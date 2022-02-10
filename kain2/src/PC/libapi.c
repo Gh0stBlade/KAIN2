@@ -1,3 +1,5 @@
+void *input_buffer0, *input_buffer1;
+
 //0001:000288e0       _CloseEvent                004298e0 f   libapi.obj
 //0001:000288f0       _DeliverEvent              004298f0 f   libapi.obj
 //0001:00028900       _DisableEvent              00429900 f   libapi.obj
@@ -19,6 +21,13 @@
 //0001:00028a00       _CdInit                    00429a00 f   libapi.obj
 //0001:00028a10       _FlushCache                00429a10 f   libapi.obj
 //0001:00028a20       _InitPAD                   00429a20 f   libapi.obj
+long InitPAD(char* buf0, long size0, char* buf1, long size1)
+{
+	input_buffer0 = buf0;
+	input_buffer1 = buf1;
+
+	return 1;
+}
 //0001:00028a40       _OpenEvent                 00429a40 f   libapi.obj
 //0001:00028a50       _ResetRCnt                 00429a50 f   libapi.obj
 //0001:00028a60       _SetRCnt                   00429a60 f   libapi.obj
