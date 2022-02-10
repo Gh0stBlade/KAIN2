@@ -6,16 +6,8 @@
 // void /*$ra*/ VM_Tick(long time /*$a0*/)
 void VM_Tick(long time)
 { // line 105, offset 0x8004f638
-	/* begin block 1 */
-		// Start line: 210
-	/* end block 1 */
-	// End Line: 211
-
-	/* begin block 2 */
-		// Start line: 211
-	/* end block 2 */
-	// End Line: 212
-
+	dword_C57FD0 += time;
+	dword_C57FD4 = dword_C57FD0 >> 8;
 }
 
 
@@ -106,22 +98,11 @@ void VM_UpdateMorph(struct Level *level, int initFlg)
 // void /*$ra*/ VM_VMObjectSetTable(struct Level *level /*$a0*/, struct _VMObject *vmobject /*$s0*/, int table /*$s1*/)
 void VM_VMObjectSetTable(struct Level *level, struct _VMObject *vmobject, int table)
 { // line 521, offset 0x8004fa30
-	/* begin block 1 */
-		// Start line: 522
-		// Start offset: 0x8004FA30
-		// Variables:
-			struct _VMOffsetTable *curTable; // $a0
-	/* end block 1 */
-	// End offset: 0x8004FA70
-	// End Line: 530
+	struct _VMOffsetTable** vmoffsetTableList; // ecx
 
-	/* begin block 2 */
-		// Start line: 1056
-	/* end block 2 */
-	// End Line: 1057
-
+	if (vmobject->curVMOffsetTable != vmobject->vmoffsetTableList[vmobject->currentIdx])
+		MEMPACK_Free((char*)vmobject->curVMOffsetTable);
+	vmoffsetTableList = vmobject->vmoffsetTableList;
+	vmobject->currentIdx = table;
+	vmobject->curVMOffsetTable = vmoffsetTableList[table];
 }
-
-
-
-

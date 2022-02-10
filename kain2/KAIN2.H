@@ -3055,10 +3055,10 @@ struct _FXTracker // hashcode: 0xCC65A064 (dec: -865755036)
 
 struct SignalInfo // hashcode: 0x5899EF0F (dec: 1486483215)
 {
-	long (*signalHandleFunc)(); // size=0, offset=0
+	long (*signalHandleFunc)(struct _Instance* instance, struct Signal* signal); // size=0, offset=0
 	short length; // size=0, offset=4
 	short onlyPlayer; // size=0, offset=6
-	void (*signalRelocateFunc)(); // size=0, offset=8
+	void (*signalRelocateFunc)(struct Signal* signal, int offset); // size=0, offset=8
 };
 
 struct _Vector // hashcode: 0x5DEB6D24 (dec: 1575709988)
