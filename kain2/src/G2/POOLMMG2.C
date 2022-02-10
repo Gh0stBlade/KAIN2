@@ -6,18 +6,23 @@
 // void /*$ra*/ G2PoolMem_InitPool(void *voidPool /*$s1*/, int blockCount /*$s0*/, int blockSize /*$s2*/)
 void G2PoolMem_InitPool(void *voidPool, int blockCount, int blockSize)
 { // line 9, offset 0x80095d9c
-	/* begin block 1 */
-		// Start line: 10
-		// Start offset: 0x80095D9C
-	/* end block 1 */
-	// End offset: 0x80095D9C
-	// End Line: 10
+	int v3; // eax
+	struct _G2PoolMemPool_Type* pool = (struct _G2PoolMemPool_Type*)voidPool; // $a0
 
-	/* begin block 2 */
-		// Start line: 18
-	/* end block 2 */
-	// End Line: 19
-
+	pool->blockPool = (struct _G2PoolMem_Type*)MEMPACK_Malloc(blockCount * blockSize, 0x19u);
+	pool->stack = (unsigned __int16*)MEMPACK_Malloc(2 * blockCount, 0x19u);
+	v3 = 0;
+	pool->blockSize = blockSize;
+	pool->stackSize = blockCount;
+	pool->stackTop = 0;
+	if ((WORD)blockCount)
+	{
+		do
+		{
+			pool->stack[v3] = v3;
+			++v3;
+		} while (v3 < pool->stackSize);
+	}
 }
 
 
@@ -25,31 +30,22 @@ void G2PoolMem_InitPool(void *voidPool, int blockCount, int blockSize)
 // void /*$ra*/ G2PoolMem_ResetPool(void *voidPool /*$a0*/)
 void G2PoolMem_ResetPool(void *voidPool)
 { // line 32, offset 0x80095e08
-	/* begin block 1 */
-		// Start line: 35
-		// Start offset: 0x80095E08
-		// Variables:
-			struct _G2PoolMemPool_Type *pool; // $a0
-			int blockIndex; // $a1
-	/* end block 1 */
-	// End offset: 0x80095E3C
-	// End Line: 48
+	struct _G2PoolMemPool_Type *pool = (struct _G2PoolMemPool_Type*)voidPool; // $a0
 
-	/* begin block 2 */
-		// Start line: 81
-	/* end block 2 */
-	// End Line: 82
+	int v1; // eax
+	bool v2; // zf
 
-	/* begin block 3 */
-		// Start line: 83
-	/* end block 3 */
-	// End Line: 84
-
-	/* begin block 4 */
-		// Start line: 94
-	/* end block 4 */
-	// End Line: 95
-
+	v1 = 0;
+	v2 = pool->stackSize == 0;
+	pool->stackTop = 0;
+	if (!v2)
+	{
+		do
+		{
+			pool->stack[v1] = v1;
+			++v1;
+		} while (v1 < pool->stackSize);
+	}
 }
 
 
@@ -57,21 +53,16 @@ void G2PoolMem_ResetPool(void *voidPool)
 // void * /*$ra*/ G2PoolMem_Allocate(void *voidPool /*$a1*/)
 void * G2PoolMem_Allocate(void *voidPool)
 { // line 64, offset 0x80095e44
-	/* begin block 1 */
-		// Start line: 65
-		// Start offset: 0x80095E44
-		// Variables:
-			int blockIndex; // $a0
-	/* end block 1 */
-	// End offset: 0x80095E98
-	// End Line: 86
+	struct _G2PoolMemPool_Type* pool = (struct _G2PoolMemPool_Type*)voidPool;
+	unsigned __int16 stackTop; // ax
+	unsigned __int16 v3; // dx
 
-	/* begin block 2 */
-		// Start line: 128
-	/* end block 2 */
-	// End Line: 129
-
-	return null;
+	stackTop = pool->stackTop;
+	if (stackTop >= pool->stackSize)
+		return 0;
+	v3 = pool->stack[stackTop];
+	pool->stackTop = stackTop + 1;
+	return (char*)pool->blockPool + v3 * pool->blockSize;
 }
 
 
@@ -79,30 +70,11 @@ void * G2PoolMem_Allocate(void *voidPool)
 // void /*$ra*/ G2PoolMem_Free(void *voidPool /*$a0*/, void *block /*$a1*/)
 void G2PoolMem_Free(void *voidPool, void *block)
 { // line 87, offset 0x80095ea0
-	/* begin block 1 */
-		// Start line: 90
-		// Start offset: 0x80095EA0
-		// Variables:
-			int blockIndex; // $a1
-	/* end block 1 */
-	// End offset: 0x80095EA0
-	// End Line: 96
+	struct _G2PoolMemPool_Type* pool = (struct _G2PoolMemPool_Type*)voidPool;
+	int v2; // eax
 
-	/* begin block 2 */
-		// Start line: 192
-	/* end block 2 */
-	// End Line: 193
-
-	/* begin block 3 */
-		// Start line: 194
-	/* end block 3 */
-	// End Line: 195
-
-	/* begin block 4 */
-		// Start line: 200
-	/* end block 4 */
-	// End Line: 201
-
+	v2 = (signed int)((int)block - (unsigned int)pool->blockPool) / pool->blockSize;
+	pool->stack[--pool->stackTop] = v2;
 }
 
 
