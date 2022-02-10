@@ -414,21 +414,19 @@ int __cdecl ASLD_GetFileDataFP(void* a1, int a2, int a3)
 //0001:00076580       _ASLD_Init                 00477580 f   asyncld.obj
 void ASLD_Init(void)
 {
-	DWORD v0; // ecx
-	ASLD_File* i; // ecx
+	ASLD_File* f; // ecx
 	ASLD_File* p_index; // eax
 	DWORD ThreadId; // [esp+0h] [ebp-4h] BYREF
 
-	ThreadId = v0;
 	asld_ftbl[0].next = 0;
-	i = 0;
+	f = 0;
 	p_index = &asld_ftbl[255];
-	do
+	for(int i = 0; i<256; i++)
 	{
-		p_index->index = (int)i;
-		i = p_index--;
-	} while ((int)p_index >= (int)&asld_ftbl[0].index);
-	asld_fcur = i;
+		p_index->index = (int)f;
+		f = p_index--;
+	}
+	asld_fcur = f;
 	asld_actv = 0;
 	asld_evt = CreateEventA(0, 0, 1, 0);
 	asld_obj = CreateThread(0, 0, FileLoadThread, 0, 0, &ThreadId);
