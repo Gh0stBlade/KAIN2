@@ -225,9 +225,9 @@ void MON_SwitchState(struct _Instance *instance, enum MonsterState state)
 { // line 318, offset 0x8007f850
 	struct _MonsterVars* mv; // edi
 	struct _Instance* i; // esi
-	int* v4; // eax
-	int v5; // ecx
-	int j; // eax
+	struct _HModel* v4; // eax
+	int numHPrims; // ecx
+	struct _HPrim* prim; // eax
 	unsigned int mvFlags; // eax
 	char pathSlotID; // al
 
@@ -238,13 +238,13 @@ void MON_SwitchState(struct _Instance *instance, enum MonsterState state)
 			TurnOffCollisionPhysOb(i, 3);
 		if ((mv->mvFlags & 0x4000) != 0)
 		{
-			v4 = (int*)((char*)instance->hModelList + 8 * instance->currentModel);
-			v5 = v4[1];
-			for (j = *v4; v5; --v5)
+			v4 = &instance->hModelList[instance->currentModel];
+			numHPrims = v4->numHPrims;
+			for (prim = v4->hPrimList; numHPrims; --numHPrims)
 			{
-				if (*(BYTE*)(j + 2) == 1 && *(BYTE*)(*(DWORD*)(j + 4) + 4) == 9)
-					*(BYTE*)j &= ~1u;
-				j += 8;
+				if (prim->type == 1 && prim->data.hsphere->id == 9)
+					prim->hpFlags &= ~1u;
+				++prim;
 			}
 			mv->mvFlags &= ~0x4000;
 		}
@@ -281,20 +281,18 @@ void MON_SwitchState(struct _Instance *instance, enum MonsterState state)
 // void /*$ra*/ MON_SwitchStateDoEntry(struct _Instance *instance /*$s1*/, enum MonsterState state /*$a1*/)
 void MON_SwitchStateDoEntry(struct _Instance *instance, enum MonsterState state)
 { // line 360, offset 0x8007f94c
-	/* begin block 1 */
-		// Start line: 361
-		// Start offset: 0x8007F94C
-		// Variables:
-			struct _MonsterVars *mv; // $s0
-	/* end block 1 */
-	// End offset: 0x8007F9A0
-	// End Line: 376
+	struct _MonsterVars* mv; // edi
+	struct _MonsterState* StateFuncs; // eax
+	unsigned int mvFlags; // eax
 
-	/* begin block 2 */
-		// Start line: 707
-	/* end block 2 */
-	// End Line: 708
-
+	mv = (struct _MonsterVars*)instance->extraData;
+	MON_SwitchState(instance, state);
+	if (mv)
+	{
+		StateFuncs = MONTABLE_GetStateFuncs(instance, instance->currentMainState);
+		((void(__cdecl*)(struct _Instance*))StateFuncs->entryFunction)(instance);
+		mv->mvFlags &= ~1;
+	}
 }
 
 
@@ -302,12 +300,7 @@ void MON_SwitchStateDoEntry(struct _Instance *instance, enum MonsterState state)
 // int /*$ra*/ MON_TransNodeAnimation(struct _Instance *instance /*$a0*/)
 int MON_TransNodeAnimation(struct _Instance *instance)
 { // line 388, offset 0x8007f9b4
-	/* begin block 1 */
-		// Start line: 763
-	/* end block 1 */
-	// End Line: 764
-
-	return 0;
+	return G2Anim_SegmentHasActiveChannels(&instance->anim, 0, 0x700);
 }
 
 
@@ -315,26 +308,13 @@ int MON_TransNodeAnimation(struct _Instance *instance)
 // struct _MonsterAnim * /*$ra*/ MON_GetAnim(struct _Instance *instance /*$a0*/, char *animList /*$a1*/, int index /*$a2*/)
 struct _MonsterAnim * MON_GetAnim(struct _Instance *instance, char *animList, int index)
 { // line 397, offset 0x8007f9dc
-	/* begin block 1 */
-		// Start line: 399
-		// Start offset: 0x8007F9DC
-		// Variables:
-			int whichAnim; // $a1
-	/* end block 1 */
-	// End offset: 0x8007FA08
-	// End Line: 404
+	int whichAnim; // ecx
 
-	/* begin block 2 */
-		// Start line: 782
-	/* end block 2 */
-	// End Line: 783
-
-	/* begin block 3 */
-		// Start line: 783
-	/* end block 3 */
-	// End Line: 784
-
-	return null;
+	whichAnim = animList[index];
+	if (whichAnim == -1)
+		return 0;
+	else
+		return (struct _MonsterAnim*)(16 * whichAnim + *((DWORD*)instance->data + 16));
 }
 
 
@@ -342,27 +322,63 @@ struct _MonsterAnim * MON_GetAnim(struct _Instance *instance, char *animList, in
 // void /*$ra*/ MON_PlayAnimID(struct _Instance *instance /*$s3*/, int index /*$a1*/, int mode /*$fp*/)
 void MON_PlayAnimID(struct _Instance *instance, int index, int mode)
 { // line 409, offset 0x8007fa10
-	/* begin block 1 */
-		// Start line: 410
-		// Start offset: 0x8007FA10
-		// Variables:
-			struct _MonsterVars *mv; // $s2
-			struct _MonsterAnim *manim; // $s1
-			struct _MonsterAttributes *ma; // $v0
-			int anim; // $a2
-			int anim0; // $s6
-			int i; // $s0
-			int interpFrames; // $s5
-			int alphaTable; // $s4
-	/* end block 1 */
-	// End offset: 0x8007FB44
-	// End Line: 466
+	struct _MonsterVars* mv; // ebp
+	struct _MonsterAnim* manim; // edi
+	int anims; // eax
+	struct _MonsterAnim* v7; // ecx
+	int v8; // esi
+	int v9; // eax
+	int v10; // edx
+	int v11; // [esp+10h] [ebp-4h]
+	struct _MonsterAttributes* ma; // [esp+18h] [ebp+4h]
+	struct _Instance* instanceb; // [esp+18h] [ebp+4h]
+	int indexa; // [esp+1Ch] [ebp+8h]
 
-	/* begin block 2 */
-		// Start line: 808
-	/* end block 2 */
-	// End Line: 809
-
+	mv = (struct _MonsterVars*)instance->extraData;
+	ma = (struct _MonsterAttributes*)instance->data;
+	if (index < 0)
+	{
+		MON_Say();
+		MON_Say();
+	}
+	manim = &ma->animList[index];
+	anims = manim->index[0];
+	instanceb = (struct _Instance*)anims;
+	if (anims < 0 || anims >= instance->object->numAnims)
+	{
+		MON_Say();
+		MON_Say();
+		instanceb = 0;
+	}
+	G2Anim_SetCallback(&instance->anim, (int)INSTANCE_DefaultAnimCallback, (int)instance);
+	v7 = mv->anim;
+	if (v7 && v7->interpOut)
+	{
+		v11 = v7->interpOut;
+		indexa = v7->alphaTableOut;
+	}
+	else
+	{
+		v11 = manim->interpFrames;
+		indexa = manim->alphaTable;
+	}
+	v8 = 0;
+	if (mv->subAttr->numSections)
+	{
+		do
+		{
+			v9 = manim->index[v8];
+			if (v9 == -1)
+				v9 = (int)instanceb;
+			G2EmulationInstanceSwitchAnimationAlpha(instance, v8, v9, manim->startFrame, v11, mode, indexa);
+			G2EmulationInstanceSetAnimSpeed(instance, v8++, manim->playSpeed);
+		} while (v8 < mv->subAttr->numSections);
+	}
+	v10 = mv->mvFlags | 0x4000000;
+	mv->anim = manim;
+	mv->mvFlags = v10;
+	instance->anim.section[manim->controllingSection].callback = (int(__stdcall*)())MON_AnimCallback;
+	instance->anim.section[manim->controllingSection].callbackData = instance;
 }
 
 
@@ -370,11 +386,7 @@ void MON_PlayAnimID(struct _Instance *instance, int index, int mode)
 // void /*$ra*/ MON_PlayAnimFromList(struct _Instance *instance /*$a0*/, char *animList /*$a1*/, int animtype /*$a2*/, int mode /*$a3*/)
 void MON_PlayAnimFromList(struct _Instance *instance, char *animList, int animtype, int mode)
 { // line 470, offset 0x8007fbc8
-	/* begin block 1 */
-		// Start line: 977
-	/* end block 1 */
-	// End Line: 978
-
+	MON_PlayAnimID(instance, animList[animtype], mode);
 }
 
 
@@ -382,31 +394,8 @@ void MON_PlayAnimFromList(struct _Instance *instance, char *animList, int animty
 // int /*$ra*/ MON_AnimIDPlaying(struct _Instance *instance /*$a0*/, int index /*$a1*/)
 int MON_AnimIDPlaying(struct _Instance *instance, int index)
 { // line 475, offset 0x8007fbf0
-	/* begin block 1 */
-		// Start line: 477
-		// Start offset: 0x8007FBF0
-		// Variables:
-			struct _MonsterAttributes *ma; // $v0
-	/* end block 1 */
-	// End offset: 0x8007FBF0
-	// End Line: 479
-
-	/* begin block 2 */
-		// Start line: 988
-	/* end block 2 */
-	// End Line: 989
-
-	/* begin block 3 */
-		// Start line: 989
-	/* end block 3 */
-	// End Line: 990
-
-	/* begin block 4 */
-		// Start line: 991
-	/* end block 4 */
-	// End Line: 992
-
-	return 0;
+	struct _MonsterAttributes *ma; // $v0
+	return *((DWORD*)instance->extraData + 47) == 16 * index + *((DWORD*)instance->data + 16);
 }
 
 
@@ -414,11 +403,8 @@ int MON_AnimIDPlaying(struct _Instance *instance, int index)
 // void /*$ra*/ MON_PlayAnimIDIfNotPlaying(struct _Instance *instance /*$s0*/, int index /*$s1*/, int mode /*$s2*/)
 void MON_PlayAnimIDIfNotPlaying(struct _Instance *instance, int index, int mode)
 { // line 482, offset 0x8007fc14
-	/* begin block 1 */
-		// Start line: 1004
-	/* end block 1 */
-	// End Line: 1005
-
+	if (*((DWORD*)instance->extraData + 47) != 16 * index + *((DWORD*)instance->data + 16))
+		MON_PlayAnimID(instance, index, mode);
 }
 
 
@@ -426,12 +412,7 @@ void MON_PlayAnimIDIfNotPlaying(struct _Instance *instance, int index, int mode)
 // int /*$ra*/ MON_AnimPlayingFromList(struct _Instance *instance /*$a0*/, char *animList /*$a1*/, int animtype /*$a2*/)
 int MON_AnimPlayingFromList(struct _Instance *instance, char *animList, int animtype)
 { // line 491, offset 0x8007fc64
-	/* begin block 1 */
-		// Start line: 1022
-	/* end block 1 */
-	// End Line: 1023
-
-	return 0;
+	return *((DWORD*)instance->extraData + 47) == *((DWORD*)instance->data + 16) + 16 * animList[animtype];
 }
 
 

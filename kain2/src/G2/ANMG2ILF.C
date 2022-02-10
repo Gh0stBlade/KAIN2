@@ -6,36 +6,7 @@
 // short /*$ra*/ G2Anim_GetElapsedTime(struct _G2Anim_Type *anim /*$a0*/)
 short G2Anim_GetElapsedTime(struct _G2Anim_Type *anim)
 { // line 97, offset 0x8008fa10
-	/* begin block 1 */
-		// Start line: 100
-		// Start offset: 0x8008FA10
-		// Variables:
-			struct _G2AnimSection_Type *section; // $v0
-	/* end block 1 */
-	// End offset: 0x8008FA10
-	// End Line: 104
-
-	/* begin block 2 */
-		// Start line: 104
-	/* end block 2 */
-	// End Line: 105
-
-	/* begin block 3 */
-		// Start line: 194
-	/* end block 3 */
-	// End Line: 195
-
-	/* begin block 4 */
-		// Start line: 106
-	/* end block 4 */
-	// End Line: 107
-
-	/* begin block 5 */
-		// Start line: 110
-	/* end block 5 */
-	// End Line: 111
-
-	return 0;
+	return anim->section[anim->masterSection].elapsedTime;
 }
 
 
@@ -43,31 +14,7 @@ short G2Anim_GetElapsedTime(struct _G2Anim_Type *anim)
 // struct _G2AnimKeylist_Type * /*$ra*/ G2Anim_GetKeylist(struct _G2Anim_Type *anim /*$a0*/)
 struct _G2AnimKeylist_Type * G2Anim_GetKeylist(struct _G2Anim_Type *anim)
 { // line 136, offset 0x8008fa34
-	/* begin block 1 */
-		// Start line: 139
-		// Start offset: 0x8008FA34
-		// Variables:
-			struct _G2AnimSection_Type *section; // $v0
-	/* end block 1 */
-	// End offset: 0x8008FA34
-	// End Line: 143
-
-	/* begin block 2 */
-		// Start line: 272
-	/* end block 2 */
-	// End Line: 273
-
-	/* begin block 3 */
-		// Start line: 153
-	/* end block 3 */
-	// End Line: 154
-
-	/* begin block 4 */
-		// Start line: 157
-	/* end block 4 */
-	// End Line: 158
-
-	return null;
+	return anim->section[anim->masterSection].keylist;
 }
 
 
@@ -94,20 +41,22 @@ void G2Anim_GetRootMotionOverInterval(struct _G2Anim_Type *anim, short intervalS
 // void /*$ra*/ G2Anim_InterpToKeylistFrame(struct _G2Anim_Type *anim /*$s2*/, struct _G2AnimKeylist_Type *keylist /*$s4*/, int keylistID /*$s5*/, int targetFrame /*$s6*/, int duration /*stack 16*/)
 void G2Anim_InterpToKeylistFrame(struct _G2Anim_Type *anim, struct _G2AnimKeylist_Type *keylist, int keylistID, int targetFrame, int duration)
 { // line 292, offset 0x8008fa88
-	/* begin block 1 */
-		// Start line: 293
-		// Start offset: 0x8008FA88
-		// Variables:
-			int i; // $s0
-	/* end block 1 */
-	// End offset: 0x8008FB04
-	// End Line: 307
+	int sectionCount; // ecx
+	int v6; // edi
+	struct _G2AnimSection_Type* section; // esi
 
-	/* begin block 2 */
-		// Start line: 584
-	/* end block 2 */
-	// End Line: 585
-
+	v6 = 0;
+	if (anim->sectionCount)
+	{
+		section = anim->section;
+		do
+		{
+			G2AnimSection_InterpToKeylistAtTime(section, keylist, keylistID, keylist->s0TailTime * targetFrame, duration);
+			sectionCount = anim->sectionCount;
+			++v6;
+			++section;
+		} while (v6 < sectionCount);
+	}
 }
 
 
@@ -115,20 +64,21 @@ void G2Anim_InterpToKeylistFrame(struct _G2Anim_Type *anim, struct _G2AnimKeylis
 // void /*$ra*/ G2Anim_SetAlphaTable(struct _G2Anim_Type *anim /*$s2*/, struct _G2AnimAlphaTable_Type *table /*$s3*/)
 void G2Anim_SetAlphaTable(struct _G2Anim_Type *anim, struct _G2AnimAlphaTable_Type *table)
 { // line 412, offset 0x8008fb2c
-	/* begin block 1 */
-		// Start line: 413
-		// Start offset: 0x8008FB2C
-		// Variables:
-			int i; // $s0
-	/* end block 1 */
-	// End offset: 0x8008FB80
-	// End Line: 422
+	int v2; // edx
+	struct _G2AnimInterpInfo_Type** p_interpInfo; // ecx
 
-	/* begin block 2 */
-		// Start line: 824
-	/* end block 2 */
-	// End Line: 825
-
+	v2 = 0;
+	if (anim->sectionCount)
+	{
+		p_interpInfo = &anim->section[0].interpInfo;
+		do
+		{
+			if (*p_interpInfo)
+				(*p_interpInfo)->alphaTable = table;
+			++v2;
+			p_interpInfo += 12;
+		} while (v2 < anim->sectionCount);
+	}
 }
 
 
@@ -136,30 +86,21 @@ void G2Anim_SetAlphaTable(struct _G2Anim_Type *anim, struct _G2AnimAlphaTable_Ty
 // void /*$ra*/ G2Anim_SetCallback(struct _G2Anim_Type *anim /*$a0*/, TDRFuncPtr_G2Anim_SetCallback1callback callback /*$a1*/, void *data /*$a2*/)
 void G2Anim_SetCallback(struct _G2Anim_Type *anim, TDRFuncPtr_G2Anim_SetCallback1callback callback, void *data)
 { // line 428, offset 0x8008fb9c
-	/* begin block 1 */
-		// Start line: 431
-		// Start offset: 0x8008FB9C
-		// Variables:
-			int i; // $v1
-	/* end block 1 */
-	// End offset: 0x8008FBD0
-	// End Line: 439
+	int v3; // ecx
+	void** p_callbackData; // eax
 
-	/* begin block 2 */
-		// Start line: 520
-	/* end block 2 */
-	// End Line: 521
-
-	/* begin block 3 */
-		// Start line: 522
-	/* end block 3 */
-	// End Line: 523
-
-	/* begin block 4 */
-		// Start line: 527
-	/* end block 4 */
-	// End Line: 528
-
+	v3 = 0;
+	if (anim->sectionCount)
+	{
+		p_callbackData = &anim->section[0].callbackData;
+		do
+		{
+			*(p_callbackData - 1) = callback;
+			*p_callbackData = data;
+			++v3;
+			p_callbackData += 12;
+		} while (v3 < anim->sectionCount);
+	}
 }
 
 
@@ -167,20 +108,30 @@ void G2Anim_SetCallback(struct _G2Anim_Type *anim, TDRFuncPtr_G2Anim_SetCallback
 // void /*$ra*/ G2Anim_SetLooping(struct _G2Anim_Type *anim /*$s2*/)
 void G2Anim_SetLooping(struct _G2Anim_Type *anim)
 { // line 518, offset 0x8008fbd8
-	/* begin block 1 */
-		// Start line: 519
-		// Start offset: 0x8008FBD8
-		// Variables:
-			int i; // $s0
-	/* end block 1 */
-	// End offset: 0x8008FC20
-	// End Line: 527
+	int v1; // edx
+	unsigned int* p_alarmFlags; // eax
+	unsigned int v3; // ecx
+	unsigned int v4; // ecx
+	__int16 v5; // di
 
-	/* begin block 2 */
-		// Start line: 1036
-	/* end block 2 */
-	// End Line: 1037
-
+	v1 = 0;
+	if (anim->sectionCount)
+	{
+		p_alarmFlags = &anim->section[0].alarmFlags;
+		do
+		{
+			v3 = *p_alarmFlags;
+			*((WORD*)p_alarmFlags - 8) = 0;
+			*p_alarmFlags = v3 & 0xFFFFFFFC;
+			v4 = p_alarmFlags[3];
+			p_alarmFlags += 12;
+			v5 = *(unsigned __int8*)(v4 + 1) + *(WORD*)(v4 + 6) * (*(WORD*)(v4 + 4) - 1);
+			v4 = *((BYTE*)p_alarmFlags - 72) | 2;
+			*((WORD*)p_alarmFlags - 31) = v5;
+			*((BYTE*)p_alarmFlags - 72) = v4;
+			++v1;
+		} while (v1 < anim->sectionCount);
+	}
 }
 
 
@@ -188,20 +139,22 @@ void G2Anim_SetLooping(struct _G2Anim_Type *anim)
 // void /*$ra*/ G2Anim_SetNoLooping(struct _G2Anim_Type *anim /*$s2*/)
 void G2Anim_SetNoLooping(struct _G2Anim_Type *anim)
 { // line 565, offset 0x8008fc38
-	/* begin block 1 */
-		// Start line: 566
-		// Start offset: 0x8008FC38
-		// Variables:
-			int i; // $s0
-	/* end block 1 */
-	// End offset: 0x8008FC80
-	// End Line: 574
+	int v1; // ecx
+	struct _G2AnimSection_Type* section; // eax
+	unsigned __int8 flags; // dl
 
-	/* begin block 2 */
-		// Start line: 1130
-	/* end block 2 */
-	// End Line: 1131
-
+	v1 = 0;
+	if (anim->sectionCount)
+	{
+		section = anim->section;
+		do
+		{
+			flags = section->flags;
+			++section;
+			++v1;
+			section[-1].flags = flags & 0xFD;
+		} while (v1 < anim->sectionCount);
+	}
 }
 
 
@@ -209,20 +162,22 @@ void G2Anim_SetNoLooping(struct _G2Anim_Type *anim)
 // void /*$ra*/ G2Anim_SetPaused(struct _G2Anim_Type *anim /*$s2*/)
 void G2Anim_SetPaused(struct _G2Anim_Type *anim)
 { // line 591, offset 0x8008fc98
-	/* begin block 1 */
-		// Start line: 592
-		// Start offset: 0x8008FC98
-		// Variables:
-			int i; // $s0
-	/* end block 1 */
-	// End offset: 0x8008FCE0
-	// End Line: 600
+	int v1; // ecx
+	struct _G2AnimSection_Type* section; // eax
+	unsigned __int8 flags; // dl
 
-	/* begin block 2 */
-		// Start line: 1182
-	/* end block 2 */
-	// End Line: 1183
-
+	v1 = 0;
+	if (anim->sectionCount)
+	{
+		section = anim->section;
+		do
+		{
+			flags = section->flags;
+			++section;
+			++v1;
+			section[-1].flags = flags | 1;
+		} while (v1 < anim->sectionCount);
+	}
 }
 
 
@@ -230,30 +185,20 @@ void G2Anim_SetPaused(struct _G2Anim_Type *anim)
 // void /*$ra*/ G2Anim_SetSpeedAdjustment(struct _G2Anim_Type *anim /*$a0*/, long adjustment /*$a1*/)
 void G2Anim_SetSpeedAdjustment(struct _G2Anim_Type *anim, long adjustment)
 { // line 618, offset 0x8008fcf8
-	/* begin block 1 */
-		// Start line: 621
-		// Start offset: 0x8008FCF8
-		// Variables:
-			int i; // $v1
-	/* end block 1 */
-	// End offset: 0x8008FD24
-	// End Line: 629
+	int v2; // eax
+	int* p_speedAdjustment; // ecx
 
-	/* begin block 2 */
-		// Start line: 1236
-	/* end block 2 */
-	// End Line: 1237
-
-	/* begin block 3 */
-		// Start line: 750
-	/* end block 3 */
-	// End Line: 751
-
-	/* begin block 4 */
-		// Start line: 755
-	/* end block 4 */
-	// End Line: 756
-
+	v2 = 0;
+	if (anim->sectionCount)
+	{
+		p_speedAdjustment = &anim->section[0].speedAdjustment;
+		do
+		{
+			*p_speedAdjustment = adjustment;
+			++v2;
+			p_speedAdjustment += 12;
+		} while (v2 < anim->sectionCount);
+	}
 }
 
 
@@ -261,20 +206,22 @@ void G2Anim_SetSpeedAdjustment(struct _G2Anim_Type *anim, long adjustment)
 // void /*$ra*/ G2Anim_SetUnpaused(struct _G2Anim_Type *anim /*$s2*/)
 void G2Anim_SetUnpaused(struct _G2Anim_Type *anim)
 { // line 649, offset 0x8008fd2c
-	/* begin block 1 */
-		// Start line: 650
-		// Start offset: 0x8008FD2C
-		// Variables:
-			int i; // $s0
-	/* end block 1 */
-	// End offset: 0x8008FD74
-	// End Line: 658
+	int v1; // ecx
+	struct _G2AnimSection_Type* section; // eax
+	unsigned __int8 flags; // dl
 
-	/* begin block 2 */
-		// Start line: 1298
-	/* end block 2 */
-	// End Line: 1299
-
+	v1 = 0;
+	if (anim->sectionCount)
+	{
+		section = anim->section;
+		do
+		{
+			flags = section->flags;
+			++section;
+			++v1;
+			section[-1].flags = flags & 0xFE;
+		} while (v1 < anim->sectionCount);
+	}
 }
 
 
@@ -282,20 +229,20 @@ void G2Anim_SetUnpaused(struct _G2Anim_Type *anim)
 // void /*$ra*/ G2Anim_SwitchToKeylist(struct _G2Anim_Type *anim /*$s2*/, struct _G2AnimKeylist_Type *keylist /*$s3*/, int keylistID /*$s4*/)
 void G2Anim_SwitchToKeylist(struct _G2Anim_Type *anim, struct _G2AnimKeylist_Type *keylist, int keylistID)
 { // line 678, offset 0x8008fd8c
-	/* begin block 1 */
-		// Start line: 679
-		// Start offset: 0x8008FD8C
-		// Variables:
-			int i; // $s0
-	/* end block 1 */
-	// End offset: 0x8008FDEC
-	// End Line: 689
+	int v3; // esi
+	struct _G2AnimSection_Type* section; // edi
 
-	/* begin block 2 */
-		// Start line: 1356
-	/* end block 2 */
-	// End Line: 1357
-
+	v3 = 0;
+	if (anim->sectionCount)
+	{
+		section = anim->section;
+		do
+		{
+			G2AnimSection_SwitchToKeylistAtTime(section, keylist, keylistID, 0);
+			++v3;
+			++section;
+		} while (v3 < anim->sectionCount);
+	}
 }
 
 
@@ -303,17 +250,7 @@ void G2Anim_SwitchToKeylist(struct _G2Anim_Type *anim, struct _G2AnimKeylist_Typ
 // short /*$ra*/ G2AnimKeylist_GetDuration(struct _G2AnimKeylist_Type *keylist /*$a0*/)
 short G2AnimKeylist_GetDuration(struct _G2AnimKeylist_Type *keylist)
 { // line 797, offset 0x8008fe0c
-	/* begin block 1 */
-		// Start line: 1594
-	/* end block 1 */
-	// End Line: 1595
-
-	/* begin block 2 */
-		// Start line: 962
-	/* end block 2 */
-	// End Line: 963
-
-	return 0;
+	return keylist->s0TailTime + (keylist->keyCount - 1) * keylist->timePerKey;
 }
 
 
@@ -321,17 +258,7 @@ short G2AnimKeylist_GetDuration(struct _G2AnimKeylist_Type *keylist)
 // int /*$ra*/ G2AnimKeylist_GetKeyframeCount(struct _G2AnimKeylist_Type *keylist /*$a0*/)
 int G2AnimKeylist_GetKeyframeCount(struct _G2AnimKeylist_Type *keylist)
 { // line 811, offset 0x8008fe34
-	/* begin block 1 */
-		// Start line: 986
-	/* end block 1 */
-	// End Line: 987
-
-	/* begin block 2 */
-		// Start line: 989
-	/* end block 2 */
-	// End Line: 990
-
-	return 0;
+	return ((keylist->keyCount - 1) * keylist->timePerKey + 2 * keylist->s0TailTime - 1) / keylist->s0TailTime;
 }
 
 
@@ -339,16 +266,7 @@ int G2AnimKeylist_GetKeyframeCount(struct _G2AnimKeylist_Type *keylist)
 // void /*$ra*/ G2AnimSection_ClearAlarm(struct _G2AnimSection_Type *section /*$a0*/, unsigned long flag /*$a1*/)
 void G2AnimSection_ClearAlarm(struct _G2AnimSection_Type *section, unsigned long flag)
 { // line 840, offset 0x8008fe6c
-	/* begin block 1 */
-		// Start line: 1044
-	/* end block 1 */
-	// End Line: 1045
-
-	/* begin block 2 */
-		// Start line: 1049
-	/* end block 2 */
-	// End Line: 1050
-
+	section->alarmFlags &= ~flag;
 }
 
 
@@ -356,12 +274,13 @@ void G2AnimSection_ClearAlarm(struct _G2AnimSection_Type *section, unsigned long
 // int /*$ra*/ G2AnimSection_GetKeyframeNumber(struct _G2AnimSection_Type *section /*$s0*/)
 int G2AnimSection_GetKeyframeNumber(struct _G2AnimSection_Type *section)
 { // line 870, offset 0x8008fe80
-	/* begin block 1 */
-		// Start line: 1740
-	/* end block 1 */
-	// End Line: 1741
+	struct _G2AnimInterpInfo_Type* interpInfo; // eax
 
-	return 0;
+	interpInfo = section->interpInfo;
+	if (interpInfo && interpInfo->stateBlockList)
+		return interpInfo->targetTime / (int)section->keylist->s0TailTime;
+	else
+		return section->elapsedTime / (int)section->keylist->s0TailTime;
 }
 
 
@@ -369,22 +288,7 @@ int G2AnimSection_GetKeyframeNumber(struct _G2AnimSection_Type *section)
 // int /*$ra*/ G2AnimSection_GetStoredKeyframeNumber(struct _G2AnimSection_Type *section /*$a0*/)
 int G2AnimSection_GetStoredKeyframeNumber(struct _G2AnimSection_Type *section)
 { // line 974, offset 0x8008fedc
-	/* begin block 1 */
-		// Start line: 1201
-	/* end block 1 */
-	// End Line: 1202
-
-	/* begin block 2 */
-		// Start line: 1292
-	/* end block 2 */
-	// End Line: 1293
-
-	/* begin block 3 */
-		// Start line: 1297
-	/* end block 3 */
-	// End Line: 1298
-
-	return 0;
+	return section->storedTime / (int)section->keylist->s0TailTime;
 }
 
 
@@ -392,18 +296,7 @@ int G2AnimSection_GetStoredKeyframeNumber(struct _G2AnimSection_Type *section)
 // void /*$ra*/ G2AnimSection_InterpToKeylistFrame(struct _G2AnimSection_Type *section /*$a0*/, struct _G2AnimKeylist_Type *keylist /*$a1*/, int keylistID /*$a2*/, int targetFrame /*$a3*/, int duration /*stack 16*/)
 void G2AnimSection_InterpToKeylistFrame(struct _G2AnimSection_Type *section, struct _G2AnimKeylist_Type *keylist, int keylistID, int targetFrame, int duration)
 { // line 1005, offset 0x8008fefc
-	/* begin block 1 */
-		// Start line: 1006
-		// Start offset: 0x8008FEFC
-	/* end block 1 */
-	// End offset: 0x8008FEFC
-	// End Line: 1006
-
-	/* begin block 2 */
-		// Start line: 2010
-	/* end block 2 */
-	// End Line: 2011
-
+	G2AnimSection_InterpToKeylistAtTime(section, keylist, keylistID, targetFrame * keylist->s0TailTime, duration);
 }
 
 
@@ -411,31 +304,10 @@ void G2AnimSection_InterpToKeylistFrame(struct _G2AnimSection_Type *section, str
 // enum _G2Bool_Enum /*$ra*/ G2AnimSection_IsInInterpolation(struct _G2AnimSection_Type *section /*$a0*/)
 enum _G2Bool_Enum G2AnimSection_IsInInterpolation(struct _G2AnimSection_Type *section)
 { // line 1023, offset 0x8008ff3c
-	/* begin block 1 */
-		// Start line: 1026
-		// Start offset: 0x8008FF3C
-		// Variables:
-			struct _G2AnimInterpInfo_Type *interpInfo; // $v0
-	/* end block 1 */
-	// End offset: 0x8008FF64
-	// End Line: 1035
+	struct _G2AnimInterpInfo_Type* interpInfo; // eax
 
-	/* begin block 2 */
-		// Start line: 1364
-	/* end block 2 */
-	// End Line: 1365
-
-	/* begin block 3 */
-		// Start line: 1366
-	/* end block 3 */
-	// End Line: 1367
-
-	/* begin block 4 */
-		// Start line: 1370
-	/* end block 4 */
-	// End Line: 1371
-
-	return null;
+	interpInfo = section->interpInfo;
+	return interpInfo && interpInfo->stateBlockList;
 }
 
 
@@ -443,12 +315,13 @@ enum _G2Bool_Enum G2AnimSection_IsInInterpolation(struct _G2AnimSection_Type *se
 // short /*$ra*/ G2AnimSection_NextKeyframe(struct _G2AnimSection_Type *section /*$s0*/)
 short G2AnimSection_NextKeyframe(struct _G2AnimSection_Type *section)
 { // line 1081, offset 0x8008ff6c
-	/* begin block 1 */
-		// Start line: 1480
-	/* end block 1 */
-	// End Line: 1481
+	int FrameTime; // eax
 
-	return 0;
+	if ((section->flags & 1) != 0)
+		return 0;
+	section->flags &= ~4;
+	FrameTime = G2Timer_GetFrameTime();
+	return G2AnimSection_UpdateOverInterval(section, FrameTime);
 }
 
 
@@ -456,16 +329,11 @@ short G2AnimSection_NextKeyframe(struct _G2AnimSection_Type *section)
 // void /*$ra*/ G2AnimSection_SetAlphaTable(struct _G2AnimSection_Type *section /*$a0*/, struct _G2AnimAlphaTable_Type *table /*$a1*/)
 void G2AnimSection_SetAlphaTable(struct _G2AnimSection_Type *section, struct _G2AnimAlphaTable_Type *table)
 { // line 1112, offset 0x8008ffc8
-	/* begin block 1 */
-		// Start line: 2224
-	/* end block 1 */
-	// End Line: 2225
+	struct _G2AnimInterpInfo_Type* interpInfo; // eax
 
-	/* begin block 2 */
-		// Start line: 1521
-	/* end block 2 */
-	// End Line: 1522
-
+	interpInfo = section->interpInfo;
+	if (interpInfo)
+		interpInfo->alphaTable = table;
 }
 
 
@@ -487,11 +355,14 @@ void G2AnimSection_SetInterpInfo(struct _G2AnimSection_Type *section, struct _G2
 // void /*$ra*/ G2AnimSection_SetLooping(struct _G2AnimSection_Type *section /*$s0*/)
 void G2AnimSection_SetLooping(struct _G2AnimSection_Type *section)
 { // line 1208, offset 0x80090014
-	/* begin block 1 */
-		// Start line: 2416
-	/* end block 1 */
-	// End Line: 2417
+	unsigned int alarmFlags; // ecx
 
+	alarmFlags = section->alarmFlags;
+	section->loopStartTime = 0;
+	section->alarmFlags = alarmFlags & ~3u;
+	alarmFlags = section->flags | 2;
+	section->loopEndTime = section->keylist->s0TailTime + (section->keylist->keyCount - 1) * section->keylist->timePerKey;
+	section->flags = alarmFlags;
 }
 
 
@@ -499,11 +370,11 @@ void G2AnimSection_SetLooping(struct _G2AnimSection_Type *section)
 // void /*$ra*/ G2AnimSection_SetLoopRangeAll(struct _G2AnimSection_Type *section /*$s0*/)
 void G2AnimSection_SetLoopRangeAll(struct _G2AnimSection_Type *section)
 { // line 1220, offset 0x80090054
-	/* begin block 1 */
-		// Start line: 1695
-	/* end block 1 */
-	// End Line: 1696
+	struct _G2AnimKeylist_Type* keylist; // eax
 
+	keylist = section->keylist;
+	section->loopStartTime = 0;
+	section->loopEndTime = keylist->s0TailTime + (keylist->keyCount - 1) * keylist->timePerKey;
 }
 
 
@@ -511,16 +382,7 @@ void G2AnimSection_SetLoopRangeAll(struct _G2AnimSection_Type *section)
 // void /*$ra*/ G2AnimSection_SetNoLooping(struct _G2AnimSection_Type *section /*$a0*/)
 void G2AnimSection_SetNoLooping(struct _G2AnimSection_Type *section)
 { // line 1261, offset 0x80090084
-	/* begin block 1 */
-		// Start line: 2522
-	/* end block 1 */
-	// End Line: 2523
-
-	/* begin block 2 */
-		// Start line: 1744
-	/* end block 2 */
-	// End Line: 1745
-
+	section->flags &= ~2u;
 }
 
 
@@ -528,16 +390,7 @@ void G2AnimSection_SetNoLooping(struct _G2AnimSection_Type *section)
 // void /*$ra*/ G2AnimSection_SetNotRewinding(struct _G2AnimSection_Type *section /*$a0*/)
 void G2AnimSection_SetNotRewinding(struct _G2AnimSection_Type *section)
 { // line 1270, offset 0x80090098
-	/* begin block 1 */
-		// Start line: 1759
-	/* end block 1 */
-	// End Line: 1760
-
-	/* begin block 2 */
-		// Start line: 1762
-	/* end block 2 */
-	// End Line: 1763
-
+	section->flags &= ~4u;
 }
 
 
@@ -545,16 +398,7 @@ void G2AnimSection_SetNotRewinding(struct _G2AnimSection_Type *section)
 // void /*$ra*/ G2AnimSection_SetPaused(struct _G2AnimSection_Type *section /*$a0*/)
 void G2AnimSection_SetPaused(struct _G2AnimSection_Type *section)
 { // line 1279, offset 0x800900ac
-	/* begin block 1 */
-		// Start line: 1777
-	/* end block 1 */
-	// End Line: 1778
-
-	/* begin block 2 */
-		// Start line: 1780
-	/* end block 2 */
-	// End Line: 1781
-
+	section->flags |= 1u;
 }
 
 
@@ -562,16 +406,7 @@ void G2AnimSection_SetPaused(struct _G2AnimSection_Type *section)
 // void /*$ra*/ G2AnimSection_SetUnpaused(struct _G2AnimSection_Type *section /*$a0*/)
 void G2AnimSection_SetUnpaused(struct _G2AnimSection_Type *section)
 { // line 1333, offset 0x800900c0
-	/* begin block 1 */
-		// Start line: 2666
-	/* end block 1 */
-	// End Line: 2667
-
-	/* begin block 2 */
-		// Start line: 1837
-	/* end block 2 */
-	// End Line: 1838
-
+	section->flags &= ~1u;
 }
 
 
@@ -579,13 +414,5 @@ void G2AnimSection_SetUnpaused(struct _G2AnimSection_Type *section)
 // void /*$ra*/ G2AnimSection_SwitchToKeylist(struct _G2AnimSection_Type *section /*$a0*/, struct _G2AnimKeylist_Type *keylist /*$a1*/, int keylistID /*$a2*/)
 void G2AnimSection_SwitchToKeylist(struct _G2AnimSection_Type *section, struct _G2AnimKeylist_Type *keylist, int keylistID)
 { // line 1344, offset 0x800900d4
-	/* begin block 1 */
-		// Start line: 1856
-	/* end block 1 */
-	// End Line: 1857
-
+	G2AnimSection_SwitchToKeylistAtTime(section, keylist, keylistID, 0);
 }
-
-
-
-
