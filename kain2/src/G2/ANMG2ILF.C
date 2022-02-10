@@ -22,18 +22,7 @@ struct _G2AnimKeylist_Type * G2Anim_GetKeylist(struct _G2Anim_Type *anim)
 // void /*$ra*/ G2Anim_GetRootMotionOverInterval(struct _G2Anim_Type *anim /*$a0*/, short intervalStart /*$a1*/, short intervalEnd /*$a2*/, struct _G2SVector3_Type *motionVector /*$a3*/)
 void G2Anim_GetRootMotionOverInterval(struct _G2Anim_Type *anim, short intervalStart, short intervalEnd, struct _G2SVector3_Type *motionVector)
 { // line 165, offset 0x8008fa58
-	/* begin block 1 */
-		// Start line: 166
-		// Start offset: 0x8008FA58
-	/* end block 1 */
-	// End offset: 0x8008FA58
-	// End Line: 166
-
-	/* begin block 2 */
-		// Start line: 330
-	/* end block 2 */
-	// End Line: 331
-
+	G2Anim_GetRootMotionFromTimeForDuration(anim, intervalStart, intervalEnd - intervalStart, motionVector);
 }
 
 
