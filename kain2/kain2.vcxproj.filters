@@ -1,0 +1,633 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="kain2.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BSP.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CAMERA.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CINEMA\CINEPSX.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\COLLIDE.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\DEBUG.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\DRAW.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EVENT.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\FONT.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\FX.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\G2\ANIMG2.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\G2\ANMCTRLR.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\G2\ANMDECMP.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\G2\ANMG2ILF.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\G2\ANMINTRP.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\G2\INSTNCG2.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\G2\MAING2.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\G2\POOLMMG2.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\G2\QUATG2.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\G2\TIMERG2.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GAMELOOP.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GAMEPAD.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GENERIC.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GLYPH.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\INSTANCE.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\LIGHT3D.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\LIST.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\LOAD3D.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\LOCAL\LOCALSTR.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MATH3D.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MCARD\MCASSERT.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MCARD\MEMCARD.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MEMPACK.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MENU\MENU.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MENU\MENUDEFS.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MENU\MENUFACE.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MENU\MENUUTIL.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MONSTER\HUMAN.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MONSTER\MBMISS.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MONSTER\MISSILE.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MONSTER\MONAPI.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MONSTER\MONLIB.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MONSTER\MONMSG.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MONSTER\MONSENSE.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MONSTER\MONSTER.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MONSTER\MONTABLE.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MONSTER\SLUAGH.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MONSTER\SOUL.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MONSTER\VWRAITH.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MONSTER\WORSHIP.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\OBTABLE.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PHYSICS.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PHYSOBS.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PIPE3D.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PLAN\ENMYPLAN.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PLAN\PLAN.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PLAN\PLANAPI.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PLAN\PLANCOLL.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PLAN\PLANPOOL.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PLAN\PLANSRCH.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PLAYER.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PSX\AADLIB.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PSX\AADSEQEV.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PSX\AADSFX.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PSX\AADSQCMD.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PSX\AADVOICE.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PSX\MAIN.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PSX\PSX_G2\MAINVM.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PSX\PSX_G2\QUATVM.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PSX\SUPPORT.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RAZCNTRL.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RAZIEL\ALGOCTRL.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RAZIEL\ATTACK.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RAZIEL\CONTROL.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RAZIEL\HEALTH.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RAZIEL\PUPPET.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RAZIEL\RAZDBUG.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RAZIEL\RAZIEL.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RAZIEL\RAZLIB.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RAZIEL\SENSES.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RAZIEL\SPIDER.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RAZIEL\STEERING.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RAZIEL\SWIM.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\REAVER.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RELMOD.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RESOLVE.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SAVEINFO.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SCRIPT.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SIGNAL.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SOUND.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SPLINE.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\STATE.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\STREAM.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\STRMLOAD.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TIMER.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UNDRWRLD.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\VM.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\VOICEXA.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\VRAM.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="THISDUST.C">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\BSP.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CAMERA.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CINEMA\CINEPSX.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\COLLIDE.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\DEBUG.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\DRAW.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\EVENT.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\FONT.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\FX.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\G2\ANIMG2.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\G2\ANMCTRLR.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\G2\ANMDECMP.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\G2\ANMG2ILF.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\G2\ANMINTRP.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\G2\INSTNCG2.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\G2\MAING2.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\G2\POOLMMG2.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\G2\QUATG2.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\G2\TIMERG2.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GAMELOOP.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GAMEPAD.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GENERIC.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GLYPH.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\INSTANCE.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\LIGHT3D.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\LIST.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\LOAD3D.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\LOCAL\LOCALSTR.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MATH3D.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MCARD\MCASSERT.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MCARD\MEMCARD.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MEMPACK.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MENU\MENU.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MENU\MENUDEFS.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MENU\MENUFACE.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MENU\MENUUTIL.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MONSTER\HUMAN.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MONSTER\MBMISS.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MONSTER\MISSILE.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MONSTER\MONAPI.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MONSTER\MONLIB.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MONSTER\MONMSG.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MONSTER\MONSENSE.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MONSTER\MONSTER.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MONSTER\MONTABLE.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MONSTER\SLUAGH.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MONSTER\SOUL.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MONSTER\VWRAITH.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MONSTER\WORSHIP.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\OBTABLE.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PHYSICS.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PHYSOBS.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PIPE3D.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PLAN\ENMYPLAN.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PLAN\PLAN.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PLAN\PLANAPI.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PLAN\PLANCOLL.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PLAN\PLANPOOL.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PLAN\PLANSRCH.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PLAYER.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PSX\AADLIB.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PSX\AADSEQEV.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PSX\AADSFX.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PSX\AADSQCMD.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PSX\AADVOICE.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PSX\COLLIDES.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PSX\DRAWS.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PSX\MAIN.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PSX\PSX_G2\MAINVM.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PSX\PSX_G2\QUATVM.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PSX\SNMAIN.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PSX\SUPPORT.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RAZCNTRL.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RAZIEL\ALGOCTRL.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RAZIEL\ATTACK.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RAZIEL\CONTROL.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RAZIEL\HEALTH.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RAZIEL\PUPPET.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RAZIEL\RAZDBUG.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RAZIEL\RAZIEL.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RAZIEL\RAZLIB.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RAZIEL\SENSES.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RAZIEL\SPIDER.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RAZIEL\STEERING.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RAZIEL\SWIM.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\REAVER.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RELMOD.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RESOLVE.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SAVEINFO.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SCRIPT.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SIGNAL.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SOUND.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SPLINE.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\STATE.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\STREAM.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\STRMLOAD.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\TIMER.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UNDRWRLD.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\VM.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\VOICEXA.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\VRAM.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="KAIN2.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="psyq.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="gex2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{9d37cc65-2257-475f-ba2c-90eed953f7a1}</ProjectGuid>
+    <RootNamespace>kain2</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>.;..</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="kain2.cpp" />
+    <ClCompile Include="src\BSP.C" />
+    <ClCompile Include="src\CAMERA.C" />
+    <ClCompile Include="src\CINEMA\CINEPSX.C" />
+    <ClCompile Include="src\COLLIDE.C" />
+    <ClCompile Include="src\DEBUG.C" />
+    <ClCompile Include="src\DRAW.C" />
+    <ClCompile Include="src\EVENT.C" />
+    <ClCompile Include="src\FONT.C" />
+    <ClCompile Include="src\FX.C" />
+    <ClCompile Include="src\G2\ANIMG2.C" />
+    <ClCompile Include="src\G2\ANMCTRLR.C" />
+    <ClCompile Include="src\G2\ANMDECMP.C" />
+    <ClCompile Include="src\G2\ANMG2ILF.C" />
+    <ClCompile Include="src\G2\ANMINTRP.C" />
+    <ClCompile Include="src\G2\INSTNCG2.C" />
+    <ClCompile Include="src\G2\MAING2.C" />
+    <ClCompile Include="src\G2\POOLMMG2.C" />
+    <ClCompile Include="src\G2\QUATG2.C" />
+    <ClCompile Include="src\G2\TIMERG2.C" />
+    <ClCompile Include="src\GAMELOOP.C" />
+    <ClCompile Include="src\GAMEPAD.C" />
+    <ClCompile Include="src\GENERIC.C" />
+    <ClCompile Include="src\GLYPH.C" />
+    <ClCompile Include="src\INSTANCE.C" />
+    <ClCompile Include="src\LIGHT3D.C" />
+    <ClCompile Include="src\LIST.C" />
+    <ClCompile Include="src\LOAD3D.C" />
+    <ClCompile Include="src\LOCAL\LOCALSTR.C" />
+    <ClCompile Include="src\MATH3D.C" />
+    <ClCompile Include="src\MCARD\MCASSERT.C" />
+    <ClCompile Include="src\MCARD\MEMCARD.C" />
+    <ClCompile Include="src\MEMPACK.C" />
+    <ClCompile Include="src\MENU\MENU.C" />
+    <ClCompile Include="src\MENU\MENUDEFS.C" />
+    <ClCompile Include="src\MENU\MENUFACE.C" />
+    <ClCompile Include="src\MENU\MENUUTIL.C" />
+    <ClCompile Include="src\MONSTER\HUMAN.C" />
+    <ClCompile Include="src\MONSTER\MBMISS.C" />
+    <ClCompile Include="src\MONSTER\MISSILE.C" />
+    <ClCompile Include="src\MONSTER\MONAPI.C" />
+    <ClCompile Include="src\MONSTER\MONLIB.C" />
+    <ClCompile Include="src\MONSTER\MONMSG.C" />
+    <ClCompile Include="src\MONSTER\MONSENSE.C" />
+    <ClCompile Include="src\MONSTER\MONSTER.C" />
+    <ClCompile Include="src\MONSTER\MONTABLE.C" />
+    <ClCompile Include="src\MONSTER\SLUAGH.C" />
+    <ClCompile Include="src\MONSTER\SOUL.C" />
+    <ClCompile Include="src\MONSTER\VWRAITH.C" />
+    <ClCompile Include="src\MONSTER\WORSHIP.C" />
+    <ClCompile Include="src\OBTABLE.C" />
+    <ClCompile Include="src\PHYSICS.C" />
+    <ClCompile Include="src\PHYSOBS.C" />
+    <ClCompile Include="src\PIPE3D.C" />
+    <ClCompile Include="src\PLAN\ENMYPLAN.C" />
+    <ClCompile Include="src\PLAN\PLAN.C" />
+    <ClCompile Include="src\PLAN\PLANAPI.C" />
+    <ClCompile Include="src\PLAN\PLANCOLL.C" />
+    <ClCompile Include="src\PLAN\PLANPOOL.C" />
+    <ClCompile Include="src\PLAN\PLANSRCH.C" />
+    <ClCompile Include="src\PLAYER.C" />
+    <ClCompile Include="src\PSX\AADLIB.C" />
+    <ClCompile Include="src\PSX\AADSEQEV.C" />
+    <ClCompile Include="src\PSX\AADSFX.C" />
+    <ClCompile Include="src\PSX\AADSQCMD.C" />
+    <ClCompile Include="src\PSX\AADVOICE.C" />
+    <ClCompile Include="src\PSX\MAIN.C" />
+    <ClCompile Include="src\PSX\PSX_G2\MAINVM.C" />
+    <ClCompile Include="src\PSX\PSX_G2\QUATVM.C" />
+    <ClCompile Include="src\PSX\SUPPORT.C" />
+    <ClCompile Include="src\RAZCNTRL.C" />
+    <ClCompile Include="src\RAZIEL\ALGOCTRL.C" />
+    <ClCompile Include="src\RAZIEL\ATTACK.C" />
+    <ClCompile Include="src\RAZIEL\CONTROL.C" />
+    <ClCompile Include="src\RAZIEL\HEALTH.C" />
+    <ClCompile Include="src\RAZIEL\PUPPET.C" />
+    <ClCompile Include="src\RAZIEL\RAZDBUG.C" />
+    <ClCompile Include="src\RAZIEL\RAZIEL.C" />
+    <ClCompile Include="src\RAZIEL\RAZLIB.C" />
+    <ClCompile Include="src\RAZIEL\SENSES.C" />
+    <ClCompile Include="src\RAZIEL\SPIDER.C" />
+    <ClCompile Include="src\RAZIEL\STEERING.C" />
+    <ClCompile Include="src\RAZIEL\SWIM.C" />
+    <ClCompile Include="src\REAVER.C" />
+    <ClCompile Include="src\RELMOD.C" />
+    <ClCompile Include="src\RESOLVE.C" />
+    <ClCompile Include="src\SAVEINFO.C" />
+    <ClCompile Include="src\SCRIPT.C" />
+    <ClCompile Include="src\SIGNAL.C" />
+    <ClCompile Include="src\SOUND.C" />
+    <ClCompile Include="src\SPLINE.C" />
+    <ClCompile Include="src\STATE.C" />
+    <ClCompile Include="src\STREAM.C" />
+    <ClCompile Include="src\STRMLOAD.C" />
+    <ClCompile Include="src\TIMER.C" />
+    <ClCompile Include="src\UNDRWRLD.C" />
+    <ClCompile Include="src\VM.C" />
+    <ClCompile Include="src\VOICEXA.C" />
+    <ClCompile Include="src\VRAM.C" />
+    <ClCompile Include="THISDUST.C" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="gex2.h" />
+    <ClInclude Include="KAIN2.H" />
+    <ClInclude Include="psyq.h" />
+    <ClInclude Include="src\BSP.H" />
+    <ClInclude Include="src\CAMERA.H" />
+    <ClInclude Include="src\CINEMA\CINEPSX.H" />
+    <ClInclude Include="src\COLLIDE.H" />
+    <ClInclude Include="src\DEBUG.H" />
+    <ClInclude Include="src\DRAW.H" />
+    <ClInclude Include="src\EVENT.H" />
+    <ClInclude Include="src\FONT.H" />
+    <ClInclude Include="src\FX.H" />
+    <ClInclude Include="src\G2\ANIMG2.H" />
+    <ClInclude Include="src\G2\ANMCTRLR.H" />
+    <ClInclude Include="src\G2\ANMDECMP.H" />
+    <ClInclude Include="src\G2\ANMG2ILF.H" />
+    <ClInclude Include="src\G2\ANMINTRP.H" />
+    <ClInclude Include="src\G2\INSTNCG2.H" />
+    <ClInclude Include="src\G2\MAING2.H" />
+    <ClInclude Include="src\G2\POOLMMG2.H" />
+    <ClInclude Include="src\G2\QUATG2.H" />
+    <ClInclude Include="src\G2\TIMERG2.H" />
+    <ClInclude Include="src\GAMELOOP.H" />
+    <ClInclude Include="src\GAMEPAD.H" />
+    <ClInclude Include="src\GENERIC.H" />
+    <ClInclude Include="src\GLYPH.H" />
+    <ClInclude Include="src\INSTANCE.H" />
+    <ClInclude Include="src\LIGHT3D.H" />
+    <ClInclude Include="src\LIST.H" />
+    <ClInclude Include="src\LOAD3D.H" />
+    <ClInclude Include="src\LOCAL\LOCALSTR.H" />
+    <ClInclude Include="src\MATH3D.H" />
+    <ClInclude Include="src\MCARD\MCASSERT.H" />
+    <ClInclude Include="src\MCARD\MEMCARD.H" />
+    <ClInclude Include="src\MEMPACK.H" />
+    <ClInclude Include="src\MENU\MENU.H" />
+    <ClInclude Include="src\MENU\MENUDEFS.H" />
+    <ClInclude Include="src\MENU\MENUFACE.H" />
+    <ClInclude Include="src\MENU\MENUUTIL.H" />
+    <ClInclude Include="src\MONSTER\HUMAN.H" />
+    <ClInclude Include="src\MONSTER\MBMISS.H" />
+    <ClInclude Include="src\MONSTER\MISSILE.H" />
+    <ClInclude Include="src\MONSTER\MONAPI.H" />
+    <ClInclude Include="src\MONSTER\MONLIB.H" />
+    <ClInclude Include="src\MONSTER\MONMSG.H" />
+    <ClInclude Include="src\MONSTER\MONSENSE.H" />
+    <ClInclude Include="src\MONSTER\MONSTER.H" />
+    <ClInclude Include="src\MONSTER\MONTABLE.H" />
+    <ClInclude Include="src\MONSTER\SLUAGH.H" />
+    <ClInclude Include="src\MONSTER\SOUL.H" />
+    <ClInclude Include="src\MONSTER\VWRAITH.H" />
+    <ClInclude Include="src\MONSTER\WORSHIP.H" />
+    <ClInclude Include="src\OBTABLE.H" />
+    <ClInclude Include="src\PHYSICS.H" />
+    <ClInclude Include="src\PHYSOBS.H" />
+    <ClInclude Include="src\PIPE3D.H" />
+    <ClInclude Include="src\PLAN\ENMYPLAN.H" />
+    <ClInclude Include="src\PLAN\PLAN.H" />
+    <ClInclude Include="src\PLAN\PLANAPI.H" />
+    <ClInclude Include="src\PLAN\PLANCOLL.H" />
+    <ClInclude Include="src\PLAN\PLANPOOL.H" />
+    <ClInclude Include="src\PLAN\PLANSRCH.H" />
+    <ClInclude Include="src\PLAYER.H" />
+    <ClInclude Include="src\PSX\AADLIB.H" />
+    <ClInclude Include="src\PSX\AADSEQEV.H" />
+    <ClInclude Include="src\PSX\AADSFX.H" />
+    <ClInclude Include="src\PSX\AADSQCMD.H" />
+    <ClInclude Include="src\PSX\AADVOICE.H" />
+    <ClInclude Include="src\PSX\COLLIDES.H" />
+    <ClInclude Include="src\PSX\DRAWS.H" />
+    <ClInclude Include="src\PSX\MAIN.H" />
+    <ClInclude Include="src\PSX\PSX_G2\MAINVM.H" />
+    <ClInclude Include="src\PSX\PSX_G2\QUATVM.H" />
+    <ClInclude Include="src\PSX\SNMAIN.H" />
+    <ClInclude Include="src\PSX\SUPPORT.H" />
+    <ClInclude Include="src\RAZCNTRL.H" />
+    <ClInclude Include="src\RAZIEL\ALGOCTRL.H" />
+    <ClInclude Include="src\RAZIEL\ATTACK.H" />
+    <ClInclude Include="src\RAZIEL\CONTROL.H" />
+    <ClInclude Include="src\RAZIEL\HEALTH.H" />
+    <ClInclude Include="src\RAZIEL\PUPPET.H" />
+    <ClInclude Include="src\RAZIEL\RAZDBUG.H" />
+    <ClInclude Include="src\RAZIEL\RAZIEL.H" />
+    <ClInclude Include="src\RAZIEL\RAZLIB.H" />
+    <ClInclude Include="src\RAZIEL\SENSES.H" />
+    <ClInclude Include="src\RAZIEL\SPIDER.H" />
+    <ClInclude Include="src\RAZIEL\STEERING.H" />
+    <ClInclude Include="src\RAZIEL\SWIM.H" />
+    <ClInclude Include="src\REAVER.H" />
+    <ClInclude Include="src\RELMOD.H" />
+    <ClInclude Include="src\RESOLVE.H" />
+    <ClInclude Include="src\SAVEINFO.H" />
+    <ClInclude Include="src\SCRIPT.H" />
+    <ClInclude Include="src\SIGNAL.H" />
+    <ClInclude Include="src\SOUND.H" />
+    <ClInclude Include="src\SPLINE.H" />
+    <ClInclude Include="src\STATE.H" />
+    <ClInclude Include="src\STREAM.H" />
+    <ClInclude Include="src\STRMLOAD.H" />
+    <ClInclude Include="src\TIMER.H" />
+    <ClInclude Include="src\UNDRWRLD.H" />
+    <ClInclude Include="src\VM.H" />
+    <ClInclude Include="src\VOICEXA.H" />
+    <ClInclude Include="src\VRAM.H" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
