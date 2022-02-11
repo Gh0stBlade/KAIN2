@@ -6,31 +6,27 @@
 // struct SoundEffectChannel * /*$ra*/ SndOpenSfxChannel(unsigned char *channelNum /*$a0*/)
 struct SoundEffectChannel * SndOpenSfxChannel(unsigned char *channelNum)
 { // line 40, offset 0x8003e64c
-	/* begin block 1 */
-		// Start line: 42
-		// Start offset: 0x8003E64C
-		// Variables:
-			int i; // $a1
-	/* end block 1 */
-	// End offset: 0x8003E68C
-	// End Line: 56
+	int v1; // ecx
+	SoundEffectChannel* v2; // eax
+	struct SoundEffectChannel* result; // eax
+	int v4; // edx
 
-	/* begin block 2 */
-		// Start line: 80
-	/* end block 2 */
-	// End Line: 81
-
-	/* begin block 3 */
-		// Start line: 81
-	/* end block 3 */
-	// End Line: 82
-
-	/* begin block 4 */
-		// Start line: 83
-	/* end block 4 */
-	// End Line: 84
-
-	return null;
+	v1 = 0;
+	v2 = soundEffectChannelTbl;
+	while (v2->inUse)
+	{
+		++v2;
+		++v1;
+		if (v1 >= 16)
+			return 0;
+	}
+	v4 = v1;
+	result = &soundEffectChannelTbl[v1];
+	result->inUse = -1;
+	soundEffectChannelTbl[v4].pitchChangeTime = 0;
+	soundEffectChannelTbl[v4].volumeChangeTime = 0;
+	*channelNum = v1;
+	return result;
 }
 
 
@@ -38,16 +34,8 @@ struct SoundEffectChannel * SndOpenSfxChannel(unsigned char *channelNum)
 // void /*$ra*/ SndCloseSfxChannel(int channelNum /*$a0*/)
 void SndCloseSfxChannel(int channelNum)
 { // line 59, offset 0x8003e694
-	/* begin block 1 */
-		// Start line: 126
-	/* end block 1 */
-	// End Line: 127
-
-	/* begin block 2 */
-		// Start line: 127
-	/* end block 2 */
-	// End Line: 128
-
+	if (channelNum < 16)
+		soundEffectChannelTbl[channelNum].inUse = 0;
 }
 
 
@@ -55,17 +43,9 @@ void SndCloseSfxChannel(int channelNum)
 // struct SoundEffectChannel * /*$ra*/ SndGetSfxChannel(int channelNum /*$a0*/)
 struct SoundEffectChannel * SndGetSfxChannel(int channelNum)
 { // line 66, offset 0x8003e6bc
-	/* begin block 1 */
-		// Start line: 140
-	/* end block 1 */
-	// End Line: 141
-
-	/* begin block 2 */
-		// Start line: 141
-	/* end block 2 */
-	// End Line: 142
-
-	return null;
+	if (channelNum >= 16)
+		return 0;
+	else return &soundEffectChannelTbl[channelNum];
 }
 
 
@@ -73,27 +53,52 @@ struct SoundEffectChannel * SndGetSfxChannel(int channelNum)
 // void /*$ra*/ SOUND_ProcessInstanceSounds(unsigned char *sfxFileData /*$s0*/, struct SoundInstance *soundInstTbl /*$a1*/, struct _Position *position /*$s4*/, int livesInOnePlace /*stack 12*/, int inSpectral /*stack 16*/, int hidden /*stack 20*/, int burning /*stack 24*/, long *triggerFlags /*stack 28*/)
 void SOUND_ProcessInstanceSounds(unsigned char *sfxFileData, struct SoundInstance *soundInstTbl, struct _Position *position, int livesInOnePlace, int inSpectral, int hidden, int burning, long *triggerFlags)
 { // line 97, offset 0x8003e6e4
-	/* begin block 1 */
-		// Start line: 98
-		// Start offset: 0x8003E6E4
-		// Variables:
-			int numSounds; // $s3
-			int numSfxIDs; // $v0
-			int i; // $s2
-	/* end block 1 */
-	// End offset: 0x8003E83C
-	// End Line: 141
+	struct SoundInstance* v8; // edi
+	unsigned __int8* v9; // esi
+	unsigned __int8* sfxFileDataa; // [esp+Ch] [ebp+4h]
 
-	/* begin block 2 */
-		// Start line: 177
-	/* end block 2 */
-	// End Line: 178
-
-	/* begin block 3 */
-		// Start line: 204
-	/* end block 3 */
-	// End Line: 205
-
+	if (gameTrackerX.gameMode != 6)
+	{
+		if (sfxFileData)
+		{
+			v8 = soundInstTbl;
+			if (soundInstTbl)
+			{
+				if (*sfxFileData == 0xBE && sfxFileData[1] == 0xEF)
+				{
+					v9 = sfxFileData + 4;
+					if (sfxFileData[2])
+					{
+						sfxFileDataa = (unsigned __int8*)sfxFileData[2];
+						do
+						{
+							switch (*v9)
+							{
+							case 0u:
+								processPeriodicSound(position, livesInOnePlace, inSpectral, hidden, burning, v8, v9);
+								v9 += 2 * v9[1] + 18;
+								break;
+							case 1u:
+								processEventSound(position, v8, v9);
+								goto LABEL_12;
+							case 2u:
+							case 3u:
+							case 4u:
+								processOneShotSound(position, hidden, burning, triggerFlags, v8, v9);
+							LABEL_12:
+								v9 += 2 * v9[1] + 14;
+								break;
+							default:
+								break;
+							}
+							++v8;
+							--sfxFileDataa;
+						} while (sfxFileDataa);
+					}
+				}
+			}
+		}
+	}
 }
 
 
@@ -101,23 +106,71 @@ void SOUND_ProcessInstanceSounds(unsigned char *sfxFileData, struct SoundInstanc
 // void /*$ra*/ SOUND_EndInstanceSounds(unsigned char *sfxFileData /*$s0*/, struct SoundInstance *soundInstTbl /*$a1*/)
 void SOUND_EndInstanceSounds(unsigned char *sfxFileData, struct SoundInstance *soundInstTbl)
 { // line 149, offset 0x8003e86c
-	/* begin block 1 */
-		// Start line: 150
-		// Start offset: 0x8003E86C
-		// Variables:
-			int numSounds; // $s3
-			int numSfxIDs; // $v0
-			int i; // $s2
-			struct SoundEffectChannel *channel; // $v0
-	/* end block 1 */
-	// End offset: 0x8003E9B8
-	// End Line: 211
+	struct SoundInstance* v2; // esi
+	unsigned __int8* v3; // edi
+	int v4; // ebp
+	SoundEffectChannel* v5; // eax
+	unsigned int channel; // eax
+	SoundEffectChannel* v7; // ecx
 
-	/* begin block 2 */
-		// Start line: 336
-	/* end block 2 */
-	// End Line: 337
-
+	if (sfxFileData)
+	{
+		v2 = soundInstTbl;
+		if (soundInstTbl)
+		{
+			if (*sfxFileData == 0xBE && sfxFileData[1] == 0xEF)
+			{
+				v3 = sfxFileData + 4;
+				if (sfxFileData[2])
+				{
+					v4 = sfxFileData[2];
+					do
+					{
+						switch (*v3)
+						{
+						case 0u:
+							v3 += 2 * v3[1] + 18;
+							goto LABEL_10;
+						case 1u:
+							v3 += 2 * v3[1] + 14;
+						LABEL_10:
+							if (v2->channel >= 0x10u)
+								v5 = 0;
+							else
+								v5 = &soundEffectChannelTbl[v2->channel];
+							if (!v5)
+								goto LABEL_23;
+							aadStopSfx(v5->handle);
+							if (v2->channel < 0x10u)
+								soundEffectChannelTbl[v2->channel].inUse = 0;
+							break;
+						case 2u:
+						case 3u:
+						case 4u:
+							v3 += 2 * v3[1] + 14;
+							channel = v2->channel;
+							if (channel >= 0x10)
+								v7 = 0;
+							else
+								v7 = &soundEffectChannelTbl[channel];
+							if (!v7)
+								goto LABEL_23;
+							if (v2->channel < 0x10u)
+								soundEffectChannelTbl[channel].inUse = 0;
+							break;
+						default:
+							goto LABEL_23;
+						}
+						v2->channel = -1;
+						v2->state = 0;
+					LABEL_23:
+						++v2;
+						--v4;
+					} while (v4);
+				}
+			}
+		}
+	}
 }
 
 
@@ -125,29 +178,35 @@ void SOUND_EndInstanceSounds(unsigned char *sfxFileData, struct SoundInstance *s
 // int /*$ra*/ isOkayToPlaySound(int flags /*$s0*/, int spectralPlane /*$s1*/, int hidden /*$s2*/, int burning /*$s3*/)
 int isOkayToPlaySound(int flags, int spectralPlane, int hidden, int burning)
 { // line 218, offset 0x8003e9d8
-	/* begin block 1 */
-		// Start line: 219
-		// Start offset: 0x8003E9D8
+	int v4; // eax
+	int v5; // eax
+	int v6; // eax
+	int result; // eax
 
-		/* begin block 1.1 */
-			// Start line: 224
-			// Start offset: 0x8003EA08
-			// Variables:
-				int mask; // $v0
-				int tod; // $v1
-		/* end block 1.1 */
-		// End offset: 0x8003EA7C
-		// End Line: 245
-	/* end block 1 */
-	// End offset: 0x8003EAD0
-	// End Line: 259
-
-	/* begin block 2 */
-		// Start line: 515
-	/* end block 2 */
-	// End Line: 516
-
-	return 0;
+	if ((flags & 0xF) != 0)
+	{
+		v4 = GAMELOOP_GetTimeOfDay() - 600;
+		if (v4)
+		{
+			v5 = v4 - 1200;
+			if (v5)
+				v6 = v5 == 100 ? 8 : 2;
+			else
+				v6 = 4;
+		}
+		else
+		{
+			v6 = 1;
+		}
+		if ((v6 & flags) == 0)
+			return 0;
+	}
+	result = spectralPlane;
+	if ((flags & 0x10) == 0 || spectralPlane)
+		return ((flags & 0x20) == 0 || !spectralPlane)
+		&& ((flags & 0x40) == 0 || !hidden)
+		&& ((flags & 0x80u) == 0 || burning);
+	return result;
 }
 
 
@@ -155,11 +214,18 @@ int isOkayToPlaySound(int flags, int spectralPlane, int hidden, int burning)
 // void /*$ra*/ setPeriodicSoundStateOff(struct SoundInstance *soundInst /*$s0*/, struct ObjectPeriodicSound *sound /*$s1*/)
 void setPeriodicSoundStateOff(struct SoundInstance *soundInst, struct ObjectPeriodicSound *sound)
 { // line 266, offset 0x8003eaec
-	/* begin block 1 */
-		// Start line: 611
-	/* end block 1 */
-	// End Line: 612
+	uchar offTimeVariation; // bl
 
+	if (soundInst->channel < 0x10u)
+		soundEffectChannelTbl[soundInst->channel].inUse = 0;
+	soundInst->channel = -1;
+	soundInst->state = 3;
+	soundInst->delay = sound->offTime;
+	if (sound->offTimeVariation)
+	{
+		offTimeVariation = sound->offTimeVariation;
+		soundInst->delay += offTimeVariation - rand() % (2 * offTimeVariation);
+	}
 }
 
 
@@ -167,23 +233,291 @@ void setPeriodicSoundStateOff(struct SoundInstance *soundInst, struct ObjectPeri
 // void /*$ra*/ processPeriodicSound(struct _Position *position /*$fp*/, int livesInOnePlane /*$s4*/, int inSpectral /*$s5*/, int hidden /*$s7*/, int burning /*stack 16*/, struct SoundInstance *soundInst /*stack 20*/, struct ObjectPeriodicSound *sound /*stack 24*/)
 void processPeriodicSound(struct _Position *position, int livesInOnePlane, int inSpectral, int hidden, int burning, struct SoundInstance *soundInst, struct ObjectPeriodicSound *sound)
 { // line 280, offset 0x8003eb78
-	/* begin block 1 */
-		// Start line: 281
-		// Start offset: 0x8003EB78
-		// Variables:
-			struct SoundEffectChannel *channel; // $s0
-			int sfxIDNum; // $v1
-			int sfxToneID; // $a1
-			int spectralPlane; // $s2
-	/* end block 1 */
-	// End offset: 0x8003EFE8
-	// End Line: 443
+	int MorphType; // edi
+	uchar initialDelayVariation; // bl
+	SoundEffectChannel* v9; // ebp
+	struct ObjectPeriodicSound* v10; // eax
+	uchar offTimeVariation; // bl
+	int flags; // ebx
+	int v13; // eax
+	int v14; // eax
+	int v15; // eax
+	uchar delay; // al
+	uchar v17; // al
+	uchar onTimeVariation; // bl
+	uchar maxVolVariation; // bl
+	ushort pitchVariation; // bx
+	uchar state; // al
+	uchar v22; // bl
+	int v23; // ebx
+	int v24; // eax
+	int v25; // eax
+	int v26; // eax
+	uchar v27; // al
+	int v28; // ecx
+	SoundEffectChannel* v29; // eax
+	SoundEffectChannel* v30; // edi
+	uchar v31; // bl
+	ushort v32; // bx
+	int v33; // edx
+	unsigned int v34; // eax
+	uchar v35; // bl
+	int v36; // eax
+	int v37; // [esp+10h] [ebp-4h]
 
-	/* begin block 2 */
-		// Start line: 639
-	/* end block 2 */
-	// End Line: 640
-
+	MorphType = gameTrackerX.gameData.asmData.MorphType;
+	v37 = gameTrackerX.gameData.asmData.MorphType;
+	if ((soundInst->state & 0xF) != 1)
+	{
+		if ((soundInst->state & 0xF) != 2)
+		{
+			if ((soundInst->state & 0xF) != 3)
+			{
+				soundInst->channel = -1;
+				soundInst->state = 1;
+				soundInst->delay = sound->initialDelay;
+				if (sound->initialDelayVariation)
+				{
+					initialDelayVariation = sound->initialDelayVariation;
+					soundInst->delay += initialDelayVariation - rand() % (2 * initialDelayVariation);
+				}
+				return;
+			}
+			goto LABEL_68;
+		}
+		if (soundInst->channel >= 0x10u)
+			v9 = 0;
+		else
+			v9 = &soundEffectChannelTbl[soundInst->channel];
+		if (!v9)
+			return;
+		if (!aadIsSfxPlayingOrRequested(v9->handle))
+			goto LABEL_16;
+		if (!aadIsSfxPlaying(v9->handle))
+			return;
+		if (livesInOnePlane)
+		{
+			if (inSpectral)
+			{
+				if (!MorphType)
+				{
+					aadStopSfx(v9->handle);
+				LABEL_16:
+					if (soundInst->channel < 0x10u)
+						soundEffectChannelTbl[soundInst->channel].inUse = 0;
+					v10 = sound;
+					soundInst->channel = -1;
+					soundInst->state = 3;
+					soundInst->delay = sound->offTime;
+				LABEL_23:
+					if (v10->offTimeVariation)
+					{
+						offTimeVariation = v10->offTimeVariation;
+						soundInst->delay += offTimeVariation - rand() % (2 * offTimeVariation);
+					}
+					return;
+				}
+			}
+			else if (MorphType)
+			{
+				aadStopSfx(v9->handle);
+				if (soundInst->channel < 0x10u)
+					soundEffectChannelTbl[soundInst->channel].inUse = 0;
+				v10 = sound;
+				soundInst->channel = -1;
+				soundInst->state = 3;
+				soundInst->delay = sound->offTime;
+				goto LABEL_23;
+			}
+		}
+		flags = sound->flags;
+		if ((flags & 0xF) != 0
+			&& ((v13 = GAMELOOP_GetTimeOfDay() - 600) == 0
+				? (v15 = 1)
+				: (v14 = v13 - 1200) == 0
+				? (v15 = 4)
+				: v14 == 100
+				? (v15 = 8)
+				: (v15 = 2),
+				(flags & v15) == 0)
+			|| (flags & 0x10) != 0 && !v37
+			|| (flags & 0x20) != 0 && v37
+			|| (flags & 0x40) != 0 && hidden
+			|| (flags & 0x80u) != 0 && !burning)
+		{
+			aadStopSfx(v9->handle);
+			if (soundInst->channel < 0x10u)
+				soundEffectChannelTbl[soundInst->channel].inUse = 0;
+			soundInst->channel = -1;
+			soundInst->state = 3;
+			soundInst->delay = sound->offTime;
+			goto LABEL_65;
+		}
+		delay = soundInst->delay;
+		if (delay)
+		{
+			v17 = delay - 1;
+		}
+		else
+		{
+			if (sound->offTime)
+			{
+				aadStopSfx(v9->handle);
+				if (soundInst->channel < 0x10u)
+					soundEffectChannelTbl[soundInst->channel].inUse = 0;
+				soundInst->channel = -1;
+				soundInst->state = 3;
+				soundInst->delay = sound->offTime;
+				if (!sound->offTimeVariation)
+					goto LABEL_60;
+				onTimeVariation = sound->offTimeVariation;
+			}
+			else
+			{
+				if (sound->maxVolVariation)
+				{
+					v9->volume = sound->maxVolume;
+					maxVolVariation = sound->maxVolVariation;
+					v9->volume += maxVolVariation - (unsigned __int16)(rand() % (2 * maxVolVariation));
+				}
+				if (sound->pitchVariation)
+				{
+					v9->pitch = sound->pitch;
+					pitchVariation = sound->pitchVariation;
+					v9->pitch += pitchVariation - rand() % (2 * pitchVariation);
+				}
+				soundInst->delay = sound->onTime;
+				if (!sound->onTimeVariation)
+					goto LABEL_60;
+				onTimeVariation = sound->onTimeVariation;
+			}
+			v17 = onTimeVariation - rand() % (2 * onTimeVariation) + soundInst->delay;
+		}
+		soundInst->delay = v17;
+	LABEL_60:
+		state = soundInst->state;
+		if ((state & 0x10) == 0)
+		{
+			soundInst->state = state | 0x10;
+			return;
+		}
+		soundInst->state = state & 0xEF;
+		if (SOUND_Update3dSound(position, v9->handle, v9->pitch, v9->volume, sound->minVolDistance))
+			return;
+		aadStopSfx(v9->handle);
+		if (soundInst->channel < 0x10u)
+			soundEffectChannelTbl[soundInst->channel].inUse = 0;
+		soundInst->channel = -1;
+		soundInst->state = 3;
+		soundInst->delay = sound->offTime;
+	LABEL_65:
+		if (sound->offTimeVariation)
+		{
+			v22 = sound->offTimeVariation;
+			soundInst->delay += v22 - rand() % (2 * v22);
+		}
+		return;
+	}
+LABEL_68:
+	if (livesInOnePlane)
+	{
+		if (inSpectral)
+		{
+			if (!gameTrackerX.gameData.asmData.MorphType)
+				return;
+		}
+		else if (gameTrackerX.gameData.asmData.MorphType)
+		{
+			return;
+		}
+	}
+	v23 = sound->flags;
+	if ((v23 & 0xF) == 0
+		|| ((v24 = GAMELOOP_GetTimeOfDay() - 600) == 0
+			? (v26 = 1)
+			: (v25 = v24 - 1200) == 0
+			? (v26 = 4)
+			: v25 == 100
+			? (v26 = 8)
+			: (v26 = 2),
+			(v23 & v26) != 0))
+	{
+		if (((v23 & 0x10) == 0 || v37)
+			&& ((v23 & 0x20) == 0 || !v37)
+			&& ((v23 & 0x40) == 0 || !hidden)
+			&& ((v23 & 0x80u) == 0 || burning))
+		{
+			v27 = soundInst->delay;
+			if (v27)
+			{
+				soundInst->delay = v27 - 1;
+			}
+			else
+			{
+				v28 = 0;
+				v29 = soundEffectChannelTbl;
+				while (v29->inUse)
+				{
+					++v29;
+					++v28;
+					if ((int)v29 >= (int)&musicInfo)
+					{
+						v30 = 0;
+						goto LABEL_96;
+					}
+				}
+				v36 = v28;
+				v30 = &soundEffectChannelTbl[v28];
+				v30->inUse = -1;
+				soundEffectChannelTbl[v36].pitchChangeTime = 0;
+				soundEffectChannelTbl[v36].volumeChangeTime = 0;
+				soundInst->channel = v28;
+			LABEL_96:
+				if (v30)
+				{
+					v30->volume = sound->maxVolume;
+					if (sound->maxVolVariation)
+					{
+						v31 = sound->maxVolVariation;
+						v30->volume += v31 - (unsigned __int16)(rand() % (2 * v31));
+					}
+					v30->pitch = sound->pitch;
+					if (sound->pitchVariation)
+					{
+						v32 = sound->pitchVariation;
+						v30->pitch += v32 - rand() % (2 * v32);
+					}
+					if (sound->numSfxIDs <= 1u)
+						v33 = 0;
+					else
+						v33 = rand() % sound->numSfxIDs;
+					v34 = SOUND_Play3dSound(
+						position,
+						*((unsigned __int16*)&sound[1].type + v33),
+						v30->pitch,
+						v30->volume,
+						sound->minVolDistance);
+					v30->handle = v34;
+					if (v34)
+					{
+						soundInst->state = 2;
+						soundInst->delay = sound->onTime;
+						if (sound->onTimeVariation)
+						{
+							v35 = sound->onTimeVariation;
+							soundInst->delay += v35 - rand() % (2 * v35);
+						}
+					}
+					else
+					{
+						if (soundInst->channel < 0x10u)
+							soundEffectChannelTbl[soundInst->channel].inUse = 0;
+						soundInst->channel = -1;
+					}
+				}
+			}
+		}
+	}
 }
 
 
@@ -191,23 +525,194 @@ void processPeriodicSound(struct _Position *position, int livesInOnePlane, int i
 // void /*$ra*/ processEventSound(struct _Position *position /*$s5*/, struct SoundInstance *soundInst /*$s1*/, struct ObjectEventSound *sound /*$s3*/)
 void processEventSound(struct _Position *position, struct SoundInstance *soundInst, struct ObjectEventSound *sound)
 { // line 449, offset 0x8003f018
-	/* begin block 1 */
-		// Start line: 450
-		// Start offset: 0x8003F018
-		// Variables:
-			struct SoundEffectChannel *channel; // $s0
-			int sfxIDNum; // $v1
-			int sfxToneID; // $a1
-			int spectralPlane; // $s4
-	/* end block 1 */
-	// End offset: 0x8003F398
-	// End Line: 564
+	struct SoundInstance* v3; // edi
+	SoundEffectChannel* v4; // esi
+	__int16 pitchChangePerUpdate; // dx
+	__int16 pitchChangeError; // ax
+	__int16 pitchChangeTimeSave; // dx
+	__int16 volumeChangeErrPerUpdate; // cx
+	__int16 volumeChangeTimeSave; // ax
+	uchar state; // al
+	int flags; // ebx
+	int v12; // eax
+	int v13; // eax
+	int v14; // eax
+	int v15; // ebx
+	int v16; // eax
+	int v17; // eax
+	int v18; // eax
+	int v19; // ecx
+	SoundEffectChannel* v20; // eax
+	SoundEffectChannel* v21; // esi
+	uchar maxVolVariation; // bl
+	ushort pitchVariation; // di
+	int v24; // edx
+	unsigned int v25; // eax
+	int v26; // eax
+	int MorphType; // [esp+10h] [ebp-4h]
 
-	/* begin block 2 */
-		// Start line: 986
-	/* end block 2 */
-	// End Line: 987
-
+	v3 = soundInst;
+	MorphType = gameTrackerX.gameData.asmData.MorphType;
+	if ((soundInst->state & 0xF) == 1)
+		return;
+	if ((soundInst->state & 0xF) != 2)
+	{
+		soundInst->channel = -1;
+		soundInst->state = 1;
+		soundInst->delay = 0;
+		return;
+	}
+	if (soundInst->channel >= 0x10u)
+		v4 = 0;
+	else
+		v4 = &soundEffectChannelTbl[soundInst->channel];
+	if (v4)
+	{
+		if (!aadIsSfxPlayingOrRequested(v4->handle))
+		{
+			if (soundInst->channel < 0x10u)
+				soundEffectChannelTbl[soundInst->channel].inUse = 0;
+			soundInst->channel = -1;
+			soundInst->state = 1;
+			return;
+		}
+		if (aadIsSfxPlaying(v4->handle))
+		{
+			if (v4->pitchChangeTime)
+			{
+				pitchChangePerUpdate = v4->pitchChangePerUpdate;
+				v4->pitchChangeError += v4->pitchChangeErrPerUpdate;
+				pitchChangeError = v4->pitchChangeError;
+				v4->pitch += pitchChangePerUpdate;
+				if (pitchChangeError >= v4->pitchChangeTimeSave)
+				{
+					pitchChangeTimeSave = v4->pitchChangeTimeSave;
+					v4->pitch += v4->pitchChangeSign;
+					v4->pitchChangeError -= pitchChangeTimeSave;
+				}
+				--v4->pitchChangeTime;
+			}
+			if (v4->volumeChangeTime)
+			{
+				volumeChangeErrPerUpdate = v4->volumeChangeErrPerUpdate;
+				v4->volume += v4->volumeChangePerUpdate;
+				v4->volumeChangeError += volumeChangeErrPerUpdate;
+				if (v4->volumeChangeError >= v4->volumeChangeTimeSave)
+				{
+					volumeChangeTimeSave = v4->volumeChangeTimeSave;
+					v4->volume += v4->volumeChangeSign;
+					v4->volumeChangeError -= volumeChangeTimeSave;
+				}
+				--v4->volumeChangeTime;
+			}
+			state = soundInst->state;
+			if ((state & 0x10) != 0)
+			{
+				soundInst->state = state & 0xEF;
+				if (!SOUND_Update3dSound(position, v4->handle, v4->pitch, v4->volume, sound->minVolDistance))
+				{
+					aadStopSfx(v4->handle);
+					if (soundInst->channel < 0x10u)
+						soundEffectChannelTbl[soundInst->channel].inUse = 0;
+					soundInst->channel = -1;
+				}
+			}
+			else
+			{
+				soundInst->state = state | 0x10;
+			}
+			if ((flags = sound->flags, (flags & 0xF) != 0)
+				&& ((v12 = GAMELOOP_GetTimeOfDay() - 600) == 0
+					? (v14 = 1)
+					: (v13 = v12 - 1200) == 0
+					? (v14 = 4)
+					: v13 == 100
+					? (v14 = 8)
+					: (v14 = 2),
+					(flags & v14) == 0)
+				|| (flags & 0x10) != 0 && !MorphType
+				|| (flags & 0x20) != 0 && MorphType
+				|| (flags & 0x80u) != 0)
+			{
+				aadStopSfx(v4->handle);
+				if (soundInst->channel < 0x10u)
+				{
+					soundEffectChannelTbl[soundInst->channel].inUse = 0;
+					soundInst->channel = -1;
+					return;
+				}
+				goto LABEL_72;
+			}
+		}
+	}
+	else
+	{
+		v15 = sound->flags;
+		if ((v15 & 0xF) == 0
+			|| ((v16 = GAMELOOP_GetTimeOfDay() - 600) == 0
+				? (v18 = 1)
+				: (v17 = v16 - 1200) == 0
+				? (v18 = 4)
+				: v17 == 100
+				? (v18 = 8)
+				: (v18 = 2),
+				(v15 & v18) != 0))
+		{
+			if (((v15 & 0x10) == 0 || MorphType) && ((v15 & 0x20) == 0 || !MorphType) && (v15 & 0x80u) == 0)
+			{
+				v19 = 0;
+				v20 = soundEffectChannelTbl;
+				while (v20->inUse)
+				{
+					++v20;
+					++v19;
+					if ((int)v20 >= (int)&musicInfo)
+					{
+						v21 = 0;
+						goto LABEL_61;
+					}
+				}
+				v26 = v19;
+				v21 = &soundEffectChannelTbl[v19];
+				v21->inUse = -1;
+				soundEffectChannelTbl[v26].pitchChangeTime = 0;
+				soundEffectChannelTbl[v26].volumeChangeTime = 0;
+				soundInst->channel = v19;
+			LABEL_61:
+				if (v21)
+				{
+					v21->volume = sound->maxVolume;
+					if (sound->maxVolVariation)
+					{
+						maxVolVariation = sound->maxVolVariation;
+						v21->volume += maxVolVariation - (unsigned __int16)(rand() % (2 * maxVolVariation));
+					}
+					v21->pitch = sound->pitch;
+					if (sound->pitchVariation)
+					{
+						pitchVariation = sound->pitchVariation;
+						v21->pitch += pitchVariation - rand() % (2 * pitchVariation);
+						v3 = soundInst;
+					}
+					v24 = sound->numSfxIDs <= 1u ? 0 : rand() % sound->numSfxIDs;
+					v25 = SOUND_Play3dSound(
+						position,
+						*((unsigned __int16*)&sound[1].type + v24),
+						v21->pitch,
+						v21->volume,
+						sound->minVolDistance);
+					v21->handle = v25;
+					if (!v25)
+					{
+						if (v3->channel < 0x10u)
+							soundEffectChannelTbl[v3->channel].inUse = 0;
+					LABEL_72:
+						v3->channel = -1;
+					}
+				}
+			}
+		}
+	}
 }
 
 
@@ -215,16 +720,8 @@ void processEventSound(struct _Position *position, struct SoundInstance *soundIn
 // void /*$ra*/ SOUND_StartInstanceSound(struct SoundInstance *soundInst /*$a0*/)
 void SOUND_StartInstanceSound(struct SoundInstance *soundInst)
 { // line 566, offset 0x8003f3bc
-	/* begin block 1 */
-		// Start line: 1241
-	/* end block 1 */
-	// End Line: 1242
-
-	/* begin block 2 */
-		// Start line: 1242
-	/* end block 2 */
-	// End Line: 1243
-
+	if ((soundInst->state & 0xF) == 1)
+		soundInst->state = 2;
 }
 
 
@@ -232,20 +729,20 @@ void SOUND_StartInstanceSound(struct SoundInstance *soundInst)
 // void /*$ra*/ SOUND_StopInstanceSound(struct SoundInstance *soundInst /*$s0*/)
 void SOUND_StopInstanceSound(struct SoundInstance *soundInst)
 { // line 573, offset 0x8003f3dc
-	/* begin block 1 */
-		// Start line: 574
-		// Start offset: 0x8003F3DC
-		// Variables:
-			struct SoundEffectChannel *channel; // $v0
-	/* end block 1 */
-	// End offset: 0x8003F420
-	// End Line: 585
+	SoundEffectChannel* v1; // eax
 
-	/* begin block 2 */
-		// Start line: 1255
-	/* end block 2 */
-	// End Line: 1256
-
+	if (soundInst->channel >= 0x10u)
+		v1 = 0;
+	else
+		v1 = &soundEffectChannelTbl[soundInst->channel];
+	if (v1)
+	{
+		aadStopSfx(v1->handle);
+		if (soundInst->channel < 0x10u)
+			soundEffectChannelTbl[soundInst->channel].inUse = 0;
+		soundInst->channel = -1;
+	}
+	soundInst->state = 1;
 }
 
 
@@ -253,24 +750,59 @@ void SOUND_StopInstanceSound(struct SoundInstance *soundInst)
 // int /*$ra*/ SOUND_IsInstanceSoundLoaded(unsigned char *sfxFileData /*$a0*/, long soundNumber /*$a1*/)
 int SOUND_IsInstanceSoundLoaded(unsigned char *sfxFileData, long soundNumber)
 { // line 594, offset 0x8003f438
-	/* begin block 1 */
-		// Start line: 595
-		// Start offset: 0x8003F438
-		// Variables:
-			unsigned short *sfxIDList; // $s1
-			int numSounds; // $a3
-			int numSfxIDs; // $s0
-			int i; // $a2
-			int status; // $v0
-	/* end block 1 */
-	// End offset: 0x8003F51C
-	// End Line: 652
+	int v2; // edx
+	unsigned __int8* v3; // eax
+	unsigned __int16* v4; // esi
+	int v5; // edi
+	int v7; // edx
+	int v8; // edi
+	unsigned __int16 v9; // ax
+	int IsSfxLoaded; // eax
 
-	/* begin block 2 */
-		// Start line: 1297
-	/* end block 2 */
-	// End Line: 1298
-
+	if (!sfxFileData)
+		return -1;
+	if (*sfxFileData != 0xBE)
+		return -1;
+	if (sfxFileData[1] != 0xEF)
+		return -1;
+	v2 = 0;
+	v3 = sfxFileData + 4;
+	if (!sfxFileData[2])
+		return -1;
+	while (1)
+	{
+		if (*v3)
+		{
+			v4 = (unsigned __int16*)(v3 + 14);
+			v5 = v3[1];
+			v3 += 2 * v5 + 14;
+		}
+		else
+		{
+			v4 = (unsigned __int16*)(v3 + 18);
+			v5 = v3[1];
+			v3 += 2 * v5 + 18;
+		}
+		if (v2 == soundNumber)
+			break;
+		if (++v2 >= sfxFileData[2])
+			return -1;
+	}
+	v7 = v5;
+	v8 = v5 - 1;
+	if (!v7)
+		return 1;
+	while (1)
+	{
+		v9 = *v4++;
+		IsSfxLoaded = aadIsSfxLoaded(v9);
+		if (!IsSfxLoaded)
+			break;
+		if (IsSfxLoaded == -1)
+			return -1;
+		if (!v8--)
+			return 1;
+	}
 	return 0;
 }
 
@@ -279,20 +811,42 @@ int SOUND_IsInstanceSoundLoaded(unsigned char *sfxFileData, long soundNumber)
 // void /*$ra*/ SOUND_SetInstanceSoundPitch(struct SoundInstance *soundInst /*$a0*/, long pitchChangeAmt /*$s1*/, long time /*$s0*/)
 void SOUND_SetInstanceSoundPitch(struct SoundInstance *soundInst, long pitchChangeAmt, long time)
 { // line 665, offset 0x8003f534
-	/* begin block 1 */
-		// Start line: 666
-		// Start offset: 0x8003F534
-		// Variables:
-			struct SoundEffectChannel *channel; // $a0
-	/* end block 1 */
-	// End offset: 0x8003F5E0
-	// End Line: 687
+	WORD* v3; // ecx
+	int v4; // esi
+	bool v5; // zf
+	int v6; // edx
 
-	/* begin block 2 */
-		// Start line: 1474
-	/* end block 2 */
-	// End Line: 1475
-
+	if ((soundInst->state & 0xF) == 2)
+	{
+		v3 = soundInst->channel >= 0x10u ? 0 : (WORD*)(36 * soundInst->channel + 12979232);
+		if (v3)
+		{
+			v4 = time;
+			v5 = time == 0;
+			if (time < 0)
+			{
+				v4 = -time;
+				v5 = time == 0;
+			}
+			if (v5)
+			{
+				v3[12] = 0;
+				v3[11] += pitchChangeAmt;
+			}
+			else
+			{
+				v3[15] = pitchChangeAmt >= 0 ? 1 : -1;
+				v3[14] = pitchChangeAmt / v4;
+				v6 = pitchChangeAmt % v4;
+				if (pitchChangeAmt % v4 < 0)
+					v6 = -v6;
+				v3[16] = v6;
+				v3[17] = 0;
+				v3[12] = v4;
+				v3[13] = v4;
+			}
+		}
+	}
 }
 
 
@@ -300,20 +854,59 @@ void SOUND_SetInstanceSoundPitch(struct SoundInstance *soundInst, long pitchChan
 // void /*$ra*/ SOUND_SetInstanceSoundVolume(struct SoundInstance *soundInst /*$a0*/, long volumeChangeAmt /*$s0*/, long time /*$s1*/)
 void SOUND_SetInstanceSoundVolume(struct SoundInstance *soundInst, long volumeChangeAmt, long time)
 { // line 694, offset 0x8003f5f4
-	/* begin block 1 */
-		// Start line: 695
-		// Start offset: 0x8003F5F4
-		// Variables:
-			struct SoundEffectChannel *channel; // $a0
-	/* end block 1 */
-	// End offset: 0x8003F6E4
-	// End Line: 720
+	SoundEffectChannel* v3; // esi
+	int v4; // edi
+	int v5; // ecx
+	bool v6; // sf
+	int volume; // eax
+	int v8; // eax
+	__int16 v9; // ax
+	int v10; // edx
 
-	/* begin block 2 */
-		// Start line: 1535
-	/* end block 2 */
-	// End Line: 1536
-
+	if ((soundInst->state & 0xF) == 2)
+	{
+		v3 = soundInst->channel >= 0x10u ? 0 : &soundEffectChannelTbl[soundInst->channel];
+		if (v3)
+		{
+			v4 = time;
+			if (time < 0)
+				v4 = -time;
+			v5 = volumeChangeAmt;
+			v6 = volumeChangeAmt < 0;
+			if (volumeChangeAmt > 0)
+			{
+				volume = v3->volume;
+				if (volumeChangeAmt + volume > 127)
+					v5 = 127 - volume;
+				v6 = v5 < 0;
+			}
+			if (v6)
+			{
+				v8 = v3->volume;
+				if (v5 + v8 < 0)
+					v5 = -v8;
+			}
+			if (v4)
+			{
+				v3->volumeChangePerUpdate = v5 / v4;
+				v9 = (v5 >= 0) - 1;
+				v9 = v9 & ~1;
+				v3->volumeChangeSign = v9 + 1;
+				v10 = v5 % v4;
+				if (v5 % v4 < 0)
+					v10 = -v10;
+				v3->volumeChangeErrPerUpdate = v10;
+				v3->volumeChangeError = 0;
+				v3->volumeChangeTime = v4;
+				v3->volumeChangeTimeSave = v4;
+			}
+			else
+			{
+				v3->volume += v5;
+				v3->volumeChangeTime = 0;
+			}
+		}
+	}
 }
 
 
@@ -346,29 +939,87 @@ void processOneShotSound(struct _Position *position, int hidden, int burning, lo
 // unsigned long /*$ra*/ SOUND_Play3dSound(struct _Position *position /*$t0*/, int sfxToneID /*$s5*/, int pitch /*$s6*/, int maxVolume /*$s4*/, int minVolDist /*stack 16*/)
 unsigned long SOUND_Play3dSound(struct _Position *position, int sfxToneID, int pitch, int maxVolume, int minVolDist)
 { // line 863, offset 0x8003fa40
-	/* begin block 1 */
-		// Start line: 864
-		// Start offset: 0x8003FA40
-		// Variables:
-			long dx; // $s1
-			long dy; // $s0
-			long dz; // $a0
-			long objDist; // $s3
-			long workMinVolDist; // $s2
-			int angle; // $v0
-			int quadrant; // $a0
-			int qpos; // $v1
-			int pan; // $a2
-			int volume; // $a1
-	/* end block 1 */
-	// End offset: 0x8003FC54
-	// End Line: 956
+	int z; // eax
+	int v7; // esi
+	int v8; // edi
+	int v9; // ecx
+	int v10; // ebp
+	__int16 v11; // cx
+	int v12; // esi
+	int v13; // ecx
+	int v14; // esi
+	int v15; // edi
+	int v16; // esi
+	int v17; // ecx
+	int v18; // esi
+	int v19; // esi
+	int v20; // eax
+	unsigned __int16 v21; // cx
 
-	/* begin block 2 */
-		// Start line: 1873
-	/* end block 2 */
-	// End Line: 1874
-
+	if (maxVolume)
+	{
+		if (!minVolDist)
+		{
+			if (gameTrackerX.sound.gSfxOn)
+				return aadPlaySfx(sfxToneID, (unsigned __int16)maxVolume, 64, (__int16)pitch);
+			return 0;
+		}
+		if (theCamera.mode == 5 && (gameTrackerX.gameFlags & 0x10) != 0)
+		{
+			z = position->z;
+			v7 = position->x - theCamera.core.position.x;
+			v8 = position->y - theCamera.core.position.y;
+			v9 = theCamera.core.position.z;
+		}
+		else
+		{
+			z = position->z;
+			v7 = position->x - theCamera.focusInstance->position.x;
+			v9 = theCamera.focusInstance->position.z;
+			v8 = position->y - theCamera.focusInstance->position.y;
+		}
+		v10 = MATH3D_FastSqrt0((z - v9) * (z - v9) + v8 * v8 + v7 * v7);
+		if (v10 <= minVolDist)
+		{
+			v11 = theCamera.core.rotation.z - (ratan2(v8, v7) + 1024);
+			v12 = v11 & 0xFFF;
+			v13 = v11 & 0x3FF;
+			v14 = v12 >> 10;
+			v15 = (minVolDist - v10) / (minVolDist / maxVolume);
+			if (v15 > 127)
+				v15 = 127;
+			if (v14)
+			{
+				v16 = v14 - 1;
+				if (!v16)
+				{
+					v19 = v13 >> 4;
+					goto LABEL_20;
+				}
+				if (v16 == 1)
+				{
+					v19 = (v13 >> 4) + 64;
+					goto LABEL_20;
+				}
+				v17 = v13 >> 4;
+				v18 = 127;
+			}
+			else
+			{
+				v17 = v13 >> 4;
+				v18 = 63;
+			}
+			v19 = v18 - v17;
+		LABEL_20:
+			v20 = (v10 << 8) / minVolDist;
+			if (v19 >= 64)
+				v21 = ((v20 * (v19 - 64)) >> 8) + 64;
+			else
+				v21 = 63 - ((v20 * (63 - v19)) >> 8);
+			if (gameTrackerX.sound.gSfxOn)
+				return aadPlaySfx(sfxToneID, (unsigned __int16)v15, v21, (__int16)pitch);
+		}
+	}
 	return 0;
 }
 

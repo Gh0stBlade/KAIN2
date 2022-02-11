@@ -39,11 +39,13 @@ void G2Instance_BuildTransforms(struct _Instance *instance)
 // void /*$ra*/ G2Instance_RebuildTransforms(struct _Instance *instance /*$a0*/)
 void G2Instance_RebuildTransforms(struct _Instance *instance)
 { // line 169, offset 0x80094f68
-	/* begin block 1 */
-		// Start line: 361
-	/* end block 1 */
-	// End Line: 362
+	struct Object *object; // eax
 
+  object = instance->object;
+  if ( !object->animList || (object->oflags2 & 0x40000000) != 0 )
+    G2Instance_RebuildNonAnimatedTransforms(instance);
+  else
+    G2Instance_RebuildAnimatedTransforms(instance);
 }
 
 

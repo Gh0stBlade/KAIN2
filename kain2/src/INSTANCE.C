@@ -703,27 +703,63 @@ void INSTANCE_DefaultInit(struct _Instance *instance, struct Object *object, int
 // void /*$ra*/ INSTANCE_PlainDeath(struct _Instance *instance /*$s5*/)
 void INSTANCE_PlainDeath(struct _Instance *instance)
 { // line 1793, offset 0x80034230
-	/* begin block 1 */
-		// Start line: 1794
-		// Start offset: 0x80034230
+	struct _Instance* v1; // edi
+	int flags; // ecx
+	struct Object* object; // ecx
+	int flags2; // ebx
+	struct _Instance* v5; // eax
+	int v6; // ecx
+	int v7; // eax
 
-		/* begin block 1.1 */
-			// Start line: 1825
-			// Start offset: 0x800342FC
-			// Variables:
-				struct _Instance *oldOn; // $a0
-		/* end block 1.1 */
-		// End offset: 0x80034324
-		// End Line: 1832
-	/* end block 1 */
-	// End offset: 0x80034324
-	// End Line: 1834
-
-	/* begin block 2 */
-		// Start line: 4267
-	/* end block 2 */
-	// End Line: 4268
-
+	v1 = instance;
+	flags = instance->flags;
+	flags &= ~4u;
+	instance->flags = flags;
+	object = instance->object;
+	if ((object->oflags2 & 4) != 0)
+	{
+		flags2 = instance->flags2;
+		flags2 |= 0x10u;
+		instance->flags2 = flags2;
+		SOUND_ProcessInstanceSounds(
+			object->soundData,
+			instance->soundInstanceTbl,
+			&instance->position,
+			object->oflags2 & 0x2000000,
+			flags2 & 0x8000000,
+			0,
+			0,
+			&instance->flags2);
+		SOUND_ProcessInstanceSounds(
+			instance->object->soundData,
+			instance->soundInstanceTbl,
+			&instance->position,
+			instance->object->oflags2 & 0x2000000,
+			instance->flags2 & 0x8000000,
+			0,
+			0,
+			&instance->flags2);
+	}
+	v5 = (struct _Instance*)*((DWORD*)gameTrackerX.instanceList + 1);
+	if (v5)
+	{
+		do
+		{
+			if (v5->introUniqueID == v1->attachedID)
+				break;
+			v5 = v5->next;
+		} while (v5);
+		if (v5)
+		{
+			v6 = v5->flags2;
+			v6 = v6 & ~0x80;
+			v5->flags2 = v6;
+		}
+	}
+	SAVE_MarkDeadDead(v1);
+	v7 = v1->flags;
+	v7 = v7 | 0x20;
+	v1->flags = v7;
 }
 
 
@@ -731,11 +767,8 @@ void INSTANCE_PlainDeath(struct _Instance *instance)
 // void /*$ra*/ INSTANCE_KillInstance(struct _Instance *instance /*$a0*/)
 void INSTANCE_KillInstance(struct _Instance *instance)
 { // line 1838, offset 0x80034360
-	/* begin block 1 */
-		// Start line: 4364
-	/* end block 1 */
-	// End Line: 4365
-
+	if ((instance->flags & 0x20) == 0)
+		INSTANCE_PlainDeath(instance);
 }
 
 
@@ -743,21 +776,12 @@ void INSTANCE_KillInstance(struct _Instance *instance)
 // unsigned long /*$ra*/ INSTANCE_Query(struct _Instance *Inst /*$a0*/, int Query /*$a1*/)
 unsigned long INSTANCE_Query(struct _Instance *Inst, int Query)
 { // line 1857, offset 0x80034394
-	/* begin block 1 */
-		// Start line: 1858
-		// Start offset: 0x80034394
-		// Variables:
-			unsigned long (*Func)(); // $v0
-	/* end block 1 */
-	// End offset: 0x800343C0
-	// End Line: 1871
+	unsigned int result; // eax
 
-	/* begin block 2 */
-		// Start line: 3714
-	/* end block 2 */
-	// End Line: 3715
-
-	return 0;
+	result = (unsigned int)Inst->queryFunc;
+	if (result)
+		return ((int(__cdecl*)(struct _Instance*, int))result)(Inst, Query);
+	return result;
 }
 
 
@@ -765,20 +789,40 @@ unsigned long INSTANCE_Query(struct _Instance *Inst, int Query)
 // void /*$ra*/ INSTANCE_Post(struct _Instance *Inst /*$s0*/, int Message /*$s2*/, int Data /*$s3*/)
 void INSTANCE_Post(struct _Instance *Inst, int Message, int Data)
 { // line 1875, offset 0x800343d0
-	/* begin block 1 */
-		// Start line: 1876
-		// Start offset: 0x800343D0
-		// Variables:
-			void (*Func)(); // $s1
-	/* end block 1 */
-	// End offset: 0x80034418
-	// End Line: 1886
+	void(__stdcall * messageFunc)(); // edi
+	int flags2; // eax
+	int flags; // ecx
+	struct Object* object; // edx
+	int v7; // eax
 
-	/* begin block 2 */
-		// Start line: 4430
-	/* end block 2 */
-	// End Line: 4431
-
+	messageFunc = Inst->messageFunc;
+	if (messageFunc)
+	{
+		flags2 = Inst->flags2;
+		if ((flags2 & 1) != 0)
+		{
+			flags = Inst->flags;
+			object = Inst->object;
+			flags2 = flags2 & ~1;
+			Inst->flags2 = flags2;
+			if ((flags & 0x40000) != 0)
+			{
+				v7 = flags2 | 0x20000000;
+				Inst->flags = flags & ~0x40000u;
+			}
+			else
+			{
+				v7 = flags2 & ~0x20000000u;
+			}
+			Inst->flags2 = v7;
+			if (object->animList)
+			{
+				if ((object->oflags2 & 0x40000000) == 0)
+					G2Anim_Restore(&Inst->anim);
+			}
+		}
+		((void(__cdecl*)(struct _Instance*, int, int))messageFunc)(Inst, Message, Data);
+	}
 }
 
 
@@ -786,26 +830,65 @@ void INSTANCE_Post(struct _Instance *Inst, int Message, int Data)
 // void /*$ra*/ INSTANCE_Broadcast(struct _Instance *sender /*$s2*/, long whatAmIMask /*$s3*/, int Message /*$s4*/, int Data /*$s5*/)
 void INSTANCE_Broadcast(struct _Instance *sender, long whatAmIMask, int Message, int Data)
 { // line 1892, offset 0x80034434
-	/* begin block 1 */
-		// Start line: 1893
-		// Start offset: 0x80034434
-		// Variables:
-			struct _Instance *instance; // $s0
-			int plane; // $s1
-	/* end block 1 */
-	// End offset: 0x800344BC
-	// End Line: 1906
+	int MorphType; // ebp
+	struct _Instance* i; // esi
+	int queryFunc; // eax
+	struct Object* object; // eax
+	bool v8; // eax
+	void(__stdcall * messageFunc)(); // edi
+	int flags; // ecx
+	struct Object* v11; // eax
+	unsigned int v12; // edx
+	unsigned int v13; // ecx
 
-	/* begin block 2 */
-		// Start line: 4468
-	/* end block 2 */
-	// End Line: 4469
-
-	/* begin block 3 */
-		// Start line: 4472
-	/* end block 3 */
-	// End Line: 4473
-
+	MorphType = gameTrackerX.gameData.asmData.MorphType;
+	for (i = (struct _Instance*)*((DWORD*)gameTrackerX.instanceList + 1); i; i = i->next)
+	{
+		if (i != sender)
+		{
+			queryFunc = (int)i->queryFunc;
+			if (queryFunc)
+				queryFunc = ((int(__cdecl*)(struct _Instance*, int))queryFunc)(i, 1);
+			if ((queryFunc & whatAmIMask) != 0)
+			{
+				object = i->object;
+				if (object)
+				{
+					if ((object->oflags2 & 0x2000000) == 0
+						|| ((i->flags2 & 0x8000000) == 0 ? (v8 = MorphType == 0) : (v8 = MorphType), v8))
+					{
+						messageFunc = i->messageFunc;
+						if (messageFunc)
+						{
+							if ((i->flags2 & 1) != 0)
+							{
+								flags = i->flags;
+								v11 = i->object;
+								i->flags2 &= ~1u;
+								if ((flags & 0x40000) != 0)
+								{
+									v12 = flags & ~0x40000u;
+									v13 = i->flags2 | 0x20000000;
+									i->flags = v12;
+								}
+								else
+								{
+									v13 = i->flags2 & ~0x20000000u;
+								}
+								i->flags2 = v13;
+								if (v11->animList)
+								{
+									if ((v11->oflags2 & 0x40000000) == 0)
+										G2Anim_Restore(&i->anim);
+								}
+							}
+							((void(__cdecl*)(struct _Instance*, int, int))messageFunc)(i, Message, Data);
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
 
@@ -813,17 +896,19 @@ void INSTANCE_Broadcast(struct _Instance *sender, long whatAmIMask, int Message,
 // int /*$ra*/ INSTANCE_InPlane(struct _Instance *instance /*$a0*/, int plane /*$a1*/)
 int INSTANCE_InPlane(struct _Instance *instance, int plane)
 { // line 1911, offset 0x800344e0
-	/* begin block 1 */
-		// Start line: 4518
-	/* end block 1 */
-	// End Line: 4519
+	struct Object* object; // eax
+	int result; // eax
 
-	/* begin block 2 */
-		// Start line: 4519
-	/* end block 2 */
-	// End Line: 4520
-
-	return 0;
+	object = instance->object;
+	result = 0;
+	if (object)
+	{
+		if ((object->oflags2 & 0x2000000) == 0)
+			return 1;
+		if ((instance->flags2 & 0x8000000) != 0 ? plane : plane == 0)
+			return 1;
+	}
+	return result;
 }
 
 
@@ -831,28 +916,26 @@ int INSTANCE_InPlane(struct _Instance *instance, int plane)
 // long /*$ra*/ INSTANCE_FindWithID(long uniqueID /*$a0*/)
 long INSTANCE_FindWithID(long uniqueID)
 { // line 1938, offset 0x8003453c
-	/* begin block 1 */
-		// Start line: 1940
-		// Start offset: 0x8003453C
-		// Variables:
-			struct _Instance *instance; // $v1
-			struct _Instance *next; // $v1
-			long ret; // $a1
-	/* end block 1 */
-	// End offset: 0x80034574
-	// End Line: 1956
+	struct _Instance* v1; // ecx
+	int result; // eax
+	struct _Instance* v3; // edx
 
-	/* begin block 2 */
-		// Start line: 3876
-	/* end block 2 */
-	// End Line: 3877
-
-	/* begin block 3 */
-		// Start line: 4547
-	/* end block 3 */
-	// End Line: 4548
-
-	return 0;
+	v1 = (struct _Instance*)*((DWORD*)gameTrackerX.instanceList + 1);
+	result = 0;
+	if (v1)
+	{
+		while (1)
+		{
+			v3 = v1->next;
+			if (v1->introUniqueID == uniqueID)
+				break;
+			v1 = v1->next;
+			if (!v3)
+				return result;
+		}
+		return 1;
+	}
+	return result;
 }
 
 
@@ -860,28 +943,45 @@ long INSTANCE_FindWithID(long uniqueID)
 // struct _Instance * /*$ra*/ INSTANCE_FindWithName(long areaID /*$s3*/, char *instanceName /*$s4*/, struct _Instance *startInstance /*$a2*/)
 struct _Instance * INSTANCE_FindWithName(long areaID, char *instanceName, struct _Instance *startInstance)
 { // line 1995, offset 0x8003457c
-	/* begin block 1 */
-		// Start line: 1996
-		// Start offset: 0x8003457C
-		// Variables:
-			struct _Instance *instance; // $s0
-			struct _Instance *ret; // $s2
-			struct _Instance *next; // $s1
-	/* end block 1 */
-	// End offset: 0x8003462C
-	// End Line: 2039
+	struct _Instance* next; // esi
+	struct _Instance* v4; // edi
+	struct _Instance* v6; // edi
+	struct _Instance* v7; // [esp+10h] [ebp-4h]
 
-	/* begin block 2 */
-		// Start line: 3990
-	/* end block 2 */
-	// End Line: 3991
-
-	/* begin block 3 */
-		// Start line: 4624
-	/* end block 3 */
-	// End Line: 4625
-
-	return null;
+	next = (struct _Instance*)*((DWORD*)gameTrackerX.instanceList + 1);
+	v7 = 0;
+	if (startInstance)
+		next = startInstance->next;
+	if (areaID)
+	{
+		if (next)
+		{
+			while (1)
+			{
+				v4 = next->next;
+				if (next->birthStreamUnitID == areaID && !strcmpi(next->introName, instanceName))
+					break;
+				next = v4;
+				if (!v4)
+					return 0;
+			}
+			return next;
+		}
+	}
+	else if (next)
+	{
+		while (1)
+		{
+			v6 = next->next;
+			if (!strcmpi(next->introName, instanceName))
+				break;
+			next = v6;
+			if (!v6)
+				return 0;
+		}
+		return next;
+	}
+	return v7;
 }
 
 
@@ -889,23 +989,31 @@ struct _Instance * INSTANCE_FindWithName(long areaID, char *instanceName, struct
 // struct Intro * /*$ra*/ INSTANCE_FindIntro(long areaID /*$a0*/, long introUniqueID /*$s1*/)
 struct Intro * INSTANCE_FindIntro(long areaID, long introUniqueID)
 { // line 2065, offset 0x80034650
-	/* begin block 1 */
-		// Start line: 2066
-		// Start offset: 0x80034650
-		// Variables:
-			struct Intro *ret; // $s0
-			long i; // $a0
-			struct Level *level; // $v1
-	/* end block 1 */
-	// End offset: 0x800346BC
-	// End Line: 2086
+	struct Intro* v2; // ebx
+	struct Level* LevelWithID; // eax
+	int numIntros; // edx
+	int v5; // ecx
+	struct Intro* introList; // edi
+	int* i; // eax
 
-	/* begin block 2 */
-		// Start line: 4130
-	/* end block 2 */
-	// End Line: 4131
-
-	return null;
+	v2 = 0;
+	LevelWithID = STREAM_GetLevelWithID(areaID);
+	if (LevelWithID)
+	{
+		numIntros = LevelWithID->numIntros;
+		v5 = 0;
+		if (numIntros > 0)
+		{
+			introList = LevelWithID->introList;
+			for (i = &introList->UniqueID; introUniqueID != *i; i += 19)
+			{
+				if (++v5 >= numIntros)
+					return 0;
+			}
+			return &introList[v5];
+		}
+	}
+	return v2;
 }
 
 
@@ -1388,31 +1496,38 @@ int INSTANCE_GetFadeValue(struct _Instance *instance)
 // unsigned long /*$ra*/ INSTANCE_DefaultAnimCallback(struct _G2Anim_Type *anim /*$a0*/, int sectionID /*$a1*/, enum _G2AnimCallbackMsg_Enum message /*$a2*/, long messageDataA /*$s4*/, long messageDataB /*stack 16*/, struct _Instance *instance /*stack 20*/)
 unsigned long INSTANCE_DefaultAnimCallback(struct _G2Anim_Type *anim, int sectionID, enum _G2AnimCallbackMsg_Enum message, long messageDataA, long messageDataB, struct _Instance *instance)
 { // line 2855, offset 0x80035720
-	/* begin block 1 */
-		// Start line: 2856
-		// Start offset: 0x80035720
-		// Variables:
-			struct _AnimSoundData_Type *soundData; // $s2
+	int v7; // esi
+	int v8; // edi
 
-		/* begin block 1.1 */
-			// Start line: 2868
-			// Start offset: 0x80035770
-			// Variables:
-				int id; // $s0
-				int vol; // $s1
-		/* end block 1.1 */
-		// End offset: 0x800357D0
-		// End Line: 2877
-	/* end block 1 */
-	// End offset: 0x80035804
-	// End Line: 2891
-
-	/* begin block 2 */
-		// Start line: 6574
-	/* end block 2 */
-	// End Line: 6575
-
-	return 0;
+	if (message == G2ANIM_MSG_PLAYEFFECT)
+	{
+		if (messageDataA)
+		{
+			if (messageDataA == 1)
+			{
+				FX_StartInstanceEffect(instance, (unsigned __int8*)messageDataB, 0);
+				return 1;
+			}
+		}
+		else if (messageDataB)
+		{
+			v7 = *(__int16*)(messageDataB + 2);
+			if (v7 > 999)
+			{
+				v8 = v7 / 1000;
+				v7 += 200 * (4 * (v7 / -1000) - v7 / 1000);
+				if (v8 != HUMAN_TypeOfHuman(instance))
+					return 0;
+			}
+			SOUND_Play3dSound(
+				&instance->position,
+				*(__int16*)messageDataB,
+				*(__int16*)(messageDataB + 4),
+				v7,
+				*(__int16*)(messageDataB + 6));
+		}
+	}
+	return messageDataA;
 }
 
 

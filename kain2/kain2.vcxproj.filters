@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="PC">
+      <UniqueIdentifier>{45e1c12e-a970-4582-b774-b3a520110bc6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="kain2.cpp">
@@ -314,6 +317,36 @@
     </ClCompile>
     <ClCompile Include="THISDUST.C">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PC\libapi.c">
+      <Filter>PC</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PC\libgpu.c">
+      <Filter>PC</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PC\libgte.c">
+      <Filter>PC</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PC\libsn.c">
+      <Filter>PC</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PC\libspu.c">
+      <Filter>PC</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PC\libetc.c">
+      <Filter>PC</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PC\async.cpp">
+      <Filter>PC</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PC\memwpsx.c">
+      <Filter>PC</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PC\snd.cpp">
+      <Filter>PC</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PC\pcload.c">
+      <Filter>PC</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -628,6 +661,9 @@
     </ClInclude>
     <ClInclude Include="gex2.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PC\libspu.h">
+      <Filter>PC</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

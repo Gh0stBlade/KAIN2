@@ -154,7 +154,7 @@ extern void OK() ; // 0x80026B04
 
 extern void no_depthQ2() ; // 0x80026BBC
 
-extern void DRAW_DisplayPolytopeList_S() ; // 0x80026BD4
+extern void DRAW_DisplayPolytopeList_S(struct _VertexPool*, struct _Terrain*, struct Camera*, struct _PrimPool*, unsigned int**, struct _Position*) ; // 0x80026BD4
 
 extern void PIPE3D_TransformAnimatedInstanceVertices_S() ; // 0x80026E10
 

@@ -1296,26 +1296,65 @@ void aadStopSlot(int slotNumber)
 // void /*$ra*/ aadStopAllSlots()
 void aadStopAllSlots()
 { // line 3117, offset 0x80054388
-	/* begin block 1 */
-		// Start line: 3118
-		// Start offset: 0x80054388
-		// Variables:
-			struct _AadSequenceSlot *slot; // $s1
-			int slotNumber; // $s0
-	/* end block 1 */
-	// End offset: 0x80054400
-	// End Line: 3132
+	AadMemoryStruct* v0; // ecx
+	int v1; // edx
+	int numSlots; // eax
+	int v3; // edi
+	int v4; // esi
+	AadMemoryStruct* v5; // ebp
+	int v6; // ecx
+	int v7; // edx
+	int i; // edi
+	char* v9; // eax
+	int v10; // ebp
+	int v11; // [esp+0h] [ebp-8h]
+	int v12; // [esp+4h] [ebp-4h]
 
-	/* begin block 2 */
-		// Start line: 7147
-	/* end block 2 */
-	// End Line: 7148
-
-	/* begin block 3 */
-		// Start line: 7152
-	/* end block 3 */
-	// End Line: 7153
-
+	v0 = aadMem;
+	v1 = 0;
+	v11 = 0;
+	numSlots = aadMem->numSlots;
+	if (numSlots > 0)
+	{
+		v3 = 52;
+		v12 = 52;
+		do
+		{
+			v4 = *(unsigned int*)((char*)&v0->updateCounter + v3);
+			if ((*(BYTE*)(v4 + 1344) & 1) != 0 && v1 < numSlots && *(BYTE*)(v4 + 1342) != 0xFF)
+			{
+				*(WORD*)(v4 + 1344) &= ~1u;
+				aadInitSequenceSlot(v4);
+				v5 = aadMem;
+				v6 = 0;
+				v7 = *(unsigned int*)((char*)&aadMem->updateCounter + v3);
+				for (i = 476; i < 1148; i += 28)
+				{
+					v9 = (char*)v5 + i;
+					if ((*((BYTE*)&v5->updateMode + i) & 0xF0) == *(BYTE*)(v7 + 1361))
+					{
+						v10 = *(DWORD*)v9;
+						v9[8] = -1;
+						v6 |= v10;
+						v9[18] |= 2u;
+						v5 = aadMem;
+					}
+				}
+				if (v6)
+				{
+					v5->voiceKeyOffRequest |= v6;
+					aadMem->voiceKeyOnRequest &= ~v6;
+				}
+			}
+			v1 = v11 + 1;
+			*(BYTE*)(v4 + 1342) = -1;
+			v0 = aadMem;
+			v3 = v12 + 4;
+			v11 = v1;
+			numSlots = aadMem->numSlots;
+			v12 += 4;
+		} while (v1 < numSlots);
+	}
 }
 
 
@@ -1323,16 +1362,39 @@ void aadStopAllSlots()
 // void /*$ra*/ aadDisableSlot(int slotNumber /*$a0*/)
 void aadDisableSlot(int slotNumber)
 { // line 3135, offset 0x80054418
-	/* begin block 1 */
-		// Start line: 7194
-	/* end block 1 */
-	// End Line: 7195
+	int v1; // esi
+	AadMemoryStruct* v2; // edi
+	int v3; // ecx
+	struct _AadSequenceSlot* v4; // ebp
+	char* v5; // eax
+	int v6; // ebx
 
-	/* begin block 2 */
-		// Start line: 7195
-	/* end block 2 */
-	// End Line: 7196
-
+	if (slotNumber < aadMem->numSlots)
+	{
+		v1 = 476;
+		aadMem->sequenceSlots[slotNumber]->slotFlags |= 1u;
+		v2 = aadMem;
+		v3 = 0;
+		v4 = aadMem->sequenceSlots[slotNumber];
+		do
+		{
+			v5 = (char*)v2 + v1;
+			if ((*((BYTE*)&v2->updateMode + v1) & 0xF0) == v4->slotID)
+			{
+				v6 = *(DWORD*)v5;
+				v5[8] = -1;
+				v3 |= v6;
+				*((WORD*)v5 + 9) |= 2u;
+				v2 = aadMem;
+			}
+			v1 += 28;
+		} while (v1 < 1148);
+		if (v3)
+		{
+			v2->voiceKeyOffRequest |= v3;
+			aadMem->voiceKeyOnRequest &= ~v3;
+		}
+	}
 }
 
 
@@ -1340,16 +1402,8 @@ void aadDisableSlot(int slotNumber)
 // void /*$ra*/ aadEnableSlot(int slotNumber /*$a0*/)
 void aadEnableSlot(int slotNumber)
 { // line 3146, offset 0x80054468
-	/* begin block 1 */
-		// Start line: 7217
-	/* end block 1 */
-	// End Line: 7218
-
-	/* begin block 2 */
-		// Start line: 7218
-	/* end block 2 */
-	// End Line: 7219
-
+	if (slotNumber < aadMem->numSlots)
+		aadMem->sequenceSlots[slotNumber]->slotFlags &= ~1u;
 }
 
 
@@ -1357,16 +1411,39 @@ void aadEnableSlot(int slotNumber)
 // void /*$ra*/ aadPauseSlot(int slotNumber /*$a0*/)
 void aadPauseSlot(int slotNumber)
 { // line 3154, offset 0x800544a8
-	/* begin block 1 */
-		// Start line: 7233
-	/* end block 1 */
-	// End Line: 7234
+	int v1; // esi
+	AadMemoryStruct* v2; // edi
+	int v3; // ecx
+	struct _AadSequenceSlot* v4; // ebp
+	char* v5; // eax
+	int v6; // ebx
 
-	/* begin block 2 */
-		// Start line: 7234
-	/* end block 2 */
-	// End Line: 7235
-
+	if (slotNumber < aadMem->numSlots)
+	{
+		v1 = 476;
+		aadMem->sequenceSlots[slotNumber]->status &= ~1u;
+		v2 = aadMem;
+		v3 = 0;
+		v4 = aadMem->sequenceSlots[slotNumber];
+		do
+		{
+			v5 = (char*)v2 + v1;
+			if ((*((BYTE*)&v2->updateMode + v1) & 0xF0) == v4->slotID)
+			{
+				v6 = *(DWORD*)v5;
+				v5[8] = -1;
+				v3 |= v6;
+				*((WORD*)v5 + 9) |= 2u;
+				v2 = aadMem;
+			}
+			v1 += 28;
+		} while (v1 < 1148);
+		if (v3)
+		{
+			v2->voiceKeyOffRequest |= v3;
+			aadMem->voiceKeyOnRequest &= ~v3;
+		}
+	}
 }
 
 
@@ -1532,31 +1609,12 @@ void aadUnMuteChannels(struct _AadSequenceSlot *slot, unsigned long channelList)
 // TDRFuncPtr_aadInstallEndSequenceCallback /*$ra*/ aadInstallEndSequenceCallback(TDRFuncPtr_aadInstallEndSequenceCallback0callbackProc callbackProc /*$a0*/, long data /*$a1*/)
 TDRFuncPtr_aadInstallEndSequenceCallback aadInstallEndSequenceCallback(TDRFuncPtr_aadInstallEndSequenceCallback0callbackProc callbackProc, long data)
 { // line 3405, offset 0x8005473c
-	/* begin block 1 */
-		// Start line: 3407
-		// Start offset: 0x8005473C
-		// Variables:
-			void (*previousCallbackProc)(); // $v0
-	/* end block 1 */
-	// End offset: 0x8005473C
-	// End Line: 3409
+	TDRFuncPtr_aadInstallEndSequenceCallback result; // eax
 
-	/* begin block 2 */
-		// Start line: 6810
-	/* end block 2 */
-	// End Line: 6811
-
-	/* begin block 3 */
-		// Start line: 7620
-	/* end block 3 */
-	// End Line: 7621
-
-	/* begin block 4 */
-		// Start line: 7622
-	/* end block 4 */
-	// End Line: 7623
-
-	return null;
+	result = (TDRFuncPtr_aadInstallEndSequenceCallback)aadMem[3].loadRequestQueue[13].type;
+	aadMem[3].loadRequestQueue[13].type = (int)callbackProc;
+	aadMem[3].loadRequestQueue[13].directoryID = data;
+	return result;
 }
 
 
@@ -1564,16 +1622,7 @@ TDRFuncPtr_aadInstallEndSequenceCallback aadInstallEndSequenceCallback(TDRFuncPt
 // void /*$ra*/ aadSetUserVariable(int variableNumber /*$a0*/, int value /*$a1*/)
 void aadSetUserVariable(int variableNumber, int value)
 { // line 3416, offset 0x80054754
-	/* begin block 1 */
-		// Start line: 7641
-	/* end block 1 */
-	// End Line: 7642
-
-	/* begin block 2 */
-		// Start line: 7643
-	/* end block 2 */
-	// End Line: 7644
-
+	*((BYTE*)&aadMem[3].loadRequestQueue[13].flags + variableNumber) = value;
 }
 
 
@@ -1581,16 +1630,13 @@ void aadSetUserVariable(int variableNumber, int value)
 // void /*$ra*/ aadSetNoUpdateMode(int noUpdate /*$a0*/)
 void aadSetNoUpdateMode(int noUpdate)
 { // line 3446, offset 0x80054768
-	/* begin block 1 */
-		// Start line: 6892
-	/* end block 1 */
-	// End Line: 6893
+	int flags; // ecx
 
-	/* begin block 2 */
-		// Start line: 7675
-	/* end block 2 */
-	// End Line: 7676
-
+	flags = aadMem->flags;
+	if (noUpdate)
+		aadMem->flags = flags | 2;
+	else
+		aadMem->flags = flags & ~2u;
 }
 
 
@@ -1598,25 +1644,25 @@ void aadSetNoUpdateMode(int noUpdate)
 // void /*$ra*/ aadPauseSound()
 void aadPauseSound()
 { // line 3467, offset 0x800547a8
-	/* begin block 1 */
-		// Start line: 3468
-		// Start offset: 0x800547A8
-		// Variables:
-			int i; // $s0
-	/* end block 1 */
-	// End offset: 0x80054828
-	// End Line: 3484
+	int flags; // eax
+	int v1; // esi
+	int v2; // ebx
+	int i; // edi
 
-	/* begin block 2 */
-		// Start line: 6934
-	/* end block 2 */
-	// End Line: 6935
-
-	/* begin block 3 */
-		// Start line: 7705
-	/* end block 3 */
-	// End Line: 7706
-
+	flags = aadMem->flags;
+	if ((flags & 8) == 0)
+	{
+		v1 = 0;
+		aadMem->flags |= 0xC;
+		v2 = 0;
+		for (i = 1172; i < 1220; i += 2)
+		{
+			aadMem->synthVoice[v2].flags &= ~2u;
+			SpuGetVoicePitch(v1, (unsigned __int16*)((char*)aadMem + i));
+			SpuSetVoicePitch(v1++, 0);
+			++v2;
+		}
+	}
 }
 
 
@@ -1624,16 +1670,7 @@ void aadPauseSound()
 // void /*$ra*/ aadCancelPauseSound()
 void aadCancelPauseSound()
 { // line 3486, offset 0x80054840
-	/* begin block 1 */
-		// Start line: 7755
-	/* end block 1 */
-	// End Line: 7756
-
-	/* begin block 2 */
-		// Start line: 7757
-	/* end block 2 */
-	// End Line: 7758
-
+	aadMem->flags &= ~0xCu;
 }
 
 
@@ -1641,25 +1678,30 @@ void aadCancelPauseSound()
 // void /*$ra*/ aadResumeSound()
 void aadResumeSound()
 { // line 3493, offset 0x8005485c
-	/* begin block 1 */
-		// Start line: 3494
-		// Start offset: 0x8005485C
-		// Variables:
-			int i; // $s0
-	/* end block 1 */
-	// End offset: 0x800548D4
-	// End Line: 3509
+	int flags; // eax
+	AadMemoryStruct* v1; // eax
+	int v2; // edi
+	int v3; // ebp
+	int i; // esi
 
-	/* begin block 2 */
-		// Start line: 7769
-	/* end block 2 */
-	// End Line: 7770
-
-	/* begin block 3 */
-		// Start line: 7773
-	/* end block 3 */
-	// End Line: 7774
-
+	flags = aadMem->flags;
+	if ((flags & 8) != 0)
+	{
+		aadMem->flags &= ~0xC;
+		v1 = aadMem;
+		v2 = 0;
+		v3 = 0;
+		for (i = 1172; i < 1220; i += 2)
+		{
+			if ((v1->synthVoice[v3].flags & 2) == 0)
+			{
+				SpuSetVoicePitch(v2, *(WORD*)((char*)&v1->updateCounter + i));
+				v1 = aadMem;
+			}
+			++v2;
+			++v3;
+		}
+	}
 }
 
 
