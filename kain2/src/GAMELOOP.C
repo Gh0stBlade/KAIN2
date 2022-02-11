@@ -563,11 +563,34 @@ long StreamRenderLevel(struct _StreamUnit *currentUnit, struct Level *mainLevel,
 // void /*$ra*/ GAMELOOP_FlipScreenAndDraw(struct GameTracker *gameTracker /*$s0*/, unsigned long **drawot /*$a1*/)
 void GAMELOOP_FlipScreenAndDraw(struct GameTracker *gameTracker, unsigned long **drawot)
 { // line 2187, offset 0x8002f1a0
-	/* begin block 1 */
-		// Start line: 5067
-	/* end block 1 */
-	// End Line: 5068
+	unsigned int** dispOT; // ecx
+	struct _PrimPool* v3; // eax
 
+	DrawOTag((u_long*)drawot + 3071);
+	dispOT = gameTrackerX.dispOT;
+	gameTrackerX.dispOT = gameTrackerX.drawOT;
+	gameTrackerX.drawOT = dispOT;
+	gameTrackerX.drawPage = 1 - gameTrackerX.drawPage;
+	ClearOTagR((u_long*)dispOT, 3072);
+	if ((gameTrackerX.gameFlags & 0x8000000) != 0)
+	{
+		if (gameTrackerX.drawPage)
+			gameTrackerX.primPool->nextPrim = &gameTrackerX.primPool->prim[16500];
+		else
+			gameTrackerX.primPool->nextPrim = &gameTrackerX.primPool->prim[9000];
+		gameTrackerX.primPool->numPrims = 0;
+	}
+	else
+	{
+		v3 = primPool0;
+		if (gameTrackerX.primPool == primPool0)
+			v3 = primPool1;
+		gameTrackerX.primPool = v3;
+		v3->nextPrim = v3->prim;
+		gameTrackerX.primPool->numPrims = 0;
+	}
+	RenderG2_Swap();
+	RenderG2_Clear(gameTracker, drawot);
 }
 
 
@@ -629,16 +652,8 @@ void GAMELOOP_SwitchTheDrawBuffer(unsigned long **drawot)
 // void /*$ra*/ GAMELOOP_SetupRenderFunction(struct GameTracker *gameTracker /*$a0*/)
 void GAMELOOP_SetupRenderFunction(struct GameTracker *gameTracker)
 { // line 2277, offset 0x8002f37c
-	/* begin block 1 */
-		// Start line: 5274
-	/* end block 1 */
-	// End Line: 5275
-
-	/* begin block 2 */
-		// Start line: 5289
-	/* end block 2 */
-	// End Line: 5290
-
+	gameTracker->drawAnimatedModelFunc = DRAW_AnimatedModel_S;
+	gameTracker->drawDisplayPolytopeListFunc = DRAW_DisplayPolytopeList_S;
 }
 
 
@@ -646,39 +661,27 @@ void GAMELOOP_SetupRenderFunction(struct GameTracker *gameTracker)
 // struct _StreamUnit * /*$ra*/ GAMELOOP_GetMainRenderUnit()
 struct _StreamUnit * GAMELOOP_GetMainRenderUnit()
 { // line 2303, offset 0x8002f398
-	/* begin block 1 */
-		// Start line: 2304
-		// Start offset: 0x8002F398
-		// Variables:
-			struct _StreamUnit *streamUnit; // $s0
+	struct _Instance* focusInstance; // edi
+	struct _StreamUnit* StreamUnitWithID; // esi
+	struct _StreamUnit* v3; // eax
 
-		/* begin block 1.1 */
-			// Start line: 2315
-			// Start offset: 0x8002F3C8
-			// Variables:
-				struct _Instance *focusInstance; // $s1
-
-			/* begin block 1.1.1 */
-				// Start line: 2336
-				// Start offset: 0x8002F428
-				// Variables:
-					struct _StreamUnit *cameraUnit; // $v0
-			/* end block 1.1.1 */
-			// End offset: 0x8002F440
-			// End Line: 2344
-		/* end block 1.1 */
-		// End offset: 0x8002F440
-		// End Line: 2345
-	/* end block 1 */
-	// End offset: 0x8002F444
-	// End Line: 2349
-
-	/* begin block 2 */
-		// Start line: 5326
-	/* end block 2 */
-	// End Line: 5327
-
-	return null;
+	if (theCamera.mode == 5)
+		return (struct _StreamUnit*)STREAM_WhichUnitPointerIsIn(theCamera.data.Cinematic.posSpline);
+	focusInstance = theCamera.focusInstance;
+	if (theCamera.focusInstance == gameTrackerX.playerInstance && gameTrackerX.SwitchToNewStreamUnit)
+	{
+		StreamUnitWithID = STREAM_GetStreamUnitWithID(gameTrackerX.moveRazielToStreamID);
+		if (!StreamUnitWithID)
+			return STREAM_GetStreamUnitWithID(focusInstance->currentStreamUnitID);
+	}
+	else
+	{
+		StreamUnitWithID = STREAM_GetStreamUnitWithID(theCamera.focusInstance->currentStreamUnitID);
+	}
+	v3 = COLLIDE_CameraWithStreamSignals(&theCamera);
+	if (v3)
+		return v3;
+	return StreamUnitWithID;
 }
 
 
@@ -784,11 +787,31 @@ void GAMELOOP_DrawSavedOT(unsigned long **newOT)
 // void /*$ra*/ ResetPrimPool()
 void ResetPrimPool()
 { // line 2764, offset 0x8002fd98
-	/* begin block 1 */
-		// Start line: 6554
-	/* end block 1 */
-	// End Line: 6555
+	unsigned int** dispOT; // ecx
+	struct _PrimPool* v1; // eax
 
+	dispOT = gameTrackerX.dispOT;
+	gameTrackerX.dispOT = gameTrackerX.drawOT;
+	gameTrackerX.drawOT = dispOT;
+	gameTrackerX.drawPage = 1 - gameTrackerX.drawPage;
+	ClearOTagR((u_long*)dispOT, 3072);
+	if ((gameTrackerX.gameFlags & 0x8000000) != 0)
+	{
+		if (gameTrackerX.drawPage)
+			gameTrackerX.primPool->nextPrim = &gameTrackerX.primPool->prim[16500];
+		else
+			gameTrackerX.primPool->nextPrim = &gameTrackerX.primPool->prim[9000];
+		gameTrackerX.primPool->numPrims = 0;
+	}
+	else
+	{
+		v1 = primPool0;
+		if (gameTrackerX.primPool == primPool0)
+			v1 = primPool1;
+		gameTrackerX.primPool = v1;
+		v1->nextPrim = v1->prim;
+		gameTrackerX.primPool->numPrims = 0;
+	}
 }
 
 
@@ -827,16 +850,7 @@ void Switch_For_Redraw()
 // void /*$ra*/ GAMELOOP_Set_Pause_Redraw()
 void GAMELOOP_Set_Pause_Redraw()
 { // line 2824, offset 0x8002fec0
-	/* begin block 1 */
-		// Start line: 6677
-	/* end block 1 */
-	// End Line: 6678
-
-	/* begin block 2 */
-		// Start line: 6678
-	/* end block 2 */
-	// End Line: 6679
-
+	word_C54F8C = 1;
 }
 
 
@@ -895,16 +909,7 @@ void ResetDrawPage()
 // void /*$ra*/ GAMELOOP_Set24FPS()
 void GAMELOOP_Set24FPS()
 { // line 2914, offset 0x800300b0
-	/* begin block 1 */
-		// Start line: 6889
-	/* end block 1 */
-	// End Line: 6890
-
-	/* begin block 2 */
-		// Start line: 6890
-	/* end block 2 */
-	// End Line: 6891
-
+	gameTrackerX.frameRate24fps = 1;
 }
 
 
@@ -912,16 +917,7 @@ void GAMELOOP_Set24FPS()
 // void /*$ra*/ GAMELOOP_Reset24FPS()
 void GAMELOOP_Reset24FPS()
 { // line 2920, offset 0x800300c0
-	/* begin block 1 */
-		// Start line: 6901
-	/* end block 1 */
-	// End Line: 6902
-
-	/* begin block 2 */
-		// Start line: 6902
-	/* end block 2 */
-	// End Line: 6903
-
+	gameTrackerX.frameRate24fps = 0;
 }
 
 
@@ -929,30 +925,84 @@ void GAMELOOP_Reset24FPS()
 // void /*$ra*/ GAMELOOP_DoTimeProcess()
 void GAMELOOP_DoTimeProcess()
 { // line 2925, offset 0x800300cc
-	/* begin block 1 */
-		// Start line: 2926
-		// Start offset: 0x800300CC
-		// Variables:
-			int holdTime; // $s1
+	unsigned int TimeMS; // ebx
+	int frameRateLock; // eax
+	unsigned int lastLoopTime; // ecx
+	unsigned int timeSinceLastGameFrame; // eax
+	unsigned int fps30Count; // ecx
 
-		/* begin block 1.1 */
-			// Start line: 2961
-			// Start offset: 0x800301B0
-			// Variables:
-				int lockRate; // $a1
-				unsigned long last; // $a0
-		/* end block 1.1 */
-		// End offset: 0x80030260
-		// End Line: 2998
-	/* end block 1 */
-	// End offset: 0x800302B8
-	// End Line: 3014
-
-	/* begin block 2 */
-		// Start line: 6911
-	/* end block 2 */
-	// End Line: 6912
-
+	TimeMS = TIMER_GetTimeMS();
+	if ((gameTrackerX.gameFlags & 0x10000000) != 0)
+	{
+		gameTrackerX.lastLoopTime = -1;
+		goto LABEL_27;
+	}
+	gameTrackerX.totalTime = D3D_TimeDiff(gameTrackerX.currentTicks);
+	gameTrackerX.currentTicks = D3D_CurrentTime();
+	frameRateLock = gameTrackerX.frameRateLock;
+	if (gameTrackerX.frameRateLock < 1)
+	{
+		frameRateLock = 1;
+		gameTrackerX.frameRateLock = 1;
+	}
+	if (frameRateLock > 2)
+	{
+		frameRateLock = 2;
+		gameTrackerX.frameRateLock = 2;
+	}
+	if (gameTrackerX.decoupleGame && (gameTrackerX.gameFlags & 0x10000000) == 0)
+	{
+		lastLoopTime = 33;
+		if (frameRateLock == 2)
+			lastLoopTime = 50;
+		if (gameTrackerX.gameData.asmData.MorphTime != 1000)
+			lastLoopTime = 15;
+		if (gameTrackerX.lastLoopTime != -1)
+			lastLoopTime = TimeMS - gameTrackerX.currentTime;
+		if (lastLoopTime > 0x42)
+		{
+			lastLoopTime = 66;
+			gameTrackerX.lastLoopTime = 66;
+			goto LABEL_22;
+		}
+		goto LABEL_20;
+	}
+	if (frameRateLock == 1)
+	{
+		lastLoopTime = 33;
+		gameTrackerX.lastLoopTime = 33;
+		goto LABEL_22;
+	}
+	if (frameRateLock == 2)
+	{
+		lastLoopTime = 50;
+	LABEL_20:
+		gameTrackerX.lastLoopTime = lastLoopTime;
+		goto LABEL_22;
+	}
+	lastLoopTime = gameTrackerX.lastLoopTime;
+LABEL_22:
+	gameTrackerX.gameFramePassed = 0;
+	gameTrackerX.timeMult = (lastLoopTime << 12) / 0x21;
+	gameTrackerX.globalTimeMult = (lastLoopTime << 12) / 0x21;
+	gameTrackerX.timeSinceLastGameFrame += (lastLoopTime << 12) / 0x21;
+	timeSinceLastGameFrame = gameTrackerX.timeSinceLastGameFrame;
+	if (gameTrackerX.timeSinceLastGameFrame <= 0x1000)
+	{
+	LABEL_27:
+		gameTrackerX.currentTime = TimeMS;
+		return;
+	}
+	fps30Count = gameTrackerX.fps30Count;
+	do
+	{
+		timeSinceLastGameFrame -= 4096;
+		++fps30Count;
+		gameTrackerX.gameFramePassed = 1;
+	} while (timeSinceLastGameFrame > 0x1000);
+	gameTrackerX.fps30Count = fps30Count;
+	gameTrackerX.timeSinceLastGameFrame = timeSinceLastGameFrame;
+	gameTrackerX.currentTime = TimeMS;
 }
 
 
@@ -1067,11 +1117,14 @@ void GAMELOOP_ChangeMode()
 // void /*$ra*/ GAMELOOP_RequestLevelChange(char *name /*$s2*/, short number /*$a1*/, struct GameTracker *gameTracker /*$s0*/)
 void GAMELOOP_RequestLevelChange(char *name, short number, struct GameTracker *gameTracker)
 { // line 3664, offset 0x80030e7c
-	/* begin block 1 */
-		// Start line: 8558
-	/* end block 1 */
-	// End Line: 8559
-
+	if (!gameTracker->levelChange)
+	{
+		gameTracker->gameFlags |= 1u;
+		SOUND_ResetAllSound();
+		sprintf(gameTracker->baseAreaName, "%s%d", name, number);
+		gameTracker->levelChange = 1;
+		gameTracker->levelDone = 1;
+	}
 }
 
 
@@ -1079,11 +1132,8 @@ void GAMELOOP_RequestLevelChange(char *name, short number, struct GameTracker *g
 // void /*$ra*/ PSX_GameLoop(struct GameTracker *gameTracker /*$s0*/)
 void PSX_GameLoop(struct GameTracker *gameTracker)
 { // line 3686, offset 0x80030efc
-	/* begin block 1 */
-		// Start line: 8602
-	/* end block 1 */
-	// End Line: 8603
-
+	GAMEPAD_Process(gameTracker);
+	GAMELOOP_Process(gameTracker);
 }
 
 
@@ -1091,32 +1141,15 @@ void PSX_GameLoop(struct GameTracker *gameTracker)
 // struct MATRIX * /*$ra*/ GAMELOOP_GetMatrices(int numMatrices /*$a0*/)
 struct MATRIX * GAMELOOP_GetMatrices(int numMatrices)
 { // line 3696, offset 0x80030f28
-	/* begin block 1 */
-		// Start line: 3698
-		// Start offset: 0x80030F28
-		// Variables:
-			struct MATRIX *matrix; // $a1
-			struct _PrimPool *pool; // $v1
-	/* end block 1 */
-	// End offset: 0x80030F4C
-	// End Line: 3715
+	struct MATRIX* result; // eax
+	ulong* v2; // edx
 
-	/* begin block 2 */
-		// Start line: 8622
-	/* end block 2 */
-	// End Line: 8623
-
-	/* begin block 3 */
-		// Start line: 8623
-	/* end block 3 */
-	// End Line: 8624
-
-	/* begin block 4 */
-		// Start line: 8624
-	/* end block 4 */
-	// End Line: 8625
-
-	return null;
+	result = (struct MATRIX*)gameTrackerX.primPool->nextPrim;
+	v2 = (ulong*)&result[numMatrices];
+	if (v2 >= gameTrackerX.primPool->lastPrim)
+		return 0;
+	gameTrackerX.primPool->nextPrim = v2;
+	return result;
 }
 
 
@@ -1124,17 +1157,7 @@ struct MATRIX * GAMELOOP_GetMatrices(int numMatrices)
 // struct GameTracker * /*$ra*/ GAMELOOP_GetGT()
 struct GameTracker * GAMELOOP_GetGT()
 { // line 3720, offset 0x80030f5c
-	/* begin block 1 */
-		// Start line: 8672
-	/* end block 1 */
-	// End Line: 8673
-
-	/* begin block 2 */
-		// Start line: 8673
-	/* end block 2 */
-	// End Line: 8674
-
-	return null;
+	return &gameTrackerX;
 }
 
 

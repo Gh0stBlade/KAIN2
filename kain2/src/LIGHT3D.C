@@ -55,42 +55,70 @@ void LIGHT_GetLightMatrix(struct _Instance *instance, struct Level *level, struc
 // void /*$ra*/ LIGHT_PresetInstanceLight(struct _Instance *instance /*$s0*/, short attenuate /*$a1*/, struct MATRIX *lm /*$s1*/)
 void LIGHT_PresetInstanceLight(struct _Instance *instance, short attenuate, struct MATRIX *lm)
 { // line 200, offset 0x80035b98
-	/* begin block 1 */
-		// Start line: 201
-		// Start offset: 0x80035B98
-		// Variables:
-			struct MATRIX cm; // stack offset -80
-			long scale; // $a0
-			long scaleRGB[3]; // stack offset -48
-			int i; // $t3
-			int j; // $a3
-			struct Level *level; // $s2
-			short tempRGB[3]; // stack offset -32
+	int currentStreamUnitID; // eax
+	struct Level* LevelWithID; // edi
+	int v5; // eax
+	__int16* p_TODRedScale; // eax
+	MATRIX* p_colorM; // ecx
+	int* v8; // ebp
+	__int16* v9; // ebx
+	int v10; // edi
+	int v11; // esi
+	int v12; // eax
+	int v13; // edx
+	__int16 v14[4]; // [esp+10h] [ebp-34h] BYREF
+	int v15[3]; // [esp+18h] [ebp-2Ch] BYREF
+	MATRIX colorM; // [esp+24h] [ebp-20h] BYREF
+	int attenuatea; // [esp+4Ch] [ebp+8h]
 
-		/* begin block 1.1 */
-			// Start line: 254
-			// Start offset: 0x80035C34
-			// Variables:
-				short *todRGB; // $v0
-
-			/* begin block 1.1.1 */
-				// Start line: 271
-				// Start offset: 0x80035C68
-			/* end block 1.1.1 */
-			// End offset: 0x80035CD8
-			// End Line: 277
-		/* end block 1.1 */
-		// End offset: 0x80035CF0
-		// End Line: 278
-	/* end block 1 */
-	// End offset: 0x80035CF0
-	// End Line: 281
-
-	/* begin block 2 */
-		// Start line: 428
-	/* end block 2 */
-	// End Line: 429
-
+	currentStreamUnitID = instance->currentStreamUnitID;
+	v14[0] = 4096;
+	v14[1] = 4096;
+	v14[2] = 4096;
+	LevelWithID = STREAM_GetLevelWithID(currentStreamUnitID);
+	LIGHT_GetLightMatrix(instance, LevelWithID, lm, &colorM);
+	v5 = 4096;
+	if ((instance->flags & 0x200000) != 0)
+		v5 = 2048;
+	if (attenuate != 4096)
+		v5 = (v5 * attenuate) >> 12;
+	v15[0] = v5;
+	v15[1] = v5;
+	v15[2] = v5;
+	p_TODRedScale = &LevelWithID->TODRedScale;
+	if (!LevelWithID)
+		p_TODRedScale = v14;
+	p_colorM = &colorM;
+	v8 = v15;
+	v9 = p_TODRedScale;
+	attenuatea = 3;
+	do
+	{
+		v10 = (__int16)((*v8 * *v9) >> 12);
+		v11 = 3;
+		do
+		{
+			v12 = (v10 * p_colorM->m[0][0]) >> 12;
+			v13 = v12;
+			if (v12 <= -32768)
+				v13 = -32768;
+			if (v13 >= 32767)
+			{
+				v12 = 32767;
+			}
+			else if (v12 <= -32768)
+			{
+				v12 = 0x8000;
+			}
+			p_colorM->m[0][0] = v12;
+			p_colorM = (MATRIX*)((char*)p_colorM + 2);
+			--v11;
+		} while (v11);
+		++v9;
+		++v8;
+		--attenuatea;
+	} while (attenuatea);
+	SetColorMatrix(&colorM);
 }
 
 
@@ -98,30 +126,12 @@ void LIGHT_PresetInstanceLight(struct _Instance *instance, short attenuate, stru
 // void /*$ra*/ LIGHT_GetAmbient(struct _ColorType *color /*$a0*/, struct _Instance *instance /*$a1*/)
 void LIGHT_GetAmbient(struct _ColorType *color, struct _Instance *instance)
 { // line 290, offset 0x80035d14
-	/* begin block 1 */
-		// Start line: 292
-		// Start offset: 0x80035D14
-		// Variables:
-			int lightval; // $v1
-	/* end block 1 */
-	// End offset: 0x80035D34
-	// End Line: 333
+	uchar v2; // al
 
-	/* begin block 2 */
-		// Start line: 648
-	/* end block 2 */
-	// End Line: 649
-
-	/* begin block 3 */
-		// Start line: 649
-	/* end block 3 */
-	// End Line: 650
-
-	/* begin block 4 */
-		// Start line: 688
-	/* end block 4 */
-	// End Line: 689
-
+	v2 = (instance->object->oflags2 & 0x800) != 0 ? 0 : 48;
+	color->b = v2;
+	color->g = v2;
+	color->r = v2;
 }
 
 

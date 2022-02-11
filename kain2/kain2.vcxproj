@@ -191,6 +191,16 @@
     <ClCompile Include="src\MONSTER\VWRAITH.C" />
     <ClCompile Include="src\MONSTER\WORSHIP.C" />
     <ClCompile Include="src\OBTABLE.C" />
+    <ClCompile Include="src\PC\async.cpp" />
+    <ClCompile Include="src\PC\libapi.c" />
+    <ClCompile Include="src\PC\libetc.c" />
+    <ClCompile Include="src\PC\libgpu.c" />
+    <ClCompile Include="src\PC\libgte.c" />
+    <ClCompile Include="src\PC\libsn.c" />
+    <ClCompile Include="src\PC\libspu.c" />
+    <ClCompile Include="src\PC\memwpsx.c" />
+    <ClCompile Include="src\PC\pcload.c" />
+    <ClCompile Include="src\PC\snd.cpp" />
     <ClCompile Include="src\PHYSICS.C" />
     <ClCompile Include="src\PHYSOBS.C" />
     <ClCompile Include="src\PIPE3D.C" />
@@ -295,6 +305,7 @@
     <ClInclude Include="src\MONSTER\VWRAITH.H" />
     <ClInclude Include="src\MONSTER\WORSHIP.H" />
     <ClInclude Include="src\OBTABLE.H" />
+    <ClInclude Include="src\PC\libspu.h" />
     <ClInclude Include="src\PHYSICS.H" />
     <ClInclude Include="src\PHYSOBS.H" />
     <ClInclude Include="src\PIPE3D.H" />

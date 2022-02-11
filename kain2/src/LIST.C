@@ -6,16 +6,14 @@
 // void /*$ra*/ LIST_InsertFunc(struct NodeType *list /*$a0*/, struct NodeType *node /*$a1*/)
 void LIST_InsertFunc(struct NodeType *list, struct NodeType *node)
 { // line 46, offset 0x8004f568
-	/* begin block 1 */
-		// Start line: 92
-	/* end block 1 */
-	// End Line: 93
+	struct NodeType* next; // edx
 
-	/* begin block 2 */
-		// Start line: 93
-	/* end block 2 */
-	// End Line: 94
-
+	node->prev = list;
+	node->next = list->next;
+	next = list->next;
+	if (next)
+		next->prev = node;
+	list->next = node;
 }
 
 
@@ -23,16 +21,35 @@ void LIST_InsertFunc(struct NodeType *list, struct NodeType *node)
 // void /*$ra*/ LIST_DeleteFunc(struct NodeType *node /*$a0*/)
 void LIST_DeleteFunc(struct NodeType *node)
 { // line 57, offset 0x8004f594
-	/* begin block 1 */
-		// Start line: 114
-	/* end block 1 */
-	// End Line: 115
+	struct NodeType* prev; // ecx
+	struct NodeType* v2; // edx
+	struct NodeType* next; // edx
 
-	/* begin block 2 */
-		// Start line: 115
-	/* end block 2 */
-	// End Line: 116
-
+	prev = node->prev;
+	if (node->prev && (v2 = node->next) != 0)
+	{
+		prev->next = v2;
+		node->next->prev = node->prev;
+		node->next = 0;
+		node->prev = 0;
+	}
+	else
+	{
+		next = node->next;
+		if (next)
+		{
+			next->prev = 0;
+			node->next = 0;
+			node->prev = 0;
+		}
+		else
+		{
+			if (prev)
+				prev->next = 0;
+			node->next = 0;
+			node->prev = 0;
+		}
+	}
 }
 
 
@@ -40,19 +57,40 @@ void LIST_DeleteFunc(struct NodeType *node)
 // struct NodeType * /*$ra*/ LIST_GetFunc(struct NodeType *list /*$a0*/)
 struct NodeType * LIST_GetFunc(struct NodeType *list)
 { // line 76, offset 0x8004f600
-	/* begin block 1 */
-		// Start line: 77
-		// Start offset: 0x8004F600
-	/* end block 1 */
-	// End offset: 0x8004F628
-	// End Line: 86
+	struct NodeType* result; // eax
+	struct NodeType* prev; // ecx
+	struct NodeType* v3; // edx
+	struct NodeType* next; // edx
 
-	/* begin block 2 */
-		// Start line: 152
-	/* end block 2 */
-	// End Line: 153
-
-	return null;
+	result = list->next;
+	if (!result)
+		return 0;
+	prev = result->prev;
+	if (result->prev && (v3 = result->next) != 0)
+	{
+		prev->next = v3;
+		result->next->prev = result->prev;
+		result->next = 0;
+		result->prev = 0;
+	}
+	else
+	{
+		next = result->next;
+		if (next)
+		{
+			next->prev = 0;
+			result->next = 0;
+			result->prev = 0;
+		}
+		else
+		{
+			if (prev)
+				prev->next = 0;
+			result->next = 0;
+			result->prev = 0;
+		}
+	}
+	return result;
 }
 
 
