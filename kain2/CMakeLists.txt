@@ -26,3 +26,5 @@ if(MSVC)
 	PROPERTIES LINK_FLAGS_DEBUG "/SUBSYSTEM:CONSOLE"
 	)
 endif()
+
+add_definitions(-DPSX_VERSION)
