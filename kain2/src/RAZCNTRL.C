@@ -6,18 +6,23 @@
 // void /*$ra*/ ProcessRazControl(long *command /*$a0*/)
 void ProcessRazControl(long *command)
 { // line 67, offset 0x80070694
-	/* begin block 1 */
-		// Start line: 134
-	/* end block 1 */
-	// End Line: 135
+	int v1; // eax
 
-	/* begin block 2 */
-		// Start line: 136
-	/* end block 2 */
-	// End Line: 137
-
+	if ((dword_4FAD98 & *command) != 0)
+	{
+		dword_C55180 = 0;
+		v1 = ++dword_C55184;
+	}
+	else
+	{
+		++dword_C55180;
+		if (dword_C55184)
+			dword_C5517C = dword_C55184;
+		v1 = 0;
+		dword_C55184 = 0;
+	}
+	if (v1 > 5)
+		dword_C5517C = v1;
+	if (dword_C55180 > 2)
+		dword_C5517C = 0;
 }
-
-
-
-

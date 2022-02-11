@@ -328,20 +328,37 @@ void SteerSwitchMode(struct _Instance *instance, int mode)
 // void /*$ra*/ razInitWallCrawlSteering(struct _Instance *instance /*$s0*/)
 void razInitWallCrawlSteering(struct _Instance *instance)
 { // line 888, offset 0x800a3178
-	/* begin block 1 */
-		// Start line: 889
-		// Start offset: 0x800A3178
-		// Variables:
-			struct _G2SVector3_Type vec; // stack offset -24
-	/* end block 1 */
-	// End offset: 0x800A3178
-	// End Line: 889
+	struct MATRIX* matrix; // eax
+	__int16 y; // dx
+	__int16 z; // ax
+	struct _G2SVector3_Type vector; // [esp+Ch] [ebp-8h] BYREF
 
-	/* begin block 2 */
-		// Start line: 1840
-	/* end block 2 */
-	// End Line: 1841
-
+	G2Anim_EnableController(&instance->anim, 1, 38);
+	matrix = instance->matrix;
+	vector.x = 0;
+	instance->position.z += 318;
+	instance->oldPos.z += 318;
+	vector.y = 0;
+	vector.z = -318;
+	matrix->t[2] += 318;
+	instance->oldMatrix->t[2] += 318;
+	G2Anim_SetController_Vector(&instance->anim, 1, 38, &vector);
+	G2Anim_EnableController(&instance->anim, 0, 14);
+	y = instance->rotation.y;
+	z = instance->rotation.z;
+	vector.x = instance->rotation.x;
+	vector.y = y;
+	vector.z = z;
+	G2Anim_EnableController(&instance->anim, 0, 8);
+	G2Anim_SetControllerAngleOrder(&instance->anim, 0, 8, 1);
+	G2Anim_SetController_Vector(&instance->anim, 0, 8, &vector);
+	G2Anim_EnableController(&instance->anim, 14, 14);
+	G2Anim_EnableController(&instance->anim, 50, 76);
+	G2Anim_EnableController(&instance->anim, 58, 76);
+	dword_B08AB0 = &stru_B08AB8;
+	stru_B08AB8.z = 0;
+	stru_B08AB8.y = 0;
+	stru_B08AB8.x = 0;
 }
 
 
@@ -349,11 +366,19 @@ void razInitWallCrawlSteering(struct _Instance *instance)
 // void /*$ra*/ razDeinitWallCrawlSteering(struct _Instance *instance /*$s0*/)
 void razDeinitWallCrawlSteering(struct _Instance *instance)
 { // line 922, offset 0x800a32b4
-	/* begin block 1 */
-		// Start line: 1931
-	/* end block 1 */
-	// End Line: 1932
+	struct MATRIX* matrix; // eax
 
+	G2Anim_DisableController(&instance->anim, 1, 38);
+	matrix = instance->matrix;
+	instance->position.z -= 318;
+	instance->oldPos.z -= 318;
+	matrix->t[2] -= 318;
+	instance->oldMatrix->t[2] -= 318;
+	G2Anim_InterpDisableController(&instance->anim, 0, 14, 300);
+	G2Anim_InterpDisableController(&instance->anim, 0, 8, 300);
+	G2Anim_InterpDisableController(&instance->anim, 14, 14, 300);
+	G2Anim_InterpDisableController(&instance->anim, 50, 76, 300);
+	G2Anim_InterpDisableController(&instance->anim, 58, 76, 300);
 }
 
 
