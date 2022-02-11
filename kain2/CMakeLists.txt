@@ -17,6 +17,9 @@ ${PROJECT_NAME} PROPERTIES OUTPUT_NAME "KAIN2"
 ${PROJECT_NAME} PROPERTIES FOLDER "Build Targets/PlayStation"
 )
 
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+
 if(MSVC)
 	set_target_properties(
 	${PROJECT_NAME}
