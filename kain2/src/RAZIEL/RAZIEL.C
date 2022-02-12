@@ -1809,11 +1809,6 @@ void InitGlyphSystem(struct _Instance *instance)
 // void /*$ra*/ mdRazielProcess(struct _Instance *playerInstance /*$s0*/, struct GameTracker *gameTracker /*$s2*/, long *controlCommand /*$s1*/)
 void mdRazielProcess(struct _Instance *playerInstance, struct GameTracker *gameTracker, long *controlCommand)
 { // line 7373, offset 0x800b404c
-	/* begin block 1 */
-		// Start line: 15566
-	/* end block 1 */
-	// End Line: 15567
-
 }
 
 
@@ -1821,18 +1816,76 @@ void mdRazielProcess(struct _Instance *playerInstance, struct GameTracker *gameT
 // void /*$ra*/ RazielProcess(struct _Instance *playerInstance /*$s0*/, struct GameTracker *gameTracker /*$a1*/)
 void RazielProcess(struct _Instance *playerInstance, struct GameTracker *gameTracker)
 { // line 7407, offset 0x800b4104
-	/* begin block 1 */
-		// Start line: 7408
-		// Start offset: 0x800B4104
-	/* end block 1 */
-	// End offset: 0x800B4104
-	// End Line: 7408
+	struct _Instance* v2; // edi
+	int* v3; // esi
+	int CurrentHint; // esi
 
-	/* begin block 2 */
-		// Start line: 15640
-	/* end block 2 */
-	// End Line: 15641
-
+	v2 = gameTracker->playerInstance;
+	v3 = gameTracker->controlCommand[0];
+	ProcessTimers(v2);
+	if ((ControlFlag & 0x100000) != 0)
+		dword_B089C8 &= 0x2000u;
+	else
+		dword_B089C8 = 0;
+	ProcessRazControl(v3);
+	SetStates(v2, gameTracker, v3);
+	CurrentHint = HINT_GetCurrentHint();
+	if ((dword_B089CC & 0x2000) == 0)
+	{
+		if ((dword_B089C8 & 0x2000) != 0)
+		{
+			if (CurrentHint == -1)
+				HINT_StartHint(12);
+			if (CurrentHint == 12 && (int(__cdecl*)(int, int, int))stru_B0841C.SectionList[0].Process == StateHandlerGlyphs)
+			{
+				HINT_KillSpecificHint(12);
+				HINT_StartHint(40);
+			}
+			if (CurrentHint == 40 && (int(__cdecl*)(int, int, int))stru_B0841C.SectionList[0].Process != StateHandlerGlyphs)
+			{
+				HINT_KillSpecificHint(40);
+				HINT_StartHint(12);
+			}
+			goto LABEL_19;
+		}
+		if (CurrentHint != 12)
+			goto LABEL_19;
+	LABEL_15:
+		HINT_KillSpecificHint(12);
+		goto LABEL_19;
+	}
+	if (CurrentHint == 12)
+		goto LABEL_15;
+	if (CurrentHint == 40)
+		HINT_KillSpecificHint(40);
+LABEL_19:
+	if ((dword_B089CC & 0x10000) == 0)
+	{
+		if ((dword_B089C8 & 0x10000) != 0)
+		{
+			if (CurrentHint == -1)
+				HINT_StartHint(32);
+		}
+		else if (CurrentHint == 32)
+		{
+			HINT_KillSpecificHint(32);
+		}
+	}
+	CAMERA_Control(&theCamera, v2);
+	v2->offset.x = 0;
+	v2->offset.y = 0;
+	v2->offset.z = 0;
+	word_B089BC = 0;
+	word_B089BE = 0;
+	word_B089C0 = 0;
+	dword_B087E0 = 0;
+	if (instance)
+		GlyphProcess(instance, gameTracker);
+	dword_B08820 = debugRazielFlags1;
+	word_B08414 = 0;
+	word_B08412 = 0;
+	word_B08410 = 0;
+	debugRazielFlags1 |= debugRazielFlags2;
 }
 
 
