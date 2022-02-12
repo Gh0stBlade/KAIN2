@@ -5022,6 +5022,8 @@ struct _LoadStatus // hashcode: 0x3D15BA2C (dec: 1024834092)
 	long endLoadTime; // size=0, offset=140
 	long currentDirLoading; // size=0, offset=144
 	long currentSector; // size=0, offset=148
+	long sectorTime; // size=0, offset=152
+	long seekTime; // size=0, offset=156
 };
 
 struct RedirectList // hashcode: 0x4C185B3B (dec: 1276664635)
