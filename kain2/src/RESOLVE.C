@@ -6,42 +6,14 @@
 // void /*$ra*/ RESOLVE_Pointers(struct RedirectList *redirectList /*$a0*/, long *data /*$a1*/, long *baseAddr /*$a2*/)
 void RESOLVE_Pointers(struct RedirectList *redirectList, long *data, long *baseAddr)
 { // line 55, offset 0x8003c678
-	/* begin block 1 */
-		// Start line: 60
-		// Start offset: 0x8003C678
-		// Variables:
-			long *rdList; // $a0
-			int i; // $a3
+	__int32 numPointers; // edx
+	__int32* i; // ecx
+	long* v5; // eax
 
-		/* begin block 1.1 */
-			// Start line: 64
-			// Start offset: 0x8003C688
-			// Variables:
-				long *handle; // $v1
-		/* end block 1.1 */
-		// End offset: 0x8003C688
-		// End Line: 65
-	/* end block 1 */
-	// End offset: 0x8003C6A8
-	// End Line: 77
-
-	/* begin block 2 */
-		// Start line: 110
-	/* end block 2 */
-	// End Line: 111
-
-	/* begin block 3 */
-		// Start line: 114
-	/* end block 3 */
-	// End Line: 115
-
-	/* begin block 4 */
-		// Start line: 116
-	/* end block 4 */
-	// End Line: 117
-
+	numPointers = redirectList->numPointers;
+	for (i = redirectList->data; numPointers; *v5 += baseAddr)
+	{
+		v5 = (int*)((char*)data + *i++);
+		--numPointers;
+	}
 }
-
-
-
-

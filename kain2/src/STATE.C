@@ -928,20 +928,26 @@ void G2EmulationInstanceSwitchAnimation(struct _Instance *instance, int CurrentS
 // void /*$ra*/ G2EmulationInstanceSwitchAnimationAlpha(struct _Instance *instance /*$a0*/, int CurrentSection /*$a1*/, int NewAnim /*$a2*/, int NewFrame /*$a3*/, int Frames /*stack 16*/, int Mode /*stack 20*/, int AlphaTable /*stack 24*/)
 void G2EmulationInstanceSwitchAnimationAlpha(struct _Instance *instance, int CurrentSection, int NewAnim, int NewFrame, int Frames, int Mode, int AlphaTable)
 { // line 1057, offset 0x80071aa0
-	/* begin block 1 */
-		// Start line: 1058
-		// Start offset: 0x80071AA0
-		// Variables:
-			struct _G2AnimSection_Type *animSection; // $s1
-	/* end block 1 */
-	// End offset: 0x80071AA0
-	// End Line: 1058
+	struct _G2AnimSection_Type* v7; // esi
+	struct _G2AnimKeylist_Type* Keylist; // ebx
 
-	/* begin block 2 */
-		// Start line: 2021
-	/* end block 2 */
-	// End Line: 2022
-
+	v7 = &instance->anim.section[CurrentSection];
+	Keylist = G2Instance_GetKeylist(instance, NewAnim);
+	G2AnimSection_SetAlphaTable(v7, 0);
+	G2AnimSection_InterpToKeylistFrame(v7, Keylist, NewAnim, NewFrame, 100 * Frames);
+	if (Mode)
+	{
+		G2AnimSection_SetUnpaused(v7);
+		if (Mode == 2)
+			G2AnimSection_SetLooping(v7);
+		else
+			G2AnimSection_SetNoLooping(v7);
+	}
+	else
+	{
+		G2AnimSection_SetPaused(v7);
+	}
+	G2AnimSection_SetAlphaTable(&instance->anim.section[(unsigned __int8)CurrentSection], (&table)[AlphaTable]);
 }
 
 
