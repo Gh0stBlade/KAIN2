@@ -6,30 +6,37 @@
 // void /*$ra*/ RELMOD_InitModulePointers(int baseaddr /*$a0*/, int *relocs /*$a1*/)
 void RELMOD_InitModulePointers(int baseaddr, int *relocs)
 { // line 11, offset 0x8007c974
-	/* begin block 1 */
-		// Start line: 13
-		// Start offset: 0x8007C974
-		// Variables:
-			unsigned int *rel_addr; // $a2
-	/* end block 1 */
-	// End offset: 0x8007CA50
-	// End Line: 38
+	int* v2; // esi
+	int i; // ecx
+	int v4; // eax
+	DWORD* v5; // eax
 
-	/* begin block 2 */
-		// Start line: 22
-	/* end block 2 */
-	// End Line: 23
-
-	/* begin block 3 */
-		// Start line: 23
-	/* end block 3 */
-	// End Line: 24
-
-	/* begin block 4 */
-		// Start line: 25
-	/* end block 4 */
-	// End Line: 26
-
+	v2 = relocs;
+	for (i = *relocs; *v2 != -1; i = *v2)
+	{
+		v4 = i;
+		v4 = i & ~3;
+		++v2;
+		v5 = (DWORD*)(baseaddr + v4);
+		switch (i & 3)
+		{
+		case 0:
+			if (*v5 < 0x80000000)
+				*v5 += baseaddr;
+			break;
+		case 1:
+			*(WORD*)v5 = (unsigned int)(*v2++ + baseaddr + 0x8000) >> 16;
+			break;
+		case 2:
+			*(WORD*)v5 += baseaddr;
+			break;
+		case 3:
+			*v5 += ((unsigned int)baseaddr >> 2) & 0x3FFFFFF;
+			break;
+		default:
+			continue;
+		}
+	}
 }
 
 
@@ -37,33 +44,37 @@ void RELMOD_InitModulePointers(int baseaddr, int *relocs)
 // void /*$ra*/ RELMOD_RelocModulePointers(int baseaddr /*$a0*/, int offset /*$a1*/, int *relocs /*$a2*/)
 void RELMOD_RelocModulePointers(int baseaddr, int offset, int *relocs)
 { // line 42, offset 0x8007ca58
-	/* begin block 1 */
-		// Start line: 44
-		// Start offset: 0x8007CA58
-		// Variables:
-			int oldbaseaddr; // $v0
-			int *rel_addr; // $a3
-	/* end block 1 */
-	// End offset: 0x8007CB38
-	// End Line: 69
+	int* v3; // esi
+	int i; // ecx
+	int v5; // eax
+	int* v6; // eax
+	int v7; // ecx
 
-	/* begin block 2 */
-		// Start line: 86
-	/* end block 2 */
-	// End Line: 87
-
-	/* begin block 3 */
-		// Start line: 87
-	/* end block 3 */
-	// End Line: 88
-
-	/* begin block 4 */
-		// Start line: 90
-	/* end block 4 */
-	// End Line: 91
-
+	v3 = relocs;
+	for (i = *relocs; *v3 != -1; i = *v3)
+	{
+		v5 = i;
+		v5 = i & ~3;
+		++v3;
+		v6 = (int*)(baseaddr + v5);
+		switch (i & 3)
+		{
+		case 0:
+			v7 = offset + *v6;
+			goto LABEL_7;
+		case 1:
+			*(WORD*)v6 = (unsigned int)(*v3++ + baseaddr + 0x8000) >> 16;
+			break;
+		case 2:
+			*(WORD*)v6 += offset;
+			break;
+		case 3:
+			v7 = (((unsigned int)baseaddr >> 2) & 0x3FFFFFF) - (((unsigned int)(baseaddr - offset) >> 2) & 0x3FFFFFF) + *v6;
+		LABEL_7:
+			*v6 = v7;
+			break;
+		default:
+			continue;
+		}
+	}
 }
-
-
-
-

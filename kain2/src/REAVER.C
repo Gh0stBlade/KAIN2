@@ -6,20 +6,29 @@
 // void /*$ra*/ SoulReaverInit(struct _Instance *instance /*$s0*/, struct GameTracker *gameTracker /*$a1*/)
 void SoulReaverInit(struct _Instance *instance, struct GameTracker *gameTracker)
 { // line 55, offset 0x80079d48
-	/* begin block 1 */
-		// Start line: 56
-		// Start offset: 0x80079D48
-		// Variables:
-			struct __ReaverData *data; // $v1
-	/* end block 1 */
-	// End offset: 0x80079DD0
-	// End Line: 109
+	struct __ReaverData* v2; // eax
 
-	/* begin block 2 */
-		// Start line: 110
-	/* end block 2 */
-	// End Line: 111
-
+	if ((instance->flags & 0x20000) != 0)
+	{
+		MEMPACK_Free((char*)instance->extraData);
+	}
+	else
+	{
+		v2 = (struct __ReaverData*)MEMPACK_Malloc(0x24u, 0x1Eu);
+		instance->extraData = v2;
+		v2->CurrentReaver = 2;
+		word_C55188 = 0;
+		v2->ReaverChargeTime = 0;
+		v2->ReaverShockAmount = 0;
+		v2->ReaverOn = 1;
+		v2->ReaverPickedUp = 0;
+		v2->ReaverSize = 4096;
+		v2->ReaverDeg = 0;
+		v2->ReaverScale = 4096;
+		v2->ReaverTargetScale = 4096;
+		COLLIDE_SegmentCollisionOff(instance, 0);
+	}
+	FX_ReaverBladeInit();
 }
 
 
@@ -27,41 +36,88 @@ void SoulReaverInit(struct _Instance *instance, struct GameTracker *gameTracker)
 // void /*$ra*/ SoulReaverCollide(struct _Instance *instance /*$s2*/, struct GameTracker *gameTracker /*$a1*/)
 void SoulReaverCollide(struct _Instance *instance, struct GameTracker *gameTracker)
 { // line 114, offset 0x80079de8
-	/* begin block 1 */
-		// Start line: 115
-		// Start offset: 0x80079DE8
-		// Variables:
-			struct _CollideInfo *collideInfo; // $s0
-			struct _HSphere *S; // $v0
-			struct _Instance *target; // $s3
-			struct __ReaverData *reaverData; // $v0
+	struct _CollideInfo* collideInfo; // edi
+	struct _Instance* v4; // ebx
+	struct __ReaverData* extraData; // ebp
+	int v6; // ecx
+	int v7; // eax
+	int v8; // eax
+	struct __ReaverData* v9; // ebx
+	struct Level* LevelWithID; // eax
+	struct _Instance* v11; // edi
+	int v12; // eax
+	int Data; // [esp+14h] [ebp+4h]
 
-		/* begin block 1.1 */
-			// Start line: 130
-			// Start offset: 0x80079E54
-			// Variables:
-				long type; // $s1
-		/* end block 1.1 */
-		// End offset: 0x80079F08
-		// End Line: 203
-
-		/* begin block 1.2 */
-			// Start line: 229
-			// Start offset: 0x80079F18
-			// Variables:
-				struct _Instance *inst; // $v1
-		/* end block 1.2 */
-		// End offset: 0x80079F18
-		// End Line: 229
-	/* end block 1 */
-	// End offset: 0x80079F3C
-	// End Line: 236
-
-	/* begin block 2 */
-		// Start line: 292
-	/* end block 2 */
-	// End Line: 293
-
+	collideInfo = (struct _CollideInfo*)instance->collideInfo;
+	if (collideInfo->type0 == 1)
+	{
+		if (collideInfo->type1 == 1)
+		{
+			if (*((BYTE*)collideInfo->prim0 + 4) == 9 && *((BYTE*)collideInfo->prim1 + 4) == 8)
+			{
+				v4 = (struct _Instance*)collideInfo->inst1;
+				Data = 0;
+				COLLIDE_SegmentCollisionOff(instance, 0);
+				extraData = (struct __ReaverData*)instance->extraData;
+				v6 = 0;
+				switch (extraData->CurrentReaver)
+				{
+				case 1:
+				case 2:
+					Data = 4096;
+					break;
+				case 6:
+					Data = 32;
+					break;
+				case 9:
+					INSTANCE_Post(v4, 0x100001D, (int)instance);
+					extraData->CurrentReaver = 2;
+					word_C55188 = 0;
+					v6 = 1;
+					break;
+				default:
+					break;
+				}
+				if (!v6)
+				{
+					if (instance->LinkParent)
+					{
+						COLLIDE_SegmentCollisionOff(instance, 0);
+						v7 = SetMonsterHitData(instance->LinkParent, v4, Data, 0, 0);
+						INSTANCE_Post(gameTrackerX.playerInstance, 16777247, v7);
+						v8 = SetFXHitData(instance, collideInfo->segment, 50, Data);
+						INSTANCE_Post(v4, 0x400000, v8);
+					}
+				}
+			}
+		}
+		else
+		{
+			if (collideInfo->type1 != 3)
+			{
+			LABEL_17:
+				v11 = (struct _Instance*)collideInfo->inst1;
+				v12 = v11->flags;
+				v12 = v12 | 4;
+				v11->flags = v12;
+				return;
+			}
+			v9 = (struct __ReaverData*)instance->extraData;
+			if (v9->CurrentReaver == 9)
+			{
+				LevelWithID = STREAM_GetLevelWithID(instance->currentStreamUnitID);
+				if (MBMISSILE_BreakPillar(LevelWithID, collideInfo->bspID))
+				{
+					COLLIDE_SegmentCollisionOff(instance, 0);
+					v9->CurrentReaver = 2;
+					word_C55188 = 0;
+				}
+			}
+		}
+	}
+	if (collideInfo->type1 != 3)
+		goto LABEL_17;
+	COLLIDE_SetBSPTreeFlag(collideInfo, 2048);
 }
 
 
@@ -69,20 +125,83 @@ void SoulReaverCollide(struct _Instance *instance, struct GameTracker *gameTrack
 // void /*$ra*/ SoulReaverProcess(struct _Instance *instance /*$a0*/, struct GameTracker *gameTracker /*$a1*/)
 void SoulReaverProcess(struct _Instance *instance, struct GameTracker *gameTracker)
 { // line 240, offset 0x80079f58
-	/* begin block 1 */
-		// Start line: 241
-		// Start offset: 0x80079F58
-		// Variables:
-			struct __ReaverData *data; // $v0
-	/* end block 1 */
-	// End offset: 0x80079F8C
-	// End Line: 248
+	struct __ReaverData* extraData; // esi
+	char* data; // edi
+	__int16 ReaverSize; // ax
+	__int16 v5; // ax
+	__int16 CurrentReaver; // ax
+	int v7; // eax
+	__int16 ReaverTargetScale; // cx
+	__int16 ReaverScale; // bp
+	int v10; // eax
+	__int16 v11; // ax
+	int flags; // eax
 
-	/* begin block 2 */
-		// Start line: 555
-	/* end block 2 */
-	// End Line: 556
-
+	extraData = (struct __ReaverData*)instance->extraData;
+	if (extraData->ReaverPickedUp)
+		instance->currentStreamUnitID = gameTrackerX.playerInstance->currentStreamUnitID;
+	data = (char*)instance->data;
+	FX_SetReaverInstance(instance);
+	extraData->ReaverDeg = (extraData->ReaverDeg + (rand() & 0x1F) + 256) & 0xFFF;
+	ReaverSize = extraData->ReaverSize;
+	if (extraData->ReaverOn == 1)
+	{
+		if (ReaverSize >= 4096)
+			goto LABEL_9;
+		v5 = ReaverSize + 256;
+	}
+	else
+	{
+		if (ReaverSize <= 0)
+			goto LABEL_9;
+		v5 = ReaverSize - 256;
+	}
+	extraData->ReaverSize = v5;
+LABEL_9:
+	CurrentReaver = extraData->CurrentReaver;
+	if (CurrentReaver > 0)
+	{
+		v7 = 4 * CurrentReaver;
+		extraData->ReaverBladeColor = *(DWORD*)&data[v7 + 28];
+		extraData->ReaverBladeGlowColor = *(DWORD*)&data[v7 + 60];
+		extraData->ReaverGlowColor = *(DWORD*)&data[v7 - 4];
+	}
+	ReaverTargetScale = extraData->ReaverTargetScale;
+	ReaverScale = extraData->ReaverScale;
+	if (ReaverTargetScale - ReaverScale < 0)
+		v10 = ReaverScale - ReaverTargetScale;
+	else
+		v10 = ReaverTargetScale - ReaverScale;
+	if (v10 > 128)
+	{
+		if (ReaverScale > ReaverTargetScale)
+			extraData->ReaverScale = ReaverScale - 128;
+		v11 = extraData->ReaverScale;
+		if (v11 < ReaverTargetScale)
+			extraData->ReaverScale = v11 + 128;
+	}
+	else
+	{
+		extraData->ReaverScale = ReaverTargetScale;
+	}
+	if (extraData->ReaverOn == 1)
+	{
+		flags = instance->flags;
+		if (extraData->ReaverScale > 0)
+		{
+			flags &= ~0x800u;
+			instance->flags = flags;
+			SoulReaverCharge(instance, extraData);
+			return;
+		}
+	}
+	else
+	{
+		flags = instance->flags;
+	}
+	flags |= 0x800u;
+	instance->flags = flags;
+	SoulReaverCharge(instance, extraData);
 }
 
 
@@ -90,41 +209,68 @@ void SoulReaverProcess(struct _Instance *instance, struct GameTracker *gameTrack
 // void /*$ra*/ CollideReaverProjectile(struct _Instance *instance /*$s2*/, struct GameTracker *gameTracker /*$s4*/)
 void CollideReaverProjectile(struct _Instance *instance, struct GameTracker *gameTracker)
 { // line 256, offset 0x80079fa4
-	/* begin block 1 */
-		// Start line: 257
-		// Start offset: 0x80079FA4
-		// Variables:
-			struct _CollideInfo *collideInfo; // $s1
-			struct _Instance *target; // $s3
-			long type; // $s0
-			long reavType; // $a0
+	int v2; // ebp
+	struct _CollideInfo* collideInfo; // edi
+	struct _Instance* v4; // ebx
+	struct Level* LevelWithID; // eax
+	int v6; // eax
+	int v7; // eax
+	struct Level* v8; // eax
+	struct _Instance* v9; // edi
+	int v10; // eax
 
-		/* begin block 1.1 */
-			// Start line: 279
-			// Start offset: 0x8007A01C
-			// Variables:
-				struct Level *level; // $v1
-		/* end block 1.1 */
-		// End offset: 0x8007A04C
-		// End Line: 288
-
-		/* begin block 1.2 */
-			// Start line: 342
-			// Start offset: 0x8007A0B0
-			// Variables:
-				struct _Instance *inst; // $v1
-		/* end block 1.2 */
-		// End offset: 0x8007A0B0
-		// End Line: 342
-	/* end block 1 */
-	// End offset: 0x8007A0E0
-	// End Line: 350
-
-	/* begin block 2 */
-		// Start line: 587
-	/* end block 2 */
-	// End Line: 588
-
+	v2 = 0;
+	collideInfo = (struct _CollideInfo*)instance->collideInfo;
+	v4 = (struct _Instance*)collideInfo->inst1;
+	if (collideInfo->type0 == 1)
+	{
+		if (collideInfo->type1 == 1)
+		{
+			switch (*((DWORD*)instance->extraData + 1))
+			{
+			case 3:
+			case 4:
+				v2 = 4096;
+				goto LABEL_8;
+			case 8:
+				v2 = 32;
+				LevelWithID = STREAM_GetLevelWithID(instance->currentStreamUnitID);
+				if (!LevelWithID || LevelWithID->waterZLevel <= instance->position.z)
+					goto LABEL_8;
+				return;
+			case 0xB:
+				INSTANCE_Post(v4, 0x100001E, (int)instance);
+				goto LABEL_8;
+			default:
+			LABEL_8:
+				if (v2)
+				{
+					v6 = SetMonsterHitData(instance, 0, v2, 0, 0);
+					INSTANCE_Post(v4, 0x1000021, v6);
+					v7 = SetFXHitData(instance, 1, 50, v2);
+					INSTANCE_Post(v4, 0x400000, v7);
+				}
+				break;
+			}
+		}
+		else if (collideInfo->type1 == 3 && *((DWORD*)instance->extraData + 1) == 11)
+		{
+			v8 = STREAM_GetLevelWithID(instance->currentStreamUnitID);
+			MBMISSILE_BreakPillar(v8, collideInfo->bspID);
+		}
+	}
+	if (collideInfo->type1 == 3)
+	{
+		COLLIDE_SetBSPTreeFlag(collideInfo, 2048);
+	}
+	else
+	{
+		v9 = (struct _Instance*)collideInfo->inst1;
+		v10 = v9->flags;
+		v10 = v10 | 4;
+		v9->flags = v10;
+	}
+	CollidePhysicalObject(instance);
 }
 
 
@@ -132,34 +278,22 @@ void CollideReaverProjectile(struct _Instance *instance, struct GameTracker *gam
 // unsigned long /*$ra*/ SoulReaverQuery(struct _Instance *instance /*$a0*/, unsigned long query /*$a1*/)
 unsigned long SoulReaverQuery(struct _Instance *instance, unsigned long query)
 { // line 354, offset 0x8007a100
-	/* begin block 1 */
-		// Start line: 357
-		// Start offset: 0x8007A100
+	unsigned int result; // eax
+	struct __ReaverData* extraData; // ecx
 
-		/* begin block 1.1 */
-			// Start line: 366
-			// Start offset: 0x8007A148
-			// Variables:
-				struct __ReaverData *reaverData; // $a0
-				unsigned long retval; // $v1
-		/* end block 1.1 */
-		// End offset: 0x8007A17C
-		// End Line: 375
-	/* end block 1 */
-	// End offset: 0x8007A17C
-	// End Line: 381
-
-	/* begin block 2 */
-		// Start line: 791
-	/* end block 2 */
-	// End Line: 792
-
-	/* begin block 3 */
-		// Start line: 793
-	/* end block 3 */
-	// End Line: 794
-
-	return 0;
+	if (query == 1)
+		return 0x20000;
+	if (query == 4)
+		return 4096;
+	if (query != 40)
+		return 0;
+	extraData = (struct __ReaverData*)instance->extraData;
+	if (!extraData->ReaverOn)
+		return 0;
+	result = 1;
+	if (extraData->ReaverTargetScale)
+		return 3;
+	return result;
 }
 
 
@@ -167,21 +301,26 @@ unsigned long SoulReaverQuery(struct _Instance *instance, unsigned long query)
 // void /*$ra*/ SoulReaverImbue(struct _Instance *instance /*$a0*/, int number /*$a1*/)
 void SoulReaverImbue(struct _Instance *instance, int number)
 { // line 383, offset 0x8007a184
-	/* begin block 1 */
-		// Start line: 384
-		// Start offset: 0x8007A184
-		// Variables:
-			long color; // $a1
-			struct __ReaverTuneData *tuneData; // $v0
-	/* end block 1 */
-	// End offset: 0x8007A184
-	// End Line: 384
-
-	/* begin block 2 */
-		// Start line: 849
-	/* end block 2 */
-	// End Line: 850
-
+	FX_DoBlastRing(
+		instance,
+		(struct _SVector*)&instance->position,
+		instance->matrix,
+		0,
+		320,
+		0,
+		240,
+		0,
+		0,
+		-65536,
+		0,
+		0,
+		160,
+		320,
+		*((DWORD*)instance->data + number - 1),
+		0,
+		0,
+		20,
+		1);
 }
 
 
@@ -189,22 +328,58 @@ void SoulReaverImbue(struct _Instance *instance, int number)
 // void /*$ra*/ SoulReaverCharge(struct _Instance *instance /*$s2*/, struct __ReaverData *data /*$s0*/)
 void SoulReaverCharge(struct _Instance *instance, struct __ReaverData *data)
 { // line 415, offset 0x8007a210
-	/* begin block 1 */
-		// Start line: 416
-		// Start offset: 0x8007A210
-		// Variables:
-			long color; // $v1
-			long shock; // $a0
-			struct __ReaverTuneData *tuneData; // $s1
-	/* end block 1 */
-	// End offset: 0x8007A31C
-	// End Line: 461
+	__int32 ReaverChargeTime; // eax
+	DWORD* v3; // ebx
+	__int32 ReaverShockAmount; // eax
+	__int32 v5; // eax
+	int v6; // eax
+	__int32 v7; // eax
+	int CurrentReaver; // edx
 
-	/* begin block 2 */
-		// Start line: 922
-	/* end block 2 */
-	// End Line: 923
-
+	ReaverChargeTime = data->ReaverChargeTime;
+	v3 = instance->data;
+	if (ReaverChargeTime)
+	{
+		data->ReaverChargeTime = ReaverChargeTime - gameTrackerX.timeMult;
+		ReaverShockAmount = data->ReaverShockAmount;
+		if (ReaverShockAmount >= 245760)
+		{
+			v6 = 110;
+		}
+		else
+		{
+			v5 = gameTrackerX.timeMult + ReaverShockAmount;
+			data->ReaverShockAmount = v5;
+			v6 = v5 / 4096 + 50;
+		}
+		GAMEPAD_Shock1(v6, 20480);
+		v7 = data->ReaverChargeTime;
+		if (v7 <= 0)
+		{
+			CurrentReaver = data->CurrentReaver;
+			data->ReaverChargeTime = v7 + 61440;
+			FX_DoBlastRing(
+				instance,
+				(struct _SVector*)&instance->position,
+				instance->matrix,
+				0,
+				360,
+				0,
+				0,
+				0,
+				0,
+				-65536,
+				0,
+				320,
+				272,
+				224,
+				v3[CurrentReaver - 1],
+				0,
+				0,
+				-1,
+				1);
+		}
+	}
 }
 
 
@@ -224,64 +399,143 @@ void StopSoulReaverCharge(struct __ReaverData *data, struct _Instance *instance)
 // void /*$ra*/ SoulReaverPost(struct _Instance *instance /*$s1*/, unsigned long message /*$a1*/, unsigned long data /*$s3*/)
 void SoulReaverPost(struct _Instance *instance, unsigned long message, unsigned long data)
 { // line 475, offset 0x8007a374
-	/* begin block 1 */
-		// Start line: 476
-		// Start offset: 0x8007A374
-		// Variables:
-			struct __ReaverData *reaverData; // $s0
+	struct __ReaverData* extraData; // edi
+	int v4; // eax
+	bool v5; // zf
+	int flags; // eax
+	int v7; // eax
+	int v8; // eax
+	__int16 y; // cx
+	__int16 z; // dx
+	struct __ReaverData* v11; // eax
+	struct evObjectBirthProjectileData* v12; // esi
+	struct _Instance* birthInstance; // eax
+	int v14; // eax
+	MATRIX* matrix; // [esp-Ch] [ebp-28h]
+	SVECTOR v1; // [esp+Ch] [ebp-10h] BYREF
+	SVECTOR v0; // [esp+14h] [ebp-8h] BYREF
 
-		/* begin block 1.1 */
-			// Start line: 526
-			// Start offset: 0x8007A55C
-			// Variables:
-				struct SVECTOR oldVector; // stack offset -40
-				struct SVECTOR startPos; // stack offset -32
-
-			/* begin block 1.1.1 */
-				// Start line: 530
-				// Start offset: 0x8007A55C
-				// Variables:
-					struct __ReaverData *reaverData; // $v0
-					struct evObjectBirthProjectileData *pData; // $s0
-
-				/* begin block 1.1.1.1 */
-					// Start line: 570
-					// Start offset: 0x8007A5F4
-					// Variables:
-						short _x1; // $v1
-						short _y1; // $a0
-						short _z1; // $a2
-						struct _Position *_v0; // $v0
-				/* end block 1.1.1.1 */
-				// End offset: 0x8007A5F4
-				// End Line: 570
-
-				/* begin block 1.1.1.2 */
-					// Start line: 570
-					// Start offset: 0x8007A5F4
-					// Variables:
-						short _x1; // $v1
-						short _y1; // $a0
-						short _z1; // $a1
-						struct _Position *_v0; // $v0
-				/* end block 1.1.1.2 */
-				// End offset: 0x8007A5F4
-				// End Line: 570
-			/* end block 1.1.1 */
-			// End offset: 0x8007A5F4
-			// End Line: 570
-		/* end block 1.1 */
-		// End offset: 0x8007A5F4
-		// End Line: 570
-	/* end block 1 */
-	// End offset: 0x8007A6B4
-	// End Line: 615
-
-	/* begin block 2 */
-		// Start line: 1059
-	/* end block 2 */
-	// End Line: 1060
-
+	extraData = (struct __ReaverData*)instance->extraData;
+	if (message > 0x800002)
+	{
+		switch (message)
+		{
+		case 0x800010u:
+			extraData->ReaverChargeTime = 0;
+			extraData->ReaverShockAmount = 0;
+			GAMEPAD_Shock1(0, 0);
+			FX_EndInstanceEffects(instance);
+			matrix = instance->matrix;
+			v0.vx = 0;
+			v0.vy = 0;
+			v0.vz = 400;
+			ApplyMatrixSV(matrix, &v0, &v1);
+			y = instance->position.y;
+			v1.vx += instance->position.x;
+			z = instance->position.z;
+			v11 = (struct __ReaverData*)instance->extraData;
+			v1.vy += y;
+			v1.vz += z;
+			v12 = PHYSOB_BirthProjectile(instance->LinkParent, 0, v11->CurrentReaver + 2);
+			birthInstance = v12->birthInstance;
+			if (birthInstance)
+			{
+				birthInstance->collideFunc = (void(__stdcall*)())CollideReaverProjectile;
+				v12->birthInstance->position.x = v1.vx;
+				v12->birthInstance->position.y = v1.vy;
+				v12->birthInstance->position.z = v1.vz;
+				INSTANCE_Post(v12->birthInstance, 0x800010, data);
+				v12->birthInstance->position.x = v1.vx;
+				v12->birthInstance->position.y = v1.vy;
+				v12->birthInstance->position.z = v1.vz;
+			}
+			break;
+		case 0x800100u:
+			v5 = extraData->ReaverTargetScale == 0;
+			extraData->ReaverOn = 1;
+			if (!v5)
+				goto LABEL_21;
+			extraData->ReaverTargetScale = 4096;
+			flags = instance->flags;
+			flags &= ~0x800u;
+			instance->flags = flags;
+			break;
+		case 0x800101u:
+			extraData->ReaverOn = 0;
+			extraData->ReaverChargeTime = 0;
+			extraData->ReaverShockAmount = 0;
+			GAMEPAD_Shock1(0, 0);
+			FX_EndInstanceEffects(instance);
+			v7 = instance->flags;
+			v7 |= 0x800u;
+			instance->flags = v7;
+			break;
+		case 0x800103u:
+			extraData->CurrentReaver = data;
+			word_C55188 = (WORD)data == 6;
+			FX_DoBlastRing(
+				instance,
+				(struct _SVector*)&instance->position,
+				instance->matrix,
+				0, 320, 0, 240,
+				0, 0, -65536,
+				0, 0, 160, 320,
+				*((DWORD*)instance->data + data - 1),
+				0, 0, 20, 1);
+			break;
+		case 0x800104u:
+			extraData->ReaverChargeTime = 61440;
+			v8 = SetObjectAbsorbData(instance, 0, 60);
+			INSTANCE_Broadcast(instance, 32, 0x800028, v8);
+			break;
+		case 0x800105u:
+			extraData->ReaverChargeTime = 0;
+			extraData->ReaverShockAmount = 0;
+			GAMEPAD_Shock1(0, 0);
+			FX_EndInstanceEffects(instance);
+			break;
+		case 0x800107u:
+			extraData->ReaverTargetScale = data;
+			break;
+		case 0x800108u:
+			extraData->ReaverTargetScale = 4096;
+		LABEL_21:
+			v14 = instance->flags;
+			v14 &= ~0x800u;
+			instance->flags = v14;
+			break;
+		case 0x800109u:
+			extraData->ReaverChargeTime = 0;
+			extraData->ReaverShockAmount = 0;
+			GAMEPAD_Shock1(0, 0);
+			FX_EndInstanceEffects(instance);
+			extraData->ReaverTargetScale = 0;
+			break;
+		default:
+			return;
+		}
+	}
+	else
+	{
+		switch (message)
+		{
+		case 0x800002u:
+			if (!instance->LinkParent)
+				INSTANCE_LinkToParent(instance, (struct _Instance*)data, 41);
+			extraData->ReaverOn = 1;
+			extraData->ReaverPickedUp = 1;
+			v4 = instance->flags;
+			v4 &= ~0x800;
+			instance->flags = v4;
+			break;
+		case 0x200002u:
+			COLLIDE_SegmentCollisionOn(instance, 0);
+			break;
+		case 0x200003u:
+			COLLIDE_SegmentCollisionOff(instance, 0);
+			break;
+		}
+	}
 }
 
 
@@ -344,19 +598,5 @@ void _SoulReaverAnimate(struct _Instance *instance)
 // int /*$ra*/ SoulReaverFire()
 int SoulReaverFire()
 { // line 690, offset 0x8007a8b0
-	/* begin block 1 */
-		// Start line: 1514
-	/* end block 1 */
-	// End Line: 1515
-
-	/* begin block 2 */
-		// Start line: 1515
-	/* end block 2 */
-	// End Line: 1516
-
-	return 0;
+	return word_C55188;
 }
-
-
-
-
