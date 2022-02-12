@@ -337,15 +337,12 @@ struct _BigFileDir * LOAD_ReadDirectory(struct _BigFileDirEntry *dirEntry)
 
 void LOAD_InitCdLoader(char *bigFileName, char *voiceFileName)
 {
-	struct CdlFILE fp; // stack offset -40
-	long i; // $s1
-	char *ptr; // $s0
+	struct CdlFILE fp;
+	long i;
+	char *ptr;
 
-	//s0 = bigFileName
-	//s1 = 0
 	loadStatus.state = 0;
 
-	//loc_80037AF0
 	for(i = 0; i < 10; i++)
 	{
 		if (CdSearchFile(&fp, bigFileName) != NULL)
@@ -360,10 +357,6 @@ void LOAD_InitCdLoader(char *bigFileName, char *voiceFileName)
 	{
 		LOAD_InitCdStreamMode();
 		loadStatus.bigFile.bigfileBaseOffset = CdPosToInt(&fp.pos);
-		//a0 = 0
-		//a1 = &loadStatus.bigFile.numSubDirs
-		//a2 = 4
-		//a3 = 0
 		loadStatus.cdWaitTime = 0;
 		loadStatus.currentQueueFile.readStatus = 0;
 		loadStatus.bigFile.currentDir = NULL;
@@ -373,66 +366,37 @@ void LOAD_InitCdLoader(char *bigFileName, char *voiceFileName)
 		loadStatus.bigFile.searchDirID = 0;
 
 		LOAD_CdReadFromBigFile(0, (unsigned long*)&loadStatus.bigFile.numSubDirs, 4, 0, 0);
-		LOAD_ProcessReadQueue();
-
-		if (LOAD_IsFileLoading() == 0)
+		
+		do
 		{
-		}
+			LOAD_ProcessReadQueue();
+		
+		} while (LOAD_IsFileLoading() != 0);
+		
+
+		CdControlF(CdlPause, NULL);
+		ptr = MEMPACK_Malloc((loadStatus.bigFile.numSubDirs << 3) + 4, 8);
+
+		CdSync(0, NULL);
+
+		LOAD_CdReadFromBigFile(0, (unsigned long*)ptr, (loadStatus.bigFile.numSubDirs << 3) + 4, 0, 0);
+		ptr += 4;
+		loadStatus.bigFile.subDirList = (struct _BigFileDirEntry*)ptr;
+		
+		do
+		{
+			LOAD_ProcessReadQueue();
+
+		} while (LOAD_IsFileLoading() != 0);
+
+		loadStatus.bigFile.rootDir = LOAD_ReadDirectory(loadStatus.bigFile.subDirList);
+
+		do
+		{
+			LOAD_ProcessReadQueue();
+
+		} while (LOAD_IsFileLoading != 0);
 	}
-	//loc_80037C14
-#if 0
-		jal     sub_800384C8
-		nop
-		bnez    $v0, loc_80037B6C
-		li      $a0, 9
-		jal     sub_800BE27C
-		move    $a1, $zero
-		lw      $v0, -0x43F4($gp)
-		li      $a1, 8
-		sll     $v0, 3
-		addiu   $s1, $v0, 4
-		jal     sub_80050204
-		move    $a0, $s1
-		move    $a0, $zero
-		move    $a1, $a0
-		jal     PadChkVsync_0
-		move    $s0, $v0
-		move    $a0, $zero
-		move    $a1, $s0
-		move    $a2, $s1
-		move    $a3, $a0
-		jal     sub_80037A40
-		sw      $zero, 0x30 + var_20($sp)
-		addiu   $s0, 4
-		sw      $s0, -0x43F0($gp)
-
-		loc_80037BD4:
-	jal     sub_800377BC
-		nop
-		jal     sub_800384C8
-		nop
-		bnez    $v0, loc_80037BD4
-		nop
-		lw      $a0, -0x43F0($gp)
-		jal     sub_80037A6C
-		nop
-		sw      $v0, -0x440C($gp)
-
-		loc_80037BFC:
-	jal     sub_800377BC
-		nop
-		jal     sub_800384C8
-		nop
-		bnez    $v0, loc_80037BFC
-		nop
-
-		loc_80037C14 :
-	lw      $ra, 0x30 + var_s8($sp)
-		lw      $s1, 0x30 + var_s4($sp)
-		lw      $s0, 0x30 + var_s0($sp)
-		jr      $ra
-		addiu   $sp, 0x40
-#endif
 }
 
 
