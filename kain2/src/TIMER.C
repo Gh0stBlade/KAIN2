@@ -6,22 +6,24 @@
 // unsigned long /*$ra*/ TIMER_GetTimeMS()
 unsigned long TIMER_GetTimeMS()
 { // line 41, offset 0x8003d7b0
-	/* begin block 1 */
-		// Start line: 42
-		// Start offset: 0x8003D7B0
-		// Variables:
-			unsigned long ticks; // $s1
-			unsigned long mticks; // $s0
-	/* end block 1 */
-	// End offset: 0x8003D7B0
-	// End Line: 42
+#ifdef PSX
+  uint ticks;
+  uint mticks;
+  
+  EnterCriticalSection();
+  ticks = GetRCnt(0xf2000000);
+  mticks = gameTimer;
+  ExitCriticalSection();
+  return (mticks >> 16) * 126819 + (ticks & 0xffff | mticks << 16) / 33869;
+#else
+  unsigned __int64 result; // rax
 
-	/* begin block 2 */
-		// Start line: 82
-	/* end block 2 */
-	// End Line: 83
-
-	return 0;
+  QueryPerformanceCounter(&PerformanceCount);
+  QueryPerformanceFrequency(&Frequency);
+  result = (unsigned __int64)(1000 * PerformanceCount.QuadPart) / Frequency.QuadPart;
+  qword_C57FB0 = result;
+  return result;
+#endif
 }
 
 
@@ -29,27 +31,72 @@ unsigned long TIMER_GetTimeMS()
 // unsigned long /*$ra*/ TIMER_TimeDiff(unsigned long x /*$s0*/)
 unsigned long TIMER_TimeDiff(unsigned long x)
 { // line 72, offset 0x8003d840
-	/* begin block 1 */
-		// Start line: 73
-		// Start offset: 0x8003D840
-		// Variables:
-			unsigned long intrs; // $v1
-			unsigned long ticks; // $a2
-			unsigned long prevIntrs; // $a1
-			unsigned long prevTicks; // $a0
-			unsigned long diffIntrs; // $v1
-			unsigned long diffTicks; // $s0
-			unsigned long timeDiff; // $v1
-	/* end block 1 */
-	// End offset: 0x8003D914
-	// End Line: 122
+#ifdef PSX
+  uint ticks;
+  uint prevIntrs;
+  uint timeDiff;
+  ulong res;
+  uint prevTicks;
+  int diffTicks;
+  
+  ticks = GetRCnt(0xf2000000);
+  ticks = ticks & 0xffff;
+  timeDiff = x >> 0x10;
+  prevIntrs = gameTimer & 0xffff;
+  prevTicks = x & 0xffff;
+  if (prevIntrs < timeDiff) {
+    timeDiff = (prevIntrs + 0x10000) - timeDiff;
+  }
+  else {
+    timeDiff = prevIntrs - timeDiff;
+  }
+  if (ticks < prevTicks) {
+    diffTicks = (ticks + 0xffff) - prevTicks;
+    timeDiff = timeDiff - 1;
+  }
+  else {
+    diffTicks = ticks - prevTicks;
+  }
+  if (timeDiff < 2259) {
+    res = ((diffTicks * 29 + timeDiff * 1900515) / 1000);
+  }
+  else {
+    res = 4293263;
+  }
+  if (gTimerEnabled == 0) {
+    res = 0x0;
+  }
+  return (ulong)res;
+#else
+  unsigned __int16 RCnt; // ax
+  unsigned int v2; // edx
+  unsigned int v3; // ecx
+  int v4; // eax
+  unsigned int result; // eax
 
-	/* begin block 2 */
-		// Start line: 154
-	/* end block 2 */
-	// End Line: 155
-
-	return 0;
+  RCnt = GetRCnt(0xF2000000);
+  v2 = x >> 16;
+  if ( x <= (unsigned __int16)gameTimer )
+    v3 = (unsigned __int16)gameTimer - v2;
+  else
+    v3 = (unsigned __int16)gameTimer - v2 + 65536;
+  if ( (unsigned __int16)x <= (unsigned int)RCnt )
+  {
+    v4 = RCnt - (unsigned __int16)x;
+  }
+  else
+  {
+    v4 = RCnt - (unsigned __int16)x + 65535;
+    --v3;
+  }
+  if ( v3 <= 2258 )
+    result = 29 * (v4 + 65535 * v3) / 1000;
+  else
+    result = 4293263;
+  if ( !gTimerEnabled )
+    return 0;
+  return result;
+#endif
 }
 
 
