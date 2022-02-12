@@ -4034,33 +4034,29 @@ void FX_DrawFField(struct MATRIX *wcTransform, struct _FXForceFieldEffect *field
 // struct _FXForceFieldEffect * /*$ra*/ FX_StartFField(struct _Instance *instance /*$s2*/, int size /*$s3*/, struct _Position *offset /*$s1*/, int size_diff /*$s4*/, int size_change /*stack 16*/, int deg_change /*stack 20*/, long color /*stack 24*/)
 struct _FXForceFieldEffect * FX_StartFField(struct _Instance *instance, int size, struct _Position *offset, int size_diff, int size_change, int deg_change, long color)
 { // line 8021, offset 0x8004e810
-	/* begin block 1 */
-		// Start line: 8022
-		// Start offset: 0x8004E810
-		// Variables:
-			struct _FXForceFieldEffect *field; // $s0
+	struct _FXForceFieldEffect* result; // eax
 
-		/* begin block 1.1 */
-			// Start line: 8027
-			// Start offset: 0x8004E854
-			// Variables:
-				short _x1; // $v0
-				short _y1; // $v1
-				short _z1; // $a1
-				struct _SVector *_v0; // $v0
-		/* end block 1.1 */
-		// End offset: 0x8004E854
-		// End Line: 8027
-	/* end block 1 */
-	// End offset: 0x8004E8C0
-	// End Line: 8045
-
-	/* begin block 2 */
-		// Start line: 19583
-	/* end block 2 */
-	// End Line: 19584
-
-	return null;
+	result = (struct _FXForceFieldEffect*)MEMPACK_Malloc(0x2Cu, 0xDu);
+	if (result)
+	{
+		result->instance = instance;
+		result->size = size;
+		result->effectType = -122;
+		result->type = 0;
+		result->lifeTime = -1;
+		result->continue_process = 0;
+		*(struct _Position*)&result->offset.x = *offset;
+		result->size_diff = size_diff;
+		result->size_change = size_change;
+		result->deg = 0;
+		result->end_fade = 0;
+		result->deg_change = deg_change;
+		result->start_fade = 4096;
+		result->color = color;
+		result->next = ring;
+		ring = (struct _FXGlowEffect*)result;
+	}
+	return result;
 }
 
 
@@ -4068,32 +4064,32 @@ struct _FXForceFieldEffect * FX_StartFField(struct _Instance *instance, int size
 // void /*$ra*/ FX_EndFField(struct _Instance *instance /*$a0*/)
 void FX_EndFField(struct _Instance *instance)
 { // line 8048, offset 0x8004e8e4
-	/* begin block 1 */
-		// Start line: 8050
-		// Start offset: 0x8004E8E4
-		// Variables:
-			struct _FXGeneralEffect *currentEffect; // $v1
+	struct _FXForceFieldEffect* i; // eax
+	__int16 height; // cx
 
-		/* begin block 1.1 */
-			// Start line: 8054
-			// Start offset: 0x8004E91C
-		/* end block 1.1 */
-		// End offset: 0x8004E94C
-		// End Line: 8066
-	/* end block 1 */
-	// End offset: 0x8004E95C
-	// End Line: 8069
-
-	/* begin block 2 */
-		// Start line: 19644
-	/* end block 2 */
-	// End Line: 19645
-
-	/* begin block 3 */
-		// Start line: 19645
-	/* end block 3 */
-	// End Line: 19646
-
+	i = (struct _FXForceFieldEffect*)ring;
+	if (ring)
+	{
+		do
+		{
+			if (i->instance == instance && i->effectType == 0x86)
+			{
+				height = i->start_fade;
+				if (height)
+				{
+					i->start_fade = 0;
+					i->end_fade = 4096 - height;
+					if (4096 == height)
+						i->end_fade = 1;
+				}
+				else
+				{
+					i->end_fade = 4096;
+				}
+			}
+			i = (struct _FXForceFieldEffect*)i->next;
+		} while (i);
+	}
 }
 
 
@@ -4101,22 +4097,59 @@ void FX_EndFField(struct _Instance *instance)
 // void /*$ra*/ FX_Draw_Glowing_Line(unsigned long **ot /*$t6*/, long otz /*$a0*/, struct DVECTOR *sxy0 /*$a2*/, struct DVECTOR *sxy1 /*$a3*/, struct DVECTOR *xy0 /*stack 16*/, struct DVECTOR *xy1 /*stack 20*/, long color /*stack 24*/, long color2 /*stack 28*/)
 void FX_Draw_Glowing_Line(unsigned long **ot, long otz, struct DVECTOR *sxy0, struct DVECTOR *sxy1, struct DVECTOR *xy0, struct DVECTOR *xy1, long color, long color2)
 { // line 8071, offset 0x8004e964
-	/* begin block 1 */
-		// Start line: 8072
-		// Start offset: 0x8004E964
-		// Variables:
-			struct _POLY_2G4T *poly; // $t0
-			struct _PrimPool *primPool; // $t2
-			int negflag; // $t5
-	/* end block 1 */
-	// End offset: 0x8004EAF8
-	// End Line: 8116
+	int v8; // esi
+	struct _POLY_2G4T* nextPrim; // eax
+	struct _POLY_2G4T* p_nextPrim; // ebx
+	int v11; // ecx
+	int v12; // ecx
+	struct DVECTOR v13; // edx
+	struct DVECTOR v14; // edx
 
-	/* begin block 2 */
-		// Start line: 19690
-	/* end block 2 */
-	// End Line: 19691
-
+	v8 = 0;
+	if (otz > 0 && otz < 3072)
+	{
+		nextPrim = (struct _POLY_2G4T*)gameTrackerX.primPool->nextPrim;
+		p_nextPrim = (struct _POLY_2G4T*)&gameTrackerX.primPool->nextPrim;
+		if ((ulong*)&nextPrim[1] < gameTrackerX.primPool->lastPrim)
+		{
+			v11 = color;
+			if ((color & 0x1000000) != 0)
+			{
+				v11 = color & 0xFFFFFF;
+				v8 = 1;
+			}
+			v12 = v11 | 0x3A000000;
+			*(DWORD*)&nextPrim->p1.r0 = 0x3A000000;
+			*(DWORD*)&nextPrim->p1.r2 = v12;
+			*(DWORD*)&nextPrim->p2.r0 = v12;
+			*(DWORD*)&nextPrim->p1.r1 = 0;
+			*(DWORD*)&nextPrim->p1.r3 = color2;
+			*(DWORD*)&nextPrim->p2.r1 = color2;
+			*(DWORD*)&nextPrim->p2.r2 = 0;
+			*(DWORD*)&nextPrim->p2.r3 = 0;
+			v13 = *sxy0;
+			*(struct DVECTOR*)&nextPrim->p2.x0 = *sxy0;
+			*(struct DVECTOR*)&nextPrim->p1.x2 = v13;
+			nextPrim->p1.x0 = xy0->vx + sxy0->vx;
+			nextPrim->p1.y0 = sxy0->vy - xy0->vy;
+			nextPrim->p2.x2 = sxy0->vx - xy0->vx;
+			nextPrim->p2.y2 = sxy0->vy + xy0->vy;
+			v14 = *sxy1;
+			*(struct DVECTOR*)&nextPrim->p2.x1 = *sxy1;
+			*(struct DVECTOR*)&nextPrim->p1.x3 = v14;
+			nextPrim->p1.x1 = xy1->vx + sxy1->vx;
+			nextPrim->p1.y1 = sxy1->vy - xy1->vy;
+			nextPrim->p2.x3 = sxy1->vx - xy1->vx;
+			nextPrim->p2.y3 = sxy1->vy + xy1->vy;
+			if (v8)
+				nextPrim->drawTPage1 = 0xE1000640;
+			else
+				nextPrim->drawTPage1 = 0xE1000620;
+			nextPrim->tag = (unsigned int)ot[otz] & 0xFFFFFF | 0x11000000;
+			ot[otz] = (unsigned int*)(((unsigned int)nextPrim - primBase) & 0xFFFFFF);
+			p_nextPrim->tag = (ulong)&nextPrim[1];
+		}
+	}
 }
 
 
@@ -4276,20 +4309,15 @@ void FX_LightHouse(struct MATRIX *wcTransform, unsigned long **ot, struct _Insta
 // void /*$ra*/ FX_StartPassthruFX(struct _Instance *instance /*$s0*/, struct _SVector *normal /*$a1*/, struct _SVector *point /*$a2*/)
 void FX_StartPassthruFX(struct _Instance *instance, struct _SVector *normal, struct _SVector *point)
 { // line 8391, offset 0x8004f46c
-	/* begin block 1 */
-		// Start line: 8392
-		// Start offset: 0x8004F46C
-		// Variables:
-			long color; // stack offset -24
-	/* end block 1 */
-	// End offset: 0x8004F46C
-	// End Line: 8392
+	int color; // [esp+Ch] [ebp-4h] BYREF
 
-	/* begin block 2 */
-		// Start line: 20457
-	/* end block 2 */
-	// End Line: 20458
-
+	instance->halvePlane.a = normal->x;
+	instance->halvePlane.b = normal->y;
+	instance->halvePlane.c = normal->z;
+	instance->halvePlane.d = -((point->x * normal->x + normal->z * point->z + normal->y * point->y) >> 12);
+	color = 0x20FF40;
+	FX_DoInstancePowerRing(instance, 8400, &color, 0, 2);
+	FX_DoInstancePowerRing(instance, 8400, &color, 0, 1);
 }
 
 
@@ -4297,11 +4325,44 @@ void FX_StartPassthruFX(struct _Instance *instance, struct _SVector *normal, str
 // void /*$ra*/ FX_EndPassthruFX(struct _Instance *instance /*$a0*/)
 void FX_EndPassthruFX(struct _Instance *instance)
 { // line 8409, offset 0x8004f548
-	/* begin block 1 */
-		// Start line: 20509
-	/* end block 1 */
-	// End Line: 20510
+	struct _FXGlowEffect* v1; // eax
+	struct _FXGlowEffect* v2; // esi
+	struct _FXGlowEffect* next; // edi
+	DWORD* p_next; // ecx
 
+	v1 = ring;
+	v2 = ring;
+	if (ring)
+	{
+		do
+		{
+			next = (struct _FXGlowEffect*)v2->next;
+			if (v2->instance == instance && v2)
+			{
+				p_next = 0;
+				if (v1)
+				{
+					while (v1 != v2)
+					{
+						p_next = &v1->next;
+						v1 = (struct _FXGlowEffect*)v1->next;
+						if (!v1)
+							goto LABEL_11;
+					}
+					if (p_next)
+						*p_next = next;
+					else
+						ring = (struct _FXGlowEffect*)v2->next;
+				}
+			LABEL_11:
+				if (!v2->effectType)
+					MEMPACK_Free((char*)v2->colorArray);
+				MEMPACK_Free((char*)v2);
+				v1 = ring;
+			}
+			v2 = next;
+		} while (next);
+	}
 }
 
 

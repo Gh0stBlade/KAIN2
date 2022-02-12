@@ -335,7 +335,7 @@ int LOAD_IsXAInQueue()
 // void /*$ra*/ LOAD_PlayXA(int number /*$s0*/)
 void LOAD_PlayXA(int number)
 { // line 529, offset 0x800603b0
-	VOICEXA_Play(number);
+	VOICEXA_Play(number, 0);
 }
 
 
