@@ -28,28 +28,41 @@ void PHYSOB_PlayDropSound(struct _Instance *instance)
 // struct _Instance * /*$ra*/ PHYSOBS_IsAPushBlockAttached(struct _Instance *block /*$s3*/)
 struct _Instance * PHYSOBS_IsAPushBlockAttached(struct _Instance *block)
 { // line 259, offset 0x80068820
-	/* begin block 1 */
-		// Start line: 260
-		// Start offset: 0x80068820
-		// Variables:
-			struct _Instance *instance; // $s0
-			struct _Instance *next; // $s1
-			struct _Instance *result; // $s2
-	/* end block 1 */
-	// End offset: 0x80068888
-	// End Line: 280
+	struct _Instance* v1; // ecx
+	struct _Instance* next; // esi
+	struct PhysObProperties* data; // edx
+	struct _Instance* v5; // [esp+10h] [ebp-4h]
 
-	/* begin block 2 */
-		// Start line: 518
-	/* end block 2 */
-	// End Line: 519
-
-	/* begin block 3 */
-		// Start line: 519
-	/* end block 3 */
-	// End Line: 520
-
-	return null;
+	v1 = (struct _Instance*)*((DWORD*)gameTrackerX.instanceList + 1);
+	v5 = 0;
+	if (v1)
+	{
+		do
+		{
+			next = v1->next;
+			if (v1->attachedID == block->introUniqueID)
+			{
+				data = (struct PhysObProperties*)v1->data;
+				if (data)
+				{
+					if (data->ID == 0xB00B)
+					{
+						if (data->family == 3)
+						{
+							if ((*((BYTE*)v1->extraData + 4) & 2) != 0)
+								return v1;
+						}
+						else if ((data->Type & 2) != 0)
+						{
+							return v1;
+						}
+					}
+				}
+			}
+			v1 = v1->next;
+		} while (next);
+	}
+	return v5;
 }
 
 
@@ -57,28 +70,26 @@ struct _Instance * PHYSOBS_IsAPushBlockAttached(struct _Instance *block)
 // struct _Instance * /*$ra*/ PHYSOBS_IsAnythingAttached(struct _Instance *block /*$a0*/)
 struct _Instance * PHYSOBS_IsAnythingAttached(struct _Instance *block)
 { // line 284, offset 0x800688a8
-	/* begin block 1 */
-		// Start line: 286
-		// Start offset: 0x800688A8
-		// Variables:
-			struct _Instance *instance; // $v1
-			struct _Instance *next; // $a1
-			struct _Instance *result; // $a2
-	/* end block 1 */
-	// End offset: 0x800688E8
-	// End Line: 303
+	struct _Instance* v1; // ecx
+	struct _Instance* result; // eax
+	struct _Instance* next; // edx
 
-	/* begin block 2 */
-		// Start line: 572
-	/* end block 2 */
-	// End Line: 573
-
-	/* begin block 3 */
-		// Start line: 573
-	/* end block 3 */
-	// End Line: 574
-
-	return null;
+	v1 = (struct _Instance*)*((DWORD*)gameTrackerX.instanceList + 1);
+	result = 0;
+	if (v1)
+	{
+		while (1)
+		{
+			next = v1->next;
+			if (v1->attachedID == block->introUniqueID)
+				break;
+			v1 = v1->next;
+			if (!next)
+				return result;
+		}
+		return v1;
+	}
+	return result;
 }
 
 
@@ -86,31 +97,10 @@ struct _Instance * PHYSOBS_IsAnythingAttached(struct _Instance *block)
 // int /*$ra*/ CheckPhysOb(struct _Instance *instance /*$a0*/)
 int CheckPhysOb(struct _Instance *instance)
 { // line 307, offset 0x800688f0
-	/* begin block 1 */
-		// Start line: 309
-		// Start offset: 0x800688F0
-		// Variables:
-			struct PhysObProperties *Prop; // $v0
-	/* end block 1 */
-	// End offset: 0x80068914
-	// End Line: 319
+	struct PhysObProperties* data; // eax
 
-	/* begin block 2 */
-		// Start line: 621
-	/* end block 2 */
-	// End Line: 622
-
-	/* begin block 3 */
-		// Start line: 622
-	/* end block 3 */
-	// End Line: 623
-
-	/* begin block 4 */
-		// Start line: 626
-	/* end block 4 */
-	// End Line: 627
-
-	return 0;
+	data = (struct PhysObProperties*)instance->data;
+	return data && data->ID == 0xB00B;
 }
 
 
@@ -118,32 +108,21 @@ int CheckPhysOb(struct _Instance *instance)
 // int /*$ra*/ CheckPhysObAbility(struct _Instance *instance /*$a0*/, unsigned short ability /*$a3*/)
 int CheckPhysObAbility(struct _Instance *instance, unsigned short ability)
 { // line 322, offset 0x8006891c
-	/* begin block 1 */
-		// Start line: 323
-		// Start offset: 0x8006891C
-		// Variables:
-			struct PhysObProperties *Prop; // $a2
+	struct PhysObProperties* data; // eax
 
-		/* begin block 1.1 */
-			// Start line: 335
-			// Start offset: 0x80068954
-		/* end block 1.1 */
-		// End offset: 0x80068978
-		// End Line: 339
-	/* end block 1 */
-	// End offset: 0x80068990
-	// End Line: 345
-
-	/* begin block 2 */
-		// Start line: 653
-	/* end block 2 */
-	// End Line: 654
-
-	/* begin block 3 */
-		// Start line: 658
-	/* end block 3 */
-	// End Line: 659
-
+	data = (struct PhysObProperties*)instance->data;
+	if (data && data->ID == 0xB00B)
+	{
+		if (data->family == 3)
+		{
+			if ((ability & *((WORD*)instance->extraData + 2)) != 0)
+				return 1;
+		}
+		else if ((ability & data->Type) != 0)
+		{
+			return 1;
+		}
+	}
 	return 0;
 }
 
@@ -152,34 +131,14 @@ int CheckPhysObAbility(struct _Instance *instance, unsigned short ability)
 // int /*$ra*/ CheckPhysObFamily(struct _Instance *instance /*$a0*/, unsigned short family /*$a1*/)
 int CheckPhysObFamily(struct _Instance *instance, unsigned short family)
 { // line 348, offset 0x80068998
-	/* begin block 1 */
-		// Start line: 350
-		// Start offset: 0x80068998
-		// Variables:
-			struct PhysObProperties *Prop; // $a0
-	/* end block 1 */
-	// End offset: 0x800689D4
-	// End Line: 365
+	struct PhysObProperties* data; // eax
 
-	/* begin block 2 */
-		// Start line: 710
-	/* end block 2 */
-	// End Line: 711
-
-	/* begin block 3 */
-		// Start line: 711
-	/* end block 3 */
-	// End Line: 712
-
-	/* begin block 4 */
-		// Start line: 715
-	/* end block 4 */
-	// End Line: 716
-
-	return 0;
+	data = (struct PhysObProperties*)instance->data;
+	return data && data->ID == 0xB00B && data->family == family;
 }
 
 
+// ***************** does not exist on pc
 // autogenerated function stub: 
 // int /*$ra*/ GetPhysicalAbility(struct _Instance *instance /*$a0*/)
 int GetPhysicalAbility(struct _Instance *instance)
@@ -223,36 +182,25 @@ int GetPhysicalAbility(struct _Instance *instance)
 // int /*$ra*/ AnyBlocksInMotion()
 int AnyBlocksInMotion()
 { // line 426, offset 0x80068a34
-	/* begin block 1 */
-		// Start line: 428
-		// Start offset: 0x80068A34
-		// Variables:
-			struct _Instance *instance; // $a0
+	struct _Instance* result; // eax
+	struct PhysObProperties* v1; // ecx
 
-		/* begin block 1.1 */
-			// Start line: 434
-			// Start offset: 0x80068A6C
-			// Variables:
-				struct PhysObProperties *Prop; // $v1
-				struct PhysObData *Data; // $v0
-		/* end block 1.1 */
-		// End offset: 0x80068AB4
-		// End Line: 445
-	/* end block 1 */
-	// End offset: 0x80068AC4
-	// End Line: 450
-
-	/* begin block 2 */
-		// Start line: 866
-	/* end block 2 */
-	// End Line: 867
-
-	/* begin block 3 */
-		// Start line: 867
-	/* end block 3 */
-	// End Line: 868
-
-	return 0;
+	result = (struct _Instance*)*((DWORD*)gameTrackerX.instanceList + 1);
+	if (!result)
+		return 0;
+	while (1)
+	{
+		if ((result->object->oflags2 & 0x40000) != 0)
+		{
+			v1 = (struct PhysObProperties*)result->data;
+			if ((v1->Type & 8) != 0 && v1->ID == 0xB00B && (*(DWORD*)result->extraData & 0x14E) != 0)
+				break;
+		}
+		result = result->next;
+		if (!result)
+			return (int)result;
+	}
+	return 1;
 }
 
 
@@ -260,42 +208,108 @@ int AnyBlocksInMotion()
 // void /*$ra*/ SetThrowDirection(struct _Instance *instance /*$s1*/, struct _Instance *parent /*$a1*/, struct evObjectThrowData *throwData /*$s2*/, struct PhysObData *Data /*$a3*/)
 void SetThrowDirection(struct _Instance *instance, struct _Instance *parent, struct evObjectThrowData *throwData, struct PhysObData *Data)
 { // line 456, offset 0x80068ad4
-	/* begin block 1 */
-		// Start line: 457
-		// Start offset: 0x80068AD4
+	struct _Instance* LinkParent; // eax
+	struct _Instance* target; // ebx
+	__int16 v6; // ax
+	MATRIX* matrix; // eax
+	int xVel; // ebx
+	int v9; // edx
+	int yVel; // edi
+	int v11; // ecx
+	__int32 v12; // ecx
+	__int32 v13; // ecx
+	__int16 v14; // ax
+	int v15; // ecx
+	int v16; // edx
+	int v17; // edi
+	int v18; // eax
+	int v19; // edi
+	int v20; // ecx
+	__int16 z; // [esp-8h] [ebp-18h]
 
-		/* begin block 1.1 */
-			// Start line: 473
-			// Start offset: 0x80068B58
-			// Variables:
-				long val; // $a2
-				struct _Instance *itarget; // $s0
-				struct MATRIX *matrix; // $a1
-		/* end block 1.1 */
-		// End offset: 0x80068C58
-		// End Line: 503
-
-		/* begin block 1.2 */
-			// Start line: 511
-			// Start offset: 0x80068CB0
-			// Variables:
-				long val; // $a1
-				struct _Position *ptarget; // $s0
-		/* end block 1.2 */
-		// End offset: 0x80068D68
-		// End Line: 535
-	/* end block 1 */
-	// End offset: 0x80068E08
-	// End Line: 558
-
-	/* begin block 2 */
-		// Start line: 926
-	/* end block 2 */
-	// End Line: 927
-
+	switch (throwData->type)
+	{
+	case 0:
+		LinkParent = parent->LinkParent;
+		if (LinkParent)
+			z = LinkParent->rotation.z;
+		else
+			z = parent->rotation.z;
+		PhysicsSetVelFromZRot(instance, z, throwData->speed);
+		instance->zVel = throwData->zVel;
+		break;
+	case 1:
+		target = throwData->data.target;
+		Data->Force = target;
+		v6 = MATH3D_AngleFromPosToPos(&instance->position, &target->position);
+		PhysicsSetVelFromZRot(instance, v6, throwData->speed);
+		instance->zVel = 0;
+		matrix = target->matrix;
+		if (target->object->modelList[target->currentModel]->numSegments >= 2)
+			++matrix;
+		xVel = instance->xVel;
+		v9 = xVel;
+		if (xVel < 0)
+			v9 = -xVel;
+		yVel = instance->yVel;
+		v11 = yVel;
+		if (yVel < 0)
+			v11 = -yVel;
+		if (v9 <= v11)
+		{
+			v13 = matrix->t[1] - instance->position.y;
+			if (yVel && v13)
+				instance->zVel = yVel * (matrix->t[2] - instance->position.z) / v13 - ((v13 * instance->zAccl / yVel) >> 1);
+		}
+		else
+		{
+			v12 = matrix->t[0] - instance->position.x;
+			if (xVel && v12)
+				instance->zVel = xVel * (matrix->t[2] - instance->position.z) / v12 - ((v12 * instance->zAccl / xVel) >> 1);
+		}
+		break;
+	case 2:
+		v14 = MATH3D_AngleFromPosToPos(&instance->position, (struct _Position*)&throwData->data);
+		PhysicsSetVelFromZRot(instance, v14, throwData->speed);
+		v15 = instance->xVel;
+		instance->zVel = 0;
+		v16 = v15;
+		if (v15 < 0)
+			v16 = -v15;
+		v17 = instance->yVel;
+		v18 = v17;
+		if (v17 < 0)
+			v18 = -v17;
+		if (v16 <= v18)
+		{
+			v20 = throwData->data.position.y - instance->position.y;
+			if (v17 && v20)
+				instance->zVel = v17 * (throwData->data.position.z - instance->position.z) / v20
+				- ((v20 * instance->zAccl / v17) >> 1);
+		}
+		else
+		{
+			v19 = throwData->data.position.x - instance->position.x;
+			if (v15 && v19)
+				instance->zVel = v15 * (throwData->data.position.z - instance->position.z) / v19
+				- ((v19 * instance->zAccl / v15) >> 1);
+		}
+		break;
+	case 3:
+		PhysicsSetVelFromRot(instance, (struct _Rotation*)&throwData->data, throwData->speed);
+		break;
+	case 4:
+		instance->xVel = throwData->data.position.x;
+		instance->yVel = throwData->data.position.y;
+		instance->zVel = throwData->data.position.z;
+		instance->zAccl = throwData->gravity;
+		break;
+	default:
+		return;
+	}
 }
 
-
+// ************** not on pc
 // autogenerated function stub: 
 // void /*$ra*/ ThrowPhysOb(struct _Instance *instance /*$s3*/, struct evObjectThrowData *throwData /*$s0*/)
 void ThrowPhysOb(struct _Instance *instance, struct evObjectThrowData *throwData)
@@ -391,7 +405,7 @@ void ThrowPhysOb(struct _Instance *instance, struct evObjectThrowData *throwData
 
 }
 
-
+// ************** not on pc
 // autogenerated function stub: 
 // int /*$ra*/ PushPhysOb(struct _Instance *instance /*$s1*/, short x /*stack -32*/, short y /*stack -30*/, short PathNumber /*$a3*/, struct _Instance *Force /*stack 16*/)
 int PushPhysOb(struct _Instance *instance, short x, short y, short PathNumber, struct _Instance *Force)
@@ -415,7 +429,7 @@ int PushPhysOb(struct _Instance *instance, short x, short y, short PathNumber, s
 	return 0;
 }
 
-
+// ***** not on pc
 // autogenerated function stub: 
 // void /*$ra*/ ResetSwitchPhysOb(struct _Instance *instance /*$s0*/)
 void ResetSwitchPhysOb(struct _Instance *instance)
@@ -437,7 +451,7 @@ void ResetSwitchPhysOb(struct _Instance *instance)
 
 }
 
-
+// ***** not on pc
 // autogenerated function stub: 
 // int /*$ra*/ SwitchPhysOb(struct _Instance *instance /*$s1*/)
 int SwitchPhysOb(struct _Instance *instance)
@@ -461,7 +475,7 @@ int SwitchPhysOb(struct _Instance *instance)
 	return 0;
 }
 
-
+// ***** not on pc
 // autogenerated function stub: 
 // int /*$ra*/ InteractPhysOb(struct _Instance *instance /*$s1*/, struct _Instance *Force /*$s3*/, int LinkNode /*$s7*/, int Action /*$s4*/)
 int InteractPhysOb(struct _Instance *instance, struct _Instance *Force, int LinkNode, int Action)
@@ -534,65 +548,143 @@ int InteractPhysOb(struct _Instance *instance, struct _Instance *Force, int Link
 // void /*$ra*/ ResetOrientation(struct _Instance *instance /*$s1*/)
 void ResetOrientation(struct _Instance *instance)
 { // line 989, offset 0x80069930
-	/* begin block 1 */
-		// Start line: 990
-		// Start offset: 0x80069930
-		// Variables:
-			struct _G2EulerAngles_Type ea; // stack offset -40
-			struct PhysObData *Data; // $a1
-			struct _G2SVector3_Type vec; // stack offset -32
-			struct _G2SVector3_Type vec2; // stack offset -24
-			int dp; // $a0
-			int fixxy; // $a2
-			int fixz; // $a3
-			int dx; // $v1
-			int dx2; // $v0
-			int dy; // $v0
-			int dy2; // $v1
-			int dz; // $v0
-			int dz2; // $v1
+	struct PhysObData* data; // edi
+	__int16 v2; // si
+	int v3; // eax
+	int v4; // edx
+	__int16 v5; // si
+	int v6; // eax
+	int v7; // edx
+	__int16 v8; // si
+	int v9; // eax
+	int v10; // edx
+	int v11; // eax
+	__int16 v12; // bp
+	int v13; // eax
+	int v14; // eax
+	__int16 v15; // ax
+	__int16 v16; // si
+	__int16 v17; // bx
+	int v18; // ecx
+	__int16 v19; // di
+	int v20; // ecx
+	__int16 v21; // si
+	int v22; // ecx
+	__int16 v23; // si
+	__int16 v24; // dx
+	int v25; // eax
+	int v26; // ecx
+	int v27; // eax
+	int v28; // ecx
+	int v29; // eax
+	int v30; // ecx
+	struct _G2Anim_Type* anim; // [esp+1Ch] [ebp-1Ch]
+	struct _G2SVector3_Type vector; // [esp+20h] [ebp-18h] BYREF
+	__int16 v33; // [esp+28h] [ebp-10h]
+	__int16 v34; // [esp+2Ah] [ebp-Eh]
+	int v35; // [esp+2Ch] [ebp-Ch]
+	struct _G2EulerAngles_Type euler; // [esp+30h] [ebp-8h] BYREF
 
-		/* begin block 1.1 */
-			// Start line: 1119
-			// Start offset: 0x80069BC0
-			// Variables:
-				short _x0; // $v0
-				short _y0; // $v1
-				short _z0; // $a0
-				short _x1; // $a1
-				short _y1; // $a3
-				short _z1; // $a2
-				struct _G2SVector3_Type *_v; // $a1
-				struct _G2EulerAngles_Type *_v0; // $a0
-				struct _G2SVector3_Type *_v1; // $a2
-		/* end block 1.1 */
-		// End offset: 0x80069BC0
-		// End Line: 1119
-
-		/* begin block 1.2 */
-			// Start line: 1121
-			// Start offset: 0x80069D04
-			// Variables:
-				short _x0; // $v1
-				short _y0; // $v0
-				short _z0; // $a0
-				short _x1; // $t0
-				short _y1; // $a2
-				short _z1; // $a1
-				struct _G2SVector3_Type *_v; // $a3
-				struct _G2SVector3_Type *_v1; // $a1
-		/* end block 1.2 */
-		// End offset: 0x80069D04
-		// End Line: 1121
-	/* end block 1 */
-	// End offset: 0x80069E04
-	// End Line: 1145
-
-	/* begin block 2 */
-		// Start line: 2115
-	/* end block 2 */
-	// End Line: 2116
-
+	anim = &instance->anim;
+	G2Anim_DisableController(&instance->anim, 0, 76);
+	data = (struct PhysObData*)instance->extraData;
+	v2 = data->px;
+	v3 = instance->position.x - v2;
+	if (v3)
+	{
+		if (v3 <= 0)
+			v4 = (v3 - 320) / 640;
+		else
+			v4 = (v3 + 320) / 640;
+		instance->position.x = v2 + 640 * v4;
+	}
+	v5 = data->py;
+	v6 = instance->position.y - v5;
+	if (v6)
+	{
+		if (v6 <= 0)
+			v7 = (v6 - 320) / 640;
+		else
+			v7 = (v6 + 320) / 640;
+		instance->position.y = v5 + 640 * v7;
+	}
+	v8 = data->pz;
+	v9 = instance->position.z - v8;
+	if (v9)
+	{
+		if (v9 < 0)
+			v10 = (v9 - 80) / 160;
+		else
+			v10 = (v9 + 80) / 160;
+		instance->position.z = v8 + 160 * v10;
+	}
+	*(struct _Position*)&data->px = instance->position;
+	G2EulerAngles_FromMatrix(&euler, (struct _G2Matrix_Type*)&instance->matrix[2], 21);
+	if (euler.x >= 0)
+		v11 = euler.x + 512;
+	else
+		v11 = euler.x - 512;
+	v12 = (unsigned __int16)(v11 / 1024) << 10;
+	v33 = v12;
+	if (euler.y >= 0)
+		v13 = euler.y + 512;
+	else
+		v13 = euler.y - 512;
+	v34 = (unsigned __int16)(v13 / 1024) << 10;
+	if (euler.z >= 0)
+		v14 = euler.z + 512;
+	else
+		v14 = euler.z - 512;
+	v35 = (unsigned __int16)(v14 / 1024) << 10;
+	v15 = euler.x - v33;
+	v16 = euler.y - v34;
+	v17 = euler.z - v35;
+	if ((__int16)(euler.x - v33) >= 0)
+		v18 = v15 + 150;
+	else
+		v18 = v15 - 150;
+	v19 = 301 * (v18 / 301);
+	if (v16 >= 0)
+		v20 = v16 + 150;
+	else
+		v20 = v16 - 150;
+	v21 = 301 * (v20 / 301);
+	if (v17 >= 0)
+		v22 = v17 + 150;
+	else
+		v22 = v17 - 150;
+	vector.x = v12 + v19;
+	v23 = v34 + v21;
+	vector.y = v23;
+	v24 = v35 + 301 * (v22 / 301);
+	vector.z = v24;
+	v25 = (__int16)(v12 + v19) - euler.x;
+	v26 = v12 - euler.x;
+	if (v25 < 0)
+		v25 = euler.x - (__int16)(v12 + v19);
+	if (v26 < 0)
+		v26 = euler.x - v12;
+	if (v25 > v26)
+		vector.x = v12;
+	v27 = v23 - euler.y;
+	v28 = v34 - euler.y;
+	if (v27 < 0)
+		v27 = euler.y - v23;
+	if (v28 < 0)
+		v28 = euler.y - v34;
+	if (v27 > v28)
+		vector.y = v34;
+	v29 = v24 - euler.z;
+	v30 = (__int16)v35 - euler.z;
+	if (v29 < 0)
+		v29 = euler.z - v24;
+	if (v30 < 0)
+		v30 = euler.z - (__int16)v35;
+	if (v29 > v30)
+		vector.z = v35;
+	G2Anim_SetController_Vector(anim, 2, 14, &vector);
+	G2Instance_RebuildTransforms(instance);
+	G2Anim_SwitchToKeylist(anim, *instance->object->animList, 0);
 }
 
 
@@ -612,24 +704,45 @@ void FinishPush(struct _Instance *instance)
 // void /*$ra*/ PhysOb_AlignPush(struct _Instance *instance /*$s4*/, int x /*$s5*/, int y /*$s3*/, int path /*$s6*/, struct PhysObData *Data /*stack 16*/)
 void PhysOb_AlignPush(struct _Instance *instance, int x, int y, int path, struct PhysObData *Data)
 { // line 1160, offset 0x80069e6c
-	/* begin block 1 */
-		// Start line: 1161
-		// Start offset: 0x80069E6C
-		// Variables:
-			struct _G2SVector3_Type vec; // stack offset -96
-			int rotZ; // $s2
-			short temp[3][3]; // stack offset -88
-			short temp2[3][3]; // stack offset -64
-			struct _G2EulerAngles_Type ea; // stack offset -40
-	/* end block 1 */
-	// End offset: 0x80069F04
-	// End Line: 1189
+	struct _G2Anim_Type* p_anim; // esi
+	int v6; // edi
+	__int16 v7; // di
+	struct _G2SVector3_Type vector; // [esp+10h] [ebp-38h] BYREF
+	struct _G2EulerAngles_Type euler; // [esp+18h] [ebp-30h] BYREF
+	MATRIX v10; // [esp+20h] [ebp-28h] BYREF
 
-	/* begin block 2 */
-		// Start line: 2513
-	/* end block 2 */
-	// End Line: 2514
-
+	p_anim = &instance->anim;
+	G2Anim_EnableController(&instance->anim, 0, 76);
+	G2Anim_EnableController(&instance->anim, 2, 14);
+	v6 = Data->Mode & 0xFFEFFFFF;
+	Data->xForce = x;
+	Data->yForce = y;
+	Data->PathNumber = path;
+	Data->Mode = v6;
+	if (y <= 0)
+	{
+		if (y >= 0)
+			v7 = x >= 0 ? 1024 : -1024;
+		else
+			v7 = 0;
+	}
+	else
+	{
+		v7 = 2048;
+	}
+	vector.x = 0;
+	vector.y = 0;
+	vector.z = v7;
+	G2Anim_SetController_Vector(p_anim, 0, 76, &vector);
+	vector.z = -v7;
+	RotMatrixZYX(&vector, &v10);
+	MulMatrix0(&v10, instance->matrix + 2, (MATRIX*)v10.t);
+	G2EulerAngles_FromMatrix(&euler, (struct _G2Matrix_Type*)v10.t, 21);
+	vector.x = euler.x;
+	vector.y = euler.y;
+	vector.z = euler.z;
+	G2Anim_SetController_Vector(p_anim, 2, 14, &vector);
+	G2Anim_SwitchToKeylist(p_anim, instance->object->animList[path], path);
 }
 
 
@@ -661,37 +774,70 @@ int FlipPhysOb(struct _Instance *instance, short x, short y, struct _Instance *F
 // int /*$ra*/ CanBePickedUp(struct _Instance *instance /*$s1*/, struct _Instance *Force /*$s0*/, int LinkNode /*$s2*/)
 int CanBePickedUp(struct _Instance *instance, struct _Instance *Force, int LinkNode)
 { // line 1296, offset 0x8006a120
-	/* begin block 1 */
-		// Start line: 1297
-		// Start offset: 0x8006A120
+	struct MATRIX* matrix; // esi
+	WORD* data; // ecx
+	struct MATRIX* v6; // eax
+	__int16 v7; // dx
+	struct MATRIX* v8; // eax
+	__int16 v9; // ax
+	__int16 v10; // [esp+8h] [ebp-3Ch] BYREF
+	__int16 v11; // [esp+Ah] [ebp-3Ah]
+	__int16 v12; // [esp+Ch] [ebp-38h]
+	__int16 v13; // [esp+10h] [ebp-34h] BYREF
+	__int16 v14; // [esp+12h] [ebp-32h]
+	__int16 v15; // [esp+14h] [ebp-30h]
+	struct _PCollideInfo v16; // [esp+18h] [ebp-2Ch] BYREF
 
-		/* begin block 1.1 */
-			// Start line: 1320
-			// Start offset: 0x8006A19C
-			// Variables:
-				struct _PCollideInfo pcollideInfo; // stack offset -80
-				struct _Position newPos; // stack offset -32
-				struct _Position oldPos; // stack offset -24
-
-			/* begin block 1.1.1 */
-				// Start line: 1343
-				// Start offset: 0x8006A268
-			/* end block 1.1.1 */
-			// End offset: 0x8006A29C
-			// End Line: 1352
-		/* end block 1.1 */
-		// End offset: 0x8006A29C
-		// End Line: 1354
-	/* end block 1 */
-	// End offset: 0x8006A2A0
-	// End Line: 1358
-
-	/* begin block 2 */
-		// Start line: 2847
-	/* end block 2 */
-	// End Line: 2848
-
-	return 0;
+	if (!Force)
+		return 0;
+	if ((Force->object->oflags2 & 0x80000) != 0)
+		return 1;
+	matrix = Force->matrix;
+	if (!matrix)
+		return 1;
+	data = instance->data;
+	if (!data || data[2] != 0xB00B)
+		return 0;
+	if (data[1] == 3)
+	{
+		if ((*((BYTE*)instance->extraData + 4) & 1) == 0)
+			return 0;
+	}
+	else if ((data[3] & 1) == 0)
+	{
+		return 0;
+	}
+	v6 = instance->matrix;
+	if (!v6)
+		return 1;
+	v13 = v6[2].t[0];
+	v14 = v6[2].t[1];
+	v7 = v6[2].t[2];
+	v15 = v7;
+	v8 = &matrix[LinkNode];
+	v10 = v8->t[0];
+	v11 = v8->t[1];
+	v9 = v8->t[2];
+	v12 = v9;
+	v16.newPoint = (struct SVECTOR*)&v10;
+	v16.oldPoint = (struct SVECTOR*)&v13;
+	if (data[2] == 0xB00B)
+	{
+		if (data[1] == 3)
+		{
+			if ((*((BYTE*)instance->extraData + 4) & 0x20) == 0)
+				goto LABEL_19;
+		LABEL_18:
+			if (v9 >= v7)
+				goto LABEL_19;
+			return 1;
+		}
+		if ((data[3] & 0x20) != 0)
+			goto LABEL_18;
+	}
+LABEL_19:
+	PHYSICS_CheckLineInWorld(instance, &v16);
+	return v16.type < 2u || MATH3D_LengthXYZ(v10 - v13, v11 - v14, v12 - v15) <= 20;
 }
 
 
@@ -730,29 +876,26 @@ int PickUpPhysOb(struct _Instance *instance, short Steps, struct _Instance *Forc
 // struct _Instance * /*$ra*/ PHYSOB_BirthCollectible(struct _Instance *parent /*$a0*/, int x /*$s1*/, int y /*$s2*/, int z /*$s3*/, int type /*stack 16*/, int lifeTime /*stack 20*/)
 struct _Instance * PHYSOB_BirthCollectible(struct _Instance *parent, int x, int y, int z, int type, int lifeTime)
 { // line 1443, offset 0x8006a3b8
-	/* begin block 1 */
-		// Start line: 1444
-		// Start offset: 0x8006A3B8
-		// Variables:
-			struct Object *object; // $a1
-			struct _Instance *instance; // $a2
+	struct _Instance* result; // eax
+	struct Object* v7; // ecx
 
-		/* begin block 1.1 */
-			// Start line: 1457
-			// Start offset: 0x8006A424
-		/* end block 1.1 */
-		// End offset: 0x8006A448
-		// End Line: 1466
-	/* end block 1 */
-	// End offset: 0x8006A448
-	// End Line: 1469
-
-	/* begin block 2 */
-		// Start line: 2886
-	/* end block 2 */
-	// End Line: 2887
-
-	return null;
+	result = 0;
+	v7 = dword_4FAABC;
+	if (!type)
+		v7 = dword_4FAAB4;
+	if (v7)
+	{
+		result = INSTANCE_BirthObject(parent, v7, 0);
+		if (result)
+		{
+			*((DWORD*)result->extraData + 1) = 122880 * lifeTime;
+			result->position.x = x;
+			result->fadeValue = 4096;
+			result->position.y = y;
+			result->position.z = z;
+		}
+	}
+	return result;
 }
 
 

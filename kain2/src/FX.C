@@ -4034,33 +4034,29 @@ void FX_DrawFField(struct MATRIX *wcTransform, struct _FXForceFieldEffect *field
 // struct _FXForceFieldEffect * /*$ra*/ FX_StartFField(struct _Instance *instance /*$s2*/, int size /*$s3*/, struct _Position *offset /*$s1*/, int size_diff /*$s4*/, int size_change /*stack 16*/, int deg_change /*stack 20*/, long color /*stack 24*/)
 struct _FXForceFieldEffect * FX_StartFField(struct _Instance *instance, int size, struct _Position *offset, int size_diff, int size_change, int deg_change, long color)
 { // line 8021, offset 0x8004e810
-	/* begin block 1 */
-		// Start line: 8022
-		// Start offset: 0x8004E810
-		// Variables:
-			struct _FXForceFieldEffect *field; // $s0
+	struct _FXForceFieldEffect* result; // eax
 
-		/* begin block 1.1 */
-			// Start line: 8027
-			// Start offset: 0x8004E854
-			// Variables:
-				short _x1; // $v0
-				short _y1; // $v1
-				short _z1; // $a1
-				struct _SVector *_v0; // $v0
-		/* end block 1.1 */
-		// End offset: 0x8004E854
-		// End Line: 8027
-	/* end block 1 */
-	// End offset: 0x8004E8C0
-	// End Line: 8045
-
-	/* begin block 2 */
-		// Start line: 19583
-	/* end block 2 */
-	// End Line: 19584
-
-	return null;
+	result = (struct _FXForceFieldEffect*)MEMPACK_Malloc(0x2Cu, 0xDu);
+	if (result)
+	{
+		result->instance = instance;
+		result->size = size;
+		result->effectType = -122;
+		result->type = 0;
+		result->lifeTime = -1;
+		result->continue_process = 0;
+		*(struct _Position*)&result->offset.x = *offset;
+		result->size_diff = size_diff;
+		result->size_change = size_change;
+		result->deg = 0;
+		result->end_fade = 0;
+		result->deg_change = deg_change;
+		result->start_fade = 4096;
+		result->color = color;
+		result->next = ring;
+		ring = (struct _FXGlowEffect*)result;
+	}
+	return result;
 }
 
 
