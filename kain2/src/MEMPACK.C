@@ -3,6 +3,7 @@
 #include "PSX/DRAWS.H"
 #include "STREAM.H"
 #include "DEBUG.H"
+#include "PSX/AADLIB.H"
 
 #include <stddef.h>
 
@@ -596,167 +597,105 @@ void MEMPACK_GarbageCollectFree(struct MemHeader *memAddress)
 
 void MEMPACK_DoGarbageCollection()
 { 
-	struct MemHeader* relocateAddress; // $s0
-	long foundOpening; // $s1
-	long done; // $s5
-	long addressSize; // $s3
-	long addressMemType; // $s2
-	long holdSize; // stack offset -40
-	long freeSize; // stack offset -36
-	char* oldAddress; // $s0
-	char* newAddress; // $s1
+	struct MemHeader* relocateAddress;
+	long foundOpening;
+	long done;
+	long addressSize;
+	long addressMemType;
+	long holdSize;
+	long freeSize;
+	char* oldAddress;
+	char* newAddress;
 
 	done = 0;
-	//s6 = 1
-	//s4 = 2
-	//v0 = 1
-	//sw      $zero, 0x18 + var_4($sp)
+	freeSize = 0;
 	newMemTracker.doingGarbageCollection = 1;
 
-	//loc_8005099C
-	relocateAddress = newMemTracker.rootNode;
-
-	foundOpening = 0;
-	if ((char*)relocateAddress != newMemTracker.lastMemoryAddress)
+	while (done == 0)
 	{
-		do
+		relocateAddress = newMemTracker.rootNode;
+
+		foundOpening = 0;
+		if ((char*)relocateAddress != newMemTracker.lastMemoryAddress)
 		{
-			if (relocateAddress->memStatus != 0)
+			do
 			{
-				if (MEMPACK_RelocatableType(relocateAddress->memType) != 0 && foundOpening == 1 &&
-					relocateAddress->memStatus != 2)
+				if (relocateAddress->memStatus != 0)
 				{
-					foundOpening = 2;
-					break;
+					if (MEMPACK_RelocatableType(relocateAddress->memType) != 0 && foundOpening == 1 &&
+						relocateAddress->memStatus != 2)
+					{
+						foundOpening = 2;
+						break;
+					}
 				}
-			}
-			else
+				else
+				{
+					foundOpening = 1;
+				}
+
+				relocateAddress = (MemHeader*)(char*)relocateAddress + relocateAddress->memSize;
+			} while ((char*)relocateAddress != newMemTracker.lastMemoryAddress);
+		}
+
+		if (foundOpening == 2)
+		{
+			addressMemType = relocateAddress->memType;
+			addressSize = relocateAddress->memSize - 8;
+			MEMPACK_GarbageCollectFree(relocateAddress);
+			holdSize = addressSize;
+			newAddress = MEMPACK_GarbageCollectMalloc((unsigned long*)&holdSize, addressMemType, (unsigned long*)&freeSize);
+			relocateAddress++;
+
+			if (newAddress != NULL)
 			{
-				foundOpening = 1;
+				if (addressMemType == 2)
+				{
+					RemoveIntroducedLights((struct Level*)relocateAddress);
+
+				}
+				else if (addressMemType == 4)
+				{
+					aadRelocateMusicMemoryBegin();
+				}
+
+				memcpy(newAddress, (char*)relocateAddress, addressSize);
+
+				if (addressMemType == 4)
+				{
+					MEMPACK_RelocateAreaType(relocateAddress - 1, newAddress - (char*)relocateAddress, (struct Level*)relocateAddress);
+				}
+				else if (addressMemType == 1)
+				{
+					MEMPACK_RelocateObjectType((struct MemHeader*)newAddress - 8, newAddress - (char*)relocateAddress, (struct Object*)relocateAddress);
+				}
+				else if (addressMemType == 14)
+				{
+					STREAM_UpdateInstanceCollisionInfo((struct HModel*)relocateAddress, (struct HModel*)newAddress);
+				}
+				else if (addressMemType == 44)
+				{
+					MEMPACK_RelocateCDMemory((struct MemHeader*)newAddress - 8, newAddress - (char*)relocateAddress, (struct BigFileDir*)relocateAddress);
+				}
+				else if (addressMemType == 4)
+				{
+					aadRelocateMusicMemoryEnd((struct MemHeader*)relocateAddress, newAddress - (char*)relocateAddress, NULL);
+				}
+				else if (addressMemType == 47)
+				{
+					aadRelocateSfxMemory(relocateAddress, newAddress - (char*)relocateAddress);
+				}
+
+				MEMPACK_GarbageSplitMemoryNow(holdSize, (struct MemHeader*)newAddress - 8, addressMemType, freeSize);
 			}
-
-			relocateAddress = (MemHeader*)(char*)relocateAddress + relocateAddress->memSize;
-		} while ((char*)relocateAddress != newMemTracker.lastMemoryAddress);
+		}
+		else
+		{
+			done = 1;
+		}
 	}
 
-	//loc_80050A0C
-	if (foundOpening == 2)
-	{
-		addressMemType = relocateAddress->memType;
-		addressSize = relocateAddress->memSize - 8;
-		MEMPACK_GarbageCollectFree(relocateAddress);
-		MEMPACK_GarbageCollectMalloc();
-	}
-	//loc_80050B40
-#if 0
-
-		addiu   $a0, $sp, 0x18 + var_8
-		move    $a1, $s2
-		addiu   $a2, $sp, 0x18 + var_4
-		jal     sub_80050714
-		sw      $s3, 0x18 + var_8($sp)
-		move    $s1, $v0
-		beqz    $s1, loc_80050B44
-		addiu   $s0, 8
-		bne     $s2, $s4, loc_80050A5C
-		li      $v0, 4
-		jal     sub_8005ACC0
-		move    $a0, $s0
-		j       loc_80050A70
-		move    $a0, $s1
-
-		loc_80050A5C :
-	bne     $s2, $v0, loc_80050A70
-		move    $a0, $s1
-		jal     sub_80052C8C
-		nop
-		move    $a0, $s1
-
-		loc_80050A70 :
-	move    $a1, $s0
-		jal     sub_80079408
-		move    $a2, $s3
-		bne     $s2, $s4, loc_80050A98
-		addiu   $a0, $s1, -8
-		subu    $a1, $s1, $s0
-		jal     sub_80050B78
-		move    $a2, $s0
-		j       loc_80050B28
-		addiu   $a1, $s1, -8
-
-		loc_80050A98:
-	bne     $s2, $s6, loc_80050AB8
-		li      $v0, 0xE
-		addiu   $a0, $s1, -8
-		subu    $a1, $s1, $s0
-		jal     sub_800514FC
-		move    $a2, $s0
-		j       loc_80050B28
-		addiu   $a1, $s1, -8
-
-		loc_80050AB8:
-	bne     $s2, $v0, loc_80050AD4
-		li      $v0, 0x2C  # ','
-		move    $a0, $s0
-		jal     sub_8005A91C
-		move    $a1, $s1
-		j       loc_80050B28
-		addiu   $a1, $s1, -8
-
-		loc_80050AD4:
-	bne     $s2, $v0, loc_80050AF4
-		li      $v0, 4
-		addiu   $a0, $s1, -8
-		subu    $a1, $s1, $s0
-		jal     sub_80051A6C
-		move    $a2, $s0
-		j       loc_80050B28
-		addiu   $a1, $s1, -8
-
-		loc_80050AF4:
-	bne     $s2, $v0, loc_80050B10
-		li      $v0, 0x2F  # '/'
-		move    $a0, $s0
-		jal     sub_80052CA8
-		subu    $a1, $s1, $a0
-		j       loc_80050B28
-		addiu   $a1, $s1, -8
-
-		loc_80050B10:
-	bne     $s2, $v0, loc_80050B28
-		addiu   $a1, $s1, -8
-		move    $a0, $s0
-		jal     sub_80052E54
-		subu    $a1, $s1, $a0
-		addiu   $a1, $s1, -8
-
-		loc_80050B28:
-	lw      $a0, 0x18 + var_8($sp)
-		lw      $a3, 0x18 + var_4($sp)
-		jal     sub_8005088C
-		move    $a2, $s2
-		j       loc_80050B44
-		nop
-
-		loc_80050B40 :
-	li      $s5, 1
-
-		loc_80050B44 :
-		beqz    $s5, loc_8005099C
-		nop
-		lw      $ra, 0x18 + var_s1C($sp)
-		lw      $s6, 0x18 + var_s18($sp)
-		lw      $s5, 0x18 + var_s14($sp)
-		lw      $s4, 0x18 + var_s10($sp)
-		lw      $s3, 0x18 + var_sC($sp)
-		lw      $s2, 0x18 + var_s8($sp)
-		lw      $s1, 0x18 + var_s4($sp)
-		lw      $s0, 0x18 + var_s0($sp)
-		sw      $zero, -0x3900($gp)//newMemTracker.doingGarbageCollection
-		jr      $ra
-		addiu   $sp, 0x38
-		# End of function sub_80050960
-#endif
+	newMemTracker.doingGarbageCollection = 0;
 }
 
 
