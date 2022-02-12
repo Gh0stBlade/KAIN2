@@ -174,20 +174,93 @@ int razPlaneShift(struct _Instance *instance)
 // void /*$ra*/ razSpectralShift()
 void razSpectralShift()
 { // line 320, offset 0x800a57d0
-	/* begin block 1 */
-		// Start line: 321
-		// Start offset: 0x800A57D0
-		// Variables:
-			struct _Instance *inst; // $a0
-	/* end block 1 */
-	// End offset: 0x800A58F8
-	// End Line: 357
+	struct _Instance* LinkChild; // edx
+	struct _Instance* LinkSibling; // eax
+	struct _Instance* v2; // eax
+	int v3; // eax
+	int v4; // eax
+	struct _Instance* v5; // eax
 
-	/* begin block 2 */
-		// Start line: 715
-	/* end block 2 */
-	// End Line: 716
-
+	if ((gameTrackerX.streamFlags & 0x40000) != 0 || dword_B08850 != 1)
+		return;
+	LinkChild = stru_B0841C.CharacterInstance->LinkChild;
+	LinkSibling = LinkChild;
+	if (Inst && LinkChild == Inst)
+	{
+		if (!LinkChild)
+			goto LABEL_15;
+		LinkSibling = LinkChild->LinkSibling;
+	}
+	if (LinkSibling)
+	{
+		if (dword_B08804 == 8)
+		{
+			v2 = stru_B0841C.CharacterInstance->LinkChild;
+			if (Inst && LinkChild == Inst && LinkChild)
+				v2 = LinkChild->LinkSibling;
+			INSTANCE_PlainDeath(v2);
+		}
+		else
+		{
+			INSTANCE_Post(LinkSibling, 0x800008, 4);
+			v3 = dword_B08934;
+			LOBYTE(v3) = dword_B08934 | 3;
+			word_B08938 = 4096;
+			dword_B08934 = v3;
+			word_B0893A = 0;
+			dword_B08940 = 0;
+			dword_B0893C = 256;
+		}
+	}
+LABEL_15:
+	gameTrackerX.playerInstance->flags2 |= 0x8000000u;
+	INSTANCE_Post(gameTrackerX.playerInstance, 0x100014, 0);
+	if (dword_B08850 == 2)
+		v4 = 100000;
+	else
+		v4 = 100000 * (word_B08810 + 1);
+	dword_B08850 = 2;
+	current_health = v4 != current_health ? 83334 : 100000;
+	if (Inst)
+	{
+		v5 = stru_B0841C.CharacterInstance->LinkChild;
+		if (v5 == Inst)
+		{
+			if (!v5)
+			{
+			LABEL_23:
+				if ((INSTANCE_Query(Inst, 40) & 1) == 0)
+					INSTANCE_Post(Inst, 0x800100, 0);
+				dword_B08804 = 4096;
+				if (dword_B08850 == 2 && dword_B0884C != 1)
+				{
+					dword_B0884C = 1;
+					debugRazielFlags2 = 1024;
+					INSTANCE_Post(Inst, 0x800103, 1);
+				}
+				if (dword_B08850 == 1 && dword_B0884C == 1)
+				{
+					dword_B0884C = 2;
+					debugRazielFlags2 = 2048;
+					INSTANCE_Post(Inst, 0x800103, 2);
+				}
+				goto LABEL_31;
+			}
+			v5 = v5->LinkSibling;
+		}
+		if (!v5)
+			goto LABEL_23;
+	}
+LABEL_31:
+	if (!gameTrackerX.gameData.asmData.MorphType)
+	{
+		MORPH_ToggleMorph();
+		if ((int(__cdecl*)(int, int, int))stru_B0841C.SectionList[0].Process != StateHandlerGlyphs
+			&& (int(__cdecl*)(struct __CharacterState*, int, int))stru_B0841C.SectionList[0].Process != StateHandlerPuppetShow)
+		{
+			INSTANCE_Post(gameTrackerX.playerInstance, 262149, 0);
+		}
+	}
 }
 
 
@@ -195,11 +268,6 @@ void razSpectralShift()
 // void /*$ra*/ razMaterialShift()
 void razMaterialShift()
 { // line 360, offset 0x800a5908
-	/* begin block 1 */
-		// Start line: 797
-	/* end block 1 */
-	// End Line: 798
-
 }
 
 
@@ -207,12 +275,13 @@ void razMaterialShift()
 // int /*$ra*/ RAZIEL_OkToShift()
 int RAZIEL_OkToShift()
 { // line 383, offset 0x800a59d0
-	/* begin block 1 */
-		// Start line: 844
-	/* end block 1 */
-	// End Line: 845
-
-	return 0;
+	if (dword_B08850 != 2)
+		return 1;
+	if (current_health != 100000)
+		return 0;
+	if ((dword_B08820 & 0x40) != 0)
+		return (unsigned __int8)(dword_B08820 & 0x10) >> 4;
+	return (unsigned __int8)(dword_B087B4 & 0x40) >> 6;
 }
 
 
@@ -220,41 +289,85 @@ int RAZIEL_OkToShift()
 // int /*$ra*/ razPickupAndGrab(struct __CharacterState *In /*$s1*/, int CurrentSection /*$s2*/)
 int razPickupAndGrab(struct __CharacterState *In, int CurrentSection)
 { // line 409, offset 0x800a5a44
-	/* begin block 1 */
-		// Start line: 410
-		// Start offset: 0x800A5A44
+	struct _Instance* LinkChild; // eax
+	struct _Instance* LinkParent; // eax
+	int v5; // esi
+	struct _Instance* v6; // eax
+	int v7; // esi
+	int v8; // edx
+	struct _Instance* v9; // eax
+	struct _Instance* v10; // esi
+	struct _Instance* v11; // esi
+	unsigned int v12; // eax
 
-		/* begin block 1.1 */
-			// Start line: 413
-			// Start offset: 0x800A5AA0
-			// Variables:
-				int index; // $a2
-
-			/* begin block 1.1.1 */
-				// Start line: 427
-				// Start offset: 0x800A5AD0
-				// Variables:
-					struct evObjectData *objData; // $s0
-			/* end block 1.1.1 */
-			// End offset: 0x800A5B9C
-			// End Line: 448
-		/* end block 1.1 */
-		// End offset: 0x800A5C38
-		// End Line: 460
-	/* end block 1 */
-	// End offset: 0x800A5C3C
-	// End Line: 464
-
-	/* begin block 2 */
-		// Start line: 896
-	/* end block 2 */
-	// End Line: 897
-
-	/* begin block 3 */
-		// Start line: 898
-	/* end block 3 */
-	// End Line: 899
-
+	if ((dword_B087F4 & 0x20) == 0)
+		return 1;
+	LinkChild = stru_B0841C.CharacterInstance->LinkChild;
+	if (Inst && LinkChild == Inst)
+	{
+		if (!LinkChild)
+			goto LABEL_7;
+		LinkChild = LinkChild->LinkSibling;
+	}
+	if (LinkChild)
+		return 1;
+LABEL_7:
+	if (dword_B08850 != 1 || (dword_B087B4 & 0x80u) != 0)
+		return 1;
+	if (CurrentSection != 1)
+		return 0;
+	LinkParent = dword_B087F0[10]->LinkParent;
+	if (LinkParent && !(INSTANCE_Query(LinkParent, 0) | 0x40000000))
+		return 0;
+	v5 = SetObjectData(0, 0, 8, In->CharacterInstance, 1);
+	INSTANCE_Post(dword_B087F0[10], 0x80002E, v5);
+	if (*(_WORD*)(v5 + 6))
+		return 0;
+	v6 = dword_B087F0[10]->LinkParent;
+	if (v6)
+	{
+		INSTANCE_Post(v6, 0x100001B, 0);
+		INSTANCE_UnlinkFromParent(dword_B087F0[10]);
+	}
+	v7 = SetObjectData(0, 0, 8, In->CharacterInstance, 49);
+	INSTANCE_Post(dword_B087F0[10], 0x800002, v7);
+	if (*(_WORD*)(v7 + 6))
+		return 0;
+	v8 = dword_B087B4;
+	v9 = Inst;
+	LOBYTE(v8) = dword_B087B4 | 0x80;
+	dword_B087B4 = v8;
+	if (!Inst || dword_B08804 != 4096)
+		goto LABEL_32;
+	v10 = stru_B0841C.CharacterInstance->LinkChild;
+	if (v10 == Inst)
+	{
+		if (!v10)
+			goto LABEL_26;
+		v10 = v10->LinkSibling;
+	}
+	if (v10)
+	{
+		v11 = (INSTANCE_Query(v10, 1) & 0x20) != 0 ? v10 : 0;
+		v9 = Inst;
+		goto LABEL_28;
+	}
+LABEL_26:
+	v11 = Inst;
+LABEL_28:
+	if ((INSTANCE_Query(v9, 40) & 1) != 0)
+		INSTANCE_Post(Inst, 0x800101, 0);
+	if (v11 == Inst)
+		dword_B08804 = 0;
+LABEL_32:
+	In->SectionList[1].Data1 = 0;
+	v12 = INSTANCE_Query(dword_B087F0[10], 4);
+	if ((dword_B08778 & 0x40000) == 0)
+	{
+		G2EmulationSwitchAnimation(In, 1, (unsigned __int8)byte_4F4900[v12], 0, 3, 1);
+		dword_B08920 = (int)In->SectionList[1].Process;
+		StateSwitchStateData(In, 1, StateHandlerPickupObject, 0);
+	}
 	return 0;
 }
 
@@ -263,21 +376,16 @@ int razPickupAndGrab(struct __CharacterState *In, int CurrentSection)
 // int /*$ra*/ razZeroAxis(long *x /*$s1*/, long *y /*$s2*/, int radius /*$s0*/)
 int razZeroAxis(long *x, long *y, int radius)
 { // line 471, offset 0x800a5c54
-	/* begin block 1 */
-		// Start line: 472
-		// Start offset: 0x800A5C54
-		// Variables:
-			unsigned long distance; // $v0
-	/* end block 1 */
-	// End offset: 0x800A5C9C
-	// End Line: 504
+	int result; // eax
 
-	/* begin block 2 */
-		// Start line: 1023
-	/* end block 2 */
-	// End Line: 1024
-
-	return 0;
+	result = MATH3D_SquareLength(*x, *y, 0);
+	if (result < (unsigned int)radius)
+	{
+		*x = 0;
+		*y = 0;
+		return 0;
+	}
+	return result;
 }
 
 
@@ -285,30 +393,21 @@ int razZeroAxis(long *x, long *y, int radius)
 // int /*$ra*/ razAdjustSpeed(struct _Instance *instance /*$a3*/, int minSpeed /*$a1*/)
 int razAdjustSpeed(struct _Instance *instance, int minSpeed)
 { // line 508, offset 0x800a5cb4
-	/* begin block 1 */
-		// Start line: 509
-		// Start offset: 0x800A5CB4
-		// Variables:
-			long adjustment; // $s0
+	int v2; // esi
 
-		/* begin block 1.1 */
-			// Start line: 509
-			// Start offset: 0x800A5CB4
-			// Variables:
-				int data; // $v1
-		/* end block 1.1 */
-		// End offset: 0x800A5D30
-		// End Line: 530
-	/* end block 1 */
-	// End offset: 0x800A5D30
-	// End Line: 537
-
-	/* begin block 2 */
-		// Start line: 1099
-	/* end block 2 */
-	// End Line: 1100
-
-	return 0;
+	if (dword_B0878C <= word_B087B2)
+	{
+		if (dword_B0878C >= word_B087B0)
+			v2 = word_B087AE - (word_B087B2 - dword_B0878C) * (word_B087AE - word_B087AC) / (word_B087B2 - word_B087B0);
+		else
+			v2 = word_B087AC;
+	}
+	else
+	{
+		v2 = word_B087AE;
+	}
+	G2Anim_SetSpeedAdjustment(&instance->anim, v2);
+	return v2;
 }
 
 
@@ -316,18 +415,32 @@ int razAdjustSpeed(struct _Instance *instance, int minSpeed)
 // void /*$ra*/ razLaunchForce(struct _Instance *instance /*$s0*/)
 void razLaunchForce(struct _Instance *instance)
 { // line 558, offset 0x800a5d50
-	/* begin block 1 */
-		// Start line: 559
-		// Start offset: 0x800A5D50
-	/* end block 1 */
-	// End offset: 0x800A5D50
-	// End Line: 559
+	int v2; // edi
+	int v3; // ebx
+	__int32 v4; // esi
+	__int16 v5; // [esp+10h] [ebp-4h]
+	__int16 parent; // [esp+18h] [ebp+4h]
 
-	/* begin block 2 */
-		// Start line: 1207
-	/* end block 2 */
-	// End Line: 1208
-
+	PHYSOB_BirthProjectile(instance, 49, (dword_B08820 & 0x100) != 0);
+	dword_B08934 |= 4u;
+	v2 = *(__int16*)(dword_B08B3C + 60);
+	v3 = *(__int16*)(dword_B08B3C + 56);
+	parent = *(_WORD*)(dword_B08B3C + 58);
+	v5 = *(_WORD*)(dword_B08B3C + 62);
+	v4 = 30 * *(_DWORD*)(dword_B08B3C + 64);
+	if (!sound.soundHandle)
+		sound.soundHandle = SOUND_Play3dSound(&instance->position, 12, v3, v2, 10000);
+	if (!v4)
+		sound.soundHandle = 0;
+	sound.soundStartVolume = v2;
+	sound.soundTotalTime = v4;
+	sound.soundStartPitch = v3;
+	sound.soundEndPitch = parent;
+	sound.soundEndVolume = v5;
+	sound.soundDistance = 10000;
+	sound.soundTimer = 0;
+	dword_B089B0 = 0;
+	dword_B089B4 = 0;
 }
 
 
@@ -335,31 +448,15 @@ void razLaunchForce(struct _Instance *instance)
 // struct _Instance * /*$ra*/ razGetHeldItem()
 struct _Instance * razGetHeldItem()
 { // line 582, offset 0x800a5de0
-	/* begin block 1 */
-		// Start line: 584
-		// Start offset: 0x800A5DE0
-		// Variables:
-			struct _Instance *instance; // $v0
-	/* end block 1 */
-	// End offset: 0x800A5E10
-	// End Line: 606
+	struct _Instance* result; // eax
 
-	/* begin block 2 */
-		// Start line: 1266
-	/* end block 2 */
-	// End Line: 1267
-
-	/* begin block 3 */
-		// Start line: 1267
-	/* end block 3 */
-	// End Line: 1268
-
-	/* begin block 4 */
-		// Start line: 1269
-	/* end block 4 */
-	// End Line: 1270
-
-	return null;
+	result = stru_B0841C.CharacterInstance->LinkChild;
+	if (Inst && result == Inst)
+	{
+		if (result)
+			return result->LinkSibling;
+	}
+	return result;
 }
 
 
@@ -367,21 +464,18 @@ struct _Instance * razGetHeldItem()
 // struct _Instance * /*$ra*/ razGetHeldWeapon()
 struct _Instance * razGetHeldWeapon()
 { // line 610, offset 0x800a5e18
-	/* begin block 1 */
-		// Start line: 611
-		// Start offset: 0x800A5E18
-		// Variables:
-			struct _Instance *instance; // $s0
-	/* end block 1 */
-	// End offset: 0x800A5E68
-	// End Line: 628
+	struct _Instance* LinkChild; // esi
 
-	/* begin block 2 */
-		// Start line: 1324
-	/* end block 2 */
-	// End Line: 1325
-
-	return null;
+	LinkChild = stru_B0841C.CharacterInstance->LinkChild;
+	if (Inst && LinkChild == Inst)
+	{
+		if (!LinkChild)
+			return dword_B08804 != 0 ? Inst : 0;
+		LinkChild = LinkChild->LinkSibling;
+	}
+	if (!LinkChild)
+		return dword_B08804 != 0 ? Inst : 0;
+	return (INSTANCE_Query(LinkChild, 1) & 0x20) != 0 ? LinkChild : 0;
 }
 
 
@@ -389,16 +483,6 @@ struct _Instance * razGetHeldWeapon()
 // void /*$ra*/ razReaverBladeOff()
 void razReaverBladeOff()
 { // line 631, offset 0x800a5e78
-	/* begin block 1 */
-		// Start line: 1366
-	/* end block 1 */
-	// End Line: 1367
-
-	/* begin block 2 */
-		// Start line: 1367
-	/* end block 2 */
-	// End Line: 1368
-
 }
 
 
@@ -406,16 +490,6 @@ void razReaverBladeOff()
 // void /*$ra*/ razReaverBladeOn()
 void razReaverBladeOn()
 { // line 639, offset 0x800a5ea8
-	/* begin block 1 */
-		// Start line: 1383
-	/* end block 1 */
-	// End Line: 1384
-
-	/* begin block 2 */
-		// Start line: 1384
-	/* end block 2 */
-	// End Line: 1385
-
 }
 
 
@@ -423,33 +497,6 @@ void razReaverBladeOn()
 // int /*$ra*/ razReaverOff()
 int razReaverOff()
 { // line 649, offset 0x800a5ee8
-	/* begin block 1 */
-		// Start line: 650
-		// Start offset: 0x800A5EE8
-
-		/* begin block 1.1 */
-			// Start line: 653
-			// Start offset: 0x800A5F0C
-			// Variables:
-				struct _Instance *heldWeapon; // $s0
-		/* end block 1.1 */
-		// End offset: 0x800A5F5C
-		// End Line: 661
-	/* end block 1 */
-	// End offset: 0x800A5F60
-	// End Line: 663
-
-	/* begin block 2 */
-		// Start line: 1404
-	/* end block 2 */
-	// End Line: 1405
-
-	/* begin block 3 */
-		// Start line: 1406
-	/* end block 3 */
-	// End Line: 1407
-
-	return 0;
 }
 
 
@@ -457,17 +504,43 @@ int razReaverOff()
 // int /*$ra*/ razReaverOn()
 int razReaverOn()
 { // line 666, offset 0x800a5f70
-	/* begin block 1 */
-		// Start line: 1440
-	/* end block 1 */
-	// End Line: 1441
+	struct _Instance* LinkChild; // eax
+	int v1; // eax
 
-	/* begin block 2 */
-		// Start line: 1442
-	/* end block 2 */
-	// End Line: 1443
-
-	return 0;
+	if (!Inst)
+		return 0;
+	LinkChild = stru_B0841C.CharacterInstance->LinkChild;
+	if (LinkChild == Inst)
+	{
+		if (!LinkChild)
+			goto LABEL_6;
+		LinkChild = LinkChild->LinkSibling;
+	}
+	if (LinkChild)
+		return 0;
+LABEL_6:
+	if (dword_B08850 == 2)
+		v1 = 100000;
+	else
+		v1 = 100000 * (word_B08810 + 1);
+	if (current_health != v1 && dword_B08850 != 2)
+		return 0;
+	if ((INSTANCE_Query(Inst, 40) & 1) == 0)
+		INSTANCE_Post(Inst, 0x800100, 0);
+	dword_B08804 = 4096;
+	if (dword_B08850 == 2 && dword_B0884C != 1)
+	{
+		dword_B0884C = 1;
+		debugRazielFlags2 = 1024;
+		INSTANCE_Post(Inst, 0x800103, 1);
+	}
+	if (dword_B08850 == 1 && dword_B0884C == 1)
+	{
+		dword_B0884C = 2;
+		debugRazielFlags2 = 2048;
+		INSTANCE_Post(Inst, 0x800103, 2);
+	}
+	return 1;
 }
 
 
@@ -475,11 +548,6 @@ int razReaverOn()
 // void /*$ra*/ razReaverPickup(struct _Instance *instance /*$a2*/, struct _Instance *soulReaver /*$s0*/)
 void razReaverPickup(struct _Instance *instance, struct _Instance *soulReaver)
 { // line 691, offset 0x800a6054
-	/* begin block 1 */
-		// Start line: 1495
-	/* end block 1 */
-	// End Line: 1496
-
 }
 
 
@@ -487,11 +555,12 @@ void razReaverPickup(struct _Instance *instance, struct _Instance *soulReaver)
 // void /*$ra*/ razReaverImbue(int reaverType /*$a2*/)
 void razReaverImbue(int reaverType)
 { // line 719, offset 0x800a6110
-	/* begin block 1 */
-		// Start line: 1563
-	/* end block 1 */
-	// End Line: 1564
-
+	if (reaverType == 1 || reaverType == 2 || reaverType == 6)
+	{
+		dword_B0884C = reaverType;
+		debugRazielFlags2 = 1 << (reaverType + 9);
+		INSTANCE_Post(Inst, 0x800103, reaverType);
+	}
 }
 
 
@@ -499,30 +568,6 @@ void razReaverImbue(int reaverType)
 // int /*$ra*/ razGetReaverFromMask(int reaverMask /*$a0*/)
 int razGetReaverFromMask(int reaverMask)
 { // line 731, offset 0x800a6168
-	/* begin block 1 */
-		// Start line: 733
-		// Start offset: 0x800A6168
-		// Variables:
-			int rc; // $v0
-	/* end block 1 */
-	// End offset: 0x800A6184
-	// End Line: 742
-
-	/* begin block 2 */
-		// Start line: 1590
-	/* end block 2 */
-	// End Line: 1591
-
-	/* begin block 3 */
-		// Start line: 1591
-	/* end block 3 */
-	// End Line: 1592
-
-	/* begin block 4 */
-		// Start line: 1593
-	/* end block 4 */
-	// End Line: 1594
-
 	return 0;
 }
 
@@ -531,20 +576,6 @@ int razGetReaverFromMask(int reaverMask)
 // void /*$ra*/ razReaverScale(int scale /*$s1*/)
 void razReaverScale(int scale)
 { // line 745, offset 0x800a618c
-	/* begin block 1 */
-		// Start line: 746
-		// Start offset: 0x800A618C
-		// Variables:
-			struct _Instance *Inst; // $s0
-	/* end block 1 */
-	// End offset: 0x800A61E0
-	// End Line: 757
-
-	/* begin block 2 */
-		// Start line: 1618
-	/* end block 2 */
-	// End Line: 1619
-
 }
 
 
@@ -552,22 +583,29 @@ void razReaverScale(int scale)
 // void /*$ra*/ razGetForwardNormal(struct _Instance *inst /*$a0*/, struct _Instance *target /*$a1*/)
 void razGetForwardNormal(struct _Instance *inst, struct _Instance *target)
 { // line 760, offset 0x800a61f4
-	/* begin block 1 */
-		// Start line: 761
-		// Start offset: 0x800A61F4
-		// Variables:
-			struct _PCollideInfo CInfo; // stack offset -72
-			struct SVECTOR Old; // stack offset -24
-			struct SVECTOR New; // stack offset -16
-	/* end block 1 */
-	// End offset: 0x800A62C8
-	// End Line: 794
+	struct MATRIX* matrix; // eax
+	struct MATRIX* v3; // eax
+	__int16 v4[4]; // [esp+0h] [ebp-3Ch] BYREF
+	__int16 v5[4]; // [esp+8h] [ebp-34h] BYREF
+	struct _PCollideInfo v6; // [esp+10h] [ebp-2Ch] BYREF
 
-	/* begin block 2 */
-		// Start line: 1648
-	/* end block 2 */
-	// End Line: 1649
-
+	v6.newPoint = (struct SVECTOR*)v5;
+	v6.oldPoint = (struct SVECTOR*)v4;
+	matrix = inst->matrix;
+	v4[0] = matrix[1].t[0];
+	v4[1] = matrix[1].t[1];
+	v4[2] = matrix[1].t[2];
+	v3 = target->matrix;
+	v5[0] = v3[1].t[0];
+	v5[1] = v3[1].t[1];
+	v5[2] = v3[1].t[2];
+	PHYSICS_CheckLineInWorld(inst, &v6);
+	if (v6.type == 2 || v6.type == 3 || v6.type == 5)
+	{
+		stru_B087B8.x = v6.wNormal.vx;
+		stru_B087B8.y = v6.wNormal.vy;
+		stru_B087B8.z = v6.wNormal.vz;
+	}
 }
 
 
@@ -575,21 +613,6 @@ void razGetForwardNormal(struct _Instance *inst, struct _Instance *target)
 // void /*$ra*/ razGetRotFromNormal(struct _SVector *normal /*$a0*/, struct _Rotation *rot /*$a2*/)
 void razGetRotFromNormal(struct _SVector *normal, struct _Rotation *rot)
 { // line 797, offset 0x800a62d8
-	/* begin block 1 */
-		// Start line: 798
-		// Start offset: 0x800A62D8
-		// Variables:
-			struct _Position a; // stack offset -24
-			struct _Position b; // stack offset -16
-	/* end block 1 */
-	// End offset: 0x800A62D8
-	// End Line: 798
-
-	/* begin block 2 */
-		// Start line: 1731
-	/* end block 2 */
-	// End Line: 1732
-
 }
 
 
@@ -597,24 +620,76 @@ void razGetRotFromNormal(struct _SVector *normal, struct _Rotation *rot)
 // void /*$ra*/ razCenterWithBlock(struct _Instance *inst /*$s3*/, struct _Instance *target /*$s1*/, int dist /*$s2*/)
 void razCenterWithBlock(struct _Instance *inst, struct _Instance *target, int dist)
 { // line 811, offset 0x800a6324
-	/* begin block 1 */
-		// Start line: 812
-		// Start offset: 0x800A6324
-		// Variables:
-			struct SVECTOR d; // stack offset -88
-			struct SVECTOR dd; // stack offset -80
-			struct _Rotation rot; // stack offset -72
-			struct MATRIX mat; // stack offset -64
-			struct _G2SVector3_Type v; // stack offset -32
-	/* end block 1 */
-	// End offset: 0x800A64A8
-	// End Line: 863
+	int z; // eax
+	__int16 x; // bp
+	int v5; // ecx
+	__int16 v6; // ax
+	int v7; // ebx
+	int v8; // edx
+	int v9; // eax
+	__int16 y; // ax
+	__int16 v11; // cx
+	int v12; // [esp+10h] [ebp-54h]
+	struct _Position to; // [esp+14h] [ebp-50h] BYREF
+	struct _Position from; // [esp+1Ch] [ebp-48h] BYREF
+	struct _G2SVector3_Type vec; // [esp+24h] [ebp-40h] BYREF
+	SVECTOR v0; // [esp+2Ch] [ebp-38h] BYREF
+	SVECTOR v1; // [esp+34h] [ebp-30h] BYREF
+	struct _Rotation rot; // [esp+3Ch] [ebp-28h] BYREF
+	MATRIX mat; // [esp+44h] [ebp-20h] BYREF
 
-	/* begin block 2 */
-		// Start line: 1771
-	/* end block 2 */
-	// End Line: 1772
-
+	v12 = 0;
+	razGetForwardNormal(inst, target);
+	from = stru_B087B8;
+	to.z = 0;
+	to.y = 0;
+	to.x = 0;
+	MATH3D_RotationFromPosToPos(&from, &to, &rot);
+	z = stru_B087B8.z;
+	if (stru_B087B8.z < 0)
+		z = -stru_B087B8.z;
+	if (z > 1000)
+		v12 = 1;
+	MATH3D_SetUnityMatrix(&mat);
+	RotMatrixZ(rot.z, &mat);
+	v0.vy = 320 - dist;
+	v0.vz = 0;
+	v0.vx = 0;
+	ApplyMatrixSV(&mat, &v0, &v1);
+	x = inst->position.x;
+	LOWORD(v5) = inst->position.y - target->position.y;
+	v6 = x - target->position.x;
+	v0.vy = v5;
+	v0.vx = v6;
+	v7 = v6;
+	v8 = v6;
+	if (v6 < 0)
+		v8 = -v6;
+	v9 = (__int16)v5;
+	v5 = (__int16)v5;
+	if ((v5 & 0x8000u) != 0)
+		v5 = -(__int16)v5;
+	if (v8 >= v5)
+	{
+		v0.vy = v9 / 2;
+		if (v12)
+			v0.vx = v1.vx;
+	}
+	else
+	{
+		v0.vx = v7 / 2;
+		if (v12)
+			v0.vy = v1.vy;
+	}
+	y = inst->position.y;
+	vec.x = x + v1.vx - v0.vx;
+	v11 = inst->position.z;
+	vec.y = y + v1.vy - v0.vy;
+	vec.z = v11;
+	if (!G2Anim_IsControllerActive(&inst->anim, 0, 32))
+		G2Anim_EnableController(&inst->anim, 0, 32);
+	G2EmulationSetInterpController_Vector(inst, 0, 32, &vec, 6, 0);
+	inst->rotation.z = rot.z;
 }
 
 
@@ -622,20 +697,6 @@ void razCenterWithBlock(struct _Instance *inst, struct _Instance *target, int di
 // void /*$ra*/ razSetPauseTranslation(struct _Instance *instance /*$a0*/)
 void razSetPauseTranslation(struct _Instance *instance)
 { // line 870, offset 0x800a64f4
-	/* begin block 1 */
-		// Start line: 871
-		// Start offset: 0x800A64F4
-		// Variables:
-			struct _G2SVector3_Type Vec; // stack offset -16
-	/* end block 1 */
-	// End offset: 0x800A6528
-	// End Line: 881
-
-	/* begin block 2 */
-		// Start line: 1909
-	/* end block 2 */
-	// End Line: 1910
-
 }
 
 
@@ -643,11 +704,6 @@ void razSetPauseTranslation(struct _Instance *instance)
 // void /*$ra*/ razResetPauseTranslation(struct _Instance *instance /*$a0*/)
 void razResetPauseTranslation(struct _Instance *instance)
 { // line 887, offset 0x800a6568
-	/* begin block 1 */
-		// Start line: 1951
-	/* end block 1 */
-	// End Line: 1952
-
 }
 
 
@@ -704,39 +760,42 @@ void razSelectMotionAnim(struct __CharacterState *In, int CurrentSection, int Fr
 // int /*$ra*/ razApplyMotion(struct __CharacterState *In /*$s1*/, int CurrentSection /*$s0*/)
 int razApplyMotion(struct __CharacterState *In, int CurrentSection)
 { // line 1199, offset 0x800a6c30
-	/* begin block 1 */
-		// Start line: 1200
-		// Start offset: 0x800A6C30
-		// Variables:
-			struct _G2SVector3_Type Vec; // stack offset -24
+	struct _Instance* CharacterInstance; // edi
+	int speedAdjustment; // edi
+	struct _G2SVector3_Type vector; // [esp+8h] [ebp-8h] BYREF
 
-		/* begin block 1.1 */
-			// Start line: 1205
-			// Start offset: 0x800A6C60
-			// Variables:
-				struct _G2AnimSection_Type *animSection; // $s0
-
-			/* begin block 1.1.1 */
-				// Start line: 1245
-				// Start offset: 0x800A6D08
-				// Variables:
-					long adjustment; // $s0
-			/* end block 1.1.1 */
-			// End offset: 0x800A6DA4
-			// End Line: 1255
-		/* end block 1.1 */
-		// End offset: 0x800A6DA4
-		// End Line: 1256
-	/* end block 1 */
-	// End offset: 0x800A6DA4
-	// End Line: 1258
-
-	/* begin block 2 */
-		// Start line: 2604
-	/* end block 2 */
-	// End Line: 2605
-
-	return 0;
+	vector.x = 0;
+	vector.y = 0;
+	vector.z = 0;
+	if (!CurrentSection)
+	{
+		CharacterInstance = In->CharacterInstance;
+		if (CharacterInstance->anim.section[0].keylist == G2Instance_GetKeylist(In->CharacterInstance, 2))
+		{
+			vector.y = -60;
+		}
+		else if (CharacterInstance->anim.section[0].keylist == G2Instance_GetKeylist(In->CharacterInstance, 124))
+		{
+			vector.y = -35;
+		}
+		else if (CharacterInstance->anim.section[0].keylist == G2Instance_GetKeylist(In->CharacterInstance, 123))
+		{
+			vector.y = -16;
+		}
+		else if (G2Anim_IsControllerActive(&In->CharacterInstance->anim, 0, 34))
+		{
+			G2Anim_DisableController(&In->CharacterInstance->anim, 0, 34);
+		}
+		if (vector.y)
+		{
+			if (!G2Anim_IsControllerActive(&In->CharacterInstance->anim, 0, 34))
+				G2Anim_EnableController(&In->CharacterInstance->anim, 0, 34);
+			speedAdjustment = In->CharacterInstance->anim.section[0].speedAdjustment;
+			vector.y = (__int16)((vector.y * speedAdjustment * (__int16)G2Timer_GetFrameTime()) >> 12) / 100;
+			G2Anim_SetController_Vector(&In->CharacterInstance->anim, 0, 34, &vector);
+		}
+	}
+	return -vector.y;
 }
 
 
@@ -756,16 +815,10 @@ void razResetMotion(struct _Instance *instance)
 // void /*$ra*/ razSetDampingPhysics(struct _Instance *instance /*$a0*/)
 void razSetDampingPhysics(struct _Instance *instance)
 { // line 1301, offset 0x800a6e14
-	/* begin block 1 */
-		// Start line: 2602
-	/* end block 1 */
-	// End Line: 2603
-
-	/* begin block 2 */
-		// Start line: 2783
-	/* end block 2 */
-	// End Line: 2784
-
+	dword_B08780 = 0;
+	LOWORD(dword_B08928) = 0;
+	Mode = 4;
+	SetDampingPhysics(instance, *(_DWORD*)(dword_B08B3C + 68));
 }
 
 
@@ -773,20 +826,94 @@ void razSetDampingPhysics(struct _Instance *instance)
 // void /*$ra*/ razEnterWater(struct __CharacterState *In /*$s0*/, int CurrentSection /*$s1*/, struct evPhysicsSwimData *SwimData /*$s3*/)
 void razEnterWater(struct __CharacterState *In, int CurrentSection, struct evPhysicsSwimData *SwimData)
 { // line 1311, offset 0x800a6e4c
-	/* begin block 1 */
-		// Start line: 1312
-		// Start offset: 0x800A6E4C
-		// Variables:
-			struct _Instance *Inst; // $s2
-	/* end block 1 */
-	// End offset: 0x800A70D4
-	// End Line: 1409
+	struct _Instance* LinkChild; // esi
+	struct _Instance* v4; // ebp
+	struct _Instance* CharacterInstance; // eax
+	struct _Instance* v6; // eax
+	struct _G2Anim_Type* p_anim; // edi
+	struct _Instance* v8; // eax
 
-	/* begin block 2 */
-		// Start line: 2804
-	/* end block 2 */
-	// End Line: 2805
-
+	LinkChild = stru_B0841C.CharacterInstance->LinkChild;
+	if (Inst && LinkChild == Inst)
+	{
+		if (!LinkChild)
+		{
+		LABEL_6:
+			v4 = dword_B08804 != 0 ? Inst : 0;
+			goto LABEL_8;
+		}
+		LinkChild = LinkChild->LinkSibling;
+	}
+	if (!LinkChild)
+		goto LABEL_6;
+	v4 = (INSTANCE_Query(LinkChild, 1) & 0x20) != 0 ? LinkChild : 0;
+LABEL_8:
+	if ((SwimData->rc & 0x10) != 0)
+	{
+		if (dword_B08850 != 1 || (dword_B08820 & 0x10) != 0)
+		{
+			if (v4 && INSTANCE_Query(v4, 4) == 3)
+			{
+				G2Anim_SetSpeedAdjustment(&In->CharacterInstance->anim, 2048);
+			}
+			else if ((dword_B08778 & 0x40000) == 0 && dword_B08850 == 1)
+			{
+				if (Mode != 4)
+				{
+					CharacterInstance = In->CharacterInstance;
+					Mode = 4;
+					dword_B08780 = 0;
+					LOWORD(dword_B08928) = 0;
+					SetDampingPhysics(CharacterInstance, *(_DWORD*)(dword_B08B3C + 68));
+				}
+				v6 = In->CharacterInstance;
+				if (!In->CharacterInstance->zVel || (dword_B08778 & 0x400004) != 0)
+				{
+					p_anim = &v6->anim;
+					if (G2Anim_IsControllerActive(&v6->anim, 0, 34))
+						G2Anim_DisableController(p_anim, 0, 34);
+					dword_B08924 = 0;
+					G2Anim_SetSpeedAdjustment(p_anim, 4096);
+					StateSwitchStateCharacterData(In, StateHandlerSwim, 0);
+				}
+				TrailWaterFX(In->CharacterInstance, 9, 1, 1);
+				TrailWaterFX(In->CharacterInstance, 13, 1, 1);
+				TrailWaterFX(In->CharacterInstance, 31, 1, 1);
+				TrailWaterFX(In->CharacterInstance, 41, 1, 1);
+			}
+		}
+		else
+		{
+			current_health = 100000;
+			SetPhysics(In->CharacterInstance, -16, 0, 0, 0);
+			Mode = 0;
+		}
+	}
+	if ((SwimData->rc & 0x800) != 0 && dword_B08804 == 1)
+	{
+		if (CurrentSection == 2)
+			G2EmulationSwitchAnimation(In, 2, 61, 0, 3, 2);
+		else
+			G2EmulationSwitchAnimation(In, CurrentSection, 63, 0, 16, 2);
+	}
+	if ((SwimData->rc & 0x100) != 0 && !CurrentSection)
+	{
+		if (v4)
+		{
+			INSTANCE_Query(v4, 4);
+		}
+		else
+		{
+			v8 = In->CharacterInstance;
+			dword_B08780 = 0;
+			LOWORD(dword_B08928) = 0;
+			Mode = 4;
+			SetDampingPhysics(v8, *(_DWORD*)(dword_B08B3C + 68));
+		}
+		PurgeMessageQueue(&In->SectionList[0].Event);
+		TrailWaterFX(In->CharacterInstance, 9, 4, 1);
+		TrailWaterFX(In->CharacterInstance, 13, 4, 1);
+	}
 }
 
 
@@ -823,27 +950,31 @@ void razSetSwimVelocity(struct _Instance *instance, int vel, int accl)
 // void /*$ra*/ razSetWallCrawlNodes(struct _Instance *instance /*$s1*/, struct evPhysicsWallCrawlData *data /*$s0*/)
 void razSetWallCrawlNodes(struct _Instance *instance, struct evPhysicsWallCrawlData *data)
 { // line 1455, offset 0x800a7144
-	/* begin block 1 */
-		// Start line: 1456
-		// Start offset: 0x800A7144
-		// Variables:
-			struct _G2SVector3_Type vec; // stack offset -24
+	__int16 y; // ax
+	__int16 z; // cx
+	struct _G2SVector3_Type vector; // [esp+8h] [ebp-8h] BYREF
 
-		/* begin block 1.1 */
-			// Start line: 1463
-			// Start offset: 0x800A716C
-		/* end block 1.1 */
-		// End offset: 0x800A71DC
-		// End Line: 1501
-	/* end block 1 */
-	// End offset: 0x800A721C
-	// End Line: 1512
-
-	/* begin block 2 */
-		// Start line: 3095
-	/* end block 2 */
-	// End Line: 3096
-
+	if ((data->rc & 8) != 0)
+	{
+		if ((int)MATH3D_SquareLength(data->NewPosition.x, data->NewPosition.y, data->NewPosition.z) > 100)
+		{
+			instance->position.x -= data->NewPosition.x;
+			instance->position.y -= data->NewPosition.y;
+		}
+		y = data->DropRotation.y;
+		z = data->DropRotation.z;
+		vector.x = data->DropRotation.x;
+		vector.y = y;
+		vector.z = z;
+		G2Anim_SetController_Vector(&instance->anim, 0, 8, &vector);
+	}
+	if (data->rc == 10)
+	{
+		vector.x = -data->ForwardXRotation;
+		vector.y = 0;
+		vector.z = 0;
+		G2EmulationSetInterpController_Vector(instance, 14, 14, &vector, 3, 0);
+	}
 }
 
 
@@ -939,11 +1070,30 @@ void razSwitchVAnimSingle(struct _Instance *instance, int section, int anim, int
 // void /*$ra*/ razSwitchVAnim(struct _Instance *instance /*$a0*/, int section /*$a1*/, struct __VAnim *vAnim /*$v1*/, int frame /*$a3*/, int frames /*stack 16*/)
 void razSwitchVAnim(struct _Instance *instance, int section, struct __VAnim *vAnim, int frame, int frames)
 { // line 1587, offset 0x800a7434
-	/* begin block 1 */
-		// Start line: 3396
-	/* end block 1 */
-	// End Line: 3397
+	int v5; // ecx
+	int v6; // esi
 
+	v5 = frame;
+	if (frame == -1)
+		v5 = vAnim->frame;
+	v6 = frames;
+	if (frames == -1)
+		v6 = vAnim->frames;
+	if (section)
+	{
+		if (section == 1)
+		{
+			G2EmulationInstanceSwitchAnimationAlpha(instance, 1, vAnim->anim1, v5, v6, vAnim->mode, vAnim->alpha);
+		}
+		else if (section == 2)
+		{
+			G2EmulationInstanceSwitchAnimationAlpha(instance, 2, vAnim->anim2, v5, v6, vAnim->mode, vAnim->alpha);
+		}
+	}
+	else
+	{
+		G2EmulationInstanceSwitchAnimationAlpha(instance, 0, vAnim->anim0, v5, v6, vAnim->mode, vAnim->alpha);
+	}
 }
 
 
@@ -951,31 +1101,77 @@ void razSwitchVAnim(struct _Instance *instance, int section, struct __VAnim *vAn
 // int /*$ra*/ razProcessSAnim(struct _Instance *instance /*$s3*/, int mode /*$a1*/)
 int razProcessSAnim(struct _Instance *instance, int mode)
 { // line 1615, offset 0x800a7500
-	/* begin block 1 */
-		// Start line: 1616
-		// Start offset: 0x800A7500
-		// Variables:
-			int rc; // $s2
-			int i; // $s0
+	int v2; // ebp
+	unsigned __int8** v3; // eax
+	unsigned __int8* v4; // esi
+	int v5; // eax
+	int v6; // ecx
+	int v8; // [esp+10h] [ebp-4h]
 
-		/* begin block 1.1 */
-			// Start line: 1641
-			// Start offset: 0x800A75C8
-			// Variables:
-				struct __VAnim *vanim; // $s1
-		/* end block 1.1 */
-		// End offset: 0x800A7630
-		// End Line: 1652
-	/* end block 1 */
-	// End offset: 0x800A7654
-	// End Line: 1663
-
-	/* begin block 2 */
-		// Start line: 3452
-	/* end block 2 */
-	// End Line: 3453
-
-	return 0;
+	v2 = 0;
+	v8 = 0;
+	if (mode == 1048597)
+	{
+		if (*(WORD*)(dword_B089C4 + 8) != 2)
+			goto LABEL_10;
+		goto LABEL_9;
+	}
+	if (mode == 0x8000000)
+	{
+		if (*(WORD*)(dword_B089C4 + 8) != 1)
+			goto LABEL_10;
+		goto LABEL_9;
+	}
+	if (mode == 0x8000003 && *(WORD*)(dword_B089C4 + 8) == 3)
+		LABEL_9:
+	v8 = 1;
+LABEL_10:
+	if (v8)
+	{
+		v3 = *(unsigned __int8***)(dword_B089C4 + 4);
+		if (v3)
+		{
+			dword_B089C4 = *(DWORD*)(dword_B089C4 + 4);
+			v4 = *v3;
+			if (*v3)
+			{
+				do
+				{
+					v5 = *((unsigned __int16*)v4 + 3);
+					v6 = v4[3];
+					if (v2)
+					{
+						if (v2 == 1)
+						{
+							G2EmulationInstanceSwitchAnimationAlpha(instance, 1, v4[1], v5, v6, v4[4], v4[5]);
+						}
+						else if (v2 == 2)
+						{
+							G2EmulationInstanceSwitchAnimationAlpha(instance, 2, v4[2], v5, v6, v4[4], v4[5]);
+						}
+					}
+					else
+					{
+						G2EmulationInstanceSwitchAnimationAlpha(instance, 0, *v4, v5, v6, v4[4], v4[5]);
+					}
+					G2Anim_SetSpeedAdjustment(&instance->anim, *(__int16*)(dword_B089C4 + 12));
+					++v2;
+				} while (v2 <= 2);
+				if (*(WORD*)(dword_B089C4 + 8) == 2)
+				{
+					dword_B08960 = *(__int16*)(dword_B089C4 + 10) << 12;
+					return v8;
+				}
+			}
+		}
+		else
+		{
+			G2Anim_SetSpeedAdjustment(&instance->anim, 4096);
+			dword_B089C4 = 0;
+			return 0;
+		}
+	}
+	return v8;
 }
 
 
@@ -1158,22 +1354,16 @@ void razSetPlayerEventHistory(unsigned long event)
 // int /*$ra*/ razSideMoveSpiderCheck(struct _Instance *instance /*$s2*/, int x /*$a1*/)
 int razSideMoveSpiderCheck(struct _Instance *instance, int x)
 { // line 1905, offset 0x800a7cac
-	/* begin block 1 */
-		// Start line: 1906
-		// Start offset: 0x800A7CAC
-		// Variables:
-			struct SVECTOR startVec; // stack offset -32
-			struct SVECTOR endVec; // stack offset -24
-	/* end block 1 */
-	// End offset: 0x800A7D60
-	// End Line: 1925
+	struct SVECTOR endVec; // [esp+8h] [ebp-10h] BYREF
+	struct SVECTOR startVec; // [esp+10h] [ebp-8h] BYREF
 
-	/* begin block 2 */
-		// Start line: 4025
-	/* end block 2 */
-	// End Line: 4026
-
-	return 0;
+	PHYSICS_GenericLineCheckSetup(x, 0, 192, &startVec);
+	PHYSICS_GenericLineCheckSetup(x, -320, 192, &endVec);
+	if ((PHYSICS_CheckForValidMove(instance, &startVec, &endVec, 0) & 1) == 0)
+		return 1;
+	PHYSICS_GenericLineCheckSetup(x, 0, 0, &startVec);
+	PHYSICS_GenericLineCheckSetup(x, -320, 0, &endVec);
+	return (PHYSICS_CheckForValidMove(instance, &startVec, &endVec, 0) & 1) == 0;
 }
 
 
@@ -1181,17 +1371,10 @@ int razSideMoveSpiderCheck(struct _Instance *instance, int x)
 // struct _Instance * /*$ra*/ RAZIEL_QueryEngagedInstance(int index /*$a0*/)
 struct _Instance * RAZIEL_QueryEngagedInstance(int index)
 { // line 1942, offset 0x800a7d78
-	/* begin block 1 */
-		// Start line: 4115
-	/* end block 1 */
-	// End Line: 4116
-
-	/* begin block 2 */
-		// Start line: 4117
-	/* end block 2 */
-	// End Line: 4118
-
-	return null;
+	if ((dword_B087F4 & (1 << index)) != 0)
+		return dword_B087F0[2 * index];
+	else
+		return 0;
 }
 
 
@@ -1199,39 +1382,40 @@ struct _Instance * RAZIEL_QueryEngagedInstance(int index)
 // int /*$ra*/ razUpdateSoundRamp(struct _Instance *instance /*$a0*/, struct _SoundRamp *sound /*$s0*/)
 int razUpdateSoundRamp(struct _Instance *instance, struct _SoundRamp *sound)
 { // line 1955, offset 0x800a7db0
-	/* begin block 1 */
-		// Start line: 1956
-		// Start offset: 0x800A7DB0
-		// Variables:
-			int volume; // $s1
-			int time; // $t0
+	int v2; // edi
+	__int32 soundTotalTime; // ebx
+	__int32 v4; // eax
+	__int32 soundTimer; // ecx
 
-		/* begin block 1.1 */
-			// Start line: 1971
-			// Start offset: 0x800A7E14
-			// Variables:
-				int startPitch; // $v1
-				int endPitch; // $v0
-				int startVolume; // $a1
-				int endVolume; // $v0
-		/* end block 1.1 */
-		// End offset: 0x800A7E9C
-		// End Line: 1986
-	/* end block 1 */
-	// End offset: 0x800A7E9C
-	// End Line: 1989
-
-	/* begin block 2 */
-		// Start line: 4137
-	/* end block 2 */
-	// End Line: 4138
-
-	/* begin block 3 */
-		// Start line: 4144
-	/* end block 3 */
-	// End Line: 4145
-
-	return 0;
+	v2 = 0;
+	if (sound->soundHandle)
+	{
+		soundTotalTime = sound->soundTotalTime;
+		v4 = gameTrackerX.timeMult + sound->soundTimer;
+		sound->soundTimer = v4;
+		if (v4 > soundTotalTime)
+			sound->soundTimer = soundTotalTime;
+		if (soundTotalTime)
+		{
+			soundTimer = sound->soundTimer;
+			if (soundTimer <= soundTotalTime)
+			{
+				v2 = sound->soundStartVolume
+					+ sound->soundTimer * (sound->soundEndVolume - sound->soundStartVolume) / soundTotalTime;
+				if (!SOUND_Update3dSound(
+					&instance->position,
+					sound->soundHandle,
+					sound->soundStartPitch + soundTimer * (sound->soundEndPitch - sound->soundStartPitch) / soundTotalTime,
+					v2,
+					sound->soundDistance))
+				{
+					SndEndLoop(sound->soundHandle);
+					sound->soundHandle = 0;
+				}
+			}
+		}
+	}
+	return v2;
 }
 
 
@@ -1239,11 +1423,17 @@ int razUpdateSoundRamp(struct _Instance *instance, struct _SoundRamp *sound)
 // void /*$ra*/ razSetupSoundRamp(struct _Instance *instance /*$a0*/, struct _SoundRamp *sound /*$s0*/, int sfx /*$a1*/, int startPitch /*$s2*/, int endPitch /*stack 16*/, int startVolume /*stack 20*/, int endVolume /*stack 24*/, int timer /*stack 28*/, int distance /*stack 32*/)
 void razSetupSoundRamp(struct _Instance *instance, struct _SoundRamp *sound, int sfx, int startPitch, int endPitch, int startVolume, int endVolume, int timer, int distance)
 { // line 1995, offset 0x800a7eb4
-	/* begin block 1 */
-		// Start line: 4235
-	/* end block 1 */
-	// End Line: 4236
-
+	if (!sound->soundHandle)
+		sound->soundHandle = SOUND_Play3dSound(&instance->position, sfx, startPitch, startVolume, distance);
+	if (!timer)
+		sound->soundHandle = 0;
+	sound->soundDistance = distance;
+	sound->soundStartPitch = startPitch;
+	sound->soundEndPitch = endPitch;
+	sound->soundStartVolume = startVolume;
+	sound->soundEndVolume = endVolume;
+	sound->soundTotalTime = timer;
+	sound->soundTimer = 0;
 }
 
 
@@ -1251,20 +1441,21 @@ void razSetupSoundRamp(struct _Instance *instance, struct _SoundRamp *sound, int
 // void /*$ra*/ RAZIEL_SetInteractiveMusic(int modifier /*$a0*/, int action /*$a1*/)
 void RAZIEL_SetInteractiveMusic(int modifier, int action)
 { // line 2019, offset 0x800a7f58
-	/* begin block 1 */
-		// Start line: 2020
-		// Start offset: 0x800A7F58
-		// Variables:
-			int soundFlag; // $s0
-	/* end block 1 */
-	// End offset: 0x800A7FC4
-	// End Line: 2039
+	int v2; // esi
 
-	/* begin block 2 */
-		// Start line: 4290
-	/* end block 2 */
-	// End Line: 4291
-
+	v2 = 1 << modifier;
+	if (action)
+	{
+		if ((dword_B08974 & v2) == 0)
+			SOUND_SetMusicModifier(modifier);
+		dword_B08974 |= v2;
+	}
+	else
+	{
+		if ((dword_B08974 & v2) != 0)
+			SOUND_ResetMusicModifier(modifier);
+		dword_B08974 &= ~v2;
+	}
 }
 
 
@@ -1272,11 +1463,57 @@ void RAZIEL_SetInteractiveMusic(int modifier, int action)
 // void /*$ra*/ RAZIEL_DebugHurtRaziel()
 void RAZIEL_DebugHurtRaziel()
 { // line 2040, offset 0x800a7fd4
-	/* begin block 1 */
-		// Start line: 4338
-	/* end block 1 */
-	// End Line: 4339
+	struct _Instance* v0; // eax
+	struct _Instance* LinkChild; // esi
+	struct _Instance* v2; // esi
 
+	if ((ControlFlag & 0x1000000) == 0 && !dword_B0881C && current_health > 525)
+	{
+		current_health -= 20000;
+		dword_B08818 -= 20000;
+		dword_B0881C = 122880 * *(__int16*)(dword_B08B3C + 52);
+		if (dword_B08850 != 1 || (v0 = Inst) == 0)
+		{
+		LABEL_19:
+			if (SLOBYTE(gameTrackerX.gameFlags) >= 0)
+				GAMEPAD_Shock0(1, 9000);
+			return;
+		}
+		if (dword_B08804 != 4096)
+		{
+		LABEL_17:
+			if (v0)
+			{
+				INSTANCE_Post(v0, (int)&memwpsx[3112401], 0);
+				dword_B0884C = 2;
+				debugRazielFlags2 = 2048;
+				INSTANCE_Post(Inst, (int)&memwpsx[3112403], 2);
+			}
+			goto LABEL_19;
+		}
+		LinkChild = stru_B0841C.CharacterInstance->LinkChild;
+		if (LinkChild == Inst)
+		{
+			if (!LinkChild)
+				goto LABEL_11;
+			LinkChild = LinkChild->LinkSibling;
+		}
+		if (LinkChild)
+		{
+			v2 = (INSTANCE_Query(LinkChild, 1) & 0x20) != 0 ? LinkChild : 0;
+			v0 = Inst;
+			goto LABEL_13;
+		}
+	LABEL_11:
+		v2 = Inst;
+	LABEL_13:
+		if ((INSTANCE_Query(v0, 40) & 1) != 0)
+			INSTANCE_Post(Inst, (int)&memwpsx[3112401], 0);
+		v0 = Inst;
+		if (v2 == Inst)
+			dword_B08804 = 0;
+		goto LABEL_17;
+	}
 }
 
 
@@ -1284,11 +1521,7 @@ void RAZIEL_DebugHurtRaziel()
 // void /*$ra*/ RAZIEL_StartNewGame()
 void RAZIEL_StartNewGame()
 { // line 2045, offset 0x800a7ff4
-	/* begin block 1 */
-		// Start line: 4348
-	/* end block 1 */
-	// End Line: 4349
-
+	memset(&player, 0, sizeof(player));
 }
 
 
