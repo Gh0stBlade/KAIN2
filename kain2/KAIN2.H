@@ -6047,8 +6047,8 @@ struct burntTuneType // hashcode: 0x127E6332 (dec: 310272818)
 
 struct _MonsterState // hashcode: 0x1B0172BB (dec: 453079739)
 {
-	void (*entryFunction)(); // size=0, offset=0
-	void (*stateFunction)(); // size=0, offset=4
+	void (*entryFunction)(struct _Instance* instance); // size=0, offset=0
+	void (*stateFunction)(struct _Instance* instance); // size=0, offset=4
 };
 
 struct _MonsterStateChoice // hashcode: 0xE0AABD5C (dec: -525681316)
@@ -6233,9 +6233,9 @@ struct HUMAN_114fake // hashcode: 0xC7C43F22 (dec: -943440094)
 
 struct _MonsterFunctionTable // hashcode: 0x82983F8D (dec: -2103951475)
 {
-	void (*initFunc)(); // size=0, offset=0
-	void (*cleanUpFunc)(); // size=0, offset=4
-	void (*damageEffectFunc)(); // size=0, offset=8
+	void (*initFunc)(struct _Instance* instance); // size=0, offset=0
+	void (*cleanUpFunc)(struct _Instance* instance); // size=0, offset=4
+	void (*damageEffectFunc)(struct _Instance* instance, struct evFXHitData* data); // size=0, offset=8
 	unsigned long (*queryFunc)(); // size=0, offset=12
 	void (*messageFunc)(); // size=0, offset=16
 	struct _MonsterStateChoice *stateFuncs; // size=12, offset=20

@@ -6,30 +6,135 @@
 // void /*$ra*/ MON_DoCombatTimers(struct _Instance *instance /*$s2*/)
 void MON_DoCombatTimers(struct _Instance *instance)
 { // line 101, offset 0x800871fc
-	/* begin block 1 */
-		// Start line: 102
-		// Start offset: 0x800871FC
-		// Variables:
-			struct _MonsterVars *mv; // $s0
-			unsigned long curtime; // $s1
+	struct _MonsterVars* mv; // esi MAPDST
+	int v2; // ecx
+	unsigned int Time; // edi
+	unsigned int mvFlags; // eax
+	__int16 maxHitPoints; // ax
+	int v6; // ecx
+	int mainColorVertex; // edi
+	int v8; // ebp
+	struct CVECTOR* perVertexColor; // eax
+	struct _Model* mdl; // ebx
+	u_char g; // cl
+	u_char r; // dl
+	int b; // edx
+	int v15; // ecx
+	int v16; // ecx
+	int numVertices; // edx
+	int v18; // ecx
+	int v19; // ecx
+	int v20; // ecx
+	unsigned int v21; // eax
+	unsigned int v22; // [esp+10h] [ebp-8h]
 
-		/* begin block 1.1 */
-			// Start line: 117
-			// Start offset: 0x80087280
-			// Variables:
-				struct _MonsterCombatAttributes *combat; // $v0
-		/* end block 1.1 */
-		// End offset: 0x800872F0
-		// End Line: 126
-	/* end block 1 */
-	// End offset: 0x800873CC
-	// End Line: 142
-
-	/* begin block 2 */
-		// Start line: 202
-	/* end block 2 */
-	// End Line: 203
-
+	mv = (struct _MonsterVars*)instance->extraData;
+	Time = MON_GetTime(instance);
+	mvFlags = mv->mvFlags;
+	v22 = Time;
+	if ((mv->mvFlags & 0x10) != 0)
+	{
+		if (mv->damageTimer < Time)
+		{
+			mv->mvFlags = mvFlags & 0xFF7FFFEF;
+			if ((gameTrackerX.debugFlags2 & 1) != 0)
+				MON_Say();
+		}
+	}
+	else if ((mvFlags & 0x2000) == 0)
+	{
+		v2 = mv->hitPoints;
+		maxHitPoints = mv->maxHitPoints;
+		if ((__int16)v2 < maxHitPoints)
+		{
+			v6 = ((gameTrackerX.timeMult * mv->subAttr->combatAttributes->recovery) >> 12) + v2;
+			mv->hitPoints = v6;
+			if ((__int16)v6 > maxHitPoints)
+				mv->hitPoints = maxHitPoints;
+			mainColorVertex = mv->mainColorVertex;
+			v8 = ((maxHitPoints - mv->hitPoints) << 8) / maxHitPoints;
+			perVertexColor = instance->perVertexColor;
+			mdl = instance->object->modelList[instance->currentModel];
+			if (perVertexColor)
+			{
+				if (v8)
+				{
+					g = perVertexColor[mainColorVertex].g;
+					mv = (struct _MonsterVars*)instance->extraData;
+					r = perVertexColor[mainColorVertex].r;
+					if (g > r)
+					{
+						if (perVertexColor[mainColorVertex].b > r)
+						{
+							b = perVertexColor[mainColorVertex].r;
+							v15 = mv->subAttr->bruiseRed;
+						}
+						else
+						{
+							b = perVertexColor[mainColorVertex].b;
+							v15 = mv->subAttr->bruiseBlue;
+						}
+					}
+					else if (perVertexColor[mainColorVertex].b > g)
+					{
+						b = perVertexColor[mainColorVertex].g;
+						v15 = mv->subAttr->bruiseGreen;
+					}
+					else
+					{
+						b = perVertexColor[mainColorVertex].b;
+						v15 = mv->subAttr->bruiseBlue;
+					}
+					v16 = ((255 - v15) * (256 - v8)) >> 8;
+					if (perVertexColor[mainColorVertex].cd == 1 && b < v16 && mdl->numVertices)
+					{
+						numVertices = mdl->numVertices;
+						do
+						{
+							if (perVertexColor->cd == 1)
+							{
+								v18 = perVertexColor->r + 8;
+								perVertexColor->r = v18 <= 255 ? v18 : -1;
+								v19 = perVertexColor->g + 8;
+								perVertexColor->g = v19 <= 255 ? v19 : -1;
+								v20 = perVertexColor->b + 8;
+								perVertexColor->b = v20 <= 255 ? v20 : -1;
+								if ((*(DWORD*)perVertexColor & 0xFFFFFF) == 0xFFFFFF)
+									perVertexColor->cd = 0;
+							}
+							++perVertexColor;
+							--numVertices;
+						} while (numVertices);
+					}
+				}
+				else
+				{
+					MEMPACK_Free((char*)instance->perVertexColor);
+					instance->perVertexColor = 0;
+				}
+			}
+			Time = v22;
+		}
+	}
+	v21 = mv->mvFlags;
+	if ((mv->mvFlags & 0x100) != 0 && mv->stunTimer < Time)
+	{
+		v21 &= ~0x100;
+		mv->mvFlags = v21;
+		if ((v21 & 0x10) != 0)
+		{
+			if ((gameTrackerX.debugFlags2 & 1) == 0)
+				goto LABEL_44;
+		}
+		else if ((gameTrackerX.debugFlags2 & 1) == 0)
+		{
+			goto LABEL_44;
+		}
+		MON_Say();
+	}
+LABEL_44:
+	if (Time % 0x3E8 < (Time - gameTrackerX.lastLoopTime) % 0x3E8)
+		mv->chance = rand() % 100;
 }
 
 
@@ -67,49 +172,52 @@ void MON_ChangeHumanOpinion(struct _Instance *instance)
 // void /*$ra*/ MON_CutOut_Monster(struct _Instance *instance /*$s2*/, int fade_amount /*$t4*/, int startseg /*$a2*/, int endseg /*$a3*/)
 void MON_CutOut_Monster(struct _Instance *instance, int fade_amount, int startseg, int endseg)
 { // line 192, offset 0x8008748c
-	/* begin block 1 */
-		// Start line: 193
-		// Start offset: 0x8008748C
-		// Variables:
-			struct _SVector point; // stack offset -56
-			struct _SVector normal; // stack offset -48
-			struct _SVector p1; // stack offset -40
-			struct _SVector p2; // stack offset -32
-			int tmp; // $t0
-			struct MATRIX *mat; // $a0
+	struct MATRIX* mat; // edx
+	SVECTOR* _v; // eax
+	int tmp; // kr00_4
+	SVECTOR p1; // [esp+0h] [ebp-20h] BYREF
+	SVECTOR p2; // [esp+8h] [ebp-18h] BYREF
+	struct _SVector normal; // [esp+10h] [ebp-10h] BYREF
+	SVECTOR point; // [esp+18h] [ebp-8h] BYREF
 
-		/* begin block 1.1 */
-			// Start line: 221
-			// Start offset: 0x800875D0
-			// Variables:
-				long color; // stack offset -24
-
-			/* begin block 1.1.1 */
-				// Start line: 221
-				// Start offset: 0x800875D0
-				// Variables:
-					short _x0; // $v0
-					short _y0; // $v1
-					short _z0; // $a1
-					short _x1; // $a2
-					short _y1; // $a3
-					short _z1; // $t0
-					struct _SVector *_v; // $a0
-			/* end block 1.1.1 */
-			// End offset: 0x800875D0
-			// End Line: 221
-		/* end block 1.1 */
-		// End offset: 0x80087678
-		// End Line: 233
-	/* end block 1 */
-	// End offset: 0x800876C8
-	// End Line: 238
-
-	/* begin block 2 */
-		// Start line: 389
-	/* end block 2 */
-	// End Line: 390
-
+	mat = instance->matrix;
+	if (mat)
+	{
+		_v = (SVECTOR*)&mat[startseg];
+		p2.vx = _v[3].vz;
+		p2.vy = _v[3].vx;
+		p2.vz = _v[3].vz;
+		_v = (SVECTOR*)&mat[endseg];
+		p1.vx = _v[2].vz;
+		p1.vy = _v[3].vx;
+		p1.vz = _v[3].vz;
+		tmp = p2.vx - p1.vx;
+		p2.vx += tmp / 8;
+		p1.vx -= tmp / 8;
+		tmp = p2.vy - p1.vy;
+		p2.vy += tmp / 8;
+		p1.vy -= tmp / 8;
+		tmp = p2.vz - p1.vz;
+		p1.vz -= tmp / 8;
+		p2.vz += tmp / 8;
+		LoadAverageShort12(&p1, &p2, fade_amount, 4096 - fade_amount, &point);
+		if ((instance->halvePlane.flags & 8) == 0)
+		{
+			normal.x = p1.vx - p2.vx;
+			instance = 0;
+			normal.y = p1.vy - p2.vy;
+			normal.z = p1.vz - p2.vz;
+			CAMERA_Normalize(&normal);
+			int color = 0x0080FF;
+			FX_DoInstancePowerRing(instance, 12000, (int*)&color, 0, 2);
+			FX_DoInstancePowerRing(instance, 12000, (int*)&color, 0, 1);
+			instance->halvePlane.flags = 8;
+			instance->halvePlane.a = normal.x;
+			instance->halvePlane.b = normal.y;
+			instance->halvePlane.c = normal.z;
+		}
+		instance->halvePlane.d = -((point.vx * instance->halvePlane.a + point.vy * instance->halvePlane.b + point.vz * instance->halvePlane.c) >> 12);
+	}
 }
 
 
@@ -117,20 +225,56 @@ void MON_CutOut_Monster(struct _Instance *instance, int fade_amount, int startse
 // void /*$ra*/ MON_DeadEntry(struct _Instance *instance /*$s1*/)
 void MON_DeadEntry(struct _Instance *instance)
 { // line 249, offset 0x800876e0
-	/* begin block 1 */
-		// Start line: 250
-		// Start offset: 0x800876E0
-		// Variables:
-			struct _MonsterVars *mv; // $s0
-	/* end block 1 */
-	// End offset: 0x800877BC
-	// End Line: 278
+	struct _MonsterVars* extraData; // edi
+	struct _MonsterIR* v2; // eax
+	__int16 humanOpinionOfRaziel; // ax
+	int v4; // esi
+	unsigned int v5; // edx
+	bool v6; // zf
 
-	/* begin block 2 */
-		// Start line: 524
-	/* end block 2 */
-	// End Line: 525
-
+	extraData = (struct _MonsterVars*)instance->extraData;
+	MON_TurnOffAllSpheres(instance);
+	if ((gameTrackerX.debugFlags2 & 1) != 0)
+		MON_Say();
+	v2 = extraData->enemy;
+	if (v2 && (INSTANCE_Query(*((struct _Instance**)v2 + 1), 1) & 1) != 0 && (INSTANCE_Query(instance, 1) & 0xC000) != 0)
+	{
+		humanOpinionOfRaziel = GlobalSave->humanOpinionOfRaziel;
+		if (humanOpinionOfRaziel >= -40)
+			v4 = -40;
+		else
+			v4 = humanOpinionOfRaziel - 5;
+		if (v4 >= -32767)
+		{
+			if (v4 > 0x7FFF)
+				v4 = 0x7FFF;
+		}
+		else
+		{
+			v4 = -32767;
+		}
+		if (v4 <= 0 && humanOpinionOfRaziel > 0)
+			HUMAN_GetAngry();
+		GlobalSave->humanOpinionOfRaziel = v4;
+	}
+	if (extraData->previousMainState == -1)
+		MON_PlayAnim(instance, 24, 1);
+	v5 = extraData->mvFlags;
+	v5 = extraData->mvFlags | 0x200;
+	extraData->mvFlags = v5;
+	instance->flags2 &= ~0x200C0u;
+	v6 = extraData->soulJuice == 0;
+	extraData->damageTimer = 0;
+	if (v6)
+	{
+		extraData->damageTimer = MON_GetTime(instance);
+	}
+	else if (!extraData->soulID)
+	{
+		if ((gameTrackerX.debugFlags2 & 1) != 0)
+			MON_Say();
+		MON_BirthSoul(instance, 1);
+	}
 }
 
 
@@ -231,20 +375,26 @@ void MON_Dead(struct _Instance *instance)
 // void /*$ra*/ MON_MissileHitEntry(struct _Instance *instance /*$s0*/)
 void MON_MissileHitEntry(struct _Instance *instance)
 { // line 527, offset 0x80087f04
-	/* begin block 1 */
-		// Start line: 528
-		// Start offset: 0x80087F04
-		// Variables:
-			struct _MonsterVars *mv; // $s1
-	/* end block 1 */
-	// End offset: 0x80087F04
-	// End Line: 528
+	struct _MonsterVars* mv; // edi
+	unsigned int mvFlags; // eax
+	int v3; // eax
 
-	/* begin block 2 */
-		// Start line: 1142
-	/* end block 2 */
-	// End Line: 1143
-
+	mv = (struct _MonsterVars*)instance->extraData;
+	instance->xAccl = 0;
+	instance->yAccl = 0;
+	instance->xVel = 0;
+	instance->yVel = 0;
+	MON_PlayAnim(instance, 25, 1);
+	mvFlags = mv->mvFlags;
+	mvFlags = mv->mvFlags & ~0x10;
+	mv->mvFlags = mvFlags | 0x200000;
+	MON_TurnOffAllSpheres(instance);
+	mv->causeOfDeath = 0;
+	MON_DropAllObjects(instance);
+	mv->heldID = mv->held->introUniqueID;
+	v3 = SetObjectData(0, 0, 0, instance, 3);
+	INSTANCE_Post(mv->held, 0x800002, v3);
+	SOUND_Play3dSound(&instance->position, 39, -100, 100, 16000);
 }
 
 
@@ -252,23 +402,32 @@ void MON_MissileHitEntry(struct _Instance *instance)
 // void /*$ra*/ MON_MissileHit(struct _Instance *instance /*$s1*/)
 void MON_MissileHit(struct _Instance *instance)
 { // line 551, offset 0x80087fd0
-	/* begin block 1 */
-		// Start line: 552
-		// Start offset: 0x80087FD0
-		// Variables:
-			struct _MonsterVars *mv; // $s3
-			struct _MonsterAttributes *ma; // $s0
-			int thisFrame; // $s2
-			int lastFrame; // $a0
-	/* end block 1 */
-	// End offset: 0x80088094
-	// End Line: 574
+	struct _MonsterVars* mv; // ebp
+	unsigned __int8* data; // edi
+	int Frame; // ebx
+	int LastFrame; // eax
+	int v5; // ecx
+	int v6; // ecx
 
-	/* begin block 2 */
-		// Start line: 1208
-	/* end block 2 */
-	// End Line: 1209
-
+	mv = (struct _MonsterVars*)instance->extraData;
+	data = (unsigned __int8*)instance->data;
+	Frame = G2EmulationInstanceQueryFrame(instance, 0);
+	LastFrame = G2EmulationInstanceQueryLastFrame(instance, 0);
+	v5 = data[38];
+	if (LastFrame >= v5 || Frame < v5)
+	{
+		v6 = data[39];
+		if (LastFrame < v6 && Frame >= v6)
+			FX_BloodCone(instance, data[37], 80);
+	}
+	else
+	{
+		LastFrame = data[37];
+		FX_Blood_Impale(instance, LastFrame, instance, LastFrame);
+	}
+	if ((instance->flags2 & 0x10) != 0)
+		MON_SwitchState(instance, MONSTER_STATE_DEAD);
+	while (DeMessageQueue(&mv->messageQueue));
 }
 
 
@@ -276,16 +435,6 @@ void MON_MissileHit(struct _Instance *instance)
 // void /*$ra*/ MON_BirthEntry(struct _Instance *instance /*$a0*/)
 void MON_BirthEntry(struct _Instance *instance)
 { // line 579, offset 0x800880b0
-	/* begin block 1 */
-		// Start line: 1266
-	/* end block 1 */
-	// End Line: 1267
-
-	/* begin block 2 */
-		// Start line: 1267
-	/* end block 2 */
-	// End Line: 1268
-
 }
 
 
@@ -293,11 +442,7 @@ void MON_BirthEntry(struct _Instance *instance)
 // void /*$ra*/ MON_Birth(struct _Instance *instance /*$a0*/)
 void MON_Birth(struct _Instance *instance)
 { // line 583, offset 0x800880b8
-	/* begin block 1 */
-		// Start line: 1274
-	/* end block 1 */
-	// End Line: 1275
-
+	MON_SwitchState(instance, MONSTER_STATE_IDLE);
 }
 
 
