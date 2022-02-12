@@ -87,131 +87,91 @@ long MEMPACK_RelocatableType(long memType)
 char * MEMPACK_Malloc(unsigned long allocSize, unsigned char memType)
 {
 #ifdef PSX_VERSION
-	struct MemHeader* bestAddress; // $s1
-	long relocatableMemory; // $s3
-	int curMem; // $s0
-	struct MemHeader* address; // $a1
-	long topOffset; // $a0
-
-	//s2 = allocSize
-	//s4 = memType
+	struct MemHeader* bestAddress;
+	long relocatableMemory;
+	int curMem;
+	struct MemHeader* address;
+	long topOffset;
 
 	relocatableMemory = MEMPACK_RelocatableType(memType);
-	//s2 = ((allocSize + 11) >> 2) << 2
-	//loc_80050240
+	
+	allocSize = ((allocSize + 11) >> 2) << 2;
+
 	if (newMemTracker.doingGarbageCollection == 0 && relocatableMemory != 0)
 	{
 		MEMPACK_DoGarbageCollection();
 	}
-	//loc_80050260
+
 	if (relocatableMemory != 0)
 	{
-		bestAddress = MEMPACK_GetSmallestBlockTopBottom(((allocSize + 11) >> 2) << 2);
+		bestAddress = MEMPACK_GetSmallestBlockTopBottom(allocSize);
 	}
 	else
 	{
-		bestAddress = MEMPACK_GetSmallestBlockBottomTop(((allocSize + 11) >> 2) << 2);
+		bestAddress = MEMPACK_GetSmallestBlockBottomTop(allocSize);
 	}
-#if 0
 
-		loc_80050284 :
-	bnez    $s1, loc_800502E4
-		nop
-		lw      $s0, -0x3908($gp)
-		jal     sub_80058F84
-		nop
-		lw      $v0, -0x3908($gp)
-		nop
-		bne     $s0, $v0, loc_80050240
-		andi    $s0, $s4, 0xFF
-		li      $v0, 0x10
-		beq     $s0, $v0, loc_800503AC
-		move    $v0, $zero
-		jal     sub_800505FC
-		nop
-		li      $a0, aTryingToFitMem  # "Trying to fit memory size %d Type = %d"...
-		move    $a1, $s2
-		lw      $v0, -0x390C($gp)
-		lw      $v1, -0x3908($gp)
-		move    $a2, $s0
-		subu    $v0, $v1
-		move    $a3, $v1
-		jal     sub_800148AC
-		sw      $v0, 0x18 + var_8($sp)
+	if (bestAddress == NULL)
+	{
+		curMem = newMemTracker.currentMemoryUsed;
+		STREAM_TryAndDumpANonResidentObject();
+	
+		if (curMem == newMemTracker.currentMemoryUsed)
+		{
+			if (memType != 16)
+			{
+				MEMPACK_ReportMemory2();
+				DEBUG_FatalError("Trying to fit memory size %d Type = %d\nAvalible memory : used = % d, free = % d\n", allocSize, memType, newMemTracker.currentMemoryUsed, newMemTracker.totalMemory - newMemTracker.currentMemoryUsed);
+			}
+		}
+	}
+	
+	topOffset = bestAddress->memSize;
+	if (topOffset - allocSize < 8)
+	{
+		allocSize = topOffset;
+	}
 
-		loc_800502E4:
-	lw      $a0, 4($s1)
-		nop
-		subu    $v0, $a0, $s2
-		sltiu   $v0, 8
-		beqz    $v0, loc_80050300
-		nop
-		move    $s2, $a0
+	if (allocSize != topOffset)
+	{
+		if (relocatableMemory != 0)
+		{
+			address = (struct MemHeader*)(char*)bestAddress + allocSize;
+			address->magicNumber = DEFAULT_MEM_MAGIC;
+			address->memStatus = 0;
+			address->memType = 0;
+			address->memSize -= allocSize;
+			
+			bestAddress->magicNumber = DEFAULT_MEM_MAGIC;
+			bestAddress->memStatus = 1;
+			bestAddress->memType = memType;
+			bestAddress->memSize = allocSize;
 
-		loc_80050300 :
-	beq     $s2, $a0, loc_80050384
-		li      $v0, 0xBADE
-		beqz    $s3, loc_8005033C
-		addu    $a1, $s1, $s2
-		li      $v1, 0xBADE
-		sh      $v1, 0($a1)
-		sb      $zero, 2($a1)
-		sb      $zero, 3($a1)
-		lw      $v0, 4($s1)
-		nop
-		subu    $v0, $s2
-		sw      $v0, 4($a1)
-		li      $v0, 1
-		j       loc_8005038C
-		sh      $v1, 0($s1)
+			bestAddress = address;
 
-		loc_8005033C:
-	subu    $a0, $s2
-		addu    $a1, $s1, $a0
-		li      $v1, 0xBADE
-		li      $v0, 1
-		sh      $v1, 0($a1)
-		sb      $v0, 2($a1)
-		sb      $s4, 3($a1)
-		sw      $s2, 4($a1)
-		lw      $v0, -0x3908($gp)
-		nop
-		addu    $v0, $s2
-		sw      $v0, -0x3908($gp)
-		sh      $v1, 0($s1)
-		sb      $zero, 2($s1)
-		sb      $zero, 3($s1)
-		sw      $a0, 4($s1)
-		j       loc_800503A8
-		move    $s1, $a1
+			newMemTracker.currentMemoryUsed += allocSize;
+		}
+		else
+		{
+			topOffset -= allocSize;
+			
+			address = (struct MemHeader*)(char*)bestAddress + topOffset;
+			address->magicNumber = DEFAULT_MEM_MAGIC;
+			address->memStatus = 1;
+			address->memType = memType;
+			address->memSize = allocSize;
 
-		loc_80050384 :
-	sh      $v0, 0($s1)
-		li      $v0, 1
+			newMemTracker.currentMemoryUsed += allocSize;
 
-		loc_8005038C :
-		sb      $v0, 2($s1)
-		sb      $s4, 3($s1)
-		sw      $s2, 4($s1)
-		lw      $v0, -0x3908($gp)
-		nop
-		addu    $v0, $s2
-		sw      $v0, -0x3908($gp)
+			bestAddress->magicNumber = DEFAULT_MEM_MAGIC;
+			bestAddress->memStatus = 0;
+			bestAddress->memType = 0;
+			bestAddress->memSize = topOffset;
 
-		loc_800503A8:
-	addiu   $v0, $s1, 8
-
-		loc_800503AC :
-		lw      $ra, 0x18 + var_s14($sp)
-		lw      $s4, 0x18 + var_s10($sp)
-		lw      $s3, 0x18 + var_sC($sp)
-		lw      $s2, 0x18 + var_s8($sp)
-		lw      $s1, 0x18 + var_s4($sp)
-		lw      $s0, 0x18 + var_s0($sp)
-		jr      $ra
-		addiu   $sp, 0x30
-		# End of function sub_80050204
-#endif
+			bestAddress = address;
+		}
+	}
+	return (char*)(bestAddress + 1);
 
 #else
 	char* result; // eax
