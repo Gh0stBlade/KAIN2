@@ -65,9 +65,9 @@ void STREAM_InitLoader(char *bigFileName, char *voiceFileName)
 	loadTail = NULL;
 	numLoads = 0;
 
-	for (i = 39; i >= 0; i--)
+	for (i = 38; i >= 0; i--)
 	{
-		LoadQueue->next = &LoadQueue[i + 1];
+		LoadQueue[i].next = &LoadQueue[i + 1];
 	}
 
 	LoadQueue[39].next = NULL;
