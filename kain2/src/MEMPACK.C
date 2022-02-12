@@ -552,61 +552,30 @@ void MEMPACK_GarbageSplitMemoryNow(unsigned long allocSize, struct MemHeader *be
 
 void MEMPACK_GarbageCollectFree(struct MemHeader *memAddress)
 {
-	struct MemHeader* secondAddress; // $v1
-	//s0 = memAddress
+	struct MemHeader* secondAddress;
 
 	memAddress->memStatus = 0;
 	memAddress->memType = 0;
-	//v0 = newMemTracker.currentMemoryUsed
-	//v1 = memAddress->memSize
+
 	newMemTracker.currentMemoryUsed -= memAddress->memSize;
-	//v0 = memAddress->memSize
 	secondAddress = (struct MemHeader*)(char*)memAddress + memAddress->memSize;
 
 	if ((char*)secondAddress != newMemTracker.lastMemoryAddress)
 	{
 		MEMORY_MergeAddresses(memAddress, secondAddress);
 	}
-	//loc_80050900
-#if 0
-		beq     $v1, $v0, loc_80050900
-		nop
-		jal     sub_800503CC
-		move    $a1, $v1
 
-		loc_80050900 :
-	move    $v1, $s0
-		addiu   $v0, $gp, -0x3908///newMemTracker.currentMemoryUsed
-		lw      $s0, -8($v0)
-		lw      $v0, -0x3904($gp)//newMemTracker.lastMemoryAddress
-		nop
-		beq     $s0, $v0, loc_80050950
-		nop
+	if ((char*)newMemTracker.rootNode != newMemTracker.lastMemoryAddress)
+	{
+		do
+		{
+			if ((char*)newMemTracker.rootNode + newMemTracker.rootNode->memSize == (char*)memAddress)
+			{
+				MEMORY_MergeAddresses(newMemTracker.rootNode, (struct MemHeader*)(char*)newMemTracker.rootNode + newMemTracker.rootNode->memSize);
+			}
 
-		loc_8005091C :
-	lw      $v0, 4($s0)
-		nop
-		addu    $a1, $s0, $v0
-		bne     $a1, $v1, loc_80050940
-		nop
-		jal     sub_800503CC
-		move    $a0, $s0
-		j       loc_80050950
-		nop
-
-		loc_80050940 :
-	lw      $v0, -0x3904($gp)//newMemTracker.lastMemoryAddress
-		move    $s0, $a1
-		bne     $s0, $v0, loc_8005091C
-		nop
-
-		loc_80050950 :
-	lw      $ra, 0x10 + var_s4($sp)
-		lw      $s0, 0x10 + var_s0($sp)
-		jr      $ra
-		addiu   $sp, 0x18
-		# End of function sub_800508B0
-#endif
+		} while ((char*)newMemTracker != (char*)newMemTracker.rootNode + newMemTracker.rootNode->memSize);
+	}
 }
 
 void MEMPACK_DoGarbageCollection()
