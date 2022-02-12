@@ -204,7 +204,6 @@ void MON_CutOut_Monster(struct _Instance *instance, int fade_amount, int startse
 		if ((instance->halvePlane.flags & 8) == 0)
 		{
 			normal.x = p1.vx - p2.vx;
-			instance = 0;
 			normal.y = p1.vy - p2.vy;
 			normal.z = p1.vz - p2.vz;
 			CAMERA_Normalize(&normal);
