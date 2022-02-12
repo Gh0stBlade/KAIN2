@@ -1,17 +1,13 @@
 #include "THISDUST.H"
 #include "MEMPACK.H"
 #include "PSX/DRAWS.H"
+#include "STREAM.H"
+#include "DEBUG.H"
 
 #include <stddef.h>
 
 void MEMPACK_Init()
 { 
-#define ONE_MB 1048576
-#define TWO_MB ONE_MB * 2
-#define BASE_ADDRESS 0x80000000
-#define PACK_MAGIC_USHORT(A, B, C, D) A << 12 | B << 8 | C << 4 | D << 0
-#define DEFAULT_MEM_MAGIC PACK_MAGIC_USHORT(0xB, 0xA, 0xD, 0xE)
-
 	newMemTracker.totalMemory = (BASE_ADDRESS + TWO_MB - (ONE_MB / 256)) - (unsigned int)overlayAddress;
 	newMemTracker.rootNode = (MemHeader*)overlayAddress;
 	newMemTracker.rootNode->magicNumber = DEFAULT_MEM_MAGIC;
@@ -507,106 +503,53 @@ long MEMPACK_MemoryValidFunc(char *address)
 
 char * MEMPACK_GarbageCollectMalloc(unsigned long *allocSize, unsigned char memType, unsigned long *freeSize)
 {
-	struct MemHeader* bestAddress; // $s0
+	struct MemHeader* bestAddress;
 
-	//s1 = allocSize
-	//s4 = freeSize
-	//s3 = memType
 	allocSize[0] = ((allocSize[0] + 11) >> 2) << 2;
-	MEMPACK_GetSmallestBlockTopBottom(allocSize[0]);
-#if 0
-		jal     sub_800500F8
-		sw      $a0, 0($s1)
-		move    $s0, $v0
-		bnez    $s0, loc_800507BC
-		nop
-		jal     sub_8005FD84
-		nop
-		lw      $a0, 0($s1)
-		jal     sub_800500F8
-		nop
-		move    $s0, $v0
-		bnez    $s0, loc_800507BC
-		andi    $s2, $s3, 0xFF
-		li      $v0, 0x10
-		beq     $s2, $v0, loc_8005086C
-		move    $v0, $zero
-		jal     sub_8005062C
-		nop
-		li      $a0, aTryingToFitMem_0  # "Trying to fit memory size %d Type = %d"...
-		lw      $v0, -0x390C($gp)
-		lw      $v1, -0x3908($gp)//newMemTracker.currentMemoryUsed
-		move    $a2, $s2
-		subu    $v0, $v1
-		sw      $v0, 0x18 + var_8($sp)
-		lw      $a1, 0($s1)
-		jal     sub_800148AC
-		move    $a3, $v1
+	bestAddress = MEMPACK_GetSmallestBlockTopBottom(allocSize[0]);
+	
+	if (bestAddress == NULL)
+	{
+		STREAM_DumpNonResidentObjects();
+		bestAddress = MEMPACK_GetSmallestBlockTopBottom(allocSize[0]);
 
-		loc_800507BC :
-	lw      $v1, 4($s0)
-		lw      $v0, 0($s1)
-		nop
-		subu    $v0, $v1, $v0
-		sltiu   $v0, 8
-		beqz    $v0, loc_800507DC
-		nop
-		sw      $v1, 0($s1)
+		if (bestAddress == NULL)
+		{
+			if (memType == 16)
+			{
+				return NULL;
+			}
 
-		loc_800507DC:
-	lw      $v1, 0($s1)
-		lw      $v0, 4($s0)
-		nop
-		beq     $v1, $v0, loc_80050830
-		subu    $v0, $v1
-		sw      $v0, 0($s4)
-		li      $v0, 0xBADE
-		sh      $v0, 0($s0)
-		li      $v0, 1
-		sb      $v0, 2($s0)
-		sb      $s3, 3($s0)
-		lw      $v0, 0($s1)
-		nop
-		sw      $v0, 4($s0)
-		lw      $v0, -0x3908($gp)//newMemTracker.currentMemoryUsed
-		lw      $v1, 0($s1)
-		nop
-		addu    $v0, $v1
-		sw      $v0, -0x3908($gp)//newMemTracker.currentMemoryUsed
-		j       loc_8005086C
-		addiu   $v0, $s0, 8
+			MEMPACK_ReportMemory();
+			DEBUG_FatalError("Trying to fit memory size %d Type = %d\nAvailable memory : used = %d, free = %d", allocSize[0], memType, newMemTracker.currentMemoryUsed, newMemTracker.totalMemory - newMemTracker.currentMemoryUsed);
+		}
+	}
 
-		loc_80050830:
-	li      $v0, 0xBADE
-		sh      $v0, 0($s0)
-		li      $v0, 1
-		sb      $v0, 2($s0)
-		sb      $s3, 3($s0)
-		lw      $v0, 0($s1)
-		nop
-		sw      $v0, 4($s0)
-		lw      $v0, -0x3908($gp)//newMemTracker.currentMemoryUsed
-		lw      $v1, 0($s1)
-		nop
-		addu    $v0, $v1
-		sw      $v0, -0x3908($gp)//newMemTracker.currentMemoryUsed
-		sw      $zero, 0($s4)
-		addiu   $v0, $s0, 8
+	if (allocSize[0] - bestAddress->memSize < 8)
+	{
+		allocSize[0] = bestAddress->memSize;
+	}
 
-		loc_8005086C:
-	lw      $ra, 0x18 + var_s14($sp)
-		lw      $s4, 0x18 + var_s10($sp)
-		lw      $s3, 0x18 + var_sC($sp)
-		lw      $s2, 0x18 + var_s8($sp)
-		lw      $s1, 0x18 + var_s4($sp)
-		lw      $s0, 0x18 + var_s0($sp)
-		jr      $ra
-		addiu   $sp, 0x30
-		# End of function sub_80050714
+	if (allocSize[0] != bestAddress->memSize)
+	{
+		freeSize[0] = bestAddress->memSize - allocSize[0];
+		bestAddress->magicNumber = DEFAULT_MEM_MAGIC;
+		bestAddress->memStatus = 1;
+		bestAddress->memType = memType;
+		bestAddress->memSize = allocSize[0];
+		newMemTracker.currentMemoryUsed += allocSize[0];
+	}
+	else
+	{
+		bestAddress->magicNumber = DEFAULT_MEM_MAGIC;
+		bestAddress->memStatus = 1;
+		bestAddress->memType = memType;
+		bestAddress->memSize = allocSize[0];
+		newMemTracker.currentMemoryUsed += allocSize[0];
+		freeSize[0] = 0;
+	}
 
-#endif
-
-	return null;
+	return (char*)bestAddress + 1;
 }
 
 
