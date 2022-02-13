@@ -6,22 +6,154 @@
 // void /*$ra*/ GAMEPAD_Commands(long (*command)[5] /*$t4*/, long (*data)[5] /*$t3*/, long pad /*$a2*/)
 void GAMEPAD_Commands(long (*command)[5], long (*data)[5], long pad)
 { // line 55, offset 0x80030f68
-	/* begin block 1 */
-		// Start line: 56
-		// Start offset: 0x80030F68
-		// Variables:
-			long analogX; // $t2
-			long analogY; // $t1
-			static short lastPad[2]; // offset 0x0
-	/* end block 1 */
-	// End offset: 0x80031314
-	// End Line: 233
+	unsigned int v4; // eax
+	int v5; // edx
+	int v6; // ebp
+	int v7; // ebx
+	int v8; // edx
+	int v9; // edx
+	int* v10; // edi
+	int v11; // edx
+	int v12; // edx
+	int v13; // ebx
+	int v14; // ebp
+	int v15; // edx
+	int v16; // ecx
+	int v17; // ecx
+	int v18; // eax
+	int pada; // [esp+1Ch] [ebp+Ch]
 
-	/* begin block 2 */
-		// Start line: 110
-	/* end block 2 */
-	// End Line: 111
-
+	v4 = 20 * pad;
+	(*command)[5 * pad + 2] = (*command)[5 * pad] & ~(*data)[5 * pad];
+	v5 = (*data)[5 * pad];
+	v6 = (*data)[5 * pad + 3];
+	v7 = (*data)[5 * pad + 4];
+	pada = v6;
+	if ((v5 & 1) != 0)
+	{
+		v7 = -128;
+	}
+	else if ((v5 & 2) != 0)
+	{
+		v7 = 128;
+	}
+	if ((v5 & 4) != 0)
+	{
+		v6 = -128;
+	}
+	else
+	{
+		if ((v5 & 8) == 0)
+			goto LABEL_10;
+		v6 = 128;
+	}
+	pada = v6;
+LABEL_10:
+	if (v7 >= -55)
+	{
+		if (v7 <= 55)
+			goto LABEL_15;
+		v8 = v5 | 2;
+	}
+	else
+	{
+		v8 = v5 | 1;
+	}
+	(*data)[v4 / 4] = v8;
+LABEL_15:
+	if (v6 >= -55)
+	{
+		if (v6 <= 55)
+			goto LABEL_20;
+		v9 = (*data)[v4 / 4] | 8;
+	}
+	else
+	{
+		v9 = (*data)[v4 / 4] | 4;
+	}
+	(*data)[v4 / 4] = v9;
+LABEL_20:
+	(*data)[v4 / 4 + 1] = ~word_C54FA8[pad] & (*data)[v4 / 4];
+	word_C54FA8[pad] = (*data)[v4 / 4];
+	(*command)[v4 / 4 + 3] = pada;
+	(*command)[v4 / 4 + 4] = v7;
+	if ((gameTrackerX.gameFlags & 0x10) != 0)
+	{
+		v10 = &(*command)[v4 / 4 + 1];
+		*v10 = gameTrackerX.overrideData[v4 / 0x14][0] & ~(*command)[v4 / 4];
+		(*command)[v4 / 4] = gameTrackerX.overrideData[v4 / 0x14][0];
+		(*data)[v4 / 4 + 3] = gameTrackerX.overrideData[v4 / 0x14][3];
+		(*data)[v4 / 4 + 4] = gameTrackerX.overrideData[v4 / 0x14][4];
+		v11 = gameTrackerX.overrideData[v4 / 0x14][0];
+		if ((v11 & 1) != 0)
+		{
+			(*data)[v4 / 4 + 4] = -128;
+		}
+		else if ((v11 & 2) != 0)
+		{
+			(*data)[v4 / 4 + 4] = 128;
+		}
+		v12 = gameTrackerX.overrideData[v4 / 0x14][0];
+		if ((v12 & 4) != 0)
+		{
+			(*data)[v4 / 4 + 3] = -128;
+		}
+		else if ((v12 & 8) != 0)
+		{
+			(*data)[v4 / 4 + 3] = 128;
+		}
+	}
+	else
+	{
+		if ((gameTrackerX.gameFlags & 1) != 0)
+		{
+			memset(gameTrackerX.controlCommand, 0, sizeof(gameTrackerX.controlCommand));
+			memset(gameTrackerX.controlData, 0, sizeof(gameTrackerX.controlData));
+			return;
+		}
+		v10 = &(*command)[v4 / 4 + 1];
+		v13 = 0;
+		v14 = 0;
+		*v10 = (*data)[v4 / 4] & ~(*command)[v4 / 4];
+		(*command)[v4 / 4] = (*data)[v4 / 4];
+		v15 = (*data)[v4 / 4];
+		if ((v15 & 1) != 0)
+		{
+			v14 = -128;
+		}
+		else if ((v15 & 2) != 0)
+		{
+			v14 = 128;
+		}
+		if ((v15 & 4) != 0)
+		{
+			v13 = -128;
+		}
+		else if ((v15 & 8) != 0)
+		{
+			v13 = 128;
+		}
+		if (v13 || v14)
+		{
+			(*data)[v4 / 4 + 3] = v13;
+			(*data)[v4 / 4 + 4] = v14;
+		}
+	}
+	if ((gameTrackerX.debugFlags & 0x40000) == 0 && (gameTrackerX.debugFlags2 & 0x2000000) != 0)
+	{
+		v16 = (*data)[v4 / 4];
+		if ((v16 & 0x100) != 0 && (v16 & 0x200) != 0)
+		{
+			v17 = (*command)[v4 / 4];
+			v17 &= ~0xC00;
+			(*command)[v4 / 4] = v17 | 0x40000000;
+			if ((*v10 & 0xC00) != 0)
+				*v10 |= 0x40000000u;
+			v18 = *v10;
+			v18 = *v10 & ~0xC00;
+			*v10 = v18;
+		}
+	}
 }
 
 
@@ -198,43 +330,103 @@ void GAMEPAD_Detect()
 // void /*$ra*/ GAMEPAD_Init()
 void GAMEPAD_Init()
 { // line 436, offset 0x8003164c
-	/* begin block 1 */
-		// Start line: 963
-	/* end block 1 */
-	// End Line: 964
-
+	InitPAD((char*)&readGPBuffer1, 34, (char*)&readGPBuffer2, 34);
+	StartPAD();
+	CTRLCNFG_InitValues();
+	gDummyCommand = 0;
+	dword_C60FD4 = 0;
+	dword_C60FD8 = 0;
+	dword_C60FDC = 0;
+	memset(&readGPBuffer1, 0, 0x20u);
+	*(_WORD*)&readGPBuffer1.data.tap.ctrllers[3].data.negcon.buttonII = 0;
+	memset(&readGPBuffer2, 0, 0x20u);
+	*(_WORD*)&readGPBuffer2.data.tap.ctrllers[3].data.negcon.buttonII = 0;
+	readGPBuffer1.data.pad = -1;
+	readGPBuffer1.transStatus = 0;
+	readGPBuffer2.data.pad = -1;
+	readGPBuffer2.transStatus = 0;
+	gpbuffer1.data.pad = -1;
+	gpbuffer1.transStatus = 0;
+	word_C60FA2 = -1;
+	gpbuffer2 = 0;
 }
 
+struct JoypadMappingStruct joymap_tbl0[16] =
+{
+	0x10, 0x1,
+	0x40, 0x2,
+	0x80, 0x4,
+	0x20, 0x8,
+	0x8, 0x4000,
+	0x1000, 0x10,
+	0x4000, 0x80,
+	0x8000, 0x20,
+	0x2000, 0x40,
+	0x400, 0x100,
+	0x100, 0x400,
+	0x800, 0x200,
+	0x200, 0x800,
+	0x2, 0x1000,
+	0x4, 0x2000,
+	0x1, 0x8000,
+};
+struct JoypadMappingStruct joymap_tbl1[16] =
+{
+	0x10, 0x1,
+	0x40, 0x2,
+	0x80, 0x4,
+	0x20, 0x8,
+	0x8, 0x4000,
+	0x1000, 0x10,
+	0x4000, 0x80,
+	0x8000, 0x20,
+	0x2000, 0x40,
+	0x400, 0x100,
+	0x100, 0x400,
+	0x800, 0x200,
+	0x200, 0x800,
+	0x2, 0x1000,
+	0x4, 0x2000,
+	0x1, 0x8000
+};
 
 // autogenerated function stub: 
 // void /*$ra*/ PSXPAD_TranslateData(long *data /*$a0*/, unsigned short padData /*$a1*/, unsigned short lastData /*$a2*/)
 void PSXPAD_TranslateData(long *data, unsigned short padData, unsigned short lastData)
 { // line 476, offset 0x800316d4
-	/* begin block 1 */
-		// Start line: 477
-		// Start offset: 0x800316D4
-		// Variables:
-			int i; // $t1
-			struct JoypadMappingStruct table[16]; // stack offset -64
+	PAIR16 psxData; // eax
+	struct JoypadMappingStruct* table; // esi
+	int v5; // ebx
+	int translation; // ecx
 
-		/* begin block 1.1 */
-			// Start line: 531
-			// Start offset: 0x8003177C
-			// Variables:
-				unsigned short padButton; // $a3
-				unsigned short logicalButton; // $v1
-		/* end block 1.1 */
-		// End offset: 0x800317E0
-		// End Line: 547
-	/* end block 1 */
-	// End offset: 0x800317F0
-	// End Line: 548
-
-	/* begin block 2 */
-		// Start line: 1056
-	/* end block 2 */
-	// End Line: 1057
-
+	if (MainTracker_IsGamePlaying() && (psxData.y = gApplyGamepadRemapping.y, *(DWORD*)&gApplyGamepadRemapping))
+		table = joymap_tbl1;
+	else
+		table = joymap_tbl0;
+	v5 = 16;
+	do
+	{
+		psxData.x = table->psxData;
+		if ((padData & table->psxData) != 0)
+		{
+			psxData = (PAIR16)(lastData & *(unsigned int*)&psxData);
+			if (!psxData.x)
+			{
+				psxData = (PAIR16)(table->translation | data[2]);
+				data[2] = (int)psxData;
+			}
+		}
+		else
+		{
+			translation = table->translation;
+			psxData = (PAIR16)(lastData & *(unsigned int*)&psxData);
+			*data |= translation;
+			if (psxData.x)
+				data[1] |= translation;
+		}
+		++table;
+		--v5;
+	} while (v5);
 }
 
 
@@ -293,27 +485,94 @@ void GAMEPAD_DetectInit()
 // void /*$ra*/ GAMEPAD_GetData(long (*data)[5] /*$s0*/)
 void GAMEPAD_GetData(long (*data)[5])
 { // line 576, offset 0x8003188c
-	/* begin block 1 */
-		// Start line: 577
-		// Start offset: 0x8003188C
-		// Variables:
-			long analogue_x; // $a0
-			long analogue_y; // $v1
-			int padState; // $v1
-	/* end block 1 */
-	// End offset: 0x80031CB4
-	// End Line: 721
+	bool v2; // zf
+	int v3; // eax
+	unsigned __int16 v4; // si
+	unsigned __int16 v5; // di
+	JoypadMappingStruct* v6; // edx
+	ushort psxData; // cx
+	int translation; // eax
+	int left_x; // eax
+	int left_y; // ecx
+	int dataa; // [esp+14h] [ebp+4h]
 
-	/* begin block 2 */
-		// Start line: 1275
-	/* end block 2 */
-	// End Line: 1276
-
-	/* begin block 3 */
-		// Start line: 1289
-	/* end block 3 */
-	// End Line: 1290
-
+	(*data)[2] = 0;
+	(*data)[1] = 0;
+	(*data)[0] = 0;
+	(*data)[7] = 0;
+	(*data)[6] = 0;
+	(*data)[5] = 0;
+	::psxData = 0;
+	(*data)[3] = 0;
+	(*data)[4] = 0;
+	(*data)[8] = 0;
+	(*data)[9] = 0;
+	qmemcpy(&gpbuffer1, &readGPBuffer1, sizeof(gpbuffer1));
+	v2 = readGPBuffer1.transStatus == 0xFF;
+	qmemcpy(&gpbuffer2, &readGPBuffer2, 0x20u);
+	v3 = gamePadControllerOut;
+	*((_WORD*)&gpbuffer2 + 16) = *(_WORD*)&readGPBuffer2.data.tap.ctrllers[3].data.negcon.buttonII;
+	if (v2)
+	{
+		gamePadControllerOut = v3 + 1;
+	}
+	else
+	{
+		if (v3 > 5 && dword_C55018 && word_C55014)
+		{
+			word_C55014 = 1;
+			word_C55010 = 0;
+		}
+		gamePadControllerOut = 0;
+		LOWORD(::psxData) = readGPBuffer1.data.pad;
+		if (controllerType == 83)
+		{
+			LOWORD((*data)[0]) = readGPBuffer1.data.pad;
+			LOWORD(::psxData) = ~(~readGPBuffer1.data.pad & 0x61F9 | ((unsigned __int16)(~readGPBuffer1.data.pad & 0x1000 | (~(unsigned int)data >> 5) & 0x400) >> 1) | (2 * (~readGPBuffer1.data.pad & 0xA00 | (16 * (~readGPBuffer1.data.pad & 0xFC00)))));
+		}
+		v4 = lastData;
+		v5 = ::psxData;
+		if (MainTracker_IsGamePlaying() && *(DWORD*)&gApplyGamepadRemapping)
+			v6 = joymap_tbl1;
+		else
+			v6 = joymap_tbl0;
+		dataa = 16;
+		do
+		{
+			psxData = v6->psxData;
+			if ((v6->psxData & v5) != 0)
+			{
+				if ((psxData & v4) == 0)
+					(*data)[2] |= v6->translation;
+			}
+			else
+			{
+				translation = v6->translation;
+				(*data)[0] |= translation;
+				if ((psxData & v4) != 0)
+					(*data)[1] |= translation;
+			}
+			++v6;
+			--dataa;
+		} while (dataa);
+		LOWORD(lastData) = ::psxData;
+		controllerType = gpbuffer1.dataFormat;
+		if (gpbuffer1.dataFormat == 115 || gpbuffer1.dataFormat == 83)
+		{
+			left_x = gpbuffer1.data.joystick.left_x;
+			left_y = gpbuffer1.data.joystick.left_y;
+			if (gpbuffer1.data.joystick.left_x > 73u
+				&& gpbuffer1.data.joystick.left_x < 183u
+				&& gpbuffer1.data.joystick.left_y > 73u
+				&& gpbuffer1.data.joystick.left_y < 183u)
+			{
+				left_x = 128;
+				left_y = 128;
+			}
+			(*data)[3] = left_x - 128;
+			(*data)[4] = left_y - 128;
+		}
+	}
 }
 
 

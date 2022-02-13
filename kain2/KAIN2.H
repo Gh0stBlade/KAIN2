@@ -3898,18 +3898,70 @@ struct JoypadMappingStruct // hashcode: 0x312F2BE8 (dec: 825175016)
 	unsigned short translation; // size=0, offset=2
 };
 
-struct ControllerPacket // hashcode: 0x9621B4F3 (dec: -1776175885)
+typedef unsigned short PadData;
+
+typedef struct MouseData
 {
-	unsigned char transStatus; // size=0, offset=0
-	unsigned char dataFormat; // size=0, offset=1
-	union {
-		unsigned short pad; // size=0, offset=0
-		unsigned short multitap[16]; // size=32, offset=0
-		unsigned short mouse[2]; // size=4, offset=0
-		unsigned short negcon[3]; // size=6, offset=0
-		struct AnalogueData analogue; // size=6, offset=0
-	} data; // size=32, offset=2, found in object files: gamepad.o, gamepad.o
-};
+	unsigned short buttons;
+	signed char xOffset;
+	signed char yOffset;
+}
+MouseData;
+
+typedef struct NegconData
+{
+	unsigned short digitalButtons;               /* Bit mask of plain keys. */
+	char centralTwist;                           /* Analogue twisting thing.*/
+	char buttonI;                                /* The I analogue button.  */
+	char buttonII;                               /* The II analogue button. */
+	char topLeft;                                /* The analogue tl button. */
+}
+NegconData;
+
+typedef struct AnalogjoyData
+{
+	unsigned short digitalButtons;               /* Bit mask of plain keys. */
+	unsigned char  right_x;
+	unsigned char  right_y;
+	unsigned char  left_x;
+	unsigned char  left_y;
+} AnalogjoyData;
+
+typedef struct TapCtrllerData
+{
+	unsigned char transStatus;  /* 0xff = no pad, bad pad, bad transmission */
+	unsigned char dataFormat;            /* Top 4 bits = type of controller */
+
+	union                                         /* Controller data union. */                   /* Controller data union. */
+	{
+		PadData    pad;                                 /* Plain pad.       */
+		NegconData negcon;                              /* Namco controller.*/
+	}
+	data;
+}
+TapCtrllerData;
+
+typedef struct MultiTapData
+{
+	TapCtrllerData ctrllers[4];               /* Just 4 controller packets. */
+}
+MultiTapData;
+
+typedef struct ControllerPacket
+{
+	unsigned char transStatus;  /* 0xff = no pad, bad pad, bad transmission */
+	unsigned char dataFormat;            /* Top 4 bits = type of controller */
+									   /* Bottom 4 == shorts of data written */
+	union                                         /* Controller data union. */
+	{
+		PadData       pad;                     /* Plain pad.       */
+		MouseData     mouse;                   /* Mouse.           */
+		NegconData    negcon;                  /* Namco controller.*/
+		AnalogjoyData joystick;				/* Analog Joystick  */
+		MultiTapData  tap;                     /* 4-way multi-tap. */
+	}
+	data;
+} ControllerPacket;
 
 struct _G2EulerAngles_Type // hashcode: 0xB3709AC5 (dec: -1284465979)
 {
