@@ -1,9 +1,6 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-#define SCREEN_WIDTH 512
-#define SCREEN_HEIGHT 240
-
 extern void ClearDisplay(); // 0x80037EF8
 
 extern void screen_to_vram(long *screen, int buffer); // 0x80037FB4

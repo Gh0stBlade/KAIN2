@@ -20,7 +20,7 @@ extern long FONT_CharSpacing(char c, long fontXSize); // 0x8002D1FC
 
 extern void FONT_AddCharToBuffer(char c, long x, long y); // 0x8002D340
 
-extern void FONT_Print(char *fmt); // 0x8002D3AC
+extern void FONT_Print(char *fmt, ...); // 0x8002D3AC
 
 extern void FONT_Print2(char *fmt); // 0x8002D43C
 

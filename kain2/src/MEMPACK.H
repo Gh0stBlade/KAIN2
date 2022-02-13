@@ -1,12 +1,6 @@
 #ifndef MEMPACK_H
 #define MEMPACK_H
 
-#define ONE_MB 1048576
-#define TWO_MB ONE_MB * 2
-#define BASE_ADDRESS 0x80000000
-#define PACK_MAGIC_USHORT(A, B, C, D) A << 12 | B << 8 | C << 4 | D << 0
-#define DEFAULT_MEM_MAGIC PACK_MAGIC_USHORT(0xB, 0xA, 0xD, 0xE)
-
 extern void MEMPACK_Init(); // 0x8004FAA4
 
 extern struct MemHeader * MEMPACK_GetSmallestBlockTopBottom(long allocSize); // 0x8004FB0C
