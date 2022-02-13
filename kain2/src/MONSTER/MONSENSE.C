@@ -6,36 +6,14 @@
 // struct _MonsterIR * /*$ra*/ MONSENSE_FindIR(struct _MonsterVars *mv /*$a0*/, struct _Instance *instance /*$a1*/)
 struct _MonsterIR * MONSENSE_FindIR(struct _MonsterVars *mv, struct _Instance *instance)
 { // line 64, offset 0x80085aa4
-	/* begin block 1 */
-		// Start line: 66
-		// Start offset: 0x80085AA4
-		// Variables:
-			struct _MonsterIR *mir; // $v1
-	/* end block 1 */
-	// End offset: 0x80085AD4
-	// End Line: 72
+	struct _MonsterIR* mir; // eax
 
-	/* begin block 2 */
-		// Start line: 114
-	/* end block 2 */
-	// End Line: 115
-
-	/* begin block 3 */
-		// Start line: 128
-	/* end block 3 */
-	// End Line: 129
-
-	/* begin block 4 */
-		// Start line: 115
-	/* end block 4 */
-	// End Line: 116
-
-	/* begin block 5 */
-		// Start line: 117
-	/* end block 5 */
-	// End Line: 118
-
-	return null;
+	for (mir = mv->monsterIRList; mir; mir = mir->next)
+	{
+		if (mir->instance == instance)
+			break;
+	}
+	return mir;
 }
 
 
@@ -189,32 +167,47 @@ int MONSENSE_Smell(struct _Instance *instance, struct evCollideInstanceStatsData
 // struct _MonsterIR * /*$ra*/ MONSENSE_FirstSense(struct _Instance *instance /*$s2*/, struct _Instance *sensed /*$s4*/)
 struct _MonsterIR * MONSENSE_FirstSense(struct _Instance *instance, struct _Instance *sensed)
 { // line 186, offset 0x80085d30
-	/* begin block 1 */
-		// Start line: 187
-		// Start offset: 0x80085D30
-		// Variables:
-			struct _MonsterIR *mir; // $s0
-			struct _MonsterVars *mv; // $s1
+	struct _MonsterVars* mv; // edi
+	struct _MonsterIR* mir; // esi
+	unsigned int v5; // ebx
+	struct _Instance* allegiances; // eax MAPDST
+	unsigned __int16 mirFlags; // ax
 
-		/* begin block 1.1 */
-			// Start line: 194
-			// Start offset: 0x80085D6C
-			// Variables:
-				long whatAmI; // $s2
-				struct _MonsterAllegiances *allegiances; // $s3
-		/* end block 1.1 */
-		// End offset: 0x80085EB0
-		// End Line: 224
-	/* end block 1 */
-	// End offset: 0x80085EB0
-	// End Line: 226
-
-	/* begin block 2 */
-		// Start line: 339
-	/* end block 2 */
-	// End Line: 340
-
-	return null;
+	mv = (struct _MonsterVars*)instance->extraData;
+	mir = mv->freeIRs;
+	if (mir)
+		mv->freeIRs = mir->next;
+	else
+		mir = 0;
+	if (mir)
+	{
+		v5 = INSTANCE_Query(sensed, 1);
+		allegiances = (struct _Instance*)mv->subAttr->allegiances;
+		mir->mirFlags = 256;
+		mir->instance = sensed;
+		mir->handle = sensed->instanceID;
+		mir->forgetTimer = MON_GetTime(instance) + 1000 * mv->subAttr->forgetTime;
+		mir->next = mv->monsterIRList;
+		mv->monsterIRList = mir;
+		mir->mirConditions = 0;
+		if ((v5 & (unsigned int)allegiances->node.prev) != 0 && (INSTANCE_Query(sensed, 0) & 0x44000000) == 0)
+			mir->mirFlags |= 1u;
+		if ((v5 & (unsigned int)allegiances->node.next) != 0)
+		{
+			mir->mirFlags |= 2u;
+			mirFlags = mir->mirFlags;
+			if ((v5 & 0xA) != 0 && (*(DWORD*)sensed->extraData & 0x100000) != 0)
+			{
+				mirFlags = mirFlags | 0x10;
+				mir->mirFlags = mirFlags;
+			}
+		}
+		if ((v5 & (unsigned int)allegiances->next) != 0)
+			mir->mirFlags |= 9u;
+		if ((v5 & (unsigned int)allegiances->prev) != 0)
+			mir->mirFlags |= 4u;
+	}
+	return mir;
 }
 
 
@@ -222,60 +215,131 @@ struct _MonsterIR * MONSENSE_FirstSense(struct _Instance *instance, struct _Inst
 // void /*$ra*/ MONSENSE_SetupMIR(struct _Instance *instance /*$s3*/, struct evCollideInstanceStatsData *data /*$s1*/, int flags /*$s2*/)
 void MONSENSE_SetupMIR(struct _Instance *instance, struct evCollideInstanceStatsData *data, int flags)
 { // line 233, offset 0x80085ed4
-	/* begin block 1 */
-		// Start line: 234
-		// Start offset: 0x80085ED4
-		// Variables:
-			struct _MonsterIR *mir; // $s0
-			struct _MonsterVars *mv; // $s4
+	struct _Instance* v3; // ecx
+	struct _MonsterVars* mv; // ebp MAPDST
+	struct _MonsterIR* mir; // esi
+	struct _MonsterCombatAttributes* combatAttributes; // eax
+	struct _Position* p_position; // edi
+	unsigned int v8; // ebp
+	unsigned __int16 mirFlags; // ax
+	unsigned __int16 mirConditions; // ax
+	struct _MonsterCombatAttributes* v11; // eax
+	int v12; // eax
+	unsigned __int16 v13; // ax
 
-		/* begin block 1.1 */
-			// Start line: 253
-			// Start offset: 0x80085F78
-			// Variables:
-				long mode; // $s1
-
-			/* begin block 1.1.1 */
-				// Start line: 256
-				// Start offset: 0x80085F78
-				// Variables:
-					short _x1; // $v1
-					short _y1; // $a0
-					short _z1; // $a1
-					struct _SVector *_v0; // $v0
-					struct _SVector *_v1; // $v0
-			/* end block 1.1.1 */
-			// End offset: 0x80085F78
-			// End Line: 256
-
-			/* begin block 1.1.2 */
-				// Start line: 301
-				// Start offset: 0x80086120
-				// Variables:
-					int run; // $s2
-					int distance; // $a0
-
-				/* begin block 1.1.2.1 */
-					// Start line: 312
-					// Start offset: 0x8008615C
-				/* end block 1.1.2.1 */
-				// End offset: 0x800861BC
-				// End Line: 319
-			/* end block 1.1.2 */
-			// End offset: 0x800861BC
-			// End Line: 336
-		/* end block 1.1 */
-		// End offset: 0x800862E0
-		// End Line: 367
-	/* end block 1 */
-	// End offset: 0x800862E0
-	// End Line: 368
-
-	/* begin block 2 */
-		// Start line: 447
-	/* end block 2 */
-	// End Line: 448
-
+	v3 = instance;
+	mv = (struct _MonsterVars*)instance->extraData;
+	for (mir = mv->monsterIRList; mir; mir = mir->next)
+	{
+		if (mir->instance == data->instance)
+			break;
+	}
+	if (mir)
+	{
+		if (!flags)
+			goto LABEL_10;
+		mir->forgetTimer = MON_GetTime(instance) + 1000 * mv->subAttr->forgetTime;
+	}
+	else
+	{
+		if (!flags)
+			goto LABEL_10;
+		mir = MONSENSE_FirstSense(instance, data->instance);
+	}
+	v3 = instance;
+LABEL_10:
+	if (mir)
+	{
+		mir->mirFlags |= flags;
+		mir->distance = data->distance;
+		mir->relativePosition.x = data->relativePosition.x;
+		mir->relativePosition.y = data->relativePosition.y;
+		mir->relativePosition.z = data->relativePosition.z;
+		combatAttributes = mv->subAttr->combatAttributes;
+		if (combatAttributes && combatAttributes->combatRange > mir->distance)
+			mir->mirConditions |= 8u;
+		else
+			mir->mirConditions &= ~8u;
+		p_position = &v3->position;
+		if (((1024 - mir->instance->rotation.z + MATH3D_AngleFromPosToPos(&mir->instance->position, &v3->position)) & 0xFFFu) <= 0x800)
+			mir->mirConditions &= ~2u;
+		else
+			mir->mirConditions |= 2u;
+		v8 = INSTANCE_Query(mir->instance, 10);
+		if ((v8 & 0x208000) == 0x208000)
+			v8 &= ~0x200000u;
+		if ((v8 & 4) != 0)
+			mir->mirConditions |= 1u;
+		else
+			mir->mirConditions &= ~1u;
+		if ((mir->mirFlags & 0x400) != 0)
+		{
+			if ((v8 & 0x200000) == 0)
+			{
+				mir->mirFlags &= ~0x400u;
+				mirFlags = mir->mirFlags;
+				mir->mirConditions &= 0xF7DFu;
+				if ((mirFlags & 1) != 0)
+				{
+					mirConditions = mir->mirConditions;
+					if ((mirConditions & 0x400) == 0)
+					{
+						mirConditions = mirConditions | 4;
+						mir->mirConditions = mirConditions;
+					}
+				}
+			}
+		}
+		else if ((v8 & 0x200000) != 0)
+		{
+			v11 = mv->subAttr->combatAttributes;
+			if (v11)
+			{
+				v12 = (v8 & 4) != 0 ? v11->enemyRunAttackRange : v11->enemyAttackRange;
+				mir->mirFlags |= 0x400u;
+				mir->mirConditions &= 0xFF1Bu;
+				if (mir->distance < v12
+					&& ((512 - mir->instance->rotation.z + MATH3D_AngleFromPosToPos(&mir->instance->position, p_position)) & 0xFFFu) < 0x800)
+				{
+					if ((v8 & 4) != 0)
+						mir->mirConditions |= 0x20u;
+					mir->mirConditions |= 0x800u;
+				}
+			}
+		}
+		if ((mir->mirFlags & 0x800) != 0)
+		{
+			if (v8 == 1)
+			{
+				if ((mir->mirConditions & 0x10) == 0 && mir->idleTime < MON_GetTime(instance))
+					mir->mirConditions |= 0x10u;
+			}
+			else
+			{
+				mir->mirConditions &= ~0x10u;
+				mir->mirFlags &= ~0x800u;
+			}
+		}
+		else if (v8 == 1)
+		{
+			mir->mirFlags |= 0x800u;
+			mir->idleTime = MON_GetTime(instance) + 4950;
+		}
+		v13 = mir->mirFlags;
+		if ((v13 & 0x200) != 0)
+		{
+			if (mir->distance > mv->subAttr->combatAttributes->allyRange + 300
+				|| (INSTANCE_Query(mir->instance, 0) & 0x44000000) != 0)
+			{
+				mir->mirFlags &= ~0x200u;
+			}
+		}
+		else if ((v13 & 2) != 0 && mir->distance < mv->subAttr->combatAttributes->allyRange)
+		{
+			v13 |= 0x200u;
+			mir->mirFlags = v13;
+		}
+	}
 }
 
 
