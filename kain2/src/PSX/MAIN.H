@@ -1,6 +1,8 @@
 #ifndef MAIN_H
 #define MAIN_H
 
+#define SCREEN_WIDTH 512
+#define SCREEN_HEIGHT 240
 
 extern void ClearDisplay(); // 0x80037EF8
 
