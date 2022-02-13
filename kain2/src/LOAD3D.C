@@ -626,7 +626,6 @@ void LOAD_LoadTIM(long *addr, long x_pos, long y_pos, long clut_x, long clut_y)
 		DrawSync(0);
 		LoadImage(&rect, clutAddr);
 	}
-	//loc_8003813C
 }
 
 
