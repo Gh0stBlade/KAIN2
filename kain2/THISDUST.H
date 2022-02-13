@@ -8607,8 +8607,8 @@ struct burntTuneType // hashcode: 0x127E6332 (dec: 310272818)
 
 struct _MonsterState // hashcode: 0x1B0172BB (dec: 453079739)
 {
-	void (*entryFunction)(); // size=0, offset=0
-	void (*stateFunction)(); // size=0, offset=4
+	void (*entryFunction)(struct _Instance* instance); // size=0, offset=0
+	void (*stateFunction)(struct _Instance* instance); // size=0, offset=4
 };
 
 struct _MonsterStateChoice // hashcode: 0xE0AABD5C (dec: -525681316)
