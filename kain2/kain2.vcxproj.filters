@@ -287,6 +287,9 @@
     <ClCompile Include="src\VOICEXA.C" />
     <ClCompile Include="src\VRAM.C" />
     <ClCompile Include="src\SCRIPT2.C" />
+    <ClCompile Include="src\MONSTER\PRIESTESS.C">
+      <Filter>MONSTER</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\PC\libspu.h">

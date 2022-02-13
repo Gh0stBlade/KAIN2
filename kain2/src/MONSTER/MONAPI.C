@@ -688,22 +688,27 @@ void MONAPI_AddToGenerator(struct _Instance *instance)
 // void /*$ra*/ MONAPI_CheckGenerator(struct _Instance *instance /*$a0*/)
 void MONAPI_CheckGenerator(struct _Instance *instance)
 { // line 1426, offset 0x8007f378
-	/* begin block 1 */
-		// Start line: 1427
-		// Start offset: 0x8007F378
-		// Variables:
-			int i; // $a1
-			struct _MONAPI_Regenerator *regen; // $v1
-			int id; // $a0
-	/* end block 1 */
-	// End offset: 0x8007F3D4
-	// End Line: 1439
+	char numRegens; // dl
+	signed int result; // eax
+	struct _MONAPI_Regenerator* regenEntries; // edi
 
-	/* begin block 2 */
-		// Start line: 3067
-	/* end block 2 */
-	// End Line: 3068
-
+	numRegens = GlobalSave->numRegens;
+	result = 0;
+	regenEntries = GlobalSave->regenEntries;
+	if (numRegens > 0)
+	{
+		while (regenEntries->introUniqueID != instance->introUniqueID)
+		{
+			++result;
+			++regenEntries;
+			if (result >= numRegens)
+				return result;
+		}
+		GlobalSave->numRegens = numRegens - 1;
+		result = 8 * (GlobalSave->numRegens - (((char*)regenEntries - (char*)GlobalSave - 16) >> 3));
+		qmemcpy(regenEntries, &regenEntries[1], result);
+	}
+	return result;
 }
 
 

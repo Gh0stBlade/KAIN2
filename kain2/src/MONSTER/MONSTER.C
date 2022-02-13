@@ -1943,22 +1943,35 @@ void MON_PetrifiedEntry(struct _Instance *instance)
 // void /*$ra*/ MON_Petrified(struct _Instance *instance /*$s1*/)
 void MON_Petrified(struct _Instance *instance)
 { // line 2865, offset 0x8008bc38
-	/* begin block 1 */
-		// Start line: 2866
-		// Start offset: 0x8008BC38
-		// Variables:
-			struct _MonsterVars *mv; // $s0
-			struct __Event *message; // $v0
-			int time; // $v1
-	/* end block 1 */
-	// End offset: 0x8008BD20
-	// End Line: 2889
+	struct _MonsterVars* mv; // ebp
+	unsigned int Time; // eax
+	unsigned int generalTimer; // ecx
+	struct __Event* i; // esi
 
-	/* begin block 2 */
-		// Start line: 6006
-	/* end block 2 */
-	// End Line: 6007
-
+	mv = (struct _MonsterVars*)instance->extraData;
+	Time = MON_GetTime(instance);
+	generalTimer = mv->generalTimer;
+	if (Time <= generalTimer)
+	{
+		if (Time > generalTimer - 1000)
+			instance->petrifyValue = 4 * (mv->generalTimer - Time);
+	}
+	else
+	{
+		mv->mvFlags &= ~0x80u;
+		instance->petrifyValue = 0;
+		MON_SwitchState(instance, MONSTER_STATE_IDLE);
+	}
+	for (i = DeMessageQueue(&mv->messageQueue); i; i = DeMessageQueue(&mv->messageQueue))
+	{
+		if ((gameTrackerX.debugFlags2 & 1) != 0)
+			MON_Say();
+		if (i->ID == 0x100001F || i->ID == 0x1000023 && i->Data == 4096)
+		{
+			mv->damageType = 1024;
+			MON_SwitchState(instance, MONSTER_STATE_GENERALDEATH);
+		}
+	}
 }
 
 
@@ -1984,38 +1997,64 @@ int MONSTER_CalcDamageIntensity(int hp, int maxHp)
 // void /*$ra*/ MONSTER_ProcessClosestVerts(struct _Instance *instance /*$fp*/, struct _SVector *location /*stack 4*/, TDRFuncPtr_MONSTER_ProcessClosestVerts2processVert_cb processVert_cb /*stack 8*/, void *cb_data /*stack 12*/)
 void MONSTER_ProcessClosestVerts(struct _Instance *instance, struct _SVector *location, TDRFuncPtr_MONSTER_ProcessClosestVerts2processVert_cb processVert_cb, void *cb_data)
 { // line 2907, offset 0x8008bd5c
-	/* begin block 1 */
-		// Start line: 2908
-		// Start offset: 0x8008BD5C
-		// Variables:
-			int i; // $s2
-			struct _Model *model; // $s7
-			struct _MVertex *vertexList; // $s4
-			struct _Vector locVec; // stack offset -96
-			long flag; // stack offset -48
+	struct _Model* hmodel; // edx MAPDST
+	struct _MVertex* vertexList; // ebx
+	struct _Segment* segs; // ecx MAPDST
+	struct _MVertex* fv; // esi
+	unsigned int lv; // edi
+	__int32 v10; // eax
+	__int32 v11; // ecx
+	__int32 v12; // ecx
+	int i; // [esp+Ch] [ebp-3Ch]
+	int flag; // [esp+18h] [ebp-30h] BYREF
+	struct _Vector vec; // [esp+1Ch] [ebp-2Ch] BYREF
+	MATRIX mat; // [esp+28h] [ebp-20h] BYREF
+	int nsegs; // [esp+4Ch] [ebp+4h]
 
-		/* begin block 1.1 */
-			// Start line: 2925
-			// Start offset: 0x8008BDE0
-			// Variables:
-				struct _MVertex *firstVertex; // $s0
-				struct _MVertex *lastVertex; // $s5
-				struct _MVertex *modelVertex; // $s0
-				struct MATRIX inverse; // stack offset -80
-				int tmp; // $a3
-				int dist; // $a0
-		/* end block 1.1 */
-		// End offset: 0x8008BEDC
-		// End Line: 2958
-	/* end block 1 */
-	// End offset: 0x8008BEF4
-	// End Line: 2960
-
-	/* begin block 2 */
-		// Start line: 6094
-	/* end block 2 */
-	// End Line: 6095
-
+	hmodel = instance->object->modelList[instance->currentModel];
+	nsegs = 1;
+	vertexList = hmodel->vertexList;
+	if (hmodel->numSegments > 1)
+	{
+		segs = hmodel->segmentList;
+		i = 1;
+		do
+		{
+			if (segs->lastVertex != -1)
+			{
+				fv = &vertexList[segs->firstVertex];
+				lv = (unsigned int)&vertexList[segs->lastVertex];
+				PIPE3D_InvertTransform(&mat, &instance->matrix[i]);
+				SetRotMatrix(&mat);
+				SetTransMatrix(&mat);
+				RotTrans((SVECTOR*)location, (VECTOR*)&vec, &flag);
+				for (; (unsigned int)fv <= lv; ++fv)
+				{
+					v10 = fv->vertex.x - vec.x;
+					if (v10 < 0)
+						v10 = vec.x - fv->vertex.x;
+					v11 = fv->vertex.y - vec.y;
+					if (v11 < 0)
+						v11 = vec.y - fv->vertex.y;
+					if (v10 <= v11)
+						v10 = v11;
+					v12 = fv->vertex.z - vec.z;
+					if (v12 < 0)
+						v12 = vec.z - fv->vertex.z;
+					if (v10 <= v12)
+						v10 = v12;
+					((void(__cdecl*)(struct _Instance*, int, int, __int32, void*))processVert_cb)(
+						instance,
+						fv - vertexList,
+						nsegs,
+						v10,
+						cb_data);
+				}
+			}
+			++i;
+			++segs;
+		} while (++nsegs < hmodel->numSegments);
+	}
 }
 
 
@@ -2023,30 +2062,43 @@ void MONSTER_ProcessClosestVerts(struct _Instance *instance, struct _SVector *lo
 // void /*$ra*/ ProcessBloodyMess(struct _Instance *instance /*$a0*/, int vertidx /*$a1*/, int segidx /*$a2*/, int dist /*$a3*/, void *cb_data /*stack 16*/)
 void ProcessBloodyMess(struct _Instance *instance, int vertidx, int segidx, int dist, void *cb_data)
 { // line 2967, offset 0x8008bf24
-	/* begin block 1 */
-		// Start line: 2968
-		// Start offset: 0x8008BF24
-		// Variables:
-			struct _MonsterVars *mv; // $t0
+	struct _MonsterVars* mv; // ebp
+	bool is_german; // zf
+	struct CVECTOR* cv; // esi
+	int v8; // edx
+	struct _MonsterSubAttributes* ma; // ecx
+	int v10; // ecx
 
-		/* begin block 1.1 */
-			// Start line: 2988
-			// Start offset: 0x8008BF54
-			// Variables:
-				long scl; // $a2
-				struct CVECTOR *cv; // $a0
-		/* end block 1.1 */
-		// End offset: 0x8008C028
-		// End Line: 3014
-	/* end block 1 */
-	// End offset: 0x8008C028
-	// End Line: 3015
-
-	/* begin block 2 */
-		// Start line: 6288
-	/* end block 2 */
-	// End Line: 6289
-
+	mv = (struct _MonsterVars*)instance->extraData;
+	is_german = localstr_get_language() == 2;
+	if (dist < *((DWORD*)cb_data + 1))
+	{
+		*(DWORD*)cb_data = vertidx;
+		*((DWORD*)cb_data + 1) = dist;
+		*((DWORD*)cb_data + 2) = segidx;
+	}
+	if (dist < 100)
+	{
+		cv = &instance->perVertexColor[vertidx];
+		v8 = 2 * (100 - dist) * *((DWORD*)cb_data + 4) / 100;
+		if (v8 > 256)
+			v8 = 256;
+		ma = mv->subAttr;
+		if (is_german)
+		{
+			cv->g = -1 - ((unsigned __int16)(v8 * (255 - ma->bruiseRed)) >> 8);
+			cv->r = -1 - ((unsigned __int16)(v8 * (255 - mv->subAttr->bruiseGreen)) >> 8);
+		}
+		else
+		{
+			cv->r = -1 - ((unsigned __int16)(v8 * (255 - ma->bruiseRed)) >> 8);
+			cv->g = -1 - ((unsigned __int16)(v8 * (255 - mv->subAttr->bruiseGreen)) >> 8);
+		}
+		v10 = (v8 * (255 - mv->subAttr->bruiseBlue)) >> 8;
+		cv->cd = 1;
+		cv->b = -1 - v10;
+		*((DWORD*)cb_data + 3) = 1;
+	}
 }
 
 
@@ -2357,34 +2409,101 @@ void MON_DamageEffect(struct _Instance *instance, struct evFXHitData *data)
 // void /*$ra*/ MON_DefaultInit(struct _Instance *instance /*$s2*/)
 void MON_DefaultInit(struct _Instance *instance)
 { // line 3392, offset 0x8008cb28
-	/* begin block 1 */
-		// Start line: 3393
-		// Start offset: 0x8008CB28
-		// Variables:
-			struct _MonsterAttributes *ma; // $s1
-			struct _MonsterVars *mv; // $s3
-			struct _HModel *hModel; // $v0
-			struct _HPrim *hprim; // $v0
-			int i; // $a0
-			int state; // $a1
+	struct _MonsterVars* extraData; // ebp
+	struct _MonsterAttributes* data; // ebx
+	bool v3; // zf
+	unsigned int mvFlags; // eax
+	struct _HModel* hModelList; // eax
+	struct _HModel* v6; // eax
+	int numHPrims; // ecx
+	struct _HPrim* hPrimList; // eax
+	struct _HPrim* p_withFlags; // eax
+	uchar spineSegment; // al
+	struct Level* level; // edi
+	unsigned __int8 behaviorState; // al
+	int v13; // eax
 
-		/* begin block 1.1 */
-			// Start line: 3440
-			// Start offset: 0x8008CC84
-			// Variables:
-				struct Level *level; // $s0
-		/* end block 1.1 */
-		// End offset: 0x8008CCEC
-		// End Line: 3448
-	/* end block 1 */
-	// End offset: 0x8008CD50
-	// End Line: 3466
-
-	/* begin block 2 */
-		// Start line: 7299
-	/* end block 2 */
-	// End Line: 7300
-
+	extraData = (struct _MonsterVars*)instance->extraData;
+	data = (struct _MonsterAttributes*)instance->data;
+	if ((extraData->mvFlags & 0x1000000) != 0)
+		MONAPI_CheckGenerator(instance);
+	v3 = MON_OnGround(instance) == 0;
+	mvFlags = extraData->mvFlags;
+	if (v3)
+		mvFlags = mvFlags & ~2;
+	else
+		mvFlags = mvFlags | 2;
+	extraData->mvFlags = mvFlags;
+	hModelList = instance->hModelList;
+	if (hModelList)
+	{
+		v6 = &hModelList[instance->currentModel];
+		numHPrims = v6->numHPrims;
+		hPrimList = v6->hPrimList;
+		if (numHPrims)
+		{
+			p_withFlags = hPrimList;
+			do
+			{
+				if (p_withFlags->segment != 1)
+					p_withFlags->withFlags &= ~0x5Au;
+				++p_withFlags;
+				--numHPrims;
+			} while (numHPrims);
+		}
+	}
+	if (data->neckSegment)
+	{
+		G2Anim_AttachControllerToSeg(&instance->anim, data->neckSegment, 14);
+		G2Anim_DisableController(&instance->anim, data->neckSegment, 14);
+	}
+	spineSegment = data->spineSegment;
+	if (spineSegment && spineSegment != data->neckSegment)
+	{
+		G2Anim_AttachControllerToSeg(&instance->anim, data->spineSegment, 14);
+		G2Anim_DisableController(&instance->anim, data->spineSegment, 14);
+	}
+	if ((instance->object->oflags & 0x80000) == 0)
+	{
+		if (theCamera.focusInstance)
+		{
+			level = STREAM_GetLevelWithID(theCamera.focusInstance->currentStreamUnitID);
+			if (MATH3D_LengthXYZ(
+				instance->position.x - theCamera.core.position.x,
+				instance->position.y - theCamera.core.position.y,
+				instance->position.z - theCamera.core.position.z) < level->fogNear)
+			{
+				instance->fadeValue = 4096;
+				MON_StartSpecialFade(instance, 0, 20);
+			}
+		}
+	}
+	if ((instance->flags & 2) != 0)
+	{
+		MON_SwitchState(instance, MONSTER_STATE_BIRTH);
+	}
+	else
+	{
+		behaviorState = extraData->behaviorState;
+		switch (behaviorState)
+		{
+		case 4u:
+			MON_SwitchState(instance, MONSTER_STATE_HIDE);
+			break;
+		case 0x10u:
+			MON_SwitchState(instance, MONSTER_STATE_PUPATE);
+			break;
+		case 0xDu:
+			extraData->damageType = 0;
+			MON_SwitchState(instance, MONSTER_STATE_DEAD);
+			break;
+		default:
+			v13 = -((extraData->mvFlags & 2) != 0);
+			v13 = v13 & ~1;
+			MON_SwitchState(instance, (enum MonsterState)(v13 + 4));
+			break;
+		}
+	}
 }
 
 

@@ -186,6 +186,7 @@
     <ClCompile Include="src\MONSTER\MONSENSE.C" />
     <ClCompile Include="src\MONSTER\MONSTER.C" />
     <ClCompile Include="src\MONSTER\MONTABLE.C" />
+    <ClCompile Include="src\MONSTER\PRIESTESS.C" />
     <ClCompile Include="src\MONSTER\SLUAGH.C" />
     <ClCompile Include="src\MONSTER\SOUL.C" />
     <ClCompile Include="src\MONSTER\VWRAITH.C" />

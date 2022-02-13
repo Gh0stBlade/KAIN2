@@ -9,53 +9,46 @@
 void __cdecl PRIESTS_Init(struct _Instance* instance)
 {
 	__int16* v1; // ebx
-	int* extraData; // ebp
+	struct _MonsterVars* mv; // ebp
 	char* v3; // eax
 	struct _Position* v4; // edi
-	int v5; // ecx
-	struct _StreamUnit* StreamUnitWithID; // eax
-	struct _StreamUnit* v7; // esi
-	int v8; // ecx
+	unsigned int v5; // ecx
+	struct _StreamUnit* unit; // eax MAPDST
+	unsigned int v8; // ecx
 
 	v1 = (__int16*)*((DWORD*)instance->data + 1);
 	MON_DefaultInit(instance);
-	extraData = (int*)instance->extraData;
-	if (extraData)
+	mv = (struct _MonsterVars*)instance->extraData;
+	if (mv)
 	{
 		v3 = MEMPACK_Malloc(0x1Cu, 0x25u);
 		v4 = (struct _Position*)v3;
 		if (!v3)
 		{
 			MON_Say();
-			v5 = *extraData;
-			v5 = *extraData & ~0x1000;
-			extraData[87] = 0;
-			v5 |= 0x2000u;
-			*extraData = v5;
+			mv->extraVars = 0;
+			mv->mvFlags = (mv->mvFlags & ~0x1000) | 0x2000;
 			return;
 		}
-		extraData[87] = (int)v3;
-		StreamUnitWithID = STREAM_GetStreamUnitWithID(instance->currentStreamUnitID);
-		v7 = StreamUnitWithID;
+		mv->extraVars = v3;
+		unit = STREAM_GetStreamUnitWithID(instance->currentStreamUnitID);
 		if (v1)
 		{
-			PLANAPI_FindNodePositionInUnit(StreamUnitWithID, v4, *v1, 5);
-			PLANAPI_FindNodePositionInUnit(v7, v4 + 1, v1[1], 5);
+			PLANAPI_FindNodePositionInUnit(unit, v4, *v1, 5);
+			PLANAPI_FindNodePositionInUnit(unit, v4 + 1, v1[1], 5);
 		}
 	}
-	v8 = *extraData;
-	v8 = *extraData & ~0x3000 | 0x200;
-	*extraData = v8;
+	mv->mvFlags = mv->mvFlags & ~0x3000 | 0x200;
 }
 void __cdecl PRIESTS_CleanUp(struct _Instance* instance)
 {
-	void* extraData; // eax
+	struct _MonsterVars* mv; // eax
 	char* v2; // eax
 
-	extraData = instance->extraData;
-	if (extraData)
+	mv = (struct _MonsterVars*)instance->extraData;
+	if (mv)
 	{
-		v2 = (char*)*((DWORD*)extraData + 87);
+		v2 = (char*)mv->extraVars;
 		if (v2)
 			MEMPACK_Free(v2);
 	}
@@ -76,13 +69,13 @@ char __cdecl PRIESTS_Query(struct _Instance* instance, struct evFXHitData* data)
 }
 void __cdecl PRIESTS_Message(struct _Instance* instance, unsigned int message, unsigned int data)
 {
-	DWORD* extraData; // edx
+	struct _MonsterVars* mv; // edx
 	int v4; // eax
 	int v5; // eax
 	int v6; // esi
 	char** v7; // ecx
 
-	extraData = instance->extraData;
+	mv = (struct _MonsterVars*)instance->extraData;
 	if (message == 0x1000017)
 	{
 		switch (data)
@@ -91,7 +84,7 @@ void __cdecl PRIESTS_Message(struct _Instance* instance, unsigned int message, u
 		case 1u:
 		case 3u:
 		case 5u:
-			v6 = extraData[87];
+			v6 = mv->extraVars;
 			v7 = (char**)instance->data;
 			if (v6)
 			{
@@ -119,14 +112,14 @@ void __cdecl PRIESTS_Message(struct _Instance* instance, unsigned int message, u
 			}
 			break;
 		case 2u:
-			v4 = extraData[1];
+			v4 = mv->auxFlags;
 			v4 = v4 & ~1;
-			extraData[1] = v4;
+			mv->auxFlags = v4;
 			break;
 		case 4u:
-			v5 = extraData[1];
+			v5 = mv->auxFlags;
 			v5 = v5& ~2;
-			extraData[1] = v5;
+			mv->auxFlags = v5;
 			break;
 		case 6u:
 			MON_SwitchStateDoEntry(instance, MONSTER_STATE_FLEE);
@@ -143,22 +136,22 @@ void __cdecl PRIESTS_Message(struct _Instance* instance, unsigned int message, u
 
 void __cdecl PRIESTS_IdleEntry(struct _Instance* instance)
 {
-	DWORD* extraData; // esi
+	struct _MonsterVars* mv; // esi
 	int zVel; // edi
 
-	extraData = (DWORD*)instance->extraData;
-	if (extraData[87])
+	mv = (struct _MonsterVars*)instance->extraData;
+	if (mv->extraVars)
 	{
-		if ((*(BYTE*)extraData & 4) != 0)
+		if ((mv->mvFlags & 4) != 0)
 		{
 			MON_IdleEntry(instance);
 		}
 		else
 		{
-			zVel = extraData[87];
+			zVel = (int)mv->extraVars;
 			MON_PlayAnimID(instance, **((char**)instance->data + 0x11), 2);
 			*(WORD*)(zVel + 18) = 0;
-			extraData[61] = 1;
+			mv->mode = 1;
 		}
 	}
 }
@@ -280,5 +273,12 @@ struct _MonsterStateChoice PRIESTS_StateChoiceTable[] =
 
 struct _MonsterFunctionTable PRIESTS_FunctionTable =
 {
-	PRIESTS_Init, PRIESTS_CleanUp, 0, __DATE__,  PRIESTS_Query, PRIESTS_Message, PRIESTS_StateChoiceTable, __DATE__
+	PRIESTS_Init,
+	PRIESTS_CleanUp,
+	0,
+	__DATE__,
+	PRIESTS_Query,
+	PRIESTS_Message,
+	PRIESTS_StateChoiceTable,
+	__DATE__
 };

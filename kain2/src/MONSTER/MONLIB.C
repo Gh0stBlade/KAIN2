@@ -6,40 +6,27 @@
 // void /*$ra*/ MON_TurnOffWeaponSpheres(struct _Instance *instance /*$s1*/)
 void MON_TurnOffWeaponSpheres(struct _Instance *instance)
 { // line 148, offset 0x8007f3e4
-	/* begin block 1 */
-		// Start line: 149
-		// Start offset: 0x8007F3E4
-		// Variables:
-			struct _MonsterVars *mv; // $s2
+	struct _Instance* LinkChild; // esi
+	struct _MonsterVars* mv; // ebp
+	struct _HModel* hmodel; // eax
+	int numprim; // ecx
+	struct _HPrim* hprim; // eax
 
-		/* begin block 1.1 */
-			// Start line: 153
-			// Start offset: 0x8007F40C
-			// Variables:
-				struct _Instance *weapon; // $s0
-		/* end block 1.1 */
-		// End offset: 0x8007F42C
-		// End Line: 157
-
-		/* begin block 1.2 */
-			// Start line: 160
-			// Start offset: 0x8007F440
-			// Variables:
-				int i; // $a1
-				struct _HPrim *hprim; // $v1
-				struct _HModel *hmodel; // $v1
-		/* end block 1.2 */
-		// End offset: 0x8007F4C4
-		// End Line: 168
-	/* end block 1 */
-	// End offset: 0x8007F4C4
-	// End Line: 169
-
-	/* begin block 2 */
-		// Start line: 296
-	/* end block 2 */
-	// End Line: 297
-
+	LinkChild = instance->LinkChild;
+	for (mv = (struct _MonsterVars*)instance->extraData; LinkChild; LinkChild = LinkChild->LinkSibling)
+		TurnOffCollisionPhysOb(LinkChild, 3);
+	if ((mv->mvFlags & 0x4000) != 0)
+	{
+		hmodel = &instance->hModelList[instance->currentModel];
+		numprim = hmodel->numHPrims;
+		for (hprim = hmodel->hPrimList; numprim; --numprim)
+		{
+			if (hprim->type == 1 && hprim->data.hsphere->id == 9)
+				hprim->hpFlags &= ~1u;
+			++hprim;
+		}
+		mv->mvFlags &= ~0x4000;
+	}
 }
 
 
