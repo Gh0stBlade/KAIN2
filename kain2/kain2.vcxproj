@@ -238,6 +238,7 @@
     <ClCompile Include="src\RESOLVE.C" />
     <ClCompile Include="src\SAVEINFO.C" />
     <ClCompile Include="src\SCRIPT.C" />
+    <ClCompile Include="src\SCRIPT2.C" />
     <ClCompile Include="src\SIGNAL.C" />
     <ClCompile Include="src\SOUND.C" />
     <ClCompile Include="src\SPLINE.C" />
@@ -346,6 +347,7 @@
     <ClInclude Include="src\RESOLVE.H" />
     <ClInclude Include="src\SAVEINFO.H" />
     <ClInclude Include="src\SCRIPT.H" />
+    <ClInclude Include="src\SCRIPT2.H" />
     <ClInclude Include="src\SIGNAL.H" />
     <ClInclude Include="src\SOUND.H" />
     <ClInclude Include="src\SPLINE.H" />

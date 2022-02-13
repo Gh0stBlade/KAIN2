@@ -286,6 +286,7 @@
     <ClCompile Include="src\VM.C" />
     <ClCompile Include="src\VOICEXA.C" />
     <ClCompile Include="src\VRAM.C" />
+    <ClCompile Include="src\SCRIPT2.C" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\PC\libspu.h">
@@ -517,5 +518,6 @@
     <ClInclude Include="src\VM.H" />
     <ClInclude Include="src\VOICEXA.H" />
     <ClInclude Include="src\VRAM.H" />
+    <ClInclude Include="src\SCRIPT2.H" />
   </ItemGroup>
 </Project>

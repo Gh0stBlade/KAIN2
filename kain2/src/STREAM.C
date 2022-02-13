@@ -298,16 +298,7 @@ void STREAM_NoMonsters()
 // void /*$ra*/ STREAM_YesMonsters()
 void STREAM_YesMonsters()
 { // line 498, offset 0x800589ec
-	/* begin block 1 */
-		// Start line: 1051
-	/* end block 1 */
-	// End Line: 1052
-
-	/* begin block 2 */
-		// Start line: 1053
-	/* end block 2 */
-	// End Line: 1054
-
+	gameTrackerX.gameFlags &= ~0x4000000u;
 }
 
 

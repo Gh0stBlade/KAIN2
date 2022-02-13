@@ -274,24 +274,50 @@ void LIGHT_SetMatrixForLightGroupInstance(struct _Instance *instance, struct Lev
 // void /*$ra*/ LIGHT_DrawShadow(struct MATRIX *wcTransform /*$s2*/, struct _Instance *instance /*$s1*/, struct _PrimPool *primPool /*$s3*/, unsigned long **ot /*$s4*/)
 void LIGHT_DrawShadow(struct MATRIX *wcTransform, struct _Instance *instance, struct _PrimPool *primPool, unsigned long **ot)
 { // line 730, offset 0x80036644
-	/* begin block 1 */
-		// Start line: 731
-		// Start offset: 0x80036644
-		// Variables:
-			struct SVECTOR face_orient; // stack offset -112
-			struct MATRIX rot; // stack offset -104
-			struct MATRIX scTransform; // stack offset -72
-			struct _Vector scale; // stack offset -40
-			struct _Instance *playerInstance; // $s0
-	/* end block 1 */
-	// End offset: 0x80036908
-	// End Line: 804
+	int v4; // eax
+	__int16 v5; // ax
+	__int16 z; // cx
+	int y; // edx
+	_DWORD* v8; // eax
+	SVECTOR v9; // [esp+8h] [ebp-54h] BYREF
+	VECTOR v; // [esp+10h] [ebp-4Ch] BYREF
+	int x; // [esp+30h] [ebp-2Ch]
+	int v12; // [esp+34h] [ebp-28h]
+	int v13; // [esp+38h] [ebp-24h]
+	MATRIX scTransform; // [esp+3Ch] [ebp-20h] BYREF
 
-	/* begin block 2 */
-		// Start line: 1460
-	/* end block 2 */
-	// End Line: 1461
-
+	if (instance->shadowPosition.z > instance->position.z - 1280)
+	{
+		v9.vx = -MATH3D_FastAtan2(instance->wNormal.y, instance->wNormal.z);
+		v4 = MATH3D_FastSqrt0(0x1000000 - instance->wNormal.x * instance->wNormal.x);
+		v5 = MATH3D_FastAtan2(instance->wNormal.x, v4);
+		z = instance->rotation.z;
+		v9.vy = v5;
+		v9.vz = z;
+		RotMatrix(&v9, (MATRIX*)&v.pad);
+		y = instance->shadowPosition.y;
+		x = instance->shadowPosition.x;
+		v12 = y;
+		v13 = instance->shadowPosition.z;
+		TRANS_CompMatrix(wcTransform, (MATRIX*)&v.pad, &scTransform);
+		v.vz = ((((instance->shadowPosition.z - instance->position.z) << 12) / 1280 + 4096)
+			* ((instance->object->modelList[instance->currentModel]->maxRad << 12)
+				/ 480)) >> 12;
+		v.vy = v.vz;
+		v.vx = v.vz;
+		ScaleMatrix(&scTransform, &v);
+		SetRotMatrix(&scTransform);
+		SetTransMatrix(&scTransform);
+#if PSX_VERSION
+		DRAW_DrawShadow(primPool, model, ot, instance->fadeValue);
+#else
+		v8 = (DWORD*)INSTANCE_Query(instance, 38);
+		if (v8 && *v8 >= 2u)
+			D3DDRAW_DrawSegmentShadow(instance, v8, instance->fadeValue);
+		else
+			D3DDRAW_DrawShadow(0, ot, instance->fadeValue, &scTransform);
+#endif
+	}
 }
 
 
@@ -299,25 +325,137 @@ void LIGHT_DrawShadow(struct MATRIX *wcTransform, struct _Instance *instance, st
 // void /*$ra*/ LIGHT_CalcShadowPositions(struct GameTracker *gameTracker /*$a0*/)
 void LIGHT_CalcShadowPositions(struct GameTracker *gameTracker)
 { // line 806, offset 0x80036928
-	/* begin block 1 */
-		// Start line: 807
-		// Start offset: 0x80036928
-		// Variables:
-			struct _InstanceList *instanceList; // $v0
-			struct _Instance *instance; // $s0
-			struct _PCollideInfo pcollideInfo; // stack offset -72
-			struct _Position newPos; // stack offset -24
-			struct _Position oldPos; // stack offset -16
-			struct Level *level; // $v0
-	/* end block 1 */
-	// End offset: 0x80036C18
-	// End Line: 910
+	struct _Instance* v1; // esi
+	int flags; // eax
+	struct _TFace* waterFace; // eax
+	struct _Terrain** tfaceLevel; // eax
+	__int16 z; // ax
+	__int16 v6; // cx
+	struct Level* LevelWithID; // eax
+	__int16 type; // ax
+	int v9; // eax
+	int v10; // eax
+	int currentStreamUnitID; // [esp-Ch] [ebp-50h]
+	struct _Position v12; // [esp+8h] [ebp-3Ch] BYREF
+	int v13; // [esp+10h] [ebp-34h] BYREF
+	__int16 v14; // [esp+14h] [ebp-30h]
+	struct _PCollideInfo pcollideInfo; // [esp+18h] [ebp-2Ch] BYREF
 
-	/* begin block 2 */
-		// Start line: 1734
-	/* end block 2 */
-	// End Line: 1735
-
+	v1 = (struct _Instance*)*((_DWORD*)gameTracker->instanceList + 1);
+	if (v1)
+	{
+		while ((v1->flags2 & 0x40) != 0)
+		{
+			flags = v1->flags;
+			if ((flags & 0x200) == 0 || (flags & 0x800) != 0 || (v1->flags2 & 0x4000000) != 0)
+				break;
+			if ((flags & 0x8000000) == 0)
+			{
+				if ((flags & 0x10000000) != 0)
+				{
+				LABEL_13:
+					v12.x = v1->matrix[1].t[0];
+					LOWORD(v13) = v12.x;
+					v12.y = v1->matrix[1].t[1];
+					HIWORD(v13) = v12.y;
+					z = v1->matrix[1].t[2];
+					v6 = z;
+				}
+				else
+				{
+					*(_DWORD*)&v12.x = *(_DWORD*)&v1->position.x;
+					z = v1->position.z;
+					v12.z = z;
+					v13 = *(_DWORD*)&v1->position.x;
+					v6 = v1->position.z;
+				}
+				v12.z = z - 1280;
+				v14 = v6 + 256;
+				pcollideInfo.collideType = 55;
+				pcollideInfo.instance = v1;
+				pcollideInfo.newPoint = (struct SVECTOR*)&v12;
+				pcollideInfo.oldPoint = (struct SVECTOR*)&v13;
+				currentStreamUnitID = v1->currentStreamUnitID;
+				v1->flags |= 0x40u;
+				LevelWithID = STREAM_GetLevelWithID(currentStreamUnitID);
+				if (LevelWithID)
+					COLLIDE_PointAndWorld(&pcollideInfo, LevelWithID);
+				else
+					pcollideInfo.type = 0;
+				v1->flags &= ~0x40u;
+				type = pcollideInfo.type;
+				if (pcollideInfo.type == 3)
+				{
+					LIGHT_CalcLightValue((struct _TFace*)pcollideInfo.prim, v1, (struct _Terrain*)pcollideInfo.inst->node.prev);
+					goto LABEL_22;
+				}
+				if (pcollideInfo.type != 5)
+				{
+					LIGHT_CalcLightValue(0, v1, 0);
+				LABEL_22:
+					type = pcollideInfo.type;
+				}
+				if (type)
+				{
+					if (type == 1)
+					{
+						v1->wNormal.x = 0;
+						v1->wNormal.y = 0;
+						v1->wNormal.z = 4096;
+					}
+					else
+					{
+						if (type == 3
+							&& (*((_WORD*)pcollideInfo.prim + 5) == 0xFFFF
+								? (BYTE1(v9) = 0)
+								: (v9 = *(unsigned __int16*)((char*)&pcollideInfo.inst->node.prev[6].next[1].prev
+									+ *((unsigned __int16*)pcollideInfo.prim + 5)
+									+ 2)),
+								(v9 & 0x4000) != 0))
+						{
+							v10 = v1->flags | 0x200000;
+						}
+						else
+						{
+							v10 = v1->flags & 0xFFDFFFFF;
+						}
+						v1->flags = v10;
+						v1->wNormal.x = pcollideInfo.wNormal.vx;
+						v1->wNormal.y = pcollideInfo.wNormal.vy;
+						v1->wNormal.z = pcollideInfo.wNormal.vz;
+					}
+				}
+				v1->shadowPosition = v12;
+				goto LABEL_38;
+			}
+			if ((flags & 0x10000000) != 0)
+				goto LABEL_13;
+			waterFace = v1->waterFace;
+			if (waterFace)
+			{
+				LIGHT_CalcLightValue(waterFace, v1, v1->waterFaceTerrain);
+			}
+			else
+			{
+				tfaceLevel = (struct _Terrain**)v1->tfaceLevel;
+				if (tfaceLevel)
+					goto LABEL_37;
+			}
+		LABEL_38:
+			v1->flags &= ~0x8000000u;
+			v1 = v1->next;
+			if (!v1)
+				return;
+		}
+		if ((v1->flags2 & 0x40) != 0)
+			goto LABEL_38;
+		tfaceLevel = (struct _Terrain**)v1->tfaceLevel;
+		if (!tfaceLevel)
+			goto LABEL_38;
+	LABEL_37:
+		LIGHT_CalcLightValue(v1->tface, v1, *tfaceLevel);
+		goto LABEL_38;
+	}
 }
 
 
@@ -325,16 +463,6 @@ void LIGHT_CalcShadowPositions(struct GameTracker *gameTracker)
 // void /*$ra*/ LIGHT_Restore(struct LightInfo *lightInfo /*$a0*/)
 void LIGHT_Restore(struct LightInfo *lightInfo)
 { // line 1361, offset 0x80036c28
-	/* begin block 1 */
-		// Start line: 2722
-	/* end block 1 */
-	// End Line: 2723
-
-	/* begin block 2 */
-		// Start line: 2405
-	/* end block 2 */
-	// End Line: 2406
-
 }
 
 
@@ -342,35 +470,42 @@ void LIGHT_Restore(struct LightInfo *lightInfo)
 // void /*$ra*/ LIGHT_CalcDQPTable(struct Level *level /*$a3*/)
 void LIGHT_CalcDQPTable(struct Level *level)
 { // line 1600, offset 0x80036c30
-	/* begin block 1 */
-		// Start line: 1601
-		// Start offset: 0x80036C30
-		// Variables:
-			long dqa; // $a1
-			long limit; // $t0
+	unsigned __int16 fogNear; // bx
+	int fogFar; // ecx
+	int v3; // esi
+	int v4; // eax
+	int v5; // eax
+	int v6; // eax
+	unsigned __int8 backColorG; // cl
 
-		/* begin block 1.1 */
-			// Start line: 1614
-			// Start offset: 0x80036C78
-		/* end block 1.1 */
-		// End offset: 0x80036CA0
-		// End Line: 1621
-
-		/* begin block 1.2 */
-			// Start line: 1624
-			// Start offset: 0x80036CB0
-		/* end block 1.2 */
-		// End offset: 0x80036CE4
-		// End Line: 1631
-	/* end block 1 */
-	// End offset: 0x80036D3C
-	// End Line: 1661
-
-	/* begin block 2 */
-		// Start line: 3200
-	/* end block 2 */
-	// End Line: 3201
-
+	fogNear = level->fogNear;
+	if (level->fogFar != fogNear)
+	{
+		fogFar = level->fogFar;
+		v3 = -(fogFar * fogNear / (fogFar - fogNear));
+		if (v3 > 40958)
+		{
+			v3 = 40958;
+			v4 = 40958 * fogFar / (40958 - fogFar);
+			if (level->holdFogNear == fogNear)
+				level->holdFogNear = v4;
+			level->fogNear = v4;
+		}
+		if (v3 < -40958)
+		{
+			v3 = -40958;
+			v5 = -40958 * fogFar / (-40958 - fogFar);
+			if (level->holdFogNear == level->fogNear)
+				level->holdFogNear = v5;
+			level->fogNear = v5;
+		}
+		v6 = -4096 * v3 / ((fogFar << 12) / (fogFar - level->fogNear));
+		depthQFogStart = v6;
+		if (level->backColorR || (backColorG = level->backColorG, depthQBlendStart = 0xFFFF, backColorG))
+			depthQBlendStart = v6;
+		level->depthQFogStart = v6;
+		level->depthQBlendStart = depthQBlendStart;
+	}
 }
 
 
