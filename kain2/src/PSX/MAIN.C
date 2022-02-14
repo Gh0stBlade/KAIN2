@@ -22,16 +22,11 @@
 // void /*$ra*/ ClearDisplay()
 void ClearDisplay()
 { // line 136, offset 0x80037ef8
-	/* begin block 1 */
-		// Start line: 272
-	/* end block 1 */
-	// End Line: 273
-
-	/* begin block 2 */
-		// Start line: 274
-	/* end block 2 */
-	// End Line: 275
-
+	PutDrawEnv(&draw[gameTrackerX.gameData.asmData.dispPage]);
+	DrawPrim(&clearRect[gameTrackerX.gameData.asmData.dispPage]);
+	DrawSync(0);
+	PutDispEnv(&disp[gameTrackerX.gameData.asmData.dispPage]);
+	SetDispMask(1);
 }
 
 
@@ -180,21 +175,58 @@ void ProcessArgs(char *baseAreaName, struct GameTracker *gameTracker)
 // void /*$ra*/ InitDisplay()
 void InitDisplay()
 { // line 588, offset 0x800383d8
-	/* begin block 1 */
-		// Start line: 589
-		// Start offset: 0x800383D8
-		// Variables:
-			int i; // $a1
-			struct RECT r; // stack offset -16
-	/* end block 1 */
-	// End offset: 0x80038510
-	// End Line: 650
+	TILE* t; // eax
+	u_long tag; // edx
+	int dispPage; // eax
+	RECT rect; // [esp+Ch] [ebp-8h] BYREF
 
-	/* begin block 2 */
-		// Start line: 1134
-	/* end block 2 */
-	// End Line: 1135
-
+	rect.x = 512;
+	rect.y = 0;
+	rect.w = 512;
+	rect.h = 512;
+	ResetGraph(3);
+	SetGraphDebug(0);
+	SetDefDrawEnv(draw, 0, 0, 512, 240);
+	SetDefDispEnv(disp, 0, 0, 512, 240);
+	SetDefDrawEnv(&draw[1], 0, 0, 512, 240);
+	SetDefDispEnv(&disp[1], 0, 0, 512, 240);
+	draw[1].dtd = 1;
+	draw[0].dtd = 1;
+	draw[1].dfe = 1;
+	draw[0].dfe = 1;
+	draw[1].isbg = 0;
+	draw[0].isbg = 0;
+	draw[0].r0 = 0;
+	draw[0].g0 = 0;
+	draw[0].b0 = 0;
+	draw[1].r0 = 0;
+	draw[1].g0 = 0;
+	draw[1].b0 = 0;
+	t = (TILE*)clearRect;
+	int i = 0;
+	do
+	{
+		tag = t->tag;
+		t->tag = tag & 0xFFFFFF | 0x3000000;
+		t->code = 2;
+		t->x0 = 0;
+		t->y0 = 0;
+		t->w = 512;
+		t->h = 240;
+		t->r0 = 0;
+		t->g0 = 0;
+		t->b0 = 0;
+		++t;
+	} while (i < 2);
+	dispPage = gameTrackerX.gameData.asmData.dispPage;
+	clearRect[dispPage].r0 = 0;
+	clearRect[dispPage].g0 = 0;
+	clearRect[dispPage].b0 = 0;
+	ClearDisplay();
+	GXFilePrint("ClearDisplay()\n");
+	ClearOTagR((u_long*)gameTrackerX.drawOT, 3072);
+	ClearOTagR((u_long*)gameTrackerX.dispOT, 3072);
+	ClearImage(&rect, 0, 0xFFu, 0);
 }
 
 void StartTimer()
