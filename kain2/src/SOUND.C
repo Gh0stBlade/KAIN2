@@ -1077,20 +1077,36 @@ void SOUND_HandleGlobalValueSignal(int name, long data)
 // void /*$ra*/ SOUND_Init()
 void SOUND_Init()
 { // line 1100, offset 0x8003feb8
-	/* begin block 1 */
-		// Start line: 1101
-		// Start offset: 0x8003FEB8
-		// Variables:
-			struct AadInitAttr initAttr; // stack offset -32
-	/* end block 1 */
-	// End offset: 0x8003FEB8
-	// End Line: 1101
+	struct AadInitAttr attributes; // [esp+0h] [ebp-18h] BYREF
 
-	/* begin block 2 */
-		// Start line: 2339
-	/* end block 2 */
-	// End Line: 2340
-
+	attributes.updateMode = 5;
+	SND_SetTimerFunc(aadSlotUpdate);
+	attributes.numSlots = 4;
+	attributes.nonBlockLoadProc = LOAD_NonBlockingFileLoad;
+	attributes.nonBlockBufferedLoadProc = LOAD_NonBlockingBufferedLoad;
+	attributes.memoryMallocProc = MEMPACK_Malloc;
+	attributes.memoryFreeProc = MEMPACK_Free;
+	aadGetMemorySize(&attributes);
+	aadInit(&attributes, &soundBuffer);
+	gameTrackerX.sound.gMasterVol = 0x3FFF;
+	gameTrackerX.sound.gMusicVol = 127;
+	aadSetMusicMasterVolume(127);
+	gameTrackerX.sound.gSfxVol = 127;
+	aadSetSfxMasterVolume(0x7Fu);
+	gameTrackerX.sound.gSfxOn = 1;
+	gameTrackerX.sound.gMusicOn = 1;
+	gameTrackerX.sound.gVoiceOn = 1;
+	gameTrackerX.sound.gVoiceVol = 127;
+	gameTrackerX.sound.soundsLoaded = 0;
+	musicInfo = 0;
+	dword_C60E68 = 0;
+	dword_C60E70 = 0;
+	dword_C60E74 = -1;
+	byte_C60E78 = 0;
+	dword_C60EA8 = 0;
+	dword_C60EA4 = 0;
+	dword_C60EA0 = 0;
+	aadInitReverb();
 }
 
 

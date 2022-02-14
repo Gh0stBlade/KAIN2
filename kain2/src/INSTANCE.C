@@ -227,29 +227,129 @@ void INSTANCE_InsertInstanceGroup(struct _InstanceList *list, struct _Instance *
 // void /*$ra*/ INSTANCE_ReallyRemoveInstance(struct _InstanceList *list /*$s1*/, struct _Instance *instance /*$s0*/, long reset /*$s2*/)
 void INSTANCE_ReallyRemoveInstance(struct _InstanceList *list, struct _Instance *instance, long reset)
 { // line 499, offset 0x800325a0
-	/* begin block 1 */
-		// Start line: 500
-		// Start offset: 0x800325A0
-		// Variables:
-			struct _Instance *temp; // $v1
+	struct Intro* intro; // eax
+	struct _Instance* prev; // ecx
+	struct _Instance* next; // ecx
+	struct _InstancePool* pool; // ecx
+	struct _InstancePool* v7; // eax
+	struct _Instance* first_free; // ecx
+	int flags; // eax
+	struct Object* object; // eax
+	struct Object* v11; // eax
+	struct _Instance* LinkChild; // edi
+	void(__stdcall * messageFunc)(); // ebx
+	struct _Instance* LinkSibling; // ebp
+	int flags2; // eax
+	int v16; // ecx
+	struct Object* v17; // edx
+	int v18; // eax
+	int i; // ecx
+	struct LightInstance* lightInstances; // eax
 
-		/* begin block 1.1 */
-			// Start line: 602
-			// Start offset: 0x800327AC
-			// Variables:
-				int i; // $a0
-		/* end block 1.1 */
-		// End offset: 0x800327CC
-		// End Line: 611
-	/* end block 1 */
-	// End offset: 0x800327CC
-	// End Line: 612
-
-	/* begin block 2 */
-		// Start line: 998
-	/* end block 2 */
-	// End Line: 999
-
+	EVENT_RemoveInstanceFromInstanceList(instance);
+	if ((instance->flags & 0x800000) != 0)
+		SAVE_DoInstanceDeadDead(instance);
+	if ((instance->flags & 2) == 0)
+	{
+		intro = instance->intro;
+		if (intro)
+		{
+			intro->flags &= ~reset;
+			instance->intro->instance = 0;
+		}
+	}
+	prev = instance->prev;
+	if (prev)
+		prev->next = instance->next;
+	else
+		list->first = instance->next;
+	next = instance->next;
+	if (next)
+		next->prev = instance->prev;
+	instance->instanceID = 0;
+	pool = list->pool;
+	--list->numInstances;
+	++pool->numFreeInstances;
+	v7 = list->pool;
+	first_free = v7->first_free;
+	v7->first_free = instance;
+	instance->next = first_free;
+	instance->prev = 0;
+	if (first_free)
+		first_free->prev = instance;
+	LIST_DeleteFunc(&instance->node);
+	FX_EndInstanceEffects(instance);
+	flags = instance->flags;
+	if ((flags & 0x10000) != 0)
+	{
+		instance->flags = flags | 0x20000;
+		OBTABLE_InstanceInit(instance);
+	}
+	object = instance->object;
+	if (object->animList && (object->oflags2 & 0x40000000) == 0)
+		G2Anim_Free(&instance->anim);
+	v11 = instance->object;
+	if ((v11->oflags2 & 4) != 0)
+		SOUND_EndInstanceSounds(v11->soundData, instance->soundInstanceTbl);
+	if (instance->LinkParent)
+		INSTANCE_UnlinkFromParent(instance);
+	LinkChild = instance->LinkChild;
+	if (LinkChild)
+	{
+		do
+		{
+			messageFunc = instance->messageFunc;
+			LinkSibling = LinkChild->LinkSibling;
+			if (messageFunc)
+			{
+				flags2 = instance->flags2;
+				if ((flags2 & 1) != 0)
+				{
+					v16 = instance->flags;
+					v17 = instance->object;
+					flags2 = flags2 & ~1;
+					instance->flags2 = flags2;
+					if ((v16 & 0x40000) != 0)
+					{
+						v18 = flags2 | 0x20000000;
+						instance->flags = v16 & 0xFFFBFFFF;
+					}
+					else
+					{
+						v18 = flags2 & ~0x20000000u;
+					}
+					instance->flags2 = v18;
+					if (v17->animList)
+					{
+						if ((v17->oflags2 & 0x40000000) == 0)
+							G2Anim_Restore(&instance->anim);
+					}
+				}
+				((void(__cdecl*)(struct _Instance*, int, struct _Instance*))messageFunc)(instance, 1048595, LinkChild);
+			}
+			LinkChild->LinkParent = 0;
+			LinkChild->LinkSibling = 0;
+			LinkChild = LinkSibling;
+		} while (LinkSibling);
+		instance->LinkChild = 0;
+	}
+	if (instance->hModelList)
+		MEMPACK_Free((char*)instance->hModelList);
+	if (instance->perVertexColor)
+	{
+		MEMPACK_Free((char*)instance->perVertexColor);
+		instance->perVertexColor = 0;
+	}
+	i = 0;
+	lightInstances = gameTrackerX.gameData.asmData.lightInstances;
+	while (lightInstances->lightInstance != instance)
+	{
+		++lightInstances;
+		++i;
+		if ((int)lightInstances >= (int)&gameTrackerX.menu)
+			return;
+	}
+	gameTrackerX.gameData.asmData.lightInstances[i].lightInstance = 0;
 }
 
 

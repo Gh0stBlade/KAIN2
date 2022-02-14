@@ -422,8 +422,15 @@ void MAIN_DoMainInit()
 		gameTrackerX.sound.gVoiceOn = 0;
 	}
 
+#if PSX_VERSION
 	init_menus(&gameTrackerX);
 	SAVE_Init(&gameTrackerX);
+#else
+	int v0 = menu_data_size();
+	struct menu_t *v1 = MEMPACK_Malloc(v0, 0x2Du);
+	menu_initialize(v1, &gameTrackerX);
+	gameTrackerX.menu = v1;
+#endif
 
 	srand(0);
 }
