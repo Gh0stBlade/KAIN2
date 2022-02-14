@@ -368,10 +368,8 @@ void LOAD_ChangeDirectory(char *name)
 	gCurDir = LOAD_HashUnit(name);
 	currentEntry->loadEntry.dirHash = gCurDir;
 	currentEntry->loadEntry.fileHash = 0;
-	currentEntry->status = 0;
+	currentEntry->status = 10;
 	sprintf(&currentEntry->loadEntry.fileName[8], "dir %s", name);
-
-	return 10;
 }
 
 
