@@ -1346,30 +1346,25 @@ void INSTANCE_SpatialRelationships(struct _InstanceList *instanceList)
 // int /*$ra*/ INSTANCE_SetStatsData(struct _Instance *instance /*$s1*/, struct _Instance *checkee /*$s5*/, struct _Vector *checkPoint /*$s2*/, struct evCollideInstanceStatsData *data /*$s3*/, struct MATRIX *mat /*stack 16*/)
 int INSTANCE_SetStatsData(struct _Instance *instance, struct _Instance *checkee, struct _Vector *checkPoint, struct evCollideInstanceStatsData *data, struct MATRIX *mat)
 { // line 2643, offset 0x80035164
-	/* begin block 1 */
-		// Start line: 2644
-		// Start offset: 0x80035164
-		// Variables:
-			long distance; // $s4
+	unsigned int v5; // ebp
+	SVECTOR* ScratchAddr; // esi
 
-		/* begin block 1.1 */
-			// Start line: 2649
-			// Start offset: 0x800351D0
-			// Variables:
-				struct SVECTOR *delta; // $s0
-		/* end block 1.1 */
-		// End offset: 0x800351D8
-		// End Line: 2666
-	/* end block 1 */
-	// End offset: 0x80035250
-	// End Line: 2668
-
-	/* begin block 2 */
-		// Start line: 6097
-	/* end block 2 */
-	// End Line: 6098
-
-	return 0;
+	v5 = MATH3D_LengthXYZ(
+		instance->position.x - checkPoint->x,
+		instance->position.y - checkPoint->y,
+		instance->position.z - checkPoint->z);
+	if (v5 >= instance->maxCheckDistance)
+		return 0;
+	ScratchAddr = (SVECTOR*)getScratchAddr(0);
+	ScratchAddr->vx = checkPoint->x - instance->position.x;
+	ScratchAddr->vy = checkPoint->y - instance->position.y;
+	ScratchAddr->vz = checkPoint->z - instance->position.z;
+	ApplyMatrixSV(mat, ScratchAddr, (SVECTOR*)&data->relativePosition);
+	data->distance = v5;
+	data->instance = checkee;
+	data->zDelta = ScratchAddr->vz;
+	data->xyDistance = MATH3D_LengthXY(ScratchAddr->vx, ScratchAddr->vy);
+	return 1;
 }
 
 
@@ -1377,11 +1372,56 @@ int INSTANCE_SetStatsData(struct _Instance *instance, struct _Instance *checkee,
 // void /*$ra*/ INSTANCE_LinkToParent(struct _Instance *instance /*$s0*/, struct _Instance *parent /*$s1*/, int node /*$a2*/)
 void INSTANCE_LinkToParent(struct _Instance *instance, struct _Instance *parent, int node)
 { // line 2672, offset 0x80035274
-	/* begin block 1 */
-		// Start line: 6180
-	/* end block 1 */
-	// End Line: 6181
+	int x; // eax
+	struct _Instance* i; // edi
+	void(__stdcall * messageFunc)(); // edi
+	int flags2; // eax
+	int flags; // ecx
+	struct Object* object; // edx
+	int v9; // eax
+	int v10; // eax
 
+	instance->LinkSibling = parent->LinkChild;
+	parent->LinkChild = instance;
+	x = instance->scale.x;
+	instance->LinkParent = parent;
+	instance->ParentLinkNode = node;
+	instance->scale.x = (x << 12) / parent->scale.x;
+	instance->scale.y = (instance->scale.y << 12) / parent->scale.y;
+	instance->scale.z = (instance->scale.z << 12) / parent->scale.z;
+	for (i = parent->LinkChild; i; i = i->LinkSibling)
+	{
+		i->currentStreamUnitID = parent->currentStreamUnitID;
+		INSTANCE_UpdateFamilyStreamUnitID(i);
+	}
+	messageFunc = parent->messageFunc;
+	if (messageFunc)
+	{
+		flags2 = parent->flags2;
+		if ((flags2 & 1) != 0)
+		{
+			flags = parent->flags;
+			object = parent->object;
+			flags2 = flags2 & ~1;
+			parent->flags2 = flags2;
+			if ((flags & 0x40000) != 0)
+			{
+				v9 = flags2 | 0x20000000;
+				parent->flags = flags & ~0x40000u;
+			}
+			else
+			{
+				v9 = flags2 & 0xDFFFFFFF;
+			}
+			parent->flags2 = v9;
+			if (object->animList && (object->oflags2 & 0x40000000) == 0)
+				G2Anim_Restore(&parent->anim);
+		}
+		((void(__cdecl*)(struct _Instance*, int, struct _Instance*))messageFunc)(parent, 0x100012, instance);
+	}
+	v10 = instance->flags2;
+	v10 = v10 | 8;
+	instance->flags2 = v10;
 }
 
 
@@ -1428,29 +1468,51 @@ void INSTANCE_UnlinkFromParent(struct _Instance *instance)
 // void /*$ra*/ INSTANCE_UnlinkChildren(struct _Instance *instance /*$s2*/)
 void INSTANCE_UnlinkChildren(struct _Instance *instance)
 { // line 2735, offset 0x80035494
-	/* begin block 1 */
-		// Start line: 2736
-		// Start offset: 0x80035494
-		// Variables:
-			struct _Instance *child; // $s1
+	struct _Instance* child; // edi
+	void(* messageFunc)(); // ebx
+	struct _Instance* sibling; // ebp
+	int flags2; // eax
+	int flags; // ecx
+	struct Object* object; // edx
+	int v7; // eax
 
-		/* begin block 1.1 */
-			// Start line: 2741
-			// Start offset: 0x800354BC
-			// Variables:
-				struct _Instance *sibling; // $s0
-		/* end block 1.1 */
-		// End offset: 0x800354BC
-		// End Line: 2741
-	/* end block 1 */
-	// End offset: 0x800354E4
-	// End Line: 2752
-
-	/* begin block 2 */
-		// Start line: 6317
-	/* end block 2 */
-	// End Line: 6318
-
+	child = instance->LinkChild;
+	if (child)
+	{
+		do
+		{
+			messageFunc = instance->messageFunc;
+			sibling = child->LinkSibling;
+			if (messageFunc)
+			{
+				flags2 = instance->flags2;
+				if ((flags2 & 1) != 0)
+				{
+					flags = instance->flags;
+					object = instance->object;
+					flags2 = flags2 & ~1;
+					instance->flags2 = flags2;
+					if ((flags & 0x40000) != 0)
+					{
+						v7 = flags2 | 0x20000000;
+						instance->flags = flags & ~0x40000u;
+					}
+					else
+					{
+						v7 = flags2 & ~0x20000000u;
+					}
+					instance->flags2 = v7;
+					if (object->animList && (object->oflags2 & 0x40000000) == 0)
+						G2Anim_Restore(&instance->anim);
+				}
+				((void(__cdecl*)(struct _Instance*, int, struct _Instance*))messageFunc)(instance, 0x100013, child);
+			}
+			child->LinkParent = 0;
+			child->LinkSibling = 0;
+			child = sibling;
+		} while (sibling);
+	}
+	instance->LinkChild = 0;
 }
 
 
@@ -1458,20 +1520,13 @@ void INSTANCE_UnlinkChildren(struct _Instance *instance)
 // void /*$ra*/ INSTANCE_UpdateFamilyStreamUnitID(struct _Instance *instance /*$s1*/)
 void INSTANCE_UpdateFamilyStreamUnitID(struct _Instance *instance)
 { // line 2758, offset 0x80035500
-	/* begin block 1 */
-		// Start line: 2759
-		// Start offset: 0x80035500
-		// Variables:
-			struct _Instance *child; // $s0
-	/* end block 1 */
-	// End offset: 0x80035544
-	// End Line: 2767
+	struct _Instance* child; // esi
 
-	/* begin block 2 */
-		// Start line: 6366
-	/* end block 2 */
-	// End Line: 6367
-
+	for (child = instance->LinkChild; child; child = child->LinkSibling)
+	{
+		child->currentStreamUnitID = instance->currentStreamUnitID;
+		INSTANCE_UpdateFamilyStreamUnitID(child);
+	}
 }
 
 
@@ -1479,29 +1534,20 @@ void INSTANCE_UpdateFamilyStreamUnitID(struct _Instance *instance)
 // void /*$ra*/ INSTANCE_ReallyRemoveAllChildren(struct _Instance *instance /*$a0*/)
 void INSTANCE_ReallyRemoveAllChildren(struct _Instance *instance)
 { // line 2769, offset 0x80035558
-	/* begin block 1 */
-		// Start line: 2770
-		// Start offset: 0x80035558
-		// Variables:
-			struct _Instance *child; // $s1
+	struct _Instance* LinkChild; // esi
+	struct _Instance* LinkSibling; // edi
 
-		/* begin block 1.1 */
-			// Start line: 2775
-			// Start offset: 0x80035578
-			// Variables:
-				struct _Instance *sibling; // $s0
-		/* end block 1.1 */
-		// End offset: 0x80035578
-		// End Line: 2775
-	/* end block 1 */
-	// End offset: 0x800355A0
-	// End Line: 2780
-
-	/* begin block 2 */
-		// Start line: 6391
-	/* end block 2 */
-	// End Line: 6392
-
+	LinkChild = instance->LinkChild;
+	if (LinkChild)
+	{
+		do
+		{
+			LinkSibling = LinkChild->LinkSibling;
+			INSTANCE_ReallyRemoveAllChildren(LinkChild);
+			INSTANCE_ReallyRemoveInstance(gameTrackerX.instanceList, LinkChild, 0);
+			LinkChild = LinkSibling;
+		} while (LinkSibling);
+	}
 }
 
 
@@ -1509,31 +1555,14 @@ void INSTANCE_ReallyRemoveAllChildren(struct _Instance *instance)
 // struct _Instance * /*$ra*/ INSTANCE_GetChildLinkedToSegment(struct _Instance *instance /*$a0*/, int segment /*$a1*/)
 struct _Instance * INSTANCE_GetChildLinkedToSegment(struct _Instance *instance, int segment)
 { // line 2785, offset 0x800355b4
-	/* begin block 1 */
-		// Start line: 2787
-		// Start offset: 0x800355B4
-		// Variables:
-			struct _Instance *child; // $v1
-	/* end block 1 */
-	// End offset: 0x800355E4
-	// End Line: 2795
+	struct _Instance* child; // eax
 
-	/* begin block 2 */
-		// Start line: 6428
-	/* end block 2 */
-	// End Line: 6429
-
-	/* begin block 3 */
-		// Start line: 6429
-	/* end block 3 */
-	// End Line: 6430
-
-	/* begin block 4 */
-		// Start line: 6431
-	/* end block 4 */
-	// End Line: 6432
-
-	return null;
+	for (child = instance->LinkChild; child; child = child->LinkSibling)
+	{
+		if (child->ParentLinkNode == segment)
+			break;
+	}
+	return child;
 }
 
 
@@ -1541,32 +1570,18 @@ struct _Instance * INSTANCE_GetChildLinkedToSegment(struct _Instance *instance, 
 // int /*$ra*/ INSTANCE_Linked(struct _Instance *instance1 /*$a0*/, struct _Instance *instance2 /*$a1*/)
 int INSTANCE_Linked(struct _Instance *instance1, struct _Instance *instance2)
 { // line 2801, offset 0x800355ec
-	/* begin block 1 */
-		// Start line: 2803
-		// Start offset: 0x800355EC
-		// Variables:
-			struct _Instance *root1; // $a0
-			struct _Instance *root2; // $a1
-	/* end block 1 */
-	// End offset: 0x80035634
-	// End Line: 2811
+	struct _Instance* root1; // edx
+	struct _Instance* p0; // eax
+	struct _Instance* root2; // ecx
+	struct _Instance* p1; // eax
 
-	/* begin block 2 */
-		// Start line: 6462
-	/* end block 2 */
-	// End Line: 6463
-
-	/* begin block 3 */
-		// Start line: 6463
-	/* end block 3 */
-	// End Line: 6464
-
-	/* begin block 4 */
-		// Start line: 6465
-	/* end block 4 */
-	// End Line: 6466
-
-	return 0;
+	root1 = instance1;
+	for (p0 = instance1->LinkParent; p0; p0 = p0->LinkParent)
+		root1 = p0;
+	root2 = instance2;
+	for (p1 = instance2->LinkParent; p1; p1 = p1->LinkParent)
+		root2 = p1;
+	return root1 == root2;
 }
 
 
@@ -1574,21 +1589,30 @@ int INSTANCE_Linked(struct _Instance *instance1, struct _Instance *instance2)
 // int /*$ra*/ INSTANCE_GetFadeValue(struct _Instance *instance /*$s1*/)
 int INSTANCE_GetFadeValue(struct _Instance *instance)
 { // line 2819, offset 0x8003563c
-	/* begin block 1 */
-		// Start line: 2820
-		// Start offset: 0x8003563C
-		// Variables:
-			int fadeValue; // $s0
-	/* end block 1 */
-	// End offset: 0x80035708
-	// End Line: 2844
+	int result; // eax
+	int v2; // esi
+	struct _Instance* LinkParent; // eax
+	int v4; // eax
 
-	/* begin block 2 */
-		// Start line: 6498
-	/* end block 2 */
-	// End Line: 6499
-
-	return 0;
+	result = instance->fadeValue;
+	if (gameTrackerX.gameData.asmData.MorphTime != 1000)
+	{
+		v2 = 4096 - result;
+		if (MEMPACK_MemoryValidFunc((char*)instance->object))
+		{
+			if ((instance->object->oflags2 & 0x2000000) != 0
+				|| (LinkParent = instance->LinkParent) != 0 && (LinkParent->object->oflags2 & 0x2000000) != 0)
+			{
+				if ((instance->flags2 & 0x8000000) != 0)
+					v4 = gameTrackerX.spectral_fadeValue * v2;
+				else
+					v4 = gameTrackerX.material_fadeValue * v2;
+				v2 = v4 / 4096;
+			}
+		}
+		return 4096 - v2;
+	}
+	return result;
 }
 
 

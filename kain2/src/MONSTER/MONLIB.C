@@ -337,7 +337,7 @@ void MON_PlayAnimID(struct _Instance *instance, int index, int mode)
 		MON_Say();
 		instanceb = 0;
 	}
-	G2Anim_SetCallback(&instance->anim, (int)INSTANCE_DefaultAnimCallback, (int)instance);
+	G2Anim_SetCallback(&instance->anim, INSTANCE_DefaultAnimCallback, (int)instance);
 	v7 = mv->anim;
 	if (v7 && v7->interpOut)
 	{
@@ -1796,7 +1796,7 @@ void MON_GetSaveInfo(struct _Instance *instance, struct _MonsterSaveInfo *saveDa
 	struct _MonsterAttributes* ma; // ebx
 	struct _MonsterVars* mv; // esi
 	unsigned __int8 v4; // al
-	_MonsterSubAttributes* v5; // eax
+	struct _MonsterSubAttributes* v5; // eax
 	struct _MonsterVars* extraData; // edx
 	__int16 modelNum; // ax
 	struct _HModel* v8; // eax
@@ -1826,7 +1826,7 @@ void MON_GetSaveInfo(struct _Instance *instance, struct _MonsterSaveInfo *saveDa
 	extraData = (struct _MonsterVars*)instance->extraData;
 	modelNum = v5->modelNum;
 	instance->currentModel = modelNum;
-	if ((BYTE1(saveData->mvFlags) & 0x80u) == 0)
+	if ((saveData->mvFlags & 0x8000) == 0)
 	{
 		if ((BYTE1(extraData->mvFlags) & 0x80u) == 0)
 			goto LABEL_20;
@@ -1839,7 +1839,7 @@ void MON_GetSaveInfo(struct _Instance *instance, struct _MonsterSaveInfo *saveDa
 			++i;
 		}
 		mvFlags = extraData->mvFlags;
-		BYTE1(mvFlags) = BYTE1(extraData->mvFlags) & 0x7F;
+		mvFlags = extraData->mvFlags & ~0x8000;
 		goto LABEL_19;
 	}
 	if ((BYTE1(extraData->mvFlags) & 0x80u) == 0)
@@ -1856,7 +1856,7 @@ void MON_GetSaveInfo(struct _Instance *instance, struct _MonsterSaveInfo *saveDa
 				++j;
 			}
 			mvFlags = extraData->mvFlags;
-			BYTE1(mvFlags) = BYTE1(extraData->mvFlags) | 0x80;
+			mvFlags = extraData->mvFlags | 0x8000;
 		LABEL_19:
 			extraData->mvFlags = mvFlags;
 		}
@@ -1888,7 +1888,7 @@ LABEL_20:
 	case 16:
 		instance->flags2 &= ~0x40u;
 		v18 = mv->mvFlags;
-		BYTE1(v18) = BYTE1(mv->mvFlags) | 2;
+		v18 = mv->mvFlags | 0x200;
 		mv->soulID = 0x7FFFFFFF;
 		mv->mvFlags = v18;
 		goto LABEL_22;
@@ -1899,7 +1899,7 @@ LABEL_20:
 			mv->heldID = mv->soulJuice;
 			mv->soulJuice = 4096;
 			flags2 = instance->flags2;
-			LOBYTE(flags2) = flags2 | 0x80;
+			flags2 = flags2 | 0x80;
 			instance->flags2 = flags2;
 		}
 		instance->currentMainState = 23;
@@ -1915,7 +1915,7 @@ LABEL_20:
 	{
 		v22 = ((age & 0x100000) != 0) + 1;
 		if (instance->currentMainState == 23)
-			MON_PlayAnimID(instance, *(char*)(**((_DWORD**)instance->extraData + 85) + 24), 1);
+			MON_PlayAnimID(instance, *(char*)(**((DWORD**)instance->extraData + 85) + 24), 1);
 		else
 			MON_PlayAnimID(instance, v21, v22);
 	}
@@ -1999,7 +1999,7 @@ void MON_KillMonster(struct _Instance *instance)
 		}
 	}
 	flags = instance->flags;
-	LOBYTE(flags) = flags | 0x20;
+	flags = flags | 0x20;
 	instance->flags = flags;
 }
 
