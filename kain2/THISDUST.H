@@ -8449,8 +8449,13 @@ union EVENT_219fake // Hashcode: 0xED7CCDD7 (dec: -310587945)
 
 struct EventTimer // hashcode: 0xAA55BC81 (dec: -1437221759)
 {
+#ifdef PSX_VERSION
+	long flags : 1; // offset=0.0
+	long time : 31; // offset=0.1
+#else
 	long flags; // size=1, offset=0
 	long time; // size=31, offset=1
+#endif
 	struct Event *event; // size=28, offset=4
 	struct ScriptPCode *actionScript; // size=8, offset=8
 	short *scriptPos; // size=0, offset=12
