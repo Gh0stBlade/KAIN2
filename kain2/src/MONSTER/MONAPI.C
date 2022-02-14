@@ -514,11 +514,20 @@ void MonsterRelocateInstanceObject(struct _Instance *instance, long offset)
 // void /*$ra*/ MONAPI_TurnHead(struct _Instance *instance /*$a0*/, short *rotx /*$a1*/, short *rotz /*$a2*/, struct GameTracker *gameTracker /*$a3*/)
 void MONAPI_TurnHead(struct _Instance *instance, short *rotx, short *rotz, struct GameTracker *gameTracker)
 { // line 1299, offset 0x8007f05c
-	/* begin block 1 */
-		// Start line: 2598
-	/* end block 1 */
-	// End Line: 2599
+	if (*rotx >= -768)
+	{
+		if (*rotx > 512)
+			*rotx = 512;
+	}
+	else *rotx = -768;
 
+	if (*rotz <= 1024)
+	{
+		if (*rotz < -1024)
+			*rotz = -1024;
+	}
+	else *rotz = 1024;
+	MON_LookInDirection(instance, -*rotx, *rotz);
 }
 
 
@@ -526,20 +535,11 @@ void MONAPI_TurnHead(struct _Instance *instance, short *rotx, short *rotz, struc
 // void /*$ra*/ MONAPI_SetLookAround(struct _Instance *instance /*$a0*/)
 void MONAPI_SetLookAround(struct _Instance *instance)
 { // line 1320, offset 0x8007f0d8
-	/* begin block 1 */
-		// Start line: 1321
-		// Start offset: 0x8007F0D8
-		// Variables:
-			struct _MonsterVars *mv; // $s0
-	/* end block 1 */
-	// End offset: 0x8007F0D8
-	// End Line: 1321
+	struct _MonsterVars* extraData; // esi
 
-	/* begin block 2 */
-		// Start line: 2776
-	/* end block 2 */
-	// End Line: 2777
-
+	extraData = (struct _MonsterVars*)instance->extraData;
+	MON_EnableHeadMove(instance);
+	extraData->mode = 0x80000;
 }
 
 
@@ -547,20 +547,11 @@ void MONAPI_SetLookAround(struct _Instance *instance)
 // void /*$ra*/ MONAPI_ResetLookAround(struct _Instance *instance /*$a0*/)
 void MONAPI_ResetLookAround(struct _Instance *instance)
 { // line 1329, offset 0x8007f108
-	/* begin block 1 */
-		// Start line: 1330
-		// Start offset: 0x8007F108
-		// Variables:
-			struct _MonsterVars *mv; // $s0
-	/* end block 1 */
-	// End offset: 0x8007F108
-	// End Line: 1330
+	struct _MonsterVars* extraData; // esi
 
-	/* begin block 2 */
-		// Start line: 2794
-	/* end block 2 */
-	// End Line: 2795
-
+	extraData = (struct _MonsterVars*)instance->extraData;
+	MON_DisableHeadMove(instance);
+	extraData->mode = 1;
 }
 
 
@@ -568,17 +559,7 @@ void MONAPI_ResetLookAround(struct _Instance *instance)
 // long /*$ra*/ MONAPI_OkToLookAround(struct _Instance *instance /*$a0*/)
 long MONAPI_OkToLookAround(struct _Instance *instance)
 { // line 1338, offset 0x8007f138
-	/* begin block 1 */
-		// Start line: 2812
-	/* end block 1 */
-	// End Line: 2813
-
-	/* begin block 2 */
-		// Start line: 2813
-	/* end block 2 */
-	// End Line: 2814
-
-	return 0;
+	return instance->currentMainState == 2;
 }
 
 

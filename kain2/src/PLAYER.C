@@ -6,11 +6,10 @@
 // void /*$ra*/ PLAYER_TurnHead(struct _Instance *instance /*$s0*/, short *rotx /*$s1*/, short *rotz /*$s2*/, struct GameTracker *gameTracker /*$s3*/)
 void PLAYER_TurnHead(struct _Instance *instance, short *rotx, short *rotz, struct GameTracker *gameTracker)
 { // line 25, offset 0x80012d5c
-	/* begin block 1 */
-		// Start line: 50
-	/* end block 1 */
-	// End Line: 51
-
+	if ((INSTANCE_Query(instance, 1) & 1) != 0)
+		RAZIEL_TurnHead(instance, rotx, rotz, gameTracker);
+	else
+		MONAPI_TurnHead(instance, rotx, rotz, gameTracker);
 }
 
 
@@ -18,12 +17,10 @@ void PLAYER_TurnHead(struct _Instance *instance, short *rotx, short *rotz, struc
 // long /*$ra*/ PLAYER_OkToLookAround(struct _Instance *instance /*$s0*/)
 long PLAYER_OkToLookAround(struct _Instance *instance)
 { // line 33, offset 0x80012ddc
-	/* begin block 1 */
-		// Start line: 66
-	/* end block 1 */
-	// End Line: 67
-
-	return 0;
+	if ((INSTANCE_Query(instance, 1) & 1) != 0)
+		return RAZIEL_OkToLookAround(instance);
+	else
+		return MONAPI_OkToLookAround(instance);
 }
 
 
@@ -31,16 +28,10 @@ long PLAYER_OkToLookAround(struct _Instance *instance)
 // void /*$ra*/ PLAYER_SetLookAround(struct _Instance *instance /*$s0*/)
 void PLAYER_SetLookAround(struct _Instance *instance)
 { // line 41, offset 0x80012e28
-	/* begin block 1 */
-		// Start line: 80
-	/* end block 1 */
-	// End Line: 81
-
-	/* begin block 2 */
-		// Start line: 84
-	/* end block 2 */
-	// End Line: 85
-
+	if ((INSTANCE_Query(instance, 1) & 1) != 0)
+		RAZIEL_SetLookAround(instance);
+	else
+		MONAPI_SetLookAround(instance);
 }
 
 
@@ -48,11 +39,10 @@ void PLAYER_SetLookAround(struct _Instance *instance)
 // void /*$ra*/ PLAYER_ReSetLookAround(struct _Instance *instance /*$s0*/)
 void PLAYER_ReSetLookAround(struct _Instance *instance)
 { // line 49, offset 0x80012e74
-	/* begin block 1 */
-		// Start line: 100
-	/* end block 1 */
-	// End Line: 101
-
+	if ((INSTANCE_Query(instance, 1) & 1) != 0)
+		RAZIEL_ResetLookAround(instance);
+	else
+		MONAPI_ResetLookAround(instance);
 }
 
 
