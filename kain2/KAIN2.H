@@ -2088,13 +2088,6 @@ struct SplineKey // hashcode: 0x5D3D994D (dec: 1564318029)
 	struct vecL ds; // size=12, offset=20
 };
 
-struct SplineDef // hashcode: 0x04DD5459 (dec: 81613913)
-{
-	short currkey; // size=0, offset=0
-	unsigned short denomFlag; // size=0, offset=2
-	long fracCurr; // size=0, offset=4
-};
-
 struct _HVertex // hashcode: 0xC488A83D (dec: -997676995)
 {
 	short x; // size=0, offset=0
@@ -6015,92 +6008,9 @@ struct _MonsterAttributes // hashcode: 0x9EE88812 (dec: -1628927982)
 	void *shatterList; // size=0, offset=76
 };
 
-struct _MonsterIR // hashcode: 0x41A7CD43 (dec: 1101516099)
-{
-	struct _MonsterIR* next; // size=36, offset=0
-	struct _Instance* instance; // size=616, offset=4
-	long handle; // size=0, offset=8
-	struct _SVector relativePosition; // size=8, offset=12
-	short distance; // size=0, offset=20
-	unsigned short mirFlags; // size=0, offset=22
-	unsigned short mirConditions; // size=0, offset=24
-	unsigned long forgetTimer; // size=0, offset=28
-	unsigned long idleTime; // size=0, offset=32
-};
 
-struct _MonsterVars // hashcode: 0xEF80566F (dec: -276801937)
-{
-	unsigned long mvFlags; // size=0, offset=0
-	unsigned long auxFlags; // size=0, offset=4
-	struct __MessageQueue messageQueue; // size=136, offset=8
-	struct _MonsterIR *monsterIRList; // size=0, offset=144
-	struct _G2AnimInterpInfo_Type interpInfo[3]; // size=36, offset=148
-	struct _MonsterAttackAttributes *attackType; // size=32, offset=184
-	struct _MonsterAnim *anim; // size=16, offset=188
-	void *messageData; // size=0, offset=192
-	struct _MonsterIR *enemy; // size=0, offset=196
-	struct _MonsterIR *leader; // size=0, offset=200
-	struct _MonsterIR *ally; // size=0, offset=204
-	struct _Instance *held; // size=616, offset=208
-	long heldID; // size=0, offset=212
-	long soulID; // size=0, offset=216
-	void *effect; // size=0, offset=220
-	unsigned short radarMap; // size=0, offset=224
-	unsigned short radarCounter; // size=0, offset=226
-	short radarDistance[8]; // size=16, offset=228
-	unsigned long mode; // size=0, offset=244
-	unsigned long damageTimer; // size=0, offset=248
-	unsigned long stunTimer; // size=0, offset=252
-	unsigned long generalTimer; // size=0, offset=256
-	unsigned long generalTimer2; // size=0, offset=260
-	unsigned long effectTimer; // size=0, offset=264
-	struct _Position *lookAtPos; // size=6, offset=268
-	short speed; // size=0, offset=272
-	struct _Position destination; // size=6, offset=274
-	short fleeMarker; // size=0, offset=280
-	struct _Position lastValidPos; // size=6, offset=282
-	short wanderRange; // size=0, offset=288
-	struct _Position lookAtPosData; // size=6, offset=290
-	short guardRange; // size=0, offset=296
-	short ambushRange; // size=0, offset=298
-	short ambushArc; // size=0, offset=300
-	short ambushElevation; // size=0, offset=302
-	short hitPoints; // size=0, offset=304
-	short maxHitPoints; // size=0, offset=306
-	short soulJuice; // size=0, offset=308
-	short regenTime; // size=0, offset=310
-	short mainColorVertex; // size=0, offset=312
-	short lookAngleX; // size=0, offset=314
-	short lookAngleZ; // size=0, offset=316
-	unsigned short avoidMask; // size=0, offset=318
-	unsigned short damageType; // size=0, offset=320
-	char ambushMarker; // size=0, offset=322
-	char ambushJumpType; // size=0, offset=323
-	unsigned char causeOfDeath; // size=0, offset=324
-	char previousMainState; // size=0, offset=325
-	unsigned char behaviorState; // size=0, offset=326
-	unsigned char initialBehavior; // size=0, offset=327
-	unsigned char triggeredBehavior; // size=0, offset=328
-	char activeBehavior; // size=0, offset=329
-	unsigned char age; // size=0, offset=330
-	char attackState; // size=0, offset=331
-	unsigned char ambient; // size=0, offset=332
-	char alertness; // size=0, offset=333
-	char alertCount; // size=0, offset=334
-	char senseIndex; // size=0, offset=335
-	char lastSideMove; // size=0, offset=336
-	char chance; // size=0, offset=337
-	char pathSlotID; // size=0, offset=338
-	struct _MonsterSubAttributes *subAttr; // size=84, offset=340
-	struct _MonsterIR *freeIRs; // size=0, offset=344
-	void *extraVars; // size=0, offset=348
-	short validUnits[10]; // size=20, offset=352
-	short patrolMarkers[12]; // size=24, offset=372
-	short *currentMarker; // size=0, offset=396
-	long terrainImpaleID; // size=0, offset=400
-	short targetFade; // size=0, offset=404
-	short fadeRate; // size=0, offset=406
-};
+
+
 
 struct burntTuneType // hashcode: 0x127E6332 (dec: 310272818)
 {

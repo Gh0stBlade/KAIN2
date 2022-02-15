@@ -930,101 +930,6 @@ struct LightInstance // hashcode: 0xB8D5E61F (dec: -1193941473)
 	unsigned char flags; // size=0, offset=19
 };
 
-struct _Instance // hashcode: 0x699A5B3D (dec: 1771723581)
-{
-	struct NodeType node; // size=8, offset=0
-	struct _Instance *next; // size=616, offset=8
-	struct _Instance *prev; // size=616, offset=12
-	long instanceID; // size=0, offset=16
-	long flags; // size=0, offset=20
-	long flags2; // size=0, offset=24
-	struct Object *object; // size=76, offset=28
-	struct Intro *intro; // size=0, offset=32
-	void *data; // size=0, offset=36
-	void *introData; // size=0, offset=40
-	struct _Instance *parent; // size=616, offset=44
-	long introNum; // size=0, offset=48
-	long birthStreamUnitID; // size=0, offset=52
-	long currentStreamUnitID; // size=0, offset=56
-	long introUniqueID; // size=0, offset=60
-	struct MATRIX *matrix; // size=32, offset=64
-	struct MATRIX *oldMatrix; // size=32, offset=68
-	struct SoundInstance soundInstanceTbl[4]; // size=12, offset=72
-	unsigned long maxCheckDistance; // size=0, offset=84
-	unsigned long checkMask; // size=0, offset=88
-	struct _Position position; // size=6, offset=92
-	unsigned char lightGroup; // size=0, offset=98
-	struct _Position oldPos; // size=6, offset=100
-	unsigned char spectralLightGroup; // size=0, offset=106
-	short currentTextureAnimFrame; // size=0, offset=108
-	struct _Position initialPos; // size=6, offset=110
-	struct _Rotation rotation; // size=8, offset=116
-	struct _Rotation oldRotation; // size=8, offset=124
-	struct _SVector scale; // size=8, offset=132
-	long attachedID; // size=0, offset=140
-	long attachedSegment; // size=0, offset=144
-	struct MATRIX relativeMatrix; // size=32, offset=148
-	struct _TFace *tface; // size=12, offset=180
-	struct _TFace *oldTFace; // size=12, offset=184
-	void *tfaceLevel; // size=0, offset=188
-	void *collideInfo; // size=0, offset=192
-	long bspTree; // size=0, offset=196
-	short cachedTFace; // size=0, offset=200
-	short cachedBSPTree; // size=0, offset=202
-	void *cachedTFaceLevel; // size=0, offset=204
-	struct _Normal oldWNormal; // size=8, offset=208
-	struct _Normal wNormal; // size=8, offset=216
-	struct _SVector offset; // size=8, offset=224
-	struct _HModel *hModelList; // size=8, offset=232
-	short fadeValue; // size=0, offset=236
-	short lightMatrix; // size=0, offset=238
-	void (*processFunc)(); // size=0, offset=240
-	void (*collideFunc)(); // size=0, offset=244
-	void (*additionalCollideFunc)(); // size=0, offset=248
-	unsigned long (*queryFunc)(); // size=0, offset=252
-	void (*messageFunc)(); // size=0, offset=256
-	struct _Position shadowPosition; // size=6, offset=260
-	short currentModel; // size=0, offset=266
-	struct _TFace *waterFace; // size=12, offset=268
-	struct _TFace *oldWaterFace; // size=12, offset=272
-	struct _Terrain *waterFaceTerrain; // size=0, offset=276
-	struct _PlaneConstants halvePlane; // size=12, offset=280
-	struct _SVector splitPoint; // size=8, offset=292
-	struct _Instance *LinkParent; // size=616, offset=300
-	struct _Instance *LinkChild; // size=616, offset=304
-	struct _Instance *LinkSibling; // size=616, offset=308
-	long ParentLinkNode; // size=0, offset=312
-	void *InstanceState; // size=0, offset=316
-	char introName[12]; // size=12, offset=320
-	void *extraData; // size=0, offset=332
-	short constrictAngle; // size=0, offset=336
-	short petrifyValue; // size=0, offset=338
-	long xVel; // size=0, offset=340
-	long yVel; // size=0, offset=344
-	long zVel; // size=0, offset=348
-	long xAccl; // size=0, offset=352
-	long yAccl; // size=0, offset=356
-	long zAccl; // size=0, offset=360
-	long maxXVel; // size=0, offset=364
-	long maxYVel; // size=0, offset=368
-	long maxZVel; // size=0, offset=372
-	long currentMainState; // size=0, offset=376
-	long work0; // size=0, offset=380
-	long work1; // size=0, offset=384
-	long work2; // size=0, offset=388
-	long work3; // size=0, offset=392
-	long work4; // size=0, offset=396
-	long work5; // size=0, offset=400
-	struct _G2Anim_Type anim; // size=180, offset=404
-	enum _G2Bool_Enum (*rebuildCallback)(); // size=4, offset=584
-	short splineFlags; // size=0, offset=588
-	short targetFrame; // size=0, offset=590
-	short clipBeg; // size=0, offset=592
-	short clipEnd; // size=0, offset=594
-	struct EventAliasCommandStruct aliasCommand; // size=12, offset=596
-	long light_color; // size=0, offset=608
-	struct CVECTOR *perVertexColor; // size=4, offset=612
-};
 
 struct _GameTrackerASMData_Type // hashcode: 0x28F0BFB9 (dec: 686866361)
 {
@@ -1601,18 +1506,7 @@ struct _Segment // hashcode: 0x2F06BF28 (dec: 788971304)
 	struct _HInfo *hInfo; // size=24, offset=20
 };
 
-struct MultiSpline // hashcode: 0x2823B2CF (dec: 673428175)
-{
-	struct Spline *positional; // size=8, offset=0
-	struct RSpline *rotational; // size=8, offset=4
-	struct Spline *scaling; // size=8, offset=8
-	struct Spline *color; // size=8, offset=12
-	struct SplineDef curPositional; // size=8, offset=16
-	struct SplineDef curRotational; // size=8, offset=24
-	struct SplineDef curScaling; // size=8, offset=32
-	struct SplineDef curColor; // size=8, offset=40
-	struct MATRIX curRotMatrix; // size=32, offset=48
-};
+
 
 struct ObjectEffect // hashcode: 0x2892438D (dec: 680674189)
 {
@@ -1685,21 +1579,7 @@ struct _Terrain // hashcode: 0x5D541B4E (dec: 1565793102)
 	struct _MultiSignal *signals; // size=904, offset=80
 };
 
-struct _InstancePool // hashcode: 0xC591AB92 (dec: -980309102)
-{
-	long nextInstanceID; // size=0, offset=0
-	long numFreeInstances; // size=0, offset=4
-	struct _Instance instance[62]; // size=38192, offset=8
-	struct _Instance *first_free; // size=616, offset=38200
-};
 
-struct _InstanceList // hashcode: 0x7594B1C7 (dec: 1972679111)
-{
-	long numInstances; // size=0, offset=0
-	struct _Instance *first; // size=616, offset=4
-	struct _InstancePool *pool; // size=38204, offset=8
-	struct NodeType group[32]; // size=256, offset=12
-};
 
 struct _ObjectTracker // hashcode: 0xFE4678BF (dec: -28936001)
 {
@@ -1730,34 +1610,6 @@ struct CDLight // hashcode: 0xD90757B8 (dec: -653830216)
 	unsigned char b; // size=0, offset=10
 	unsigned char flags; // size=0, offset=11
 	struct _Sphere sphere; // size=12, offset=12
-};
-
-struct _BSPNode // hashcode: 0x60C20F69 (dec: 1623330665)
-{
-	struct _Sphere_noSq sphere; // size=8, offset=0
-	short a; // size=0, offset=8
-	short b; // size=0, offset=10
-	short c; // size=0, offset=12
-	short flags; // size=0, offset=14
-	long d; // size=0, offset=16
-	void *front; // size=0, offset=20
-	void *back; // size=0, offset=24
-	struct _Sphere_noSq spectralSphere; // size=8, offset=28
-	short front_spectral_error; // size=0, offset=36
-	short back_spectral_error; // size=0, offset=38
-	short front_material_error; // size=0, offset=40
-	short back_material_error; // size=0, offset=42
-};
-
-struct _BSPLeaf // hashcode: 0xB2C1AC71 (dec: -1295930255)
-{
-	struct _Sphere_noSq sphere; // size=8, offset=0
-	struct _TFace *faceList; // size=12, offset=8
-	short numFaces; // size=0, offset=12
-	short flags; // size=0, offset=14
-	struct _BoundingBox box; // size=12, offset=16
-	struct _BoundingBox spectralBox; // size=12, offset=28
-	struct _Sphere_noSq spectralSphere; // size=8, offset=40
 };
 
 struct _MorphVertex // hashcode: 0xAAB8DABE (dec: -1430725954)
@@ -1891,18 +1743,7 @@ struct _SavedCinematic // hashcode: 0x1E29151B (dec: 506008859)
 	struct Level *level; // size=0, offset=108
 };
 
-struct BSPTree // hashcode: 0x17800192 (dec: 394264978)
-{
-	struct _BSPNode *bspRoot; // size=44, offset=0
-	struct _BSPLeaf *startLeaves; // size=48, offset=4
-	struct _BSPLeaf *endLeaves; // size=48, offset=8
-	struct _Position globalOffset; // size=6, offset=12
-	short flags; // size=0, offset=18
-	struct _Position localOffset; // size=6, offset=20
-	short ID; // size=0, offset=26
-	long splineID; // size=0, offset=28
-	struct _Instance *instanceSpline; // size=616, offset=32
-};
+
 
 struct LightGroup // hashcode: 0xBB5FF847 (dec: -1151338425)
 {
@@ -2544,13 +2385,7 @@ struct GameTracker // hashcode: 0x4EB3EFC5 (dec: 1320415173)
 	char pad; // size=0, offset=623
 };
 
-struct Spline // hashcode: 0xA7B8D53F (dec: -1481059009)
-{
-	struct SplineKey *key; // size=32, offset=0
-	short numkeys; // size=0, offset=4
-	unsigned char type; // size=0, offset=6
-	unsigned char flags; // size=0, offset=7
-};
+
 
 struct vecS // hashcode: 0xEADB8F3A (dec: -354709702)
 {
@@ -2564,28 +2399,6 @@ struct vecL // hashcode: 0x7575CB14 (dec: 1970653972)
 	long x; // size=0, offset=0
 	long y; // size=0, offset=4
 	long z; // size=0, offset=8
-};
-
-struct SplineRotKey // hashcode: 0xD2E3A87E (dec: -756832130)
-{
-	short count; // size=0, offset=0
-	struct _G2Quat_Type q; // size=8, offset=2
-};
-
-struct RSpline // hashcode: 0xD9C500BD (dec: -641400643)
-{
-	struct SplineRotKey *key; // size=10, offset=0
-	short numkeys; // size=0, offset=4
-	unsigned char type; // size=0, offset=6
-	unsigned char flags; // size=0, offset=7
-};
-
-struct SplineKey // hashcode: 0x5D3D994D (dec: 1564318029)
-{
-	short count; // size=0, offset=0
-	struct vecS point; // size=6, offset=2
-	struct vecL dd; // size=12, offset=8
-	struct vecL ds; // size=12, offset=20
 };
 
 struct _HVertex // hashcode: 0xC488A83D (dec: -997676995)
@@ -5667,171 +5480,8 @@ struct _SavedIntroWithIntro // hashcode: 0xF234DCD6 (dec: -231416618)
 	struct _Position position; // size=6, offset=26
 };
 
-union INSTANCE_270fake // Hashcode: 0xB44B3EBC (dec: -1270137156)
-{
-	struct Intro *intro; // size=76, offset=0
-	struct _SFXMkr *sfxMarker; // size=36, offset=0
-};
 
-struct _MonsterAnim // hashcode: 0xF5F8CA4B (dec: -168244661)
-{
-	unsigned short velocity; // size=0, offset=0
-	unsigned short distance; // size=0, offset=2
-	unsigned short playSpeed; // size=0, offset=4
-	unsigned char interpFrames; // size=0, offset=6
-	unsigned char startFrame; // size=0, offset=7
-	unsigned char interpOut; // size=0, offset=8
-	unsigned char alphaTable; // size=0, offset=9
-	unsigned char alphaTableOut; // size=0, offset=10
-	unsigned char controllingSection; // size=0, offset=11
-	char index[3]; // size=3, offset=12
-	char pad; // size=0, offset=15
-};
 
-struct _MonsterIdle // hashcode: 0x181712FA (dec: 404165370)
-{
-	char anim; // size=0, offset=0
-	char alertMod; // size=0, offset=1
-	char probability; // size=0, offset=2
-	char pad; // size=0, offset=3
-};
-
-struct _MonsterBehavior // hashcode: 0x6D7D1660 (dec: 1836914272)
-{
-	char alertness; // size=0, offset=0
-	char idleFreq; // size=0, offset=1
-	char numIdles; // size=0, offset=2
-	char idleList[5]; // size=5, offset=3
-};
-
-struct _MonsterSenses // hashcode: 0x1AA0E325 (dec: 446751525)
-{
-	short sightArc; // size=0, offset=0
-	short sightRadius; // size=0, offset=2
-	short sightElevation; // size=0, offset=4
-	short soundArc; // size=0, offset=6
-	short soundRadius; // size=0, offset=8
-	short soundElevation; // size=0, offset=10
-	unsigned short scentRadius; // size=0, offset=12
-	short alarmRadius; // size=0, offset=14
-	unsigned short allyRadius; // size=0, offset=16
-};
-
-struct _MonsterAllegiances // hashcode: 0x1F15B182 (dec: 521515394)
-{
-	unsigned long enemies; // size=0, offset=0
-	unsigned long allies; // size=0, offset=4
-	unsigned long food; // size=0, offset=8
-	unsigned long gods; // size=0, offset=12
-};
-
-struct _MonsterAttackAttributes // hashcode: 0x4F8BA493 (dec: 1334551699)
-{
-	short attackRange; // size=0, offset=0
-	short attackHeight; // size=0, offset=2
-	short knockBackDistance; // size=0, offset=4
-	char knockBackDuration; // size=0, offset=6
-	char damage; // size=0, offset=7
-	char sphereSegment; // size=0, offset=8
-	char sphereOnFrame; // size=0, offset=9
-	char sphereOnAnim; // size=0, offset=10
-	char sphereOffFrame; // size=0, offset=11
-	char sphereOffAnim; // size=0, offset=12
-	char turnFrames; // size=0, offset=13
-	char numAnims; // size=0, offset=14
-	char attackProbability[12]; // size=12, offset=15
-	char animList[5]; // size=5, offset=27
-};
-
-struct _MonsterMissile // hashcode: 0xC37A9403 (dec: -1015376893)
-{
-	unsigned short speed; // size=0, offset=0
-	unsigned short range; // size=0, offset=2
-	unsigned char frame; // size=0, offset=4
-	unsigned char anim; // size=0, offset=5
-	unsigned char segment; // size=0, offset=6
-	unsigned char damage; // size=0, offset=7
-	unsigned char type; // size=0, offset=8
-	unsigned char graphic; // size=0, offset=9
-	char gravity; // size=0, offset=10
-	char reload; // size=0, offset=11
-	char fireChance; // size=0, offset=12
-	unsigned char numAnims; // size=0, offset=13
-	char animList[2]; // size=2, offset=14
-};
-
-struct _MonsterCombatAttributes // hashcode: 0x1CD3787B (dec: 483620987)
-{
-	short stunTime; // size=0, offset=0
-	short damageTime; // size=0, offset=2
-	short recovery; // size=0, offset=4
-	short surpriseTime; // size=0, offset=6
-	short grabTime; // size=0, offset=8
-	short combatRange; // size=0, offset=10
-	short surpriseRange; // size=0, offset=12
-	short allyRange; // size=0, offset=14
-	short enemyAttackRange; // size=0, offset=16
-	short enemyRunAttackRange; // size=0, offset=18
-	short preferredCombatRange; // size=0, offset=20
-	short suckPower; // size=0, offset=22
-	short suckRange; // size=0, offset=24
-	short suckTime; // size=0, offset=26
-	char hitPoints; // size=0, offset=28
-	char numAttacks; // size=0, offset=29
-	char missileAttack; // size=0, offset=30
-	char ambushAttack; // size=0, offset=31
-	char evadeProbability[12]; // size=12, offset=32
-	char attackList[1]; // size=1, offset=44
-};
-
-struct _MonsterSubAttributes // hashcode: 0xD249D756 (dec: -766912682)
-{
-	char *animList; // size=0, offset=0
-	struct _MonsterSenses *senses; // size=18, offset=4
-	struct _MonsterCombatAttributes *combatAttributes; // size=46, offset=8
-	struct _MonsterAllegiances *allegiances; // size=16, offset=12
-	char *behaviorList; // size=0, offset=16
-	short scale; // size=0, offset=20
-	short fallDistance; // size=0, offset=22
-	short defAmbushRange; // size=0, offset=24
-	short fleeRange; // size=0, offset=26
-	short speedPivotTurn; // size=0, offset=28
-	short speedWalkTurn; // size=0, offset=30
-	short speedRunTurn; // size=0, offset=32
-	short speedFleeTurn; // size=0, offset=34
-	short forgetTime; // size=0, offset=36
-	unsigned char modelNum; // size=0, offset=38
-	unsigned char physAbility; // size=0, offset=39
-	unsigned char stunnable; // size=0, offset=40
-	unsigned char grabable; // size=0, offset=41
-	unsigned char numSections; // size=0, offset=42
-	unsigned char sectionEnd[3]; // size=3, offset=43
-	short defPlayerAttitude; // size=0, offset=46
-	short defWanderRange; // size=0, offset=48
-	short defGuardRange; // size=0, offset=50
-	unsigned char defInitialBehavior; // size=0, offset=52
-	unsigned char defTriggeredBehavior; // size=0, offset=53
-	char defActiveBehavior; // size=0, offset=54
-	unsigned char defSpectral; // size=0, offset=55
-	unsigned char sunVuln; // size=0, offset=56
-	unsigned char fireVuln; // size=0, offset=57
-	unsigned char waterVuln; // size=0, offset=58
-	unsigned char impaleVuln; // size=0, offset=59
-	unsigned char soundVuln; // size=0, offset=60
-	unsigned char weaponVuln; // size=0, offset=61
-	unsigned char missileVuln; // size=0, offset=62
-	unsigned char bruiseRed; // size=0, offset=63
-	unsigned char bruiseGreen; // size=0, offset=64
-	unsigned char bruiseBlue; // size=0, offset=65
-	short minSpikeRange; // size=0, offset=66
-	short maxSpikeRange; // size=0, offset=68
-	short maxSpikeAngle; // size=0, offset=70
-	short minSpikeHorzSpeed; // size=0, offset=72
-	short maxSpikeHorzSpeed; // size=0, offset=74
-	short maxSpikeVertSpeed; // size=0, offset=76
-	short upOnGroundOffset; // size=0, offset=78
-	short downOnGroundOffset; // size=0, offset=80
-};
 
 typedef struct _G2EulerAngles_Type G2EulerAngles;
 

@@ -202,7 +202,7 @@
     <ClCompile Include="src\PC\memwpsx.c" />
     <ClCompile Include="src\PC\pcload.c" />
     <ClCompile Include="src\PC\snd.cpp" />
-    <ClCompile Include="src\PC\video\winmm.cpp" />
+    <ClCompile Include="src\PC\video\winplay.cpp" />
     <ClCompile Include="src\PHYSICS.C" />
     <ClCompile Include="src\PHYSOBS.C" />
     <ClCompile Include="src\PIPE3D.C" />

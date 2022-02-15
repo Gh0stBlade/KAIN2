@@ -292,7 +292,7 @@
     <ClCompile Include="src\MONSTER\PRIESTESS.C">
       <Filter>MONSTER</Filter>
     </ClCompile>
-    <ClCompile Include="src\PC\video\winmm.cpp">
+    <ClCompile Include="src\PC\video\winplay.cpp">
       <Filter>PC\video</Filter>
     </ClCompile>
   </ItemGroup>

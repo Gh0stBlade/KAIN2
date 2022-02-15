@@ -1,6 +1,55 @@
 #ifndef SPLINE_H
 #define SPLINE_H
 
+struct Spline // hashcode: 0xA7B8D53F (dec: -1481059009)
+{
+	struct SplineKey* key; // size=32, offset=0
+	short numkeys; // size=0, offset=4
+	unsigned char type; // size=0, offset=6
+	unsigned char flags; // size=0, offset=7
+};
+
+struct SplineRotKey // hashcode: 0xD2E3A87E (dec: -756832130)
+{
+	short count; // size=0, offset=0
+	struct _G2Quat_Type q; // size=8, offset=2
+};
+
+struct RSpline // hashcode: 0xD9C500BD (dec: -641400643)
+{
+	struct SplineRotKey* key; // size=10, offset=0
+	short numkeys; // size=0, offset=4
+	unsigned char type; // size=0, offset=6
+	unsigned char flags; // size=0, offset=7
+};
+
+struct SplineKey // hashcode: 0x5D3D994D (dec: 1564318029)
+{
+	short count; // size=0, offset=0
+	struct vecS point; // size=6, offset=2
+	struct vecL dd; // size=12, offset=8
+	struct vecL ds; // size=12, offset=20
+};
+
+struct SplineDef // hashcode: 0x04DD5459 (dec: 81613913)
+{
+	short currkey; // size=0, offset=0
+	unsigned short denomFlag; // size=0, offset=2
+	long fracCurr; // size=0, offset=4
+};
+
+struct MultiSpline // hashcode: 0x2823B2CF (dec: 673428175)
+{
+	struct Spline* positional; // size=8, offset=0
+	struct RSpline* rotational; // size=8, offset=4
+	struct Spline* scaling; // size=8, offset=8
+	struct Spline* color; // size=8, offset=12
+	struct SplineDef curPositional; // size=8, offset=16
+	struct SplineDef curRotational; // size=8, offset=24
+	struct SplineDef curScaling; // size=8, offset=32
+	struct SplineDef curColor; // size=8, offset=40
+	struct MATRIX curRotMatrix; // size=32, offset=48
+};
 
 extern void _SplineS2Pos(struct vecS *p, long s, struct SplineKey *key, struct SplineKey *key2); // 0x80040C18
 
