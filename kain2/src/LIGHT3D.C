@@ -278,7 +278,7 @@ void LIGHT_DrawShadow(struct MATRIX *wcTransform, struct _Instance *instance, st
 	__int16 v5; // ax
 	__int16 z; // cx
 	int y; // edx
-	_DWORD* v8; // eax
+	DWORD* v8; // eax
 	SVECTOR v9; // [esp+8h] [ebp-54h] BYREF
 	VECTOR v; // [esp+10h] [ebp-4Ch] BYREF
 	int x; // [esp+30h] [ebp-2Ch]
@@ -325,7 +325,7 @@ void LIGHT_DrawShadow(struct MATRIX *wcTransform, struct _Instance *instance, st
 // void /*$ra*/ LIGHT_CalcShadowPositions(struct GameTracker *gameTracker /*$a0*/)
 void LIGHT_CalcShadowPositions(struct GameTracker *gameTracker)
 { // line 806, offset 0x80036928
-	struct _Instance* v1; // esi
+	struct _Instance* first; // esi
 	int flags; // eax
 	struct _TFace* waterFace; // eax
 	struct _Terrain** tfaceLevel; // eax
@@ -336,62 +336,60 @@ void LIGHT_CalcShadowPositions(struct GameTracker *gameTracker)
 	int v9; // eax
 	int v10; // eax
 	int currentStreamUnitID; // [esp-Ch] [ebp-50h]
-	struct _Position v12; // [esp+8h] [ebp-3Ch] BYREF
-	int v13; // [esp+10h] [ebp-34h] BYREF
-	__int16 v14; // [esp+14h] [ebp-30h]
+	SVECTOR v12, v13; // [esp+8h] [ebp-3Ch] BYREF
 	struct _PCollideInfo pcollideInfo; // [esp+18h] [ebp-2Ch] BYREF
 
-	v1 = (struct _Instance*)*((_DWORD*)gameTracker->instanceList + 1);
-	if (v1)
+	first = (struct _Instance*)*((DWORD*)gameTracker->instanceList + 1);
+	if (first)
 	{
-		while ((v1->flags2 & 0x40) != 0)
+		while ((first->flags2 & 0x40) != 0)
 		{
-			flags = v1->flags;
-			if ((flags & 0x200) == 0 || (flags & 0x800) != 0 || (v1->flags2 & 0x4000000) != 0)
+			flags = first->flags;
+			if ((flags & 0x200) == 0 || (flags & 0x800) != 0 || (first->flags2 & 0x4000000) != 0)
 				break;
 			if ((flags & 0x8000000) == 0)
 			{
 				if ((flags & 0x10000000) != 0)
 				{
 				LABEL_13:
-					v12.x = v1->matrix[1].t[0];
-					LOWORD(v13) = v12.x;
-					v12.y = v1->matrix[1].t[1];
-					HIWORD(v13) = v12.y;
-					z = v1->matrix[1].t[2];
+					v12.vx = first->matrix[1].t[0];
+					v13.vx = v12.vx;
+					v12.vy = first->matrix[1].t[1];
+					v13.vy = v12.vy;
+					z = first->matrix[1].t[2];
 					v6 = z;
 				}
 				else
 				{
-					*(_DWORD*)&v12.x = *(_DWORD*)&v1->position.x;
-					z = v1->position.z;
-					v12.z = z;
-					v13 = *(_DWORD*)&v1->position.x;
-					v6 = v1->position.z;
+					*(DWORD*)&v12.vx = *(DWORD*)&first->position.x;
+					z = first->position.z;
+					v12.vz = z;
+					*(DWORD*)&v13.vx = *(DWORD*)&first->position.x;
+					v6 = first->position.z;
 				}
-				v12.z = z - 1280;
-				v14 = v6 + 256;
+				v12.vz = z - 1280;
+				v13.vz = v6 + 256;
 				pcollideInfo.collideType = 55;
-				pcollideInfo.instance = v1;
+				pcollideInfo.instance = first;
 				pcollideInfo.newPoint = (struct SVECTOR*)&v12;
 				pcollideInfo.oldPoint = (struct SVECTOR*)&v13;
-				currentStreamUnitID = v1->currentStreamUnitID;
-				v1->flags |= 0x40u;
+				currentStreamUnitID = first->currentStreamUnitID;
+				first->flags |= 0x40u;
 				LevelWithID = STREAM_GetLevelWithID(currentStreamUnitID);
 				if (LevelWithID)
 					COLLIDE_PointAndWorld(&pcollideInfo, LevelWithID);
 				else
 					pcollideInfo.type = 0;
-				v1->flags &= ~0x40u;
+				first->flags &= ~0x40u;
 				type = pcollideInfo.type;
 				if (pcollideInfo.type == 3)
 				{
-					LIGHT_CalcLightValue((struct _TFace*)pcollideInfo.prim, v1, (struct _Terrain*)pcollideInfo.inst->node.prev);
+					LIGHT_CalcLightValue((struct _TFace*)pcollideInfo.prim, first, (struct _Terrain*)pcollideInfo.inst->node.prev);
 					goto LABEL_22;
 				}
 				if (pcollideInfo.type != 5)
 				{
-					LIGHT_CalcLightValue(0, v1, 0);
+					LIGHT_CalcLightValue(0, first, 0);
 				LABEL_22:
 					type = pcollideInfo.type;
 				}
@@ -399,61 +397,62 @@ void LIGHT_CalcShadowPositions(struct GameTracker *gameTracker)
 				{
 					if (type == 1)
 					{
-						v1->wNormal.x = 0;
-						v1->wNormal.y = 0;
-						v1->wNormal.z = 4096;
+						first->wNormal.x = 0;
+						first->wNormal.y = 0;
+						first->wNormal.z = 4096;
 					}
 					else
 					{
 						if (type == 3
-							&& (*((_WORD*)pcollideInfo.prim + 5) == 0xFFFF
-								? (BYTE1(v9) = 0)
+							&& (*((WORD*)pcollideInfo.prim + 5) == 0xFFFF
+								? (v9 &= 0xffff00ff)
 								: (v9 = *(unsigned __int16*)((char*)&pcollideInfo.inst->node.prev[6].next[1].prev
 									+ *((unsigned __int16*)pcollideInfo.prim + 5)
 									+ 2)),
 								(v9 & 0x4000) != 0))
 						{
-							v10 = v1->flags | 0x200000;
+							v10 = first->flags | 0x200000;
 						}
 						else
 						{
-							v10 = v1->flags & 0xFFDFFFFF;
+							v10 = first->flags & 0xFFDFFFFF;
 						}
-						v1->flags = v10;
-						v1->wNormal.x = pcollideInfo.wNormal.vx;
-						v1->wNormal.y = pcollideInfo.wNormal.vy;
-						v1->wNormal.z = pcollideInfo.wNormal.vz;
+						first->flags = v10;
+						first->wNormal.x = pcollideInfo.wNormal.vx;
+						first->wNormal.y = pcollideInfo.wNormal.vy;
+						first->wNormal.z = pcollideInfo.wNormal.vz;
 					}
 				}
-				v1->shadowPosition = v12;
+				*(DWORD*)&first->shadowPosition.x = *(DWORD*)&v12.vx;
+				first->shadowPosition.z = v12.vz;
 				goto LABEL_38;
 			}
 			if ((flags & 0x10000000) != 0)
 				goto LABEL_13;
-			waterFace = v1->waterFace;
+			waterFace = first->waterFace;
 			if (waterFace)
 			{
-				LIGHT_CalcLightValue(waterFace, v1, v1->waterFaceTerrain);
+				LIGHT_CalcLightValue(waterFace, first, first->waterFaceTerrain);
 			}
 			else
 			{
-				tfaceLevel = (struct _Terrain**)v1->tfaceLevel;
+				tfaceLevel = (struct _Terrain**)first->tfaceLevel;
 				if (tfaceLevel)
 					goto LABEL_37;
 			}
 		LABEL_38:
-			v1->flags &= ~0x8000000u;
-			v1 = v1->next;
-			if (!v1)
+			first->flags &= ~0x8000000u;
+			first = first->next;
+			if (!first)
 				return;
 		}
-		if ((v1->flags2 & 0x40) != 0)
+		if ((first->flags2 & 0x40) != 0)
 			goto LABEL_38;
-		tfaceLevel = (struct _Terrain**)v1->tfaceLevel;
+		tfaceLevel = (struct _Terrain**)first->tfaceLevel;
 		if (!tfaceLevel)
 			goto LABEL_38;
 	LABEL_37:
-		LIGHT_CalcLightValue(v1->tface, v1, *tfaceLevel);
+		LIGHT_CalcLightValue(first->tface, first, *tfaceLevel);
 		goto LABEL_38;
 	}
 }
