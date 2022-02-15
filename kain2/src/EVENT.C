@@ -990,16 +990,12 @@ void EVENT_Addvector3dToStack(struct _PCodeStack *stack, short x, short y, short
 // void /*$ra*/ EVENT_ChangeOperandRotation3d(struct StackType *operand /*$a0*/, struct Rotation3d *rotation /*$a1*/)
 void EVENT_ChangeOperandRotation3d(struct StackType *operand, struct Rotation3d *rotation)
 { // line 1464, offset 0x80061d70
-	/* begin block 1 */
-		// Start line: 3329
-	/* end block 1 */
-	// End Line: 3330
-
-	/* begin block 2 */
-		// Start line: 3330
-	/* end block 2 */
-	// End Line: 3331
-
+	operand->id = 14;
+	operand->data.Object.instanceNumber = *(DWORD*)&rotation->vx;
+	operand->data.vector3d.vz = rotation->vz;
+	operand->data.instanceSpline.attribute = *(DWORD*)&rotation->errorx;
+	operand->data.vector3d.errorz = rotation->errorz;
+	operand->data.instanceSpline.isClass = -1;
 }
 
 
@@ -1007,38 +1003,30 @@ void EVENT_ChangeOperandRotation3d(struct StackType *operand, struct Rotation3d 
 // long /*$ra*/ EVENT_AddSubListObjectToStack(struct _PCodeStack *stack /*$a0*/, long listNumber /*$a1*/)
 long EVENT_AddSubListObjectToStack(struct _PCodeStack *stack, long listNumber)
 { // line 1490, offset 0x80061dc8
-	/* begin block 1 */
-		// Start line: 1492
-		// Start offset: 0x80061DC8
+	struct StackType* stackEntry; // eax
+	int v3; // edx
 
-		/* begin block 1.1 */
-			// Start line: 1499
-			// Start offset: 0x80061DDC
-			// Variables:
-				struct StackType *stackEntry; // $a3
-		/* end block 1.1 */
-		// End offset: 0x80061E4C
-		// End Line: 1513
-	/* end block 1 */
-	// End offset: 0x80061E4C
-	// End Line: 1519
-
-	/* begin block 2 */
-		// Start line: 2980
-	/* end block 2 */
-	// End Line: 2981
-
-	/* begin block 3 */
-		// Start line: 3364
-	/* end block 3 */
-	// End Line: 3365
-
-	/* begin block 4 */
-		// Start line: 3369
-	/* end block 4 */
-	// End Line: 3370
-
-	return 0;
+	if (listNumber < 0 || listNumber > dword_C549D0)
+		GXFilePrint("Illegal list operator number %d on line %d\n", listNumber, dword_C549D0);
+	if (stack->topOfStack >= 32)
+	{
+		GXFilePrint("Ran out of pcode stack. Size = %d\n", 32);
+		return 0;
+	}
+	else
+	{
+		stackEntry = &stack->stack[stack->topOfStack];
+		stackEntry->id = 22;
+		if (eventListNumInstances[listNumber] <= 0)
+			stackEntry->data.Object.instanceNumber = 0;
+		else
+			stackEntry->data.Object.instanceNumber = (int)eventListArray[listNumber];
+		v3 = eventListNumInstances[listNumber];
+		stackEntry->data.instanceSpline.attribute = 0;
+		stackEntry->data.Object.attribute = v3;
+		++stack->topOfStack;
+		return 0;
+	}
 }
 
 
@@ -1046,16 +1034,22 @@ long EVENT_AddSubListObjectToStack(struct _PCodeStack *stack, long listNumber)
 // void /*$ra*/ EVENT_StackDuplicate(struct _PCodeStack *stack /*$a0*/)
 void EVENT_StackDuplicate(struct _PCodeStack *stack)
 { // line 1569, offset 0x80061e54
-	/* begin block 1 */
-		// Start line: 3138
-	/* end block 1 */
-	// End Line: 3139
+	int topOfStack; // eax
 
-	/* begin block 2 */
-		// Start line: 3473
-	/* end block 2 */
-	// End Line: 3474
-
+	topOfStack = stack->topOfStack;
+	if (stack->topOfStack >= 32)
+	{
+		GXFilePrint("Ran out of pcode stack. Size = %d\n", 32);
+	}
+	else if (topOfStack)
+	{
+		qmemcpy(&stack->stack[topOfStack], (char*)stack + 36 * topOfStack - 32, sizeof(stack->stack[topOfStack]));
+		++stack->topOfStack;
+	}
+	else
+	{
+		GXFilePrint("ERROR: Need something on the stack to duplicate.\n");
+	}
 }
 
 
@@ -1063,31 +1057,42 @@ void EVENT_StackDuplicate(struct _PCodeStack *stack)
 // long /*$ra*/ EVENT_TransformTGroupAttribute(struct _PCodeStack *stack /*$a0*/, struct StackType *stackObject /*$a1*/, long item /*$a2*/, short *codeStream /*$a3*/)
 long EVENT_TransformTGroupAttribute(struct _PCodeStack *stack, struct StackType *stackObject, long item, short *codeStream)
 { // line 1591, offset 0x80061eec
-	/* begin block 1 */
-		// Start line: 1593
-		// Start offset: 0x80061EEC
-		// Variables:
-			long retValue; // $a0
-	/* end block 1 */
-	// End offset: 0x80061F74
-	// End Line: 1638
+	int v4; // esi
+	int retValue; // eax
 
-	/* begin block 2 */
-		// Start line: 3516
-	/* end block 2 */
-	// End Line: 3517
-
-	/* begin block 3 */
-		// Start line: 3517
-	/* end block 3 */
-	// End Line: 3518
-
-	/* begin block 4 */
-		// Start line: 3518
-	/* end block 4 */
-	// End Line: 3519
-
-	return 0;
+	v4 = 0;
+	if (stackObject->data.instanceSpline.attribute == -1)
+	{
+		v4 = 1;
+		stackObject->data.instanceSpline.attribute = item;
+		switch (item)
+		{
+		case 0x2C:
+		case 0x2E:
+			if (!codeStream)
+				return v4;
+			dword_C549CC = 2;
+			stackObject->data.instanceSpline.isParent = *(DWORD*)(codeStream + 1);
+			retValue = 1;
+			break;
+		case 0x2D:
+		case 0x2F:
+			if (!codeStream)
+				return v4;
+			dword_C549CC = 1;
+			stackObject->data.vector3d.errorz = codeStream[1];
+			retValue = 1;
+			break;
+		default:
+			return v4;
+		}
+	}
+	else
+	{
+		GXFilePrint("To many attributes to the terrian group\n");
+		return v4;
+	}
+	return retValue;
 }
 
 
@@ -1095,36 +1100,33 @@ long EVENT_TransformTGroupAttribute(struct _PCodeStack *stack, struct StackType 
 // long /*$ra*/ EVENT_TransformConstrictAttribute(struct _PCodeStack *stack /*$a0*/, struct StackType *stackObject /*$a0*/, long item /*$a2*/)
 long EVENT_TransformConstrictAttribute(struct _PCodeStack *stack, struct StackType *stackObject, long item)
 { // line 1641, offset 0x80061f7c
-	/* begin block 1 */
-		// Start line: 1642
-		// Start offset: 0x80061F7C
-		// Variables:
-			long retValue; // $v1
-			struct _Instance *instance; // $a1
+	struct _Instance* instanceNumber; // edx
+	int v5; // ecx
 
-		/* begin block 1.1 */
-			// Start line: 1652
-			// Start offset: 0x80061FAC
-		/* end block 1.1 */
-		// End offset: 0x80061FAC
-		// End Line: 1655
-
-		/* begin block 1.2 */
-			// Start line: 1666
-			// Start offset: 0x80061FBC
-		/* end block 1.2 */
-		// End offset: 0x80061FD8
-		// End Line: 1675
-	/* end block 1 */
-	// End offset: 0x80061FD8
-	// End Line: 1687
-
-	/* begin block 2 */
-		// Start line: 3616
-	/* end block 2 */
-	// End Line: 3617
-
-	return 0;
+	instanceNumber = stackObject->data.instanceSpline.instance;
+	if (item == 58)
+	{
+		v5 = 0;
+		if (instanceNumber->constrictAngle < -1)
+			LABEL_7:
+		v5 = 1;
+	}
+	else
+	{
+		if (item != 59)
+		{
+			GXFilePrint("ERROR: Unknown attribute %d to constrict.\n", item);
+			return 0;
+		}
+		v5 = 0;
+		if (instanceNumber->constrictAngle > 1)
+			goto LABEL_7;
+	}
+	stackObject->data.Object.attribute = 0;
+	stackObject->data.Number.flags = 0;
+	stackObject->id = 7;
+	stackObject->data.Object.instanceNumber = v5;
+	return 1;
 }
 
 

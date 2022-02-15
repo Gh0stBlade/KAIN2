@@ -38,6 +38,9 @@
     <Filter Include="RAZIEL">
       <UniqueIdentifier>{c4229d81-d910-40d3-ae67-43038ae5cd57}</UniqueIdentifier>
     </Filter>
+    <Filter Include="PC\video">
+      <UniqueIdentifier>{53bd3007-da84-4396-a1c4-a34414355c54}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\PC\libapi.c">
@@ -280,7 +283,6 @@
     <ClCompile Include="src\STATE.C" />
     <ClCompile Include="src\STREAM.C" />
     <ClCompile Include="src\STRMLOAD.C" />
-    <ClCompile Include="THISDUST.C" />
     <ClCompile Include="src\TIMER.C" />
     <ClCompile Include="src\UNDRWRLD.C" />
     <ClCompile Include="src\VM.C" />
@@ -289,6 +291,9 @@
     <ClCompile Include="src\SCRIPT2.C" />
     <ClCompile Include="src\MONSTER\PRIESTESS.C">
       <Filter>MONSTER</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PC\video\winmm.cpp">
+      <Filter>PC\video</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
