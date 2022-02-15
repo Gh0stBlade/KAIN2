@@ -6,16 +6,15 @@
 // void /*$ra*/ INSTANCE_ClearTfaces(struct _Instance *instance /*$a0*/)
 void INSTANCE_ClearTfaces(struct _Instance *instance)
 { // line 52, offset 0x80031ed8
-	/* begin block 1 */
-		// Start line: 104
-	/* end block 1 */
-	// End Line: 105
-
-	/* begin block 2 */
-		// Start line: 111
-	/* end block 2 */
-	// End Line: 112
-
+	instance->oldWaterFace = 0;
+	instance->waterFace = 0;
+	instance->waterFaceTerrain = 0;
+	instance->tface = 0;
+	instance->oldTFace = 0;
+	instance->tfaceLevel = 0;
+	instance->cachedTFace = -1;
+	instance->cachedBSPTree = 0;
+	instance->cachedTFaceLevel = 0;
 }
 
 
@@ -65,11 +64,34 @@ void INSTANCE_Reactivate(struct _Instance *instance)
 // void /*$ra*/ INSTANCE_ForceActive(struct _Instance *instance /*$a0*/)
 void INSTANCE_ForceActive(struct _Instance *instance)
 { // line 120, offset 0x80032058
-	/* begin block 1 */
-		// Start line: 262
-	/* end block 1 */
-	// End Line: 263
+	int flags2; // eax
+	int flags; // edx
+	struct Object* object; // esi
+	int v4; // eax
 
+	flags2 = instance->flags2;
+	if ((flags2 & 1) != 0)
+	{
+		flags = instance->flags;
+		object = instance->object;
+		flags2 = flags2 & ~1;
+		instance->flags2 = flags2;
+		if ((flags & 0x40000) != 0)
+		{
+			v4 = flags2 | 0x20000000;
+			instance->flags = flags & ~0x40000u;
+		}
+		else
+		{
+			v4 = flags2 & ~0x20000000u;
+		}
+		instance->flags2 = v4;
+		if (object->animList)
+		{
+			if ((object->oflags2 & 0x40000000) == 0)
+				G2Anim_Restore(&instance->anim);
+		}
+	}
 }
 
 
@@ -94,27 +116,274 @@ void INSTANCE_DeactivatedProcess(struct _Instance *instance, struct GameTracker 
 // void /*$ra*/ INSTANCE_DeactivateFarInstances(struct GameTracker *gameTracker /*$s3*/)
 void INSTANCE_DeactivateFarInstances(struct GameTracker *gameTracker)
 { // line 136, offset 0x80032094
-	/* begin block 1 */
-		// Start line: 137
-		// Start offset: 0x80032094
-		// Variables:
-			struct _InstanceList *instanceList; // $v0
-			struct _Instance *instance; // $s0
-			struct SVECTOR *line; // $s2
-			long distSq; // $v1
-			int numInstances; // $a0
-			int numToProcess; // $s1
-			int cntInst; // $v1
-			static int lastInst; // offset 0x0
-	/* end block 1 */
-	// End offset: 0x800322F4
-	// End Line: 234
+	struct _InstanceList* instanceList; // edi
+	struct _Instance* first; // esi
+	char* ScratchAddr; // eax
+	int v4; // ecx
+	int numInstances; // eax
+	int v6; // edi
+	int v7; // eax
+	unsigned int(__stdcall * queryFunc)(); // eax
+	int v9; // eax
+	unsigned int(__stdcall * v10)(); // eax
+	int v11; // eax
+	__int16 v12; // cx
+	int v13; // eax
+	int v14; // eax
+	struct Object* v15; // edx
+	int flags2; // eax
+	int v17; // eax
+	int v18; // ecx
+	struct Object* v19; // eax
+	unsigned int v20; // edx
+	unsigned int v21; // ecx
+	int v22; // ecx
+	struct Object* v23; // edi
+	int v24; // eax
+	int v25; // eax
+	int v26; // ecx
+	struct Object* object; // eax
+	int v28; // edx
+	int v29; // ecx
+	unsigned int v30; // ecx
+	struct Object* v31; // edx
+	int v32; // eax
+	int v33; // eax
+	int v34; // ecx
+	struct Object* v35; // eax
+	unsigned int v36; // edx
+	unsigned int v37; // ecx
+	int flags; // ecx
+	unsigned int v39; // edx
+	int v40; // [esp+10h] [ebp-8h]
+	struct _SVector* v41; // [esp+14h] [ebp-4h]
 
-	/* begin block 2 */
-		// Start line: 294
-	/* end block 2 */
-	// End Line: 295
-
+	instanceList = gameTracker->instanceList;
+	first = instanceList->first;
+	ScratchAddr = getScratchAddr(0);
+	v4 = dword_C550A0;
+	v41 = (struct _SVector*)ScratchAddr;
+	numInstances = instanceList->numInstances;
+	v6 = (instanceList->numInstances >> 3) + 1;
+	v40 = v6;
+	if (dword_C550A0 >= numInstances)
+		v4 = 0;
+	dword_C550A0 = v6 + v4;
+	if (v6 + v4 >= numInstances)
+		dword_C550A0 = 0;
+	if (v4)
+	{
+		v7 = v4;
+		do
+		{
+			first = first->next;
+			--v7;
+		} while (v7);
+	}
+	while (first)
+	{
+		if (!v6)
+			return;
+		if ((first->flags2 & 0x80)
+			|| (first->object->oflags & 0x10000) != 0
+			|| ((queryFunc = first->queryFunc) != 0
+				? (v9 = ((int(__cdecl*)(struct _Instance*, int))queryFunc)(first, 35))
+				: (v9 = 0),
+				v9
+				|| ((v10 = first->queryFunc) != 0
+					? (v11 = ((int(__cdecl*)(struct _Instance*, int))v10)(first, 47))
+					: (v11 = 0),
+					v11 || first->LinkParent || !first->matrix)))
+		{
+			if ((first->flags2 & 1) != 0)
+			{
+				flags = first->flags;
+				object = first->object;
+				first->flags2 &= ~1u;
+				if ((flags & 0x40000) != 0)
+				{
+					v39 = flags & ~0x40000u;
+					v30 = first->flags2 | 0x20000000;
+					first->flags = v39;
+				}
+				else
+				{
+					v30 = first->flags2 & ~0x20000000u;
+				}
+				goto LABEL_76;
+			}
+		}
+		else
+		{
+			v41->x = first->position.x - theCamera.core.position.x;
+			v41->y = first->position.y - theCamera.core.position.y;
+			v12 = first->position.z - theCamera.core.position.z;
+			v41->z = v12;
+			v14 = v41->x * v41->x + v12 * v12 + v41->y * v41->y;
+			if ((first->flags & 0x200) != 0)
+			{
+				v15 = first->object;
+				if (v14 <= v15->vvRemoveDist * v15->vvRemoveDist)
+				{
+					if ((first->flags2 & 1) == 0)
+						goto LABEL_79;
+					v18 = first->flags;
+					v19 = first->object;
+					first->flags2 &= ~1u;
+					if ((v18 & 0x40000) != 0)
+					{
+						v20 = v18 & ~0x40000u;
+						v21 = first->flags2 | 0x20000000;
+						first->flags = v20;
+					}
+					else
+					{
+						v21 = first->flags2 & ~0x20000000u;
+					}
+					first->flags2 = v21;
+					if (!v19->animList || (v19->oflags2 & 0x40000000) != 0)
+						goto LABEL_79;
+					goto LABEL_78;
+				}
+				flags2 = first->flags2;
+				if ((flags2 & 1) != 0 || (gameTrackerX.streamFlags & 0x2000000) != 0)
+					goto LABEL_79;
+				flags2 = flags2 | 1;
+				first->flags2 = flags2;
+				if ((flags2 & 0x20000000) != 0)
+				{
+					first->flags |= 0x40000u;
+				}
+				else
+				{
+					v17 = first->flags2 | 0x20000000;
+					first->flags &= ~0x40000u;
+					first->flags2 = v17;
+				}
+				if (!v15->animList || (v15->oflags2 & 0x40000000) != 0)
+					goto LABEL_64;
+				goto LABEL_31;
+			}
+			v22 = first->flags2;
+			if ((v22 & 0x80000) != 0)
+			{
+				if (v14 <= gameTracker->defRemoveDist * gameTracker->defRemoveDist)
+				{
+					if ((v22 & 1) == 0)
+						goto LABEL_79;
+					v34 = first->flags;
+					v35 = first->object;
+					first->flags2 &= ~1u;
+					if ((v34 & 0x40000) != 0)
+					{
+						v36 = v34 & 0xFFFBFFFF;
+						v37 = first->flags2 | 0x20000000;
+						first->flags = v36;
+					}
+					else
+					{
+						v37 = first->flags2 & 0xDFFFFFFF;
+					}
+					first->flags2 = v37;
+					if (!v35->animList || (v35->oflags2 & 0x40000000) != 0)
+						goto LABEL_79;
+					goto LABEL_78;
+				}
+				if ((v22 & 1) != 0)
+					goto LABEL_79;
+				v31 = first->object;
+				if ((gameTrackerX.streamFlags & 0x2000000) != 0)
+					goto LABEL_79;
+				v32 = first->flags2;
+				v32 = v22 | 1;
+				first->flags2 = v32;
+				if ((v32 & 0x20000000) != 0)
+				{
+					first->flags |= 0x40000u;
+				}
+				else
+				{
+					v33 = first->flags2 | 0x20000000;
+					first->flags &= ~0x40000u;
+					first->flags2 = v33;
+				}
+				if (v31->animList && (v31->oflags2 & 0x40000000) == 0)
+					G2Anim_Free(&first->anim);
+			LABEL_64:
+				first->oldWaterFace = 0;
+				first->waterFace = 0;
+				first->waterFaceTerrain = 0;
+				first->tface = 0;
+				first->oldTFace = 0;
+				first->tfaceLevel = 0;
+				first->cachedTFace = -1;
+				first->cachedBSPTree = 0;
+				first->cachedTFaceLevel = 0;
+				goto LABEL_79;
+			}
+			v23 = first->object;
+			if (v14 > v23->removeDist * v23->removeDist)
+			{
+				if ((v22 & 1) != 0 || (gameTrackerX.streamFlags & 0x2000000) != 0)
+					goto LABEL_79;
+				v24 = first->flags2;
+				v24 = v22 | 1;
+				first->flags2 = v24;
+				if ((v24 & 0x20000000) != 0)
+				{
+					first->flags |= 0x40000u;
+				}
+				else
+				{
+					v25 = first->flags2 | 0x20000000;
+					first->flags &= ~0x40000u;
+					first->flags2 = v25;
+				}
+				if (!v23->animList || (v23->oflags2 & 0x40000000) != 0)
+					goto LABEL_64;
+			LABEL_31:
+				G2Anim_Free(&first->anim);
+				first->oldWaterFace = 0;
+				first->waterFace = 0;
+				first->waterFaceTerrain = 0;
+				first->tface = 0;
+				first->oldTFace = 0;
+				first->tfaceLevel = 0;
+				first->cachedTFace = -1;
+				first->cachedBSPTree = 0;
+				first->cachedTFaceLevel = 0;
+				goto LABEL_79;
+			}
+			if ((v22 & 1) != 0)
+			{
+				v26 = first->flags;
+				object = first->object;
+				first->flags2 &= ~1u;
+				if ((v26 & 0x40000) != 0)
+				{
+					v28 = v26;
+					v29 = first->flags2;
+					first->flags = v28 & ~0x40000u;
+					v30 = v29 | 0x20000000;
+				LABEL_76:
+					first->flags2 = v30;
+					if (!object->animList || (object->oflags2 & 0x40000000) != 0)
+						goto LABEL_79;
+				}
+				else
+				{
+					first->flags2 &= ~0x20000000u;
+					if (!object->animList || (object->oflags2 & 0x40000000) != 0)
+						goto LABEL_79;
+				}
+			LABEL_78:
+				G2Anim_Restore(&first->anim);
+			}
+		}
+	LABEL_79:
+		first = first->next;
+		v6 = --v40;
+	}
 }
 
 
@@ -122,30 +391,38 @@ void INSTANCE_DeactivateFarInstances(struct GameTracker *gameTracker)
 // void /*$ra*/ INSTANCE_InitInstanceList(struct _InstanceList *list /*$a0*/, struct _InstancePool *pool /*$a1*/)
 void INSTANCE_InitInstanceList(struct _InstanceList *list, struct _InstancePool *pool)
 { // line 257, offset 0x80032310
-	/* begin block 1 */
-		// Start line: 259
-		// Start offset: 0x80032310
-		// Variables:
-			long i; // $a3
-	/* end block 1 */
-	// End offset: 0x800323A4
-	// End Line: 292
+	struct _Instance** p_next; // eax
+	struct NodeType* group; // eax
+	int i; // edx MAPDST
 
-	/* begin block 2 */
-		// Start line: 562
-	/* end block 2 */
-	// End Line: 563
-
-	/* begin block 3 */
-		// Start line: 563
-	/* end block 3 */
-	// End Line: 564
-
-	/* begin block 4 */
-		// Start line: 566
-	/* end block 4 */
-	// End Line: 567
-
+	i = 60;
+	pool->numFreeInstances = 62;
+	p_next = &pool->instance[1].next;
+	do
+	{
+		*p_next = (struct _Instance*)(p_next + 152);
+		p_next[1] = (struct _Instance*)(p_next - 156);
+		p_next += 154;
+		--i;
+	} while (i);
+	pool->instance[0].next = &pool->instance[1];
+	pool->first_free = pool->instance;
+	pool->instance[0].prev = 0;
+	pool->instance[61].next = 0;
+	pool->instance[61].prev = &pool->instance[60];
+	list->pool = pool;
+	list->numInstances = 0;
+	list->first = 0;
+	group = list->group;
+	i = 32;
+	do
+	{
+		group->next = 0;
+		group->prev = 0;
+		++group;
+		--i;
+	} while (i);
+	pool->nextInstanceID = 1;
 }
 
 
@@ -153,32 +430,35 @@ void INSTANCE_InitInstanceList(struct _InstanceList *list, struct _InstancePool 
 // struct _Instance * /*$ra*/ INSTANCE_NewInstance(struct _InstanceList *list /*$a0*/)
 struct _Instance * INSTANCE_NewInstance(struct _InstanceList *list)
 { // line 348, offset 0x800323b0
-	/* begin block 1 */
-		// Start line: 350
-		// Start offset: 0x800323B0
-		// Variables:
-			struct _Instance *temp; // $v0
-			struct _Instance *instance; // $a1
-	/* end block 1 */
-	// End offset: 0x80032434
-	// End Line: 389
+	struct _InstancePool* pool; // eax
+	int numFreeInstances; // edx
+	struct _InstancePool* v3; // edx
+	struct _Instance* result; // eax
+	struct _Instance* first; // edx
 
-	/* begin block 2 */
-		// Start line: 779
-	/* end block 2 */
-	// End Line: 780
-
-	/* begin block 3 */
-		// Start line: 780
-	/* end block 3 */
-	// End Line: 781
-
-	/* begin block 4 */
-		// Start line: 785
-	/* end block 4 */
-	// End Line: 786
-
-	return null;
+	pool = list->pool;
+	numFreeInstances = pool->numFreeInstances;
+	if (numFreeInstances)
+	{
+		pool->numFreeInstances = numFreeInstances - 1;
+		v3 = list->pool;
+		result = v3->first_free;
+		v3->first_free = result->next;
+		first = list->first;
+		list->first = result;
+		result->next = first;
+		if (first)
+			first->prev = result;
+		result->prev = 0;
+		result->instanceID = list->pool->nextInstanceID++;
+		++list->numInstances;
+	}
+	else
+	{
+		GXFilePrint("ran out of instances need more than %d - contact a programmer\n", 62);
+		return 0;
+	}
+	return result;
 }
 
 
@@ -186,21 +466,33 @@ struct _Instance * INSTANCE_NewInstance(struct _InstanceList *list)
 // long /*$ra*/ INSTANCE_InstanceGroupNumber(struct _Instance *instance /*$a0*/)
 long INSTANCE_InstanceGroupNumber(struct _Instance *instance)
 { // line 391, offset 0x8003243c
-	/* begin block 1 */
-		// Start line: 392
-		// Start offset: 0x8003243C
-		// Variables:
-			long result; // $s0
-	/* end block 1 */
-	// End offset: 0x80032544
-	// End Line: 431
+	int v1; // ebx
+	struct Object* object; // ecx
+	int oflags; // eax
 
-	/* begin block 2 */
-		// Start line: 868
-	/* end block 2 */
-	// End Line: 869
-
-	return 0;
+	v1 = 0;
+	object = instance->object;
+	oflags = object->oflags;
+	if ((object->oflags & 0x80u) != 0 && (BYTE1(instance->flags) & 0x80u) == 0)
+		v1 = 1;
+	if ((oflags & 0x20) != 0 && (instance->flags & 0x2000) == 0)
+		v1 |= 2u;
+	if ((oflags & 0x40) != 0 && (instance->flags & 0x4000) == 0)
+		v1 |= 4u;
+	if ((oflags & 0x10) != 0 && (instance->flags & 0x1000) == 0)
+		v1 |= 0x10u;
+	if ((oflags & 1) != 0)
+		return v1 | 8;
+	if (strcmp(object->name, "raziel__"))
+	{
+		if ((v1 & 3) != 0)
+		{
+			printf("Object %s\n", object->name);
+				FONT_Print("Object %s\n", instance->object->name);
+		}
+		return v1 & ~3u;
+	}
+	return v1;
 }
 
 
@@ -208,18 +500,10 @@ long INSTANCE_InstanceGroupNumber(struct _Instance *instance)
 // void /*$ra*/ INSTANCE_InsertInstanceGroup(struct _InstanceList *list /*$s1*/, struct _Instance *instance /*$s0*/)
 void INSTANCE_InsertInstanceGroup(struct _InstanceList *list, struct _Instance *instance)
 { // line 450, offset 0x80032558
-	/* begin block 1 */
-		// Start line: 451
-		// Start offset: 0x80032558
-	/* end block 1 */
-	// End offset: 0x80032558
-	// End Line: 451
+	int v2; // eax
 
-	/* begin block 2 */
-		// Start line: 986
-	/* end block 2 */
-	// End Line: 987
-
+	v2 = INSTANCE_InstanceGroupNumber(instance);
+	LIST_InsertFunc(&list->group[v2], &instance->node);
 }
 
 
@@ -379,28 +663,39 @@ void INSTANCE_CleanUpInstanceList(struct _InstanceList *list, long reset)
 // long /*$ra*/ INSTANCE_Introduced(struct Intro *intro /*$s0*/, short streamUnitID /*$a1*/)
 long INSTANCE_Introduced(struct Intro *intro, short streamUnitID)
 { // line 720, offset 0x800328a0
-	/* begin block 1 */
-		// Start line: 721
-		// Start offset: 0x800328A0
-		// Variables:
-			struct _Instance *instance; // $v1
-			struct _Instance *next; // $v1
-			long ret; // $s1
-	/* end block 1 */
-	// End offset: 0x80032940
-	// End Line: 761
+	struct _Instance* first; // eax
+	int v3; // edi
+	struct _Instance* next; // ecx
+	int flags; // eax
+	int v6; // eax
 
-	/* begin block 2 */
-		// Start line: 1440
-	/* end block 2 */
-	// End Line: 1441
-
-	/* begin block 3 */
-		// Start line: 1496
-	/* end block 3 */
-	// End Line: 1497
-
-	return 0;
+	first = gameTrackerX.instanceList->first;
+	v3 = 0;
+	if (first)
+	{
+		while (1)
+		{
+			next = first->next;
+			if (intro->UniqueID == first->introUniqueID)
+				break;
+			first = first->next;
+			if (!next)
+				goto LABEL_6;
+		}
+		flags = intro->flags;
+		v3 = 1;
+		flags = flags | 8;
+		intro->flags = flags;
+	}
+LABEL_6:
+	if (!v3 && (SAVE_HasSavedIntro(intro) || SAVE_IsIntroDeadDead(intro)))
+	{
+		v6 = intro->flags;
+		v3 = 1;
+		v6 = v6 | 8;
+		intro->flags = v6;
+	}
+	return v3;
 }
 
 
@@ -408,17 +703,23 @@ long INSTANCE_Introduced(struct Intro *intro, short streamUnitID)
 // struct INICommand * /*$ra*/ INSTANCE_GetIntroCommand(struct INICommand *command /*$a0*/, int cmd /*$a1*/)
 struct INICommand * INSTANCE_GetIntroCommand(struct INICommand *command, int cmd)
 { // line 765, offset 0x80032958
-	/* begin block 1 */
-		// Start line: 1606
-	/* end block 1 */
-	// End Line: 1607
+	struct INICommand* result; // eax
+	__int16 v3; // cx
 
-	/* begin block 2 */
-		// Start line: 1607
-	/* end block 2 */
-	// End Line: 1608
-
-	return null;
+	result = command;
+	if (!command)
+		return 0;
+	v3 = command->command;
+	if (!command->command)
+		return 0;
+	while (v3 != cmd)
+	{
+		result += result->numParameters + 1;
+		v3 = result->command;
+		if (!result->command)
+			return 0;
+	}
+	return result;
 }
 
 
@@ -426,12 +727,23 @@ struct INICommand * INSTANCE_GetIntroCommand(struct INICommand *command, int cmd
 // struct INICommand * /*$ra*/ INSTANCE_FindIntroCommand(struct _Instance *instance /*$a0*/, int cmd /*$a1*/)
 struct INICommand * INSTANCE_FindIntroCommand(struct _Instance *instance, int cmd)
 { // line 780, offset 0x800329a8
-	/* begin block 1 */
-		// Start line: 1638
-	/* end block 1 */
-	// End Line: 1639
+	struct INICommand* result; // eax
+	__int16 command; // cx
 
-	return null;
+	result = (struct INICommand*)instance->introData;
+	if (!result)
+		return 0;
+	command = result->command;
+	if (!result->command)
+		return 0;
+	while (command != cmd)
+	{
+		result += result->numParameters + 1;
+		command = result->command;
+		if (!result->command)
+			return 0;
+	}
+	return result;
 }
 
 
@@ -439,32 +751,39 @@ struct INICommand * INSTANCE_FindIntroCommand(struct _Instance *instance, int cm
 // void /*$ra*/ INSTANCE_ProcessIntro(struct _Instance *instance /*$a0*/)
 void INSTANCE_ProcessIntro(struct _Instance *instance)
 { // line 787, offset 0x800329cc
-	/* begin block 1 */
-		// Start line: 789
-		// Start offset: 0x800329CC
+	struct INICommand* introData; // esi
+	__int16 i; // ax
+	__int16 v3; // ax
+	struct Object* object; // ecx
+	__int16 numModels; // cx
+	int numParameters; // ecx
 
-		/* begin block 1.1 */
-			// Start line: 789
-			// Start offset: 0x800329F0
-			// Variables:
-				struct INICommand *command; // $a1
-		/* end block 1.1 */
-		// End offset: 0x80032A40
-		// End Line: 809
-	/* end block 1 */
-	// End offset: 0x80032A40
-	// End Line: 810
-
-	/* begin block 2 */
-		// Start line: 1652
-	/* end block 2 */
-	// End Line: 1653
-
-	/* begin block 3 */
-		// Start line: 1653
-	/* end block 3 */
-	// End Line: 1654
-
+	introData = (struct INICommand*)instance->introData;
+	if (introData)
+	{
+		if ((instance->flags & 2) == 0)
+		{
+			for (i = introData->command; i; introData += numParameters + 1)
+			{
+				if (i == 18)
+				{
+					v3 = introData->parameter[0];
+					object = instance->object;
+					instance->currentModel = v3;
+					numModels = object->numModels;
+					if (numModels <= v3)
+						GXFilePrint(
+							"Error: Specify model num %d on a instance(%s%d) with %d models.\n",
+							v3,
+							instance->introName,
+							instance->introNum,
+							numModels);
+				}
+				numParameters = introData->numParameters;
+				i = introData[numParameters + 1].command;
+			}
+		}
+	}
 }
 
 
@@ -472,20 +791,23 @@ void INSTANCE_ProcessIntro(struct _Instance *instance)
 // void /*$ra*/ INSTANCE_InitEffects(struct _Instance *instance /*$s2*/, struct Object *object /*$s1*/)
 void INSTANCE_InitEffects(struct _Instance *instance, struct Object *object)
 { // line 812, offset 0x80032a48
-	/* begin block 1 */
-		// Start line: 813
-		// Start offset: 0x80032A48
-		// Variables:
-			int i; // $s0
-	/* end block 1 */
-	// End offset: 0x80032AB8
-	// End Line: 825
+	__int16 numberOfEffects; // ax
+	int v3; // esi
 
-	/* begin block 2 */
-		// Start line: 1707
-	/* end block 2 */
-	// End Line: 1708
-
+	if ((object->oflags2 & 0x100) == 0)
+	{
+		numberOfEffects = object->numberOfEffects;
+		if (numberOfEffects)
+		{
+			v3 = 0;
+			if (numberOfEffects > 0)
+			{
+				do
+					FX_StartInstanceEffect(instance, (unsigned __int8*)&object->effectList[v3++], 1);
+				while (v3 < object->numberOfEffects);
+			}
+		}
+	}
 }
 
 
@@ -561,20 +883,38 @@ struct _Instance * INSTANCE_IntroduceInstance(struct Intro *intro, short streamU
 // void /*$ra*/ INSTANCE_AdditionalCollideFunctions(struct _InstanceList *instanceList /*$a0*/)
 void INSTANCE_AdditionalCollideFunctions(struct _InstanceList *instanceList)
 { // line 1138, offset 0x800331f0
-	/* begin block 1 */
-		// Start line: 1139
-		// Start offset: 0x800331F0
-		// Variables:
-			struct _Instance *instance; // $s0
-	/* end block 1 */
-	// End offset: 0x80033300
-	// End Line: 1170
+	struct _Instance* i; // esi
+	int flags2; // ecx
+	struct Object* object; // eax
 
-	/* begin block 2 */
-		// Start line: 2429
-	/* end block 2 */
-	// End Line: 2430
-
+	for (i = instanceList->first; i; i = i->next)
+	{
+		if ((gameTrackerX.gameMode != 6 || (i->object->oflags & 0x20000) != 0)
+			&& ((gameTrackerX.streamFlags & 0x100000) == 0 || (i->object->oflags & 0x40000) != 0))
+		{
+			if (i->additionalCollideFunc)
+			{
+				flags2 = i->flags2;
+				if ((flags2 & 0x24000000) == 0)
+				{
+					object = i->object;
+					if (object && (object->oflags2 & 0x2000000) != 0)
+					{
+						if ((flags2 & 0x8000000) != 0)
+							gameTrackerX.timeMult = gameTrackerX.spectralTimeMult;
+						else
+							gameTrackerX.timeMult = gameTrackerX.materialTimeMult;
+					}
+					else
+					{
+						gameTrackerX.timeMult = gameTrackerX.globalTimeMult;
+					}
+					((void(__cdecl*)(struct _Instance*, struct GameTracker*))i->additionalCollideFunc)(i, &gameTrackerX);
+				}
+			}
+		}
+	}
+	gameTrackerX.timeMult = gameTrackerX.globalTimeMult;
 }
 
 
@@ -582,19 +922,10 @@ void INSTANCE_AdditionalCollideFunctions(struct _InstanceList *instanceList)
 // long /*$ra*/ INSTANCE_GetSplineFrameNumber(struct _Instance *instance /*$s0*/, struct MultiSpline *spline /*$a1*/)
 long INSTANCE_GetSplineFrameNumber(struct _Instance *instance, struct MultiSpline *spline)
 { // line 1173, offset 0x80033318
-	/* begin block 1 */
-		// Start line: 1174
-		// Start offset: 0x80033318
-	/* end block 1 */
-	// End offset: 0x80033318
-	// End Line: 1174
+	int* PosSplineDef; // eax
 
-	/* begin block 2 */
-		// Start line: 2520
-	/* end block 2 */
-	// End Line: 2521
-
-	return 0;
+	PosSplineDef = SCRIPT_GetPosSplineDef(instance, spline, 0, 0);
+	return SCRIPT_GetSplineFrameNumber(instance, PosSplineDef);
 }
 
 
@@ -686,22 +1017,102 @@ void INSTANCE_ProcessFunctions(struct _InstanceList *instanceList)
 // struct _Instance * /*$ra*/ INSTANCE_BirthObject(struct _Instance *parent /*$s2*/, struct Object *object /*$s4*/, int modelNum /*$s1*/)
 struct _Instance * INSTANCE_BirthObject(struct _Instance *parent, struct Object *object, int modelNum)
 { // line 1526, offset 0x80033bfc
-	/* begin block 1 */
-		// Start line: 1527
-		// Start offset: 0x80033BFC
-		// Variables:
-			struct _Instance *instance; // $s0
-			int i; // $s1
-	/* end block 1 */
-	// End offset: 0x80033E4C
-	// End Line: 1598
+	struct _InstanceList* instanceList; // eax
+	struct _InstancePool* pool; // ecx
+	int numFreeInstances; // edx
+	struct _InstancePool* v6; // ecx
+	struct _Instance* first_free; // ebp
+	struct _Instance* first; // ecx
+	int v9; // esi
+	struct _InstanceList* v10; // esi
+	int v11; // eax
+	__int16 numberOfEffects; // ax
+	int v13; // esi
 
-	/* begin block 2 */
-		// Start line: 3577
-	/* end block 2 */
-	// End Line: 3578
-
-	return null;
+	if (!object)
+		return 0;
+	instanceList = gameTrackerX.instanceList;
+	pool = gameTrackerX.instanceList->pool;
+	numFreeInstances = pool->numFreeInstances;
+	if (numFreeInstances)
+	{
+		pool->numFreeInstances = numFreeInstances - 1;
+		v6 = instanceList->pool;
+		first_free = v6->first_free;
+		v6->first_free = first_free->next;
+		first = instanceList->first;
+		instanceList->first = first_free;
+		first_free->next = first;
+		if (first)
+			first->prev = first_free;
+		first_free->prev = 0;
+		first_free->instanceID = instanceList->pool->nextInstanceID++;
+		++instanceList->numInstances;
+	}
+	else
+	{
+		GXFilePrint("ran out of instances need more than %d - contact a programmer\n", 62);
+		first_free = 0;
+	}
+	if (!first_free)
+		return 0;
+	INSTANCE_DefaultInit(first_free, object, modelNum);
+	first_free->position = parent->position;
+	first_free->initialPos = parent->position;
+	first_free->oldPos = parent->position;
+	first_free->rotation = parent->rotation;
+	first_free->scale = parent->scale;
+	first_free->lightGroup = parent->lightGroup;
+	first_free->spectralLightGroup = parent->spectralLightGroup;
+	first_free->currentStreamUnitID = parent->currentStreamUnitID;
+	first_free->birthStreamUnitID = parent->birthStreamUnitID;
+	first_free->introUniqueID = GlobalSave->CurrentBirthID++;
+	strcpy(first_free->introName, object->name);
+	v9 = 0;
+	if (strlen(first_free->introName))
+	{
+		while (first_free->introName[v9] != 95)
+		{
+			if (++v9 >= strlen(first_free->introName))
+				goto LABEL_13;
+		}
+		first_free->introName[v9] = 0;
+	}
+LABEL_13:
+	first_free->parent = parent;
+	first_free->intro = parent->intro;
+	first_free->introData = parent->introData;
+	LIGHT_GetAmbient((struct _ColorType*)&first_free->light_color, first_free);
+	if (!SCRIPT_GetMultiSpline(first_free, 0, 0))
+		first_free->flags |= 0x100000u;
+	if ((parent->flags2 & 0x8000000) != 0)
+		first_free->flags2 |= 0x8000000u;
+	v10 = gameTrackerX.instanceList;
+	v11 = INSTANCE_InstanceGroupNumber(first_free);
+	LIST_InsertFunc(&v10->group[v11], &first_free->node);
+	OBTABLE_GetInstanceCollideFunc(first_free);
+	OBTABLE_GetInstanceProcessFunc(first_free);
+	OBTABLE_GetInstanceQueryFunc(first_free);
+	OBTABLE_GetInstanceMessageFunc(first_free);
+	OBTABLE_GetInstanceAdditionalCollideFunc(first_free);
+	first_free->flags |= 2u;
+	OBTABLE_InstanceInit(first_free);
+	EVENT_AddInstanceToInstanceList(first_free);
+	if ((object->oflags2 & 0x100) == 0)
+	{
+		numberOfEffects = object->numberOfEffects;
+		if (numberOfEffects)
+		{
+			v13 = 0;
+			if (numberOfEffects > 0)
+			{
+				do
+					FX_StartInstanceEffect(first_free, (unsigned __int8*)&object->effectList[v13++], 1);
+				while (v13 < object->numberOfEffects);
+			}
+		}
+	}
+	return first_free;
 }
 
 
@@ -1121,31 +1532,14 @@ struct Intro * INSTANCE_FindIntro(long areaID, long introUniqueID)
 // struct _Instance * /*$ra*/ INSTANCE_Find(long introUniqueID /*$a0*/)
 struct _Instance * INSTANCE_Find(long introUniqueID)
 { // line 2090, offset 0x800346d4
-	/* begin block 1 */
-		// Start line: 2092
-		// Start offset: 0x800346D4
-		// Variables:
-			struct _Instance *instance; // $v1
-	/* end block 1 */
-	// End offset: 0x8003470C
-	// End Line: 2098
+	struct _Instance* result; // eax
 
-	/* begin block 2 */
-		// Start line: 4810
-	/* end block 2 */
-	// End Line: 4811
-
-	/* begin block 3 */
-		// Start line: 4811
-	/* end block 3 */
-	// End Line: 4812
-
-	/* begin block 4 */
-		// Start line: 4813
-	/* end block 4 */
-	// End Line: 4814
-
-	return null;
+	for (result = gameTrackerX.instanceList->first; result; result = result->next)
+	{
+		if (result->introUniqueID == introUniqueID)
+			break;
+	}
+	return result;
 }
 
 
@@ -1153,80 +1547,326 @@ struct _Instance * INSTANCE_Find(long introUniqueID)
 // struct _Instance * /*$ra*/ INSTANCE_IntroduceSavedInstance(struct _SavedIntro *savedIntro /*$s2*/, struct _StreamUnit *streamUnit /*$a1*/, int *deleted /*$fp*/)
 struct _Instance * INSTANCE_IntroduceSavedInstance(struct _SavedIntro *savedIntro, struct _StreamUnit *streamUnit, int *deleted)
 { // line 2102, offset 0x80034714
-	/* begin block 1 */
-		// Start line: 2103
-		// Start offset: 0x80034714
-		// Variables:
-			struct _ObjectTracker *objectTracker; // $s1
-			struct Object *object; // $s7
-			struct _Instance *instance; // $s0
-			struct _Position *levelOffset; // $s5
-			struct Level *level; // $v0
-			struct _Instance *attachInst; // $s4
+	struct _Instance* first_free; // ebp
+	int v5; // esi
+	struct _Instance* first; // eax
+	struct _Instance* next; // ecx
+	int v8; // edx
+	struct _ObjectTracker* ObjectTracker; // eax
+	struct _ObjectTracker* v10; // esi
+	Object* v11; // edx
+	struct _Instance* i; // eax
+	struct _InstanceList* instanceList; // eax
+	struct _InstancePool* pool; // ecx
+	int numFreeInstances; // edx
+	struct _InstancePool* v16; // ecx
+	struct _Instance* v17; // ecx
+	struct Level* LevelWithID; // eax
+	struct _Terrain* terrain; // eax
+	int numIntros; // ecx
+	struct Intro* introList; // eax
+	__int16 z; // ax
+	struct _InstanceList* v23; // esi
+	int v24; // eax
+	int flags; // eax
+	int v26; // ecx
+	struct Object* v27; // eax
+	unsigned int v28; // edx
+	unsigned int v29; // ecx
+	int flags2; // eax
+	int v31; // eax
+	unsigned int v32; // eax
+	__int16* introData; // esi
+	__int16 j; // ax
+	__int16 v35; // ax
+	struct Object* v36; // edx
+	int v37; // ecx
+	int v38; // eax
+	void(__stdcall * messageFunc)(); // esi
+	int v40; // edi
+	int v41; // ecx
+	struct Object* v42; // eax
+	unsigned int v43; // edx
+	unsigned int v44; // ecx
+	__int16 numberOfEffects; // ax
+	int v46; // esi
+	int v47; // eax
+	struct _Instance* v49; // [esp+10h] [ebp-14h]
+	struct _Position* p_globalOffset; // [esp+14h] [ebp-10h]
+	int v51; // [esp+14h] [ebp-10h]
+	char name[4]; // [esp+18h] [ebp-Ch] BYREF
+	int v53; // [esp+1Ch] [ebp-8h]
+	char v54; // [esp+20h] [ebp-4h]
+	struct _SavedIntro* savedIntroa; // [esp+28h] [ebp+4h]
+	struct Object* object; // [esp+2Ch] [ebp+8h]
 
-		/* begin block 1.1 */
-			// Start line: 2119
-			// Start offset: 0x80034770
-			// Variables:
-				char savedName[12]; // stack offset -56
-
-			/* begin block 1.1.1 */
-				// Start line: 2147
-				// Start offset: 0x80034838
-				// Variables:
-					struct Level *birthLevel; // $v0
-					struct Intro *oldIntro; // $s1
-					int nosave; // $s3
-					int remove; // $s1
-
-				/* begin block 1.1.1.1 */
-					// Start line: 2173
-					// Start offset: 0x80034898
-					// Variables:
-						struct Intro *intro; // $v1
-						int i; // $a0
-				/* end block 1.1.1.1 */
-				// End offset: 0x800348CC
-				// End Line: 2184
-
-				/* begin block 1.1.1.2 */
-					// Start line: 2201
-					// Start offset: 0x800348F4
-					// Variables:
-						short _x0; // $v0
-						short _y0; // $a0
-						short _z0; // $v1
-						short _x1; // $a1
-						short _y1; // $a2
-						short _z1; // $a3
-						struct _Position *_v; // $v0
-						struct _Position *_v0; // $v1
-				/* end block 1.1.1.2 */
-				// End offset: 0x800348F4
-				// End Line: 2201
-
-				/* begin block 1.1.1.3 */
-					// Start line: 2283
-					// Start offset: 0x80034ADC
-				/* end block 1.1.1.3 */
-				// End offset: 0x80034AF8
-				// End Line: 2294
-			/* end block 1.1.1 */
-			// End offset: 0x80034B2C
-			// End Line: 2303
-		/* end block 1.1 */
-		// End offset: 0x80034B58
-		// End Line: 2315
-	/* end block 1 */
-	// End offset: 0x80034B58
-	// End Line: 2324
-
-	/* begin block 2 */
-		// Start line: 4835
-	/* end block 2 */
-	// End Line: 4836
-
-	return null;
+	first_free = 0;
+	v5 = 0;
+	v49 = 0;
+	p_globalOffset = &streamUnit->level->terrain->BSPTreeArray->globalOffset;
+	first = gameTrackerX.instanceList->first;
+	if (first)
+	{
+		while (1)
+		{
+			next = first->next;
+			if (first->introUniqueID == savedIntro->introUniqueID)
+				break;
+			first = first->next;
+			if (!next)
+				goto LABEL_6;
+		}
+		v5 = 1;
+	}
+LABEL_6:
+	if (!v5)
+	{
+		v8 = *(_DWORD*)&savedIntro->name[4];
+		*(_DWORD*)name = *(_DWORD*)savedIntro->name;
+		v53 = v8;
+		v54 = 0;
+		ObjectTracker = STREAM_GetObjectTracker(name);
+		v10 = ObjectTracker;
+		if (ObjectTracker)
+		{
+			v11 = ObjectTracker->object;
+			object = v11;
+			if (ObjectTracker->objectStatus == 2)
+			{
+				if (!savedIntro->attachedUniqueID)
+					goto LABEL_73;
+				for (i = gameTrackerX.instanceList->first; i; i = i->next)
+				{
+					if (i->introUniqueID == savedIntro->attachedUniqueID)
+						break;
+				}
+				v49 = i;
+				if (i)
+				{
+				LABEL_73:
+					if ((v11->oflags2 & 0x10000000) == 0 || (OBTABLE_InitAnimPointers(v10), (object->oflags2 & 0x10000000) == 0))
+					{
+						instanceList = gameTrackerX.instanceList;
+						pool = gameTrackerX.instanceList->pool;
+						numFreeInstances = pool->numFreeInstances;
+						if (numFreeInstances)
+						{
+							pool->numFreeInstances = numFreeInstances - 1;
+							v16 = instanceList->pool;
+							first_free = v16->first_free;
+							v16->first_free = first_free->next;
+							v17 = instanceList->first;
+							instanceList->first = first_free;
+							first_free->next = v17;
+							if (v17)
+								v17->prev = first_free;
+							first_free->prev = 0;
+							first_free->instanceID = instanceList->pool->nextInstanceID++;
+							++instanceList->numInstances;
+						}
+						else
+						{
+							GXFilePrint("ran out of instances need more than %d - contact a programmer\n", 62);
+							first_free = 0;
+						}
+						if (!first_free)
+							goto LABEL_69;
+						++v10->numInUse;
+						INSTANCE_DefaultInit(first_free, object, 0);
+						strcpy(first_free->introName, name);
+						first_free->introUniqueID = savedIntro->introUniqueID;
+						first_free->currentStreamUnitID = savedIntro->streamUnitID;
+						first_free->birthStreamUnitID = savedIntro->birthUnitID;
+						LIGHT_GetAmbient((struct _ColorType*)&first_free->light_color, first_free);
+						LevelWithID = STREAM_GetLevelWithID(first_free->birthStreamUnitID);
+						if (LevelWithID
+							&& (terrain = LevelWithID->terrain,
+								numIntros = terrain->numIntros,
+								introList = terrain->introList,
+								numIntros))
+						{
+							while (introList->UniqueID != first_free->introUniqueID)
+							{
+								++introList;
+								if (!--numIntros)
+									goto LABEL_26;
+							}
+						}
+						else
+						{
+						LABEL_26:
+							introList = 0;
+						}
+						if (introList)
+						{
+							first_free->intro = introList;
+							first_free->introData = introList->data;
+						}
+						else
+						{
+							first_free->intro = 0;
+							first_free->introData = 0;
+						}
+						first_free->position.x = p_globalOffset->x + savedIntro->position.x;
+						first_free->position.y = p_globalOffset->y + savedIntro->position.y;
+						first_free->position.z = p_globalOffset->z + savedIntro->position.z;
+						*(_DWORD*)&first_free->initialPos.x = *(_DWORD*)&first_free->position.x;
+						first_free->initialPos.z = first_free->position.z;
+						z = first_free->position.z;
+						*(_DWORD*)&first_free->oldPos.x = *(_DWORD*)&first_free->position.x;
+						first_free->oldPos.z = z;
+						*(_SmallRotation*)&first_free->rotation.x = savedIntro->smallRotation;
+						first_free->scale.x = 4096;
+						first_free->scale.y = 4096;
+						first_free->scale.z = 4096;
+						first_free->lightGroup = savedIntro->lightGroup;
+						first_free->spectralLightGroup = savedIntro->specturalLightGroup;
+						v23 = gameTrackerX.instanceList;
+						v24 = INSTANCE_InstanceGroupNumber(first_free);
+						LIST_InsertFunc(&v23->group[v24], &first_free->node);
+						OBTABLE_GetInstanceCollideFunc(first_free);
+						OBTABLE_GetInstanceProcessFunc(first_free);
+						OBTABLE_GetInstanceQueryFunc(first_free);
+						OBTABLE_GetInstanceMessageFunc(first_free);
+						OBTABLE_GetInstanceAdditionalCollideFunc(first_free);
+						OBTABLE_InstanceInit(first_free);
+						v51 = first_free->flags2 & 0x20000;
+						flags = first_free->flags;
+						first_free->flags = savedIntro->flags;
+						savedIntroa = (struct _SavedIntro*)(flags & 0x20);
+						first_free->flags2 = savedIntro->flags2 & ~1u;
+						if (v49)
+						{
+							if ((v49->flags2 & 1) != 0)
+							{
+								v26 = v49->flags;
+								v27 = v49->object;
+								v49->flags2 &= ~1u;
+								if ((v26 & 0x40000) != 0)
+								{
+									v28 = v26 & ~0x40000u;
+									v29 = v49->flags2 | 0x20000000;
+									v49->flags = v28;
+								}
+								else
+								{
+									v29 = v49->flags2 & ~0x20000000u;
+								}
+								v49->flags2 = v29;
+								if (v27->animList)
+								{
+									if ((v27->oflags2 & 0x40000000) == 0)
+										G2Anim_Restore(&v49->anim);
+								}
+							}
+							flags2 = v49->flags2;
+							LOBYTE(flags2) = flags2 | 0x80;
+							v49->flags2 = flags2;
+						}
+						v31 = first_free->flags2;
+						if ((first_free->flags & 0x40000) != 0)
+							v32 = v31 | 0x20000000;
+						else
+							v32 = v31 & ~0x20000000u;
+						first_free->flags2 = v32;
+						first_free->flags = first_free->flags & ~0x2140000u | 0x100000;
+						MORPH_SetupInstanceFlags(first_free);
+						if (first_free->intro)
+						{
+							introData = (__int16*)first_free->introData;
+							if (introData)
+							{
+								if ((first_free->flags & 2) == 0)
+								{
+									for (j = *introData; j; introData += 2 * v37 + 2)
+									{
+										if (j == 18)
+										{
+											v35 = introData[2];
+											v36 = first_free->object;
+											first_free->currentModel = v35;
+											if (v36->numModels <= v35)
+												GXFilePrint(
+													"Error: Specify model num %d on a instance(%s%d) with %d models.\n",
+													first_free->currentModel,
+													first_free->introName,
+													first_free->introNum,
+													v36->numModels);
+										}
+										v37 = introData[1];
+										j = introData[2 * v37 + 2];
+									}
+								}
+							}
+						}
+						if (savedIntro->shiftedSaveSize > 0xAu)
+						{
+							v38 = SetControlSaveDataData(4 * savedIntro->shiftedSaveSize - 40, &savedIntro[1]);
+							messageFunc = first_free->messageFunc;
+							v40 = v38;
+							if (messageFunc)
+							{
+								if ((first_free->flags2 & 1) != 0)
+								{
+									v41 = first_free->flags;
+									v42 = first_free->object;
+									first_free->flags2 &= ~1u;
+									if ((v41 & 0x40000) != 0)
+									{
+										v43 = v41 & 0xFFFBFFFF;
+										v44 = first_free->flags2 | 0x20000000;
+										first_free->flags = v43;
+									}
+									else
+									{
+										v44 = first_free->flags2 & 0xDFFFFFFF;
+									}
+									first_free->flags2 = v44;
+									if (v42->animList)
+									{
+										if ((v42->oflags2 & 0x40000000) == 0)
+											G2Anim_Restore(&first_free->anim);
+									}
+								}
+								((void(__cdecl*)(struct _Instance*, int, int))messageFunc)(first_free, 1048583, v40);
+							}
+						}
+						EVENT_AddInstanceToInstanceList(first_free);
+						if ((object->oflags2 & 0x100) == 0)
+						{
+							numberOfEffects = object->numberOfEffects;
+							if (numberOfEffects)
+							{
+								v46 = 0;
+								if (numberOfEffects > 0)
+								{
+									do
+										FX_StartInstanceEffect(first_free, (unsigned __int8*)&object->effectList[v46++], 1);
+									while (v46 < object->numberOfEffects);
+								}
+							}
+						}
+						if (savedIntroa)
+						{
+							v47 = first_free->flags;
+							LOBYTE(v47) = v47 | 0x20;
+							first_free->flags = v47;
+						}
+						if (v51)
+						{
+							first_free->flags2 |= 0x20000u;
+							SAVE_DeleteInstance(first_free);
+							*deleted = 1;
+						}
+					}
+				}
+			}
+		}
+		if (!first_free)
+			LABEL_69:
+		SAVE_BufferIntro(savedIntro);
+	}
+	return first_free;
 }
 
 
