@@ -2552,6 +2552,22 @@ struct _BigFile // hashcode: 0x50C273F3 (dec: 1354920947)
 
 struct _NonBlockLoadEntry // hashcode: 0x722059B4 (dec: 1914722740)
 {
+#ifdef PSX_VERSION
+	long fileHash; // size=0, offset=0
+	long dirHash; // size=0, offset=4
+	long filePos; // size=0, offset=8
+	long* loadAddr; // size=0, offset=12
+	long loadSize; // size=0, offset=16
+	long checksum; // size=0, offset=20
+	long checksumType; // size=0, offset=24
+	long memType; // size=0, offset=28
+	long posInFile; // size=0, offset=32
+	void* retFunc; // size=0, offset=36
+	void* retData; // size=0, offset=40
+	void* retData2; // size=0, offset=44
+	void** retPointer; // size=0, offset=48
+	char fileName[48]; // size=48, offset=52
+#else
 	long fileHash; // size=0, offset=0
 	long dirHash; // size=0, offset=4
 	long filePos; // size=0, offset=8
@@ -2566,6 +2582,7 @@ struct _NonBlockLoadEntry // hashcode: 0x722059B4 (dec: 1914722740)
 	void *retData; // size=0, offset=44
 	void *retData2; // size=0, offset=48
 	void **retPointer; // size=0, offset=52
+#endif
 };
 
 struct _ReadQueueEntry // hashcode: 0x5360DCDA (dec: 1398856922)
