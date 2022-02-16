@@ -945,12 +945,6 @@ struct _GameData_Type // hashcode: 0xE05EBAD0 (dec: -530662704)
 	struct _GameTrackerASMData_Type asmData; // size=32, offset=0
 };
 
-struct NodeType // hashcode: 0x5BF613D7 (dec: 1542853591)
-{
-	struct NodeType *prev; // size=8, offset=0
-	struct NodeType *next; // size=8, offset=4
-};
-
 struct TextureFT3 // hashcode: 0x2D2801D6 (dec: 757596630)
 {
 	unsigned char u0; // size=0, offset=0
@@ -4539,11 +4533,6 @@ struct _SavedIntroWithIntro // hashcode: 0xF234DCD6 (dec: -231416618)
 	struct _Position position; // size=6, offset=26
 };
 
-
-
-
-typedef struct _G2EulerAngles_Type G2EulerAngles;
-
 typedef enum _G2AnimCallbackMsg_Enum G2AnimCallbackMsg;
 
 typedef struct _AnimSoundData_Type AnimSoundData;
@@ -4769,38 +4758,6 @@ typedef struct evAnimationInstanceSwitchData evAnimationInstanceSwitchData;
 typedef struct evControlSaveDataData evControlSaveDataData;
 
 typedef struct GenericTune GenericTune;
-
-union MATH3D_76fake // Hashcode: 0x663290A4 (dec: 1714589860)
-{
-	struct {
-		unsigned long (*function)(); // size=0, offset=0
-		void *fnData; // size=0, offset=4
-	} callback; // size=8, offset=0, found in object files: math3d.o, math3d.o
-	struct {
-		struct _G2SVector3_Type base; // size=6, offset=0
-		struct _G2SVector3_Type offset; // size=6, offset=6
-	} vector; // size=12, offset=0, found in object files: math3d.o, math3d.o
-	struct {
-		struct _G2Quat_Type src; // size=8, offset=0
-		struct _G2Quat_Type dest; // size=8, offset=8
-	} quat; // size=16, offset=0, found in object files: math3d.o, math3d.o
-};
-
-union MATH3D_77fake // Hashcode: 0xA8CF04EA (dec: -1462827798)
-{
-	long color; // size=0, offset=0
-	struct _RGBAColor rgba; // size=4, offset=0
-};
-
-enum MATH3D_AXIS // Hashcode: 0x37FE6D4A (dec: 939421002)
-{
-	AXIS_X = 0,
-	AXIS_Y = 1,
-	AXIS_Z = 2,
-	AXIS_NEG_X = 3,
-	AXIS_NEG_Y = 4,
-	AXIS_NEG_Z = 5,
-};
 
 struct POLY_FT3 // hashcode: 0x1FB59984 (dec: 531995012)
 {
@@ -6053,77 +6010,6 @@ struct evMonsterSoulSuckData // hashcode: 0x24FA0E9A (dec: 620367514)
 {
 	struct _Instance *sender; // size=616, offset=0
 	struct _Position Destination; // size=6, offset=4
-};
-
-struct evPhysicsDropOffData // hashcode: 0x240C7D71 (dec: 604798321)
-{
-	short xOffset; // size=0, offset=0
-	short yOffset; // size=0, offset=2
-	short DropOffset; // size=0, offset=4
-	short slipSlope; // size=0, offset=6
-	int UpperOffset; // size=0, offset=8
-};
-
-struct evPhysicsEdgeData // hashcode: 0x9E9E1CB3 (dec: -1633805133)
-{
-	short UpperOffset; // size=0, offset=0
-	short ForwardOffset; // size=0, offset=2
-	short AboveOffset; // size=0, offset=4
-	short XDistance; // size=0, offset=6
-	short YDistance; // size=0, offset=8
-	short ZDistance; // size=0, offset=10
-	struct _SVector *Normal1; // size=8, offset=12
-	struct _SVector *Normal2; // size=8, offset=16
-	struct _SVector *Delta; // size=8, offset=20
-	struct _Instance *instance; // size=616, offset=24
-	int zRot; // size=0, offset=28
-	int rc; // size=0, offset=32
-};
-
-struct evPhysicsWallCrawlData // hashcode: 0x27DFBF06 (dec: 668974854)
-{
-	short Segment; // size=0, offset=0
-	short Length; // size=0, offset=2
-	short ForwardOffset; // size=0, offset=4
-	short NormalDistance; // size=0, offset=6
-	struct _SVector DropNormal; // size=8, offset=8
-	struct _SVector ForwardNormal; // size=8, offset=16
-	struct _Position NewPosition; // size=6, offset=24
-	struct _Rotation DropRotation; // size=8, offset=30
-	short ForwardXRotation; // size=0, offset=38
-	int rc; // size=0, offset=40
-};
-
-struct evPhysicsSwimData // hashcode: 0x947F2BE5 (dec: -1803605019)
-{
-	short CheckDepth; // size=0, offset=0
-	short SwimDepth; // size=0, offset=2
-	short WadeDepth; // size=0, offset=4
-	short TreadDepth; // size=0, offset=6
-	struct _SVector *iVelocity; // size=8, offset=8
-	short Depth; // size=0, offset=12
-	short WaterDepth; // size=0, offset=14
-	short rc; // size=0, offset=16
-	short pad; // size=0, offset=18
-	int WaterLevel; // size=0, offset=20
-};
-
-struct evPhysicsDropHeightData // hashcode: 0x5DCE3926 (dec: 1573796134)
-{
-	struct _Position origin; // size=6, offset=0
-	short mode; // size=0, offset=6
-	short DropOffset; // size=0, offset=8
-	short result; // size=0, offset=10
-	struct BSPTree *bsp; // size=36, offset=12
-	struct _TFace *tface; // size=12, offset=16
-};
-
-struct evPhysicsLinkedMoveData // hashcode: 0xB4C6EBA9 (dec: -1262031959)
-{
-	struct _Instance *instance; // size=616, offset=0
-	int segment; // size=0, offset=4
-	struct _SVector posDelta; // size=8, offset=8
-	struct _SVector rotDelta; // size=8, offset=16
 };
 
 struct evFXHitData // hashcode: 0x3D609E61 (dec: 1029742177)

@@ -34,6 +34,14 @@ struct _G2Quat_Type // hashcode: 0xC71F9EB1 (dec: -954229071)
 	short w; // size=0, offset=6
 };
 
+struct _G2EulerAngles_Type // hashcode: 0xB3709AC5 (dec: -1284465979)
+{
+	short x; // size=0, offset=0
+	short y; // size=0, offset=2
+	short z; // size=0, offset=4
+	short order; // size=0, offset=6
+};
+
 struct _G2AnimQuatInfo_Type // hashcode: 0x5A520473 (dec: 1515324531)
 {
 	struct _G2Quat_Type srcQuat; // size=8, offset=0
