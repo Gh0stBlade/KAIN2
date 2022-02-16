@@ -1,6 +1,12 @@
 #ifndef EVENT_H
 #define EVENT_H
 
+struct __Event // hashcode: 0xBC16D673 (dec: -1139353997)
+{
+	int ID; // size=0, offset=0
+	int Data; // size=0, offset=4
+};
+
 struct EventBasicObject // hashcode: 0x9FC1DB2A (dec: -1614685398)
 {
 	short id; // size=0, offset=0

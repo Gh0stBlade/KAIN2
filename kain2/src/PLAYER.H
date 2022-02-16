@@ -1,14 +1,125 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
+struct __Player // hashcode: 0x0712E7A5 (dec: 118679461)
+{
+	int footPrint; // size=0, offset=0
+	struct __CharacterState State; // size=860, offset=4
+	int Mode; // size=0, offset=864
+	int Anim; // size=0, offset=868
+	int RotationSegment; // size=0, offset=872
+	struct _SVector iVelocity; // size=8, offset=876
+	int Magnitude; // size=0, offset=884
+	int input; // size=0, offset=888
+	int lastInput; // size=0, offset=892
+	int ZDirection; // size=0, offset=896
+	short Bearing; // size=0, offset=900
+	short LastBearing; // size=0, offset=902
+	int steeringMode; // size=0, offset=904
+	short steeringVelocity; // size=0, offset=908
+	short steeringAcceleration; // size=0, offset=910
+	int steeringLockRotation; // size=0, offset=912
+	short movementMinRate; // size=0, offset=916
+	short movementMaxRate; // size=0, offset=918
+	short movementMinAnalog; // size=0, offset=920
+	short movementMaxAnalog; // size=0, offset=922
+	struct __SensoryData Senses; // size=84, offset=924
+	struct _Instance* attachedPlatform; // size=616, offset=1008
+	short dropOffHeight; // size=0, offset=1012
+	short fallZVelocity; // size=0, offset=1014
+	short HealthScale; // size=0, offset=1016
+	short HealthBalls; // size=0, offset=1018
+	int HitPoints; // size=0, offset=1020
+	int DamageFrequency; // size=0, offset=1024
+	int invincibleTimer; // size=0, offset=1028
+	int Abilities; // size=0, offset=1032
+	struct _Instance* GlyphSystem; // size=616, offset=1036
+	unsigned short GlyphManaBalls; // size=0, offset=1040
+	unsigned short GlyphManaMax; // size=0, offset=1042
+	struct __FitPoint* constrictData; // size=4, offset=1044
+	short constrictIndex; // size=0, offset=1048
+	short constrictWaitIndex; // size=0, offset=1050
+	struct _SVector constrictCenter; // size=8, offset=1052
+	short constrictFlag; // size=0, offset=1060
+	short constrictGoodCircle; // size=0, offset=1062
+	unsigned long constrictXTotal; // size=0, offset=1064
+	unsigned long constrictYTotal; // size=0, offset=1068
+	struct _Instance* soulReaver; // size=616, offset=1072
+	unsigned long currentSoulReaver; // size=0, offset=1076
+	int CurrentPlane; // size=0, offset=1080
+	int slipSlope; // size=0, offset=1084
+	unsigned long idleCount; // size=0, offset=1088
+	struct _Instance* idleInstance; // size=616, offset=1092
+	struct __AttackItem* attack; // size=36, offset=1096
+	int attackFlags; // size=0, offset=1100
+	int currentAttack; // size=0, offset=1104
+	struct _Instance* attackCurrentHit; // size=616, offset=1108
+	struct _Instance* attackLastHit; // size=616, offset=1112
+	struct _FXGlowEffect* glowEffect; // size=44, offset=1116
+	struct _Instance* attackedBy; // size=616, offset=1120
+	struct __ThrowItem* throwData; // size=32, offset=1124
+	int throwMode; // size=0, offset=1128
+	struct _Position throwTarget; // size=6, offset=1132
+	struct _Instance* throwInstance; // size=616, offset=1140
+	short throwXRot; // size=0, offset=1144
+	short throwZRot; // size=0, offset=1146
+	int throwReturnRot; // size=0, offset=1148
+	struct __MessageQueue padCommands; // size=136, offset=1152
+	void (*returnState)(); // size=0, offset=1288
+	unsigned long passedMask; // size=0, offset=1292
+	struct _G2SVector3_Type extraRot; // size=6, offset=1296
+	long blankPad; // size=0, offset=1304
+	int effectsFlags; // size=0, offset=1308
+	short effectsFadeSource; // size=0, offset=1312
+	short effectsFadeDest; // size=0, offset=1314
+	int effectsFadeStep; // size=0, offset=1316
+	int effectsFadeSteps; // size=0, offset=1320
+	short autoFaceZone; // size=0, offset=1324
+	short autoFaceAngle; // size=0, offset=1326
+	int autoFaceLastRootAngle; // size=0, offset=1328
+	int autoFaceRootAngle; // size=0, offset=1332
+	int autoFaceTrueAngle; // size=0, offset=1336
+	int autoFaceAnim; // size=0, offset=1340
+	int autoFaceLastAnim; // size=0, offset=1344
+	int nothingCounter; // size=0, offset=1348
+	int timeAccumulator; // size=0, offset=1352
+	struct _Position puppetMoveToPoint; // size=6, offset=1356
+	struct _Position puppetRotToPoint; // size=6, offset=1362
+	int puppetHint; // size=0, offset=1368
+	int soundModifier; // size=0, offset=1372
+	short alarmTable; // size=0, offset=1376
+	short terminator; // size=0, offset=1378
+	short swimSpeedAdjustment; // size=0, offset=1380
+	short swimTargetSpeed; // size=0, offset=1382
+	unsigned long soundHandle; // size=0, offset=1384
+	long soundTimer; // size=0, offset=1388
+	long soundTotalTime; // size=0, offset=1392
+	unsigned long soundDistance; // size=0, offset=1396
+	short soundStartPitch; // size=0, offset=1400
+	short soundEndPitch; // size=0, offset=1402
+	short soundStartVolume; // size=0, offset=1404
+	short soundEndVolume; // size=0, offset=1406
+	unsigned long soundHandle2; // size=0, offset=1408
+	long soundTimer2; // size=0, offset=1412
+	long soundTotalTime2; // size=0, offset=1416
+	unsigned long soundDistance2; // size=0, offset=1420
+	short soundStartPitch2; // size=0, offset=1424
+	short soundEndPitch2; // size=0, offset=1426
+	short soundStartVolume2; // size=0, offset=1428
+	short soundEndVolume2; // size=0, offset=1430
+	long soundTimerNext; // size=0, offset=1432
+	unsigned long soundTimerData; // size=0, offset=1436
+	unsigned long forcedGlideSpeed; // size=0, offset=1440
+	struct _SVector collisionEdgeOffset; // size=8, offset=1444
+	struct __SAnim* currentSAnim; // size=16, offset=1452
+	unsigned long playerEvent; // size=0, offset=1456
+	unsigned long playerEventHistory; // size=0, offset=1460
+	int currentHint; // size=0, offset=1464
+};
 
 extern void PLAYER_TurnHead(struct _Instance *instance, short *rotx, short *rotz, struct GameTracker *gameTracker); // 0x80012D5C
-
 extern long PLAYER_OkToLookAround(struct _Instance *instance); // 0x80012DDC
-
 extern void PLAYER_SetLookAround(struct _Instance *instance); // 0x80012E28
-
 extern void PLAYER_ReSetLookAround(struct _Instance *instance); // 0x80012E74
-
 
 #endif

@@ -527,5 +527,8 @@
     <ClInclude Include="src\VOICEXA.H" />
     <ClInclude Include="src\VRAM.H" />
     <ClInclude Include="src\SCRIPT2.H" />
+    <ClInclude Include="src\MONSTER\MORLOCK.H">
+      <Filter>MONSTER</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -76,19 +76,12 @@ struct menuface_t // hashcode: 0xC2732FD8 (dec: -1032638504)
 };
 
 typedef enum bdepth bdepth;
-
 typedef struct menuface_t menuface_t;
 
-
 extern char * NextTimAddr(char *addr, int w, int h, enum bdepth bpp); // 0x800B9538
-
 extern void menuface_initialize(); // 0x800B9580
-
 extern void menuface_terminate(); // 0x800B96AC
-
 extern void MENUFACE_ChangeStateRandomly(int index); // 0x800B9758
-
 extern void MENUFACE_RefreshFaces(); // 0x800B987C
-
 
 #endif

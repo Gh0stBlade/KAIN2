@@ -1,6 +1,93 @@
 #ifndef MONSTER_H
 #define MONSTER_H
 
+enum MonsterAnim // Hashcode: 0x13BE1EAB (dec: 331226795)
+{
+	MONSTER_ANIM_HIT1 = 0,
+	MONSTER_ANIM_HIT2 = 1,
+	MONSTER_ANIM_WALK = 2,
+	MONSTER_ANIM_RUN = 3,
+	MONSTER_ANIM_GRABBED = 4,
+	MONSTER_ANIM_STUNNED = 5,
+	MONSTER_ANIM_JUMPFORWARD = 6,
+	MONSTER_ANIM_JUMPBACK = 7,
+	MONSTER_ANIM_JUMPLEFT = 8,
+	MONSTER_ANIM_JUMPRIGHT = 9,
+	MONSTER_ANIM_STANCE_HEALTHY = 10,
+	MONSTER_ANIM_STANCE_VULNERABLE = 11,
+	MONSTER_ANIM_STUNNED_RECOVERY = 12,
+	MONSTER_ANIM_IMPALED = 13,
+	MONSTER_ANIM_STRUGGLE = 14,
+	MONSTER_ANIM_BREAKHOLD = 15,
+	MONSTER_ANIM_THROWN = 16,
+	MONSTER_ANIM_IMPACT = 17,
+	MONSTER_ANIM_LANDONFEET = 18,
+	MONSTER_ANIM_FALL = 19,
+	MONSTER_ANIM_BREAKFALL = 20,
+	MONSTER_ANIM_SPINLAND = 21,
+	MONSTER_ANIM_IMPALEDEATH = 22,
+	MONSTER_ANIM_GETUP = 23,
+	MONSTER_ANIM_GENERALDEATH = 24,
+	MONSTER_ANIM_MISSILEIMPALEDEATH = 25,
+	MONSTER_ANIM_SURPRISED = 26,
+	MONSTER_ANIM_AGONY = 27,
+	MONSTER_ANIM_PUPATE = 28,
+	MONSTER_ANIM_NOTICE = 29,
+	MONSTER_ANIM_SOULSUCK = 30,
+	MONSTER_ANIM_IMPALEHORZ = 31,
+	MONSTER_ANIM_IMPALEVERT = 32,
+	MONSTER_ANIM_SOULOUTGRND = 33,
+	MONSTER_ANIM_SOULOUTHORZ = 34,
+	MONSTER_ANIM_SOULOUTVERT = 35,
+	MONSTER_ANIM_FALLOVER = 36,
+	MONSTER_ANIM_EMBRACE = 37,
+	MONSTER_ANIM_SHOVE = 38,
+	MONSTER_ANIM_FLIPSWITCH = 39,
+	MONSTER_ANIM_EVADELEFT = 40,
+	MONSTER_ANIM_EVADERIGHT = 41,
+	MONSTER_ANIM_ALARM = 42,
+	MONSTER_ANIM_DEAF = 43,
+	MONSTER_ANIM_BLIND = 44,
+	MONSTER_ANIM_SUCKED = 45,
+	MONSTER_NUM_ANIMS = 46,
+};
+
+enum MonsterState // Hashcode: 0xCAD17293 (dec: -892243309)
+{
+	MONSTER_STATE_BIRTH = 0,
+	MONSTER_STATE_PURSUE = 1,
+	MONSTER_STATE_IDLE = 2,
+	MONSTER_STATE_MISSILEHIT = 3,
+	MONSTER_STATE_FALL = 4,
+	MONSTER_STATE_WANDER = 5,
+	MONSTER_STATE_ATTACK = 6,
+	MONSTER_STATE_IMPALEDEATH = 7,
+	MONSTER_STATE_HIT = 8,
+	MONSTER_STATE_STUNNED = 9,
+	MONSTER_STATE_GRABBED = 10,
+	MONSTER_STATE_THROWN = 11,
+	MONSTER_STATE_IMPACT = 12,
+	MONSTER_STATE_COMBAT = 13,
+	MONSTER_STATE_BREAKHOLD = 14,
+	MONSTER_STATE_LANDONFEET = 15,
+	MONSTER_STATE_GENERALDEATH = 16,
+	MONSTER_STATE_ENVIRONMENTDAMAGE = 17,
+	MONSTER_STATE_LANDINWATER = 18,
+	MONSTER_STATE_FLEE = 19,
+	MONSTER_STATE_HIDE = 20,
+	MONSTER_STATE_SURPRISEATTACK = 21,
+	MONSTER_STATE_PARRY = 22,
+	MONSTER_STATE_DEAD = 23,
+	MONSTER_STATE_SURPRISED = 24,
+	MONSTER_STATE_NOTICE = 25,
+	MONSTER_STATE_PUPATE = 26,
+	MONSTER_STATE_EMBRACE = 27,
+	MONSTER_STATE_PROJECTILE = 28,
+	MONSTER_STATE_TERRAINIMPALEDEATH = 29,
+	MONSTER_STATE_PETRIFIED = 30,
+	MONSTER_NUM_STATES = 31,
+};
+
 struct _MonsterSenses // hashcode: 0x1AA0E325 (dec: 446751525)
 {
 	short sightArc; // size=0, offset=0
@@ -305,6 +392,38 @@ struct _MonsterVars // hashcode: 0xEF80566F (dec: -276801937)
 	short fadeRate; // size=0, offset=406
 };
 
+struct MONAPI_114fake // hashcode: 0x26233514 (dec: 639841556)
+{
+	struct {
+		struct MultiSpline* posSpline; // size=0, offset=0
+		struct MultiSpline* targetSpline; // size=0, offset=4
+		struct _SVector lastSplinePos; // size=8, offset=8
+		short splinePointAhead; // size=0, offset=16
+		short cinema_done; // size=0, offset=18
+		int splinecam_currkey; // size=0, offset=20
+		int splinecam_helpkey; // size=0, offset=24
+	} Cinematic; // size=28, offset=0, found in object files: monapi.o, monapi.o
+	struct {
+		struct _Position offset; // size=6, offset=0
+		struct _Rotation rotation; // size=8, offset=6
+		long focusDistance; // size=0, offset=16
+	} Idle; // size=20, offset=28, found in object files: monapi.o, monapi.o
+	struct {
+		struct _TFace* tface; // size=12, offset=0
+		struct _TFace* oldTFace; // size=12, offset=4
+		struct _SVector oldTargetRot; // size=8, offset=8
+		long timer; // size=0, offset=16
+		struct _SVector oldFocusInstancePos; // size=8, offset=20
+	} Behind; // size=28, offset=48, found in object files: monapi.o, monapi.o
+	struct {
+		long stopTimer; // size=0, offset=0
+		long stopHit; // size=0, offset=4
+		struct _TFace* tface; // size=12, offset=8
+		struct _TFace* oldTFace; // size=12, offset=12
+		long hit; // size=0, offset=16
+	} Follow; // size=20, offset=76, found in object files: monapi.o, monapi.o
+};
+
 struct MONMSG_114fake // hashcode: 0x79F33A82 (dec: 2045983362)
 {
 	struct {
@@ -335,6 +454,46 @@ struct MONMSG_114fake // hashcode: 0x79F33A82 (dec: 2045983362)
 		struct _TFace* oldTFace; // size=12, offset=12
 		long hit; // size=0, offset=16
 	} Follow; // size=20, offset=76, found in object files: monmsg.o, monmsg.o
+};
+
+struct evMonsterHitTerrainData // hashcode: 0x4CD2E030 (dec: 1288888368)
+{
+	struct _TFace* tface; // size=12, offset=0
+	struct _Normal normal; // size=8, offset=4
+	short faceFlags; // size=0, offset=12
+	short bspFlags; // size=0, offset=14
+};
+
+struct evMonsterHitObjectData // hashcode: 0xB7192556 (dec: -1223088810)
+{
+	struct _Instance* instance; // size=616, offset=0
+	int hitType; // size=0, offset=4
+};
+
+struct _MonsterSaveInfo // hashcode: 0x3088BC75 (dec: 814267509)
+{
+	long mvFlags; // size=0, offset=0
+	long auxFlags; // size=0, offset=4
+	short soulID; // size=0, offset=8
+	short soulJuice; // size=0, offset=10
+	unsigned int age; // size=3, offset=96
+	unsigned int state; // size=6, offset=99
+	unsigned int behaviorState; // size=5, offset=105
+	unsigned int anim; // size=6, offset=110
+	unsigned int animLooping; // size=1, offset=116
+	unsigned int causeOfDeath; // size=3, offset=117
+};
+
+struct _MonsterFunctionTable // hashcode: 0x82983F8D (dec: -2103951475)
+{
+	void (*initFunc)(struct _Instance* instance); // size=0, offset=0
+	void (*cleanUpFunc)(struct _Instance* instance); // size=0, offset=4
+	void (*damageEffectFunc)(struct _Instance* instance, struct evFXHitData* data); // size=0, offset=8
+	unsigned long (*queryFunc)(); // size=0, offset=12
+	void (*messageFunc)(); // size=0, offset=16
+	struct _MonsterStateChoice* stateFuncs; // size=12, offset=20
+	char* versionID; // size=0, offset=24
+	char* localVersionID; // size=0, offset=28
 };
 
 extern void MON_DoCombatTimers(struct _Instance *instance); // 0x800871FC

@@ -302,6 +302,7 @@
     <ClInclude Include="src\MONSTER\MONSENSE.H" />
     <ClInclude Include="src\MONSTER\MONSTER.H" />
     <ClInclude Include="src\MONSTER\MONTABLE.H" />
+    <ClInclude Include="src\MONSTER\MORLOCK.H" />
     <ClInclude Include="src\MONSTER\SLUAGH.H" />
     <ClInclude Include="src\MONSTER\SOUL.H" />
     <ClInclude Include="src\MONSTER\VWRAITH.H" />
