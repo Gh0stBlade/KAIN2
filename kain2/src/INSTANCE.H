@@ -1,6 +1,24 @@
 #ifndef INSTANCE_H
 #define INSTANCE_H
 
+typedef struct _Instance _Instance;
+
+struct SoundInstance // hashcode: 0xFF235679 (dec: -14461319)
+{
+	unsigned char channel; // size=0, offset=0
+	unsigned char state; // size=0, offset=1
+	unsigned char delay; // size=0, offset=2
+};
+
+struct EventAliasCommandStruct // hashcode: 0xB6EF2AF6 (dec: -1225839882)
+{
+	struct _Instance* hostInstance; // size=0, offset=0
+	short newanim; // size=0, offset=4
+	short newframe; // size=0, offset=6
+	short interpframes; // size=0, offset=8
+	short speed; // size=0, offset=10
+};
+
 struct _Instance // hashcode: 0x699A5B3D (dec: 1771723581)
 {
 	struct NodeType node; // size=8, offset=0

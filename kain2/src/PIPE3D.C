@@ -1,4 +1,4 @@
-#include "THISDUST.H"
+#include "core.H"
 #include "PIPE3D.H"
 
 
@@ -106,7 +106,7 @@ void PIPE3D_NormalizeMatrix(struct MATRIX *target, struct MATRIX *source)
 			// Start line: 196
 			// Start offset: 0x8003A74C
 			// TypeDefs:
-				struct PIPE3D_239fake tmm
+			struct PIPE3D_239fake tmm;
 		/* end block 1.1 */
 		// End offset: 0x8003A74C
 		// End Line: 196
@@ -115,7 +115,7 @@ void PIPE3D_NormalizeMatrix(struct MATRIX *target, struct MATRIX *source)
 			// Start line: 196
 			// Start offset: 0x8003A74C
 			// TypeDefs:
-				struct PIPE3D_240fake cmm
+			struct PIPE3D_240fake cmm;
 		/* end block 1.2 */
 		// End offset: 0x8003A74C
 		// End Line: 196

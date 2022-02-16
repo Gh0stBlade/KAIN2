@@ -132,6 +132,12 @@ struct vecL // hashcode: 0x7575CB14 (dec: 1970653972)
 	long z; // size=0, offset=8
 };
 
+struct NodeType // hashcode: 0x5BF613D7 (dec: 1542853591)
+{
+	struct NodeType* prev; // size=8, offset=0
+	struct NodeType* next; // size=8, offset=4
+};
+
 #include "gex2.h"
 #include "FONT.H"
 #include "DEBUG.H"
@@ -139,5 +145,8 @@ struct vecL // hashcode: 0x7575CB14 (dec: 1970653972)
 
 #include "SPLINE.H"
 #include "CAMERA.H"
+#include "INSTANCE.H"
+#include "COLLIDE.H"
+#include "PHYSICS.H"
 
 #endif
