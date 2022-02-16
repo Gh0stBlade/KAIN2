@@ -8,6 +8,8 @@ struct TCB // hashcode: 0x6A70BBF4 (dec: 1785773044)
 	long system[6]; // size=24, offset=168
 };
 
+#undef s_addr
+
 struct EXEC // hashcode: 0x4291A2AD (dec: 1116840621)
 {
 	unsigned long pc0; // size=0, offset=0

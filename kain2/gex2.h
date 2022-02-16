@@ -47,7 +47,7 @@ struct _G2AnimQuatInfo_Type // hashcode: 0x5A520473 (dec: 1515324531)
 struct _G2AnimAlphaTable_Type // hashcode: 0x2288BF48 (dec: 579387208)
 {
 	unsigned short size; // size=0, offset=0
-	long data[0]; // size=0, offset=4
+	long data[1]; // size=0, offset=4
 };
 
 struct _G2AnimInterpStateBlock_Type // hashcode: 0xFB03DD89 (dec: -83632759)
@@ -96,7 +96,7 @@ struct _G2AnimKeylist_Type // hashcode: 0x87A15165 (dec: -2019471003)
 	unsigned short pad10; // size=0, offset=12
 	short pad11; // size=0, offset=14
 	struct _G2AnimFxHeader_Type *fxList; // size=4, offset=16
-	unsigned short (*sectionData[0]); // size=0, offset=20
+	unsigned short (*sectionData[1]); // size=0, offset=20
 };
 
 struct _G2AnimSection_Type // hashcode: 0xFC80328C (dec: -58707316)

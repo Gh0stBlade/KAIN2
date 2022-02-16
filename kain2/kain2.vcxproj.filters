@@ -41,6 +41,9 @@
     <Filter Include="PC\video">
       <UniqueIdentifier>{53bd3007-da84-4396-a1c4-a34414355c54}</UniqueIdentifier>
     </Filter>
+    <Filter Include="PC\d3d">
+      <UniqueIdentifier>{fada52eb-9642-4f2b-8ce8-29e9ea55cb3b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\PC\libapi.c">
@@ -61,7 +64,7 @@
     <ClCompile Include="src\PC\libetc.c">
       <Filter>PC</Filter>
     </ClCompile>
-    <ClCompile Include="src\PC\async.cpp">
+    <ClCompile Include="src\PC\async.c">
       <Filter>PC</Filter>
     </ClCompile>
     <ClCompile Include="src\PC\memwpsx.c">
@@ -294,6 +297,9 @@
     </ClCompile>
     <ClCompile Include="src\PC\video\winplay.cpp">
       <Filter>PC\video</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PC\d3d\rnd_3d.c">
+      <Filter>PC\d3d</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -530,5 +536,6 @@
     <ClInclude Include="src\MONSTER\MORLOCK.H">
       <Filter>MONSTER</Filter>
     </ClInclude>
+    <ClInclude Include="src\core.h" />
   </ItemGroup>
 </Project>
