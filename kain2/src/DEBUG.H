@@ -1,6 +1,54 @@
 #ifndef DEBUG_H
 #define DEBUG_H
 
+enum DEBUG_LINE_TYPE // Hashcode: 0x03F31324 (dec: 66261796)
+{
+	DEBUG_LINE_TYPE_BIT = 0,
+	DEBUG_LINE_TYPE_LONG = 1,
+	DEBUG_LINE_TYPE_ACTION = 2,
+	DEBUG_LINE_TYPE_ACTION_WITH_LINE = 3,
+	DEBUG_LINE_TYPE_MENU = 4,
+	DEBUG_LINE_TYPE_ENDLIST = 5,
+	DEBUG_LINE_TYPE_FORMAT = 6,
+	DEBUG_LINE_TYPE_INFO = 7,
+};
+
+struct GameCheat // hashcode: 0x9BFF36C0 (dec: -1677773120)
+{
+	unsigned char cheatKeys[12]; // size=12, offset=0
+	short cheatLen; // size=0, offset=12
+	short cheatStage; // size=0, offset=14
+};
+
+struct debug_format_t // hashcode: 0xCC4C6103 (dec: -867409661)
+{
+	int xpos; // size=0, offset=0
+	int ypos; // size=0, offset=4
+	int is_centered; // size=0, offset=8
+};
+
+union DEBUG_260fake // Hashcode: 0x8C9106F7 (dec: -1936652553)
+{
+	struct Intro* intro; // size=76, offset=0
+	struct _SFXMkr* sfxMarker; // size=36, offset=0
+};
+
+struct DebugMenuLine // hashcode: 0x1BD18E81 (dec: 466718337)
+{
+	enum DEBUG_LINE_TYPE type; // size=4, offset=0
+	long lower; // size=0, offset=4
+	long upper; // size=0, offset=8
+	char* text; // size=0, offset=12
+	long* var_address; // size=0, offset=16
+	long bit_mask; // size=0, offset=20
+};
+
+struct debug_dispatch_t // hashcode: 0x928EA8E4 (dec: -1836144412)
+{
+	enum DEBUG_LINE_TYPE type; // size=4, offset=0
+	void (*fn)(); // size=0, offset=4
+};
+
 
 extern void DEBUG_UpdateHealth(long *var); // 0x80012EC0
 

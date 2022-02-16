@@ -1,6 +1,13 @@
 #ifndef MONAPI_H
 #define MONAPI_H
 
+struct _MONAPI_Regenerator // hashcode: 0x37E0AA1B (dec: 937470491)
+{
+	unsigned long regenTime; // size=0, offset=0
+	short introUniqueID; // size=0, offset=4
+	short streamUnitID; // size=0, offset=6
+};
+
 
 extern void MonsterProcess(struct _Instance *instance, struct GameTracker *gameTracker); // 0x8007DA80
 

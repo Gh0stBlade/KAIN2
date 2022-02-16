@@ -2010,246 +2010,6 @@ struct SpuStVoiceAttr // hashcode: 0xAFDFBA7E (dec: -1344292226)
 	unsigned long data_addr; // size=0, offset=12
 };
 
-struct AadSoundBankHdr // hashcode: 0x453DB83F (dec: 1161672767)
-{
-	unsigned long bankID; // size=0, offset=0
-	unsigned long headerSize; // size=0, offset=4
-	int bankVersion; // size=0, offset=8
-	int numPrograms; // size=0, offset=12
-	int numTones; // size=0, offset=16
-	int numWaves; // size=0, offset=20
-	int numSequences; // size=0, offset=24
-	int numLabels; // size=0, offset=28
-	int reverbMode; // size=0, offset=32
-	int reverbDepth; // size=0, offset=36
-};
-
-struct AadProgramAtr // hashcode: 0x13FC0BEF (dec: 335285231)
-{
-	unsigned short numTones; // size=0, offset=0
-	unsigned short firstTone; // size=0, offset=2
-	unsigned char volume; // size=0, offset=4
-	unsigned char panPosition; // size=0, offset=5
-	unsigned short unused; // size=0, offset=6
-};
-
-struct AadToneAtr // hashcode: 0x990CD685 (dec: -1727211899)
-{
-	unsigned char priority; // size=0, offset=0
-	unsigned char parentProgram; // size=0, offset=1
-	unsigned char volume; // size=0, offset=2
-	unsigned char panPosition; // size=0, offset=3
-	unsigned char centerNote; // size=0, offset=4
-	char centerFine; // size=0, offset=5
-	unsigned char minNote; // size=0, offset=6
-	unsigned char maxNote; // size=0, offset=7
-	unsigned char mode; // size=0, offset=8
-	unsigned char pitchBendMax; // size=0, offset=9
-	unsigned short adsr1; // size=0, offset=10
-	unsigned short adsr2; // size=0, offset=12
-	short waveIndex; // size=0, offset=14
-};
-
-struct _AadDynSfxFileHdr // hashcode: 0xB9609773 (dec: -1184852109)
-{
-	unsigned long snfID; // size=0, offset=0
-	unsigned short snfVersion; // size=0, offset=4
-	unsigned short uniqueID; // size=0, offset=6
-	unsigned short handle; // size=0, offset=8
-	unsigned short numSfxInFile; // size=0, offset=10
-	struct _AadDynSfxFileHdr *prevDynSfxFile; // size=20, offset=12
-	struct _AadDynSfxFileHdr *nextDynSfxFile; // size=20, offset=16
-};
-
-struct AadDynSfxAttr // hashcode: 0x20751E4B (dec: 544546379)
-{
-	unsigned short sfxID; // size=0, offset=0
-	unsigned short waveID; // size=0, offset=2
-	struct AadToneAtr toneAttr; // size=16, offset=4
-	unsigned long waveSize; // size=0, offset=20
-};
-
-struct AadTempoCounter // hashcode: 0x15707CC0 (dec: 359693504)
-{
-	unsigned long currentTick; // size=0, offset=0
-	unsigned long currentError; // size=0, offset=4
-	unsigned long tickTimeFixed; // size=0, offset=8
-	unsigned long errorPerUpdate; // size=0, offset=12
-	unsigned short ticksPerUpdate; // size=0, offset=16
-	unsigned short ppqn; // size=0, offset=18
-	unsigned long quarterNoteTime; // size=0, offset=20
-};
-
-struct AadSeqEvent // hashcode: 0x3E306185 (dec: 1043358085)
-{
-	unsigned long deltaTime; // size=0, offset=0
-	unsigned char track; // size=0, offset=4
-	unsigned char statusByte; // size=0, offset=5
-	char dataByte[6]; // size=6, offset=6
-};
-
-struct _AadSequenceSlot // hashcode: 0xD7421DD6 (dec: -683532842)
-{
-	struct AadTempoCounter tempo; // size=24, offset=0
-	struct AadSeqEvent eventQueue[4][16]; // size=768, offset=24
-	unsigned char eventIn[16]; // size=16, offset=792
-	unsigned char eventOut[16]; // size=16, offset=808
-	unsigned char eventsInQueue[16]; // size=16, offset=824
-	unsigned char (*sequencePosition[16]); // size=64, offset=840
-	unsigned long lastEventExecutedTime[16]; // size=64, offset=904
-	unsigned char runningStatus[16]; // size=16, offset=968
-	unsigned char trackFlags[16]; // size=16, offset=984
-	unsigned char (*loopSequencePosition[4][16]); // size=256, offset=1000
-	unsigned char loopCurrentNestLevel[16]; // size=16, offset=1256
-	unsigned char loopCounter[4][16]; // size=64, offset=1272
-	struct _AadSequenceSlot *selectedSlotPtr; // size=1488, offset=1336
-	unsigned char selectedSlotNum; // size=0, offset=1340
-	unsigned char selectedChannel; // size=0, offset=1341
-	unsigned char sequenceNumberAssigned; // size=0, offset=1342
-	unsigned char thisSlotNumber; // size=0, offset=1343
-	unsigned short status; // size=0, offset=1344
-	unsigned short channelMute; // size=0, offset=1346
-	unsigned short delayedMuteMode; // size=0, offset=1348
-	unsigned short delayedMuteCmds; // size=0, offset=1350
-	unsigned short delayedUnMuteCmds; // size=0, offset=1352
-	unsigned short unused; // size=0, offset=1354
-	unsigned short enableSustainUpdate; // size=0, offset=1356
-	unsigned short ignoreTranspose; // size=0, offset=1358
-	unsigned char slotFlags; // size=0, offset=1360
-	unsigned char slotID; // size=0, offset=1361
-	unsigned char slotVolume; // size=0, offset=1362
-	unsigned char slotPan; // size=0, offset=1363
-	int *masterVolPtr; // size=0, offset=1364
-	int selectedDynamicBank; // size=0, offset=1368
-	int sequenceAssignedDynamicBank; // size=0, offset=1372
-	unsigned char currentDynamicBank[16]; // size=16, offset=1376
-	unsigned short pitchWheel[16]; // size=32, offset=1392
-	unsigned char currentProgram[16]; // size=16, offset=1424
-	unsigned char volume[16]; // size=16, offset=1440
-	unsigned char panPosition[16]; // size=16, offset=1456
-	char transpose[16]; // size=16, offset=1472
-};
-
-struct AadSfxCommand // hashcode: 0xD8F832F6 (dec: -654822666)
-{
-	unsigned char statusByte; // size=0, offset=0
-	unsigned char dataByte[3]; // size=3, offset=1
-	unsigned long ulongParam; // size=0, offset=4
-	short shortParam; // size=0, offset=8
-	unsigned short unused; // size=0, offset=10
-};
-
-struct AadSfxSlot // hashcode: 0x6E655A78 (dec: 1852136056)
-{
-	struct AadSfxCommand commandQueue[32]; // size=384, offset=0
-	unsigned char commandIn; // size=0, offset=384
-	unsigned char commandOut; // size=0, offset=385
-	unsigned short commandsInQueue; // size=0, offset=386
-	unsigned short handleCounter; // size=0, offset=388
-	unsigned char sfxVolume; // size=0, offset=390
-	unsigned char sfxPan; // size=0, offset=391
-};
-
-struct AadSynthVoice // hashcode: 0x12E02CA2 (dec: 316681378)
-{
-	unsigned long voiceMask; // size=0, offset=0
-	unsigned long handle; // size=0, offset=4
-	unsigned char voiceID; // size=0, offset=8
-	unsigned char priority; // size=0, offset=9
-	unsigned char note; // size=0, offset=10
-	unsigned char unused; // size=0, offset=11
-	unsigned char program; // size=0, offset=12
-	unsigned char baseProg; // size=0, offset=13
-	unsigned char volume; // size=0, offset=14
-	unsigned char updateVol; // size=0, offset=15
-	unsigned char pan; // size=0, offset=16
-	unsigned char voiceNum; // size=0, offset=17
-	unsigned short flags; // size=0, offset=18
-	struct AadToneAtr *toneAtr; // size=16, offset=20
-	struct AadProgramAtr *progAtr; // size=8, offset=24
-};
-
-struct AadDynamicLoadRequest // hashcode: 0xBC9D60B7 (dec: -1130536777)
-{
-	int type; // size=0, offset=0
-	int handle; // size=0, offset=4
-	long directoryID; // size=0, offset=8
-	long flags; // size=0, offset=12
-	char fileName[12]; // size=12, offset=16
-};
-
-struct AadDynamicBankLoadInfo // hashcode: 0x6A3AE9FB (dec: 1782245883)
-{
-	char sndFileName[32]; // size=32, offset=0
-	char smpFileName[32]; // size=32, offset=32
-	int dynamicBankIndex; // size=0, offset=64
-	int loadOption; // size=0, offset=68
-	void (*userCallbackProc)(); // size=0, offset=72
-	unsigned long sramDataSize; // size=0, offset=76
-	unsigned long nextSramAddr; // size=0, offset=80
-	unsigned long flags; // size=0, offset=84
-};
-
-struct AadDynamicSfxLoadInfo // hashcode: 0xEDD41D4C (dec: -304865972)
-{
-	char snfFileName[40]; // size=40, offset=0
-	char smfFileName[40]; // size=40, offset=40
-	int fileHandle; // size=0, offset=80
-	long directoryID; // size=0, offset=84
-	long loadFlags; // size=0, offset=88
-	long flags; // size=0, offset=92
-	int smfLoadingState; // size=0, offset=96
-	unsigned long bytesToLoad; // size=0, offset=100
-	int numSfxToLoad; // size=0, offset=104
-	int error; // size=0, offset=108
-	unsigned long waveTransferAddr; // size=0, offset=112
-	unsigned long totalSramUsed; // size=0, offset=116
-	struct _AadDynSfxFileHdr *snfFile; // size=20, offset=120
-	struct AadDynSfxAttr attr; // size=24, offset=124
-};
-
-struct AadNewSramBlockDesc // hashcode: 0x4DF7A665 (dec: 1308075621)
-{
-	unsigned short waveID; // size=0, offset=0
-	unsigned short address; // size=0, offset=2
-	unsigned short size; // size=0, offset=4
-	unsigned char prevIndex; // size=0, offset=6
-	unsigned char nextIndex; // size=0, offset=7
-};
-
-struct AadLoadedSfxToneAttr // hashcode: 0xC1F66431 (dec: -1040817103)
-{
-	unsigned short referenceCount; // size=0, offset=0
-	unsigned short waveID; // size=0, offset=2
-	struct AadToneAtr toneAttr; // size=16, offset=4
-};
-
-struct AadLoadedSfxWaveAttr // hashcode: 0x3EFD9321 (dec: 1056805665)
-{
-	unsigned short referenceCount; // size=0, offset=0
-	unsigned char unused; // size=0, offset=2
-	unsigned char sramHandle; // size=0, offset=3
-};
-
-struct AadSramDefragInfo // hashcode: 0xB08B77B9 (dec: -1333037127)
-{
-	int status; // size=0, offset=0
-	unsigned char *fragBuffer; // size=0, offset=4
-	int masterListEntry; // size=0, offset=8
-	int waveID; // size=0, offset=12
-	unsigned long destSramAddr; // size=0, offset=16
-	unsigned long srcSramAddr; // size=0, offset=20
-	unsigned long moveSize; // size=0, offset=24
-	unsigned long readSize; // size=0, offset=28
-};
-
-struct AadVolFader // hashcode: 0x053CCA3C (dec: 87870012)
-{
-	int volumeStep; // size=0, offset=0
-	int targetVolume; // size=0, offset=4
-	void (*fadeCompleteCallback)(); // size=0, offset=8
-};
-
 struct MusicLoadCmd // hashcode: 0x575883B8 (dec: 1465418680)
 {
 	int type; // size=0, offset=0
@@ -2410,24 +2170,9 @@ struct _HVertex // hashcode: 0xC488A83D (dec: -997676995)
 	long pad; // size=0, offset=8
 };
 
-struct _MONAPI_Regenerator // hashcode: 0x37E0AA1B (dec: 937470491)
-{
-	unsigned long regenTime; // size=0, offset=0
-	short introUniqueID; // size=0, offset=4
-	short streamUnitID; // size=0, offset=6
-};
 
-enum DEBUG_LINE_TYPE // Hashcode: 0x03F31324 (dec: 66261796)
-{
-	DEBUG_LINE_TYPE_BIT = 0,
-	DEBUG_LINE_TYPE_LONG = 1,
-	DEBUG_LINE_TYPE_ACTION = 2,
-	DEBUG_LINE_TYPE_ACTION_WITH_LINE = 3,
-	DEBUG_LINE_TYPE_MENU = 4,
-	DEBUG_LINE_TYPE_ENDLIST = 5,
-	DEBUG_LINE_TYPE_FORMAT = 6,
-	DEBUG_LINE_TYPE_INFO = 7,
-};
+
+
 
 struct __Event // hashcode: 0xBC16D673 (dec: -1139353997)
 {
@@ -3174,16 +2919,6 @@ struct Camera // hashcode: 0x0670C20F (dec: 108053007)
 	short lead_timer; // size=0, offset=1218
 };
 
-struct DebugMenuLine // hashcode: 0x1BD18E81 (dec: 466718337)
-{
-	enum DEBUG_LINE_TYPE type; // size=4, offset=0
-	long lower; // size=0, offset=4
-	long upper; // size=0, offset=8
-	char *text; // size=0, offset=12
-	long *var_address; // size=0, offset=16
-	long bit_mask; // size=0, offset=20
-};
-
 struct _ButtonTexture // hashcode: 0x9E750D8C (dec: -1636495988)
 {
 	short tpage; // size=0, offset=0
@@ -3630,16 +3365,9 @@ struct SavedBspTree // hashcode: 0x7AE7209C (dec: 2061967516)
 	unsigned char bspIndex; // size=0, offset=7
 };
 
-struct EventBasicObject // hashcode: 0x9FC1DB2A (dec: -1614685398)
-{
-	short id; // size=0, offset=0
-};
 
-union DEBUG_260fake // Hashcode: 0x8C9106F7 (dec: -1936652553)
-{
-	struct Intro *intro; // size=76, offset=0
-	struct _SFXMkr *sfxMarker; // size=36, offset=0
-};
+
+
 
 struct EventWildCardObject // hashcode: 0x24FF3630 (dec: 620705328)
 {
@@ -3647,35 +3375,6 @@ struct EventWildCardObject // hashcode: 0x24FF3630 (dec: 620705328)
 	short spad; // size=0, offset=2
 	long unitID; // size=0, offset=4
 	char *objectName; // size=0, offset=8
-};
-
-struct Event // hashcode: 0x68F4AD26 (dec: 1760865574)
-{
-	short eventNumber; // size=0, offset=0
-	short numInstances; // size=0, offset=2
-	unsigned char numActions; // size=0, offset=4
-	unsigned char processingPuppetShow; // size=0, offset=5
-	short eventVariables[5]; // size=10, offset=6
-	struct EventBasicObject **instanceList; // size=2, offset=16
-	struct ScriptPCode **conditionalList; // size=8, offset=20
-	struct ScriptPCode **actionList; // size=8, offset=24
-};
-
-struct ScriptPCode // hashcode: 0x5E69DEB9 (dec: 1583996601)
-{
-	unsigned short sizeOfPcodeStream; // size=0, offset=0
-	unsigned short conditionBits; // size=0, offset=2
-	short *data; // size=0, offset=4
-};
-
-struct InstanceSpline // hashcode: 0x88E38857 (dec: -1998354345)
-{
-	struct _Instance *instance; // size=616, offset=0
-	struct MultiSpline *spline; // size=80, offset=4
-	long attribute; // size=0, offset=8
-	long isParent; // size=0, offset=12
-	long isClass; // size=0, offset=16
-	long splineFlags; // size=0, offset=20
 };
 
 struct Vector3d // hashcode: 0x10BF06FC (dec: 280954620)
@@ -3883,26 +3582,6 @@ enum option_ctrl_t // Hashcode: 0xEBCEABAC (dec: -338777172)
 	option_ctrl_left = 3,
 	option_ctrl_right = 4,
 	option_ctrl_num_states = 5,
-};
-
-struct GameCheat // hashcode: 0x9BFF36C0 (dec: -1677773120)
-{
-	unsigned char cheatKeys[12]; // size=12, offset=0
-	short cheatLen; // size=0, offset=12
-	short cheatStage; // size=0, offset=14
-};
-
-struct debug_dispatch_t // hashcode: 0x928EA8E4 (dec: -1836144412)
-{
-	enum DEBUG_LINE_TYPE type; // size=4, offset=0
-	void (*fn)(); // size=0, offset=4
-};
-
-struct debug_format_t // hashcode: 0xCC4C6103 (dec: -867409661)
-{
-	int xpos; // size=0, offset=0
-	int ypos; // size=0, offset=4
-	int is_centered; // size=0, offset=8
 };
 
 typedef struct POLY_F4 POLY_F4;
@@ -5386,27 +5065,9 @@ enum _G2AnimCallbackMsg_Enum // Hashcode: 0xA8F4A89C (dec: -1460361060)
 	G2ANIM_MSG_PLAYEFFECT = 6,
 };
 
-union INSTANCE_76fake // Hashcode: 0x868EC9CC (dec: -2037462580)
-{
-	struct {
-		unsigned long (*function)(); // size=0, offset=0
-		void *fnData; // size=0, offset=4
-	} callback; // size=8, offset=0, found in object files: instance.o, instance.o
-	struct {
-		struct _G2SVector3_Type base; // size=6, offset=0
-		struct _G2SVector3_Type offset; // size=6, offset=6
-	} vector; // size=12, offset=0, found in object files: instance.o, instance.o
-	struct {
-		struct _G2Quat_Type src; // size=8, offset=0
-		struct _G2Quat_Type dest; // size=8, offset=8
-	} quat; // size=16, offset=0, found in object files: instance.o, instance.o
-};
 
-union INSTANCE_77fake // Hashcode: 0x2031C6D4 (dec: 540133076)
-{
-	long color; // size=0, offset=0
-	struct _RGBAColor rgba; // size=4, offset=0
-};
+
+
 
 struct _AnimSoundData_Type // hashcode: 0x5367FF66 (dec: 1399324518)
 {
@@ -12057,75 +11718,7 @@ struct DR_STP // hashcode: 0x8C972396 (dec: -1936252010)
 	unsigned long code[2]; // size=8, offset=4
 };
 
-union UNDRWRLD_76fake // Hashcode: 0x6E59B9C2 (dec: 1851374018)
-{
-	struct {
-		unsigned long (*function)(); // size=0, offset=0
-		void *fnData; // size=0, offset=4
-	} callback; // size=8, offset=0, found in object files: undrwrld.o, undrwrld.o
-	struct {
-		struct _G2SVector3_Type base; // size=6, offset=0
-		struct _G2SVector3_Type offset; // size=6, offset=6
-	} vector; // size=12, offset=0, found in object files: undrwrld.o, undrwrld.o
-	struct {
-		struct _G2Quat_Type src; // size=8, offset=0
-		struct _G2Quat_Type dest; // size=8, offset=8
-	} quat; // size=16, offset=0, found in object files: undrwrld.o, undrwrld.o
-};
 
-union UNDRWRLD_77fake // Hashcode: 0x395B97AA (dec: 962303914)
-{
-	long color; // size=0, offset=0
-	struct _RGBAColor rgba; // size=4, offset=0
-};
-
-struct UNDRWRLD_114fake // hashcode: 0x3CF3A383 (dec: 1022600067)
-{
-	struct {
-		struct MultiSpline *posSpline; // size=0, offset=0
-		struct MultiSpline *targetSpline; // size=0, offset=4
-		struct _SVector lastSplinePos; // size=8, offset=8
-		short splinePointAhead; // size=0, offset=16
-		short cinema_done; // size=0, offset=18
-		int splinecam_currkey; // size=0, offset=20
-		int splinecam_helpkey; // size=0, offset=24
-	} Cinematic; // size=28, offset=0, found in object files: undrwrld.o, undrwrld.o
-	struct {
-		struct _Position offset; // size=6, offset=0
-		struct _Rotation rotation; // size=8, offset=6
-		long focusDistance; // size=0, offset=16
-	} Idle; // size=20, offset=28, found in object files: undrwrld.o, undrwrld.o
-	struct {
-		struct _TFace *tface; // size=12, offset=0
-		struct _TFace *oldTFace; // size=12, offset=4
-		struct _SVector oldTargetRot; // size=8, offset=8
-		long timer; // size=0, offset=16
-		struct _SVector oldFocusInstancePos; // size=8, offset=20
-	} Behind; // size=28, offset=48, found in object files: undrwrld.o, undrwrld.o
-	struct {
-		long stopTimer; // size=0, offset=0
-		long stopHit; // size=0, offset=4
-		struct _TFace *tface; // size=12, offset=8
-		struct _TFace *oldTFace; // size=12, offset=12
-		long hit; // size=0, offset=16
-	} Follow; // size=20, offset=76, found in object files: undrwrld.o, undrwrld.o
-};
-
-union UNDRWRLD_195fake // Hashcode: 0xA8618D78 (dec: -1470001800)
-{
-	struct _Instance *target; // size=616, offset=0
-	struct _Position position; // size=6, offset=0
-	struct _Rotation direction; // size=8, offset=0
-	struct _Position throwVector; // size=6, offset=0
-};
-
-struct UW_ScreenXY // hashcode: 0x88757B16 (dec: -2005566698)
-{
-	short sx; // size=0, offset=0
-	short sy; // size=0, offset=2
-	short dx; // size=0, offset=4
-	short dy; // size=0, offset=6
-};
 
 typedef struct DR_STP DR_STP;
 

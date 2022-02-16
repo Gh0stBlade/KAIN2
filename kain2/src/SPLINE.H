@@ -1,6 +1,14 @@
 #ifndef SPLINE_H
 #define SPLINE_H
 
+struct SplineKey // hashcode: 0x5D3D994D (dec: 1564318029)
+{
+	short count; // size=0, offset=0
+	struct vecS point; // size=6, offset=2
+	struct vecL dd; // size=12, offset=8
+	struct vecL ds; // size=12, offset=20
+};
+
 struct Spline // hashcode: 0xA7B8D53F (dec: -1481059009)
 {
 	struct SplineKey* key; // size=32, offset=0
@@ -23,14 +31,6 @@ struct RSpline // hashcode: 0xD9C500BD (dec: -641400643)
 	unsigned char flags; // size=0, offset=7
 };
 
-struct SplineKey // hashcode: 0x5D3D994D (dec: 1564318029)
-{
-	short count; // size=0, offset=0
-	struct vecS point; // size=6, offset=2
-	struct vecL dd; // size=12, offset=8
-	struct vecL ds; // size=12, offset=20
-};
-
 struct SplineDef // hashcode: 0x04DD5459 (dec: 81613913)
 {
 	short currkey; // size=0, offset=0
@@ -49,6 +49,16 @@ struct MultiSpline // hashcode: 0x2823B2CF (dec: 673428175)
 	struct SplineDef curScaling; // size=8, offset=32
 	struct SplineDef curColor; // size=8, offset=40
 	struct MATRIX curRotMatrix; // size=32, offset=48
+};
+
+struct InstanceSpline // hashcode: 0x88E38857 (dec: -1998354345)
+{
+	struct _Instance* instance; // size=616, offset=0
+	struct MultiSpline* spline; // size=80, offset=4
+	long attribute; // size=0, offset=8
+	long isParent; // size=0, offset=12
+	long isClass; // size=0, offset=16
+	long splineFlags; // size=0, offset=20
 };
 
 extern void _SplineS2Pos(struct vecS *p, long s, struct SplineKey *key, struct SplineKey *key2); // 0x80040C18

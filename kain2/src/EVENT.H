@@ -1,6 +1,70 @@
 #ifndef EVENT_H
 #define EVENT_H
 
+struct EventBasicObject // hashcode: 0x9FC1DB2A (dec: -1614685398)
+{
+	short id; // size=0, offset=0
+};
+
+struct ScriptPCode // hashcode: 0x5E69DEB9 (dec: 1583996601)
+{
+	unsigned short sizeOfPcodeStream; // size=0, offset=0
+	unsigned short conditionBits; // size=0, offset=2
+	short* data; // size=0, offset=4
+};
+
+struct Event // hashcode: 0x68F4AD26 (dec: 1760865574)
+{
+	short eventNumber; // size=0, offset=0
+	short numInstances; // size=0, offset=2
+	unsigned char numActions; // size=0, offset=4
+	unsigned char processingPuppetShow; // size=0, offset=5
+	short eventVariables[5]; // size=10, offset=6
+	struct EventBasicObject** instanceList; // size=2, offset=16
+	struct ScriptPCode** conditionalList; // size=8, offset=20
+	struct ScriptPCode** actionList; // size=8, offset=24
+};
+
+struct EventTimer // hashcode: 0xAA55BC81 (dec: -1437221759)
+{
+	long flags : 1; // offset=0.0
+	long time : 31; // offset=0.1
+	struct Event* event; // size=28, offset=4
+	struct ScriptPCode* actionScript; // size=8, offset=8
+	short* scriptPos; // size=0, offset=12
+	struct Level* level; // size=392, offset=16
+	long nextEventIndex; // size=0, offset=20
+};
+
+struct EventInstanceObject // hashcode: 0xC22B6786 (dec: -1037342842)
+{
+	short id; // size=0, offset=0
+	short flags; // size=0, offset=2
+	long unitID; // size=0, offset=4
+	long introUniqueID; // size=0, offset=8
+	struct _Instance* instance; // size=616, offset=12
+	union {
+		struct Intro* intro; // size=76, offset=0
+		struct _SFXMkr* sfxMarker; // size=36, offset=0
+	} data; // size=4, offset=16, found in object files: event.o, event.o
+};
+
+struct EventEventObject // hashcode: 0x59DD7B24 (dec: 1507687204)
+{
+	short id; // size=0, offset=0
+	short eventNumber; // size=0, offset=2
+	long unitID; // size=0, offset=4
+	struct Event* event; // size=0, offset=8
+};
+
+struct EventTGroupObject // hashcode: 0x9ED92E4E (dec: -1629934002)
+{
+	short id; // size=0, offset=0
+	short tgroupNumber; // size=0, offset=2
+	long unitID; // size=0, offset=4
+	struct BSPTree* bspTree; // size=36, offset=8
+	struct _StreamUnit* stream; // size=0, offset=12
+};
 
 extern void EVENT_UpdateResetSignalArrayAndWaterMovement(struct Level *oldLevel, struct Level *newLevel, long sizeOfLevel); // 0x800605D0
 

@@ -174,6 +174,63 @@ struct _MonsterIR // hashcode: 0x41A7CD43 (dec: 1101516099)
 	unsigned long idleTime; // size=0, offset=32
 };
 
+struct _MonsterState // hashcode: 0x1B0172BB (dec: 453079739)
+{
+	void (*entryFunction)(struct _Instance* instance); // size=0, offset=0
+	void (*stateFunction)(struct _Instance* instance); // size=0, offset=4
+};
+
+struct _MonsterStateChoice // hashcode: 0xE0AABD5C (dec: -525681316)
+{
+	int state; // size=0, offset=0
+	struct _MonsterState functions; // size=8, offset=4
+};
+
+struct _MonsterAttributes // hashcode: 0x9EE88812 (dec: -1628927982)
+{
+	unsigned long magicnum; // size=0, offset=0
+	void* tunData; // size=0, offset=4
+	char* auxAnimList; // size=0, offset=8
+	char* ambientAnimList; // size=0, offset=12
+	long whatAmI; // size=0, offset=16
+	char numAuxAnims; // size=0, offset=20
+	char numAmbientAnims; // size=0, offset=21
+	unsigned char defaultAge; // size=0, offset=22
+	char pupateObject; // size=0, offset=23
+	unsigned char damageFXSegment; // size=0, offset=24
+	unsigned char headSegment; // size=0, offset=25
+	unsigned char neckSegment; // size=0, offset=26
+	unsigned char leftShoulderSegment; // size=0, offset=27
+	unsigned char rightShoulderSegment; // size=0, offset=28
+	unsigned char waistSegment; // size=0, offset=29
+	unsigned char leftKneeSegment; // size=0, offset=30
+	unsigned char rightKneeSegment; // size=0, offset=31
+	unsigned char leftFootSegment; // size=0, offset=32
+	unsigned char rightFootSegment; // size=0, offset=33
+	unsigned char spineSegment; // size=0, offset=34
+	unsigned char leftWeaponSegment; // size=0, offset=35
+	unsigned char rightWeaponSegment; // size=0, offset=36
+	unsigned char grabSegment; // size=0, offset=37
+	unsigned char bloodImpaleFrame; // size=0, offset=38
+	unsigned char bloodConeFrame; // size=0, offset=39
+	char numSubAttributes; // size=0, offset=40
+	char numCombatAttributes; // size=0, offset=41
+	char numAttackAttributes; // size=0, offset=42
+	char numMissiles; // size=0, offset=43
+	char numAnims; // size=0, offset=44
+	char numIdles; // size=0, offset=45
+	char numBehaviors; // size=0, offset=46
+	char numShatters; // size=0, offset=47
+	struct _MonsterSubAttributes** subAttributesList; // size=84, offset=48
+	struct _MonsterCombatAttributes** combatAttributesList; // size=46, offset=52
+	struct _MonsterAttackAttributes* attackAttributesList; // size=32, offset=56
+	struct _MonsterMissile* missileList; // size=16, offset=60
+	struct _MonsterAnim* animList; // size=16, offset=64
+	struct _MonsterIdle* idleList; // size=4, offset=68
+	struct _MonsterBehavior* behaviorList; // size=8, offset=72
+	void* shatterList; // size=0, offset=76
+};
+
 struct _MonsterVars // hashcode: 0xEF80566F (dec: -276801937)
 {
 	unsigned long mvFlags; // size=0, offset=0
@@ -246,6 +303,38 @@ struct _MonsterVars // hashcode: 0xEF80566F (dec: -276801937)
 	long terrainImpaleID; // size=0, offset=400
 	short targetFade; // size=0, offset=404
 	short fadeRate; // size=0, offset=406
+};
+
+struct MONMSG_114fake // hashcode: 0x79F33A82 (dec: 2045983362)
+{
+	struct {
+		struct MultiSpline* posSpline; // size=0, offset=0
+		struct MultiSpline* targetSpline; // size=0, offset=4
+		struct _SVector lastSplinePos; // size=8, offset=8
+		short splinePointAhead; // size=0, offset=16
+		short cinema_done; // size=0, offset=18
+		int splinecam_currkey; // size=0, offset=20
+		int splinecam_helpkey; // size=0, offset=24
+	} Cinematic; // size=28, offset=0, found in object files: monmsg.o, monmsg.o
+	struct {
+		struct _Position offset; // size=6, offset=0
+		struct _Rotation rotation; // size=8, offset=6
+		long focusDistance; // size=0, offset=16
+	} Idle; // size=20, offset=28, found in object files: monmsg.o, monmsg.o
+	struct {
+		struct _TFace* tface; // size=12, offset=0
+		struct _TFace* oldTFace; // size=12, offset=4
+		struct _SVector oldTargetRot; // size=8, offset=8
+		long timer; // size=0, offset=16
+		struct _SVector oldFocusInstancePos; // size=8, offset=20
+	} Behind; // size=28, offset=48, found in object files: monmsg.o, monmsg.o
+	struct {
+		long stopTimer; // size=0, offset=0
+		long stopHit; // size=0, offset=4
+		struct _TFace* tface; // size=12, offset=8
+		struct _TFace* oldTFace; // size=12, offset=12
+		long hit; // size=0, offset=16
+	} Follow; // size=20, offset=76, found in object files: monmsg.o, monmsg.o
 };
 
 extern void MON_DoCombatTimers(struct _Instance *instance); // 0x800871FC
