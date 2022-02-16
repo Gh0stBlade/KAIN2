@@ -1,6 +1,25 @@
 #ifndef STREAM_H
 #define STREAM_H
 
+struct StreamUnitPortal // hashcode: 0x7C52D8D9 (dec: 2085804249)
+{
+	char tolevelname[16]; // size=16, offset=0
+	long MSignalID; // size=0, offset=16
+	long streamID; // size=0, offset=20
+	short minx; // size=0, offset=24
+	short miny; // size=0, offset=26
+	short minz; // size=0, offset=28
+	short flags; // size=0, offset=30
+	short maxx; // size=0, offset=32
+	short maxy; // size=0, offset=34
+	short maxz; // size=0, offset=36
+	short pad2; // size=0, offset=38
+	struct _StreamUnit* toStreamUnit; // size=64, offset=40
+	struct _SVector t1[3]; // size=24, offset=44
+	struct _SVector t2[3]; // size=24, offset=68
+};
+
+typedef struct StreamUnitPortal StreamUnitPortal;
 
 extern void STREAM_FillOutFileNames(char *baseAreaName, char *dramName, char *vramName, char *sfxName); // 0x800584E4
 
