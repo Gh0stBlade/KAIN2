@@ -1,9 +1,10 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 
 //0001:00031400       _PCinit                    00432400 f   libsn.obj
 int	PCinit(void)
 {
-	return (fcloseall() != -1) - 1;
+	return (_fcloseall() != -1) - 1;
 }
 //0001 : 00031410       _PCopen                    00432410 f   libsn.obj
 int	PCopen(char* name, int flags, int perms)

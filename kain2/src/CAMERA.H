@@ -233,6 +233,9 @@ struct Camera // hashcode: 0x0670C20F (dec: 108053007)
 	short lead_timer; // size=0, offset=1218
 };
 
+#if defined(_LANGUAGE_C_PLUS_PLUS)||defined(__cplusplus)||defined(c_plusplus)
+extern "C" {
+#endif
 
 extern void CAMERA_CalculateViewVolumeNormals(struct Camera *camera); // 0x800146E8
 extern void CAMERA_CalcVVClipInfo(struct Camera *camera); // 0x80014A24
@@ -332,5 +335,9 @@ extern void CAMERA_DoPanicCheck(struct Camera *camera, struct CameraCollisionInf
 extern void CAMERA_Panic(struct Camera *camera, short min_dist); // 0x8001D01C
 extern long CAMERA_DoCameraCollision2(struct Camera *camera, struct _Position *targetCamPos, int simpleflag); // 0x8001D1CC
 extern int CAMERA_FocusInstanceMoved(struct Camera *camera); // 0x8001D7D0
+
+#if defined(_LANGUAGE_C_PLUS_PLUS)||defined(__cplusplus)||defined(c_plusplus)
+}
+#endif
 
 #endif

@@ -14,12 +14,16 @@
 
 #define null	0
 
-//#ifndef WIN32
+#ifndef WINAPI
 typedef unsigned char BYTE;
 typedef unsigned __int64 QWORD;
 typedef unsigned int DWORD;
 typedef unsigned short WORD;
-//#endif
+#endif
+
+typedef unsigned long u_long;
+typedef unsigned short u_short;
+typedef unsigned char u_char;
 
 struct _SVector // hashcode: 0x73B07C09 (dec: 1940945929)
 {
