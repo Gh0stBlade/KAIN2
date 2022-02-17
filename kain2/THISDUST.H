@@ -3126,6 +3126,9 @@ struct _LoadQueueEntry // hashcode: 0xFEE70962 (dec: -18413214)
 	char relocateBinary; // size=0, offset=6
 	char mempackUsed; // size=0, offset=7
 	struct _NonBlockLoadEntry loadEntry; // size=56, offset=8
+#ifdef PSX_VERSION
+	long endLoadTime; // size=0, offset=108
+#endif
 };
 
 struct SavedBasic // hashcode: 0x6198E1EF (dec: 1637409263)
