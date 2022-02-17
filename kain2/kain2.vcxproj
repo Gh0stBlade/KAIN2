@@ -310,6 +310,8 @@
     <ClInclude Include="src\MONSTER\VWRAITH.H" />
     <ClInclude Include="src\MONSTER\WORSHIP.H" />
     <ClInclude Include="src\OBTABLE.H" />
+    <ClInclude Include="src\PC\LIBGPU.H" />
+    <ClInclude Include="src\PC\LIBGTE.H" />
     <ClInclude Include="src\PC\libspu.h" />
     <ClInclude Include="src\PHYSICS.H" />
     <ClInclude Include="src\PHYSOBS.H" />
