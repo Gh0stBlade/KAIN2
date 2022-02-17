@@ -1,8 +1,6 @@
 #ifndef _LIBSPU_H_
 #define _LIBSPU_H_
 
-#include "../../psyq.h"
-
 /*****************************************************************
  * -*- c -*-
  * $RCSfile: libspu.h,v $

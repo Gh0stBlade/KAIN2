@@ -5,8 +5,6 @@
 #ifndef _LIBGTE_H_
 #define _LIBGTE_H_
 
-#include "../../psyq.h"
-
 /*
  *  (C) Copyright 1993/1994/1995 Sony Computer Entertainment ,Tokyo,Japan.
  *				All Rights Reserved

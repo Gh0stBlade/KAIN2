@@ -48,7 +48,7 @@ struct MultiSpline // hashcode: 0x2823B2CF (dec: 673428175)
 	struct SplineDef curRotational; // size=8, offset=24
 	struct SplineDef curScaling; // size=8, offset=32
 	struct SplineDef curColor; // size=8, offset=40
-	struct MATRIX curRotMatrix; // size=32, offset=48
+	MATRIX curRotMatrix; // size=32, offset=48
 };
 
 struct InstanceSpline // hashcode: 0x88E38857 (dec: -1998354345)

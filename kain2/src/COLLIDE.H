@@ -14,8 +14,8 @@ struct _CollideInfo // hashcode: 0xCA2DF5E9 (dec: -902957591)
 	void* prim1; // size=0, offset=12
 	void* inst0; // size=0, offset=16
 	void* inst1; // size=0, offset=20
-	struct SVECTOR point0; // size=8, offset=24
-	struct SVECTOR point1; // size=8, offset=32
+	SVECTOR point0; // size=8, offset=24
+	SVECTOR point1; // size=8, offset=32
 	struct _Position offset; // size=6, offset=40
 	short bspID; // size=0, offset=46
 };
@@ -40,7 +40,7 @@ struct SCollideInfo // hashcode: 0x0DEAD21F (dec: 233493023)
 
 struct PandTScratch // hashcode: 0x53B2A743 (dec: 1404217155)
 {
-	struct MATRIX posMatrix; // size=32, offset=0
+	MATRIX posMatrix; // size=32, offset=0
 	struct _SVector normal; // size=8, offset=32
 	struct _Vector dpv; // size=12, offset=40
 	struct _SVector planePoint; // size=8, offset=52

@@ -52,7 +52,7 @@ struct _Instance // hashcode: 0x699A5B3D (dec: 1771723581)
 	struct _SVector scale; // size=8, offset=132
 	long attachedID; // size=0, offset=140
 	long attachedSegment; // size=0, offset=144
-	struct MATRIX relativeMatrix; // size=32, offset=148
+	MATRIX relativeMatrix; // size=32, offset=148
 	struct _TFace* tface; // size=12, offset=180
 	struct _TFace* oldTFace; // size=12, offset=184
 	void* tfaceLevel; // size=0, offset=188

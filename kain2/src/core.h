@@ -1,7 +1,12 @@
 #ifndef __CORE_H
 #define __CORE_H
 
+#ifdef _WIN32
 #include "psyq.h"
+#include "PC/LIBGTE.H"
+#include "PC/LIBGPU.H"
+#include "PC/libspu.h"
+#endif
 
 #define SCREEN_WIDTH 512
 #define SCREEN_HEIGHT 240
@@ -150,5 +155,7 @@ struct NodeType // hashcode: 0x5BF613D7 (dec: 1542853591)
 #include "INSTANCE.H"
 #include "COLLIDE.H"
 #include "PHYSICS.H"
+
+#include "RESOLVE.H"
 
 #endif
