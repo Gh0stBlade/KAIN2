@@ -408,7 +408,7 @@ int LOAD_SetupFileInfo(struct _NonBlockLoadEntry *loadEntry)
 
 	if (fileInfo == NULL)
 	{
-		if (loadEntry->dirHash == loadStatus.bigFile.currentDir)
+		if (loadEntry->dirHash == loadStatus.bigFile.currentDirID)
 		{
 			DEBUG_FatalError("CD ERROR: File %s does not exist\n", &loadEntry->fileName[0]);
 		}
