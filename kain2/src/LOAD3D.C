@@ -656,7 +656,7 @@ void LOAD_NonBlockingReadFile(struct _NonBlockLoadEntry *loadEntry)
 
 void LOAD_LoadTIM(long *addr, long x_pos, long y_pos, long clut_x, long clut_y)
 { 
-	struct RECT rect;
+	struct PSX_RECT rect;
 	long *clutAddr;
 
 	addr += 2;
@@ -695,7 +695,7 @@ void LOAD_LoadTIM2(long *addr, long x_pos, long y_pos, long width, long height)
 		// Start line: 1259
 		// Start offset: 0x80037B3C
 		// Variables:
-			struct RECT rect; // stack offset -16
+			struct PSX_RECT rect; // stack offset -16
 	/* end block 1 */
 	// End offset: 0x80037B3C
 	// End Line: 1259

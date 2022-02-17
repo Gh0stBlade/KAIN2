@@ -13,7 +13,7 @@ WORD word_C6108A;
 // void /*$ra*/ FONT_MakeSpecialFogClut(int x /*$a3*/, int y /*$a1*/)
 void FONT_MakeSpecialFogClut(int x, int y)
 { // line 58, offset 0x8002cb74
-	RECT v2; // [esp+4h] [ebp-28h] BYREF
+	PSX_RECT v2; // [esp+4h] [ebp-28h] BYREF
 	static WORD v3[16] = { 0x4210, 0x4210, 0x4210, 0x4210, 0x4210, 0x4210, 0x4210, 0x4210, 
 	0x4210, 0x4210, 0x4210, 0x4210, 0x4210, 0x4210, 0x4210, 0 }; // [esp+Ch] [ebp-20h] BYREF
 

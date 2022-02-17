@@ -186,7 +186,7 @@ void InitDisplay()
 	TILE* t; // eax
 	u_long tag; // edx
 	int dispPage; // eax
-	RECT rect; // [esp+Ch] [ebp-8h] BYREF
+	PSX_RECT rect; // [esp+Ch] [ebp-8h] BYREF
 
 	rect.x = 512;
 	rect.y = 0;

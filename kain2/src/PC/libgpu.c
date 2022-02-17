@@ -1,7 +1,7 @@
 #include "../core.h"
 #include "../../psyq.h"
 
-typedef struct RECT RECT;
+typedef struct PSX_RECT PSX_RECT;
 typedef struct DISPENV DISPENV;
 typedef struct DRAWENV DRAWENV;
 typedef struct DR_AREA DR_AREA;
@@ -13,7 +13,7 @@ void (*_psxEmuState)(void);
 u_long primBase;
 
 //0001:00028b10       _ClearImage                00429b10 f   libgpu.obj
-int ClearImage(RECT* rect, u_char r, u_char g, u_char b)
+int ClearImage(PSX_RECT* rect, u_char r, u_char g, u_char b)
 {
 	return 0;
 }
@@ -72,12 +72,12 @@ u_short GetTPage(int tp, int abr, int x, int y)
 	return ((y & 0x100 | (x >> 2) & 0xF0) >> 4) | (4 * (y & 0x200 | (8 * ((4 * (tp & 3)) | abr & 3))));
 }
 //0001:00028d10       _LoadImage                 00429d10 f   libgpu.obj
-int LoadImage(RECT* rect, u_long* p)
+int LoadImage(PSX_RECT* rect, u_long* p)
 {
 	return 1;
 }
 //0001:00028d20       _MoveImage                 00429d20 f   libgpu.obj
-int MoveImage2(RECT* rect, int x, int y) { return 0; }
+int MoveImage2(PSX_RECT* rect, int x, int y) { return 0; }
 //0001:00028d30       _PutDispEnv                00429d30 f   libgpu.obj
 DISPENV* PutDispEnv(DISPENV* env) { return 0; }
 //0001:00028d40       _PutDrawEnv                00429d40 f   libgpu.obj
@@ -91,7 +91,7 @@ DRAWENV* SetDefDrawEnv(DRAWENV* env, int x, int y, int w, int h) { return 0; }
 //0001:00028d80       _SetDispMask               00429d80 f   libgpu.obj
 void SetDispMask(int mask) {}
 //0001:00028d90       _SetDrawArea               00429d90 f   libgpu.obj
-void SetDrawArea(DR_AREA* p, RECT* r) {}
+void SetDrawArea(DR_AREA* p, PSX_RECT* r) {}
 //0001:00028da0       _SetDrawTPage              00429da0 f   libgpu.obj
 void SetDrawTPage(DR_TPAGE* p, int dfe, int dtd, int tpage) {}
 //0001:00028db0       _SetGraphDebug             00429db0 f   libgpu.obj
@@ -99,4 +99,4 @@ int SetGraphDebug(int level) { return 0; }
 //0001:00028dc0       _SetPolyFT4                00429dc0 f   libgpu.obj
 void SetPolyFT4(POLY_FT4* p) {}
 //0001:00028dd0       _StoreImage                00429dd0 f   libgpu.obj
-int StoreImage(RECT* rect, u_long* p) { return 0; }
+int StoreImage(PSX_RECT* rect, u_long* p) { return 0; }

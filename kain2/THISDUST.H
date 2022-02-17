@@ -1922,7 +1922,7 @@ typedef struct CRVECTOR3 CRVECTOR3;
 
 typedef struct CRVECTOR4 CRVECTOR4;
 
-typedef struct RECT RECT;
+typedef struct PSX_RECT RECT;
 
 typedef struct DR_ENV DR_ENV;
 
@@ -4026,9 +4026,9 @@ typedef struct RedirectList RedirectList;
 
 struct DRAWENV // hashcode: 0x1D93A150 (dec: 496214352)
 {
-	struct RECT clip; // size=8, offset=0
+	struct PSX_RECT clip; // size=8, offset=0
 	short ofs[2]; // size=4, offset=8
-	struct RECT tw; // size=8, offset=12
+	struct PSX_RECT tw; // size=8, offset=12
 	unsigned short tpage; // size=0, offset=20
 	unsigned char dtd; // size=0, offset=22
 	unsigned char dfe; // size=0, offset=23
@@ -4041,8 +4041,8 @@ struct DRAWENV // hashcode: 0x1D93A150 (dec: 496214352)
 
 struct DISPENV // hashcode: 0x286FCE3D (dec: 678415933)
 {
-	struct RECT disp; // size=8, offset=0
-	struct RECT screen; // size=8, offset=8
+	struct PSX_RECT disp; // size=8, offset=0
+	struct PSX_RECT screen; // size=8, offset=8
 	unsigned char isinter; // size=0, offset=16
 	unsigned char isrgb24; // size=0, offset=17
 	unsigned char pad0; // size=0, offset=18

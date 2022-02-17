@@ -115,7 +115,7 @@ struct CRVECTOR4 // hashcode: 0x56AED614 (dec: 1454298644)
 	unsigned long *rtn; // size=0, offset=136
 };
 
-struct RECT // hashcode: 0xDFC821CB (dec: -540532277)
+struct PSX_RECT // hashcode: 0xDFC821CB (dec: -540532277)
 {
 	short x; // size=0, offset=0
 	short y; // size=0, offset=2

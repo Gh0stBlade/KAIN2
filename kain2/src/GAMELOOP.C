@@ -704,7 +704,7 @@ void GAMELOOP_DisplayFrame(struct GameTracker *gameTracker)
 				struct StreamUnitPortal *streamPortal2; // $s4
 				int i; // $s5
 				int draw; // $s3
-				struct RECT cliprect; // stack offset -72
+				struct PSX_RECT cliprect; // stack offset -72
 
 			/* begin block 1.1.1 */
 				// Start line: 2508

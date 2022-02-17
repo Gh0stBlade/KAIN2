@@ -143,7 +143,7 @@ void UNDERWORLD_SetupSource()
 		// Start line: 280
 		// Start offset: 0x800B509C
 		// Variables:
-			struct RECT rect; // stack offset -32
+			struct PSX_RECT rect; // stack offset -32
 			struct DR_STP stp; // stack offset -24
 	/* end block 1 */
 	// End offset: 0x800B509C

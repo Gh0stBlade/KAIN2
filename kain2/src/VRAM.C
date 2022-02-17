@@ -453,7 +453,7 @@ struct _BlockVramEntry * VRAM_RearrangeVramsLayer(long whichLayer, short *AddX, 
 			struct _BlockVramEntry *curBlock; // $s0
 			struct _BlockVramEntry (*savedVramBlocksPTR[48]); // stack offset -1624
 			struct _BlockVramEntry savedVramBlocks[48]; // stack offset -1432
-			struct RECT vramLoc; // stack offset -88
+			struct PSX_RECT vramLoc; // stack offset -88
 			long numBlocks; // $s3
 			long d; // $s1
 			int error_retry; // $s4
@@ -507,7 +507,7 @@ void VRAM_TransferBufferToVram(void *dataPtr, long dataSize, short status, void 
 		// Start offset: 0x80073DC8
 		// Variables:
 			struct VramBuffer *vramControl; // $s1
-			struct RECT rect; // stack offset -48
+			struct PSX_RECT rect; // stack offset -48
 			long *nextOTag; // $s5
 			long *drawTimerReturn; // $fp
 
@@ -560,7 +560,7 @@ long VRAM_GetObjectVramSpace(struct VramSize *vramSize, struct _ObjectTracker *o
 	__int16 w; // cx
 	int v5; // esi
 	struct _BlockVramEntry* v6; // eax
-	RECT AddX; // [esp+4h] [ebp-Ch] OVERLAPPED BYREF
+	PSX_RECT AddX; // [esp+4h] [ebp-Ch] OVERLAPPED BYREF
 
 	x = vramSize->x + 512;
 	AddX.y = vramSize->y;

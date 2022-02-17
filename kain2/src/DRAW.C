@@ -151,7 +151,7 @@ void DRAW_LoadButton(long *addr, struct _ButtonTexture *button)
 		// Start line: 3574
 		// Start offset: 0x8002ABA8
 		// Variables:
-			struct RECT vramRect; // stack offset -32
+			struct PSX_RECT vramRect; // stack offset -32
 			long *paletteAddr; // $s3
 			short paletteW; // $s2
 			short paletteH; // $s4
