@@ -26,13 +26,7 @@ struct NodeType // hashcode: 0x5BF613D7 (dec: 1542853591)
 
 
 
-struct VramSize // hashcode: 0xD96A55BF (dec: -647342657)
-{
-	short x; // size=0, offset=0
-	short y; // size=0, offset=2
-	short w; // size=0, offset=4
-	short h; // size=0, offset=6
-};
+
 
 struct SplineDef // hashcode: 0x04DD5459 (dec: 81613913)
 {
