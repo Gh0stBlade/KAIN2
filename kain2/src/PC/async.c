@@ -1,9 +1,13 @@
 #include <windows.h>
 #include <stdio.h>
+#include "../core.h"
 
-class ASLD_File
+void __cdecl DBG_Print(const char* fmt, ...);
+
+typedef struct ASLD_File ASLD_File;
+
+struct ASLD_File
 {
-public:
 	ASLD_File *next;
 	int index;
 	DWORD type;
@@ -356,7 +360,7 @@ int __cdecl ASLD_GetFileData(const char* a1, int a2, int a3)
 	}
 	v4->type = (int)EventA;
 	v4->index = 0;
-	strcpy(v4->name, a1);
+	strcpy_s(v4->name, sizeof(v4->name), a1);
 	v4->handle = 0;
 	v4->read_size = a3;
 	v4->pos = a2;
@@ -505,7 +509,7 @@ FILE* __cdecl ASLD_FetchFile(char* FileName, BYTE memType)
 	int size; // edi
 	char* buf; // ebx
 
-	fp = fopen(FileName, "rb");
+	fopen_s(&fp, FileName, "rb");
 	if (fp)
 	{
 		fseek(fp, 0, 2);

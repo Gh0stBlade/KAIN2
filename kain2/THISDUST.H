@@ -945,12 +945,6 @@ struct _GameData_Type // hashcode: 0xE05EBAD0 (dec: -530662704)
 	struct _GameTrackerASMData_Type asmData; // size=32, offset=0
 };
 
-struct NodeType // hashcode: 0x5BF613D7 (dec: 1542853591)
-{
-	struct NodeType *prev; // size=8, offset=0
-	struct NodeType *next; // size=8, offset=4
-};
-
 struct TextureFT3 // hashcode: 0x2D2801D6 (dec: 757596630)
 {
 	unsigned char u0; // size=0, offset=0
@@ -1025,14 +1019,6 @@ struct DrMoveAniTex // hashcode: 0x0820A5D4 (dec: 136357332)
 	struct DrMoveAniTexDestInfo *aniTexInfo; // size=40, offset=4
 };
 
-struct MemHeader // hashcode: 0xDAEE4890 (dec: -621918064)
-{
-	unsigned short magicNumber; // size=0, offset=0
-	unsigned char memStatus; // size=0, offset=2
-	unsigned char memType; // size=0, offset=3
-	unsigned long memSize; // size=0, offset=4
-};
-
 union PLAYER_76fake // Hashcode: 0x35EA4737 (dec: 904546103)
 {
 	struct {
@@ -1068,89 +1054,6 @@ struct _Model // hashcode: 0x9BCE1D24 (dec: -1680990940)
 	struct TextureMT3 *endTextures; // size=16, offset=52
 };
 
-struct _SVector // hashcode: 0x73B07C09 (dec: 1940945929)
-{
-	short x; // size=0, offset=0
-	short y; // size=0, offset=2
-	short z; // size=0, offset=4
-	short pad; // size=0, offset=6
-};
-
-struct _SVectorNoPad // hashcode: 0xA6EDBBC6 (dec: -1494369338)
-{
-	short x; // size=0, offset=0
-	short y; // size=0, offset=2
-	short z; // size=0, offset=4
-};
-
-struct _Position // hashcode: 0x2523C22F (dec: 623100463)
-{
-	short x; // size=0, offset=0
-	short y; // size=0, offset=2
-	short z; // size=0, offset=4
-};
-
-struct _Rotation // hashcode: 0x5A40CBB0 (dec: 1514195888)
-{
-	short x; // size=0, offset=0
-	short y; // size=0, offset=2
-	short z; // size=0, offset=4
-	short pad; // size=0, offset=6
-};
-
-struct _Normal // hashcode: 0xC59D5A5B (dec: -979543461)
-{
-	short x; // size=0, offset=0
-	short y; // size=0, offset=2
-	short z; // size=0, offset=4
-	short pad; // size=0, offset=6
-};
-
-struct _PlaneConstants // hashcode: 0xE1AAD777 (dec: -508897417)
-{
-	short a; // size=0, offset=0
-	short b; // size=0, offset=2
-	short c; // size=0, offset=4
-	short flags; // size=0, offset=6
-	long d; // size=0, offset=8
-};
-
-struct _Vertex // hashcode: 0x97101469 (dec: -1760553879)
-{
-	short x; // size=0, offset=0
-	short y; // size=0, offset=2
-	short z; // size=0, offset=4
-};
-
-struct _Face // hashcode: 0x8775891B (dec: -2022340325)
-{
-	unsigned short v0; // size=0, offset=0
-	unsigned short v1; // size=0, offset=2
-	unsigned short v2; // size=0, offset=4
-};
-
-struct _MVertex // hashcode: 0x2B95C05B (dec: 731234395)
-{
-	struct _Vertex vertex; // size=6, offset=0
-	unsigned short normal; // size=0, offset=6
-};
-
-struct _MFace // hashcode: 0xB75C604D (dec: -1218682803)
-{
-	struct _Face face; // size=6, offset=0
-	unsigned char normal; // size=0, offset=6
-	unsigned char flags; // size=0, offset=7
-	long color; // size=0, offset=8
-};
-
-struct _RGBAColor // hashcode: 0xF7174D90 (dec: -149467760)
-{
-	unsigned char r; // size=0, offset=0
-	unsigned char g; // size=0, offset=1
-	unsigned char b; // size=0, offset=2
-	unsigned char a; // size=0, offset=3
-};
-
 union PLAYER_77fake // Hashcode: 0xBB3AB3AC (dec: -1153780820)
 {
 	long color; // size=0, offset=0
@@ -1178,12 +1081,7 @@ struct _PrimPool // hashcode: 0x9529B283 (dec: -1792429437)
 	unsigned long prim[24000]; // size=96000, offset=12
 };
 
-struct _Sphere // hashcode: 0x361BDD31 (dec: 907795761)
-{
-	struct _Position position; // size=6, offset=0
-	unsigned short radius; // size=0, offset=6
-	unsigned long radiusSquared; // size=0, offset=8
-};
+
 
 struct _Sphere_noSq // hashcode: 0xA031058C (dec: -1607400052)
 {
@@ -1741,35 +1639,6 @@ struct _ColorType // hashcode: 0x440E837C (dec: 1141801852)
 	unsigned char g; // size=0, offset=1
 	unsigned char b; // size=0, offset=2
 	unsigned char code; // size=0, offset=3
-};
-
-struct _CameraCore_Type // hashcode: 0xD341D51C (dec: -750660324)
-{
-	struct _Position position; // size=6, offset=0
-	short pad1; // size=0, offset=6
-	struct MATRIX vvNormalWorVecMat[2]; // size=64, offset=8
-	long vvPlaneConsts[6]; // size=24, offset=72
-	struct MATRIX *wcTransform; // size=32, offset=96
-	long farPlane; // size=0, offset=100
-	long projDistance; // size=0, offset=104
-	long nearPlane; // size=0, offset=108
-	struct MATRIX *wcTransform2; // size=32, offset=112
-	struct MATRIX *cwTransform2; // size=32, offset=116
-	struct _Normal viewVolumeNormal[5]; // size=40, offset=120
-	int leftX; // size=0, offset=160
-	int rightX; // size=0, offset=164
-	int topY; // size=0, offset=168
-	int bottomY; // size=0, offset=172
-	struct _Rotation rotation; // size=8, offset=176
-	short pad2; // size=0, offset=184
-	struct _SVector screenScale; // size=8, offset=186
-	short pad3; // size=0, offset=194
-	struct _Position debugPos; // size=6, offset=196
-	short pad4; // size=0, offset=202
-	struct _Rotation debugRot; // size=8, offset=204
-	short pad5; // size=0, offset=212
-	struct _Position nondebugPos; // size=6, offset=214
-	short pad6; // size=0, offset=220
 };
 
 struct PLAYER_114fake // hashcode: 0x5A1E67AD (dec: 1511942061)
@@ -2601,155 +2470,6 @@ struct EventPointers // hashcode: 0x3787E212 (dec: 931652114)
 {
 	long numPuzzles; // size=0, offset=0
 	struct Event (*eventInstances[1]); // size=4, offset=4
-};
-
-struct Camera // hashcode: 0x0670C20F (dec: 108053007)
-{
-	struct _CameraCore_Type core; // size=224, offset=0
-	long shake; // size=0, offset=224
-	short shakeFrame; // size=0, offset=228
-	short shakeScale; // size=0, offset=230
-	long flags; // size=0, offset=232
-	long lock; // size=0, offset=236
-	short mode; // size=0, offset=240
-	short state; // size=0, offset=242
-	short posState; // size=0, offset=244
-	short rotState; // size=0, offset=246
-	short tiltState; // size=0, offset=248
-	short distanceState; // size=0, offset=250
-	short lagZ; // size=0, offset=252
-	short tilt; // size=0, offset=254
-	struct _Position focusPoint; // size=6, offset=256
-	short focusDistance; // size=0, offset=262
-	struct _Instance *focusInstance; // size=616, offset=264
-	struct _Position oldFocusInstancePos; // size=6, offset=268
-	struct _Position newFocusInstancePos; // size=6, offset=274
-	struct _Rotation oldFocusInstanceRot; // size=8, offset=280
-	struct _Rotation newFocusInstanceRot; // size=8, offset=288
-	struct _SVector focusInstanceVelVec; // size=8, offset=296
-	struct _Position focusLeadPivot; // size=6, offset=304
-	struct _Position focusOffset; // size=6, offset=310
-	struct _Rotation focusRotation; // size=8, offset=316
-	short tiltVel; // size=0, offset=324
-	short tiltAccl; // size=0, offset=326
-	struct _SVector positionVel; // size=8, offset=328
-	struct _SVector positionAccl; // size=8, offset=336
-	struct _SVector focusPointVel; // size=8, offset=344
-	struct _SVector focusPointAccl; // size=8, offset=352
-	short focusDistanceVel; // size=0, offset=360
-	short focusDistanceAccl; // size=0, offset=362
-	struct _SVector focusRotVel; // size=8, offset=364
-	struct _SVector focusRotAccl; // size=8, offset=372
-	struct _SVector maxFocusVel; // size=8, offset=380
-	struct _SVector rotationVel; // size=8, offset=388
-	struct _SVector rotationAccl; // size=8, offset=396
-	short maxVel; // size=0, offset=404
-	short maxRot; // size=0, offset=406
-	struct _Position targetPos; // size=6, offset=408
-	short targetTilt; // size=0, offset=414
-	struct _Rotation targetRotation; // size=8, offset=416
-	short targetFocusDistance; // size=0, offset=424
-	struct _Position targetFocusPoint; // size=6, offset=426
-	short collisionTargetFocusDistance; // size=0, offset=432
-	struct _Rotation targetFocusRotation; // size=8, offset=434
-	short tfaceTilt; // size=0, offset=442
-	struct _Rotation collisionTargetFocusRotation; // size=8, offset=444
-	short smooth; // size=0, offset=452
-	struct _CameraKey *cameraKey; // size=24, offset=456
-	struct _Sphere focusSphere; // size=12, offset=460
-	struct _Sphere smallBaseSphere; // size=12, offset=472
-	struct _Sphere posSphere; // size=12, offset=484
-	short lookTimer; // size=0, offset=496
-	short lookSavedMode; // size=0, offset=498
-	short presetIndex; // size=0, offset=500
-	short presetFocusDistance[3]; // size=6, offset=502
-	long minFocusDistance; // size=0, offset=508
-	long maxFocusDistance; // size=0, offset=512
-	long minTilt; // size=0, offset=516
-	long maxTilt; // size=0, offset=520
-	long pad[3]; // size=12, offset=524
-	long minXYDist; // size=0, offset=536
-	long maxXYDist; // size=0, offset=540
-	long oppositeError; // size=0, offset=544
-	long tempsplinePointAhead; // size=0, offset=548
-	long noTeleport; // size=0, offset=552
-	long focusDistanceList[3][3]; // size=36, offset=556
-	long tiltList[3][3]; // size=36, offset=592
-	long cineControl; // size=0, offset=628
-	short stack; // size=0, offset=632
-	short targetStack; // size=0, offset=634
-	long savedMode[3]; // size=12, offset=636
-	long savedTargetFocusDistance[3]; // size=12, offset=648
-	struct _Rotation savedFocusRotation; // size=8, offset=660
-	short savedFocusDistance; // size=0, offset=668
-	short signalFocusDistance; // size=0, offset=670
-	struct _SavedCinematic savedCinematic[3]; // size=336, offset=672
-	struct _Rotation savedfocusRotation; // size=8, offset=1008
-	struct _Position signalPos; // size=6, offset=1016
-	short pad11; // size=0, offset=1022
-	struct _Rotation signalRot; // size=8, offset=1024
-	short forced_movement; // size=0, offset=1032
-	short last_forced_movement; // size=0, offset=1034
-	short rotDirection; // size=0, offset=1036
-	unsigned long lastModTime; // size=0, offset=1040
-	struct _Rotation lookRot; // size=8, offset=1044
-	struct MultiSpline *Spline00; // size=0, offset=1052
-	struct MultiSpline *Spline01; // size=0, offset=1056
-	struct {
-		struct {
-			struct MultiSpline *posSpline; // size=0, offset=0
-			struct MultiSpline *targetSpline; // size=0, offset=4
-			struct _SVector lastSplinePos; // size=8, offset=8
-			short splinePointAhead; // size=0, offset=16
-			short cinema_done; // size=0, offset=18
-			int splinecam_currkey; // size=0, offset=20
-			int splinecam_helpkey; // size=0, offset=24
-		} Cinematic; // size=28, offset=0, found in object files: debug.o, debug.o
-		struct {
-			struct _Position offset; // size=6, offset=0
-			struct _Rotation rotation; // size=8, offset=6
-			long focusDistance; // size=0, offset=16
-		} Idle; // size=20, offset=28, found in object files: debug.o, debug.o
-		struct {
-			struct _TFace *tface; // size=12, offset=0
-			struct _TFace *oldTFace; // size=12, offset=4
-			struct _SVector oldTargetRot; // size=8, offset=8
-			long timer; // size=0, offset=16
-			struct _SVector oldFocusInstancePos; // size=8, offset=20
-		} Behind; // size=28, offset=48, found in object files: debug.o, debug.o
-		struct {
-			long stopTimer; // size=0, offset=0
-			long stopHit; // size=0, offset=4
-			struct _TFace *tface; // size=12, offset=8
-			struct _TFace *oldTFace; // size=12, offset=12
-			long hit; // size=0, offset=16
-		} Follow; // size=20, offset=76, found in object files: debug.o, debug.o
-	} data; // size=96, offset=1060, found in object files: debug.o, debug.o
-	long cuckooTimer; // size=0, offset=1156
-	short teleportZRot; // size=0, offset=1160
-	short extraZRot; // size=0, offset=1162
-	short extraXRot; // size=0, offset=1164
-	short leftTimer; // size=0, offset=1166
-	short rightTimer; // size=0, offset=1168
-	short collideRotControl; // size=0, offset=1170
-	short collision_lastPush; // size=0, offset=1172
-	short collision_timer; // size=0, offset=1174
-	unsigned long prev_instance_mode; // size=0, offset=1176
-	unsigned long instance_mode; // size=0, offset=1180
-	long instance_xyvel; // size=0, offset=1184
-	long instance_prev_xyvel; // size=0, offset=1188
-	struct _Position real_focuspoint; // size=6, offset=1192
-	short always_rotate_flag; // size=0, offset=1198
-	short follow_flag; // size=0, offset=1200
-	short actual_x_rot; // size=0, offset=1202
-	short actual_vel_x; // size=0, offset=1204
-	short actual_acc_x; // size=0, offset=1206
-	short x_rot_change; // size=0, offset=1208
-	short focuspoint_fallz; // size=0, offset=1210
-	short lead_angle; // size=0, offset=1212
-	short lead_vel; // size=0, offset=1214
-	short lead_accl; // size=0, offset=1216
-	short lead_timer; // size=0, offset=1218
 };
 
 struct _ButtonTexture // hashcode: 0x9E750D8C (dec: -1636495988)
@@ -4816,11 +4536,6 @@ struct _SavedIntroWithIntro // hashcode: 0xF234DCD6 (dec: -231416618)
 	struct _Position position; // size=6, offset=26
 };
 
-
-
-
-typedef struct _G2EulerAngles_Type G2EulerAngles;
-
 typedef enum _G2AnimCallbackMsg_Enum G2AnimCallbackMsg;
 
 typedef struct _AnimSoundData_Type AnimSoundData;
@@ -5046,38 +4761,6 @@ typedef struct evAnimationInstanceSwitchData evAnimationInstanceSwitchData;
 typedef struct evControlSaveDataData evControlSaveDataData;
 
 typedef struct GenericTune GenericTune;
-
-union MATH3D_76fake // Hashcode: 0x663290A4 (dec: 1714589860)
-{
-	struct {
-		unsigned long (*function)(); // size=0, offset=0
-		void *fnData; // size=0, offset=4
-	} callback; // size=8, offset=0, found in object files: math3d.o, math3d.o
-	struct {
-		struct _G2SVector3_Type base; // size=6, offset=0
-		struct _G2SVector3_Type offset; // size=6, offset=6
-	} vector; // size=12, offset=0, found in object files: math3d.o, math3d.o
-	struct {
-		struct _G2Quat_Type src; // size=8, offset=0
-		struct _G2Quat_Type dest; // size=8, offset=8
-	} quat; // size=16, offset=0, found in object files: math3d.o, math3d.o
-};
-
-union MATH3D_77fake // Hashcode: 0xA8CF04EA (dec: -1462827798)
-{
-	long color; // size=0, offset=0
-	struct _RGBAColor rgba; // size=4, offset=0
-};
-
-enum MATH3D_AXIS // Hashcode: 0x37FE6D4A (dec: 939421002)
-{
-	AXIS_X = 0,
-	AXIS_Y = 1,
-	AXIS_Z = 2,
-	AXIS_NEG_X = 3,
-	AXIS_NEG_Y = 4,
-	AXIS_NEG_Z = 5,
-};
 
 struct POLY_FT3 // hashcode: 0x1FB59984 (dec: 531995012)
 {
@@ -6330,77 +6013,6 @@ struct evMonsterSoulSuckData // hashcode: 0x24FA0E9A (dec: 620367514)
 {
 	struct _Instance *sender; // size=616, offset=0
 	struct _Position Destination; // size=6, offset=4
-};
-
-struct evPhysicsDropOffData // hashcode: 0x240C7D71 (dec: 604798321)
-{
-	short xOffset; // size=0, offset=0
-	short yOffset; // size=0, offset=2
-	short DropOffset; // size=0, offset=4
-	short slipSlope; // size=0, offset=6
-	int UpperOffset; // size=0, offset=8
-};
-
-struct evPhysicsEdgeData // hashcode: 0x9E9E1CB3 (dec: -1633805133)
-{
-	short UpperOffset; // size=0, offset=0
-	short ForwardOffset; // size=0, offset=2
-	short AboveOffset; // size=0, offset=4
-	short XDistance; // size=0, offset=6
-	short YDistance; // size=0, offset=8
-	short ZDistance; // size=0, offset=10
-	struct _SVector *Normal1; // size=8, offset=12
-	struct _SVector *Normal2; // size=8, offset=16
-	struct _SVector *Delta; // size=8, offset=20
-	struct _Instance *instance; // size=616, offset=24
-	int zRot; // size=0, offset=28
-	int rc; // size=0, offset=32
-};
-
-struct evPhysicsWallCrawlData // hashcode: 0x27DFBF06 (dec: 668974854)
-{
-	short Segment; // size=0, offset=0
-	short Length; // size=0, offset=2
-	short ForwardOffset; // size=0, offset=4
-	short NormalDistance; // size=0, offset=6
-	struct _SVector DropNormal; // size=8, offset=8
-	struct _SVector ForwardNormal; // size=8, offset=16
-	struct _Position NewPosition; // size=6, offset=24
-	struct _Rotation DropRotation; // size=8, offset=30
-	short ForwardXRotation; // size=0, offset=38
-	int rc; // size=0, offset=40
-};
-
-struct evPhysicsSwimData // hashcode: 0x947F2BE5 (dec: -1803605019)
-{
-	short CheckDepth; // size=0, offset=0
-	short SwimDepth; // size=0, offset=2
-	short WadeDepth; // size=0, offset=4
-	short TreadDepth; // size=0, offset=6
-	struct _SVector *iVelocity; // size=8, offset=8
-	short Depth; // size=0, offset=12
-	short WaterDepth; // size=0, offset=14
-	short rc; // size=0, offset=16
-	short pad; // size=0, offset=18
-	int WaterLevel; // size=0, offset=20
-};
-
-struct evPhysicsDropHeightData // hashcode: 0x5DCE3926 (dec: 1573796134)
-{
-	struct _Position origin; // size=6, offset=0
-	short mode; // size=0, offset=6
-	short DropOffset; // size=0, offset=8
-	short result; // size=0, offset=10
-	struct BSPTree *bsp; // size=36, offset=12
-	struct _TFace *tface; // size=12, offset=16
-};
-
-struct evPhysicsLinkedMoveData // hashcode: 0xB4C6EBA9 (dec: -1262031959)
-{
-	struct _Instance *instance; // size=616, offset=0
-	int segment; // size=0, offset=4
-	struct _SVector posDelta; // size=8, offset=8
-	struct _SVector rotDelta; // size=8, offset=16
 };
 
 struct evFXHitData // hashcode: 0x3D609E61 (dec: 1029742177)

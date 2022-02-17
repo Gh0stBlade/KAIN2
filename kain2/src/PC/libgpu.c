@@ -1,4 +1,12 @@
-#include "kain2.h"
+#include "../core.h"
+#include "../../psyq.h"
+
+typedef struct RECT RECT;
+typedef struct DISPENV DISPENV;
+typedef struct DRAWENV DRAWENV;
+typedef struct DR_AREA DR_AREA;
+typedef struct DR_TPAGE DR_TPAGE;
+typedef struct POLY_FT4 POLY_FT4;
 
 extern void (*cb_vsync)(void);
 void (*_psxEmuState)(void);

@@ -24,12 +24,7 @@ struct NodeType // hashcode: 0x5BF613D7 (dec: 1542853591)
 	struct NodeType* next; // size=8, offset=4
 };
 
-struct SoundInstance // hashcode: 0xFF235679 (dec: -14461319)
-{
-	unsigned char channel; // size=0, offset=0
-	unsigned char state; // size=0, offset=1
-	unsigned char delay; // size=0, offset=2
-};
+
 
 struct VramSize // hashcode: 0xD96A55BF (dec: -647342657)
 {
@@ -44,15 +39,6 @@ struct SplineDef // hashcode: 0x04DD5459 (dec: 81613913)
 	short currkey; // size=0, offset=0
 	unsigned short denomFlag; // size=0, offset=2
 	long fracCurr; // size=0, offset=4
-};
-
-struct EventAliasCommandStruct // hashcode: 0xB6EF2AF6 (dec: -1225839882)
-{
-	struct _Instance* hostInstance; // size=0, offset=0
-	short newanim; // size=0, offset=4
-	short newframe; // size=0, offset=6
-	short interpframes; // size=0, offset=8
-	short speed; // size=0, offset=10
 };
 
 enum option_ctrl_t // Hashcode: 0xEBCEABAC (dec: -338777172)
@@ -419,22 +405,6 @@ struct _Model // hashcode: 0x9BCE1D24 (dec: -1680990940)
 	struct MultiSpline *multiSpline; // size=0, offset=44
 	struct TextureMT3 *startTextures; // size=16, offset=48
 	struct TextureMT3 *endTextures; // size=16, offset=52
-};
-
-struct _CameraKey // hashcode: 0xB9E6B724 (dec: -1176062172)
-{
-	short x; // size=0, offset=0
-	short y; // size=0, offset=2
-	short z; // size=0, offset=4
-	short id; // size=0, offset=6
-	short rx; // size=0, offset=8
-	short ry; // size=0, offset=10
-	short rz; // size=0, offset=12
-	short flags; // size=0, offset=14
-	short tx; // size=0, offset=16
-	short ty; // size=0, offset=18
-	short tz; // size=0, offset=20
-	short pad; // size=0, offset=22
 };
 
 struct Object // hashcode: 0xEC12E9AC (dec: -334304852)
@@ -1687,19 +1657,7 @@ struct Spline // hashcode: 0xA7B8D53F (dec: -1481059009)
 	unsigned char flags; // size=0, offset=7
 };
 
-struct vecS // hashcode: 0xEADB8F3A (dec: -354709702)
-{
-	short x; // size=0, offset=0
-	short y; // size=0, offset=2
-	short z; // size=0, offset=4
-};
 
-struct vecL // hashcode: 0x7575CB14 (dec: 1970653972)
-{
-	long x; // size=0, offset=0
-	long y; // size=0, offset=4
-	long z; // size=0, offset=8
-};
 
 struct SplineRotKey // hashcode: 0xD2E3A87E (dec: -756832130)
 {
@@ -1978,14 +1936,6 @@ struct _BlockVramEntry // hashcode: 0x24B2FBC5 (dec: 615709637)
 		struct _ObjectTracker *streamObject; // size=36, offset=0
 		struct _ButtonTexture *button; // size=16, offset=0
 	} udata; // size=4, offset=24, found in object files: debug.o, debug.o
-};
-
-struct FontChar // hashcode: 0x5A2F9F5B (dec: 1513070427)
-{
-	short x; // size=0, offset=0
-	short y; // size=0, offset=2
-	char c; // size=0, offset=4
-	char color; // size=0, offset=5
 };
 
 struct _BigFileEntry // hashcode: 0xA904436B (dec: -1459338389)
@@ -2698,13 +2648,6 @@ struct SignalInfo // hashcode: 0x5899EF0F (dec: 1486483215)
 	void (*signalRelocateFunc)(struct Signal* signal, int offset); // size=0, offset=8
 };
 
-struct _Vector // hashcode: 0x5DEB6D24 (dec: 1575709988)
-{
-	long x; // size=0, offset=0
-	long y; // size=0, offset=4
-	long z; // size=0, offset=8
-};
-
 struct _Triangle2D // hashcode: 0xD422B451 (dec: -735923119)
 {
 	short x0; // size=0, offset=0
@@ -2746,67 +2689,6 @@ struct _HFaceInfo // hashcode: 0x0E79FF8C (dec: 242876300)
 	struct _HVertex *vertex0; // size=12, offset=20
 	struct _HVertex *vertex1; // size=12, offset=24
 	struct _HVertex *vertex2; // size=12, offset=28
-};
-
-struct _CollideInfo // hashcode: 0xCA2DF5E9 (dec: -902957591)
-{
-	void *level; // size=0, offset=0
-	char flags; // size=0, offset=4
-	char segment; // size=0, offset=5
-	char type0; // size=0, offset=6
-	char type1; // size=0, offset=7
-	void *prim0; // size=0, offset=8
-	void *prim1; // size=0, offset=12
-	void *inst0; // size=0, offset=16
-	void *inst1; // size=0, offset=20
-	struct SVECTOR point0; // size=8, offset=24
-	struct SVECTOR point1; // size=8, offset=32
-	struct _Position offset; // size=6, offset=40
-	short bspID; // size=0, offset=46
-};
-
-struct _LCollideInfo // hashcode: 0xCC1DB336 (dec: -870468810)
-{
-	struct _TFace *tface; // size=12, offset=0
-	struct _Terrain *terrain; // size=84, offset=4
-	int curTree; // size=0, offset=8
-};
-
-struct SCollideInfo // hashcode: 0x0DEAD21F (dec: 233493023)
-{
-	struct _Sphere *sphere; // size=12, offset=0
-	struct SVECTOR *oldPos; // size=8, offset=4
-	void (*collideFunc)(); // size=0, offset=8
-	long id; // size=0, offset=12
-	long segment; // size=0, offset=16
-	struct _Instance *instance; // size=616, offset=20
-	void *prim; // size=0, offset=24
-};
-
-struct PandTScratch // hashcode: 0x53B2A743 (dec: 1404217155)
-{
-	struct MATRIX posMatrix; // size=32, offset=0
-	struct _SVector normal; // size=8, offset=32
-	struct _Vector dpv; // size=12, offset=40
-	struct _SVector planePoint; // size=8, offset=52
-	long ignore_attr; // size=0, offset=60
-	long accept_attr; // size=0, offset=64
-	short *backface_flag; // size=0, offset=68
-	struct _SVector newPos; // size=8, offset=72
-	struct _SVector oldPos; // size=8, offset=80
-	int flags; // size=0, offset=88
-	int i; // size=0, offset=92
-	int slack; // size=0, offset=96
-	long in_spectral; // size=0, offset=100
-	short *normalList; // size=0, offset=104
-	struct _TVertex *vertexList; // size=12, offset=108
-	struct _TFace *result; // size=12, offset=112
-	struct _SVector line; // size=8, offset=116
-};
-
-struct COLLIDE_258fake // hashcode: 0x1D802093 (dec: 494936211)
-{
-	long m[3]; // size=12, offset=0
 };
 
 struct SandHFScratch // hashcode: 0x31C4E20D (dec: 834986509)
@@ -2868,20 +2750,7 @@ struct PandTFScratch // hashcode: 0x218F0B73 (dec: 563022707)
 	struct _Vector dpv; // size=12, offset=64
 };
 
-struct CameraCollisionInfo // hashcode: 0x76C89E59 (dec: 1992859225)
-{
-	struct _TFace (*tfaceList[5]); // size=20, offset=0
-	struct _Terrain (*tfaceTerrain[5]); // size=20, offset=20
-	short bspTree[6]; // size=12, offset=40
-	short lengthList[6]; // size=12, offset=52
-	long flags; // size=0, offset=64
-	long line; // size=0, offset=68
-	long numCollided; // size=0, offset=72
-	long lenCenterToExtend; // size=0, offset=76
-	struct _Sphere *start; // size=12, offset=80
-	struct _Sphere *end; // size=12, offset=84
-	long cldLines; // size=0, offset=88
-};
+
 
 struct POLY_GT3 // hashcode: 0x405DA246 (dec: 1079878214)
 {
@@ -3591,13 +3460,7 @@ typedef struct ControllerPacket
 	data;
 } ControllerPacket;
 
-struct _G2EulerAngles_Type // hashcode: 0xB3709AC5 (dec: -1284465979)
-{
-	short x; // size=0, offset=0
-	short y; // size=0, offset=2
-	short z; // size=0, offset=4
-	short order; // size=0, offset=6
-};
+
 
 struct _AnimSoundData_Type // hashcode: 0x5367FF66 (dec: 1399324518)
 {
@@ -4685,15 +4548,6 @@ struct VM_109fake // hashcode: 0x94EF070A (dec: -1796274422)
 		struct _TFace *oldTFace; // size=12, offset=12
 		long hit; // size=0, offset=16
 	} Follow; // size=20, offset=76, found in object files: vm.o, vm.o
-};
-
-struct NewMemTracker // hashcode: 0x5C68280F (dec: 1550329871)
-{
-	struct MemHeader *rootNode; // size=8, offset=0
-	unsigned long totalMemory; // size=0, offset=4
-	unsigned long currentMemoryUsed; // size=0, offset=8
-	char *lastMemoryAddress; // size=0, offset=12
-	long doingGarbageCollection; // size=0, offset=16
 };
 
 struct AadVolume // hashcode: 0xDE43B1D6 (dec: -565988906)

@@ -1,4 +1,9 @@
-#pragma once
+#ifndef __PSYQ_H
+#define __PSYQ_H
+
+typedef unsigned long u_long;
+typedef unsigned short u_short;
+typedef unsigned char u_char;
 
 struct TCB // hashcode: 0x6A70BBF4 (dec: 1785773044)
 {
@@ -7,6 +12,8 @@ struct TCB // hashcode: 0x6A70BBF4 (dec: 1785773044)
 	unsigned long reg[40]; // size=160, offset=8
 	long system[6]; // size=24, offset=168
 };
+
+#undef s_addr
 
 struct EXEC // hashcode: 0x4291A2AD (dec: 1116840621)
 {
@@ -139,3 +146,5 @@ struct CdlLOC // hashcode: 0x449289F8 (dec: 1150454264)
 	unsigned char sector; // size=0, offset=2
 	unsigned char track; // size=0, offset=3
 };
+
+#endif

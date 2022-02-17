@@ -81,6 +81,10 @@ struct PIPE3D_240fake // hashcode: 0xB73CD4A8 (dec: -1220750168)
 	long m[5]; // size=20, offset=0
 };
 
+#if defined(_LANGUAGE_C_PLUS_PLUS)||defined(__cplusplus)||defined(c_plusplus)
+extern "C" {
+#endif
+
 extern void PIPE3D_AspectAdjustMatrix(struct MATRIX *matrix); // 0x8003A1F0
 extern void PIPE3D_CalculateWCTransform(struct _CameraCore_Type *cameraCore); // 0x8003A278
 extern void PIPE3D_InvertTransform(struct MATRIX *target, struct MATRIX *source); // 0x8003A5F4
@@ -100,5 +104,9 @@ extern void PIPE3D_HalvePlaneInstanceTransformAndDraw(struct _Instance *instance
 extern void PIPE3D_HalvePlaneGetRingPoints(struct _Instance *instance, struct MATRIX *wcTransform, struct _VertexPool *vertexPool, struct _PrimPool *primPool, unsigned long **ot, struct _FXHalvePlane *ring); // 0x8003C048
 extern void PIPE3D_DoGlow(struct _Instance *instance, struct MATRIX *wcTransform, struct _VertexPool *vertexPool, struct _PrimPool *primPool, unsigned long **ot, struct _FXGlowEffect *glow); // 0x8003C218
 extern long PIPE3D_Segment2ScreenPt(struct _Instance *instance, struct MATRIX *wcTransform, int segIndex, struct _Position *pos); // 0x8003C5F4
+
+#if defined(_LANGUAGE_C_PLUS_PLUS)||defined(__cplusplus)||defined(c_plusplus)
+}
+#endif
 
 #endif

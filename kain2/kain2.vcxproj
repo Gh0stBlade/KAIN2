@@ -192,7 +192,8 @@
     <ClCompile Include="src\MONSTER\VWRAITH.C" />
     <ClCompile Include="src\MONSTER\WORSHIP.C" />
     <ClCompile Include="src\OBTABLE.C" />
-    <ClCompile Include="src\PC\async.cpp" />
+    <ClCompile Include="src\PC\async.c" />
+    <ClCompile Include="src\PC\d3d\rnd_3d.c" />
     <ClCompile Include="src\PC\libapi.c" />
     <ClCompile Include="src\PC\libetc.c" />
     <ClCompile Include="src\PC\libgpu.c" />
@@ -261,6 +262,7 @@
     <ClInclude Include="src\CAMERA.H" />
     <ClInclude Include="src\CINEMA\CINEPSX.H" />
     <ClInclude Include="src\COLLIDE.H" />
+    <ClInclude Include="src\core.h" />
     <ClInclude Include="src\DEBUG.H" />
     <ClInclude Include="src\DRAW.H" />
     <ClInclude Include="src\EVENT.H" />
