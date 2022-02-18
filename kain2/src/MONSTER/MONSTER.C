@@ -343,8 +343,8 @@ void MON_Dead(struct _Instance *instance)
 			// Start line: 402
 			// Start offset: 0x80087B98
 			// Variables:
-				struct SVECTOR New; // stack offset -96
-				struct SVECTOR Old; // stack offset -88
+				SVECTOR New; // stack offset -96
+				SVECTOR Old; // stack offset -88
 				struct _PCollideInfo pcinfo; // stack offset -80
 		/* end block 1.4 */
 		// End offset: 0x80087C20

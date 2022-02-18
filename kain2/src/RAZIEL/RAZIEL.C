@@ -508,8 +508,8 @@ void StateHandlerBlock(struct __CharacterState *In, int CurrentSection, int Data
 				// Start line: 2762
 				// Start offset: 0x800AC94C
 				// Variables:
-					struct SVECTOR startVec; // stack offset -56
-					struct SVECTOR endVec; // stack offset -48
+					SVECTOR startVec; // stack offset -56
+					SVECTOR endVec; // stack offset -48
 			/* end block 1.3.1 */
 			// End offset: 0x800AC9A4
 			// End Line: 2770
@@ -1915,7 +1915,7 @@ void RazielCollide(struct _Instance *instance, struct GameTracker *gameTracker)
 			// Start line: 7521
 			// Start offset: 0x800B42B8
 			// Variables:
-				struct SVECTOR *offset; // $s1
+				SVECTOR*offset; // $s1
 		/* end block 1.1 */
 		// End offset: 0x800B434C
 		// End Line: 7537
@@ -1924,7 +1924,7 @@ void RazielCollide(struct _Instance *instance, struct GameTracker *gameTracker)
 			// Start line: 7555
 			// Start offset: 0x800B43EC
 			// Variables:
-				struct SVECTOR *offset; // $a1
+				SVECTOR*offset; // $a1
 		/* end block 1.2 */
 		// End offset: 0x800B4454
 		// End Line: 7571

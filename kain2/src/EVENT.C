@@ -450,7 +450,7 @@ void EVENT_BSPProcess(struct _StreamUnit *streamUnit)
 						// Start offset: 0x80060F84
 						// Variables:
 							struct _Instance *attachedInstance; // $s0
-							struct SVECTOR offset; // stack offset -48
+							SVECTOR offset; // stack offset -48
 					/* end block 1.1.1.1.1 */
 					// End offset: 0x8006107C
 					// End Line: 694

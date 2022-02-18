@@ -523,7 +523,7 @@ void MATH3D_RotMatAboutVec(struct _SVector *vec, struct MATRIX *mat, short angle
 	int v18; // eax
 	__int16 v19; // ax
 	int x; // [esp-14h] [ebp-5Ch]
-	struct SVECTOR v21; // [esp+0h] [ebp-48h] BYREF
+	SVECTOR v21; // [esp+0h] [ebp-48h] BYREF
 	struct MATRIX v22; // [esp+8h] [ebp-40h] BYREF
 	struct MATRIX v23; // [esp+28h] [ebp-20h] BYREF
 

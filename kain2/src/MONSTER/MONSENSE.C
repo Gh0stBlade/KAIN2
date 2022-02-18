@@ -601,8 +601,8 @@ void MONSENSE_Radar(struct _Instance *instance)
 		// Start offset: 0x80086BA8
 		// Variables:
 			struct _MonsterVars *mv; // $s1
-			struct SVECTOR newPos; // stack offset -96
-			struct SVECTOR oldPos; // stack offset -88
+			SVECTOR newPos; // stack offset -96
+			SVECTOR oldPos; // stack offset -88
 			struct _PCollideInfo pCollideInfo; // stack offset -80
 			int index; // $s3
 	/* end block 1 */

@@ -401,34 +401,6 @@ struct _Model // hashcode: 0x9BCE1D24 (dec: -1680990940)
 	struct TextureMT3 *endTextures; // size=16, offset=52
 };
 
-struct Object // hashcode: 0xEC12E9AC (dec: -334304852)
-{
-	long oflags; // size=0, offset=0
-	short id; // size=0, offset=4
-	short sfxFileHandle; // size=0, offset=6
-	short numModels; // size=0, offset=8
-	short numAnims; // size=0, offset=10
-	struct _Model **modelList; // size=56, offset=12
-	struct _G2AnimKeylist_Type **animList; // size=20, offset=16
-	short introDist; // size=0, offset=20
-	short vvIntroDist; // size=0, offset=22
-	short removeDist; // size=0, offset=24
-	short vvRemoveDist; // size=0, offset=26
-	void *data; // size=0, offset=28
-	char *script; // size=0, offset=32
-	char *name; // size=0, offset=36
-	unsigned char *soundData; // size=0, offset=40
-	long oflags2; // size=0, offset=44
-	short sectionA; // size=0, offset=48
-	short sectionB; // size=0, offset=50
-	short sectionC; // size=0, offset=52
-	short numberOfEffects; // size=0, offset=54
-	struct ObjectEffect *effectList; // size=4, offset=56
-	unsigned long *relocList; // size=0, offset=60
-	void *relocModule; // size=0, offset=64
-	struct VramSize vramSize; // size=8, offset=68
-};
-
 struct _BVertex // hashcode: 0xADD3BD2F (dec: -1378632401)
 {
 	short x; // size=0, offset=0
@@ -1526,123 +1498,6 @@ struct gSoundData // hashcode: 0x100090FC (dec: 268472572)
 	char soundsLoaded; // size=0, offset=19
 };
 
-struct GameTracker // hashcode: 0x4EB3EFC5 (dec: 1320415173)
-{
-	struct _GameData_Type gameData; // size=32, offset=0
-	struct menu_t *menu; // size=0, offset=32
-	struct memcard_t *memcard; // size=0, offset=36
-	struct Level *level; // size=392, offset=40
-	struct _Instance *playerInstance; // size=616, offset=44
-	long drawPage; // size=0, offset=48
-	struct _InstanceList *instanceList; // size=268, offset=52
-	struct _InstancePool *instancePool; // size=38204, offset=56
-	struct _VertexPool *vertexPool; // size=6336, offset=60
-	struct _PrimPool *primPool; // size=96012, offset=64
-	struct _ObjectTracker *GlobalObjects; // size=36, offset=68
-	long controlCommand[2][5]; // size=40, offset=72
-	long controlData[2][5]; // size=40, offset=112
-	long overrideData[2][5]; // size=40, offset=152
-	long debugFlags; // size=0, offset=192
-	long debugFlags2; // size=0, offset=196
-	struct CVECTOR wipeColor; // size=4, offset=200
-	short wipeTime; // size=0, offset=204
-	short maxWipeTime; // size=0, offset=206
-	short wipeType; // size=0, offset=208
-	short numGSignals; // size=0, offset=210
-	void (*gSignal[16]); // size=64, offset=212
-	struct LightInfo *lightInfo; // size=1148, offset=276
-	void *reqDisp; // size=0, offset=280
-	long *drawTimerReturn; // size=0, offset=284
-	long usecsStartDraw; // size=0, offset=288
-	void *disp; // size=0, offset=292
-	unsigned long displayFrameCount; // size=0, offset=296
-	unsigned long frameCount; // size=0, offset=300
-	unsigned long fps30Count; // size=0, offset=304
-	unsigned long vblFrames; // size=0, offset=308
-	unsigned long vblCount; // size=0, offset=312
-	long numMatrices; // size=0, offset=316
-	long gameFlags; // size=0, offset=320
-	long streamFlags; // size=0, offset=324
-	void *drawNonAnimatedSegmentFunc; // size=0, offset=328
-	void *drawAnimatedModelFunc; // size=0, offset=332
-	void *drawDisplayPolytopeListFunc; // size=0, offset=336
-	void *drawBgFunc; // size=0, offset=340
-	struct Level *mainDrawUnit; // size=392, offset=344
-	char baseAreaName[16]; // size=16, offset=348
-	short levelDone; // size=0, offset=364
-	short levelChange; // size=0, offset=366
-	short hideBG; // size=0, offset=368
-	short gameMode; // size=0, offset=370
-	long currentHotSpot; // size=0, offset=372
-	long StreamUnitID; // size=0, offset=376
-	short SwitchToNewStreamUnit; // size=0, offset=380
-	short SwitchToNewWarpIndex; // size=0, offset=382
-	char S_baseAreaName[16]; // size=16, offset=384
-	short toSignal; // size=0, offset=400
-	short fromSignal; // size=0, offset=402
-	char LastSignal; // size=0, offset=404
-	short StreamNormalA; // size=0, offset=406
-	short StreamNormalB; // size=0, offset=408
-	short StreamNormalC; // size=0, offset=410
-	long StreamNormalD; // size=0, offset=412
-	long moveRazielToStreamID; // size=0, offset=416
-	struct _ColorType animObjLine; // size=4, offset=420
-	struct _ColorType animObjShade; // size=4, offset=424
-	long maxIntroFXTime; // size=0, offset=428
-	struct gSoundData sound; // size=20, offset=432
-	short controllerMode; // size=0, offset=452
-	unsigned char plan_collide_override; // size=0, offset=454
-	unsigned char cheatMode; // size=0, offset=455
-	char currentLvl; // size=0, offset=456
-	char lastLvl; // size=0, offset=457
-	struct Object *introFX; // size=76, offset=460
-	struct Intro *introFXIntro; // size=76, offset=464
-	unsigned long **drawOT; // size=0, offset=468
-	unsigned long **dispOT; // size=0, offset=472
-	struct P_TAG *savedOTStart; // size=8, offset=476
-	struct P_TAG *savedOTEnd; // size=8, offset=480
-	long introWaitTime; // size=0, offset=484
-	long mirrorZPush; // size=0, offset=488
-	long defVVRemoveDist; // size=0, offset=492
-	long defRemoveDist; // size=0, offset=496
-	struct _Position forcedStartPosition; // size=6, offset=500
-	short hudCollDisplay; // size=0, offset=506
-	long primMemUsed; // size=0, offset=508
-	long cheatTimerCount; // size=0, offset=512
-	long playerCheatFlags; // size=0, offset=516
-	long savedPlayerCameraMode; // size=0, offset=520
-	long debugDrawFlags; // size=0, offset=524
-	void *planningPool; // size=0, offset=528
-	void *enemyPlanPool; // size=0, offset=532
-	unsigned char block_collide_override; // size=0, offset=536
-	unsigned char raziel_collide_override; // size=0, offset=537
-	short timeOfDay; // size=0, offset=538
-	long decoupleGame; // size=0, offset=540
-	long multGameTime; // size=0, offset=544
-	short spectral_fadeValue; // size=0, offset=548
-	short material_fadeValue; // size=0, offset=550
-	unsigned long drawTime; // size=0, offset=552
-	unsigned long currentTime; // size=0, offset=556
-	unsigned long currentMaterialTime; // size=0, offset=560
-	unsigned long currentSpectralTime; // size=0, offset=564
-	unsigned long currentTimeOfDayTime; // size=0, offset=568
-	unsigned long lastLoopTime; // size=0, offset=572
-	unsigned long timeMult; // size=0, offset=576
-	unsigned long globalTimeMult; // size=0, offset=580
-	unsigned long spectralTimeMult; // size=0, offset=584
-	unsigned long materialTimeMult; // size=0, offset=588
-	unsigned long currentTicks; // size=0, offset=592
-	unsigned long totalTime; // size=0, offset=596
-	unsigned long idleTime; // size=0, offset=600
-	long visibleInstances; // size=0, offset=604
-	int gameFramePassed; // size=0, offset=608
-	unsigned long timeSinceLastGameFrame; // size=0, offset=612
-	long frameRateLock; // size=0, offset=616
-	short frameRate24fps; // size=0, offset=620
-	char monster_collide_override; // size=0, offset=622
-	char pad; // size=0, offset=623
-};
-
 struct Spline // hashcode: 0xA7B8D53F (dec: -1481059009)
 {
 	struct SplineKey *key; // size=32, offset=0
@@ -2642,49 +2497,6 @@ struct SignalInfo // hashcode: 0x5899EF0F (dec: 1486483215)
 	void (*signalRelocateFunc)(struct Signal* signal, int offset); // size=0, offset=8
 };
 
-struct _Triangle2D // hashcode: 0xD422B451 (dec: -735923119)
-{
-	short x0; // size=0, offset=0
-	short y0; // size=0, offset=2
-	short x1; // size=0, offset=4
-	short y1; // size=0, offset=6
-	short x2; // size=0, offset=8
-	short y2; // size=0, offset=10
-};
-
-struct _PCollideInfo // hashcode: 0x32613C4B (dec: 845233227)
-{
-	short type; // size=0, offset=0
-	short segment; // size=0, offset=2
-	void *prim; // size=0, offset=4
-	struct _Instance *inst; // size=0, offset=8
-	struct SVECTOR wNormal; // size=8, offset=12
-	struct SVECTOR *newPoint; // size=8, offset=20
-	struct SVECTOR *oldPoint; // size=8, offset=24
-	struct SVECTOR cldPoint; // size=8, offset=28
-	long collideType; // size=0, offset=36
-	struct _Instance *instance; // size=0, offset=40
-};
-
-struct _HNormal // hashcode: 0xC53FB2BB (dec: -985681221)
-{
-	short x; // size=0, offset=0
-	short y; // size=0, offset=2
-	short z; // size=0, offset=4
-	short pad; // size=0, offset=6
-};
-
-struct _HFaceInfo // hashcode: 0x0E79FF8C (dec: 242876300)
-{
-	long flags; // size=0, offset=0
-	long attr; // size=0, offset=4
-	struct _HFace *hface; // size=12, offset=8
-	struct _SVector normal; // size=8, offset=12
-	struct _HVertex *vertex0; // size=12, offset=20
-	struct _HVertex *vertex1; // size=12, offset=24
-	struct _HVertex *vertex2; // size=12, offset=28
-};
-
 struct SandHFScratch // hashcode: 0x31C4E20D (dec: 834986509)
 {
 	struct _SVector normal; // size=8, offset=0
@@ -2937,12 +2749,12 @@ struct SP_SUBDIV_STRUCT // hashcode: 0x4C4B55E8 (dec: 1280005608)
 	struct _SVector vertex0; // size=8, offset=0
 	struct _SVector vertex1; // size=8, offset=8
 	struct _SVector vertex2; // size=8, offset=16
-	struct SVECTOR face_v0; // size=8, offset=24
-	struct SVECTOR face_v1; // size=8, offset=32
-	struct SVECTOR face_v2; // size=8, offset=40
-	struct SVECTOR face_v01; // size=8, offset=48
-	struct SVECTOR face_v12; // size=8, offset=56
-	struct SVECTOR face_v20; // size=8, offset=64
+	SVECTORface_v0; // size=8, offset=24
+	SVECTORface_v1; // size=8, offset=32
+	SVECTORface_v2; // size=8, offset=40
+	SVECTORface_v01; // size=8, offset=48
+	SVECTORface_v12; // size=8, offset=56
+	SVECTORface_v20; // size=8, offset=64
 	struct UVTYPE face_uv0; // size=4, offset=72
 	struct UVTYPE face_uv1; // size=4, offset=76
 	struct UVTYPE face_uv2; // size=4, offset=80
@@ -3056,12 +2868,6 @@ struct _LoadStatus // hashcode: 0x3D15BA2C (dec: 1024834092)
 	long currentSector; // size=0, offset=148
 	long sectorTime; // size=0, offset=152
 	long seekTime; // size=0, offset=156
-};
-
-struct RedirectList // hashcode: 0x4C185B3B (dec: 1276664635)
-{
-	long numPointers; // size=0, offset=0
-	long *data; // size=0, offset=4
 };
 
 struct DRAWENV // hashcode: 0x1D93A150 (dec: 496214352)
@@ -4269,7 +4075,7 @@ struct _FXRibbon // hashcode: 0xB11070B8 (dec: -1324322632)
 	short lifeTime; // size=0, offset=14
 	short numberVerts; // size=0, offset=16
 	short endIndex; // size=0, offset=18
-	struct SVECTOR *vertexPool; // size=8, offset=20
+	SVECTOR*vertexPool; // size=8, offset=20
 	short startSegment; // size=0, offset=24
 	short endSegment; // size=0, offset=26
 	long startColor; // size=0, offset=28
@@ -4806,29 +4612,6 @@ struct evObjectData // hashcode: 0xE261F276 (dec: -496897418)
 	short LinkNode; // size=0, offset=6
 	struct _Instance *Force; // size=616, offset=8
 	int rc; // size=0, offset=12
-};
-
-struct evPhysicsGravityData // hashcode: 0xD13BDF0D (dec: -784605427)
-{
-	short UpperOffset; // size=0, offset=0
-	short LowerOffset; // size=0, offset=2
-	short x; // size=0, offset=4
-	short y; // size=0, offset=6
-	short z; // size=0, offset=8
-	short slipSlope; // size=0, offset=10
-};
-
-struct evPhysicsSlideData // hashcode: 0x42A65F7B (dec: 1118199675)
-{
-	struct _SVector ForwardVector; // size=8, offset=0
-	struct _SVector ForwardNormal; // size=8, offset=8
-	struct _SVector DropNormal; // size=8, offset=16
-	short Segment; // size=0, offset=24
-	short DropOffset; // size=0, offset=26
-	short UpperOffset; // size=0, offset=28
-	short Height; // size=0, offset=30
-	struct _Instance *UpperInstance; // size=616, offset=32
-	int Dot; // size=0, offset=36
 };
 
 struct evObjectThrowData // hashcode: 0x293A2507 (dec: 691676423)
@@ -9209,7 +8992,7 @@ typedef struct MATRIX MATRIX;
 
 typedef struct VECTOR VECTOR;
 
-typedef struct SVECTOR SVECTOR;
+typedef SVECTORSVECTOR;
 
 typedef struct CVECTOR CVECTOR;
 
@@ -10818,22 +10601,22 @@ extern long draw_belowSplit; // offset 0x800CE19C
 extern short forceDrawInFront; // offset 0x800CE198
 
 
-extern struct SVECTOR *face_v0; // offset 0x800CE1A0
+extern SVECTOR*face_v0; // offset 0x800CE1A0
 
 
-extern struct SVECTOR *face_v1; // offset 0x800CE1A4
+extern SVECTOR*face_v1; // offset 0x800CE1A4
 
 
-extern struct SVECTOR *face_v2; // offset 0x800CE1A8
+extern SVECTOR*face_v2; // offset 0x800CE1A8
 
 
-extern struct SVECTOR *face_v01; // offset 0x800CE1AC
+extern SVECTOR*face_v01; // offset 0x800CE1AC
 
 
-extern struct SVECTOR *face_v12; // offset 0x800CE1B0
+extern SVECTOR*face_v12; // offset 0x800CE1B0
 
 
-extern struct SVECTOR *face_v20; // offset 0x800CE1B4
+extern SVECTOR*face_v20; // offset 0x800CE1B4
 
 
 extern struct UVTYPE *face_uv0; // offset 0x800CE1B8
@@ -10860,7 +10643,7 @@ extern long modelDQP; // offset 0x800D0388
 extern unsigned char *draw_stack; // offset 0x800D0384
 
 
-extern struct SVECTOR shadow_vertices[11]; // offset 0x800D038C
+extern SVECTORshadow_vertices[11]; // offset 0x800D038C
 
 
 static struct LightGroup default_lightgroup; // offset 0x800CE460

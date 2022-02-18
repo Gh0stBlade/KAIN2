@@ -349,7 +349,7 @@ void PointAt(struct _Instance *instance, struct _Position *Target, struct _Rotat
 		// Start offset: 0x8009E390
 		// Variables:
 			struct _Position From; // stack offset -48
-			struct SVECTOR v1; // stack offset -40
+			SVECTOR v1; // stack offset -40
 			struct VECTOR v3; // stack offset -32
 			struct MATRIX *tempMat; // $a0
 	/* end block 1 */
@@ -379,7 +379,7 @@ void ThrowSetFocusPoint(struct _Instance *instance, struct _Rotation *rot)
 		// Variables:
 			struct MATRIX *pTempMat; // $s0
 			struct _Instance *weaponInstance; // $s1
-			struct SVECTOR v1; // stack offset -48
+			SVECTOR v1; // stack offset -48
 			struct VECTOR v4; // stack offset -40
 	/* end block 1 */
 	// End offset: 0x8009E5D0

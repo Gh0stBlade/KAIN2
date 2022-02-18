@@ -652,7 +652,7 @@ void ScriptKillInstance(struct _Instance *instance, int effect)
 			// Start line: 1080
 			// Start offset: 0x8003D6A4
 			// Variables:
-				struct SVECTOR v; // stack offset -24
+				SVECTOR v; // stack offset -24
 		/* end block 1.2 */
 		// End offset: 0x8003D6E0
 		// End Line: 1087

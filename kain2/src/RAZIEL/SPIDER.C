@@ -42,8 +42,8 @@ void StateHandlerWallIdle(struct __CharacterState *In, int CurrentSection, int D
 		// Variables:
 			int Anim; // $s3
 			struct __Event *Ptr; // $s0
-			struct SVECTOR startVec; // stack offset -56
-			struct SVECTOR endVec; // stack offset -48
+			SVECTOR startVec; // stack offset -56
+			SVECTOR endVec; // stack offset -48
 			int extraProcess; // $s6
 
 		/* begin block 1.1 */

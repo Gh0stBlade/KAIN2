@@ -1,4 +1,4 @@
-#include "THISDUST.H"
+#include "core.H"
 #include "DEBUG.H"
 
 
@@ -795,7 +795,7 @@ void DEBUG_PageFlip()
 		// Start line: 4047
 		// Start offset: 0x800143E8
 		// Variables:
-			struct POLY_F4 poly; // stack offset -32
+			POLY_F4 poly; // stack offset -32
 			unsigned long **drawot; // $s0
 	/* end block 1 */
 	// End offset: 0x800143E8
@@ -866,9 +866,9 @@ void DEBUG_ProcessCheat(struct GameTracker *gameTracker)
 			// Start line: 4565
 			// Start offset: 0x80014620
 			// Variables:
-				struct SVECTOR v; // stack offset -80
-				struct VECTOR dv; // stack offset -72
-				struct MATRIX rotate_mat; // stack offset -56
+				SVECTOR v; // stack offset -80
+				VECTOR dv; // stack offset -72
+				MATRIX rotate_mat; // stack offset -56
 		/* end block 1.1 */
 		// End offset: 0x800146A4
 		// End Line: 4575

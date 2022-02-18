@@ -10,8 +10,8 @@ void razAlignYMoveRot(struct _Instance *dest, short distance, struct _Position *
 		// Start line: 13
 		// Start offset: 0x800A51B0
 		// Variables:
-			struct SVECTOR d; // stack offset -72
-			struct SVECTOR dd; // stack offset -64
+			SVECTOR d; // stack offset -72
+			SVECTOR dd; // stack offset -64
 			struct MATRIX mat; // stack offset -56
 	/* end block 1 */
 	// End offset: 0x800A51B0
@@ -33,9 +33,9 @@ void razAlignYRotMove(struct _Instance *dest, short distance, struct _Position *
 		// Start line: 55
 		// Start offset: 0x800A5274
 		// Variables:
-			struct SVECTOR d; // stack offset -88
-			struct SVECTOR dd; // stack offset -80
-			struct SVECTOR rot; // stack offset -72
+			SVECTORd; // stack offset -88
+			SVECTORdd; // stack offset -80
+			SVECTORrot; // stack offset -72
 			struct MATRIX mat; // stack offset -64
 	/* end block 1 */
 	// End offset: 0x800A5274
@@ -1354,8 +1354,8 @@ void razSetPlayerEventHistory(unsigned long event)
 // int /*$ra*/ razSideMoveSpiderCheck(struct _Instance *instance /*$s2*/, int x /*$a1*/)
 int razSideMoveSpiderCheck(struct _Instance *instance, int x)
 { // line 1905, offset 0x800a7cac
-	struct SVECTOR endVec; // [esp+8h] [ebp-10h] BYREF
-	struct SVECTOR startVec; // [esp+10h] [ebp-8h] BYREF
+	SVECTORendVec; // [esp+8h] [ebp-10h] BYREF
+	SVECTORstartVec; // [esp+10h] [ebp-8h] BYREF
 
 	PHYSICS_GenericLineCheckSetup(x, 0, 192, &startVec);
 	PHYSICS_GenericLineCheckSetup(x, -320, 192, &endVec);

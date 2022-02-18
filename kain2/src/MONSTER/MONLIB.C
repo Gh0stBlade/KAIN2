@@ -839,7 +839,7 @@ int MON_ChooseCombatMove(struct _Instance *instance, int reason)
 				// Start offset: 0x800808C0
 				// Variables:
 					struct _Position temp; // stack offset -56
-					struct SVECTOR New; // stack offset -48
+					SVECTOR New; // stack offset -48
 					struct VECTOR OutTrans; // stack offset -40
 			/* end block 1.2.1 */
 			// End offset: 0x800809E0

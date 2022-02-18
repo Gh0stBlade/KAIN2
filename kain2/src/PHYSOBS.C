@@ -1454,8 +1454,8 @@ void ProcessPhysicalObject(struct _Instance *instance, struct GameTracker *gameT
 				// Start offset: 0x8006BCDC
 				// Variables:
 					struct _PCollideInfo CInfo; // stack offset -96
-					struct SVECTOR Old; // stack offset -48
-					struct SVECTOR New; // stack offset -40
+					SVECTOR Old; // stack offset -48
+					SVECTOR New; // stack offset -40
 					short len; // $a2
 					long mult; // $a3
 			/* end block 1.9.3 */
@@ -2325,8 +2325,8 @@ int CheckBlockSlope(struct _Instance *instance, int x, int y, int hOff, int vOff
 		// Start offset: 0x8006E184
 		// Variables:
 			struct _PCollideInfo CInfo; // stack offset -72
-			struct SVECTOR Old; // stack offset -24
-			struct SVECTOR New; // stack offset -16
+			SVECTOROld; // stack offset -24
+			SVECTORNew; // stack offset -16
 			int xOff; // $t3
 			int yOff; // $t4
 			int dX; // $t2

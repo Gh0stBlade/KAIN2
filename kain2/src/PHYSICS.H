@@ -1,6 +1,43 @@
 #ifndef PHYSICS_H
 #define PHYSICS_H
 
+struct evPhysicsGravityData // hashcode: 0xD13BDF0D (dec: -784605427)
+{
+	short UpperOffset; // size=0, offset=0
+	short LowerOffset; // size=0, offset=2
+	short x; // size=0, offset=4
+	short y; // size=0, offset=6
+	short z; // size=0, offset=8
+	short slipSlope; // size=0, offset=10
+};
+
+struct evPhysicsSlideData // hashcode: 0x42A65F7B (dec: 1118199675)
+{
+	struct _SVector ForwardVector; // size=8, offset=0
+	struct _SVector ForwardNormal; // size=8, offset=8
+	struct _SVector DropNormal; // size=8, offset=16
+	short Segment; // size=0, offset=24
+	short DropOffset; // size=0, offset=26
+	short UpperOffset; // size=0, offset=28
+	short Height; // size=0, offset=30
+	struct _Instance* UpperInstance; // size=616, offset=32
+	int Dot; // size=0, offset=36
+};
+
+struct _PCollideInfo // hashcode: 0x32613C4B (dec: 845233227)
+{
+	short type; // size=0, offset=0
+	short segment; // size=0, offset=2
+	void* prim; // size=0, offset=4
+	struct _Instance* inst; // size=0, offset=8
+	SVECTOR wNormal; // size=8, offset=12
+	SVECTOR* newPoint; // size=8, offset=20
+	SVECTOR* oldPoint; // size=8, offset=24
+	SVECTOR cldPoint; // size=8, offset=28
+	long collideType; // size=0, offset=36
+	struct _Instance* instance; // size=0, offset=40
+};
+
 struct evPhysicsDropOffData // hashcode: 0x240C7D71 (dec: 604798321)
 {
 	short xOffset; // size=0, offset=0
@@ -104,12 +141,12 @@ extern void PHYSICS_SetVAndAFromRot(struct _Instance *instance, struct _Rotation
 extern long PHYSICS_FindAFromDAndT(long d, long t); // 0x80077A00
 extern long PHYSICS_FindVFromAAndD(long a, long d); // 0x80077A3C
 extern void PHYSICS_StopIfCloseToTarget(struct _Instance *instance, int x, int y, int z); // 0x80077A74
-extern int PHYSICS_CheckForTerrainCollide(struct _Instance *instance, struct SVECTOR *startVec, struct SVECTOR *endVec, int segment); // 0x80077B54
-extern int PHYSICS_CheckForObjectCollide(struct _Instance *instance, struct SVECTOR *startVec, struct SVECTOR *endVec, int segment); // 0x80077B9C
-extern int PHYSICS_CheckForValidMove(struct _Instance *instance, struct SVECTOR *startVec, struct SVECTOR *endVec, int segment); // 0x80077BE0
+extern int PHYSICS_CheckForTerrainCollide(struct _Instance *instance, SVECTOR*startVec, SVECTOR*endVec, int segment); // 0x80077B54
+extern int PHYSICS_CheckForObjectCollide(struct _Instance *instance, SVECTOR*startVec, SVECTOR*endVec, int segment); // 0x80077B9C
+extern int PHYSICS_CheckForValidMove(struct _Instance *instance, SVECTOR*startVec, SVECTOR*endVec, int segment); // 0x80077BE0
 extern int PHYSICS_CheckFaceStick(struct _PCollideInfo *CInfo); // 0x80077C4C
 extern int PHYSICS_CheckDontGrabEdge(struct _PCollideInfo *CInfo); // 0x80077CB0
-extern void PHYSICS_GenericLineCheckSetup(short x, short y, short z, struct SVECTOR *inVec); // 0x80077DD8
+extern void PHYSICS_GenericLineCheckSetup(short x, short y, short z, SVECTOR*inVec); // 0x80077DD8
 extern void PHYSICS_GenericLineCheck(struct _Instance *instance, struct MATRIX *transMat, struct MATRIX *rotMat, struct _PCollideInfo *cInfo); // 0x80077DE8
 extern void PHYSICS_GenericLineCheckMask(struct _Instance *instance, struct MATRIX *transMat, struct MATRIX *rotMat, struct _PCollideInfo *cInfo); // 0x80077E0C
 

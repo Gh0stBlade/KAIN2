@@ -79,57 +79,54 @@ void PHYSICS_CheckLineInWorldMask(struct _Instance *instance, struct _PCollideIn
 // int /*$ra*/ PhysicsCheckLinkedMove(struct _Instance *instance /*$s2*/, int Data /*stack 4*/, short Mode /*stack -72*/)
 int PhysicsCheckLinkedMove(struct _Instance *instance, int Data, short Mode)
 { // line 124, offset 0x80074754
-	struct evPhysicsLinkedMoveData *ptr = (struct evPhysicsLinkedMoveData*)Data; // $s3
 	struct _Instance* v5; // eax
-	int* v6; // ebx
+	MATRIX* v6; // ebx
 	int x; // ebp
 	struct evPhysicsLinkedMoveData* z; // edx
 	int attachedID; // ecx
 	__int32 v10; // ecx
 	__int32 v11; // eax
-	struct SVECTOR* p_posDelta; // ebx
+	SVECTOR* p_posDelta; // ebx
 	__int16 v13; // ax
-	__int16 v14; // cx
+	__int16 vz; // cx
 	__int16 v15; // dx
 	__int16 v16; // ax
 	__int16 v17; // cx
 	struct _Instance* v18; // eax
-	int v19; // ecx
 	int flags2; // ecx
+	int v20; // ecx
 	int introUniqueID; // edx
-	__int16 v22; // cx
+	__int16 vy; // cx
 	__int16 v23; // dx
 	char v24; // al
 	int v25; // eax
 	int v27; // [esp+4h] [ebp-68h]
 	int v28; // [esp+8h] [ebp-64h]
-	int v29; // [esp+Ch] [ebp-60h]
-	int v30; // [esp+10h] [ebp-5Ch]
-	int v31; // [esp+14h] [ebp-58h]
+	__int32 v29; // [esp+Ch] [ebp-60h]
+	__int32 v30; // [esp+10h] [ebp-5Ch]
+	__int32 v31; // [esp+14h] [ebp-58h]
 	struct _Instance* v32; // [esp+18h] [ebp-54h]
 	struct evPhysicsLinkedMoveData* v33; // [esp+18h] [ebp-54h]
 	int v34; // [esp+1Ch] [ebp-50h]
 	int y; // [esp+20h] [ebp-4Ch]
 	struct _G2EulerAngles_Type euler; // [esp+24h] [ebp-48h] BYREF
-	int v37; // [esp+2Ch] [ebp-40h] BYREF
-	int v38; // [esp+30h] [ebp-3Ch]
-	int v39; // [esp+34h] [ebp-38h]
-	int v40; // [esp+3Ch] [ebp-30h] BYREF
-	int v41; // [esp+40h] [ebp-2Ch]
-	int v42; // [esp+44h] [ebp-28h]
+	VECTOR v0; // [esp+2Ch] [ebp-40h] BYREF
+	VECTOR v1; // [esp+3Ch] [ebp-30h] BYREF
 	struct _G2Matrix_Type matrix; // [esp+4Ch] [ebp-20h] BYREF
 	struct _Instance* instancea; // [esp+70h] [ebp+4h]
 	struct evPhysicsLinkedMoveData* Dataa; // [esp+74h] [ebp+8h]
+
+	struct evPhysicsLinkedMoveData* ptr = (struct evPhysicsLinkedMoveData*)Data;
 
 	if (instance->matrix)
 	{
 		v5 = ptr->instance;
 		v32 = v5;
-		v6 = (int*)&ptr->instance->matrix[ptr->segment];
+		v6 = &ptr->instance->matrix[ptr->segment];
 		x = instance->position.x;
-		v29 = v6[5];
-		v30 = v6[6];
-		v31 = v6[7];
+		v29 = v6->t[0];
+		v30 = v6->t[1];
+		v31 = v6->t[2];
 		z = (struct evPhysicsLinkedMoveData*)instance->position.z;
 		instancea = (struct _Instance*)instance->position.y;
 		attachedID = instance->attachedID;
@@ -151,33 +148,33 @@ int PhysicsCheckLinkedMove(struct _Instance *instance, int Data, short Mode)
 				v28 = 1;
 			if (v28 || v27)
 			{
-				TransposeMatrix(v6, &matrix);
+				TransposeMatrix(v6, (MATRIX*)&matrix);
 				if (v27)
 					MulMatrix0((MATRIX*)&matrix, instance->matrix, &instance->relativeMatrix);
 				if (v28)
 				{
-					v37 = x - v34;
-					v38 = (int)instancea - y;
-					v39 = (char*)Dataa - (char*)v33;
-					ApplyMatrixLV((int*)&matrix, &v37, &v37);
+					v0.vx = x - v34;
+					v0.vy = (__int32)instancea - y;
+					v0.vz = (char*)Dataa - (char*)v33;
+					ApplyMatrixLV((MATRIX*)&matrix, &v0, &v0);
 					v10 = instance->relativeMatrix.t[1];
-					instance->relativeMatrix.t[0] += v37;
+					instance->relativeMatrix.t[0] += v0.vx;
 					v11 = instance->relativeMatrix.t[2];
-					instance->relativeMatrix.t[1] = v38 + v10;
-					instance->relativeMatrix.t[2] = v39 + v11;
+					instance->relativeMatrix.t[1] = v0.vy + v10;
+					instance->relativeMatrix.t[2] = v0.vz + v11;
 				}
 			}
-			ApplyMatrixLV(v6, instance->relativeMatrix.t, &v40);
-			MulMatrix0((MATRIX*)v6, &instance->relativeMatrix, (MATRIX*)&matrix);
+			ApplyMatrixLV(v6, (VECTOR*)instance->relativeMatrix.t, &v1);
+			MulMatrix0(v6, &instance->relativeMatrix, (MATRIX*)&matrix);
 			G2EulerAngles_FromMatrix(&euler, &matrix, 21);
 			p_posDelta = (struct SVECTOR*)&ptr->posDelta;
-			v13 = v41 - (WORD)instancea;
-			v14 = v42;
-			ptr->posDelta.x = v29 + v40 - x;
+			v13 = LOWORD(v1.vy) - (WORD)instancea;
+			vz = v1.vz;
+			ptr->posDelta.x = v29 + LOWORD(v1.vx) - x;
 			v15 = euler.x;
 			ptr->posDelta.y = v30 + v13;
 			v16 = euler.y;
-			ptr->posDelta.z = v31 + v14 - (WORD)Dataa;
+			ptr->posDelta.z = v31 + vz - (WORD)Dataa;
 			v17 = euler.z;
 			ptr->rotDelta.x = v15 - instance->oldRotation.x;
 			ptr->rotDelta.y = v16 - instance->oldRotation.y;
@@ -196,29 +193,29 @@ int PhysicsCheckLinkedMove(struct _Instance *instance, int Data, short Mode)
 				}
 				v5 = v32;
 			}
-			flags2 = v5->flags2;
+			v20 = v5->flags2;
 			introUniqueID = v5->introUniqueID;
-			flags2 = flags2 | 0x80;
-			v5->flags2 = flags2;
+			v20 = v20 | 0x80;
+			v5->flags2 = v20;
 			instance->attachedID = introUniqueID;
 			instance->attachedSegment = ptr->segment;
 			instance->zAccl = 0;
 			instance->zVel = 0;
-			TransposeMatrix(v6, &matrix);
-			v37 = x - v29;
-			v38 = (int)instancea - v30;
-			v39 = (int)Dataa - v31;
-			ApplyMatrixLV((int*)&matrix, &v37, instance->relativeMatrix.t);
+			TransposeMatrix(v6, (MATRIX*)&matrix);
+			v0.vx = x - v29;
+			v0.vy = (__int32)instancea - v30;
+			v0.vz = (__int32)Dataa - v31;
+			ApplyMatrixLV((MATRIX*)&matrix, &v0, (VECTOR*)instance->relativeMatrix.t);
 			MulMatrix0((MATRIX*)&matrix, instance->matrix, &instance->relativeMatrix);
-			ApplyMatrixLV(v6, instance->relativeMatrix.t, &v37);
-			v22 = v38;
+			ApplyMatrixLV(v6, (VECTOR*)instance->relativeMatrix.t, &v0);
+			vy = v0.vy;
 			ptr->rotDelta.z = 0;
 			ptr->rotDelta.y = 0;
 			ptr->rotDelta.x = 0;
 			p_posDelta = (struct SVECTOR*)&ptr->posDelta;
-			v23 = v39;
-			ptr->posDelta.x = x - v37 - v29;
-			ptr->posDelta.y = (WORD)instancea - v22 - v30;
+			v23 = v0.vz;
+			ptr->posDelta.x = x - LOWORD(v0.vx) - v29;
+			ptr->posDelta.y = (WORD)instancea - vy - v30;
 			ptr->posDelta.z = (WORD)Dataa - v23 - v31;
 		}
 		v24 = Mode;
@@ -235,7 +232,7 @@ int PhysicsCheckLinkedMove(struct _Instance *instance, int Data, short Mode)
 			instance->rotation.z += ptr->rotDelta.z;
 		}
 		if ((v24 & 2) != 0)
-			INSTANCE_Post(instance, 67174408, (int)ptr);
+			INSTANCE_Post(instance, 0x4010008, (int)ptr);
 		if (p_posDelta->vx || ptr->posDelta.y || ptr->posDelta.z || ptr->rotDelta.x || ptr->rotDelta.y || ptr->rotDelta.z)
 		{
 			v25 = instance->flags2;
@@ -260,7 +257,7 @@ void PhysicsDefaultLinkedMoveResponse(struct _Instance *instance, struct evPhysi
 	instance->position.y += Data->posDelta.y;
 	instance->position.z += Data->posDelta.z;
 	if (updateTransforms)
-		COLLIDE_UpdateAllTransforms(instance, (struct SVECTOR*)&Data->posDelta);
+		COLLIDE_UpdateAllTransforms(instance, (SVECTOR*)&Data->posDelta);
 	instance->rotation.z += Data->rotDelta.z;
 }
 
@@ -274,13 +271,13 @@ int PhysicsCheckGravity(struct _Instance *instance, int Data, short Mode)
 		// Start offset: 0x80074C38
 		// Variables:
 			struct evPhysicsGravityData *Ptr; // $s3
-			struct SVECTOR D; // stack offset -120
-			struct SVECTOR N; // stack offset -112
+			SVECTOR D; // stack offset -120
+			SVECTOR N; // stack offset -112
 			short Dot; // $v0
 			int rc; // $s4
 			struct _PCollideInfo CInfo; // stack offset -104
-			struct SVECTOR Old; // stack offset -56
-			struct SVECTOR New; // stack offset -48
+			SVECTOR Old; // stack offset -56
+			SVECTOR New; // stack offset -48
 			int slide; // $fp
 
 		/* begin block 1.1 */
@@ -338,13 +335,13 @@ int PhysicsCheckEdgeGrabbing(struct _Instance *instance, struct GameTracker *gam
 		// Variables:
 			struct evPhysicsEdgeData *Ptr; // $s1
 			int rc; // $s6
-			struct VECTOR OutTrans; // stack offset -120
-			struct SVECTOR *ExtraRot; // $v0
+			VECTOR OutTrans; // stack offset -120
+			SVECTOR *ExtraRot; // $v0
 			struct _PCollideInfo CInfo; // stack offset -104
-			struct SVECTOR Old; // stack offset -56
-			struct SVECTOR New; // stack offset -48
-			static struct MATRIX TempMat; // offset 0x0
-			static struct MATRIX *pTempMat; // offset 0x20
+			SVECTOR Old; // stack offset -56
+			SVECTOR New; // stack offset -48
+			static MATRIX TempMat; // offset 0x0
+			static MATRIX *pTempMat; // offset 0x20
 			int wallCrawl; // $fp
 			int freeSpot; // $s3
 	/* end block 1 */
@@ -370,9 +367,9 @@ void PhysicsDefaultEdgeGrabResponse(struct _Instance *instance, struct evPhysics
 		// Variables:
 			struct _SVector normal; // stack offset -88
 			struct _G2EulerAngles_Type ea1; // stack offset -80
-			struct VECTOR OutTrans; // stack offset -72
-			struct MATRIX TempMat; // stack offset -56
-			struct SVECTOR New; // stack offset -24
+			VECTOR OutTrans; // stack offset -72
+			MATRIX TempMat; // stack offset -56
+			SVECTOR New; // stack offset -24
 
 		/* begin block 1.1 */
 			// Start line: 936
@@ -404,12 +401,12 @@ int PhysicsCheckSliding(struct _Instance *instance, int Data, short Mode)
 		// Variables:
 			struct evPhysicsSlideData *Ptr; // $s0
 			int rc; // $s1
-			struct VECTOR OutTrans; // stack offset -120
+			VECTOR OutTrans; // stack offset -120
 			struct _SVector normal; // stack offset -104
 			struct _PCollideInfo CInfo; // stack offset -96
-			struct SVECTOR Old; // stack offset -48
-			struct SVECTOR New; // stack offset -40
-			static struct MATRIX *pTempMat; // offset 0x24
+			SVECTOR Old; // stack offset -48
+			SVECTOR New; // stack offset -40
+			static MATRIX *pTempMat; // offset 0x24
 
 		/* begin block 1.1 */
 			// Start line: 1015
@@ -448,8 +445,8 @@ int PhysicsUpdateTface(struct _Instance *instance, int Data)
 		// Start offset: 0x80076270
 		// Variables:
 			struct _PCollideInfo CInfo; // stack offset -72
-			struct SVECTOR Old; // stack offset -24
-			struct SVECTOR New; // stack offset -16
+			SVECTOR Old; // stack offset -24
+			SVECTOR New; // stack offset -16
 	/* end block 1 */
 	// End offset: 0x8007635C
 	// End Line: 1219
@@ -472,11 +469,11 @@ int PhysicsCheckBlockers(struct _Instance *instance, struct GameTracker *gameTra
 		// Start offset: 0x8007636C
 		// Variables:
 			struct evPhysicsEdgeData *Ptr; // $s1
-			struct VECTOR OutTrans; // stack offset -120
+			VECTOR OutTrans; // stack offset -120
 			struct _PCollideInfo CInfo; // stack offset -104
-			struct SVECTOR Old; // stack offset -56
-			struct SVECTOR New; // stack offset -48
-			static struct MATRIX *pTempMat; // offset 0x28
+			SVECTOR Old; // stack offset -56
+			SVECTOR New; // stack offset -48
+			static MATRIX *pTempMat; // offset 0x28
 
 		/* begin block 1.1 */
 			// Start line: 1276
@@ -489,7 +486,7 @@ int PhysicsCheckBlockers(struct _Instance *instance, struct GameTracker *gameTra
 				// Start offset: 0x80076418
 				// Variables:
 					int Dot; // $a0
-					struct SVECTOR Force; // stack offset -40
+					SVECTOR Force; // stack offset -40
 			/* end block 1.1.1 */
 			// End offset: 0x800764FC
 			// End Line: 1323
@@ -531,8 +528,8 @@ int PhysicsCheckSwim(struct _Instance *instance, int Data, short Mode)
 			int Depth; // $s0
 			int WaterDepth; // $v1
 			struct _PCollideInfo CInfo; // stack offset -96
-			struct SVECTOR Old; // stack offset -48
-			struct SVECTOR New; // stack offset -40
+			SVECTOR Old; // stack offset -48
+			SVECTOR New; // stack offset -40
 			long waterZLevel; // $s2
 	/* end block 1 */
 	// End offset: 0x800768CC
@@ -554,10 +551,10 @@ int PhysicsDefaultCheckSwimResponse(struct _Instance *instance, struct evPhysics
 	int v2; // ebp
 	int WaterLevel; // ebx
 	__int16 Depth; // ax
-	struct MATRIX* matrix; // ecx
-	struct MATRIX* oldMatrix; // eax
-	struct MATRIX* v7; // ecx
-	struct MATRIX* v8; // esi
+	MATRIX* matrix; // ecx
+	MATRIX* oldMatrix; // eax
+	MATRIX* v7; // ecx
+	MATRIX* v8; // esi
 	int v9; // eax
 
 	v2 = 0;
@@ -643,8 +640,8 @@ int PhysicsCheckLOS(struct _Instance *instance, int Data, int Mode)
 
 	v3 = 0;
 	currentStreamUnitID = instance->currentStreamUnitID;
-	v11.oldPoint = (struct SVECTOR*)(Data + 8);
-	v11.newPoint = (struct SVECTOR*)Data;
+	v11.oldPoint = (SVECTOR*)(Data + 8);
+	v11.newPoint = (SVECTOR*)Data;
 	v11.collideType = 63;
 	LevelWithID = STREAM_GetLevelWithID(currentStreamUnitID);
 	LinkChild = instance->LinkChild;
@@ -677,20 +674,20 @@ int PhysicsCheckDropHeight(struct _Instance *instance, int Data, int Mode)
 		// Variables:
 			struct evPhysicsDropHeightData *data; // $s0
 			struct Level *level; // $v0
-			struct SVECTOR newPos; // stack offset -104
-			struct SVECTOR oldPos; // stack offset -96
+			SVECTOR newPos; // stack offset -104
+			SVECTOR oldPos; // stack offset -96
 			int rc; // $s1
 			int lowZ; // $v1
 			struct _PCollideInfo CInfo; // stack offset -88
-			static struct MATRIX TempMat; // offset 0x30
-			static struct MATRIX *pTempMat; // offset 0x50
+			static MATRIX TempMat; // offset 0x30
+			static MATRIX *pTempMat; // offset 0x50
 
 		/* begin block 1.1 */
 			// Start line: 1929
 			// Start offset: 0x80076C30
 			// Variables:
-				struct VECTOR outTrans; // stack offset -40
-				struct SVECTOR *ExtraRot; // $v0
+				VECTOR outTrans; // stack offset -40
+				SVECTOR *ExtraRot; // $v0
 		/* end block 1.1 */
 		// End offset: 0x80076C74
 		// End Line: 1958
@@ -726,13 +723,13 @@ int PhysicsCheckDropOff(struct _Instance *instance, int Data, short Mode)
 		// Variables:
 			struct evPhysicsDropOffData *Ptr; // $s1
 			int rc; // $s2
-			struct VECTOR OutTrans; // stack offset -104
-			struct SVECTOR *ExtraRot; // $v0
+			VECTOR OutTrans; // stack offset -104
+			SVECTOR *ExtraRot; // $v0
 			struct _PCollideInfo CInfo; // stack offset -88
-			struct SVECTOR New; // stack offset -40
-			struct SVECTOR Old; // stack offset -32
-			static struct MATRIX TempMat; // offset 0x60
-			static struct MATRIX *pTempMat; // offset 0x80
+			SVECTOR New; // stack offset -40
+			SVECTOR Old; // stack offset -32
+			static MATRIX TempMat; // offset 0x60
+			static MATRIX *pTempMat; // offset 0x80
 	/* end block 1 */
 	// End offset: 0x80077090
 	// End Line: 2155
@@ -754,12 +751,12 @@ int PhysicsFollowWall(struct _Instance *instance, struct GameTracker *gameTracke
 		// Start line: 2210
 		// Start offset: 0x800770AC
 		// Variables:
-			struct VECTOR OutTrans; // stack offset -168
+			VECTOR OutTrans; // stack offset -168
 			struct evPhysicsWallCrawlData *Ptr; // $s1
 			struct _PCollideInfo CInfo; // stack offset -152
-			struct SVECTOR New; // stack offset -104
-			struct SVECTOR Old; // stack offset -96
-			static struct MATRIX *pTempMat; // offset 0x84
+			SVECTOR New; // stack offset -104
+			SVECTOR Old; // stack offset -96
+			static MATRIX *pTempMat; // offset 0x84
 
 		/* begin block 1.1 */
 			// Start line: 2281
@@ -767,7 +764,7 @@ int PhysicsFollowWall(struct _Instance *instance, struct GameTracker *gameTracke
 			// Variables:
 				struct _Position A; // stack offset -88
 				struct _Position B; // stack offset -80
-				struct MATRIX mat; // stack offset -72
+				MATRIX mat; // stack offset -72
 		/* end block 1.1 */
 		// End offset: 0x800772E4
 		// End Line: 2341
@@ -788,7 +785,7 @@ int PhysicsFollowWall(struct _Instance *instance, struct GameTracker *gameTracke
 // void /*$ra*/ PhysicsMoveLocalZClamp(struct _Instance *instance /*$s3*/, long segment /*$s0*/, long time /*$s1*/, long clamp /*$s2*/)
 void PhysicsMoveLocalZClamp(struct _Instance *instance, long segment, long time, long clamp)
 { // line 2636, offset 0x800775bc
-	struct MATRIX* matrix; // edx
+	MATRIX* matrix; // edx
 	__int16 vy; // cx
 	struct _Position position; // [esp+4h] [ebp-18h] BYREF
 	SVECTOR v0; // [esp+Ch] [ebp-10h] BYREF
@@ -994,10 +991,10 @@ void PHYSICS_StopIfCloseToTarget(struct _Instance *instance, int x, int y, int z
 
 
 // autogenerated function stub: 
-// int /*$ra*/ PHYSICS_CheckForTerrainCollide(struct _Instance *instance /*$a0*/, struct SVECTOR *startVec /*$a1*/, struct SVECTOR *endVec /*$a2*/, int segment /*$a3*/)
-int PHYSICS_CheckForTerrainCollide(struct _Instance *instance, struct SVECTOR *startVec, struct SVECTOR *endVec, int segment)
+// int /*$ra*/ PHYSICS_CheckForTerrainCollide(struct _Instance *instance /*$a0*/, SVECTOR *startVec /*$a1*/, SVECTOR *endVec /*$a2*/, int segment /*$a3*/)
+int PHYSICS_CheckForTerrainCollide(struct _Instance *instance, SVECTOR *startVec, SVECTOR *endVec, int segment)
 { // line 2898, offset 0x80077b54
-	struct MATRIX* matrix; // eax
+	MATRIX* matrix; // eax
 	struct _PCollideInfo v6; // [esp+0h] [ebp-2Ch] BYREF
 
 	v6.newPoint = endVec;
@@ -1010,10 +1007,10 @@ int PHYSICS_CheckForTerrainCollide(struct _Instance *instance, struct SVECTOR *s
 
 
 // autogenerated function stub: 
-// int /*$ra*/ PHYSICS_CheckForObjectCollide(struct _Instance *instance /*$a0*/, struct SVECTOR *startVec /*$a1*/, struct SVECTOR *endVec /*$a2*/, int segment /*$a3*/)
-int PHYSICS_CheckForObjectCollide(struct _Instance *instance, struct SVECTOR *startVec, struct SVECTOR *endVec, int segment)
+// int /*$ra*/ PHYSICS_CheckForObjectCollide(struct _Instance *instance /*$a0*/, SVECTOR *startVec /*$a1*/, SVECTOR *endVec /*$a2*/, int segment /*$a3*/)
+int PHYSICS_CheckForObjectCollide(struct _Instance *instance, SVECTOR *startVec, SVECTOR *endVec, int segment)
 { // line 2917, offset 0x80077b9c
-	struct MATRIX* matrix; // eax
+	MATRIX* matrix; // eax
 	struct _PCollideInfo v6; // [esp+0h] [ebp-2Ch] BYREF
 
 	v6.newPoint = endVec;
@@ -1026,13 +1023,13 @@ int PHYSICS_CheckForObjectCollide(struct _Instance *instance, struct SVECTOR *st
 
 
 // autogenerated function stub: 
-// int /*$ra*/ PHYSICS_CheckForValidMove(struct _Instance *instance /*$a0*/, struct SVECTOR *startVec /*$a1*/, struct SVECTOR *endVec /*$a2*/, int segment /*$a3*/)
-int PHYSICS_CheckForValidMove(struct _Instance *instance, struct SVECTOR *startVec, struct SVECTOR *endVec, int segment)
+// int /*$ra*/ PHYSICS_CheckForValidMove(struct _Instance *instance /*$a0*/, SVECTOR *startVec /*$a1*/, SVECTOR *endVec /*$a2*/, int segment /*$a3*/)
+int PHYSICS_CheckForValidMove(struct _Instance *instance, SVECTOR *startVec, SVECTOR *endVec, int segment)
 { // line 2938, offset 0x80077be0
 	int v4; // edi
 	int v5; // edx
 	int v6 = 0; // ecx
-	struct MATRIX* v8; // [esp-Ch] [ebp-44h]
+	MATRIX* v8; // [esp-Ch] [ebp-44h]
 	struct _PCollideInfo v9; // [esp+Ch] [ebp-2Ch] BYREF
 
 	v9.newPoint = endVec;
@@ -1136,8 +1133,8 @@ int PHYSICS_CheckDontGrabEdge(struct _PCollideInfo *CInfo)
 
 
 // autogenerated function stub: 
-// void /*$ra*/ PHYSICS_GenericLineCheckSetup(short x /*$a0*/, short y /*$a1*/, short z /*$a2*/, struct SVECTOR *inVec /*$a3*/)
-void PHYSICS_GenericLineCheckSetup(short x, short y, short z, struct SVECTOR *inVec)
+// void /*$ra*/ PHYSICS_GenericLineCheckSetup(short x /*$a0*/, short y /*$a1*/, short z /*$a2*/, SVECTOR *inVec /*$a3*/)
+void PHYSICS_GenericLineCheckSetup(short x, short y, short z, SVECTOR *inVec)
 { // line 3035, offset 0x80077dd8
 	inVec->vx = x;
 	inVec->vy = y;
@@ -1146,8 +1143,8 @@ void PHYSICS_GenericLineCheckSetup(short x, short y, short z, struct SVECTOR *in
 
 
 // autogenerated function stub: 
-// void /*$ra*/ PHYSICS_GenericLineCheck(struct _Instance *instance /*$a0*/, struct MATRIX *transMat /*$a1*/, struct MATRIX *rotMat /*$a2*/, struct _PCollideInfo *cInfo /*$a3*/)
-void PHYSICS_GenericLineCheck(struct _Instance *instance, struct MATRIX *transMat, struct MATRIX *rotMat, struct _PCollideInfo *cInfo)
+// void /*$ra*/ PHYSICS_GenericLineCheck(struct _Instance *instance /*$a0*/, MATRIX *transMat /*$a1*/, MATRIX *rotMat /*$a2*/, struct _PCollideInfo *cInfo /*$a3*/)
+void PHYSICS_GenericLineCheck(struct _Instance *instance, MATRIX *transMat, MATRIX *rotMat, struct _PCollideInfo *cInfo)
 { // line 3053, offset 0x80077de8
 	cInfo->collideType = 63;
 	PHYSICS_GenericLineCheckMask(instance, transMat, rotMat, cInfo);
@@ -1155,29 +1152,27 @@ void PHYSICS_GenericLineCheck(struct _Instance *instance, struct MATRIX *transMa
 
 
 // autogenerated function stub: 
-// void /*$ra*/ PHYSICS_GenericLineCheckMask(struct _Instance *instance /*$a0*/, struct MATRIX *transMat /*$a1*/, struct MATRIX *rotMat /*$a2*/, struct _PCollideInfo *cInfo /*$a3*/)
-void PHYSICS_GenericLineCheckMask(struct _Instance *instance, struct MATRIX *transMat, struct MATRIX *rotMat, struct _PCollideInfo *cInfo)
+// void /*$ra*/ PHYSICS_GenericLineCheckMask(struct _Instance *instance /*$a0*/, MATRIX *transMat /*$a1*/, MATRIX *rotMat /*$a2*/, struct _PCollideInfo *cInfo /*$a3*/)
+void PHYSICS_GenericLineCheckMask(struct _Instance *instance, MATRIX *transMat, MATRIX *rotMat, struct _PCollideInfo *cInfo)
 { // line 3057, offset 0x80077e0c
-	struct SVECTOR* oldPoint; // edi
-	struct SVECTOR* newPoint; // ebx
+	SVECTOR* oldPoint; // edi
+	SVECTOR* newPoint; // ebx
 	struct Level* LevelWithID; // eax
 	struct _Instance* LinkChild; // esi
 	struct Level* v8; // ebx
 	struct _Instance* i; // edi
-	__int16 v10; // [esp+10h] [ebp-10h] BYREF
-	__int16 v11; // [esp+14h] [ebp-Ch]
-	__int16 v12; // [esp+18h] [ebp-8h]
+	VECTOR v10; // [esp+10h] [ebp-10h] BYREF
 
 	oldPoint = cInfo->oldPoint;
 	newPoint = cInfo->newPoint;
 	TRANS_ApplyMatrix(rotMat, oldPoint, &v10);
-	oldPoint->vx = transMat->t[0] + v10;
-	oldPoint->vy = transMat->t[1] + v11;
-	oldPoint->vz = transMat->t[2] + v12;
+	oldPoint->vx = transMat->t[0] + v10.vx;
+	oldPoint->vy = transMat->t[1] + v10.vy;
+	oldPoint->vz = transMat->t[2] + v10.vz;
 	TRANS_ApplyMatrix(rotMat, newPoint, &v10);
-	newPoint->vx = transMat->t[0] + v10;
-	newPoint->vy = transMat->t[1] + v11;
-	newPoint->vz = transMat->t[2] + v12;
+	newPoint->vx = transMat->t[0] + v10.vx;
+	newPoint->vy = transMat->t[1] + v10.vy;
+	newPoint->vz = transMat->t[2] + v10.vz;
 	LevelWithID = STREAM_GetLevelWithID(instance->currentStreamUnitID);
 	cInfo->inst = 0;
 	cInfo->instance = instance;

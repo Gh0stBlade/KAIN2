@@ -1,6 +1,11 @@
 #ifndef REAVER_H
 #define REAVER_H
 
+struct __ReaverSaveDat // hashcode: 0x18BBFFA1 (dec: 414973857)
+{
+	unsigned long pad; // size=0, offset=0
+};
+
 struct __ReaverData // hashcode: 0xD1EA4FE0 (dec: -773173280)
 {
 	char ReaverPickedUp; // size=0, offset=0

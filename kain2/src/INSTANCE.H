@@ -3,6 +3,17 @@
 
 typedef struct _Instance _Instance;
 
+struct LightInstance // hashcode: 0xB8D5E61F (dec: -1193941473)
+{
+	struct _Instance* lightInstance; // size=0, offset=0
+	long r; // size=0, offset=4
+	long g; // size=0, offset=8
+	long b; // size=0, offset=12
+	short radius; // size=0, offset=16
+	unsigned char segment; // size=0, offset=18
+	unsigned char flags; // size=0, offset=19
+};
+
 struct SoundInstance // hashcode: 0xFF235679 (dec: -14461319)
 {
 	unsigned char channel; // size=0, offset=0
@@ -36,8 +47,8 @@ struct _Instance // hashcode: 0x699A5B3D (dec: 1771723581)
 	long birthStreamUnitID; // size=0, offset=52
 	long currentStreamUnitID; // size=0, offset=56
 	long introUniqueID; // size=0, offset=60
-	struct MATRIX* matrix; // size=32, offset=64
-	struct MATRIX* oldMatrix; // size=32, offset=68
+	MATRIX* matrix; // size=32, offset=64
+	MATRIX* oldMatrix; // size=32, offset=68
 	struct SoundInstance soundInstanceTbl[4]; // size=12, offset=72
 	unsigned long maxCheckDistance; // size=0, offset=84
 	unsigned long checkMask; // size=0, offset=88

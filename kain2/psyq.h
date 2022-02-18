@@ -6,6 +6,10 @@ typedef unsigned int u_int;
 typedef unsigned short u_short;
 typedef unsigned char u_char;
 
+char* MemW32_GetMemBase();
+int MemW32_GetSize();
+char* getScratchAddr(int a1);
+
 struct TCB // hashcode: 0x6A70BBF4 (dec: 1785773044)
 {
 	long status; // size=0, offset=0

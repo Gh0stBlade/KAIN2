@@ -324,17 +324,17 @@ extern struct UVTYPE *face_uv2; // offset 0x800CE1C0
 
 extern struct UVTYPE *face_uv20; // offset 0x800CE1CC
 
-extern struct SVECTOR *face_v0; // offset 0x800CE1A0
+extern SVECTOR*face_v0; // offset 0x800CE1A0
 
-extern struct SVECTOR *face_v01; // offset 0x800CE1AC
+extern SVECTOR*face_v01; // offset 0x800CE1AC
 
-extern struct SVECTOR *face_v1; // offset 0x800CE1A4
+extern SVECTOR*face_v1; // offset 0x800CE1A4
 
-extern struct SVECTOR *face_v12; // offset 0x800CE1B0
+extern SVECTOR*face_v12; // offset 0x800CE1B0
 
-extern struct SVECTOR *face_v2; // offset 0x800CE1A8
+extern SVECTOR*face_v2; // offset 0x800CE1A8
 
-extern struct SVECTOR *face_v20; // offset 0x800CE1B4
+extern SVECTOR*face_v20; // offset 0x800CE1B4
 
 
 static struct _ButtonTexture *FaceButtons; // offset 0x800D5C04
@@ -751,7 +751,7 @@ static struct UW_ScreenXY *ScreenMorphArray; // offset 0x800CF894
 
 extern char (*selectMenuText[5]); // offset 0x800C8768
 
-extern struct SVECTOR shadow_vertices[11]; // offset 0x800D038C
+extern SVECTORshadow_vertices[11]; // offset 0x800D038C
 
 static short shorten_count; // offset 0x800CDF74
 
@@ -916,34 +916,6 @@ extern struct _MonsterFunctionTable WORSHIP_FunctionTable; // offset 0x800CF714
 extern struct _MonsterStateChoice WORSHIP_StateChoiceTable[5]; // offset 0x800CABF0
 
 static int ZoneDelta; // offset 0x800CF85C
-
-
-
-struct LightInstance // hashcode: 0xB8D5E61F (dec: -1193941473)
-{
-	struct _Instance *lightInstance; // size=0, offset=0
-	long r; // size=0, offset=4
-	long g; // size=0, offset=8
-	long b; // size=0, offset=12
-	short radius; // size=0, offset=16
-	unsigned char segment; // size=0, offset=18
-	unsigned char flags; // size=0, offset=19
-};
-
-
-struct _GameTrackerASMData_Type // hashcode: 0x28F0BFB9 (dec: 686866361)
-{
-	long drawBackFaces; // size=0, offset=0
-	long dispPage; // size=0, offset=4
-	short MorphTime; // size=0, offset=8
-	short MorphType; // size=0, offset=10
-	struct LightInstance lightInstances[1]; // size=20, offset=12
-};
-
-struct _GameData_Type // hashcode: 0xE05EBAD0 (dec: -530662704)
-{
-	struct _GameTrackerASMData_Type asmData; // size=32, offset=0
-};
 
 struct TextureFT3 // hashcode: 0x2D2801D6 (dec: 757596630)
 {
@@ -1633,14 +1605,6 @@ struct TClassAttr // hashcode: 0x4DC02369 (dec: 1304437609)
 	unsigned short sound; // size=0, offset=2
 };
 
-struct _ColorType // hashcode: 0x440E837C (dec: 1141801852)
-{
-	unsigned char r; // size=0, offset=0
-	unsigned char g; // size=0, offset=1
-	unsigned char b; // size=0, offset=2
-	unsigned char code; // size=0, offset=3
-};
-
 struct PLAYER_114fake // hashcode: 0x5A1E67AD (dec: 1511942061)
 {
 	struct {
@@ -1728,17 +1692,7 @@ struct MusicLoadCmd // hashcode: 0x575883B8 (dec: 1465418680)
 	int data; // size=0, offset=4
 };
 
-struct gSoundData // hashcode: 0x100090FC (dec: 268472572)
-{
-	unsigned long gMasterVol; // size=0, offset=0
-	unsigned long gMusicVol; // size=0, offset=4
-	unsigned long gSfxVol; // size=0, offset=8
-	unsigned long gVoiceVol; // size=0, offset=12
-	char gSfxOn; // size=0, offset=16
-	char gMusicOn; // size=0, offset=17
-	char gVoiceOn; // size=0, offset=18
-	char soundsLoaded; // size=0, offset=19
-};
+
 
 struct GameTracker // hashcode: 0x4EB3EFC5 (dec: 1320415173)
 {
@@ -1873,15 +1827,6 @@ struct vecL // hashcode: 0x7575CB14 (dec: 1970653972)
 	long z; // size=0, offset=8
 };
 
-struct _HVertex // hashcode: 0xC488A83D (dec: -997676995)
-{
-	short x; // size=0, offset=0
-	short y; // size=0, offset=2
-	short z; // size=0, offset=4
-	short normal; // size=0, offset=6
-	long pad; // size=0, offset=8
-};
-
 struct __MessageQueue // hashcode: 0x473062B5 (dec: 1194353333)
 {
 	int Head; // size=0, offset=0
@@ -1910,7 +1855,7 @@ typedef struct MATRIX MATRIX;
 
 typedef struct VECTOR VECTOR;
 
-typedef struct SVECTOR SVECTOR;
+typedef SVECTORSVECTOR;
 
 typedef struct CVECTOR CVECTOR;
 
@@ -2779,26 +2724,6 @@ union DEBUG_224fake // Hashcode: 0x0131C19B (dec: 20038043)
 	struct _Position throwVector; // size=6, offset=0
 };
 
-struct _StreamUnit // hashcode: 0xAC366E40 (dec: -1405718976)
-{
-	long StreamUnitID; // size=0, offset=0
-	short used; // size=0, offset=4
-	short flags; // size=0, offset=6
-	struct Level *level; // size=392, offset=8
-	char baseAreaName[16]; // size=16, offset=12
-	short toSignal; // size=0, offset=28
-	short fromSignal; // size=0, offset=30
-	long FrameCount; // size=0, offset=32
-	short eventVariables[6]; // size=12, offset=36
-	long FogColor; // size=0, offset=48
-	short UnitFogFar; // size=0, offset=52
-	short UnitFogNear; // size=0, offset=54
-	short TargetFogFar; // size=0, offset=56
-	short TargetFogNear; // size=0, offset=58
-	short sfxFileHandle; // size=0, offset=60
-	short pad; // size=0, offset=62
-};
-
 struct XAFileInfo // hashcode: 0xD7260012 (dec: -685375470)
 {
 	int startPos; // size=0, offset=0
@@ -3074,10 +2999,7 @@ struct StackType // hashcode: 0x9CE4C465 (dec: -1662729115)
 	} data; // size=32, offset=4, found in object files: debug.o, debug.o
 };
 
-struct __ReaverSaveDat // hashcode: 0x18BBFFA1 (dec: 414973857)
-{
-	unsigned long pad; // size=0, offset=0
-};
+
 
 enum option_ctrl_t // Hashcode: 0xEBCEABAC (dec: -338777172)
 {
@@ -3370,10 +3292,10 @@ struct _PCollideInfo // hashcode: 0x32613C4B (dec: 845233227)
 	short segment; // size=0, offset=2
 	void *prim; // size=0, offset=4
 	struct _Instance *inst; // size=0, offset=8
-	struct SVECTOR wNormal; // size=8, offset=12
-	struct SVECTOR *newPoint; // size=8, offset=20
-	struct SVECTOR *oldPoint; // size=8, offset=24
-	struct SVECTOR cldPoint; // size=8, offset=28
+	SVECTORwNormal; // size=8, offset=12
+	SVECTOR*newPoint; // size=8, offset=20
+	SVECTOR*oldPoint; // size=8, offset=24
+	SVECTORcldPoint; // size=8, offset=28
 	long collideType; // size=0, offset=36
 	struct _Instance *instance; // size=0, offset=40
 };
@@ -3408,8 +3330,8 @@ struct _CollideInfo // hashcode: 0xCA2DF5E9 (dec: -902957591)
 	void *prim1; // size=0, offset=12
 	void *inst0; // size=0, offset=16
 	void *inst1; // size=0, offset=20
-	struct SVECTOR point0; // size=8, offset=24
-	struct SVECTOR point1; // size=8, offset=32
+	SVECTORpoint0; // size=8, offset=24
+	SVECTORpoint1; // size=8, offset=32
 	struct _Position offset; // size=6, offset=40
 	short bspID; // size=0, offset=46
 };
@@ -3424,7 +3346,7 @@ struct _LCollideInfo // hashcode: 0xCC1DB336 (dec: -870468810)
 struct SCollideInfo // hashcode: 0x0DEAD21F (dec: 233493023)
 {
 	struct _Sphere *sphere; // size=12, offset=0
-	struct SVECTOR *oldPos; // size=8, offset=4
+	SVECTOR*oldPos; // size=8, offset=4
 	void (*collideFunc)(); // size=0, offset=8
 	long id; // size=0, offset=12
 	long segment; // size=0, offset=16
@@ -3817,12 +3739,12 @@ struct SP_SUBDIV_STRUCT // hashcode: 0x4C4B55E8 (dec: 1280005608)
 	struct _SVector vertex0; // size=8, offset=0
 	struct _SVector vertex1; // size=8, offset=8
 	struct _SVector vertex2; // size=8, offset=16
-	struct SVECTOR face_v0; // size=8, offset=24
-	struct SVECTOR face_v1; // size=8, offset=32
-	struct SVECTOR face_v2; // size=8, offset=40
-	struct SVECTOR face_v01; // size=8, offset=48
-	struct SVECTOR face_v12; // size=8, offset=56
-	struct SVECTOR face_v20; // size=8, offset=64
+	SVECTORface_v0; // size=8, offset=24
+	SVECTORface_v1; // size=8, offset=32
+	SVECTORface_v2; // size=8, offset=40
+	SVECTORface_v01; // size=8, offset=48
+	SVECTORface_v12; // size=8, offset=56
+	SVECTORface_v20; // size=8, offset=64
 	struct UVTYPE face_uv0; // size=4, offset=72
 	struct UVTYPE face_uv1; // size=4, offset=76
 	struct UVTYPE face_uv2; // size=4, offset=80

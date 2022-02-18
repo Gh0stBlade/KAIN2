@@ -235,17 +235,17 @@ void _G2Instance_BuildFacadeTransforms(struct _Instance *instance, struct _Segme
 		// Start offset: 0x800959F0
 		// Variables:
 			struct _Position *cameraPos; // $s7
-			struct SVECTOR *segmentPos; // $s3
-			struct SVECTOR *segmentRot; // $s4
+			SVECTOR*segmentPos; // $s3
+			SVECTOR*segmentRot; // $s4
 			struct VECTOR *scale; // $fp
 
 		/* begin block 1.1 */
 			// Start line: 644
 			// Start offset: 0x80095B1C
 			// Variables:
-				struct SVECTOR *zvec; // $s1
-				struct SVECTOR *camWorldPos; // $s2
-				struct SVECTOR *camLocPos; // $s6
+				SVECTOR*zvec; // $s1
+				SVECTOR*camWorldPos; // $s2
+				SVECTOR*camLocPos; // $s6
 				long sqrt; // $s0
 		/* end block 1.1 */
 		// End offset: 0x80095C38

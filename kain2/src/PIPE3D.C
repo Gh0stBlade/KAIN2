@@ -30,7 +30,7 @@ void PIPE3D_CalculateWCTransform(struct _CameraCore_Type *cameraCore)
 			struct MATRIX user_rotation; // stack offset -112
 			struct MATRIX first; // stack offset -80
 			struct MATRIX *cam_wcTrans; // $s3
-			struct SVECTOR v0; // stack offset -48
+			SVECTOR v0; // stack offset -48
 			struct VECTOR v1; // stack offset -40
 	/* end block 1 */
 	// End offset: 0x8003A3CC
@@ -233,7 +233,7 @@ void PIPE3D_InstanceListTransformAndDrawFunc(struct _StreamUnit *unit, unsigned 
 			struct VECTOR dpv[2]; // stack offset -72
 			long maxRad; // $a1
 			struct Level *level; // $s5
-			struct SVECTOR bsPos; // stack offset -40
+			SVECTORbsPos; // stack offset -40
 	/* end block 1 */
 	// End offset: 0x8003B0FC
 	// End Line: 1586

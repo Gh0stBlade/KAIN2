@@ -11,8 +11,8 @@ int PLANCOLL_DoesLOSExistFinal(struct _Position *startPos, struct _Position *end
 		// Start offset: 0x80098B14
 		// Variables:
 			struct _PCollideInfo pcollideinfo; // stack offset -72
-			struct SVECTOR startPt; // stack offset -24
-			struct SVECTOR endPt; // stack offset -16
+			SVECTOR startPt; // stack offset -24
+			SVECTOR endPt; // stack offset -16
 
 		/* begin block 1.1 */
 			// Start line: 76
@@ -101,8 +101,8 @@ int PLANCOLL_FindTerrainHitFinal(struct _PlanCollideInfo *pci, int *placement, i
 			struct _PCollideInfo pcollideinfo; // stack offset -120
 			struct _fth *current; // $s1
 			struct _fth *last; // $s6
-			struct SVECTOR startPt; // stack offset -72
-			struct SVECTOR endPt; // stack offset -64
+			SVECTOR startPt; // stack offset -72
+			SVECTOR endPt; // stack offset -64
 			struct _SVector normal; // stack offset -56
 
 		/* begin block 1.1 */

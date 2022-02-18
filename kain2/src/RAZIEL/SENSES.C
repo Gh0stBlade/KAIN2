@@ -59,8 +59,8 @@ void UpdateEngagementList(struct evCollideInstanceStatsData *Ptr, struct __Playe
 			// Start line: 93
 			// Start offset: 0x800A3678
 			// Variables:
-				struct SVECTOR startVec; // stack offset -64
-				struct SVECTOR endVec; // stack offset -56
+				SVECTOR startVec; // stack offset -64
+				SVECTOR endVec; // stack offset -56
 		/* end block 1.2 */
 		// End offset: 0x800A3754
 		// End Line: 116
