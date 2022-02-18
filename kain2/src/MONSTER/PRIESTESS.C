@@ -4,7 +4,8 @@
 /* thing in actuality.                        */
 /* ========================================== */
 
-#include "KAIN2.H"
+#include "../core.H"
+#include "MONSTER.H"
 
 void __cdecl PRIESTS_Init(struct _Instance* instance)
 {
@@ -37,8 +38,8 @@ void __cdecl PRIESTS_Init(struct _Instance* instance)
 			PLANAPI_FindNodePositionInUnit(unit, v4, *v1, 5);
 			PLANAPI_FindNodePositionInUnit(unit, v4 + 1, v1[1], 5);
 		}
+		mv->mvFlags = mv->mvFlags & ~0x3000 | 0x200;
 	}
-	mv->mvFlags = mv->mvFlags & ~0x3000 | 0x200;
 }
 void __cdecl PRIESTS_CleanUp(struct _Instance* instance)
 {
@@ -191,64 +192,64 @@ void __cdecl PRIESTS_FleeEntry(struct _Instance* instance)
 		*(WORD*)(v3 + 18) = 0;
 	}
 }
-void* __cdecl PRIESTS_Flee(struct _Instance* instance)
+void __cdecl PRIESTS_Flee(struct _Instance* instance)
 {
-	DWORD* extraData; // eax
-	char** data; // ebx
-	struct _Position* v4; // esi
+	struct _MonsterVars* mv; // eax
+	struct _MonsterAttributes* ma; // ebx
+	struct _Position* extraVars; // esi
 	char* v5; // ebp
 	int v6; // ebp
 	int v7; // eax
 	char* v8; // [esp+10h] [ebp-4h]
-	struct _Instance* instancea; // [esp+18h] [ebp+4h]
+	struct _MonsterIR* ir; // [esp+18h] [ebp+4h]
 
-	extraData = instance->extraData;
-	data = (char**)instance->data;
-	v4 = (struct _Position*)extraData[87];
-	v5 = data[1];
+	mv = (struct _MonsterVars*)instance->extraData;
+	ma = (struct _MonsterAttributes*)instance->data;
+	extraVars = (struct _Position*)mv->extraVars;
+	v5 = (char*)ma->tunData;
 	v8 = v5;
-	instancea = (struct _Instance*)extraData[49];
-	if (v4 && v5)
+	ir = mv->enemy;
+	if (extraVars && v5)
 	{
-		switch (v4[3].x)
+		switch (extraVars[3].x)
 		{
 		case 0:
-			if (MATH3D_LengthXY(instance->position.x - v4->x, instance->position.y - v4->y) >= *((__int16*)v5 + 2))
+			if (MATH3D_LengthXY(instance->position.x - extraVars->x, instance->position.y - extraVars->y) >= *((__int16*)v5 + 2))
 				goto LABEL_16;
-			MON_PlayAnimID(instance, *data[17], 2);
-			++v4[3].x;
+			MON_PlayAnimID(instance, *(BYTE*)ma->idleList, 2);
+			++extraVars[3].x;
 			MON_DefaultQueueHandler(instance);
 			return;
 		case 1:
-			if (MON_TurnToPosition(instance, v4 + 1, *(WORD*)(extraData[85] + 34)))
+			if (MON_TurnToPosition((int)instance, extraVars + 1, mv->subAttr->speedFleeTurn))
 			{
-				MON_PlayAnimFromList(instance, data[2], 0, 1);
-				++v4[3].x;
+				MON_PlayAnimFromList(instance, ma->auxAnimList, 0, 1);
+				++extraVars[3].x;
 			}
 			goto LABEL_8;
 		case 2:
 		LABEL_8:
 			v6 = 1;
-			if (instancea
+			if (ir
 				&& MATH3D_LengthXY(
-					instance->position.x - SLOWORD(instancea->node.next[11].next),
-					instance->position.y - SHIWORD(instancea->node.next[11].next)) < *((__int16*)v8 + 4))
+					instance->position.x - ir->instance->position.x,
+					instance->position.y - ir->instance->position.y) < *((__int16*)v8 + 4))
 			{
-				MON_PlayAnimFromList(instance, data[2], 3, 1);
-				++v4[3].x;
+				MON_PlayAnimFromList(instance, ma->auxAnimList, 3, 1);
+				++extraVars[3].x;
 				v6 = 0;
 			}
 			if (!v6 || (instance->flags2 & 0x10) == 0)
 				goto LABEL_16;
 			v7 = rand();
-			MON_PlayAnimFromList(instance, data[2], v7 % 3, 1);
+			MON_PlayAnimFromList(instance, ma->auxAnimList, v7 % 3, 1);
 			MON_DefaultQueueHandler(instance);
 			break;
 		case 3:
 			if ((instance->flags2 & 0x10) != 0)
 			{
-				MON_PlayAnimFromList(instance, data[2], 5, 1);
-				++v4[3].x;
+				MON_PlayAnimFromList(instance, ma->auxAnimList, 5, 1);
+				++extraVars[3].x;
 			}
 			goto LABEL_16;
 		default:
@@ -264,19 +265,19 @@ extern void HUMAN_Dead(struct _Instance* instance);
 
 struct _MonsterStateChoice PRIESTS_StateChoiceTable[] =
 {
-	{2, PRIESTS_IdleEntry, PRIESTS_Idle},
-	{1, PRIESTS_PursueEntry, PRIESTS_Pursue},
-	{0x13, PRIESTS_FleeEntry, PRIESTS_Flee},
-	{0x17, HUMAN_DeadEntry, HUMAN_Dead},
+	{MONSTER_STATE_IDLE, PRIESTS_IdleEntry, PRIESTS_Idle},
+	{MONSTER_STATE_PURSUE, PRIESTS_PursueEntry, PRIESTS_Pursue},
+	{MONSTER_STATE_FLEE, PRIESTS_FleeEntry, PRIESTS_Flee},
+	{MONSTER_STATE_DEAD, HUMAN_DeadEntry, HUMAN_Dead},
 	{-1}
 };
 
-struct _MonsterFunctionTable PRIESTS_FunctionTable =
+_MonsterFunctionTable PRIESTS_FunctionTable =
 {
 	PRIESTS_Init,
 	PRIESTS_CleanUp,
 	0,
-	__DATE__,
+	0,
 	PRIESTS_Query,
 	PRIESTS_Message,
 	PRIESTS_StateChoiceTable,

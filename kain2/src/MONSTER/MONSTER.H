@@ -88,6 +88,8 @@ enum MonsterState // Hashcode: 0xCAD17293 (dec: -892243309)
 	MONSTER_NUM_STATES = 31,
 };
 
+typedef void (*TDRFuncPtr_MONSTER_ProcessClosestVerts2processVert_cb)();
+
 struct _MonsterSenses // hashcode: 0x1AA0E325 (dec: 446751525)
 {
 	short sightArc; // size=0, offset=0
@@ -318,6 +320,35 @@ struct _MonsterAttributes // hashcode: 0x9EE88812 (dec: -1628927982)
 	void* shatterList; // size=0, offset=76
 };
 
+struct _MONAPI_Regenerator // hashcode: 0x37E0AA1B (dec: 937470491)
+{
+	unsigned long regenTime; // size=0, offset=0
+	short introUniqueID; // size=0, offset=4
+	short streamUnitID; // size=0, offset=6
+};
+
+struct __Event // hashcode: 0xBC16D673 (dec: -1139353997)
+{
+	int ID; // size=0, offset=0
+	int Data; // size=0, offset=4
+};
+
+struct __MessageQueue // hashcode: 0x473062B5 (dec: 1194353333)
+{
+	int Head; // size=0, offset=0
+	int Tail; // size=0, offset=4
+	struct __Event Queue[16]; // size=128, offset=8
+};
+
+struct __State // hashcode: 0xA27CC1F7 (dec: -1568882185)
+{
+	void (*Process)(); // size=0, offset=0
+	struct __MessageQueue Event; // size=136, offset=4
+	struct __MessageQueue Defer; // size=136, offset=140
+	int Data1; // size=0, offset=276
+	int Data2; // size=0, offset=280
+};
+
 struct _MonsterVars // hashcode: 0xEF80566F (dec: -276801937)
 {
 	unsigned long mvFlags; // size=0, offset=0
@@ -484,7 +515,7 @@ struct _MonsterSaveInfo // hashcode: 0x3088BC75 (dec: 814267509)
 	unsigned int causeOfDeath; // size=3, offset=117
 };
 
-struct _MonsterFunctionTable // hashcode: 0x82983F8D (dec: -2103951475)
+typedef struct _MonsterFunctionTable // hashcode: 0x82983F8D (dec: -2103951475)
 {
 	void (*initFunc)(struct _Instance* instance); // size=0, offset=0
 	void (*cleanUpFunc)(struct _Instance* instance); // size=0, offset=4
@@ -494,7 +525,7 @@ struct _MonsterFunctionTable // hashcode: 0x82983F8D (dec: -2103951475)
 	struct _MonsterStateChoice* stateFuncs; // size=12, offset=20
 	char* versionID; // size=0, offset=24
 	char* localVersionID; // size=0, offset=28
-};
+} _MonsterFunctionTable;
 
 extern void MON_DoCombatTimers(struct _Instance *instance); // 0x800871FC
 
@@ -651,11 +682,6 @@ extern void MON_DamageEffect(struct _Instance *instance, struct evFXHitData *dat
 extern void MON_DefaultInit(struct _Instance *instance); // 0x8008CB28
 
 extern void MON_CleanUp(struct _Instance *instance); // 0x8008CD74
-
-
-typedef void (*TDRFuncPtr_MONSTER_ProcessClosestVerts2processVert_cb)();
-
-
 
 
 #endif

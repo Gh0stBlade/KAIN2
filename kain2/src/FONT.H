@@ -27,13 +27,13 @@ union FONT_77fake // Hashcode: 0xADC7F886 (dec: -1379403642)
 	struct _RGBAColor rgba; // size=4, offset=0
 };
 
-struct FontChar // hashcode: 0x5A2F9F5B (dec: 1513070427)
+typedef struct FontChar // hashcode: 0x5A2F9F5B (dec: 1513070427)
 {
 	short x; // size=0, offset=0
 	short y; // size=0, offset=2
 	char c; // size=0, offset=4
 	char color; // size=0, offset=5
-};
+} FontChar;
 
 struct FontTracker // hashcode: 0xE32D3F0A (dec: -483574006)
 {
@@ -93,20 +93,20 @@ union FONT_213fake // Hashcode: 0x740A6D3C (dec: 1946840380)
 	struct _Position throwVector; // size=6, offset=0
 };
 
-struct font_color_t // hashcode: 0x5F515B79 (dec: 1599167353)
+typedef struct font_color_t // hashcode: 0x5F515B79 (dec: 1599167353)
 {
 	int r; // size=0, offset=0
 	int g; // size=0, offset=4
 	int b; // size=0, offset=8
-};
+} font_color_t;
 
-struct FontPos // hashcode: 0x0084D7DD (dec: 8706013)
+typedef struct FontPos // hashcode: 0x0084D7DD (dec: 8706013)
 {
 	char x; // size=0, offset=0
 	char y; // size=0, offset=1
 	char w; // size=0, offset=2
 	char h; // size=0, offset=3
-};
+} FontPos;
 
 extern void FONT_MakeSpecialFogClut(int x, int y); // 0x8002CB74
 extern void FONT_Init(); // 0x8002CBF8

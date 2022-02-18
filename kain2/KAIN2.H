@@ -1539,35 +1539,6 @@ struct _HVertex // hashcode: 0xC488A83D (dec: -997676995)
 	long pad; // size=0, offset=8
 };
 
-struct _MONAPI_Regenerator // hashcode: 0x37E0AA1B (dec: 937470491)
-{
-	unsigned long regenTime; // size=0, offset=0
-	short introUniqueID; // size=0, offset=4
-	short streamUnitID; // size=0, offset=6
-};
-
-struct __Event // hashcode: 0xBC16D673 (dec: -1139353997)
-{
-	int ID; // size=0, offset=0
-	int Data; // size=0, offset=4
-};
-
-struct __MessageQueue // hashcode: 0x473062B5 (dec: 1194353333)
-{
-	int Head; // size=0, offset=0
-	int Tail; // size=0, offset=4
-	struct __Event Queue[16]; // size=128, offset=8
-};
-
-struct __State // hashcode: 0xA27CC1F7 (dec: -1568882185)
-{
-	void (*Process)(); // size=0, offset=0
-	struct __MessageQueue Event; // size=136, offset=4
-	struct __MessageQueue Defer; // size=136, offset=140
-	int Data1; // size=0, offset=276
-	int Data2; // size=0, offset=280
-};
-
 struct POLY_F4 // hashcode: 0xE2AC295D (dec: -492033699)
 {
 	unsigned long tag; // size=0, offset=0

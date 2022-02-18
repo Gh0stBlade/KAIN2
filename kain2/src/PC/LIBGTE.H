@@ -135,31 +135,31 @@
 #endif
 
 #ifndef ASSEMBLER
-typedef struct  {
+typedef struct MATRIX {
 	short	m[3][3];	/* 3x3 rotation matrix */
         long    t[3];		/* transfer vector */
 } MATRIX;
 
-typedef struct {		/* long word type 3D vector */
+typedef struct VECTOR {		/* long word type 3D vector */
 	long	vx, vy;
 	long	vz, pad;
 } VECTOR;
 	
-typedef struct {		/* short word type 3D vector */	
+typedef struct SVECTOR {		/* short word type 3D vector */	
 	short	vx, vy;
 	short	vz, pad;
 } SVECTOR;
 	       
-typedef struct {		/* color type vector */	
+typedef struct CVECTOR {		/* color type vector */	
 	u_char	r, g, b, cd;
 } CVECTOR;
 	       
-typedef struct {		/* 2D short vector */
+typedef struct DVECTOR {		/* 2D short vector */
 	short vx, vy;
 } DVECTOR;
 
 
-typedef struct {		
+typedef struct EVECTOR {		
 	SVECTOR v;		/* Object(Local) 3D Vertex 	*/
 	VECTOR sxyz;		/* Screen 3D Vertex		*/
 	DVECTOR sxy;		/* Screen 2D Vertex		*/
@@ -168,7 +168,7 @@ typedef struct {
 	long chx,chy;		/* Clip Window Data 		*/
 } EVECTOR;
 
-typedef struct {
+typedef struct RVECTOR {
 	SVECTOR v;
 	u_char uv[2]; u_short pad;	/*  */  
 	CVECTOR c;
@@ -177,7 +177,7 @@ typedef struct {
 } RVECTOR;			/* division vertex data vector */
 
 
-typedef struct {
+typedef struct CRVECTOR3 {
 	RVECTOR r01,r12,r20;
 	RVECTOR	*r0,*r1,*r2;
 	u_long *rtn;

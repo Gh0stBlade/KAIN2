@@ -11,7 +11,7 @@ int MemW32_GetSize()
 	return sizeof(memwpsx);
 }
 
-char* getScratchAddr(int a1)
+char* getScratchAddr(int pos)
 {
-	return &scratchpad[4 * a1];
+	return &scratchpad[4 * pos];
 }
