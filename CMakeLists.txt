@@ -20,6 +20,9 @@ endmacro()
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
 
+#Set root path
+set(ROOT_DIR ${ROOT_DIR} "${CMAKE_CURRENT_SOURCE_DIR}")
+
 #Stores root external lib folder.
 set(EXTERN_LIB_PATH ${EXTERN_LIB_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/External")
 
