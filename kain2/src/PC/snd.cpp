@@ -29,7 +29,9 @@ extern int __cdecl DSOUND_EnumerateDevices(SND_DEVICE* devs);
 
 void (*SND_ShutdownPtr)();
 void (*SND_SetSamplePtr)(int voiceNum, BYTE* data);
+BYTE* (*SND_GetSamplePtr)(int voiceNum);
 void (*SND_SetNextSamplePtr)(int voiceNum, BYTE* data);
+BYTE* (*SND_GetNextSamplePtr)(int voiceNum);
 void (*SND_FreeSamplePtr)(void *data);
 void (*SND_SetFrequencyPtr)(int voiceNum, float frequency);
 void (*SND_SetVolumePtr)(int voiceNum, int voll, int volr);
@@ -74,7 +76,21 @@ void SND_SetNextSample(int voiceNum, BYTE* data)
 		SND_SetNextSamplePtr(voiceNum, data);
 }
 //0001 : 0007b650       _SND_GetSample             0047c650 f   snd.obj
+BYTE* __cdecl SND_GetSample(int voiceNum)
+{
+	if (SND_GetSamplePtr)
+		return SND_GetSamplePtr(voiceNum);
+	else
+		return nullptr;
+}
 //0001 : 0007b670       _SND_GetNextSample         0047c670 f   snd.obj
+BYTE* __cdecl SND_GetNextSample(int voiceNum)
+{
+	if (SND_GetNextSamplePtr)
+		return SND_GetNextSamplePtr(voiceNum);
+	else
+		return nullptr;
+}
 //0001 : 0007b690       _SND_SetFrequency          0047c690 f   snd.obj
 void SND_SetFrequency(int voiceNum, float frequency)
 {
