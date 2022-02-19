@@ -1,6 +1,3 @@
-#include <Windows.h>
-#include <stdarg.h>
-#include <stdio.h>
 #include "../core.h"
 
 //0001:00000000       _ALUKA_ControllersEnabled  00401000 f   aluka.obj

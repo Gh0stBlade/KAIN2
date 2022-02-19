@@ -2,11 +2,24 @@
 #define __CORE_H
 
 #ifdef _WIN32
+#include <Windows.h>
 #include "psyq.h"
 #include "PC/LIBGTE.H"
 #include "PC/LIBGPU.H"
 #include "PC/libspu.h"
+#else
+#include <libgte.h>
+#include <libgpu.h>
+#include <libspu.h>
+
+#define OutputDebugStringA	printf
+
 #endif
+
+#include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #define SCREEN_WIDTH		512
 #define SCREEN_HEIGHT		240

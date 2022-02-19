@@ -1,0 +1,14 @@
+ //0001:0001cd80       _MON_GetRandomGroundPoint  0041dd80 f   skinner.obj
+ //0001:0001cef0       _MONSENSE_DetectPlayer     0041def0 f   skinner.obj
+ //0001:0001cf20       _FX_StartInstanceBurrow    0041df20 f   skinner.obj
+ //0001:0001cff0       _FX_StopInstanceBurrow     0041dff0 f   skinner.obj
+ //0001:0001d000       _SKINNER_BurrowInEntry     0041e000 f   skinner.obj
+ //0001:0001d0a0       _SKINNER_BurrowIn          0041e0a0 f   skinner.obj
+ //0001:0001d0e0       _SKINNER_PupateEntry       0041e0e0 f   skinner.obj
+ //0001:0001d130       _SKINNER_Pupate            0041e130 f   skinner.obj
+ //0001:0001d160       _SKINNER_PursueEntry       0041e160 f   skinner.obj
+ //0001:0001d1c0       _SKINNER_Pursue            0041e1c0 f   skinner.obj
+ //0001:0001d5a0       _SKINNER_HideEntry         0041e5a0 f   skinner.obj
+ //0001:0001d670       _SKINNER_Hide              0041e670 f   skinner.obj
+ //0001:0001d770       _SKINNER_SurpriseAttackEntry 0041e770 f   skinner.obj
+ //0001:0001d7f0       _SKINNER_SurpriseAttack    0041e7f0 f   skinner.obj
