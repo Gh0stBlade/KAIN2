@@ -1,25 +1,19 @@
 #ifndef __CORE_H
 #define __CORE_H
 
-#ifdef PSX_VERSION
-#include <LIBGTE.H>
-#include <LIBGPU.H>
-#include <LIBSPU.H>
-#else
-#ifdef _WIN32
+#ifdef PC_VERSION || PSXPC_VERSION
 #include <Windows.h>
 #include "psyq.h"
 #include "PC/LIBGTE.H"
 #include "PC/LIBGPU.H"
 #include "PC/libspu.h"
-#else
+#else	// psx basically
 #include <libgte.h>
 #include <libgpu.h>
 #include <libspu.h>
 // wrappers for winapi crap
 #define OutputDebugStringA	printf
 #define vprintf_s(a,b,c,d)	vprintf(a,c,d)
-#endif
 #endif
 
 #include <stdarg.h>
