@@ -12,6 +12,14 @@ enum language_t // Hashcode: 0x2F13EDA4 (dec: 789835172)
 	language_num_states = 5,
 };
 
+struct LocalizationHeader // hashcode: 0x40BDAC32 (dec: 1086172210)
+{
+	enum language_t language; // size=4, offset=0
+	int numXAfiles; // size=0, offset=4
+	int XATableOffset; // size=0, offset=8
+	int numStrings; // size=0, offset=12
+};
+
 enum localstr_t // Hashcode: 0xC51A2F36 (dec: -988139722)
 {
 	LOCALSTR_BOGUS = 0,

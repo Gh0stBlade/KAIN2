@@ -1,6 +1,35 @@
 #ifndef STRMLOAD_H
 #define STRMLOAD_H
 
+#include "LOAD3D.H"
+
+struct _LoadQueueEntry // hashcode: 0xFEE70962 (dec: -18413214)
+{
+	struct _LoadQueueEntry* next; // size=64, offset=0
+	short status; // size=0, offset=4
+	char relocateBinary; // size=0, offset=6
+	char mempackUsed; // size=0, offset=7
+	struct _NonBlockLoadEntry loadEntry; // size=56, offset=8
+#ifdef PSX_VERSION
+	long endLoadTime; // size=0, offset=108
+#endif
+};
+
+extern int gCurDir; // offset 0x800CF4E8
+
+extern int numLoads; // offset 0x800D2730
+
+extern struct _LoadQueueEntry* loadFree; // offset 0x800D2724
+
+extern int loadFromHead; // offset 0x800CF4E0
+
+extern struct _LoadQueueEntry* loadHead; // offset 0x800D2728
+
+extern struct _LoadQueueEntry LoadQueue[40]; // offset 0x800D1D24
+
+extern struct _LoadStatus loadStatus; // offset 0x800D0D84
+
+extern struct _LoadQueueEntry* loadTail; // offset 0x800D272C
 
 extern void STREAM_NextLoadFromHead(); // 0x8005FAE8
 

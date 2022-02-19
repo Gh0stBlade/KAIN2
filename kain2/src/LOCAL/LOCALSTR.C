@@ -1,6 +1,7 @@
 #include "CORE.H"
 #include "LOCALSTR.H"
 #include "LOAD3D.H"
+#include "VOICEXA.H"
 
 #include <stddef.h>
 

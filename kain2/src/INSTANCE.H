@@ -1,6 +1,8 @@
 #ifndef INSTANCE_H
 #define INSTANCE_H
 
+#include "G2/QUATG2.H"
+
 #include <LIBGTE.H>
 
 typedef struct _Instance _Instance;
@@ -65,7 +67,7 @@ struct _Instance // hashcode: 0x699A5B3D (dec: 1771723581)
 	struct _SVector scale; // size=8, offset=132
 	long attachedID; // size=0, offset=140
 	long attachedSegment; // size=0, offset=144
-	MATRIX relativeMatrix; // size=32, offset=148
+	///MATRIX relativeMatrix; // size=32, offset=148//Disabled by Gh0stBlade why is this saying incomplete type?
 	struct _TFace* tface; // size=12, offset=180
 	struct _TFace* oldTFace; // size=12, offset=184
 	void* tfaceLevel; // size=0, offset=188
@@ -125,7 +127,7 @@ struct _Instance // hashcode: 0x699A5B3D (dec: 1771723581)
 	short clipEnd; // size=0, offset=594
 	struct EventAliasCommandStruct aliasCommand; // size=12, offset=596
 	long light_color; // size=0, offset=608
-	struct CVECTOR* perVertexColor; // size=4, offset=612
+	CVECTOR* perVertexColor; // size=4, offset=612
 };
 
 struct _InstancePool // hashcode: 0xC591AB92 (dec: -980309102)

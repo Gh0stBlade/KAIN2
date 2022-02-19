@@ -395,8 +395,6 @@ static struct GameTracker *gameTracker; // offset 0x800D58A4
 
 extern struct GameTracker gameTrackerX; // offset 0x800D0FAC
 
-static int gCurDir; // offset 0x800CF4E8
-
 static int gDefragRequest; // offset 0x800CECDC
 
 extern long gDummyCommand[2][2]; // offset 0x800D0D60
@@ -539,18 +537,6 @@ static int LINESKIP; // offset 0x800CFA60
 
 static int loadCanFail; // offset 0x800CF4E4
 
-static struct _LoadQueueEntry *loadFree; // offset 0x800D2724
-
-static int loadFromHead; // offset 0x800CF4E0
-
-static struct _LoadQueueEntry *loadHead; // offset 0x800D2728
-
-static struct _LoadQueueEntry LoadQueue[40]; // offset 0x800D1D24
-
-static struct _LoadStatus loadStatus; // offset 0x800D0D84
-
-static struct _LoadQueueEntry *loadTail; // offset 0x800D272C
-
 extern int LoopCounter; // offset 0x800CF774
 
 extern short M_TrackClutUpdate; // offset 0x800D4804
@@ -630,8 +616,6 @@ extern int nosound; // offset 0x800CE568
 static long numActiveEventTimers; // offset 0x800D2A14
 
 static long numbufferedIntros; // offset 0x800CF8AC
-
-static int numLoads; // offset 0x800D2730
 
 extern long NumSignalsToReset; // offset 0x800CF548
 
@@ -797,8 +781,6 @@ extern struct DebugMenuLine statsMenu[1]; // offset 0x800CFC98
 
 extern int StCdIntrFlag; // offset 0x800D8FD0
 
-extern struct STracker StreamTracker; // offset 0x800D1920
-
 static struct MATRIX TempMat; // offset 0x800D51E4
 
 static struct MATRIX TempMat; // offset 0x800D5884
@@ -816,8 +798,6 @@ static struct font_color_t the_font_color_table[5]; // offset 0x800CE1D0
 static char *the_format_string; // offset 0x800CDAE0
 
 static int the_header_size; // offset 0x800CF8B0
-
-static enum language_t the_language; // offset 0x800D5BFC
 
 extern struct mcmenu_table_t the_mcmenu_table; // offset 0x24
 
@@ -844,8 +824,6 @@ static long UW_scalexInc; // offset 0x800D59B8
 static long vmClock; // offset 0x800CEBD8
 
 static long vmRealClock; // offset 0x800CEBD4
-
-extern struct XAVoiceListEntry *voiceList; // offset 0x800CF99C
 
 extern long VRAM_NeedToUpdateMorph; // offset 0x800CF5B4
 
@@ -1281,98 +1259,6 @@ struct _MorphVertex // hashcode: 0xAAB8DABE (dec: -1430725954)
 struct _MorphColor // hashcode: 0xA6BA0326 (dec: -1497758938)
 {
 	short morphColor15; // size=0, offset=0
-};
-
-struct Level // hashcode: 0x012B0198 (dec: 19595672)
-{
-	struct _Terrain *terrain; // size=84, offset=0
-	struct LightList *lightList; // size=12, offset=4
-	long numVMObjects; // size=0, offset=8
-	struct _VMObject *vmobjectList; // size=60, offset=12
-	long numSpotLights; // size=0, offset=16
-	struct SpotLight *spotLightList; // size=40, offset=20
-	long numPointLights; // size=0, offset=24
-	struct PointLight *pointLightList; // size=24, offset=28
-	long numSpotSpecturalLights; // size=0, offset=32
-	struct SpotLight *spotSpecturalLightList; // size=40, offset=36
-	long numPointSpecturalLights; // size=0, offset=40
-	struct PointLight *pointSpecturalLightList; // size=24, offset=44
-	long numBGObjects; // size=0, offset=48
-	struct _BGObject *bgObjectList; // size=24, offset=52
-	long waterZLevel; // size=0, offset=56
-	unsigned char backColorR; // size=0, offset=60
-	unsigned char backColorG; // size=0, offset=61
-	unsigned char backColorB; // size=0, offset=62
-	unsigned char cpad1; // size=0, offset=63
-	unsigned char specturalColorR; // size=0, offset=64
-	unsigned char specturalColorG; // size=0, offset=65
-	unsigned char specturalColorB; // size=0, offset=66
-	unsigned char cpad2; // size=0, offset=67
-	unsigned short fogFar; // size=0, offset=68
-	unsigned short fogNear; // size=0, offset=70
-	unsigned short spectralFogFar; // size=0, offset=72
-	unsigned short spectralFogNear; // size=0, offset=74
-	unsigned short waterFogFar; // size=0, offset=76
-	unsigned short waterFogNear; // size=0, offset=78
-	long depthQBlendStart; // size=0, offset=80
-	struct LightList *spectrallightList; // size=12, offset=84
-	long numCameras; // size=0, offset=88
-	void *cameraList; // size=0, offset=92
-	long bspPlaneError; // size=0, offset=96
-	long numVGroups; // size=0, offset=100
-	struct _VGroup *vGroupList; // size=12, offset=104
-	long deathZ; // size=0, offset=108
-	long flags; // size=0, offset=112
-	struct _MultiSignal *startSignal; // size=904, offset=116
-	long numIntros; // size=0, offset=120
-	struct Intro *introList; // size=76, offset=124
-	struct DrMoveAniTex *bgAniList; // size=8, offset=128
-	long numHotSpots; // size=0, offset=132
-	struct _HotSpot *hotSpotList; // size=8, offset=136
-	void *objectNameList; // size=0, offset=140
-	long depthQFogStart; // size=0, offset=144
-	long morphLastStep; // size=0, offset=148
-	char *worldName; // size=0, offset=152
-	struct VramSize vramSize; // size=8, offset=156
-	unsigned short holdFogFar; // size=0, offset=164
-	unsigned short holdFogNear; // size=0, offset=166
-	long numberEnemyUnits; // size=0, offset=168
-	char **enemyUnitsNames; // size=0, offset=172
-	long **timesSignalList; // size=0, offset=176
-	struct _MultiSignal *spectralSignal; // size=904, offset=180
-	struct _MultiSignal *materialSignal; // size=904, offset=184
-	struct _MultiSignal *startUnitLoadedSignal; // size=904, offset=188
-	struct _MultiSignal *startUnitMainSignal; // size=904, offset=192
-	struct _MultiSignal *startGoingIntoWaterSignal; // size=904, offset=196
-	struct _MultiSignal *startGoingOutOfWaterSignal; // size=904, offset=200
-	long unitFlags; // size=0, offset=204
-	struct _MultiSignal *SignalListStart; // size=904, offset=208
-	struct _MultiSignal *SignalListEnd; // size=904, offset=212
-	long numBSPLeaves; // size=0, offset=216
-	struct EventPointers *PuzzleInstances; // size=0, offset=220
-	long NumberOfPlanMarkers; // size=0, offset=224
-	struct _PlanMkr *PlanMarkerList; // size=8, offset=228
-	long NumberOfSFXMarkers; // size=0, offset=232
-	struct _SFXMkr *SFXMarkerList; // size=36, offset=236
-	unsigned long versionNumber; // size=0, offset=240
-	char *dynamicMusicName; // size=0, offset=244
-	long streamUnitID; // size=0, offset=248
-	struct TClassAttr tClassAttr[16]; // size=64, offset=252
-	short TODLighting[4][3]; // size=24, offset=316
-	unsigned char TODbackColor[4][3]; // size=12, offset=340
-	unsigned short TODfogNearFar[4][2]; // size=16, offset=352
-	short TODRedScale; // size=0, offset=368
-	short TODGrnScale; // size=0, offset=370
-	short TODBluScale; // size=0, offset=372
-	short TODfogNear; // size=0, offset=374
-	short TODfogFar; // size=0, offset=376
-	short short_pad; // size=0, offset=378
-	unsigned char TODbackColorR; // size=0, offset=380
-	unsigned char TODbackColorG; // size=0, offset=381
-	unsigned char TODbackColorB; // size=0, offset=382
-	unsigned char cpad3; // size=0, offset=383
-	struct LightGroup *razielLightGroup; // size=64, offset=384
-	struct LightGroup *razielSpectralLightGroup; // size=64, offset=388
 };
 
 struct _SavedCinematic // hashcode: 0x1E29151B (dec: 506008859)
@@ -2150,18 +2036,6 @@ union DEBUG_224fake // Hashcode: 0x0131C19B (dec: 20038043)
 	struct _Position position; // size=6, offset=0
 	struct _Rotation direction; // size=8, offset=0
 	struct _Position throwVector; // size=6, offset=0
-};
-
-struct _LoadQueueEntry // hashcode: 0xFEE70962 (dec: -18413214)
-{
-	struct _LoadQueueEntry *next; // size=64, offset=0
-	short status; // size=0, offset=4
-	char relocateBinary; // size=0, offset=6
-	char mempackUsed; // size=0, offset=7
-	struct _NonBlockLoadEntry loadEntry; // size=56, offset=8
-#ifdef PSX_VERSION
-	long endLoadTime; // size=0, offset=108
-#endif
 };
 
 struct SavedBasic // hashcode: 0x6198E1EF (dec: 1637409263)
@@ -4736,11 +4610,6 @@ union STREAM_210fake // Hashcode: 0x3DCA0E3B (dec: 1036652091)
 	struct _Position position; // size=6, offset=0
 	struct _Rotation direction; // size=8, offset=0
 	struct _Position throwVector; // size=6, offset=0
-};
-
-struct STracker // hashcode: 0xAED5E069 (dec: -1361715095)
-{
-	struct _StreamUnit StreamList[16]; // size=1024, offset=0
 };
 
 struct FaceExtents // hashcode: 0x22E8BE79 (dec: 585678457)

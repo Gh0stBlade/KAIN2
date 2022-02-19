@@ -3,6 +3,8 @@
 #include "GAMELOOP.H"
 
 struct XAVoiceTracker voiceTracker; // offset 0x800D5AD4
+struct XAVoiceListEntry* voiceList; // offset 0x800CF99C
+enum language_t the_language; // offset 0x800D5BFC
 
 void VOICEXA_Init()
 {
