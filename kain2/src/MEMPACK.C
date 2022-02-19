@@ -168,7 +168,7 @@ char * MEMPACK_Malloc(unsigned long allocSize, unsigned char memType)
 		{
 			topOffset -= allocSize;
 			
-			address = (struct MemHeader*)(char*)bestAddress + topOffset;
+			address = (struct MemHeader*)((char*)bestAddress + topOffset);
 			address->magicNumber = DEFAULT_MEM_MAGIC;
 			address->memStatus = 1;
 			address->memType = memType;
