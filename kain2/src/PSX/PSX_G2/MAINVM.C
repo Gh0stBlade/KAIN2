@@ -1,4 +1,3 @@
-#include "THISDUST.H"
 #include "MAINVM.H"
 #include "PSX/MAIN.H"
 
@@ -9,6 +8,7 @@ int main()
 	return MainG2(&_appDataVM);
 }
 
+#ifndef PSX_VERSION
 int MainG2_UpdateLoop()
 {
     MSG Msg;
@@ -30,5 +30,4 @@ int MainG2_UpdateLoop()
     }
     return 0;
 }
-
-
+#endif

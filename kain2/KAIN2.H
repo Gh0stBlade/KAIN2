@@ -5388,12 +5388,6 @@ struct PLANOPT_151fake // hashcode: 0xD60D918D (dec: -703753843)
 	} Follow; // size=20, offset=76, found in object files: planopt.o, planopt.o
 };
 
-struct _G2AppDataVM_Type // hashcode: 0xC1BF7B11 (dec: -1044415727)
-{
-	int argc; // size=0, offset=0
-	int *argv; // size=0, offset=4
-};
-
 struct ENMYPLAN_114fake // hashcode: 0xA6FD1322 (dec: -1493363934)
 {
 	struct {
@@ -11419,12 +11413,6 @@ extern char monVersion[12]; // offset 0x800CF95C
 extern struct XAVoiceTracker voiceTracker; // offset 0x800D5AD4
 
 extern int StCdIntrFlag; // offset 0x800D8FD0
-
-
-static struct LocalizationHeader *LocalizationTable; // offset 0x800CF994
-
-
-static char **LocalStrings; // offset 0x800CF998
 
 
 extern struct XAVoiceListEntry *voiceList; // offset 0x800CF99C

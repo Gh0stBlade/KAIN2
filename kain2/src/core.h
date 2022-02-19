@@ -274,6 +274,17 @@ struct Object // hashcode: 0xEC12E9AC (dec: -334304852)
 	struct VramSize vramSize; // size=8, offset=68
 };
 
+struct _ObjectTracker // hashcode: 0xFE4678BF (dec: -28936001)
+{
+	char name[16]; // size=16, offset=0
+	struct Object* object; // size=76, offset=16
+	short objectStatus; // size=0, offset=20
+	short numInUse; // size=0, offset=22
+	void* vramBlock; // size=0, offset=24
+	char numObjectsUsing; // size=0, offset=28
+	char objectsUsing[7]; // size=7, offset=29
+};
+
 struct Intro // hashcode: 0x796E766D (dec: 2037282413)
 {
 	char name[16]; // size=16, offset=0

@@ -561,10 +561,6 @@ static struct _LoadStatus loadStatus; // offset 0x800D0D84
 
 static struct _LoadQueueEntry *loadTail; // offset 0x800D272C
 
-static struct LocalizationHeader *LocalizationTable; // offset 0x800CF994
-
-static char **LocalStrings; // offset 0x800CF998
-
 extern int LoopCounter; // offset 0x800CF774
 
 extern short M_TrackClutUpdate; // offset 0x800D4804
@@ -1283,19 +1279,6 @@ struct _Terrain // hashcode: 0x5D541B4E (dec: 1565793102)
 	struct BSPTree *BSPTreeArray; // size=36, offset=72
 	short *morphNormalIdx; // size=0, offset=76
 	struct _MultiSignal *signals; // size=904, offset=80
-};
-
-
-
-struct _ObjectTracker // hashcode: 0xFE4678BF (dec: -28936001)
-{
-	char name[16]; // size=16, offset=0
-	struct Object *object; // size=76, offset=16
-	short objectStatus; // size=0, offset=20
-	short numInUse; // size=0, offset=22
-	void *vramBlock; // size=0, offset=24
-	char numObjectsUsing; // size=0, offset=28
-	char objectsUsing[7]; // size=7, offset=29
 };
 
 struct CDLight // hashcode: 0xD90757B8 (dec: -653830216)
@@ -8138,12 +8121,6 @@ union PLANOPT_211fake // Hashcode: 0xC37ABAC4 (dec: -1015366972)
 	struct _Position position; // size=6, offset=0
 	struct _Rotation direction; // size=8, offset=0
 	struct _Position throwVector; // size=6, offset=0
-};
-
-struct _G2AppDataVM_Type // hashcode: 0xC1BF7B11 (dec: -1044415727)
-{
-	int argc; // size=0, offset=0
-	int *argv; // size=0, offset=4
 };
 
 typedef struct _G2AppDataVM_Type G2AppDataVM;
