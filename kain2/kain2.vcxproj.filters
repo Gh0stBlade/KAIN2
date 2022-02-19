@@ -343,6 +343,9 @@
     <ClCompile Include="src\PC\d3d\RenderRA.C">
       <Filter>PC\d3d</Filter>
     </ClCompile>
+    <ClCompile Include="src\PC\ViewVM.cpp">
+      <Filter>PC</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\PC\libspu.h">
