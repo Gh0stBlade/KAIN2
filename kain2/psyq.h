@@ -49,6 +49,7 @@ typedef struct DIRENTRY // hashcode: 0xD989A944 (dec: -645289660)
 	char system[4]; // size=4, offset=36
 } DIRENTRY;
 
+#ifndef PSX_VERSION
 typedef struct CdlLOC // hashcode: 0x449289F8 (dec: 1150454264)
 {
 	unsigned char minute; // size=0, offset=0
@@ -56,5 +57,6 @@ typedef struct CdlLOC // hashcode: 0x449289F8 (dec: 1150454264)
 	unsigned char sector; // size=0, offset=2
 	unsigned char track; // size=0, offset=3
 } CdlLOC;
+#endif
 
 #endif

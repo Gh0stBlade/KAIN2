@@ -1,4 +1,4 @@
-#include "THISDUST.H"
+#include "CORE.H"
 #include "LOAD3D.H"
 #include "FONT.H"
 #include "MEMPACK.H"
@@ -7,7 +7,15 @@
 #include "DEBUG.H"
 #include "RESOLVE.H"
 
+#include "LIBGPU.H"
+#include "LIBCD.H"
+#include "LIBETC.H"
+
 #include <stdlib.h>
+
+static struct _LoadStatus loadStatus; // offset 0x800D0D84
+
+char HashExtensions[7][4];
 
 void LOAD_InitCd()
 {
@@ -93,7 +101,7 @@ void LOAD_CdReadReady(unsigned char intr, unsigned char *result)
 				// Start line: 367
 				// Start offset: 0x80036F50
 				// Variables:
-					struct CdlLOC loc; // stack offset -24
+					CdlLOC loc; // stack offset -24
 			/* end block 1.1.1 */
 			// End offset: 0x80036F50
 			// End Line: 370
@@ -172,7 +180,7 @@ void LOAD_SetupFileToDoCDReading()
 {
 #define CD_SECTOR_LENGTH 2048
 
-	struct CdlLOC loc;
+	CdlLOC loc;
 
 	loadStatus.currentQueueFile.readStatus = 3;
 	loadStatus.checksum = 0;
@@ -198,7 +206,7 @@ void LOAD_SetupFileToDoCDReading()
 
 void LOAD_SetupFileToDoBufferedCDReading()
 {
-	struct CdlLOC loc;
+	CdlLOC loc;
 
 	loadStatus.currentQueueFile.readStatus = 6;
 	loadStatus.checksum = 0;
@@ -214,7 +222,7 @@ void LOAD_SetupFileToDoBufferedCDReading()
 		loadStatus.currentSector = loadStatus.bigFile.bigfileBaseOffset + (loadStatus.currentQueueFile.readStartPos >> 11);
 	}
 
-	CdIntToPos(&loc);
+	CdIntToPos(loadStatus.currentSector , &loc);
 	CdControl(CdlReadN, &loc.minute, NULL);
 	loadStatus.cdWaitTime = TIMER_GetTimeMS();
 }
@@ -222,7 +230,7 @@ void LOAD_SetupFileToDoBufferedCDReading()
 void LOAD_ProcessReadQueue()
 {
 	long cdWaitTimeDiff;
-	struct CdlLOC loc;
+	CdlLOC loc;
 
 	if (gameTrackerX.debugFlags < 0)
 	{
@@ -281,7 +289,7 @@ void LOAD_ProcessReadQueue()
 
 char * LOAD_ReadFileFromCD(char *filename, int memType)
 { 
-	struct CdlFILE fp;
+	CdlFILE fp;
 	int i;
 	char *readBuffer;
 
@@ -314,7 +322,7 @@ char * LOAD_ReadFileFromCD(char *filename, int memType)
 
 			} while (LOAD_IsFileLoading() != 0);
 
-			CdControlF(CdlPause, NULL, NULL);
+			CdControlF(CdlPause, NULL);
 			return readBuffer;
 		}
 	}
@@ -358,7 +366,7 @@ struct _BigFileDir * LOAD_ReadDirectory(struct _BigFileDirEntry *dirEntry)
 
 void LOAD_InitCdLoader(char *bigFileName, char *voiceFileName)
 {
-	struct CdlFILE fp;
+	CdlFILE fp;
 	long i;
 	char *ptr;
 
@@ -594,7 +602,7 @@ struct _BigFileEntry * LOAD_GetBigFileEntryByHash(long hash)
 	int i;
 	struct _BigFileEntry* entry;
 
-	entry = loadStatus.bigFile.currentDir;
+	entry = (_BigFileEntry*)loadStatus.bigFile.currentDir;//Probably wrong?
 	i = entry->fileHash;
 	
 	if (entry != NULL && loadStatus.currentDirLoading == 0 &&  i != 0)
@@ -718,7 +726,7 @@ void LOAD_LoadTIM(long *addr, long x_pos, long y_pos, long clut_x, long clut_y)
 	rect.w = ((unsigned short*)addr)[4];
 	rect.h = ((unsigned short*)addr)[5];
 
-	LoadImage(&rect, addr + 3);
+	LoadImage(&rect, (unsigned long*)(addr + 3));
 
 	if (clutAddr != NULL)
 	{
@@ -727,7 +735,7 @@ void LOAD_LoadTIM(long *addr, long x_pos, long y_pos, long clut_x, long clut_y)
 		rect.w = 16;
 		rect.h = 1;
 		DrawSync(0);
-		LoadImage(&rect, clutAddr);
+		LoadImage(&rect, (unsigned long*)clutAddr);
 	}
 }
 
@@ -807,8 +815,8 @@ void * LOAD_InitBuffers()
 void LOAD_InitCdStreamMode()
 { 
 	unsigned char cdMode = 0xA0;
-	CdReadyCallback(&LOAD_CdReadReady, 0xA0, NULL);
-	CdSyncCallback(&LOAD_CdSeekCallback, 0, NULL);
+	CdReadyCallback(&LOAD_CdReadReady);
+	CdSyncCallback(&LOAD_CdSeekCallback);
 	CdControl(CdlSetmode, &cdMode, NULL);
 }
 
