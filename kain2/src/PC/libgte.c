@@ -160,9 +160,15 @@ void gte_DPCS()
 void gte_DPCT()
 {}
 //0001:00029de0       _gte_INTPL                 0042ade0 f   libgte.obj
+void gte_INTPL()
+{}
 //0001:00029fd0       _gte_SQR                   0042afd0 f   libgte.obj
 //0001:0002a0a0       _gte_NCS                   0042b0a0 f   libgte.obj
+void gte_NCS()
+{}
 //0001:0002a340       _gte_NCT                   0042b340 f   libgte.obj
+void gte_NCT()
+{}
 //0001:0002a630       _gte_NCDS                  0042b630 f   libgte.obj
 //0001:0002a9f0       _gte_NCDT                  0042b9f0 f   libgte.obj
 //0001:0002ae50       _gte_NCCS                  0042be50 f   libgte.obj
@@ -584,6 +590,15 @@ void DpqColor3(CVECTOR* v0, CVECTOR* v1, CVECTOR* v2, long p, CVECTOR* v3, CVECT
 //0001:0002d550       _FlipTRX                   0042e550 f   libgte.obj
 //0001:0002d560       _InitGeom                  0042e560 f   libgte.obj
 //0001:0002d580       _Intpl                     0042e580 f   libgte.obj
+void Intpl(VECTOR* v0, long p, CVECTOR* v1)
+{
+	gte.ir0 = p;
+	gte.ir1 = v0->vx;
+	gte.ir2 = v0->vy;
+	gte.ir3 = v0->vz;
+	gte_INTPL();
+	*v1 = gte.ncol210[2];
+}
 //0001:0002d5c0       _LightColor                0042e5c0 f   libgte.obj
 void LightColor(VECTOR* v0, VECTOR* v1)
 {
@@ -599,8 +614,26 @@ void LightColor(VECTOR* v0, VECTOR* v1)
 //0001:0002d6a0       _LoadAverage12             0042e6a0 f   libgte.obj
 //0001:0002d730       _LoadAverageByte           0042e730 f   libgte.obj
 //0001:0002d7a0       _LoadAverageCol            0042e7a0 f   libgte.obj
+void LoadAverageCol(u_char* v0, u_char* v1, long p0, long p1, u_char* v2)
+{
+	v2[0] = (v0[0] * p0 + v1[0] * p1) >> 12;
+	v2[1] = (v0[1] * p0 + v1[1] * p1) >> 12;
+	v2[2] = (v0[2] * p0 + v1[2] * p1) >> 12;
+}
 //0001:0002d830       _LoadAverageShort0         0042e830 f   libgte.obj
+void LoadAverageShort0(SVECTOR* v0, SVECTOR* v1, long p0, long p1, SVECTOR* v2)
+{
+	v2->vx = (v0->vx * p0 + v1->vx * p1);
+	v2->vy = (v0->vy * p0 + v1->vy * p1);
+	v2->vz = (v0->vz * p0 + v1->vz * p1);
+}
 //0001:0002d8c0       _LoadAverageShort12        0042e8c0 f   libgte.obj
+void LoadAverageShort12(SVECTOR* v0, SVECTOR* v1, long p0, long p1, SVECTOR* v2)
+{
+	v2->vx = (v0->vx * p0 + v1->vx * p1) >> 12;
+	v2->vy = (v0->vy * p0 + v1->vy * p1) >> 12;
+	v2->vz = (v0->vz * p0 + v1->vz * p1) >> 12;
+}
 //0001:0002d950       _LocalLight                0042e950 f   libgte.obj
 void LocalLight(SVECTOR* v0, VECTOR* v1)
 {
@@ -665,7 +698,27 @@ long NormalClip(long sxy0, long sxy1, long sxy2)
 	return clip;
 }
 //0001:0002dfb0       _NormalColor               0042efb0 f   libgte.obj
+void NormalColor(SVECTOR* v0, CVECTOR* v1)
+{
+	gte.sv012xy[0] = *(PAIR16*)&v0->vx;
+	gte.sv012_z[0] = *(PAIR16*)&v0->vz;
+	gte_NCS();
+	*v1 = gte.ncol210[2];
+}
 //0001:0002dfe0       _NormalColor3              0042efe0 f   libgte.obj
+void __cdecl NormalColor3(SVECTOR* v0, SVECTOR* v1, SVECTOR* v2, CVECTOR* v3, CVECTOR* v4, CVECTOR* v5)
+{
+	gte.sv012xy[0] = *(PAIR16*)&v0->vx;
+	gte.sv012_z[0] = *(PAIR16*)&v0->vz;
+	gte.sv012xy[1] = *(PAIR16*)&v1->vx;
+	gte.sv012_z[1] = *(PAIR16*)&v1->vz;
+	gte.sv012xy[2] = *(PAIR16*)&v2->vx;
+	gte.sv012_z[2] = *(PAIR16*)&v2->vz;
+	gte_NCT();
+	*v3 = gte.ncol210[0];
+	*v4 = gte.ncol210[1];
+	*v5 = gte.ncol210[2];
+}
 //0001:0002e050       _NormalColorCol            0042f050 f   libgte.obj
 //0001:0002e090       _NormalColorCol3           0042f090 f   libgte.obj
 //0001:0002e110       _NormalColorDpq            0042f110 f   libgte.obj
