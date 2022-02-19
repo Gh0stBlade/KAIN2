@@ -2943,73 +2943,6 @@ struct JoypadMappingStruct // hashcode: 0x312F2BE8 (dec: 825175016)
 	unsigned short translation; // size=0, offset=2
 };
 
-typedef unsigned short PadData;
-
-typedef struct MouseData
-{
-	unsigned short buttons;
-	signed char xOffset;
-	signed char yOffset;
-}
-MouseData;
-
-typedef struct NegconData
-{
-	unsigned short digitalButtons;               /* Bit mask of plain keys. */
-	char centralTwist;                           /* Analogue twisting thing.*/
-	char buttonI;                                /* The I analogue button.  */
-	char buttonII;                               /* The II analogue button. */
-	char topLeft;                                /* The analogue tl button. */
-}
-NegconData;
-
-typedef struct AnalogjoyData
-{
-	unsigned short digitalButtons;               /* Bit mask of plain keys. */
-	unsigned char  right_x;
-	unsigned char  right_y;
-	unsigned char  left_x;
-	unsigned char  left_y;
-} AnalogjoyData;
-
-typedef struct TapCtrllerData
-{
-	unsigned char transStatus;  /* 0xff = no pad, bad pad, bad transmission */
-	unsigned char dataFormat;            /* Top 4 bits = type of controller */
-
-	union                                         /* Controller data union. */                   /* Controller data union. */
-	{
-		PadData    pad;                                 /* Plain pad.       */
-		NegconData negcon;                              /* Namco controller.*/
-	}
-	data;
-}
-TapCtrllerData;
-
-typedef struct MultiTapData
-{
-	TapCtrllerData ctrllers[4];               /* Just 4 controller packets. */
-}
-MultiTapData;
-
-typedef struct ControllerPacket
-{
-	unsigned char transStatus;  /* 0xff = no pad, bad pad, bad transmission */
-	unsigned char dataFormat;            /* Top 4 bits = type of controller */
-									   /* Bottom 4 == shorts of data written */
-	union                                         /* Controller data union. */
-	{
-		PadData       pad;                     /* Plain pad.       */
-		MouseData     mouse;                   /* Mouse.           */
-		NegconData    negcon;                  /* Namco controller.*/
-		AnalogjoyData joystick;				/* Analog Joystick  */
-		MultiTapData  tap;                     /* 4-way multi-tap. */
-	}
-	data;
-} ControllerPacket;
-
-
-
 struct _AnimSoundData_Type // hashcode: 0x5367FF66 (dec: 1399324518)
 {
 	short sfxToneID; // size=0, offset=0
@@ -3274,21 +3207,6 @@ struct AadInitAttr // hashcode: 0x0549E29A (dec: 88728218)
 	void (*nonBlockBufferedLoadProc)(); // size=0, offset=12
 	void (**memoryMallocProc)(); // size=0, offset=16
 	void (*memoryFreeProc)(); // size=0, offset=20
-};
-
-struct MusicLoadInfo // hashcode: 0xC8F67C40 (dec: -923370432)
-{
-	int state; // size=0, offset=0
-	int nextState; // size=0, offset=4
-	int errorStatus; // size=0, offset=8
-	int bankLoaded; // size=0, offset=12
-	int checkMusicDelay; // size=0, offset=16
-	int currentMusicPlane; // size=0, offset=20
-	char currentMusicName[8]; // size=8, offset=24
-	struct MusicLoadCmd commandQueue[4]; // size=32, offset=32
-	int commandIn; // size=0, offset=64
-	int commandOut; // size=0, offset=68
-	int numCmdsInQueue; // size=0, offset=72
 };
 
 struct ObjectPeriodicSound // hashcode: 0x931DBADB (dec: -1826768165)
@@ -4806,20 +4724,6 @@ struct SavedEventSmallVars // hashcode: 0xE3137261 (dec: -485264799)
 	char eventNumber; // size=0, offset=4
 	char eventVariables[5]; // size=5, offset=5
 };
-
-struct WaterLevelProcess // hashcode: 0x43FF89D3 (dec: 1140820435)
-{
-	long flags; // size=0, offset=0
-	struct BSPTree *bspTree; // size=36, offset=4
-	struct _StreamUnit *streamUnit; // size=0, offset=8
-	short oldWaterZ; // size=0, offset=12
-	short oldGlobalOffset; // size=0, offset=14
-	short zValueFrom; // size=0, offset=16
-	short zValueTo; // size=0, offset=18
-	long maxSteps; // size=0, offset=20
-	long curStep; // size=0, offset=24
-};
-
 
 
 struct _PCodeStack // hashcode: 0x88A5C96B (dec: -2002400917)
@@ -9039,9 +8943,6 @@ extern unsigned char fontTransTable[128]; // offset 0x800CE224
 extern struct FontTracker fontTracker; // offset 0x800D05EC
 
 
-extern struct _BlockVramEntry *FONT_vramBlock; // offset 0x800D05E4
-
-
 extern unsigned short SpecialFogClut; // offset 0x800D05E8
 
 
@@ -9138,25 +9039,10 @@ static int gpSaved; // offset 0x800CE3A4
 extern int gamePadControllerOut; // offset 0x800D0D70
 
 
-extern long gDummyCommand[2][2]; // offset 0x800D0D60
-
-
 extern unsigned char controllerType[2]; // offset 0x800D0CC8
 
 
 static int ignoreFind; // offset 0x800D0C64
-
-
-extern struct ControllerPacket gpbuffer1; // offset 0x800D0CD0
-
-
-extern struct ControllerPacket gpbuffer2; // offset 0x800D0D18
-
-
-extern struct ControllerPacket readGPBuffer1; // offset 0x800D0CF4
-
-
-extern struct ControllerPacket readGPBuffer2; // offset 0x800D0D3C
 
 
 static long dualshock0_time; // offset 0x800D0C68
@@ -9410,25 +9296,7 @@ static long CurrentEventLine; // offset 0x800CF53C
 static long EventCurrentEventIndex; // offset 0x800CF540
 
 
-extern long WaterInUse; // offset 0x800CF544
-
-
 extern long NumSignalsToReset; // offset 0x800CF548
-
-
-extern long WaitingForVoiceNumber; // offset 0x800D2AF8
-
-
-extern long WaitingToLoadSound; // offset 0x800D2A18
-
-
-extern long WaitingToLoadSFX; // offset 0x800D2AF4
-
-
-extern short MoviePlayed; // offset 0x800D2A6C
-
-
-extern short MovieToPlay; // offset 0x800D2A70
 
 
 static struct Event *currentEventInstance; // offset 0x800D2734
@@ -9450,12 +9318,6 @@ static struct WaterLevelProcess WaterLevelArray[5]; // offset 0x800D2744
 
 
 static struct Level *CurrentPuzzleLevel; // offset 0x800D27D0
-
-
-static struct EventTimer eventTimerArray[24]; // offset 0x800D27D4
-
-
-static long numActiveEventTimers; // offset 0x800D2A14
 
 
 extern struct SignalResetStruct ResetSignalArray[16]; // offset 0x800D2A74

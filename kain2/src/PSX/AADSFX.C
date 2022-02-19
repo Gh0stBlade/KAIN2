@@ -1,4 +1,5 @@
-#include "THISDUST.H"
+#include "CORE.H"
+#include "AADLIB.H"
 #include "AADSFX.H"
 
 
@@ -6,6 +7,7 @@
 // unsigned long /*$ra*/ aadPlaySfx(unsigned int toneID /*$a0*/, int voll /*$s1*/, int pan /*$s2*/, int pitchOffset /*$s0*/)
 unsigned long aadPlaySfx(unsigned int toneID, int volume, int pan, int pitchOffset)
 { // line 19, offset 0x800569dc
+#if defined(PC_VERSION)
 	AadMemoryStruct* v4; // eax
 	ushort handleCounter; // cx
 	ushort commandsInQueue; // ax
@@ -48,6 +50,9 @@ unsigned long aadPlaySfx(unsigned int toneID, int volume, int pan, int pitchOffs
 	++v10->sfxSlot.commandsInQueue;
 	PSX_ExitCriticalSection();
 	return v8;
+#else
+	return NULL;
+#endif
 }
 
 
@@ -55,6 +60,7 @@ unsigned long aadPlaySfx(unsigned int toneID, int volume, int pan, int pitchOffs
 // unsigned long /*$ra*/ aadStopSfx(unsigned long handle /*$s0*/)
 unsigned long aadStopSfx(unsigned long handle)
 { // line 37, offset 0x80056a40
+#if defined(PC_VERSION)
 	ushort commandsInQueue; // ax
 	char v2; // bl
 	AadSfxCommand* v3; // eax
@@ -85,6 +91,9 @@ unsigned long aadStopSfx(unsigned long handle)
 	++v4->sfxSlot.commandsInQueue;
 	PSX_ExitCriticalSection();
 	return handle;
+#else
+	return 0;
+#endif
 }
 
 void aadStopAllSfx()
@@ -122,6 +131,7 @@ void aadStopAllSfx()
 // int /*$ra*/ aadIsSfxPlaying(unsigned long handle /*$a0*/)
 int aadIsSfxPlaying(unsigned long handle)
 { // line 53, offset 0x80056aac
+#if defined(PC_VERSION)
 	int v1; // ecx
 	ulong* i; // edx
 	char v3; // al
@@ -142,6 +152,9 @@ int aadIsSfxPlaying(unsigned long handle)
 			return 0;
 	}
 	return 1;
+#else
+	return 0;
+#endif
 }
 
 
@@ -149,6 +162,7 @@ int aadIsSfxPlaying(unsigned long handle)
 // int /*$ra*/ aadIsSfxPlayingOrRequested(unsigned long handle /*$s0*/)
 int aadIsSfxPlayingOrRequested(unsigned long handle)
 { // line 72, offset 0x80056b1c
+#if defined(PC_VERSION)
 	int commandsInQueue; // esi
 	int commandOut; // ecx
 	int v3; // ecx
@@ -192,6 +206,9 @@ int aadIsSfxPlayingOrRequested(unsigned long handle)
 		}
 		return 1;
 	}
+#else
+	return 0;
+#endif
 }
 
 
@@ -199,6 +216,7 @@ int aadIsSfxPlayingOrRequested(unsigned long handle)
 // int /*$ra*/ aadIsSfxTypePlaying(unsigned int toneID /*$a0*/)
 int aadIsSfxTypePlaying(unsigned int toneID)
 { // line 93, offset 0x80056bd4
+#if defined(PC_VERSION)
 	int v1; // ecx
 	ulong* i; // edx
 	char v3; // al
@@ -219,6 +237,9 @@ int aadIsSfxTypePlaying(unsigned int toneID)
 			return 0;
 	}
 	return 1;
+#else
+	return 0;
+#endif
 }
 
 
@@ -226,6 +247,7 @@ int aadIsSfxTypePlaying(unsigned int toneID)
 // int /*$ra*/ aadIsSfxTypePlayingOrRequested(unsigned int sfxToneID /*$s0*/)
 int aadIsSfxTypePlayingOrRequested(unsigned int sfxToneID)
 { // line 111, offset 0x80056c48
+#if defined(PC_VERSION)
 	int commandsInQueue; // esi
 	int commandOut; // ecx
 	int v3; // ecx
@@ -269,6 +291,9 @@ int aadIsSfxTypePlayingOrRequested(unsigned int sfxToneID)
 		}
 		return 1;
 	}
+#else
+	return 0;
+#endif
 }
 
 
@@ -276,6 +301,7 @@ int aadIsSfxTypePlayingOrRequested(unsigned int sfxToneID)
 // unsigned long /*$ra*/ aadSetSfxVolPanPitch(unsigned long handle /*$s0*/, int voll /*$a1*/, int pan /*$a2*/, int pitch /*$a3*/)
 unsigned long aadSetSfxVolPanPitch(unsigned long handle, int volume, int pan, int pitch)
 { // line 160, offset 0x80056d00
+#if defined(PC_VERSION)
 	ushort commandsInQueue; // ax
 	char v5; // bl
 	AadSfxCommand* v6; // eax
@@ -306,6 +332,9 @@ unsigned long aadSetSfxVolPanPitch(unsigned long handle, int volume, int pan, in
 	++v7->sfxSlot.commandsInQueue;
 	PSX_ExitCriticalSection();
 	return handle;
+#else
+	return 0;
+#endif
 }
 
 
@@ -313,6 +342,7 @@ unsigned long aadSetSfxVolPanPitch(unsigned long handle, int volume, int pan, in
 // unsigned long /*$ra*/ createSfxHandle(unsigned int toneID /*$a0*/)
 unsigned long createSfxHandle(unsigned int toneID)
 { // line 168, offset 0x80056d44
+#if defined(PC_VERSION)
 	AadMemoryStruct* v1; // ecx
 
 	++aadMem->sfxSlot.handleCounter;
@@ -323,6 +353,9 @@ unsigned long createSfxHandle(unsigned int toneID)
 		v1 = aadMem;
 	}
 	return (v1->sfxSlot.handleCounter << 16) | (unsigned __int16)toneID;
+#else
+	return 0;
+#endif
 }
 
 void aadPutSfxCommand(int statusByte, int dataByte0, int dataByte1, unsigned long ulongParam, int shortParam)
@@ -391,6 +424,8 @@ void aadPutSfxCommand(int statusByte, int dataByte0, int dataByte1, unsigned lon
 // void /*$ra*/ aadExecuteSfxCommand(struct AadSfxCommand *sfxCmd /*$a0*/)
 void aadExecuteSfxCommand(struct AadSfxCommand *sfxCmd)
 { // line 229, offset 0x80056e80
+
+#if defined(PC_VERSION)
 	static int(*sfxCmds[])(struct AadSfxCommand*) =
 	{
 		sfxCmdPlayTone,
@@ -406,6 +441,7 @@ void aadExecuteSfxCommand(struct AadSfxCommand *sfxCmd)
 
 	if (sfxCmd->statusByte < 9u)
 		sfxCmds[sfxCmd->statusByte](sfxCmd);
+#endif
 }
 
 
@@ -413,6 +449,7 @@ void aadExecuteSfxCommand(struct AadSfxCommand *sfxCmd)
 // void /*$ra*/ sfxCmdPlayTone(struct AadSfxCommand *sfxCmd /*$s4*/)
 void sfxCmdPlayTone(struct AadSfxCommand *sfxCmd)
 { // line 248, offset 0x80056ecc
+#if defined(PC_VERSION)
 	unsigned __int8* v2; // eax
 	struct AadToneAtr* v3; // edi
 	unsigned __int16 v4; // bx
@@ -513,6 +550,7 @@ void sfxCmdStopTone(struct AadSfxCommand *sfxCmd)
 	} while (v5);
 	v1->voiceKeyOffRequest |= v2;
 	aadMem->voiceKeyOnRequest &= ~v2;
+#endif
 }
 
 
@@ -520,6 +558,7 @@ void sfxCmdStopTone(struct AadSfxCommand *sfxCmd)
 // void /*$ra*/ sfxCmdStopAllTones(struct AadSfxCommand *sfxCmd /*$a0*/)
 void sfxCmdStopAllTones(struct AadSfxCommand *sfxCmd)
 { // line 372, offset 0x800570f0
+#if defined(PC_VERSION)
 	AadMemoryStruct* v1; // edx
 	int v2; // esi
 	int v3; // edi
@@ -643,7 +682,7 @@ void sfxCmdSetToneVolumeAndPan(struct AadSfxCommand *sfxCmd)
 		// Start line: 881
 	/* end block 2 */
 	// End Line: 882
-
+#endif
 }
 
 
@@ -651,7 +690,8 @@ void sfxCmdSetToneVolumeAndPan(struct AadSfxCommand *sfxCmd)
 // void /*$ra*/ sfxCmdSetToneVolPanPitch(struct AadSfxCommand *sfxCmd /*$s2*/)
 void sfxCmdSetToneVolPanPitch(struct AadSfxCommand *sfxCmd)
 { // line 439, offset 0x80057508
-	/* begin block 1 */
+#if defined(PC_VERSION)
+  /* begin block 1 */
 		// Start line: 440
 		// Start offset: 0x80057508
 		// Variables:
@@ -733,7 +773,7 @@ void sfxCmdSetToneVolPanPitch(struct AadSfxCommand *sfxCmd)
 		// Start line: 999
 	/* end block 2 */
 	// End Line: 1000
-
+#endif
 }
 
 
@@ -741,6 +781,7 @@ void sfxCmdSetToneVolPanPitch(struct AadSfxCommand *sfxCmd)
 // void /*$ra*/ sfxCmdLockVoice(struct AadSfxCommand *sfxCmd /*$a0*/)
 void sfxCmdLockVoice(struct AadSfxCommand *sfxCmd)
 { // line 498, offset 0x80057974
+#if defined(PC_VERSION)
 	void(__cdecl * ulongParam)(int); // esi
 	int* Voice; // eax
 	int v3; // ecx
@@ -757,6 +798,7 @@ void sfxCmdLockVoice(struct AadSfxCommand *sfxCmd)
 	{
 		ulongParam(0);
 	}
+#endif
 }
 
 
@@ -764,6 +806,7 @@ void sfxCmdLockVoice(struct AadSfxCommand *sfxCmd)
 // void /*$ra*/ sfxCmdSetVoiceAttr(struct AadSfxCommand *sfxCmd /*$a0*/)
 void sfxCmdSetVoiceAttr(struct AadSfxCommand *sfxCmd)
 { // line 516, offset 0x800579c0
+#if defined(PC_VERSION)
 	unsigned int v1; // esi
 	ulong ulongParam; // edi
 	int v3; // eax
@@ -784,6 +827,7 @@ void sfxCmdSetVoiceAttr(struct AadSfxCommand *sfxCmd)
 	SpuSetVoiceStartAddr(v1, *(DWORD*)(ulongParam + 28));
 	v4 = *(WORD*)(ulongParam + 60);
 	SpuSetVoiceADSR1ADSR2(v1, *(WORD*)(ulongParam + 58), v4);
+#endif
 }
 
 

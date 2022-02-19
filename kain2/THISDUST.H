@@ -296,8 +296,6 @@ extern long eventListNumInstances[20]; // offset 0x800D2A1C
 
 extern struct DebugMenuLine eventMenu[1]; // offset 0x800CFB64
 
-static struct EventTimer eventTimerArray[24]; // offset 0x800D27D4
-
 static struct __Force *ExternalForces; // offset 0x800D51D4
 
 static struct __Force ExternalForces[4]; // offset 0x800D58C4
@@ -336,8 +334,6 @@ static struct _ButtonTexture *FaceButtons; // offset 0x800D5C04
 static short FireReaverFlag; // offset 0x800D48B8
 
 extern struct DebugMenuLine fogMenu[1]; // offset 0x800CFC58
-
-extern struct _BlockVramEntry *FONT_vramBlock; // offset 0x800D05E4
 
 extern struct FontPos fontPos[72]; // offset 0x800C8500
 
@@ -397,8 +393,6 @@ extern struct GameTracker gameTrackerX; // offset 0x800D0FAC
 
 static int gDefragRequest; // offset 0x800CECDC
 
-extern long gDummyCommand[2][2]; // offset 0x800D0D60
-
 extern short gEndGameNow; // offset 0x800CE562
 
 extern struct _FXTracker *gFXT; // offset 0x800D0C44
@@ -434,10 +428,6 @@ static int gNumSpectralMonsters; // offset 0x800CF630
 extern struct DebugMenuLine goodiesMenu[1]; // offset 0x800CFBDC
 
 static unsigned long (**gOt[2]); // offset 0x800D0C0C
-
-extern struct ControllerPacket gpbuffer1; // offset 0x800D0CD0
-
-extern struct ControllerPacket gpbuffer2; // offset 0x800D0D18
 
 static struct _PolytopeList *gPolytopeList; // offset 0x800D0C1C
 
@@ -585,10 +575,6 @@ extern short MORPH_Track[2]; // offset 0x800D191C
 
 static long MoveCodeStreamExtra; // offset 0x800CF538
 
-extern short MoviePlayed; // offset 0x800D2A6C
-
-extern short MovieToPlay; // offset 0x800D2A70
-
 static struct NewMemTracker newMemTracker; // offset 0x800D18D4
 
 extern int nomusic; // offset 0x800CE56C
@@ -596,8 +582,6 @@ extern int nomusic; // offset 0x800CE56C
 static struct _Normal Norm; // offset 0x800D599C
 
 extern int nosound; // offset 0x800CE568
-
-static long numActiveEventTimers; // offset 0x800D2A14
 
 static long numbufferedIntros; // offset 0x800CF8AC
 
@@ -668,10 +652,6 @@ static struct __Player Raziel; // offset 0x800D5214
 extern long RazielCommands[10]; // offset 0x800CF560
 
 static struct _G2AnimInterpInfo_Type razInterpInfo[3]; // offset 0x800D57D4
-
-extern struct ControllerPacket readGPBuffer1; // offset 0x800D0CF4
-
-extern struct ControllerPacket readGPBuffer2; // offset 0x800D0D3C
 
 extern short RENDER_currentStreamUnitID; // offset 0x800D0C4C
 
@@ -815,21 +795,11 @@ extern struct _MonsterFunctionTable VWRAITH_FunctionTable; // offset 0x800CF6F4
 
 extern struct _MonsterStateChoice VWRAITH_StateChoiceTable[7]; // offset 0x800CAB9C
 
-extern long WaitingForVoiceNumber; // offset 0x800D2AF8
-
-extern long WaitingToLoadSFX; // offset 0x800D2AF4
-
-extern long WaitingToLoadSound; // offset 0x800D2A18
-
 static int warpDraw; // offset 0x800D48F4
 
 extern struct STREAM_294fake WarpGateLoadInfo; // offset 0x800D18FC
 
 extern struct WarpRoom WarpRoomArray[14]; // offset 0x800CF200
-
-extern long WaterInUse; // offset 0x800CF544
-
-static struct WaterLevelProcess WaterLevelArray[5]; // offset 0x800D2744
 
 static int WaterStatus; // offset 0x800CF778
 
@@ -3569,22 +3539,7 @@ struct JoypadMappingStruct // hashcode: 0x312F2BE8 (dec: 825175016)
 	unsigned short translation; // size=0, offset=2
 };
 
-struct ControllerPacket // hashcode: 0x9621B4F3 (dec: -1776175885)
-{
-	unsigned char transStatus; // size=0, offset=0
-	unsigned char dataFormat; // size=0, offset=1
-	union {
-		unsigned short pad; // size=0, offset=0
-		unsigned short multitap[16]; // size=32, offset=0
-		unsigned short mouse[2]; // size=4, offset=0
-		unsigned short negcon[3]; // size=6, offset=0
-		struct AnalogueData analogue; // size=6, offset=0
-	} data; // size=32, offset=2, found in object files: gamepad.o, gamepad.o
-};
-
 typedef struct JoypadMappingStruct JoypadMapping;
-
-typedef struct ControllerPacket ControllerPacket;
 
 struct _G2EulerAngles_Type // hashcode: 0xB3709AC5 (dec: -1284465979)
 {
@@ -5352,19 +5307,6 @@ struct SavedEventSmallVars // hashcode: 0xE3137261 (dec: -485264799)
 	short areaID; // size=0, offset=2
 	char eventNumber; // size=0, offset=4
 	char eventVariables[5]; // size=5, offset=5
-};
-
-struct WaterLevelProcess // hashcode: 0x43FF89D3 (dec: 1140820435)
-{
-	long flags; // size=0, offset=0
-	struct BSPTree *bspTree; // size=36, offset=4
-	struct _StreamUnit *streamUnit; // size=0, offset=8
-	short oldWaterZ; // size=0, offset=12
-	short oldGlobalOffset; // size=0, offset=14
-	short zValueFrom; // size=0, offset=16
-	short zValueTo; // size=0, offset=18
-	long maxSteps; // size=0, offset=20
-	long curStep; // size=0, offset=24
 };
 
 struct EventInstanceObject // hashcode: 0xC22B6786 (dec: -1037342842)

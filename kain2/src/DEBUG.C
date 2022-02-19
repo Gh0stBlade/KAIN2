@@ -1,4 +1,4 @@
-#include "core.H"
+#include "CORE.H"
 #include "DEBUG.H"
 
 
@@ -868,7 +868,7 @@ void DEBUG_ProcessCheat(struct GameTracker *gameTracker)
 			// Variables:
 				SVECTOR v; // stack offset -80
 				VECTOR dv; // stack offset -72
-				MATRIX rotate_mat; // stack offset -56
+				//MATRIX rotate_mat; // stack offset -56
 		/* end block 1.1 */
 		// End offset: 0x800146A4
 		// End Line: 4575

@@ -660,8 +660,10 @@ void GAMELOOP_SwitchTheDrawBuffer(unsigned long **drawot)
 // void /*$ra*/ GAMELOOP_SetupRenderFunction(struct GameTracker *gameTracker /*$a0*/)
 void GAMELOOP_SetupRenderFunction(struct GameTracker *gameTracker)
 { // line 2277, offset 0x8002f37c
+#if defined(PC_VERSION)
 	gameTracker->drawAnimatedModelFunc = DRAW_AnimatedModel_S;
 	gameTracker->drawDisplayPolytopeListFunc = DRAW_DisplayPolytopeList_S;
+#endif
 }
 
 

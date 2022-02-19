@@ -1,4 +1,4 @@
-#include "THISDUST.H"
+#include "CORE.H"
 #include "TIMER.H"
 
 
@@ -6,7 +6,8 @@
 // unsigned long /*$ra*/ TIMER_GetTimeMS()
 unsigned long TIMER_GetTimeMS()
 { // line 41, offset 0x8003d7b0
-#ifdef PSX
+#if defined(PSX_VERSION)
+#if 0
 	uint ticks;
 	uint mticks;
 
@@ -15,6 +16,8 @@ unsigned long TIMER_GetTimeMS()
 	mticks = gameTimer;
 	ExitCriticalSection();
 	return (mticks >> 16) * 126819 + (ticks & 0xffff | mticks << 16) / 33869;
+#endif
+	return 0;
 #else
 	unsigned __int64 result; // rax
 
@@ -31,7 +34,8 @@ unsigned long TIMER_GetTimeMS()
 // unsigned long /*$ra*/ TIMER_TimeDiff(unsigned long x /*$s0*/)
 unsigned long TIMER_TimeDiff(unsigned long x)
 { // line 72, offset 0x8003d840
-#ifdef PSX
+#if defined(PSX_VERSION)
+#if 0
 	uint ticks;
 	uint prevIntrs;
 	uint timeDiff;
@@ -67,6 +71,8 @@ unsigned long TIMER_TimeDiff(unsigned long x)
 		res = 0x0;
 	}
 	return (ulong)res;
+#endif
+	return 0;
 #else
 	unsigned __int16 RCnt; // ax
 	unsigned int v2; // edx
@@ -102,6 +108,7 @@ unsigned long TIMER_TimeDiff(unsigned long x)
 // pc exclusive, unused
 void* __cdecl TIMER_TimeDiff2(unsigned int a1)
 {
+#if defined(PC_VERSION)
 	unsigned __int16 RCnt; // ax
 	unsigned int v3; // edx
 	unsigned int v4; // ecx
@@ -128,4 +135,7 @@ void* __cdecl TIMER_TimeDiff2(unsigned int a1)
 		return (void*)(14 * (v5 + 65535 * v4) / 1000);
 	else
 		return 4293263;
+#else
+	return 0;
+#endif
 }

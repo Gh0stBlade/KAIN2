@@ -3504,7 +3504,9 @@ void STREAM_DumpNonResidentObjects()
 			if (STREAM_GetStreamUnitWithID(instance->birthStreamUnitID) == 0 &&
 				STREAM_IsObjectInAnyUnit(FindObjectInTracker(object)) == 0)
 			{
+#if !defined(PSX_VERSION)//Temporarily disabled to make PSX compile.
 				INSTANCE_ReallyRemoveInstance(gameTrackerX.instanceList, instance, 0);
+#endif
 			}
 		}
 		instance = instance->next;

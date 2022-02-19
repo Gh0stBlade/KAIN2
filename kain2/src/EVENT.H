@@ -1,11 +1,28 @@
 #ifndef EVENT_H
 #define EVENT_H
 
+#include "STREAM.H"
+#include "BSP.H"
+
 //struct __Event // hashcode: 0xBC16D673 (dec: -1139353997)
 //{
 //	int ID; // size=0, offset=0
 //	int Data; // size=0, offset=4
 //};
+
+struct WaterLevelProcess // hashcode: 0x43FF89D3 (dec: 1140820435)
+{
+	long flags; // size=0, offset=0
+	struct BSPTree* bspTree; // size=36, offset=4
+	struct _StreamUnit* streamUnit; // size=0, offset=8
+	short oldWaterZ; // size=0, offset=12
+	short oldGlobalOffset; // size=0, offset=14
+	short zValueFrom; // size=0, offset=16
+	short zValueTo; // size=0, offset=18
+	long maxSteps; // size=0, offset=20
+	long curStep; // size=0, offset=24
+};
+
 
 struct EventBasicObject // hashcode: 0x9FC1DB2A (dec: -1614685398)
 {
@@ -86,7 +103,16 @@ struct HintSystemStruct // hashcode: 0xAD521037 (dec: -1387130825)
 extern "C" {
 #endif
 
+extern long WaterInUse; // offset 0x800CF544
 extern struct HintSystemStruct gHintSystem; // offset 0x800D2AFC
+extern struct WaterLevelProcess WaterLevelArray[5];
+extern struct EventTimer eventTimerArray[24]; // offset 0x800D27D4
+extern long numActiveEventTimers; // offset 0x800D2A14
+extern long WaitingForVoiceNumber; // offset 0x800D2AF8
+extern long WaitingToLoadSFX; // offset 0x800D2AF4
+extern long WaitingToLoadSound; // offset 0x800D2A18
+extern short MoviePlayed; // offset 0x800D2A6C
+extern short MovieToPlay; // offset 0x800D2A70
 
 extern void EVENT_UpdateResetSignalArrayAndWaterMovement(struct Level *oldLevel, struct Level *newLevel, long sizeOfLevel); // 0x800605D0
 extern void EVENT_ResetAllOneTimeVariables(); // 0x800606AC

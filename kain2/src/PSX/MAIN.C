@@ -29,6 +29,7 @@ int devstation; // offset 0x800D0E68
 struct BLK_FILL clearRect[2]; // offset 0x800D0F88
 DRAWENV draw[2]; // offset 0x800D0E6C
 DISPENV disp[2]; // offset 0x800D0E40
+struct InterfaceItem InterfaceItems[6];
 
 void ClearDisplay()
 {

@@ -1,4 +1,4 @@
-#include "THISDUST.H"
+#include "CORE.H"
 #include "SAVEINFO.H"
 
 
@@ -813,6 +813,7 @@ void SAVE_MarkDeadDead(struct _Instance *instance)
 // void /*$ra*/ SAVE_UndestroyInstance(struct _Instance *instance /*$a0*/)
 void SAVE_UndestroyInstance(struct _Instance *instance)
 { // line 1264, offset 0x800b6958
+#if defined(PC_VERSION)
 	BYTE* v1; // edi
 	int introUniqueID; // esi
 	BYTE* v3; // eax
@@ -841,6 +842,7 @@ void SAVE_UndestroyInstance(struct _Instance *instance)
 				v1[introUniqueID / 8 + 2] &= ~(unsigned __int8)(1 << (instance->introUniqueID & 7));
 		}
 	}
+#endif
 }
 
 
@@ -848,6 +850,7 @@ void SAVE_UndestroyInstance(struct _Instance *instance)
 // struct SavedIntroSmall * /*$ra*/ SAVE_GetSavedSmallIntro(struct _Instance *instance /*$a0*/)
 struct SavedIntroSmall * SAVE_GetSavedSmallIntro(struct _Instance *instance)
 { // line 1269, offset 0x800b697c
+#if defined(PC_VERSION)
 	struct SavedIntroSmall* result; // eax
 
 	result = dword_C55294;
@@ -860,6 +863,9 @@ struct SavedIntroSmall * SAVE_GetSavedSmallIntro(struct _Instance *instance)
 			return 0;
 	}
 	return result;
+#else
+	return NULL;
+#endif
 }
 
 
@@ -867,6 +873,7 @@ struct SavedIntroSmall * SAVE_GetSavedSmallIntro(struct _Instance *instance)
 // struct SavedIntroSpline * /*$ra*/ SAVE_GetIntroSpline(struct _Instance *instance /*$a0*/)
 struct SavedIntroSpline * SAVE_GetIntroSpline(struct _Instance *instance)
 { // line 1291, offset 0x800b69e8
+#if defined(PC_VERSION)
 	struct SavedIntroSpline* result; // eax
 
 	result = (struct SavedIntroSpline*)dword_C55294;
@@ -879,6 +886,9 @@ struct SavedIntroSpline * SAVE_GetIntroSpline(struct _Instance *instance)
 			return 0;
 	}
 	return result;
+#else
+	return NULL;
+#endif
 }
 
 
@@ -957,6 +967,7 @@ void SAVE_SaveEverythingInMemory()
 // void /*$ra*/ SAVE_SaveGame()
 void SAVE_SaveGame()
 { // line 1391, offset 0x800b6c6c
+#if defined(PC_VERSION)
 	int v0; // esi
 	int v1; // edi
 	int LevelWithID; // eax
@@ -997,6 +1008,9 @@ void SAVE_SaveGame()
 	result = dword_C55294;
 	GlobalSave->sizeUsedInBlock = (WORD)dword_C55298 - (WORD)dword_C55294;
 	return result;
+#else
+	return;
+#endif
 }
 
 
@@ -1004,6 +1018,7 @@ void SAVE_SaveGame()
 // void /*$ra*/ SAVE_RestoreGame()
 void SAVE_RestoreGame()
 { // line 1406, offset 0x800b6cb8
+#if defined(PC_VERSION)
 	SavedIntroSmall* v0; // eax
 	SavedIntroSmall* v1; // esi
 
@@ -1054,6 +1069,7 @@ LABEL_6:
 	}
 	dword_C55298 = (SavedIntroSmall*)((char*)dword_C55294 + GlobalSave->sizeUsedInBlock);
 	GAMELOOP_RequestLevelChange(aUnder, 1, &gameTrackerX);
+#endif
 }
 
 

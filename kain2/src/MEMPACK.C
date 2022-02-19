@@ -1,4 +1,4 @@
-#include "core.h"
+#include "CORE.H"
 #include "MEMPACK.H"
 #include "PSX/DRAWS.H"
 #include "STREAM.H"
@@ -10,6 +10,7 @@
 
 static struct NewMemTracker newMemTracker;
 unsigned long mem_used, mem_total;
+void* overlayAddress; // 0x800CE194
 
 void MEMPACK_Init()
 { 

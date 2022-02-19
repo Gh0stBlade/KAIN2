@@ -19,8 +19,6 @@ extern void modelFadeValue() ; // 0x800CE18C
 
 extern void lowerSplitPush() ; // 0x800CE190
 
-extern void* overlayAddress; // 0x800CE194
-
 extern void forceDrawInFront() ; // 0x800CE198
 
 extern void ClearBss() ; // 0x80024E4C

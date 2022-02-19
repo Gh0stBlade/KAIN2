@@ -1,6 +1,8 @@
 #ifndef BSP_H
 #define BSP_H
 
+#include <LIBGTE.H>
+
 struct _Sphere_noSq // hashcode: 0xA031058C (dec: -1607400052)
 {
 	struct _Position position; // size=6, offset=0
@@ -133,12 +135,14 @@ union BSP_208fake // Hashcode: 0x2E8AEFCF (dec: 780857295)
 
 struct BSPScratch // hashcode: 0x17CFF45B (dec: 399504475)
 {
-	struct MATRIX vv[2]; // size=64, offset=0
-	struct MATRIX camMatrix; // size=32, offset=64
-	struct VECTOR dpv[3]; // size=48, offset=96
+#if !defined(PSX_VERSION)//Disabled by Gh0stBlade keeps complaining about being incomplete when it's complete..
+	MATRIX vv[2]; // size=64, offset=0
+	MATRIX camMatrix; // size=32, offset=64
+	VECTOR dpv[3]; // size=48, offset=96
 	long d[6]; // size=24, offset=144
-	struct MATRIX boundMatrix; // size=32, offset=168
+	MATRIX boundMatrix; // size=32, offset=168
 	long in_spectral; // size=0, offset=200
+#endif
 };
 
 typedef struct _SBSPLeaf SBSPLeaf;

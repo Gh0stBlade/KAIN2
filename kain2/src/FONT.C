@@ -1,4 +1,4 @@
-#include "core.H"
+#include "CORE.H"
 #include "FONT.H"
 #include "VRAM.H"
 #include "STRMLOAD.H"
@@ -7,9 +7,12 @@
 
 #include <stddef.h>
 
+struct _BlockVramEntry* FONT_vramBlock; // offset 0x800D05E4
 static WORD font_clut;
 struct FontTracker fontTracker;
+#if defined(PC_VERSION)
 font_color_t the_font_color_table[];
+#endif
 FontPos fontPos[];
 char charMap[92][3];
 
@@ -47,9 +50,9 @@ void FONT_Init()
 
 	if (FONT_vramBlock != NULL)
 	{
-		timAddr = LOAD_ReadFile("\\kain2\\game\\font.tim", 5);
+		timAddr = (unsigned long*)LOAD_ReadFile("\\kain2\\game\\font.tim", 5);
 
-		LOAD_LoadTIM(timAddr, x, y, x, (SCREEN_HEIGHT / 2) + 6);
+		LOAD_LoadTIM((long*)timAddr, x, y, x, (SCREEN_HEIGHT / 2) + 6);
 
 		MEMPACK_Free((char*)timAddr);
 
@@ -202,6 +205,7 @@ long FONT_Get2DImageIndex(unsigned char c)
 // void /*$ra*/ drawChar2DPoly(long fpi /*$a0*/, long x /*$s0*/, long y /*$a2*/)
 void drawChar2DPoly(long fpi, long x, long y)
 { // line 558, offset 0x8002cdc8
+#if defined(PC_VERSION)
 	__int16 v3; // ax
 	int v4; // ecx
 	__int16 v5; // ax
@@ -341,6 +345,7 @@ void drawChar2DPoly(long fpi, long x, long y)
 		nextPrim->b0 = 0x80;
 	}
 	D3D_RenderLetter(nextPrim);
+#endif
 }
 
 
@@ -348,6 +353,7 @@ void drawChar2DPoly(long fpi, long x, long y)
 // void /*$ra*/ FONT_DrawChar2D(unsigned char c /*$fp*/, long x /*$s7*/, long y /*$s3*/)
 void FONT_DrawChar2D(unsigned char c, long x, long y)
 { // line 660, offset 0x8002cfc8
+#if defined(PC_VERSION)
 	int v3; // eax
 	int v4; // ecx
 	int v5; // esi
@@ -448,6 +454,7 @@ LABEL_21:
 		drawChar2DPoly(fpi, x + (v10 - v16) / 2, v15);
 	if (v19 >= 0)
 		drawChar2DPoly(v19, x + (v10 - v12) / 2, v14 - v17 + 1);
+#endif
 }
 
 
@@ -455,6 +462,7 @@ LABEL_21:
 // long /*$ra*/ FONT_CharSpacing(char c /*$a0*/, long fontXSize /*$s0*/)
 long FONT_CharSpacing(char c, long fontXSize)
 { // line 704, offset 0x8002d1fc
+#if defined(PC_VERSION)
 	int v2; // eax
 	int v3; // eax
 	char v4; // dl
@@ -504,6 +512,9 @@ long FONT_CharSpacing(char c, long fontXSize)
 		return v7 + 1;
 	}
 	return v10 + 1;
+#else
+	return 0;
+#endif
 }
 
 
@@ -536,7 +547,7 @@ void FONT_AddCharToBuffer(char c, long x, long y)
 
 char byte_C549E0[512];
 
-void FONT_Print(char *fmt, ...)
+void FONT_Print(const char *fmt, ...)
 {
 #ifdef PSX_VERSION
 	//-8+arg_0 = a0
@@ -577,6 +588,7 @@ void FONT_Print(char *fmt, ...)
 // void /*$ra*/ FONT_Print2(char *fmt /*stack 0*/)
 void FONT_Print2(char *fmt)
 { // line 1115, offset 0x8002d43c
+#if defined(PC_VERSION)
 	va_list ap; // [esp+8h] [ebp+8h] BYREF
 
 	va_start(ap, fmt);
@@ -584,6 +596,7 @@ void FONT_Print2(char *fmt)
 	va_end(ap);
 
 	FONT_VaReallyPrint(&byte_C549E0, ap);
+#endif
 }
 
 
@@ -649,6 +662,7 @@ void FONT_SetCursor(short x, short y)
 // void /*$ra*/ FONT_VaReallyPrint(char *fmt /*$a0*/, void *ap /*$a1*/)
 void FONT_VaReallyPrint(char *fmt, void *ap)
 { // line 1280, offset 0x8002d5b0
+#if defined(PC_VERSION)
 	char* v2; // edi
 	__int32 font_buffIndex; // esi
 	char v4; // dl
@@ -735,6 +749,7 @@ void FONT_VaReallyPrint(char *fmt, void *ap)
 			}
 		} while (*++v2);
 	}
+#endif
 }
 
 
@@ -742,6 +757,7 @@ void FONT_VaReallyPrint(char *fmt, void *ap)
 // void /*$ra*/ FONT_FontPrintCentered(char *text /*$s1*/, long y /*$s0*/)
 void FONT_FontPrintCentered(char *text, long y)
 { // line 1336, offset 0x8002d740
+#if defined(PC_VERSION)
 	unsigned int v2; // kr04_4
 	signed int v3; // esi
 	int i; // edi
@@ -757,6 +773,7 @@ void FONT_FontPrintCentered(char *text, long y)
 	if ((__int16)y > 0)
 		fontTracker.font_ypos = (__int16)y;
 	FONT_Print2((int)text);
+#endif
 }
 
 
@@ -772,10 +789,12 @@ void FONT_SetColorIndex(int color)
 // void /*$ra*/ FONT_SetColorIndexCol(int color /*$a0*/, int r /*$a1*/, int g /*$a2*/, int b /*$a3*/)
 void FONT_SetColorIndexCol(int color, int r, int g, int b)
 { // line 1349, offset 0x8002d7a4
+#if defined(PC_VERSION)
 	font_color_t* v4; // eax
 
 	v4 = &the_font_color_table[color];
 	v4->r = r;
 	v4->g = g;
 	v4->b = b;
+#endif
 }
