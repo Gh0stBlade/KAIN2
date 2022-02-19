@@ -476,7 +476,7 @@ void MAIN_DoMainInit()
 		gameTrackerX.sound.gVoiceOn = 0;
 	}
 
-#if PSX_VERSION
+#if defined(PSX_VERSION)
 	init_menus(&gameTrackerX);
 	SAVE_Init(&gameTrackerX);
 #else
