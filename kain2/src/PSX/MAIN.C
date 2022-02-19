@@ -19,6 +19,10 @@
 #include "../CINEMA/CINEPSX.H"
 #include "DRAWS.H"
 
+#if defined(PSXPC_VERSION)
+#include <EMULATOR_PRIVATE.H>
+#endif
+
 char mainOptionsInit; // offset 0x800CE560
 struct MainTracker mainTrackerX; // offset 0x800D121C
 long gTimerEnabled; // offset 0x800CE8D4
@@ -590,6 +594,10 @@ int MainG2(void *appData)
 	struct InterfaceItem* item; // $s1
 	int timer; // $s0
 
+#if defined(PSXPC_VERSION)
+	Emulator_Initialise("Legacy of Kain: Soul Reaver", SCREEN_WIDTH, SCREEN_HEIGHT);
+#endif
+
 	//s7 = appData
 	menuPos = 0;
 	CheckForDevStation();
@@ -756,6 +764,11 @@ int MainG2(void *appData)
 		}
 
 	}
+
+#if defined(PSXPC_VERSION)
+	Emulator_ShutDown();
+#endif
+
 	//loc_80039A20
 	return 0;
 }
