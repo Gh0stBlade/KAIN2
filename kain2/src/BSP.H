@@ -1,6 +1,22 @@
 #ifndef BSP_H
 #define BSP_H
 
+struct _Sphere_noSq // hashcode: 0xA031058C (dec: -1607400052)
+{
+	struct _Position position; // size=6, offset=0
+	unsigned short radius; // size=0, offset=6
+};
+
+struct _BoundingBox // hashcode: 0x2183782B (dec: 562264107)
+{
+	short minX; // size=0, offset=0
+	short minY; // size=0, offset=2
+	short minZ; // size=0, offset=4
+	short maxX; // size=0, offset=6
+	short maxY; // size=0, offset=8
+	short maxZ; // size=0, offset=10
+};
+
 struct _BSPNode // hashcode: 0x60C20F69 (dec: 1623330665)
 {
 	struct _Sphere_noSq sphere; // size=8, offset=0
@@ -127,7 +143,15 @@ struct BSPScratch // hashcode: 0x17CFF45B (dec: 399504475)
 
 typedef struct _SBSPLeaf SBSPLeaf;
 
+#if defined(_LANGUAGE_C_PLUS_PLUS) || defined(__cplusplus) || defined(c_plusplus)
+extern "C" {
+#endif
+
 extern void SBSP_IntroduceInstances(struct _Terrain *terrain, int unitID); // 0x8003D928
 extern void SBSP_IntroduceInstancesAndLights(struct _Terrain *terrain, struct _CameraCore_Type *cameraCore, struct LightInfo *lightInfo, int unitID); // 0x8003D98C
+
+#if defined(_LANGUAGE_C_PLUS_PLUS) || defined(__cplusplus) || defined(c_plusplus)
+}
+#endif
 
 #endif

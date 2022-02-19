@@ -10,7 +10,7 @@ void __cdecl PRIESTS_Init(struct _Instance* instance)
 {
 	__int16* v1; // ebx
 	struct _MonsterVars* mv; // ebp
-	char* v3; // eax
+	char* extra; // eax
 	struct _Position* v4; // edi
 	struct _StreamUnit* unit; // eax MAPDST
 
@@ -19,16 +19,16 @@ void __cdecl PRIESTS_Init(struct _Instance* instance)
 	mv = (struct _MonsterVars*)instance->extraData;
 	if (mv)
 	{
-		v3 = MEMPACK_Malloc(0x1Cu, 0x25u);
-		v4 = (struct _Position*)v3;
-		if (!v3)
+		extra = MEMPACK_Malloc(0x1Cu, 0x25u);
+		v4 = (struct _Position*)extra;
+		if (!extra)
 		{
 			MON_Say(instance, "ERROR: Out of space for priests variables!\n");
 			mv->extraVars = 0;
 			mv->mvFlags = (mv->mvFlags & ~0x1000) | 0x2000;
 			return;
 		}
-		mv->extraVars = v3;
+		mv->extraVars = extra;
 		unit = STREAM_GetStreamUnitWithID(instance->currentStreamUnitID);
 		if (v1)
 		{
@@ -149,7 +149,7 @@ void __cdecl PRIESTS_IdleEntry(struct _Instance* instance)
 		else
 		{
 			zVel = (int)mv->extraVars;
-			MON_PlayAnimID(instance, **((char**)instance->data + 0x11), 2);
+			MON_PlayAnimID(instance, ((struct _MonsterAttributes*)instance->data)->idleList, 2);
 			*(WORD*)(zVel + 18) = 0;
 			mv->mode = 1;
 		}
@@ -267,28 +267,28 @@ void __cdecl PRIESTS_Flee(struct _Instance* instance)
 // ------------------ unlinked code ------------------
 struct _Instance* __cdecl PRIESTS_InstanceToPossess(struct _Instance* instance)
 {
-	struct _Instance* v1; // esi
+	struct _Instance* nextinst; // esi
 	struct _MonsterVars* mv; // eax
 
-	v1 = (struct _Instance*)*((DWORD*)gameTrackerX.instanceList + 1);
-	if (!v1)
+	nextinst = (struct _Instance*)*((DWORD*)gameTrackerX.instanceList + 1);
+	if (!nextinst)
 		return 0;
 	while (1)
 	{
-		if ((INSTANCE_Query(v1, 1) & 8) != 0 && instance != v1)
+		if ((INSTANCE_Query(nextinst, 1) & 8) != 0 && instance != nextinst)
 		{
-			mv = (struct _MonsterVars*)v1->extraData;
+			mv = (struct _MonsterVars*)nextinst->extraData;
 			if (mv)
 			{
 				if ((mv->mvFlags & 0x20000000) == 0)
 					break;
 			}
 		}
-		v1 = v1->next;
-		if (!v1)
+		nextinst = nextinst->next;
+		if (!nextinst)
 			return 0;
 	}
-	return v1;
+	return nextinst;
 }
 
 void __cdecl PRIESTS_DoAttackAnim(_Instance* instance, int a2)

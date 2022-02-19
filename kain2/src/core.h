@@ -11,9 +11,9 @@
 #include <libgte.h>
 #include <libgpu.h>
 #include <libspu.h>
-
+// wrappers for winapi crap
 #define OutputDebugStringA	printf
-
+#define vprintf_s(a,b,c,d)	vprintf(a,c,d)
 #endif
 
 #include <stdarg.h>
@@ -274,7 +274,55 @@ struct Object // hashcode: 0xEC12E9AC (dec: -334304852)
 	struct VramSize vramSize; // size=8, offset=68
 };
 
+struct Intro // hashcode: 0x796E766D (dec: 2037282413)
+{
+	char name[16]; // size=16, offset=0
+	long intronum; // size=0, offset=16
+	long UniqueID; // size=0, offset=20
+	struct _Rotation rotation; // size=8, offset=24
+	struct _Position position; // size=6, offset=32
+	short maxRad; // size=0, offset=38
+	long maxRadSq; // size=0, offset=40
+	long flags; // size=0, offset=44
+	void* data; // size=0, offset=48
+	struct _Instance* instance; // size=616, offset=52
+	struct MultiSpline* multiSpline; // size=0, offset=56
+	void* dsignal; // size=0, offset=60
+	short specturalLightGroup; // size=0, offset=64
+	short meshColor; // size=0, offset=66
+	struct _Position spectralPosition; // size=6, offset=68
+	short spad; // size=0, offset=74
+};
+
+struct _Terrain // hashcode: 0x5D541B4E (dec: 1565793102)
+{
+	short UnitChangeFlags; // size=0, offset=0
+	short spad; // size=0, offset=2
+	long lpad2; // size=0, offset=4
+	long numIntros; // size=0, offset=8
+	struct Intro* introList; // size=76, offset=12
+	long numVertices; // size=0, offset=16
+	long numFaces; // size=0, offset=20
+	long numNormals; // size=0, offset=24
+	struct _TVertex* vertexList; // size=12, offset=28
+	struct _TFace* faceList; // size=12, offset=32
+	struct _Normal* normalList; // size=8, offset=36
+	struct DrMoveAniTex* aniList; // size=8, offset=40
+	long pad; // size=0, offset=44
+	void* StreamUnits; // size=0, offset=48
+	struct TextureFT3* StartTextureList; // size=12, offset=52
+	struct TextureFT3* EndTextureList; // size=12, offset=56
+	struct _MorphVertex* MorphDiffList; // size=14, offset=60
+	struct _MorphColor* MorphColorList; // size=2, offset=64
+	long numBSPTrees; // size=0, offset=68
+	struct BSPTree* BSPTreeArray; // size=36, offset=72
+	short* morphNormalIdx; // size=0, offset=76
+	struct _MultiSignal* signals; // size=904, offset=80
+};
+
 #include "GAMELOOP.H"
+#include "STREAM.H"
+#include "BSP.H"
 #include "MONSTER/MONSTER.H"
 
 #endif

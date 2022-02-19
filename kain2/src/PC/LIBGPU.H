@@ -348,12 +348,12 @@ extern	int (*GPU_printf)(char *fmt, ...);	/* printf() object */
 /*
  * Rectangle:
  */
-typedef struct {
+typedef struct PSX_RECT {
 	short x, y;		/* offset point on VRAM */
 	short w, h;		/* width and height */
 } PSX_RECT;
 
-typedef struct {
+typedef struct PSX_RECT32 {
 	int x, y;		/* offset point on VRAM */
 	int w, h;		/* width and height */
 } PSX_RECT32;
@@ -361,12 +361,12 @@ typedef struct {
 /*
  * Environment 
  */
-typedef struct {
+typedef struct DR_ENV {
 	u_long	tag;
 	u_long	code[15];
 } DR_ENV;				/* Packed Drawing Environment */
 	       
-typedef struct {
+typedef struct DRAWENV {
 	PSX_RECT	clip;		/* clip area */
 	short	ofs[2];		/* drawing offset */
 	PSX_RECT	tw;		/* texture window */
@@ -378,7 +378,7 @@ typedef struct {
 	DR_ENV	dr_env;		/* reserved */
 } DRAWENV;
 	       
-typedef struct {
+typedef struct DISPENV {
 	PSX_RECT	disp;		/* display area */
 	PSX_RECT	screen;		/* display start point */
 	u_char	isinter;	/* interlace 0: off 1: on */

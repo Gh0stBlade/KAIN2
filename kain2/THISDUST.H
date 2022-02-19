@@ -1054,13 +1054,6 @@ struct _PrimPool // hashcode: 0x9529B283 (dec: -1792429437)
 };
 
 
-
-struct _Sphere_noSq // hashcode: 0xA031058C (dec: -1607400052)
-{
-	struct _Position position; // size=6, offset=0
-	unsigned short radius; // size=0, offset=6
-};
-
 struct _CameraKey // hashcode: 0xB9E6B724 (dec: -1176062172)
 {
 	short x; // size=0, offset=0
@@ -1303,16 +1296,6 @@ struct _ObjectTracker // hashcode: 0xFE4678BF (dec: -28936001)
 	void *vramBlock; // size=0, offset=24
 	char numObjectsUsing; // size=0, offset=28
 	char objectsUsing[7]; // size=7, offset=29
-};
-
-struct _BoundingBox // hashcode: 0x2183782B (dec: 562264107)
-{
-	short minX; // size=0, offset=0
-	short minY; // size=0, offset=2
-	short minZ; // size=0, offset=4
-	short maxX; // size=0, offset=6
-	short maxY; // size=0, offset=8
-	short maxZ; // size=0, offset=10
 };
 
 struct CDLight // hashcode: 0xD90757B8 (dec: -653830216)

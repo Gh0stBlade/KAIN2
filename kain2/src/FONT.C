@@ -30,7 +30,7 @@ void FONT_MakeSpecialFogClut(int x, int y)
 	rect.h = 1;
 	font_clut = getClut(x, y);
 	DrawSync(0);
-	LoadImage(&rect, pal);
+	LoadImage(&rect, (u_long*)pal);
 	DrawSync(0);
 }
 
@@ -555,7 +555,9 @@ void FONT_Print(char *fmt, ...)
 	va_list ap; // [esp+8h] [ebp+8h] BYREF
 
 	va_start(ap, fmt);
-	vsprintf(&byte_C549E0, fmt, (va_list*)ap);
+	vsprintf_s(&byte_C549E0, sizeof(byte_C549E0), fmt, (va_list*)ap);
+	va_end(ap);
+
 	v1 = &byte_C549E0;
 	if (byte_C549E0)
 	{
@@ -578,7 +580,9 @@ void FONT_Print2(char *fmt)
 	va_list ap; // [esp+8h] [ebp+8h] BYREF
 
 	va_start(ap, fmt);
-	vsprintf(&byte_C549E0, fmt, (va_list*)ap);
+	vsprintf_s(&byte_C549E0, sizeof(byte_C549E0), fmt, (va_list*)ap);
+	va_end(ap);
+
 	FONT_VaReallyPrint(&byte_C549E0, ap);
 }
 
