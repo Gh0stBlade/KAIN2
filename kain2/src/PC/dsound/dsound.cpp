@@ -8,6 +8,9 @@ EXTERN_C int NumSNDDevices,
 EXTERN_C SND_DEVICE SNDDeviceList[16];
 EXTERN_C SND_DEVICE_INFO SndGuids[16];
 
+void __cdecl SNDMIX_Mix(unsigned short* sample, int size);
+void __cdecl DBG_Print(const char* fmt, ...);
+
 int SndDevCurIndex,
 	SndBufferAlign;
 DWORD SndBufferBytes,
@@ -154,5 +157,74 @@ void __cdecl DSOUND_Shutdown()
 	{
 		ppDS->Release();
 		ppDS = nullptr;
+	}
+}
+
+void StreamSamples()
+{
+	DWORD status, pos;
+	pSndBuffer->GetStatus(&status);
+
+	if (status & DSBSTATUS_BUFFERLOST)
+	{
+		pSndBuffer->Restore();
+		pSndBuffer->Play(0, 0, DSBPLAY_LOOPING);
+		pSndBuffer->GetCurrentPosition(0, &pos);
+		SndBufferHalf = pos;
+	}
+
+	pSndBuffer->GetCurrentPosition(0, &pos);
+	DWORD dwOffset = SndBufferHalf;
+	int range = SndBufferHalf + SndBufferBytes - pos;
+	int range2 = SndBufferHalf - pos;
+	if (range > 0 && range < SndBufferAlign)
+		range2 = SndBufferHalf + SndBufferBytes - pos;
+	if (range2 < SndBufferAlign)
+	{
+		DWORD dwBytes;
+		if (range2 >= 0)
+			dwBytes = SndBufferAlign - range2;
+		else
+		{
+			DBG_Print("Mixer is behind :(\n");
+			dwOffset = SndBufferHalf - range2;
+			dwBytes = SndBufferAlign;
+			SndBufferHalf = dwOffset;
+		}
+
+		if (dwBytes >= 1024)
+		{
+			if (dwOffset >= SndBufferBytes)
+			{
+				DBG_Print("bufferpos is too big :P\n");
+				dwOffset = 0;
+				SndBufferHalf = 0;
+			}
+
+			DWORD ppvAudioPtr1 = 0, ppvAudioPtr2 = 0,
+				pdwAudioBytes1 = 0, pdwAudioBytes2 = 0;
+			if (SUCCEEDED(pSndBuffer->Lock(dwOffset, dwBytes, (LPVOID*)&ppvAudioPtr1, &pdwAudioBytes1, (LPVOID*)&ppvAudioPtr2, &pdwAudioBytes2, 0)))
+			{
+				if (ppvAudioPtr1)
+				{
+					if (pdwAudioBytes1)
+					{
+						SNDMIX_Mix((unsigned short*)ppvAudioPtr1, pdwAudioBytes1 >> 2);
+						SndBufferHalf += pdwAudioBytes1;
+						if (SndBufferHalf == SndBufferBytes)
+							SndBufferHalf = 0;
+					}
+				}
+				if (ppvAudioPtr2)
+				{
+					if (pdwAudioBytes2)
+					{
+						SNDMIX_Mix((unsigned short*)ppvAudioPtr2, pdwAudioBytes2 >> 2);
+						SndBufferHalf = pdwAudioBytes2;
+					}
+				}
+				pSndBuffer->Unlock((LPVOID)ppvAudioPtr1, pdwAudioBytes1, (LPVOID)ppvAudioPtr2, pdwAudioBytes2);
+			}
+		}
 	}
 }
