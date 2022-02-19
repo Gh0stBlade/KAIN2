@@ -539,6 +539,7 @@ typedef struct _MonsterFunctionTable // hashcode: 0x82983F8D (dec: -2103951475)
 
 // monsters
 #include "ALUKA.h"
+#include "HUNTER.H"
 
 #if defined(_LANGUAGE_C_PLUS_PLUS) || defined(__cplusplus) || defined(c_plusplus)
 extern "C" {

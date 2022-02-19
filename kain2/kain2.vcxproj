@@ -307,6 +307,7 @@
     <ClInclude Include="src\MENU\MENUUTIL.H" />
     <ClInclude Include="src\MONSTER\ALUKA.h" />
     <ClInclude Include="src\MONSTER\HUMAN.H" />
+    <ClInclude Include="src\MONSTER\HUNTER.H" />
     <ClInclude Include="src\MONSTER\MBMISS.H" />
     <ClInclude Include="src\MONSTER\MISSILE.H" />
     <ClInclude Include="src\MONSTER\MONAPI.H" />

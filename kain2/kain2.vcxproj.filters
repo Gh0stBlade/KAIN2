@@ -576,5 +576,8 @@
     <ClInclude Include="src\MONSTER\ALUKA.h">
       <Filter>MONSTER</Filter>
     </ClInclude>
+    <ClInclude Include="src\MONSTER\HUNTER.H">
+      <Filter>MONSTER</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
