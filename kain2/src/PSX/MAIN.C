@@ -312,6 +312,7 @@ void FadeOutSayingLoading(struct GameTracker *gameTracker)
 
 void CheckForDevStation()
 {
+#if !defined(PSXPC_VERSION)
 	long* a1 = (long*)0x80180000;
 	long* a2 = (long*)0x80380000;
 
@@ -326,6 +327,7 @@ void CheckForDevStation()
 	{
 		devstation = 1;
 	}
+#endif
 }
 
 void MAIN_ShowLoadingScreen()
