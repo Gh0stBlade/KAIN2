@@ -2769,32 +2769,6 @@ struct LOAD3D_114fake // hashcode: 0x1C723D51 (dec: 477248849)
 	} Follow; // size=20, offset=76, found in object files: load3d.o, load3d.o
 };
 
-struct _LoadStatus // hashcode: 0x3D15BA2C (dec: 1024834092)
-{
-	struct _ReadQueueEntry currentQueueFile; // size=44, offset=0
-	long state; // size=0, offset=44
-	long bytesTransferred; // size=0, offset=48
-	long lastCheckPos; // size=0, offset=52
-	long cdWaitTime; // size=0, offset=56
-	unsigned char *compSrcAddr; // size=0, offset=60
-	unsigned char *compDstAddr; // size=0, offset=64
-	long compControlbits; // size=0, offset=68
-	long compControl; // size=0, offset=72
-	long compEndBytes; // size=0, offset=76
-	long decompressLen; // size=0, offset=80
-	long checksum; // size=0, offset=84
-	long *checkAddr; // size=0, offset=88
-	struct _BigFile bigFile; // size=36, offset=92
-	void *buffer1; // size=0, offset=128
-	void *buffer2; // size=0, offset=132
-	int changeDir; // size=0, offset=136
-	long endLoadTime; // size=0, offset=140
-	long currentDirLoading; // size=0, offset=144
-	long currentSector; // size=0, offset=148
-	long sectorTime; // size=0, offset=152
-	long seekTime; // size=0, offset=156
-};
-
 struct DRAWENV // hashcode: 0x1D93A150 (dec: 496214352)
 {
 	struct PSX_RECT clip; // size=8, offset=0
@@ -6157,12 +6131,6 @@ struct XAVoiceTracker // hashcode: 0x77052065 (dec: 1996824677)
 	short fileNum; // size=0, offset=172
 	short unused2; // size=0, offset=174
 	struct XAFileInfo xaFileInfo[30]; // size=120, offset=176
-};
-
-struct cinema_fn_table_t // hashcode: 0xBFD79C7E (dec: -1076388738)
-{
-	int (*play)(); // size=0, offset=0
-	char *versionID; // size=0, offset=4
 };
 
 struct CINEPSX_109fake // hashcode: 0xCA47EDB9 (dec: -901255751)
@@ -10565,9 +10533,6 @@ extern struct _Terrain *light_terrain; // offset 0x800D0D7C
 extern char HashExtensions[7][4]; // offset 0x800CE4D0
 
 
-static struct _LoadStatus loadStatus; // offset 0x800D0D84
-
-
 extern int _ramsize; // offset 0x800CE558
 
 
@@ -11452,13 +11417,6 @@ extern char monVersion[12]; // offset 0x800CF95C
 
 
 extern struct XAVoiceTracker voiceTracker; // offset 0x800D5AD4
-
-
-static struct cinema_fn_table_t *the_cine_table; // offset 0x800CAD90
-
-
-static struct _ObjectTracker *the_cine_tracker; // offset 0x800CAD94
-
 
 extern int StCdIntrFlag; // offset 0x800D8FD0
 

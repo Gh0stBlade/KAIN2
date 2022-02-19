@@ -88,7 +88,7 @@ extern void DEBUG_EndViewVram(struct GameTracker *gameTracker); // 0x80014270
 extern void DEBUG_ViewVram(struct GameTracker *gameTracker); // 0x800142C0
 extern void DEBUG_CaptureScreen(struct GameTracker *gameTracker); // 0x800143E0
 extern void DEBUG_PageFlip(); // 0x800143E8
-extern void DEBUG_FatalError(char *fmt); // 0x800144F0
+extern void DEBUG_FatalError(char *fmt, ...); // 0x800144F0
 extern void DEBUG_ProcessSecondController(struct GameTracker *gameTracker); // 0x80014544
 extern void DEBUG_ProcessCheat(struct GameTracker *gameTracker); // 0x8001454C
 extern void DEBUG_DoAreaProtection(); // 0x800146C0
