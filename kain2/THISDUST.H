@@ -633,8 +633,6 @@ static long numbufferedIntros; // offset 0x800CF8AC
 
 static int numLoads; // offset 0x800D2730
 
-extern long numOfBlocksUsed; // offset 0x800D4808
-
 extern long NumSignalsToReset; // offset 0x800CF548
 
 extern struct ObjectAccess objectAccess[28]; // offset 0x800C877C
@@ -642,8 +640,6 @@ extern struct ObjectAccess objectAccess[28]; // offset 0x800C877C
 extern struct ObjectFunc objectFunc[7]; // offset 0x800C885C
 
 static long objectOneShotTriggerTbl[3]; // offset 0x800CEA90
-
-extern struct _BlockVramEntry *openVramBlocks; // offset 0x800D482C
 
 static long overrideCommand[2][5]; // offset 0x800D0CA0
 
@@ -837,8 +833,6 @@ static long timerIndex; // offset 0x800D51CC
 
 static int Up; // offset 0x800CF58C
 
-extern struct _BlockVramEntry *usedVramBlocks; // offset 0x800D4828
-
 static long UW_angle; // offset 0x800D59B0
 
 static long UW_angleInc; // offset 0x800D59BC
@@ -856,8 +850,6 @@ extern struct XAVoiceListEntry *voiceList; // offset 0x800CF99C
 extern struct XAVoiceTracker voiceTracker; // offset 0x800D5AD4
 
 extern long VRAM_NeedToUpdateMorph; // offset 0x800CF5B4
-
-extern struct _BlockVramEntry vramBlockList[90]; // offset 0x800D3E2C
 
 extern struct _MonsterFunctionTable VWRAITH_FunctionTable; // offset 0x800CF6F4
 

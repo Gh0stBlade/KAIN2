@@ -6,10 +6,7 @@
 #include "VOICEXA.H"
 #include "DEBUG.H"
 #include "RESOLVE.H"
-
-#include "LIBGPU.H"
-#include "LIBCD.H"
-#include "LIBETC.H"
+#include "GAMELOOP.H"
 
 #include <stdlib.h>
 
@@ -709,7 +706,7 @@ void LOAD_NonBlockingReadFile(struct _NonBlockLoadEntry *loadEntry)
 
 void LOAD_LoadTIM(long *addr, long x_pos, long y_pos, long clut_x, long clut_y)
 { 
-	struct PSX_RECT rect;
+	PSX_RECT rect;
 	long *clutAddr;
 
 	addr += 2;
@@ -741,7 +738,7 @@ void LOAD_LoadTIM(long *addr, long x_pos, long y_pos, long clut_x, long clut_y)
 
 void LOAD_LoadTIM2(long *addr, long x_pos, long y_pos, long width, long height)
 {
-	struct PSX_RECT rect;
+	PSX_RECT rect;
 
 	rect.x = x_pos;
 	rect.y = y_pos;

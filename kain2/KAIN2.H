@@ -9680,18 +9680,6 @@ extern long VRAM_NeedToUpdateMorph; // offset 0x800CF5B4
 extern short M_TrackClutUpdate; // offset 0x800D4804
 
 
-extern struct _BlockVramEntry *openVramBlocks; // offset 0x800D482C
-
-
-extern struct _BlockVramEntry *usedVramBlocks; // offset 0x800D4828
-
-
-extern struct _BlockVramEntry vramBlockList[90]; // offset 0x800D3E2C
-
-
-extern long numOfBlocksUsed; // offset 0x800D4808
-
-
 extern struct _BlockVramEntry TerrainVramBlock; // offset 0x800D480C
 
 

@@ -13,6 +13,12 @@
 #include <LIBGTE.H>
 #include <LIBGPU.H>
 #include <LIBSPU.H>
+#include <LIBCD.H>
+
+#if defined(PSXPC_VERSION)//Temporary
+#define LoadImage LoadImagePSX
+#endif
+
 #if !defined(PSXPC_VERSION)
 // wrappers for winapi crap
 #define OutputDebugStringA	printf
