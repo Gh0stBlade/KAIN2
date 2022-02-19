@@ -1,6 +1,12 @@
 #ifndef CINEPSX_H
 #define CINEPSX_H
 
+struct cinema_fn_table_t // hashcode: 0xBFD79C7E (dec: -1076388738)
+{
+	int (*play)(); // size=0, offset=0
+	char* versionID; // size=0, offset=4
+};
+
 
 extern int CINE_CDIntrQuery(); // 0x800B777C
 

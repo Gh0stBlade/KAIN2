@@ -9213,12 +9213,6 @@ typedef struct XAVoiceTracker XAVoiceTracker;
 
 typedef void (*VoiceCmdProc)();
 
-struct cinema_fn_table_t // hashcode: 0xBFD79C7E (dec: -1076388738)
-{
-	int (*play)(); // size=0, offset=0
-	char *versionID; // size=0, offset=4
-};
-
 union CINEPSX_71fake // Hashcode: 0xC9DD8A44 (dec: -908228028)
 {
 	struct {

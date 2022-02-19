@@ -6133,12 +6133,6 @@ struct XAVoiceTracker // hashcode: 0x77052065 (dec: 1996824677)
 	struct XAFileInfo xaFileInfo[30]; // size=120, offset=176
 };
 
-struct cinema_fn_table_t // hashcode: 0xBFD79C7E (dec: -1076388738)
-{
-	int (*play)(); // size=0, offset=0
-	char *versionID; // size=0, offset=4
-};
-
 struct CINEPSX_109fake // hashcode: 0xCA47EDB9 (dec: -901255751)
 {
 	struct {
@@ -11423,13 +11417,6 @@ extern char monVersion[12]; // offset 0x800CF95C
 
 
 extern struct XAVoiceTracker voiceTracker; // offset 0x800D5AD4
-
-
-static struct cinema_fn_table_t *the_cine_table; // offset 0x800CAD90
-
-
-static struct _ObjectTracker *the_cine_tracker; // offset 0x800CAD94
-
 
 extern int StCdIntrFlag; // offset 0x800D8FD0
 
