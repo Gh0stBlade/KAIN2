@@ -209,6 +209,8 @@ typedef struct NodeType // hashcode: 0x5BF613D7 (dec: 1542853591)
 
 #include "RESOLVE.H"
 #include "VRAM.H"
+#include "MATH3D.H"
+#include "PLAN/PLANAPI.H"
 
 struct _ColorType // hashcode: 0x440E837C (dec: 1141801852)
 {

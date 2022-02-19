@@ -5,7 +5,6 @@
 /* ========================================== */
 #include <stdlib.h>
 #include "../core.H"
-//#include "MONSTER.H"
 
 void __cdecl PRIESTS_Init(struct _Instance* instance)
 {
@@ -13,9 +12,7 @@ void __cdecl PRIESTS_Init(struct _Instance* instance)
 	struct _MonsterVars* mv; // ebp
 	char* v3; // eax
 	struct _Position* v4; // edi
-	unsigned int v5; // ecx
 	struct _StreamUnit* unit; // eax MAPDST
-	unsigned int v8; // ecx
 
 	v1 = (__int16*)*((DWORD*)instance->data + 1);
 	MON_DefaultInit(instance);
@@ -56,12 +53,12 @@ void __cdecl PRIESTS_CleanUp(struct _Instance* instance)
 	MON_CleanUp(instance);
 }
 
-u_long __cdecl PRIESTS_Query(struct _Instance* instance, struct evFXHitData* data)
+u_long __cdecl PRIESTS_Query(struct _Instance* instance, unsigned long data)
 {
 	char result; // al
 	int aux; // ecx
 
-	if (data != (struct evFXHitData*)30)
+	if (data != 30)
 		return MonsterQuery(instance, data);
 	aux = ((struct _MonsterVars*)instance->extraData)->auxFlags;
 	result = (aux & 1) != 0;
@@ -87,7 +84,7 @@ void __cdecl PRIESTS_Message(struct _Instance* instance, unsigned int message, u
 		case 1u:
 		case 3u:
 		case 5u:
-			v6 = mv->extraVars;
+			v6 = (int)mv->extraVars;
 			ma = (struct _MonsterAttributes*)instance->data;
 			if (v6)
 			{
@@ -228,7 +225,7 @@ void __cdecl PRIESTS_Flee(struct _Instance* instance)
 			MON_DefaultQueueHandler(instance);
 			return;
 		case 1:
-			if (MON_TurnToPosition((int)instance, extraVars + 1, mv->subAttr->speedFleeTurn))
+			if (MON_TurnToPosition(instance, extraVars + 1, mv->subAttr->speedFleeTurn))
 			{
 				MON_PlayAnimFromList(instance, ma->auxAnimList, 0, 1);
 				++extraVars[3].x;

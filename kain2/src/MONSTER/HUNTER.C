@@ -1,5 +1,4 @@
 #include "../core.h"
-#include "HUMAN.H"
 
 struct _MonsterStateChoice HUNTER_StateChoiceTable[] =
 {

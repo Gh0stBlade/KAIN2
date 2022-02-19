@@ -5427,18 +5427,7 @@ struct WarpRoom // hashcode: 0x34E00E66 (dec: 887098982)
 	struct _StreamUnit *streamUnit; // size=64, offset=16
 };
 
-struct PlanningNode // hashcode: 0xDB9F3065 (dec: -610324379)
-{
-	struct _Position pos; // size=6, offset=0
-	unsigned short flags; // size=0, offset=6
-	unsigned long connectionStatus; // size=0, offset=8
-	unsigned long connections; // size=0, offset=12
-	unsigned short cost; // size=0, offset=16
-	unsigned short parent; // size=0, offset=18
-	unsigned short nodeType; // size=0, offset=20
-	unsigned short id; // size=0, offset=22
-	long streamUnitID; // size=0, offset=24
-};
+
 
 union STREAM_261fake // Hashcode: 0x825DBD24 (dec: -2107785948)
 {
@@ -7957,15 +7946,6 @@ struct PoolManagementData // hashcode: 0xA005D5E0 (dec: -1610230304)
 	struct _Position peakPos; // size=6, offset=22
 	unsigned char currentNode; // size=0, offset=28
 	unsigned char currentBit; // size=0, offset=29
-};
-
-struct EnemyPlanData // hashcode: 0xE792BD02 (dec: -409813758)
-{
-	unsigned char nodeSkipArray[8]; // size=8, offset=0
-	unsigned char nodeTypeArray[8]; // size=8, offset=8
-	struct _Position wayPointArray[8]; // size=48, offset=16
-	short goalUnitID; // size=0, offset=64
-	unsigned char numWayPoints; // size=0, offset=66
 };
 
 struct _PlanCollideInfo // hashcode: 0x3B1266CC (dec: 991061708)
