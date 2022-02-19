@@ -8,8 +8,12 @@ EXTERN_C int NumSNDDevices,
 EXTERN_C SND_DEVICE SNDDeviceList[16];
 EXTERN_C SND_DEVICE_INFO SndGuids[16];
 
-void __cdecl SNDMIX_Mix(unsigned short* sample, int size);
+void __cdecl SNDMIX_Init();
+void __cdecl SNDMIX_Mix(WORD* sample, int size);
 void __cdecl DBG_Print(const char* fmt, ...);
+
+DWORD WINAPI PlayThread(LPVOID lpThreadParameter);
+void StreamSamples();
 
 int SndDevCurIndex,
 	SndBufferAlign;
@@ -52,10 +56,6 @@ int __cdecl DSOUND_EnumerateDevices(SND_DEVICE* devs)
 }
 
 //0001:0007ad40       _DSOUND_Init               0047bd40 f   dsound.obj
-EXTERN_C void __cdecl SNDMIX_Init();
-EXTERN_C DWORD WINAPI PlayThread(LPVOID lpThreadParameter);
-EXTERN_C void StreamSamples();
-
 int __cdecl DSOUND_Init(HWND hWnd, int index)
 {
 	if (FAILED(DirectSoundCreate(SndGuids[index].pGuid, &ppDS, nullptr)))
@@ -227,4 +227,15 @@ void StreamSamples()
 			}
 		}
 	}
+}
+
+DWORD WINAPI PlayThread(LPVOID lpThreadParameter)
+{
+	while (1)
+	{
+		Sleep(15);
+		StreamSamples();
+	}
+
+	return 0;
 }
