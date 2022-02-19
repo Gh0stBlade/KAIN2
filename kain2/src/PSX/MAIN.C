@@ -633,7 +633,7 @@ int MainG2(void *appData)
 		//loc_800394D4
 		switch (mainTrackerX.mainState)
 		{
-		case 0:
+		case 1:
 			SOUND_UpdateSound();
 
 			if ((gameTracker->debugFlags & 0x80000))
@@ -686,7 +686,7 @@ int MainG2(void *appData)
 			}
 			//def_80039508
 			break;
-		case 1:
+		case 2:
 			if ((gameTrackerX.streamFlags & 0x1000000))
 			{
 				play_movie(&InterfaceItems[2].name[0]);
@@ -720,7 +720,7 @@ int MainG2(void *appData)
 			gameTrackerX.vblFrames = 0;
 
 			break;
-		case 3:
+		case 4:
 			//loc_800395F8
 			LOAD_ChangeDirectory("Menustuff");
 			//a0 = 
@@ -758,7 +758,43 @@ int MainG2(void *appData)
 			//TODO the rest, it's mangled as hell and we can only use labels to fix this...
 
 			break;
-		case 2:
+		case 6:
+			CINE_Load();
+			if (mainTracker->movieNum >= 0)
+			{
+				do
+				{
+					if (CINE_Loaded() != 0)
+					{
+						CINE_Play(InterfaceItems[mainTracker->movieNum].name, 0xFFFFu, 2);
+						ClearDisplay();
+					}
+					//loc_80039564
+					//v1 = 
+					if (InterfaceItems[InterfaceItems[mainTracker->movieNum].nextItem].itemType != 0)
+					{
+						mainTracker->mainState = 4;
+						break;
+					}
+				} while (InterfaceItems[mainTracker->movieNum].nextItem >= 0);
+			}
+			//loc_800395B0
+			CINE_Unload();
+
+			if (mainTracker->movieNum < 0)
+			{
+				mainTracker->mainState = 8;
+			}
+
+			//loc_800395CC
+			if (nosound == 0)
+			{
+				SOUND_StopAllSound();
+			}
+
+			break;
+		case 3:
+		case 5:
 		default:
 			//def_80039508
 			break;
