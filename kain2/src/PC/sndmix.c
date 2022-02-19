@@ -176,7 +176,7 @@ void* __cdecl SNDMIX_UploadSample(const void* data, int samples, int a3, int a4,
 		block = 4;
 	size = samples * block;
 	sample = (MIX_SAMPLE*)GlobalAlloc(GMEM_NOT_BANKED, size + 20);
-	qmemcpy(sample->data, data, size);
+	memcpy(sample->data, data, size);
 	sample->pData = (int)sample->data;
 	sample->field_C = a4 << 12;
 	sample->samples = samples << 12;
