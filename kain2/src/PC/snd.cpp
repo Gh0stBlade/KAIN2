@@ -40,6 +40,9 @@ void* (*SND_UploadSamplePtr)(const void* data, int samples, int a3, int a4, int 
 void (*SND_SetChannelInterruptPtr)(int voiceNum, int intr);
 void (*SND_KeyOffPtr)(int voiceNum);
 void (*SND_StopPtr)(int voiceNum);
+void (*SND_SetLoopModePtr)(int voiceNum, int mode);
+void (*SND_StartPtr)(int voiceNum);
+int (*SND_GetStatusPtr)(int voiceNum);
 
 //0001 : 0007b190       _SoundG2_Init              0047c190 f   snd.obj
 int __cdecl SoundG2_Init(_G2AppDataVM_Type* vm)
@@ -63,6 +66,7 @@ void __cdecl SND_EnumerateDevices()
 }
 //0001 : 0007b400       _SND_Init                  0047c400 f   snd.obj [unused]
 //0001 : 0007b600       _SND_Shutdown              0047c600 f   snd.obj [unused]
+
 //0001 : 0007b610       _SND_SetSample             0047c610 f   snd.obj
 void SND_SetSample(int voiceNum, BYTE* data)
 {
@@ -104,8 +108,25 @@ void SND_SetVolume(int voiceNum, int voll, int volr)
 		SND_SetVolumePtr(voiceNum, voll, volr);
 }
 //0001 : 0007b6d0       _SND_SetLoopMode           0047c6d0 f   snd.obj
+void __cdecl SND_SetLoopMode(int voiceNum, int mode)
+{
+	if (SND_SetLoopModePtr)
+		SND_SetLoopModePtr(voiceNum, mode);
+}
 //0001 : 0007b6f0       _SND_GetStatus             0047c6f0 f   snd.obj
+int __cdecl SND_GetStatus(int voiceNum)
+{
+	if (SND_GetStatusPtr)
+		return SND_GetStatusPtr(voiceNum);
+	else
+		return 0;
+}
 //0001 : 0007b710       _SND_Start                 0047c710 f   snd.obj
+void __cdecl SND_Start(int voiceNum)
+{
+	if (SND_StartPtr)
+		SND_StartPtr(voiceNum);
+}
 //0001 : 0007b730       _SND_Stop                  0047c730 f   snd.obj
 void __cdecl SND_Stop(int voiceNum)
 {
