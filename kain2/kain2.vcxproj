@@ -213,6 +213,7 @@
     <ClCompile Include="src\PC\memwpsx.c" />
     <ClCompile Include="src\PC\pcload.c" />
     <ClCompile Include="src\PC\snd.cpp" />
+    <ClCompile Include="src\PC\sndmix.c" />
     <ClCompile Include="src\PC\video\winplay.cpp" />
     <ClCompile Include="src\PHYSICS.C" />
     <ClCompile Include="src\PHYSOBS.C" />

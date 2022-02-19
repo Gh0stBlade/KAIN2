@@ -27,20 +27,20 @@ typedef struct GTE
 		pad1,
 		farb;
 	PAIR16 tx1220;
-	u_long stack_pos;
+	long stack_pos;
 	long sx2, sy2,
 		sz0;
 	long sz123[3];
 	PAIR16 cm_20_21,
 		pad5;
 	PAIR16 sv012_z[3],
-		cm_22;
+		cm_22___;
 	u_long dqa;
-	PAIR16 lm_22;
+	PAIR16 lm_22___;
 	u_long backg,
 		dqb,
 		farg;
-	PAIR16 tx32;
+	PAIR16 tx32__;
 	long ir0, ir3, ir2, ir1,
 		ofy, ofx;
 	u_long backr;
@@ -527,7 +527,7 @@ MATRIX* CompMatrixLV(MATRIX* m0, MATRIX* m1, MATRIX* m2)
 	gte.tx1220 = *(PAIR16*)&m0->m[0][2];
 	gte.tx2122 = *(PAIR16*)&m0->m[1][1];
 	gte.tx3031 = *(PAIR16*)&m0->m[2][0];
-	gte.tx32 = *(PAIR16*)&m0->m[2][2];
+	gte.tx32__ = *(PAIR16*)&m0->m[2][2];
 	gte.ir1 = m1->m[0][0];
 	gte.ir2 = m1->m[1][0];
 	gte.ir3 = m1->m[2][0];
@@ -706,7 +706,7 @@ void NormalColor(SVECTOR* v0, CVECTOR* v1)
 	*v1 = gte.ncol210[2];
 }
 //0001:0002dfe0       _NormalColor3              0042efe0 f   libgte.obj
-void __cdecl NormalColor3(SVECTOR* v0, SVECTOR* v1, SVECTOR* v2, CVECTOR* v3, CVECTOR* v4, CVECTOR* v5)
+void NormalColor3(SVECTOR* v0, SVECTOR* v1, SVECTOR* v2, CVECTOR* v3, CVECTOR* v4, CVECTOR* v5)
 {
 	gte.sv012xy[0] = *(PAIR16*)&v0->vx;
 	gte.sv012_z[0] = *(PAIR16*)&v0->vz;
@@ -732,37 +732,33 @@ void __cdecl NormalColor3(SVECTOR* v0, SVECTOR* v1, SVECTOR* v2, CVECTOR* v3, CV
 //0001:0002e470       _PopMatrix                 0042f470 f   libgte.obj
 void PopMatrix()
 {
-	u_long stack_pos; // eax
-	MATRIX* v1; // eax
-
-	stack_pos = gte.stack_pos;
-	if ((int)gte.stack_pos > 0)
+	MATRIX* m;
+	if (gte.stack_pos > 0)
 	{
 		--gte.stack_pos;
-		v1 = &gte.m_stack[stack_pos - 1];
-		gte.tx1011 = *(PAIR16*)&v1->m[0][0];
-		gte.tx1220 = *(PAIR16*)&v1->m[0][2];
-		gte.tx2122 = *(PAIR16*)&v1->m[1][1];
-		gte.tx3031 = *(PAIR16*)&v1->m[2][0];
-		gte.tx32 = *(PAIR16*)&v1->m[2][2];
+		m = &gte.m_stack[gte.stack_pos];
+		gte.tx1011 = *(PAIR16*)&m->m[0][0];
+		gte.tx1220 = *(PAIR16*)&m->m[0][2];
+		gte.tx2122 = *(PAIR16*)&m->m[1][1];
+		gte.tx3031 = *(PAIR16*)&m->m[2][0];
+		gte.tx32__ = *(PAIR16*)&m->m[2][2];
 	}
 }
 //0001:0002e4c0       _PushMatrix                0042f4c0 f   libgte.obj
 void PushMatrix()
 {
-	MATRIX* v0; // eax
-
-	if ((int)gte.stack_pos < 20)
+	MATRIX* m;
+	if (gte.stack_pos < 20)
 	{
-		v0 = &gte.m_stack[gte.stack_pos];
-		*(PAIR16*)&v0->m[0][0] = gte.tx1011;
-		*(PAIR16*)&v0->m[0][2] = gte.tx1220;
-		*(PAIR16*)&v0->m[1][1] = gte.tx2122;
-		*(PAIR16*)&v0->m[2][0] = gte.tx3031;
-		*(PAIR16*)&v0->m[2][2] = gte.tx32;
-		v0->t[0] = gte.tm_x;
-		v0->t[1] = gte.tm_y;
-		v0->t[2] = gte.tm_z;
+		m = &gte.m_stack[gte.stack_pos];
+		*(PAIR16*)&m->m[0][0] = gte.tx1011;
+		*(PAIR16*)&m->m[0][2] = gte.tx1220;
+		*(PAIR16*)&m->m[1][1] = gte.tx2122;
+		*(PAIR16*)&m->m[2][0] = gte.tx3031;
+		*(PAIR16*)&m->m[2][2] = gte.tx32__;
+		m->t[0] = gte.tm_x;
+		m->t[1] = gte.tm_y;
+		m->t[2] = gte.tm_z;
 		++gte.stack_pos;
 	}
 }
@@ -779,25 +775,30 @@ void ReadColorMatrix(MATRIX* m)
 	*(PAIR16*)&m->m[0][2] = gte.cm_02_10;
 	*(PAIR16*)&m->m[1][1] = gte.cm_11_12;
 	*(PAIR16*)&m->m[2][0] = gte.cm_20_21;
-	*(PAIR16*)&m->m[2][2] = gte.cm_22;
+	*(PAIR16*)&m->m[2][2] = gte.cm_22___;
 	m->t[0] = gte.farr;
 	m->t[1] = gte.farg;
 	m->t[2] = gte.farb;
 }
 //0001:0002e6a0       _ReadGeomOffset            0042f6a0 f   libgte.obj
+void ReadGeomOffset(long* x, long* y)
+{
+	*x = gte.ofx >> 16;
+	*y = gte.ofy >> 16;
+}
 //0001:0002e6c0       _ReadGeomScreen            0042f6c0 f   libgte.obj
 long ReadGeomScreen()
 {
 	return gte.h;
 }
 //0001:0002e6d0       _ReadLightMatrix           0042f6d0 f   libgte.obj
-void __cdecl ReadLightMatrix(MATRIX* m)
+void ReadLightMatrix(MATRIX* m)
 {
 	*(PAIR16*)&m->m[0][0] = gte.lm_00_01;
 	*(PAIR16*)&m->m[0][2] = gte.lm_02_10;
 	*(PAIR16*)&m->m[1][1] = gte.lm_11_12;
 	*(PAIR16*)&m->m[2][0] = gte.lm_20_21;
-	*(PAIR16*)&m->m[2][2] = gte.lm_22;
+	*(PAIR16*)&m->m[2][2] = gte.lm_22___;
 	m->t[0] = gte.backr;
 	m->t[1] = gte.backg;
 	m->t[2] = gte.backb;
@@ -973,7 +974,7 @@ void SetColorMatrix(MATRIX* m)
 	gte.cm_02_10 = *(PAIR16*)&m->m[0][2];
 	gte.cm_11_12 = *(PAIR16*)&m->m[1][1];
 	gte.cm_20_21 = *(PAIR16*)&m->m[2][0];
-	gte.cm_22 = *(PAIR16*)&m->m[2][2];
+	gte.cm_22___ = *(PAIR16*)&m->m[2][2];
 }
 //0001:00030f80       _SetDQA                    00431f80 f   libgte.obj
 void SetDQA(int dqa)
@@ -1030,7 +1031,7 @@ void SetLightMatrix(MATRIX* a1)
 	gte.lm_02_10 = *(PAIR16*)&a1->m[0][2];
 	gte.lm_11_12 = *(PAIR16*)&a1->m[1][1];
 	gte.lm_20_21 = *(PAIR16*)&a1->m[2][0];
-	gte.lm_22 = *(PAIR16*)&a1->m[2][2];
+	gte.lm_22___ = *(PAIR16*)&a1->m[2][2];
 }
 //0001:000310b0       _SetRGBcd                  004320b0 f   libgte.obj
 void SetRGBcd(CVECTOR* v)
@@ -1044,7 +1045,7 @@ void SetRotMatrix(MATRIX * m)
 	gte.tx1220 = *(PAIR16*)&m->m[0][2];
 	gte.tx2122 = *(PAIR16*)&m->m[1][1];
 	gte.tx3031 = *(PAIR16*)&m->m[2][0];
-	gte.tx32 = *(PAIR16*)&m->m[2][2];
+	gte.tx32__ = *(PAIR16*)&m->m[2][2];
 }
 //0001:000310f0       _SetTransMatrix            004320f0 f   libgte.obj
 void SetTransMatrix(MATRIX* m)
@@ -1088,7 +1089,7 @@ MATRIX* TransposeMatrix(MATRIX* m0, MATRIX* m1)
 void gte_ldsvrtrow2(SVECTOR* v)
 {
 	gte.tx3031 = *(PAIR16*)&v->vx;
-	gte.tx32 = *(PAIR16*)&v->vz;
+	gte.tx32__ = *(PAIR16*)&v->vz;
 }
 //0001:00031350       _gte_stv0                  00432350 f   libgte.obj
 void gte_stv0(SVECTOR* v)
