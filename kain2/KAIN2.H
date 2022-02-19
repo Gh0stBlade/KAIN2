@@ -5280,17 +5280,6 @@ struct MONTABLE_109fake // hashcode: 0xD09BCEF5 (dec: -795095307)
 	} Follow; // size=20, offset=76, found in object files: montable.o, montable.o
 };
 
-struct MONTABLE_207fake // hashcode: 0x35A35A66 (dec: 899897958)
-{
-	long whatAmI; // size=0, offset=0
-	struct _MonsterFunctionTable *table; // size=32, offset=4
-};
-
-
-
-
-
-
 struct RadarInfo // hashcode: 0xB8957CDE (dec: -1198162722)
 {
 	short angle; // size=0, offset=0
