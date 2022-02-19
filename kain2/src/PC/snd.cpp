@@ -5,7 +5,7 @@ struct _G2AppDataVM_Type
 {
 	HINSTANCE hInstance;
 	HWND hWindow;
-	int hWnd;
+	HWND hWnd;
 	int Screen_width;
 	int Screen_height;
 	int Screen_depth;
@@ -26,6 +26,24 @@ SND_DEVICE SNDDeviceList[16];
 SND_DEVICE_INFO SndGuids[16];
 
 extern int __cdecl DSOUND_EnumerateDevices(SND_DEVICE* devs);
+extern int __cdecl DSOUND_Init(HWND hWnd, int index);
+extern void __cdecl DSOUND_Shutdown();
+
+extern void __cdecl SNDMIX_SetSample(int voiceNum, BYTE* sample);
+extern void __cdecl SNDMIX_SetNextSample(int voiceNum, BYTE* sample);
+extern BYTE* __cdecl SNDMIX_GetSample(int voiceNum);
+extern BYTE* __cdecl SNDMIX_GetNextSample(int voiceNum);
+extern void __cdecl SNDMIX_SetFrequency(int voiceNum, float frequency);
+extern void __cdecl SNDMIX_SetVolume(int voiceNum, int left, int right);
+extern void __cdecl SNDMIX_SetLoopMode(int voiceNum, int mode);
+extern void __cdecl SNDMIX_SetChannelInterrupt(int voiceNum, int intr);
+extern int __cdecl SNDMIX_GetStatus(int voiceNum);
+extern void __cdecl SNDMIX_Start(int voiceNum);
+extern void __cdecl SNDMIX_Stop(int voiceNum);
+extern void __cdecl SNDMIX_KeyOff(int voiceNum);
+extern void* __cdecl SNDMIX_UploadSample(const void* data, int samples, int a3, int a4, int a5);
+extern void __cdecl SNDMIX_FreeSample(void* ptr);
+extern void __cdecl SNDMIX_SetTimerFunc(void(__cdecl* fn)());
 
 void (*SND_ShutdownPtr)();
 void (*SND_SetSamplePtr)(int voiceNum, BYTE* data);
@@ -47,6 +65,57 @@ int (*SND_GetStatusPtr)(int voiceNum);
 //0001 : 0007b190       _SoundG2_Init              0047c190 f   snd.obj
 int __cdecl SoundG2_Init(_G2AppDataVM_Type* vm)
 {
+	int (*init)(HWND hWnd, int index) = nullptr;
+
+	if (vm->Sound_device_id < NumSNDDevices2)
+	{
+		if (vm->Sound_device_id < NumSNDDevicesBase)
+		{
+			init = nullptr;
+			SND_ShutdownPtr = nullptr;
+			//SND_InitPtr = 0;
+			SND_SetSamplePtr = nullptr;
+			SND_SetNextSamplePtr = nullptr;
+			SND_GetSamplePtr = nullptr;
+			SND_GetNextSamplePtr = nullptr;
+			SND_SetFrequencyPtr = nullptr;
+			SND_SetVolumePtr = nullptr;
+			SND_SetChannelInterruptPtr = nullptr;
+			SND_SetLoopModePtr = nullptr;
+			SND_GetStatusPtr = nullptr;
+			SND_StartPtr = nullptr;
+			SND_StopPtr = nullptr;
+			SND_KeyOffPtr = nullptr;
+			SND_UploadSamplePtr = nullptr;
+			SND_FreeSamplePtr = nullptr;
+			SND_SetTimerFuncPtr = nullptr;
+		}
+		else
+		{
+			init = DSOUND_Init;
+			SND_ShutdownPtr = DSOUND_Shutdown;
+			//SND_InitPtr = DSOUND_Init;
+			SND_SetSamplePtr = SNDMIX_SetSample;
+			SND_SetNextSamplePtr = SNDMIX_SetNextSample;
+			SND_GetSamplePtr = SNDMIX_GetSample;
+			SND_GetNextSamplePtr = SNDMIX_GetNextSample;
+			SND_SetFrequencyPtr = SNDMIX_SetFrequency;
+			SND_SetVolumePtr = SNDMIX_SetVolume;
+			SND_SetLoopModePtr = SNDMIX_SetLoopMode;
+			SND_SetChannelInterruptPtr = SNDMIX_SetChannelInterrupt;
+			SND_GetStatusPtr = SNDMIX_GetStatus;
+			SND_StartPtr = SNDMIX_Start;
+			SND_StopPtr = SNDMIX_Stop;
+			SND_KeyOffPtr = SNDMIX_KeyOff;
+			SND_UploadSamplePtr = SNDMIX_UploadSample;
+			SND_FreeSamplePtr = SNDMIX_FreeSample;
+			SND_SetTimerFuncPtr = SNDMIX_SetTimerFunc;
+		}
+	}
+
+	if (init)
+		return init(vm->hWnd, vm->Sound_device_id);
+
 	return 0;
 }
 //0001 : 0007b390       _SoundG2_ShutDown          0047c390 f   snd.obj
