@@ -209,6 +209,12 @@ typedef struct {
 	CRVECTOR4 cr[5];	
 } DIVPOLYGON4;			/* division buffer for four-sided polygons */
 
+typedef struct VERTC {
+	short   vx, vy, vz;
+	u_char  tu, tv;
+	CVECTOR col;
+}       VERTC;
+
 typedef struct {
         short   xy[3];
         short   uv[2];
