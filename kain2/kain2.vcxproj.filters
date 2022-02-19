@@ -331,6 +331,9 @@
     <ClCompile Include="src\MONSTER\WALBOSS.C">
       <Filter>MONSTER</Filter>
     </ClCompile>
+    <ClCompile Include="src\PC\sndmix.c">
+      <Filter>PC</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\PC\libspu.h">

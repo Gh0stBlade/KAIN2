@@ -132,10 +132,10 @@
 
 /* for Voice setting */
 
-#define	SPU_VOICE_VOLL		(0x01 <<  0) /* volume (left) */
-#define	SPU_VOICE_VOLR		(0x01 <<  1) /* volume (right) */
-#define	SPU_VOICE_VOLMODEL	(0x01 <<  2) /* volume mode (left) */
-#define	SPU_VOICE_VOLMODER	(0x01 <<  3) /* volume mode (right) */
+#define	SPU_VOICE_VOLL		(0x01 <<  0) /* voll (left) */
+#define	SPU_VOICE_VOLR		(0x01 <<  1) /* voll (right) */
+#define	SPU_VOICE_VOLMODEL	(0x01 <<  2) /* voll mode (left) */
+#define	SPU_VOICE_VOLMODER	(0x01 <<  3) /* voll mode (right) */
 #define	SPU_VOICE_PITCH		(0x01 <<  4) /* tone (pitch setting) */
 #define	SPU_VOICE_NOTE		(0x01 <<  5) /* tone (note setting)  */
 #define	SPU_VOICE_SAMPLE_NOTE	(0x01 <<  6) /* waveform data sample note */
@@ -169,18 +169,18 @@
 #define	SPU_DECODE_SECONDHALF	SPU_DECODED_SECONDHALF
 
 
-#define	SPU_COMMON_MVOLL		(0x01 <<  0) /* master volume (left) */
-#define	SPU_COMMON_MVOLR		(0x01 <<  1) /* master volume (right) */
-#define	SPU_COMMON_MVOLMODEL		(0x01 <<  2) /* master volume mode (left) */
-#define	SPU_COMMON_MVOLMODER		(0x01 <<  3) /* master volume mode (right) */
-#define	SPU_COMMON_RVOLL		(0x01 <<  4) /* reverb volume (left) */
-#define	SPU_COMMON_RVOLR		(0x01 <<  5) /* reverb volume (right) */
-#define	SPU_COMMON_CDVOLL		(0x01 <<  6) /* CD input volume (left) */
-#define	SPU_COMMON_CDVOLR		(0x01 <<  7) /* CD input volume (right) */
+#define	SPU_COMMON_MVOLL		(0x01 <<  0) /* master voll (left) */
+#define	SPU_COMMON_MVOLR		(0x01 <<  1) /* master voll (right) */
+#define	SPU_COMMON_MVOLMODEL		(0x01 <<  2) /* master voll mode (left) */
+#define	SPU_COMMON_MVOLMODER		(0x01 <<  3) /* master voll mode (right) */
+#define	SPU_COMMON_RVOLL		(0x01 <<  4) /* reverb voll (left) */
+#define	SPU_COMMON_RVOLR		(0x01 <<  5) /* reverb voll (right) */
+#define	SPU_COMMON_CDVOLL		(0x01 <<  6) /* CD input voll (left) */
+#define	SPU_COMMON_CDVOLR		(0x01 <<  7) /* CD input voll (right) */
 #define	SPU_COMMON_CDREV		(0x01 <<  8) /* CD input reverb on/off */
 #define	SPU_COMMON_CDMIX		(0x01 <<  9) /* CD input on/off */
-#define	SPU_COMMON_EXTVOLL		(0x01 << 10) /* external digital input volume (left) */
-#define	SPU_COMMON_EXTVOLR		(0x01 << 11) /* external digital input volume (right) */
+#define	SPU_COMMON_EXTVOLL		(0x01 << 10) /* external digital input voll (left) */
+#define	SPU_COMMON_EXTVOLR		(0x01 << 11) /* external digital input voll (right) */
 #define	SPU_COMMON_EXTREV		(0x01 << 12) /* external digital input reverb on/off */
 #define	SPU_COMMON_EXTMIX		(0x01 << 13) /* external digital input on/off */
 
@@ -232,9 +232,9 @@ typedef struct {
                             SpuSetVoiceAttr: each voice is a bit array
                             SpuGetVoiceAttr: voice is a bit value */
     unsigned long	mask;		/* settings attribute bit (invalid with Get) */
-    SpuVolume		volume;		/* volume                         */
-    SpuVolume		volmode;	/* volume mode                    */
-    SpuVolume		volumex;	/* current volume (invalid with Set) */
+    SpuVolume		volume;		/* voll                         */
+    SpuVolume		volmode;	/* voll mode                    */
+    SpuVolume		volumex;	/* current voll (invalid with Set) */
     unsigned short	pitch;		/* tone (pitch setting) */
     unsigned short	note;		/* tone (note setting) */
     unsigned short	sample_note;	/* tone (note setting) */
@@ -279,7 +279,7 @@ typedef struct {
 typedef SpuDecodedData SpuDecodeData;
 
 typedef struct {
-    SpuVolume	volume;		  /* volume       */
+    SpuVolume	volume;		  /* voll       */
     long	reverb;		  /* reverb on/off */
     long	mix;		  /* mixing on/off */
 } SpuExtAttr;
@@ -287,9 +287,9 @@ typedef struct {
 typedef struct {
     unsigned long	mask;	  /* settings mask */
     
-    SpuVolume		mvol;	  /* master volume */
-    SpuVolume		mvolmode; /* master volume mode */
-    SpuVolume		mvolx;	  /* current master volume */
+    SpuVolume		mvol;	  /* master voll */
+    SpuVolume		mvolmode; /* master voll mode */
+    SpuVolume		mvolx;	  /* current master voll */
     SpuExtAttr		cd;	  /* CD input attributes */
     SpuExtAttr		ext;	  /* external digital input attributes */
 } SpuCommonAttr;
