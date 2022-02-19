@@ -421,7 +421,7 @@ void LOAD_InitCdLoader(char *bigFileName, char *voiceFileName)
 		{
 			LOAD_ProcessReadQueue();
 
-		} while (LOAD_IsFileLoading != 0);
+		} while (LOAD_IsFileLoading() != 0);
 	}
 }
 
