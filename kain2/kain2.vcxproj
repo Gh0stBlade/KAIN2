@@ -177,7 +177,11 @@
     <ClCompile Include="src\MENU\MENUDEFS.C" />
     <ClCompile Include="src\MENU\MENUFACE.C" />
     <ClCompile Include="src\MENU\MENUUTIL.C" />
+    <ClCompile Include="src\MONSTER\ALUKA.C" />
+    <ClCompile Include="src\MONSTER\ALUKABSS.C" />
     <ClCompile Include="src\MONSTER\HUMAN.C" />
+    <ClCompile Include="src\MONSTER\HUNTER.C" />
+    <ClCompile Include="src\MONSTER\KAIN.C" />
     <ClCompile Include="src\MONSTER\MBMISS.C" />
     <ClCompile Include="src\MONSTER\MISSILE.C" />
     <ClCompile Include="src\MONSTER\MONAPI.C" />
@@ -187,9 +191,15 @@
     <ClCompile Include="src\MONSTER\MONSTER.C" />
     <ClCompile Include="src\MONSTER\MONTABLE.C" />
     <ClCompile Include="src\MONSTER\PRIESTESS.C" />
+    <ClCompile Include="src\MONSTER\RONINBSS.C" />
+    <ClCompile Include="src\MONSTER\SKINBOS.C" />
+    <ClCompile Include="src\MONSTER\SKINNER.C" />
     <ClCompile Include="src\MONSTER\SLUAGH.C" />
     <ClCompile Include="src\MONSTER\SOUL.C" />
     <ClCompile Include="src\MONSTER\VWRAITH.C" />
+    <ClCompile Include="src\MONSTER\WALBOSB.C" />
+    <ClCompile Include="src\MONSTER\WALBOSS.C" />
+    <ClCompile Include="src\MONSTER\WALLCR.C" />
     <ClCompile Include="src\MONSTER\WORSHIP.C" />
     <ClCompile Include="src\OBTABLE.C" />
     <ClCompile Include="src\PC\async.c" />
@@ -295,6 +305,7 @@
     <ClInclude Include="src\MENU\MENUDEFS.H" />
     <ClInclude Include="src\MENU\MENUFACE.H" />
     <ClInclude Include="src\MENU\MENUUTIL.H" />
+    <ClInclude Include="src\MONSTER\ALUKA.h" />
     <ClInclude Include="src\MONSTER\HUMAN.H" />
     <ClInclude Include="src\MONSTER\MBMISS.H" />
     <ClInclude Include="src\MONSTER\MISSILE.H" />

@@ -301,6 +301,36 @@
     <ClCompile Include="src\PC\d3d\rnd_3d.c">
       <Filter>PC\d3d</Filter>
     </ClCompile>
+    <ClCompile Include="src\MONSTER\ALUKA.C">
+      <Filter>MONSTER</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MONSTER\ALUKABSS.C">
+      <Filter>MONSTER</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MONSTER\HUNTER.C">
+      <Filter>MONSTER</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MONSTER\KAIN.C">
+      <Filter>MONSTER</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MONSTER\WALLCR.C">
+      <Filter>MONSTER</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MONSTER\RONINBSS.C">
+      <Filter>MONSTER</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MONSTER\SKINBOS.C">
+      <Filter>MONSTER</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MONSTER\SKINNER.C">
+      <Filter>MONSTER</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MONSTER\WALBOSB.C">
+      <Filter>MONSTER</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MONSTER\WALBOSS.C">
+      <Filter>MONSTER</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\PC\libspu.h">
@@ -542,6 +572,9 @@
     </ClInclude>
     <ClInclude Include="src\PC\LIBGTE.H">
       <Filter>PC</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MONSTER\ALUKA.h">
+      <Filter>MONSTER</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
