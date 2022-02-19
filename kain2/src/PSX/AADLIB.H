@@ -8,6 +8,16 @@ typedef void (*TDRFuncPtr_aadLoadDynamicSoundBank4retProc)();
 typedef void (*TDRFuncPtr_aadStartMasterVolumeFade2fadeCompleteCallback)();
 typedef void (*TDRFuncPtr_aadStartMusicMasterVolFade2fadeCompleteCallback)();
 
+struct AadSequenceHdr 
+{
+	unsigned long sequenceID; // size=0, offset=0
+	unsigned long quarterNoteTime; // size=0, offset=4
+	unsigned short ppqn; // size=0, offset=8
+	unsigned short version; // size=0, offset=10
+	unsigned short numTracks; // size=0, offset=12
+	unsigned short unused; // size=0, offset=14
+};
+
 struct AadSoundBankHdr // hashcode: 0x453DB83F (dec: 1161672767)
 {
 	unsigned long bankID; // size=0, offset=0
@@ -292,7 +302,7 @@ struct AadMemoryStruct // hashcode: 0x46CEF45B (dec: 1187968091)
 	void (*nonBlockLoadProc)(); // size=0, offset=1840
 	void (*nonBlockBufferedLoadProc)(); // size=0, offset=1844
 	void (**memoryMallocProc)(); // size=0, offset=1848
-	void (*memoryFreeProc)(); // size=0, offset=1852
+	void (*memoryFreeProc)(unsigned char* func); // size=0, offset=1852
 	int nextLoadReqIn; // size=0, offset=1856
 	int nextLoadReqOut; // size=0, offset=1860
 	int numLoadReqsQueued; // size=0, offset=1864

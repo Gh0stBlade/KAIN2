@@ -61,4 +61,5 @@ if(MSVC)
 	)
 endif()
 
+add_definitions(-DPSXPC_VERSION)
 add_definitions(-DPSX_VERSION)

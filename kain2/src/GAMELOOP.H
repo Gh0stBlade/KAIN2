@@ -175,7 +175,7 @@ extern void GAMELOOP_ModeStartPause(); // 0x800309F8
 extern void GAMELOOP_ChangeMode(); // 0x80030AD0
 extern void GAMELOOP_RequestLevelChange(char *name, short number, struct GameTracker *gameTracker); // 0x80030E7C
 extern void PSX_GameLoop(struct GameTracker *gameTracker); // 0x80030EFC
-extern struct MATRIX * GAMELOOP_GetMatrices(int numMatrices); // 0x80030F28
+extern MATRIX * GAMELOOP_GetMatrices(int numMatrices); // 0x80030F28
 extern struct GameTracker * GAMELOOP_GetGT(); // 0x80030F5C
 
 #if defined(_LANGUAGE_C_PLUS_PLUS) || defined(__cplusplus) || defined(c_plusplus)

@@ -1,6 +1,8 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
+#include <LIBGTE.H>
+
 struct _CameraCore_Type // hashcode: 0xD341D51C (dec: -750660324)
 {
 	struct _Position position; // size=6, offset=0

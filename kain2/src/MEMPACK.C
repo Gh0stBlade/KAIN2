@@ -56,7 +56,7 @@ struct MemHeader * MEMPACK_GetSmallestBlockBottomTop(long allocSize)
 	address = newMemTracker.rootNode;
 	bestAddress = NULL;
 
-	while (address != newMemTracker.lastMemoryAddress)
+	while ((char*)address != newMemTracker.lastMemoryAddress)
 	{
 		if (address->memStatus == 0)
 		{
@@ -369,6 +369,8 @@ int dword_C550A8, dword_C550B4;
 // void /*$ra*/ MEMPACK_ReportMemory2()
 void MEMPACK_ReportMemory2()
 { // line 689, offset 0x80050050
+
+#if defined(PC_VERSION)
 	int i;
 	GXFilePrint("----- Memory Map -----\n");
 	for (i = dword_C550A8; i != dword_C550B4; i += *(DWORD*)(i + 4))
@@ -394,6 +396,7 @@ void MEMPACK_ReportMemory2()
 		}
 	}
 	GXFilePrint("Total Memory Used = %d, Total Memory Free = %d\n", mem_used, mem_total - mem_used);
+#endif
 }
 
 void MEMPACK_ReportMemory()
@@ -613,11 +616,11 @@ void MEMPACK_DoGarbageCollection()
 				}
 				else if (addressMemType == 14)
 				{
-					STREAM_UpdateInstanceCollisionInfo((struct HModel*)relocateAddress, (struct HModel*)newAddress);
+					STREAM_UpdateInstanceCollisionInfo((struct _HModel*)relocateAddress, (struct _HModel*)newAddress);
 				}
 				else if (addressMemType == 44)
 				{
-					MEMPACK_RelocateCDMemory((struct MemHeader*)newAddress - 8, newAddress - (char*)relocateAddress, (struct BigFileDir*)relocateAddress);
+					MEMPACK_RelocateCDMemory((struct MemHeader*)newAddress - 8, newAddress - (char*)relocateAddress, (struct _BigFileDir*)relocateAddress);
 				}
 				else if (addressMemType == 4)
 				{
@@ -726,6 +729,7 @@ void MEMPACK_RelocateAreaType(struct MemHeader *newAddress, long offset, struct 
 // void /*$ra*/ MEMPACK_RelocateG2AnimKeylistType(struct _G2AnimKeylist_Type **pKeylist /*$a0*/, int offset /*$a1*/, char *start /*$a2*/, char *end /*$a3*/)
 void MEMPACK_RelocateG2AnimKeylistType(struct _G2AnimKeylist_Type **pKeylist, int offset, char *start, char *end)
 { // line 1432, offset 0x80050ea0
+#if defined(PC_VERSION)
 	struct _G2AnimKeylist_Type* v4; // eax
 	struct _G2AnimKeylist_Type* v5; // esi
 	struct _G2AnimFxHeader_Type* fxList; // eax
@@ -760,6 +764,7 @@ void MEMPACK_RelocateG2AnimKeylistType(struct _G2AnimKeylist_Type **pKeylist, in
 			}
 		}
 	}
+#endif
 }
 
 

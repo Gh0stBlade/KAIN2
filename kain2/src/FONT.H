@@ -1,6 +1,9 @@
 #ifndef FONT_H
 #define FONT_H
 
+#include "G2/QUATG2.H"
+#include "CORE.H"
+
 #if defined(_LANGUAGE_C_PLUS_PLUS)||defined(__cplusplus)||defined(c_plusplus)
 extern "C" {
 #endif

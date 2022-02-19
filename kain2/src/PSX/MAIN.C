@@ -18,7 +18,7 @@
 #include "../VRAM.H"
 #include "../CINEMA/CINEPSX.H"
 #include "DRAWS.H"
-
+#include "PSX/STYPES.H"
 char mainOptionsInit; // offset 0x800CE560
 struct MainTracker mainTrackerX; // offset 0x800D121C
 long gTimerEnabled; // offset 0x800CE8D4

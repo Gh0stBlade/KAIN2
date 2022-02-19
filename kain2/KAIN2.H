@@ -2914,15 +2914,6 @@ struct LightTableEntry // hashcode: 0x952494E4 (dec: -1792764700)
 	short radius; // size=0, offset=6
 };
 
-struct InterfaceItem // hashcode: 0xB8494031 (dec: -1203158991)
-{
-	char name[48]; // size=48, offset=0
-	unsigned short timeout; // size=0, offset=48
-	unsigned short buttonTimeout; // size=0, offset=50
-	short itemType; // size=0, offset=52
-	short nextItem; // size=0, offset=54
-};
-
 struct POLY_FT4 // hashcode: 0xAD2AA0E4 (dec: -1389715228)
 {
 	unsigned long tag; // size=0, offset=0
@@ -9161,9 +9152,6 @@ extern short gEndGameNow; // offset 0x800CE562
 
 
 extern int pcverify; // offset 0x800CE564
-
-
-extern struct InterfaceItem InterfaceItems[6]; // offset 0x800CE570
 
 
 extern long DoMainMenu; // offset 0x800CE6C0

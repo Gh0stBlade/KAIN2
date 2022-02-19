@@ -1,19 +1,23 @@
 #ifndef __CORE_H
 #define __CORE_H
 
-#if defined(PC_VERSION) || defined(PSXPC_VERSION)
+#if defined(PC_VERSION)
 #include <Windows.h>
 #include "psyq.h"
 #include "PC/LIBGTE.H"
 #include "PC/LIBGPU.H"
 #include "PC/libspu.h"
 #else	// psx basically
-#include <libgte.h>
-#include <libgpu.h>
-#include <libspu.h>
+#include <LIBAPI.H>
+#include <LIBETC.H>
+#include <LIBGTE.H>
+#include <LIBGPU.H>
+#include <LIBSPU.H>
+#if !defined(PSXPC_VERSION)
 // wrappers for winapi crap
 #define OutputDebugStringA	printf
 #define vprintf_s(a,b,c,d)	vprintf(a,c,d)
+#endif
 #endif
 
 #include <stdarg.h>
@@ -197,6 +201,7 @@ typedef struct NodeType // hashcode: 0x5BF613D7 (dec: 1542853591)
 	struct NodeType* next; // size=8, offset=4
 } NodeType;
 
+#if defined(PC_VERSION)
 #include "gex2.h"
 #include "FONT.H"
 #include "DEBUG.H"
@@ -213,12 +218,26 @@ typedef struct NodeType // hashcode: 0x5BF613D7 (dec: 1542853591)
 #include "MATH3D.H"
 #include "PLAN/PLANAPI.H"
 
+#elif defined(PSX_VERSION) || defined(PSXPC_VERSION)
+#include "VRAM.H"
+#endif
+
 struct _ColorType // hashcode: 0x440E837C (dec: 1141801852)
 {
 	unsigned char r; // size=0, offset=0
 	unsigned char g; // size=0, offset=1
 	unsigned char b; // size=0, offset=2
 	unsigned char code; // size=0, offset=3
+};
+
+struct LightInstance {
+	struct _Instance* lightInstance; // size=0, offset=0
+	long r; // size=0, offset=4
+	long g; // size=0, offset=8
+	long b; // size=0, offset=12
+	short radius; // size=0, offset=16
+	unsigned char segment; // size=0, offset=18
+	unsigned char flags; // size=0, offset=19
 };
 
 struct _GameTrackerASMData_Type // hashcode: 0x28F0BFB9 (dec: 686866361)
@@ -332,9 +351,11 @@ struct _Terrain // hashcode: 0x5D541B4E (dec: 1565793102)
 	struct _MultiSignal* signals; // size=904, offset=80
 };
 
+#if defined(PC_VERSION)
 #include "GAMELOOP.H"
 #include "STREAM.H"
 #include "BSP.H"
 #include "MONSTER/MONSTER.H"
+#endif
 
 #endif

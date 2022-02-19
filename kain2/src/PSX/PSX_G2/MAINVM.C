@@ -8,7 +8,7 @@ int main()
 	return MainG2(&_appDataVM);
 }
 
-#ifndef PSX_VERSION
+#if defined(PC_VERSION)
 int MainG2_UpdateLoop()
 {
     MSG Msg;

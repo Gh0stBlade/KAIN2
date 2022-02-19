@@ -3,6 +3,15 @@
 
 #include <LIBGPU.H>
 
+struct InterfaceItem // hashcode: 0xB8494031 (dec: -1203158991)
+{
+	char name[48]; // size=48, offset=0
+	unsigned short timeout; // size=0, offset=48
+	unsigned short buttonTimeout; // size=0, offset=50
+	short itemType; // size=0, offset=52
+	short nextItem; // size=0, offset=54
+};
+
 struct MainTracker // hashcode: 0x7F315B98 (dec: 2133941144)
 {
 	long mainState; // size=0, offset=0
@@ -23,6 +32,8 @@ struct BLK_FILL // hashcode: 0x2490546A (dec: 613438570)
 	unsigned short w; // size=0, offset=12
 	unsigned short h; // size=0, offset=14
 };
+
+extern struct InterfaceItem InterfaceItems[6]; // offset 0x800CE570
 
 extern char mainOptionsInit; // offset 0x800CE560
 

@@ -1,6 +1,8 @@
 #ifndef INSTANCE_H
 #define INSTANCE_H
 
+#include <LIBGTE.H>
+
 typedef struct _Instance _Instance;
 
 struct LightInstance // hashcode: 0xB8D5E61F (dec: -1193941473)

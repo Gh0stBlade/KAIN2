@@ -1,6 +1,8 @@
 #ifndef COLLIDE_H
 #define COLLIDE_H
 
+#include <LIBGTE.H>
+
 typedef long (*TDRFuncPtr_COLLIDE_LineWithBoxFace6collideBoundFunc)();
 
 struct _CollideInfo // hashcode: 0xCA2DF5E9 (dec: -902957591)
