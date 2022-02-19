@@ -37,7 +37,11 @@
 
 #define ONE_MB				1048576
 #define TWO_MB				ONE_MB * 2
+#if defined(PC_VERSION) || defined(PSXPC_VERSION)
+#define BASE_ADDRESS		0x00000000
+#elif defined(PSX_VERSION)
 #define BASE_ADDRESS		0x80000000
+#endif
 #define PACK_MAGIC_USHORT(A, B, C, D)	(A << 12) | (B << 8) | (C << 4) | (D << 0)
 #define DEFAULT_MEM_MAGIC				PACK_MAGIC_USHORT(0xB, 0xA, 0xD, 0xE)
 
