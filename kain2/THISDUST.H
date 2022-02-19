@@ -8,8 +8,6 @@
 
 static unsigned long __hblankEvent; // offset 0x800D18E8
 
-extern unsigned long __timerEvent; // offset 0x800D0F84
-
 static struct _G2AppDataVM_Type _appDataVM; // offset 0x800D517C
 
 static struct _G2AnimChanStatusBlockPool_Type _chanStatusBlockPool; // offset 0x800D49CC
@@ -33,8 +31,6 @@ static struct AadProgramAtr aadDummySfxProgram; // offset 0x800CEF48
 extern unsigned long aadGp; // offset 0x800CA910
 
 static unsigned short aadHblanksPerUpdate[4]; // offset 0x800CECC0
-
-extern struct AadMemoryStruct *aadMem; // offset 0x800CECD8
 
 extern unsigned short aadPitchTable[85]; // offset 0x800CEF50
 
@@ -250,8 +246,6 @@ static struct _MonsterFunctionTable DefaultFunctionTable; // offset 0x800CF68C
 
 static struct _MonsterState DefaultStateTable[31]; // offset 0x800CAA20
 
-extern int devstation; // offset 0x800D0E68
-
 static struct _fth directionList[6]; // offset 0x800CF75C
 
 extern struct DISPENV disp[2]; // offset 0x800D0E40
@@ -465,8 +459,6 @@ extern int gSramTotalUsed; // offset 0x800D1508
 
 extern int gSramUsedBlocks; // offset 0x800D1504
 
-extern long gTimerEnabled; // offset 0x800CE8D4
-
 static struct _VertexPool *gVertexPool; // offset 0x800D0C28
 
 static int hack_attract; // offset 0x800CFA70
@@ -561,10 +553,6 @@ static struct _LoadStatus loadStatus; // offset 0x800D0D84
 
 static struct _LoadQueueEntry *loadTail; // offset 0x800D272C
 
-static struct LocalizationHeader *LocalizationTable; // offset 0x800CF994
-
-static char **LocalStrings; // offset 0x800CF998
-
 extern int LoopCounter; // offset 0x800CF774
 
 extern short M_TrackClutUpdate; // offset 0x800D4804
@@ -592,10 +580,6 @@ extern long *mainMenuScreen; // offset 0x800CE6C8
 static int mainMenuSfx; // offset 0x800D0E1C
 
 extern short mainMenuTimeOut; // offset 0x800D0FA8
-
-extern char mainOptionsInit; // offset 0x800CE560
-
-extern struct MainTracker mainTrackerX; // offset 0x800D121C
 
 static int MANNA_Pickup_Time; // offset 0x800D48D4
 
@@ -1285,19 +1269,6 @@ struct _Terrain // hashcode: 0x5D541B4E (dec: 1565793102)
 	struct _MultiSignal *signals; // size=904, offset=80
 };
 
-
-
-struct _ObjectTracker // hashcode: 0xFE4678BF (dec: -28936001)
-{
-	char name[16]; // size=16, offset=0
-	struct Object *object; // size=76, offset=16
-	short objectStatus; // size=0, offset=20
-	short numInUse; // size=0, offset=22
-	void *vramBlock; // size=0, offset=24
-	char numObjectsUsing; // size=0, offset=28
-	char objectsUsing[7]; // size=7, offset=29
-};
-
 struct CDLight // hashcode: 0xD90757B8 (dec: -653830216)
 {
 	struct NodeType node; // size=8, offset=0
@@ -1833,520 +1804,6 @@ union PLAYER_208fake // Hashcode: 0xD87F8A52 (dec: -662730158)
 	struct _Rotation direction; // size=8, offset=0
 	struct _Position throwVector; // size=6, offset=0
 };
-
-typedef struct MATRIX MATRIX;
-
-typedef struct VECTOR VECTOR;
-
-typedef SVECTORSVECTOR;
-
-typedef struct CVECTOR CVECTOR;
-
-typedef struct DVECTOR DVECTOR;
-
-typedef struct RVECTOR RVECTOR;
-
-typedef struct CRVECTOR3 CRVECTOR3;
-
-typedef struct CRVECTOR4 CRVECTOR4;
-
-typedef struct PSX_RECT RECT;
-
-typedef struct DR_ENV DR_ENV;
-
-typedef struct P_TAG P_TAG;
-
-typedef struct CdlLOC CdlLOC;
-
-typedef struct LightInstance LightInstance;
-
-typedef struct _GameTrackerASMData_Type GameTrackerASMData;
-
-typedef struct _GameData_Type GameData;
-
-typedef struct NodeType NodeType;
-
-typedef struct TextureFT3 TextureFT3;
-
-typedef struct TextureMT3 TextureMT3;
-
-typedef struct AniTexInfo AniTexInfo;
-
-typedef struct AniTex AniTex;
-
-typedef struct DrMoveAniTexSrcInfo DrMoveAniTexSrcInfo;
-
-typedef struct DrMoveAniTexDestInfo DrMoveAniTexDestInfo;
-
-typedef struct DrMoveAniTex DrMoveAniTex;
-
-typedef struct MemHeader MemHeader;
-
-typedef enum _G2Bool_Enum G2Bool;
-
-typedef struct _G2SVector3_Type G2SVector3;
-
-typedef struct _G2LVector3_Type G2LVector3;
-
-typedef struct _G2Matrix_Type G2Matrix;
-
-typedef struct _G2Quat_Type G2Quat;
-
-typedef struct _G2AnimQuatInfo_Type G2AnimQuatInfo;
-
-typedef struct _G2AnimAlphaTable_Type G2AnimAlphaTable;
-
-typedef struct _G2AnimInterpStateBlock_Type G2AnimInterpStateBlock;
-
-typedef struct _G2AnimInterpInfo_Type G2AnimInterpInfo;
-
-typedef struct _G2AnimChanStatus_Type G2AnimChanStatus;
-
-typedef struct _G2AnimChanStatusBlock_Type G2AnimChanStatusBlock;
-
-typedef struct _G2AnimFxHeader_Type G2AnimFxHeader;
-
-typedef struct _G2AnimKeylist_Type G2AnimKeylist;
-
-typedef struct _G2AnimSection_Type G2AnimSection;
-
-typedef struct _G2Anim_Type G2Anim;
-
-typedef struct _SVector SVector;
-
-typedef struct _SVectorNoPad SVectorNoPad;
-
-typedef struct MATRIX Transform;
-
-typedef struct _Position Position;
-
-typedef struct _Rotation Rotation;
-
-typedef struct _Normal Normal;
-
-typedef struct _PlaneConstants PlaneConstants;
-
-typedef struct _Vertex Vertex;
-
-typedef struct _Face Face;
-
-typedef struct _MVertex MVertex;
-
-typedef struct _MFace MFace;
-
-typedef struct _RGBAColor RGBAColor;
-
-typedef struct _PVertex PVertex;
-
-typedef struct _VertexPool VertexPool;
-
-typedef struct _PrimPool PrimPool;
-
-typedef struct _Sphere Sphere;
-
-typedef struct _Sphere_noSq Sphere_noSq;
-
-typedef struct _CameraKey CameraKey;
-
-typedef struct Object Object;
-
-typedef struct _BVertex BVertex;
-
-typedef struct _BFace BFace;
-
-typedef struct _BGObject BGObject;
-
-typedef struct Signal Signal;
-
-typedef struct _MultiSignal MultiSignal;
-
-typedef struct _HFace HFace;
-
-typedef struct _HSphere HSphere;
-
-typedef struct _HBox HBox;
-
-typedef struct _HPrim HPrim;
-
-typedef struct _HModel HModel;
-
-typedef struct _HInfo HInfo;
-
-typedef struct _Segment Segment;
-
-typedef struct MultiSpline MultiSpline;
-
-typedef struct _Model Model;
-
-typedef struct SoundInstance SoundInstance;
-
-typedef struct ObjectEffect ObjectEffect;
-
-typedef struct ObjectEffect AnimEffectData;
-
-typedef struct VramSize VramSize;
-
-typedef struct _TFace TFace;
-
-typedef struct _TVertex TVertex;
-
-typedef struct EventAliasCommandStruct EventAliasCommandStruct;
-
-typedef struct _Instance Instance;
-
-typedef struct _InstancePool InstancePool;
-
-typedef struct _InstanceList InstanceList;
-
-typedef struct _ObjectTracker ObjectTracker;
-
-typedef struct Intro Intro;
-
-typedef struct _BoundingBox BoundingBox;
-
-typedef struct CDLight CDLight;
-
-typedef struct _BSPNode BSPNode;
-
-typedef struct _BSPNode SBSPNode;
-
-typedef struct _BSPLeaf BSPLeaf;
-
-typedef struct _MorphVertex MorphVertex;
-
-typedef struct _MorphColor MorphColor;
-
-typedef struct _SavedCinematic SavedCinematic;
-
-typedef struct BSPTree BSPTree;
-
-typedef struct _Terrain Terrain;
-
-typedef struct LightGroup LightGroup;
-
-typedef struct LightList LightList;
-
-typedef struct PointLight PointLight;
-
-typedef struct SpotLight SpotLight;
-
-typedef struct LightInfo LightInfo;
-
-typedef struct _VMOffset VMMoveOffset;
-
-typedef struct _VMColorOffset VMColorOffset;
-
-typedef struct _VMInterpolated VMInterpolated;
-
-typedef struct _VMOffsetTable VMOffsetTable;
-
-typedef struct _VMObject VMObject;
-
-typedef struct _VGroup VGroup;
-
-typedef struct _HotSpot HotSpot;
-
-typedef struct _PlanMkr PlanMkr;
-
-typedef struct _SFXMkr SFXMkr;
-
-typedef struct TClassAttr TClassAttr;
-
-typedef struct Level Level;
-
-typedef struct _ColorType ColorType;
-
-typedef struct _CameraCore_Type CameraCore;
-
-typedef struct SpuVolume SpuVolume;
-
-typedef struct SpuVoiceAttr SpuVoiceAttr;
-
-typedef struct SpuExtAttr SpuExtAttr;
-
-typedef struct SpuStVoiceAttr SpuStVoiceAttr;
-
-typedef struct AadSoundBankHdr AadSoundBankHdr;
-
-typedef struct AadProgramAtr AadProgramAtr;
-
-typedef struct AadToneAtr AadToneAtr;
-
-typedef struct _AadDynSfxFileHdr AadDynSfxSnfFileHdr;
-
-typedef struct AadDynSfxAttr AadDynSfxAttr;
-
-typedef struct AadTempoCounter AadTempoCounter;
-
-typedef struct AadSeqEvent AadSeqEvent;
-
-typedef struct _AadSequenceSlot AadSequenceSlot;
-
-typedef struct AadSfxCommand AadSfxCommand;
-
-typedef struct AadSfxSlot AadSfxSlot;
-
-typedef struct AadSynthVoice AadSynthVoice;
-
-typedef struct AadDynamicLoadRequest AadDynamicLoadRequest;
-
-typedef struct AadDynamicBankLoadInfo AadDynamicBankLoadInfo;
-
-typedef struct AadDynamicSfxLoadInfo AadDynamicSfxLoadInfo;
-
-typedef struct AadNewSramBlockDesc AadNewSramBlockDesc;
-
-typedef struct AadLoadedSfxToneAttr AadLoadedSfxToneAttr;
-
-typedef struct AadLoadedSfxWaveAttr AadLoadedSfxWaveAttr;
-
-typedef struct AadSramDefragInfo AadSramDefragInfo;
-
-typedef struct AadVolFader AadVolFader;
-
-typedef struct MusicLoadCmd MusicLoadCmd;
-
-typedef struct gSoundData gSoundData;
-
-typedef struct GameTracker GameTracker;
-
-typedef struct Spline Spline;
-
-typedef struct vecS vecS;
-
-typedef struct vecL vecL;
-
-typedef struct SplineRotKey SplineRotKey;
-
-typedef struct RSpline RSpline;
-
-typedef struct SplineKey SplineKey;
-
-typedef struct SplineDef SplineDef;
-
-typedef struct _HVertex HVertex;
-
-typedef struct _MONAPI_Regenerator MONAPI_Regenerator;
-
-typedef enum DEBUG_LINE_TYPE DEBUG_LINE_TYPE;
-
-typedef struct __Event Message;
-
-typedef struct __MessageQueue MessageQueue;
-
-typedef struct __State State;
-
-typedef unsigned char u_char;
-
-typedef unsigned short u_short;
-
-typedef unsigned int u_int;
-
-typedef unsigned long u_long;
-
-typedef unsigned short ushort;
-
-typedef struct _physadr *physadr;
-
-typedef long daddr_t;
-
-typedef char *caddr_t;
-
-typedef long *qaddr_t;
-
-typedef unsigned long ino_t;
-
-typedef long swblk_t;
-
-typedef unsigned int size_t;
-
-typedef long time_t;
-
-typedef short dev_t;
-
-typedef long off_t;
-
-typedef unsigned short uid_t;
-
-typedef unsigned short gid_t;
-
-typedef unsigned long wchar_t;
-
-typedef void (*CdlCB)();
-
-typedef void *va_list;
-
-typedef unsigned char uchar;
-
-typedef unsigned char u_byte;
-
-typedef unsigned char ubyte;
-
-typedef unsigned long ulong;
-
-typedef char int8;
-
-typedef short int16;
-
-typedef long int32;
-
-typedef long int64;
-
-typedef unsigned char uint8;
-
-typedef unsigned short uint16;
-
-typedef unsigned long uint32;
-
-typedef unsigned long uint64;
-
-typedef char BYTE;
-
-typedef unsigned char UBYTE;
-
-typedef unsigned long ULONG;
-
-typedef unsigned short USHORT;
-
-typedef unsigned long bool;
-
-typedef long ListOrderFunc();
-
-typedef unsigned long *OTag;
-
-typedef unsigned char G2UInt8;
-
-typedef unsigned short G2UInt16;
-
-typedef unsigned long G2UInt32;
-
-typedef char G2Int8;
-
-typedef short G2Int16;
-
-typedef long G2Int32;
-
-typedef long G2fp4dot12;
-
-typedef long G2fp8dot24;
-
-typedef short G2TimerAtomicUnit;
-
-typedef int G2AnimKeyframeNumber;
-
-typedef int G2AnimKeylistID;
-
-typedef int G2AnimSectionID;
-
-typedef unsigned char G2AnimSegmentID;
-
-typedef unsigned char G2AnimControllerType;
-
-typedef unsigned short G2AnimChanMask;
-
-typedef long (*G2AnimCallback)();
-
-typedef unsigned long (*G2AnimControllerFn)();
-
-typedef short G2AnimChanKeyData;
-
-typedef short G2AnimChanFinalValue;
-
-typedef enum _G2Bool_Enum (*G2InstanceRebuildCallback)();
-
-typedef long lfixed;
-
-typedef short sfixed;
-
-typedef short MatEntry;
-
-typedef short Fraction;
-
-typedef long VectorCoord;
-
-typedef short SVectorCoord;
-
-typedef short NormalCoord;
-
-typedef short TrigVal;
-
-typedef short Angle;
-
-typedef short Matrix[3][3];
-
-typedef void InitFunc();
-
-typedef void ProcessFunc();
-
-typedef void CollideFunc();
-
-typedef unsigned long QueryFunc();
-
-typedef void MessageFunc();
-
-typedef void RelocateTuneFunc();
-
-typedef void (*SpuIRQCallbackProc)();
-
-typedef void (*SpuTransferCallbackProc)();
-
-typedef void (*SpuStCallbackProc)();
-
-typedef int AADRESULT;
-
-typedef int AadFileHandle;
-
-typedef unsigned long AadChannelList;
-
-typedef void (*AadFadeCompleteCallbackProc)();
-
-typedef void (*AadLockVoiceCallbackProc)();
-
-typedef void (*AadController11CallbackProc)();
-
-typedef void (*AadEndSequenceCallbackProc)();
-
-typedef void (*AadLoadDynamicSoundBankReturnProc)();
-
-typedef void (*AadLoadDynamicSfxReturnProc)();
-
-typedef void (**AadMemoryMallocProc)();
-
-typedef void (*AadMemoryFreeProc)();
-
-typedef void (*AadNonBlockLoadReturnProc)();
-
-typedef void (*AadNonBlockLoadProc)();
-
-typedef void (*AadNonBlockBufferedLoadReturnProc)();
-
-typedef void (*AadNonBlockBufferedLoadProc)();
-
-typedef unsigned char AadNewSramBlockHandle;
-
-typedef unsigned long AadSfxHandle;
-
-typedef unsigned int AadSfxToneID;
-
-typedef void (*EndSequenceCallbackProc)();
-
-typedef void (*Controller11CallbackProc)();
-
-typedef unsigned long *DrawNonAnimatedSegmentFunc();
-
-typedef unsigned long *DrawAnimatedModelFunc();
-
-typedef unsigned long *DrawDisplayPolytopeListFunc();
-
-typedef unsigned long *AdditionalDrawFunc();
-
-typedef void BG_DisplayFunc();
-
-typedef void RelocateInstObFunc();
-
-typedef void (*VoidProc)();
-
-typedef void (*StateHandler)();
 
 struct POLY_F4 // hashcode: 0xE2AC295D (dec: -492033699)
 {
@@ -4029,14 +3486,6 @@ union MAIN_213fake // Hashcode: 0xFBB8D531 (dec: -71772879)
 	struct _Position throwVector; // size=6, offset=0
 };
 
-struct MainTracker // hashcode: 0x7F315B98 (dec: 2133941144)
-{
-	long mainState; // size=0, offset=0
-	long previousState; // size=0, offset=4
-	long movieNum; // size=0, offset=8
-	long done; // size=0, offset=12
-};
-
 struct AnalogueData // hashcode: 0xD8EB0F12 (dec: -655683822)
 {
 	unsigned short pad; // size=0, offset=0
@@ -5182,63 +4631,6 @@ union AADASSRT_119fake // Hashcode: 0x8D49167A (dec: -1924589958)
 	struct _RGBAColor rgba; // size=4, offset=0
 };
 
-struct AadMemoryStruct // hashcode: 0x46CEF45B (dec: 1187968091)
-{
-	unsigned long updateCounter; // size=0, offset=0
-	int numSlots; // size=0, offset=4
-	int updateMode; // size=0, offset=8
-	int masterVolume; // size=0, offset=12
-	struct AadVolFader masterVolFader; // size=12, offset=16
-	int sfxMasterVol; // size=0, offset=28
-	int musicMasterVol; // size=0, offset=32
-	int flags; // size=0, offset=36
-	struct AadVolFader musicMasterVolFader; // size=12, offset=40
-	struct _AadSequenceSlot (*sequenceSlots[8]); // size=32, offset=52
-	struct AadSfxSlot sfxSlot; // size=392, offset=84
-	struct AadSynthVoice synthVoice[24]; // size=672, offset=476
-	char voiceStatus[24]; // size=24, offset=1148
-	unsigned short voicePitchSave[24]; // size=48, offset=1172
-	unsigned long voiceKeyOffRequest; // size=0, offset=1220
-	unsigned long voiceKeyOnRequest; // size=0, offset=1224
-	unsigned long voiceReverbRequest; // size=0, offset=1228
-	struct AadSoundBankHdr (*dynamicSoundBankHdr[2]); // size=8, offset=1232
-	struct AadProgramAtr (*dynamicProgramAtr[2]); // size=8, offset=1240
-	struct AadToneAtr (*dynamicToneAtr[2]); // size=8, offset=1248
-	unsigned long (*dynamicWaveAddr[2]); // size=8, offset=1256
-	unsigned char (**dynamicSequenceAddressTbl[2]); // size=8, offset=1264
-	unsigned long (*dynamicSequenceLabelOffsetTbl[2]); // size=8, offset=1272
-	int dynamicBankStatus[2]; // size=8, offset=1280
-	unsigned char (*dynamicSoundBankData[2]); // size=8, offset=1288
-	unsigned long dynamicSoundBankSramData[2]; // size=8, offset=1296
-	struct AadDynamicLoadRequest loadRequestQueue[16]; // size=448, offset=1304
-	struct AadDynamicBankLoadInfo dynamicBankLoadInfo; // size=88, offset=1752
-	void (*nonBlockLoadProc)(); // size=0, offset=1840
-	void (*nonBlockBufferedLoadProc)(); // size=0, offset=1844
-	void (**memoryMallocProc)(); // size=0, offset=1848
-	void (*memoryFreeProc)(); // size=0, offset=1852
-	int nextLoadReqIn; // size=0, offset=1856
-	int nextLoadReqOut; // size=0, offset=1860
-	int numLoadReqsQueued; // size=0, offset=1864
-	struct AadDynamicSfxLoadInfo dynamicSfxLoadInfo; // size=148, offset=1868
-	struct _AadDynSfxFileHdr *firstDynSfxFile; // size=20, offset=2016
-	int nextFileHandle; // size=0, offset=2020
-	struct AadSramDefragInfo sramDefragInfo; // size=32, offset=2024
-	unsigned char sfxToneMasterList[512]; // size=512, offset=2056
-	unsigned char sfxWaveMasterList[512]; // size=512, offset=2568
-	struct AadLoadedSfxToneAttr sfxToneAttrTbl[128]; // size=2560, offset=3080
-	struct AadLoadedSfxWaveAttr sfxWaveAttrTbl[120]; // size=480, offset=5640
-	int nextToneIndex; // size=0, offset=6120
-	int nextWaveIndex; // size=0, offset=6124
-	struct AadNewSramBlockDesc sramDescriptorTbl[128]; // size=1024, offset=6128
-	int nextSramDescIndex; // size=0, offset=7152
-	int firstSramBlockDescIndex; // size=0, offset=7156
-	void (*controller11Callback)(); // size=0, offset=7160
-	void (*endSequenceCallback)(); // size=0, offset=7164
-	long controller11CallbackData; // size=0, offset=7168
-	long endSequenceCallbackData; // size=0, offset=7172
-	unsigned char userVariables[128]; // size=128, offset=7176
-};
-
 struct AadSlotAttributes // hashcode: 0x7DE97E8C (dec: 2112454284)
 {
 	int sequenceNumberAssigned; // size=0, offset=0
@@ -5311,8 +4703,6 @@ union AADLIB_190fake // Hashcode: 0x9F6EB891 (dec: -1620133743)
 	struct _Rotation direction; // size=8, offset=0
 	struct _Position throwVector; // size=6, offset=0
 };
-
-typedef struct AadMemoryStruct AadMemoryStruct;
 
 typedef struct AadSlotAttributes AadSlotAttributes;
 
@@ -8138,12 +7528,6 @@ union PLANOPT_211fake // Hashcode: 0xC37ABAC4 (dec: -1015366972)
 	struct _Position position; // size=6, offset=0
 	struct _Rotation direction; // size=8, offset=0
 	struct _Position throwVector; // size=6, offset=0
-};
-
-struct _G2AppDataVM_Type // hashcode: 0xC1BF7B11 (dec: -1044415727)
-{
-	int argc; // size=0, offset=0
-	int *argv; // size=0, offset=4
 };
 
 typedef struct _G2AppDataVM_Type G2AppDataVM;

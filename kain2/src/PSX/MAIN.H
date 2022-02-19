@@ -1,6 +1,49 @@
 #ifndef MAIN_H
 #define MAIN_H
 
+#include <LIBGPU.H>
+
+struct MainTracker // hashcode: 0x7F315B98 (dec: 2133941144)
+{
+	long mainState; // size=0, offset=0
+	long previousState; // size=0, offset=4
+	long movieNum; // size=0, offset=8
+	long done; // size=0, offset=12
+};
+
+struct BLK_FILL // hashcode: 0x2490546A (dec: 613438570)
+{
+	unsigned long tag; // size=0, offset=0
+	unsigned char r0; // size=0, offset=4
+	unsigned char g0; // size=0, offset=5
+	unsigned char b0; // size=0, offset=6
+	unsigned char code; // size=0, offset=7
+	unsigned short x0; // size=0, offset=8
+	unsigned short y0; // size=0, offset=10
+	unsigned short w; // size=0, offset=12
+	unsigned short h; // size=0, offset=14
+};
+
+extern char mainOptionsInit; // offset 0x800CE560
+
+extern struct MainTracker mainTrackerX; // offset 0x800D121C
+
+extern long gTimerEnabled; // offset 0x800CE8D4
+
+extern unsigned long __timerEvent; // offset 0x800D0F84
+
+extern int nosound; // offset 0x800CE568
+
+extern int nomusic; // offset 0x800CE56C
+
+extern int devstation; // offset 0x800D0E68
+
+extern DRAWENV draw[2]; // offset 0x800D0E6C
+
+extern DISPENV disp[2]; // offset 0x800D0E40
+
+extern struct BLK_FILL clearRect[2]; // offset 0x800D0F88
+
 extern void ClearDisplay(); // 0x80037EF8
 
 extern void screen_to_vram(long *screen, int buffer); // 0x80037FB4

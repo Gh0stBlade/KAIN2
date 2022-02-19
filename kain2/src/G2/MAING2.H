@@ -1,6 +1,8 @@
 #ifndef MAING2_H
 #define MAING2_H
 
+#include <LIBGTE.H>
+
 struct _SVector // hashcode: 0x73B07C09 (dec: 1940945929)
 {
 	short x; // size=0, offset=0
@@ -94,7 +96,7 @@ struct _PVertex // hashcode: 0x4AC0ECE8 (dec: 1254157544)
 struct _VertexPool // hashcode: 0x98F8C96E (dec: -1728525970)
 {
 	struct _PVertex vertex[528]; // size=4224, offset=0
-	struct CVECTOR color[528]; // size=2112, offset=4224
+	CVECTOR color[528]; // size=2112, offset=4224
 };
 
 struct _PrimPool // hashcode: 0x9529B283 (dec: -1792429437)

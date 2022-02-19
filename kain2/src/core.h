@@ -1,6 +1,11 @@
 #ifndef __CORE_H
 #define __CORE_H
 
+#ifdef PSX_VERSION
+#include <LIBGTE.H>
+#include <LIBGPU.H>
+#include <LIBSPU.H>
+#else
 #ifdef _WIN32
 #include <Windows.h>
 #include "psyq.h"
@@ -14,6 +19,7 @@
 // wrappers for winapi crap
 #define OutputDebugStringA	printf
 #define vprintf_s(a,b,c,d)	vprintf(a,c,d)
+#endif
 #endif
 
 #include <stdarg.h>
@@ -37,8 +43,9 @@ typedef unsigned char BYTE;
 typedef unsigned long long QWORD;
 typedef unsigned int DWORD;
 typedef unsigned short WORD;
-
+#ifndef PSX_VERSION//?
 typedef unsigned int bool;
+#endif
 #endif
 
 typedef struct _SVector // hashcode: 0x73B07C09 (dec: 1940945929)
@@ -272,6 +279,17 @@ struct Object // hashcode: 0xEC12E9AC (dec: -334304852)
 	unsigned long* relocList; // size=0, offset=60
 	void* relocModule; // size=0, offset=64
 	struct VramSize vramSize; // size=8, offset=68
+};
+
+struct _ObjectTracker // hashcode: 0xFE4678BF (dec: -28936001)
+{
+	char name[16]; // size=16, offset=0
+	struct Object* object; // size=76, offset=16
+	short objectStatus; // size=0, offset=20
+	short numInUse; // size=0, offset=22
+	void* vramBlock; // size=0, offset=24
+	char numObjectsUsing; // size=0, offset=28
+	char objectsUsing[7]; // size=7, offset=29
 };
 
 struct Intro // hashcode: 0x796E766D (dec: 2037282413)

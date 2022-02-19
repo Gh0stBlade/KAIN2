@@ -258,6 +258,66 @@ struct AadInitAttr // hashcode: 0x0549E29A (dec: 88728218)
 	void (*memoryFreeProc)(); // size=0, offset=20
 };
 
+
+struct AadMemoryStruct // hashcode: 0x46CEF45B (dec: 1187968091)
+{
+	unsigned long updateCounter; // size=0, offset=0
+	int numSlots; // size=0, offset=4
+	int updateMode; // size=0, offset=8
+	int masterVolume; // size=0, offset=12
+	struct AadVolFader masterVolFader; // size=12, offset=16
+	int sfxMasterVol; // size=0, offset=28
+	int musicMasterVol; // size=0, offset=32
+	int flags; // size=0, offset=36
+	struct AadVolFader musicMasterVolFader; // size=12, offset=40
+	struct _AadSequenceSlot(*sequenceSlots[8]); // size=32, offset=52
+	struct AadSfxSlot sfxSlot; // size=392, offset=84
+	struct AadSynthVoice synthVoice[24]; // size=672, offset=476
+	char voiceStatus[24]; // size=24, offset=1148
+	unsigned short voicePitchSave[24]; // size=48, offset=1172
+	unsigned long voiceKeyOffRequest; // size=0, offset=1220
+	unsigned long voiceKeyOnRequest; // size=0, offset=1224
+	unsigned long voiceReverbRequest; // size=0, offset=1228
+	struct AadSoundBankHdr(*dynamicSoundBankHdr[2]); // size=8, offset=1232
+	struct AadProgramAtr(*dynamicProgramAtr[2]); // size=8, offset=1240
+	struct AadToneAtr(*dynamicToneAtr[2]); // size=8, offset=1248
+	unsigned long(*dynamicWaveAddr[2]); // size=8, offset=1256
+	unsigned char(**dynamicSequenceAddressTbl[2]); // size=8, offset=1264
+	unsigned long(*dynamicSequenceLabelOffsetTbl[2]); // size=8, offset=1272
+	int dynamicBankStatus[2]; // size=8, offset=1280
+	unsigned char(*dynamicSoundBankData[2]); // size=8, offset=1288
+	unsigned long dynamicSoundBankSramData[2]; // size=8, offset=1296
+	struct AadDynamicLoadRequest loadRequestQueue[16]; // size=448, offset=1304
+	struct AadDynamicBankLoadInfo dynamicBankLoadInfo; // size=88, offset=1752
+	void (*nonBlockLoadProc)(); // size=0, offset=1840
+	void (*nonBlockBufferedLoadProc)(); // size=0, offset=1844
+	void (**memoryMallocProc)(); // size=0, offset=1848
+	void (*memoryFreeProc)(); // size=0, offset=1852
+	int nextLoadReqIn; // size=0, offset=1856
+	int nextLoadReqOut; // size=0, offset=1860
+	int numLoadReqsQueued; // size=0, offset=1864
+	struct AadDynamicSfxLoadInfo dynamicSfxLoadInfo; // size=148, offset=1868
+	struct _AadDynSfxFileHdr* firstDynSfxFile; // size=20, offset=2016
+	int nextFileHandle; // size=0, offset=2020
+	struct AadSramDefragInfo sramDefragInfo; // size=32, offset=2024
+	unsigned char sfxToneMasterList[512]; // size=512, offset=2056
+	unsigned char sfxWaveMasterList[512]; // size=512, offset=2568
+	struct AadLoadedSfxToneAttr sfxToneAttrTbl[128]; // size=2560, offset=3080
+	struct AadLoadedSfxWaveAttr sfxWaveAttrTbl[120]; // size=480, offset=5640
+	int nextToneIndex; // size=0, offset=6120
+	int nextWaveIndex; // size=0, offset=6124
+	struct AadNewSramBlockDesc sramDescriptorTbl[128]; // size=1024, offset=6128
+	int nextSramDescIndex; // size=0, offset=7152
+	int firstSramBlockDescIndex; // size=0, offset=7156
+	void (*controller11Callback)(); // size=0, offset=7160
+	void (*endSequenceCallback)(); // size=0, offset=7164
+	long controller11CallbackData; // size=0, offset=7168
+	long endSequenceCallbackData; // size=0, offset=7172
+	unsigned char userVariables[128]; // size=128, offset=7176
+};
+
+extern struct AadMemoryStruct* aadMem; // offset 0x800CECD8
+
 extern unsigned long aadGetMemorySize(struct AadInitAttr *attributes); // 0x800514D4
 extern int aadInit(struct AadInitAttr *attributes, unsigned char *memoryPtr); // 0x800514F8
 extern void aadInstallUpdateFunc(TDRFuncPtr_aadInstallUpdateFunc0updateFuncPtr updateFuncPtr, int hblanksPerUpdate); // 0x800517A0

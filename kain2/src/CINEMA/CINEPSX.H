@@ -3,7 +3,7 @@
 
 struct cinema_fn_table_t // hashcode: 0xBFD79C7E (dec: -1076388738)
 {
-	int (*play)(); // size=0, offset=0
+	int (*play)(char* strfile, unsigned short mask, int buffers); // size=0, offset=0
 	char* versionID; // size=0, offset=4
 };
 

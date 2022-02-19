@@ -2,8 +2,13 @@ cmake_minimum_required (VERSION 3.0)
 
 project (KAIN2_${TARGET_ARCH})
 
-file(GLOB_RECURSE KAIN2_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/*.c ${CMAKE_CURRENT_SOURCE_DIR}/*.h ${CMAKE_CURRENT_SOURCE_DIR}/*.cur ${CMAKE_CURRENT_SOURCE_DIR}/*.rc)
-list(FILTER KAIN2_SRCS EXCLUDE REGEX "/PC/*")
+#file(GLOB_RECURSE KAIN2_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/*.c ${CMAKE_CURRENT_SOURCE_DIR}/*.h ${CMAKE_CURRENT_SOURCE_DIR}/*.cur ${CMAKE_CURRENT_SOURCE_DIR}/*.rc)
+#list(FILTER KAIN2_SRCS EXCLUDE REGEX "/PC/*")
+
+list(APPEND KAIN2_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/src/PSX/PSX_G2/MAINVM.C)
+list(APPEND KAIN2_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/src/PSX/MAIN.C)
+list(APPEND KAIN2_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/src/MEMPACK.C)
+list(APPEND KAIN2_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/src/PSX/AADLIB.C)
 
 add_executable(
 ${PROJECT_NAME}
@@ -23,7 +28,12 @@ set(TARGET_BINARY_DIR "${PROJECT_BINARY_DIR}/${CMAKE_CFG_INTDIR}")
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${ROOT_DIR}/Emulator)
-link_directories(${ROOT_DIR}/Build/Emulator/${CMAKE_BUILD_TYPE})
+
+if(NOT ${CMAKE_BUILD_TYPE})
+target_link_directories(${PROJECT_NAME} PUBLIC ${ROOT_DIR}/Build/Emulator/Release/)
+else()
+target_link_directories(${PROJECT_NAME} PUBLIC ${ROOT_DIR}/Build/Emulator/Debug/)
+endif()
 
 #Include all platform specific cmake files.
 include("Platform/Windows.cmake")

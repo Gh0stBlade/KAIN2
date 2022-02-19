@@ -1,6 +1,11 @@
 #ifndef MAINVM_H
 #define MAINVM_H
 
+struct _G2AppDataVM_Type // hashcode: 0xC1BF7B11 (dec: -1044415727)
+{
+	int argc; // size=0, offset=0
+	int* argv; // size=0, offset=4
+};
 
 extern int main(); // 0x800962C0
 
