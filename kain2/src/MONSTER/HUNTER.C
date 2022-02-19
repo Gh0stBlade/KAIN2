@@ -10,7 +10,7 @@ struct _MonsterStateChoice HUNTER_StateChoiceTable[] =
 	{-1}
 };
 
-_MonsterFunctionTable HUNTER_FunctionTable =
+struct _MonsterFunctionTable HUNTER_FunctionTable =
 {
 	HUNTER_Init,
 	HUNTER_CleanUp,
