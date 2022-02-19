@@ -1,8 +1,10 @@
 #define _CRT_SECURE_NO_WARNINGS
 
-#include "core.H"
+#include "CORE.H"
+#include "CAMERA.H"
 #include "GAMELOOP.H"
-
+#include "GAMEPAD.H"
+#include "SOUND.H"
 #include "EVENT.H"
 
 struct GameTracker gameTrackerX;
@@ -457,7 +459,7 @@ void MainRenderLevel(struct _StreamUnit *currentUnit, unsigned long **drawot)
 			int curTree; // $s1
 			long BackColor; // stack offset -48
 			struct _Position cam_pos_save; // stack offset -96
-			struct MATRIX cam_mat_save; // stack offset -88
+			//struct MATRIX cam_mat_save; // stack offset -88
 			struct _Instance *saveLightInstance; // $s2
 
 		/* begin block 1.1 */
@@ -532,7 +534,7 @@ long StreamRenderLevel(struct _StreamUnit *currentUnit, struct Level *mainLevel,
 			int curTree; // $s1
 			int farplanesave; // $fp
 			struct _Position cam_pos_save; // stack offset -88
-			struct MATRIX cam_mat_save; // stack offset -80
+			//struct MATRIX cam_mat_save; // stack offset -80
 
 		/* begin block 1.1 */
 			// Start line: 2085
@@ -567,6 +569,7 @@ long StreamRenderLevel(struct _StreamUnit *currentUnit, struct Level *mainLevel,
 // void /*$ra*/ GAMELOOP_FlipScreenAndDraw(struct GameTracker *gameTracker /*$s0*/, unsigned long **drawot /*$a1*/)
 void GAMELOOP_FlipScreenAndDraw(struct GameTracker *gameTracker, unsigned long **drawot)
 { // line 2187, offset 0x8002f1a0
+#if defined(PC_VERSION)
 	unsigned int** dispOT; // ecx
 	struct _PrimPool* v3; // eax
 
@@ -595,6 +598,7 @@ void GAMELOOP_FlipScreenAndDraw(struct GameTracker *gameTracker, unsigned long *
 	}
 	RenderG2_Swap();
 	RenderG2_Clear(gameTracker, drawot);
+#endif
 }
 
 
@@ -665,6 +669,7 @@ void GAMELOOP_SetupRenderFunction(struct GameTracker *gameTracker)
 // struct _StreamUnit * /*$ra*/ GAMELOOP_GetMainRenderUnit()
 struct _StreamUnit * GAMELOOP_GetMainRenderUnit()
 { // line 2303, offset 0x8002f398
+#if defined(PC_VERSION)
 	struct _Instance* focusInstance; // edi
 	struct _StreamUnit* StreamUnitWithID; // esi
 	struct _StreamUnit* v3; // eax
@@ -686,6 +691,9 @@ struct _StreamUnit * GAMELOOP_GetMainRenderUnit()
 	if (v3)
 		return v3;
 	return StreamUnitWithID;
+#else
+	return NULL;
+#endif
 }
 
 
@@ -714,7 +722,7 @@ void GAMELOOP_DisplayFrame(struct GameTracker *gameTracker)
 				struct StreamUnitPortal *streamPortal2; // $s4
 				int i; // $s5
 				int draw; // $s3
-				struct PSX_RECT cliprect; // stack offset -72
+				//struct PSX_RECT cliprect; // stack offset -72
 
 			/* begin block 1.1.1 */
 				// Start line: 2508
@@ -791,6 +799,8 @@ void GAMELOOP_DrawSavedOT(unsigned long **newOT)
 // void /*$ra*/ ResetPrimPool()
 void ResetPrimPool()
 { // line 2764, offset 0x8002fd98
+	
+#if defined(PC_VERSION)
 	unsigned int** dispOT; // ecx
 	struct _PrimPool* v1; // eax
 
@@ -816,6 +826,7 @@ void ResetPrimPool()
 		v1->nextPrim = v1->prim;
 		gameTrackerX.primPool->numPrims = 0;
 	}
+#endif
 }
 
 
@@ -929,6 +940,8 @@ void GAMELOOP_Reset24FPS()
 // void /*$ra*/ GAMELOOP_DoTimeProcess()
 void GAMELOOP_DoTimeProcess()
 { // line 2925, offset 0x800300cc
+	
+#if defined(PC_VERSION)
 	unsigned int TimeMS; // ebx
 	int frameRateLock; // eax
 	unsigned int lastLoopTime; // ecx
@@ -1007,6 +1020,7 @@ LABEL_22:
 	gameTrackerX.fps30Count = fps30Count;
 	gameTrackerX.timeSinceLastGameFrame = timeSinceLastGameFrame;
 	gameTrackerX.currentTime = TimeMS;
+#endif
 }
 
 
@@ -1145,6 +1159,7 @@ void PSX_GameLoop(struct GameTracker *gameTracker)
 // struct MATRIX * /*$ra*/ GAMELOOP_GetMatrices(int numMatrices /*$a0*/)
 MATRIX * GAMELOOP_GetMatrices(int numMatrices)
 { // line 3696, offset 0x80030f28
+#if defined(PC_VERSION)
 	MATRIX* result; // eax
 	u_long* v2; // edx
 
@@ -1154,6 +1169,9 @@ MATRIX * GAMELOOP_GetMatrices(int numMatrices)
 		return 0;
 	gameTrackerX.primPool->nextPrim = v2;
 	return result;
+#else
+	return NULL;
+#endif
 }
 
 

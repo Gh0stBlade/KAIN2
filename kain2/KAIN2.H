@@ -9174,34 +9174,10 @@ static long overrideData[2][5]; // offset 0x800D0C70
 static long overrideCommand[2][5]; // offset 0x800D0CA0
 
 
-extern int gSramFullAlarm; // offset 0x800CEA88
-
-
-static int gSramFullMsgCnt; // offset 0x800CEA8C
-
-
 static long objectOneShotTriggerTbl[3]; // offset 0x800CEA90
 
 
-extern int gSramTotalUsed; // offset 0x800D1508
-
-
-extern int gSramUsedBlocks; // offset 0x800D1504
-
-
-extern int gSramTotalFree; // offset 0x800D150C
-
-
-extern int gSramLargestFree; // offset 0x800D12BC
-
-
-extern int gSramFreeBlocks; // offset 0x800D1500
-
-
 extern struct SoundEffectChannel soundEffectChannelTbl[16]; // offset 0x800D12C0
-
-
-extern struct MusicLoadInfo musicInfo; // offset 0x800D1510
 
 
 extern char soundBuffer[13256]; // offset 0x800D5C08

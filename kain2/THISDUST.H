@@ -443,20 +443,6 @@ static struct _PolytopeList *gPolytopeList; // offset 0x800D0C1C
 
 static int gpSaved; // offset 0x800CE3A4
 
-extern int gSramFreeBlocks; // offset 0x800D1500
-
-extern int gSramFullAlarm; // offset 0x800CEA88
-
-static int gSramFullMsgCnt; // offset 0x800CEA8C
-
-extern int gSramLargestFree; // offset 0x800D12BC
-
-extern int gSramTotalFree; // offset 0x800D150C
-
-extern int gSramTotalUsed; // offset 0x800D1508
-
-extern int gSramUsedBlocks; // offset 0x800D1504
-
 static struct _VertexPool *gVertexPool; // offset 0x800D0C28
 
 static int hack_attract; // offset 0x800CFA70
@@ -602,8 +588,6 @@ static long MoveCodeStreamExtra; // offset 0x800CF538
 extern short MoviePlayed; // offset 0x800D2A6C
 
 extern short MovieToPlay; // offset 0x800D2A70
-
-extern struct MusicLoadInfo musicInfo; // offset 0x800D1510
 
 static struct NewMemTracker newMemTracker; // offset 0x800D18D4
 
@@ -1513,13 +1497,6 @@ struct SpuStVoiceAttr // hashcode: 0xAFDFBA7E (dec: -1344292226)
 	unsigned long buf_addr; // size=0, offset=8
 	unsigned long data_addr; // size=0, offset=12
 };
-
-struct MusicLoadCmd // hashcode: 0x575883B8 (dec: 1465418680)
-{
-	int type; // size=0, offset=0
-	int data; // size=0, offset=4
-};
-
 
 
 struct GameTracker // hashcode: 0x4EB3EFC5 (dec: 1320415173)
@@ -3791,23 +3768,6 @@ struct SOUND_114fake // hashcode: 0xEE28F284 (dec: -299306364)
 		struct _TFace *oldTFace; // size=12, offset=12
 		long hit; // size=0, offset=16
 	} Follow; // size=20, offset=76, found in object files: sound.o, sound.o
-};
-
-
-
-struct MusicLoadInfo // hashcode: 0xC8F67C40 (dec: -923370432)
-{
-	int state; // size=0, offset=0
-	int nextState; // size=0, offset=4
-	int errorStatus; // size=0, offset=8
-	int bankLoaded; // size=0, offset=12
-	int checkMusicDelay; // size=0, offset=16
-	int currentMusicPlane; // size=0, offset=20
-	char currentMusicName[8]; // size=8, offset=24
-	struct MusicLoadCmd commandQueue[4]; // size=32, offset=32
-	int commandIn; // size=0, offset=64
-	int commandOut; // size=0, offset=68
-	int numCmdsInQueue; // size=0, offset=72
 };
 
 struct ObjectPeriodicSound // hashcode: 0x931DBADB (dec: -1826768165)

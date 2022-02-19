@@ -7,7 +7,7 @@ struct _CameraCore_Type // hashcode: 0xD341D51C (dec: -750660324)
 {
 	struct _Position position; // size=6, offset=0
 	short pad1; // size=0, offset=6
-	MATRIX vvNormalWorVecMat[2]; // size=64, offset=8
+	//MATRIX vvNormalWorVecMat[2]; // size=64, offset=8//Disabled by Gh0stBlade, why is this saying incomplete type?
 	long vvPlaneConsts[6]; // size=24, offset=72
 	struct MATRIX* wcTransform; // size=32, offset=96
 	long farPlane; // size=0, offset=100

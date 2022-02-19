@@ -1,6 +1,42 @@
 #ifndef SOUND_H
 #define SOUND_H
 
+struct MusicLoadCmd // hashcode: 0x575883B8 (dec: 1465418680)
+{
+	int type; // size=0, offset=0
+	int data; // size=0, offset=4
+};
+
+struct MusicLoadInfo // hashcode: 0xC8F67C40 (dec: -923370432)
+{
+	int state; // size=0, offset=0
+	int nextState; // size=0, offset=4
+	int errorStatus; // size=0, offset=8
+	int bankLoaded; // size=0, offset=12
+	int checkMusicDelay; // size=0, offset=16
+	int currentMusicPlane; // size=0, offset=20
+	char currentMusicName[8]; // size=8, offset=24
+	struct MusicLoadCmd commandQueue[4]; // size=32, offset=32
+	int commandIn; // size=0, offset=64
+	int commandOut; // size=0, offset=68
+	int numCmdsInQueue; // size=0, offset=72
+};
+
+extern struct MusicLoadInfo musicInfo; // offset 0x800D1510
+
+extern int gSramFreeBlocks; // offset 0x800D1500
+
+extern int gSramFullAlarm; // offset 0x800CEA88
+
+extern int gSramFullMsgCnt; // offset 0x800CEA8C
+
+extern int gSramLargestFree; // offset 0x800D12BC
+
+extern int gSramTotalFree; // offset 0x800D150C
+
+extern int gSramTotalUsed; // offset 0x800D1508
+
+extern int gSramUsedBlocks; // offset 0x800D1504
 
 extern struct SoundEffectChannel * SndOpenSfxChannel(unsigned char *channelNum); // 0x8003E64C
 
