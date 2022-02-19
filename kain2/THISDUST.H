@@ -847,8 +847,6 @@ static long vmRealClock; // offset 0x800CEBD4
 
 extern struct XAVoiceListEntry *voiceList; // offset 0x800CF99C
 
-extern struct XAVoiceTracker voiceTracker; // offset 0x800D5AD4
-
 extern long VRAM_NeedToUpdateMorph; // offset 0x800CF5B4
 
 extern struct _MonsterFunctionTable VWRAITH_FunctionTable; // offset 0x800CF6F4
@@ -2152,26 +2150,6 @@ union DEBUG_224fake // Hashcode: 0x0131C19B (dec: 20038043)
 	struct _Position position; // size=6, offset=0
 	struct _Rotation direction; // size=8, offset=0
 	struct _Position throwVector; // size=6, offset=0
-};
-
-struct XAFileInfo // hashcode: 0xD7260012 (dec: -685375470)
-{
-	int startPos; // size=0, offset=0
-};
-
-struct CdCommand // hashcode: 0x042C215C (dec: 70000988)
-{
-	unsigned short flags; // size=0, offset=0
-	unsigned char unused; // size=0, offset=2
-	unsigned char cdCommand; // size=0, offset=3
-	unsigned char cdCmdParam[4]; // size=4, offset=4
-};
-
-struct VoiceCommand // hashcode: 0xEEB8F864 (dec: -289867676)
-{
-	unsigned char voiceCmd; // size=0, offset=0
-	unsigned char nextVoiceStatus; // size=0, offset=1
-	unsigned short voiceCmdParam; // size=0, offset=2
 };
 
 struct _LoadQueueEntry // hashcode: 0xFEE70962 (dec: -18413214)
@@ -8534,38 +8512,6 @@ struct VOICEXA_175fake // hashcode: 0xD4103ED4 (dec: -737132844)
 		struct _TFace *oldTFace; // size=12, offset=12
 		long hit; // size=0, offset=16
 	} Follow; // size=20, offset=76, found in object files: voicexa.o, voicexa.o
-};
-
-struct XAVoiceListEntry // hashcode: 0xDBE9AB23 (dec: -605443293)
-{
-	unsigned short length; // size=0, offset=0
-};
-
-struct XAVoiceTracker // hashcode: 0x77052065 (dec: 1996824677)
-{
-	struct CdlLOC currentPos; // size=4, offset=0
-	int currentSector; // size=0, offset=4
-	int endSector; // size=0, offset=8
-	void (*prevCallback)(); // size=0, offset=12
-	unsigned char cdResult[8]; // size=8, offset=16
-	struct CdCommand cdCmdQueue[8]; // size=64, offset=24
-	unsigned short requestQueue[4]; // size=8, offset=88
-	struct VoiceCommand voiceCmdQueue[16]; // size=64, offset=96
-	unsigned char cdCmdIn; // size=0, offset=160
-	unsigned char cdCmdOut; // size=0, offset=161
-	unsigned char cdCmdsQueued; // size=0, offset=162
-	unsigned char reqIn; // size=0, offset=163
-	unsigned char reqOut; // size=0, offset=164
-	unsigned char reqsQueued; // size=0, offset=165
-	unsigned char voiceCmdIn; // size=0, offset=166
-	unsigned char voiceCmdOut; // size=0, offset=167
-	unsigned char voiceCmdsQueued; // size=0, offset=168
-	unsigned char unused1; // size=0, offset=169
-	unsigned char voiceStatus; // size=0, offset=170
-	unsigned char cdStatus; // size=0, offset=171
-	short fileNum; // size=0, offset=172
-	short unused2; // size=0, offset=174
-	struct XAFileInfo xaFileInfo[30]; // size=120, offset=176
 };
 
 typedef struct CdlFILTER CdlFILTER;

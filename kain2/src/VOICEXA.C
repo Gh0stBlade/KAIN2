@@ -1,10 +1,13 @@
-#include "THISDUST.H"
+#include "CORE.H"
 #include "VOICEXA.H"
+#include "GAMELOOP.H"
+
+struct XAVoiceTracker voiceTracker; // offset 0x800D5AD4
 
 void VOICEXA_Init()
 {
 	int i;
-	struct CdlFILE fp;
+	CdlFILE fp;
 	struct XAVoiceTracker* vt;
 	char fileName[32];
 
@@ -28,7 +31,7 @@ void VOICEXA_Init()
 
 			sprintf(&fileName[0], "\VOICE\VOICE%02d.XA;", i);
 			
-			if (CdSearchFile(&fp, &fileName[0] == 0))
+			if (CdSearchFile(&fp, &fileName[0]) == 0)
 			{
 				vt->xaFileInfo->startPos = 0;
 			}
@@ -157,12 +160,12 @@ void voiceCmdPlay(struct XAVoiceTracker *vt, short voiceIndex)
 		// Start line: 227
 		// Start offset: 0x800B71A4
 		// Variables:
-			struct CdlFILTER filter; // stack offset -88
-			struct CdlLOC pos; // stack offset -80
-			unsigned char mode; // stack offset -32
-			struct SpuCommonAttr spuattr; // stack offset -72
-			struct XAVoiceListEntry *voice; // $s1
-			struct XAFileInfo *file; // $s0
+			//struct CdlFILTER filter; // stack offset -88
+			//struct CdlLOC pos; // stack offset -80
+			//unsigned char mode; // stack offset -32
+			//struct SpuCommonAttr spuattr; // stack offset -72
+			//struct XAVoiceListEntry *voice; // $s1
+			//struct XAFileInfo *file; // $s0
 	/* end block 1 */
 	// End offset: 0x800B72F8
 	// End Line: 299
@@ -188,7 +191,7 @@ void voiceCmdStop(struct XAVoiceTracker *vt, short cmdParam)
 		// Start line: 303
 		// Start offset: 0x800B7314
 		// Variables:
-			struct SpuCommonAttr spuattr; // stack offset -48
+			//struct SpuCommonAttr spuattr; // stack offset -48
 	/* end block 1 */
 	// End offset: 0x800B7360
 	// End Line: 318
