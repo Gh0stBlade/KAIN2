@@ -2,6 +2,7 @@
 #define DRAWS_H
 
 
+
 extern void depthQPTable() ; // 0x800CE174
 
 extern void depthQBlendStart() ; // 0x800CE178

@@ -1,6 +1,11 @@
 #ifndef __CORE_H
 #define __CORE_H
 
+#ifdef PSX_VERSION
+#include <LIBGTE.H>
+#include <LIBGPU.H>
+#include <LIBSPU.H>
+#else
 #ifdef _WIN32
 #include <Windows.h>
 #include "psyq.h"
@@ -14,6 +19,7 @@
 // wrappers for winapi crap
 #define OutputDebugStringA	printf
 #define vprintf_s(a,b,c,d)	vprintf(a,c,d)
+#endif
 #endif
 
 #include <stdarg.h>
@@ -37,8 +43,9 @@ typedef unsigned char BYTE;
 typedef unsigned long long QWORD;
 typedef unsigned int DWORD;
 typedef unsigned short WORD;
-
+#ifndef PSX_VERSION//?
 typedef unsigned int bool;
+#endif
 #endif
 
 typedef struct _SVector // hashcode: 0x73B07C09 (dec: 1940945929)
