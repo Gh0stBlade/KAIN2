@@ -1,0 +1,84 @@
+#include <Windows.h>
+#include <stdarg.h>
+#include <stdio.h>
+#include "../core.h"
+
+//0001:00000000       _ALUKA_ControllersEnabled  00401000 f   aluka.obj
+//0001:00000020       _ALUKA_SetPitch            00401020 f   aluka.obj
+//0001:00000080       _ALUKA_EnableControllers   00401080 f   aluka.obj
+//0001:00000170       _ALUKA_DisableControllers  00401170 f   aluka.obj
+//0001:00000230       _ALUKA_SetSwimBodyTwist    00401230 f   aluka.obj
+//0001:00000370       _ALUKA_NotDaylight         00401370 f   aluka.obj
+//0001:000003a0       _ALUKA_CapDepth            004013a0 f   aluka.obj
+//0001:00000460       _ALUKA_AngleTooWide        00401460 f   aluka.obj
+//0001:000004e0       _ALUKA_VectorFromPitchYaw  004014e0 f   aluka.obj
+//0001:00000590       _ALUKA_FacingVector        00401590 f   aluka.obj
+//0001:00000660       _ALUKA_SimpleLineCheck     00401660 f   aluka.obj
+//0001:00000720       _ALUKA_TerrainInPath       00401720 f   aluka.obj
+//0001:00000850       _ALUKA_ApplyIncr           00401850 f   aluka.obj
+//0001:00000890       _ALUKA_ApplyForwardAccel   00401890 f   aluka.obj
+//0001:000008f0       _ALUKA_ApplyAngularAccel   004018f0 f   aluka.obj
+//0001:00000990       _ALUKA_ApplyRots           00401990 f   aluka.obj
+//0001:00000b10       _ALUKA_MoveForward         00401b10 f   aluka.obj
+//0001:00000c00       _ALUKA_FixPitch            00401c00 f   aluka.obj
+//0001:00000cc0       _ALUKA_ProportionalLimitsAndAccels 00401cc0 f   aluka.obj
+//0001:00000da0       _ALUKA_FacePoint           00401da0 f   aluka.obj
+//0001:00000ec0       _ALUKA_SetupSwimAnimWOTread 00401ec0 f   aluka.obj
+//0001:00000f70       _ALUKA_SetupSwimAnimWTread 00401f70 f   aluka.obj
+//0001:00000ff0       _ALUKA_SwimToDestination   00401ff0 f   aluka.obj
+//0001:000013d0       _ALUKA_GetRandomDestination 004023d0 f   aluka.obj
+//0001:000014a0       _ALUKA_NearAluka           004024a0 f   aluka.obj
+//0001:00001550       _ALUKA_GetCircleDestination 00402550 f   aluka.obj
+//0001:00001960       _ALUKA_SwimPlanMovement    00402960 f   aluka.obj
+//0001:00001a90       _ALUKA_ResetSwim           00402a90 f   aluka.obj
+//0001:00001bb0       _ALUKA_ShouldJumpIn        00402bb0 f   aluka.obj
+//0001:00001be0       _ALUKA_ShouldJumpOut       00402be0 f   aluka.obj
+//0001:00001c40       _ALUKA_JumpToEntry         00402c40 f   aluka.obj
+//0001:00001d10       _ALUKA_SetJumpVels         00402d10 f   aluka.obj
+//0001:00001e00       _ALUKA_SetHitGround        00402e00 f   aluka.obj
+//0001:00001e50       _ALUKA_JumpTo              00402e50 f   aluka.obj
+//0001:00002330       _ALUKA_ChooseAttack        00403330 f   aluka.obj
+//0001:00002600       _ALUKA_Init                00403600 f   aluka.obj
+
+void MON_Say(struct _Instance *instance, const char* fmt, ...)
+{
+	va_list va;
+	char buf[256];
+
+	va_start(va, fmt);
+	vsprintf_s(buf, sizeof(buf), fmt, va);
+	va_end(va);
+
+	OutputDebugStringA(buf);
+}
+
+//0001:00002760       _ALUKA_CleanUp             00403760 f   aluka.obj
+//0001:00002810       _ALUKA_Message             00403810 f   aluka.obj
+//0001:00002a10       _ALUKA_PursueEntry         00403a10 f   aluka.obj
+//0001:00002ad0       _ALUKA_Pursue              00403ad0 f   aluka.obj
+//0001:00002f20       _ALUKA_AttackEntry         00403f20 f   aluka.obj
+//0001:00002fa0       _ALUKA_Attack              00403fa0 f   aluka.obj
+//0001:00003320       _ALUKA_FleeEntry           00404320 f   aluka.obj
+//0001:00003380       _ALUKA_Flee                00404380 f   aluka.obj
+//0001:000034e0       _ALUKA_WanderEntry         004044e0 f   aluka.obj
+//0001:00003560       _ALUKA_Wander              00404560 f   aluka.obj
+//0001:00003760       _ALUKA_IdleEntry           00404760 f   aluka.obj
+//0001:000037c0       _ALUKA_Idle                004047c0 f   aluka.obj
+//0001:00003930       _ALUKA_LandInWaterEntry    00404930 f   aluka.obj
+//0001:00003a30       _ALUKA_LandInWater         00404a30 f   aluka.obj
+//0001:00003ae0       _ALUKA_HitEntry            00404ae0 f   aluka.obj
+//0001:00003b70       _ALUKA_Hit                 00404b70 f   aluka.obj
+//0001:00003d20       _ALUKA_StunnedEntry        00404d20 f   aluka.obj
+//0001:00003df0       _ALUKA_Stunned             00404df0 f   aluka.obj
+//0001:00003fa0       _ALUKA_ProjectileEntry     00404fa0 f   aluka.obj
+//0001:00003ff0       _ALUKA_Projectile          00404ff0 f   aluka.obj
+//0001:00004440       _ALUKA_SurpriseAttackEntry 00405440 f   aluka.obj
+//0001:00004530       _ALUKA_SurpriseAttack      00405530 f   aluka.obj
+//0001:00004670       _ALUKA_SurprisedEntry      00405670 f   aluka.obj
+//0001:000046b0       _ALUKA_Surprised           004056b0 f   aluka.obj
+//0001:000047e0       _ALUKA_NoticeEntry         004057e0 f   aluka.obj
+//0001:00004820       _ALUKA_Notice              00405820 f   aluka.obj
+//0001:00004960       _ALUKA_EmbraceEntry        00405960 f   aluka.obj
+//0001:000049b0       _ALUKA_Embrace             004059b0 f   aluka.obj
+//0001:00004bf0       _ALUKA_GeneralDeathEntry   00405bf0 f   aluka.obj
+//0001:00004d90       _ALUKA_GeneralDeath        00405d90 f   aluka.obj

@@ -3,9 +3,9 @@
 /* the prototype priestess and barely does a  */
 /* thing in actuality.                        */
 /* ========================================== */
-
+#include <stdlib.h>
 #include "../core.H"
-#include "MONSTER.H"
+//#include "MONSTER.H"
 
 void __cdecl PRIESTS_Init(struct _Instance* instance)
 {
@@ -26,7 +26,7 @@ void __cdecl PRIESTS_Init(struct _Instance* instance)
 		v4 = (struct _Position*)v3;
 		if (!v3)
 		{
-			MON_Say();
+			MON_Say(instance, "ERROR: Out of space for priests variables!\n");
 			mv->extraVars = 0;
 			mv->mvFlags = (mv->mvFlags & ~0x1000) | 0x2000;
 			return;
@@ -55,26 +55,28 @@ void __cdecl PRIESTS_CleanUp(struct _Instance* instance)
 	}
 	MON_CleanUp(instance);
 }
-char __cdecl PRIESTS_Query(struct _Instance* instance, struct evFXHitData* data)
+
+u_long __cdecl PRIESTS_Query(struct _Instance* instance, struct evFXHitData* data)
 {
 	char result; // al
-	int v3; // ecx
+	int aux; // ecx
 
 	if (data != (struct evFXHitData*)30)
 		return MonsterQuery(instance, data);
-	v3 = *((DWORD*)instance->extraData + 1);
-	result = (v3 & 1) != 0;
-	if ((v3 & 2) != 0)
+	aux = ((struct _MonsterVars*)instance->extraData)->auxFlags;
+	result = (aux & 1) != 0;
+	if ((aux & 2) != 0)
 		return result | 2;
 	return result;
 }
+
 void __cdecl PRIESTS_Message(struct _Instance* instance, unsigned int message, unsigned int data)
 {
 	struct _MonsterVars* mv; // edx
 	int v4; // eax
 	int v5; // eax
 	int v6; // esi
-	char** v7; // ecx
+	struct _MonsterAttributes* ma; // ecx
 
 	mv = (struct _MonsterVars*)instance->extraData;
 	if (message == 0x1000017)
@@ -86,25 +88,25 @@ void __cdecl PRIESTS_Message(struct _Instance* instance, unsigned int message, u
 		case 3u:
 		case 5u:
 			v6 = mv->extraVars;
-			v7 = (char**)instance->data;
+			ma = (struct _MonsterAttributes*)instance->data;
 			if (v6)
 			{
 				switch (data)
 				{
 				case 0u:
-					MON_PlayAnimFromList(instance, v7[2], 4, 2);
+					MON_PlayAnimFromList(instance, ma->auxAnimList, 4, 2);
 					*(WORD*)(v6 + 18) = 1;
 					break;
 				case 1u:
-					MON_PlayAnimFromList(instance, v7[2], 9, 1);
+					MON_PlayAnimFromList(instance, ma->auxAnimList, 9, 1);
 					*(WORD*)(v6 + 18) = 2;
 					break;
 				case 3u:
-					MON_PlayAnimFromList(instance, v7[2], 10, 1);
+					MON_PlayAnimFromList(instance, ma->auxAnimList, 10, 1);
 					*(WORD*)(v6 + 18) = 3;
 					break;
 				case 5u:
-					MON_PlayAnimFromList(instance, v7[2], 8, 1);
+					MON_PlayAnimFromList(instance, ma->auxAnimList, 8, 1);
 					*(WORD*)(v6 + 18) = 7;
 					break;
 				default:
@@ -156,16 +158,19 @@ void __cdecl PRIESTS_IdleEntry(struct _Instance* instance)
 		}
 	}
 }
+// TODO: fill me
 void __cdecl PRIESTS_Idle(struct _Instance* instance)
 {}
+
 void __cdecl PRIESTS_PursueEntry(struct _Instance* instance)
 {
-	if ((*(BYTE*)instance->extraData & 4) != 0)
+	if ((((struct _MonsterVars*)instance->extraData)->mvFlags & 4) != 0)
 		MON_PursueEntry(instance);
 }
+
 void __cdecl PRIESTS_Pursue(struct _Instance* instance)
 {
-	if ((*(BYTE*)instance->extraData & 4) != 0)
+	if ((((struct _MonsterVars*)instance->extraData)->mvFlags & 4) != 0)
 	{
 		MON_Pursue(instance);
 	}
@@ -175,23 +180,25 @@ void __cdecl PRIESTS_Pursue(struct _Instance* instance)
 		MON_DefaultQueueHandler(instance);
 	}
 }
+
 void __cdecl PRIESTS_FleeEntry(struct _Instance* instance)
 {
-	DWORD* extraData; // esi
-	char** data; // ecx
-	int v3; // edi
+	struct _MonsterVars* mv; // esi
+	struct _MonsterAttributes* ma; // ecx
+	WORD* extraVars; // edi
 
-	extraData = instance->extraData;
-	data = (char**)instance->data;
-	v3 = extraData[87];
-	if (v3)
+	mv = (struct _MonsterVars*)instance->extraData;
+	ma = (struct _MonsterAttributes*)instance->data;
+	extraVars = mv->extraVars;
+	if (extraVars)
 	{
-		*extraData = *extraData & ~0x31000u | 0x21000;
-		MON_PlayAnimFromList(instance, data[2], 6, 2);
-		extraData[61] = 4;
-		*(WORD*)(v3 + 18) = 0;
+		mv->mvFlags = mv->mvFlags & ~0x31000u | 0x21000;
+		MON_PlayAnimFromList(instance, ma->auxAnimList, 6, 2);
+		mv->mode = 4;
+		extraVars[9] = 0;
 	}
 }
+
 void __cdecl PRIESTS_Flee(struct _Instance* instance)
 {
 	struct _MonsterVars* mv; // eax
@@ -260,15 +267,75 @@ void __cdecl PRIESTS_Flee(struct _Instance* instance)
 	}
 }
 
+// ------------------ unlinked code ------------------
+struct _Instance* __cdecl PRIESTS_InstanceToPossess(struct _Instance* instance)
+{
+	struct _Instance* v1; // esi
+	struct _MonsterVars* mv; // eax
+
+	v1 = (struct _Instance*)*((DWORD*)gameTrackerX.instanceList + 1);
+	if (!v1)
+		return 0;
+	while (1)
+	{
+		if ((INSTANCE_Query(v1, 1) & 8) != 0 && instance != v1)
+		{
+			mv = (struct _MonsterVars*)v1->extraData;
+			if (mv)
+			{
+				if ((mv->mvFlags & 0x20000000) == 0)
+					break;
+			}
+		}
+		v1 = v1->next;
+		if (!v1)
+			return 0;
+	}
+	return v1;
+}
+
+void __cdecl PRIESTS_DoAttackAnim(_Instance* instance, int a2)
+{
+	struct _MonsterAttributes* ma; // ecx
+	WORD* extraVars; // esi
+
+	ma = (struct _MonsterAttributes*)instance->data;
+	extraVars = ((struct _MonsterVars*)instance->extraData)->extraVars;
+	if (extraVars)
+	{
+		switch (a2)
+		{
+		case 0:
+			MON_PlayAnimFromList(instance, ma->auxAnimList, 4, 2);
+			extraVars[9] = 1;
+			break;
+		case 1:
+			MON_PlayAnimFromList(instance, ma->auxAnimList, 9, 1);
+			extraVars[9] = 2;
+			break;
+		case 3:
+			MON_PlayAnimFromList(instance, ma->auxAnimList, 10, 1);
+			extraVars[9] = 3;
+			break;
+		case 5:
+			MON_PlayAnimFromList(instance, ma->auxAnimList, 8, 1);
+			extraVars[9] = 7;
+			break;
+		default:
+			return;
+		}
+	}
+}
+
 extern void HUMAN_DeadEntry(struct _Instance* instance);
 extern void HUMAN_Dead(struct _Instance* instance);
 
 struct _MonsterStateChoice PRIESTS_StateChoiceTable[] =
 {
-	{MONSTER_STATE_IDLE, PRIESTS_IdleEntry, PRIESTS_Idle},
+	{MONSTER_STATE_IDLE,   PRIESTS_IdleEntry,   PRIESTS_Idle},
 	{MONSTER_STATE_PURSUE, PRIESTS_PursueEntry, PRIESTS_Pursue},
-	{MONSTER_STATE_FLEE, PRIESTS_FleeEntry, PRIESTS_Flee},
-	{MONSTER_STATE_DEAD, HUMAN_DeadEntry, HUMAN_Dead},
+	{MONSTER_STATE_FLEE,   PRIESTS_FleeEntry,   PRIESTS_Flee},
+	{MONSTER_STATE_DEAD,   HUMAN_DeadEntry,     HUMAN_Dead},
 	{-1}
 };
 
@@ -276,7 +343,6 @@ _MonsterFunctionTable PRIESTS_FunctionTable =
 {
 	PRIESTS_Init,
 	PRIESTS_CleanUp,
-	0,
 	0,
 	PRIESTS_Query,
 	PRIESTS_Message,

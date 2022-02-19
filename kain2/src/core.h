@@ -8,14 +8,14 @@
 #include "PC/libspu.h"
 #endif
 
-#define SCREEN_WIDTH 512
-#define SCREEN_HEIGHT 240
+#define SCREEN_WIDTH		512
+#define SCREEN_HEIGHT		240
 
-#define ONE_MB 1048576
-#define TWO_MB ONE_MB * 2
-#define BASE_ADDRESS 0x80000000
-#define PACK_MAGIC_USHORT(A, B, C, D) A << 12 | B << 8 | C << 4 | D << 0
-#define DEFAULT_MEM_MAGIC PACK_MAGIC_USHORT(0xB, 0xA, 0xD, 0xE)
+#define ONE_MB				1048576
+#define TWO_MB				ONE_MB * 2
+#define BASE_ADDRESS		0x80000000
+#define PACK_MAGIC_USHORT(A, B, C, D)	(A << 12) | (B << 8) | (C << 4) | (D << 0)
+#define DEFAULT_MEM_MAGIC				PACK_MAGIC_USHORT(0xB, 0xA, 0xD, 0xE)
 
 #define null	0
 
@@ -260,5 +260,6 @@ struct Object // hashcode: 0xEC12E9AC (dec: -334304852)
 };
 
 #include "GAMELOOP.H"
+#include "MONSTER/MONSTER.H"
 
 #endif

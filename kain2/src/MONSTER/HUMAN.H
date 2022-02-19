@@ -33,6 +33,10 @@ struct HUMAN_114fake // hashcode: 0xC7C43F22 (dec: -943440094)
 	} Follow; // size=20, offset=76, found in object files: human.o, human.o
 };
 
+#if defined(_LANGUAGE_C_PLUS_PLUS) || defined(__cplusplus) || defined(c_plusplus)
+extern "C" {
+#endif
+
 extern void HUMAN_WaitForWeapon(struct _Instance *instance, struct GameTracker *gameTracker); // 0x8007CB40
 extern struct _Instance * HUMAN_CreateWeapon(struct _Instance *instance, int weaponid, int segment); // 0x8007CBB0
 extern void HUMAN_Init(struct _Instance *instance); // 0x8007CC84
@@ -49,5 +53,9 @@ extern void HUMAN_Idle(struct _Instance *instance); // 0x8007D378
 extern void HUMAN_Flee(struct _Instance *instance); // 0x8007D530
 extern void HUMAN_GetAngry(); // 0x8007D688
 extern int HUMAN_TypeOfHuman(struct _Instance *instance); // 0x8007D750
+
+#if defined(_LANGUAGE_C_PLUS_PLUS) || defined(__cplusplus) || defined(c_plusplus)
+}
+#endif
 
 #endif

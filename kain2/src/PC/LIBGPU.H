@@ -718,6 +718,8 @@ extern int FntPrint();
 extern int KanjiFntPrint();
 #endif /* _KANJIFNTPRINT_ */
 #endif
+
+#undef LoadImage
 	
 extern DISPENV *GetDispEnv(DISPENV *env);
 extern DISPENV *PutDispEnv(DISPENV *env);

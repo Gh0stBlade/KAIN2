@@ -40,7 +40,7 @@ struct _Instance // hashcode: 0x699A5B3D (dec: 1771723581)
 	long flags2; // size=0, offset=24
 	struct Object* object; // size=76, offset=28
 	struct Intro* intro; // size=0, offset=32
-	void* data; // size=0, offset=36
+	void* data; // size=0, offset=36 _MonsterAttributes*
 	void* introData; // size=0, offset=40
 	struct _Instance* parent; // size=616, offset=44
 	long introNum; // size=0, offset=48
@@ -96,7 +96,7 @@ struct _Instance // hashcode: 0x699A5B3D (dec: 1771723581)
 	long ParentLinkNode; // size=0, offset=312
 	void* InstanceState; // size=0, offset=316
 	char introName[12]; // size=12, offset=320
-	void* extraData; // size=0, offset=332
+	void* extraData; // size=0, offset=332 _MonsterVars*
 	short constrictAngle; // size=0, offset=336
 	short petrifyValue; // size=0, offset=338
 	long xVel; // size=0, offset=340
