@@ -44,6 +44,9 @@
     <Filter Include="PC\d3d">
       <UniqueIdentifier>{fada52eb-9642-4f2b-8ce8-29e9ea55cb3b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="PC\dsound">
+      <UniqueIdentifier>{4e003b03-508e-43b3-a6d7-5ace753e07dc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\PC\libapi.c">
@@ -334,6 +337,9 @@
     <ClCompile Include="src\PC\sndmix.c">
       <Filter>PC</Filter>
     </ClCompile>
+    <ClCompile Include="src\PC\dsound\dsound.cpp">
+      <Filter>PC\dsound</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\PC\libspu.h">
@@ -581,6 +587,9 @@
     </ClInclude>
     <ClInclude Include="src\MONSTER\HUNTER.H">
       <Filter>MONSTER</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PC\snd.h">
+      <Filter>PC</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

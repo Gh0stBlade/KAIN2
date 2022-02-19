@@ -204,6 +204,7 @@
     <ClCompile Include="src\OBTABLE.C" />
     <ClCompile Include="src\PC\async.c" />
     <ClCompile Include="src\PC\d3d\rnd_3d.c" />
+    <ClCompile Include="src\PC\dsound\dsound.cpp" />
     <ClCompile Include="src\PC\libapi.c" />
     <ClCompile Include="src\PC\libetc.c" />
     <ClCompile Include="src\PC\libgpu.c" />
@@ -326,6 +327,7 @@
     <ClInclude Include="src\PC\LIBGPU.H" />
     <ClInclude Include="src\PC\LIBGTE.H" />
     <ClInclude Include="src\PC\libspu.h" />
+    <ClInclude Include="src\PC\snd.h" />
     <ClInclude Include="src\PHYSICS.H" />
     <ClInclude Include="src\PHYSOBS.H" />
     <ClInclude Include="src\PIPE3D.H" />

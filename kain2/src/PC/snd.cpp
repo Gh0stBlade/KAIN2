@@ -1,4 +1,5 @@
 #include <windows.h>
+#include "snd.h"
 
 struct _G2AppDataVM_Type
 {
@@ -17,6 +18,15 @@ struct _G2AppDataVM_Type
 	int Sound_device_id;
 };
 
+int NumSNDDevices,
+	NumSNDDevicesBase,
+	NumSNDDevices2;
+
+SND_DEVICE SNDDeviceList[16];
+SND_DEVICE_INFO SndGuids[16];
+
+extern int __cdecl DSOUND_EnumerateDevices(SND_DEVICE* devs);
+
 void (*SND_ShutdownPtr)();
 void (*SND_SetSamplePtr)(int voiceNum, BYTE* data);
 void (*SND_SetNextSamplePtr)(int voiceNum, BYTE* data);
@@ -24,6 +34,10 @@ void (*SND_FreeSamplePtr)(void *data);
 void (*SND_SetFrequencyPtr)(int voiceNum, float frequency);
 void (*SND_SetVolumePtr)(int voiceNum, int voll, int volr);
 void (*SND_SetTimerFuncPtr)(void (*fn)());
+void* (*SND_UploadSamplePtr)(const void* data, int samples, int a3, int a4, int a5);
+void (*SND_SetChannelInterruptPtr)(int voiceNum, int intr);
+void (*SND_KeyOffPtr)(int voiceNum);
+void (*SND_StopPtr)(int voiceNum);
 
 //0001 : 0007b190       _SoundG2_Init              0047c190 f   snd.obj
 int __cdecl SoundG2_Init(_G2AppDataVM_Type* vm)
@@ -37,6 +51,14 @@ void SoundG2_ShutDown()
 		SND_ShutdownPtr();
 }
 //0001 : 0007b3a0       _SND_EnumerateDevices      0047c3a0 f   snd.obj
+void __cdecl SND_EnumerateDevices()
+{
+	strcpy_s(SNDDeviceList[0].name, sizeof(SNDDeviceList[0].name), "No Sound");
+	NumSNDDevices = 1;
+	NumSNDDevicesBase = 1;
+	NumSNDDevices = DSOUND_EnumerateDevices(&SNDDeviceList[1]) + 1;
+	NumSNDDevices2 = NumSNDDevices;
+}
 //0001 : 0007b400       _SND_Init                  0047c400 f   snd.obj [unused]
 //0001 : 0007b600       _SND_Shutdown              0047c600 f   snd.obj [unused]
 //0001 : 0007b610       _SND_SetSample             0047c610 f   snd.obj
@@ -69,9 +91,31 @@ void SND_SetVolume(int voiceNum, int voll, int volr)
 //0001 : 0007b6f0       _SND_GetStatus             0047c6f0 f   snd.obj
 //0001 : 0007b710       _SND_Start                 0047c710 f   snd.obj
 //0001 : 0007b730       _SND_Stop                  0047c730 f   snd.obj
+void __cdecl SND_Stop(int voiceNum)
+{
+	if (SND_StopPtr)
+		SND_StopPtr(voiceNum);
+}
 //0001 : 0007b750       _SND_KeyOff                0047c750 f   snd.obj
+void __cdecl SND_KeyOff(int voiceNum)
+{
+	if (SND_KeyOffPtr)
+		SND_KeyOffPtr(voiceNum);
+}
 //0001 : 0007b770       _SND_SetChannelInterrupt   0047c770 f   snd.obj
+void __cdecl SND_SetChannelInterrupt(int voiceNum, int intr)
+{
+	if (SND_SetChannelInterruptPtr)
+		SND_SetChannelInterruptPtr(voiceNum, intr);
+}
 //0001 : 0007b790       _SND_UploadSample          0047c790 f   snd.obj
+void* SND_UploadSample(const void* data, int samples, int a3, int a4, int a5)
+{
+	if (SND_UploadSamplePtr)
+		return SND_UploadSamplePtr(data, samples, a3, a4, a5);
+	else
+		return 0;
+}
 //0001 : 0007b7c0       _SND_FreeSample            0047c7c0 f   snd.obj
 void SND_FreeSample(void *data)
 {
