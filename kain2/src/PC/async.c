@@ -1,5 +1,3 @@
-#include <windows.h>
-#include <stdio.h>
 #include "../core.h"
 
 void __cdecl DBG_Print(const char* fmt, ...);

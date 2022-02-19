@@ -1,12 +1,74 @@
-#include "LIBGTE.H"
-#include <stdlib.h>
-#include <string.h>
+#include "../core.h"
+
+#pragma warning(disable: 4244)
+
+// emulator stuff
+typedef struct PAIR16
+{
+	short x, y;
+} PAIR16;
+
+typedef struct GTE
+{
+	u_long lzcs, lzcr;
+	PAIR16 lm_02_10;
+	DWORD pad0[3];
+	MATRIX m_stack[20];
+	PAIR16 cm_00_01,
+		tx2122;
+	u_long flg;
+	PAIR16 tx3031,
+		lm_00_01;
+	CVECTOR cvec;
+	u_long h;
+	PAIR16 cm_11_12,
+		cm_02_10;
+	u_long backb,
+		pad1,
+		farb;
+	PAIR16 tx1220;
+	u_long stack_pos;
+	long sx2, sy2,
+		sz0;
+	long sz123[3];
+	PAIR16 cm_20_21,
+		pad5;
+	PAIR16 sv012_z[3],
+		cm_22;
+	u_long dqa;
+	PAIR16 lm_22;
+	u_long backg,
+		dqb,
+		farg;
+	PAIR16 tx32;
+	long ir0, ir3, ir2, ir1,
+		ofy, ofx;
+	u_long backr;
+	long zsf3, zsf4,
+		pad2;
+	CVECTOR ncol210[3];
+	u_long farr;
+	PAIR16 lm_11_12;
+	long otz,
+		tm_y,
+		tm_x,
+		tm_z,
+		pad3;
+	PAIR16 sxy0[3];
+	long mac1, mac2, mac0, mac3,
+		pad4;
+	PAIR16 lm_20_21,
+		tx1011,
+		sv012xy[3];
+} GTE;
 
 #define FIXROT(x)	((unsigned)x) & 0xfff
 
 typedef signed __int64 s64;
 typedef unsigned __int64 u64;
 typedef signed int s32;
+
+static GTE gte;
 
 static MATRIX M_id =
 {
@@ -88,9 +150,15 @@ static short rsin_tbl[] =
 //0001:00028de0       _gte_RTPS                  00429de0 f   libgte.obj
 //0001:00029140       _gte_RTPT                  0042a140 f   libgte.obj
 //0001:00029490       _gte_MVMVA                 0042a490 f   libgte.obj
+void gte_MVMVA(int a1, int cv, int a3, int a4, int a5)
+{}
 //0001:000297d0       _gte_DPCL                  0042a7d0 f   libgte.obj
 //0001:000299e0       _gte_DPCS                  0042a9e0 f   libgte.obj
+void gte_DPCS()
+{}
 //0001:00029bd0       _gte_DPCT                  0042abd0 f   libgte.obj
+void gte_DPCT()
+{}
 //0001:00029de0       _gte_INTPL                 0042ade0 f   libgte.obj
 //0001:00029fd0       _gte_SQR                   0042afd0 f   libgte.obj
 //0001:0002a0a0       _gte_NCS                   0042b0a0 f   libgte.obj
@@ -135,7 +203,17 @@ static short rsin_tbl[] =
 //0001:0002c4d0       _gte_ldopv1                0042d4d0 f   libgte.obj
 //0001:0002c4f0       _gte_ldopv2                0042d4f0 f   libgte.obj
 //0001:0002c510       _gte_ldlzc                 0042d510 f   libgte.obj
+void gte_ldlzc(u_long lzc)
+{
+	gte.lzcs = lzc;
+}
 //0001:0002c520       _gte_ldbkdir               0042d520 f   libgte.obj
+void gte_ldbkdir(u_long r, u_long g, u_long b)
+{
+	gte.backr = r;
+	gte.backg = g;
+	gte.backb = b;
+}
 //0001:0002c540       _gte_ldfcdir               0042d540 f   libgte.obj
 //0001:0002c560       _gte_ldsvrtrow0            0042d560 f   libgte.obj
 //0001:0002c580       _gte_ldsvllrow0            0042d580 f   libgte.obj
@@ -197,6 +275,7 @@ static short rsin_tbl[] =
 //0001:0002cc40       _gte_stfc                  0042dc40 f   libgte.obj
 //0001:0002cc60       _gte_mvlvtr                0042dc60 f   libgte.obj
 //0001:0002cc90       _gte_nop                   0042dc90 f   libgte.obj
+void gte_nop() {}
 //0001:0002cca0       _gte_subdvl                0042dca0 f   libgte.obj
 //0001:0002cce0       _gte_subdvd                0042dce0 f   libgte.obj
 //0001:0002cd20       _gte_adddvl                0042dd20 f   libgte.obj
@@ -249,14 +328,86 @@ MATRIX* CompMatrix(MATRIX* m0, MATRIX* m1, MATRIX* m2)
 	return m2;
 }
 //0001:0002d2b0       _CompMatrixLV              0042e2b0 f   libgte.obj
+MATRIX* CompMatrixLV(MATRIX* m0, MATRIX* m1, MATRIX* m2)
+{
+	gte.tx1011 = *(PAIR16*)&m0->m[0][0];
+	gte.tx1220 = *(PAIR16*)&m0->m[0][2];
+	gte.tx2122 = *(PAIR16*)&m0->m[1][1];
+	gte.tx3031 = *(PAIR16*)&m0->m[2][0];
+	gte.tx32 = *(PAIR16*)&m0->m[2][2];
+	gte.ir1 = m1->m[0][0];
+	gte.ir2 = m1->m[1][0];
+	gte.ir3 = m1->m[2][0];
+	gte_MVMVA(1, 0, 3, 3, 0);
+	m2->m[0][0] = gte.ir1;
+	m2->m[1][0] = gte.ir2;
+	m2->m[2][0] = gte.ir3;
+	gte.ir1 = m1->m[0][1];
+	gte.ir2 = m1->m[1][1];
+	gte.ir3 = m1->m[2][1];
+	gte_MVMVA(1, 0, 3, 3, 0);
+	m2->m[0][1] = gte.ir1;
+	m2->m[1][1] = gte.ir2;
+	m2->m[2][1] = gte.ir3;
+	gte.ir1 = m1->m[0][2];
+	gte.ir2 = m1->m[1][2];
+	gte.ir3 = m1->m[2][2];
+	gte_MVMVA(1, 0, 3, 3, 0);
+	m2->m[0][2] = gte.ir1;
+	m2->m[1][2] = gte.ir2;
+	m2->m[2][2] = gte.ir3;
+	gte.tm_x = m0->t[0];
+	gte.tm_y = m0->t[1];
+	gte.tm_z = m0->t[2];
+	gte.ir1 = m1->t[0];
+	gte.ir2 = m1->t[1];
+	gte.ir3 = m1->t[2];
+	gte_MVMVA(1, 0, 3, 3, 0);
+	m2->t[0] = gte.mac1;
+	m2->t[1] = gte.mac2;
+	m2->t[2] = gte.mac3;
+	return m2;
+}
 //0001:0002d440       _DpqColor                  0042e440 f   libgte.obj
+void DpqColor(CVECTOR* v0, long p, CVECTOR* v1)
+{
+	CVECTOR v3; // ecx
+
+	v3 = *v0;
+	gte.ir0 = p;
+	gte.cvec = v3;
+	gte_DPCS();
+	*v1 = gte.ncol210[2];
+}
 //0001:0002d470       _DpqColor3                 0042e470 f   libgte.obj
+void __cdecl DpqColor3(CVECTOR* v0, CVECTOR* v1, CVECTOR* v2, long p, CVECTOR* v3, CVECTOR* v4, CVECTOR* v5)
+{
+	gte.ncol210[0] = *v0;
+	gte.ncol210[1] = *v1;
+	gte.ncol210[2] = *v2;
+	gte.cvec = *v2;
+	gte.ir0 = p;
+	gte_DPCT();
+	*v3 = gte.ncol210[0];
+	*v4 = gte.ncol210[1];
+	*v5 = gte.ncol210[2];
+}
 //0001:0002d4d0       _DpqColorLight             0042e4d0 f   libgte.obj
 //0001:0002d520       _FlipRotMatrixX            0042e520 f   libgte.obj
 //0001:0002d550       _FlipTRX                   0042e550 f   libgte.obj
 //0001:0002d560       _InitGeom                  0042e560 f   libgte.obj
 //0001:0002d580       _Intpl                     0042e580 f   libgte.obj
 //0001:0002d5c0       _LightColor                0042e5c0 f   libgte.obj
+void __cdecl LightColor(VECTOR* v0, VECTOR* v1)
+{
+	gte.ir1 = v0->vx;
+	gte.ir2 = v0->vy;
+	gte.ir3 = v0->vz;
+	gte_MVMVA(1, 2, 3, 1, 1);
+	v1->vx = gte.ir1;
+	v1->vy = gte.ir2;
+	v1->vz = gte.ir3;
+}
 //0001:0002d610       _LoadAverage0              0042e610 f   libgte.obj
 //0001:0002d6a0       _LoadAverage12             0042e6a0 f   libgte.obj
 //0001:0002d730       _LoadAverageByte           0042e730 f   libgte.obj
@@ -264,7 +415,21 @@ MATRIX* CompMatrix(MATRIX* m0, MATRIX* m1, MATRIX* m2)
 //0001:0002d830       _LoadAverageShort0         0042e830 f   libgte.obj
 //0001:0002d8c0       _LoadAverageShort12        0042e8c0 f   libgte.obj
 //0001:0002d950       _LocalLight                0042e950 f   libgte.obj
+void __cdecl LocalLight(SVECTOR* v0, VECTOR* v1)
+{
+	gte.sv012xy[0] = *(PAIR16*)&v0->vx;
+	gte.sv012_z[0] = *(PAIR16*)&v0->vz;
+	gte_MVMVA(1, 1, 0, 3, 1);
+	v1->vx = gte.ir1;
+	v1->vy = gte.ir2;
+	v1->vz = gte.ir3;
+}
 //0001:0002d9a0       _Lzc                       0042e9a0 f   libgte.obj
+long Lzc(long data)
+{
+	gte.lzcs = data;
+	return gte.lzcr;
+}
 //0001:0002d9b0       _MulMatrix                 0042e9b0 f   libgte.obj
 MATRIX* MulMatrix(MATRIX* m0, MATRIX* m1)
 {
@@ -305,7 +470,42 @@ MATRIX* MulMatrix2(MATRIX* m0, MATRIX* m1)
 //0001:0002e390       _OuterProduct12SV          0042f390 f   libgte.obj
 //0001:0002e400       _OuterProduct12SVL         0042f400 f   libgte.obj
 //0001:0002e470       _PopMatrix                 0042f470 f   libgte.obj
+void PopMatrix()
+{
+	u_long stack_pos; // eax
+	MATRIX* v1; // eax
+
+	stack_pos = gte.stack_pos;
+	if ((int)gte.stack_pos > 0)
+	{
+		--gte.stack_pos;
+		v1 = &gte.m_stack[stack_pos - 1];
+		gte.tx1011 = *(PAIR16*)&v1->m[0][0];
+		gte.tx1220 = *(PAIR16*)&v1->m[0][2];
+		gte.tx2122 = *(PAIR16*)&v1->m[1][1];
+		gte.tx3031 = *(PAIR16*)&v1->m[2][0];
+		gte.tx32 = *(PAIR16*)&v1->m[2][2];
+	}
+}
 //0001:0002e4c0       _PushMatrix                0042f4c0 f   libgte.obj
+void PushMatrix()
+{
+	MATRIX* v0; // eax
+
+	if ((int)gte.stack_pos < 20)
+	{
+		v0 = &gte.m_stack[gte.stack_pos];
+		*(PAIR16*)&v0->m[0][0] = gte.tx1011;
+		*(PAIR16*)&v0->m[0][2] = gte.tx1220;
+		*(PAIR16*)&v0->m[1][1] = gte.tx2122;
+		*(PAIR16*)&v0->m[2][0] = gte.tx3031;
+		*(PAIR16*)&v0->m[2][2] = gte.tx32;
+		v0->t[0] = gte.tm_x;
+		v0->t[1] = gte.tm_y;
+		v0->t[2] = gte.tm_z;
+		++gte.stack_pos;
+	}
+}
 //0001:0002e530       _ratan2                    0042f530 f   libgte.obj
 //0001:0002e5f0       _rcos                      0042f5f0 f   libgte.obj
 int rcos(int r)
@@ -464,29 +664,172 @@ MATRIX* ScaleMatrix(MATRIX* m, VECTOR* v)
 	return m;
 }
 //0001:00030f20       _SetBackColor              00431f20 f   libgte.obj
+void SetBackColor(long rbk, long gbk, long bbk)
+{
+	gte.backr = 16 * rbk;
+	gte.backg = 16 * gbk;
+	gte.backb = 16 * bbk;
+}
 //0001:00030f50       _SetColorMatrix            00431f50 f   libgte.obj
+void SetColorMatrix(MATRIX* m)
+{
+	gte.cm_00_01 = *(PAIR16*)&m->m[0][0];
+	gte.cm_02_10 = *(PAIR16*)&m->m[0][2];
+	gte.cm_11_12 = *(PAIR16*)&m->m[1][1];
+	gte.cm_20_21 = *(PAIR16*)&m->m[2][0];
+	gte.cm_22 = *(PAIR16*)&m->m[2][2];
+}
 //0001:00030f80       _SetDQA                    00431f80 f   libgte.obj
+void SetDQA(int dqa)
+{
+	gte.dqa = dqa;
+}
 //0001:00030f90       _SetDQB                    00431f90 f   libgte.obj
+void SetDQB(int dqb)
+{
+	gte.dqb = dqb;
+}
 //0001:00030fa0       _SetFarColor               00431fa0 f   libgte.obj
+void SetFarColor(long rfc, long gfc, long bfc)
+{
+	gte.farr = 16 * rfc;
+	gte.farg = 16 * gfc;
+	gte.farb = 16 * bfc;
+}
 //0001:00030fd0       _SetFogFar                 00431fd0 f   libgte.obj
+void SetFogFar(long a, long h){}
 //0001:00030fe0       _SetFogNear                00431fe0 f   libgte.obj
+void SetFogNear(long a, long h){}
 //0001:00030ff0       _SetFogNearFar             00431ff0 f   libgte.obj
+void SetFogNearFar(long a, long b, long h)
+{
+	int diff; // ecx
+	int dqa; // eax
+
+	diff = b - a;
+	if (b - a >= 100)
+	{
+		dqa = -256 * (a * b / diff) / h;
+		if (dqa < -32768) dqa = -32768;
+		if (dqa >  32767) dqa = 32767;
+		gte.dqa = dqa;
+		gte.dqb = ((b << 12) / diff) << 12;
+	}
+}
 //0001:00031050       _SetGeomOffset             00432050 f   libgte.obj
+void SetGeomOffset(long ofx, long ofy)
+{
+	gte.ofx = ofx << 16;
+	gte.ofy = ofy << 16;
+}
 //0001:00031070       _SetGeomScreen             00432070 f   libgte.obj
+void SetGeomScreen(long h)
+{
+	gte.h = h;
+}
 //0001:00031080       _SetLightMatrix            00432080 f   libgte.obj
+void SetLightMatrix(MATRIX* a1)
+{
+	gte.lm_00_01 = *(PAIR16*)&a1->m[0][0];
+	gte.lm_02_10 = *(PAIR16*)&a1->m[0][2];
+	gte.lm_11_12 = *(PAIR16*)&a1->m[1][1];
+	gte.lm_20_21 = *(PAIR16*)&a1->m[2][0];
+	gte.lm_22 = *(PAIR16*)&a1->m[2][2];
+}
 //0001:000310b0       _SetRGBcd                  004320b0 f   libgte.obj
+void SetRGBcd(CVECTOR* v)
+{
+	gte.cvec = *v;
+}
 //0001:000310c0       _SetRotMatrix              004320c0 f   libgte.obj
+void SetRotMatrix(MATRIX * m)
+{
+	gte.tx1011 = *(PAIR16*)&m->m[0][0];
+	gte.tx1220 = *(PAIR16*)&m->m[0][2];
+	gte.tx2122 = *(PAIR16*)&m->m[1][1];
+	gte.tx3031 = *(PAIR16*)&m->m[2][0];
+	gte.tx32 = *(PAIR16*)&m->m[2][2];
+}
 //0001:000310f0       _SetTransMatrix            004320f0 f   libgte.obj
+void SetTransMatrix(MATRIX* m)
+{
+	gte.tm_x = m->t[0];
+	gte.tm_y = m->t[1];
+	gte.tm_z = m->t[2];
+}
 //0001:00031110       _SetTransVector            00432110 f   libgte.obj
+void SetTransVector(VECTOR* m)
+{
+	gte.tm_x = m->vx;
+	gte.tm_y = m->vy;
+	gte.tm_z = m->vz;
+}
 //0001:00031130       _Square0                   00432130 f   libgte.obj
 //0001:000311f0       _Square12                  004321f0 f   libgte.obj
 //0001:000312c0       _TransMatrix               004322c0 f   libgte.obj
+MATRIX* TransMatrix(MATRIX* m, VECTOR* v)
+{
+	m->t[0] = v->vx;
+	m->t[1] = v->vy;
+	m->t[2] = v->vz;
+	return m;
+}
 //0001:000312e0       _TransposeMatrix           004322e0 f   libgte.obj
+MATRIX* TransposeMatrix(MATRIX* m0, MATRIX* m1)
+{
+	m1->m[0][0] = m0->m[0][0];
+	m1->m[1][0] = m0->m[0][1];
+	m1->m[2][0] = m0->m[0][2];
+	m1->m[0][1] = m0->m[1][0];
+	m1->m[1][1] = m0->m[1][1];
+	m1->m[2][1] = m0->m[1][2];
+	m1->m[0][2] = m0->m[2][0];
+	m1->m[1][2] = m0->m[2][1];
+	m1->m[2][2] = m0->m[2][2];
+	return m1;
+}
 //0001:00031330       _gte_ldsvrtrow2            00432330 f   libgte.obj
+void gte_ldsvrtrow2(SVECTOR* v)
+{
+	gte.tx3031 = *(PAIR16*)&v->vx;
+	gte.tx32 = *(PAIR16*)&v->vz;
+}
 //0001:00031350       _gte_stv0                  00432350 f   libgte.obj
+void gte_stv0(SVECTOR* v)
+{
+	*(PAIR16*)&v->vx = gte.sv012xy[0];
+	*(PAIR16*)&v->vz = gte.sv012_z[0];
+}
 //0001:00031370       _gte_stv1                  00432370 f   libgte.obj
+void gte_stv1(SVECTOR* v)
+{
+	*(PAIR16*)&v->vx = gte.sv012xy[1];
+	*(PAIR16*)&v->vz = gte.sv012_z[1];
+}
 //0001:00031390       _gte_stv2                  00432390 f   libgte.obj
+void gte_stv2(SVECTOR* v)
+{
+	*(PAIR16*)&v->vx = gte.sv012xy[2];
+	*(PAIR16*)&v->vz = gte.sv012_z[2];
+}
 //0001:000313b0       _gte_lddqa                 004323b0 f   libgte.obj
+void gte_lddqa(u_long dqa)
+{
+	gte.dqa = dqa;
+}
 //0001:000313c0       _gte_lddqb                 004323c0 f   libgte.obj
+void gte_lddqb(u_long dqb)
+{
+	gte.dqb = dqb;
+}
 //0001:000313d0       _gte_lddqab                004323d0 f   libgte.obj
+void gte_lddqab(u_long dqa, u_long dqb)
+{
+	gte.dqa = dqa;
+	gte.dqb = dqb;
+}
 //0001:000313f0       _gte_stmac0                004323f0 f   libgte.obj
+void gte_stmac0(long* a1)
+{
+	*a1 = gte.mac0;
+}
