@@ -9,6 +9,7 @@ EXTERN_C SND_DEVICE SNDDeviceList[16];
 EXTERN_C SND_DEVICE_INFO SndGuids[16];
 
 void __cdecl SNDMIX_Init();
+void __cdecl SNDMIX_Shutdown();
 void __cdecl SNDMIX_Mix(WORD* sample, int size);
 void __cdecl DBG_Print(const char* fmt, ...);
 
@@ -28,19 +29,15 @@ HANDLE hThread;
 
 BOOL WINAPI DSCallback(LPGUID lpGuid, LPCSTR lpcstrDescription, LPCSTR lpcstrModule, LPVOID lpContext)
 {
-	int index; // edx
-	SND_DEVICE_INFO* guid; // edi
-
-	index = SndDevCurIndex;
 	if (lpGuid)
 	{
-		guid = &SndGuids[SndDevCurIndex];
+		SND_DEVICE_INFO* guid = &SndGuids[SndDevCurIndex];
 		guid->Guid = *lpGuid;
 		SndGuids[SndDevCurIndex].pGuid = &guid->Guid;
 	}
 	else SndGuids[SndDevCurIndex].pGuid = nullptr;
 
-	pSndDevs->index = index;
+	pSndDevs->index = SndDevCurIndex;
 	strcpy_s(pSndDevs->name, sizeof(pSndDevs->name), lpcstrDescription);
 	++SndDevCurIndex;
 	++pSndDevs;
@@ -134,8 +131,6 @@ int __cdecl DSOUND_Init(HWND hWnd, int index)
 }
 
 //0001:0007b130       _DSOUND_Shutdown           0047c130 f   dsound.obj
-EXTERN_C void SNDMIX_Shutdown();
-
 void __cdecl DSOUND_Shutdown()
 {
 #if 0

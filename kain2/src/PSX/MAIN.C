@@ -1,4 +1,5 @@
-#include "CORE.H"
+#include <stddef.h>
+#include "../CORE.H"
 #include "MAIN.H"
 #include "../G2/MAING2.H"
 #include "../MEMPACK.H"
@@ -18,31 +19,16 @@
 #include "../CINEMA/CINEPSX.H"
 #include "DRAWS.H"
 
-#include <LIBAPI.H>
-#include <LIBGPU.H>
-#include <LIBETC.H>
-
 char mainOptionsInit; // offset 0x800CE560
-
 struct MainTracker mainTrackerX; // offset 0x800D121C
-
 long gTimerEnabled; // offset 0x800CE8D4
-
 unsigned long __timerEvent; // offset 0x800D0F84
-
 int nosound; // offset 0x800CE568
-
 int nomusic; // offset 0x800CE56C
-
 int devstation; // offset 0x800D0E68
-
 struct BLK_FILL clearRect[2]; // offset 0x800D0F88
-
 DRAWENV draw[2]; // offset 0x800D0E6C
-
 DISPENV disp[2]; // offset 0x800D0E40
-
-#include <stddef.h>
 
 void ClearDisplay()
 {

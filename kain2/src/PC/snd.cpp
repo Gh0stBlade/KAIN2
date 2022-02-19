@@ -1,23 +1,6 @@
 #include <windows.h>
 #include "snd.h"
 
-struct _G2AppDataVM_Type
-{
-	HINSTANCE hInstance;
-	HWND hWindow;
-	HWND hWnd;
-	int Screen_width;
-	int Screen_height;
-	int Screen_depth;
-	int Gamma_level;
-	int Is_windowed;
-	int Render_device_id;
-	int Triple_buffer;
-	int VSync;
-	int Filter;
-	int Sound_device_id;
-};
-
 int NumSNDDevices,
 	NumSNDDevicesBase,
 	NumSNDDevices2;
@@ -45,22 +28,23 @@ extern void* __cdecl SNDMIX_UploadSample(const void* data, int samples, int a3, 
 extern void __cdecl SNDMIX_FreeSample(void* ptr);
 extern void __cdecl SNDMIX_SetTimerFunc(void(__cdecl* fn)());
 
-void (*SND_ShutdownPtr)();
-void (*SND_SetSamplePtr)(int voiceNum, BYTE* data);
-BYTE* (*SND_GetSamplePtr)(int voiceNum);
-void (*SND_SetNextSamplePtr)(int voiceNum, BYTE* data);
-BYTE* (*SND_GetNextSamplePtr)(int voiceNum);
-void (*SND_FreeSamplePtr)(void *data);
-void (*SND_SetFrequencyPtr)(int voiceNum, float frequency);
-void (*SND_SetVolumePtr)(int voiceNum, int voll, int volr);
-void (*SND_SetTimerFuncPtr)(void (*fn)());
-void* (*SND_UploadSamplePtr)(const void* data, int samples, int a3, int a4, int a5);
-void (*SND_SetChannelInterruptPtr)(int voiceNum, int intr);
-void (*SND_KeyOffPtr)(int voiceNum);
-void (*SND_StopPtr)(int voiceNum);
-void (*SND_SetLoopModePtr)(int voiceNum, int mode);
-void (*SND_StartPtr)(int voiceNum);
-int (*SND_GetStatusPtr)(int voiceNum);
+int (__cdecl* SND_InitPtr)(HWND hWnd, int index);
+void (__cdecl* SND_ShutdownPtr)();
+void (__cdecl* SND_SetSamplePtr)(int voiceNum, BYTE* data);
+BYTE* (__cdecl* SND_GetSamplePtr)(int voiceNum);
+void (__cdecl* SND_SetNextSamplePtr)(int voiceNum, BYTE* data);
+BYTE* (__cdecl* SND_GetNextSamplePtr)(int voiceNum);
+void (__cdecl* SND_FreeSamplePtr)(void *data);
+void (__cdecl* SND_SetFrequencyPtr)(int voiceNum, float frequency);
+void (__cdecl* SND_SetVolumePtr)(int voiceNum, int voll, int volr);
+void (__cdecl* SND_SetTimerFuncPtr)(void (*fn)());
+void* (__cdecl* SND_UploadSamplePtr)(const void* data, int samples, int a3, int a4, int a5);
+void (__cdecl* SND_SetChannelInterruptPtr)(int voiceNum, int intr);
+void (__cdecl* SND_KeyOffPtr)(int voiceNum);
+void (__cdecl* SND_StopPtr)(int voiceNum);
+void (__cdecl* SND_SetLoopModePtr)(int voiceNum, int mode);
+void (__cdecl* SND_StartPtr)(int voiceNum);
+int (__cdecl* SND_GetStatusPtr)(int voiceNum);
 
 //0001 : 0007b190       _SoundG2_Init              0047c190 f   snd.obj
 int __cdecl SoundG2_Init(_G2AppDataVM_Type* vm)
@@ -73,7 +57,7 @@ int __cdecl SoundG2_Init(_G2AppDataVM_Type* vm)
 		{
 			init = nullptr;
 			SND_ShutdownPtr = nullptr;
-			//SND_InitPtr = 0;
+			SND_InitPtr = nullptr;
 			SND_SetSamplePtr = nullptr;
 			SND_SetNextSamplePtr = nullptr;
 			SND_GetSamplePtr = nullptr;
@@ -94,7 +78,7 @@ int __cdecl SoundG2_Init(_G2AppDataVM_Type* vm)
 		{
 			init = DSOUND_Init;
 			SND_ShutdownPtr = DSOUND_Shutdown;
-			//SND_InitPtr = DSOUND_Init;
+			SND_InitPtr = DSOUND_Init;
 			SND_SetSamplePtr = SNDMIX_SetSample;
 			SND_SetNextSamplePtr = SNDMIX_SetNextSample;
 			SND_GetSamplePtr = SNDMIX_GetSample;
@@ -119,7 +103,7 @@ int __cdecl SoundG2_Init(_G2AppDataVM_Type* vm)
 	return 0;
 }
 //0001 : 0007b390       _SoundG2_ShutDown          0047c390 f   snd.obj
-void SoundG2_ShutDown()
+void __cdecl SoundG2_ShutDown()
 {
 	if (SND_ShutdownPtr)
 		SND_ShutdownPtr();

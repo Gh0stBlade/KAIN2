@@ -1,7 +1,7 @@
 #ifndef __CORE_H
 #define __CORE_H
 
-#ifdef PC_VERSION || PSXPC_VERSION
+#if defined(PC_VERSION) || defined(PSXPC_VERSION)
 #include <Windows.h>
 #include "psyq.h"
 #include "PC/LIBGTE.H"

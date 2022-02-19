@@ -203,6 +203,7 @@
     <ClCompile Include="src\MONSTER\WORSHIP.C" />
     <ClCompile Include="src\OBTABLE.C" />
     <ClCompile Include="src\PC\async.c" />
+    <ClCompile Include="src\PC\d3d\RenderRA.C" />
     <ClCompile Include="src\PC\d3d\rnd_3d.c" />
     <ClCompile Include="src\PC\dsound\dsound.cpp" />
     <ClCompile Include="src\PC\libapi.c" />

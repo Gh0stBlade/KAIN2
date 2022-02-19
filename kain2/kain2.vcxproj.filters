@@ -340,6 +340,9 @@
     <ClCompile Include="src\PC\dsound\dsound.cpp">
       <Filter>PC\dsound</Filter>
     </ClCompile>
+    <ClCompile Include="src\PC\d3d\RenderRA.C">
+      <Filter>PC\d3d</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\PC\libspu.h">
