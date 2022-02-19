@@ -629,8 +629,7 @@ int MainG2(void *appData)
 		MAIN_DoMainInit();
 		//s4 = &InterfaceItems[0];
 		mainTracker->mainState = 6;
-		mainTracker->previousState = 6;
-
+		mainTracker->movieNum = 0;
 		//loc_800394D4
 		switch (mainTrackerX.mainState)
 		{
