@@ -130,15 +130,48 @@ void LOAD_CdReadReady(unsigned char intr, unsigned char *result)
 				bytes = 2048;
 			}
 
-			CdGetSector(&crap, 3);
-
 			loadStatus.bytesTransferred = bytes;
 			loadStatus.state = 4;
+
+			CdGetSector(&crap, 3);
+
 			if (loadStatus.currentSector == CdPosToInt((CdlLOC*)&crap))
 			{
-				loadStatus.currentSector++;
-				CdGetSector(loadStatus.currentQueueFile.readCurDest, bytes >> 2);
+#if !defined(PSXPC_VERSION)
+					loadStatus.currentSector++;
+					CdGetSector(loadStatus.currentQueueFile.readCurDest, bytes >> 2);
+					LOAD_CdDataReady();
+#else
+				//Because the emu is mostly single threaded we can't continuously call the callback.
+				unsigned int numSectorsToRead = (loadStatus.currentQueueFile.readSize - loadStatus.currentQueueFile.readCurSize) / 2048;
+				unsigned int numRemainingDataToRead = (loadStatus.currentQueueFile.readSize - loadStatus.currentQueueFile.readCurSize) % 2048;
+				char* dest = (char*)loadStatus.currentQueueFile.readCurDest;
+
+				for (int i = 0; i < numSectorsToRead; i++)
+				{
+					loadStatus.currentSector++;
+					CdGetSector(dest, 2048 >> 2);
+
+					CdIntToPos(loadStatus.currentSector, &loc);
+					CdControl(CdlReadN, &loc.minute, NULL);
+
+					dest += 2048;
+				}
+
+				if (numRemainingDataToRead != 0)
+				{
+					loadStatus.currentSector++;
+					CdGetSector(dest, numRemainingDataToRead >> 2);
+
+					CdIntToPos(loadStatus.currentSector, &loc);
+					CdControl(CdlReadN, &loc.minute, NULL);
+					dest += numRemainingDataToRead;
+				}
+
+				loadStatus.bytesTransferred = (loadStatus.currentQueueFile.readSize - loadStatus.currentQueueFile.readCurSize);
+					
 				LOAD_CdDataReady();
+#endif
 			}
 			else
 			{
