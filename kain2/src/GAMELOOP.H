@@ -130,9 +130,16 @@ typedef struct GameTracker // hashcode: 0x4EB3EFC5 (dec: 1320415173)
 extern "C" {
 #endif
 
+extern unsigned long(**gOt[2]); // offset 0x800D0C0C
+extern struct LightInfo* gLightInfo; // offset 0x800D0C2C
 extern struct _InstanceList* instanceList; // offset 0x800D0C20
 extern struct _InstancePool* instancePool; // offset 0x800D0C24
 extern struct GameTracker gameTrackerX; // offset 0x800D0FAC
+extern struct _PrimPool(*primPool[2]); // offset 0x800D0C14
+extern struct _VertexPool* gVertexPool; // offset 0x800D0C28
+extern void* planningPool;
+extern void* enemyPlanPool; // offset 0x800D0C30
+extern struct _ObjectTracker* GlobalObjects; // offset 0x800D0C38
 
 extern void GAMELOOP_AllocStaticMemory(); // 0x8002D7C8
 extern void GAMELOOP_InitGameTracker(); // 0x8002D8B8

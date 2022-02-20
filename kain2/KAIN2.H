@@ -8964,13 +8964,7 @@ extern struct _FXTracker *gFXT; // offset 0x800D0C44
 extern unsigned long StackSave; // offset 0x800D0C54
 
 
-static unsigned long (**gOt[2]); // offset 0x800D0C0C
-
-
 extern char *primBase; // offset 0x800D0C5C
-
-
-static struct _PrimPool (*primPool[2]); // offset 0x800D0C14
 
 
 static struct _PolytopeList *gPolytopeList; // offset 0x800D0C1C
@@ -8982,22 +8976,7 @@ static struct _InstanceList *instanceList; // offset 0x800D0C20
 static struct _InstancePool *instancePool; // offset 0x800D0C24
 
 
-static struct _VertexPool *gVertexPool; // offset 0x800D0C28
-
-
-static struct LightInfo *gLightInfo; // offset 0x800D0C2C
-
-
 extern struct _FXTracker *fxTracker; // offset 0x800D0C58
-
-
-static void *enemyPlanPool; // offset 0x800D0C30
-
-
-static void *planningPool; // offset 0x800D0C34
-
-
-static struct _ObjectTracker *GlobalObjects; // offset 0x800D0C38
 
 
 extern short RENDER_currentStreamUnitID; // offset 0x800D0C4C

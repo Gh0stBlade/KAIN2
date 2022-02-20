@@ -278,8 +278,6 @@ extern long dyna_cldstat[8]; // offset 0x800CE144
 
 extern short ecostable[3072]; // offset 0x800C9110
 
-static void *enemyPlanPool; // offset 0x800D0C30
-
 static struct __EngagedInstance EngagedList[15]; // offset 0x800D5924
 
 static short *EventAbortedPosition; // offset 0x800D273C
@@ -399,10 +397,6 @@ extern struct _FXTracker *gFXT; // offset 0x800D0C44
 
 extern struct HintSystemStruct gHintSystem; // offset 0x800D2AFC
 
-static struct LightInfo *gLightInfo; // offset 0x800D0C2C
-
-static struct _ObjectTracker *GlobalObjects; // offset 0x800D0C38
-
 extern struct _GlobalSaveTracker *GlobalSave; // offset 0x800CF8A8
 
 static int glowdeg; // offset 0x800D48F8
@@ -427,13 +421,9 @@ static int gNumSpectralMonsters; // offset 0x800CF630
 
 extern struct DebugMenuLine goodiesMenu[1]; // offset 0x800CFBDC
 
-static unsigned long (**gOt[2]); // offset 0x800D0C0C
-
 static struct _PolytopeList *gPolytopeList; // offset 0x800D0C1C
 
 static int gpSaved; // offset 0x800CE3A4
-
-static struct _VertexPool *gVertexPool; // offset 0x800D0C28
 
 static int hack_attract; // offset 0x800CFA70
 
@@ -621,8 +611,6 @@ static int PhysicsMode; // offset 0x800D5914
 
 static unsigned char PickupList[4]; // offset 0x800CF77C
 
-static void *planningPool; // offset 0x800D0C34
-
 extern long playerCameraMode; // offset 0x800CE2A8
 
 static struct RazielData *PlayerData; // offset 0x800D57D0
@@ -632,8 +620,6 @@ extern struct PoolManagementData *poolManagementData; // offset 0x800D51D0
 static struct PoolManagementData poolManagementDataStorage; // offset 0x800D5184
 
 extern char *primBase; // offset 0x800D0C5C
-
-static struct _PrimPool (*primPool[2]); // offset 0x800D0C14
 
 extern unsigned short psxData[2]; // offset 0x800D0CCC
 
