@@ -301,7 +301,7 @@
     <ClCompile Include="src\PC\video\winplay.cpp">
       <Filter>PC\video</Filter>
     </ClCompile>
-    <ClCompile Include="src\PC\d3d\rnd_3d.c">
+    <ClCompile Include="src\PC\d3d\rnd_d3d.cpp">
       <Filter>PC\d3d</Filter>
     </ClCompile>
     <ClCompile Include="src\MONSTER\ALUKA.C">
@@ -345,6 +345,27 @@
     </ClCompile>
     <ClCompile Include="src\PC\ViewVM.cpp">
       <Filter>PC</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PC\d3d\rnd_d3d9.cpp">
+      <Filter>PC\d3d</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PC\d3d\d3dbuckt.cpp">
+      <Filter>PC\d3d</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PC\d3d\d3dclip.cpp">
+      <Filter>PC\d3d</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PC\d3d\d3ddraw.cpp">
+      <Filter>PC\d3d</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PC\d3d\d3denum.cpp">
+      <Filter>PC\d3d</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PC\d3d\d3dshell.cpp">
+      <Filter>PC\d3d</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PC\d3d\d3dtextr.cpp">
+      <Filter>PC\d3d</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -596,6 +617,12 @@
     </ClInclude>
     <ClInclude Include="src\PC\snd.h">
       <Filter>PC</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PC\d3d\d3dbuckt.h">
+      <Filter>PC\d3d</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PC\d3d\d3dclip.h">
+      <Filter>PC\d3d</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

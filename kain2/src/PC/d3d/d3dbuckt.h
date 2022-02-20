@@ -20,7 +20,7 @@ typedef struct MATBUCKET
 	int field_0;
 	int page;
 	int count;
-	int total;
+	int total;		// max allocations of MYTRIs, -16 for some reason
 	MYTRI* ptr;
 } MATBUCKET;
 

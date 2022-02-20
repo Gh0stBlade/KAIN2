@@ -203,8 +203,15 @@
     <ClCompile Include="src\MONSTER\WORSHIP.C" />
     <ClCompile Include="src\OBTABLE.C" />
     <ClCompile Include="src\PC\async.c" />
+    <ClCompile Include="src\PC\d3d\d3dbuckt.cpp" />
+    <ClCompile Include="src\PC\d3d\d3dclip.cpp" />
+    <ClCompile Include="src\PC\d3d\d3ddraw.cpp" />
+    <ClCompile Include="src\PC\d3d\d3denum.cpp" />
+    <ClCompile Include="src\PC\d3d\d3dshell.cpp" />
+    <ClCompile Include="src\PC\d3d\d3dtextr.cpp" />
     <ClCompile Include="src\PC\d3d\RenderRA.C" />
-    <ClCompile Include="src\PC\d3d\rnd_3d.c" />
+    <ClCompile Include="src\PC\d3d\rnd_d3d.cpp" />
+    <ClCompile Include="src\PC\d3d\rnd_d3d9.cpp" />
     <ClCompile Include="src\PC\dsound\dsound.cpp" />
     <ClCompile Include="src\PC\libapi.c" />
     <ClCompile Include="src\PC\libetc.c" />
@@ -326,6 +333,8 @@
     <ClInclude Include="src\MONSTER\VWRAITH.H" />
     <ClInclude Include="src\MONSTER\WORSHIP.H" />
     <ClInclude Include="src\OBTABLE.H" />
+    <ClInclude Include="src\PC\d3d\d3dbuckt.h" />
+    <ClInclude Include="src\PC\d3d\d3dclip.h" />
     <ClInclude Include="src\PC\LIBGPU.H" />
     <ClInclude Include="src\PC\LIBGTE.H" />
     <ClInclude Include="src\PC\libspu.h" />
