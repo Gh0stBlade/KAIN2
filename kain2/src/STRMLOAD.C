@@ -149,7 +149,7 @@ struct _LoadQueueEntry * STREAM_AddQueueEntryToTail()
 	}
 	else
 	{
-		loadHead->next = entry;
+		loadHead = entry;
 	}
 
 	loadTail = entry;
