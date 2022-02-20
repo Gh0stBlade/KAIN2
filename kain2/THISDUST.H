@@ -481,10 +481,6 @@ extern short identityMatrix[3][3]; // offset 0x800CE870
 
 static int ignoreFind; // offset 0x800D0C64
 
-static struct _InstanceList *instanceList; // offset 0x800D0C20
-
-static struct _InstancePool *instancePool; // offset 0x800D0C24
-
 extern int InStreamUnit; // offset 0x800D0C48
 
 static int ITEMSKIP; // offset 0x800CFA64

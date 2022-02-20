@@ -1,4 +1,4 @@
-#include "THISDUST.H"
+#include "CORE.H"
 #include "INSTANCE.H"
 
 
@@ -64,6 +64,7 @@ void INSTANCE_Reactivate(struct _Instance* instance)
 // void /*$ra*/ INSTANCE_ForceActive(struct _Instance *instance /*$a0*/)
 void INSTANCE_ForceActive(struct _Instance* instance)
 { // line 120, offset 0x80032058
+#if defined(PC_VERSION)
 	int flags2; // eax
 	int flags; // edx
 	struct Object* object; // esi
@@ -92,6 +93,7 @@ void INSTANCE_ForceActive(struct _Instance* instance)
 				G2Anim_Restore(&instance->anim);
 		}
 	}
+#endif
 }
 
 
@@ -116,6 +118,7 @@ void INSTANCE_DeactivatedProcess(struct _Instance* instance, struct GameTracker*
 // void /*$ra*/ INSTANCE_DeactivateFarInstances(struct GameTracker *gameTracker /*$s3*/)
 void INSTANCE_DeactivateFarInstances(struct GameTracker* gameTracker)
 { // line 136, offset 0x80032094
+#if defined(PC_VERSION)
 	struct _InstanceList* instanceList; // edi
 	struct _Instance* first; // esi
 	char* ScratchAddr; // eax
@@ -384,6 +387,7 @@ void INSTANCE_DeactivateFarInstances(struct GameTracker* gameTracker)
 		first = first->next;
 		v6 = --v40;
 	}
+#endif
 }
 
 
@@ -391,6 +395,7 @@ void INSTANCE_DeactivateFarInstances(struct GameTracker* gameTracker)
 // void /*$ra*/ INSTANCE_InitInstanceList(struct _InstanceList *list /*$a0*/, struct _InstancePool *pool /*$a1*/)
 void INSTANCE_InitInstanceList(struct _InstanceList* list, struct _InstancePool* pool)
 { // line 257, offset 0x80032310
+#if defined(PC_VERSION)
 	struct _Instance** p_next; // eax
 	struct NodeType* group; // eax
 	int i; // edx MAPDST
@@ -423,6 +428,7 @@ void INSTANCE_InitInstanceList(struct _InstanceList* list, struct _InstancePool*
 		--i;
 	} while (i);
 	pool->nextInstanceID = 1;
+#endif
 }
 
 
@@ -430,6 +436,7 @@ void INSTANCE_InitInstanceList(struct _InstanceList* list, struct _InstancePool*
 // struct _Instance * /*$ra*/ INSTANCE_NewInstance(struct _InstanceList *list /*$a0*/)
 struct _Instance* INSTANCE_NewInstance(struct _InstanceList* list)
 { // line 348, offset 0x800323b0
+#if defined(PC_VERSION)
 	struct _InstancePool* pool; // eax
 	int numFreeInstances; // edx
 	struct _InstancePool* v3; // edx
@@ -459,6 +466,9 @@ struct _Instance* INSTANCE_NewInstance(struct _InstanceList* list)
 		return 0;
 	}
 	return result;
+#else
+	return NULL;
+#endif
 }
 
 
@@ -466,6 +476,7 @@ struct _Instance* INSTANCE_NewInstance(struct _InstanceList* list)
 // long /*$ra*/ INSTANCE_InstanceGroupNumber(struct _Instance *instance /*$a0*/)
 long INSTANCE_InstanceGroupNumber(struct _Instance* instance)
 { // line 391, offset 0x8003243c
+#if defined(PC_VERSION)
 	int v1; // ebx
 	struct Object* object; // ecx
 	int oflags; // eax
@@ -493,6 +504,9 @@ long INSTANCE_InstanceGroupNumber(struct _Instance* instance)
 		return v1 & ~3u;
 	}
 	return v1;
+#else
+	return NULL;
+#endif
 }
 
 
@@ -500,10 +514,12 @@ long INSTANCE_InstanceGroupNumber(struct _Instance* instance)
 // void /*$ra*/ INSTANCE_InsertInstanceGroup(struct _InstanceList *list /*$s1*/, struct _Instance *instance /*$s0*/)
 void INSTANCE_InsertInstanceGroup(struct _InstanceList* list, struct _Instance* instance)
 { // line 450, offset 0x80032558
+#if defined(PC_VERSION)
 	int v2; // eax
 
 	v2 = INSTANCE_InstanceGroupNumber(instance);
 	LIST_InsertFunc(&list->group[v2], &instance->node);
+#endif
 }
 
 
@@ -511,6 +527,7 @@ void INSTANCE_InsertInstanceGroup(struct _InstanceList* list, struct _Instance* 
 // void /*$ra*/ INSTANCE_ReallyRemoveInstance(struct _InstanceList *list /*$s1*/, struct _Instance *instance /*$s0*/, long reset /*$s2*/)
 void INSTANCE_ReallyRemoveInstance(struct _InstanceList* list, struct _Instance* instance, long reset)
 { // line 499, offset 0x800325a0
+#if defined(PC_VERSION)
 	struct Intro* intro; // eax
 	struct _Instance* prev; // ecx
 	struct _Instance* next; // ecx
@@ -634,6 +651,7 @@ void INSTANCE_ReallyRemoveInstance(struct _InstanceList* list, struct _Instance*
 			return;
 	}
 	gameTrackerX.gameData.asmData.lightInstances[i].lightInstance = 0;
+#endif
 }
 
 
@@ -663,6 +681,7 @@ void INSTANCE_CleanUpInstanceList(struct _InstanceList* list, long reset)
 // long /*$ra*/ INSTANCE_Introduced(struct Intro *intro /*$s0*/, short streamUnitID /*$a1*/)
 long INSTANCE_Introduced(struct Intro* intro, short streamUnitID)
 { // line 720, offset 0x800328a0
+#if defined(PC_VERSION)
 	struct _Instance* first; // eax
 	int v3; // edi
 	struct _Instance* next; // ecx
@@ -696,6 +715,9 @@ LABEL_6:
 		intro->flags = v6;
 	}
 	return v3;
+#else
+	return 0;
+#endif
 }
 
 
@@ -703,6 +725,7 @@ LABEL_6:
 // struct INICommand * /*$ra*/ INSTANCE_GetIntroCommand(struct INICommand *command /*$a0*/, int cmd /*$a1*/)
 struct INICommand* INSTANCE_GetIntroCommand(struct INICommand* command, int cmd)
 { // line 765, offset 0x80032958
+#if defined(PC_VERSION)
 	struct INICommand* result; // eax
 	__int16 v3; // cx
 
@@ -720,6 +743,9 @@ struct INICommand* INSTANCE_GetIntroCommand(struct INICommand* command, int cmd)
 			return 0;
 	}
 	return result;
+#else
+	return NULL;
+#endif
 }
 
 
@@ -727,6 +753,7 @@ struct INICommand* INSTANCE_GetIntroCommand(struct INICommand* command, int cmd)
 // struct INICommand * /*$ra*/ INSTANCE_FindIntroCommand(struct _Instance *instance /*$a0*/, int cmd /*$a1*/)
 struct INICommand* INSTANCE_FindIntroCommand(struct _Instance* instance, int cmd)
 { // line 780, offset 0x800329a8
+#if defined(PC_VERSION)
 	struct INICommand* result; // eax
 	__int16 command; // cx
 
@@ -744,6 +771,9 @@ struct INICommand* INSTANCE_FindIntroCommand(struct _Instance* instance, int cmd
 			return 0;
 	}
 	return result;
+#else
+	return NULL;
+#endif
 }
 
 
@@ -751,6 +781,7 @@ struct INICommand* INSTANCE_FindIntroCommand(struct _Instance* instance, int cmd
 // void /*$ra*/ INSTANCE_ProcessIntro(struct _Instance *instance /*$a0*/)
 void INSTANCE_ProcessIntro(struct _Instance* instance)
 { // line 787, offset 0x800329cc
+#if defined(PC_VERSION)
 	struct INICommand* introData; // esi
 	__int16 i; // ax
 	__int16 v3; // ax
@@ -784,6 +815,7 @@ void INSTANCE_ProcessIntro(struct _Instance* instance)
 			}
 		}
 	}
+#endif
 }
 
 
@@ -791,6 +823,7 @@ void INSTANCE_ProcessIntro(struct _Instance* instance)
 // void /*$ra*/ INSTANCE_InitEffects(struct _Instance *instance /*$s2*/, struct Object *object /*$s1*/)
 void INSTANCE_InitEffects(struct _Instance* instance, struct Object* object)
 { // line 812, offset 0x80032a48
+#if defined(PC_VERSION)
 	__int16 numberOfEffects; // ax
 	int v3; // esi
 
@@ -808,6 +841,7 @@ void INSTANCE_InitEffects(struct _Instance* instance, struct Object* object)
 			}
 		}
 	}
+#endif
 }
 
 
@@ -883,6 +917,7 @@ struct _Instance* INSTANCE_IntroduceInstance(struct Intro* intro, short streamUn
 // void /*$ra*/ INSTANCE_AdditionalCollideFunctions(struct _InstanceList *instanceList /*$a0*/)
 void INSTANCE_AdditionalCollideFunctions(struct _InstanceList* instanceList)
 { // line 1138, offset 0x800331f0
+#if defined(PC_VERSION)
 	struct _Instance* i; // esi
 	int flags2; // ecx
 	struct Object* object; // eax
@@ -915,6 +950,7 @@ void INSTANCE_AdditionalCollideFunctions(struct _InstanceList* instanceList)
 		}
 	}
 	gameTrackerX.timeMult = gameTrackerX.globalTimeMult;
+#endif
 }
 
 
@@ -922,10 +958,14 @@ void INSTANCE_AdditionalCollideFunctions(struct _InstanceList* instanceList)
 // long /*$ra*/ INSTANCE_GetSplineFrameNumber(struct _Instance *instance /*$s0*/, struct MultiSpline *spline /*$a1*/)
 long INSTANCE_GetSplineFrameNumber(struct _Instance* instance, struct MultiSpline* spline)
 { // line 1173, offset 0x80033318
+#if defined(PC_VERSION)
 	int* PosSplineDef; // eax
 
 	PosSplineDef = SCRIPT_GetPosSplineDef(instance, spline, 0, 0);
 	return SCRIPT_GetSplineFrameNumber(instance, PosSplineDef);
+#else
+	return 0;
+#endif
 }
 
 
@@ -1017,6 +1057,7 @@ void INSTANCE_ProcessFunctions(struct _InstanceList* instanceList)
 // struct _Instance * /*$ra*/ INSTANCE_BirthObject(struct _Instance *parent /*$s2*/, struct Object *object /*$s4*/, int modelNum /*$s1*/)
 struct _Instance* INSTANCE_BirthObject(struct _Instance* parent, struct Object* object, int modelNum)
 { // line 1526, offset 0x80033bfc
+#if defined(PC_VERSION)
 	struct _InstanceList* instanceList; // eax
 	struct _InstancePool* pool; // ecx
 	int numFreeInstances; // edx
@@ -1113,6 +1154,10 @@ LABEL_13:
 		}
 	}
 	return first_free;
+
+#else
+	return 0;
+#endif
 }
 
 
@@ -1172,14 +1217,14 @@ void INSTANCE_DefaultInit(struct _Instance* instance, struct Object* object, int
 	// Start line: 1722
 	// Start offset: 0x800340A4
 	// Variables:
-	struct _Model* model; // $s0
-	struct _Segment* seg; // $t4
+	//struct _Model* model; // $s0
+	//struct _Segment* seg; // $t4
 
 /* begin block 1.2.1 */
 	// Start line: 1733
 	// Start offset: 0x800340C0
 	// Variables:
-	struct _HInfo* hinfo; // $a1
+	//struct _HInfo* hinfo; // $a1
 
 /* begin block 1.2.1.1 */
 	// Start line: 1737
@@ -1214,6 +1259,7 @@ void INSTANCE_DefaultInit(struct _Instance* instance, struct Object* object, int
 // void /*$ra*/ INSTANCE_PlainDeath(struct _Instance *instance /*$s5*/)
 void INSTANCE_PlainDeath(struct _Instance* instance)
 { // line 1793, offset 0x80034230
+#if defined(PC_VERSION)
 	struct _Instance* v1; // edi
 	int flags; // ecx
 	struct Object* object; // ecx
@@ -1271,6 +1317,7 @@ void INSTANCE_PlainDeath(struct _Instance* instance)
 	v7 = v1->flags;
 	v7 = v7 | 0x20;
 	v1->flags = v7;
+#endif
 }
 
 
@@ -1300,6 +1347,7 @@ unsigned long INSTANCE_Query(struct _Instance* Inst, int Query)
 // void /*$ra*/ INSTANCE_Post(struct _Instance *Inst /*$s0*/, int Message /*$s2*/, int Data /*$s3*/)
 void INSTANCE_Post(struct _Instance* Inst, int Message, int Data)
 { // line 1875, offset 0x800343d0
+#if defined(PC_VERSION)
 	void(__stdcall * messageFunc)(); // edi
 	int flags2; // eax
 	int flags; // ecx
@@ -1334,6 +1382,7 @@ void INSTANCE_Post(struct _Instance* Inst, int Message, int Data)
 		}
 		((void(__cdecl*)(struct _Instance*, int, int))messageFunc)(Inst, Message, Data);
 	}
+#endif
 }
 
 
@@ -1341,6 +1390,7 @@ void INSTANCE_Post(struct _Instance* Inst, int Message, int Data)
 // void /*$ra*/ INSTANCE_Broadcast(struct _Instance *sender /*$s2*/, long whatAmIMask /*$s3*/, int Message /*$s4*/, int Data /*$s5*/)
 void INSTANCE_Broadcast(struct _Instance* sender, long whatAmIMask, int Message, int Data)
 { // line 1892, offset 0x80034434
+#if defined(PC_VERSION)
 	int MorphType; // ebp
 	struct _Instance* i; // esi
 	int queryFunc; // eax
@@ -1400,6 +1450,7 @@ void INSTANCE_Broadcast(struct _Instance* sender, long whatAmIMask, int Message,
 			}
 		}
 	}
+#endif
 }
 
 
@@ -1407,6 +1458,7 @@ void INSTANCE_Broadcast(struct _Instance* sender, long whatAmIMask, int Message,
 // int /*$ra*/ INSTANCE_InPlane(struct _Instance *instance /*$a0*/, int plane /*$a1*/)
 int INSTANCE_InPlane(struct _Instance* instance, int plane)
 { // line 1911, offset 0x800344e0
+#if defined(PC_VERSION)
 	struct Object* object; // eax
 	int result; // eax
 
@@ -1420,6 +1472,9 @@ int INSTANCE_InPlane(struct _Instance* instance, int plane)
 			return 1;
 	}
 	return result;
+#else
+	return 0;
+#endif
 }
 
 
@@ -1427,6 +1482,7 @@ int INSTANCE_InPlane(struct _Instance* instance, int plane)
 // long /*$ra*/ INSTANCE_FindWithID(long uniqueID /*$a0*/)
 long INSTANCE_FindWithID(long uniqueID)
 { // line 1938, offset 0x8003453c
+#if defined(PC_VERSION)
 	struct _Instance* v1; // ecx
 	int result; // eax
 	struct _Instance* v3; // edx
@@ -1447,6 +1503,9 @@ long INSTANCE_FindWithID(long uniqueID)
 		return 1;
 	}
 	return result;
+#else
+	return 0;
+#endif
 }
 
 
@@ -1454,6 +1513,7 @@ long INSTANCE_FindWithID(long uniqueID)
 // struct _Instance * /*$ra*/ INSTANCE_FindWithName(long areaID /*$s3*/, char *instanceName /*$s4*/, struct _Instance *startInstance /*$a2*/)
 struct _Instance* INSTANCE_FindWithName(long areaID, char* instanceName, struct _Instance* startInstance)
 { // line 1995, offset 0x8003457c
+#if defined(PC_VERSION)
 	struct _Instance* next; // esi
 	struct _Instance* v4; // edi
 	struct _Instance* v6; // edi
@@ -1493,6 +1553,9 @@ struct _Instance* INSTANCE_FindWithName(long areaID, char* instanceName, struct 
 		return next;
 	}
 	return v7;
+#else
+	return NULL;
+#endif
 }
 
 
@@ -1500,6 +1563,7 @@ struct _Instance* INSTANCE_FindWithName(long areaID, char* instanceName, struct 
 // struct Intro * /*$ra*/ INSTANCE_FindIntro(long areaID /*$a0*/, long introUniqueID /*$s1*/)
 struct Intro* INSTANCE_FindIntro(long areaID, long introUniqueID)
 { // line 2065, offset 0x80034650
+#if defined(PC_VERSION)
 	struct Intro* v2; // ebx
 	struct Level* LevelWithID; // eax
 	int numIntros; // edx
@@ -1525,6 +1589,9 @@ struct Intro* INSTANCE_FindIntro(long areaID, long introUniqueID)
 		}
 	}
 	return v2;
+#else
+	return NULL;
+#endif
 }
 
 
@@ -1532,6 +1599,7 @@ struct Intro* INSTANCE_FindIntro(long areaID, long introUniqueID)
 // struct _Instance * /*$ra*/ INSTANCE_Find(long introUniqueID /*$a0*/)
 struct _Instance* INSTANCE_Find(long introUniqueID)
 { // line 2090, offset 0x800346d4
+#if defined(PC_VERSION)
 	struct _Instance* result; // eax
 
 	for (result = gameTrackerX.instanceList->first; result; result = result->next)
@@ -1540,6 +1608,9 @@ struct _Instance* INSTANCE_Find(long introUniqueID)
 			break;
 	}
 	return result;
+#else
+	return NULL;
+#endif
 }
 
 
@@ -1547,6 +1618,7 @@ struct _Instance* INSTANCE_Find(long introUniqueID)
 // struct _Instance * /*$ra*/ INSTANCE_IntroduceSavedInstance(struct _SavedIntro *savedIntro /*$s2*/, struct _StreamUnit *streamUnit /*$a1*/, int *deleted /*$fp*/)
 struct _Instance* INSTANCE_IntroduceSavedInstance(struct _SavedIntro* savedIntro, struct _StreamUnit* streamUnit, int* deleted)
 { // line 2102, offset 0x80034714
+#if defined(PC_VERSION)
 	struct _Instance* first_free; // ebp
 	int v5; // esi
 	struct _Instance* first; // eax
@@ -1867,6 +1939,9 @@ LABEL_6:
 		SAVE_BufferIntro(savedIntro);
 	}
 	return first_free;
+#else
+	return 0;
+#endif
 }
 
 
@@ -1953,13 +2028,13 @@ void INSTANCE_SpatialRelationships(struct _InstanceList* instanceList)
 	// Start line: 2615
 	// Start offset: 0x80035074
 	// Variables:
-	struct MATRIX invMatrix; // stack offset -80
+	//struct MATRIX invMatrix; // stack offset -80
 
 /* begin block 1.1.1.1 */
 	// Start line: 2624
 	// Start offset: 0x800350D0
 	// Variables:
-	struct evCollideInstanceStatsData data; // stack offset -48
+	//struct evCollideInstanceStatsData data; // stack offset -48
 	struct MATRIX* mat; // $a2
 /* end block 1.1.1.1 */
 // End offset: 0x80035124
@@ -1986,6 +2061,7 @@ void INSTANCE_SpatialRelationships(struct _InstanceList* instanceList)
 // int /*$ra*/ INSTANCE_SetStatsData(struct _Instance *instance /*$s1*/, struct _Instance *checkee /*$s5*/, struct _Vector *checkPoint /*$s2*/, struct evCollideInstanceStatsData *data /*$s3*/, struct MATRIX *mat /*stack 16*/)
 int INSTANCE_SetStatsData(struct _Instance* instance, struct _Instance* checkee, struct _Vector* checkPoint, struct evCollideInstanceStatsData* data, struct MATRIX* mat)
 { // line 2643, offset 0x80035164
+#if defined(PC_VERSION)
 	unsigned int v5; // ebp
 	SVECTOR* ScratchAddr; // esi
 
@@ -2005,6 +2081,9 @@ int INSTANCE_SetStatsData(struct _Instance* instance, struct _Instance* checkee,
 	data->zDelta = ScratchAddr->vz;
 	data->xyDistance = MATH3D_LengthXY(ScratchAddr->vx, ScratchAddr->vy);
 	return 1;
+#else
+	return 0;
+#endif
 }
 
 
@@ -2012,6 +2091,7 @@ int INSTANCE_SetStatsData(struct _Instance* instance, struct _Instance* checkee,
 // void /*$ra*/ INSTANCE_LinkToParent(struct _Instance *instance /*$s0*/, struct _Instance *parent /*$s1*/, int node /*$a2*/)
 void INSTANCE_LinkToParent(struct _Instance* instance, struct _Instance* parent, int node)
 { // line 2672, offset 0x80035274
+#if defined(PC_VERSION)
 	int x; // eax
 	struct _Instance* i; // edi
 	void(__stdcall * messageFunc)(); // edi
@@ -2062,6 +2142,7 @@ void INSTANCE_LinkToParent(struct _Instance* instance, struct _Instance* parent,
 	v10 = instance->flags2;
 	v10 = v10 | 8;
 	instance->flags2 = v10;
+#endif
 }
 
 
@@ -2079,7 +2160,7 @@ void INSTANCE_UnlinkFromParent(struct _Instance* instance)
 	// Start line: 2698
 	// Start offset: 0x80035354
 	// Variables:
-	struct _G2EulerAngles_Type ea; // stack offset -24
+	//struct _G2EulerAngles_Type ea; // stack offset -24
 
 /* begin block 1.1.1 */
 	// Start line: 2706
@@ -2108,6 +2189,7 @@ void INSTANCE_UnlinkFromParent(struct _Instance* instance)
 // void /*$ra*/ INSTANCE_UnlinkChildren(struct _Instance *instance /*$s2*/)
 void INSTANCE_UnlinkChildren(struct _Instance* instance)
 { // line 2735, offset 0x80035494
+#if defined(PC_VERSION)
 	struct _Instance* child; // edi
 	void(*messageFunc)(); // ebx
 	struct _Instance* sibling; // ebp
@@ -2153,6 +2235,7 @@ void INSTANCE_UnlinkChildren(struct _Instance* instance)
 		} while (sibling);
 	}
 	instance->LinkChild = 0;
+#endif
 }
 
 
@@ -2174,6 +2257,7 @@ void INSTANCE_UpdateFamilyStreamUnitID(struct _Instance* instance)
 // void /*$ra*/ INSTANCE_ReallyRemoveAllChildren(struct _Instance *instance /*$a0*/)
 void INSTANCE_ReallyRemoveAllChildren(struct _Instance* instance)
 { // line 2769, offset 0x80035558
+#if defined(PC_VERSION)
 	struct _Instance* LinkChild; // esi
 	struct _Instance* LinkSibling; // edi
 
@@ -2188,6 +2272,7 @@ void INSTANCE_ReallyRemoveAllChildren(struct _Instance* instance)
 			LinkChild = LinkSibling;
 		} while (LinkSibling);
 	}
+#endif
 }
 
 
@@ -2229,6 +2314,7 @@ int INSTANCE_Linked(struct _Instance* instance1, struct _Instance* instance2)
 // int /*$ra*/ INSTANCE_GetFadeValue(struct _Instance *instance /*$s1*/)
 int INSTANCE_GetFadeValue(struct _Instance* instance)
 { // line 2819, offset 0x8003563c
+#if defined(PC_VERSION)
 	int result; // eax
 	int v2; // esi
 	struct _Instance* LinkParent; // eax
@@ -2253,6 +2339,9 @@ int INSTANCE_GetFadeValue(struct _Instance* instance)
 		return 4096 - v2;
 	}
 	return result;
+#else
+	return 0;
+#endif
 }
 
 
@@ -2260,6 +2349,7 @@ int INSTANCE_GetFadeValue(struct _Instance* instance)
 // unsigned long /*$ra*/ INSTANCE_DefaultAnimCallback(struct _G2Anim_Type *anim /*$a0*/, int sectionID /*$a1*/, enum _G2AnimCallbackMsg_Enum message /*$a2*/, long messageDataA /*$s4*/, long messageDataB /*stack 16*/, struct _Instance *instance /*stack 20*/)
 unsigned long INSTANCE_DefaultAnimCallback(struct _G2Anim_Type* anim, int sectionID, enum _G2AnimCallbackMsg_Enum message, long messageDataA, long messageDataB, struct _Instance* instance)
 { // line 2855, offset 0x80035720
+#if defined(PC_VERSION)
 	int v7; // esi
 	int v8; // edi
 
@@ -2292,6 +2382,9 @@ unsigned long INSTANCE_DefaultAnimCallback(struct _G2Anim_Type* anim, int sectio
 		}
 	}
 	return messageDataA;
+#else
+	return 0;
+#endif
 }
 
 
