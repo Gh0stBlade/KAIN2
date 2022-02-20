@@ -48,9 +48,19 @@ void __cdecl D3DTEX_SetTextureFormat(DDPIXELFORMAT* fmt)
 	sys_texture_amask = fmt->dwRGBAlphaBitMask >> 15;
 }
 //0001:00071860       _D3DTEX_Save               00472860 f   d3dtextr.obj
-//0001:000718b0       _D3DTEX_Restore            004728b0 f   d3dtextr.obj
+void D3DTEX_Save()
+{
+
+}
+//0001:000718b0       _D3DTEX_Restore            004728b0 f   d3dtextr.obj [unused]
 //0001:00071940       _D3DTEX_Init               00472940 f   d3dtextr.obj
+void __cdecl D3DTEX_Init(int is_software)
+{}
 //0001:00071a80       _D3DTEX_Shutdown           00472a80 f   d3dtextr.obj
+int D3DTEX_Shutdown()
+{
+	return 1;
+}
 //0001:00071bc0       _D3DTEX_CreateSystemTextures 00472bc0 f   d3dtextr.obj
 int D3DTEX_CreateSystemTextures()
 {
@@ -170,6 +180,16 @@ void __cdecl D3DTEX_PreloadTexture(int clut)
 	sys_texture_pool[i].age = D3D_CurrentFrame;
 }
 //0001:00072160       _D3DTEX_DumpTexture        00473160 f   d3dtextr.obj
+void __cdecl D3DTEX_DumpTexture(int clut)
+{}
 //0001:000721e0       ?GetSystemTexture@@YAPAUSystemTextureD3D@@H@Z 004731e0 f   d3dtextr.obj
+SystemTexturePool* __cdecl GetSystemTexture(int clut)
+{
+	return nullptr;
+}
 //0001:000722a0       _D3DTEX_SetActiveTexture   004732a0 f   d3dtextr.obj
+void __cdecl D3DTEX_SetActiveTexture(int clut)
+{}
 //0001:000726d0 ?LoadAndActivateIntoDevice@@YAXPAUSystemTextureD3D@@@Z 004736d0 f   d3dtextr.obj
+void __cdecl LoadAndActivateIntoDevice(struct SystemTextureD3D* a1)
+{}
