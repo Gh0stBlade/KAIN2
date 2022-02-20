@@ -13,8 +13,6 @@ extern void depthQFogFar() ; // 0x800CE180
 
 extern void depthQBackColor() ; // 0x800CE184
 
-extern void gameTimer() ; // 0x800CE188
-
 extern void modelFadeValue() ; // 0x800CE18C
 
 extern void lowerSplitPush() ; // 0x800CE190

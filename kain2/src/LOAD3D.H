@@ -98,6 +98,9 @@ struct _LoadStatus // hashcode: 0x3D15BA2C (dec: 1024834092)
 	long seekTime; // size=0, offset=156
 };
 
+extern long crap1;
+extern long crap35[4];
+
 extern char HashExtensions[7][4]; // offset 0x800CE4D0
 
 extern void LOAD_InitCd(); // 0x80036D44

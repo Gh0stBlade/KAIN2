@@ -1,6 +1,7 @@
 #ifndef TIMER_H
 #define TIMER_H
 
+extern long gameTimer; // 0x800CE188
 
 extern unsigned long TIMER_GetTimeMS(); // 0x8003D7B0
 
