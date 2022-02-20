@@ -35,6 +35,13 @@ extern _G2AppDataVM_Type appDataVM;
 extern D3D_DEVLIST Devicelist[];
 void __cdecl D3D_FailAbort(char* fmt, ...);
 
+#define ROPT_BILINEAR			0x01
+#define ROPT_UNK1				0x02
+#define ROPT_UNK2				0x04
+#define ROPT_32BIT				0x08
+#define ROPT_TRIPLEBUFFERING	0x10
+#define ROPT_VSYNC				0x20
+
 //0001 : 00073fa0       _RenderG2_Init             00474fa0 f   RenderRA.obj
 int __cdecl RenderG2_Init(_G2AppDataVM_Type* vm)
 {
@@ -58,21 +65,21 @@ void RenderG2_Pause()
 //0001 : 00073fe0       _RenderG2_GetRenderOptions 00474fe0 f   RenderRA.obj
 BYTE __cdecl RenderG2_GetRenderOptions()
 {
-	BYTE result; // al
+	BYTE result = 0;
 
-	result = 0;
 	if (!Devicelist[appDataVM.Render_device_id].field_A8)
-		result = 2;
+		result |= ROPT_UNK1;
 	if (Devicelist[appDataVM.Render_device_id].field_0)
-		result |= 4u;
+		result |= ROPT_UNK2;
 	if (appDataVM.Filter)
-		result |= 1u;
+		result |= ROPT_BILINEAR;
 	if (appDataVM.Triple_buffer)
-		result |= 0x10u;
+		result |= ROPT_TRIPLEBUFFERING;
 	if (appDataVM.VSync)
-		result |= 0x20u;
+		result |= ROPT_VSYNC;
 	if (appDataVM.Screen_depth == 32)
-		return result | 8;
+		result |= ROPT_32BIT;
+
 	return result;
 }
 //0001 : 00074040       _RenderG2_SetRenderOptions 00475040 f   RenderRA.obj
