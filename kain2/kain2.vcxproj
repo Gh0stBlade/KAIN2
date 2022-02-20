@@ -143,64 +143,138 @@
     <ClCompile Include="kain2.cpp" />
     <ClCompile Include="src\BSP.C" />
     <ClCompile Include="src\CAMERA.C" />
-    <ClCompile Include="src\CINEMA\CINEPSX.C" />
+    <ClCompile Include="src\CINEMA\CINEPSX.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="src\COLLIDE.C" />
     <ClCompile Include="src\DEBUG.C" />
-    <ClCompile Include="src\DRAW.C" />
-    <ClCompile Include="src\EVENT.C" />
+    <ClCompile Include="src\DRAW.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\EVENT.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="src\FONT.C" />
-    <ClCompile Include="src\FX.C" />
-    <ClCompile Include="src\G2\ANIMG2.C" />
-    <ClCompile Include="src\G2\ANMCTRLR.C" />
-    <ClCompile Include="src\G2\ANMDECMP.C" />
-    <ClCompile Include="src\G2\ANMG2ILF.C" />
-    <ClCompile Include="src\G2\ANMINTRP.C" />
-    <ClCompile Include="src\G2\INSTNCG2.C" />
+    <ClCompile Include="src\FX.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\G2\ANIMG2.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\G2\ANMCTRLR.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\G2\ANMDECMP.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\G2\ANMG2ILF.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\G2\ANMINTRP.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\G2\INSTNCG2.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="src\G2\MAING2.C" />
-    <ClCompile Include="src\G2\POOLMMG2.C" />
-    <ClCompile Include="src\G2\QUATG2.C" />
-    <ClCompile Include="src\G2\TIMERG2.C" />
+    <ClCompile Include="src\G2\POOLMMG2.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\G2\QUATG2.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\G2\TIMERG2.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="src\GAMELOOP.C" />
-    <ClCompile Include="src\GAMEPAD.C" />
-    <ClCompile Include="src\GENERIC.C" />
-    <ClCompile Include="src\GLYPH.C" />
-    <ClCompile Include="src\INSTANCE.C" />
-    <ClCompile Include="src\LIGHT3D.C" />
+    <ClCompile Include="src\GAMEPAD.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\GENERIC.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\GLYPH.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\INSTANCE.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\LIGHT3D.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="src\LIST.C" />
-    <ClCompile Include="src\LOAD3D.C" />
-    <ClCompile Include="src\LOCAL\LOCALSTR.C" />
+    <ClCompile Include="src\LOAD3D.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\LOCAL\LOCALSTR.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="src\MATH3D.C" />
-    <ClCompile Include="src\MCARD\MCASSERT.C" />
-    <ClCompile Include="src\MCARD\MEMCARD.C" />
+    <ClCompile Include="src\MCARD\MCASSERT.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\MCARD\MEMCARD.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="src\MEMPACK.C" />
-    <ClCompile Include="src\MENU\MENU.C" />
-    <ClCompile Include="src\MENU\MENUDEFS.C" />
-    <ClCompile Include="src\MENU\MENUFACE.C" />
-    <ClCompile Include="src\MENU\MENUUTIL.C" />
+    <ClCompile Include="src\MENU\MENU.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\MENU\MENUDEFS.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\MENU\MENUFACE.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\MENU\MENUUTIL.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="src\MONSTER\ALUKA.C" />
     <ClCompile Include="src\MONSTER\ALUKABSS.C" />
     <ClCompile Include="src\MONSTER\HUMAN.C" />
     <ClCompile Include="src\MONSTER\HUNTER.C" />
     <ClCompile Include="src\MONSTER\KAIN.C" />
-    <ClCompile Include="src\MONSTER\MBMISS.C" />
-    <ClCompile Include="src\MONSTER\MISSILE.C" />
-    <ClCompile Include="src\MONSTER\MONAPI.C" />
-    <ClCompile Include="src\MONSTER\MONLIB.C" />
-    <ClCompile Include="src\MONSTER\MONMSG.C" />
-    <ClCompile Include="src\MONSTER\MONSENSE.C" />
-    <ClCompile Include="src\MONSTER\MONSTER.C" />
+    <ClCompile Include="src\MONSTER\MBMISS.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\MONSTER\MISSILE.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\MONSTER\MONAPI.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\MONSTER\MONLIB.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\MONSTER\MONMSG.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\MONSTER\MONSENSE.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\MONSTER\MONSTER.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="src\MONSTER\MONTABLE.C" />
     <ClCompile Include="src\MONSTER\PRIESTESS.C" />
     <ClCompile Include="src\MONSTER\RONINBSS.C" />
     <ClCompile Include="src\MONSTER\SKINBOS.C" />
     <ClCompile Include="src\MONSTER\SKINNER.C" />
-    <ClCompile Include="src\MONSTER\SLUAGH.C" />
-    <ClCompile Include="src\MONSTER\SOUL.C" />
-    <ClCompile Include="src\MONSTER\VWRAITH.C" />
+    <ClCompile Include="src\MONSTER\SLUAGH.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\MONSTER\SOUL.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\MONSTER\VWRAITH.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="src\MONSTER\WALBOSB.C" />
     <ClCompile Include="src\MONSTER\WALBOSS.C" />
     <ClCompile Include="src\MONSTER\WALLCR.C" />
-    <ClCompile Include="src\MONSTER\WORSHIP.C" />
+    <ClCompile Include="src\MONSTER\WORSHIP.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="src\OBTABLE.C" />
     <ClCompile Include="src\PC\async.c" />
     <ClCompile Include="src\PC\d3d\d3dbuckt.cpp" />
@@ -229,53 +303,133 @@
     <ClCompile Include="src\PC\video\winplay.cpp" />
     <ClCompile Include="src\PC\ViewVM.cpp" />
     <ClCompile Include="src\PHYSICS.C" />
-    <ClCompile Include="src\PHYSOBS.C" />
+    <ClCompile Include="src\PHYSOBS.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="src\PIPE3D.C" />
-    <ClCompile Include="src\PLAN\ENMYPLAN.C" />
-    <ClCompile Include="src\PLAN\PLAN.C" />
-    <ClCompile Include="src\PLAN\PLANAPI.C" />
-    <ClCompile Include="src\PLAN\PLANCOLL.C" />
-    <ClCompile Include="src\PLAN\PLANPOOL.C" />
-    <ClCompile Include="src\PLAN\PLANSRCH.C" />
+    <ClCompile Include="src\PLAN\ENMYPLAN.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\PLAN\PLAN.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\PLAN\PLANAPI.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\PLAN\PLANCOLL.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\PLAN\PLANPOOL.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\PLAN\PLANSRCH.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="src\PLAYER.C" />
     <ClCompile Include="src\PSX\AADLIB.C" />
-    <ClCompile Include="src\PSX\AADSEQEV.C" />
-    <ClCompile Include="src\PSX\AADSFX.C" />
-    <ClCompile Include="src\PSX\AADSQCMD.C" />
-    <ClCompile Include="src\PSX\AADVOICE.C" />
+    <ClCompile Include="src\PSX\AADSEQEV.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\PSX\AADSFX.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\PSX\AADSQCMD.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\PSX\AADVOICE.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="src\PSX\MAIN.C" />
     <ClCompile Include="src\PSX\PSX_G2\MAINVM.C" />
     <ClCompile Include="src\PSX\PSX_G2\QUATVM.C" />
-    <ClCompile Include="src\PSX\SUPPORT.C" />
-    <ClCompile Include="src\RAZCNTRL.C" />
-    <ClCompile Include="src\RAZIEL\ALGOCTRL.C" />
-    <ClCompile Include="src\RAZIEL\ATTACK.C" />
-    <ClCompile Include="src\RAZIEL\CONTROL.C" />
-    <ClCompile Include="src\RAZIEL\HEALTH.C" />
-    <ClCompile Include="src\RAZIEL\PUPPET.C" />
-    <ClCompile Include="src\RAZIEL\RAZDBUG.C" />
-    <ClCompile Include="src\RAZIEL\RAZIEL.C" />
-    <ClCompile Include="src\RAZIEL\RAZLIB.C" />
-    <ClCompile Include="src\RAZIEL\SENSES.C" />
-    <ClCompile Include="src\RAZIEL\SPIDER.C" />
-    <ClCompile Include="src\RAZIEL\STEERING.C" />
-    <ClCompile Include="src\RAZIEL\SWIM.C" />
-    <ClCompile Include="src\REAVER.C" />
-    <ClCompile Include="src\RELMOD.C" />
+    <ClCompile Include="src\PSX\SUPPORT.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\RAZCNTRL.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\RAZIEL\ALGOCTRL.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\RAZIEL\ATTACK.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\RAZIEL\CONTROL.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\RAZIEL\HEALTH.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\RAZIEL\PUPPET.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\RAZIEL\RAZDBUG.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\RAZIEL\RAZIEL.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\RAZIEL\RAZLIB.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\RAZIEL\SENSES.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\RAZIEL\SPIDER.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\RAZIEL\STEERING.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\RAZIEL\SWIM.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\REAVER.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\RELMOD.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="src\RESOLVE.C" />
-    <ClCompile Include="src\SAVEINFO.C" />
-    <ClCompile Include="src\SCRIPT.C" />
-    <ClCompile Include="src\SCRIPT2.C" />
-    <ClCompile Include="src\SIGNAL.C" />
-    <ClCompile Include="src\SOUND.C" />
-    <ClCompile Include="src\SPLINE.C" />
-    <ClCompile Include="src\STATE.C" />
-    <ClCompile Include="src\STREAM.C" />
-    <ClCompile Include="src\STRMLOAD.C" />
-    <ClCompile Include="src\TIMER.C" />
-    <ClCompile Include="src\UNDRWRLD.C" />
-    <ClCompile Include="src\VM.C" />
-    <ClCompile Include="src\VOICEXA.C" />
+    <ClCompile Include="src\SAVEINFO.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\SCRIPT.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\SCRIPT2.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\SIGNAL.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\SOUND.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\SPLINE.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\STATE.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\STREAM.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\STRMLOAD.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\TIMER.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\UNDRWRLD.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\VM.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\VOICEXA.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="src\VRAM.C" />
   </ItemGroup>
   <ItemGroup>
@@ -343,6 +497,7 @@
     <ClInclude Include="src\PC\LIBGTE.H" />
     <ClInclude Include="src\PC\libspu.h" />
     <ClInclude Include="src\PC\snd.h" />
+    <ClInclude Include="src\PC\sndmix.h" />
     <ClInclude Include="src\PHYSICS.H" />
     <ClInclude Include="src\PHYSOBS.H" />
     <ClInclude Include="src\PIPE3D.H" />

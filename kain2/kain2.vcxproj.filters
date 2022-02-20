@@ -630,5 +630,8 @@
     <ClInclude Include="src\PC\async.h">
       <Filter>PC</Filter>
     </ClInclude>
+    <ClInclude Include="src\PC\sndmix.h">
+      <Filter>PC</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
