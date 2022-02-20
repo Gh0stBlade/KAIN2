@@ -389,8 +389,8 @@ int InsertGlobalObject(char *name, struct GameTracker *gameTracker)
 			}
 		}
 
-		sprintf(string, "\\kain2\\object\\%s\\%s.drm", name);
-		sprintf(vramname, "\\kain2\\object\\%s\\%s.crm", name);
+		sprintf(string, "\\kain2\\object\\%s\\%s.drm", name, name);
+		sprintf(vramname, "\\kain2\\object\\%s\\%s.crm", name, name);
 		
 		strcpy(otr->name, name);
 
