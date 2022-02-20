@@ -63,7 +63,7 @@ int COLLIDE_PointInTriangle(struct _SVector *v0, struct _SVector *v1, struct _SV
 	int v18; // eax
 	int v19; // ecx
 	int v20; // eax
-	bool v21; // zf
+	int v21; // zf
 	int v23; // [esp+10h] [ebp-8h]
 	__int16 v0a; // [esp+1Ch] [ebp+4h]
 	int v1a; // [esp+20h] [ebp+8h]
