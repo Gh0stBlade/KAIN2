@@ -599,46 +599,37 @@ struct _BigFileEntry * LOAD_GetBigFileEntryByHash(long hash)
 	int i;
 	struct _BigFileEntry* entry;
 
-	entry = (_BigFileEntry*)loadStatus.bigFile.currentDir;//Probably wrong?
-	i = entry->fileHash;
-	
-	if (entry != NULL && loadStatus.currentDirLoading == 0 &&  i != 0)
+
+	if (loadStatus.bigFile.currentDir != NULL && loadStatus.currentDirLoading == 0 && loadStatus.bigFile.currentDir->numFiles != 0)
 	{
-		entry++;
+		i = loadStatus.bigFile.currentDir->numFiles;
+		entry = &loadStatus.bigFile.currentDir->fileList[0];
 
 		do
 		{
-			i--;
 			if (entry->fileHash == hash)
 			{
 				return entry;
 			}
+			
+			entry++;
 
-		} while (entry->fileHash - 1, entry += 4);
-
-	}
-	else
-	{
-		entry++;
-	}
-	
-	if (loadStatus.bigFile.rootDir->numFiles == 0)
-	{
-		return &loadStatus.bigFile.rootDir->fileList[0];
+		} while (i-- != 0);
 	}
 
-	i = entry->fileHash;
+	i = loadStatus.bigFile.rootDir->numFiles;
+	entry = &loadStatus.bigFile.rootDir->fileList[0];
 
 	do
 	{
-		if (i == hash)
+		if (entry->fileHash == hash)
 		{
-			break;
+			return entry;
 		}
-		
-		entry += 4;
 
-	} while (i--);
+		entry++;
+
+	} while (i-- != 0);
 
 	return NULL;
 }
