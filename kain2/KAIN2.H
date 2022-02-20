@@ -2293,14 +2293,6 @@ struct _FXTracker // hashcode: 0xCC65A064 (dec: -865755036)
 	struct NodeType freePrimList; // size=8, offset=28064
 };
 
-struct SignalInfo // hashcode: 0x5899EF0F (dec: 1486483215)
-{
-	long (*signalHandleFunc)(struct _Instance* instance, struct Signal* signal); // size=0, offset=0
-	short length; // size=0, offset=4
-	short onlyPlayer; // size=0, offset=6
-	void (*signalRelocateFunc)(struct Signal* signal, int offset); // size=0, offset=8
-};
-
 struct SandHFScratch // hashcode: 0x31C4E20D (dec: 834986509)
 {
 	struct _SVector normal; // size=8, offset=0

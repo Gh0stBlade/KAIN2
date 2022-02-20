@@ -1,4 +1,4 @@
-#include "THISDUST.H"
+#include "../core.H"
 #include "ANMDECMP.H"
 
 DWORD dword_4F4AA0[] =
@@ -26,7 +26,7 @@ void _G2Anim_DecompressChannel_AdaptiveDelta(struct _G2AnimDecompressChannelInfo
 	struct _G2AnimChanStatus_Type* v2; // ebx
 	struct _G2AnimDecompressChannelInfo_Type* v3; // edi
 	int storedKey; // edx
-	ushort* v5; // eax
+	u_short* v5; // eax
 	int v6; // ecx
 	int index; // esi
 	unsigned __int16 v8; // bp
@@ -118,7 +118,7 @@ void _G2Anim_DecompressChannel_Linear(struct _G2AnimDecompressChannelInfo_Type *
 // void /*$ra*/ _G2Anim_InitializeChannel_AdaptiveDelta(struct _G2AnimDecompressChannelInfo_Type *dcInfo /*$a0*/, struct _G2AnimChanStatus_Type *status /*$a1*/)
 void _G2Anim_InitializeChannel_AdaptiveDelta(struct _G2AnimDecompressChannelInfo_Type *dcInfo, struct _G2AnimChanStatus_Type *status)
 { // line 271, offset 0x800902b4
-	ushort* chanData; // eax
+	u_short* chanData; // eax
 	int v3; // ecx
 
 	chanData = dcInfo->chanData;
@@ -133,7 +133,7 @@ void _G2Anim_InitializeChannel_AdaptiveDelta(struct _G2AnimDecompressChannelInfo
 // void /*$ra*/ _G2Anim_InitializeChannel_Linear(struct _G2AnimDecompressChannelInfo_Type *dcInfo /*$a0*/, struct _G2AnimChanStatus_Type *status /*$a1*/)
 void _G2Anim_InitializeChannel_Linear(struct _G2AnimDecompressChannelInfo_Type *dcInfo, struct _G2AnimChanStatus_Type *status)
 { // line 289, offset 0x800902ec
-	ushort* chanData; // ecx
+	u_short* chanData; // ecx
 	int v3; // eax
 
 	chanData = dcInfo->chanData;

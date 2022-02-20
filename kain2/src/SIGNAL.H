@@ -1,6 +1,14 @@
 #ifndef SIGNAL_H
 #define SIGNAL_H
 
+struct SignalInfo // hashcode: 0x5899EF0F (dec: 1486483215)
+{
+	long (*signalHandleFunc)(struct _Instance* instance, struct Signal* signal); // size=0, offset=0
+	short length; // size=0, offset=4
+	short onlyPlayer; // size=0, offset=6
+	void (*signalRelocateFunc)(struct Signal* signal, int offset); // size=0, offset=8
+};
+
 struct Signal // hashcode: 0xA0225F88 (dec: -1608360056)
 {
 	long id; // size=0, offset=0

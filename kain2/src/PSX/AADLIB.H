@@ -138,16 +138,16 @@ struct _AadSequenceSlot // hashcode: 0xD7421DD6 (dec: -683532842)
 	char transpose[16]; // size=16, offset=1472
 };
 
-struct AadSfxCommand // hashcode: 0xD8F832F6 (dec: -654822666)
+typedef struct AadSfxCommand // hashcode: 0xD8F832F6 (dec: -654822666)
 {
 	unsigned char statusByte; // size=0, offset=0
 	unsigned char dataByte[3]; // size=3, offset=1
 	unsigned long ulongParam; // size=0, offset=4
 	short shortParam; // size=0, offset=8
 	unsigned short unused; // size=0, offset=10
-};
+} AadSfxCommand;
 
-struct AadSfxSlot // hashcode: 0x6E655A78 (dec: 1852136056)
+typedef struct AadSfxSlot // hashcode: 0x6E655A78 (dec: 1852136056)
 {
 	struct AadSfxCommand commandQueue[32]; // size=384, offset=0
 	unsigned char commandIn; // size=0, offset=384
@@ -156,7 +156,7 @@ struct AadSfxSlot // hashcode: 0x6E655A78 (dec: 1852136056)
 	unsigned short handleCounter; // size=0, offset=388
 	unsigned char sfxVolume; // size=0, offset=390
 	unsigned char sfxPan; // size=0, offset=391
-};
+} AadSfxSlot;
 
 struct AadSynthVoice // hashcode: 0x12E02CA2 (dec: 316681378)
 {
@@ -269,7 +269,7 @@ struct AadInitAttr // hashcode: 0x0549E29A (dec: 88728218)
 };
 
 
-struct AadMemoryStruct // hashcode: 0x46CEF45B (dec: 1187968091)
+typedef struct AadMemoryStruct // hashcode: 0x46CEF45B (dec: 1187968091)
 {
 	unsigned long updateCounter; // size=0, offset=0
 	int numSlots; // size=0, offset=4
@@ -324,7 +324,7 @@ struct AadMemoryStruct // hashcode: 0x46CEF45B (dec: 1187968091)
 	long controller11CallbackData; // size=0, offset=7168
 	long endSequenceCallbackData; // size=0, offset=7172
 	unsigned char userVariables[128]; // size=128, offset=7176
-};
+} AadMemoryStruct;
 
 extern struct AadMemoryStruct* aadMem; // offset 0x800CECD8
 

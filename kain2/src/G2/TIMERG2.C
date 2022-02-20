@@ -9,10 +9,10 @@ short G2Timer_GetFrameTime()
 	unsigned int result; // eax
 
   if ( gameTrackerX.timeMult )
-    result = (100 * gameTrackerX.timeMult) >> 12;
+	result = (100 * gameTrackerX.timeMult) >> 12;
   else
-    result = 100;
+	result = 100;
   if ( (__int16)result <= 0 )
-    return 1;
+	return 1;
   return result;
 }

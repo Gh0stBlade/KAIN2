@@ -1,5 +1,7 @@
-#include "THISDUST.H"
+#include "core.H"
 #include "SIGNAL.H"
+
+extern struct Camera theCamera;
 
 struct SignalInfo signalInfoList[] =
 {
@@ -55,7 +57,7 @@ long SIGNAL_HandleCameraAdjust(struct _Instance *instance, struct Signal *signal
 // long /*$ra*/ SIGNAL_HandleCamera(struct _Instance *instance /*$a0*/, struct Signal *signal /*$a1*/)
 long SIGNAL_HandleCamera(struct _Instance *instance, struct Signal *signal)
 { // line 91, offset 0x8001d884
-	CAMERA_ChangeTo((Camera*)&theCamera, signal->data.cameraKey);
+	CAMERA_ChangeTo(&theCamera, signal->data.cameraKey);
 	return 1;
 }
 
@@ -78,7 +80,7 @@ void SIGNAL_RelocateCamera(struct Signal *signal, long offset)
 // long /*$ra*/ SIGNAL_HandleCameraMode(struct _Instance *instance /*$a0*/, struct Signal *signal /*$a1*/)
 long SIGNAL_HandleCameraMode(struct _Instance *instance, struct Signal *signal)
 { // line 102, offset 0x8001d8c8
-	CAMERA_SetMode((Camera*)&theCamera, (Camera*)signal->data.misc.size.l);
+	CAMERA_SetMode(&theCamera, signal->data.misc.size.l);
 	return 1;
 }
 
@@ -96,7 +98,7 @@ long SIGNAL_HandleCameraLock(struct _Instance *instance, struct Signal *signal)
 // long /*$ra*/ SIGNAL_HandleCameraUnlock(struct _Instance *instance /*$a0*/, struct Signal *signal /*$a1*/)
 long SIGNAL_HandleCameraUnlock(struct _Instance *instance, struct Signal *signal)
 { // line 116, offset 0x8001d918
-	CAMERA_Unlock((struct Camera*)&theCamera, signal->data.misc.size.l);
+	CAMERA_Unlock(&theCamera, signal->data.misc.size.l);
 	return 1;
 }
 
@@ -105,7 +107,7 @@ long SIGNAL_HandleCameraUnlock(struct _Instance *instance, struct Signal *signal
 // long /*$ra*/ SIGNAL_HandleCameraSmooth(struct _Instance *instance /*$a0*/, struct Signal *signal /*$a1*/)
 long SIGNAL_HandleCameraSmooth(struct _Instance *instance, struct Signal *signal)
 { // line 122, offset 0x8001d940
-	CAMERA_SetSmoothValue((Camera*)&theCamera, signal->data.misc.size.l);
+	CAMERA_SetSmoothValue(&theCamera, signal->data.misc.size.l);
 	return 1;
 }
 
@@ -114,7 +116,7 @@ long SIGNAL_HandleCameraSmooth(struct _Instance *instance, struct Signal *signal
 // long /*$ra*/ SIGNAL_HandleCameraTimer(struct _Instance *instance /*$a0*/, struct Signal *signal /*$a1*/)
 long SIGNAL_HandleCameraTimer(struct _Instance *instance, struct Signal *signal)
 { // line 128, offset 0x8001d968
-	CAMERA_SetTimer((Camera*)&theCamera);
+	CAMERA_SetTimer(&theCamera, signal->data.misc.size.l);
 	return 1;
 }
 
@@ -123,7 +125,7 @@ long SIGNAL_HandleCameraTimer(struct _Instance *instance, struct Signal *signal)
 // long /*$ra*/ SIGNAL_HandleCameraSave(struct _Instance *instance /*$a0*/, struct Signal *signal /*$a1*/)
 long SIGNAL_HandleCameraSave(struct _Instance *instance, struct Signal *signal)
 { // line 134, offset 0x8001d990
-	CAMERA_Save((Camera*)&theCamera, signal->data.misc.size.l);
+	CAMERA_Save(&theCamera, signal->data.misc.size.l);
 	return 1;
 }
 
@@ -132,7 +134,7 @@ long SIGNAL_HandleCameraSave(struct _Instance *instance, struct Signal *signal)
 // long /*$ra*/ SIGNAL_HandleCameraRestore(struct _Instance *instance /*$a0*/, struct Signal *signal /*$a1*/)
 long SIGNAL_HandleCameraRestore(struct _Instance *instance, struct Signal *signal)
 { // line 140, offset 0x8001d9b8
-	CAMERA_Restore((Camera*)&theCamera, signal->data.misc.size.l);
+	CAMERA_Restore(&theCamera, signal->data.misc.size.l);
 	return 1;
 }
 
@@ -409,7 +411,7 @@ long SIGNAL_HandleResetSlideAngle(struct _Instance *instance, struct Signal *sig
 long SIGNAL_HandleSetCameraTilt(struct _Instance *instance, struct Signal *signal)
 { // line 595, offset 0x8001df10
 	if (instance)
-		CAMERA_Adjust_tilt((Camera*)&theCamera,
+		CAMERA_Adjust_tilt(&theCamera,
 			(__int16)(((unsigned __int16)(-signal->data.misc.size.l % 360) + (-signal->data.misc.size.l % 360 < 0 ? 0x168 : 0)) << 12) / 360);
 	return 1;
 }
@@ -420,7 +422,7 @@ long SIGNAL_HandleSetCameraTilt(struct _Instance *instance, struct Signal *signa
 long SIGNAL_HandleSetCameraDistance(struct _Instance *instance, struct Signal *signal)
 { // line 613, offset 0x8001df9c
 	if (instance)
-		CAMERA_Adjust_distance((Camera*)&theCamera, signal->data.misc.size.l);
+		CAMERA_Adjust_distance(&theCamera, signal->data.misc.size.l);
 	return 1;
 }
 
@@ -574,7 +576,7 @@ struct _MultiSignal * SIGNAL_FindSignal(struct Level *level, long id)
 	struct Level* v2; // eax
 	struct _MultiSignal* SignalListStart; // ebx
 	struct _MultiSignal* SignalListEnd; // ecx
-	bool v5; // zf
+	int v5; // zf
 	struct Signal* signalList; // edi
 	int v7; // ebp
 	unsigned int v8; // esi

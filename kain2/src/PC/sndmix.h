@@ -1,0 +1,15 @@
+extern void __cdecl SNDMIX_SetSample(int voiceNum, BYTE* sample);
+extern void __cdecl SNDMIX_SetNextSample(int voiceNum, BYTE* sample);
+extern BYTE* __cdecl SNDMIX_GetSample(int voiceNum);
+extern BYTE* __cdecl SNDMIX_GetNextSample(int voiceNum);
+extern void __cdecl SNDMIX_SetFrequency(int voiceNum, float frequency);
+extern void __cdecl SNDMIX_SetVolume(int voiceNum, int left, int right);
+extern void __cdecl SNDMIX_SetLoopMode(int voiceNum, int mode);
+extern void __cdecl SNDMIX_SetChannelInterrupt(int voiceNum, int intr);
+extern int __cdecl SNDMIX_GetStatus(int voiceNum);
+extern void __cdecl SNDMIX_Start(int voiceNum);
+extern void __cdecl SNDMIX_Stop(int voiceNum);
+extern void __cdecl SNDMIX_KeyOff(int voiceNum);
+extern void* __cdecl SNDMIX_UploadSample(const void* data, int samples, int a3, int a4, int a5);
+extern void __cdecl SNDMIX_FreeSample(void* ptr);
+extern void __cdecl SNDMIX_SetTimerFunc(void(__cdecl* fn)());

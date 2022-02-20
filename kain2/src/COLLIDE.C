@@ -250,7 +250,7 @@ void COLLIDE_MakeNormal(struct _Terrain *terrain, struct _TFace *tface, struct _
 	int v11; // eax
 	int v12; // eax
 	int v13; // ecx
-	bool v14; // sf
+	int v14; // sf
 	int v15; // edi
 	int v16; // esi
 	int v17; // edx
