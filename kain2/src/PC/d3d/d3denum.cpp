@@ -1,6 +1,8 @@
 #include <windows.h>
 #include <ddraw.h>
 #include <d3d.h>
+#include <stdlib.h>
+#include <stdio.h>
 
 struct TEXTURE_TYPE
 {
@@ -19,14 +21,31 @@ typedef struct D3D_RES
 	int depth;
 } D3D_RES;
 
+typedef struct D3D_DEVLIST
+{
+	GUID* pguid0;
+	GUID* pguid;
+	GUID guid0;
+	GUID guid;
+	char desc[128];
+	int tri_caps;
+	int is_software;
+	int field_B0;
+	int res_count;
+	int can_gamma;
+	D3D_RES* res_list;
+} D3D_DEVLIST;
+
 DWORD D3D_NumTextureTypes, enumerated, D3D_NumDevices, dword_C3C27C, dword_C3C284;
 int screenmode_cnt0, screenmode_cnt1;
 TEXTURE_TYPE Texturetypelist[64];
 D3D_RES Screenmodelist[512];
+D3D_DEVLIST Devicelist[32];
 void __cdecl D3D_FailAbort(const char* fmt, ...);
+HRESULT WINAPI d3denumcallback(_GUID* lpGUID, LPSTR lpszDeviceDesc, LPSTR lpszDeviceName, LPD3DDEVICEDESC lpd3dHWDeviceDesc, LPD3DDEVICEDESC lpd3dSWDeviceDesc, void* ctx);
 
 //0001:00070a40 ? EnumScrModesCallback@@YGJPAU_DDSURFACEDESC@@PAX@Z 00471a40 f   d3denum.obj
-int WINAPI EnumScrModesCallback(DDSURFACEDESC* desc, LPVOID ctx)
+HRESULT WINAPI EnumScrModesCallback(DDSURFACEDESC* desc, LPVOID ctx)
 {
 	Screenmodelist[screenmode_cnt0].x = desc->dwWidth;
 	Screenmodelist[screenmode_cnt0].y = desc->dwHeight;
@@ -72,8 +91,108 @@ HRESULT WINAPI enumtextures(struct _DDPIXELFORMAT* fmt, LPVOID ctx)
 }
 
 //0001:00070be0 ? DDEnumCallback@@YGHPAU_GUID@@PAD1PAX2@Z 00471be0 f   d3denum.obj
-BOOL WINAPI DDEnumCallback(GUID *guid, LPSTR name, LPSTR desc, LPVOID ctx, HMONITOR)
+DWORD D3D_CanGamma;
+char dev_name[256];
+D3D_RES* pScreenmodelist;
+
+BOOL WINAPI DDEnumCallback(GUID *guid, LPSTR name, LPSTR, LPVOID ctx, HMONITOR)
 {
+	strcpy_s(dev_name, sizeof(dev_name), name);
+	screenmode_cnt1 = 0;
+	pScreenmodelist = &Screenmodelist[screenmode_cnt0];
+
+	LPDIRECTDRAW lpDD;
+	if (SUCCEEDED(DirectDrawCreate(guid, &lpDD, nullptr)))
+	{
+		D3D_CanGamma = 0;
+		// test if gamma ramp is available (so much code, oof)
+		LPDIRECTDRAW4 lpDD4;
+		if (SUCCEEDED(lpDD->QueryInterface(IID_IDirectDraw4, (LPVOID*)&lpDD4)))
+		{
+			DDCAPS caps4 = { 0 };
+			caps4.dwSize = sizeof(caps4);
+			if (SUCCEEDED(lpDD4->GetCaps(&caps4, nullptr)))
+			{
+				if ((caps4.dwCaps2 & DDCAPS2_PRIMARYGAMMA) != 0)
+					D3D_CanGamma = 1;
+			}
+			lpDD4->Release();
+		}
+
+		// enumerate resolutions
+		DDSURFACEDESC ddesc = { 0 };
+		ddesc.dwSize = sizeof(ddesc);
+		ddesc.dwFlags = DDSD_CAPS;
+		ddesc.ddsCaps.dwCaps = DDSCAPS_3DDEVICE;
+		lpDD->EnumDisplayModes(0, &ddesc, nullptr, EnumScrModesCallback);
+
+		// enumerate 3d devices
+		LPDIRECT3D3 lpD3D3;
+		if (SUCCEEDED(lpDD->QueryInterface(IID_IDirect3D3, (LPVOID*)&lpD3D3)))
+		{
+			if(guid)
+				lpD3D3->EnumDevices(d3denumcallback, guid);
+			lpD3D3->Release();
+		}
+
+		lpDD->Release();
+	}
+	return 1;
+}
+
+HRESULT WINAPI d3denumcallback(_GUID* lpGUID, LPSTR lpszDeviceDesc, LPSTR lpszDeviceName, LPD3DDEVICEDESC lpd3dHWDeviceDesc, LPD3DDEVICEDESC lpd3dSWDeviceDesc, void* ctx)
+{
+	if (((lpd3dHWDeviceDesc->dcmColorModel & D3DCOLOR_RGB) != 0 || (lpd3dSWDeviceDesc->dcmColorModel & D3DCOLOR_RGB) != 0)
+		&& (lpd3dHWDeviceDesc->dwFlags & D3DDD_TRICAPS) != 0)
+	{
+		auto dev = &Devicelist[D3D_NumDevices];
+		if (ctx)
+		{
+			dev->guid0 = *(GUID*)ctx;
+			dev->pguid0 = &dev->guid0;
+		}
+		else dev->pguid0 = nullptr;
+
+		if ((lpd3dHWDeviceDesc->dwFlags & D3DDD_TRICAPS) != 0)
+			dev->tri_caps = 0;
+		else
+		{
+			lpd3dHWDeviceDesc = lpd3dSWDeviceDesc;
+			dev->tri_caps = 1;
+		}
+
+		dev->field_B0 = 1;
+		dev->is_software = false;
+		dev->can_gamma = D3D_CanGamma;
+		dev->guid = *lpGUID;
+		dev->pguid = &dev->guid;
+		dev->res_list = &Screenmodelist[screenmode_cnt0];
+		auto dev_res = dev->res_list;
+		if (screenmode_cnt1 > 0)
+		{
+			auto bitDepth = lpd3dHWDeviceDesc->dwDeviceRenderBitDepth;
+			auto res = pScreenmodelist;
+			for (int i = 0; i < screenmode_cnt1; i++, res++)
+			{
+				auto depth = res->depth;
+				if ((depth != 32 || (bitDepth & 0x100) != 0)
+					&& (depth != 24 || (bitDepth & 0x200) != 0)
+					&& (depth != 16 || (bitDepth & 0x400) != 0)
+					&& depth != 8)
+				{
+					dev->res_count++;
+					dev_res->x = res->x;
+					dev_res->y = res->y;
+					dev_res->depth = res->depth;
+					dev_res++;
+					++screenmode_cnt0;
+				}
+			}
+		}
+
+		sprintf_s(dev->desc, sizeof(dev->desc), "%s : %s", dev_name, lpszDeviceDesc);
+		D3D_NumDevices++;
+	}
 	return 1;
 }
 
