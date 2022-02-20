@@ -43,6 +43,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	GetModuleFileNameA(hInstance, path, MAX_PATH);
 	*strrchr(path, '\\') = '\0';
 	_chdir(path);
+	DWORD PID = GetCurrentProcessId();
 
 	return 0;
 }
