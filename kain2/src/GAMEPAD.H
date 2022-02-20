@@ -1,8 +1,6 @@
 #ifndef GAMEPAD_H
 #define GAMEPAD_H
 
-#include <LIBPAD.H>
-
 #if defined(_LANGUAGE_C_PLUS_PLUS)||defined(__cplusplus)||defined(c_plusplus)
 extern "C" {
 #endif

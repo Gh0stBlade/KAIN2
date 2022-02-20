@@ -33,8 +33,8 @@ extern void (*DRAW_DisplayPolytopeList_S)();
 // void /*$ra*/ GAMELOOP_AllocStaticMemory()
 void GAMELOOP_AllocStaticMemory()
 {
-	instanceList = (_InstanceList*)MEMPACK_Malloc(sizeof(_InstanceList), 6);
-	instancePool = (_InstancePool*)MEMPACK_Malloc(sizeof(_InstancePool), 6);///@FIXME struct size mis-match on PSX/PSXPC!
+	instanceList = (struct _InstanceList*)MEMPACK_Malloc(sizeof(struct _InstanceList), 6);
+	instancePool = (struct _InstancePool*)MEMPACK_Malloc(sizeof(struct _InstancePool), 6);///@FIXME struct size mis-match on PSX/PSXPC!
 	primBase = MEMPACK_Malloc(216600, 6);
 	gOt[1] = (unsigned long**)(primBase + 12288);
 	primPool[0] = (_PrimPool*)(primBase + 24576);
@@ -51,7 +51,7 @@ void GAMELOOP_AllocStaticMemory()
 
 	planningPool = MEMPACK_Malloc(3000, 6);
 	enemyPlanPool = MEMPACK_Malloc(1000, 6);
-	GlobalObjects = (_ObjectTracker*)MEMPACK_Malloc(1728, 6);
+	GlobalObjects = (struct _ObjectTracker*)MEMPACK_Malloc(1728, 6);
 	///G2Anim_Install();
 }
 

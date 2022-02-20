@@ -7,6 +7,8 @@
 #include "PC/LIBGTE.H"
 #include "PC/LIBGPU.H"
 #include "PC/libspu.h"
+#include "PC/LIBAPI.H"
+#include "PC/LIBPAD.H"
 #else	// psx basically
 #include <LIBAPI.H>
 #include <LIBETC.H>

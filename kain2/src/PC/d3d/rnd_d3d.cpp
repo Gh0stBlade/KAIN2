@@ -16,7 +16,7 @@ typedef struct D3D_FOGTBL
 	int col;
 } D3D_FOGTBL;
 
-
+int __cdecl D3D_SetGammaNormalized(int level);
 
 LPDIRECTDRAW lpDD;
 LPDIRECT3DDEVICE3 d3ddev;

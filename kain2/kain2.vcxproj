@@ -146,7 +146,9 @@
     <ClCompile Include="src\CINEMA\CINEPSX.C">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="src\COLLIDE.C" />
+    <ClCompile Include="src\COLLIDE.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="src\DEBUG.C" />
     <ClCompile Include="src\DRAW.C">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -285,7 +287,9 @@
     <ClCompile Include="src\PC\d3d\d3dtextr.cpp" />
     <ClCompile Include="src\PC\d3d\RenderRA.C" />
     <ClCompile Include="src\PC\d3d\rnd_d3d.cpp" />
-    <ClCompile Include="src\PC\d3d\rnd_d3d9.cpp" />
+    <ClCompile Include="src\PC\d3d\rnd_d3d9.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="src\PC\dsound\dsound.cpp" />
     <ClCompile Include="src\PC\libapi.c" />
     <ClCompile Include="src\PC\libetc.c" />
@@ -340,8 +344,12 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="src\PSX\MAIN.C" />
-    <ClCompile Include="src\PSX\PSX_G2\MAINVM.C" />
-    <ClCompile Include="src\PSX\PSX_G2\QUATVM.C" />
+    <ClCompile Include="src\PSX\PSX_G2\MAINVM.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\PSX\PSX_G2\QUATVM.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="src\PSX\SUPPORT.C">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
@@ -491,10 +499,14 @@
     <ClInclude Include="src\MONSTER\WORSHIP.H" />
     <ClInclude Include="src\OBTABLE.H" />
     <ClInclude Include="src\PC\async.h" />
+    <ClInclude Include="src\PC\d3d\d3d.h" />
     <ClInclude Include="src\PC\d3d\d3dbuckt.h" />
     <ClInclude Include="src\PC\d3d\d3dclip.h" />
+    <ClInclude Include="src\PC\KERNEL.H" />
+    <ClInclude Include="src\PC\LIBAPI.H" />
     <ClInclude Include="src\PC\LIBGPU.H" />
     <ClInclude Include="src\PC\LIBGTE.H" />
+    <ClInclude Include="src\PC\LIBPAD.H" />
     <ClInclude Include="src\PC\libspu.h" />
     <ClInclude Include="src\PC\snd.h" />
     <ClInclude Include="src\PC\sndmix.h" />
