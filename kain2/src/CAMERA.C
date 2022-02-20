@@ -1479,7 +1479,7 @@ struct _TFace * CAMERA_SphereToSphereWithLines(struct Camera *camera, struct Cam
 	//		// Start line: 2232
 	//		// Start offset: 0x80018148
 	//		// Variables:
-	//			int flag; // $fp
+	//			int clut; // $fp
 	//			short backface_flag; // stack offset -72
 	//			struct _PCollideInfo pCollideInfo; // stack offset -120
 

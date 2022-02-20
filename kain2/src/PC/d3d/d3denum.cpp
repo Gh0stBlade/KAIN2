@@ -139,7 +139,7 @@ BOOL WINAPI DDEnumCallback(GUID *guid, LPSTR name, LPSTR, LPVOID ctx, HMONITOR)
 	}
 	return 1;
 }
-
+//0001:00070d80 ? d3denumcallback@@YGJPAU_GUID@@PAD1PAU_D3DDeviceDesc@@2PAX@Z 00471d80 f   d3denum.obj
 HRESULT WINAPI d3denumcallback(_GUID* lpGUID, LPSTR lpszDeviceDesc, LPSTR lpszDeviceName, LPD3DDEVICEDESC lpd3dHWDeviceDesc, LPD3DDEVICEDESC lpd3dSWDeviceDesc, void* ctx)
 {
 	if (((lpd3dHWDeviceDesc->dcmColorModel & D3DCOLOR_RGB) != 0 || (lpd3dSWDeviceDesc->dcmColorModel & D3DCOLOR_RGB) != 0)
