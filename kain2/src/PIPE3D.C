@@ -233,7 +233,7 @@ void PIPE3D_InstanceListTransformAndDrawFunc(struct _StreamUnit *unit, unsigned 
 			struct VECTOR dpv[2]; // stack offset -72
 			long maxRad; // $a1
 			struct Level *level; // $s5
-			SVECTORbsPos; // stack offset -40
+			SVECTOR bsPos; // stack offset -40
 	/* end block 1 */
 	// End offset: 0x8003B0FC
 	// End Line: 1586

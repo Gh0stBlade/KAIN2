@@ -4986,13 +4986,6 @@ struct STATE_109fake // hashcode: 0x5CC5AB24 (dec: 1556458276)
 	} Follow; // size=20, offset=76, found in object files: state.o, state.o
 };
 
-struct __CharacterState // hashcode: 0x6C0823BB (dec: 1812472763)
-{
-	struct _Instance *CharacterInstance; // size=616, offset=0
-	int TotalSections; // size=0, offset=4
-	struct __State SectionList[3]; // size=852, offset=8
-};
-
 struct evMonsterHitData // hashcode: 0x5BC7AF7A (dec: 1539813242)
 {
 	struct _Instance *sender; // size=616, offset=0
@@ -7934,26 +7927,6 @@ struct __FitPoint // hashcode: 0xFA3F31C2 (dec: -96521790)
 	short x; // size=0, offset=0
 	short y; // size=0, offset=2
 };
-
-struct __SensoryData // hashcode: 0x3A2E27FD (dec: 976103421)
-{
-	int Flags; // size=0, offset=0
-	struct _SVector ForwardNormal; // size=8, offset=4
-	struct _SVector AboveNormal; // size=8, offset=12
-	struct _SVector BelowNormal; // size=8, offset=20
-	struct _SVector BelowPoint; // size=8, offset=28
-	struct _SVector Delta; // size=8, offset=36
-	struct _Instance *HitMonster; // size=616, offset=44
-	struct _Instance *CurrentAutoFace; // size=616, offset=48
-	struct _Instance *LastAutoFace; // size=616, offset=52
-	struct _Instance *Portal; // size=616, offset=56
-	struct __EngagedInstance *EngagedList; // size=8, offset=60
-	unsigned long EngagedMask; // size=0, offset=64
-	struct _Vector lookAtPoint; // size=12, offset=68
-	unsigned long heldClass; // size=0, offset=80
-};
-
-
 
 typedef struct __Force Force;
 

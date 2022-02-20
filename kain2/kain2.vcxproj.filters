@@ -367,6 +367,9 @@
     <ClCompile Include="src\PC\d3d\d3dtextr.cpp">
       <Filter>PC\d3d</Filter>
     </ClCompile>
+    <ClCompile Include="src\PC\setup.cpp">
+      <Filter>PC</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\PC\libspu.h">

@@ -221,6 +221,9 @@
     <ClCompile Include="src\PC\libspu.c" />
     <ClCompile Include="src\PC\memwpsx.c" />
     <ClCompile Include="src\PC\pcload.c" />
+    <ClCompile Include="src\PC\setup.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="src\PC\snd.cpp" />
     <ClCompile Include="src\PC\sndmix.c" />
     <ClCompile Include="src\PC\video\winplay.cpp" />

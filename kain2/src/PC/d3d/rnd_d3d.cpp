@@ -47,7 +47,7 @@ void __cdecl DBG_Print(const char* fmt, ...)
 }
 
 //0001:00074450       _D3D_FailAbort             00475450 f   rnd_d3d.obj
-void __cdecl D3D_FailAbort(char *fmt, ...)
+void __cdecl D3D_FailAbort(const char *fmt, ...)
 {
 	CHAR Text[256]; // [esp+0h] [ebp-100h] BYREF
 	va_list va; // [esp+108h] [ebp+8h] BYREF

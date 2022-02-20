@@ -1,8 +1,6 @@
 #ifndef BSP_H
 #define BSP_H
 
-#include <LIBGTE.H>
-
 struct _Sphere_noSq // hashcode: 0xA031058C (dec: -1607400052)
 {
 	struct _Position position; // size=6, offset=0

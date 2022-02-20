@@ -1,6 +1,31 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
+struct __CharacterState // hashcode: 0x6C0823BB (dec: 1812472763)
+{
+	struct _Instance* CharacterInstance; // size=616, offset=0
+	int TotalSections; // size=0, offset=4
+	struct __State SectionList[3]; // size=852, offset=8
+};
+
+struct __SensoryData // hashcode: 0x3A2E27FD (dec: 976103421)
+{
+	int Flags; // size=0, offset=0
+	struct _SVector ForwardNormal; // size=8, offset=4
+	struct _SVector AboveNormal; // size=8, offset=12
+	struct _SVector BelowNormal; // size=8, offset=20
+	struct _SVector BelowPoint; // size=8, offset=28
+	struct _SVector Delta; // size=8, offset=36
+	struct _Instance* HitMonster; // size=616, offset=44
+	struct _Instance* CurrentAutoFace; // size=616, offset=48
+	struct _Instance* LastAutoFace; // size=616, offset=52
+	struct _Instance* Portal; // size=616, offset=56
+	struct __EngagedInstance* EngagedList; // size=8, offset=60
+	unsigned long EngagedMask; // size=0, offset=64
+	struct _Vector lookAtPoint; // size=12, offset=68
+	unsigned long heldClass; // size=0, offset=80
+};
+
 struct __Player // hashcode: 0x0712E7A5 (dec: 118679461)
 {
 	int footPrint; // size=0, offset=0

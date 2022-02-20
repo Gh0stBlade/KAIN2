@@ -46,10 +46,10 @@
 #define DEFAULT_MEM_MAGIC				PACK_MAGIC_USHORT(0xB, 0xA, 0xD, 0xE)
 
 #define null	0
+typedef unsigned long long QWORD;
 
 #ifndef WINAPI
 typedef unsigned char BYTE;
-typedef unsigned long long QWORD;
 typedef unsigned int DWORD;
 typedef unsigned short WORD;
 #ifndef PSX_VERSION//?

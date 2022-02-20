@@ -1,7 +1,7 @@
-#include "CORE.H"
+#include "../CORE.H"
 #include "LOCALSTR.H"
-#include "LOAD3D.H"
-#include "VOICEXA.H"
+#include "../LOAD3D.H"
+#include "../VOICEXA.H"
 
 #include <stddef.h>
 
@@ -23,7 +23,7 @@ enum language_t localstr_get_language()
 	/* end block 2 */
 	// End Line: 102
 
-	return (language_t)null;
+	return (language_t)0;
 }
 
 void localstr_set_language(enum language_t lang)

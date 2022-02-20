@@ -1,4 +1,4 @@
-#include "CORE.H"
+#include "../CORE.H"
 #include "AADLIB.H"
 
 struct AadMemoryStruct* aadMem; // offset 0x800CECD8

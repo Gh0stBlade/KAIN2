@@ -60,7 +60,7 @@ long MATH3D_LengthXYZ(long x, long y, long z)
 	int v6; // esi
 	int v7; // esi
 	int v8; // esi
-	bool v9; // cc
+	int v9; // cc
 
 	v3 = x;
 	if (x < 0)
