@@ -192,7 +192,7 @@ void LOAD_SetupFileToDoCDReading()
 	}
 	else
 	{
-		loadStatus.currentSector = loadStatus.bigFile.bigfileBaseOffset + ((loadStatus.currentQueueFile.readStartPos >> 11) + loadStatus.bigFile.bigfileBaseOffset);
+		loadStatus.currentSector = loadStatus.bigFile.bigfileBaseOffset + (loadStatus.currentQueueFile.readStartPos >> 11);
 	}
 
 	CdIntToPos(loadStatus.currentSector, &loc);
@@ -384,7 +384,7 @@ void LOAD_InitCdLoader(char *bigFileName, char *voiceFileName)
 		loadStatus.bigFile.cachedDirID = 0;
 		loadStatus.bigFile.searchDirID = 0;
 
-		LOAD_CdReadFromBigFile(0, (unsigned long*)&loadStatus.bigFile.numSubDirs, 4, 0, 0);
+		LOAD_CdReadFromBigFile(0, (unsigned long*)&loadStatus.bigFile.numSubDirs, sizeof(loadStatus.bigFile.numSubDirs), 0, 0);
 		
 		do
 		{
