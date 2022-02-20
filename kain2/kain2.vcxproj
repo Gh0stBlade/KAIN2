@@ -336,6 +336,7 @@
     <ClInclude Include="src\MONSTER\VWRAITH.H" />
     <ClInclude Include="src\MONSTER\WORSHIP.H" />
     <ClInclude Include="src\OBTABLE.H" />
+    <ClInclude Include="src\PC\async.h" />
     <ClInclude Include="src\PC\d3d\d3dbuckt.h" />
     <ClInclude Include="src\PC\d3d\d3dclip.h" />
     <ClInclude Include="src\PC\LIBGPU.H" />

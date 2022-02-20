@@ -627,5 +627,8 @@
     <ClInclude Include="src\PC\d3d\d3dclip.h">
       <Filter>PC\d3d</Filter>
     </ClInclude>
+    <ClInclude Include="src\PC\async.h">
+      <Filter>PC</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,4 +1,5 @@
 #include "../core.h"
+#include "async.h"
 
 void __cdecl DBG_Print(const char* fmt, ...);
 
