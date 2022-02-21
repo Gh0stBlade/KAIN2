@@ -83,14 +83,14 @@ void STREAM_InitLoader(char *bigFileName, char *voiceFileName)
 
 	LOAD_InitCdLoader(bigFileName, voiceFileName);
 	
-	loadFree = &LoadQueue[38];
+	loadFree = &LoadQueue[0];
 	loadHead = NULL;
 	loadTail = NULL;
 	numLoads = 0;
 
 	for (i = 38; i >= 0; i--)
 	{
-		LoadQueue[i].next = &LoadQueue[i + 1];
+		LoadQueue[38 - i].next = &LoadQueue[39 - i];
 	}
 
 	LoadQueue[39].next = NULL;
@@ -108,8 +108,8 @@ void STREAM_RemoveQueueHead()
 		loadTail = NULL;
 	}
 
+	entry->next = loadFree;
 	loadFree = entry;
-	entry ->next = loadFree;
 	numLoads--;
 }
 
@@ -171,7 +171,7 @@ struct _LoadQueueEntry * STREAM_AddQueueEntryToHead()
 
 	loadFree = entry->next;
 
-	if (loadHead == NULL || loadHead->status == 1 || loadHead->status == 5 || loadHead->status != 10 || loadHead->status == 8)
+	if (loadHead == NULL || loadHead->status == 1 || loadHead->status == 5 || loadHead->status == 10 || loadHead->status == 8)
 	{
 		entry->next = loadHead;
 		loadHead = entry;

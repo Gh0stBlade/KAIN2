@@ -12,8 +12,8 @@ static struct NewMemTracker newMemTracker;
 unsigned long mem_used, mem_total;
 
 #if defined(PSXPC_VERSION)
-char memBuffer[TWO_MB];
-void* overlayAddress = &memBuffer[0]; // 0x800CE194
+char memBuffer[0x11F18C];
+void* overlayAddress = memBuffer; // 0x800CE194
 #else
 void* overlayAddress; // For PSX this is quite clearly set by the linker script maybe.
 #endif
@@ -22,11 +22,13 @@ void MEMPACK_Init()
 {
 #if defined(PSXPC_VERSION)
 	newMemTracker.totalMemory = sizeof(memBuffer);
-	memset(overlayAddress, 0, ONE_MB);
+	memset(memBuffer, 0, sizeof(memBuffer));
+	newMemTracker.rootNode = (struct MemHeader*)memBuffer;
 #else
-	newMemTracker.totalMemory = (BASE_ADDRESS + TWO_MB - (ONE_MB / 256)) - (unsigned int)overlayAddress;
+	newMemTracker.totalMemory = ((TWO_MB - (ONE_MB / 256)) + BASE_ADDRESS) - ((long*)overlayAddress)[0];
+	newMemTracker.rootNode = (struct MemHeader*)((long*)overlayAddress)[0];
 #endif
-	newMemTracker.rootNode = (struct MemHeader*)overlayAddress;
+	
 	newMemTracker.rootNode->magicNumber = DEFAULT_MEM_MAGIC;
 	newMemTracker.rootNode->memStatus = 0;
 	newMemTracker.rootNode->memType = 0;
@@ -115,16 +117,20 @@ char * MEMPACK_Malloc(unsigned long allocSize, unsigned char memType)
 		if (relocatableMemory != 0)
 		{
 			MEMPACK_DoGarbageCollection();
-		}
 
-		if (relocatableMemory != 0)
-		{
-			bestAddress = MEMPACK_GetSmallestBlockTopBottom(allocSize);
+			if (relocatableMemory != 0)
+			{
+				bestAddress = MEMPACK_GetSmallestBlockTopBottom(allocSize);
+			}
+			else
+			{
+				bestAddress = MEMPACK_GetSmallestBlockBottomTop(allocSize);
+			}
 		}
 		else
 		{
 			bestAddress = MEMPACK_GetSmallestBlockBottomTop(allocSize);
-		}
+		}	
 	}
 	else
 	{
@@ -316,7 +322,7 @@ void MEMPACK_Free(char *address)
 	memAddress->memType = 0;
 	newMemTracker.currentMemoryUsed -= memAddress->memSize;
 
-	secondAddress = (struct MemHeader*)(char*)memAddress + memAddress->memSize;
+	secondAddress = (struct MemHeader*)(char*)(memAddress + memAddress->memSize);
 
 	if ((char*)secondAddress != newMemTracker.lastMemoryAddress)
 	{
@@ -332,12 +338,12 @@ void MEMPACK_Free(char *address)
 		{
 			if ((char*)memAddress + memAddress->memSize == (char*)secondAddress)
 			{
-				MEMORY_MergeAddresses(memAddress, (struct MemHeader*)(char*)memAddress + memAddress->memSize);
+				MEMORY_MergeAddresses(memAddress, (struct MemHeader*)(char*)(memAddress + memAddress->memSize));
 				break;
 			}
 			else
 			{
-				memAddress = (struct MemHeader*)(char*)memAddress + memAddress->memSize;
+				memAddress = (struct MemHeader*)(char*)(memAddress + memAddress->memSize);
 			}
 
 		} while ((char*)memAddress + memAddress->memSize != newMemTracker.lastMemoryAddress);
