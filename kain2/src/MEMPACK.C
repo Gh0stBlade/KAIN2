@@ -180,8 +180,6 @@ char * MEMPACK_Malloc(unsigned long allocSize, unsigned char memType)
 			bestAddress->memType = memType;
 			bestAddress->memSize = allocSize;
 
-			bestAddress = address;
-
 			newMemTracker.currentMemoryUsed += allocSize;
 		}
 		else
