@@ -150,6 +150,10 @@ void LOAD_CdReadReady(unsigned char intr, unsigned char *result)
 				for (int i = 0; i < numSectorsToRead; i++)
 				{
 					loadStatus.currentSector++;
+					if (i > 0)
+					{
+						CdGetSector(&crap, 3);
+					}
 					CdGetSector(dest, 2048 >> 2);
 
 					CdIntToPos(loadStatus.currentSector, &loc);
@@ -161,10 +165,15 @@ void LOAD_CdReadReady(unsigned char intr, unsigned char *result)
 				if (numRemainingDataToRead != 0)
 				{
 					loadStatus.currentSector++;
+					if (numSectorsToRead != 0)
+					{
+						CdGetSector(&crap, 3);
+					}
 					CdGetSector(dest, numRemainingDataToRead >> 2);
 
 					CdIntToPos(loadStatus.currentSector, &loc);
 					CdControl(CdlReadN, &loc.minute, NULL);
+
 					dest += numRemainingDataToRead;
 				}
 
@@ -434,8 +443,8 @@ struct _BigFileDir * LOAD_ReadDirectory(struct _BigFileDirEntry *dirEntry)
 	struct _BigFileDir* dir;
 	long sizeOfDir;
 	
-	sizeOfDir = dirEntry->numFiles;
-	dir = (_BigFileDir*)MEMPACK_Malloc((sizeOfDir << 4) + 4, 0x2C);
+	sizeOfDir = (dirEntry->numFiles * sizeof(_BigFileEntry)) + sizeof(long);
+	dir = (_BigFileDir*)MEMPACK_Malloc(sizeOfDir, 0x2C);
 	
 	LOAD_CdReadFromBigFile(dirEntry->subDirOffset, (unsigned long*)dir, sizeOfDir, 0, 0);
 	
