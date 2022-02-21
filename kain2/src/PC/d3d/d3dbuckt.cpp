@@ -1,8 +1,4 @@
-#include <windows.h>
-#include <ddraw.h>
-#include <d3d.h>
-#include "d3dbuckt.h"
-#include "d3dclip.h"
+#include "d3d.h"
 
 HGLOBAL hMem;
 MATBUCKET MaterialBuckets[6], transbucket;

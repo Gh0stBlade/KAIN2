@@ -1,7 +1,7 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-#include <LIBGPU.H>
+//#include <LIBGPU.H>
 
 struct InterfaceItem // hashcode: 0xB8494031 (dec: -1203158991)
 {

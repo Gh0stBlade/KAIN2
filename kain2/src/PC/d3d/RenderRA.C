@@ -33,7 +33,7 @@ typedef struct D3D_DEVLIST
 
 extern _G2AppDataVM_Type appDataVM;
 extern D3D_DEVLIST Devicelist[];
-void __cdecl D3D_FailAbort(char* fmt, ...);
+extern void __cdecl D3D_FailAbort(char* fmt, ...);
 
 #define ROPT_BILINEAR			0x01
 #define ROPT_UNK1				0x02

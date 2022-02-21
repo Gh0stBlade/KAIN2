@@ -633,5 +633,17 @@
     <ClInclude Include="src\PC\sndmix.h">
       <Filter>PC</Filter>
     </ClInclude>
+    <ClInclude Include="src\PC\d3d\d3d.h">
+      <Filter>PC\d3d</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PC\LIBPAD.H">
+      <Filter>PC</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PC\LIBAPI.H">
+      <Filter>PC</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PC\KERNEL.H">
+      <Filter>PC</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

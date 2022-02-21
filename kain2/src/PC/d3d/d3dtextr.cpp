@@ -1,25 +1,6 @@
-#include <windows.h>
-#include <ddraw.h>
-#include <d3d.h>
+#include "d3d.h"
 #include <stdio.h>
 #include "../async.h"
-
-typedef struct SystemTextureD3D
-{
-	DWORD age;
-	DWORD clut;
-	LPDIRECTDRAWSURFACE4 surface;
-	IDirect3DTexture2* texture;
-	SystemTextureD3D* linked;
-} SystemTextureD3D;
-
-typedef struct SystemTexturePool
-{
-	int age;
-	int clut;
-	LPDIRECTDRAWSURFACE4 surface;
-	IDirect3DTexture2* texture;
-} SystemTexturePool;
 
 DDPIXELFORMAT sys_texture_fmt;
 DWORD sys_texture_amask, sys_texture_rmask, sys_texture_gmask, sys_texture_bmask;

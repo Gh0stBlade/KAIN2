@@ -1566,7 +1566,7 @@ void aadMuteChannels(struct _AadSequenceSlot *slot, unsigned long channelList)
 			unsigned long vmask; // $t2
 			unsigned long delayedMute; // $a2
 			int channel; // $t1
-			int i; // $t0
+			//int i; // $t0
 	unsigned int v2; // edx
 	unsigned int v3; // eax
 	AadMemoryStruct* v4; // esi

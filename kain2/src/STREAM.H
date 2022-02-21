@@ -144,6 +144,9 @@ struct STracker // hashcode: 0xAED5E069 (dec: -1361715095)
 
 typedef struct StreamUnitPortal StreamUnitPortal;
 
+#if defined(_LANGUAGE_C_PLUS_PLUS)||defined(__cplusplus)||defined(c_plusplus)
+extern "C" {
+#endif
 extern struct STracker StreamTracker; // offset 0x800D1920
 
 extern void STREAM_FillOutFileNames(char *baseAreaName, char *dramName, char *vramName, char *sfxName); // 0x800584E4
@@ -272,5 +275,9 @@ extern void STREAM_RenderWarpGate(unsigned long **mainOT, struct StreamUnitPorta
 extern void WARPGATE_RenderWarpUnit(unsigned long **mainOT, struct StreamUnitPortal *curStreamPortal, struct _StreamUnit *mainStreamUnit, struct PSX_RECT *cliprect); // 0x8005F4F0
 extern void STREAM_DumpNonResidentObjects(); // 0x8005F8C8
 extern int STREAM_TryAndDumpNonResident(struct _ObjectTracker *otr); // 0x8005F978
+
+#if defined(_LANGUAGE_C_PLUS_PLUS)||defined(__cplusplus)||defined(c_plusplus)
+}
+#endif
 
 #endif

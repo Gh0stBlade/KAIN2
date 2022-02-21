@@ -2,7 +2,7 @@
 
 extern void (*cb_vsync)(void);
 void (*_psxEmuState)(void);
-u_long primBase;
+static u_long primBaseX;
 
 //0001:00028b10       _ClearImage                00429b10 f   libgpu.obj
 int ClearImage(PSX_RECT* rect, u_char r, u_char g, u_char b)
@@ -24,7 +24,8 @@ u_long* ClearOTagR(u_long* ot, int n)
 		v4 = n - 1;
 		do
 		{
-			v5 = (u_long)&ot[v3 - 2] - primBase;
+			v5 = ((u_long)&ot[v3 - 2]);
+			v5 -= primBaseX;
 			--v3;
 			--v4;
 			ot[v3] = v5 & 0xFFFFFF;

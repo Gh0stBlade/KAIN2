@@ -1,13 +1,8 @@
-#include <windows.h>
-#include <ddraw.h>
-#include <d3d.h>
-#include "d3dbuckt.h"
+#include "d3d.h"
 
 DWORD D3D_ClipPlaneMask, D3D_InverseClipPlanes;
 float D3D_LeftClip, D3D_BottomClip, D3D_TopClip, D3D_RightClip,
 	D3D_FarClip, D3D_NearClip;
-
-extern DWORD D3D_XRes, D3D_YRes;
 
 //0001:00068490       _D3D_SetClipRect           00469490 f   d3dclip.obj
 void __cdecl D3D_SetClipRect(int left, int top, int right, int bottom)
