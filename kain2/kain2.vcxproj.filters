@@ -569,7 +569,6 @@
     <ClInclude Include="src\GAMELOOP.H" />
     <ClInclude Include="src\GAMEPAD.H" />
     <ClInclude Include="src\GENERIC.H" />
-    <ClInclude Include="gex2.h" />
     <ClInclude Include="src\GLYPH.H" />
     <ClInclude Include="src\INSTANCE.H" />
     <ClInclude Include="KAIN2.H" />
@@ -583,7 +582,6 @@
     <ClInclude Include="src\PHYSOBS.H" />
     <ClInclude Include="src\PIPE3D.H" />
     <ClInclude Include="src\PLAYER.H" />
-    <ClInclude Include="psyq.h" />
     <ClInclude Include="src\RAZCNTRL.H" />
     <ClInclude Include="src\REAVER.H" />
     <ClInclude Include="src\RELMOD.H" />
@@ -645,5 +643,7 @@
     <ClInclude Include="src\PC\KERNEL.H">
       <Filter>PC</Filter>
     </ClInclude>
+    <ClInclude Include="src\gex2.h" />
+    <ClInclude Include="src\psyq.h" />
   </ItemGroup>
 </Project>
