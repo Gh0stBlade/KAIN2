@@ -33,7 +33,12 @@ int devstation; // offset 0x800D0E68
 struct BLK_FILL clearRect[2]; // offset 0x800D0F88
 DRAWENV draw[2]; // offset 0x800D0E6C
 DISPENV disp[2]; // offset 0x800D0E40
-struct InterfaceItem InterfaceItems[6];
+struct InterfaceItem InterfaceItems[6] = { "\PUBLOGO.STR;1", 0, 0, 0, 1, 
+										   "\CRYLOGO.STR;1", 0, 0, 0, 5, 
+										   "\KAININT.STR;1", 0, 0, 0, -1,
+										   "\VERSE.STR;1", 0, 0, 0, 4, 
+										   "\CREDITS.STR;1", 0, 0, 0, -1,
+										   "\\kain2\\game\\psx\\mainmenu\\legal.tim", 165, 165, 1, -1, };
 
 void ClearDisplay()
 {
@@ -769,16 +774,17 @@ int MainG2(void *appData)
 						CINE_Play(InterfaceItems[mainTracker->movieNum].name, 0xFFFFu, 2);
 						ClearDisplay();
 					}
-					//loc_80039564
-					//v1 = 
-					if (InterfaceItems[InterfaceItems[mainTracker->movieNum].nextItem].itemType != 0)
+
+					mainTracker->movieNum = InterfaceItems[mainTracker->movieNum].nextItem;
+					
+					if (InterfaceItems[mainTracker->movieNum].itemType != 0)
 					{
 						mainTracker->mainState = 4;
 						break;
 					}
-				} while (InterfaceItems[mainTracker->movieNum].nextItem >= 0);
+				} while (mainTracker->movieNum >= 0);
 			}
-			//loc_800395B0
+
 			CINE_Unload();
 
 			if (mainTracker->movieNum < 0)
@@ -786,7 +792,6 @@ int MainG2(void *appData)
 				mainTracker->mainState = 8;
 			}
 
-			//loc_800395CC
 			if (nosound == 0)
 			{
 				SOUND_StopAllSound();
