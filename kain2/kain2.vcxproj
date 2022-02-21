@@ -441,9 +441,7 @@
     <ClCompile Include="src\VRAM.C" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="gex2.h" />
     <ClInclude Include="KAIN2.H" />
-    <ClInclude Include="psyq.h" />
     <ClInclude Include="src\BSP.H" />
     <ClInclude Include="src\CAMERA.H" />
     <ClInclude Include="src\CINEMA\CINEPSX.H" />
@@ -467,6 +465,7 @@
     <ClInclude Include="src\GAMELOOP.H" />
     <ClInclude Include="src\GAMEPAD.H" />
     <ClInclude Include="src\GENERIC.H" />
+    <ClInclude Include="src\gex2.h" />
     <ClInclude Include="src\GLYPH.H" />
     <ClInclude Include="src\INSTANCE.H" />
     <ClInclude Include="src\LIGHT3D.H" />
@@ -532,6 +531,7 @@
     <ClInclude Include="src\PSX\PSX_G2\QUATVM.H" />
     <ClInclude Include="src\PSX\SNMAIN.H" />
     <ClInclude Include="src\PSX\SUPPORT.H" />
+    <ClInclude Include="src\psyq.h" />
     <ClInclude Include="src\RAZCNTRL.H" />
     <ClInclude Include="src\RAZIEL\ALGOCTRL.H" />
     <ClInclude Include="src\RAZIEL\ATTACK.H" />

@@ -1,7 +1,5 @@
-#include <windows.h>
+#include "d3d.h"
 #include <stdio.h>
-#include <ddraw.h>
-#include <d3d.h>
 #include "../snd.h"
 #include "d3dbuckt.h"
 #include "d3dclip.h"
@@ -27,6 +25,9 @@ LPDIRECTDRAWCLIPPER clipper;
 LPDIRECTDRAWSURFACE4 primary, backbuffer, zbuffer;
 LPDIRECTDRAWGAMMACONTROL gamma;
 
+D3DDEVICEDESC D3D_DeviceDesc;
+DDCAPS D3D_Caps;
+
 _G2AppDataVM_Type* d3d_vm;
 HWND hWnd;
 int D3D_Windowed,
@@ -48,7 +49,8 @@ void __cdecl D3D_FreeBuckets();
 DWORD D3D_GammaLevel,
 	D3D_GammaAdjust,
 	D3D_SelectedDevice,
-	D3D_bgcol;
+	D3D_bgcol,
+	D3D_CurrentFrame;
 int(__cdecl* TRANS_DoTransform)(DWORD, DWORD, DWORD, DWORD);
 
 #ifndef SAFE_RELEASE
@@ -123,17 +125,129 @@ void __cdecl D3D_FailAbort(const char *fmt, ...)
 	D3D_FreeBuckets();
 	ShutdownDevice();
 	hWnd = 0;
+#if 0
 	if (MessageBoxA(0, Text, "Kain 2 Error", MB_OKCANCEL) == IDCANCEL)
 	{
 		// questionable code
 		// it makes the program stagger if you click on CANCEL
 		while (1);
 	}
+#else
+	// more sane like this, just display an error message and quit
+	MessageBoxA(0, Text, "Kain 2 Error", MB_OK);
+#endif
 	ExitProcess(0);
 }
 
 //0001:000744b0 ?enumdepthbuf@@YGJPAU_DDPIXELFORMAT@@PAX@Z 004754b0 f   rnd_d3d.obj
+HRESULT WINAPI enumdepthbuf(DDPIXELFORMAT* a1, LPVOID lpContext)
+{
+	if (a1->dwRGBBitCount == 16)
+		memcpy(lpContext, a1, sizeof(DDPIXELFORMAT));
+
+	return 1;
+}
+
 //0001:000744e0 ?InitialiseDevice@@YAHXZ   004754e0 f   rnd_d3d.obj
+int __cdecl InitialiseDevice()
+{
+	D3D_CurrentFrame = 0;
+	DirectDrawCreate(Devicelist[D3D_SelectedDevice].pguid, &lpDD, nullptr);
+	lpDD->QueryInterface(IID_IDirectDraw4, (LPVOID*)&lpDD4);
+	lpDD->Release();
+	if (D3D_XRes == 0 || D3D_YRes == 0)
+		return 1;
+
+	if (D3D_Windowed)
+	{
+		if (Devicelist[D3D_SelectedDevice].field_B0)
+			return 0;
+		if (FAILED(lpDD4->SetCooperativeLevel(hWnd, DDSCL_NORMAL)))
+			return 0;
+
+		DDSURFACEDESC2 scap = { 0 };
+		scap.dwSize = sizeof(scap);
+		scap.dwFlags = 1;
+		scap.ddsCaps.dwCaps = 0x200;
+		lpDD4->CreateSurface(&scap, &primary, 0);
+		if (primary == nullptr)
+			return 0;
+		scap.dwWidth = D3D_XRes;
+		scap.dwHeight = D3D_YRes;
+		scap.dwFlags = 7;
+		scap.ddsCaps.dwCaps = Devicelist[D3D_SelectedDevice].tri_caps != 0 ? 0x2800 : 0x6000;
+		lpDD4->CreateSurface(&scap, &backbuffer, 0);
+		if (!backbuffer)
+			return 0;
+		lpDD4->QueryInterface(IID_IDirect3D3, (LPVOID*)&d3dobj);
+		if (!d3dobj)
+			return 0;
+
+		//if ( !Devicelist[D3D_SelectedDevice].is_software )
+		{
+			DDSURFACEDESC2 scap2 = { 0 };
+			scap2.dwSize = sizeof(scap2);
+			d3dobj->EnumZBufferFormats((const IID&)Devicelist[D3D_SelectedDevice].guid, enumdepthbuf, (LPVOID)&scap2.ddpfPixelFormat);
+			scap2.dwFlags = 0x1007;
+			if (!Devicelist[D3D_SelectedDevice].tri_caps)
+				scap2.ddsCaps.dwCaps = 0x24000;
+			else scap2.ddsCaps.dwCaps = 0x20800;
+			scap2.dwWidth = D3D_XRes;
+			scap2.dwHeight = D3D_YRes;
+			lpDD4->CreateSurface(&scap2, &zbuffer, 0);
+			if (!zbuffer)
+				return 0;
+			if (FAILED(backbuffer->AddAttachedSurface(zbuffer)))
+				return 0;
+		}
+
+		lpDD4->CreateClipper(0, &clipper, nullptr);
+		primary->SetClipper(clipper);
+	}
+	else
+	{
+		while (ShowCursor(0) >= 0);
+		SetCursor(0);
+		if (lpDD4->SetCooperativeLevel(hWnd, DDSCL_EXCLUSIVE | DDSCL_ALLOWREBOOT | DDSCL_FULLSCREEN))
+			return 0;
+		if (lpDD4->SetDisplayMode(D3D_XRes, D3D_YRes, D3D_BitDepth, 0, 0))
+			return 0;
+	}
+
+	D3D_GammaAdjust = 0;
+	if (Devicelist[D3D_SelectedDevice].can_gamma)
+	{
+		if (SUCCEEDED(primary->QueryInterface(IID_IDirectDrawGammaControl, (LPVOID*)&gamma)))
+			D3D_GammaAdjust = 1;
+	}
+
+	d3dobj->CreateDevice((const IID&)Devicelist[D3D_SelectedDevice].pguid, backbuffer, &d3ddev, nullptr);
+	if (d3ddev == nullptr)
+		return 0;
+
+	D3DDEVICEDESC desc = {0};
+	desc.dwSize = sizeof(desc);
+	memset(&D3D_DeviceDesc, 0, sizeof(desc));
+	D3D_DeviceDesc.dwSize = sizeof(desc);
+
+	LPDDCAPS pcaps;
+	if (Devicelist[D3D_SelectedDevice].tri_caps)
+	{
+		d3ddev->GetCaps(&desc, &D3D_DeviceDesc);
+		pcaps = nullptr;
+	}
+	else
+	{
+		d3ddev->GetCaps(&D3D_DeviceDesc, &desc);
+		pcaps = &D3D_Caps;
+		memset(&D3D_Caps, 0, sizeof(D3D_Caps));
+		D3D_Caps.dwSize = sizeof(D3D_Caps);
+	}
+
+	DDCAPS caps = { 0 };
+	caps.dwSize = sizeof(caps);
+	lpDD4->GetCaps(&caps, pcaps);
+}
 //0001:00075080       _D3D_Init                  00476080 f   rnd_d3d.obj
 extern int __cdecl TRANS_Init();
 int InitialiseDevice();
@@ -234,12 +348,12 @@ void __cdecl D3D_SetFog(int r, int g, int b, float fogNear, float fogFar)
 		if (D3D_UseVertexFog)
 		{
 			d3ddev->SetRenderState(D3DRENDERSTATE_FOGCOLOR, D3D_FogColor);
-			D3D_FogZScale = 254.0 / (D3D_FogFar - D3D_FogNear);
+			D3D_FogZScale = 254.f / (D3D_FogFar - D3D_FogNear);
 		}
 	}
 }
 //0001:000753f0       _D3D_Clear                 004763f0 f   rnd_d3d.obj
-void __cdecl D3D_ClearZBuffer()
+void __cdecl D3D_Clear()
 {
 	D3DRECT rect;
 	rect.x1 = 0;

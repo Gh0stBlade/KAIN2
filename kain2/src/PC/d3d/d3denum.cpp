@@ -1,40 +1,6 @@
-#include <windows.h>
-#include <ddraw.h>
-#include <d3d.h>
+#include "d3d.h"
 #include <stdlib.h>
 #include <stdio.h>
-
-struct TEXTURE_TYPE
-{
-	DDPIXELFORMAT pfmt;
-	int field_20;
-	int bits_alpha;
-	int bits_red;
-	int bits_green;
-	int bits_blue;
-};
-
-typedef struct D3D_RES
-{
-	int x;
-	int y;
-	int depth;
-} D3D_RES;
-
-typedef struct D3D_DEVLIST
-{
-	GUID* pguid0;
-	GUID* pguid;
-	GUID guid0;
-	GUID guid;
-	char desc[128];
-	int tri_caps;
-	int is_software;
-	int field_B0;
-	int res_count;
-	int can_gamma;
-	D3D_RES* res_list;
-} D3D_DEVLIST;
 
 DWORD D3D_NumTextureTypes, enumerated, D3D_NumDevices, dword_C3C27C, dword_C3C284;
 int screenmode_cnt0, screenmode_cnt1;

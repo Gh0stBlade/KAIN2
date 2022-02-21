@@ -23,6 +23,44 @@ typedef struct SystemTexturePool
 	IDirect3DTexture2* texture;
 } SystemTexturePool;
 
+struct TEXTURE_TYPE
+{
+	DDPIXELFORMAT pfmt;
+	int field_20;
+	int bits_alpha;
+	int bits_red;
+	int bits_green;
+	int bits_blue;
+};
+
+typedef struct D3D_RES
+{
+	int x;
+	int y;
+	int depth;
+} D3D_RES;
+
+typedef struct D3D_DEVLIST
+{
+	GUID* pguid0;
+	GUID* pguid;
+	GUID guid0;
+	GUID guid;
+	char desc[128];
+	int tri_caps;
+	int is_software;
+	int field_B0;
+	int res_count;
+	int can_gamma;
+	D3D_RES* res_list;
+} D3D_DEVLIST;
+
+extern DWORD D3D_NumTextureTypes, enumerated, D3D_NumDevices, dword_C3C27C, dword_C3C284;
+extern int screenmode_cnt0, screenmode_cnt1;
+extern TEXTURE_TYPE Texturetypelist[64];
+extern D3D_RES Screenmodelist[512];
+extern D3D_DEVLIST Devicelist[32];
+
 extern DWORD D3D_ClipPlaneMask, D3D_InverseClipPlanes;
 extern float D3D_LeftClip, D3D_BottomClip, D3D_TopClip, D3D_RightClip,
 	D3D_FarClip, D3D_NearClip;
