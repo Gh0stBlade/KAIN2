@@ -140,6 +140,14 @@ void __cdecl D3D_FailAbort(const char *fmt, ...)
 }
 
 //0001:000744b0 ?enumdepthbuf@@YGJPAU_DDPIXELFORMAT@@PAX@Z 004754b0 f   rnd_d3d.obj
+HRESULT WINAPI enumdepthbuf(DDPIXELFORMAT* a1, LPVOID lpContext)
+{
+	if (a1->dwRGBBitCount == 16)
+		memcpy(lpContext, a1, sizeof(DDPIXELFORMAT));
+
+	return 1;
+}
+
 //0001:000744e0 ?InitialiseDevice@@YAHXZ   004754e0 f   rnd_d3d.obj
 int __cdecl InitialiseDevice()
 {
@@ -156,6 +164,42 @@ int __cdecl InitialiseDevice()
 			return 0;
 		if (FAILED(lpDD4->SetCooperativeLevel(hWnd, DDSCL_NORMAL)))
 			return 0;
+
+		DDSURFACEDESC2 scap = { 0 };
+		scap.dwSize = sizeof(scap);
+		scap.dwFlags = 1;
+		scap.ddsCaps.dwCaps = 0x200;
+		lpDD4->CreateSurface(&scap, &primary, 0);
+		if (primary == nullptr)
+			return 0;
+		scap.dwWidth = D3D_XRes;
+		scap.dwHeight = D3D_YRes;
+		scap.dwFlags = 7;
+		scap.ddsCaps.dwCaps = Devicelist[D3D_SelectedDevice].tri_caps != 0 ? 0x2800 : 0x6000;
+		lpDD4->CreateSurface(&scap, &backbuffer, 0);
+		if (!backbuffer)
+			return 0;
+		lpDD4->QueryInterface(IID_IDirect3D3, (LPVOID*)&d3dobj);
+		if (!d3dobj)
+			return 0;
+
+		//if ( !Devicelist[D3D_SelectedDevice].is_software )
+		{
+			DDSURFACEDESC2 scap2 = { 0 };
+			scap2.dwSize = sizeof(scap2);
+			d3dobj->EnumZBufferFormats((const IID&)Devicelist[D3D_SelectedDevice].guid, enumdepthbuf, (LPVOID)&scap2.ddpfPixelFormat);
+			scap2.dwFlags = 0x1007;
+			if (!Devicelist[D3D_SelectedDevice].tri_caps)
+				scap2.ddsCaps.dwCaps = 0x24000;
+			else scap2.ddsCaps.dwCaps = 0x20800;
+			scap2.dwWidth = D3D_XRes;
+			scap2.dwHeight = D3D_YRes;
+			lpDD4->CreateSurface(&scap2, &zbuffer, 0);
+			if (!zbuffer)
+				return 0;
+			if (FAILED(backbuffer->AddAttachedSurface(zbuffer)))
+				return 0;
+		}
 
 		lpDD4->CreateClipper(0, &clipper, nullptr);
 		primary->SetClipper(clipper);
