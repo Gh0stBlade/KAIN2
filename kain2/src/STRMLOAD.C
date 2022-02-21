@@ -242,7 +242,7 @@ int STREAM_PollLoadQueue()
 					sprintf(&newQueue->loadEntry.fileName[0], "(%d)", queueEntry->loadEntry.dirHash);
 					newQueue->loadEntry.fileHash = 0;
 					newQueue->status = 10;
-					newQueue->loadEntry.filePos = 0;
+					newQueue->loadEntry.dirHash = 0;
 				}
 				else
 				{
@@ -264,14 +264,18 @@ int STREAM_PollLoadQueue()
 				if (LOAD_IsFileLoading() == 0)
 				{
 					queueEntry->endLoadTime = TIMER_GetTimeMS() - queueEntry->endLoadTime;
-					size = LOAD_RelocBinaryData(queueEntry->loadEntry.loadAddr, queueEntry->loadEntry.loadSize);
 
-					if (queueEntry->mempackUsed != 0)
+					if (queueEntry->relocateBinary != 0)
 					{
-						MEMPACK_Return((char*)queueEntry->loadEntry.loadAddr, size);
-					}
+						size = LOAD_RelocBinaryData(queueEntry->loadEntry.loadAddr, queueEntry->loadEntry.loadSize);
 
-					queueEntry->relocateBinary = 0;
+						if (queueEntry->mempackUsed != 0)
+						{
+							MEMPACK_Return((char*)queueEntry->loadEntry.loadAddr, size);
+						}
+
+						queueEntry->relocateBinary = 0;
+					}
 
 					if (queueEntry->loadEntry.retFunc != NULL)
 					{
