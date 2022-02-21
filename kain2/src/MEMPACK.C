@@ -12,7 +12,7 @@ static struct NewMemTracker newMemTracker;
 unsigned long mem_used, mem_total;
 
 #if defined(PSXPC_VERSION)
-char memBuffer[TWO_MB];
+char memBuffer[ONE_MB];
 void* overlayAddress = &memBuffer[0]; // 0x800CE194
 #else
 void* overlayAddress; // For PSX this is quite clearly set by the linker script maybe.
@@ -22,6 +22,7 @@ void MEMPACK_Init()
 {
 #if defined(PSXPC_VERSION)
 	newMemTracker.totalMemory = sizeof(memBuffer);
+	memset(overlayAddress, 0, ONE_MB);
 #else
 	newMemTracker.totalMemory = (BASE_ADDRESS + TWO_MB - (ONE_MB / 256)) - (unsigned int)overlayAddress;
 #endif
@@ -52,7 +53,7 @@ struct MemHeader * MEMPACK_GetSmallestBlockTopBottom(long allocSize)
 			break;
 		}
 
-		address = (struct MemHeader*)(char*)address + address->memSize;
+		address = (struct MemHeader*)((char*)address + address->memSize);
 
 	}
 
@@ -71,7 +72,6 @@ struct MemHeader * MEMPACK_GetSmallestBlockBottomTop(long allocSize)
 	{
 		if (address->memStatus == 0)
 		{
-			//v0 = address->memSize
 			if (address->memSize >= allocSize)
 			{
 				if (bestAddress == NULL || bestAddress < address)
@@ -110,18 +110,32 @@ char * MEMPACK_Malloc(unsigned long allocSize, unsigned char memType)
 	
 	allocSize = ((allocSize + 11) >> 2) << 2;
 
-	if (newMemTracker.doingGarbageCollection == 0 && relocatableMemory != 0)
+	if (newMemTracker.doingGarbageCollection == 0)
 	{
-		MEMPACK_DoGarbageCollection();
-	}
+		if (relocatableMemory != 0)
+		{
+			MEMPACK_DoGarbageCollection();
+		}
 
-	if (relocatableMemory != 0)
-	{
-		bestAddress = MEMPACK_GetSmallestBlockTopBottom(allocSize);
+		if (relocatableMemory != 0)
+		{
+			bestAddress = MEMPACK_GetSmallestBlockTopBottom(allocSize);
+		}
+		else
+		{
+			bestAddress = MEMPACK_GetSmallestBlockBottomTop(allocSize);
+		}
 	}
 	else
 	{
-		bestAddress = MEMPACK_GetSmallestBlockBottomTop(allocSize);
+		if (relocatableMemory != 0)
+		{
+			bestAddress = MEMPACK_GetSmallestBlockTopBottom(allocSize);
+		}
+		else
+		{
+			bestAddress = MEMPACK_GetSmallestBlockBottomTop(allocSize);
+		}
 	}
 
 	if (bestAddress == NULL)
@@ -149,11 +163,11 @@ char * MEMPACK_Malloc(unsigned long allocSize, unsigned char memType)
 	{
 		if (relocatableMemory != 0)
 		{
-			address = (struct MemHeader*)(char*)bestAddress + allocSize;
+			address = (struct MemHeader*)((char*)bestAddress + allocSize);
 			address->magicNumber = DEFAULT_MEM_MAGIC;
 			address->memStatus = 0;
 			address->memType = 0;
-			address->memSize -= allocSize;
+			address->memSize = bestAddress->memSize - allocSize;
 			
 			bestAddress->magicNumber = DEFAULT_MEM_MAGIC;
 			bestAddress->memStatus = 1;
@@ -570,28 +584,25 @@ void MEMPACK_DoGarbageCollection()
 	while (done == 0)
 	{
 		relocateAddress = newMemTracker.rootNode;
-
 		foundOpening = 0;
-		if ((char*)relocateAddress != newMemTracker.lastMemoryAddress)
-		{
-			do
-			{
-				if (relocateAddress->memStatus != 0)
-				{
-					if (MEMPACK_RelocatableType(relocateAddress->memType) != 0 && foundOpening == 1 &&
-						relocateAddress->memStatus != 2)
-					{
-						foundOpening = 2;
-						break;
-					}
-				}
-				else
-				{
-					foundOpening = 1;
-				}
 
-				relocateAddress = (struct MemHeader*)(char*)relocateAddress + relocateAddress->memSize;
-			} while ((char*)relocateAddress != newMemTracker.lastMemoryAddress);
+		while ((char*)relocateAddress != newMemTracker.lastMemoryAddress)
+		{
+			if (relocateAddress->memStatus != 0)
+			{
+				if (MEMPACK_RelocatableType(relocateAddress->memType) != 0 && foundOpening == 1 &&
+					relocateAddress->memStatus != 2)
+				{
+					foundOpening = 2;
+					break;
+				}
+			}
+			else
+			{
+				foundOpening = 1;
+			}
+
+			relocateAddress = (struct MemHeader*)((char*)relocateAddress + relocateAddress->memSize);
 		}
 
 		if (foundOpening == 2)
