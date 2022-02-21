@@ -16,7 +16,7 @@ static struct _LoadStatus loadStatus; // offset 0x800D0D84
 long crap1;
 long crap35[4];
 
-char HashExtensions[7][4];
+char HashExtensions[7][4] = { "drm", "crm", "tim", "smp", "snd", "smf", "snf"};
 
 void LOAD_InitCd()
 {
@@ -576,7 +576,7 @@ long LOAD_HashName(char *string)
 	pos = strchr(string, '.');
 	endPos = 0;
 
-	if (pos != 0)
+	if (pos != NULL)
 	{
 		pos++;
 		
@@ -596,21 +596,20 @@ long LOAD_HashName(char *string)
 
 		if (strl >= endPos)
 		{
-			for(; strl < endPos; strl--)
+			for(; strl >= endPos; strl--)
 			{
 				c = string[strl];
 				
 				if (c != '\\')
 				{
-					if (c - 0x61 < 0x1A)
+					if ((unsigned)(c - 0x61) < 0x1A)
 					{
 						c &= 0xDF;
 					}
 
-					c -= 0x1A;
-					sum += (c & 0xFF);
-					length++;
-					xor ^= (c & 0xFF) * length;
+					c = (c - 0x1A) & 0xFF;
+					sum = sum + c;
+					xor = xor ^ (c * length++);
 				}
 			}
 		}
