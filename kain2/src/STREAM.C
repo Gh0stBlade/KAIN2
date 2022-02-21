@@ -395,7 +395,7 @@ int InsertGlobalObject(char *name, struct GameTracker *gameTracker)
 		strcpy(otr->name, name);
 
 		otr->objectStatus = 1;
-		LOAD_NonBlockingBinaryLoad(vramname, STREAM_LoadObjectReturn, otr, NULL, (void**)otr->object, 1);
+		LOAD_NonBlockingBinaryLoad(string, STREAM_LoadObjectReturn, otr, NULL, (void**)otr->object, 1);
 		otr->numInUse = 0;
 		otr->numObjectsUsing = 0;
 	}
