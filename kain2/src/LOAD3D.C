@@ -596,7 +596,7 @@ long LOAD_HashName(char *string)
 
 		if (strl >= endPos)
 		{
-			for(; strl < endPos; strl--)
+			for(; strl >= endPos; strl--)
 			{
 				c = string[strl];
 				
