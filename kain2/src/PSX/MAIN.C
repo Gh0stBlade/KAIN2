@@ -33,7 +33,11 @@ int devstation; // offset 0x800D0E68
 struct BLK_FILL clearRect[2]; // offset 0x800D0F88
 DRAWENV draw[2]; // offset 0x800D0E6C
 DISPENV disp[2]; // offset 0x800D0E40
-struct InterfaceItem InterfaceItems[6];
+struct InterfaceItem InterfaceItems[6] = { "\PUBLOGO.STR;1", 0, 0, 0, 1, 
+										   "\CRYLOGO.STR;1", 0, 0, 0, 5, 
+										   "\KAININT.STR;1", 0, 0, 0, -1,
+										   "\VERSE.STR;1", 0, 0, 0, 4, 
+										   "\CREDITS.STR;1", 0, 0, 0, -1, };
 
 void ClearDisplay()
 {
