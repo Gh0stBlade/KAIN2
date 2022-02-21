@@ -12,7 +12,7 @@ static struct NewMemTracker newMemTracker;
 unsigned long mem_used, mem_total;
 
 #if defined(PSXPC_VERSION)
-char memBuffer[ONE_MB];
+char memBuffer[TWO_MB];
 void* overlayAddress = &memBuffer[0]; // 0x800CE194
 #else
 void* overlayAddress; // For PSX this is quite clearly set by the linker script maybe.
