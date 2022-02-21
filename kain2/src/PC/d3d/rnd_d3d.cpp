@@ -41,7 +41,8 @@ int D3D_Windowed,
 
 D3D_FOGTBL d3d_fogtbl[32];
 float D3D_FogFar, D3D_FogNear, D3D_FogZScale;
-DWORD D3D_FogColor, D3D_CurFogUnit, D3D_UseVertexFog, D3D_AdaptivePerspec, D3D_ClipPlaneMask;
+DWORD D3D_FogColor, D3D_CurFogUnit, D3D_UseVertexFog, D3D_AdaptivePerspec;
+extern DWORD D3D_ClipPlaneMask;
 
 void __cdecl D3D_InitBuckets();
 void __cdecl D3D_FreeBuckets();
