@@ -841,12 +841,12 @@ long LOAD_RelocBinaryData(long *data, long fileSize)
 	redirectList->data = data + 1;
 	redirectListX.numPointers = data[0];
 
-	if (data[0] + 512 < 0)
+	if (redirectListX.numPointers + 512 < 0)
 	{
 		tableSize = (((data[0] & 0x3FF) >> 9) << 9);
-		RESOLVE_Pointers(redirectList, (long*)(char*)data + ((data[0] & 0x3FF) << 11), data);
+		RESOLVE_Pointers(redirectList, (long*)((char*)data + ((data[0] & 0x3FF) << 11)), data);
 
-		lastMoveDest = (long*)(char*)data + (((fileSize >> 2) - tableSize) << 2);
+		lastMoveDest = (long*)((char*)data + (((fileSize >> 2) - tableSize) << 2));
 		while (data < lastMoveDest)
 		{
 			*data++ = ((long*)(((data[0] & 0x3FF) << 11) + (char*)data))[0];
@@ -854,13 +854,14 @@ long LOAD_RelocBinaryData(long *data, long fileSize)
 	}
 	else
 	{
-		tableSize = (((data[0] + 512) >> 9) << 9);
-		RESOLVE_Pointers(redirectList, (long*)(char*)data + ((data[0] + 512) << 11), data);
+		tableSize = (((redirectListX.numPointers + 512) >> 9) << 9);
+		RESOLVE_Pointers(redirectList, (long*)((char*)data + (((redirectListX.numPointers + 512) >> 9) << 11)), data);
 
-		lastMoveDest = (long*)(char*)data + (((fileSize >> 2) - tableSize) << 2);
+		lastMoveDest = (long*)((char*)data + (((fileSize >> 2) - tableSize) << 2));
+
 		while (data < lastMoveDest)
 		{
-			*data++ = ((long*)(((data[0] + 512) << 11) + (char*)data))[0];
+			*data++ = ((long*)((char*)data + (((redirectListX.numPointers + 512) >> 9) << 11)))[0];
 		}
 	}
 
