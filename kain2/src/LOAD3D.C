@@ -16,7 +16,7 @@ static struct _LoadStatus loadStatus; // offset 0x800D0D84
 long crap1;
 long crap35[4];
 
-char HashExtensions[7][4];
+char HashExtensions[7][4] = { "drm", "crm", "tim", "smp", "snd", "smf", "snf"};
 
 void LOAD_InitCd()
 {
