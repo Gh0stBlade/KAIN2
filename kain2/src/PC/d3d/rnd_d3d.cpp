@@ -19,8 +19,13 @@ typedef struct D3D_FOGTBL
 int __cdecl D3D_SetGammaNormalized(int level);
 
 LPDIRECTDRAW lpDD;
+LPDIRECTDRAW4 lpDD4;
+LPDIRECT3D3 d3dobj;
 LPDIRECT3DDEVICE3 d3ddev;
 LPDIRECT3DVIEWPORT3 viewport;
+LPDIRECTDRAWCLIPPER clipper;
+LPDIRECTDRAWSURFACE4 primary, backbuffer, zbuffer;
+LPDIRECTDRAWGAMMACONTROL gamma;
 
 D3D_FOGTBL d3d_fogtbl[32];
 float D3D_FogFar, D3D_FogNear, D3D_FogZScale;
@@ -30,9 +35,81 @@ void __cdecl D3D_InitBuckets();
 void __cdecl D3D_FreeBuckets();
 
 DWORD D3D_GammaLevel,
+	D3D_GammaAdjust,
 	D3D_SelectedDevice,
 	D3D_bgcol;
 int(__cdecl* TRANS_DoTransform)(DWORD, DWORD, DWORD, DWORD);
+
+//0001:00074f20 ?ShutdownDevice@@YAXXZ     00475f20 f   rnd_d3d.obj
+void __cdecl ShutdownDevice()
+{
+	if (D3D_InScene)
+	{
+		d3ddev->EndScene();
+		D3D_InScene = 0;
+	}
+
+	if (clipper)
+	{
+		primary->SetClipper(nullptr);
+		clipper->Release();
+		clipper = nullptr;
+	}
+	
+	if (viewport)
+	{
+		d3ddev->DeleteViewport(viewport);
+		viewport->Release();
+		viewport = nullptr;
+	}
+
+	if (d3ddev)
+	{
+		d3ddev->Release();
+		d3ddev = nullptr;
+	}
+
+	if (d3dobj)
+	{
+		d3dobj->Release();
+		d3dobj = nullptr;
+	}
+
+	if (D3D_GammaAdjust)
+	{
+		gamma->Release();
+		gamma = nullptr;
+		D3D_GammaAdjust = 0;
+	}
+
+	if (zbuffer)
+	{
+		zbuffer->Release();
+		zbuffer = nullptr;
+	}
+
+	if (backbuffer)
+	{
+		backbuffer->Release();
+		backbuffer = nullptr;
+	}
+
+	if (primary)
+	{
+		primary->Release();
+		primary = nullptr;
+	}
+
+	if (lpDD4)
+	{
+		lpDD4->Release();
+		lpDD4 = nullptr;
+	}
+
+	if (D3D_Windowed)
+		SetWindowPos(hWnd, (HWND)1, 0, 0, 0, 0, 0x30B);
+	while (ShowCursor(true) < 0);
+}
 
 //0001:00074410       _DBG_Print                 00475410 f   rnd_d3d.obj
 void __cdecl DBG_Print(const char* fmt, ...)
@@ -49,19 +126,19 @@ void __cdecl DBG_Print(const char* fmt, ...)
 //0001:00074450       _D3D_FailAbort             00475450 f   rnd_d3d.obj
 void __cdecl D3D_FailAbort(const char *fmt, ...)
 {
-	CHAR Text[256]; // [esp+0h] [ebp-100h] BYREF
-	va_list va; // [esp+108h] [ebp+8h] BYREF
+	CHAR Text[256];
+	va_list va;
 
 	va_start(va, fmt);
 	vsprintf_s(Text, sizeof(Text), fmt, va);
 	va_end(va);
-	//D3D_FreeBuckets();
-	//ShutdownDevice();
-	//hWnd = 0;
-	if (MessageBoxA(0, Text, "Kain 2 Error", 1u) == 2)
+
+	D3D_FreeBuckets();
+	ShutdownDevice();
+	hWnd = 0;
+	if (MessageBoxA(0, Text, "Kain 2 Error", MB_OKCANCEL) == IDCANCEL)
 	{
-		while (1)
-			;
+		while (1);
 	}
 	ExitProcess(0);
 }

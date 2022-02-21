@@ -11,7 +11,7 @@ static LPSTR lpClass = (LPSTR)"";
 //0001:00078c10       _FailMsg                   00479c10 f   MainVM.obj
 //0001:00078c60       _RetryMsg                  00479c60 f   MainVM.obj
 //0001:00078cc0       _WinMain@16                00479cc0 f   MainVM.obj
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
+int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nCmdShow)
 {
 	_appDataVM.hInstance = hInstance;
 	_appDataVM.hWindow = 0;
