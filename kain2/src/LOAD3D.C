@@ -680,7 +680,7 @@ long LOAD_HashUnit(char *name)
 	}
 
 	hash += num;
-	return hash << 16;
+	return (hash << 16) >> 16;
 }
 
 struct _BigFileEntry * LOAD_GetBigFileEntryByHash(long hash)
