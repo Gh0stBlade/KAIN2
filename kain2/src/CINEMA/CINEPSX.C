@@ -73,12 +73,15 @@ int CINE_Load()
 
 	do
 	{
-		if (tracker->objectStatus != 2)
+		if (tracker->objectStatus == 2)
 		{
-			attempts++;
-			STREAM_PollLoadQueue();
-			VSync(0);
+			break;
 		}
+		
+		attempts++;
+		STREAM_PollLoadQueue();
+		VSync(0);
+
 	} while (attempts < 400);
 	
 	if (attempts < 400)
