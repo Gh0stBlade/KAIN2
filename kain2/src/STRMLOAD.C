@@ -345,10 +345,10 @@ int STREAM_PollLoadQueue()
 
 				if (queueEntry->loadEntry.retFunc != NULL)
 				{
-					//Commented out as it needs a cast for sure.
-					///queueEntry->loadEntry.retFunc(queueEntry->loadEntry.loadAddr, queueEntry->loadEntry.retData, queueEntry->loadEntry.retData2);
+					typedef void (*retFunc)(void*, void*, void*);
+					retFunc returnFunction = retFunc(queueEntry->loadEntry.retFunc);
+					returnFunction(queueEntry->loadEntry.loadAddr, queueEntry->loadEntry.retData, queueEntry->loadEntry.retData2);
 				}
-
 				break;
 			case 8:
 				queueEntry->status = 9;

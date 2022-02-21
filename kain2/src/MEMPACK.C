@@ -292,12 +292,12 @@ void MEMPACK_Return(char *address, long takeBackSize)
 		memAddress->memSize -= ((takeBackSize >> 2) << 2);
 		newMemTracker.currentMemoryUsed -= ((takeBackSize >> 2) << 2);
 
-		memAddress = (struct MemHeader*)(char*)memAddress + memAddress->memSize;
+		memAddress = (struct MemHeader*)((char*)memAddress + memAddress->memSize);
 		memAddress->magicNumber = DEFAULT_MEM_MAGIC;
 		memAddress->memStatus = 0;
 		memAddress->memType = 0;
 		memAddress->memSize = ((takeBackSize >> 2) << 2);
-		nextAddress = (struct MemHeader*)(char*)memAddress + ((takeBackSize >> 2) << 2);
+		nextAddress = (struct MemHeader*)((char*)memAddress + memAddress->memSize);
 
 		if ((char*)nextAddress != newMemTracker.lastMemoryAddress)
 		{
