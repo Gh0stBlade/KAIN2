@@ -793,8 +793,6 @@ void LOAD_LoadTIM(long *addr, long x_pos, long y_pos, long clut_x, long clut_y)
 	}
 }
 
-#include "EMULATOR_PRIVATE.H"
-
 void LOAD_LoadTIM2(long *addr, long x_pos, long y_pos, long width, long height)
 {
 	PSX_RECT rect;
@@ -805,7 +803,6 @@ void LOAD_LoadTIM2(long *addr, long x_pos, long y_pos, long width, long height)
 	rect.h = ((unsigned short*)addr)[9];
 
 	LoadImage(&rect, (unsigned long*)addr + 5);
-	//Emulator_SaveVRAM("DEBUG.TGA", 0, 0, 1024, 512, false);
 	DrawSync(0);
 }
 
