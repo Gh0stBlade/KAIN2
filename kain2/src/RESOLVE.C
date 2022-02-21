@@ -19,15 +19,6 @@ void RESOLVE_Pointers(struct RedirectList *redirectList, long *data, long *baseA
 			*handle = (long)(handle[0] + (char*)baseAddr);
 		} while (--i != 0);
 	}
-#if 0
-		addu    $v0, $a2
-		bnez    $a3, loc_8003CC94
-		sw      $v0, 0($v1)
-
-		locret_8003CCB4:
-	jr      $ra
-		nop
-#endif
 
 #elif defined(PC_VERSION)
 	__int32 numPointers; // edx
