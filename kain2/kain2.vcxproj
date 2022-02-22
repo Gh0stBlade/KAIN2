@@ -352,6 +352,7 @@
     </ClCompile>
     <ClCompile Include="src\PC\snd.cpp" />
     <ClCompile Include="src\PC\sndmix.c" />
+    <ClCompile Include="src\PC\transform.cpp" />
     <ClCompile Include="src\PC\video\winplay.cpp" />
     <ClCompile Include="src\PC\ViewVM.cpp" />
     <ClCompile Include="src\PHYSICS.C">
@@ -573,6 +574,7 @@
     <ClInclude Include="src\PC\libspu.h" />
     <ClInclude Include="src\PC\snd.h" />
     <ClInclude Include="src\PC\sndmix.h" />
+    <ClInclude Include="src\PC\transform.h" />
     <ClInclude Include="src\PHYSICS.H" />
     <ClInclude Include="src\PHYSOBS.H" />
     <ClInclude Include="src\PIPE3D.H" />

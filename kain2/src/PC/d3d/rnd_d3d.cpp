@@ -5,6 +5,7 @@
 #include "d3dclip.h"
 #include "d3dshell.h"
 #include "../async.h"
+#include "../transform.h"
 
 #pragma comment(lib, "ddraw.lib")
 #pragma comment(lib, "dxguid.lib")
@@ -65,7 +66,6 @@ DWORD D3D_GammaLevel,
 	D3D_SelectedDevice,
 	D3D_bgcol,
 	D3D_CurrentFrame;
-int(__cdecl* TRANS_DoTransform)(DWORD, DWORD, DWORD, DWORD);
 
 #ifndef SAFE_RELEASE
 #define SAFE_RELEASE(x)		if((x)) { (x)->Release(); (x) = nullptr; }
@@ -390,7 +390,7 @@ int InitialiseDevice()
 	return 0;
 }
 //0001:00075080       _D3D_Init                  00476080 f   rnd_d3d.obj
-extern int TRANS_Init();
+//extern int TRANS_Init();
 int InitialiseDevice();
 
 int D3D_Init(void* pvm)

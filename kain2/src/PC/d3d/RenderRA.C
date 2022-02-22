@@ -18,6 +18,11 @@ extern D3D_DEVLIST Devicelist[];
 #define ROPT_TRIPLEBUFFERING	0x10
 #define ROPT_VSYNC				0x20
 
+void GXFilePrint(const char* fmt, ...)
+{
+
+}
+
 int FindResolution(int dev_id, int width, int height)
 {
 	int found = 0;

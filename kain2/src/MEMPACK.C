@@ -8,10 +8,12 @@
 
 #include <stddef.h>
 
+extern void GXFilePrint(const char* fmt, ...);
+
 static struct NewMemTracker newMemTracker;
 unsigned long mem_used, mem_total;
 
-#if defined(PSXPC_VERSION)
+#if defined(PSXPC_VERSION) || defined(PC_VERSION)
 char memBuffer[0x11F18C];
 void* overlayAddress = memBuffer; // 0x800CE194
 #else
