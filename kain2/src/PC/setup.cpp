@@ -3,6 +3,10 @@
 
 _G2AppDataVM_Type* pVM_Setup;
 
+extern void __cdecl D3D_EnumerateDevices();
+extern void __cdecl SND_EnumerateDevices();
+
+
 INT_PTR CALLBACK SetupDialogProc(HWND hWnd, UINT, WPARAM wParam, LPARAM lParam)
 {
 	return 0;
