@@ -515,12 +515,6 @@ extern short mainMenuFading; // offset 0x800CE6D2
 
 extern long mainMenuMode; // offset 0x800CE6C4
 
-extern long *mainMenuScreen; // offset 0x4
-
-extern long *mainMenuScreen; // offset 0x800CE6C8
-
-static int mainMenuSfx; // offset 0x800D0E1C
-
 extern short mainMenuTimeOut; // offset 0x800D0FA8
 
 static int MANNA_Pickup_Time; // offset 0x800D48D4

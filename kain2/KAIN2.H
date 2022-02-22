@@ -8572,9 +8572,6 @@ extern int pcverify; // offset 0x800CE564
 extern long mainMenuMode; // offset 0x800CE6C4
 
 
-extern long *mainMenuScreen; // offset 0x800CE6C8
-
-
 extern long *controlsScreen; // offset 0x800CE6CC
 
 
@@ -8585,9 +8582,6 @@ extern struct GameTracker gameTrackerX; // offset 0x800D0FAC
 
 
 extern short mainMenuTimeOut; // offset 0x800D0FA8
-
-
-static int mainMenuSfx; // offset 0x800D0E1C
 
 
 extern struct _ButtonTexture PauseButtons[4][2]; // offset 0x800D122C
@@ -9319,9 +9313,6 @@ static int hack_attract; // offset 0x800CFA70
 
 
 static int hack_attract_movie; // offset 0x800CFA74
-
-
-extern long *mainMenuScreen; // offset 0x4
 
 
 static struct menuface_t MenuFaces[8]; // offset 0x800CFABC
