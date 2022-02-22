@@ -176,8 +176,6 @@ extern struct __Idle **currentIdleList; // offset 0x800CF874
 
 extern int currentIdleListCount; // offset 0x800CF878
 
-extern struct DebugMenuLine *currentMenu; // offset 0x800CDB3C
-
 static struct Level *CurrentPuzzleLevel; // offset 0x800D27D0
 
 extern long CurrentWarpNumber; // offset 0x800CF1FC
@@ -390,8 +388,6 @@ static struct GameTracker *gameTracker; // offset 0x800D58A4
 extern struct GameTracker gameTrackerX; // offset 0x800D0FAC
 
 static int gDefragRequest; // offset 0x800CECDC
-
-extern short gEndGameNow; // offset 0x800CE562
 
 extern struct _FXTracker *gFXT; // offset 0x800D0C44
 
@@ -716,8 +712,6 @@ static struct DVECTOR Spiral_OffsetP[64]; // offset 0x800D16C4
 static struct _Rotation splinecam_helprot; // offset 0x800CFE84
 
 extern unsigned long StackSave; // offset 0x800D0C54
-
-extern struct DebugMenuLine standardMenu[1]; // offset 0x800CFCB0
 
 static int StartGameFading; // offset 0x800CFA6C
 

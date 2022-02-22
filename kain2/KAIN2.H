@@ -8197,9 +8197,6 @@ extern struct DebugMenuLine mainMenu[8]; // offset 0x800C8418
 static struct debug_dispatch_t debug_dispatch_table[5]; // offset 0x800C84D8
 
 
-extern struct DebugMenuLine *currentMenu; // offset 0x800CDB3C
-
-
 static char pauseFormatString[20]; // offset 0x800CDAB8
 
 
@@ -8279,9 +8276,6 @@ static int cem_item_leading; // offset 0x800CDCF8
 
 
 extern short AXIS_LENGTH; // offset 0x800CDE5C
-
-
-extern struct DebugMenuLine standardMenu[1]; // offset 0x800CFCB0
 
 
 extern struct DebugMenuLine pauseMenu[1]; // offset 0x800CFCC8
@@ -8570,9 +8564,6 @@ extern int _ramsize; // offset 0x800CE558
 
 
 extern int _stacksize; // offset 0x800CE55C
-
-
-extern short gEndGameNow; // offset 0x800CE562
 
 
 extern int pcverify; // offset 0x800CE564
