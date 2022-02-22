@@ -598,6 +598,7 @@ void MAIN_FreeMainMenuStuff()
 	}
 
 	aadFreeDynamicSfx(mainMenuSfx);
+
 	do
 	{
 		if (aadGetNumLoadsQueued() == 0)

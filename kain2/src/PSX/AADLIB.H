@@ -262,10 +262,10 @@ struct AadInitAttr // hashcode: 0x0549E29A (dec: 88728218)
 {
 	int updateMode; // size=0, offset=0
 	int numSlots; // size=0, offset=4
-	void (*nonBlockLoadProc)(); // size=0, offset=8
-	void (*nonBlockBufferedLoadProc)(); // size=0, offset=12
-	void (**memoryMallocProc)(); // size=0, offset=16
-	void (*memoryFreeProc)(); // size=0, offset=20
+	void (*nonBlockLoadProc)(char *, void *, void *, void *, void **, int); // size=0, offset=8
+	void (*nonBlockBufferedLoadProc)(char*, void*, void*, void*); // size=0, offset=12
+	char* (*memoryMallocProc)(unsigned long, unsigned char); // size=0, offset=16
+	void (*memoryFreeProc)(char*); // size=0, offset=20
 };
 
 

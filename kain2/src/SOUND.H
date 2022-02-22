@@ -22,6 +22,8 @@ struct MusicLoadInfo // hashcode: 0xC8F67C40 (dec: -923370432)
 	int numCmdsInQueue; // size=0, offset=72
 };
 
+extern char soundBuffer[13256];
+
 extern struct MusicLoadInfo musicInfo; // offset 0x800D1510
 
 extern int gSramFreeBlocks; // offset 0x800D1500
