@@ -334,17 +334,17 @@ void MEMPACK_Free(char *address)
 	{
 		do
 		{
-			if ((char*)memAddress + memAddress->memSize == (char*)secondAddress)
+			if (((char*)memAddress + memAddress->memSize) == (char*)secondAddress)
 			{
-				MEMORY_MergeAddresses(memAddress, (struct MemHeader*)(char*)(memAddress + memAddress->memSize));
+				MEMORY_MergeAddresses(memAddress, (struct MemHeader*)((char*)memAddress + memAddress->memSize));
 				break;
 			}
 			else
 			{
-				memAddress = (struct MemHeader*)(char*)(memAddress + memAddress->memSize);
+				memAddress = (struct MemHeader*)((char*)memAddress + memAddress->memSize);
 			}
 
-		} while ((char*)memAddress + memAddress->memSize != newMemTracker.lastMemoryAddress);
+		} while (((char*)memAddress + memAddress->memSize) != newMemTracker.lastMemoryAddress);
 	}
 }
 
