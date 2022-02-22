@@ -28,10 +28,10 @@ Channel channels[26];
 void(__cdecl* TimerFunc)();
 int timeout, timeoutmax;
 
-void __cdecl Mix(unsigned __int16* data, unsigned int time);
+void Mix(unsigned __int16* data, unsigned int time);
 
 //0001 : 0007b800       _SNDMIX_Init               0047c800 f   sndmix.obj
-void __cdecl SNDMIX_Init()
+void SNDMIX_Init()
 {
 	timeoutmax = 441;
 	timeout = 0;
@@ -43,7 +43,7 @@ void SNDMIX_Shutdown()
 {
 }
 //0001 : 0007b840       _SNDMIX_Mix                0047c840 f   sndmix.obj
-void __cdecl SNDMIX_Mix(WORD* sample, int size)
+void /*__cdecl*/ SNDMIX_Mix(WORD* sample, int size)
 {
 	signed int time; // eax
 
@@ -78,7 +78,7 @@ LABEL_11:
 	}
 }
 //0001 : 0007bc60       _SNDMIX_SetSample          0047cc60 f   sndmix.obj
-void __cdecl SNDMIX_SetSample(int voiceNum, BYTE* sample)
+void SNDMIX_SetSample(int voiceNum, BYTE* sample)
 {
 	channels[voiceNum].status = 0;
 	channels[voiceNum].interrupt = 0;
@@ -86,27 +86,27 @@ void __cdecl SNDMIX_SetSample(int voiceNum, BYTE* sample)
 	channels[voiceNum].next_sample = 0;
 }
 //0001 : 0007bc90       _SNDMIX_SetNextSample      0047cc90 f   sndmix.obj
-void __cdecl SNDMIX_SetNextSample(int voiceNum, BYTE* sample)
+void SNDMIX_SetNextSample(int voiceNum, BYTE* sample)
 {
 	channels[voiceNum].next_sample = sample;
 }
 //0001 : 0007bcb0       _SNDMIX_GetSample          0047ccb0 f   sndmix.obj
-BYTE* __cdecl SNDMIX_GetSample(int voiceNum)
+BYTE* SNDMIX_GetSample(int voiceNum)
 {
 	return channels[voiceNum].sample;
 }
 //0001 : 0007bcc0       _SNDMIX_GetNextSample      0047ccc0 f   sndmix.obj
-BYTE* __cdecl SNDMIX_GetNextSample(int voiceNum)
+BYTE* SNDMIX_GetNextSample(int voiceNum)
 {
 	return channels[voiceNum].next_sample;
 }
 //0001 : 0007bcd0       _SNDMIX_SetFrequency       0047ccd0 f   sndmix.obj
-void __cdecl SNDMIX_SetFrequency(int voiceNum, float frequency)
+void SNDMIX_SetFrequency(int voiceNum, float frequency)
 {
 	channels[voiceNum].frequency = (int)(frequency * 0.092879817f);
 }
 //0001 : 0007bcf0       _SNDMIX_SetVolume          0047ccf0 f   sndmix.obj
-void __cdecl SNDMIX_SetVolume(int voiceNum, int left, int right)
+void SNDMIX_SetVolume(int voiceNum, int left, int right)
 {
 	int l; // eax
 	int r; // ecx
@@ -119,12 +119,12 @@ void __cdecl SNDMIX_SetVolume(int voiceNum, int left, int right)
 	channels[voiceNum].volr = r;
 }
 //0001 : 0007bd30       _SNDMIX_SetLoopMode        0047cd30 f   sndmix.obj
-void __cdecl SNDMIX_SetLoopMode(int voiceNum, int mode)
+void SNDMIX_SetLoopMode(int voiceNum, int mode)
 {
 	channels[voiceNum].loop_mode = mode;
 }
 //0001 : 0007bd50       _SNDMIX_KeyOff             0047cd50 f   sndmix.obj
-void __cdecl SNDMIX_KeyOff(int voiceNum)
+void SNDMIX_KeyOff(int voiceNum)
 {
 	if (channels[voiceNum].loop_mode == 1)
 	{
@@ -137,7 +137,7 @@ void __cdecl SNDMIX_KeyOff(int voiceNum)
 	}
 }
 //0001 : 0007bd90       _SNDMIX_Start              0047cd90 f   sndmix.obj
-void __cdecl SNDMIX_Start(int voiceNum)
+void SNDMIX_Start(int voiceNum)
 {
 	channels[voiceNum].status = 1;
 	channels[voiceNum].field_C = 0;
@@ -154,12 +154,12 @@ void __cdecl SNDMIX_Start(int voiceNum)
 	}
 }
 //0001 : 0007bdf0       _SNDMIX_Stop               0047cdf0 f   sndmix.obj
-void __cdecl SNDMIX_Stop(int voiceNum)
+void SNDMIX_Stop(int voiceNum)
 {
 	channels[voiceNum].status = 0;
 }
 //0001 : 0007be10       _SNDMIX_UploadSample       0047ce10 f   sndmix.obj
-void* __cdecl SNDMIX_UploadSample(const void* data, int samples, int a3, int a4, int a5)
+void* SNDMIX_UploadSample(const void* data, int samples, int a3, int a4, int a5)
 {
 	int block; // esi
 	unsigned int size; // esi
@@ -185,26 +185,26 @@ void* __cdecl SNDMIX_UploadSample(const void* data, int samples, int a3, int a4,
 	return sample;
 }
 //0001 : 0007bea0       _SNDMIX_SetChannelInterrupt 0047cea0 f   sndmix.obj
-void __cdecl SNDMIX_SetChannelInterrupt(int voiceNum, int intr)
+void SNDMIX_SetChannelInterrupt(int voiceNum, int intr)
 {
 	channels[voiceNum].interrupt = intr;
 }
 //0001 : 0007bec0       _SNDMIX_FreeSample         0047cec0 f   sndmix.obj
-void __cdecl SNDMIX_FreeSample(void *ptr)
+void SNDMIX_FreeSample(void *ptr)
 {
 	GlobalFree(ptr);
 }
 //0001 : 0007bed0       _SNDMIX_GetStatus          0047ced0 f   sndmix.obj
-int __cdecl SNDMIX_GetStatus(int voiceNum)
+int SNDMIX_GetStatus(int voiceNum)
 {
 	return channels[voiceNum].status;
 }
 //0001 : 0007bee0       _SNDMIX_SetTimerFunc       0047cee0 f   sndmix.obj
-void __cdecl SNDMIX_SetTimerFunc(void(__cdecl* fn)())
+void SNDMIX_SetTimerFunc(void(__cdecl* fn)())
 {
 	TimerFunc = fn;
 }
 
 // TODO: this is gonna be messy as fuck
-void __cdecl Mix(unsigned __int16* data, unsigned int time)
+void Mix(unsigned __int16* data, unsigned int time)
 {}

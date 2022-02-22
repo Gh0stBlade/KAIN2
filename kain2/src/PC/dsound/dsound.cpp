@@ -1,17 +1,22 @@
 #include <windows.h>
 #include <dsound.h>
 #include "../snd.h"
+#include "../sndmix.h"
+#include "../d3d/d3d.h"
 
-EXTERN_C int NumSNDDevices,
+#pragma comment(lib, "dsound.lib")
+
+extern int NumSNDDevices,
 	NumSNDDevicesBase,
 	NumSNDDevices2;
-EXTERN_C SND_DEVICE SNDDeviceList[16];
-EXTERN_C SND_DEVICE_INFO SndGuids[16];
+extern SND_DEVICE SNDDeviceList[16];
+extern SND_DEVICE_INFO SndGuids[16];
 
-void __cdecl SNDMIX_Init();
-void __cdecl SNDMIX_Shutdown();
-void __cdecl SNDMIX_Mix(WORD* sample, int size);
-void __cdecl DBG_Print(const char* fmt, ...);
+//void SNDMIX_Init();
+//void SNDMIX_Shutdown();
+//void SNDMIX_Mix(WORD* sample, int size);
+
+//void DBG_Print(const char* fmt, ...);
 
 DWORD WINAPI PlayThread(LPVOID lpThreadParameter);
 void StreamSamples();

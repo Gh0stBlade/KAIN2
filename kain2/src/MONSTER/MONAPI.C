@@ -687,7 +687,7 @@ void MONAPI_CheckGenerator(struct _Instance *instance)
 		}
 		GlobalSave->numRegens = numRegens - 1;
 		result = 8 * (GlobalSave->numRegens - (((char*)regenEntries - (char*)GlobalSave - 16) >> 3));
-		qmemcpy(regenEntries, &regenEntries[1], result);
+		memcpy(regenEntries, &regenEntries[1], result);
 	}
 	return result;
 }

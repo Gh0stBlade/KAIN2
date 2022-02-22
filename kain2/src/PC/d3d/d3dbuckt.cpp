@@ -13,7 +13,7 @@ extern DWORD D3D_CurFogUnit, D3D_AdaptivePerspec;
 #define free_tri(x)			GlobalFree((HGLOBAL)(x))
 
 //0001:00067770       _D3D_InitBuckets           00468770 f   d3dbuckt.obj
-void __cdecl D3D_InitBuckets()
+void D3D_InitBuckets()
 {
 	MATBUCKET* bucket; // esi
 
@@ -43,7 +43,7 @@ void __cdecl D3D_InitBuckets()
 	transbucket.total = 12272;
 }
 //0001:00067810       _D3D_FreeBuckets           00468810 f   d3dbuckt.obj
-void __cdecl D3D_FreeBuckets()
+void D3D_FreeBuckets()
 {
 	MATBUCKET* bucket;
 	bool v1;
@@ -70,7 +70,7 @@ int dword_BBBCD0,
 
 #define MAKE4(a,b,c,d)		(a) | ((b) << 8) | ((c) << 16) | ((d) << 24)
 
-void __cdecl D3D_SetTexMorphPosition(float pos)
+void D3D_SetTexMorphPosition(float pos)
 {
 	if (pos <= 0.99000001f)
 	{
@@ -99,7 +99,7 @@ void __cdecl D3D_SetTexMorphPosition(float pos)
 	}
 }
 //0001:00067910       _D3D_ClearAllBuckets       00468910 f   d3dbuckt.obj
-void __cdecl D3D_ClearAllBuckets()
+void D3D_ClearAllBuckets()
 {
 	MATBUCKET* v0; // ecx
 	MATBUCKET* bucket; // eax
@@ -118,7 +118,7 @@ void __cdecl D3D_ClearAllBuckets()
 	}
 }
 //0001:00067950       _D3D_ClearBucket           00468950 f   d3dbuckt.obj
-void __cdecl D3D_ClearBucket(MATBUCKET* bucket)
+void D3D_ClearBucket(MATBUCKET* bucket)
 {
 	bucket->field_0 = 0;
 	bucket->count = 0;
@@ -127,7 +127,7 @@ void __cdecl D3D_ClearBucket(MATBUCKET* bucket)
 		dword_BBBCCC = -1;
 }
 //0001:00067980       _D3D_GetBucket             00468980 f   d3dbuckt.obj
-MATBUCKET* __cdecl D3D_GetBucket(int page)
+MATBUCKET* D3D_GetBucket(int page)
 {
 	int i; // ecx
 	MATBUCKET* res = nullptr; // eax
@@ -199,7 +199,7 @@ MATBUCKET* __cdecl D3D_GetBucket(int page)
 	return res;
 }
 //0001:00067aa0       _D3D_AddTriToBucket        00468aa0 f   d3dbuckt.obj
-void __cdecl D3D_AddTriToBucket(MATBUCKET* bucket, MYTRI* tri)
+void D3D_AddTriToBucket(MATBUCKET* bucket, MYTRI* tri)
 {
 	if (bucket->count > bucket->total)
 	{
@@ -216,7 +216,7 @@ void __cdecl D3D_AddTriToBucket(MATBUCKET* bucket, MYTRI* tri)
 	bucket->count += 3;
 }
 //0001:00067b20       _D3D_AddPolyToBucket       00468b20 f   d3dbuckt.obj
-void __cdecl D3D_AddPolyToBucket(MATBUCKET* bucket, MYTRI* poly, int count)
+void D3D_AddPolyToBucket(MATBUCKET* bucket, MYTRI* poly, int count)
 {
 	int i;
 
@@ -245,7 +245,7 @@ void __cdecl D3D_AddPolyToBucket(MATBUCKET* bucket, MYTRI* poly, int count)
 	}
 }
 //0001:00067c00       _D3D_DrawAllBuckets        00468c00 f   d3dbuckt.obj
-void __cdecl D3D_DrawAllBuckets()
+void D3D_DrawAllBuckets()
 {
 	MATBUCKET* bucket; // esi
 
@@ -254,8 +254,8 @@ void __cdecl D3D_DrawAllBuckets()
 		D3D_DrawBucket(bucket++);
 }
 //0001:00067c20       _D3D_DrawBucket            00468c20 f   d3dbuckt.obj
-void __cdecl D3D_DrawBucket(MATBUCKET* bucket)
+void D3D_DrawBucket(MATBUCKET* bucket)
 {}
 //0001:00067ec0       _D3D_DrawTransBucket       00468ec0 f   d3dbuckt.obj
-void __cdecl D3D_DrawTransBucket()
+void D3D_DrawTransBucket()
 {}

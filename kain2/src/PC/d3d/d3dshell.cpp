@@ -1,20 +1,5 @@
-#include <Windows.h>
-#include <ddraw.h>
-
-struct BLOCK
-{
-	int width;
-	int height;
-	int red_cnt, red_diff;
-	int green_cnt, green_diff;
-	int blue_cnt, blue_diff;
-	int dwRBitMask;
-	int dwGBitMask;
-	int dwBBitMask;
-	int dwRGBAlphaBitMask;
-	int dwRGBBitCount;
-	DWORD* ptr;
-};
+#include "d3d.h"
+#include "d3dshell.h"
 
 BLOCK *Block;
 DWORD invalid_ptrs[5];

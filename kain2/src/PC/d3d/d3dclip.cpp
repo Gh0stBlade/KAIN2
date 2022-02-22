@@ -5,7 +5,7 @@ float D3D_LeftClip, D3D_BottomClip, D3D_TopClip, D3D_RightClip,
 	D3D_FarClip, D3D_NearClip;
 
 //0001:00068490       _D3D_SetClipRect           00469490 f   d3dclip.obj
-void __cdecl D3D_SetClipRect(int left, int top, int right, int bottom)
+void D3D_SetClipRect(int left, int top, int right, int bottom)
 {
 	if (left < 0) left = 0;
 	if (left > D3D_XRes) left = D3D_XRes;
@@ -22,7 +22,7 @@ void __cdecl D3D_SetClipRect(int left, int top, int right, int bottom)
 	D3D_BottomClip = (float)bottom;
 }
 //0001:00068530       _D3D_GetClipRect           00469530 f   d3dclip.obj
-void __cdecl D3D_GetClipRect(int* left, int* top, int* right, int* bottom)
+void D3D_GetClipRect(int* left, int* top, int* right, int* bottom)
 {
 	*left = (int)D3D_LeftClip;
 	*top = (int)D3D_TopClip;
@@ -30,7 +30,7 @@ void __cdecl D3D_GetClipRect(int* left, int* top, int* right, int* bottom)
 	*bottom = (int)D3D_BottomClip;
 }
 //0001:00068580 ?D3D_GetClipRect_float@@YAXPAM000@Z 00469580 f   d3dclip.obj
-void __cdecl D3D_GetClipRect_float(float* left, float* top, float* right, float* bottom)
+void D3D_GetClipRect_float(float* left, float* top, float* right, float* bottom)
 {
 	*left = 0.f;
 	*top = 0.f;
@@ -38,7 +38,7 @@ void __cdecl D3D_GetClipRect_float(float* left, float* top, float* right, float*
 	*bottom = (float)D3D_YRes;
 }
 //0001:000685b0 _D3D_CalcOutCode           004695b0 f   d3dclip.obj
-void __cdecl D3D_CalcOutCode(MYTRI* p)
+void D3D_CalcOutCode(MYTRI* p)
 {
 	p->col = 0;
 	if (p->z < D3D_NearClip)

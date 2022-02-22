@@ -544,9 +544,9 @@ void GAMEPAD_GetData(long (*data)[5])
 	(*data)[4] = 0;
 	(*data)[8] = 0;
 	(*data)[9] = 0;
-	qmemcpy(&gpbuffer1, &readGPBuffer1, sizeof(gpbuffer1));
+	memcpy(&gpbuffer1, &readGPBuffer1, sizeof(gpbuffer1));
 	v2 = readGPBuffer1.transStatus == 0xFF;
-	qmemcpy(&gpbuffer2, &readGPBuffer2, 0x20u);
+	memcpy(&gpbuffer2, &readGPBuffer2, 0x20u);
 	v3 = gamePadControllerOut;
 	*((_WORD*)&gpbuffer2 + 16) = *(_WORD*)&readGPBuffer2.data.tap.ctrllers[3].data.negcon.buttonII;
 	if (v2)
