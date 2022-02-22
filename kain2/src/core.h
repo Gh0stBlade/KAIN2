@@ -40,7 +40,7 @@
 #define ONE_MB				1048576
 #define TWO_MB				ONE_MB * 2
 #if defined(PC_VERSION) || defined(PSXPC_VERSION)
-#define BASE_ADDRESS		0x00000000
+#define BASE_ADDRESS		(unsigned long)&memBuffer
 #elif defined(PSX_VERSION)
 #define BASE_ADDRESS		0x80000000
 #endif

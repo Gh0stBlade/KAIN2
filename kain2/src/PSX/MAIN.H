@@ -33,6 +33,10 @@ struct BLK_FILL // hashcode: 0x2490546A (dec: 613438570)
 	unsigned short h; // size=0, offset=14
 };
 
+extern short mainMenuFading; // offset 0x800CE6D2
+
+extern long DoMainMenu; // offset 0x800CE6C0
+
 extern struct InterfaceItem InterfaceItems[6]; // offset 0x800CE570
 
 extern char mainOptionsInit; // offset 0x800CE560

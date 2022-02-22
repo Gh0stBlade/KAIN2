@@ -24,6 +24,8 @@
 #include <EMULATOR_PRIVATE.H>
 #endif
 
+short mainMenuFading; // offset 0x800CE6D2
+long DoMainMenu; // offset 0x800CE6C0
 char mainOptionsInit; // offset 0x800CE560
 struct MainTracker mainTrackerX; // offset 0x800D121C
 long gTimerEnabled; // offset 0x800CE8D4
@@ -729,39 +731,53 @@ int MainG2(void *appData)
 				//loc_800395F8
 				LOAD_ChangeDirectory("Menustuff");
 				//a0 = 
-				while (mainTracker->movieNum < 6)
+
+				checkMovie:
+				while ((unsigned)mainTracker->movieNum < 6)
 				{
-					do
+					item = &InterfaceItems[mainTracker->movieNum];
+					gameTrackerX.gameFlags &= 0x1;
+					show_screen(&item->name[0]);
+
+					timer = 1;
+					if (item->timeout != 0)
 					{
-						item = &InterfaceItems[mainTracker->movieNum];
-						gameTrackerX.gameFlags &= 0x1;
-						show_screen(&item->name[0]);
-
-						timer = 1;
-						if (item->timeout != 0)
+						do
 						{
-							do
+							GAMEPAD_Process(gameTracker);
+
+							if (item->buttonTimeout < timer && (gameTracker->controlCommand[0][1] & 0x80))
 							{
-								GAMEPAD_Process(gameTracker);
+								break;
+							}
 
-								if (item->buttonTimeout < timer && (gameTracker->controlCommand[0][1] & 0x80))
-								{
-									break;
-								}
-
-								VSync(0);
-								timer++;
-							} while (timer < item->timeout);
-						}
-
-					} while (item->nextItem < 0);
-					//loc_80039698
+							VSync(0);
+							timer++;
+						} while (timer < item->timeout);
+					}
+					mainTracker->movieNum = item->nextItem;
+					if (item->nextItem < 0)
+					{
+						goto checkMovie;
+					}
 				}
-				//loc_800396D0
-				//loc_800396D0
+				
+				FONT_ReloadFont();
 
-				//TODO the rest, it's mangled as hell and we can only use labels to fix this...
-
+				if (mainTracker->mainState != 6)
+				{
+					if (DoMainMenu == 0)
+					{
+						MAIN_ResetGame();
+						gameTrackerX.gameMode = 0;
+						mainMenuFading = 1;
+						MAIN_StartGame();
+					}
+					else
+					{
+						mainTracker->mainState = 8;
+					}
+				}
 				break;
 			case 6:
 				CINE_Load();

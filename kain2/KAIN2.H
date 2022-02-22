@@ -8578,9 +8578,6 @@ extern short gEndGameNow; // offset 0x800CE562
 extern int pcverify; // offset 0x800CE564
 
 
-extern long DoMainMenu; // offset 0x800CE6C0
-
-
 extern long mainMenuMode; // offset 0x800CE6C4
 
 
@@ -8591,9 +8588,6 @@ extern long *controlsScreen; // offset 0x800CE6CC
 
 
 extern short mainMenuFadeInTime; // offset 0x800CE6D0
-
-
-extern short mainMenuFading; // offset 0x800CE6D2
 
 
 extern struct GameTracker gameTrackerX; // offset 0x800D0FAC
