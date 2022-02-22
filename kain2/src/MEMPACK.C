@@ -8,6 +8,10 @@
 
 #include <stddef.h>
 
+#ifdef PC_VERSION
+#pragma warning(disable: 4101)
+#endif
+
 extern void GXFilePrint(const char* fmt, ...);
 
 static struct NewMemTracker newMemTracker;
@@ -51,7 +55,7 @@ struct MemHeader * MEMPACK_GetSmallestBlockTopBottom(long allocSize)
 	while ((char*)address != newMemTracker.lastMemoryAddress)
 	{
 
-		if (address->memStatus == 0 && address->memSize >= allocSize && bestAddress == NULL)
+		if (address->memStatus == 0 && address->memSize >= (unsigned long)allocSize && bestAddress == NULL)
 		{
 			bestAddress = address;
 			break;
@@ -76,7 +80,7 @@ struct MemHeader * MEMPACK_GetSmallestBlockBottomTop(long allocSize)
 	{
 		if (address->memStatus == 0)
 		{
-			if (address->memSize >= allocSize)
+			if (address->memSize >= (unsigned long)allocSize)
 			{
 				if (bestAddress == NULL || bestAddress < address)
 				{
@@ -617,7 +621,7 @@ void MEMPACK_DoGarbageCollection()
 			addressSize = relocateAddress->memSize - 8;
 			MEMPACK_GarbageCollectFree(relocateAddress);
 			holdSize = addressSize;
-			newAddress = MEMPACK_GarbageCollectMalloc((unsigned long*)&holdSize, addressMemType, (unsigned long*)&freeSize);
+			newAddress = MEMPACK_GarbageCollectMalloc((unsigned long*)&holdSize, (u_char)addressMemType, (unsigned long*)&freeSize);
 			relocateAddress++;
 
 			if (newAddress != NULL)

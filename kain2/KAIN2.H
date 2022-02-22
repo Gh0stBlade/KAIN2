@@ -45,16 +45,6 @@ enum option_ctrl_t // Hashcode: 0xEBCEABAC (dec: -338777172)
 	option_ctrl_num_states = 5,
 };
 
-enum _G2AnimCallbackMsg_Enum // Hashcode: 0xA8F4A89C (dec: -1460361060)
-{
-	G2ANIM_MSG_DONE = 1,
-	G2ANIM_MSG_LOOPPOINT = 2,
-	G2ANIM_MSG_SECTION_INTERPDONE = 3,
-	G2ANIM_MSG_SEGCTRLR_INTERPDONE = 4,
-	G2ANIM_MSG_SWALARMSET = 5,
-	G2ANIM_MSG_PLAYEFFECT = 6,
-};
-
 enum MATH3D_AXIS // Hashcode: 0x37FE6D4A (dec: 939421002)
 {
 	AXIS_X = 0,
@@ -2641,22 +2631,6 @@ struct _InstanceHandle // hashcode: 0xDC7D3685 (dec: -595773819)
 {
 	struct _Instance *instance; // size=616, offset=0
 	long instanceID; // size=0, offset=4
-};
-
-struct evCollideInstanceStatsData // hashcode: 0xD8198216 (dec: -669416938)
-{
-	struct _Instance *instance; // size=616, offset=0
-	unsigned long distance; // size=0, offset=4
-	struct _SVector relativePosition; // size=8, offset=8
-	long xyDistance; // size=0, offset=16
-	long zDelta; // size=0, offset=20
-};
-
-struct INICommand // hashcode: 0x04B02DE1 (dec: 78654945)
-{
-	short command; // size=0, offset=0
-	short numParameters; // size=0, offset=2
-	long parameter[0]; // size=0, offset=4
 };
 
 struct SavedIntroSmall // hashcode: 0x42C7682C (dec: 1120364588)

@@ -111,6 +111,12 @@ typedef struct FontPos // hashcode: 0x0084D7DD (dec: 8706013)
 	char h; // size=0, offset=3
 } FontPos;
 
+#if defined(PC_VERSION)
+extern font_color_t the_font_color_table[];
+#endif
+extern FontPos fontPos[79];
+extern char charMap[92][3];
+
 extern struct _BlockVramEntry* FONT_vramBlock; // offset 0x800D05E4
 
 extern void FONT_MakeSpecialFogClut(int x, int y); // 0x8002CB74
