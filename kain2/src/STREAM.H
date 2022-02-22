@@ -258,21 +258,21 @@ extern void MORPH_SetFog(struct _StreamUnit *streamUnit, int mainUnitFlag); // 0
 extern void MORPH_UpdateTextures(); // 0x8005DE10
 extern void MORPH_Continue(); // 0x8005DE68
 extern void STREAM_MORPH_Relocate(); // 0x8005DFDC
-extern int AddVertex(VECTOR *v0, struct PSX_RECT *rect); // 0x8005DFEC
+extern int AddVertex(VECTOR *v0, PSX_RECT *rect); // 0x8005DFEC
 extern int GetPlaneDist(int k, int j, int i, struct VECTOR *v); // 0x8005E178
 extern void CalcVert(VECTOR *v, VECTOR *v1, VECTOR *v2, int dist1, int dist2, int k, int j); // 0x8005E204
-extern int AddClippedTri(SVECTOR*iv, struct PSX_RECT *cliprect, int *minz); // 0x8005E28C
-extern int STREAM_GetClipRect(struct StreamUnitPortal *portal, struct PSX_RECT *rect); // 0x8005E534
+extern int AddClippedTri(SVECTOR*iv, PSX_RECT *cliprect, int *minz); // 0x8005E28C
+extern int STREAM_GetClipRect(struct StreamUnitPortal *portal, PSX_RECT *rect); // 0x8005E534
 extern long GetFogColor(struct StreamUnitPortal *portal, struct _StreamUnit *mainStreamUnit, struct Level *mainLevel); // 0x8005EAFC
-extern void DrawFogRectangle(struct PSX_RECT *cliprect, struct _PrimPool *primPool, int otzpos, unsigned long **drawot, long color); // 0x8005EE20
-extern void STREAM_RenderAdjacantUnit(unsigned long **curOT, struct StreamUnitPortal *curStreamPortal, struct _StreamUnit *toStreamUnit, struct _StreamUnit *mainStreamUnit, struct PSX_RECT *cliprect); // 0x8005EF0C
+extern void DrawFogRectangle(PSX_RECT *cliprect, struct _PrimPool *primPool, int otzpos, unsigned long **drawot, long color); // 0x8005EE20
+extern void STREAM_RenderAdjacantUnit(unsigned long **curOT, struct StreamUnitPortal *curStreamPortal, struct _StreamUnit *toStreamUnit, struct _StreamUnit *mainStreamUnit, PSX_RECT *cliprect); // 0x8005EF0C
 extern struct BSPTree * STREAM_GetBspTree(struct _StreamUnit *streamUnit, long bspNumber); // 0x8005EFB8
 extern void WARPGATE_BlockWarpGateEntrance(struct _StreamUnit *streamUnit, long collideOn); // 0x8005F018
 extern void WARPGATE_DrawWarpGateRim(struct _StreamUnit *streamUnit, long drawOn); // 0x8005F088
 extern void WARPGATE_HideAllCloudCovers(); // 0x8005F0E0
 extern struct _Instance * WARPGATE_UnHideCloudCoverInUnit(long streamUnitID); // 0x8005F140
-extern void STREAM_RenderWarpGate(unsigned long **mainOT, struct StreamUnitPortal *curStreamPortal, struct _StreamUnit *mainStreamUnit, struct PSX_RECT *cliprect); // 0x8005F1B8
-extern void WARPGATE_RenderWarpUnit(unsigned long **mainOT, struct StreamUnitPortal *curStreamPortal, struct _StreamUnit *mainStreamUnit, struct PSX_RECT *cliprect); // 0x8005F4F0
+extern void STREAM_RenderWarpGate(unsigned long **mainOT, struct StreamUnitPortal *curStreamPortal, struct _StreamUnit *mainStreamUnit, PSX_RECT *cliprect); // 0x8005F1B8
+extern void WARPGATE_RenderWarpUnit(unsigned long **mainOT, struct StreamUnitPortal *curStreamPortal, struct _StreamUnit *mainStreamUnit, PSX_RECT *cliprect); // 0x8005F4F0
 extern void STREAM_DumpNonResidentObjects(); // 0x8005F8C8
 extern int STREAM_TryAndDumpNonResident(struct _ObjectTracker *otr); // 0x8005F978
 
