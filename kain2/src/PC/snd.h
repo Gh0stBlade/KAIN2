@@ -33,7 +33,7 @@ typedef struct SND_DEVICE_INFO
 extern "C" {
 #endif
 
-extern _G2AppDataVM_Type _appDataVM;
+extern _G2AppDataVM_Type appDataVM;
 
 extern int(__cdecl* SND_InitPtr)(HWND hWnd, int index);
 extern void(__cdecl* SND_ShutdownPtr)();

@@ -32,6 +32,13 @@ struct EventAliasCommandStruct // hashcode: 0xB6EF2AF6 (dec: -1225839882)
 	short speed; // size=0, offset=10
 };
 
+struct INICommand // hashcode: 0x04B02DE1 (dec: 78654945)
+{
+	short command; // size=0, offset=0
+	short numParameters; // size=0, offset=2
+	long parameter[1]; // size=0, offset=4
+};
+
 struct _Instance // hashcode: 0x699A5B3D (dec: 1771723581)
 {
 	struct NodeType node; // size=8, offset=0
@@ -126,6 +133,15 @@ struct _Instance // hashcode: 0x699A5B3D (dec: 1771723581)
 	struct EventAliasCommandStruct aliasCommand; // size=12, offset=596
 	long light_color; // size=0, offset=608
 	CVECTOR* perVertexColor; // size=4, offset=612
+};
+
+struct evCollideInstanceStatsData // hashcode: 0xD8198216 (dec: -669416938)
+{
+	struct _Instance* instance; // size=616, offset=0
+	unsigned long distance; // size=0, offset=4
+	struct _SVector relativePosition; // size=8, offset=8
+	long xyDistance; // size=0, offset=16
+	long zDelta; // size=0, offset=20
 };
 
 struct _InstancePool // hashcode: 0xC591AB92 (dec: -980309102)

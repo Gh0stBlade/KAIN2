@@ -4,40 +4,68 @@
 #include "d3d/d3d.h"
 
 _G2AppDataVM_Type* pVM;
-/*static */_G2AppDataVM_Type _appDataVM;
+_G2AppDataVM_Type appDataVM;
 static LPSTR lpClass = (LPSTR)"";
 
 //0001:00078b30       _PSXEmulation_CheckForTermination 00479b30 f   MainVM.obj
+void PSXEmulation_CheckForTermination()
+{
+}
 //0001:00078b40       _InitToolhelp32            00479b40 f   MainVM.obj
 //0001:00078c10       _FailMsg                   00479c10 f   MainVM.obj
+void FailMsg(const char* fmt, ...)
+{
+	CHAR Text[256]; // [esp+0h] [ebp-100h] BYREF
+	va_list va; // [esp+108h] [ebp+8h] BYREF
+
+	va_start(va, fmt);
+	vsprintf_s(Text, sizeof(Text), fmt, va);
+	va_end(va);
+
+	MessageBoxA(0, Text, "Kain2 Error", MB_OK);
+	ExitProcess(0);
+}
 //0001:00078c60       _RetryMsg                  00479c60 f   MainVM.obj
+int RetryMsg(const char* fmt, ...)
+{
+	CHAR Text[256]; // [esp+0h] [ebp-100h] BYREF
+	va_list va; // [esp+108h] [ebp+8h] BYREF
+
+	va_start(va, fmt);
+	vsprintf_s(Text, sizeof(Text), fmt, va);
+	va_end(va);
+
+	if (MessageBoxA(0, Text, "Kain2 Error", MB_OKCANCEL) == IDCANCEL)
+		ExitProcess(0);
+	return 1;
+}
 //0001:00078cc0       _WinMain@16                00479cc0 f   MainVM.obj
 int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nCmdShow)
 {
-	_appDataVM.hInstance = hInstance;
-	_appDataVM.hWindow = 0;
-	_appDataVM.Is_windowed = 1;
-	_appDataVM.Render_device_id = 0;
-	_appDataVM.Screen_width = 640;
-	_appDataVM.Screen_height = 480;
-	_appDataVM.Screen_depth = 16;
-	_appDataVM.Gamma_level = 5;
-	_appDataVM.Triple_buffer = 0;
-	_appDataVM.Filter = 1;
-	_appDataVM.Sound_device_id = 0;
-	_appDataVM.VSync = 0;
+	appDataVM.hInstance = hInstance;
+	appDataVM.hWindow = 0;
+	appDataVM.Is_windowed = 1;
+	appDataVM.Render_device_id = 0;
+	appDataVM.Screen_width = 640;
+	appDataVM.Screen_height = 480;
+	appDataVM.Screen_depth = 16;
+	appDataVM.Gamma_level = 5;
+	appDataVM.Triple_buffer = 0;
+	appDataVM.Filter = 1;
+	appDataVM.Sound_device_id = 0;
+	appDataVM.VSync = 0;
 	HKEY key;
-	DWORD type, cbData;
+	DWORD type = 0, cbData = 0;
 	RegCreateKeyExA(HKEY_LOCAL_MACHINE, "SOFTWARE\\Crystal Dynamics\\Legacy of Kain: Soul Reaver\\1.00.000", 0, lpClass, 0, KEY_READ, nullptr, &key, nullptr);
-	RegQueryValueExA(key, "Windowed",       0, &type, (LPBYTE)&_appDataVM.Is_windowed, &cbData);
-	RegQueryValueExA(key, "RenderDeviceID", 0, &type, (LPBYTE)&_appDataVM.Render_device_id, &cbData);
-	RegQueryValueExA(key, "SoundDeviceID",  0, &type, (LPBYTE)&_appDataVM.Sound_device_id, &cbData);
-	RegQueryValueExA(key, "ScreenWidth",    0, &type, (LPBYTE)&_appDataVM.Screen_width, &cbData);
-	RegQueryValueExA(key, "ScreenHeight",   0, &type, (LPBYTE)&_appDataVM.Screen_height, &cbData);
-	RegQueryValueExA(key, "ScreenDepth",    0, &type, (LPBYTE)&_appDataVM.Screen_depth, &cbData);
-	RegQueryValueExA(key, "TripleBuffer",   0, &type, (LPBYTE)&_appDataVM.Triple_buffer, &cbData);
-	RegQueryValueExA(key, "Filter",         0, &type, (LPBYTE)&_appDataVM.Filter, &cbData);
-	RegQueryValueExA(key, "VSync",          0, &type, (LPBYTE)&_appDataVM.VSync, &cbData);
+	RegQueryValueExA(key, "Windowed",       0, &type, (LPBYTE)&appDataVM.Is_windowed, &cbData);
+	RegQueryValueExA(key, "RenderDeviceID", 0, &type, (LPBYTE)&appDataVM.Render_device_id, &cbData);
+	RegQueryValueExA(key, "SoundDeviceID",  0, &type, (LPBYTE)&appDataVM.Sound_device_id, &cbData);
+	RegQueryValueExA(key, "ScreenWidth",    0, &type, (LPBYTE)&appDataVM.Screen_width, &cbData);
+	RegQueryValueExA(key, "ScreenHeight",   0, &type, (LPBYTE)&appDataVM.Screen_height, &cbData);
+	RegQueryValueExA(key, "ScreenDepth",    0, &type, (LPBYTE)&appDataVM.Screen_depth, &cbData);
+	RegQueryValueExA(key, "TripleBuffer",   0, &type, (LPBYTE)&appDataVM.Triple_buffer, &cbData);
+	RegQueryValueExA(key, "Filter",         0, &type, (LPBYTE)&appDataVM.Filter, &cbData);
+	RegQueryValueExA(key, "VSync",          0, &type, (LPBYTE)&appDataVM.VSync, &cbData);
 	RegCloseKey(key);
 
 	char path[MAX_PATH];
