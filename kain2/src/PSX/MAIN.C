@@ -1,5 +1,3 @@
-#include <stddef.h>
-#include "../CORE.H"
 #include "MAIN.H"
 #include "../G2/MAING2.H"
 #include "../MEMPACK.H"
@@ -193,11 +191,55 @@ void ProcessArgs(char *baseAreaName, struct GameTracker *gameTracker)
 
 }
 
+PSX_RECT rect = { SCREEN_WIDTH, 0, SCREEN_WIDTH, SCREEN_WIDTH };//0x800D0BF6
+
 void InitDisplay()
 {
-#ifdef PSX_VERSION && 0
+#if defined(PSX_VERSION)
+	int i;
+	PSX_RECT r;
 
+	r = rect;
 
+	ResetGraph(0);
+	SetGraphDebug(0);
+
+	SetDefDrawEnv(&draw[0], 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+	SetDefDispEnv(&disp[0], 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+	SetDefDrawEnv(&draw[1], 0, SCREEN_HEIGHT + 16, SCREEN_WIDTH, SCREEN_HEIGHT);
+	SetDefDispEnv(&disp[1], 0, SCREEN_HEIGHT + 16, SCREEN_WIDTH, SCREEN_HEIGHT);
+
+	draw[1].dtd = 1;
+	draw[0].dtd = 1;
+	draw[1].dfe = 1;
+	draw[0].dfe = 1;
+	draw[1].isbg = 0;
+	draw[0].isbg = 0;
+	draw[0].r0 = 0;
+	draw[0].g0 = 0;
+	draw[0].b0 = 0;
+	draw[1].r0 = 0;
+	draw[1].g0 = 0;
+	draw[1].b0 = 0;
+
+	for (i = 0; i < 2; i++)
+	{
+#if 0//P_TAG is claiming to be undefined.
+		setlen(&clearRect[i], 3);
+		setcode(&clearRect[i], 2);
+#else
+		clearRect[i].tag = 0x3 << 24;
+		clearRect[i].code = 2;
+#endif
+		setXY0(&clearRect[i], 0, i * (SCREEN_HEIGHT + 16));
+		setWH(&clearRect[i], SCREEN_WIDTH, SCREEN_HEIGHT + 16);
+		setRGB0(&clearRect[i], 0, 0, 0);
+	}
+
+	ClearDisplay();
+	ClearOTagR((u_long*)gameTrackerX.drawOT, 3072);
+	ClearOTagR((u_long*)gameTrackerX.dispOT, 3072);
+	ClearImage(&r, 0, 255, 0);
 #else
 	TILE* t; // eax
 	u_long tag; // edx
