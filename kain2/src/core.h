@@ -13,10 +13,10 @@
 #include <LIBAPI.H>
 #include <LIBETC.H>
 #include <LIBGTE.H>
-#include <LIBGPU.H>
 #include <LIBSPU.H>
 #include <LIBCD.H>
 #include <LIBPAD.H>
+#include <LIBGPU.H>
 
 #if defined(PSXPC_VERSION)//Temporary
 #define LoadImage LoadImagePSX
@@ -232,6 +232,7 @@ typedef struct NodeType // hashcode: 0x5BF613D7 (dec: 1542853591)
 #include "PLAN/PLANAPI.H"
 
 #elif defined(PSX_VERSION) || defined(PSXPC_VERSION)
+#include "gex2.h"
 #include "VRAM.H"
 #include "INSTANCE.H"//For struct LightInstance
 #endif

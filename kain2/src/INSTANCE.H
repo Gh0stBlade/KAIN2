@@ -1,7 +1,7 @@
 #ifndef INSTANCE_H
 #define INSTANCE_H
 
-#include "G2/QUATG2.H"
+#include "core.h"
 
 typedef struct _Instance _Instance;
 
