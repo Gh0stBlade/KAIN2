@@ -525,6 +525,7 @@ void razReaverBladeOn()
 // int /*$ra*/ razReaverOff()
 int razReaverOff()
 { // line 649, offset 0x800a5ee8
+	return 0;
 }
 
 

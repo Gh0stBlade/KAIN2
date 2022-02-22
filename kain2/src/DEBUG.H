@@ -53,6 +53,11 @@ struct debug_dispatch_t // hashcode: 0x928EA8E4 (dec: -1836144412)
 	void (*fn)(); // size=0, offset=4
 };
 
+
+extern struct DebugMenuLine standardMenu[1]; // offset 0x800CFCB0
+
+extern struct DebugMenuLine* currentMenu; // offset 0x800CDB3C
+
 extern void DEBUG_UpdateHealth(long *var); // 0x80012EC0
 extern void DEBUG_UpdateMana(long *var); // 0x80012EE4
 extern void DEBUG_FillUpHealth(long *var); // 0x80012F08
