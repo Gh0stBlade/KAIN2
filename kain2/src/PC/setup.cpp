@@ -27,7 +27,7 @@ int __cdecl SETUP_DoSetupDialog(_G2AppDataVM_Type* vm)
 		if (v3)
 		{
 			HKEY key;
-			if (!RegOpenKeyExA(HKEY_LOCAL_MACHINE, "SOFTWARE\Crystal Dynamics\Legacy of Kain: Soul Reaver\1.00.000", 0, 0x20019u, &key))
+			if (!RegOpenKeyExA(HKEY_LOCAL_MACHINE, "SOFTWARE\\Crystal Dynamics\\Legacy of Kain: Soul Reaver\\1.00.000", 0, 0x20019u, &key))
 			{
 				RegSetValueExA(key, "Windowed",       0, REG_DWORD, (const BYTE*)&pVM_Setup->Is_windowed, 4);
 				RegSetValueExA(key, "RenderDeviceID", 0, REG_DWORD, (const BYTE*)&pVM_Setup->Render_device_id, 4);

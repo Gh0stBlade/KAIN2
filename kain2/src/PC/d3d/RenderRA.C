@@ -94,7 +94,7 @@ int __cdecl RenderG2_SetResolution(int res)
 	_G2AppDataVM_Type bk; // [esp+Ch] [ebp-34h] BYREF
 
 	res_count = Devicelist[appDataVM.Render_device_id].res_count;
-	qmemcpy(&bk, &appDataVM, sizeof(bk));
+	memcpy(&bk, &appDataVM, sizeof(bk));
 	if (res >= res_count)
 		res = res_count - 1;
 	D3D_Pause();
@@ -103,7 +103,7 @@ int __cdecl RenderG2_SetResolution(int res)
 	appDataVM.Screen_height = res_list[res].y;
 	if (!D3D_ReInit())
 	{
-		qmemcpy(&appDataVM, &bk, sizeof(appDataVM));
+		memcpy(&appDataVM, &bk, sizeof(appDataVM));
 		if (!D3D_ReInit())
 			D3D_FailAbort("RNDD3D failed to reinitialise");
 	}

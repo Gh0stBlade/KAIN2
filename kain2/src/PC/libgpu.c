@@ -37,9 +37,9 @@ u_long* ClearOTagR(u_long* ot, int n)
 //0001:00028b70       _DrawOTag                  00429b70 f   libgpu.obj
 void DrawOTag(u_long* p)
 {
-	PSXEmulation_CheckForTermination();
-	D3D_ParseAndDrawOTag(p);
-	RendererAPSX_Flush();
+	//PSXEmulation_CheckForTermination();
+	//D3D_ParseAndDrawOTag(p);
+	//RendererAPSX_Flush();
 	if (_psxEmuState)
 		_psxEmuState();
 	if (cb_vsync)

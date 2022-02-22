@@ -645,5 +645,8 @@
     </ClInclude>
     <ClInclude Include="src\gex2.h" />
     <ClInclude Include="src\psyq.h" />
+    <ClInclude Include="src\PC\d3d\d3dshell.h">
+      <Filter>PC\d3d</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

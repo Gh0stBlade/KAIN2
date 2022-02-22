@@ -35,8 +35,10 @@ void D3DTEX_Save()
 }
 //0001:000718b0       _D3DTEX_Restore            004728b0 f   d3dtextr.obj [unused]
 //0001:00071940       _D3DTEX_Init               00472940 f   d3dtextr.obj
-void __cdecl D3DTEX_Init(int is_software)
-{}
+int __cdecl D3DTEX_Init(int is_software)
+{
+	return 1;
+}
 //0001:00071a80       _D3DTEX_Shutdown           00472a80 f   d3dtextr.obj
 int D3DTEX_Shutdown()
 {

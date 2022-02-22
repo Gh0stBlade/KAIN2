@@ -999,7 +999,7 @@ void SAVE_SaveGame()
 		v3 += 16;
 	} while ((int)v3 < (int)&MORPH_SavedLevel);
 	GlobalSave->currentTime = dword_C66F4C;
-	qmemcpy(&GlobalSave->sound, &dword_C66ED0, sizeof(GlobalSave->sound));
+	memcpy(&GlobalSave->sound, &dword_C66ED0, sizeof(GlobalSave->sound));
 	GlobalSave->saveVersion = 21797;
 	if (GAMEPAD_DualShockEnabled())
 		GlobalSave->flags |= 2u;
@@ -1041,7 +1041,7 @@ LABEL_6:
 	if (v1[1].introUniqueID == 21797)
 	{
 		dword_C66F4C = (int)v1[2];
-		qmemcpy(&dword_C66ED0, &v1[24], 0x14u);
+		memcpy(&dword_C66ED0, &v1[24], 0x14u);
 		SOUND_SetSfxVolume(dword_C66ED8);
 		SOUND_SetMusicVolume(dword_C66ED4);
 		SOUND_SetVoiceVolume(dword_C66EDC);
