@@ -1,4 +1,5 @@
 #include "d3d.h"
+#include "rnd_d3d.h"
 #include <stdio.h>
 #include "../async.h"
 
@@ -147,7 +148,7 @@ void TexturePreloaded(unsigned __int16* data, signed int read_size, int clut)
 void LoadSystemTexture(int clut, unsigned __int16* data)
 {}
 //0001:00072100       _D3DTEX_PreloadTexture     00473100 f   d3dtextr.obj
-extern int D3D_CurrentFrame;
+//extern int D3D_CurrentFrame;
 
 void D3DTEX_PreloadTexture(int clut)
 {

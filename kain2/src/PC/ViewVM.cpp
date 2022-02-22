@@ -1,9 +1,10 @@
 #include "../core.h"
 #include <direct.h>
 #include "snd.h"
+#include "d3d/d3d.h"
 
 _G2AppDataVM_Type* pVM;
-static _G2AppDataVM_Type _appDataVM;
+/*static */_G2AppDataVM_Type _appDataVM;
 static LPSTR lpClass = (LPSTR)"";
 
 //0001:00078b30       _PSXEmulation_CheckForTermination 00479b30 f   MainVM.obj

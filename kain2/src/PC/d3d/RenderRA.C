@@ -20,7 +20,19 @@ extern D3D_DEVLIST Devicelist[];
 
 int FindResolution(int dev_id, int width, int height)
 {
-	return 0;
+	int found = 0;
+	D3D_RES* res = Devicelist[dev_id].res_list;
+	for (int i = 0; i < Devicelist[dev_id].res_count; i++, res++)
+	{
+		if ((res->x >= 0 && res->x <= width) &&
+			(res->y >= 0 && res->y <= height) &&
+			(res->depth >= 0 && res->depth <= appDataVM.Screen_depth))
+		{
+			found = i;
+		}
+	}
+
+	return found;
 }
 
 //0001 : 00073fa0       _RenderG2_Init             00474fa0 f   RenderRA.obj

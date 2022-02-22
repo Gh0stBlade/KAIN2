@@ -32,6 +32,9 @@ typedef struct SND_DEVICE_INFO
 #if defined(_LANGUAGE_C_PLUS_PLUS) || defined(__cplusplus) || defined(c_plusplus)
 extern "C" {
 #endif
+
+extern _G2AppDataVM_Type _appDataVM;
+
 extern int(__cdecl* SND_InitPtr)(HWND hWnd, int index);
 extern void(__cdecl* SND_ShutdownPtr)();
 extern void(__cdecl* SND_SetSamplePtr)(int voiceNum, BYTE* data);

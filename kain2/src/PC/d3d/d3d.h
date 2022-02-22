@@ -60,7 +60,7 @@ typedef struct D3D_DEVLIST
 extern "C" {
 #endif
 
-extern DWORD D3D_NumTextureTypes, enumerated, D3D_NumDevices, dword_C3C27C, dword_C3C284;
+extern DWORD D3D_NumTextureTypes, enumerated, D3D_NumDevices, dword_C3C27C, dword_C3C284, D3D_CurrentFrame;
 extern int screenmode_cnt0, screenmode_cnt1;
 extern TEXTURE_TYPE Texturetypelist[64];
 extern D3D_RES Screenmodelist[512];

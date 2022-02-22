@@ -4,6 +4,7 @@
 #include "d3dbuckt.h"
 #include "d3dclip.h"
 #include "d3dshell.h"
+#include "../async.h"
 
 #pragma comment(lib, "ddraw.lib")
 #pragma comment(lib, "dxguid.lib")
@@ -55,8 +56,7 @@ void D3D_EnumTextureTypes(IDirect3DDevice3* dev);
 void D3DTEX_SetTextureFormat(DDPIXELFORMAT* fmt);
 int D3DTEX_Init(int is_software);
 
-void ASLD_ReportStatus();
-void FONT_SetCursor(__int16 x, __int16 y);
+extern "C" void FONT_SetCursor(__int16 x, __int16 y);
 
 DWORD D3D_GammaLevel,
 	D3D_GammaAdjust,
