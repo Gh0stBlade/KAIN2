@@ -29,6 +29,9 @@ typedef struct SND_DEVICE_INFO
 	GUID* pGuid;
 } SND_DEVICE_INFO;
 
+#if defined(_LANGUAGE_C_PLUS_PLUS) || defined(__cplusplus) || defined(c_plusplus)
+extern "C" {
+#endif
 extern int(__cdecl* SND_InitPtr)(HWND hWnd, int index);
 extern void(__cdecl* SND_ShutdownPtr)();
 extern void(__cdecl* SND_SetSamplePtr)(int voiceNum, BYTE* data);
@@ -47,5 +50,9 @@ extern void(__cdecl* SND_SetLoopModePtr)(int voiceNum, int mode);
 extern void(__cdecl* SND_StartPtr)(int voiceNum);
 extern int(__cdecl* SND_GetStatusPtr)(int voiceNum);
 
-int __cdecl SoundG2_Init(_G2AppDataVM_Type* vm);
-void __cdecl SoundG2_ShutDown();
+int SoundG2_Init(_G2AppDataVM_Type* vm);
+void SoundG2_ShutDown();
+
+#if defined(_LANGUAGE_C_PLUS_PLUS) || defined(__cplusplus) || defined(c_plusplus)
+}
+#endif

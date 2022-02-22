@@ -163,10 +163,10 @@ HRESULT WINAPI d3denumcallback(_GUID* lpGUID, LPSTR lpszDeviceDesc, LPSTR lpszDe
 }
 
 //0001:00070b60       _D3D_EnumTextureTypes      00471b60 f   d3denum.obj
-int __cdecl D3D_EnumTextureTypes(IDirect3DDevice3* dev)
+void __cdecl D3D_EnumTextureTypes(IDirect3DDevice3* dev)
 {
 	D3D_NumTextureTypes = 0;
-	return dev->EnumTextureFormats(enumtextures, nullptr);
+	dev->EnumTextureFormats(enumtextures, nullptr);
 }
 //0001:00070b80       _D3D_EnumerateDevices      00471b80 f   d3denum.obj
 void __cdecl D3D_EnumerateDevices()

@@ -1060,7 +1060,7 @@ void EVENT_StackDuplicate(struct _PCodeStack *stack)
 	}
 	else if (topOfStack)
 	{
-		qmemcpy(&stack->stack[topOfStack], (char*)stack + 36 * topOfStack - 32, sizeof(stack->stack[topOfStack]));
+		memcpy(&stack->stack[topOfStack], (char*)stack + 36 * topOfStack - 32, sizeof(stack->stack[topOfStack]));
 		++stack->topOfStack;
 	}
 	else

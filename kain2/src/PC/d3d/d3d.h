@@ -5,14 +5,15 @@
 #include <d3d.h>
 #include "d3dbuckt.h"
 #include "d3dclip.h"
+#include "rnd_d3d.h"
 
-typedef struct SystemTextureD3D
+typedef struct _SystemTextureD3D
 {
 	DWORD age;
 	DWORD clut;
 	LPDIRECTDRAWSURFACE4 surface;
 	IDirect3DTexture2* texture;
-	SystemTextureD3D* linked;
+	struct _SystemTextureD3D* linked;
 } SystemTextureD3D;
 
 typedef struct SystemTexturePool
@@ -23,7 +24,7 @@ typedef struct SystemTexturePool
 	IDirect3DTexture2* texture;
 } SystemTexturePool;
 
-struct TEXTURE_TYPE
+typedef struct TEXTURE_TYPE
 {
 	DDPIXELFORMAT pfmt;
 	int field_20;
@@ -31,7 +32,7 @@ struct TEXTURE_TYPE
 	int bits_red;
 	int bits_green;
 	int bits_blue;
-};
+} TEXTURE_TYPE;
 
 typedef struct D3D_RES
 {
@@ -54,6 +55,10 @@ typedef struct D3D_DEVLIST
 	int can_gamma;
 	D3D_RES* res_list;
 } D3D_DEVLIST;
+
+#if defined(_LANGUAGE_C_PLUS_PLUS) || defined(__cplusplus) || defined(c_plusplus)
+extern "C" {
+#endif
 
 extern DWORD D3D_NumTextureTypes, enumerated, D3D_NumDevices, dword_C3C27C, dword_C3C284;
 extern int screenmode_cnt0, screenmode_cnt1;
@@ -81,3 +86,7 @@ extern SystemTexturePool sys_texture_pool[64];
 extern HANDLE sys_texture_handle;
 extern RTL_CRITICAL_SECTION sys_tex_csec;
 extern int sys_cluts[64], sys_clut_cnt;
+
+#if defined(_LANGUAGE_C_PLUS_PLUS) || defined(__cplusplus) || defined(c_plusplus)
+}
+#endif
