@@ -564,6 +564,7 @@
     <ClInclude Include="src\PC\d3d\d3dbuckt.h" />
     <ClInclude Include="src\PC\d3d\d3dclip.h" />
     <ClInclude Include="src\PC\d3d\d3dshell.h" />
+    <ClInclude Include="src\PC\d3d\rnd_d3d.h" />
     <ClInclude Include="src\PC\KERNEL.H" />
     <ClInclude Include="src\PC\LIBAPI.H" />
     <ClInclude Include="src\PC\LIBGPU.H" />

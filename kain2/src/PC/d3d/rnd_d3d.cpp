@@ -18,7 +18,7 @@ typedef struct D3D_FOGTBL
 	int col;
 } D3D_FOGTBL;
 
-int __cdecl D3D_SetGammaNormalized(int level);
+int D3D_SetGammaNormalized(int level);
 
 LPDIRECTDRAW lpDD;
 LPDIRECTDRAW4 lpDD4;
@@ -48,15 +48,15 @@ float D3D_FogFar, D3D_FogNear, D3D_FogZScale;
 DWORD D3D_FogColor, D3D_CurFogUnit, D3D_UseVertexFog, D3D_AdaptivePerspec;
 float D3D_XCenter, D3D_YCenter;
 
-void __cdecl D3D_EnumTextureTypes(IDirect3DDevice3* dev);
-void __cdecl D3D_Flip();
-void __cdecl D3D_Clear();
+void D3D_EnumTextureTypes(IDirect3DDevice3* dev);
+//void D3D_Flip();
+//void D3D_Clear();
 
-void __cdecl D3DTEX_SetTextureFormat(DDPIXELFORMAT* fmt);
-int __cdecl D3DTEX_Init(int is_software);
+void D3DTEX_SetTextureFormat(DDPIXELFORMAT* fmt);
+int D3DTEX_Init(int is_software);
 
-void __cdecl ASLD_ReportStatus();
-void __cdecl FONT_SetCursor(__int16 x, __int16 y);
+void ASLD_ReportStatus();
+void FONT_SetCursor(__int16 x, __int16 y);
 
 DWORD D3D_GammaLevel,
 	D3D_GammaAdjust,
@@ -72,7 +72,7 @@ int(__cdecl* TRANS_DoTransform)(DWORD, DWORD, DWORD, DWORD);
 #endif
 
 //0001:00074f20 ?ShutdownDevice@@YAXXZ     00475f20 f   rnd_d3d.obj
-void __cdecl ShutdownDevice()
+void ShutdownDevice()
 {
 	if (D3D_InScene)
 	{
@@ -115,7 +115,7 @@ void __cdecl ShutdownDevice()
 }
 
 //0001:00074410       _DBG_Print                 00475410 f   rnd_d3d.obj
-void __cdecl DBG_Print(const char* fmt, ...)
+void DBG_Print(const char* fmt, ...)
 {
 	CHAR Text[256]; // [esp+0h] [ebp-100h] BYREF
 	va_list va; // [esp+108h] [ebp+8h] BYREF
@@ -127,7 +127,7 @@ void __cdecl DBG_Print(const char* fmt, ...)
 }
 
 //0001:00074450       _D3D_FailAbort             00475450 f   rnd_d3d.obj
-void __cdecl D3D_FailAbort(const char *fmt, ...)
+void D3D_FailAbort(const char *fmt, ...)
 {
 	CHAR Text[256];
 	va_list va;
@@ -163,7 +163,7 @@ HRESULT WINAPI enumdepthbuf(DDPIXELFORMAT* pixfmt, LPVOID lpContext)
 }
 
 //0001:000744e0 ?InitialiseDevice@@YAHXZ   004754e0 f   rnd_d3d.obj
-int __cdecl InitialiseDevice()
+int InitialiseDevice()
 {
 	D3D_CurrentFrame = 0;
 	if(FAILED(DirectDrawCreate(Devicelist[D3D_SelectedDevice].pguid, &lpDD, nullptr)))
@@ -390,12 +390,14 @@ int __cdecl InitialiseDevice()
 	return 0;
 }
 //0001:00075080       _D3D_Init                  00476080 f   rnd_d3d.obj
-extern int __cdecl TRANS_Init();
+extern int TRANS_Init();
 int InitialiseDevice();
 
-int __cdecl D3D_Init(_G2AppDataVM_Type* vm)
+int D3D_Init(void* pvm)
 {
 	int result; // eax
+	_G2AppDataVM_Type* vm = (_G2AppDataVM_Type*)pvm;
+
 
 	d3d_vm = vm;
 	hWnd = vm->hWindow;
@@ -420,12 +422,12 @@ int __cdecl D3D_Init(_G2AppDataVM_Type* vm)
 	return result;
 }
 //0001:00075130       _D3D_Pause                 00476130 f   rnd_d3d.obj
-void __cdecl D3D_Pause()
+void D3D_Pause()
 {
 	if (hWnd) ShutdownDevice();
 }
 //0001:00075140       _D3D_ReInit                00476140 f   rnd_d3d.obj
-void __cdecl D3D_ReInit()
+int D3D_ReInit()
 {
 	if (hWnd)
 	{
@@ -441,26 +443,27 @@ void __cdecl D3D_ReInit()
 		if (InitialiseDevice())
 			d3d_vm->Gamma_level = D3D_SetGammaNormalized(d3d_vm->Gamma_level);
 	}
+	return 1;
 }
 //0001:000751d0       _D3D_Shutdown              004761d0 f   rnd_d3d.obj
-void __cdecl D3D_Shutdown()
+void D3D_Shutdown()
 {
 	D3D_FreeBuckets();
 	ShutdownDevice();
 	hWnd = nullptr;
 }
 //0001:000751f0       _D3D_SetGammaNormalized    004761f0 f   rnd_d3d.obj
-int __cdecl D3D_SetGammaNormalized(int level)
+int D3D_SetGammaNormalized(int level)
 {
 	return 1;
 }
 //0001:000752b0       _D3D_SetBGColor            004762b0 f   rnd_d3d.obj
-void __cdecl D3D_SetBGColor(int r, int g, int b)
+void D3D_SetBGColor(int r, int g, int b)
 {
 	D3D_bgcol = b | ((g | (r << 8)) << 8);
 }
 //0001:000752d0       _D3D_ActivateFogUnit       004762d0 f   rnd_d3d.obj
-void __cdecl D3D_ActivateFogUnit(int index)
+void D3D_ActivateFogUnit(int index)
 {
 	D3D_FogColor = d3d_fogtbl[index].col;
 	D3D_FogFar = d3d_fogtbl[index].far;
@@ -472,7 +475,7 @@ void __cdecl D3D_ActivateFogUnit(int index)
 	}
 }
 //0001:00075330       _D3D_SetFog                00476330 f   rnd_d3d.obj
-void __cdecl D3D_SetFog(int r, int g, int b, float fogNear, float fogFar)
+void D3D_SetFog(int r, int g, int b, float fogNear, float fogFar)
 {
 	if (d3ddev)
 	{
@@ -494,7 +497,7 @@ void __cdecl D3D_SetFog(int r, int g, int b, float fogNear, float fogFar)
 	}
 }
 //0001:000753f0       _D3D_Clear                 004763f0 f   rnd_d3d.obj
-void __cdecl D3D_Clear()
+void D3D_Clear()
 {
 	D3DRECT rect;
 	rect.x1 = 0;
@@ -506,7 +509,7 @@ void __cdecl D3D_Clear()
 		viewport->Clear2(1, &rect, D3DCLEAR_ZBUFFER | D3DCLEAR_TARGET, D3D_bgcol, 1.f, 0);
 }
 //0001:00075480       _D3D_ClearZBuffer          00476480 f   rnd_d3d.obj
-void __cdecl D3D_ClearZBuffer()
+void D3D_ClearZBuffer()
 {
 	D3DRECT rect;
 	rect.x1 = 0;
@@ -518,7 +521,7 @@ void __cdecl D3D_ClearZBuffer()
 		viewport->Clear2(1, &rect, D3DCLEAR_ZBUFFER, D3D_bgcol, 1.f, 0);
 }
 //0001:00075510       _D3D_Flip                  00476510 f   rnd_d3d.obj
-void __cdecl D3D_Flip()
+void D3D_Flip()
 {
 	if (d3ddev == nullptr) return;
 
@@ -596,7 +599,7 @@ void __cdecl D3D_Flip()
 	}
 }
 //0001:000758f0       _D3D_AddTri                004768f0 f   rnd_d3d.obj
-void __cdecl D3D_AddTri(int page, MYTRI* tri)
+void D3D_AddTri(int page, MYTRI* tri)
 {
 	MATBUCKET* bucket = D3D_GetBucket(page);
 	if ((tri[2].col & tri[1].col & tri->col) == 0)
@@ -616,7 +619,7 @@ void __cdecl D3D_AddTri(int page, MYTRI* tri)
 	}
 }
 //0001:00075960       _D3D_DebugDrawLine         00476960 f   rnd_d3d.obj
-void __cdecl D3D_DebugDrawLine(int a, int b)
+void D3D_DebugDrawLine(int a, int b)
 {
 	if (d3ddev)
 	{
@@ -628,7 +631,7 @@ void __cdecl D3D_DebugDrawLine(int a, int b)
 //0001:000759c0       _D3D_GetScreenShot         004769c0 f   rnd_d3d.obj
 //0001:00075bc0       _DrawTPage                 00476bc0 f   rnd_d3d.obj [unused]
 //0001:00075dd0       _D3D_TimeDiff              00476dd0 f   rnd_d3d.obj
-unsigned int __cdecl D3D_TimeDiff(unsigned int start)
+unsigned int D3D_TimeDiff(unsigned int start)
 {
 	LARGE_INTEGER Frequency, PerformanceCount;
 
@@ -646,7 +649,7 @@ unsigned int D3D_CurrentTime()
 	return (unsigned int)(PerformanceCount.QuadPart / (Frequency.QuadPart / 1000000));
 }
 //0001:00075e80       _D3D_Sleep                 00476e80 f   rnd_d3d.obj
-void __cdecl D3D_Sleep(DWORD dwMilliseconds)
+void D3D_Sleep(DWORD dwMilliseconds)
 {
 	Sleep(dwMilliseconds);
 }

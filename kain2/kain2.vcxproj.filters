@@ -648,5 +648,8 @@
     <ClInclude Include="src\PC\d3d\d3dshell.h">
       <Filter>PC\d3d</Filter>
     </ClInclude>
+    <ClInclude Include="src\PC\d3d\rnd_d3d.h">
+      <Filter>PC\d3d</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
