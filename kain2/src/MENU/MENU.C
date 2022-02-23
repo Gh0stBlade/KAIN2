@@ -1,4 +1,4 @@
-#include "THISDUST.H"
+#include "CORE.H"
 #include "MENU.H"
 
 int menu_data_size()
@@ -218,7 +218,7 @@ void DisplayHintBox(int len, int y)
 		// Start line: 222
 		// Start offset: 0x800B7D10
 		// Variables:
-			struct Extents2d ext; // stack offset -24
+			//struct Extents2d ext; // stack offset -24
 			int i; // $s0
 
 		/* begin block 1.1 */
@@ -247,7 +247,7 @@ void DisplayMenuBox(int x0, int x1, int y0, int y1)
 		// Start line: 258
 		// Start offset: 0x800B7E3C
 		// Variables:
-			struct Extents2d ext; // stack offset -56
+			//struct Extents2d ext; // stack offset -56
 			static int dy[16]; // offset 0x0
 			int i; // $s3
 			int j; // $s6
@@ -336,7 +336,7 @@ int menu_draw_item(struct menu_t *menu, int ypos, int xadj, int yadj, char *text
 					// Start line: 443
 					// Start offset: 0x800B8328
 					// Variables:
-						int wd; // $s0
+						//int wd; // $s0
 				/* end block 1.1.1.3 */
 				// End offset: 0x800B8378
 				// End Line: 450
@@ -371,7 +371,7 @@ void menu_draw(struct menu_t *menu)
 			// Start line: 482
 			// Start offset: 0x800B8478
 			// Variables:
-				struct Extents2d ext; // stack offset -48
+				//struct Extents2d ext; // stack offset -48
 				struct menu_stack_t *stack; // $s6
 				int index; // $s5
 				int ypos; // $s3
