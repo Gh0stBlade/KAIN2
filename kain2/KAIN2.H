@@ -8165,9 +8165,6 @@ union UNDRWRLD_195fake // Hashcode: 0xA8618D78 (dec: -1470001800)
 
 /* Begin external declarations */
 
-extern struct DebugMenuLine mainMenu[8]; // offset 0x800C8418
-
-
 static struct debug_dispatch_t debug_dispatch_table[5]; // offset 0x800C84D8
 
 
@@ -8541,9 +8538,6 @@ extern int _stacksize; // offset 0x800CE55C
 
 
 extern int pcverify; // offset 0x800CE564
-
-
-extern long mainMenuMode; // offset 0x800CE6C4
 
 
 extern long *controlsScreen; // offset 0x800CE6CC

@@ -135,7 +135,7 @@ typedef int (*TDRFuncPtr_menu_set1fn)();
 extern int menu_data_size(); // 0x800B7A40
 extern void menu_initialize(struct menu_t *menu, void *opaque); // 0x800B7A48
 extern void menu_format(struct menu_t *menu, int center, int xpos, int ypos, int width, int lineskip, int itemskip, int border); // 0x800B7A8C
-extern void menu_set(struct menu_t *menu, TDRFuncPtr_menu_set1fn fn); // 0x800B7ADC
+extern void menu_set(struct menu_t *menu, int* fn(void*, int*)); // 0x800B7ADC
 extern void menu_push(struct menu_t *menu, TDRFuncPtr_menu_push1fn fn); // 0x800B7B00
 extern void menu_pop(struct menu_t *menu); // 0x800B7B70
 extern void menu_item_flags(struct menu_t *menu, TDRFuncPtr_menu_item_flags1fn fn, long parameter, long flags, char *format); // 0x800B7B84

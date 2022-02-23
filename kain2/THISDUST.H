@@ -507,13 +507,9 @@ static int MAIN_YPOS; // offset 0x800CFA48
 
 static char mainFormatString[20]; // offset 0x800CDACC
 
-extern struct DebugMenuLine mainMenu[8]; // offset 0x800C8418
-
 extern short mainMenuFadeInTime; // offset 0x800CE6D0
 
 extern short mainMenuFading; // offset 0x800CE6D2
-
-extern long mainMenuMode; // offset 0x800CE6C4
 
 static int MANNA_Pickup_Time; // offset 0x800D48D4
 
