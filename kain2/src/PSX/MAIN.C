@@ -610,29 +610,25 @@ long MAIN_DoMainMenu(struct GameTracker *gameTracker, struct MainTracker *mainTr
 
 int MainG2(void *appData)
 { 
-	struct MainTracker* mainTracker; // $s2
-	struct GameTracker* gameTracker; // $s3
-	long menuPos; // $s5
-	struct InterfaceItem* item; // $s1
-	int timer; // $s0
+	struct MainTracker* mainTracker;
+	struct GameTracker* gameTracker;
+	long menuPos;
+	struct InterfaceItem* item;
+	int timer;
 
 #if defined(PSXPC_VERSION)
 	Emulator_Initialise("Legacy of Kain: Soul Reaver", SCREEN_WIDTH, SCREEN_HEIGHT);
 #endif
 
-	//s7 = appData
 	menuPos = 0;
 	CheckForDevStation();
-	//a0 = appData
-	//a1 = 0x200//SW?
-	//a2 = 0xF0 //SH?
+	
 	mainTracker = &mainTrackerX;
 	gameTracker = &gameTrackerX;
 	mainOptionsInit = 0;
 
 	if (MainG2_InitEngine(appData, SCREEN_WIDTH, SCREEN_HEIGHT, NULL) == 1)
 	{
-		//s6 = 2
 		MEMPACK_Init();
 		LOAD_InitCd();
 		StartTimer();
@@ -647,11 +643,10 @@ int MainG2(void *appData)
 		ProcessArgs(&gameTracker->baseAreaName[0], gameTracker);
 		InitMainTracker(mainTracker);
 		MAIN_DoMainInit();
-		//s4 = &InterfaceItems[0];
+
 		mainTracker->mainState = 6;
 		mainTracker->movieNum = 0;
 
-		//loc_800394D4
 		while (mainTracker->done == 0)
 		{
 			switch (mainTrackerX.mainState)
@@ -744,9 +739,7 @@ int MainG2(void *appData)
 
 				break;
 			case 4:
-				//loc_800395F8
 				LOAD_ChangeDirectory("Menustuff");
-				//a0 = 
 
 				checkMovie:
 				while ((unsigned)mainTracker->movieNum < 6)
@@ -776,6 +769,11 @@ int MainG2(void *appData)
 					{
 						goto checkMovie;
 					}
+				}
+
+				if (item->nextItem != 1)
+				{
+					mainTracker->mainState = 6;
 				}
 				
 				FONT_ReloadFont();
@@ -830,14 +828,28 @@ int MainG2(void *appData)
 				}
 
 				break;
+			case 7:
+				mainTracker->movieNum = 1;
+				break;
+			case 8:
+				ProcessArgs(gameTracker->baseAreaName, gameTracker);
+				MAIN_ResetGame();
+				LOAD_ChangeDirectory("Menustuff");
+				MAIN_MainMenuInit();
+				MAIN_InitVolume();
+				SAVE_ClearMemory(&gameTrackerX);
+				FONT_ReloadFont();
+				mainTracker->mainState = 9;
+				break;
+			case 9:
+				menuPos = MAIN_DoMainMenu(gameTracker, mainTracker, menuPos);
+				break;
 			case 3:
 			case 5:
 			default:
-				//def_80039508
 				break;
 			}
 
-			//def_80039508
 			STREAM_PollLoadQueue();
 		}
 
@@ -857,7 +869,6 @@ int MainG2(void *appData)
 		StopCallback();
 		ResetGraph(0);
 	}
-	//loc_80039A20
 
 	MainG2_ShutDownEngine(appData);
 
@@ -865,6 +876,5 @@ int MainG2(void *appData)
 	Emulator_ShutDown();
 #endif
 
-	//loc_80039A20
 	return 0;
 }
