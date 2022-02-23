@@ -62,7 +62,9 @@ extern int do_function(void *gt, long fnparam, enum menu_ctrl_t ctrl); // 0x800B
 extern int do_start_game(void *gt, long parameter, enum menu_ctrl_t ctrl); // 0x800B8A10
 extern int do_save_menu(void *gt, long parameter, enum menu_ctrl_t ctrl); // 0x800B8A74
 extern void womp_background(char *tim_path); // 0x800B8AB0
+#if !defined(PSX_VERSION)
 extern void play_movie(char *name); // 0x800B8AE8
+#endif
 extern void menudefs_reset_hack_attract_mode(); // 0x800B8B30
 extern void check_hack_attract(); // 0x800B8B54
 extern int get_volume(void *gt, enum sfx_t sfx); // 0x800B8BC4
