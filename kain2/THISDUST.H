@@ -515,8 +515,6 @@ extern short mainMenuFading; // offset 0x800CE6D2
 
 extern long mainMenuMode; // offset 0x800CE6C4
 
-extern short mainMenuTimeOut; // offset 0x800D0FA8
-
 static int MANNA_Pickup_Time; // offset 0x800D48D4
 
 static short MANNA_Pos_vel; // offset 0x800D48BE

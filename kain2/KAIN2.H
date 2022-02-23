@@ -8555,9 +8555,6 @@ extern short mainMenuFadeInTime; // offset 0x800CE6D0
 extern struct GameTracker gameTrackerX; // offset 0x800D0FAC
 
 
-extern short mainMenuTimeOut; // offset 0x800D0FA8
-
-
 extern struct _ButtonTexture PauseButtons[4][2]; // offset 0x800D122C
 
 
