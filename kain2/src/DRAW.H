@@ -8,7 +8,7 @@ extern void DRAW_InitShadow(); // 0x8002A62C
 
 extern unsigned long * DRAW_DrawShadow(struct _PrimPool *primPool, struct _Model *model, unsigned long **ot, long fadeValue); // 0x8002A6F4
 
-extern void DRAW_FlatQuad(struct CVECTOR *color, short x0, short y0, short x1, int y1, int x2, int y2, int x3, int y3, struct _PrimPool *primPool, unsigned long **ot); // 0x8002A8B4
+extern void DRAW_FlatQuad(CVECTOR *color, short x0, short y0, short x1, int y1, int x2, int y2, int x3, int y3, struct _PrimPool *primPool, unsigned long **ot); // 0x8002A8B4
 
 extern void DRAW_TranslucentQuad(short x0, short y0, short x1, short y1, int x2, int y2, int x3, int y3, int r, int g, int b, int abr, struct _PrimPool *primPool, unsigned long **ot); // 0x8002A95C
 
@@ -34,7 +34,7 @@ extern unsigned long * DRAW_DrawGlowPoint(struct _Instance *instance, long seg1,
 
 extern int DRAW_DisplayTFace_zclipped_C(SVECTOR*vertex0, SVECTOR*vertex1, SVECTOR*vertex2, struct UVTYPE *uv0, struct UVTYPE *uv1, struct UVTYPE *uv2, long color0, long color1, long color2, struct _PrimPool *primPool, unsigned long **ot, int ndiv); // 0x8002BD14
 
-extern long * DRAW_Zclip_subdiv(struct POLY_GT3 *texture, unsigned long **ot, int ndiv); // 0x8002C554
+extern long * DRAW_Zclip_subdiv(POLY_GT3 *texture, unsigned long **ot, int ndiv); // 0x8002C554
 
 extern void DRAW_LoadingMessage(); // 0x8002CA58
 

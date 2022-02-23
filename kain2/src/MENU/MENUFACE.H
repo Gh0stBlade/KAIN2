@@ -1,6 +1,18 @@
 #ifndef MENUFACE_H
 #define MENUFACE_H
 
+#include "../VRAM.H"
+
+struct _ButtonTexture 
+{
+	short tpage; // size=0, offset=0
+	short clut; // size=0, offset=2
+	short textureW; // size=0, offset=4
+	short textureH; // size=0, offset=6
+	struct _BlockVramEntry* vramBlock; // size=0, offset=8
+	long xshift; // size=0, offset=12
+};
+
 union MENUFACE_71fake // Hashcode: 0x1C6ACF56 (dec: 476761942)
 {
 	struct {
