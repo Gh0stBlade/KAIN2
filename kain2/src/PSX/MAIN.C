@@ -384,67 +384,34 @@ void CheckForDevStation()
 
 void MAIN_ShowLoadingScreen()
 { 
-	long *loadingScreen; // $s0
-	char langChar[5]; // stack offset -88
-	int lang; // $v0
-	char filename[64]; // stack offset -80
+	long *loadingScreen;
+	char langChar[5];
+	int lang;
+	char filename[64];
 
-	//t1 = FGIS
-#if 0///@FIXME why lwl/swl here?
-	ulw     $v1, (aFgis - 0x800D0BFC)($t1)  # "FGIS"
-	lb      $a3, (aFgis + 4 - 0x800D0BFC)($t1)  # ""
-	usw     $v1, 0x58 + var_48($sp)
-	sb      $a3, 0x58 + var_44($sp)
-#endif
+	langChar[0] = 'F';
+	langChar[1] = 'G';
+	langChar[2] = 'I';
+	langChar[3] = 'S';
 
 	VSync(0);
+	lang = localstr_get_language();
 
-	if (localstr_get_language() != language_english)
+	if (lang != language_english)
 	{
-#if 0
-		addiu   $s1, $sp, 0x58 + var_48
-		addiu   $s0, $sp, 0x58 + var_40
-		move    $a0, $s0
-		lui     $a1, 0x800D
-		addu    $v0, $s1
-		lbu     $a2, -1($v0)
-		jal     sub_80074468
-		li      $a1, aKain2GamePsxLo  # "\\kain2\\game\\psx\\loading%c.tim"
-		j       loc_80038EA8
-		move    $a0, $s0
-		sprintf
-#endif
-
+		sprintf(filename, "\\kain2\\game\\psx\\loading%c.tim", langChar[lang - 1]);
+		loadingScreen = LOAD_ReadFile(filename, 11);
+	}
+	else
+	{
+		loadingScreen = LOAD_ReadFile("\\kain2\\game\\psx\\loading.tim", 11);
 	}
 
-#if 0
-
-		
-		
-
-		loc_80038EA0 :
-	li      $a0, aKain2GamePsxLo_0  # "\\kain2\\game\\psx\\loading.tim"
-
-		loc_80038EA8 :
-		jal     sub_800608F8
-		li      $a1, 0xB
-		move    $s0, $v0
-		beqz    $s0, loc_80038ED0
-		nop
-		lw      $a1, -0x4234($gp)
-		jal     sub_800385B4
-		move    $a0, $s0
-		jal     sub_80050498
-		move    $a0, $s0
-
-		loc_80038ED0 :
-	lw      $ra, 0x58 + var_s8($sp)
-		lw      $s1, 0x58 + var_s4($sp)
-		lw      $s0, 0x58 + var_s0($sp)
-		jr      $ra
-		addiu   $sp, 0x68
-		# End of function sub_80038E34
-#endif
+	if (loadingScreen != NULL)
+	{
+		screen_to_vram(loadingScreen, gameTrackerX.gameData.asmData.dispPage);
+		MEMPACK_Free((char*)loadingScreen);
+	}
 }
 
 
