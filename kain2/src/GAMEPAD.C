@@ -2,6 +2,10 @@
 #include "GAMELOOP.H"
 #include "GAMEPAD.H"
 
+#if defined(PSXPC_VERSION)
+#include "EMULATOR_PRIVATE.H"
+#endif
+
 long gDummyCommand[2][2]; // offset 0x800D0D60
 
 struct ControllerPacket readGPBuffer1; // offset 0x800D0CF4
@@ -642,6 +646,9 @@ void GAMEPAD_DisplayControllerStatus(int msgY)
 
 void GAMEPAD_Process(struct GameTracker *gameTracker)
 { 
+#if defined(PSXPC_VERSION)
+	Emulator_UpdateInput();
+#endif
 	GAMEPAD_GetData(gameTracker->controlData);
 	GAMEPAD_Commands(gameTracker->controlCommand, gameTracker->controlData, 0);
 	GAMEPAD_Commands(gameTracker->controlCommand, gameTracker->controlData, 1);
