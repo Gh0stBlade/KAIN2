@@ -126,7 +126,7 @@ void DrawAggregatedSplits();
 int DrawSync(int mode)
 {
 	// Update VRAM seems needed to be here
-	//Emulator_UpdateVRAM();
+	Emulator_UpdateVRAM();
 
 	if (drawsync_callback != NULL)
 	{
@@ -144,7 +144,6 @@ int DrawSync(int mode)
 		vbo_was_dirty_flag = 1;
 		begin_scene_flag = 1;
 		Emulator_BlitVRAM();
-		Emulator_UpdateVRAM();
 		Emulator_EndScene();
 	}
 
