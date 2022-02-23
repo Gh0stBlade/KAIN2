@@ -33,6 +33,11 @@ struct BLK_FILL // hashcode: 0x2490546A (dec: 613438570)
 	unsigned short h; // size=0, offset=14
 };
 
+extern long mainMenuMode; // offset 0x800CE6C4
+
+extern struct DebugMenuLine mainMenu[8]; // offset 0x800C8418
+
+extern short mainMenuTimeOut; // offset 0x800D0FA8
 
 extern int mainMenuSfx; // offset 0x800D0E1C
 

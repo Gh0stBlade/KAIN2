@@ -2262,7 +2262,7 @@ int Emulator_Initialise()
 	glEnableVertexAttribArray(a_z);
 	glEnableVertexAttribArray(a_w);
 #endif
-	glBindVertexArray(0);
+	//glBindVertexArray(0);
 #elif defined(D3D9) || defined(XED3D)
 	if (FAILED(d3ddev->CreateTexture(VRAM_WIDTH, VRAM_HEIGHT, 1, 0, D3DFMT_A8L8, D3DPOOL_MANAGED, &vramTexture, NULL)))
 	{
@@ -3106,7 +3106,7 @@ void Emulator_EndScene()
 	}
 
 #if defined(OGL) || defined(OGLES)
-	glBindVertexArray(0);
+	//glBindVertexArray(0);
 #elif defined(D3D9) || defined(XED3D)
 	d3ddev->EndScene();
 #elif defined(D3D12)

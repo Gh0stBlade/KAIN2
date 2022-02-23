@@ -1,6 +1,32 @@
 #ifndef MENU_H
 #define MENU_H
 
+struct menu_format_t // hashcode: 0xD91CEBF0 (dec: -652416016)
+{
+	int xpos; // size=0, offset=0
+	int ypos; // size=0, offset=4
+	int lineskip; // size=0, offset=8
+	int itemskip; // size=0, offset=12
+	int width; // size=0, offset=16
+	int center; // size=0, offset=20
+	int border; // size=0, offset=24
+};
+
+struct menu_stack_t // hashcode: 0x04101191 (dec: 68161937)
+{
+	int (*fn)(); // size=0, offset=0
+	int index; // size=0, offset=4
+	struct menu_format_t format; // size=28, offset=8
+};
+
+struct menu_item_t // hashcode: 0xF260D8A8 (dec: -228534104)
+{
+	char* text; // size=0, offset=0
+	int (*fn)(); // size=0, offset=4
+	long parameter; // size=0, offset=8
+	long flags; // size=0, offset=12
+};
+
 enum menu_ctrl_t // Hashcode: 0xE0BD1E93 (dec: -524476781)
 {
 	menu_ctrl_none = 0,
@@ -96,32 +122,6 @@ struct menu_sound_entry_t // hashcode: 0xFFB1DFB2 (dec: -5120078)
 	int sfx; // size=0, offset=4
 };
 
-struct menu_format_t // hashcode: 0xD91CEBF0 (dec: -652416016)
-{
-	int xpos; // size=0, offset=0
-	int ypos; // size=0, offset=4
-	int lineskip; // size=0, offset=8
-	int itemskip; // size=0, offset=12
-	int width; // size=0, offset=16
-	int center; // size=0, offset=20
-	int border; // size=0, offset=24
-};
-
-struct menu_stack_t // hashcode: 0x04101191 (dec: 68161937)
-{
-	int (*fn)(); // size=0, offset=0
-	int index; // size=0, offset=4
-	struct menu_format_t format; // size=28, offset=8
-};
-
-struct menu_item_t // hashcode: 0xF260D8A8 (dec: -228534104)
-{
-	char* text; // size=0, offset=0
-	int (*fn)(); // size=0, offset=4
-	long parameter; // size=0, offset=8
-	long flags; // size=0, offset=12
-};
-
 typedef struct menu_sound_entry_t menu_sound_entry_t;
 
 typedef int (*TDRFuncPtr_menu_item_flags1fn)();
@@ -135,7 +135,7 @@ typedef int (*TDRFuncPtr_menu_set1fn)();
 extern int menu_data_size(); // 0x800B7A40
 extern void menu_initialize(struct menu_t *menu, void *opaque); // 0x800B7A48
 extern void menu_format(struct menu_t *menu, int center, int xpos, int ypos, int width, int lineskip, int itemskip, int border); // 0x800B7A8C
-extern void menu_set(struct menu_t *menu, TDRFuncPtr_menu_set1fn fn); // 0x800B7ADC
+extern void menu_set(struct menu_t *menu, int fn(void*, int)); // 0x800B7ADC
 extern void menu_push(struct menu_t *menu, TDRFuncPtr_menu_push1fn fn); // 0x800B7B00
 extern void menu_pop(struct menu_t *menu); // 0x800B7B70
 extern void menu_item_flags(struct menu_t *menu, TDRFuncPtr_menu_item_flags1fn fn, long parameter, long flags, char *format); // 0x800B7B84
