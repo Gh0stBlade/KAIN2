@@ -299,10 +299,10 @@ typedef struct AadMemoryStruct // hashcode: 0x46CEF45B (dec: 1187968091)
 	unsigned long dynamicSoundBankSramData[2]; // size=8, offset=1296
 	struct AadDynamicLoadRequest loadRequestQueue[16]; // size=448, offset=1304
 	struct AadDynamicBankLoadInfo dynamicBankLoadInfo; // size=88, offset=1752
-	void (*nonBlockLoadProc)(); // size=0, offset=1840
-	void (*nonBlockBufferedLoadProc)(); // size=0, offset=1844
-	void (**memoryMallocProc)(); // size=0, offset=1848
-	void (*memoryFreeProc)(unsigned char* func); // size=0, offset=1852
+	void (*nonBlockLoadProc)(char*, void*, void*, void*, void**, int); // size=0, offset=1840
+	void (*nonBlockBufferedLoadProc)(char*, void*, void*, void*); // size=0, offset=1844
+	char* (*memoryMallocProc)(unsigned long, unsigned char); // size=0, offset=1848
+	void (*memoryFreeProc)(char*); // size=0, offset=1852
 	int nextLoadReqIn; // size=0, offset=1856
 	int nextLoadReqOut; // size=0, offset=1860
 	int numLoadReqsQueued; // size=0, offset=1864
@@ -326,6 +326,8 @@ typedef struct AadMemoryStruct // hashcode: 0x46CEF45B (dec: 1187968091)
 	unsigned char userVariables[128]; // size=128, offset=7176
 } AadMemoryStruct;
 
+extern unsigned short aadHblanksPerUpdate[4];
+extern unsigned long aadGp;
 extern struct AadMemoryStruct* aadMem; // offset 0x800CECD8
 
 extern unsigned long aadGetMemorySize(struct AadInitAttr *attributes); // 0x800514D4
