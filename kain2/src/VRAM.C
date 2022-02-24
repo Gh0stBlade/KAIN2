@@ -308,32 +308,19 @@ struct _BlockVramEntry* VRAM_CheckVramSlot(short* x, short* y, short w, short h,
 		//loc_8007367C
 		//t0 = vblock->w
 
-		if (vblock->w >= w && vblock->h >= h)
+		if ((vblock->w >= w && vblock->h >= h && startY == -1) || (vblock->y >= startY && vblock->y < startY + (SCREEN_HEIGHT + 16)))
 		{
-			
+			//v1 = vblock->x
+			//a2 = 64 -(vblock->x & 0x3F)
+			if ((vblock->x & 0x3F) != 0)
+			{
+
+			}//loc_800738B8
 		}
 		//loc_80073794
 	}
 	//loc_800737AC
 
-		li      $v0, 0xFFFFFFFF
-		beq     $t2, $v0, loc_800736C8
-		nop
-		lh      $v1, 0xE($s1)
-		nop
-		slt     $v0, $v1, $t2
-		bnez    $v0, loc_80073794
-		slt     $v0, $v1, $t4
-		beqz    $v0, loc_80073794
-		nop
-
-		loc_800736C8 :
-	lhu     $v1, 0xC($s1)
-		nop
-		andi    $v0, $v1, 0x3F
-		beqz    $v0, loc_800738B8
-		subu    $a2, $t3, $v0
-		slt     $v0, $a2, $a1
 		bnez    $v0, loc_8007375C
 		move    $s0, $a2
 		andi    $a2, $v1, 0xF
