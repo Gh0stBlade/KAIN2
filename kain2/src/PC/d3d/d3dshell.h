@@ -1,6 +1,6 @@
 #pragma once
 
-struct BLOCK
+typedef struct BLOCK
 {
 	int width;
 	int height;
@@ -13,7 +13,7 @@ struct BLOCK
 	int dwRGBAlphaBitMask;
 	int dwRGBBitCount;
 	DWORD* ptr;
-};
+} BLOCK;
 
 #if defined(_LANGUAGE_C_PLUS_PLUS) || defined(__cplusplus) || defined(c_plusplus)
 extern "C" {

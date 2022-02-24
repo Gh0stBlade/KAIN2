@@ -13,7 +13,14 @@ struct _BlockVramEntry* FONT_vramBlock; // offset 0x800D05E4
 static WORD font_clut;
 struct FontTracker fontTracker;
 #if defined(PC_VERSION)
-font_color_t the_font_color_table[5];
+font_color_t the_font_color_table[5] =
+{
+	0x00, 0x00, 0x00,
+	0x40, 0x40, 0x40,
+	0x40, 0x40, 0xff,
+	0x58, 0x58, 0x68,
+	0xdc, 0xdc, 0x40
+};
 #endif
 FontPos fontPos[79];
 char charMap[92][3];

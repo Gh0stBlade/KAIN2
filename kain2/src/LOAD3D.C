@@ -814,6 +814,7 @@ void LOAD_LoadTIM(long *addr, long x_pos, long y_pos, long clut_x, long clut_y)
 	}
 }
 
+#ifndef PC_VERSION
 void LOAD_LoadTIM2(long *addr, long x_pos, long y_pos, long width, long height)
 {
 	PSX_RECT rect;
@@ -826,6 +827,7 @@ void LOAD_LoadTIM2(long *addr, long x_pos, long y_pos, long width, long height)
 	LoadImage(&rect, (unsigned long*)addr + 5);
 	DrawSync(0);
 }
+#endif
 
 long LOAD_RelocBinaryData(long *data, long fileSize)
 {

@@ -74,8 +74,8 @@ extern void DisablePAD(void);
 
 extern void FlushCache(void);
 extern void ReturnFromException(void);
-//extern int  EnterCriticalSection(void);
-extern void ExitCriticalSection(void);
+extern int  PSX_EnterCriticalSection(void);
+extern void PSX_ExitCriticalSection(void);
 extern void Exception(void);
 extern void SwEnterCriticalSection(void);
 extern void SwExitCriticalSection(void);

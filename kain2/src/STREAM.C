@@ -1,3 +1,5 @@
+#define _CRT_SECURE_NO_WARNINGS
+
 #include "CORE.H"
 #include "STREAM.H"
 #include "INSTANCE.H"
@@ -10,6 +12,10 @@
 #include "MEMPACK.H"
 
 #include <stddef.h>
+
+#ifdef PC_VERSION
+#pragma warning(disable: 4101)
+#endif
 
 struct STracker StreamTracker; // offset 0x800D1920
 
@@ -145,8 +151,8 @@ void STREAM_LoadObjectReturn(void* loadData, void* data, void* data2)
 	struct _ObjectTracker* objectTracker;
 	char objDsfxFileName[64];
 
-	object = (Object*)loadData;
-	objectTracker = (_ObjectTracker*)data;
+	object = (struct Object*)loadData;
+	objectTracker = (struct _ObjectTracker*)data;
 	GetRCnt(0xF2000000);
 
 	if ((object->oflags & 0x8000000) && object->relocList != NULL && object->relocModule != NULL)
@@ -371,7 +377,7 @@ int InsertGlobalObject(char *name, struct GameTracker *gameTracker)
 	{
 		if (otr->objectStatus != 0)
 		{
-			if (strcmpi(otr->name, name) == 0)
+			if (_strcmpi(otr->name, name) == 0)
 			{
 				break;
 			}
@@ -563,10 +569,10 @@ void STREAM_DumpObject(struct _ObjectTracker *objectTracker)
 			{
 				if (objectTracker->vramBlock != NULL)
 				{
-					VRAM_ClearVramBlock((_BlockVramEntry*)objectTracker->vramBlock);
+					VRAM_ClearVramBlock((struct _BlockVramEntry*)objectTracker->vramBlock);
 				}
 
-				if ((object->oflags2 & 0x800000) && object->sfxFileHandle != NULL)
+				if ((object->oflags2 & 0x800000) && object->sfxFileHandle != 0)
 				{
 					aadFreeDynamicSfx(object->sfxFileHandle);
 				}
@@ -600,7 +606,7 @@ int STREAM_IsObjectInAnyUnit(struct _ObjectTracker *tracker)
 
 			while (objlist[0] != 255)
 			{
-				if (strcmpi(&tracker->name[0], (char*)objlist) == 0)
+				if (_strcmpi(&tracker->name[0], (char*)objlist) == 0)
 				{
 					return 1;
 				}
@@ -710,16 +716,16 @@ void RemoveAllObjects(struct GameTracker *gameTracker)
 // struct Level * /*$ra*/ STREAM_GetLevelWithID(long id /*$a0*/)
 struct Level * STREAM_GetLevelWithID(long id)
 { 
-#if defined(PC_VERSION)
+#if 0//defined(PC_VERSION)
 	// line 945, offset 0x80059318
 	struct Level* result; // eax
 	int v2; // edx
-	_WORD* v3; // ecx
+	WORD* v3; // ecx
 
 	result = 0;
 	v2 = 0;
 	v3 = &StreamTracker;
-	while (v3[2] != 2 || *(_DWORD*)v3 != id)
+	while (v3[2] != 2 || *(DWORD*)v3 != id)
 	{
 		v3 += 32;
 		++v2;

@@ -1,6 +1,10 @@
 #include "core.H"
 #include "COLLIDE.H"
 
+#ifdef PC_VERSION
+#pragma warning(disable: 4101)
+#endif
+
 void __cdecl G2Quat_ToMatrix(struct _G2EulerAngles_Type* a1, struct _G2Matrix_Type* a2)
 {
 	int x; // ecx
@@ -266,7 +270,7 @@ void COLLIDE_MakeNormal(struct _Terrain *terrain, struct _TFace *tface, struct _
 	v8 = &vertexList[tface->face.v2];
 	ScratchAddr->x = terraina->UnitChangeFlags - v7->vertex.x;
 	ScratchAddr->y = terraina->spad - v7->vertex.y;
-	ScratchAddr->z = SLOWORD(terraina->lpad2) - v7->vertex.z;
+	ScratchAddr->z = terraina->lpad2 - v7->vertex.z;
 	*v4 = v8->vertex.x - v7->vertex.x;
 	v4[1] = v8->vertex.y - v7->vertex.y;
 	z = v8->vertex.z;
@@ -321,6 +325,7 @@ LABEL_10:
 // void /*$ra*/ COLLIDE_UpdateAllTransforms(struct _Instance *instance /*$a0*/, SVECTOR*offset /*$a1*/)
 void COLLIDE_UpdateAllTransforms(struct _Instance *instance, SVECTOR*offset)
 { // line 415, offset 0x8001e9c0
+#ifndef PC_VERSION
 	MATRIX* matrix; // ebx
 	int vx; // edx
 	int vy; // esi
@@ -368,6 +373,7 @@ void COLLIDE_UpdateAllTransforms(struct _Instance *instance, SVECTOR*offset)
 			} while (numSegments);
 		}
 	}
+#endif
 }
 
 
@@ -375,6 +381,7 @@ void COLLIDE_UpdateAllTransforms(struct _Instance *instance, SVECTOR*offset)
 // void /*$ra*/ COLLIDE_MoveAllTransforms(struct _Instance *instance /*$a0*/, struct _Position *offset /*$a1*/)
 void COLLIDE_MoveAllTransforms(struct _Instance *instance, struct _Position *offset)
 { // line 450, offset 0x8001ea90
+#ifndef PC_VERSION
 	MATRIX* oldMatrix; // ebx
 	int x; // edx
 	int y; // esi
@@ -422,6 +429,7 @@ void COLLIDE_MoveAllTransforms(struct _Instance *instance, struct _Position *off
 			} while (numSegments);
 		}
 	}
+#endif
 }
 
 
@@ -483,6 +491,7 @@ long COLLIDE_WithinXYBounds(struct _SVector *point, struct _HBox *hbox)
 // void /*$ra*/ COLLIDE_LineWithBoxFace(short startDist /*$a0*/, long lineDist /*$a1*/, short planeDist /*$a2*/, struct _SVector *start /*$a3*/, struct _Vector *line /*stack 16*/, struct _HBox *hbox /*stack 20*/, TDRFuncPtr_COLLIDE_LineWithBoxFace6collideBoundFunc collideBoundFunc /*stack 24*/, struct _SVector *normal /*stack 28*/)
 void COLLIDE_LineWithBoxFace(short startDist, long lineDist, short planeDist, struct _SVector *start, struct _Vector *line, struct _HBox *hbox, TDRFuncPtr_COLLIDE_LineWithBoxFace6collideBoundFunc collideBoundFunc, struct _SVector *normal)
 { // line 611, offset 0x8001ec74
+#if 0
 	/* begin block 1 */
 		// Start line: 612
 		// Start offset: 0x8001EC74
@@ -584,7 +593,7 @@ void COLLIDE_LineWithBoxFace(short startDist, long lineDist, short planeDist, st
 		// Start line: 1111
 	/* end block 2 */
 	// End Line: 1112
-
+#endif
 }
 
 
@@ -592,6 +601,7 @@ void COLLIDE_LineWithBoxFace(short startDist, long lineDist, short planeDist, st
 // long /*$ra*/ COLLIDE_IntersectLineAndBox(struct _SVector *point0 /*$a0*/, struct _SVector *normal0 /*$a1*/, struct _SVector *point1 /*$a2*/, struct _SVector *normal1 /*$a3*/, struct _SVector *end /*stack 16*/, struct _SVector *start /*stack 20*/, struct _HBox *hbox /*stack 24*/)
 long COLLIDE_IntersectLineAndBox(struct _SVector *point0, struct _SVector *normal0, struct _SVector *point1, struct _SVector *normal1, struct _SVector *end, struct _SVector *start, struct _HBox *hbox)
 { // line 650, offset 0x8001ee20
+#if 0
 	/* begin block 1 */
 		// Start line: 651
 		// Start offset: 0x8001EE20
@@ -621,7 +631,7 @@ long COLLIDE_IntersectLineAndBox(struct _SVector *point0, struct _SVector *norma
 		// Start line: 1201
 	/* end block 2 */
 	// End Line: 1202
-
+#endif
 	return 0;
 }
 
@@ -643,6 +653,7 @@ struct _TFace * COLLIDE_PointAndTerrain(struct _Terrain *terrain, struct _PColli
 // struct _TFace * /*$ra*/ COLLIDE_PointAndTerrainFunc(struct _Terrain *terrain /*$t2*/, struct _PCollideInfo *pCollideInfo /*stack 4*/, int Flags /*$a2*/, short *Backface_Flag /*$a3*/, long ignoreAttr /*stack 16*/, long acceptAttr /*stack 20*/, struct _LCollideInfo *lcolinfo /*stack 24*/)
 struct _TFace * COLLIDE_PointAndTerrainFunc(struct _Terrain *terrain, struct _PCollideInfo *pCollideInfo, int Flags, short *Backface_Flag, long ignoreAttr, long acceptAttr, struct _LCollideInfo *lcolinfo)
 { // line 780, offset 0x8001f0cc
+#if 0
 	/* begin block 1 */
 		// Start line: 781
 		// Start offset: 0x8001F0CC
@@ -874,7 +885,7 @@ struct _TFace * COLLIDE_PointAndTerrainFunc(struct _Terrain *terrain, struct _PC
 		// Start line: 1540
 	/* end block 2 */
 	// End Line: 1541
-
+#endif
 	return null;
 }
 
@@ -883,6 +894,7 @@ struct _TFace * COLLIDE_PointAndTerrainFunc(struct _Terrain *terrain, struct _PC
 // int /*$ra*/ COLLIDE_PointAndHFace(struct _SVector *newPos /*$s4*/, struct _SVector *oldPos /*$s6*/, struct _HFace *hface /*$s5*/, struct _Model *model /*$s7*/, struct _SVector *hfNormal /*stack 16*/)
 int COLLIDE_PointAndHFace(struct _SVector *newPos, struct _SVector *oldPos, struct _HFace *hface, struct _Model *model, struct _SVector *hfNormal)
 { // line 1330, offset 0x8001fc64
+#if 0
 	/* begin block 1 */
 		// Start line: 1331
 		// Start offset: 0x8001FC64
@@ -942,7 +954,7 @@ int COLLIDE_PointAndHFace(struct _SVector *newPos, struct _SVector *oldPos, stru
 		// Start line: 3219
 	/* end block 2 */
 	// End Line: 3220
-
+#endif
 	return 0;
 }
 
@@ -951,6 +963,7 @@ int COLLIDE_PointAndHFace(struct _SVector *newPos, struct _SVector *oldPos, stru
 // void /*$ra*/ COLLIDE_PointAndInstance(struct _PCollideInfo *pcollideInfo /*$s4*/, struct _Instance *instance /*stack 4*/)
 void COLLIDE_PointAndInstance(struct _PCollideInfo *pcollideInfo, struct _Instance *instance)
 { // line 1389, offset 0x8001feac
+#if 0
 	/* begin block 1 */
 		// Start line: 1390
 		// Start offset: 0x8001FEAC
@@ -1052,7 +1065,7 @@ void COLLIDE_PointAndInstance(struct _PCollideInfo *pcollideInfo, struct _Instan
 		// Start line: 3368
 	/* end block 2 */
 	// End Line: 3369
-
+#endif
 }
 
 
@@ -1235,6 +1248,7 @@ long COLLIDE_SphereAndPoint(struct _Sphere *sphere, struct _SVector *point, stru
 // long /*$ra*/ COLLIDE_SphereAndHBox(struct _HBox *hbox /*$s4*/, struct _Sphere *sphere /*$s1*/, struct _Position *oldPos /*$s5*/, struct _SVector *normal /*$s3*/)
 long COLLIDE_SphereAndHBox(struct _HBox *hbox, struct _Sphere *sphere, struct _Position *oldPos, struct _SVector *normal)
 { // line 1975, offset 0x80020f64
+#if 0
 	/* begin block 1 */
 		// Start line: 1976
 		// Start offset: 0x80020F64
@@ -1356,7 +1370,7 @@ long COLLIDE_SphereAndHBox(struct _HBox *hbox, struct _Sphere *sphere, struct _P
 		// Start line: 4981
 	/* end block 2 */
 	// End Line: 4982
-
+#endif
 	return 0;
 }
 
@@ -1365,6 +1379,7 @@ long COLLIDE_SphereAndHBox(struct _HBox *hbox, struct _Sphere *sphere, struct _P
 // void /*$ra*/ COLLIDE_Instance1SpheresToInstance2(struct _Instance *instance1 /*stack 0*/, struct _Instance *instance2 /*$fp*/, long sphereToSphere /*$a2*/)
 void COLLIDE_Instance1SpheresToInstance2(struct _Instance *instance1, struct _Instance *instance2, long sphereToSphere)
 { // line 2419, offset 0x800213dc
+#if 0
 	/* begin block 1 */
 		// Start line: 2420
 		// Start offset: 0x800213DC
@@ -1479,7 +1494,7 @@ void COLLIDE_Instance1SpheresToInstance2(struct _Instance *instance1, struct _In
 		// Start line: 4838
 	/* end block 2 */
 	// End Line: 4839
-
+#endif
 }
 
 
@@ -1552,6 +1567,7 @@ void COLLIDE_InstanceList(struct _InstanceList *instanceList)
 // long /*$ra*/ COLLIDE_SphereAndHFace(struct _Sphere *sphere /*$s2*/, struct _Position *oldPos /*$a1*/, struct _HFaceInfo *hfaceInfo /*$s4*/, struct _SVector *intersect /*$s5*/, long *edge /*stack 16*/)
 long COLLIDE_SphereAndHFace(struct _Sphere *sphere, struct _Position *oldPos, struct _HFaceInfo *hfaceInfo, struct _SVector *intersect, long *edge)
 { // line 3061, offset 0x8002251c
+#if 0
 	/* begin block 1 */
 		// Start line: 3062
 		// Start offset: 0x8002251C
@@ -1666,7 +1682,7 @@ long COLLIDE_SphereAndHFace(struct _Sphere *sphere, struct _Position *oldPos, st
 		// Start line: 6122
 	/* end block 2 */
 	// End Line: 6123
-
+#endif
 	return 0;
 }
 
@@ -1675,6 +1691,7 @@ long COLLIDE_SphereAndHFace(struct _Sphere *sphere, struct _Position *oldPos, st
 // long /*$ra*/ COLLIDE_SAndT(struct SCollideInfo *scollideInfo /*stack 0*/, struct Level *level /*stack 4*/)
 long COLLIDE_SAndT(struct SCollideInfo *scollideInfo, struct Level *level)
 { // line 3243, offset 0x80022bf8
+#if 0
 	/* begin block 1 */
 		// Start line: 3244
 		// Start offset: 0x80022BF8
@@ -1891,7 +1908,7 @@ long COLLIDE_SAndT(struct SCollideInfo *scollideInfo, struct Level *level)
 		// Start line: 8066
 	/* end block 2 */
 	// End Line: 8067
-
+#endif
 	return 0;
 }
 
@@ -1975,6 +1992,7 @@ void COLLIDE_InstanceTerrain(struct _Instance *instance, struct Level *level)
 // long /*$ra*/ COLLIDE_LineWithSignals(struct _SVector *startPoint /*$a0*/, struct _SVector *endPoint /*$a1*/, struct _MultiSignal **signalList /*stack 8*/, long maxSignals /*stack 12*/, struct Level *level /*stack 16*/)
 long COLLIDE_LineWithSignals(struct _SVector *startPoint, struct _SVector *endPoint, struct _MultiSignal **signalList, long maxSignals, struct Level *level)
 { // line 4331, offset 0x80023a38
+#if 0
 	/* begin block 1 */
 		// Start line: 4332
 		// Start offset: 0x80023A38
@@ -2148,7 +2166,7 @@ long COLLIDE_LineWithSignals(struct _SVector *startPoint, struct _SVector *endPo
 		// Start line: 10815
 	/* end block 2 */
 	// End Line: 10816
-
+#endif
 	return 0;
 }
 
@@ -2371,6 +2389,7 @@ void COLLIDE_SegmentCollisionOff(struct _Instance *instance, int segment)
 // long /*$ra*/ COLLIDE_FindCollisionFaceNormal(struct _CollideInfo *collideInfo /*$a0*/, struct _Normal *normal /*$s2*/)
 long COLLIDE_FindCollisionFaceNormal(struct _CollideInfo *collideInfo, struct _Normal *normal)
 { // line 5015, offset 0x80024964
+#if 0
 	/* begin block 1 */
 		// Start line: 5016
 		// Start offset: 0x80024964
@@ -2419,7 +2438,7 @@ long COLLIDE_FindCollisionFaceNormal(struct _CollideInfo *collideInfo, struct _N
 		// Start line: 10030
 	/* end block 2 */
 	// End Line: 10031
-
+#endif
 	return 0;
 }
 
@@ -2483,6 +2502,7 @@ void COLLIDE_SetBSPTreeFlag(struct _CollideInfo *collideInfo, short flag)
 // int /*$ra*/ COLLIDE_PointAndTfaceFunc(struct _Terrain *terrain /*$fp*/, struct BSPTree *bsp /*$s6*/, struct _SVector *orgNewPos /*$s7*/, struct _SVector *orgOldPos /*$t4*/, struct _TFace *tface /*stack 16*/, long ignoreAttr /*stack 20*/, long flags /*stack 24*/)
 int COLLIDE_PointAndTfaceFunc(struct _Terrain *terrain, struct BSPTree *bsp, struct _SVector *orgNewPos, struct _SVector *orgOldPos, struct _TFace *tface, long ignoreAttr, long flags)
 { // line 5121, offset 0x80024afc
+#if 0
 	/* begin block 1 */
 		// Start line: 5122
 		// Start offset: 0x80024AFC
@@ -2572,7 +2592,7 @@ int COLLIDE_PointAndTfaceFunc(struct _Terrain *terrain, struct BSPTree *bsp, str
 		// Start line: 10242
 	/* end block 2 */
 	// End Line: 10243
-
+#endif
 	return 0;
 }
 

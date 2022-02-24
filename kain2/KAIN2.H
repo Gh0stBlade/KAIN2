@@ -524,25 +524,6 @@ struct ObjectEffect // hashcode: 0x2892438D (dec: 680674189)
 	unsigned char modifierList[3]; // size=3, offset=1
 };
 
-struct _TFace // hashcode: 0x85FE430F (dec: -2046934257)
-{
-	struct _Face face; // size=6, offset=0
-	unsigned char attr; // size=0, offset=6
-	char sortPush; // size=0, offset=7
-	unsigned short normal; // size=0, offset=8
-	unsigned short textoff; // size=0, offset=10
-};
-
-struct _TVertex // hashcode: 0x0883ABD5 (dec: 142846933)
-{
-	struct _Vertex vertex; // size=6, offset=0
-	unsigned short rgb15; // size=0, offset=6
-	unsigned char r0; // size=0, offset=8
-	unsigned char g0; // size=0, offset=9
-	unsigned char b0; // size=0, offset=10
-	unsigned char code; // size=0, offset=11
-};
-
 struct _InstancePool // hashcode: 0xC591AB92 (dec: -980309102)
 {
 	long nextInstanceID; // size=0, offset=0

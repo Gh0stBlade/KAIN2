@@ -9,6 +9,7 @@
 #include "PC/libspu.h"
 #include "PC/LIBAPI.H"
 #include "PC/LIBPAD.H"
+#include "PC/LIBSN.H"
 #else	// psx basically
 #include <LIBAPI.H>
 #include <LIBETC.H>
@@ -18,8 +19,10 @@
 #include <LIBPAD.H>
 #include <LIBGPU.H>
 
-#if defined(PSXPC_VERSION)//Temporary
+#if defined(PSXPC_VERSION) || defined(PSX_VERSION)//Temporary
 #define LoadImage LoadImagePSX
+#define PSX_EnterCriticalSection	EnterCriticalSection
+#define PSX_ExitCriticalSection		ExitCriticalSection
 #endif
 
 #if !defined(PSXPC_VERSION)
@@ -127,6 +130,15 @@ typedef struct _Face // hashcode: 0x8775891B (dec: -2022340325)
 	unsigned short v2; // size=0, offset=4
 } _Face;
 
+struct _TFace // hashcode: 0x85FE430F (dec: -2046934257)
+{
+	struct _Face face; // size=6, offset=0
+	unsigned char attr; // size=0, offset=6
+	char sortPush; // size=0, offset=7
+	unsigned short normal; // size=0, offset=8
+	unsigned short textoff; // size=0, offset=10
+};
+
 typedef struct _MVertex // hashcode: 0x2B95C05B (dec: 731234395)
 {
 	struct _Vertex vertex; // size=6, offset=0
@@ -187,6 +199,16 @@ typedef struct vecL // hashcode: 0x7575CB14 (dec: 1970653972)
 	long y; // size=0, offset=4
 	long z; // size=0, offset=8
 } vecL;
+
+struct _TVertex // hashcode: 0x0883ABD5 (dec: 142846933)
+{
+	struct _Vertex vertex; // size=6, offset=0
+	unsigned short rgb15; // size=0, offset=6
+	unsigned char r0; // size=0, offset=8
+	unsigned char g0; // size=0, offset=9
+	unsigned char b0; // size=0, offset=10
+	unsigned char code; // size=0, offset=11
+};
 
 typedef struct _HVertex // hashcode: 0xC488A83D (dec: -997676995)
 {

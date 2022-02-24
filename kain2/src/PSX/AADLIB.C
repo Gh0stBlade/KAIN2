@@ -26,9 +26,11 @@ int aadInit(struct AadInitAttr *attributes, unsigned char *memoryPtr)
 	int slotNumber;
 	int i;
 
+#ifndef PC_VERSION
 	aadGp = GetGp();
-
-	EnterCriticalSection();
+#endif
+	
+	PSX_EnterCriticalSection();
 	size = aadGetMemorySize(attributes);
 	aadMem = (AadMemoryStruct*)memoryPtr;
 
@@ -72,7 +74,7 @@ int aadInit(struct AadInitAttr *attributes, unsigned char *memoryPtr)
 		{
 			for (slotNumber = 0; slotNumber < attributes->numSlots; slotNumber++)
 			{
-				slot = (_AadSequenceSlot*)aadMem + 1;
+				slot = (struct _AadSequenceSlot*)aadMem + 1;
 
 				aadMem->sequenceSlots[slotNumber] = slot;
 				aadMem->sequenceSlots[slotNumber]->thisSlotNumber = slotNumber;
@@ -125,7 +127,7 @@ int aadInit(struct AadInitAttr *attributes, unsigned char *memoryPtr)
 		}
 		//loc_80051D38
 		aadMem->flags = 0;
-		ExitCriticalSection();
+		PSX_ExitCriticalSection();
 	}
 
 	return 0;
@@ -1425,7 +1427,7 @@ void aadStopAllSlots()
 			if ((*(BYTE*)(v4 + 1344) & 1) != 0 && v1 < numSlots && *(BYTE*)(v4 + 1342) != 0xFF)
 			{
 				*(WORD*)(v4 + 1344) &= ~1u;
-				aadInitSequenceSlot(v4);
+				aadInitSequenceSlot((struct _AadSequenceSlot* )v4);
 				v5 = aadMem;
 				v6 = 0;
 				v7 = *(unsigned int*)((char*)&aadMem->updateCounter + v3);
@@ -1687,7 +1689,7 @@ void aadMuteChannels(struct _AadSequenceSlot *slot, unsigned long channelList)
 		{
 			for (j = 476; j < 1148; j += 28)
 			{
-				v8 = (char*)&v4->updateMode + j;
+				v8 = (BYTE*)&v4->updateMode + j;
 				if ((unsigned __int8)*v8 == (slot->slotID | i))
 				{
 					v9 = *(unsigned int*)((char*)&v4->updateCounter + j);

@@ -674,7 +674,7 @@ void MATH3D_ZYXtoXYZ(struct _Rotation *rot)
 	struct _G2EulerAngles_Type euler; // [esp+4h] [ebp-28h] BYREF
 	struct _G2Matrix_Type matrix; // [esp+Ch] [ebp-20h] BYREF
 
-	RotMatrixZYX(rot, &matrix);
+	RotMatrixZYX((SVECTOR*)rot, (MATRIX*)&matrix);
 	G2EulerAngles_FromMatrix(&euler, &matrix, 21);
 	y = euler.y;
 	z = euler.z;
