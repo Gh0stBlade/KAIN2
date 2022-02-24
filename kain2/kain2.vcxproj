@@ -571,6 +571,7 @@
     <ClInclude Include="src\PC\LIBGPU.H" />
     <ClInclude Include="src\PC\LIBGTE.H" />
     <ClInclude Include="src\PC\LIBPAD.H" />
+    <ClInclude Include="src\PC\LIBSN.H" />
     <ClInclude Include="src\PC\libspu.h" />
     <ClInclude Include="src\PC\snd.h" />
     <ClInclude Include="src\PC\sndmix.h" />

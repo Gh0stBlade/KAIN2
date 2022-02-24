@@ -1,3 +1,5 @@
+#define _CRT_SECURE_NO_WARNINGS
+
 #include "CORE.H"
 #include "STRMLOAD.H"
 #include "LOAD3D.H"

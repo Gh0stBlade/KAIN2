@@ -7,7 +7,9 @@ void *input_buffer0, *input_buffer1;
 //0001:00028900       _DisableEvent              00429900 f   libapi.obj
 //0001:00028910       _EnableEvent               00429910 f   libapi.obj
 //0001:00028920       _EnterCriticalSection      00429920 f   libapi.obj
+int PSX_EnterCriticalSection() { return 0; }
 //0001:00028930       _ExitCriticalSection       00429930 f   libapi.obj
+void PSX_ExitCriticalSection() {}
 //0001:00028940       _GetRCnt                   00429940 f   libapi.obj
 long GetRCnt(unsigned long t)
 {

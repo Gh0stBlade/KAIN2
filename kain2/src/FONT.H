@@ -4,10 +4,6 @@
 #include "G2/QUATG2.H"
 #include "CORE.H"
 
-#if defined(_LANGUAGE_C_PLUS_PLUS)||defined(__cplusplus)||defined(c_plusplus)
-extern "C" {
-#endif
-
 union FONT_76fake // Hashcode: 0x7BE39A46 (dec: 2078513734)
 {
 	struct {
@@ -110,6 +106,10 @@ typedef struct FontPos // hashcode: 0x0084D7DD (dec: 8706013)
 	char w; // size=0, offset=2
 	char h; // size=0, offset=3
 } FontPos;
+
+#if defined(_LANGUAGE_C_PLUS_PLUS)||defined(__cplusplus)||defined(c_plusplus)
+extern "C" {
+#endif
 
 #if defined(PC_VERSION)
 extern font_color_t the_font_color_table[];

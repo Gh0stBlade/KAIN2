@@ -9,6 +9,7 @@
 #include "PC/libspu.h"
 #include "PC/LIBAPI.H"
 #include "PC/LIBPAD.H"
+#include "PC/LIBSN.H"
 #else	// psx basically
 #include <LIBAPI.H>
 #include <LIBETC.H>
@@ -18,8 +19,10 @@
 #include <LIBPAD.H>
 #include <LIBGPU.H>
 
-#if defined(PSXPC_VERSION)//Temporary
+#if defined(PSXPC_VERSION) || defined(PSX_VERSION)//Temporary
 #define LoadImage LoadImagePSX
+#define PSX_EnterCriticalSection	EnterCriticalSection
+#define PSX_ExitCriticalSection		ExitCriticalSection
 #endif
 
 #if !defined(PSXPC_VERSION)

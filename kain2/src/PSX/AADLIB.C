@@ -26,9 +26,11 @@ int aadInit(struct AadInitAttr *attributes, unsigned char *memoryPtr)
 	int slotNumber;
 	int i;
 
+#ifndef PC_VERSION
 	aadGp = GetGp();
-
-	EnterCriticalSection();
+#endif
+	
+	PSX_EnterCriticalSection();
 	size = aadGetMemorySize(attributes);
 	aadMem = (AadMemoryStruct*)memoryPtr;
 
@@ -72,7 +74,7 @@ int aadInit(struct AadInitAttr *attributes, unsigned char *memoryPtr)
 		{
 			for (slotNumber = 0; slotNumber < attributes->numSlots; slotNumber++)
 			{
-				slot = (_AadSequenceSlot*)aadMem + 1;
+				slot = (struct _AadSequenceSlot*)aadMem + 1;
 
 				aadMem->sequenceSlots[slotNumber] = slot;
 				aadMem->sequenceSlots[slotNumber]->thisSlotNumber = slotNumber;
@@ -125,7 +127,7 @@ int aadInit(struct AadInitAttr *attributes, unsigned char *memoryPtr)
 		}
 		//loc_80051D38
 		aadMem->flags = 0;
-		ExitCriticalSection();
+		PSX_ExitCriticalSection();
 	}
 
 	return 0;
