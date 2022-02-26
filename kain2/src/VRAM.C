@@ -300,7 +300,7 @@ int VRAM_InsertFreeVram(short x, short y, short w, short h, int flags)
 {
 	struct _BlockVramEntry* useBlock;
 
-	if ((w & 0x3F) && (64 - (w & 0x3F)) < w)
+	if ((x & 0x3F) && (64 - (x & 0x3F)) < w)
 	{
 
 		useBlock = VRAM_GetOpenBlock();
