@@ -64,10 +64,10 @@ void menuface_initialize()
 			{
 				for (i = 0; i < 8; i++)
 				{
-					MenuFaces[0].curFrame = -1;
-					MenuFaces[0].transitionDir = 0;
-					MenuFaces[0].loaded = 0;
-					MenuFaces[0].delay = 0;
+					MenuFaces[i].curFrame = -1;
+					MenuFaces[i].transitionDir = 0;
+					MenuFaces[i].loaded = 0;
+					MenuFaces[i].delay = 0;
 
 					for (j = 0; j < 7; j++)
 					{
