@@ -54,7 +54,7 @@ int VRAM_ConcatanateMemory(struct _BlockVramEntry* curBlock)
 {
 	struct _BlockVramEntry* nextBlock;
 
-	if (curBlock != NULL)
+	while (curBlock != NULL)
 	{
 		nextBlock = curBlock->next;
 
@@ -111,6 +111,7 @@ int VRAM_ConcatanateMemory(struct _BlockVramEntry* curBlock)
 			}
 			nextBlock = nextBlock->next;
 		}
+		curBlock = curBlock->next;
 	}
 
 	return 0;
