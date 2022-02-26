@@ -118,7 +118,7 @@ int VRAM_ConcatanateMemory(struct _BlockVramEntry* curBlock)
 
 void VRAM_GarbageCollect()
 { 
-	while (VRAM_ConcatanateMemory(openVramBlocks) != 1)
+	while (VRAM_ConcatanateMemory(openVramBlocks) == 1)
 	{
 
 	}
