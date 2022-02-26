@@ -39,6 +39,8 @@ void FONT_MakeSpecialFogClut(int x, int y)
 		cl[n] = 0x4210;
 	}
 
+	cl[15] = 0;
+
 	myrect.w = 16;
 	myrect.h = 1;
 	myrect.x = x;
