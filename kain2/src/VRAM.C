@@ -302,10 +302,9 @@ int VRAM_InsertFreeVram(short x, short y, short w, short h, int flags)
 
 	if ((x & 0x3F) && (64 - (x & 0x3F)) < w)
 	{
-
 		useBlock = VRAM_GetOpenBlock();
 
-		useBlock->w = 64 - (w & 0x3F);
+		useBlock->w = 64 - (x & 0x3F);
 		useBlock->next = NULL;
 		useBlock->flags = flags;
 		useBlock->time = 0;
@@ -318,15 +317,15 @@ int VRAM_InsertFreeVram(short x, short y, short w, short h, int flags)
 		VRAM_InsertFreeBlock(useBlock);
 
 		useBlock = VRAM_GetOpenBlock();
-		useBlock->w = (w - 64) + (w & 0x3F);
+		useBlock->w = (w - 64) + (x & 0x3F);
 		useBlock->next = NULL;
 		useBlock->flags = flags;
 		useBlock->time = 0;
 		useBlock->ID = 0;
 		useBlock->y = y;
 		useBlock->h = h;
-		useBlock->x = (x - 64) - (w & 0x3F);
-		useBlock->area = ((w - 64) + (w & 0x3F)) * h;
+		useBlock->x = (x + 64) - (x & 0x3F);
+		useBlock->area = useBlock->w * h;
 
 		VRAM_InsertFreeBlock(useBlock);
 	}
