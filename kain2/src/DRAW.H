@@ -1,6 +1,7 @@
 #ifndef DRAW_H
 #define DRAW_H
 
+#include "VRAM.H"
 
 extern void fDRAW_SPLIT_INTPL_XYZ(struct _SVector *newVertex, struct _SVector *pvb, struct _SVector *pvc); // 0x8002A5B0
 
@@ -12,11 +13,11 @@ extern void DRAW_FlatQuad(CVECTOR *color, short x0, short y0, short x1, int y1, 
 
 extern void DRAW_TranslucentQuad(short x0, short y0, short x1, short y1, int x2, int y2, int x3, int y3, int r, int g, int b, int abr, struct _PrimPool *primPool, unsigned long **ot); // 0x8002A95C
 
-extern void DRAW_DrawButton(struct _ButtonTexture *button, short x, short y, unsigned long **ot); // 0x8002AA40
+extern void DRAW_DrawButton(_ButtonTexture *button, short x, short y, unsigned long **ot); // 0x8002AA40
 
-extern void DRAW_LoadButton(long *addr, struct _ButtonTexture *button); // 0x8002ABA8
+extern void DRAW_LoadButton(long *addr, _ButtonTexture *button); // 0x8002ABA8
 
-extern void DRAW_FreeButton(struct _ButtonTexture *button); // 0x8002AD48
+extern void DRAW_FreeButton(_ButtonTexture *button); // 0x8002AD48
 
 extern void DRAW_RingLine(struct _PrimPool *primPool, unsigned long **ot, long color); // 0x8002AD6C
 
