@@ -156,7 +156,7 @@ int VRAM_InsertFreeBlock(struct _BlockVramEntry *block)
 	else
 	{
 		block->next = next;
-		next->next = block;
+		prev->next = block;
 	}
 
 	VRAM_GarbageCollect();
