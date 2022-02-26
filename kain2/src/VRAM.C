@@ -142,7 +142,8 @@ int VRAM_InsertFreeBlock(struct _BlockVramEntry *block)
 		while (next->area < block->area)
 		{
 			prev = next;
-			if (prev->next == NULL)
+			next = prev->next;
+			if (next == NULL)
 			{
 				break;
 			}
