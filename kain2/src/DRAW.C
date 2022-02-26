@@ -184,7 +184,7 @@ void DRAW_LoadButton(long *addr, _ButtonTexture *button)
 	vramRect.h = button->textureH;
 	
 	LoadImage(&vramRect, (unsigned long*)addr + 3);
-
+	
 	if (paletteAddr != NULL)
 	{
 		vramRect.w = paletteW;

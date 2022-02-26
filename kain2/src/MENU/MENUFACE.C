@@ -10,9 +10,9 @@ struct menuface_t MenuFaces[8] = { 236, 49,  48, 48, 2, 65535, 0, 0, 0,
 								   268, 97,  48, 48, 2, 65535, 0, 0, 0,
 								   273, 156, 48, 48, 2, 65535, 0, 0, 0,
 								   326, 49,  48, 48, 2, 65535, 0, 0, 0,
-								   342, 97,  48, 48, 2, 65535, 0, 0, 0,
-								   409, 14,  48, 48, 2, 65535, 0, 0, 0,
-								   383, 78,  64, 64, 2, 65535, 0, 0, 0,
+								   342, 114,  48, 48, 2, 65535, 0, 0, 0,
+								   409, 14,  64, 64, 2, 65535, 0, 0, 0,
+								   383, 78,  48, 48, 2, 65535, 0, 0, 0,
 								   400, 150, 48, 48, 2, 65535, 0, 0, 0 };
 struct _ButtonTexture* FaceButtons;
 
@@ -69,7 +69,7 @@ void menuface_initialize()
 
 					for (j = 0; j < 7; j++)
 					{
-						DRAW_LoadButton((long*)buttonAddr, &FaceButtons[j]);
+						DRAW_LoadButton((long*)buttonAddr, &FaceButtons[(i * 7) + j]);
 						buttonAddr = NextTimAddr(buttonAddr, MenuFaces[i].w, MenuFaces[i].h, TIM_4BIT);
 						MenuFaces[i].loaded |= 1 << j;
 					}
