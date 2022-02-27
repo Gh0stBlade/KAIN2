@@ -154,7 +154,7 @@ void menu_build(struct menu_t *menu)
 
 	stack = &menu->stack[menu->nmenus - 1];
 
-	stack->index = (stack - 1)->fn(menu->opaque, stack->index);
+	stack->index = stack->fn(menu->opaque, (stack - 1)->index);
 }
 
 
