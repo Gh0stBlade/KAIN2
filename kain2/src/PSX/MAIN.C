@@ -28,7 +28,16 @@
 #endif
 
 long mainMenuMode; // offset 0x800CE6C4
-struct DebugMenuLine mainMenu[8]; // offset 0x800C8418
+struct DebugMenuLine mainMenu[8] = { DEBUG_LINE_TYPE_FORMAT,  0, 0, "-abs 256 40 -center", 0, 0,
+									 DEBUG_LINE_TYPE_ENDLIST, 0, 0, "",                    0, 0,
+									 DEBUG_LINE_TYPE_ENDLIST, 0, 0, "",                    0, 0,
+									 DEBUG_LINE_TYPE_ENDLIST, 0, 0, "",                    0, 0,
+									 DEBUG_LINE_TYPE_ENDLIST, 0, 0, "",                    0, 0,
+									 DEBUG_LINE_TYPE_ENDLIST, 0, 0, "",                    0, 0,
+									 DEBUG_LINE_TYPE_ENDLIST, 0, 0, "",                    0, 0,
+									 DEBUG_LINE_TYPE_ENDLIST, 0, 0, "",                    0, 0,
+									
+								    }; // offset 0x800C8418
 short mainMenuTimeOut; // offset 0x800D0FA8
 int mainMenuSfx; // offset 0x800D0E1C
 long* mainMenuScreen; // offset 0x800CE6C8
