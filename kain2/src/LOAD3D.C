@@ -392,9 +392,9 @@ void LOAD_ProcessReadQueue()
 #endif
 }
 
+#ifndef PC_VERSION
 char * LOAD_ReadFileFromCD(char *filename, int memType)
 { 
-#if defined(PSX_VERSION) || (PSXPC_VERSION)
 	CdlFILE fp;
 	int i;
 	char *readBuffer;
@@ -432,10 +432,10 @@ char * LOAD_ReadFileFromCD(char *filename, int memType)
 			return readBuffer;
 		}
 	}
-#endif
 
 	return NULL;
 }
+#endif
 
 void LOAD_CdReadFromBigFile(long fileOffset, unsigned long *loadAddr, long bytes, long chksumLevel, long checksum)
 {
@@ -465,9 +465,9 @@ struct _BigFileDir * LOAD_ReadDirectory(struct _BigFileDirEntry *dirEntry)
 #endif
 }
 
+#ifndef PC_VERSION
 void LOAD_InitCdLoader(char *bigFileName, char *voiceFileName)
 {
-#if defined(PSX_VERSION) || (PSXPC_VERSION)
 	CdlFILE fp;
 	long i;
 	char *ptr;
@@ -528,8 +528,8 @@ void LOAD_InitCdLoader(char *bigFileName, char *voiceFileName)
 
 		} while (LOAD_IsFileLoading() != 0);
 	}
-#endif
 }
+#endif
 
 int LOAD_SetupFileInfo(struct _NonBlockLoadEntry *loadEntry)
 { 
@@ -746,6 +746,7 @@ struct _BigFileEntry * LOAD_GetBigFileEntry(char *fileName)
 	return 	LOAD_GetBigFileEntryByHash(LOAD_HashName(fileName));
 }
 
+#ifndef PC_VERSION
 long LOAD_DoesFileExist(char *fileName)
 { 
 	struct _BigFileEntry *entry;
@@ -759,6 +760,7 @@ long LOAD_DoesFileExist(char *fileName)
 
 	return 0;
 }
+#endif
 
 void LOAD_NonBlockingReadFile(struct _NonBlockLoadEntry *loadEntry)
 { 
@@ -779,6 +781,7 @@ void LOAD_NonBlockingReadFile(struct _NonBlockLoadEntry *loadEntry)
 	}
 }
 
+#ifndef PC_VERSION
 void LOAD_LoadTIM(long *addr, long x_pos, long y_pos, long clut_x, long clut_y)
 { 
 	PSX_RECT rect;
@@ -810,6 +813,7 @@ void LOAD_LoadTIM(long *addr, long x_pos, long y_pos, long clut_x, long clut_y)
 		LoadImage(&rect, (unsigned long*)clutAddr);
 	}
 }
+#endif
 
 #ifndef PC_VERSION
 void LOAD_LoadTIM2(long *addr, long x_pos, long y_pos, long width, long height)

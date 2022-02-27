@@ -5,6 +5,7 @@
 #include <d3d.h>
 #include "d3dbuckt.h"
 #include "d3dclip.h"
+#include "d3dshell.h"
 #include "rnd_d3d.h"
 
 typedef struct _SystemTextureD3D
