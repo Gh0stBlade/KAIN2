@@ -174,7 +174,7 @@ void DRAW_LoadButton(long *addr, _ButtonTexture *button)
 	{
 		vramRect.w = paletteW;	
 	}
-	
+
 	vramRect.h = button->textureH + paletteH;
 	button->vramBlock = VRAM_CheckVramSlot(&vramRect.x, &vramRect.y, vramRect.w, vramRect.h, 4, 0);
 	button->tpage = getTPage(2 - button->xshift, 0, vramRect.x, vramRect.y);

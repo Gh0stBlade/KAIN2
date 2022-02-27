@@ -581,7 +581,6 @@ void MAIN_MainMenuInit()
 		if (aadGetNumLoadsQueued() == 0)
 		{
 			break;
-
 		}
 		
 		aadProcessLoadQueue();

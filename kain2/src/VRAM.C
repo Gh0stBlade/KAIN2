@@ -421,7 +421,7 @@ struct _BlockVramEntry* VRAM_CheckVramSlot(short* x, short* y, short w, short h,
 
 	if (vblock == NULL)
 	{
-		if (vblockright != NULL && fits != 1)
+		if (vblockright != NULL && fits == 1)
 		{
 			vblock = vblockright;
 	
@@ -475,7 +475,7 @@ struct _BlockVramEntry* VRAM_CheckVramSlot(short* x, short* y, short w, short h,
 			if (ABS(((offsetright - vblock->w) * hldh) - (w * (hldh - h))) < ABS(((offsetright - vblock->w) * h) - (offsetright * (hldh - h))))
 			{
 				VRAM_InsertFreeVram(hldx + w, hldy, hldw - w, hldh, 1);
-				VRAM_InsertFreeVram(hldx, hldy + h, offsetright, hldh - h, 1);
+				VRAM_InsertFreeVram(hldx, hldy + h, w, hldh - h, 1);
 			}
 			else
 			{
