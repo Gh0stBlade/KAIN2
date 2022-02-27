@@ -1,8 +1,27 @@
 #ifndef VRAM_H
 #define VRAM_H
 
+#include "MENU/MENUFACE.H"
+
 struct _BlockVramEntry // hashcode: 0x24B2FBC5 (dec: 615709637)
 {
+#if defined(PSX_VERSION)
+	struct _BlockVramEntry* next; // size=28, offset=0
+	unsigned char type; // size=0, offset=4
+	unsigned char flags; // size=0, offset=5
+	short time; // size=0, offset=6
+	long ID; // size=0, offset=8
+	short x; // size=0, offset=12
+	short y; // size=0, offset=14
+	short w; // size=0, offset=16
+	short h; // size=0, offset=18
+	long area; // size=0, offset=20
+	union {
+		struct _StreamUnit* streamUnit; // size=64, offset=0
+		struct _ObjectTracker* streamObject; // size=36, offset=0
+		_ButtonTexture* button; // size=16, offset=0
+	} udata; // size=4, offset=24
+#else
 	struct _BlockVramEntry* next; // size=28, offset=0
 	unsigned char type; // size=0, offset=4
 	unsigned char flags; // size=0, offset=5
@@ -19,6 +38,7 @@ struct _BlockVramEntry // hashcode: 0x24B2FBC5 (dec: 615709637)
 		struct _ObjectTracker* streamObject; // size=36, offset=0
 		struct _ButtonTexture* button; // size=16, offset=0
 	} udata; // size=4, offset=24, found in object files: debug.o, debug.o
+#endif
 };
 
 struct VramSize // hashcode: 0xD96A55BF (dec: -647342657)
