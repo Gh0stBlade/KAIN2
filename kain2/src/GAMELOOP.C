@@ -599,7 +599,7 @@ long StreamRenderLevel(struct _StreamUnit *currentUnit, struct Level *mainLevel,
 void GAMELOOP_FlipScreenAndDraw(struct GameTracker* gameTracker, unsigned long** drawot)
 {
 #if defined(PSX_VERSION)
-	DrawOTag(drawot[3071]);
+	DrawOTag((unsigned long*)drawot + 3071);
 
 #if !defined(PSXPC_VERSION)
 	while (CheckVolatile(gameTracker->drawTimerReturn) != 0)
