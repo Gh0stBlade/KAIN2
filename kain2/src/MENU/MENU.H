@@ -1,6 +1,14 @@
 #ifndef MENU_H
 #define MENU_H
 
+struct Extents2d 
+{
+	int xmin; // size=0, offset=0
+	int xmax; // size=0, offset=4
+	int ymin; // size=0, offset=8
+	int ymax; // size=0, offset=12
+};
+
 struct menu_format_t // hashcode: 0xD91CEBF0 (dec: -652416016)
 {
 	int xpos; // size=0, offset=0
@@ -58,7 +66,7 @@ struct menu_t // hashcode: 0x8AB0D2F2 (dec: -1968123150)
 	struct menu_stack_t stack[5]; // size=180, offset=12
 	struct menu_item_t items[12]; // size=192, offset=192
 	char bytes[512]; // size=512, offset=384
-	void (*drawfn)(); // size=0, offset=896
+	void (*drawfn)(void*); // size=0, offset=896
 	void* opaque; // size=0, offset=900
 };
 
