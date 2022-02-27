@@ -14,7 +14,7 @@ struct menu_format_t // hashcode: 0xD91CEBF0 (dec: -652416016)
 
 struct menu_stack_t // hashcode: 0x04101191 (dec: 68161937)
 {
-	int (*fn)(); // size=0, offset=0
+	int (*fn)(void*, int); // size=0, offset=0
 	int index; // size=0, offset=4
 	struct menu_format_t format; // size=28, offset=8
 };
