@@ -4,6 +4,15 @@
 extern "C" {
 #endif
 
+extern LPDIRECTDRAW lpDD;
+extern LPDIRECTDRAW4 lpDD4;
+extern LPDIRECT3D3 d3dobj;
+extern LPDIRECT3DDEVICE3 d3ddev;
+extern LPDIRECT3DVIEWPORT3 viewport;
+extern LPDIRECTDRAWCLIPPER clipper;
+extern LPDIRECTDRAWSURFACE4 primary, backbuffer, zbuffer;
+extern LPDIRECTDRAWGAMMACONTROL gamma;
+
 void ShutdownDevice();
 void DBG_Print(const char* fmt, ...);
 void D3D_FailAbort(const char* fmt, ...);
