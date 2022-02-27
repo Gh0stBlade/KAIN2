@@ -58,9 +58,7 @@ void menu_push(struct menu_t *menu, int fn(void*, int))
 { 
 	struct menu_stack_t *stack;
 
-	stack = &menu->stack[menu->nmenus];
-
-	menu->nmenus = 1;
+	stack = &menu->stack[menu->nmenus++];
 
 	stack->fn = fn;
 	stack->index = -1;
