@@ -30,7 +30,7 @@ struct menu_stack_t // hashcode: 0x04101191 (dec: 68161937)
 struct menu_item_t // hashcode: 0xF260D8A8 (dec: -228534104)
 {
 	char* text; // size=0, offset=0
-	int (*fn)(); // size=0, offset=4
+	int (*fn)(void*, long, enum menu_ctrl_t); // size=0, offset=4
 	long parameter; // size=0, offset=8
 	long flags; // size=0, offset=12
 };
