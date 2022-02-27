@@ -4,7 +4,7 @@
 #include "../async.h"
 
 DDPIXELFORMAT sys_texture_fmt;
-DWORD sys_texture_amask, sys_texture_rmask, sys_texture_gmask, sys_texture_bmask;
+DWORD sys_texture_amask, sys_texture_rmask, sys_texture_gmask, sys_texture_bmask, sys_tex_status;
 int sys_texture_cnt, dev_texture_cnt;
 SystemTextureD3D sys_textures[32];
 SystemTexturePool sys_texture_pool[64];
@@ -19,6 +19,7 @@ void LoadSystemTexture(int clut, unsigned __int16* data);
 
 extern DWORD D3D_MipMapSupport;
 extern LPDIRECTDRAW4 lpDD4;
+extern LPDIRECT3DDEVICE3 d3ddev;
 
 //0001:000717e0       _D3DTEX_SetTextureFormat   004727e0 f   d3dtextr.obj
 void D3DTEX_SetTextureFormat(DDPIXELFORMAT* fmt)
@@ -43,6 +44,47 @@ int D3DTEX_Init(int is_software)
 //0001:00071a80       _D3DTEX_Shutdown           00472a80 f   d3dtextr.obj
 int D3DTEX_Shutdown()
 {
+	if (d3ddev && sys_tex_status)
+	{
+		EnterCriticalSection(&sys_tex_csec);
+		d3ddev->SetTexture(0, nullptr);
+
+		sys_clut_cnt = 0;
+		for (int i = 0; i < sys_texture_cnt; i++, sys_clut_cnt++)
+		{
+			if (sys_texture_pool[i].clut != -1)
+			{
+				sys_cluts[i] = sys_texture_pool[i].clut;
+				sys_texture_pool[i].clut = -1;
+			}
+		}
+
+		for (int i = 0; i < sys_texture_cnt; i++)
+		{
+			if (sys_texture_pool[i].clut != -1)
+				sys_cluts[i] = sys_texture_pool[i].clut;
+			sys_texture_pool[i].texture->Release();
+			sys_texture_pool[i].texture = nullptr;
+			sys_texture_pool[i].surface->Release();
+			sys_texture_pool[i].surface = nullptr;
+		}
+		sys_texture_cnt = 0;
+
+		for (int i = 0; i < dev_texture_cnt; i++)
+		{
+			sys_textures[i].texture->Release();
+			sys_textures[i].texture = nullptr;
+			sys_textures[i].surface->Release();
+			sys_textures[i].surface = nullptr;
+			sys_textures[i].clut = -1;
+			sys_textures[i].linked = nullptr;
+		}
+		dev_texture_cnt = 0;
+		sys_tex_status = 0;
+		ASLD_CloseFile(sys_texture_handle);
+		LeaveCriticalSection(&sys_tex_csec);
+	}
+
 	return 1;
 }
 //0001:00071bc0       _D3DTEX_CreateSystemTextures 00472bc0 f   d3dtextr.obj

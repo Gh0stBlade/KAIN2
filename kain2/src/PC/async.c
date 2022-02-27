@@ -374,7 +374,7 @@ int __cdecl ASLD_GetFileData(const char* a1, int a2, int a3)
 	return v6;
 }
 //0001:00076470       _ASLD_GetFileDataFP        00477470 f   asyncld.obj
-int __cdecl ASLD_GetFileDataFP(void* a1, int a2, int a3)
+int __cdecl ASLD_GetFileDataFP(void* handle, int pos, int size)
 {
 	ASLD_File* f; // esi
 	HANDLE hHandle; // [esp+Ch] [ebp-8h]
@@ -399,11 +399,11 @@ int __cdecl ASLD_GetFileDataFP(void* a1, int a2, int a3)
 		SetEvent(asld_evt);
 	}
 	f->type = (int)hHandle;
-	f->handle = a1;
+	f->handle = handle;
 	f->index = 0;
 	f->name[0] = 0;
-	f->read_size = a3;
-	f->pos = a2;
+	f->read_size = size;
+	f->pos = pos;
 	f->fn_read = SynchronousCallback;
 	f->read = (int)&v6;
 	WaitForSingleObject(asld_evt, INFINITE);
