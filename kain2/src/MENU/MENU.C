@@ -18,7 +18,7 @@ void menu_format(struct menu_t *menu, int center, int xpos, int ypos, int width,
 {
 	struct menu_format_t* fmt;
 
-	fmt = &menu[menu->nmenus].stack[0].format;
+	fmt = &menu->stack[menu->nmenus].format;
 	
 	fmt += 2;
 
@@ -290,7 +290,7 @@ void menu_draw(struct menu_t *menu)
 	ext.ymin = -129;
 	ext.ymax = 2147483648;
 
-	stack = &menu[menu->nmenus-1].stack[2];
+	stack = &menu->stack[menu->nmenus];
 	index = stack->index;
 	ypos = 0;
 	
@@ -299,24 +299,20 @@ void menu_draw(struct menu_t *menu)
 		menu[menu->nmenus - 1].drawfn(menu->opaque);
 	}
 
-	if (menu->nitems > 0)
+	for (i = 0; i < menu->nitems; i++)
 	{
-		do
-		{
-			item = &menu->items[i];
-			
-			if (i == 0 && !(item->flags & 0x4))
-			{
-				color = 3;
-			}
-			else
-			{
-				color = 0 < (i ^ index);
-			}
+		item = &menu->items[i];
 
-			ypos = menu_draw_item(menu, ypos, 0, 0, item->text, color, item->flags, &ext);
-	
-		} while (i < menu->nitems);
+		if (i == 0 && !(item->flags & 0x4))
+		{
+			color = 3;
+		}
+		else
+		{
+			color = 0 < (i ^ index);
+		}
+
+		ypos = menu_draw_item(menu, ypos, 0, 0, item->text, color, item->flags, &ext);
 	}
 
 	if (stack->format.border != 0)
