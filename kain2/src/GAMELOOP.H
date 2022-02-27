@@ -130,6 +130,7 @@ typedef struct GameTracker // hashcode: 0x4EB3EFC5 (dec: 1320415173)
 extern "C" {
 #endif
 
+extern struct Camera theCamera;
 extern char* primBase;
 extern unsigned long(**gOt[2]); // offset 0x800D0C0C
 extern struct LightInfo* gLightInfo; // offset 0x800D0C2C
