@@ -104,17 +104,18 @@ void menu_item_flags(struct menu_t *menu, TDRFuncPtr_menu_item_flags1fn fn, long
 
 void menu_item(struct menu_t *menu, int (*fn)(void*, long, enum menu_ctrl_t), long parameter, char* format)
 { 
-	struct menu_item_t *item;
+	struct menu_item_t* item;
 
 	item = &menu->items[menu->nitems++];
 	item->fn = fn;
 	item->parameter = parameter;
 	item->flags = 0;
-	item->text = ((char*)menu + menu->nbytes + 384);
+
+	menu->nbytes += 384;
 
 	if (format != NULL)
 	{
-		vsprintf(item->text, format, format + 1);
+		vsprintf(menu->bytes, format, format + 1);
 		menu->nbytes += strlen(item->text) + 1;
 	}
 	else
@@ -252,7 +253,7 @@ int menu_draw_item(struct menu_t *menu, int ypos, int xadj, int yadj, char *text
 	ypos += yadj;
 	numColumns = 1;
 
-#if PSXPC_VERSION//Modern strlen doesn't support NULL being passed in but the old PSX version does.
+#if defined(PSXPC_VERSION)//Modern strlen doesn't support NULL being passed in but the old PSX version does.
 	if (text == NULL)
 	{
 		texLen = 0;
@@ -288,7 +289,18 @@ int menu_draw_item(struct menu_t *menu, int ypos, int xadj, int yadj, char *text
 		leftEdge = (fmt->xpos + xadj);
 	}
 
+#if defined(PSXPC_VERSION)//Modern strtok cannot have NULL passed, PSX version can!
+	if (text == NULL)
+	{
+		columnText = NULL;
+	}
+	else
+	{
+		columnText = strtok(text, "\x9");
+	}
+#else
 	columnText = strtok(text, "\x9");
+#endif
 
 	while (columnText != NULL)
 	{
