@@ -405,6 +405,7 @@ char * LOAD_ReadFileFromCD(char *filename, int memType)
 		if (CdSearchFile(&fp, filename) != 0)
 		{
 			CdReset(0);
+			break;
 		}
 	
 	} while (++i < 10);
