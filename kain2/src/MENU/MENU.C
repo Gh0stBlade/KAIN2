@@ -453,9 +453,9 @@ void menu_draw(struct menu_t *menu)
 	index = stack->index;
 	ypos = 0;
 	
-	if (stack->index != 0)
+	if (menu->drawfn != NULL)
 	{
-		menu[menu->nmenus - 1].drawfn(menu->opaque);
+		menu->drawfn(menu->opaque);
 	}
 
 	for (i = 0; i < menu->nitems; i++)
