@@ -43,13 +43,19 @@ void menu_set(struct menu_t *menu, int fn(void*, int))
 
 void menu_push(struct menu_t *menu, int fn(void*, int))
 { 
-	struct menu_stack_t *stack;
+	struct menu_stack_t* stack;
 
 	stack = &menu->stack[menu->nmenus++];
 
-	stack->fn = fn;
-	stack->index = -1;
-	stack->format = (stack - 1)->format;
+	(stack + 1)->fn = fn;
+	(stack + 1)->index = -1;
+	(stack + 1)->format.xpos = stack->format.xpos;
+	(stack + 1)->format.ypos = stack->format.ypos;
+	(stack + 1)->format.lineskip = stack->format.lineskip;
+	(stack + 1)->format.itemskip = stack->format.itemskip;
+	(stack + 1)->format.width = stack->format.width;
+	(stack + 1)->format.center = stack->format.center;
+	(stack + 1)->format.border = stack->format.border;
 }
 
 
