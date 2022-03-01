@@ -34,14 +34,14 @@ void localstr_set_language(enum language_t lang)
 	
 	if (LocalizationTable != NULL)
 	{
-		LocalStrings = (char**)LocalizationTable + 1;
-		voiceList = (XAVoiceListEntry*)(char*)LocalizationTable + LocalizationTable->XATableOffset;
+		LocalStrings = (char**)LocalizationTable + 4;
+		voiceList = (XAVoiceListEntry*)(char*)(LocalizationTable + LocalizationTable->XATableOffset);
 
 		if (LocalizationTable->numStrings > 0)
 		{
 			for (i = 0; i < LocalizationTable->numStrings; i++)
 			{
-				LocalStrings[i] = LocalStrings[i] + (unsigned int)LocalizationTable;
+				LocalStrings[i] =(char*)((unsigned int*)LocalStrings)[i] + (unsigned int)LocalizationTable;
 			}
 		}
 		the_language = LocalizationTable->language;
