@@ -24,8 +24,7 @@ void menu_format(struct menu_t *menu, int center, int xpos, int ypos, int width,
 
 	fmt = &menu->stack[menu->nmenus].format;
 	
-	fmt += 2;
-
+	fmt->ypos = xpos;
 	fmt->ypos = ypos;
 	fmt->center = center;
 	fmt->lineskip = lineskip;
