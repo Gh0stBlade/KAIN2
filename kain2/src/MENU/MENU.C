@@ -125,9 +125,8 @@ void menu_build(struct menu_t *menu)
 	menu->nitems = 0;
 	menu->nbytes = 0;
 
-	stack = &menu->stack[menu->nmenus - 1];
-
-	stack->index = stack->fn(menu->opaque, (stack - 1)->index);
+	stack = &menu->stack[menu->nmenus];
+	stack->fn(menu->opaque, stack->index);
 }
 
 
@@ -248,7 +247,20 @@ int menu_draw_item(struct menu_t *menu, int ypos, int xadj, int yadj, char *text
 	ypos += yadj;
 	numColumns = 1;
 
+#if PSXPC_VERSION//Modern strlen doesn't support NULL being passed in but the old PSX version does.
+	if (text == NULL)
+	{
+		texLen = 0;
+	}
+	else
+	{
+		texLen = strlen(text);
+	}
+#else
 	texLen = strlen(text);
+#endif
+
+
 	if (texLen > 0)
 	{
 		for (i = 0; i < texLen; i++)
