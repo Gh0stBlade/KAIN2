@@ -41,7 +41,7 @@ void localstr_set_language(enum language_t lang)
 		{
 			for (i = 0; i < LocalizationTable->numStrings; i++)
 			{
-				LocalStrings[i] =(char*)((unsigned int*)LocalStrings)[i] + (unsigned int)LocalizationTable;
+				LocalStrings[i] = LocalStrings[i] + (unsigned int)LocalizationTable;
 			}
 		}
 		the_language = LocalizationTable->language;
