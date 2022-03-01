@@ -402,7 +402,7 @@ char * LOAD_ReadFileFromCD(char *filename, int memType)
 	i = 0;
 	do
 	{
-		if (CdSearchFile(&fp, filename) == 0)
+		if (CdSearchFile(&fp, filename) != 0)
 		{
 			CdReset(0);
 		}
