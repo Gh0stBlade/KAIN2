@@ -38,11 +38,20 @@ void GAMELOOP_AllocStaticMemory()
 {
 	instanceList = (struct _InstanceList*)MEMPACK_Malloc(sizeof(struct _InstanceList), 6);
 	instancePool = (struct _InstancePool*)MEMPACK_Malloc(sizeof(struct _InstancePool), 6);///@FIXME struct size mis-match on PSX/PSXPC!
+
+#if defined(PSXPC_VERSION)//Increase primitive memory pools to allow 32_BIT_ADDR mode.
+	primBase = MEMPACK_Malloc(216600 * 2, 6);
+	gOt[1] = (unsigned long**)(primBase + 12288 * 2);
+	primPool[0] = (_PrimPool*)(primBase + 24576 * 2);
+	gOt[0] = (unsigned long**)(primBase);
+	primPool[1] = (_PrimPool*)(primBase + 120588 * 2);
+#else
 	primBase = MEMPACK_Malloc(216600, 6);
 	gOt[1] = (unsigned long**)(primBase + 12288);
 	primPool[0] = (_PrimPool*)(primBase + 24576);
 	gOt[0] = (unsigned long**)(primBase);
 	primPool[1] = (_PrimPool*)(primBase + 120588);
+#endif
 
 	///@TODO disabled until header fixes implemented.
 	///gLightInfo = (LightInfo*)MEMPACK_Malloc(sizeof(LightInfo), 6);
