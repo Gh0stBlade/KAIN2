@@ -376,26 +376,28 @@ void drawChar2DPoly(long fpi, long x, long y)
 	int holdv; // $v1
 	struct font_color_t* color; // $v0
 
+	u = ABS(fontPos[fpi].x);
 	xl = x;
-	u0 = ABS(fontPos[fpi].x) + fontTracker.font_vramU;
+	v = ABS(fontPos[fpi].y);
+	u0 = u + fontTracker.font_vramU;
 	u2 = u0;
 	drawOT = gameTrackerX.drawOT;
-	v0 = ABS(fontPos[fpi].y) + fontTracker.font_vramV;
+	v0 = v + fontTracker.font_vramV;
 	w = ABS(fontPos[fpi].w);
 
-	u1 = u0 + ABS(fontPos[fpi].y);
+	u1 = u0 + w;
 	v1 = v0;
 	h = ABS(fontPos[fpi].h);
 
-	v2 = v1 + fontTracker.font_vramV;
+	v2 = v1 + h;
 	u3 = u1;
 	v3 = v2;
 
-	xr = xl + ABS(fontPos[fpi].y);
-	v = y - (fontTracker.font_vramV - 12);
+	xr = xl + w;
+	yt = y - (h - 12);
+	yb = y + 12;
 
-	textPoly = (POLY_FT4*)drawOT[1];
-	y += 12;
+	textPoly = (POLY_FT4*)gameTrackerX.primPool->nextPrim;
 
 	if (fontPos[fpi].h < 0)
 	{
@@ -1121,20 +1123,14 @@ void FONT_Flush()
 	fontTracker.font_xpos = 10;
 	fontTracker.font_ypos = 16;
 
-	i = fontTracker.font_buffIndex;
-
-	if (i != 0)
+	for (i = 0; i < fontTracker.font_buffIndex; i++)
 	{
-		do
+		fontChar = &fontTracker.font_buffer[i];
+
+		if (fontChar->c != ' ' && fontChar->c != '@')
 		{
-			fontChar = &fontTracker.font_buffer[i];
-
-			if (fontChar->c != ' ' && fontChar->c != '@')
-			{
-				FONT_DrawChar(fontChar);
-			}
-
-		} while (i-- != 0);
+			FONT_DrawChar(fontChar);
+		}
 
 		fontTracker.font_buffIndex = 0;
 	}
