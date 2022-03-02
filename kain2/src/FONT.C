@@ -1131,9 +1131,9 @@ void FONT_Flush()
 		{
 			FONT_DrawChar(fontChar);
 		}
-
-		fontTracker.font_buffIndex = 0;
 	}
+
+	fontTracker.font_buffIndex = 0;
 
 #else//PC
 	FontChar* p_c; // esi
