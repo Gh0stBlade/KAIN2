@@ -959,7 +959,7 @@ void FONT_VaReallyPrint(const char *fmt, void *ap)
 		{
 			xpos[0] += 8;
 		}
-		else if (p[0] == '\x5F')
+		else if (p[0] != '\x5F')
 		{
 			FONT_AddCharToBuffer(p[0], xpos[0], ypos[0]);
 			xpos += FONT_CharSpacing(p[0], 8);
