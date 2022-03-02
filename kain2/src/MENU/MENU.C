@@ -110,8 +110,7 @@ void menu_item(struct menu_t *menu, int (*fn)(void*, long, enum menu_ctrl_t), lo
 	item->fn = fn;
 	item->parameter = parameter;
 	item->flags = 0;
-
-	menu->nbytes += 384;
+	item->text = &menu->bytes[menu->nbytes];
 
 	if (format != NULL)
 	{
@@ -337,13 +336,13 @@ int menu_draw_item(struct menu_t *menu, int ypos, int xadj, int yadj, char *text
 					{
 						do
 						{
-							tmp = strchr(lineText + 1, 32);
+							tmp = strchr(eop + 1, 32);
 							if (tmp != NULL)
 							{
 								tmp[0] = 0;
 							}
 
-							wd = menu_text_width(tmp);
+							wd = menu_text_width(lineText);
 							if (tmp != NULL)
 							{
 								tmp[0] = 32;
@@ -455,9 +454,9 @@ void menu_draw(struct menu_t *menu)
 	struct menu_item_t* item;
 	int color;
 
-	ext.xmin = -129;
+	ext.xmin = 2147483647;
 	ext.xmax = 2147483648;
-	ext.ymin = -129;
+	ext.ymin = 2147483647;
 	ext.ymax = 2147483648;
 
 	stack = &menu->stack[menu->nmenus];
