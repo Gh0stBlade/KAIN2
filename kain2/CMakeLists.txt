@@ -2,6 +2,9 @@ cmake_minimum_required (VERSION 3.0)
 
 project (KAIN2_${TARGET_ARCH})
 
+#Enable 32-bit address for tag
+OPTIONAL_DEFINE(USE_32_BIT_ADDR "Enable/Disable 32-bit address for tag" ON)
+
 #file(GLOB_RECURSE KAIN2_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/*.c ${CMAKE_CURRENT_SOURCE_DIR}/*.h ${CMAKE_CURRENT_SOURCE_DIR}/*.cur ${CMAKE_CURRENT_SOURCE_DIR}/*.rc)
 #list(FILTER KAIN2_SRCS EXCLUDE REGEX "/PC/*")
 
@@ -69,6 +72,8 @@ include("Platform/Mingw.cmake")
 include("Platform/Linux.cmake")
 include("Platform/Emscripten.cmake")
 include("Platform/Android.cmake")
+
+BuildPreProcessorDefinitions()
 
 target_link_libraries(
 ${PROJECT_NAME}
