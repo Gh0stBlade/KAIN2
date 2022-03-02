@@ -928,7 +928,6 @@ void FONT_VaReallyPrint(const char *fmt, void *ap)
 		{
 			xpos[0] = p[0];
 			ypos[0] += 12;
-			p++;
 		}
 		else if (p[0] == '@')
 		{
@@ -947,34 +946,26 @@ void FONT_VaReallyPrint(const char *fmt, void *ap)
 		{
 			xpos[0] = 10;
 			ypos[0] = 16;
-			
-			p++;
 		}
 		else if (p[0] == '\xD')
 		{
 			xpos[0] = 10;
-			
-			p++;
 		}
 		else if (p[0] == '\x9')
 		{
 			xpos[0] += 32;
-			
-			p++;
 		}
 		else if (p[0] == ' ')
 		{
 			xpos[0] += 8;
-			
-			p++;
 		}
 		else if (p[0] == '\x5F')
 		{
 			FONT_AddCharToBuffer(p[0], xpos[0], ypos[0]);
 			xpos += FONT_CharSpacing(p[0], 8);
-
-			p++;
 		}
+
+		p++;
 	}
 
 #elif defined(PC_VERSION)
