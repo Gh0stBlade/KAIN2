@@ -274,7 +274,7 @@ struct DebugMenuLine debugSpecialAbilitiesMenu[10] =
 		0,
 		0,
 		(char*)0x800cf5f8, // Fix me
-		& gameTrackerX.debugFlags,
+		&gameTrackerX.debugFlags,
 		0
 	}
 };
@@ -334,7 +334,7 @@ struct DebugMenuLine debugForgedAbilitiesMenu[7] =
 		0,
 		0,
 		(char*)0x800cf5f8, // Fix me
-		& gameTrackerX.debugFlags,
+		&gameTrackerX.debugFlags,
 		0
 	}
 };
@@ -394,7 +394,7 @@ struct DebugMenuLine debugGlyphAbilitiesMenu[11] =
 		0,
 		0,
 		(char*)0x800cf5f8, // Fix me
-		& gameTrackerX.debugFlags,
+		&gameTrackerX.debugFlags,
 		0
 	}
 };
@@ -454,7 +454,7 @@ struct DebugMenuLine debugImbueSoulReaverMenu[7] =
 		0,
 		0,
 		(char*)0x800cf5f8, // Fix me
-		& gameTrackerX.debugFlags,
+		&gameTrackerX.debugFlags,
 		0
 	}
 };
