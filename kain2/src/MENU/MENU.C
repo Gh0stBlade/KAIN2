@@ -348,13 +348,17 @@ int menu_draw_item(struct menu_t *menu, int ypos, int xadj, int yadj, char *text
 								tmp[0] = 32;
 							}
 
-							if (columnWidth < wd)
+							if (columnWidth >= wd)
 							{
 								eop = tmp;
 								if (eop == NULL)
 								{
 									break;
 								}
+							}
+							else
+							{
+								break;
 							}
 
 						} while (1);
