@@ -469,9 +469,6 @@ struct _BlockVramEntry* VRAM_CheckVramSlot(short* x, short* y, short w, short h,
 	{
 		if (hldh != h)
 		{
-
-#define ABS(x) x < 0 ? -x : x
-
 			if (ABS(((offsetright - vblock->w) * hldh) - (w * (hldh - h))) < ABS(((offsetright - vblock->w) * h) - (offsetright * (hldh - h))))
 			{
 				VRAM_InsertFreeVram(hldx + w, hldy, hldw - w, hldh, 1);
