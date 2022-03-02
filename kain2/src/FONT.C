@@ -630,7 +630,7 @@ long FONT_CharSpacing(char c, long fontXSize)
 			}
 			else
 			{
-				w2 = 8;
+				w2 = w;
 			}
 			
 			holdw = ABS(fontPos[i3].w);
@@ -641,10 +641,10 @@ long FONT_CharSpacing(char c, long fontXSize)
 			}
 			else
 			{
-				w3 = 8;
+				w3 = w;
 			}
 
-			if (w2 >= w1)
+			if (w2 >= w3)
 			{
 				if (w >= w2)
 				{
