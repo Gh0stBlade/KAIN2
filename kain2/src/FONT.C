@@ -730,7 +730,7 @@ void FONT_AddCharToBuffer(char c, long x, long y)
 	
 	fontChar = &fontTracker.font_buffer[fontTracker.font_buffIndex];
 	
-	if (fontTracker.font_buffIndex != 0)
+	if (fontTracker.font_buffIndex < 255)
 	{
 		if (c == '@')
 		{
