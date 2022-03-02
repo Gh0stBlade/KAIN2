@@ -82,8 +82,8 @@ typedef struct GameTracker // hashcode: 0x4EB3EFC5 (dec: 1320415173)
 	struct Intro* introFXIntro; // size=76, offset=464
 	unsigned long** drawOT; // size=0, offset=468
 	unsigned long** dispOT; // size=0, offset=472
-	struct P_TAG* savedOTStart; // size=8, offset=476
-	struct P_TAG* savedOTEnd; // size=8, offset=480
+	P_TAG* savedOTStart; // size=8, offset=476
+	P_TAG* savedOTEnd; // size=8, offset=480
 	long introWaitTime; // size=0, offset=484
 	long mirrorZPush; // size=0, offset=488
 	long defVVRemoveDist; // size=0, offset=492

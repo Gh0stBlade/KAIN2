@@ -810,7 +810,7 @@ void GAMELOOP_DrawSavedOT(unsigned long **newOT)
 		// Start line: 2711
 		// Start offset: 0x8002FC20
 		// Variables:
-			struct P_TAG *tag; // $a1
+			//struct P_TAG *tag; // $a1
 			int y; // $a2
 
 		/* begin block 1.1 */
@@ -957,9 +957,9 @@ void SaveOT()
 		// Start line: 2830
 		// Start offset: 0x8002FED0
 		// Variables:
-			struct P_TAG *tag; // $a0
-			struct P_TAG *last; // $s0
-			struct P_TAG *lastlast; // $s1
+			//struct P_TAG *tag; // $a0
+			//struct P_TAG *last; // $s0
+			//struct P_TAG *lastlast; // $s1
 	/* end block 1 */
 	// End offset: 0x8003005C
 	// End Line: 2880
