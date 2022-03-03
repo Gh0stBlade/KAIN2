@@ -4,6 +4,7 @@
 #include "GAMELOOP.H"
 #include "PSX/MAIN.H"
 #include "LOCAL/LOCALSTR.H"
+#include "FONT.H"
 
 int StartGameFading;
 int LINESKIP = 14; // offset 0x800d1fa8
@@ -336,16 +337,14 @@ int do_main_menu(void *gt, long param, enum menu_ctrl_t ctrl)
 	return 0;
 }
 
-char * flashStart()
+char* flashStart()
 { 
-	static int counter = -1; // offset 0x98
-	int intpl; // $a0
-	int fcols[2][3]; // stack offset -40
-	int r; // $s2
-	int g; // $s1
-	int b; // $s0
-	
-	//v1 = 
+	static int counter = -1;
+	int intpl;
+	int fcols[2][3] = { 0xC0, 0xD2, 0xD2, 0xC0, 0xC0, 0x40 };
+	int r;
+	int g;
+	int b;
 
 	gameTrackerX.gameFramePassed = 1;
 
@@ -368,108 +367,38 @@ char * flashStart()
 
 			return NULL;
 		}
-		//loc_800B8EFC
 	}
 	else
 	{
-		//loc_800B8D98
-		//a0 = counter
-		//v0 = counter < 30
 		counter = (counter + 1) % 60;
+		
 		if (counter < 10)
 		{
-			//a0 = 0
-			//j loc_800B8E64
+			intpl = 0;
 		}
 		else if (counter < 30)
 		{
-			//li      $v1, 0x66666667
-			//j       loc_800B8E4C
-			//addiu   $v0, $a0, -0xA
-
-			///((counter - 10) << 12)
-			//loc_800B8E4C
+			intpl = ((((counter - 10) << 12) * 0x66666667) >> 3) - (((counter - 10) << 12) >> 31);
 		}
 		else
 		{
 			if (counter < 40)
 			{
-				//loc_800B8E30
-				//li      $v1, 0x66666667
-				//j       loc_800B8E64
-				//li      $a0, 0x1000
+				intpl = 4096;
 			}
 			else
 			{
-				//li      $v1, 0x66666667
-				//v0 = 60 - counter;
-				//loc_800B8E4C
+				intpl = ((((60 - counter) << 12) * 0x66666667) >> 3) - (((60 - counter) << 12) >> 31);
 			}
 		}
+
+		r = ((fcols[0][0] * (4096 - counter)) + (fcols[1][0] * (counter))) >> 12;
+		g = ((fcols[0][1] * (4096)) + (fcols[1][1] * (counter))) >> 12;
+		b = ((fcols[0][2] * (4096)) + (fcols[1][2] * (counter))) >> 12;
+
+		FONT_SetColorIndex(4);
+		FONT_SetColorIndexCol(4, r, g, b);
 	}
-#if 0
-
-
-		loc_800B8E4C :
-	sll     $v0, 12
-		mult    $v0, $v1
-		sra     $v0, 31
-		mfhi    $t1
-		sra     $v1, $t1, 3
-		subu    $a0, $v1, $v0
-
-		loc_800B8E64 :
-	li      $v1, 0x1000
-		lw      $v0, 0x28 + var_18($sp)
-		subu    $v1, $a0
-		mult    $v0, $v1
-		mflo    $t0
-		lw      $v0, 0x28 + var_C($sp)
-		nop
-		mult    $v0, $a0
-		mflo    $a2
-		lw      $v0, 0x28 + var_14($sp)
-		nop
-		mult    $v0, $v1
-		mflo    $a3
-		lw      $v0, 0x28 + var_8($sp)
-		nop
-		mult    $v0, $a0
-		mflo    $a1
-		lw      $v0, 0x28 + var_10($sp)
-		nop
-		mult    $v0, $v1
-		mflo    $v1
-		lw      $v0, 0x28 + var_4($sp)
-		nop
-		mult    $v0, $a0
-		addu    $s2, $t0, $a2
-		sra     $s2, 12
-		addu    $s1, $a3, $a1
-		sra     $s1, 12
-		li      $a0, 4
-		mflo    $t5
-		addu    $s0, $v1, $t5
-		jal     sub_8002DAF8
-		sra     $s0, 12
-		li      $a0, 4
-		move    $a1, $s2
-		move    $a2, $s1
-		jal     sub_8002DB04
-		move    $a3, $s0
-
-		loc_800B8EFC :
-	jal     sub_800B76CC
-		li      $a0, 0x22  # '"'
-
-		loc_800B8F04 :
-		lw      $ra, 0x28 + var_sC($sp)
-		lw      $s2, 0x28 + var_s8($sp)
-		lw      $s1, 0x28 + var_s4($sp)
-		lw      $s0, 0x28 + var_s0($sp)
-		jr      $ra
-		addiu   $sp, 0x38
-#endif
 
 	return localstr_get(LOCALSTR_press_start);
 }
