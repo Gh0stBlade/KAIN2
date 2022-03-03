@@ -3128,9 +3128,7 @@ void Emulator_EndScene()
 
 	begin_scene_flag = FALSE;
 	vbo_was_dirty_flag = FALSE;
-
-
-
+	
 	Emulator_SwapWindow();
 }
 

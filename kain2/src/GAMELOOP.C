@@ -14,6 +14,10 @@
 #include "DRAW.H"
 #include "SAVEINFO.H"
 
+#if defined(PSXPC_VERSION)
+#include <EMULATOR_PRIVATE.H>
+#endif
+
 char* primBase;
 unsigned long(**gOt[2]); // offset 0x800D0C0C
 struct LightInfo* gLightInfo; // offset 0x800D0C2C
@@ -666,6 +670,7 @@ void GAMELOOP_FlipScreenAndDraw(struct GameTracker* gameTracker, unsigned long**
 #if defined(PSX_VERSION)
 #if defined(USE_32_BIT_ADDR)
 	DrawOTag((unsigned long*)drawot + 3071-1);
+	Emulator_EndScene();
 #else
 	DrawOTag((unsigned long*)drawot + 3071);
 #endif
@@ -1048,7 +1053,9 @@ void ResetDrawPage()
 	gameTrackerX.drawOT = gameTrackerX.dispOT;
 	gameTrackerX.dispOT = temp;
 	gameTrackerX.drawPage = 1 - gameTrackerX.drawPage;
-
+#if defined(PSXPC_VERSION)
+	Emulator_BeginScene();
+#endif
 	ClearOTagR((unsigned long*)gameTrackerX.drawOT, 3072);
 }
 

@@ -138,14 +138,6 @@ int DrawSync(int mode)
 		DrawAggregatedSplits();
 		Emulator_EndScene();
 	}
-	else
-	{
-		
-		vbo_was_dirty_flag = 1;
-		begin_scene_flag = 1;
-		Emulator_BlitVRAM();
-		Emulator_EndScene();
-	}
 
 	return 0;
 }
@@ -555,6 +547,8 @@ void DrawOTag(u_long* p)
 	/* Reset the ztable index of */
 	pgxp_vertex_index = 0;
 #endif
+
+	VSync(0);
 }
 
 void DrawPrim(void* p)
