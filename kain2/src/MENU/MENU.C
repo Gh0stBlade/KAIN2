@@ -131,7 +131,7 @@ void menu_build(struct menu_t *menu)
 	menu->nbytes = 0;
 
 	stack = &menu->stack[menu->nmenus];
-	stack->fn(menu->opaque, stack->index);
+	stack->index = stack->fn(menu->opaque, stack->index);
 }
 
 
@@ -427,9 +427,9 @@ int menu_draw_item(struct menu_t *menu, int ypos, int xadj, int yadj, char *text
 
 		columnText = strtok(NULL, "\x9");
 
-		if (maxColumnYPos < columnYPos)
+		//if (maxColumnYPos < columnYPos)
 		{
-			maxColumnYPos = columnYPos;
+			//maxColumnYPos = columnYPos;
 		}
 	}
 
@@ -478,11 +478,11 @@ void menu_draw(struct menu_t *menu)
 
 		if (i == 0 && !(item->flags & 0x4))
 		{
-			color = 3;
+			color = 0 < (i ^ index);
 		}
 		else
 		{
-			color = 0 < (i ^ index);
+			color = 3;
 		}
 
 		ypos = menu_draw_item(menu, ypos, 0, 0, item->text, color, item->flags, &ext);
