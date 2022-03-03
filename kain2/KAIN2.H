@@ -1617,12 +1617,6 @@ struct _StreamUnit // hashcode: 0xAC366E40 (dec: -1405718976)
 	short pad; // size=0, offset=62
 };
 
-struct SavedBasic // hashcode: 0x6198E1EF (dec: 1637409263)
-{
-	unsigned char savedID; // size=0, offset=0
-	unsigned char shiftedSaveSize; // size=0, offset=1
-};
-
 struct _SavedIntro // hashcode: 0x8389D216 (dec: -2088119786)
 {
 	unsigned char savedID; // size=0, offset=0

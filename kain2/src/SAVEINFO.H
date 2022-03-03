@@ -4,6 +4,12 @@
 #include "core.h"
 #include "MONSTER/MONAPI.H"
 
+struct SavedBasic // hashcode: 0x6198E1EF (dec: 1637409263)
+{
+	unsigned char savedID; // size=0, offset=0
+	unsigned char shiftedSaveSize; // size=0, offset=1
+};
+
 struct _GlobalSaveTracker {
 	short savedID; // size=0, offset=0
 	short saveSize; // size=0, offset=2

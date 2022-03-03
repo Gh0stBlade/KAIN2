@@ -1949,12 +1949,6 @@ union DEBUG_224fake // Hashcode: 0x0131C19B (dec: 20038043)
 	struct _Position throwVector; // size=6, offset=0
 };
 
-struct SavedBasic // hashcode: 0x6198E1EF (dec: 1637409263)
-{
-	unsigned char savedID; // size=0, offset=0
-	unsigned char shiftedSaveSize; // size=0, offset=1
-};
-
 struct _SavedIntro // hashcode: 0x8389D216 (dec: -2088119786)
 {
 	unsigned char savedID; // size=0, offset=0
