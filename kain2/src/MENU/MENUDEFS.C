@@ -378,7 +378,7 @@ char* flashStart()
 		}
 		else if (counter < 30)
 		{
-			intpl = ((((counter - 10) << 12) * 0x66666667) >> 3) - (((counter - 10) << 12) >> 31);
+			intpl = ((counter - 10) << 12) / 20;
 		}
 		else
 		{
@@ -388,13 +388,13 @@ char* flashStart()
 			}
 			else
 			{
-				intpl = ((((60 - counter) << 12) * 0x66666667) >> 3) - (((60 - counter) << 12) >> 31);
+				intpl = ((60 - counter) << 12) / 20;
 			}
 		}
 
-		r = ((fcols[0][0] * (4096 - counter)) + (fcols[1][0] * (counter))) >> 12;
-		g = ((fcols[0][1] * (4096)) + (fcols[1][1] * (counter))) >> 12;
-		b = ((fcols[0][2] * (4096)) + (fcols[1][2] * (counter))) >> 12;
+		r = ((fcols[0][0] * (4096 - intpl)) + (fcols[1][0] * (intpl))) >> 12;
+		g = ((fcols[0][1] * (4096 - intpl)) + (fcols[1][1] * (intpl))) >> 12;
+		b = ((fcols[0][2] * (4096 - intpl)) + (fcols[1][2] * (intpl))) >> 12;
 
 		FONT_SetColorIndex(4);
 		FONT_SetColorIndexCol(4, r, g, b);
