@@ -416,7 +416,7 @@ void GAMELOOP_HandleScreenWipes(unsigned long **drawot)
 	if ((GlobalSave->flags & 0x1))
 	{
 		DRAW_FlatQuad(&gameTrackerX.wipeColor, 0, 0, SCREEN_WIDTH, 0, 0, 30, SCREEN_WIDTH, 30, primPool, drawot);
-		DRAW_FlatQuad(&gameTrackerX.wipeColor, 0, 0xD2, SCREEN_WIDTH, 0xD2, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 0xD2, primPool, drawot);
+		DRAW_FlatQuad(&gameTrackerX.wipeColor, 0, 210, SCREEN_WIDTH, 210, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 210, primPool, drawot);
 	}
 
 	if (gameTrackerX.wipeTime > 0)

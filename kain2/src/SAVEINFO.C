@@ -70,6 +70,7 @@ void SAVE_Init(struct GameTracker *gt)
 	}
 
 	savedInfoTracker.MemoryCardBuffer = (char*)buffer;
+	SAVE_ClearMemory(gt);
 }
 
 
