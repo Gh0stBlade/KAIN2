@@ -5329,14 +5329,6 @@ struct __razController // hashcode: 0x694854B2 (dec: 1766347954)
 	unsigned short type; // size=0, offset=2
 };
 
-struct SavedInfoTracker // hashcode: 0x03231C9A (dec: 52632730)
-{
-	char *MemoryCardBuffer; // size=0, offset=0
-	char *InfoStart; // size=0, offset=4
-	char *InfoEnd; // size=0, offset=8
-	char *EndOfMemory; // size=0, offset=12
-};
-
 struct SavedLevel // hashcode: 0xABBBA745 (dec: -1413765307)
 {
 	unsigned char savedID; // size=0, offset=0
@@ -5672,12 +5664,6 @@ struct mcpsx_t // hashcode: 0x79B44761 (dec: 2041857889)
 		long *nfilesptr; // size=0, offset=28
 	} params; // size=32, offset=20, found in object files: memcard.o, memcard.o
 	void *opaque; // size=0, offset=52
-};
-
-struct mcpsx_directory_t // hashcode: 0xED9CBF92 (dec: -308494446)
-{
-	char name[20]; // size=20, offset=0
-	int nbytes; // size=0, offset=20
 };
 
 struct mcard_t // hashcode: 0x55AF6CB2 (dec: 1437559986)

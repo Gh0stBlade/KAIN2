@@ -8080,18 +8080,10 @@ union SAVEINFO_77fake // Hashcode: 0xFB46A940 (dec: -79255232)
 
 union SAVEINFO_196fake // Hashcode: 0x37750CF1 (dec: 930417905)
 {
-	struct _Instance *target; // size=616, offset=0
+	struct _Instance* target; // size=616, offset=0
 	struct _Position position; // size=6, offset=0
 	struct _Rotation direction; // size=8, offset=0
 	struct _Position throwVector; // size=6, offset=0
-};
-
-struct SavedInfoTracker // hashcode: 0x03231C9A (dec: 52632730)
-{
-	char *MemoryCardBuffer; // size=0, offset=0
-	char *InfoStart; // size=0, offset=4
-	char *InfoEnd; // size=0, offset=8
-	char *EndOfMemory; // size=0, offset=12
 };
 
 struct SavedLevel // hashcode: 0xABBBA745 (dec: -1413765307)
@@ -8140,8 +8132,6 @@ union SAVEINFO_223fake // Hashcode: 0x8FDE617F (dec: -1881251457)
 	struct Intro *intro; // size=76, offset=0
 	struct _SFXMkr *sfxMarker; // size=36, offset=0
 };
-
-typedef struct SavedInfoTracker SavedInfoTracker;
 
 typedef struct SavedLevel SavedLevel;
 
@@ -8488,8 +8478,6 @@ enum sfx_t // Hashcode: 0xC1FB9866 (dec: -1040476058)
 typedef enum sfx_t sfx_t;
 
 typedef struct mcpsx_t mcpsx_t;
-
-typedef struct mcpsx_directory_t mcpsx_directory_t;
 
 typedef enum mcpsx_err_t mcpsx_err_t;
 

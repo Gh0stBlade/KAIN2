@@ -98,6 +98,12 @@ enum mcard_status_t // Hashcode: 0xD1B8064B (dec: -776468917)
 	mcard_status_num_items = 7,
 };
 
+struct mcpsx_directory_t // hashcode: 0xED9CBF92 (dec: -308494446)
+{
+	char name[20]; // size=20, offset=0
+	int nbytes; // size=0, offset=20
+};
+
 union MEMCARD_79fake // Hashcode: 0xCBE8E87E (dec: -873928578)
 {
 	struct {
@@ -223,12 +229,6 @@ struct mcmenu_table_t // hashcode: 0xB78C7C17 (dec: -1215529961)
 	char* versionID; // size=0, offset=32
 };
 
-struct mcpsx_directory_t // hashcode: 0xED9CBF92 (dec: -308494446)
-{
-	char name[20]; // size=20, offset=0
-	int nbytes; // size=0, offset=20
-};
-
 struct mcpsx_t // hashcode: 0x79B44761 (dec: 2041857889)
 {
 	struct {
@@ -258,7 +258,19 @@ struct MEMCARD_216fake // hashcode: 0x1C10213E (dec: 470819134)
 	struct mcpsx_t dummy3; // size=56, offset=456
 };
 
+struct SavedInfoTracker // hashcode: 0x03231C9A (dec: 52632730)
+{
+	char* MemoryCardBuffer; // size=0, offset=0
+	char* InfoStart; // size=0, offset=4
+	char* InfoEnd; // size=0, offset=8
+	char* EndOfMemory; // size=0, offset=12
+};
+
 typedef int (*TDRFuncPtr_memcard_item1fn)();
+
+extern struct memcard_t gMemcard;
+extern int the_header_size;
+extern struct SavedInfoTracker savedInfoTracker;
 
 extern int MEMCARD_IsWrongVersion(struct memcard_t *memcard); // 0x800B9924
 extern void load(struct memcard_t *memcard); // 0x800B9938
