@@ -1,6 +1,24 @@
 #ifndef SAVEINFO_H
 #define SAVEINFO_H
 
+#include "core.h"
+#include "MONSTER/MONAPI.H"
+
+struct _GlobalSaveTracker {
+	short savedID; // size=0, offset=0
+	short saveSize; // size=0, offset=2
+	short flags; // size=0, offset=4
+	short saveVersion; // size=0, offset=6
+	unsigned long currentTime; // size=0, offset=8
+	short humanOpinionOfRaziel; // size=0, offset=12
+	char numRegens; // size=0, offset=14
+	struct _MONAPI_Regenerator regenEntries[10]; // size=80, offset=16
+	struct gSoundData sound; // size=20, offset=96
+	short sizeUsedInBlock; // size=0, offset=116
+	short CurrentBirthID; // size=0, offset=118
+};
+
+extern struct _GlobalSaveTracker* GlobalSave;
 
 extern void SAVE_GetInstanceRotation(struct _Instance *instance, struct _SmallRotation *vector); // 0x800B5560
 

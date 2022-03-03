@@ -5,6 +5,13 @@
 extern "C" {
 #endif
 
+struct _MONAPI_Regenerator 
+{
+	unsigned long regenTime; // size=0, offset=0
+	short introUniqueID; // size=0, offset=4
+	short streamUnitID; // size=0, offset=6
+};
+
 extern void MonsterProcess(struct _Instance *instance, struct GameTracker *gameTracker); // 0x8007DA80
 extern void MonsterInit(struct _Instance *instance, struct GameTracker *gameTracker); // 0x8007DBB8
 extern void SendHitObject(struct _Instance *instance, struct _Instance *hit, int type); // 0x8007DDC0
