@@ -70,6 +70,12 @@ extern "C" {
 		data;
 	} ControllerPacket;
 
+struct JoypadMappingStruct 
+{
+	unsigned short psxData; // size=0, offset=0
+	unsigned short translation; // size=0, offset=2
+};
+
 extern long gDummyCommand[2][2]; // offset 0x800D0D60
 
 extern struct ControllerPacket readGPBuffer1; // offset 0x800D0CF4
@@ -94,7 +100,11 @@ extern void GAMEPAD_Init(); // 0x8003164C
 extern void PSXPAD_TranslateData(long *data, unsigned short padData, unsigned short lastData); // 0x800316D4
 extern unsigned short GAMEPAD_RemapAnalogueButtons(unsigned short in); // 0x800317F8
 extern void GAMEPAD_DetectInit(); // 0x80031844
+#if defined(PSX_VERSION)
+extern void GAMEPAD_GetData(long* data[5]); // 0x8003188C
+#else
 extern void GAMEPAD_GetData(long (*data)[5]); // 0x8003188C
+#endif
 extern void GAMEPAD_DisplayControllerStatus(int msgY); // 0x80031CC8
 extern void GAMEPAD_Process(struct GameTracker *gameTracker); // 0x80031D28
 extern void GAMEPAD_SaveControllers(); // 0x80031D80
