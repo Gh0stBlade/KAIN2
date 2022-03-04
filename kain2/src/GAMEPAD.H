@@ -5,6 +5,15 @@
 extern "C" {
 #endif
 
+struct AnalogueData 
+{
+	unsigned short pad; // size=0, offset=0
+	unsigned char xR; // size=0, offset=2
+	unsigned char yR; // size=0, offset=3
+	unsigned char xL; // size=0, offset=4
+	unsigned char yL; // size=0, offset=5
+};
+
 	typedef unsigned short PadData;
 
 	typedef struct MouseData
@@ -66,6 +75,7 @@ extern "C" {
 			NegconData    negcon;                  /* Namco controller.*/
 			AnalogjoyData joystick;				/* Analog Joystick  */
 			MultiTapData  tap;                     /* 4-way multi-tap. */
+			AnalogueData analogue;
 		}
 		data;
 	} ControllerPacket;
@@ -100,11 +110,7 @@ extern void GAMEPAD_Init(); // 0x8003164C
 extern void PSXPAD_TranslateData(long *data, unsigned short padData, unsigned short lastData); // 0x800316D4
 extern unsigned short GAMEPAD_RemapAnalogueButtons(unsigned short in); // 0x800317F8
 extern void GAMEPAD_DetectInit(); // 0x80031844
-#if defined(PSX_VERSION)
-extern void GAMEPAD_GetData(long* data[5]); // 0x8003188C
-#else
-extern void GAMEPAD_GetData(long (*data)[5]); // 0x8003188C
-#endif
+extern void GAMEPAD_GetData(long(*data)[5]); // 0x8003188C
 extern void GAMEPAD_DisplayControllerStatus(int msgY); // 0x80031CC8
 extern void GAMEPAD_Process(struct GameTracker *gameTracker); // 0x80031D28
 extern void GAMEPAD_SaveControllers(); // 0x80031D80

@@ -605,32 +605,27 @@ void GAMEPAD_DetectInit()
 	}
 }
 
-#if defined(PSX_VERSION)
-void GAMEPAD_GetData(long* data[5])
-#else
 void GAMEPAD_GetData(long(*data)[5])
-#endif
 {
 #if defined(PSX_VERSION)
-	long analogue_x; // $a0
-	long analogue_y; // $v1
-	int padState; // $v1
+	long analogue_x;
+	long analogue_y;
+	int padState;
 
-	//s0 = data
-	data[2] = NULL;
-	data[1] = NULL;
-	data[0] = NULL;
-	data[7] = NULL;
-	data[6] = NULL;
-	data[5] = NULL;
+	data[0][2] = 0;
+	data[0][1] = 0;
+	data[0][0] = 0;
+	data[1][2] = 0;
+	data[1][1] = 0;
+	data[1][0] = 0;
 
 	psxData[0] = 0;
 	psxData[1] = 0;
 
-	data[3] = NULL;
-	data[4] = NULL;
-	data[8] = NULL;
-	data[9] = NULL;
+	data[0][3] = 0;
+	data[0][4] = 0;
+	data[1][3] = 0;
+	data[1][4] = 0;
 
 	if (ignoreFind != 0)
 	{
@@ -664,81 +659,46 @@ void GAMEPAD_GetData(long(*data)[5])
 			GAMEPAD_DetectInit();
 		}
 	}
-	//loc_80031EA4
+
 	if (gpbuffer1.transStatus != 0xFF)
 	{
 		if (gamePadControllerOut >= 6)
 		{
 			GAMEPAD_DetectInit();
 		}
-		//loc_80031ED0
-		//v0 = gpBuffer1.data.pad
+		
 		psxData[0] = gpbuffer1.data.pad;
-		//v0 = controllerType
-		//s1 = 0x53
-
 		gamePadControllerOut = 0;
 
 		if (controllerType[0] == 0x53)
 		{
 			psxData[0] = GAMEPAD_RemapAnalogueButtons(psxData[0]);
 		}
-		//loc_80031F00
 
 		PSXPAD_TranslateData((long*)data, psxData[0], lastData[0]);
+
 		controllerType[0] = gpbuffer1.dataFormat;
 		lastData[0] = psxData[0];
-		//v1 = (gpBuffer1.dataFormat & 0xFF)
 
 		if ((gpbuffer1.dataFormat & 0xFF) == 0x73 || (gpbuffer1.dataFormat & 0xFF) == 0x53)
 		{
-
+			analogue_x = gpbuffer1.data.analogue.xL;
+			analogue_y = gpbuffer1.data.analogue.yL;
+			
+			if (analogue_x - 74 >= 109 && analogue_y < 74 && analogue_x - 128 < 183)
+			{
+				analogue_x = 128;
+				analogue_y = 128;
+			}
+	
+			data[0][3] = analogue_x - 128;
+			data[0][4] = analogue_y - 128;
 		}
-		//loc_80031F90
 	}
-	//loc_80031F80
-
-#if 0
-
-		loc_80031F38 :
-		lbu     $a0, -0x452A($gp)
-		lbu     $v1, -0x4529($gp)
-		addiu   $v0, $a0, -0x4A
-		sltiu   $v0, 0x6D  # 'm'
-		beqz    $v0, loc_80031F6C
-		slti    $v0, $v1, 0x4A  # 'J'
-		bnez    $v0, loc_80031F70
-		addiu   $v0, $a0, -0x80
-		slti    $v0, $v1, 0xB7
-		beqz    $v0, loc_80031F70
-		addiu   $v0, $a0, -0x80
-		li      $a0, 0x80
-		move    $v1, $a0
-
-		loc_80031F6C :
-	addiu   $v0, $a0, -0x80
-
-		loc_80031F70 :
-		sw      $v0, 0xC($s0)
-		addiu   $v0, $v1, -0x80
-		j       loc_80031F90
-		sw      $v0, 0x10($s0)
-
-		loc_80031F80 :
-		lw      $v0, -0x4490($gp)
-		nop
-		addiu   $v0, 1
-		sw      $v0, -0x4490($gp)
-
-		loc_80031F90 :
-		lw      $ra, 0x10 + var_s8($sp)
-		lw      $s1, 0x10 + var_s4($sp)
-		lw      $s0, 0x10 + var_s0($sp)
-		jr      $ra
-		addiu   $sp, 0x20
-		# End of function sub_80031B68
-#endif
-
+	else
+	{
+		gamePadControllerOut++;
+	}
 #elif defined(PC_VERSION)
 	bool v2; // zf
 	int v3; // eax
@@ -863,7 +823,7 @@ void GAMEPAD_Process(struct GameTracker *gameTracker)
 #if defined(PSXPC_VERSION)
 	Emulator_UpdateInput();
 #endif
-	GAMEPAD_GetData((long**)&gameTracker->controlData);
+	GAMEPAD_GetData(gameTracker->controlData);
 	GAMEPAD_Commands(gameTracker->controlCommand, gameTracker->controlData, 0);
 	GAMEPAD_Commands(gameTracker->controlCommand, gameTracker->controlData, 1);
 }
