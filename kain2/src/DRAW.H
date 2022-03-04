@@ -3,6 +3,40 @@
 
 #include "VRAM.H"
 
+struct POLY_F4_SEMITRANS 
+{
+#if defined(USE_32_BIT_ADDR)
+	unsigned long tag;
+#if defined(PGXP)
+	unsigned short len;
+	unsigned short pgxp_index;
+#else
+	unsigned long len;
+#endif
+#else
+	unsigned long tag;
+#endif
+
+#if defined(USE_32_BIT_ADDR)
+	DR_TPAGE dr_tpage;
+#else
+	unsigned long dr_tpage; // size=0, offset=4
+#endif
+
+	unsigned char r0; // size=0, offset=8
+	unsigned char g0; // size=0, offset=9
+	unsigned char b0; // size=0, offset=10
+	unsigned char code; // size=0, offset=11
+	short x0; // size=0, offset=12
+	short y0; // size=0, offset=14
+	short x1; // size=0, offset=16
+	short y1; // size=0, offset=18
+	short x2; // size=0, offset=20
+	short y2; // size=0, offset=22
+	short x3; // size=0, offset=24
+	short y3; // size=0, offset=26
+};
+
 extern void fDRAW_SPLIT_INTPL_XYZ(struct _SVector *newVertex, struct _SVector *pvb, struct _SVector *pvc); // 0x8002A5B0
 
 extern void DRAW_InitShadow(); // 0x8002A62C
