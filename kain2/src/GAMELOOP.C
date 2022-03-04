@@ -450,12 +450,12 @@ void GAMELOOP_HandleScreenWipes(unsigned long **drawot)
 		{
 			if (gameTrackerX.wipeType == 10)
 			{
-				temp = ((((gameTrackerX.maxWipeTime + gameTrackerX.wipeTime) + 2) << 8) - gameTrackerX.wipeType) / gameTrackerX.maxWipeTime;
+				temp = ((((gameTrackerX.maxWipeTime + gameTrackerX.wipeTime) + 2) << 8) - ((gameTrackerX.maxWipeTime + gameTrackerX.wipeTime) + 2)) / gameTrackerX.maxWipeTime;
 				DRAW_TranslucentQuad(0, 0, SCREEN_WIDTH, 0, 0, SCREEN_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT, temp, temp, temp, 2, primPool, drawot);
 			}
 			else if (gameTrackerX.wipeType == 11)
 			{
-				temp = (((gameTrackerX.maxWipeTime + gameTrackerX.wipeTime) << 8) - gameTrackerX.wipeType) / gameTrackerX.maxWipeTime;
+				temp = (((gameTrackerX.maxWipeTime + gameTrackerX.wipeTime) << 8) - ((gameTrackerX.maxWipeTime + gameTrackerX.wipeTime) + 2)) / gameTrackerX.maxWipeTime;
 				DRAW_TranslucentQuad(0, 0, SCREEN_WIDTH, 0, 0, 30, SCREEN_WIDTH, 30, temp, temp, temp, 2, primPool, drawot);
 				DRAW_TranslucentQuad(0, 210, SCREEN_WIDTH, 210, 0, SCREEN_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT, temp, temp, temp, 2, primPool, drawot);
 
