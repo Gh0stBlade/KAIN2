@@ -318,7 +318,7 @@ int do_main_menu(void *gt, long param, enum menu_ctrl_t ctrl)
 	if (StartGameFading == 0 && ctrl == menu_ctrl_start || ctrl == menu_ctrl_engage)
 	{
 		((GameTracker*)gt)->wipeType = 10;
-		((GameTracker*)gt)->wipeTime = -14;
+		((GameTracker*)gt)->wipeTime = -20;
 		((GameTracker*)gt)->maxWipeTime = 20;
 		StartGameFading = 1;
 		return 1;
