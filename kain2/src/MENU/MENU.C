@@ -102,7 +102,7 @@ void menu_item(struct menu_t *menu, int (*fn)(void*, long, enum menu_ctrl_t), lo
 
 	if (format != NULL)
 	{
-		vsprintf(menu->bytes, format, format + 1);
+		vsprintf(item->text, format, format + 1);
 		menu->nbytes += strlen(item->text) + 1;
 	}
 	else
