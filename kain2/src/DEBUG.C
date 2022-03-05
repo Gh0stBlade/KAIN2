@@ -11,21 +11,43 @@
 void DEBUG_FillUpHealth(long* var);
 void DEBUG_FogLoad();
 void DEBUG_SetViewVram();
+void DEBUG_ReloadCurrentLevel();
 
 unsigned long debugRazielFlags1;
 unsigned long debugRazielFlags2;
 unsigned long debugRazielFlags3;
 
 struct DebugMenuLine debugHealthSystemMenu[7];
-struct DebugMenuLine levelSelectMenu[1];
 struct DebugMenuLine cameraMenu[1];
+
 struct DebugMenuLine fogMenu[1];
+struct DebugMenuLine AlukaMenu[1];
+struct DebugMenuLine AshVillageMenu[1];
+struct DebugMenuLine OracleMenu[1];
+struct DebugMenuLine PillarsMenu[1];
+struct DebugMenuLine SilencedCathedralMenu[1];
+struct DebugMenuLine SkinnerMenu[1];
+struct DebugMenuLine StoneMenu[1];
+struct DebugMenuLine SunLightMenu[1];
+struct DebugMenuLine TombMenu[1];
+struct DebugMenuLine WaterMenu[1];
+struct DebugMenuLine CityMenu[1];
+struct DebugMenuLine CliffMenu[1];
+struct DebugMenuLine UnderMenu[1];
+struct DebugMenuLine MorlockMenu[1];
+struct DebugMenuLine HubAMenu[1];
+struct DebugMenuLine HubBMenu[1];
+struct DebugMenuLine TrainingMenu[1];
+struct DebugMenuLine DarkEdenMenu[1];
+struct DebugMenuLine BossAreasMenu[1];
 
 extern struct DebugMenuLine debugRazielMenu[8];
 extern struct DebugMenuLine debugSpecialAbilitiesMenu[10];
 extern struct DebugMenuLine debugForgedAbilitiesMenu[7];
 extern struct DebugMenuLine debugGlyphAbilitiesMenu[11];
 extern struct DebugMenuLine debugImbueSoulReaverMenu[7];
+extern struct DebugMenuLine levelSelectMenu[14];
+extern struct DebugMenuLine level2SelectMenu[11];
 
 struct DebugMenuLine standardMenu[12] =
 {
@@ -448,6 +470,214 @@ struct DebugMenuLine debugImbueSoulReaverMenu[7] =
 		"Fire Reaver",
 		(long*)debugRazielFlags2,
 		0x8000
+	},
+	{
+		DEBUG_LINE_TYPE_ENDLIST,
+		0,
+		0,
+		(char*)0x800cf5f8, // Fix me
+		&gameTrackerX.debugFlags,
+		0
+	}
+};
+
+struct DebugMenuLine levelSelectMenu[14] =
+{
+	{
+		DEBUG_LINE_TYPE_MENU,
+		0,
+		0,
+		"MAIN MENU...",
+		(long*)&standardMenu,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0,
+		0,
+		"RELOAD CURRENT LEVEL",
+		(long*)&DEBUG_ReloadCurrentLevel,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_MENU,
+		0,
+		0,
+		"Aluka...",
+		(long*)&AlukaMenu,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_MENU,
+		0,
+		0,
+		"Ash Village...",
+		(long*)&AshVillageMenu,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_MENU,
+		0,
+		0,
+		"Oracle's Cave...",
+		(long*)&OracleMenu,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_MENU,
+		0,
+		0,
+		"Pillars...",
+		(long*)&PillarsMenu,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_MENU,
+		0,
+		0,
+		"Silenced Cathedral...",
+		(long*)&SilencedCathedralMenu,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_MENU,
+		0,
+		0,
+		"Skinner...",
+		(long*)&SkinnerMenu,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_MENU,
+		0,
+		0,
+		"Stone Glyph...",
+		(long*)&StoneMenu,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_MENU,
+		0,
+		0,
+		"Sunlight Glyph... ",
+		(long*)&SunLightMenu,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_MENU,
+		0,
+		0,
+		"Tomb Of Seven...",
+		(long*)&TombMenu,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_MENU,
+		0,
+		0,
+		"Water Glyph...",
+		(long*)&WaterMenu,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_MENU,
+		0,
+		0,
+		"More Areas..",
+		(long*)&level2SelectMenu,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ENDLIST,
+		0,
+		0,
+		(char*)0x800cf5f8, // Fix me
+		&gameTrackerX.debugFlags,
+		0
+	}
+};
+
+struct DebugMenuLine level2SelectMenu[11] =
+{
+	{
+		DEBUG_LINE_TYPE_MENU,
+		0,
+		0,
+		"AREA MENU...",
+		(long*)&levelSelectMenu,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_MENU,
+		0,
+		0,
+		"City...",
+		(long*)&CityMenu,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_MENU,
+		0,
+		0,
+		"Cliff...",
+		(long*)&CliffMenu,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_MENU,
+		0,
+		0,
+		"Under...",
+		(long*)&UnderMenu,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_MENU,
+		0,
+		0,
+		"Morlock...",
+		(long*)&MorlockMenu,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_MENU,
+		0,
+		0,
+		"HubA...",
+		(long*)&HubAMenu,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_MENU,
+		0,
+		0,
+		"HubB...",
+		(long*)&HubBMenu,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_MENU,
+		0,
+		0,
+		"Training...",
+		(long*)&TrainingMenu,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_MENU,
+		0,
+		0,
+		"Dark Eden...",
+		(long*)&DarkEdenMenu,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_MENU,
+		0,
+		0,
+		"Boss Areas...",
+		(long*)&BossAreasMenu,
+		0
 	},
 	{
 		DEBUG_LINE_TYPE_ENDLIST,
@@ -1269,6 +1499,9 @@ void DEBUG_ExitGame()
 
 }
 
+void DEBUG_ReloadCurrentLevel()
+{
+}
 
 void DEBUG_SetViewVram()
 {
