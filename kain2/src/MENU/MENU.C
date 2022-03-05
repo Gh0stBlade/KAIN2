@@ -415,9 +415,9 @@ int menu_draw_item(struct menu_t *menu, int ypos, int xadj, int yadj, char *text
 
 		columnText = strtok(NULL, "\x9");
 
-		//if (maxColumnYPos < columnYPos)
+		if (maxColumnYPos < ypos)
 		{
-			//maxColumnYPos = columnYPos;
+			maxColumnYPos = ypos;
 		}
 	}
 
