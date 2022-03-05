@@ -53,8 +53,36 @@ struct debug_dispatch_t // hashcode: 0x928EA8E4 (dec: -1836144412)
 	void (*fn)(); // size=0, offset=4
 };
 
+extern struct DebugMenuLine AlukaMenu[10];
+extern struct DebugMenuLine AshVillageMenu[7];
+extern struct DebugMenuLine OracleMenu[10];
+extern struct DebugMenuLine PillarsMenu[6];
+extern struct DebugMenuLine SilencedCathedralMenu[11];
+extern struct DebugMenuLine SkinnerMenu[7];
+extern struct DebugMenuLine StoneMenu[5];
+extern struct DebugMenuLine SunLightMenu[7];
+extern struct DebugMenuLine TombMenu[6];
+extern struct DebugMenuLine WaterMenu[4];
+extern struct DebugMenuLine CityMenu[5];
+extern struct DebugMenuLine CliffMenu[3];
+extern struct DebugMenuLine UnderMenu[3];
+extern struct DebugMenuLine MorlockMenu[3];
+extern struct DebugMenuLine HubAMenu[5];
+extern struct DebugMenuLine HubBMenu[3];
+extern struct DebugMenuLine TrainingMenu[5];
+extern struct DebugMenuLine DarkEdenMenu[3];
+extern struct DebugMenuLine BossAreasMenu[9];
+extern struct DebugMenuLine AnteRoomsMenu[8];
 
-extern struct DebugMenuLine standardMenu[1]; // offset 0x800CFCB0
+extern struct DebugMenuLine debugRazielMenu[8];
+extern struct DebugMenuLine debugSpecialAbilitiesMenu[10];
+extern struct DebugMenuLine debugForgedAbilitiesMenu[7];
+extern struct DebugMenuLine debugGlyphAbilitiesMenu[11];
+extern struct DebugMenuLine debugImbueSoulReaverMenu[7];
+extern struct DebugMenuLine levelSelectMenu[14];
+extern struct DebugMenuLine level2SelectMenu[11];
+
+extern struct DebugMenuLine standardMenu[12]; // offset 0x800CFCB0
 
 extern struct DebugMenuLine* currentMenu; // offset 0x800CDB3C
 
