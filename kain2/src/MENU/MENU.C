@@ -464,13 +464,20 @@ void menu_draw(struct menu_t *menu)
 	{
 		item = &menu->items[i];
 
-		if (i == 0 && !(item->flags & 0x4))
+		if (i != 0)
 		{
-			color = 0 < (i ^ index);
+			color = i != index;
 		}
 		else
 		{
-			color = 3;
+			if (!(item->flags & 0x4))
+			{
+				color = i != index;
+			}
+			else
+			{
+				color = 3;
+			}
 		}
 
 		ypos = menu_draw_item(menu, ypos, 0, 0, item->text, color, item->flags, &ext);

@@ -1620,32 +1620,72 @@ void Emulator_GenerateColourArrayTriangle(struct Vertex* vertex, unsigned char* 
 	vertex[2].a = 255;
 }
 
-void Emulator_GenerateColourArrayQuad(struct Vertex* vertex, unsigned char* col0, unsigned char* col1, unsigned char* col2, unsigned char* col3)
+void Emulator_GenerateColourArrayQuad(struct Vertex* vertex, unsigned char* col0, unsigned char* col1, unsigned char* col2, unsigned char* col3, bool bMaxCol)
 {
 	assert(col0);
 	assert(col1);
 	assert(col2);
 	assert(col3);
 
-	vertex[0].r = col0[0];
-	vertex[0].g = col0[1];
-	vertex[0].b = col0[2];
-	vertex[0].a = 255;
+	if (bMaxCol)
+	{
+		vertex[0].r = 255;
+		vertex[0].g = 255;
+		vertex[0].b = 255;
+		vertex[0].a = 255;
+	}
+	else
+	{
+		vertex[0].r = col0[0];
+		vertex[0].g = col0[1];
+		vertex[0].b = col0[2];
+		vertex[0].a = 255;
+	}
 
-	vertex[1].r = col1[0];
-	vertex[1].g = col1[1];
-	vertex[1].b = col1[2];
-	vertex[1].a = 255;
+	if (bMaxCol)
+	{
+		vertex[1].r = 255;
+		vertex[1].g = 255;
+		vertex[1].b = 255;
+		vertex[1].a = 255;
+	}
+	else
+	{
+		vertex[1].r = col1[0];
+		vertex[1].g = col1[1];
+		vertex[1].b = col1[2];
+		vertex[1].a = 255;
+	}
 
-	vertex[2].r = col2[0];
-	vertex[2].g = col2[1];
-	vertex[2].b = col2[2];
-	vertex[2].a = 255;
+	if (bMaxCol)
+	{
+		vertex[2].r = 255;
+		vertex[2].g = 255;
+		vertex[2].b = 255;
+		vertex[2].a = 255;
+	}
+	else
+	{
+		vertex[2].r = col2[0];
+		vertex[2].g = col2[1];
+		vertex[2].b = col2[2];
+		vertex[2].a = 255;
+	}
 
-	vertex[3].r = col3[0];
-	vertex[3].g = col3[1];
-	vertex[3].b = col3[2];
-	vertex[3].a = 255;
+	if (bMaxCol)
+	{
+		vertex[3].r = 255;
+		vertex[3].g = 255;
+		vertex[3].b = 255;
+		vertex[3].a = 255;
+	}
+	else
+	{
+		vertex[3].r = col3[0];
+		vertex[3].g = col3[1];
+		vertex[3].b = col3[2];
+		vertex[3].a = 255;
+	}
 }
 
 ShaderID g_gte_shader_4;
