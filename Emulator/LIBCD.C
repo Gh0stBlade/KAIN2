@@ -336,6 +336,10 @@ int CdSync(int mode, u_char * result)
 	switch (mode)
 	{
 	case 0:
+		if (syncCallback != NULL)
+		{
+			syncCallback(mode, result);
+		}
 		break;
 	case 1:
 		switch (CdLastCom())

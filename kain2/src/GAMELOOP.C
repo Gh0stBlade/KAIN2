@@ -669,8 +669,7 @@ void GAMELOOP_FlipScreenAndDraw(struct GameTracker* gameTracker, unsigned long**
 {
 #if defined(PSX_VERSION)
 #if defined(USE_32_BIT_ADDR)
-	DrawOTag((unsigned long*)drawot + 3071-1);
-	Emulator_EndScene();
+	DrawOTag((unsigned long*)drawot + 3071 * 2);
 #else
 	DrawOTag((unsigned long*)drawot + 3071);
 #endif
@@ -1053,9 +1052,7 @@ void ResetDrawPage()
 	gameTrackerX.drawOT = gameTrackerX.dispOT;
 	gameTrackerX.dispOT = temp;
 	gameTrackerX.drawPage = 1 - gameTrackerX.drawPage;
-#if defined(PSXPC_VERSION)
-	Emulator_BeginScene();
-#endif
+
 	ClearOTagR((unsigned long*)gameTrackerX.drawOT, 3072);
 }
 

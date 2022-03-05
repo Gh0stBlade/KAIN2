@@ -22,7 +22,12 @@ struct MainTracker // hashcode: 0x7F315B98 (dec: 2133941144)
 
 struct BLK_FILL // hashcode: 0x2490546A (dec: 613438570)
 {
+#if defined(USE_32_BIT_ADDR)
 	unsigned long tag; // size=0, offset=0
+	unsigned long len; // size=0, offset=0
+#else
+	unsigned long tag; // size=0, offset=0
+#endif
 	unsigned char r0; // size=0, offset=4
 	unsigned char g0; // size=0, offset=5
 	unsigned char b0; // size=0, offset=6

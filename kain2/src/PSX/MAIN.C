@@ -299,13 +299,8 @@ void InitDisplay()
 
 	for (i = 0; i < 2; i++)
 	{
-#if 0//P_TAG is claiming to be undefined.
 		setlen(&clearRect[i], 3);
 		setcode(&clearRect[i], 2);
-#else
-		clearRect[i].tag = 0x3 << 24;
-		clearRect[i].code = 2;
-#endif
 		setXY0(&clearRect[i], 0, i * (SCREEN_HEIGHT + 16));
 		setWH(&clearRect[i], SCREEN_WIDTH, SCREEN_HEIGHT + 16);
 		setRGB0(&clearRect[i], 0, 0, 0);
@@ -315,10 +310,6 @@ void InitDisplay()
 	
 	ClearOTagR((u_long*)gameTrackerX.drawOT, 3072);
 	ClearOTagR((u_long*)gameTrackerX.dispOT, 3072);
-
-#if defined(PSXPC_VERSION)
-	Emulator_BeginScene();
-#endif
 	
 	ClearImage(&r, 0, 255, 0);
 #else
@@ -404,7 +395,11 @@ void VblTick()
 	gameTrackerX.vblFrames++;
 	gameTrackerX.vblCount++;
 
+#if defined(PSXPC_VERSION)
+	if (gameTrackerX.reqDisp != NULL)
+#else
 	if (gameTrackerX.reqDisp != NULL && gameTrackerX.frameRateLock < gameTrackerX.vblFrames)
+#endif
 	{
 		PutDispEnv((DISPENV*)gameTrackerX.reqDisp);
 		gameTrackerX.reqDisp = NULL;

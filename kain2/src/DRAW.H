@@ -17,12 +17,7 @@ struct POLY_F4_SEMITRANS
 	unsigned long tag;
 #endif
 
-#if defined(USE_32_BIT_ADDR)
-	DR_TPAGE dr_tpage;
-#else
 	unsigned long dr_tpage; // size=0, offset=4
-#endif
-
 	unsigned char r0; // size=0, offset=8
 	unsigned char g0; // size=0, offset=9
 	unsigned char b0; // size=0, offset=10

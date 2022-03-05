@@ -13,6 +13,40 @@
 #include <string.h>
 #include <assert.h>
 
+//KAIN2
+
+struct POLY_F4_SEMITRANS
+{
+#if defined(USE_32_BIT_ADDR)
+	unsigned long tag;
+#if defined(PGXP)
+	unsigned short len;
+	unsigned short pgxp_index;
+#else
+	unsigned long len;
+#endif
+#else
+	unsigned long tag;
+#endif
+
+	unsigned long dr_tpage; // size=0, offset=4
+	unsigned char r0; // size=0, offset=8
+	unsigned char g0; // size=0, offset=9
+	unsigned char b0; // size=0, offset=10
+	unsigned char code; // size=0, offset=11
+	short x0; // size=0, offset=12
+	short y0; // size=0, offset=14
+	short x1; // size=0, offset=16
+	short y1; // size=0, offset=18
+	short x2; // size=0, offset=20
+	short y2; // size=0, offset=22
+	short x3; // size=0, offset=24
+	short y3; // size=0, offset=26
+};
+
+
+//END KAIN2
+
 DISPENV activeDispEnv;
 DRAWENV activeDrawEnv;	// word_33BC
 DRAWENV byte_9CCA4;
@@ -484,6 +518,7 @@ void AggregatePTAGsToSplits(u_long* p, bool singlePrimitive)
 				if (lastSize == -1)
 					break; // safe bailout
 			}
+
 			pTag = (P_TAG*)pTag->addr;
 		}
 	}
@@ -516,6 +551,8 @@ void DrawOTagEnv(u_long* p, DRAWENV* env)
 
 void DrawOTag(u_long* p)
 {
+	VSync(0);
+
 	if (Emulator_BeginScene())
 	{
 		ClearVBO();
@@ -523,32 +560,30 @@ void DrawOTag(u_long* p)
 	}
 
 #if defined(DEBUG_POLY_COUNT)
-	polygon_count = 0;
+polygon_count = 0;
 #endif
 
-	if (activeDrawEnv.isbg)
-	{
-		ClearImage(&activeDrawEnv.clip, activeDrawEnv.r0, activeDrawEnv.g0, activeDrawEnv.b0);
-	}
-	else
-	{
-		Emulator_BlitVRAM();
-	}
+if (activeDrawEnv.isbg)
+{
+	ClearImage(&activeDrawEnv.clip, activeDrawEnv.r0, activeDrawEnv.g0, activeDrawEnv.b0);
+}
+else
+{
+	Emulator_BlitVRAM();
+}
 
-	AggregatePTAGsToSplits(p, FALSE);
+AggregatePTAGsToSplits(p, FALSE);
 
-	DrawAggregatedSplits();
-	Emulator_EndScene();
+DrawAggregatedSplits();
+Emulator_EndScene();
 
 #if defined(PGXP)
-	/* Reset the ztable */
-	memset(&pgxp_vertex_buffer[0], 0, pgxp_vertex_index * sizeof(PGXPVertex));
+/* Reset the ztable */
+memset(&pgxp_vertex_buffer[0], 0, pgxp_vertex_index * sizeof(PGXPVertex));
 
-	/* Reset the ztable index of */
-	pgxp_vertex_index = 0;
+/* Reset the ztable index of */
+pgxp_vertex_index = 0;
 #endif
-
-	VSync(0);
 }
 
 void DrawPrim(void* p)
@@ -583,6 +618,11 @@ void DrawPrim(void* p)
 #endif
 }
 
+bool IsValidCode(int code)
+{
+	return code >= 0x20 && code <= 0x7C;
+}
+
 // parses primitive and pushes it to VBO
 // returns primitive size
 // -1 means invalid primitive
@@ -610,11 +650,25 @@ int ParsePrimitive(uintptr_t primPtr)
 		blend_mode = 0;
 	}
 
-	bool semi_transparent = (pTag->code & 2) != 0;
+	int code = 0;
+
+	if (IsValidCode(pTag->code))
+	{
+		code = pTag->code;
+	}
+	else
+	{
+		if (IsValidCode(((POLY_F4_SEMITRANS*)pTag)->code))
+		{
+			code = ((POLY_F4_SEMITRANS*)pTag)->code;
+		}
+	}
+
+	bool semi_transparent = (code & 2) != 0;
 
 	int primitive_size = -1;	// -1
 
-	switch (pTag->code & ~3)
+	switch (code & ~0x3)
 	{
 		case 0x0:
 		{
@@ -660,21 +714,44 @@ int ParsePrimitive(uintptr_t primPtr)
 		}
 		case 0x28:
 		{
-			POLY_F4* poly = (POLY_F4*)pTag;
+			if (semi_transparent)
+			{
+				POLY_F4_SEMITRANS* poly = (POLY_F4_SEMITRANS*)pTag;
 
-			AddSplit(semi_transparent, activeDrawEnv.tpage, whiteTexture);
+				activeDrawEnv.tpage = (poly->dr_tpage & 0xFFFF);
 
-			Emulator_GenerateVertexArrayQuad(&g_vertexBuffer[g_vertexIndex], &poly->x0, &poly->x1, &poly->x3, &poly->x2);
-			Emulator_GenerateTexcoordArrayQuadZero(&g_vertexBuffer[g_vertexIndex], 0);
-			Emulator_GenerateColourArrayQuad(&g_vertexBuffer[g_vertexIndex], &poly->r0, &poly->r0, &poly->r0, &poly->r0);
+				AddSplit(semi_transparent, activeDrawEnv.tpage, whiteTexture);
 
-			MakeTriangle();
+				Emulator_GenerateVertexArrayQuad(&g_vertexBuffer[g_vertexIndex], &poly->x0, &poly->x1, &poly->x3, &poly->x2);
+				Emulator_GenerateTexcoordArrayQuadZero(&g_vertexBuffer[g_vertexIndex], 0);
+				Emulator_GenerateColourArrayQuad(&g_vertexBuffer[g_vertexIndex], &poly->r0, &poly->r0, &poly->r0, &poly->r0);
 
-			g_vertexIndex += 6;
-			primitive_size = sizeof(POLY_F4);
-	#if defined(DEBUG_POLY_COUNT)
-			polygon_count++;
-	#endif
+				MakeTriangle();
+
+				g_vertexIndex += 6;
+				primitive_size = sizeof(POLY_F4_SEMITRANS);
+#if defined(DEBUG_POLY_COUNT)
+				polygon_count++;
+#endif
+			}
+			else
+			{
+				POLY_F4* poly = (POLY_F4*)pTag;
+
+				AddSplit(semi_transparent, activeDrawEnv.tpage, whiteTexture);
+
+				Emulator_GenerateVertexArrayQuad(&g_vertexBuffer[g_vertexIndex], &poly->x0, &poly->x1, &poly->x3, &poly->x2);
+				Emulator_GenerateTexcoordArrayQuadZero(&g_vertexBuffer[g_vertexIndex], 0);
+				Emulator_GenerateColourArrayQuad(&g_vertexBuffer[g_vertexIndex], &poly->r0, &poly->r0, &poly->r0, &poly->r0);
+
+				MakeTriangle();
+
+				g_vertexIndex += 6;
+				primitive_size = sizeof(POLY_F4);
+#if defined(DEBUG_POLY_COUNT)
+				polygon_count++;
+#endif
+			}
 			break;
 		}
 		case 0x2C:
@@ -1004,7 +1081,7 @@ int ParsePrimitive(uintptr_t primPtr)
 						activeDrawEnv.tpage = tpage;
 					}
 
-					primitive_size = sizeof(DR_TPAGE);
+					primitive_size = 4;//sizeof(DR_TPAGE);
 		#if defined(DEBUG_POLY_COUNT)
 					polygon_count++;
 		#endif

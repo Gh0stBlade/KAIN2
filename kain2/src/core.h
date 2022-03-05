@@ -24,15 +24,10 @@
 #define LoadImage LoadImagePSX
 #define PSX_EnterCriticalSection	EnterCriticalSection
 #define PSX_ExitCriticalSection		ExitCriticalSection
-#if defined(USE_32_BIT_ADDR)
-#define setAbr(p, abr) ((p)->dr_tpage.tag) |= ((short)abr << 5)
-#else
 #define setAbr(p, abr) ((p)->dr_tpage) |= ((short)abr << 5)
-#endif
 #define setlen_ST( p, _len) 	(((POLY_F4_SEMITRANS *)(p))->len  = (u_char)(_len))
-#define setlen_DP_ST( p, _len) 	(((POLY_F4_SEMITRANS *)(p))->dr_tpage.len  = (u_char)(_len))
 #define setcode_ST(p, _code)	(((POLY_F4_SEMITRANS *)(p))->code = (u_char)(_code))
-#define setPolyFT4_ST(p) setlen_DP_ST(p, 2), setlen_ST(p, 7),  setcode_ST(p, 0x2A)
+#define setPolyFT4_ST(p) setlen_ST(p, 6),  setcode_ST(p, 0x2A)
 #endif
 
 #if !defined(PSXPC_VERSION)

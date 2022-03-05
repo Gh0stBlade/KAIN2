@@ -96,7 +96,7 @@ void PadRemoveGun()
 int PadGetState(int port)
 {
 #if defined(SDL2)
-#if _DEBUG || 1
+#if _DEBUG && 0
 	return PadStateStable;//FIXME should check if keyboard is connected
 #endif
 	if (!(SDL_GameControllerGetAttached(padHandle[port])))
