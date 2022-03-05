@@ -1,3 +1,5 @@
+SET PATH=%PATH%;C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Utilities\bin\x86
+
 fxc /nologo /T vs_3_0 /O3 /Gec /Vn gte_shader_4_vs /Fh gte_shader_4_vs.h gte_shader_4.hlsl /DVERTEX
 fxc /nologo /T ps_3_0 /O3 /Gec /Vn gte_shader_4_ps /Fh gte_shader_4_ps.h gte_shader_4.hlsl /DPIXEL
 fxc /nologo /T vs_3_0 /O3 /Gec /Vn gte_shader_8_vs /Fh gte_shader_8_vs.h gte_shader_8.hlsl /DVERTEX

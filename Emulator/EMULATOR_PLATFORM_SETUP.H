@@ -100,6 +100,7 @@
 #elif defined(D3D9)
 #include <Windows.h>
 #include <d3d9.h>
+#include <SDL_syswm.h>
 #elif defined(D3D11)
 #include <Windows.h>
 #include <d3d11.h>
