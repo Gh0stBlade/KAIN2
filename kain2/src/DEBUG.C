@@ -8,8 +8,458 @@
 #pragma warning(disable: 4101)
 #endif
 
+void DEBUG_FillUpHealth(long* var);
+void DEBUG_FogLoad();
+void DEBUG_SetViewVram();
+
+unsigned long debugRazielFlags1;
+unsigned long debugRazielFlags2;
+unsigned long debugRazielFlags3;
+
+struct DebugMenuLine debugHealthSystemMenu[7];
+struct DebugMenuLine levelSelectMenu[1];
+struct DebugMenuLine cameraMenu[1];
+struct DebugMenuLine fogMenu[1];
+
+extern struct DebugMenuLine debugRazielMenu[8];
+extern struct DebugMenuLine debugSpecialAbilitiesMenu[10];
+extern struct DebugMenuLine debugForgedAbilitiesMenu[7];
+extern struct DebugMenuLine debugGlyphAbilitiesMenu[11];
+extern struct DebugMenuLine debugImbueSoulReaverMenu[7];
+
+struct DebugMenuLine standardMenu[12] =
+{
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0,
+		0,
+		"FILL ER UP",
+		(long*)&DEBUG_FillUpHealth,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_BIT,
+		0,
+		0,
+		"keep info between loads",
+		&gameTrackerX.streamFlags,
+		0x200000
+	},
+	{
+		DEBUG_LINE_TYPE_MENU,
+		0,
+		0,
+		"LEVELS",
+		(long*)&levelSelectMenu,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_BIT,
+		0,
+		0,
+		"SHORT SHORT STATS",
+		&gameTrackerX.debugFlags,
+		0x4000000
+	},
+	{
+		DEBUG_LINE_TYPE_MENU,
+		0,
+		0,
+		"RAZIEL MENU...",
+		(long*)&debugRazielMenu,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_MENU,
+		0,
+		0,
+		"CAMERA MENU...",
+		(long*)&cameraMenu,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_MENU,
+		0,
+		0,
+		"FOG MENU...",
+		(long*)&fogMenu,
+		(long)DEBUG_FogLoad
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0,
+		0,
+		"VIEW VRAM",
+		(long*)DEBUG_SetViewVram,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_BIT,
+		0,
+		0,
+		"Show Warp Gate Info",
+		&gameTrackerX.debugFlags2,
+		0x1000000
+	},
+	{
+		DEBUG_LINE_TYPE_BIT,
+		0,
+		0,
+		"Activate All WarpGates",
+		&gameTrackerX.streamFlags,
+		0x400000
+	},
+	{
+		DEBUG_LINE_TYPE_BIT,
+		0,
+		0,
+		"MUSIC ON",
+		&gameTrackerX.debugFlags2,
+		0x1000
+	},
+	{
+		DEBUG_LINE_TYPE_ENDLIST,
+		0,
+		0,
+		(char*)0x800cf5f8, // Fix me
+		&gameTrackerX.debugFlags,
+		0
+	}
+};
+
+struct DebugMenuLine debugRazielMenu[8] =
+{
+	{
+		DEBUG_LINE_TYPE_MENU,
+		0,
+		0,
+		"MAIN MENU...",
+		(long*)&standardMenu,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_MENU,
+		0,
+		0,
+		"HEALTH SYSTEM    ...",
+		(long*)&debugHealthSystemMenu,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_MENU,
+		0,
+		0,
+		"Special Abilities...",
+		(long*)&debugSpecialAbilitiesMenu,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_MENU,
+		0,
+		0,
+		"Forged  Abilities...",
+		(long*)&debugForgedAbilitiesMenu,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_MENU,
+		0,
+		0,
+		"Glyph   Abilities...",
+		(long*)&debugGlyphAbilitiesMenu,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_MENU,
+		0,
+		0,
+		"IMBUE SOUL REAVER...",
+		(long*)&debugImbueSoulReaverMenu,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_BIT,
+		0,
+		0,
+		"SHIFT ANY TIME",
+		(long*)&debugRazielFlags1,
+		0x50
+	},
+	{
+		DEBUG_LINE_TYPE_ENDLIST,
+		0,
+		0,
+		(char*)0x800cf5f8, // Fix me
+		&gameTrackerX.debugFlags,
+		0
+	}
+};
+
+struct DebugMenuLine debugSpecialAbilitiesMenu[10] =
+{
+	{
+		DEBUG_LINE_TYPE_MENU,
+		0,
+		0,
+		"MAIN MENU...",
+		(long*)&standardMenu,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_MENU,
+		0,
+		0,
+		"RAZIEL MENU...",
+		(long*)&debugRazielMenu,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_BIT,
+		0,
+		0,
+		"ALL",
+		(long*)debugRazielFlags1,
+		0x3f
+	},
+	{
+		DEBUG_LINE_TYPE_BIT,
+		0,
+		0,
+		"PASS THROUGH BARRIERS",
+		(long*)debugRazielFlags1,
+		0x1
+	},
+	{
+		DEBUG_LINE_TYPE_BIT,
+		0,
+		0,
+		"WALL CRAWLING",
+		(long*)debugRazielFlags1,
+		0xb
+	},
+	{
+		DEBUG_LINE_TYPE_BIT,
+		0,
+		0,
+		"FORCE",
+		(long*)debugRazielFlags1,
+		0xf
+	},
+	{
+		DEBUG_LINE_TYPE_BIT,
+		0,
+		0,
+		"SOUL REAVER",
+		(long*)debugRazielFlags1,
+		0x9
+	},
+	{
+		DEBUG_LINE_TYPE_BIT,
+		0,
+		0,
+		"SWIM",
+		(long*)debugRazielFlags1,
+		0x1f
+	},
+	{
+		DEBUG_LINE_TYPE_BIT,
+		0,
+		0,
+		"CONSTRICT",
+		(long*)debugRazielFlags1,
+		0x3f
+	},
+	{
+		DEBUG_LINE_TYPE_ENDLIST,
+		0,
+		0,
+		(char*)0x800cf5f8, // Fix me
+		&gameTrackerX.debugFlags,
+		0
+	}
+};
+
+struct DebugMenuLine debugForgedAbilitiesMenu[7] =
+{
+	{
+		DEBUG_LINE_TYPE_MENU,
+		0,
+		0,
+		"MAIN MENU...",
+		(long*)&standardMenu,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_MENU,
+		0,
+		0,
+		"RAZIEL MENU...",
+		(long*)&debugRazielMenu,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_BIT,
+		0,
+		0,
+		"ALL",
+		(long*)debugRazielFlags1,
+		0x3fc00
+	},
+	{
+		DEBUG_LINE_TYPE_BIT,
+		0,
+		0,
+		"Spectral Reaver",
+		(long*)debugRazielFlags1,
+		0x400
+	},
+	{
+		DEBUG_LINE_TYPE_BIT,
+		0,
+		0,
+		"Material Reaver",
+		(long*)debugRazielFlags1,
+		0x800
+	},
+	{
+		DEBUG_LINE_TYPE_BIT,
+		0,
+		0,
+		"Fire Reaver",
+		(long*)debugRazielFlags1,
+		0x8000
+	},
+	{
+		DEBUG_LINE_TYPE_ENDLIST,
+		0,
+		0,
+		(char*)0x800cf5f8, // Fix me
+		&gameTrackerX.debugFlags,
+		0
+	}
+};
+
+struct DebugMenuLine debugGlyphAbilitiesMenu[11] =
+{
+	{
+		DEBUG_LINE_TYPE_MENU,
+		0,
+		0,
+		"MAIN MENU...",
+		(long*)&standardMenu,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_MENU,
+		0,
+		0,
+		"RAZIEL MENU...",
+		(long*)&debugRazielMenu,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_BIT,
+		0,
+		0,
+		"ALL",
+		(long*)debugRazielFlags1,
+		0x3fc00
+	},
+	{
+		DEBUG_LINE_TYPE_BIT,
+		0,
+		0,
+		"Spectral Reaver",
+		(long*)debugRazielFlags1,
+		0x400
+	},
+	{
+		DEBUG_LINE_TYPE_BIT,
+		0,
+		0,
+		"Material Reaver",
+		(long*)debugRazielFlags1,
+		0x800
+	},
+	{
+		DEBUG_LINE_TYPE_BIT,
+		0,
+		0,
+		"Fire Reaver",
+		(long*)debugRazielFlags1,
+		0x8000
+	},
+	{
+		DEBUG_LINE_TYPE_ENDLIST,
+		0,
+		0,
+		(char*)0x800cf5f8, // Fix me
+		&gameTrackerX.debugFlags,
+		0
+	}
+};
+
+struct DebugMenuLine debugImbueSoulReaverMenu[7] =
+{
+	{
+		DEBUG_LINE_TYPE_MENU,
+		0,
+		0,
+		"MAIN MENU...",
+		(long*)&standardMenu,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_MENU,
+		0,
+		0,
+		"RAZIEL MENU...",
+		(long*)&debugRazielMenu,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_BIT,
+		0,
+		0,
+		"Hold Soul Reaver",
+		(long*)debugRazielFlags1,
+		0x8
+	},
+	{
+		DEBUG_LINE_TYPE_BIT,
+		0,
+		0,
+		"Spectral Reaver",
+		(long*)debugRazielFlags2,
+		0x400
+	},
+	{
+		DEBUG_LINE_TYPE_BIT,
+		0,
+		0,
+		"Material Reaver",
+		(long*)debugRazielFlags2,
+		0x800
+	},
+	{
+		DEBUG_LINE_TYPE_BIT,
+		0,
+		0,
+		"Fire Reaver",
+		(long*)debugRazielFlags2,
+		0x8000
+	},
+	{
+		DEBUG_LINE_TYPE_ENDLIST,
+		0,
+		0,
+		(char*)0x800cf5f8, // Fix me
+		&gameTrackerX.debugFlags,
+		0
+	}
+};
+
 long debugMenuChoice;
-struct DebugMenuLine standardMenu[1]; // offset 0x800CFCB0
 struct DebugMenuLine* currentMenu; // offset 0x800CDB3C
 struct DebugMenuLine pauseMenu[7]; // offset 0x800c9ef0
 
@@ -68,6 +518,11 @@ void DEBUG_FillUpHealth(long *var)
 	/* end block 2 */
 	// End Line: 2513
 
+}
+
+
+void DEBUG_FogLoad(void)
+{
 }
 
 
@@ -812,6 +1267,13 @@ void DEBUG_ExitGame()
 	/* end block 1 */
 	// End Line: 6372
 
+}
+
+
+void DEBUG_SetViewVram()
+{
+	gameTrackerX.gameMode = 7;
+	return;
 }
 
 
