@@ -1629,10 +1629,10 @@ void Emulator_GenerateColourArrayQuad(struct Vertex* vertex, unsigned char* col0
 
 	if (bMaxCol)
 	{
-		vertex[0].r = 255;
-		vertex[0].g = 255;
-		vertex[0].b = 255;
-		vertex[0].a = 255;
+		vertex[0].r = 128;
+		vertex[0].g = 128;
+		vertex[0].b = 128;
+		vertex[0].a = 128;
 	}
 	else
 	{
@@ -1644,9 +1644,9 @@ void Emulator_GenerateColourArrayQuad(struct Vertex* vertex, unsigned char* col0
 
 	if (bMaxCol)
 	{
-		vertex[1].r = 255;
-		vertex[1].g = 255;
-		vertex[1].b = 255;
+		vertex[1].r = 128;
+		vertex[1].g = 128;
+		vertex[1].b = 128;
 		vertex[1].a = 255;
 	}
 	else
@@ -1659,9 +1659,9 @@ void Emulator_GenerateColourArrayQuad(struct Vertex* vertex, unsigned char* col0
 
 	if (bMaxCol)
 	{
-		vertex[2].r = 255;
-		vertex[2].g = 255;
-		vertex[2].b = 255;
+		vertex[2].r = 128;
+		vertex[2].g = 128;
+		vertex[2].b = 128;
 		vertex[2].a = 255;
 	}
 	else
@@ -1674,9 +1674,9 @@ void Emulator_GenerateColourArrayQuad(struct Vertex* vertex, unsigned char* col0
 
 	if (bMaxCol)
 	{
-		vertex[3].r = 255;
-		vertex[3].g = 255;
-		vertex[3].b = 255;
+		vertex[3].r = 128;
+		vertex[3].g = 128;
+		vertex[3].b = 128;
 		vertex[3].a = 255;
 	}
 	else
