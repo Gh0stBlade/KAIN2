@@ -68,7 +68,7 @@ typedef unsigned int bool;
 #endif
 
 #ifndef ABS//I know one of the psyq headers has this so maybe we should just use the one from psyq at some point.
-#define ABS(x) x < 0 ? -x : x
+#define ABS(x) ((x)<0 ? -(x) : (x))
 #endif
 
 typedef struct _SVector // hashcode: 0x73B07C09 (dec: 1940945929)
