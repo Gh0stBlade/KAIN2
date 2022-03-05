@@ -119,11 +119,11 @@ void MENUFACE_ChangeStateRandomly(int index)
 	{
 		lastFace = &MenuFaces[8];
 		face = &MenuFaces[0];
+		curFace = &lastFace[-8];
+
 
 		while (face < lastFace)
-		{
-			curFace = &lastFace[-8];
-			
+		{	
 			if (curFace->delay == 0)
 			{
 				if(curFace->transitionDir == 0)
