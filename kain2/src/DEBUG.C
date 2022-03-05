@@ -12,6 +12,7 @@ void DEBUG_FillUpHealth(long* var);
 void DEBUG_FogLoad();
 void DEBUG_SetViewVram();
 void DEBUG_ReloadCurrentLevel();
+void DEBUG_LevelSelectNew();
 
 unsigned long debugRazielFlags1;
 unsigned long debugRazielFlags2;
@@ -19,35 +20,7 @@ unsigned long debugRazielFlags3;
 
 struct DebugMenuLine debugHealthSystemMenu[7];
 struct DebugMenuLine cameraMenu[1];
-
 struct DebugMenuLine fogMenu[1];
-struct DebugMenuLine AlukaMenu[1];
-struct DebugMenuLine AshVillageMenu[1];
-struct DebugMenuLine OracleMenu[1];
-struct DebugMenuLine PillarsMenu[1];
-struct DebugMenuLine SilencedCathedralMenu[1];
-struct DebugMenuLine SkinnerMenu[1];
-struct DebugMenuLine StoneMenu[1];
-struct DebugMenuLine SunLightMenu[1];
-struct DebugMenuLine TombMenu[1];
-struct DebugMenuLine WaterMenu[1];
-struct DebugMenuLine CityMenu[1];
-struct DebugMenuLine CliffMenu[1];
-struct DebugMenuLine UnderMenu[1];
-struct DebugMenuLine MorlockMenu[1];
-struct DebugMenuLine HubAMenu[1];
-struct DebugMenuLine HubBMenu[1];
-struct DebugMenuLine TrainingMenu[1];
-struct DebugMenuLine DarkEdenMenu[1];
-struct DebugMenuLine BossAreasMenu[1];
-
-extern struct DebugMenuLine debugRazielMenu[8];
-extern struct DebugMenuLine debugSpecialAbilitiesMenu[10];
-extern struct DebugMenuLine debugForgedAbilitiesMenu[7];
-extern struct DebugMenuLine debugGlyphAbilitiesMenu[11];
-extern struct DebugMenuLine debugImbueSoulReaverMenu[7];
-extern struct DebugMenuLine levelSelectMenu[14];
-extern struct DebugMenuLine level2SelectMenu[11];
 
 struct DebugMenuLine standardMenu[12] =
 {
@@ -677,6 +650,1046 @@ struct DebugMenuLine level2SelectMenu[11] =
 		0,
 		"Boss Areas...",
 		(long*)&BossAreasMenu,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ENDLIST,
+		0,
+		0,
+		(char*)0x800cf5f8, // Fix me
+		&gameTrackerX.debugFlags,
+		0
+	}
+};
+
+struct DebugMenuLine AlukaMenu[10] =
+{
+	{
+		DEBUG_LINE_TYPE_MENU,
+		0,
+		0,
+		"AREA MENU...",
+		(long*)&levelSelectMenu,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x1,
+		0,
+		"ALUKA 1",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x4,
+		0,
+		"ALUKA 4",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x6,
+		0,
+		"ALUKA 6",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x8,
+		0,
+		"ALUKA 8",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0xc,
+		0,
+		"ALUKA 12",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x13,
+		0,
+		"ALUKA 19",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x1b,
+		0,
+		"ALUKA 27",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x1d,
+		0,
+		"ALUKA 29",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ENDLIST,
+		0,
+		0,
+		(char*)0x800cf5f8, // Fix me
+		&gameTrackerX.debugFlags,
+		0
+	}
+};
+
+struct DebugMenuLine AshVillageMenu[7] =
+{
+	{
+		DEBUG_LINE_TYPE_MENU,
+		0,
+		0,
+		"AREA MENU...",
+		(long*)&levelSelectMenu,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x1,
+		0,
+		"NIGHTA 1",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x2,
+		0,
+		"NIGHTA 2",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x4,
+		0,
+		"NIGHTA 4",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x3,
+		0,
+		"NIGHTB 3",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x5,
+		0,
+		"NIGHTB 5",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ENDLIST,
+		0,
+		0,
+		(char*)0x800cf5f8, // Fix me
+		&gameTrackerX.debugFlags,
+		0
+	}
+};
+
+struct DebugMenuLine OracleMenu[10] =
+{
+	{
+		DEBUG_LINE_TYPE_MENU,
+		0,
+		0,
+		"AREA MENU...",
+		(long*)&levelSelectMenu,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x3,
+		0,
+		"ORACLE 3",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x5,
+		0,
+		"ORACLE 5",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0xa,
+		0,
+		"ORACLE 10",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0xd,
+		0,
+		"ORACLE 13",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0xf,
+		0,
+		"ORACLE 15",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x11,
+		0,
+		"ORACLE 17",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x12,
+		0,
+		"ORACLE 18",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x16,
+		0,
+		"ORACLE 22",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ENDLIST,
+		0,
+		0,
+		(char*)0x800cf5f8, // Fix me
+		&gameTrackerX.debugFlags,
+		0
+	}
+};
+
+struct DebugMenuLine PillarsMenu[6] =
+{
+	{
+		DEBUG_LINE_TYPE_MENU,
+		0,
+		0,
+		"AREA MENU...",
+		(long*)&levelSelectMenu,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x3,
+		0,
+		"Pillars 3",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x4,
+		0,
+		"Pillars 4",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x9,
+		0,
+		"Pillars 9",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x3,
+		0,
+		"Tompil 3",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ENDLIST,
+		0,
+		0,
+		(char*)0x800cf5f8, // Fix me
+		&gameTrackerX.debugFlags,
+		0
+	}
+};
+
+struct DebugMenuLine SilencedCathedralMenu[11] =
+{
+	{
+		DEBUG_LINE_TYPE_MENU,
+		0,
+		0,
+		"AREA MENU...",
+		(long*)&levelSelectMenu,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x1,
+		0,
+		"Cathy 1",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x3,
+		0,
+		"Cathy 3",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x5,
+		0,
+		"Cathy 5",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x8,
+		0,
+		"Cathy 8",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x13,
+		0,
+		"Cathy 19",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x2a,
+		0,
+		"Cathy 42",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x2f,
+		0,
+		"Cathy 47",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x31,
+		0,
+		"Cathy 49",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x44,
+		0,
+		"Cathy 68",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ENDLIST,
+		0,
+		0,
+		(char*)0x800cf5f8, // Fix me
+		&gameTrackerX.debugFlags,
+		0
+	}
+};
+
+struct DebugMenuLine SkinnerMenu[7] =
+{
+	{
+		DEBUG_LINE_TYPE_MENU,
+		0,
+		0,
+		"AREA MENU...",
+		(long*)&levelSelectMenu,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x1,
+		0,
+		"OUT 1",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x4,
+		0,
+		"OUT 4",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x7,
+		0,
+		"SKINNR 7",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x1,
+		0,
+		"SKINNR 1",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x9,
+		0,
+		"SKINNR 9",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ENDLIST,
+		0,
+		0,
+		(char*)0x800cf5f8, // Fix me
+		&gameTrackerX.debugFlags,
+		0
+	}
+};
+
+struct DebugMenuLine StoneMenu[5] =
+{
+	{
+		DEBUG_LINE_TYPE_MENU,
+		0,
+		0,
+		"AREA MENU...",
+		(long*)&levelSelectMenu,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x1,
+		0,
+		"STONE 1",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x5,
+		0,
+		"STONE 5",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0xa,
+		0,
+		"STONE 10",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ENDLIST,
+		0,
+		0,
+		(char*)0x800cf5f8, // Fix me
+		&gameTrackerX.debugFlags,
+		0
+	}
+};
+
+struct DebugMenuLine SunLightMenu[7] =
+{
+	{
+		DEBUG_LINE_TYPE_MENU,
+		0,
+		0,
+		"AREA MENU...",
+		(long*)&levelSelectMenu,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x1,
+		0,
+		"FILL 1",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x1,
+		0,
+		"INTVALY 1",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x1,
+		0,
+		"SUNRM 1",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x1,
+		0,
+		"PISTON 1",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x1,
+		0,
+		"HTORM 1",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ENDLIST,
+		0,
+		0,
+		(char*)0x800cf5f8, // Fix me
+		&gameTrackerX.debugFlags,
+		0
+	}
+};
+
+struct DebugMenuLine TombMenu[6] =
+{
+	{
+		DEBUG_LINE_TYPE_MENU,
+		0,
+		0,
+		"AREA MENU...",
+		(long*)&levelSelectMenu,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x2,
+		0,
+		"BOSS 2",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x1,
+		0,
+		"TOMB 1",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x1,
+		0,
+		"CONECTC 1",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x1,
+		0,
+		"Add 1",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ENDLIST,
+		0,
+		0,
+		(char*)0x800cf5f8, // Fix me
+		&gameTrackerX.debugFlags,
+		0
+	}
+};
+
+struct DebugMenuLine WaterMenu[4] =
+{
+	{
+		DEBUG_LINE_TYPE_MENU,
+		0,
+		0,
+		"AREA MENU...",
+		(long*)&levelSelectMenu,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x1,
+		0,
+		"TOWER 1",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x7,
+		0,
+		"TOWER 7",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ENDLIST,
+		0,
+		0,
+		(char*)0x800cf5f8, // Fix me
+		&gameTrackerX.debugFlags,
+		0
+	}
+};
+
+struct DebugMenuLine CityMenu[5] =
+{
+	{
+		DEBUG_LINE_TYPE_MENU,
+		0,
+		0,
+		"AREA MENU...",
+		(long*)&levelSelectMenu,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x2,
+		0,
+		"CITY 2",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x9,
+		0,
+		"CITY 9",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0xe,
+		0,
+		"CITY 14",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ENDLIST,
+		0,
+		0,
+		(char*)0x800cf5f8, // Fix me
+		&gameTrackerX.debugFlags,
+		0
+	}
+};
+
+struct DebugMenuLine CliffMenu[3] =
+{
+	{
+		DEBUG_LINE_TYPE_MENU,
+		0,
+		0,
+		"AREA MENU...",
+		(long*)&levelSelectMenu,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x1,
+		0,
+		"CLIFF 1",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ENDLIST,
+		0,
+		0,
+		(char*)0x800cf5f8, // Fix me
+		&gameTrackerX.debugFlags,
+		0
+	}
+};
+
+struct DebugMenuLine UnderMenu[3] =
+{
+	{
+		DEBUG_LINE_TYPE_MENU,
+		0,
+		0,
+		"AREA MENU...",
+		(long*)&levelSelectMenu,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x1,
+		0,
+		"UNDER 1",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ENDLIST,
+		0,
+		0,
+		(char*)0x800cf5f8, // Fix me
+		&gameTrackerX.debugFlags,
+		0
+	}
+};
+
+struct DebugMenuLine MorlockMenu[3] =
+{
+	{
+		DEBUG_LINE_TYPE_MENU,
+		0,
+		0,
+		"AREA MENU...",
+		(long*)&levelSelectMenu,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x1,
+		0,
+		"Mrlock 1",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ENDLIST,
+		0,
+		0,
+		(char*)0x800cf5f8, // Fix me
+		&gameTrackerX.debugFlags,
+		0
+	}
+};
+
+struct DebugMenuLine HubAMenu[5] =
+{
+	{
+		DEBUG_LINE_TYPE_MENU,
+		0,
+		0,
+		"AREA MENU...",
+		(long*)&levelSelectMenu,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x1,
+		0,
+		"Huba 1",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x6,
+		0,
+		"Huba 6",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0xa,
+		0,
+		"Huba 10",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ENDLIST,
+		0,
+		0,
+		(char*)0x800cf5f8, // Fix me
+		&gameTrackerX.debugFlags,
+		0
+	}
+};
+
+struct DebugMenuLine HubBMenu[3] =
+{
+	{
+		DEBUG_LINE_TYPE_MENU,
+		0,
+		0,
+		"AREA MENU...",
+		(long*)&levelSelectMenu,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x1,
+		0,
+		"Hubb 1",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ENDLIST,
+		0,
+		0,
+		(char*)0x800cf5f8, // Fix me
+		&gameTrackerX.debugFlags,
+		0
+	}
+};
+
+struct DebugMenuLine TrainingMenu[5] =
+{
+	{
+		DEBUG_LINE_TYPE_MENU,
+		0,
+		0,
+		"AREA MENU...",
+		(long*)&levelSelectMenu,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x1,
+		0,
+		"Train 1",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x7,
+		0,
+		"Train 7",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x9,
+		0,
+		"Train 9",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ENDLIST,
+		0,
+		0,
+		(char*)0x800cf5f8, // Fix me
+		&gameTrackerX.debugFlags,
+		0
+	}
+};
+
+struct DebugMenuLine DarkEdenMenu[3] =
+{
+	{
+		DEBUG_LINE_TYPE_MENU,
+		0,
+		0,
+		"AREA MENU...",
+		(long*)&levelSelectMenu,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x3,
+		0,
+		"Fire 3",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ENDLIST,
+		0,
+		0,
+		(char*)0x800cf5f8, // Fix me
+		&gameTrackerX.debugFlags,
+		0
+	}
+};
+
+struct DebugMenuLine BossAreasMenu[9] =
+{
+	{
+		DEBUG_LINE_TYPE_MENU,
+		0,
+		0,
+		"More Areas Menu...",
+		(long*)&level2SelectMenu,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_MENU,
+		0,
+		0,
+		"Anterooms...",
+		(long*)&AnteRoomsMenu,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x9,
+		0,
+		"Skinnr 9",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x37,
+		0,
+		"Cathy 55",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x1,
+		0,
+		"Pillars 1",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x6,
+		0,
+		"Aluka 6",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x3,
+		0,
+		"Nightb 3",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x1,
+		0,
+		"Chrono 1",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ENDLIST,
+		0,
+		0,
+		(char*)0x800cf5f8, // Fix me
+		&gameTrackerX.debugFlags,
+		0
+	}
+};
+
+struct DebugMenuLine AnteRoomsMenu[8] =
+{
+	{
+		DEBUG_LINE_TYPE_MENU,
+		0,
+		0,
+		"Boss Menu...",
+		(long*)&BossAreasMenu,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0xc,
+		0,
+		"Skinnr 12",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x36,
+		0,
+		"Cathy 54",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x2,
+		0,
+		"Pillars 2",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x2e,
+		0,
+		"Aluka 46",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x8,
+		0,
+		"Nightb 8",
+		(long*)&DEBUG_LevelSelectNew,
+		0
+	},
+	{
+		DEBUG_LINE_TYPE_ACTION,
+		0x2,
+		0,
+		"Chrono 2",
+		(long*)&DEBUG_LevelSelectNew,
 		0
 	},
 	{
@@ -1500,6 +2513,10 @@ void DEBUG_ExitGame()
 }
 
 void DEBUG_ReloadCurrentLevel()
+{
+}
+
+void DEBUG_LevelSelectNew()
 {
 }
 
