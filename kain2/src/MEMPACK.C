@@ -326,7 +326,7 @@ void MEMPACK_Free(char *address)
 	memAddress->memType = 0;
 	newMemTracker.currentMemoryUsed -= memAddress->memSize;
 
-	secondAddress = (struct MemHeader*)(char*)(memAddress + memAddress->memSize);
+	secondAddress = (struct MemHeader*)((char*)memAddress + memAddress->memSize);
 
 	if ((char*)secondAddress != newMemTracker.lastMemoryAddress)
 	{
