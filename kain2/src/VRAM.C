@@ -475,6 +475,10 @@ struct _BlockVramEntry* VRAM_CheckVramSlot(short* x, short* y, short w, short h,
 				VRAM_InsertFreeVram(hldx, hldy + h, w, hldh - h, 1);
 			}
 		}
+		else
+		{
+			VRAM_InsertFreeVram(hldx + w, hldy, hldw - w, hldh, 16);
+		}
 	}
 	else
 	{
