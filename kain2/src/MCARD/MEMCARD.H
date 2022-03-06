@@ -224,7 +224,7 @@ struct mcmenu_table_t // hashcode: 0xB78C7C17 (dec: -1215529961)
 	void (*begin)(); // size=0, offset=12
 	void (*end)(); // size=0, offset=16
 	int (*set_buffer)(); // size=0, offset=20
-	int (*main)(); // size=0, offset=24
+	int (*main)(mcmenu_t*, int index); // size=0, offset=24
 	int (*pause)(); // size=0, offset=28
 	char* versionID; // size=0, offset=32
 };
