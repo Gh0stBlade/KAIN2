@@ -86,15 +86,13 @@ int VRAM_ConcatanateMemory(struct _BlockVramEntry* curBlock)
 			{
 				if (curBlock->y == nextBlock->y && curBlock->h == nextBlock->h)
 				{
-					if ((curBlock->x + curBlock->w) == nextBlock->x)
+					if ((curBlock->x + curBlock->w) == nextBlock->x &&
+						!(curBlock->x & 0x3F) || curBlock->w + nextBlock->w < 65)
 					{
-						if (!(curBlock->x & 0x3F) || curBlock->w + nextBlock->w < 65)
-						{
-							curBlock->w += nextBlock->w;
-							VRAM_DeleteFreeBlock(nextBlock);
-							nextBlock->flags = 0;
-							return 1;
-						}
+						curBlock->w += nextBlock->w;
+						VRAM_DeleteFreeBlock(nextBlock);
+						nextBlock->flags = 0;
+						return 1;
 					}
 
 					if ((nextBlock->x + nextBlock->w) == curBlock->x)
@@ -125,11 +123,11 @@ void VRAM_GarbageCollect()
 	}
 }
 
-int VRAM_InsertFreeBlock(struct _BlockVramEntry *block)
-{ 
-	struct _BlockVramEntry *next;
-	struct _BlockVramEntry *prev;
-	
+int VRAM_InsertFreeBlock(struct _BlockVramEntry* block)
+{
+	struct _BlockVramEntry* next;
+	struct _BlockVramEntry* prev;
+
 	prev = NULL;
 	if (block == NULL)
 	{
@@ -137,18 +135,17 @@ int VRAM_InsertFreeBlock(struct _BlockVramEntry *block)
 	}
 
 	next = openVramBlocks;
-	if (next != NULL)
+	while (next != NULL)
 	{
-		while (next->area < block->area)
+		if (next->area >= block->area)
 		{
-			prev = next;
-			next = prev->next;
-			if (next == NULL)
-			{
-				break;
-			}
+			break;
 		}
+
+		prev = next;
+		next = prev->next;
 	}
+
 
 	if (prev == NULL)
 	{
@@ -219,7 +216,8 @@ void VRAM_InsertUsedBlock(struct _BlockVramEntry *block)
 		}
 		else
 		{
-			usedVramBlocks = block->next;
+			block->next = usedVramBlocks;
+			usedVramBlocks = block;
 		}
 	}
 }
@@ -316,7 +314,16 @@ int VRAM_InsertFreeVram(short x, short y, short w, short h, int flags)
 		useBlock->h = h;
 		useBlock->area = useBlock->w * h;
 
+
+		if (useBlock->x == 528 && useBlock->y == 0 && useBlock->w == 48 && useBlock->h == 512)
+		{
+			int testing = 0;
+			testing++;
+		}
+
 		VRAM_InsertFreeBlock(useBlock);
+
+		
 
 		useBlock = VRAM_GetOpenBlock();
 		useBlock->w = (w - 64) + (x & 0x3F);
@@ -330,6 +337,12 @@ int VRAM_InsertFreeVram(short x, short y, short w, short h, int flags)
 		useBlock->area = useBlock->w * h;
 
 		VRAM_InsertFreeBlock(useBlock);
+
+		if (useBlock->x == 528 && useBlock->y == 0 && useBlock->w == 48 && useBlock->h == 512)
+		{
+			int testing = 0;
+			testing++;
+		}
 	}
 	else
 	{
@@ -346,6 +359,12 @@ int VRAM_InsertFreeVram(short x, short y, short w, short h, int flags)
 		useBlock->area = w * h;
 
 		VRAM_InsertFreeBlock(useBlock);
+
+		if (useBlock->x == 528 && useBlock->y == 0 && useBlock->w == 48 && useBlock->h == 512)
+		{
+			int testing = 0;
+			testing++;
+		}
 	}
 
 	return 1;
@@ -372,8 +391,7 @@ struct _BlockVramEntry* VRAM_CheckVramSlot(short* x, short* y, short w, short h,
 
 	while (vblock != NULL)
 	{
-		if ((vblock->w >= w && vblock->h >= h && startY == -1) ||
-			vblock->y >= startY && vblock->y < startY + 256)
+		if ((((vblock->w >= w) && (vblock->h >= h))) && ((startY == -1 || ((vblock->y >= startY) && (vblock->y < startY + 256)))))
 		{
 			if ((vblock->x & 0x3F))
 			{
@@ -469,32 +487,24 @@ struct _BlockVramEntry* VRAM_CheckVramSlot(short* x, short* y, short w, short h,
 	{
 		if (hldh != h)
 		{
-			if (ABS(((offsetright - vblock->w) * hldh) - (w * (hldh - h))) < ABS(((offsetright - vblock->w) * h) - (offsetright * (hldh - h))))
+			if (ABS(((hldw - w) * hldh) - (w * (hldh - h))) < ABS(((hldw - w) * h) - (hldw * (hldh - h))))
 			{
 				VRAM_InsertFreeVram(hldx + w, hldy, hldw - w, hldh, 1);
 				VRAM_InsertFreeVram(hldx, hldy + h, w, hldh - h, 1);
 			}
 			else
 			{
-				VRAM_InsertFreeVram(hldx - w, hldy, hldw - w, hldh, 1);
+				VRAM_InsertFreeVram(hldx + w, hldy, hldw - w, hldh, 1);
 				VRAM_InsertFreeVram(hldx, hldy + h, w, hldh - h, 1);
 			}
-
-			return vblock;
 		}
-		else
-		{
-			VRAM_InsertFreeVram(hldx + w, hldy, offset - w, hldh, 1);
-		}
-	}
-	else if (hldh == h)
-	{
-		return vblock;
 	}
 	else
 	{
-		VRAM_InsertFreeVram(hldx, hldy + h, vblock->w, hldh - h, 1);
-		return vblock;
+		if (hldh != h)
+		{
+			VRAM_InsertFreeVram(hldx, hldy + h, vblock->w, hldh - h, 16);
+		}
 	}
 
 	return vblock;
