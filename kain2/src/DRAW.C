@@ -127,10 +127,9 @@ void DRAW_DrawButton(struct _ButtonTexture *button, short x, short y, unsigned l
 	primPool = gameTrackerX.primPool;
 
 	prim = primPool->nextPrim;
-
 	if (primPool->lastPrim - 12 >= primPool->nextPrim)
 	{
-		w = button->textureW;
+		w = button->textureW << button->xshift;
 		h = button->textureH;
 
 		offsetx = (button->vramBlock->x & 0x3F) << button->xshift;
@@ -147,6 +146,8 @@ void DRAW_DrawButton(struct _ButtonTexture *button, short x, short y, unsigned l
 
 		((POLY_FT4*)prim)->x0 = x;
 		((POLY_FT4*)prim)->y0 = y;
+
+		((POLY_FT4*)prim)->u0 = offsetx;
 
 		((POLY_FT4*)prim)->x1 = (x + w) - 1;
 		((POLY_FT4*)prim)->y1 = y;
@@ -218,7 +219,7 @@ void DRAW_LoadButton(long *addr, _ButtonTexture *button)
 	vramRect.w = button->textureW;
 	vramRect.h = button->textureH;
 	
-	LoadImage(&vramRect, (unsigned long*)addr + 3);
+	LoadImage(&vramRect, (unsigned long*)(addr + 3));
 	
 	if (paletteAddr != NULL)
 	{
