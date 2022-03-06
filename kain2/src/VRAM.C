@@ -54,7 +54,7 @@ int VRAM_ConcatanateMemory(struct _BlockVramEntry* curBlock)
 		while (nextBlock != NULL)
 		{
 			if (curBlock->x == nextBlock->x && curBlock->w == nextBlock->w &&
-				(curBlock->y >> 24) == (nextBlock->y >> 24))
+				(curBlock->y >> 8) == (nextBlock->y >> 8))
 			{
 				if ((curBlock->y + curBlock->h) == nextBlock->y)
 				{
@@ -307,16 +307,7 @@ int VRAM_InsertFreeVram(short x, short y, short w, short h, int flags)
 		useBlock->h = h;
 		useBlock->area = useBlock->w * h;
 
-
-		if (useBlock->x == 528 && useBlock->y == 0 && useBlock->w == 48 && useBlock->h == 512)
-		{
-			int testing = 0;
-			testing++;
-		}
-
 		VRAM_InsertFreeBlock(useBlock);
-
-		
 
 		useBlock = VRAM_GetOpenBlock();
 		useBlock->w = (w - 64) + (x & 0x3F);
@@ -330,12 +321,6 @@ int VRAM_InsertFreeVram(short x, short y, short w, short h, int flags)
 		useBlock->area = useBlock->w * h;
 
 		VRAM_InsertFreeBlock(useBlock);
-
-		if (useBlock->x == 528 && useBlock->y == 0 && useBlock->w == 48 && useBlock->h == 512)
-		{
-			int testing = 0;
-			testing++;
-		}
 	}
 	else
 	{
@@ -352,12 +337,6 @@ int VRAM_InsertFreeVram(short x, short y, short w, short h, int flags)
 		useBlock->area = w * h;
 
 		VRAM_InsertFreeBlock(useBlock);
-
-		if (useBlock->x == 528 && useBlock->y == 0 && useBlock->w == 48 && useBlock->h == 512)
-		{
-			int testing = 0;
-			testing++;
-		}
 	}
 
 	return 1;
