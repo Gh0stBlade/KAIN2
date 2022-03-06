@@ -367,21 +367,9 @@ struct _BlockVramEntry* VRAM_CheckVramSlot(short* x, short* y, short w, short h,
 		{
 			if ((vblock->x & 0x3F))
 			{
-				if ((64 - (vblock->x & 0x3F)) != 0)
+				if ((64 - (vblock->x & 0x3F)) >= w)
 				{
-					hldw = 64 - (vblock->x & 0x3F);
-					newx = 64 - ((vblock->x + hldw) & 0x3F);
-
-					if (newx >= w || (vblock->w - hldw) >= w)
-					{
-						fits = 1;
-						vblockright = vblock;
-						offsetright = hldw;
-					}
-				}
-				else
-				{
-					if ((vblock->x & 0xF))
+					if (((vblock->x & 0x3F) & 0xF))
 					{
 						hldw = (16 - (64 - (vblock->x & 0x3F)));
 						newx = 64 - ((vblock->x + hldw) & 0x3F);
@@ -396,6 +384,23 @@ struct _BlockVramEntry* VRAM_CheckVramSlot(short* x, short* y, short w, short h,
 							vblock->w -= hldw;
 							break;
 						}
+					}
+					else
+					{
+						fits = 0;
+						break;
+					}
+				}
+				else
+				{
+					hldw = 64 - (vblock->x & 0x3F);
+					newx = 64 - ((vblock->x + hldw) & 0x3F);
+
+					if (newx >= w || (vblock->w - hldw) >= w)
+					{
+						fits = 1;
+						vblockright = vblock;
+						offsetright = hldw;
 					}
 				}
 			}
@@ -461,8 +466,8 @@ struct _BlockVramEntry* VRAM_CheckVramSlot(short* x, short* y, short w, short h,
 		{
 			if (ABS(((hldw - w) * hldh) - (w * (hldh - h))) < ABS(((hldw - w) * h) - (hldw * (hldh - h))))
 			{
-				VRAM_InsertFreeVram(hldx + w, hldy, hldw - w, hldh, 1);
-				VRAM_InsertFreeVram(hldx, hldy + h, w, hldh - h, 1);
+				VRAM_InsertFreeVram(hldx + w, hldy, hldw - w, h, 1);
+				VRAM_InsertFreeVram(hldx, hldy + h, hldw, hldh - h, 1);
 			}
 			else
 			{
