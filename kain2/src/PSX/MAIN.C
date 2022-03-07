@@ -797,6 +797,11 @@ int MainG2(void *appData)
 				MAIN_ShowLoadingScreen();
 				FONT_ReloadFont();
 				DrawSync(0);
+
+#if defined(PSXPC_VERSION)
+				DrawOTag(NULL);
+#endif
+
 				STREAM_Init();
 				gameTracker->frameCount = 0;
 				GAMELOOP_LevelLoadAndInit(&gameTracker->baseAreaName[0], gameTracker);

@@ -1,4 +1,4 @@
-#include "THISDUST.H"
+#include "CORE.H"
 #include "ENMYPLAN.H"
 
 
@@ -119,7 +119,7 @@ int ENMYPLAN_WayPointSkipped(struct _Position *currentPos, struct _Position *tar
 		// Start offset: 0x800966C8
 		// Variables:
 			long range[2]; // stack offset -40
-			struct _Position vector[2]; // stack offset -32
+			//struct _Position vector[2]; // stack offset -32
 
 		/* begin block 1.1 */
 			// Start line: 209
@@ -140,13 +140,6 @@ int ENMYPLAN_WayPointSkipped(struct _Position *currentPos, struct _Position *tar
 			// Start line: 209
 			// Start offset: 0x800966C8
 			// Variables:
-				short _x0; // $a0
-				short _y0; // $v0
-				short _z0; // $v1
-				short _x1; // $a1
-				short _y1; // $a2
-				short _z1; // $a3
-				struct _Position *_v; // $a1
 		/* end block 1.2 */
 		// End offset: 0x800966C8
 		// End Line: 209
@@ -208,7 +201,7 @@ int ENMYPLAN_PathClear(struct _Position *pos, struct _Position *target)
 			int len; // $a1
 			int oldPCO; // $s2
 			struct _Position *tpos; // $a1
-			struct _Position newTarget; // stack offset -24
+			//struct _Position newTarget; // stack offset -24
 	/* end block 1 */
 	// End offset: 0x80096A68
 	// End Line: 304

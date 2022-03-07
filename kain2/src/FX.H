@@ -1,6 +1,8 @@
 #ifndef FX_H
 #define FX_H
 
+#include "CORE.H"
+
 typedef void (*TDRFuncPtr__FX_Build5fxSetup)();
 typedef void (*TDRFuncPtr__FX_Build6fxProcess)();
 typedef void (*TDRFuncPtr__FX_BuildNonSegmentedSplinters6fxSetup)();
@@ -101,7 +103,9 @@ struct _FXBlastringEffect // hashcode: 0x2F8F0E55 (dec: 797904469)
 	unsigned char type; // size=0, offset=13
 	short lifeTime; // size=0, offset=14
 	struct _SVector position; // size=8, offset=16
-	struct MATRIX matrix; // size=32, offset=24
+#if !defined(PSX_VERSION)//Undefined
+	MATRIX matrix; // size=32, offset=24
+#endif
 	short segment; // size=0, offset=56
 	short pad; // size=0, offset=58
 	int radius; // size=0, offset=60
@@ -206,7 +210,9 @@ struct _FX_MATRIX // hashcode: 0x13190ADD (dec: 320408285)
 {
 	struct NodeType node; // size=8, offset=0
 	long flags; // size=0, offset=8
-	struct MATRIX lwTransform; // size=32, offset=12
+#if !defined(PSX_VERSION)//Undefined
+	MATRIX lwTransform; // size=32, offset=12
+#endif
 };
 
 struct _FX_PRIM // hashcode: 0x16BF818E (dec: 381649294)
@@ -322,8 +328,8 @@ extern void FX_Relocate(struct _SVector *offset); // 0x80044430
 extern void FX_UpdateTexturePointers(struct _FX_PRIM *fxPrim, struct Object *oldObject, long sizeOfObject, long offset); // 0x800445E0
 extern void FX_RelocateFXPointers(struct Object *oldObject, struct Object *newObject, long sizeOfObject); // 0x80044640
 extern void FX_ProcessList(struct _FXTracker *fxTracker); // 0x80044710
-extern void FX_DrawReaver(struct _PrimPool *primPool, unsigned long **ot, struct MATRIX *wcTransform); // 0x8004490C
-extern void FX_DrawList(struct _FXTracker *fxTracker, struct GameTracker *gameTracker, unsigned long **ot, struct MATRIX *wcTransform); // 0x80044958
+extern void FX_DrawReaver(struct _PrimPool *primPool, unsigned long **ot, MATRIX *wcTransform); // 0x8004490C
+extern void FX_DrawList(struct _FXTracker *fxTracker, struct GameTracker *gameTracker, unsigned long **ot, MATRIX *wcTransform); // 0x80044958
 extern void FX_SimpleQuadSetup(struct _FX_PRIM *fxPrim, TDRFuncPtr_FX_SimpleQuadSetup1fxProcess fxProcess, struct _FX_MATRIX *fxMatrix, struct _Instance *instance, struct _MFace *mface, struct _MVertex *vertexList, SVECTOR*center, SVECTOR*vel, SVECTOR*accl, struct _FXTracker *fxTracker, int timeToLive); // 0x80045B60
 extern void FX_WaterRingProcess(struct _FX_PRIM *fxPrim, struct _FXTracker *fxTracker); // 0x80045D9C
 extern void FX_WaterBubbleProcess(struct _FX_PRIM *fxPrim, struct _FXTracker *fxTracker); // 0x80045E18
@@ -331,7 +337,7 @@ extern void FX_Sprite_Insert(struct NodeType *list, struct _FX_PRIM *fxPrim); //
 extern struct TextureMT3 * FX_GetTextureObject(struct Object *object, int modelnum, int texnum); // 0x80046068
 extern void FX_MakeWaterBubble(struct _SVector *position, struct _SVector *vel, struct _SVector *accl, long splashZ, struct __BubbleParams *BP); // 0x800460A4
 extern void FX_DrawScreenPoly(int transtype, unsigned long color, int zdepth); // 0x80046254
-extern struct POLY_GT4 * FX_SetupPolyGT4(int x1, int y1, int x2, int y2, int otz, struct TextureMT3 *texture, long color0, long color1, long color2, long color3); // 0x80046300
+extern POLY_GT4 * FX_SetupPolyGT4(int x1, int y1, int x2, int y2, int otz, struct TextureMT3 *texture, long color0, long color1, long color2, long color3); // 0x80046300
 extern void FX_MakeWarpArrow(int x, int y, int xsize, int ysize, int fade); // 0x80046404
 extern void FX_MakeMannaIcon(int x, int y, int xsize, int ysize); // 0x800464E4
 extern void FX_MakeGlyphIcon(struct _Position *position, struct Object *glyphObject, int size, int glyphnum, int enabled); // 0x80046690
@@ -374,7 +380,7 @@ extern void FX_ContinueLightning(struct _FXLightning *zap, struct _FXTracker *fx
 extern void FX_SetReaverInstance(struct _Instance *instance); // 0x8004A224
 extern void FX_SoulReaverBlade(struct _Instance *instance, unsigned long **drawot); // 0x8004A230
 extern void FX_ReaverBladeInit(); // 0x8004A620
-extern void FX_SoulReaverWinding(struct _Instance *instance, struct _PrimPool *primPool, unsigned long **ot, struct MATRIX *wcTransform); // 0x8004A628
+extern void FX_SoulReaverWinding(struct _Instance *instance, struct _PrimPool *primPool, unsigned long **ot, MATRIX *wcTransform); // 0x8004A628
 extern void FX_UpdateInstanceWaterSplit(struct _Instance *instance); // 0x8004A878
 extern void FX_GetPlaneEquation(struct _SVector *normal, struct _SVector *poPlane, struct _PlaneConstants *plane); // 0x8004A948
 extern void FX_DoInstancePowerRing(struct _Instance *instance, long atuTime, long *color, long numColors, int follow_halveplane); // 0x8004A9BC
@@ -390,11 +396,11 @@ extern struct _FXGlowEffect * FX_DoInstanceManySegmentGlow(struct _Instance *ins
 extern struct _FXGlowEffect * FX_DoInstanceOneSegmentGlowWithTime(struct _Instance *instance, long segment, long *color, long numColors, long atuColorCycleRate, long width, long height, long ATULifeTime); // 0x8004B148
 extern void FX_StopAllGlowEffects(struct _Instance *instance, int fadeout_time); // 0x8004B190
 extern void FX_StopGlowEffect(struct _FXGlowEffect *glowEffect, int fadeout_time); // 0x8004B224
-extern void FX_DrawLightning(struct _FXLightning *zap, struct MATRIX *wcTransform, unsigned long **ot); // 0x8004B2AC
-extern void FX_DrawAllGeneralEffects(struct MATRIX *wcTransform, struct _VertexPool *vertexPool, struct _PrimPool *primPool, unsigned long **ot); // 0x8004B560
+extern void FX_DrawLightning(struct _FXLightning *zap, MATRIX *wcTransform, unsigned long **ot); // 0x8004B2AC
+extern void FX_DrawAllGeneralEffects(MATRIX *wcTransform, struct _VertexPool *vertexPool, struct _PrimPool *primPool, unsigned long **ot); // 0x8004B560
 extern void FX_ContinueBlastRing(struct _FXBlastringEffect *blast, struct _FXTracker *fxTracker); // 0x8004B738
-extern struct _FXBlastringEffect * FX_DoBlastRing(struct _Instance *instance, struct _SVector *position, struct MATRIX *mat, int segment, int radius, int endRadius, int colorChangeRadius, int size1, int size2, int vel, int accl, int height1, int height2, int height3, long startColor, long endColor, int pred_offset, int lifeTime, int sortInWorld); // 0x8004B94C
-extern void FX_DrawBlastring(struct MATRIX *wcTransform, struct _FXBlastringEffect *blast); // 0x8004BB20
+extern struct _FXBlastringEffect * FX_DoBlastRing(struct _Instance *instance, struct _SVector *position, MATRIX *mat, int segment, int radius, int endRadius, int colorChangeRadius, int size1, int size2, int vel, int accl, int height1, int height2, int height3, long startColor, long endColor, int pred_offset, int lifeTime, int sortInWorld); // 0x8004B94C
+extern void FX_DrawBlastring(MATRIX *wcTransform, struct _FXBlastringEffect *blast); // 0x8004BB20
 extern void FX_ContinueFlash(struct _FXFlash *flash, struct _FXTracker *fxTracker); // 0x8004BCEC
 extern void FX_DrawFlash(struct _FXFlash *flash); // 0x8004BD3C
 extern void FX_RelocateGeneric(struct Object *object, long offset); // 0x8004BE50
@@ -422,15 +428,15 @@ extern void FX_Spiral_Init(); // 0x8004DB34
 extern void FX_DrawModel(struct Object *object, int model_num, struct _SVector *rotation, struct _SVector *position, struct _SVector *offset, int transflag); // 0x8004DB74
 extern void fx_calc_points(struct _SVector *points, int degrees, int radius, int radius2, int radius3); // 0x8004DDEC
 extern long fx_get_startz(struct _SVector *position); // 0x8004DEFC
-extern void FX_DrawRing(struct MATRIX *wcTransform, struct _SVector *position, struct MATRIX *matrix, int radius, int radius2, int radius3, int z1, int z2, int z3, long color, int sortInWorld); // 0x8004DF54
-extern void fx_setTex(struct DVECTOR *x, unsigned char *uv, int tx, int offset); // 0x8004E200
-extern void FX_DrawRing2(struct MATRIX *wcTransform, struct _SVector *position, struct MATRIX *matrix, int radius, int radius2, int radius3, int z1, int z2, int z3, long offset, int sortInWorld); // 0x8004E244
-extern void FX_DrawFField(struct MATRIX *wcTransform, struct _FXForceFieldEffect *field); // 0x8004E61C
+extern void FX_DrawRing(MATRIX *wcTransform, struct _SVector *position, MATRIX *matrix, int radius, int radius2, int radius3, int z1, int z2, int z3, long color, int sortInWorld); // 0x8004DF54
+extern void fx_setTex(DVECTOR *x, unsigned char *uv, int tx, int offset); // 0x8004E200
+extern void FX_DrawRing2(MATRIX *wcTransform, struct _SVector *position, MATRIX *matrix, int radius, int radius2, int radius3, int z1, int z2, int z3, long offset, int sortInWorld); // 0x8004E244
+extern void FX_DrawFField(MATRIX *wcTransform, struct _FXForceFieldEffect *field); // 0x8004E61C
 extern struct _FXForceFieldEffect * FX_StartFField(struct _Instance *instance, int size, struct _Position *offset, int size_diff, int size_change, int deg_change, long color); // 0x8004E810
 extern void FX_EndFField(struct _Instance *instance); // 0x8004E8E4
 extern void FX_Draw_Glowing_Line(unsigned long **ot, long otz, struct DVECTOR *sxy0, struct DVECTOR *sxy1, struct DVECTOR *xy0, struct DVECTOR *xy1, long color, long color2); // 0x8004E964
-extern void FX_Lightning(struct MATRIX *wcTransform, unsigned long **ot, struct MATRIX *mat, short deg, struct _SVector *start, struct _SVector *end, int width, int small_width, int segs, int sine_size, int variation, long color, long glow_color); // 0x8004EB00
-extern void FX_LightHouse(struct MATRIX *wcTransform, unsigned long **ot, struct _Instance *instance, int startSeg, int endSeg, int segs, long beam_color); // 0x8004EFF0
+extern void FX_Lightning(MATRIX *wcTransform, unsigned long **ot, MATRIX *mat, short deg, struct _SVector *start, struct _SVector *end, int width, int small_width, int segs, int sine_size, int variation, long color, long glow_color); // 0x8004EB00
+extern void FX_LightHouse(MATRIX *wcTransform, unsigned long **ot, struct _Instance *instance, int startSeg, int endSeg, int segs, long beam_color); // 0x8004EFF0
 extern void FX_StartPassthruFX(struct _Instance *instance, struct _SVector *normal, struct _SVector *point); // 0x8004F46C
 extern void FX_EndPassthruFX(struct _Instance *instance); // 0x8004F548
 

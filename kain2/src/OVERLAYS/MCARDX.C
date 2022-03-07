@@ -1,5 +1,6 @@
 #include "CORE.H"
 #include "MCARDX.H"
+#include "PSX/MAIN.H"
 
 #include "MCARD/MEMCARD.H"
 
@@ -37,7 +38,26 @@ void sub_801A03D4(mcard_t* card, mcmenu_t* mcmenu, mcpsx_directory_t* directory,
 	sub_801A039C(card);
 }
 
-void MCARDX_initialize(mcmenu_t* mcmenu, memcard_t* memcard, int nBlocks)
+int sub_801A17A8(void* buffer, int* a1, int nbytes, int a3, void* var_10, int* var_14)
+{
+	//s3 = buffer
+	//s0 = a1
+	//s2 = nbytes
+	//s4 = a3
+
+	memset(buffer, 0, (a3 << 7) + 256);
+	return 0;//temp
+}
+
+static int unk_8019F934 = 32;
+static int unk_801A512C = 0;
+
+int sub_801A1ADC(void* buffer, int nbytes)
+{
+	return sub_801A17A8(buffer, &unk_8019F934, nbytes, 1, NULL, &unk_801A512C);
+}
+
+void MCARDX_initialize(mcmenu_t* mcmenu, memcard_t* memcard, int nblocks)
 {
 	memset(mcmenu, 0, sizeof(mcmenu_t));
 
@@ -45,9 +65,26 @@ void MCARDX_initialize(mcmenu_t* mcmenu, memcard_t* memcard, int nBlocks)
 	mcmenu->state.fsm = fsm_new_card;
 	mcmenu->state.fsm_prev = fsm_new_card;
 	mcmenu->state.running = 0;
-	mcmenu->params.nblocks = nBlocks;
+	mcmenu->params.nblocks = nblocks;
 	mcmenu->mcard = (mcard_t*)(mcmenu + 1);
 	mcmenu->opaque = memcard;
 
 	sub_801A03D4(mcmenu->mcard, mcmenu, mcmenu->params.directory, &mcmenu->params.nfiles);
+}
+
+int MCARDX_set_buffer(mcmenu_t* mcmenu, void* buffer, int nbytes)
+{
+	mcmenu->params.buffer = buffer;
+	mcmenu->params.nbytes = nbytes;
+	return sub_801A1ADC(buffer, mcmenu->params.nblocks);
+}
+
+void MCARDX_begin()
+{
+	///mainTrackerX.mainState = 4;//Dirty hack for now.
+}
+
+int MCARDX_main(mcmenu_t* mcmenu, int index)
+{
+	return 0;
 }

@@ -79,10 +79,10 @@ void load(struct memcard_t *memcard)
 	memcard->table->data_size = NULL;
 	memcard->table->initialize = MCARDX_initialize;
 	memcard->table->terminate = NULL;
-	memcard->table->begin = NULL;
+	memcard->table->begin = MCARDX_begin;
 	memcard->table->end = NULL;
-	memcard->table->set_buffer = NULL;
-	memcard->table->main = NULL;
+	memcard->table->set_buffer = MCARDX_set_buffer;
+	memcard->table->main = MCARDX_main;
 	memcard->table->pause = NULL;
 #endif
 }

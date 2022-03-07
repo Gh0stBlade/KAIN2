@@ -1,4 +1,4 @@
-#include "THISDUST.H"
+#include "CORE.H"
 #include "PLANAPI.H"
 
 
@@ -88,7 +88,7 @@ int PLANAPI_AddNodeOfTypeToPool(struct _Position *pos, int type)
 			struct PlanningNode *planningPool; // $s1
 			int foundHit; // $v1
 			int nodePlacement; // stack offset -24
-			struct _PlanCollideInfo pci; // stack offset -40
+			//struct _PlanCollideInfo pci; // stack offset -40
 
 		/* begin block 1.1 */
 			// Start line: 284
@@ -385,7 +385,7 @@ void PLANAPI_InitPlanMkrList(struct _StreamUnit *streamUnit)
 			// Start line: 712
 			// Start offset: 0x800987A0
 			// Variables:
-				struct _PlanCollideInfo pci; // stack offset -40
+				//struct _PlanCollideInfo pci; // stack offset -40
 
 			/* begin block 1.1.1 */
 				// Start line: 713
@@ -403,9 +403,6 @@ void PLANAPI_InitPlanMkrList(struct _StreamUnit *streamUnit)
 				// Start line: 738
 				// Start offset: 0x8009883C
 				// Variables:
-					short _x1; // $v0
-					short _y1; // $v1
-					short _z1; // $a0
 			/* end block 1.1.2 */
 			// End offset: 0x80098854
 			// End Line: 738
