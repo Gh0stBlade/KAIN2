@@ -24,13 +24,17 @@ enum menu_ctrl_t menu_get_ctrl(void *gt)
 	{
 		ctrl = menu_ctrl_right;
 	}
-	else if (!(((GameTracker*)gt)->controlCommand[0][1] & 0x80) || (((GameTracker*)gt)->controlCommand[0][0] & 0x300))
+	else if ((((GameTracker*)gt)->controlCommand[0][1] & 0x80) && !(((GameTracker*)gt)->controlCommand[0][0] & 0x300))
+	{
+		ctrl = menu_ctrl_engage;
+	}
+	else
 	{
 		if ((((GameTracker*)gt)->controlCommand[0][1] & 0x10))
 		{
 			ctrl = menu_ctrl_cancel;
 		}
-		else 
+		else
 		{
 			if ((((GameTracker*)gt)->controlCommand[0][1] & 0x4000))
 			{
@@ -42,10 +46,6 @@ enum menu_ctrl_t menu_get_ctrl(void *gt)
 				ctrl = menu_ctrl_none;
 			}
 		}
-	}
-	else
-	{
-		ctrl = menu_ctrl_engage;
 	}
 	
 	return ctrl;
