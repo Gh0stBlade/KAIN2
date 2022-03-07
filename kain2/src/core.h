@@ -19,6 +19,7 @@
 #include <LIBPAD.H>
 #include <LIBGPU.H>
 #include <LIBSN.H>
+#include <LIBMCRD.H>
 
 #if defined(PSXPC_VERSION) || defined(PSX_VERSION)//Temporary
 #define LoadImage LoadImagePSX

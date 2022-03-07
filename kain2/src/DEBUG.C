@@ -2424,7 +2424,6 @@ void DEBUG_Menu(struct GameTracker* gt)
 					post_process_functions(gt, menu);
 				}
 			}
-
 		}
 	}
 }

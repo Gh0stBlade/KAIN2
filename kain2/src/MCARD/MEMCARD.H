@@ -266,6 +266,15 @@ struct SavedInfoTracker // hashcode: 0x03231C9A (dec: 52632730)
 	char* EndOfMemory; // size=0, offset=12
 };
 
+struct mcmenu 
+{
+	struct mcmenu_t dummy1; // size=404, offset=0
+	struct mcard_t dummy2; // size=52, offset=404
+	struct mcpsx_t dummy3; // size=56, offset=456
+};
+
+extern mcmenu gMcmenu;
+
 typedef int (*TDRFuncPtr_memcard_item1fn)();
 
 extern struct memcard_t gMemcard;
