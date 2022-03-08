@@ -158,7 +158,7 @@ struct Signal // hashcode: 0xA0225F88 (dec: -1608360056)
 	} data; // size=24, offset=4, found in object files: player.o, player.o
 };
 
-struct _MultiSignal // hashcode: 0x0620B768 (dec: 102807400)
+struct _MultiSignal
 {
 	long numSignals; // size=0, offset=0
 	short signalNum; // size=0, offset=4

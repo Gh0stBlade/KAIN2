@@ -61,18 +61,20 @@ struct _Instance // hashcode: 0x699A5B3D (dec: 1771723581)
 	struct SoundInstance soundInstanceTbl[4]; // size=12, offset=72
 	unsigned long maxCheckDistance; // size=0, offset=84
 	unsigned long checkMask; // size=0, offset=88
-	struct _Position position; // size=6, offset=92
+	_Position position; // size=6, offset=92
 	unsigned char lightGroup; // size=0, offset=98
-	struct _Position oldPos; // size=6, offset=100
+	_Position oldPos; // size=6, offset=100
 	unsigned char spectralLightGroup; // size=0, offset=106
 	short currentTextureAnimFrame; // size=0, offset=108
-	struct _Position initialPos; // size=6, offset=110
-	struct _Rotation rotation; // size=8, offset=116
-	struct _Rotation oldRotation; // size=8, offset=124
-	struct _SVector scale; // size=8, offset=132
+	_Position initialPos; // size=6, offset=110
+	_Rotation rotation; // size=8, offset=116
+	_Rotation oldRotation; // size=8, offset=124
+	_SVector scale; // size=8, offset=132
 	long attachedID; // size=0, offset=140
 	long attachedSegment; // size=0, offset=144
+#if !defined(PSX_VERSION)
 	MATRIX relativeMatrix; // size=32, offset=148//Disabled by Gh0stBlade why is this saying incomplete type?
+#endif
 	struct _TFace* tface; // size=12, offset=180
 	struct _TFace* oldTFace; // size=12, offset=184
 	void* tfaceLevel; // size=0, offset=188
@@ -83,7 +85,7 @@ struct _Instance // hashcode: 0x699A5B3D (dec: 1771723581)
 	void* cachedTFaceLevel; // size=0, offset=204
 	struct _Normal oldWNormal; // size=8, offset=208
 	struct _Normal wNormal; // size=8, offset=216
-	struct _SVector offset; // size=8, offset=224
+	_SVector offset; // size=8, offset=224
 	struct _HModel* hModelList; // size=8, offset=232
 	short fadeValue; // size=0, offset=236
 	short lightMatrix; // size=0, offset=238
@@ -92,13 +94,13 @@ struct _Instance // hashcode: 0x699A5B3D (dec: 1771723581)
 	void (*additionalCollideFunc)(); // size=0, offset=248
 	unsigned long (*queryFunc)(); // size=0, offset=252
 	void (*messageFunc)(); // size=0, offset=256
-	struct _Position shadowPosition; // size=6, offset=260
+	_Position shadowPosition; // size=6, offset=260
 	short currentModel; // size=0, offset=266
 	struct _TFace* waterFace; // size=12, offset=268
 	struct _TFace* oldWaterFace; // size=12, offset=272
 	struct _Terrain* waterFaceTerrain; // size=0, offset=276
 	struct _PlaneConstants halvePlane; // size=12, offset=280
-	struct _SVector splitPoint; // size=8, offset=292
+	_SVector splitPoint; // size=8, offset=292
 	struct _Instance* LinkParent; // size=616, offset=300
 	struct _Instance* LinkChild; // size=616, offset=304
 	struct _Instance* LinkSibling; // size=616, offset=308
@@ -139,7 +141,7 @@ struct evCollideInstanceStatsData // hashcode: 0xD8198216 (dec: -669416938)
 {
 	struct _Instance* instance; // size=616, offset=0
 	unsigned long distance; // size=0, offset=4
-	struct _SVector relativePosition; // size=8, offset=8
+	_SVector relativePosition; // size=8, offset=8
 	long xyDistance; // size=0, offset=16
 	long zDelta; // size=0, offset=20
 };

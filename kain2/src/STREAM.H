@@ -1,6 +1,8 @@
 #ifndef STREAM_H
 #define STREAM_H
 
+#include "SIGNAL.H"
+
 struct TClassAttr 
 {
 	short flags; // size=0, offset=0
