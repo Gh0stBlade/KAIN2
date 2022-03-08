@@ -23,6 +23,19 @@ struct PlanningNode // hashcode: 0xDB9F3065 (dec: -610324379)
 	long streamUnitID; // size=0, offset=24
 };
 
+struct EnemyPlanSlotData // hashcode: 0x72FA4FBD (dec: 1929007037)
+{
+	char slotInUse; // size=0, offset=0
+	char state; // size=0, offset=1
+	char wayPointBeingServoedTo; // size=0, offset=2
+	struct _Position startPos; // size=6, offset=4
+	struct _Position goalPos; // size=6, offset=10
+	struct _Position oldCurrentPos; // size=6, offset=16
+	struct EnemyPlanData planData; // size=68, offset=22
+	char targetType; // size=0, offset=90
+	short timer; // size=0, offset=92
+};
+
 extern void PLANAPI_ConvertPlanIntoEnmyPlanDataFormat(struct PlanningNode *goalNode, struct EnemyPlanData *planData, struct PlanningNode *planningPool); // 0x80097B8C
 extern int PLANAPI_FindPathBetweenNodes(struct PlanningNode *startNode, struct PlanningNode *goalNode, struct EnemyPlanData *planData, int validNodeTypes); // 0x80097C40
 extern void PLANAPI_DoTimingCalcsAndDrawing(long startTime, struct PlanningNode *planningPool); // 0x80097CC8
