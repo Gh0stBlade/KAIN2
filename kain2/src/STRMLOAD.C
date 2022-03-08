@@ -117,7 +117,6 @@ void STREAM_RemoveQueueHead()
 
 void STREAM_RemoveQueueEntry(struct _LoadQueueEntry *entry, struct _LoadQueueEntry *prev)
 { 
-
 	if (loadTail == entry)
 	{
 		loadTail = prev;
