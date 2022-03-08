@@ -193,7 +193,7 @@ void ExtractLevelNum(char *levelNum, char *levelName)
 	do
 	{
 		*levelNum++ = *levelName++;
-	} while (*levelName - 0x30 < 0xA);
+	} while ((unsigned)(*levelName - 0x30) < 0xA);
 }
 
 void ProcessArgs(char *baseAreaName, struct GameTracker *gameTracker)
@@ -201,6 +201,11 @@ void ProcessArgs(char *baseAreaName, struct GameTracker *gameTracker)
 	char levelNum[32];
 	char worldName[32];
 	long *argData;
+
+#if defined(PSXPC_VERSION)
+	memset(levelNum, 0, sizeof(levelNum));
+	memset(worldName, 0, sizeof(worldName));
+#endif
 
 	argData = LOAD_ReadFile("\\kain2\\game\\psx\\kain2.arg", 10);
 

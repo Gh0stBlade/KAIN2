@@ -1315,18 +1315,21 @@ struct _StreamUnit * STREAM_LoadLevel(char *baseAreaName, struct StreamUnitPorta
 				if (streamPortal == NULL)
 				{
 					strcpy(gameTrackerX.baseAreaName, baseAreaName);
+
+					gameTrackerX.StreamUnitID = streamUnit->StreamUnitID;
+
+					LOAD_NonBlockingBinaryLoad(dramName, STREAM_LoadLevelReturn, NULL, streamUnit, (void**)streamUnit->level, 2);
+
+					break;
 				}
 				else
 				{
-					gameTrackerX.StreamUnitID = streamUnit->StreamUnitID;
-				
-					LOAD_NonBlockingBinaryLoad(dramName, STREAM_LoadLevelReturn, NULL, streamUnit, (void**)streamUnit->level, 2);
+					streamPortal->toStreamUnit = 0;
+
+					LOAD_NonBlockingBinaryLoad(dramName, STREAM_StreamLoadLevelReturn, NULL, streamUnit, (void**)streamUnit->level, 2);
+
 					break;
 				}
-
-				streamPortal->toStreamUnit = 0;
-	
-				LOAD_NonBlockingBinaryLoad(dramName, STREAM_StreamLoadLevelReturn, NULL, streamUnit, (void**)streamUnit->level, 2);
 			}
 		}
 	}
