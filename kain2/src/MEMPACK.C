@@ -444,7 +444,7 @@ void MEMPACK_ReportMemory()
 
 	while ((char*)address != newMemTracker.lastMemoryAddress)
 	{
-		address = (struct MemHeader*)(char*)address + address->memSize;
+		address = (struct MemHeader*)((char*)address + address->memSize);
 	}
 	
 	for (i = 0; i < 49; i++)
@@ -459,7 +459,7 @@ void MEMPACK_ReportMemory()
 				firstTime = 0;
 			}
 
-			address = (struct MemHeader*)(char*)address + address->memSize;
+			address = (struct MemHeader*)((char*)address + address->memSize);
 		}
 	}
 }
@@ -549,13 +549,45 @@ void MEMPACK_GarbageSplitMemoryNow(unsigned long allocSize, struct MemHeader *be
 
 void MEMPACK_GarbageCollectFree(struct MemHeader *memAddress)
 {
+#if 1
+	struct MemHeader* secondAddress; // $v1
+	
+	 //s0 = memAddress
+	memAddress->memStatus = 0;
+	memAddress->memType = 0;
+
+	//v0 = newMemTracker.currentMemoryUsed
+	newMemTracker.currentMemoryUsed -= memAddress->memSize;
+
+	secondAddress = (struct MemHeader*)((char*)memAddress + memAddress->memSize);
+
+	if ((char*)secondAddress != newMemTracker.lastMemoryAddress)
+	{
+		MEMORY_MergeAddresses(memAddress, secondAddress);
+	}
+	
+	secondAddress = memAddress;
+	memAddress = newMemTracker.rootNode;
+
+	while ((char*)memAddress != newMemTracker.lastMemoryAddress)
+	{
+		if (((char*)memAddress + newMemTracker.rootNode->memSize) == (char*)secondAddress)
+		{
+			MEMORY_MergeAddresses(memAddress, (struct MemHeader*)((char*)memAddress + newMemTracker.rootNode->memSize));
+			break;
+		}
+
+		memAddress = (struct MemHeader*)((char*)memAddress + newMemTracker.rootNode->memSize);
+	}
+
+#else
 	struct MemHeader* secondAddress;
 
 	memAddress->memStatus = 0;
 	memAddress->memType = 0;
 
 	newMemTracker.currentMemoryUsed -= memAddress->memSize;
-	secondAddress = (struct MemHeader*)(char*)memAddress + memAddress->memSize;
+	secondAddress = (struct MemHeader*)((char*)memAddress + memAddress->memSize);
 
 	if ((char*)secondAddress != newMemTracker.lastMemoryAddress)
 	{
@@ -566,13 +598,14 @@ void MEMPACK_GarbageCollectFree(struct MemHeader *memAddress)
 	{
 		do
 		{
-			if ((char*)newMemTracker.rootNode + newMemTracker.rootNode->memSize == (char*)memAddress)
+			if (((char*)newMemTracker.rootNode + newMemTracker.rootNode->memSize) == (char*)memAddress)
 			{
-				MEMORY_MergeAddresses(newMemTracker.rootNode, (struct MemHeader*)(char*)newMemTracker.rootNode + newMemTracker.rootNode->memSize);
+				MEMORY_MergeAddresses(newMemTracker.rootNode, (struct MemHeader*)((char*)newMemTracker.rootNode + newMemTracker.rootNode->memSize));
 			}
 
-		} while ((unsigned long)&newMemTracker != (unsigned long)newMemTracker.rootNode + newMemTracker.rootNode->memSize);
+		} while ((unsigned long)&newMemTracker != (unsigned long)((char*)newMemTracker.rootNode + newMemTracker.rootNode->memSize));
 	}
+#endif
 }
 
 void MEMPACK_DoGarbageCollection()
