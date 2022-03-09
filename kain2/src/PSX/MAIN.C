@@ -182,12 +182,10 @@ void ExtractLevelNum(char *levelNum, char *levelName)
 { 
 	while (*levelName != '-')
 	{
-		if (*levelName - 0x30 < 0xA)
+		if (*levelName++ - 0x30 < 0xA)
 		{
 			break;
 		}
-
-		levelName++;
 	}
 
 	do
