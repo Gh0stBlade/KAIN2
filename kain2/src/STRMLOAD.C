@@ -531,7 +531,7 @@ void LOAD_ChangeDirectory(char *name)
 	currentEntry->loadEntry.dirHash = gCurDir;
 	currentEntry->loadEntry.fileHash = 0;
 	currentEntry->status = 10;
-	sprintf(&currentEntry->loadEntry.fileName[8], "dir %s", name);
+	sprintf(&currentEntry->loadEntry.fileName[0], "dir %s", name);
 }
 
 void LOAD_AbortDirectoryChange(char *name)
