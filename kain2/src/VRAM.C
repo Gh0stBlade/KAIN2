@@ -8,6 +8,7 @@
 #pragma warning(disable: 4101)
 #endif
 
+short M_TrackClutUpdate;
 struct _BlockVramEntry* openVramBlocks; // offset 0x800D482C
 struct _BlockVramEntry* usedVramBlocks; // offset 0x800D4828
 struct _BlockVramEntry vramBlockList[90]; // offset 0x800D3E2C

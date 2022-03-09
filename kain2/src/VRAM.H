@@ -3,6 +3,18 @@
 
 #include "MENU/MENUFACE.H"
 
+struct VramBuffer 
+{
+	long flags; // size=0, offset=0
+	short x; // size=0, offset=4
+	short y; // size=0, offset=6
+	short w; // size=0, offset=8
+	short h; // size=0, offset=10
+	short yOffset; // size=0, offset=12
+	short lengthOfLeftOverData; // size=0, offset=14
+	short* lineOverFlow; // size=0, offset=16
+};
+
 struct _BlockVramEntry // hashcode: 0x24B2FBC5 (dec: 615709637)
 {
 #if defined(PSX_VERSION)
@@ -49,6 +61,7 @@ struct VramSize // hashcode: 0xD96A55BF (dec: -647342657)
 	short h; // size=0, offset=6
 };
 
+extern short M_TrackClutUpdate;
 extern struct _BlockVramEntry* openVramBlocks; // offset 0x800D482C
 extern struct _BlockVramEntry* usedVramBlocks; // offset 0x800D4828
 extern struct _BlockVramEntry vramBlockList[90]; // offset 0x800D3E2C
