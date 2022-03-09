@@ -113,6 +113,12 @@ struct _G2AnimInterpStateBlockPool_Type // hashcode: 0x71F99BDD (dec: 1912183773
 	struct _G2AnimInterpStateBlock_Type* blockPool; // size=164, offset=12
 };
 
+#if defined(PSX_VERSION)
+extern struct _G2AnimChanStatusBlockPool_Type _chanStatusBlockPool;
+extern struct _G2AnimInterpStateBlockPool_Type _interpStateBlockPool;
+extern struct _G2AnimControllerPool_Type _controllerPool;
+#endif
+
 extern enum _G2Bool_Enum G2Anim_Install(); // 0x800929A4
 extern void G2Anim_ResetInternalState(); // 0x80092A0C
 extern void G2Anim_Init(struct _G2Anim_Type *anim, struct _Model *modelData); // 0x80092A64
