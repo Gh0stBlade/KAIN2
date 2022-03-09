@@ -19,6 +19,7 @@
 #include "STRMLOAD.H"
 #include "SIGNAL.H"
 #include "VOICEXA.H"
+#include "G2/ANIMG2.H"
 
 #if defined(PSXPC_VERSION)
 #include <EMULATOR_PRIVATE.H>
@@ -401,7 +402,7 @@ void GAMELOOP_LevelLoadAndInit(char *baseAreaName, struct GameTracker *gameTrack
 	//s0 = baseAreaName
 	//s3 = gameTracker
 	
-	//G2Anim_ResetInternalState();
+	G2Anim_ResetInternalState();
 	gameTrackerX.playerInstance = NULL;
 
 	INSTANCE_InitInstanceList(instanceList, instancePool);
@@ -421,6 +422,9 @@ void GAMELOOP_LevelLoadAndInit(char *baseAreaName, struct GameTracker *gameTrack
 	{
 
 	}
+	///@FIXME do some of the earlier functions, there should be 10 loads in the queue before LoadLevels is called!
+	///It's causing debugging difficulties and possible bugs due to missing loads.
+
 #if 0
 
 		loc_8002E2A8 :
