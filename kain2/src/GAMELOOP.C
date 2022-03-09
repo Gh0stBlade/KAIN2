@@ -77,7 +77,7 @@ void GAMELOOP_AllocStaticMemory()
 	planningPool = MEMPACK_Malloc(3000, 6);
 	enemyPlanPool = MEMPACK_Malloc(1000, 6);
 	GlobalObjects = (struct _ObjectTracker*)MEMPACK_Malloc(1728, 6);
-	///G2Anim_Install();
+	G2Anim_Install();
 }
 
 
