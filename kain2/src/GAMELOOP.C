@@ -301,11 +301,9 @@ struct _StreamUnit * LoadLevels(char *baseAreaName, struct GameTracker *gameTrac
 	{
 		DRAW_LoadingMessage();
 
-		if (streamUnit->used == 1)
+		while (streamUnit->used == 1)
 		{
-			while (GAMELOOP_WaitForLoad() == 1)
-			{
-			}
+			GAMELOOP_WaitForLoad();
 		}
 
 		STREAM_NextLoadFromHead();
