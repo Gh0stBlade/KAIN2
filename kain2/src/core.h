@@ -72,6 +72,14 @@ typedef unsigned int bool;
 #define ABS(x) ((x)<0 ? -(x) : (x))
 #endif
 
+#ifndef MIN
+#define MIN(a,b) (((a)<(b))?(a):(b))
+#endif
+
+#ifndef MAX
+#define MAX(a,b) (((a)>(b))?(a):(b))
+#endif
+
 typedef struct _SVector // hashcode: 0x73B07C09 (dec: 1940945929)
 {
 	short x; // size=0, offset=0
