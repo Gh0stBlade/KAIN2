@@ -356,9 +356,8 @@ int STREAM_PollLoadQueue()
 			case 10:
 
 				queueEntry->endLoadTime = TIMER_GetTimeMS();
-				LOAD_ChangeDirectoryByID(queueEntry->loadEntry.dirHash);
 
-				if (queueEntry->endLoadTime == 0)
+				if (LOAD_ChangeDirectoryByID(queueEntry->loadEntry.dirHash) == 0)
 				{
 					DEBUG_FatalError("Could not read directory hash %d\n", queueEntry->loadEntry.dirHash);
 				}
