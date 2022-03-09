@@ -14,11 +14,11 @@
 
 extern void GXFilePrint(const char* fmt, ...);
 
-static struct NewMemTracker newMemTracker;
+struct NewMemTracker newMemTracker;
 unsigned long mem_used, mem_total;
 
 #if defined(PSXPC_VERSION) || defined(PC_VERSION)
-char memBuffer[0x11F18C + 0x34E18];
+char memBuffer[0x11F18C + 0x34E18 + 0x6E200];
 void* overlayAddress = memBuffer; // 0x800CE194
 #else
 void* overlayAddress; // For PSX this is quite clearly set by the linker script maybe.
@@ -26,6 +26,7 @@ void* overlayAddress; // For PSX this is quite clearly set by the linker script 
 
 void MEMPACK_Init()
 {
+#if defined(PSX_VERSION)
 #if defined(PSXPC_VERSION)
 	newMemTracker.totalMemory = sizeof(memBuffer);
 	memset(memBuffer, 0, sizeof(memBuffer));
@@ -33,6 +34,7 @@ void MEMPACK_Init()
 #else
 	newMemTracker.totalMemory = ((TWO_MB - (ONE_MB / 256)) + BASE_ADDRESS) - ((long*)overlayAddress)[0];
 	newMemTracker.rootNode = (struct MemHeader*)((long*)overlayAddress)[0];
+#endif
 #endif
 	
 	newMemTracker.rootNode->magicNumber = DEFAULT_MEM_MAGIC;
@@ -549,14 +551,11 @@ void MEMPACK_GarbageSplitMemoryNow(unsigned long allocSize, struct MemHeader *be
 
 void MEMPACK_GarbageCollectFree(struct MemHeader *memAddress)
 {
-#if 1
 	struct MemHeader* secondAddress; // $v1
 	
-	 //s0 = memAddress
 	memAddress->memStatus = 0;
 	memAddress->memType = 0;
 
-	//v0 = newMemTracker.currentMemoryUsed
 	newMemTracker.currentMemoryUsed -= memAddress->memSize;
 
 	secondAddress = (struct MemHeader*)((char*)memAddress + memAddress->memSize);
@@ -579,33 +578,6 @@ void MEMPACK_GarbageCollectFree(struct MemHeader *memAddress)
 
 		memAddress = (struct MemHeader*)((char*)memAddress + newMemTracker.rootNode->memSize);
 	}
-
-#else
-	struct MemHeader* secondAddress;
-
-	memAddress->memStatus = 0;
-	memAddress->memType = 0;
-
-	newMemTracker.currentMemoryUsed -= memAddress->memSize;
-	secondAddress = (struct MemHeader*)((char*)memAddress + memAddress->memSize);
-
-	if ((char*)secondAddress != newMemTracker.lastMemoryAddress)
-	{
-		MEMORY_MergeAddresses(memAddress, secondAddress);
-	}
-
-	if ((char*)newMemTracker.rootNode != newMemTracker.lastMemoryAddress)
-	{
-		do
-		{
-			if (((char*)newMemTracker.rootNode + newMemTracker.rootNode->memSize) == (char*)memAddress)
-			{
-				MEMORY_MergeAddresses(newMemTracker.rootNode, (struct MemHeader*)((char*)newMemTracker.rootNode + newMemTracker.rootNode->memSize));
-			}
-
-		} while ((unsigned long)&newMemTracker != (unsigned long)((char*)newMemTracker.rootNode + newMemTracker.rootNode->memSize));
-	}
-#endif
 }
 
 void MEMPACK_DoGarbageCollection()
@@ -654,7 +626,7 @@ void MEMPACK_DoGarbageCollection()
 			addressSize = relocateAddress->memSize - 8;
 			MEMPACK_GarbageCollectFree(relocateAddress);
 			holdSize = addressSize;
-			newAddress = MEMPACK_GarbageCollectMalloc((unsigned long*)&holdSize, (u_char)addressMemType, (unsigned long*)&freeSize);
+			newAddress = MEMPACK_GarbageCollectMalloc((unsigned long*)&holdSize, (unsigned char)addressMemType, (unsigned long*)&freeSize);
 			relocateAddress++;
 
 			if (newAddress != NULL)
