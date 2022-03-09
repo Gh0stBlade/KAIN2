@@ -668,8 +668,7 @@ long LOAD_HashUnit(char *name)
 
 			if (val - 0x30 < 10)
 			{
-				num = ((num * 10) - 0x30) + val;
-
+				num = ((num * 2) - 0x30) + val;
 			}
 			else
 			{
