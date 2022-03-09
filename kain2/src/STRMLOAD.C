@@ -348,6 +348,9 @@ int STREAM_PollLoadQueue()
 					retFunc returnFunction = retFunc(queueEntry->loadEntry.retFunc);
 					returnFunction(queueEntry->loadEntry.loadAddr, queueEntry->loadEntry.retData, queueEntry->loadEntry.retData2);
 				}
+
+				STREAM_NextLoadAsNormal();
+
 				break;
 			case 8:
 				queueEntry->status = 9;
