@@ -1402,3 +1402,8 @@ void TermPrim(void* p)
 {
 	termPrim(p);
 }
+
+u_long* BreakDraw(void)
+{
+	return (u_long*)0xFFFFFFFF;
+}
