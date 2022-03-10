@@ -1013,7 +1013,7 @@ void STREAM_FinishLoad(struct _StreamUnit *streamUnit)
 	
 	LoadLevelObjects(streamUnit);
 	
-	streamUnit->FogColor = (level->cpad1 << 24) | (level->backColorB << 16) | (level->backColorG << 8) | (level->backColorR << 16);
+	streamUnit->FogColor = (level->cpad1 << 24) | (level->backColorB << 16) | (level->backColorG << 8) | (level->backColorR);
 	streamUnit->TargetFogFar = level->fogFar;
 	streamUnit->TargetFogNear = level->fogNear;
 
