@@ -78,8 +78,9 @@ void LOAD_CdDataReady()
 				{
 					if (currentQueueFile->retFunc != NULL)
 					{
-						assert(false);//Need to see when this happens.
-						//currentQueueFile->retFunc(currentQueueFile->readCurDest, actualReadSize, 5 ^ 5 < 1, currentQueueFile->retData, currentQueueFile->retData2);
+						typedef void (*ret)(void*, long, short, void*, void*);
+						ret returnFunction = ret(currentQueueFile->retFunc);
+						returnFunction(currentQueueFile->readCurDest, actualReadSize, 5 ^ 5 < 1, currentQueueFile->retData, currentQueueFile->retData2);
 					}
 					
 					if (currentQueueFile->readCurDest == loadStatus.buffer1)
@@ -97,8 +98,9 @@ void LOAD_CdDataReady()
 				{
 					if (currentQueueFile->retFunc != NULL)
 					{
-						assert(false);//Need to see when this happens.
-						//currentQueueFile->retFunc(currentQueueFile->readCurDest, actualReadSize, 2 ^ 5 < 1, currentQueueFile->retData, currentQueueFile->retData2);
+						typedef void (*ret)(void*, long, long, void*, void*);
+						ret returnFunction = ret(currentQueueFile->retFunc);
+						returnFunction(currentQueueFile->readCurDest, actualReadSize, 5 ^ 5 < 1, currentQueueFile->retData, currentQueueFile->retData2);
 					}
 
 					if (currentQueueFile->readCurDest == loadStatus.buffer1)
@@ -182,8 +184,19 @@ void LOAD_CdReadReady(unsigned char intr, unsigned char *result)
 				}
 
 				loadStatus.bytesTransferred = (loadStatus.currentQueueFile.readSize - loadStatus.currentQueueFile.readCurSize);
-					
-				LOAD_CdDataReady();
+
+				static int fallThrough = 0;
+
+				if (loadStatus.currentQueueFile.readStatus == 6 && fallThrough == 0)
+				{
+					fallThrough ^= 1;
+					loadStatus.currentQueueFile.readStatus = 0;
+				}
+				else
+				{
+					fallThrough = 0;
+					LOAD_CdDataReady();
+				}
 #endif
 			}
 			else
@@ -886,8 +899,13 @@ void LOAD_CleanUpBuffers()
 
 void * LOAD_InitBuffers()
 {
-	loadStatus.buffer1 = MEMPACK_Malloc(2048, 35);
-	loadStatus.buffer2 = MEMPACK_Malloc(2048, 35);
+#if defined(PSXPC_VERSION)
+	loadStatus.buffer1 = MEMPACK_Malloc(2048*129, 0x23);
+	loadStatus.buffer2 = MEMPACK_Malloc(2048, 0x23);
+#else
+	loadStatus.buffer1 = MEMPACK_Malloc(2048, 0x23);
+	loadStatus.buffer2 = MEMPACK_Malloc(2048, 0x23);
+#endif
 	return loadStatus.buffer1;
 }
 
