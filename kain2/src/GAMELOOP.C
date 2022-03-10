@@ -333,9 +333,9 @@ struct _StreamUnit * LoadLevels(char *baseAreaName, struct GameTracker *gameTrac
 	{
 		if (gameTracker->playerInstance != NULL)
 		{
-			///streamUnit->level->startUnitMainSignal->flags |= 0x1;
-			///SIGNAL_HandleSignal(gameTracker->playerInstance, streamUnit->level->startUnitMainSignal->signalList, 0);
-			///EVENT_AddSignalToReset(streamUnit->level->startUnitMainSignal);
+			streamUnit->level->startUnitMainSignal->flags |= 0x1;
+			SIGNAL_HandleSignal(gameTracker->playerInstance, streamUnit->level->startUnitMainSignal->signalList, 0);
+			EVENT_AddSignalToReset(streamUnit->level->startUnitMainSignal);
 		}
 	}
 	
