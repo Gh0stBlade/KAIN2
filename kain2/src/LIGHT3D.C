@@ -1,4 +1,4 @@
-#include "THISDUST.H"
+#include "CORE.H"
 #include "LIGHT3D.H"
 
 
@@ -55,6 +55,7 @@ void LIGHT_GetLightMatrix(struct _Instance *instance, struct Level *level, struc
 // void /*$ra*/ LIGHT_PresetInstanceLight(struct _Instance *instance /*$s0*/, short attenuate /*$a1*/, struct MATRIX *lm /*$s1*/)
 void LIGHT_PresetInstanceLight(struct _Instance *instance, short attenuate, struct MATRIX *lm)
 { // line 200, offset 0x80035b98
+#if defined(PC_VERSION)
 	int currentStreamUnitID; // eax
 	struct Level* LevelWithID; // edi
 	int v5; // eax
@@ -119,6 +120,7 @@ void LIGHT_PresetInstanceLight(struct _Instance *instance, short attenuate, stru
 		--attenuatea;
 	} while (attenuatea);
 	SetColorMatrix(&colorM);
+#endif
 }
 
 
@@ -126,12 +128,14 @@ void LIGHT_PresetInstanceLight(struct _Instance *instance, short attenuate, stru
 // void /*$ra*/ LIGHT_GetAmbient(struct _ColorType *color /*$a0*/, struct _Instance *instance /*$a1*/)
 void LIGHT_GetAmbient(struct _ColorType *color, struct _Instance *instance)
 { // line 290, offset 0x80035d14
+#if defined(PC_VERSION)
 	uchar v2; // al
 
 	v2 = (instance->object->oflags2 & 0x800) != 0 ? 0 : 48;
 	color->b = v2;
 	color->g = v2;
 	color->r = v2;
+#endif
 }
 
 
@@ -255,7 +259,7 @@ void LIGHT_SetMatrixForLightGroupInstance(struct _Instance *instance, struct Lev
 		// Start line: 570
 		// Start offset: 0x800364C8
 		// Variables:
-			struct MATRIX lgt_cat; // stack offset -40
+			//MATRIX lgt_cat; // stack offset -40
 			struct LightList *lightList; // $v0
 			int lightGrp; // $v1
 	/* end block 1 */
@@ -274,6 +278,7 @@ void LIGHT_SetMatrixForLightGroupInstance(struct _Instance *instance, struct Lev
 // void /*$ra*/ LIGHT_DrawShadow(struct MATRIX *wcTransform /*$s2*/, struct _Instance *instance /*$s1*/, struct _PrimPool *primPool /*$s3*/, unsigned long **ot /*$s4*/)
 void LIGHT_DrawShadow(struct MATRIX *wcTransform, struct _Instance *instance, struct _PrimPool *primPool, unsigned long **ot)
 { // line 730, offset 0x80036644
+#if defined(PC_VERSION)
 	int v4; // eax
 	__int16 v5; // ax
 	__int16 z; // cx
@@ -318,6 +323,7 @@ void LIGHT_DrawShadow(struct MATRIX *wcTransform, struct _Instance *instance, st
 			D3DDRAW_DrawShadow(0, ot, instance->fadeValue, &scTransform);
 #endif
 	}
+#endif
 }
 
 
@@ -325,6 +331,7 @@ void LIGHT_DrawShadow(struct MATRIX *wcTransform, struct _Instance *instance, st
 // void /*$ra*/ LIGHT_CalcShadowPositions(struct GameTracker *gameTracker /*$a0*/)
 void LIGHT_CalcShadowPositions(struct GameTracker *gameTracker)
 { // line 806, offset 0x80036928
+#if defined(PC_VERSION)
 	struct _Instance* first; // esi
 	int flags; // eax
 	struct _TFace* waterFace; // eax
@@ -455,6 +462,7 @@ void LIGHT_CalcShadowPositions(struct GameTracker *gameTracker)
 		LIGHT_CalcLightValue(first->tface, first, *tfaceLevel);
 		goto LABEL_38;
 	}
+#endif
 }
 
 
@@ -469,6 +477,7 @@ void LIGHT_Restore(struct LightInfo *lightInfo)
 // void /*$ra*/ LIGHT_CalcDQPTable(struct Level *level /*$a3*/)
 void LIGHT_CalcDQPTable(struct Level *level)
 { // line 1600, offset 0x80036c30
+#if defined(PC_VERSION)
 	unsigned __int16 fogNear; // bx
 	int fogFar; // ecx
 	int v3; // esi
@@ -505,6 +514,7 @@ void LIGHT_CalcDQPTable(struct Level *level)
 		level->depthQFogStart = v6;
 		level->depthQBlendStart = depthQBlendStart;
 	}
+#endif
 }
 
 
