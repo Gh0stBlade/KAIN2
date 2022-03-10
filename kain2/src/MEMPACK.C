@@ -323,7 +323,7 @@ void MEMPACK_Free(char *address)
 	struct MemHeader *memAddress;
 	struct MemHeader *secondAddress;
 	
-	memAddress = (struct MemHeader*)&address[-8];
+	memAddress = (struct MemHeader*)&address[-sizeof(MemHeader)];
 	memAddress->memStatus = 0;
 	memAddress->memType = 0;
 	newMemTracker.currentMemoryUsed -= memAddress->memSize;
