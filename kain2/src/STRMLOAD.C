@@ -295,7 +295,7 @@ int STREAM_PollLoadQueue()
 				}
 				else
 				{
-					queueEntry->status = 4;
+					queueEntry->status = 6;
 					queueEntry->loadEntry.posInFile = 0;
 				}
 
