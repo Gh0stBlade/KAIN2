@@ -19,7 +19,7 @@ int MEMCARD_IsWrongVersion(struct memcard_t *memcard)
 	int result = 1;
 	if (memcard != NULL)
 	{
-		result = (int)memcard->wrongVerison;
+		result = memcard->wrongVerison;
 	}
 
 	return result;
