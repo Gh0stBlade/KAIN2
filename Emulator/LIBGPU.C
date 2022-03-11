@@ -560,29 +560,29 @@ void DrawOTag(u_long* p)
 	}
 
 #if defined(DEBUG_POLY_COUNT)
-polygon_count = 0;
+	polygon_count = 0;
 #endif
 
-if (activeDrawEnv.isbg)
-{
-	ClearImage(&activeDrawEnv.clip, activeDrawEnv.r0, activeDrawEnv.g0, activeDrawEnv.b0);
-}
-else
-{
-	Emulator_BlitVRAM();
-}
+	if (activeDrawEnv.isbg)
+	{
+		ClearImage(&activeDrawEnv.clip, activeDrawEnv.r0, activeDrawEnv.g0, activeDrawEnv.b0);
+	}
+	else
+	{
+		Emulator_BlitVRAM();
+	}
 
-AggregatePTAGsToSplits(p, FALSE);
+	AggregatePTAGsToSplits(p, FALSE);
 
-DrawAggregatedSplits();
-Emulator_EndScene();
+	DrawAggregatedSplits();
+	Emulator_EndScene();
 
 #if defined(PGXP)
-/* Reset the ztable */
-memset(&pgxp_vertex_buffer[0], 0, pgxp_vertex_index * sizeof(PGXPVertex));
+	/* Reset the ztable */
+	memset(&pgxp_vertex_buffer[0], 0, pgxp_vertex_index * sizeof(PGXPVertex));
 
-/* Reset the ztable index of */
-pgxp_vertex_index = 0;
+	/* Reset the ztable index of */
+	pgxp_vertex_index = 0;
 #endif
 }
 

@@ -803,6 +803,7 @@ int MainG2(void *appData)
 
 #if defined(PSXPC_VERSION)
 				DrawOTag(NULL);
+				GAMEPAD_Process(&gameTrackerX);
 #endif
 
 				STREAM_Init();
@@ -811,10 +812,10 @@ int MainG2(void *appData)
 				gameTracker->levelDone = 0;
 				mainTracker->mainState = 1;
 
-				do
+				while (STREAM_PollLoadQueue() != 0);
 				{
 
-				} while (STREAM_PollLoadQueue() != 0);
+				}
 
 				gameTrackerX.vblFrames = 0;
 

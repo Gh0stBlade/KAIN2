@@ -29,6 +29,7 @@
 #define setlen_ST( p, _len) 	(((POLY_F4_SEMITRANS *)(p))->len  = (u_char)(_len))
 #define setcode_ST(p, _code)	(((POLY_F4_SEMITRANS *)(p))->code = (u_char)(_code))
 #define setPolyFT4_ST(p) setlen_ST(p, 6),  setcode_ST(p, 0x2A)
+#pragma warning(disable: 4101)//Unreferenced local var.
 #endif
 
 #if !defined(PSXPC_VERSION)

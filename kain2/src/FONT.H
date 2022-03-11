@@ -118,6 +118,7 @@ extern font_color_t the_font_color_table[];
 extern unsigned short SpecialFogClut;
 extern FontPos fontPos[79];
 extern char charMap[92][3];
+extern struct Object* fontsObject;
 
 extern struct _BlockVramEntry* FONT_vramBlock; // offset 0x800D05E4
 

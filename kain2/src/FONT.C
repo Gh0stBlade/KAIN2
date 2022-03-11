@@ -14,6 +14,7 @@ unsigned short SpecialFogClut;
 struct _BlockVramEntry* FONT_vramBlock; // offset 0x800D05E4
 static WORD font_clut;
 struct FontTracker fontTracker;
+struct Object* fontsObject;
 
 char fp_str[512];
 

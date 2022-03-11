@@ -155,6 +155,8 @@ union OBTABLE2_209fake // Hashcode: 0xB29B0D0C (dec: -1298461428)
 	struct _Position throwVector; // size=6, offset=0
 };
 
+
+extern struct ObjectAccess objectAccess[28];
 typedef struct ObjectFunc ObjectFunc;
 
 extern void OBTABLE_InstanceInit(struct _Instance *instance); // 0x8003D9AC
