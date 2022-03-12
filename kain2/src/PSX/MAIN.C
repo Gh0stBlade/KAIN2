@@ -398,11 +398,7 @@ void VblTick()
 	gameTrackerX.vblFrames++;
 	gameTrackerX.vblCount++;
 
-#if defined(PSXPC_VERSION)
-	if (gameTrackerX.reqDisp != NULL)
-#else
 	if (gameTrackerX.reqDisp != NULL && gameTrackerX.frameRateLock < gameTrackerX.vblFrames)
-#endif
 	{
 		PutDispEnv((DISPENV*)gameTrackerX.reqDisp);
 		gameTrackerX.reqDisp = NULL;
