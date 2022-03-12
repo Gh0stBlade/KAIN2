@@ -685,6 +685,12 @@ long MAIN_DoMainMenu(struct GameTracker *gameTracker, struct MainTracker *mainTr
 	return 0;
 }
 
+#if defined(PSXPC_VERSION) && defined(NO_CD)
+	#define BIGFILE_DAT "BIGFILE.DAT"
+#else
+	#define BIGFILE_DAT "\\BIGFILE.DAT;1"
+#endif
+
 int MainG2(void *appData)
 { 
 	struct MainTracker* mainTracker;
@@ -710,11 +716,7 @@ int MainG2(void *appData)
 		LOAD_InitCd();
 		StartTimer();
 
-#if defined(PSXPC_VERSION) && defined(NO_CD)
-		STREAM_InitLoader("BIGFILE.DAT", "");
-#else
-		STREAM_InitLoader("\\BIGFILE.DAT;1", "");
-#endif
+		STREAM_InitLoader(BIGFILE_DAT, "");
 
 		localstr_set_language(language_default);
 		GAMELOOP_SystemInit(gameTracker);

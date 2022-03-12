@@ -26,15 +26,17 @@ enum language_t localstr_get_language()
 	return (language_t)0;
 }
 
+#if defined(PSXPC_VERSION) && defined(NO_CD)
+	#define LOCALS_TBL "\\LOCALS.TBL"
+#else
+	#define LOCALS_TBL "\\LOCALS.TBL;1"
+#endif
+
 void localstr_set_language(enum language_t lang)
 { 
 	int i;
 
-#if defined(PSXPC_VERSION) && defined(NO_CD)
-	LocalizationTable = (struct LocalizationHeader*)LOAD_ReadFileFromCD("LOCALS.TBL", 6);
-#else
-	LocalizationTable = (struct LocalizationHeader*)LOAD_ReadFileFromCD("\\LOCALS.TBL;1", 6);
-#endif
+	LocalizationTable = (struct LocalizationHeader*)LOAD_ReadFileFromCD(LOCALS_TBL, 6);
 
 	if (LocalizationTable != NULL)
 	{
