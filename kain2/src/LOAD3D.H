@@ -39,6 +39,9 @@ struct _BigFileDir // hashcode: 0x4E39D3E2 (dec: 1312412642)
 
 struct _BigFile // hashcode: 0x50C273F3 (dec: 1354920947)
 {
+#if defined(PSXPC_VERSION) && defined(NO_CD)
+	long bigfileFileHandle;
+#endif
 	long bigfileBaseOffset; // size=0, offset=0
 	struct _BigFileDir* rootDir; // size=4, offset=4
 	struct _BigFileDir* currentDir; // size=4, offset=8

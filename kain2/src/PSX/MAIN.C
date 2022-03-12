@@ -709,7 +709,13 @@ int MainG2(void *appData)
 		MEMPACK_Init();
 		LOAD_InitCd();
 		StartTimer();
+
+#if defined(PSXPC_VERSION) && defined(NO_CD)
+		STREAM_InitLoader("BIGFILE.DAT", "");
+#else
 		STREAM_InitLoader("\\BIGFILE.DAT;1", "");
+#endif
+
 		localstr_set_language(language_default);
 		GAMELOOP_SystemInit(gameTracker);
 

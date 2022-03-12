@@ -311,8 +311,16 @@ void LOAD_SetupFileToDoCDReading()
 		loadStatus.currentSector = loadStatus.bigFile.bigfileBaseOffset + (loadStatus.currentQueueFile.readStartPos >> 11);
 	}
 
+#if defined(PSXPC_VERSION) && defined(NO_CD)
+	PClseek(loadStatus.bigFile.bigfileFileHandle, loadStatus.currentQueueFile.readStartPos, 0);
+	PCread(loadStatus.bigFile.bigfileFileHandle, (char*)loadStatus.currentQueueFile.readStartDest, loadStatus.currentQueueFile.readSize);
+	loadStatus.bytesTransferred = (loadStatus.currentQueueFile.readSize - loadStatus.currentQueueFile.readCurSize);
+	loadStatus.state = 4;
+	LOAD_CdDataReady();
+#else
 	CdIntToPos(loadStatus.currentSector, &loc);
 	CdControl(CdlReadN, &loc.minute, NULL);
+#endif
 	loadStatus.cdWaitTime = TIMER_GetTimeMS();
 #endif
 }
@@ -408,6 +416,44 @@ void LOAD_ProcessReadQueue()
 #ifndef PC_VERSION
 char * LOAD_ReadFileFromCD(char *filename, int memType)
 { 
+#if defined(PSXPC_VERSION) && defined(NO_CD)
+	long fp;
+	int i;
+	char* readBuffer;
+	long fileSize;
+
+	fileSize = 0;
+	i = 0;
+	
+	do
+	{
+		fp = PCopen(filename, 0, 0);
+
+		if (fp != -1)
+		{
+			PCinit();
+			break;
+		}
+
+	} while (++i < 10);
+
+
+	if (i != 10)
+	{
+		fileSize = PClseek(fp, 0, 2);
+		PClseek(fp, 0, 0);
+
+		readBuffer = MEMPACK_Malloc(fileSize, memType);
+		if (readBuffer != NULL)
+		{
+			PCread(fp, readBuffer, fileSize);
+			PCclose(fp);
+			return readBuffer;
+		}
+	}
+
+	return NULL;
+#else
 	CdlFILE fp;
 	int i;
 	char *readBuffer;
@@ -448,6 +494,7 @@ char * LOAD_ReadFileFromCD(char *filename, int memType)
 	}
 
 	return NULL;
+#endif
 }
 #endif
 
@@ -482,6 +529,65 @@ struct _BigFileDir * LOAD_ReadDirectory(struct _BigFileDirEntry *dirEntry)
 #ifndef PC_VERSION
 void LOAD_InitCdLoader(char *bigFileName, char *voiceFileName)
 {
+#if defined(PSXPC_VERSION) && defined(NO_CD)
+	CdlFILE fp;
+	long i;
+	char* ptr;
+
+	loadStatus.state = 0;
+
+	for (i = 0; i < 10; i++)
+	{
+		loadStatus.bigFile.bigfileFileHandle = PCopen(bigFileName, 0, 0);
+		if (loadStatus.bigFile.bigfileFileHandle != -1)
+		{
+			break;
+		}
+
+		PCinit();
+	}
+
+	if (i != 10)
+	{
+		loadStatus.bigFile.bigfileBaseOffset = 0;
+		loadStatus.cdWaitTime = 0;
+		loadStatus.currentQueueFile.readStatus = 0;
+		loadStatus.bigFile.currentDir = NULL;
+		loadStatus.bigFile.currentDirID = 0;
+		loadStatus.bigFile.cachedDir = NULL;
+		loadStatus.bigFile.cachedDirID = 0;
+		loadStatus.bigFile.searchDirID = 0;
+
+		LOAD_CdReadFromBigFile(0, (unsigned long*)&loadStatus.bigFile.numSubDirs, sizeof(loadStatus.bigFile.numSubDirs), 0, 0);
+
+		do
+		{
+			LOAD_ProcessReadQueue();
+
+		} while (LOAD_IsFileLoading() != 0);
+
+
+		ptr = MEMPACK_Malloc((loadStatus.bigFile.numSubDirs << 3) + 4, 8);
+
+		LOAD_CdReadFromBigFile(0, (unsigned long*)ptr, (loadStatus.bigFile.numSubDirs << 3) + 4, 0, 0);
+		ptr += 4;
+		loadStatus.bigFile.subDirList = (struct _BigFileDirEntry*)ptr;
+
+		do
+		{
+			LOAD_ProcessReadQueue();
+
+		} while (LOAD_IsFileLoading() != 0);
+
+		loadStatus.bigFile.rootDir = LOAD_ReadDirectory(loadStatus.bigFile.subDirList);
+
+		do
+		{
+			LOAD_ProcessReadQueue();
+
+		} while (LOAD_IsFileLoading() != 0);
+	}
+#else
 	CdlFILE fp;
 	long i;
 	char *ptr;
@@ -542,7 +648,9 @@ void LOAD_InitCdLoader(char *bigFileName, char *voiceFileName)
 
 		} while (LOAD_IsFileLoading() != 0);
 	}
+#endif
 }
+
 #endif
 
 int LOAD_SetupFileInfo(struct _NonBlockLoadEntry *loadEntry)

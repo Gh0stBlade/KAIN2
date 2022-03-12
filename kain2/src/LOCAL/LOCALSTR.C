@@ -30,8 +30,12 @@ void localstr_set_language(enum language_t lang)
 { 
 	int i;
 
+#if defined(PSXPC_VERSION) && defined(NO_CD)
+	LocalizationTable = (struct LocalizationHeader*)LOAD_ReadFileFromCD("LOCALS.TBL", 6);
+#else
 	LocalizationTable = (struct LocalizationHeader*)LOAD_ReadFileFromCD("\\LOCALS.TBL;1", 6);
-	
+#endif
+
 	if (LocalizationTable != NULL)
 	{
 		LocalStrings = (char**)LocalizationTable + 4;
