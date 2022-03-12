@@ -890,7 +890,7 @@ void Emulator_Initialise(char* windowName, int width, int height)
 	g_swapTime = GetTickCount() - FIXED_TIME_STEP;
 #endif
 
-	counter_thread = std::thread(Emulator_CounterLoop);
+	//counter_thread = std::thread(Emulator_CounterLoop);
 }
 
 void Emulator_CounterLoop()
@@ -3201,7 +3201,7 @@ void Emulator_ShutDown()
 	SDL_Quit();
 #endif
 
-	exit(0);
+	exit(EXIT_SUCCESS);
 }
 
 int g_PreviousBlendMode = BM_NONE;
