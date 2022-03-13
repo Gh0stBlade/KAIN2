@@ -344,10 +344,17 @@ void LOAD_SetupFileToDoBufferedCDReading()
 	{
 		loadStatus.currentSector = loadStatus.bigFile.bigfileBaseOffset + (loadStatus.currentQueueFile.readStartPos >> 11);
 	}
-
+#if defined(PSXPC_VERSION) && defined(NO_CD)
+	PClseek(loadStatus.bigFile.bigfileFileHandle, loadStatus.currentQueueFile.readStartPos, 0);
+	PCread(loadStatus.bigFile.bigfileFileHandle, (char*)loadStatus.currentQueueFile.readStartDest, loadStatus.currentQueueFile.readSize);
+	loadStatus.bytesTransferred = (loadStatus.currentQueueFile.readSize - loadStatus.currentQueueFile.readCurSize);
+	loadStatus.state = 4;
+	LOAD_CdDataReady();
+#else
 	CdIntToPos(loadStatus.currentSector, &loc);
 	CdControl(CdlReadN, &loc.minute, NULL);
 	loadStatus.cdWaitTime = TIMER_GetTimeMS();
+#endif
 #endif
 }
 

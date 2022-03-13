@@ -770,7 +770,6 @@ void aadProcessLoadQueue()
 				{
 					LOAD_SetSearchDirectory(0);
 				}
-
 			}
 		}
 		
