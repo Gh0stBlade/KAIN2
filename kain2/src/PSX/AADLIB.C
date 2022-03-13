@@ -687,10 +687,10 @@ void aadProcessLoadQueue()
 
 		if (aadMem->numLoadReqsQueued != 0 && aadMem->sramDefragInfo.status == 0 && gDefragRequest == 0)
 		{
-			aadMem->nextLoadReqOut = (aadMem->nextLoadReqOut + 1) & 0xF;
-			
 			loadReq = &aadMem->loadRequestQueue[aadMem->nextLoadReqOut];
-			
+
+			aadMem->nextLoadReqOut = (aadMem->nextLoadReqOut + 1) & 0xF;
+
 			aadMem->numLoadReqsQueued++;
 
 			if (loadReq->type == 1)
