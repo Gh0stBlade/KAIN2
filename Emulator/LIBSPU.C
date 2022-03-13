@@ -1203,3 +1203,9 @@ void SpuSetCommonCDMix(long cd_mix)
 {
     UNIMPLEMENTED();
 }
+
+SpuTransferCallbackProc SpuSetTransferCallback(SpuTransferCallbackProc func)
+{
+    UNIMPLEMENTED();
+    return NULL;
+}
