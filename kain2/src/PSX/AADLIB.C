@@ -691,7 +691,7 @@ void aadProcessLoadQueue()
 
 			aadMem->nextLoadReqOut = (aadMem->nextLoadReqOut + 1) & 0xF;
 
-			aadMem->numLoadReqsQueued++;
+			aadMem->numLoadReqsQueued--;
 
 			if (loadReq->type == 1)
 			{
