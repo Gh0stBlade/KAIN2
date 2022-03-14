@@ -70,6 +70,8 @@ unsigned short _spu_tsa = 0;
 int PrimaryDMAControlRegister = 0;///@TODO check initials wil likely be stripped though
 int* dword_E10 = &PrimaryDMAControlRegister;//Base address is 1F8010F0.
 
+char spuSoundBuffer[520191];
+
 int _spu_note2pitch(int a0, int a1, int a2, int a3)
 {
     a3 += a1;
@@ -662,9 +664,10 @@ void _spu_t(int mode, int flag)
 
 void _spu_Fw(unsigned char* addr, unsigned long size)
 {
-	//v0 = _spu_transMode
-	//s1 = addr
-	//s0 = size
+#if 1
+    memcpy(&spuSoundBuffer[_spu_tsa], addr, size);
+    __spu_transferCallback();
+#else
 
 	if (_spu_trans_mode == 0)
 	{
@@ -672,36 +675,9 @@ void _spu_Fw(unsigned char* addr, unsigned long size)
 		//a1 = _spu_mem_mode_plus
 		//a0 = 2
 		_spu_t(2, _spu_tsa << _spu_mem_mode_plus);
-		///@TODO check if a1 is modified in spu_t
-	}
-	//loc_A84
-#if 0
-jal     _spu_t
-sllv    $a1, $v0, $a1
+		_spu_t(1, _spu_tsa << _spu_mem_mode_plus);
 
-jal     _spu_t
-li      $a0, 1
-
-li      $a0, 3
-move    $a1, $s1
-jal     _spu_t
-move    $a2, $s0
-j       loc_A94
-move    $v0, $s0
-
-loc_A84:
-move    $a0, $s1
-jal     sub_480
-move    $a1, $s0
-move    $v0, $s0
-
-loc_A94:
-lw      $ra, 0x20+var_8($sp)
-lw      $s1, 0x20+var_C($sp)
-lw      $s0, 0x20+var_10($sp)
-jr      $ra
-addiu   $sp, 0x20
- # End of function _spu_Fw
+    }
 #endif
 }
 
