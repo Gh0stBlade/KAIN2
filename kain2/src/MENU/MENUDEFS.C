@@ -203,7 +203,7 @@ void set_volume(enum sfx_t sfx, int cooked)
 	}
 	else if (sfx == sfx_sound)
 	{
-		SOUND_SetMusicVolume(raw);
+		SOUND_SetSfxVolume(raw);
 	}
 	else if (sfx == sfx_voice)
 	{
