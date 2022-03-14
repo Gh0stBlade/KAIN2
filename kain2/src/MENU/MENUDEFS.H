@@ -1,6 +1,14 @@
 #ifndef MENUDEFS_H
 #define MENUDEFS_H
 
+enum sfx_t : int 
+{
+	sfx_sound = 0,
+	sfx_music = 1,
+	sfx_voice = 2,
+	sfx_error = 3,
+};
+
 union MENUDEFS_71fake // Hashcode: 0x2BC919B9 (dec: 734599609)
 {
 	struct {
