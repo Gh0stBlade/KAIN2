@@ -1164,7 +1164,6 @@ void aadLoadSingleDynSfx(struct AadDynamicSfxLoadInfo *info)
 
 	attr = &info->attr;
 
-
 	if (aadMem->sfxToneMasterList[info->attr.sfxID] == 254)
 	{
 		aadMem->sfxToneMasterList[info->attr.sfxID] = 255;
@@ -1321,7 +1320,7 @@ void aadLoadDynamicSfxReturn2(void *loadedDataPtr, long loadedDataSize, short st
 				n = bytesRemaining;
 			}
 		
-			memcpy(((char*)info - info->bytesToLoad - 148), &dataPtr[dataOffset], n);
+			memcpy(((char*)info - (unsigned)(info->bytesToLoad - 148)), &dataPtr[dataOffset], n);
 			
 			dataOffset += n;
 			bytesRemaining -= n;
