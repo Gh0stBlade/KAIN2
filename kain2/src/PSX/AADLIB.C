@@ -920,7 +920,7 @@ int aadWaveMalloc(unsigned short waveID, unsigned long waveSize)
 			}
 		}
 
-		if (next->nextIndex >= 0)
+		if ((char)next->nextIndex >= 0)
 		{
 			if (next->nextIndex != sramDescIndex)
 			{
@@ -941,7 +941,7 @@ int aadWaveMalloc(unsigned short waveID, unsigned long waveSize)
 
 		if (waveSize < bestFit->size)
 		{
-			if (bestFit->nextIndex >= 0)
+			if ((char)bestFit->nextIndex >= 0)
 			{
 				next = sramDescTbl + bestFit->nextIndex;
 
@@ -988,10 +988,9 @@ int aadWaveMalloc(unsigned short waveID, unsigned long waveSize)
 				next->size = bestFit->size - waveSize;
 				next->nextIndex = bestFit->nextIndex;
 
-				if (next->nextIndex >= 0)
+				if ((char)next->nextIndex >= 0)
 				{
 					(sramDescTbl + next->nextIndex)->prevIndex = sramDescIndex;
-
 				}
 				
 				bestFit->size = waveSize;
