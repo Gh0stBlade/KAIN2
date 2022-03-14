@@ -1131,6 +1131,7 @@ void SOUND_Init()
 	initAttr.nonBlockBufferedLoadProc = LOAD_NonBlockingBufferedLoad;
 	initAttr.memoryMallocProc = MEMPACK_Malloc;
 	initAttr.memoryFreeProc = MEMPACK_Free;
+	initAttr.updateMode = 0;
 	aadGetMemorySize(&initAttr);
 	aadInit(&initAttr, (unsigned char*)soundBuffer);
 	gameTrackerX.sound.gMasterVol = 16383;
