@@ -93,16 +93,19 @@ void menu_item_flags(struct menu_t *menu, TDRFuncPtr_menu_item_flags1fn fn, long
 void menu_item(struct menu_t *menu, int (*fn)(void*, long, enum menu_ctrl_t), long parameter, char* format ...)
 { 
 	struct menu_item_t* item;
-
+	va_list ap;
+	
 	item = &menu->items[menu->nitems++];
 	item->fn = fn;
 	item->parameter = parameter;
 	item->flags = 0;
 	item->text = &menu->bytes[menu->nbytes];
 
+	va_start(ap, format);
+
 	if (format != NULL)
 	{
-		vsprintf(item->text, format, format + 1);
+		vsprintf(item->text, format, ap);
 		menu->nbytes += strlen(item->text) + 1;
 	}
 	else
