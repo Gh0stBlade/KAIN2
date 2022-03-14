@@ -90,7 +90,7 @@ void menu_item_flags(struct menu_t *menu, TDRFuncPtr_menu_item_flags1fn fn, long
 
 }
 
-void menu_item(struct menu_t *menu, int (*fn)(void*, long, enum menu_ctrl_t), long parameter, char* format)
+void menu_item(struct menu_t *menu, int (*fn)(void*, long, enum menu_ctrl_t), long parameter, char* format ...)
 { 
 	struct menu_item_t* item;
 
