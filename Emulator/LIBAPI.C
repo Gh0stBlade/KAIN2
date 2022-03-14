@@ -1,5 +1,6 @@
 #include "LIBAPI.H"
 
+#include <thread>
 #include <stdio.h>
 #include "EMULATOR.H"
 
@@ -88,11 +89,25 @@ long StopRCnt(long spec)//TODO
 {
 	return 0;
 }
+
+static void infiniteFunctionCall(long(*func)())
+{
+	while (true)
+	{
+		func();
+	}
+}
+
 #undef OpenEvent
 long OpenEvent(unsigned long event, long unk01, long unk02, long(*func)())
 {
-	UNIMPLEMENTED();
-	return 0;
+	if (func == NULL)
+	{
+		return 0;
+	}
+
+	std::thread* t = new std::thread(infiniteFunctionCall, func);
+	return (long)t;
 }
 
 long CloseEvent(long event)
