@@ -8,6 +8,8 @@
 
 #define SPU_CENTERNOTE (-32768 / 2)
 
+SpuTransferCallbackProc __spu_transferCallback = NULL;
+
 short _spu_voice_centerNote[24] =
 {
 	SPU_CENTERNOTE, SPU_CENTERNOTE, SPU_CENTERNOTE, SPU_CENTERNOTE, SPU_CENTERNOTE, SPU_CENTERNOTE, SPU_CENTERNOTE, SPU_CENTERNOTE, SPU_CENTERNOTE, SPU_CENTERNOTE,
@@ -1206,6 +1208,12 @@ void SpuSetCommonCDMix(long cd_mix)
 
 SpuTransferCallbackProc SpuSetTransferCallback(SpuTransferCallbackProc func)
 {
-    UNIMPLEMENTED();
-    return NULL;
+    SpuTransferCallbackProc prev = __spu_transferCallback;
+
+    if (func != __spu_transferCallback)
+    {
+        __spu_transferCallback = func;
+    }
+
+    return prev;
 }
