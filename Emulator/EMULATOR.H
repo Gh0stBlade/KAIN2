@@ -113,8 +113,9 @@ typedef struct
 		unsigned short unk02;
 	};
 
+	typedef long (*CallbackProc)(void);
 
-	unsigned int padding00;
+	CallbackProc padding00;
 	unsigned int padding01;
 } SysCounter;
 

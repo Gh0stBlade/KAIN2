@@ -101,13 +101,16 @@ static void infiniteFunctionCall(long(*func)())
 #undef OpenEvent
 long OpenEvent(unsigned long event, long unk01, long unk02, long(*func)())
 {
-	if (func == NULL)
+	int spec = event &= 0xFFFF;
+
+	if (spec > 2 || func == NULL)
 	{
 		return 0;
 	}
 
-	std::thread* t = new std::thread(infiniteFunctionCall, func);
-	return (long)t;
+	counters[spec].padding00 = func;
+
+	return 1;
 }
 
 long CloseEvent(long event)

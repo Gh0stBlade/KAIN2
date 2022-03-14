@@ -890,7 +890,7 @@ void Emulator_Initialise(char* windowName, int width, int height)
 	g_swapTime = GetTickCount() - FIXED_TIME_STEP;
 #endif
 
-	//counter_thread = std::thread(Emulator_CounterLoop);
+	counter_thread = std::thread(Emulator_CounterLoop);
 }
 
 void Emulator_CounterLoop()
@@ -919,6 +919,11 @@ void Emulator_CounterLoop()
 					if (counters[i].target > 0)
 					{
 						counters[i].cycle %= counters[i].target;
+
+						if (counters[i].padding00 != NULL)
+						{
+							counters[i].padding00();
+						}
 					}
 				}
 			}

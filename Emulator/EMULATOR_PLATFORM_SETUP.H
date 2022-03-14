@@ -28,6 +28,7 @@
 
 #if defined(OGL) || defined(D3D9) || defined(D3D11)
 #define SDL2
+#define OPENAL
 #endif
 
 #if defined(OGL)
