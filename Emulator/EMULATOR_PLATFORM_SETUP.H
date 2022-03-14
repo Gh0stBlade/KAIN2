@@ -10,6 +10,11 @@
  * Platform specific emulator setup
  */
 #if (defined(_WINDOWS) || defined(__APPLE__) || defined(__linux__) || defined(__MINGW32__)) && !defined(__ANDROID__)
+
+#if defined(_DEBUG)
+#define DEBUG_PRINTS
+#endif
+
 //Open Graphics Library (Embedded Systems)
 //#define OGLES
 //#define OGLES_VERSION 3
