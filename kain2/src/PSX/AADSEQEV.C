@@ -1,4 +1,4 @@
-#include "THISDUST.H"
+#include "CORE.H"
 #include "AADSEQEV.H"
 
 
@@ -10,7 +10,7 @@ int aadQueueNextEvent(struct _AadSequenceSlot *slot, int track)
 		// Start line: 25
 		// Start offset: 0x800548E8
 		// Variables:
-	struct AadSeqEvent seqEvent; // stack offset -16
+	//struct AadSeqEvent seqEvent; // stack offset -16
 	unsigned char *seqData; // $a2
 	unsigned long deltaTime; // $v1
 	int c; // $a0
@@ -33,6 +33,7 @@ int aadQueueNextEvent(struct _AadSequenceSlot *slot, int track)
 // void /*$ra*/ aadExecuteEvent(struct AadSeqEvent *event /*$s0*/, struct _AadSequenceSlot *slot /*$s1*/)
 void aadExecuteEvent(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 { // line 103, offset 0x80054adc
+#if defined(PC_VERSION)
 	if ((event->statusByte & 0x80u) == 0)
 	{
 		aadSubstituteVariables(event, slot);
@@ -44,6 +45,7 @@ void aadExecuteEvent(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 	{
 		//((void(__cdecl*)(struct AadSeqEvent*, struct _AadSequenceSlot*))funcs_4351A9[(v2 >> 4) & 7])(event, slot);
 	}
+#endif
 }
 
 
@@ -111,7 +113,7 @@ void aadUpdateChannelVolPan(struct _AadSequenceSlot *slot, int channel)
 		// Variables:
 			struct AadSynthVoice *voice; // $s0
 			int i; // $s2
-			struct AadVolume newVoiceVol; // stack offset -40
+			//struct AadVolume newVoiceVol; // stack offset -40
 
 		/* begin block 1.1 */
 			// Start line: 267
@@ -135,7 +137,7 @@ void aadUpdateChannelVolPan(struct _AadSequenceSlot *slot, int channel)
 			// Start line: 269
 			// Start offset: 0x80055078
 			// Variables:
-				unsigned long tmp; // $v0
+				//unsigned long tmp; // $v0
 		/* end block 1.3 */
 		// End offset: 0x80055078
 		// End Line: 269
@@ -144,7 +146,7 @@ void aadUpdateChannelVolPan(struct _AadSequenceSlot *slot, int channel)
 			// Start line: 270
 			// Start offset: 0x800550E4
 			// Variables:
-				unsigned long masterVolumeSquared; // $v1
+				//unsigned long masterVolumeSquared; // $v1
 		/* end block 1.4 */
 		// End offset: 0x800550E4
 		// End Line: 270
@@ -153,7 +155,7 @@ void aadUpdateChannelVolPan(struct _AadSequenceSlot *slot, int channel)
 			// Start line: 270
 			// Start offset: 0x800550E4
 			// Variables:
-				unsigned long masterVolumeSquared; // $v0
+				//unsigned long masterVolumeSquared; // $v0
 		/* end block 1.5 */
 		// End offset: 0x800550E4
 		// End Line: 270
@@ -162,7 +164,7 @@ void aadUpdateChannelVolPan(struct _AadSequenceSlot *slot, int channel)
 			// Start line: 270
 			// Start offset: 0x800550E4
 			// Variables:
-				unsigned long masterVolumeSquared; // $v0
+				//unsigned long masterVolumeSquared; // $v0
 		/* end block 1.6 */
 		// End offset: 0x800550E4
 		// End Line: 270
@@ -171,7 +173,7 @@ void aadUpdateChannelVolPan(struct _AadSequenceSlot *slot, int channel)
 			// Start line: 270
 			// Start offset: 0x800550E4
 			// Variables:
-				unsigned long masterVolumeSquared; // $v0
+				//unsigned long masterVolumeSquared; // $v0
 		/* end block 1.7 */
 		// End offset: 0x800550E4
 		// End Line: 270
@@ -198,7 +200,7 @@ void aadUpdateSlotVolPan(struct _AadSequenceSlot *slot)
 			struct AadSynthVoice *voice; // $t0
 			int channel; // $t1
 			int i; // $s0
-			struct AadVolume newVoiceVol; // stack offset -24
+			//struct AadVolume newVoiceVol; // stack offset -24
 
 		/* begin block 1.1 */
 			// Start line: 302
@@ -222,7 +224,7 @@ void aadUpdateSlotVolPan(struct _AadSequenceSlot *slot)
 			// Start line: 304
 			// Start offset: 0x800553F4
 			// Variables:
-				unsigned long tmp; // $v0
+				//unsigned long tmp; // $v0
 		/* end block 1.3 */
 		// End offset: 0x800553F4
 		// End Line: 304
@@ -231,7 +233,7 @@ void aadUpdateSlotVolPan(struct _AadSequenceSlot *slot)
 			// Start line: 305
 			// Start offset: 0x80055460
 			// Variables:
-				unsigned long masterVolumeSquared; // $v1
+				//unsigned long masterVolumeSquared; // $v1
 		/* end block 1.4 */
 		// End offset: 0x80055460
 		// End Line: 305
@@ -240,7 +242,7 @@ void aadUpdateSlotVolPan(struct _AadSequenceSlot *slot)
 			// Start line: 305
 			// Start offset: 0x80055460
 			// Variables:
-				unsigned long masterVolumeSquared; // $v0
+				//unsigned long masterVolumeSquared; // $v0
 		/* end block 1.5 */
 		// End offset: 0x80055460
 		// End Line: 305
@@ -249,7 +251,7 @@ void aadUpdateSlotVolPan(struct _AadSequenceSlot *slot)
 			// Start line: 305
 			// Start offset: 0x80055460
 			// Variables:
-				unsigned long masterVolumeSquared; // $v0
+				//unsigned long masterVolumeSquared; // $v0
 		/* end block 1.6 */
 		// End offset: 0x80055460
 		// End Line: 305
@@ -258,7 +260,7 @@ void aadUpdateSlotVolPan(struct _AadSequenceSlot *slot)
 			// Start line: 305
 			// Start offset: 0x80055460
 			// Variables:
-				unsigned long masterVolumeSquared; // $v0
+				//unsigned long masterVolumeSquared; // $v0
 		/* end block 1.7 */
 		// End offset: 0x80055460
 		// End Line: 305
@@ -343,7 +345,9 @@ void midiControlChange(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 // void /*$ra*/ midiProgramChange(struct AadSeqEvent *event /*$a0*/, struct _AadSequenceSlot *slot /*$a1*/)
 void midiProgramChange(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 { // line 385, offset 0x800557c4
+#if defined(PC_VERSION)
 	slot->currentProgram[event->statusByte & 0xF] = event->dataByte[0];
+#endif
 }
 
 
@@ -368,11 +372,13 @@ void midiChannelAftertouch(struct AadSeqEvent *event, struct _AadSequenceSlot *s
 // void /*$ra*/ midiPitchWheelControl(struct AadSeqEvent *event /*$a0*/, struct _AadSequenceSlot *slot /*$a3*/)
 void midiPitchWheelControl(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 { // line 401, offset 0x800557e4
+#if defined(PC_VERSION)
 	int v2; // [esp-4h] [ebp-4h]
 
 	v2 = event->statusByte & 0xF;
 	slot->pitchWheel[v2] = event->dataByte[0] | ((BYTE)event->dataByte[1] << 7);
 	aadUpdateChannelPitchBend(slot, v2);
+#endif
 }
 
 
@@ -414,10 +420,12 @@ void midiControlBankSelect(struct AadSeqEvent *event, struct _AadSequenceSlot *s
 // void /*$ra*/ midiControlVolume(struct AadSeqEvent *event /*$a0*/, struct _AadSequenceSlot *slot /*$a2*/)
 void midiControlVolume(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 { // line 446, offset 0x8005583c
+#if defined(PC_VERSION)
 	int v2 = event->statusByte & 0xF;
 	slot->volume[v2] = event->dataByte[1];
 	if (((1 << v2) & slot->enableSustainUpdate) != 0)
 		aadUpdateChannelVolPan(slot, v2);
+#endif
 }
 
 
@@ -425,12 +433,14 @@ void midiControlVolume(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 // void /*$ra*/ midiControlPan(struct AadSeqEvent *event /*$a0*/, struct _AadSequenceSlot *slot /*$a2*/)
 void midiControlPan(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 { // line 461, offset 0x8005588c
+#if defined(PC_VERSION)
 	int v2; // ecx
 
 	v2 = event->statusByte & 0xF;
 	slot->panPosition[v2] = event->dataByte[1];
 	if (((1 << v2) & slot->enableSustainUpdate) != 0)
 		aadUpdateChannelVolPan(slot, v2);
+#endif
 }
 
 
@@ -438,11 +448,13 @@ void midiControlPan(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 // void /*$ra*/ midiControlCallback(struct AadSeqEvent *event /*$a3*/, struct _AadSequenceSlot *slot /*$a1*/)
 void midiControlCallback(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 { // line 476, offset 0x800558dc
+#if defined(PC_VERSION)
 	void(__cdecl * v2)(int, DWORD, int, DWORD); // eax
 
 	v2 = *(void(__cdecl**)(int, DWORD, int, DWORD)) & aadMem[3].loadRequestQueue[12].fileName[8];
 	if (v2)
 		v2(aadMem[3].loadRequestQueue[13].handle, slot->thisSlotNumber, event->statusByte & 0xF, event->dataByte[1]);
+#endif
 }
 
 
