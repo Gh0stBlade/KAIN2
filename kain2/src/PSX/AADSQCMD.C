@@ -1,4 +1,4 @@
-#include "THISDUST.H"
+#include "CORE.H"
 #include "AADSQCMD.H"
 
 
@@ -37,11 +37,13 @@ void aadSubstituteVariables(struct AadSeqEvent *event, struct _AadSequenceSlot *
 // void /*$ra*/ metaCmdSelectChannel(struct AadSeqEvent *event /*$a0*/, struct _AadSequenceSlot *slot /*$a1*/)
 void metaCmdSelectChannel(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 { // line 58, offset 0x800559e0
+#if defined(PC_VERSION)
 	int v2; // eax
 
 	v2 = event->dataByte[0];
 	if (v2 < 16)
 		slot->selectedChannel = v2;
+#endif
 }
 
 
@@ -49,6 +51,7 @@ void metaCmdSelectChannel(struct AadSeqEvent *event, struct _AadSequenceSlot *sl
 // void /*$ra*/ metaCmdSelectSlot(struct AadSeqEvent *event /*$a0*/, struct _AadSequenceSlot *slot /*$a1*/)
 void metaCmdSelectSlot(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 { // line 68, offset 0x80055a00
+#if defined(PC_VERSION)
 	int v2; // eax
 	unsigned __int8 thisSlotNumber; // cl
 
@@ -67,6 +70,7 @@ void metaCmdSelectSlot(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 		slot->selectedSlotPtr = aadMem->sequenceSlots[v2];
 		slot->selectedSlotNum = v2;
 	}
+#endif
 }
 
 
@@ -74,6 +78,7 @@ void metaCmdSelectSlot(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 // void /*$ra*/ metaCmdAssignSequence(struct AadSeqEvent *event /*$a0*/, struct _AadSequenceSlot *slot /*$s2*/)
 void metaCmdAssignSequence(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 { // line 88, offset 0x80055a50
+#if defined(PC_VERSION)
 	int selectedDynamicBank; // esi
 	int v3; // edi
 
@@ -81,6 +86,7 @@ void metaCmdAssignSequence(struct AadSeqEvent *event, struct _AadSequenceSlot *s
 	v3 = event->dataByte[0];
 	if (aadMem->dynamicBankStatus[selectedDynamicBank] == 2 && v3 < aadGetNumDynamicSequences(slot->selectedDynamicBank))
 		aadAssignDynamicSequence(selectedDynamicBank, v3, slot->selectedSlotNum);
+#endif
 }
 
 
@@ -102,6 +108,7 @@ void metaCmdUseSecondaryTempo(struct AadSeqEvent *event, struct _AadSequenceSlot
 // void /*$ra*/ metaCmdSetTempo(struct AadSeqEvent *event /*$a0*/, struct _AadSequenceSlot *slot /*$a1*/)
 void metaCmdSetTempo(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 { // line 124, offset 0x80055ad4
+#if defined(PC_VERSION)
 	struct _AadSequenceSlot* selectedSlotPtr; // eax
 	int v3; // [esp+0h] [ebp-8h] BYREF
 	int ppqn; // [esp+4h] [ebp-4h]
@@ -113,6 +120,7 @@ void metaCmdSetTempo(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 	else
 		ppqn = 480;
 	aadSetSlotTempo(slot->selectedSlotNum, &v3);
+#endif
 }
 
 
@@ -120,6 +128,7 @@ void metaCmdSetTempo(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 // void /*$ra*/ metaCmdChangeTempo(struct AadSeqEvent *event /*$a0*/, struct _AadSequenceSlot *slot /*$a1*/)
 void metaCmdChangeTempo(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 { // line 140, offset 0x80055b54
+#if defined(PC_VERSION)
 	struct _AadSequenceSlot* selectedSlotPtr; // ecx
 	int selectedSlotNum; // edx
 	int v4[2]; // [esp+8h] [ebp-8h] BYREF
@@ -129,6 +138,7 @@ void metaCmdChangeTempo(struct AadSeqEvent *event, struct _AadSequenceSlot *slot
 	v4[0] = 100 * selectedSlotPtr->tempo.quarterNoteTime / event->dataByte[0];
 	v4[1] = selectedSlotPtr->tempo.ppqn;
 	aadSetSlotTempo(selectedSlotNum, v4);
+#endif
 }
 
 
@@ -136,6 +146,7 @@ void metaCmdChangeTempo(struct AadSeqEvent *event, struct _AadSequenceSlot *slot
 // void /*$ra*/ metaCmdSetTempoFromSequence(struct AadSeqEvent *event /*$a0*/, struct _AadSequenceSlot *slot /*$s2*/)
 void metaCmdSetTempoFromSequence(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 { // line 155, offset 0x80055bc4
+#if defined(PC_VERSION)
 	int selectedDynamicBank; // esi
 	int v3; // edi
 	char v4[8]; // [esp+Ch] [ebp-8h] BYREF
@@ -147,6 +158,7 @@ void metaCmdSetTempoFromSequence(struct AadSeqEvent *event, struct _AadSequenceS
 		aadGetTempoFromDynamicSequence(selectedDynamicBank, v3, v4);
 		aadSetSlotTempo(slot->selectedSlotNum, v4);
 	}
+#endif
 }
 
 
@@ -154,7 +166,9 @@ void metaCmdSetTempoFromSequence(struct AadSeqEvent *event, struct _AadSequenceS
 // void /*$ra*/ metaCmdStartSlot(struct AadSeqEvent *event /*$a0*/, struct _AadSequenceSlot *slot /*$a1*/)
 void metaCmdStartSlot(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 { // line 185, offset 0x80055c44
+#if defined(PC_VERSION)
 	aadStartSlot(slot->selectedSlotNum);
+#endif
 }
 
 
@@ -162,7 +176,9 @@ void metaCmdStartSlot(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 // void /*$ra*/ metaCmdStopSlot(struct AadSeqEvent *event /*$a0*/, struct _AadSequenceSlot *slot /*$a1*/)
 void metaCmdStopSlot(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 { // line 192, offset 0x80055c68
+#if defined(PC_VERSION)
 	aadStopSlot(slot->selectedSlotNum);
+#endif
 }
 
 
@@ -170,7 +186,9 @@ void metaCmdStopSlot(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 // void /*$ra*/ metaCmdPauseSlot(struct AadSeqEvent *event /*$a0*/, struct _AadSequenceSlot *slot /*$a1*/)
 void metaCmdPauseSlot(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 { // line 199, offset 0x80055c8c
+#if defined(PC_VERSION)
 	aadPauseSlot(slot->selectedSlotNum);
+#endif
 }
 
 
@@ -178,7 +196,9 @@ void metaCmdPauseSlot(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 // void /*$ra*/ metaCmdResumeSlot(struct AadSeqEvent *event /*$a0*/, struct _AadSequenceSlot *slot /*$a1*/)
 void metaCmdResumeSlot(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 { // line 206, offset 0x80055cb0
+#if defined(PC_VERSION)
 	aadResumeSlot(slot->selectedSlotNum);
+#endif
 }
 
 
@@ -200,8 +220,10 @@ void metaCmdSetChannelBendRange(struct AadSeqEvent *event, struct _AadSequenceSl
 // void /*$ra*/ metaCmdSetSlotVolume(struct AadSeqEvent *event /*$a0*/, struct _AadSequenceSlot *slot /*$a1*/)
 void metaCmdSetSlotVolume(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 { // line 232, offset 0x80055ce4
+#if defined(PC_VERSION)
 	slot->selectedSlotPtr->slotVolume = event->dataByte[0];
 	aadUpdateSlotVolPan((int)slot->selectedSlotPtr, (int)slot->selectedSlotPtr);
+#endif
 }
 
 
@@ -209,8 +231,10 @@ void metaCmdSetSlotVolume(struct AadSeqEvent *event, struct _AadSequenceSlot *sl
 // void /*$ra*/ metaCmdSetSlotPan(struct AadSeqEvent *event /*$a0*/, struct _AadSequenceSlot *slot /*$a1*/)
 void metaCmdSetSlotPan(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 { // line 244, offset 0x80055d18
+#if defined(PC_VERSION)
 	slot->selectedSlotPtr->slotPan = event->dataByte[0];
 	aadUpdateSlotVolPan((int)slot->selectedSlotPtr, (int)slot->selectedSlotPtr);
+#endif
 }
 
 
@@ -218,8 +242,10 @@ void metaCmdSetSlotPan(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 // void /*$ra*/ metaCmdSetChannelVolume(struct AadSeqEvent *event /*$a0*/, struct _AadSequenceSlot *slot /*$a1*/)
 void metaCmdSetChannelVolume(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 { // line 256, offset 0x80055d4c
+#if defined(PC_VERSION)
 	slot->selectedSlotPtr->volume[slot->selectedChannel] = event->dataByte[0];
 	aadUpdateChannelVolPan(slot->selectedSlotPtr, slot->selectedChannel);
+#endif
 }
 
 
@@ -227,8 +253,10 @@ void metaCmdSetChannelVolume(struct AadSeqEvent *event, struct _AadSequenceSlot 
 // void /*$ra*/ metaCmdSetChannelPan(struct AadSeqEvent *event /*$a0*/, struct _AadSequenceSlot *slot /*$a1*/)
 void metaCmdSetChannelPan(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 { // line 268, offset 0x80055d88
+#if defined(PC_VERSION)
 	slot->selectedSlotPtr->panPosition[slot->selectedChannel] = event->dataByte[0];
 	aadUpdateChannelVolPan(slot->selectedSlotPtr, slot->selectedChannel);
+#endif
 }
 
 
@@ -236,7 +264,9 @@ void metaCmdSetChannelPan(struct AadSeqEvent *event, struct _AadSequenceSlot *sl
 // void /*$ra*/ metaCmdEnableSustainUpdate(struct AadSeqEvent *event /*$a0*/, struct _AadSequenceSlot *slot /*$a1*/)
 void metaCmdEnableSustainUpdate(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 { // line 280, offset 0x80055dc4
+#if defined(PC_VERSION)
 	slot->selectedSlotPtr->enableSustainUpdate |= 1 << slot->selectedChannel;
+#endif
 }
 
 
@@ -244,7 +274,9 @@ void metaCmdEnableSustainUpdate(struct AadSeqEvent *event, struct _AadSequenceSl
 // void /*$ra*/ metaCmdDisableSustainUpdate(struct AadSeqEvent *event /*$a0*/, struct _AadSequenceSlot *slot /*$a1*/)
 void metaCmdDisableSustainUpdate(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 { // line 290, offset 0x80055de4
+#if defined(PC_VERSION)
 	slot->selectedSlotPtr->enableSustainUpdate &= ~(1 << slot->selectedChannel);
+#endif
 }
 
 
@@ -252,7 +284,9 @@ void metaCmdDisableSustainUpdate(struct AadSeqEvent *event, struct _AadSequenceS
 // void /*$ra*/ metaCmdMuteChannel(struct AadSeqEvent *event /*$a0*/, struct _AadSequenceSlot *slot /*$a1*/)
 void metaCmdMuteChannel(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 { // line 300, offset 0x80055e08
+#if defined(PC_VERSION)
 	aadMuteChannels(slot->selectedSlotPtr, 1 << slot->selectedChannel);
+#endif
 }
 
 
@@ -260,7 +294,9 @@ void metaCmdMuteChannel(struct AadSeqEvent *event, struct _AadSequenceSlot *slot
 // void /*$ra*/ metaCmdUnMuteChannel(struct AadSeqEvent *event /*$a0*/, struct _AadSequenceSlot *slot /*$a1*/)
 void metaCmdUnMuteChannel(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 { // line 310, offset 0x80055e34
+#if defined(PC_VERSION)
 	aadUnMuteChannels(slot->selectedSlotPtr, 1 << slot->selectedChannel);
+#endif
 }
 
 
@@ -268,7 +304,9 @@ void metaCmdUnMuteChannel(struct AadSeqEvent *event, struct _AadSequenceSlot *sl
 // void /*$ra*/ metaCmdMuteChannelList(struct AadSeqEvent *event /*$a0*/, struct _AadSequenceSlot *slot /*$a1*/)
 void metaCmdMuteChannelList(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 { // line 320, offset 0x80055e60
+#if defined(PC_VERSION)
 	aadMuteChannels(slot->selectedSlotPtr, event->dataByte[0] | (event->dataByte[1] << 8));
+#endif
 }
 
 
@@ -276,7 +314,9 @@ void metaCmdMuteChannelList(struct AadSeqEvent *event, struct _AadSequenceSlot *
 // void /*$ra*/ metaCmdUnMuteChannelList(struct AadSeqEvent *event /*$a0*/, struct _AadSequenceSlot *slot /*$a1*/)
 void metaCmdUnMuteChannelList(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 { // line 330, offset 0x80055e90
+#if defined(PC_VERSION)
 	aadUnMuteChannels(slot->selectedSlotPtr, (event->dataByte[1] << 8) | event->dataByte[0]);
+#endif
 }
 
 
@@ -284,11 +324,13 @@ void metaCmdUnMuteChannelList(struct AadSeqEvent *event, struct _AadSequenceSlot
 // void /*$ra*/ metaCmdSetChannelMute(struct AadSeqEvent *event /*$v0*/, struct _AadSequenceSlot *slot /*$s1*/)
 void metaCmdSetChannelMute(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 { // line 340, offset 0x80055ec0
+#if defined(PC_VERSION)
 	int v2; // esi
 
 	v2 = (event->dataByte[1] << 8) | event->dataByte[0];
 	aadUnMuteChannels(slot->selectedSlotPtr, ~v2);
 	aadMuteChannels(slot->selectedSlotPtr, v2);
+#endif
 }
 
 
