@@ -2,7 +2,7 @@
 #include "AADLIB.H"
 #include "AADSFX.H"
 
-static void(*sfxCmds[])(struct AadSfxCommand*) =
+static void(*sfxCmdFunction[])(struct AadSfxCommand*) =
 {
 	sfxCmdPlayTone,
 	sfxCmdStopTone,
@@ -440,9 +440,23 @@ void aadExecuteSfxCommand(struct AadSfxCommand *sfxCmd)
 #if defined(PSX_VERSION)
 	if (sfxCmd->statusByte < 9)
 	{
-		sfxCmds[sfxCmd->statusByte](sfxCmd);
+		sfxCmdFunction[sfxCmd->statusByte](sfxCmd);
 	}
 #elif defined(PC_VERSION)
+
+	static void(*sfxCmds[])(struct AadSfxCommand*) =
+	{
+		sfxCmdPlayTone,
+		sfxCmdStopTone,
+		sfxCmdSetToneVolumeAndPan,
+		sfxCmdSetToneVolPanPitch,
+		sfxCmdStopAllTones,
+		sfxCmdLockVoice,
+		sfxCmdSetVoiceAttr,
+		sfxCmdSetVoiceKeyOn,
+		sfxCmdSetVoiceKeyOff
+	};
+
 	if (sfxCmd->statusByte < 9u)
 		sfxCmds[sfxCmd->statusByte](sfxCmd);
 #endif
