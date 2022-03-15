@@ -509,9 +509,9 @@ void sfxCmdPlayTone(struct AadSfxCommand *sfxCmd)
 
 	handle = sfxCmd->ulongParam;
 
-	if (aadMem->sfxToneMasterList[handle] < 0xFE)
+	if (aadMem->sfxToneMasterList[handle & 0xFFFF] < 0xFE)
 	{
-		sfxToneAttr = &aadMem->sfxToneAttrTbl[aadMem->sfxToneMasterList[handle]];
+		sfxToneAttr = &aadMem->sfxToneAttrTbl[aadMem->sfxToneMasterList[handle & 0xFFFF]];
 
 		if (aadMem->sfxWaveMasterList[sfxToneAttr->waveID] < 0xFE)
 		{
