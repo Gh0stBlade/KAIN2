@@ -25,7 +25,7 @@ unsigned long aadPlaySfx(unsigned int toneID, int volume, int pan, int pitchOffs
 
 	handle = createSfxHandle(toneID);
 	
-	aadPutSfxCommand(0, volume, pan, pitchOffset, handle);
+	aadPutSfxCommand(0, volume, pan, handle, pitchOffset);
 	
 	return handle;
 #elif defined(PC_VERSION)
