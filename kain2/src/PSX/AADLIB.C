@@ -1318,7 +1318,7 @@ void aadLoadSingleDynSfx(struct AadDynamicSfxLoadInfo *info)
 		
 		toneAttr = &aadMem->sfxToneAttrTbl[i];
 		
-		while (toneAttr->referenceCount != 0)
+		while ((toneAttr->referenceCount & 0x7F) != 0)
 		{
 			if (((i + 1) & 0x7F) != i)
 			{
@@ -1342,9 +1342,9 @@ void aadLoadSingleDynSfx(struct AadDynamicSfxLoadInfo *info)
 		toneAttr->waveID = attr->waveID;
 		toneAttr->toneAttr = attr->toneAttr;
 
-		aadMem->sfxToneMasterList[attr->sfxID] = i;
+		aadMem->sfxToneMasterList[attr->waveID & 0x7F] = i;
 
-		i = aadMem->sfxWaveMasterList[attr->waveID];
+		i = aadMem->sfxWaveMasterList[attr->sfxID];
 
 		if (i != 255)
 		{
@@ -1390,11 +1390,11 @@ void aadLoadSingleDynSfx(struct AadDynamicSfxLoadInfo *info)
 			if (aadMem->nextWaveIndex >= 120)
 			{
 				aadMem->nextWaveIndex = aadMem->nextWaveIndex - 120;
-			}
-
-			waveAttr->referenceCount = 1;
+			}			
 
 			aadMem->sfxWaveMasterList[attr->waveID] = i;
+
+			waveAttr->referenceCount = 1;
 
 			waveAttr->sramHandle = aadWaveMalloc(attr->waveID, attr->waveSize);
 

@@ -1,4 +1,4 @@
-#include "THISDUST.H"
+#include "CORE.H"
 #include "AADVOICE.H"
 
 
@@ -75,7 +75,7 @@ void aadPlayTone(struct AadToneAtr *toneAtr, unsigned long waveStartAddr, struct
 		// Start line: 157
 		// Start offset: 0x80057C34
 		// Variables:
-			struct AadVolume voiceVol; // stack offset -32
+			//struct AadVolume voiceVol; // stack offset -32
 			int pitch; // $a1
 			int finePitch; // $a1
 			int pitchIndex; // $a3
@@ -102,7 +102,7 @@ void aadPlayTone(struct AadToneAtr *toneAtr, unsigned long waveStartAddr, struct
 			// Start line: 168
 			// Start offset: 0x80057D68
 			// Variables:
-				unsigned long tmp; // $v0
+				//unsigned long tmp; // $v0
 		/* end block 1.3 */
 		// End offset: 0x80057D68
 		// End Line: 168
@@ -111,7 +111,7 @@ void aadPlayTone(struct AadToneAtr *toneAtr, unsigned long waveStartAddr, struct
 			// Start line: 170
 			// Start offset: 0x80057DD0
 			// Variables:
-				unsigned long masterVolumeSquared; // $v1
+				//unsigned long masterVolumeSquared; // $v1
 		/* end block 1.4 */
 		// End offset: 0x80057DD0
 		// End Line: 170
@@ -120,7 +120,7 @@ void aadPlayTone(struct AadToneAtr *toneAtr, unsigned long waveStartAddr, struct
 			// Start line: 170
 			// Start offset: 0x80057DD0
 			// Variables:
-				unsigned long masterVolumeSquared; // $a1
+				///unsigned long masterVolumeSquared; // $a1
 		/* end block 1.5 */
 		// End offset: 0x80057DD0
 		// End Line: 170
@@ -129,7 +129,7 @@ void aadPlayTone(struct AadToneAtr *toneAtr, unsigned long waveStartAddr, struct
 			// Start line: 170
 			// Start offset: 0x80057DD0
 			// Variables:
-				unsigned long masterVolumeSquared; // $v1
+				//unsigned long masterVolumeSquared; // $v1
 		/* end block 1.6 */
 		// End offset: 0x80057DD0
 		// End Line: 170
@@ -138,7 +138,7 @@ void aadPlayTone(struct AadToneAtr *toneAtr, unsigned long waveStartAddr, struct
 			// Start line: 170
 			// Start offset: 0x80057DD0
 			// Variables:
-				unsigned long masterVolumeSquared; // $v1
+				//unsigned long masterVolumeSquared; // $v1
 		/* end block 1.7 */
 		// End offset: 0x80057DD0
 		// End Line: 170
@@ -162,7 +162,7 @@ void aadPlayTonePitchBend(struct AadToneAtr *toneAtr, unsigned long waveStartAdd
 		// Start line: 247
 		// Start offset: 0x80058064
 		// Variables:
-			struct AadVolume voiceVol; // stack offset -32
+			//struct AadVolume voiceVol; // stack offset -32
 			int pitch; // $a1
 			int finePitch; // $a1
 			int pitchIndex; // $a3
@@ -190,7 +190,7 @@ void aadPlayTonePitchBend(struct AadToneAtr *toneAtr, unsigned long waveStartAdd
 			// Start line: 260
 			// Start offset: 0x800581A0
 			// Variables:
-				unsigned long tmp; // $v0
+				//unsigned long tmp; // $v0
 		/* end block 1.3 */
 		// End offset: 0x800581A0
 		// End Line: 260
@@ -199,7 +199,7 @@ void aadPlayTonePitchBend(struct AadToneAtr *toneAtr, unsigned long waveStartAdd
 			// Start line: 262
 			// Start offset: 0x80058208
 			// Variables:
-				unsigned long masterVolumeSquared; // $v1
+				//unsigned long masterVolumeSquared; // $v1
 		/* end block 1.4 */
 		// End offset: 0x80058208
 		// End Line: 262
@@ -208,7 +208,7 @@ void aadPlayTonePitchBend(struct AadToneAtr *toneAtr, unsigned long waveStartAdd
 			// Start line: 262
 			// Start offset: 0x80058208
 			// Variables:
-				unsigned long masterVolumeSquared; // $a1
+				//unsigned long masterVolumeSquared; // $a1
 		/* end block 1.5 */
 		// End offset: 0x80058208
 		// End Line: 262
@@ -217,7 +217,7 @@ void aadPlayTonePitchBend(struct AadToneAtr *toneAtr, unsigned long waveStartAdd
 			// Start line: 262
 			// Start offset: 0x80058208
 			// Variables:
-				unsigned long masterVolumeSquared; // $v1
+				//unsigned long masterVolumeSquared; // $v1
 		/* end block 1.6 */
 		// End offset: 0x80058208
 		// End Line: 262
@@ -226,7 +226,7 @@ void aadPlayTonePitchBend(struct AadToneAtr *toneAtr, unsigned long waveStartAdd
 			// Start line: 262
 			// Start offset: 0x80058208
 			// Variables:
-				unsigned long masterVolumeSquared; // $v1
+				//unsigned long masterVolumeSquared; // $v1
 		/* end block 1.7 */
 		// End offset: 0x80058208
 		// End Line: 262
