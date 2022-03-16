@@ -654,14 +654,14 @@ void SpuSetKey(long on_off, unsigned long voice_bit)
             //loc_388
             _spu_RXX[198] = voice_bit;
             _spu_RXX[199] = a2;
-            _spu_keystat &= (voice_bit ^ -1);
+            _spu_keystat &= ~voice_bit;
         }
     }
 
 #if defined(OPENAL)
     for (int i = 0; i < 24; i++)
     {
-        if (voice_bit & (1 << i))
+        if (_spu_keystat & (1 << i))
         {
             unsigned long vagSize = ((unsigned long*)&spuSoundBuffer[alVoiceStartAddrs[i]])[-1];
             unsigned char* wave = new unsigned char[vagSize * 4];
