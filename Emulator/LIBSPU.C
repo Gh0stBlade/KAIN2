@@ -15,6 +15,8 @@ ALuint alSources[24];
 ALuint alBuffers[24];
 ALuint alBufferSizes[24];
 ALuint alVoiceStartAddrs[24];
+ALuint alVoicePitces[24];
+
 #endif
 
 #include <string.h>
@@ -664,10 +666,10 @@ void SpuSetKey(long on_off, unsigned long voice_bit)
         if (_spu_keystat & (1 << i))
         {
             unsigned long vagSize = ((unsigned long*)&spuSoundBuffer[alVoiceStartAddrs[i]])[-1];
-            unsigned char* wave = new unsigned char[vagSize * 4];
-            unsigned int waveSize = vagtowav((unsigned char*)&spuSoundBuffer[alVoiceStartAddrs[i]], vagSize, 11025, wave);
+            unsigned char* wave = new unsigned char[vagSize * 8];
+            unsigned int waveSize = vagtowav((unsigned char*)&spuSoundBuffer[alVoiceStartAddrs[i]], vagSize, alVoicePitces[i], wave);
             alGenBuffers(1, &alBuffers[i]);
-            alBufferData(alBuffers[i], AL_FORMAT_MONO16, wave, waveSize, 11025);
+            alBufferData(alBuffers[i], AL_FORMAT_MONO16, wave, waveSize, alVoicePitces[i]);
             alSourcei(alSources[i], AL_BUFFER, alBuffers[i]);
             alSourcePlay(alSources[i]);
 
@@ -1317,6 +1319,20 @@ void SpuSetVoicePitch(int vNum, unsigned short pitch)
 {
     short* p = (short*)&_spu_RXX[vNum << 2];
     p[3] = pitch;
+
+#if defined(OPENAL)
+
+    switch (pitch)
+    {
+    case 0x400:
+        alVoicePitces[vNum] = 11025;
+        break;
+    default:
+        alVoicePitces[vNum] = 0;
+        eprinterr("[EMU-SPU]: Unknown pitch: %d\n", pitch);
+        break;
+    }
+#endif
 }
 
 void SpuSetCommonCDMix(long cd_mix)
