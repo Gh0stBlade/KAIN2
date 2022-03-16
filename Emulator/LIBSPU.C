@@ -4,6 +4,19 @@
 #include "EMULATOR.H"
 #include "LIBAPI.H"
 
+#if defined(OPENAL)
+#include <al.h>
+#include <alc.h>
+
+ALCdevice* alDevice = NULL;
+ALCcontext* alContext = NULL;
+
+ALuint alSources[24];
+ALuint alBuffers[24];
+ALuint alBufferSizes[24];
+ALuint alVoiceStartAddrs[24];
+#endif
+
 #include <string.h>
 
 #define SPU_CENTERNOTE (-32768 / 2)
@@ -72,6 +85,64 @@ int* dword_E10 = &PrimaryDMAControlRegister;//Base address is 1F8010F0.
 
 char spuSoundBuffer[520191];
 
+double f[5][2] = { { 0.0, 0.0 },
+                    {   60.0 / 64.0,  0.0 },
+                    {  115.0 / 64.0, -52.0 / 64.0 },
+                    {   98.0 / 64.0, -55.0 / 64.0 },
+                    {  122.0 / 64.0, -60.0 / 64.0 } };
+
+double samples[28];
+
+unsigned int vagtowav(unsigned char* pVAG, unsigned int length, unsigned int samp_freq, unsigned char* pOut)
+{
+    char vag_name[17];
+    int predict_nr, shift_factor, flags;
+    int i;
+    int d, s;
+    double s_1 = 0.0;
+    double s_2 = 0.0;
+    int sz;
+    unsigned int data_size;
+    unsigned int result_length = 0;
+
+    data_size = length;
+
+    // Now write data...
+    unsigned char* vagStart = pVAG;
+    while (pVAG - vagStart < (data_size)) {
+        predict_nr = *pVAG++;
+        shift_factor = predict_nr & 0xf;
+        predict_nr >>= 4;
+        flags = *pVAG++;                           // flags
+        if (flags == 7)
+            break;
+        for (i = 0; i < 28; i += 2) {
+            d = *pVAG++;
+            s = (d & 0xf) << 12;
+            if (s & 0x8000)
+                s |= 0xffff0000;
+            samples[i] = (double)(s >> shift_factor);
+            s = (d & 0xf0) << 8;
+            if (s & 0x8000)
+                s |= 0xffff0000;
+            samples[i + 1] = (double)(s >> shift_factor);
+        }
+
+        for (i = 0; i < 28; i++) {
+            samples[i] = samples[i] + s_1 * f[predict_nr][0] + s_2 * f[predict_nr][1];
+            s_2 = s_1;
+            s_1 = samples[i];
+            d = (int)(samples[i] + 0.5);
+            *pOut++ = d & 0xff;
+            *pOut++ = d >> 8;
+
+            result_length += 2;
+        }
+    }
+
+    return result_length;
+}
+
 int _spu_note2pitch(int a0, int a1, int a2, int a3)
 {
     a3 += a1;
@@ -134,7 +205,7 @@ int _spu_FsetRXXa(long flag, long addr)
             if (addr % _spu_mem_mode_unit != 0)
             {
                 addr += _spu_mem_mode_unit;
-                addr &= _spu_mem_mode_unitM ^ -1;
+                addr & ~_spu_mem_mode_unitM;
             }
             //loc_BA0
         }
@@ -194,6 +265,7 @@ void SpuSetVoiceAttr(SpuVoiceAttr* arg)//
 #if 0//TRC only ;-(
     _SpuRSetVoiceAttr();
 #else
+
     //s0 = arg
     int a0 = 0;
     int a1 = 0;
@@ -538,13 +610,13 @@ void SpuSetKey(long on_off, unsigned long voice_bit)
 
             if ((_spu_RQ[_spu_RQmask] & voice_bit))
             {
-                _spu_RQ[_spu_RQmask] = _spu_RQ[_spu_RQmask] & (voice_bit ^ -1);
+                _spu_RQ[_spu_RQmask] = _spu_RQ[_spu_RQmask] & ~voice_bit;
 
             }//loc_29C
 
             if ((_spu_RQ[_spu_RQmask + 1] & voice_bit))
             {
-                _spu_RQ[_spu_RQmask + 1] = _spu_RQ[_spu_RQmask + 1] & (a2 ^ -1);
+                _spu_RQ[_spu_RQmask + 1] = _spu_RQ[_spu_RQmask + 1] & ~a2;
 
             }//locret_3B4
         }
@@ -585,6 +657,34 @@ void SpuSetKey(long on_off, unsigned long voice_bit)
             _spu_keystat &= (voice_bit ^ -1);
         }
     }
+
+#if defined(OPENAL)
+    for (int i = 0; i < 24; i++)
+    {
+        if (voice_bit & (1 << i))
+        {
+            unsigned long vagSize = ((unsigned long*)&spuSoundBuffer[alVoiceStartAddrs[i]])[-1];
+            unsigned char* wave = new unsigned char[vagSize * 4];
+            unsigned int waveSize = vagtowav((unsigned char*)&spuSoundBuffer[alVoiceStartAddrs[i]], vagSize, 11025, wave);
+            alGenBuffers(1, &alBuffers[i]);
+            alBufferData(alBuffers[i], AL_FORMAT_MONO16, wave, waveSize, 11025);
+            alSourcei(alSources[i], AL_BUFFER, alBuffers[i]);
+            alSourcePlay(alSources[i]);
+
+            ALint state;
+            alGetSourcei(alSources[i], AL_SOURCE_STATE, &state);
+
+            while (state == AL_PLAYING) 
+            {
+                alGetSourcei(alSources[i], AL_SOURCE_STATE, &state);
+            }
+
+            alDeleteBuffers(1, &alBuffers[i]);
+
+            delete[] wave;
+        }
+    }
+#endif
 }
 
 void SpuSetKeyOnWithAttr(SpuVoiceAttr* attr)//(F)
@@ -664,7 +764,8 @@ void _spu_t(int mode, int flag)
 
 void _spu_Fw(unsigned char* addr, unsigned long size)
 {
-#if 1
+#if defined(OPENAL)
+    ((unsigned long*)&spuSoundBuffer[_spu_tsa])[-1] = size;
     memcpy(&spuSoundBuffer[_spu_tsa], addr, size);
     __spu_transferCallback();
 #else
@@ -1086,7 +1187,41 @@ void _SpuInit(int a0)
 
 void SpuInit(void)//(F)
 {
-	_SpuInit(0);
+    _SpuInit(0);
+
+#if defined(OPENAL)
+
+    alDevice = alcOpenDevice(NULL);
+
+    if (alDevice == NULL)
+    {
+        eprinterr("Failed to create OpenAL device!\n");
+        return;
+    }
+
+    alContext = alcCreateContext(alDevice, NULL);
+    if (alcMakeContextCurrent(alContext) == NULL)
+    {
+        eprinterr("Failed to create OpenAL context!\n");
+        return;
+    }
+
+    ALfloat orient[] = { 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f };
+    alListener3f(AL_POSITION, 0.0f, 0.0f, 1.0f);
+    alListener3f(AL_VELOCITY, 0.0f, 0.0f, 0.0f);
+    alListenerfv(AL_ORIENTATION, orient);
+
+    for (int i = 0; i < 24; i++)
+    {
+        alGenSources(1, &alSources[i]);
+        alSourcef(alSources[i], AL_PITCH, 1);
+        alSourcef(alSources[i], AL_GAIN, 1);
+        alSource3f(alSources[i], AL_POSITION, 0, 0, 0);
+        alSource3f(alSources[i], AL_VELOCITY, 0, 0, 0);
+        alSourcei(alSources[i], AL_LOOPING, AL_FALSE);
+    }
+
+#endif
 }
 
 long SpuSetMute(long on_off)
@@ -1175,12 +1310,13 @@ void SpuSetReverbModeDepth(short depth_left, short depth_right)//(F)
 
 void SpuGetVoicePitch(int vNum, unsigned short* pitch)
 {
-    UNIMPLEMENTED();
+
 }
 
 void SpuSetVoicePitch(int vNum, unsigned short pitch)
 {
-    UNIMPLEMENTED();
+    short* p = (short*)&_spu_RXX[vNum << 2];
+    p[3] = pitch;
 }
 
 void SpuSetCommonCDMix(long cd_mix)
@@ -1198,4 +1334,34 @@ SpuTransferCallbackProc SpuSetTransferCallback(SpuTransferCallbackProc func)
     }
 
     return prev;
+}
+
+void SpuSetVoiceADSRAttr(int vNum, unsigned short AR, unsigned short DR, unsigned short SR, unsigned short RR, unsigned short SL, long ARmode, long SRmode, long RRmode)
+{
+    UNIMPLEMENTED();
+}
+
+void SpuSetVoiceStartAddr(int vNum, unsigned long startAddr)
+{
+    long var_4;
+
+    var_4 = _spu_FsetRXXa((vNum << 3) | 0x3, startAddr);
+
+    for (int i = 0; i < 2; i++)
+    {
+        var_4 *= 13;
+    }
+#if defined(OPENAL)
+    alVoiceStartAddrs[vNum] = startAddr / 8;
+#endif
+}
+
+void SpuSetVoiceVolume(int vNum, short volL, short volR)
+{
+    volL &= 0x7FFF;
+    volR &= 0x7FFF;
+
+    short* p = (short*)&_spu_RXX[vNum << 2];
+    p[0] = volL;
+    p[1] = volR;
 }
