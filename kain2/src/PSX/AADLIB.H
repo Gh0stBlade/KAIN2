@@ -8,6 +8,12 @@ typedef void (*TDRFuncPtr_aadLoadDynamicSoundBank4retProc)();
 typedef void (*TDRFuncPtr_aadStartMasterVolumeFade2fadeCompleteCallback)();
 typedef void (*TDRFuncPtr_aadStartMusicMasterVolFade2fadeCompleteCallback)();
 
+struct AadVolume 
+{
+	short left; // size=0, offset=0
+	short right; // size=0, offset=2
+};
+
 struct AadSequenceHdr 
 {
 	unsigned long sequenceID; // size=0, offset=0
