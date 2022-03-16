@@ -517,7 +517,7 @@ void sfxCmdPlayTone(struct AadSfxCommand *sfxCmd)
 		{
 			sfxWaveAttr = &aadMem->sfxWaveAttrTbl[aadMem->sfxWaveMasterList[sfxToneAttr->waveID]];//+3
 			waveAddr = aadGetSramBlockAddr(sfxWaveAttr->sramHandle);
-			toneAtr = (struct AadToneAtr*)(sfxToneAttr + 1);
+			toneAtr = &sfxToneAttr->toneAttr;
 			midiNote = toneAtr->minNote;
 			voice = aadAllocateVoice(sfxToneAttr->toneAttr.priority);
 			progAtr = &aadDummySfxProgram;
