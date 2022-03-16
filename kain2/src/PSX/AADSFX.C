@@ -3,7 +3,7 @@
 #include "AADSFX.H"
 #include "AADVOICE.H"
 
-struct AadProgramAtr aadDummySfxProgram;
+struct AadProgramAtr aadDummySfxProgram = { 0x0001, 0x0000, 0x7F, 0x40, 0x00 };
 
 static void(*sfxCmdFunction[])(struct AadSfxCommand*) =
 {
