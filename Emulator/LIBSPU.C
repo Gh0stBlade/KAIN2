@@ -1364,4 +1364,8 @@ void SpuSetVoiceVolume(int vNum, short volL, short volR)
     short* p = (short*)&_spu_RXX[vNum << 2];
     p[0] = volL;
     p[1] = volR;
+
+#if defined(OPENAL)
+    alSourcef(alSources[vNum], AL_GAIN, volL / 32767.0f);///@FIXME only left supported?
+#endif
 }
