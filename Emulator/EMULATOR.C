@@ -908,7 +908,7 @@ void Emulator_CounterLoop()
 #else
 		current_time = 0;
 #endif
-		if (current_time > last_time + 1000)
+		//if (current_time > last_time + 1000)
 		{
 			for (int i = 0; i < 3; i++)
 			{
@@ -916,7 +916,7 @@ void Emulator_CounterLoop()
 				{
 					counters[i].cycle += COUNTER_UPDATE_INTERVAL;
 					//counters[i].cycle = SDL_GetTicks() - start;
-					if (counters[i].target > 0)
+					if (counters[i].target > 0 && counters[i].target >= counters[i].cycle)
 					{
 						counters[i].cycle %= counters[i].target;
 
