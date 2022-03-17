@@ -1,6 +1,8 @@
 #ifndef LIBSN_H
 #define LIBSN_H
 
+#include "EMULATOR_PLATFORM_SETUP.H"
+
 #include <stdint.h>
 
 extern int PCinit();

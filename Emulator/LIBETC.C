@@ -79,8 +79,10 @@ int VSync(int mode)
 	Emulator_DoPollEvent();
 	Emulator_UpdateInput();
 
+#if defined(SDL2)
 	lastTime = currentTime;
 	currentTime = SDL_GetTicks();
+#endif
 
 #if defined(SDL2)
 	if (mode < 0)

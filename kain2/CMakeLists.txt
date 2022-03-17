@@ -81,14 +81,13 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${ROOT_DIR}/Emulator)
 
-target_link_directories(${PROJECT_NAME} PUBLIC ${ROOT_DIR}/Build/Emulator/$(Configuration))
-
 #Include all platform specific cmake files.
 include("Platform/Windows.cmake")
 include("Platform/Mingw.cmake")
 include("Platform/Linux.cmake")
 include("Platform/Emscripten.cmake")
 include("Platform/Android.cmake")
+include("Platform/WindowsStore.cmake")
 
 BuildPreProcessorDefinitions()
 

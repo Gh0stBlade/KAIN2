@@ -1,4 +1,4 @@
-if(MSVC)
+if(MSVC AND NOT(WINDOWS_STORE))
 
 Message("Compiling for Windows!")
 

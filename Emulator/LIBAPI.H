@@ -1,6 +1,9 @@
 #ifndef LIBAPI_H
 #define LIBAPI_H
 
+#include "EMULATOR_PLATFORM_SETUP.H"
+#undef OpenEvent
+
 #ifndef EMU_KERNEL_H
 #include "KERNEL.H"
 #endif

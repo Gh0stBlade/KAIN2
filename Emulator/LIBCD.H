@@ -1,6 +1,8 @@
 #ifndef LIBCD_H
 #define LIBCD_H
 
+#include "EMULATOR_PLATFORM_SETUP.H"
+
 #include "TYPES.H"
 
 

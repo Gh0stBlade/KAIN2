@@ -231,7 +231,11 @@ int STREAM_InList(char *name, char **nameList)
 	char** mon = nameList;
 	while (*mon != NULL)
 	{
+#if defined(PSXPC_VERSION)
+		if (_strcmpi(name, *mon) == 0)
+#else
 		if (strcmpi(name, *mon) == 0)
+#endif
 		{
 			return 1;
 		}
@@ -373,7 +377,11 @@ int InsertGlobalObject(char *name, struct GameTracker *gameTracker)
 	{
 		if (otr->objectStatus != 0)
 		{
+#if defined(PSXPC_VERSION)
+			if (_strcmpi(otr->name, name) == 0)
+#else
 			if (strcmpi(otr->name, name) == 0)
+#endif
 			{
 				break;
 			}
@@ -592,7 +600,11 @@ int STREAM_IsObjectInAnyUnit(struct _ObjectTracker *tracker)
 
 			while (objlist[0] != 255)
 			{
+#if defined(PSXPC_VERSION)
+				if (_strcmpi(&tracker->name[0], (char*)objlist) == 0)
+#else
 				if (strcmpi(&tracker->name[0], (char*)objlist) == 0)
+#endif
 				{
 					return 1;
 				}
@@ -1252,7 +1264,11 @@ struct _StreamUnit * STREAM_LoadLevel(char *baseAreaName, struct StreamUnitPorta
 		
 		if (streamUnit->used != 0)
 		{
+#if defined(PSXPC_VERSION)
+			if (_strcmpi(streamUnit->baseAreaName, baseAreaName) == 0)
+#else
 			if (strcmpi(streamUnit->baseAreaName, baseAreaName) == 0)
+#endif
 			{
 				if (streamUnit->used != 3)
 				{

@@ -1,6 +1,8 @@
 #ifndef LIBGTE_H
 #define LIBGTE_H
 
+#include "EMULATOR_PLATFORM_SETUP.H"
+
 #include "TYPES.H"
 
 #include "LIBGPU.H"

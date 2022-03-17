@@ -840,6 +840,11 @@ long FONT_CharSpacing(char c, long fontXSize)
 	long index;
 	long w;
 	long w1;
+
+#if defined(PSXPC_VERSION)
+	w1 = 0;//UWP compile hack
+#endif
+
 	long w2;
 	long w3;
 	char i1;

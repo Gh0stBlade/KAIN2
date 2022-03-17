@@ -36,6 +36,7 @@ include("PLATFORM/Mingw.cmake")
 include("PLATFORM/Linux.cmake")
 include("PLATFORM/Emscripten.cmake")
 include("PLATFORM/Android.cmake")
+include("PLATFORM/WindowsStore.cmake")
 
 if (NOT ANDROID)
 BuildPreProcessorDefinitions()

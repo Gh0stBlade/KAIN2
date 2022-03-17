@@ -1,6 +1,8 @@
 #ifndef LIBMCRD_H
 #define LIBMCRD_H
 
+#include "EMULATOR_PLATFORM_SETUP.H"
+
 #include "KERNEL.H"
 
 typedef void (*MemCB)( long cmds, long rslt );

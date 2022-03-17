@@ -738,7 +738,11 @@ long LOAD_HashName(char *string)
 		
 		for (i = 0; i < 7; i++)
 		{
+#if defined(PSXPC_VERSION)
+			if (_strcmpi(pos, &HashExtensions[i][0]) == 0)
+#else
 			if (strcmpi(pos, &HashExtensions[i][0]) == 0)
+#endif
 			{
 				ext = i;
 				break;

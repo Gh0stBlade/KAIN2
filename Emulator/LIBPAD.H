@@ -1,6 +1,10 @@
 #ifndef LIBPAD_H
 #define LIBPAD_H
 
+#include "EMULATOR_PLATFORM_SETUP.H"
+
+#undef OpenEvent
+
 #ifdef __cplusplus
 extern "C" {
 #endif

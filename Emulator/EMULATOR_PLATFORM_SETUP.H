@@ -89,7 +89,7 @@
 #include <SDL2/SDL_opengl.h>
 #elif defined(__EMSCRIPTEN__)
 #include <SDL2/SDL.h>
-#elif (defined(_WINDOWS) || defined(__MINGW32__) || defined(__linux__)) && !defined(__ANDROID__)
+#elif (defined(_WINDOWS) || defined(__MINGW32__) || defined(__linux__)) && !defined(__ANDROID__) && !defined(UWP)
 #include <SDL.h>
 #elif defined (__ANDROID__)
 #include <SDL.h>

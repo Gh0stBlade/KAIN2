@@ -1,4 +1,4 @@
-if(MSVC)
+if(MSVC AND NOT WINDOWS_STORE)
 
 #SET(USE_VULKAN TRUE)
 #SET(USE_D3D9 TRUE)
@@ -22,6 +22,8 @@ include_directories(${GLEW_INCLUDE_DIR})
 endif()
 
 include_directories(${SDL2_INCLUDE_DIR})
+
+target_link_directories(${PROJECT_NAME} PUBLIC ${ROOT_DIR}/Build/Emulator/$(Configuration))
 
 set(PSX_LIB PSX.lib)
 

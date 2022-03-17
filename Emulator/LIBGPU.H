@@ -1,6 +1,8 @@
 #ifndef LIBGPU_H
 #define LIBGPU_H
 
+#include "EMULATOR_PLATFORM_SETUP.H"
+
 #include "TYPES.H"
 
 #ifdef __cplusplus

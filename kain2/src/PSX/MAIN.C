@@ -985,7 +985,11 @@ int MainG2(void *appData)
 	struct MainTracker* mainTracker;
 	struct GameTracker* gameTracker;
 	long menuPos;
+#if defined(PSXPC_VERSION)
+	struct InterfaceItem* item = NULL;
+#else
 	struct InterfaceItem* item;
+#endif
 	int timer;
 
 #if defined(PSXPC_VERSION)

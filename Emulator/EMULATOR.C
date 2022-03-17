@@ -50,7 +50,11 @@ TextureID whiteTexture;
 	ID3D11Buffer			*dynamic_vertex_buffer = NULL;
 	ID3D11Device			*d3ddev;
 	ID3D11DeviceContext		*d3dcontext;
+#if defined(UWP)
+	IDXGISwapChain1			*swapChain;
+#else
 	IDXGISwapChain			*swapChain;
+#endif
 	ID3D11RenderTargetView  *renderTargetView;
 	ID3D11Buffer			*projectionMatrixBuffer;
 	ID3D11SamplerState		*samplerState;
@@ -169,10 +173,16 @@ void Emulator_ResetDevice()
 	bd.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
 	bd.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
 
+#if defined(UWP)
+	DXGI_SWAP_CHAIN_DESC1 sd;
+#else
 	DXGI_SWAP_CHAIN_DESC sd;
+#endif
 	memset(&sd, 0, sizeof(sd));
+#if !defined(UWP)
 	sd.Windowed = TRUE;
 	sd.BufferDesc = bd;
+#endif
 	sd.BufferCount = 1;
 	sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	sd.SampleDesc.Count = 1;
@@ -188,9 +198,27 @@ void Emulator_ResetDevice()
 	unsigned int deviceCreationFlags = 0;
 #endif
 
-	HRESULT hr = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, deviceCreationFlags, NULL, 0, D3D11_SDK_VERSION, &sd, &swapChain, &d3ddev, NULL, &d3dcontext);
+#if defined(UWP)
+	HRESULT hr = D3D11CreateDevice(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, deviceCreationFlags, NULL, 0, D3D11_SDK_VERSION, &d3ddev, NULL, &d3dcontext);
+
 	assert(!FAILED(hr));
 
+	IDXGIDevice3* dxgiDevice = NULL;
+	IDXGIAdapter* dxgiAdapter = NULL;
+	IDXGIFactory2* dxgiFactory = NULL;
+
+	hr = d3ddev->QueryInterface(__uuidof(IDXGIDevice3), (void**)&dxgiDevice);
+	assert(!FAILED(hr));
+
+	hr = dxgiDevice->GetAdapter(&dxgiAdapter);
+	assert(!FAILED(hr));
+
+	hr = dxgiFactory->CreateSwapChainForCoreWindow(d3ddev, NULL/*reinterpret_cast<IUnknown*>(m_window.Get())*/, &sd, NULL, &swapChain);
+	assert(!FAILED(hr));
+#else
+	HRESULT hr = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, deviceCreationFlags, NULL, 0, D3D11_SDK_VERSION, &sd, &swapChain, &d3ddev, NULL, &d3dcontext);
+	assert(!FAILED(hr));
+#endif
 	ID3D11Texture2D* backBuffer;
 	hr = swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&backBuffer);
 	assert(!FAILED(hr));
@@ -361,10 +389,16 @@ static int Emulator_InitialiseD3D11Context(char* windowName)
 	bd.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
 	bd.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
 
+#if defined(UWP)
+	DXGI_SWAP_CHAIN_DESC1 sd;
+#else
 	DXGI_SWAP_CHAIN_DESC sd;
+#endif
 	memset(&sd, 0, sizeof(sd));
+#if !defined(UWP)
 	sd.Windowed = TRUE;
 	sd.BufferDesc = bd;
+#endif
 	sd.BufferCount = 1;
 	sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	sd.SampleDesc.Count = 1;
@@ -380,11 +414,43 @@ static int Emulator_InitialiseD3D11Context(char* windowName)
 	unsigned int deviceCreationFlags = 0;
 #endif
 
+#if defined(UWP)
+	HRESULT hr = D3D11CreateDevice(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, deviceCreationFlags, NULL, 0, D3D11_SDK_VERSION, &d3ddev, NULL, &d3dcontext);
+	
+	if (!SUCCEEDED(hr)) {
+		eprinterr("Failed to initialise D3D Device\n");
+		return FALSE;
+	}
+
+	IDXGIDevice3* dxgiDevice = NULL;
+	IDXGIAdapter* dxgiAdapter = NULL;
+	IDXGIFactory2* dxgiFactory = NULL;
+
+	hr = d3ddev->QueryInterface(__uuidof(IDXGIDevice3), (void**)&dxgiDevice);
+
+	if (!SUCCEEDED(hr)) {
+		eprinterr("Failed to query interface of dxgiDevice\n");
+		return FALSE;
+	}
+
+	hr = dxgiDevice->GetAdapter(&dxgiAdapter);
+
+	if (!SUCCEEDED(hr)) {
+		eprinterr("Failed to get adapter\n");
+		return FALSE;
+	}
+
+	hr = dxgiFactory->CreateSwapChainForCoreWindow(d3ddev, NULL/*reinterpret_cast<IUnknown*>(m_window.Get())*/, &sd, NULL, &swapChain);
+#else
 	HRESULT hr = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, deviceCreationFlags, NULL, 0, D3D11_SDK_VERSION, &sd, &swapChain, &d3ddev, NULL, &d3dcontext);
+
 	if (!SUCCEEDED(hr)) {
 		eprinterr("Failed to initialise D3D\n");
 		return FALSE;
 	}
+#endif
+
+
 
 	ID3D11Texture2D* backBuffer;
 	hr = swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&backBuffer);
@@ -904,7 +970,11 @@ void Emulator_CounterLoop()
 {
 	unsigned int current_time;
 	unsigned int last_time = 0;
+#if defined(SDL2)
 	unsigned int start = SDL_GetTicks();
+#else
+	unsigned int start = 0;
+#endif
 
 	while (TRUE)
 	{
