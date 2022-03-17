@@ -7,12 +7,12 @@ struct _CameraCore_Type // hashcode: 0xD341D51C (dec: -750660324)
 	short pad1; // size=0, offset=6
 	//MATRIX vvNormalWorVecMat[2]; // size=64, offset=8//Disabled by Gh0stBlade, why is this saying incomplete type?
 	long vvPlaneConsts[6]; // size=24, offset=72
-	struct MATRIX* wcTransform; // size=32, offset=96
+	MATRIX* wcTransform; // size=32, offset=96
 	long farPlane; // size=0, offset=100
 	long projDistance; // size=0, offset=104
 	long nearPlane; // size=0, offset=108
-	struct MATRIX* wcTransform2; // size=32, offset=112
-	struct MATRIX* cwTransform2; // size=32, offset=116
+	MATRIX* wcTransform2; // size=32, offset=112
+	MATRIX* cwTransform2; // size=32, offset=116
 	struct _Normal viewVolumeNormal[5]; // size=40, offset=120
 	int leftX; // size=0, offset=160
 	int rightX; // size=0, offset=164
@@ -282,7 +282,7 @@ extern void CAMERA_Relocate(struct Camera *camera, struct _SVector *offset, int 
 extern struct _TFace * CAMERA_SphereToSphereWithLines(struct Camera *camera, struct CameraCollisionInfo *colInfo, int secondcheck_flag); // 0x800179E8
 extern long CAMERA_CalcTilt(struct _Normal *normal, short zRot); // 0x80018524
 extern void CAMERA_SetLookFocusAndBase(struct _Instance *focusInstance, struct _Position *focusPoint); // 0x80018598
-extern void CAMERA_SetLookFocusAndDistance(struct Camera *camera, struct VECTOR *focuspoint, int distance); // 0x800185E0
+extern void CAMERA_SetLookFocusAndDistance(struct Camera *camera, VECTOR *focuspoint, int distance); // 0x800185E0
 extern void CAMERA_LookProcess(struct Camera *camera); // 0x80018608
 extern void CAMERA_Normalize(struct _SVector *svector); // 0x8001885C
 extern void CAMERA_HandleTransitions(struct Camera *camera); // 0x800188D4

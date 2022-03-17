@@ -738,7 +738,7 @@ long LOAD_HashName(char *string)
 		
 		for (i = 0; i < 7; i++)
 		{
-			if (_strcmpi(pos, &HashExtensions[i][0]) == 0)
+			if (strcmpi(pos, &HashExtensions[i][0]) == 0)
 			{
 				ext = i;
 				break;

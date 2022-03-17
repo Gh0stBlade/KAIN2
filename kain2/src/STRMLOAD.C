@@ -13,21 +13,21 @@
 
 #include <stddef.h>
 
-static int gCurDir; // offset 0x800CF4E8
+int gCurDir; // offset 0x800CF4E8
 
-static struct _LoadQueueEntry* loadFree; // offset 0x800D2724
+struct _LoadQueueEntry* loadFree; // offset 0x800D2724
 
-static int loadFromHead; // offset 0x800CF4E0
+int loadFromHead; // offset 0x800CF4E0
 
-static struct _LoadQueueEntry* loadHead; // offset 0x800D2728
+struct _LoadQueueEntry* loadHead; // offset 0x800D2728
 
-static struct _LoadQueueEntry LoadQueue[40]; // offset 0x800D1D24
+struct _LoadQueueEntry LoadQueue[40]; // offset 0x800D1D24
 
-static struct _LoadStatus loadStatus; // offset 0x800D0D84
+struct _LoadStatus loadStatus; // offset 0x800D0D84
 
-static struct _LoadQueueEntry* loadTail; // offset 0x800D272C
+struct _LoadQueueEntry* loadTail; // offset 0x800D272C
 
-static int numLoads; // offset 0x800D2730
+int numLoads; // offset 0x800D2730
 
 void STREAM_NextLoadFromHead()
 {

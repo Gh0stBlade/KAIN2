@@ -128,5 +128,4 @@ extern long MAIN_DoMainMenu(struct GameTracker *gameTracker, struct MainTracker 
 
 extern int MainG2(void *appData); // 0x80038E1C
 
-
 #endif

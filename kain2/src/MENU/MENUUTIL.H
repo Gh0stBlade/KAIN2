@@ -1,6 +1,8 @@
 #ifndef MENUUTIL_H
 #define MENUUTIL_H
 
+#include "MENU.H"
+
 union MENUUTIL_71fake // Hashcode: 0x6C5644DB (dec: 1817593051)
 {
 	struct {

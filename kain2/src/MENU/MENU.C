@@ -62,7 +62,7 @@ void menu_pop(struct menu_t *menu)
 	menu->nmenus--;
 }
 
-void menu_item_flags(struct menu_t *menu, int (*fn)(void*, long, enum menu_ctrl_t), long parameter, long flags, char *format)
+void menu_item_flags(struct menu_t *menu, int (*fn)(void*, long, enum menu_ctrl_t), long parameter, long flags, char *format ...)
 { 
 	struct menu_item_t *item;
 	va_list ap;

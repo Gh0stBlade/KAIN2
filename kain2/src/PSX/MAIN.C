@@ -27,6 +27,9 @@
 
 #if defined(PSXPC_VERSION)
 #include <EMULATOR_PRIVATE.H>
+#if defined(__EMSCRIPTEN__)
+#include <emscripten.h>
+#endif
 #endif
 
 long mainMenuMode; // offset 0x800CE6C4
@@ -684,6 +687,299 @@ long MAIN_DoMainMenu(struct GameTracker *gameTracker, struct MainTracker *mainTr
 	#define BIGFILE_DAT "\\BIGFILE.DAT;1"
 #endif
 
+#if defined(__EMSCRIPTEN__)
+void CloseGame()
+{
+	SOUND_StopAllSound();
+	SOUND_Free();
+	SetDispMask(0);
+	DrawSync(0);
+	VSync(0);
+	DrawSyncCallback(NULL);
+	VSyncCallback(NULL);
+	EnterCriticalSection();
+	StopRCnt(0xF2000000);
+	DisableEvent(__timerEvent);
+	CloseEvent(__timerEvent);
+	ExitCriticalSection();
+	VSync(5);
+	StopCallback();
+	ResetGraph(0);
+}
+
+void InitialiseGame(void* appData)
+{
+	struct MainTracker* mainTracker;
+	struct GameTracker* gameTracker;
+
+	Emulator_Initialise("Legacy of Kain: Soul Reaver", SCREEN_WIDTH, SCREEN_HEIGHT);
+
+	CheckForDevStation();
+
+	mainTracker = &mainTrackerX;
+	gameTracker = &gameTrackerX;
+	mainOptionsInit = 0;
+
+	if (MainG2_InitEngine(appData, SCREEN_WIDTH, SCREEN_HEIGHT, NULL) == 1)
+	{
+		MEMPACK_Init();
+		LOAD_InitCd();
+		StartTimer();
+
+		STREAM_InitLoader(BIGFILE_DAT, "");
+
+		localstr_set_language(language_default);
+		GAMELOOP_SystemInit(gameTracker);
+
+		gameTracker->lastLvl = 255;
+		gameTracker->currentLvl = 255;
+		gameTracker->disp = &disp;
+
+		ProcessArgs(&gameTracker->baseAreaName[0], gameTracker);
+		InitMainTracker(mainTracker);
+		MAIN_DoMainInit();
+
+		mainTracker->mainState = 6;
+		mainTracker->movieNum = 0;
+	}
+}
+
+void GameLoop()
+{
+	struct GameTracker* gameTracker = &gameTrackerX;
+	struct MainTracker* mainTracker = &mainTrackerX;
+	struct InterfaceItem* item;
+	long menuPos = 0;
+	int timer;
+
+	switch (mainTrackerX.mainState)
+	{
+	case 1:
+		SOUND_UpdateSound();
+
+		if ((gameTracker->debugFlags & 0x80000))
+		{
+			VOICEXA_Tick();
+		}
+
+		PSX_GameLoop(gameTracker);
+
+		if (gameTracker->levelDone != 0)
+		{
+			FadeOutSayingLoading(gameTracker);
+			aadStopAllSfx();
+			STREAM_DumpAllLevels(0, 0);
+			RemoveAllObjects(gameTracker);
+
+			while (aadGetNumLoadsQueued() != 0 || aadMem->updateCounter != 0)
+			{
+				SOUND_UpdateSound();
+				STREAM_PollLoadQueue();
+			}
+
+			SOUND_ShutdownMusic();
+			MEMPACK_FreeByType(14);
+			MEMPACK_DoGarbageCollection();
+
+			if (gameTracker->levelDone == 2)
+			{
+				mainTracker->mainState = 8;
+			}
+			else if (gameTracker->levelDone == 3)
+			{
+				mainTracker->mainState = 6;
+				mainTracker->movieNum = 4;
+
+			}
+			else if (gameTracker->levelDone == 4)
+			{
+				mainTracker->mainState = 2;
+
+				if (!(gameTracker->streamFlags & 0x200000))
+				{
+					SAVE_ClearMemory(&gameTrackerX);
+				}
+			}
+			else
+			{
+				mainTracker->mainState = 2;
+			}
+		}
+		break;
+	case 2:
+		if ((gameTrackerX.streamFlags & 0x1000000))
+		{
+			play_movie(&InterfaceItems[2].name[0]);
+			gameTrackerX.streamFlags &= 0x1000000;
+		}
+
+		if ((gameTrackerX.streamFlags & 0x200000))
+		{
+			gameTrackerX.streamFlags &= 0x200000;
+		}
+
+		if (nosound == 0)
+		{
+			MAIN_InitVolume();
+		}
+
+		MAIN_ShowLoadingScreen();
+		FONT_ReloadFont();
+		DrawSync(0);
+
+#if defined(PSXPC_VERSION)
+		DrawOTag(NULL);
+		GAMEPAD_Process(&gameTrackerX);
+#endif
+
+		STREAM_Init();
+		gameTracker->frameCount = 0;
+		GAMELOOP_LevelLoadAndInit(&gameTracker->baseAreaName[0], gameTracker);
+		gameTracker->levelDone = 0;
+		mainTracker->mainState = 1;
+
+		while (STREAM_PollLoadQueue() != 0);
+		{
+
+		}
+
+		gameTrackerX.vblFrames = 0;
+
+		break;
+	case 4:
+		LOAD_ChangeDirectory("Menustuff");
+
+	checkMovie:
+		while ((unsigned)mainTracker->movieNum < 6)
+		{
+			item = &InterfaceItems[mainTracker->movieNum];
+			gameTrackerX.gameFlags &= 0x1;
+			show_screen(&item->name[0]);
+#if defined(PSXPC_VERSION)
+			DrawOTag(NULL);
+#endif
+
+			timer = 1;
+			if (item->timeout != 0)
+			{
+				do
+				{
+					GAMEPAD_Process(gameTracker);
+
+					if (item->buttonTimeout < timer && (gameTracker->controlCommand[0][1] & 0x80))
+					{
+						break;
+					}
+
+					VSync(0);
+					timer++;
+				} while (timer < item->timeout);
+			}
+			mainTracker->movieNum = item->nextItem;
+			if (item->nextItem < 0)
+			{
+				goto checkMovie;
+			}
+		}
+
+		if (item->nextItem != 1)
+		{
+			mainTracker->mainState = 6;
+		}
+
+		FONT_ReloadFont();
+
+		if (mainTracker->mainState != 6)
+		{
+			if (DoMainMenu == 0)
+			{
+				MAIN_ResetGame();
+				gameTrackerX.gameMode = 0;
+				mainMenuFading = 1;
+				MAIN_StartGame();
+			}
+			else
+			{
+				mainTracker->mainState = 8;
+			}
+		}
+		break;
+	case 6:
+		CINE_Load();
+		if (mainTracker->movieNum >= 0)
+		{
+			do
+			{
+				if (CINE_Loaded() != 0)
+				{
+					CINE_Play(InterfaceItems[mainTracker->movieNum].name, 0xFFFFu, 2);
+					ClearDisplay();
+				}
+
+				mainTracker->movieNum = InterfaceItems[mainTracker->movieNum].nextItem;
+
+				if (InterfaceItems[mainTracker->movieNum].itemType != 0)
+				{
+					mainTracker->mainState = 4;
+					break;
+				}
+			} while (mainTracker->movieNum >= 0);
+		}
+
+		CINE_Unload();
+
+		if (mainTracker->movieNum < 0)
+		{
+			mainTracker->mainState = 8;
+		}
+
+		if (nosound == 0)
+		{
+			SOUND_StopAllSound();
+		}
+
+		break;
+	case 7:
+		mainTracker->movieNum = 1;
+		break;
+	case 8:
+		ProcessArgs(gameTracker->baseAreaName, gameTracker);
+		MAIN_ResetGame();
+		LOAD_ChangeDirectory("Menustuff");
+		MAIN_MainMenuInit();
+		MAIN_InitVolume();
+		SAVE_ClearMemory(&gameTrackerX);
+		FONT_ReloadFont();
+		mainTracker->mainState = 9;
+		break;
+	case 9:
+		menuPos = MAIN_DoMainMenu(gameTracker, mainTracker, menuPos);
+		break;
+	case 3:
+	case 5:
+	default:
+		break;
+	}
+
+	STREAM_PollLoadQueue();
+}
+
+int MainG2(void* appData)
+{
+	InitialiseGame(appData);
+
+	emscripten_set_main_loop(GameLoop, 0, 1);
+
+	CloseGame();
+
+	MainG2_ShutDownEngine(appData);
+
+	Emulator_ShutDown();
+
+	return 0;
+}
+
+#else
 int MainG2(void *appData)
 { 
 	struct MainTracker* mainTracker;
@@ -725,6 +1021,7 @@ int MainG2(void *appData)
 		mainTracker->mainState = 6;
 		mainTracker->movieNum = 0;
 
+#if !defined(__EMSCRIPTEN__)
 		while (mainTracker->done == 0)
 		{
 			switch (mainTrackerX.mainState)
@@ -938,6 +1235,7 @@ int MainG2(void *appData)
 
 			STREAM_PollLoadQueue();
 		}
+#endif
 
 		SOUND_StopAllSound();
 		SOUND_Free();
@@ -964,3 +1262,4 @@ int MainG2(void *appData)
 
 	return 0;
 }
+#endif

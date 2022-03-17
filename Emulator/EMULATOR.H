@@ -1,11 +1,12 @@
 #ifndef EMULATOR_H
 #define EMULATOR_H
 
-#include "EMULATOR_PLATFORM_SETUP.H"
 #include "LIBGPU.H"
 
 #include <stdio.h>
 #include <stddef.h>
+
+#include "EMULATOR_PLATFORM_SETUP.H"
 
 #ifndef TRUE
 #define TRUE		1

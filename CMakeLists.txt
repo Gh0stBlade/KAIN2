@@ -35,6 +35,11 @@ if (MSVC)
     endif()
 endif()
 
+if (EMSCRIPTEN)
+	set(TARGET_ARCH "Web")
+endif()
+
+
 #We want to be able to group projects in folders
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 

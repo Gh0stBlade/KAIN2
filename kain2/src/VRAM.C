@@ -538,6 +538,7 @@ void AdjustVramCoordsObject(int oldx, int oldy, int newx, int newy, struct Objec
 // struct _BlockVramEntry * /*$ra*/ VRAM_InsertionSort(struct _BlockVramEntry *rootNode /*$a0*/, struct _BlockVramEntry *newBlock /*$a1*/, int pack_type /*$a2*/)
 struct _BlockVramEntry * VRAM_InsertionSort(struct _BlockVramEntry *rootNode, struct _BlockVramEntry *newBlock, int pack_type)
 { // line 922, offset 0x8007364c
+#if defined(PC_VERSION)
 	struct _BlockVramEntry* result; // eax
 	struct _BlockVramEntry* v4; // esi
 	struct _BlockVramEntry* v5; // ecx
@@ -583,6 +584,9 @@ struct _BlockVramEntry * VRAM_InsertionSort(struct _BlockVramEntry *rootNode, st
 		return newBlock;
 	}
 	return result;
+#else
+	return NULL;
+#endif
 }
 
 
@@ -834,6 +838,7 @@ void VRAM_LoadReturn(void *dataPtr, void *data1, void *data2)
 // long /*$ra*/ VRAM_GetObjectVramSpace(struct VramSize *vramSize /*$v1*/, struct _ObjectTracker *objectTracker /*$s4*/)
 long VRAM_GetObjectVramSpace(struct VramSize *vramSize, struct _ObjectTracker *objectTracker)
 { // line 1461, offset 0x80074060
+#if defined(PC_VERSION)
 	__int16 x; // cx
 	__int16 h; // dx
 	__int16 w; // cx
@@ -864,6 +869,9 @@ long VRAM_GetObjectVramSpace(struct VramSize *vramSize, struct _ObjectTracker *o
 	if (v6)
 		v6->udata.streamUnit = (struct _StreamUnit*)objectTracker;
 	return v5;
+#else
+	return NULL;
+#endif
 }
 
 

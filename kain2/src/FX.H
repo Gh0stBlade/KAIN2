@@ -39,7 +39,7 @@ struct _FXRibbon // hashcode: 0xB11070B8 (dec: -1324322632)
 	short lifeTime; // size=0, offset=14
 	short numberVerts; // size=0, offset=16
 	short endIndex; // size=0, offset=18
-	struct SVECTOR* vertexPool; // size=8, offset=20
+	SVECTOR* vertexPool; // size=8, offset=20
 	short startSegment; // size=0, offset=24
 	short endSegment; // size=0, offset=26
 	long startColor; // size=0, offset=28
@@ -434,7 +434,7 @@ extern void FX_DrawRing2(MATRIX *wcTransform, struct _SVector *position, MATRIX 
 extern void FX_DrawFField(MATRIX *wcTransform, struct _FXForceFieldEffect *field); // 0x8004E61C
 extern struct _FXForceFieldEffect * FX_StartFField(struct _Instance *instance, int size, struct _Position *offset, int size_diff, int size_change, int deg_change, long color); // 0x8004E810
 extern void FX_EndFField(struct _Instance *instance); // 0x8004E8E4
-extern void FX_Draw_Glowing_Line(unsigned long **ot, long otz, struct DVECTOR *sxy0, struct DVECTOR *sxy1, struct DVECTOR *xy0, struct DVECTOR *xy1, long color, long color2); // 0x8004E964
+extern void FX_Draw_Glowing_Line(unsigned long **ot, long otz, DVECTOR *sxy0, DVECTOR *sxy1, DVECTOR *xy0, DVECTOR *xy1, long color, long color2); // 0x8004E964
 extern void FX_Lightning(MATRIX *wcTransform, unsigned long **ot, MATRIX *mat, short deg, struct _SVector *start, struct _SVector *end, int width, int small_width, int segs, int sine_size, int variation, long color, long glow_color); // 0x8004EB00
 extern void FX_LightHouse(MATRIX *wcTransform, unsigned long **ot, struct _Instance *instance, int startSeg, int endSeg, int segs, long beam_color); // 0x8004EFF0
 extern void FX_StartPassthruFX(struct _Instance *instance, struct _SVector *normal, struct _SVector *point); // 0x8004F46C

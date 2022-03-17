@@ -1,6 +1,8 @@
 #ifndef MENUDEFS_H
 #define MENUDEFS_H
 
+#include "MENU.H"
+
 enum sfx_t : int 
 {
 	sfx_sound = 0,

@@ -1,6 +1,8 @@
 #ifndef VOICEXA_H
 #define VOICEXA_H
 
+#include "LOCAL/LOCALSTR.H"
+
 struct XAVoiceListEntry // hashcode: 0xDBE9AB23 (dec: -605443293)
 {
 	unsigned short length; // size=0, offset=0

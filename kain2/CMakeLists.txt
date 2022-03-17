@@ -65,8 +65,13 @@ ${KAIN2_SRCS}
 
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${KAIN2_SRCS})
 
+if(MSVC)
 set_target_properties(
 ${PROJECT_NAME} PROPERTIES OUTPUT_NAME "KAIN2" SUFFIX ".EXE"
+)
+endif()
+
+set_target_properties(
 ${PROJECT_NAME} PROPERTIES FOLDER "Build Targets/PlayStation"
 )
 

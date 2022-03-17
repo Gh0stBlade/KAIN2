@@ -141,13 +141,14 @@ void SOUND_ProcessInstanceSounds(unsigned char *sfxFileData, struct SoundInstanc
 // void /*$ra*/ SOUND_EndInstanceSounds(unsigned char *sfxFileData /*$s0*/, struct SoundInstance *soundInstTbl /*$a1*/)
 void SOUND_EndInstanceSounds(unsigned char *sfxFileData, struct SoundInstance *soundInstTbl)
 { // line 149, offset 0x8003e86c
+#if defined(PC_VERSION)
 	struct SoundInstance* v2; // esi
 	unsigned __int8* v3; // edi
 	int v4; // ebp
 	SoundEffectChannel* v5; // eax
 	unsigned int channel; // eax
 	SoundEffectChannel* v7; // ecx
-#if defined(PC_VERSION)
+
 	if (sfxFileData)
 	{
 		v2 = soundInstTbl;
@@ -797,6 +798,7 @@ void SOUND_StopInstanceSound(struct SoundInstance *soundInst)
 // int /*$ra*/ SOUND_IsInstanceSoundLoaded(unsigned char *sfxFileData /*$a0*/, long soundNumber /*$a1*/)
 int SOUND_IsInstanceSoundLoaded(unsigned char *sfxFileData, long soundNumber)
 { // line 594, offset 0x8003f438
+#if defined(PC_VERSION)
 	int v2; // edx
 	unsigned __int8* v3; // eax
 	unsigned __int16* v4; // esi
@@ -851,6 +853,10 @@ int SOUND_IsInstanceSoundLoaded(unsigned char *sfxFileData, long soundNumber)
 			return 1;
 	}
 	return 0;
+#else
+	return 0;
+#endif
+
 }
 
 

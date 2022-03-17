@@ -56,7 +56,7 @@ extern void DRAW_RingLine(struct _PrimPool *primPool, unsigned long **ot, long c
 
 extern void DRAW_RingPoint(struct _PrimPool *primPool, unsigned long **ot, long color, struct _SVector *vel, struct _SVector *acc); // 0x8002AE9C
 
-extern unsigned long * DRAW_DrawRingPoints(struct _Model *model, struct _VertexPool *vertexPool, struct MATRIX *pcTransform, struct _PrimPool *primPool, unsigned long **ot, long color, int ring_type); // 0x8002AFAC
+extern unsigned long * DRAW_DrawRingPoints(struct _Model *model, struct _VertexPool *vertexPool, MATRIX *pcTransform, struct _PrimPool *primPool, unsigned long **ot, long color, int ring_type); // 0x8002AFAC
 
 extern void DRAW_GlowQuad(struct _PrimPool *primPool, unsigned long **ot, long otz, long color, struct _Vector *v0, struct _Vector *v1, struct _Vector *v2, struct _Vector *v3); // 0x8002B2C8
 

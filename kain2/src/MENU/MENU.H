@@ -27,14 +27,6 @@ struct menu_stack_t // hashcode: 0x04101191 (dec: 68161937)
 	struct menu_format_t format; // size=28, offset=8
 };
 
-struct menu_item_t // hashcode: 0xF260D8A8 (dec: -228534104)
-{
-	char* text; // size=0, offset=0
-	int (*fn)(void*, long, enum menu_ctrl_t); // size=0, offset=4
-	long parameter; // size=0, offset=8
-	long flags; // size=0, offset=12
-};
-
 enum menu_ctrl_t // Hashcode: 0xE0BD1E93 (dec: -524476781)
 {
 	menu_ctrl_none = 0,
@@ -46,6 +38,14 @@ enum menu_ctrl_t // Hashcode: 0xE0BD1E93 (dec: -524476781)
 	menu_ctrl_cancel = 6,
 	menu_ctrl_start = 7,
 	menu_ctrl_num_items = 8,
+};
+
+struct menu_item_t // hashcode: 0xF260D8A8 (dec: -228534104)
+{
+	char* text; // size=0, offset=0
+	int (*fn)(void*, long, enum menu_ctrl_t); // size=0, offset=4
+	long parameter; // size=0, offset=8
+	long flags; // size=0, offset=12
 };
 
 enum menu_sound_t // Hashcode: 0x0248C7C9 (dec: 38324169)
@@ -146,7 +146,7 @@ extern void menu_format(struct menu_t *menu, int center, int xpos, int ypos, int
 extern void menu_set(struct menu_t *menu, int fn(void*, int)); // 0x800B7ADC
 extern void menu_push(struct menu_t *menu, int fn(void*, int)); // 0x800B7B00
 extern void menu_pop(struct menu_t *menu); // 0x800B7B70
-extern void menu_item_flags(struct menu_t *menu, int (*fn)(void*, long, enum menu_ctrl_t), long parameter, long flags, char *format); // 0x800B7B84
+extern void menu_item_flags(struct menu_t *menu, int (*fn)(void*, long, enum menu_ctrl_t), long parameter, long flags, char *format ...); // 0x800B7B84
 extern void menu_item(struct menu_t *menu, int (*fn)(void*, long, enum menu_ctrl_t), long parameter, char *format ...); // 0x800B7C14
 extern void menu_build(struct menu_t *menu); // 0x800B7CB8
 extern void DisplayHintBox(int len, int y); // 0x800B7D10

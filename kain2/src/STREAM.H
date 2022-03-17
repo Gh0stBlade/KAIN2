@@ -261,7 +261,7 @@ extern void MORPH_UpdateTextures(); // 0x8005DE10
 extern void MORPH_Continue(); // 0x8005DE68
 extern void STREAM_MORPH_Relocate(); // 0x8005DFDC
 extern int AddVertex(VECTOR *v0, PSX_RECT *rect); // 0x8005DFEC
-extern int GetPlaneDist(int k, int j, int i, struct VECTOR *v); // 0x8005E178
+extern int GetPlaneDist(int k, int j, int i, VECTOR *v); // 0x8005E178
 extern void CalcVert(VECTOR *v, VECTOR *v1, VECTOR *v2, int dist1, int dist2, int k, int j); // 0x8005E204
 extern int AddClippedTri(SVECTOR*iv, PSX_RECT *cliprect, int *minz); // 0x8005E28C
 extern int STREAM_GetClipRect(struct StreamUnitPortal *portal, PSX_RECT *rect); // 0x8005E534

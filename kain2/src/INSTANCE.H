@@ -227,7 +227,7 @@ extern struct _Instance * INSTANCE_Find(long introUniqueID); // 0x800346D4
 extern struct _Instance * INSTANCE_IntroduceSavedInstance(struct _SavedIntro *savedIntro, struct _StreamUnit *streamUnit, int *deleted); // 0x80034714
 extern struct _Instance * INSTANCE_IntroduceSavedInstanceWithIntro(struct _SavedIntroWithIntro *savedIntro, struct _StreamUnit *streamUnit, int *deleted); // 0x80034B8C
 extern void INSTANCE_SpatialRelationships(struct _InstanceList *instanceList); // 0x80035000
-extern int INSTANCE_SetStatsData(struct _Instance *instance, struct _Instance *checkee, struct _Vector *checkPoint, struct evCollideInstanceStatsData *data, struct MATRIX *mat); // 0x80035164
+extern int INSTANCE_SetStatsData(struct _Instance *instance, struct _Instance *checkee, struct _Vector *checkPoint, struct evCollideInstanceStatsData *data, MATRIX *mat); // 0x80035164
 extern void INSTANCE_LinkToParent(struct _Instance *instance, struct _Instance *parent, int node); // 0x80035274
 extern void INSTANCE_UnlinkFromParent(struct _Instance *instance); // 0x80035330
 extern void INSTANCE_UnlinkChildren(struct _Instance *instance); // 0x80035494
