@@ -1,4 +1,6 @@
-#ifdef _WINDOWS
+#include "EMULATOR_PLATFORM_SETUP.H"
+
+#if defined(_WINDOWS) && !defined(UWP);
 
 #include <windows.h>
 #include <Dbghelp.h>

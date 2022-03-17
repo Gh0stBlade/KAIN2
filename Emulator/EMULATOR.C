@@ -152,9 +152,11 @@ void Emulator_ResetDevice()
 	vramTexture = NULL;
 	vramBaseTexture = NULL;
 
+#if defined(SDL2)
 	SDL_SysWMinfo wmInfo;
 	SDL_VERSION(&wmInfo.version);
 	SDL_GetWindowWMInfo(g_window, &wmInfo);
+#endif
 
 	DXGI_MODE_DESC bd;
 	ZeroMemory(&bd, sizeof(DXGI_MODE_DESC));
@@ -176,7 +178,9 @@ void Emulator_ResetDevice()
 	sd.SampleDesc.Count = 1;
 	sd.SampleDesc.Quality = 0;
 	sd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+#if defined(SDL2)
 	sd.OutputWindow = wmInfo.info.win.window;
+#endif
 
 #if defined(_DEBUG)
 	unsigned int deviceCreationFlags = D3D11_CREATE_DEVICE_DEBUG;
@@ -340,10 +344,11 @@ static int Emulator_InitialiseD3D11Context(char* windowName)
 		eprinterr("Failed to initialise SDL window!\n");
 		return FALSE;
 	}
-#endif
+
 	SDL_SysWMinfo wmInfo;
 	SDL_VERSION(&wmInfo.version);
 	SDL_GetWindowWMInfo(g_window, &wmInfo);
+#endif
 
 	DXGI_MODE_DESC bd;
 	ZeroMemory(&bd, sizeof(DXGI_MODE_DESC));
@@ -365,7 +370,9 @@ static int Emulator_InitialiseD3D11Context(char* windowName)
 	sd.SampleDesc.Count = 1;
 	sd.SampleDesc.Quality = 0;
 	sd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+#if defined(SDL2)
 	sd.OutputWindow = wmInfo.info.win.window;
+#endif
 
 #if defined(_DEBUG)
 	unsigned int deviceCreationFlags = D3D11_CREATE_DEVICE_DEBUG;

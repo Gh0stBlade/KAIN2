@@ -1,6 +1,10 @@
-
 #ifndef EMULATOR_PLATFORM_SETUP_H
 #define EMULATOR_PLATFORM_SETUP_H
+
+#if defined(WINAPI_FAMILY) && (WINAPI_FAMILY == WINAPI_FAMILY_APP)
+#define UWP
+#endif
+
 
 #ifndef _CRT_SECURE_NO_WARNINGS
     #define _CRT_SECURE_NO_WARNINGS
@@ -9,7 +13,7 @@
 /*
  * Platform specific emulator setup
  */
-#if (defined(_WINDOWS) || defined(__APPLE__) || defined(__linux__) || defined(__MINGW32__)) && !defined(__ANDROID__)
+#if (defined(_WINDOWS) || defined(__APPLE__) || defined(__linux__) || defined(__MINGW32__)) && !defined(__ANDROID__) && (!defined(UWP))
 
 #if defined(_DEBUG)
 #define DEBUG_PRINTS
@@ -57,6 +61,9 @@
 #elif OGLES_VERSION == 3
 #define ES3_SHADERS
 #endif
+#endif
+#if defined(UWP)//UWP
+#define D3D11
 #endif
 
 #if defined(GLEW)
@@ -109,8 +116,14 @@
 #include <SDL_syswm.h>
 #elif defined(D3D11)
 #include <Windows.h>
+#if defined(UWP)
+#include <d3d11_3.h>
+#else
 #include <d3d11.h>
+#endif
+#if defined(SDL2)
 #include <SDL_syswm.h>
+#endif
 #elif defined(D3D12)
 #include <Windows.h>
 #include <d3d12.h>
