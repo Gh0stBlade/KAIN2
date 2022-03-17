@@ -34,6 +34,10 @@ SDL_Window* g_window = NULL;
 
 #if defined(D3D11)
 ID3D11Texture2D* vramBaseTexture;
+
+#if defined(UWP)
+
+#endif
 #endif
 TextureID vramTexture;
 TextureID whiteTexture;
@@ -182,12 +186,24 @@ void Emulator_ResetDevice()
 #if !defined(UWP)
 	sd.Windowed = TRUE;
 	sd.BufferDesc = bd;
+#else
+	sd.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+	sd.Width = windowWidth;
+	sd.Height = windowHeight;
 #endif
+#if !defined(UWP)
 	sd.BufferCount = 1;
+#else
+	sd.BufferCount = 2;
+#endif
 	sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	sd.SampleDesc.Count = 1;
 	sd.SampleDesc.Quality = 0;
+#if !defined(UWP)
 	sd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+#else
+	sd.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
+#endif
 #if defined(SDL2)
 	sd.OutputWindow = wmInfo.info.win.window;
 #endif
@@ -208,12 +224,19 @@ void Emulator_ResetDevice()
 	IDXGIFactory2* dxgiFactory = NULL;
 
 	hr = d3ddev->QueryInterface(__uuidof(IDXGIDevice3), (void**)&dxgiDevice);
+
 	assert(!FAILED(hr));
 
 	hr = dxgiDevice->GetAdapter(&dxgiAdapter);
+
 	assert(!FAILED(hr));
 
-	hr = dxgiFactory->CreateSwapChainForCoreWindow(d3ddev, NULL/*reinterpret_cast<IUnknown*>(m_window.Get())*/, &sd, NULL, &swapChain);
+	hr = dxgiAdapter->GetParent(__uuidof(IDXGIFactory2), (void**)&dxgiFactory);
+
+	assert(!FAILED(hr));
+
+	hr = dxgiFactory->CreateSwapChainForComposition(d3ddev, &sd, NULL, &swapChain);
+
 	assert(!FAILED(hr));
 #else
 	HRESULT hr = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, deviceCreationFlags, NULL, 0, D3D11_SDK_VERSION, &sd, &swapChain, &d3ddev, NULL, &d3dcontext);
@@ -398,12 +421,24 @@ static int Emulator_InitialiseD3D11Context(char* windowName)
 #if !defined(UWP)
 	sd.Windowed = TRUE;
 	sd.BufferDesc = bd;
+#else
+	sd.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+	sd.Width = windowWidth;
+	sd.Height = windowHeight;
 #endif
+#if !defined(UWP)
 	sd.BufferCount = 1;
+#else
+	sd.BufferCount = 2;
+#endif
 	sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	sd.SampleDesc.Count = 1;
 	sd.SampleDesc.Quality = 0;
+#if !defined(UWP)
 	sd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+#else
+	sd.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
+#endif
 #if defined(SDL2)
 	sd.OutputWindow = wmInfo.info.win.window;
 #endif
@@ -440,7 +475,19 @@ static int Emulator_InitialiseD3D11Context(char* windowName)
 		return FALSE;
 	}
 
-	hr = dxgiFactory->CreateSwapChainForCoreWindow(d3ddev, NULL/*reinterpret_cast<IUnknown*>(m_window.Get())*/, &sd, NULL, &swapChain);
+	hr = dxgiAdapter->GetParent(__uuidof(IDXGIFactory2), (void**)&dxgiFactory);
+
+	if (!SUCCEEDED(hr)) {
+		eprinterr("Failed to get factory\n");
+		return FALSE;
+	}
+
+	hr = dxgiFactory->CreateSwapChainForComposition(d3ddev, &sd, NULL, &swapChain);
+
+	if (!SUCCEEDED(hr)) {
+		eprinterr("Failed to create swapchain\n");
+		return FALSE;
+	}
 #else
 	HRESULT hr = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, deviceCreationFlags, NULL, 0, D3D11_SDK_VERSION, &sd, &swapChain, &d3ddev, NULL, &d3dcontext);
 

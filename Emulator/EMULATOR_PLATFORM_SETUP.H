@@ -115,10 +115,10 @@
 #include <d3d9.h>
 #include <SDL_syswm.h>
 #elif defined(D3D11)
-#include <Windows.h>
 #if defined(UWP)
 #include <d3d11_3.h>
 #else
+#include <Windows.h>
 #include <d3d11.h>
 #endif
 #if defined(SDL2)

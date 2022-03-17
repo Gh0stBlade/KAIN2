@@ -339,3 +339,4 @@ External/
 /kain2/*.filters
 /Build_Emscripten/*
 /Build_UWP/*
+/Emulator/Shaders/*
