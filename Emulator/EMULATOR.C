@@ -71,7 +71,172 @@ public:
 	{
 		Window->Closed += ref new TypedEventHandler
 			<CoreWindow^, CoreWindowEventArgs^>(this, &App::Closed);
+
+		Window->KeyDown +=
+			ref new TypedEventHandler<CoreWindow^, KeyEventArgs^>(this, &App::OnKeyPressed);
+
+		Window->KeyUp +=
+			ref new TypedEventHandler<CoreWindow^, KeyEventArgs^>(this, &App::OnKeyReleased);
 	}
+
+	void App::OnKeyPressed(CoreWindow^ sender, KeyEventArgs^ args)
+	{
+		unsigned short kbInputs = 0xFFFF;
+
+		if (args->VirtualKey == Windows::System::VirtualKey::X)//Square
+		{
+			kbInputs &= ~0x8000;
+		}
+
+		if (args->VirtualKey == Windows::System::VirtualKey::V)//Circle
+		{
+			kbInputs &= ~0x2000;
+		}
+
+		if (args->VirtualKey == Windows::System::VirtualKey::Z)//Triangle
+		{
+			kbInputs &= ~0x1000;
+		}
+
+		if (args->VirtualKey == Windows::System::VirtualKey::C)//Cross
+		{
+			kbInputs &= ~0x4000;
+		}
+
+		if (args->VirtualKey == Windows::System::VirtualKey::LeftShift)//L1
+		{
+			kbInputs &= ~0x400;
+		}
+
+		if (args->VirtualKey == Windows::System::VirtualKey::RightShift)//R1
+		{
+			kbInputs &= ~0x800;
+		}
+
+		if (args->VirtualKey == Windows::System::VirtualKey::Up)//UP
+		{
+			kbInputs &= ~0x10;
+		}
+
+		if (args->VirtualKey == Windows::System::VirtualKey::Down)//DOWN
+		{
+			kbInputs &= ~0x40;
+		}
+
+		if (args->VirtualKey == Windows::System::VirtualKey::Left)//LEFT
+		{
+			kbInputs &= ~0x80;
+		}
+
+		if (args->VirtualKey == Windows::System::VirtualKey::Right)//RIGHT
+		{
+			kbInputs &= ~0x20;
+		}
+
+		if (args->VirtualKey == Windows::System::VirtualKey::LeftControl)//L2
+		{
+			kbInputs &= ~0x100;
+		}
+
+		if (args->VirtualKey == Windows::System::VirtualKey::RightControl)//R2
+		{
+			kbInputs &= ~0x200;
+		}
+
+		if (args->VirtualKey == Windows::System::VirtualKey::Space)//SELECT
+		{
+			kbInputs &= ~0x1;
+		}
+
+		if (args->VirtualKey == Windows::System::VirtualKey::Enter)//START
+		{
+			kbInputs &= ~0x8;
+		}
+
+		padData[0][0] = 0;
+		padData[0][1] = 0x41;
+		((unsigned short*)padData[0])[1] = kbInputs;
+	}
+
+	void App::OnKeyReleased(CoreWindow^ sender, KeyEventArgs^ args)
+	{
+		unsigned short kbInputs = ((unsigned short*)padData[0])[1];
+
+		if (args->VirtualKey == Windows::System::VirtualKey::X)//Square
+		{
+			kbInputs |= 0x8000;
+		}
+
+		if (args->VirtualKey == Windows::System::VirtualKey::V)//Circle
+		{
+			kbInputs |= 0x2000;
+		}
+
+		if (args->VirtualKey == Windows::System::VirtualKey::Z)//Triangle
+		{
+			kbInputs |= 0x1000;
+		}
+
+		if (args->VirtualKey == Windows::System::VirtualKey::C)//Cross
+		{
+			kbInputs |= 0x4000;
+		}
+
+		if (args->VirtualKey == Windows::System::VirtualKey::LeftShift)//L1
+		{
+			kbInputs |= 0x400;
+		}
+
+		if (args->VirtualKey == Windows::System::VirtualKey::RightShift)//R1
+		{
+			kbInputs |= 0x800;
+		}
+
+		if (args->VirtualKey == Windows::System::VirtualKey::Up)//UP
+		{
+			kbInputs |= 0x10;
+		}
+
+		if (args->VirtualKey == Windows::System::VirtualKey::Down)//DOWN
+		{
+			kbInputs |= 0x40;
+		}
+
+		if (args->VirtualKey == Windows::System::VirtualKey::Left)//LEFT
+		{
+			kbInputs |= 0x80;
+		}
+
+		if (args->VirtualKey == Windows::System::VirtualKey::Right)//RIGHT
+		{
+			kbInputs |= 0x20;
+		}
+
+		if (args->VirtualKey == Windows::System::VirtualKey::LeftControl)//L2
+		{
+			kbInputs |= 0x100;
+		}
+
+		if (args->VirtualKey == Windows::System::VirtualKey::RightControl)//R2
+		{
+			kbInputs |= 0x200;
+		}
+
+		if (args->VirtualKey == Windows::System::VirtualKey::Space)//SELECT
+		{
+			kbInputs |= 0x1;
+		}
+
+		if (args->VirtualKey == Windows::System::VirtualKey::Enter)//START
+		{
+			kbInputs |= 0x8;
+		}
+
+		padData[0][0] = 0;
+		padData[0][1] = 0x41;
+		((unsigned short*)padData[0])[1] = kbInputs;
+	}
+
 	virtual void Load(String^ EntryPoint) {}
 	virtual void Run()
 	{
