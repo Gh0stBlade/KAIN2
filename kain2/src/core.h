@@ -151,7 +151,7 @@ typedef struct _Face // hashcode: 0x8775891B (dec: -2022340325)
 
 struct _TFace // hashcode: 0x85FE430F (dec: -2046934257)
 {
-	struct _Face face; // size=6, offset=0
+	_Face face; // size=6, offset=0
 	unsigned char attr; // size=0, offset=6
 	char sortPush; // size=0, offset=7
 	unsigned short normal; // size=0, offset=8
