@@ -3503,7 +3503,7 @@ void Emulator_WaitForTimestep(int count)
 	}
 
 	g_swapTime = SDL_GetTicks();
-#elif defined(XED3D)
+#elif defined(XED3D) || defined(D3D11)
 	if (g_swapInterval > 0) 
 	{
 		int delta = g_swapTime + FIXED_TIME_STEP*count - GetTickCount();

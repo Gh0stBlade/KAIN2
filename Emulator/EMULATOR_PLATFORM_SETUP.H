@@ -64,6 +64,7 @@
 #endif
 #if defined(UWP)//UWP
 #define D3D11
+#define XAUDIO2
 #endif
 
 #if defined(GLEW)
