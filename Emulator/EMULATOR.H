@@ -269,6 +269,7 @@ extern void Emulator_UpdateProjectionConstantBuffer(float* ortho);
 extern void Emulator_SetConstantBuffers();
 extern void Emulator_DestroyConstantBuffers();
 extern void Emulator_CreateRasterState(int wireframe);
+extern void Emulator_SetDefaultRenderTarget();
 #elif defined(D3D12)
 extern void Emulator_CreateRasterState(int wireframe);
 extern void Emulator_WaitForPreviousFrame();

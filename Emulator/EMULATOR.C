@@ -37,7 +37,91 @@ ID3D11Texture2D* vramBaseTexture;
 
 #if defined(UWP)
 
+using namespace Windows::ApplicationModel;
+using namespace Windows::ApplicationModel::Core;
+using namespace Windows::ApplicationModel::Activation;
+using namespace Windows::UI::Core;
+using namespace Windows::UI::Popups;
+using namespace Windows::System;
+using namespace Windows::Foundation;
+using namespace Windows::Graphics::Display;
+using namespace Platform;
+
+CoreWindow^ g_window;
+std::thread g_uiThread;
+int g_windowReady = 0;
+
+ref class App sealed : public IFrameworkView
+{
+	bool WindowClosed;
+
+public:
+	virtual void Initialize(CoreApplicationView^ AppView)
+	{
+		AppView->Activated += ref new TypedEventHandler
+			<CoreApplicationView^, IActivatedEventArgs^>(this, &App::OnActivated);
+		CoreApplication::Suspending +=
+			ref new EventHandler<SuspendingEventArgs^>(this, &App::Suspending);
+		CoreApplication::Resuming +=
+			ref new EventHandler<Object^>(this, &App::Resuming);
+
+		WindowClosed = false;    // initialize to false
+	}
+	virtual void SetWindow(CoreWindow^ Window)
+	{
+		Window->Closed += ref new TypedEventHandler
+			<CoreWindow^, CoreWindowEventArgs^>(this, &App::Closed);
+	}
+	virtual void Load(String^ EntryPoint) {}
+	virtual void Run()
+	{
+		CoreWindow^ Window = CoreWindow::GetForCurrentThread();
+
+		g_window = Window;
+		g_windowReady = 1;
+
+		while (!WindowClosed)
+		{
+			Window->Dispatcher->ProcessEvents(CoreProcessEventsOption::ProcessAllIfPresent);
+		}
+	}
+	virtual void Uninitialize() {}
+
+	void OnActivated(CoreApplicationView^ CoreAppView, IActivatedEventArgs^ Args)
+	{
+		CoreWindow^ Window = CoreWindow::GetForCurrentThread();
+		Window->Activate();
+	}
+
+	void Closed(CoreWindow^ sender, CoreWindowEventArgs^ args)
+	{
+		WindowClosed = true;    // time to end the endless loop
+	}
+
+	void Suspending(Object^ Sender, SuspendingEventArgs^ Args) {}
+	void Resuming(Object^ Sender, Object^ Args) {}
+};
+
+
+// the class definition that creates our core framework
+ref class AppSource sealed : IFrameworkViewSource
+{
+public:
+	virtual IFrameworkView^ CreateView()
+	{
+		return ref new App();    // create the framework view and return it
+	}
+};
+
+[MTAThread]    // define main() as a multi-threaded-apartment function
+
+void CreateUWPApplication()
+{
+	CoreApplication::Run(ref new AppSource());
+}
+
 #endif
+
 #endif
 TextureID vramTexture;
 TextureID whiteTexture;
@@ -216,7 +300,6 @@ void Emulator_ResetDevice()
 
 #if defined(UWP)
 	HRESULT hr = D3D11CreateDevice(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, deviceCreationFlags, NULL, 0, D3D11_SDK_VERSION, &d3ddev, NULL, &d3dcontext);
-
 	assert(!FAILED(hr));
 
 	IDXGIDevice3* dxgiDevice = NULL;
@@ -235,7 +318,7 @@ void Emulator_ResetDevice()
 
 	assert(!FAILED(hr));
 
-	hr = dxgiFactory->CreateSwapChainForComposition(d3ddev, &sd, NULL, &swapChain);
+	hr = dxgiFactory->CreateSwapChainForCoreWindow(d3ddev, reinterpret_cast<IUnknown*>(g_window), &sd, NULL, &swapChain);
 
 	assert(!FAILED(hr));
 #else
@@ -450,6 +533,7 @@ static int Emulator_InitialiseD3D11Context(char* windowName)
 #endif
 
 #if defined(UWP)
+
 	HRESULT hr = D3D11CreateDevice(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, deviceCreationFlags, NULL, 0, D3D11_SDK_VERSION, &d3ddev, NULL, &d3dcontext);
 	
 	if (!SUCCEEDED(hr)) {
@@ -978,6 +1062,14 @@ void Emulator_Initialise(char* windowName, int width, int height)
 	eprintf("VERSION: %d.%d\n", EMULATOR_MAJOR_VERSION, EMULATOR_MINOR_VERSION);
 	eprintf("Compile Date: %s Time: %s\n", EMULATOR_COMPILE_DATE, EMULATOR_COMPILE_TIME);
 	
+#if defined(UWP)
+	g_uiThread = std::thread(CreateUWPApplication);
+
+	while (!g_windowReady)
+	{
+	}
+#endif
+
 	if (Emulator_InitialiseSDL(windowName, width, height) == FALSE)
 	{
 		eprinterr("Failed to Intialise SDL\n");
@@ -3217,10 +3309,14 @@ void Emulator_SwapWindow()
 		Emulator_ResetDevice();
 	}
 #elif defined(D3D11) || defined(D3D12)
+
 	HRESULT hr = swapChain->Present(g_swapInterval, 0);
+	
 	if (hr == DXGI_ERROR_DEVICE_REMOVED || hr == DXGI_ERROR_DEVICE_RESET) {
 		Emulator_ResetDevice();
 	}
+
+	Emulator_SaveVRAM("VRAM.TGA", 0, 0, VRAM_WIDTH, VRAM_HEIGHT, TRUE);
 #else
 	#error
 #endif
@@ -3725,6 +3821,12 @@ void Emulator_CreateRasterState(int wireframe)
 	assert(!FAILED(hr));
 	d3dcontext->RSSetState(rasterState);
 }
+#if defined(D3D11)
+void Emulator_SetDefaultRenderTarget()
+{
+	d3dcontext->OMSetRenderTargets(1, &renderTargetView, NULL);
+}
+#endif
 
 #elif defined(D3D12)
 void Emulator_CreateRasterState(int wireframe)

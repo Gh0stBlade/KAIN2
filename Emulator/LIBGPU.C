@@ -557,6 +557,10 @@ void DrawOTag(u_long* p)
 	{
 		ClearVBO();
 		ResetPolyState();
+
+#if defined(UWP)
+		Emulator_SetDefaultRenderTarget();
+#endif
 	}
 
 #if defined(DEBUG_POLY_COUNT)
@@ -593,6 +597,10 @@ void DrawPrim(void* p)
 		ClearVBO();
 		ResetPolyState();
 
+#if defined(UWP)
+		Emulator_SetDefaultRenderTarget();
+#endif
+
 		if (activeDrawEnv.isbg)
 		{
 			ClearImage(&activeDrawEnv.clip, activeDrawEnv.r0, activeDrawEnv.g0, activeDrawEnv.b0);
@@ -607,6 +615,7 @@ void DrawPrim(void* p)
 #endif
 
 	AggregatePTAGsToSplits((u_long*)p, TRUE);
+
 	DrawAggregatedSplits();
 
 #if defined(PGXP)
