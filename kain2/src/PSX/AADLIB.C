@@ -636,7 +636,7 @@ int aadFreeDynamicSfx(int handle)
 	{
 		loadReq = &aadMem->loadRequestQueue[(aadMem->nextLoadReqOut - 1) & 0xF];
 		
-		aadMem->nextLoadReqOut = (aadMem->nextLoadReqOut + 1) & 0xF;
+		aadMem->nextLoadReqOut = (aadMem->nextLoadReqOut - 1) & 0xF;
 		
 		loadReq->type = 1;
 		loadReq->handle = handle;
