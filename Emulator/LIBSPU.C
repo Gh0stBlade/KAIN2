@@ -14,10 +14,19 @@ ALCcontext* alContext = NULL;
 ALuint alSources[24];
 ALuint alBuffers[24];
 ALuint alBufferSizes[24];
-ALuint alVoiceStartAddrs[24];
-ALuint alVoicePitces[24];
 
+#elif defined(XAUDIO2)
+
+#include <xaudio2.h>
+#include <assert.h>
+
+IXAudio2* pXAudio2 = NULL;
+IXAudio2MasteringVoice* pMasterVoice = NULL;
+IXAudio2SourceVoice* pSourceVoices[24];
 #endif
+
+unsigned int voicePitces[24];
+unsigned int voiceStartAddrs[24];
 
 #include <string.h>
 
@@ -660,16 +669,19 @@ void SpuSetKey(long on_off, unsigned long voice_bit)
         }
     }
 
-#if defined(OPENAL)
     for (int i = 0; i < 24; i++)
     {
         if (_spu_keystat & (1 << i))
         {
-            unsigned long vagSize = ((unsigned long*)&spuSoundBuffer[alVoiceStartAddrs[i]])[-1];
+
+#if defined(OPENAL) || defined(XAUDIO2)
+            unsigned long vagSize = ((unsigned long*)&spuSoundBuffer[voiceStartAddrs[i]])[-1];
             unsigned char* wave = new unsigned char[vagSize * 8];
-            unsigned int waveSize = vagtowav((unsigned char*)&spuSoundBuffer[alVoiceStartAddrs[i]], vagSize, alVoicePitces[i], wave);
+            unsigned int waveSize = vagtowav((unsigned char*)&spuSoundBuffer[voiceStartAddrs[i]], vagSize, voicePitces[i], wave);
+           
+#if defined(OPENAL)
             alGenBuffers(1, &alBuffers[i]);
-            alBufferData(alBuffers[i], AL_FORMAT_MONO16, wave, waveSize, alVoicePitces[i]);
+            alBufferData(alBuffers[i], AL_FORMAT_MONO16, wave, waveSize, voicePitces[i]);
             alSourcei(alSources[i], AL_BUFFER, alBuffers[i]);
             alSourcePlay(alSources[i]);
 
@@ -682,11 +694,48 @@ void SpuSetKey(long on_off, unsigned long voice_bit)
             }
 
             alDeleteBuffers(1, &alBuffers[i]);
+#elif defined(XAUDIO2)
+            WAVEFORMATEX wfex;
+            wfex.wFormatTag = WAVE_FORMAT_PCM;
+            wfex.nChannels = 1;
+            wfex.nSamplesPerSec = voicePitces[i];
+            wfex.wBitsPerSample = 16;
+            wfex.nBlockAlign = (unsigned short)((wfex.nChannels * wfex.wBitsPerSample) / 8);
+            wfex.cbSize = 0;
+            wfex.nAvgBytesPerSec = wfex.nSamplesPerSec * wfex.nBlockAlign;
+            
+            HRESULT hr = pXAudio2->CreateSourceVoice(&pSourceVoices[i], &wfex, 0, XAUDIO2_DEFAULT_FREQ_RATIO, NULL, NULL, NULL);
 
+            assert(SUCCEEDED(hr));
+
+            XAUDIO2_BUFFER buffer;
+            buffer.AudioBytes = waveSize;
+            buffer.pAudioData = (BYTE*)wave;
+            buffer.Flags = XAUDIO2_END_OF_STREAM;
+            buffer.PlayBegin = 0;
+            buffer.PlayLength = 0;
+            buffer.LoopBegin = 0;
+            buffer.LoopLength = 0;
+            buffer.LoopCount = 0;
+            buffer.pContext = NULL;
+
+            hr = pSourceVoices[i]->SubmitSourceBuffer(&buffer);
+            hr = pSourceVoices[i]->Start();
+
+            XAUDIO2_VOICE_STATE state;
+            pSourceVoices[i]->GetState(&state);
+            while (state.BuffersQueued > 0) 
+            {
+                pSourceVoices[i]->GetState(&state);
+            }
+
+            pSourceVoices[i]->DestroyVoice();
+
+#endif
             delete[] wave;
+#endif
         }
     }
-#endif
 }
 
 void SpuSetKeyOnWithAttr(SpuVoiceAttr* attr)//(F)
@@ -766,7 +815,7 @@ void _spu_t(int mode, int flag)
 
 void _spu_Fw(unsigned char* addr, unsigned long size)
 {
-#if defined(OPENAL)
+#if defined(OPENAL) || defined(XAUDIO2)
     ((unsigned long*)&spuSoundBuffer[_spu_tsa])[-1] = size;
     memcpy(&spuSoundBuffer[_spu_tsa], addr, size);
     __spu_transferCallback();
@@ -1192,7 +1241,6 @@ void SpuInit(void)//(F)
     _SpuInit(0);
 
 #if defined(OPENAL)
-
     alDevice = alcOpenDevice(NULL);
 
     if (alDevice == NULL)
@@ -1222,7 +1270,17 @@ void SpuInit(void)//(F)
         alSource3f(alSources[i], AL_VELOCITY, 0, 0, 0);
         alSourcei(alSources[i], AL_LOOPING, AL_FALSE);
     }
+    
+#elif defined(XAUDIO2)
 
+    CoInitializeEx(0, 0);
+
+    HRESULT hr = XAudio2Create(&pXAudio2, 0, XAUDIO2_DEFAULT_PROCESSOR);
+
+    assert(SUCCEEDED(hr));
+
+    hr = pXAudio2->CreateMasteringVoice(&pMasterVoice);
+    assert(SUCCEEDED(hr));
 #endif
 }
 
@@ -1320,15 +1378,15 @@ void SpuSetVoicePitch(int vNum, unsigned short pitch)
     short* p = (short*)&_spu_RXX[vNum << 2];
     p[3] = pitch;
 
-#if defined(OPENAL)
+#if defined(OPENAL) || defined(XAUDIO2)
 
     switch (pitch)
     {
     case 0x400:
-        alVoicePitces[vNum] = 11025;
+        voicePitces[vNum] = 11025;
         break;
     default:
-        alVoicePitces[vNum] = 0;
+        voicePitces[vNum] = 0;
         eprinterr("[EMU-SPU]: Unknown pitch: %d\n", pitch);
         break;
     }
@@ -1367,8 +1425,8 @@ void SpuSetVoiceStartAddr(int vNum, unsigned long startAddr)
     {
         var_4 *= 13;
     }
-#if defined(OPENAL)
-    alVoiceStartAddrs[vNum] = startAddr / 8;
+#if defined(OPENAL) || defined(XAUDIO2)
+    voiceStartAddrs[vNum] = startAddr / 8;
 #endif
 }
 
@@ -1383,5 +1441,7 @@ void SpuSetVoiceVolume(int vNum, short volL, short volR)
 
 #if defined(OPENAL)
     alSourcef(alSources[vNum], AL_GAIN, volL / 32767.0f);///@FIXME only left supported?
+#elif defined(XAUDIO2)
+   pMasterVoice->SetVolume(volL / 32767.0f, 0);
 #endif
 }

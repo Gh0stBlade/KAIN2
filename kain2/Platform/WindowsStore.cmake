@@ -1,6 +1,7 @@
 if(WINDOWS_STORE)
 
 target_link_directories(${PROJECT_NAME} PUBLIC ${ROOT_DIR}/Build_UWP/Emulator/$(Configuration))
+target_link_libraries(${PROJECT_NAME} xaudio2.lib)
 
 set(CMAKE_C_FLAGS           "${CMAKE_C_FLAGS} /ZW")
 set(CMAKE_C_FLAGS_DEBUG     "${CMAKE_C_FLAGS_DEBUG} /ZW")
