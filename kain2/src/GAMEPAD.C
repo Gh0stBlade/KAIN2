@@ -46,7 +46,7 @@ void GAMEPAD_Commands(long (*command)[5], long (*data)[5], long pad)
 	long analogY;
 	static short lastPad[2];
 
-	command[pad][2] = command[pad][0] & (data[pad][0] ^ -1);
+	command[pad][2] = command[pad][0] & ~data[pad][0];
 	
 	analogX = data[pad][3];
 	analogY = data[pad][4];
@@ -93,7 +93,7 @@ void GAMEPAD_Commands(long (*command)[5], long (*data)[5], long pad)
 		data[pad][0] |= 0x8;
 	}
 
-	data[pad][1] = (lastPad[pad] ^ -1) & data[pad][0];
+	data[pad][1] = ~lastPad[pad] & data[pad][0];
 	lastPad[pad] = data[pad][0];
 
 	command[pad][3] = analogX;
@@ -101,7 +101,7 @@ void GAMEPAD_Commands(long (*command)[5], long (*data)[5], long pad)
 
 	if ((gameTrackerX.gameFlags & 0x10))
 	{
-		command[pad][1] = (command[pad][0] ^ -1) & gameTrackerX.overrideData[pad][0];
+		command[pad][1] = ~command[pad][0] & gameTrackerX.overrideData[pad][0];
 		command[pad][0] = gameTrackerX.overrideData[pad][0];
 		
 		data[pad][3] = gameTrackerX.overrideData[pad][3];
@@ -139,7 +139,7 @@ void GAMEPAD_Commands(long (*command)[5], long (*data)[5], long pad)
 	}
 	else
 	{
-		command[pad][1] = (command[pad][0] ^ -1) & data[pad][0];
+		command[pad][1] = ~command[pad][0] & data[pad][0];
 		command[pad][0] = data[pad][0];
 
 		if (!(data[pad][0] & 0x1))
