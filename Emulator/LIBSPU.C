@@ -96,58 +96,60 @@ int* dword_E10 = &PrimaryDMAControlRegister;//Base address is 1F8010F0.
 
 char spuSoundBuffer[520191];
 
-double f[5][2] = { { 0.0, 0.0 },
-                    {   60.0 / 64.0,  0.0 },
-                    {  115.0 / 64.0, -52.0 / 64.0 },
-                    {   98.0 / 64.0, -55.0 / 64.0 },
-                    {  122.0 / 64.0, -60.0 / 64.0 } };
-
-double samples[28];
-
-unsigned int vagtowav(unsigned char* pVAG, unsigned int length, unsigned int samp_freq, unsigned char* pOut)
+unsigned int decodeVAG(unsigned char* vag, unsigned int length, unsigned char* out)
 {
-    char vag_name[17];
     int predict_nr, shift_factor, flags;
-    int i;
     int d, s;
-    double s_1 = 0.0;
-    double s_2 = 0.0;
-    int sz;
-    unsigned int data_size;
+    double s_1 = 0.0f;
+    double s_2 = 0.0f;
     unsigned int result_length = 0;
+    unsigned short* wav = (unsigned short*)out;
+    double samples[28];
 
-    data_size = length;
+    double f[5][2] = { { 0.0f, 0.0 },
+                    {   60.0f / 64.0f,  0.0f },
+                    {  115.0f / 64.0f, -52.0f / 64.0f },
+                    {   98.0f / 64.0f, -55.0f / 64.0f },
+                    {  122.0f / 64.0f, -60.0f / 64.0f } };
 
-    // Now write data...
-    unsigned char* vagStart = pVAG;
-    while (pVAG - vagStart < (data_size)) {
-        predict_nr = *pVAG++;
-        shift_factor = predict_nr & 0xf;
-        predict_nr >>= 4;
-        flags = *pVAG++;                           // flags
+
+    for(int i = 0; i < length; i++)
+    {
+        predict_nr = *vag >> 4;
+        shift_factor = *vag++ & 0xF;
+        flags = *vag++;
+
         if (flags == 7)
+        {
             break;
-        for (i = 0; i < 28; i += 2) {
-            d = *pVAG++;
-            s = (d & 0xf) << 12;
+        }
+
+        for (i = 0; i < 28; i += 2, vag++)
+        {
+            s = (*vag & 0xF) << 12;
             if (s & 0x8000)
-                s |= 0xffff0000;
+            {
+                s |= 0xFFFF0000;
+            }
+
             samples[i] = (double)(s >> shift_factor);
-            s = (d & 0xf0) << 8;
+            s = (*vag & 0xF0) << 8;
+
             if (s & 0x8000)
-                s |= 0xffff0000;
+            {
+                s |= 0xFFFF0000;
+            }
+
             samples[i + 1] = (double)(s >> shift_factor);
         }
 
-        for (i = 0; i < 28; i++) {
+        for (i = 0; i < 28; i++) 
+        {
             samples[i] = samples[i] + s_1 * f[predict_nr][0] + s_2 * f[predict_nr][1];
             s_2 = s_1;
             s_1 = samples[i];
-            d = (int)(samples[i] + 0.5);
-            *pOut++ = d & 0xff;
-            *pOut++ = d >> 8;
-
-            result_length += 2;
+            *wav++ = (int)(s_1 + 0.5f);
+            result_length += sizeof(unsigned short);
         }
     }
 
@@ -677,7 +679,7 @@ void SpuSetKey(long on_off, unsigned long voice_bit)
 #if defined(OPENAL) || defined(XAUDIO2)
             unsigned long vagSize = ((unsigned long*)&spuSoundBuffer[voiceStartAddrs[i]])[-1];
             unsigned char* wave = new unsigned char[vagSize * 8];
-            unsigned int waveSize = vagtowav((unsigned char*)&spuSoundBuffer[voiceStartAddrs[i]], vagSize, voicePitces[i], wave);
+            unsigned int waveSize = decodeVAG((unsigned char*)&spuSoundBuffer[voiceStartAddrs[i]], vagSize, wave);
            
 #if defined(OPENAL)
             alGenBuffers(1, &alBuffers[i]);
