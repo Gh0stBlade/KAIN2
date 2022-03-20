@@ -901,6 +901,23 @@ void aadProcessLoadQueue()
 
 void aadLoadDynamicSfxAbort(struct AadDynamicSfxLoadInfo *info, int error)
 { 
+	if (info->snfFile != NULL)
+	{
+		if((info->flags & 0x2))
+		{
+			if (info->snfFile->prevDynSfxFile != NULL)
+			{
+				info->snfFile->prevDynSfxFile->nextDynSfxFile = NULL;
+			}
+			else
+			{
+				aadMem->firstDynSfxFile = NULL;
+			}
+		}
+
+		aadMem->memoryFreeProc((char*)info->snfFile);
+	}
+
 	info->flags = 0;
 }
 
