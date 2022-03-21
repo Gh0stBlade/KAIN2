@@ -1,8 +1,6 @@
 #ifndef LIBSPU_H
 #define LIBSPU_H
 
-#include "EMULATOR_PLATFORM_SETUP.H"
-
 /*****************************************************************
  * -*- c -*-
  * $RCSfile: libspu.h,v $

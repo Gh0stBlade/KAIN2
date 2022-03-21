@@ -2,8 +2,6 @@
 #ifndef _LIBPRESS_H_
 #define _LIBPRESS_H_
 
-#include "EMULATOR_PLATFORM_SETUP.H"
-
 #include "TYPES.H"
 
 /*

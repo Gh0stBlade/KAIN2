@@ -214,6 +214,14 @@ struct ShaderID {
 };
 
 typedef D3D12_RENDER_TARGET_VIEW_DESC* RenderTargetID;
+#elif defined(VULKAN)
+typedef void* TextureID;
+
+struct ShaderID {
+
+};
+
+typedef void* RenderTargetID;
 #else
 #error
 #endif

@@ -1,8 +1,6 @@
 #ifndef LIBETC_H
 #define LIBETC_H
 
-#include "EMULATOR_PLATFORM_SETUP.H"
-
 #include "TYPES.H"
 
 #ifdef __cplusplus

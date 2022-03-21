@@ -49,6 +49,7 @@ using namespace Platform;
 
 CoreWindow^ g_window;
 std::thread g_uiThread;
+char* g_windowName;
 int g_windowReady = 0;
 
 ref class App sealed : public IFrameworkView
@@ -64,7 +65,7 @@ public:
 			ref new EventHandler<SuspendingEventArgs^>(this, &App::Suspending);
 		CoreApplication::Resuming +=
 			ref new EventHandler<Object^>(this, &App::Resuming);
-
+		
 		WindowClosed = false;    // initialize to false
 	}
 	virtual void SetWindow(CoreWindow^ Window)
@@ -336,6 +337,59 @@ TextureID whiteTexture;
 	ID3D12Fence* fence[RENDER_TARGET_COUNT];
 	unsigned int fenceValue[RENDER_TARGET_COUNT];
 	HANDLE fenceEvent;
+#elif defined(VULKAN)
+
+#if defined(_DEBUG)
+	std::vector<const char*> g_availableExtensions = {
+		"VK_EXT_debug_report"
+	};
+	VkInstance g_vkInstance;
+	
+	VkDebugReportCallbackEXT g_debugCallback;
+
+	VkSurfaceKHR g_surface;
+
+	VkPhysicalDevice physical_devices;
+
+	unsigned int graphics_QueueFamilyIndex;
+	unsigned int present_QueueFamilyIndex;
+
+	const std::vector<const char*> validationLayers = {
+		"VK_LAYER_LUNARG_standard_validation"
+	};
+
+	VkDevice device;
+	VkQueue graphicsQueue;
+	VkQueue presentQueue;
+
+	VkSwapchainKHR swapchain;
+
+	VkSurfaceCapabilitiesKHR surfaceCapabilities;
+	VkSurfaceFormatKHR surfaceFormat;
+	VkExtent2D swapchainSize;
+
+	std::vector<VkImage> swapchainImages;
+	uint32_t swapchainImageCount;
+	std::vector<VkImageView> swapchainImageViews;
+
+	VkRenderPass render_pass;
+	std::vector<VkFramebuffer> swapchainFramebuffers;
+
+	VkCommandPool commandPool;
+	std::vector<VkCommandBuffer> commandBuffers;
+
+	VkSemaphore imageAvailableSemaphore;
+	VkSemaphore renderingFinishedSemaphore;
+
+	std::vector<VkFence> fences;
+
+	VkFormat depthFormat;//
+	VkImage depthImage;//
+	VkDeviceMemory depthImageMemory;//
+	VkImageView depthImageView;//
+
+#endif
+
 #endif
 
 int windowWidth = 0;
@@ -1009,6 +1063,573 @@ static int Emulator_InitialiseD3D12Context(char* windowName)
 }
 #endif
 
+#if defined(VULKAN)
+
+
+#if defined(_DEBUG)
+
+static VKAPI_ATTR VkBool32 VKAPI_CALL VulkanReportFunc(VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objType, uint64_t obj, size_t location, int32_t code, const char* layerPrefix, const char* msg, void* userData)
+{
+	printf("VULKAN VALIDATION: %s\n", msg);
+	return VK_FALSE;
+}
+
+PFN_vkGetInstanceProcAddr SDL2_vkGetInstanceProcAddr = VK_NULL_HANDLE;
+PFN_vkCreateDebugReportCallbackEXT SDL2_vkCreateDebugReportCallbackEXT = VK_NULL_HANDLE;
+
+void Emulator_CreateVulkanDebugLayer()
+{
+	SDL2_vkGetInstanceProcAddr = (PFN_vkGetInstanceProcAddr)SDL_Vulkan_GetVkGetInstanceProcAddr();
+	SDL2_vkCreateDebugReportCallbackEXT = (PFN_vkCreateDebugReportCallbackEXT)vkGetInstanceProcAddr(g_vkInstance, "vkCreateDebugReportCallbackEXT");
+
+	VkDebugReportCallbackCreateInfoEXT debugCallbackCreateInfo;
+	memset(&debugCallbackCreateInfo, 0, sizeof(VkDebugReportCallbackCreateInfoEXT));
+	debugCallbackCreateInfo.sType = VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT;
+	debugCallbackCreateInfo.flags = VK_DEBUG_REPORT_ERROR_BIT_EXT | VK_DEBUG_REPORT_WARNING_BIT_EXT;
+	debugCallbackCreateInfo.pfnCallback = VulkanReportFunc;
+
+	SDL2_vkCreateDebugReportCallbackEXT(g_vkInstance, &debugCallbackCreateInfo, NULL, &g_debugCallback);
+}
+#endif
+
+int Emulator_CreateVulkanSurface()
+{
+	return SDL_Vulkan_CreateSurface(g_window, g_vkInstance, &g_surface);
+}
+
+int Emulator_CreateVulkanInstance(char* windowName)
+{
+	unsigned int numExtensions = 0;
+	SDL_Vulkan_GetInstanceExtensions(g_window, &numExtensions, NULL);
+
+	unsigned int additionalExtensionsCount = g_availableExtensions.size();
+	numExtensions += additionalExtensionsCount;
+	g_availableExtensions.resize(numExtensions);
+
+	SDL_Vulkan_GetInstanceExtensions(g_window, &numExtensions, g_availableExtensions.data() + additionalExtensionsCount);
+
+	VkApplicationInfo appInfo;
+	memset(&appInfo, 0, sizeof(VkApplicationInfo));
+
+	appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
+	appInfo.pApplicationName = windowName;
+	appInfo.apiVersion = VK_API_VERSION_1_3;
+	appInfo.applicationVersion = VK_MAKE_VERSION(0, 0, 0);
+	appInfo.pEngineName = EMULATOR_NAME;
+
+
+	VkInstanceCreateInfo createInfo;
+	memset(&createInfo, 0, sizeof(VkInstanceCreateInfo));
+
+	createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+	createInfo.pApplicationInfo = &appInfo;
+	createInfo.enabledLayerCount = 0;
+	createInfo.ppEnabledLayerNames = NULL;
+	createInfo.enabledExtensionCount = g_availableExtensions.size();
+	createInfo.ppEnabledExtensionNames = g_availableExtensions.data();
+
+	return vkCreateInstance(&createInfo, NULL, &g_vkInstance);
+}
+
+void Emulator_SelectVulkanPhysicalDevice()
+{
+	std::vector<VkPhysicalDevice> physicalDevices;
+	unsigned int physicalDeviceCount = 0;
+
+	vkEnumeratePhysicalDevices(g_vkInstance, &physicalDeviceCount, NULL);
+	physicalDevices.resize(physicalDeviceCount);
+	vkEnumeratePhysicalDevices(g_vkInstance, &physicalDeviceCount, physicalDevices.data());
+
+	physical_devices = physicalDevices[0];
+}
+
+void Emulator_SelectVulkanQueueFamily()
+{
+	std::vector<VkQueueFamilyProperties> queueFamilyProperties;
+	unsigned int queueFamilyCount;
+
+	vkGetPhysicalDeviceQueueFamilyProperties(physical_devices, &queueFamilyCount, NULL);
+	queueFamilyProperties.resize(queueFamilyCount);
+	vkGetPhysicalDeviceQueueFamilyProperties(physical_devices, &queueFamilyCount, queueFamilyProperties.data());
+
+	int graphicIndex = -1;
+	int presentIndex = -1;
+
+	int i = 0;
+	for (const auto& queueFamily : queueFamilyProperties)
+	{
+		if (queueFamily.queueCount > 0 && queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT)
+		{
+			graphicIndex = i;
+		}
+
+		VkBool32 presentSupport = false;
+		vkGetPhysicalDeviceSurfaceSupportKHR(physical_devices, i, g_surface, &presentSupport);
+		
+		if (queueFamily.queueCount > 0 && presentSupport)
+		{
+			presentIndex = i;
+		}
+
+		if (graphicIndex != -1 && presentIndex != -1)
+		{
+			break;
+		}
+
+		i++;
+	}
+
+	graphics_QueueFamilyIndex = graphicIndex;
+	present_QueueFamilyIndex = presentIndex;
+}
+
+int Emulator_CreateVulkanDevice()
+{
+	const std::vector<const char*> deviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+	const float queue_priority[] = { 1.0f };
+
+	std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
+	std::set<uint32_t> uniqueQueueFamilies = { graphics_QueueFamilyIndex, present_QueueFamilyIndex };
+
+	float queuePriority = queue_priority[0];
+	for (int queueFamily : uniqueQueueFamilies)
+	{
+		VkDeviceQueueCreateInfo queueCreateInfo = {};
+		queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+		queueCreateInfo.queueFamilyIndex = queueFamily;
+		queueCreateInfo.queueCount = 1;
+		queueCreateInfo.pQueuePriorities = &queuePriority;
+		queueCreateInfos.push_back(queueCreateInfo);
+	}
+
+	VkDeviceQueueCreateInfo queueCreateInfo = {};
+	queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+	queueCreateInfo.queueFamilyIndex = graphics_QueueFamilyIndex;
+	queueCreateInfo.queueCount = 1;
+	queueCreateInfo.pQueuePriorities = &queuePriority;
+
+	VkPhysicalDeviceFeatures deviceFeatures = {};
+	deviceFeatures.samplerAnisotropy = VK_TRUE;
+
+	VkDeviceCreateInfo createInfo = {};
+	createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+	createInfo.pQueueCreateInfos = &queueCreateInfo;
+	createInfo.queueCreateInfoCount = queueCreateInfos.size();
+	createInfo.pQueueCreateInfos = queueCreateInfos.data();
+	createInfo.pEnabledFeatures = &deviceFeatures;
+	createInfo.enabledExtensionCount = deviceExtensions.size();
+	createInfo.ppEnabledExtensionNames = deviceExtensions.data();
+
+	createInfo.enabledLayerCount = validationLayers.size();
+	createInfo.ppEnabledLayerNames = validationLayers.data();
+
+	VkResult result = vkCreateDevice(physical_devices, &createInfo, NULL, &device);
+
+	vkGetDeviceQueue(device, graphics_QueueFamilyIndex, 0, &graphicsQueue);
+	vkGetDeviceQueue(device, present_QueueFamilyIndex, 0, &presentQueue);
+
+	return result;
+}
+
+int Emulator_CreateVulkanSwapChain()
+{
+#define CLAMP(x, lo, hi)    ((x) < (lo) ? (lo) : (x) > (hi) ? (hi) : (x))
+
+	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physical_devices, g_surface, &surfaceCapabilities);
+
+	std::vector<VkSurfaceFormatKHR> surfaceFormats;
+	uint32_t surfaceFormatsCount;
+	vkGetPhysicalDeviceSurfaceFormatsKHR(physical_devices, g_surface,	&surfaceFormatsCount, NULL);
+	surfaceFormats.resize(surfaceFormatsCount);
+	vkGetPhysicalDeviceSurfaceFormatsKHR(physical_devices, g_surface, &surfaceFormatsCount, surfaceFormats.data());
+
+	if (surfaceFormats[0].format != VK_FORMAT_B8G8R8A8_UNORM)
+	{
+		return FALSE;
+	}
+
+	surfaceFormat = surfaceFormats[0];
+	int width, height = 0;
+	SDL_Vulkan_GetDrawableSize(g_window, &width, &height);
+	width = CLAMP(width, surfaceCapabilities.minImageExtent.width, surfaceCapabilities.maxImageExtent.width);
+	height = CLAMP(height, surfaceCapabilities.minImageExtent.height, surfaceCapabilities.maxImageExtent.height);
+	swapchainSize.width = width;
+	swapchainSize.height = height;
+
+	unsigned int imageCount = surfaceCapabilities.minImageCount + 1;
+	if (surfaceCapabilities.maxImageCount > 0 && imageCount > surfaceCapabilities.maxImageCount)
+	{
+		imageCount = surfaceCapabilities.maxImageCount;
+	}
+
+	VkSwapchainCreateInfoKHR createInfo = {};
+	createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+	createInfo.surface = g_surface;
+	createInfo.minImageCount = surfaceCapabilities.minImageCount;
+	createInfo.imageFormat = surfaceFormat.format;
+	createInfo.imageColorSpace = surfaceFormat.colorSpace;
+	createInfo.imageExtent = swapchainSize;
+	createInfo.imageArrayLayers = 1;
+	createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+
+	unsigned int queueFamilyIndices[] = { graphics_QueueFamilyIndex, present_QueueFamilyIndex };
+	if (graphics_QueueFamilyIndex != present_QueueFamilyIndex)
+	{
+		createInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
+		createInfo.queueFamilyIndexCount = 2;
+		createInfo.pQueueFamilyIndices = queueFamilyIndices;
+	}
+	else
+	{
+		createInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
+	}
+
+	createInfo.preTransform = surfaceCapabilities.currentTransform;
+	createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+	createInfo.presentMode = VK_PRESENT_MODE_FIFO_KHR;
+	createInfo.clipped = VK_TRUE;
+
+	vkCreateSwapchainKHR(device, &createInfo, NULL, &swapchain);
+
+	vkGetSwapchainImagesKHR(device, swapchain, &swapchainImageCount, NULL);
+	swapchainImages.resize(swapchainImageCount);
+	vkGetSwapchainImagesKHR(device, swapchain, &swapchainImageCount, swapchainImages.data());
+
+	return TRUE;
+}
+
+VkImageView Emulator_CreateVulkanImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags)
+{
+	VkImageViewCreateInfo viewInfo = {};
+	viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+	viewInfo.image = image;
+	viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+	viewInfo.format = format;
+	viewInfo.subresourceRange.aspectMask = aspectFlags;
+	viewInfo.subresourceRange.baseMipLevel = 0;
+	viewInfo.subresourceRange.levelCount = 1;
+	viewInfo.subresourceRange.baseArrayLayer = 0;
+	viewInfo.subresourceRange.layerCount = 1;
+
+	VkImageView imageView;
+	if (vkCreateImageView(device, &viewInfo, nullptr, &imageView) != VK_SUCCESS)
+	{
+		eprinterr("Failed to create image view!\n");
+	}
+
+	return imageView;
+}
+
+
+void Emulator_CreateVulkanImageViews()
+{
+	swapchainImageViews.resize(swapchainImages.size());
+
+	for (unsigned int i = 0; i < swapchainImages.size(); i++)
+	{
+		swapchainImageViews[i] = Emulator_CreateVulkanImageView(swapchainImages[i], surfaceFormat.format, VK_IMAGE_ASPECT_COLOR_BIT);
+	}
+}
+
+unsigned int Emulator_FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties)
+{
+	VkPhysicalDeviceMemoryProperties memProperties;
+	vkGetPhysicalDeviceMemoryProperties(physical_devices, &memProperties);
+
+	for (unsigned int i = 0; i < memProperties.memoryTypeCount; i++)
+	{
+		if ((typeFilter & (1 << i)) && (memProperties.memoryTypes[i].propertyFlags & properties) == properties)
+		{
+			return i;
+		}
+	}
+
+	eprinterr("Failed to find memory type!\n");
+}
+
+VkBool32 Emulator_GetSupportedDepthFormat(VkPhysicalDevice physicalDevice, VkFormat* depthFormat)
+{
+	std::vector<VkFormat> depthFormats = {
+		VK_FORMAT_D32_SFLOAT_S8_UINT,
+		VK_FORMAT_D32_SFLOAT,
+		VK_FORMAT_D24_UNORM_S8_UINT,
+		VK_FORMAT_D16_UNORM_S8_UINT,
+		VK_FORMAT_D16_UNORM
+	};
+
+	for (auto& format : depthFormats)
+	{
+		VkFormatProperties formatProps;
+		vkGetPhysicalDeviceFormatProperties(physicalDevice, format, &formatProps);
+		if (formatProps.optimalTilingFeatures & VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT)
+		{
+			*depthFormat = format;
+			return true;
+		}
+	}
+
+	return false;
+}
+
+
+void Emulator_CreateImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory)
+{
+	VkImageCreateInfo imageInfo = {};
+	imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+	imageInfo.imageType = VK_IMAGE_TYPE_2D;
+	imageInfo.extent.width = width;
+	imageInfo.extent.height = height;
+	imageInfo.extent.depth = 1;
+	imageInfo.mipLevels = 1;
+	imageInfo.arrayLayers = 1;
+	imageInfo.format = format;
+	imageInfo.tiling = tiling;
+	imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+	imageInfo.usage = usage;
+	imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
+	imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+	if (vkCreateImage(device, &imageInfo, nullptr, &image) != VK_SUCCESS)
+	{
+		eprinterr("Failed to create image!\n");
+	}
+
+	VkMemoryRequirements memRequirements;
+	vkGetImageMemoryRequirements(device, image, &memRequirements);
+
+	VkMemoryAllocateInfo allocInfo = {};
+	allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+	allocInfo.allocationSize = memRequirements.size;
+	allocInfo.memoryTypeIndex = Emulator_FindMemoryType(memRequirements.memoryTypeBits, properties);
+
+	if (vkAllocateMemory(device, &allocInfo, nullptr, &imageMemory) != VK_SUCCESS) 
+	{
+		eprinterr("Failed to allocate memory!\n");
+	}
+
+	vkBindImageMemory(device, image, imageMemory, 0);
+}
+
+
+void Emulator_CreateVulkanDepthStencil()
+{
+	VkBool32 validDepthFormat = Emulator_GetSupportedDepthFormat(physical_devices, &depthFormat);
+	Emulator_CreateImage(swapchainSize.width, swapchainSize.height, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, depthImage, depthImageMemory);
+	depthImageView = Emulator_CreateVulkanImageView(depthImage, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_IMAGE_ASPECT_DEPTH_BIT);
+}
+
+void Emulator_CreateVulkanRenderPass()
+{
+	std::vector<VkAttachmentDescription> attachments(2);
+
+	attachments[0].format = surfaceFormat.format;
+	attachments[0].samples = VK_SAMPLE_COUNT_1_BIT;
+	attachments[0].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+	attachments[0].storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+	attachments[0].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+	attachments[0].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+	attachments[0].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+	attachments[0].finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+
+	attachments[1].format = depthFormat;
+	attachments[1].samples = VK_SAMPLE_COUNT_1_BIT;
+	attachments[1].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+	attachments[1].storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+	attachments[1].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+	attachments[1].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+	attachments[1].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+	attachments[1].finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+
+	VkAttachmentReference colorReference = {};
+	colorReference.attachment = 0;
+	colorReference.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+	VkAttachmentReference depthReference = {};
+	depthReference.attachment = 1;
+	depthReference.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+
+	VkSubpassDescription subpassDescription = {};
+	subpassDescription.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
+	subpassDescription.colorAttachmentCount = 1;
+	subpassDescription.pColorAttachments = &colorReference;
+	subpassDescription.pDepthStencilAttachment = &depthReference;
+	subpassDescription.inputAttachmentCount = 0;
+	subpassDescription.pInputAttachments = nullptr;
+	subpassDescription.preserveAttachmentCount = 0;
+	subpassDescription.pPreserveAttachments = nullptr;
+	subpassDescription.pResolveAttachments = nullptr;
+
+	std::vector<VkSubpassDependency> dependencies(1);
+
+	dependencies[0].srcSubpass = VK_SUBPASS_EXTERNAL;
+	dependencies[0].dstSubpass = 0;
+	dependencies[0].srcStageMask = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+	dependencies[0].dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+	dependencies[0].srcAccessMask = VK_ACCESS_MEMORY_READ_BIT;
+	dependencies[0].dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+	dependencies[0].dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
+
+	VkRenderPassCreateInfo renderPassInfo = {};
+	renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
+	renderPassInfo.attachmentCount = static_cast<unsigned int>(attachments.size());
+	renderPassInfo.pAttachments = attachments.data();
+	renderPassInfo.subpassCount = 1;
+	renderPassInfo.pSubpasses = &subpassDescription;
+	renderPassInfo.dependencyCount = static_cast<unsigned int>(dependencies.size());
+	renderPassInfo.pDependencies = dependencies.data();
+
+	vkCreateRenderPass(device, &renderPassInfo, nullptr, &render_pass);
+}
+
+void Emulator_CreateVulkanFrameBuffers()
+{
+	swapchainFramebuffers.resize(swapchainImageViews.size());
+
+	for (unsigned int i = 0; i < swapchainImageViews.size(); i++)
+	{
+		std::vector<VkImageView> attachments(2);
+		attachments[0] = swapchainImageViews[i];
+		attachments[1] = depthImageView;
+
+		VkFramebufferCreateInfo framebufferInfo = {};
+		framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+		framebufferInfo.renderPass = render_pass;
+		framebufferInfo.attachmentCount = static_cast<unsigned int>(attachments.size());
+		framebufferInfo.pAttachments = attachments.data();
+		framebufferInfo.width = swapchainSize.width;
+		framebufferInfo.height = swapchainSize.height;
+		framebufferInfo.layers = 1;
+
+		if (vkCreateFramebuffer(device, &framebufferInfo, NULL, &swapchainFramebuffers[i]) != VK_SUCCESS)
+		{
+			eprinterr("Failed to create vulkan frame buffer!\n");
+		}
+	}
+}
+
+void Emulator_CreateVulkanCommandPool()
+{
+	VkResult result;
+
+	VkCommandPoolCreateInfo createInfo = {};
+	createInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+	createInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT | VK_COMMAND_POOL_CREATE_TRANSIENT_BIT;
+	createInfo.queueFamilyIndex = graphics_QueueFamilyIndex;
+	vkCreateCommandPool(device, &createInfo, nullptr, &commandPool);
+}
+
+void Emulator_CreateVulkanCommandBuffers()
+{
+	VkResult result;
+
+	VkCommandBufferAllocateInfo allocateInfo = {};
+	allocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+	allocateInfo.commandPool = commandPool;
+	allocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+	allocateInfo.commandBufferCount = swapchainImageCount;
+
+	commandBuffers.resize(swapchainImageCount);
+	vkAllocateCommandBuffers(device, &allocateInfo, commandBuffers.data());
+}
+
+void Emulator_CreateSemaphore(VkSemaphore* semaphore)
+{
+	VkResult result;
+
+	VkSemaphoreCreateInfo createInfo = {};
+	createInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+	vkCreateSemaphore(device, &createInfo, nullptr, semaphore);
+}
+
+void Emulator_CreateVulkanSemaphores()
+{
+	Emulator_CreateSemaphore(&imageAvailableSemaphore);
+	Emulator_CreateSemaphore(&renderingFinishedSemaphore);
+}
+
+void Emulator_CreateVulkanFences()
+{
+	unsigned int i;
+	fences.resize(swapchainImageCount);
+	for (i = 0; i < swapchainImageCount; i++)
+	{
+		VkResult result;
+
+		VkFenceCreateInfo createInfo = {};
+		createInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+		createInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
+		vkCreateFence(device, &createInfo, NULL, &fences[i]);
+	}
+}
+
+void Emulator_CreateDepthStencilViews()
+{
+	VkBool32 validDepthFormat = Emulator_GetSupportedDepthFormat(physical_devices, &depthFormat);
+	Emulator_CreateImage(swapchainSize.width, swapchainSize.height, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, depthImage, depthImageMemory);
+	depthImageView = Emulator_CreateVulkanImageView(depthImage, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_IMAGE_ASPECT_DEPTH_BIT);
+}
+
+static int Emulator_InitialiseVulkanContext(char* windowName)
+{
+#if defined(SDL2)
+	if (SDL_Vulkan_LoadLibrary(NULL) < 0)
+	{
+		eprinterr("Failed to load libvulkan-1.dll!\n");
+		return FALSE;
+	}
+
+	g_window = SDL_CreateWindow(windowName, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, windowWidth, windowHeight, SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE);
+	if (g_window == NULL)
+	{
+		eprinterr("Failed to initialise SDL window!\n");
+		return FALSE;
+	}
+#endif
+
+	if (Emulator_CreateVulkanInstance(windowName))
+	{
+		eprinterr("Failed to create instance (vkCreateInstance)!\n");
+		return FALSE;
+	}
+
+#if defined(_DEBUG)
+	Emulator_CreateVulkanDebugLayer();
+#endif
+
+	if (Emulator_CreateVulkanSurface() == SDL_FALSE)
+	{
+		eprinterr("Failed to create vulkan surface!\n");
+		return FALSE;
+	}
+
+	Emulator_SelectVulkanPhysicalDevice();
+	Emulator_SelectVulkanQueueFamily();
+
+	if (Emulator_CreateVulkanDevice() != VK_SUCCESS)
+	{
+		eprinterr("Failed to create device (vkCreateDevice)!\n");
+		return FALSE;
+	}
+
+	if (Emulator_CreateVulkanSwapChain() != TRUE)
+	{
+		eprinterr("Failed to create vulkan swap chain!\n");
+		return FALSE;
+	}
+
+	Emulator_CreateVulkanImageViews();
+	Emulator_CreateDepthStencilViews();
+	Emulator_CreateVulkanRenderPass();
+	Emulator_CreateVulkanFrameBuffers();
+	Emulator_CreateVulkanCommandPool();
+	Emulator_CreateVulkanCommandBuffers();
+	Emulator_CreateVulkanSemaphores();
+	Emulator_CreateVulkanFences();
+
+	return TRUE;
+}
+#endif
+
 static int Emulator_InitialiseGLContext(char* windowName)
 {
 #if defined(SDL2)
@@ -1196,6 +1817,12 @@ static int Emulator_InitialiseSDL(char* windowName, int width, int height)
 		eprinterr("Failed to Initialise D3D12 Context!\n");
 		return FALSE;
 	}
+#elif defined(VULKAN)
+	if (Emulator_InitialiseVulkanContext(windowName) == FALSE)
+	{
+		eprinterr("Failed to Initialise Vulkan Context!\n");
+		return FALSE;
+	}
 #endif
 
 	return TRUE;
@@ -1228,6 +1855,8 @@ void Emulator_Initialise(char* windowName, int width, int height)
 	eprintf("Compile Date: %s Time: %s\n", EMULATOR_COMPILE_DATE, EMULATOR_COMPILE_TIME);
 	
 #if defined(UWP)
+	g_windowName = windowName;
+	//Thread required because UI will block game execution
 	g_uiThread = std::thread(CreateUWPApplication);
 
 	while (!g_windowReady)
@@ -2547,6 +3176,8 @@ ShaderID Shader_Compile_Internal(const DWORD* vs_data, const DWORD* ps_data, con
 
 	return shader;
 }
+#elif defined(VULKAN)
+
 #else
     #error
 #endif
@@ -2557,10 +3188,12 @@ void Emulator_CreateGlobalShaders()
 	Emulator_CreateRasterState(FALSE);
 #endif
 
+#if !defined(VULKAN)
 	g_gte_shader_4  = Shader_Compile(gte_shader_4);
 	g_gte_shader_8  = Shader_Compile(gte_shader_8);
 	g_gte_shader_16 = Shader_Compile(gte_shader_16);
 	g_blit_shader   = Shader_Compile(blit_shader);
+#endif
 
 #if defined(OGL) || defined(OGLES)
 	u_Projection = glGetUniformLocation(g_gte_shader_4, "Projection");
@@ -2638,6 +3271,7 @@ void Emulator_GenerateCommonTextures()
 	t->Release();
 #elif defined(D3D12)
 	UNIMPLEMENTED();
+#elif defined(VULKAN)
 #else
 	#error
 #endif
@@ -2747,6 +3381,7 @@ int Emulator_Initialise()
 	}
 #elif defined(D3D12)
 	UNIMPLEMENTED();
+#elif defined(VULKAN)
 #else
 	#error
 #endif
@@ -2767,7 +3402,7 @@ void Emulator_Ortho2D(float left, float right, float bottom, float top, float zn
 
 #if defined(OGL) || defined(OGLES) // -1..1
 	float z = (znear + zfar) / (znear - zfar);
-#elif defined(D3D9) || defined (XED3D) || defined(D3D11) || defined(D3D12)// 0..1
+#elif defined(D3D9) || defined (XED3D) || defined(D3D11) || defined(D3D12) || defined(VULKAN)// 0..1
 	float z = znear / (znear - zfar);
 #endif
 
@@ -2788,6 +3423,8 @@ void Emulator_Ortho2D(float left, float right, float bottom, float top, float zn
 #elif defined(D3D12)
 	///@D3D12
 	UNIMPLEMENTED();
+#elif defined(VULKAN)
+	UNIMPLEMENTED();
 #else
 	#error
 #endif
@@ -2806,6 +3443,8 @@ void Emulator_SetShader(const ShaderID &shader)
 	d3dcontext->IASetInputLayout(shader.IL);
 #elif defined(D3D12)
 	///@D3D12
+	UNIMPLEMENTED();
+#elif defined(VULKAN)
 	UNIMPLEMENTED();
 #else
 	#error
@@ -2847,6 +3486,8 @@ void Emulator_SetTexture(TextureID texture, TexFormat texFormat)
 #elif defined(D3D12)
 	///@D3D12
 	UNIMPLEMENTED();
+#elif defined(VULKAN)
+	UNIMPLEMENTED();
 #else
 	#error
 #endif
@@ -2862,6 +3503,8 @@ void Emulator_DestroyTexture(TextureID texture)
     texture->Release();
 #elif defined(D3D12)
 	///@TODO D3D12
+	UNIMPLEMENTED();
+#elif defined(VULKAN)
 	UNIMPLEMENTED();
 #else
     #error
@@ -2884,6 +3527,8 @@ extern void Emulator_Clear(int x, int y, int w, int h, unsigned char r, unsigned
 	FLOAT clearColor[4]{ r / 255.0f, g / 255.0f, b / 255.0f, 1.0f };
 	D3D12_CPU_DESCRIPTOR_HANDLE renderTargetHandle(renderTargetDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
 	commandList->ClearRenderTargetView(renderTargetHandle, clearColor, 0, NULL);
+#elif defined(VULKAN)
+
 #else
 	#error
 #endif
@@ -3009,7 +3654,7 @@ void Emulator_StoreFrameBuffer(int x, int y, int w, int h)
 	int* data = (int*)resource.pData;
 
 #define FLIP_Y (fy)
-#elif defined(D3D12)
+#elif defined(D3D12) || defined(VULKAN)
 #define FLIP_Y (fy)
 	int* data = NULL;
 	return;
@@ -3263,7 +3908,9 @@ int Emulator_BeginScene()
 	UINT offset = 0;
 	d3dcontext->IASetVertexBuffers(0, 1, &dynamic_vertex_buffer, &stride, &offset);
 #elif defined(D3D12)
-	
+
+#elif defined(VULKAN)
+
 #else
 	#error
 #endif
@@ -3482,6 +4129,8 @@ void Emulator_SwapWindow()
 	}
 
 	Emulator_SaveVRAM("VRAM.TGA", 0, 0, VRAM_WIDTH, VRAM_HEIGHT, TRUE);
+#elif defined(VULKAN)
+
 #else
 	#error
 #endif
@@ -3783,6 +4432,7 @@ void Emulator_SetBlendMode(BlendMode blendMode)
 #elif defined(D3D12)
 	///@D3D12
 	UNIMPLEMENTED();
+#elif defined(VULKAN)
 #else
 	#error
 #endif
@@ -3838,6 +4488,7 @@ void Emulator_SetViewPort(int x, int y, int width, int height)
 	rect.top = 0;
 	rect.bottom = height;
 	commandList->RSSetScissorRects(1, &rect);
+#elif defined(VULKAN)
 #else
 	#error
 #endif
@@ -3855,6 +4506,7 @@ void Emulator_SetRenderTarget(const RenderTargetID &frameBufferObject)
 	///@TODO
 	UNIMPLEMENTED();
 	assert(false);
+#elif defined(VULKAN)
 #else
     #error
 #endif
@@ -3910,6 +4562,7 @@ void Emulator_UpdateVertexBuffer(const Vertex *vertices, int num_vertices)
 	dynamic_vertex_buffer_view.BufferLocation = dynamic_vertex_buffer->GetGPUVirtualAddress();
 	dynamic_vertex_buffer_view.StrideInBytes = sizeof(Vertex);
 	dynamic_vertex_buffer_view.SizeInBytes = num_vertices * sizeof(Vertex);
+#elif defined(VULKAN)
 #else
 	#error
 #endif
@@ -3928,6 +4581,7 @@ void Emulator_DrawTriangles(int start_vertex, int triangles)
 #elif defined(D3D12)
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	commandList->DrawInstanced(triangles, 1, start_vertex, 0);
+#elif defined(VULKAN)
 #else
 	#error
 #endif

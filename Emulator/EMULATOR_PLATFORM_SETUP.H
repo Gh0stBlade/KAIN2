@@ -24,7 +24,10 @@
 //#define OGLES_VERSION 3
 
 //Open Graphics Library
-#define OGL
+//#define OGL
+
+//Vulkan
+#define VULKAN
 
 //Direct3D9
 //#define D3D9
@@ -35,7 +38,7 @@
 //Direct3D12
 //#define D3D12
 
-#if defined(OGL) || defined(D3D9) || defined(D3D11)
+#if defined(OGL) || defined(D3D9) || defined(D3D11) || defined(VULKAN)
 #define SDL2
 #define OPENAL
 #endif
@@ -92,6 +95,12 @@
 #include <SDL2/SDL.h>
 #elif (defined(_WINDOWS) || defined(__MINGW32__) || defined(__linux__)) && !defined(__ANDROID__) && !defined(UWP)
 #include <SDL.h>
+#if defined(VULKAN)
+#include <SDL_vulkan.h>
+#include <vulkan/vulkan.h>
+#include <vector>
+#include <set>
+#endif
 #elif defined (__ANDROID__)
 #include <SDL.h>
 #if (OGLES_VERSION == 3)
