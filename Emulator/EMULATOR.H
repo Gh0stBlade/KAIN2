@@ -217,8 +217,10 @@ typedef D3D12_RENDER_TARGET_VIEW_DESC* RenderTargetID;
 #elif defined(VULKAN)
 typedef void* TextureID;
 
-struct ShaderID {
-
+struct ShaderID 
+{
+	VkShaderModule VS;
+	VkShaderModule PS;
 };
 
 typedef void* RenderTargetID;

@@ -98,6 +98,7 @@ static void infiniteFunctionCall(long(*func)())
 	}
 }
 
+#undef OpenEvent
 long OpenEvent(unsigned long event, long unk01, long unk02, long(*func)())
 {
 	int spec = event &= 0xFFFF;

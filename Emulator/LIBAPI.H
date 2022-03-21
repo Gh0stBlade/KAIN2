@@ -13,6 +13,7 @@ extern long ResetRCnt(long spec);
 extern long StartRCnt(long spec);
 extern long StopRCnt(long spec);
 
+#undef OpenEvent
 extern long OpenEvent(unsigned long unk00,long,long,long (*func)());
 extern long CloseEvent(long unk00);
 extern long WaitEvent(long unk00);

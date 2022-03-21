@@ -27,15 +27,16 @@ struct VS_OUTPUT {
 		return Out;
 	}
 #else
-	sampler2D s_texture : register(s0);
+	SamplerState samplerState : register(s0);
+	Texture2D tex;
 
 	float4 main(VS_OUTPUT In, float4 coord : SV_Position) : SV_TARGET {
 		float2 uv = (In.v_texcoord.xy * float2(0.5, 1.0) + In.v_page_clut.xy) * float2(1.0 / 1024.0, 1.0 / 512.0);
-		float2 comp = tex2D(s_texture, uv).rg;
+		float2 comp = tex.Sample(samplerState, uv).rg;
 
 		float2 clut_pos = In.v_page_clut.zw;
 		clut_pos.x += comp[int(fmod(In.v_texcoord.x, 2.0))] * 255.0 / 1024.0;
-		float2 clut_color = tex2D(s_texture, clut_pos).rg * 255.0;
+		float2 clut_color = tex.Sample(samplerState, clut_pos).rg * 255.0;
 
 		float color_16 = clut_color.y * 256.0 + clut_color.x;
 		clip(color_16 - 0.001);

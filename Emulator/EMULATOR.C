@@ -340,6 +340,11 @@ TextureID whiteTexture;
 #elif defined(VULKAN)
 
 #if defined(_DEBUG)
+
+	std::vector<const char*> g_validationLayers = {
+		"VK_LAYER_KHRONOS_validation"
+	};
+
 	std::vector<const char*> g_availableExtensions = {
 		"VK_EXT_debug_report"
 	};
@@ -1121,10 +1126,15 @@ int Emulator_CreateVulkanInstance(char* windowName)
 	VkInstanceCreateInfo createInfo;
 	memset(&createInfo, 0, sizeof(VkInstanceCreateInfo));
 
+	//unsigned int layerCount;
+	//vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
+	//g_validationLayers.resize(layerCount);
+	//vkEnumerateInstanceLayerProperties(&layerCount, g_validationLayers.data());
+
 	createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
 	createInfo.pApplicationInfo = &appInfo;
-	createInfo.enabledLayerCount = 0;
-	createInfo.ppEnabledLayerNames = NULL;
+	createInfo.enabledLayerCount = g_validationLayers.size();
+	createInfo.ppEnabledLayerNames = g_validationLayers.data();
 	createInfo.enabledExtensionCount = g_availableExtensions.size();
 	createInfo.ppEnabledExtensionNames = g_availableExtensions.data();
 
@@ -1572,12 +1582,6 @@ void Emulator_CreateDepthStencilViews()
 static int Emulator_InitialiseVulkanContext(char* windowName)
 {
 #if defined(SDL2)
-	if (SDL_Vulkan_LoadLibrary(NULL) < 0)
-	{
-		eprinterr("Failed to load libvulkan-1.dll!\n");
-		return FALSE;
-	}
-
 	g_window = SDL_CreateWindow(windowName, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, windowWidth, windowHeight, SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE);
 	if (g_window == NULL)
 	{
@@ -3178,6 +3182,49 @@ ShaderID Shader_Compile_Internal(const DWORD* vs_data, const DWORD* ps_data, con
 }
 #elif defined(VULKAN)
 
+
+#include "shaders/Vulkan/gte_shader_4_vs.h"
+#include "shaders/Vulkan/gte_shader_4_ps.h"
+#include "shaders/Vulkan/gte_shader_8_vs.h"
+#include "shaders/Vulkan/gte_shader_8_ps.h"
+#include "shaders/Vulkan/gte_shader_16_vs.h"
+#include "shaders/Vulkan/gte_shader_16_ps.h"
+#include "shaders/Vulkan/blit_shader_vs.h"
+#include "shaders/Vulkan/blit_shader_ps.h"
+
+
+#define Shader_Compile(name) Shader_Compile_Internal((DWORD*)name##_vs, (DWORD*)name##_ps, sizeof(name##_vs), sizeof(name##_ps))
+
+ShaderID Shader_Compile_Internal(const DWORD* vs_data, const DWORD* ps_data, const unsigned int vs_size, const unsigned int ps_size)
+{
+	ShaderID shader;
+	HRESULT hr;
+
+	VkShaderModuleCreateInfo createInfo;
+	memset(&createInfo, 0, sizeof(VkShaderModuleCreateInfo));
+
+	createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+	createInfo.codeSize = vs_size;
+	createInfo.pCode = (const uint32_t*)vs_data;
+	
+	if (vkCreateShaderModule(device, &createInfo, NULL, &shader.VS) != VK_SUCCESS)
+	{
+		assert(FALSE);
+	}
+
+	memset(&createInfo, 0, sizeof(VkShaderModuleCreateInfo));
+	createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+	createInfo.codeSize = ps_size;
+	createInfo.pCode = (const uint32_t*)ps_data;
+
+	if (vkCreateShaderModule(device, &createInfo, NULL, &shader.PS) != VK_SUCCESS)
+	{
+		assert(FALSE);
+	}
+
+	return shader;
+}
+
 #else
     #error
 #endif
@@ -3188,12 +3235,10 @@ void Emulator_CreateGlobalShaders()
 	Emulator_CreateRasterState(FALSE);
 #endif
 
-#if !defined(VULKAN)
 	g_gte_shader_4  = Shader_Compile(gte_shader_4);
 	g_gte_shader_8  = Shader_Compile(gte_shader_8);
 	g_gte_shader_16 = Shader_Compile(gte_shader_16);
 	g_blit_shader   = Shader_Compile(blit_shader);
-#endif
 
 #if defined(OGL) || defined(OGLES)
 	u_Projection = glGetUniformLocation(g_gte_shader_4, "Projection");

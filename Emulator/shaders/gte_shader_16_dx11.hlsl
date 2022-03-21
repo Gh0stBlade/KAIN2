@@ -27,10 +27,11 @@ struct VS_OUTPUT {
 		return Out;
 	}
 #else
-	sampler2D s_texture : register(s0);
+	SamplerState samplerState : register(s0);
+	Texture2D tex;
 
 	float4 main(VS_OUTPUT In, float4 coord : SV_Position) : SV_TARGET {
-		float2 color_rg = tex2D(s_texture, In.v_texcoord.xy).rg * 255.0;
+		float2 color_rg = tex.Sample(samplerState, In.v_texcoord.xy).rg * 255.0;
 		float color_16 = color_rg.y * 256.0 + color_rg.x;
 		clip(color_16 - 0.001);
 
