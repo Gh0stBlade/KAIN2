@@ -388,10 +388,9 @@ TextureID whiteTexture;
 	VkCommandPool commandPool;
 	std::vector<VkCommandBuffer> commandBuffers;
 
-	VkSemaphore imageAvailableSemaphore;
-	VkSemaphore renderingFinishedSemaphore;
-
-	std::vector<VkFence> fences;
+	std::vector<VkSemaphore> imageAvailableSemaphores;
+	std::vector<VkSemaphore> renderFinishedSemaphores;
+	std::vector<VkFence> inFlightFences;
 
 	VkFormat depthFormat;//
 	VkImage depthImage;//
@@ -402,12 +401,17 @@ TextureID whiteTexture;
 #define FRAGMENT_BIT (1)
 	VkPipelineShaderStageCreateInfo g_shaderStages[2];
 	std::array<VkVertexInputAttributeDescription, 3> g_attributeDescriptions;
+	std::array<VkVertexInputAttributeDescription, 3> g_attributeDescriptionsBlit;
 	VkVertexInputBindingDescription g_bindingDescription;
+	VkVertexInputBindingDescription g_bindingDescriptionBlit;
 
 	VkViewport g_viewport;
 	VkPipelineRasterizationStateCreateInfo g_rasterizer;
 	VkPipelineLayout g_pipelineLayout;
 	VkPipeline g_graphicsPipeline;
+	unsigned int frameIndex;
+	unsigned int currentFrame = 0;
+	const int MAX_FRAMES_IN_FLIGHT = 2;
 #endif
 #endif
 
@@ -1487,24 +1491,21 @@ void Emulator_CreateVulkanRenderPass()
 	attachments[1].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 	attachments[1].finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
-	VkAttachmentReference colorReference = {};
+	VkAttachmentReference colorReference;
+	memset(&colorReference, 0, sizeof(VkAttachmentReference));
 	colorReference.attachment = 0;
 	colorReference.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
-	VkAttachmentReference depthReference = {};
+	VkAttachmentReference depthReference;
+	memset(&depthReference, 0, sizeof(VkAttachmentReference));
 	depthReference.attachment = 1;
 	depthReference.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
-	VkSubpassDescription subpassDescription = {};
+	VkSubpassDescription subpassDescription;
+	memset(&subpassDescription, 0, sizeof(VkSubpassDescription));
 	subpassDescription.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
 	subpassDescription.colorAttachmentCount = 1;
 	subpassDescription.pColorAttachments = &colorReference;
-	subpassDescription.pDepthStencilAttachment = &depthReference;
-	subpassDescription.inputAttachmentCount = 0;
-	subpassDescription.pInputAttachments = nullptr;
-	subpassDescription.preserveAttachmentCount = 0;
-	subpassDescription.pPreserveAttachments = nullptr;
-	subpassDescription.pResolveAttachments = nullptr;
 
 	std::vector<VkSubpassDependency> dependencies(1);
 
@@ -1567,45 +1568,42 @@ void Emulator_CreateVulkanCommandPool()
 
 void Emulator_CreateVulkanCommandBuffers()
 {
-	VkResult result;
+	commandBuffers.resize(MAX_FRAMES_IN_FLIGHT);
 
-	VkCommandBufferAllocateInfo allocateInfo = {};
-	allocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-	allocateInfo.commandPool = commandPool;
-	allocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-	allocateInfo.commandBufferCount = swapchainImageCount;
+	VkCommandBufferAllocateInfo allocInfo{};
+	allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+	allocInfo.commandPool = commandPool;
+	allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+	allocInfo.commandBufferCount = (uint32_t)commandBuffers.size();
 
-	commandBuffers.resize(swapchainImageCount);
-	vkAllocateCommandBuffers(device, &allocateInfo, commandBuffers.data());
-}
-
-void Emulator_CreateSemaphore(VkSemaphore* semaphore)
-{
-	VkResult result;
-
-	VkSemaphoreCreateInfo createInfo = {};
-	createInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
-	vkCreateSemaphore(device, &createInfo, nullptr, semaphore);
-}
-
-void Emulator_CreateVulkanSemaphores()
-{
-	Emulator_CreateSemaphore(&imageAvailableSemaphore);
-	Emulator_CreateSemaphore(&renderingFinishedSemaphore);
-}
-
-void Emulator_CreateVulkanFences()
-{
-	unsigned int i;
-	fences.resize(swapchainImageCount);
-	for (i = 0; i < swapchainImageCount; i++)
+	if (vkAllocateCommandBuffers(device, &allocInfo, commandBuffers.data()) != VK_SUCCESS)
 	{
-		VkResult result;
+		eprinterr("Failed to allocate command buffers!\n");
+		assert(FALSE);
+	}
+}
 
-		VkFenceCreateInfo createInfo = {};
-		createInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-		createInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
-		vkCreateFence(device, &createInfo, NULL, &fences[i]);
+void Emulator_CreateSyncObjects()
+{
+	imageAvailableSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
+	renderFinishedSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
+	inFlightFences.resize(MAX_FRAMES_IN_FLIGHT);
+
+	VkSemaphoreCreateInfo semaphoreInfo{};
+	semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+
+	VkFenceCreateInfo fenceInfo{};
+	fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+	fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
+
+	for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+		if (vkCreateSemaphore(device, &semaphoreInfo, nullptr, &imageAvailableSemaphores[i]) != VK_SUCCESS ||
+			vkCreateSemaphore(device, &semaphoreInfo, nullptr, &renderFinishedSemaphores[i]) != VK_SUCCESS ||
+			vkCreateFence(device, &fenceInfo, nullptr, &inFlightFences[i]) != VK_SUCCESS) 
+		{
+			eprinterr("Failed to create sync objects!\n");
+			assert(FALSE);
+		}
 	}
 }
 
@@ -1664,8 +1662,7 @@ static int Emulator_InitialiseVulkanContext(char* windowName)
 	Emulator_CreateVulkanFrameBuffers();
 	Emulator_CreateVulkanCommandPool();
 	Emulator_CreateVulkanCommandBuffers();
-	Emulator_CreateVulkanSemaphores();
-	Emulator_CreateVulkanFences();
+	Emulator_CreateSyncObjects();
 
 	return TRUE;
 }
@@ -3237,6 +3234,8 @@ ShaderID Shader_Compile_Internal(const DWORD* vs_data, const DWORD* ps_data, con
 	ShaderID shader;
 	HRESULT hr;
 
+	static int shaderType = 0;
+
 	VkShaderModuleCreateInfo createInfo;
 	memset(&createInfo, 0, sizeof(VkShaderModuleCreateInfo));
 
@@ -3267,6 +3266,8 @@ ShaderID Shader_Compile_Internal(const DWORD* vs_data, const DWORD* ps_data, con
 	shader.PS.flags = 0;
 	shader.PS.pNext = NULL;
 	shader.PS.pSpecializationInfo = NULL;
+
+	shader.T = (enum ShaderID::ShaderType)shaderType++;
 
 	if (vkCreateShaderModule(device, &createInfo, NULL, &shader.PS.module) != VK_SUCCESS)
 	{
@@ -3335,12 +3336,6 @@ ShaderID Shader_Compile_Internal(const DWORD* vs_data, const DWORD* ps_data, con
 	{
 		eprinterr("Failed to create sampler state!\n");
 	}
-
-	g_attributeDescriptions[0].binding = 0;
-	g_attributeDescriptions[0].location = 0;
-	g_attributeDescriptions[0].format = VK_FORMAT_R32G32B32A32_SFLOAT;
-	g_attributeDescriptions[0].offset = OFFSETOF(Vertex, x);
-
 #undef OFFSETOF
 
 	return shader;
@@ -3631,6 +3626,7 @@ void Emulator_SetShader(const ShaderID &shader)
 	///@D3D12
 	UNIMPLEMENTED();
 #elif defined(VULKAN)
+	
 	g_shaderStages[VERTEX_BIT] = shader.VS;
 	g_shaderStages[FRAGMENT_BIT] = shader.PS;
 #else
@@ -3993,7 +3989,7 @@ void Emulator_BlitVRAM()
 	Emulator_SetShader(g_blit_shader);
 
 #if defined(VULKAN)
-	Emulator_CreatePipelineState();
+	Emulator_CreatePipelineState((enum ShaderID::ShaderType)0);
 	Emulator_BeginPass();
 #endif
 
@@ -4336,7 +4332,47 @@ void Emulator_SwapWindow()
 
 	Emulator_SaveVRAM("VRAM.TGA", 0, 0, VRAM_WIDTH, VRAM_HEIGHT, TRUE);
 #elif defined(VULKAN)
+	
 
+	VkPipelineStageFlags waitDestStageMask = VK_PIPELINE_STAGE_TRANSFER_BIT;
+
+	VkSubmitInfo submitInfo{};
+	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+
+	VkSemaphore waitSemaphores[] = { imageAvailableSemaphores[currentFrame] };
+	VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+	submitInfo.waitSemaphoreCount = 1;
+	submitInfo.pWaitSemaphores = waitSemaphores;
+	submitInfo.pWaitDstStageMask = waitStages;
+
+	submitInfo.commandBufferCount = 1;
+	submitInfo.pCommandBuffers = &commandBuffers[currentFrame];
+
+	VkSemaphore signalSemaphores[] = { renderFinishedSemaphores[currentFrame] };
+	submitInfo.signalSemaphoreCount = 1;
+	submitInfo.pSignalSemaphores = signalSemaphores;
+
+	if (vkQueueSubmit(graphicsQueue, 1, &submitInfo, inFlightFences[currentFrame]) != VK_SUCCESS)
+	{
+		eprinterr("Failed to submit queue!\n");
+		assert(FALSE);
+	}
+
+	VkPresentInfoKHR presentInfo{};
+	presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+
+	presentInfo.waitSemaphoreCount = 1;
+	presentInfo.pWaitSemaphores = signalSemaphores;
+
+	VkSwapchainKHR swapChains[] = { swapchain };
+	presentInfo.swapchainCount = 1;
+	presentInfo.pSwapchains = swapChains;
+
+	presentInfo.pImageIndices = &frameIndex;
+
+	vkQueuePresentKHR(presentQueue, &presentInfo);
+
+	currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
 #else
 	#error
 #endif
@@ -4410,9 +4446,11 @@ void Emulator_EndScene()
 	HRESULT hr = commandQueue->Signal(fence[frameIndex], fenceValue[frameIndex]);
 	assert(!FAILED(hr));
 #elif defined(VULKAN)
-	vkCmdEndRenderPass(commandBuffers[0]);
+	vkCmdDraw(commandBuffers[currentFrame], 3, 1, 0, 0);
 
-	if (vkEndCommandBuffer(commandBuffers[0]) != VK_SUCCESS) 
+	vkCmdEndRenderPass(commandBuffers[currentFrame]);
+
+	if (vkEndCommandBuffer(commandBuffers[currentFrame]) != VK_SUCCESS)
 	{
 		eprinterr("Failed to end command buffer!\n");
 		assert(FALSE);
@@ -4811,6 +4849,7 @@ void Emulator_DrawTriangles(int start_vertex, int triangles)
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	commandList->DrawInstanced(triangles, 1, start_vertex, 0);
 #elif defined(VULKAN)
+
 #else
 	#error
 #endif
@@ -4869,12 +4908,11 @@ void Emulator_CreateRasterState(int wireframe)
 	assert(!FAILED(hr));
 	d3dcontext->RSSetState(rasterState);
 }
-#if defined(D3D11)
+
 void Emulator_SetDefaultRenderTarget()
 {
 	d3dcontext->OMSetRenderTargets(1, &renderTargetView, NULL);
 }
-#endif
 
 #elif defined(D3D12)
 void Emulator_CreateRasterState(int wireframe)
@@ -4919,10 +4957,11 @@ void Emulator_CreateRasterState(int wireframe)
 	g_rasterizer.depthBiasEnable = VK_FALSE;
 }
 
-void Emulator_CreatePipelineState()
+void Emulator_CreatePipelineState(enum ShaderID::ShaderType type)
 {
 	VkPipelineVertexInputStateCreateInfo vertexInputInfo;
 	memset(&vertexInputInfo, 0, sizeof(VkPipelineVertexInputStateCreateInfo));
+
 	vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 	vertexInputInfo.vertexBindingDescriptionCount = 1;
 	vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(g_attributeDescriptions.size());
@@ -5065,10 +5104,16 @@ void Emulator_CreateVulkanBuffer(VkDeviceSize size, VkBufferUsageFlags usage, Vk
 
 void Emulator_BeginPass()
 {
+	vkWaitForFences(device, 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
+	unsigned int imageIndex = 0;
+	vkAcquireNextImageKHR(device, swapchain, UINT64_MAX, imageAvailableSemaphores[currentFrame], VK_NULL_HANDLE, &imageIndex);
+	vkResetFences(device, 1, &inFlightFences[currentFrame]);
+	vkResetCommandBuffer(commandBuffers[currentFrame], 0);
+
 	VkCommandBufferBeginInfo beginInfo{};
 	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 
-	if (vkBeginCommandBuffer(commandBuffers[0], &beginInfo) != VK_SUCCESS)
+	if (vkBeginCommandBuffer(commandBuffers[currentFrame], &beginInfo) != VK_SUCCESS)
 	{
 		eprinterr("Failed to begin recording command buffer!\n");
 		assert(FALSE);
@@ -5081,7 +5126,7 @@ void Emulator_BeginPass()
 	VkRenderPassBeginInfo renderPassInfo{};
 	renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 	renderPassInfo.renderPass = render_pass;
-	renderPassInfo.framebuffer = swapchainImages[0];
+	renderPassInfo.framebuffer = swapchainFramebuffers[imageIndex];
 	renderPassInfo.renderArea.offset = { 0, 0 };
 	renderPassInfo.renderArea.extent = swapChainExtent;
 
@@ -5089,13 +5134,14 @@ void Emulator_BeginPass()
 	renderPassInfo.clearValueCount = 1;
 	renderPassInfo.pClearValues = &clearColor;
 
-	vkCmdBeginRenderPass(commandBuffers[0], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+	vkCmdBeginRenderPass(commandBuffers[currentFrame], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
 	VkBuffer vertexBuffers[] = { dynamic_vertex_buffer };
 	VkDeviceSize offsets[] = { 0 };
-	vkCmdBindVertexBuffers(commandBuffers[0], 0, 1, vertexBuffers, offsets);
+	vkBindBufferMemory(device, dynamic_vertex_buffer, dynamic_vertex_buffer_memory, 0);
+	vkCmdBindVertexBuffers(commandBuffers[currentFrame], 0, 1, vertexBuffers, offsets);
 
-	vkCmdBindPipeline(commandBuffers[0], VK_PIPELINE_BIND_POINT_GRAPHICS, g_graphicsPipeline);
+	vkCmdBindPipeline(commandBuffers[currentFrame], VK_PIPELINE_BIND_POINT_GRAPHICS, g_graphicsPipeline);
 }
 
 VkImageView Emulator_CreateImageView(VkImage image, VkFormat format) 
@@ -5121,6 +5167,10 @@ VkImageView Emulator_CreateImageView(VkImage image, VkFormat format)
 	}
 
 	return imageView;
+}
+
+void Emulator_CreateBlitShaderDescriptors()
+{
 }
 
 #endif

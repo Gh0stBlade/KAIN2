@@ -229,6 +229,15 @@ typedef TextureImage TextureID;
 
 struct ShaderID 
 {
+	enum ShaderType
+	{
+		gte_4,
+		gte_8,
+		gte_16,
+		blit,
+	};
+
+	ShaderType T;
 	VkPipelineShaderStageCreateInfo VS;
 	VkPipelineShaderStageCreateInfo PS;
 };
@@ -295,11 +304,12 @@ extern void Emulator_CreateRasterState(int wireframe);
 extern void Emulator_WaitForPreviousFrame();
 #elif defined(VULKAN)
 extern void Emulator_CreateRasterState(int wireframe);
-extern void Emulator_CreatePipelineState();
+extern void Emulator_CreatePipelineState(enum ShaderID::ShaderType type);
 extern void Emulator_CreateVulkanBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
 extern void Emulator_BeginPass();
 extern VkImageView Emulator_CreateImageView(VkImage image, VkFormat format);
 extern unsigned int Emulator_FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
+extern void Emulator_CreateBlitShaderDescriptors();
 #endif
 
 #if defined(D3D9) || defined(XED3D)
