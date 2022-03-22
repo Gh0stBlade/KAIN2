@@ -338,8 +338,13 @@ TextureID whiteTexture;
 	unsigned int fenceValue[RENDER_TARGET_COUNT];
 	HANDLE fenceEvent;
 #elif defined(VULKAN)
+	TextureID g_currentBoundTexture;
+	VkBuffer dynamic_vertex_buffer;
+	VkDeviceMemory dynamic_vertex_buffer_memory;
 
-#if defined(_DEBUG)
+	VkSampler samplerState;
+
+#if defined(_DEBUG)///@TODO sort me out! not all of that is for debug!
 
 	std::vector<const char*> g_validationLayers = {
 		"VK_LAYER_KHRONOS_validation"
@@ -393,8 +398,17 @@ TextureID whiteTexture;
 	VkDeviceMemory depthImageMemory;//
 	VkImageView depthImageView;//
 
-#endif
+#define VERTEX_BIT (0)
+#define FRAGMENT_BIT (1)
+	VkPipelineShaderStageCreateInfo g_shaderStages[2];
+	std::array<VkVertexInputAttributeDescription, 3> g_attributeDescriptions;
+	VkVertexInputBindingDescription g_bindingDescription;
 
+	VkViewport g_viewport;
+	VkPipelineRasterizationStateCreateInfo g_rasterizer;
+	VkPipelineLayout g_pipelineLayout;
+	VkPipeline g_graphicsPipeline;
+#endif
 #endif
 
 int windowWidth = 0;
@@ -635,6 +649,34 @@ void Emulator_ResetDevice()
 	rtvHandle.ptr = rtvHandle.ptr + (frameIndex * renderTargetDescriptorSize);
 	commandList->OMSetRenderTargets(1, &rtvHandle, FALSE, nullptr);
 	Emulator_CreateRasterState(FALSE);
+#elif defined(VULKAN)
+	VkBufferCreateInfo bufferInfo;
+	memset(&bufferInfo, 0, sizeof(VkBufferCreateInfo));
+
+	bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+	bufferInfo.size = sizeof(Vertex) * MAX_NUM_POLY_BUFFER_VERTICES;
+	bufferInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
+	bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+	if (vkCreateBuffer(device, &bufferInfo, nullptr, &dynamic_vertex_buffer) != VK_SUCCESS) 
+	{
+		eprinterr("Failed to create vertex buffer!\n");
+		assert(FALSE);
+	}
+
+	VkMemoryRequirements memRequirements;
+	vkGetBufferMemoryRequirements(device, dynamic_vertex_buffer, &memRequirements);
+
+	VkMemoryAllocateInfo allocInfo{};
+	allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+	allocInfo.allocationSize = memRequirements.size;
+	allocInfo.memoryTypeIndex = Emulator_FindMemoryType(memRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+
+	if (vkAllocateMemory(device, &allocInfo, nullptr, &dynamic_vertex_buffer_memory) != VK_SUCCESS) 
+	{
+		eprinterr("Failed to allocate vertex buffer!\n");
+		assert(FALSE);
+	}
 #endif
 }
 
@@ -804,8 +846,6 @@ static int Emulator_InitialiseD3D11Context(char* windowName)
 		return FALSE;
 	}
 #endif
-
-
 
 	ID3D11Texture2D* backBuffer;
 	hr = swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&backBuffer);
@@ -1069,10 +1109,7 @@ static int Emulator_InitialiseD3D12Context(char* windowName)
 #endif
 
 #if defined(VULKAN)
-
-
 #if defined(_DEBUG)
-
 static VKAPI_ATTR VkBool32 VKAPI_CALL VulkanReportFunc(VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objType, uint64_t obj, size_t location, int32_t code, const char* layerPrefix, const char* msg, void* userData)
 {
 	printf("VULKAN VALIDATION: %s\n", msg);
@@ -3093,7 +3130,7 @@ ShaderID Shader_Compile_Internal(const DWORD* vs_data, const DWORD* ps_data, con
 	sampDesc.MinLOD = -D3D11_FLOAT32_MAX;
 	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
 	sampDesc.MaxAnisotropy = 1;
-	d3ddev->CreateSamplerState(&sampDesc, &samplerState);
+	d3ddev->CreateSamplerState(&sampDesc, &samplerState);///@FIXME can be created more than once on same pointer? bug!
 
 #undef OFFSETOF
 
@@ -3207,7 +3244,14 @@ ShaderID Shader_Compile_Internal(const DWORD* vs_data, const DWORD* ps_data, con
 	createInfo.codeSize = vs_size;
 	createInfo.pCode = (const uint32_t*)vs_data;
 	
-	if (vkCreateShaderModule(device, &createInfo, NULL, &shader.VS) != VK_SUCCESS)
+	shader.VS.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+	shader.VS.stage = VK_SHADER_STAGE_VERTEX_BIT;
+	shader.VS.pName = "main";
+	shader.VS.flags = 0;
+	shader.VS.pNext = NULL;
+	shader.VS.pSpecializationInfo = NULL;
+
+	if (vkCreateShaderModule(device, &createInfo, NULL, &shader.VS.module) != VK_SUCCESS)
 	{
 		assert(FALSE);
 	}
@@ -3217,10 +3261,87 @@ ShaderID Shader_Compile_Internal(const DWORD* vs_data, const DWORD* ps_data, con
 	createInfo.codeSize = ps_size;
 	createInfo.pCode = (const uint32_t*)ps_data;
 
-	if (vkCreateShaderModule(device, &createInfo, NULL, &shader.PS) != VK_SUCCESS)
+	shader.PS.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+	shader.PS.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
+	shader.PS.pName = "main";
+	shader.PS.flags = 0;
+	shader.PS.pNext = NULL;
+	shader.PS.pSpecializationInfo = NULL;
+
+	if (vkCreateShaderModule(device, &createInfo, NULL, &shader.PS.module) != VK_SUCCESS)
 	{
 		assert(FALSE);
 	}
+
+#define OFFSETOF(T, E)     ((size_t)&(((T*)0)->E))
+
+	memset(&g_attributeDescriptions[0], 0, sizeof(VkVertexInputAttributeDescription));
+	memset(&g_attributeDescriptions[1], 0, sizeof(VkVertexInputAttributeDescription));
+	memset(&g_attributeDescriptions[2], 0, sizeof(VkVertexInputAttributeDescription));
+
+#if defined(PGXP)
+	g_attributeDescriptions[0].binding = 0;
+	g_attributeDescriptions[0].location = 0;
+	g_attributeDescriptions[0].format = VK_FORMAT_R32G32B32A32_SFLOAT;
+	g_attributeDescriptions[0].offset = OFFSETOF(Vertex, x);
+#else
+	g_attributeDescriptions[0].binding = 0;
+	g_attributeDescriptions[0].location = 0;
+	g_attributeDescriptions[0].format = VK_FORMAT_R16G16B16A16_SINT;
+	g_attributeDescriptions[0].offset = OFFSETOF(Vertex, x);
+#endif
+
+	g_attributeDescriptions[1].binding = 0;
+	g_attributeDescriptions[1].location = 1;
+	g_attributeDescriptions[1].format = VK_FORMAT_R8G8B8A8_UINT;
+	g_attributeDescriptions[1].offset = OFFSETOF(Vertex, u);
+
+	g_attributeDescriptions[2].binding = 0;
+	g_attributeDescriptions[2].location = 2;
+	g_attributeDescriptions[2].format = VK_FORMAT_R8G8B8A8_UNORM;
+	g_attributeDescriptions[2].offset = OFFSETOF(Vertex, r);
+
+
+	memset(&g_bindingDescription, 0, sizeof(VkVertexInputBindingDescription));
+	g_bindingDescription.binding = 0;
+	g_bindingDescription.stride = sizeof(Vertex);
+	g_bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+
+
+	///@FIXME can be created more than once on same pointer? bug!
+	VkPhysicalDeviceProperties properties;
+	memset(&properties, 0, sizeof(VkPhysicalDeviceProperties));
+
+	vkGetPhysicalDeviceProperties(physical_devices, &properties);
+
+	VkSamplerCreateInfo samplerInfo;
+	memset(&samplerInfo, 0, sizeof(VkSamplerCreateInfo));
+
+	samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+	samplerInfo.magFilter = VK_FILTER_LINEAR;
+	samplerInfo.minFilter = VK_FILTER_LINEAR;
+	samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+	samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+	samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+	samplerInfo.anisotropyEnable = VK_TRUE;
+	samplerInfo.maxAnisotropy = properties.limits.maxSamplerAnisotropy;
+	samplerInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
+	samplerInfo.unnormalizedCoordinates = VK_FALSE;
+	samplerInfo.compareEnable = VK_FALSE;
+	samplerInfo.compareOp = VK_COMPARE_OP_ALWAYS;
+	samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
+
+	if (vkCreateSampler(device, &samplerInfo, nullptr, &samplerState) != VK_SUCCESS) 
+	{
+		eprinterr("Failed to create sampler state!\n");
+	}
+
+	g_attributeDescriptions[0].binding = 0;
+	g_attributeDescriptions[0].location = 0;
+	g_attributeDescriptions[0].format = VK_FORMAT_R32G32B32A32_SFLOAT;
+	g_attributeDescriptions[0].offset = OFFSETOF(Vertex, x);
+
+#undef OFFSETOF
 
 	return shader;
 }
@@ -3231,7 +3352,7 @@ ShaderID Shader_Compile_Internal(const DWORD* vs_data, const DWORD* ps_data, con
 
 void Emulator_CreateGlobalShaders()
 {
-#if defined(D3D12)
+#if defined(D3D12) || defined(VULKAN)
 	Emulator_CreateRasterState(FALSE);
 #endif
 
@@ -3317,6 +3438,19 @@ void Emulator_GenerateCommonTextures()
 #elif defined(D3D12)
 	UNIMPLEMENTED();
 #elif defined(VULKAN)
+	int texWidth = 1;
+	int texHeight = 1;
+	VkDeviceSize imageSize = texWidth * texHeight * sizeof(unsigned int);
+
+	Emulator_CreateVulkanBuffer(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, whiteTexture.stagingBuffer, whiteTexture.stagingBufferMemory);
+
+	void* data;
+	vkMapMemory(device, whiteTexture.stagingBufferMemory, 0, imageSize, 0, &data);
+	memcpy(data, &pixelData, static_cast<size_t>(imageSize));
+	vkUnmapMemory(device, whiteTexture.stagingBufferMemory);
+
+	Emulator_CreateImage(texWidth, texHeight, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, whiteTexture.textureImage, whiteTexture.textureImageMemory);
+	whiteTexture.textureImageView = Emulator_CreateImageView(whiteTexture.textureImage, VK_FORMAT_R8G8B8A8_UNORM);
 #else
 	#error
 #endif
@@ -3427,6 +3561,13 @@ int Emulator_Initialise()
 #elif defined(D3D12)
 	UNIMPLEMENTED();
 #elif defined(VULKAN)
+	int texWidth = VRAM_WIDTH;
+	int texHeight = VRAM_HEIGHT;
+	VkDeviceSize imageSize = texWidth * texHeight * sizeof(unsigned int);
+
+	Emulator_CreateVulkanBuffer(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, vramTexture.stagingBuffer, vramTexture.stagingBufferMemory);
+	Emulator_CreateImage(texWidth, texHeight, VK_FORMAT_R8G8_UNORM, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, vramTexture.textureImage, vramTexture.textureImageMemory);
+	vramTexture.textureImageView = Emulator_CreateImageView(vramTexture.textureImage, VK_FORMAT_R8G8_UNORM);
 #else
 	#error
 #endif
@@ -3490,7 +3631,8 @@ void Emulator_SetShader(const ShaderID &shader)
 	///@D3D12
 	UNIMPLEMENTED();
 #elif defined(VULKAN)
-	UNIMPLEMENTED();
+	g_shaderStages[VERTEX_BIT] = shader.VS;
+	g_shaderStages[FRAGMENT_BIT] = shader.PS;
 #else
 	#error
 #endif
@@ -3517,9 +3659,15 @@ void Emulator_SetTexture(TextureID texture, TexFormat texFormat)
 		texture = whiteTexture;
 	}
 
-	if (g_lastBoundTexture == texture) {
+#if defined(VULKAN)
+	if (g_lastBoundTexture.textureImage == texture.textureImage) {
 		return;
 	}
+#else
+	if (g_lastBoundTexture == texture) {
+		return;
+}
+#endif
 
 #if defined(OGL) || defined(OGLES)
 	glBindTexture(GL_TEXTURE_2D, texture);
@@ -3532,7 +3680,7 @@ void Emulator_SetTexture(TextureID texture, TexFormat texFormat)
 	///@D3D12
 	UNIMPLEMENTED();
 #elif defined(VULKAN)
-	UNIMPLEMENTED();
+	g_currentBoundTexture = texture;
 #else
 	#error
 #endif
@@ -3825,6 +3973,11 @@ void Emulator_UpdateVRAM()
 	assert(!FAILED(hr));
 	memcpy(sr.pData, vram, VRAM_WIDTH * VRAM_HEIGHT * sizeof(short));
 	d3dcontext->Unmap(vramBaseTexture, 0);
+#elif defined(VULKAN)
+	void* data = NULL;
+	vkMapMemory(device, vramTexture.stagingBufferMemory, 0, VRAM_WIDTH * VRAM_HEIGHT * sizeof(short), 0, &data);
+	memcpy(data, vram, VRAM_WIDTH * VRAM_HEIGHT * sizeof(short));
+	vkUnmapMemory(device, vramTexture.stagingBufferMemory);
 #endif
 }
 
@@ -3838,6 +3991,11 @@ void Emulator_BlitVRAM()
 
 	Emulator_SetTexture(vramTexture, TF_16_BIT);
 	Emulator_SetShader(g_blit_shader);
+
+#if defined(VULKAN)
+	Emulator_CreatePipelineState();
+	Emulator_BeginPass();
+#endif
 
 	u_char l = activeDispEnv.disp.x / 8;
 	u_char t = activeDispEnv.disp.y / 8;
@@ -3940,7 +4098,11 @@ int Emulator_BeginScene()
 
 	assert(!begin_scene_flag);
 
+#if defined(VULKAN)
+	g_lastBoundTexture.textureImage = NULL;
+#else
 	g_lastBoundTexture = NULL;
+#endif
 
 #if defined(OGL) || defined(OGLES)
 	glBindVertexArray(dynamic_vertex_array);
@@ -3955,7 +4117,7 @@ int Emulator_BeginScene()
 #elif defined(D3D12)
 
 #elif defined(VULKAN)
-
+	
 #else
 	#error
 #endif
@@ -3972,7 +4134,6 @@ int Emulator_BeginScene()
 	{
 		Emulator_SetWireframe(TRUE);
 	}
-
 	return TRUE;
 }
 
@@ -4248,6 +4409,14 @@ void Emulator_EndScene()
 	commandQueue->ExecuteCommandLists(sizeof(ppCommandLists) / sizeof(commandList), ppCommandLists);
 	HRESULT hr = commandQueue->Signal(fence[frameIndex], fenceValue[frameIndex]);
 	assert(!FAILED(hr));
+#elif defined(VULKAN)
+	vkCmdEndRenderPass(commandBuffers[0]);
+
+	if (vkEndCommandBuffer(commandBuffers[0]) != VK_SUCCESS) 
+	{
+		eprinterr("Failed to end command buffer!\n");
+		assert(FALSE);
+	}
 #endif
 
 	begin_scene_flag = FALSE;
@@ -4534,6 +4703,13 @@ void Emulator_SetViewPort(int x, int y, int width, int height)
 	rect.bottom = height;
 	commandList->RSSetScissorRects(1, &rect);
 #elif defined(VULKAN)
+	memset(&g_viewport, 0, sizeof(VkViewport));
+	g_viewport.x = (float)x + offset_x;
+	g_viewport.y = (float)y + offset_y;
+	g_viewport.width = (float)width;
+	g_viewport.height = (float)height;
+	g_viewport.minDepth = 0.0f;
+	g_viewport.maxDepth = 1.0f;
 #else
 	#error
 #endif
@@ -4565,6 +4741,10 @@ void Emulator_SetWireframe(bool enable)
 	d3ddev->SetRenderState(D3DRS_FILLMODE, enable ? D3DFILL_WIREFRAME : D3DFILL_SOLID);
 #elif defined(D3D11) || defined(D3D12)
 	Emulator_CreateRasterState(enable ? TRUE : FALSE);
+#elif defined(VULKAN)
+	Emulator_CreateRasterState(enable ? TRUE : FALSE);
+#else
+#error
 #endif
 }
 
@@ -4608,6 +4788,10 @@ void Emulator_UpdateVertexBuffer(const Vertex *vertices, int num_vertices)
 	dynamic_vertex_buffer_view.StrideInBytes = sizeof(Vertex);
 	dynamic_vertex_buffer_view.SizeInBytes = num_vertices * sizeof(Vertex);
 #elif defined(VULKAN)
+	void* data = NULL;
+	vkMapMemory(device, dynamic_vertex_buffer_memory, 0, num_vertices * sizeof(Vertex), 0, &data);
+	memcpy(data, vertices, num_vertices * sizeof(Vertex));
+	vkUnmapMemory(device, dynamic_vertex_buffer_memory);
 #else
 	#error
 #endif
@@ -4720,6 +4904,223 @@ void Emulator_WaitForPreviousFrame()
 	}
 
 	fenceValue[frameIndex]++;
+}
+
+#elif defined(VULKAN)
+void Emulator_CreateRasterState(int wireframe)
+{
+	g_rasterizer.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
+	g_rasterizer.depthClampEnable = VK_FALSE;
+	g_rasterizer.rasterizerDiscardEnable = VK_FALSE;
+	g_rasterizer.polygonMode = wireframe ? VK_POLYGON_MODE_LINE : VK_POLYGON_MODE_FILL;
+	g_rasterizer.lineWidth = 1.0f;
+	g_rasterizer.cullMode = VK_CULL_MODE_NONE;
+	g_rasterizer.frontFace = VK_FRONT_FACE_CLOCKWISE;
+	g_rasterizer.depthBiasEnable = VK_FALSE;
+}
+
+void Emulator_CreatePipelineState()
+{
+	VkPipelineVertexInputStateCreateInfo vertexInputInfo;
+	memset(&vertexInputInfo, 0, sizeof(VkPipelineVertexInputStateCreateInfo));
+	vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+	vertexInputInfo.vertexBindingDescriptionCount = 1;
+	vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(g_attributeDescriptions.size());
+	vertexInputInfo.pVertexBindingDescriptions = &g_bindingDescription;
+	vertexInputInfo.pVertexAttributeDescriptions = g_attributeDescriptions.data();
+
+	VkPipelineInputAssemblyStateCreateInfo inputAssembly;
+	memset(&inputAssembly, 0, sizeof(VkPipelineInputAssemblyStateCreateInfo));
+	inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
+	inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+	inputAssembly.primitiveRestartEnable = VK_FALSE;
+
+	VkRect2D scissor;
+	scissor.extent.width = VRAM_WIDTH;
+	scissor.extent.height = VRAM_HEIGHT;
+	scissor.offset.x = 0;
+	scissor.offset.y = 0;
+
+	VkPipelineViewportStateCreateInfo viewportState;
+	memset(&viewportState, 0, sizeof(VkPipelineViewportStateCreateInfo));
+	viewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
+	viewportState.viewportCount = 1;
+	viewportState.pViewports = &g_viewport;
+	viewportState.scissorCount = 1;
+	viewportState.pScissors = &scissor;
+
+	VkPipelineMultisampleStateCreateInfo multisampling;
+	memset(&multisampling, 0, sizeof(VkPipelineMultisampleStateCreateInfo));
+
+	multisampling.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
+	multisampling.sampleShadingEnable = VK_FALSE;
+	multisampling.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
+
+	VkPipelineColorBlendAttachmentState colorBlendAttachment;
+	memset(&colorBlendAttachment, 0, sizeof(VkPipelineColorBlendAttachmentState));
+
+	colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+	colorBlendAttachment.blendEnable = VK_FALSE;
+
+	VkPipelineColorBlendStateCreateInfo colorBlending;
+	memset(&colorBlending, 0, sizeof(VkPipelineColorBlendStateCreateInfo));
+	colorBlending.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
+	colorBlending.logicOpEnable = VK_FALSE;
+	colorBlending.logicOp = VK_LOGIC_OP_COPY;
+	colorBlending.attachmentCount = 1;
+	colorBlending.pAttachments = &colorBlendAttachment;
+	colorBlending.blendConstants[0] = 0.0f;
+	colorBlending.blendConstants[1] = 0.0f;
+	colorBlending.blendConstants[2] = 0.0f;
+	colorBlending.blendConstants[3] = 0.0f;
+
+	VkDescriptorSetLayoutBinding descriptorLayoutSampler = { 0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT , NULL };
+	VkDescriptorSetLayoutBinding descriptorLayoutTexture = { 1, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, 1, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT , NULL };
+	VkDescriptorSetLayoutBinding descriptorLayoutUniformBuffer = { 2, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT , NULL };
+
+
+	VkDescriptorSetLayoutBinding bindings[] = 
+	{
+	  descriptorLayoutSampler,
+	  descriptorLayoutTexture,
+	  descriptorLayoutUniformBuffer,
+	};
+
+	VkDescriptorSetLayoutCreateInfo resourceLayoutInfo;
+	memset(&resourceLayoutInfo, 0, sizeof(VkDescriptorSetLayoutCreateInfo));
+	resourceLayoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+	resourceLayoutInfo.pNext = NULL;
+	resourceLayoutInfo.bindingCount = 3;
+	resourceLayoutInfo.pBindings = bindings;
+
+	VkDescriptorSetLayout descriptorLayout;
+	memset(&descriptorLayout, 0, sizeof(VkDescriptorSetLayout));
+	vkCreateDescriptorSetLayout(device, &resourceLayoutInfo, NULL, &descriptorLayout);
+
+	VkPipelineLayoutCreateInfo pipelineLayoutInfo;
+	memset(&pipelineLayoutInfo, 0, sizeof(VkPipelineLayoutCreateInfo));
+	pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+	pipelineLayoutInfo.setLayoutCount = 0;
+	pipelineLayoutInfo.pushConstantRangeCount = 0;
+	pipelineLayoutInfo.setLayoutCount = 1;
+	pipelineLayoutInfo.pSetLayouts = &descriptorLayout;
+
+	if (vkCreatePipelineLayout(device, &pipelineLayoutInfo, NULL, &g_pipelineLayout) != VK_SUCCESS)
+	{
+		eprinterr("Failed to create pipeline layout!\n");
+		assert(FALSE);
+	}
+
+	VkGraphicsPipelineCreateInfo pipelineInfo;
+	memset(&pipelineInfo, 0, sizeof(VkGraphicsPipelineCreateInfo));
+	pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+	pipelineInfo.stageCount = 2;
+	pipelineInfo.pStages = g_shaderStages;
+	pipelineInfo.pVertexInputState = &vertexInputInfo;
+	pipelineInfo.pInputAssemblyState = &inputAssembly;
+	pipelineInfo.pViewportState = &viewportState;
+	pipelineInfo.pRasterizationState = &g_rasterizer;
+	pipelineInfo.pMultisampleState = &multisampling;
+	pipelineInfo.pColorBlendState = &colorBlending;
+	pipelineInfo.layout = g_pipelineLayout;
+	pipelineInfo.renderPass = render_pass;
+	pipelineInfo.subpass = 0;
+	pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
+
+	if (vkCreateGraphicsPipelines(device, VK_NULL_HANDLE, 1, &pipelineInfo, NULL, &g_graphicsPipeline) != VK_SUCCESS)
+	{
+		eprinterr("Failed to create graphics pipeline\n");
+		assert(FALSE);
+	}
+}
+
+void Emulator_CreateVulkanBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory)
+{
+	VkBufferCreateInfo bufferInfo{};
+	bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+	bufferInfo.size = size;
+	bufferInfo.usage = usage;
+	bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+	if (vkCreateBuffer(device, &bufferInfo, nullptr, &buffer) != VK_SUCCESS) 
+	{
+		eprinterr("Failed to create buffer!\n");
+	}
+
+	VkMemoryRequirements memRequirements;
+	vkGetBufferMemoryRequirements(device, buffer, &memRequirements);
+
+	VkMemoryAllocateInfo allocInfo{};
+	allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+	allocInfo.allocationSize = memRequirements.size;
+	allocInfo.memoryTypeIndex = Emulator_FindMemoryType(memRequirements.memoryTypeBits, properties);
+
+	if (vkAllocateMemory(device, &allocInfo, nullptr, &bufferMemory) != VK_SUCCESS) 
+	{
+		eprinterr("Failed to allocate buffer memory!\n");
+	}
+
+	vkBindBufferMemory(device, buffer, bufferMemory, 0);
+}
+
+void Emulator_BeginPass()
+{
+	VkCommandBufferBeginInfo beginInfo{};
+	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+
+	if (vkBeginCommandBuffer(commandBuffers[0], &beginInfo) != VK_SUCCESS)
+	{
+		eprinterr("Failed to begin recording command buffer!\n");
+		assert(FALSE);
+	}
+
+	VkExtent2D swapChainExtent;
+	swapChainExtent.width = windowWidth;
+	swapChainExtent.height = windowHeight;
+
+	VkRenderPassBeginInfo renderPassInfo{};
+	renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+	renderPassInfo.renderPass = render_pass;
+	renderPassInfo.framebuffer = swapchainImages[0];
+	renderPassInfo.renderArea.offset = { 0, 0 };
+	renderPassInfo.renderArea.extent = swapChainExtent;
+
+	VkClearValue clearColor = { {{0.0f, 0.0f, 0.0f, 1.0f}} };
+	renderPassInfo.clearValueCount = 1;
+	renderPassInfo.pClearValues = &clearColor;
+
+	vkCmdBeginRenderPass(commandBuffers[0], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+
+	VkBuffer vertexBuffers[] = { dynamic_vertex_buffer };
+	VkDeviceSize offsets[] = { 0 };
+	vkCmdBindVertexBuffers(commandBuffers[0], 0, 1, vertexBuffers, offsets);
+
+	vkCmdBindPipeline(commandBuffers[0], VK_PIPELINE_BIND_POINT_GRAPHICS, g_graphicsPipeline);
+}
+
+VkImageView Emulator_CreateImageView(VkImage image, VkFormat format) 
+{
+	VkImageViewCreateInfo viewInfo;
+	memset(&viewInfo, 0, sizeof(VkImageViewCreateInfo));
+
+	viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+	viewInfo.image = image;
+	viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+	viewInfo.format = format;
+	viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	viewInfo.subresourceRange.baseMipLevel = 0;
+	viewInfo.subresourceRange.levelCount = 1;
+	viewInfo.subresourceRange.baseArrayLayer = 0;
+	viewInfo.subresourceRange.layerCount = 1;
+
+	VkImageView imageView;
+	if (vkCreateImageView(device, &viewInfo, nullptr, &imageView) != VK_SUCCESS)
+	{
+		eprinterr("Failed to create image view!");
+		assert(FALSE);
+	}
+
+	return imageView;
 }
 
 #endif

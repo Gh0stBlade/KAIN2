@@ -1,4 +1,4 @@
-#include "THISDUST.H"
+#include "CORE.H"
 #include "SCRIPT.H"
 
 
@@ -6,6 +6,7 @@
 // void /*$ra*/ SCRIPT_CombineEulerAngles(struct _Rotation *combinedRotation /*$s1*/, struct _Rotation *inputRotation1 /*$a1*/, struct _Rotation *inputRotation2 /*$s0*/)
 void SCRIPT_CombineEulerAngles(struct _Rotation *combinedRotation, struct _Rotation *inputRotation1, struct _Rotation *inputRotation2)
 { // line 51, offset 0x8003c6b0
+#if defined(PC_VERSION)
 	__int16 y; // cx
 	__int16 z; // dx
 	struct _G2EulerAngles_Type euler; // [esp+0h] [ebp-48h] BYREF
@@ -21,6 +22,7 @@ void SCRIPT_CombineEulerAngles(struct _Rotation *combinedRotation, struct _Rotat
 	z = euler.z;
 	combinedRotation->y = y;
 	combinedRotation->z = z;
+#endif
 }
 
 
@@ -53,7 +55,7 @@ void SCRIPT_InstanceSplineInit(struct _Instance *instance)
 				// Start line: 195
 				// Start offset: 0x8003C7EC
 				// Variables:
-					struct MATRIX introTransform; // stack offset -72
+					MATRIX introTransform; // stack offset -72
 			/* end block 1.1.1 */
 			// End offset: 0x8003C824
 			// End Line: 204
@@ -94,9 +96,9 @@ void SCRIPT_InstanceSplineInit(struct _Instance *instance)
 					short _x0; // $v0
 					short _y0; // $a0
 					short _z0; // $v1
-					short _x1; // $a1
-					short _y1; // $a2
-					short _z1; // $a3
+					//short _x1; // $a1
+					//short _y1; // $a2
+					//short _z1; // $a3
 					struct _Position *_v; // $v0
 					struct _Position *_v0; // $v1
 			/* end block 1.2.1 */
@@ -110,7 +112,7 @@ void SCRIPT_InstanceSplineInit(struct _Instance *instance)
 			// Start line: 248
 			// Start offset: 0x8003C920
 			// Variables:
-				struct _SVector *start_point; // $v1
+				//struct _SVector *start_point; // $v1
 		/* end block 1.3 */
 		// End offset: 0x8003C958
 		// End Line: 258
@@ -359,7 +361,7 @@ void SCRIPT_RelativisticSpline(struct _Instance *instance, struct _SVector *poin
 			// Start line: 423
 			// Start offset: 0x8003CD10
 			// Variables:
-				struct MATRIX segMatrix; // stack offset -56
+				MATRIX segMatrix; // stack offset -56
 				struct _Position newPt; // stack offset -24
 				struct _Position localPt; // stack offset -16
 
@@ -381,11 +383,11 @@ void SCRIPT_RelativisticSpline(struct _Instance *instance, struct _SVector *poin
 				// Variables:
 					short _y0; // $v1
 					short _z0; // $v0
-					short _x1; // $a1
-					short _y1; // $a3
-					short _z1; // $a2
+					//short _x1; // $a1
+					//short _y1; // $a3
+					//short _z1; // $a2
 					struct _Position *_v; // $a0
-					struct _Position *_v0; // $v0
+					//struct _Position *_v0; // $v0
 					struct _Position *_v1; // $a2
 			/* end block 1.1.2 */
 			// End offset: 0x8003CD10
@@ -399,13 +401,13 @@ void SCRIPT_RelativisticSpline(struct _Instance *instance, struct _SVector *poin
 			// Start offset: 0x8003CE78
 			// Variables:
 				short _x0; // $v0
-				short _y0; // $a0
-				short _z0; // $v1
-				short _x1; // $a1
-				short _y1; // $a2
-				short _z1; // $a3
-				struct _Position *_v; // $v0
-				struct _Position *_v0; // $v1
+				//short _y0; // $a0
+				//short _z0; // $v1
+				//short _x1; // $a1
+				//short _y1; // $a2
+				//short _z1; // $a3
+				//struct _Position *_v; // $v0
+				//struct _Position *_v0; // $v1
 		/* end block 1.2 */
 		// End offset: 0x8003CEB0
 		// End Line: 440
@@ -447,7 +449,7 @@ void SCRIPT_InstanceSplineSet(struct _Instance *instance, short frameNum, struct
 				// Start line: 509
 				// Start offset: 0x8003D07C
 				// Variables:
-					struct MATRIX introTransform; // stack offset -80
+					MATRIX introTransform; // stack offset -80
 			/* end block 1.1.1 */
 			// End offset: 0x8003D098
 			// End Line: 515
@@ -539,7 +541,7 @@ long SCRIPT_SplineProcess(struct _Instance *instance, struct MultiSpline *multi,
 				// Start line: 620
 				// Start offset: 0x8003D2F4
 				// Variables:
-					struct MATRIX introTransform; // stack offset -72
+					MATRIX introTransform; // stack offset -72
 			/* end block 1.2.1 */
 			// End offset: 0x8003D310
 			// End Line: 626
@@ -571,7 +573,7 @@ long SCRIPT_SplineProcess(struct _Instance *instance, struct MultiSpline *multi,
 			// Start line: 662
 			// Start offset: 0x8003D3A0
 			// Variables:
-				struct _SVector pt; // stack offset -80
+				//struct _SVector pt; // stack offset -80
 		/* end block 1.4 */
 		// End offset: 0x8003D44C
 		// End Line: 687
@@ -643,7 +645,7 @@ void ScriptKillInstance(struct _Instance *instance, int effect)
 			// Start line: 1069
 			// Start offset: 0x8003D65C
 			// Variables:
-				struct Object *object; // $v0
+				//struct Object *object; // $v0
 		/* end block 1.1 */
 		// End offset: 0x8003D67C
 		// End Line: 1074

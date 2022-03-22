@@ -215,12 +215,22 @@ struct ShaderID {
 
 typedef D3D12_RENDER_TARGET_VIEW_DESC* RenderTargetID;
 #elif defined(VULKAN)
-typedef void* TextureID;
+
+struct TextureImage
+{
+	VkImage textureImage;
+	VkDeviceMemory textureImageMemory;
+	VkBuffer stagingBuffer;
+	VkDeviceMemory stagingBufferMemory;
+	VkImageView textureImageView;
+};
+
+typedef TextureImage TextureID;
 
 struct ShaderID 
 {
-	VkShaderModule VS;
-	VkShaderModule PS;
+	VkPipelineShaderStageCreateInfo VS;
+	VkPipelineShaderStageCreateInfo PS;
 };
 
 typedef void* RenderTargetID;
@@ -283,6 +293,13 @@ extern void Emulator_SetDefaultRenderTarget();
 #elif defined(D3D12)
 extern void Emulator_CreateRasterState(int wireframe);
 extern void Emulator_WaitForPreviousFrame();
+#elif defined(VULKAN)
+extern void Emulator_CreateRasterState(int wireframe);
+extern void Emulator_CreatePipelineState();
+extern void Emulator_CreateVulkanBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
+extern void Emulator_BeginPass();
+extern VkImageView Emulator_CreateImageView(VkImage image, VkFormat format);
+extern unsigned int Emulator_FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
 #endif
 
 #if defined(D3D9) || defined(XED3D)

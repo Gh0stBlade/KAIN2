@@ -428,7 +428,11 @@ void AddSplit(bool semiTrans, int page, TextureID textureId)
 	BlendMode blendMode = semiTrans ? GET_TPAGE_BLEND(page) : BM_NONE;
 	TexFormat texFormat = GET_TPAGE_FORMAT(page);
 
-	if (curSplit.blendMode == blendMode && curSplit.texFormat == texFormat && curSplit.textureId == textureId)
+#if defined(VULKAN)
+	if (curSplit.blendMode == blendMode && curSplit.texFormat == texFormat && curSplit.textureId.textureImage == textureId.textureImage)
+#else
+		if (curSplit.blendMode == blendMode && curSplit.texFormat == texFormat && curSplit.textureId == textureId)
+#endif
 	{
 		return;
 	}
