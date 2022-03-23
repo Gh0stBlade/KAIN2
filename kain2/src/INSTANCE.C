@@ -901,7 +901,7 @@ void INSTANCE_InitEffects(struct _Instance* instance, struct Object* object)
 }
 
 struct _Instance* INSTANCE_IntroduceInstance(struct Intro* intro, short streamUnitID)
-{ 
+{
 	struct Object* object;
 	struct _Instance* instance;
 	struct _Instance* attachInst;
@@ -924,9 +924,9 @@ struct _Instance* INSTANCE_IntroduceInstance(struct Intro* intro, short streamUn
 		{
 			attachedUniqueID = index->parameter[0];
 		}
-		
+
 		objectTracker = STREAM_GetObjectTracker(intro->name);
-		
+
 		if (objectTracker != NULL)
 		{
 			object = objectTracker->object;
@@ -938,235 +938,237 @@ struct _Instance* INSTANCE_IntroduceInstance(struct Intro* intro, short streamUn
 				if (attachedUniqueID != 0)
 				{
 					attachInst = INSTANCE_Find(attachedUniqueID);
+					if (attachInst == NULL)
+					{
+						return 0;
+					}
 				}
 
-				if (attachInst != NULL)
+
+				if ((object->oflags2 & 0x10000000))
 				{
-					if((object->oflags2 & 0x10000000))
+					OBTABLE_InitAnimPointers(objectTracker);
+
+					if ((object->oflags2 & 0x10000000))
 					{
-						OBTABLE_InitAnimPointers(objectTracker);
-						
-						if ((object->oflags2 & 0x10000000))
+						return 0;
+					}
+				}
+
+				instance = INSTANCE_NewInstance(gameTrackerX.instanceList);
+
+				if (instance != NULL)
+				{
+					intro->flags |= 0x8;
+
+					objectTracker->numInUse++;
+
+					INSTANCE_DefaultInit(instance, object, 0);
+
+					strcpy(instance->introName, intro->name);
+
+					instance->introUniqueID = intro->UniqueID;
+					instance->introNum = intro->intronum;
+					instance->birthStreamUnitID = streamUnitID;
+					instance->currentStreamUnitID = streamUnitID;
+
+					intro->instance = instance;
+
+					instance->intro = intro;
+					instance->introData = intro->multiSpline;
+					instance->position = intro->position;
+
+					if (gameTrackerX.gameData.asmData.MorphType == 1)
+					{
+						if (intro->spectralPosition.x != 0 && intro->spectralPosition.y != 0 && intro->spectralPosition.z != 0)
 						{
-							return 0;
+							instance->position.x = intro->position.x + intro->spectralPosition.x;
+							instance->position.y = intro->position.y + intro->spectralPosition.y;
+							instance->position.z = intro->position.z + intro->spectralPosition.z;
 						}
 					}
-					
-					instance = INSTANCE_NewInstance(gameTrackerX.instanceList);
-					
-					if (instance != NULL)
+
+					instance->initialPos = instance->position;
+					instance->oldPos = intro->position;
+
+					LIGHT_GetAmbient((struct _ColorType*)&instance->light_color, instance);
+
+					instance->rotation = intro->rotation;
+					if ((instance->object->oflags & 0x100))
 					{
-						intro->flags |= 0x8;
-						
-						objectTracker->numInUse++;
-						
-						INSTANCE_DefaultInit(instance, object, 0);
-						
-						strcpy(instance->introName, intro->name);
-						
-						instance->introUniqueID = intro->UniqueID;
-						instance->introNum = intro->intronum;
-						instance->birthStreamUnitID = streamUnitID;
-						instance->currentStreamUnitID = streamUnitID;
-						
-						intro->instance = instance;
-						
-						instance->intro = intro;
-						instance->introData = intro->multiSpline;
-						instance->position = intro->position;
-
-						if (gameTrackerX.gameData.asmData.MorphType == 1)
-						{
-							if (intro->spectralPosition.x != 0 && intro->spectralPosition.y != 0 && intro->spectralPosition.z != 0)
-							{
-								instance->position.x = intro->position.x + intro->spectralPosition.x;
-								instance->position.y = intro->position.y + intro->spectralPosition.y;
-								instance->position.z = intro->position.z + intro->spectralPosition.z;
-							}
-						}
-						
-						instance->initialPos = instance->position;
-						instance->oldPos = intro->position;
-
-						LIGHT_GetAmbient((struct _ColorType*)&instance->light_color, instance);
-
-						instance->rotation = intro->rotation;
-						if ((instance->object->oflags & 0x100))
-						{
-							INSTANCE_BuildStaticShadow(instance);
-						}
-						
-						instance->scale.x = 4096;
-						instance->scale.y = 4096;
-						instance->scale.z = 4096;
-
-						if ((intro->flags & 0x2000))
-						{
-							instance->flags |= 0x400;
-						}
-						
-						if ((intro->flags & 0x10000))
-						{
-							instance->flags2 |= 0x20000;
-						}
-						
-						if (attachInst != NULL)
-						{
-							INSTANCE_ForceActive(attachInst);
-							attachInst->flags2 |= 0x80;
-						}
-						
-						if ((object->oflags2 & 0x80))
-						{
-							instance->flags |= 0x800;
-						}
-						
-						if ((intro->flags & 0x800) && object->id == -1)
-						{
-							SCRIPTCountFramesInSpline(instance);
-							SCRIPT_InstanceSplineSet(instance, -1, NULL, NULL, NULL);
-							instance->flags = (instance->flags ^ 0x1000000) | 0x100000;
-						}
-
-						instance->lightGroup = (unsigned char)intro->rotation.pad;
-						instance->spectralLightGroup = intro->specturalLightGroup;
-
-						INSTANCE_InsertInstanceGroup(gameTrackerX.instanceList, instance);
-						OBTABLE_GetInstanceCollideFunc(instance);
-						OBTABLE_GetInstanceProcessFunc(instance);
-						OBTABLE_GetInstanceQueryFunc(instance);
-						OBTABLE_GetInstanceMessageFunc(instance);
-						OBTABLE_GetInstanceAdditionalCollideFunc(instance);
-
-						if (!(intro->flags & 0x10))
-						{
-							OBTABLE_InstanceInit(instance);
-						}
-
-						MORPH_SetupInstanceFlags(instance);
-
-						if ((intro->flags & 0x80))
-						{
-							instance->flags |= 0x800;
-							instance->flags2 |= 0x20000000;
-
-							if ((object->oflags2 & 0x80000))
-							{
-								instance->flags2 |= 0x10000000;
-							}
-						}
-						
-						if (SCRIPT_GetMultiSpline(instance, NULL, NULL) == NULL)
-						{
-							instance->flags = (instance->flags & 0xFDFFFFFF) | 0x100000;
-						}
-						else
-						{
-							spline = SCRIPT_GetMultiSpline(instance, NULL, NULL);
-							savedIntroSpline = SAVE_GetIntroSpline(instance);
-
-							if (savedIntroSpline != NULL)
-							{
-								SCRIPT_InstanceSplineSet(instance, savedIntroSpline->splineKeyFrame, NULL, NULL, NULL);
-
-								instance->oldPos = instance->position;
-								instance->splineFlags = savedIntroSpline->splineFlags;
-								instance->clipBeg = savedIntroSpline->splineClipBeg;
-								instance->clipEnd = savedIntroSpline->splineClipEnd;
-
-								if ((instance->splineFlags & 0x80))
-								{
-									instance->flags |= 0x1000000;
-								}
-								
-								if ((instance->splineFlags & 0x100))
-								{
-									instance->flags |= 0x2000000;
-								}
-								
-								if ((savedIntroSpline->splineFlags & 0x10))
-								{
-									if (spline->positional != NULL)
-									{
-										spline->positional->flags |= 0x1;
-									}
-						
-									if (spline->rotational != NULL)
-									{
-										spline->rotational->flags |= 0x1;
-									}
-
-									if (spline->scaling != NULL)
-									{
-										spline->scaling->flags |= 0x1;
-									}
-
-									if(spline->color != NULL)
-									{
-										spline->color->flags |= 0x1;
-									}
-								}
-								else if((instance->splineFlags & 0x20))
-								{
-									if (spline->positional != NULL)
-									{
-										spline->positional->flags |= 0x2;
-									}
-
-									if (spline->rotational != NULL)
-									{
-										spline->rotational->flags |= 0x2;
-									}
-
-									if (spline->scaling != NULL)
-									{
-										spline->scaling->flags |= 0x2;
-									}
-
-									if (spline->color != NULL)
-									{
-										spline->color->flags |= 0x2;
-									}
-								}
-								else if ((instance->splineFlags & 0x40))
-								{
-									if (spline->positional != NULL)
-									{
-										spline->positional->flags |= 0x4;
-									}
-
-									if (spline->rotational != NULL)
-									{
-										spline->rotational->flags |= 0x4;
-									}
-
-									if (spline->scaling != NULL)
-									{
-										spline->scaling->flags |= 0x4;
-									}
-
-									if (spline->color != NULL)
-									{
-										spline->color->flags |= 0x4;
-									}
-								}
-							}
-						}
-						
-						EVENT_AddInstanceToInstanceList(instance);
-						
-						INSTANCE_ProcessIntro(instance);
-						INSTANCE_InitEffects(instance, object);
-						
-						savedIntroSmall = SAVE_GetSavedSmallIntro(instance);
-
-						if (savedIntroSmall != NULL)
-						{
-							INSTANCE_Post(instance, 0x100007, SetControlSaveDataData((savedIntroSmall->shiftedSaveSize << 2) - 4, savedIntroSmall + 1));
-						}
-	
-						return instance;
+						INSTANCE_BuildStaticShadow(instance);
 					}
+
+					instance->scale.x = 4096;
+					instance->scale.y = 4096;
+					instance->scale.z = 4096;
+
+					if ((intro->flags & 0x2000))
+					{
+						instance->flags |= 0x400;
+					}
+
+					if ((intro->flags & 0x10000))
+					{
+						instance->flags2 |= 0x20000;
+					}
+
+					if (attachInst != NULL)
+					{
+						INSTANCE_ForceActive(attachInst);
+						attachInst->flags2 |= 0x80;
+					}
+
+					if ((object->oflags2 & 0x80))
+					{
+						instance->flags |= 0x800;
+					}
+
+					if ((intro->flags & 0x800) && object->id == -1)
+					{
+						SCRIPTCountFramesInSpline(instance);
+						SCRIPT_InstanceSplineSet(instance, -1, NULL, NULL, NULL);
+						instance->flags = (instance->flags ^ 0x1000000) | 0x100000;
+					}
+
+					instance->lightGroup = (unsigned char)intro->rotation.pad;
+					instance->spectralLightGroup = intro->specturalLightGroup;
+
+					INSTANCE_InsertInstanceGroup(gameTrackerX.instanceList, instance);
+					OBTABLE_GetInstanceCollideFunc(instance);
+					OBTABLE_GetInstanceProcessFunc(instance);
+					OBTABLE_GetInstanceQueryFunc(instance);
+					OBTABLE_GetInstanceMessageFunc(instance);
+					OBTABLE_GetInstanceAdditionalCollideFunc(instance);
+
+					if (!(intro->flags & 0x10))
+					{
+						OBTABLE_InstanceInit(instance);
+					}
+
+					MORPH_SetupInstanceFlags(instance);
+
+					if ((intro->flags & 0x80))
+					{
+						instance->flags |= 0x800;
+						instance->flags2 |= 0x20000000;
+
+						if ((object->oflags2 & 0x80000))
+						{
+							instance->flags2 |= 0x10000000;
+						}
+					}
+
+					if (SCRIPT_GetMultiSpline(instance, NULL, NULL) == NULL)
+					{
+						instance->flags = (instance->flags & 0xFDFFFFFF) | 0x100000;
+					}
+					else
+					{
+						spline = SCRIPT_GetMultiSpline(instance, NULL, NULL);
+						savedIntroSpline = SAVE_GetIntroSpline(instance);
+
+						if (savedIntroSpline != NULL)
+						{
+							SCRIPT_InstanceSplineSet(instance, savedIntroSpline->splineKeyFrame, NULL, NULL, NULL);
+
+							instance->oldPos = instance->position;
+							instance->splineFlags = savedIntroSpline->splineFlags;
+							instance->clipBeg = savedIntroSpline->splineClipBeg;
+							instance->clipEnd = savedIntroSpline->splineClipEnd;
+
+							if ((instance->splineFlags & 0x80))
+							{
+								instance->flags |= 0x1000000;
+							}
+
+							if ((instance->splineFlags & 0x100))
+							{
+								instance->flags |= 0x2000000;
+							}
+
+							if ((savedIntroSpline->splineFlags & 0x10))
+							{
+								if (spline->positional != NULL)
+								{
+									spline->positional->flags |= 0x1;
+								}
+
+								if (spline->rotational != NULL)
+								{
+									spline->rotational->flags |= 0x1;
+								}
+
+								if (spline->scaling != NULL)
+								{
+									spline->scaling->flags |= 0x1;
+								}
+
+								if (spline->color != NULL)
+								{
+									spline->color->flags |= 0x1;
+								}
+							}
+							else if ((instance->splineFlags & 0x20))
+							{
+								if (spline->positional != NULL)
+								{
+									spline->positional->flags |= 0x2;
+								}
+
+								if (spline->rotational != NULL)
+								{
+									spline->rotational->flags |= 0x2;
+								}
+
+								if (spline->scaling != NULL)
+								{
+									spline->scaling->flags |= 0x2;
+								}
+
+								if (spline->color != NULL)
+								{
+									spline->color->flags |= 0x2;
+								}
+							}
+							else if ((instance->splineFlags & 0x40))
+							{
+								if (spline->positional != NULL)
+								{
+									spline->positional->flags |= 0x4;
+								}
+
+								if (spline->rotational != NULL)
+								{
+									spline->rotational->flags |= 0x4;
+								}
+
+								if (spline->scaling != NULL)
+								{
+									spline->scaling->flags |= 0x4;
+								}
+
+								if (spline->color != NULL)
+								{
+									spline->color->flags |= 0x4;
+								}
+							}
+						}
+					}
+
+					EVENT_AddInstanceToInstanceList(instance);
+
+					INSTANCE_ProcessIntro(instance);
+					INSTANCE_InitEffects(instance, object);
+
+					savedIntroSmall = SAVE_GetSavedSmallIntro(instance);
+
+					if (savedIntroSmall != NULL)
+					{
+						INSTANCE_Post(instance, 0x100007, SetControlSaveDataData((savedIntroSmall->shiftedSaveSize << 2) - 4, savedIntroSmall + 1));
+					}
+
+					return instance;
 				}
 			}
 		}
