@@ -1,8 +1,26 @@
 #ifndef SAVEINFO_H
 #define SAVEINFO_H
 
-#include "core.h"
+#include "CORE.H"
 #include "MONSTER/MONAPI.H"
+
+struct SavedIntroSmall 
+{
+	unsigned char savedID; // size=0, offset=0
+	unsigned char shiftedSaveSize; // size=0, offset=1
+	short introUniqueID; // size=0, offset=2
+};
+
+struct SavedIntroSpline 
+{
+	unsigned char savedID; // size=0, offset=0
+	unsigned char shiftedSaveSize; // size=0, offset=1
+	short introUniqueID; // size=0, offset=2
+	short splineFlags; // size=0, offset=4
+	short splineKeyFrame; // size=0, offset=6
+	short splineClipBeg; // size=0, offset=8
+	short splineClipEnd; // size=0, offset=10
+};
 
 struct SavedBasic // hashcode: 0x6198E1EF (dec: 1637409263)
 {

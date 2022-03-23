@@ -1,4 +1,4 @@
-#include "THISDUST.H"
+#include "CORE.H"
 #include "STATE.H"
 
 
@@ -928,6 +928,7 @@ void G2EmulationInstanceSwitchAnimation(struct _Instance *instance, int CurrentS
 // void /*$ra*/ G2EmulationInstanceSwitchAnimationAlpha(struct _Instance *instance /*$a0*/, int CurrentSection /*$a1*/, int NewAnim /*$a2*/, int NewFrame /*$a3*/, int Frames /*stack 16*/, int Mode /*stack 20*/, int AlphaTable /*stack 24*/)
 void G2EmulationInstanceSwitchAnimationAlpha(struct _Instance *instance, int CurrentSection, int NewAnim, int NewFrame, int Frames, int Mode, int AlphaTable)
 { // line 1057, offset 0x80071aa0
+#if defined(PC_VERSION)
 	struct _G2AnimSection_Type* v7; // esi
 	struct _G2AnimKeylist_Type* Keylist; // ebx
 
@@ -948,6 +949,7 @@ void G2EmulationInstanceSwitchAnimationAlpha(struct _Instance *instance, int Cur
 		G2AnimSection_SetPaused(v7);
 	}
 	G2AnimSection_SetAlphaTable(&instance->anim.section[(unsigned __int8)CurrentSection], (&table)[AlphaTable]);
+#endif
 }
 
 

@@ -1,6 +1,13 @@
 #ifndef STATE_H
 #define STATE_H
 
+typedef void (*TDRFuncPtr_StateSwitchStateCharacterData1NewProcess)();
+
+typedef void (*TDRFuncPtr_StateSwitchStateCharacterDataDefault1NewProcess)();
+
+typedef void (*TDRFuncPtr_StateSwitchStateData2NewProcess)();
+
+typedef void (*TDRFuncPtr_StateSwitchStateDataDefault2NewProcess)();
 
 extern void InitMessageQueue(struct __MessageQueue *In); // 0x8007071C
 
@@ -145,17 +152,5 @@ extern void StateSwitchStateData(struct __CharacterState *In, int CurrentSection
 extern void StateSwitchStateCharacterData(struct __CharacterState *In, TDRFuncPtr_StateSwitchStateCharacterData1NewProcess NewProcess, int Data); // 0x8007265C
 
 extern void StateGovernState(struct __CharacterState *In, int Frames); // 0x80072750
-
-
-typedef void (*TDRFuncPtr_StateSwitchStateCharacterData1NewProcess)();
-
-typedef void (*TDRFuncPtr_StateSwitchStateCharacterDataDefault1NewProcess)();
-
-typedef void (*TDRFuncPtr_StateSwitchStateData2NewProcess)();
-
-typedef void (*TDRFuncPtr_StateSwitchStateDataDefault2NewProcess)();
-
-
-
 
 #endif

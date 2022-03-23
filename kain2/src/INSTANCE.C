@@ -3,6 +3,12 @@
 #include "OBTABLE.H"
 #include "GAMELOOP.H"
 #include "SAVEINFO.H"
+#include "LIGHT3D.H"
+#include "SCRIPT.H"
+#include "OBTABLE.H"
+#include "SPLINE.H"
+#include "EVENT.H"
+#include "STATE.H"
 
 #ifdef PC_VERSION
 #pragma warning(disable: 4101)
@@ -776,6 +782,7 @@ struct INICommand* INSTANCE_GetIntroCommand(struct INICommand* command, int cmd)
 	}
 
 	return 0;
+
 #elif defined(PC_VERSION)
 	struct INICommand* result; // eax
 	__int16 v3; // cx
@@ -895,35 +902,33 @@ void INSTANCE_InitEffects(struct _Instance* instance, struct Object* object)
 
 struct _Instance* INSTANCE_IntroduceInstance(struct Intro* intro, short streamUnitID)
 { 
-	struct Object* object; // $s6
-	struct _Instance* instance; // $s0
-	struct _Instance* attachInst; // $s5
-	struct _ObjectTracker* objectTracker; // $s1
-	struct INICommand* index; // $v0
-	long attachedUniqueID; // $s4
-	struct SavedIntroSpline* savedIntroSpline; // $s1
-	struct MultiSpline* spline; // $s2
-	struct SavedIntroSmall* savedIntroSmall; // $v0
+	struct Object* object;
+	struct _Instance* instance;
+	struct _Instance* attachInst;
+	struct _ObjectTracker* objectTracker;
+	struct INICommand* index;
+	long attachedUniqueID;
+	struct SavedIntroSpline* savedIntroSpline;
+	struct MultiSpline* spline;
+	struct SavedIntroSmall* savedIntroSmall;
 
-	//s2 = intro
 	attachInst = NULL;
-	//s3 = streamUnitID
 	index = NULL;
+
 	if (!(INSTANCE_Introduced(intro, streamUnitID)))
 	{
 		attachedUniqueID = 0;
 		index = INSTANCE_GetIntroCommand(index, 26);
+
 		if (index != NULL)
 		{
 			attachedUniqueID = index->parameter[0];
 		}
 		
-		//loc_80032E08
 		objectTracker = STREAM_GetObjectTracker(intro->name);
 		
 		if (objectTracker != NULL)
 		{
-			//v0 = objectTracker->objectStatus
 			object = objectTracker->object;
 
 			if (objectTracker->objectStatus == 2)
@@ -935,7 +940,6 @@ struct _Instance* INSTANCE_IntroduceInstance(struct Intro* intro, short streamUn
 					attachInst = INSTANCE_Find(attachedUniqueID);
 				}
 
-				//v0 = 0
 				if (attachInst != NULL)
 				{
 					if((object->oflags2 & 0x10000000))
@@ -947,466 +951,227 @@ struct _Instance* INSTANCE_IntroduceInstance(struct Intro* intro, short streamUn
 							return 0;
 						}
 					}
-					//loc_80032E78
-
+					
 					instance = INSTANCE_NewInstance(gameTrackerX.instanceList);
-					//a0 = instance
+					
 					if (instance != NULL)
 					{
-						//v0 = intro->flags
-						//a1 = object
 						intro->flags |= 0x8;
+						
 						objectTracker->numInUse++;
+						
 						INSTANCE_DefaultInit(instance, object, 0);
+						
 						strcpy(instance->introName, intro->name);
+						
+						instance->introUniqueID = intro->UniqueID;
+						instance->introNum = intro->intronum;
+						instance->birthStreamUnitID = streamUnitID;
+						instance->currentStreamUnitID = streamUnitID;
+						
+						intro->instance = instance;
+						
+						instance->intro = intro;
+						instance->introData = intro->multiSpline;
+						instance->position = intro->position;
 
+						if (gameTrackerX.gameData.asmData.MorphType == 1)
+						{
+							if (intro->spectralPosition.x != 0 && intro->spectralPosition.y != 0 && intro->spectralPosition.z != 0)
+							{
+								instance->position.x = intro->position.x + intro->spectralPosition.x;
+								instance->position.y = intro->position.y + intro->spectralPosition.y;
+								instance->position.z = intro->position.z + intro->spectralPosition.z;
+							}
+						}
+						
+						instance->initialPos = instance->position;
+						instance->oldPos = intro->position;
+
+						LIGHT_GetAmbient((struct _ColorType*)&instance->light_color, instance);
+
+						instance->rotation = intro->rotation;
+						if ((instance->object->oflags & 0x100))
+						{
+							INSTANCE_BuildStaticShadow(instance);
+						}
+						
+						instance->scale.x = 4096;
+						instance->scale.y = 4096;
+						instance->scale.z = 4096;
+
+						if ((intro->flags & 0x2000))
+						{
+							instance->flags |= 0x400;
+						}
+						
+						if ((intro->flags & 0x10000))
+						{
+							instance->flags2 |= 0x20000;
+						}
+						
+						if (attachInst != NULL)
+						{
+							INSTANCE_ForceActive(attachInst);
+							attachInst->flags2 |= 0x80;
+						}
+						
+						if ((object->oflags2 & 0x80))
+						{
+							instance->flags |= 0x800;
+						}
+						
+						if ((intro->flags & 0x800) && object->id == -1)
+						{
+							SCRIPTCountFramesInSpline(instance);
+							SCRIPT_InstanceSplineSet(instance, -1, NULL, NULL, NULL);
+							instance->flags = (instance->flags ^ 0x1000000) | 0x100000;
+						}
+
+						instance->lightGroup = (unsigned char)intro->rotation.pad;
+						instance->spectralLightGroup = intro->specturalLightGroup;
+
+						INSTANCE_InsertInstanceGroup(gameTrackerX.instanceList, instance);
+						OBTABLE_GetInstanceCollideFunc(instance);
+						OBTABLE_GetInstanceProcessFunc(instance);
+						OBTABLE_GetInstanceQueryFunc(instance);
+						OBTABLE_GetInstanceMessageFunc(instance);
+						OBTABLE_GetInstanceAdditionalCollideFunc(instance);
+
+						if (!(intro->flags & 0x10))
+						{
+							OBTABLE_InstanceInit(instance);
+						}
+
+						MORPH_SetupInstanceFlags(instance);
+
+						if ((intro->flags & 0x80))
+						{
+							instance->flags |= 0x800;
+							instance->flags2 |= 0x20000000;
+
+							if ((object->oflags2 & 0x80000))
+							{
+								instance->flags2 |= 0x10000000;
+							}
+						}
+						
+						if (SCRIPT_GetMultiSpline(instance, NULL, NULL) == NULL)
+						{
+							instance->flags = (instance->flags & 0xFDFFFFFF) | 0x100000;
+						}
+						else
+						{
+							spline = SCRIPT_GetMultiSpline(instance, NULL, NULL);
+							savedIntroSpline = SAVE_GetIntroSpline(instance);
+
+							if (savedIntroSpline != NULL)
+							{
+								SCRIPT_InstanceSplineSet(instance, savedIntroSpline->splineKeyFrame, NULL, NULL, NULL);
+
+								instance->oldPos = instance->position;
+								instance->splineFlags = savedIntroSpline->splineFlags;
+								instance->clipBeg = savedIntroSpline->splineClipBeg;
+								instance->clipEnd = savedIntroSpline->splineClipEnd;
+
+								if ((instance->splineFlags & 0x80))
+								{
+									instance->flags |= 0x1000000;
+								}
+								
+								if ((instance->splineFlags & 0x100))
+								{
+									instance->flags |= 0x2000000;
+								}
+								
+								if ((savedIntroSpline->splineFlags & 0x10))
+								{
+									if (spline->positional != NULL)
+									{
+										spline->positional->flags |= 0x1;
+									}
+						
+									if (spline->rotational != NULL)
+									{
+										spline->rotational->flags |= 0x1;
+									}
+
+									if (spline->scaling != NULL)
+									{
+										spline->scaling->flags |= 0x1;
+									}
+
+									if(spline->color != NULL)
+									{
+										spline->color->flags |= 0x1;
+									}
+								}
+								else if((instance->splineFlags & 0x20))
+								{
+									if (spline->positional != NULL)
+									{
+										spline->positional->flags |= 0x2;
+									}
+
+									if (spline->rotational != NULL)
+									{
+										spline->rotational->flags |= 0x2;
+									}
+
+									if (spline->scaling != NULL)
+									{
+										spline->scaling->flags |= 0x2;
+									}
+
+									if (spline->color != NULL)
+									{
+										spline->color->flags |= 0x2;
+									}
+								}
+								else if ((instance->splineFlags & 0x40))
+								{
+									if (spline->positional != NULL)
+									{
+										spline->positional->flags |= 0x4;
+									}
+
+									if (spline->rotational != NULL)
+									{
+										spline->rotational->flags |= 0x4;
+									}
+
+									if (spline->scaling != NULL)
+									{
+										spline->scaling->flags |= 0x4;
+									}
+
+									if (spline->color != NULL)
+									{
+										spline->color->flags |= 0x4;
+									}
+								}
+							}
+						}
+						
+						EVENT_AddInstanceToInstanceList(instance);
+						
+						INSTANCE_ProcessIntro(instance);
+						INSTANCE_InitEffects(instance, object);
+						
+						savedIntroSmall = SAVE_GetSavedSmallIntro(instance);
+
+						if (savedIntroSmall != NULL)
+						{
+							INSTANCE_Post(instance, 0x100007, SetControlSaveDataData((savedIntroSmall->shiftedSaveSize << 2) - 4, savedIntroSmall + 1));
+						}
+	
+						return instance;
 					}
-					//loc_8003349C
 				}
-				//loc_800334A0
 			}
-			//loc_800334A0
 		}
 	}
-	//loc_800334A0
-#if 0
-		lw      $v0, 0x14($s2)
-		sw      $v0, 0x3C($s0)
-		lw      $v0, 0x10($s2)
-		sw      $s3, 0x34($s0)
-		sw      $s3, 0x38($s0)
-		sw      $v0, 0x30($s0)
-		sw      $s0, 0x34($s2)
-		sw      $s2, 0x20($s0)
-		lw      $v0, 0x30($s2)
-		nop
-		sw      $v0, 0x28($s0)
-		ulw     $t0, 0x20($s2)
-		lh      $t1, 0x24($s2)
-		usw     $t0, 0x5C($s0)
-		sh      $t1, 0x60($s0)
-		lh      $v1, -0x422E($gp)
-		li      $v0, 1
-		bne     $v1, $v0, loc_80032F78
-		addiu   $a0, $s0, 0x294
-		lw      $v0, 0x44($s2)
-		nop
-		bnez    $v0, loc_80032F38
-		nop
-		lh      $v0, 0x48($s2)
-		nop
-		beqz    $v0, loc_80032F7C
-		move    $a1, $s0
-
-		loc_80032F38 :
-	lhu     $v0, 0x20($s2)
-		lhu     $v1, 0x44($s2)
-		nop
-		addu    $v0, $v1
-		sh      $v0, 0x5C($s0)
-		lhu     $v0, 0x22($s2)
-		lhu     $v1, 0x46($s2)
-		nop
-		addu    $v0, $v1
-		sh      $v0, 0x5E($s0)
-		lhu     $v0, 0x24($s2)
-		lhu     $v1, 0x48($s2)
-		nop
-		addu    $v0, $v1
-		sh      $v0, 0x60($s0)
-		addiu   $a0, $s0, 0x294
-
-		loc_80032F78:
-	move    $a1, $s0
-
-		loc_80032F7C :
-	ulw     $t0, 0x5C($s0)
-		lh      $t1, 0x60($s0)
-		usw     $t0, 0x6E($s0)
-		sh      $t1, 0x72($s0)
-		ulw     $t0, 0x20($s2)
-		lh      $t1, 0x24($s2)
-		usw     $t0, 0x64($s0)
-		sh      $t1, 0x68($s0)
-		jal     sub_80036050
-		sw      $s4, 0x8C($s0)
-		ulw     $t0, 0x18($s2)
-		ulw     $t1, 0x1C($s2)
-		usw     $t0, 0x74($s0)
-		usw     $t1, 0x78($s0)
-		lw      $v0, 0x1C($s0)
-		nop
-		lw      $v0, 0($v0)
-		nop
-		andi    $v0, 0x100
-		beqz    $v0, loc_80032FFC
-		li      $v0, 0x1000
-		jal     nullsub_5
-		move    $a0, $s0
-		li      $v0, 0x1000
-
-		loc_80032FFC:
-	sh      $v0, 0x84($s0)
-		sh      $v0, 0x86($s0)
-		sh      $v0, 0x88($s0)
-		lw      $v0, 0x2C($s2)
-		nop
-		andi    $v0, 0x2000
-		beqz    $v0, loc_8003302C
-		nop
-		lw      $v0, 0x14($s0)
-		nop
-		ori     $v0, 0x400
-		sw      $v0, 0x14($s0)
-
-		loc_8003302C:
-	lw      $v0, 0x2C($s2)
-		lui     $v1, 1
-		and $v0, $v1
-		beqz    $v0, loc_80033050
-		lui     $v1, 2
-		lw      $v0, 0x18($s0)
-		nop
-		or $v0, $v1
-		sw      $v0, 0x18($s0)
-
-		loc_80033050:
-	beqz    $s5, loc_80033070
-		nop
-		jal     sub_80032308
-		move    $a0, $s5
-		lw      $v0, 0x18($s5)
-		nop
-		ori     $v0, 0x80
-		sw      $v0, 0x18($s5)
-
-		loc_80033070:
-	lw      $v0, 0x2C($s6)
-		nop
-		andi    $v0, 0x80
-		beqz    $v0, loc_80033094
-		nop
-		lw      $v0, 0x14($s0)
-		nop
-		ori     $v0, 0x800
-		sw      $v0, 0x14($s0)
-
-		loc_80033094:
-	lw      $v0, 0x2C($s2)
-		nop
-		andi    $v0, 0x800
-		beqz    $v0, loc_800330F4
-		li      $v0, 0xFFFFFFFF
-		lh      $v1, 4($s6)
-		nop
-		bne     $v1, $v0, loc_800330F4
-		nop
-		jal     sub_8003CF8C
-		move    $a0, $s0
-		move    $a0, $s0
-		sll     $v0, 16
-		sra     $a1, $v0, 16
-		move    $a2, $zero
-		move    $a3, $a2
-		jal     sub_8003D4CC
-		sw      $zero, 0x18 + var_8($sp)
-		lw      $v0, 0x14($s0)
-		lui     $v1, 0x100
-		xor $v0, $v1
-		lui     $v1, 0x10
-		or $v0, $v1
-		sw      $v0, 0x14($s0)
-
-		loc_800330F4:
-	lbu     $v0, 0x1E($s2)
-		nop
-		sb      $v0, 0x62($s0)
-		lbu     $v0, 0x40($s2)
-		nop
-		sb      $v0, 0x6A($s0)
-		lw      $a0, -0x4204($gp)//gameTrackerX.instanceList//gameTrackerX.instanceList
-		jal     sub_80032808
-		move    $a1, $s0
-		jal     sub_8003E09C
-		move    $a0, $s0
-		jal     sub_8003E124
-		move    $a0, $s0
-		jal     sub_8003E16C
-		move    $a0, $s0
-		jal     sub_8003E1B4
-		move    $a0, $s0
-		jal     sub_8003E0E4
-		move    $a0, $s0
-		lw      $v0, 0x2C($s2)
-		nop
-		andi    $v0, 0x10
-		bnez    $v0, loc_8003315C
-		nop
-		jal     sub_8003DFB8
-		move    $a0, $s0
-
-		loc_8003315C :
-	jal     sub_8005C66C
-		move    $a0, $s0
-		lw      $v0, 0x2C($s2)
-		nop
-		andi    $v0, 0x80
-		beqz    $v0, loc_800331B4
-		move    $a0, $s0
-		lw      $v0, 0x14($s0)
-		lw      $v1, 0x18($s0)
-		ori     $v0, 0x800
-		sw      $v0, 0x14($s0)
-		lui     $v0, 0x2000
-		or $a0, $v1, $v0
-		sw      $a0, 0x18($s0)
-		lw      $v0, 0x2C($s6)
-		lui     $v1, 8
-		and $v0, $v1
-		beqz    $v0, loc_800331B0
-		lui     $v0, 0x1000
-		or $v0, $a0, $v0
-		sw      $v0, 0x18($s0)
-
-		loc_800331B0:
-	move    $a0, $s0
-
-		loc_800331B4 :
-	move    $a1, $zero
-		jal     sub_8003D1AC
-		move    $a2, $a1
-		bnez    $v0, loc_800331E8
-		move    $a1, $zero
-		lui     $v0, 0xFDFF
-		lw      $v1, 0x14($s0)
-		li      $v0, 0xFDFFFFFF
-		and $v1, $v0
-		lui     $v0, 0x10
-		or $v1, $v0
-		j       loc_80033440
-		sw      $v1, 0x14($s0)
-
-		loc_800331E8:
-	move    $a0, $s0
-		jal     sub_8003D1AC
-		move    $a2, $a1
-		move    $a0, $s0
-		jal     sub_800B6670
-		move    $s2, $v0
-		move    $s1, $v0
-		beqz    $s1, loc_80033440
-		move    $a2, $zero
-		move    $a0, $s0
-		lh      $a1, 6($s1)
-		move    $a3, $a2
-		jal     sub_8003D4CC
-		sw      $zero, 0x18 + var_8($sp)
-		ulw     $t0, 0x5C($s0)
-		lh      $t1, 0x60($s0)
-		usw     $t0, 0x64($s0)
-		sh      $t1, 0x68($s0)
-		lhu     $v0, 4($s1)
-		nop
-		sh      $v0, 0x280($s0)
-		lhu     $v0, 8($s1)
-		nop
-		sh      $v0, 0x284($s0)
-		lhu     $v0, 0x280($s0)
-		lhu     $v1, 0xA($s1)
-		andi    $v0, 0x80
-		beqz    $v0, loc_80033274
-		sh      $v1, 0x286($s0)
-		lw      $v0, 0x14($s0)
-		lui     $v1, 0x100
-		or $v0, $v1
-		sw      $v0, 0x14($s0)
-
-		loc_80033274:
-	lhu     $v0, 0x280($s0)
-		nop
-		andi    $v0, 0x100
-		beqz    $v0, loc_80033298
-		lui     $v1, 0x200
-		lw      $v0, 0x14($s0)
-		nop
-		or $v0, $v1
-		sw      $v0, 0x14($s0)
-
-		loc_80033298:
-	lhu     $v0, 4($s1)
-		nop
-		andi    $v0, 0x10
-		beqz    $v0, loc_80033328
-		nop
-		lw      $v1, 0($s2)
-		nop
-		beqz    $v1, loc_800332CC
-		nop
-		lbu     $v0, 7($v1)
-		nop
-		ori     $v0, 1
-		sb      $v0, 7($v1)
-
-		loc_800332CC:
-	lw      $v1, 4($s2)
-		nop
-		beqz    $v1, loc_800332EC
-		nop
-		lbu     $v0, 7($v1)
-		nop
-		ori     $v0, 1
-		sb      $v0, 7($v1)
-
-		loc_800332EC:
-	lw      $v1, 8($s2)
-		nop
-		beqz    $v1, loc_8003330C
-		nop
-		lbu     $v0, 7($v1)
-		nop
-		ori     $v0, 1
-		sb      $v0, 7($v1)
-
-		loc_8003330C:
-	lw      $v1, 0xC($s2)
-		nop
-		beqz    $v1, loc_80033440
-		nop
-		lbu     $v0, 7($v1)
-		j       loc_8003343C
-		ori     $v0, 1
-
-		loc_80033328:
-	lhu     $v1, 0x280($s0)
-		nop
-		andi    $v0, $v1, 0x20
-		beqz    $v0, loc_800333B8
-		andi    $v0, $v1, 0x40
-		lw      $v1, 0($s2)
-		nop
-		beqz    $v1, loc_8003335C
-		nop
-		lbu     $v0, 7($v1)
-		nop
-		ori     $v0, 2
-		sb      $v0, 7($v1)
-
-		loc_8003335C:
-	lw      $v1, 4($s2)
-		nop
-		beqz    $v1, loc_8003337C
-		nop
-		lbu     $v0, 7($v1)
-		nop
-		ori     $v0, 2
-		sb      $v0, 7($v1)
-
-		loc_8003337C:
-	lw      $v1, 8($s2)
-		nop
-		beqz    $v1, loc_8003339C
-		nop
-		lbu     $v0, 7($v1)
-		nop
-		ori     $v0, 2
-		sb      $v0, 7($v1)
-
-		loc_8003339C:
-	lw      $v1, 0xC($s2)
-		nop
-		beqz    $v1, loc_80033440
-		nop
-		lbu     $v0, 7($v1)
-		j       loc_8003343C
-		ori     $v0, 2
-
-		loc_800333B8:
-	beqz    $v0, loc_80033440
-		nop
-		lw      $v1, 0($s2)
-		nop
-		beqz    $v1, loc_800333E0
-		nop
-		lbu     $v0, 7($v1)
-		nop
-		ori     $v0, 4
-		sb      $v0, 7($v1)
-
-		loc_800333E0:
-	lw      $v1, 4($s2)
-		nop
-		beqz    $v1, loc_80033400
-		nop
-		lbu     $v0, 7($v1)
-		nop
-		ori     $v0, 4
-		sb      $v0, 7($v1)
-
-		loc_80033400:
-	lw      $v1, 8($s2)
-		nop
-		beqz    $v1, loc_80033420
-		nop
-		lbu     $v0, 7($v1)
-		nop
-		ori     $v0, 4
-		sb      $v0, 7($v1)
-
-		loc_80033420:
-	lw      $v1, 0xC($s2)
-		nop
-		beqz    $v1, loc_80033440
-		nop
-		lbu     $v0, 7($v1)
-		nop
-		ori     $v0, 4
-
-		loc_8003343C:
-	sb      $v0, 7($v1)
-
-		loc_80033440 :
-		jal     sub_80067CA0
-		move    $a0, $s0
-		jal     sub_80032CA4
-		move    $a0, $s0
-		move    $a0, $s0
-		jal     sub_80032D20
-		move    $a1, $s6
-		jal     sub_800B6604
-		move    $a0, $s0
-		beqz    $v0, loc_80033494
-		addiu   $a1, $v0, 4
-		lbu     $a0, 1($v0)
-		nop
-		sll     $a0, 2
-		jal     sub_80071A40
-		addiu   $a0, -4
-		move    $a0, $s0
-		li      $a1, 0x100007
-		jal     sub_80034684
-		move    $a2, $v0
-
-		loc_80033494 :
-	j       loc_800334A0
-		move    $v0, $s0
-
-		loc_8003349C :
-	move    $v0, $zero
-
-		loc_800334A0 :
-	lw      $ra, 0x18 + var_s1C($sp)
-		lw      $s6, 0x18 + var_s18($sp)
-		lw      $s5, 0x18 + var_s14($sp)
-		lw      $s4, 0x18 + var_s10($sp)
-		lw      $s3, 0x18 + var_sC($sp)
-		lw      $s2, 0x18 + var_s8($sp)
-		lw      $s1, 0x18 + var_s4($sp)
-		lw      $s0, 0x18 + var_s0($sp)
-		jr      $ra
-		addiu   $sp, 0x38
-#endif
-
-	return null;
+	return NULL;
 }
 
 
