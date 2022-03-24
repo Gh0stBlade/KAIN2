@@ -621,7 +621,7 @@ void DrawPrim(void* p)
 	AggregatePTAGsToSplits((u_long*)p, TRUE);
 
 	DrawAggregatedSplits();
-	Emulator_EndScene();
+	//Emulator_EndScene();
 
 #if defined(PGXP)
 	/* Reset the ztable */

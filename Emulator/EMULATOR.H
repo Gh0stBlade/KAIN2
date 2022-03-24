@@ -237,14 +237,21 @@ struct ShaderID
 		blit,
 	};
 
-	ShaderType T;
+	enum ShaderType T;
 	VkPipelineShaderStageCreateInfo VS;
 	VkPipelineShaderStageCreateInfo PS;
+	VkDescriptorSetLayout DL;
+	VkSampler SS;
+	VkImageView TIV;
+	VkPipeline GP;
 };
 
 typedef void* RenderTargetID;
+
+extern ShaderID* g_shaders[];
+
 #else
-#error
+	#error
 #endif
 
 extern int vram_need_update;
@@ -304,12 +311,22 @@ extern void Emulator_CreateRasterState(int wireframe);
 extern void Emulator_WaitForPreviousFrame();
 #elif defined(VULKAN)
 extern void Emulator_CreateRasterState(int wireframe);
-extern void Emulator_CreatePipelineState(enum ShaderID::ShaderType type);
 extern void Emulator_CreateVulkanBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
 extern void Emulator_BeginPass();
+extern void Emulator_EndPass();
 extern VkImageView Emulator_CreateImageView(VkImage image, VkFormat format);
 extern unsigned int Emulator_FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
 extern void Emulator_CreateBlitShaderDescriptors();
+extern void Emulator_CreateConstantBuffers();
+extern void Emulator_CopyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
+extern void Emulator_EndSingleTimeCommands(VkCommandBuffer commandBuffer);
+extern void Emulator_TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
+extern void Emulator_UpdateProjectionConstantBuffer(float* ortho);
+extern void Emulator_CreatePipelineState(ShaderID& shader, VkPipeline* pipeline);
+
+extern ShaderID g_gte_shader_4;
+extern ShaderID g_gte_shader_8;
+extern ShaderID g_gte_shader_16;
 #endif
 
 #if defined(D3D9) || defined(XED3D)

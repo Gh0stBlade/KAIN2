@@ -17,7 +17,7 @@ struct VS_OUTPUT {
 	}
 #else
 	SamplerState samplerState : register(s0);
-	Texture2D s_texture;
+	Texture2D s_texture : register(t0);
 
 	float4 main(VS_OUTPUT In) : COLOR0 {
 		float2 color_rg = s_texture.Sample(samplerState, In.v_texcoord.xy).rg * 255.0;

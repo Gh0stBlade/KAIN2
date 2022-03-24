@@ -338,11 +338,9 @@ TextureID whiteTexture;
 	unsigned int fenceValue[RENDER_TARGET_COUNT];
 	HANDLE fenceEvent;
 #elif defined(VULKAN)
-	TextureID g_currentBoundTexture;
 	VkBuffer dynamic_vertex_buffer;
 	VkDeviceMemory dynamic_vertex_buffer_memory;
-
-	VkSampler samplerState;
+	VkDeviceSize dynamic_vertex_buffer_index;
 
 #if defined(_DEBUG)///@TODO sort me out! not all of that is for debug!
 
@@ -408,10 +406,20 @@ TextureID whiteTexture;
 	VkViewport g_viewport;
 	VkPipelineRasterizationStateCreateInfo g_rasterizer;
 	VkPipelineLayout g_pipelineLayout;
-	VkPipeline g_graphicsPipeline;
 	unsigned int frameIndex;
 	unsigned int currentFrame = 0;
 	const int MAX_FRAMES_IN_FLIGHT = 2;
+
+	std::vector<VkBuffer> uniformBuffers;
+	std::vector<VkDeviceMemory> uniformBuffersMemory;
+	VkDescriptorPool descriptorPool;
+	VkDescriptorSetLayout descriptorSetLayout;
+	std::vector<VkDescriptorSet> descriptorSets;
+
+	VkPipeline g_graphicsPipeline;
+	unsigned int g_vertexBufferMemoryBound = FALSE;
+	unsigned int imageIndex = 0;
+	bool begin_pass_flag = FALSE;
 #endif
 #endif
 
@@ -662,7 +670,7 @@ void Emulator_ResetDevice()
 	bufferInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
 	bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-	if (vkCreateBuffer(device, &bufferInfo, nullptr, &dynamic_vertex_buffer) != VK_SUCCESS) 
+	if (vkCreateBuffer(device, &bufferInfo, NULL, &dynamic_vertex_buffer) != VK_SUCCESS) 
 	{
 		eprinterr("Failed to create vertex buffer!\n");
 		assert(FALSE);
@@ -676,7 +684,7 @@ void Emulator_ResetDevice()
 	allocInfo.allocationSize = memRequirements.size;
 	allocInfo.memoryTypeIndex = Emulator_FindMemoryType(memRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
-	if (vkAllocateMemory(device, &allocInfo, nullptr, &dynamic_vertex_buffer_memory) != VK_SUCCESS) 
+	if (vkAllocateMemory(device, &allocInfo, NULL, &dynamic_vertex_buffer_memory) != VK_SUCCESS) 
 	{
 		eprinterr("Failed to allocate vertex buffer!\n");
 		assert(FALSE);
@@ -1471,62 +1479,47 @@ void Emulator_CreateVulkanDepthStencil()
 
 void Emulator_CreateVulkanRenderPass()
 {
-	std::vector<VkAttachmentDescription> attachments(2);
+	VkAttachmentDescription colorAttachment{};
+	colorAttachment.format = surfaceFormat.format;
+	colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
+	colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+	colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+	colorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+	colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+	colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+	colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 
-	attachments[0].format = surfaceFormat.format;
-	attachments[0].samples = VK_SAMPLE_COUNT_1_BIT;
-	attachments[0].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-	attachments[0].storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-	attachments[0].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-	attachments[0].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-	attachments[0].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-	attachments[0].finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+	VkAttachmentReference colorAttachmentRef{};
+	colorAttachmentRef.attachment = 0;
+	colorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
-	attachments[1].format = depthFormat;
-	attachments[1].samples = VK_SAMPLE_COUNT_1_BIT;
-	attachments[1].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-	attachments[1].storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-	attachments[1].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-	attachments[1].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-	attachments[1].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-	attachments[1].finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+	VkSubpassDescription subpass{};
+	subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
+	subpass.colorAttachmentCount = 1;
+	subpass.pColorAttachments = &colorAttachmentRef;
 
-	VkAttachmentReference colorReference;
-	memset(&colorReference, 0, sizeof(VkAttachmentReference));
-	colorReference.attachment = 0;
-	colorReference.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+	VkSubpassDependency dependency{};
+	dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
+	dependency.dstSubpass = 0;
+	dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+	dependency.srcAccessMask = 0;
+	dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+	dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
 
-	VkAttachmentReference depthReference;
-	memset(&depthReference, 0, sizeof(VkAttachmentReference));
-	depthReference.attachment = 1;
-	depthReference.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-
-	VkSubpassDescription subpassDescription;
-	memset(&subpassDescription, 0, sizeof(VkSubpassDescription));
-	subpassDescription.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
-	subpassDescription.colorAttachmentCount = 1;
-	subpassDescription.pColorAttachments = &colorReference;
-
-	std::vector<VkSubpassDependency> dependencies(1);
-
-	dependencies[0].srcSubpass = VK_SUBPASS_EXTERNAL;
-	dependencies[0].dstSubpass = 0;
-	dependencies[0].srcStageMask = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
-	dependencies[0].dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-	dependencies[0].srcAccessMask = VK_ACCESS_MEMORY_READ_BIT;
-	dependencies[0].dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-	dependencies[0].dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
-
-	VkRenderPassCreateInfo renderPassInfo = {};
+	VkRenderPassCreateInfo renderPassInfo{};
 	renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-	renderPassInfo.attachmentCount = static_cast<unsigned int>(attachments.size());
-	renderPassInfo.pAttachments = attachments.data();
+	renderPassInfo.attachmentCount = 1;
+	renderPassInfo.pAttachments = &colorAttachment;
 	renderPassInfo.subpassCount = 1;
-	renderPassInfo.pSubpasses = &subpassDescription;
-	renderPassInfo.dependencyCount = static_cast<unsigned int>(dependencies.size());
-	renderPassInfo.pDependencies = dependencies.data();
+	renderPassInfo.pSubpasses = &subpass;
+	renderPassInfo.dependencyCount = 1;
+	renderPassInfo.pDependencies = &dependency;
 
-	vkCreateRenderPass(device, &renderPassInfo, nullptr, &render_pass);
+	if (vkCreateRenderPass(device, &renderPassInfo, nullptr, &render_pass) != VK_SUCCESS) 
+	{
+		eprinterr("Failed to create render pass\n");
+		assert(FALSE);
+	}
 }
 
 void Emulator_CreateVulkanFrameBuffers()
@@ -1535,9 +1528,9 @@ void Emulator_CreateVulkanFrameBuffers()
 
 	for (unsigned int i = 0; i < swapchainImageViews.size(); i++)
 	{
-		std::vector<VkImageView> attachments(2);
+		std::vector<VkImageView> attachments(1);
 		attachments[0] = swapchainImageViews[i];
-		attachments[1] = depthImageView;
+		//attachments[1] = depthImageView;
 
 		VkFramebufferCreateInfo framebufferInfo = {};
 		framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
@@ -1581,6 +1574,144 @@ void Emulator_CreateVulkanCommandBuffers()
 		eprinterr("Failed to allocate command buffers!\n");
 		assert(FALSE);
 	}
+}
+
+void Emulator_CreateDescriptorPool()
+{
+	std::array<VkDescriptorPoolSize, 3> poolSizes{};
+	poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+	poolSizes[0].descriptorCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
+	poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	poolSizes[1].descriptorCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
+	poolSizes[2].type = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
+	poolSizes[2].descriptorCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
+
+	VkDescriptorPoolCreateInfo poolInfo{};
+	poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+	poolInfo.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
+	poolInfo.pPoolSizes = poolSizes.data();
+	poolInfo.maxSets = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
+
+	if (vkCreateDescriptorPool(device, &poolInfo, nullptr, &descriptorPool) != VK_SUCCESS) 
+	{
+		eprinterr("Failed to create descriptor pool!\n");
+	}
+}
+
+void Emulator_CreateDescriptorSetLayout() 
+{
+	VkDescriptorSetLayoutBinding uboLayoutBinding{};
+	uboLayoutBinding.binding = 0;
+	uboLayoutBinding.descriptorCount = 1;
+	uboLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+	uboLayoutBinding.pImmutableSamplers = NULL;
+	uboLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+
+	VkDescriptorSetLayoutBinding samplerLayoutBinding{};
+	samplerLayoutBinding.binding = 2;
+	samplerLayoutBinding.descriptorCount = 1;
+	samplerLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	samplerLayoutBinding.pImmutableSamplers = NULL;
+	samplerLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+
+	VkDescriptorSetLayoutBinding textureLayoutBinding{};
+	textureLayoutBinding.binding = 4;
+	textureLayoutBinding.descriptorCount = 1;
+	textureLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
+	textureLayoutBinding.pImmutableSamplers = NULL;
+	textureLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+
+	std::array<VkDescriptorSetLayoutBinding, 3> bindings = { uboLayoutBinding, samplerLayoutBinding, textureLayoutBinding };
+	VkDescriptorSetLayoutCreateInfo layoutInfo{};
+	layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+	layoutInfo.bindingCount = static_cast<uint32_t>(bindings.size());
+	layoutInfo.pBindings = bindings.data();
+
+	if (vkCreateDescriptorSetLayout(device, &layoutInfo, nullptr, &descriptorSetLayout) != VK_SUCCESS) 
+	{
+		eprinterr("Failed to create descriptor set layout!");
+		assert(FALSE);
+	}
+}
+
+void Emulator_CreateUniformBuffers()
+{
+	VkDeviceSize bufferSize = sizeof(float) * 16;
+
+	uniformBuffers.resize(MAX_FRAMES_IN_FLIGHT);
+	uniformBuffersMemory.resize(MAX_FRAMES_IN_FLIGHT);
+
+	for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) 
+	{
+		Emulator_CreateVulkanBuffer(bufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, uniformBuffers[i], uniformBuffersMemory[i]);
+	}
+}
+
+void Emulator_UpdateDescriptorSets()
+{
+	for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
+	{
+		VkDescriptorBufferInfo uniformInfo{};
+		uniformInfo.buffer = uniformBuffers[i];
+		uniformInfo.offset = 0;
+		uniformInfo.range = sizeof(float) * 16;
+
+		VkDescriptorImageInfo samplerInfo{};
+		samplerInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		samplerInfo.imageView = vramTexture.textureImageView;
+		samplerInfo.sampler = g_shaders[0]->SS;
+
+		VkDescriptorImageInfo textureInfo{};
+		textureInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		textureInfo.imageView = vramTexture.textureImageView;
+		textureInfo.sampler = VK_NULL_HANDLE;
+
+		std::array<VkWriteDescriptorSet, 3> descriptorWrites{};
+
+		descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		descriptorWrites[0].dstSet = descriptorSets[i];
+		descriptorWrites[0].dstBinding = 0;
+		descriptorWrites[0].dstArrayElement = 0;
+		descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		descriptorWrites[0].descriptorCount = 1;
+		descriptorWrites[0].pBufferInfo = &uniformInfo;
+
+		descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		descriptorWrites[1].dstSet = descriptorSets[i];
+		descriptorWrites[1].dstBinding = 2;
+		descriptorWrites[1].dstArrayElement = 0;
+		descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+		descriptorWrites[1].descriptorCount = 1;
+		descriptorWrites[1].pImageInfo = &samplerInfo;
+
+		descriptorWrites[2].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		descriptorWrites[2].dstSet = descriptorSets[i];
+		descriptorWrites[2].dstBinding = 4;
+		descriptorWrites[2].dstArrayElement = 0;
+		descriptorWrites[2].descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
+		descriptorWrites[2].descriptorCount = 1;
+		descriptorWrites[2].pImageInfo = &textureInfo;
+
+		vkUpdateDescriptorSets(device, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
+	}
+}
+
+void Emulator_CreateDescriptorSets()
+{
+	std::vector<VkDescriptorSetLayout> layouts(MAX_FRAMES_IN_FLIGHT, descriptorSetLayout);
+	VkDescriptorSetAllocateInfo allocInfo{};
+	allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+	allocInfo.descriptorPool = descriptorPool;
+	allocInfo.descriptorSetCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
+	allocInfo.pSetLayouts = layouts.data();
+
+	descriptorSets.resize(MAX_FRAMES_IN_FLIGHT);
+	if (vkAllocateDescriptorSets(device, &allocInfo, descriptorSets.data()) != VK_SUCCESS) 
+	{
+		eprinterr("Failed to allocate descriptor sets!\n");
+	}
+
+	Emulator_UpdateDescriptorSets();
 }
 
 void Emulator_CreateSyncObjects()
@@ -1657,12 +1788,15 @@ static int Emulator_InitialiseVulkanContext(char* windowName)
 	}
 
 	Emulator_CreateVulkanImageViews();
-	Emulator_CreateDepthStencilViews();
+	//Emulator_CreateDepthStencilViews();
 	Emulator_CreateVulkanRenderPass();
 	Emulator_CreateVulkanFrameBuffers();
 	Emulator_CreateVulkanCommandPool();
 	Emulator_CreateVulkanCommandBuffers();
 	Emulator_CreateSyncObjects();
+	Emulator_CreateUniformBuffers();
+	Emulator_CreateDescriptorPool();
+	Emulator_CreateDescriptorSetLayout();
 
 	return TRUE;
 }
@@ -3226,6 +3360,7 @@ ShaderID Shader_Compile_Internal(const DWORD* vs_data, const DWORD* ps_data, con
 #include "shaders/Vulkan/blit_shader_vs.h"
 #include "shaders/Vulkan/blit_shader_ps.h"
 
+ShaderID* g_shaders[] = { &g_gte_shader_4, &g_gte_shader_8, &g_gte_shader_16, &g_blit_shader };
 
 #define Shader_Compile(name) Shader_Compile_Internal((DWORD*)name##_vs, (DWORD*)name##_ps, sizeof(name##_vs), sizeof(name##_ps))
 
@@ -3266,8 +3401,6 @@ ShaderID Shader_Compile_Internal(const DWORD* vs_data, const DWORD* ps_data, con
 	shader.PS.flags = 0;
 	shader.PS.pNext = NULL;
 	shader.PS.pSpecializationInfo = NULL;
-
-	shader.T = (enum ShaderID::ShaderType)shaderType++;
 
 	if (vkCreateShaderModule(device, &createInfo, NULL, &shader.PS.module) != VK_SUCCESS)
 	{
@@ -3332,10 +3465,36 @@ ShaderID Shader_Compile_Internal(const DWORD* vs_data, const DWORD* ps_data, con
 	samplerInfo.compareOp = VK_COMPARE_OP_ALWAYS;
 	samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
 
-	if (vkCreateSampler(device, &samplerInfo, nullptr, &samplerState) != VK_SUCCESS) 
+	if (vkCreateSampler(device, &samplerInfo, nullptr, &shader.SS) != VK_SUCCESS) 
 	{
 		eprinterr("Failed to create sampler state!\n");
 	}
+
+
+	VkDescriptorSetLayoutBinding descriptorLayoutUniformBuffer = { 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1, VK_SHADER_STAGE_VERTEX_BIT, NULL };
+	VkDescriptorSetLayoutBinding descriptorLayoutSampler = { 2, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_FRAGMENT_BIT, NULL };
+	VkDescriptorSetLayoutBinding descriptorLayoutTexture = { 4, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, 1, VK_SHADER_STAGE_FRAGMENT_BIT, NULL };
+
+	VkDescriptorSetLayoutBinding bindings[] =
+	{
+		descriptorLayoutUniformBuffer,
+		descriptorLayoutSampler,
+		descriptorLayoutTexture,
+	};
+
+	VkDescriptorSetLayoutCreateInfo resourceLayoutInfo;
+	memset(&resourceLayoutInfo, 0, sizeof(VkDescriptorSetLayoutCreateInfo));
+	resourceLayoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+	resourceLayoutInfo.pNext = NULL;
+	resourceLayoutInfo.bindingCount = 3;
+	resourceLayoutInfo.pBindings = bindings;
+
+	vkCreateDescriptorSetLayout(device, &resourceLayoutInfo, NULL, &shader.DL);
+
+	Emulator_CreatePipelineState(shader, &shader.GP);
+
+	shader.T = (enum ShaderID::ShaderType)shaderType++;
+
 #undef OFFSETOF
 
 	return shader;
@@ -3351,10 +3510,18 @@ void Emulator_CreateGlobalShaders()
 	Emulator_CreateRasterState(FALSE);
 #endif
 
+#if defined(VULKAN)
+	Emulator_SetViewPort(0, 0, windowWidth, windowHeight);//For intial viewport
+#endif
+
 	g_gte_shader_4  = Shader_Compile(gte_shader_4);
 	g_gte_shader_8  = Shader_Compile(gte_shader_8);
 	g_gte_shader_16 = Shader_Compile(gte_shader_16);
 	g_blit_shader   = Shader_Compile(blit_shader);
+
+#if defined(VULKAN)
+	Emulator_CreateDescriptorSets();
+#endif
 
 #if defined(OGL) || defined(OGLES)
 	u_Projection = glGetUniformLocation(g_gte_shader_4, "Projection");
@@ -3438,14 +3605,12 @@ void Emulator_GenerateCommonTextures()
 	VkDeviceSize imageSize = texWidth * texHeight * sizeof(unsigned int);
 
 	Emulator_CreateVulkanBuffer(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, whiteTexture.stagingBuffer, whiteTexture.stagingBufferMemory);
-
-	void* data;
-	vkMapMemory(device, whiteTexture.stagingBufferMemory, 0, imageSize, 0, &data);
-	memcpy(data, &pixelData, static_cast<size_t>(imageSize));
-	vkUnmapMemory(device, whiteTexture.stagingBufferMemory);
-
 	Emulator_CreateImage(texWidth, texHeight, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, whiteTexture.textureImage, whiteTexture.textureImageMemory);
 	whiteTexture.textureImageView = Emulator_CreateImageView(whiteTexture.textureImage, VK_FORMAT_R8G8B8A8_UNORM);
+
+	Emulator_TransitionImageLayout(whiteTexture.textureImage, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+	//Emulator_CopyBufferToImage(whiteTexture.stagingBuffer, whiteTexture.textureImage, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight));
+	Emulator_TransitionImageLayout(whiteTexture.textureImage, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 #else
 	#error
 #endif
@@ -3455,9 +3620,12 @@ int Emulator_Initialise()
 {
 	memset(vram, 0, VRAM_WIDTH * VRAM_HEIGHT * sizeof(unsigned short));
 	Emulator_GenerateCommonTextures();
-	Emulator_CreateGlobalShaders();
 
-#if defined(D3D11)
+#if !defined(VULKAN)
+	Emulator_CreateGlobalShaders();
+#endif
+
+#if defined(D3D11) || defined(VULKAN)
 	Emulator_CreateConstantBuffers();
 #endif
 
@@ -3563,6 +3731,12 @@ int Emulator_Initialise()
 	Emulator_CreateVulkanBuffer(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, vramTexture.stagingBuffer, vramTexture.stagingBufferMemory);
 	Emulator_CreateImage(texWidth, texHeight, VK_FORMAT_R8G8_UNORM, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, vramTexture.textureImage, vramTexture.textureImageMemory);
 	vramTexture.textureImageView = Emulator_CreateImageView(vramTexture.textureImage, VK_FORMAT_R8G8_UNORM);
+
+	Emulator_TransitionImageLayout(vramTexture.textureImage, VK_FORMAT_R8G8_UNORM, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+	//Emulator_CopyBufferToImage(vramTexture.stagingBuffer, vramTexture.textureImage, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight));
+	Emulator_TransitionImageLayout(vramTexture.textureImage, VK_FORMAT_R8G8_UNORM, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+
+	Emulator_CreateGlobalShaders();
 #else
 	#error
 #endif
@@ -3605,7 +3779,7 @@ void Emulator_Ortho2D(float left, float right, float bottom, float top, float zn
 	///@D3D12
 	UNIMPLEMENTED();
 #elif defined(VULKAN)
-	UNIMPLEMENTED();
+	Emulator_UpdateProjectionConstantBuffer(ortho);
 #else
 	#error
 #endif
@@ -3626,9 +3800,14 @@ void Emulator_SetShader(const ShaderID &shader)
 	///@D3D12
 	UNIMPLEMENTED();
 #elif defined(VULKAN)
-	
 	g_shaderStages[VERTEX_BIT] = shader.VS;
 	g_shaderStages[FRAGMENT_BIT] = shader.PS;
+	g_graphicsPipeline = shader.GP;
+	
+	if (begin_pass_flag)
+	{
+		vkCmdBindPipeline(commandBuffers[currentFrame], VK_PIPELINE_BIND_POINT_GRAPHICS, g_graphicsPipeline);
+	}
 #else
 	#error
 #endif
@@ -3662,7 +3841,7 @@ void Emulator_SetTexture(TextureID texture, TexFormat texFormat)
 #else
 	if (g_lastBoundTexture == texture) {
 		return;
-}
+	}
 #endif
 
 #if defined(OGL) || defined(OGLES)
@@ -3676,7 +3855,7 @@ void Emulator_SetTexture(TextureID texture, TexFormat texFormat)
 	///@D3D12
 	UNIMPLEMENTED();
 #elif defined(VULKAN)
-	g_currentBoundTexture = texture;
+	
 #else
 	#error
 #endif
@@ -3970,10 +4149,7 @@ void Emulator_UpdateVRAM()
 	memcpy(sr.pData, vram, VRAM_WIDTH * VRAM_HEIGHT * sizeof(short));
 	d3dcontext->Unmap(vramBaseTexture, 0);
 #elif defined(VULKAN)
-	void* data = NULL;
-	vkMapMemory(device, vramTexture.stagingBufferMemory, 0, VRAM_WIDTH * VRAM_HEIGHT * sizeof(short), 0, &data);
-	memcpy(data, vram, VRAM_WIDTH * VRAM_HEIGHT * sizeof(short));
-	vkUnmapMemory(device, vramTexture.stagingBufferMemory);
+	
 #endif
 }
 
@@ -3987,11 +4163,6 @@ void Emulator_BlitVRAM()
 
 	Emulator_SetTexture(vramTexture, TF_16_BIT);
 	Emulator_SetShader(g_blit_shader);
-
-#if defined(VULKAN)
-	Emulator_CreatePipelineState((enum ShaderID::ShaderType)0);
-	Emulator_BeginPass();
-#endif
 
 	u_char l = activeDispEnv.disp.x / 8;
 	u_char t = activeDispEnv.disp.y / 8;
@@ -4084,7 +4255,6 @@ int Emulator_BeginScene()
 	rtvHandle.ptr = rtvHandle.ptr + (frameIndex * renderTargetDescriptorSize);
 	commandList->OMSetRenderTargets(1, &rtvHandle, FALSE, nullptr);
 	commandList->SetGraphicsRootSignature(rootSignature);
-
 #endif
 
 	Emulator_DoPollEvent();
@@ -4113,15 +4283,29 @@ int Emulator_BeginScene()
 #elif defined(D3D12)
 
 #elif defined(VULKAN)
-	
+	dynamic_vertex_buffer_index = 0;
+	Emulator_UpdateVRAM();
+	Emulator_BeginPass();
+
+	VkBuffer vertexBuffers[] = { dynamic_vertex_buffer };
+	VkDeviceSize offsets[] = { 0 };
+
+	if (g_vertexBufferMemoryBound == FALSE)
+	{
+		vkBindBufferMemory(device, dynamic_vertex_buffer, dynamic_vertex_buffer_memory, 0);
+		g_vertexBufferMemoryBound = TRUE;
+	}
+
+	vkCmdBindVertexBuffers(commandBuffers[currentFrame], 0, 1, vertexBuffers, offsets);
 #else
 	#error
 #endif
 
+#if !defined(VULKAN)
 	Emulator_UpdateVRAM();
-	Emulator_SetViewPort(0, 0, windowWidth, windowHeight);
+#endif
 
-	Emulator_SetShader(g_gte_shader_4);
+	Emulator_SetViewPort(0, 0, windowWidth, windowHeight);
 	Emulator_Ortho2D(0.0f, activeDispEnv.disp.w, activeDispEnv.disp.h, 0.0f, 0.0f, 1.0f);
 
 	begin_scene_flag = TRUE;
@@ -4130,6 +4314,7 @@ int Emulator_BeginScene()
 	{
 		Emulator_SetWireframe(TRUE);
 	}
+
 	return TRUE;
 }
 
@@ -4332,8 +4517,6 @@ void Emulator_SwapWindow()
 
 	Emulator_SaveVRAM("VRAM.TGA", 0, 0, VRAM_WIDTH, VRAM_HEIGHT, TRUE);
 #elif defined(VULKAN)
-	
-
 	VkPipelineStageFlags waitDestStageMask = VK_PIPELINE_STAGE_TRANSFER_BIT;
 
 	VkSubmitInfo submitInfo{};
@@ -4352,7 +4535,8 @@ void Emulator_SwapWindow()
 	submitInfo.signalSemaphoreCount = 1;
 	submitInfo.pSignalSemaphores = signalSemaphores;
 
-	if (vkQueueSubmit(graphicsQueue, 1, &submitInfo, inFlightFences[currentFrame]) != VK_SUCCESS)
+	VkResult vkr = vkQueueSubmit(graphicsQueue, 1, &submitInfo, inFlightFences[currentFrame]);
+	if (vkr != VK_SUCCESS)
 	{
 		eprinterr("Failed to submit queue!\n");
 		assert(FALSE);
@@ -4368,7 +4552,7 @@ void Emulator_SwapWindow()
 	presentInfo.swapchainCount = 1;
 	presentInfo.pSwapchains = swapChains;
 
-	presentInfo.pImageIndices = &frameIndex;
+	presentInfo.pImageIndices = &imageIndex;
 
 	vkQueuePresentKHR(presentQueue, &presentInfo);
 
@@ -4413,6 +4597,11 @@ void Emulator_WaitForTimestep(int count)
 
 void Emulator_EndScene()
 {
+#if defined(VULKAN)
+	dynamic_vertex_buffer_index = 0;
+	Emulator_EndPass();
+#endif
+
 	if (!begin_scene_flag)
 		return;
 
@@ -4446,15 +4635,7 @@ void Emulator_EndScene()
 	HRESULT hr = commandQueue->Signal(fence[frameIndex], fenceValue[frameIndex]);
 	assert(!FAILED(hr));
 #elif defined(VULKAN)
-	vkCmdDraw(commandBuffers[currentFrame], 3, 1, 0, 0);
 
-	vkCmdEndRenderPass(commandBuffers[currentFrame]);
-
-	if (vkEndCommandBuffer(commandBuffers[currentFrame]) != VK_SUCCESS)
-	{
-		eprinterr("Failed to end command buffer!\n");
-		assert(FALSE);
-	}
 #endif
 
 	begin_scene_flag = FALSE;
@@ -4748,6 +4929,11 @@ void Emulator_SetViewPort(int x, int y, int width, int height)
 	g_viewport.height = (float)height;
 	g_viewport.minDepth = 0.0f;
 	g_viewport.maxDepth = 1.0f;
+	
+	if (begin_pass_flag)
+	{
+		vkCmdSetViewport(commandBuffers[currentFrame], 0, 1, &g_viewport);
+	}
 #else
 	#error
 #endif
@@ -4789,6 +4975,10 @@ void Emulator_SetWireframe(bool enable)
 void Emulator_UpdateVertexBuffer(const Vertex *vertices, int num_vertices)
 {
 	assert(num_vertices <= MAX_NUM_POLY_BUFFER_VERTICES);
+
+	if (num_vertices <= 0)
+		return;
+
 #if defined(OGL) || defined(OGLES)
 	glBufferSubData(GL_ARRAY_BUFFER, 0, num_vertices * sizeof(Vertex), vertices);
 #elif defined(D3D9) || defined(XED3D)
@@ -4827,7 +5017,11 @@ void Emulator_UpdateVertexBuffer(const Vertex *vertices, int num_vertices)
 	dynamic_vertex_buffer_view.SizeInBytes = num_vertices * sizeof(Vertex);
 #elif defined(VULKAN)
 	void* data = NULL;
-	vkMapMemory(device, dynamic_vertex_buffer_memory, 0, num_vertices * sizeof(Vertex), 0, &data);
+	if (vkMapMemory(device, dynamic_vertex_buffer_memory, dynamic_vertex_buffer_index * sizeof(Vertex), num_vertices * sizeof(Vertex), 0, &data) != VK_SUCCESS)
+	{
+		eprinterr("Failed to map vertex buffer memory\n");
+		assert(FALSE);
+	}
 	memcpy(data, vertices, num_vertices * sizeof(Vertex));
 	vkUnmapMemory(device, dynamic_vertex_buffer_memory);
 #else
@@ -4839,6 +5033,8 @@ void Emulator_UpdateVertexBuffer(const Vertex *vertices, int num_vertices)
 
 void Emulator_DrawTriangles(int start_vertex, int triangles)
 {
+	if(triangles <= 0)
+		return;
 #if defined(OGL) || defined(OGLES)
 	glDrawArrays(GL_TRIANGLES, start_vertex, triangles * 3);
 #elif defined(D3D9) || defined(XED3D)
@@ -4849,7 +5045,8 @@ void Emulator_DrawTriangles(int start_vertex, int triangles)
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	commandList->DrawInstanced(triangles, 1, start_vertex, 0);
 #elif defined(VULKAN)
-
+	vkCmdDraw(commandBuffers[currentFrame], triangles * 3, 1, dynamic_vertex_buffer_index, 0);
+	dynamic_vertex_buffer_index += triangles * 3;
 #else
 	#error
 #endif
@@ -4957,7 +5154,7 @@ void Emulator_CreateRasterState(int wireframe)
 	g_rasterizer.depthBiasEnable = VK_FALSE;
 }
 
-void Emulator_CreatePipelineState(enum ShaderID::ShaderType type)
+void Emulator_CreatePipelineState(ShaderID& shader, VkPipeline* pipeline)
 {
 	VkPipelineVertexInputStateCreateInfo vertexInputInfo;
 	memset(&vertexInputInfo, 0, sizeof(VkPipelineVertexInputStateCreateInfo));
@@ -5013,36 +5210,12 @@ void Emulator_CreatePipelineState(enum ShaderID::ShaderType type)
 	colorBlending.blendConstants[2] = 0.0f;
 	colorBlending.blendConstants[3] = 0.0f;
 
-	VkDescriptorSetLayoutBinding descriptorLayoutSampler = { 0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT , NULL };
-	VkDescriptorSetLayoutBinding descriptorLayoutTexture = { 1, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, 1, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT , NULL };
-	VkDescriptorSetLayoutBinding descriptorLayoutUniformBuffer = { 2, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT , NULL };
-
-
-	VkDescriptorSetLayoutBinding bindings[] = 
-	{
-	  descriptorLayoutSampler,
-	  descriptorLayoutTexture,
-	  descriptorLayoutUniformBuffer,
-	};
-
-	VkDescriptorSetLayoutCreateInfo resourceLayoutInfo;
-	memset(&resourceLayoutInfo, 0, sizeof(VkDescriptorSetLayoutCreateInfo));
-	resourceLayoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-	resourceLayoutInfo.pNext = NULL;
-	resourceLayoutInfo.bindingCount = 3;
-	resourceLayoutInfo.pBindings = bindings;
-
-	VkDescriptorSetLayout descriptorLayout;
-	memset(&descriptorLayout, 0, sizeof(VkDescriptorSetLayout));
-	vkCreateDescriptorSetLayout(device, &resourceLayoutInfo, NULL, &descriptorLayout);
-
 	VkPipelineLayoutCreateInfo pipelineLayoutInfo;
 	memset(&pipelineLayoutInfo, 0, sizeof(VkPipelineLayoutCreateInfo));
 	pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-	pipelineLayoutInfo.setLayoutCount = 0;
 	pipelineLayoutInfo.pushConstantRangeCount = 0;
 	pipelineLayoutInfo.setLayoutCount = 1;
-	pipelineLayoutInfo.pSetLayouts = &descriptorLayout;
+	pipelineLayoutInfo.pSetLayouts = &shader.DL;
 
 	if (vkCreatePipelineLayout(device, &pipelineLayoutInfo, NULL, &g_pipelineLayout) != VK_SUCCESS)
 	{
@@ -5050,11 +5223,13 @@ void Emulator_CreatePipelineState(enum ShaderID::ShaderType type)
 		assert(FALSE);
 	}
 
+	VkPipelineShaderStageCreateInfo shaderStages[] = { shader.VS, shader.PS };
+
 	VkGraphicsPipelineCreateInfo pipelineInfo;
 	memset(&pipelineInfo, 0, sizeof(VkGraphicsPipelineCreateInfo));
 	pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 	pipelineInfo.stageCount = 2;
-	pipelineInfo.pStages = g_shaderStages;
+	pipelineInfo.pStages = shaderStages;
 	pipelineInfo.pVertexInputState = &vertexInputInfo;
 	pipelineInfo.pInputAssemblyState = &inputAssembly;
 	pipelineInfo.pViewportState = &viewportState;
@@ -5066,11 +5241,116 @@ void Emulator_CreatePipelineState(enum ShaderID::ShaderType type)
 	pipelineInfo.subpass = 0;
 	pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
 
-	if (vkCreateGraphicsPipelines(device, VK_NULL_HANDLE, 1, &pipelineInfo, NULL, &g_graphicsPipeline) != VK_SUCCESS)
+	if (vkCreateGraphicsPipelines(device, VK_NULL_HANDLE, 1, &pipelineInfo, NULL, pipeline) != VK_SUCCESS)
 	{
 		eprinterr("Failed to create graphics pipeline\n");
 		assert(FALSE);
 	}
+}
+
+VkCommandBuffer Emulator_BeginSingleTimeCommands() 
+{
+	VkCommandBufferAllocateInfo allocInfo{};
+	allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+	allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+	allocInfo.commandPool = commandPool;
+	allocInfo.commandBufferCount = 1;
+
+	VkCommandBuffer commandBuffer;
+	vkAllocateCommandBuffers(device, &allocInfo, &commandBuffer);
+
+	VkCommandBufferBeginInfo beginInfo{};
+	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+
+	vkBeginCommandBuffer(commandBuffer, &beginInfo);
+
+	return commandBuffer;
+}
+
+void Emulator_EndSingleTimeCommands(VkCommandBuffer commandBuffer) 
+{
+	vkEndCommandBuffer(commandBuffer);
+
+	VkSubmitInfo submitInfo{};
+	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+	submitInfo.commandBufferCount = 1;
+	submitInfo.pCommandBuffers = &commandBuffer;
+
+	vkQueueSubmit(graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
+	vkQueueWaitIdle(graphicsQueue);
+
+	vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
+}
+
+void Emulator_CopyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height) 
+{
+	VkCommandBuffer commandBuffer = Emulator_BeginSingleTimeCommands();
+
+	VkBufferImageCopy region{};
+	region.bufferOffset = 0;
+	region.bufferRowLength = 0;
+	region.bufferImageHeight = 0;
+	region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	region.imageSubresource.mipLevel = 0;
+	region.imageSubresource.baseArrayLayer = 0;
+	region.imageSubresource.layerCount = 1;
+	region.imageOffset = { 0, 0, 0 };
+	region.imageExtent = {
+		width,
+		height,
+		1
+	};
+
+	vkCmdCopyBufferToImage(commandBuffer, buffer, image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
+
+	Emulator_EndSingleTimeCommands(commandBuffer);
+}
+
+void Emulator_TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout) 
+{
+	VkCommandBuffer commandBuffer = Emulator_BeginSingleTimeCommands();
+
+	VkImageMemoryBarrier barrier{};
+	barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+	barrier.oldLayout = oldLayout;
+	barrier.newLayout = newLayout;
+	barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+	barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+	barrier.image = image;
+	barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	barrier.subresourceRange.baseMipLevel = 0;
+	barrier.subresourceRange.levelCount = 1;
+	barrier.subresourceRange.baseArrayLayer = 0;
+	barrier.subresourceRange.layerCount = 1;
+
+	VkPipelineStageFlags sourceStage;
+	VkPipelineStageFlags destinationStage;
+
+	if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL)
+	{
+		barrier.srcAccessMask = 0;
+		barrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+
+		sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+		destinationStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+	}
+	else if (oldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) 
+	{
+		barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+		barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+
+		sourceStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+		destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+	}
+	else 
+	{
+		eprinterr("Unsupported layout transition!\n");
+	}
+
+	vkCmdPipelineBarrier(commandBuffer, sourceStage, destinationStage, 0, 0, NULL, 0, NULL, 1, &barrier);
+
+	Emulator_EndSingleTimeCommands(commandBuffer);
 }
 
 void Emulator_CreateVulkanBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory)
@@ -5102,13 +5382,44 @@ void Emulator_CreateVulkanBuffer(VkDeviceSize size, VkBufferUsageFlags usage, Vk
 	vkBindBufferMemory(device, buffer, bufferMemory, 0);
 }
 
+void Emulator_EndPass()
+{
+	vkCmdEndRenderPass(commandBuffers[currentFrame]);
+
+	if (vkEndCommandBuffer(commandBuffers[currentFrame]) != VK_SUCCESS)
+	{
+		eprinterr("Failed to end command buffer!\n");
+		assert(FALSE);
+	}
+
+	begin_pass_flag = FALSE;
+}
+
 void Emulator_BeginPass()
 {
-	vkWaitForFences(device, 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
-	unsigned int imageIndex = 0;
-	vkAcquireNextImageKHR(device, swapchain, UINT64_MAX, imageAvailableSemaphores[currentFrame], VK_NULL_HANDLE, &imageIndex);
-	vkResetFences(device, 1, &inFlightFences[currentFrame]);
-	vkResetCommandBuffer(commandBuffers[currentFrame], 0);
+	if (vkWaitForFences(device, 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX) != VK_SUCCESS)
+	{
+		eprinterr("Failed to wait for fences!\n");
+		assert(FALSE);
+	}
+	
+	if (vkAcquireNextImageKHR(device, swapchain, UINT64_MAX, imageAvailableSemaphores[currentFrame], VK_NULL_HANDLE, &imageIndex) != VK_SUCCESS)
+	{
+		eprinterr("Failed to acquire next image!\n");
+		assert(FALSE);
+	}
+	
+	if (vkResetFences(device, 1, &inFlightFences[currentFrame]) != VK_SUCCESS)
+	{
+		eprinterr("Failed to reset fences!\n");
+		assert(FALSE);
+	}
+
+	if (vkResetCommandBuffer(commandBuffers[currentFrame], 0) != VK_SUCCESS)
+	{
+		eprinterr("Failed to reset command buffer!\n");
+		assert(FALSE);
+	}
 
 	VkCommandBufferBeginInfo beginInfo{};
 	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -5135,13 +5446,10 @@ void Emulator_BeginPass()
 	renderPassInfo.pClearValues = &clearColor;
 
 	vkCmdBeginRenderPass(commandBuffers[currentFrame], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+	vkCmdBindDescriptorSets(commandBuffers[currentFrame], VK_PIPELINE_BIND_POINT_GRAPHICS, g_pipelineLayout, 0, 1, &descriptorSets[currentFrame], 0, NULL);
+	
 
-	VkBuffer vertexBuffers[] = { dynamic_vertex_buffer };
-	VkDeviceSize offsets[] = { 0 };
-	vkBindBufferMemory(device, dynamic_vertex_buffer, dynamic_vertex_buffer_memory, 0);
-	vkCmdBindVertexBuffers(commandBuffers[currentFrame], 0, 1, vertexBuffers, offsets);
-
-	vkCmdBindPipeline(commandBuffers[currentFrame], VK_PIPELINE_BIND_POINT_GRAPHICS, g_graphicsPipeline);
+	begin_pass_flag = TRUE;
 }
 
 VkImageView Emulator_CreateImageView(VkImage image, VkFormat format) 
@@ -5169,8 +5477,25 @@ VkImageView Emulator_CreateImageView(VkImage image, VkFormat format)
 	return imageView;
 }
 
-void Emulator_CreateBlitShaderDescriptors()
+void Emulator_CreateConstantBuffers()
 {
+	VkDeviceSize bufferSize = sizeof(float) * 16;
+
+	uniformBuffers.resize(MAX_FRAMES_IN_FLIGHT);
+	uniformBuffersMemory.resize(MAX_FRAMES_IN_FLIGHT);
+
+	for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) 
+	{
+		Emulator_CreateVulkanBuffer(bufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, uniformBuffers[i], uniformBuffersMemory[i]);
+	}
+}
+
+void Emulator_UpdateProjectionConstantBuffer(float* ortho)
+{
+	void* data = NULL;
+	vkMapMemory(device, uniformBuffersMemory[imageIndex], 0, sizeof(float) * 16, 0, &data);
+	memcpy(data, ortho, sizeof(float) * 16);
+	vkUnmapMemory(device, uniformBuffersMemory[imageIndex]);
 }
 
 #endif

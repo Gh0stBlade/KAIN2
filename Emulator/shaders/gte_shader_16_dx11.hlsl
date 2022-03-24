@@ -28,7 +28,7 @@ struct VS_OUTPUT {
 	}
 #else
 	SamplerState samplerState : register(s0);
-	Texture2D tex;
+	Texture2D tex : register(t0);
 
 	float4 main(VS_OUTPUT In, float4 coord : SV_Position) : SV_TARGET {
 		float2 color_rg = tex.Sample(samplerState, In.v_texcoord.xy).rg * 255.0;
