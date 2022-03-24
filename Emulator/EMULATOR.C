@@ -420,6 +420,7 @@ TextureID whiteTexture;
 	unsigned int g_vertexBufferMemoryBound = FALSE;
 	unsigned int imageIndex = 0;
 	bool begin_pass_flag = FALSE;
+	bool begin_commands_flag = FALSE;
 #endif
 #endif
 
@@ -3452,8 +3453,8 @@ ShaderID Shader_Compile_Internal(const DWORD* vs_data, const DWORD* ps_data, con
 	memset(&samplerInfo, 0, sizeof(VkSamplerCreateInfo));
 
 	samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
-	samplerInfo.magFilter = VK_FILTER_LINEAR;
-	samplerInfo.minFilter = VK_FILTER_LINEAR;
+	samplerInfo.magFilter = VK_FILTER_NEAREST;
+	samplerInfo.minFilter = VK_FILTER_NEAREST;
 	samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
 	samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
 	samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
@@ -3749,11 +3750,21 @@ int Emulator_Initialise()
 void Emulator_Ortho2D(float left, float right, float bottom, float top, float znear, float zfar)
 {
 	float a = 2.0f / (right - left);
+#if defined(VULKAN)
+	float b = 2.0f / (bottom - top);
+#else
 	float b = 2.0f / (top - bottom);
+#endif	
+	
 	float c = 2.0f / (znear - zfar);
 	
+#if defined(VULKAN)
+	float x = -(right + left) / (right - left);
+	float y = -(bottom + top) / (bottom - top);
+#else
 	float x = (left + right) / (left - right);
 	float y = (bottom + top) / (bottom - top);
+#endif
 
 #if defined(OGL) || defined(OGLES) // -1..1
 	float z = (znear + zfar) / (znear - zfar);
@@ -4149,7 +4160,51 @@ void Emulator_UpdateVRAM()
 	memcpy(sr.pData, vram, VRAM_WIDTH * VRAM_HEIGHT * sizeof(short));
 	d3dcontext->Unmap(vramBaseTexture, 0);
 #elif defined(VULKAN)
+
+	if (begin_pass_flag)
+	{
+		return;
+	}
+
+	TextureID newVramTexture;
+	unsigned int texWidth = VRAM_WIDTH;
+	unsigned int texHeight = VRAM_HEIGHT;
+	VkDeviceSize imageSize = texWidth * texHeight * sizeof(unsigned int);
+
+	Emulator_CreateVulkanBuffer(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, newVramTexture.stagingBuffer, newVramTexture.stagingBufferMemory);
+
+	void* data = NULL;
+	vkMapMemory(device, newVramTexture.stagingBufferMemory, 0, imageSize, 0, &data);
+	memcpy(data, vram, imageSize);
+	vkUnmapMemory(device, newVramTexture.stagingBufferMemory);
+
+	VkBufferImageCopy region{};
+	region.bufferOffset = 0;
+	region.bufferRowLength = 0;
+	region.bufferImageHeight = 0;
+
+	region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	region.imageSubresource.mipLevel = 0;
+	region.imageSubresource.baseArrayLayer = 0;
+	region.imageSubresource.layerCount = 1;
+
+	region.imageOffset = { 0, 0, 0 };
+	region.imageExtent = {
+		texWidth,
+		texHeight,
+		1
+	};
+
 	
+	VkCommandBuffer buff = Emulator_BeginSingleTimeCommands();
+
+	vkCmdCopyBufferToImage(buff, newVramTexture.stagingBuffer, vramTexture.textureImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
+
+	Emulator_EndSingleTimeCommands(buff);
+
+	vkDestroyBuffer(device, newVramTexture.stagingBuffer, NULL);
+	vkFreeMemory(device, newVramTexture.stagingBufferMemory, NULL);
+
 #endif
 }
 
@@ -5382,17 +5437,47 @@ void Emulator_CreateVulkanBuffer(VkDeviceSize size, VkBufferUsageFlags usage, Vk
 	vkBindBufferMemory(device, buffer, bufferMemory, 0);
 }
 
-void Emulator_EndPass()
+void Emulator_EndCommandBuffer()
 {
-	vkCmdEndRenderPass(commandBuffers[currentFrame]);
-
 	if (vkEndCommandBuffer(commandBuffers[currentFrame]) != VK_SUCCESS)
 	{
 		eprinterr("Failed to end command buffer!\n");
 		assert(FALSE);
 	}
 
+	begin_commands_flag = FALSE;
+}
+
+void Emulator_EndPass()
+{
+	vkCmdEndRenderPass(commandBuffers[currentFrame]);
+
+	Emulator_EndCommandBuffer();
+
 	begin_pass_flag = FALSE;
+}
+
+int Emulator_BeginCommandBuffer()
+{
+	if (begin_commands_flag)
+	{
+		return begin_commands_flag;
+	}
+
+	int last_begin_commands_flag = begin_commands_flag;
+
+	VkCommandBufferBeginInfo beginInfo{};
+	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+
+	if (vkBeginCommandBuffer(commandBuffers[currentFrame], &beginInfo) != VK_SUCCESS)
+	{
+		eprinterr("Failed to begin recording command buffer!\n");
+		assert(FALSE);
+	}
+
+	begin_commands_flag = TRUE;
+
+	return last_begin_commands_flag;
 }
 
 void Emulator_BeginPass()
@@ -5421,14 +5506,7 @@ void Emulator_BeginPass()
 		assert(FALSE);
 	}
 
-	VkCommandBufferBeginInfo beginInfo{};
-	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-
-	if (vkBeginCommandBuffer(commandBuffers[currentFrame], &beginInfo) != VK_SUCCESS)
-	{
-		eprinterr("Failed to begin recording command buffer!\n");
-		assert(FALSE);
-	}
+	Emulator_BeginCommandBuffer();
 
 	VkExtent2D swapChainExtent;
 	swapChainExtent.width = windowWidth;
@@ -5448,7 +5526,6 @@ void Emulator_BeginPass()
 	vkCmdBeginRenderPass(commandBuffers[currentFrame], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 	vkCmdBindDescriptorSets(commandBuffers[currentFrame], VK_PIPELINE_BIND_POINT_GRAPHICS, g_pipelineLayout, 0, 1, &descriptorSets[currentFrame], 0, NULL);
 	
-
 	begin_pass_flag = TRUE;
 }
 

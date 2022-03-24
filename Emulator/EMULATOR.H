@@ -323,6 +323,9 @@ extern void Emulator_EndSingleTimeCommands(VkCommandBuffer commandBuffer);
 extern void Emulator_TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
 extern void Emulator_UpdateProjectionConstantBuffer(float* ortho);
 extern void Emulator_CreatePipelineState(ShaderID& shader, VkPipeline* pipeline);
+extern int Emulator_BeginCommandBuffer();
+extern void Emulator_EndCommandBuffer();
+extern VkCommandBuffer Emulator_BeginSingleTimeCommands();
 
 extern ShaderID g_gte_shader_4;
 extern ShaderID g_gte_shader_8;
