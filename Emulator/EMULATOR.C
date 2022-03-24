@@ -3750,21 +3750,11 @@ int Emulator_Initialise()
 void Emulator_Ortho2D(float left, float right, float bottom, float top, float znear, float zfar)
 {
 	float a = 2.0f / (right - left);
-#if defined(VULKAN)
-	float b = 2.0f / (bottom - top);
-#else
 	float b = 2.0f / (top - bottom);
-#endif	
-	
 	float c = 2.0f / (znear - zfar);
 	
-#if defined(VULKAN)
-	float x = -(right + left) / (right - left);
-	float y = -(bottom + top) / (bottom - top);
-#else
 	float x = (left + right) / (left - right);
 	float y = (bottom + top) / (bottom - top);
-#endif
 
 #if defined(OGL) || defined(OGLES) // -1..1
 	float z = (znear + zfar) / (znear - zfar);
@@ -4161,11 +4151,6 @@ void Emulator_UpdateVRAM()
 	d3dcontext->Unmap(vramBaseTexture, 0);
 #elif defined(VULKAN)
 
-	if (begin_pass_flag)
-	{
-		return;
-	}
-
 	TextureID newVramTexture;
 	unsigned int texWidth = VRAM_WIDTH;
 	unsigned int texHeight = VRAM_HEIGHT;
@@ -4195,12 +4180,16 @@ void Emulator_UpdateVRAM()
 		1
 	};
 
-	
 	VkCommandBuffer buff = Emulator_BeginSingleTimeCommands();
+
+	Emulator_TransitionImageLayout(vramTexture.textureImage, VK_FORMAT_R8G8_UNORM, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 
 	vkCmdCopyBufferToImage(buff, newVramTexture.stagingBuffer, vramTexture.textureImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
 
 	Emulator_EndSingleTimeCommands(buff);
+
+	Emulator_TransitionImageLayout(vramTexture.textureImage, VK_FORMAT_R8G8_UNORM, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+
 
 	vkDestroyBuffer(device, newVramTexture.stagingBuffer, NULL);
 	vkFreeMemory(device, newVramTexture.stagingBufferMemory, NULL);
@@ -4979,9 +4968,9 @@ void Emulator_SetViewPort(int x, int y, int width, int height)
 #elif defined(VULKAN)
 	memset(&g_viewport, 0, sizeof(VkViewport));
 	g_viewport.x = (float)x + offset_x;
-	g_viewport.y = (float)y + offset_y;
+	g_viewport.y = (float)y + offset_y + height;
 	g_viewport.width = (float)width;
-	g_viewport.height = (float)height;
+	g_viewport.height = -((float)height);
 	g_viewport.minDepth = 0.0f;
 	g_viewport.maxDepth = 1.0f;
 	
@@ -5454,6 +5443,11 @@ void Emulator_EndPass()
 
 	Emulator_EndCommandBuffer();
 
+	if (vram_need_update)
+	{
+		Emulator_UpdateVRAM();
+	}
+
 	begin_pass_flag = FALSE;
 }
 
@@ -5570,9 +5564,9 @@ void Emulator_CreateConstantBuffers()
 void Emulator_UpdateProjectionConstantBuffer(float* ortho)
 {
 	void* data = NULL;
-	vkMapMemory(device, uniformBuffersMemory[imageIndex], 0, sizeof(float) * 16, 0, &data);
+	vkMapMemory(device, uniformBuffersMemory[currentFrame], 0, sizeof(float) * 16, 0, &data);
 	memcpy(data, ortho, sizeof(float) * 16);
-	vkUnmapMemory(device, uniformBuffersMemory[imageIndex]);
+	vkUnmapMemory(device, uniformBuffersMemory[currentFrame]);
 }
 
 #endif

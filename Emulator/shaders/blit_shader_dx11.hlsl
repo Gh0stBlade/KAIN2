@@ -4,7 +4,7 @@ struct VS_INPUT {
 };
 
 struct VS_OUTPUT {
-	float4 v_position  : POSITION;
+	float4 v_position  : SV_POSITION;
 	float4 v_texcoord  : TEXCOORD0;
 };
 
