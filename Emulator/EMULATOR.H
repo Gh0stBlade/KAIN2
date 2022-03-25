@@ -354,6 +354,7 @@ extern void Emulator_DestroyVulkanImageViews();
 extern ShaderID g_gte_shader_4;
 extern ShaderID g_gte_shader_8;
 extern ShaderID g_gte_shader_16;
+extern ShaderID g_blit_shader;
 #endif
 
 #if defined(D3D9) || defined(XED3D)

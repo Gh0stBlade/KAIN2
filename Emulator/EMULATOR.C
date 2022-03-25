@@ -676,6 +676,8 @@ void Emulator_ResetDevice()
 		dynamic_vertex_buffer = VK_NULL_HANDLE;
 	}
 
+	enum ShaderID::ShaderType lastShaderBound = g_activeShader.T;
+
 	Emulator_DestroySyncObjects();
 	Emulator_DestroyGlobalShaders();
 	Emulator_DestroyConstantBuffers();
@@ -794,7 +796,32 @@ void Emulator_ResetDevice()
 		assert(FALSE);
 	}
 
+	currentFrame = 0;
+
 	g_vertexBufferMemoryBound = FALSE;
+
+#if 0
+	begin_commands_flag = FALSE;
+	begin_pass_flag = FALSE;
+	Emulator_BeginPass();
+
+	switch (lastShaderBound)
+	{
+	case ShaderID::ShaderType::gte_4:
+		Emulator_SetShader(g_gte_shader_4);
+		break;
+	case ShaderID::ShaderType::gte_8:
+		Emulator_SetShader(g_gte_shader_8);
+		break;
+	case ShaderID::ShaderType::gte_16:
+		Emulator_SetShader(g_gte_shader_16);
+		break;
+	case ShaderID::ShaderType::blit:
+		Emulator_SetShader(g_blit_shader);
+		break;
+	}
+
+#endif
 #endif
 }
 
@@ -1430,7 +1457,7 @@ int Emulator_CreateVulkanSwapChain()
 	createInfo.imageExtent = swapchainSize;
 	createInfo.imageArrayLayers = 1;
 	createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
-
+	
 	unsigned int queueFamilyIndices[] = { graphics_QueueFamilyIndex, present_QueueFamilyIndex };
 	if (graphics_QueueFamilyIndex != present_QueueFamilyIndex)
 	{
@@ -4132,7 +4159,7 @@ void Emulator_SetShader(const ShaderID &shader)
 	g_graphicsPipeline = shader.GP;
 	g_activeShader = shader;
 
-	if (begin_pass_flag)
+	if (begin_pass_flag && !g_resetDeviceOnNextFrame)
 	{
 		vkCmdBindPipeline(commandBuffers[currentFrame], VK_PIPELINE_BIND_POINT_GRAPHICS, g_graphicsPipeline);
 	}
@@ -4735,7 +4762,9 @@ void Emulator_DoDebugKeys(int nKey, bool down)
 			if (g_swapInterval != 0)
 			{
 				g_swapInterval = 0;
-				g_resetDeviceOnNextFrame = TRUE;
+#if !defined(VULKAN)
+				Emulator_ResetDevice();
+#endif
 			}
 		}
 		else
@@ -4743,7 +4772,9 @@ void Emulator_DoDebugKeys(int nKey, bool down)
 			if (g_swapInterval != SWAP_INTERVAL)
 			{
 				g_swapInterval = SWAP_INTERVAL;
-				g_resetDeviceOnNextFrame = TRUE;
+#if !defined(VULKAN)
+				Emulator_ResetDevice();
+#endif
 			}
 		}
 	}
@@ -5439,7 +5470,7 @@ void Emulator_SetViewPort(int x, int y, int width, int height)
 	g_viewport.minDepth = 0.0f;
 	g_viewport.maxDepth = 1.0f;
 	
-	if (begin_pass_flag)
+	if (begin_pass_flag && !g_resetDeviceOnNextFrame)
 	{
 		vkCmdSetViewport(commandBuffers[currentFrame], 0, 1, &g_viewport);
 	}
@@ -5554,8 +5585,11 @@ void Emulator_DrawTriangles(int start_vertex, int triangles)
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	commandList->DrawInstanced(triangles, 1, start_vertex, 0);
 #elif defined(VULKAN)
-	vkCmdDraw(commandBuffers[currentFrame], triangles * 3, 1, dynamic_vertex_buffer_index, 0);
-	dynamic_vertex_buffer_index += triangles * 3;
+	if (!g_resetDeviceOnNextFrame)
+	{
+		vkCmdDraw(commandBuffers[currentFrame], triangles * 3, 1, dynamic_vertex_buffer_index, 0);
+		dynamic_vertex_buffer_index += triangles * 3;
+	}
 #else
 	#error
 #endif
@@ -5847,7 +5881,7 @@ void Emulator_CreateVulkanBuffer(VkDeviceSize size, VkBufferUsageFlags usage, Vk
 	bufferInfo.usage = usage;
 	bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-	if (vkCreateBuffer(device, &bufferInfo, nullptr, &buffer) != VK_SUCCESS) 
+	if (vkCreateBuffer(device, &bufferInfo, NULL, &buffer) != VK_SUCCESS) 
 	{
 		eprinterr("Failed to create buffer!\n");
 	}
