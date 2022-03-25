@@ -32,6 +32,8 @@
 SDL_Window* g_window = NULL;
 #endif
 
+int g_PreviousBlendMode = BM_NONE;
+
 #if defined(D3D11)
 ID3D11Texture2D* vramBaseTexture;
 
@@ -397,6 +399,10 @@ TextureID whiteTexture;
 
 #define VERTEX_BIT (0)
 #define FRAGMENT_BIT (1)
+
+	ShaderID g_activeShader;
+	TextureID g_activeTexture;
+
 	VkPipelineShaderStageCreateInfo g_shaderStages[2];
 	std::array<VkVertexInputAttributeDescription, 3> g_attributeDescriptions;
 	std::array<VkVertexInputAttributeDescription, 3> g_attributeDescriptionsBlit;
@@ -412,9 +418,13 @@ TextureID whiteTexture;
 
 	std::vector<VkBuffer> uniformBuffers;
 	std::vector<VkDeviceMemory> uniformBuffersMemory;
-	VkDescriptorPool descriptorPool;
-	VkDescriptorSetLayout descriptorSetLayout;
-	std::vector<VkDescriptorSet> descriptorSets;
+	VkDescriptorPool descriptorPool[2];
+	VkDescriptorSetLayout descriptorSetLayout[2];
+	std::vector<VkDescriptorSet> descriptorSets[2];
+	int g_activeDescriptor = 0;
+
+	VkPipelineColorBlendAttachmentState g_colorBlendAttachment;
+	VkPipelineColorBlendStateCreateInfo g_colorBlend;
 
 	VkPipeline g_graphicsPipeline;
 	unsigned int g_vertexBufferMemoryBound = FALSE;
@@ -1579,59 +1589,65 @@ void Emulator_CreateVulkanCommandBuffers()
 
 void Emulator_CreateDescriptorPool()
 {
-	std::array<VkDescriptorPoolSize, 3> poolSizes{};
-	poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-	poolSizes[0].descriptorCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
-	poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-	poolSizes[1].descriptorCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
-	poolSizes[2].type = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
-	poolSizes[2].descriptorCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
-
-	VkDescriptorPoolCreateInfo poolInfo{};
-	poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-	poolInfo.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
-	poolInfo.pPoolSizes = poolSizes.data();
-	poolInfo.maxSets = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
-
-	if (vkCreateDescriptorPool(device, &poolInfo, nullptr, &descriptorPool) != VK_SUCCESS) 
+	for (int i = 0; i < 2; i++)
 	{
-		eprinterr("Failed to create descriptor pool!\n");
+		std::array<VkDescriptorPoolSize, 3> poolSizes{};
+		poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		poolSizes[0].descriptorCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
+		poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+		poolSizes[1].descriptorCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
+		poolSizes[2].type = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
+		poolSizes[2].descriptorCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
+
+		VkDescriptorPoolCreateInfo poolInfo{};
+		poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+		poolInfo.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
+		poolInfo.pPoolSizes = poolSizes.data();
+		poolInfo.maxSets = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
+
+		if (vkCreateDescriptorPool(device, &poolInfo, nullptr, &descriptorPool[i]) != VK_SUCCESS)
+		{
+			eprinterr("Failed to create descriptor pool!\n");
+		}
 	}
 }
 
 void Emulator_CreateDescriptorSetLayout() 
 {
-	VkDescriptorSetLayoutBinding uboLayoutBinding{};
-	uboLayoutBinding.binding = 0;
-	uboLayoutBinding.descriptorCount = 1;
-	uboLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-	uboLayoutBinding.pImmutableSamplers = NULL;
-	uboLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
-
-	VkDescriptorSetLayoutBinding samplerLayoutBinding{};
-	samplerLayoutBinding.binding = 2;
-	samplerLayoutBinding.descriptorCount = 1;
-	samplerLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-	samplerLayoutBinding.pImmutableSamplers = NULL;
-	samplerLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
-
-	VkDescriptorSetLayoutBinding textureLayoutBinding{};
-	textureLayoutBinding.binding = 4;
-	textureLayoutBinding.descriptorCount = 1;
-	textureLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
-	textureLayoutBinding.pImmutableSamplers = NULL;
-	textureLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
-
-	std::array<VkDescriptorSetLayoutBinding, 3> bindings = { uboLayoutBinding, samplerLayoutBinding, textureLayoutBinding };
-	VkDescriptorSetLayoutCreateInfo layoutInfo{};
-	layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-	layoutInfo.bindingCount = static_cast<uint32_t>(bindings.size());
-	layoutInfo.pBindings = bindings.data();
-
-	if (vkCreateDescriptorSetLayout(device, &layoutInfo, nullptr, &descriptorSetLayout) != VK_SUCCESS) 
+	for (int i = 0; i < 2; i++)
 	{
-		eprinterr("Failed to create descriptor set layout!");
-		assert(FALSE);
+		VkDescriptorSetLayoutBinding uboLayoutBinding{};
+		uboLayoutBinding.binding = 0;
+		uboLayoutBinding.descriptorCount = 1;
+		uboLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		uboLayoutBinding.pImmutableSamplers = NULL;
+		uboLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+
+		VkDescriptorSetLayoutBinding samplerLayoutBinding{};
+		samplerLayoutBinding.binding = 2;
+		samplerLayoutBinding.descriptorCount = 1;
+		samplerLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+		samplerLayoutBinding.pImmutableSamplers = NULL;
+		samplerLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+
+		VkDescriptorSetLayoutBinding textureLayoutBinding{};
+		textureLayoutBinding.binding = 4;
+		textureLayoutBinding.descriptorCount = 1;
+		textureLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
+		textureLayoutBinding.pImmutableSamplers = NULL;
+		textureLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+
+		std::array<VkDescriptorSetLayoutBinding, 3> bindings = { uboLayoutBinding, samplerLayoutBinding, textureLayoutBinding };
+		VkDescriptorSetLayoutCreateInfo layoutInfo{};
+		layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+		layoutInfo.bindingCount = static_cast<uint32_t>(bindings.size());
+		layoutInfo.pBindings = bindings.data();
+
+		if (vkCreateDescriptorSetLayout(device, &layoutInfo, nullptr, &descriptorSetLayout[i]) != VK_SUCCESS)
+		{
+			eprinterr("Failed to create descriptor set layout!");
+			assert(FALSE);
+		}
 	}
 }
 
@@ -1652,64 +1668,82 @@ void Emulator_UpdateDescriptorSets()
 {
 	for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
 	{
-		VkDescriptorBufferInfo uniformInfo{};
-		uniformInfo.buffer = uniformBuffers[i];
-		uniformInfo.offset = 0;
-		uniformInfo.range = sizeof(float) * 16;
+		for (int j = 0; j < 2; j++)
+		{
+			TextureID texture;
 
-		VkDescriptorImageInfo samplerInfo{};
-		samplerInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-		samplerInfo.imageView = vramTexture.textureImageView;
-		samplerInfo.sampler = g_shaders[0]->SS;
+			if (j == 0)
+			{
+				texture = vramTexture;
+			}
+			else
+			{
+				texture = whiteTexture;
+			}
 
-		VkDescriptorImageInfo textureInfo{};
-		textureInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-		textureInfo.imageView = vramTexture.textureImageView;
-		textureInfo.sampler = VK_NULL_HANDLE;
 
-		std::array<VkWriteDescriptorSet, 3> descriptorWrites{};
+			VkDescriptorBufferInfo uniformInfo{};
+			uniformInfo.buffer = uniformBuffers[i];
+			uniformInfo.offset = 0;
+			uniformInfo.range = sizeof(float) * 16;
 
-		descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		descriptorWrites[0].dstSet = descriptorSets[i];
-		descriptorWrites[0].dstBinding = 0;
-		descriptorWrites[0].dstArrayElement = 0;
-		descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-		descriptorWrites[0].descriptorCount = 1;
-		descriptorWrites[0].pBufferInfo = &uniformInfo;
+			VkDescriptorImageInfo samplerInfo{};
+			samplerInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+			samplerInfo.imageView = texture.textureImageView;
+			samplerInfo.sampler = g_shaders[0]->SS;
 
-		descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		descriptorWrites[1].dstSet = descriptorSets[i];
-		descriptorWrites[1].dstBinding = 2;
-		descriptorWrites[1].dstArrayElement = 0;
-		descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-		descriptorWrites[1].descriptorCount = 1;
-		descriptorWrites[1].pImageInfo = &samplerInfo;
+			VkDescriptorImageInfo textureInfo{};
+			textureInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+			textureInfo.imageView = texture.textureImageView;
+			textureInfo.sampler = VK_NULL_HANDLE;
 
-		descriptorWrites[2].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		descriptorWrites[2].dstSet = descriptorSets[i];
-		descriptorWrites[2].dstBinding = 4;
-		descriptorWrites[2].dstArrayElement = 0;
-		descriptorWrites[2].descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
-		descriptorWrites[2].descriptorCount = 1;
-		descriptorWrites[2].pImageInfo = &textureInfo;
+			std::array<VkWriteDescriptorSet, 3> descriptorWrites{};
 
-		vkUpdateDescriptorSets(device, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
+			descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+			descriptorWrites[0].dstSet = descriptorSets[i][j];
+			descriptorWrites[0].dstBinding = 0;
+			descriptorWrites[0].dstArrayElement = 0;
+			descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+			descriptorWrites[0].descriptorCount = 1;
+			descriptorWrites[0].pBufferInfo = &uniformInfo;
+
+			descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+			descriptorWrites[1].dstSet = descriptorSets[i][j];
+			descriptorWrites[1].dstBinding = 2;
+			descriptorWrites[1].dstArrayElement = 0;
+			descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+			descriptorWrites[1].descriptorCount = 1;
+			descriptorWrites[1].pImageInfo = &samplerInfo;
+
+			descriptorWrites[2].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+			descriptorWrites[2].dstSet = descriptorSets[i][j];
+			descriptorWrites[2].dstBinding = 4;
+			descriptorWrites[2].dstArrayElement = 0;
+			descriptorWrites[2].descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
+			descriptorWrites[2].descriptorCount = 1;
+			descriptorWrites[2].pImageInfo = &textureInfo;
+
+			vkUpdateDescriptorSets(device, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, NULL);
+		}
 	}
 }
 
 void Emulator_CreateDescriptorSets()
 {
-	std::vector<VkDescriptorSetLayout> layouts(MAX_FRAMES_IN_FLIGHT, descriptorSetLayout);
-	VkDescriptorSetAllocateInfo allocInfo{};
-	allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-	allocInfo.descriptorPool = descriptorPool;
-	allocInfo.descriptorSetCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
-	allocInfo.pSetLayouts = layouts.data();
-
-	descriptorSets.resize(MAX_FRAMES_IN_FLIGHT);
-	if (vkAllocateDescriptorSets(device, &allocInfo, descriptorSets.data()) != VK_SUCCESS) 
+	for (int i = 0; i < 2; i++)
 	{
-		eprinterr("Failed to allocate descriptor sets!\n");
+		std::vector<VkDescriptorSetLayout> layouts(MAX_FRAMES_IN_FLIGHT, descriptorSetLayout[i]);
+		VkDescriptorSetAllocateInfo allocInfo{};
+		allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+		allocInfo.descriptorPool = descriptorPool[i];
+		allocInfo.descriptorSetCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
+		allocInfo.pSetLayouts = layouts.data();
+
+		descriptorSets[i].resize(MAX_FRAMES_IN_FLIGHT);
+		if (vkAllocateDescriptorSets(device, &allocInfo, descriptorSets[i].data()) != VK_SUCCESS)
+		{
+			eprinterr("Failed to allocate descriptor sets!\n");
+		}
 	}
 
 	Emulator_UpdateDescriptorSets();
@@ -3492,7 +3526,26 @@ ShaderID Shader_Compile_Internal(const DWORD* vs_data, const DWORD* ps_data, con
 
 	vkCreateDescriptorSetLayout(device, &resourceLayoutInfo, NULL, &shader.DL);
 
-	Emulator_CreatePipelineState(shader, &shader.GP);
+
+	VkPipelineColorBlendAttachmentState colorBlendAttachment;
+	memset(&colorBlendAttachment, 0, sizeof(VkPipelineColorBlendAttachmentState));
+
+	colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+	colorBlendAttachment.blendEnable = VK_FALSE;
+
+	VkPipelineColorBlendStateCreateInfo colorBlending;
+	memset(&colorBlending, 0, sizeof(VkPipelineColorBlendStateCreateInfo));
+	colorBlending.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
+	colorBlending.logicOpEnable = VK_FALSE;
+	colorBlending.logicOp = VK_LOGIC_OP_COPY;
+	colorBlending.attachmentCount = 1;
+	colorBlending.pAttachments = &colorBlendAttachment;
+	colorBlending.blendConstants[0] = 0.0f;
+	colorBlending.blendConstants[1] = 0.0f;
+	colorBlending.blendConstants[2] = 0.0f;
+	colorBlending.blendConstants[3] = 0.0f;
+
+	Emulator_CreatePipelineState(shader, &shader.GP, &colorBlending);
 
 	shader.T = (enum ShaderID::ShaderType)shaderType++;
 
@@ -3606,11 +3659,17 @@ void Emulator_GenerateCommonTextures()
 	VkDeviceSize imageSize = texWidth * texHeight * sizeof(unsigned int);
 
 	Emulator_CreateVulkanBuffer(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, whiteTexture.stagingBuffer, whiteTexture.stagingBufferMemory);
+	
+	void* data = NULL;
+	vkMapMemory(device, whiteTexture.stagingBufferMemory, 0, imageSize, 0, &data);
+	memcpy(data, &pixelData, static_cast<size_t>(imageSize));
+	vkUnmapMemory(device, whiteTexture.stagingBufferMemory);
+	
 	Emulator_CreateImage(texWidth, texHeight, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, whiteTexture.textureImage, whiteTexture.textureImageMemory);
 	whiteTexture.textureImageView = Emulator_CreateImageView(whiteTexture.textureImage, VK_FORMAT_R8G8B8A8_UNORM);
 
 	Emulator_TransitionImageLayout(whiteTexture.textureImage, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
-	//Emulator_CopyBufferToImage(whiteTexture.stagingBuffer, whiteTexture.textureImage, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight));
+	Emulator_CopyBufferToImage(whiteTexture.stagingBuffer, whiteTexture.textureImage, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight));
 	Emulator_TransitionImageLayout(whiteTexture.textureImage, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 #else
 	#error
@@ -3804,7 +3863,8 @@ void Emulator_SetShader(const ShaderID &shader)
 	g_shaderStages[VERTEX_BIT] = shader.VS;
 	g_shaderStages[FRAGMENT_BIT] = shader.PS;
 	g_graphicsPipeline = shader.GP;
-	
+	g_activeShader = shader;
+
 	if (begin_pass_flag)
 	{
 		vkCmdBindPipeline(commandBuffers[currentFrame], VK_PIPELINE_BIND_POINT_GRAPHICS, g_graphicsPipeline);
@@ -3820,15 +3880,15 @@ void Emulator_SetTexture(TextureID texture, TexFormat texFormat)
 {
 	switch (texFormat)
 	{
-		case TF_4_BIT :
-			Emulator_SetShader(g_gte_shader_4);
-			break;
-		case TF_8_BIT :
-			Emulator_SetShader(g_gte_shader_8);
-			break;
-		case TF_16_BIT :
-			Emulator_SetShader(g_gte_shader_16);
-			break;
+	case TF_4_BIT:
+		Emulator_SetShader(g_gte_shader_4);
+		break;
+	case TF_8_BIT:
+		Emulator_SetShader(g_gte_shader_8);
+		break;
+	case TF_16_BIT:
+		Emulator_SetShader(g_gte_shader_16);
+		break;
 	}
 
 	if (g_texturelessMode) {
@@ -3856,7 +3916,18 @@ void Emulator_SetTexture(TextureID texture, TexFormat texFormat)
 	///@D3D12
 	UNIMPLEMENTED();
 #elif defined(VULKAN)
-	
+	g_activeTexture = texture;
+	if (g_activeTexture.textureImage == vramTexture.textureImage)
+	{
+		g_activeDescriptor = 0;
+	}
+	else
+	{
+		g_activeDescriptor = 1;
+	}
+
+	vkCmdBindDescriptorSets(commandBuffers[currentFrame], VK_PIPELINE_BIND_POINT_GRAPHICS, g_pipelineLayout, 0, 1, &descriptorSets[currentFrame][g_activeDescriptor], 0, NULL);
+
 #else
 	#error
 #endif
@@ -4720,8 +4791,6 @@ void Emulator_ShutDown()
 	exit(EXIT_SUCCESS);
 }
 
-int g_PreviousBlendMode = BM_NONE;
-
 void Emulator_SetBlendMode(BlendMode blendMode)
 {
 	if (g_PreviousBlendMode == blendMode)
@@ -4910,6 +4979,130 @@ void Emulator_SetBlendMode(BlendMode blendMode)
 	///@D3D12
 	UNIMPLEMENTED();
 #elif defined(VULKAN)
+
+	
+	memset(&g_colorBlendAttachment, 0, sizeof(VkPipelineColorBlendAttachmentState));
+
+	memset(&g_colorBlend, 0, sizeof(VkPipelineColorBlendStateCreateInfo));
+	g_colorBlend.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
+	g_colorBlend.logicOpEnable = VK_FALSE;
+	g_colorBlend.logicOp = VK_LOGIC_OP_COPY;
+	g_colorBlend.attachmentCount = 1;
+	g_colorBlend.pAttachments = &g_colorBlendAttachment;
+
+	g_colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+
+	if (g_PreviousBlendMode == BM_NONE)
+	{
+		g_colorBlendAttachment.blendEnable = VK_TRUE;
+		g_colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
+		g_colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ZERO;
+		g_colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
+		g_colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+		g_colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+		g_colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
+
+		g_colorBlend.blendConstants[0] = 1.0f;
+		g_colorBlend.blendConstants[1] = 1.0f;
+		g_colorBlend.blendConstants[2] = 1.0f;
+		g_colorBlend.blendConstants[3] = 1.0f;
+	}
+
+	switch (blendMode)
+	{
+	case BM_NONE:
+	{
+		g_colorBlendAttachment.blendEnable = VK_FALSE;
+		g_colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
+		g_colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ZERO;
+		g_colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
+		g_colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+		g_colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+		g_colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
+
+		g_colorBlend.blendConstants[0] = 1.0f;
+		g_colorBlend.blendConstants[1] = 1.0f;
+		g_colorBlend.blendConstants[2] = 1.0f;
+		g_colorBlend.blendConstants[3] = 1.0f;
+		break;
+	}
+	case BM_AVERAGE:
+	{
+		g_colorBlendAttachment.blendEnable = VK_TRUE;
+		g_colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_CONSTANT_COLOR;
+		g_colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_CONSTANT_COLOR;
+		g_colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
+		g_colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_CONSTANT_COLOR;
+		g_colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_CONSTANT_COLOR;
+		g_colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
+
+		g_colorBlend.blendConstants[0] = 128.0f * (1.0f / 255.0f);
+		g_colorBlend.blendConstants[1] = 128.0f * (1.0f / 255.0f);
+		g_colorBlend.blendConstants[2] = 128.0f * (1.0f / 255.0f);
+		g_colorBlend.blendConstants[3] = 128.0f * (1.0f / 255.0f);
+		break;
+	}
+	case BM_ADD:
+	{
+		g_colorBlendAttachment.blendEnable = VK_TRUE;
+		g_colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
+		g_colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ONE;
+		g_colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
+		g_colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+		g_colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+		g_colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
+
+		g_colorBlend.blendConstants[0] = 1.0f;
+		g_colorBlend.blendConstants[1] = 1.0f;
+		g_colorBlend.blendConstants[2] = 1.0f;
+		g_colorBlend.blendConstants[3] = 1.0f;
+		break;
+	}
+	case BM_SUBTRACT:
+	{
+		g_colorBlendAttachment.blendEnable = VK_TRUE;
+		g_colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
+		g_colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ONE;
+		g_colorBlendAttachment.colorBlendOp = VK_BLEND_OP_REVERSE_SUBTRACT;
+		g_colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+		g_colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+		g_colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_REVERSE_SUBTRACT;
+
+		g_colorBlend.blendConstants[0] = 1.0f;
+		g_colorBlend.blendConstants[1] = 1.0f;
+		g_colorBlend.blendConstants[2] = 1.0f;
+		g_colorBlend.blendConstants[3] = 1.0f;
+		break;
+	}
+	case BM_ADD_QUATER_SOURCE:
+	{
+		g_colorBlendAttachment.blendEnable = VK_TRUE;
+		g_colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_CONSTANT_COLOR;
+		g_colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ONE;
+		g_colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
+		g_colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_CONSTANT_COLOR;
+		g_colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+		g_colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
+
+		g_colorBlend.blendConstants[0] = 64.0f * (1.0f / 255.0f);
+		g_colorBlend.blendConstants[1] = 64.0f * (1.0f / 255.0f);
+		g_colorBlend.blendConstants[2] = 64.0f * (1.0f / 255.0f);
+		g_colorBlend.blendConstants[3] = 64.0f * (1.0f / 255.0f);
+		break;
+	}
+	}
+
+
+#if defined(VULKAN)
+	Emulator_CreatePipelineState(g_activeShader, &g_activeShader.GP, NULL);
+	g_graphicsPipeline = g_activeShader.GP;
+
+	if (begin_pass_flag)
+	{
+		vkCmdBindPipeline(commandBuffers[currentFrame], VK_PIPELINE_BIND_POINT_GRAPHICS, g_graphicsPipeline);
+	}
+#endif
+
 #else
 	#error
 #endif
@@ -5198,7 +5391,7 @@ void Emulator_CreateRasterState(int wireframe)
 	g_rasterizer.depthBiasEnable = VK_FALSE;
 }
 
-void Emulator_CreatePipelineState(ShaderID& shader, VkPipeline* pipeline)
+void Emulator_CreatePipelineState(ShaderID& shader, VkPipeline* pipeline, VkPipelineColorBlendStateCreateInfo* colourBlendState)
 {
 	VkPipelineVertexInputStateCreateInfo vertexInputInfo;
 	memset(&vertexInputInfo, 0, sizeof(VkPipelineVertexInputStateCreateInfo));
@@ -5236,24 +5429,6 @@ void Emulator_CreatePipelineState(ShaderID& shader, VkPipeline* pipeline)
 	multisampling.sampleShadingEnable = VK_FALSE;
 	multisampling.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
 
-	VkPipelineColorBlendAttachmentState colorBlendAttachment;
-	memset(&colorBlendAttachment, 0, sizeof(VkPipelineColorBlendAttachmentState));
-
-	colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
-	colorBlendAttachment.blendEnable = VK_FALSE;
-
-	VkPipelineColorBlendStateCreateInfo colorBlending;
-	memset(&colorBlending, 0, sizeof(VkPipelineColorBlendStateCreateInfo));
-	colorBlending.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
-	colorBlending.logicOpEnable = VK_FALSE;
-	colorBlending.logicOp = VK_LOGIC_OP_COPY;
-	colorBlending.attachmentCount = 1;
-	colorBlending.pAttachments = &colorBlendAttachment;
-	colorBlending.blendConstants[0] = 0.0f;
-	colorBlending.blendConstants[1] = 0.0f;
-	colorBlending.blendConstants[2] = 0.0f;
-	colorBlending.blendConstants[3] = 0.0f;
-
 	VkPipelineLayoutCreateInfo pipelineLayoutInfo;
 	memset(&pipelineLayoutInfo, 0, sizeof(VkPipelineLayoutCreateInfo));
 	pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
@@ -5279,7 +5454,15 @@ void Emulator_CreatePipelineState(ShaderID& shader, VkPipeline* pipeline)
 	pipelineInfo.pViewportState = &viewportState;
 	pipelineInfo.pRasterizationState = &g_rasterizer;
 	pipelineInfo.pMultisampleState = &multisampling;
-	pipelineInfo.pColorBlendState = &colorBlending;
+	if (colourBlendState == NULL)
+	{
+		pipelineInfo.pColorBlendState = &g_colorBlend;
+	}
+	else
+	{
+		pipelineInfo.pColorBlendState = colourBlendState;
+	}
+
 	pipelineInfo.layout = g_pipelineLayout;
 	pipelineInfo.renderPass = render_pass;
 	pipelineInfo.subpass = 0;
@@ -5518,7 +5701,7 @@ void Emulator_BeginPass()
 	renderPassInfo.pClearValues = &clearColor;
 
 	vkCmdBeginRenderPass(commandBuffers[currentFrame], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-	vkCmdBindDescriptorSets(commandBuffers[currentFrame], VK_PIPELINE_BIND_POINT_GRAPHICS, g_pipelineLayout, 0, 1, &descriptorSets[currentFrame], 0, NULL);
+	vkCmdBindDescriptorSets(commandBuffers[currentFrame], VK_PIPELINE_BIND_POINT_GRAPHICS, g_pipelineLayout, 0, 1, &descriptorSets[currentFrame][g_activeDescriptor], 0, NULL);
 	
 	begin_pass_flag = TRUE;
 }

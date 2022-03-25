@@ -322,7 +322,7 @@ extern void Emulator_CopyBufferToImage(VkBuffer buffer, VkImage image, uint32_t 
 extern void Emulator_EndSingleTimeCommands(VkCommandBuffer commandBuffer);
 extern void Emulator_TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
 extern void Emulator_UpdateProjectionConstantBuffer(float* ortho);
-extern void Emulator_CreatePipelineState(ShaderID& shader, VkPipeline* pipeline);
+extern void Emulator_CreatePipelineState(ShaderID& shader, VkPipeline* pipeline, VkPipelineColorBlendStateCreateInfo* colourBlendState);
 extern int Emulator_BeginCommandBuffer();
 extern void Emulator_EndCommandBuffer();
 extern VkCommandBuffer Emulator_BeginSingleTimeCommands();
