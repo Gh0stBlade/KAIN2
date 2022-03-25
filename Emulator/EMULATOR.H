@@ -242,8 +242,8 @@ struct ShaderID
 	VkPipelineShaderStageCreateInfo PS;
 	VkDescriptorSetLayout DL;
 	VkSampler SS;
-	VkImageView TIV;
 	VkPipeline GP;
+	VkPipelineLayout PL;
 };
 
 typedef void* RenderTargetID;
@@ -326,6 +326,30 @@ extern void Emulator_CreatePipelineState(ShaderID& shader, VkPipeline* pipeline,
 extern int Emulator_BeginCommandBuffer();
 extern void Emulator_EndCommandBuffer();
 extern VkCommandBuffer Emulator_BeginSingleTimeCommands();
+extern void Emulator_DestroyConstantBuffers();
+extern void Emulator_SelectVulkanPhysicalDevice();
+extern void Emulator_SelectVulkanQueueFamily();
+extern int Emulator_CreateVulkanDevice();
+extern int Emulator_CreateVulkanSwapChain();
+extern void Emulator_CreateVulkanImageViews();
+extern void Emulator_CreateVulkanRenderPass();
+extern void Emulator_CreateVulkanFrameBuffers();
+extern void Emulator_CreateVulkanCommandPool();
+extern void Emulator_CreateVulkanCommandBuffers();
+extern void Emulator_CreateSyncObjects();
+extern void Emulator_CreateUniformBuffers();
+extern void Emulator_CreateDescriptorPool();
+extern void Emulator_CreateDescriptorSetLayout();
+extern void Emulator_CreateImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory);
+extern void Emulator_DestroyVulkanCommandPool();
+extern void Emulator_DestroyVulkanCommandBuffers();
+extern void Emulator_DestroySyncObjects();
+extern void Emulator_DestroyVulkanFrameBuffers();
+extern void Emulator_DestroyDescriptorSetLayout();
+extern void Emulator_DestroyDescriptorPool();
+extern void Emulator_DestroyVulkanRenderPass();
+extern void Emulator_SetShader(const ShaderID& shader);
+extern void Emulator_DestroyVulkanImageViews();
 
 extern ShaderID g_gte_shader_4;
 extern ShaderID g_gte_shader_8;

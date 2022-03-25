@@ -18,6 +18,8 @@
 #define FIXED_TIME_STEP    33
 #define SWAP_INTERVAL      1
 
+unsigned int g_resetDeviceOnNextFrame = FALSE;
+
 #if defined(NTSC_VERSION)
 #define COUNTER_UPDATE_INTERVAL (263)
 #else
@@ -392,11 +394,6 @@ TextureID whiteTexture;
 	std::vector<VkSemaphore> renderFinishedSemaphores;
 	std::vector<VkFence> inFlightFences;
 
-	VkFormat depthFormat;//
-	VkImage depthImage;//
-	VkDeviceMemory depthImageMemory;//
-	VkImageView depthImageView;//
-
 #define VERTEX_BIT (0)
 #define FRAGMENT_BIT (1)
 
@@ -411,7 +408,7 @@ TextureID whiteTexture;
 
 	VkViewport g_viewport;
 	VkPipelineRasterizationStateCreateInfo g_rasterizer;
-	VkPipelineLayout g_pipelineLayout;
+	
 	unsigned int frameIndex;
 	unsigned int currentFrame = 0;
 	const int MAX_FRAMES_IN_FLIGHT = 2;
@@ -673,6 +670,102 @@ void Emulator_ResetDevice()
 	commandList->OMSetRenderTargets(1, &rtvHandle, FALSE, nullptr);
 	Emulator_CreateRasterState(FALSE);
 #elif defined(VULKAN)
+
+	if (dynamic_vertex_buffer) {
+		vkDestroyBuffer(device, dynamic_vertex_buffer, NULL);
+		dynamic_vertex_buffer = VK_NULL_HANDLE;
+	}
+
+	Emulator_DestroySyncObjects();
+	Emulator_DestroyGlobalShaders();
+	Emulator_DestroyConstantBuffers();
+	Emulator_DestroyDescriptorSetLayout();
+	Emulator_DestroyDescriptorPool();
+	Emulator_DestroyVulkanCommandBuffers();
+	Emulator_DestroyVulkanCommandPool();
+	Emulator_DestroyVulkanFrameBuffers();
+	Emulator_DestroyVulkanRenderPass();
+	Emulator_DestroyVulkanImageViews();
+
+	vkDestroySwapchainKHR(device, swapchain, NULL);
+	swapchain = VK_NULL_HANDLE;
+	swapchainImages.clear();
+
+	vkDestroyImageView(device, vramTexture.textureImageView, NULL);
+	vkDestroyImage(device, vramTexture.textureImage, NULL);
+	vkFreeMemory(device, vramTexture.textureImageMemory, NULL);
+	vkDestroyBuffer(device, vramTexture.stagingBuffer, NULL);
+	vkFreeMemory(device, vramTexture.stagingBufferMemory, NULL);
+
+	vkDestroyImageView(device, whiteTexture.textureImageView, NULL);
+	vkDestroyImage(device, whiteTexture.textureImage, NULL);
+	vkFreeMemory(device, whiteTexture.textureImageMemory, NULL);
+	vkDestroyBuffer(device, whiteTexture.stagingBuffer, NULL);
+	vkFreeMemory(device, whiteTexture.stagingBufferMemory, NULL);
+
+	vkDestroyDevice(device, NULL);
+	device = VK_NULL_HANDLE;
+
+	Emulator_SelectVulkanPhysicalDevice();
+	Emulator_SelectVulkanQueueFamily();
+
+	if (Emulator_CreateVulkanDevice() != VK_SUCCESS)
+	{
+		eprinterr("Failed to create device (vkCreateDevice)!\n");
+		assert(FALSE);
+		return;
+	}
+
+	if (Emulator_CreateVulkanSwapChain() != TRUE)
+	{
+		eprinterr("Failed to create vulkan swap chain!\n");
+		assert(FALSE);
+		return;
+	}
+
+	Emulator_CreateVulkanImageViews();
+	Emulator_CreateVulkanRenderPass();
+	Emulator_CreateVulkanFrameBuffers();
+	Emulator_CreateVulkanCommandPool();
+	Emulator_CreateVulkanCommandBuffers();
+	Emulator_CreateSyncObjects();
+	Emulator_CreateUniformBuffers();
+	Emulator_CreateDescriptorPool();//TOFREE
+	Emulator_CreateDescriptorSetLayout();//TOFREE
+
+	unsigned int pixelData = 0xFFFFFFFF;
+	int texWidth = 1;
+	int texHeight = 1;
+	VkDeviceSize imageSize = texWidth * texHeight * sizeof(unsigned int);
+
+	Emulator_CreateVulkanBuffer(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, whiteTexture.stagingBuffer, whiteTexture.stagingBufferMemory);
+
+	void* data = NULL;
+	vkMapMemory(device, whiteTexture.stagingBufferMemory, 0, imageSize, 0, &data);
+	memcpy(data, &pixelData, static_cast<size_t>(imageSize));
+	vkUnmapMemory(device, whiteTexture.stagingBufferMemory);
+
+	Emulator_CreateImage(texWidth, texHeight, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, whiteTexture.textureImage, whiteTexture.textureImageMemory);
+	whiteTexture.textureImageView = Emulator_CreateImageView(whiteTexture.textureImage, VK_FORMAT_R8G8B8A8_UNORM);
+
+	Emulator_TransitionImageLayout(whiteTexture.textureImage, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+	Emulator_CopyBufferToImage(whiteTexture.stagingBuffer, whiteTexture.textureImage, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight));
+	Emulator_TransitionImageLayout(whiteTexture.textureImage, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+
+	texWidth = VRAM_WIDTH;
+	texHeight = VRAM_HEIGHT;
+	imageSize = texWidth * texHeight * sizeof(unsigned int);
+
+	Emulator_CreateVulkanBuffer(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, vramTexture.stagingBuffer, vramTexture.stagingBufferMemory);
+	Emulator_CreateImage(texWidth, texHeight, VK_FORMAT_R8G8_UNORM, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, vramTexture.textureImage, vramTexture.textureImageMemory);
+	vramTexture.textureImageView = Emulator_CreateImageView(vramTexture.textureImage, VK_FORMAT_R8G8_UNORM);
+
+	Emulator_TransitionImageLayout(vramTexture.textureImage, VK_FORMAT_R8G8_UNORM, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+	Emulator_TransitionImageLayout(vramTexture.textureImage, VK_FORMAT_R8G8_UNORM, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+
+	Emulator_CreateGlobalShaders();
+
+	//VTX buffer
 	VkBufferCreateInfo bufferInfo;
 	memset(&bufferInfo, 0, sizeof(VkBufferCreateInfo));
 
@@ -700,6 +793,8 @@ void Emulator_ResetDevice()
 		eprinterr("Failed to allocate vertex buffer!\n");
 		assert(FALSE);
 	}
+
+	g_vertexBufferMemoryBound = FALSE;
 #endif
 }
 
@@ -1303,8 +1398,6 @@ int Emulator_CreateVulkanDevice()
 
 int Emulator_CreateVulkanSwapChain()
 {
-#define CLAMP(x, lo, hi)    ((x) < (lo) ? (lo) : (x) > (hi) ? (hi) : (x))
-
 	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physical_devices, g_surface, &surfaceCapabilities);
 
 	std::vector<VkSurfaceFormatKHR> surfaceFormats;
@@ -1319,12 +1412,8 @@ int Emulator_CreateVulkanSwapChain()
 	}
 
 	surfaceFormat = surfaceFormats[0];
-	int width, height = 0;
-	SDL_Vulkan_GetDrawableSize(g_window, &width, &height);
-	width = CLAMP(width, surfaceCapabilities.minImageExtent.width, surfaceCapabilities.maxImageExtent.width);
-	height = CLAMP(height, surfaceCapabilities.minImageExtent.height, surfaceCapabilities.maxImageExtent.height);
-	swapchainSize.width = width;
-	swapchainSize.height = height;
+	swapchainSize.width = windowWidth;
+	swapchainSize.height = windowHeight;
 
 	unsigned int imageCount = surfaceCapabilities.minImageCount + 1;
 	if (surfaceCapabilities.maxImageCount > 0 && imageCount > surfaceCapabilities.maxImageCount)
@@ -1399,6 +1488,16 @@ void Emulator_CreateVulkanImageViews()
 	{
 		swapchainImageViews[i] = Emulator_CreateVulkanImageView(swapchainImages[i], surfaceFormat.format, VK_IMAGE_ASPECT_COLOR_BIT);
 	}
+}
+
+void Emulator_DestroyVulkanImageViews()
+{
+	for (unsigned int i = 0; i < swapchainImages.size(); i++)
+	{
+		vkDestroyImageView(device, swapchainImageViews[i], NULL);
+	}
+
+	swapchainImageViews.clear();
 }
 
 unsigned int Emulator_FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties)
@@ -1480,14 +1579,6 @@ void Emulator_CreateImage(uint32_t width, uint32_t height, VkFormat format, VkIm
 	vkBindImageMemory(device, image, imageMemory, 0);
 }
 
-
-void Emulator_CreateVulkanDepthStencil()
-{
-	VkBool32 validDepthFormat = Emulator_GetSupportedDepthFormat(physical_devices, &depthFormat);
-	Emulator_CreateImage(swapchainSize.width, swapchainSize.height, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, depthImage, depthImageMemory);
-	depthImageView = Emulator_CreateVulkanImageView(depthImage, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_IMAGE_ASPECT_DEPTH_BIT);
-}
-
 void Emulator_CreateVulkanRenderPass()
 {
 	VkAttachmentDescription colorAttachment{};
@@ -1530,6 +1621,20 @@ void Emulator_CreateVulkanRenderPass()
 	{
 		eprinterr("Failed to create render pass\n");
 		assert(FALSE);
+	}
+}
+
+void Emulator_DestroyVulkanRenderPass()
+{
+	vkDestroyRenderPass(device, render_pass, NULL);
+	render_pass = VK_NULL_HANDLE;
+}
+
+void Emulator_DestroyVulkanFrameBuffers()
+{
+	for (unsigned int i = 0; i < swapchainImageViews.size(); i++)
+	{
+		vkDestroyFramebuffer(device, swapchainFramebuffers[i], NULL);
 	}
 }
 
@@ -1609,6 +1714,15 @@ void Emulator_CreateDescriptorPool()
 		{
 			eprinterr("Failed to create descriptor pool!\n");
 		}
+	}
+}
+
+void Emulator_DestroyDescriptorPool()
+{
+	for (int i = 0; i < 2; i++)
+	{
+		vkDestroyDescriptorPool(device, descriptorPool[i], NULL);
+		descriptorPool[i] = VK_NULL_HANDLE;
 	}
 }
 
@@ -1773,13 +1887,6 @@ void Emulator_CreateSyncObjects()
 	}
 }
 
-void Emulator_CreateDepthStencilViews()
-{
-	VkBool32 validDepthFormat = Emulator_GetSupportedDepthFormat(physical_devices, &depthFormat);
-	Emulator_CreateImage(swapchainSize.width, swapchainSize.height, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, depthImage, depthImageMemory);
-	depthImageView = Emulator_CreateVulkanImageView(depthImage, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_IMAGE_ASPECT_DEPTH_BIT);
-}
-
 static int Emulator_InitialiseVulkanContext(char* windowName)
 {
 #if defined(SDL2)
@@ -1823,7 +1930,6 @@ static int Emulator_InitialiseVulkanContext(char* windowName)
 	}
 
 	Emulator_CreateVulkanImageViews();
-	//Emulator_CreateDepthStencilViews();
 	Emulator_CreateVulkanRenderPass();
 	Emulator_CreateVulkanFrameBuffers();
 	Emulator_CreateVulkanCommandPool();
@@ -3527,6 +3633,19 @@ ShaderID Shader_Compile_Internal(const DWORD* vs_data, const DWORD* ps_data, con
 	vkCreateDescriptorSetLayout(device, &resourceLayoutInfo, NULL, &shader.DL);
 
 
+	VkPipelineLayoutCreateInfo pipelineLayoutInfo;
+	memset(&pipelineLayoutInfo, 0, sizeof(VkPipelineLayoutCreateInfo));
+	pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+	pipelineLayoutInfo.pushConstantRangeCount = 0;
+	pipelineLayoutInfo.setLayoutCount = 1;
+	pipelineLayoutInfo.pSetLayouts = &shader.DL;
+
+	if (vkCreatePipelineLayout(device, &pipelineLayoutInfo, NULL, &shader.PL) != VK_SUCCESS)
+	{
+		eprinterr("Failed to create pipeline layout!\n");
+		assert(FALSE);
+	}
+
 	VkPipelineColorBlendAttachmentState colorBlendAttachment;
 	memset(&colorBlendAttachment, 0, sizeof(VkPipelineColorBlendAttachmentState));
 
@@ -3575,6 +3694,7 @@ void Emulator_CreateGlobalShaders()
 
 #if defined(VULKAN)
 	Emulator_CreateDescriptorSets();
+	Emulator_SetShader(g_gte_shader_4);
 #endif
 
 #if defined(OGL) || defined(OGLES)
@@ -3597,6 +3717,154 @@ void Emulator_DestroyGlobalShaders()
 	g_blit_shader.VS->Release();
 	g_blit_shader.PS->Release();
 	g_blit_shader.IL->Release();
+}
+
+#elif defined(VULKAN)
+void Emulator_DestroyGlobalShaders()
+{
+	if (g_gte_shader_4.VS.module)
+	{
+		vkDestroyShaderModule(device, g_gte_shader_4.VS.module, NULL);
+		g_gte_shader_4.VS.module = VK_NULL_HANDLE;
+	}
+
+	if (g_gte_shader_4.PS.module)
+	{
+		vkDestroyShaderModule(device, g_gte_shader_4.PS.module, NULL);
+		g_gte_shader_4.PS.module = VK_NULL_HANDLE;
+	}
+
+	if (g_gte_shader_4.DL)
+	{
+		vkDestroyDescriptorSetLayout(device, g_gte_shader_4.DL, NULL);
+		g_gte_shader_4.DL = VK_NULL_HANDLE;
+	}
+
+	if (g_gte_shader_4.PL)
+	{
+		vkDestroyPipelineLayout(device, g_gte_shader_4.PL, NULL);
+		g_gte_shader_4.PL = VK_NULL_HANDLE;
+	}
+
+	if (g_gte_shader_4.GP)
+	{
+		vkDestroyPipeline(device, g_gte_shader_4.GP, NULL);
+		g_gte_shader_4.GP = VK_NULL_HANDLE;
+	}
+
+	if (g_gte_shader_4.SS)
+	{
+		vkDestroySampler(device, g_gte_shader_4.SS, NULL);
+		g_gte_shader_4.SS = VK_NULL_HANDLE;
+	}
+
+	if (g_gte_shader_8.VS.module)
+	{
+		vkDestroyShaderModule(device, g_gte_shader_8.VS.module, NULL);
+		g_gte_shader_8.VS.module = VK_NULL_HANDLE;
+	}
+
+	if (g_gte_shader_8.PS.module)
+	{
+		vkDestroyShaderModule(device, g_gte_shader_8.PS.module, NULL);
+		g_gte_shader_8.PS.module = VK_NULL_HANDLE;
+	}
+
+	if (g_gte_shader_8.DL)
+	{
+		vkDestroyDescriptorSetLayout(device, g_gte_shader_8.DL, NULL);
+		g_gte_shader_8.DL = VK_NULL_HANDLE;
+	}
+	
+	if (g_gte_shader_8.PL)
+	{
+		vkDestroyPipelineLayout(device, g_gte_shader_8.PL, NULL);
+		g_gte_shader_8.PL = VK_NULL_HANDLE;
+	}
+
+	if (g_gte_shader_8.GP)
+	{
+		vkDestroyPipeline(device, g_gte_shader_8.GP, NULL);
+		g_gte_shader_8.GP = VK_NULL_HANDLE;
+	}
+
+	if (g_gte_shader_8.SS)
+	{
+		vkDestroySampler(device, g_gte_shader_8.SS, NULL);
+		g_gte_shader_8.SS = VK_NULL_HANDLE;
+	}
+
+	if (g_gte_shader_16.VS.module)
+	{
+		vkDestroyShaderModule(device, g_gte_shader_16.VS.module, NULL);
+		g_gte_shader_16.VS.module = VK_NULL_HANDLE;
+	}
+
+	if (g_gte_shader_16.PS.module)
+	{
+		vkDestroyShaderModule(device, g_gte_shader_16.PS.module, NULL);
+		g_gte_shader_16.PS.module = VK_NULL_HANDLE;
+	}
+
+	if (g_gte_shader_16.DL)
+	{
+		vkDestroyDescriptorSetLayout(device, g_gte_shader_16.DL, NULL);
+		g_gte_shader_16.DL = VK_NULL_HANDLE;
+	}
+
+	if (g_gte_shader_16.PL)
+	{
+		vkDestroyPipelineLayout(device, g_gte_shader_16.PL, NULL);
+		g_gte_shader_16.PL = VK_NULL_HANDLE;
+	}
+
+	if (g_gte_shader_16.GP)
+	{
+		vkDestroyPipeline(device, g_gte_shader_16.GP, NULL);
+		g_gte_shader_16.GP = VK_NULL_HANDLE;
+	}
+
+	if (g_gte_shader_16.SS)
+	{
+		vkDestroySampler(device, g_gte_shader_16.SS, NULL);
+		g_gte_shader_16.SS = VK_NULL_HANDLE;
+	}
+
+	if (g_blit_shader.VS.module)
+	{
+		vkDestroyShaderModule(device, g_blit_shader.VS.module, NULL);
+		g_blit_shader.VS.module = VK_NULL_HANDLE;
+	}
+
+	if (g_blit_shader.PS.module)
+	{
+		vkDestroyShaderModule(device, g_blit_shader.PS.module, NULL);
+		g_blit_shader.PS.module = VK_NULL_HANDLE;
+	}
+
+	if (g_blit_shader.DL)
+	{
+		vkDestroyDescriptorSetLayout(device, g_blit_shader.DL, NULL);
+		g_blit_shader.DL = VK_NULL_HANDLE;
+	}
+
+	if (g_blit_shader.PL)
+	{
+		vkDestroyPipelineLayout(device, g_blit_shader.PL, NULL);
+		g_blit_shader.PL = VK_NULL_HANDLE;
+	}
+
+	if (g_blit_shader.GP)
+	{
+		vkDestroyPipeline(device, g_blit_shader.GP, NULL);
+		g_blit_shader.GP = VK_NULL_HANDLE;
+	}
+
+	if (g_blit_shader.SS)
+	{
+		vkDestroySampler(device, g_blit_shader.SS, NULL);
+		g_blit_shader.SS = VK_NULL_HANDLE;
+	}
 }
 #endif
 
@@ -3793,7 +4061,6 @@ int Emulator_Initialise()
 	vramTexture.textureImageView = Emulator_CreateImageView(vramTexture.textureImage, VK_FORMAT_R8G8_UNORM);
 
 	Emulator_TransitionImageLayout(vramTexture.textureImage, VK_FORMAT_R8G8_UNORM, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
-	//Emulator_CopyBufferToImage(vramTexture.stagingBuffer, vramTexture.textureImage, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight));
 	Emulator_TransitionImageLayout(vramTexture.textureImage, VK_FORMAT_R8G8_UNORM, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
 	Emulator_CreateGlobalShaders();
@@ -3872,7 +4139,6 @@ void Emulator_SetShader(const ShaderID &shader)
 #else
 	#error
 #endif
-
 	Emulator_Ortho2D(0.0f, activeDispEnv.disp.w, activeDispEnv.disp.h, 0.0f, 0.0f, 1.0f);
 }
 
@@ -3926,7 +4192,7 @@ void Emulator_SetTexture(TextureID texture, TexFormat texFormat)
 		g_activeDescriptor = 1;
 	}
 
-	vkCmdBindDescriptorSets(commandBuffers[currentFrame], VK_PIPELINE_BIND_POINT_GRAPHICS, g_pipelineLayout, 0, 1, &descriptorSets[currentFrame][g_activeDescriptor], 0, NULL);
+	vkCmdBindDescriptorSets(commandBuffers[currentFrame], VK_PIPELINE_BIND_POINT_GRAPHICS, g_activeShader.PL, 0, 1, &descriptorSets[currentFrame][g_activeDescriptor], 0, NULL);
 
 #else
 	#error
@@ -4261,7 +4527,6 @@ void Emulator_UpdateVRAM()
 
 	Emulator_TransitionImageLayout(vramTexture.textureImage, VK_FORMAT_R8G8_UNORM, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
-
 	vkDestroyBuffer(device, newVramTexture.stagingBuffer, NULL);
 	vkFreeMemory(device, newVramTexture.stagingBufferMemory, NULL);
 
@@ -4325,7 +4590,7 @@ void Emulator_DoPollEvent()
 				case SDL_WINDOWEVENT_RESIZED:
 					windowWidth = event.window.data1;
 					windowHeight = event.window.data2;
-					Emulator_ResetDevice();
+					g_resetDeviceOnNextFrame = TRUE;
 					break;
 				case SDL_WINDOWEVENT_CLOSE:
 					Emulator_ShutDown();
@@ -4358,6 +4623,7 @@ bool vbo_was_dirty_flag = FALSE;
 
 int Emulator_BeginScene()
 {
+
 #if defined(D3D12)
 	Emulator_WaitForPreviousFrame();
 
@@ -4373,6 +4639,12 @@ int Emulator_BeginScene()
 #endif
 
 	Emulator_DoPollEvent();
+
+	if (g_resetDeviceOnNextFrame == TRUE)
+	{
+		Emulator_ResetDevice();
+		g_resetDeviceOnNextFrame = FALSE;
+	}
 
 	if (begin_scene_flag)
 		return FALSE;
@@ -4463,7 +4735,7 @@ void Emulator_DoDebugKeys(int nKey, bool down)
 			if (g_swapInterval != 0)
 			{
 				g_swapInterval = 0;
-				Emulator_ResetDevice();
+				g_resetDeviceOnNextFrame = TRUE;
 			}
 		}
 		else
@@ -4471,7 +4743,7 @@ void Emulator_DoDebugKeys(int nKey, bool down)
 			if (g_swapInterval != SWAP_INTERVAL)
 			{
 				g_swapInterval = SWAP_INTERVAL;
-				Emulator_ResetDevice();
+				g_resetDeviceOnNextFrame = TRUE;
 			}
 		}
 	}
@@ -5409,8 +5681,8 @@ void Emulator_CreatePipelineState(ShaderID& shader, VkPipeline* pipeline, VkPipe
 	inputAssembly.primitiveRestartEnable = VK_FALSE;
 
 	VkRect2D scissor;
-	scissor.extent.width = VRAM_WIDTH;
-	scissor.extent.height = VRAM_HEIGHT;
+	scissor.extent.width = windowWidth;
+	scissor.extent.height = windowHeight;
 	scissor.offset.x = 0;
 	scissor.offset.y = 0;
 
@@ -5428,19 +5700,6 @@ void Emulator_CreatePipelineState(ShaderID& shader, VkPipeline* pipeline, VkPipe
 	multisampling.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
 	multisampling.sampleShadingEnable = VK_FALSE;
 	multisampling.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
-
-	VkPipelineLayoutCreateInfo pipelineLayoutInfo;
-	memset(&pipelineLayoutInfo, 0, sizeof(VkPipelineLayoutCreateInfo));
-	pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-	pipelineLayoutInfo.pushConstantRangeCount = 0;
-	pipelineLayoutInfo.setLayoutCount = 1;
-	pipelineLayoutInfo.pSetLayouts = &shader.DL;
-
-	if (vkCreatePipelineLayout(device, &pipelineLayoutInfo, NULL, &g_pipelineLayout) != VK_SUCCESS)
-	{
-		eprinterr("Failed to create pipeline layout!\n");
-		assert(FALSE);
-	}
 
 	VkPipelineShaderStageCreateInfo shaderStages[] = { shader.VS, shader.PS };
 
@@ -5463,7 +5722,7 @@ void Emulator_CreatePipelineState(ShaderID& shader, VkPipeline* pipeline, VkPipe
 		pipelineInfo.pColorBlendState = colourBlendState;
 	}
 
-	pipelineInfo.layout = g_pipelineLayout;
+	pipelineInfo.layout = shader.PL;
 	pipelineInfo.renderPass = render_pass;
 	pipelineInfo.subpass = 0;
 	pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
@@ -5701,7 +5960,7 @@ void Emulator_BeginPass()
 	renderPassInfo.pClearValues = &clearColor;
 
 	vkCmdBeginRenderPass(commandBuffers[currentFrame], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-	vkCmdBindDescriptorSets(commandBuffers[currentFrame], VK_PIPELINE_BIND_POINT_GRAPHICS, g_pipelineLayout, 0, 1, &descriptorSets[currentFrame][g_activeDescriptor], 0, NULL);
+	vkCmdBindDescriptorSets(commandBuffers[currentFrame], VK_PIPELINE_BIND_POINT_GRAPHICS, g_activeShader.PL, 0, 1, &descriptorSets[currentFrame][g_activeDescriptor], 0, NULL);
 	
 	begin_pass_flag = TRUE;
 }
@@ -5750,6 +6009,59 @@ void Emulator_UpdateProjectionConstantBuffer(float* ortho)
 	vkMapMemory(device, uniformBuffersMemory[currentFrame], 0, sizeof(float) * 16, 0, &data);
 	memcpy(data, ortho, sizeof(float) * 16);
 	vkUnmapMemory(device, uniformBuffersMemory[currentFrame]);
+}
+
+void Emulator_DestroyConstantBuffers()
+{
+	for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) 
+	{
+		vkDestroyBuffer(device, uniformBuffers[i], NULL);
+		vkFreeMemory(device, uniformBuffersMemory[i], NULL);
+		uniformBuffers[i] = VK_NULL_HANDLE;
+		uniformBuffersMemory[i] = VK_NULL_HANDLE;
+	}
+}
+
+void Emulator_DestroySyncObjects()
+{
+	for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) 
+	{
+		vkDestroySemaphore(device, renderFinishedSemaphores[i], NULL);
+		vkDestroySemaphore(device, imageAvailableSemaphores[i], NULL);
+		vkDestroyFence(device, inFlightFences[i], NULL);
+
+		renderFinishedSemaphores[i] = VK_NULL_HANDLE;
+		imageAvailableSemaphores[i] = VK_NULL_HANDLE;
+		inFlightFences[i] = VK_NULL_HANDLE;
+	}
+
+	renderFinishedSemaphores.clear();
+	imageAvailableSemaphores.clear();
+	inFlightFences.clear();
+}
+
+void Emulator_DestroyVulkanCommandPool()
+{
+	vkDestroyCommandPool(device, commandPool, NULL);
+	commandPool = VK_NULL_HANDLE;
+}
+
+void Emulator_DestroyVulkanCommandBuffers()
+{
+	for (int i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
+	{
+		vkFreeCommandBuffers(device, commandPool, 1, &commandBuffers[i]);
+	}
+
+	commandBuffers.clear();
+}
+
+void Emulator_DestroyDescriptorSetLayout()
+{
+	for (int i = 0; i < 2; i++)
+	{
+		vkDestroyDescriptorSetLayout(device, descriptorSetLayout[i], NULL);
+	}
 }
 
 #endif
