@@ -475,52 +475,33 @@ void INSTANCE_InitInstanceList(struct _InstanceList* list, struct _InstancePool*
 struct _Instance* INSTANCE_NewInstance(struct _InstanceList* list)
 {
 #if defined(PSX_VERSION)
-	struct _Instance* temp; // $v0
-	struct _Instance* instance; // $a1
-
-	//v1 = list->pool;
+	struct _Instance* temp;
+	struct _Instance* instance;
 
 	if (list->pool->numFreeInstances != 0)
 	{
 		list->pool->numFreeInstances--;
-		//v0 = list->pool
-		//list->pool[0x8000]
+		instance = list->pool->first_free;
+		list->pool->first_free = instance->next;
+
+		temp = list->first;
+		list->first = instance;
+		instance->next = list->first;
+
+		if (instance->next != NULL)
+		{
+			list->first->prev = instance;
+		}
+	
+		instance->prev = NULL;
+		instance->instanceID = list->pool->nextInstanceID++;
+
+		list->numInstances++;
+
+		return instance;
 	}
-	//locret_800326E4
+	
 	return NULL;
-#if 0 
-		li      $v1, 0x8000
-		addu    $v0, $v1
-		lw      $a1, 0x1C98($v0)
-		nop
-		lw      $v1, 8($a1)
-		nop
-		sw      $v1, 0x1C98($v0)
-		lw      $v0, 4($a0)
-		sw      $a1, 4($a0)
-		beqz    $v0, loc_800326B0
-		sw      $v0, 8($a1)
-		sw      $a1, 0xC($v0)
-
-		loc_800326B0:
-	sw      $zero, 0xC($a1)
-		lw      $v0, 8($a0)
-		nop
-		lw      $v1, 0($v0)
-		nop
-		sw      $v1, 0x10($a1)
-		addiu   $v1, 1
-		sw      $v1, 0($v0)
-		lw      $v1, 0($a0)
-		move    $v0, $a1
-		addiu   $v1, 1
-		jr      $ra
-		sw      $v1, 0($a0)
-
-		locret_800326E4:
-	jr      $ra
-		move    $v0, $zero
-#endif
 
 #elif defined(PC_VERSION)
 	struct _InstancePool* pool; // eax
