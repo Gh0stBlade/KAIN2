@@ -4166,6 +4166,7 @@ void Emulator_SetShader(const ShaderID &shader)
 #else
 	#error
 #endif
+
 	Emulator_Ortho2D(0.0f, activeDispEnv.disp.w, activeDispEnv.disp.h, 0.0f, 0.0f, 1.0f);
 }
 
@@ -5958,12 +5959,13 @@ void Emulator_BeginPass()
 		assert(FALSE);
 	}
 	
-	if (vkAcquireNextImageKHR(device, swapchain, UINT64_MAX, imageAvailableSemaphores[currentFrame], VK_NULL_HANDLE, &imageIndex) != VK_SUCCESS)
+	VkResult result = vkAcquireNextImageKHR(device, swapchain, UINT64_MAX, imageAvailableSemaphores[currentFrame], VK_NULL_HANDLE, &imageIndex);
+	if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR)
 	{
 		eprinterr("Failed to acquire next image!\n");
 		assert(FALSE);
 	}
-	
+
 	if (vkResetFences(device, 1, &inFlightFences[currentFrame]) != VK_SUCCESS)
 	{
 		eprinterr("Failed to reset fences!\n");
