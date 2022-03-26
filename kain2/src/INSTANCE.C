@@ -486,7 +486,7 @@ struct _Instance* INSTANCE_NewInstance(struct _InstanceList* list)
 
 		temp = list->first;
 		list->first = instance;
-		instance->next = list->first;
+		instance->next = temp;
 
 		if (instance->next != NULL)
 		{
