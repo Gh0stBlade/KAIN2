@@ -800,9 +800,20 @@ void Emulator_ResetDevice()
 
 	g_vertexBufferMemoryBound = FALSE;
 
+	if (begin_pass_flag)
+	{
+		begin_commands_flag = FALSE;
+		begin_pass_flag = FALSE;
+		Emulator_BeginPass();
+	}
+	else if (begin_commands_flag)
+	{
+		begin_commands_flag = FALSE;
+		Emulator_BeginCommandBuffer();
+	}
+
 #if 0
-	begin_commands_flag = FALSE;
-	begin_pass_flag = FALSE;
+	
 	Emulator_BeginPass();
 
 	switch (lastShaderBound)
@@ -4159,7 +4170,7 @@ void Emulator_SetShader(const ShaderID &shader)
 	g_graphicsPipeline = shader.GP;
 	g_activeShader = shader;
 
-	if (begin_pass_flag && !g_resetDeviceOnNextFrame)
+	if (begin_commands_flag && begin_pass_flag && !g_resetDeviceOnNextFrame)
 	{
 		vkCmdBindPipeline(commandBuffers[currentFrame], VK_PIPELINE_BIND_POINT_GRAPHICS, g_graphicsPipeline);
 	}
