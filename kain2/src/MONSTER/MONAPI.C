@@ -1,4 +1,4 @@
-#include "THISDUST.H"
+#include "CORE.H"
 #include "MONAPI.H"
 
 
@@ -171,7 +171,7 @@ void MonsterCollide(struct _Instance *instance, struct GameTracker *gameTracker)
 							// Start line: 534
 							// Start offset: 0x8007E2A0
 							// Variables:
-								struct _CollideInfo parentCI; // stack offset -88
+							//	struct _CollideInfo parentCI; // stack offset -88
 						/* end block 1.1.2.2.1.1 */
 						// End offset: 0x8007E30C
 						// End Line: 541
@@ -514,6 +514,7 @@ void MonsterRelocateInstanceObject(struct _Instance *instance, long offset)
 // void /*$ra*/ MONAPI_TurnHead(struct _Instance *instance /*$a0*/, short *rotx /*$a1*/, short *rotz /*$a2*/, struct GameTracker *gameTracker /*$a3*/)
 void MONAPI_TurnHead(struct _Instance *instance, short *rotx, short *rotz, struct GameTracker *gameTracker)
 { // line 1299, offset 0x8007f05c
+#if defined(PC_VERSION)
 	if (*rotx >= -768)
 	{
 		if (*rotx > 512)
@@ -528,6 +529,7 @@ void MONAPI_TurnHead(struct _Instance *instance, short *rotx, short *rotz, struc
 	}
 	else *rotz = 1024;
 	MON_LookInDirection(instance, -*rotx, *rotz);
+#endif
 }
 
 
@@ -535,11 +537,13 @@ void MONAPI_TurnHead(struct _Instance *instance, short *rotx, short *rotz, struc
 // void /*$ra*/ MONAPI_SetLookAround(struct _Instance *instance /*$a0*/)
 void MONAPI_SetLookAround(struct _Instance *instance)
 { // line 1320, offset 0x8007f0d8
+#if defined(PC_VERSION)
 	struct _MonsterVars* extraData; // esi
 
 	extraData = (struct _MonsterVars*)instance->extraData;
 	MON_EnableHeadMove(instance);
 	extraData->mode = 0x80000;
+#endif
 }
 
 
@@ -547,11 +551,13 @@ void MONAPI_SetLookAround(struct _Instance *instance)
 // void /*$ra*/ MONAPI_ResetLookAround(struct _Instance *instance /*$a0*/)
 void MONAPI_ResetLookAround(struct _Instance *instance)
 { // line 1329, offset 0x8007f108
+#if defined(PC_VERSION)
 	struct _MonsterVars* extraData; // esi
 
 	extraData = (struct _MonsterVars*)instance->extraData;
 	MON_DisableHeadMove(instance);
 	extraData->mode = 1;
+#endif
 }
 
 
@@ -669,6 +675,7 @@ void MONAPI_AddToGenerator(struct _Instance *instance)
 // void /*$ra*/ MONAPI_CheckGenerator(struct _Instance *instance /*$a0*/)
 void MONAPI_CheckGenerator(struct _Instance *instance)
 { // line 1426, offset 0x8007f378
+#if defined(PC_VERSION)
 	char numRegens; // dl
 	signed int result; // eax
 	struct _MONAPI_Regenerator* regenEntries; // edi
@@ -690,6 +697,7 @@ void MONAPI_CheckGenerator(struct _Instance *instance)
 		memcpy(regenEntries, &regenEntries[1], result);
 	}
 	return result;
+#endif
 }
 
 

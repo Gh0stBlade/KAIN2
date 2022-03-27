@@ -137,14 +137,14 @@ struct OBTABLE2_114fake // hashcode: 0xAA6A3EB1 (dec: -1435877711)
 struct ObjectFunc // hashcode: 0xFDE6E2DA (dec: -35200294)
 {
 	char* scriptName; // size=0, offset=0
-	void (*initFunc)(); // size=0, offset=4
-	void (*processFunc)(); // size=0, offset=8
-	void (*collideFunc)(); // size=0, offset=12
-	unsigned long (*queryFunc)(); // size=0, offset=16
-	void (*messageFunc)(); // size=0, offset=20
-	void (*additionalCollideFunc)(); // size=0, offset=24
-	void (*relocateTuneFunc)(); // size=0, offset=28
-	void (*relocateInstObFunc)(); // size=0, offset=32
+	void (*initFunc)(struct _Instance*, struct GameTracker*); // size=0, offset=4
+	void (*processFunc)(struct _Instance* playerInstance, struct GameTracker* gameTracker); // size=0, offset=8
+	void (*collideFunc)(struct _Instance* instance, struct GameTracker* gameTracker); // size=0, offset=12
+	unsigned long (*queryFunc)(struct _Instance* instance, unsigned long Query); // size=0, offset=16
+	void (*messageFunc)(struct _Instance* instance, unsigned long Message, unsigned long Data); // size=0, offset=20
+	void (*additionalCollideFunc)(struct _Instance* instance, struct GameTracker* gameTracker); // size=0, offset=24
+	void (*relocateTuneFunc)(struct Object* object, long offset); // size=0, offset=28
+	void (*relocateInstObFunc)(struct _Instance* instance, long offset); // size=0, offset=32
 };
 
 union OBTABLE2_209fake // Hashcode: 0xB29B0D0C (dec: -1298461428)

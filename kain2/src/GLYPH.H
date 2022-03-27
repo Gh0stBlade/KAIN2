@@ -33,6 +33,19 @@ struct GLYPH_114fake // hashcode: 0x249332FF (dec: 613626623)
 	} Follow; // size=20, offset=76, found in object files: glyph.o, glyph.o
 };
 
+struct __Event 
+{
+	int ID; // size=0, offset=0
+	int Data; // size=0, offset=4
+};
+
+struct __MessageQueue 
+{
+	int Head; // size=0, offset=0
+	int Tail; // size=0, offset=4
+	struct __Event Queue[16]; // size=128, offset=8
+};
+
 struct __GlyphData // hashcode: 0x9C88C1F1 (dec: -1668759055)
 {
 	void (*process)(); // size=0, offset=0
@@ -71,7 +84,7 @@ extern int _GlyphIsAnyGlyphSet(); // 0x8007ABF0
 extern int _GlyphCost(struct _GlyphTuneData *glyphtunedata, int glyphNum); // 0x8007AC20
 extern int GlyphIsPuppetShowModeOn(); // 0x8007AC30
 extern void _GlyphDefaultProcess(struct _Instance *instance, int data1, int data2); // 0x8007AC54
-extern void HUD_GetPlayerScreenPt(struct DVECTOR *center); // 0x8007ACF8
+extern void HUD_GetPlayerScreenPt(DVECTOR *center); // 0x8007ACF8
 extern void GlyphDrawMenu(struct _Instance *instance); // 0x8007AD88
 extern long GlyphTime(int time); // 0x8007B0EC
 extern void ShrinkGlyphMenu(struct _Instance *instance); // 0x8007B108

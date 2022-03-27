@@ -1,4 +1,4 @@
-#include "THISDUST.H"
+#include "CORE.H"
 #include "PHYSOBS.H"
 
 
@@ -28,6 +28,7 @@ void PHYSOB_PlayDropSound(struct _Instance *instance)
 // struct _Instance * /*$ra*/ PHYSOBS_IsAPushBlockAttached(struct _Instance *block /*$s3*/)
 struct _Instance * PHYSOBS_IsAPushBlockAttached(struct _Instance *block)
 { // line 259, offset 0x80068820
+#if defined(PC_VERSION)
 	struct _Instance* v1; // ecx
 	struct _Instance* next; // esi
 	struct PhysObProperties* data; // edx
@@ -63,6 +64,9 @@ struct _Instance * PHYSOBS_IsAPushBlockAttached(struct _Instance *block)
 		} while (next);
 	}
 	return v5;
+#else
+	return NULL;
+#endif
 }
 
 
@@ -70,6 +74,7 @@ struct _Instance * PHYSOBS_IsAPushBlockAttached(struct _Instance *block)
 // struct _Instance * /*$ra*/ PHYSOBS_IsAnythingAttached(struct _Instance *block /*$a0*/)
 struct _Instance * PHYSOBS_IsAnythingAttached(struct _Instance *block)
 { // line 284, offset 0x800688a8
+#if defined(PC_VERSION)
 	struct _Instance* v1; // ecx
 	struct _Instance* result; // eax
 	struct _Instance* next; // edx
@@ -90,6 +95,9 @@ struct _Instance * PHYSOBS_IsAnythingAttached(struct _Instance *block)
 		return v1;
 	}
 	return result;
+#else
+	return NULL;
+#endif
 }
 
 
@@ -97,10 +105,14 @@ struct _Instance * PHYSOBS_IsAnythingAttached(struct _Instance *block)
 // int /*$ra*/ CheckPhysOb(struct _Instance *instance /*$a0*/)
 int CheckPhysOb(struct _Instance *instance)
 { // line 307, offset 0x800688f0
+#if defined(PC_VERSION)
 	struct PhysObProperties* data; // eax
 
 	data = (struct PhysObProperties*)instance->data;
 	return data && data->ID == 0xB00B;
+#else
+	return 0;
+#endif
 }
 
 
@@ -108,6 +120,7 @@ int CheckPhysOb(struct _Instance *instance)
 // int /*$ra*/ CheckPhysObAbility(struct _Instance *instance /*$a0*/, unsigned short ability /*$a3*/)
 int CheckPhysObAbility(struct _Instance *instance, unsigned short ability)
 { // line 322, offset 0x8006891c
+#if defined(PC_VERSION)
 	struct PhysObProperties* data; // eax
 
 	data = (struct PhysObProperties*)instance->data;
@@ -124,6 +137,9 @@ int CheckPhysObAbility(struct _Instance *instance, unsigned short ability)
 		}
 	}
 	return 0;
+#else
+	return 0;
+#endif
 }
 
 
@@ -131,10 +147,14 @@ int CheckPhysObAbility(struct _Instance *instance, unsigned short ability)
 // int /*$ra*/ CheckPhysObFamily(struct _Instance *instance /*$a0*/, unsigned short family /*$a1*/)
 int CheckPhysObFamily(struct _Instance *instance, unsigned short family)
 { // line 348, offset 0x80068998
+#if defined(PC_VERSION)
 	struct PhysObProperties* data; // eax
 
 	data = (struct PhysObProperties*)instance->data;
 	return data && data->ID == 0xB00B && data->family == family;
+#else
+	return 0;
+#endif
 }
 
 
@@ -182,6 +202,7 @@ int GetPhysicalAbility(struct _Instance *instance)
 // int /*$ra*/ AnyBlocksInMotion()
 int AnyBlocksInMotion()
 { // line 426, offset 0x80068a34
+#if defined(PC_VERSION)
 	struct _Instance* result; // eax
 	struct PhysObProperties* v1; // ecx
 
@@ -201,6 +222,9 @@ int AnyBlocksInMotion()
 			return (int)result;
 	}
 	return 1;
+#else
+	return 0;
+#endif
 }
 
 
@@ -208,6 +232,7 @@ int AnyBlocksInMotion()
 // void /*$ra*/ SetThrowDirection(struct _Instance *instance /*$s1*/, struct _Instance *parent /*$a1*/, struct evObjectThrowData *throwData /*$s2*/, struct PhysObData *Data /*$a3*/)
 void SetThrowDirection(struct _Instance *instance, struct _Instance *parent, struct evObjectThrowData *throwData, struct PhysObData *Data)
 { // line 456, offset 0x80068ad4
+#if defined(PC_VERSION)
 	struct _Instance* LinkParent; // eax
 	struct _Instance* target; // ebx
 	__int16 v6; // ax
@@ -307,6 +332,7 @@ void SetThrowDirection(struct _Instance *instance, struct _Instance *parent, str
 	default:
 		return;
 	}
+#endif
 }
 
 // ************** not on pc
@@ -358,7 +384,7 @@ void ThrowPhysOb(struct _Instance *instance, struct evObjectThrowData *throwData
 				// Start line: 672
 				// Start offset: 0x80069090
 				// Variables:
-					struct _PCollideInfo pcollideInfo; // stack offset -96
+					//struct _PCollideInfo pcollideInfo; // stack offset -96
 					struct _Position newPos; // stack offset -48
 					struct _Position oldPos; // stack offset -40
 					struct MATRIX *mat; // $v0
@@ -381,9 +407,9 @@ void ThrowPhysOb(struct _Instance *instance, struct evObjectThrowData *throwData
 					// Start line: 697
 					// Start offset: 0x80069128
 					// Variables:
-						short _x0; // $v0
-						short _y0; // $v1
-						short _z0; // $a0
+						//short _x0; // $v0
+						//short _y0; // $v1
+						//short _z0; // $a0
 						struct _Position *_v; // $a1
 				/* end block 1.1.3.2 */
 				// End offset: 0x80069128
@@ -506,7 +532,7 @@ int InteractPhysOb(struct _Instance *instance, struct _Instance *Force, int Link
 				// Start line: 912
 				// Start offset: 0x800696D0
 				// Variables:
-					struct _Instance *lightInst; // $s0
+					//struct _Instance *lightInst; // $s0
 			/* end block 1.1.2 */
 			// End offset: 0x80069700
 			// End Line: 921
@@ -515,7 +541,7 @@ int InteractPhysOb(struct _Instance *instance, struct _Instance *Force, int Link
 				// Start line: 958
 				// Start offset: 0x80069820
 				// Variables:
-					int s; // $s0
+					//int s; // $s0
 			/* end block 1.1.3 */
 			// End offset: 0x80069870
 			// End Line: 963
@@ -548,6 +574,7 @@ int InteractPhysOb(struct _Instance *instance, struct _Instance *Force, int Link
 // void /*$ra*/ ResetOrientation(struct _Instance *instance /*$s1*/)
 void ResetOrientation(struct _Instance *instance)
 { // line 989, offset 0x80069930
+#if defined(PC_VERSION)
 	struct PhysObData* data; // edi
 	__int16 v2; // si
 	int v3; // eax
@@ -685,6 +712,7 @@ void ResetOrientation(struct _Instance *instance)
 	G2Anim_SetController_Vector(anim, 2, 14, &vector);
 	G2Instance_RebuildTransforms(instance);
 	G2Anim_SwitchToKeylist(anim, *instance->object->animList, 0);
+#endif
 }
 
 
@@ -704,6 +732,7 @@ void FinishPush(struct _Instance *instance)
 // void /*$ra*/ PhysOb_AlignPush(struct _Instance *instance /*$s4*/, int x /*$s5*/, int y /*$s3*/, int path /*$s6*/, struct PhysObData *Data /*stack 16*/)
 void PhysOb_AlignPush(struct _Instance *instance, int x, int y, int path, struct PhysObData *Data)
 { // line 1160, offset 0x80069e6c
+#if defined(PC_VERSION)
 	struct _G2Anim_Type* p_anim; // esi
 	int v6; // edi
 	__int16 v7; // di
@@ -743,6 +772,7 @@ void PhysOb_AlignPush(struct _Instance *instance, int x, int y, int path, struct
 	vector.z = euler.z;
 	G2Anim_SetController_Vector(p_anim, 2, 14, &vector);
 	G2Anim_SwitchToKeylist(p_anim, instance->object->animList[path], path);
+#endif
 }
 
 
@@ -774,6 +804,7 @@ int FlipPhysOb(struct _Instance *instance, short x, short y, struct _Instance *F
 // int /*$ra*/ CanBePickedUp(struct _Instance *instance /*$s1*/, struct _Instance *Force /*$s0*/, int LinkNode /*$s2*/)
 int CanBePickedUp(struct _Instance *instance, struct _Instance *Force, int LinkNode)
 { // line 1296, offset 0x8006a120
+#if defined(PC_VERSION)
 	struct MATRIX* matrix; // esi
 	WORD* data; // ecx
 	struct MATRIX* v6; // eax
@@ -838,6 +869,9 @@ int CanBePickedUp(struct _Instance *instance, struct _Instance *Force, int LinkN
 LABEL_19:
 	PHYSICS_CheckLineInWorld(instance, &v16);
 	return v16.type < 2u || MATH3D_LengthXYZ(v10 - v13, v11 - v14, v12 - v15) <= 20;
+#else
+	return 0;
+#endif
 }
 
 
@@ -876,6 +910,7 @@ int PickUpPhysOb(struct _Instance *instance, short Steps, struct _Instance *Forc
 // struct _Instance * /*$ra*/ PHYSOB_BirthCollectible(struct _Instance *parent /*$a0*/, int x /*$s1*/, int y /*$s2*/, int z /*$s3*/, int type /*stack 16*/, int lifeTime /*stack 20*/)
 struct _Instance * PHYSOB_BirthCollectible(struct _Instance *parent, int x, int y, int z, int type, int lifeTime)
 { // line 1443, offset 0x8006a3b8
+#if defined(PC_VERSION)
 	struct _Instance* result; // eax
 	struct Object* v7; // ecx
 
@@ -896,6 +931,9 @@ struct _Instance * PHYSOB_BirthCollectible(struct _Instance *parent, int x, int 
 		}
 	}
 	return result;
+#else
+	return NULL;
+#endif
 }
 
 
@@ -955,7 +993,7 @@ struct _Instance * BirthProjectilePhysOb(struct _Instance *instance, int grabJoi
 				// Start line: 1535
 				// Start offset: 0x8006A5CC
 				// Variables:
-					struct __PhysObProjectileData *ProjData; // $v1
+					//struct __PhysObProjectileData *ProjData; // $v1
 			/* end block 1.1.2 */
 			// End offset: 0x8006A620
 			// End Line: 1547
@@ -1252,7 +1290,7 @@ void InitPhysicalObject(struct _Instance *instance, struct GameTracker *gameTrac
 				// Start line: 2009
 				// Start offset: 0x8006AE38
 				// Variables:
-					int s; // $s0
+					//int s; // $s0
 			/* end block 1.3.2 */
 			// End offset: 0x8006AE88
 			// End Line: 2015
@@ -1348,7 +1386,7 @@ void ProcessPhysicalObject(struct _Instance *instance, struct GameTracker *gameT
 				// Start line: 2230
 				// Start offset: 0x8006B434
 				// Variables:
-					struct _PhysObLight *pLight; // $a1
+					//struct _PhysObLight *pLight; // $a1
 			/* end block 1.2.1 */
 			// End offset: 0x8006B46C
 			// End Line: 2237
@@ -1398,7 +1436,7 @@ void ProcessPhysicalObject(struct _Instance *instance, struct GameTracker *gameT
 				// Start line: 2373
 				// Start offset: 0x8006B7C4
 				// Variables:
-					struct _PhysObLight *pLight; // $a1
+					//struct _PhysObLight *pLight; // $a1
 			/* end block 1.7.1 */
 			// End offset: 0x8006B800
 			// End Line: 2380
@@ -1410,7 +1448,7 @@ void ProcessPhysicalObject(struct _Instance *instance, struct GameTracker *gameT
 			// Start line: 2385
 			// Start offset: 0x8006B814
 			// Variables:
-				struct Level *level; // $v1
+				//struct Level *level; // $v1
 
 			/* begin block 1.8.1 */
 				// Start line: 2393
@@ -1453,7 +1491,7 @@ void ProcessPhysicalObject(struct _Instance *instance, struct GameTracker *gameT
 				// Start line: 2570
 				// Start offset: 0x8006BCDC
 				// Variables:
-					struct _PCollideInfo CInfo; // stack offset -96
+					//struct _PCollideInfo CInfo; // stack offset -96
 					SVECTOR Old; // stack offset -48
 					SVECTOR New; // stack offset -40
 					short len; // $a2
@@ -1580,13 +1618,13 @@ unsigned long PhysicalObjectQuery(struct _Instance *instance, unsigned long Quer
 			// Start line: 2884
 			// Start offset: 0x8006C310
 			// Variables:
-				struct PhysObSwitchProperties *Prop; // $v0
+				//struct PhysObSwitchProperties *Prop; // $v0
 
 			/* begin block 1.9.1 */
 				// Start line: 2889
 				// Start offset: 0x8006C328
 				// Variables:
-					struct PhysObData *Data; // $v0
+					//struct PhysObData *Data; // $v0
 			/* end block 1.9.1 */
 			// End offset: 0x8006C34C
 			// End Line: 2901
@@ -1650,7 +1688,7 @@ void PhysicalObjectPost(struct _Instance *instance, unsigned long Message, unsig
 				// Start line: 3041
 				// Start offset: 0x8006C83C
 				// Variables:
-					struct PhysObData *Data; // $a0
+					//struct PhysObData *Data; // $a0
 			/* end block 1.2.2 */
 			// End offset: 0x8006C85C
 			// End Line: 3050
@@ -1677,7 +1715,7 @@ void PhysicalObjectPost(struct _Instance *instance, unsigned long Message, unsig
 				// Start line: 3083
 				// Start offset: 0x8006C908
 				// Variables:
-					struct PhysObSwitchProperties *Prop; // $v1
+					//struct PhysObSwitchProperties *Prop; // $v1
 			/* end block 1.3.2 */
 			// End offset: 0x8006C94C
 			// End Line: 3099
@@ -1719,7 +1757,7 @@ void PhysicalObjectPost(struct _Instance *instance, unsigned long Message, unsig
 			// Start line: 3199
 			// Start offset: 0x8006CB58
 			// Variables:
-				struct _PhysObLight *pLight; // $a1
+				//struct _PhysObLight *pLight; // $a1
 
 			/* begin block 1.7.1 */
 				// Start line: 3213
@@ -1751,7 +1789,7 @@ void PhysicalObjectPost(struct _Instance *instance, unsigned long Message, unsig
 			// Start line: 3252
 			// Start offset: 0x8006CC58
 			// Variables:
-				struct PhysObProperties *Prop; // $v0
+				//struct PhysObProperties *Prop; // $v0
 		/* end block 1.10 */
 		// End offset: 0x8006CCA4
 		// End Line: 3258
@@ -1902,7 +1940,7 @@ void CollidePhysicalObject(struct _Instance *instance, struct GameTracker *gameT
 			// Start offset: 0x8006D170
 			// Variables:
 				struct BSPTree *bsp; // $s0
-				struct Level *level; // $a0
+				//struct Level *level; // $a0
 		/* end block 1.2 */
 		// End offset: 0x8006D1C4
 		// End Line: 3494
@@ -1934,9 +1972,9 @@ void CollidePhysicalObject(struct _Instance *instance, struct GameTracker *gameT
 				// Start line: 3519
 				// Start offset: 0x8006D298
 				// Variables:
-					short _x0; // $v0
-					short _y0; // $v1
-					short _z0; // $a2
+					//short _x0; // $v0
+					//short _y0; // $v1
+					//short _z0; // $a2
 			/* end block 1.3.2 */
 			// End offset: 0x8006D298
 			// End Line: 3519
@@ -1955,7 +1993,7 @@ void CollidePhysicalObject(struct _Instance *instance, struct GameTracker *gameT
 			// Start line: 3583
 			// Start offset: 0x8006D4B0
 			// Variables:
-				struct _PCollideInfo CInfo; // stack offset -104
+				//struct _PCollideInfo CInfo; // stack offset -104
 				struct _SVector newPos; // stack offset -56
 		/* end block 1.5 */
 		// End offset: 0x8006D50C
@@ -1965,18 +2003,18 @@ void CollidePhysicalObject(struct _Instance *instance, struct GameTracker *gameT
 			// Start line: 3622
 			// Start offset: 0x8006D5B4
 			// Variables:
-				struct _Position delta; // stack offset -112
+				//struct _Position delta; // stack offset -112
 
 			/* begin block 1.6.1 */
 				// Start line: 3622
 				// Start offset: 0x8006D5B4
 				// Variables:
-					short _x0; // $v0
-					short _y0; // $v1
-					short _z0; // $a2
-					short _y1; // $t1
-					short _z1; // $t2
-					struct _Position *_v; // $a3
+					//short _x0; // $v0
+					//short _y0; // $v1
+					//short _z0; // $a2
+					//short _y1; // $t1
+					//short _z1; // $t2
+					//struct _Position *_v; // $a3
 			/* end block 1.6.1 */
 			// End offset: 0x8006D5B4
 			// End Line: 3622
@@ -1995,7 +2033,7 @@ void CollidePhysicalObject(struct _Instance *instance, struct GameTracker *gameT
 			// Start line: 3684
 			// Start offset: 0x8006D758
 			// Variables:
-				struct _CollideInfo parentCI; // stack offset -112
+				//struct _CollideInfo parentCI; // stack offset -112
 		/* end block 1.8 */
 		// End offset: 0x8006D7B0
 		// End Line: 3690
@@ -2044,7 +2082,7 @@ struct PhysObWeaponAttributes * PhysObGetWeapon(struct _Instance *instance)
 			// Start line: 3740
 			// Start offset: 0x8006D8C8
 			// Variables:
-				struct PhysObInteractProperties *Prop; // $v0
+				//struct PhysObInteractProperties *Prop; // $v0
 		/* end block 1.2 */
 		// End offset: 0x8006D8D4
 		// End Line: 3742
@@ -2053,7 +2091,7 @@ struct PhysObWeaponAttributes * PhysObGetWeapon(struct _Instance *instance)
 			// Start line: 3744
 			// Start offset: 0x8006D8E4
 			// Variables:
-				struct __PhysObProjectileProperties *Prop; // $a0
+				//struct __PhysObProjectileProperties *Prop; // $a0
 		/* end block 1.3 */
 		// End offset: 0x8006D90C
 		// End Line: 3748
@@ -2324,9 +2362,9 @@ int CheckBlockSlope(struct _Instance *instance, int x, int y, int hOff, int vOff
 		// Start line: 4178
 		// Start offset: 0x8006E184
 		// Variables:
-			struct _PCollideInfo CInfo; // stack offset -72
-			SVECTOROld; // stack offset -24
-			SVECTORNew; // stack offset -16
+			//struct _PCollideInfo CInfo; // stack offset -72
+			//SVECTOROld; // stack offset -24
+			//SVECTORNew; // stack offset -16
 			int xOff; // $t3
 			int yOff; // $t4
 			int dX; // $t2
@@ -2380,7 +2418,7 @@ int PHYSOB_CheckThrownLineCollision(struct _Instance *instance, struct _Instance
 		// Start line: 4256
 		// Start offset: 0x8006E2C4
 		// Variables:
-			struct _PCollideInfo pcollideInfo; // stack offset -160
+			//struct _PCollideInfo pcollideInfo; // stack offset -160
 			struct _Position newPos; // stack offset -112
 			struct _Position oldPos; // stack offset -104
 			struct _Position orgNew; // stack offset -96
@@ -2415,11 +2453,11 @@ int PHYSOB_CheckThrownLineCollision(struct _Instance *instance, struct _Instance
 				// Start line: 4316
 				// Start offset: 0x8006E488
 				// Variables:
-					short _x0; // $v0
-					short _y0; // $v1
-					short _z0; // $a0
-					short _y1; // $a1
-					short _z1; // $a2
+					//short _x0; // $v0
+					//short _y0; // $v1
+					//short _z0; // $a0
+					//short _y1; // $a1
+					//short _z1; // $a2
 			/* end block 1.1.2 */
 			// End offset: 0x8006E488
 			// End Line: 4316
@@ -2428,11 +2466,11 @@ int PHYSOB_CheckThrownLineCollision(struct _Instance *instance, struct _Instance
 				// Start line: 4326
 				// Start offset: 0x8006E4D8
 				// Variables:
-					short _x1; // $a2
-					short _y1; // $v1
-					short _z1; // $a3
-					struct _Position *_v0; // $v0
-					struct _Position *_v1; // $v0
+					//short _x1; // $a2
+					//short _y1; // $v1
+					//short _z1; // $a3
+					//struct _Position *_v0; // $v0
+					//struct _Position *_v1; // $v0
 			/* end block 1.1.3 */
 			// End offset: 0x8006E4D8
 			// End Line: 4326
@@ -2454,14 +2492,14 @@ int PHYSOB_CheckThrownLineCollision(struct _Instance *instance, struct _Instance
 			// Start line: 4363
 			// Start offset: 0x8006E604
 			// Variables:
-				short _x0; // $t0
-				short _y0; // $t1
-				short _z0; // $t2
-				short _x1; // $v0
-				short _y1; // $v1
-				short _z1; // $a2
-				struct _Position *_v; // $a1
-				struct _Position *_v0; // $v0
+				//short _x0; // $t0
+				//short _y0; // $t1
+				//short _z0; // $t2
+				//short _x1; // $v0
+				//short _y1; // $v1
+				//short _z1; // $a2
+				//struct _Position *_v; // $a1
+				//struct _Position *_v0; // $v0
 		/* end block 1.3 */
 		// End offset: 0x8006E604
 		// End Line: 4363
@@ -2470,10 +2508,10 @@ int PHYSOB_CheckThrownLineCollision(struct _Instance *instance, struct _Instance
 			// Start line: 4363
 			// Start offset: 0x8006E604
 			// Variables:
-				short _x0; // $v0
-				short _y0; // $v1
-				short _z0; // $a2
-				struct _Position *_v; // $a3
+				//short _x0; // $v0
+				//short _y0; // $v1
+				//short _z0; // $a2
+				//struct _Position *_v; // $a3
 		/* end block 1.4 */
 		// End offset: 0x8006E604
 		// End Line: 4363
@@ -2500,8 +2538,8 @@ int PHYSOB_CheckThrownLineCollision(struct _Instance *instance, struct _Instance
 				// Variables:
 					struct _SVector dir; // stack offset -80
 					struct _Instance *hitInst; // $s1
-					struct _TFace *tface; // $s2
-					struct _CollideInfo collideInfo; // stack offset -72
+					//struct _TFace *tface; // $s2
+					//struct _CollideInfo collideInfo; // stack offset -72
 			/* end block 1.5.2 */
 			// End offset: 0x8006E714
 			// End Line: 4406
@@ -2513,9 +2551,9 @@ int PHYSOB_CheckThrownLineCollision(struct _Instance *instance, struct _Instance
 			// Start line: 4414
 			// Start offset: 0x8006E760
 			// Variables:
-				struct Level *level; // $v0
-				int bspID; // $a0
-				struct BSPTree *bsp; // $v0
+				//struct Level *level; // $v0
+				//int bspID; // $a0
+				//struct BSPTree *bsp; // $v0
 		/* end block 1.6 */
 		// End offset: 0x8006E768
 		// End Line: 4425
@@ -2540,7 +2578,7 @@ int PHYSOB_CheckDroppedLineCollision(struct _Instance *instance, struct _Instanc
 		// Start line: 4433
 		// Start offset: 0x8006E7BC
 		// Variables:
-			struct _PCollideInfo pcollideInfo; // stack offset -208
+			//struct _PCollideInfo pcollideInfo; // stack offset -208
 			struct _Position parentPos; // stack offset -160
 			struct _Position newPos; // stack offset -152
 			struct _Position oldPos; // stack offset -144
@@ -2574,8 +2612,8 @@ int PHYSOB_CheckDroppedLineCollision(struct _Instance *instance, struct _Instanc
 				// Start line: 4479
 				// Start offset: 0x8006E948
 				// Variables:
-					short _y0; // $v1
-					short _z0; // $a1
+					//short _y0; // $v1
+					//short _z0; // $a1
 			/* end block 1.1.2 */
 			// End offset: 0x8006E948
 			// End Line: 4479
@@ -2593,20 +2631,20 @@ int PHYSOB_CheckDroppedLineCollision(struct _Instance *instance, struct _Instanc
 				struct _SVector newDir; // stack offset -96
 				struct _SVector axis; // stack offset -88
 				short angle; // $s0
-				struct MATRIX mat; // stack offset -80
+				//struct MATRIX mat; // stack offset -80
 				struct _G2EulerAngles_Type ea; // stack offset -48
 
 			/* begin block 1.2.1 */
 				// Start line: 4496
 				// Start offset: 0x8006E9F4
 				// Variables:
-					short _y0; // $v0
-					short _z0; // $v1
-					short _y1; // $a3
-					short _z1; // $a1
-					struct _SVector *_v; // $s0
-					struct _SVector *_v0; // $v1
-					struct _SVector *_v1; // $a1
+					//short _y0; // $v0
+					//short _z0; // $v1
+					//short _y1; // $a3
+					//short _z1; // $a1
+					///struct _SVector *_v; // $s0
+					//struct _SVector *_v0; // $v1
+					//struct _SVector *_v1; // $a1
 			/* end block 1.2.1 */
 			// End offset: 0x8006E9F4
 			// End Line: 4496
@@ -2615,10 +2653,10 @@ int PHYSOB_CheckDroppedLineCollision(struct _Instance *instance, struct _Instanc
 				// Start line: 4496
 				// Start offset: 0x8006E9F4
 				// Variables:
-					struct _SVector delta; // stack offset -40
-					int i; // $a0
-					struct _Model *model; // $a2
-					struct MATRIX *m; // $a1
+					//struct _SVector delta; // stack offset -40
+					//int i; // $a0
+					//struct _Model *model; // $a2
+					//struct MATRIX *m; // $a1
 			/* end block 1.2.2 */
 			// End offset: 0x8006EC40
 			// End Line: 4546
@@ -2646,7 +2684,7 @@ int PHYSOB_CheckDirectedLineCollision(struct _Instance *instance, int xoffset, i
 		// Start line: 4567
 		// Start offset: 0x8006EC78
 		// Variables:
-			struct _PCollideInfo pcollideInfo; // stack offset -72
+			//struct _PCollideInfo pcollideInfo; // stack offset -72
 			struct _Position newPos; // stack offset -24
 			struct _Position oldPos; // stack offset -16
 			struct MATRIX *mat; // $v0
@@ -2755,7 +2793,7 @@ long PHYSOBS_CheckForValidMove(struct _Instance *instance)
 			// Start line: 4972
 			// Start offset: 0x8006F32C
 			// Variables:
-				struct evPhysicsSlideData *Ptr; // stack offset -24
+				//struct evPhysicsSlideData *Ptr; // stack offset -24
 		/* end block 1.2 */
 		// End offset: 0x8006F420
 		// End Line: 5017
@@ -2860,8 +2898,8 @@ int PHYSOB_MoveTowardsAlign(struct _Instance *instance, struct _SVector *orgVec,
 		// Start line: 5195
 		// Start offset: 0x8006F8C8
 		// Variables:
-			struct MATRIX xform; // stack offset -104
-			struct MATRIX dest; // stack offset -72
+			//struct MATRIX xform; // stack offset -104
+			//struct MATRIX dest; // stack offset -72
 			struct MATRIX *src; // $s4
 			struct _G2Quat_Type rot; // stack offset -40
 			long len; // $s0
@@ -2902,7 +2940,7 @@ int PHYSOB_ReAlignFalling(struct _Instance *instance, int zEndOff)
 			// Start line: 5309
 			// Start offset: 0x8006FC08
 			// Variables:
-				struct _PCollideInfo pcollideInfo; // stack offset -176
+				//struct _PCollideInfo pcollideInfo; // stack offset -176
 				struct _Position newPos; // stack offset -128
 				struct _Position oldPos; // stack offset -120
 				short x; // $s1
@@ -2949,14 +2987,14 @@ int PHYSOB_ReAlignFalling(struct _Instance *instance, int zEndOff)
 			// Start line: 5403
 			// Start offset: 0x8006FEAC
 			// Variables:
-				short _x0; // $v0
-				short _y0; // $v1
-				short _z0; // $a0
-				short _x1; // $a2
-				short _y1; // $t1
-				short _z1; // $t0
-				struct _Position *_v; // $a1
-				struct _Position *_v1; // $t0
+				//short _x0; // $v0
+				//short _y0; // $v1
+				//short _z0; // $a0
+				//short _x1; // $a2
+				//short _y1; // $t1
+				//short _z1; // $t0
+				//struct _Position *_v; // $a1
+				//struct _Position *_v1; // $t0
 		/* end block 1.3 */
 		// End offset: 0x8006FEAC
 		// End Line: 5403
@@ -2965,11 +3003,11 @@ int PHYSOB_ReAlignFalling(struct _Instance *instance, int zEndOff)
 			// Start line: 5425
 			// Start offset: 0x8006FFB4
 			// Variables:
-				struct _PCollideInfo pcollideInfo; // stack offset -112
-				struct _Position newPos; // stack offset -64
-				struct _Position oldPos; // stack offset -56
-				struct _Position deltaPos; // stack offset -48
-				struct MATRIX *mat; // $a2
+				//struct _PCollideInfo pcollideInfo; // stack offset -112
+				//struct _Position newPos; // stack offset -64
+				//struct _Position oldPos; // stack offset -56
+				//struct _Position deltaPos; // stack offset -48
+				//struct MATRIX *mat; // $a2
 		/* end block 1.4 */
 		// End offset: 0x80070058
 		// End Line: 5481
@@ -3033,7 +3071,7 @@ void PhysicalRelocateTune(struct Object *object, long offset)
 			// Start line: 5595
 			// Start offset: 0x800702C0
 			// Variables:
-				struct __PhysObProjectileProperties *prop; // $a0
+				//struct __PhysObProjectileProperties *prop; // $a0
 
 			/* begin block 1.2.1 */
 				// Start line: 5601
@@ -3065,14 +3103,14 @@ void PhysicalRelocateTune(struct Object *object, long offset)
 
 // autogenerated function stub: 
 // int /*$ra*/ PHYSOBS_CheckObjectAxisAlignment(struct MATRIX *m0 /*$a0*/, struct MATRIX *m1 /*$s1*/, struct _SVector *axis /*$s0*/)
-int PHYSOBS_CheckObjectAxisAlignment(struct MATRIX *m0, struct MATRIX *m1, struct _SVector *axis)
+int PHYSOBS_CheckObjectAxisAlignment(MATRIX *m0, MATRIX *m1, struct _SVector *axis)
 { // line 5632, offset 0x80070358
 	/* begin block 1 */
 		// Start line: 5633
 		// Start offset: 0x80070358
 		// Variables:
-			struct VECTOR r0; // stack offset -64
-			struct VECTOR r1; // stack offset -48
+			//struct VECTOR r0; // stack offset -64
+			//struct VECTOR r1; // stack offset -48
 			struct _SVector v0; // stack offset -32
 			struct _SVector v1; // stack offset -24
 	/* end block 1 */

@@ -136,7 +136,7 @@ extern void DropPhysOb(struct _Instance *instance, int flags); // 0x800700C4
 
 extern void PhysicalRelocateTune(struct Object *object, long offset); // 0x800701C0
 
-extern int PHYSOBS_CheckObjectAxisAlignment(struct MATRIX *m0, struct MATRIX *m1, struct _SVector *axis); // 0x80070358
+extern int PHYSOBS_CheckObjectAxisAlignment(MATRIX *m0, MATRIX *m1, struct _SVector *axis); // 0x80070358
 
 extern int PHYSOB_CheckSlide(struct _Instance *instance, int x, int y, struct evPhysicsSlideData **data); // 0x80070428
 

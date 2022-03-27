@@ -1,4 +1,4 @@
-#include "THISDUST.H"
+#include "CORE.H"
 #include "RAZIEL.H"
 
 
@@ -123,7 +123,7 @@ void StateHandlerLookAround(struct __CharacterState *In, int CurrentSection, int
 			// Start line: 925
 			// Start offset: 0x800A9094
 			// Variables:
-				struct _Instance *instance; // $s0
+				//struct _Instance *instance; // $s0
 		/* end block 1.2 */
 		// End offset: 0x800A9094
 		// End Line: 926
@@ -689,10 +689,10 @@ void StateHandlerBreakOff(struct __CharacterState *In, int CurrentSection, int D
 			// Start line: 3397
 			// Start offset: 0x800AE0D4
 			// Variables:
-				struct PhysObInteractProperties *interactProp; // $v0
+				//struct PhysObInteractProperties *interactProp; // $v0
 				int action; // $s1
 				int condition; // $v0
-				struct _Instance *Inst; // $s0
+				//struct _Instance *Inst; // $s0
 		/* end block 1.2 */
 		// End offset: 0x800AE17C
 		// End Line: 3428
@@ -753,9 +753,9 @@ void StateHandlerPullSwitch(struct __CharacterState *In, int CurrentSection, int
 			// Start line: 3545
 			// Start offset: 0x800AE544
 			// Variables:
-				int switchStatus; // $v1
-				struct _Instance *inst; // $s0
-				struct PhysObSwitchProperties *switchProperties; // $s0
+				//int switchStatus; // $v1
+				//struct _Instance *inst; // $s0
+				//struct PhysObSwitchProperties *switchProperties; // $s0
 				int switchClass; // $s1
 		/* end block 1.2 */
 		// End offset: 0x800AE6C8
@@ -816,7 +816,7 @@ void StateHandlerDragObject(struct __CharacterState *In, int CurrentSection, int
 			// Start line: 3795
 			// Start offset: 0x800AEEA0
 			// Variables:
-				struct evMonsterHitData *data; // $v0
+				//struct evMonsterHitData *data; // $v0
 		/* end block 1.2 */
 		// End offset: 0x800AEEA0
 		// End Line: 3796
@@ -1034,7 +1034,7 @@ long RazielAnimCallback(struct _G2Anim_Type *anim, int sectionID, enum _G2AnimCa
 			// Start line: 4806
 			// Start offset: 0x800B0C40
 			// Variables:
-				struct __AlarmData *data; // $s0
+				//struct __AlarmData *data; // $s0
 				struct _Instance *inst; // $a0
 
 			/* begin block 1.2.1 */
@@ -1224,7 +1224,7 @@ void RazielPost(struct _Instance *instance, unsigned long Message, unsigned long
 			// Start line: 5413
 			// Start offset: 0x800B1A9C
 			// Variables:
-				struct _G2AnimSection_Type *animSection; // $v0
+				//struct _G2AnimSection_Type *animSection; // $v0
 		/* end block 1.6 */
 		// End offset: 0x800B1AC4
 		// End Line: 5418
@@ -1247,8 +1247,8 @@ void RazielPost(struct _Instance *instance, unsigned long Message, unsigned long
 			// Start line: 5514
 			// Start offset: 0x800B1CE8
 			// Variables:
-				int i; // $s2
-				struct _Instance *heldWeapon; // $s0
+				//int i; // $s2
+				//struct _Instance *heldWeapon; // $s0
 		/* end block 1.9 */
 		// End offset: 0x800B1D80
 		// End Line: 5541
@@ -1816,6 +1816,7 @@ void mdRazielProcess(struct _Instance *playerInstance, struct GameTracker *gameT
 // void /*$ra*/ RazielProcess(struct _Instance *playerInstance /*$s0*/, struct GameTracker *gameTracker /*$a1*/)
 void RazielProcess(struct _Instance *playerInstance, struct GameTracker *gameTracker)
 { // line 7407, offset 0x800b4104
+#if defined(PC_VERSION)
 	struct _Instance* v2; // edi
 	int* v3; // esi
 	int CurrentHint; // esi
@@ -1886,6 +1887,7 @@ LABEL_19:
 	word_B08412 = 0;
 	word_B08410 = 0;
 	debugRazielFlags1 |= debugRazielFlags2;
+#endif
 }
 
 
@@ -1924,7 +1926,7 @@ void RazielCollide(struct _Instance *instance, struct GameTracker *gameTracker)
 			// Start line: 7555
 			// Start offset: 0x800B43EC
 			// Variables:
-				SVECTOR*offset; // $a1
+				///SVECTOR*offset; // $a1
 		/* end block 1.2 */
 		// End offset: 0x800B4454
 		// End Line: 7571
@@ -1961,7 +1963,7 @@ void RAZIEL_TurnHead(struct _Instance *instance, short *rotx, short *rotz, struc
 			// Start line: 7603
 			// Start offset: 0x800B45BC
 			// Variables:
-				struct evActionLookAroundData data; // stack offset -32
+				//struct evActionLookAroundData data; // stack offset -32
 		/* end block 1.2 */
 		// End offset: 0x800B467C
 		// End Line: 7621
@@ -2033,7 +2035,7 @@ void TrailWaterFX(struct _Instance *instance, int Segment, int Bubbles, int Type
 			int i; // $s4
 			int j; // $s1
 			struct Level *level; // $s5
-			struct __BubbleParams BP; // stack offset -64
+			//struct __BubbleParams BP; // stack offset -64
 	/* end block 1 */
 	// End offset: 0x800B4B64
 	// End Line: 7761

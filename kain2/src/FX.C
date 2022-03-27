@@ -1,4 +1,4 @@
-#include "THISDUST.H"
+#include "CORE.H"
 #include "FX.H"
 
 
@@ -30,6 +30,7 @@ void FX_Init(struct _FXTracker *fxTracker)
 // void /*$ra*/ FX_Die(struct _FX_PRIM *fxPrim /*$s0*/, struct _FXTracker *fxTracker /*$s1*/)
 void FX_Die(struct _FX_PRIM *fxPrim, struct _FXTracker *fxTracker)
 { // line 191, offset 0x80042034
+#if defined(PC_VERSION)
 	if (dword_C54BE8 == fxPrim)
 	{
 		dword_C54BE8 = (struct _FX_PRIM*)fxPrim->node.prev;
@@ -39,6 +40,7 @@ void FX_Die(struct _FX_PRIM *fxPrim, struct _FXTracker *fxTracker)
 	fxPrim->flags |= 0x10u;
 	LIST_DeleteFunc(fxPrim);
 	LIST_InsertFunc(&fxTracker->freePrimList, &fxPrim->node);
+#endif
 }
 
 
@@ -46,6 +48,7 @@ void FX_Die(struct _FX_PRIM *fxPrim, struct _FXTracker *fxTracker)
 // struct _FX_MATRIX * /*$ra*/ FX_GetMatrix(struct _FXTracker *fxTracker /*$s1*/)
 struct _FX_MATRIX * FX_GetMatrix(struct _FXTracker *fxTracker)
 { // line 208, offset 0x800420a4
+#if defined(PC_VERSION)
 	struct NodeType* Func; // eax
 	struct _FX_MATRIX* v2; // esi
 
@@ -57,6 +60,9 @@ struct _FX_MATRIX * FX_GetMatrix(struct _FXTracker *fxTracker)
 		LIST_InsertFunc(&fxTracker->usedMatrixList, Func);
 	}
 	return v2;
+#else
+	return NULL;
+#endif
 }
 
 
@@ -64,6 +70,7 @@ struct _FX_MATRIX * FX_GetMatrix(struct _FXTracker *fxTracker)
 // struct _FX_PRIM * /*$ra*/ FX_GetPrim(struct _FXTracker *fxTracker /*$a0*/)
 struct _FX_PRIM * FX_GetPrim(struct _FXTracker *fxTracker)
 { // line 222, offset 0x800420f4
+#if defined(PC_VERSION)
 	struct _FX_PRIM* result; // eax
 
 	result = (struct _FX_PRIM*)LIST_GetFunc(&fxTracker->freePrimList);
@@ -85,6 +92,9 @@ struct _FX_PRIM * FX_GetPrim(struct _FXTracker *fxTracker)
 		result->matrix = 0;
 	}
 	return result;
+#else
+	return NULL;
+#endif
 }
 
 
@@ -92,6 +102,7 @@ struct _FX_PRIM * FX_GetPrim(struct _FXTracker *fxTracker)
 // struct _FXParticle * /*$ra*/ FX_GetParticle(struct _Instance *instance /*$s1*/, short startSegment /*$s0*/)
 struct _FXParticle * FX_GetParticle(struct _Instance *instance, short startSegment)
 { // line 247, offset 0x80042164
+#if defined(PC_VERSION)
 	struct _FXParticle* result; // eax
 
 	result = (struct _FXParticle*)MEMPACK_Malloc(0x4Cu, 0xDu);
@@ -117,6 +128,9 @@ struct _FXParticle * FX_GetParticle(struct _Instance *instance, short startSegme
 		result->z_undulate = 0;
 	}
 	return result;
+#else
+	return NULL;
+#endif
 }
 
 
@@ -147,6 +161,7 @@ void FX_AniTexSetup(struct _FX_PRIM *fxPrim, struct _MFace *mface, struct _Model
 // void /*$ra*/ FX_StandardProcess(struct _FX_PRIM *fxPrim /*$a0*/, struct _FXTracker *fxTracker /*$a1*/)
 void FX_StandardProcess(struct _FX_PRIM *fxPrim, struct _FXTracker *fxTracker)
 { // line 360, offset 0x8004227c
+#if defined(PC_VERSION)
 	__int16 timeToLive; // ax
 	__int16 v4; // ax
 	int v5; // ebx
@@ -335,6 +350,7 @@ void FX_StandardProcess(struct _FX_PRIM *fxPrim, struct _FXTracker *fxTracker)
 			}
 		}
 	}
+#endif
 }
 
 
@@ -342,6 +358,7 @@ void FX_StandardProcess(struct _FX_PRIM *fxPrim, struct _FXTracker *fxTracker)
 // void /*$ra*/ FX_ShatterProcess(struct _FX_PRIM *fxPrim /*$s0*/, struct _FXTracker *fxTracker /*$s1*/)
 void FX_ShatterProcess(struct _FX_PRIM *fxPrim, struct _FXTracker *fxTracker)
 { // line 396, offset 0x8004229c
+#if defined(PC_VERSION)
 	__int16 timeToLive; // ax
 	int flags; // ebx
 	int timeMult_low; // eax
@@ -412,6 +429,7 @@ void FX_ShatterProcess(struct _FX_PRIM *fxPrim, struct _FXTracker *fxTracker)
 		LIST_DeleteFunc(fxPrim);
 		LIST_InsertFunc(&fxTracker->freePrimList, &fxPrim->node);
 	}
+#endif
 }
 
 
@@ -496,7 +514,7 @@ void _FX_SetupLighting(struct _Instance *instance)
 		// Start line: 918
 		// Start offset: 0x80042864
 		// Variables:
-			struct MATRIX lm; // stack offset -40
+			//struct MATRIX lm; // stack offset -40
 	/* end block 1 */
 	// End offset: 0x80042864
 	// End Line: 918
@@ -593,14 +611,14 @@ void _FX_BuildSegmentedSplinters(struct _Instance *instance, SVECTOR*center, SVE
 			// Start line: 1136
 			// Start offset: 0x80043008
 			// Variables:
-				short _x0; // $a1
-				short _y0; // $v1
-				short _z0; // $v0
-				short _x1; // $a0
-				short _y1; // $a3
-				short _z1; // $a2
-				struct _Position *_v0; // $v0
-				struct _Vector *_v1; // $a2
+				//short _x0; // $a1
+				//short _y0; // $v1
+				//short _z0; // $v0
+				//short _x1; // $a0
+				//short _y1; // $a3
+				//short _z1; // $a2
+				//struct _Position *_v0; // $v0
+				//struct _Vector *_v1; // $a2
 		/* end block 1.3 */
 		// End offset: 0x80043008
 		// End Line: 1136
@@ -671,7 +689,7 @@ void _FX_BuildNonSegmentedSplinters(struct _Instance *instance, SVECTOR*center, 
 			struct _SVector *vertex2; // $s4
 			struct _SVector *poolOfVertices; // $fp
 			struct MATRIX *swTransform; // $s1
-			struct MATRIX ourM; // stack offset -184
+			//struct MATRIX ourM; // stack offset -184
 			struct _Vector Center; // stack offset -152
 			struct _SVector offset; // stack offset -136
 			struct _Normal faceNorm; // stack offset -128
@@ -704,15 +722,15 @@ void _FX_BuildNonSegmentedSplinters(struct _Instance *instance, SVECTOR*center, 
 			// Start line: 1414
 			// Start offset: 0x80043BAC
 			// Variables:
-				short _x0; // $a1
-				short _y0; // $v1
-				short _z0; // $v0
-				short _x1; // $a0
-				short _y1; // $a3
-				short _z1; // $a2
-				struct _SVector *_v; // stack offset -48
-				struct _Position *_v0; // $v0
-				struct _Vector *_v1; // $a2
+				//short _x0; // $a1
+				//short _y0; // $v1
+				//short _z0; // $v0
+				//short _x1; // $a0
+				//short _y1; // $a3
+				//short _z1; // $a2
+				//struct _SVector *_v; // stack offset -48
+				//struct _Position *_v0; // $v0
+				//struct _Vector *_v1; // $a2
 		/* end block 1.3 */
 		// End offset: 0x80043BAC
 		// End Line: 1414
@@ -755,6 +773,7 @@ void _FX_BuildNonSegmentedSplinters(struct _Instance *instance, SVECTOR*center, 
 // void /*$ra*/ _FX_BuildSplinters(struct _Instance *instance /*$s2*/, SVECTOR*center /*$s4*/, SVECTOR*vel /*$s5*/, SVECTOR*accl /*$s6*/, struct FXSplinter *splintDef /*stack 16*/, struct _FXTracker *fxTracker /*stack 20*/, TDRFuncPtr__FX_BuildSplinters6fxSetup fxSetup /*stack 24*/, TDRFuncPtr__FX_BuildSplinters7fxProcess fxProcess /*stack 28*/, int shardFlags /*stack 32*/)
 void _FX_BuildSplinters(struct _Instance *instance, SVECTOR*center, SVECTOR*vel, SVECTOR*accl, struct FXSplinter *splintDef, struct _FXTracker *fxTracker, TDRFuncPtr__FX_BuildSplinters6fxSetup fxSetup, TDRFuncPtr__FX_BuildSplinters7fxProcess fxProcess, int shardFlags)
 { // line 1541, offset 0x8004403c
+#if defined(PC_VERSION)
 	int v9; // ecx
 	__int16 soundFx; // ax
 	int v11; // ebx
@@ -778,6 +797,7 @@ void _FX_BuildSplinters(struct _Instance *instance, SVECTOR*center, SVECTOR*vel,
 		else
 			FX_BuildSegmentedSplinters(instance, center, vel, accl, splintDef, fxTracker, fxSetup, fxProcess, v11);
 	}
+#endif
 }
 
 
@@ -785,6 +805,7 @@ void _FX_BuildSplinters(struct _Instance *instance, SVECTOR*center, SVECTOR*vel,
 // void /*$ra*/ _FX_Build(struct _Instance *instance /*$s0*/, SVECTOR*center /*$s2*/, SVECTOR*vel /*$s3*/, SVECTOR*accl /*$s4*/, struct _FXTracker *fxTracker /*stack 16*/, TDRFuncPtr__FX_Build5fxSetup fxSetup /*stack 20*/, TDRFuncPtr__FX_Build6fxProcess fxProcess /*stack 24*/, int shardFlags /*stack 28*/)
 void _FX_Build(struct _Instance *instance, SVECTOR*center, SVECTOR*vel, SVECTOR*accl, struct _FXTracker *fxTracker, TDRFuncPtr__FX_Build5fxSetup fxSetup, TDRFuncPtr__FX_Build6fxProcess fxProcess, int shardFlags)
 { // line 1566, offset 0x80044190
+#if defined(PC_VERSION)
 	int shardFlags; // [esp+24h] [ebp+20h]
 
 	if (MEMPACK_MemoryValidFunc((char*)instance->object))
@@ -794,6 +815,7 @@ void _FX_Build(struct _Instance *instance, SVECTOR*center, SVECTOR*vel, SVECTOR*
 		else
 			FX_BuildNonSegmentedSplinters(instance, center, vel, accl, 0, fxTracker, fxSetup, fxProcess, shardFlags);
 	}
+#endif
 }
 
 
@@ -801,6 +823,7 @@ void _FX_Build(struct _Instance *instance, SVECTOR*center, SVECTOR*vel, SVECTOR*
 // void /*$ra*/ FX_Build(struct _Instance *instance /*$a0*/, SVECTOR*center /*$a1*/, SVECTOR*vel /*$a2*/, SVECTOR*accl /*$a3*/, struct _FXTracker *fxTracker /*stack 16*/, TDRFuncPtr_FX_Build5fxSetup fxSetup /*stack 20*/, TDRFuncPtr_FX_Build6fxProcess fxProcess /*stack 24*/)
 void FX_Build(struct _Instance *instance, SVECTOR*center, SVECTOR*vel, SVECTOR*accl, struct _FXTracker *fxTracker, TDRFuncPtr_FX_Build5fxSetup fxSetup, TDRFuncPtr_FX_Build6fxProcess fxProcess)
 { // line 1741, offset 0x800442a4
+#if defined(PC_VERSION)
 	if (MEMPACK_MemoryValidFunc((char*)instance->object))
 	{
 		if (instance->object->modelList[instance->currentModel]->numSegments >= 4)
@@ -808,6 +831,7 @@ void FX_Build(struct _Instance *instance, SVECTOR*center, SVECTOR*vel, SVECTOR*a
 		else
 			_FX_BuildNonSegmentedSplinters(instance, center, vel, accl, 0, fxTracker, fxSetup, fxProcess, 0);
 	}
+#endif
 }
 
 
@@ -815,6 +839,7 @@ void FX_Build(struct _Instance *instance, SVECTOR*center, SVECTOR*vel, SVECTOR*a
 // void /*$ra*/ FX_UpdatePos(struct _FX_PRIM *fxPrim /*$t2*/, struct _SVector *offset /*$t3*/, int spriteflag /*$a2*/)
 void FX_UpdatePos(struct _FX_PRIM *fxPrim, struct _SVector *offset, int spriteflag)
 { // line 1747, offset 0x800442dc
+#if defined(PC_VERSION)
 	int flags; // edx
 
 	fxPrim->position.x += offset->x;
@@ -842,6 +867,7 @@ void FX_UpdatePos(struct _FX_PRIM *fxPrim, struct _SVector *offset, int spritefl
 			}
 		}
 	}
+#endif
 }
 
 
@@ -849,6 +875,7 @@ void FX_UpdatePos(struct _FX_PRIM *fxPrim, struct _SVector *offset, int spritefl
 // void /*$ra*/ FX_Relocate(struct _SVector *offset /*$s1*/)
 void FX_Relocate(struct _SVector *offset)
 { // line 1767, offset 0x80044430
+#if defined(PC_VERSION)
 	struct _FXTracker* v1; // ebx
 	struct _FX_PRIM* fxPrim; // edi
 	struct _FX_PRIM* currentEffect; // edi
@@ -897,6 +924,9 @@ void FX_Relocate(struct _SVector *offset)
 		} while (fxTracker);
 	}
 	return fxTracker;
+#else
+	return;
+#endif
 }
 
 
@@ -904,6 +934,7 @@ void FX_Relocate(struct _SVector *offset)
 // void /*$ra*/ FX_UpdateTexturePointers(struct _FX_PRIM *fxPrim /*$a0*/, struct Object *oldObject /*$a1*/, long sizeOfObject /*$a2*/, long offset /*$a3*/)
 void FX_UpdateTexturePointers(struct _FX_PRIM *fxPrim, struct Object *oldObject, long sizeOfObject, long offset)
 { // line 1822, offset 0x800445e0
+#if defined(PC_VERSION)
 	struct _FX_PRIM* i; // ecx
 	unsigned int texture; // eax
 
@@ -920,6 +951,7 @@ void FX_UpdateTexturePointers(struct _FX_PRIM *fxPrim, struct Object *oldObject,
 			}
 		}
 	}
+#endif
 }
 
 
@@ -927,6 +959,7 @@ void FX_UpdateTexturePointers(struct _FX_PRIM *fxPrim, struct Object *oldObject,
 // void /*$ra*/ FX_RelocateFXPointers(struct Object *oldObject /*$s3*/, struct Object *newObject /*$a1*/, long sizeOfObject /*$s2*/)
 void FX_RelocateFXPointers(struct Object *oldObject, struct Object *newObject, long sizeOfObject)
 { // line 1842, offset 0x80044640
+#if defined(PC_VERSION)
 	struct _FXTracker* v3; // esi
 	struct _FXGeneralEffect* next; // ecx
 	int i; // edi
@@ -978,6 +1011,7 @@ void FX_RelocateFXPointers(struct Object *oldObject, struct Object *newObject, l
 			}
 		}
 	}
+#endif
 }
 
 
@@ -1025,6 +1059,7 @@ extern struct _Instance* inst_Reaver;
 // void /*$ra*/ FX_DrawReaver(struct _PrimPool *primPool /*$v0*/, unsigned long **ot /*$s0*/, struct MATRIX *wcTransform /*$a3*/)
 void FX_DrawReaver(struct _PrimPool *primPool, unsigned long **ot, struct MATRIX *wcTransform)
 { // line 1963, offset 0x8004490c
+#if defined(PC_VERSION)
 	struct _Instance* v3; // eax
 	struct __ReaverData* rv; // esi
 	__int16 v6; // di
@@ -1066,6 +1101,7 @@ void FX_DrawReaver(struct _PrimPool *primPool, unsigned long **ot, struct MATRIX
 		FX_SoulReaverBlade(v3, ot);
 	}
 	inst_Reaver = 0;
+#endif
 }
 
 
@@ -1082,9 +1118,9 @@ void FX_DrawList(struct _FXTracker *fxTracker, struct GameTracker *gameTracker, 
 			long *prim; // $s1
 			struct _FX_PRIM *fxPrim; // $s0
 			struct _FX_PRIM *nextFXPrim; // $s6
-			SVECTORsv0; // stack offset -104
-			SVECTORsv1; // stack offset -96
-			SVECTORsv2; // stack offset -88
+			//SVECTORsv0; // stack offset -104
+			//SVECTORsv1; // stack offset -96
+			//SVECTORsv2; // stack offset -88
 			long otz; // stack offset -52
 			long sz0; // stack offset -64
 			long sz1; // stack offset -60
@@ -1149,8 +1185,8 @@ void FX_DrawList(struct _FXTracker *fxTracker, struct GameTracker *gameTracker, 
 					// Start line: 2302
 					// Start offset: 0x80045214
 					// Variables:
-						short uMin; // $a3
-						short uMax; // $a2
+						//short uMin; // $a3
+						//short uMax; // $a2
 				/* end block 1.1.4.1 */
 				// End offset: 0x80045318
 				// End Line: 2310
@@ -1165,8 +1201,8 @@ void FX_DrawList(struct _FXTracker *fxTracker, struct GameTracker *gameTracker, 
 			// Start line: 2331
 			// Start offset: 0x80045394
 			// Variables:
-				struct DVECTOR xy_pos; // stack offset -72
-				long flags; // $t2
+				//struct DVECTOR xy_pos; // stack offset -72
+				//long flags; // $t2
 
 			/* begin block 1.2.1 */
 				// Start line: 2400
@@ -1178,10 +1214,10 @@ void FX_DrawList(struct _FXTracker *fxTracker, struct GameTracker *gameTracker, 
 					// Start line: 2402
 					// Start offset: 0x800455D0
 					// Variables:
-						int n; // $a3
+						//int n; // $a3
 						long *src; // $t2
 						long *dst; // $t1
-						long *ptr; // $t3
+						//long *ptr; // $t3
 				/* end block 1.2.1.1 */
 				// End offset: 0x800456C8
 				// End Line: 2433
@@ -1200,11 +1236,11 @@ void FX_DrawList(struct _FXTracker *fxTracker, struct GameTracker *gameTracker, 
 				// Start line: 2499
 				// Start offset: 0x80045834
 				// Variables:
-					unsigned short uMin; // $t3
-					unsigned short uMax; // $t1
-					unsigned short vMin; // $a3
-					unsigned short vMax; // $v1
-					struct POLY_FT4 *ft4; // $a2
+					//unsigned short uMin; // $t3
+					//unsigned short uMax; // $t1
+					//unsigned short vMin; // $a3
+					//unsigned short vMax; // $v1
+					//struct POLY_FT4 *ft4; // $a2
 			/* end block 1.2.3 */
 			// End offset: 0x80045AA0
 			// End Line: 2537
@@ -1251,10 +1287,10 @@ void FX_SimpleQuadSetup(struct _FX_PRIM *fxPrim, TDRFuncPtr_FX_SimpleQuadSetup1f
 			// Start line: 2728
 			// Start offset: 0x80045B60
 			// Variables:
-				short _x1; // $v0
-				short _y1; // $v1
-				short _z1; // $a0
-				struct _SVector *_v0; // $v0
+				//short _x1; // $v0
+				//short _y1; // $v1
+				//short _z1; // $a0
+				//struct _SVector *_v0; // $v0
 		/* end block 1.2 */
 		// End offset: 0x80045B60
 		// End Line: 2728
@@ -1263,10 +1299,10 @@ void FX_SimpleQuadSetup(struct _FX_PRIM *fxPrim, TDRFuncPtr_FX_SimpleQuadSetup1f
 			// Start line: 2728
 			// Start offset: 0x80045B60
 			// Variables:
-				short _x1; // $v0
-				short _y1; // $v1
-				short _z1; // $a0
-				struct _SVector *_v0; // $v0
+				//short _x1; // $v0
+				//short _y1; // $v1
+				//short _z1; // $a0
+				//struct _SVector *_v0; // $v0
 		/* end block 1.3 */
 		// End offset: 0x80045B60
 		// End Line: 2728
@@ -1275,10 +1311,10 @@ void FX_SimpleQuadSetup(struct _FX_PRIM *fxPrim, TDRFuncPtr_FX_SimpleQuadSetup1f
 			// Start line: 2728
 			// Start offset: 0x80045B60
 			// Variables:
-				short _x1; // $v0
-				short _y1; // $v1
-				short _z1; // $a0
-				struct _SVector *_v0; // $v0
+				//short _x1; // $v0
+				//short _y1; // $v1
+				//short _z1; // $a0
+				//struct _SVector *_v0; // $v0
 		/* end block 1.4 */
 		// End offset: 0x80045B60
 		// End Line: 2728
@@ -1287,10 +1323,10 @@ void FX_SimpleQuadSetup(struct _FX_PRIM *fxPrim, TDRFuncPtr_FX_SimpleQuadSetup1f
 			// Start line: 2728
 			// Start offset: 0x80045B60
 			// Variables:
-				short _x1; // $v0
-				short _y1; // $v1
-				short _z1; // $a0
-				struct _SVector *_v0; // $v0
+				//short _x1; // $v0
+				//short _y1; // $v1
+				//short _z1; // $a0
+				//struct _SVector *_v0; // $v0
 		/* end block 1.5 */
 		// End offset: 0x80045B60
 		// End Line: 2728
@@ -1440,7 +1476,7 @@ void FX_DrawScreenPoly(int transtype, unsigned long color, int zdepth)
 
 // autogenerated function stub: 
 // struct POLY_GT4 * /*$ra*/ FX_SetupPolyGT4(int x1 /*$a0*/, int y1 /*$a1*/, int x2 /*$a2*/, int y2 /*$a3*/, int otz /*stack 16*/, struct TextureMT3 *texture /*stack 20*/, long color0 /*stack 24*/, long color1 /*stack 28*/, long color2 /*stack 32*/, long color3 /*stack 36*/)
-struct POLY_GT4 * FX_SetupPolyGT4(int x1, int y1, int x2, int y2, int otz, struct TextureMT3 *texture, long color0, long color1, long color2, long color3)
+POLY_GT4 * FX_SetupPolyGT4(int x1, int y1, int x2, int y2, int otz, struct TextureMT3 *texture, long color0, long color1, long color2, long color3)
 { // line 2997, offset 0x80046300
 	/* begin block 1 */
 		// Start line: 2998
@@ -1462,7 +1498,7 @@ struct POLY_GT4 * FX_SetupPolyGT4(int x1, int y1, int x2, int y2, int otz, struc
 	/* end block 3 */
 	// End Line: 7455
 
-	return null;
+	return NULL;
 }
 
 
@@ -1529,7 +1565,7 @@ void FX_MakeGlyphIcon(struct _Position *position, struct Object *glyphObject, in
 			int sizex; // $t0
 			struct POLY_GT4 *poly; // $v1
 			struct TextureMT3 *texture; // $s2
-			struct DVECTOR xy_pos; // stack offset -40
+			//struct DVECTOR xy_pos; // stack offset -40
 			int otz; // $t1
 			long *color_array; // $v0
 			struct _GlyphTuneData *glyphtunedata; // $v1
@@ -1588,7 +1624,7 @@ void FX_MakeSoulDust(struct _Instance *instance, short segment)
 		// Start offset: 0x80046A08
 		// Variables:
 			struct _FX_PRIM *fxPrim; // $s1
-			SVECTORlocation; // stack offset -32
+			//SVECTORlocation; // stack offset -32
 			struct Object *particle; // $s2
 	/* end block 1 */
 	// End offset: 0x80046C28
@@ -1763,11 +1799,11 @@ void FX_EndConstrict(int ConstrictEnemyFlag, struct _Instance *instance)
 			// Start line: 3725
 			// Start offset: 0x800476B8
 			// Variables:
-				short _x1; // $v1
-				short _y1; // $a0
-				short _z1; // $a1
-				struct _Position *_v0; // $v0
-				struct _Position *_v1; // $v0
+				//short _x1; // $v1
+				//short _y1; // $a0
+				//short _z1; // $a1
+				//struct _Position *_v0; // $v0
+				//struct _Position *_v1; // $v0
 		/* end block 1.2 */
 		// End offset: 0x800476DC
 		// End Line: 3725
@@ -1791,8 +1827,8 @@ void FX_SubDividePrim(struct _FX_PRIM *fxPrim1, struct _FX_PRIM *fxPrim2)
 		// Start line: 3734
 		// Start offset: 0x800476F8
 		// Variables:
-			SVECTORmp0; // stack offset -32
-			SVECTORmp1; // stack offset -24
+			//SVECTORmp0; // stack offset -32
+			//SVECTORmp1; // stack offset -24
 	/* end block 1 */
 	// End offset: 0x800476F8
 	// End Line: 3734
@@ -1822,7 +1858,7 @@ void FX_ContinueRibbon(struct _FXRibbon *ribbon, struct _FXTracker *fxTracker)
 			int d; // $s5
 			struct _FX_PRIM *fxPrim; // $s0
 			struct _FX_PRIM *fxPrim2; // $s1
-			SVECTORQuad[4]; // stack offset -80
+			//SVECTORQuad[4]; // stack offset -80
 
 		/* begin block 1.1 */
 			// Start line: 3909
@@ -2089,6 +2125,7 @@ struct _FXParticle * FX_BloodCone(struct _Instance *instance, short startSegment
 // struct _FXParticle * /*$ra*/ FX_GetTorchParticle(struct _Instance *instance /*$s1*/, short startSegment /*$a1*/, int tex /*$s2*/, int birthRadius /*$s3*/, int num /*stack 16*/)
 struct _FXParticle * FX_GetTorchParticle(struct _Instance *instance, short startSegment, int tex, int birthRadius, int num)
 { // line 4447, offset 0x800489b8
+#if defined(PC_VERSION)
 	struct _FXParticle* result; // eax
 	struct Object* object; // edx
 	int v7; // edx
@@ -2139,6 +2176,9 @@ struct _FXParticle * FX_GetTorchParticle(struct _Instance *instance, short start
 		ring = (_FXParticle*)result;
 	}
 	return result;
+#else
+	return NULL;
+#endif
 }
 
 
@@ -2169,10 +2209,14 @@ struct _FXParticle * FX_TorchFlame(struct _Instance *instance, short startSegmen
 // int /*$ra*/ FX_GetMorphFadeVal()
 int FX_GetMorphFadeVal()
 { // line 4526, offset 0x80048bf8
+#if defined(PC_VERSION)
 	int result = (gameTrackerX.gameData.asmData.MorphTime << 12) / 1000;
 	if (gameTrackerX.gameData.asmData.MorphType == 1)
 		return 4096 - result;
 	return result;
+#else
+	return 0;
+#endif
 }
 
 
@@ -2181,7 +2225,7 @@ int FX_GetMorphFadeVal()
 void FX_ConvertCamPersToWorld(SVECTOR*campos, SVECTOR*worldpos)
 { // line 4550, offset 0x80048c38
 	int vz; // esi
-
+#if defined(PC_VERSION)
 	SetRotMatrix(theCamera.cwTransform2);
 	SetTransMatrix(theCamera.cwTransform2);
 	campos->vx += D3D_XRes / -2;
@@ -2192,6 +2236,7 @@ void FX_ConvertCamPersToWorld(SVECTOR*campos, SVECTOR*worldpos)
 	gte_ldv0(campos);
 	gte_MVMVA(1, 0, 0, 0, 0);
 	gte_stsv(worldpos);
+#endif
 }
 
 
@@ -2199,9 +2244,11 @@ void FX_ConvertCamPersToWorld(SVECTOR*campos, SVECTOR*worldpos)
 // void /*$ra*/ FX_GetRandomScreenPt(SVECTOR*point /*$s0*/)
 void FX_GetRandomScreenPt(SVECTOR*point)
 { // line 4570, offset 0x80048d50
+#if defined(PC_VERSION)
 	point->vx = rand() % D3D_XRes;
 	point->vy = rand() % D3D_YRes;
 	point->vz = (rand() & 0xFFF) + 384;
+#endif
 }
 
 
@@ -2217,7 +2264,7 @@ void FX_ProcessSnow(struct _FX_PRIM *fxPrim, struct _FXTracker *fxTracker)
 			// Start line: 4581
 			// Start offset: 0x80048E00
 			// Variables:
-				SVECTORposition; // stack offset -24
+				//SVECTORposition; // stack offset -24
 		/* end block 1.1 */
 		// End offset: 0x80048E48
 		// End Line: 4597
@@ -2242,14 +2289,14 @@ void FX_ContinueSnow(struct _FXTracker *fxTracker)
 		// Start offset: 0x80048F10
 		// Variables:
 			struct _FX_PRIM *fxPrim; // $s0
-			SVECTORposition; // stack offset -40
-			SVECTORvel; // stack offset -32
+			//SVECTORposition; // stack offset -40
+			//SVECTORvel; // stack offset -32
 
 		/* begin block 1.1 */
 			// Start line: 4631
 			// Start offset: 0x80048F8C
 			// Variables:
-				SVECTORcampos; // stack offset -24
+				//SVECTORcampos; // stack offset -24
 		/* end block 1.1 */
 		// End offset: 0x80049054
 		// End Line: 4653
@@ -2316,7 +2363,7 @@ void FX_ContinueRain(struct _FXTracker *fxTracker)
 		// Start offset: 0x800492B0
 		// Variables:
 			struct _FX_PRIM *fxPrim; // $s0
-			SVECTORcampos; // stack offset -56
+			//SVECTORcampos; // stack offset -56
 			int n; // $s4
 			int rain_pct; // $s6
 			long waterZLevel; // $s2
@@ -2375,7 +2422,7 @@ void FX_ContinueParticle(struct _FXParticle *currentParticle, struct _FXTracker 
 		// Start offset: 0x800496A4
 		// Variables:
 			struct _FX_PRIM *fxPrim; // $s1
-			struct VECTOR movement; // stack offset -64
+			//struct VECTOR movement; // stack offset -64
 			int i; // $fp
 			int num; // stack offset -44
 			struct MATRIX *swTransform; // $s4
@@ -2506,7 +2553,7 @@ void FX_SoulReaverBlade(struct _Instance *instance, unsigned long **drawot)
 		// Start line: 5129
 		// Start offset: 0x8004A230
 		// Variables:
-			SVECTORlocation; // stack offset -136
+			//SVECTORlocation; // stack offset -136
 			int i; // $s3
 			int size; // $s2
 			int reaverScale; // $s7
@@ -2515,13 +2562,13 @@ void FX_SoulReaverBlade(struct _Instance *instance, unsigned long **drawot)
 			short deg; // $s4
 			long color; // $fp
 			struct TextureMT3 *texture; // $v0
-			struct MATRIX mat; // stack offset -128
-			struct DVECTOR xy_pos; // stack offset -96
+			//struct MATRIX mat; // stack offset -128
+			//struct DVECTOR xy_pos; // stack offset -96
 			long sizex; // stack offset -48
 			long sizey; // $a0
 			long otz; // stack offset -44
 			struct POLY_FT4 *poly; // $s5
-			struct POLY_FT4 poly2; // stack offset -88
+			//struct POLY_FT4 poly2; // stack offset -88
 
 		/* begin block 1.1 */
 			// Start line: 5186
@@ -2568,7 +2615,7 @@ void FX_SoulReaverWinding(struct _Instance *instance, struct _PrimPool *primPool
 		// Start line: 5276
 		// Start offset: 0x8004A628
 		// Variables:
-			struct MATRIX mat; // stack offset -96
+			//struct MATRIX mat; // stack offset -96
 			struct MATRIX *swTransform; // $a1
 			struct _SVector start; // stack offset -64
 			struct _SVector end; // stack offset -56
@@ -2938,7 +2985,7 @@ void FX_DrawLightning(struct _FXLightning *zap, struct MATRIX *wcTransform, unsi
 			struct _SVector end; // stack offset -72
 			struct _SVector offset; // stack offset -64
 			struct MATRIX *swtransform; // $s0
-			struct MATRIX mat; // stack offset -56
+			//struct MATRIX mat; // stack offset -56
 	/* end block 1 */
 	// End offset: 0x8004B4D8
 	// End Line: 5928
@@ -3031,7 +3078,7 @@ void FX_ContinueBlastRing(struct _FXBlastringEffect *blast, struct _FXTracker *f
 			// Variables:
 				unsigned long *colorPtr; // $a0
 				unsigned long black; // stack offset -16
-				int fade; // $a3
+				//int fade; // $a3
 		/* end block 1.2 */
 		// End offset: 0x8004B8A8
 		// End Line: 6059
@@ -3084,7 +3131,7 @@ void FX_DrawBlastring(struct MATRIX *wcTransform, struct _FXBlastringEffect *bla
 		// Variables:
 			int radius; // $s2
 			struct _SVector position; // stack offset -64
-			struct MATRIX mat; // stack offset -56
+			//struct MATRIX mat; // stack offset -56
 
 		/* begin block 1.1 */
 			// Start line: 6162
@@ -3270,7 +3317,7 @@ void FX_StartGenericGlow(struct _Instance *instance, int num, int segOverride, i
 			// Start line: 6426
 			// Start offset: 0x8004C3C8
 			// Variables:
-				int seg; // $a1
+				//int seg; // $a1
 				int segEnd; // $a2
 		/* end block 1.2 */
 		// End offset: 0x8004C3E8
@@ -3280,7 +3327,7 @@ void FX_StartGenericGlow(struct _Instance *instance, int num, int segOverride, i
 			// Start line: 6441
 			// Start offset: 0x8004C418
 			// Variables:
-				int seg; // $a1
+				//int seg; // $a1
 				int numSeg; // $a2
 		/* end block 1.3 */
 		// End offset: 0x8004C460
@@ -3396,7 +3443,7 @@ struct _FXBlastringEffect * FX_StartGenericBlastring(struct _Instance *instance,
 			struct _SVector position; // stack offset -64
 			int segment; // $s2
 			int matrix_segment; // $s3
-			struct MATRIX mat; // stack offset -56
+			//struct MATRIX mat; // stack offset -56
 			struct MATRIX *swTransform; // $v0
 	/* end block 1 */
 	// End offset: 0x8004C9E8
@@ -3840,7 +3887,7 @@ void FX_DrawModel(struct Object *object, int model_num, struct _SVector *rotatio
 			struct _MFace *mface; // $t0
 			struct _MVertex *vertexList; // $t3
 			struct TextureMT3 *texture; // $a1
-			struct MATRIX matrix; // stack offset -88
+			//struct MATRIX matrix; // stack offset -88
 			int i; // $a3
 			struct POLY_GT3 *poly; // $s4
 			unsigned long **drawot; // $s5
@@ -3902,7 +3949,7 @@ long fx_get_startz(struct _SVector *position)
 		// Start line: 7672
 		// Start offset: 0x8004DEFC
 		// Variables:
-			struct MATRIX tmpmat; // stack offset -40
+			//struct MATRIX tmpmat; // stack offset -40
 	/* end block 1 */
 	// End offset: 0x8004DF44
 	// End Line: 7680
@@ -3954,7 +4001,7 @@ void FX_DrawRing(struct MATRIX *wcTransform, struct _SVector *position, struct M
 
 // autogenerated function stub: 
 // void /*$ra*/ fx_setTex(struct DVECTOR *x /*$a0*/, unsigned char *uv /*$a1*/, int tx /*$a2*/, int offset /*$a3*/)
-void fx_setTex(struct DVECTOR *x, unsigned char *uv, int tx, int offset)
+void fx_setTex(DVECTOR *x, unsigned char *uv, int tx, int offset)
 { // line 7785, offset 0x8004e200
 	/* begin block 1 */
 		// Start line: 18998
@@ -4012,7 +4059,7 @@ void FX_DrawFField(struct MATRIX *wcTransform, struct _FXForceFieldEffect *field
 		// Start offset: 0x8004E61C
 		// Variables:
 			struct _Instance *instance; // $a0
-			struct MATRIX tmpmat; // stack offset -64
+			//struct MATRIX tmpmat; // stack offset -64
 			struct _SVector position; // stack offset -32
 			int size; // $s1
 			short fade; // $v0
@@ -4034,6 +4081,7 @@ void FX_DrawFField(struct MATRIX *wcTransform, struct _FXForceFieldEffect *field
 // struct _FXForceFieldEffect * /*$ra*/ FX_StartFField(struct _Instance *instance /*$s2*/, int size /*$s3*/, struct _Position *offset /*$s1*/, int size_diff /*$s4*/, int size_change /*stack 16*/, int deg_change /*stack 20*/, long color /*stack 24*/)
 struct _FXForceFieldEffect * FX_StartFField(struct _Instance *instance, int size, struct _Position *offset, int size_diff, int size_change, int deg_change, long color)
 { // line 8021, offset 0x8004e810
+#if defined(PC_VERSION)
 	struct _FXForceFieldEffect* result; // eax
 
 	result = (struct _FXForceFieldEffect*)MEMPACK_Malloc(0x2Cu, 0xDu);
@@ -4057,6 +4105,9 @@ struct _FXForceFieldEffect * FX_StartFField(struct _Instance *instance, int size
 		ring = (struct _FXGlowEffect*)result;
 	}
 	return result;
+#else
+	return 0;
+#endif
 }
 
 
@@ -4064,6 +4115,7 @@ struct _FXForceFieldEffect * FX_StartFField(struct _Instance *instance, int size
 // void /*$ra*/ FX_EndFField(struct _Instance *instance /*$a0*/)
 void FX_EndFField(struct _Instance *instance)
 { // line 8048, offset 0x8004e8e4
+#if defined(PC_VERSION)
 	struct _FXForceFieldEffect* i; // eax
 	__int16 height; // cx
 
@@ -4090,6 +4142,7 @@ void FX_EndFField(struct _Instance *instance)
 			i = (struct _FXForceFieldEffect*)i->next;
 		} while (i);
 	}
+#endif
 }
 
 
@@ -4097,6 +4150,7 @@ void FX_EndFField(struct _Instance *instance)
 // void /*$ra*/ FX_Draw_Glowing_Line(unsigned long **ot /*$t6*/, long otz /*$a0*/, struct DVECTOR *sxy0 /*$a2*/, struct DVECTOR *sxy1 /*$a3*/, struct DVECTOR *xy0 /*stack 16*/, struct DVECTOR *xy1 /*stack 20*/, long color /*stack 24*/, long color2 /*stack 28*/)
 void FX_Draw_Glowing_Line(unsigned long **ot, long otz, struct DVECTOR *sxy0, struct DVECTOR *sxy1, struct DVECTOR *xy0, struct DVECTOR *xy1, long color, long color2)
 { // line 8071, offset 0x8004e964
+#if defined(PC_VERSION)
 	int v8; // esi
 	struct _POLY_2G4T* nextPrim; // eax
 	struct _POLY_2G4T* p_nextPrim; // ebx
@@ -4150,6 +4204,7 @@ void FX_Draw_Glowing_Line(unsigned long **ot, long otz, struct DVECTOR *sxy0, st
 			p_nextPrim->tag = (ulong)&nextPrim[1];
 		}
 	}
+#endif
 }
 
 
@@ -4165,12 +4220,12 @@ void FX_Lightning(struct MATRIX *wcTransform, unsigned long **ot, struct MATRIX 
 			int sz1; // stack offset -56
 			long otz; // $s1
 			int length; // $v1
-			struct DVECTOR sxy0; // stack offset -112
-			struct DVECTOR sxy1; // stack offset -104
-			struct DVECTOR xy0; // stack offset -96
-			struct DVECTOR xy1; // stack offset -88
-			struct DVECTOR small_xy0; // stack offset -80
-			struct DVECTOR small_xy1; // stack offset -72
+			//struct DVECTOR sxy0; // stack offset -112
+			//struct DVECTOR sxy1; // stack offset -104
+			//struct DVECTOR xy0; // stack offset -96
+			///truct DVECTOR xy1; // stack offset -88
+			//struct DVECTOR small_xy0; // stack offset -80
+			//struct DVECTOR small_xy1; // stack offset -72
 			int n; // $s3
 			int increment; // stack offset -52
 			int rsin_nd2; // $s2
@@ -4179,7 +4234,7 @@ void FX_Lightning(struct MATRIX *wcTransform, unsigned long **ot, struct MATRIX 
 			// Start line: 8154
 			// Start offset: 0x8004EBB4
 			// Variables:
-				SVECTORpoint; // stack offset -64
+				//SVECTORpoint; // stack offset -64
 
 			/* begin block 1.1.1 */
 				// Start line: 8162
@@ -4237,10 +4292,10 @@ void FX_LightHouse(struct MATRIX *wcTransform, unsigned long **ot, struct _Insta
 			int width; // $s0
 			struct _SVector start; // stack offset -136
 			struct _SVector end; // stack offset -128
-			struct DVECTOR sxy0; // stack offset -120
-			struct DVECTOR sxy1; // stack offset -112
-			struct DVECTOR xy0; // stack offset -104
-			struct DVECTOR xy1; // stack offset -96
+			//struct DVECTOR sxy0; // stack offset -120
+			//struct DVECTOR sxy1; // stack offset -112
+			//struct DVECTOR xy0; // stack offset -104
+			//struct DVECTOR xy1; // stack offset -96
 			int fade; // $a3
 			int n; // $s2
 			int increment; // $s6
@@ -4260,7 +4315,7 @@ void FX_LightHouse(struct MATRIX *wcTransform, unsigned long **ot, struct _Insta
 			// Start line: 8292
 			// Start offset: 0x8004F138
 			// Variables:
-				SVECTORpoint; // stack offset -88
+				//SVECTORpoint; // stack offset -88
 
 			/* begin block 1.1.1 */
 				// Start line: 8303
@@ -4280,7 +4335,7 @@ void FX_LightHouse(struct MATRIX *wcTransform, unsigned long **ot, struct _Insta
 			// Start line: 8335
 			// Start offset: 0x8004F248
 			// Variables:
-				SVECTORpoint; // stack offset -80
+				//SVECTORpoint; // stack offset -80
 
 			/* begin block 1.2.1 */
 				// Start line: 8357
@@ -4309,6 +4364,7 @@ void FX_LightHouse(struct MATRIX *wcTransform, unsigned long **ot, struct _Insta
 // void /*$ra*/ FX_StartPassthruFX(struct _Instance *instance /*$s0*/, struct _SVector *normal /*$a1*/, struct _SVector *point /*$a2*/)
 void FX_StartPassthruFX(struct _Instance *instance, struct _SVector *normal, struct _SVector *point)
 { // line 8391, offset 0x8004f46c
+#if defined(PC_VERSION)
 	int color; // [esp+Ch] [ebp-4h] BYREF
 
 	instance->halvePlane.a = normal->x;
@@ -4318,6 +4374,7 @@ void FX_StartPassthruFX(struct _Instance *instance, struct _SVector *normal, str
 	color = 0x20FF40;
 	FX_DoInstancePowerRing(instance, 8400, &color, 0, 2);
 	FX_DoInstancePowerRing(instance, 8400, &color, 0, 1);
+#endif
 }
 
 
@@ -4325,6 +4382,7 @@ void FX_StartPassthruFX(struct _Instance *instance, struct _SVector *normal, str
 // void /*$ra*/ FX_EndPassthruFX(struct _Instance *instance /*$a0*/)
 void FX_EndPassthruFX(struct _Instance *instance)
 { // line 8409, offset 0x8004f548
+#if defined(PC_VERSION)
 	struct _FXGlowEffect* v1; // eax
 	struct _FXGlowEffect* v2; // esi
 	struct _FXGlowEffect* next; // edi
@@ -4363,6 +4421,7 @@ void FX_EndPassthruFX(struct _Instance *instance)
 			v2 = next;
 		} while (next);
 	}
+#endif
 }
 
 
