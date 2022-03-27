@@ -1,4 +1,4 @@
-#include "core.H"
+#include "CORE.H"
 #include "LIST.H"
 
 
@@ -6,6 +6,8 @@
 // void /*$ra*/ LIST_InsertFunc(struct NodeType *list /*$a0*/, struct NodeType *node /*$a1*/)
 void LIST_InsertFunc(struct NodeType *list, struct NodeType *node)
 { // line 46, offset 0x8004f568
+
+#if defined(PC_VERSION)
 	struct NodeType* next; // edx
 
 	node->prev = list;
@@ -14,6 +16,7 @@ void LIST_InsertFunc(struct NodeType *list, struct NodeType *node)
 	if (next)
 		next->prev = node;
 	list->next = node;
+#endif
 }
 
 
@@ -21,6 +24,7 @@ void LIST_InsertFunc(struct NodeType *list, struct NodeType *node)
 // void /*$ra*/ LIST_DeleteFunc(struct NodeType *node /*$a0*/)
 void LIST_DeleteFunc(struct NodeType *node)
 { // line 57, offset 0x8004f594
+#if defined(PC_VERSION)
 	struct NodeType* prev; // ecx
 	struct NodeType* v2; // edx
 	struct NodeType* next; // edx
@@ -50,6 +54,7 @@ void LIST_DeleteFunc(struct NodeType *node)
 			node->prev = 0;
 		}
 	}
+#endif
 }
 
 
@@ -57,6 +62,7 @@ void LIST_DeleteFunc(struct NodeType *node)
 // struct NodeType * /*$ra*/ LIST_GetFunc(struct NodeType *list /*$a0*/)
 struct NodeType * LIST_GetFunc(struct NodeType *list)
 { // line 76, offset 0x8004f600
+#if defined(PC_VERSION)
 	struct NodeType* result; // eax
 	struct NodeType* prev; // ecx
 	struct NodeType* v3; // edx
@@ -91,6 +97,9 @@ struct NodeType * LIST_GetFunc(struct NodeType *list)
 		}
 	}
 	return result;
+#else
+	return NULL;
+#endif
 }
 
 
