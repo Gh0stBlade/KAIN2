@@ -1,4 +1,4 @@
-#include "THISDUST.H"
+#include "CORE.H"
 #include "INSTNCG2.H"
 
 
@@ -40,12 +40,13 @@ void G2Instance_BuildTransforms(struct _Instance *instance)
 void G2Instance_RebuildTransforms(struct _Instance *instance)
 { // line 169, offset 0x80094f68
 	struct Object *object; // eax
-
+#if defined(PC_VERSION)
   object = instance->object;
   if ( !object->animList || (object->oflags2 & 0x40000000) != 0 )
     G2Instance_RebuildNonAnimatedTransforms(instance);
   else
     G2Instance_RebuildAnimatedTransforms(instance);
+#endif
 }
 
 

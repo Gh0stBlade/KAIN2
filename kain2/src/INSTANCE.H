@@ -1,9 +1,134 @@
 #ifndef INSTANCE_H
 #define INSTANCE_H
 
-#include "core.h"
+#include "CORE.H"
+#include "SPLINE.H"
 
 typedef struct _Instance _Instance;
+
+struct _HFace 
+{
+	short v0; // size=0, offset=0
+	short v1; // size=0, offset=2
+	short v2; // size=0, offset=4
+	unsigned char attr; // size=0, offset=6
+	char pad; // size=0, offset=7
+	unsigned short normal; // size=0, offset=8
+	unsigned short n0; // size=0, offset=10
+};
+
+struct _HSphere 
+{
+	long attr; // size=0, offset=0
+	unsigned char id; // size=0, offset=4
+	unsigned char rank; // size=0, offset=5
+	short pad; // size=0, offset=6
+	struct _Position position; // size=6, offset=8
+	unsigned short radius; // size=0, offset=14
+	unsigned long radiusSquared; // size=0, offset=16
+};
+
+struct _HBox 
+{
+	short flags; // size=0, offset=0
+	unsigned char id; // size=0, offset=2
+	unsigned char rank; // size=0, offset=3
+	short minX; // size=0, offset=4
+	short minY; // size=0, offset=6
+	short minZ; // size=0, offset=8
+	short maxX; // size=0, offset=10
+	short maxY; // size=0, offset=12
+	short maxZ; // size=0, offset=14
+	short refMinX; // size=0, offset=16
+	short refMinY; // size=0, offset=18
+	short refMinZ; // size=0, offset=20
+	short refMaxX; // size=0, offset=22
+	short refMaxY; // size=0, offset=24
+	short refMaxZ; // size=0, offset=26
+};
+
+struct _HInfo
+{
+	long numHFaces; // size=0, offset=0
+	struct _HFace* hfaceList; // size=12, offset=4
+	long numHSpheres; // size=0, offset=8
+	struct _HSphere* hsphereList; // size=20, offset=12
+	long numHBoxes; // size=0, offset=16
+	struct _HBox* hboxList; // size=28, offset=20
+};
+
+struct _Segment 
+{
+	long flags; // size=0, offset=0
+	short firstTri; // size=0, offset=4
+	short lastTri; // size=0, offset=6
+	short firstVertex; // size=0, offset=8
+	short lastVertex; // size=0, offset=10
+	short px; // size=0, offset=12
+	short py; // size=0, offset=14
+	short pz; // size=0, offset=16
+	short parent; // size=0, offset=18
+	struct _HInfo* hInfo; // size=24, offset=20
+};
+
+struct DrMoveAniTex 
+{
+	long numAniTextues; // size=0, offset=0
+	struct DrMoveAniTexDestInfo* aniTexInfo; // size=40, offset=4
+};
+
+struct TextureMT3 
+{
+	unsigned char u0; // size=0, offset=0
+	unsigned char v0; // size=0, offset=1
+	unsigned short clut; // size=0, offset=2
+	unsigned char u1; // size=0, offset=4
+	unsigned char v1; // size=0, offset=5
+	unsigned short tpage; // size=0, offset=6
+	unsigned char u2; // size=0, offset=8
+	unsigned char v2; // size=0, offset=9
+	char pad1; // size=0, offset=10
+	char sortPush; // size=0, offset=11
+	long color; // size=0, offset=12
+};
+
+struct _Model 
+{
+	long numVertices; // size=0, offset=0
+	struct _MVertex* vertexList; // size=8, offset=4
+	long numNormals; // size=0, offset=8
+	struct _SVectorNoPad* normalList; // size=6, offset=12
+	long numFaces; // size=0, offset=16
+	struct _MFace* faceList; // size=12, offset=20
+	long numSegments; // size=0, offset=24
+	struct _Segment* segmentList; // size=24, offset=28
+	struct AniTex* aniTextures; // size=16, offset=32
+	short maxRad; // size=0, offset=36
+	short pad; // size=0, offset=38
+	long maxRadSq; // size=0, offset=40
+	struct MultiSpline* multiSpline; // size=0, offset=44
+	struct TextureMT3* startTextures; // size=16, offset=48
+	struct TextureMT3* endTextures; // size=16, offset=52
+};
+
+struct _HPrim 
+{
+	unsigned char hpFlags; // size=0, offset=0
+	unsigned char withFlags; // size=0, offset=1
+	unsigned char type; // size=0, offset=2
+	unsigned char segment; // size=0, offset=3
+	union {
+		struct _HSphere* hsphere; // size=20, offset=0
+		struct _HBox* hbox; // size=28, offset=0
+		struct _HFace* hface; // size=12, offset=0
+	} data; // size=4, offset=4
+};
+
+struct _HModel 
+{
+	struct _HPrim* hPrimList; // size=8, offset=0
+	long numHPrims; // size=0, offset=4
+};
 
 struct LightInstance // hashcode: 0xB8D5E61F (dec: -1193941473)
 {

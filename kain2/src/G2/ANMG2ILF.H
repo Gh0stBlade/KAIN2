@@ -8,7 +8,7 @@ extern struct _G2AnimKeylist_Type * G2Anim_GetKeylist(struct _G2Anim_Type *anim)
 extern void G2Anim_GetRootMotionOverInterval(struct _G2Anim_Type *anim, short intervalStart, short intervalEnd, struct _G2SVector3_Type *motionVector); // 0x8008FA58
 extern void G2Anim_InterpToKeylistFrame(struct _G2Anim_Type *anim, struct _G2AnimKeylist_Type *keylist, int keylistID, int targetFrame, int duration); // 0x8008FA88
 extern void G2Anim_SetAlphaTable(struct _G2Anim_Type *anim, struct _G2AnimAlphaTable_Type *table); // 0x8008FB2C
-extern void G2Anim_SetCallback(struct _G2Anim_Type *anim, TDRFuncPtr_G2Anim_SetCallback1callback callback, void *data); // 0x8008FB9C
+extern void G2Anim_SetCallback(struct _G2Anim_Type *anim, unsigned long (*func)(struct _G2Anim_Type*, int, enum _G2AnimCallbackMsg_Enum, long, long, struct _Instance*), void *data); // 0x8008FB9C
 extern void G2Anim_SetLooping(struct _G2Anim_Type *anim); // 0x8008FBD8
 extern void G2Anim_SetNoLooping(struct _G2Anim_Type *anim); // 0x8008FC38
 extern void G2Anim_SetPaused(struct _G2Anim_Type *anim); // 0x8008FC98
