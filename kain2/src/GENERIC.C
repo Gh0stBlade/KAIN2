@@ -1,4 +1,4 @@
-#include "THISDUST.H"
+#include "CORE.H"
 #include "GENERIC.H"
 
 
@@ -6,6 +6,7 @@
 // void /*$ra*/ GenericInit(struct _Instance *instance /*$s0*/, struct GameTracker *gameTracker /*$a1*/)
 void GenericInit(struct _Instance *instance, struct GameTracker *gameTracker)
 { // line 28, offset 0x8003e194
+#if defined(PC_VERSION)
 	Spline* positional; // ecx
 	struct Intro* intro; // eax
 	struct Object* object; // edi
@@ -48,6 +49,7 @@ void GenericInit(struct _Instance *instance, struct GameTracker *gameTracker)
 			}
 		}
 	}
+#endif
 }
 
 
