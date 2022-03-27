@@ -313,7 +313,7 @@ void OBTABLE_InstanceInit(struct _Instance *instance)
 
 	instance->flags2 |= 0x200000;
 
-	if ((!instance->flags & 0x100000))
+	if (!(instance->flags & 0x100000))
 	{
 		SCRIPT_InstanceSplineInit(instance);
 	}
