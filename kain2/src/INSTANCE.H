@@ -214,7 +214,7 @@ struct _Instance // hashcode: 0x699A5B3D (dec: 1771723581)
 	struct _HModel* hModelList; // size=8, offset=232
 	short fadeValue; // size=0, offset=236
 	short lightMatrix; // size=0, offset=238
-	void (*processFunc)(); // size=0, offset=240
+	void (*processFunc)(struct _Instance* playerInstance, struct GameTracker* gameTracker); // size=0, offset=240
 	void (*collideFunc)(struct _Instance* instance, struct GameTracker* gameTracker); // size=0, offset=244
 	void (*additionalCollideFunc)(); // size=0, offset=248
 	unsigned long (*queryFunc)(); // size=0, offset=252
