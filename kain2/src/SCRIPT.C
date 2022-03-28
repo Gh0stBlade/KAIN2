@@ -228,46 +228,46 @@ int SCRIPT_GetSplineFrameNumber(struct _Instance *instance, struct SplineDef *sp
 	return 0;
 }
 
-struct MultiSpline * SCRIPT_GetMultiSpline(struct _Instance *instance, unsigned long *isParent, unsigned long *isClass)
+struct MultiSpline* SCRIPT_GetMultiSpline(struct _Instance* instance, unsigned long* isParent, unsigned long* isClass)
 {
-	struct MultiSpline *multi;
-	
+	struct MultiSpline* multi;
+
 	multi = NULL;
+
+	if (isParent != NULL)
+	{
+		*isParent = 0;
+	}
+	if (isClass != NULL)
+	{
+		*isClass = 0;
+	}
 
 	if (instance != NULL)
 	{
-		*isParent = 0;
-
-		if (isClass != NULL)
+		if (instance->intro != NULL && instance->intro->multiSpline != NULL)
 		{
-			*isClass = 0;
+			multi = instance->intro->multiSpline;
+
+			if ((instance->flags & 0x100002) == 2 && isParent != NULL)
+			{
+				*isParent = 1;
+			}
+
 		}
 
-		if (instance != NULL)
+		if (multi == NULL)
 		{
-			if (instance->intro != NULL && instance->intro->multiSpline != NULL)
+			if (instance->object->modelList[0] != NULL)
 			{
-				multi = instance->intro->multiSpline;
-	
-				if ((instance->flags & 0x100002) == 2 && isParent != NULL)
+				multi = instance->object->modelList[0]->multiSpline;
+
+				if (isClass != NULL)
 				{
-					*isParent = 1;
-				}
-
-			}
-
-			if (multi == NULL)
-			{
-				if (instance->object->modelList[0] != NULL)
-				{
-					multi = instance->object->modelList[0]->multiSpline;
-
-					if (isClass != NULL)
-					{
-						*isClass = 1;
-					}
+					*isClass = 1;
 				}
 			}
+
 		}
 	}
 	
