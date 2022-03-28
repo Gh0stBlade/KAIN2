@@ -756,7 +756,7 @@ void Emulator_ResetDevice()
 
 	texWidth = VRAM_WIDTH;
 	texHeight = VRAM_HEIGHT;
-	imageSize = texWidth * texHeight * sizeof(unsigned int);
+	imageSize = texWidth * texHeight * sizeof(unsigned short);
 
 	Emulator_CreateVulkanBuffer(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, vramTexture.stagingBuffer, vramTexture.stagingBufferMemory);
 	Emulator_CreateImage(texWidth, texHeight, VK_FORMAT_R8G8_UNORM, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, vramTexture.textureImage, vramTexture.textureImageMemory);
@@ -4092,7 +4092,7 @@ int Emulator_Initialise()
 #elif defined(VULKAN)
 	int texWidth = VRAM_WIDTH;
 	int texHeight = VRAM_HEIGHT;
-	VkDeviceSize imageSize = texWidth * texHeight * sizeof(unsigned int);
+	VkDeviceSize imageSize = texWidth * texHeight * sizeof(unsigned short);
 
 	Emulator_CreateVulkanBuffer(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, vramTexture.stagingBuffer, vramTexture.stagingBufferMemory);
 	Emulator_CreateImage(texWidth, texHeight, VK_FORMAT_R8G8_UNORM, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, vramTexture.textureImage, vramTexture.textureImageMemory);
@@ -4530,7 +4530,7 @@ void Emulator_UpdateVRAM()
 	TextureID newVramTexture;
 	unsigned int texWidth = VRAM_WIDTH;
 	unsigned int texHeight = VRAM_HEIGHT;
-	VkDeviceSize imageSize = texWidth * texHeight * sizeof(unsigned int);
+	VkDeviceSize imageSize = texWidth * texHeight * sizeof(unsigned short);
 
 	Emulator_CreateVulkanBuffer(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, newVramTexture.stagingBuffer, newVramTexture.stagingBufferMemory);
 
