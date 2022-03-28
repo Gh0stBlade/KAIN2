@@ -4945,7 +4945,6 @@ void Emulator_SwapWindow()
 		Emulator_ResetDevice();
 	}
 
-	Emulator_SaveVRAM("VRAM.TGA", 0, 0, VRAM_WIDTH, VRAM_HEIGHT, TRUE);
 #elif defined(VULKAN)
 	VkPipelineStageFlags waitDestStageMask = VK_PIPELINE_STAGE_TRANSFER_BIT;
 
