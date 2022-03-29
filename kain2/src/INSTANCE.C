@@ -1764,12 +1764,16 @@ void INSTANCE_KillInstance(struct _Instance* instance)
 // unsigned long /*$ra*/ INSTANCE_Query(struct _Instance *Inst /*$a0*/, int Query /*$a1*/)
 unsigned long INSTANCE_Query(struct _Instance* Inst, int Query)
 { // line 1857, offset 0x80034394
+#if defined(PC_VERSION)
 	unsigned int result; // eax
 
 	result = (unsigned int)Inst->queryFunc;
 	if (result)
 		return ((int(__cdecl*)(struct _Instance*, int))result)(Inst, Query);
 	return result;
+#else
+	return 0;
+#endif
 }
 
 

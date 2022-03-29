@@ -164,6 +164,116 @@ struct INICommand // hashcode: 0x04B02DE1 (dec: 78654945)
 	long parameter[1]; // size=0, offset=4
 };
 
+#if defined(PSX_VERSION)///@TODO Review build struct is different
+struct _Instance {
+	struct NodeType node; // size=8, offset=0
+	struct _Instance* next; // size=668, offset=8
+	struct _Instance* prev; // size=668, offset=12
+	long instanceID; // size=0, offset=16
+	long flags; // size=0, offset=20
+	long flags2; // size=0, offset=24
+	struct Object* object; // size=76, offset=28
+	struct Intro* intro; // size=0, offset=32
+	void* data; // size=0, offset=36
+	void* introData; // size=0, offset=40
+	struct _Instance* parent; // size=668, offset=44
+	long introNum; // size=0, offset=48
+	long birthStreamUnitID; // size=0, offset=52
+	long currentStreamUnitID; // size=0, offset=56
+	long introUniqueID; // size=0, offset=60
+	MATRIX* matrix; // size=32, offset=64
+	MATRIX* oldMatrix; // size=32, offset=68
+	struct SoundInstance soundInstanceTbl[4]; // size=12, offset=72
+	unsigned long maxCheckDistance; // size=0, offset=84
+	unsigned long checkMask; // size=0, offset=88
+	struct _Position position; // size=6, offset=92
+	unsigned char lightGroup; // size=0, offset=98
+	struct _Position oldPos; // size=6, offset=100
+	unsigned char spectralLightGroup; // size=0, offset=106
+	short currentTextureAnimFrame; // size=0, offset=108
+	struct _Position initialPos; // size=6, offset=110
+	struct _Rotation rotation; // size=8, offset=116
+	struct _Rotation oldRotation; // size=8, offset=124
+	struct _SVector scale; // size=8, offset=132
+	long attachedID; // size=0, offset=140
+	long attachedSegment; // size=0, offset=144
+#if !defined(PSX_VERSION)///@TODO Disabled, causing undefined issues 
+	MATRIX relativeMatrix; // size=32, offset=148
+#endif
+	struct _TFace* tface; // size=12, offset=180
+	struct _TFace* oldTFace; // size=12, offset=184
+	void* tfaceLevel; // size=0, offset=188
+	void* collideInfo; // size=0, offset=192
+	long bspTree; // size=0, offset=196
+	short cachedTFace; // size=0, offset=200
+	short cachedBSPTree; // size=0, offset=202
+	void* cachedTFaceLevel; // size=0, offset=204
+	struct _Normal oldWNormal; // size=8, offset=208
+	struct _Normal wNormal; // size=8, offset=216
+	struct _SVector offset; // size=8, offset=224
+	void* dsignal; // size=0, offset=232
+	void* shadow0; // size=0, offset=236
+	void* shadow1; // size=0, offset=240
+	void* extraLight; // size=0, offset=244
+	struct _Position extraLightDir; // size=6, offset=248
+	short extraLightScale; // size=0, offset=254
+	struct _HModel* hModelList; // size=8, offset=256
+	short fadeValue; // size=0, offset=260
+	short lightMatrix; // size=0, offset=262
+	void (*processFunc)(struct _Instance* playerInstance, struct GameTracker* gameTracker); // size=0, offset=264
+	void (*collideFunc)(struct _Instance* instance, struct GameTracker* gameTracker); // size=0, offset=268
+	void (*additionalCollideFunc)(struct _Instance* instance, struct GameTracker* gameTracker); // size=0, offset=272
+	void* additionalDrawFunc; // size=0, offset=276
+	unsigned long (*queryFunc)(struct _Instance* instance, unsigned long Query); // size=0, offset=280
+	void (*messageFunc)(struct _Instance* instance, unsigned long Message, unsigned long Data); // size=0, offset=284
+	struct _Position shadowPosition; // size=6, offset=288
+	short currentModel; // size=0, offset=294
+	struct _TFace* waterFace; // size=12, offset=296
+	struct _TFace* oldWaterFace; // size=12, offset=300
+	struct _Terrain* waterFaceTerrain; // size=0, offset=304
+	struct _PlaneConstants halvePlane; // size=12, offset=308
+	struct _SVector splitPoint; // size=8, offset=320
+	struct _Instance* LinkParent; // size=668, offset=328
+	struct _Instance* LinkChild; // size=668, offset=332
+	struct _Instance* LinkSibling; // size=668, offset=336
+	long ParentLinkNode; // size=0, offset=340
+	void* InstanceState; // size=0, offset=344
+	char introName[16]; // size=16, offset=348
+	void* extraData; // size=0, offset=364
+	short constrictAngle; // size=0, offset=368
+	short petrifyValue; // size=0, offset=370
+	long xVel; // size=0, offset=372
+	long yVel; // size=0, offset=376
+	long zVel; // size=0, offset=380
+	long xAccl; // size=0, offset=384
+	long yAccl; // size=0, offset=388
+	long zAccl; // size=0, offset=392
+	long maxXVel; // size=0, offset=396
+	long maxYVel; // size=0, offset=400
+	long maxZVel; // size=0, offset=404
+	long currentMainState; // size=0, offset=408
+	long currentSubState; // size=0, offset=412
+	long work0; // size=0, offset=416
+	long work1; // size=0, offset=420
+	long work2; // size=0, offset=424
+	long work3; // size=0, offset=428
+	long work4; // size=0, offset=432
+	long work5; // size=0, offset=436
+	long work6; // size=0, offset=440
+	long work7; // size=0, offset=444
+	long work8; // size=0, offset=448
+	long work9; // size=0, offset=452
+	struct _G2Anim_Type anim; // size=180, offset=456
+	enum _G2Bool_Enum* rebuildCallback(); // size=4, offset=636
+	short splineFlags; // size=0, offset=640
+	short targetFrame; // size=0, offset=642
+	short clipBeg; // size=0, offset=644
+	short clipEnd; // size=0, offset=646
+	struct EventAliasCommandStruct aliasCommand; // size=12, offset=648
+	long light_color; // size=0, offset=660
+	CVECTOR* perVertexColor; // size=4, offset=664
+};
+#else
 struct _Instance // hashcode: 0x699A5B3D (dec: 1771723581)
 {
 	struct NodeType node; // size=8, offset=0
@@ -197,9 +307,7 @@ struct _Instance // hashcode: 0x699A5B3D (dec: 1771723581)
 	_SVector scale; // size=8, offset=132
 	long attachedID; // size=0, offset=140
 	long attachedSegment; // size=0, offset=144
-#if !defined(PSX_VERSION)
-	MATRIX relativeMatrix; // size=32, offset=148//Disabled by Gh0stBlade why is this saying incomplete type?
-#endif
+	MATRIX relativeMatrix; // size=32, offset=148
 	struct _TFace* tface; // size=12, offset=180
 	struct _TFace* oldTFace; // size=12, offset=184
 	void* tfaceLevel; // size=0, offset=188
@@ -261,6 +369,7 @@ struct _Instance // hashcode: 0x699A5B3D (dec: 1771723581)
 	long light_color; // size=0, offset=608
 	CVECTOR* perVertexColor; // size=4, offset=612
 };
+#endif
 
 struct evCollideInstanceStatsData // hashcode: 0xD8198216 (dec: -669416938)
 {
