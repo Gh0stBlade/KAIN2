@@ -3393,14 +3393,14 @@ ShaderID Shader_Compile_Internal(const DWORD *vs_data, const DWORD *ps_data)
 
 #elif defined(D3D11)
 
-#include "shaders/gte_shader_4_vs.h"
-#include "shaders/gte_shader_4_ps.h"
-#include "shaders/gte_shader_8_vs.h"
-#include "shaders/gte_shader_8_ps.h"
-#include "shaders/gte_shader_16_vs.h"
-#include "shaders/gte_shader_16_ps.h"
-#include "shaders/blit_shader_vs.h"
-#include "shaders/blit_shader_ps.h"
+#include "shaders/D3D11/gte_shader_4_vs.h"
+#include "shaders/D3D11/gte_shader_4_ps.h"
+#include "shaders/D3D11/gte_shader_8_vs.h"
+#include "shaders/D3D11/gte_shader_8_ps.h"
+#include "shaders/D3D11/gte_shader_16_vs.h"
+#include "shaders/D3D11/gte_shader_16_ps.h"
+#include "shaders/D3D11/blit_shader_vs.h"
+#include "shaders/D3D11/blit_shader_ps.h"
 
 
 #define Shader_Compile(name) Shader_Compile_Internal((DWORD*)name##_vs, (DWORD*)name##_ps, sizeof(name##_vs), sizeof(name##_ps))
@@ -3448,14 +3448,14 @@ ShaderID Shader_Compile_Internal(const DWORD* vs_data, const DWORD* ps_data, con
 }
 #elif defined(D3D12)
 ///@D3D12
-#include "shaders/gte_shader_4_vs.h"
-#include "shaders/gte_shader_4_ps.h"
-#include "shaders/gte_shader_8_vs.h"
-#include "shaders/gte_shader_8_ps.h"
-#include "shaders/gte_shader_16_vs.h"
-#include "shaders/gte_shader_16_ps.h"
-#include "shaders/blit_shader_vs.h"
-#include "shaders/blit_shader_ps.h"
+#include "shaders/D3D12/gte_shader_4_vs.h"
+#include "shaders/D3D12/gte_shader_4_ps.h"
+#include "shaders/D3D12/gte_shader_8_vs.h"
+#include "shaders/D3D12/gte_shader_8_ps.h"
+#include "shaders/D3D12/gte_shader_16_vs.h"
+#include "shaders/D3D12/gte_shader_16_ps.h"
+#include "shaders/D3D12/blit_shader_vs.h"
+#include "shaders/D3D12/blit_shader_ps.h"
 
 #define Shader_Compile(name) Shader_Compile_Internal((DWORD*)name##_vs, (DWORD*)name##_ps, sizeof(name##_vs), sizeof(name##_ps))
 
@@ -3528,7 +3528,6 @@ ShaderID Shader_Compile_Internal(const DWORD* vs_data, const DWORD* ps_data, con
 	return shader;
 }
 #elif defined(VULKAN)
-
 
 #include "shaders/Vulkan/gte_shader_4_vs.h"
 #include "shaders/Vulkan/gte_shader_4_ps.h"
