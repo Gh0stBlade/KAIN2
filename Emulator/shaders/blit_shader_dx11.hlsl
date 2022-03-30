@@ -19,7 +19,7 @@ struct VS_OUTPUT {
 	SamplerState samplerState : register(s0);
 	Texture2D s_texture : register(t0);
 
-	float4 main(VS_OUTPUT In) : COLOR0 {
+	float4 main(VS_OUTPUT In) : SV_Target0 {
 		float2 color_rg = s_texture.Sample(samplerState, In.v_texcoord.xy).rg * 255.0;
 		float color_16 = color_rg.y * 256.0 + color_rg.x;
 		float4 color = frac(floor(color_16 / float4(1.0, 32.0, 1024.0, 32768.0)) / 32.0);
