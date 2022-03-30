@@ -33,7 +33,7 @@ struct VS_OUTPUT {
 	float4 main(VS_OUTPUT In, float4 coord : SV_Position) : SV_TARGET {
 		float2 uv = (In.v_texcoord.xy * float2(0.25, 1.0) + In.v_page_clut.xy) * float2(1.0 / 1024.0, 1.0 / 512.0);
 		float2 comp = tex.Sample(samplerState, uv).rg;
-		int index = int(frac(In.v_texcoord.x / 4.0 + 0.0001) * 4.0);
+		uint index = int(frac(In.v_texcoord.x / 4.0 + 0.0001) * 4.0);
 
 		float v = comp[index / 2] * (255.0 / 16.0);
 		float f = floor(v);
