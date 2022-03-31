@@ -30,7 +30,7 @@ struct VS_OUTPUT {
 	SamplerState samplerState : register(s0);
 	Texture2D tex : register(t0);
 
-	float4 main(VS_OUTPUT In, float4 coord : VPOS) : SV_TARGET {
+	float4 main(VS_OUTPUT In) : SV_TARGET {
 		float2 uv = (In.v_texcoord.xy * float2(0.25, 1.0) + In.v_page_clut.xy) * float2(1.0 / 1024.0, 1.0 / 512.0);
 		float2 comp = tex.Sample(samplerState, uv).rg;
 		uint index = int(frac(In.v_texcoord.x / 4.0 + 0.0001) * 4.0);
@@ -55,7 +55,7 @@ struct VS_OUTPUT {
 			+2.0,  -2.0,  +3.0,  -1.0,
 			-3.0,  +1.0,  -4.0,  +0.0,
 			+3.0,  -1.0,  +2.0,  -2.0) / 255.0;
-		int2 dc = int2(frac(coord.xy / 4.0) * 4.0);
+		int2 dc = int2(frac(In.v_position.xy / 4.0) * 4.0);
 		color.xyz += dither[dc.x][dc.y] * In.v_texcoord.w;
 
 		return color;

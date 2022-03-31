@@ -1,6 +1,6 @@
 struct VS_INPUT {
-	int4 a_position : POSITION;
-	uint4 a_texcoord : TEXCOORD0;
+	int4 a_position   : POSITION;
+	uint4 a_texcoord  : TEXCOORD0;
 	float4 a_color    : COLOR0;
 };
 
@@ -30,7 +30,7 @@ struct VS_OUTPUT {
 	SamplerState samplerState : register(s0);
 	Texture2D tex : register(t0);
 
-	float4 main(VS_OUTPUT In, float4 coord : VPOS) : SV_TARGET {
+	float4 main(VS_OUTPUT In) : SV_TARGET {
 		float2 color_rg = tex.Sample(samplerState, In.v_texcoord.xy).rg * 255.0;
 		float color_16 = color_rg.y * 256.0 + color_rg.x;
 		clip(color_16 - 0.001);
@@ -43,7 +43,7 @@ struct VS_OUTPUT {
 			+2.0,  -2.0,  +3.0,  -1.0,
 			-3.0,  +1.0,  -4.0,  +0.0,
 			+3.0,  -1.0,  +2.0,  -2.0) / 255.0;
-		int2 dc = int2(frac(coord.xy / 4.0) * 4.0);
+		int2 dc = int2(frac(In.v_position.xy / 4.0) * 4.0);
 		color.xyz += dither[dc.x][dc.y] * In.v_texcoord.w;
 
 		return color;

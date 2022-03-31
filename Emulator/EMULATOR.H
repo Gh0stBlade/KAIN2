@@ -309,6 +309,7 @@ extern void Emulator_SetDefaultRenderTarget();
 #elif defined(D3D12)
 extern void Emulator_CreateRasterState(int wireframe);
 extern void Emulator_WaitForPreviousFrame();
+extern void Emulator_BeginPass();
 #elif defined(VULKAN)
 extern void Emulator_CreateRasterState(int wireframe);
 extern void Emulator_CreateVulkanBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);

@@ -319,6 +319,8 @@ TextureID whiteTexture;
 	ID3D11BlendState		*blendState;
 	ID3D11RasterizerState	*rasterState;
 #elif defined(D3D12)
+	const unsigned int frameCount = 2;
+	
 	ID3D12Resource* dynamic_vertex_buffer = NULL;
 	D3D12_VERTEX_BUFFER_VIEW dynamic_vertex_buffer_view;
 	ID3D12Device* d3ddev = NULL;
@@ -333,14 +335,17 @@ TextureID whiteTexture;
 	ID3D12DescriptorHeap* renderTargetDescriptorHeap;
 	int renderTargetDescriptorSize = 0;
 	int frameIndex = 0;
-#define RENDER_TARGET_COUNT (2)
-	ID3D12Resource* renderTargets[RENDER_TARGET_COUNT];
-	ID3D12CommandAllocator* commandAllocator[RENDER_TARGET_COUNT];
+	ID3D12Resource* renderTargets[frameCount];
+	ID3D12CommandAllocator* commandAllocator;
 	ID3D12GraphicsCommandList* commandList;
 	ID3D12RootSignature* rootSignature;
-	ID3D12Fence* fence[RENDER_TARGET_COUNT];
-	unsigned int fenceValue[RENDER_TARGET_COUNT];
+	ID3D12Fence* fence;
 	HANDLE fenceEvent;
+	UINT64 fenceValue;
+
+	bool begin_pass_flag = FALSE;
+	bool begin_commands_flag = FALSE;
+
 #elif defined(VULKAN)
 	VkBuffer dynamic_vertex_buffer;
 	VkDeviceMemory dynamic_vertex_buffer_memory;
@@ -665,9 +670,6 @@ void Emulator_ResetDevice()
 	assert(!FAILED(hr));
 	
 	commandList->IASetVertexBuffers(0, 1, &dynamic_vertex_buffer_view);
-	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle(renderTargetDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
-	rtvHandle.ptr = rtvHandle.ptr + (frameIndex * renderTargetDescriptorSize);
-	commandList->OMSetRenderTargets(1, &rtvHandle, FALSE, nullptr);
 	Emulator_CreateRasterState(FALSE);
 #elif defined(VULKAN)
 
@@ -1111,7 +1113,7 @@ static int Emulator_InitialiseD3D12Context(char* windowName)
 
 	DXGI_SWAP_CHAIN_DESC swapChainDesc;
 	ZeroMemory(&swapChainDesc, sizeof(DXGI_SWAP_CHAIN_DESC));
-	swapChainDesc.BufferCount = RENDER_TARGET_COUNT;
+	swapChainDesc.BufferCount = frameCount;
 	swapChainDesc.BufferDesc = backBufferDesc;
 	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
@@ -1133,7 +1135,7 @@ static int Emulator_InitialiseD3D12Context(char* windowName)
 
 	D3D12_DESCRIPTOR_HEAP_DESC heapDesc;
 	ZeroMemory(&heapDesc, sizeof(D3D12_DESCRIPTOR_HEAP_DESC));
-	heapDesc.NumDescriptors = RENDER_TARGET_COUNT;
+	heapDesc.NumDescriptors = frameCount;
 	heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
 	heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
 
@@ -1147,7 +1149,7 @@ static int Emulator_InitialiseD3D12Context(char* windowName)
 
 	D3D12_CPU_DESCRIPTOR_HANDLE renderTargetHandle(renderTargetDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
 
-	for (int i = 0; i < RENDER_TARGET_COUNT; i++)
+	for (int i = 0; i < frameCount; i++)
 	{
 		hr = swapChain->GetBuffer(i, IID_PPV_ARGS(&renderTargets[i]));
 		if (FAILED(hr))
@@ -1160,30 +1162,24 @@ static int Emulator_InitialiseD3D12Context(char* windowName)
 		renderTargetHandle.ptr += (1 * renderTargetDescriptorSize);
 	}
 
-	for (int i = 0; i < RENDER_TARGET_COUNT; i++)
+	hr = d3ddev->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&commandAllocator));
+	if (FAILED(hr))
 	{
-		hr = d3ddev->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&commandAllocator[i]));
-		if (FAILED(hr))
-		{
-			return FALSE;
-		}
+		return FALSE;
 	}
-
-	hr = d3ddev->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, commandAllocator[frameIndex], NULL, IID_PPV_ARGS(&commandList));
+	
+	hr = d3ddev->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, commandAllocator, NULL, IID_PPV_ARGS(&commandList));
 	if (FAILED(hr))
 	{
 		return FALSE;
 	}
 
-	for (int i = 0; i < RENDER_TARGET_COUNT; i++)
-	{
-		hr = d3ddev->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence[i]));
-		if (FAILED(hr))
-		{
-			return FALSE;
-		}
+	commandList->Close();
 
-		fenceValue[i] = 0;
+	hr = d3ddev->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence));
+	if (FAILED(hr))
+	{
+		return FALSE;
 	}
 
 	fenceEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
@@ -1247,14 +1243,6 @@ static int Emulator_InitialiseD3D12Context(char* windowName)
 	}
 
 	hr = d3ddev->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(), IID_PPV_ARGS(&rootSignature));
-	if (FAILED(hr))
-	{
-		return FALSE;
-	}
-
-	commandList->Close();
-	fenceValue[frameIndex]++;
-	hr = commandQueue->Signal(fence[frameIndex], fenceValue[frameIndex]);
 	if (FAILED(hr))
 	{
 		return FALSE;
@@ -3516,7 +3504,6 @@ ShaderID Shader_Compile_Internal(const DWORD* vs_data, const DWORD* ps_data, con
 	pipelineStateDesc.NumRenderTargets = 1;
 	pipelineStateDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
 	pipelineStateDesc.SampleDesc.Count = 1;
-
 	assert(!FAILED(d3ddev->CreateGraphicsPipelineState(&pipelineStateDesc, IID_PPV_ARGS(&pipelineState))));
 
 	///@TODO one per shader needs switching
@@ -4661,21 +4648,6 @@ bool vbo_was_dirty_flag = FALSE;
 
 int Emulator_BeginScene()
 {
-
-#if defined(D3D12)
-	Emulator_WaitForPreviousFrame();
-
-	HRESULT hr = commandAllocator[frameIndex]->Reset();
-	assert(!FAILED(hr));
-	hr = commandList->Reset(commandAllocator[frameIndex], pipelineState);
-	assert(!FAILED(hr));
-
-	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle(renderTargetDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
-	rtvHandle.ptr = rtvHandle.ptr + (frameIndex * renderTargetDescriptorSize);
-	commandList->OMSetRenderTargets(1, &rtvHandle, FALSE, nullptr);
-	commandList->SetGraphicsRootSignature(rootSignature);
-#endif
-
 	Emulator_DoPollEvent();
 
 	if (g_resetDeviceOnNextFrame == TRUE)
@@ -4706,6 +4678,7 @@ int Emulator_BeginScene()
 	UINT offset = 0;
 	d3dcontext->IASetVertexBuffers(0, 1, &dynamic_vertex_buffer, &stride, &offset);
 #elif defined(D3D12)
+	Emulator_BeginPass();
 
 #elif defined(VULKAN)
 	dynamic_vertex_buffer_index = 0;
@@ -4944,6 +4917,10 @@ void Emulator_SwapWindow()
 		Emulator_ResetDevice();
 	}
 
+#if defined(D3D12)
+	frameIndex = (frameIndex + 1) % 2;
+#endif
+
 #elif defined(VULKAN)
 	VkPipelineStageFlags waitDestStageMask = VK_PIPELINE_STAGE_TRANSFER_BIT;
 
@@ -5051,7 +5028,7 @@ void Emulator_EndScene()
 	D3D12_RESOURCE_BARRIER presentBarrier;
 	presentBarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
 	presentBarrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-	presentBarrier.Transition.pResource = renderTargets[0];
+	presentBarrier.Transition.pResource = renderTargets[frameIndex];
 	presentBarrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
 	presentBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
 	presentBarrier.Transition.Subresource =D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
@@ -5060,7 +5037,7 @@ void Emulator_EndScene()
 
 	ID3D12CommandList* ppCommandLists[] = { commandList };
 	commandQueue->ExecuteCommandLists(sizeof(ppCommandLists) / sizeof(commandList), ppCommandLists);
-	HRESULT hr = commandQueue->Signal(fence[frameIndex], fenceValue[frameIndex]);
+	HRESULT hr = commandQueue->Signal(fence, fenceValue);
 	assert(!FAILED(hr));
 #elif defined(VULKAN)
 
@@ -5665,6 +5642,76 @@ void Emulator_SetDefaultRenderTarget()
 }
 
 #elif defined(D3D12)
+
+void Emulator_EndCommandBuffer()
+{
+	commandList->Close();
+
+	begin_commands_flag = FALSE;
+}
+
+void Emulator_EndPass()
+{
+
+	Emulator_EndCommandBuffer();
+
+	if (vram_need_update)
+	{
+		Emulator_UpdateVRAM();
+	}
+
+	begin_pass_flag = FALSE;
+}
+
+int Emulator_BeginCommandBuffer()
+{
+	if (begin_commands_flag)
+	{
+		return begin_commands_flag;
+	}
+
+	int last_begin_commands_flag = begin_commands_flag;
+
+	HRESULT hr = commandAllocator->Reset();
+	assert(!FAILED(hr));
+	hr = commandList->Reset(commandAllocator, pipelineState);
+	assert(!FAILED(hr));
+
+	begin_commands_flag = TRUE;
+
+	return last_begin_commands_flag;
+}
+
+void Emulator_BeginPass()
+{
+	Emulator_WaitForPreviousFrame();
+
+	D3D12_RESOURCE_BARRIER barrier;
+	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	barrier.Transition.pResource = renderTargets[frameIndex];
+	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
+	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	commandList->ResourceBarrier(1, &barrier);
+
+	D3D12_CPU_DESCRIPTOR_HANDLE renderTargetViewHandle;
+	renderTargetViewHandle = renderTargetDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
+	unsigned int renderTargetViewDescriptorSize;
+	renderTargetViewDescriptorSize = d3ddev->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+	if (frameIndex == 1)
+	{
+		renderTargetViewHandle.ptr += renderTargetViewDescriptorSize;
+	}
+
+	commandList->SetGraphicsRootSignature(rootSignature);
+
+	Emulator_BeginCommandBuffer();
+
+	begin_pass_flag = TRUE;
+}
+
+
 void Emulator_CreateRasterState(int wireframe)
 {
 	rsd.FillMode = wireframe ? D3D12_FILL_MODE_WIREFRAME : D3D12_FILL_MODE_SOLID;
@@ -5682,16 +5729,18 @@ void Emulator_CreateRasterState(int wireframe)
 
 void Emulator_WaitForPreviousFrame()
 {
-	frameIndex = swapChain->GetCurrentBackBufferIndex();
+	const UINT64 fenceVal = fenceValue;
+	commandQueue->Signal(fence, fenceVal);
+	fenceValue++;
 
-	if (fence[frameIndex]->GetCompletedValue() < fenceValue[frameIndex])
+	// Wait until the previous frame is finished.
+	if (fence->GetCompletedValue() < fenceVal)
 	{
-		HRESULT hr = fence[frameIndex]->SetEventOnCompletion(fenceValue[frameIndex], fenceEvent);
-		assert(!FAILED(hr));
+		fence->SetEventOnCompletion(fenceVal, fenceEvent);
 		WaitForSingleObject(fenceEvent, INFINITE);
 	}
 
-	fenceValue[frameIndex]++;
+	frameIndex = swapChain->GetCurrentBackBufferIndex();
 }
 
 #elif defined(VULKAN)
