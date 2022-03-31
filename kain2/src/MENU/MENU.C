@@ -509,7 +509,15 @@ void menu_run(struct menu_t *menu)
 			if (ctrl == menu_ctrl_down)
 			{
 				index = (index + 1) % menu->nitems;
-				///@FIXME im sure something else is happening here!
+
+				if (menu->items[index].fn == NULL)
+				{
+					do
+					{
+						index = (index + 1) % menu->nitems;
+
+					} while (menu->items[index].fn == NULL);
+				}
 			}
 			else if (ctrl == menu_ctrl_cancel)
 			{
@@ -522,7 +530,14 @@ void menu_run(struct menu_t *menu)
 			else if (ctrl == menu_ctrl_up)
 			{
 				index = ((index + menu->nitems - 1) % menu->nitems);
-				///@FIXME im sure something else is happening here!
+				if (menu->items[index].fn == NULL)
+				{
+					do
+					{
+						index = ((index + menu->nitems - 1) % menu->nitems);
+
+					} while (menu->items[index].fn == NULL);
+				}
 			}
 
 			if (stack->index != index)
