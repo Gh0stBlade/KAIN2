@@ -1,4 +1,4 @@
-#include "THISDUST.H"
+#include "CORE.H"
 #include "VM.H"
 
 
@@ -6,8 +6,10 @@
 // void /*$ra*/ VM_Tick(long time /*$a0*/)
 void VM_Tick(long time)
 { // line 105, offset 0x8004f638
+#if defined(PC_VERSION)
 	dword_C57FD0 += time;
 	dword_C57FD4 = dword_C57FD0 >> 8;
+#endif
 }
 
 
@@ -70,9 +72,9 @@ void VM_UpdateMorph(struct Level *level, int initFlg)
 						short dr; // $a3
 						short dg; // $a0
 						short db; // $v1
-						struct _VMColorOffset *material; // $a1
-						struct _VMColorOffset *spectral; // $a0
-						struct _VMColorOffset *offset; // $v1
+						//struct _VMColorOffset *material; // $a1
+						//struct _VMColorOffset *spectral; // $a0
+						//struct _VMColorOffset *offset; // $v1
 				/* end block 1.1.2.3 */
 				// End offset: 0x8004F9FC
 				// End Line: 403
@@ -98,6 +100,7 @@ void VM_UpdateMorph(struct Level *level, int initFlg)
 // void /*$ra*/ VM_VMObjectSetTable(struct Level *level /*$a0*/, struct _VMObject *vmobject /*$s0*/, int table /*$s1*/)
 void VM_VMObjectSetTable(struct Level *level, struct _VMObject *vmobject, int table)
 { // line 521, offset 0x8004fa30
+#if defined(PC_VERSION)
 	struct _VMOffsetTable** vmoffsetTableList; // ecx
 
 	if (vmobject->curVMOffsetTable != vmobject->vmoffsetTableList[vmobject->currentIdx])
@@ -105,4 +108,5 @@ void VM_VMObjectSetTable(struct Level *level, struct _VMObject *vmobject, int ta
 	vmoffsetTableList = vmobject->vmoffsetTableList;
 	vmobject->currentIdx = table;
 	vmobject->curVMOffsetTable = vmoffsetTableList[table];
+#endif
 }

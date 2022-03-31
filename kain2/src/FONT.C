@@ -1334,7 +1334,7 @@ void FONT_VaReallyPrint(const char *fmt, void *ap)
 void FONT_FontPrintCentered(char *text, long y)
 {
 #if defined(PSX_VERSION)
-	FONT_SetCursor(0x100 - (FONT_GetStringWidth(text) >> 1), y);
+	FONT_SetCursor((SCREEN_WIDTH/2) - (FONT_GetStringWidth(text) >> 1), y);
 	FONT_Print2(text);
 #elif defined(PC_VERSION)
 	unsigned int v2; // kr04_4

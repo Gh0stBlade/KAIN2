@@ -11,6 +11,6 @@ extern void _G2Instance_BuildAnimatedTransforms(struct _Instance *instance); // 
 extern void _G2Instance_RebuildNonAnimatedTransforms(struct _Instance *instance); // 0x80095528
 extern void _G2Instance_BuildDeactivatedTransforms(struct _Instance *instance); // 0x800957B4
 extern void _G2Instance_BuildNonAnimatedTransforms(struct _Instance *instance); // 0x80095934
-extern void _G2Instance_BuildFacadeTransforms(struct _Instance *instance, struct _Segment *segment, struct MATRIX *segMatrix, struct MATRIX *matrixPool, long scale_flag); // 0x800959F0
+extern void _G2Instance_BuildFacadeTransforms(struct _Instance *instance, struct _Segment *segment, MATRIX *segMatrix, MATRIX *matrixPool, long scale_flag); // 0x800959F0
 
 #endif

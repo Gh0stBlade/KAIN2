@@ -77,7 +77,7 @@ extern long UNDERWORLD_RotateScreenStep(long time); // 0x800B4C14
 
 extern void UNDERWORLD_DoUV(unsigned char *uv, struct UW_ScreenXY *p0, int tx); // 0x800B4D80
 
-extern struct POLY_GT3 * UNDERWORLD_Poly(struct POLY_GT3 *last, struct UW_ScreenXY *p0, struct UW_ScreenXY *p1, struct UW_ScreenXY *p2, int drawY); // 0x800B4DCC
+extern POLY_GT3 * UNDERWORLD_Poly(POLY_GT3 *last, struct UW_ScreenXY *p0, struct UW_ScreenXY *p1, struct UW_ScreenXY *p2, int drawY); // 0x800B4DCC
 
 extern void UNDERWORLD_DisplayFrame(long *primStart, long drawY); // 0x800B4F44
 

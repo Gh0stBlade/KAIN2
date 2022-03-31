@@ -61,6 +61,7 @@ struct VramSize // hashcode: 0xD96A55BF (dec: -647342657)
 	short h; // size=0, offset=6
 };
 
+extern long VRAM_NeedToUpdateMorph;
 extern short M_TrackClutUpdate;
 extern struct _BlockVramEntry* openVramBlocks; // offset 0x800D482C
 extern struct _BlockVramEntry* usedVramBlocks; // offset 0x800D4828

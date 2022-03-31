@@ -1,6 +1,8 @@
 #ifndef GAMELOOP_H
 #define GAMELOOP_H
 
+#include "CORE.H"
+
 typedef struct _PrimPool // hashcode: 0x9529B283 (dec: -1792429437)
 {
 	long numPrims; // size=0, offset=0

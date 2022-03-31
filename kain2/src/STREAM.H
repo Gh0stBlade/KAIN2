@@ -2,11 +2,23 @@
 #define STREAM_H
 
 #include "SIGNAL.H"
+#include "INSTANCE.H"
 
 struct TClassAttr 
 {
 	short flags; // size=0, offset=0
 	unsigned short sound; // size=0, offset=2
+};
+
+struct _SFXMkr 
+{
+	unsigned char* soundData; // size=0, offset=0
+	long uniqueID; // size=0, offset=4
+	struct SoundInstance sfxTbl[4]; // size=12, offset=8
+	struct _Position pos; // size=6, offset=20
+	short pad; // size=0, offset=26
+	long livesInOnePlace; // size=0, offset=28
+	long inSpectral; // size=0, offset=32
 };
 
 struct Level // hashcode: 0x012B0198 (dec: 19595672)

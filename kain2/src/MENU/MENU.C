@@ -556,7 +556,3 @@ void menu_process(struct menu_t *menu)
 	menu_draw(menu);
 	menu_run(menu);
 }
-
-
-
-

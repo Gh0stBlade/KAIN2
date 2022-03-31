@@ -22,6 +22,7 @@
 #include <LIBMCRD.H>
 
 #if defined(PSXPC_VERSION) || defined(PSX_VERSION)//Temporary
+#undef LoadImage
 #define LoadImage LoadImagePSX
 #define PSX_EnterCriticalSection	EnterCriticalSection
 #define PSX_ExitCriticalSection		ExitCriticalSection
@@ -310,6 +311,12 @@ struct gSoundData // hashcode: 0x100090FC (dec: 268472572)
 	char gMusicOn; // size=0, offset=17
 	char gVoiceOn; // size=0, offset=18
 	char soundsLoaded; // size=0, offset=19
+};
+
+struct ObjectEffect 
+{
+	unsigned char effectNumber; // size=0, offset=0
+	unsigned char modifierList[3]; // size=3, offset=1
 };
 
 struct Object // hashcode: 0xEC12E9AC (dec: -334304852)
