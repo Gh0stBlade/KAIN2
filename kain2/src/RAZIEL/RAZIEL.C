@@ -510,8 +510,8 @@ void StateHandlerBlock(struct __CharacterState *In, int CurrentSection, int Data
 				// Start line: 2762
 				// Start offset: 0x800AC94C
 				// Variables:
-					SVECTOR startVec; // stack offset -56
-					SVECTOR endVec; // stack offset -48
+					//SVECTOR startVec; // stack offset -56
+					///SVECTOR endVec; // stack offset -48
 			/* end block 1.3.1 */
 			// End offset: 0x800AC9A4
 			// End Line: 2770
