@@ -250,7 +250,7 @@ void sound_item(void *gt, char *text, enum sfx_t sfx)
 
 int menudefs_toggle_dualshock(void *gt, long param, enum menu_ctrl_t ctrl)
 { 
-	if ((int)ctrl - 3 < 2)
+	if ((unsigned int)ctrl - 3 < 2)
 	{
 		if (GAMEPAD_DualShockEnabled() != 0)
 		{
