@@ -9,6 +9,7 @@
 SDL_GameController* padHandle[MAX_CONTROLLERS];
 #endif
 
+unsigned char* padRumbleData[MAX_CONTROLLERS];
 unsigned char* padData[MAX_CONTROLLERS];
 const unsigned char* keyboardState;
 
@@ -25,6 +26,9 @@ void PadInitDirect(unsigned char* pad1, unsigned char* pad2)
 		padData[1] = pad2;
 		padData[1][0] = 0xFF;
 	}
+
+	padRumbleData[0] = NULL;
+	padRumbleData[1] = NULL;
 
 #if defined(SDL2)
 	if (SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER) < 0)
@@ -145,7 +149,7 @@ int PadInfoComb(int unk00, int unk01, int unk02)
 int PadSetActAlign(int unk00, unsigned char* unk01)
 {
 	UNIMPLEMENTED();
-	return 0;
+	return 1;
 }
 
 int PadSetMainMode(int socket, int offs, int lock)
@@ -156,7 +160,14 @@ int PadSetMainMode(int socket, int offs, int lock)
 
 void PadSetAct(int unk00, unsigned char* unk01, int unk02)
 {
-	UNIMPLEMENTED();
+	if (unk00 == 0x0)
+	{
+		padRumbleData[0] = unk01;
+	}
+	else if (unk00 == 0x10)
+	{
+		padRumbleData[1] = unk01;
+	}
 }
 
 #if defined(SDL2)

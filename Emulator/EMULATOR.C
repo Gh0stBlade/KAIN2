@@ -4846,6 +4846,22 @@ void Emulator_DoDebugKeys(int nKey, bool down)
 
 unsigned short kbInputs = 0xFFFF;
 
+void Emulator_RumbleGameController(SDL_GameController* pad, unsigned char* padRumbleData)
+{
+#define PSX_MIN 0
+#define PSX_MAX 255
+
+#define SDL_MIN 0
+#define SDL_MAX 65535
+
+#define TRANSLATE(x) ((SDL_MAX - SDL_MIN) * (x - PSX_MIN) / (PSX_MAX - PSX_MIN)) + SDL_MIN
+
+	if (padRumbleData != NULL)
+	{
+		SDL_GameControllerRumble(pad, TRANSLATE(padRumbleData[1]), TRANSLATE(padRumbleData[1]), 1);
+	}
+}
+
 void Emulator_TranslateControllerType(void* padData, SDL_GameController* padHandle)
 {
 	struct PadData
@@ -4901,6 +4917,8 @@ void Emulator_UpdateInput()
 
 				((unsigned short*)padData[i])[2] = analogData[0];
 				((unsigned short*)padData[i])[3] = analogData[1];
+
+				Emulator_RumbleGameController(padHandle[i], padRumbleData[i]);
 			}
 		}
 	}
