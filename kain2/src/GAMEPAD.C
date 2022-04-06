@@ -368,7 +368,7 @@ void GAMEPAD_DisableDualShock()
 	dualshock0_time = 0;
 	dualshock1_time = 0;
 
-	PadSetAct(0, &dualshock_motors, 2);
+	PadSetAct(0, dualshock_motors, 2);
 }
 
 void GAMEPAD_EnableDualShock()
