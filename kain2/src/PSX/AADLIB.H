@@ -326,7 +326,7 @@ typedef struct AadMemoryStruct // hashcode: 0x46CEF45B (dec: 1187968091)
 	int nextSramDescIndex; // size=0, offset=7152
 	int firstSramBlockDescIndex; // size=0, offset=7156
 	void (*controller11Callback)(); // size=0, offset=7160
-	void (*endSequenceCallback)(); // size=0, offset=7164
+	void (*endSequenceCallback)(long, int, int); // size=0, offset=7164
 	long controller11CallbackData; // size=0, offset=7168
 	long endSequenceCallbackData; // size=0, offset=7172
 	unsigned char userVariables[128]; // size=128, offset=7176
@@ -398,7 +398,7 @@ extern int aadGetSlotStatus(int slotNumber); // 0x80054568
 extern void aadAllNotesOff(int slotNumber); // 0x80054588
 extern void aadMuteChannels(struct _AadSequenceSlot *slot, unsigned long channelList); // 0x80054628
 extern void aadUnMuteChannels(struct _AadSequenceSlot *slot, unsigned long channelList); // 0x80054704
-extern TDRFuncPtr_aadInstallEndSequenceCallback aadInstallEndSequenceCallback(void (*func)(long, int, int), long data); // 0x8005473C
+extern void* aadInstallEndSequenceCallback(void (*func)(long, int, int), long data); // 0x8005473C
 extern void aadSetUserVariable(int variableNumber, int value); // 0x80054754
 extern void aadSetNoUpdateMode(int noUpdate); // 0x80054768
 extern void aadPauseSound(); // 0x800547A8
