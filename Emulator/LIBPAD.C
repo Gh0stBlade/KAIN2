@@ -95,6 +95,8 @@ void PadRemoveGun()
 
 int PadGetState(int port)
 {
+	static int lastState = PadStateDiscon;
+
 #if defined(SDL2)
 #if _DEBUG && 0
 	return PadStateStable;//FIXME should check if keyboard is connected
@@ -105,7 +107,16 @@ int PadGetState(int port)
 	}
 	else
 	{
-		return PadStateStable;
+		if (lastState == PadStateDiscon && (padData[0][1] >> 4) == 5)
+		{
+			lastState = PadStateReqInfo;
+			return PadStateReqInfo;
+		}
+		else
+		{
+			lastState = PadStateStable;
+			return PadStateStable;
+		}
 	}
 
 	return 0;
@@ -236,6 +247,42 @@ unsigned short UpdateGameControllerInput(SDL_GameController* pad)
 	return ret;
 }
 #endif
+
+void UpdateGameControllerAnalogInput(SDL_GameController* pad, void* analogR, void* analogL)
+{
+
+#define PSX_MIN 0
+#define PSX_MAX 255
+
+#define SDL_MIN -32768
+#define SDL_MAX 32767
+
+///@FIXME 0 is not exactly 0x80 it's 0x7F!
+#define TRANSLATE(x) ((PSX_MAX - PSX_MIN) * (x - SDL_MIN) / (SDL_MAX - SDL_MIN)) + PSX_MIN
+
+	struct Analog
+	{
+		unsigned char x;
+		unsigned char y;
+	};
+
+	Analog* ar = (Analog*)analogR;
+	Analog* al = (Analog*)analogL;
+
+	if (ar != NULL)
+	{
+		constexpr int test = TRANSLATE(1);
+
+		ar->x = TRANSLATE(SDL_GameControllerGetAxis(pad, SDL_CONTROLLER_AXIS_RIGHTX));
+		ar->y = TRANSLATE(SDL_GameControllerGetAxis(pad, SDL_CONTROLLER_AXIS_RIGHTY));
+	}
+
+	if (al != NULL)
+	{
+		al->x = TRANSLATE(SDL_GameControllerGetAxis(pad, SDL_CONTROLLER_AXIS_LEFTX));
+		al->y = TRANSLATE(SDL_GameControllerGetAxis(pad, SDL_CONTROLLER_AXIS_LEFTY));
+	}
+}
 
 unsigned short UpdateKeyboardInput()
 {

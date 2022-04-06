@@ -4164,7 +4164,9 @@ void Emulator_SetShader(const ShaderID &shader)
 	#error
 #endif
 
+#if !defined(_PATCH)
 	Emulator_Ortho2D(0.0f, activeDispEnv.disp.w, activeDispEnv.disp.h, 0.0f, 0.0f, 1.0f);
+#endif
 }
 
 void Emulator_SetTexture(TextureID texture, TexFormat texFormat)
@@ -4320,13 +4322,14 @@ void Emulator_SaveVRAM(const char* outputFileName, int x, int y, int width, int 
 
 void Emulator_StoreFrameBuffer(int x, int y, int w, int h)
 {
-	short *fb = (short*)malloc(windowWidth * windowHeight * sizeof(short));
+	short *fb = (short*)malloc(w * h * sizeof(short));
 
 #if defined(OGL) || defined(OGLES)
-	int *data = (int*)malloc(windowWidth * windowHeight * sizeof(int));
-	glReadPixels(0, 0, windowWidth, windowHeight, GL_RGBA, GL_UNSIGNED_BYTE, data);
+	int *data = (int*)malloc(w * h * sizeof(int));
+	glReadPixels(x, y, w, h, GL_RGBA, GL_UNSIGNED_BYTE, data);
 
 	#define FLIP_Y (h - fy - 1)
+	#define SWAP_RB
 #elif defined(D3D9) || defined (XED3D)
 	IDirect3DSurface9 *srcSurface, *dstSurface;
 	HRESULT hr;
@@ -4385,24 +4388,53 @@ void Emulator_StoreFrameBuffer(int x, int y, int w, int h)
 	int* data = (int*)resource.pData;
 
 #define FLIP_Y (fy)
+#define SWAP_RB
 #elif defined(D3D12) || defined(VULKAN)
 #define FLIP_Y (fy)
 	int* data = NULL;
+	assert(FALSE);//Needs implementing for framebuffer write backs!
 	return;
 #endif
 
 	unsigned int   *data_src = (unsigned int*)data;
 	unsigned short *data_dst = (unsigned short*)fb;
 
-	for (int i = 0; i < windowHeight; i++) {
-		for (int j = 0; j < windowWidth; j++) {
+	for (int i = 0; i < w; i++) {
+		for (int j = 0; j < h; j++) {
 			unsigned int  c = *data_src++;
 			unsigned char b = ((c >>  3) & 0x1F);
 			unsigned char g = ((c >> 11) & 0x1F);
 			unsigned char r = ((c >> 19) & 0x1F);
+#if defined(SWAP_RB)
+			*data_dst++ = b | (g << 5) | (r << 10) | 0x8000;
+#else
 			*data_dst++ = r | (g << 5) | (b << 10) | 0x8000;
+#endif
 		}
 	}
+
+#if 0
+	unsigned short* src = (unsigned short*)fb;
+	unsigned short* dst = vram + x + y * VRAM_WIDTH;
+	
+	for (int i = 0; i < h; i++) {
+		memcpy(dst, src, w * sizeof(unsigned short));
+		src += w;
+		dst += VRAM_WIDTH;
+	}
+#elif 1
+	short* ptr = (short*)vram + VRAM_WIDTH * y + x;
+
+	for (int fy = 0; fy < h; fy++) {
+		short* fb_ptr = fb + (h * FLIP_Y / h) * w;
+
+		for (int fx = 0; fx < w; fx++) {
+			ptr[fx] = fb_ptr[w * fx / w];
+		}
+
+		ptr += VRAM_WIDTH;
+	}
+#endif
 
 #if defined(OGL) || defined(OGLES)
 	free(data);
@@ -4413,19 +4445,8 @@ void Emulator_StoreFrameBuffer(int x, int y, int w, int h)
 	srcSurface->Release();
 #elif defined(D3D11)
 	d3dcontext->Unmap(newBackBuffer, subResource);
+	newBackBuffer->Release();
 #endif
-
-	short *ptr = (short*)vram + VRAM_WIDTH * y + x;
-
-	for (int fy = 0; fy < h; fy++) {
-		short *fb_ptr = fb + (windowHeight * FLIP_Y / h) * windowWidth;
-
-		for (int fx = 0; fx < w; fx++) {
-			ptr[fx] = fb_ptr[windowWidth * fx / w];
-		}
-
-		ptr += VRAM_WIDTH;
-	}
 
 	#undef FLIP_Y
 
@@ -4569,10 +4590,29 @@ void Emulator_BlitVRAM()
 	Emulator_SetTexture(vramTexture, TF_16_BIT);
 	Emulator_SetShader(g_blit_shader);
 
+#if defined(_PATCH2)
+	u_char l, t, r, b; 
+
+	if (activeDispEnv.disp.x != activeDrawEnv.clip.x || activeDispEnv.disp.y != activeDrawEnv.clip.y)
+	{
+		l = activeDrawEnv.clip.x / 8;
+		t = activeDrawEnv.clip.y / 8;
+		r = activeDrawEnv.clip.w / 8 + l;
+		b = activeDrawEnv.clip.h / 8 + t;
+	}
+	else
+	{
+		l = activeDispEnv.disp.x / 8;
+		t = activeDispEnv.disp.y / 8;
+		r = activeDispEnv.disp.w / 8 + l;
+		b = activeDispEnv.disp.h / 8 + t;
+	}
+#else
 	u_char l = activeDispEnv.disp.x / 8;
 	u_char t = activeDispEnv.disp.y / 8;
 	u_char r = activeDispEnv.disp.w / 8 + l;
 	u_char b = activeDispEnv.disp.h / 8 + t;
+#endif
 
 	Vertex blit_vertices[] =
 	{
@@ -4584,6 +4624,11 @@ void Emulator_BlitVRAM()
 		{ -1, -1,    0, 0,    l, b,    0, 0,    0, 0, 0, 0 },
 		{ +1, +1,    0, 0,    r, t,    0, 0,    0, 0, 0, 0 },
 	};
+
+#if defined(_PATCH)
+	Emulator_SetViewPort(0.0f, 0.0f, windowWidth, windowHeight);
+	Emulator_Ortho2D(0.0f, windowWidth, windowHeight, 0.0f, 0.0f, 1.0f);
+#endif
 
 	Emulator_UpdateVertexBuffer(blit_vertices, 6);
 	Emulator_SetBlendMode(BM_NONE);
@@ -4703,8 +4748,10 @@ int Emulator_BeginScene()
 	Emulator_UpdateVRAM();
 #endif
 
+#if !defined(_PATCH)
 	Emulator_SetViewPort(0, 0, windowWidth, windowHeight);
 	Emulator_Ortho2D(0.0f, activeDispEnv.disp.w, activeDispEnv.disp.h, 0.0f, 0.0f, 1.0f);
+#endif
 
 	begin_scene_flag = TRUE;
 
@@ -4799,6 +4846,36 @@ void Emulator_DoDebugKeys(int nKey, bool down)
 
 unsigned short kbInputs = 0xFFFF;
 
+void Emulator_TranslateControllerType(void* padData, SDL_GameController* padHandle)
+{
+	struct PadData
+	{
+		unsigned char status;
+		unsigned char size : 4;
+		unsigned char type : 4;
+	};
+
+	PadData* pd = (PadData*)padData;
+
+	bool hasLeftAnalog = SDL_GameControllerHasAxis(padHandle, SDL_CONTROLLER_AXIS_LEFTX) & SDL_GameControllerHasAxis(padHandle, SDL_CONTROLLER_AXIS_LEFTY);
+	bool hasRightAnalog = SDL_GameControllerHasAxis(padHandle, SDL_CONTROLLER_AXIS_RIGHTX) & SDL_GameControllerHasAxis(padHandle, SDL_CONTROLLER_AXIS_RIGHTY);
+
+	if (hasLeftAnalog && hasRightAnalog)
+	{
+		//Analog controller
+		pd->type = 5;
+		pd->size = 3;
+	}
+	else
+	{
+		//Non-analog controller.
+		pd->type = 4;
+		pd->size = 1;
+	}
+
+	pd->status = 0;
+}
+
 void Emulator_UpdateInput()
 {
 	// also poll events here
@@ -4816,9 +4893,14 @@ void Emulator_UpdateInput()
 			{
 				unsigned short controllerInputs = UpdateGameControllerInput(padHandle[i]);
 
-				padData[i][0] = 0;
-				padData[i][1] = 0x41;//?
+				Emulator_TranslateControllerType(padData[i], padHandle[i]);
 				((unsigned short*)padData[i])[1] = kbInputs & controllerInputs;
+
+				unsigned short analogData[2];
+				UpdateGameControllerAnalogInput(padHandle[i], &analogData[0], &analogData[1]);
+
+				((unsigned short*)padData[i])[2] = analogData[0];
+				((unsigned short*)padData[i])[3] = analogData[1];
 			}
 		}
 	}
@@ -4827,9 +4909,10 @@ void Emulator_UpdateInput()
 		//Update keyboard
 		if (padData[0] != NULL)
 		{
-			padData[0][0] = 0;
-			padData[0][1] = 0x41;//?
+			Emulator_TranslateControllerType(padData[0], padHandle[0]);
 			((unsigned short*)padData[0])[1] = kbInputs;
+			((unsigned short*)padData[0])[2] = 128;
+			((unsigned short*)padData[0])[3] = 128;
 		}
 	}
 #endif
@@ -5005,6 +5088,15 @@ void Emulator_EndScene()
 #if defined(VULKAN)
 	dynamic_vertex_buffer_index = 0;
 	Emulator_EndPass();
+#endif
+
+#if defined(_PATCH)
+	if (activeDispEnv.disp.x != activeDrawEnv.clip.x || activeDispEnv.disp.y != activeDrawEnv.clip.y)
+	{
+	}
+	Emulator_StoreFrameBuffer(activeDrawEnv.clip.x, activeDrawEnv.clip.y, activeDrawEnv.clip.w, activeDrawEnv.clip.h);
+
+	//Emulator_StoreFrameBuffer(activeDispEnv.disp.x, activeDispEnv.disp.y, activeDispEnv.disp.w, activeDispEnv.disp.h);
 #endif
 
 	if (!begin_scene_flag)
@@ -5562,6 +5654,9 @@ void Emulator_DrawTriangles(int start_vertex, int triangles)
 {
 	if(triangles <= 0)
 		return;
+
+	//Emulator_UpdateToActiveDrawEnv();
+
 #if defined(OGL) || defined(OGLES)
 	glDrawArrays(GL_TRIANGLES, start_vertex, triangles * 3);
 #elif defined(D3D9) || defined(XED3D)

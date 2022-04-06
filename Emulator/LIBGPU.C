@@ -173,6 +173,8 @@ int DrawSync(int mode)
 		Emulator_EndScene();
 	}
 
+	VSync(0);
+
 	return 0;
 }
 
@@ -459,6 +461,9 @@ void DrawSplit(const VertexBufferSplit& split)
 {
 	Emulator_SetTexture(split.textureId, split.texFormat);
 	Emulator_SetBlendMode(split.blendMode);
+#if defined(_PATCH)
+	Emulator_Ortho2D(0, activeDrawEnv.clip.w, activeDrawEnv.clip.h, 0, 0.0f, 1.0f);
+#endif
 	Emulator_DrawTriangles(split.vIndex, split.vCount / 3);
 }
 
@@ -596,6 +601,8 @@ void DrawOTag(u_long* p)
 
 void DrawPrim(void* p)
 {
+	VSync(0);
+
 	if (Emulator_BeginScene())
 	{
 		ClearVBO();
@@ -621,7 +628,10 @@ void DrawPrim(void* p)
 	AggregatePTAGsToSplits((u_long*)p, TRUE);
 
 	DrawAggregatedSplits();
-	//Emulator_EndScene();
+
+#if defined(_PATCH)
+	Emulator_StoreFrameBuffer(activeDrawEnv.clip.x, activeDrawEnv.clip.y, activeDrawEnv.clip.w, activeDrawEnv.clip.h);
+#endif
 
 #if defined(PGXP)
 	/* Reset the ztable */
@@ -666,16 +676,59 @@ int ParsePrimitive(uintptr_t primPtr)
 
 	int code = 0;
 
-	if (IsValidCode(pTag->code))
+	//BLK_FILL
+	if (pTag->code != 2)
 	{
-		code = pTag->code;
+
+		if (IsValidCode(pTag->code))
+		{
+			code = pTag->code;
+		}
+		else
+		{
+			if (IsValidCode(((POLY_F4_SEMITRANS*)pTag)->code))
+			{
+				code = ((POLY_F4_SEMITRANS*)pTag)->code;
+			}
+		}
 	}
 	else
 	{
-		if (IsValidCode(((POLY_F4_SEMITRANS*)pTag)->code))
+		//Do black fill
+		struct BLK_FILL
 		{
-			code = ((POLY_F4_SEMITRANS*)pTag)->code;
-		}
+#if defined(USE_32_BIT_ADDR)
+			unsigned long tag; // size=0, offset=0
+			unsigned long len; // size=0, offset=0
+#else
+			unsigned long tag; // size=0, offset=0
+#endif
+			unsigned char r0;
+			unsigned char g0;
+			unsigned char b0;
+			unsigned char code;
+			unsigned short x0;
+			unsigned short y0;
+			unsigned short w;
+			unsigned short h;
+		};
+
+		BLK_FILL* poly = (BLK_FILL*)pTag;
+
+		short* blackImage = new short[poly->w * poly->h];
+		memset(blackImage, 0, poly->w * poly->h * sizeof(short));
+
+		RECT16 r;
+		r.x = poly->x0;
+		r.y = poly->y0;
+		r.w = poly->w;
+		r.h = poly->h;
+
+		LoadImagePSX(&r, (unsigned long*)blackImage);
+		Emulator_UpdateVRAM();
+
+		int primitive_size = sizeof(BLK_FILL);
+		return primitive_size;
 	}
 
 	bool semi_transparent = (code & 2) != 0;

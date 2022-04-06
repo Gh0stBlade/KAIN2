@@ -292,6 +292,8 @@ extern void Emulator_SetRenderTarget(const RenderTargetID& render_target);
 extern void Emulator_SetWireframe(bool enable);
 extern void Emulator_UpdateVertexBuffer(const Vertex* vertices, int count);
 extern void Emulator_DrawTriangles(int start_vertex, int triangles);
+extern void Emulator_UpdateToActiveDrawEnv();
+extern void Emulator_Ortho2D(float left, float right, float bottom, float top, float znear, float zfar);
 
 extern void Emulator_CreateGlobalShaders();
 extern void Emulator_DestroyGlobalShaders();
