@@ -1447,3 +1447,9 @@ void SpuSetVoiceVolume(int vNum, short volL, short volR)
    pMasterVoice->SetVolume(volL / 32767.0f, 0);
 #endif
 }
+
+long SpuClearReverbWorkArea(long mode)
+{
+    UNIMPLEMENTED();
+    return 0;
+}
