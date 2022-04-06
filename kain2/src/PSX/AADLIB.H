@@ -349,7 +349,7 @@ extern void aadShutdown(); // 0x80051924
 extern long aadSlotUpdateWrapper(); // 0x800519AC
 extern void aadSlotUpdate(); // 0x800519F0
 extern unsigned long aadCreateFourCharID(char a, char b, char c, char d); // 0x80051F38
-extern int aadLoadDynamicSoundBank(char *sndFileName, char *smpFileName, int dynamicBankIndex, int loadOption, TDRFuncPtr_aadLoadDynamicSoundBank4retProc retProc); // 0x80051F60
+extern int aadLoadDynamicSoundBank(char *sndFileName, char *smpFileName, int dynamicBankIndex, int loadOption, void (*func)(int, int)); // 0x80051F60
 extern void aadLoadDynamicSoundBankReturn(void *loadedDataPtr, void *data, void *data2); // 0x800520B8
 extern void aadLoadDynamicSoundBankReturn2(void *loadedDataPtr, long loadedDataSize, short status, void *data1, void *data2); // 0x80052188
 extern int aadFreeDynamicSoundBank(int dynamicBankIndex); // 0x800523B4
@@ -398,7 +398,7 @@ extern int aadGetSlotStatus(int slotNumber); // 0x80054568
 extern void aadAllNotesOff(int slotNumber); // 0x80054588
 extern void aadMuteChannels(struct _AadSequenceSlot *slot, unsigned long channelList); // 0x80054628
 extern void aadUnMuteChannels(struct _AadSequenceSlot *slot, unsigned long channelList); // 0x80054704
-extern TDRFuncPtr_aadInstallEndSequenceCallback aadInstallEndSequenceCallback(TDRFuncPtr_aadInstallEndSequenceCallback0callbackProc callbackProc, long data); // 0x8005473C
+extern TDRFuncPtr_aadInstallEndSequenceCallback aadInstallEndSequenceCallback(void (*func)(long, int, int), long data); // 0x8005473C
 extern void aadSetUserVariable(int variableNumber, int value); // 0x80054754
 extern void aadSetNoUpdateMode(int noUpdate); // 0x80054768
 extern void aadPauseSound(); // 0x800547A8
