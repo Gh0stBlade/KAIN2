@@ -727,6 +727,8 @@ int ParsePrimitive(uintptr_t primPtr)
 		LoadImagePSX(&r, (unsigned long*)blackImage);
 		Emulator_UpdateVRAM();
 
+		delete[] blackImage;
+
 		int primitive_size = sizeof(BLK_FILL);
 		return primitive_size;
 	}
