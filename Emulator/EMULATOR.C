@@ -4858,7 +4858,7 @@ void Emulator_RumbleGameController(SDL_GameController* pad, unsigned char* padRu
 
 	if (padRumbleData != NULL)
 	{
-		SDL_GameControllerRumble(pad, TRANSLATE(padRumbleData[1]), TRANSLATE(padRumbleData[1]), 1);
+		SDL_GameControllerRumble(pad, TRANSLATE(padRumbleData[1]), TRANSLATE(padRumbleData[1]), 100);
 	}
 }
 
@@ -4918,7 +4918,10 @@ void Emulator_UpdateInput()
 				((unsigned short*)padData[i])[2] = analogData[0];
 				((unsigned short*)padData[i])[3] = analogData[1];
 
-				Emulator_RumbleGameController(padHandle[i], padRumbleData[i]);
+				if (SDL_GameControllerHasRumble(padHandle[i]))
+				{
+					Emulator_RumbleGameController(padHandle[i], padRumbleData[i]);
+				}
 			}
 		}
 	}
@@ -4929,7 +4932,7 @@ void Emulator_UpdateInput()
 		{
 			Emulator_TranslateControllerType(padData[0], padHandle[0]);
 			((unsigned short*)padData[0])[1] = kbInputs;
-			((unsigned short*)padData[0])[2] = 128;
+			((unsigned short*)padData[0])[2] = 128;//Maybe not required.
 			((unsigned short*)padData[0])[3] = 128;
 		}
 	}
