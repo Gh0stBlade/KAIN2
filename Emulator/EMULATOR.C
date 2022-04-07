@@ -4859,6 +4859,11 @@ void Emulator_RumbleGameController(SDL_GameController* pad, unsigned char* padRu
 	if (padRumbleData != NULL)
 	{
 		SDL_GameControllerRumble(pad, TRANSLATE(padRumbleData[1]), TRANSLATE(padRumbleData[1]), 100);
+
+		if (SDL_JoystickHasRumbleTriggers(SDL_GameControllerGetJoystick(pad)))
+		{
+			SDL_GameControllerRumbleTriggers(pad, TRANSLATE(padRumbleData[1]), TRANSLATE(padRumbleData[1]), 100);
+		}
 	}
 }
 
