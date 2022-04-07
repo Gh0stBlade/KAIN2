@@ -23,6 +23,18 @@ void VRAM_PrintVramBlock(struct _BlockVramEntry* vblock /*$a0*/)
 void VRAM_PrintInfo()
 {
 	struct _BlockVramEntry* vblock;
+
+	vblock = usedVramBlocks;
+	while (vblock != NULL)
+	{
+		vblock = vblock->next;
+	}
+
+	vblock = openVramBlocks;
+	while (vblock != NULL)
+	{
+		vblock = vblock->next;
+	}
 }
 
 void VRAM_InitVramBlockCache()
