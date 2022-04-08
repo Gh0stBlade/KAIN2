@@ -4,6 +4,23 @@
 #include "SIGNAL.H"
 #include "INSTANCE.H"
 
+struct WarpGateLoadInfo
+{
+	int warpgate_in_use; // size=0, offset=0
+	char loading; // size=0, offset=4
+	char blocked; // size=0, offset=5
+	short fadeValue; // size=0, offset=6
+	long curTime; // size=0, offset=8
+	long maxTime; // size=0, offset=12
+	struct _Instance* warpFaceInstance; // size=668, offset=16
+};
+
+struct WarpRoom 
+{
+	char name[16]; // size=16, offset=0
+	struct _StreamUnit* streamUnit; // size=64, offset=16
+};
+
 struct TClassAttr 
 {
 	short flags; // size=0, offset=0

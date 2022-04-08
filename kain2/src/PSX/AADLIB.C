@@ -1664,7 +1664,7 @@ void aadInitSequenceSlot(struct _AadSequenceSlot *slot)
 	int bank;
 
 	bank = slot->sequenceAssignedDynamicBank;
-	i = 0;
+	
 	slot->status = 0;
 	slot->selectedDynamicBank = bank;
 	slot->slotFlags &= 0x1;
