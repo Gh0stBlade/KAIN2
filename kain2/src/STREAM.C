@@ -1517,7 +1517,7 @@ void STREAM_DumpAllLevels(long IDNoRemove, int DoSave)
 
 	for (i = 0; i < 16; i++)
 	{
-		if (StreamTracker.StreamList[i].used != 0 && StreamTracker.StreamList[i].StreamUnitID != 0)
+		if (StreamTracker.StreamList[i].used != 0 && StreamTracker.StreamList[i].StreamUnitID != IDNoRemove)
 		{
 			STREAM_DumpUnit(&StreamTracker.StreamList[i], DoSave);
 		}
