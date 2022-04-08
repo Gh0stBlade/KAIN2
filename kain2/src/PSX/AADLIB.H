@@ -8,6 +8,12 @@ typedef void (*TDRFuncPtr_aadLoadDynamicSoundBank4retProc)();
 typedef void (*TDRFuncPtr_aadStartMasterVolumeFade2fadeCompleteCallback)();
 typedef void (*TDRFuncPtr_aadStartMusicMasterVolFade2fadeCompleteCallback)();
 
+struct AadTempo 
+{
+	unsigned long quarterNoteTime; // size=0, offset=0
+	int ppqn; // size=0, offset=4
+};
+
 struct AadVolume 
 {
 	short left; // size=0, offset=0
