@@ -1476,3 +1476,8 @@ u_long* BreakDraw(void)
 {
 	return (u_long*)0xFFFFFFFF;
 }
+
+void ContinueDraw(u_long* insaddr, u_long* contaddr)
+{
+	UNIMPLEMENTED();
+}
