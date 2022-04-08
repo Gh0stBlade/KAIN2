@@ -721,7 +721,7 @@ void PSXPAD_TranslateData(long *data, unsigned short padData, unsigned short las
 unsigned short GAMEPAD_RemapAnalogueButtons(unsigned short in)
 {
 	in = ~in;
-	return ~((in & 0x61F9) | (in & 0x800) << 1) | ((in & 0x400) << 5) | ((in & 0x200) << 1) | ((in & 0x8000) >> 6) | ((in & 0x1000) >> 1) & 0xFFFF;
+	return ~((in & 0x61F9) | ((in & 0x800) << 1) | ((in & 0x400) << 5) | ((in & 0x200) << 1) | ((in & 0x8000) >> 6) | ((in & 0x1000) >> 1) & 0xFFFF);
 }
 
 void GAMEPAD_DetectInit()
