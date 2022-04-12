@@ -1,8 +1,6 @@
 #ifndef KERNEL_H
 #define KERNEL_H
 
-#include "EMULATOR_PLATFORM_SETUP.H"
-
 #ifndef R3000_H
 #include "R3000.H"
 #endif

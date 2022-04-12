@@ -98,7 +98,8 @@ set(TARGET_BINARY_DIR "${PROJECT_BINARY_DIR}/${CMAKE_CFG_INTDIR}")
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-include_directories(${ROOT_DIR}/Emulator)
+include_directories(${EMULATOR_PUBLIC_INCLUDE_DIR})
+include_directories(${EMULATOR_INCLUDE_DIR})
 
 #Include all platform specific cmake files.
 include("Platform/Windows.cmake")

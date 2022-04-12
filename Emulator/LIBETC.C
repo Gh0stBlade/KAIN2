@@ -1,6 +1,6 @@
 #include "LIBETC.H"
 
-#include "EMULATOR_PRIVATE.H"
+#include "Public/EMULATOR_PUBLIC.H"
 #include "EMULATOR.H"
 
 #if defined(_WINDOWS)

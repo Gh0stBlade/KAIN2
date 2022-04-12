@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <stddef.h>
 
-#include "EMULATOR_PLATFORM_SETUP.H"
+#include "Setup/Platform/EMULATOR_PLATFORM_SETUP.H"
 
 #ifndef TRUE
 #define TRUE		1

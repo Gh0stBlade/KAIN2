@@ -26,13 +26,6 @@
 
 #include <assert.h>
 
-#if defined(PSXPC_VERSION)
-#include <EMULATOR_PRIVATE.H>
-#if defined(__EMSCRIPTEN__)
-#include <emscripten.h>
-#endif
-#endif
-
 long mainMenuMode; // offset 0x800CE6C4
 struct DebugMenuLine mainMenu[8] = { DEBUG_LINE_TYPE_FORMAT,  0, 0, "-abs 256 40 -center", 0, 0,
 									 DEBUG_LINE_TYPE_ENDLIST, 0, 0, "",                    0, 0,
@@ -280,7 +273,7 @@ void InitDisplay()
 
 	r = rect;
 
-	ResetGraph(0);
+	ResetGraph(3);
 	SetGraphDebug(0);
 
 	SetDefDrawEnv(&draw[0], 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -306,7 +299,7 @@ void InitDisplay()
 		setlen(&clearRect[i], 3);
 		setcode(&clearRect[i], 2);
 		setXY0(&clearRect[i], 0, i * (SCREEN_HEIGHT + 16));
-		setWH(&clearRect[i], SCREEN_WIDTH, SCREEN_HEIGHT + 16);
+		setWH(&clearRect[i], SCREEN_WIDTH, SCREEN_HEIGHT);
 		setRGB0(&clearRect[i], 0, 0, 0);
 	}
 
@@ -399,7 +392,11 @@ void VblTick()
 	gameTrackerX.vblFrames++;
 	gameTrackerX.vblCount++;
 
+#if defined(PSXPC_VERSION)
+	if (gameTrackerX.reqDisp != NULL && gameTrackerX.frameRateLock <= gameTrackerX.vblFrames)
+#else
 	if (gameTrackerX.reqDisp != NULL && gameTrackerX.frameRateLock < gameTrackerX.vblFrames)
+#endif
 	{
 		PutDispEnv((DISPENV*)gameTrackerX.reqDisp);
 		gameTrackerX.reqDisp = NULL;
@@ -689,6 +686,7 @@ long MAIN_DoMainMenu(struct GameTracker *gameTracker, struct MainTracker *mainTr
 	gameTrackerX.timeMult = 4096;
 	drawot = gameTracker->drawOT;
 	DrawPrim(&clearRect[gameTracker->drawPage]);
+
 	GAMEPAD_Process(gameTracker);
 	DEBUG_Process(gameTracker);
 
@@ -701,7 +699,9 @@ long MAIN_DoMainMenu(struct GameTracker *gameTracker, struct MainTracker *mainTr
 	MENUFACE_RefreshFaces();
 	FONT_Flush();
 	mainMenuTimeOut++;
+	Emulator_SaveVRAM("FADE.TGA", 0, 0, 1024, 512, 1);
 	GAMELOOP_FlipScreenAndDraw(gameTracker, drawot);
+	Emulator_SaveVRAM("FADE2.TGA", 0, 0, 1024, 512, 1);
 
 	if (mainMenuFading != 0 && gameTracker->wipeTime == -1)
 	{
@@ -1134,7 +1134,7 @@ int MainG2(void *appData)
 				DrawSync(0);
 
 #if defined(PSXPC_VERSION)
-				DrawOTag(NULL);
+				VSync(0);
 				GAMEPAD_Process(&gameTrackerX);
 #endif
 

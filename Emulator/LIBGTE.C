@@ -1,7 +1,7 @@
 #include "LIBGTE.H"
 #include <stdio.h>
 #include "EMULATOR.H"
-#include "EMULATOR_PRIVATE.H"
+#include "Public/EMULATOR_PUBLIC.H"
 #include <assert.h>
 
 #define WIDE_SCREEN (0)

@@ -1,6 +1,6 @@
 #include "LIBCD.H"
 
-#include "EMULATOR_SETUP.H"
+#include "Setup/Game/EMULATOR_SETUP.H"
 #include "EMULATOR.H"
 
 #include <assert.h>

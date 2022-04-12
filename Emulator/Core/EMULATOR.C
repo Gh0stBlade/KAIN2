@@ -2,10 +2,10 @@
 
 #include "EMULATOR_VERSION.H"
 #include "EMULATOR_GLOBALS.H"
-#include "EMULATOR_PRIVATE.H"
-#include "CRASHHANDLER.H"
+#include "Public/EMULATOR_PUBLIC.H"
+#include "Debug/CRASHHANDLER.H"
 
-#include "EMULATOR_PLATFORM_SETUP.H"
+#include "Setup/Platform/EMULATOR_PLATFORM_SETUP.H"
 
 #include "LIBGPU.H"
 #include "LIBETC.H"

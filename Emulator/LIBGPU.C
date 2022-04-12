@@ -2,7 +2,7 @@
 
 #include "EMULATOR.H"
 #include "EMULATOR_GLOBALS.H"
-#include "EMULATOR_PRIVATE.H"
+#include "Public/EMULATOR_PUBLIC.H"
 
 #include <stdint.h>
 

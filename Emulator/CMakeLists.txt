@@ -15,12 +15,18 @@ OPTIONAL_DEFINE(USE_32_BIT_ADDR "Enable/Disable 32-bit address for tag" ON)
 
 #Setup platform specific / game code include folder
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-
 #Recursively locate the source files for SPEC_PSX.
 file(GLOB_RECURSE EMULATOR_SPECIFIC_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/*.C  ${CMAKE_CURRENT_SOURCE_DIR}/*.S ${CMAKE_CURRENT_SOURCE_DIR}/*.H ${CMAKE_CURRENT_SOURCE_DIR}/*.CUR ${CMAKE_CURRENT_SOURCE_DIR}/*.RC)
 
+set(EMULATOR_PUBLIC_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Core/Public/ CACHE INTERNAL  "")
+set(EMULATOR_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/ CACHE INTERNAL "")
+
+include_directories(${EMULATOR_PUBLIC_INCLUDE_DIR})
+include_directories(${EMULATOR_INCLUDE_DIR}/Core/)
+
 #Group solution source files to correct folders.
-source_group(${PLATFORM_SPECIFIC_FOLDER_NAME} FILES ${EMULATOR_SPECIFIC_SRCS})
+#source_group(${PLATFORM_SPECIFIC_FOLDER_NAME} FILES ${EMULATOR_SPECIFIC_SRCS})
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${EMULATOR_SPECIFIC_SRCS})
 
 if(NOT ANDROID)
 add_library(
@@ -31,12 +37,12 @@ ${EMULATOR_SPECIFIC_SRCS}
 endif()
 
 #Include all platform specific cmake files.
-include("PLATFORM/Windows.cmake")
-include("PLATFORM/Mingw.cmake")
-include("PLATFORM/Linux.cmake")
-include("PLATFORM/Emscripten.cmake")
-include("PLATFORM/Android.cmake")
-include("PLATFORM/WindowsStore.cmake")
+include("Platform/Windows.cmake")
+include("Platform/Mingw.cmake")
+include("Platform/Linux.cmake")
+include("Platform/Emscripten.cmake")
+include("Platform/Android.cmake")
+include("Platform/WindowsStore.cmake")
 
 if (NOT ANDROID)
 BuildPreProcessorDefinitions()
