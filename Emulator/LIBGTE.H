@@ -150,6 +150,7 @@ extern long RotTransPers4(SVECTOR* v0, SVECTOR* v1, SVECTOR* v2, SVECTOR* v3, lo
 extern void RotTransSV(SVECTOR* v0, SVECTOR* v1, long* flag);
 extern long TransRotPers(SVECTOR* v0, long* sxy, long* p, long* flag);
 extern long NormalClip(long sxy0, long sxy1, long sxy2);
+extern MATRIX* TransposeMatrix(MATRIX* m0, MATRIX* m1);
 
 #if defined(PGXP)
 #define MAX_NUM_VERTICES 32768
