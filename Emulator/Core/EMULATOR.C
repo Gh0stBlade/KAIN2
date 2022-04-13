@@ -15,6 +15,24 @@
 #endif
 #include <assert.h>
 
+#if defined(D3D9)
+const char* renderBackendName = "D3D9";
+#elif defined(D3D11)
+const char* renderBackendName = "D3D11";
+#elif defined(D3D12)
+const char* renderBackendName = "D3D12";
+#elif defined(VULKAN)
+const char* renderBackendName = "Vulkan";
+#elif defined(OGL)
+const char* renderBackendName = "OpenGL 3.3";
+#elif defined(OGLES)
+#if OGLES_VERSION == 2
+const char* renderBackendName = "OpenGLES 3.0";
+#elif OGLES_VERSION == 3
+const char* renderBackendName = "OpenGLES 2.0";
+#endif
+#endif
+
 #define FIXED_TIME_STEP    33
 #define SWAP_INTERVAL      1
 
@@ -453,7 +471,6 @@ int g_swapInterval = SWAP_INTERVAL;
 int g_wireframeMode = 0;
 int g_texturelessMode = 0;
 int g_emulatorPaused = 0;
-int g_polygonSelected = 0;
 TextureID g_lastBoundTexture;
 int vram_need_update = TRUE;
 
@@ -2203,7 +2220,10 @@ void Emulator_Initialise(char* windowName, int width, int height)
 	}
 #endif
 
-	if (Emulator_InitialiseSDL(windowName, width, height) == FALSE)
+	char finalWindowName[128];
+	sprintf(finalWindowName, "%s - %s", windowName, renderBackendName);
+
+	if (Emulator_InitialiseSDL(finalWindowName, width, height) == FALSE)
 	{
 		eprinterr("Failed to Intialise SDL\n");
 		Emulator_ShutDown();
@@ -3352,14 +3372,14 @@ ShaderID Shader_Compile(const char *source)
 }
 #elif defined(D3D9) || defined(XED3D)
 
-#include "shaders/gte_shader_4_vs.h"
-#include "shaders/gte_shader_4_ps.h"
-#include "shaders/gte_shader_8_vs.h"
-#include "shaders/gte_shader_8_ps.h"
-#include "shaders/gte_shader_16_vs.h"
-#include "shaders/gte_shader_16_ps.h"
-#include "shaders/blit_shader_vs.h"
-#include "shaders/blit_shader_ps.h"
+#include "shaders/D3D9/gte_shader_4_vs.h"
+#include "shaders/D3D9/gte_shader_4_ps.h"
+#include "shaders/D3D9/gte_shader_8_vs.h"
+#include "shaders/D3D9/gte_shader_8_ps.h"
+#include "shaders/D3D9/gte_shader_16_vs.h"
+#include "shaders/D3D9/gte_shader_16_ps.h"
+#include "shaders/D3D9/blit_shader_vs.h"
+#include "shaders/D3D9/blit_shader_ps.h"
 
 // shader registers
 const int u_Projection = 0;

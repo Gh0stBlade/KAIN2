@@ -8,22 +8,13 @@
 #endif
 
 #if defined(SDL2)
-#include <SDL_timer.h>
-#include <SDL.h>
 #include <assert.h>
-
-SDL_GameController* padHandleDebug[MAX_CONTROLLERS];
-
+#include "Input/EMULATOR_INPUT.H"
 #endif
-
-unsigned char* padDataDebug[MAX_CONTROLLERS];
-const unsigned char* keyboardStateDebug;
 
 char scratchData[4096];///@TODO check size
 
 void(*vsync_callback)(void) = NULL;
-
-static int g_initialisedPadSubsystem = FALSE;
 
 int StopCallback(void)
 {
@@ -34,31 +25,7 @@ int StopCallback(void)
 void PadInit(int mode)
 {
 #if defined(SDL2)
-	if (g_initialisedPadSubsystem == FALSE)
-	{
-		if (SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER) < 0)
-		{
-			eprinterr("Failed to initialise subsystem GAMECONTROLLER\n");
-		}
-
-		if (SDL_NumJoysticks() < 1)
-		{
-			eprinterr("Failed to locate a connected gamepad!\n");
-		}
-		else
-		{
-			for (int i = 0; i < SDL_NumJoysticks(); i++)
-			{
-				if (SDL_IsGameController(i) && i < MAX_CONTROLLERS)
-				{
-					padHandleDebug[i] = SDL_GameControllerOpen(i);///@TODO close joysticks
-				}
-			}
-		}
-
-		keyboardStateDebug = SDL_GetKeyboardState(NULL);
-		g_initialisedPadSubsystem = TRUE;
-	}
+	Emulator_InitialiseSDLInput(&padHandleDebug[0], &keyboardStateDebug, TRUE);
 #endif
 }
 

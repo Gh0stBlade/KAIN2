@@ -257,6 +257,9 @@ extern ShaderID* g_shaders[];
 extern int vram_need_update;
 extern bool begin_scene_flag;
 extern bool vbo_was_dirty_flag;
+extern TextureID whiteTexture;
+extern TextureID vramTexture;
+
 extern int  Emulator_Initialise();
 extern void Emulator_SaveVRAM(const char* outputFileName, int x, int y, int width, int height, int bReadFromFrameBuffer);
 extern void Emulator_CopyVRAM(unsigned short* src, int x, int y, int w, int h, int dst_x, int dst_y);
@@ -267,6 +270,8 @@ extern void Emulator_ShutDown();
 extern void Emulator_SwapWindow();
 extern void Emulator_SetBlendMode(BlendMode blendMode);
 extern void Emulator_CounterLoop();
+extern int Emulator_BeginScene();
+extern void Emulator_EndScene();
 
 extern void Emulator_GenerateLineArray(struct Vertex* vertex, short* p0, short* p1);
 extern void Emulator_GenerateVertexArrayTriangle(struct Vertex* vertex, short* p0, short* p1, short* p2);
@@ -300,6 +305,7 @@ extern void Emulator_DestroyGlobalShaders();
 extern void Emulator_GenerateCommonTextures();
 
 extern void Emulator_DoPollEvent();
+extern void Emulator_UpdateInput();
 
 #if defined(D3D11)
 extern void Emulator_CreateConstantBuffers();

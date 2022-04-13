@@ -1,5 +1,5 @@
 #include "MAINVM.H"
-#include "../../PSX/MAIN.H"
+#include "PSX/MAIN.H"
 
 struct _G2AppDataVM_Type _appDataVM;
 

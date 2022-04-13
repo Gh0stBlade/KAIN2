@@ -15,12 +15,6 @@ extern "C" {
 /* Usually called at the beginning of main function */
 extern void Emulator_Initialise(char* windowName, int screenWidth, int screenHeight);
 
-/* Usually called after ClearOTag/ClearOTagR */
-extern int Emulator_BeginScene();
-
-/* Usually called after DrawOTag/DrawOTagEnv */
-extern void Emulator_EndScene();
-
 #ifdef __cplusplus
 }
 #endif

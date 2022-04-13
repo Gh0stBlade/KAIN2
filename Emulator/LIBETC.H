@@ -44,8 +44,6 @@ extern char scratchData[4096];
 #define MODE_NTSC 0
 #define MODE_PAL 1 
 
-#define MAX_CONTROLLERS 2
-
 extern int CheckCallback(void);
 extern void PadInit(int mode);
 extern int ResetCallback(void);
@@ -58,8 +56,6 @@ extern long SetVideoMode (long mode);
 extern u_long PadRead(int id);
 extern void PadStop(void);
 extern void(*vsync_callback)(void);
-
-extern const unsigned char* keyboardStateDebug;
 
 #ifdef __cplusplus
 }

@@ -33,10 +33,10 @@
 //#define D3D9
 
 //Direct3D11
-//#define D3D11
+#define D3D11
 
 //Direct3D12
-#define D3D12
+//#define D3D12
 
 #if defined(OGL) || defined(D3D9) || defined(D3D11) || defined(D3D12) || defined(VULKAN)
 #define SDL2
