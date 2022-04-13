@@ -2221,7 +2221,7 @@ void Emulator_Initialise(char* windowName, int width, int height)
 #endif
 
 	char finalWindowName[128];
-	sprintf(finalWindowName, "%s - %s", windowName, renderBackendName);
+	sprintf(finalWindowName, "%s - %s - v%d.%d", windowName, renderBackendName, GAME_MAJOR_VERSION, GAME_MINOR_VERSION);
 
 	if (Emulator_InitialiseSDL(finalWindowName, width, height) == FALSE)
 	{

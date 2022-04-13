@@ -1,3 +1,5 @@
+#include "CORE.H"
+
 #include "MAIN.H"
 #include "G2/MAING2.H"
 #include "MEMPACK.H"
@@ -1023,7 +1025,7 @@ int MainG2(void *appData)
 	int timer;
 
 #if defined(PSXPC_VERSION)
-	Emulator_Initialise("Legacy of Kain: Soul Reaver", SCREEN_WIDTH, SCREEN_HEIGHT);
+	Emulator_Initialise(GAME_NAME, GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT);
 #endif
 
 	menuPos = 0;

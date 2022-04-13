@@ -1,6 +1,8 @@
 #ifndef EMULATOR_PRIVATE_H
 #define EMULATOR_PRIVATE_H
 
+#include "Core/Setup/Game/GAME_VERSION.H"
+
 //Required for SDL_main define.
 #if defined(__ANDROID__)
     #include <SDL_main.h>
