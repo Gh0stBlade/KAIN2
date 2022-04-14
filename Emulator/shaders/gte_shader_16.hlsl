@@ -1,11 +1,30 @@
+#ifdef D3D9
+	#define SV_TARGET COLOR0
+	#define ARG_VPOS ,float2 coord : VPOS
+	#define FRAG_COORD coord.xy
+#else
+	#define FRAG_COORD In.v_position.xy
+	#define ARG_VPOS
+#endif
+
 struct VS_INPUT {
+#ifdef D3D9
 	float4 a_position : POSITION;
 	float4 a_texcoord : TEXCOORD0;
 	float4 a_color    : COLOR0;
+#else
+	int4 a_position   : POSITION;
+	uint4 a_texcoord  : TEXCOORD0;
+	float4 a_color    : COLOR0;
+#endif
 };
 
 struct VS_OUTPUT {
+#ifdef D3D9
 	float4 v_position  : POSITION;
+#else
+	float4 v_position  : SV_POSITION;
+#endif
 	float4 v_texcoord  : TEXCOORD0;
 	float4 v_color     : TEXCOORD1;
 };
@@ -27,10 +46,19 @@ struct VS_OUTPUT {
 		return Out;
 	}
 #else
-	sampler2D s_texture : register(s0);
+#ifdef D3D9
+	SamplerState s_texture : register(s0);
+#else
+	SamplerState samplerState : register(s0);
+	Texture2D s_texture : register(t0);
+#endif
 
-	float4 main(VS_OUTPUT In, float2 coord : VPOS) : COLOR0 {
+	float4 main(VS_OUTPUT In ARG_VPOS) : SV_TARGET {
+#ifdef D3D9
 		float2 color_rg = tex2D(s_texture, In.v_texcoord.xy).ra * 255.0;
+#else
+		float2 color_rg = s_texture.Sample(samplerState, In.v_texcoord.xy).rg * 255.0;
+#endif
 		float color_16 = color_rg.y * 256.0 + color_rg.x;
 		clip(color_16 - 0.001);
 
@@ -42,7 +70,7 @@ struct VS_OUTPUT {
 			+2.0,  -2.0,  +3.0,  -1.0,
 			-3.0,  +1.0,  -4.0,  +0.0,
 			+3.0,  -1.0,  +2.0,  -2.0) / 255.0;
-		int2 dc = int2(frac(coord.xy / 4.0) * 4.0);
+		int2 dc = int2(frac(FRAG_COORD / 4.0) * 4.0);
 		color.xyz += dither[dc.x][dc.y] * In.v_texcoord.w;
 
 		return color;
