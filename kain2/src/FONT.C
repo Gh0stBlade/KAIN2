@@ -1182,7 +1182,7 @@ void FONT_SetCursor(short x, short y)
 #endif
 }
 
-void FONT_VaReallyPrint(const char *fmt, void *ap)
+void FONT_VaReallyPrint(const char *fmt, va_list ap)
 {
 #if defined(PSX_VERSION)
 	char* p;

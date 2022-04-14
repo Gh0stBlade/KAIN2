@@ -2466,7 +2466,7 @@ void STREAM_PackVRAMObject(struct _ObjectTracker *objectTracker)
 			vramBuffer->lengthOfLeftOverData = 0;
 			vramBuffer->h = vramBlock->h;
 			
-			LOAD_NonBlockingBufferedLoad(fileName, VRAM_TransferBufferToVram, vramBuffer, objectTracker);
+			LOAD_NonBlockingBufferedLoad(fileName, (void*)VRAM_TransferBufferToVram, vramBuffer, objectTracker);
 	}
 	else
 	{
@@ -3693,7 +3693,7 @@ int STREAM_TryAndDumpNonResident(struct _ObjectTracker* otr)
 		{
 			if (instance->object == otr->object && instance->LinkParent != NULL)
 			{
-				if ((!instance->object->oflags2 & 0x80000))
+				if (!(instance->object->oflags2 & 0x80000))
 				{
 					return 0;
 				}

@@ -34,6 +34,7 @@ void GlyphCollide(struct _Instance *instance, struct GameTracker *gameTracker)
 // void /*$ra*/ GlyphProcess(struct _Instance *instance /*$s0*/, struct GameTracker *gameTracker /*$a1*/)
 void GlyphProcess(struct _Instance *instance, struct GameTracker *gameTracker)
 { // line 186, offset 0x8007a9e0
+#if defined(PC_VERSION)
 	struct _Instance* parent; // ecx
 	int flags; // eax
 
@@ -45,6 +46,7 @@ void GlyphProcess(struct _Instance *instance, struct GameTracker *gameTracker)
 	flags |= 0xC00;
 	instance->currentStreamUnitID = parent->currentStreamUnitID;
 	instance->flags = flags;
+#endif
 }
 
 
@@ -102,7 +104,11 @@ void _GlyphSwitchProcess(struct _Instance *instance, TDRFuncPtr__GlyphSwitchProc
 // int /*$ra*/ GlyphIsGlyphOpen(struct _Instance *instance /*$a0*/)
 int GlyphIsGlyphOpen(struct _Instance *instance)
 { // line 282, offset 0x8007ab5c
+#if defined(PC_VERSION)
 	return *((__int16*)instance->extraData + 71);
+#else
+	return 0;
+#endif
 }
 
 

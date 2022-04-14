@@ -137,8 +137,8 @@ void UNDERWORLD_DisplayFrame(long *primStart, long drawY)
 			struct UW_ScreenXY *p1; // $s1
 			struct UW_ScreenXY *p2; // $s3
 			struct UW_ScreenXY *p3; // $s4
-			struct POLY_GT3 *poly; // $a1
-			struct POLY_GT3 *terminator; // $fp
+			//struct POLY_GT3 *poly; // $a1
+			//struct POLY_GT3 *terminator; // $fp
 	/* end block 1 */
 	// End offset: 0x800B5050
 	// End Line: 274

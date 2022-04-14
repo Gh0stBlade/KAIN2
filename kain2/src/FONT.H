@@ -136,7 +136,7 @@ extern void FONT_Print2(const char *fmt, ...); // 0x8002D43C
 extern int FONT_GetStringWidth(char *str); // 0x8002D48C
 extern void FONT_Flush(); // 0x8002D500
 extern void FONT_SetCursor(short x, short y); // 0x8002D590
-extern void FONT_VaReallyPrint(const char *fmt, void *ap); // 0x8002D5B0
+extern void FONT_VaReallyPrint(const char *fmt, va_list ap); // 0x8002D5B0
 extern void FONT_FontPrintCentered(char *text, long y); // 0x8002D740
 extern void FONT_SetColorIndex(int color); // 0x8002D798
 extern void FONT_SetColorIndexCol(int color, int r, int g, int b); // 0x8002D7A4

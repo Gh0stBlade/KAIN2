@@ -2294,7 +2294,7 @@ void* aadInstallEndSequenceCallback(void (*func)(long, int, int), long data)
 {
 #if defined(PSX_VERSION)
 	void* previousCallbackProc;
-	previousCallbackProc = aadMem->endSequenceCallback;
+	previousCallbackProc = (void*)aadMem->endSequenceCallback;
 	aadMem->endSequenceCallback = func;
 	aadMem->endSequenceCallbackData = data;
 	return previousCallbackProc;

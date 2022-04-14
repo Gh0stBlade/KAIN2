@@ -34,6 +34,12 @@
 
 #if defined(PSXPC_VERSION)
 #include <EMULATOR_PUBLIC.H>
+
+#if defined(__ANDROID__)
+#define strcmpi strcmp
+#define _strcmpi strcmp
+#endif
+
 #if defined(__EMSCRIPTEN__)
 #include <emscripten.h>
 #endif
