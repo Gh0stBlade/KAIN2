@@ -24,7 +24,7 @@
 //#define OGLES_VERSION 3
 
 //Open Graphics Library
-//#define OGL
+#define OGL
 
 //Vulkan
 //#define VULKAN
@@ -33,7 +33,7 @@
 //#define D3D9
 
 //Direct3D11
-#define D3D11
+//#define D3D11
 
 //Direct3D12
 //#define D3D12

@@ -2,6 +2,7 @@
 #include "LIBGPU.H"
 
 #include <assert.h>
+#include <string.h>
 
 //#define DEBUG_POLY_COUNT
 

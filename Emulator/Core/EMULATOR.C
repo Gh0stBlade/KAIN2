@@ -4281,7 +4281,28 @@ extern void Emulator_Clear(int x, int y, int w, int h, unsigned char r, unsigned
 	D3D12_CPU_DESCRIPTOR_HANDLE renderTargetHandle(renderTargetDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
 	commandList->ClearRenderTargetView(renderTargetHandle, clearColor, 0, NULL);
 #elif defined(VULKAN)
+	VkClearColorValue clearColor = { r / 255.0f, g / 255.0f, b / 255.0f, 1.0f };
+	
+	VkClearValue clearValue;
+	memset(&clearValue, 0, sizeof(VkClearValue));
 
+	clearValue.color = clearColor;
+	VkImageSubresourceRange imageRange;
+	memset(&imageRange, 0, sizeof(VkImageSubresourceRange));
+
+	imageRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	imageRange.levelCount = 1;
+	imageRange.layerCount = 1;
+	
+	VkCommandBuffer buff = Emulator_BeginSingleTimeCommands();
+	
+	Emulator_TransitionImageLayout(swapchainImages[0], VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+	Emulator_EndSingleTimeCommands(buff);
+	vkCmdClearColorImage(commandBuffers[currentFrame], swapchainImages[0], VK_IMAGE_LAYOUT_GENERAL, &clearColor, 1, &imageRange);
+	
+	VkCommandBuffer buff2 = Emulator_BeginSingleTimeCommands();
+	Emulator_TransitionImageLayout(swapchainImages[0], VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
+	Emulator_EndSingleTimeCommands(buff2);
 #else
 	#error
 #endif
@@ -6055,7 +6076,7 @@ void Emulator_TransitionImageLayout(VkImage image, VkFormat format, VkImageLayou
 		sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
 		destinationStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
 	}
-	else if (oldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) 
+	else if (oldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL && (newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL || newLayout == VK_IMAGE_LAYOUT_PRESENT_SRC_KHR))
 	{
 		barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
 		barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
