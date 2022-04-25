@@ -22,7 +22,7 @@ uintptr_t PCopen(char* name, int flags, int perms)
 
 #if defined(__ANDROID__)
 	char buff[64];
-	sprintf(&buff[0], "/storage/emulated/0/TOMB5/%s", name);
+	sprintf(&buff[0], "/storage/self/primary/TOMB5/%s", name);
 	name = &buff[0];
 #elif defined(_XBOX)
 	char buff[64];

@@ -198,7 +198,7 @@ u_long* ClearOTag(u_long* ot, int n)
 #if defined(USE_32_BIT_ADDR)
 		setaddr(&ot[i], (unsigned long)&ot[i + 2]);
 #else
-		setaddr(&ot[i], (unsigned long)&ot[i + 1]);Ma
+		setaddr(&ot[i], (unsigned long)&ot[i + 1]);
 #endif
 	}
 

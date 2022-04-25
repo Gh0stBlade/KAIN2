@@ -3,6 +3,8 @@
 
 #include "LIBGPU.H"
 
+#define _CRT_SECURE_NO_WARNINGS
+
 #include <stdio.h>
 #include <stddef.h>
 
@@ -62,9 +64,12 @@
 #define VRAM_FORMAT            GL_RG
 #define VRAM_INTERNAL_FORMAT   GL_RG8
 #elif defined(OGLES)
-#define VRAM_FORMAT            GL_LUMINANCE_ALPHA
-#define VRAM_INTERNAL_FORMAT   GL_LUMINANCE_ALPHA
+#define VRAM_FORMAT            GL_RG
+#define VRAM_INTERNAL_FORMAT   GL_RG8
 #endif
+
+#define LUT_WIDTH (256)
+#define LUT_HEIGHT (256)
 
 #define VRAM_WIDTH (1024)
 #define VRAM_HEIGHT (512)
@@ -257,10 +262,16 @@ extern ShaderID* g_shaders[];
 extern int vram_need_update;
 extern bool begin_scene_flag;
 extern bool vbo_was_dirty_flag;
+extern TextureID rg8lutTexture;
 extern TextureID whiteTexture;
 extern TextureID vramTexture;
 
-extern int  Emulator_Initialise();
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+extern void* Emulator_GenerateRG8LUT();
+extern int  Emulator_CreateCommonResources();
 extern void Emulator_SaveVRAM(const char* outputFileName, int x, int y, int width, int height, int bReadFromFrameBuffer);
 extern void Emulator_CopyVRAM(unsigned short* src, int x, int y, int w, int h, int dst_x, int dst_y);
 extern void Emulator_ReadVRAM(unsigned short* dst, int x, int y, int dst_w, int dst_h);
@@ -306,6 +317,10 @@ extern void Emulator_GenerateCommonTextures();
 
 extern void Emulator_DoPollEvent();
 extern void Emulator_UpdateInput();
+
+#ifdef __cplusplus
+}
+#endif
 
 #if defined(D3D11)
 extern void Emulator_CreateConstantBuffers();

@@ -27,9 +27,9 @@ const char* renderBackendName = "Vulkan";
 const char* renderBackendName = "OpenGL 3.3";
 #elif defined(OGLES)
 #if OGLES_VERSION == 2
-const char* renderBackendName = "OpenGLES 3.0";
-#elif OGLES_VERSION == 3
 const char* renderBackendName = "OpenGLES 2.0";
+#elif OGLES_VERSION == 3
+const char* renderBackendName = "OpenGLES 3.0";
 #endif
 #endif
 
@@ -313,6 +313,7 @@ void CreateUWPApplication()
 #endif
 TextureID vramTexture;
 TextureID whiteTexture;
+TextureID rg8lutTexture;
 
 #if defined(OGLES) || defined(OGL)
 	GLuint dynamic_vertex_buffer;
@@ -471,7 +472,7 @@ int g_swapInterval = SWAP_INTERVAL;
 int g_wireframeMode = 0;
 int g_texturelessMode = 0;
 int g_emulatorPaused = 0;
-TextureID g_lastBoundTexture;
+TextureID g_lastBoundTexture[2];
 int vram_need_update = TRUE;
 
 void Emulator_ResetDevice()
@@ -501,6 +502,10 @@ void Emulator_ResetDevice()
 
 	d3ddev->SetRenderState(D3DRS_ZENABLE,  D3DZB_FALSE);
 	d3ddev->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+	d3ddev->SetSamplerState(1, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
+	d3ddev->SetSamplerState(1, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
+	d3ddev->SetSamplerState(1, D3DSAMP_ADDRESSW, D3DTADDRESS_WRAP);
+
 #elif defined(D3D11)
 	if (dynamic_vertex_buffer) {
 		dynamic_vertex_buffer->Release();
@@ -516,6 +521,7 @@ void Emulator_ResetDevice()
 	vramTexture->Release();
 	vramBaseTexture->Release();
 	whiteTexture->Release();
+	rg8lutTexture->Release();
 
 	swapChain = NULL;
 	d3ddev = NULL;
@@ -696,7 +702,7 @@ void Emulator_ResetDevice()
 	}
 
 	enum ShaderID::ShaderType lastShaderBound = g_activeShader.T;
-
+	
 	Emulator_DestroySyncObjects();
 	Emulator_DestroyGlobalShaders();
 	Emulator_DestroyConstantBuffers();
@@ -723,6 +729,12 @@ void Emulator_ResetDevice()
 	vkFreeMemory(device, whiteTexture.textureImageMemory, NULL);
 	vkDestroyBuffer(device, whiteTexture.stagingBuffer, NULL);
 	vkFreeMemory(device, whiteTexture.stagingBufferMemory, NULL);
+
+	vkDestroyImageView(device, rg8lutTexture.textureImageView, NULL);
+	vkDestroyImage(device, rg8lutTexture.textureImage, NULL);
+	vkFreeMemory(device, rg8lutTexture.textureImageMemory, NULL);
+	vkDestroyBuffer(device, rg8lutTexture.stagingBuffer, NULL);
+	vkFreeMemory(device, rg8lutTexture.stagingBufferMemory, NULL);
 
 	vkDestroyDevice(device, NULL);
 	device = VK_NULL_HANDLE;
@@ -783,6 +795,23 @@ void Emulator_ResetDevice()
 
 	Emulator_TransitionImageLayout(vramTexture.textureImage, VK_FORMAT_R8G8_UNORM, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 	Emulator_TransitionImageLayout(vramTexture.textureImage, VK_FORMAT_R8G8_UNORM, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+
+	imageSize = LUT_WIDTH * LUT_HEIGHT * sizeof(unsigned int);
+
+	Emulator_CreateVulkanBuffer(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, rg8lutTexture.stagingBuffer, rg8lutTexture.stagingBufferMemory);
+
+	data = NULL;
+	vkMapMemory(device, rg8lutTexture.stagingBufferMemory, 0, imageSize, 0, &data);
+	memcpy(data, Emulator_GenerateRG8LUT(), static_cast<size_t>(imageSize));
+	vkUnmapMemory(device, rg8lutTexture.stagingBufferMemory);
+
+	Emulator_CreateImage(LUT_WIDTH, LUT_HEIGHT, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, rg8lutTexture.textureImage, rg8lutTexture.textureImageMemory);
+	rg8lutTexture.textureImageView = Emulator_CreateImageView(rg8lutTexture.textureImage, VK_FORMAT_R8G8B8A8_UNORM);
+
+	Emulator_TransitionImageLayout(rg8lutTexture.textureImage, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+	Emulator_CopyBufferToImage(rg8lutTexture.stagingBuffer, rg8lutTexture.textureImage, static_cast<uint32_t>(LUT_WIDTH), static_cast<uint32_t>(LUT_HEIGHT));
+	Emulator_TransitionImageLayout(rg8lutTexture.textureImage, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+
 
 	Emulator_CreateGlobalShaders();
 
@@ -1557,6 +1586,7 @@ unsigned int Emulator_FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags 
 	}
 
 	eprinterr("Failed to find memory type!\n");
+	return 0;//?
 }
 
 VkBool32 Emulator_GetSupportedDepthFormat(VkPhysicalDevice physicalDevice, VkFormat* depthFormat)
@@ -1709,8 +1739,6 @@ void Emulator_CreateVulkanFrameBuffers()
 
 void Emulator_CreateVulkanCommandPool()
 {
-	VkResult result;
-
 	VkCommandPoolCreateInfo createInfo = {};
 	createInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
 	createInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT | VK_COMMAND_POOL_CREATE_TRANSIENT_BIT;
@@ -1739,13 +1767,15 @@ void Emulator_CreateDescriptorPool()
 {
 	for (int i = 0; i < 2; i++)
 	{
-		std::array<VkDescriptorPoolSize, 3> poolSizes{};
+		std::array<VkDescriptorPoolSize, 4> poolSizes{};
 		poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 		poolSizes[0].descriptorCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
 		poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
 		poolSizes[1].descriptorCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
 		poolSizes[2].type = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
 		poolSizes[2].descriptorCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
+		poolSizes[3].type = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
+		poolSizes[3].descriptorCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
 
 		VkDescriptorPoolCreateInfo poolInfo{};
 		poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
@@ -1794,7 +1824,14 @@ void Emulator_CreateDescriptorSetLayout()
 		textureLayoutBinding.pImmutableSamplers = NULL;
 		textureLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
 
-		std::array<VkDescriptorSetLayoutBinding, 3> bindings = { uboLayoutBinding, samplerLayoutBinding, textureLayoutBinding };
+		VkDescriptorSetLayoutBinding textureLayoutBinding2{};
+		textureLayoutBinding2.binding = 5;
+		textureLayoutBinding2.descriptorCount = 1;
+		textureLayoutBinding2.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
+		textureLayoutBinding2.pImmutableSamplers = NULL;
+		textureLayoutBinding2.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+
+		std::array<VkDescriptorSetLayoutBinding, 4> bindings = { uboLayoutBinding, samplerLayoutBinding, textureLayoutBinding, textureLayoutBinding2 };
 		VkDescriptorSetLayoutCreateInfo layoutInfo{};
 		layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
 		layoutInfo.bindingCount = static_cast<uint32_t>(bindings.size());
@@ -1838,7 +1875,6 @@ void Emulator_UpdateDescriptorSets()
 				texture = whiteTexture;
 			}
 
-
 			VkDescriptorBufferInfo uniformInfo{};
 			uniformInfo.buffer = uniformBuffers[i];
 			uniformInfo.offset = 0;
@@ -1854,7 +1890,12 @@ void Emulator_UpdateDescriptorSets()
 			textureInfo.imageView = texture.textureImageView;
 			textureInfo.sampler = VK_NULL_HANDLE;
 
-			std::array<VkWriteDescriptorSet, 3> descriptorWrites{};
+			VkDescriptorImageInfo textureInfo2{};
+			textureInfo2.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+			textureInfo2.imageView = rg8lutTexture.textureImageView;
+			textureInfo2.sampler = VK_NULL_HANDLE;
+
+			std::array<VkWriteDescriptorSet, 4> descriptorWrites{};
 
 			descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 			descriptorWrites[0].dstSet = descriptorSets[i][j];
@@ -1879,6 +1920,14 @@ void Emulator_UpdateDescriptorSets()
 			descriptorWrites[2].descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
 			descriptorWrites[2].descriptorCount = 1;
 			descriptorWrites[2].pImageInfo = &textureInfo;
+
+			descriptorWrites[3].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+			descriptorWrites[3].dstSet = descriptorSets[i][j];
+			descriptorWrites[3].dstBinding = 5;
+			descriptorWrites[3].dstArrayElement = 0;
+			descriptorWrites[3].descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
+			descriptorWrites[3].descriptorCount = 1;
+			descriptorWrites[3].pImageInfo = &textureInfo2;
 
 			vkUpdateDescriptorSets(device, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, NULL);
 		}
@@ -2022,12 +2071,13 @@ const EGLint config16bpp[] =
 #elif OGLES_VERSION == 3
 		EGL_RENDERABLE_TYPE,EGL_OPENGL_ES3_BIT,
 #endif
-		EGL_BUFFER_SIZE,24,
+		EGL_BUFFER_SIZE,32,
 		EGL_RED_SIZE,8,
 		EGL_GREEN_SIZE,8,
 		EGL_BLUE_SIZE,8,
-		EGL_ALPHA_SIZE,0,
+		EGL_ALPHA_SIZE,8,
 		EGL_STENCIL_SIZE,0,
+		EGL_DEPTH_SIZE,16,
 		EGL_NONE
 };
 
@@ -2126,7 +2176,11 @@ static int Emulator_InitialiseSDL(char* windowName, int width, int height)
             windowHeight = displayMode.h;
         }
 #endif
-        //SDL_GL_SetAttribute(SDL_GL_CONTEXT_EGL, 1);
+
+#if defined(__ANDROID__)
+		SDL_SetHint(SDL_HINT_ORIENTATIONS, "LandscapeLeft");
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_EGL, 1);
+#endif
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, OGLES_VERSION);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
@@ -2243,7 +2297,7 @@ void Emulator_Initialise(char* windowName, int width, int height)
 		Emulator_ShutDown();
 	}
 
-	if (Emulator_Initialise() == FALSE)
+	if (Emulator_CreateCommonResources() == FALSE)
 	{
 		eprinterr("Failed to Intialise GL.\n");
 		Emulator_ShutDown();
@@ -2255,7 +2309,9 @@ void Emulator_Initialise(char* windowName, int width, int height)
 	g_swapTime = GetTickCount() - FIXED_TIME_STEP;
 #endif
 
+#if !defined(__ANDROID__)
 	counter_thread = std::thread(Emulator_CounterLoop);
+#endif
 }
 
 void Emulator_CounterLoop()
@@ -3070,15 +3126,11 @@ ShaderID g_blit_shader;
 #if defined(OGLES) || defined(OGL)
 GLint u_Projection;
 
-
-#define GTE_PACK_RG\
-	"		float color_16 = (color_rg.y * 256.0 + color_rg.x) * 255.0;\n"
-
 #define GTE_DISCARD\
-	"		if (color_16 == 0.0) { discard; }\n"
+	"		if (color_rg.x + color_rg.y == 0.0) { discard; }\n"
 
 #define GTE_DECODE_RG\
-	"		fragColor = fract(floor(color_16 / vec4(1.0, 32.0, 1024.0, 32768.0)) / 32.0);\n"
+	"		fragColor = texture2D(s_lut, color_rg);\n"
 
 #define GTE_FETCH_DITHER_FUNC\
 	"		mat4 dither = mat4(\n"\
@@ -3100,15 +3152,10 @@ GLint u_Projection;
 	"		ivec2 dc = ivec2(fract(gl_FragCoord.xy / 4.0) * 4.0);\n"\
 	"		fragColor.xyz += DITHER(dc);\n"
 
-#if (VRAM_FORMAT == GL_LUMINANCE_ALPHA)
 	#define GTE_FETCH_VRAM_FUNC\
 		"	uniform sampler2D s_texture;\n"\
-		"	vec2 VRAM(vec2 uv) { return texture2D(s_texture, uv).ra; }\n"
-#else
-	#define GTE_FETCH_VRAM_FUNC\
-		"	uniform sampler2D s_texture;\n"\
+		"	uniform sampler2D s_lut;\n"\
 		"	vec2 VRAM(vec2 uv) { return texture2D(s_texture, uv).rg; }\n"
-#endif
 
 #if defined(PGXP)
 	#define GTE_PERSPECTIVE_CORRECTION \
@@ -3161,7 +3208,6 @@ const char* gte_shader_4 =
 	"		vec2 clut_pos = v_page_clut.zw;\n"
 	"		clut_pos.x += mix(c[0], c[1], fract(float(index) / 2.0) * 2.0) / 1024.0;\n"
 	"		vec2 color_rg = VRAM(clut_pos);\n"
-	GTE_PACK_RG
 	GTE_DISCARD
 	GTE_DECODE_RG
 	GTE_DITHERING
@@ -3205,7 +3251,6 @@ const char* gte_shader_8 =
 	"			clut_pos.x += comp[1] * 255.0 / 1024.0;\n"
 	"		}\n"
 	"		vec2 color_rg = VRAM(clut_pos);\n"
-	GTE_PACK_RG
 	GTE_DISCARD
 	GTE_DECODE_RG
 	GTE_DITHERING
@@ -3239,7 +3284,6 @@ const char* gte_shader_16 =
 	GTE_FETCH_DITHER_FUNC
 	"	void main() {\n"
 	"		vec2 color_rg = VRAM(v_texcoord.xy);\n"
-	GTE_PACK_RG
 	GTE_DISCARD
 	GTE_DECODE_RG
 	GTE_DITHERING
@@ -3259,7 +3303,6 @@ const char* blit_shader =
 	GTE_FETCH_VRAM_FUNC
 	"	void main() {\n"
 	"		vec2 color_rg = VRAM(v_texcoord.xy);\n"
-	GTE_PACK_RG
 	GTE_DECODE_RG
 	"	}\n"
 	"#endif\n";
@@ -3363,9 +3406,11 @@ ShaderID Shader_Compile(const char *source)
     glLinkProgram(program);
     Shader_CheckProgramStatus(program);
 
-    GLint sampler = 0;
+	GLint texArray[2] = { vramTexture, rg8lutTexture };
     glUseProgram(program);
-    glUniform1iv(glGetUniformLocation(program, "s_texture"), 1, &sampler);
+	//glUniform1iv(glGetUniformLocation(program, "s_texture"), 2, texArray);
+	glUniform1i(glGetUniformLocation(program, "s_texture"), 0);
+	glUniform1i(glGetUniformLocation(program, "s_lut"), 1);
     glUseProgram(0);
 
     return program;
@@ -3441,9 +3486,9 @@ ShaderID Shader_Compile_Internal(const DWORD* vs_data, const DWORD* ps_data, con
 	D3D11_SAMPLER_DESC sampDesc;
 	ZeroMemory(&sampDesc, sizeof(sampDesc));
 	sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
-	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-	sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+	sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
 	sampDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
 	sampDesc.MinLOD = -D3D11_FLOAT32_MAX;
 	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
@@ -3552,7 +3597,6 @@ ShaderID* g_shaders[] = { &g_gte_shader_4, &g_gte_shader_8, &g_gte_shader_16, &g
 ShaderID Shader_Compile_Internal(const DWORD* vs_data, const DWORD* ps_data, const unsigned int vs_size, const unsigned int ps_size)
 {
 	ShaderID shader;
-	HRESULT hr;
 
 	static int shaderType = 0;
 
@@ -3639,9 +3683,9 @@ ShaderID Shader_Compile_Internal(const DWORD* vs_data, const DWORD* ps_data, con
 	samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
 	samplerInfo.magFilter = VK_FILTER_NEAREST;
 	samplerInfo.minFilter = VK_FILTER_NEAREST;
-	samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-	samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-	samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+	samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+	samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+	samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
 	samplerInfo.anisotropyEnable = VK_TRUE;
 	samplerInfo.maxAnisotropy = properties.limits.maxSamplerAnisotropy;
 	samplerInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
@@ -3659,19 +3703,21 @@ ShaderID Shader_Compile_Internal(const DWORD* vs_data, const DWORD* ps_data, con
 	VkDescriptorSetLayoutBinding descriptorLayoutUniformBuffer = { 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1, VK_SHADER_STAGE_VERTEX_BIT, NULL };
 	VkDescriptorSetLayoutBinding descriptorLayoutSampler = { 2, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_FRAGMENT_BIT, NULL };
 	VkDescriptorSetLayoutBinding descriptorLayoutTexture = { 4, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, 1, VK_SHADER_STAGE_FRAGMENT_BIT, NULL };
+	VkDescriptorSetLayoutBinding descriptorLayoutTexture2 = { 5, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, 1, VK_SHADER_STAGE_FRAGMENT_BIT, NULL };
 
 	VkDescriptorSetLayoutBinding bindings[] =
 	{
 		descriptorLayoutUniformBuffer,
 		descriptorLayoutSampler,
 		descriptorLayoutTexture,
+		descriptorLayoutTexture2,
 	};
 
 	VkDescriptorSetLayoutCreateInfo resourceLayoutInfo;
 	memset(&resourceLayoutInfo, 0, sizeof(VkDescriptorSetLayoutCreateInfo));
 	resourceLayoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
 	resourceLayoutInfo.pNext = NULL;
-	resourceLayoutInfo.bindingCount = 3;
+	resourceLayoutInfo.bindingCount = 4;
 	resourceLayoutInfo.pBindings = bindings;
 
 	vkCreateDescriptorSetLayout(device, &resourceLayoutInfo, NULL, &shader.DL);
@@ -3914,16 +3960,89 @@ void Emulator_DestroyGlobalShaders()
 
 unsigned short vram[VRAM_WIDTH * VRAM_HEIGHT];
 
+unsigned char rgLUT[LUT_WIDTH * LUT_HEIGHT * sizeof(unsigned int)];
+
+void* Emulator_GenerateRG8LUT()
+{
+#pragma pack(push, 1)
+	struct pixel
+	{
+#if defined(D3D9)
+		unsigned char b;
+		unsigned char g;
+		unsigned char r;
+		unsigned char a;
+#else
+		unsigned char r;
+		unsigned char g;
+		unsigned char b;
+		unsigned char a;
+#endif
+	};
+#pragma pack(pop)
+
+	pixel* p = (pixel*)&rgLUT[(256*256)*4-4];
+
+	for (int y = 0; y < LUT_HEIGHT; y++)
+	{
+		for (int x = 0; x < LUT_WIDTH; x++, p--)
+		{	
+			short c = (y << 8) | x;
+
+			pixel* p = (pixel*)&rgLUT[(y * (LUT_HEIGHT * sizeof(unsigned int))) + x * sizeof(unsigned int)];
+
+			p->a = 255;// ((c & 0x8000)) << 3;
+			p->b = ((c & 0x7C00) >> 10) << 3;
+			p->g = ((c & 0x3E0) >> 5) << 3;
+			p->r = ((c & 0x1F)) << 3;
+
+		}
+	}
+
+#if !defined(__ANDROID__)
+	FILE* f = fopen("RG8LUT.TGA", "wb");
+	unsigned char TGAheader[12] = { 0,0,2,0,0,0,0,0,0,0,0,0 };
+	unsigned char header[6];
+	header[0] = (LUT_WIDTH % 256);
+	header[1] = (LUT_WIDTH / 256);
+	header[2] = (LUT_HEIGHT % 256);
+	header[3] = (LUT_HEIGHT / 256);
+	header[4] = 32;
+	header[5] = 0;
+
+	fwrite(TGAheader, sizeof(unsigned char), 12, f);
+	fwrite(header, sizeof(unsigned char), 6, f);
+	fwrite(rgLUT, sizeof(rgLUT), 1, f);
+	fclose(f);
+#endif
+
+	return rgLUT;
+}
+
 void Emulator_GenerateCommonTextures()
 {
 	unsigned int pixelData = 0xFFFFFFFF;
 #if defined(OGL) || defined(OGLES)
 	glGenTextures(1, &whiteTexture);
 	glBindTexture(GL_TEXTURE_2D, whiteTexture);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, &pixelData);
 	glBindTexture(GL_TEXTURE_2D, 0);
+	
+	glGenTextures(1, &rg8lutTexture);
+	glBindTexture(GL_TEXTURE_2D, rg8lutTexture);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 256, 256, 0, GL_RGBA, GL_UNSIGNED_BYTE, Emulator_GenerateRG8LUT());
+	glBindTexture(GL_TEXTURE_2D, 0);
+
 #elif defined(D3D9) || defined(XED3D)
 	HRESULT hr = d3ddev->CreateTexture(1, 1, 1, 0, D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, &whiteTexture, NULL);
 	assert(!FAILED(hr));
@@ -3932,6 +4051,13 @@ void Emulator_GenerateCommonTextures()
 	assert(!FAILED(hr));
 	memcpy(rect.pBits, &pixelData, sizeof(pixelData));
 	whiteTexture->UnlockRect(0);
+
+	hr = d3ddev->CreateTexture(LUT_WIDTH, LUT_HEIGHT, 1, 0, D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, &rg8lutTexture, NULL);
+	assert(!FAILED(hr));
+	hr = rg8lutTexture->LockRect(0, &rect, NULL, 0);
+	assert(!FAILED(hr));
+	memcpy(rect.pBits, Emulator_GenerateRG8LUT(), 256*256*4);
+	rg8lutTexture->UnlockRect(0);
 #elif defined(D3D11)
 	D3D11_TEXTURE2D_DESC td;
 	ZeroMemory(&td, sizeof(td));
@@ -3963,6 +4089,35 @@ void Emulator_GenerateCommonTextures()
 	hr = d3ddev->CreateShaderResourceView(t, &srvd, &whiteTexture);
 	assert(!FAILED(hr));
 	t->Release();
+
+	ZeroMemory(&td, sizeof(td));
+	td.Width = 256;
+	td.Height = 256;
+	td.MipLevels = td.ArraySize = 1;
+	td.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	td.SampleDesc.Count = 1;
+	td.Usage = D3D11_USAGE_DEFAULT;
+	td.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	td.CPUAccessFlags = 0;
+	td.MiscFlags = 0;
+	t = NULL;
+
+	ZeroMemory(&srd, sizeof(srd));
+	srd.pSysMem = (void*)Emulator_GenerateRG8LUT();
+	srd.SysMemPitch = td.Width * sizeof(unsigned int);
+	srd.SysMemSlicePitch = 0;
+
+	hr = d3ddev->CreateTexture2D(&td, &srd, &t);
+	assert(!FAILED(hr));
+	ZeroMemory(&srvd, sizeof(srvd));
+	srvd.Format = td.Format;
+	srvd.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	srvd.Texture2D.MipLevels = td.MipLevels;
+	srvd.Texture2D.MostDetailedMip = 0;
+	hr = d3ddev->CreateShaderResourceView(t, &srvd, &rg8lutTexture);
+	assert(!FAILED(hr));
+	t->Release();
+
 #elif defined(D3D12)
 	UNIMPLEMENTED();
 #elif defined(VULKAN)
@@ -3983,12 +4138,28 @@ void Emulator_GenerateCommonTextures()
 	Emulator_TransitionImageLayout(whiteTexture.textureImage, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 	Emulator_CopyBufferToImage(whiteTexture.stagingBuffer, whiteTexture.textureImage, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight));
 	Emulator_TransitionImageLayout(whiteTexture.textureImage, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+
+	imageSize = LUT_WIDTH * LUT_HEIGHT * sizeof(unsigned int);
+
+	Emulator_CreateVulkanBuffer(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, rg8lutTexture.stagingBuffer, rg8lutTexture.stagingBufferMemory);
+
+	data = NULL;
+	vkMapMemory(device, rg8lutTexture.stagingBufferMemory, 0, imageSize, 0, &data);
+	memcpy(data, Emulator_GenerateRG8LUT(), static_cast<size_t>(imageSize));
+	vkUnmapMemory(device, rg8lutTexture.stagingBufferMemory);
+
+	Emulator_CreateImage(LUT_WIDTH, LUT_HEIGHT, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, rg8lutTexture.textureImage, rg8lutTexture.textureImageMemory);
+	rg8lutTexture.textureImageView = Emulator_CreateImageView(rg8lutTexture.textureImage, VK_FORMAT_R8G8B8A8_UNORM);
+
+	Emulator_TransitionImageLayout(rg8lutTexture.textureImage, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+	Emulator_CopyBufferToImage(rg8lutTexture.stagingBuffer, rg8lutTexture.textureImage, static_cast<uint32_t>(LUT_WIDTH), static_cast<uint32_t>(LUT_HEIGHT));
+	Emulator_TransitionImageLayout(rg8lutTexture.textureImage, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 #else
 	#error
 #endif
 }
 
-int Emulator_Initialise()
+int Emulator_CreateCommonResources()
 {
 	memset(vram, 0, VRAM_WIDTH * VRAM_HEIGHT * sizeof(unsigned short));
 	Emulator_GenerateCommonTextures();
@@ -4007,6 +4178,9 @@ int Emulator_Initialise()
 
 	glGenTextures(1, &vramTexture);
 	glBindTexture(GL_TEXTURE_2D, vramTexture);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexImage2D(GL_TEXTURE_2D, 0, VRAM_INTERNAL_FORMAT, VRAM_WIDTH, VRAM_HEIGHT, 0, VRAM_FORMAT, GL_UNSIGNED_BYTE, NULL);
@@ -4209,21 +4383,39 @@ void Emulator_SetTexture(TextureID texture, TexFormat texFormat)
 	}
 
 #if defined(VULKAN)
-	if (g_lastBoundTexture.textureImage == texture.textureImage) {
-		return;
+
+	///@FIXME broken!
+	if (g_lastBoundTexture[0].textureImage == texture.textureImage && g_lastBoundTexture[1].textureImage == rg8lutTexture.textureImage) {
+		//return;
 	}
 #else
-	if (g_lastBoundTexture == texture) {
-		return;
+	if (g_lastBoundTexture[0] == texture && g_lastBoundTexture[1] == rg8lutTexture) {
+		//return;
 	}
 #endif
 
 #if defined(OGL) || defined(OGLES)
+	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, rg8lutTexture);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 #elif defined(D3D9) || defined(XED3D)
 	d3ddev->SetTexture(0, texture);
+	d3ddev->SetTexture(1, rg8lutTexture);
 #elif defined(D3D11)
 	d3dcontext->PSSetShaderResources(0, 1, &texture);
+	d3dcontext->PSSetShaderResources(1, 1, &rg8lutTexture);
 	d3dcontext->PSSetSamplers(0, 1, &samplerState);
 #elif defined(D3D12)
 	///@D3D12
@@ -4245,7 +4437,8 @@ void Emulator_SetTexture(TextureID texture, TexFormat texFormat)
 	#error
 #endif
 
-	g_lastBoundTexture = texture;
+	g_lastBoundTexture[0] = texture;
+	g_lastBoundTexture[1] = rg8lutTexture;
 }
 
 void Emulator_DestroyTexture(TextureID texture)
@@ -4578,7 +4771,7 @@ void Emulator_UpdateVRAM()
 	TextureID newVramTexture;
 	unsigned int texWidth = VRAM_WIDTH;
 	unsigned int texHeight = VRAM_HEIGHT;
-	VkDeviceSize imageSize = texWidth * texHeight * sizeof(unsigned short);
+	unsigned int imageSize = texWidth * texHeight * sizeof(unsigned short);
 
 	Emulator_CreateVulkanBuffer(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, newVramTexture.stagingBuffer, newVramTexture.stagingBufferMemory);
 
@@ -4748,9 +4941,11 @@ int Emulator_BeginScene()
 	assert(!begin_scene_flag);
 
 #if defined(VULKAN)
-	g_lastBoundTexture.textureImage = NULL;
+	g_lastBoundTexture[0].textureImage = NULL;
+	g_lastBoundTexture[1].textureImage = NULL;
 #else
-	g_lastBoundTexture = NULL;
+	g_lastBoundTexture[0] = NULL;
+	g_lastBoundTexture[1] = NULL;
 #endif
 
 #if defined(OGL) || defined(OGLES)
@@ -4984,9 +5179,9 @@ void Emulator_UpdateInput()
 	}
 #endif
 
-#if defined(__ANDROID__)
+#if !defined(__ANDROID__)
     ///@TODO SDL_NumJoysticks always reports > 0 for some reason on Android.
-    ((unsigned short*)padData[0])[1] = UpdateKeyboardInput();
+    //((unsigned short*)padData[0])[1] = UpdateKeyboardInput();
 #endif
 }
 
@@ -5213,6 +5408,7 @@ void Emulator_ShutDown()
 #if defined(OGL) || defined(OGLES)
 	Emulator_DestroyTexture(vramTexture);
 	Emulator_DestroyTexture(whiteTexture);
+	Emulator_DestroyTexture(rg8lutTexture);
 #endif
 
 #if defined(SDL2)
@@ -5653,6 +5849,8 @@ void Emulator_SetWireframe(bool enable)
 	Emulator_CreateRasterState(enable ? TRUE : FALSE);
 #elif defined(VULKAN)
 	Emulator_CreateRasterState(enable ? TRUE : FALSE);
+#elif defined(OGLES)
+
 #else
 #error
 #endif

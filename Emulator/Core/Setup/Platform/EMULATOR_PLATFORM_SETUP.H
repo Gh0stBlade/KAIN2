@@ -5,7 +5,6 @@
 #define UWP
 #endif
 
-
 #ifndef _CRT_SECURE_NO_WARNINGS
     #define _CRT_SECURE_NO_WARNINGS
 #endif
@@ -24,7 +23,7 @@
 //#define OGLES_VERSION 3
 
 //Open Graphics Library
-//#define OGL
+#define OGL
 
 //Vulkan
 //#define VULKAN
@@ -33,7 +32,7 @@
 //#define D3D9
 
 //Direct3D11
-#define D3D11
+//#define D3D11
 
 //Direct3D12
 //#define D3D12
@@ -104,6 +103,7 @@
 #include <array>
 #endif
 #elif defined (__ANDROID__)
+#define DEBUG_PRINTS
 #include <SDL.h>
 #if (OGLES_VERSION == 3)
 #include <GLES3/gl3.h>
@@ -122,6 +122,7 @@
 #include <GLES3/gl3.h>
 #endif
 #include <EGL/egl.h>
+#include <SDL_egl.h>
 #elif defined(D3D9)
 #include <Windows.h>
 #include <d3d9.h>
@@ -151,12 +152,6 @@
 
 #if !defined (__EMSCRIPTEN__)
 //#include <SDL_gamecontroller.h>
-#endif
-
-#if defined(OGL)
-#define TEXTURE_FORMAT GL_UNSIGNED_SHORT_1_5_5_5_REV
-#elif defined(OGLES)
-#define TEXTURE_FORMAT GL_UNSIGNED_SHORT_5_5_5_1
 #endif
 
 #endif

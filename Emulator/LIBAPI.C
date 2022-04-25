@@ -1,6 +1,9 @@
 #include "LIBAPI.H"
 
+#if !defined(__ANDROID__)
 #include <thread>
+#endif
+
 #include <stdio.h>
 #include "EMULATOR.H"
 

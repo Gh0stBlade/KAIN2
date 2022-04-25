@@ -1805,8 +1805,10 @@ unsigned int* gte_rcossin_tbl = (unsigned int*)&ida_chars[0];///@FIXME convert t
 #   define min(a, b) ((a) < (b) ? (a) : (b))
 #endif
 
+#if defined(__ANDROID__)
 #ifdef __cplusplus
 extern "C" {
+#endif
 #endif
 
 void InitGeom()
@@ -3317,7 +3319,15 @@ long NormalClip(long sxy0, long sxy1, long sxy2)
 
 MATRIX* TransposeMatrix(MATRIX* m0, MATRIX* m1)
 {
-    return NULL;
+    m1->m[0][0] = m0->m[0][0];
+    m1->m[0][1] = m0->m[0][1];
+
+    m1->m[0][0] = m0->m[0][0];
+    m1->m[0][1] = m0->m[0][1];
+
+    ///@TODO half baked.
+
+    return m1;
 }
 
 long RotAverageNclip4(SVECTOR* v0, SVECTOR* v1, SVECTOR* v2, SVECTOR* v3, long* sxy0/*arg_10*/, long* sxy1/*arg_14*/, long* sxy2/*arg_18*/, long* sxy3/*arg_1C*/, long* p/*arg_20*/, long* otz/*arg_24*/, long* flag/*arg_28*/)
@@ -3694,6 +3704,8 @@ int rcos(int a)
     return cos;
 }
 
+#if defined(__ANDROID__)
 #ifdef __cplusplus
 }
+#endif
 #endif

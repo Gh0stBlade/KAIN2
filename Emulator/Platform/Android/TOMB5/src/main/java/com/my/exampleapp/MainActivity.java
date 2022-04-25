@@ -23,7 +23,7 @@ public class MainActivity extends org.libsdl.app.SDLActivity {
                 "SDL2",
                 "EGL",
                 "GLESv3",
-                "MAIN"
+                "KAIN2_Androidx86"
         };
     }
 

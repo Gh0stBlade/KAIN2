@@ -48,9 +48,11 @@ struct VS_OUTPUT {
 #else
 #ifdef D3D9
 	SamplerState s_texture : register(s0);
+	SamplerState s_lut : register(s1);
 #else
 	SamplerState samplerState : register(s0);
 	Texture2D s_texture : register(t0);
+	Texture2D s_lut : register(t1);
 #endif
 
 	float4 main(VS_OUTPUT In ARG_VPOS) : SV_TARGET {
@@ -70,15 +72,19 @@ struct VS_OUTPUT {
 		float2 clut_pos = In.v_page_clut.zw;
 		clut_pos.x += lerp(c[0], c[1], frac(float(index) / 2.0) * 2.0) / 1024.0;
 #ifdef D3D9
-		float2 clut_color = tex2D(s_texture, clut_pos).ra * 255.0;
+		float2 clut_color = tex2D(s_texture, clut_pos).ra;
 #else
-		float2 clut_color = s_texture.Sample(samplerState, clut_pos).rg * 255.0;
+		float2 clut_color = s_texture.Sample(samplerState, clut_pos).rg;
 #endif
-		float color_16 = clut_color.y * 256.0 + clut_color.x;
-		clip(color_16 - 0.001);
-
-		float4 color = frac(floor(color_16 / float4(1.0, 32.0, 1024.0, 32768.0)) / 32.0);
-
+		if(clut_color.x == 0.0 && clut_color.y == 0.0)
+		{
+			discard;
+		}
+#ifdef D3D9
+		float4 color = tex2D(s_lut, clut_color);
+#else
+		float4 color = s_lut.Sample(samplerState, clut_color);
+#endif
 		color = color * In.v_color;
 		float4x4 dither = float4x4(
 			-4.0,  +0.0,  -3.0,  +1.0,

@@ -1,11 +1,16 @@
 #ifndef LIBAPI_H
 #define LIBAPI_H
 
-#undef OpenEvent
-
 #ifndef EMU_KERNEL_H
 #include "KERNEL.H"
 #endif
+
+#if defined(__ANDROID__)
+#ifdef __cplusplus
+extern "C" {
+#endif
+#endif
+
 
 extern long SetRCnt(long spec, unsigned short target, long mode);
 extern long GetRCnt(long spec);
@@ -40,7 +45,7 @@ extern long erase(char* unk00);
 
 extern long undelete(char* unk00);
 extern long format(char* unk00);
-extern long rename(char* unk00, char *);
+//extern long rename(char* unk00, char *);
 extern long cd(char* unk00);
 
 extern long LoadTest(char*  unk00, struct EXEC *);
@@ -103,5 +108,12 @@ extern unsigned long _card_chan(void);
 extern long _card_write(long chan, long block, unsigned char *buf);
 extern long _card_read(long chan, long block, unsigned char *buf);
 extern long _card_format(long chan);
+
+#if defined(__ANDROID__)
+#ifdef __cplusplus
+}
+#endif
+#endif
+
 
 #endif

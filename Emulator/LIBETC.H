@@ -3,8 +3,10 @@
 
 #include "TYPES.H"
 
+#if defined(__ANDROID__)
 #ifdef __cplusplus
 extern "C" {
+#endif
 #endif
 
 extern int PadIdentifier;
@@ -57,8 +59,10 @@ extern u_long PadRead(int id);
 extern void PadStop(void);
 extern void(*vsync_callback)(void);
 
+#if defined(__ANDROID__)
 #ifdef __cplusplus
 }
+#endif
 #endif
 
 #endif

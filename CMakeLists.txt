@@ -35,6 +35,10 @@ if (MSVC)
     endif()
 endif()
 
+if (ANDROID)
+	set(TARGET_ARCH "Androidx86")
+endif()
+
 if (EMSCRIPTEN)
 	set(TARGET_ARCH "Web")
 endif()
@@ -42,6 +46,8 @@ endif()
 
 #We want to be able to group projects in folders
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-
+if(ANDROID)
+add_subdirectory(${ROOT_DIR}/External/SDL/ EXCLUDE_FROM_ALL)
+endif()
 add_subdirectory(Emulator)
 add_subdirectory(KAIN2)

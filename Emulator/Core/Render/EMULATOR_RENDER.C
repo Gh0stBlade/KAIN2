@@ -51,7 +51,7 @@ unsigned short s_lastSemiTrans = 0xFFFF;
 unsigned short s_lastPolyType = 0xFFFF;
 
 #if defined(USE_32_BIT_ADDR)
-unsigned int terminator[2] = { -1, 0 };
+unsigned int terminator[2] = { 0xFFFFFFFF, 0 };
 #else
 unsigned int terminator = -1;
 #endif

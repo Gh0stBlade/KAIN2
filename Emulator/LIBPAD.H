@@ -3,8 +3,10 @@
 
 #undef OpenEvent
 
+#if defined(__ANDROID__)
 #ifdef __cplusplus
 extern "C" {
+#endif
 #endif
 
 #ifndef TRUE
@@ -58,8 +60,10 @@ extern int PadSetActAlign(int unk00, unsigned char* unk01);
 extern int PadSetMainMode(int socket, int offs, int lock);
 extern void PadSetAct(int unk00, unsigned char* unk01, int unk02);
 
+#if defined(__ANDROID__)
 #ifdef __cplusplus
 }
+#endif
 #endif
 
 #endif

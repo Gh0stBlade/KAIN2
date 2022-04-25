@@ -113,7 +113,7 @@ unsigned int decodeVAG(unsigned char* vag, unsigned int length, unsigned char* o
                     {  122.0f / 64.0f, -60.0f / 64.0f } };
 
 
-    for(int i = 0; i < length; i++)
+    for(unsigned int i = 0; i < length; i++)
     {
         predict_nr = *vag >> 4;
         shift_factor = *vag++ & 0xF;
@@ -218,7 +218,7 @@ int _spu_FsetRXXa(long flag, long addr)
             if (addr % _spu_mem_mode_unit != 0)
             {
                 addr += _spu_mem_mode_unit;
-                addr & ~_spu_mem_mode_unitM;
+                addr &= ~_spu_mem_mode_unitM;
             }
             //loc_BA0
         }

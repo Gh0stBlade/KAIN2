@@ -22,7 +22,13 @@ typedef void (*MemCB)( long cmds, long rslt );
 #define	McErrBlockFull		(7)
 #define	McErrExtend		(0x8000)
 
-extern void MemCardInit( long val );
+#if defined(__ANDROID__)
+#ifdef __cplusplus
+extern "C" {
+#endif
+#endif
+
+extern void MemCardInit(long val);
 extern void MemCardEnd( void );
 extern void MemCardStart(void);
 extern void MemCardStop(void);
@@ -41,5 +47,11 @@ extern long MemCardUnformat(long chan);
 extern long MemCardSync( long mode, long* cmds, long* rslt );
 extern MemCB MemCardCallback( MemCB func );
 extern long MemCardGetDirentry( long chan, char* name, struct DIRENTRY* dir, long* files, long ofs, long max );
+
+#if defined(__ANDROID__)
+#ifdef __cplusplus
+}
+#endif
+#endif
 
 #endif

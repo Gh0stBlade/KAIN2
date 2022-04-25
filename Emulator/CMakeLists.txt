@@ -18,6 +18,9 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 #Recursively locate the source files for SPEC_PSX.
 file(GLOB_RECURSE EMULATOR_SPECIFIC_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/*.C  ${CMAKE_CURRENT_SOURCE_DIR}/*.S ${CMAKE_CURRENT_SOURCE_DIR}/*.H ${CMAKE_CURRENT_SOURCE_DIR}/*.CUR ${CMAKE_CURRENT_SOURCE_DIR}/*.RC)
 
+#Exclude Android temporary files folder.
+list(FILTER EMULATOR_SPECIFIC_SRCS EXCLUDE REGEX "/Platform/Android/*")
+
 set(EMULATOR_PUBLIC_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Core/Public/ CACHE INTERNAL  "")
 set(EMULATOR_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/ CACHE INTERNAL "")
 
@@ -46,6 +49,7 @@ include("Platform/WindowsStore.cmake")
 
 if (NOT ANDROID)
 BuildPreProcessorDefinitions()
+
 target_compile_definitions(${PROJECT_NAME} PRIVATE GLEW_STATIC)
 
 set_target_properties(

@@ -190,8 +190,10 @@ typedef struct {
 #define  StMOVIE_WIDTH    0x08
 #define  StMOVIE_HEIGHT   0x09
 
+#if defined(__ANDROID__)
 #ifdef __cplusplus
 extern "C" {
+#endif
 #endif
 void	StSetRing(u_long *ring_addr,u_long ring_size);
 void	StClearRing(void);
@@ -246,8 +248,10 @@ int CdDiskReady( int mode );
 int CdGetDiskType( void );
 struct EXEC *CdReadExec(char *file);
 void CdReadBreak( void );
+#if defined(__ANDROID__)
 #ifdef __cplusplus
 }
+#endif
 #endif
 
 #endif

@@ -5,8 +5,10 @@
 
 #include "LIBGPU.H"
 
+#if defined(__ANDROID__)
 #ifdef __cplusplus
 extern "C" {
+#endif
 #endif
 
 /*
@@ -171,9 +173,10 @@ extern int last_pgxp_tri_match;
 extern int pgxp_vertex_count;
 #endif
 
-
+#if defined(__ANDROID__)
 #ifdef __cplusplus
 }
+#endif
 #endif
 
 #endif

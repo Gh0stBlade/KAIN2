@@ -3,8 +3,10 @@
 
 #include "TYPES.H"
 
+#if defined(__ANDROID__)
 #ifdef __cplusplus
 extern "C" {
+#endif
 #endif
 
 extern	int (*GPU_printf)(const char *fmt, ...);
@@ -1086,8 +1088,10 @@ extern void GetDrawEnv2(DR_ENV *p);
 extern DISPENV activeDispEnv;
 extern DRAWENV activeDrawEnv;
 
+#if defined(__ANDROID__)
 #ifdef __cplusplus
 }
+#endif
 #endif
 
 #endif
