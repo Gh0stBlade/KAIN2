@@ -206,6 +206,12 @@ int menu_draw_item(struct menu_t *menu, int ypos, int xadj, int yadj, char *text
 	char* tmp;
 	int wd;
 
+//Modern strlen/strtok doesn't support NULL being passed in but the old PSX version does.
+#if defined(PSXPC_VERSION)
+#define strlen(a) a == NULL ? 0 : strlen(a);
+#define strtok(a, b) a == NULL ? NULL : strtok(a, b);
+#endif
+	
 	i = menu->nmenus;
 	maxColumnYPos = 0;
 
@@ -233,19 +239,7 @@ int menu_draw_item(struct menu_t *menu, int ypos, int xadj, int yadj, char *text
 	ypos += yadj;
 	numColumns = 1;
 
-#if defined(PSXPC_VERSION)//Modern strlen doesn't support NULL being passed in but the old PSX version does.
-	if (text == NULL)
-	{
-		texLen = 0;
-	}
-	else
-	{
-		texLen = strlen(text);
-	}
-#else
 	texLen = strlen(text);
-#endif
-
 
 	if (texLen > 0)
 	{
@@ -269,18 +263,7 @@ int menu_draw_item(struct menu_t *menu, int ypos, int xadj, int yadj, char *text
 		leftEdge = (fmt->xpos + xadj);
 	}
 
-#if defined(PSXPC_VERSION)//Modern strtok cannot have NULL passed, PSX version can!
-	if (text == NULL)
-	{
-		columnText = NULL;
-	}
-	else
-	{
-		columnText = strtok(text, "\x9");
-	}
-#else
 	columnText = strtok(text, "\x9");
-#endif
 
 	while (columnText != NULL)
 	{
