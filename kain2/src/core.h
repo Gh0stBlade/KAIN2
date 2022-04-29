@@ -10,7 +10,10 @@
 #include "PC/LIBAPI.H"
 #include "PC/LIBPAD.H"
 #include "PC/LIBSN.H"
-#else	// psx basically
+
+#elif defined(PSX_VERSION) && !defined(PSXPC_VERSION)
+
+#include <SYS/TYPES.H>
 #include <LIBAPI.H>
 #include <LIBETC.H>
 #include <LIBGTE.H>
@@ -21,7 +24,6 @@
 #include <LIBSN.H>
 #include <LIBMCRD.H>
 
-#if defined(PSXPC_VERSION) || defined(PSX_VERSION)//Temporary
 #undef LoadImage
 #define LoadImage LoadImagePSX
 #define PSX_EnterCriticalSection	EnterCriticalSection
@@ -30,11 +32,32 @@
 #define setlen_ST( p, _len) 	(((POLY_F4_SEMITRANS *)(p))->len  = (u_char)(_len))
 #define setcode_ST(p, _code)	(((POLY_F4_SEMITRANS *)(p))->code = (u_char)(_code))
 #define setPolyFT4_ST(p) setlen_ST(p, 6),  setcode_ST(p, 0x2A)
+
+typedef RECT PSX_RECT;
+
+#elif defined(PSXPC_VERSION)
+
+#include <LIBAPI.H>
+#include <LIBETC.H>
+#include <LIBGTE.H>
+#include <LIBSPU.H>
+#include <LIBCD.H>
+#include <LIBPAD.H>
+#include <LIBGPU.H>
+#include <LIBSN.H>
+#include <LIBMCRD.H>
+
+#undef LoadImage
+#define LoadImage LoadImagePSX
+#define PSX_EnterCriticalSection	EnterCriticalSection
+#define PSX_ExitCriticalSection		ExitCriticalSection
+#define setAbr(p, abr) ((p)->dr_tpage) |= ((short)abr << 5)
+#define setlen_ST( p, _len) 	(((POLY_F4_SEMITRANS *)(p))->len  = (u_char)(_len))
+#define setcode_ST(p, _code)	(((POLY_F4_SEMITRANS *)(p))->code = (u_char)(_code))
+#define setPolyFT4_ST(p) setlen_ST(p, 6),  setcode_ST(p, 0x2A)
+
 #pragma warning(disable: 4101)//Unreferenced local var.
-
-#if defined(PSXPC_VERSION)
 #include <EMULATOR_PUBLIC.H>
-
 #if defined(__ANDROID__)
 #define strcmpi strcmp
 #define _strcmpi strcmp
@@ -45,13 +68,10 @@
 #endif
 #endif
 
-#endif
-
-#if !defined(PSXPC_VERSION)
+#if !defined(PSXPC_VERSION) && !defined(PSX_VERSION)
 // wrappers for winapi crap
 #define OutputDebugStringA	printf
 #define vprintf_s(a,b,c,d)	vprintf(a,c,d)
-#endif
 #endif
 
 #include <stdarg.h>
