@@ -99,7 +99,7 @@ char spuSoundBuffer[520191];
 unsigned int decodeVAG(unsigned char* vag, unsigned int length, unsigned char* out)
 {
     int predict_nr, shift_factor, flags;
-    int d, s;
+    int s;
     double s_1 = 0.0f;
     double s_2 = 0.0f;
     unsigned int result_length = 0;

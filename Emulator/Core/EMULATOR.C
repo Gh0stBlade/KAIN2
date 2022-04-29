@@ -3406,7 +3406,7 @@ ShaderID Shader_Compile(const char *source)
     glLinkProgram(program);
     Shader_CheckProgramStatus(program);
 
-	GLint texArray[2] = { vramTexture, rg8lutTexture };
+	//GLint texArray[2] = { vramTexture, rg8lutTexture };
     glUseProgram(program);
 	//glUniform1iv(glGetUniformLocation(program, "s_texture"), 2, texArray);
 	glUniform1i(glGetUniformLocation(program, "s_texture"), 0);
@@ -3999,7 +3999,7 @@ void* Emulator_GenerateRG8LUT()
 		}
 	}
 
-#if !defined(__ANDROID__)
+#if !defined(__ANDROID__) && defined(DEBUG_RG8LUT)
 	FILE* f = fopen("RG8LUT.TGA", "wb");
 	unsigned char TGAheader[12] = { 0,0,2,0,0,0,0,0,0,0,0,0 };
 	unsigned char header[6];
@@ -4163,7 +4163,6 @@ int Emulator_CreateCommonResources()
 {
 	memset(vram, 0, VRAM_WIDTH * VRAM_HEIGHT * sizeof(unsigned short));
 	Emulator_GenerateCommonTextures();
-
 #if !defined(VULKAN)
 	Emulator_CreateGlobalShaders();
 #endif
@@ -5000,18 +4999,92 @@ int Emulator_BeginScene()
 }
 
 #if !defined(__EMSCRIPTEN__) && !defined(__ANDROID__)
+int Emulator_DoesFileExist(const char* fileName)
+{
+	FILE* f = fopen(fileName, "rb");
+	
+	if (f != NULL)
+	{
+		fclose(f);
+		return 1;
+	}
+
+	return 0;
+}
+
+int Emulator_GetScreenshotNumber()
+{
+	int fileNumber = 0;
+	char buff[64];
+	do
+	{
+		sprintf(buff, "SCREENSHOT_%d.TGA", fileNumber++);
+
+	} while (Emulator_DoesFileExist(buff) == 1);
+
+	return fileNumber - 1;
+}
+
 void Emulator_TakeScreenshot()
 {
 	unsigned char* pixels = new unsigned char[windowWidth * windowHeight * 4];
 #if defined(OGL) || defined(OGLES)
-#define GL_BGRA GL_RGBA
-	glReadPixels(0, 0, windowWidth, windowHeight, GL_BGRA, GL_UNSIGNED_BYTE, pixels);
+	glReadPixels(0, 0, windowWidth, windowHeight, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
 #endif
 
 #if defined(SDL2)
+
+#if 1
 	SDL_Surface* surface = SDL_CreateRGBSurfaceFrom(pixels, windowWidth, windowHeight, 8 * 4, windowWidth * 4, 0, 0, 0, 0);
-	SDL_SaveBMP(surface, "SCREENSHOT.BMP");
+
+	char buff[64];
+	sprintf(buff, "SCREENSHOT_%d.TGA", Emulator_GetScreenshotNumber());
+
+	FILE* f = fopen(buff, "wb");
+	unsigned char TGAheader[12] = { 0,0,2,0,0,0,0,0,0,0,0,0 };
+	unsigned char header[6];
+	header[0] = (windowWidth % 256);
+	header[1] = (windowWidth / 256);
+	header[2] = (windowHeight % 256);
+	header[3] = (windowHeight / 256);
+	header[4] = 32;
+	header[5] = 0;
+
+	fwrite(TGAheader, sizeof(unsigned char), 12, f);
+	fwrite(header, sizeof(unsigned char), 6, f);
+
+	struct pixel
+	{
+		unsigned char b;
+		unsigned char g;
+		unsigned char r;
+		unsigned char a;
+	};
+
+	pixel* p = (pixel*)surface->pixels;
+
+	for (int y = 0; y < windowHeight; y++)
+	{
+		for (int x = 0; x < windowWidth; x++)
+		{	
+			unsigned char temp = p->b;
+			p->b = p->r;
+			p->r = temp;
+			p++;
+		}
+	}
+
+	fwrite(surface->pixels, windowWidth * windowHeight * sizeof(unsigned int), 1, f);
+	fclose(f);
+
 	SDL_FreeSurface(surface);
+#else
+	SDL_Surface* surface = SDL_CreateRGBSurfaceFrom(pixels, windowWidth, windowHeight, 8 * 4, windowWidth * 4, 0, 0, 0, 0);
+	char buff[64];
+	sprintf(buff, "SCREENSHOT_%d.bmp", Emulator_GetScreenshotNumber());
+	SDL_SaveBMP(surface, buff);
+	SDL_FreeSurface(surface);
+#endif
 #endif
 
 	delete[] pixels;

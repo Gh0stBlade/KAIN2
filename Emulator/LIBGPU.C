@@ -647,7 +647,6 @@ int FntOpen(int x, int y, int w, int h, int isbg, int n)
 {
 	RECT16 rect;
 	int characterCount = n;
-	int i;
 	SPRT_8* pSprite;
 
 	//Maximum number of font streams is 8.

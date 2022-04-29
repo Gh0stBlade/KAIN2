@@ -2,11 +2,11 @@
 #define EMULATOR_VERSION_H
 
 /* Name of the Emulator */
-#define EMULATOR_NAME "LIBPSX"
+#define EMULATOR_NAME "Valkyrie"
 
 /* Emulator version */
 #define EMULATOR_MAJOR_VERSION (1)
-#define EMULATOR_MINOR_VERSION (184)
+#define EMULATOR_MINOR_VERSION (186)
 
 /* Compile date and time */
 #define EMULATOR_COMPILE_DATE (__DATE__)

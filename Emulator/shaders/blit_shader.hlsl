@@ -48,7 +48,6 @@ struct VS_OUTPUT {
 		float4 color = s_lut.Sample(samplerState, color_rg);
 #endif
 		
-		
 		color.a = 1.0;
 
 		return color;
