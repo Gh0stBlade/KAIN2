@@ -136,7 +136,7 @@ extern int MON_ValidUnit(struct _Instance *instance, unsigned long unitId); // 0
 
 extern int MON_ValidPosition(struct _Instance *instance); // 0x8008335C
 
-extern void MON_SphereWorldPos(struct MATRIX *mat, struct _HSphere *sphere, struct _Position *ret); // 0x800833B4
+extern void MON_SphereWorldPos(MATRIX *mat, struct _HSphere *sphere, struct _Position *ret); // 0x800833B4
 
 extern struct _HPrim * MON_FindSphereForTerrain(struct _Instance *instance); // 0x80083424
 

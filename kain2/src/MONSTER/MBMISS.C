@@ -1,4 +1,4 @@
-#include "../core.H"
+#include "CORE.H"
 #include "MONSTER.H"
 #include "MBMISS.H"
 
@@ -284,6 +284,7 @@ void WALBOSC_Message(struct _Instance *instance, unsigned long message, unsigned
 
 }
 
+#if defined(PC_VERSION)
 struct _MonsterStateChoice WALBOSS_StateChoiceTable[] =
 {
 	{MONSTER_STATE_STUNNED, HUMAN_StunnedEntry, HUMAN_Stunned},
@@ -304,3 +305,4 @@ struct _MonsterFunctionTable WALBOSS_FunctionTable =
 	WALBOSS_StateChoiceTable,
 	__DATE__
 };
+#endif

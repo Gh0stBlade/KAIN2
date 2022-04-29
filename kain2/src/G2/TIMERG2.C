@@ -1,4 +1,4 @@
-#include "THISDUST.H"
+#include "CORE.H"
 #include "TIMERG2.H"
 
 
@@ -6,6 +6,7 @@
 // short /*$ra*/ G2Timer_GetFrameTime()
 short G2Timer_GetFrameTime()
 { // line 10, offset 0x80096280
+#if defined(PC_VERSION)
 	unsigned int result; // eax
 
   if ( gameTrackerX.timeMult )
@@ -15,4 +16,5 @@ short G2Timer_GetFrameTime()
   if ( (__int16)result <= 0 )
 	return 1;
   return result;
+#endif
 }

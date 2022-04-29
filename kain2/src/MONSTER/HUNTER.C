@@ -1,5 +1,6 @@
-#include "../core.h"
+#include "CORE.H"
 
+#if defined(PC_VERSION)
 struct _MonsterStateChoice HUNTER_StateChoiceTable[] =
 {
 	{MONSTER_STATE_STUNNED,    HUMAN_StunnedEntry,     HUMAN_Stunned},
@@ -19,6 +20,7 @@ struct _MonsterFunctionTable HUNTER_FunctionTable =
 	HUNTER_StateChoiceTable,
 	__DATE__
 };
+#endif
 
 //0001:00006f00       _FX_MakeHitFlame           00407f00 f   hunter.obj
 void FX_MakeHitFlame(struct _Position* pos, __int16 a2, int a3, int a4, int a5) {}	// unused

@@ -23,6 +23,7 @@ WORD word_4F4AE0[] =
 // void /*$ra*/ _G2Anim_DecompressChannel_AdaptiveDelta(struct _G2AnimDecompressChannelInfo_Type *dcInfo /*$a0*/, struct _G2AnimChanStatus_Type *status /*$a1*/)
 void _G2Anim_DecompressChannel_AdaptiveDelta(struct _G2AnimDecompressChannelInfo_Type *dcInfo, struct _G2AnimChanStatus_Type *status)
 { // line 135, offset 0x800900f4
+#if defined(PC_VERSION)
 	struct _G2AnimChanStatus_Type* v2; // ebx
 	struct _G2AnimDecompressChannelInfo_Type* v3; // edi
 	int storedKey; // edx
@@ -75,6 +76,7 @@ void _G2Anim_DecompressChannel_AdaptiveDelta(struct _G2AnimDecompressChannelInfo
 	v2->index = index;
 	v2->keyData = keyData;
 	v3->chanData = &v5[v6 >> 2];
+#endif
 }
 
 
@@ -118,6 +120,7 @@ void _G2Anim_DecompressChannel_Linear(struct _G2AnimDecompressChannelInfo_Type *
 // void /*$ra*/ _G2Anim_InitializeChannel_AdaptiveDelta(struct _G2AnimDecompressChannelInfo_Type *dcInfo /*$a0*/, struct _G2AnimChanStatus_Type *status /*$a1*/)
 void _G2Anim_InitializeChannel_AdaptiveDelta(struct _G2AnimDecompressChannelInfo_Type *dcInfo, struct _G2AnimChanStatus_Type *status)
 { // line 271, offset 0x800902b4
+#if defined(PC_VERSION)
 	u_short* chanData; // eax
 	int v3; // ecx
 
@@ -126,6 +129,7 @@ void _G2Anim_InitializeChannel_AdaptiveDelta(struct _G2AnimDecompressChannelInfo
 	status->index = *(unsigned __int8*)chanData;
 	status->keyData = chanData[1];
 	dcInfo->chanData = &chanData[v3 + 2];
+#endif
 }
 
 
@@ -133,6 +137,7 @@ void _G2Anim_InitializeChannel_AdaptiveDelta(struct _G2AnimDecompressChannelInfo
 // void /*$ra*/ _G2Anim_InitializeChannel_Linear(struct _G2AnimDecompressChannelInfo_Type *dcInfo /*$a0*/, struct _G2AnimChanStatus_Type *status /*$a1*/)
 void _G2Anim_InitializeChannel_Linear(struct _G2AnimDecompressChannelInfo_Type *dcInfo, struct _G2AnimChanStatus_Type *status)
 { // line 289, offset 0x800902ec
+#if defined(PC_VERSION)
 	u_short* chanData; // ecx
 	int v3; // eax
 
@@ -140,4 +145,5 @@ void _G2Anim_InitializeChannel_Linear(struct _G2AnimDecompressChannelInfo_Type *
 	v3 = *chanData & 0xFFF;
 	status->keyData = chanData[1];
 	dcInfo->chanData = &chanData[v3 + 1];
+#endif
 }

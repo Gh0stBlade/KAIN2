@@ -1,4 +1,4 @@
-#include "THISDUST.H"
+#include "CORE.H"
 #include "ANMINTRP.H"
 
 
@@ -71,10 +71,10 @@ void _G2AnimSection_UpdateStoredFrameFromQuat(struct _G2AnimSection_Type *sectio
 			// Start line: 223
 			// Start offset: 0x8009244C
 			// Variables:
-				struct _G2SVector3_Type *dest; // $a0
-				struct _G2SVector3_Type *base; // $v0
-				struct _G2SVector3_Type *offset; // $v1
-				long alpha; // $s5
+				//struct _G2SVector3_Type *dest; // $a0
+				//struct _G2SVector3_Type *base; // $v0
+				//struct _G2SVector3_Type *offset; // $v1
+				//long alpha; // $s5
 		/* end block 1.2 */
 		// End offset: 0x8009244C
 		// End Line: 223
@@ -83,10 +83,10 @@ void _G2AnimSection_UpdateStoredFrameFromQuat(struct _G2AnimSection_Type *sectio
 			// Start line: 223
 			// Start offset: 0x8009244C
 			// Variables:
-				struct _G2SVector3_Type *dest; // $a0
-				struct _G2SVector3_Type *base; // $v0
-				struct _G2SVector3_Type *offset; // $v1
-				long alpha; // $s5
+				//struct _G2SVector3_Type *dest; // $a0
+				//struct _G2SVector3_Type *base; // $v0
+				//struct _G2SVector3_Type *offset; // $v1
+				//long alpha; // $s5
 		/* end block 1.3 */
 		// End offset: 0x8009244C
 		// End Line: 223
@@ -142,9 +142,9 @@ void _G2AnimSection_InterpStateToQuat(struct _G2AnimSection_Type *section)
 			// Start line: 288
 			// Start offset: 0x80092610
 			// Variables:
-				struct _G2SVector3_Type *dest; // $v1
-				struct _G2SVector3_Type *offset; // $v0
-				long alpha; // $s1
+				//struct _G2SVector3_Type *dest; // $v1
+				//struct _G2SVector3_Type *offset; // $v0
+				//long alpha; // $s1
 		/* end block 1.2 */
 		// End offset: 0x80092610
 		// End Line: 288
@@ -153,9 +153,9 @@ void _G2AnimSection_InterpStateToQuat(struct _G2AnimSection_Type *section)
 			// Start line: 288
 			// Start offset: 0x80092610
 			// Variables:
-				struct _G2SVector3_Type *dest; // $v1
-				struct _G2SVector3_Type *offset; // $v0
-				long alpha; // $s1
+				//struct _G2SVector3_Type *dest; // $v1
+				//struct _G2SVector3_Type *offset; // $v0
+				//long alpha; // $s1
 		/* end block 1.3 */
 		// End offset: 0x80092610
 		// End Line: 288

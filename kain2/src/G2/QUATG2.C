@@ -18,6 +18,7 @@ BYTE byte_4F4BE0[] = { 1, 2, 0, 1, 0, 0, 0, 0, 0, 1, 2, 0, 0, 0, 0, 0 };
 // void /*$ra*/ G2EulerAngles_FromMatrix(struct _G2EulerAngles_Type *euler /*$s3*/, struct _G2Matrix_Type *matrix /*$s4*/, long order /*stack 8*/)
 void G2EulerAngles_FromMatrix(struct _G2EulerAngles_Type *euler, struct _G2Matrix_Type *matrix, long order)
 { // line 328, offset 0x80095f1c
+#if defined(PC_VERSION)
 	bool v3; // ecx
 	int v4; // esi
 	int v5; // edi
@@ -88,6 +89,7 @@ LABEL_9:
 		v7->z = x;
 	}
 	v7->order = order;
+#endif
 }
 
 

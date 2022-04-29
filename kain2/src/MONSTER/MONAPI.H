@@ -1,16 +1,11 @@
 #ifndef MONAPI_H
 #define MONAPI_H
 
+#include "MONSTER.H"
+
 #if defined(_LANGUAGE_C_PLUS_PLUS) || defined(__cplusplus) || defined(c_plusplus)
 extern "C" {
 #endif
-
-struct _MONAPI_Regenerator 
-{
-	unsigned long regenTime; // size=0, offset=0
-	short introUniqueID; // size=0, offset=4
-	short streamUnitID; // size=0, offset=6
-};
 
 extern void MonsterProcess(struct _Instance *instance, struct GameTracker *gameTracker); // 0x8007DA80
 extern void MonsterInit(struct _Instance *instance, struct GameTracker *gameTracker); // 0x8007DBB8

@@ -1,4 +1,4 @@
-#include "../core.h"
+#include "CORE.H"
 
 //0001:00000000       _ALUKA_ControllersEnabled  00401000 f   aluka.obj
 //0001:00000020       _ALUKA_SetPitch            00401020 f   aluka.obj
@@ -39,6 +39,7 @@
 
 void MON_Say(struct _Instance *instance, const char* fmt, ...)
 {
+#if defined(PC_VERSION)
 	va_list va;
 	char buf[256];
 
@@ -47,6 +48,7 @@ void MON_Say(struct _Instance *instance, const char* fmt, ...)
 	va_end(va);
 
 	OutputDebugStringA(buf);
+#endif
 }
 
 //0001:00002760       _ALUKA_CleanUp             00403760 f   aluka.obj
