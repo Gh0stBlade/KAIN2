@@ -1,4 +1,4 @@
-#include "../core.H"
+#include "CORE.H"
 #include "MONSTER.H"
 #include "HUMAN.H"
 
@@ -10,6 +10,7 @@ extern void MON_FleeEntry(struct _Instance* instance);
 // void /*$ra*/ HUMAN_WaitForWeapon(struct _Instance *instance /*$s0*/, struct GameTracker *gameTracker /*$a1*/)
 void HUMAN_WaitForWeapon(struct _Instance *instance, struct GameTracker *gameTracker)
 { // line 92, offset 0x8007cb40
+#if defined(PC_VERSION)
 	TDRFuncPtr_MONTABLE_GetInitFunc InitFunc; // eax
 	int flags; // ecx
 	int v4; // eax
@@ -26,6 +27,7 @@ void HUMAN_WaitForWeapon(struct _Instance *instance, struct GameTracker *gameTra
 		instance->flags2 = v4;
 		instance->processFunc = (void(*)())MonsterProcess;
 	}
+#endif
 }
 
 
