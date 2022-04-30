@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 3.0)
 
-project (SoulReaver)
+project ("Soul Reaver")
 
 macro(OPTIONAL_DEFINE DEFNAME DESCRIPTION VALUE)
 	set(${DEFNAME} ${VALUE})

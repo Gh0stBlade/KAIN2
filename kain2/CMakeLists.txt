@@ -73,6 +73,8 @@ ${GLEW_LIBRARY}
 ${OPENAL_LIBRARY}
 )
 
+add_dependencies(${PROJECT_NAME} ${EMULATOR_TARGET_NAME})
+
 if(MSVC)
 	set_target_properties(
 	${PROJECT_NAME}
