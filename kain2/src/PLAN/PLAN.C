@@ -1,4 +1,4 @@
-#include "THISDUST.H"
+#include "CORE.H"
 #include "PLAN.H"
 
 
@@ -81,7 +81,7 @@ void PLAN_UpdatePlayerNode(struct PlanningNode *planningPool, struct _Position *
 			struct PlanningNode *playerNode; // $s1
 			int nodePlacement; // stack offset -32
 			int foundHit; // $s0
-			struct _PlanCollideInfo pci; // stack offset -48
+			//struct _PlanCollideInfo pci; // stack offset -48
 
 		/* begin block 1.1 */
 			// Start line: 245
@@ -115,7 +115,7 @@ void PLAN_AddRandomNode(struct PlanningNode *planningPool, struct _Position *pla
 		// Start offset: 0x800975C4
 		// Variables:
 			int i; // $s2
-			struct _PlanCollideInfo pci; // stack offset -56
+			//struct _PlanCollideInfo pci; // stack offset -56
 			int successFlag; // $s4
 
 		/* begin block 1.1 */
@@ -236,7 +236,7 @@ void PLAN_AddInitialNodes(struct PlanningNode *planningPool, struct _Instance *p
 		// Start line: 373
 		// Start offset: 0x8009792C
 		// Variables:
-			struct _PlanCollideInfo pci; // stack offset -40
+			//struct _PlanCollideInfo pci; // stack offset -40
 
 		/* begin block 1.1 */
 			// Start line: 373

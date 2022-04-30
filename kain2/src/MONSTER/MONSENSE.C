@@ -1,4 +1,4 @@
-#include "THISDUST.H"
+#include "CORE.H"
 #include "MONSENSE.H"
 
 
@@ -6,6 +6,7 @@
 // struct _MonsterIR * /*$ra*/ MONSENSE_FindIR(struct _MonsterVars *mv /*$a0*/, struct _Instance *instance /*$a1*/)
 struct _MonsterIR * MONSENSE_FindIR(struct _MonsterVars *mv, struct _Instance *instance)
 { // line 64, offset 0x80085aa4
+#if defined(PC_VERSION)
 	struct _MonsterIR* mir; // eax
 
 	for (mir = mv->monsterIRList; mir; mir = mir->next)
@@ -14,6 +15,9 @@ struct _MonsterIR * MONSENSE_FindIR(struct _MonsterVars *mv, struct _Instance *i
 			break;
 	}
 	return mir;
+#else
+	return NULL;
+#endif
 }
 
 
@@ -45,7 +49,7 @@ int MONSENSE_See(struct _Instance *instance, struct evCollideInstanceStatsData *
 					// Start line: 118
 					// Start offset: 0x80085B88
 					// Variables:
-						struct evPhysicsLOSData losData; // stack offset -40
+						//struct evPhysicsLOSData losData; // stack offset -40
 
 					/* begin block 1.1.1.1.1 */
 						// Start line: 122
@@ -60,11 +64,11 @@ int MONSENSE_See(struct _Instance *instance, struct evCollideInstanceStatsData *
 						// Start line: 128
 						// Start offset: 0x80085BD4
 						// Variables:
-							short _x1; // $v1
-							short _y1; // $a0
-							short _z1; // $a1
-							struct _Position *_v0; // $v0
-							struct _Position *_v1; // $v0
+							//short _x1; // $v1
+							//short _y1; // $a0
+							//short _z1; // $a1
+							//struct _Position *_v0; // $v0
+							//struct _Position *_v1; // $v0
 					/* end block 1.1.1.1.2 */
 					// End offset: 0x80085BF0
 					// End Line: 128
@@ -73,7 +77,7 @@ int MONSENSE_See(struct _Instance *instance, struct evCollideInstanceStatsData *
 						// Start line: 132
 						// Start offset: 0x80085C00
 						// Variables:
-							struct MATRIX *mat; // $v1
+							//MATRIX *mat; // $v1
 					/* end block 1.1.1.1.3 */
 					// End offset: 0x80085C00
 					// End Line: 132
@@ -82,11 +86,11 @@ int MONSENSE_See(struct _Instance *instance, struct evCollideInstanceStatsData *
 						// Start line: 138
 						// Start offset: 0x80085C24
 						// Variables:
-							short _x1; // $v1
-							short _y1; // $a0
-							short _z1; // $a1
-							struct _Position *_v0; // $v0
-							struct _Position *_v1; // $v0
+							//short _x1; // $v1
+							//short _y1; // $a0
+							//short _z1; // $a1
+							//struct _Position *_v0; // $v0
+							//struct _Position *_v1; // $v0
 					/* end block 1.1.1.1.4 */
 					// End offset: 0x80085C44
 					// End Line: 138
@@ -167,6 +171,7 @@ int MONSENSE_Smell(struct _Instance *instance, struct evCollideInstanceStatsData
 // struct _MonsterIR * /*$ra*/ MONSENSE_FirstSense(struct _Instance *instance /*$s2*/, struct _Instance *sensed /*$s4*/)
 struct _MonsterIR * MONSENSE_FirstSense(struct _Instance *instance, struct _Instance *sensed)
 { // line 186, offset 0x80085d30
+#if defined(PC_VERSION)
 	struct _MonsterVars* mv; // edi
 	struct _MonsterIR* mir; // esi
 	unsigned int v5; // ebx
@@ -208,6 +213,9 @@ struct _MonsterIR * MONSENSE_FirstSense(struct _Instance *instance, struct _Inst
 			mir->mirFlags |= 4u;
 	}
 	return mir;
+#else
+	return NULL;
+#endif
 }
 
 
@@ -215,6 +223,7 @@ struct _MonsterIR * MONSENSE_FirstSense(struct _Instance *instance, struct _Inst
 // void /*$ra*/ MONSENSE_SetupMIR(struct _Instance *instance /*$s3*/, struct evCollideInstanceStatsData *data /*$s1*/, int flags /*$s2*/)
 void MONSENSE_SetupMIR(struct _Instance *instance, struct evCollideInstanceStatsData *data, int flags)
 { // line 233, offset 0x80085ed4
+#if defined(PC_VERSION)
 	struct _Instance* v3; // ecx
 	struct _MonsterVars* mv; // ebp MAPDST
 	struct _MonsterIR* mir; // esi
@@ -340,6 +349,7 @@ LABEL_10:
 			mir->mirFlags = v13;
 		}
 	}
+#endif
 }
 
 
@@ -603,7 +613,7 @@ void MONSENSE_Radar(struct _Instance *instance)
 			struct _MonsterVars *mv; // $s1
 			SVECTOR newPos; // stack offset -96
 			SVECTOR oldPos; // stack offset -88
-			struct _PCollideInfo pCollideInfo; // stack offset -80
+			//struct _PCollideInfo pCollideInfo; // stack offset -80
 			int index; // $s3
 	/* end block 1 */
 	// End offset: 0x80086DC0

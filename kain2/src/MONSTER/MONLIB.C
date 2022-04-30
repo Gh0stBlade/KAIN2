@@ -1,4 +1,4 @@
-#include "THISDUST.H"
+#include "CORE.H"
 #include "MONLIB.H"
 
 
@@ -6,6 +6,7 @@
 // void /*$ra*/ MON_TurnOffWeaponSpheres(struct _Instance *instance /*$s1*/)
 void MON_TurnOffWeaponSpheres(struct _Instance *instance)
 { // line 148, offset 0x8007f3e4
+#if defined(PC_VERSION)
 	struct _Instance* LinkChild; // esi
 	struct _MonsterVars* mv; // ebp
 	struct _HModel* hmodel; // eax
@@ -27,6 +28,7 @@ void MON_TurnOffWeaponSpheres(struct _Instance *instance)
 		}
 		mv->mvFlags &= ~0x4000;
 	}
+#endif
 }
 
 
@@ -210,6 +212,7 @@ void MON_TurnOnAllSpheres(struct _Instance *instance)
 // void /*$ra*/ MON_SwitchState(struct _Instance *instance /*$s2*/, enum MonsterState state /*$s1*/)
 void MON_SwitchState(struct _Instance *instance, enum MonsterState state)
 { // line 318, offset 0x8007f850
+#if defined(PC_VERSION)
 	struct _MonsterVars* mv; // edi
 	struct _Instance* i; // esi
 	struct _HModel* v4; // eax
@@ -261,6 +264,7 @@ void MON_SwitchState(struct _Instance *instance, enum MonsterState state)
 		ENMYPLAN_ReleasePlanningWorkspace(pathSlotID);
 		mv->pathSlotID = -1;
 	}
+#endif
 }
 
 
@@ -268,6 +272,7 @@ void MON_SwitchState(struct _Instance *instance, enum MonsterState state)
 // void /*$ra*/ MON_SwitchStateDoEntry(struct _Instance *instance /*$s1*/, enum MonsterState state /*$a1*/)
 void MON_SwitchStateDoEntry(struct _Instance *instance, enum MonsterState state)
 { // line 360, offset 0x8007f94c
+#if defined(PC_VERSION)
 	struct _MonsterVars* mv; // edi
 	struct _MonsterState* StateFuncs; // eax
 	unsigned int mvFlags; // eax
@@ -280,6 +285,7 @@ void MON_SwitchStateDoEntry(struct _Instance *instance, enum MonsterState state)
 		((void(__cdecl*)(struct _Instance*))StateFuncs->entryFunction)(instance);
 		mv->mvFlags &= ~1;
 	}
+#endif
 }
 
 
@@ -287,7 +293,11 @@ void MON_SwitchStateDoEntry(struct _Instance *instance, enum MonsterState state)
 // int /*$ra*/ MON_TransNodeAnimation(struct _Instance *instance /*$a0*/)
 int MON_TransNodeAnimation(struct _Instance *instance)
 { // line 388, offset 0x8007f9b4
+#if defined(PC_VERSION)
 	return G2Anim_SegmentHasActiveChannels(&instance->anim, 0, 0x700);
+#else
+	return 0;
+#endif
 }
 
 
@@ -295,6 +305,7 @@ int MON_TransNodeAnimation(struct _Instance *instance)
 // struct _MonsterAnim * /*$ra*/ MON_GetAnim(struct _Instance *instance /*$a0*/, char *animList /*$a1*/, int index /*$a2*/)
 struct _MonsterAnim * MON_GetAnim(struct _Instance *instance, char *animList, int index)
 { // line 397, offset 0x8007f9dc
+#if defined(PC_VERSION)
 	int whichAnim; // ecx
 
 	whichAnim = animList[index];
@@ -302,6 +313,9 @@ struct _MonsterAnim * MON_GetAnim(struct _Instance *instance, char *animList, in
 		return 0;
 	else
 		return (struct _MonsterAnim*)(16 * whichAnim + *((DWORD*)instance->data + 16));
+#else
+	return 0;
+#endif
 }
 
 
@@ -309,6 +323,7 @@ struct _MonsterAnim * MON_GetAnim(struct _Instance *instance, char *animList, in
 // void /*$ra*/ MON_PlayAnimID(struct _Instance *instance /*$s3*/, int index /*$a1*/, int mode /*$fp*/)
 void MON_PlayAnimID(struct _Instance *instance, int index, int mode)
 { // line 409, offset 0x8007fa10
+#if defined(PC_VERSION)
 	struct _MonsterVars* mv; // ebp
 	struct _MonsterAnim* manim; // edi
 	int anims; // eax
@@ -366,6 +381,7 @@ void MON_PlayAnimID(struct _Instance *instance, int index, int mode)
 	mv->mvFlags = v10;
 	instance->anim.section[manim->controllingSection].callback = (int(__stdcall*)())MON_AnimCallback;
 	instance->anim.section[manim->controllingSection].callbackData = instance;
+#endif
 }
 
 
@@ -373,7 +389,9 @@ void MON_PlayAnimID(struct _Instance *instance, int index, int mode)
 // void /*$ra*/ MON_PlayAnimFromList(struct _Instance *instance /*$a0*/, char *animList /*$a1*/, int animtype /*$a2*/, int mode /*$a3*/)
 void MON_PlayAnimFromList(struct _Instance *instance, char *animList, int animtype, int mode)
 { // line 470, offset 0x8007fbc8
+#if defined(PC_VERSION)
 	MON_PlayAnimID(instance, animList[animtype], mode);
+#endif
 }
 
 
@@ -381,8 +399,12 @@ void MON_PlayAnimFromList(struct _Instance *instance, char *animList, int animty
 // int /*$ra*/ MON_AnimIDPlaying(struct _Instance *instance /*$a0*/, int index /*$a1*/)
 int MON_AnimIDPlaying(struct _Instance *instance, int index)
 { // line 475, offset 0x8007fbf0
+#if defined(PC_VERSION)
 	struct _MonsterAttributes *ma; // $v0
 	return *((DWORD*)instance->extraData + 47) == 16 * index + *((DWORD*)instance->data + 16);
+#else
+	return 0;
+#endif
 }
 
 
@@ -390,8 +412,10 @@ int MON_AnimIDPlaying(struct _Instance *instance, int index)
 // void /*$ra*/ MON_PlayAnimIDIfNotPlaying(struct _Instance *instance /*$s0*/, int index /*$s1*/, int mode /*$s2*/)
 void MON_PlayAnimIDIfNotPlaying(struct _Instance *instance, int index, int mode)
 { // line 482, offset 0x8007fc14
+#if defined(PC_VERSION)
 	if (*((DWORD*)instance->extraData + 47) != 16 * index + *((DWORD*)instance->data + 16))
 		MON_PlayAnimID(instance, index, mode);
+#endif
 }
 
 
@@ -399,7 +423,11 @@ void MON_PlayAnimIDIfNotPlaying(struct _Instance *instance, int index, int mode)
 // int /*$ra*/ MON_AnimPlayingFromList(struct _Instance *instance /*$a0*/, char *animList /*$a1*/, int animtype /*$a2*/)
 int MON_AnimPlayingFromList(struct _Instance *instance, char *animList, int animtype)
 { // line 491, offset 0x8007fc64
+#if defined(PC_VERSION)
 	return *((DWORD*)instance->extraData + 47) == *((DWORD*)instance->data + 16) + 16 * animList[animtype];
+#else
+	return 0;
+#endif
 }
 
 
@@ -840,7 +868,7 @@ int MON_ChooseCombatMove(struct _Instance *instance, int reason)
 				// Variables:
 					struct _Position temp; // stack offset -56
 					SVECTOR New; // stack offset -48
-					struct VECTOR OutTrans; // stack offset -40
+					VECTOR OutTrans; // stack offset -40
 			/* end block 1.2.1 */
 			// End offset: 0x800809E0
 			// End Line: 1148
@@ -942,7 +970,7 @@ int MON_GetRandomDestinationInWorld(struct _Instance *instance, struct _Position
 			// Start offset: 0x80080DA0
 			// Variables:
 				struct _MonsterVars *mv; // $s1
-				struct evPhysicsLOSData data; // stack offset -48
+				//struct evPhysicsLOSData data; // stack offset -48
 				int result; // $s0
 				int avoidEnemy; // $s3
 
@@ -1037,7 +1065,7 @@ int MON_OnGround(struct _Instance *instance)
 		// Start offset: 0x80081058
 		// Variables:
 			struct _MonsterVars *mv; // $s1
-			struct evPhysicsGravityData data; // stack offset -32
+			//struct evPhysicsGravityData data; // stack offset -32
 			int minUpper; // $v1
 			long xyDist; // $a1
 	/* end block 1 */
@@ -1069,6 +1097,7 @@ void MON_ApplyPhysics(struct _Instance *instance)
 // void /*$ra*/ MON_ChangeBehavior(struct _Instance *instance /*$a0*/, int behavior /*$s0*/)
 void MON_ChangeBehavior(struct _Instance *instance, int behavior)
 { // line 1559, offset 0x8008116c
+#if defined(PC_VERSION)
 	struct _MonsterVars* extraData; // ebp
 	enum MonsterState v3; // esi
 
@@ -1098,6 +1127,7 @@ void MON_ChangeBehavior(struct _Instance *instance, int behavior)
 		MON_SwitchState(instance, v3);
 		extraData->behaviorState = behavior;
 	}
+#endif
 }
 
 
@@ -1126,7 +1156,7 @@ void MON_CheckEnvironment(struct _Instance *instance)
 				// Start offset: 0x800813D4
 				// Variables:
 					int offset; // $a1
-					int result; // $v0
+					//int result; // $v0
 					struct _Position pos; // stack offset -32
 			/* end block 1.1.1 */
 			// End offset: 0x8008147C
@@ -1136,8 +1166,8 @@ void MON_CheckEnvironment(struct _Instance *instance)
 				// Start line: 1696
 				// Start offset: 0x800814B8
 				// Variables:
-					int result; // $v0
-					int offset; // $a1
+					//int result; // $v0
+					//int offset; // $a1
 			/* end block 1.1.2 */
 			// End offset: 0x80081518
 			// End Line: 1712
@@ -1146,7 +1176,7 @@ void MON_CheckEnvironment(struct _Instance *instance)
 				// Start line: 1719
 				// Start offset: 0x80081520
 				// Variables:
-					int result; // $v1
+					//int result; // $v1
 			/* end block 1.1.3 */
 			// End offset: 0x8008157C
 			// End Line: 1749
@@ -1301,7 +1331,7 @@ void MON_BirthSoul(struct _Instance *instance, int link)
 			// Start line: 1996
 			// Start offset: 0x80081990
 			// Variables:
-				struct _Instance *isoul; // $a0
+				//struct _Instance *isoul; // $a0
 		/* end block 1.2 */
 		// End offset: 0x800819E0
 		// End Line: 2010
@@ -1363,7 +1393,7 @@ void MON_ProcessIntro(struct _Instance *instance)
 				// Start line: 2117
 				// Start offset: 0x80081D64
 				// Variables:
-					int i; // $a0
+					//int i; // $a0
 					short *unit; // $a1
 			/* end block 1.1.2 */
 			// End offset: 0x80081D9C
@@ -1544,6 +1574,7 @@ void MON_DisableHeadMove(struct _Instance *instance)
 // void /*$ra*/ MON_LookInDirection(struct _Instance *instance /*$a0*/, short tx /*$a1*/, short tz /*$a2*/)
 void MON_LookInDirection(struct _Instance *instance, short tx, short tz)
 { // line 2447, offset 0x800825b0
+#if defined(PC_VERSION)
 	struct _MonsterAttributes* ma; // ebp
 	uchar v4; // al
 	struct _G2SVector3_Type rot; // [esp+10h] [ebp-8h] BYREF
@@ -1574,6 +1605,7 @@ void MON_LookInDirection(struct _Instance *instance, short tx, short tz)
 			}
 		}
 	}
+#endif
 }
 
 
@@ -1581,6 +1613,7 @@ void MON_LookInDirection(struct _Instance *instance, short tx, short tz)
 // void /*$ra*/ MON_LookAtPos(struct _Instance *instance /*$s1*/, struct _Position *position /*$a1*/)
 void MON_LookAtPos(struct _Instance *instance, struct _Position *position)
 { // line 2478, offset 0x80082724
+#if defined(PC_VERSION)
 	struct _MonsterVars* mv; // esi
 	__int16 v3; // ax
 	__int16 v4; // ax
@@ -1623,6 +1656,7 @@ void MON_LookAtPos(struct _Instance *instance, struct _Position *position)
 	z = mv->lookAngleZ;
 	mv->lookAngleX = 0;
 	MON_LookInDirection(instance, 0, z);
+#endif
 }
 
 
@@ -1630,6 +1664,7 @@ void MON_LookAtPos(struct _Instance *instance, struct _Position *position)
 // void /*$ra*/ MON_ProcessLookAt(struct _Instance *instance /*$s1*/)
 void MON_ProcessLookAt(struct _Instance *instance)
 { // line 2511, offset 0x80082800
+#if defined(PC_VERSION)
 	struct _MonsterVars* mv; // ebp
 	struct _MonsterAttributes* v2; // edi
 	struct _MonsterAttributes* ma; // edi
@@ -1700,6 +1735,7 @@ void MON_ProcessLookAt(struct _Instance *instance)
 			MON_LookAtPos(instance, &mv->lookAtPosData);
 		}
 	}
+#endif
 }
 
 
@@ -1707,6 +1743,7 @@ void MON_ProcessLookAt(struct _Instance *instance)
 // int /*$ra*/ MON_TakeDamage(struct _Instance *instance /*$a0*/, int damage /*$s2*/, int type /*$s1*/)
 int MON_TakeDamage(struct _Instance *instance, int damage, int type)
 { // line 2545, offset 0x800828f4
+#if defined(PC_VERSION)
 	struct _MonsterVars* mv; // esi
 	struct _MonsterCombatAttributes* combatAttributes; // eax
 	char v5; // al
@@ -1740,6 +1777,9 @@ int MON_TakeDamage(struct _Instance *instance, int damage, int type)
 		MON_Say();
 	}
 	return 1;
+#else
+	return 0;
+#endif
 }
 
 
@@ -1747,6 +1787,7 @@ int MON_TakeDamage(struct _Instance *instance, int damage, int type)
 // void /*$ra*/ MON_SetUpSaveInfo(struct _Instance *instance /*$t0*/, struct _MonsterSaveInfo *saveData /*$a3*/)
 void MON_SetUpSaveInfo(struct _Instance *instance, struct _MonsterSaveInfo *saveData)
 { // line 2582, offset 0x800829a0
+#if defined(PC_VERSION)
 	struct _MonsterVars* mv; // ecx
 	struct _MonsterAttributes* ma; // ebp
 	unsigned int v4; // esi
@@ -1786,6 +1827,7 @@ void MON_SetUpSaveInfo(struct _Instance *instance, struct _MonsterSaveInfo *save
 	}
 	if ((gameTrackerX.debugFlags2 & 1) != 0)
 		MON_Say();
+#endif
 }
 
 
@@ -1793,6 +1835,7 @@ void MON_SetUpSaveInfo(struct _Instance *instance, struct _MonsterSaveInfo *save
 // void /*$ra*/ MON_GetSaveInfo(struct _Instance *instance /*$s1*/, struct _MonsterSaveInfo *saveData /*$s2*/)
 void MON_GetSaveInfo(struct _Instance *instance, struct _MonsterSaveInfo *saveData)
 { // line 2616, offset 0x80082b0c
+#if defined(PC_VERSION)
 	struct _MonsterAttributes* ma; // ebx
 	struct _MonsterVars* mv; // esi
 	unsigned __int8 v4; // al
@@ -1919,6 +1962,7 @@ LABEL_20:
 		else
 			MON_PlayAnimID(instance, v21, v22);
 	}
+#endif
 }
 
 
@@ -1926,6 +1970,7 @@ LABEL_20:
 // void /*$ra*/ MON_KillMonster(struct _Instance *instance /*$s5*/)
 void MON_KillMonster(struct _Instance *instance)
 { // line 2694, offset 0x80082d50
+#if defined(PC_VERSION)
 	struct _Instance* LinkChild; // esi
 	struct _Instance* LinkSibling; // ebp
 	struct Intro* intro; // eax
@@ -2001,6 +2046,7 @@ void MON_KillMonster(struct _Instance *instance)
 	flags = instance->flags;
 	flags = flags | 0x20;
 	instance->flags = flags;
+#endif
 }
 
 
@@ -2008,6 +2054,7 @@ void MON_KillMonster(struct _Instance *instance)
 // int /*$ra*/ MON_ShouldIAmbushEnemy(struct _Instance *instance /*$s3*/)
 int MON_ShouldIAmbushEnemy(struct _Instance *instance)
 { // line 2755, offset 0x80082f28
+#if defined(PC_VERSION)
 	struct _MonsterVars* mv; // esi
 	int birthStreamUnitID; // eax
 	struct _MonsterIR* enemy; // ebx
@@ -2048,6 +2095,9 @@ int MON_ShouldIAmbushEnemy(struct _Instance *instance)
 		return MATH3D_ConeDetect(&enemy->relativePosition, arc, mv->ambushElevation);
 	else
 		return 0;
+#else
+	return 0;
+#endif
 }
 
 
@@ -2110,6 +2160,7 @@ int MON_ShouldIFireAtTarget(struct _Instance *instance, struct _MonsterIR *targe
 // int /*$ra*/ MON_ShouldIFlee(struct _Instance *instance /*$a0*/)
 int MON_ShouldIFlee(struct _Instance *instance)
 { // line 2847, offset 0x80083184
+#if defined(PC_VERSION)
 	struct _MonsterVars* mv; // edx
 	struct _MonsterIR* enemy; // eax
 	__int16 v3; // ax
@@ -2142,6 +2193,9 @@ int MON_ShouldIFlee(struct _Instance *instance)
 			return 1;
 	}
 	return (mv->mvFlags & 0x2000) != 0 && !mv->hitPoints;
+#else
+	return 0;
+#endif
 }
 
 
@@ -2149,6 +2203,7 @@ int MON_ShouldIFlee(struct _Instance *instance)
 // void /*$ra*/ MON_RelocateCoords(struct _Instance *instance /*$a0*/, struct _SVector *offset /*$t0*/)
 void MON_RelocateCoords(struct _Instance *instance, struct _SVector *offset)
 { // line 2877, offset 0x80083284
+#if defined(PC_VERSION)
 	__int16 x; // dx
 	__int16 y; // si
 	__int16 z; // di
@@ -2168,6 +2223,7 @@ void MON_RelocateCoords(struct _Instance *instance, struct _SVector *offset)
 	v6 = mv->pathSlotID;
 	if (v6 != -1)
 		ENMYPLAN_RelocatePlanPositions(v6, offset);
+#endif
 }
 
 
@@ -2175,6 +2231,7 @@ void MON_RelocateCoords(struct _Instance *instance, struct _SVector *offset)
 // int /*$ra*/ MON_ValidUnit(struct _Instance *instance /*$a0*/, unsigned long unitId /*$a1*/)
 int MON_ValidUnit(struct _Instance *instance, unsigned long unitId)
 { // line 2901, offset 0x80083310
+#if defined(PC_VERSION)
 	struct _MonsterVars* extraData; // ecx
 	__int16 v3; // ax
 	__int16* validUnits; // ecx
@@ -2192,6 +2249,9 @@ int MON_ValidUnit(struct _Instance *instance, unsigned long unitId)
 			return 0;
 	}
 	return 1;
+#else
+	return 0;
+#endif
 }
 
 
@@ -2199,6 +2259,7 @@ int MON_ValidUnit(struct _Instance *instance, unsigned long unitId)
 // int /*$ra*/ MON_ValidPosition(struct _Instance *instance /*$s0*/)
 int MON_ValidPosition(struct _Instance *instance)
 { // line 2923, offset 0x8008335c
+#if defined(PC_VERSION)
 	struct _MonsterVars* mv; // esi
 	__int16 v2; // ax
 	__int16* validUnits; // ecx
@@ -2218,17 +2279,22 @@ int MON_ValidPosition(struct _Instance *instance)
 	}
 	mv->lastValidPos = instance->position;
 	return 1;
+#else
+	return 0;
+#endif
 }
 
 
 // autogenerated function stub: 
 // void /*$ra*/ MON_SphereWorldPos(struct MATRIX *mat /*$s1*/, struct _HSphere *sphere /*$a1*/, struct _Position *ret /*$s0*/)
-void MON_SphereWorldPos(struct MATRIX *mat, struct _HSphere *sphere, struct _Position *ret)
+void MON_SphereWorldPos(MATRIX *mat, struct _HSphere *sphere, struct _Position *ret)
 { // line 2936, offset 0x800833b4
+#if defined(PC_VERSION)
 	ApplyMatrixSV(mat, (SVECTOR*)&sphere->position, (SVECTOR*)ret);
 	ret->x += mat->t[0];
 	ret->y += mat->t[1];
 	ret->z += mat->t[2];
+#endif
 }
 
 
@@ -2236,6 +2302,7 @@ void MON_SphereWorldPos(struct MATRIX *mat, struct _HSphere *sphere, struct _Pos
 // struct _HPrim * /*$ra*/ MON_FindSphereForTerrain(struct _Instance *instance /*$a0*/)
 struct _HPrim * MON_FindSphereForTerrain(struct _Instance *instance)
 { // line 2945, offset 0x80083424
+#if defined(PC_VERSION)
 	struct _HPrim* usePrim; // eax
 	struct _HModel* hmodel; // ecx
 	int radius; // edi
@@ -2268,6 +2335,9 @@ struct _HPrim * MON_FindSphereForTerrain(struct _Instance *instance)
 		}
 	}
 	return usePrim;
+#else
+	return NULL;
+#endif
 }
 
 
@@ -2346,9 +2416,9 @@ void MON_MoveInstanceToImpalePoint(struct _Instance *instance)
 				short _y0; // $v1
 				short _z0; // $a2
 				short _y1; // $t0
-				short _z1; // $t2
+				//short _z1; // $t2
 				struct _Position *_v; // $a3
-				struct _Position *_v1; // $a1
+				//struct _Position *_v1; // $a1
 		/* end block 1.1 */
 		// End offset: 0x80083718
 		// End Line: 3097
@@ -2358,10 +2428,10 @@ void MON_MoveInstanceToImpalePoint(struct _Instance *instance)
 			// Start offset: 0x80083718
 			// Variables:
 				short _x1; // $v1
-				short _y1; // $a2
-				short _z1; // $a3
+				//short _y1; // $a2
+				//short _z1; // $a3
 				struct _Rotation *_v0; // $v0
-				struct _Rotation *_v1; // $v0
+				//struct _Rotation *_v1; // $v0
 		/* end block 1.2 */
 		// End offset: 0x80083718
 		// End Line: 3097

@@ -1,6 +1,8 @@
 #ifndef GLYPH_H
 #define GLYPH_H
 
+#include "MONSTER/MONSTER.H"
+
 struct GLYPH_114fake // hashcode: 0x249332FF (dec: 613626623)
 {
 	struct {
@@ -31,19 +33,6 @@ struct GLYPH_114fake // hashcode: 0x249332FF (dec: 613626623)
 		struct _TFace* oldTFace; // size=12, offset=12
 		long hit; // size=0, offset=16
 	} Follow; // size=20, offset=76, found in object files: glyph.o, glyph.o
-};
-
-struct __Event 
-{
-	int ID; // size=0, offset=0
-	int Data; // size=0, offset=4
-};
-
-struct __MessageQueue 
-{
-	int Head; // size=0, offset=0
-	int Tail; // size=0, offset=4
-	struct __Event Queue[16]; // size=128, offset=8
 };
 
 struct __GlyphData // hashcode: 0x9C88C1F1 (dec: -1668759055)

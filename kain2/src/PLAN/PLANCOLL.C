@@ -1,4 +1,4 @@
-#include "THISDUST.H"
+#include "CORE.H"
 #include "PLANCOLL.H"
 
 
@@ -10,7 +10,7 @@ int PLANCOLL_DoesLOSExistFinal(struct _Position *startPos, struct _Position *end
 		// Start line: 76
 		// Start offset: 0x80098B14
 		// Variables:
-			struct _PCollideInfo pcollideinfo; // stack offset -72
+			//struct _PCollideInfo pcollideinfo; // stack offset -72
 			SVECTOR startPt; // stack offset -24
 			SVECTOR endPt; // stack offset -16
 
@@ -30,10 +30,10 @@ int PLANCOLL_DoesLOSExistFinal(struct _Position *startPos, struct _Position *end
 			// Start line: 76
 			// Start offset: 0x80098B14
 			// Variables:
-				short _x1; // $v0
-				short _y1; // $a0
-				short _z1; // $a1
-				struct _Position *_v0; // $v0
+				//short _x1; // $v0
+				//short _y1; // $a0
+				//short _z1; // $a1
+				//struct _Position *_v0; // $v0
 		/* end block 1.2 */
 		// End offset: 0x80098B14
 		// End Line: 76
@@ -98,7 +98,7 @@ int PLANCOLL_FindTerrainHitFinal(struct _PlanCollideInfo *pci, int *placement, i
 		// Start line: 163
 		// Start offset: 0x80098D84
 		// Variables:
-			struct _PCollideInfo pcollideinfo; // stack offset -120
+			//struct _PCollideInfo pcollideinfo; // stack offset -120
 			struct _fth *current; // $s1
 			struct _fth *last; // $s6
 			SVECTOR startPt; // stack offset -72
@@ -122,10 +122,10 @@ int PLANCOLL_FindTerrainHitFinal(struct _PlanCollideInfo *pci, int *placement, i
 			// Start line: 180
 			// Start offset: 0x80098E18
 			// Variables:
-				short _x1; // $a1
-				short _y1; // $v0
-				short _z1; // $v1
-				struct _Position *_v0; // $s3
+				//short _x1; // $a1
+				//short _y1; // $v0
+				//short _z1; // $v1
+				//struct _Position *_v0; // $s3
 		/* end block 1.2 */
 		// End offset: 0x80098E18
 		// End Line: 180
@@ -134,8 +134,8 @@ int PLANCOLL_FindTerrainHitFinal(struct _PlanCollideInfo *pci, int *placement, i
 			// Start line: 201
 			// Start offset: 0x80098FD4
 			// Variables:
-				short _y1; // $v1
-				short _z1; // $a0
+				//short _y1; // $v1
+				//short _z1; // $a0
 		/* end block 1.3 */
 		// End offset: 0x80098FD4
 		// End Line: 201

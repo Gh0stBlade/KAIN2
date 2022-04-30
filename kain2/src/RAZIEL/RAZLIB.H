@@ -3,19 +3,7 @@
 
 #include "CORE.H"
 #include "INSTANCE.H"
-
-struct __Event 
-{
-	int ID; // size=0, offset=0
-	int Data; // size=0, offset=4
-};
-
-struct __MessageQueue 
-{
-	int Head; // size=0, offset=0
-	int Tail; // size=0, offset=4
-	struct __Event Queue[16]; // size=128, offset=8
-};
+#include "MONSTER/MONSTER.H"
 
 struct __EngagedInstance 
 {
@@ -39,15 +27,6 @@ struct __SensoryData
 	unsigned long EngagedMask; // size=0, offset=64
 	struct _Vector lookAtPoint; // size=12, offset=68
 	unsigned long heldClass; // size=0, offset=80
-};
-
-struct __State 
-{
-	void* Process(); // size=0, offset=0
-	struct __MessageQueue Event; // size=136, offset=4
-	struct __MessageQueue Defer; // size=136, offset=140
-	int Data1; // size=0, offset=276
-	int Data2; // size=0, offset=280
 };
 
 struct __CharacterState 

@@ -303,9 +303,7 @@ struct _StreamUnit * LoadLevels(char *baseAreaName, struct GameTracker *gameTrac
 	
 	if (streamUnit->used == 1)
 	{
-		Emulator_SaveVRAM("DEBUG.TGA", 0, 0, 1024, 512, 1);
 		DRAW_LoadingMessage();
-		Emulator_SaveVRAM("DEBUG2.TGA", 0, 0, 1024, 512, 1);
 		while (streamUnit->used == 1)
 		{
 			GAMELOOP_WaitForLoad();

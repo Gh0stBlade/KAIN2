@@ -1,4 +1,4 @@
-#include "THISDUST.H"
+#include "CORE.H"
 #include "ATTACK.H"
 
 
@@ -84,9 +84,9 @@ void StateHandlerAttack2(struct __CharacterState *In, int CurrentSection, int Da
 			// Start line: 406
 			// Start offset: 0x8009C750
 			// Variables:
-				struct _Instance *inst; // $s0
-				unsigned long startColor; // $s2
-				unsigned long endColor; // $s1
+				//struct _Instance *inst; // $s0
+				//unsigned long startColor; // $s2
+				//unsigned long endColor; // $s1
 		/* end block 1.3 */
 		// End offset: 0x8009C834
 		// End Line: 438
@@ -175,7 +175,7 @@ void StateHandlerCannedReaction(struct __CharacterState *In, int CurrentSection,
 			// Start line: 707
 			// Start offset: 0x8009D11C
 			// Variables:
-				struct _Instance *Inst; // $s0
+				//struct _Instance *Inst; // $s0
 		/* end block 1.2 */
 		// End offset: 0x8009D18C
 		// End Line: 724
@@ -214,7 +214,7 @@ void StateHandlerStumble(struct __CharacterState *In, int CurrentSection, int Da
 			// Start line: 831
 			// Start offset: 0x8009D554
 			// Variables:
-				struct evMonsterHitData *data; // $v0
+				//struct evMonsterHitData *data; // $v0
 		/* end block 1.2 */
 		// End offset: 0x8009D554
 		// End Line: 832
@@ -322,9 +322,9 @@ void StateHandlerThrow2(struct __CharacterState *In, int CurrentSection, int Dat
 			// Start line: 1361
 			// Start offset: 0x8009E320
 			// Variables:
-				struct _Position To; // stack offset -64
-				struct _Rotation Rot; // stack offset -48
-				struct MATRIX *matrix; // $v0
+				//struct _Position To; // stack offset -64
+				//struct _Rotation Rot; // stack offset -48
+				//struct MATRIX *matrix; // $v0
 		/* end block 1.3 */
 		// End offset: 0x8009E364
 		// End Line: 1371
@@ -350,8 +350,8 @@ void PointAt(struct _Instance *instance, struct _Position *Target, struct _Rotat
 		// Variables:
 			struct _Position From; // stack offset -48
 			SVECTOR v1; // stack offset -40
-			struct VECTOR v3; // stack offset -32
-			struct MATRIX *tempMat; // $a0
+			VECTOR v3; // stack offset -32
+			MATRIX *tempMat; // $a0
 	/* end block 1 */
 	// End offset: 0x8009E47C
 	// End Line: 1428
@@ -377,10 +377,10 @@ void ThrowSetFocusPoint(struct _Instance *instance, struct _Rotation *rot)
 		// Start line: 1434
 		// Start offset: 0x8009E4B0
 		// Variables:
-			struct MATRIX *pTempMat; // $s0
+			MATRIX *pTempMat; // $s0
 			struct _Instance *weaponInstance; // $s1
 			SVECTOR v1; // stack offset -48
-			struct VECTOR v4; // stack offset -40
+			VECTOR v4; // stack offset -40
 	/* end block 1 */
 	// End offset: 0x8009E5D0
 	// End Line: 1480
@@ -429,7 +429,7 @@ void StateHandlerGrab(struct __CharacterState *In, int CurrentSection, int Data)
 			// Start line: 1612
 			// Start offset: 0x8009EA70
 			// Variables:
-				struct _Instance *Inst; // $s0
+				//struct _Instance *Inst; // $s0
 		/* end block 1.2 */
 		// End offset: 0x8009EA8C
 		// End Line: 1631
@@ -438,7 +438,7 @@ void StateHandlerGrab(struct __CharacterState *In, int CurrentSection, int Data)
 			// Start line: 1718
 			// Start offset: 0x8009EC64
 			// Variables:
-				struct _Instance *Inst; // $s0
+				//struct _Instance *Inst; // $s0
 		/* end block 1.3 */
 		// End offset: 0x8009ED24
 		// End Line: 1751
@@ -447,7 +447,7 @@ void StateHandlerGrab(struct __CharacterState *In, int CurrentSection, int Data)
 			// Start line: 1758
 			// Start offset: 0x8009ED3C
 			// Variables:
-				struct _Instance *Inst; // $s0
+				//struct _Instance *Inst; // $s0
 		/* end block 1.4 */
 		// End offset: 0x8009ED9C
 		// End Line: 1771
@@ -456,7 +456,7 @@ void StateHandlerGrab(struct __CharacterState *In, int CurrentSection, int Data)
 			// Start line: 1778
 			// Start offset: 0x8009EDFC
 			// Variables:
-				struct _Instance *Inst; // $s0
+				//struct _Instance *Inst; // $s0
 		/* end block 1.5 */
 		// End offset: 0x8009EE5C
 		// End Line: 1793

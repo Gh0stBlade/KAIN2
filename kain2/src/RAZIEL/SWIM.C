@@ -1,4 +1,4 @@
-#include "THISDUST.H"
+#include "CORE.H"
 #include "SWIM.H"
 
 
@@ -71,7 +71,7 @@ void StateHandlerSwimTread(struct __CharacterState *In, int CurrentSection, int 
 			// Start line: 448
 			// Start offset: 0x8009FDAC
 			// Variables:
-				struct evMonsterHitData *data; // $v1
+				//struct evMonsterHitData *data; // $v1
 		/* end block 1.2 */
 		// End offset: 0x8009FDCC
 		// End Line: 453

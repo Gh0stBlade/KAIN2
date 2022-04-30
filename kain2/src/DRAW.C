@@ -621,7 +621,6 @@ void DRAW_LoadingMessage()
 
 #if defined(PSX_VERSION)
 #if defined(USE_32_BIT_ADDR)
-	Emulator_SaveVRAM("CLEAR.TGA", 0, 0, 1024, 512, 1);
 	DrawOTag((unsigned long*)drawot + 3071 * 2);
 #else
 	DrawOTag((unsigned long*)drawot + 3071);
@@ -631,7 +630,6 @@ void DRAW_LoadingMessage()
 	DrawSync(0);
 	ClearOTagR((unsigned long*)drawot, 3072);
 	PutDrawEnv(&draw[gameTrackerX.drawPage]);
-	Emulator_SaveVRAM("CLEAR.TGA", 0, 0, 1024, 512, 1);
 	VSyncCallback(VblTick);
 	DrawSyncCallback(DrawCallback);
 }

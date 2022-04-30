@@ -1,6 +1,8 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
+#include "MONSTER/MONSTER.H"
+
 struct __CharacterState // hashcode: 0x6C0823BB (dec: 1812472763)
 {
 	struct _Instance* CharacterInstance; // size=616, offset=0

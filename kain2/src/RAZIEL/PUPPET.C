@@ -1,4 +1,4 @@
-#include "THISDUST.H"
+#include "CORE.H"
 #include "PUPPET.H"
 
 
@@ -25,7 +25,7 @@ void StateHandlerPuppetShow(struct __CharacterState *In, int CurrentSection, int
 			// Start line: 53
 			// Start offset: 0x8009ABB8
 			// Variables:
-				struct evAnimationInstanceSwitchData *data; // $v1
+				//struct evAnimationInstanceSwitchData *data; // $v1
 		/* end block 1.2 */
 		// End offset: 0x8009ABB8
 		// End Line: 55
@@ -34,7 +34,7 @@ void StateHandlerPuppetShow(struct __CharacterState *In, int CurrentSection, int
 			// Start line: 67
 			// Start offset: 0x8009AC34
 			// Variables:
-				struct evPositionData *data; // $v0
+				//struct evPositionData *data; // $v0
 		/* end block 1.3 */
 		// End offset: 0x8009AC34
 		// End Line: 67
@@ -43,7 +43,7 @@ void StateHandlerPuppetShow(struct __CharacterState *In, int CurrentSection, int
 			// Start line: 78
 			// Start offset: 0x8009AC78
 			// Variables:
-				struct evPositionData *data; // $v0
+				//struct evPositionData *data; // $v0
 
 			/* begin block 1.4.1 */
 				// Start line: 78
@@ -109,15 +109,15 @@ void StateHandlerMoveToPosition(struct __CharacterState *In, int CurrentSection,
 			// Start line: 134
 			// Start offset: 0x8009AEC8
 			// Variables:
-				struct evPositionData *moveToPoint; // $v0
+				//struct evPositionData *moveToPoint; // $v0
 
 			/* begin block 1.2.1 */
 				// Start line: 136
 				// Start offset: 0x8009AEC8
 				// Variables:
-					short _x1; // $v1
-					short _y1; // $a0
-					short _z1; // $v0
+					//short _x1; // $v1
+					//short _y1; // $a0
+					//short _z1; // $v0
 			/* end block 1.2.1 */
 			// End offset: 0x8009AEC8
 			// End Line: 136
@@ -159,7 +159,7 @@ void DefaultPuppetStateHandler(struct __CharacterState *In, int CurrentSection, 
 			// Start line: 201
 			// Start offset: 0x8009B1A4
 			// Variables:
-				struct evPositionData *data; // $v1
+				//struct evPositionData *data; // $v1
 
 			/* begin block 1.2.1 */
 				// Start line: 203

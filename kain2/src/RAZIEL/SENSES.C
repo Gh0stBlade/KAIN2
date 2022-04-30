@@ -1,4 +1,4 @@
-#include "THISDUST.H"
+#include "CORE.H"
 #include "SENSES.H"
 
 
@@ -135,8 +135,8 @@ void UpdateEngagementList(struct evCollideInstanceStatsData *Ptr, struct __Playe
 			// Start line: 503
 			// Start offset: 0x800A420C
 			// Variables:
-				struct VECTOR in; // stack offset -64
-				struct VECTOR out; // stack offset -48
+				//struct VECTOR in; // stack offset -64
+				//struct VECTOR out; // stack offset -48
 
 			/* begin block 1.7.1 */
 				// Start line: 512

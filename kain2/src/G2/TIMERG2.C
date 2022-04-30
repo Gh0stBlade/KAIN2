@@ -16,5 +16,7 @@ short G2Timer_GetFrameTime()
   if ( (__int16)result <= 0 )
 	return 1;
   return result;
+#else
+	return 0;
 #endif
 }

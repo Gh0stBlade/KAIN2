@@ -423,7 +423,7 @@ int menudefs_confirmexit_menu(void *gt, int index)
 
 	do_check_controller(gt);
 	
-	menu_item_flags(((struct GameTracker*)gt)->menu, NULL, 0, 4, localstr_get(LOCALSTR_query_quit);
+	menu_item_flags(((struct GameTracker*)gt)->menu, NULL, 0, 4, localstr_get(LOCALSTR_query_quit));
 	
 	menu_item(((struct GameTracker*)gt)->menu, do_pop_menu, 0, localstr_get(LOCALSTR_no));
 	menu_item(((struct GameTracker*)gt)->menu, do_function, (long)DEBUG_ExitGame, localstr_get(LOCALSTR_yes));

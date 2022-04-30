@@ -1,4 +1,4 @@
-#include "THISDUST.H"
+#include "CORE.H"
 #include "STEERING.H"
 
 
@@ -111,7 +111,7 @@ int ProcessMovement(struct _Instance *instance, long *controlCommand, struct Gam
 			// Start line: 365
 			// Start offset: 0x800A2728
 			// Variables:
-				short angle; // $s0
+				//short angle; // $s0
 		/* end block 1.4 */
 		// End offset: 0x800A2784
 		// End Line: 376
@@ -127,8 +127,8 @@ int ProcessMovement(struct _Instance *instance, long *controlCommand, struct Gam
 			// Start line: 426
 			// Start offset: 0x800A28A4
 			// Variables:
-				short diff; // stack offset -24
-				short zone; // stack offset -22
+				//short diff; // stack offset -24
+				//short zone; // stack offset -22
 		/* end block 1.6 */
 		// End offset: 0x800A28A4
 		// End Line: 427
@@ -328,6 +328,7 @@ void SteerSwitchMode(struct _Instance *instance, int mode)
 // void /*$ra*/ razInitWallCrawlSteering(struct _Instance *instance /*$s0*/)
 void razInitWallCrawlSteering(struct _Instance *instance)
 { // line 888, offset 0x800a3178
+#if defined(PC_VERSION)
 	struct MATRIX* matrix; // eax
 	__int16 y; // dx
 	__int16 z; // ax
@@ -359,6 +360,7 @@ void razInitWallCrawlSteering(struct _Instance *instance)
 	stru_B08AB8.z = 0;
 	stru_B08AB8.y = 0;
 	stru_B08AB8.x = 0;
+#endif
 }
 
 
@@ -366,6 +368,7 @@ void razInitWallCrawlSteering(struct _Instance *instance)
 // void /*$ra*/ razDeinitWallCrawlSteering(struct _Instance *instance /*$s0*/)
 void razDeinitWallCrawlSteering(struct _Instance *instance)
 { // line 922, offset 0x800a32b4
+#if defined(PC_VERSION)
 	struct MATRIX* matrix; // eax
 
 	G2Anim_DisableController(&instance->anim, 1, 38);
@@ -379,6 +382,7 @@ void razDeinitWallCrawlSteering(struct _Instance *instance)
 	G2Anim_InterpDisableController(&instance->anim, 14, 14, 300);
 	G2Anim_InterpDisableController(&instance->anim, 50, 76, 300);
 	G2Anim_InterpDisableController(&instance->anim, 58, 76, 300);
+#endif
 }
 
 

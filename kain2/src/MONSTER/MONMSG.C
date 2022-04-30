@@ -1,4 +1,4 @@
-#include "THISDUST.H"
+#include "CORE.H"
 #include "MONMSG.H"
 
 
@@ -50,7 +50,7 @@ void MON_PupateMessageHandler(struct _Instance *instance, struct __Event *messag
 			// Start line: 86
 			// Start offset: 0x800849BC
 			// Variables:
-				struct evFXHitData data; // stack offset -40
+				//struct evFXHitData data; // stack offset -40
 		/* end block 1.2 */
 		// End offset: 0x800849FC
 		// End Line: 93
@@ -108,6 +108,7 @@ void MON_PossessedMessageHandler(struct _Instance* instance, struct __Event* mes
 // void /*$ra*/ MON_IdleMessageHandler(struct _Instance *instance /*$s2*/, struct __Event *message /*$s0*/)
 void MON_IdleMessageHandler(struct _Instance *instance, struct __Event *message)
 { // line 167, offset 0x80084a84
+#if defined(PC_VERSION)
 	struct _MonsterVars* mv; // ebx
 	struct _MonsterIR* ir = (struct _MonsterIR* )message->Data;
 
@@ -151,6 +152,7 @@ void MON_IdleMessageHandler(struct _Instance *instance, struct __Event *message)
 		MON_DefaultMessageHandler(instance, message);
 		break;
 	}
+#endif
 }
 
 
@@ -191,7 +193,7 @@ void MON_DefaultMessageHandler(struct _Instance *instance, struct __Event *messa
 			// Start offset: 0x80084FA4
 			// Variables:
 				int state; // $a1
-				struct evMonsterHitData *data; // $s0
+				//struct evMonsterHitData *data; // $s0
 		/* end block 1.2 */
 		// End offset: 0x80085048
 		// End Line: 372
@@ -200,7 +202,7 @@ void MON_DefaultMessageHandler(struct _Instance *instance, struct __Event *messa
 			// Start line: 395
 			// Start offset: 0x800850A4
 			// Variables:
-				struct evMonsterSoulSuckData *data; // $v0
+				//struct evMonsterSoulSuckData *data; // $v0
 		/* end block 1.3 */
 		// End offset: 0x800850DC
 		// End Line: 399
@@ -225,7 +227,7 @@ void MON_DefaultMessageHandler(struct _Instance *instance, struct __Event *messa
 			// Start line: 530
 			// Start offset: 0x800853F8
 			// Variables:
-				struct evMonsterAlarmData *data; // $s0
+				//struct evMonsterAlarmData *data; // $s0
 				struct _Instance *enemy; // $s3
 
 			/* begin block 1.6.1 */
@@ -251,7 +253,7 @@ void MON_DefaultMessageHandler(struct _Instance *instance, struct __Event *messa
 			// Start line: 558
 			// Start offset: 0x800854BC
 			// Variables:
-				struct _MonsterIR *mir; // $v0
+				//struct _MonsterIR *mir; // $v0
 		/* end block 1.7 */
 		// End offset: 0x800854DC
 		// End Line: 560
@@ -269,7 +271,7 @@ void MON_DefaultMessageHandler(struct _Instance *instance, struct __Event *messa
 			// Start line: 602
 			// Start offset: 0x800855B8
 			// Variables:
-				struct evFXHitData data; // stack offset -80
+				//struct evFXHitData data; // stack offset -80
 		/* end block 1.9 */
 		// End offset: 0x800855F8
 		// End Line: 609
@@ -278,7 +280,7 @@ void MON_DefaultMessageHandler(struct _Instance *instance, struct __Event *messa
 			// Start line: 668
 			// Start offset: 0x80085720
 			// Variables:
-				struct evFXHitData data; // stack offset -56
+			//	struct evFXHitData data; // stack offset -56
 		/* end block 1.10 */
 		// End offset: 0x80085720
 		// End Line: 669
@@ -303,7 +305,7 @@ void MON_DefaultMessageHandler(struct _Instance *instance, struct __Event *messa
 			// Start line: 709
 			// Start offset: 0x80085830
 			// Variables:
-				struct evPositionData *posData; // $v1
+				//struct evPositionData *posData; // $v1
 		/* end block 1.13 */
 		// End offset: 0x80085830
 		// End Line: 709
@@ -312,7 +314,7 @@ void MON_DefaultMessageHandler(struct _Instance *instance, struct __Event *messa
 			// Start line: 719
 			// Start offset: 0x80085870
 			// Variables:
-				struct evPositionData *posData; // $v1
+				//struct evPositionData *posData; // $v1
 		/* end block 1.14 */
 		// End offset: 0x80085870
 		// End Line: 719
@@ -330,7 +332,7 @@ void MON_DefaultMessageHandler(struct _Instance *instance, struct __Event *messa
 			// Start line: 749
 			// Start offset: 0x800858E8
 			// Variables:
-				struct evMonsterHitData *data; // $s0
+				//struct evMonsterHitData *data; // $s0
 		/* end block 1.16 */
 		// End offset: 0x800858E8
 		// End Line: 749
@@ -340,7 +342,7 @@ void MON_DefaultMessageHandler(struct _Instance *instance, struct __Event *messa
 			// Start offset: 0x80085924
 			// Variables:
 				int i; // $s1
-				struct evActionPlayHostAnimationData *data; // $s0
+				//struct evActionPlayHostAnimationData *data; // $s0
 		/* end block 1.17 */
 		// End offset: 0x8008597C
 		// End Line: 760
@@ -349,7 +351,7 @@ void MON_DefaultMessageHandler(struct _Instance *instance, struct __Event *messa
 			// Start line: 764
 			// Start offset: 0x80085984
 			// Variables:
-				struct evAnimationInstanceSwitchData *data; // $v0
+				//struct evAnimationInstanceSwitchData *data; // $v0
 		/* end block 1.18 */
 		// End offset: 0x8008599C
 		// End Line: 766

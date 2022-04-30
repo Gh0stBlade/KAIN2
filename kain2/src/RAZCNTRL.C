@@ -1,4 +1,4 @@
-#include "THISDUST.H"
+#include "CORE.H"
 #include "RAZCNTRL.H"
 
 
@@ -6,6 +6,7 @@
 // void /*$ra*/ ProcessRazControl(long *command /*$a0*/)
 void ProcessRazControl(long *command)
 { // line 67, offset 0x80070694
+#if defined(PC_VERSION)
 	int v1; // eax
 
 	if ((dword_4FAD98 & *command) != 0)
@@ -25,4 +26,5 @@ void ProcessRazControl(long *command)
 		dword_C5517C = v1;
 	if (dword_C55180 > 2)
 		dword_C5517C = 0;
+#endif
 }

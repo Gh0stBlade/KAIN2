@@ -4,10 +4,11 @@
 /* thing in actuality.                        */
 /* ========================================== */
 #include <stdlib.h>
-#include "../core.H"
+#include "CORE.H"
 
 void __cdecl PRIESTS_Init(struct _Instance* instance)
 {
+#if defined(PC_VERSION)
 	__int16* v1; // ebx
 	struct _MonsterVars* mv; // ebp
 	char* extra; // eax
@@ -37,9 +38,11 @@ void __cdecl PRIESTS_Init(struct _Instance* instance)
 		}
 		mv->mvFlags = mv->mvFlags & ~0x3000 | 0x200;
 	}
+#endif
 }
 void __cdecl PRIESTS_CleanUp(struct _Instance* instance)
 {
+#if defined(PC_VERSION)
 	struct _MonsterVars* mv; // eax
 	char* v2; // eax
 
@@ -51,10 +54,12 @@ void __cdecl PRIESTS_CleanUp(struct _Instance* instance)
 			MEMPACK_Free(v2);
 	}
 	MON_CleanUp(instance);
+#endif
 }
 
 u_long __cdecl PRIESTS_Query(struct _Instance* instance, unsigned long data)
 {
+#if defined(PC_VERSION)
 	char result; // al
 	int aux; // ecx
 
@@ -65,10 +70,14 @@ u_long __cdecl PRIESTS_Query(struct _Instance* instance, unsigned long data)
 	if ((aux & 2) != 0)
 		return result | 2;
 	return result;
+#else
+	return 0;
+#endif
 }
 
 void __cdecl PRIESTS_Message(struct _Instance* instance, unsigned int message, unsigned int data)
 {
+#if defined(PC_VERSION)
 	struct _MonsterVars* mv; // edx
 	int v4; // eax
 	int v5; // eax
@@ -132,10 +141,12 @@ void __cdecl PRIESTS_Message(struct _Instance* instance, unsigned int message, u
 	{
 		MonsterMessage(instance, message, data);
 	}
+#endif
 }
 
 void __cdecl PRIESTS_IdleEntry(struct _Instance* instance)
 {
+#if defined(PC_VERSION)
 	struct _MonsterVars* mv; // esi
 	int zVel; // edi
 
@@ -154,6 +165,7 @@ void __cdecl PRIESTS_IdleEntry(struct _Instance* instance)
 			mv->mode = 1;
 		}
 	}
+#endif
 }
 // TODO: fill me
 void __cdecl PRIESTS_Idle(struct _Instance* instance)
@@ -161,12 +173,15 @@ void __cdecl PRIESTS_Idle(struct _Instance* instance)
 
 void __cdecl PRIESTS_PursueEntry(struct _Instance* instance)
 {
+#if defined(PC_VERSION)
 	if ((((struct _MonsterVars*)instance->extraData)->mvFlags & 4) != 0)
 		MON_PursueEntry(instance);
+#endif
 }
 
 void __cdecl PRIESTS_Pursue(struct _Instance* instance)
 {
+#if defined(PC_VERSION)
 	if ((((struct _MonsterVars*)instance->extraData)->mvFlags & 4) != 0)
 	{
 		MON_Pursue(instance);
@@ -176,10 +191,12 @@ void __cdecl PRIESTS_Pursue(struct _Instance* instance)
 		MON_SwitchState(instance, MONSTER_STATE_IDLE);
 		MON_DefaultQueueHandler(instance);
 	}
+#endif
 }
 
 void __cdecl PRIESTS_FleeEntry(struct _Instance* instance)
 {
+#if defined(PC_VERSION)
 	struct _MonsterVars* mv; // esi
 	struct _MonsterAttributes* ma; // ecx
 	WORD* extraVars; // edi
@@ -194,10 +211,12 @@ void __cdecl PRIESTS_FleeEntry(struct _Instance* instance)
 		mv->mode = 4;
 		extraVars[9] = 0;
 	}
+#endif
 }
 
 void __cdecl PRIESTS_Flee(struct _Instance* instance)
 {
+#if defined(PC_VERSION)
 	struct _MonsterVars* mv; // eax
 	struct _MonsterAttributes* ma; // ebx
 	struct _Position* extraVars; // esi
@@ -262,11 +281,13 @@ void __cdecl PRIESTS_Flee(struct _Instance* instance)
 			break;
 		}
 	}
+#endif
 }
 
 // ------------------ unlinked code ------------------
 struct _Instance* __cdecl PRIESTS_InstanceToPossess(struct _Instance* instance)
 {
+#if defined(PC_VERSION)
 	struct _Instance* nextinst; // esi
 	struct _MonsterVars* mv; // eax
 
@@ -289,10 +310,14 @@ struct _Instance* __cdecl PRIESTS_InstanceToPossess(struct _Instance* instance)
 			return 0;
 	}
 	return nextinst;
+#else
+	return NULL;
+#endif
 }
 
 void __cdecl PRIESTS_DoAttackAnim(_Instance* instance, int a2)
 {
+#if defined(PC_VERSION)
 	struct _MonsterAttributes* ma; // ecx
 	WORD* extraVars; // esi
 
@@ -322,11 +347,13 @@ void __cdecl PRIESTS_DoAttackAnim(_Instance* instance, int a2)
 			return;
 		}
 	}
+#endif
 }
 
 extern void HUMAN_DeadEntry(struct _Instance* instance);
 extern void HUMAN_Dead(struct _Instance* instance);
 
+#if defined(PC_VERSION)
 struct _MonsterStateChoice PRIESTS_StateChoiceTable[] =
 {
 	{MONSTER_STATE_IDLE,   PRIESTS_IdleEntry,   PRIESTS_Idle},
@@ -346,3 +373,4 @@ _MonsterFunctionTable PRIESTS_FunctionTable =
 	PRIESTS_StateChoiceTable,
 	__DATE__
 };
+#endif

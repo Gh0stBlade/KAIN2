@@ -1,4 +1,4 @@
-#include "THISDUST.H"
+#include "CORE.H"
 #include "SPIDER.H"
 
 
@@ -16,7 +16,7 @@ void StateHandlerWallGrab(struct __CharacterState *In, int CurrentSection, int D
 			// Start line: 41
 			// Start offset: 0x800A1000
 			// Variables:
-				struct evPhysicsWallCrawlData *Data; // $a1
+				//struct evPhysicsWallCrawlData *Data; // $a1
 		/* end block 1.1 */
 		// End offset: 0x800A1090
 		// End Line: 81
@@ -59,7 +59,7 @@ void StateHandlerWallIdle(struct __CharacterState *In, int CurrentSection, int D
 			// Start line: 191
 			// Start offset: 0x800A14A8
 			// Variables:
-				struct evPhysicsWallCrawlData *Data; // $a1
+				//struct evPhysicsWallCrawlData *Data; // $a1
 		/* end block 1.2 */
 		// End offset: 0x800A1574
 		// End Line: 239
@@ -68,7 +68,7 @@ void StateHandlerWallIdle(struct __CharacterState *In, int CurrentSection, int D
 			// Start line: 253
 			// Start offset: 0x800A15F4
 			// Variables:
-				int rc; // $v1
+				//int rc; // $v1
 		/* end block 1.3 */
 		// End offset: 0x800A1648
 		// End Line: 259
@@ -77,7 +77,7 @@ void StateHandlerWallIdle(struct __CharacterState *In, int CurrentSection, int D
 			// Start line: 288
 			// Start offset: 0x800A16B4
 			// Variables:
-				int rc; // $v1
+				//int rc; // $v1
 		/* end block 1.4 */
 		// End offset: 0x800A1708
 		// End Line: 294

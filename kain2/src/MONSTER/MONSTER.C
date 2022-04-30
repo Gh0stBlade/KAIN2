@@ -1,4 +1,4 @@
-#include "THISDUST.H"
+#include "CORE.H"
 #include "MONSTER.H"
 
 
@@ -6,6 +6,7 @@
 // void /*$ra*/ MON_DoCombatTimers(struct _Instance *instance /*$s2*/)
 void MON_DoCombatTimers(struct _Instance *instance)
 { // line 101, offset 0x800871fc
+#if defined(PC_VERSION)
 	struct _MonsterVars* mv; // esi MAPDST
 	int v2; // ecx
 	unsigned int Time; // edi
@@ -135,6 +136,7 @@ void MON_DoCombatTimers(struct _Instance *instance)
 LABEL_44:
 	if (Time % 0x3E8 < (Time - gameTrackerX.lastLoopTime) % 0x3E8)
 		mv->chance = rand() % 100;
+#endif
 }
 
 
@@ -172,6 +174,7 @@ void MON_ChangeHumanOpinion(struct _Instance *instance)
 // void /*$ra*/ MON_CutOut_Monster(struct _Instance *instance /*$s2*/, int fade_amount /*$t4*/, int startseg /*$a2*/, int endseg /*$a3*/)
 void MON_CutOut_Monster(struct _Instance *instance, int fade_amount, int startseg, int endseg)
 { // line 192, offset 0x8008748c
+#if defined(PC_VERSION)
 	struct MATRIX* mat; // edx
 	SVECTOR* _v; // eax
 	int tmp; // kr00_4
@@ -217,6 +220,7 @@ void MON_CutOut_Monster(struct _Instance *instance, int fade_amount, int startse
 		}
 		instance->halvePlane.d = -((point.vx * instance->halvePlane.a + point.vy * instance->halvePlane.b + point.vz * instance->halvePlane.c) >> 12);
 	}
+#endif
 }
 
 
@@ -224,6 +228,7 @@ void MON_CutOut_Monster(struct _Instance *instance, int fade_amount, int startse
 // void /*$ra*/ MON_DeadEntry(struct _Instance *instance /*$s1*/)
 void MON_DeadEntry(struct _Instance *instance)
 { // line 249, offset 0x800876e0
+#if defined(PC_VERSION)
 	struct _MonsterVars* extraData; // edi
 	struct _MonsterIR* v2; // eax
 	__int16 humanOpinionOfRaziel; // ax
@@ -274,6 +279,7 @@ void MON_DeadEntry(struct _Instance *instance)
 			MON_Say();
 		MON_BirthSoul(instance, 1);
 	}
+#endif
 }
 
 
@@ -345,7 +351,7 @@ void MON_Dead(struct _Instance *instance)
 			// Variables:
 				SVECTOR New; // stack offset -96
 				SVECTOR Old; // stack offset -88
-				struct _PCollideInfo pcinfo; // stack offset -80
+				//struct _PCollideInfo pcinfo; // stack offset -80
 		/* end block 1.4 */
 		// End offset: 0x80087C20
 		// End Line: 421
@@ -354,7 +360,7 @@ void MON_Dead(struct _Instance *instance)
 			// Start line: 448
 			// Start offset: 0x80087D20
 			// Variables:
-				struct _MonsterAttributes *ma; // $a0
+				//struct _MonsterAttributes *ma; // $a0
 		/* end block 1.5 */
 		// End offset: 0x80087E30
 		// End Line: 482
@@ -374,6 +380,7 @@ void MON_Dead(struct _Instance *instance)
 // void /*$ra*/ MON_MissileHitEntry(struct _Instance *instance /*$s0*/)
 void MON_MissileHitEntry(struct _Instance *instance)
 { // line 527, offset 0x80087f04
+#if defined(PC_VERSION)
 	struct _MonsterVars* mv; // edi
 	unsigned int mvFlags; // eax
 	int v3; // eax
@@ -394,6 +401,7 @@ void MON_MissileHitEntry(struct _Instance *instance)
 	v3 = SetObjectData(0, 0, 0, instance, 3);
 	INSTANCE_Post(mv->held, 0x800002, v3);
 	SOUND_Play3dSound(&instance->position, 39, -100, 100, 16000);
+#endif
 }
 
 
@@ -401,6 +409,7 @@ void MON_MissileHitEntry(struct _Instance *instance)
 // void /*$ra*/ MON_MissileHit(struct _Instance *instance /*$s1*/)
 void MON_MissileHit(struct _Instance *instance)
 { // line 551, offset 0x80087fd0
+#if defined(PC_VERSION)
 	struct _MonsterVars* mv; // ebp
 	unsigned __int8* data; // edi
 	int Frame; // ebx
@@ -427,6 +436,7 @@ void MON_MissileHit(struct _Instance *instance)
 	if ((instance->flags2 & 0x10) != 0)
 		MON_SwitchState(instance, MONSTER_STATE_DEAD);
 	while (DeMessageQueue(&mv->messageQueue));
+#endif
 }
 
 
@@ -441,7 +451,9 @@ void MON_BirthEntry(struct _Instance *instance)
 // void /*$ra*/ MON_Birth(struct _Instance *instance /*$a0*/)
 void MON_Birth(struct _Instance *instance)
 { // line 583, offset 0x800880b8
+#if defined(PC_VERSION)
 	MON_SwitchState(instance, MONSTER_STATE_IDLE);
+#endif
 }
 
 
@@ -616,7 +628,7 @@ void MON_BreakHold(struct _Instance *instance)
 				// Start line: 780
 				// Start offset: 0x8008854C
 				// Variables:
-					struct evMonsterHitTerrainData *data; // $v0
+					//struct evMonsterHitTerrainData *data; // $v0
 			/* end block 1.1.2 */
 			// End offset: 0x80088568
 			// End Line: 782
@@ -645,7 +657,7 @@ void MON_ImpactEntry(struct _Instance *instance)
 		// Variables:
 			struct _MonsterVars *mv; // $s1
 			struct _MonsterCombatAttributes *combat; // $s2
-			struct evFXHitData data; // stack offset -40
+			//struct evFXHitData data; // stack offset -40
 	/* end block 1 */
 	// End offset: 0x800886F4
 	// End Line: 842
@@ -1048,7 +1060,7 @@ void MON_Grabbed(struct _Instance *instance)
 			// Start line: 1431
 			// Start offset: 0x8008977C
 			// Variables:
-				struct evMonsterHitTerrainData *data; // $v0
+				//struct evMonsterHitTerrainData *data; // $v0
 		/* end block 1.2 */
 		// End offset: 0x80089798
 		// End Line: 1433
@@ -1227,7 +1239,7 @@ void MON_Combat(struct _Instance *instance)
 					// Start line: 1676
 					// Start offset: 0x80089EA4
 					// Variables:
-						int anim; // $v0
+						//int anim; // $v0
 				/* end block 1.1.1.3 */
 				// End offset: 0x80089EDC
 				// End Line: 1687
@@ -1943,6 +1955,7 @@ void MON_PetrifiedEntry(struct _Instance *instance)
 // void /*$ra*/ MON_Petrified(struct _Instance *instance /*$s1*/)
 void MON_Petrified(struct _Instance *instance)
 { // line 2865, offset 0x8008bc38
+#if defined(PC_VERSION)
 	struct _MonsterVars* mv; // ebp
 	unsigned int Time; // eax
 	unsigned int generalTimer; // ecx
@@ -1972,6 +1985,7 @@ void MON_Petrified(struct _Instance *instance)
 			MON_SwitchState(instance, MONSTER_STATE_GENERALDEATH);
 		}
 	}
+#endif
 }
 
 
@@ -1997,6 +2011,7 @@ int MONSTER_CalcDamageIntensity(int hp, int maxHp)
 // void /*$ra*/ MONSTER_ProcessClosestVerts(struct _Instance *instance /*$fp*/, struct _SVector *location /*stack 4*/, TDRFuncPtr_MONSTER_ProcessClosestVerts2processVert_cb processVert_cb /*stack 8*/, void *cb_data /*stack 12*/)
 void MONSTER_ProcessClosestVerts(struct _Instance *instance, struct _SVector *location, TDRFuncPtr_MONSTER_ProcessClosestVerts2processVert_cb processVert_cb, void *cb_data)
 { // line 2907, offset 0x8008bd5c
+#if defined(PC_VERSION)
 	struct _Model* hmodel; // edx MAPDST
 	struct _MVertex* vertexList; // ebx
 	struct _Segment* segs; // ecx MAPDST
@@ -2055,6 +2070,7 @@ void MONSTER_ProcessClosestVerts(struct _Instance *instance, struct _SVector *lo
 			++segs;
 		} while (++nsegs < hmodel->numSegments);
 	}
+#endif
 }
 
 
@@ -2062,6 +2078,7 @@ void MONSTER_ProcessClosestVerts(struct _Instance *instance, struct _SVector *lo
 // void /*$ra*/ ProcessBloodyMess(struct _Instance *instance /*$a0*/, int vertidx /*$a1*/, int segidx /*$a2*/, int dist /*$a3*/, void *cb_data /*stack 16*/)
 void ProcessBloodyMess(struct _Instance *instance, int vertidx, int segidx, int dist, void *cb_data)
 { // line 2967, offset 0x8008bf24
+#if defined(PC_VERSION)
 	struct _MonsterVars* mv; // ebp
 	bool is_german; // zf
 	struct CVECTOR* cv; // esi
@@ -2099,6 +2116,7 @@ void ProcessBloodyMess(struct _Instance *instance, int vertidx, int segidx, int 
 		cv->b = -1 - v10;
 		*((DWORD*)cb_data + 3) = 1;
 	}
+#endif
 }
 
 
@@ -2133,13 +2151,13 @@ int MONSTER_StartVertexBlood(struct _Instance *instance, struct _SVector *locati
 		// Start offset: 0x8008C098
 		// Variables:
 			struct _Model *model; // $s1
-			struct bloodyMessType bmt; // stack offset -88
+			//struct bloodyMessType bmt; // stack offset -88
 
 		/* begin block 1.1 */
 			// Start line: 3041
 			// Start offset: 0x8008C0FC
 			// Variables:
-				struct _SVector localloc; // stack offset -64
+				//struct _SVector localloc; // stack offset -64
 
 			/* begin block 1.1.1 */
 				// Start line: 3052
@@ -2242,13 +2260,13 @@ int MONSTER_StartVertexBurnt(struct _Instance *instance, struct _SVector *locati
 		// Start offset: 0x8008C498
 		// Variables:
 			struct _Model *model; // $s1
-			struct burntMessType bmt; // stack offset -80
+			//struct burntMessType bmt; // stack offset -80
 
 		/* begin block 1.1 */
 			// Start line: 3206
 			// Start offset: 0x8008C4FC
 			// Variables:
-				struct _SVector localloc; // stack offset -64
+				//struct _SVector localloc; // stack offset -64
 
 			/* begin block 1.1.1 */
 				// Start line: 3216
@@ -2327,7 +2345,7 @@ void MON_DamageEffect(struct _Instance *instance, struct evFXHitData *data)
 		// Start line: 3273
 		// Start offset: 0x8008C6C4
 		// Variables:
-			struct _SVector accel; // stack offset -104
+			//struct _SVector accel; // stack offset -104
 			struct _MonsterVars *mv; // $s4
 
 		/* begin block 1.1 */
@@ -2340,10 +2358,10 @@ void MON_DamageEffect(struct _Instance *instance, struct evFXHitData *data)
 				// Start line: 3293
 				// Start offset: 0x8008C740
 				// Variables:
-					struct MATRIX *mat; // $s1
-					struct _SVector location; // stack offset -96
-					struct _SVector vel; // stack offset -88
-					struct _SVector accel; // stack offset -80
+					//struct MATRIX *mat; // $s1
+					//struct _SVector location; // stack offset -96
+					//struct _SVector vel; // stack offset -88
+					//struct _SVector accel; // stack offset -80
 			/* end block 1.1.1 */
 			// End offset: 0x8008C81C
 			// End Line: 3308
@@ -2352,9 +2370,9 @@ void MON_DamageEffect(struct _Instance *instance, struct evFXHitData *data)
 				// Start line: 3312
 				// Start offset: 0x8008C834
 				// Variables:
-					struct MATRIX *mat; // $s0
-					struct _SVector location; // stack offset -72
-					struct _SVector vel; // stack offset -64
+					//struct MATRIX *mat; // $s0
+					//struct _SVector location; // stack offset -72
+					//struct _SVector vel; // stack offset -64
 			/* end block 1.1.2 */
 			// End offset: 0x8008C894
 			// End Line: 3321
@@ -2381,10 +2399,10 @@ void MON_DamageEffect(struct _Instance *instance, struct evFXHitData *data)
 				// Start line: 3345
 				// Start offset: 0x8008C95C
 				// Variables:
-					struct MATRIX *mat; // $s0
-					struct _SVector location; // stack offset -56
-					struct _SVector vel; // stack offset -48
-					struct _SVector accel; // stack offset -40
+					//struct MATRIX *mat; // $s0
+					//struct _SVector location; // stack offset -56
+					//struct _SVector vel; // stack offset -48
+					//struct _SVector accel; // stack offset -40
 					int n; // $s1
 					int cnt; // $s4
 			/* end block 1.1.4 */
@@ -2409,6 +2427,7 @@ void MON_DamageEffect(struct _Instance *instance, struct evFXHitData *data)
 // void /*$ra*/ MON_DefaultInit(struct _Instance *instance /*$s2*/)
 void MON_DefaultInit(struct _Instance *instance)
 { // line 3392, offset 0x8008cb28
+#if defined(PC_VERSION)
 	struct _MonsterVars* extraData; // ebp
 	struct _MonsterAttributes* data; // ebx
 	bool v3; // zf
@@ -2504,6 +2523,7 @@ void MON_DefaultInit(struct _Instance *instance)
 			break;
 		}
 	}
+#endif
 }
 
 

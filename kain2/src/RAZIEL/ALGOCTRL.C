@@ -1,4 +1,4 @@
-#include "THISDUST.H"
+#include "CORE.H"
 #include "ALGOCTRL.H"
 
 
@@ -88,7 +88,7 @@ void AlgorithmicNeck(struct _Instance *Player, struct _Instance *Target)
 			struct _Position To; // stack offset -88
 			struct _Rotation Rot1; // stack offset -80
 			int Diff; // $v1
-			struct MATRIX matrix; // stack offset -72
+			MATRIX matrix; // stack offset -72
 
 		/* begin block 1.1 */
 			// Start line: 162
@@ -103,7 +103,7 @@ void AlgorithmicNeck(struct _Instance *Player, struct _Instance *Target)
 			// Start line: 208
 			// Start offset: 0x800A1FFC
 			// Variables:
-				struct MATRIX *matrix; // $v1
+				//MATRIX *matrix; // $v1
 		/* end block 1.2 */
 		// End offset: 0x800A2034
 		// End Line: 223

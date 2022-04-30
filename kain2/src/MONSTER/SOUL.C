@@ -1,4 +1,4 @@
-#include "THISDUST.H"
+#include "CORE.H"
 #include "SOUL.H"
 
 
@@ -97,7 +97,7 @@ void SOUL_MovePastWall(struct _Instance *instance, struct _Instance *sucker)
 		// Start line: 163
 		// Start offset: 0x8008D974
 		// Variables:
-			struct _PCollideInfo pcollideInfo; // stack offset -88
+			//struct _PCollideInfo pcollideInfo; // stack offset -88
 			struct _Position newPos; // stack offset -40
 			struct _Position oldPos; // stack offset -32
 			struct _Position delta; // stack offset -24
@@ -124,13 +124,13 @@ void SOUL_MovePastWall(struct _Instance *instance, struct _Instance *sucker)
 			// Start line: 188
 			// Start offset: 0x8008DA58
 			// Variables:
-				short _x0; // $v0
-				short _y0; // $v1
-				short _z0; // $a2
-				short _x1; // $a3
-				short _y1; // $t1
-				short _z1; // $t0
-				struct _Position *_v1; // $t0
+				//short _x0; // $v0
+				//short _y0; // $v1
+				//short _z0; // $a2
+				//short _x1; // $a3
+				//short _y1; // $t1
+				//short _z1; // $t0
+				//struct _Position *_v1; // $t0
 		/* end block 1.2 */
 		// End offset: 0x8008DA58
 		// End Line: 188

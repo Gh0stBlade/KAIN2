@@ -1,4 +1,4 @@
-#include "THISDUST.H"
+#include "CORE.H"
 #include "VWRAITH.H"
 
 
@@ -118,7 +118,7 @@ void VWRAITH_Pursue(struct _Instance *instance)
 			// Start line: 195
 			// Start offset: 0x8008EBBC
 			// Variables:
-				struct _MonsterAttributes *ma; // $s1
+				//struct _MonsterAttributes *ma; // $s1
 				struct _MonsterAttackAttributes *attack; // $s3
 		/* end block 1.1 */
 		// End offset: 0x8008ECAC
