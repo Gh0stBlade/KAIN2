@@ -2147,7 +2147,7 @@ static int Emulator_InitialiseGLESContext(char* windowName)
 #endif
 
 
-static int Emulator_InitialiseSDL(char* windowName, int width, int height)
+static int Emulator_InitialiseSDL2(char* windowName, int width, int height)
 {
 #if defined(XED3D)
 	windowWidth = 1280;
@@ -2161,6 +2161,10 @@ static int Emulator_InitialiseSDL(char* windowName, int width, int height)
 	//Initialise SDL2
 	if (SDL_Init(SDL_INIT_VIDEO) == 0)
 	{
+		SDL_version ver;
+		SDL_GetVersion(&ver);
+		eprintf("Initialised SDL2 Version: %d.%d.%d\n", ver.major, ver.minor, ver.patch);
+
 #if !defined(RO_DOUBLE_BUFFERED)
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 0);
 #endif
@@ -2277,9 +2281,9 @@ void Emulator_Initialise(char* windowName, int width, int height)
 	char finalWindowName[128];
 	sprintf(finalWindowName, "%s - %s - v%d.%d", windowName, renderBackendName, GAME_MAJOR_VERSION, GAME_MINOR_VERSION);
 
-	if (Emulator_InitialiseSDL(finalWindowName, width, height) == FALSE)
+	if (Emulator_InitialiseSDL2(finalWindowName, width, height) == FALSE)
 	{
-		eprinterr("Failed to Intialise SDL\n");
+		eprinterr("Failed to Intialise SDL2\n");
 		Emulator_ShutDown();
 	}
 
@@ -3981,11 +3985,9 @@ void* Emulator_GenerateRG8LUT()
 	};
 #pragma pack(pop)
 
-	pixel* p = (pixel*)&rgLUT[(256*256)*4-4];
-
 	for (int y = 0; y < LUT_HEIGHT; y++)
 	{
-		for (int x = 0; x < LUT_WIDTH; x++, p--)
+		for (int x = 0; x < LUT_WIDTH; x++)
 		{	
 			short c = (y << 8) | x;
 
@@ -4040,7 +4042,7 @@ void Emulator_GenerateCommonTextures()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 256, 256, 0, GL_RGBA, GL_UNSIGNED_BYTE, Emulator_GenerateRG8LUT());
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, LUT_WIDTH, LUT_HEIGHT, 0, GL_RGBA, GL_UNSIGNED_BYTE, Emulator_GenerateRG8LUT());
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 #elif defined(D3D9) || defined(XED3D)
@@ -4091,8 +4093,8 @@ void Emulator_GenerateCommonTextures()
 	t->Release();
 
 	ZeroMemory(&td, sizeof(td));
-	td.Width = 256;
-	td.Height = 256;
+	td.Width = LUT_WIDTH;
+	td.Height = LUT_HEIGHT;
 	td.MipLevels = td.ArraySize = 1;
 	td.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	td.SampleDesc.Count = 1;
