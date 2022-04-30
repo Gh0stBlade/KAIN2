@@ -2260,7 +2260,7 @@ static int Emulator_InitialiseCore()
 
 void Emulator_Initialise(char* windowName, int width, int height)
 {
-	eprintf("Initialising Emulator.\n");
+	eprintf("Initialising %s.\n", EMULATOR_NAME);
 	eprintf("VERSION: %d.%d\n", EMULATOR_MAJOR_VERSION, EMULATOR_MINOR_VERSION);
 	eprintf("Compile Date: %s Time: %s\n", EMULATOR_COMPILE_DATE, EMULATOR_COMPILE_TIME);
 	
