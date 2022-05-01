@@ -4,12 +4,6 @@
 #include "STREAM.H"
 #include "BSP.H"
 
-//struct __Event // hashcode: 0xBC16D673 (dec: -1139353997)
-//{
-//	int ID; // size=0, offset=0
-//	int Data; // size=0, offset=4
-//};
-
 struct WaterLevelProcess // hashcode: 0x43FF89D3 (dec: 1140820435)
 {
 	long flags; // size=0, offset=0
@@ -46,6 +40,12 @@ struct Event // hashcode: 0x68F4AD26 (dec: 1760865574)
 	struct EventBasicObject** instanceList; // size=2, offset=16
 	struct ScriptPCode** conditionalList; // size=8, offset=20
 	struct ScriptPCode** actionList; // size=8, offset=24
+};
+
+struct EventPointers 
+{
+	long numPuzzles; // size=0, offset=0
+	struct Event* eventInstances[1]; // size=4, offset=4
 };
 
 struct EventTimer // hashcode: 0xAA55BC81 (dec: -1437221759)
