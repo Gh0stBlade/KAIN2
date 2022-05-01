@@ -428,11 +428,7 @@ void GAMELOOP_LevelLoadAndInit(char *baseAreaName, struct GameTracker *gameTrack
 	{
 		for (i = 0; i < streamUnit->level->numIntros; i++)
 		{
-#if defined(PSXPC_VERSION)
-			if (_strcmpi(streamUnit->level->introList[i].name, "raziel") == 0)
-#else
 			if (strcmpi(streamUnit->level->introList[i].name, "raziel") == 0)
-#endif
 			{
 				INSTANCE_IntroduceInstance(&streamUnit->level->introList[i], (short)streamUnit->StreamUnitID);
 				break;

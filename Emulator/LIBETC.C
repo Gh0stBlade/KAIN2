@@ -9,8 +9,9 @@
 
 #if defined(SDL2)
 #include <assert.h>
-#include "Input/EMULATOR_INPUT.H"
 #endif
+
+#include "Input/EMULATOR_INPUT.H"
 
 char scratchData[4096];///@TODO check size
 

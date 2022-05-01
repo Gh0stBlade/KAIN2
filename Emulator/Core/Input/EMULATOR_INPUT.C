@@ -2,16 +2,17 @@
 
 #include "EMULATOR.H"
 
+int g_initialisedPadSubsystem = FALSE;
+unsigned char* padData[MAX_CONTROLLERS];
+unsigned char* padDataDebug[MAX_CONTROLLERS];
+
+#if defined(SDL2)
 SDL_GameController* padHandle[MAX_CONTROLLERS];
 unsigned char* padRumbleData[MAX_CONTROLLERS];
-unsigned char* padData[MAX_CONTROLLERS];
 const unsigned char* keyboardState;
 
 SDL_GameController* padHandleDebug[MAX_CONTROLLERS];
-unsigned char* padDataDebug[MAX_CONTROLLERS];
 const unsigned char* keyboardStateDebug;
-
-int g_initialisedPadSubsystem = FALSE;
 
 void Emulator_InitialiseSDLInput(SDL_GameController** pad, const unsigned char** kbState, int isDebugInput)
 {
@@ -42,6 +43,7 @@ void Emulator_InitialiseSDLInput(SDL_GameController** pad, const unsigned char**
 
 	kbState[0] = SDL_GetKeyboardState(NULL);
 }
+#endif
 
 #if defined(SDL2)
 unsigned short UpdateGameControllerInput(SDL_GameController* pad)
@@ -132,6 +134,7 @@ unsigned short UpdateGameControllerInput(SDL_GameController* pad)
 }
 #endif
 
+#if defined(SDL2)
 void UpdateGameControllerAnalogInput(SDL_GameController* pad, void* analogR, void* analogL)
 {
 
@@ -167,6 +170,7 @@ void UpdateGameControllerAnalogInput(SDL_GameController* pad, void* analogR, voi
 		al->y = TRANSLATE(SDL_GameControllerGetAxis(pad, SDL_CONTROLLER_AXIS_LEFTY));
 	}
 }
+#endif
 
 unsigned short UpdateKeyboardInput()
 {

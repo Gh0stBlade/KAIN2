@@ -5,8 +5,9 @@
 
 #if defined(SDL2)
 #include <SDL.h>
-#include "Input/EMULATOR_INPUT.H"
 #endif
+
+#include "Input/EMULATOR_INPUT.H"
 
 void PadInitDirect(unsigned char* pad1, unsigned char* pad2)
 {
@@ -22,10 +23,10 @@ void PadInitDirect(unsigned char* pad1, unsigned char* pad2)
 		padData[1][0] = 0xFF;
 	}
 
+#if defined(SDL2)
 	padRumbleData[0] = NULL;
 	padRumbleData[1] = NULL;
 
-#if defined(SDL2)
 	Emulator_InitialiseSDLInput(&padHandle[0], &keyboardState, FALSE);
 #endif
 }
@@ -135,6 +136,7 @@ int PadSetMainMode(int socket, int offs, int lock)
 
 void PadSetAct(int unk00, unsigned char* unk01, int unk02)
 {
+#if defined(SDL2)
 	if (unk00 == 0x0)
 	{
 		padRumbleData[0] = unk01;
@@ -143,4 +145,5 @@ void PadSetAct(int unk00, unsigned char* unk01, int unk02)
 	{
 		padRumbleData[1] = unk01;
 	}
+#endif
 }

@@ -47,7 +47,8 @@ typedef RECT PSX_RECT;
 #include <LIBSN.H>
 #include <LIBMCRD.H>
 
-#undef LoadImage
+#include <EMULATOR_PUBLIC.H>
+
 #define LoadImage LoadImagePSX
 #define PSX_EnterCriticalSection	EnterCriticalSection
 #define PSX_ExitCriticalSection		ExitCriticalSection
@@ -57,10 +58,13 @@ typedef RECT PSX_RECT;
 #define setPolyFT4_ST(p) setlen_ST(p, 6),  setcode_ST(p, 0x2A)
 
 #pragma warning(disable: 4101)//Unreferenced local var.
-#include <EMULATOR_PUBLIC.H>
 #if defined(__ANDROID__)
 #define strcmpi strcmp
 #define _strcmpi strcmp
+#endif
+
+#if defined(UWP)
+#define strcmpi _strcmpi
 #endif
 
 #if defined(__EMSCRIPTEN__)

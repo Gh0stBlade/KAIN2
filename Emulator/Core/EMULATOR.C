@@ -2309,7 +2309,7 @@ void Emulator_Initialise(char* windowName, int width, int height)
 
 #if defined(SDL2)
 	g_swapTime = SDL_GetTicks() - FIXED_TIME_STEP;
-#elif defined(XED3D)
+#elif defined(UWP) || defined(XED3D)
 	g_swapTime = GetTickCount() - FIXED_TIME_STEP;
 #endif
 
@@ -5031,6 +5031,7 @@ int Emulator_GetScreenshotNumber(int mode)
 
 void Emulator_TakeScreenshot(int mode)
 {
+#if defined(SDL2)
 	unsigned char* pixels = new unsigned char[windowWidth * windowHeight * sizeof(unsigned int)];
 
 #if defined(OGL) || defined(OGLES)
@@ -5093,6 +5094,7 @@ void Emulator_TakeScreenshot(int mode)
 	}
 	
 	delete[] pixels;
+#endif
 }
 #endif
 
@@ -5160,6 +5162,7 @@ void Emulator_DoDebugKeys(int nKey, bool down)
 
 unsigned short kbInputs = 0xFFFF;
 
+#if defined(SDL2)
 void Emulator_RumbleGameController(SDL_GameController* pad, unsigned char* padRumbleData)
 {
 #define PSX_MIN 0
@@ -5210,6 +5213,7 @@ void Emulator_TranslateControllerType(void* padData, SDL_GameController* padHand
 
 	pd->status = 0;
 }
+#endif
 
 void Emulator_UpdateInput()
 {
