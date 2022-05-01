@@ -5014,81 +5014,84 @@ int Emulator_DoesFileExist(const char* fileName)
 	return 0;
 }
 
-int Emulator_GetScreenshotNumber()
+char* screenshotExtensions[] = { ".TGA", ".BMP" };
+
+int Emulator_GetScreenshotNumber(int mode)
 {
 	int fileNumber = 0;
 	char buff[64];
 	do
 	{
-		sprintf(buff, "SCREENSHOT_%d.TGA", fileNumber++);
+		sprintf(buff, "SCREENSHOT_%d.%s", fileNumber++, screenshotExtensions[mode]);
 
 	} while (Emulator_DoesFileExist(buff) == 1);
 
 	return fileNumber - 1;
 }
 
-void Emulator_TakeScreenshot()
+void Emulator_TakeScreenshot(int mode)
 {
-	unsigned char* pixels = new unsigned char[windowWidth * windowHeight * 4];
+	unsigned char* pixels = new unsigned char[windowWidth * windowHeight * sizeof(unsigned int)];
+
 #if defined(OGL) || defined(OGLES)
 	glReadPixels(0, 0, windowWidth, windowHeight, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
 #endif
 
-#if defined(SDL2)
-
-#if 1
-	SDL_Surface* surface = SDL_CreateRGBSurfaceFrom(pixels, windowWidth, windowHeight, 8 * 4, windowWidth * 4, 0, 0, 0, 0);
-
-	char buff[64];
-	sprintf(buff, "SCREENSHOT_%d.TGA", Emulator_GetScreenshotNumber());
-
-	FILE* f = fopen(buff, "wb");
-	unsigned char TGAheader[12] = { 0,0,2,0,0,0,0,0,0,0,0,0 };
-	unsigned char header[6];
-	header[0] = (windowWidth % 256);
-	header[1] = (windowWidth / 256);
-	header[2] = (windowHeight % 256);
-	header[3] = (windowHeight / 256);
-	header[4] = 32;
-	header[5] = 0;
-
-	fwrite(TGAheader, sizeof(unsigned char), 12, f);
-	fwrite(header, sizeof(unsigned char), 6, f);
-
-	struct pixel
+	if (mode == SCREENSHOT_MODE_TGA)
 	{
-		unsigned char b;
-		unsigned char g;
-		unsigned char r;
-		unsigned char a;
-	};
+		SDL_Surface* surface = SDL_CreateRGBSurfaceFrom(pixels, windowWidth, windowHeight, 8 * 4, windowWidth * 4, 0, 0, 0, 0);
 
-	pixel* p = (pixel*)surface->pixels;
+		char buff[64];
+		sprintf(buff, "SCREENSHOT_%d.%s", Emulator_GetScreenshotNumber(mode), screenshotExtensions[mode]);
 
-	for (int y = 0; y < windowHeight; y++)
-	{
-		for (int x = 0; x < windowWidth; x++)
-		{	
-			unsigned char temp = p->b;
-			p->b = p->r;
-			p->r = temp;
-			p++;
+		FILE* f = fopen(buff, "wb");
+		unsigned char TGAheader[12] = { 0,0,2,0,0,0,0,0,0,0,0,0 };
+		unsigned char header[6];
+		header[0] = (windowWidth % 256);
+		header[1] = (windowWidth / 256);
+		header[2] = (windowHeight % 256);
+		header[3] = (windowHeight / 256);
+		header[4] = 32;
+		header[5] = 0;
+
+		fwrite(TGAheader, sizeof(unsigned char), 12, f);
+		fwrite(header, sizeof(unsigned char), 6, f);
+
+		struct pixel
+		{
+			unsigned char b;
+			unsigned char g;
+			unsigned char r;
+			unsigned char a;
+		};
+
+		pixel* p = (pixel*)surface->pixels;
+
+		for (int y = 0; y < windowHeight; y++)
+		{
+			for (int x = 0; x < windowWidth; x++)
+			{
+				unsigned char temp = p->b;
+				p->b = p->r;
+				p->r = temp;
+				p++;
+			}
 		}
+
+		fwrite(surface->pixels, windowWidth * windowHeight * sizeof(unsigned int), 1, f);
+		fclose(f);
+
+		SDL_FreeSurface(surface);
 	}
-
-	fwrite(surface->pixels, windowWidth * windowHeight * sizeof(unsigned int), 1, f);
-	fclose(f);
-
-	SDL_FreeSurface(surface);
-#else
-	SDL_Surface* surface = SDL_CreateRGBSurfaceFrom(pixels, windowWidth, windowHeight, 8 * 4, windowWidth * 4, 0, 0, 0, 0);
-	char buff[64];
-	sprintf(buff, "SCREENSHOT_%d.bmp", Emulator_GetScreenshotNumber());
-	SDL_SaveBMP(surface, buff);
-	SDL_FreeSurface(surface);
-#endif
-#endif
-
+	else if (mode == SCREENSHOT_MODE_BMP)
+	{
+		SDL_Surface* surface = SDL_CreateRGBSurfaceFrom(pixels, windowWidth, windowHeight, 8 * 4, windowWidth * 4, 0, 0, 0, 0);
+		char buff[64];
+		sprintf(buff, "SCREENSHOT_%d.%s", Emulator_GetScreenshotNumber(mode), screenshotExtensions[mode]);
+		SDL_SaveBMP(surface, buff);
+		SDL_FreeSurface(surface);
+	}
+	
 	delete[] pixels;
 }
 #endif
@@ -5144,7 +5147,7 @@ void Emulator_DoDebugKeys(int nKey, bool down)
 
 #if !defined(__EMSCRIPTEN__) && !defined(__ANDROID__)
 			case SDL_SCANCODE_4:
-				Emulator_TakeScreenshot();
+				Emulator_TakeScreenshot(SCREENSHOT_MODE_TGA);
 				break;
 			case SDL_SCANCODE_5:
 				Emulator_SaveVRAM("VRAM.TGA", 0, 0, VRAM_WIDTH, VRAM_HEIGHT, TRUE);

@@ -105,6 +105,9 @@
 #define GET_CLUT_X(clut)        ((clut & 0x3F) << 4)
 #define GET_CLUT_Y(clut)        (clut >> 6)
 
+#define SCREENSHOT_MODE_TGA 0
+#define SCREENSHOT_MODE_BMP 1
+
 typedef struct
 {
 	unsigned int i_cycle;
