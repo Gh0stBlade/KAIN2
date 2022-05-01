@@ -1453,3 +1453,8 @@ long SpuClearReverbWorkArea(long mode)
     UNIMPLEMENTED();
     return 0;
 }
+
+void SpuGetCommonAttr(SpuCommonAttr* attr)
+{
+    UNIMPLEMENTED();
+}

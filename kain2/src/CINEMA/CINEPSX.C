@@ -3,6 +3,7 @@
 #include "STREAM.H"
 #include "STRMLOAD.H"
 #include "PSX/MAIN.H"
+#include "OVERLAYS/CINEMAX.H"
 
 #include "LIBGPU.H"
 #include "LIBETC.H"
@@ -52,7 +53,11 @@ void CINE_Play(char *strfile, unsigned short mask, int buffers)
 { 
 	if (the_cine_table != NULL)
 	{
-		if (the_cine_table->versionID == "Jun 30 1999")///@FIXME may need matching to get this address right?
+#if defined(PSXPC_VERSION)
+		if (!strcmp(the_cine_table->versionID, __DATE__))
+#else
+		if (the_cine_table->versionID == __DATE__)
+#endif
 		{
 			the_cine_table->play(strfile, mask, buffers);
 		}
@@ -62,6 +67,15 @@ void CINE_Play(char *strfile, unsigned short mask, int buffers)
 		}
 	}
 }
+
+#if defined(PSXPC_VERSION)
+void CINE_PatchTable()
+{
+	the_cine_table->versionID = __DATE__;
+	the_cine_table->play = CINEMAX_Play;
+}
+
+#endif
 
 int CINE_Load()
 {
@@ -88,6 +102,11 @@ int CINE_Load()
 	{
 		the_cine_tracker = tracker;
 		the_cine_table = (struct cinema_fn_table_t*)tracker->object->relocModule;
+
+#if defined(PSXPC_VERSION)
+		CINE_PatchTable();
+#endif
+
 		return 1;
 	}
 	else
