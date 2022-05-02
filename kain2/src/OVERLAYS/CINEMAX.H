@@ -1,7 +1,7 @@
 #ifndef CINEMAX_H
 #define CINEMAX_H
 
-#define MAX_BUFFER_COUNT (3)
+#define MAX_BUFFER_COUNT (3*2)
 
 struct BufferInfo
 {
@@ -40,9 +40,10 @@ extern void CINEMAX_VSync();
 extern void CINEMAX_InitBufferDetails(char* b1, char* b2, char* b3, char* b4, BufferInfo* bd);
 extern void CINEMAX_InitStream(char* buffer, CdlFILE* fp, void* func);
 extern void CINEMAX_Unknown();
-extern void CINEMAX_Unknown2(int unk);
-extern void CINEMAX_Unkown3(int unk);
 extern void CINEMAX_E1EB0(unsigned int* func, int unk2);
 extern void CINEMAX_E1FCC();
+extern void CINEMAX_E1658(BufferInfo* buffer_info);
+extern void CINEMAX_E1708(BufferInfo* buffer_info);
+extern void CINEMAX_E190C(CdlFILE* fp);
 
 #endif

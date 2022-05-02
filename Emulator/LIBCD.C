@@ -536,3 +536,26 @@ int CdGetSector(void* madr, int size)
 	}
 	return 0;
 }
+
+int CdRead2(long mode)
+{
+	UNIMPLEMENTED();
+	return 0;
+}
+
+void StSetRing(u_long* ring_addr, u_long ring_size)
+{
+	UNIMPLEMENTED();
+}
+
+void StSetStream(u_long mode, u_long start_frame, u_long end_frame, void (*func1)(), void (*func2)())
+{
+	UNIMPLEMENTED();
+}
+
+u_long StGetNext(u_long** addr, u_long** header)
+{
+	UNIMPLEMENTED();
+
+	return 0;
+}

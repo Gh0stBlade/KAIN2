@@ -6,9 +6,6 @@
 #include "MEMPACK.H"
 
 unsigned int unk_E21BC = 0x40000001;//0x800E21BC
-unsigned long* scratch1 = getScratchAddr(1048);//0x800E22D4
-unsigned long* scratch2 = getScratchAddr(1062);//0x800E22E0
-unsigned long* scratch3 = getScratchAddr(1545);//0x800E2300
 
 int buffer_count = 0;//800F3360
 BufferInfo buffer_details;//800F330C
@@ -59,6 +56,7 @@ int CINEMAX_ActuallyPlay(char* strfile, unsigned short mask, int buffers)
 	char* buffer3;
 	char* buffer4;
 	char* buffer5;
+	unsigned short m;//0xA0
 	//s0 = strfile
 	//s5 = 0
 	//s7 = 0
@@ -67,6 +65,7 @@ int CINEMAX_ActuallyPlay(char* strfile, unsigned short mask, int buffers)
 
 	buffer_count = buffers;
 	unk_F334C = 1;
+	m = mask;
 
 	if (buffer_count < 2)
 	{
@@ -90,7 +89,7 @@ int CINEMAX_ActuallyPlay(char* strfile, unsigned short mask, int buffers)
 	if (CdSearchFile(&fp, strfile) == NULL)
 	{
 		printf("file not found\n");
-		return 0;
+		///temp disabled return 0;
 	}
 
 	unk_F335C = CdPosToInt(&fp.pos) + (fp.size >> 11) - 5;
@@ -166,7 +165,12 @@ void CINEMAX_InitStream(char* buffer, CdlFILE* fp, void* func)
 	//s0 = buffer
 	//s2 = fp
 	//s1 = func
-	CINEMAX_Unknown2(0);
+	DecDCTReset(0);
+	DecDCToutCallback((void(*)())func);
+	StSetRing((u_long*)buffer, 48);
+	StSetStream(1, 1, 0xFFFFFFFF, NULL, NULL);
+	CINEMAX_E190C(fp);
+	CINEMAX_E1658(&buffer_details);
 }
 
 //0x800E151C
@@ -175,49 +179,58 @@ void CINEMAX_Unknown()
 
 }
 
-//0x800E1CCC
-void CINEMAX_Unknown2(int unk)
+//0x800E1658
+void CINEMAX_E1658(BufferInfo* buffer_info)
 {
-	if (unk == 0)
-	{
-		ResetCallback();
-		CINEMAX_Unkown3(unk);
-	}
+	//s2 = buffer_info
+	//s0 = 0x96
+	//s3 = 1
+	CINEMAX_E1708(buffer_info);
 }
 
-//0x800E1DC0
-void CINEMAX_Unkown3(int unk)
+void CINEMAX_E1708(BufferInfo* buffer_info)
 {
-	//a1 = unk
-	if (unk != 0)
+	unsigned long* nextstream;
+	StHEADER* header;
+	int s0;
+
+	//s1 = buffer_info
+	for(s0 = 0x36B0; s0 != 0; s0--)
 	{
-		if (unk == 1)
+		if (StGetNext(&nextstream, (unsigned long**)&header) == 0)
 		{
-			//0x800E1E44
+			//0xE1754
 		}
-	}
-	else
-	{
-		((unsigned int*)scratch3[0])[0] = 0x80000000;
-		((unsigned int*)scratch1[0])[0] = 0;
-		((unsigned int*)scratch2[0])[0] = 0;
-		((unsigned int*)scratch3[0])[0] = 0x60000000;
-
-		CINEMAX_E1EB0(&unk_E21BC, 32);
-	}
-
-	//0x800E1E94
+	} 
 }
 
-//0x800E1EB0
-void CINEMAX_E1EB0(unsigned int* func, int unk2)
+//0x800E190C
+void CINEMAX_E190C(CdlFILE* fp)
 {
-	//s0 = unk2
+	unsigned char param;
+	
+	param = 128;
 
+	do
+	{
+		while (CdControl(CdlSetloc, (u_char*)fp, NULL) == 0)
+		{
+
+		}
+
+		while (CdControl(CdlSetmode, &param, NULL) == 0)
+		{
+
+		}
+
+		VSync(3);
+
+	} while(CdRead2(0x1E0) == 0);
 }
 
 //0x800E1FCC
 void CINEMAX_E1FCC()
 {
+	//((unsigned int*)scratch3[0])[0] = 0x100000;
 
 }
