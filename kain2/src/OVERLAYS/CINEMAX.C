@@ -15,10 +15,23 @@ int unk_F3358 = 0;//800F3358
 int unk_F335C = 0;//800F335C
 int unk_F334C = 0;//800F334C
 
+//0x800E0DBC
+int CINEMAX_E0DBC()
+{
+	unsigned char result[8];
+	CdControlB(CdlGetlocP, NULL, result);
+
+	return CdPosToInt((CdlLOC*)&result[5]) < unk_F335C ^ 1;
+}
+
 //0x800E0DF8
 int CINEMAX_Play(char* strfile, unsigned short mask, int buffers)
 {
+#if 0
 	return CINEMAX_ActuallyPlay(strfile, mask, buffers);
+#else
+	return 0;
+#endif
 }
 
 //0x800E0E2C
@@ -128,6 +141,17 @@ int CINEMAX_ActuallyPlay(char* strfile, unsigned short mask, int buffers)
 	VSyncCallback(CINEMAX_VSync);
 
 	CINEMAX_InitStream(buffer1, &fp, CINEMAX_Unknown);
+	
+	if (CINEMAX_E1658(&buffer_details) == -1)
+	{
+		
+	}
+	else
+	{
+		//s1 = &buffer_details
+		//s6 = 1
+		//s2 = 1
+	}
 
 	return 0;
 }
@@ -180,15 +204,29 @@ void CINEMAX_Unknown()
 }
 
 //0x800E1658
-void CINEMAX_E1658(BufferInfo* buffer_info)
+int CINEMAX_E1658(BufferInfo* buffer_info)
 {
 	//s2 = buffer_info
 	//s0 = 0x96
 	//s3 = 1
-	CINEMAX_E1708(buffer_info);
+	
+	for (int s0 = 150; s0 != 0; s0--)
+	{
+		int s1 = CINEMAX_E1708(buffer_info);
+
+		if (s1 == 0)
+		{
+			if (unk_F3358 == 1)
+			{
+				break;
+			}
+		}
+	}
+
+	return 0;
 }
 
-void CINEMAX_E1708(BufferInfo* buffer_info)
+int CINEMAX_E1708(BufferInfo* buffer_info)
 {
 	unsigned long* nextstream;
 	StHEADER* header;
@@ -202,6 +240,17 @@ void CINEMAX_E1708(BufferInfo* buffer_info)
 			//0xE1754
 		}
 	} 
+
+	if (CINEMAX_E0DBC() == 0)
+	{
+		return 0;
+	}
+	else
+	{
+		unk_F3358 = 1;
+		return 1;
+	}
+	//0xE1780
 }
 
 //0x800E190C

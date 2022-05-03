@@ -32,7 +32,6 @@ struct BufferInfo
 	int unk_3C;
 };
 
-
 extern int CINEMAX_Play(char* strfile, unsigned short mask, int buffers);
 extern int CINEMAX_ActuallyPlay(char* strfile, unsigned short mask, int buffers);
 extern void CINEMAX_ClearBuffers();
@@ -42,8 +41,8 @@ extern void CINEMAX_InitStream(char* buffer, CdlFILE* fp, void* func);
 extern void CINEMAX_Unknown();
 extern void CINEMAX_E1EB0(unsigned int* func, int unk2);
 extern void CINEMAX_E1FCC();
-extern void CINEMAX_E1658(BufferInfo* buffer_info);
-extern void CINEMAX_E1708(BufferInfo* buffer_info);
+extern int CINEMAX_E1658(BufferInfo* buffer_info);
+extern int CINEMAX_E1708(BufferInfo* buffer_info);
 extern void CINEMAX_E190C(CdlFILE* fp);
 
 #endif

@@ -204,7 +204,7 @@ int CdControl(u_char com, u_char * param, u_char * result)
 		break;
 	}
 
-	return 0;
+	return 1;
 }
 
 int CdControlB(u_char com, u_char* param, u_char* result)
@@ -231,7 +231,7 @@ int CdControlB(u_char com, u_char* param, u_char* result)
 		break;
 	}
 
-	return 0;
+	return 1;
 }
 
 int CdControlF(u_char com, u_char * param)
@@ -540,7 +540,7 @@ int CdGetSector(void* madr, int size)
 int CdRead2(long mode)
 {
 	UNIMPLEMENTED();
-	return 0;
+	return 1;
 }
 
 void StSetRing(u_long* ring_addr, u_long ring_size)
