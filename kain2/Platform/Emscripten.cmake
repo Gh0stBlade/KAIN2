@@ -12,7 +12,7 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wno-error=format-securi
 
 link_directories(${ROOT_DIR}/Build_Emscripten/Emulator/)
 
-set(PSX_LIB ${ROOT_DIR}/Build_Emscripten/Emulator/libPSX.a)
+set(PSX_LIB ${ROOT_DIR}/Build_Emscripten/Emulator/libValkyrie.a)
 
 set(CMAKE_EXECUTABLE_SUFFIX ".html")
 

@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 3.0)
 
-project (Emulator_${TARGET_ARCH})
+project (Valkyrie_${TARGET_ARCH})
 
 set(OPT_DEFINITIONS "")
 
@@ -54,7 +54,7 @@ BuildPreProcessorDefinitions()
 target_compile_definitions(${PROJECT_NAME} PRIVATE GLEW_STATIC)
 
 set_target_properties(
-${PROJECT_NAME} PROPERTIES OUTPUT_NAME "PSX"
+${PROJECT_NAME} PROPERTIES OUTPUT_NAME "Valkyrie"
 ${PROJECT_NAME} PROPERTIES FOLDER "Libs"
 )
 endif()

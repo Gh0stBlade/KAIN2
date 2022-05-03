@@ -12,6 +12,6 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /ZW")
 
 add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 
-set(PSX_LIB PSX.lib)
+set(PSX_LIB Valkyrie.lib)
 
 endif()

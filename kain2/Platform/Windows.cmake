@@ -25,6 +25,6 @@ include_directories(${SDL2_INCLUDE_DIR})
 
 target_link_directories(${PROJECT_NAME} PUBLIC ${ROOT_DIR}/Build/Emulator/$(Configuration))
 
-set(PSX_LIB PSX.lib)
+set(PSX_LIB Valkyrie.lib)
 
 endif()

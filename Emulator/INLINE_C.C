@@ -3,6 +3,7 @@
 #include "LIBGTE.H"
 #include "GTEREG.H"
 
+#if 0
 void gte_SetGeomScreen(int h)
 {
 	H = h;
@@ -27,3 +28,4 @@ int gte_ldlzc(int input)
 	
 	return leadingZeroCount;
 }
+#endif

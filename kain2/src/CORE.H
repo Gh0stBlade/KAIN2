@@ -24,6 +24,7 @@
 #include <LIBSN.H>
 #include <LIBMCRD.H>
 #include <LIBPRESS.H>
+#include <INLINE_C.H>
 
 #undef LoadImage
 #define LoadImage LoadImagePSX
@@ -48,6 +49,7 @@ typedef RECT PSX_RECT;
 #include <LIBSN.H>
 #include <LIBMCRD.H>
 #include <LIBPRESS.H>
+#include <INLINE_C.H>
 
 #include <EMULATOR_PUBLIC.H>
 

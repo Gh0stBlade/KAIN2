@@ -14,7 +14,7 @@ set(GLEW_USE_STATIC_LIBS ON)
 include_directories(${GLEW_INCLUDE_DIR})
 include_directories(${SDL2_INCLUDE_DIR})
 
-set(PSX_LIB Emulator_${TARGET_ARCH})
+set(PSX_LIB Valkyrie_${TARGET_ARCH})
 
 set(CMAKE_C_FLAGS           "${CMAKE_C_FLAGS} -fpermissive -Wno-narrowing -std=c++11")
 set(CMAKE_C_FLAGS_DEBUG     "${CMAKE_C_FLAGS_DEBUG} -fpermissive -Wno-narrowing -std=c++11")
