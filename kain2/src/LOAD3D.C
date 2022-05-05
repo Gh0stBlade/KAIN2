@@ -79,8 +79,7 @@ void LOAD_CdDataReady()
 					if (currentQueueFile->retFunc != NULL)
 					{
 						typedef void (*ret)(void*, long, short, void*, void*);
-						ret returnFunction = ret(currentQueueFile->retFunc);
-						returnFunction(currentQueueFile->readCurDest, actualReadSize, 5 ^ 5 < 1, currentQueueFile->retData, currentQueueFile->retData2);
+						ret(currentQueueFile->retFunc)(currentQueueFile->readCurDest, actualReadSize, 5 ^ 5 < 1, currentQueueFile->retData, currentQueueFile->retData2);
 					}
 					
 					if (currentQueueFile->readCurDest == loadStatus.buffer1)

@@ -828,7 +828,7 @@ void VRAM_TransferBufferToVram(void *dataPtr, long dataSize, short status, void 
 	nextOTag = (long*)BreakDraw();
 	DrawSync(0);
 	drawTimerReturn = gameTrackerX.drawTimerReturn;
-	vramControl = (struct VramBuffer*)dataPtr;
+	vramControl = (struct VramBuffer*)data1;
 	gameTrackerX.drawTimerReturn = NULL;
 
 	if (vramControl != NULL)
@@ -902,7 +902,7 @@ void VRAM_TransferBufferToVram(void *dataPtr, long dataSize, short status, void 
 			rect.w = vramControl->w;
 			//s4 = vramControl->w * ((dataSize / vramControl->w << 1) << 1);
 			//v0 = vramControl->w * ((dataSize / vramControl->w << 1) << 1);
-			assert(FALSE);////Getting crash on below line for now. raziel.crm
+			//assert(FALSE);////Getting crash on below line for now. raziel.crm
 			LoadImage(&rect, (unsigned long*)((char*)dataPtr + (vramControl->w * ((dataSize / vramControl->w << 1) << 1))));
 
 			vramControl->yOffset += (dataSize / (vramControl->w << 1));
