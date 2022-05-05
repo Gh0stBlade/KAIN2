@@ -1,10 +1,37 @@
 #ifndef INLINE_C_H
 #define INLINE_C_H
 
+#include "GTEREG.H"
+
 #if 0
 extern void gte_SetGeomScreen(int h);
 extern int gte_ldlzc(int input);
 #endif
+
+//AX = & 0xFC00
+//DX = & 0x3
+//CL = 6
+// 
+//0xBF & 0xFC00 = 0x0
+//0xBF & 0x3F = 0x3F
+//0xBF & 0x3 = 0x3
+
+//AX = 0 >> 6
+//DX = 3 >>
+
+//= 0xC00
+//110000000010
+
+//001010000000000000110000
+//TARG: 0x0280030
+
+
+
+#define TRANSLATE_OPCODE_COP2(x) \
+if ((x & 0xFC00) == 0 && (x & 0x3F) == 0x3F) { \
+} \
+
+#define gte_mvmva_t(sf,mx,v,cv,lm) ((sf)<<25) | ((mx)<<23) | ((v)<<21) | ((cv)<<19) | ((lm)<<18));
 
 /*
  * $PSLibId: Run-time Library Release 4.6$
@@ -21,11 +48,9 @@ extern int gte_ldlzc(int input);
    * Type 1 functions
    */
 
-#define gte_ldv0( r0 ) __asm__ volatile (			\
-	"lwc2	$0, 0( %0 );"					\
-	"lwc2	$1, 4( %0 )"					\
-	:							\
-	: "r"( r0 ) )
+#define gte_ldv0( r0 )                      \
+	((int*)&VX0)[0] = ((int*)&r0)[0];       \
+	((int*)&VZ0)[0] = ((int*)&r0)[1];       \
 
 #define gte_ldv1( r0 ) __asm__ volatile (			\
 	"lwc2	$2, 0( %0 );"					\
@@ -215,16 +240,10 @@ extern int gte_ldlzc(int input);
 	:							\
 	: "r"( r0 ), "r"( r1 ), "r"( r2 ), "r"( r3 ) )
 
-#define gte_ldopv1( r0 ) __asm__ volatile (			\
-	"lw	$12, 0( %0 );"					\
-	"lw	$13, 4( %0 );"					\
-	"ctc2	$12, $0;"					\
-	"lw	$14, 8( %0 );"					\
-	"ctc2	$13, $2;"					\
-	"ctc2	$14, $4"					\
-	:							\
-	: "r"( r0 )						\
-	: "$12", "$13", "$14" )
+#define gte_ldopv1( r0 )                \
+	((int*)&R11)[0] = ((int*)&r0)[0];   \
+	((int*)&R22)[0] = ((int*)&r0)[1];   \
+	((int*)&R33)[0] = ((int*)&r0)[2];
 
 #define gte_ldopv2( r0 ) __asm__ volatile (			\
 	"lwc2	$11, 8( %0 );"					\
@@ -302,20 +321,12 @@ extern int gte_ldlzc(int input);
 	: "r"( r0 )						\
 	: "$12", "$13" )
 
-#define gte_SetRotMatrix( r0 ) __asm__ volatile (		\
-	"lw	$12, 0( %0 );"					\
-	"lw	$13, 4( %0 );"					\
-	"ctc2	$12, $0;"					\
-	"ctc2	$13, $1;"					\
-	"lw	$12, 8( %0 );"					\
-	"lw	$13, 12( %0 );"					\
-	"lw	$14, 16( %0 );"					\
-	"ctc2	$12, $2;"					\
-	"ctc2	$13, $3;"					\
-	"ctc2	$14, $4"					\
-	:							\
-	: "r"( r0 )						\
-	: "$12", "$13", "$14" )
+#define gte_SetRotMatrix( r0 )          \
+	((int*)&R11)[0] = ((int*)&r0)[0];   \
+	((int*)&R13)[0] = ((int*)&r0)[1];   \
+	((int*)&R22)[0] = ((int*)&r0)[2];   \
+	((int*)&R31)[0] = ((int*)&r0)[3];   \
+	((int*)&R33)[0] = ((int*)&r0)[4];
 
 #define gte_ldsvllrow0( r0 ) __asm__ volatile (			\
 	"lw	$12, 0( %0 );"					\
@@ -821,9 +832,11 @@ extern int gte_ldlzc(int input);
 	:							\
 	: "g"( r0 ) )
 
-#define gte_mvmva(sf,mx,v,cv,lm) gte_mvmva_core( 0x000013bf |	\
-	((sf)<<25) | ((mx)<<23) | ((v)<<21) | ((cv)<<19) | ((lm)<<18))
+#define gte_mvmva(sf,mx,v,cv,lm)    \
+	docop2( 0x0400012  | ((sf)<<19) | ((mx)<<17) | ((v)<<15) | ((cv)<<13) | ((lm)<<10)); \
 
+#define gte_mvmva_dbg(sf,mx,v,cv,lm)    \
+	(0x0400012 | ((sf)<<19) | ((mx)<<17) | ((v)<<15) | ((cv)<<13) | ((lm)<<10));
 
 	/*
 	 * Type 2 functions without nop
@@ -1116,13 +1129,10 @@ extern int gte_ldlzc(int input);
 	: "r"( r0 )						\
 	: "memory" )
 
-#define gte_stlvnl( r0 ) __asm__ volatile (			\
-	"swc2	$25, 0( %0 );"					\
-	"swc2	$26, 4( %0 );"					\
-	"swc2	$27, 8( %0 )"					\
-	:							\
-	: "r"( r0 )						\
-	: "memory" )
+#define gte_stlvnl( r0 )		 \
+	((int*)&r0)[0] = MAC1;       \
+	((int*)&r0)[1] = MAC2;       \
+	((int*)&r0)[2] = MAC3;       \
 
 #define gte_stlvnl0( r0 ) __asm__ volatile (			\
 	"swc2	$25, 0( %0 )"					\

@@ -1,7 +1,8 @@
 #include "LIBGTE.H"
-#include <stdio.h>
 #include "EMULATOR.H"
 #include "Public/EMULATOR_PUBLIC.H"
+
+#include <stdio.h>
 #include <assert.h>
 
 #define WIDE_SCREEN (0)
@@ -1820,7 +1821,7 @@ void InitGeom()
         or $v0, $v1
         mtc0    $v0, SR
 #endif
-        ZSF3 = 341;
+    ZSF3 = 341;
     ZSF4 = 256;
     H = 1000;
     DQA = -98;
@@ -2644,6 +2645,65 @@ int docop2(int op) {
     return 0;
 }
 
+//ax = upper
+//dx = lower
+//cl = flag
+int GetFunction(short upper, short lower, char flag)
+{
+    if (flag < 16) 
+    {
+        return upper >> (flag & 0x1F) | lower << (0x10 - flag & 0x1F);
+    }
+
+    return lower >> (flag - 16 & 0x1F);
+}
+
+int GetFunction_NotMVMVA(int op)
+{
+    return GetFunction(op & 0xFFC0, op & 0x3, 6);
+}
+
+int FUN_1000052C(short ax, char cl)
+{
+    if (cl < 0x10) 
+    {
+        return ax << (cl & 0x1f);
+    }
+    
+    return 0;
+}
+
+int transCop2(int op)
+{
+    if ((op & 0xFC00) == 0 && (op & 0x3F) == 0) 
+    {
+        int newOp = GetFunction_NotMVMVA(op);
+
+        if ((newOp < 0x53) || (newOp < 0)) 
+        {
+            //Error
+            return 0;
+        }
+
+        int sf = GetFunction(0, op & 0x200, 25);
+        int mx = GetFunction(0, op & 0x180, 23);
+        int v = GetFunction(0, op & 0x60, 21);
+        int cv = GetFunction(0, op & 0x18, 19);
+        int lm = GetFunction(0, op & 0x4, 18);
+        
+        int testing = 0;
+        testing++;
+        
+
+    }
+    else
+    {
+        //Probably MVMVA
+    }
+
+    return 0;
+}
+
 void SetRotMatrix(MATRIX* m)
 {
     R11 = m->m[0][0];
@@ -2964,6 +3024,12 @@ void ApplyMatrixLV(MATRIX* mat, VECTOR* v0, VECTOR* v1)
     v1->vx = t0;
     v1->vy = t1;
     v1->vz = t2;
+}
+
+SVECTOR* ApplyMatrixSV(MATRIX* m, SVECTOR* v0, SVECTOR* v1)
+{
+    UNIMPLEMENTED();
+    return NULL;
 }
 
 void CompMatrixLV(MATRIX* m0, MATRIX* m1, MATRIX* m2)

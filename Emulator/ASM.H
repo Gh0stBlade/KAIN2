@@ -1,6 +1,8 @@
 #ifndef ASM_H
 #define ASM_H
 
+#if 0
+
 #define R0  $0
 #define R1  $1
 #define R2  $2
@@ -33,6 +35,7 @@
 #define R29 $29
 #define R30 $30
 #define R31 $31
+#endif
 
 #if defined(_LANGUAGE_C)||defined(LANGUAGE_C)||defined(_LANGUAGE_C_PLUS_PLUS)||defined(__cplusplus)||defined(c_plusplus)
 #else
