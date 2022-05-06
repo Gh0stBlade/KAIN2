@@ -7,7 +7,7 @@
 
 int menu_data_size()
 { 
-	return 904;
+	return sizeof(menu_t);
 }
 
 void menu_initialize(struct menu_t *menu, void *opaque)
