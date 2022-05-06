@@ -1,6 +1,7 @@
 #include "CORE.H"
 #include "VOICEXA.H"
 #include "GAMELOOP.H"
+#include "PSX/AADLIB.H"
 
 struct XAVoiceTracker voiceTracker; // offset 0x800D5AD4
 struct XAVoiceListEntry* voiceList; // offset 0x800CF99C
@@ -50,7 +51,6 @@ void VOICEXA_Init()
 			}
 			else
 			{
-				//loc_800B6B74
 				vt->xaFileInfo[i].startPos = CdPosToInt(&fp.pos);
 			}
 		}
@@ -179,15 +179,61 @@ void processVoiceCommands(struct XAVoiceTracker *vt)
 
 void voiceCmdPlay(struct XAVoiceTracker *vt, short voiceIndex)
 { 
-	CdlFILTER filter; // stack offset -88
-	CdlLOC pos; // stack offset -80
-	unsigned char mode; // stack offset -32
-	SpuCommonAttr spuattr; // stack offset -72
-	struct XAVoiceListEntry* voice; // $s1
-	struct XAFileInfo* file; // $s0
+	CdlFILTER filter;
+	CdlLOC pos;
+	unsigned char mode;
+	SpuCommonAttr spuattr;
+	struct XAVoiceListEntry* voice;
+	struct XAFileInfo* file;
 
+	if (voiceList != NULL)
+	{
+		voice = &voiceList[voiceIndex];
 
+		vt->fileNum = voiceIndex >> 4;
 
+		file = &vt->xaFileInfo[voiceIndex >> 2];
+
+		putCdCommand(vt, 9, 0, NULL);
+
+		filter.file = 1;
+		filter.chan = voiceIndex & 0xF;
+
+		putCdCommand(vt, 13, 4, (unsigned char*)&filter);
+
+		mode = 200;
+
+		putCdCommand(vt, 14, 1, &mode);
+
+		CdIntToPos(file->startPos, &vt->currentPos);
+
+		vt->endSector = file->startPos + (voice->length - 150);
+
+		CdIntToPos(file->startPos, &pos);
+
+		putCdCommand(vt, 27, 4, (unsigned char*)&pos);
+
+		spuattr.mask = 0x3FCF;
+		spuattr.mvol.left = 0x3FFF;
+		spuattr.mvol.right = 0x3FFF;
+		spuattr.mvolmode.left = 0;
+		spuattr.mvolmode.right = 0;
+		spuattr.cd.reverb = 0;
+		spuattr.cd.mix = 1;
+		spuattr.ext.volume.left = 0x7FFF;
+		spuattr.ext.volume.right = 0x7FFF;
+		spuattr.ext.reverb = 0;
+		spuattr.ext.mix = 1;
+		spuattr.cd.volume.left = gameTrackerX.sound.gVoiceVol << 8;
+		spuattr.cd.volume.right = gameTrackerX.sound.gVoiceVol << 8;
+
+		SpuSetCommonAttr(&spuattr);
+
+		if (gameTrackerX.sound.gMusicVol >= 60)
+		{
+			aadStartMusicMasterVolFade(60, -1, NULL);
+		}
+	}
 }
 
 
