@@ -33,7 +33,7 @@ struct XAVoiceTracker // hashcode: 0x77052065 (dec: 1996824677)
 	CdlLOC currentPos; // size=4, offset=0
 	int currentSector; // size=0, offset=4
 	int endSector; // size=0, offset=8
-	CdlCB (*prevCallback)(); // size=0, offset=12
+	CdlCB prevCallback; // size=0, offset=12
 	unsigned char cdResult[8]; // size=8, offset=16
 	struct CdCommand cdCmdQueue[8]; // size=64, offset=24
 	unsigned short requestQueue[4]; // size=8, offset=88
