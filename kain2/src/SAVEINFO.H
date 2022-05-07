@@ -4,6 +4,46 @@
 #include "CORE.H"
 #include "MONSTER/MONAPI.H"
 
+struct _SmallRotation 
+{
+	short x; // size=0, offset=0
+	short y; // size=0, offset=2
+	short z; // size=0, offset=4
+};
+
+struct _SavedIntroWithIntro 
+{
+	unsigned char savedID; // size=0, offset=0
+	unsigned char shiftedSaveSize; // size=0, offset=1
+	unsigned short attachedUniqueID; // size=0, offset=2
+	short introOffset; // size=0, offset=4
+	short birthUnitID; // size=0, offset=6
+	short introUniqueID; // size=0, offset=8
+	unsigned char lightGroup; // size=0, offset=10
+	unsigned char specturalLightGroup; // size=0, offset=11
+	long flags; // size=0, offset=12
+	long flags2; // size=0, offset=16
+	struct _SmallRotation smallRotation; // size=6, offset=20
+	struct _Position position; // size=6, offset=26
+};
+
+struct _SavedIntro 
+{
+	unsigned char savedID; // size=0, offset=0
+	unsigned char shiftedSaveSize; // size=0, offset=1
+	unsigned char lightGroup; // size=0, offset=2
+	unsigned char specturalLightGroup; // size=0, offset=3
+	char name[8]; // size=8, offset=4
+	short introUniqueID; // size=0, offset=12
+	short streamUnitID; // size=0, offset=14
+	short birthUnitID; // size=0, offset=16
+	unsigned short attachedUniqueID; // size=0, offset=18
+	struct _SmallRotation smallRotation; // size=6, offset=20
+	struct _Position position; // size=6, offset=26
+	long flags; // size=0, offset=32
+	long flags2; // size=0, offset=36
+};
+
 struct SavedIntroSmall 
 {
 	unsigned char savedID; // size=0, offset=0
