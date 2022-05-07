@@ -64,7 +64,7 @@ struct FONT_118fake // hashcode: 0x5664C5CE (dec: 1449444814)
 		int splinecam_helpkey; // size=0, offset=24
 	} Cinematic; // size=28, offset=0, found in object files: font.o, font.o
 	struct {
-		struct _Position offset; // size=6, offset=0
+		_Position offset; // size=6, offset=0
 		struct _Rotation rotation; // size=8, offset=6
 		long focusDistance; // size=0, offset=16
 	} Idle; // size=20, offset=28, found in object files: font.o, font.o
@@ -87,9 +87,9 @@ struct FONT_118fake // hashcode: 0x5664C5CE (dec: 1449444814)
 union FONT_213fake // Hashcode: 0x740A6D3C (dec: 1946840380)
 {
 	struct _Instance* target; // size=616, offset=0
-	struct _Position position; // size=6, offset=0
+	_Position position; // size=6, offset=0
 	struct _Rotation direction; // size=8, offset=0
-	struct _Position throwVector; // size=6, offset=0
+	_Position throwVector; // size=6, offset=0
 };
 
 typedef struct font_color_t // hashcode: 0x5F515B79 (dec: 1599167353)

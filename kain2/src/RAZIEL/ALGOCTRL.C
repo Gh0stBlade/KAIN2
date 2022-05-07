@@ -84,8 +84,8 @@ void AlgorithmicNeck(struct _Instance *Player, struct _Instance *Target)
 		// Start line: 151
 		// Start offset: 0x800A1EBC
 		// Variables:
-			struct _Position From; // stack offset -96
-			struct _Position To; // stack offset -88
+			_Position From; // stack offset -96
+			_Position To; // stack offset -88
 			struct _Rotation Rot1; // stack offset -80
 			int Diff; // $v1
 			MATRIX matrix; // stack offset -72

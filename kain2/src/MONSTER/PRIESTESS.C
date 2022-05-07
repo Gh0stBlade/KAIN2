@@ -12,7 +12,7 @@ void __cdecl PRIESTS_Init(struct _Instance* instance)
 	__int16* v1; // ebx
 	struct _MonsterVars* mv; // ebp
 	char* extra; // eax
-	struct _Position* v4; // edi
+	_Position* v4; // edi
 	struct _StreamUnit* unit; // eax MAPDST
 
 	v1 = (__int16*)*((DWORD*)instance->data + 1);
@@ -21,7 +21,7 @@ void __cdecl PRIESTS_Init(struct _Instance* instance)
 	if (mv)
 	{
 		extra = MEMPACK_Malloc(0x1Cu, 0x25u);
-		v4 = (struct _Position*)extra;
+		v4 = (_Position*)extra;
 		if (!extra)
 		{
 			MON_Say(instance, "ERROR: Out of space for priests variables!\n");
@@ -219,7 +219,7 @@ void __cdecl PRIESTS_Flee(struct _Instance* instance)
 #if defined(PC_VERSION)
 	struct _MonsterVars* mv; // eax
 	struct _MonsterAttributes* ma; // ebx
-	struct _Position* extraVars; // esi
+	_Position* extraVars; // esi
 	char* v5; // ebp
 	int v6; // ebp
 	int v7; // eax
@@ -228,7 +228,7 @@ void __cdecl PRIESTS_Flee(struct _Instance* instance)
 
 	mv = (struct _MonsterVars*)instance->extraData;
 	ma = (struct _MonsterAttributes*)instance->data;
-	extraVars = (struct _Position*)mv->extraVars;
+	extraVars = (_Position*)mv->extraVars;
 	v5 = (char*)ma->tunData;
 	v8 = v5;
 	ir = mv->enemy;

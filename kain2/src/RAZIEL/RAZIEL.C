@@ -948,8 +948,8 @@ void DefaultStateHandler(struct __CharacterState *In, int CurrentSection, int Da
 				// Start line: 4608
 				// Start offset: 0x800B0640
 				// Variables:
-					struct _Position pos1; // stack offset -48
-					struct _Position pos2; // stack offset -40
+					_Position pos1; // stack offset -48
+					_Position pos2; // stack offset -40
 					int diff; // $v0
 			/* end block 1.2.1 */
 			// End offset: 0x800B0720

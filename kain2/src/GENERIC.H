@@ -35,7 +35,7 @@ struct GENERIC_114fake // hashcode: 0xDFE61644 (dec: -538569148)
 		int splinecam_helpkey; // size=0, offset=24
 	} Cinematic; // size=28, offset=0, found in object files: generic.o, generic.o
 	struct {
-		struct _Position offset; // size=6, offset=0
+		_Position offset; // size=6, offset=0
 		struct _Rotation rotation; // size=8, offset=6
 		long focusDistance; // size=0, offset=16
 	} Idle; // size=20, offset=28, found in object files: generic.o, generic.o
@@ -67,9 +67,9 @@ struct evAnimationInstanceSwitchData // hashcode: 0xEE7F2A6C (dec: -293655956)
 union GENERIC_201fake // Hashcode: 0x7031E694 (dec: 1882318484)
 {
 	struct _Instance* target; // size=616, offset=0
-	struct _Position position; // size=6, offset=0
+	_Position position; // size=6, offset=0
 	struct _Rotation direction; // size=8, offset=0
-	struct _Position throwVector; // size=6, offset=0
+	_Position throwVector; // size=6, offset=0
 };
 
 struct evControlSaveDataData // hashcode: 0xA76A68A9 (dec: -1486198615)

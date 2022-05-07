@@ -138,7 +138,7 @@ struct MEMCARD_117fake // hashcode: 0x86F561E0 (dec: -2030738976)
 		int splinecam_helpkey; // size=0, offset=24
 	} Cinematic; // size=28, offset=0, found in object files: memcard.o, memcard.o
 	struct {
-		struct _Position offset; // size=6, offset=0
+		_Position offset; // size=6, offset=0
 		struct _Rotation rotation; // size=8, offset=6
 		long focusDistance; // size=0, offset=16
 	} Idle; // size=20, offset=28, found in object files: memcard.o, memcard.o
@@ -211,9 +211,9 @@ struct memcard_t // hashcode: 0xAEC9A344 (dec: -1362517180)
 union MEMCARD_196fake // Hashcode: 0xF7F7C377 (dec: -134757513)
 {
 	struct _Instance* target; // size=616, offset=0
-	struct _Position position; // size=6, offset=0
+	_Position position; // size=6, offset=0
 	struct _Rotation direction; // size=8, offset=0
-	struct _Position throwVector; // size=6, offset=0
+	_Position throwVector; // size=6, offset=0
 };
 
 struct mcmenu_table_t // hashcode: 0xB78C7C17 (dec: -1215529961)

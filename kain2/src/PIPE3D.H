@@ -43,7 +43,7 @@ struct PIPE3D_109fake // hashcode: 0xEADE4BF5 (dec: -354530315)
 		int splinecam_helpkey; // size=0, offset=24
 	} Cinematic; // size=28, offset=0, found in object files: pipe3d.o, pipe3d.o
 	struct {
-		struct _Position offset; // size=6, offset=0
+		_Position offset; // size=6, offset=0
 		struct _Rotation rotation; // size=8, offset=6
 		long focusDistance; // size=0, offset=16
 	} Idle; // size=20, offset=28, found in object files: pipe3d.o, pipe3d.o
@@ -66,9 +66,9 @@ struct PIPE3D_109fake // hashcode: 0xEADE4BF5 (dec: -354530315)
 union PIPE3D_199fake // Hashcode: 0x416C539D (dec: 1097618333)
 {
 	struct _Instance* target; // size=616, offset=0
-	struct _Position position; // size=6, offset=0
+	_Position position; // size=6, offset=0
 	struct _Rotation direction; // size=8, offset=0
-	struct _Position throwVector; // size=6, offset=0
+	_Position throwVector; // size=6, offset=0
 };
 
 struct PIPE3D_239fake // hashcode: 0x11DBF281 (dec: 299627137)
@@ -103,7 +103,7 @@ extern void PIPE3D_AnimateTerrainTextures(struct DrMoveAniTex *aniTextures, long
 extern void PIPE3D_HalvePlaneInstanceTransformAndDraw(struct _Instance *instance, MATRIX * wcTransform, struct _VertexPool *vertexPool, struct _PrimPool *primPool, unsigned long **ot, struct _Mirror *mirror); // 0x8003BE54
 extern void PIPE3D_HalvePlaneGetRingPoints(struct _Instance *instance, MATRIX * wcTransform, struct _VertexPool *vertexPool, struct _PrimPool *primPool, unsigned long **ot, struct _FXHalvePlane *ring); // 0x8003C048
 extern void PIPE3D_DoGlow(struct _Instance *instance, MATRIX * wcTransform, struct _VertexPool *vertexPool, struct _PrimPool *primPool, unsigned long **ot, struct _FXGlowEffect *glow); // 0x8003C218
-extern long PIPE3D_Segment2ScreenPt(struct _Instance *instance, MATRIX * wcTransform, int segIndex, struct _Position *pos); // 0x8003C5F4
+extern long PIPE3D_Segment2ScreenPt(struct _Instance *instance, MATRIX * wcTransform, int segIndex, _Position *pos); // 0x8003C5F4
 
 #if defined(_LANGUAGE_C_PLUS_PLUS)||defined(__cplusplus)||defined(c_plusplus)
 }

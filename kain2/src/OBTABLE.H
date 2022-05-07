@@ -42,7 +42,7 @@ struct OBTABLE_114fake // hashcode: 0xA297FC58 (dec: -1567097768)
 		int splinecam_helpkey; // size=0, offset=24
 	} Cinematic; // size=28, offset=0, found in object files: obtable.o, obtable.o
 	struct {
-		struct _Position offset; // size=6, offset=0
+		_Position offset; // size=6, offset=0
 		struct _Rotation rotation; // size=8, offset=6
 		long focusDistance; // size=0, offset=16
 	} Idle; // size=20, offset=28, found in object files: obtable.o, obtable.o
@@ -71,9 +71,9 @@ struct ObjectAccess // hashcode: 0x1268C513 (dec: 308856083)
 union OBTABLE_196fake // Hashcode: 0x921E9F5C (dec: -1843486884)
 {
 	struct _Instance* target; // size=616, offset=0
-	struct _Position position; // size=6, offset=0
+	_Position position; // size=6, offset=0
 	struct _Rotation direction; // size=8, offset=0
-	struct _Position throwVector; // size=6, offset=0
+	_Position throwVector; // size=6, offset=0
 };
 
 typedef struct _ObjectOwnerInfo ObjectOwnerInfo;
@@ -114,7 +114,7 @@ struct OBTABLE2_114fake // hashcode: 0xAA6A3EB1 (dec: -1435877711)
 		int splinecam_helpkey; // size=0, offset=24
 	} Cinematic; // size=28, offset=0, found in object files: obtable2.o, obtable2.o
 	struct {
-		struct _Position offset; // size=6, offset=0
+		_Position offset; // size=6, offset=0
 		struct _Rotation rotation; // size=8, offset=6
 		long focusDistance; // size=0, offset=16
 	} Idle; // size=20, offset=28, found in object files: obtable2.o, obtable2.o
@@ -150,9 +150,9 @@ struct ObjectFunc // hashcode: 0xFDE6E2DA (dec: -35200294)
 union OBTABLE2_209fake // Hashcode: 0xB29B0D0C (dec: -1298461428)
 {
 	struct _Instance* target; // size=616, offset=0
-	struct _Position position; // size=6, offset=0
+	_Position position; // size=6, offset=0
 	struct _Rotation direction; // size=8, offset=0
-	struct _Position throwVector; // size=6, offset=0
+	_Position throwVector; // size=6, offset=0
 };
 
 

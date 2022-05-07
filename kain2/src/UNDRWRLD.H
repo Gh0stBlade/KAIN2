@@ -35,7 +35,7 @@ struct UNDRWRLD_114fake // hashcode: 0x3CF3A383 (dec: 1022600067)
 		int splinecam_helpkey; // size=0, offset=24
 	} Cinematic; // size=28, offset=0, found in object files: undrwrld.o, undrwrld.o
 	struct {
-		struct _Position offset; // size=6, offset=0
+		_Position offset; // size=6, offset=0
 		struct _Rotation rotation; // size=8, offset=6
 		long focusDistance; // size=0, offset=16
 	} Idle; // size=20, offset=28, found in object files: undrwrld.o, undrwrld.o
@@ -58,9 +58,9 @@ struct UNDRWRLD_114fake // hashcode: 0x3CF3A383 (dec: 1022600067)
 union UNDRWRLD_195fake // Hashcode: 0xA8618D78 (dec: -1470001800)
 {
 	struct _Instance* target; // size=616, offset=0
-	struct _Position position; // size=6, offset=0
+	_Position position; // size=6, offset=0
 	struct _Rotation direction; // size=8, offset=0
-	struct _Position throwVector; // size=6, offset=0
+	_Position throwVector; // size=6, offset=0
 };
 
 struct UW_ScreenXY // hashcode: 0x88757B16 (dec: -2005566698)

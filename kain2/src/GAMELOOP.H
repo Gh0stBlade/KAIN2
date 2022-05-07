@@ -90,7 +90,7 @@ typedef struct GameTracker // hashcode: 0x4EB3EFC5 (dec: 1320415173)
 	long mirrorZPush; // size=0, offset=488
 	long defVVRemoveDist; // size=0, offset=492
 	long defRemoveDist; // size=0, offset=496
-	struct _Position forcedStartPosition; // size=6, offset=500
+	_Position forcedStartPosition; // size=6, offset=500
 	short hudCollDisplay; // size=0, offset=506
 	long primMemUsed; // size=0, offset=508
 	long cheatTimerCount; // size=0, offset=512

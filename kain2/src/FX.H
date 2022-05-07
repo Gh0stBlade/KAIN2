@@ -65,11 +65,11 @@ struct _FXParticle // hashcode: 0xDD6F143E (dec: -579922882)
 	short primLifeTime; // size=0, offset=30
 	short birthRadius; // size=0, offset=32
 	short scaleSpeed; // size=0, offset=34
-	struct _Position direction; // size=6, offset=36
+	_Position direction; // size=6, offset=36
 	unsigned short flag_bits; // size=0, offset=42
-	struct _Position acceleration; // size=6, offset=44
+	_Position acceleration; // size=6, offset=44
 	short startScale; // size=0, offset=50
-	struct _Position offset; // size=6, offset=52
+	_Position offset; // size=6, offset=52
 	char startSegment; // size=0, offset=58
 	char z_undulate; // size=0, offset=59
 	long startColor; // size=0, offset=60
@@ -157,10 +157,10 @@ struct _FXLightning // hashcode: 0x552145A3 (dec: 1428243875)
 	short lifeTime; // size=0, offset=14
 	short deg; // size=0, offset=16
 	short deg_inc; // size=0, offset=18
-	struct _Position start_offset; // size=6, offset=20
+	_Position start_offset; // size=6, offset=20
 	short startSeg; // size=0, offset=26
 	struct _Instance* end_instance; // size=616, offset=28
-	struct _Position end_offset; // size=6, offset=32
+	_Position end_offset; // size=6, offset=32
 	short endSeg; // size=0, offset=38
 	short matrixSeg; // size=0, offset=40
 	short width; // size=0, offset=42
@@ -201,9 +201,9 @@ struct GenericFXObject // hashcode: 0xD22FD65C (dec: -768616868)
 union FX_204fake // Hashcode: 0x83EDAC95 (dec: -2081575787)
 {
 	struct _Instance* target; // size=616, offset=0
-	struct _Position position; // size=6, offset=0
+	_Position position; // size=6, offset=0
 	struct _Rotation direction; // size=8, offset=0
-	struct _Position throwVector; // size=6, offset=0
+	_Position throwVector; // size=6, offset=0
 };
 
 struct _FX_MATRIX // hashcode: 0x13190ADD (dec: 320408285)
@@ -229,16 +229,16 @@ struct _FX_PRIM // hashcode: 0x16BF818E (dec: 381649294)
 	long endColor; // size=0, offset=36
 	short colorFadeValue; // size=0, offset=40
 	short colorFadeStep; // size=0, offset=42
-	struct _Position position; // size=6, offset=44
+	_Position position; // size=6, offset=44
 	short fadeStep; // size=0, offset=50
 	short fadeValue[4]; // size=8, offset=52
-	struct _Position v0; // size=6, offset=60
+	_Position v0; // size=6, offset=60
 	short work0; // size=0, offset=66
-	struct _Position v1; // size=6, offset=68
+	_Position v1; // size=6, offset=68
 	short work1; // size=0, offset=74
-	struct _Position v2; // size=6, offset=76
+	_Position v2; // size=6, offset=76
 	short work2; // size=0, offset=82
-	struct _Position v3; // size=6, offset=84
+	_Position v3; // size=6, offset=84
 	short work3; // size=0, offset=90
 	union {
 		struct {
@@ -340,7 +340,7 @@ extern void FX_DrawScreenPoly(int transtype, unsigned long color, int zdepth); /
 extern POLY_GT4 * FX_SetupPolyGT4(int x1, int y1, int x2, int y2, int otz, struct TextureMT3 *texture, long color0, long color1, long color2, long color3); // 0x80046300
 extern void FX_MakeWarpArrow(int x, int y, int xsize, int ysize, int fade); // 0x80046404
 extern void FX_MakeMannaIcon(int x, int y, int xsize, int ysize); // 0x800464E4
-extern void FX_MakeGlyphIcon(struct _Position *position, struct Object *glyphObject, int size, int glyphnum, int enabled); // 0x80046690
+extern void FX_MakeGlyphIcon(_Position *position, struct Object *glyphObject, int size, int glyphnum, int enabled); // 0x80046690
 extern void FX_SoulDustProcess(struct _FX_PRIM *fxPrim, struct _FXTracker *fxTracker); // 0x80046854
 extern void FX_MakeSoulDust(struct _Instance *instance, short segment); // 0x80046A08
 extern void FX_WaterTrailProcess(struct _FX_PRIM *fxPrim, struct _FXTracker *fxTracker); // 0x80046C48
@@ -408,7 +408,7 @@ extern struct _FXParticle * FX_StartGenericParticle(struct _Instance *instance, 
 extern void FX_StartGenericRibbon(struct _Instance *instance, int num, int segOverride, int endOverride, int InitFlag); // 0x8004C23C
 extern void FX_StartGenericGlow(struct _Instance *instance, int num, int segOverride, int seg2Override, int InitFlag); // 0x8004C2F8
 extern struct _FXLightning * FX_CreateLightning(struct _Instance *instance, int lifeTime, int deg, int deg_inc, int width, int small_width, int segs, int sine_size, int variation, unsigned long color, unsigned long glow_color); // 0x8004C4A0
-extern void FX_SetLightingPos(struct _FXLightning *zap, struct _Instance *startInstance, int startSeg, struct _Position *startOffset, struct _Instance *endInstance, int endSeg, struct _Position *endOffset, int matrixSeg); // 0x8004C5A8
+extern void FX_SetLightingPos(struct _FXLightning *zap, struct _Instance *startInstance, int startSeg, _Position *startOffset, struct _Instance *endInstance, int endSeg, _Position *endOffset, int matrixSeg); // 0x8004C5A8
 extern struct _FXLightning * FX_StartGenericLightning(struct _Instance *instance, int num, int segOverride, int endSegOverride); // 0x8004C658
 extern struct _FXBlastringEffect * FX_StartGenericBlastring(struct _Instance *instance, int num, int segOverride, int matrixSegOverride); // 0x8004C7FC
 extern struct _FXFlash * FX_StartGenericFlash(struct _Instance *instance, int num); // 0x8004CA04
@@ -432,7 +432,7 @@ extern void FX_DrawRing(MATRIX *wcTransform, struct _SVector *position, MATRIX *
 extern void fx_setTex(DVECTOR *x, unsigned char *uv, int tx, int offset); // 0x8004E200
 extern void FX_DrawRing2(MATRIX *wcTransform, struct _SVector *position, MATRIX *matrix, int radius, int radius2, int radius3, int z1, int z2, int z3, long offset, int sortInWorld); // 0x8004E244
 extern void FX_DrawFField(MATRIX *wcTransform, struct _FXForceFieldEffect *field); // 0x8004E61C
-extern struct _FXForceFieldEffect * FX_StartFField(struct _Instance *instance, int size, struct _Position *offset, int size_diff, int size_change, int deg_change, long color); // 0x8004E810
+extern struct _FXForceFieldEffect * FX_StartFField(struct _Instance *instance, int size, _Position *offset, int size_diff, int size_change, int deg_change, long color); // 0x8004E810
 extern void FX_EndFField(struct _Instance *instance); // 0x8004E8E4
 extern void FX_Draw_Glowing_Line(unsigned long **ot, long otz, DVECTOR *sxy0, DVECTOR *sxy1, DVECTOR *xy0, DVECTOR *xy1, long color, long color2); // 0x8004E964
 extern void FX_Lightning(MATRIX *wcTransform, unsigned long **ot, MATRIX *mat, short deg, struct _SVector *start, struct _SVector *end, int width, int small_width, int segs, int sine_size, int variation, long color, long glow_color); // 0x8004EB00

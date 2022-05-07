@@ -378,13 +378,13 @@ struct _MonsterVars // hashcode: 0xEF80566F (dec: -276801937)
 	unsigned long generalTimer; // size=0, offset=256
 	unsigned long generalTimer2; // size=0, offset=260
 	unsigned long effectTimer; // size=0, offset=264
-	struct _Position* lookAtPos; // size=6, offset=268
+	_Position* lookAtPos; // size=6, offset=268
 	short speed; // size=0, offset=272
-	struct _Position destination; // size=6, offset=274
+	_Position destination; // size=6, offset=274
 	short fleeMarker; // size=0, offset=280
-	struct _Position lastValidPos; // size=6, offset=282
+	_Position lastValidPos; // size=6, offset=282
 	short wanderRange; // size=0, offset=288
-	struct _Position lookAtPosData; // size=6, offset=290
+	_Position lookAtPosData; // size=6, offset=290
 	short guardRange; // size=0, offset=296
 	short ambushRange; // size=0, offset=298
 	short ambushArc; // size=0, offset=300
@@ -438,7 +438,7 @@ struct MONAPI_114fake // hashcode: 0x26233514 (dec: 639841556)
 		int splinecam_helpkey; // size=0, offset=24
 	} Cinematic; // size=28, offset=0, found in object files: monapi.o, monapi.o
 	struct {
-		struct _Position offset; // size=6, offset=0
+		_Position offset; // size=6, offset=0
 		struct _Rotation rotation; // size=8, offset=6
 		long focusDistance; // size=0, offset=16
 	} Idle; // size=20, offset=28, found in object files: monapi.o, monapi.o
@@ -470,7 +470,7 @@ struct MONMSG_114fake // hashcode: 0x79F33A82 (dec: 2045983362)
 		int splinecam_helpkey; // size=0, offset=24
 	} Cinematic; // size=28, offset=0, found in object files: monmsg.o, monmsg.o
 	struct {
-		struct _Position offset; // size=6, offset=0
+		_Position offset; // size=6, offset=0
 		struct _Rotation rotation; // size=8, offset=6
 		long focusDistance; // size=0, offset=16
 	} Idle; // size=20, offset=28, found in object files: monmsg.o, monmsg.o

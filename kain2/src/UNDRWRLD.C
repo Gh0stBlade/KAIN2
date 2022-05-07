@@ -236,7 +236,7 @@ struct _StreamUnit * UNDERWORLD_LoadLevel(char *baseAreaName, struct GameTracker
 				short _y1; // $a0
 				short _z1; // $a1
 				struct _SVector *_v0; // $v0
-				struct _Position *_v1; // $v0
+				_Position *_v1; // $v0
 		/* end block 1.1 */
 		// End offset: 0x800B52B8
 		// End Line: 368
@@ -284,8 +284,8 @@ void UNDERWORLD_UpdatePlayer(struct Intro *playerIntro, struct _Instance *instan
 				short _y1; // $t0
 				short _z1; // $a3
 				struct _SVector *_v; // $a1
-				struct _Position *_v0; // $a1
-				struct _Position *_v1; // $a3
+				_Position *_v0; // $a1
+				_Position *_v1; // $a3
 		/* end block 1.1 */
 		// End offset: 0x800B5500
 		// End Line: 462

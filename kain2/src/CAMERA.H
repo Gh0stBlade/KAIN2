@@ -5,7 +5,7 @@
 
 struct _CameraCore_Type // hashcode: 0xD341D51C (dec: -750660324)
 {
-	struct _Position position; // size=6, offset=0
+	_Position position; // size=6, offset=0
 	short pad1; // size=0, offset=6
 	MATRIX vvNormalWorVecMat[2]; // size=64, offset=8
 	long vvPlaneConsts[6]; // size=24, offset=72
@@ -24,11 +24,11 @@ struct _CameraCore_Type // hashcode: 0xD341D51C (dec: -750660324)
 	short pad2; // size=0, offset=184
 	struct _SVector screenScale; // size=8, offset=186
 	short pad3; // size=0, offset=194
-	struct _Position debugPos; // size=6, offset=196
+	_Position debugPos; // size=6, offset=196
 	short pad4; // size=0, offset=202
 	struct _Rotation debugRot; // size=8, offset=204
 	short pad5; // size=0, offset=212
-	struct _Position nondebugPos; // size=6, offset=214
+	_Position nondebugPos; // size=6, offset=214
 	short pad6; // size=0, offset=220
 };
 
@@ -50,12 +50,12 @@ struct _CameraKey // hashcode: 0xB9E6B724 (dec: -1176062172)
 
 struct _SavedCinematic // hashcode: 0x1E29151B (dec: 506008859)
 {
-	struct _Position position; // size=6, offset=0
-	struct _Position focusPoint; // size=6, offset=6
-	struct _Position base; // size=6, offset=12
-	struct _Position targetPos; // size=6, offset=18
-	struct _Position targetFocusPoint; // size=6, offset=24
-	struct _Position targetBase; // size=6, offset=30
+	_Position position; // size=6, offset=0
+	_Position focusPoint; // size=6, offset=6
+	_Position base; // size=6, offset=12
+	_Position targetPos; // size=6, offset=18
+	_Position targetFocusPoint; // size=6, offset=24
+	_Position targetBase; // size=6, offset=30
 	struct _Rotation baseRot; // size=8, offset=36
 	struct _Rotation focusRotation; // size=8, offset=44
 	struct _Rotation targetFocusRotation; // size=8, offset=52
@@ -102,16 +102,16 @@ struct Camera // hashcode: 0x0670C20F (dec: 108053007)
 	short distanceState; // size=0, offset=250
 	short lagZ; // size=0, offset=252
 	short tilt; // size=0, offset=254
-	struct _Position focusPoint; // size=6, offset=256
+	_Position focusPoint; // size=6, offset=256
 	short focusDistance; // size=0, offset=262
 	struct _Instance* focusInstance; // size=616, offset=264
-	struct _Position oldFocusInstancePos; // size=6, offset=268
-	struct _Position newFocusInstancePos; // size=6, offset=274
+	_Position oldFocusInstancePos; // size=6, offset=268
+	_Position newFocusInstancePos; // size=6, offset=274
 	struct _Rotation oldFocusInstanceRot; // size=8, offset=280
 	struct _Rotation newFocusInstanceRot; // size=8, offset=288
 	struct _SVector focusInstanceVelVec; // size=8, offset=296
-	struct _Position focusLeadPivot; // size=6, offset=304
-	struct _Position focusOffset; // size=6, offset=310
+	_Position focusLeadPivot; // size=6, offset=304
+	_Position focusOffset; // size=6, offset=310
 	struct _Rotation focusRotation; // size=8, offset=316
 	short tiltVel; // size=0, offset=324
 	short tiltAccl; // size=0, offset=326
@@ -128,11 +128,11 @@ struct Camera // hashcode: 0x0670C20F (dec: 108053007)
 	struct _SVector rotationAccl; // size=8, offset=396
 	short maxVel; // size=0, offset=404
 	short maxRot; // size=0, offset=406
-	struct _Position targetPos; // size=6, offset=408
+	_Position targetPos; // size=6, offset=408
 	short targetTilt; // size=0, offset=414
 	struct _Rotation targetRotation; // size=8, offset=416
 	short targetFocusDistance; // size=0, offset=424
-	struct _Position targetFocusPoint; // size=6, offset=426
+	_Position targetFocusPoint; // size=6, offset=426
 	short collisionTargetFocusDistance; // size=0, offset=432
 	struct _Rotation targetFocusRotation; // size=8, offset=434
 	short tfaceTilt; // size=0, offset=442
@@ -168,7 +168,7 @@ struct Camera // hashcode: 0x0670C20F (dec: 108053007)
 	short signalFocusDistance; // size=0, offset=670
 	struct _SavedCinematic savedCinematic[3]; // size=336, offset=672
 	struct _Rotation savedfocusRotation; // size=8, offset=1008
-	struct _Position signalPos; // size=6, offset=1016
+	_Position signalPos; // size=6, offset=1016
 	short pad11; // size=0, offset=1022
 	struct _Rotation signalRot; // size=8, offset=1024
 	short forced_movement; // size=0, offset=1032
@@ -189,7 +189,7 @@ struct Camera // hashcode: 0x0670C20F (dec: 108053007)
 			int splinecam_helpkey; // size=0, offset=24
 		} Cinematic; // size=28, offset=0, found in object files: debug.o, debug.o
 		struct {
-			struct _Position offset; // size=6, offset=0
+			_Position offset; // size=6, offset=0
 			struct _Rotation rotation; // size=8, offset=6
 			long focusDistance; // size=0, offset=16
 		} Idle; // size=20, offset=28, found in object files: debug.o, debug.o
@@ -221,7 +221,7 @@ struct Camera // hashcode: 0x0670C20F (dec: 108053007)
 	unsigned long instance_mode; // size=0, offset=1180
 	long instance_xyvel; // size=0, offset=1184
 	long instance_prev_xyvel; // size=0, offset=1188
-	struct _Position real_focuspoint; // size=6, offset=1192
+	_Position real_focuspoint; // size=6, offset=1192
 	short always_rotate_flag; // size=0, offset=1198
 	short follow_flag; // size=0, offset=1200
 	short actual_x_rot; // size=0, offset=1202
@@ -259,9 +259,9 @@ extern short CAMERA_AngleDifference(short angle0, short angle1); // 0x80016334
 extern short CAMERA_SignedAngleDifference(short angle0, short angle1); // 0x800163AC
 extern unsigned long CAMERA_QueryMode(struct Camera *camera); // 0x800163DC
 extern void CAMERA_SetMaxVel(struct Camera *camera); // 0x80016478
-extern void CAMERA_SetTarget(struct Camera *camera, struct _Position *pos); // 0x80016584
-extern void CAMERA_CalcPosition(struct _Position *position, struct _Position *base, struct _Rotation *rotation, short distance); // 0x80016600
-extern void CAMERA_SetFocus(struct Camera *camera, struct _Position *targetfocusPoint); // 0x80016728
+extern void CAMERA_SetTarget(struct Camera *camera, _Position *pos); // 0x80016584
+extern void CAMERA_CalcPosition(_Position *position, _Position *base, struct _Rotation *rotation, short distance); // 0x80016600
+extern void CAMERA_SetFocus(struct Camera *camera, _Position *targetfocusPoint); // 0x80016728
 extern void CAMERA_Lock(struct Camera *camera, long lock); // 0x800169A4
 extern void CAMERA_Unlock(struct Camera *camera, long unlock); // 0x800169B8
 extern void CAMERA_SetSmoothValue(struct Camera *camera, long smooth); // 0x800169CC
@@ -275,15 +275,15 @@ extern void CAMERA_ChangeTo(struct Camera *camera, struct _CameraKey *cameraKey)
 extern void CAMERA_SetShake(struct Camera *camera, long shake, long scale); // 0x80016CC4
 extern void Decouple_AngleMoveToward(short *current_ptr, short destination, short step); // 0x80016D74
 extern void CriticalDampValue(long dampMode, short *sourceVal, short targetVal, short *vel, short *accl, int smooth); // 0x80016DC4
-extern void CriticalDampPosition(long dampMode, struct _Position *position, struct _Position *targetPos, struct _SVector *vel, struct _SVector *accl, int smooth); // 0x80016F78
+extern void CriticalDampPosition(long dampMode, _Position *position, _Position *targetPos, struct _SVector *vel, struct _SVector *accl, int smooth); // 0x80016F78
 extern void CriticalDampAngle(long dampMode, short *currentVal, short target, short *vel, short *accl, int smooth); // 0x8001763C
-extern short CAMERA_CalcZRotation(struct _Position *target, struct _Position *position); // 0x800176DC
-extern void CAMERA_CalcRotation(struct _Rotation *rotation, struct _Position *target, struct _Position *position); // 0x80017754
-extern void CAMERA_CalcFSRotation(struct Camera *camera, struct _Rotation *rotation, struct _Position *target, struct _Position *position); // 0x800177F0
+extern short CAMERA_CalcZRotation(_Position *target, _Position *position); // 0x800176DC
+extern void CAMERA_CalcRotation(struct _Rotation *rotation, _Position *target, _Position *position); // 0x80017754
+extern void CAMERA_CalcFSRotation(struct Camera *camera, struct _Rotation *rotation, _Position *target, _Position *position); // 0x800177F0
 extern void CAMERA_Relocate(struct Camera *camera, struct _SVector *offset, int streamSignalFlag); // 0x8001789C
 extern struct _TFace * CAMERA_SphereToSphereWithLines(struct Camera *camera, struct CameraCollisionInfo *colInfo, int secondcheck_flag); // 0x800179E8
 extern long CAMERA_CalcTilt(struct _Normal *normal, short zRot); // 0x80018524
-extern void CAMERA_SetLookFocusAndBase(struct _Instance *focusInstance, struct _Position *focusPoint); // 0x80018598
+extern void CAMERA_SetLookFocusAndBase(struct _Instance *focusInstance, _Position *focusPoint); // 0x80018598
 extern void CAMERA_SetLookFocusAndDistance(struct Camera *camera, VECTOR *focuspoint, int distance); // 0x800185E0
 extern void CAMERA_LookProcess(struct Camera *camera); // 0x80018608
 extern void CAMERA_Normalize(struct _SVector *svector); // 0x8001885C
@@ -302,10 +302,10 @@ extern void CAMERA_CombatCamDist(struct Camera *camera); // 0x800198E8
 extern void CAMERA_GenericCameraProcess(struct Camera *camera); // 0x80019BAC
 extern void CAMERA_CinematicProcess(struct Camera *camera); // 0x8001A028
 extern int CAMERA_GetDistSq(struct _SVector *point1, struct _SVector *point2); // 0x8001A544
-extern void CAMERA_NearestPointOnLineVec(struct _SVector *linePoint, struct _SVector *start, struct _SVector *line, struct _Position *point); // 0x8001A5C0
+extern void CAMERA_NearestPointOnLineVec(struct _SVector *linePoint, struct _SVector *start, struct _SVector *line, _Position *point); // 0x8001A5C0
 extern int CAMERA_CheckPoint(int linePoint, int linept1, int linept2); // 0x8001A6EC
 extern int CAMERA_CheckIfPointOnLine(struct _SVector *linePoint, struct _SVector *linept1, struct _SVector *linept2); // 0x8001A730
-extern int CAMERA_FindLinePoint(struct _Position *point, struct _SVector *linept1, struct _SVector *linept2, int target_dist_sq, struct _SVector *results); // 0x8001A7C0
+extern int CAMERA_FindLinePoint(_Position *point, struct _SVector *linept1, struct _SVector *linept2, int target_dist_sq, struct _SVector *results); // 0x8001A7C0
 extern void CAMERA_SplineGetNearestPoint2(struct Camera *camera, struct Spline *spline, struct _SVector *point, int *currkey, struct _SVector *ret_dpoint); // 0x8001A984
 extern void CAMERA_SplineGetNearestPoint(struct Spline *spline, struct _SVector *point, int *currkey, struct _SVector *ret_dpoint); // 0x8001AB6C
 extern void CAMERA_SplineHelpMove(struct Camera *camera); // 0x8001AF04
@@ -332,10 +332,10 @@ extern void CAMERA_FollowGoBehindPlayerWithTimer(struct Camera *camera); // 0x80
 extern void CAMERA_FollowGoBehindPlayer(struct Camera *camera); // 0x8001C9AC
 extern void CAMERA_CalculateLead(struct Camera *camera); // 0x8001C9E8
 extern void CAMERA_CalcFollowPosition(struct Camera *camera, struct _Rotation *rotation); // 0x8001CB90
-extern void CAMERA_SetupColInfo(struct Camera *camera, struct CameraCollisionInfo *colInfo, struct _Position *targetCamPos); // 0x8001CE8C
+extern void CAMERA_SetupColInfo(struct Camera *camera, struct CameraCollisionInfo *colInfo, _Position *targetCamPos); // 0x8001CE8C
 extern void CAMERA_DoPanicCheck(struct Camera *camera, struct CameraCollisionInfo *tmpcolInfo, struct _Rotation *rotation, short *best_z, short *max_dist); // 0x8001CF4C
 extern void CAMERA_Panic(struct Camera *camera, short min_dist); // 0x8001D01C
-extern long CAMERA_DoCameraCollision2(struct Camera *camera, struct _Position *targetCamPos, int simpleflag); // 0x8001D1CC
+extern long CAMERA_DoCameraCollision2(struct Camera *camera, _Position *targetCamPos, int simpleflag); // 0x8001D1CC
 extern int CAMERA_FocusInstanceMoved(struct Camera *camera); // 0x8001D7D0
 
 #if defined(_LANGUAGE_C_PLUS_PLUS)||defined(__cplusplus)||defined(c_plusplus)

@@ -14,7 +14,7 @@ extern void StateHandlerHitReaction(struct __CharacterState *In, int CurrentSect
 
 extern void StateHandlerThrow2(struct __CharacterState *In, int CurrentSection, int Data); // 0x8009D868
 
-extern void PointAt(struct _Instance *instance, struct _Position *Target, struct _Rotation *Rot1); // 0x8009E390
+extern void PointAt(struct _Instance *instance, _Position *Target, struct _Rotation *Rot1); // 0x8009E390
 
 extern void ThrowSetFocusPoint(struct _Instance *instance, struct _Rotation *rot); // 0x8009E4B0
 

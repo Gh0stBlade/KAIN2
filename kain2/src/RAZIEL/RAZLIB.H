@@ -94,7 +94,7 @@ struct __Player
 	struct _Instance* attackedBy; // size=668, offset=1120
 	struct __ThrowItem* throwData; // size=32, offset=1124
 	int throwMode; // size=0, offset=1128
-	struct _Position throwTarget; // size=6, offset=1132
+	_Position throwTarget; // size=6, offset=1132
 	struct _Instance* throwInstance; // size=668, offset=1140
 	short throwXRot; // size=0, offset=1144
 	short throwZRot; // size=0, offset=1146
@@ -118,8 +118,8 @@ struct __Player
 	int autoFaceLastAnim; // size=0, offset=1344
 	int nothingCounter; // size=0, offset=1348
 	int timeAccumulator; // size=0, offset=1352
-	struct _Position puppetMoveToPoint; // size=6, offset=1356
-	struct _Position puppetRotToPoint; // size=6, offset=1362
+	_Position puppetMoveToPoint; // size=6, offset=1356
+	_Position puppetRotToPoint; // size=6, offset=1362
 	int soundModifier; // size=0, offset=1368
 	short alarmTable; // size=0, offset=1372
 	short terminator; // size=0, offset=1374
@@ -152,13 +152,13 @@ struct __Player
 };
 
 
-extern void razAlignYMoveRot(struct _Instance *dest, short distance, struct _Position *position, struct _Rotation *rotation, int extraZ); // 0x800A51B0
+extern void razAlignYMoveRot(struct _Instance *dest, short distance, _Position *position, struct _Rotation *rotation, int extraZ); // 0x800A51B0
 
-extern void razAlignYRotMove(struct _Instance *dest, short distance, struct _Position *position, struct _Rotation *rotation, int extraZ); // 0x800A5274
+extern void razAlignYRotMove(struct _Instance *dest, short distance, _Position *position, struct _Rotation *rotation, int extraZ); // 0x800A5274
 
 extern void razAlignYRotMoveInterp(struct _Instance *source, struct _Instance *dest, short distance, unsigned char segNumber, int Frames, int extraZ); // 0x800A534C
 
-extern void razAlignYRotInterp(struct _Instance *source, struct _Position *dest, unsigned char segNumber, int Frames); // 0x800A5440
+extern void razAlignYRotInterp(struct _Instance *source, _Position *dest, unsigned char segNumber, int Frames); // 0x800A5440
 
 extern int razConstrictAngle(struct _Instance *instance); // 0x800A546C
 

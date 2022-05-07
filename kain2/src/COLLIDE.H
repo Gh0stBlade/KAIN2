@@ -16,7 +16,7 @@ struct _CollideInfo // hashcode: 0xCA2DF5E9 (dec: -902957591)
 	void* inst1; // size=0, offset=20
 	SVECTOR point0; // size=8, offset=24
 	SVECTOR point1; // size=8, offset=32
-	struct _Position offset; // size=6, offset=40
+	_Position offset; // size=6, offset=40
 	short bspID; // size=0, offset=46
 };
 
@@ -75,7 +75,7 @@ extern int COLLIDE_PointInTriangle2DPub(short *v0, short *v1, short *v2, short *
 extern long COLLIDE_GetNormal(short nNum, short *nrmlArray, struct _SVector *nrml); // 0x8001E750
 extern void COLLIDE_MakeNormal(struct _Terrain *terrain, struct _TFace *tface, struct _SVector *normal); // 0x8001E7E8
 extern void COLLIDE_UpdateAllTransforms(struct _Instance *instance, SVECTOR*offset); // 0x8001E9C0
-extern void COLLIDE_MoveAllTransforms(struct _Instance *instance, struct _Position *offset); // 0x8001EA90
+extern void COLLIDE_MoveAllTransforms(struct _Instance *instance, _Position *offset); // 0x8001EA90
 extern long COLLIDE_WithinYZBounds(struct _SVector *point, struct _HBox *hbox); // 0x8001EB60
 extern long COLLIDE_WithinXZBounds(struct _SVector *point, struct _HBox *hbox); // 0x8001EBBC
 extern long COLLIDE_WithinXYBounds(struct _SVector *point, struct _HBox *hbox); // 0x8001EC18
@@ -87,13 +87,13 @@ extern int COLLIDE_PointAndHFace(struct _SVector *newPos, struct _SVector *oldPo
 extern void COLLIDE_PointAndInstance(struct _PCollideInfo *pcollideInfo, struct _Instance *instance); // 0x8001FEAC
 extern void COLLIDE_PointAndInstanceTrivialReject(struct _PCollideInfo *pcollideInfo, struct _Instance *instance); // 0x800206E0
 extern void COLLIDE_PointAndWorld(struct _PCollideInfo *pcollideInfo, struct Level *level); // 0x80020864
-extern long COLLIDE_ClosestPointInBoxToPoint(struct _Position *boxPoint, struct _HBox *hbox, struct _SVector *point); // 0x80020C4C
+extern long COLLIDE_ClosestPointInBoxToPoint(_Position *boxPoint, struct _HBox *hbox, struct _SVector *point); // 0x80020C4C
 extern long COLLIDE_SphereAndPoint(struct _Sphere *sphere, struct _SVector *point, struct _SVector *normal); // 0x80020D20
-extern long COLLIDE_SphereAndHBox(struct _HBox *hbox, struct _Sphere *sphere, struct _Position *oldPos, struct _SVector *normal); // 0x80020F64
+extern long COLLIDE_SphereAndHBox(struct _HBox *hbox, struct _Sphere *sphere, _Position *oldPos, struct _SVector *normal); // 0x80020F64
 extern void COLLIDE_Instance1SpheresToInstance2(struct _Instance *instance1, struct _Instance *instance2, long sphereToSphere); // 0x800213DC
 extern void COLLIDE_Instances(struct _Instance *instance1, struct _Instance *instance2); // 0x8002212C
 extern void COLLIDE_InstanceList(struct _InstanceList *instanceList); // 0x80022274
-extern long COLLIDE_SphereAndHFace(struct _Sphere *sphere, struct _Position *oldPos, struct _HFaceInfo *hfaceInfo, struct _SVector *intersect, long *edge); // 0x8002251C
+extern long COLLIDE_SphereAndHFace(struct _Sphere *sphere, _Position *oldPos, struct _HFaceInfo *hfaceInfo, struct _SVector *intersect, long *edge); // 0x8002251C
 extern long COLLIDE_SAndT(struct SCollideInfo *scollideInfo, struct Level *level); // 0x80022BF8
 extern long COLLIDE_SphereAndTerrain(struct SCollideInfo *scollideInfo, struct Level *level); // 0x800236E4
 extern void COLLIDE_InstanceTerrain(struct _Instance *instance, struct Level *level); // 0x800237CC

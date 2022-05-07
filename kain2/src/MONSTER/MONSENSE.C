@@ -67,8 +67,8 @@ int MONSENSE_See(struct _Instance *instance, struct evCollideInstanceStatsData *
 							//short _x1; // $v1
 							//short _y1; // $a0
 							//short _z1; // $a1
-							//struct _Position *_v0; // $v0
-							//struct _Position *_v1; // $v0
+							//_Position *_v0; // $v0
+							//_Position *_v1; // $v0
 					/* end block 1.1.1.1.2 */
 					// End offset: 0x80085BF0
 					// End Line: 128
@@ -89,8 +89,8 @@ int MONSENSE_See(struct _Instance *instance, struct evCollideInstanceStatsData *
 							//short _x1; // $v1
 							//short _y1; // $a0
 							//short _z1; // $a1
-							//struct _Position *_v0; // $v0
-							//struct _Position *_v1; // $v0
+							//_Position *_v0; // $v0
+							//_Position *_v1; // $v0
 					/* end block 1.1.1.1.4 */
 					// End offset: 0x80085C44
 					// End Line: 138
@@ -228,7 +228,7 @@ void MONSENSE_SetupMIR(struct _Instance *instance, struct evCollideInstanceStats
 	struct _MonsterVars* mv; // ebp MAPDST
 	struct _MonsterIR* mir; // esi
 	struct _MonsterCombatAttributes* combatAttributes; // eax
-	struct _Position* p_position; // edi
+	_Position* p_position; // edi
 	unsigned int v8; // ebp
 	unsigned __int16 mirFlags; // ax
 	unsigned __int16 mirConditions; // ax

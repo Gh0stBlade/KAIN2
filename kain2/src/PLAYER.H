@@ -86,7 +86,7 @@ struct __Player // hashcode: 0x0712E7A5 (dec: 118679461)
 	struct _Instance* attackedBy; // size=616, offset=1120
 	struct __ThrowItem* throwData; // size=32, offset=1124
 	int throwMode; // size=0, offset=1128
-	struct _Position throwTarget; // size=6, offset=1132
+	_Position throwTarget; // size=6, offset=1132
 	struct _Instance* throwInstance; // size=616, offset=1140
 	short throwXRot; // size=0, offset=1144
 	short throwZRot; // size=0, offset=1146
@@ -110,8 +110,8 @@ struct __Player // hashcode: 0x0712E7A5 (dec: 118679461)
 	int autoFaceLastAnim; // size=0, offset=1344
 	int nothingCounter; // size=0, offset=1348
 	int timeAccumulator; // size=0, offset=1352
-	struct _Position puppetMoveToPoint; // size=6, offset=1356
-	struct _Position puppetRotToPoint; // size=6, offset=1362
+	_Position puppetMoveToPoint; // size=6, offset=1356
+	_Position puppetRotToPoint; // size=6, offset=1362
 	int puppetHint; // size=0, offset=1368
 	int soundModifier; // size=0, offset=1372
 	short alarmTable; // size=0, offset=1376

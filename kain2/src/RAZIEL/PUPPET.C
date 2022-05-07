@@ -52,7 +52,7 @@ void StateHandlerPuppetShow(struct __CharacterState *In, int CurrentSection, int
 					short _x1; // $v1
 					short _y1; // $a0
 					short _z1; // $a1
-					struct _Position *_v0; // $v0
+					_Position *_v0; // $v0
 			/* end block 1.4.1 */
 			// End offset: 0x8009AC78
 			// End Line: 78
@@ -97,7 +97,7 @@ void StateHandlerMoveToPosition(struct __CharacterState *In, int CurrentSection,
 					short _x1; // $v1
 					short _y1; // $a0
 					short _z1; // $v0
-					struct _Position *_v0; // $s3
+					_Position *_v0; // $s3
 			/* end block 1.1.1 */
 			// End offset: 0x8009AE2C
 			// End Line: 115

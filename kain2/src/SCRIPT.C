@@ -99,8 +99,8 @@ void SCRIPT_InstanceSplineInit(struct _Instance *instance)
 					//short _x1; // $a1
 					//short _y1; // $a2
 					//short _z1; // $a3
-					struct _Position *_v; // $v0
-					struct _Position *_v0; // $v1
+					_Position *_v; // $v0
+					_Position *_v0; // $v1
 			/* end block 1.2.1 */
 			// End offset: 0x8003C8BC
 			// End Line: 235
@@ -371,8 +371,8 @@ void SCRIPT_RelativisticSpline(struct _Instance *instance, struct _SVector *poin
 			// Start offset: 0x8003CD10
 			// Variables:
 				MATRIX segMatrix; // stack offset -56
-				struct _Position newPt; // stack offset -24
-				struct _Position localPt; // stack offset -16
+				_Position newPt; // stack offset -24
+				_Position localPt; // stack offset -16
 
 			/* begin block 1.1.1 */
 				// Start line: 426
@@ -395,9 +395,9 @@ void SCRIPT_RelativisticSpline(struct _Instance *instance, struct _SVector *poin
 					//short _x1; // $a1
 					//short _y1; // $a3
 					//short _z1; // $a2
-					struct _Position *_v; // $a0
-					//struct _Position *_v0; // $v0
-					struct _Position *_v1; // $a2
+					_Position *_v; // $a0
+					//_Position *_v0; // $v0
+					_Position *_v1; // $a2
 			/* end block 1.1.2 */
 			// End offset: 0x8003CD10
 			// End Line: 426
@@ -415,8 +415,8 @@ void SCRIPT_RelativisticSpline(struct _Instance *instance, struct _SVector *poin
 				//short _x1; // $a1
 				//short _y1; // $a2
 				//short _z1; // $a3
-				//struct _Position *_v; // $v0
-				//struct _Position *_v0; // $v1
+				//_Position *_v; // $v0
+				//_Position *_v0; // $v1
 		/* end block 1.2 */
 		// End offset: 0x8003CEB0
 		// End Line: 440

@@ -13,7 +13,7 @@ struct VWRAITH_114fake // hashcode: 0x99946622 (dec: -1718327774)
 		int splinecam_helpkey; // size=0, offset=24
 	} Cinematic; // size=28, offset=0, found in object files: vwraith.o, vwraith.o
 	struct {
-		struct _Position offset; // size=6, offset=0
+		_Position offset; // size=6, offset=0
 		struct _Rotation rotation; // size=8, offset=6
 		long focusDistance; // size=0, offset=16
 	} Idle; // size=20, offset=28, found in object files: vwraith.o, vwraith.o

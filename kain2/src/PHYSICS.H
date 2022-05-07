@@ -71,7 +71,7 @@ struct evPhysicsWallCrawlData // hashcode: 0x27DFBF06 (dec: 668974854)
 	short NormalDistance; // size=0, offset=6
 	struct _SVector DropNormal; // size=8, offset=8
 	struct _SVector ForwardNormal; // size=8, offset=16
-	struct _Position NewPosition; // size=6, offset=24
+	_Position NewPosition; // size=6, offset=24
 	struct _Rotation DropRotation; // size=8, offset=30
 	short ForwardXRotation; // size=0, offset=38
 	int rc; // size=0, offset=40
@@ -93,7 +93,7 @@ struct evPhysicsSwimData // hashcode: 0x947F2BE5 (dec: -1803605019)
 
 struct evPhysicsDropHeightData // hashcode: 0x5DCE3926 (dec: 1573796134)
 {
-	struct _Position origin; // size=6, offset=0
+	_Position origin; // size=6, offset=0
 	short mode; // size=0, offset=6
 	short DropOffset; // size=0, offset=8
 	short result; // size=0, offset=10
@@ -134,7 +134,7 @@ extern int PhysicsCheckDropHeight(struct _Instance *instance, int Data, int Mode
 extern int PhysicsCheckDropOff(struct _Instance *instance, int Data, short Mode); // 0x80076E8C
 extern int PhysicsFollowWall(struct _Instance *instance, struct GameTracker *gameTracker, int Data, short Mode); // 0x800770AC
 extern void PhysicsMoveLocalZClamp(struct _Instance *instance, long segment, long time, long clamp); // 0x800775BC
-extern void PhysicsMove(struct _Instance *instance, struct _Position *position, long time); // 0x80077694
+extern void PhysicsMove(struct _Instance *instance, _Position *position, long time); // 0x80077694
 extern void PhysicsSetVelFromZRot(struct _Instance *instance, short angle, long magnitude); // 0x80077830
 extern void PhysicsSetVelFromRot(struct _Instance *instance, struct _Rotation *rot, long magnitude); // 0x800778A0
 extern void PHYSICS_SetVAndAFromRot(struct _Instance *instance, struct _Rotation *rot, long v, long a); // 0x80077910

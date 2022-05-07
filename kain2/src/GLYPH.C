@@ -230,7 +230,7 @@ void HUD_GetPlayerScreenPt(DVECTOR *center)
 		// Start line: 363
 		// Start offset: 0x8007ACF8
 		// Variables:
-			struct _Position position; // stack offset -16
+			_Position position; // stack offset -16
 	/* end block 1 */
 	// End offset: 0x8007ACF8
 	// End Line: 363

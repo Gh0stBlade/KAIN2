@@ -225,7 +225,7 @@ void LIGHT_CalcLightValue(struct _TFace *tface, struct _Instance *instance, stru
 					// Start offset: 0x8003629C
 					// Variables:
 						short tdist; // $a3
-						struct _Position pos; // stack offset -64
+						_Position pos; // stack offset -64
 						//struct MATRIX *mat; // $a1
 				/* end block 1.2.1.1 */
 				// End offset: 0x80036384

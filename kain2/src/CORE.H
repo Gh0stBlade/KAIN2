@@ -217,7 +217,7 @@ typedef struct _MFace // hashcode: 0xB75C604D (dec: -1218682803)
 
 typedef struct _Sphere // hashcode: 0x361BDD31 (dec: 907795761)
 {
-	struct _Position position; // size=6, offset=0
+	_Position position; // size=6, offset=0
 	unsigned short radius; // size=0, offset=6
 	unsigned long radiusSquared; // size=0, offset=8
 } _Sphere;
@@ -406,7 +406,7 @@ struct Intro // hashcode: 0x796E766D (dec: 2037282413)
 	long intronum; // size=0, offset=16
 	long UniqueID; // size=0, offset=20
 	struct _Rotation rotation; // size=8, offset=24
-	struct _Position position; // size=6, offset=32
+	_Position position; // size=6, offset=32
 	short maxRad; // size=0, offset=38
 	long maxRadSq; // size=0, offset=40
 	long flags; // size=0, offset=44
@@ -416,7 +416,7 @@ struct Intro // hashcode: 0x796E766D (dec: 2037282413)
 	void* dsignal; // size=0, offset=60
 	short specturalLightGroup; // size=0, offset=64
 	short meshColor; // size=0, offset=66
-	struct _Position spectralPosition; // size=6, offset=68
+	_Position spectralPosition; // size=6, offset=68
 	short spad; // size=0, offset=74
 };
 

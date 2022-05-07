@@ -29,11 +29,11 @@ extern int SetMonsterHitData(struct _Instance *Sender, struct _Instance *lastHit
 
 extern int SetMonsterThrownData(struct _Instance *Sender, struct _Rotation *Direction, int Power); // 0x8007094C
 
-extern int SetMonsterAlarmData(struct _Instance *sender, struct _Position *position, int type); // 0x800709B4
+extern int SetMonsterAlarmData(struct _Instance *sender, _Position *position, int type); // 0x800709B4
 
 extern int SetMonsterSoulSuckData(struct _Instance *Sender, int x, int y, int z); // 0x80070A1C
 
-extern int SetMonsterImpaleData(struct _Instance *weapon, struct _Rotation *direction, struct _Position *position, int distance); // 0x80070A78
+extern int SetMonsterImpaleData(struct _Instance *weapon, struct _Rotation *direction, _Position *position, int distance); // 0x80070A78
 
 extern int SetObjectData(int x, int y, int PathNumber, struct _Instance *Force, int node); // 0x80070B10
 
@@ -53,7 +53,7 @@ extern int SetPhysicsWallCrawlData(int Segment, int Length, int ForwardOffset, i
 
 extern int SetPhysicsLinkedMoveData(struct _Instance *instance, int segment, struct _SVector *posDelta, struct _SVector *rotDelta); // 0x80070EB0
 
-extern int SetPhysicsDropHeightData(struct _Position *offset, int dropOffset, int mode); // 0x80070F50
+extern int SetPhysicsDropHeightData(_Position *offset, int dropOffset, int mode); // 0x80070F50
 
 extern int SetAnimationControllerDoneData(struct _Instance *instance, long segment, long type, int data); // 0x80070FC0
 

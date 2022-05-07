@@ -24,7 +24,7 @@ struct _SavedIntroWithIntro
 	long flags; // size=0, offset=12
 	long flags2; // size=0, offset=16
 	struct _SmallRotation smallRotation; // size=6, offset=20
-	struct _Position position; // size=6, offset=26
+	_Position position; // size=6, offset=26
 };
 
 struct _SavedIntro 
@@ -39,7 +39,7 @@ struct _SavedIntro
 	short birthUnitID; // size=0, offset=16
 	unsigned short attachedUniqueID; // size=0, offset=18
 	struct _SmallRotation smallRotation; // size=6, offset=20
-	struct _Position position; // size=6, offset=26
+	_Position position; // size=6, offset=26
 	long flags; // size=0, offset=32
 	long flags2; // size=0, offset=36
 };

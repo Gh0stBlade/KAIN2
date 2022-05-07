@@ -415,8 +415,8 @@ unsigned long * DRAW_DrawGlowPoints2(struct _Instance *instance, long seg1, long
 		// Start line: 4039
 		// Start offset: 0x8002BAD8
 		// Variables:
-			struct _Position glowPoints1; // stack offset -88
-			struct _Position glowPoints2; // stack offset -80
+			_Position glowPoints1; // stack offset -88
+			_Position glowPoints2; // stack offset -80
 			struct _Vector f1; // stack offset -72
 			struct _Vector f2; // stack offset -56
 			struct _Vector f3; // stack offset -40
@@ -446,7 +446,7 @@ unsigned long * DRAW_DrawGlowPoint(struct _Instance *instance, long seg1, struct
 		// Start line: 4090
 		// Start offset: 0x8002BC44
 		// Variables:
-			struct _Position glowPoints1; // stack offset -48
+			_Position glowPoints1; // stack offset -48
 			struct _Vector f1; // stack offset -40
 			long otz; // $t0
 			long z; // $a1

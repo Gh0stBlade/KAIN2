@@ -396,8 +396,8 @@ void GAMELOOP_LevelLoadAndInit(char *baseAreaName, struct GameTracker *gameTrack
 	short _x1;
 	short _y1;
 	short _z1;
-	struct _Position *_v0;
-	struct _Position *_v1;
+	_Position *_v0;
+	_Position *_v1;
 
 	G2Anim_ResetInternalState();
 	gameTrackerX.playerInstance = NULL;
@@ -658,7 +658,7 @@ void MainRenderLevel(struct _StreamUnit *currentUnit, unsigned long **drawot)
 			struct _Terrain *terrain; // $s4
 			int curTree; // $s1
 			long BackColor; // stack offset -48
-			struct _Position cam_pos_save; // stack offset -96
+			_Position cam_pos_save; // stack offset -96
 			//struct MATRIX cam_mat_save; // stack offset -88
 			struct _Instance *saveLightInstance; // $s2
 
@@ -733,7 +733,7 @@ long StreamRenderLevel(struct _StreamUnit *currentUnit, struct Level *mainLevel,
 			struct _Terrain *terrain; // $s2
 			int curTree; // $s1
 			int farplanesave; // $fp
-			struct _Position cam_pos_save; // stack offset -88
+			_Position cam_pos_save; // stack offset -88
 			//struct MATRIX cam_mat_save; // stack offset -80
 
 		/* begin block 1.1 */

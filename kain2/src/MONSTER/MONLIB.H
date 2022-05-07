@@ -68,15 +68,15 @@ extern void MON_PlayRandomIdle(struct _Instance *instance, int mode); // 0x80080
 
 extern void MON_PlayCombatIdle(struct _Instance *instance, int mode); // 0x80080C80
 
-extern void MON_GetRandomPoint(struct _Position *out, struct _Position *in, short r); // 0x80080CC0
+extern void MON_GetRandomPoint(_Position *out, _Position *in, short r); // 0x80080CC0
 
-extern int MON_GetRandomDestinationInWorld(struct _Instance *instance, struct _Position *in, short r); // 0x80080D6C
+extern int MON_GetRandomDestinationInWorld(struct _Instance *instance, _Position *in, short r); // 0x80080D6C
 
 extern void MON_MoveForward(struct _Instance *instance); // 0x80080F54
 
-extern int MON_TurnToPosition(struct _Instance *instance, struct _Position *position, short turnspeed); // 0x80080FA4
+extern int MON_TurnToPosition(struct _Instance *instance, _Position *position, short turnspeed); // 0x80080FA4
 
-extern void MON_MoveToPosition(struct _Instance *instance, struct _Position *position, short turnSpeed); // 0x80081014
+extern void MON_MoveToPosition(struct _Instance *instance, _Position *position, short turnSpeed); // 0x80081014
 
 extern int MON_OnGround(struct _Instance *instance); // 0x80081058
 
@@ -90,7 +90,7 @@ extern void MON_CheckTerrainAndRespond(struct _Instance *instance, struct BSPTre
 
 extern unsigned long MON_CheckTerrain(struct _Instance *instance, struct BSPTree *bsp, struct _TFace *tface); // 0x800816AC
 
-extern int MON_CheckPointSuitability(struct _Instance *instance, struct _Position *origin, struct _Position *destination); // 0x8008176C
+extern int MON_CheckPointSuitability(struct _Instance *instance, _Position *origin, _Position *destination); // 0x8008176C
 
 extern unsigned long MON_GetTime(struct _Instance *instance); // 0x80081844
 
@@ -112,7 +112,7 @@ extern void MON_DisableHeadMove(struct _Instance *instance); // 0x80082524
 
 extern void MON_LookInDirection(struct _Instance *instance, short tx, short tz); // 0x800825B0
 
-extern void MON_LookAtPos(struct _Instance *instance, struct _Position *position); // 0x80082724
+extern void MON_LookAtPos(struct _Instance *instance, _Position *position); // 0x80082724
 
 extern void MON_ProcessLookAt(struct _Instance *instance); // 0x80082800
 
@@ -136,17 +136,17 @@ extern int MON_ValidUnit(struct _Instance *instance, unsigned long unitId); // 0
 
 extern int MON_ValidPosition(struct _Instance *instance); // 0x8008335C
 
-extern void MON_SphereWorldPos(MATRIX *mat, struct _HSphere *sphere, struct _Position *ret); // 0x800833B4
+extern void MON_SphereWorldPos(MATRIX *mat, struct _HSphere *sphere, _Position *ret); // 0x800833B4
 
 extern struct _HPrim * MON_FindSphereForTerrain(struct _Instance *instance); // 0x80083424
 
-extern struct Intro * MON_FindNearestImpalingIntro(int unitID, struct _Position *position); // 0x800834B0
+extern struct Intro * MON_FindNearestImpalingIntro(int unitID, _Position *position); // 0x800834B0
 
 extern struct Intro * MON_TestForTerrainImpale(struct _Instance *instance, struct _Terrain *terrain); // 0x800835E0
 
 extern void MON_MoveInstanceToImpalePoint(struct _Instance *instance); // 0x800836DC
 
-extern int MON_ReachableIntro(struct _Instance *instance, struct _Position *pos, struct _Position *introPos, struct _Rotation *introRot, int checkOrientation); // 0x800837C0
+extern int MON_ReachableIntro(struct _Instance *instance, _Position *pos, _Position *introPos, struct _Rotation *introRot, int checkOrientation); // 0x800837C0
 
 extern int MON_SetVelocityTowardsImpalingObject(struct _Instance *instance, int checkOrientation); // 0x80083BAC
 

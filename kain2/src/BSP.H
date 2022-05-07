@@ -5,7 +5,7 @@
 
 struct _Sphere_noSq // hashcode: 0xA031058C (dec: -1607400052)
 {
-	struct _Position position; // size=6, offset=0
+	_Position position; // size=6, offset=0
 	unsigned short radius; // size=0, offset=6
 };
 
@@ -52,9 +52,9 @@ struct BSPTree // hashcode: 0x17800192 (dec: 394264978)
 	struct _BSPNode* bspRoot; // size=44, offset=0
 	struct _BSPLeaf* startLeaves; // size=48, offset=4
 	struct _BSPLeaf* endLeaves; // size=48, offset=8
-	struct _Position globalOffset; // size=6, offset=12
+	_Position globalOffset; // size=6, offset=12
 	short flags; // size=0, offset=18
-	struct _Position localOffset; // size=6, offset=20
+	_Position localOffset; // size=6, offset=20
 	short ID; // size=0, offset=26
 	long splineID; // size=0, offset=28
 	struct _Instance* instanceSpline; // size=616, offset=32
@@ -105,7 +105,7 @@ struct BSP_109fake // hashcode: 0xF4A997D6 (dec: -190212138)
 		int splinecam_helpkey; // size=0, offset=24
 	} Cinematic; // size=28, offset=0, found in object files: bsp.o, bsp.o
 	struct {
-		struct _Position offset; // size=6, offset=0
+		_Position offset; // size=6, offset=0
 		struct _Rotation rotation; // size=8, offset=6
 		long focusDistance; // size=0, offset=16
 	} Idle; // size=20, offset=28, found in object files: bsp.o, bsp.o
@@ -128,9 +128,9 @@ struct BSP_109fake // hashcode: 0xF4A997D6 (dec: -190212138)
 union BSP_208fake // Hashcode: 0x2E8AEFCF (dec: 780857295)
 {
 	struct _Instance* target; // size=616, offset=0
-	struct _Position position; // size=6, offset=0
+	_Position position; // size=6, offset=0
 	struct _Rotation direction; // size=8, offset=0
-	struct _Position throwVector; // size=6, offset=0
+	_Position throwVector; // size=6, offset=0
 };
 
 struct BSPScratch // hashcode: 0x17CFF45B (dec: 399504475)

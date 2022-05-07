@@ -98,9 +98,9 @@ void SOUL_MovePastWall(struct _Instance *instance, struct _Instance *sucker)
 		// Start offset: 0x8008D974
 		// Variables:
 			//struct _PCollideInfo pcollideInfo; // stack offset -88
-			struct _Position newPos; // stack offset -40
-			struct _Position oldPos; // stack offset -32
-			struct _Position delta; // stack offset -24
+			_Position newPos; // stack offset -40
+			_Position oldPos; // stack offset -32
+			_Position delta; // stack offset -24
 			struct MATRIX *to; // $a0
 			struct MATRIX *from; // $v1
 			long tmp; // $v0
@@ -113,9 +113,9 @@ void SOUL_MovePastWall(struct _Instance *instance, struct _Instance *sucker)
 				short _z0; // $a0
 				short _y1; // $a1
 				short _z1; // $a2
-				struct _Position *_v; // $s0
-				struct _Position *_v0; // $s1
-				struct _Position *_v1; // $t0
+				_Position *_v; // $s0
+				_Position *_v0; // $s1
+				_Position *_v1; // $t0
 		/* end block 1.1 */
 		// End offset: 0x8008D974
 		// End Line: 163
@@ -130,7 +130,7 @@ void SOUL_MovePastWall(struct _Instance *instance, struct _Instance *sucker)
 				//short _x1; // $a3
 				//short _y1; // $t1
 				//short _z1; // $t0
-				//struct _Position *_v1; // $t0
+				//_Position *_v1; // $t0
 		/* end block 1.2 */
 		// End offset: 0x8008DA58
 		// End Line: 188
@@ -320,8 +320,8 @@ void SOUL_SoulSuck(struct _Instance *instance)
 							short _y1; // $a2
 							short _z1; // $a1
 							struct _SVector *_v; // $s7
-							struct _Position *_v0; // $v1
-							struct _Position *_v1; // $a1
+							_Position *_v0; // $v1
+							_Position *_v1; // $a1
 					/* end block 1.1.1.1.1 */
 					// End offset: 0x8008DF88
 					// End Line: 379

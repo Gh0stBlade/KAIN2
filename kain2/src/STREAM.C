@@ -2019,7 +2019,7 @@ void RelocateLevel(struct Level *level, struct _SVector *offset)
 				short _x1; // $a2
 				short _y1; // $t0
 				short _z1; // $t1
-				struct _Position *_v; // $a3
+				_Position *_v; // $a3
 		/* end block 1.1 */
 		// End offset: 0x8005B700
 		// End Line: 2893
@@ -2087,7 +2087,7 @@ void RelocateSavedCameras(struct Camera *camera, struct Level *level, struct _SV
 				short _x1; // $v1
 				short _y1; // $a1
 				short _z1; // $a2
-				struct _Position *_v; // $a0
+				_Position *_v; // $a0
 		/* end block 1.1 */
 		// End offset: 0x8005B848
 		// End Line: 2931
@@ -2102,7 +2102,7 @@ void RelocateSavedCameras(struct Camera *camera, struct Level *level, struct _SV
 				short _x1; // $a2
 				short _y1; // $t0
 				short _z1; // $t1
-				struct _Position *_v; // $a3
+				_Position *_v; // $a3
 		/* end block 1.2 */
 		// End offset: 0x8005B848
 		// End Line: 2931
@@ -2117,7 +2117,7 @@ void RelocateSavedCameras(struct Camera *camera, struct Level *level, struct _SV
 				short _x1; // $a2
 				short _y1; // $t0
 				short _z1; // $t1
-				struct _Position *_v; // $a3
+				_Position *_v; // $a3
 		/* end block 1.3 */
 		// End offset: 0x8005B848
 		// End Line: 2931
@@ -2132,7 +2132,7 @@ void RelocateSavedCameras(struct Camera *camera, struct Level *level, struct _SV
 				short _x1; // $a2
 				short _y1; // $t0
 				short _z1; // $t1
-				struct _Position *_v; // $a3
+				_Position *_v; // $a3
 		/* end block 1.4 */
 		// End offset: 0x8005B914
 		// End Line: 2940
@@ -2692,7 +2692,7 @@ void MORPH_UpdateNormals(struct Level *BaseLevel)
 				// Start offset: 0x8005C900
 				// Variables:
 					SVECTOR realDiff; // stack offset -32
-					struct _Position oldPos; // stack offset -24
+					_Position oldPos; // stack offset -24
 			/* end block 1.3.1 */
 			// End offset: 0x8005C9E8
 			// End Line: 3756
@@ -2761,7 +2761,7 @@ void MORPH_BringBackNormals(struct Level *BaseLevel)
 				// Start offset: 0x8005CD88
 				// Variables:
 					SVECTOR realDiff; // stack offset -32
-					struct _Position oldPos; // stack offset -24
+					_Position oldPos; // stack offset -24
 			/* end block 1.3.1 */
 			// End offset: 0x8005CE58
 			// End Line: 3927
@@ -2801,7 +2801,7 @@ void MORPH_AddOffsets(struct Level *BaseLevel, int time)
 			// Variables:
 				SVECTOR diff; // stack offset -40
 				SVECTOR realDiff; // stack offset -32
-				struct _Position oldPos; // stack offset -24
+				_Position oldPos; // stack offset -24
 		/* end block 1.1 */
 		// End offset: 0x8005D13C
 		// End Line: 4001
@@ -2866,7 +2866,7 @@ void MORPH_SubtractOffsets(struct Level *BaseLevel, int time)
 			// Variables:
 				SVECTOR diff; // stack offset -40
 				SVECTOR realDiff; // stack offset -32
-				struct _Position oldPos; // stack offset -24
+				_Position oldPos; // stack offset -24
 		/* end block 1.1 */
 		// End offset: 0x8005D510
 		// End Line: 4129
@@ -2919,8 +2919,8 @@ void MORPH_GetComponentsForTrackingPoint(struct _TFace *face, struct Level *leve
 		// Start offset: 0x8005D618
 		// Variables:
 			struct _SVector (*v[3]); // stack offset -32
-			struct _Position *offset; // $a2
-			struct _Position player; // stack offset -16
+			_Position *offset; // $a2
+			_Position player; // stack offset -16
 			int n; // $a1
 			int saved_div; // $t0
 			int next; // $a0
@@ -2939,8 +2939,8 @@ void MORPH_GetComponentsForTrackingPoint(struct _TFace *face, struct Level *leve
 				short _x1; // $v1
 				short _y1; // $a3
 				short _z1; // $a2
-				struct _Position *_v; // $v0
-				struct _Position *_v0; // $a0
+				_Position *_v; // $v0
+				_Position *_v0; // $a0
 		/* end block 1.1 */
 		// End offset: 0x8005D638
 		// End Line: 4205
@@ -2998,7 +2998,7 @@ void MORPH_UpdateTrackingPoint(struct _TFace *face, struct Level *level)
 			struct _SVector p1; // stack offset -40
 			struct _SVector p2; // stack offset -32
 			struct _SVector p3; // stack offset -24
-			struct _Position *offset; // $a3
+			_Position *offset; // $a3
 			int next; // $a1
 			struct _TVertex *vertexList; // $a0
 
@@ -3020,7 +3020,7 @@ void MORPH_UpdateTrackingPoint(struct _TFace *face, struct Level *level)
 			// Start line: 4299
 			// Start offset: 0x8005DA44
 			// Variables:
-				struct _Position *_v0; // $a2
+				_Position *_v0; // $a2
 		/* end block 1.2 */
 		// End offset: 0x8005DA44
 		// End Line: 4299

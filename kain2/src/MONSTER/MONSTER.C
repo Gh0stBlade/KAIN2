@@ -1573,7 +1573,7 @@ void MON_Wander(struct _Instance *instance)
 			// Start line: 2232
 			// Start offset: 0x8008AC34
 			// Variables:
-				struct _Position *target; // $a1
+				_Position *target; // $a1
 				short range; // $a2
 		/* end block 1.3 */
 		// End offset: 0x8008AC78

@@ -23,7 +23,7 @@ struct _HSphere
 	unsigned char id; // size=0, offset=4
 	unsigned char rank; // size=0, offset=5
 	short pad; // size=0, offset=6
-	struct _Position position; // size=6, offset=8
+	_Position position; // size=6, offset=8
 	unsigned short radius; // size=0, offset=14
 	unsigned long radiusSquared; // size=0, offset=16
 };
@@ -186,12 +186,12 @@ struct _Instance {
 	struct SoundInstance soundInstanceTbl[4]; // size=12, offset=72
 	unsigned long maxCheckDistance; // size=0, offset=84
 	unsigned long checkMask; // size=0, offset=88
-	struct _Position position; // size=6, offset=92
+	_Position position; // size=6, offset=92
 	unsigned char lightGroup; // size=0, offset=98
-	struct _Position oldPos; // size=6, offset=100
+	_Position oldPos; // size=6, offset=100
 	unsigned char spectralLightGroup; // size=0, offset=106
 	short currentTextureAnimFrame; // size=0, offset=108
-	struct _Position initialPos; // size=6, offset=110
+	_Position initialPos; // size=6, offset=110
 	struct _Rotation rotation; // size=8, offset=116
 	struct _Rotation oldRotation; // size=8, offset=124
 	struct _SVector scale; // size=8, offset=132
@@ -215,7 +215,7 @@ struct _Instance {
 	void* shadow0; // size=0, offset=236
 	void* shadow1; // size=0, offset=240
 	void* extraLight; // size=0, offset=244
-	struct _Position extraLightDir; // size=6, offset=248
+	_Position extraLightDir; // size=6, offset=248
 	short extraLightScale; // size=0, offset=254
 	struct _HModel* hModelList; // size=8, offset=256
 	short fadeValue; // size=0, offset=260
@@ -226,7 +226,7 @@ struct _Instance {
 	void* additionalDrawFunc; // size=0, offset=276
 	unsigned long (*queryFunc)(struct _Instance* instance, unsigned long Query); // size=0, offset=280
 	void (*messageFunc)(struct _Instance* instance, unsigned long Message, unsigned long Data); // size=0, offset=284
-	struct _Position shadowPosition; // size=6, offset=288
+	_Position shadowPosition; // size=6, offset=288
 	short currentModel; // size=0, offset=294
 	struct _TFace* waterFace; // size=12, offset=296
 	struct _TFace* oldWaterFace; // size=12, offset=300

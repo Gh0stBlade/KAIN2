@@ -39,7 +39,7 @@ struct ANIMG2_109fake // hashcode: 0x1C77A67E (dec: 477603454)
 		int splinecam_helpkey; // size=0, offset=24
 	} Cinematic; // size=28, offset=0, found in object files: AnimG2.o, AnimG2.o
 	struct {
-		struct _Position offset; // size=6, offset=0
+		_Position offset; // size=6, offset=0
 		struct _Rotation rotation; // size=8, offset=6
 		long focusDistance; // size=0, offset=16
 	} Idle; // size=20, offset=28, found in object files: AnimG2.o, AnimG2.o

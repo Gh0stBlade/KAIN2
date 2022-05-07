@@ -13,7 +13,7 @@ struct WORSHIP_114fake // hashcode: 0x92B54E7B (dec: -1833611653)
 		int splinecam_helpkey; // size=0, offset=24
 	} Cinematic; // size=28, offset=0, found in object files: worship.o, worship.o
 	struct {
-		struct _Position offset; // size=6, offset=0
+		_Position offset; // size=6, offset=0
 		struct _Rotation rotation; // size=8, offset=6
 		long focusDistance; // size=0, offset=16
 	} Idle; // size=20, offset=28, found in object files: worship.o, worship.o

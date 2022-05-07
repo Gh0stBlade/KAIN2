@@ -192,7 +192,7 @@ struct _SavedIntro * SAVE_UpdateSavedIntro(struct _Instance *instance, struct Le
 		// Start line: 472
 		// Start offset: 0x800B59A4
 		// Variables:
-			struct _Position *levelOffset; // $t1
+			_Position *levelOffset; // $t1
 
 		/* begin block 1.1 */
 			// Start line: 483
@@ -204,8 +204,8 @@ struct _SavedIntro * SAVE_UpdateSavedIntro(struct _Instance *instance, struct Le
 				short _x1; // $a3
 				short _y1; // $t0
 				short _z1; // $t1
-				struct _Position *_v; // $v0
-				struct _Position *_v0; // $v1
+				_Position *_v; // $v0
+				_Position *_v0; // $v1
 		/* end block 1.1 */
 		// End offset: 0x800B59D4
 		// End Line: 483
@@ -230,7 +230,7 @@ struct _SavedIntroWithIntro * SAVE_UpdateSavedIntroWithIntro(struct _Instance *i
 		// Start line: 514
 		// Start offset: 0x800B5AB0
 		// Variables:
-			struct _Position *levelOffset; // $t1
+			_Position *levelOffset; // $t1
 
 		/* begin block 1.1 */
 			// Start line: 525
@@ -242,8 +242,8 @@ struct _SavedIntroWithIntro * SAVE_UpdateSavedIntroWithIntro(struct _Instance *i
 				short _x1; // $a3
 				short _y1; // $t0
 				short _z1; // $t1
-				struct _Position *_v; // $v0
-				struct _Position *_v0; // $v1
+				_Position *_v; // $v0
+				_Position *_v0; // $v1
 		/* end block 1.1 */
 		// End offset: 0x800B5AF0
 		// End Line: 525

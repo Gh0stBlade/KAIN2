@@ -46,7 +46,7 @@ extern void SndCloseSfxChannel(int channelNum); // 0x8003E694
 
 extern struct SoundEffectChannel * SndGetSfxChannel(int channelNum); // 0x8003E6BC
 
-extern void SOUND_ProcessInstanceSounds(unsigned char *sfxFileData, struct SoundInstance *soundInstTbl, struct _Position *position, int livesInOnePlace, int inSpectral, int hidden, int burning, long *triggerFlags); // 0x8003E6E4
+extern void SOUND_ProcessInstanceSounds(unsigned char *sfxFileData, struct SoundInstance *soundInstTbl, _Position *position, int livesInOnePlace, int inSpectral, int hidden, int burning, long *triggerFlags); // 0x8003E6E4
 
 extern void SOUND_EndInstanceSounds(unsigned char *sfxFileData, struct SoundInstance *soundInstTbl); // 0x8003E86C
 
@@ -54,9 +54,9 @@ extern int isOkayToPlaySound(int flags, int spectralPlane, int hidden, int burni
 
 extern void setPeriodicSoundStateOff(struct SoundInstance *soundInst, struct ObjectPeriodicSound *sound); // 0x8003EAEC
 
-extern void processPeriodicSound(struct _Position *position, int livesInOnePlane, int inSpectral, int hidden, int burning, struct SoundInstance *soundInst, struct ObjectPeriodicSound *sound); // 0x8003EB78
+extern void processPeriodicSound(_Position *position, int livesInOnePlane, int inSpectral, int hidden, int burning, struct SoundInstance *soundInst, struct ObjectPeriodicSound *sound); // 0x8003EB78
 
-extern void processEventSound(struct _Position *position, struct SoundInstance *soundInst, struct ObjectEventSound *sound); // 0x8003F018
+extern void processEventSound(_Position *position, struct SoundInstance *soundInst, struct ObjectEventSound *sound); // 0x8003F018
 
 extern void SOUND_StartInstanceSound(struct SoundInstance *soundInst); // 0x8003F3BC
 
@@ -68,11 +68,11 @@ extern void SOUND_SetInstanceSoundPitch(struct SoundInstance *soundInst, long pi
 
 extern void SOUND_SetInstanceSoundVolume(struct SoundInstance *soundInst, long volumeChangeAmt, long time); // 0x8003F5F4
 
-extern void processOneShotSound(struct _Position *position, int hidden, int burning, long *triggerFlags, struct SoundInstance *soundInst, struct ObjectOneShotSound *sound); // 0x8003F6F8
+extern void processOneShotSound(_Position *position, int hidden, int burning, long *triggerFlags, struct SoundInstance *soundInst, struct ObjectOneShotSound *sound); // 0x8003F6F8
 
-extern unsigned long SOUND_Play3dSound(struct _Position *position, int sfxToneID, int pitch, int maxVolume, int minVolDist); // 0x8003FA40
+extern unsigned long SOUND_Play3dSound(_Position *position, int sfxToneID, int pitch, int maxVolume, int minVolDist); // 0x8003FA40
 
-extern unsigned long SOUND_Update3dSound(struct _Position *position, unsigned long handle, int pitch, int maxVolume, int minVolDist); // 0x8003FC7C
+extern unsigned long SOUND_Update3dSound(_Position *position, unsigned long handle, int pitch, int maxVolume, int minVolDist); // 0x8003FC7C
 
 extern void SOUND_HandleGlobalValueSignal(int name, long data); // 0x8003FEB0
 
