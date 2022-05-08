@@ -27,7 +27,7 @@ extern void TimerTick() ; // 0x80024E78
 
 extern int CheckVolatile(void* a0) ; // 0x80024EB0
 
-//extern void DRAW_AnimatedModel_S() ; // 0x80024EBC
+extern void DRAW_AnimatedModel_S() ; // 0x80024EBC
 
 extern void anim_loop_top() ; // 0x80024FA0
 
@@ -150,6 +150,8 @@ extern void draw_trans_fog() ; // 0x80026AD0
 extern void OK() ; // 0x80026B04
 
 extern void no_depthQ2() ; // 0x80026BBC
+
+extern void DRAW_DisplayPolytopeList_S();
 
 //extern void DRAW_DisplayPolytopeList_S(struct _VertexPool*, struct _Terrain*, struct Camera*, struct _PrimPool*, unsigned int**, _Position*) ; // 0x80026BD4
 
