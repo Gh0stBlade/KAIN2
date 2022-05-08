@@ -523,15 +523,15 @@ void EVENT_ProcessEvents(struct EventPointers* eventPointers, struct Level* leve
 
 	for (i = 0; i < eventPointers->numPuzzles; i++)
 	{
-		if (eventPointers[i].eventInstances[0]->eventNumber >= 0)
+		if (eventPointers->eventInstances[i]->eventNumber >= 0)
 		{
-			EVENT_Process(eventPointers[i].eventInstances[0], 0);
+			EVENT_Process(eventPointers->eventInstances[i], 0);
 		}
 		else
 		{
-			if (eventPointers[i].eventInstances[0]->processingPuppetShow != 0)
+			if (eventPointers->eventInstances[i]->processingPuppetShow != 0)
 			{
-				EVENT_ProcessPuppetShow(eventPointers[i].eventInstances[0], eventPointers[i].eventInstances[0]->processingPuppetShow - 1);
+				EVENT_ProcessPuppetShow(eventPointers->eventInstances[i], eventPointers->eventInstances[i]->processingPuppetShow - 1);
 			}
 		}
 	}
