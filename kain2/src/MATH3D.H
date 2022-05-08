@@ -48,8 +48,8 @@ extern long MATH3D_FastSqrt(long square); // 0x800397D8
 extern long MATH3D_FastSqrt0(long square); // 0x800398B8
 extern long MATH3D_DistanceBetweenPositions(_Position *pos1, _Position *pos2); // 0x80039948
 extern short MATH3D_AngleBetweenVectors(struct _SVector *vector1, struct _SVector *vector2); // 0x80039994
-extern void MATH3D_RotMatAboutVec(struct _SVector *vec, struct MATRIX *mat, short angle); // 0x80039A80
-extern void MATH3D_SetUnityMatrix(struct MATRIX *mat); // 0x80039B50
+extern void MATH3D_RotMatAboutVec(struct _SVector *vec, MATRIX *mat, short angle); // 0x80039A80
+extern void MATH3D_SetUnityMatrix(MATRIX *mat); // 0x80039B50
 extern void AngleMoveToward(short *current_ptr, short destination, short step); // 0x80039B6C
 extern short AngleDiff(short current, short destination); // 0x80039C18
 extern short MATH3D_AngleFromPosToPos(_Position *from, _Position *to); // 0x80039C3C
@@ -57,7 +57,7 @@ extern void MATH3D_ZYXtoXYZ(struct _Rotation *rot); // 0x80039C74
 extern short MATH3D_ElevationFromPosToPos(_Position *from, _Position *to); // 0x80039CD0
 extern void MATH3D_RotationFromPosToPos(_Position *from, _Position *to, struct _Rotation *rot); // 0x80039D54
 extern int MATH3D_veclen2(int ix, int iy); // 0x80039DA8
-extern void MATH3D_RotateAxisToVector(struct MATRIX *dest, struct MATRIX *src, struct _SVector *vec, enum MATH3D_AXIS axis); // 0x80039E08
+extern void MATH3D_RotateAxisToVector(MATRIX *dest, MATRIX *src, struct _SVector *vec, enum MATH3D_AXIS axis); // 0x80039E08
 extern int MATH3D_ConeDetect(struct _SVector *pos, int arc, int elevation); // 0x8003A060
 extern void MATH3D_CrossProduct(struct _SVector *t, struct _SVector *r, struct _SVector *s); // 0x8003A118
 extern unsigned long MATH3D_SquareLength(long x, long y, long z); // 0x8003A1BC

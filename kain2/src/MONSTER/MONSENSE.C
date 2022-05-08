@@ -55,7 +55,7 @@ int MONSENSE_See(struct _Instance *instance, struct evCollideInstanceStatsData *
 						// Start line: 122
 						// Start offset: 0x80085B98
 						// Variables:
-							struct MATRIX *mat; // $v0
+							MATRIX *mat; // $v0
 					/* end block 1.1.1.1.1 */
 					// End offset: 0x80085B98
 					// End Line: 122

@@ -197,8 +197,8 @@ struct LightInstance // hashcode: 0xB8D5E61F (dec: -1193941473)
 //	long birthStreamUnitID; // size=0, offset=52
 //	long currentStreamUnitID; // size=0, offset=56
 //	long introUniqueID; // size=0, offset=60
-//	struct MATRIX *matrix; // size=32, offset=64
-//	struct MATRIX *oldMatrix; // size=32, offset=68
+//	MATRIX *matrix; // size=32, offset=64
+//	MATRIX *oldMatrix; // size=32, offset=68
 //	struct SoundInstance soundInstanceTbl[4]; // size=12, offset=72
 //	unsigned long maxCheckDistance; // size=0, offset=84
 //	unsigned long checkMask; // size=0, offset=88
@@ -213,7 +213,7 @@ struct LightInstance // hashcode: 0xB8D5E61F (dec: -1193941473)
 //	struct _SVector scale; // size=8, offset=132
 //	long attachedID; // size=0, offset=140
 //	long attachedSegment; // size=0, offset=144
-//	struct MATRIX relativeMatrix; // size=32, offset=148
+//	MATRIX relativeMatrix; // size=32, offset=148
 //	struct _TFace *tface; // size=12, offset=180
 //	struct _TFace *oldTFace; // size=12, offset=184
 //	void *tfaceLevel; // size=0, offset=188
@@ -515,7 +515,7 @@ struct MultiSpline // hashcode: 0x2823B2CF (dec: 673428175)
 	struct SplineDef curRotational; // size=8, offset=24
 	struct SplineDef curScaling; // size=8, offset=32
 	struct SplineDef curColor; // size=8, offset=40
-	struct MATRIX curRotMatrix; // size=32, offset=48
+	MATRIX curRotMatrix; // size=32, offset=48
 };
 
 struct ObjectEffect // hashcode: 0x2892438D (dec: 680674189)
@@ -653,8 +653,8 @@ struct BSPTree // hashcode: 0x17800192 (dec: 394264978)
 
 struct LightGroup // hashcode: 0xBB5FF847 (dec: -1151338425)
 {
-	struct MATRIX lightMatrix; // size=32, offset=0
-	struct MATRIX colorMatrix; // size=32, offset=32
+	MATRIX lightMatrix; // size=32, offset=0
+	MATRIX colorMatrix; // size=32, offset=32
 };
 
 struct LightList // hashcode: 0xC8448BB7 (dec: -935031881)
@@ -810,14 +810,14 @@ struct _CameraCore_Type // hashcode: 0xD341D51C (dec: -750660324)
 {
 	_Position position; // size=6, offset=0
 	short pad1; // size=0, offset=6
-	struct MATRIX vvNormalWorVecMat[2]; // size=64, offset=8
+	MATRIX vvNormalWorVecMat[2]; // size=64, offset=8
 	long vvPlaneConsts[6]; // size=24, offset=72
-	struct MATRIX *wcTransform; // size=32, offset=96
+	MATRIX *wcTransform; // size=32, offset=96
 	long farPlane; // size=0, offset=100
 	long projDistance; // size=0, offset=104
 	long nearPlane; // size=0, offset=108
-	struct MATRIX *wcTransform2; // size=32, offset=112
-	struct MATRIX *cwTransform2; // size=32, offset=116
+	MATRIX *wcTransform2; // size=32, offset=112
+	MATRIX *cwTransform2; // size=32, offset=116
 	struct _Normal viewVolumeNormal[5]; // size=40, offset=120
 	int leftX; // size=0, offset=160
 	int rightX; // size=0, offset=164
@@ -1356,7 +1356,7 @@ struct _FX_MATRIX // hashcode: 0x13190ADD (dec: 320408285)
 {
 	struct NodeType node; // size=8, offset=0
 	long flags; // size=0, offset=8
-	struct MATRIX lwTransform; // size=32, offset=12
+	MATRIX lwTransform; // size=32, offset=12
 };
 
 struct _FX_PRIM // hashcode: 0x16BF818E (dec: 381649294)
@@ -1955,7 +1955,7 @@ struct _FXTracker // hashcode: 0xCC65A064 (dec: -865755036)
 struct SandHFScratch // hashcode: 0x31C4E20D (dec: 834986509)
 {
 	struct _SVector normal; // size=8, offset=0
-	struct MATRIX posMatrix; // size=32, offset=8
+	MATRIX posMatrix; // size=32, offset=8
 	struct _Vector dpv; // size=12, offset=40
 	struct _SVector triPoint; // size=8, offset=52
 	struct _SVector planePoint; // size=8, offset=60
@@ -1963,7 +1963,7 @@ struct SandHFScratch // hashcode: 0x31C4E20D (dec: 834986509)
 
 struct SandTScratch // hashcode: 0x2773448F (dec: 661865615)
 {
-	struct MATRIX posMatrix; // size=32, offset=0
+	MATRIX posMatrix; // size=32, offset=0
 	struct _Vector dpv; // size=12, offset=32
 	struct _HNormal *normalList; // size=8, offset=44
 	struct _CollideInfo collideInfo; // size=48, offset=48
@@ -1988,7 +1988,7 @@ struct SandTScratch // hashcode: 0x2773448F (dec: 661865615)
 
 struct IandTScratch // hashcode: 0xE0F1425D (dec: -521059747)
 {
-	struct MATRIX posMatrix; // size=32, offset=0
+	MATRIX posMatrix; // size=32, offset=0
 	struct _SVector normal; // size=8, offset=32
 	struct _Vector dpv; // size=12, offset=40
 	struct _SVector planePoint; // size=8, offset=52
@@ -2003,7 +2003,7 @@ struct IandTScratch // hashcode: 0xE0F1425D (dec: -521059747)
 
 struct PandTFScratch // hashcode: 0x218F0B73 (dec: 563022707)
 {
-	struct MATRIX posMatrix; // size=32, offset=0
+	MATRIX posMatrix; // size=32, offset=0
 	struct _SVector planePoint; // size=8, offset=32
 	struct _SVector newPos; // size=8, offset=40
 	struct _SVector oldPos; // size=8, offset=48
@@ -2960,11 +2960,11 @@ struct BSP_109fake // hashcode: 0xF4A997D6 (dec: -190212138)
 
 struct BSPScratch // hashcode: 0x17CFF45B (dec: 399504475)
 {
-	struct MATRIX vv[2]; // size=64, offset=0
-	struct MATRIX camMatrix; // size=32, offset=64
+	MATRIX vv[2]; // size=64, offset=0
+	MATRIX camMatrix; // size=32, offset=64
 	struct VECTOR dpv[3]; // size=48, offset=96
 	long d[6]; // size=24, offset=144
-	struct MATRIX boundMatrix; // size=32, offset=168
+	MATRIX boundMatrix; // size=32, offset=168
 	long in_spectral; // size=0, offset=200
 };
 
@@ -3225,9 +3225,9 @@ struct PIPE3D_240fake // hashcode: 0xB73CD4A8 (dec: -1220750168)
 
 struct TransformAnimatedInstanceVerticesWork_t // hashcode: 0x7584B74F (dec: 1971631951)
 {
-	struct MATRIX scTransform; // size=32, offset=0
-	struct MATRIX mirrorMatrix; // size=32, offset=32
-	struct MATRIX llm; // size=32, offset=64
+	MATRIX scTransform; // size=32, offset=0
+	MATRIX mirrorMatrix; // size=32, offset=32
+	MATRIX llm; // size=32, offset=64
 	struct _Vector vector; // size=12, offset=96
 };
 
@@ -3440,7 +3440,7 @@ struct _FXBlastringEffect // hashcode: 0x2F8F0E55 (dec: 797904469)
 	unsigned char type; // size=0, offset=13
 	short lifeTime; // size=0, offset=14
 	struct _SVector position; // size=8, offset=16
-	struct MATRIX matrix; // size=32, offset=24
+	MATRIX matrix; // size=32, offset=24
 	short segment; // size=0, offset=56
 	short pad; // size=0, offset=58
 	int radius; // size=0, offset=60
@@ -4823,7 +4823,7 @@ struct INSTNCG2_109fake // hashcode: 0x507B5C94 (dec: 1350261908)
 	} Follow; // size=20, offset=76, found in object files: InstncG2.o, InstncG2.o
 };
 
-struct MATRIXG2_109fake // hashcode: 0x245522F0 (dec: 609559280)
+MATRIXG2_109fake // hashcode: 0x245522F0 (dec: 609559280)
 {
 	struct {
 		struct MultiSpline *posSpline; // size=0, offset=0
@@ -8315,7 +8315,7 @@ extern long collide_acceptAttr; // offset 0x800CE168
 extern struct _SVector collide_localPoint; // offset 0x800D0370
 
 
-extern struct MATRIX *collide_lwTransform; // offset 0x800D0378
+extern MATRIX *collide_lwTransform; // offset 0x800D0378
 
 
 extern struct _SVector *collide_point0; // offset 0x800D0360
@@ -8366,13 +8366,13 @@ static short panic_count; // offset 0x800CDF9A
 extern struct Camera theCamera; // offset 0x800CFE90
 
 
-static struct MATRIX wcTransformX; // offset 0x800CFD74
+static MATRIX wcTransformX; // offset 0x800CFD74
 
 
-static struct MATRIX wcTransform2X; // offset 0x800CFD94
+static MATRIX wcTransform2X; // offset 0x800CFD94
 
 
-static struct MATRIX cwTransform2X; // offset 0x800CFDB4
+static MATRIX cwTransform2X; // offset 0x800CFDB4
 
 
 static short combat_cam_distance; // offset 0x800CFDD4
@@ -9086,7 +9086,7 @@ static struct _G2AppDataVM_Type _appDataVM; // offset 0x800D517C
 static struct __Force *ExternalForces; // offset 0x800D51D4
 
 
-static struct MATRIX TempMat; // offset 0x800D51E4
+static MATRIX TempMat; // offset 0x800D51E4
 
 
 extern int LoopCounter; // offset 0x800CF774
@@ -9140,7 +9140,7 @@ static struct _G2AnimInterpInfo_Type razInterpInfo[3]; // offset 0x800D57D4
 static struct __FitPoint constrictData[32]; // offset 0x800D5804
 
 
-static struct MATRIX TempMat; // offset 0x800D5884
+static MATRIX TempMat; // offset 0x800D5884
 
 
 static struct GameTracker *gameTracker; // offset 0x800D58A4

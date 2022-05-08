@@ -147,8 +147,8 @@ extern int PHYSICS_CheckForValidMove(struct _Instance *instance, SVECTOR*startVe
 extern int PHYSICS_CheckFaceStick(struct _PCollideInfo *CInfo); // 0x80077C4C
 extern int PHYSICS_CheckDontGrabEdge(struct _PCollideInfo *CInfo); // 0x80077CB0
 extern void PHYSICS_GenericLineCheckSetup(short x, short y, short z, SVECTOR*inVec); // 0x80077DD8
-extern void PHYSICS_GenericLineCheck(struct _Instance *instance, struct MATRIX *transMat, struct MATRIX *rotMat, struct _PCollideInfo *cInfo); // 0x80077DE8
-extern void PHYSICS_GenericLineCheckMask(struct _Instance *instance, struct MATRIX *transMat, struct MATRIX *rotMat, struct _PCollideInfo *cInfo); // 0x80077E0C
+extern void PHYSICS_GenericLineCheck(struct _Instance *instance, MATRIX *transMat, MATRIX *rotMat, struct _PCollideInfo *cInfo); // 0x80077DE8
+extern void PHYSICS_GenericLineCheckMask(struct _Instance *instance, MATRIX *transMat, MATRIX *rotMat, struct _PCollideInfo *cInfo); // 0x80077E0C
 
 #if defined(_LANGUAGE_C_PLUS_PLUS)||defined(__cplusplus)||defined(c_plusplus)
 }

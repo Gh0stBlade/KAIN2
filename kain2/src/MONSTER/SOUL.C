@@ -101,8 +101,8 @@ void SOUL_MovePastWall(struct _Instance *instance, struct _Instance *sucker)
 			_Position newPos; // stack offset -40
 			_Position oldPos; // stack offset -32
 			_Position delta; // stack offset -24
-			struct MATRIX *to; // $a0
-			struct MATRIX *from; // $v1
+			MATRIX *to; // $a0
+			MATRIX *from; // $v1
 			long tmp; // $v0
 
 		/* begin block 1.1 */

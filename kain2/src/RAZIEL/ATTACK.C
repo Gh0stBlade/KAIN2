@@ -307,7 +307,7 @@ void StateHandlerThrow2(struct __CharacterState *In, int CurrentSection, int Dat
 					// Variables:
 						_Position To; // stack offset -64
 						struct _Rotation Rot; // stack offset -56
-						struct MATRIX *matrix; // $v0
+						MATRIX *matrix; // $v0
 				/* end block 1.2.1.1 */
 				// End offset: 0x8009E0E8
 				// End Line: 1294
@@ -324,7 +324,7 @@ void StateHandlerThrow2(struct __CharacterState *In, int CurrentSection, int Dat
 			// Variables:
 				//_Position To; // stack offset -64
 				//struct _Rotation Rot; // stack offset -48
-				//struct MATRIX *matrix; // $v0
+				//MATRIX *matrix; // $v0
 		/* end block 1.3 */
 		// End offset: 0x8009E364
 		// End Line: 1371

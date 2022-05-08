@@ -73,7 +73,7 @@ struct _Instance * MISSILE_Birth(struct _Instance *instance, struct _MonsterMiss
 			// Start line: 122
 			// Start offset: 0x8007D954
 			// Variables:
-				struct MATRIX *matrix; // $v0
+				MATRIX *matrix; // $v0
 		/* end block 1.1 */
 		// End offset: 0x8007D988
 		// End Line: 126

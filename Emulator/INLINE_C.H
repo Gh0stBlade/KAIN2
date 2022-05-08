@@ -8,29 +8,6 @@ extern void gte_SetGeomScreen(int h);
 extern int gte_ldlzc(int input);
 #endif
 
-//AX = & 0xFC00
-//DX = & 0x3
-//CL = 6
-// 
-//0xBF & 0xFC00 = 0x0
-//0xBF & 0x3F = 0x3F
-//0xBF & 0x3 = 0x3
-
-//AX = 0 >> 6
-//DX = 3 >>
-
-//= 0xC00
-//110000000010
-
-//001010000000000000110000
-//TARG: 0x0280030
-
-
-
-#define TRANSLATE_OPCODE_COP2(x) \
-if ((x & 0xFC00) == 0 && (x & 0x3F) == 0x3F) { \
-} \
-
 #define gte_mvmva_t(sf,mx,v,cv,lm) ((sf)<<25) | ((mx)<<23) | ((v)<<21) | ((cv)<<19) | ((lm)<<18));
 
 /*

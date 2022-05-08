@@ -175,7 +175,7 @@ void MON_ChangeHumanOpinion(struct _Instance *instance)
 void MON_CutOut_Monster(struct _Instance *instance, int fade_amount, int startseg, int endseg)
 { // line 192, offset 0x8008748c
 #if defined(PC_VERSION)
-	struct MATRIX* mat; // edx
+	MATRIX* mat; // edx
 	SVECTOR* _v; // eax
 	int tmp; // kr00_4
 	SVECTOR p1; // [esp+0h] [ebp-20h] BYREF
@@ -2166,7 +2166,7 @@ int MONSTER_StartVertexBlood(struct _Instance *instance, struct _SVector *locati
 					struct _MVertex *vertexList; // $s1
 					struct _Vector locVec; // stack offset -56
 					long flag; // stack offset -40
-					struct MATRIX *segMatrix; // $s0
+					MATRIX *segMatrix; // $s0
 			/* end block 1.1.1 */
 			// End offset: 0x8008C16C
 			// End Line: 3052
@@ -2275,7 +2275,7 @@ int MONSTER_StartVertexBurnt(struct _Instance *instance, struct _SVector *locati
 					struct _MVertex *vertexList; // $s1
 					struct _Vector locVec; // stack offset -56
 					long flag; // stack offset -40
-					struct MATRIX *segMatrix; // $s0
+					MATRIX *segMatrix; // $s0
 			/* end block 1.1.1 */
 			// End offset: 0x8008C56C
 			// End Line: 3216
@@ -2358,7 +2358,7 @@ void MON_DamageEffect(struct _Instance *instance, struct evFXHitData *data)
 				// Start line: 3293
 				// Start offset: 0x8008C740
 				// Variables:
-					//struct MATRIX *mat; // $s1
+					//MATRIX *mat; // $s1
 					//struct _SVector location; // stack offset -96
 					//struct _SVector vel; // stack offset -88
 					//struct _SVector accel; // stack offset -80
@@ -2370,7 +2370,7 @@ void MON_DamageEffect(struct _Instance *instance, struct evFXHitData *data)
 				// Start line: 3312
 				// Start offset: 0x8008C834
 				// Variables:
-					//struct MATRIX *mat; // $s0
+					//MATRIX *mat; // $s0
 					//struct _SVector location; // stack offset -72
 					//struct _SVector vel; // stack offset -64
 			/* end block 1.1.2 */
@@ -2399,7 +2399,7 @@ void MON_DamageEffect(struct _Instance *instance, struct evFXHitData *data)
 				// Start line: 3345
 				// Start offset: 0x8008C95C
 				// Variables:
-					//struct MATRIX *mat; // $s0
+					//MATRIX *mat; // $s0
 					//struct _SVector location; // stack offset -56
 					//struct _SVector vel; // stack offset -48
 					//struct _SVector accel; // stack offset -40

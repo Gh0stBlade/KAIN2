@@ -13,7 +13,7 @@ void razAlignYMoveRot(struct _Instance *dest, short distance, _Position *positio
 		// Variables:
 			SVECTOR d; // stack offset -72
 			SVECTOR dd; // stack offset -64
-			//struct MATRIX mat; // stack offset -56
+			//MATRIX mat; // stack offset -56
 	/* end block 1 */
 	// End offset: 0x800A51B0
 	// End Line: 13
@@ -37,7 +37,7 @@ void razAlignYRotMove(struct _Instance *dest, short distance, _Position *positio
 			//SVECTORd; // stack offset -88
 			//SVECTORdd; // stack offset -80
 			//SVECTORrot; // stack offset -72
-			//struct MATRIX mat; // stack offset -64
+			//MATRIX mat; // stack offset -64
 	/* end block 1 */
 	// End offset: 0x800A5274
 	// End Line: 55
@@ -620,8 +620,8 @@ void razReaverScale(int scale)
 void razGetForwardNormal(struct _Instance *inst, struct _Instance *target)
 { // line 760, offset 0x800a61f4
 #if defined(PC_VERSION)
-	struct MATRIX* matrix; // eax
-	struct MATRIX* v3; // eax
+	MATRIX* matrix; // eax
+	MATRIX* v3; // eax
 	__int16 v4[4]; // [esp+0h] [ebp-3Ch] BYREF
 	__int16 v5[4]; // [esp+8h] [ebp-34h] BYREF
 	struct _PCollideInfo v6; // [esp+10h] [ebp-2Ch] BYREF

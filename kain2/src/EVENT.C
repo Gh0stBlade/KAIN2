@@ -2622,8 +2622,8 @@ long EVENT_CompareRotationVectors(struct Rotation3d *rot1, struct Rotation3d *ro
 		// Start line: 5280
 		// Start offset: 0x80065D8C
 		// Variables:
-			//struct MATRIX matrix1; // stack offset -104
-			//struct MATRIX matrix2; // stack offset -72
+			//MATRIX matrix1; // stack offset -104
+			//MATRIX matrix2; // stack offset -72
 			long result; // $s2
 			long c1; // $v1
 			long attribute; // $s0

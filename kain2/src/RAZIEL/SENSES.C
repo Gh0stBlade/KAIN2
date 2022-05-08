@@ -104,7 +104,7 @@ void UpdateEngagementList(struct evCollideInstanceStatsData *Ptr, struct __Playe
 			// Start line: 235
 			// Start offset: 0x800A3A30
 			// Variables:
-				struct MATRIX *collectMat; // $v1
+				MATRIX *collectMat; // $v1
 				_Position headPos; // stack offset -64
 				_Position collectPos; // stack offset -56
 				long headDistance; // $s0

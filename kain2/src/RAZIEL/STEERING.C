@@ -329,7 +329,7 @@ void SteerSwitchMode(struct _Instance *instance, int mode)
 void razInitWallCrawlSteering(struct _Instance *instance)
 { // line 888, offset 0x800a3178
 #if defined(PC_VERSION)
-	struct MATRIX* matrix; // eax
+	MATRIX* matrix; // eax
 	__int16 y; // dx
 	__int16 z; // ax
 	struct _G2SVector3_Type vector; // [esp+Ch] [ebp-8h] BYREF
@@ -369,7 +369,7 @@ void razInitWallCrawlSteering(struct _Instance *instance)
 void razDeinitWallCrawlSteering(struct _Instance *instance)
 { // line 922, offset 0x800a32b4
 #if defined(PC_VERSION)
-	struct MATRIX* matrix; // eax
+	MATRIX* matrix; // eax
 
 	G2Anim_DisableController(&instance->anim, 1, 38);
 	matrix = instance->matrix;

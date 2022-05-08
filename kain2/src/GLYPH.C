@@ -564,7 +564,7 @@ void Glyph_DoSpell(struct _Instance *instance, int glyphnum)
 			int fx_rad3; // $s2
 			int pred_offset; // $s0
 			int color_change_radius; // $s1
-			//struct MATRIX mat; // stack offset -80
+			//MATRIX mat; // stack offset -80
 			struct _GlyphTuneData *glyphtunedata; // $s0
 	/* end block 1 */
 	// End offset: 0x8007BED8
