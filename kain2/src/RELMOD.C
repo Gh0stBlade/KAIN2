@@ -8,7 +8,6 @@ void RELMOD_InitModulePointers(int baseaddr, int *relocs)
 
 	if (*relocs != -1)
 	{
-
 		do
 		{
 			rel_addr = (unsigned int*)(baseaddr + (*relocs & 0xFFFFFFFC));
