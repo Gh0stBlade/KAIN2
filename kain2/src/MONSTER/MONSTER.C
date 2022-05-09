@@ -15,7 +15,7 @@ void MON_DoCombatTimers(struct _Instance *instance)
 	int v6; // ecx
 	int mainColorVertex; // edi
 	int v8; // ebp
-	struct CVECTOR* perVertexColor; // eax
+	CVECTOR* perVertexColor; // eax
 	struct _Model* mdl; // ebx
 	u_char g; // cl
 	u_char r; // dl
@@ -312,7 +312,7 @@ void MON_Dead(struct _Instance *instance)
 			// Variables:
 				struct _Model *model; // $s0
 				int i; // $s0
-				struct CVECTOR *ptr; // $v0
+				CVECTOR *ptr; // $v0
 		/* end block 1.2 */
 		// End offset: 0x80087980
 		// End Line: 344
@@ -2081,7 +2081,7 @@ void ProcessBloodyMess(struct _Instance *instance, int vertidx, int segidx, int 
 #if defined(PC_VERSION)
 	struct _MonsterVars* mv; // ebp
 	bool is_german; // zf
-	struct CVECTOR* cv; // esi
+	CVECTOR* cv; // esi
 	int v8; // edx
 	struct _MonsterSubAttributes* ma; // ecx
 	int v10; // ecx
@@ -2129,7 +2129,7 @@ void MONSTER_InitVertexColors(struct _Instance *instance, struct _Model *model)
 		// Start offset: 0x8008C030
 		// Variables:
 			int i; // $s0
-			struct CVECTOR *ptr; // $v0
+			CVECTOR *ptr; // $v0
 	/* end block 1 */
 	// End offset: 0x8008C084
 	// End Line: 3027
@@ -2201,7 +2201,7 @@ void MONSTER_VertexBlood(struct _Instance *instance, int vert, int amount)
 			// Start line: 3088
 			// Start offset: 0x8008C254
 			// Variables:
-				struct CVECTOR *c; // $a3
+				CVECTOR *c; // $a3
 
 			/* begin block 1.1.1 */
 				// Start line: 3097
@@ -2311,7 +2311,7 @@ void MONSTER_VertexBurnt(struct _Instance *instance, struct burntTuneType *burnt
 			// Start line: 3253
 			// Start offset: 0x8008C650
 			// Variables:
-				struct CVECTOR *c; // $v1
+				CVECTOR *c; // $v1
 		/* end block 1.1 */
 		// End offset: 0x8008C6A4
 		// End Line: 3262

@@ -48,10 +48,10 @@ typedef struct GameTracker // hashcode: 0x4EB3EFC5 (dec: 1320415173)
 	long numMatrices; // size=0, offset=316
 	long gameFlags; // size=0, offset=320
 	long streamFlags; // size=0, offset=324
-	void* drawNonAnimatedSegmentFunc; // size=0, offset=328
-	void* drawAnimatedModelFunc; // size=0, offset=332
-	void* drawDisplayPolytopeListFunc; // size=0, offset=336
-	void* drawBgFunc; // size=0, offset=340
+	void (*drawNonAnimatedSegmentFunc)(); // size=0, offset=328
+	void (*drawAnimatedModelFunc)(); // size=0, offset=332
+	void (*drawDisplayPolytopeListFunc)(); // size=0, offset=336
+	void (*drawBgFunc)(); // size=0, offset=340
 	struct Level* mainDrawUnit; // size=392, offset=344
 	char baseAreaName[16]; // size=16, offset=348
 	short levelDone; // size=0, offset=364

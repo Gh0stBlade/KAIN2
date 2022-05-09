@@ -1,7 +1,9 @@
 #ifndef EMULATOR_PUBLIC_H
 #define EMULATOR_PUBLIC_H
 
-#include "Core/Setup/Platform/EMULATOR_PLATFORM_SETUP.H"
+#if defined(WINAPI_FAMILY) && (WINAPI_FAMILY == WINAPI_FAMILY_APP)
+#define UWP
+#endif
 
 //Undefine nasty windows.h defs which collide with our PSX ones.
 #ifdef LoadImage

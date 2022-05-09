@@ -48,7 +48,7 @@
 
 #elif defined(__EMSCRIPTEN__)
 #define OGLES
-#define OGLES_VERSION (2)
+#define OGLES_VERSION (3)
 #define SDL2
 #elif defined(__ANDROID__)
 #define OGLES

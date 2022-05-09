@@ -338,5 +338,6 @@ External/
 
 /kain2/*.filters
 /Build_Emscripten/*
+/Build_EMSDK/*
 /Build_UWP/*
 /Emulator/Shaders/*

@@ -1,6 +1,7 @@
 #ifndef MONLIB_H
 #define MONLIB_H
 
+#include "MONSTER.H"
 
 extern void MON_TurnOffWeaponSpheres(struct _Instance *instance); // 0x8007F3E4
 

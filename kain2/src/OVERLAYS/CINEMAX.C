@@ -184,13 +184,13 @@ void CINEMAX_InitBufferDetails(char* b1, char* b2, char* b3, char* b4, BufferInf
 }
 
 //0x800E1474
-void CINEMAX_InitStream(char* buffer, CdlFILE* fp, void* func)
+void CINEMAX_InitStream(char* buffer, CdlFILE* fp, void (*func)())
 {
 	//s0 = buffer
 	//s2 = fp
 	//s1 = func
 	DecDCTReset(0);
-	DecDCToutCallback((void(*)())func);
+	DecDCToutCallback(func);
 	StSetRing((u_long*)buffer, 48);
 	StSetStream(1, 1, 0xFFFFFFFF, NULL, NULL);
 	CINEMAX_E190C(fp);
