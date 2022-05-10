@@ -15,10 +15,10 @@ unsigned long TIMER_GetTimeMS()
 	unsigned long mticks;
 
 	EnterCriticalSection();
-	ticks = GetRCnt(0xf2000000);
+	ticks = GetRCnt(0xF2000000);
 	mticks = gameTimer;
 	ExitCriticalSection();
-	return (mticks >> 16) * 126819 + (ticks & 0xffff | mticks << 16) / 33869;
+	return (mticks >> 16) * 126819 + (ticks & 0xFFFF | mticks << 16) / 33869;
 #else
 	unsigned __int64 result; // rax
 
