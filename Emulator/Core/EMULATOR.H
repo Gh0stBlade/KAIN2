@@ -8,7 +8,8 @@
 #include <stdio.h>
 #include <stddef.h>
 
-#include "Setup/Platform/EMULATOR_PLATFORM_SETUP.H"
+#include "Core/Setup/Platform/EMULATOR_PLATFORM_SETUP.H"
+#include "Core/Debug/EMULATOR_LOG.H"
 
 #ifndef TRUE
 #define TRUE		1
@@ -26,44 +27,8 @@
 #define glDeleteVertexArrays    glDeleteVertexArraysOES
 #endif
 
-#ifdef _MSC_VER
-#define FUNCNAME __FUNCTION__
-#else
-#define FUNCNAME __func__
-#endif
 
-#if defined(__ANDROID__)
-#include <android/log.h>
-#define LOG_TAG_EMU "[EMU] "
-
-#if defined(_DEBUG)
-#define eprintf(fmt, ...) __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG_EMU, fmt, ##__VA_ARGS__)
-#define eprinterr(fmt, ...) eprintf("[%s] - " fmt, FUNCNAME, ##__VA_ARGS__);
-#else
-#define eprintf(fmt, ...) (0)
-#define eprinterr(fmt, ...) (0)
-#endif
-
-#else
-#if defined(DEBUG_PRINTS)
-#define eprintf(fmt, ...) printf("[EMU] " fmt, ##__VA_ARGS__)
-#define eprinterr(fmt, ...) eprintf("[%s] - " fmt, FUNCNAME, ##__VA_ARGS__);
-#else
-#define eprintf(...) 
-#define eprinterr(...)
-#endif
-#endif
-
-#if defined(__EMSCRIPTEN__) || !defined(DEBUG_PRINTS)
-#define UNIMPLEMENTED()
-#else
-#define UNIMPLEMENTED() eprinterr("Unimplemented!\n");
-#endif
-
-#if defined(OGL)
-#define VRAM_FORMAT            GL_RG
-#define VRAM_INTERNAL_FORMAT   GL_RG8
-#elif defined(OGLES)
+#if defined(OGL) || defined(OGLES)
 #define VRAM_FORMAT            GL_RG
 #define VRAM_INTERNAL_FORMAT   GL_RG8
 #endif

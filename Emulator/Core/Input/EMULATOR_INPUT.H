@@ -8,7 +8,11 @@ extern unsigned char* padData[];
 extern unsigned char* padDataDebug[];
 
 #if defined(SDL2)
+#if defined(__EMSCRIPTEN__)
+#include <SDL2/SDL.h>
+#else
 #include <SDL.h>
+#endif
 
 extern void Emulator_InitialiseSDLInput(SDL_GameController** pad, const unsigned char** kbState, int isDebugInput);
 

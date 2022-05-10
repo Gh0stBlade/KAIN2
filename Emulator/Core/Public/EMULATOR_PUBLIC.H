@@ -14,6 +14,7 @@
 #endif
 
 #include "Core/Setup/Game/GAME_VERSION.H"
+#include "Core/Debug/EMULATOR_LOG.H"
 
 #ifdef __cplusplus
 extern "C" {

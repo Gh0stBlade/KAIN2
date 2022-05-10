@@ -1,6 +1,8 @@
 #ifndef EMULATOR_PLATFORM_SETUP_H
 #define EMULATOR_PLATFORM_SETUP_H
 
+#define DEBUG_PRINTS
+
 #if defined(WINAPI_FAMILY) && (WINAPI_FAMILY == WINAPI_FAMILY_APP)
 #define UWP
 #endif
@@ -113,7 +115,6 @@
 #if defined (OGL)
 #include <SDL_opengl.h>///@FIXME see mac!
 #elif defined (OGLES)
-#include <SDL_syswm.h>
 #if OGLES_VERSION == 2
 #define GL_GLEXT_PROTOTYPES
 #include <GLES2/gl2.h>
@@ -122,7 +123,12 @@
 #include <GLES3/gl3.h>
 #endif
 #include <EGL/egl.h>
+#if defined(__EMSCRIPTEN__)
+#include <SDL2/SDL_egl.h>
+#include <SDL2/SDL_syswm.h>
+#else
 #include <SDL_egl.h>
+#endif
 #elif defined(D3D9)
 #include <Windows.h>
 #include <d3d9.h>

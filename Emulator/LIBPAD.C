@@ -4,7 +4,11 @@
 #include "EMULATOR.H"
 
 #if defined(SDL2)
+#if defined(__EMSCRIPTEN__)
+#include <SDL2/SDL.h>
+#else
 #include <SDL.h>
+#endif
 #endif
 
 #include "Input/EMULATOR_INPUT.H"

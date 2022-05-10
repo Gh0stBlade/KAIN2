@@ -10,10 +10,14 @@
 #include "LIBGPU.H"
 #include "LIBETC.H"
 #include "LIBPAD.H"
-#if !defined(__ANDROID__)
+#if !defined(__ANDROID__) && !defined(__EMSCRIPTEN__)
 #include <thread>
 #endif
 #include <assert.h>
+
+#if defined(_DEBUG)
+extern "C" int docop2(int op);
+#endif
 
 #if defined(D3D9)
 const char* renderBackendName = "D3D9";
@@ -48,7 +52,6 @@ unsigned int g_resetDeviceOnNextFrame = FALSE;
 #include <string.h>
 
 #if defined(SDL2) || (defined(OGLES) && defined(_WINDOWS))
-#include <SDL.h>
 SDL_Window* g_window = NULL;
 #endif
 
@@ -459,7 +462,7 @@ int windowWidth = 0;
 int windowHeight = 0;
 char* pVirtualMemory = NULL;
 SysCounter counters[3] = { 0 };
-#if !defined(__ANDROID__)
+#if !defined(__ANDROID__) && !defined(__EMSCRIPTEN__)
 std::thread counter_thread;
 #endif
 #if defined(__ANDROID__)
@@ -2157,6 +2160,10 @@ static int Emulator_InitialiseSDL2(char* windowName, int width, int height)
 	windowHeight = height;
 #endif
 
+#if defined(_DEBUG)	
+	docop2(0x486012);
+#endif
+
 #if defined(SDL2)
 	//Initialise SDL2
 	if (SDL_Init(SDL_INIT_VIDEO) == 0)
@@ -2313,7 +2320,7 @@ void Emulator_Initialise(char* windowName, int width, int height)
 	g_swapTime = GetTickCount() - FIXED_TIME_STEP;
 #endif
 
-#if !defined(__ANDROID__)
+#if !defined(__ANDROID__) && !defined(__EMSCRIPTEN__)
 	counter_thread = std::thread(Emulator_CounterLoop);
 #endif
 }
@@ -4001,7 +4008,7 @@ void* Emulator_GenerateRG8LUT()
 		}
 	}
 
-#if !defined(__ANDROID__) && defined(DEBUG_RG8LUT)
+#if !defined(__EMSCRIPTEN__) && !defined(__ANDROID__) && defined(DEBUG_RG8LUT)
 	FILE* f = fopen("RG8LUT.TGA", "wb");
 	unsigned char TGAheader[12] = { 0,0,2,0,0,0,0,0,0,0,0,0 };
 	unsigned char header[6];
@@ -4029,7 +4036,9 @@ void Emulator_GenerateCommonTextures()
 	glBindTexture(GL_TEXTURE_2D, whiteTexture);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+#if (OGLES_VERSION != 2)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_REPEAT);
+#endif
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, &pixelData);
@@ -4039,9 +4048,11 @@ void Emulator_GenerateCommonTextures()
 	glBindTexture(GL_TEXTURE_2D, rg8lutTexture);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+#if (OGLES_VERSION != 2)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+#endif
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, LUT_WIDTH, LUT_HEIGHT, 0, GL_RGBA, GL_UNSIGNED_BYTE, Emulator_GenerateRG8LUT());
 	glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -5293,7 +5304,7 @@ void Emulator_UpdateInputDebug()
 
 #endif
 
-#if defined(__ANDROID__)
+#if defined(__ANDROID__) || defined(__EMSCRIPTEN__)
 	///@TODO SDL_NumJoysticks always reports > 0 for some reason on Android.
 	((unsigned short*)padData[0])[1] = UpdateKeyboardInput();
 #endif

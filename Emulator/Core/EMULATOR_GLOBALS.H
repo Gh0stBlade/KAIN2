@@ -2,7 +2,11 @@
 #define EMULATOR_GLOBALS_H
 
 #if defined(SDL2)
+#if defined(__EMSCRIPTEN__)
+#include <SDL2/SDL_gamecontroller.h>
+#else
 #include <SDL_gamecontroller.h>
+#endif
 #endif
 #include "EMULATOR.H"
 
