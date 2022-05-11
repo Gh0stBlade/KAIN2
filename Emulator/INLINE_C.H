@@ -1129,16 +1129,10 @@ extern int gte_ldlzc(int input);
 	: "r"( r0 )						\
 	: "memory" )
 
-#define gte_stsv( r0 ) __asm__ volatile (			\
-	"mfc2	$12, $9;"					\
-	"mfc2	$13, $10;"					\
-	"mfc2	$14, $11;"					\
-	"sh	$12, 0( %0 );"					\
-	"sh	$13, 2( %0 );"					\
-	"sh	$14, 4( %0 )"					\
-	:							\
-	: "r"( r0 )						\
-	: "$12", "$13", "$14", "memory" )
+#define gte_stsv( r0 )       \
+	((short*)&r0)[0] = IR1;   \
+	((short*)&r0)[1] = IR2;   \
+	((short*)&r0)[2] = IR3;
 
 #define gte_stclmv( r0 ) __asm__ volatile (			\
 	"mfc2	$12, $9;"					\

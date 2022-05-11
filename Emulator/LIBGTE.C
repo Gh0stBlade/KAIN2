@@ -1,6 +1,7 @@
 #include "LIBGTE.H"
 #include "EMULATOR.H"
 #include "Public/EMULATOR_PUBLIC.H"
+#include "INLINE_C.H"
 
 #include <stdio.h>
 #include <assert.h>
@@ -3028,8 +3029,11 @@ void ApplyMatrixLV(MATRIX* mat, VECTOR* v0, VECTOR* v1)
 
 SVECTOR* ApplyMatrixSV(MATRIX* m, SVECTOR* v0, SVECTOR* v1)
 {
-    UNIMPLEMENTED();
-    return NULL;
+    gte_SetRotMatrix(m);
+    gte_ldv0(v0);
+    gte_mvmva(1, 0, 0, 3, 0);
+    gte_stsv(v1);
+    return v1;
 }
 
 void CompMatrixLV(MATRIX* m0, MATRIX* m1, MATRIX* m2)
