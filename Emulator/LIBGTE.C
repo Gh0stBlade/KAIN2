@@ -3456,7 +3456,68 @@ long RotAverageNclip4(SVECTOR* v0, SVECTOR* v1, SVECTOR* v2, SVECTOR* v3, long* 
 
 MATRIX* MulMatrix0(MATRIX* m0, MATRIX* m1, MATRIX* m2)
 {
-    UNIMPLEMENTED();
+    VECTOR v0;
+    SVECTOR v1;//t3, t4, t5
+    SVECTOR v2;//t6, t7, t8
+    SVECTOR v3;//t0, t2, t1
+
+    gte_SetRotMatrix(m0);
+
+    v0.vx = m1->m[0][2] | m1->m[1][0] << 16;
+    v0.vy = m1->m[2][0] | m1->m[2][1] << 16;
+
+    gte_ldv0(v0);
+
+    gte_mvmva(1, 0, 0, 3, 0);
+   
+    gte_stsv(v1);
+
+    //
+    v0.vx = m1->m[0][1] | m1->m[1][2] << 16;
+    v0.vy = m1->m[2][1];
+
+    gte_ldv0(v0);
+
+    gte_mvmva(1, 0, 0, 3, 0);
+
+    gte_stsv(v2);
+
+    constexpr int test = offsetof(MATRIX, m[2][2]);
+
+    v0.vx = m1->m[0][2] | m1->m[1][1] << 16;
+    v0.vy = m1->m[2][2];
+
+    gte_ldv0(v0);
+
+    gte_mvmva(1, 0, 0, 3, 0);
+
+    gte_stsv(v3);
+
+#if 0
+        .text : 000001B4                 andi    $t3, 0xFFFF
+        .text : 000001B8                 sll     $t6, 16
+        .text : 000001BC or $t6, $t3
+        .text : 000001C0                 sw      $t6, 0($a2)
+        .text : 000001C4                 andi    $t5, 0xFFFF
+        .text : 000001C8                 sll     $t8, 16
+        .text : 000001CC or $t8, $t5
+        .text : 000001D0                 sw      $t8, 0xC($a2)
+        .text : 000001D4                 mfc2    $t0, $9
+        .text : 000001D8                 mfc2    $t1, $10
+        .text : 000001DC                 andi    $t0, 0xFFFF
+        .text : 000001E0                 sll     $t4, 16
+        .text : 000001E4 or $t0, $t4
+        .text : 000001E8                 sw      $t0, 4($a2)
+        .text : 000001EC                 andi    $t7, 0xFFFF
+        .text : 000001F0                 sll     $t1, 16
+        .text : 000001F4 or $t1, $t7
+        .text : 000001F8                 sw      $t1, 8($a2)
+        .text : 000001FC                 swc2    $11, 0x10($a2)
+        .text : 00000200                 move    $v0, $a2
+        .text : 00000204                 jr      $ra
+        .text : 00000208                 nop
+#endif
+
     return NULL;
 }
 
@@ -3617,9 +3678,9 @@ MATRIX* RotMatrix(SVECTOR* r, MATRIX* m)
 
 MATRIX* TransMatrix(MATRIX* m, VECTOR* v)
 {
-    ((int*)m)[5] = v->vx;
-    ((int*)m)[6] = v->vy;
-    ((int*)m)[7] = v->vz;
+    m->t[0] = v->vx;
+    m->t[1] = v->vy;
+    m->t[2] = v->vz;
     return m;
 }
 
@@ -3670,7 +3731,20 @@ void SetFogNear(long a, long h)
 
 void LoadAverageCol(u_char* v0, u_char* v1, long p0, long p1, u_char* v2)
 {
-    UNIMPLEMENTED();
+    int lzc;
+
+    gte_lddp(p0);
+    gte_ldcv(v0);
+    gte_gpf0();
+    gte_stlzc(lzc);
+
+    gte_lddp(p1);
+    gte_ldcv(v1);
+    gte_gpl();
+
+    v2[0] = OFY >> 12;
+    v2[1] = H >> 12;
+    v2[2] = DQA >> 12;
 }
 
 static unsigned short rsin_tbl[] = {

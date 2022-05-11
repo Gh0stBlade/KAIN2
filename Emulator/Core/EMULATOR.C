@@ -2163,7 +2163,7 @@ static int Emulator_InitialiseSDL2(char* windowName, int width, int height)
 #endif
 
 #if defined(_DEBUG)	
-	docop2(0x486012);
+	docop2(0x1A0003E);
 #endif
 
 #if defined(SDL2)
