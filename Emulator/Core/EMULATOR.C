@@ -2090,6 +2090,8 @@ static int Emulator_InitialiseGLESContext(char* windowName)
 
 #if defined(__ANDROID__)
 	windowFlags |= SDL_WINDOW_FULLSCREEN;
+#elif defined(__EMSCRIPTEN__)
+	windowFlags |= SDL_WINDOW_RESIZABLE;
 #endif
 
     eglDisplay = eglGetDisplay(EGL_DEFAULT_DISPLAY);
@@ -4906,6 +4908,10 @@ void Emulator_DoPollEvent()
 				case SDL_WINDOWEVENT_RESIZED:
 					windowWidth = event.window.data1;
 					windowHeight = event.window.data2;
+
+#if defined(__EMSCRIPTEN__)
+					SDL_SetWindowSize(g_window, windowWidth, windowHeight);
+#endif
 					g_resetDeviceOnNextFrame = TRUE;
 					break;
 				case SDL_WINDOWEVENT_CLOSE:

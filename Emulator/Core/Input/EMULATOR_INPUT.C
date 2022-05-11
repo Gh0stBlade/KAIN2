@@ -26,6 +26,17 @@ void Emulator_InitialiseSDLInput(SDL_GameController** pad, const unsigned char**
 		eprinterr("Failed to initialise subsystem GAMECONTROLLER\n");
 	}
 
+#if defined(__EMSCRIPTEN__) && 0//Bug in emscripten, if called to early, always says 0.
+	int attempts = 1000;
+	while (attempts--)
+	{
+		if (SDL_NumJoysticks() > 0)
+		{
+			break;
+		}
+	}
+#endif
+
 	if (SDL_NumJoysticks() < 1)
 	{
 		eprinterr("Failed to locate a connected gamepad!\n");

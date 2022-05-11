@@ -1,6 +1,6 @@
 if(EMSCRIPTEN)
 
-set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -g --emrun --std=c++11 --preload-file ${ROOT_DIR}/Build_EMSDK/Assets@/ -s USE_WEBGL2=1 -s FULL_ES3=1 -s USE_PTHREADS=1 -s WASM=1 -s GLOBAL_BASE=1024 -s ALLOW_MEMORY_GROWTH=1 -lopenal -s USE_SDL=2")
+set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} --std=c++11 --preload-file ${ROOT_DIR}/Build_EMSDK/Assets@/ -s USE_WEBGL2=1 -s FULL_ES3=1 -s USE_PTHREADS=1 -s WASM=1 -s GLOBAL_BASE=1024 -s ALLOW_MEMORY_GROWTH=1 -lopenal -s USE_SDL=2")
 set(SDL2_LIBRARIES "-s USE_SDL=2")
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-error=format-security -Wno-narrowing -Wno-nonportable-include-path")

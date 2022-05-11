@@ -1,7 +1,7 @@
 #ifndef EMULATOR_PLATFORM_SETUP_H
 #define EMULATOR_PLATFORM_SETUP_H
 
-#define DEBUG_PRINTS
+//#define DEBUG_PRINTS
 
 #if defined(WINAPI_FAMILY) && (WINAPI_FAMILY == WINAPI_FAMILY_APP)
 #define UWP
@@ -107,6 +107,7 @@
 #elif defined (__ANDROID__)
 #define DEBUG_PRINTS
 #include <SDL.h>
+#include <SDL_syswm.h>
 #if (OGLES_VERSION == 3)
 #include <GLES3/gl3.h>
 #endif
