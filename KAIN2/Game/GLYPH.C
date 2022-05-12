@@ -19,7 +19,8 @@ void GlyphInit(struct _Instance *instance, struct GameTracker *gameTracker)
 		// Start line: 252
 	/* end block 2 */
 	// End Line: 253
-
+			int testing = 0;
+			testing++;
 }
 
 

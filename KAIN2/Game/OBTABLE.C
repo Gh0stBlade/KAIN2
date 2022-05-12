@@ -468,6 +468,7 @@ void OBTABLE_InitObjectWithID(struct Object *object)
 void OBTABLE_ClearObjectReferences()
 {
 	ObjectAccess* oa = objectAccess;
+
 	while (oa->objectName != NULL)
 	{
 		oa->object = NULL;

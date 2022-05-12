@@ -27,7 +27,7 @@ int CINE_CDIntrQuery()
 		// Start line: 81
 	/* end block 2 */
 	// End Line: 82
-
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -45,7 +45,7 @@ unsigned short CINE_Pad(int pad)
 		// Start line: 103
 	/* end block 2 */
 	// End Line: 104
-
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -152,7 +152,7 @@ void CINE_PlayIngame(int number)
 		// Start line: 278
 	/* end block 2 */
 	// End Line: 279
-
+	UNIMPLEMENTED();
 }
 
 

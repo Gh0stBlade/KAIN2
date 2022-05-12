@@ -29,8 +29,8 @@ void MEMPACK_Init()
 #if defined(PSX_VERSION)
 #if defined(PSXPC_VERSION)
 	newMemTracker.totalMemory = sizeof(memBuffer);
-	memset(memBuffer, 0, sizeof(memBuffer));
-	newMemTracker.rootNode = (struct MemHeader*)memBuffer;
+	memset(&memBuffer[0], 0, sizeof(memBuffer));
+	newMemTracker.rootNode = (struct MemHeader*)&memBuffer[0];
 #else
 	newMemTracker.totalMemory = ((TWO_MB - (ONE_MB / 256)) + BASE_ADDRESS) - ((long*)overlayAddress)[0];
 	newMemTracker.rootNode = (struct MemHeader*)((long*)overlayAddress)[0];
@@ -43,7 +43,7 @@ void MEMPACK_Init()
 	newMemTracker.rootNode->memSize = newMemTracker.totalMemory;
 	newMemTracker.currentMemoryUsed = 0;
 	newMemTracker.doingGarbageCollection = 0;
-	newMemTracker.lastMemoryAddress = (char*)((DWORD)newMemTracker.rootNode + (DWORD)newMemTracker.totalMemory);
+	newMemTracker.lastMemoryAddress = (char*)newMemTracker.rootNode + newMemTracker.totalMemory;
 }
 
 struct MemHeader * MEMPACK_GetSmallestBlockTopBottom(long allocSize)
@@ -99,7 +99,7 @@ struct MemHeader * MEMPACK_GetSmallestBlockBottomTop(long allocSize)
 
 long MEMPACK_RelocatableType(long memType)
 {
-	if (memType - 1 < 2 || memType == 0x2C || memType == 0x2F || memType == 0x4)
+	if ((unsigned int)(memType - 1) < 2 || memType == 0x2C || memType == 0x2F || memType == 0x4)
 	{
 		return 1;
 	}
@@ -608,7 +608,7 @@ void MEMPACK_DoGarbageCollection()
 		relocateAddress = newMemTracker.rootNode;
 		foundOpening = 0;
 
-		while ((char*)relocateAddress != newMemTracker.lastMemoryAddress)
+		while ((unsigned int)relocateAddress != (unsigned int)newMemTracker.lastMemoryAddress)
 		{
 			if (relocateAddress->memStatus != 0)
 			{
@@ -618,6 +618,7 @@ void MEMPACK_DoGarbageCollection()
 					foundOpening = 2;
 					break;
 				}
+
 			}
 			else
 			{

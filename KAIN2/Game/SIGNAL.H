@@ -1,6 +1,8 @@
 #ifndef SIGNAL_H
 #define SIGNAL_H
 
+#include "CORE.H"
+
 struct SignalInfo // hashcode: 0x5899EF0F (dec: 1486483215)
 {
 	long (*signalHandleFunc)(struct _Instance* instance, struct Signal* signal); // size=0, offset=0

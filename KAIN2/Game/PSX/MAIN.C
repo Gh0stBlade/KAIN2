@@ -121,38 +121,39 @@ char* FindTextInLine(char* search_match, char* search_str)
 {
 	char* match_pos;
 
+#if defined(__EMSCRIPTEN__)
+	return NULL;///@FIXME this is crashing for this platform!
+#endif
+
 	if (*search_str != 0)
 	{
 		match_pos = search_match;
 
-		if (*search_str != '\n')
+		while (*search_str != '\n')
 		{
-			do
+			if (*search_str == '\r')
 			{
-				if (*search_str == '\r')
-				{
-					break;
-				}
-				if ((*search_str++ | 0x20) == (*match_pos | 0x20))
-				{
-					match_pos++;
-				}
-				else
-				{
-					match_pos = search_match;
-				}
+				break;
+			}
 
-				if (*match_pos == 0)
-				{
-					return search_str;
-				}
+			if ((*search_str++ | 0x20) == (*match_pos | 0x20))
+			{
+				match_pos++;
+			}
+			else
+			{
+				match_pos = search_match;
+			}
 
-				if (*search_str == 0)
-				{
-					return NULL;
-				}
+			if (*match_pos == 0)
+			{
+				return search_str;
+			}
 
-			} while (*search_str != 0);
+			if (*search_str == 0)
+			{
+				return NULL;
+			}
 		}
 	}
 
@@ -163,7 +164,7 @@ void ExtractWorldName(char *worldName, char *levelName)
 { 
 	while (*levelName != '-')
 	{
-		if (*levelName - 0x41 < 0x1A || *levelName - 0x61 >= 0x1A)
+		if ((*levelName - 0x41) < 0x1A || (*levelName - 0x61) >= 0x1A)
 		{
 			break;
 		}
@@ -178,7 +179,7 @@ void ExtractLevelNum(char *levelNum, char *levelName)
 { 
 	while (*levelName != '-')
 	{
-		if (*levelName++ - 0x30 < 0xA)
+		if ((*levelName++ - 0x30) < 0xA)
 		{
 			break;
 		}
@@ -187,7 +188,7 @@ void ExtractLevelNum(char *levelNum, char *levelName)
 	do
 	{
 		*levelNum++ = *levelName++;
-	} while ((unsigned)(*levelName - 0x30) < 0xA);
+	} while ((unsigned int)(*levelName - 0x30) < 0xA);
 }
 
 void ProcessArgs(char *baseAreaName, struct GameTracker *gameTracker)
@@ -201,7 +202,7 @@ void ProcessArgs(char *baseAreaName, struct GameTracker *gameTracker)
 	memset(worldName, 0, sizeof(worldName));
 #endif
 
-	argData = LOAD_ReadFile("\\kain2\\game\\psx\\kain2.arg", 10);
+	argData = LOAD_ReadFile((char*)"\\kain2\\game\\psx\\kain2.arg", 10);
 
 	if (argData != NULL)
 	{
@@ -210,48 +211,48 @@ void ProcessArgs(char *baseAreaName, struct GameTracker *gameTracker)
 		
 		sprintf(baseAreaName, "%s%s", worldName, levelNum);
 
-		if (FindTextInLine("-NOSOUND", (char*)argData) != 0)
+		if (FindTextInLine((char*)"-NOSOUND", (char*)argData) != 0)
 		{
 			nosound = 1;
 			nomusic = 1;
 		}
 
-		if (FindTextInLine("-NOMUSIC", (char*)argData) != 0)
+		if (FindTextInLine((char*)"-NOMUSIC", (char*)argData) != 0)
 		{
 			nomusic = 1;
 		}
 
-		if (FindTextInLine("-TIMEOUT", (char*)argData) != 0)
+		if (FindTextInLine((char*)"-TIMEOUT", (char*)argData) != 0)
 		{
 			gameTracker->debugFlags |= 0x20000;
 		}
 
-		if (FindTextInLine("-MAINMENU", (char*)argData) != 0)
+		if (FindTextInLine((char*)"-MAINMENU", (char*)argData) != 0)
 		{
 			DoMainMenu = 1;
 		}
 
-		if (FindTextInLine("-INSPECTRAL", (char*)argData) != 0)
+		if (FindTextInLine((char*)"-INSPECTRAL", (char*)argData) != 0)
 		{
 			gameTrackerX.gameData.asmData.MorphType = 1;
 		}
 
-		if (FindTextInLine("-VOICE", (char*)argData) != 0)
+		if (FindTextInLine((char*)"-VOICE", (char*)argData) != 0)
 		{
 			gameTracker->debugFlags |= 0x80000;
 		}
 		
-		if (FindTextInLine("-DEBUG_CD", (char*)argData) != 0)
+		if (FindTextInLine((char*)"-DEBUG_CD", (char*)argData) != 0)
 		{
 			gameTracker->debugFlags |= 0x80000000;
 		}
 
-		if (FindTextInLine("-LOADGAME", (char*)argData) != 0)
+		if (FindTextInLine((char*)"-LOADGAME", (char*)argData) != 0)
 		{
 			gameTrackerX.streamFlags |= 0x200000;
 		}
 
-		if (FindTextInLine("-ALLWARP", (char*)argData) != 0)
+		if (FindTextInLine((char*)"-ALLWARP", (char*)argData) != 0)
 		{
 			gameTrackerX.streamFlags |= 0x400000;
 		}
@@ -701,9 +702,7 @@ long MAIN_DoMainMenu(struct GameTracker *gameTracker, struct MainTracker *mainTr
 	MENUFACE_RefreshFaces();
 	FONT_Flush();
 	mainMenuTimeOut++;
-	Emulator_SaveVRAM("FADE.TGA", 0, 0, 1024, 512, 1);
 	GAMELOOP_FlipScreenAndDraw(gameTracker, drawot);
-	Emulator_SaveVRAM("FADE2.TGA", 0, 0, 1024, 512, 1);
 
 	if (mainMenuFading != 0 && gameTracker->wipeTime == -1)
 	{

@@ -1,7 +1,7 @@
 #ifndef DRAWS_H
 #define DRAWS_H
 
-
+extern long depthQBackColor;
 
 extern void depthQPTable() ; // 0x800CE174
 
@@ -10,8 +10,6 @@ extern void depthQBlendStart() ; // 0x800CE178
 extern void depthQFogStart() ; // 0x800CE17C
 
 extern void depthQFogFar() ; // 0x800CE180
-
-extern void depthQBackColor() ; // 0x800CE184
 
 extern void modelFadeValue() ; // 0x800CE18C
 

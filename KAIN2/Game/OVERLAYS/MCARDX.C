@@ -4,7 +4,7 @@
 
 #include "MCARD/MEMCARD.H"
 
-void sub_801A039C(mcard_t* card)
+void sub_801A039C(struct mcard_t* card)
 {
 	card->state.err = mcpsx_err_new_card;
 	card->state.fsm = fsmcard_new_card;
@@ -12,9 +12,9 @@ void sub_801A039C(mcard_t* card)
 	card->state.not_exists = 0;
 }
 
-void sub_8019FC00(mcpsx_t* mcpsx, mcard_t* card)
+void sub_8019FC00(struct mcpsx_t* mcpsx, struct mcard_t* card)
 {
-	memset(mcpsx, 0, sizeof(mcpsx_t));
+	memset(mcpsx, 0, sizeof(struct mcpsx_t));
 	PadStopCom();
 	MemCardInit(1);//801A3860
 	PadStartCom();
@@ -28,11 +28,11 @@ void sub_8019FC00(mcpsx_t* mcpsx, mcard_t* card)
 	mcpsx->params.offset = 0;
 }
 
-void sub_801A03D4(mcard_t* card, mcmenu_t* mcmenu, mcpsx_directory_t* directory, long* nfiles)
+void sub_801A03D4(struct mcard_t* card, struct mcmenu_t* mcmenu, struct mcpsx_directory_t* directory, long* nfiles)
 {
-	memset(card, 0, sizeof(mcard_t));
+	memset(card, 0, sizeof(struct mcard_t));
 
-	card->mcpsx = ((mcpsx_t*)card + 1);
+	card->mcpsx = ((struct mcpsx_t*)card + 1);
 	
 	sub_8019FC00(card->mcpsx, card);
 	sub_801A039C(card);
@@ -57,22 +57,22 @@ int sub_801A1ADC(void* buffer, int nbytes)
 	return sub_801A17A8(buffer, &unk_8019F934, nbytes, 1, NULL, &unk_801A512C);
 }
 
-void MCARDX_initialize(mcmenu_t* mcmenu, memcard_t* memcard, int nblocks)
+void MCARDX_initialize(struct mcmenu_t* mcmenu, struct memcard_t* memcard, int nblocks)
 {
-	memset(mcmenu, 0, sizeof(mcmenu_t));
+	memset(mcmenu, 0, sizeof(struct mcmenu_t));
 
 	mcmenu->state.status = mcard_status_new_card;
 	mcmenu->state.fsm = fsm_new_card;
 	mcmenu->state.fsm_prev = fsm_new_card;
 	mcmenu->state.running = 0;
 	mcmenu->params.nblocks = nblocks;
-	mcmenu->mcard = (mcard_t*)(mcmenu + 1);
+	mcmenu->mcard = (struct mcard_t*)(mcmenu + 1);
 	mcmenu->opaque = memcard;
 
 	sub_801A03D4(mcmenu->mcard, mcmenu, mcmenu->params.directory, &mcmenu->params.nfiles);
 }
 
-int MCARDX_set_buffer(mcmenu_t* mcmenu, void* buffer, int nbytes)
+int MCARDX_set_buffer(struct mcmenu_t* mcmenu, void* buffer, int nbytes)
 {
 	mcmenu->params.buffer = buffer;
 	mcmenu->params.nbytes = nbytes;

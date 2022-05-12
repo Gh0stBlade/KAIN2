@@ -5,6 +5,8 @@
 #include "FONT.H"
 #include "MENU/MENU.H"
 
+#include "Core/Public/EMULATOR_PUBLIC.H"
+
 unsigned char dualshock_align[6];
 
 unsigned char dualshock_motors[2];
