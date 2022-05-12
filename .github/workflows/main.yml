@@ -26,13 +26,13 @@ jobs:
       - name: Download BIGFILE.DAT
         uses: carlosperate/download-file-action@v1.1.1
         with:
-          file-url: 'https://legacyofkain.co.uk/KAIN2/DEMO/BIGFILE.DAT'
+          file-url: 'https://legacyofkain.co.uk/KAIN2/ASSETS/DEMO/BIGFILE.DAT'
           location: '${{github.workspace}}/Build_EMSDK/Assets'
           
       - name: Download LOCALS.TBL
         uses: carlosperate/download-file-action@v1.1.1
         with:
-          file-url: 'https://legacyofkain.co.uk/KAIN2/DEMO/LOCALS.TBL'
+          file-url: 'https://legacyofkain.co.uk/KAIN2/ASSETS/DEMO/LOCALS.TBL'
           location: '${{github.workspace}}/Build_EMSDK/Assets'
 
       - name: Configure CMake
@@ -40,3 +40,13 @@ jobs:
 
       - name: Build
         run: cmake --build ./Build_EMSDK --config Release
+        
+      - name: Simple FTP upload
+        uses: dennisameling/ftp-upload-action@v1.0.6
+        with:
+          server: ${{secrets.FTP_SERVER}}
+          username: ${{secrets.FTP_USER}}
+          password: ${{secrets.FTP_PASSWORD}}
+          local_dir: ${{github.workspace}}/Build_EMSDK/kain2/
+          server_dir: ./
+        
