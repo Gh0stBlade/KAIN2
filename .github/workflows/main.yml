@@ -30,8 +30,7 @@ jobs:
         run: emcc -v
 
       - name: Configure CMake
-        run: cmake -S . -B Build_EMSDK -DCMAKE_BUILD_TYPE=Release -Wno-dev -DCMAKE_TOOLCHAIN_FILE=$GITHUB_WORKSPACE/emsdk/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake
+        run: emcmake cmake . -B%cd%"/Build_EMSDK/"
 
       - name: Build
-
         run: cmake --build ./Build_EMSDK --config Release
