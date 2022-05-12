@@ -41,7 +41,7 @@ jobs:
       - name: Build
         run: cmake --build ./Build_EMSDK --config Release
       
-      - name: Create Assets Deployment
+      - name: Create Deployment Directory
         run: cmake -E make_directory ${{github.workspace}}/Build_EMSDK/kain2/Deploy/
         
       - name: Copy to Deployment Folder
