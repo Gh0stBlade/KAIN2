@@ -14,6 +14,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+        with:
+           token: ${{secrets.PAT}}
+           
       - uses: mymindstorm/setup-emsdk@v11
       
       - name: Create Build Directory
