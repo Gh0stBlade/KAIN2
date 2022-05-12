@@ -1,0 +1,41 @@
+name: Release Build
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+    types: [closed]
+
+jobs:
+  release_web:
+    name: Web Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Create Build Directory
+        run: cmake -E make_directory ${{github.workspace}}/Build_EMSDK
+
+      - name: Install Packages
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y gcc-multilib python3 curl zip unzip
+          sudo apt-get install -y --no-install-recommends libx11-dev libxcursor-dev libxrandr-dev libxinerama-dev libxi-dev libxext-dev libxfixes-dev libgl1-mesa-dev
+
+      - name: Configure Emscripten
+        shell: bash
+
+        # Change the directory to be emsdk instead of the project root
+        working-directory: ${{github.workspace}}/emsdk
+        run: |
+          ./emsdk install latest
+          ./emsdk activate latest
+
+      - name: Configure CMake
+        run: cmake -S . -B Build_EMSDK -DCMAKE_BUILD_TYPE=Release -Wno-dev -DCMAKE_TOOLCHAIN_FILE=$GITHUB_WORKSPACE/emsdk/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake
+
+      - name: Build
+
+        run: cmake --build ./Build_EMSDK --config Release
