@@ -1,4 +1,5 @@
-#pragma once
+#ifndef GEX_H
+#define GEX_H
 
 enum _G2AnimCallbackMsg_Enum // Hashcode: 0xA8F4A89C (dec: -1460361060)
 {
@@ -131,7 +132,7 @@ struct _G2AnimSection_Type // hashcode: 0xFC80328C (dec: -58707316)
 	long speedAdjustment; // size=0, offset=16
 	unsigned short keylistID; // size=0, offset=20
 	unsigned long alarmFlags; // size=0, offset=24
-	long (*callback)(); // size=0, offset=28
+	unsigned long (*callback)(struct _G2Anim_Type*, int, enum _G2AnimCallbackMsg_Enum, long, long, struct _Instance*); // size=0, offset=28
 	void *callbackData; // size=0, offset=32
 	struct _G2AnimKeylist_Type *keylist; // size=20, offset=36
 	struct _G2AnimChanStatusBlock_Type *chanStatusBlockList; // size=36, offset=40
@@ -152,3 +153,4 @@ struct _G2Anim_Type // hashcode: 0xF35FCCD2 (dec: -211825454)
 	unsigned long disabledBits[3]; // size=12, offset=24
 	struct _G2AnimSection_Type section[3]; // size=144, offset=36
 };
+#endif
