@@ -1,4 +1,4 @@
-name: Release Build
+name: Emscripten Release Build
 
 on:
   workflow_dispatch:
@@ -11,7 +11,7 @@ on:
 jobs:
   release_web:
     name: Web Release
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
       - uses: actions/checkout@v2
@@ -19,13 +19,7 @@ jobs:
       
       - name: Create Build Directory
         run: cmake -E make_directory ${{github.workspace}}/Build_EMSDK
-
-      - name: Install Packages
-        run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y gcc-multilib python3 curl zip unzip
-          sudo apt-get install -y --no-install-recommends libx11-dev libxcursor-dev libxrandr-dev libxinerama-dev libxi-dev libxext-dev libxfixes-dev libgl1-mesa-dev
-
+        
       - name: Verify
         run: emcc -v
 
