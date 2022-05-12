@@ -2,10 +2,9 @@ name: Emscripten Release Build
 
 on:
   push:
-    branches: [master]
+    branches: -master
   pull_request:
-    branches: [master]
-    types: [closed]
+    branches: -master
 
 jobs:
   release_web:
