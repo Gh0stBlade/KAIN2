@@ -8,8 +8,8 @@
 #include <stdio.h>
 #include <stddef.h>
 
-#include "Core/Setup/Platform/EMULATOR_PLATFORM_SETUP.H"
-#include "Core/Debug/EMULATOR_LOG.H"
+#include "Setup/Platform/EMULATOR_PLATFORM_SETUP.H"
+#include "Debug/EMULATOR_LOG.H"
 
 #ifndef TRUE
 #define TRUE		1
