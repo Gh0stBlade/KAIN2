@@ -42,10 +42,12 @@ jobs:
         run: cmake --build ./Build_EMSDK --config Release
         
       - name: Deploy to FTP
-        uses: sebastianpopp/ftp-action@releases/v2
+        uses: kevinpainchaud/simple-ftp-deploy-action@v1.2.1
+
         with:
-          host: ${{secrets.FTP_SERVER}}
-          user: ${{secrets.FTP_USER}}
-          password: ${{secrets.FTP_PASSWORD}}
-          localDir: ${{github.workspace}}/Build_EMSDK/kain2/
+          ftp_host: ${{secrets.FTP_SERVER}}
+          ftp_username: ${{secrets.FTP_USER}}
+          ftp_password: ${{secrets.FTP_PASSWORD}}
+          local_source_dir: ${{github.workspace}}/Build_EMSDK/kain2/
+          dist_target_dir: /
         
