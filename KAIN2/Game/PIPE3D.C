@@ -109,7 +109,7 @@ void PIPE3D_InvertTransform(MATRIX *target, MATRIX *source)
 	VECTOR sourceTrans;
 	MATRIX normMat;
 
-	if (((short*)source)[2*3] == 1)
+	if (source->m[2][0] == 1)
 	{
 		PIPE3D_NormalizeMatrix(target, &normMat);
 		TransposeMatrix(&normMat, target);
