@@ -1863,7 +1863,7 @@ void INSTANCE_KillInstance(struct _Instance* instance)
 unsigned long INSTANCE_Query(struct _Instance* Inst, int Query)
 {
 #if defined(PSX_VERSION)
-	unsigned long (*Func)(struct _Instance*, unsigned long); // $v0
+	unsigned long (*Func)(struct _Instance*, unsigned long);
 
 	Func = Inst->queryFunc;
 
@@ -1888,7 +1888,7 @@ void INSTANCE_Post(struct _Instance* Inst, int Message, int Data)
 {
 #if defined(PSX_VERSION)
 
-	void (*Func)(_Instance*, unsigned long, unsigned long); // $s1
+	void (*Func)(_Instance*, unsigned long, unsigned long);
 
 	Func = Inst->messageFunc;
 
