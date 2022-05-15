@@ -121,10 +121,6 @@ char* FindTextInLine(char* search_match, char* search_str)
 {
 	char* match_pos;
 
-#if defined(__EMSCRIPTEN__)
-	return NULL;///@FIXME this is crashing for this platform!
-#endif
-
 	if (*search_str != 0)
 	{
 		match_pos = search_match;
