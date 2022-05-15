@@ -828,7 +828,7 @@ void VRAM_TransferBufferToVram(void *dataPtr, long dataSize, short status, void 
 
 	if (vramControl != NULL)
 	{
-		if (!(vramControl->flags) & 0x1)
+		if (!(vramControl->flags & 0x1))
 		{
 			vramControl->flags |= 0x1;
 		
