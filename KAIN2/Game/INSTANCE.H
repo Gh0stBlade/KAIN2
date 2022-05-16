@@ -223,7 +223,7 @@ struct _Instance {
 	void (*processFunc)(struct _Instance* playerInstance, struct GameTracker* gameTracker); // size=0, offset=264
 	void (*collideFunc)(struct _Instance* instance, struct GameTracker* gameTracker); // size=0, offset=268
 	void (*additionalCollideFunc)(struct _Instance* instance, struct GameTracker* gameTracker); // size=0, offset=272
-	void* additionalDrawFunc; // size=0, offset=276
+	void (*additionalDrawFunc)(MATRIX*, struct _Instance*, struct _VertexPool*, struct _PrimPool*, unsigned long**); // size=0, offset=276
 	unsigned long (*queryFunc)(struct _Instance* instance, unsigned long Query); // size=0, offset=280
 	void (*messageFunc)(struct _Instance* instance, unsigned long Message, unsigned long Data); // size=0, offset=284
 	_Position shadowPosition; // size=6, offset=288
