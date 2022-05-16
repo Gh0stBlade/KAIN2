@@ -694,82 +694,55 @@ void MainRenderLevel(struct _StreamUnit* currentUnit, unsigned long** drawot)
 
 	tod = GAMELOOP_GetTimeOfDay();
 
-	if (tod != 600 && tod != 1800)
+	if (tod == 600 || tod != 1800 || !(level->unitFlags & 0x2))
 	{
-
+		if (gameTrackerX.gameData.asmData.MorphTime == 1000)
+		{
+			depthQBackColor = (depthQBackColor & 0xFFF8F8F8) | 0x40404;
+		}
 	}
-	//loc_8002EDA8
+	//loc_8002EDE8
+
+	//v0 = level->fogNear
+	//v1 = level->fogFar
+	depthQFogStart = level->fogNear;
+	depthQFogFar = level->fogFar;
+
+	if (CheckForNoBlend((_ColorType*)&depthQBackColor) == 0)
+	{
+		depthQBlendStart = depthQFogStart;
+	}
+	else
+	{
+		depthQBlendStart = 0xFFFF;
+	}
+
+	//loc_8002EE10
+	//v0 = &depthQBackColor
+	//a1 = gameTracker->frameCount
+	//a2 = gameTracker->primPool
+	//v1 = ((_ColorType*)&depthQBackColor)->r
+	//a0 = ((_ColorType*)&depthQBackColor)->g
+	//a3 = ((_ColorType*)&depthQBackColor)->b
+	//v0 = &clearRect[0]
+
+	clearRect[0].r0 = ((_ColorType*)&depthQBackColor)->r;
+	clearRect[0].g0 = ((_ColorType*)&depthQBackColor)->g;
+	clearRect[0].b0 = ((_ColorType*)&depthQBackColor)->b;
+
+	clearRect[1].r0 = ((_ColorType*)&depthQBackColor)->r;
+	clearRect[1].g0 = ((_ColorType*)&depthQBackColor)->g;
+	clearRect[1].b0 = ((_ColorType*)&depthQBackColor)->b;
+
+	//a0 = terrain->aniList
+	//a3 = drawot
+	PIPE3D_AnimateTerrainTextures(terrain->aniList, gameTracker->frameCount, gameTracker->primPool, drawot);
+	PIPE3D_AnimateTerrainTextures(level->bgAniList, gameTracker->frameCount, gameTracker->primPool, drawot);
+
+	PIPE3D_InstanceListTransformAndDraw(currentUnit, gameTracker, drawot, &theCamera.core);
+	gLightInfo->numSavedColors = 0;
+
 #if 0
-		li      $v0, 0x258
-		beq     $v1, $v0, loc_8002EDA8
-		li      $v0, 0x708
-		bne     $v1, $v0, loc_8002EDBC
-		nop
-
-		loc_8002EDA8 :
-	lw      $v0, 0xCC($s0)
-		nop
-		andi    $v0, 2
-		bnez    $v0, loc_8002EDE8
-		nop
-
-		loc_8002EDBC :
-	lh      $v1, -0x4230($gp)
-		li      $v0, 0x3E8
-		bne     $v1, $v0, loc_8002EDE8
-		lui     $a0, 0xFFF8
-		li      $a0, 0xFFF8F8F8
-		lui     $v1, 4
-		lw      $v0, -0x6FAC($gp)
-		li      $v1, 0x40404
-		and $v0, $a0
-		or $v0, $v1
-		sw      $v0, -0x6FAC($gp)
-
-		loc_8002EDE8:
-	lhu     $v0, 0x46($s0)
-		lhu     $v1, 0x44($s0)
-		addiu   $a0, $gp, -0x6FAC
-		sw      $v0, -0x6FB4($gp)
-		sw      $v1, -0x6FB0($gp)
-		jal     sub_8002EAE0
-		nop
-		bnez    $v0, loc_8002EE10
-		li      $v0, 0xFFFF
-		lw      $v0, -0x6FB4($gp)
-
-		loc_8002EE10:
-	nop
-		sw      $v0, -0x6FB8($gp)
-		addiu   $v0, $gp, -0x6FAC
-		lw      $a1, 0x12C($s5)
-		lw      $a2, 0x40($s5)
-		lbu     $v1, -0x6FAC($gp)
-		lbu     $a0, 1($v0)
-		lbu     $a3, 2($v0)
-		addiu   $v0, $gp, -0x425C
-		sb      $v1, 4($v0)
-		sb      $a0, 5($v0)
-		sb      $a3, 6($v0)
-		addiu   $v0, $gp, -0x424C
-		sb      $v1, 4($v0)
-		sb      $a0, 5($v0)
-		sb      $a3, 6($v0)
-		lw      $a0, 0x28($s4)
-		jal     sub_8003C2C8
-		move    $a3, $fp
-		lw      $a0, 0x80($s0)
-		lw      $a1, 0x12C($s5)
-		lw      $a2, 0x40($s5)
-		jal     sub_8003C2C8
-		move    $a3, $fp
-		move    $a0, $s7
-		move    $a1, $s5
-		move    $a2, $fp
-		lw      $v0, -0x45D4($gp)
-		addiu   $a3, $gp, -0x5370
-		jal     sub_8003B72C
-		sw      $zero, 0x478($v0)
 		lw      $v0, -0x5310($gp)
 		addiu   $t1, $gp, -0x5370
 		ulw     $t2, 0($t1)

@@ -3,6 +3,49 @@
 
 #include "CORE.H"
 
+struct PointLight 
+{
+	struct NodeType node; // size=8, offset=0
+	unsigned char r; // size=0, offset=8
+	unsigned char g; // size=0, offset=9
+	unsigned char b; // size=0, offset=10
+	unsigned char flags; // size=0, offset=11
+	struct _Position position; // size=6, offset=12
+	short radius; // size=0, offset=18
+	long radiusSquared; // size=0, offset=20
+};
+
+struct SpotLight 
+{
+	struct NodeType node; // size=8, offset=0
+	unsigned char r; // size=0, offset=8
+	unsigned char g; // size=0, offset=9
+	unsigned char b; // size=0, offset=10
+	unsigned char flags; // size=0, offset=11
+	struct _Position centroid; // size=6, offset=12
+	short radius; // size=0, offset=18
+	long radiusSquared; // size=0, offset=20
+	struct _Position position; // size=6, offset=24
+	struct _Position direction; // size=6, offset=30
+	short cosFalloffAngle; // size=0, offset=36
+	short attenuationScale; // size=0, offset=38
+};
+
+struct LightInfo
+{
+	long numPointLights; // size=0, offset=0
+	struct PointLight pointLightPool[32]; // size=768, offset=4
+	struct NodeType usedPointLightList; // size=8, offset=772
+	struct NodeType freePointLightList; // size=8, offset=780
+	struct NodeType activePointLightList; // size=8, offset=788
+	long numSpotLights; // size=0, offset=796
+	struct SpotLight spotLightPool[8]; // size=320, offset=800
+	struct NodeType usedSpotLightList; // size=8, offset=1120
+	struct NodeType freeSpotLightList; // size=8, offset=1128
+	struct NodeType activeSpotLightList; // size=8, offset=1136
+	long numSavedColors; // size=0, offset=1144
+};
+
 typedef struct _PrimPool // hashcode: 0x9529B283 (dec: -1792429437)
 {
 	long numPrims; // size=0, offset=0
