@@ -743,7 +743,8 @@ void InitialiseGame(void* appData)
 	struct MainTracker* mainTracker;
 	struct GameTracker* gameTracker;
 
-	Emulator_Initialise("Legacy of Kain: Soul Reaver", SCREEN_WIDTH, SCREEN_HEIGHT);
+	//Emscripten requires 640x480 as minimal initial to stay "in control" of the main window and handle resize events.
+	Emulator_Initialise("Legacy of Kain: Soul Reaver", 640, 480);
 
 	CheckForDevStation();
 
