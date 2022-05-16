@@ -1,11 +1,12 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
+#include "RAZIEL/RAZLIB.H"
 #include "MONSTER/MONSTER.H"
 
-struct __CharacterState // hashcode: 0x6C0823BB (dec: 1812472763)
+struct __CharacterState
 {
-	struct _Instance* CharacterInstance; // size=616, offset=0
+	struct _Instance* CharacterInstance; // size=668, offset=0
 	int TotalSections; // size=0, offset=4
 	struct __State SectionList[3]; // size=852, offset=8
 };
@@ -143,6 +144,8 @@ struct __Player // hashcode: 0x0712E7A5 (dec: 118679461)
 	unsigned long playerEventHistory; // size=0, offset=1460
 	int currentHint; // size=0, offset=1464
 };
+
+extern struct __Player Raziel;
 
 extern void PLAYER_TurnHead(struct _Instance *instance, short *rotx, short *rotz, struct GameTracker *gameTracker); // 0x80012D5C
 extern long PLAYER_OkToLookAround(struct _Instance *instance); // 0x80012DDC

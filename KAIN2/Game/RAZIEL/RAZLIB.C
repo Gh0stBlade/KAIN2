@@ -1,5 +1,5 @@
 #include "CORE.H"
-#include "RAZLIB.H"
+#include "PLAYER.H"
 
 struct __Player Raziel;
 

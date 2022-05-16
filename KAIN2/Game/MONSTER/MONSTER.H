@@ -1,6 +1,8 @@
 #ifndef MONSTER_H
 #define MONSTER_H
 
+#include "STATE.H"
+
 enum MonsterAnim // Hashcode: 0x13BE1EAB (dec: 331226795)
 {
 	MONSTER_ANIM_HIT1 = 0,
@@ -334,13 +336,6 @@ struct __Event // hashcode: 0xBC16D673 (dec: -1139353997)
 {
 	int ID; // size=0, offset=0
 	int Data; // size=0, offset=4
-};
-
-struct __MessageQueue // hashcode: 0x473062B5 (dec: 1194353333)
-{
-	int Head; // size=0, offset=0
-	int Tail; // size=0, offset=4
-	struct __Event Queue[16]; // size=128, offset=8
 };
 
 struct __State // hashcode: 0xA27CC1F7 (dec: -1568882185)

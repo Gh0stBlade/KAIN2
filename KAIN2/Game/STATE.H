@@ -1,6 +1,13 @@
 #ifndef STATE_H
 #define STATE_H
 
+struct __MessageQueue // hashcode: 0x473062B5 (dec: 1194353333)
+{
+	int Head; // size=0, offset=0
+	int Tail; // size=0, offset=4
+	struct __Event Queue[16]; // size=128, offset=8
+};
+
 typedef void (*TDRFuncPtr_StateSwitchStateCharacterData1NewProcess)();
 
 typedef void (*TDRFuncPtr_StateSwitchStateCharacterDataDefault1NewProcess)();

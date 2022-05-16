@@ -2,6 +2,55 @@
 #define RAZIEL_H
 
 
+struct RazielData 
+{
+	unsigned long version; // size=0, offset=0
+	unsigned long nonBurningRibbonStartColor; // size=0, offset=4
+	unsigned long nonBurningRibbonEndColor; // size=0, offset=8
+	struct __Idle*** idleList; // size=4, offset=12
+	struct __AttackItem*** attackList; // size=36, offset=16
+	struct __ThrowItem** throwList; // size=32, offset=20
+	struct __VAnim* virtualAnimations; // size=8, offset=24
+	struct __VAnim* virtualAnimSingle; // size=8, offset=28
+	struct __SAnim** stringAnimations; // size=16, offset=32
+	short throwFadeValue; // size=0, offset=36
+	short throwFadeInRate; // size=0, offset=38
+	int throwFadeOutRate; // size=0, offset=40
+	int throwManualDistance; // size=0, offset=44
+	short healthMaterialRate; // size=0, offset=48
+	short healthSpectralRate; // size=0, offset=50
+	short healthInvinciblePostHit; // size=0, offset=52
+	short healthInvinciblePostShunt; // size=0, offset=54
+	short forceMinPitch; // size=0, offset=56
+	short forceMaxPitch; // size=0, offset=58
+	short forceMinVolume; // size=0, offset=60
+	short forceMaxVolume; // size=0, offset=62
+	unsigned long forceRampTime; // size=0, offset=64
+	int SwimPhysicsFallDamping; // size=0, offset=68
+	int SwimPhysicsWaterFrequency; // size=0, offset=72
+	int SwimPhysicsWaterAmplitude; // size=0, offset=76
+	int SwimPhysicsUnderDeceleration; // size=0, offset=80
+	int SwimPhysicsUnderKickVelocity; // size=0, offset=84
+	int SwimPhysicsUnderKickAccel; // size=0, offset=88
+	int SwimPhysicsUnderVelocity; // size=0, offset=92
+	int SwimPhysicsUnderKickDecel; // size=0, offset=96
+	int SwimPhysicsUnderStealthAdjust; // size=0, offset=100
+	int SwimPhysicsCoilVelocity; // size=0, offset=104
+	int SwimPhysicsCoilDecelerationIn; // size=0, offset=108
+	int SwimPhysicsCoilDecelerationOut; // size=0, offset=112
+	int SwimPhysicsShotVelocity; // size=0, offset=116
+	int SwimPhysicsShotAccelerationIn; // size=0, offset=120
+	int SwimPhysicsShotAccelerationOut; // size=0, offset=124
+	int SwimPhysicsSurfVelocity; // size=0, offset=128
+	int SwimPhysicsSurfAccelerationIn; // size=0, offset=132
+	int SwimPhysicsSurfAccelerationOut; // size=0, offset=136
+	int SwimPhysicsSurfKickVelocity; // size=0, offset=140
+	int SwimPhysicsSurfKickAccel; // size=0, offset=144
+	int SwimPhysicsSurfMinRotation; // size=0, offset=148
+	int SwimPhysicsSurfMaxRotation; // size=0, offset=152
+	int SwimPhysicsSurfKickDecel; // size=0, offset=156
+};
+
 extern void InitStates(struct _Instance *PlayerInstance); // 0x800A80C8
 
 extern void StateInitIdle(struct __CharacterState *In, int CurrentSection, int Ptr); // 0x800A83B0
