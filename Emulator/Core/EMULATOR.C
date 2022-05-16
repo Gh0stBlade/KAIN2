@@ -2096,13 +2096,7 @@ static int Emulator_InitialiseGLESContext(char* windowName)
 
     eglDisplay = eglGetDisplay(EGL_DEFAULT_DISPLAY);
 
-#if defined(__EMSCRIPTEN__)
-	//Hack to keep EMSCRIPTEN in control of the window so it can resize properly
-	g_window = SDL_CreateWindow(windowName, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 640-1, 480-1, windowFlags);
-	SDL_SetWindowSize(g_window, 640, 480);
-#else
 	g_window = SDL_CreateWindow(windowName, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, windowWidth, windowHeight, windowFlags);
-#endif
 
 	if(g_window == NULL)
     {
