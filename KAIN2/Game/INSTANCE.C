@@ -1271,103 +1271,52 @@ void INSTANCE_AdditionalCollideFunctions(struct _InstanceList* instanceList)
 {
 #if defined(PSX_VERSION)
 
-	struct _Instance* instance; // $s0
+	struct _Instance* instance;
 
 	instance = instanceList->first;
 
-	if (instance != NULL)
+	while (instance != NULL)
 	{
-		//loc_800334E4
-		//v1 = gameTrackerX.gameMode
+		if (gameTrackerX.gameMode != 6 || (instance->object->oflags & 0x20000))
+		{
+			if (!(gameTrackerX.streamFlags & 0x100000) || (instance->object->oflags & 0x40000))
+			{
+				if (instance->additionalCollideFunc != NULL)
+				{
+					if (!(instance->flags2 & 0x24000000))
+					{
+						if (instance->object != NULL)
+						{
+							if ((instance->object->oflags2 & 0x2000000))
+							{
+								if ((instance->flags2 & 0x8000000))
+								{
+									gameTrackerX.timeMult = gameTrackerX.spectralTimeMult;
+								}
+								else
+								{
+									gameTrackerX.timeMult = gameTrackerX.materialTimeMult;
+								}
+							}
+							else
+							{
+								gameTrackerX.timeMult = gameTrackerX.globalTimeMult;
+							}
+						}
+						else
+						{
+							gameTrackerX.timeMult = gameTrackerX.globalTimeMult;
+						}
 
+						instance->additionalCollideFunc(instance, &gameTrackerX);
+					}
+				}
+			}
+		}
 
+		instance = instance->next;
 	}
-	//loc_800335D8
-#if 0
-		loc_800334E4 :
-	lh      $v1, -0x40C6($gp)
-		li      $v0, 6
-		bne     $v1, $v0, loc_80033510
-		lui     $v1, 2
-		lw      $v0, 0x1C($s0)
-		nop
-		lw      $v0, 0($v0)
-		nop
-		and $v0, $v1
-		beqz    $v0, loc_800335C8
-		nop
-
-		loc_80033510 :
-	lw      $v0, -0x40F4($gp)//gameTrackerX.streamFlags
-		lui     $v1, 0x10
-		and $v0, $v1
-		beqz    $v0, loc_80033540
-		lui     $v1, 4
-		lw      $v0, 0x1C($s0)
-		nop
-		lw      $v0, 0($v0)
-		nop
-		and $v0, $v1
-		beqz    $v0, loc_800335C8
-		nop
-
-		loc_80033540 :
-	lw      $v0, 0x110($s0)
-		nop
-		beqz    $v0, loc_800335C8
-		lui     $v0, 0x2400
-		lw      $a0, 0x18($s0)
-		nop
-		and $v0, $a0, $v0
-		bnez    $v0, loc_800335C8
-		nop
-		lw      $v0, 0x1C($s0)
-		nop
-		beqz    $v0, loc_800335AC
-		lui     $v1, 0x200
-		lw      $v0, 0x2C($v0)
-		nop
-		and $v0, $v1
-		beqz    $v0, loc_800335AC
-		lui     $v0, 0x800
-		and $v0, $a0, $v0
-		beqz    $v0, loc_800335A0
-		nop
-		lw      $v0, -0x3FF0($gp)
-		j       loc_800335B0
-		nop
-
-		loc_800335A0 :
-	lw      $v0, -0x3FEC($gp)
-		j       loc_800335B0
-		nop
-
-		loc_800335AC :
-	lw      $v0, -0x3FF4($gp)
-
-		loc_800335B0 :
-		nop
-		sw      $v0, -0x3FF8($gp)
-		lw      $v0, 0x110($s0)
-		addiu   $a1, $gp, -0x4238
-		jalr    $v0
-		move    $a0, $s0
-
-		loc_800335C8 :
-	lw      $s0, 8($s0)
-		nop
-		bnez    $s0, loc_800334E4
-		nop
-
-		loc_800335D8 :
-	lw      $v0, -0x3FF4($gp)
-		lw      $ra, 0x10 + var_s4($sp)
-		lw      $s0, 0x10 + var_s0($sp)
-		sw      $v0, -0x3FF8($gp)
-		jr      $ra
-		addiu   $sp, 0x18
-#endif
-
+	gameTrackerX.timeMult = gameTrackerX.globalTimeMult;
 
 #elif defined(PC_VERSION)
 	struct _Instance* i; // esi
