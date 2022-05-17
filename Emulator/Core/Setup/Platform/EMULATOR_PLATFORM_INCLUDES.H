@@ -10,9 +10,9 @@
 #include <GL/glew.h>
 #endif
 
- /*
-  * SDL2.H inclusion.
-  */
+/*
+ * SDL2.H inclusion.
+ */
 
 #if defined(__APPLE__)
 #include <SDL2/SDL.h>

@@ -4,6 +4,12 @@
 #include "RAZIEL/RAZLIB.H"
 #include "MONSTER/MONSTER.H"
 
+struct __FitPoint 
+{
+	short x; // size=0, offset=0
+	short y; // size=0, offset=2
+};
+
 struct __CharacterState
 {
 	struct _Instance* CharacterInstance; // size=668, offset=0

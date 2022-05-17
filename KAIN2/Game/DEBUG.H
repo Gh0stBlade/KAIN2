@@ -86,6 +86,10 @@ extern struct DebugMenuLine standardMenu[12]; // offset 0x800CFCB0
 
 extern struct DebugMenuLine* currentMenu; // offset 0x800CDB3C
 
+extern unsigned long debugRazielFlags1;
+extern unsigned long debugRazielFlags2;
+extern unsigned long debugRazielFlags3;
+
 extern void DEBUG_UpdateHealth(long *var); // 0x80012EC0
 extern void DEBUG_UpdateMana(long *var); // 0x80012EE4
 extern void DEBUG_FillUpHealth(long *var); // 0x80012F08
