@@ -740,7 +740,7 @@ void MainRenderLevel(struct _StreamUnit* currentUnit, unsigned long** drawot)
 	PIPE3D_AnimateTerrainTextures(level->bgAniList, gameTracker->frameCount, gameTracker->primPool, drawot);
 
 	PIPE3D_InstanceListTransformAndDraw(currentUnit, gameTracker, drawot, &theCamera.core);
-	gLightInfo->numSavedColors = 0;
+	///gLightInfo->numSavedColors = 0;
 
 #if 0
 		lw      $v0, -0x5310($gp)
@@ -1316,18 +1316,55 @@ void GAMELOOP_DisplayFrame(struct GameTracker* gameTracker)
 
 				//t0 = mainLevel
 				i = 0;
-				//v0 = level->terrain
+				//v0 = mainLevel->terrain
 				draw = 0;
-				//v0 = level->terrain->StreamUnits
-
-				//s4 = v0 + 4
+				//v0 = mainLevel->terrain->StreamUnits
+				
 				if (numportals > 0)
 				{
-					//s1 = v0 + 0x2C
+					//s1 = &streamPortal2->toStreamUnit
 
 					//loc_8002FA68
+					for(i = 0; i < numportals; i++)
+					{
+						streamPortal2 = (struct StreamUnitPortal*)(&((int*)mainLevel->terrain->StreamUnits)[1]) + i;
+
+						//v0 = streamPortal2->streamID
+						if (streamPortal2->streamID == toStreamUnitID)
+						{
+							//v1 = 
+							if (STREAM_GetClipRect(streamPortal2, &cliprect) != 0)
+							{
+								draw = 1;
+								//loc_8002FB08
+							}
+							else if ((theCamera.instance_mode & 0x2000000))
+							{
+								streamID = streamPortal2->toStreamUnit->StreamUnitID;
+								INSTANCE_Query(gameTrackerX.playerInstance, 0x22);
+
+								if (streamID == gameTrackerX.playerInstance->currentStreamUnitID || streamPortal2->toStreamUnit != NULL && *(int*)&streamPortal2->toStreamUnit->TargetFogFar == streamID)
+								{
+									draw = 1;
+									//v0 = 0x200
+									cliprect.w = SCREEN_WIDTH;
+									cliprect.x = 0;
+									cliprect.y = 0;
+									cliprect.h = SCREEN_HEIGHT;
+
+								}
+								//loc_8002FB08
+							}
+							//loc_8002FB08
+						}
+						//loc_8002FB08
+					}
 				}
 				//loc_8002FB24
+				if (draw != 0)
+				{
+
+				}
 			}
 			//loc_8002FC8C
 		}
@@ -1336,64 +1373,6 @@ void GAMELOOP_DisplayFrame(struct GameTracker* gameTracker)
 	//loc_8002FD78
 #if 0
 
-		loc_8002FA68:
-	lw      $v0, -0x14($s1)
-		lw      $t0, 0x38 + var_4($sp)
-		nop
-		bne     $v0, $t0, loc_8002FB08
-		move    $a0, $s4
-		jal     sub_8005E9F0
-		addiu   $a1, $sp, 0x38 + var_20
-		beqz    $v0, loc_8002FA94
-		lui     $v1, 0x200
-		j       loc_8002FB08
-		li      $s2, 1
-
-		loc_8002FA94:
-	lw      $v0, -0x4ED4($gp)
-		nop
-		and $v0, $v1
-		beqz    $v0, loc_8002FB08
-		nop
-		lw      $v0, 0($s1)
-		lw      $a0, -0x420C($gp)
-		lw      $s0, 0($v0)
-		jal     sub_80034648
-		li      $a1, 0x22  # '"'
-		lw      $v1, -0x420C($gp)
-		nop
-		lw      $v1, 0x38($v1)
-		nop
-		beq     $s0, $v1, loc_8002FAEC
-		nop
-		beqz    $v0, loc_8002FB08
-		nop
-		lw      $v0, 0x38($v0)
-		nop
-		bne     $s0, $v0, loc_8002FB08
-		nop
-
-		loc_8002FAEC :
-	li      $s2, 1
-		li      $v0, 0x200
-		sh      $v0, 0x38 + var_1C($sp)
-		li      $v0, 0xF0
-		sh      $zero, 0x38 + var_20($sp)
-		sh      $zero, 0x38 + var_1E($sp)
-		sh      $v0, 0x38 + var_1A($sp)
-
-		loc_8002FB08:
-	addiu   $s5, 1
-		addiu   $s1, 0x5C  # '\'
-		lw      $t0, 0x38 + var_C($sp)
-		nop
-		slt     $v0, $s5, $t0
-		bnez    $v0, loc_8002FA68
-		addiu   $s4, 0x5C  # '\'
-
-		loc_8002FB24:
-	beqz    $s2, loc_8002FC64
-		nop
 		lh      $a0, 0x38 + var_20($sp)
 		nop
 		sll     $v0, $a0, 2
@@ -1616,119 +1595,138 @@ void GAMELOOP_DisplayFrame(struct GameTracker* gameTracker)
 		nop
 		lw      $t0, 0x38 + arg_0($sp)
 		nop
-		sw      $zero, 0x118($t0)
-		sw      $zero, 0x134($t0)
+sw      $zero, 0x118($t0)
+sw      $zero, 0x134($t0)
 
-		loc_8002FE3C:
+loc_8002FE3C:
+lw      $t0, 0x38 + arg_0($sp)
+
+loc_8002FE40 :
+	nop
+	lw      $a0, 0x258($t0)
+	jal     sub_8003DE4C
+	nop
+	lw      $t0, 0x38 + var_18($sp)
+	nop
+	addiu   $s0, $t0, 0x2FFC
 	lw      $t0, 0x38 + arg_0($sp)
+	nop
+	lw      $v1, 4($t0)
+	move    $a0, $s0
+	sw      $v0, 0x258($t0)
+	li      $v0, 1
+	subu    $v0, $v1
+	jal     nullsub_1
+	sw      $v0, 4($t0)
+	lw      $a0, 0x38 + var_18($sp)
+	jal     sub_8002E558
+	nop
+	jal     GetRCnt
+	lui     $a0, 0xF200
+	lw      $t0, 0x38 + arg_0($sp)
+	nop
+	addiu   $v1, $t0, 0x228
+	sw      $v1, 0x11C($t0)
+	lw      $v1, -0x6FA8($gp)
+	andi    $v0, 0xFFFF
+	sll     $v1, 16
+	or $v0, $v1
+	sw      $v0, 0x120($t0)
+	lw      $v0, -0x40F8($gp)//gameTrackerX.gameFlags
+	lui     $v1, 0x800
+	and $v0, $v1
+	beqz    $v0, loc_8002FEE0
+	nop
+	lw      $a0, 0x38 + var_18($sp)
+	jal     sub_8002FF18
+	nop
+	j       loc_8002FEE8
+	nop
 
-		loc_8002FE40 :
-		nop
-		lw      $a0, 0x258($t0)
-		jal     sub_8003DE4C
-		nop
-		lw      $t0, 0x38 + var_18($sp)
-		nop
-		addiu   $s0, $t0, 0x2FFC
-		lw      $t0, 0x38 + arg_0($sp)
-		nop
-		lw      $v1, 4($t0)
-		move    $a0, $s0
-		sw      $v0, 0x258($t0)
-		li      $v0, 1
-		subu    $v0, $v1
-		jal     nullsub_1
-		sw      $v0, 4($t0)
-		lw      $a0, 0x38 + var_18($sp)
-		jal     sub_8002E558
-		nop
-		jal     GetRCnt
-		lui     $a0, 0xF200
-		lw      $t0, 0x38 + arg_0($sp)
-		nop
-		addiu   $v1, $t0, 0x228
-		sw      $v1, 0x11C($t0)
-		lw      $v1, -0x6FA8($gp)
-		andi    $v0, 0xFFFF
-		sll     $v1, 16
-		or $v0, $v1
-		sw      $v0, 0x120($t0)
-		lw      $v0, -0x40F8($gp)//gameTrackerX.gameFlags
-		lui     $v1, 0x800
-		and $v0, $v1
-		beqz    $v0, loc_8002FEE0
-		nop
-		lw      $a0, 0x38 + var_18($sp)
-		jal     sub_8002FF18
-		nop
-		j       loc_8002FEE8
-		nop
+	loc_8002FEE0 :
+jal     sub_800BA870
+move    $a0, $s0
 
-		loc_8002FEE0 :
-	jal     sub_800BA870
-		move    $a0, $s0
-
-		loc_8002FEE8 :
-	lw      $ra, 0x38 + var_s24($sp)
-		lw      $fp, 0x38 + var_s20($sp)
-		lw      $s7, 0x38 + var_s1C($sp)
-		lw      $s6, 0x38 + var_s18($sp)
-		lw      $s5, 0x38 + var_s14($sp)
-		lw      $s4, 0x38 + var_s10($sp)
-		lw      $s3, 0x38 + var_sC($sp)
-		lw      $s2, 0x38 + var_s8($sp)
-		lw      $s1, 0x38 + var_s4($sp)
-		lw      $s0, 0x38 + var_s0($sp)
-		jr      $ra
-		addiu   $sp, 0x60
+loc_8002FEE8 :
+lw      $ra, 0x38 + var_s24($sp)
+lw      $fp, 0x38 + var_s20($sp)
+lw      $s7, 0x38 + var_s1C($sp)
+lw      $s6, 0x38 + var_s18($sp)
+lw      $s5, 0x38 + var_s14($sp)
+lw      $s4, 0x38 + var_s10($sp)
+lw      $s3, 0x38 + var_sC($sp)
+lw      $s2, 0x38 + var_s8($sp)
+lw      $s1, 0x38 + var_s4($sp)
+lw      $s0, 0x38 + var_s0($sp)
+jr      $ra
+addiu   $sp, 0x60
 #endif
 }
 
+void GAMELOOP_DrawSavedOT(unsigned long** newOT)
+{
+	P_TAG* tag;
+	int y;
+	int tpage;
 
-// autogenerated function stub: 
-// void /*$ra*/ GAMELOOP_DrawSavedOT(unsigned long **newOT /*$t3*/)
-void GAMELOOP_DrawSavedOT(unsigned long **newOT)
-{ // line 2710, offset 0x8002fc20
-	/* begin block 1 */
-		// Start line: 2711
-		// Start offset: 0x8002FC20
-		// Variables:
-			//struct P_TAG *tag; // $a1
-			int y; // $a2
+	tag = gameTrackerX.savedOTStart;
+	y = draw[gameTrackerX.drawPage].ofs[1];
 
-		/* begin block 1.1 */
-			// Start line: 2719
-			// Start offset: 0x8002FC84
-			// Variables:
-				int tpage; // $v1
-		/* end block 1.1 */
-		// End offset: 0x8002FCAC
-		// End Line: 2727
+	if (tag != gameTrackerX.savedOTEnd)
+	{
+		do
+		{
+			if ((tag->code & 0xFFFFFFFC) == 0x34)
+			{
+				tpage = ((POLY_GT3*)tag)->tpage;
 
-		/* begin block 1.2 */
-			// Start line: 2732
-			// Start offset: 0x8002FCC0
-			// Variables:
-				//int tpage; // $v1
-		/* end block 1.2 */
-		// End offset: 0x8002FCE8
-		// End Line: 2740
+				if ((tpage & 0xF) < 8)
+				{
+					if (y != 0)
+					{
+						((POLY_GT3*)tag)->tpage |= 0x10;
+					}
+					else
+					{
+						((POLY_GT3*)tag)->tpage &= ~0x10;
+					}
+				}
+			}
+			else if ((tag->code & 0xFFFFFFFC) == 0x24)
+			{
+				tpage = ((POLY_FT3*)tag)->tpage;
 
-		/* begin block 1.3 */
-			// Start line: 2745
-			// Start offset: 0x8002FCFC
-		/* end block 1.3 */
-		// End offset: 0x8002FD30
-		// End Line: 2756
-	/* end block 1 */
-	// End offset: 0x8002FD54
-	// End Line: 2759
+				if ((tpage & 0xF) < 8)
+				{
+					if (y != 0)
+					{
+						((POLY_FT3*)tag)->tpage |= 0x10;
+					}
+					else
+					{
+						((POLY_FT3*)tag)->tpage &= ~0x10;
+					}
+				}
+			}
+			else if ((tag->code == 0xE3))
+			{
+				if (y != 0)
+				{
+					((DR_TPAGE*)tag)->code[0] |= 0x40000;
+					((DR_TPAGE*)tag)->code[1] |= 0x40000;
+				}
+				else
+				{
+					((DR_TPAGE*)tag)->code[0] &= 0xFFFBFFFF;
+					((DR_TPAGE*)tag)->code[1] &= 0xFFFBFFFF;
+				}
+			}
+		} while (nextPrim(tag) != gameTrackerX.savedOTEnd);
+	}
 
-	/* begin block 2 */
-		// Start line: 6396
-	/* end block 2 */
-	// End Line: 6397
+	setaddr(gameTrackerX.savedOTEnd, getaddr(newOT + 3071));
 
+	DrawOTag((unsigned long*)gameTrackerX.savedOTStart);
 }
 
 void ResetPrimPool()
