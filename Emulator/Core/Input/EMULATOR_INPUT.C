@@ -7,12 +7,34 @@ unsigned char* padData[MAX_CONTROLLERS];
 unsigned char* padDataDebug[MAX_CONTROLLERS];
 
 #if defined(SDL2)
+
+#define PAD_FLAG_SUBSYSTEM_INITED 0
+#define PAD_FLAG_HAPTIC_INITED 1
+
+unsigned int padFlags[MAX_CONTROLLERS];
+
+SDL_Joystick* padJoyStickHandle[MAX_CONTROLLERS];
 SDL_GameController* padHandle[MAX_CONTROLLERS];
 unsigned char* padRumbleData[MAX_CONTROLLERS];
 const unsigned char* keyboardState;
 
 SDL_GameController* padHandleDebug[MAX_CONTROLLERS];
 const unsigned char* keyboardStateDebug;
+
+void Emulator_AddController(unsigned int index)
+{
+	if (SDL_IsGameController(index) && index < MAX_CONTROLLERS)
+	{
+		padHandle[index] = SDL_GameControllerOpen(index);
+		padJoyStickHandle[index] = SDL_GameControllerGetJoystick(padHandle[index]);
+
+		if (SDL_JoystickIsHaptic(padJoyStickHandle[index]) && !(padFlags[index] & 1 << PAD_FLAG_HAPTIC_INITED))
+		{
+			SDL_HapticRumbleInit(SDL_HapticOpenFromJoystick(padJoyStickHandle[index]));
+			padFlags[index] |= 1 << PAD_FLAG_HAPTIC_INITED;
+		}
+	}
+}
 
 void Emulator_InitialiseSDLInput(SDL_GameController** pad, const unsigned char** kbState, int isDebugInput)
 {
@@ -45,10 +67,7 @@ void Emulator_InitialiseSDLInput(SDL_GameController** pad, const unsigned char**
 	{
 		for (int i = 0; i < SDL_NumJoysticks(); i++)
 		{
-			if (SDL_IsGameController(i) && i < MAX_CONTROLLERS)
-			{
-				pad[i] = SDL_GameControllerOpen(i);///@TODO close joysticks
-			}
+			Emulator_AddController(i);
 		}
 	}
 

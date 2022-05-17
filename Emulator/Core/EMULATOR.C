@@ -4,13 +4,13 @@
 #include "EMULATOR_GLOBALS.H"
 #include "Public/EMULATOR_PUBLIC.H"
 #include "Debug/CRASHHANDLER.H"
-
+#include "Core/Input/EMULATOR_INPUT.H"
 #include "Setup/Platform/EMULATOR_PLATFORM_SETUP.H"
 
 #include "LIBGPU.H"
 #include "LIBETC.H"
 #include "LIBPAD.H"
-#if !defined(__ANDROID__) && !defined(__EMSCRIPTEN__)
+#if !defined(__ANDROID__)
 #include <thread>
 #endif
 #include <assert.h>
@@ -462,7 +462,7 @@ int windowWidth = 0;
 int windowHeight = 0;
 char* pVirtualMemory = NULL;
 SysCounter counters[3] = { 0 };
-#if !defined(__ANDROID__) && !defined(__EMSCRIPTEN__)
+#if !defined(__ANDROID__)
 std::thread counter_thread;
 #endif
 #if defined(__ANDROID__)
@@ -2323,7 +2323,7 @@ void Emulator_Initialise(char* windowName, int width, int height)
 	g_swapTime = GetTickCount() - FIXED_TIME_STEP;
 #endif
 
-#if !defined(__ANDROID__) && !defined(__EMSCRIPTEN__)
+#if !defined(__ANDROID__)
 	counter_thread = std::thread(Emulator_CounterLoop);
 #endif
 }
@@ -4895,7 +4895,7 @@ void Emulator_DoPollEvent()
 		switch (event.type)
 		{
 			case SDL_CONTROLLERDEVICEADDED:
-				padHandle[event.jbutton.which] = SDL_GameControllerOpen(event.cdevice.which);
+				Emulator_AddController(event.cdevice.which);
 				break;
 			case SDL_CONTROLLERDEVICEREMOVED:
 				SDL_GameControllerClose(padHandle[event.cdevice.which]);
