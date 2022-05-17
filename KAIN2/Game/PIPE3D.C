@@ -211,7 +211,7 @@ void PIPE3D_InstanceTransformAndDraw(struct _Instance* instance, struct _CameraC
 	long flags; // $s1
 	struct _MVertex* vertexList; // $s0
 	struct _PVertex* poolVertex; // $s5
-	struct CVECTOR* vertexColor; // $s6
+	CVECTOR* vertexColor; // $s6
 	long spadOffset; // $v1
 	long spadFree; // $a1
 	long allocSize; // $a0
