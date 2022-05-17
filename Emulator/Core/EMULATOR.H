@@ -9,6 +9,7 @@
 #include <stddef.h>
 
 #include "Setup/Platform/EMULATOR_PLATFORM_SETUP.H"
+#include "Setup/Platform/EMULATOR_PLATFORM_INCLUDES.H"
 #include "Debug/EMULATOR_LOG.H"
 
 #ifndef TRUE

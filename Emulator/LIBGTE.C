@@ -1,7 +1,8 @@
-#include "LIBGTE.H"
 #include "EMULATOR.H"
 #include "Public/EMULATOR_PUBLIC.H"
 #include "INLINE_C.H"
+
+#include "LIBGTE.H"
 
 #include <stdio.h>
 #include <assert.h>
