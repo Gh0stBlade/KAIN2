@@ -43,7 +43,7 @@ void VOICEXA_Init()
 
 		for (i = 0; i < 30; i++)
 		{
-			sprintf(&fileName[0], "\VOICE\VOICE%02d.XA;", i);
+			sprintf(&fileName[0], "\\VOICE\\VOICE%02d.XA;", i);
 			
 			if (CdSearchFile(&fp, &fileName[0]) == 0)
 			{
