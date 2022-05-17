@@ -94,18 +94,16 @@ struct _FXLightBeam // hashcode: 0xDC9CA53F (dec: -593713857)
 	long color; // size=0, offset=20
 };
 
-struct _FXBlastringEffect // hashcode: 0x2F8F0E55 (dec: 797904469)
+struct _FXBlastringEffect 
 {
 	void* next; // size=0, offset=0
 	void* continue_process; // size=0, offset=4
-	struct _Instance* instance; // size=616, offset=8
+	struct _Instance* instance; // size=668, offset=8
 	unsigned char effectType; // size=0, offset=12
 	unsigned char type; // size=0, offset=13
 	short lifeTime; // size=0, offset=14
 	struct _SVector position; // size=8, offset=16
-#if !defined(PSX_VERSION)//Undefined
 	MATRIX matrix; // size=32, offset=24
-#endif
 	short segment; // size=0, offset=56
 	short pad; // size=0, offset=58
 	int radius; // size=0, offset=60
@@ -127,6 +125,7 @@ struct _FXBlastringEffect // hashcode: 0x2F8F0E55 (dec: 797904469)
 	long startColor; // size=0, offset=112
 	long endColor; // size=0, offset=116
 };
+
 
 struct _FXForceFieldEffect // hashcode: 0x59105BC4 (dec: 1494244292)
 {
@@ -304,6 +303,10 @@ struct _FXTracker // hashcode: 0xCC65A064 (dec: -865755036)
 	struct NodeType usedPrimListSprite; // size=8, offset=28056
 	struct NodeType freePrimList; // size=8, offset=28064
 };
+
+
+extern struct _FXBlastringEffect* fx_blastring;
+extern short fx_going;
 
 extern void FX_Init(struct _FXTracker *fxTracker); // 0x80041F54
 extern void FX_Die(struct _FX_PRIM *fxPrim, struct _FXTracker *fxTracker); // 0x80042034

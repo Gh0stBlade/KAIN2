@@ -37,7 +37,7 @@ struct GLYPH_114fake // hashcode: 0x249332FF (dec: 613626623)
 
 struct __GlyphData // hashcode: 0x9C88C1F1 (dec: -1668759055)
 {
-	void (*process)(); // size=0, offset=0
+	void (*process)(struct _Instance*, int, int); // size=0, offset=0
 	struct __MessageQueue messages; // size=136, offset=4
 	short selectedGlyph; // size=0, offset=140
 	short glyph_open; // size=0, offset=142
