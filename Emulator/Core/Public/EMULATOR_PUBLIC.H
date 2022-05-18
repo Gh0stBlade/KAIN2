@@ -18,6 +18,10 @@
 extern "C" {
 #endif
 
+#if defined(__EMSCRIPTEN__)
+extern void Emulator_PollAudio();
+#endif
+
 extern void Emulator_SaveVRAM(const char* outputFileName, int x, int y, int width, int height, int bReadFromFrameBuffer);
 
 /* Usually called at the beginning of main function */

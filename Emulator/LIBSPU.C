@@ -102,6 +102,16 @@ int* dword_E10 = &PrimaryDMAControlRegister;//Base address is 1F8010F0.
 
 char spuSoundBuffer[520191];
 
+#if defined(__EMSCRIPTEN__)
+void Emulator_PollAudio()
+{
+    int numFrames = 0;
+
+    while (numFrames < 1)
+        alcGetIntegerv(device, ALC_CAPTURE_SAMPLES, 1, &numFrames);
+}
+#endif
+
 unsigned int decodeVAG(unsigned char* vag, unsigned int length, unsigned char* out)
 {
     int predict_nr, shift_factor, flags;

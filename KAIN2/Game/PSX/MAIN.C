@@ -783,10 +783,7 @@ void GameLoop()
 	long menuPos = 0;
 	int timer;
 
-	int numFrames = 0;
-
-	while (numFrames < 1)
-		alcGetIntegerv(device, ALC_CAPTURE_SAMPLES, 1, &numFrames);
+	Emulator_PollAudio();
 
 	switch (mainTrackerX.mainState)
 	{
