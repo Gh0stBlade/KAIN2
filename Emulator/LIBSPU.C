@@ -5,8 +5,14 @@
 #include "LIBAPI.H"
 
 #if defined(OPENAL)
+
+#if defined(__EMSCRIPTEN__)
+#include <AL/al.h>
+#include <AL/alc.h>
+#else
 #include <al.h>
 #include <alc.h>
+#endif
 
 ALCdevice* alDevice = NULL;
 ALCcontext* alContext = NULL;
