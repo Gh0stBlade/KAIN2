@@ -52,7 +52,7 @@
 #define OGLES
 #define OGLES_VERSION (3)
 #define SDL2
-#define OPENAL
+//#define OPENAL Disabled due to crashing.
 #elif defined(__ANDROID__)
 #define OGLES
 #define OGLES_VERSION (3)
