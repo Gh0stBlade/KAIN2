@@ -105,10 +105,12 @@ char spuSoundBuffer[520191];
 #if defined(__EMSCRIPTEN__)
 void Emulator_PollAudio()
 {
+#if defined(OPENAL)
     int numFrames = 0;
 
     while (numFrames < 1)
-        alcGetIntegerv(device, ALC_CAPTURE_SAMPLES, 1, &numFrames);
+        alcGetIntegerv(alDevice, ALC_CAPTURE_SAMPLES, 1, &numFrames);
+#endif
 }
 #endif
 
