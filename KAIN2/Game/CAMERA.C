@@ -16,215 +16,66 @@ MATRIX cwTransform2X;
 
 void CAMERA_CalculateViewVolumeNormals(struct Camera *camera)
 {
-	short projDistance; // $v0
-	struct _Normal n0; // stack offset -40
-	struct _Normal n1; // stack offset -32
-	struct _Normal n2; // stack offset -24
-	struct _Normal n3; // stack offset -16
-	int x1; // $a0
-	int x2; // $a2
-	int y1; // $v1
-	int y2; // $a1
+	short projDistance;
+	struct _Normal n0;
+	struct _Normal n1;
+	struct _Normal n2;
+	struct _Normal n3;
+	int x1;
+	int x2;
+	int y1;
+	int y2;
 
-	//s0 = camera
 	x1 = (camera->core.leftX - 160) << 4;
 	projDistance = camera->core.projDistance << 4;
 	x2 = (camera->core.rightX - 160) << 4;
 	y1 = (camera->core.topY - 120) << 4;
 	y2 = (camera->core.bottomY - 120) << 4;
 
-#if 0
-		sh      $v0, 0x30 + var_1C($sp)
-		sh      $v0, 0x30 + var_14($sp)
-		sh      $v0, 0x30 + var_C($sp)
-		sh      $v0, 0x30 + var_4($sp)
-		li      $v0, 0x1000
-		sh      $a0, 0x30 + var_20($sp)
-		sh      $v1, 0x30 + var_1E($sp)
-		sh      $a2, 0x30 + var_18($sp)
-		sh      $v1, 0x30 + var_16($sp)
-		sh      $a0, 0x30 + var_10($sp)
-		sh      $a1, 0x30 + var_E($sp)
-		sh      $a2, 0x30 + var_8($sp)
-		sh      $a1, 0x30 + var_6($sp)
-		sh      $zero, 0x78($s0)
-		sh      $zero, 0x7A($s0)
-		sh      $v0, 0x7C($s0)
-		lh      $v1, 0x30 + var_1E($sp)
-		lh      $v0, 0x30 + var_14($sp)
-		nop
-		mult    $v1, $v0
-		lh      $v1, 0x30 + var_1C($sp)
-		mflo    $a0
-		lh      $v0, 0x30 + var_16($sp)
-		nop
-		mult    $v1, $v0
-		mflo    $v0
-		subu    $v0, $a0, $v0
-		sra     $v0, 12
-		sh      $v0, 0x80($s0)
-		lh      $v1, 0x30 + var_20($sp)
-		lh      $v0, 0x30 + var_14($sp)
-		nop
-		mult    $v1, $v0
-		lh      $v1, 0x30 + var_1C($sp)
-		mflo    $a0
-		lh      $v0, 0x30 + var_18($sp)
-		nop
-		mult    $v1, $v0
-		mflo    $v0
-		subu    $v0, $a0, $v0
-		sra     $v0, 12
-		negu    $v0, $v0
-		sh      $v0, 0x82($s0)
-		lh      $v1, 0x30 + var_20($sp)
-		lh      $v0, 0x30 + var_16($sp)
-		nop
-		mult    $v1, $v0
-		lh      $v1, 0x30 + var_1E($sp)
-		mflo    $a1
-		lh      $v0, 0x30 + var_18($sp)
-		nop
-		mult    $v1, $v0
-		addiu   $a0, $s0, 0x80
-		mflo    $v0
-		subu    $v0, $a1, $v0
-		sra     $v0, 12
-		jal     sub_80018C18
-		sh      $v0, 0x84($s0)
-		lh      $v1, 0x30 + var_E($sp)
-		lh      $v0, 0x30 + var_1C($sp)
-		nop
-		mult    $v1, $v0
-		lh      $v1, 0x30 + var_C($sp)
-		mflo    $a0
-		lh      $v0, 0x30 + var_1E($sp)
-		nop
-		mult    $v1, $v0
-		mflo    $v0
-		subu    $v0, $a0, $v0
-		sra     $v0, 12
-		sh      $v0, 0x88($s0)
-		lh      $v1, 0x30 + var_10($sp)
-		lh      $v0, 0x30 + var_1C($sp)
-		nop
-		mult    $v1, $v0
-		lh      $v1, 0x30 + var_C($sp)
-		mflo    $a0
-		lh      $v0, 0x30 + var_20($sp)
-		nop
-		mult    $v1, $v0
-		mflo    $v0
-		subu    $v0, $a0, $v0
-		sra     $v0, 12
-		negu    $v0, $v0
-		sh      $v0, 0x8A($s0)
-		lh      $v1, 0x30 + var_10($sp)
-		lh      $v0, 0x30 + var_1E($sp)
-		nop
-		mult    $v1, $v0
-		lh      $v1, 0x30 + var_E($sp)
-		mflo    $a1
-		lh      $v0, 0x30 + var_20($sp)
-		nop
-		mult    $v1, $v0
-		addiu   $a0, $s0, 0x88
-		mflo    $v0
-		subu    $v0, $a1, $v0
-		sra     $v0, 12
-		jal     sub_80018C18
-		sh      $v0, 0x8C($s0)
-		lh      $v1, 0x30 + var_16($sp)
-		lh      $v0, 0x30 + var_4($sp)
-		nop
-		mult    $v1, $v0
-		lh      $v1, 0x30 + var_14($sp)
-		mflo    $a0
-		lh      $v0, 0x30 + var_6($sp)
-		nop
-		mult    $v1, $v0
-		mflo    $v0
-		subu    $v0, $a0, $v0
-		sra     $v0, 12
-		sh      $v0, 0x90($s0)
-		lh      $v1, 0x30 + var_18($sp)
-		lh      $v0, 0x30 + var_4($sp)
-		nop
-		mult    $v1, $v0
-		lh      $v1, 0x30 + var_14($sp)
-		mflo    $a0
-		lh      $v0, 0x30 + var_8($sp)
-		nop
-		mult    $v1, $v0
-		mflo    $v0
-		subu    $v0, $a0, $v0
-		sra     $v0, 12
-		negu    $v0, $v0
-		sh      $v0, 0x92($s0)
-		lh      $v1, 0x30 + var_18($sp)
-		lh      $v0, 0x30 + var_6($sp)
-		nop
-		mult    $v1, $v0
-		lh      $v1, 0x30 + var_16($sp)
-		mflo    $a1
-		lh      $v0, 0x30 + var_8($sp)
-		nop
-		mult    $v1, $v0
-		addiu   $a0, $s0, 0x90
-		mflo    $v0
-		subu    $v0, $a1, $v0
-		sra     $v0, 12
-		jal     sub_80018C18
-		sh      $v0, 0x94($s0)
-		lh      $v1, 0x30 + var_6($sp)
-		lh      $v0, 0x30 + var_C($sp)
-		nop
-		mult    $v1, $v0
-		lh      $v1, 0x30 + var_4($sp)
-		mflo    $a0
-		lh      $v0, 0x30 + var_E($sp)
-		nop
-		mult    $v1, $v0
-		mflo    $v0
-		subu    $v0, $a0, $v0
-		sra     $v0, 12
-		sh      $v0, 0x98($s0)
-		lh      $v1, 0x30 + var_8($sp)
-		lh      $v0, 0x30 + var_C($sp)
-		nop
-		mult    $v1, $v0
-		lh      $v1, 0x30 + var_4($sp)
-		mflo    $a0
-		lh      $v0, 0x30 + var_10($sp)
-		nop
-		mult    $v1, $v0
-		mflo    $v0
-		subu    $v0, $a0, $v0
-		sra     $v0, 12
-		negu    $v0, $v0
-		sh      $v0, 0x9A($s0)
-		lh      $v1, 0x30 + var_8($sp)
-		lh      $v0, 0x30 + var_E($sp)
-		nop
-		mult    $v1, $v0
-		lh      $v1, 0x30 + var_6($sp)
-		mflo    $a1
-		lh      $v0, 0x30 + var_10($sp)
-		nop
-		mult    $v1, $v0
-		addiu   $a0, $s0, 0x98
-		mflo    $v0
-		subu    $v0, $a1, $v0
-		sra     $v0, 12
-		jal     sub_80018C18
-		sh      $v0, 0x9C($s0)
-		lw      $ra, 0x30 + var_s4($sp)
-		lw      $s0, 0x30 + var_s0($sp)
-		jr      $ra
-		addiu   $sp, 0x38
-#endif
+	n0.z = projDistance;
+	n1.z = projDistance;
+	n2.z = projDistance;
+	n3.z = projDistance;
 
+	n0.x = x1;
+	n0.y = y1;
 
+	n1.x = x2;
+	n1.y = y1;
+
+	n2.x = x1;
+	n2.y = y2;
+
+	n3.x = x2;
+	n3.y = y2;
+
+	camera->core.viewVolumeNormal[0].x = 0;
+	camera->core.viewVolumeNormal[0].y = 0;
+	camera->core.viewVolumeNormal[0].z = 4096;
+
+	camera->core.viewVolumeNormal[1].x = (((n0.y * n1.z) - (n0.z * n1.y)) >> 12);
+	camera->core.viewVolumeNormal[1].y = -(((n0.x * n1.z) - (n0.z * n1.x)) >> 12);
+	camera->core.viewVolumeNormal[1].z = (((n0.x * n1.y) - (n0.y * n1.x)) >> 12);
+
+	CAMERA_Normalize((_SVector*)&camera->core.viewVolumeNormal[1]);
+
+	camera->core.viewVolumeNormal[2].x = (((n2.y * n0.z) - (n2.z * n0.y)) >> 12);
+	camera->core.viewVolumeNormal[2].y = -(((n2.x * n0.z) - (n2.z * n0.x)) >> 12);
+	camera->core.viewVolumeNormal[2].z = (((n2.x * n0.y) - (n2.y * n0.x)) >> 12);
+
+	CAMERA_Normalize((_SVector*)&camera->core.viewVolumeNormal[2]);
+
+	camera->core.viewVolumeNormal[3].x = (((n1.y * n3.z) - (n1.z * n3.y)) >> 12);
+	camera->core.viewVolumeNormal[3].y = -(((n1.x * n3.z) - (n1.z * n3.x)) >> 12);
+	camera->core.viewVolumeNormal[3].z = (((n1.x * n3.y) - (n1.y * n3.x)) >> 12);
+
+	CAMERA_Normalize((_SVector*)&camera->core.viewVolumeNormal[3]);
+
+	camera->core.viewVolumeNormal[4].x = (((n3.y * n2.z) - (n3.z * n2.y)) >> 12);
+	camera->core.viewVolumeNormal[4].y = -(((n3.x * n2.z) - (n3.z * n2.x)) >> 12);
+	camera->core.viewVolumeNormal[4].z = (((n3.x * n2.y) - (n3.y * n2.x)) >> 12);
+
+	CAMERA_Normalize((_SVector*)&camera->core.viewVolumeNormal[4]);
 }
 
 void CAMERA_CalcVVClipInfo(struct Camera* camera)
