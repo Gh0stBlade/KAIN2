@@ -742,29 +742,32 @@ void MainRenderLevel(struct _StreamUnit* currentUnit, unsigned long** drawot)
 	PIPE3D_InstanceListTransformAndDraw(currentUnit, gameTracker, drawot, &theCamera.core);
 	///gLightInfo->numSavedColors = 0;
 
+	//v0 = theCamera.core.wcTransform
+	//t1 = &theCamera
+	cam_pos_save.x = theCamera.core.position.x;
+	cam_pos_save.y = theCamera.core.position.y;
+	cam_pos_save.z = theCamera.core.position.z;
+
+	cam_mat_save.m[0][0] = theCamera.core.wcTransform->m[0][0];
+	cam_mat_save.m[0][1] = theCamera.core.wcTransform->m[0][1];
+	cam_mat_save.m[0][2] = theCamera.core.wcTransform->m[0][2];
+	cam_mat_save.m[1][0] = theCamera.core.wcTransform->m[1][0];
+	cam_mat_save.m[1][1] = theCamera.core.wcTransform->m[1][1];
+	cam_mat_save.m[1][2] = theCamera.core.wcTransform->m[1][2];
+	cam_mat_save.m[2][0] = theCamera.core.wcTransform->m[2][0];
+	cam_mat_save.m[2][1] = theCamera.core.wcTransform->m[2][1];
+	cam_mat_save.m[2][2] = theCamera.core.wcTransform->m[2][2];
+
+	cam_mat_save.t[0] = theCamera.core.wcTransform->t[0];
+	cam_mat_save.t[1] = theCamera.core.wcTransform->t[1];
+	cam_mat_save.t[2] = theCamera.core.wcTransform->t[2];
+
+	if (terrain->numBSPTrees > 0)
+	{
+		curTree = 0;
+	}
+	//loc_8002F010
 #if 0
-		lw      $v0, -0x5310($gp)
-		addiu   $t1, $gp, -0x5370
-		ulw     $t2, 0($t1)
-		lh      $t3, 4($t1)
-		usw     $t2, 0x50 + var_38($sp)
-		sh      $t3, 0x50 + var_34($sp)
-		lw      $t2, 0($v0)
-		lw      $t3, 4($v0)
-		lw      $t4, 8($v0)
-		lw      $t1, 0xC($v0)
-		sw      $t2, 0x50 + var_30($sp)
-		sw      $t3, 0x50 + var_2C($sp)
-		sw      $t4, 0x50 + var_28($sp)
-		sw      $t1, 0x50 + var_24($sp)
-		lw      $t2, 0x10($v0)
-		lw      $t3, 0x14($v0)
-		lw      $t4, 0x18($v0)
-		lw      $t1, 0x1C($v0)
-		sw      $t2, 0x50 + var_20($sp)
-		sw      $t3, 0x50 + var_1C($sp)
-		sw      $t4, 0x50 + var_18($sp)
-		sw      $t1, 0x50 + var_14($sp)
 		lw      $v0, 0x44($s4)
 		nop
 		blez    $v0, loc_8002F010
@@ -1363,8 +1366,54 @@ void GAMELOOP_DisplayFrame(struct GameTracker* gameTracker)
 				//loc_8002FB24
 				if (draw != 0)
 				{
+					//a0 = cliprect.x
+					///@MACRO
+					int v1 = ((cliprect.x << 2) + cliprect.x) << 6;
+					if (v1 < 0)
+					{
+						v1 += SCREEN_WIDTH-1;
+					}
+					//loc_8002FB4C
+					theCamera.core.leftX = v1 >> 9;
 
+					int v0 = ((cliprect.x << 2) + cliprect.x) << 6;
+					if (v1 < 0)
+					{
+						v1 += SCREEN_WIDTH - 1;
+					}
+					//loc_8002FB4C
+					theCamera.core.leftX = v1 >> 9;
+
+					v0 = cliprect.x + cliprect.w;
+
+					v1 = (((v0 << 2) + v0) << 6);
+
+					//a1 = cliprect.y
+					theCamera.core.topY = cliprect.y;
+
+					if (v1 < 0)
+					{
+						v1 += SCREEN_WIDTH - 1;
+					}
+
+					//t0 = &theCamera.core.leftX
+					//v1 = cliprect.h
+					theCamera.core.rightX = v1 >> 9;
+					theCamera.core.bottomY = cliprect.y + cliprect.h;
+
+					CAMERA_SetViewVolume(&theCamera);
+
+					SetRotMatrix(theCamera.core.wcTransform);
+					
+					SetTransMatrix(theCamera.core.wcTransform);
+
+					if ((((short*)mainLevel->terrain->StreamUnits + 17)[0] & 0x1))
+					{
+
+					}
+					//loc_8002FC24
 				}
+				//loc_8002FC64
 			}
 			//loc_8002FC8C
 		}
@@ -1372,50 +1421,6 @@ void GAMELOOP_DisplayFrame(struct GameTracker* gameTracker)
 	}
 	//loc_8002FD78
 #if 0
-
-		lh      $a0, 0x38 + var_20($sp)
-		nop
-		sll     $v0, $a0, 2
-		addu    $v0, $a0
-		sll     $v1, $v0, 6
-		bgez    $v1, loc_8002FB4C
-		nop
-		addiu   $v1, 0x1FF
-
-		loc_8002FB4C:
-	lh      $v0, 0x38 + var_1C($sp)
-		lh      $a1, 0x38 + var_1E($sp)
-		sra     $v1, 9
-		sw      $v1, -0x52D0($gp)
-		addu    $v0, $a0, $v0
-		sll     $v1, $v0, 2
-		addu    $v1, $v0
-		sll     $v0, $v1, 6
-		sw      $a1, -0x52C8($gp)
-		bgez    $v0, loc_8002FB7C
-		nop
-		addiu   $v0, 0x1FF
-
-		loc_8002FB7C:
-	addiu   $t0, $gp, -0x52D0
-		lh      $v1, 0x38 + var_1A($sp)
-		sra     $v0, 9
-		sw      $v0, -0x52CC($gp)
-		addu    $v1, $a1, $v1
-		sw      $v1, -0x52C4($gp)
-		jal     sub_80014F00
-		addiu   $a0, $t0, -0xA0
-		lw      $a0, -0x5310($gp)
-		jal     SetRotMatrix
-		nop
-		lw      $a0, -0x5310($gp)
-		jal     SetTransMatrix
-		nop
-		lhu     $v0, 0($s7)
-		nop
-		andi    $v0, 1
-		beqz    $v0, loc_8002FC24
-		nop
 		lhu     $v0, 6($fp)
 		nop
 		andi    $v0, 8

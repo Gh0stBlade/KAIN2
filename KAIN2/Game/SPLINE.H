@@ -1,6 +1,8 @@
 #ifndef SPLINE_H
 #define SPLINE_H
 
+#include "gex2.h"
+
 struct SplineKey // hashcode: 0x5D3D994D (dec: 1564318029)
 {
 	short count; // size=0, offset=0

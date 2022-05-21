@@ -1,6 +1,9 @@
 #ifndef GEX_H
 #define GEX_H
 
+struct _Instance;
+struct _G2Anim_Type;
+
 enum _G2AnimCallbackMsg_Enum // Hashcode: 0xA8F4A89C (dec: -1460361060)
 {
 	G2ANIM_MSG_DONE = 1,
@@ -153,4 +156,5 @@ struct _G2Anim_Type // hashcode: 0xF35FCCD2 (dec: -211825454)
 	unsigned long disabledBits[3]; // size=12, offset=24
 	struct _G2AnimSection_Type section[3]; // size=144, offset=36
 };
+
 #endif

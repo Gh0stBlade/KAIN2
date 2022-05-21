@@ -219,7 +219,7 @@ struct DebugMenuLine debugSpecialAbilitiesMenu[10] =
 		0,
 		0,
 		"ALL",
-		(long*)debugRazielFlags1,
+		(long*)&debugRazielFlags1,
 		0x3f
 	},
 	{
@@ -227,7 +227,7 @@ struct DebugMenuLine debugSpecialAbilitiesMenu[10] =
 		0,
 		0,
 		"PASS THROUGH BARRIERS",
-		(long*)debugRazielFlags1,
+		(long*)&debugRazielFlags1,
 		0x1
 	},
 	{
@@ -235,7 +235,7 @@ struct DebugMenuLine debugSpecialAbilitiesMenu[10] =
 		0,
 		0,
 		"WALL CRAWLING",
-		(long*)debugRazielFlags1,
+		(long*)&debugRazielFlags1,
 		0xb
 	},
 	{
@@ -243,7 +243,7 @@ struct DebugMenuLine debugSpecialAbilitiesMenu[10] =
 		0,
 		0,
 		"FORCE",
-		(long*)debugRazielFlags1,
+		(long*)&debugRazielFlags1,
 		0xf
 	},
 	{
@@ -251,7 +251,7 @@ struct DebugMenuLine debugSpecialAbilitiesMenu[10] =
 		0,
 		0,
 		"SOUL REAVER",
-		(long*)debugRazielFlags1,
+		(long*)&debugRazielFlags1,
 		0x9
 	},
 	{
@@ -259,7 +259,7 @@ struct DebugMenuLine debugSpecialAbilitiesMenu[10] =
 		0,
 		0,
 		"SWIM",
-		(long*)debugRazielFlags1,
+		(long*)&debugRazielFlags1,
 		0x1f
 	},
 	{
@@ -267,7 +267,7 @@ struct DebugMenuLine debugSpecialAbilitiesMenu[10] =
 		0,
 		0,
 		"CONSTRICT",
-		(long*)debugRazielFlags1,
+		(long*)&debugRazielFlags1,
 		0x3f
 	},
 	{
@@ -303,7 +303,7 @@ struct DebugMenuLine debugForgedAbilitiesMenu[7] =
 		0,
 		0,
 		"ALL",
-		(long*)debugRazielFlags1,
+		(long*)&debugRazielFlags1,
 		0x3fc00
 	},
 	{
@@ -311,7 +311,7 @@ struct DebugMenuLine debugForgedAbilitiesMenu[7] =
 		0,
 		0,
 		"Spectral Reaver",
-		(long*)debugRazielFlags1,
+		(long*)&debugRazielFlags1,
 		0x400
 	},
 	{
@@ -319,7 +319,7 @@ struct DebugMenuLine debugForgedAbilitiesMenu[7] =
 		0,
 		0,
 		"Material Reaver",
-		(long*)debugRazielFlags1,
+		(long*)&debugRazielFlags1,
 		0x800
 	},
 	{
@@ -327,7 +327,7 @@ struct DebugMenuLine debugForgedAbilitiesMenu[7] =
 		0,
 		0,
 		"Fire Reaver",
-		(long*)debugRazielFlags1,
+		(long*)&debugRazielFlags1,
 		0x8000
 	},
 	{
@@ -363,7 +363,7 @@ struct DebugMenuLine debugGlyphAbilitiesMenu[11] =
 		0,
 		0,
 		"ALL",
-		(long*)debugRazielFlags1,
+		(long*)&debugRazielFlags1,
 		0x3fc00
 	},
 	{
@@ -371,7 +371,7 @@ struct DebugMenuLine debugGlyphAbilitiesMenu[11] =
 		0,
 		0,
 		"Spectral Reaver",
-		(long*)debugRazielFlags1,
+		(long*)&debugRazielFlags1,
 		0x400
 	},
 	{
@@ -379,7 +379,7 @@ struct DebugMenuLine debugGlyphAbilitiesMenu[11] =
 		0,
 		0,
 		"Material Reaver",
-		(long*)debugRazielFlags1,
+		(long*)&debugRazielFlags1,
 		0x800
 	},
 	{
@@ -387,7 +387,7 @@ struct DebugMenuLine debugGlyphAbilitiesMenu[11] =
 		0,
 		0,
 		"Fire Reaver",
-		(long*)debugRazielFlags1,
+		(long*)&debugRazielFlags1,
 		0x8000
 	},
 	{
@@ -423,7 +423,7 @@ struct DebugMenuLine debugImbueSoulReaverMenu[7] =
 		0,
 		0,
 		"Hold Soul Reaver",
-		(long*)debugRazielFlags1,
+		(long*)&debugRazielFlags1,
 		0x8
 	},
 	{
@@ -431,7 +431,7 @@ struct DebugMenuLine debugImbueSoulReaverMenu[7] =
 		0,
 		0,
 		"Spectral Reaver",
-		(long*)debugRazielFlags2,
+		(long*)&debugRazielFlags2,
 		0x400
 	},
 	{
@@ -439,7 +439,7 @@ struct DebugMenuLine debugImbueSoulReaverMenu[7] =
 		0,
 		0,
 		"Material Reaver",
-		(long*)debugRazielFlags2,
+		(long*)&debugRazielFlags2,
 		0x800
 	},
 	{
@@ -447,7 +447,7 @@ struct DebugMenuLine debugImbueSoulReaverMenu[7] =
 		0,
 		0,
 		"Fire Reaver",
-		(long*)debugRazielFlags2,
+		(long*)&debugRazielFlags2,
 		0x8000
 	},
 	{

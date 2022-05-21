@@ -33,7 +33,9 @@ void GlyphInit(struct _Instance* instance, struct GameTracker* gameTracker)
 		data = (struct __GlyphData*)MEMPACK_Malloc(sizeof(__GlyphData), 0x1D);
 
 		instance->extraData = data;
+		
 		InitMessageQueue(&data->messages);
+
 		EnMessageQueueData(&data->messages, 0x100001, 0);
 
 		data->process = &_GlyphOffProcess;

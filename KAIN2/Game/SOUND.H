@@ -1,6 +1,14 @@
 #ifndef SOUND_H
 #define SOUND_H
 
+struct _AnimSoundData_Type 
+{
+	short sfxToneID; // size=0, offset=0
+	short volume; // size=0, offset=2
+	short pitch; // size=0, offset=4
+	short minVolDistance; // size=0, offset=6
+};
+
 struct MusicLoadCmd // hashcode: 0x575883B8 (dec: 1465418680)
 {
 	int type; // size=0, offset=0

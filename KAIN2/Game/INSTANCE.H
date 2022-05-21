@@ -3,8 +3,10 @@
 
 #include "CORE.H"
 #include "SPLINE.H"
+#include "GAMELOOP.H"
 
 typedef struct _Instance _Instance;
+struct _SavedIntro;
 
 struct _HFace 
 {
@@ -128,17 +130,6 @@ struct _HModel
 {
 	struct _HPrim* hPrimList; // size=8, offset=0
 	long numHPrims; // size=0, offset=4
-};
-
-struct LightInstance // hashcode: 0xB8D5E61F (dec: -1193941473)
-{
-	struct _Instance* lightInstance; // size=0, offset=0
-	long r; // size=0, offset=4
-	long g; // size=0, offset=8
-	long b; // size=0, offset=12
-	short radius; // size=0, offset=16
-	unsigned char segment; // size=0, offset=18
-	unsigned char flags; // size=0, offset=19
 };
 
 struct SoundInstance // hashcode: 0xFF235679 (dec: -14461319)

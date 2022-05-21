@@ -2,6 +2,7 @@
 #define GAMELOOP_H
 
 #include "CORE.H"
+#include "G2TYPES.H"
 
 struct PointLight 
 {
@@ -54,7 +55,7 @@ typedef struct _PrimPool // hashcode: 0x9529B283 (dec: -1792429437)
 	unsigned long prim[24000]; // size=96000, offset=12
 } _PrimPool;
 
-typedef struct GameTracker // hashcode: 0x4EB3EFC5 (dec: 1320415173)
+struct GameTracker // hashcode: 0x4EB3EFC5 (dec: 1320415173)
 {
 	struct _GameData_Type gameData; // size=32, offset=0
 	struct menu_t* menu; // size=0, offset=32
@@ -169,7 +170,7 @@ typedef struct GameTracker // hashcode: 0x4EB3EFC5 (dec: 1320415173)
 	short frameRate24fps; // size=0, offset=620
 	char monster_collide_override; // size=0, offset=622
 	char pad; // size=0, offset=623
-} GameTracker;
+};
 
 #if defined(_LANGUAGE_C_PLUS_PLUS) || defined(__cplusplus) || defined(c_plusplus)
 extern "C" {

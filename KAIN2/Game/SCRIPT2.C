@@ -1,17 +1,16 @@
-#include "CORE.H"
 #include "SCRIPT2.H"
 
 // PROTOTYPE CODE
 // this is on pc but doesn't exist on psx at all
 
-void __cdecl UpdraftInit(struct _Instance* a1)
+void UpdraftInit(struct _Instance* a1)
 {
 #if defined(PC_VERSION)
 	a1->currentMainState = 0;
 #endif
 }
 
-void __cdecl UpdraftProcess(struct _Instance* a1)
+void UpdraftProcess(struct _Instance* a1)
 {
 #if defined(PC_VERSION)
 	if (a1->currentMainState == 1)
@@ -19,7 +18,7 @@ void __cdecl UpdraftProcess(struct _Instance* a1)
 #endif
 }
 
-void __cdecl UpdraftCollide(struct _Instance* a1, struct GameTracker* a2)
+void UpdraftCollide(struct _Instance* a1, struct GameTracker* a2)
 {
 #if defined(PC_VERSION)
 	BYTE* collideInfo; // eax

@@ -3,6 +3,8 @@
 
 #include "MENU/MENUFACE.H"
 
+struct Object;
+
 struct VramBuffer 
 {
 	long flags; // size=0, offset=0
@@ -28,10 +30,11 @@ struct _BlockVramEntry // hashcode: 0x24B2FBC5 (dec: 615709637)
 	short w; // size=0, offset=16
 	short h; // size=0, offset=18
 	long area; // size=0, offset=20
-	union {
+	union 
+	{
 		struct _StreamUnit* streamUnit; // size=64, offset=0
 		struct _ObjectTracker* streamObject; // size=36, offset=0
-		_ButtonTexture* button; // size=16, offset=0
+		struct _ButtonTexture* button; // size=16, offset=0
 	} udata; // size=4, offset=24
 #else
 	struct _BlockVramEntry* next; // size=28, offset=0
