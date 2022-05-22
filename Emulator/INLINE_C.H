@@ -126,16 +126,10 @@ extern int gte_ldlzc(int input);
 	:							\
 	: "r"( r0 ) )
 
-#define gte_ldsv( r0 ) __asm__ volatile (			\
-	"lhu	$12, 0( %0 );"					\
-	"lhu	$13, 2( %0 );"					\
-	"lhu	$14, 4( %0 );"					\
-	"mtc2	$12, $9;"					\
-	"mtc2	$13, $10;"					\
-	"mtc2	$14, $11"					\
-	:							\
-	: "r"( r0 )						\
-	: "$12", "$13", "$14" )
+#define gte_ldsv( r0 )	\
+	((int*)&IR1)[0] = ((unsigned short*)&r0)[0];       \
+	((int*)&IR2)[0] = ((unsigned short*)&r0)[1];       \
+	((int*)&IR3)[0] = ((unsigned short*)&r0)[2];
 
 #define gte_ldbv( r0 ) __asm__ volatile (			\
 	"lbu	$12, 0( %0 );"					\
@@ -782,10 +776,8 @@ extern int gte_ldlzc(int input);
 #define gte_gpf0() \
 	docop2(0x190003D);
 
-#define gte_gpl12() __asm__ volatile (				\
-	"nop;"							\
-	"nop;"							\
-	".word 0x0000133f" )
+#define gte_gpl12() \
+	docop2(0x01A8003E);
 
 #define gte_gpl0() __asm__ volatile (				\
 	"nop;"							\
