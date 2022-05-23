@@ -405,7 +405,3 @@ void _G2Anim_FreeInterpStateBlockList(struct _G2AnimInterpStateBlock_Type *block
 		block = nextBlock;
 	}
 }
-
-
-
-
