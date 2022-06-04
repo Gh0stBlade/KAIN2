@@ -998,7 +998,6 @@ void _G2AnimSection_UpdateStoredFrameFromData(struct _G2AnimSection_Type *sectio
 		section->flags |= 0x80;
 
 		section->storedTime = section->elapsedTime;
-
 	}
 }
 
