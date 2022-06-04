@@ -761,7 +761,7 @@ void INSTANCE_CleanUpInstanceList(struct _InstanceList* list, long reset)
 		instance = next;
 	}
 
-	do
+	while (instance != NULL)
 	{
 		next = instance->next;
 
@@ -771,8 +771,7 @@ void INSTANCE_CleanUpInstanceList(struct _InstanceList* list, long reset)
 		}
 
 		instance = next;
-
-	} while (instance != NULL);
+	}
 }
 
 long INSTANCE_Introduced(struct Intro* intro, short streamUnitID)
