@@ -156,8 +156,10 @@ void GAMELOOP_ClearGameTracker()
 
 void GAMELOOP_CalcGameTime()
 {
-	long time; // $a1
+	long time;
 
+	time = (gameTrackerX.currentTimeOfDayTime * gameTrackerX.multGameTime) / 60000;
+	gameTrackerX.timeOfDay = (((((time + 720) / 60) % 24) * 100) + ((time + 720) % 60));
 }
 
 
