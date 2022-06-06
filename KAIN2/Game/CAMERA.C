@@ -733,9 +733,9 @@ unsigned long CAMERA_QueryMode(struct Camera *camera)
 			if (combat_cam_debounce > 0)
 			{
 				combat_cam_debounce--;
-			}
 
-			mode |= 0x2000000;
+				mode |= 0x2000000;
+			}
 		}
 	}
 	else
