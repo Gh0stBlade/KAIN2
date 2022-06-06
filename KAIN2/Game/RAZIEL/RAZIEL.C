@@ -1274,7 +1274,7 @@ unsigned long RazielQuery(struct _Instance *instance, unsigned long Query)
 	{
 		if (instance->oldMatrix != NULL)
 		{
-			return (unsigned long)instance->oldMatrix +
+			return (unsigned long)&instance->oldMatrix[15];
 		}
 		else
 		{
@@ -1286,7 +1286,7 @@ unsigned long RazielQuery(struct _Instance *instance, unsigned long Query)
 	{
 		if (instance->oldMatrix != NULL)
 		{
-			return (unsigned long)&instance->oldMatrix[15];
+			return (unsigned long)&instance->oldMatrix[0];
 		}
 		else
 		{
