@@ -4,6 +4,17 @@
 #include "CORE.H"
 #include "MONSTER/MONAPI.H"
 
+struct PlayerSaveData 
+{
+	unsigned long abilities; // size=0, offset=0
+	unsigned long currentPlane; // size=0, offset=4
+	unsigned long healthScale; // size=0, offset=8
+	unsigned long healthBalls; // size=0, offset=12
+	unsigned short manaBalls; // size=0, offset=16
+	unsigned short manaMax; // size=0, offset=18
+	unsigned long playerEventHistory; // size=0, offset=20
+};
+
 struct _SmallRotation 
 {
 	short x; // size=0, offset=0
