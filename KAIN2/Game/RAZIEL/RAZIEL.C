@@ -1218,18 +1218,23 @@ unsigned long RazielQuery(struct _Instance *instance, unsigned long Query)
 	switch (Query)
 	{
 	case 1:
+	{
 		return 1;
 		break;
+	}
 	case 9:
+	{
 		return WaterStatus;
 		break;
+	}
 	case 6:
-		
+	{
 		return SetPositionData(instance->position.x, instance->position.y, instance->position.z);
 
 		break;
+	}
 	case 7:
-		
+	{
 		if (Raziel.steeringMode == 4)
 		{
 			return SetPositionData(instance->rotation.x, instance->rotation.y, Raziel.steeringLockRotation);
@@ -1238,9 +1243,11 @@ unsigned long RazielQuery(struct _Instance *instance, unsigned long Query)
 		{
 			return SetPositionData(instance->rotation.x, instance->rotation.y, instance->rotation.z);
 		}
-		
+
 		break;
+	}
 	case 8:
+	{
 		if (ExtraRot != NULL)
 		{
 			return (unsigned long)ExtraRot;
@@ -1250,23 +1257,33 @@ unsigned long RazielQuery(struct _Instance *instance, unsigned long Query)
 			return NULL;
 		}
 		break;
+	}
 	case 10:
+	{
 		return Raziel.Mode;
+
 		break;
+	}
 	case 11:
+	{
 		return Raziel.CurrentPlane;
+	
 		break;
+	}
 	case 12:
+	{
 		if (instance->oldMatrix != NULL)
 		{
-			return (unsigned long)instance->oldMatrix + 
+			return (unsigned long)instance->oldMatrix +
 		}
 		else
 		{
 			return NULL;
 		}
 		break;
+	}
 	case 13:
+	{
 		if (instance->oldMatrix != NULL)
 		{
 			return (unsigned long)&instance->oldMatrix[15];
@@ -1275,10 +1292,13 @@ unsigned long RazielQuery(struct _Instance *instance, unsigned long Query)
 		{
 			return NULL;
 		}
+
 		break;
+	}
 	case 16:
+	{
 		Ptr = (struct _Normal*)CIRC_Alloc(sizeof(_Normal));
-		
+
 		if (Raziel.Mode == 0x40000)
 		{
 			Ptr->x = instance->matrix[1].m[0][2];
@@ -1291,14 +1311,15 @@ unsigned long RazielQuery(struct _Instance *instance, unsigned long Query)
 			Ptr->y = -instance->matrix[0].m[1][1];
 			Ptr->z = -instance->matrix[0].m[2][1];
 		}
-		
-		return (unsigned long)Ptr;
-		
-		break;
-	case 19:
 
+		return (unsigned long)Ptr;
+
+		break;
+	}
+	case 19:
+	{
 		ability = Raziel.Abilities & 0x1FC0000;
-		
+
 		if ((STREAM_GetLevelWithID(instance->currentStreamUnitID)->unitFlags & 0x800) || RAZIEL_OkToShift() == 0)
 		{
 			ability &= 0xFEFFFFFF;
@@ -1308,13 +1329,15 @@ unsigned long RazielQuery(struct _Instance *instance, unsigned long Query)
 		{
 			ability &= 0x1000000;
 		}
-		
+
 		return ability;
-		
+
 		break;
+	}
 	case 24:
-		int ret =  SetControlSaveDataData(sizeof(PlayerSaveData), &data);
-		
+	{
+		int ret = SetControlSaveDataData(sizeof(PlayerSaveData), &data);
+
 		data.abilities = Raziel.Abilities;
 		data.currentPlane = Raziel.CurrentPlane;
 		data.healthScale = Raziel.HealthScale;
@@ -1324,21 +1347,24 @@ unsigned long RazielQuery(struct _Instance *instance, unsigned long Query)
 		data.playerEventHistory = Raziel.playerEventHistory;
 
 		return ret;
-		
+
 		break;
+	}
 	case 31:
+	{
 
 		return Raziel.HealthBalls;
-		
-		break;
-	case 32:
 
+		break;
+	}
+	case 32:
+	{
 		return Raziel.GlyphManaBalls;
 
 		break;
-
+	}
 	case 34:
-		
+	{
 		if ((Raziel.Senses.EngagedMask & 0x40))
 		{
 			return ((unsigned long*)Raziel.Senses.EngagedList)[12];
@@ -1349,56 +1375,57 @@ unsigned long RazielQuery(struct _Instance *instance, unsigned long Query)
 		}
 
 		break;
-
+	}
 	case 38:
-
+	{
 		shadowData = (struct evShadowSegmentData*)SetShadowSegmentData(2);
 		shadowData->shadowSegments[0] = 12;
 		shadowData->shadowSegments[1] = 8;
 
 		break;
-
+	}
 	case 39:
-
+	{
 		return Raziel.Senses.EngagedMask;
 
 		break;
-
+	}
 	case 41:
-
+	{
 		return Raziel.playerEvent;
 
 		break;
-
+	}
 	case 42:
-
+	{
 		return Raziel.playerEventHistory;
 
 		break;
-
+	}
 	case 43:
-
+	{
 		return (Raziel.HitPoints ^ GetMaxHealth()) < 1;
 
 		break;
-
+	}
 	case 44:
-
+	{
 		return (unsigned long)razGetHeldItem();
 
 		break;
-
+	}
 	case 45:
-
+	{
 		return Raziel.GlyphManaMax;
 
 		break;
-
+	}
 	case 46:
-
+	{
 		return Raziel.invincibleTimer;
 
 		break;
+	}
 	}
 	
 	return 0;
