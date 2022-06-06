@@ -2906,8 +2906,11 @@ void DpqColor(CVECTOR* v0, long p, CVECTOR* v1)
 
 VECTOR* ApplyMatrix(MATRIX* m, SVECTOR* v0, VECTOR* v1)
 {
-    UNIMPLEMENTED();
-    return NULL;
+    gte_SetRotMatrix(m);
+    gte_ldv0(v0);
+    gte_rtv0();
+    gte_stlvnl(v1);
+    return v1;
 }
 
 void ApplyMatrixLV(MATRIX* mat, VECTOR* v0, VECTOR* v1)
