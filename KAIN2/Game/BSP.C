@@ -28,6 +28,8 @@ void SBSP_IntroduceInstances(struct _Terrain *terrain, int unitID)
 // void /*$ra*/ SBSP_IntroduceInstancesAndLights(struct _Terrain *terrain /*$a0*/, struct _CameraCore_Type *cameraCore /*$a1*/, struct LightInfo *lightInfo /*$a2*/, int unitID /*$a3*/)
 void SBSP_IntroduceInstancesAndLights(struct _Terrain *terrain, struct _CameraCore_Type *cameraCore, struct LightInfo *lightInfo, int unitID)
 { // line 563, offset 0x8003d98c
+
+#if defined(PC_VERSION)
 	struct Intro* introList; // esi
 	int numIntros; // edi
 	int flags; // eax
@@ -45,6 +47,7 @@ void SBSP_IntroduceInstancesAndLights(struct _Terrain *terrain, struct _CameraCo
 			--numIntros;
 		} while (numIntros);
 	}
+#endif
 }
 
 

@@ -31,6 +31,7 @@
 #include "GLYPH.H"
 #include "PSX/DRAWS.H"
 #include "PSX/COLLIDES.H"
+#include "BSP.H"
 
 char* primBase;
 unsigned long(**gOt[2]); // offset 0x800D0C0C

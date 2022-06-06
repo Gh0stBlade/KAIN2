@@ -147,15 +147,7 @@ struct BSPScratch // hashcode: 0x17CFF45B (dec: 399504475)
 
 typedef struct _SBSPLeaf SBSPLeaf;
 
-#if defined(_LANGUAGE_C_PLUS_PLUS) || defined(__cplusplus) || defined(c_plusplus)
-extern "C" {
-#endif
-
 extern void SBSP_IntroduceInstances(struct _Terrain *terrain, int unitID); // 0x8003D928
 extern void SBSP_IntroduceInstancesAndLights(struct _Terrain *terrain, struct _CameraCore_Type *cameraCore, struct LightInfo *lightInfo, int unitID); // 0x8003D98C
-
-#if defined(_LANGUAGE_C_PLUS_PLUS) || defined(__cplusplus) || defined(c_plusplus)
-}
-#endif
 
 #endif
