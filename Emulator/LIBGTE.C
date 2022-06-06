@@ -2904,6 +2904,12 @@ void DpqColor(CVECTOR* v0, long p, CVECTOR* v1)
     v1->cd = CD2;
 }
 
+VECTOR* ApplyMatrix(MATRIX* m, SVECTOR* v0, VECTOR* v1)
+{
+    UNIMPLEMENTED();
+    return NULL;
+}
+
 void ApplyMatrixLV(MATRIX* mat, VECTOR* v0, VECTOR* v1)
 {
     int t0;

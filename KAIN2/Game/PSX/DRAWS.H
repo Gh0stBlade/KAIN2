@@ -146,7 +146,7 @@ extern void OK() ; // 0x80026B04
 
 extern void no_depthQ2() ; // 0x80026BBC
 
-extern void DRAW_DisplayPolytopeList_S();
+extern unsigned long* DRAW_DisplayPolytopeList_S(struct _PolytopeList* polytopeList, struct _Terrain* terrain, struct Camera* camera, struct _PrimPool* primPool, unsigned long** drawot, struct _Position* globalOffset);
 
 //extern void DRAW_DisplayPolytopeList_S(struct _VertexPool*, struct _Terrain*, struct Camera*, struct _PrimPool*, unsigned int**, _Position*) ; // 0x80026BD4
 

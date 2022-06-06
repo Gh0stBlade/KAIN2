@@ -52,6 +52,7 @@ extern int rsin(int a);
 extern int rcos(int a);
 extern long DivideFT4(SVECTOR* v0, SVECTOR* v1, SVECTOR* v2, SVECTOR* v3, long* sxy0, long* sxy1, long* sxy2, long* sxy3, CVECTOR* col0, POLY_FT4* poly, long otz, DIVPOLYGON4* divp4);
 extern void DpqColor(CVECTOR* v0, long p, CVECTOR* v1);
+extern VECTOR* ApplyMatrix(MATRIX* m, SVECTOR* v0, VECTOR* v1);
 extern void ApplyMatrixLV(MATRIX* mat, VECTOR* v0, VECTOR* v1);
 extern SVECTOR* ApplyMatrixSV(MATRIX* m, SVECTOR* v0, SVECTOR* v1);
 extern void CompMatrixLV(MATRIX* m0, MATRIX* m1, MATRIX* m2);
