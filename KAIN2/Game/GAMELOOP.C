@@ -32,6 +32,7 @@
 #include "PSX/DRAWS.H"
 #include "PSX/COLLIDES.H"
 #include "BSP.H"
+#include <assert.h>
 
 char* primBase;
 unsigned long(**gOt[2]); // offset 0x800D0C0C
@@ -1509,8 +1510,6 @@ void GAMELOOP_DisplayFrame(struct GameTracker* gameTracker)
 
 	GAMELOOP_HandleScreenWipes(drawot);
 
-	(GetRCnt(0xF2000000) & 0xFFFF) | (gameTimer << 16);
-
 	gameTracker->drawTimerReturn = (long*)&gameTracker->drawTime;
 	gameTracker->usecsStartDraw = (GetRCnt(0xF2000000) & 0xFFFF) | (gameTimer << 16);
 
@@ -1520,7 +1519,11 @@ void GAMELOOP_DisplayFrame(struct GameTracker* gameTracker)
 	}
 	else
 	{
+#if defined(USE_32_BIT_ADDR)
+		DrawOTag((unsigned long*)drawot + 3071 * 2);
+#else
 		DrawOTag((unsigned long*)drawot + 3071);
+#endif
 	}
 }
 
