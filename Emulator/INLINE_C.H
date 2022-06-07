@@ -463,10 +463,8 @@ extern int gte_ldlzc(int input);
 	* Type 2 functions
 	*/
 
-#define gte_rtps() __asm__ volatile (				\
-	"nop;"							\
-	"nop;"							\
-	".word 0x0000007f" )
+#define gte_rtps() \
+	docop2(0x0180001);
 
 #define gte_rtpt() __asm__ volatile (				\
 	"nop;"							\
@@ -879,11 +877,8 @@ extern int gte_ldlzc(int input);
 	  * Type 3 functions
 	  */
 
-#define gte_stsxy( r0 ) __asm__ volatile (			\
-	"swc2	$14, 0( %0 )"					\
-	:							\
-	: "r"( r0 )						\
-	: "memory" )
+#define gte_stsxy( r0 )                      \
+	((int*)&r0)[0] = SXY2;       \
 
 #define gte_stsxy3( r0, r1, r2 ) __asm__ volatile (		\
 	"swc2	$12, 0( %0 );"					\
