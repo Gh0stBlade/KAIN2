@@ -555,18 +555,18 @@ void AdjustVramCoordsObject(int oldx, int oldy, int newx, int newy, struct Objec
 
 			while (texture < model->endTextures)
 			{
-				oldtpagexoffset = (newx & 0xFFFFFFC0) - (((texture->tpage & 0xF) << 6) - (oldx & 0xFFFFFFC0));
+				oldtpagexoffset = (newx & 0xFFFFFFC0) + (((texture->tpage & 0xF) << 6) - (oldx & 0xFFFFFFC0));
 				oldtpageyoffset = newy - (((texture->tpage & 0x10) << 4) - (oldy & 0xFFFFFF00));
 
-				newtpage = getTPage(0, 0, oldtpagexoffset, oldtpageyoffset);
+				newtpage = (texture->tpage & 0x1E0) | getTPage(0, 0, oldtpagexoffset, oldtpageyoffset);
 
 				texture->v0 += diffy;
 				texture->v2 += diffy;
 
 				texture->v1 += diffy;
-				texture->u0 = (texture->clut & 0xFF) + (diffx << (2 - ((texture->tpage >> 7) & 0x3)));
+				texture->u0 += diffx << (2 - ((texture->tpage >> 7) & 0x3));
 
-				oldclutxoffset = ((texture->clut & 0x3F) << 4) - oldx & 0xFFFFFFF0;
+				oldclutxoffset = (newx & 0xFFFFFFF0) + (((texture->clut & 0x3F) << 4) - (oldx & 0xFFFFFFF0));
 				oldclutyoffset = newy + ((texture->clut >> 6) - oldy);
 
 				newclut = getClut(oldclutxoffset, oldclutyoffset);
