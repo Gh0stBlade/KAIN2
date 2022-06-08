@@ -119,8 +119,8 @@ extern unsigned short SpecialFogClut;
 extern FontPos fontPos[79];
 extern char charMap[92][3];
 extern struct Object* fontsObject;
-
 extern struct _BlockVramEntry* FONT_vramBlock; // offset 0x800D05E4
+extern struct FontTracker fontTracker;
 
 extern void FONT_MakeSpecialFogClut(int x, int y); // 0x8002CB74
 extern void FONT_Init(); // 0x8002CBF8

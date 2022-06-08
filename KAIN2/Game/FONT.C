@@ -1035,15 +1035,26 @@ char byte_C549E0[512];
 void FONT_Print(const char *fmt, ...)
 {
 #ifdef PSX_VERSION
-	//-8+arg_0 = a0
-	//-8+arg_4 = a1
-	//-8+arg_8 = a2
-	//-8+arg_c = a3
+	char* hold;
+	va_list ap;
 
-	//a1 = fmt
-	//0x10+arg_0 = a0
-	//a0 = &fp_str[0];
-	//s0 = 0x10+arg_4
+	va_start(ap, fmt);
+	vsprintf(fp_str, fmt, ap);
+	va_end(ap);
+
+	hold = fp_str;
+
+	while (*hold != 0)
+	{
+		if ((*hold - 65 < 26))
+		{
+			*hold += 32;
+		}
+
+		hold++;
+	}
+
+	FONT_VaReallyPrint(fp_str, ap);
 #else
 
 	char* v1; // ecx
