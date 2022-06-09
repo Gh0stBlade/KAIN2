@@ -857,10 +857,10 @@ void aadProcessLoadQueue()
 				}
 				else
 				{
-					eprinterr("Name3: %s\n", info->snfFileName);
-
 					sprintf(info->snfFileName, "\\kain2\\sfx\\object\\%s\\%s.snf", loadReq->fileName, loadReq->fileName);
 					sprintf(info->smfFileName, "\\kain2\\sfx\\object\\%s\\%s.smf", loadReq->fileName, loadReq->fileName);
+				
+					eprinterr("Name3: %s\n", info->snfFileName);
 				}
 				
 				info->fileHandle = loadReq->handle;
