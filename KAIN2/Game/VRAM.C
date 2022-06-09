@@ -556,7 +556,7 @@ void AdjustVramCoordsObject(int oldx, int oldy, int newx, int newy, struct Objec
 			while (texture < model->endTextures)
 			{
 				oldtpagexoffset = (newx & 0xFFFFFFC0) + (((texture->tpage & 0xF) << 6) - (oldx & 0xFFFFFFC0));
-				oldtpageyoffset = newy - (((texture->tpage & 0x10) << 4) - (oldy & 0xFFFFFF00));
+				oldtpageyoffset = newy + (((texture->tpage & 0x10) << 4) - (oldy & 0xFFFFFF00));
 
 				newtpage = (texture->tpage & 0x1E0) | getTPage(0, 0, oldtpagexoffset, oldtpageyoffset);
 

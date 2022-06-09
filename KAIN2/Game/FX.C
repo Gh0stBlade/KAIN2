@@ -1487,12 +1487,10 @@ POLY_GT4* FX_SetupPolyGT4(int x1, int y1, int x2, int y2, int otz, struct Textur
 		poly->u2 = texture->u0;
 		poly->v2 = texture->v0;
 
-		poly->code = 0x3C;
-
-		*(int*)&poly->r0 = color0;
+		*(int*)&poly->r0 = color0 | 0x3C000000;
 		*(int*)&poly->r1 = color1;
 		*(int*)&poly->r2 = color2;
-
+		
 		poly->u3 = poly->u1;
 		poly->v3 = poly->v2;
 
@@ -1507,7 +1505,7 @@ POLY_GT4* FX_SetupPolyGT4(int x1, int y1, int x2, int y2, int otz, struct Textur
 		}
 		
 #if defined(USE_32_BIT_ADDR)
-		setlen(drawot[otz * 2], 13);
+		setlen(poly, 12);
 		addPrim(drawot[otz * 2], poly);
 #else
 		setlen(drawot[otz], 12);
@@ -1638,9 +1636,9 @@ void FX_MakeMannaIcon(int x, int y, int xsize, int ysize)
 					break;
 				}
 				}
-			}
 
-			FX_SetupPolyGT4(newx, newy, newx + sizex, newy + sizey, 3, texture, color, color, color, color);
+				FX_SetupPolyGT4(newx, newy, newx + sizex, newy + sizey, 3, texture, color, color, color, color);
+			}
 		}
 	}
 }

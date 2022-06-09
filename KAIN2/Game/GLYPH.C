@@ -4,6 +4,7 @@
 #include "STATE.H"
 #include "FX.H"
 #include "CAMERA.H"
+#include "FONT.H"
 
 short glyph_time;
 short glyph_trigger;
@@ -20,6 +21,11 @@ short HUD_Count_Overall; // offset 0x800d627c
 int warpDraw; // offset 0x800d62a8
 int glowdeg; // offset 0x800d62ac
 int hud_warp_arrow_flash; // offset 0x800d62b0
+short MANNA_Position; // offset 0x800d6270
+short HUD_Captured;
+struct _SVector HUD_Cap_Pos; // offset 0x800d6298
+struct _SVector HUD_Cap_Vel; // offset 0x800d62a0
+
 
 void GlyphInit(struct _Instance* instance, struct GameTracker* gameTracker)
 {
@@ -927,110 +933,88 @@ void HUD_Draw()
 
 		HUD_Update();
 
+		//v0 = MANNA_Position
+		//v1 = 0x87
+
+		offset.x = 0;
+		offset.y = 0;
+		offset.z = 135;
+
+		if (MANNA_Position >= -63)
+		{
+			oldx = fontTracker.font_xpos;
+			oldy = fontTracker.font_ypos;
+			
+			MANNA_Count = INSTANCE_Query(gameTrackerX.playerInstance, 32);
+			MANNA_Max = INSTANCE_Query(gameTrackerX.playerInstance, 45);
+
+			FX_MakeMannaIcon(MANNA_Position, 23, 51, 32);
+
+			FONT_Flush();
+
+			FONT_SetCursor(MANNA_Position + 58, 32);
+
+			if (glyph_cost != -1)
+			{
+				FONT_Print("%d/", glyph_cost);
+			}
+			
+			//loc_8007C93C
+
+			if (MANNA_Count >= MANNA_Max)
+			{
+				FONT_SetColorIndex(2);
+			}
+			//loc_8007C94C
+
+			FONT_Print("%d", MANNA_Count);
+
+			FONT_SetColorIndex(0);
+
+			FONT_SetCursor(oldx, oldy);
+
+			FONT_Flush();
+		}
+		//loc_8007C980
+
+
+		if (HUD_Position >= -999)
+		{
+			//v0 = 6
+			if (HUD_Captured != 0 && gameTrackerX.gameMode != 6)
+			{
+				HUD_Cap_Rot.x = 1024;
+				HUD_Cap_Rot.y = 0;
+				HUD_Cap_Rot.z = 0;
+
+				targetPos.x = -1536;
+				targetPos.y = 2560;
+
+				if (HUD_State < 4)
+				{
+					targetPos.z = 288;
+				}
+				else
+				{
+					targetPos.z = 608;
+				}
+
+				//loc_8007C9E8
+
+				CriticalDampPosition(1, (struct _Position*)&HUD_Cap_Pos, (struct _Position*)&targetPos, &HUD_Cap_Vel, &accl, 128);
+
+				if (HUD_Cap_Vel.x == 0)
+				{
+
+				}
+				//loc_8007CA6C
+			}
+			//loc_8007CA8C
+		}
+		//loc_8007CB88
 	}
 	//loc_8007C730
 #if 0
-
-		lh      $v0, -0x1328($gp)
-		li      $v1, 0x87
-		sh      $zero, 0x50 + var_28($sp)
-		sh      $zero, 0x50 + var_26($sp)
-		slti    $v0, -0x3F
-		bnez    $v0, loc_8007C980
-		sh      $v1, 0x50 + var_24($sp)
-		lw      $a0, -0x420C($gp)
-		lw      $s2, -0x4614($gp)//fontTracker.font_xpos
-		lw      $s3, -0x4610($gp)//fontTracker.font_ypos
-		jal     sub_80034648
-		li      $a1, 0x20  # ' '
-		li      $a1, 0x2D  # '-'
-		lw      $a0, -0x420C($gp)
-		jal     sub_80034648
-		move    $s1, $v0
-		li      $a1, 0x17
-		li      $a2, 0x33  # '3'
-		li      $a3, 0x20  # ' '
-		lh      $a0, -0x1328($gp)
-		jal     sub_80046AF0
-		move    $s0, $v0
-		jal     sub_8002D860
-		nop
-		lhu     $a0, -0x1328($gp)
-		li      $a1, 0x20  # ' '
-		addiu   $a0, 0x3A  # ':'
-		sll     $a0, 16
-		jal     sub_8002D8F0
-		sra     $a0, 16
-		lh      $a1, -0x1320($gp)
-		li      $v0, 0xFFFFFFFF
-		beq     $a1, $v0, loc_8007C93C
-		slt     $v0, $s1, $s0
-		lui     $a0, 0x800D
-		jal     sub_8002D70C
-		li      $a0, dword_800D1A94
-		slt     $v0, $s1, $s0
-
-		loc_8007C93C :
-	bnez    $v0, loc_8007C94C
-		nop
-		jal     sub_8002DAF8
-		li      $a0, 2
-
-		loc_8007C94C :
-		li      $a0, dword_800D1A98
-		jal     sub_8002D70C
-		move    $a1, $s1
-		jal     sub_8002DAF8
-		move    $a0, $zero
-		sll     $a0, $s2, 16
-		sra     $a0, 16
-		sll     $a1, $s3, 16
-		jal     sub_8002D8F0
-		sra     $a1, 16
-		jal     sub_8002D860
-		nop
-
-		loc_8007C980 :
-	lh      $v0, -0x1308($gp)
-		nop
-		slti    $v0, -0x3E7
-		bnez    $v0, loc_8007CB88
-		nop
-		lh      $v0, -0x5B08($gp)
-		nop
-		beqz    $v0, loc_8007CA8C
-		li      $v0, 6
-		lh      $v1, -0x40C6($gp)
-		nop
-		beq     $v1, $v0, loc_8007CA8C
-		li      $v0, 0x400
-		sh      $v0, 0x50 + var_8($sp)
-		li      $v0, 0xFFFFFA00
-		sh      $v0, 0x50 + var_18($sp)
-		lh      $v0, -0x1304($gp)
-		li      $v1, 0xA00
-		sh      $zero, 0x50 + var_6($sp)
-		sh      $zero, 0x50 + var_4($sp)
-		slti    $v0, 4
-		beqz    $v0, loc_8007C9E4
-		sh      $v1, 0x50 + var_14($sp)
-		j       loc_8007C9E8
-		li      $v0, 0x120
-
-		loc_8007C9E4:
-	li      $v0, 0x260
-
-		loc_8007C9E8 :
-		sh      $v0, 0x50 + var_16($sp)
-		li      $a0, 1
-		addiu   $a1, $gp, -0x1300
-		addiu   $a2, $sp, 0x50 + var_18
-		addiu   $a3, $gp, -0x12F8
-		addiu   $v0, $sp, 0x50 + var_10
-		sw      $v0, 0x50 + var_40($sp)
-		li      $v0, 0x80
-		jal     sub_80017334
-		sw      $v0, 0x50 + var_3C($sp)
 		lh      $v0, -0x12F8($gp)
 		nop
 		bnez    $v0, loc_8007CA6C

@@ -130,9 +130,9 @@ void DisplayHintBox(int len, int y)
 
 	for(i = 0; i < 2; i++)
 	{
-		DRAW_TranslucentQuad(ext.xmin - 14, (ext.ymin + ext.ymax) >> 1, ext.xmin, ext.ymax, ext.xmin, ext.ymin, ext.xmax, ext.ymax, 0, 0, 0, 0, gameTrackerX.primPool, gameTrackerX.drawOT + 1);
+		DRAW_TranslucentQuad(ext.xmin - 14, (ext.ymin + ext.ymax) >> 1, ext.xmin, ext.ymax, ext.xmin, ext.ymin, ext.xmax, ext.ymax, 0, 0, 0, 0, gameTrackerX.primPool, &gameTrackerX.drawOT[1 * 2]);
 
-		DRAW_TranslucentQuad(ext.xmin, ext.xmax, ext.ymin, ext.ymax, ext.xmax, ext.ymin, ext.xmax + 14, (ext.ymin + ext.ymax) >> 1, 0, 0, 0, 0, gameTrackerX.primPool, gameTrackerX.drawOT + 1);
+		DRAW_TranslucentQuad(ext.xmin, ext.xmax, ext.ymin, ext.ymax, ext.xmax, ext.ymin, ext.xmax + 14, (ext.ymin + ext.ymax) >> 1, 0, 0, 0, 0, gameTrackerX.primPool, &gameTrackerX.drawOT[1 * 2]);
 	}
 }
 

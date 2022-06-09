@@ -59,7 +59,7 @@ void GAMELOOP_AllocStaticMemory()
 	instancePool = (struct _InstancePool*)MEMPACK_Malloc(sizeof(struct _InstancePool), 6);///@FIXME struct size mis-match on PSX/PSXPC!
 
 #if defined(PSXPC_VERSION)//Increase primitive memory pools to allow 32_BIT_ADDR mode.
-	primBase = MEMPACK_Malloc(216600 * 4, 6);
+	primBase = MEMPACK_Malloc(216600 * 2, 6);
 	gOt[1] = (unsigned long**)(primBase + 12288 * 2);
 	primPool[0] = (_PrimPool*)(primBase + 24576 * 2);
 	gOt[0] = (unsigned long**)(primBase);
@@ -1073,7 +1073,11 @@ void GAMELOOP_AddClearPrim(unsigned long** drawot, int override)
 	{
 		blkfill = (struct BLK_FILL*)gameTrackerX.primPool->nextPrim;
 
+#if defined(USE_32_BIT_ADDR)
+		blkfill->len = clearRect[gameTrackerX.drawPage].len;
+#else
 		blkfill->tag = clearRect[gameTrackerX.drawPage].tag;
+#endif
 		blkfill->r0 = clearRect[gameTrackerX.drawPage].r0;
 		blkfill->g0 = clearRect[gameTrackerX.drawPage].g0;
 		blkfill->b0 = clearRect[gameTrackerX.drawPage].b0;
@@ -1084,8 +1088,7 @@ void GAMELOOP_AddClearPrim(unsigned long** drawot, int override)
 		blkfill->h = clearRect[gameTrackerX.drawPage].h;
 
 		gameTrackerX.primPool->nextPrim = (unsigned long*)(blkfill + 1);
-
-		setlen(blkfill, 3);
+		
 #if defined(USE_32_BIT_ADDR)
 		addPrim(drawot[3071 * 2], blkfill);
 #else
@@ -1210,6 +1213,8 @@ void GAMELOOP_DisplayFrame(struct GameTracker* gameTracker)
 	PSX_RECT cliprect;
 	int streamID;
 	struct _Instance* instance;
+
+	Emulator_SaveVRAM("DEBUG.TGA", 0, 0, 1024, 512, 0);
 
 	drawot = gameTrackerX.drawOT;
 
