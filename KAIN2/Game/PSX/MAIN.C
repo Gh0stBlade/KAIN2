@@ -871,7 +871,7 @@ void GameLoop()
 		gameTracker->levelDone = 0;
 		mainTracker->mainState = 1;
 
-		while (STREAM_PollLoadQueue() != 0);
+		while (STREAM_PollLoadQueue() != 0)
 		{
 
 		}
@@ -1147,7 +1147,7 @@ int MainG2(void *appData)
 				gameTracker->levelDone = 0;
 				mainTracker->mainState = 1;
 
-				while (STREAM_PollLoadQueue() != 0);
+				while (STREAM_PollLoadQueue() != 0)
 				{
 
 				}

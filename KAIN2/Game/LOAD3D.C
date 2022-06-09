@@ -99,7 +99,7 @@ void LOAD_CdDataReady()
 					{
 						typedef void (*ret)(void*, long, long, void*, void*);
 						ret returnFunction = ret(currentQueueFile->retFunc);
-						returnFunction(currentQueueFile->readCurDest, actualReadSize, 5 ^ 5 < 1, currentQueueFile->retData, currentQueueFile->retData2);
+						returnFunction(currentQueueFile->readCurDest, actualReadSize, (5 ^ 5) < 1, currentQueueFile->retData, currentQueueFile->retData2);
 					}
 
 					if (currentQueueFile->readCurDest == loadStatus.buffer1)
@@ -840,7 +840,11 @@ struct _BigFileEntry * LOAD_GetBigFileEntryByHash(long hash)
 	struct _BigFileEntry* entry;
 
 	eprinterr("Finding hash %d\n", hash);
-
+	if (hash == -1713633768)
+	{
+		int testing = 0;
+		testing++;
+	}
 	if (loadStatus.bigFile.currentDir != NULL && loadStatus.currentDirLoading == 0 && loadStatus.bigFile.currentDir->numFiles != 0)
 	{
 		i = loadStatus.bigFile.currentDir->numFiles;

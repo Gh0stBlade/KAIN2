@@ -1734,7 +1734,7 @@ void aadInitReverb()
 
 void aadShutdownReverb()
 {
-	if (aadWaitForSramTransferComplete != 0)
+	if (aadWaitForSramTransferComplete() != 0)
 	{
 		SpuClearReverbWorkArea(aadGetReverbMode());
 	}
