@@ -861,6 +861,7 @@ void aadProcessLoadQueue()
 					sprintf(info->smfFileName, "\\kain2\\sfx\\object\\%s\\%s.smf", loadReq->fileName, loadReq->fileName);
 				
 					eprinterr("Name3: %s\n", info->snfFileName);
+					eprinterr("Name6: %s\n", loadReq->fileName);
 				}
 				
 				info->fileHandle = loadReq->handle;
