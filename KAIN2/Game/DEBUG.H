@@ -85,6 +85,7 @@ extern struct DebugMenuLine level2SelectMenu[11];
 extern struct DebugMenuLine standardMenu[12]; // offset 0x800CFCB0
 
 extern struct DebugMenuLine* currentMenu; // offset 0x800CDB3C
+extern struct DebugMenuLine pauseMenu[];
 
 extern unsigned long debugRazielFlags1;
 extern unsigned long debugRazielFlags2;
