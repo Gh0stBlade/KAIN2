@@ -2633,6 +2633,7 @@ void DEBUG_FatalError(const char *fmt, ...)
 #if defined(PSX_VERSION)
 	//break   1, 7
 #if defined(PSXPC_VERSION)
+	eprintf("fmt");
 	DrawOTag(NULL);
 	assert(0);
 #endif
