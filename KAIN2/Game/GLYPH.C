@@ -5,6 +5,7 @@
 #include "FX.H"
 #include "CAMERA.H"
 #include "FONT.H"
+#include "OBTABLE.H"
 
 short glyph_time;
 short glyph_trigger;
@@ -810,107 +811,60 @@ void HUD_Update()
 }
 
 void HUD_Draw()
-{ 
-	struct _SVector Rotation; // stack offset -80
-	struct _SVector Pos; // stack offset -72
-	struct _SVector offset; // stack offset -64
-	int n; // $s0
-	DVECTOR center; // stack offset -56
-	int glow; // $a1
-	int left; // $t0
-	int right; // $s0
-	int oldx; // $s2
-	int oldy; // $s3
-	int MANNA_Count; // $s1
-	int MANNA_Max; // $s0
-	struct _SVector targetPos; // stack offset -48
-	struct _SVector accl; // stack offset -40
-	struct _SVector HUD_Cap_Rot; // stack offset -32
+{
+	struct _SVector Rotation;
+	struct _SVector Pos;
+	struct _SVector offset;
+	int n;
+	DVECTOR center;
+	int glow;
+	int left;
+	int right;
+	int oldx;
+	int oldy;
+	int MANNA_Count;
+	int MANNA_Max;
+	struct _SVector targetPos;
+	struct _SVector accl;
+	struct _SVector HUD_Cap_Rot;
 
-	//v1 = theCamera.instance_mode
-	//v0 = 0x80000000
-
-	if (!(theCamera.instance_mode & 0x80000000))
+	if ((theCamera.instance_mode & 0x80000000))
 	{
-		if (warpDraw != 0)
+		warpDraw += (gameTrackerX.timeMult >> 4);
+
+		if (warpDraw >= 4097)
 		{
-			if(theCamera.instance_mode != 0)
+			warpDraw = 4096;
+		}
+
+		HUD_GetPlayerScreenPt(&center);
+
+		glow = (warpDraw / 10) * rcos(glowdeg);
+
+		if (glow < 0)
+		{
+			glow = glow + 4095;
+		}
+
+		glow = (warpDraw / 3) + (glow >> 12);
+
+		if (glow < 0)
+		{
+			glow = 0;
+		}
+
+		glowdeg += (gameTrackerX.timeMult >> 5);
+
+		if (hud_warp_arrow_flash > 0)
+		{
+			right = glow + hud_warp_arrow_flash;
+
+			hud_warp_arrow_flash -= (gameTrackerX.timeMult >> 3);
+
+			if (hud_warp_arrow_flash < 0)
 			{
-				warpDraw += (gameTrackerX.timeMult >> 4);
+				hud_warp_arrow_flash = 0;
 
-				if (warpDraw >= 4097)
-				{
-					warpDraw = 4096;
-				}
-			}
-			else
-			{
-				warpDraw -= (gameTrackerX.timeMult >> 4);
-				
-				if (warpDraw < 0)
-				{
-					warpDraw = 0;
-				}
-			}
-
-			//loc_8007C77C
-			HUD_GetPlayerScreenPt(&center);
-
-			///@FIXME clearly a macro!
-			glow = (warpDraw / 10) * rcos(glowdeg);
-
-			if (glow < 0)
-			{
-				glow = glow + 4095;
-			}
-
-			glow = (warpDraw / 3) + (glow >> 12);
-
-			if (glow < 0)
-			{
-				glow = 0;
-			}
-
-			//loc_8007C7E8
-			//a2 = gameTrackerX.timeMult;
-			//v0 = glowdeg
-			//a0 = hud_warp_arrow_flash
-			//v1 = (gameTrackerX.timeMult >> 5);
-			glowdeg += (gameTrackerX.timeMult >> 5);
-
-			//v0 = gameTrackerX.timeMult >> 3
-			if (hud_warp_arrow_flash > 0)
-			{
-				right = glow + hud_warp_arrow_flash;
-
-				hud_warp_arrow_flash -= (gameTrackerX.timeMult >> 3);
-
-				if (hud_warp_arrow_flash < 0)
-				{
-					hud_warp_arrow_flash = 0;
-
-					left = glow;
-
-					if (hud_warp_arrow_flash < 0)
-					{
-						left = glow - hud_warp_arrow_flash;
-
-						hud_warp_arrow_flash += (gameTrackerX.timeMult >> 3);
-
-						if (hud_warp_arrow_flash > 0)
-						{
-							hud_warp_arrow_flash = 0;
-						}
-					}
-				}
-				else
-				{
-					right = glow;
-				}
-			}
-			else
-			{
-				right = glow;
 				left = glow;
 
 				if (hud_warp_arrow_flash < 0)
@@ -925,231 +879,250 @@ void HUD_Draw()
 					}
 				}
 			}
-
-			FX_MakeWarpArrow(center.vx + -64, center.vy, -64, 32, left);
-			FX_MakeWarpArrow(center.vx +  64, center.vy,  64, 32, right);
+			else
+			{
+				right = glow;
+			}
 		}
-		//loc_8007C89C
-
-		HUD_Update();
-
-		//v0 = MANNA_Position
-		//v1 = 0x87
-
-		offset.x = 0;
-		offset.y = 0;
-		offset.z = 135;
-
-		if (MANNA_Position >= -63)
+		else
 		{
-			oldx = fontTracker.font_xpos;
-			oldy = fontTracker.font_ypos;
-			
-			MANNA_Count = INSTANCE_Query(gameTrackerX.playerInstance, 32);
-			MANNA_Max = INSTANCE_Query(gameTrackerX.playerInstance, 45);
+			right = glow;
+			left = glow;
 
-			FX_MakeMannaIcon(MANNA_Position, 23, 51, 32);
-
-			FONT_Flush();
-
-			FONT_SetCursor(MANNA_Position + 58, 32);
-
-			if (glyph_cost != -1)
+			if (hud_warp_arrow_flash < 0)
 			{
-				FONT_Print("%d/", glyph_cost);
+				left = glow - hud_warp_arrow_flash;
+
+				hud_warp_arrow_flash += (gameTrackerX.timeMult >> 3);
+
+				if (hud_warp_arrow_flash > 0)
+				{
+					hud_warp_arrow_flash = 0;
+				}
 			}
-			
-			//loc_8007C93C
-
-			if (MANNA_Count >= MANNA_Max)
-			{
-				FONT_SetColorIndex(2);
-			}
-			//loc_8007C94C
-
-			FONT_Print("%d", MANNA_Count);
-
-			FONT_SetColorIndex(0);
-
-			FONT_SetCursor(oldx, oldy);
-
-			FONT_Flush();
 		}
-		//loc_8007C980
 
-
-		if (HUD_Position >= -999)
-		{
-			//v0 = 6
-			if (HUD_Captured != 0 && gameTrackerX.gameMode != 6)
-			{
-				HUD_Cap_Rot.x = 1024;
-				HUD_Cap_Rot.y = 0;
-				HUD_Cap_Rot.z = 0;
-
-				targetPos.x = -1536;
-				targetPos.y = 2560;
-
-				if (HUD_State < 4)
-				{
-					targetPos.z = 288;
-				}
-				else
-				{
-					targetPos.z = 608;
-				}
-
-				//loc_8007C9E8
-
-				CriticalDampPosition(1, (struct _Position*)&HUD_Cap_Pos, (struct _Position*)&targetPos, &HUD_Cap_Vel, &accl, 128);
-
-				if (HUD_Cap_Vel.x == 0)
-				{
-
-				}
-				//loc_8007CA6C
-			}
-			//loc_8007CA8C
-		}
-		//loc_8007CB88
+		FX_MakeWarpArrow(center.vx + -64, center.vy, -64, 32, left);
+		FX_MakeWarpArrow(center.vx + 64, center.vy, 64, 32, right);
 	}
-	//loc_8007C730
-#if 0
-		lh      $v0, -0x12F8($gp)
-		nop
-		bnez    $v0, loc_8007CA6C
-		move    $a1, $zero
-		lh      $v0, -0x12F6($gp)
-		nop
-		bnez    $v0, loc_8007CA70
-		addiu   $a2, $sp, 0x50 + var_8
-		lh      $v0, -0x12F4($gp)
-		nop
-		bnez    $v0, loc_8007CA70
-		li      $v0, 3
-		lh      $v1, -0x1304($gp)
-		nop
-		bne     $v1, $v0, loc_8007CA58
-		li      $v0, 4
-		j       loc_8007CA64
-		li      $v0, 4
+	else
+	{
+		if (warpDraw != 0)
+		{
+			if (theCamera.instance_mode != 0)
+			{
+				warpDraw += (gameTrackerX.timeMult >> 4);
 
-		loc_8007CA58:
-	bne     $v1, $v0, loc_8007CA6C
-		move    $a1, $zero
-		li      $v0, 5
+				if (warpDraw >= 4097)
+				{
+					warpDraw = 4096;
+				}
+			}
+			else
+			{
+				warpDraw -= (gameTrackerX.timeMult >> 4);
 
-		loc_8007CA64 :
-		sh      $v0, -0x1304($gp)
-		move    $a1, $zero
+				if (warpDraw < 0)
+				{
+					warpDraw = 0;
+				}
+			}
+		}
 
-		loc_8007CA6C :
-	addiu   $a2, $sp, 0x50 + var_8
+		HUD_GetPlayerScreenPt(&center);
 
-		loc_8007CA70 :
-	addiu   $a3, $gp, -0x1300
-		lui     $v0, 0x800D
-		lw      $a0, dword_800CA2E8
-		addiu   $v0, $sp, 0x50 + var_28
-		sw      $v0, 0x50 + var_40($sp)
-		jal     sub_8004E160
-		sw      $zero, 0x50 + var_3C($sp)
+		glow = (warpDraw / 10) * rcos(glowdeg);
 
-		loc_8007CA8C:
-	lhu     $v1, -0x130C($gp)
-		li      $v0, 0x400
-		sh      $v0, 0x50 + var_38($sp)
-		li      $v0, 0x260
-		sh      $v0, 0x50 + var_2E($sp)
-		li      $v0, 0xA00
-		sh      $v0, 0x50 + var_2C($sp)
-		lhu     $v0, -0x1308($gp)
-		sh      $zero, 0x50 + var_36($sp)
-		sh      $zero, 0x50 + var_24($sp)
-		sh      $v1, 0x50 + var_34($sp)
-		lh      $v1, -0x131E($gp)
-		addiu   $v0, -0x600
-		bnez    $v1, loc_8007CADC
-		sh      $v0, 0x50 + var_30($sp)
-		lh      $v0, -0x131C($gp)
-		nop
-		slti    $v0, 0xF
-		beqz    $v0, loc_8007CB88
-		nop
+		if (glow < 0)
+		{
+			glow = glow + 4095;
+		}
 
-		loc_8007CADC :
-	move    $s0, $zero
-		lui     $v0, 0x800D
-		addiu   $s2, $v0, (off_800CA23C - 0x800D0000)  # "hud_____"
-		lui     $v0, 0x8001
-		addiu   $s1, $v0, (off_80011E70 - 0x80010000)
-		sltiu   $v0, $s0, 5
+		glow = (warpDraw / 3) + (glow >> 12);
 
-		loc_8007CAF4:
-	beqz    $v0, loc_8007CB38
-		move    $a1, $zero
-		lw      $v0, 0($s1)
-		nop
-		jr      $v0
-		nop
+		if (glow < 0)
+		{
+			glow = 0;
+		}
 
-		loc_8007CB0C :
-	j       loc_8007CB34
-		sh      $zero, 0x50 + var_34($sp)
+		glowdeg += (gameTrackerX.timeMult >> 5);
 
-		loc_8007CB14 :
-		j       loc_8007CB30
-		li      $v0, 0xCCD
+		if (hud_warp_arrow_flash > 0)
+		{
+			right = glow + hud_warp_arrow_flash;
 
-		loc_8007CB1C :
-		j       loc_8007CB30
-		li      $v0, 0x99A
+			hud_warp_arrow_flash -= (gameTrackerX.timeMult >> 3);
 
-		loc_8007CB24 :
-		j       loc_8007CB30
-		li      $v0, 0x666
+			if (hud_warp_arrow_flash < 0)
+			{
+				hud_warp_arrow_flash = 0;
 
-		loc_8007CB2C :
-		li      $v0, 0x333
+				left = glow;
 
-		loc_8007CB30 :
-		sh      $v0, 0x50 + var_34($sp)
+				if (hud_warp_arrow_flash < 0)
+				{
+					left = glow - hud_warp_arrow_flash;
 
-		loc_8007CB34 :
-		move    $a1, $zero
+					hud_warp_arrow_flash += (gameTrackerX.timeMult >> 3);
 
-		loc_8007CB38 :
-	addiu   $a2, $sp, 0x50 + var_38
-		addiu   $a3, $sp, 0x50 + var_30
-		addiu   $s1, 4
-		lhu     $v0, 0x50 + var_34($sp)
-		lhu     $v1, -0x130C($gp)
-		lw      $a0, 0xC4($s2)
-		subu    $v0, $v1
-		lh      $v1, -0x131E($gp)
-		andi    $v0, 0xFFF
-		sh      $v0, 0x50 + var_34($sp)
-		addiu   $v0, $sp, 0x50 + var_28
-		sw      $v0, 0x50 + var_40($sp)
-		slt     $v1, $s0, $v1
-		xori    $v1, 1
-		jal     sub_8004E160
-		sw      $v1, 0x50 + var_3C($sp)
-		addiu   $s0, 1
-		slti    $v0, $s0, 5
-		bnez    $v0, loc_8007CAF4
-		sltiu   $v0, $s0, 5
+					if (hud_warp_arrow_flash > 0)
+					{
+						hud_warp_arrow_flash = 0;
+					}
+				}
+			}
+			else
+			{
+				right = glow;
+			}
+		}
+		else
+		{
+			right = glow;
+			left = glow;
 
-		loc_8007CB88:
-	lw      $ra, 0x50 + var_s10($sp)
-		lw      $s3, 0x50 + var_sC($sp)
-		lw      $s2, 0x50 + var_s8($sp)
-		lw      $s1, 0x50 + var_s4($sp)
-		lw      $s0, 0x50 + var_s0($sp)
-		jr      $ra
-		addiu   $sp, 0x68
-#endif
+			if (hud_warp_arrow_flash < 0)
+			{
+				left = glow - hud_warp_arrow_flash;
+
+				hud_warp_arrow_flash += (gameTrackerX.timeMult >> 3);
+
+				if (hud_warp_arrow_flash > 0)
+				{
+					hud_warp_arrow_flash = 0;
+				}
+			}
+		}
+
+		FX_MakeWarpArrow(center.vx + -64, center.vy, -64, 32, left);
+		FX_MakeWarpArrow(center.vx + 64, center.vy, 64, 32, right);
+	}
+
+	HUD_Update();
+
+	offset.x = 0;
+	offset.y = 0;
+	offset.z = 135;
+
+	if (MANNA_Position >= -63)
+	{
+		oldx = fontTracker.font_xpos;
+		oldy = fontTracker.font_ypos;
+
+		MANNA_Count = INSTANCE_Query(gameTrackerX.playerInstance, 32);
+		MANNA_Max = INSTANCE_Query(gameTrackerX.playerInstance, 45);
+
+		FX_MakeMannaIcon(MANNA_Position, 23, 51, 32);
+
+		FONT_Flush();
+
+		FONT_SetCursor(MANNA_Position + 58, 32);
+
+		if (glyph_cost != -1)
+		{
+			FONT_Print("%d/", glyph_cost);
+		}
+
+		if (MANNA_Count >= MANNA_Max)
+		{
+			FONT_SetColorIndex(2);
+		}
+
+		FONT_Print("%d", MANNA_Count);
+
+		FONT_SetColorIndex(0);
+
+		FONT_SetCursor(oldx, oldy);
+
+		FONT_Flush();
+	}
+
+	if (HUD_Position >= -999)
+	{
+		if (HUD_Captured != 0 && gameTrackerX.gameMode != 6)
+		{
+			HUD_Cap_Rot.x = 1024;
+			HUD_Cap_Rot.y = 0;
+			HUD_Cap_Rot.z = 0;
+
+			targetPos.x = -1536;
+			targetPos.y = 2560;
+
+			if (HUD_State < 4)
+			{
+				targetPos.z = 288;
+			}
+			else
+			{
+				targetPos.z = 608;
+			}
+
+			CriticalDampPosition(1, (struct _Position*)&HUD_Cap_Pos, (struct _Position*)&targetPos, &HUD_Cap_Vel, &accl, 128);
+
+			if (HUD_Cap_Vel.x == 0 && HUD_Cap_Vel.y == 0 && HUD_Cap_Vel.z == 0)
+			{
+				if (HUD_State == 3)
+				{
+					HUD_State = 4;
+				}
+				else if (HUD_State == 4)
+				{
+					HUD_State = 5;
+				}
+			}
+
+			FX_DrawModel((struct Object*)objectAccess[21].object, 0, &HUD_Cap_Rot, &HUD_Cap_Pos, &offset, 0);
+		}
+
+		Rotation.x = 1024;
+		Pos.y = 608;
+		Pos.z = 2560;
+		Rotation.y = 0;
+		offset.y = 0;
+		offset.z = HUD_Rotation;
+		Pos.x = HUD_Position - 1536;
+
+		if (HUD_Count != 0 || HUD_Count_Overall < 15)
+		{
+			for (n = 0; n < 5; n++)
+			{
+				switch (n)
+				{
+				case 0:
+				{
+					Rotation.x = 0;
+					break;
+				}
+				case 1:
+				{
+					Rotation.x = 3277;
+					break;
+				}
+				case 2:
+				{
+					Rotation.x = 2458;
+					break;
+				}
+				case 3:
+				{
+					Rotation.x = 1638;
+					break;
+				}
+				case 4:
+				{
+					Rotation.x = 819;
+					break;
+				}
+				}
+
+				Pos.z = (Pos.z - HUD_Rotation) & 0xFFF;
+
+				FX_DrawModel((struct Object*)objectAccess[24].object, 0, &Rotation, &Pos, &offset, (n < HUD_Count) ^ 1);
+			}
+		}
+	}
 }
+
 
 
 
