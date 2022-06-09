@@ -96,6 +96,8 @@ extern struct ControllerPacket gpbuffer1; // offset 0x800D0CD0
 
 extern struct ControllerPacket gpbuffer2; // offset 0x800D0D18
 
+extern int gamePadControllerOut;
+
 extern void GAMEPAD_Commands(long (*command)[5], long (*data)[5], long pad); // 0x80030F68
 extern int GAMEPAD_ControllerIsDualShock(); // 0x80031324
 extern int GAMEPAD_DualShockEnabled(); // 0x80031330

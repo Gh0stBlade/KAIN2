@@ -2212,18 +2212,18 @@ void GAMELOOP_Process(struct GameTracker* gameTracker)
 			getScratchAddr(1)[0] = ((unsigned long*)&theCamera.core.position.z)[0];
 #if 0
 			sw      $sp, 0($t0)
-			li      $t4, 0x1F8003F0
-			move    $sp, $t4
+li      $t4, 0x1F8003F0
+move    $sp, $t4
 #endif
 
-			G2Instance_BuildTransformsForList(gameTracker->instanceList->first);
+G2Instance_BuildTransformsForList(gameTracker->instanceList->first);
 
 #if 0
-			//t0 = &StackSave
-			addiu   $t0, $gp, -0x45AC
-			lw      $sp, 0($t0)
+//t0 = &StackSave
+addiu   $t0, $gp, -0x45AC
+lw      $sp, 0($t0)
 #endif
-			DEBUG_Process(gameTracker);
+DEBUG_Process(gameTracker);
 		}
 
 		if (gameTracker->levelDone == 0)
@@ -2266,42 +2266,36 @@ void GAMELOOP_ModeStartPause()
 
 void GAMELOOP_ChangeMode()
 {
-	long *controlCommand; // $s0
+	long* controlCommand;
 
 	controlCommand = &gameTrackerX.controlCommand[0][0];
 
 	if (!(gameTrackerX.debugFlags & 0x40000))
 	{
-		//v0 = 0xA01
 		if (!(gameTrackerX.debugFlags & 0x200000))
 		{
-			//v1 = (gameTrackerX.controlCommand[0][0] & 0xA02)
 			if ((gameTrackerX.controlCommand[0][0] & 0xA01) == 0xA01)
 			{
-				//v1 = gameTrackerX.playerInstance
 				theCamera.forced_movement = 1;
+
 				gameTrackerX.playerInstance->position.z += 100;
-				//a1 = 0x100010
-				//v0 = gameTrackerX.playerInstance
+
 				gameTrackerX.playerInstance->zVel = 0;
-				//a0 = gameTrackerX.playerInstance
+
 				gameTrackerX.cheatMode = 1;
 
 				INSTANCE_Post(gameTrackerX.playerInstance, 0x100010, 1);
 
-				//a0 = gameTrackerX.playerInstance
 				gameTrackerX.playerInstance->flags &= 0xFFFFF7FF;
 			}
-			else if((gameTrackerX.controlCommand[0][0] & 0xA02) == 0xA02)
+			else if ((gameTrackerX.controlCommand[0][0] & 0xA02) == 0xA02)
 			{
-				//loc_80030E44
-				//v0 = 1
-				//v1 = gameTrackerX.playerInstance
 				theCamera.forced_movement = 1;
+
 				gameTrackerX.playerInstance->position.z -= 100;
-				//a1 = 0x100010
-				//v0 = gameTrackerX.playerInstance
+
 				gameTrackerX.playerInstance->zVel = 0;
+
 				gameTrackerX.cheatMode = 0;
 
 				INSTANCE_Post(gameTrackerX.playerInstance, 0x100010, 0);
@@ -2309,233 +2303,140 @@ void GAMELOOP_ChangeMode()
 				gameTrackerX.gameMode = 0;
 			}
 		}
-		//loc_80030E88
+		
+		if (!(gameTrackerX.debugFlags & 0x40000) || (gameTrackerX.playerCheatFlags & 0x2))
+		{
+			if ((controlCommand[1] & 0x60) == 0x60 && (controlCommand[0] & 0xF) == 0)
+			{
+				if (gameTrackerX.gameMode == 0)
+				{
+					gameTrackerX.gameMode = 4;
+
+					currentMenu = &standardMenu[0];
+
+					if (gameTrackerX.sound.gVoiceOn != 0)
+					{
+						gameTrackerX.debugFlags |= 0x80000;
+					}
+					else
+					{
+						gameTrackerX.debugFlags &= 0xFFF7FFFF;
+					}
+
+					if (gameTrackerX.sound.gMusicOn != 0)
+					{
+						gameTrackerX.debugFlags2 |= 0x1000;
+					}
+					else
+					{
+						gameTrackerX.debugFlags2 &= 0xFFFFEFFF;
+					}
+
+
+					if (gameTrackerX.sound.gSfxOn != 0)
+					{
+						gameTrackerX.debugFlags2 |= 0x2000;
+					}
+					else
+					{
+						gameTrackerX.debugFlags2 &= 0xFFFFDFFF;
+					}
+				}
+				else if (gameTrackerX.gameMode == 7)
+				{
+					DEBUG_EndViewVram(&gameTrackerX);
+
+					gameTrackerX.gameMode = 0;
+				}
+				else
+				{
+					GAMELOOP_ModeStartRunning();
+				}
+			}
+		}
 	}
-	//loc_80030E9C
-#if 0
+	else
+	{
+		if ((gameTrackerX.playerCheatFlags & 0x2))
+		{
+			if ((controlCommand[1] & 0x60) == 0x60 && (controlCommand[0] & 0xF) == 0)
+			{
+				if (gameTrackerX.gameMode == 0)
+				{
+					gameTrackerX.gameMode = 4;
 
-		loc_80030E88:
-	lw      $v0, -0x4178($gp)//gameTrackerX.debugFlags
-		lui     $v1, 4
-		and $v0, $v1
-		beqz    $v0, loc_80030EB0
-		nop
+					currentMenu = &standardMenu[0];
 
-		loc_80030E9C :
-	lw      $v0, -0x4034($gp)
-		nop
-		andi    $v0, 2
-		beqz    $v0, loc_80030FBC
-		nop
+					if (gameTrackerX.sound.gVoiceOn != 0)
+					{
+						gameTrackerX.debugFlags |= 0x80000;
+					}
+					else
+					{
+						gameTrackerX.debugFlags &= 0xFFF7FFFF;
+					}
 
-		loc_80030EB0 :
-	lw      $v0, 4($s0)
-		li      $v1, 0x60  # '`'
-		andi    $v0, 0x60
-		bne     $v0, $v1, loc_80030FBC
-		nop
-		lw      $v0, 0($s0)
-		nop
-		andi    $v0, 0xF
-		bnez    $v0, loc_80030FBC
-		nop
-		lh      $v1, -0x40C6($gp)
-		nop
-		bnez    $v1, loc_80030F94
-		li      $v0, 7
-		li      $v0, 4
-		sh      $v0, -0x40C6($gp)
-		lui     $v0, 0x800D
-		lbu     $v1, -0x4076($gp)//gameTrackerX.sound.gVoiceOn//gameTrackerX.sound.gVoiceOn
-		li      $v0, dword_800C8090
-		sw      $v0, -0x75F4($gp)
-		beqz    $v1, loc_80030F14
-		lui     $v1, 8
-		lw      $v0, -0x4178($gp)//gameTrackerX.debugFlags
-		j       loc_80030F24
-		or $v0, $v1
+					if (gameTrackerX.sound.gMusicOn != 0)
+					{
+						gameTrackerX.debugFlags2 |= 0x1000;
+					}
+					else
+					{
+						gameTrackerX.debugFlags2 &= 0xFFFFEFFF;
+					}
 
-		loc_80030F14 :
-	lui     $v1, 0xFFF7
-		lw      $v0, -0x4178($gp)//gameTrackerX.debugFlags
-		li      $v1, 0xFFF7FFFF
-		and $v0, $v1
 
-		loc_80030F24 :
-	sw      $v0, -0x4178($gp)//gameTrackerX.debugFlags
-		lbu     $v0, -0x4077($gp)//gameTrackerX.sound.gMusicOn
-		nop
-		beqz    $v0, loc_80030F44
-		li      $v1, 0xFFFFEFFF
-		lw      $v0, -0x4174($gp)
-		j       loc_80030F50
-		ori     $v0, 0x1000
+					if (gameTrackerX.sound.gSfxOn != 0)
+					{
+						gameTrackerX.debugFlags2 |= 0x2000;
+					}
+					else
+					{
+						gameTrackerX.debugFlags2 &= 0xFFFFDFFF;
+					}
+				}
+				else if (gameTrackerX.gameMode == 7)
+				{
+					DEBUG_EndViewVram(&gameTrackerX);
 
-		loc_80030F44:
-	lw      $v0, -0x4174($gp)
-		nop
-		and $v0, $v1
+					gameTrackerX.gameMode = 0;
+				}
+				else
+				{
+					GAMELOOP_ModeStartRunning();
+				}
+			}
+		}
+	}
 
-		loc_80030F50 :
-	sw      $v0, -0x4174($gp)
-		lbu     $v0, -0x4078($gp)//gameTrackerX.sound.gSfxOn
-		nop
-		beqz    $v0, loc_80030F7C
-		li      $v1, 0xFFFFDFFF
-		lw      $v0, -0x4174($gp)
-		nop
-		ori     $v0, 0x2000
-		sw      $v0, -0x4174($gp)
-		j       loc_80030FBC
-		nop
+	if ((controlCommand[1] & 0x4000) || gamePadControllerOut >= 6 && gameTrackerX.gameMode == 0 && !(gameTrackerX.gameFlags & 0x80) && (gameTrackerX.wipeTime == 0 || gameTrackerX.wipeType != 11 || gameTrackerX.wipeTime == -1))
+	{
+		GAMELOOP_ModeStartPause();
+	}
+	else
+	{
+		if ((controlCommand[1] & 0x4000) || (gameTrackerX.gameFlags & 0x40000000) && gameTrackerX.gameMode != 0 && !(gameTrackerX.gameFlags & 0x20000000) && gameTrackerX.wipeTime == 0 || gameTrackerX.wipeType != 11 && gameTrackerX.wipeTime == -1)
+		{
+			if ((controlCommand[1] & 0x4000) != 0 && !(gameTrackerX.gameFlags & 0x40000000))
+			{
+				SndPlay(5);
+			}
 
-		loc_80030F7C :
-	lw      $v0, -0x4174($gp)
-		nop
-		and $v0, $v1
-		sw      $v0, -0x4174($gp)
-		j       loc_80030FBC
-		nop
+			gameTrackerX.gameFlags &= 0xBFFFFFFF;
 
-		loc_80030F94 :
-	bne     $v1, $v0, loc_80030FB4
-		nop
-		addiu   $a0, $gp, -0x40C6
-		jal     sub_8001462C
-		addiu   $a0, -0x172
-		sh      $zero, -0x40C6($gp)
-		j       loc_80030FBC
-		nop
+			GAMELOOP_ModeStartRunning();
+		}
+	}
 
-		loc_80030FB4 :
-	jal     sub_80030BFC
-		nop
+	if ((gameTrackerX.controlCommand[0][0] & 0x40000000))
+	{
+		gameTrackerX.playerInstance->flags |= 0x100;
+	}
 
-		loc_80030FBC :
-	lw      $v0, 4($s0)
-		nop
-		andi    $v0, 0x4000
-		bnez    $v0, loc_80030FE4
-		nop
-		lw      $v0, -0x4490($gp)
-		nop
-		slti    $v0, 6
-		bnez    $v0, loc_80031040
-		nop
-
-		loc_80030FE4 :
-	lh      $v0, -0x40C6($gp)
-		nop
-		bnez    $v0, loc_80031040
-		nop
-		lw      $v0, -0x40F8($gp)//gameTrackerX.gameFlags
-		nop
-		andi    $v0, 0x80
-		bnez    $v0, loc_80031040
-		nop
-		lh      $a0, -0x416C($gp)
-		nop
-		beqz    $a0, loc_80031030
-		li      $v0, 0xB
-		lh      $v1, -0x4168($gp)
-		nop
-		beq     $v1, $v0, loc_80031040
-		li      $v0, 0xFFFFFFFF
-		bne     $a0, $v0, loc_80031040
-		nop
-
-		loc_80031030 :
-	jal     sub_80030CD4
-		nop
-		j       loc_800310EC
-		nop
-
-		loc_80031040 :
-	lw      $v0, 4($s0)
-		nop
-		andi    $a2, $v0, 0x4000
-		bnez    $a2, loc_80031068
-		lui     $v1, 0x4000
-		lw      $v0, -0x40F8($gp)//gameTrackerX.gameFlags
-		nop
-		and $v0, $v1
-		beqz    $v0, loc_800310EC
-		nop
-
-		loc_80031068 :
-	lh      $v0, -0x40C6($gp)
-		nop
-		beqz    $v0, loc_800310EC
-		lui     $v0, 0x2000
-		lw      $a1, -0x40F8($gp)//gameTrackerX.gameFlags
-		nop
-		and $v0, $a1, $v0
-		bnez    $v0, loc_800310EC
-		nop
-		lh      $a0, -0x416C($gp)
-		nop
-		beqz    $a0, loc_800310B4
-		li      $v0, 0xB
-		lh      $v1, -0x4168($gp)
-		nop
-		beq     $v1, $v0, loc_800310EC
-		li      $v0, 0xFFFFFFFF
-		bne     $a0, $v0, loc_800310EC
-		nop
-
-		loc_800310B4 :
-	beqz    $a2, loc_800310D0
-		lui     $v0, 0x4000
-		and $v0, $a1, $v0
-		bnez    $v0, loc_800310D4
-		lui     $v1, 0xBFFF
-		jal     sub_80040838
-		li      $a0, 5
-
-		loc_800310D0:
-	lui     $v1, 0xBFFF
-
-		loc_800310D4 :
-		lw      $v0, -0x40F8($gp)//gameTrackerX.gameFlags
-		li      $v1, 0xBFFFFFFF
-		and $v0, $v1
-		sw      $v0, -0x40F8($gp)//gameTrackerX.gameFlags
-		jal     sub_80030BFC
-		nop
-
-		loc_800310EC :
-	lw      $v0, -0x41F0($gp)
-		lui     $v1, 0x4000
-		and $v0, $v1
-		beqz    $v0, loc_8003111C
-		nop
-		lw      $v1, -0x420C($gp)
-		nop
-		lw      $v0, 0x14($v1)
-		nop
-		ori     $v0, 0x100
-		j       loc_80031148
-		sw      $v0, 0x14($v1)
-
-		loc_8003111C:
-	lw      $v0, -0x41E8($gp)
-		nop
-		and $v0, $v1
-		beqz    $v0, loc_80031148
-		li      $a0, 0xFFFFFEFF
-		lw      $v0, -0x420C($gp)
-		nop
-		lw      $v1, 0x14($v0)
-		nop
-		and $v1, $a0
-		sw      $v1, 0x14($v0)
-
-		loc_80031148:
-	lw      $ra, 0x10 + var_s4($sp)
-		lw      $s0, 0x10 + var_s0($sp)
-		jr      $ra
-		addiu   $sp, 0x18
-#endif
+	if ((gameTrackerX.controlCommand[0][2] & 0x40000000))
+	{
+		gameTrackerX.playerInstance->flags &= 0xFFFFFEFF;
+	}
 }
 
 
