@@ -1214,8 +1214,6 @@ void GAMELOOP_DisplayFrame(struct GameTracker* gameTracker)
 	int streamID;
 	struct _Instance* instance;
 
-	Emulator_SaveVRAM("DEBUG.TGA", 0, 0, 1024, 512, 0);
-
 	drawot = gameTrackerX.drawOT;
 
 	if (!(gameTrackerX.gameFlags & 0x8000000) || pause_redraw_flag != 0)
