@@ -1223,7 +1223,7 @@ void GAMELOOP_DisplayFrame(struct GameTracker* gameTracker)
 	{
 		if (pause_redraw_flag != 0)
 		{
-			drawot = (unsigned long**)gameTrackerX.primPool;
+			savedNextPrim = gameTrackerX.primPool->nextPrim;
 
 			DrawSync(0);
 			Switch_For_Redraw();
