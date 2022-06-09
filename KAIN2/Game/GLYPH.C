@@ -11,14 +11,14 @@ short glyph_time;
 short glyph_trigger;
 short glyph_cost;
 
-short HUD_Rotation; // offset 0x800d628c
-short HUD_Rot_vel; // offset 0x800d628e
-short HUD_Position; // offset 0x800d6290
-short HUD_Pos_vel; // offset 0x800d6292
-short HUD_State; // offset 0x800d6294
-short HUD_Wait; // offset 0x800d6296
-short HUD_Count; // offset 0x800d627a
-short HUD_Count_Overall; // offset 0x800d627c
+short HUD_Rotation = 0; // offset 0x800d628c
+short HUD_Rot_vel = 0; // offset 0x800d628e
+short HUD_Position = 0; // offset 0x800d6290
+short HUD_Pos_vel = 0; // offset 0x800d6292
+short HUD_State = 0; // offset 0x800d6294
+short HUD_Wait = 0; // offset 0x800d6296
+short HUD_Count = 0; // offset 0x800d627a
+short HUD_Count_Overall = 0; // offset 0x800d627c
 int warpDraw; // offset 0x800d62a8
 int glowdeg; // offset 0x800d62ac
 int hud_warp_arrow_flash; // offset 0x800d62b0
@@ -788,7 +788,7 @@ void HUD_Update()
 	}
 	else if (gameTrackerX.gameMode != 6)
 	{
-		if (HUD_State - 10 < 2)
+		if ((unsigned int)(HUD_State - 10) < 2)
 		{
 			HUD_State = 12;
 		}
