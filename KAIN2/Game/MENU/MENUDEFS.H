@@ -65,6 +65,10 @@ struct MENUDEFS_109fake // hashcode: 0x99AA84CD (dec: -1716878131)
 	} Follow; // size=20, offset=76, found in object files: menudefs.o, menudefs.o
 };
 
+extern int PAUSE_XPOS; // offset 0x800d1fa0
+extern int PAUSE_WIDTH; // offset 0x800d1fa4
+extern int PAUSE_YPOS; // offset 0x800d1f94
+
 extern void do_check_controller(void *gt); // 0x800B8938
 extern int do_push_menu(void *gt, long menuparam, enum menu_ctrl_t ctrl); // 0x800B896C
 extern int do_pop_menu(void *gt, long param, enum menu_ctrl_t ctrl); // 0x800B89A4
