@@ -1910,169 +1910,95 @@ void GAMELOOP_DoTimeProcess()
 {
 #if defined(PSX_VERSION)
 
-	int holdTime; // $s1
-	int lockRate; // $a1
-	unsigned long last; // $a0
+	int holdTime;
+	int lockRate;
+	unsigned long last;
 
 	holdTime = TIMER_GetTimeMS();
 
-	//v0 = 0xFFFFFFFF
 	if (!(gameTrackerX.gameFlags & 0x10000000))
 	{
 		gameTrackerX.totalTime = TIMER_TimeDiff(gameTrackerX.currentTicks);
 
 		gameTrackerX.currentTicks = (GetRCnt(0xF2000000) & 0xFFFF) | (gameTimer << 16);
-		//v1 = (gameTimer << 16)
+
 		if (gameTrackerX.frameRateLock <= 0)
 		{
 			gameTrackerX.frameRateLock = 1;
 		}
 
-		//loc_8003042C
 		if (gameTrackerX.frameRateLock >= 3)
 		{
 			gameTrackerX.frameRateLock = 2;
 		}
 
-		//loc_80030444
 		if (gameTrackerX.decoupleGame == 0 || (gameTrackerX.gameFlags & 0x10000000))
 		{
+			if (gameTrackerX.frameRateLock == 1)
+			{
+				gameTrackerX.lastLoopTime = 33;
+			}
+			else if (gameTrackerX.frameRateLock == 2)
+			{
+				gameTrackerX.lastLoopTime = 50;
+			}
+		}
+		else
+		{
+			if (gameTrackerX.frameRateLock == 1)
+			{
+				lockRate = 33;
+			}
+			else if (gameTrackerX.frameRateLock == 2)
+			{
+				lockRate = 50;
+			}
 
+			last = lockRate;
+
+			if (gameTrackerX.lastLoopTime != -1)
+			{
+				last  = holdTime - gameTrackerX.currentTime;
+			}
+
+			if (gameTrackerX.frameRateLock == 1 || gameTrackerX.frameRate24fps != 0)
+			{
+				last -= 9;
+			}
+
+			if (last >= holdTime && gameTrackerX.gameData.asmData.MorphTime == 1000)
+			{
+				if (last >= 67)
+				{
+					last = 66;
+				}
+			}
+			else
+			{
+				last = lockRate;
+			}
+
+			gameTrackerX.lastLoopTime = last;
+		}
+
+		gameTrackerX.timeMult = ((last << 12) % 0x3E0F83E1) >> 3;
+		gameTrackerX.timeSinceLastGameFrame += gameTrackerX.timeMult;
+		gameTrackerX.gameFramePassed = 0;
+		gameTrackerX.globalTimeMult = gameTrackerX.timeMult;
+
+		while (gameTrackerX.timeSinceLastGameFrame >= 4097)
+		{
+			gameTrackerX.gameFramePassed = 1;
+			gameTrackerX.timeSinceLastGameFrame -= 4096;
+			gameTrackerX.fps30Count++;
 		}
 	}
-	//loc_800305AC
-#if 0
-		loc_80030444:
-		lw      $v0, -0x401C($gp)
-		nop
-		beqz    $v0, loc_80030468
-		nop
-		lw      $v0, -0x40F8($gp)//gameTrackerX.gameFlags
-		nop
-		and $v0, $s0
-		beqz    $v0, loc_800304A8
-		li      $v0, 1
+	else
+	{
+		gameTrackerX.lastLoopTime = -1;
+	}
 
-		loc_80030468:
-	lw      $v1, -0x3FD0($gp)
-		li      $v0, 1
-		bne     $v1, $v0, loc_80030480
-		li      $v0, 2
-		j       loc_8003048C
-		li      $v0, 0x21  # '!'
-
-		loc_80030480:
-	bne     $v1, $v0, loc_80030494
-		lui     $v1, 0x3E0F
-		li      $v0, 0x32  # '2'
-
-		loc_8003048C :
-		sw      $v0, -0x3FFC($gp)
-		lui     $v1, 0x3E0F
-
-		loc_80030494 :
-		lw      $v0, -0x3FFC($gp)
-		li      $v1, 0x3E0F83E1
-		sll     $v0, 12
-		j       loc_8003054C
-		multu   $v0, $v1
-
-		loc_800304A8 :
-	lw      $v1, -0x3FD0($gp)
-		nop
-		beq     $v1, $v0, loc_800304C8
-		li      $a1, 0x21  # '!'
-		li      $v0, 2
-		bne     $v1, $v0, loc_800304C8
-		nop
-		li      $a1, 0x32  # '2'
-
-		loc_800304C8:
-	lw      $v1, -0x3FFC($gp)
-		li      $v0, 0xFFFFFFFF
-		beq     $v1, $v0, loc_800304E4
-		move    $a0, $a1
-		lw      $v0, -0x400C($gp)
-		nop
-		subu    $a0, $s1, $v0
-
-		loc_800304E4 :
-	lw      $v1, -0x3FD0($gp)
-		li      $v0, 1
-		bne     $v1, $v0, loc_8003050C
-		sltu    $v0, $a0, $a1
-		lh      $v0, -0x3FCC($gp)
-		nop
-		beqz    $v0, loc_8003050C
-		sltu    $v0, $a0, $a1
-		addiu   $a0, -9
-		sltu    $v0, $a0, $a1
-
-		loc_8003050C :
-	bnez    $v0, loc_80030524
-		li      $v0, 0x3E8
-		lh      $v1, -0x4230($gp)
-		nop
-		beq     $v1, $v0, loc_8003052C
-		sltiu   $v0, $a0, 0x43  # 'C'
-
-		loc_80030524:
-	j       loc_80030538
-		move    $a0, $a1
-
-		loc_8003052C :
-	bnez    $v0, loc_8003053C
-		lui     $v1, 0x3E0F
-		li      $a0, 0x42  # 'B'
-
-		loc_80030538 :
-		lui     $v1, 0x3E0F
-
-		loc_8003053C :
-		li      $v1, 0x3E0F83E1
-		sll     $v0, $a0, 12
-		multu   $v0, $v1
-		sw      $a0, -0x3FFC($gp)
-
-		loc_8003054C :
-		mfhi    $a2
-		srl     $v0, $a2, 3
-		sw      $v0, -0x3FF8($gp)
-		lw      $v1, -0x3FF8($gp)
-		lw      $v0, -0x3FD4($gp)
-		sw      $zero, -0x3FD8($gp)
-		addu    $v0, $v1
-		sw      $v0, -0x3FD4($gp)
-		sltiu   $v0, 0x1001
-		sw      $v1, -0x3FF4($gp)
-		bnez    $v0, loc_800305B0
-		li      $a0, 1
-
-		loc_8003057C:
-	lw      $v0, -0x3FD4($gp)
-		lw      $v1, -0x4108($gp)
-		sw      $a0, -0x3FD8($gp)
-		addiu   $v0, -0x1000
-		addiu   $v1, 1
-		sw      $v0, -0x3FD4($gp)
-		sltiu   $v0, 0x1001
-		sw      $v1, -0x4108($gp)
-		beqz    $v0, loc_8003057C
-		nop
-		j       loc_800305B0
-		nop
-
-		loc_800305AC :
-	sw      $v0, -0x3FFC($gp)
-
-		loc_800305B0 :
-		lw      $ra, 0x10 + var_s8($sp)
-		sw      $s1, -0x400C($gp)
-		lw      $s1, 0x10 + var_s4($sp)
-		lw      $s0, 0x10 + var_s0($sp)
-		jr      $ra
-		addiu   $sp, 0x20
-#endif
+	gameTrackerX.currentTime = holdTime;
 
 #elif defined(PC_VERSION)
 	unsigned int TimeMS; // ebx
