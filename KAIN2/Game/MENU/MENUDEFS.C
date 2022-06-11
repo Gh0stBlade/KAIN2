@@ -17,9 +17,9 @@ int MAIN_XPOS = 135;
 int MAIN_WIDTH = 172;
 int LINESKIP = 14; // offset 0x800d1fa8
 int ITEMSKIP = 2; // offset 0x800d1fac
-int PAUSE_XPOS; // offset 0x800d1fa0
-int PAUSE_WIDTH; // offset 0x800d1fa4
-int PAUSE_YPOS; // offset 0x800d1f94
+int PAUSE_XPOS = 256; // offset 0x800d1fa0
+int PAUSE_WIDTH = 256; // offset 0x800d1fa4
+int PAUSE_YPOS = 60; // offset 0x800d1f94
 int hack_reset_attract;
 int hack_attract;
 int hack_attract_movie;
@@ -68,8 +68,9 @@ int do_function(void *gt, long fnparam, enum menu_ctrl_t ctrl)
 { 
 	if (ctrl == menu_ctrl_engage)
 	{
-		typedef void (*retFunc)();
-		retFunc(fnparam)();
+		typedef void (*ret)();
+		ret((void*)fnparam)();
+
 		return 1;
 	}
 
