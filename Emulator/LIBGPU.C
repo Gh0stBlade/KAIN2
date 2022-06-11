@@ -22,9 +22,9 @@ int dword_3410 = 0;
 char byte_3352 = 0;
 
 #if defined(USE_32_BIT_ADDR)
-extern  unsigned int terminator[];
+extern  unsigned int terminatorOT[];
 #else
-extern unsigned int terminator = -1;
+extern unsigned int terminatorOT = -1;
 #endif
 
 extern int g_splitIndex;
@@ -181,10 +181,10 @@ u_long* ClearOTag(u_long* ot, int n)
 
 	//last is special terminator
 #if defined(USE_32_BIT_ADDR)
-	setaddr(&ot[n - 2], &terminator);
+	setaddr(&ot[n - 2], &terminatorOT);
 	setlen(&ot[n - 2], 0);
 #else
-	setaddr(&ot[n - 1], &terminator);
+	setaddr(&ot[n - 1], &terminatorOT);
 	setlen(&ot[n - 1], 0);
 #endif
 
@@ -212,7 +212,7 @@ u_long* ClearOTagR(u_long* ot, int n)
 		return NULL;
 
 	//First is special terminator
-	setaddr(ot, &terminator);
+	setaddr(ot, &terminatorOT);
 	setlen(ot, 0);
 
 #if defined(USE_32_BIT_ADDR)

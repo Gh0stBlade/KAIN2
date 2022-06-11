@@ -51,9 +51,11 @@ unsigned short s_lastSemiTrans = 0xFFFF;
 unsigned short s_lastPolyType = 0xFFFF;
 
 #if defined(USE_32_BIT_ADDR)
-unsigned int terminator[2] = { 0xFFFFFFFF, 0 };
+unsigned int actualTerminator[2] { 0xFFFFFFFF, 0};
+unsigned int terminatorOT[2] = { (unsigned int)&actualTerminator, 0};
 #else
-unsigned int terminator = -1;
+unsigned int actualTerminator = -1;
+unsigned int terminatorOT = (unsigned int)&actualTerminator;
 #endif
 
 int IsValidCode(int code)
@@ -725,7 +727,7 @@ void Emulator_AggregatePTAGsToSplits(u_long* p, bool singlePrimitive)
 
 		// P_TAG as primitive list
 		//do
-		while ((uintptr_t)pTag != (uintptr_t)&terminator)
+		while ((uintptr_t)pTag != (uintptr_t)&terminatorOT)
 		{
 			if (pTag->len > 0)
 			{
