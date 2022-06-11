@@ -3422,19 +3422,283 @@ MATRIX* TransposeMatrix(MATRIX* m0, MATRIX* m1)
 
 MATRIX* RotMatrixX(long r, MATRIX* m)
 {
-    UNIMPLEMENTED();
+    int t7;
+    int t9;
+    int t1;
+    int t0;
+    int t6;
+    int t2;
+    int t5;
+    int t8;
+    int t3;
+    int t4;
+    
+    t7 = r;
+    t9 = t7 & 0xFFF;
+
+    if (t7 < 0)
+    {
+        t7 = -t7;
+        t7 &= 0xFFF;
+        t9 = gte_rcossin_tbl[t7];
+        t6 = t9;
+        t1 = -t6;
+        t0 = t9 >> 16;
+    }
+    else
+    {
+        t9 = gte_rcossin_tbl[t9];
+        t1 = t9;
+        t0 = t9 >> 16;
+    }
+    
+    t2 = m->m[1][0];
+    t5 = m->m[2][0];
+
+    t8 = t0 * t2;
+
+    t3 = m->m[1][1];
+    t6 = m->m[2][1];
+
+    t4 = m->m[1][2];
+    t7 = m->m[2][2];
+
+    t9 = t1 * t5;
+
+    t9 = t8 - t9;
+    t8 = t9 >> 12;
+
+    m->m[1][0] = t8;
+
+    t8 = t0 * t3;
+    t9 = t1 * t6;
+
+    t9 = t8 - t9;
+    t8 = t9 >> 12;
+    
+    m->m[1][1] = t8;
+
+    t8 = t0 * t4;
+    t9 = t1 * t7;
+
+    t9 = t8 - t9;
+    t8 = t9 >> 12;
+
+    m->m[1][2] = t8;
+
+    t8 = t1 * t2;
+    t9 = t0 * t5;
+
+    t9 = t8 + t9;
+    t8 = t9 >> 12;
+
+    m->m[2][0] = t8;
+
+    t8 = t1 * t3;
+    t9 = t0 * t6;
+
+    t9 = t8 + t9;
+    t8 = t9 >> 12;
+
+    m->m[2][1] = t8;
+
+    t8 = t1 * t4;
+    t9 = t0 * t7;
+
+    t9 = t8 + t9;
+    t8 = t9 >> 12;
+
+    m->m[2][2] = t8;
+
     return m;
 }
 
 MATRIX* RotMatrixY(long r, MATRIX* m)
 {
-    UNIMPLEMENTED();
+    int t7;
+    int t9;
+    int t6;
+    int t1;
+    int t0;
+    int t2;
+    int t5;
+    int t3;
+    int t8;
+    int t4;
+
+    t7 = r;
+    t9 = t7 & 0xFFF;
+    
+    if (t7 < 0)
+    {
+        t7 = -t7;
+        t7 &= 0xFFF;
+        t9 = gte_rcossin_tbl[t7];
+        t1 = t9;
+        t0 = t9 >> 16;
+    }
+    else
+    {
+        t9 = gte_rcossin_tbl[t9];
+        t7 = t9;
+        t1 = -t7;
+        t0 = t9 >> 16;
+    }
+
+    t2 = m->m[0][0];
+    t5 = m->m[2][0];
+
+    t8 = t0 * t2;
+
+    t3 = m->m[0][1];
+    t6 = m->m[2][1];
+
+    t9 = t1 * t5;
+
+    t4 = m->m[0][2];
+    t7 = m->m[2][2];
+
+    t9 = t8 - t9;
+    t8 = t9 >> 12;
+
+    m->m[0][0] = t8;
+
+    t8 = t0 * t3;
+    t9 = t1 * t6;
+
+    t9 = t8 - t9;
+    t8 = t9 >> 12;
+
+    m->m[0][1] = t8;
+
+    t8 = t0 * t4;
+    t9 = t1 * t7;
+
+    t9 = t8 - t9;
+    t8 = t9 >> 12;
+
+    m->m[0][2] = t8;
+
+    t8 = t1 * t2;
+    t9 = t0 * t5;
+
+    t9 = t8 + t9;
+    t8 = t9 >> 12;
+
+    m->m[2][0] = t8;
+
+    t8 = t1 * t3;
+    t9 = t0 * t6;
+
+    t9 = t8 + t9;
+    t8 = t9 >> 12;
+
+    m->m[2][1] = t8;
+
+    t8 = t1 * t4;
+    t9 = t0 * t7;
+
+    t9 = t8 + t9;
+    t8 = t9 >> 12;
+
+    m->m[2][2] = t8;
+
     return m;
 }
 
 MATRIX* RotMatrixZ(long r, MATRIX* m)
 {
-    UNIMPLEMENTED();
+    int t7;
+    int t9;
+    int t6;
+    int t1;
+    int t0;
+    int t2;
+    int t5;
+    int t8;
+    int t3;
+    int t4;
+
+    t7 = r;
+    t9 = t7 & 0xFFF;
+    
+    if (t7 < 0)
+    {
+        t7 = -t7;
+        t7 &= 0xFFF;
+        t9 = gte_rcossin_tbl[t7];
+        t6 = t9;
+        t1 = -t6;
+        t0 = t9 >> 16;
+    }
+    else
+    {
+        t9 = gte_rcossin_tbl[t9];
+        t1 = t9;
+        t0 = t9 >> 16;
+    }
+
+    t2 = m->m[0][0];
+    t5 = m->m[1][0];
+
+    t8 = t0 * t2;
+
+    t3 = m->m[0][1];
+    t6 = m->m[1][1];
+    t4 = m->m[0][2];
+    t7 = m->m[1][2];
+
+    t9 = t1 * t5;
+
+    t9 = t8 - t9;
+    t8 = t9 >> 12;
+
+    m->m[0][0] = t8;
+
+    t8 = t0 * t3;
+
+    t9 = t1 * t6;
+
+    t9 = t8 - t9;
+    t8 = t9 >> 12;
+
+    m->m[0][1] = t8;
+
+    t8 = t0 * t4;
+
+    t9 = t1 * t7;
+
+    t9 = t8 - t9;
+    t8 = t9 >> 12;
+
+    m->m[0][2] = t8;
+
+    t8 = t1 * t2;
+
+    t9 = t0 * t5;
+
+    t9 = t8 + t9;
+    t8 = t9 >> 12;
+
+    m->m[1][0] = t8;
+
+    t8 = t1 * t3;
+
+    t9 = t0 * t6;
+
+    t9 = t8 + t9;
+    t8 = t9 >> 12;
+
+    m->m[1][1] = t8;
+
+    t8 = t1 * t4;
+    t9 = t0 * t7;
+
+    t9 = t8 + t9;
+    t8 = t9 >> 12;
+
+    m->m[1][2] = t8;
+
     return m;
 }
 
