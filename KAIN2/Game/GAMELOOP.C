@@ -1093,8 +1093,10 @@ void GAMELOOP_AddClearPrim(unsigned long** drawot, int override)
 		gameTrackerX.primPool->nextPrim = (unsigned long*)(blkfill + 1);
 		
 #if defined(USE_32_BIT_ADDR)
+		setlen(blkfill, 3);
 		addPrim(drawot[3071 * 2], blkfill);
 #else
+		setlen(blkfill, 3);
 		addPrim(drawot[3071], blkfill);
 #endif
 	}
@@ -1217,9 +1219,9 @@ void GAMELOOP_DisplayFrame(struct GameTracker* gameTracker)
 	int streamID;
 	struct _Instance* instance;
 
-	drawot = gameTrackerX.drawOT;
+	drawot = gameTracker->drawOT;
 
-	if (!(gameTrackerX.gameFlags & 0x8000000) || pause_redraw_flag != 0)
+	if (!(gameTrackerX.gameFlags & 0x8000000) && pause_redraw_flag != 0)
 	{
 		if (pause_redraw_flag != 0)
 		{
@@ -1228,7 +1230,7 @@ void GAMELOOP_DisplayFrame(struct GameTracker* gameTracker)
 			DrawSync(0);
 			Switch_For_Redraw();
 
-			drawot = gameTrackerX.drawOT;
+			drawot = gameTracker->drawOT;
 
 			ClearOTagR((unsigned long*)gameTrackerX.drawOT, 3072);
 
@@ -1461,7 +1463,7 @@ void GAMELOOP_DisplayFrame(struct GameTracker* gameTracker)
 			
 			SaveOT();
 
-			ClearOTagR((unsigned long*)gameTrackerX.drawOT, 0xC00);
+			ClearOTagR((unsigned long*)gameTrackerX.drawOT, 3072);
 
 			Switch_For_Redraw();
 
@@ -1596,7 +1598,11 @@ void GAMELOOP_DrawSavedOT(unsigned long** newOT)
 		} while (tag != gameTrackerX.savedOTEnd);
 	}
 
-	setaddr(gameTrackerX.savedOTEnd, getaddr(newOT + 3071));
+#if defined(PSXPC_VERSION)
+	setaddr(gameTrackerX.savedOTEnd, getaddr(newOT + 3071 * 2));
+#else
+	setaddr(gameTrackerX.savedOTEnd, (unsigned long)newOT + 3071) & 0xFFFFFF);
+#endif
 
 	DrawOTag((unsigned long*)gameTrackerX.savedOTStart);
 }
@@ -1705,111 +1711,168 @@ void GAMELOOP_Set_Pause_Redraw()
 
 void SaveOT()
 {
-	P_TAG* tag;
-	P_TAG* last;
-	P_TAG* lastlast;
+	P_TAG* tag; // $a0
+	P_TAG* last; // $s0
+	P_TAG* lastlast; // $s1
 
 	DrawSync(0);
 
-	last = NULL;
-
-#if defined(USE_32_BIT_ADDR)
+#if defined(PSXPC_VERSION)
 	tag = (P_TAG*)(gameTrackerX.drawOT + 3071 * 2);
-#else
+#elif defined(PSX_VERSION)
 	tag = (P_TAG*)(gameTrackerX.drawOT + 3071);
 #endif
 
-	lastlast = last;
+	last = NULL;
+	lastlast = NULL;
 
-	while (tag->len == 0)
+	if (tag->len == 0)
 	{
+
+	loc_80030208:
+		if (tag->addr != -1)
+		{
+
+#if defined(PSXPC_VERSION)
+			tag = (P_TAG*)tag->addr;
+#elif defined(PSX_VERSION)
+			tag = (P_TAG*)(unsigned long)tag->addr | 0x80000000;
+#endif
+			if (tag->len == 0)
+			{
+				goto loc_80030208;
+			}
+		}
+		else
+		{
+			gameTrackerX.savedOTStart = NULL;
+			return;
+		}
+	}
+	else
+	{
+		//loc_8003022C
 		if (tag->addr == -1)
 		{
 			gameTrackerX.savedOTStart = NULL;
 			return;
 		}
-
-#if defined(PSXPC_VERSION)
-		tag = (P_TAG*)tag->addr;
-#elif defined(PSX_VERSION)
-		tag = (P_TAG*)(unsigned long)(tag->addr | 0x80000000);
-#endif
 	}
+
+loc_80030250:
+
+	gameTrackerX.savedOTStart = tag;
 
 	if (tag->addr == -1)
 	{
-		gameTrackerX.savedOTStart = NULL;
-		return;
+		if (lastlast != NULL)
+		{
+			gameTrackerX.savedOTEnd = lastlast;
+			lastlast->addr = -1;
+			return;
+		}
+		else
+		{
+			gameTrackerX.savedOTEnd = tag;
+			return;
+		}
 	}
 	else
 	{
-		gameTrackerX.savedOTStart = tag;
-
-	start:
-		while (tag->len != 0)
-		{
-			if (tag->addr == -1)
-			{
-				break;
-			}
-
-			lastlast = last;
-			last = tag;
-
-#if defined(PSXPC_VERSION)
-			tag = (P_TAG*)tag->addr;
-#elif defined(PSX_VERSION)
-			tag = (P_TAG*)(unsigned long)(tag->addr | 0x80000000);
-#endif
-		}
-
-		if (tag->addr != -1)
-		{
-			while (tag->len != 0)
-			{
-				last->addr = tag->addr;
-
-				if (tag->addr != -1)
-				{
-					goto start;
-				}
-
-				if (tag->addr == -1)
-				{
-					gameTrackerX.savedOTEnd = tag;
-					return;
-				}
-				else
-				{
-					if (lastlast != NULL)
-					{
-						gameTrackerX.savedOTEnd = lastlast;
-						lastlast->addr = -1;
-					}
-					else
-					{
-						gameTrackerX.savedOTEnd = tag;
-					}
-
-					return;
-				}
-			}
-
-
-		}
-		else
+	loc_80030278:
+		if (tag->addr == -1)
 		{
 			if (lastlast != NULL)
 			{
 				gameTrackerX.savedOTEnd = lastlast;
 				lastlast->addr = -1;
+				return;
 			}
 			else
 			{
 				gameTrackerX.savedOTEnd = tag;
+				return;
+			}
+		}
+		else
+		{
+			lastlast = last;
+			last = tag;
+#if defined(PSXPC_VERSION)
+			tag = (P_TAG*)tag->addr;
+#elif defined(PSX_VERSION)
+			tag = (P_TAG*)(unsigned long)tag->addr | 0x80000000;
+#endif
+		loc_80030298:
+
+			if (tag->len != 0)
+			{
+				goto loc_80030278;
 			}
 
-			return;
+			if (tag->addr == -1)
+			{
+				if (lastlast != NULL)
+				{
+					gameTrackerX.savedOTEnd = lastlast;
+					lastlast->addr = -1;
+					return;
+				}
+				else
+				{
+					gameTrackerX.savedOTEnd = tag;
+					return;
+				}
+			}
+			else
+			{
+				if (tag->len == 0)
+				{
+				loc_800302CC:
+					if (tag->addr != -1)
+					{
+#if defined(PSXPC_VERSION)
+						tag = (P_TAG*)tag->addr;
+#elif defined(PSX_VERSION)
+						tag = (P_TAG*)(unsigned long)tag->addr | 0x80000000;
+#endif
+						if (tag->len == 0)
+						{
+							goto loc_800302CC;
+						}
+					}
+				}
+				//loc_800302F4
+#if defined(PSXPC_VERSION)
+				last->addr = (unsigned long)tag;
+#elif defined(PSX_VERSION)
+				last->addr = (unsigned long)(tag) & 0xFFFFFF;
+#endif
+				if (tag->addr != -1)
+				{
+					goto loc_80030298;
+				}
+
+				if (tag->addr == -1)
+				{
+					if (lastlast != NULL)
+					{
+						gameTrackerX.savedOTEnd = lastlast;
+						lastlast->addr = -1;
+						return;
+					}
+					else
+					{
+						gameTrackerX.savedOTEnd = tag;
+						return;
+					}
+				}
+				else
+				{
+					gameTrackerX.savedOTEnd = tag;
+					return;
+				}
+			}
 		}
 	}
 }
@@ -2380,7 +2443,7 @@ void GAMELOOP_ModeStartPause()
 		gameTrackerX.primPool = primPool[0];
 	}
 
-	gameTrackerX.primPool->nextPrim = gameTrackerX.primPool->prim;
+	gameTrackerX.primPool->nextPrim = &gameTrackerX.primPool->prim[0];
 	gameTrackerX.primPool->numPrims = 0;
 
 	SaveOT();
@@ -2533,22 +2596,25 @@ void GAMELOOP_ChangeMode()
 		}
 	}
 
-	if ((controlCommand[1] & 0x4000) || gamePadControllerOut >= 6 && gameTrackerX.gameMode == 0 && !(gameTrackerX.gameFlags & 0x80) && (gameTrackerX.wipeTime == 0 || gameTrackerX.wipeType != 11 || gameTrackerX.wipeTime == -1))
+	if (((controlCommand[1] & 0x4000) || (gamePadControllerOut >= 6)) && (gameTrackerX.gameMode == 0) && !(gameTrackerX.gameFlags & 0x80) && gameTrackerX.wipeTime == 0 || (gameTrackerX.wipeType != 11 && gameTrackerX.wipeTime == -1))
 	{
 		GAMELOOP_ModeStartPause();
 	}
 	else
 	{
-		if ((controlCommand[1] & 0x4000) || (gameTrackerX.gameFlags & 0x40000000) && gameTrackerX.gameMode != 0 && !(gameTrackerX.gameFlags & 0x20000000) && gameTrackerX.wipeTime == 0 || gameTrackerX.wipeType != 11 && gameTrackerX.wipeTime == -1)
+		if ((controlCommand[1] & 0x4000) || (gameTrackerX.gameFlags & 0x40000000) && gameTrackerX.gameMode != 0)
 		{
-			if ((controlCommand[1] & 0x4000) != 0 && !(gameTrackerX.gameFlags & 0x40000000))
+			if (!(gameTrackerX.gameFlags & 0x20000000) && (gameTrackerX.wipeTime == 0) || (gameTrackerX.wipeType != 11 && gameTrackerX.wipeTime == -1))
 			{
-				SndPlay(5);
+				if ((controlCommand[1] & 0x4000) && !(gameTrackerX.gameFlags & 0x40000000))
+				{
+					SndPlay(5);
+				}
+
+				gameTrackerX.gameFlags &= 0xBFFFFFFF;
+
+				GAMELOOP_ModeStartRunning();
 			}
-
-			gameTrackerX.gameFlags &= 0xBFFFFFFF;
-
-			GAMELOOP_ModeStartRunning();
 		}
 	}
 
