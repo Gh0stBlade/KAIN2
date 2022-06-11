@@ -1046,7 +1046,7 @@ void FONT_Print(const char *fmt, ...)
 
 	while (*hold != 0)
 	{
-		if ((*hold - 65 < 26))
+		if ((unsigned int)(*hold - 65) < 26)
 		{
 			*hold += 32;
 		}
