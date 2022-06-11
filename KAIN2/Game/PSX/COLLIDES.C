@@ -231,5 +231,59 @@ void RotMatrixY(long r, MATRIX* m)
 
 void RotMatrixZ(long r, MATRIX* m)
 {
+	int v0;
+	int v1;
+
+	SVECTOR r1;
+	SVECTOR r2;
+	SVECTOR r3;
+	SVECTOR r4;
+
+	v0 = r & 0x7FF;
+
+	v1 = ecostable[v0];
+	v0 = ecostable[v0 + 1024];
+
+	if ((r & 0x800))
+	{
+		v0 = -v0;
+		v1 = -v1;
+	}
+
+	gte_lddp(v0);
+	gte_ldsv(m->m[0][0]);
+	gte_gpf12();
+	gte_stsv(&r1);
+
+	gte_lddp(v1);
+	gte_ldsv(m->m[1][0]);
+	gte_gpf12();
+	gte_stsv(&r2);
+
+	gte_ldsv(m->m[0][0]);
+	gte_gpf12();
+	gte_stsv(&r3);
+
+	r1.vx -= r2.vx;
+	r1.vy -= r2.vy;
+	r1.vz -= r2.vz;
+
+	gte_lddp(v0);
+	gte_ldsv(m->m[1][0]);
+	gte_gpf12();
+	gte_stsv(&r4);
+
+	m->m[0][0] = r1.vx;
+	m->m[0][1] = r1.vy;
+	m->m[0][2] = r1.vz;
+
+	r3.vx += r4.vx;
+	r3.vy += r4.vy;
+	r3.vz += r4.vz;
+
+	m->m[1][0] = r3.vx;
+	m->m[1][1] = r3.vy;
+	m->m[1][2] = r3.vz;
+
 	return;
 }
