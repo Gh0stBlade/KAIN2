@@ -41,15 +41,14 @@ extern int gte_ldlzc(int input);
 	:							\
 	: "r"( r0 ) )
 
-#define gte_ldv3( r0, r1, r2 ) __asm__ volatile (		\
-	"lwc2	$0, 0( %0 );"					\
-	"lwc2	$1, 4( %0 );"					\
-	"lwc2	$2, 0( %1 );"					\
-	"lwc2	$3, 4( %1 );"					\
-	"lwc2	$4, 0( %2 );"					\
-	"lwc2	$5, 4( %2 )"					\
-	:							\
-	: "r"( r0 ), "r"( r1 ), "r"( r2 ) )
+#define gte_ldv3( r0, r1, r2 ) \
+	((int*)&VX0)[0] = ((int*)&r0)[0];       \
+	((int*)&VZ0)[0] = ((int*)&r0)[2];       \
+	((int*)&VX1)[0] = ((int*)&r0)[4];       \
+	((int*)&VZ1)[0] = ((int*)&r0)[6];       \
+	((int*)&VX2)[0] = ((int*)&r0)[8];       \
+	((int*)&VZ2)[0] = ((int*)&r0)[10];      \
+
 
 #define gte_ldv3c( r0 ) __asm__ volatile (			\
 	"lwc2	$0, 0( %0 );"					\
@@ -466,10 +465,8 @@ extern int gte_ldlzc(int input);
 #define gte_rtps() \
 	docop2(0x0180001);
 
-#define gte_rtpt() __asm__ volatile (				\
-	"nop;"							\
-	"nop;"							\
-	".word 0x000000bf" )
+#define gte_rtpt() \
+	docop2(0x0280030);
 
 #define gte_rt() __asm__ volatile (				\
 	"nop;"							\
@@ -739,10 +736,8 @@ extern int gte_ldlzc(int input);
 	"nop;"							\
 	".word 0x0000113f" )
 
-#define gte_nclip() __asm__ volatile (				\
-	"nop;"							\
-	"nop;"							\
-	".word 0x0000117f" )
+#define gte_nclip() \
+	docop2(0x01400006);
 
 #define gte_avsz3() __asm__ volatile (				\
 	"nop;"							\
@@ -877,16 +872,13 @@ extern int gte_ldlzc(int input);
 	  * Type 3 functions
 	  */
 
-#define gte_stsxy( r0 )                      \
+#define gte_stsxy( r0 )          \
 	((int*)&r0)[0] = SXY2;       \
 
-#define gte_stsxy3( r0, r1, r2 ) __asm__ volatile (		\
-	"swc2	$12, 0( %0 );"					\
-	"swc2	$13, 0( %1 );"					\
-	"swc2	$14, 0( %2 )"					\
-	:							\
-	: "r"( r0 ), "r"( r1 ), "r"( r2 )			\
-	: "memory" )
+#define gte_stsxy3( r0, r1, r2 ) \
+	((int*)&r0)[0] = SXY0;       \
+	((int*)&r1)[0] = SXY1;       \
+	((int*)&r2)[0] = SXY2;       
 
 #define gte_stsxy3c( r0 ) __asm__ volatile (			\
 	"swc2	$12, 0( %0 );"					\
@@ -1076,6 +1068,9 @@ extern int gte_ldlzc(int input);
 	:							\
 	: "r"( r0 )						\
 	: "memory" )
+
+#define gte_stopz( r0 ) \
+	((int*)&r0)[0] = MAC0;       \
 
 #define gte_stlvl( r0 ) __asm__ volatile (			\
 	"swc2	$9, 0( %0 );"					\

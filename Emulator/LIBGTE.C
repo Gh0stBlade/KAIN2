@@ -3420,6 +3420,24 @@ MATRIX* TransposeMatrix(MATRIX* m0, MATRIX* m1)
     return m1;
 }
 
+MATRIX* RotMatrixX(long r, MATRIX* m)
+{
+    UNIMPLEMENTED();
+    return m;
+}
+
+MATRIX* RotMatrixY(long r, MATRIX* m)
+{
+    UNIMPLEMENTED();
+    return m;
+}
+
+MATRIX* RotMatrixZ(long r, MATRIX* m)
+{
+    UNIMPLEMENTED();
+    return m;
+}
+
 long RotAverageNclip4(SVECTOR* v0, SVECTOR* v1, SVECTOR* v2, SVECTOR* v3, long* sxy0/*arg_10*/, long* sxy1/*arg_14*/, long* sxy2/*arg_18*/, long* sxy3/*arg_1C*/, long* p/*arg_20*/, long* otz/*arg_24*/, long* flag/*arg_28*/)
 {
     VX0 = v0->vx;

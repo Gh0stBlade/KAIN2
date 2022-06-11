@@ -168,6 +168,8 @@ int ParsePrimitive(uintptr_t primPtr)
 		short* blackImage = new short[poly->w * poly->h];
 		memset(blackImage, 0, poly->w * poly->h * sizeof(short));
 
+		/// @TODO colour of buffer from rgb
+
 		RECT16 r;
 		r.x = poly->x0;
 		r.y = poly->y0;
