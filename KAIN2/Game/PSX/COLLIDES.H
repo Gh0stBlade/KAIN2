@@ -33,15 +33,13 @@ extern void rm_2() ; // 0x80078ABC
 
 extern void rm_3() ; // 0x80078AE4
 
-extern void RotMatrixX() ; // 0x80078BB8
+extern void RotMatrixX(long r, MATRIX* m);
+extern void RotMatrixY(long r, MATRIX* m);
+extern void RotMatrixZ(long r, MATRIX* m);
 
 extern void RMX_0() ; // 0x80078BE8
 
-extern void RotMatrixY() ; // 0x80078CEC
-
 extern void RMY_0() ; // 0x80078D1C
-
-extern void RotMatrixZ() ; // 0x80078E20
 
 extern void RMZ_0() ; // 0x80078E50
 

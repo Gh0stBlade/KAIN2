@@ -759,10 +759,8 @@ extern int gte_ldlzc(int input);
 	"nop;"							\
 	".word 0x0000127f" )
 
-#define gte_gpf12() __asm__ volatile (				\
-	"nop;"							\
-	"nop;"							\
-	".word 0x000012bf" )
+#define gte_gpf12() \
+	docop2(0x198003D);
 
 #define gte_gpf0() \
 	docop2(0x190003D);
@@ -1063,12 +1061,6 @@ extern int gte_ldlzc(int input);
 	: "r"( r0 )						\
 	: "memory" )
 
-#define gte_stopz( r0 ) __asm__ volatile (			\
-	"swc2	$24, 0( %0 )"					\
-	:							\
-	: "r"( r0 )						\
-	: "memory" )
-
 #define gte_stopz( r0 ) \
 	((int*)&r0)[0] = MAC0;       \
 
@@ -1095,9 +1087,9 @@ extern int gte_ldlzc(int input);
 	r0 = DQA;				
 
 #define gte_stsv( r0 )       \
-	((short*)&r0)[0] = IR1;   \
-	((short*)&r0)[1] = IR2;   \
-	((short*)&r0)[2] = IR3;
+	((short*)r0)[0] = IR1;   \
+	((short*)r0)[1] = IR2;   \
+	((short*)r0)[2] = IR3;
 
 #define gte_stclmv( r0 ) __asm__ volatile (			\
 	"mfc2	$12, $9;"					\

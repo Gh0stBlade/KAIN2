@@ -3420,6 +3420,7 @@ MATRIX* TransposeMatrix(MATRIX* m0, MATRIX* m1)
     return m1;
 }
 
+#if 0
 MATRIX* RotMatrixX(long r, MATRIX* m)
 {
     int t7;
@@ -3701,6 +3702,7 @@ MATRIX* RotMatrixZ(long r, MATRIX* m)
 
     return m;
 }
+#endif
 
 long RotAverageNclip4(SVECTOR* v0, SVECTOR* v1, SVECTOR* v2, SVECTOR* v3, long* sxy0/*arg_10*/, long* sxy1/*arg_14*/, long* sxy2/*arg_18*/, long* sxy3/*arg_1C*/, long* p/*arg_20*/, long* otz/*arg_24*/, long* flag/*arg_28*/)
 {
@@ -3762,7 +3764,7 @@ MATRIX* MulMatrix0(MATRIX* m0, MATRIX* m1, MATRIX* m2)
 
     gte_mvmva(1, 0, 0, 3, 0);
    
-    gte_stsv(v1);
+    gte_stsv(&v1);
 
     //
     v0.vx = m1->m[0][1] | m1->m[1][2] << 16;
@@ -3772,7 +3774,7 @@ MATRIX* MulMatrix0(MATRIX* m0, MATRIX* m1, MATRIX* m2)
 
     gte_mvmva(1, 0, 0, 3, 0);
 
-    gte_stsv(v2);
+    gte_stsv(&v2);
 
     constexpr int test = offsetof(MATRIX, m[2][2]);
 
@@ -3783,7 +3785,7 @@ MATRIX* MulMatrix0(MATRIX* m0, MATRIX* m1, MATRIX* m2)
 
     gte_mvmva(1, 0, 0, 3, 0);
 
-    gte_stsv(v3);
+    gte_stsv(&v3);
 
 #if 0
         .text : 000001B4                 andi    $t3, 0xFFFF
