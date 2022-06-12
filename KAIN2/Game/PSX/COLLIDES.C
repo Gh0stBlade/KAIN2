@@ -218,13 +218,13 @@ void RotMatrixY(long r, MATRIX* m)
 	m->m[0][1] = r1.vy;
 	m->m[0][2] = r1.vz;
 
-	r3.vx -= r4.vx;
-	r3.vy -= r4.vy;
-	r3.vz -= r4.vz;
+	r4.vx -= r3.vx;
+	r4.vy -= r3.vy;
+	r4.vz -= r3.vz;
 
-	m->m[2][0] = r3.vx;
-	m->m[2][1] = r3.vy;
-	m->m[2][2] = r3.vz;
+	m->m[2][0] = r4.vx;
+	m->m[2][1] = r4.vy;
+	m->m[2][2] = r4.vz;
 
 	return;
 }

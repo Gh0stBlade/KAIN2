@@ -3760,7 +3760,7 @@ MATRIX* MulMatrix0(MATRIX* m0, MATRIX* m1, MATRIX* m2)
     v0.vx = m1->m[0][2] | m1->m[1][0] << 16;
     v0.vy = m1->m[2][0] | m1->m[2][1] << 16;
 
-    gte_ldv0(v0);
+    gte_ldv0(&v0);
 
     gte_mvmva(1, 0, 0, 3, 0);
    
@@ -3770,7 +3770,7 @@ MATRIX* MulMatrix0(MATRIX* m0, MATRIX* m1, MATRIX* m2)
     v0.vx = m1->m[0][1] | m1->m[1][2] << 16;
     v0.vy = m1->m[2][1];
 
-    gte_ldv0(v0);
+    gte_ldv0(&v0);
 
     gte_mvmva(1, 0, 0, 3, 0);
 
@@ -3781,7 +3781,7 @@ MATRIX* MulMatrix0(MATRIX* m0, MATRIX* m1, MATRIX* m2)
     v0.vx = m1->m[0][2] | m1->m[1][1] << 16;
     v0.vy = m1->m[2][2];
 
-    gte_ldv0(v0);
+    gte_ldv0(&v0);
 
     gte_mvmva(1, 0, 0, 3, 0);
 

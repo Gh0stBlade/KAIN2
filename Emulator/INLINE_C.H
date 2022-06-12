@@ -26,8 +26,8 @@ extern int gte_ldlzc(int input);
    */
 
 #define gte_ldv0( r0 )                      \
-	((int*)&VX0)[0] = ((int*)&r0)[0];       \
-	((int*)&VZ0)[0] = ((int*)&r0)[1];       \
+	((int*)&VX0)[0] = ((int*)r0)[0];       \
+	((int*)&VZ0)[0] = ((int*)r0)[1];       \
 
 #define gte_ldv1( r0 ) __asm__ volatile (			\
 	"lwc2	$2, 0( %0 );"					\
@@ -41,13 +41,16 @@ extern int gte_ldlzc(int input);
 	:							\
 	: "r"( r0 ) )
 
-#define gte_ldv3( r0, r1, r2 ) \
-	((int*)&VX0)[0] = ((int*)&r0)[0];       \
-	((int*)&VZ0)[0] = ((int*)&r0)[2];       \
-	((int*)&VX1)[0] = ((int*)&r0)[4];       \
-	((int*)&VZ1)[0] = ((int*)&r0)[6];       \
-	((int*)&VX2)[0] = ((int*)&r0)[8];       \
-	((int*)&VZ2)[0] = ((int*)&r0)[10];      \
+#define gte_ldv3( r0, r1, r2 )                \
+	VX0             = ((short*)&r0)[0];       \
+	VY0             = ((short*)&r0)[1];       \
+	VZ0             = ((short*)&r0)[2];       \
+	VX1             = ((short*)&r1)[0];       \
+	VY1             = ((short*)&r1)[1];       \
+	VZ1             = ((short*)&r1)[2];       \
+	VX2             = ((short*)&r2)[0];       \
+	VY2             = ((short*)&r2)[1];       \
+	VZ2             = ((short*)&r2)[2];       \
 
 
 #define gte_ldv3c( r0 ) __asm__ volatile (			\

@@ -6,38 +6,15 @@
 #include "STREAM.H"
 #include "LIGHT3D.H"
 
-void PIPE3D_AspectAdjustMatrix(MATRIX *matrix)
+void PIPE3D_AspectAdjustMatrix(MATRIX* matrix)
 {
-	int v1 = matrix->m[0][0] << 9;
-	int v0 = 0x66666667;
-	int t2 = v1 % v0;
-	int a1 = matrix->m[0][1] << 9;
-	int t3 = a1 % v0;
-	int a2 = matrix->m[0][2] << 9;
-	int a3 = matrix->m[1][0];
-	int t0 = matrix->m[1][1];
-	int t1 = matrix->m[1][2];
-	v1 >>= 31;
-	int t5 = a2 % v0;
+	matrix->m[1][0] = matrix->m[1][0];
+	matrix->m[1][1] = matrix->m[1][1];
+	matrix->m[1][2] = matrix->m[1][2];
 
-	matrix->m[1][0] = a3;
-	matrix->m[1][1] = t0;
-	matrix->m[1][2] = t1;
-
-	a1 >>= 31;
-
-	v0 = t2 >> 7;
-	v0 -= v1;
-
-	matrix->m[0][0] = v0;
-
-	v0 = t3 >> 7;
-	v0 -= a1;
-	matrix->m[0][1] = v0;
-
-	v0 = t5 >> 7;
-	v0 -= a2;
-	matrix->m[0][2] = v0;
+	matrix->m[0][0] = (matrix->m[0][0] * 512) / 320;
+	matrix->m[0][1] = (matrix->m[0][1] * 512) / 320;
+	matrix->m[0][2] = (matrix->m[0][2] * 512) / 320;
 }
 
 void PIPE3D_CalculateWCTransform(struct _CameraCore_Type *cameraCore)
@@ -109,14 +86,14 @@ void PIPE3D_CalculateWCTransform(struct _CameraCore_Type *cameraCore)
 	cam_wcTrans->m[2][2] = (cam_wcTrans->m[2][2] * cameraCore->screenScale.z) >> 12;
 
 	gte_SetRotMatrix(cam_wcTrans);
-	gte_ldv0(v0);
+	gte_ldv0(&v0);
 	gte_mvmva(1, 0, 0, 3, 0);
 	gte_stlvnl(v1);
 
 	TransMatrix(cam_wcTrans, &v1);
 
 	gte_SetRotMatrix(cameraCore->wcTransform2);
-	gte_ldv0(v0);
+	gte_ldv0(&v0);
 	gte_mvmva(1, 0, 0, 3, 0);
 	gte_stlvnl(v1);
 
@@ -461,7 +438,7 @@ void PIPE3D_InstanceListTransformAndDrawFunc(struct _StreamUnit* unit, unsigned 
 		maxRad = instance->object->modelList[instance->currentModel]->maxRad;
 
 		gte_SetRotMatrix(cameraCore->vvNormalWorVecMat[0]);
-		gte_ldv0(bsPos);
+		gte_ldv0(&bsPos);
 		gte_mvmva(1, 0, 0, 3, 0);
 		gte_stlvnl(dpv[0]);
 
@@ -472,7 +449,7 @@ void PIPE3D_InstanceListTransformAndDrawFunc(struct _StreamUnit* unit, unsigned 
 			-maxRad < dpv[0].vz - cameraCore->vvPlaneConsts[2])
 		{
 			gte_SetRotMatrix(cameraCore->vvNormalWorVecMat[1]);
-			gte_ldv0(bsPos);
+			gte_ldv0(&bsPos);
 			gte_mvmva(1, 0, 0, 3, 0);
 			gte_stlvnl(dpv[1]);
 

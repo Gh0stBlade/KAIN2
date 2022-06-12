@@ -442,17 +442,21 @@ void FadeOutSayingLoading(struct GameTracker *gameTracker)
 		gameTracker->drawPage = 1 - gameTracker->drawPage;
 		setRGB0(transPrim, fadeTime, fadeTime, fadeTime);
 
+#if !defined(PSXPC_VERSION)
 		while (CheckVolatile(gameTracker->drawTimerReturn) != 0)
 		{
 
 		}
+#endif
 
 		PutDrawEnv(&draw[gameTracker->drawPage]);
 
+#if !defined(PSXPC_VERSION)
 		while (CheckVolatile(gameTracker->reqDisp) != 0)
 		{
 
 		}
+#endif
 		
 		gameTracker->drawTimerReturn = (long*)gameTracker->drawTime;
 		gameTracker->gameData.asmData.dispPage = 1 - gameTracker->gameData.asmData.dispPage;

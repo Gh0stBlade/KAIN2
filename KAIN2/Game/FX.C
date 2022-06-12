@@ -3,6 +3,7 @@
 #include "OBTABLE.H"
 #include "MATH3D.H"
 #include "PIPE3D.H"
+#include "PSX/COLLIDES.H"
 
 struct _FXBlastringEffect* fx_blastring;
 short fx_going;
@@ -4010,7 +4011,7 @@ void FX_DrawModel(struct Object* object, int model_num, struct _SVector* rotatio
 
 	PIPE3D_AspectAdjustMatrix(&matrix);
 
-	ApplyMatrixSV(&matrix, (SVECTOR*)&offset, (SVECTOR*)&output);
+	ApplyMatrixSV(&matrix, (SVECTOR*)offset, (SVECTOR*)&output);
 
 	matrix.t[0] = position->x + output.x;
 	matrix.t[1] = position->y + output.y;
@@ -4041,7 +4042,7 @@ void FX_DrawModel(struct Object* object, int model_num, struct _SVector* rotatio
 		{
 			for (; i != -1; i--, mface++)
 			{
-				if ((char*)(poly + 1) < (char*)gameTrackerX.primPool->lastPrim)
+				if ((char*)(poly + 1) >= (char*)gameTrackerX.primPool->lastPrim)
 				{
 					gameTrackerX.primPool->nextPrim = (unsigned long*)poly;
 				}

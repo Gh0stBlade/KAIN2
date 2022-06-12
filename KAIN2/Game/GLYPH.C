@@ -287,7 +287,7 @@ void HUD_GetPlayerScreenPt(DVECTOR *center)
 	position.y = gameTrackerX.playerInstance->position.y;
 	position.z = gameTrackerX.playerInstance->position.z + 448;
 
-	gte_ldv0(position);
+	gte_ldv0(&position);
 	gte_rtps();
 	gte_stsxy(center);
 
@@ -749,7 +749,7 @@ void HUD_Init()
 	HUD_Pos_vel = 0;
 	HUD_State = 0;
 	HUD_Wait = 0;
-	HUD_Position = 0xFFFFFC18;
+	HUD_Position = -1000;
 	HUD_Count = 0;
 	HUD_Count_Overall = 0;
 	
@@ -1180,8 +1180,8 @@ void HUD_Draw()
 		Pos.y = 608;
 		Pos.z = 2560;
 		Rotation.y = 0;
-		offset.y = 0;
-		offset.z = HUD_Rotation;
+		offset.z = 0;
+		Rotation.z = HUD_Rotation;
 		Pos.x = HUD_Position - 1536;
 
 		if (HUD_Count != 0 || HUD_Count_Overall < 15)
@@ -1192,27 +1192,27 @@ void HUD_Draw()
 				{
 				case 0:
 				{
-					Rotation.x = 0;
+					Rotation.z = 0;
 					break;
 				}
 				case 1:
 				{
-					Rotation.x = 3277;
+					Rotation.z = 3277;
 					break;
 				}
 				case 2:
 				{
-					Rotation.x = 2458;
+					Rotation.z = 2458;
 					break;
 				}
 				case 3:
 				{
-					Rotation.x = 1638;
+					Rotation.z = 1638;
 					break;
 				}
 				case 4:
 				{
-					Rotation.x = 819;
+					Rotation.z = 819;
 					break;
 				}
 				}
@@ -1224,8 +1224,3 @@ void HUD_Draw()
 		}
 	}
 }
-
-
-
-
-
