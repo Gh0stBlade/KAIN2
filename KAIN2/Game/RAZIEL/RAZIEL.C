@@ -2091,7 +2091,7 @@ void RazielProcess(struct _Instance *playerInstance, struct GameTracker *gameTra
 {
 #if defined(PSX_VERSION)
 	
-	mdRazielProcess(playerInstance->parent, gameTracker, &gameTrackerX.controlCommand[0][0]);
+	mdRazielProcess(gameTracker->playerInstance, gameTracker, &gameTrackerX.controlCommand[0][0]);
 
 	DebugProcess(playerInstance , &Raziel);
 
