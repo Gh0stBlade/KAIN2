@@ -363,7 +363,7 @@ void OBTABLE_GetInstanceProcessFunc(struct _Instance *instance)
 	
 	id = instance->object->id;
 
-	if (id > 0)
+	if (id >= 0)
 	{
 		instance->processFunc = objectFunc[id].processFunc;
 	}
