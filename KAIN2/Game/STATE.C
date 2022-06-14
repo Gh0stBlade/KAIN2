@@ -53,7 +53,7 @@ void PurgeMessageQueue(struct __MessageQueue *In)
 
 struct __Event * PeekMessageQueue(struct __MessageQueue *In)
 {
-	if (In->Head == In->Tail)
+	if (In->Head != In->Tail)
 	{
 		return &In->Queue[In->Head];
 	}
