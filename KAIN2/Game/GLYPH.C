@@ -321,7 +321,6 @@ void HUD_GetPlayerScreenPt(DVECTOR *center)
 	gte_stsxy(center);
 
 	PopMatrix();
-
 }
 
 

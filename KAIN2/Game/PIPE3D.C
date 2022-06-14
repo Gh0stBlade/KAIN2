@@ -437,7 +437,7 @@ void PIPE3D_InstanceListTransformAndDrawFunc(struct _StreamUnit* unit, unsigned 
 	{
 		maxRad = instance->object->modelList[instance->currentModel]->maxRad;
 
-		gte_SetRotMatrix(cameraCore->vvNormalWorVecMat[0]);
+		gte_SetRotMatrix(&cameraCore->vvNormalWorVecMat[0]);
 		gte_ldv0(&bsPos);
 		gte_mvmva(1, 0, 0, 3, 0);
 		gte_stlvnl(dpv[0]);
@@ -448,7 +448,7 @@ void PIPE3D_InstanceListTransformAndDrawFunc(struct _StreamUnit* unit, unsigned 
 			-maxRad < dpv[0].vy - cameraCore->vvPlaneConsts[1] &&
 			-maxRad < dpv[0].vz - cameraCore->vvPlaneConsts[2])
 		{
-			gte_SetRotMatrix(cameraCore->vvNormalWorVecMat[1]);
+			gte_SetRotMatrix(&cameraCore->vvNormalWorVecMat[1]);
 			gte_ldv0(&bsPos);
 			gte_mvmva(1, 0, 0, 3, 0);
 			gte_stlvnl(dpv[1]);

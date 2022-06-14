@@ -287,11 +287,11 @@ extern int gte_ldlzc(int input);
 	: "$12", "$13" )
 
 #define gte_SetRotMatrix( r0 )          \
-	((int*)&R11)[0] = ((int*)&r0)[0];   \
-	((int*)&R13)[0] = ((int*)&r0)[1];   \
-	((int*)&R22)[0] = ((int*)&r0)[2];   \
-	((int*)&R31)[0] = ((int*)&r0)[3];   \
-	((int*)&R33)[0] = ((int*)&r0)[4];
+	((int*)&R11)[0] = ((int*)r0)[0];   \
+	((int*)&R13)[0] = ((int*)r0)[1];   \
+	((int*)&R22)[0] = ((int*)r0)[2];   \
+	((int*)&R31)[0] = ((int*)r0)[3];   \
+	((int*)&R33)[0] = ((int*)r0)[4];
 
 #define gte_ldsvllrow0( r0 ) __asm__ volatile (			\
 	"lw	$12, 0( %0 );"					\
@@ -341,16 +341,10 @@ extern int gte_ldlzc(int input);
 	: "r"( r0 )						\
 	: "$12", "$13", "$14" )
 
-#define gte_SetTransMatrix( r0 ) __asm__ volatile (		\
-	"lw	$12, 20( %0 );"					\
-	"lw	$13, 24( %0 );"					\
-	"ctc2	$12, $5;"					\
-	"lw	$14, 28( %0 );"					\
-	"ctc2	$13, $6;"					\
-	"ctc2	$14, $7"					\
-	:							\
-	: "r"( r0 )						\
-	: "$12", "$13", "$14" )
+#define gte_SetTransMatrix( r0 )          \
+	TRX = ((int*)r0)[5];   \
+	TRY = ((int*)r0)[6];   \
+	TRZ = ((int*)r0)[7];   
 
 #define gte_ldtr( r0, r1, r2 ) __asm__ volatile (		\
 	"ctc2	%0, $5;"					\

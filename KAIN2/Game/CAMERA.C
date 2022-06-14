@@ -86,12 +86,12 @@ void CAMERA_CalcVVClipInfo(struct Camera* camera)
 	ApplyMatrixSV(camera->core.cwTransform2, (SVECTOR*)&camera->core.viewVolumeNormal[3], (SVECTOR*)&camera->core.vvNormalWorVecMat[1].m[1][0]);
 	ApplyMatrixSV(camera->core.cwTransform2, (SVECTOR*)&camera->core.viewVolumeNormal[4], (SVECTOR*)&camera->core.vvNormalWorVecMat[1].m[2][0]);
 
-	gte_SetRotMatrix(camera->core.vvNormalWorVecMat[0]);
+	gte_SetRotMatrix(&camera->core.vvNormalWorVecMat[0]);
 	gte_ldv0(&camera->core.position);
 	gte_mvmva(1, 0, 0, 3, 0);
 	gte_stlvnl(camera->core.vvPlaneConsts[0]);
 
-	gte_SetRotMatrix(camera->core.vvNormalWorVecMat[1]);
+	gte_SetRotMatrix(&camera->core.vvNormalWorVecMat[1]);
 	gte_ldv0(&camera->core.position);
 	gte_mvmva(1, 0, 0, 3, 0);
 	gte_stlvnl(camera->core.vvPlaneConsts[3]);
