@@ -65,7 +65,7 @@ extern void GlyphCollide(struct _Instance *instance, struct GameTracker *gameTra
 extern void GlyphProcess(struct _Instance *instance, struct GameTracker *gameTracker); // 0x8007A9E0
 extern unsigned long GlyphQuery(struct _Instance *instance, unsigned long query); // 0x8007AA68
 extern void GlyphPost(struct _Instance *instance, unsigned long message, unsigned long messageData); // 0x8007AA88
-extern void _GlyphSwitchProcess(struct _Instance *instance, TDRFuncPtr__GlyphSwitchProcess1process process); // 0x8007AABC
+extern void _GlyphSwitchProcess(struct _Instance *instance, void (*func)(struct _Instance* instance, int data1, int data2)); // 0x8007AABC
 extern int GlyphIsGlyphOpen(struct _Instance *instance); // 0x8007AB5C
 extern int _GlyphIsGlyphSet(int glyph); // 0x8007AB70
 extern int _GlyphIsGlyphUsable(int glyph); // 0x8007ABB4
