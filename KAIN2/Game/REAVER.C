@@ -28,6 +28,8 @@ void SoulReaverInit(struct _Instance *instance, struct GameTracker *gameTracker)
 		COLLIDE_SegmentCollisionOff(instance, 0);
 	}
 	FX_ReaverBladeInit();
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -119,6 +121,8 @@ void SoulReaverCollide(struct _Instance *instance, struct GameTracker *gameTrack
 	if (collideInfo->type1 != 3)
 		goto LABEL_17;
 	COLLIDE_SetBSPTreeFlag(collideInfo, 2048);
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -205,6 +209,8 @@ LABEL_9:
 	flags |= 0x800u;
 	instance->flags = flags;
 	SoulReaverCharge(instance, extraData);
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -276,6 +282,8 @@ void CollideReaverProjectile(struct _Instance *instance, struct GameTracker *gam
 		v9->flags = v10;
 	}
 	CollidePhysicalObject(instance);
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -302,6 +310,7 @@ unsigned long SoulReaverQuery(struct _Instance *instance, unsigned long query)
 		return 3;
 	return result;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -332,6 +341,8 @@ void SoulReaverImbue(struct _Instance *instance, int number)
 		0,
 		20,
 		1);
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -393,6 +404,8 @@ void SoulReaverCharge(struct _Instance *instance, struct __ReaverData *data)
 				1);
 		}
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -405,7 +418,7 @@ void StopSoulReaverCharge(struct __ReaverData *data, struct _Instance *instance)
 		// Start line: 1032
 	/* end block 1 */
 	// End Line: 1033
-
+	UNIMPLEMENTED();
 }
 
 
@@ -551,6 +564,8 @@ void SoulReaverPost(struct _Instance *instance, unsigned long message, unsigned 
 			break;
 		}
 	}
+#else
+UNIMPLEMENTED();
 #endif
 }
 
@@ -583,7 +598,7 @@ unsigned long REAVER_GetGlowColor(struct _Instance *instance)
 		// Start line: 1362
 	/* end block 4 */
 	// End Line: 1363
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -606,7 +621,7 @@ void _SoulReaverAnimate(struct _Instance *instance)
 		// Start line: 1398
 	/* end block 2 */
 	// End Line: 1399
-
+			UNIMPLEMENTED();
 }
 
 
@@ -617,6 +632,7 @@ int SoulReaverFire()
 #if defined(PC_VERSION)
 	return word_C55188;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }

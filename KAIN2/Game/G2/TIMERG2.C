@@ -17,6 +17,7 @@ short G2Timer_GetFrameTime()
 	return 1;
   return result;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }

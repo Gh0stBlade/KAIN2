@@ -102,6 +102,7 @@ void G2Instance_BuildTransformsForList(struct _Instance *listHead)
 		jr      $ra
 		addiu   $sp, 0x20
 #endif
+		UNIMPLEMENTED();
 }
 
 
@@ -113,7 +114,7 @@ void G2Instance_BuildTransforms(struct _Instance *instance)
 		// Start line: 333
 	/* end block 1 */
 	// End Line: 334
-
+	UNIMPLEMENTED();
 }
 
 
@@ -180,7 +181,7 @@ void _G2Instance_RebuildAnimatedTransforms(struct _Instance *instance)
 		// Start line: 415
 	/* end block 2 */
 	// End Line: 416
-
+			UNIMPLEMENTED();
 }
 
 
@@ -192,7 +193,7 @@ void G2Instance_ClearMatrices(struct _Instance *instance)
 		// Start line: 756
 	/* end block 1 */
 	// End Line: 757
-
+	UNIMPLEMENTED();
 }
 
 
@@ -219,7 +220,7 @@ void _G2Instance_BuildAnimatedTransforms(struct _Instance *instance)
 		// Start line: 780
 	/* end block 3 */
 	// End Line: 781
-
+			UNIMPLEMENTED();
 }
 
 
@@ -246,7 +247,7 @@ void _G2Instance_RebuildNonAnimatedTransforms(struct _Instance *instance)
 		// Start line: 847
 	/* end block 2 */
 	// End Line: 848
-
+			UNIMPLEMENTED();
 }
 
 
@@ -270,7 +271,7 @@ void _G2Instance_BuildDeactivatedTransforms(struct _Instance *instance)
 		// Start line: 1276
 	/* end block 2 */
 	// End Line: 1277
-
+			UNIMPLEMENTED();
 }
 
 
@@ -292,7 +293,7 @@ void _G2Instance_BuildNonAnimatedTransforms(struct _Instance *instance)
 		// Start line: 1415
 	/* end block 2 */
 	// End Line: 1416
-
+			UNIMPLEMENTED();
 }
 
 
@@ -337,7 +338,7 @@ void _G2Instance_BuildFacadeTransforms(struct _Instance *instance, struct _Segme
 		// Start line: 1488
 	/* end block 2 */
 	// End Line: 1489
-
+				UNIMPLEMENTED();
 }
 
 

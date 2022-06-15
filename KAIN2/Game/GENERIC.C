@@ -49,6 +49,8 @@ void GenericInit(struct _Instance *instance, struct GameTracker *gameTracker)
 			}
 		}
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -66,7 +68,7 @@ void GenericCollide(struct _Instance *instance, struct GameTracker *gameTracker)
 		// Start line: 205
 	/* end block 2 */
 	// End Line: 206
-
+	UNIMPLEMENTED();
 }
 
 
@@ -87,7 +89,7 @@ void GenericProcess(struct _Instance *instance, struct GameTracker *gameTracker)
 		// Start line: 271
 	/* end block 2 */
 	// End Line: 272
-
+			UNIMPLEMENTED();
 }
 
 
@@ -126,7 +128,7 @@ unsigned long GenericQuery(struct _Instance *instance, unsigned long query)
 		// Start line: 301
 	/* end block 2 */
 	// End Line: 302
-
+				UNIMPLEMENTED();
 	return 0;
 }
 
@@ -169,7 +171,7 @@ void GenericMessage(struct _Instance *instance, unsigned long message, unsigned 
 		// Start line: 453
 	/* end block 2 */
 	// End Line: 454
-
+				UNIMPLEMENTED();
 }
 
 
@@ -195,7 +197,7 @@ void GenericRelocateTune(struct Object *object, long offset)
 		// Start line: 566
 	/* end block 3 */
 	// End Line: 567
-
+			UNIMPLEMENTED();
 }
 
 

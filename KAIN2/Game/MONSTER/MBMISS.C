@@ -27,7 +27,7 @@ void WCBEGG_Message(struct _Instance *instance, unsigned long message, unsigned 
 		// Start line: 252
 	/* end block 2 */
 	// End Line: 253
-
+				UNIMPLEMENTED();
 }
 
 
@@ -49,7 +49,7 @@ int WCBEGG_ShouldIgniteEgg(struct _Instance *egg, struct _walbossAttributes *wa)
 		// Start line: 290
 	/* end block 2 */
 	// End Line: 291
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -77,7 +77,7 @@ void WCBEGG_Process(struct _Instance *instance, struct GameTracker *gameTracker)
 		// Start line: 371
 	/* end block 2 */
 	// End Line: 372
-
+			UNIMPLEMENTED();
 }
 
 
@@ -102,7 +102,7 @@ void WCBEGG_ExplodeProcess(struct _Instance *instance, struct GameTracker *gameT
 		// Start line: 506
 	/* end block 2 */
 	// End Line: 507
-
+			UNIMPLEMENTED();
 }
 
 
@@ -127,7 +127,7 @@ void WCBEGG_SplitProcess(struct _Instance *instance, struct GameTracker *gameTra
 		// Start line: 610
 	/* end block 2 */
 	// End Line: 611
-
+			UNIMPLEMENTED();
 }
 
 
@@ -148,7 +148,7 @@ void WCBEGG_CommonPostProcess(struct _Instance *instance, struct GameTracker *ga
 		// Start line: 702
 	/* end block 2 */
 	// End Line: 703
-
+			UNIMPLEMENTED();
 }
 
 
@@ -170,7 +170,7 @@ void WCBEGG_CommonPostProcess2(struct _Instance *instance, struct GameTracker *g
 		// Start line: 732
 	/* end block 2 */
 	// End Line: 733
-
+			UNIMPLEMENTED();
 }
 
 
@@ -194,7 +194,7 @@ void WCBEGG_ExplodeCollide(struct _Instance *instance, struct GameTracker *gameT
 		// Start line: 772
 	/* end block 2 */
 	// End Line: 773
-
+			UNIMPLEMENTED();
 }
 
 
@@ -224,7 +224,7 @@ void WCBEGG_Collide(struct _Instance *instance, struct GameTracker *gameTracker)
 		// Start line: 908
 	/* end block 2 */
 	// End Line: 909
-
+				UNIMPLEMENTED();
 }
 
 
@@ -236,7 +236,7 @@ long WALBOSC_AnimCallback(struct _G2Anim_Type *anim, int sectionID, enum _G2Anim
 		// Start line: 955
 	/* end block 1 */
 	// End Line: 956
-
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -269,7 +269,7 @@ void WALBOSC_Collide(struct _Instance *instance, struct GameTracker *gameTracker
 		// Start line: 1000
 	/* end block 2 */
 	// End Line: 1001
-
+				UNIMPLEMENTED();
 }
 
 
@@ -281,7 +281,7 @@ void WALBOSC_Message(struct _Instance *instance, unsigned long message, unsigned
 		// Start line: 1056
 	/* end block 1 */
 	// End Line: 1057
-
+	UNIMPLEMENTED();
 }
 
 #if defined(PC_VERSION)

@@ -38,6 +38,8 @@ void __cdecl PRIESTS_Init(struct _Instance* instance)
 		}
 		mv->mvFlags = mv->mvFlags & ~0x3000 | 0x200;
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 void __cdecl PRIESTS_CleanUp(struct _Instance* instance)
@@ -54,6 +56,8 @@ void __cdecl PRIESTS_CleanUp(struct _Instance* instance)
 			MEMPACK_Free(v2);
 	}
 	MON_CleanUp(instance);
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -71,6 +75,7 @@ u_long __cdecl PRIESTS_Query(struct _Instance* instance, unsigned long data)
 		return result | 2;
 	return result;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -141,6 +146,8 @@ void __cdecl PRIESTS_Message(struct _Instance* instance, unsigned int message, u
 	{
 		MonsterMessage(instance, message, data);
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -165,17 +172,23 @@ void __cdecl PRIESTS_IdleEntry(struct _Instance* instance)
 			mv->mode = 1;
 		}
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 // TODO: fill me
 void __cdecl PRIESTS_Idle(struct _Instance* instance)
-{}
+{
+	UNIMPLEMENTED();
+}
 
 void __cdecl PRIESTS_PursueEntry(struct _Instance* instance)
 {
 #if defined(PC_VERSION)
 	if ((((struct _MonsterVars*)instance->extraData)->mvFlags & 4) != 0)
 		MON_PursueEntry(instance);
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -191,6 +204,8 @@ void __cdecl PRIESTS_Pursue(struct _Instance* instance)
 		MON_SwitchState(instance, MONSTER_STATE_IDLE);
 		MON_DefaultQueueHandler(instance);
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -211,6 +226,8 @@ void __cdecl PRIESTS_FleeEntry(struct _Instance* instance)
 		mv->mode = 4;
 		extraVars[9] = 0;
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -281,6 +298,8 @@ void __cdecl PRIESTS_Flee(struct _Instance* instance)
 			break;
 		}
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -311,6 +330,7 @@ struct _Instance* __cdecl PRIESTS_InstanceToPossess(struct _Instance* instance)
 	}
 	return nextinst;
 #else
+	UNIMPLEMENTED();
 	return NULL;
 #endif
 }
@@ -347,6 +367,8 @@ void __cdecl PRIESTS_DoAttackAnim(_Instance* instance, int a2)
 			return;
 		}
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 

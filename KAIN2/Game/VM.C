@@ -94,7 +94,7 @@ void VM_UpdateMorph(struct Level *level, int initFlg)
 		// Start line: 590
 	/* end block 2 */
 	// End Line: 591
-
+						UNIMPLEMENTED();
 }
 
 
@@ -110,5 +110,7 @@ void VM_VMObjectSetTable(struct Level *level, struct _VMObject *vmobject, int ta
 	vmoffsetTableList = vmobject->vmoffsetTableList;
 	vmobject->currentIdx = table;
 	vmobject->curVMOffsetTable = vmoffsetTableList[table];
+#else
+	UNIMPLEMENTED();
 #endif
 }

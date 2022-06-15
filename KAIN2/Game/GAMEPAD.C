@@ -452,7 +452,7 @@ void GAMEPAD_Shock(int motor0_speed, int motor0_time, int motor1_speed, int moto
 		// Start line: 699
 	/* end block 2 */
 	// End Line: 700
-
+	UNIMPLEMENTED();
 }
 
 
@@ -469,7 +469,7 @@ void GAMEPAD_Shock0(int motor0_speed, int motor0_time)
 		// Start line: 738
 	/* end block 2 */
 	// End Line: 739
-
+	UNIMPLEMENTED();
 }
 
 void GAMEPAD_Shock1(int motor1_speed, int motor1_time)
@@ -959,7 +959,7 @@ void GAMEPAD_SaveControllers()
 		// Start line: 1742
 	/* end block 2 */
 	// End Line: 1743
-
+	UNIMPLEMENTED();
 }
 
 
@@ -976,7 +976,7 @@ void GAMEPAD_RestoreControllers()
 		// Start line: 1756
 	/* end block 2 */
 	// End Line: 1757
-
+	UNIMPLEMENTED();
 }
 
 

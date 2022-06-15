@@ -24,7 +24,7 @@ void _SplineS2Pos(struct vecS *p, long s, struct SplineKey *key, struct SplineKe
 		// Start line: 140
 	/* end block 2 */
 	// End Line: 141
-
+			UNIMPLEMENTED();
 }
 
 
@@ -55,7 +55,7 @@ void SplineSetDefDenom(struct Spline *spline, struct SplineDef *def, int denomFl
 		// Start line: 263
 	/* end block 4 */
 	// End Line: 264
-
+			UNIMPLEMENTED();
 }
 
 
@@ -79,7 +79,7 @@ unsigned short SplineGetFrameNumber(struct Spline *spline, struct SplineDef *def
 		// Start line: 496
 	/* end block 2 */
 	// End Line: 497
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -111,7 +111,7 @@ short SplineSetDef2FrameNumber(struct Spline *spline, struct SplineDef *def, uns
 		// Start line: 493
 	/* end block 3 */
 	// End Line: 494
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -138,7 +138,7 @@ short SplineIsWhere(struct Spline *spline, struct SplineDef *def)
 		// Start line: 619
 	/* end block 3 */
 	// End Line: 620
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -160,7 +160,7 @@ short SplineMultiIsWhere(struct MultiSpline *multi)
 		// Start line: 644
 	/* end block 2 */
 	// End Line: 645
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -178,7 +178,7 @@ struct _G2Quat_Type * SplineGetFirstRot(struct RSpline *rspline, struct SplineDe
 		// Start line: 718
 	/* end block 2 */
 	// End Line: 719
-
+	UNIMPLEMENTED();
 	return null;
 }
 
@@ -201,7 +201,7 @@ struct _SVector * SplineGetFirstPoint(struct Spline *spline, struct SplineDef *d
 		// Start line: 746
 	/* end block 3 */
 	// End Line: 747
-
+	UNIMPLEMENTED();
 	return null;
 }
 
@@ -223,7 +223,7 @@ struct _SVector * SplineGetNextPoint(struct Spline *spline, struct SplineDef *de
 		// Start line: 998
 	/* end block 2 */
 	// End Line: 999
-
+			UNIMPLEMENTED();
 	return null;
 }
 
@@ -245,7 +245,7 @@ struct _SVector * SplineGetPreviousPoint(struct Spline *spline, struct SplineDef
 		// Start line: 846
 	/* end block 2 */
 	// End Line: 847
-
+			UNIMPLEMENTED();
 	return null;
 }
 
@@ -280,7 +280,7 @@ struct _SVector * SplineGetNearestPoint(struct Spline *spline, struct _SVector *
 		// Start line: 900
 	/* end block 2 */
 	// End Line: 901
-
+			UNIMPLEMENTED();
 	return null;
 }
 
@@ -332,7 +332,7 @@ unsigned long SplineGetData(struct Spline *spline, struct SplineDef *def, void *
 		// Start line: 1866
 	/* end block 2 */
 	// End Line: 1867
-
+				UNIMPLEMENTED();
 	return 0;
 }
 
@@ -363,7 +363,7 @@ unsigned long SplineGetQuatData(struct Spline *spline, struct SplineDef *def, vo
 		// Start line: 1703
 	/* end block 2 */
 	// End Line: 1704
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -386,7 +386,7 @@ unsigned long SplineGetNext(struct Spline *spline, struct SplineDef *def)
 		// Start line: 1805
 	/* end block 2 */
 	// End Line: 1806
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -410,7 +410,7 @@ unsigned long SplineGetPrev(struct Spline *spline, struct SplineDef *def)
 		// Start line: 1941
 	/* end block 2 */
 	// End Line: 1942
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -434,7 +434,7 @@ unsigned long SplineGetOffsetNext(struct Spline *spline, struct SplineDef *def, 
 		// Start line: 2119
 	/* end block 2 */
 	// End Line: 2120
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -458,7 +458,7 @@ unsigned long SplineGetOffsetPrev(struct Spline *spline, struct SplineDef *def, 
 		// Start line: 2280
 	/* end block 2 */
 	// End Line: 2281
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -480,7 +480,7 @@ struct _SVector * SplineGetOffsetNextPoint(struct Spline *spline, struct SplineD
 		// Start line: 2425
 	/* end block 2 */
 	// End Line: 2426
-
+			UNIMPLEMENTED();
 	return null;
 }
 
@@ -502,7 +502,7 @@ struct _SVector * SplineGetOffsetPreviousPoint(struct Spline *spline, struct Spl
 		// Start line: 2455
 	/* end block 2 */
 	// End Line: 2456
-
+			UNIMPLEMENTED();
 	return null;
 }
 

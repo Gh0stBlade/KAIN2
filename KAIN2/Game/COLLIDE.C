@@ -46,6 +46,8 @@ void __cdecl G2Quat_ToMatrix(struct _G2EulerAngles_Type* a1, struct _G2Matrix_Ty
 	a2->rotScale[2][1] = v6 + v13;
 	a2->rotScale[1][2] = v13 - v6;
 	a2->rotScale[2][2] = 4096 - v12 - v8;
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -191,6 +193,7 @@ LABEL_15:
 	} while (!v21);
 	return v1a;
 #else
+UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -247,6 +250,7 @@ long COLLIDE_GetNormal(short nNum, short *nrmlArray, struct _SVector *nrml)
 	}
 	return result;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -332,6 +336,8 @@ LABEL_10:
 		normal->y = (v5[1] << 12) / v16;
 		normal->z = (v5[2] << 12) / v16;
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -390,6 +396,8 @@ void COLLIDE_UpdateAllTransforms(struct _Instance *instance, SVECTOR*offset)
 		}
 	}
 #endif
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -448,6 +456,8 @@ void COLLIDE_MoveAllTransforms(struct _Instance *instance, _Position *offset)
 		}
 	}
 #endif
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -465,7 +475,7 @@ long COLLIDE_WithinYZBounds(struct _SVector *point, struct _HBox *hbox)
 		// Start line: 1070
 	/* end block 2 */
 	// End Line: 1071
-
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -483,7 +493,7 @@ long COLLIDE_WithinXZBounds(struct _SVector *point, struct _HBox *hbox)
 		// Start line: 1082
 	/* end block 2 */
 	// End Line: 1083
-
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -501,7 +511,7 @@ long COLLIDE_WithinXYBounds(struct _SVector *point, struct _HBox *hbox)
 		// Start line: 1094
 	/* end block 2 */
 	// End Line: 1095
-
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -612,6 +622,8 @@ void COLLIDE_LineWithBoxFace(short startDist, long lineDist, short planeDist, st
 		// Start line: 1111
 	/* end block 2 */
 	// End Line: 1112
+#else
+UNIMPLEMENTED();
 #endif
 }
 
@@ -650,6 +662,8 @@ long COLLIDE_IntersectLineAndBox(struct _SVector *point0, struct _SVector *norma
 		// Start line: 1201
 	/* end block 2 */
 	// End Line: 1202
+#else
+	UNIMPLEMENTED();
 #endif
 	return 0;
 }
@@ -663,7 +677,7 @@ struct _TFace * COLLIDE_PointAndTerrain(struct _Terrain *terrain, struct _PColli
 		// Start line: 1519
 	/* end block 1 */
 	// End Line: 1520
-
+	UNIMPLEMENTED();
 	return null;
 }
 
@@ -905,6 +919,7 @@ struct _TFace * COLLIDE_PointAndTerrainFunc(struct _Terrain *terrain, struct _PC
 	/* end block 2 */
 	// End Line: 1541
 #endif
+	UNIMPLEMENTED();
 	return null;
 }
 
@@ -974,6 +989,7 @@ int COLLIDE_PointAndHFace(struct _SVector *newPos, struct _SVector *oldPos, stru
 	/* end block 2 */
 	// End Line: 3220
 #endif
+				UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1085,6 +1101,7 @@ void COLLIDE_PointAndInstance(struct _PCollideInfo *pcollideInfo, struct _Instan
 	/* end block 2 */
 	// End Line: 3369
 #endif
+						UNIMPLEMENTED();
 }
 
 
@@ -1121,7 +1138,7 @@ void COLLIDE_PointAndInstanceTrivialReject(struct _PCollideInfo *pcollideInfo, s
 		// Start line: 4060
 	/* end block 2 */
 	// End Line: 4061
-
+				UNIMPLEMENTED();
 }
 
 
@@ -1179,7 +1196,7 @@ void COLLIDE_PointAndWorld(struct _PCollideInfo *pcollideInfo, struct Level *lev
 		// Start line: 4207
 	/* end block 2 */
 	// End Line: 4208
-
+						UNIMPLEMENTED();
 }
 
 
@@ -1210,7 +1227,7 @@ long COLLIDE_ClosestPointInBoxToPoint(_Position *boxPoint, struct _HBox *hbox, s
 		// Start line: 4806
 	/* end block 4 */
 	// End Line: 4807
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1258,7 +1275,7 @@ long COLLIDE_SphereAndPoint(struct _Sphere *sphere, struct _SVector *point, stru
 		// Start line: 4905
 	/* end block 2 */
 	// End Line: 4906
-
+				UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1390,6 +1407,7 @@ long COLLIDE_SphereAndHBox(struct _HBox *hbox, struct _Sphere *sphere, _Position
 	/* end block 2 */
 	// End Line: 4982
 #endif
+					UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1514,6 +1532,7 @@ void COLLIDE_Instance1SpheresToInstance2(struct _Instance *instance1, struct _In
 	/* end block 2 */
 	// End Line: 4839
 #endif
+						UNIMPLEMENTED();
 }
 
 
@@ -1548,7 +1567,7 @@ void COLLIDE_Instances(struct _Instance *instance1, struct _Instance *instance2)
 		// Start line: 7060
 	/* end block 2 */
 	// End Line: 7061
-
+				UNIMPLEMENTED();
 }
 
 
@@ -1578,7 +1597,7 @@ void COLLIDE_InstanceList(struct _InstanceList *instanceList)
 		// Start line: 7236
 	/* end block 3 */
 	// End Line: 7237
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1702,6 +1721,7 @@ long COLLIDE_SphereAndHFace(struct _Sphere *sphere, _Position *oldPos, struct _H
 	/* end block 2 */
 	// End Line: 6123
 #endif
+					UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1928,6 +1948,7 @@ long COLLIDE_SAndT(struct SCollideInfo *scollideInfo, struct Level *level)
 	/* end block 2 */
 	// End Line: 8067
 #endif
+				UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1960,7 +1981,7 @@ long COLLIDE_SphereAndTerrain(struct SCollideInfo *scollideInfo, struct Level *l
 		// Start line: 9618
 	/* end block 2 */
 	// End Line: 9619
-
+				UNIMPLEMENTED();
 	return 0;
 }
 
@@ -2003,7 +2024,7 @@ void COLLIDE_InstanceTerrain(struct _Instance *instance, struct Level *level)
 		// Start line: 10562
 	/* end block 2 */
 	// End Line: 10563
-
+				UNIMPLEMENTED();
 }
 
 
@@ -2186,6 +2207,7 @@ long COLLIDE_LineWithSignals(struct _SVector *startPoint, struct _SVector *endPo
 	/* end block 2 */
 	// End Line: 10816
 #endif
+				UNIMPLEMENTED();
 	return 0;
 }
 
@@ -2221,7 +2243,7 @@ void COLLIDE_InstanceTerrainSignal(struct _Instance *instance, struct Level *lev
 		// Start line: 11519
 	/* end block 2 */
 	// End Line: 11520
-
+				UNIMPLEMENTED();
 }
 
 
@@ -2283,7 +2305,7 @@ struct _StreamUnit * COLLIDE_CameraWithStreamSignals(struct Camera *camera)
 		// Start line: 11707
 	/* end block 2 */
 	// End Line: 11708
-
+						UNIMPLEMENTED();
 	return null;
 }
 
@@ -2306,7 +2328,7 @@ void COLLIDE_InstanceListWithSignals(struct _InstanceList *instanceList)
 		// Start line: 12100
 	/* end block 2 */
 	// End Line: 12101
-
+			UNIMPLEMENTED();
 }
 
 
@@ -2329,7 +2351,7 @@ void COLLIDE_InstanceListTerrain(struct _InstanceList *instanceList)
 		// Start line: 12145
 	/* end block 2 */
 	// End Line: 12146
-
+			UNIMPLEMENTED();
 }
 
 
@@ -2364,7 +2386,7 @@ void COLLIDE_SegmentCollisionOn(struct _Instance *instance, int segment)
 		// Start line: 12376
 	/* end block 3 */
 	// End Line: 12377
-
+				UNIMPLEMENTED();
 }
 
 
@@ -2400,7 +2422,7 @@ void COLLIDE_SegmentCollisionOff(struct _Instance *instance, int segment)
 		// Start line: 12421
 	/* end block 3 */
 	// End Line: 12422
-
+				UNIMPLEMENTED();
 }
 
 
@@ -2458,6 +2480,7 @@ long COLLIDE_FindCollisionFaceNormal(struct _CollideInfo *collideInfo, struct _N
 	/* end block 2 */
 	// End Line: 10031
 #endif
+				UNIMPLEMENTED();
 	return 0;
 }
 
@@ -2491,7 +2514,7 @@ short * COLLIDE_GetBSPTreeFlag(struct _CollideInfo *collideInfo)
 		// Start line: 12605
 	/* end block 4 */
 	// End Line: 12606
-
+			UNIMPLEMENTED();
 	return null;
 }
 
@@ -2513,7 +2536,7 @@ void COLLIDE_SetBSPTreeFlag(struct _CollideInfo *collideInfo, short flag)
 		// Start line: 12649
 	/* end block 2 */
 	// End Line: 12650
-
+			UNIMPLEMENTED();
 }
 
 
@@ -2612,6 +2635,7 @@ int COLLIDE_PointAndTfaceFunc(struct _Terrain *terrain, struct BSPTree *bsp, str
 	/* end block 2 */
 	// End Line: 10243
 #endif
+					UNIMPLEMENTED();
 	return 0;
 }
 

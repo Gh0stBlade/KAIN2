@@ -7,6 +7,8 @@ void UpdraftInit(struct _Instance* a1)
 {
 #if defined(PC_VERSION)
 	a1->currentMainState = 0;
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -15,6 +17,8 @@ void UpdraftProcess(struct _Instance* a1)
 #if defined(PC_VERSION)
 	if (a1->currentMainState == 1)
 		a1->currentMainState = 0;
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -26,6 +30,8 @@ void UpdraftCollide(struct _Instance* a1, struct GameTracker* a2)
 	collideInfo = a1->collideInfo;
 	if (collideInfo[7] == 1 && (struct _Instance*)*((DWORD*)collideInfo + 5) == a2->playerInstance)
 		a1->currentMainState = 1;
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -62,6 +68,8 @@ void LitShaftInit(struct _Instance *instance, struct GameTracker *gameTracker)
 		}
 		instance->fadeValue = data->fadeValue;
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -79,6 +87,7 @@ short LitShaft_GetFadeValue(struct _Instance *instance)
 	else
 		return 0;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }

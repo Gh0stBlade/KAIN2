@@ -17,7 +17,7 @@ void G2Anim_AttachControllerToSeg(struct _G2Anim_Type *anim, int segNumber, int 
 		// Start line: 470
 	/* end block 2 */
 	// End Line: 471
-
+	UNIMPLEMENTED();
 }
 
 
@@ -39,7 +39,7 @@ void G2Anim_DetachControllerFromSeg(struct _G2Anim_Type *anim, int segNumber, in
 		// Start line: 530
 	/* end block 2 */
 	// End Line: 531
-
+			UNIMPLEMENTED();
 }
 
 
@@ -61,7 +61,7 @@ void G2Anim_EnableController(struct _G2Anim_Type *anim, int segNumber, int type)
 		// Start line: 684
 	/* end block 2 */
 	// End Line: 685
-
+			UNIMPLEMENTED();
 }
 
 
@@ -82,7 +82,7 @@ void G2Anim_DisableController(struct _G2Anim_Type *anim, int segNumber, int type
 		// Start line: 794
 	/* end block 2 */
 	// End Line: 795
-
+	UNIMPLEMENTED();
 }
 
 
@@ -105,7 +105,7 @@ void G2Anim_InterpDisableController(struct _G2Anim_Type *anim, int segNumber, in
 		// Start line: 860
 	/* end block 2 */
 	// End Line: 861
-
+			UNIMPLEMENTED();
 }
 
 
@@ -126,7 +126,7 @@ enum _G2Bool_Enum G2Anim_IsControllerActive(struct _G2Anim_Type *anim, int segNu
 		// Start line: 992
 	/* end block 2 */
 	// End Line: 993
-
+	UNIMPLEMENTED();
 	return (_G2Bool_Enum)0;
 }
 
@@ -148,7 +148,7 @@ enum _G2Bool_Enum G2Anim_IsControllerInterpolating(struct _G2Anim_Type *anim, in
 		// Start line: 987
 	/* end block 2 */
 	// End Line: 988
-
+	UNIMPLEMENTED();
 	return (_G2Bool_Enum)0;
 }
 
@@ -205,7 +205,7 @@ void G2Anim_GetControllerCurrentInterpVector(struct _G2Anim_Type *anim, int segN
 		// Start line: 1116
 	/* end block 2 */
 	// End Line: 1117
-
+				UNIMPLEMENTED();
 }
 
 
@@ -224,7 +224,7 @@ void G2Anim_SetControllerCallbackData(struct _G2Anim_Type *anim, int segNumber, 
 		// Start line: 1258
 	/* end block 2 */
 	// End Line: 1259
-
+	UNIMPLEMENTED();
 }
 
 
@@ -245,7 +245,7 @@ void G2Anim_SetControllerAngleOrder(struct _G2Anim_Type *anim, int segNumber, in
 		// Start line: 1205
 	/* end block 2 */
 	// End Line: 1206
-
+	UNIMPLEMENTED();
 }
 
 
@@ -266,7 +266,7 @@ void G2Anim_SetController_Vector(struct _G2Anim_Type *anim, int segNumber, int t
 		// Start line: 1245
 	/* end block 2 */
 	// End Line: 1246
-
+	UNIMPLEMENTED();
 }
 
 
@@ -291,7 +291,7 @@ void G2Anim_SetInterpController_Vector(struct _G2Anim_Type *anim, int segNumber,
 		// Start line: 1422
 	/* end block 2 */
 	// End Line: 1423
-
+			UNIMPLEMENTED();
 }
 
 
@@ -331,6 +331,7 @@ void G2Anim_SetInterpController_Quat(struct _G2Anim_Type *anim, int segNumber, i
 		// Start line: 1560
 	/* end block 2 */
 	// End Line: 1561
+					UNIMPLEMENTED();
 
 }
 
@@ -352,6 +353,7 @@ void _G2Anim_ApplyControllersToStoredFrame(struct _G2Anim_Type *anim)
 		// Start line: 1487
 	/* end block 2 */
 	// End Line: 1488
+			UNIMPLEMENTED();
 
 }
 
@@ -383,6 +385,7 @@ void _G2Anim_BuildTransformsWithControllers(struct _G2Anim_Type *anim)
 		// Start line: 1516
 	/* end block 2 */
 	// End Line: 1517
+			UNIMPLEMENTED();
 
 }
 
@@ -416,6 +419,7 @@ void _G2Anim_BuildSegTransformWithControllers(struct _G2Matrix_Type *segMatrix, 
 		// Start line: 1885
 	/* end block 2 */
 	// End Line: 1886
+				UNIMPLEMENTED();
 
 }
 
@@ -473,6 +477,7 @@ unsigned long _G2AnimController_ApplyToSegValue(struct _G2AnimController_Type *c
 		// Start line: 2097
 	/* end block 2 */
 	// End Line: 2098
+					UNIMPLEMENTED();
 
 	return 0;
 }
@@ -497,6 +502,7 @@ void _G2Anim_UpdateControllers(struct _G2Anim_Type *anim)
 		// Start line: 2271
 	/* end block 2 */
 	// End Line: 2272
+			UNIMPLEMENTED();
 
 }
 
@@ -514,6 +520,7 @@ void _G2Anim_CopyVectorWithOrder(struct _G2SVector3_Type *sourceVector, struct _
 		// Start line: 2390
 	/* end block 2 */
 	// End Line: 2391
+	UNIMPLEMENTED();
 
 }
 
@@ -592,6 +599,7 @@ void _G2AnimSection_ApplyControllersToStoredFrame(struct _G2AnimSection_Type *se
 		// Start line: 2436
 	/* end block 2 */
 	// End Line: 2437
+					UNIMPLEMENTED();
 
 }
 
@@ -615,6 +623,7 @@ unsigned long _G2AnimController_ApplyWorldToParentMatrix(struct _G2AnimControlle
 		// Start line: 2618
 	/* end block 2 */
 	// End Line: 2619
+			UNIMPLEMENTED();
 
 	return 0;
 }
@@ -637,6 +646,7 @@ void _G2AnimController_GetMatrix(struct _G2AnimController_Type *controller, stru
 		// Start line: 2747
 	/* end block 2 */
 	// End Line: 2748
+			UNIMPLEMENTED();
 
 }
 
@@ -692,6 +702,7 @@ void _G2AnimController_GetVector(struct _G2AnimController_Type *controller, stru
 		// Start line: 2861
 	/* end block 3 */
 	// End Line: 2862
+				UNIMPLEMENTED();
 
 }
 
@@ -713,7 +724,7 @@ struct _G2AnimController_Type * _G2Anim_FindController(struct _G2Anim_Type *anim
 		// Start line: 2897
 	/* end block 2 */
 	// End Line: 2898
-
+	UNIMPLEMENTED();
 	return null;
 }
 
@@ -735,7 +746,7 @@ struct _G2AnimController_Type * _G2AnimController_Create(int segNumber, int type
 		// Start line: 2958
 	/* end block 2 */
 	// End Line: 2959
-
+	UNIMPLEMENTED();
 	return null;
 }
 
@@ -757,7 +768,7 @@ struct _G2AnimController_Type * _G2AnimController_Destroy(struct _G2AnimControll
 		// Start line: 3046
 	/* end block 2 */
 	// End Line: 3047
-
+			UNIMPLEMENTED();
 	return null;
 }
 
@@ -779,6 +790,7 @@ void _G2AnimController_InsertIntoList(struct _G2AnimController_Type *controller,
 		// Start line: 3092
 	/* end block 2 */
 	// End Line: 3093
+	UNIMPLEMENTED();
 
 }
 
@@ -809,6 +821,7 @@ void _G2AnimController_GetCurrentInterpQuat(struct _G2AnimController_Type *contr
 		// Start line: 3170
 	/* end block 2 */
 	// End Line: 3171
+			UNIMPLEMENTED();
 
 }
 
@@ -833,6 +846,7 @@ void _G2AnimController_GetSimpleWorldRotQuat(struct _G2AnimController_Type *cont
 		// Start line: 3280
 	/* end block 2 */
 	// End Line: 3281
+			UNIMPLEMENTED();
 
 }
 
@@ -864,6 +878,7 @@ struct _G2AnimController_Type * _G2AnimControllerST_FindInList(int segNumber, in
 		// Start line: 3372
 	/* end block 4 */
 	// End Line: 3373
+	UNIMPLEMENTED();
 
 	return null;
 }
@@ -896,7 +911,7 @@ struct _G2AnimController_Type * _G2AnimControllerST_FindPtrInList(int segNumber,
 		// Start line: 3423
 	/* end block 4 */
 	// End Line: 3424
-
+	UNIMPLEMENTED();
 	return null;
 }
 
@@ -930,7 +945,7 @@ struct _G2AnimController_Type * _G2AnimControllerST_RemoveFromList(int segNumber
 		// Start line: 3506
 	/* end block 4 */
 	// End Line: 3507
-
+	UNIMPLEMENTED();
 	return null;
 }
 

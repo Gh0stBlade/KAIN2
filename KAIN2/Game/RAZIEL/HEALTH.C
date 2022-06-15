@@ -44,7 +44,7 @@ void GainHealth(int data)
 		// Start line: 71
 	/* end block 1 */
 	// End Line: 72
-
+	UNIMPLEMENTED();
 }
 
 
@@ -56,7 +56,7 @@ void LoseHealth(int amount)
 		// Start line: 101
 	/* end block 1 */
 	// End Line: 102
-
+	UNIMPLEMENTED();
 }
 
 
@@ -68,7 +68,7 @@ void DrainHealth(int amount)
 		// Start line: 153
 	/* end block 1 */
 	// End Line: 154
-
+	UNIMPLEMENTED();
 }
 
 
@@ -85,7 +85,7 @@ void BumpUpHealth()
 		// Start line: 215
 	/* end block 2 */
 	// End Line: 216
-
+	UNIMPLEMENTED();
 }
 
 int GetMaxHealth()
@@ -128,7 +128,7 @@ void ProcessHealth(struct _Instance *instance)
 		// Start line: 319
 	/* end block 3 */
 	// End Line: 320
-
+	UNIMPLEMENTED();
 }
 
 
@@ -140,7 +140,7 @@ int HealthCheckForLowHealth()
 		// Start line: 649
 	/* end block 1 */
 	// End Line: 650
-
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -158,7 +158,7 @@ void DrainMana(int amount)
 		// Start line: 694
 	/* end block 2 */
 	// End Line: 695
-
+	UNIMPLEMENTED();
 }
 
 
@@ -175,7 +175,7 @@ void SetMana(int amount)
 		// Start line: 714
 	/* end block 2 */
 	// End Line: 715
-
+	UNIMPLEMENTED();
 }
 
 
@@ -187,7 +187,7 @@ void HealthInstantDeath(struct _Instance *instance)
 		// Start line: 731
 	/* end block 1 */
 	// End Line: 732
-
+	UNIMPLEMENTED();
 }
 
 
@@ -204,7 +204,7 @@ void RAZIEL_DebugHealthSetScale(long healthScale)
 		// Start line: 778
 	/* end block 2 */
 	// End Line: 779
-
+	UNIMPLEMENTED();
 }
 
 
@@ -221,7 +221,7 @@ void RAZIEL_DebugManaSetMax(long manaScale)
 		// Start line: 802
 	/* end block 2 */
 	// End Line: 803
-
+	UNIMPLEMENTED();
 }
 
 
@@ -238,7 +238,7 @@ void RAZIEL_DebugHealthFillUp()
 		// Start line: 825
 	/* end block 2 */
 	// End Line: 826
-
+	UNIMPLEMENTED();
 }
 
 
@@ -250,7 +250,7 @@ void RAZIEL_DebugManaFillUp()
 		// Start line: 848
 	/* end block 1 */
 	// End Line: 849
-
+	UNIMPLEMENTED();
 }
 
 
@@ -262,7 +262,7 @@ void razPlayUnderworldSounds(struct _Instance *instance)
 		// Start line: 864
 	/* end block 1 */
 	// End Line: 865
-
+	UNIMPLEMENTED();
 }
 
 

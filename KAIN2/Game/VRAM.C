@@ -272,7 +272,7 @@ void VRAM_DeleteUsedBlock(struct _BlockVramEntry *block)
 		// Start line: 640
 	/* end block 4 */
 	// End Line: 641
-
+			UNIMPLEMENTED();
 }
 
 struct _BlockVramEntry * VRAM_GetOpenBlock()
@@ -313,7 +313,7 @@ int VRAM_DeleteFreeVram(short x, short y, short w, short h)
 		// Start line: 727
 	/* end block 2 */
 	// End Line: 728
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -635,6 +635,7 @@ struct _BlockVramEntry * VRAM_InsertionSort(struct _BlockVramEntry *rootNode, st
 	}
 	return result;
 #else
+	UNIMPLEMENTED();
 	return NULL;
 #endif
 }
@@ -663,13 +664,14 @@ void VRAM_ClearVram()
 		// Start line: 2229
 	/* end block 3 */
 	// End Line: 2230
-
+			UNIMPLEMENTED();
 }
 
 
 #if defined(PSX_VERSION)
 struct _BlockVramEntry* VRAM_RearrangeVramsLayer(long whichLayer)
 { // line 991, offset 0x80073740
+	UNIMPLEMENTED();
 	return NULL;
 }
 
@@ -897,8 +899,6 @@ long VRAM_GetObjectVramSpace(struct VramSize *vramSize, struct _ObjectTracker *o
 	if (v6)
 		v6->udata.streamUnit = (struct _StreamUnit*)objectTracker;
 	return v5;
-#else
-	return NULL;
 #endif
 }
 
@@ -916,7 +916,7 @@ void VRAM_InitMorphPalettes()
 		// Start line: 3509
 	/* end block 2 */
 	// End Line: 3510
-
+	UNIMPLEMENTED();
 }
 
 void VRAM_UpdateMorphPalettes()
@@ -937,7 +937,7 @@ void MORPH_ChangeAreaPalettes(long time)
 		// Start line: 3912
 	/* end block 2 */
 	// End Line: 3913
-
+	UNIMPLEMENTED();
 }
 
 

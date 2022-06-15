@@ -26,6 +26,7 @@
 // void /*$ra*/ INSTANCE_ClearTfaces(struct _Instance *instance /*$a0*/)
 void INSTANCE_ClearTfaces(struct _Instance* instance)
 { // line 52, offset 0x80031ed8
+#if defined(PC_VERSION)
 	instance->oldWaterFace = 0;
 	instance->waterFace = 0;
 	instance->waterFaceTerrain = 0;
@@ -35,6 +36,9 @@ void INSTANCE_ClearTfaces(struct _Instance* instance)
 	instance->cachedTFace = -1;
 	instance->cachedBSPTree = 0;
 	instance->cachedTFaceLevel = 0;
+#else
+	UNIMPLEMENTED();
+#endif
 }
 
 
@@ -55,7 +59,7 @@ void INSTANCE_Deactivate(struct _Instance* instance)
 	// Start line: 138
 /* end block 2 */
 // End Line: 139
-
+	UNIMPLEMENTED();
 }
 
 void INSTANCE_Reactivate(struct _Instance* instance)
@@ -140,7 +144,7 @@ void INSTANCE_DeactivatedProcess(struct _Instance* instance, struct GameTracker*
 		// Start line: 284
 	/* end block 2 */
 	// End Line: 285
-
+	UNIMPLEMENTED();
 }
 
 
@@ -418,6 +422,7 @@ void INSTANCE_DeactivateFarInstances(struct GameTracker* gameTracker)
 		v6 = --v40;
 	}
 #endif
+	UNIMPLEMENTED();
 }
 
 void INSTANCE_InitInstanceList(struct _InstanceList* list, struct _InstancePool* pool)
@@ -588,6 +593,7 @@ long INSTANCE_InstanceGroupNumber(struct _Instance* instance)
 	}
 	return v1;
 #else
+	UNIMPLEMENTED();
 	return NULL;
 #endif
 }
@@ -733,6 +739,8 @@ void INSTANCE_ReallyRemoveInstance(struct _InstanceList* list, struct _Instance*
 			return;
 	}
 	gameTrackerX.gameData.asmData.lightInstances[i].lightInstance = 0;
+#else
+UNIMPLEMENTED();
 #endif
 }
 
@@ -846,6 +854,8 @@ LABEL_6:
 		intro->flags = v6;
 	}
 	return v3;
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -915,6 +925,7 @@ struct INICommand* INSTANCE_FindIntroCommand(struct _Instance* instance, int cmd
 	}
 	return result;
 #else
+	UNIMPLEMENTED();
 	return NULL;
 #endif
 }
@@ -1390,6 +1401,7 @@ long INSTANCE_GetSplineFrameNumber(struct _Instance* instance, struct MultiSplin
 	PosSplineDef = SCRIPT_GetPosSplineDef(instance, spline, 0, 0);
 	return SCRIPT_GetSplineFrameNumber(instance, PosSplineDef);
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -2021,7 +2033,7 @@ void INSTANCE_BuildStaticShadow(struct _Instance* instance)
 		// Start line: 3761
 	/* end block 2 */
 	// End Line: 3762
-
+	UNIMPLEMENTED();
 }
 
 void INSTANCE_DefaultInit(struct _Instance* instance, struct Object* object, int modelNum)
@@ -2243,6 +2255,8 @@ void INSTANCE_PlainDeath(struct _Instance* instance)
 	v7 = v1->flags;
 	v7 = v7 | 0x20;
 	v1->flags = v7;
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -2251,8 +2265,12 @@ void INSTANCE_PlainDeath(struct _Instance* instance)
 // void /*$ra*/ INSTANCE_KillInstance(struct _Instance *instance /*$a0*/)
 void INSTANCE_KillInstance(struct _Instance* instance)
 { // line 1838, offset 0x80034360
+#if defined(PC_VERSION)
 	if ((instance->flags & 0x20) == 0)
 		INSTANCE_PlainDeath(instance);
+#else
+	UNIMPLEMENTED();
+#endif
 }
 
 unsigned long INSTANCE_Query(struct _Instance* Inst, int Query)
@@ -2397,6 +2415,8 @@ void INSTANCE_Broadcast(struct _Instance* sender, long whatAmIMask, int Message,
 			}
 		}
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -2420,6 +2440,7 @@ int INSTANCE_InPlane(struct _Instance* instance, int plane)
 	}
 	return result;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -2451,6 +2472,7 @@ long INSTANCE_FindWithID(long uniqueID)
 	}
 	return result;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -2501,6 +2523,7 @@ struct _Instance* INSTANCE_FindWithName(long areaID, char* instanceName, struct 
 	}
 	return v7;
 #else
+	UNIMPLEMENTED();
 	return NULL;
 #endif
 }
@@ -2537,6 +2560,7 @@ struct Intro* INSTANCE_FindIntro(long areaID, long introUniqueID)
 	}
 	return v2;
 #else
+	UNIMPLEMENTED();
 	return NULL;
 #endif
 }
@@ -2899,6 +2923,7 @@ LABEL_6:
 	}
 	return first_free;
 #else
+UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -2960,7 +2985,7 @@ struct _Instance* INSTANCE_IntroduceSavedInstanceWithIntro(struct _SavedIntroWit
 	// Start line: 5380
 /* end block 2 */
 // End Line: 5381
-
+	UNIMPLEMENTED();
 	return null;
 }
 
@@ -3012,7 +3037,7 @@ void INSTANCE_SpatialRelationships(struct _InstanceList* instanceList)
 	// Start line: 5192
 /* end block 2 */
 // End Line: 5193
-
+	UNIMPLEMENTED();
 }
 
 
@@ -3041,6 +3066,7 @@ int INSTANCE_SetStatsData(struct _Instance* instance, struct _Instance* checkee,
 	data->xyDistance = MATH3D_LengthXY(ScratchAddr->vx, ScratchAddr->vy);
 	return 1;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -3101,6 +3127,8 @@ void INSTANCE_LinkToParent(struct _Instance* instance, struct _Instance* parent,
 	v10 = instance->flags2;
 	v10 = v10 | 8;
 	instance->flags2 = v10;
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -3140,7 +3168,7 @@ void INSTANCE_UnlinkFromParent(struct _Instance* instance)
 	// Start line: 6228
 /* end block 2 */
 // End Line: 6229
-
+	UNIMPLEMENTED();
 }
 
 
@@ -3194,6 +3222,8 @@ void INSTANCE_UnlinkChildren(struct _Instance* instance)
 		} while (sibling);
 	}
 	instance->LinkChild = 0;
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -3242,6 +3272,8 @@ void INSTANCE_ReallyRemoveAllChildren(struct _Instance* instance)
 			LinkChild = LinkSibling;
 		} while (LinkSibling);
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -3250,6 +3282,7 @@ void INSTANCE_ReallyRemoveAllChildren(struct _Instance* instance)
 // struct _Instance * /*$ra*/ INSTANCE_GetChildLinkedToSegment(struct _Instance *instance /*$a0*/, int segment /*$a1*/)
 struct _Instance* INSTANCE_GetChildLinkedToSegment(struct _Instance* instance, int segment)
 { // line 2785, offset 0x800355b4
+#if defined(PC_VERSION)
 	struct _Instance* child; // eax
 
 	for (child = instance->LinkChild; child; child = child->LinkSibling)
@@ -3258,6 +3291,10 @@ struct _Instance* INSTANCE_GetChildLinkedToSegment(struct _Instance* instance, i
 			break;
 	}
 	return child;
+#else
+	UNIMPLEMENTED();
+	return NULL;
+#endif
 }
 
 
@@ -3265,6 +3302,7 @@ struct _Instance* INSTANCE_GetChildLinkedToSegment(struct _Instance* instance, i
 // int /*$ra*/ INSTANCE_Linked(struct _Instance *instance1 /*$a0*/, struct _Instance *instance2 /*$a1*/)
 int INSTANCE_Linked(struct _Instance* instance1, struct _Instance* instance2)
 { // line 2801, offset 0x800355ec
+#if defined(PC_VERSION)
 	struct _Instance* root1; // edx
 	struct _Instance* p0; // eax
 	struct _Instance* root2; // ecx
@@ -3277,6 +3315,9 @@ int INSTANCE_Linked(struct _Instance* instance1, struct _Instance* instance2)
 	for (p1 = instance2->LinkParent; p1; p1 = p1->LinkParent)
 		root2 = p1;
 	return root1 == root2;
+#else
+	return 0;
+#endif
 }
 
 
@@ -3310,6 +3351,7 @@ int INSTANCE_GetFadeValue(struct _Instance* instance)
 	}
 	return result;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -3434,6 +3476,7 @@ unsigned long INSTANCE_DefaultAnimCallback(struct _G2Anim_Type* anim, int sectio
 	}
 	return messageDataA;
 #else
+UNIMPLEMENTED();
 	return 0;
 #endif
 }

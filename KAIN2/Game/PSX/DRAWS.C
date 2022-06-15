@@ -19,7 +19,7 @@ void gameTimer()
 		// Start line: 111
 	/* end block 1 */
 	// End Line: 112
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -32,7 +32,7 @@ void modelFadeValue()
 		// Start line: 115
 	/* end block 1 */
 	// End Line: 116
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -45,7 +45,7 @@ void lowerSplitPush()
 		// Start line: 119
 	/* end block 1 */
 	// End Line: 120
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -73,7 +73,7 @@ void overlayAddress()
 		// Start line: 126
 	/* end block 4 */
 	// End Line: 127
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -86,7 +86,7 @@ void forceDrawInFront()
 		// Start line: 133
 	/* end block 1 */
 	// End Line: 134
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -104,7 +104,7 @@ void ClearBss()
 		// Start line: 138
 	/* end block 2 */
 	// End Line: 139
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -122,7 +122,7 @@ void clearloop()
 		// Start line: 146
 	/* end block 2 */
 	// End Line: 147
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -140,7 +140,7 @@ void TimerTick()
 		// Start line: 166
 	/* end block 2 */
 	// End Line: 167
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -155,6 +155,7 @@ int CheckVolatile(void* a0)
 // void DRAW_AnimatedModel_S() /* DRAW_AnimatedModel_S method signature is not contained in the debug symbol data. This is likely either a library function or the game was compiled without debug symbols. Please refer to the TDR documentation for additional guidance. */
 void DRAW_AnimatedModel_S() 
 { 
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -186,7 +187,7 @@ void anim_loop_top()
 		// Start line: 453
 	/* end block 5 */
 	// End Line: 454
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -204,7 +205,7 @@ void anim_dont_flip_backface()
 		// Start line: 528
 	/* end block 2 */
 	// End Line: 529
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -222,7 +223,7 @@ void sort_max_z2()
 		// Start line: 614
 	/* end block 2 */
 	// End Line: 615
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -235,7 +236,7 @@ void mm2L1()
 		// Start line: 635
 	/* end block 1 */
 	// End Line: 636
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -253,7 +254,7 @@ void mm2L2()
 		// Start line: 646
 	/* end block 2 */
 	// End Line: 647
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -266,7 +267,7 @@ void sort_avz_continue2()
 		// Start line: 653
 	/* end block 1 */
 	// End Line: 654
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -279,7 +280,7 @@ void anim_no_pushsort()
 		// Start line: 669
 	/* end block 1 */
 	// End Line: 670
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -302,7 +303,7 @@ void not_colored_fog()
 		// Start line: 711
 	/* end block 3 */
 	// End Line: 712
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -330,7 +331,7 @@ void anim_ft3()
 		// Start line: 722
 	/* end block 4 */
 	// End Line: 723
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -358,7 +359,7 @@ void always_ft3()
 		// Start line: 738
 	/* end block 4 */
 	// End Line: 739
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -376,7 +377,7 @@ void nofade_ft3_a()
 		// Start line: 778
 	/* end block 2 */
 	// End Line: 779
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -394,7 +395,7 @@ void nofade_ft3_b()
 		// Start line: 818
 	/* end block 2 */
 	// End Line: 819
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -412,7 +413,7 @@ void nofade_ft3_c()
 		// Start line: 890
 	/* end block 2 */
 	// End Line: 891
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -470,7 +471,7 @@ void anim_gt3()
 		// Start line: 926
 	/* end block 10 */
 	// End Line: 927
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -488,7 +489,7 @@ void nofade_gt3_a()
 		// Start line: 1000
 	/* end block 2 */
 	// End Line: 1001
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -511,7 +512,7 @@ void nofade_gt3_b2()
 		// Start line: 1087
 	/* end block 3 */
 	// End Line: 1088
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -529,7 +530,7 @@ void nofade_gt3_b()
 		// Start line: 1104
 	/* end block 2 */
 	// End Line: 1105
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -562,7 +563,7 @@ void anim_nontext()
 		// Start line: 1155
 	/* end block 5 */
 	// End Line: 1156
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -615,7 +616,7 @@ void anim_g3()
 		// Start line: 1173
 	/* end block 9 */
 	// End Line: 1174
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -633,7 +634,7 @@ void anim_g3_from_t()
 		// Start line: 1222
 	/* end block 2 */
 	// End Line: 1223
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -656,7 +657,7 @@ void anim_g3_overface()
 		// Start line: 1339
 	/* end block 3 */
 	// End Line: 1340
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -689,7 +690,7 @@ void anim_f3()
 		// Start line: 1393
 	/* end block 5 */
 	// End Line: 1394
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -722,7 +723,7 @@ void anim_next_mface()
 		// Start line: 1453
 	/* end block 5 */
 	// End Line: 1454
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -735,7 +736,7 @@ void exit_AnimDraw()
 		// Start line: 1471
 	/* end block 1 */
 	// End Line: 1472
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -753,7 +754,7 @@ void fogged_face()
 		// Start line: 1500
 	/* end block 2 */
 	// End Line: 1501
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -781,7 +782,7 @@ void always_fogged_ft3()
 		// Start line: 1534
 	/* end block 4 */
 	// End Line: 1535
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -814,7 +815,7 @@ void fanim_gt3()
 		// Start line: 1623
 	/* end block 5 */
 	// End Line: 1624
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -862,7 +863,7 @@ void fog_backface()
 		// Start line: 1722
 	/* end block 8 */
 	// End Line: 1723
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -890,7 +891,7 @@ void fog_backface2()
 		// Start line: 1794
 	/* end block 4 */
 	// End Line: 1795
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -928,7 +929,7 @@ void fanim_nontext()
 		// Start line: 1880
 	/* end block 6 */
 	// End Line: 1881
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -961,7 +962,7 @@ void fanim_g3()
 		// Start line: 1895
 	/* end block 5 */
 	// End Line: 1896
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -989,7 +990,7 @@ void fanim_f3()
 		// Start line: 2044
 	/* end block 4 */
 	// End Line: 2045
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -1037,7 +1038,7 @@ void faded_backpoly()
 		// Start line: 2158
 	/* end block 8 */
 	// End Line: 2159
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -1055,7 +1056,7 @@ void faded_t5_smaller()
 		// Start line: 2238
 	/* end block 2 */
 	// End Line: 2239
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -1073,7 +1074,7 @@ void faded_t6_min()
 		// Start line: 2252
 	/* end block 2 */
 	// End Line: 2253
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -1101,7 +1102,7 @@ void faded_tpage_calc()
 		// Start line: 2260
 	/* end block 4 */
 	// End Line: 2261
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -1304,7 +1305,7 @@ void do_super_subdiv()
 		// Start line: 2349
 	/* end block 39 */
 	// End Line: 2350
-
+UNIMPLEMENTED();
 	return;
 }
 
@@ -1322,7 +1323,7 @@ void super_clip()
 		// Start line: 2456
 	/* end block 2 */
 	// End Line: 2457
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -1390,7 +1391,7 @@ void DRAW_DisplayTFace_S()
 		// Start line: 2474
 	/* end block 12 */
 	// End Line: 2475
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -1403,7 +1404,7 @@ void rLL2()
 		// Start line: 2765
 	/* end block 1 */
 	// End Line: 2766
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -1416,7 +1417,7 @@ void rLL2A()
 		// Start line: 2771
 	/* end block 1 */
 	// End Line: 2772
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -1619,7 +1620,7 @@ void subdiv_begin()
 		// Start line: 2882
 	/* end block 39 */
 	// End Line: 2883
-
+UNIMPLEMENTED();
 	return;
 }
 
@@ -1637,7 +1638,7 @@ void not_liquid_26()
 		// Start line: 2992
 	/* end block 2 */
 	// End Line: 2993
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -1655,7 +1656,7 @@ void next_tface_subdiv()
 		// Start line: 3368
 	/* end block 2 */
 	// End Line: 3369
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -1683,7 +1684,7 @@ void DRAW_DisplaySubdivPolytope_S(_PolyTope* polytope, struct _Terrain* terrain)
 		// Start line: 3386
 	/* end block 4 */
 	// End Line: 3387
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -1706,7 +1707,7 @@ void do_poly()
 		// Start line: 3815
 	/* end block 3 */
 	// End Line: 3816
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -1724,7 +1725,7 @@ void positive()
 		// Start line: 4282
 	/* end block 2 */
 	// End Line: 4283
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -1777,7 +1778,7 @@ void not_quad()
 		// Start line: 4419
 	/* end block 9 */
 	// End Line: 4420
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -1795,7 +1796,7 @@ void no_subdiv()
 		// Start line: 4442
 	/* end block 2 */
 	// End Line: 4443
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -1808,7 +1809,7 @@ void maxL1()
 		// Start line: 4483
 	/* end block 1 */
 	// End Line: 4484
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -1821,7 +1822,7 @@ void maxL2()
 		// Start line: 4493
 	/* end block 1 */
 	// End Line: 4494
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -1834,7 +1835,7 @@ void minL1()
 		// Start line: 4501
 	/* end block 1 */
 	// End Line: 4502
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -1847,7 +1848,7 @@ void not_liquid_54()
 		// Start line: 4559
 	/* end block 1 */
 	// End Line: 4560
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -1880,7 +1881,7 @@ void depthQface()
 		// Start line: 4610
 	/* end block 5 */
 	// End Line: 4611
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -1898,7 +1899,7 @@ void no_depthQ()
 		// Start line: 4894
 	/* end block 2 */
 	// End Line: 4895
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -1916,7 +1917,7 @@ void skip_tface()
 		// Start line: 4910
 	/* end block 2 */
 	// End Line: 4911
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -1944,7 +1945,7 @@ void no_blend2()
 		// Start line: 4928
 	/* end block 4 */
 	// End Line: 4929
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -1987,7 +1988,7 @@ void end_of_polytope()
 		// Start line: 4953
 	/* end block 7 */
 	// End Line: 4954
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -2040,7 +2041,7 @@ void draw_trans_fog()
 		// Start line: 4993
 	/* end block 9 */
 	// End Line: 4994
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -2068,7 +2069,7 @@ void OK()
 		// Start line: 5028
 	/* end block 4 */
 	// End Line: 5029
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -2086,7 +2087,7 @@ void no_depthQ2()
 		// Start line: 5144
 	/* end block 2 */
 	// End Line: 5145
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -2623,7 +2624,7 @@ void PIPE3D_TransformAnimatedInstanceVertices_S()
 		// Start line: 5774
 	/* end block 90 */
 	// End Line: 5775
-
+UNIMPLEMENTED();
 	return;
 }
 
@@ -3309,7 +3310,7 @@ void DRAW_MFace3_MAXZ0()
 		// Start line: 7931
 	/* end block 3 */
 	// End Line: 7932
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -3327,7 +3328,7 @@ void DRAW_MFace3_MAXZ1()
 		// Start line: 7952
 	/* end block 2 */
 	// End Line: 7953
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -3345,7 +3346,7 @@ void DRAW_MFace3_MT()
 		// Start line: 7964
 	/* end block 2 */
 	// End Line: 7965
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -3363,7 +3364,7 @@ void DRAW_MFace3_OTZ()
 		// Start line: 7982
 	/* end block 2 */
 	// End Line: 7983
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -3381,7 +3382,7 @@ void DRAW_MFace3_F3()
 		// Start line: 8032
 	/* end block 2 */
 	// End Line: 8033
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -3404,7 +3405,7 @@ void DRAW_MFace3_F3_NCDPQ()
 		// Start line: 8055
 	/* end block 3 */
 	// End Line: 8056
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -3422,7 +3423,7 @@ void DRAW_MFace3_F3_AddPrim()
 		// Start line: 8102
 	/* end block 2 */
 	// End Line: 8103
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -3460,7 +3461,7 @@ void DRAW_MFace3_FT3()
 		// Start line: 8124
 	/* end block 6 */
 	// End Line: 8125
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -3483,7 +3484,7 @@ void DRAW_MFace3_FT3_NCDPQ()
 		// Start line: 8165
 	/* end block 3 */
 	// End Line: 8166
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -3506,7 +3507,7 @@ void DRAW_MFace3_FT3_AddPrim()
 		// Start line: 8227
 	/* end block 3 */
 	// End Line: 8228
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -3524,7 +3525,7 @@ void DRAW_MFace3_Gouraud()
 		// Start line: 8262
 	/* end block 2 */
 	// End Line: 8263
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -3557,7 +3558,7 @@ void DRAW_MFace3_G3()
 		// Start line: 8387
 	/* end block 5 */
 	// End Line: 8388
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -3605,7 +3606,7 @@ void DRAW_MFace3_GT3()
 		// Start line: 8472
 	/* end block 8 */
 	// End Line: 8473
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -3623,7 +3624,7 @@ void DRAW_MFace3_GT_nofade()
 		// Start line: 8564
 	/* end block 2 */
 	// End Line: 8565
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -3641,7 +3642,7 @@ void DRAW_MFace3_Return()
 		// Start line: 8608
 	/* end block 2 */
 	// End Line: 8609
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -3674,7 +3675,7 @@ void DRAW_MFace3_FadeBackpoly()
 		// Start line: 8619
 	/* end block 5 */
 	// End Line: 8620
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -3692,7 +3693,7 @@ void DMF_faded_t2_smaller()
 		// Start line: 8698
 	/* end block 2 */
 	// End Line: 8699
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -3710,7 +3711,7 @@ void DMF_faded_t3_min()
 		// Start line: 8712
 	/* end block 2 */
 	// End Line: 8713
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -3738,7 +3739,7 @@ void DMF_faded_tpage_calc()
 		// Start line: 8720
 	/* end block 4 */
 	// End Line: 8721
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -3771,7 +3772,7 @@ void DRAW_MFace3_fog_g3()
 		// Start line: 8773
 	/* end block 5 */
 	// End Line: 8774
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -3804,7 +3805,7 @@ void DRAW_MFace3_fog_ft3()
 		// Start line: 8893
 	/* end block 5 */
 	// End Line: 8894
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -3867,7 +3868,7 @@ void DRAW_MFace3_fog_gt3()
 		// Start line: 8981
 	/* end block 11 */
 	// End Line: 8982
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -3900,7 +3901,7 @@ void DRAW_MFace3_fog_backface()
 		// Start line: 9073
 	/* end block 5 */
 	// End Line: 9074
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -4083,7 +4084,7 @@ void DRAW_SplitModel_S()
 		// Start line: 9310
 	/* end block 35 */
 	// End Line: 9311
-
+UNIMPLEMENTED();
 	return;
 }
 
@@ -4096,7 +4097,7 @@ void DSM_noFade()
 		// Start line: 9565
 	/* end block 1 */
 	// End Line: 9566
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -4109,7 +4110,7 @@ void DSM_SetOutcode0()
 		// Start line: 9615
 	/* end block 1 */
 	// End Line: 9616
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -4122,7 +4123,7 @@ void DSM_SetOutcode1()
 		// Start line: 9623
 	/* end block 1 */
 	// End Line: 9624
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -4140,7 +4141,7 @@ void DSM_IncrementMFace()
 		// Start line: 9744
 	/* end block 2 */
 	// End Line: 9745
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -4163,7 +4164,7 @@ void DSM_BeginLoop()
 		// Start line: 9751
 	/* end block 3 */
 	// End Line: 9752
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -4206,7 +4207,7 @@ void DSM_Outcode0()
 		// Start line: 9859
 	/* end block 7 */
 	// End Line: 9860
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -4249,7 +4250,7 @@ void DSM_Outcode7()
 		// Start line: 9883
 	/* end block 7 */
 	// End Line: 9884
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -4277,7 +4278,7 @@ void DSM_Outcode7_LDV3()
 		// Start line: 9896
 	/* end block 4 */
 	// End Line: 9897
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -4300,7 +4301,7 @@ void DSM_Outcode7_MG()
 		// Start line: 9955
 	/* end block 3 */
 	// End Line: 9956
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -4318,7 +4319,7 @@ void DSM_Outcode7_G()
 		// Start line: 9984
 	/* end block 2 */
 	// End Line: 9985
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -4336,7 +4337,7 @@ void DSM_Outcode7_Flat()
 		// Start line: 9996
 	/* end block 2 */
 	// End Line: 9997
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -4354,7 +4355,7 @@ void DSM_Outcode7_Draw()
 		// Start line: 10010
 	/* end block 2 */
 	// End Line: 10011
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -4397,7 +4398,7 @@ void DSM_Outcode1()
 		// Start line: 10029
 	/* end block 7 */
 	// End Line: 10030
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -4420,7 +4421,7 @@ void DSM_Outcode1_MG()
 		// Start line: 10109
 	/* end block 3 */
 	// End Line: 10110
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -4438,7 +4439,7 @@ void DSM_Outcode1_G()
 		// Start line: 10138
 	/* end block 2 */
 	// End Line: 10139
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -4456,7 +4457,7 @@ void DSM_Outcode1_Flat()
 		// Start line: 10150
 	/* end block 2 */
 	// End Line: 10151
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -4474,7 +4475,7 @@ void DSM_Outcode1_Draw()
 		// Start line: 10168
 	/* end block 2 */
 	// End Line: 10169
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -4517,7 +4518,7 @@ void DSM_Outcode2()
 		// Start line: 10305
 	/* end block 7 */
 	// End Line: 10306
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -4540,7 +4541,7 @@ void DSM_Outcode2_MG()
 		// Start line: 10391
 	/* end block 3 */
 	// End Line: 10392
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -4576,7 +4577,7 @@ void DSM_Outcode2_Flat()
 		// Start line: 10434
 	/* end block 2 */
 	// End Line: 10435
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -4594,7 +4595,7 @@ void DSM_Outcode2_Draw()
 		// Start line: 10452
 	/* end block 2 */
 	// End Line: 10453
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -4637,7 +4638,7 @@ void DSM_Outcode4()
 		// Start line: 10611
 	/* end block 7 */
 	// End Line: 10612
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -4660,7 +4661,7 @@ void DSM_Outcode4_MG()
 		// Start line: 10697
 	/* end block 3 */
 	// End Line: 10698
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -4678,7 +4679,7 @@ void DSM_Outcode4_G()
 		// Start line: 10726
 	/* end block 2 */
 	// End Line: 10727
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -4696,7 +4697,7 @@ void DSM_Outcode4_Flat()
 		// Start line: 10738
 	/* end block 2 */
 	// End Line: 10739
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -4714,7 +4715,7 @@ void DSM_Outcode4_Draw()
 		// Start line: 10756
 	/* end block 2 */
 	// End Line: 10757
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -4757,7 +4758,7 @@ void DSM_Outcode3()
 		// Start line: 10915
 	/* end block 7 */
 	// End Line: 10916
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -4780,7 +4781,7 @@ void DSM_Outcode3_MG()
 		// Start line: 10987
 	/* end block 3 */
 	// End Line: 10988
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -4798,7 +4799,7 @@ void DSM_Outcode3_G()
 		// Start line: 11016
 	/* end block 2 */
 	// End Line: 11017
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -4816,7 +4817,7 @@ void DSM_Outcode3_Flat()
 		// Start line: 11028
 	/* end block 2 */
 	// End Line: 11029
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -4834,7 +4835,7 @@ void DSM_Outcode3_Draw()
 		// Start line: 11046
 	/* end block 2 */
 	// End Line: 11047
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -4877,7 +4878,7 @@ void DSM_Outcode5()
 		// Start line: 11179
 	/* end block 7 */
 	// End Line: 11180
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -4900,7 +4901,7 @@ void DSM_Outcode5_MG()
 		// Start line: 11265
 	/* end block 3 */
 	// End Line: 11266
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -4918,7 +4919,7 @@ void DSM_Outcode5_G()
 		// Start line: 11294
 	/* end block 2 */
 	// End Line: 11295
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -4936,7 +4937,7 @@ void DSM_Outcode5_Flat()
 		// Start line: 11306
 	/* end block 2 */
 	// End Line: 11307
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -4954,7 +4955,7 @@ void DSM_Outcode5_Draw()
 		// Start line: 11324
 	/* end block 2 */
 	// End Line: 11325
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -4997,7 +4998,7 @@ void DSM_Outcode6()
 		// Start line: 11461
 	/* end block 7 */
 	// End Line: 11462
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -5020,7 +5021,7 @@ void DSM_Outcode6_MG()
 		// Start line: 11547
 	/* end block 3 */
 	// End Line: 11548
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -5038,7 +5039,7 @@ void DSM_Outcode6_G()
 		// Start line: 11576
 	/* end block 2 */
 	// End Line: 11577
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -5056,7 +5057,7 @@ void DSM_Outcode6_Flat()
 		// Start line: 11588
 	/* end block 2 */
 	// End Line: 11589
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -5074,7 +5075,7 @@ void DSM_Outcode6_Draw()
 		// Start line: 11606
 	/* end block 2 */
 	// End Line: 11607
-
+	UNIMPLEMENTED();
 	return;
 }
 
@@ -5097,7 +5098,7 @@ void DSM_CleanUp()
 		// Start line: 11739
 	/* end block 3 */
 	// End Line: 11740
-
+	UNIMPLEMENTED();
 	return;
 }
 

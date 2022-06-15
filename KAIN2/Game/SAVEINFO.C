@@ -35,7 +35,7 @@ void SAVE_GetInstanceRotation(struct _Instance *instance, struct _SmallRotation 
 		// Start line: 206
 	/* end block 3 */
 	// End Line: 207
-
+			UNIMPLEMENTED();
 }
 
 void SAVE_ClearMemory(struct GameTracker *gameTracker)
@@ -147,7 +147,7 @@ long SAVE_PurgeAMemoryBlock()
 		// Start line: 488
 	/* end block 2 */
 	// End Line: 489
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -179,7 +179,7 @@ long SAVE_SaveableInstance(struct _Instance *instance)
 		// Start line: 554
 	/* end block 4 */
 	// End Line: 555
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -217,7 +217,7 @@ struct _SavedIntro * SAVE_UpdateSavedIntro(struct _Instance *instance, struct Le
 		// Start line: 942
 	/* end block 2 */
 	// End Line: 943
-
+				UNIMPLEMENTED();
 	return null;
 }
 
@@ -255,7 +255,7 @@ struct _SavedIntroWithIntro * SAVE_UpdateSavedIntroWithIntro(struct _Instance *i
 		// Start line: 916
 	/* end block 2 */
 	// End Line: 917
-
+				UNIMPLEMENTED();
 	return null;
 }
 
@@ -287,7 +287,7 @@ struct SavedBasic * SAVE_GetSavedEvent(long areaID, long eventNumber)
 		// Start line: 1025
 	/* end block 4 */
 	// End Line: 1026
-
+			UNIMPLEMENTED();
 	return null;
 }
 
@@ -309,7 +309,7 @@ void SAVE_DeleteSavedEvent(long areaID, long eventNumber)
 		// Start line: 1068
 	/* end block 2 */
 	// End Line: 1069
-
+			UNIMPLEMENTED();
 }
 
 
@@ -326,7 +326,7 @@ struct SavedBasic * SAVE_GetSavedNextEvent(long areaID, struct SavedBasic *curSa
 		// Start line: 1093
 	/* end block 2 */
 	// End Line: 1094
-
+	UNIMPLEMENTED();
 	return null;
 }
 
@@ -358,7 +358,7 @@ void SAVE_BufferIntro(struct SavedBasic *savedIntro)
 		// Start line: 1151
 	/* end block 4 */
 	// End Line: 1152
-
+			UNIMPLEMENTED();
 }
 
 void SAVE_IntroduceBufferIntros()
@@ -434,7 +434,7 @@ void SAVE_IntroForStreamID(struct _StreamUnit *streamUnit)
 		// Start line: 1410
 	/* end block 2 */
 	// End Line: 1411
-
+			UNIMPLEMENTED();
 }
 
 long SAVE_HasSavedIntro(struct Intro *intro, long currentStreamID)
@@ -494,7 +494,7 @@ long SAVE_HasSavedIntro(struct Intro *intro, long currentStreamID)
 	jr      $ra
 		move    $v0, $a3
 #endif
-
+		UNIMPLEMENTED();
 	return 0;
 }
 
@@ -526,7 +526,7 @@ struct SavedLevel * SAVE_HasSavedLevel(long areaID)
 		// Start line: 1584
 	/* end block 4 */
 	// End Line: 1585
-
+			UNIMPLEMENTED();
 	return null;
 }
 
@@ -552,7 +552,7 @@ void SAVE_UpdateLevelWithSave(struct _StreamUnit *streamUnit)
 		// Start line: 1619
 	/* end block 2 */
 	// End Line: 1620
-
+			UNIMPLEMENTED();
 }
 
 
@@ -594,7 +594,7 @@ struct SavedLevel * SAVE_CreatedSavedLevel(long areaID, struct Level *level)
 		// Start line: 1738
 	/* end block 2 */
 	// End Line: 1739
-
+				UNIMPLEMENTED();
 	return null;
 }
 
@@ -626,7 +626,7 @@ void SAVE_DeleteBlock(struct SavedBasic *savedBlock)
 		// Start line: 1932
 	/* end block 2 */
 	// End Line: 1933
-
+				UNIMPLEMENTED();
 }
 
 
@@ -693,7 +693,7 @@ void SAVE_Instance(struct _Instance *instance, struct Level *level)
 		// Start line: 2041
 	/* end block 2 */
 	// End Line: 2042
-
+					UNIMPLEMENTED();
 }
 
 
@@ -714,7 +714,7 @@ void SAVE_DeleteInstance(struct _Instance *instance)
 		// Start line: 2270
 	/* end block 2 */
 	// End Line: 2271
-
+			UNIMPLEMENTED();
 }
 
 
@@ -756,7 +756,7 @@ void SAVE_SetDeadDeadBit(int uniqueID, long set)
 		// Start line: 2340
 	/* end block 4 */
 	// End Line: 2341
-
+				UNIMPLEMENTED();
 }
 
 
@@ -787,7 +787,7 @@ void SAVE_RestoreGlobalSavePointer()
 		// Start line: 2453
 	/* end block 4 */
 	// End Line: 2454
-
+			UNIMPLEMENTED();
 }
 
 
@@ -830,7 +830,7 @@ long SAVE_IsUniqueIDDeadDead(long uniqueID)
 		// Start line: 2491
 	/* end block 4 */
 	// End Line: 2492
-
+				UNIMPLEMENTED();
 	return 0;
 }
 
@@ -843,7 +843,7 @@ long SAVE_IsIntroDeadDead(struct Intro *intro)
 		// Start line: 2573
 	/* end block 1 */
 	// End Line: 2574
-
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -856,7 +856,7 @@ void SAVE_DoInstanceDeadDead(struct _Instance *instance)
 		// Start line: 2585
 	/* end block 1 */
 	// End Line: 2586
-
+	UNIMPLEMENTED();
 }
 
 
@@ -864,7 +864,11 @@ void SAVE_DoInstanceDeadDead(struct _Instance *instance)
 // void /*$ra*/ SAVE_MarkDeadDead(struct _Instance *instance /*$a0*/)
 void SAVE_MarkDeadDead(struct _Instance *instance)
 { // line 1259, offset 0x800b6944
+#if defined(PC_VERSION)
 	instance->flags |= 0x800000;
+#else
+	UNIMPLEMENTED();
+#endif
 }
 
 
@@ -901,6 +905,8 @@ void SAVE_UndestroyInstance(struct _Instance *instance)
 				v1[introUniqueID / 8 + 2] &= ~(unsigned __int8)(1 << (instance->introUniqueID & 7));
 		}
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -960,6 +966,7 @@ struct SavedIntroSpline * SAVE_GetIntroSpline(struct _Instance *instance)
 	}
 	return result;
 #else
+	UNIMPLEMENTED();
 	return NULL;
 #endif
 }
@@ -978,7 +985,7 @@ void SAVE_UpdateGlobalSaveTracker()
 		// Start line: 2714
 	/* end block 2 */
 	// End Line: 2715
-
+	UNIMPLEMENTED();
 }
 
 
@@ -995,7 +1002,7 @@ void SAVE_RestoreGlobalSaveTracker()
 		// Start line: 2742
 	/* end block 2 */
 	// End Line: 2743
-
+	UNIMPLEMENTED();
 }
 
 
@@ -1032,7 +1039,7 @@ void SAVE_SaveEverythingInMemory()
 		// Start line: 2804
 	/* end block 3 */
 	// End Line: 2805
-
+				UNIMPLEMENTED();
 }
 
 
@@ -1082,6 +1089,7 @@ void SAVE_SaveGame()
 	GlobalSave->sizeUsedInBlock = (WORD)dword_C55298 - (WORD)dword_C55294;
 	return result;
 #else
+	UNIMPLEMENTED();
 	return;
 #endif
 }
@@ -1142,6 +1150,8 @@ LABEL_6:
 	}
 	dword_C55298 = (SavedIntroSmall*)((char*)dword_C55294 + GlobalSave->sizeUsedInBlock);
 	GAMELOOP_RequestLevelChange(aUnder, 1, &gameTrackerX);
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -1159,7 +1169,7 @@ long SAVE_SizeOfFreeSpace()
 		// Start line: 3035
 	/* end block 2 */
 	// End Line: 3036
-
+	UNIMPLEMENTED();
 	return 0;
 }
 

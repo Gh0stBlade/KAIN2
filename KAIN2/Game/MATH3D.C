@@ -48,6 +48,8 @@ void MATH3D_Sort3VectorCoords(long *a, long *b, long *c)
 		*b = v4;
 		*a = v3;
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -113,6 +115,7 @@ long MATH3D_LengthXYZ(long x, long y, long z)
 	}
 	return (9 * v3 + 12 * v4 + 30 * v5) / 32;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -141,6 +144,7 @@ long MATH3D_LengthXY(long x, long y)
 	}
 	return (12 * v2 + 30 * v3) / 32;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -160,6 +164,8 @@ void MATH3D_Normalize(struct _Normal *normal)
 		normal->y = (normal->y << 14) / v1;
 		normal->z = (normal->z << 14) / v1;
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -224,6 +230,7 @@ short MATH3D_FastAtan2(long y, long x)
 	}
 	return v2;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -313,6 +320,7 @@ long MATH3D_FastSqrt(long square)
 	}
 	return result;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -381,7 +389,7 @@ long MATH3D_FastSqrt0(long square)
 
 		return result;
 	}
-
+	UNIMPLEMENTED();
 	return 0;
 
 #elif defined(PC_VERSION)
@@ -438,6 +446,7 @@ long MATH3D_FastSqrt0(long square)
 	}
 	return result;
 #else
+UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -507,6 +516,7 @@ long MATH3D_DistanceBetweenPositions(_Position *pos1, _Position *pos2)
 	}
 	return v11;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -590,6 +600,7 @@ LABEL_10:
 	}
 	return ratan2(v11, vector1a);
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -683,6 +694,8 @@ void MATH3D_RotMatAboutVec(struct _SVector *vec, MATRIX *mat, short angle)
 		RotMatrixZ(angle, mat);
 		MulMatrix2(&v22, mat);
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -742,6 +755,8 @@ void AngleMoveToward(short *current_ptr, short destination, short step)
 	LABEL_13:
 		*current_ptr = destination;
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -759,6 +774,7 @@ short AngleDiff(short current, short destination)
 	else
 		return (v2 & 0xFFF) - 4096;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -771,6 +787,7 @@ short MATH3D_AngleFromPosToPos(_Position *from, _Position *to)
 #if defined(PC_VERSION)
 	return (ratan2(from->y - to->y, from->x - to->x) - 1024) & 0xFFF;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -793,6 +810,8 @@ void MATH3D_ZYXtoXYZ(struct _Rotation *rot)
 	rot->x = euler.x;
 	rot->y = y;
 	rot->z = z;
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -872,6 +891,7 @@ short MATH3D_ElevationFromPosToPos(_Position *from, _Position *to)
 	}
 	return -ratan2(v2->z - v3->z, (__int16)v13) & 0xFFF;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -955,6 +975,8 @@ void MATH3D_RotationFromPosToPos(_Position *from, _Position *to, struct _Rotatio
 	rot->y = 0;
 	rot->x = -v20 & 0xFFF;
 	rot->z = (ratan2(v4->y - v3->y, v4->x - v3->x) - 1024) & 0xFFF;
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -982,6 +1004,7 @@ int MATH3D_veclen2(int ix, int iy)
 	}
 	return v2 + ((v3 + (v3 >> 1)) >> 2) + ((v3 + (v3 >> 1)) >> 6) - (v2 >> 5) - (v2 >> 7);
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -1112,6 +1135,8 @@ void MATH3D_RotateAxisToVector(MATRIX *dest, MATRIX *src, struct _SVector *vec, 
 	v30.order = rcos(v16);
 	G2Quat_ToMatrix(&v30, (struct G2Matrix*)&v31);
 	MulMatrix0(src, &v31, dest);
+#else
+UNIMPLEMENTED();
 #endif
 }
 
@@ -1155,6 +1180,7 @@ int MATH3D_ConeDetect(struct _SVector *pos, int arc, int elevation)
 		z = -(__int16)z;
 	return MATH3D_FastAtan2(z, v9) < elevation;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -1168,6 +1194,8 @@ void MATH3D_CrossProduct(struct _SVector *t, struct _SVector *r, struct _SVector
 	t->x = (r->y * s->z - s->y * r->z) >> 12;
 	t->y = -(__int16)((s->z * r->x - r->z * s->x) >> 12);
 	t->z = (s->y * r->x - r->y * s->x) >> 12;
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -1179,6 +1207,7 @@ unsigned long MATH3D_SquareLength(long x, long y, long z)
 #if defined(PC_VERSION)
 	return z * z + y * y + x * x;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }

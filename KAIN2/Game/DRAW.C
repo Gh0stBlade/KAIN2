@@ -26,7 +26,7 @@ void fDRAW_SPLIT_INTPL_XYZ(struct _SVector *newVertex, struct _SVector *pvb, str
 		// Start line: 123
 	/* end block 2 */
 	// End Line: 124
-
+	UNIMPLEMENTED();
 }
 
 
@@ -48,7 +48,7 @@ void DRAW_InitShadow()
 	//int v0 = ;
 	int x = rcos(deg < 0 ? (deg + 0xFFF) >> 12 : deg >> 12); x < 0 ? (x + 0x1F) >> 5 : (x >> 5);
 	shadow_vertices[n].vx = x;
-
+	UNIMPLEMENTED();
 #if 0
 
 
@@ -120,7 +120,7 @@ unsigned long * DRAW_DrawShadow(struct _PrimPool *primPool, struct _Model *model
 		// Start line: 983
 	/* end block 2 */
 	// End Line: 984
-
+			UNIMPLEMENTED();
 	return null;
 }
 
@@ -142,7 +142,7 @@ void DRAW_FlatQuad(CVECTOR *color, short x0, short y0, short x1, int y1, int x2,
 		// Start line: 6416
 	/* end block 2 */
 	// End Line: 6417
-
+			UNIMPLEMENTED();
 }
 
 void DRAW_TranslucentQuad(short x0, short y0, short x1, short y1, int x2, int y2, int x3, int y3, int r, int g, int b, int abr, struct _PrimPool *primPool, unsigned long **ot)
@@ -293,7 +293,7 @@ void DRAW_FreeButton(struct _ButtonTexture *button)
 		// Start line: 7272
 	/* end block 1 */
 	// End Line: 7273
-
+	UNIMPLEMENTED();
 }
 
 
@@ -321,7 +321,7 @@ void DRAW_RingLine(struct _PrimPool *primPool, unsigned long **ot, long color)
 		// Start line: 4652
 	/* end block 2 */
 	// End Line: 4653
-
+			UNIMPLEMENTED();
 }
 
 
@@ -342,7 +342,7 @@ void DRAW_RingPoint(struct _PrimPool *primPool, unsigned long **ot, long color, 
 		// Start line: 4789
 	/* end block 2 */
 	// End Line: 4790
-
+			UNIMPLEMENTED();
 }
 
 
@@ -372,7 +372,7 @@ unsigned long * DRAW_DrawRingPoints(struct _Model *model, struct _VertexPool *ve
 		// Start line: 4841
 	/* end block 2 */
 	// End Line: 4842
-
+			UNIMPLEMENTED();
 	return null;
 }
 
@@ -395,7 +395,7 @@ void DRAW_GlowQuad(struct _PrimPool *primPool, unsigned long **ot, long otz, lon
 		// Start line: 7758
 	/* end block 2 */
 	// End Line: 7759
-
+			UNIMPLEMENTED();
 }
 
 
@@ -403,7 +403,7 @@ void DRAW_GlowQuad(struct _PrimPool *primPool, unsigned long **ot, long otz, lon
 // void /*$ra*/ DRAW_CreateAGlowingCircle(struct _Vector *f1 /*$fp*/, long z /*$a1*/, struct _PrimPool *primPool /*stack 8*/, unsigned long **ot /*stack 12*/, long otz /*stack 16*/, long color /*stack 20*/, long w /*stack 24*/, long h /*stack 28*/, long angle /*stack 32*/)
 void DRAW_CreateAGlowingCircle(struct _Vector *f1, long z, struct _PrimPool *primPool, unsigned long **ot, long otz, long color, long w, long h, long angle)
 { // line 3935, offset 0x8002b52c
-	
+	UNIMPLEMENTED();
 }
 
 
@@ -433,7 +433,7 @@ unsigned long * DRAW_DrawGlowPoints2(struct _Instance *instance, long seg1, long
 		// Start line: 5534
 	/* end block 2 */
 	// End Line: 5535
-
+			UNIMPLEMENTED();
 	return null;
 }
 
@@ -459,7 +459,7 @@ unsigned long * DRAW_DrawGlowPoint(struct _Instance *instance, long seg1, struct
 		// Start line: 5682
 	/* end block 2 */
 	// End Line: 5683
-
+			UNIMPLEMENTED();
 	return null;
 }
 
@@ -562,7 +562,7 @@ int DRAW_DisplayTFace_zclipped_C(SVECTOR*vertex0, SVECTOR*vertex1, SVECTOR*verte
 		// Start line: 8384
 	/* end block 2 */
 	// End Line: 8385
-
+				UNIMPLEMENTED();
 	return 0;
 }
 
@@ -586,7 +586,7 @@ long * DRAW_Zclip_subdiv(POLY_GT3 *texture, unsigned long **ot, int ndiv)
 		// Start line: 6517
 	/* end block 2 */
 	// End Line: 6518
-
+			UNIMPLEMENTED();
 	return null;
 }
 

@@ -10,7 +10,7 @@ void StateHandlerInitSwim(struct __CharacterState *In, int CurrentSection, int D
 		// Start line: 10
 	/* end block 1 */
 	// End Line: 11
-
+	UNIMPLEMENTED();
 }
 
 
@@ -43,7 +43,7 @@ void StateHandlerSwimCoil(struct __CharacterState *In, int CurrentSection, int D
 		// Start line: 108
 	/* end block 2 */
 	// End Line: 109
-
+				UNIMPLEMENTED();
 }
 
 
@@ -83,7 +83,7 @@ void StateHandlerSwimTread(struct __CharacterState *In, int CurrentSection, int 
 		// Start line: 561
 	/* end block 2 */
 	// End Line: 562
-
+				UNIMPLEMENTED();
 }
 
 
@@ -114,7 +114,7 @@ void StateHandlerSwimDiveIn(struct __CharacterState *In, int CurrentSection, int
 		// Start line: 1048
 	/* end block 2 */
 	// End Line: 1049
-
+				UNIMPLEMENTED();
 }
 
 
@@ -155,7 +155,7 @@ void StateHandlerSwim(struct __CharacterState *In, int CurrentSection, int Data)
 		// Start line: 1424
 	/* end block 2 */
 	// End Line: 1425
-
+				UNIMPLEMENTED();
 }
 
 

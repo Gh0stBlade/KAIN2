@@ -111,6 +111,7 @@ unsigned long aadStopSfx(unsigned long handle)
 	PSX_ExitCriticalSection();
 	return handle;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -172,6 +173,7 @@ int aadIsSfxPlaying(unsigned long handle)
 	}
 	return 1;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -226,6 +228,7 @@ int aadIsSfxPlayingOrRequested(unsigned long handle)
 		return 1;
 	}
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -257,6 +260,7 @@ int aadIsSfxTypePlaying(unsigned int toneID)
 	}
 	return 1;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -311,6 +315,7 @@ int aadIsSfxTypePlayingOrRequested(unsigned int sfxToneID)
 		return 1;
 	}
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -352,6 +357,7 @@ unsigned long aadSetSfxVolPanPitch(unsigned long handle, int volume, int pan, in
 	PSX_ExitCriticalSection();
 	return handle;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -643,6 +649,8 @@ void sfxCmdStopTone(struct AadSfxCommand *sfxCmd)
 	} while (v5);
 	v1->voiceKeyOffRequest |= v2;
 	aadMem->voiceKeyOnRequest &= ~v2;
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -689,6 +697,8 @@ void sfxCmdStopAllTones(struct AadSfxCommand *sfxCmd)
 	} while (v5);
 	v1->voiceKeyOffRequest |= v2;
 	aadMem->voiceKeyOnRequest &= ~v2;
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -778,6 +788,8 @@ void sfxCmdSetToneVolumeAndPan(struct AadSfxCommand *sfxCmd)
 		// Start line: 881
 	/* end block 2 */
 	// End Line: 882
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -869,6 +881,8 @@ void sfxCmdSetToneVolPanPitch(struct AadSfxCommand *sfxCmd)
 		// Start line: 999
 	/* end block 2 */
 	// End Line: 1000
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -894,6 +908,8 @@ void sfxCmdLockVoice(struct AadSfxCommand *sfxCmd)
 	{
 		ulongParam(0);
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -923,6 +939,8 @@ void sfxCmdSetVoiceAttr(struct AadSfxCommand *sfxCmd)
 	SpuSetVoiceStartAddr(v1, *(DWORD*)(ulongParam + 28));
 	v4 = *(WORD*)(ulongParam + 60);
 	SpuSetVoiceADSR1ADSR2(v1, *(WORD*)(ulongParam + 58), v4);
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -931,7 +949,11 @@ void sfxCmdSetVoiceAttr(struct AadSfxCommand *sfxCmd)
 // void /*$ra*/ sfxCmdSetVoiceKeyOn(struct AadSfxCommand *sfxCmd /*$a0*/)
 void sfxCmdSetVoiceKeyOn(struct AadSfxCommand *sfxCmd)
 { // line 535, offset 0x80057a4c
+#if defined(PC_VERSION)
 	aadMem->voiceKeyOnRequest |= sfxCmd->ulongParam;
+#else
+	UNIMPLEMENTED();
+#endif
 }
 
 
@@ -939,6 +961,10 @@ void sfxCmdSetVoiceKeyOn(struct AadSfxCommand *sfxCmd)
 // void /*$ra*/ sfxCmdSetVoiceKeyOff(struct AadSfxCommand *sfxCmd /*$a0*/)
 void sfxCmdSetVoiceKeyOff(struct AadSfxCommand *sfxCmd)
 { // line 541, offset 0x80057a68
+#if defined(PC_VERSION)
 	aadMem->voiceKeyOffRequest |= sfxCmd->ulongParam;
 	aadMem->voiceKeyOnRequest &= ~sfxCmd->ulongParam;
+#else
+	UNIMPLEMENTED();
+#endif
 }

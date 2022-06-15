@@ -62,6 +62,8 @@ void LIST_DeleteFunc(struct NodeType *node)
 			node->prev = 0;
 		}
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -106,6 +108,7 @@ struct NodeType * LIST_GetFunc(struct NodeType *list)
 	}
 	return result;
 #else
+	UNIMPLEMENTED();
 	return NULL;
 #endif
 }

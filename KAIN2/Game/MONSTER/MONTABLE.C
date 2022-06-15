@@ -96,6 +96,8 @@ void MONTABLE_SetupTablePointer(struct Object *object)
 			v2 = ++v3;
 		} while (whatAmI);
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -124,6 +126,7 @@ struct _MonsterState * MONTABLE_GetStateFuncs(struct _Instance *instance, int st
 	}
 	return &stateFuncs->functions;
 #else
+	UNIMPLEMENTED();
 	return NULL;
 #endif
 }
@@ -145,6 +148,7 @@ void* MONTABLE_GetDamageEffectFunc(struct _Instance *instance)
 		return (TDRFuncPtr_MONTABLE_GetDamageEffectFunc)mondef_tbl.damageEffectFunc;
 	return result;
 #else
+	UNIMPLEMENTED();
 	return NULL;
 #endif
 }
@@ -165,6 +169,7 @@ void* MONTABLE_GetInitFunc(struct _Instance *instance)
 		return (TDRFuncPtr_MONTABLE_GetInitFunc)mondef_tbl.initFunc;
 	return result;
 #else
+	UNIMPLEMENTED();
 	return NULL;
 #endif
 }
@@ -186,6 +191,7 @@ void* MONTABLE_GetCleanUpFunc(struct _Instance *instance)
 		return (TDRFuncPtr_MONTABLE_GetCleanUpFunc)mondef_tbl.cleanUpFunc;
 	return result;
 #else
+	UNIMPLEMENTED();
 	return NULL;
 #endif
 }
@@ -206,6 +212,8 @@ void MONTABLE_SetQueryFunc(struct _Instance *instance)
 		if (v2)
 			instance->queryFunc = v2;
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -225,5 +233,7 @@ void MONTABLE_SetMessageFunc(struct _Instance *instance)
 		if (v2)
 			instance->messageFunc = v2;
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }

@@ -24,7 +24,7 @@ int PLANSRCH_ValidNode(struct PlanningNode *node, int validNodeTypes)
 		// Start line: 157
 	/* end block 3 */
 	// End Line: 158
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -55,7 +55,7 @@ struct PlanningNode * PLANSRCH_FindNodeToExpand(struct PlanningNode *planningPoo
 		// Start line: 190
 	/* end block 3 */
 	// End Line: 191
-
+			UNIMPLEMENTED();
 	return null;
 }
 
@@ -89,7 +89,7 @@ void PLANSRCH_ExpandNode(struct PlanningNode *planningPool, struct PlanningNode 
 		// Start line: 279
 	/* end block 2 */
 	// End Line: 280
-
+				UNIMPLEMENTED();
 }
 
 
@@ -120,7 +120,7 @@ void PLANSRCH_InitNodesForSearch(struct PlanningNode *planningPool)
 		// Start line: 400
 	/* end block 4 */
 	// End Line: 401
-
+			UNIMPLEMENTED();
 }
 
 
@@ -141,7 +141,7 @@ struct PlanningNode * PLANSRCH_FindPathInGraph(struct PlanningNode *planningPool
 		// Start line: 444
 	/* end block 2 */
 	// End Line: 445
-
+			UNIMPLEMENTED();
 	return null;
 }
 

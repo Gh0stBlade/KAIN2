@@ -48,7 +48,7 @@ void STREAM_NextLoadCanFail()
 		// Start line: 85
 	/* end block 2 */
 	// End Line: 86
-
+	UNIMPLEMENTED();
 }
 
 void STREAM_NextLoadAsNormal()
@@ -189,6 +189,7 @@ int STREAM_IsCdBusy(long *numberInQueue)
 		*numberInQueue = IsBusy;
 	return IsBusy != 0;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }

@@ -45,7 +45,7 @@ int PLANCOLL_DoesLOSExistFinal(_Position *startPos, _Position *endPos, int colli
 		// Start line: 150
 	/* end block 2 */
 	// End Line: 151
-
+				UNIMPLEMENTED();
 	return 0;
 }
 
@@ -85,7 +85,7 @@ int PLANCOLL_CheckUnderwaterPoint(_Position *position)
 		// Start line: 241
 	/* end block 2 */
 	// End Line: 242
-
+				UNIMPLEMENTED();
 	return 0;
 }
 
@@ -147,7 +147,7 @@ int PLANCOLL_FindTerrainHitFinal(struct _PlanCollideInfo *pci, int *placement, i
 		// Start line: 426
 	/* end block 2 */
 	// End Line: 427
-
+				UNIMPLEMENTED();
 	return 0;
 }
 
@@ -167,7 +167,7 @@ int PLANCOLL_DoesStraightLinePathExist(_Position *startPos, _Position *endPos, i
 		// Start line: 581
 	/* end block 2 */
 	// End Line: 582
-
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -192,7 +192,7 @@ int PLANCOLL_DoesWaterPathUpExist(_Position *startPos, _Position *endPos, int co
 		// Start line: 619
 	/* end block 2 */
 	// End Line: 620
-
+			UNIMPLEMENTED();
 	return 0;
 }
 

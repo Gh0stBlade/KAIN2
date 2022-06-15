@@ -73,6 +73,7 @@ unsigned long TIMER_TimeDiff(unsigned long x)
 	}
 	return (ulong)res;
 #endif
+	UNIMPLEMENTED();
 	return 0;
 #else
 	unsigned __int16 RCnt; // ax
@@ -137,6 +138,7 @@ void* __cdecl TIMER_TimeDiff2(unsigned int a1)
 	else
 		return 4293263;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }

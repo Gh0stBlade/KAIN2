@@ -30,7 +30,7 @@ int PLANPOOL_NumNodesInPlan(struct PlanningNode *goalNode, struct PlanningNode *
 		// Start line: 248
 	/* end block 4 */
 	// End Line: 249
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -62,7 +62,7 @@ int PLANPOOL_CountBitsSetInLong(long mylong)
 		// Start line: 279
 	/* end block 4 */
 	// End Line: 280
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -75,7 +75,7 @@ int PLANPOOL_NumConnectionsExaminedForNode(struct PlanningNode *node)
 		// Start line: 302
 	/* end block 1 */
 	// End Line: 303
-
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -88,7 +88,7 @@ int PLANPOOL_NumConnectionsForNode(struct PlanningNode *node)
 		// Start line: 318
 	/* end block 1 */
 	// End Line: 319
-
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -115,7 +115,7 @@ struct PlanningNode * PLANPOOL_GetFirstNodeOfSource(struct PlanningNode *plannin
 		// Start line: 342
 	/* end block 3 */
 	// End Line: 343
-
+			UNIMPLEMENTED();
 	return null;
 }
 
@@ -143,7 +143,7 @@ int PLANPOOL_NumberOfNodesOfType(struct PlanningNode *planningPool, char nodeTyp
 		// Start line: 367
 	/* end block 3 */
 	// End Line: 368
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -171,7 +171,7 @@ int PLANPOOL_NumberOfNodesOfSource(struct PlanningNode *planningPool, char nodeS
 		// Start line: 392
 	/* end block 3 */
 	// End Line: 393
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -203,7 +203,7 @@ struct PlanningNode * PLANPOOL_GetNodeWithID(struct PlanningNode *planningPool, 
 		// Start line: 417
 	/* end block 4 */
 	// End Line: 418
-
+			UNIMPLEMENTED();
 	return null;
 }
 
@@ -233,7 +233,7 @@ struct PlanningNode * PLANPOOL_GetNodeByPosition(_Position *currentPos, struct P
 		// Start line: 456
 	/* end block 3 */
 	// End Line: 457
-
+			UNIMPLEMENTED();
 	return null;
 }
 
@@ -258,7 +258,7 @@ struct PlanningNode * PLANPOOL_GetClosestNode(_Position *pos, struct PlanningNod
 		// Start line: 514
 	/* end block 2 */
 	// End Line: 515
-
+			UNIMPLEMENTED();
 	return null;
 }
 
@@ -289,7 +289,7 @@ int PLANPOOL_AppropriatePair(struct PlanningNode *node1, struct PlanningNode *no
 		// Start line: 595
 	/* end block 2 */
 	// End Line: 596
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -311,7 +311,7 @@ int PLANPOOL_AreTwoNodesConnected(struct PlanningNode *node1, struct PlanningNod
 		// Start line: 741
 	/* end block 2 */
 	// End Line: 742
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -334,7 +334,7 @@ void PLANPOOL_MarkTwoNodesAsConnected(struct PlanningNode *node1, struct Plannin
 		// Start line: 773
 	/* end block 2 */
 	// End Line: 774
-
+			UNIMPLEMENTED();
 }
 
 
@@ -363,7 +363,7 @@ void PLANPOOL_MarkTwoNodesAsNotConnected(struct PlanningNode *node1, struct Plan
 		// Start line: 858
 	/* end block 4 */
 	// End Line: 859
-
+	UNIMPLEMENTED();
 }
 
 
@@ -388,7 +388,7 @@ struct PlanningNode * PLANPOOL_GetClosestUnexploredValidNeighbor(struct Planning
 		// Start line: 908
 	/* end block 2 */
 	// End Line: 909
-
+			UNIMPLEMENTED();
 	return null;
 }
 
@@ -411,7 +411,7 @@ void PLANPOOL_ChangeNodePosition(_Position *newPos, struct PlanningNode *nodeToC
 		// Start line: 1002
 	/* end block 2 */
 	// End Line: 1003
-
+			UNIMPLEMENTED();
 }
 
 
@@ -444,7 +444,7 @@ struct PlanningNode * PLANPOOL_AddNodeToPool(_Position *pos, struct PlanningNode
 		// Start line: 1054
 	/* end block 2 */
 	// End Line: 1055
-
+				UNIMPLEMENTED();
 	return null;
 }
 
@@ -481,7 +481,7 @@ void PLANPOOL_DeleteNodeFromPool(struct PlanningNode *nodeToDelete, struct Plann
 		// Start line: 1152
 	/* end block 4 */
 	// End Line: 1153
-
+			UNIMPLEMENTED();
 }
 
 

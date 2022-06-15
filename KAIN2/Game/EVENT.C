@@ -46,7 +46,7 @@ void EVENT_UpdateResetSignalArrayAndWaterMovement(struct Level *oldLevel, struct
 		// Start line: 307
 	/* end block 3 */
 	// End Line: 308
-
+				UNIMPLEMENTED();
 }
 
 
@@ -77,7 +77,7 @@ void EVENT_ResetAllOneTimeVariables()
 		// Start line: 398
 	/* end block 4 */
 	// End Line: 399
-
+			UNIMPLEMENTED();
 }
 
 
@@ -108,7 +108,7 @@ void EVENT_AddSignalToReset(struct _MultiSignal *mSignal)
 		// Start line: 457
 	/* end block 4 */
 	// End Line: 458
-
+			UNIMPLEMENTED();
 }
 
 void HINT_ResetHint()
@@ -144,7 +144,7 @@ void HINT_StartHint(short hintNumber)
 		// Start line: 580
 	/* end block 4 */
 	// End Line: 581
-
+			UNIMPLEMENTED();
 }
 
 
@@ -161,7 +161,7 @@ void HINT_StopHint()
 		// Start line: 650
 	/* end block 2 */
 	// End Line: 651
-
+	UNIMPLEMENTED();
 }
 
 
@@ -173,7 +173,7 @@ void HINT_KillSpecificHint(short hintNumber)
 		// Start line: 696
 	/* end block 1 */
 	// End Line: 697
-
+	UNIMPLEMENTED();
 }
 
 
@@ -190,7 +190,7 @@ long HINT_GetCurrentHint()
 		// Start line: 713
 	/* end block 2 */
 	// End Line: 714
-
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -218,7 +218,7 @@ void EVENT_ProcessTimers()
 		// Start line: 746
 	/* end block 3 */
 	// End Line: 747
-
+			UNIMPLEMENTED();
 }
 
 
@@ -252,7 +252,7 @@ void EVENT_ProcessHints()
 		// Start line: 902
 	/* end block 3 */
 	// End Line: 903
-
+				UNIMPLEMENTED();
 }
 
 struct EventTimer* EVENT_GetNextTimer()
@@ -291,6 +291,7 @@ void EVENT_RemoveTimer(struct EventTimer *timer)
 		// Start line: 1110
 	/* end block 2 */
 	// End Line: 1111
+	UNIMPLEMENTED();
 
 }
 
@@ -353,7 +354,7 @@ struct WaterLevelProcess * EVENT_GetNextTerrainMove()
 		// Start line: 1206
 	/* end block 4 */
 	// End Line: 1207
-
+			UNIMPLEMENTED();
 	return null;
 }
 
@@ -395,7 +396,7 @@ void EVENT_ProcessMovingWater()
 		// Start line: 1262
 	/* end block 4 */
 	// End Line: 1263
-
+				UNIMPLEMENTED();
 }
 
 
@@ -407,7 +408,7 @@ void EVENT_DoProcess()
 		// Start line: 1372
 	/* end block 1 */
 	// End Line: 1373
-
+	UNIMPLEMENTED();
 }
 
 
@@ -469,7 +470,7 @@ void EVENT_BSPProcess(struct _StreamUnit *streamUnit)
 		// Start line: 1384
 	/* end block 2 */
 	// End Line: 1385
-
+							UNIMPLEMENTED();
 }
 
 
@@ -490,7 +491,7 @@ void EVENT_Process(struct Event *eventInstance, long startIndex)
 		// Start line: 1646
 	/* end block 2 */
 	// End Line: 1647
-
+			UNIMPLEMENTED();
 }
 
 
@@ -512,7 +513,7 @@ void EVENT_ProcessPuppetShow(struct Event *eventInstance, long startIndex)
 		// Start line: 1888
 	/* end block 2 */
 	// End Line: 1889
-
+			UNIMPLEMENTED();
 }
 
 void EVENT_ProcessEvents(struct EventPointers* eventPointers, struct Level* level)
@@ -573,7 +574,7 @@ long EVENT_DoAction(struct Event *eventInstance, struct ScriptPCode *actionScrip
 		// Start line: 2110
 	/* end block 2 */
 	// End Line: 2111
-
+				UNIMPLEMENTED();
 	return 0;
 }
 
@@ -600,7 +601,7 @@ long EVENT_IsConditionTrue(struct Event *eventInstance, struct ScriptPCode *cond
 		// Start line: 2236
 	/* end block 2 */
 	// End Line: 2237
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -631,7 +632,7 @@ long EVENT_WriteEventObject(struct StackType *stackEntry, long areaID, struct Ev
 		// Start line: 2375
 	/* end block 2 */
 	// End Line: 2376
-
+				UNIMPLEMENTED();
 	return 0;
 }
 
@@ -654,7 +655,7 @@ struct _MultiSignal * EVENT_ResolveObjectSignal(struct _StreamUnit *stream, long
 		// Start line: 2476
 	/* end block 2 */
 	// End Line: 2477
-
+			UNIMPLEMENTED();
 	return null;
 }
 
@@ -674,7 +675,7 @@ struct Intro * EVENT_ResolveObjectIntro(struct EventInstanceObject *instanceObje
 		// Start line: 2595
 	/* end block 2 */
 	// End Line: 2596
-
+	UNIMPLEMENTED();
 	return null;
 }
 
@@ -708,7 +709,7 @@ struct _SFXMkr * EVENT_ResolveSFXMarker(struct _StreamUnit *stream, struct Event
 		// Start line: 2622
 	/* end block 4 */
 	// End Line: 2623
-
+			UNIMPLEMENTED();
 	return null;
 }
 
@@ -742,7 +743,7 @@ void EVENT_AddGameObjectToStack(struct _PCodeStack *stack)
 		// Start line: 2674
 	/* end block 3 */
 	// End Line: 2675
-
+				UNIMPLEMENTED();
 }
 
 
@@ -770,7 +771,7 @@ void EVENT_AddPlayerObjectToStack(struct _PCodeStack *stack)
 		// Start line: 2705
 	/* end block 2 */
 	// End Line: 2706
-
+				UNIMPLEMENTED();
 }
 
 
@@ -843,7 +844,7 @@ void EVENT_AddObjectToStack(struct _PCodeStack *stack, long item)
 		// Start line: 2740
 	/* end block 2 */
 	// End Line: 2741
-
+				UNIMPLEMENTED();
 }
 
 
@@ -876,7 +877,7 @@ void EVENT_AddCharPointerToStack(struct _PCodeStack *stack, char *pointer)
 		// Start line: 3156
 	/* end block 3 */
 	// End Line: 3157
-
+				UNIMPLEMENTED();
 }
 
 
@@ -909,7 +910,7 @@ void EVENT_AddShortPointerToStack(struct _PCodeStack *stack, short *pointer)
 		// Start line: 3188
 	/* end block 3 */
 	// End Line: 3189
-
+				UNIMPLEMENTED();
 }
 
 
@@ -942,7 +943,7 @@ void EVENT_AddNumberToStack(struct _PCodeStack *stack, long item, long flags)
 		// Start line: 3220
 	/* end block 3 */
 	// End Line: 3221
-
+				UNIMPLEMENTED();
 }
 
 
@@ -959,7 +960,7 @@ void EVENT_ChangeOperandToNumber(struct StackType *operand, long item, long flag
 		// Start line: 3256
 	/* end block 2 */
 	// End Line: 3257
-
+	UNIMPLEMENTED();
 }
 
 
@@ -976,7 +977,7 @@ void EVENT_ChangeOperandVector3d(struct StackType *operand, short x, short y, sh
 		// Start line: 3272
 	/* end block 2 */
 	// End Line: 3273
-
+	UNIMPLEMENTED();
 }
 
 
@@ -988,7 +989,7 @@ void EVENT_Addvector3dToStack(struct _PCodeStack *stack, short x, short y, short
 		// Start line: 3299
 	/* end block 1 */
 	// End Line: 3300
-
+	UNIMPLEMENTED();
 }
 
 
@@ -1003,6 +1004,8 @@ void EVENT_ChangeOperandRotation3d(struct StackType *operand, struct Rotation3d 
 	operand->data.instanceSpline.attribute = *(DWORD*)&rotation->errorx;
 	operand->data.vector3d.errorz = rotation->errorz;
 	operand->data.instanceSpline.isClass = -1;
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -1037,6 +1040,7 @@ long EVENT_AddSubListObjectToStack(struct _PCodeStack *stack, long listNumber)
 		return 0;
 	}
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -1063,6 +1067,8 @@ void EVENT_StackDuplicate(struct _PCodeStack *stack)
 	{
 		GXFilePrint("ERROR: Need something on the stack to duplicate.\n");
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -1109,6 +1115,7 @@ long EVENT_TransformTGroupAttribute(struct _PCodeStack *stack, struct StackType 
 	}
 	return retValue;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -1147,6 +1154,7 @@ long EVENT_TransformConstrictAttribute(struct _PCodeStack *stack, struct StackTy
 	stackObject->data.Object.instanceNumber = v5;
 	return 1;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -1307,7 +1315,7 @@ long EVENT_TransformInstanceAttribute(struct _PCodeStack *stack, struct StackTyp
 		// Start line: 3727
 	/* end block 2 */
 	// End Line: 3728
-
+					UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1338,7 +1346,7 @@ long EVENT_TransformSoundObjectAttribute(struct _PCodeStack *stack, struct Sound
 		// Start line: 4723
 	/* end block 2 */
 	// End Line: 4724
-
+				UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1360,7 +1368,7 @@ long EVENT_GetGameValue(struct GameObject *gameObject)
 		// Start line: 4907
 	/* end block 2 */
 	// End Line: 4908
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1455,7 +1463,7 @@ long EVENT_TransformGameAttribute(struct _PCodeStack *stack, struct StackType *s
 		// Start line: 4982
 	/* end block 2 */
 	// End Line: 4983
-
+				UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1479,7 +1487,7 @@ long EVENT_TransformAreaAttribute(struct _PCodeStack *stack, struct StackType *s
 		// Start line: 5598
 	/* end block 2 */
 	// End Line: 5599
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1503,7 +1511,7 @@ long EVENT_TransformEventAttribute(struct _PCodeStack *stack, struct StackType *
 		// Start line: 5722
 	/* end block 2 */
 	// End Line: 5723
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1540,7 +1548,7 @@ long EVENT_TransformSavedEventAttribute(struct _PCodeStack *stack, struct StackT
 		// Start line: 5843
 	/* end block 2 */
 	// End Line: 5844
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1572,7 +1580,7 @@ long EVENT_TransformSubListObjectAttribute(struct _PCodeStack *stack, struct Sta
 		// Start line: 5977
 	/* end block 4 */
 	// End Line: 5978
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1604,7 +1612,7 @@ long EVENT_TransformListObjectAttribute(struct _PCodeStack *stack, struct StackT
 		// Start line: 6026
 	/* end block 4 */
 	// End Line: 6027
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1643,7 +1651,7 @@ long EVENT_TransformCameraObjectAttribute(struct _PCodeStack *stack, struct Stac
 		// Start line: 6068
 	/* end block 2 */
 	// End Line: 6069
-
+				UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1675,7 +1683,7 @@ long EVENT_TransformSplineAttribute(struct _PCodeStack *stack, struct StackType 
 		// Start line: 6240
 	/* end block 2 */
 	// End Line: 6241
-
+				UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1717,7 +1725,7 @@ long EVENT_TransformIntroAttribute(struct _PCodeStack *stack, struct StackType *
 		// Start line: 6363
 	/* end block 2 */
 	// End Line: 6364
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1748,7 +1756,7 @@ long EVENT_ParseOperand2(struct StackType *operand2, long *error, long *trueValu
 		// Start line: 6616
 	/* end block 2 */
 	// End Line: 6617
-
+				UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1773,7 +1781,7 @@ long EVENT_DoVMObjectAction(struct EventVmObject *vmobject, struct StackType *op
 		// Start line: 6653
 	/* end block 2 */
 	// End Line: 6654
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1801,7 +1809,7 @@ long EVENT_GetVMObjectValue(struct EventVmObject *vmobject)
 		// Start line: 6812
 	/* end block 3 */
 	// End Line: 6813
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1825,7 +1833,7 @@ long EVENT_DoGameAction(struct GameObject *gameObject, struct StackType *operand
 		// Start line: 6877
 	/* end block 2 */
 	// End Line: 6878
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1849,7 +1857,7 @@ long EVENT_DoSignalAction(struct SignalObject *signalObject, struct StackType *o
 		// Start line: 7151
 	/* end block 2 */
 	// End Line: 7152
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1872,7 +1880,7 @@ long EVENT_TransformSignalAttribute(struct _PCodeStack *stack, struct StackType 
 		// Start line: 7228
 	/* end block 2 */
 	// End Line: 7229
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1904,7 +1912,7 @@ long EVENT_TransformRotation3dAttribute(struct _PCodeStack *stack, struct StackT
 		// Start line: 7305
 	/* end block 4 */
 	// End Line: 7306
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1926,7 +1934,7 @@ long EVENT_TransformVector3dAttribute(struct _PCodeStack *stack, struct StackTyp
 		// Start line: 7350
 	/* end block 2 */
 	// End Line: 7351
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1939,7 +1947,7 @@ void EVENT_ModifyObjectToStackWithAttribute(struct _PCodeStack *stack, long item
 		// Start line: 7479
 	/* end block 1 */
 	// End Line: 7480
-
+	UNIMPLEMENTED();
 }
 
 
@@ -1963,7 +1971,7 @@ long EVENT_DoInstanceAnimateTextureAction(struct InstanceAnimateTexture *instanc
 		// Start line: 7525
 	/* end block 2 */
 	// End Line: 7526
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1981,7 +1989,7 @@ void EVENT_ResetAllSplineFlags(struct MultiSpline *spline)
 		// Start line: 7651
 	/* end block 2 */
 	// End Line: 7652
-
+	UNIMPLEMENTED();
 }
 
 
@@ -1998,7 +2006,7 @@ void EVENT_SetSplineLoop(struct MultiSpline *spline)
 		// Start line: 7667
 	/* end block 2 */
 	// End Line: 7668
-
+	UNIMPLEMENTED();
 }
 
 
@@ -2050,7 +2058,7 @@ long EVENT_DoSplineAction(struct InstanceSpline *instanceSpline, struct StackTyp
 		// Start line: 7682
 	/* end block 2 */
 	// End Line: 7683
-
+						UNIMPLEMENTED();
 	return 0;
 }
 
@@ -2085,7 +2093,7 @@ long EVENT_DoAnimateAction(struct InstanceAnimate *instanceAnimate, struct Stack
 		// Start line: 8043
 	/* end block 2 */
 	// End Line: 8044
-
+				UNIMPLEMENTED();
 	return 0;
 }
 
@@ -2207,7 +2215,7 @@ long EVENT_DoInstanceAction(struct InstanceObject *instanceObject, struct StackT
 		// Start line: 8508
 	/* end block 2 */
 	// End Line: 8509
-
+				UNIMPLEMENTED();
 	return 0;
 }
 
@@ -2236,7 +2244,7 @@ long EVENT_GetTGroupValue(struct TGroupObject *terrainGroup)
 		// Start line: 9518
 	/* end block 3 */
 	// End Line: 9519
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -2288,7 +2296,7 @@ long EVENT_DoTGroupAction(struct TGroupObject *terrainGroup, struct StackType *o
 		// Start line: 9745
 	/* end block 2 */
 	// End Line: 9746
-
+					UNIMPLEMENTED();
 	return 0;
 }
 
@@ -2346,7 +2354,7 @@ long EVENT_DoCameraAction(struct CameraObject *cameraObject, struct StackType *o
 		// Start line: 10019
 	/* end block 2 */
 	// End Line: 10020
-
+				UNIMPLEMENTED();
 	return 0;
 }
 
@@ -2381,7 +2389,7 @@ long EVENT_DoObjectSoundAction(struct SoundObject *soundObject, struct StackType
 		// Start line: 10435
 	/* end block 2 */
 	// End Line: 10436
-
+				UNIMPLEMENTED();
 	return 0;
 }
 
@@ -2416,7 +2424,7 @@ long EVENT_DoSoundMarkerAction(struct SoundObject *soundObject, struct StackType
 		// Start line: 10560
 	/* end block 2 */
 	// End Line: 10561
-
+				UNIMPLEMENTED();
 	return 0;
 }
 
@@ -2451,7 +2459,7 @@ long EVENT_GetSoundValue(struct SoundObject *soundObject)
 		// Start line: 10719
 	/* end block 5 */
 	// End Line: 10720
-
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -2476,7 +2484,7 @@ long EVENT_DoAreaAction(struct AreaObject *areaObject, struct StackType *operand
 		// Start line: 10759
 	/* end block 2 */
 	// End Line: 10760
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -2537,7 +2545,7 @@ long EVENT_DoIntroAction(struct IntroObject *introObject, struct StackType *oper
 		// Start line: 10861
 	/* end block 2 */
 	// End Line: 10862
-
+							UNIMPLEMENTED();
 	return 0;
 }
 
@@ -2560,7 +2568,7 @@ void EVENT_DoStackOperationEquals(struct _PCodeStack *stack, short *codeStream)
 		// Start line: 10378
 	/* end block 2 */
 	// End Line: 10379
-
+	UNIMPLEMENTED();
 }
 
 
@@ -2609,7 +2617,7 @@ long EVENT_CompareVector3d(struct Vector3d *vector1, struct Vector3d *vector2)
 		// Start line: 11137
 	/* end block 4 */
 	// End Line: 11138
-
+				UNIMPLEMENTED();
 	return 0;
 }
 
@@ -2637,7 +2645,7 @@ long EVENT_CompareRotationVectors(struct Rotation3d *rot1, struct Rotation3d *ro
 		// Start line: 11280
 	/* end block 2 */
 	// End Line: 11281
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -2670,7 +2678,7 @@ long EVENT_CompareListWithOperation(struct _PCodeStack *stack, struct ListObject
 		// Start line: 11521
 	/* end block 3 */
 	// End Line: 11522
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -2700,7 +2708,7 @@ long EVENT_CompareSubListWithOperation(struct _PCodeStack *stack, struct SubList
 		// Start line: 11669
 	/* end block 3 */
 	// End Line: 11670
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -2728,7 +2736,7 @@ long EVENT_CompareOperandsWithOperation(struct _PCodeStack *stack, struct StackT
 		// Start line: 11768
 	/* end block 2 */
 	// End Line: 11769
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -2760,7 +2768,7 @@ void EVENT_DoStackMathOperation(struct _PCodeStack *stack, long operation)
 		// Start line: 12207
 	/* end block 2 */
 	// End Line: 12208
-
+	UNIMPLEMENTED();
 }
 
 
@@ -2781,7 +2789,7 @@ short * EVENT_ParseOpcode(struct _PCodeStack *stack, short *codeStream, long *op
 		// Start line: 12271
 	/* end block 2 */
 	// End Line: 12272
-
+			UNIMPLEMENTED();
 	return null;
 }
 
@@ -2814,7 +2822,7 @@ long EVENT_GetIntroValue(struct IntroObject *introObject)
 		// Start line: 12525
 	/* end block 4 */
 	// End Line: 12526
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -2838,7 +2846,7 @@ void EVENT_DoSubListAction(struct SubListObject *subListObject, struct StackType
 		// Start line: 12691
 	/* end block 2 */
 	// End Line: 12692
-
+			UNIMPLEMENTED();
 }
 
 
@@ -2860,7 +2868,7 @@ long EVENT_GetInstanceValue(struct InstanceObject *instanceObject)
 		// Start line: 12752
 	/* end block 2 */
 	// End Line: 12753
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -2880,7 +2888,7 @@ long EVENT_GetSplineFrameNumber(struct InstanceSpline *instanceSpline)
 		// Start line: 13031
 	/* end block 2 */
 	// End Line: 13032
-
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -2912,7 +2920,7 @@ long EVENT_GetSplineValue(struct InstanceSpline *instanceSpline)
 		// Start line: 13057
 	/* end block 2 */
 	// End Line: 13058
-
+				UNIMPLEMENTED();
 	return 0;
 }
 
@@ -2950,7 +2958,7 @@ long EVENT_GetAnimateTextureValue(struct InstanceAnimateTexture *instanceAniText
 		// Start line: 13221
 	/* end block 3 */
 	// End Line: 13222
-
+				UNIMPLEMENTED();
 	return 0;
 }
 
@@ -2973,7 +2981,7 @@ long EVENT_GetAnimateValue(struct InstanceAnimate *instanceAnimate)
 		// Start line: 13329
 	/* end block 2 */
 	// End Line: 13330
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -2995,7 +3003,7 @@ long EVENT_TransformObjectOnStack(struct _PCodeStack *stack, long item, short *c
 		// Start line: 13423
 	/* end block 2 */
 	// End Line: 13424
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -3029,7 +3037,7 @@ void EVENT_UpdatePuzzlePointers(struct EventPointers *events, long offset)
 		// Start line: 13467
 	/* end block 4 */
 	// End Line: 13468
-
+			UNIMPLEMENTED();
 }
 
 
@@ -3081,7 +3089,7 @@ void EVENT_SaveEventsFromLevel(long levelID, struct Level *level)
 		// Start line: 13588
 	/* end block 2 */
 	// End Line: 13589
-
+					UNIMPLEMENTED();
 }
 
 
@@ -3114,7 +3122,7 @@ void EVENT_LoadEventsForLevel(long levelID, struct Level *level)
 		// Start line: 13813
 	/* end block 2 */
 	// End Line: 13814
-
+				UNIMPLEMENTED();
 }
 
 
@@ -3136,7 +3144,7 @@ struct SavedBasic* EVENT_CreateSaveEvent(long levelID, long eventNumber)
 	// Start line: 13969
 /* end block 2 */
 // End Line: 13970
-
+	UNIMPLEMENTED();
 	return null;
 }
 
@@ -3172,7 +3180,7 @@ void EVENT_RemoveInstanceFromInstanceList(struct _Instance* instance)
 	// Start line: 14040
 /* end block 4 */
 // End Line: 14041
-
+	UNIMPLEMENTED();
 }
 
 
@@ -3205,6 +3213,7 @@ void EVENT_UpdatePuzzleWithInstance(struct EventPointers* puzzle, struct _Instan
 	// Start line: 14130
 /* end block 4 */
 // End Line: 14131
+	UNIMPLEMENTED();
 
 }
 
@@ -3268,7 +3277,7 @@ struct _VMObject * EVENT_FindVMObject(struct _StreamUnit *stream, char *vmoName)
 		// Start line: 14290
 	/* end block 2 */
 	// End Line: 14291
-
+			UNIMPLEMENTED();
 	return null;
 }
 
@@ -3379,7 +3388,7 @@ void EVENT_FixPuzzlesForStream(struct _StreamUnit *stream)
 		// Start line: 14341
 	/* end block 2 */
 	// End Line: 14342
-
+					UNIMPLEMENTED();
 }
 
 
@@ -3448,7 +3457,7 @@ void EVENT_AddStreamToInstanceList(struct _StreamUnit *stream)
 		// Start line: 14936
 	/* end block 2 */
 	// End Line: 14937
-
+				UNIMPLEMENTED();
 }
 
 
@@ -3487,7 +3496,7 @@ void EVENT_RemoveStreamToInstanceList(struct _StreamUnit *stream)
 		// Start line: 15468
 	/* end block 2 */
 	// End Line: 15469
-
+			UNIMPLEMENTED();
 }
 
 
@@ -3558,7 +3567,7 @@ void EVENT_RelocateInstanceList(struct Level *oldLevel, struct Level *newLevel, 
 		// Start line: 15760
 	/* end block 4 */
 	// End Line: 15761
-
+			UNIMPLEMENTED();
 }
 
 
@@ -3575,7 +3584,7 @@ void EVENT_PrintVars()
 		// Start line: 16069
 	/* end block 2 */
 	// End Line: 16070
-
+	UNIMPLEMENTED();
 }
 
 
@@ -3598,7 +3607,7 @@ void EVENT_ExecuteActionCommand(struct StackType *operand1, struct StackType *op
 		// Start line: 16108
 	/* end block 2 */
 	// End Line: 16109
-
+			UNIMPLEMENTED();
 }
 
 
@@ -3619,7 +3628,7 @@ long EVENT_GetScalerValueFromOperand(struct StackType *operand, long *error, sho
 		// Start line: 16334
 	/* end block 2 */
 	// End Line: 16335
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -3641,7 +3650,7 @@ long EVENT_TransformOperand(struct StackType *stackObject, struct _PCodeStack *s
 		// Start line: 16544
 	/* end block 2 */
 	// End Line: 16545
-
+			UNIMPLEMENTED();
 	return 0;
 }
 

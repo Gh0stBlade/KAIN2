@@ -43,7 +43,7 @@ int ENMYPLAN_GetNextAvailablePlanningSlot()
 		// Start line: 265
 	/* end block 4 */
 	// End Line: 266
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -66,7 +66,7 @@ int ENMYPLAN_GetInitializedPlanningWorkspaceFinal()
 		// Start line: 338
 	/* end block 2 */
 	// End Line: 339
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -88,7 +88,7 @@ void ENMYPLAN_ReleasePlanningWorkspace(int slotID)
 		// Start line: 376
 	/* end block 2 */
 	// End Line: 377
-
+			UNIMPLEMENTED();
 }
 
 
@@ -133,7 +133,7 @@ int ENMYPLAN_WayPointSkipped(_Position *currentPos, _Position *targetPos, _Posit
 		// Start line: 423
 	/* end block 2 */
 	// End Line: 424
-
+				UNIMPLEMENTED();
 	return 0;
 }
 
@@ -168,7 +168,7 @@ void ENMYPLAN_Replan(struct EnemyPlanSlotData *planSlot)
 		// Start line: 552
 	/* end block 1 */
 	// End Line: 553
-
+	UNIMPLEMENTED();
 }
 
 
@@ -192,7 +192,7 @@ int ENMYPLAN_PathClear(_Position *pos, _Position *target)
 		// Start line: 566
 	/* end block 2 */
 	// End Line: 567
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -225,7 +225,7 @@ int ENMYPLAN_MoveToTargetFinal(struct _Instance *instance, _Position *outputPos,
 		// Start line: 664
 	/* end block 2 */
 	// End Line: 665
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -243,7 +243,7 @@ int ValidSlotAndState(struct EnemyPlanSlotData *pool, int slotID)
 		// Start line: 1208
 	/* end block 2 */
 	// End Line: 1209
-
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -266,7 +266,7 @@ int ENMYPLAN_GetNodeTypeOfNextWaypoint(int slotID)
 		// Start line: 1232
 	/* end block 2 */
 	// End Line: 1233
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -301,7 +301,7 @@ int ENMYPLAN_GetPosOfNextWaypoint(int slotID, _Position *pos)
 		// Start line: 1270
 	/* end block 2 */
 	// End Line: 1271
-
+				UNIMPLEMENTED();
 	return 0;
 }
 
@@ -346,7 +346,7 @@ void ENMYPLAN_RelocatePlanPositions(int slotID, _Position *offset)
 		// Start line: 1370
 	/* end block 3 */
 	// End Line: 1371
-
+				UNIMPLEMENTED();
 }
 
 

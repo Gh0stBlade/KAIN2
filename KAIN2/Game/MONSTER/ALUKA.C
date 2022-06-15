@@ -48,6 +48,8 @@ void MON_Say(struct _Instance *instance, const char* fmt, ...)
 	va_end(va);
 
 	OutputDebugStringA(buf);
+#else
+	UNIMPLEMENTED();
 #endif
 }
 

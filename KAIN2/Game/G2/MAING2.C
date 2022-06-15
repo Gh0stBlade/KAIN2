@@ -12,7 +12,9 @@ extern int RenderOptions,
 
 enum _G2Bool_Enum MainG2_InitEngine(void *appData, unsigned int screenWidth, unsigned int screenHeight, char *filesystemName)
 {
-#if PC_VERSION
+#if defined(PSX_VERSION)
+	return (_G2Bool_Enum)1;
+#elif defined(PC_VERSION)
 	if (!ViewportG2_Init(appData)) return 0;
 
 	SoundG2_Init(appData);
@@ -29,8 +31,6 @@ enum _G2Bool_Enum MainG2_InitEngine(void *appData, unsigned int screenWidth, uns
 	LastRenderResolution = RenderResolution;
 
 	return 0;
-#else
-	return (_G2Bool_Enum)1;
 #endif
 }
 
@@ -48,7 +48,7 @@ void MainG2_ShutDownEngine(void *appData)
 		// Start line: 173
 	/* end block 2 */
 	// End Line: 174
-
+	UNIMPLEMENTED();
 }
 
 

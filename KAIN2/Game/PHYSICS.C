@@ -10,6 +10,8 @@ void SetNoPtCollideInFamily(struct _Instance *instance)
 	LinkChild = instance->LinkChild;
 	for (instance->flags |= 0x40u; LinkChild; LinkChild = LinkChild->LinkSibling)
 		SetNoPtCollideInFamily(LinkChild);
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -24,6 +26,8 @@ void ResetNoPtCollideInFamily(struct _Instance *instance)
 	LinkChild = instance->LinkChild;
 	for (instance->flags &= ~0x40u; LinkChild; LinkChild = LinkChild->LinkSibling)
 		ResetNoPtCollideInFamily(LinkChild);
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -53,6 +57,8 @@ void PHYSICS_CheckLineInWorld(struct _Instance *instance, struct _PCollideInfo *
 	v5 = instance->LinkChild;
 	for (instance->flags &= ~0x40u; v5; v5 = v5->LinkSibling)
 		ResetNoPtCollideInFamily(v5);
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -79,6 +85,8 @@ void PHYSICS_CheckLineInWorldMask(struct _Instance *instance, struct _PCollideIn
 	v4 = instance->LinkChild;
 	for (instance->flags &= ~0x40u; v4; v4 = v4->LinkSibling)
 		ResetNoPtCollideInFamily(v4);
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -256,6 +264,7 @@ int PhysicsCheckLinkedMove(struct _Instance *instance, int Data, short Mode)
 		return 0;
 	}
 #else
+UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -272,6 +281,8 @@ void PhysicsDefaultLinkedMoveResponse(struct _Instance *instance, struct evPhysi
 	if (updateTransforms)
 		COLLIDE_UpdateAllTransforms(instance, (SVECTOR*)&Data->posDelta);
 	instance->rotation.z += Data->rotDelta.z;
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -321,7 +332,7 @@ int PhysicsCheckGravity(struct _Instance *instance, int Data, short Mode)
 		// Start line: 644
 	/* end block 2 */
 	// End Line: 645
-
+				UNIMPLEMENTED();
 	return 0;
 }
 
@@ -337,6 +348,8 @@ void PhysicsDefaultGravityResponse(struct _Instance *instance, struct evPhysicsG
 		instance->position.z += 128;
 	else
 		instance->position.z += Data->z;
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -368,7 +381,7 @@ int PhysicsCheckEdgeGrabbing(struct _Instance *instance, struct GameTracker *gam
 		// Start line: 1345
 	/* end block 2 */
 	// End Line: 1346
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -403,7 +416,7 @@ void PhysicsDefaultEdgeGrabResponse(struct _Instance *instance, struct evPhysics
 		// Start line: 2031
 	/* end block 2 */
 	// End Line: 2032
-
+				UNIMPLEMENTED();
 }
 
 
@@ -447,7 +460,7 @@ int PhysicsCheckSliding(struct _Instance *instance, int Data, short Mode)
 		// Start line: 2245
 	/* end block 2 */
 	// End Line: 2246
-
+				UNIMPLEMENTED();
 	return 0;
 }
 
@@ -471,7 +484,7 @@ int PhysicsUpdateTface(struct _Instance *instance, int Data)
 		// Start line: 2786
 	/* end block 2 */
 	// End Line: 2787
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -526,7 +539,7 @@ int PhysicsCheckBlockers(struct _Instance *instance, struct GameTracker *gameTra
 		// Start line: 2909
 	/* end block 2 */
 	// End Line: 2910
-
+					UNIMPLEMENTED();
 	return 0;
 }
 
@@ -555,7 +568,7 @@ int PhysicsCheckSwim(struct _Instance *instance, int Data, short Mode)
 		// Start line: 3530
 	/* end block 2 */
 	// End Line: 3531
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -619,6 +632,7 @@ int PhysicsDefaultCheckSwimResponse(struct _Instance *instance, struct evPhysics
 	}
 	return v2;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -643,6 +657,8 @@ void PhysicsForceSetWater(struct _Instance *instance, int *Time, int Depth, int 
 		*Time = v6 - 4096;
 	if (Depth < 0)
 		instance->position.z += maxAmplitude * v5 / -3072 * rcos(*Time) / 4096;
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -685,6 +701,7 @@ int PhysicsCheckLOS(struct _Instance *instance, int Data, int Mode)
 		return 1;
 	return v3;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -734,7 +751,7 @@ int PhysicsCheckDropHeight(struct _Instance *instance, int Data, int Mode)
 		// Start line: 4438
 	/* end block 2 */
 	// End Line: 4439
-
+				UNIMPLEMENTED();
 	return 0;
 }
 
@@ -764,7 +781,7 @@ int PhysicsCheckDropOff(struct _Instance *instance, int Data, short Mode)
 		// Start line: 4753
 	/* end block 2 */
 	// End Line: 4754
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -802,7 +819,7 @@ int PhysicsFollowWall(struct _Instance *instance, struct GameTracker *gameTracke
 		// Start line: 4418
 	/* end block 2 */
 	// End Line: 4419
-
+				UNIMPLEMENTED();
 	return 0;
 }
 
@@ -832,6 +849,8 @@ void PhysicsMoveLocalZClamp(struct _Instance *instance, long segment, long time,
 	instance->position.y += vy;
 	if (!clamp)
 		instance->position.z += v1.vz;
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -880,6 +899,8 @@ void PhysicsMove(struct _Instance *instance, _Position *position, long time)
 	instance->xVel = v8;
 	instance->yVel = v9;
 	instance->zVel = v11;
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -891,6 +912,8 @@ void PhysicsSetVelFromZRot(struct _Instance *instance, short angle, long magnitu
 #if defined(PC_VERSION)
 	instance->xVel = (magnitude * rcos(angle - 1024)) >> 12;
 	instance->yVel = (magnitude * rsin(angle - 1024)) >> 12;
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -916,6 +939,8 @@ void PhysicsSetVelFromRot(struct _Instance *instance, struct _Rotation *rot, lon
 	instance->xVel = v1.vx;
 	instance->yVel = vy;
 	instance->zVel = vz;
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -971,6 +996,8 @@ void PHYSICS_SetVAndAFromRot(struct _Instance *instance, struct _Rotation *rot, 
 		instance->yAccl = 0;
 		instance->zAccl = 0;
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -985,6 +1012,7 @@ long PHYSICS_FindAFromDAndT(long d, long t)
 	else
 		return 0;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -1000,6 +1028,7 @@ long PHYSICS_FindVFromAAndD(long a, long d)
 	else
 		return 0;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -1032,6 +1061,8 @@ void PHYSICS_StopIfCloseToTarget(struct _Instance *instance, int x, int y, int z
 		instance->zAccl = 0;
 		instance->zVel = z;
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -1051,6 +1082,7 @@ int PHYSICS_CheckForTerrainCollide(struct _Instance *instance, SVECTOR *startVec
 	PHYSICS_GenericLineCheckMask(instance, &matrix[segment], &matrix[segment], &v6);
 	return v6.type == 3;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -1071,6 +1103,7 @@ int PHYSICS_CheckForObjectCollide(struct _Instance *instance, SVECTOR *startVec,
 	PHYSICS_GenericLineCheckMask(instance, &matrix[segment], &matrix[segment], &v6);
 	return v6.type != 0;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -1109,6 +1142,7 @@ int PHYSICS_CheckForValidMove(struct _Instance *instance, SVECTOR *startVec, SVE
 		v4 += 2;
 	return v4;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -1149,7 +1183,7 @@ int PHYSICS_CheckFaceStick(struct _PCollideInfo *CInfo)
 		// Start line: 6640
 	/* end block 2 */
 	// End Line: 6641
-
+				UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1189,6 +1223,7 @@ int PHYSICS_CheckDontGrabEdge(struct _PCollideInfo *CInfo)
 	}
 	return v1;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -1202,6 +1237,8 @@ void PHYSICS_GenericLineCheckSetup(short x, short y, short z, SVECTOR *inVec)
 	inVec->vx = x;
 	inVec->vy = y;
 	inVec->vz = z;
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -1213,6 +1250,8 @@ void PHYSICS_GenericLineCheck(struct _Instance *instance, MATRIX *transMat, MATR
 #if defined(PC_VERSION)
 	cInfo->collideType = 63;
 	PHYSICS_GenericLineCheckMask(instance, transMat, rotMat, cInfo);
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -1254,6 +1293,8 @@ void PHYSICS_GenericLineCheckMask(struct _Instance *instance, MATRIX *transMat, 
 	instance->flags &= ~0x40u;
 	for (i = instance->LinkChild; i; i = i->LinkSibling)
 		ResetNoPtCollideInFamily(i);
+#else
+	UNIMPLEMENTED();
 #endif
 }
 

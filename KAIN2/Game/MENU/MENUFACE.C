@@ -106,7 +106,7 @@ void menuface_terminate()
 		// Start line: 332
 	/* end block 3 */
 	// End Line: 333
-
+			UNIMPLEMENTED();
 }
 
 void MENUFACE_ChangeStateRandomly(int index)

@@ -277,7 +277,7 @@ char * MEMPACK_MallocFailOk(unsigned long allocSize, unsigned char memType)
 		// Start line: 733
 	/* end block 2 */
 	// End Line: 734
-
+					UNIMPLEMENTED();
 	return null;
 }
 
@@ -389,7 +389,12 @@ void MEMPACK_FreeByType(unsigned char memType)
 // unsigned long /*$ra*/ MEMPACK_Size(char *address /*$a0*/)
 unsigned long MEMPACK_Size(char *address)
 { // line 611, offset 0x80050034
+#if defined(PC_VERSION)
 	return *((DWORD*)address - 1) - 8;
+#else
+	UNIMPLEMENTED();
+	return 0;
+#endif
 }
 
 
@@ -397,7 +402,12 @@ unsigned long MEMPACK_Size(char *address)
 // unsigned long /*$ra*/ MEMPACK_ReportFreeMemory()
 unsigned long MEMPACK_ReportFreeMemory()
 { // line 621, offset 0x80050040
+#if defined(PC_VERSION)
 	return mem_total - mem_used;
+#else
+	UNIMPLEMENTED();
+	return 0;
+#endif
 }
 
 int dword_C550A8, dword_C550B4;
@@ -488,7 +498,11 @@ void MEMPACK_SetMemoryDoneStreamed(char *address)
 // long /*$ra*/ MEMPACK_MemoryValidFunc(char *address /*$a0*/)
 long MEMPACK_MemoryValidFunc(char *address)
 { // line 826, offset 0x80050134
+#if defined(PC_VERSION)
 	return address != (char*)0xFAFBFCFD && address && *(address - 6) == 1;
+#else
+	UNIMPLEMENTED();
+#endif
 }
 
 
@@ -766,7 +780,7 @@ void MEMPACK_RelocateAreaType(struct MemHeader *newAddress, long offset, struct 
 		// Start line: 2348
 	/* end block 2 */
 	// End Line: 2349
-
+					UNIMPLEMENTED();
 }
 
 
@@ -809,6 +823,8 @@ void MEMPACK_RelocateG2AnimKeylistType(struct _G2AnimKeylist_Type **pKeylist, in
 			}
 		}
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -881,7 +897,7 @@ void MEMPACK_RelocateObjectType(struct MemHeader *newAddress, long offset, struc
 		// Start line: 3084
 	/* end block 2 */
 	// End Line: 3085
-
+				UNIMPLEMENTED();
 }
 
 void MEMPACK_RelocateCDMemory(struct MemHeader *newAddress, long offset, struct _BigFileDir *oldDir)

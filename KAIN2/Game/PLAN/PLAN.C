@@ -20,7 +20,7 @@ long PLAN_CalcMinDistFromExistingNodes(_Position *pos, struct PlanningNode *plan
 		// Start line: 258
 	/* end block 2 */
 	// End Line: 259
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -66,7 +66,7 @@ void PLAN_UpdatePlanMkrNodes(struct PlanningNode *planningPool, _Position *playe
 		// Start line: 316
 	/* end block 2 */
 	// End Line: 317
-
+					UNIMPLEMENTED();
 }
 
 
@@ -102,7 +102,7 @@ void PLAN_UpdatePlayerNode(struct PlanningNode *planningPool, _Position *playerP
 		// Start line: 539
 	/* end block 2 */
 	// End Line: 540
-
+				UNIMPLEMENTED();
 }
 
 
@@ -153,7 +153,7 @@ void PLAN_AddRandomNode(struct PlanningNode *planningPool, _Position *playerPos)
 		// Start line: 643
 	/* end block 2 */
 	// End Line: 644
-
+					UNIMPLEMENTED();
 }
 
 
@@ -172,7 +172,7 @@ void PLAN_DeleteRandomNode(struct PlanningNode *planningPool)
 		// Start line: 773
 	/* end block 2 */
 	// End Line: 774
-
+	UNIMPLEMENTED();
 }
 
 
@@ -198,7 +198,7 @@ void PLAN_DeleteOutOfRangeNodesOfSource(struct PlanningNode *planningPool, _Posi
 		// Start line: 799
 	/* end block 3 */
 	// End Line: 800
-
+			UNIMPLEMENTED();
 }
 
 
@@ -224,7 +224,7 @@ void PLAN_AddOrRemoveRandomNodes(struct PlanningNode *planningPool, _Position *p
 		// Start line: 836
 	/* end block 3 */
 	// End Line: 837
-
+			UNIMPLEMENTED();
 }
 
 
@@ -258,7 +258,7 @@ void PLAN_AddInitialNodes(struct PlanningNode *planningPool, struct _Instance *p
 		// Start line: 884
 	/* end block 2 */
 	// End Line: 885
-
+				UNIMPLEMENTED();
 }
 
 
@@ -282,7 +282,7 @@ void PLAN_AddOrRemoveNodes(struct PlanningNode *planningPool, struct _Instance *
 		// Start line: 921
 	/* end block 3 */
 	// End Line: 922
-
+	UNIMPLEMENTED();
 }
 
 
@@ -311,7 +311,7 @@ struct PlanningNode * PLAN_FindNodeMostInNeedOfConnectivityExpansion(struct Plan
 		// Start line: 966
 	/* end block 3 */
 	// End Line: 967
-
+			UNIMPLEMENTED();
 	return null;
 }
 

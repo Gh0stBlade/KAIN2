@@ -20,7 +20,7 @@ void PHYSOB_PlayDropSound(struct _Instance *instance)
 		// Start line: 416
 	/* end block 2 */
 	// End Line: 417
-
+			UNIMPLEMENTED();
 }
 
 
@@ -65,6 +65,7 @@ struct _Instance * PHYSOBS_IsAPushBlockAttached(struct _Instance *block)
 	}
 	return v5;
 #else
+	UNIMPLEMENTED();
 	return NULL;
 #endif
 }
@@ -96,6 +97,7 @@ struct _Instance * PHYSOBS_IsAnythingAttached(struct _Instance *block)
 	}
 	return result;
 #else
+	UNIMPLEMENTED();
 	return NULL;
 #endif
 }
@@ -111,6 +113,7 @@ int CheckPhysOb(struct _Instance *instance)
 	data = (struct PhysObProperties*)instance->data;
 	return data && data->ID == 0xB00B;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -138,6 +141,7 @@ int CheckPhysObAbility(struct _Instance *instance, unsigned short ability)
 	}
 	return 0;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -153,6 +157,7 @@ int CheckPhysObFamily(struct _Instance *instance, unsigned short family)
 	data = (struct PhysObProperties*)instance->data;
 	return data && data->ID == 0xB00B && data->family == family;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -193,7 +198,7 @@ int GetPhysicalAbility(struct _Instance *instance)
 		// Start line: 823
 	/* end block 4 */
 	// End Line: 824
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -223,6 +228,7 @@ int AnyBlocksInMotion()
 	}
 	return 1;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -332,6 +338,8 @@ void SetThrowDirection(struct _Instance *instance, struct _Instance *parent, str
 	default:
 		return;
 	}
+#else
+UNIMPLEMENTED();
 #endif
 }
 
@@ -428,7 +436,7 @@ void ThrowPhysOb(struct _Instance *instance, struct evObjectThrowData *throwData
 		// Start line: 1147
 	/* end block 2 */
 	// End Line: 1148
-
+						UNIMPLEMENTED();
 }
 
 // ************** not on pc
@@ -451,7 +459,7 @@ int PushPhysOb(struct _Instance *instance, short x, short y, short PathNumber, s
 		// Start line: 1536
 	/* end block 2 */
 	// End Line: 1537
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -474,7 +482,7 @@ void ResetSwitchPhysOb(struct _Instance *instance)
 		// Start line: 1682
 	/* end block 2 */
 	// End Line: 1683
-
+			UNIMPLEMENTED();
 }
 
 // ***** not on pc
@@ -497,7 +505,7 @@ int SwitchPhysOb(struct _Instance *instance)
 		// Start line: 1734
 	/* end block 2 */
 	// End Line: 1735
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -565,7 +573,7 @@ int InteractPhysOb(struct _Instance *instance, struct _Instance *Force, int Link
 		// Start line: 1873
 	/* end block 2 */
 	// End Line: 1874
-
+					UNIMPLEMENTED();
 	return 0;
 }
 
@@ -712,6 +720,8 @@ void ResetOrientation(struct _Instance *instance)
 	G2Anim_SetController_Vector(anim, 2, 14, &vector);
 	G2Instance_RebuildTransforms(instance);
 	G2Anim_SwitchToKeylist(anim, *instance->object->animList, 0);
+#else
+UNIMPLEMENTED();
 #endif
 }
 
@@ -724,7 +734,7 @@ void FinishPush(struct _Instance *instance)
 		// Start line: 2501
 	/* end block 1 */
 	// End Line: 2502
-
+	UNIMPLEMENTED();
 }
 
 
@@ -772,6 +782,8 @@ void PhysOb_AlignPush(struct _Instance *instance, int x, int y, int path, struct
 	vector.z = euler.z;
 	G2Anim_SetController_Vector(p_anim, 2, 14, &vector);
 	G2Anim_SwitchToKeylist(p_anim, instance->object->animList[path], path);
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -795,7 +807,7 @@ int FlipPhysOb(struct _Instance *instance, short x, short y, struct _Instance *F
 		// Start line: 2634
 	/* end block 2 */
 	// End Line: 2635
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -870,6 +882,7 @@ LABEL_19:
 	PHYSICS_CheckLineInWorld(instance, &v16);
 	return v16.type < 2u || MATH3D_LengthXYZ(v10 - v13, v11 - v14, v12 - v15) <= 20;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -901,7 +914,7 @@ int PickUpPhysOb(struct _Instance *instance, short Steps, struct _Instance *Forc
 		// Start line: 2996
 	/* end block 2 */
 	// End Line: 2997
-
+				UNIMPLEMENTED();
 	return 0;
 }
 
@@ -932,6 +945,7 @@ struct _Instance * PHYSOB_BirthCollectible(struct _Instance *parent, int x, int 
 	}
 	return result;
 #else
+	UNIMPLEMENTED();
 	return NULL;
 #endif
 }
@@ -954,7 +968,7 @@ struct evObjectBirthProjectileData * PHYSOB_BirthProjectile(struct _Instance *pa
 		// Start line: 3226
 	/* end block 2 */
 	// End Line: 3227
-
+			UNIMPLEMENTED();
 	return null;
 }
 
@@ -1008,7 +1022,7 @@ struct _Instance * BirthProjectilePhysOb(struct _Instance *instance, int grabJoi
 		// Start line: 3248
 	/* end block 2 */
 	// End Line: 3249
-
+					UNIMPLEMENTED();
 	return null;
 }
 
@@ -1043,7 +1057,7 @@ void PHYSOB_SetLightTable(struct _PhysObLight *pLight, struct LightInstance *li,
 		// Start line: 3513
 	/* end block 4 */
 	// End Line: 3514
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1074,7 +1088,7 @@ void PHYSOB_EndLighting(struct _Instance *instance, struct _PhysObLight *pLight)
 		// Start line: 3574
 	/* end block 3 */
 	// End Line: 3575
-
+	UNIMPLEMENTED();
 }
 
 
@@ -1104,7 +1118,7 @@ void PHYSOB_StartLighting(struct _Instance *instance, struct _PhysObLight *pLigh
 		// Start line: 3609
 	/* end block 2 */
 	// End Line: 3610
-
+				UNIMPLEMENTED();
 }
 
 
@@ -1127,7 +1141,7 @@ void PHYSOB_StartBurnFX(struct _Instance *instance)
 		// Start line: 3678
 	/* end block 2 */
 	// End Line: 3679
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1139,7 +1153,7 @@ void PHYSOB_StartBurning(struct _Instance *instance, struct _PhysObLight *pLight
 		// Start line: 3722
 	/* end block 1 */
 	// End Line: 3723
-
+	UNIMPLEMENTED();
 }
 
 
@@ -1165,7 +1179,7 @@ void PHYSOB_StopLighting(struct _Instance *instance, struct _PhysObLight *pLight
 		// Start line: 3739
 	/* end block 3 */
 	// End Line: 3740
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1196,7 +1210,7 @@ void PHYSOB_StopBurning(struct _Instance *instance, struct _PhysObLight *pLight)
 		// Start line: 3766
 	/* end block 4 */
 	// End Line: 3767
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1217,7 +1231,7 @@ void PHYSOB_EndBurning(struct _Instance *instance, struct _PhysObLight *pLight)
 		// Start line: 3790
 	/* end block 2 */
 	// End Line: 3791
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1238,7 +1252,7 @@ void StopPhysOb(struct _Instance *instance)
 		// Start line: 3827
 	/* end block 2 */
 	// End Line: 3828
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1344,7 +1358,7 @@ void InitPhysicalObject(struct _Instance *instance, struct GameTracker *gameTrac
 		// Start line: 3558
 	/* end block 2 */
 	// End Line: 3559
-
+					UNIMPLEMENTED();
 }
 
 
@@ -1510,7 +1524,7 @@ void ProcessPhysicalObject(struct _Instance *instance, struct GameTracker *gameT
 		// Start line: 4820
 	/* end block 2 */
 	// End Line: 4821
-
+					UNIMPLEMENTED();
 }
 
 
@@ -1648,7 +1662,7 @@ unsigned long PhysicalObjectQuery(struct _Instance *instance, unsigned long Quer
 		// Start line: 5843
 	/* end block 2 */
 	// End Line: 5844
-
+				UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1801,7 +1815,7 @@ void PhysicalObjectPost(struct _Instance *instance, unsigned long Message, unsig
 		// Start line: 6405
 	/* end block 2 */
 	// End Line: 6406
-
+					UNIMPLEMENTED();
 }
 
 
@@ -1829,7 +1843,7 @@ long PhysobAnimCallback(struct _G2Anim_Type *anim, int sectionID, enum _G2AnimCa
 		// Start line: 7074
 	/* end block 2 */
 	// End Line: 7075
-
+				UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1863,7 +1877,7 @@ void CheckForceCollision(struct _Instance *instance, struct _Instance *hitinst, 
 		// Start line: 7148
 	/* end block 2 */
 	// End Line: 7149
-
+				UNIMPLEMENTED();
 }
 
 
@@ -1900,7 +1914,7 @@ int GetObliqueDirection(struct _Instance *instance, struct _SVector *dir)
 		// Start line: 7365
 	/* end block 3 */
 	// End Line: 7366
-
+				UNIMPLEMENTED();
 	return 0;
 }
 
@@ -2055,7 +2069,7 @@ void CollidePhysicalObject(struct _Instance *instance, struct GameTracker *gameT
 		// Start line: 7463
 	/* end block 2 */
 	// End Line: 7464
-
+				UNIMPLEMENTED();
 }
 
 
@@ -2103,7 +2117,7 @@ struct PhysObWeaponAttributes * PhysObGetWeapon(struct _Instance *instance)
 		// Start line: 8132
 	/* end block 2 */
 	// End Line: 8133
-
+				UNIMPLEMENTED();
 	return null;
 }
 
@@ -2126,7 +2140,7 @@ struct _PhysObLight * PhysObGetLight(struct _Instance *instance)
 		// Start line: 8186
 	/* end block 2 */
 	// End Line: 8187
-
+			UNIMPLEMENTED();
 	return null;
 }
 
@@ -2149,7 +2163,7 @@ struct PhysObSplinter * PhysObGetSplinter(struct _Instance *instance)
 		// Start line: 8214
 	/* end block 2 */
 	// End Line: 8215
-
+			UNIMPLEMENTED();
 	return null;
 }
 
@@ -2172,7 +2186,7 @@ void TurnOnCollisionPhysOb(struct _Instance *instance, int coll)
 		// Start line: 8244
 	/* end block 2 */
 	// End Line: 8245
-
+			UNIMPLEMENTED();
 }
 
 
@@ -2193,7 +2207,7 @@ void TurnOffCollisionPhysOb(struct _Instance *instance, int coll)
 		// Start line: 8299
 	/* end block 2 */
 	// End Line: 8300
-
+			UNIMPLEMENTED();
 }
 
 
@@ -2236,7 +2250,7 @@ int GetPhysObCollisionType(struct _Instance *instance)
 		// Start line: 8347
 	/* end block 2 */
 	// End Line: 8348
-
+				UNIMPLEMENTED();
 	return 0;
 }
 
@@ -2269,7 +2283,7 @@ void ExecuteThrow(struct _Instance *instance)
 		// Start line: 8590
 	/* end block 2 */
 	// End Line: 8591
-
+				UNIMPLEMENTED();
 }
 
 
@@ -2290,7 +2304,7 @@ void ExecuteDrag(struct _Instance *instance)
 		// Start line: 8681
 	/* end block 2 */
 	// End Line: 8682
-
+			UNIMPLEMENTED();
 }
 
 
@@ -2311,7 +2325,7 @@ void ExecuteSlideToStop(struct _Instance *instance)
 		// Start line: 8759
 	/* end block 2 */
 	// End Line: 8760
-
+			UNIMPLEMENTED();
 }
 
 
@@ -2332,7 +2346,7 @@ void ExecuteFlip(struct _Instance *instance)
 		// Start line: 8843
 	/* end block 2 */
 	// End Line: 8844
-
+			UNIMPLEMENTED();
 }
 
 
@@ -2349,7 +2363,7 @@ int CheckSlope(int Znormal, int Slope, int Slop)
 		// Start line: 9051
 	/* end block 2 */
 	// End Line: 9052
-
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -2383,7 +2397,7 @@ int CheckBlockSlope(struct _Instance *instance, int x, int y, int hOff, int vOff
 		// Start line: 9071
 	/* end block 3 */
 	// End Line: 9072
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -2405,7 +2419,7 @@ int PHYSOBS_FigureDragForSlope(struct _Instance *instance, int pathNumber, int *
 		// Start line: 9220
 	/* end block 2 */
 	// End Line: 9221
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -2565,7 +2579,7 @@ int PHYSOB_CheckThrownLineCollision(struct _Instance *instance, struct _Instance
 		// Start line: 9290
 	/* end block 2 */
 	// End Line: 9291
-
+					UNIMPLEMENTED();
 	return 0;
 }
 
@@ -2671,7 +2685,7 @@ int PHYSOB_CheckDroppedLineCollision(struct _Instance *instance, struct _Instanc
 		// Start line: 9698
 	/* end block 2 */
 	// End Line: 9699
-
+				UNIMPLEMENTED();
 	return 0;
 }
 
@@ -2696,7 +2710,7 @@ int PHYSOB_CheckDirectedLineCollision(struct _Instance *instance, int xoffset, i
 		// Start line: 10074
 	/* end block 2 */
 	// End Line: 10075
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -2719,7 +2733,7 @@ long PHYSOBS_CheckForStackedForwardHits(struct _Instance *block, long xoffset, l
 		// Start line: 10140
 	/* end block 2 */
 	// End Line: 10141
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -2732,7 +2746,7 @@ void PHYSOBS_SetNewAnim(struct _Instance *instance, struct PhysObData *Data, uns
 		// Start line: 10188
 	/* end block 1 */
 	// End Line: 10189
-
+	UNIMPLEMENTED();
 }
 
 
@@ -2762,7 +2776,7 @@ long PHYSOB_CheckForEnemyInBlkSpot(struct _Instance *instance, int dx, int dy)
 		// Start line: 10217
 	/* end block 2 */
 	// End Line: 10218
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -2805,7 +2819,7 @@ long PHYSOBS_CheckForValidMove(struct _Instance *instance)
 		// Start line: 10284
 	/* end block 2 */
 	// End Line: 10285
-
+				UNIMPLEMENTED();
 	return 0;
 }
 
@@ -2833,7 +2847,7 @@ void ExecuteGravitate(struct _Instance *instance)
 		// Start line: 11082
 	/* end block 2 */
 	// End Line: 11083
-
+			UNIMPLEMENTED();
 }
 
 
@@ -2865,7 +2879,7 @@ void ExecuteFollow(struct _Instance *instance)
 		// Start line: 11368
 	/* end block 4 */
 	// End Line: 11369
-
+			UNIMPLEMENTED();
 }
 
 
@@ -2886,7 +2900,7 @@ void PHYSOB_Normalize(struct _SVector *v)
 		// Start line: 11408
 	/* end block 2 */
 	// End Line: 11409
-
+			UNIMPLEMENTED();
 }
 
 
@@ -2914,7 +2928,7 @@ int PHYSOB_MoveTowardsAlign(struct _Instance *instance, struct _SVector *orgVec,
 		// Start line: 11440
 	/* end block 2 */
 	// End Line: 11441
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -3019,7 +3033,7 @@ int PHYSOB_ReAlignFalling(struct _Instance *instance, int zEndOff)
 		// Start line: 11588
 	/* end block 2 */
 	// End Line: 11589
-
+				UNIMPLEMENTED();
 	return 0;
 }
 
@@ -3042,7 +3056,7 @@ void DropPhysOb(struct _Instance *instance, int flags)
 		// Start line: 12348
 	/* end block 2 */
 	// End Line: 12349
-
+			UNIMPLEMENTED();
 }
 
 
@@ -3097,7 +3111,7 @@ void PhysicalRelocateTune(struct Object *object, long offset)
 		// Start line: 12499
 	/* end block 3 */
 	// End Line: 12500
-
+					UNIMPLEMENTED();
 }
 
 
@@ -3121,7 +3135,7 @@ int PHYSOBS_CheckObjectAxisAlignment(MATRIX *m0, MATRIX *m1, struct _SVector *ax
 		// Start line: 12646
 	/* end block 2 */
 	// End Line: 12647
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -3134,7 +3148,7 @@ int PHYSOB_CheckSlide(struct _Instance *instance, int x, int y, struct evPhysics
 		// Start line: 12714
 	/* end block 1 */
 	// End Line: 12715
-
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -3147,7 +3161,7 @@ int PHYSOB_CheckSlide2(struct _Instance *instance, int x, int y, struct evPhysic
 		// Start line: 12736
 	/* end block 1 */
 	// End Line: 12737
-
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -3160,7 +3174,7 @@ int PHYSOB_CheckDropOnSlope(struct _Instance *instance, int x, int y, struct evP
 		// Start line: 12756
 	/* end block 1 */
 	// End Line: 12757
-
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -3173,7 +3187,7 @@ int PHYSOB_CheckSlideNormal(struct _Instance *instance, int x, int y, struct evP
 		// Start line: 12778
 	/* end block 1 */
 	// End Line: 12779
-
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -3201,7 +3215,7 @@ void PHYSOB_NormalToAxis(short *x, short *y)
 		// Start line: 12797
 	/* end block 3 */
 	// End Line: 12798
-
+			UNIMPLEMENTED();
 }
 
 

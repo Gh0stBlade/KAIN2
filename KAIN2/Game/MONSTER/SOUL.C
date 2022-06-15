@@ -20,7 +20,7 @@ void SOUL_QueueHandler(struct _Instance *instance)
 		// Start line: 160
 	/* end block 2 */
 	// End Line: 161
-
+			UNIMPLEMENTED();
 }
 
 
@@ -42,6 +42,7 @@ void SOUL_Physics(struct _Instance *instance, long time)
 		// Start line: 208
 	/* end block 2 */
 	// End Line: 209
+			UNIMPLEMENTED();
 
 }
 
@@ -64,7 +65,7 @@ void SOUL_Fade(struct _Instance *instance)
 		// Start line: 251
 	/* end block 2 */
 	// End Line: 252
-
+			UNIMPLEMENTED();
 }
 
 
@@ -85,7 +86,7 @@ void SOUL_MoveToDest(struct _Instance *instance, long maxAccel, long time)
 		// Start line: 305
 	/* end block 2 */
 	// End Line: 306
-
+			UNIMPLEMENTED();
 }
 
 
@@ -142,7 +143,7 @@ void SOUL_MovePastWall(struct _Instance *instance, struct _Instance *sucker)
 		// Start line: 336
 	/* end block 2 */
 	// End Line: 337
-
+				UNIMPLEMENTED();
 }
 
 
@@ -163,7 +164,7 @@ void SOUL_Init(struct _Instance *instance)
 		// Start line: 447
 	/* end block 2 */
 	// End Line: 448
-
+			UNIMPLEMENTED();
 }
 
 
@@ -175,7 +176,7 @@ void SOUL_CleanUp(struct _Instance *instance)
 		// Start line: 518
 	/* end block 1 */
 	// End Line: 519
-
+	UNIMPLEMENTED();
 }
 
 
@@ -196,7 +197,7 @@ void SOUL_BirthEntry(struct _Instance *instance)
 		// Start line: 538
 	/* end block 2 */
 	// End Line: 539
-
+			UNIMPLEMENTED();
 }
 
 
@@ -217,7 +218,7 @@ void SOUL_Birth(struct _Instance *instance)
 		// Start line: 564
 	/* end block 2 */
 	// End Line: 565
-
+			UNIMPLEMENTED();
 }
 
 
@@ -234,7 +235,7 @@ void SOUL_SoulSuckEntry(struct _Instance *instance)
 		// Start line: 606
 	/* end block 2 */
 	// End Line: 607
-
+	UNIMPLEMENTED();
 }
 
 
@@ -270,7 +271,7 @@ long SOUL_CalcAccel(long delta, long vel, long magnitude)
 		// Start line: 628
 	/* end block 5 */
 	// End Line: 629
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -351,7 +352,7 @@ void SOUL_SoulSuck(struct _Instance *instance)
 		// Start line: 681
 	/* end block 2 */
 	// End Line: 682
-
+				UNIMPLEMENTED();
 }
 
 
@@ -372,7 +373,7 @@ void SOUL_WanderEntry(struct _Instance *instance)
 		// Start line: 1046
 	/* end block 2 */
 	// End Line: 1047
-
+			UNIMPLEMENTED();
 }
 
 
@@ -400,7 +401,7 @@ void SOUL_Wander(struct _Instance *instance)
 		// Start line: 1076
 	/* end block 2 */
 	// End Line: 1077
-
+			UNIMPLEMENTED();
 }
 
 
@@ -412,7 +413,7 @@ void SOUL_FleeEntry(struct _Instance *instance)
 		// Start line: 1171
 	/* end block 1 */
 	// End Line: 1172
-
+	UNIMPLEMENTED();
 }
 
 
@@ -444,7 +445,7 @@ void SOUL_Flee(struct _Instance *instance)
 		// Start line: 1186
 	/* end block 2 */
 	// End Line: 1187
-
+				UNIMPLEMENTED();
 }
 
 
@@ -465,7 +466,7 @@ void SOUL_IdleEntry(struct _Instance *instance)
 		// Start line: 1261
 	/* end block 2 */
 	// End Line: 1262
-
+			UNIMPLEMENTED();
 }
 
 
@@ -488,7 +489,7 @@ void SOUL_Idle(struct _Instance *instance)
 		// Start line: 1278
 	/* end block 2 */
 	// End Line: 1279
-
+			UNIMPLEMENTED();
 }
 
 
@@ -510,7 +511,7 @@ void SOUL_ReanimateEntry(struct _Instance *instance)
 		// Start line: 1365
 	/* end block 2 */
 	// End Line: 1366
-
+			UNIMPLEMENTED();
 }
 
 
@@ -540,7 +541,7 @@ void SOUL_Reanimate(struct _Instance *instance)
 		// Start line: 1401
 	/* end block 2 */
 	// End Line: 1402
-
+				UNIMPLEMENTED();
 }
 
 
@@ -557,7 +558,7 @@ void SOUL_Effect(struct _Instance *instance, struct evFXHitData *data)
 		// Start line: 1467
 	/* end block 2 */
 	// End Line: 1468
-
+	UNIMPLEMENTED();
 }
 
 

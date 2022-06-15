@@ -154,7 +154,7 @@ void midiNoteOff(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 		// Start line: 262
 	/* end block 2 */
 	// End Line: 263
-
+	UNIMPLEMENTED();
 }
 
 
@@ -191,7 +191,7 @@ void midiNoteOn(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 		// Start line: 282
 	/* end block 2 */
 	// End Line: 283
-
+				UNIMPLEMENTED();
 }
 
 
@@ -277,7 +277,7 @@ void aadUpdateChannelVolPan(struct _AadSequenceSlot *slot, int channel)
 		// Start line: 583
 	/* end block 2 */
 	// End Line: 584
-
+				UNIMPLEMENTED();
 }
 
 
@@ -364,7 +364,7 @@ void aadUpdateSlotVolPan(struct _AadSequenceSlot *slot)
 		// Start line: 686
 	/* end block 2 */
 	// End Line: 687
-
+				UNIMPLEMENTED();
 }
 
 
@@ -391,7 +391,7 @@ void aadUpdateChannelPitchBend(struct _AadSequenceSlot *slot, int channel)
 		// Start line: 785
 	/* end block 2 */
 	// End Line: 786
-
+			UNIMPLEMENTED();
 }
 
 
@@ -408,7 +408,7 @@ void midiPolyphonicAftertouch(struct AadSeqEvent *event, struct _AadSequenceSlot
 		// Start line: 975
 	/* end block 2 */
 	// End Line: 976
-
+	UNIMPLEMENTED();
 }
 
 
@@ -429,7 +429,7 @@ void midiControlChange(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 		// Start line: 984
 	/* end block 2 */
 	// End Line: 985
-
+			UNIMPLEMENTED();
 }
 
 
@@ -439,6 +439,8 @@ void midiProgramChange(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 { // line 385, offset 0x800557c4
 #if defined(PC_VERSION)
 	slot->currentProgram[event->statusByte & 0xF] = event->dataByte[0];
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -456,7 +458,7 @@ void midiChannelAftertouch(struct AadSeqEvent *event, struct _AadSequenceSlot *s
 		// Start line: 1031
 	/* end block 2 */
 	// End Line: 1032
-
+	UNIMPLEMENTED();
 }
 
 
@@ -470,6 +472,8 @@ void midiPitchWheelControl(struct AadSeqEvent *event, struct _AadSequenceSlot *s
 	v2 = event->statusByte & 0xF;
 	slot->pitchWheel[v2] = event->dataByte[0] | ((BYTE)event->dataByte[1] << 7);
 	aadUpdateChannelPitchBend(slot, v2);
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -487,7 +491,7 @@ void midiMetaEvent(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 		// Start line: 1070
 	/* end block 2 */
 	// End Line: 1071
-
+	UNIMPLEMENTED();
 }
 
 
@@ -504,7 +508,7 @@ void midiControlBankSelect(struct AadSeqEvent *event, struct _AadSequenceSlot *s
 		// Start line: 1104
 	/* end block 2 */
 	// End Line: 1105
-
+	UNIMPLEMENTED();
 }
 
 
@@ -517,6 +521,8 @@ void midiControlVolume(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 	slot->volume[v2] = event->dataByte[1];
 	if (((1 << v2) & slot->enableSustainUpdate) != 0)
 		aadUpdateChannelVolPan(slot, v2);
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -532,6 +538,8 @@ void midiControlPan(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 	slot->panPosition[v2] = event->dataByte[1];
 	if (((1 << v2) & slot->enableSustainUpdate) != 0)
 		aadUpdateChannelVolPan(slot, v2);
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -546,6 +554,8 @@ void midiControlCallback(struct AadSeqEvent *event, struct _AadSequenceSlot *slo
 	v2 = *(void(__cdecl**)(int, DWORD, int, DWORD)) & aadMem[3].loadRequestQueue[12].fileName[8];
 	if (v2)
 		v2(aadMem[3].loadRequestQueue[13].handle, slot->thisSlotNumber, event->statusByte & 0xF, event->dataByte[1]);
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -563,7 +573,7 @@ void midiControlDummy(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 		// Start line: 1229
 	/* end block 2 */
 	// End Line: 1230
-
+	UNIMPLEMENTED();
 }
 
 

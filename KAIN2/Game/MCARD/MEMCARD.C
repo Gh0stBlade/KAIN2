@@ -76,7 +76,7 @@ void unload(struct memcard_t *memcard)
 		// Start line: 253
 	/* end block 1 */
 	// End Line: 254
-
+	UNIMPLEMENTED();
 }
 
 
@@ -93,7 +93,7 @@ int memcard_data_size()
 		// Start line: 286
 	/* end block 2 */
 	// End Line: 287
-
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -132,7 +132,7 @@ void memcard_end(struct memcard_t *memcard)
 		// Start line: 400
 	/* end block 1 */
 	// End Line: 401
-
+	UNIMPLEMENTED();
 }
 
 int maybe_start(struct memcard_t *memcard)
@@ -201,7 +201,7 @@ void * gt2mcmenu(void *gt)
 		// Start line: 498
 	/* end block 3 */
 	// End Line: 499
-
+			UNIMPLEMENTED();
 	return null;
 }
 
@@ -214,7 +214,7 @@ void memcard_pop(void *opaque)
 		// Start line: 509
 	/* end block 1 */
 	// End Line: 510
-
+	UNIMPLEMENTED();
 }
 
 
@@ -226,7 +226,7 @@ void memcard_start(void *opaque)
 		// Start line: 528
 	/* end block 1 */
 	// End Line: 529
-
+	UNIMPLEMENTED();
 }
 
 
@@ -238,7 +238,7 @@ void memcard_load(void *opaque)
 		// Start line: 549
 	/* end block 1 */
 	// End Line: 550
-
+	UNIMPLEMENTED();
 }
 
 
@@ -250,7 +250,7 @@ void memcard_save(void *opaque)
 		// Start line: 569
 	/* end block 1 */
 	// End Line: 570
-
+	UNIMPLEMENTED();
 }
 
 
@@ -262,7 +262,7 @@ void memcard_item(void *opaque, TDRFuncPtr_memcard_item1fn fn, long parameter, l
 		// Start line: 579
 	/* end block 1 */
 	// End Line: 580
-
+	UNIMPLEMENTED();
 }
 
 

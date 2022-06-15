@@ -55,7 +55,7 @@ void CINEMAX_ClearBuffers()
 //0x800E0E8C
 void CINEMAX_VSync()
 {
-
+	UNIMPLEMENTED();
 }
 
 //0x800E0F18
@@ -281,5 +281,5 @@ void CINEMAX_E190C(CdlFILE* fp)
 void CINEMAX_E1FCC()
 {
 	//((unsigned int*)scratch3[0])[0] = 0x100000;
-
+	UNIMPLEMENTED();
 }

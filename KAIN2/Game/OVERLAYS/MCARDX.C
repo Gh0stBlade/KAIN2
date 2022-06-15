@@ -82,6 +82,7 @@ int MCARDX_set_buffer(struct mcmenu_t* mcmenu, void* buffer, int nbytes)
 void MCARDX_begin()
 {
 	///mainTrackerX.mainState = 4;//Dirty hack for now.
+	UNIMPLEMENTED();
 }
 
 int MCARDX_main(mcmenu_t* mcmenu, int index)

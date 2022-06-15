@@ -10,7 +10,7 @@ void MISSILE_Process(struct _Instance *instance, struct GameTracker *gameTracker
 		// Start line: 106
 	/* end block 1 */
 	// End Line: 107
-
+	UNIMPLEMENTED();
 }
 
 
@@ -22,7 +22,7 @@ void MISSILE_Collide(struct _Instance *instance, struct GameTracker *gameTracker
 		// Start line: 130
 	/* end block 1 */
 	// End Line: 131
-
+	UNIMPLEMENTED();
 }
 
 
@@ -54,7 +54,7 @@ struct _Instance * MISSILE_Find(struct _Instance *instance, struct _MonsterMissi
 		// Start line: 154
 	/* end block 4 */
 	// End Line: 155
-
+			UNIMPLEMENTED();
 	return null;
 }
 
@@ -85,7 +85,7 @@ struct _Instance * MISSILE_Birth(struct _Instance *instance, struct _MonsterMiss
 		// Start line: 181
 	/* end block 2 */
 	// End Line: 182
-
+				UNIMPLEMENTED();
 	return null;
 }
 
@@ -117,7 +117,7 @@ struct _Instance * MISSILE_Fire(struct _Instance *instance, struct _MonsterMissi
 		// Start line: 325
 	/* end block 2 */
 	// End Line: 326
-
+				UNIMPLEMENTED();
 	return null;
 }
 
@@ -130,7 +130,7 @@ struct _Instance * MISSILE_FireAtInstance(struct _Instance *instance, struct _Mo
 		// Start line: 406
 	/* end block 1 */
 	// End Line: 407
-
+	UNIMPLEMENTED();
 	return null;
 }
 

@@ -48,7 +48,7 @@ void PurgeMessageQueue(struct __MessageQueue *In)
 		// Start line: 207
 	/* end block 2 */
 	// End Line: 208
-
+	UNIMPLEMENTED();
 }
 
 struct __Event * PeekMessageQueue(struct __MessageQueue *In)
@@ -75,7 +75,7 @@ void EnMessageQueue(struct __MessageQueue *In, struct __Event *Element)
 		// Start line: 289
 	/* end block 2 */
 	// End Line: 290
-
+	UNIMPLEMENTED();
 }
 
 void EnMessageQueueData(struct __MessageQueue* In, int ID, int Data)
@@ -135,7 +135,7 @@ void * CIRC_Alloc(int size)
 		// Start line: 437
 	/* end block 4 */
 	// End Line: 438
-
+			UNIMPLEMENTED();
 	return null;
 }
 
@@ -157,7 +157,7 @@ int SetCollideInfoData(struct _CollideInfo *srcCI)
 		// Start line: 494
 	/* end block 2 */
 	// End Line: 495
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -179,7 +179,7 @@ int SetMonsterHitData(struct _Instance *Sender, struct _Instance *lastHit, int P
 		// Start line: 528
 	/* end block 2 */
 	// End Line: 529
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -201,7 +201,7 @@ int SetMonsterThrownData(struct _Instance *Sender, struct _Rotation *Direction, 
 		// Start line: 562
 	/* end block 2 */
 	// End Line: 563
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -223,7 +223,7 @@ int SetMonsterAlarmData(struct _Instance *sender, _Position *position, int type)
 		// Start line: 595
 	/* end block 2 */
 	// End Line: 596
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -245,7 +245,7 @@ int SetMonsterSoulSuckData(struct _Instance *Sender, int x, int y, int z)
 		// Start line: 630
 	/* end block 2 */
 	// End Line: 631
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -267,7 +267,7 @@ int SetMonsterImpaleData(struct _Instance *weapon, struct _Rotation *direction, 
 		// Start line: 664
 	/* end block 2 */
 	// End Line: 665
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -289,7 +289,7 @@ int SetObjectData(int x, int y, int PathNumber, struct _Instance *Force, int nod
 		// Start line: 707
 	/* end block 2 */
 	// End Line: 708
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -311,7 +311,7 @@ int SetPositionData(int x, int y, int z)
 		// Start line: 741
 	/* end block 2 */
 	// End Line: 742
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -333,7 +333,7 @@ int SetPhysicsGravityData(int UpperOffset, int LowerOffset, int x, int y, int z,
 		// Start line: 777
 	/* end block 2 */
 	// End Line: 778
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -355,7 +355,7 @@ int SetPhysicsEdgeData(int UpperOffset, int ForwardOffset, int AboveOffset, int 
 		// Start line: 825
 	/* end block 2 */
 	// End Line: 826
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -377,7 +377,7 @@ int SetPhysicsSwimData(int CheckDepth, struct _SVector *iVelocity, int SwimDepth
 		// Start line: 871
 	/* end block 2 */
 	// End Line: 872
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -399,7 +399,7 @@ int SetPhysicsDropOffData(int xOffset, int yOffset, int DropOffset, int slipSlop
 		// Start line: 907
 	/* end block 2 */
 	// End Line: 908
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -421,7 +421,7 @@ int SetPhysicsSlideData(int Segment, int ForwardVectorX, int ForwardVectorY, int
 		// Start line: 947
 	/* end block 2 */
 	// End Line: 948
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -443,7 +443,7 @@ int SetPhysicsWallCrawlData(int Segment, int Length, int ForwardOffset, int Norm
 		// Start line: 989
 	/* end block 2 */
 	// End Line: 990
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -465,7 +465,7 @@ int SetPhysicsLinkedMoveData(struct _Instance *instance, int segment, struct _SV
 		// Start line: 1023
 	/* end block 2 */
 	// End Line: 1024
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -487,7 +487,7 @@ int SetPhysicsDropHeightData(_Position *offset, int dropOffset, int mode)
 		// Start line: 1065
 	/* end block 2 */
 	// End Line: 1066
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -509,7 +509,7 @@ int SetAnimationControllerDoneData(struct _Instance *instance, long segment, lon
 		// Start line: 1105
 	/* end block 2 */
 	// End Line: 1106
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -531,7 +531,7 @@ int SetAnimationInstanceSwitchData(struct _Instance *instance, int anim, int fra
 		// Start line: 1141
 	/* end block 2 */
 	// End Line: 1142
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -553,7 +553,7 @@ int SetFXHitData(struct _Instance *hitter, int segment, int amount, int type)
 		// Start line: 1179
 	/* end block 2 */
 	// End Line: 1180
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -575,7 +575,7 @@ int SetObjectThrowData(void *target, struct _SVector *angularVel, unsigned short
 		// Start line: 1386
 	/* end block 2 */
 	// End Line: 1387
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -597,7 +597,7 @@ int SetObjectBreakOffData(struct _Instance *force, short node, short distance, s
 		// Start line: 1369
 	/* end block 2 */
 	// End Line: 1370
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -619,7 +619,7 @@ int SetControlInitHangData(struct _Instance *instance, long frame, long frames)
 		// Start line: 1403
 	/* end block 2 */
 	// End Line: 1404
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -641,7 +641,7 @@ int SetControlInitIdleData(int mode, long frame, long frames)
 		// Start line: 1431
 	/* end block 2 */
 	// End Line: 1432
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -663,7 +663,7 @@ int SetObjectDraftData(short force, unsigned short radius, unsigned short radius
 		// Start line: 1459
 	/* end block 2 */
 	// End Line: 1460
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -685,7 +685,7 @@ int SetObjectAbsorbData(struct _Instance *force, unsigned short node, unsigned s
 		// Start line: 1491
 	/* end block 2 */
 	// End Line: 1492
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -707,7 +707,7 @@ int SetControlSaveDataData(long length, void *data)
 		// Start line: 1523
 	/* end block 2 */
 	// End Line: 1524
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -729,7 +729,7 @@ int SetObjectIdleData(long mode, struct _Instance *instance)
 		// Start line: 1549
 	/* end block 2 */
 	// End Line: 1550
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -751,7 +751,7 @@ int SetActionPlayHostAnimationData(struct _Instance *instance, struct _Instance 
 		// Start line: 1738
 	/* end block 2 */
 	// End Line: 1739
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -773,7 +773,7 @@ int SetObjectBirthProjectileData(struct _Instance *instance, int joint, int type
 		// Start line: 1625
 	/* end block 2 */
 	// End Line: 1626
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -795,7 +795,7 @@ int SetShadowSegmentData(unsigned long total)
 		// Start line: 1663
 	/* end block 2 */
 	// End Line: 1664
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -881,7 +881,7 @@ void G2EmulationInstancePlayAnimation(struct _Instance *instance)
 		// Start line: 1815
 	/* end block 2 */
 	// End Line: 1816
-
+			UNIMPLEMENTED();
 }
 
 
@@ -893,7 +893,7 @@ void G2EmulatePlayAnimation(struct __CharacterState *In)
 		// Start line: 1858
 	/* end block 1 */
 	// End Line: 1859
-
+	UNIMPLEMENTED();
 }
 
 
@@ -915,7 +915,7 @@ void G2EmulationInstanceToInstanceSwitchAnimation(struct _Instance *instance, st
 		// Start line: 1880
 	/* end block 2 */
 	// End Line: 1881
-
+			UNIMPLEMENTED();
 }
 
 
@@ -937,7 +937,7 @@ void G2EmulationInstanceSwitchAnimation(struct _Instance *instance, int CurrentS
 		// Start line: 1954
 	/* end block 2 */
 	// End Line: 1955
-
+			UNIMPLEMENTED();
 }
 
 
@@ -966,6 +966,8 @@ void G2EmulationInstanceSwitchAnimationAlpha(struct _Instance *instance, int Cur
 		G2AnimSection_SetPaused(v7);
 	}
 	G2AnimSection_SetAlphaTable(&instance->anim.section[(unsigned __int8)CurrentSection], (&table)[AlphaTable]);
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -978,7 +980,7 @@ void G2EmulationSwitchAnimation(struct __CharacterState *In, int CurrentSection,
 		// Start line: 2043
 	/* end block 1 */
 	// End Line: 2044
-
+	UNIMPLEMENTED();
 }
 
 
@@ -999,7 +1001,7 @@ void G2EmulationSwitchAnimationAlpha(struct __CharacterState *In, int CurrentSec
 		// Start line: 2071
 	/* end block 2 */
 	// End Line: 2072
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1026,7 +1028,7 @@ void G2EmulationSwitchAnimationSync(struct __CharacterState *In, int SlaveSectio
 		// Start line: 2097
 	/* end block 2 */
 	// End Line: 2098
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1047,7 +1049,7 @@ void G2EmulationInstanceToInstanceSwitchAnimationCharacter(struct _Instance *ins
 		// Start line: 2208
 	/* end block 2 */
 	// End Line: 2209
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1069,7 +1071,7 @@ void G2EmulationSwitchAnimationCharacter(struct __CharacterState *In, int NewAni
 		// Start line: 2270
 	/* end block 2 */
 	// End Line: 2271
-
+			UNIMPLEMENTED();
 }
 
 void G2EmulationInstanceSetAnimation(struct _Instance *instance, int CurrentSection, int NewAnim, int NewFrame, int Frames)
@@ -1157,7 +1159,7 @@ void G2EmulationInstanceSetAnimSpeed(struct _Instance *instance, int CurrentSect
 		// Start line: 2486
 	/* end block 4 */
 	// End Line: 2487
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1188,7 +1190,7 @@ int G2EmulationInstanceQueryAnimation(struct _Instance *instance, int CurrentSec
 		// Start line: 2507
 	/* end block 4 */
 	// End Line: 2508
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1201,7 +1203,7 @@ int G2EmulationQueryAnimation(struct __CharacterState *In, int CurrentSection)
 		// Start line: 2525
 	/* end block 1 */
 	// End Line: 2526
-
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1221,7 +1223,7 @@ int G2EmulationInstanceQueryFrame(struct _Instance *instance, int CurrentSection
 		// Start line: 2541
 	/* end block 2 */
 	// End Line: 2542
-
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1241,7 +1243,7 @@ int G2EmulationInstanceQueryLastFrame(struct _Instance *instance, int CurrentSec
 		// Start line: 2569
 	/* end block 2 */
 	// End Line: 2570
-
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1263,7 +1265,7 @@ int G2EmulationInstanceQueryPassedFrame(struct _Instance *instance, int CurrentS
 		// Start line: 2594
 	/* end block 2 */
 	// End Line: 2595
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1276,7 +1278,7 @@ int G2EmulationQueryFrame(struct __CharacterState *In, int CurrentSection)
 		// Start line: 2640
 	/* end block 1 */
 	// End Line: 2641
-
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1308,7 +1310,7 @@ int G2EmulationInstanceQueryMode(struct _Instance *instance, int CurrentSection)
 		// Start line: 2660
 	/* end block 4 */
 	// End Line: 2661
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1321,7 +1323,7 @@ int G2EmulationQueryMode(struct __CharacterState *In, int CurrentSection)
 		// Start line: 2700
 	/* end block 1 */
 	// End Line: 2701
-
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1388,7 +1390,7 @@ void G2EmulationInstanceInitSection(struct _Instance *instance, int CurrentSecti
 		// Start line: 2822
 	/* end block 4 */
 	// End Line: 2823
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1400,7 +1402,7 @@ void G2EmulationSetInterpController_Vector(struct _Instance *instance, long segm
 		// Start line: 2880
 	/* end block 1 */
 	// End Line: 2881
-
+	UNIMPLEMENTED();
 }
 
 
@@ -1421,7 +1423,7 @@ void StateSwitchStateDataDefault(struct __CharacterState *In, int CurrentSection
 		// Start line: 2907
 	/* end block 2 */
 	// End Line: 2908
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1442,7 +1444,7 @@ void StateSwitchStateCharacterDataDefault(struct __CharacterState *In, TDRFuncPt
 		// Start line: 2928
 	/* end block 2 */
 	// End Line: 2929
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1454,7 +1456,7 @@ void StateSwitchStateData(struct __CharacterState *In, int CurrentSection, TDRFu
 		// Start line: 2955
 	/* end block 1 */
 	// End Line: 2956
-
+	UNIMPLEMENTED();
 }
 
 
@@ -1475,7 +1477,7 @@ void StateSwitchStateCharacterData(struct __CharacterState *In, TDRFuncPtr_State
 		// Start line: 2987
 	/* end block 2 */
 	// End Line: 2988
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1502,7 +1504,7 @@ void StateGovernState(struct __CharacterState *In, int Frames)
 		// Start line: 3040
 	/* end block 2 */
 	// End Line: 3041
-
+			UNIMPLEMENTED();
 }
 
 

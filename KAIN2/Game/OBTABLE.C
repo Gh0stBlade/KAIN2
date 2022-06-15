@@ -519,7 +519,7 @@ struct Object * OBTABLE_FindObject(char *objectName)
 		// Start line: 817
 	/* end block 3 */
 	// End Line: 818
-
+			UNIMPLEMENTED();
 	return null;
 }
 
@@ -551,7 +551,7 @@ void OBTABLE_ChangeObjectAccessPointers(struct Object *oldObject, struct Object 
 		// Start line: 872
 	/* end block 4 */
 	// End Line: 873
-
+			UNIMPLEMENTED();
 }
 
 
@@ -579,7 +579,7 @@ void OBTABLE_RelocateObjectTune(struct Object *object, long offset)
 		// Start line: 902
 	/* end block 2 */
 	// End Line: 903
-
+			UNIMPLEMENTED();
 }
 
 
@@ -600,7 +600,7 @@ void OBTABLE_RelocateInstanceObject(struct _Instance *instance, long offset)
 		// Start line: 940
 	/* end block 2 */
 	// End Line: 941
-
+			UNIMPLEMENTED();
 }
 
 
@@ -653,7 +653,7 @@ void OBTABLE_InitAnimPointers(struct _ObjectTracker *objectTracker)
 		// Start line: 968
 	/* end block 2 */
 	// End Line: 969
-
+						UNIMPLEMENTED();
 }
 
 

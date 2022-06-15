@@ -30,7 +30,7 @@ void G2Quat_Slerp_VM(long ratio, struct _G2Quat_Type *quatA, struct _G2Quat_Type
 		// Start line: 186
 	/* end block 3 */
 	// End Line: 187
-
+			UNIMPLEMENTED();
 }
 
 

@@ -136,6 +136,8 @@ void MON_DoCombatTimers(struct _Instance *instance)
 LABEL_44:
 	if (Time % 0x3E8 < (Time - gameTrackerX.lastLoopTime) % 0x3E8)
 		mv->chance = rand() % 100;
+#else
+UNIMPLEMENTED();
 #endif
 }
 
@@ -166,7 +168,7 @@ void MON_ChangeHumanOpinion(struct _Instance *instance)
 		// Start line: 298
 	/* end block 2 */
 	// End Line: 299
-
+				UNIMPLEMENTED();
 }
 
 
@@ -220,6 +222,8 @@ void MON_CutOut_Monster(struct _Instance *instance, int fade_amount, int startse
 		}
 		instance->halvePlane.d = -((point.vx * instance->halvePlane.a + point.vy * instance->halvePlane.b + point.vz * instance->halvePlane.c) >> 12);
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -279,6 +283,8 @@ void MON_DeadEntry(struct _Instance *instance)
 			MON_Say();
 		MON_BirthSoul(instance, 1);
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -372,7 +378,7 @@ void MON_Dead(struct _Instance *instance)
 		// Start line: 587
 	/* end block 2 */
 	// End Line: 588
-
+				UNIMPLEMENTED();
 }
 
 
@@ -401,6 +407,8 @@ void MON_MissileHitEntry(struct _Instance *instance)
 	v3 = SetObjectData(0, 0, 0, instance, 3);
 	INSTANCE_Post(mv->held, 0x800002, v3);
 	SOUND_Play3dSound(&instance->position, 39, -100, 100, 16000);
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -436,6 +444,8 @@ void MON_MissileHit(struct _Instance *instance)
 	if ((instance->flags2 & 0x10) != 0)
 		MON_SwitchState(instance, MONSTER_STATE_DEAD);
 	while (DeMessageQueue(&mv->messageQueue));
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -444,6 +454,7 @@ void MON_MissileHit(struct _Instance *instance)
 // void /*$ra*/ MON_BirthEntry(struct _Instance *instance /*$a0*/)
 void MON_BirthEntry(struct _Instance *instance)
 { // line 579, offset 0x800880b0
+	UNIMPLEMENTED();
 }
 
 
@@ -453,6 +464,8 @@ void MON_Birth(struct _Instance *instance)
 { // line 583, offset 0x800880b8
 #if defined(PC_VERSION)
 	MON_SwitchState(instance, MONSTER_STATE_IDLE);
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -474,7 +487,7 @@ void MON_ParryEntry(struct _Instance *instance)
 		// Start line: 1290
 	/* end block 2 */
 	// End Line: 1291
-
+			UNIMPLEMENTED();
 }
 
 
@@ -486,7 +499,7 @@ void MON_Parry(struct _Instance *instance)
 		// Start line: 1354
 	/* end block 1 */
 	// End Line: 1355
-
+	UNIMPLEMENTED();
 }
 
 
@@ -516,7 +529,7 @@ void MON_LandOnFeetEntry(struct _Instance *instance)
 		// Start line: 1380
 	/* end block 2 */
 	// End Line: 1381
-
+				UNIMPLEMENTED();
 }
 
 
@@ -546,7 +559,7 @@ void MON_LandOnFeet(struct _Instance *instance)
 		// Start line: 1447
 	/* end block 2 */
 	// End Line: 1448
-
+				UNIMPLEMENTED();
 }
 
 
@@ -563,7 +576,7 @@ void MON_LandInWaterEntry(struct _Instance *instance)
 		// Start line: 1586
 	/* end block 2 */
 	// End Line: 1587
-
+	UNIMPLEMENTED();
 }
 
 
@@ -575,7 +588,7 @@ void MON_LandInWater(struct _Instance *instance)
 		// Start line: 1595
 	/* end block 1 */
 	// End Line: 1596
-
+	UNIMPLEMENTED();
 }
 
 
@@ -596,7 +609,7 @@ void MON_BreakHoldEntry(struct _Instance *instance)
 		// Start line: 1611
 	/* end block 2 */
 	// End Line: 1612
-
+			UNIMPLEMENTED();
 }
 
 
@@ -643,7 +656,7 @@ void MON_BreakHold(struct _Instance *instance)
 		// Start line: 1638
 	/* end block 2 */
 	// End Line: 1639
-
+					UNIMPLEMENTED();
 }
 
 
@@ -666,7 +679,7 @@ void MON_ImpactEntry(struct _Instance *instance)
 		// Start line: 1768
 	/* end block 2 */
 	// End Line: 1769
-
+			UNIMPLEMENTED();
 }
 
 
@@ -687,7 +700,7 @@ void MON_Impact(struct _Instance *instance)
 		// Start line: 1830
 	/* end block 2 */
 	// End Line: 1831
-
+			UNIMPLEMENTED();
 }
 
 
@@ -708,7 +721,7 @@ void MON_FallEntry(struct _Instance *instance)
 		// Start line: 1884
 	/* end block 2 */
 	// End Line: 1885
-
+			UNIMPLEMENTED();
 }
 
 
@@ -741,7 +754,7 @@ void MON_Fall(struct _Instance *instance)
 		// Start line: 1944
 	/* end block 2 */
 	// End Line: 1945
-
+				UNIMPLEMENTED();
 }
 
 
@@ -762,7 +775,7 @@ void MON_ThrownEntry(struct _Instance *instance)
 		// Start line: 2081
 	/* end block 2 */
 	// End Line: 2082
-
+			UNIMPLEMENTED();
 }
 
 
@@ -809,7 +822,7 @@ void MON_Thrown(struct _Instance *instance)
 		// Start line: 2126
 	/* end block 2 */
 	// End Line: 2127
-
+					UNIMPLEMENTED();
 }
 
 
@@ -830,7 +843,7 @@ void MON_ImpaleDeathEntry(struct _Instance *instance)
 		// Start line: 2262
 	/* end block 2 */
 	// End Line: 2263
-
+			UNIMPLEMENTED();
 }
 
 
@@ -863,7 +876,7 @@ void MON_ImpaleDeath(struct _Instance *instance)
 		// Start line: 2310
 	/* end block 2 */
 	// End Line: 2311
-
+				UNIMPLEMENTED();
 }
 
 
@@ -886,7 +899,7 @@ void MON_TerrainImpaleDeathEntry(struct _Instance *instance)
 		// Start line: 2434
 	/* end block 2 */
 	// End Line: 2435
-
+			UNIMPLEMENTED();
 }
 
 
@@ -925,7 +938,7 @@ void MON_TerrainImpaleDeath(struct _Instance *instance)
 		// Start line: 2525
 	/* end block 2 */
 	// End Line: 2526
-
+				UNIMPLEMENTED();
 }
 
 
@@ -946,7 +959,7 @@ void MON_SurprisedEntry(struct _Instance *instance)
 		// Start line: 2671
 	/* end block 2 */
 	// End Line: 2672
-
+			UNIMPLEMENTED();
 }
 
 
@@ -967,7 +980,7 @@ void MON_Surprised(struct _Instance *instance)
 		// Start line: 2693
 	/* end block 2 */
 	// End Line: 2694
-
+			UNIMPLEMENTED();
 }
 
 
@@ -989,7 +1002,7 @@ void MON_StunnedEntry(struct _Instance *instance)
 		// Start line: 2749
 	/* end block 2 */
 	// End Line: 2750
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1010,7 +1023,7 @@ void MON_Stunned(struct _Instance *instance)
 		// Start line: 2862
 	/* end block 2 */
 	// End Line: 2863
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1031,7 +1044,7 @@ void MON_GrabbedEntry(struct _Instance *instance)
 		// Start line: 2935
 	/* end block 2 */
 	// End Line: 2936
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1072,7 +1085,7 @@ void MON_Grabbed(struct _Instance *instance)
 		// Start line: 3000
 	/* end block 2 */
 	// End Line: 3001
-
+				UNIMPLEMENTED();
 }
 
 
@@ -1094,7 +1107,7 @@ void MON_HitEntry(struct _Instance *instance)
 		// Start line: 3154
 	/* end block 2 */
 	// End Line: 3155
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1115,7 +1128,7 @@ void MON_Hit(struct _Instance *instance)
 		// Start line: 3207
 	/* end block 2 */
 	// End Line: 3208
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1137,7 +1150,7 @@ void MON_AttackEntry(struct _Instance *instance)
 		// Start line: 3267
 	/* end block 2 */
 	// End Line: 3268
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1161,7 +1174,7 @@ void MON_Attack(struct _Instance *instance)
 		// Start line: 3299
 	/* end block 2 */
 	// End Line: 3300
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1192,7 +1205,7 @@ void MON_CombatEntry(struct _Instance *instance)
 		// Start line: 3407
 	/* end block 4 */
 	// End Line: 3408
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1266,7 +1279,7 @@ void MON_Combat(struct _Instance *instance)
 		// Start line: 3434
 	/* end block 2 */
 	// End Line: 3435
-
+					UNIMPLEMENTED();
 }
 
 
@@ -1289,7 +1302,7 @@ void MON_ProjectileEntry(struct _Instance *instance)
 		// Start line: 3661
 	/* end block 2 */
 	// End Line: 3662
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1312,7 +1325,7 @@ void MON_Projectile(struct _Instance *instance)
 		// Start line: 3686
 	/* end block 2 */
 	// End Line: 3687
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1342,7 +1355,7 @@ void MON_IdleEntry(struct _Instance *instance)
 		// Start line: 3767
 	/* end block 2 */
 	// End Line: 3768
-
+				UNIMPLEMENTED();
 }
 
 
@@ -1374,7 +1387,7 @@ void MON_Idle(struct _Instance *instance)
 		// Start line: 3832
 	/* end block 2 */
 	// End Line: 3833
-
+				UNIMPLEMENTED();
 }
 
 
@@ -1395,7 +1408,7 @@ void MON_FleeEntry(struct _Instance *instance)
 		// Start line: 3952
 	/* end block 2 */
 	// End Line: 3953
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1423,7 +1436,7 @@ void MON_Flee(struct _Instance *instance)
 		// Start line: 3993
 	/* end block 2 */
 	// End Line: 3994
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1444,7 +1457,7 @@ void MON_PursueEntry(struct _Instance *instance)
 		// Start line: 4073
 	/* end block 2 */
 	// End Line: 4074
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1518,7 +1531,7 @@ void MON_Pursue(struct _Instance *instance)
 		// Start line: 4119
 	/* end block 2 */
 	// End Line: 4120
-
+					UNIMPLEMENTED();
 }
 
 
@@ -1539,7 +1552,7 @@ void MON_WanderEntry(struct _Instance *instance)
 		// Start line: 4625
 	/* end block 2 */
 	// End Line: 4626
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1596,7 +1609,7 @@ void MON_Wander(struct _Instance *instance)
 		// Start line: 4673
 	/* end block 2 */
 	// End Line: 4674
-
+				UNIMPLEMENTED();
 }
 
 
@@ -1608,7 +1621,7 @@ void MON_HideEntry(struct _Instance *instance)
 		// Start line: 4882
 	/* end block 1 */
 	// End Line: 4883
-
+	UNIMPLEMENTED();
 }
 
 
@@ -1630,7 +1643,7 @@ void MON_Hide(struct _Instance *instance)
 		// Start line: 4894
 	/* end block 2 */
 	// End Line: 4895
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1653,7 +1666,7 @@ void MON_SurpriseAttackEntry(struct _Instance *instance)
 		// Start line: 5006
 	/* end block 2 */
 	// End Line: 5007
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1665,6 +1678,7 @@ void MON_SurpriseAttack(struct _Instance *instance)
 		// Start line: 5075
 	/* end block 1 */
 	// End Line: 5076
+	UNIMPLEMENTED();
 
 }
 
@@ -1682,7 +1696,7 @@ void MON_EnvironmentDamageEntry(struct _Instance *instance)
 		// Start line: 5092
 	/* end block 2 */
 	// End Line: 5093
-
+	UNIMPLEMENTED();
 }
 
 
@@ -1699,7 +1713,7 @@ void MON_EnvironmentDamage(struct _Instance *instance)
 		// Start line: 5100
 	/* end block 2 */
 	// End Line: 5101
-
+	UNIMPLEMENTED();
 }
 
 
@@ -1721,7 +1735,7 @@ void MON_MonsterGlow(struct _Instance *instance, long color, int glowtime, int g
 		// Start line: 5107
 	/* end block 2 */
 	// End Line: 5108
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1743,7 +1757,7 @@ void MON_GeneralDeathEntry(struct _Instance *instance)
 		// Start line: 5171
 	/* end block 2 */
 	// End Line: 5172
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1766,7 +1780,7 @@ void MON_GeneralDeath(struct _Instance *instance)
 		// Start line: 5359
 	/* end block 2 */
 	// End Line: 5360
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1787,7 +1801,7 @@ void MON_NoticeEntry(struct _Instance *instance)
 		// Start line: 5481
 	/* end block 2 */
 	// End Line: 5482
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1808,7 +1822,7 @@ void MON_Notice(struct _Instance *instance)
 		// Start line: 5511
 	/* end block 2 */
 	// End Line: 5512
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1829,7 +1843,7 @@ void MON_PupateEntry(struct _Instance *instance)
 		// Start line: 5561
 	/* end block 2 */
 	// End Line: 5562
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1874,7 +1888,7 @@ void MON_Pupate(struct _Instance *instance)
 		// Start line: 5586
 	/* end block 2 */
 	// End Line: 5587
-
+					UNIMPLEMENTED();
 }
 
 
@@ -1895,7 +1909,7 @@ void MON_EmbraceEntry(struct _Instance *instance)
 		// Start line: 5823
 	/* end block 2 */
 	// End Line: 5824
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1926,7 +1940,7 @@ void MON_Embrace(struct _Instance *instance)
 		// Start line: 5844
 	/* end block 2 */
 	// End Line: 5845
-
+				UNIMPLEMENTED();
 }
 
 
@@ -1947,7 +1961,7 @@ void MON_PetrifiedEntry(struct _Instance *instance)
 		// Start line: 5714
 	/* end block 2 */
 	// End Line: 5715
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1985,6 +1999,8 @@ void MON_Petrified(struct _Instance *instance)
 			MON_SwitchState(instance, MONSTER_STATE_GENERALDEATH);
 		}
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -2002,7 +2018,7 @@ int MONSTER_CalcDamageIntensity(int hp, int maxHp)
 		// Start line: 6075
 	/* end block 2 */
 	// End Line: 6076
-
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -2070,6 +2086,8 @@ void MONSTER_ProcessClosestVerts(struct _Instance *instance, struct _SVector *lo
 			++segs;
 		} while (++nsegs < hmodel->numSegments);
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -2116,6 +2134,8 @@ void ProcessBloodyMess(struct _Instance *instance, int vertidx, int segidx, int 
 		cv->b = -1 - v10;
 		*((DWORD*)cb_data + 3) = 1;
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -2138,7 +2158,7 @@ void MONSTER_InitVertexColors(struct _Instance *instance, struct _Model *model)
 		// Start line: 6403
 	/* end block 2 */
 	// End Line: 6404
-
+			UNIMPLEMENTED();
 }
 
 
@@ -2181,7 +2201,7 @@ int MONSTER_StartVertexBlood(struct _Instance *instance, struct _SVector *locati
 		// Start line: 6428
 	/* end block 2 */
 	// End Line: 6429
-
+					UNIMPLEMENTED();
 	return 0;
 }
 
@@ -2225,7 +2245,7 @@ void MONSTER_VertexBlood(struct _Instance *instance, int vert, int amount)
 		// Start line: 6563
 	/* end block 2 */
 	// End Line: 6564
-
+					UNIMPLEMENTED();
 }
 
 
@@ -2247,7 +2267,7 @@ void ProcessBurntMess(struct _Instance *instance, int vertidx, int segidx, int d
 		// Start line: 6758
 	/* end block 2 */
 	// End Line: 6759
-
+			UNIMPLEMENTED();
 }
 
 
@@ -2290,7 +2310,7 @@ int MONSTER_StartVertexBurnt(struct _Instance *instance, struct _SVector *locati
 		// Start line: 6822
 	/* end block 2 */
 	// End Line: 6823
-
+					UNIMPLEMENTED();
 	return 0;
 }
 
@@ -2333,7 +2353,7 @@ void MONSTER_VertexBurnt(struct _Instance *instance, struct burntTuneType *burnt
 		// Start line: 6942
 	/* end block 4 */
 	// End Line: 6943
-
+				UNIMPLEMENTED();
 }
 
 
@@ -2419,7 +2439,7 @@ void MON_DamageEffect(struct _Instance *instance, struct evFXHitData *data)
 		// Start line: 7012
 	/* end block 2 */
 	// End Line: 7013
-
+					UNIMPLEMENTED();
 }
 
 
@@ -2523,6 +2543,8 @@ void MON_DefaultInit(struct _Instance *instance)
 			break;
 		}
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -2545,9 +2567,5 @@ void MON_CleanUp(struct _Instance *instance)
 		// Start line: 7473
 	/* end block 2 */
 	// End Line: 7474
-
+			UNIMPLEMENTED();
 }
-
-
-
-

@@ -328,7 +328,7 @@ void aadPlayTonePitchBend(struct AadToneAtr *toneAtr, unsigned long waveStartAdd
 		// Start line: 620
 	/* end block 2 */
 	// End Line: 621
-
+				UNIMPLEMENTED();
 }
 
 

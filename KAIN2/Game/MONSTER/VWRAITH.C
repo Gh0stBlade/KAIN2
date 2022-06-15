@@ -15,7 +15,7 @@ void VWRAITH_MoveVertical(struct _Instance *instance, long targetZ, int velocity
 		// Start line: 179
 	/* end block 2 */
 	// End Line: 180
-
+	UNIMPLEMENTED();
 }
 
 
@@ -37,7 +37,7 @@ void VWRAITH_Init(struct _Instance *instance)
 		// Start line: 216
 	/* end block 2 */
 	// End Line: 217
-
+			UNIMPLEMENTED();
 }
 
 
@@ -68,7 +68,7 @@ int VWRAITH_ShouldISwoop(struct _Instance *instance)
 		// Start line: 281
 	/* end block 2 */
 	// End Line: 282
-
+				UNIMPLEMENTED();
 	return 0;
 }
 
@@ -99,7 +99,7 @@ void VWRAITH_PursueEntry(struct _Instance *instance)
 		// Start line: 324
 	/* end block 2 */
 	// End Line: 325
-
+				UNIMPLEMENTED();
 }
 
 
@@ -131,7 +131,7 @@ void VWRAITH_Pursue(struct _Instance *instance)
 		// Start line: 370
 	/* end block 2 */
 	// End Line: 371
-
+				UNIMPLEMENTED();
 }
 
 
@@ -162,7 +162,7 @@ void VWRAITH_VerticalMove(struct _Instance *instance)
 		// Start line: 494
 	/* end block 2 */
 	// End Line: 495
-
+				UNIMPLEMENTED();
 }
 
 
@@ -174,7 +174,7 @@ void VWRAITH_CombatEntry(struct _Instance *instance)
 		// Start line: 531
 	/* end block 1 */
 	// End Line: 532
-
+	UNIMPLEMENTED();
 }
 
 
@@ -186,7 +186,7 @@ void VWRAITH_Combat(struct _Instance *instance)
 		// Start line: 541
 	/* end block 1 */
 	// End Line: 542
-
+	UNIMPLEMENTED();
 }
 
 
@@ -198,7 +198,7 @@ void VWRAITH_EmbraceEntry(struct _Instance *instance)
 		// Start line: 561
 	/* end block 1 */
 	// End Line: 562
-
+	UNIMPLEMENTED();
 }
 
 
@@ -210,6 +210,7 @@ void VWRAITH_Embrace(struct _Instance *instance)
 		// Start line: 571
 	/* end block 1 */
 	// End Line: 572
+	UNIMPLEMENTED();
 
 }
 

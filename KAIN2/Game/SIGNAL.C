@@ -44,6 +44,7 @@ long SIGNAL_HandleLightGroup(struct _Instance *instance, struct Signal *signal)
 		instance->lightGroup = signal->data.logic.target;
 	return 1;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -57,6 +58,7 @@ long SIGNAL_HandleCameraAdjust(struct _Instance *instance, struct Signal *signal
 	CAMERA_Adjust((int)&theCamera, signal->data.misc.size.l);
 	return 1;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -70,6 +72,7 @@ long SIGNAL_HandleCamera(struct _Instance *instance, struct Signal *signal)
 	CAMERA_ChangeTo(&theCamera, signal->data.cameraKey);
 	return 1;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -87,6 +90,8 @@ void SIGNAL_RelocateCamera(struct Signal *signal, long offset)
 		signal->data.misc.size.l = offset + l;
 	else
 		signal->data.misc.size.l = 0;
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -99,6 +104,7 @@ long SIGNAL_HandleCameraMode(struct _Instance *instance, struct Signal *signal)
 	CAMERA_SetMode(&theCamera, signal->data.misc.size.l);
 	return 1;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -112,6 +118,7 @@ long SIGNAL_HandleCameraLock(struct _Instance *instance, struct Signal *signal)
 	CAMERA_Lock((struct Camera*)&theCamera, signal->data.misc.size.l);
 	return 1;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -125,6 +132,7 @@ long SIGNAL_HandleCameraUnlock(struct _Instance *instance, struct Signal *signal
 	CAMERA_Unlock(&theCamera, signal->data.misc.size.l);
 	return 1;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -138,6 +146,7 @@ long SIGNAL_HandleCameraSmooth(struct _Instance *instance, struct Signal *signal
 	CAMERA_SetSmoothValue(&theCamera, signal->data.misc.size.l);
 	return 1;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -151,6 +160,7 @@ long SIGNAL_HandleCameraTimer(struct _Instance *instance, struct Signal *signal)
 	CAMERA_SetTimer(&theCamera, signal->data.misc.size.l);
 	return 1;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -164,6 +174,7 @@ long SIGNAL_HandleCameraSave(struct _Instance *instance, struct Signal *signal)
 	CAMERA_Save(&theCamera, signal->data.misc.size.l);
 	return 1;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -177,6 +188,7 @@ long SIGNAL_HandleCameraRestore(struct _Instance *instance, struct Signal *signa
 	CAMERA_Restore(&theCamera, signal->data.misc.size.l);
 	return 1;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -190,6 +202,7 @@ long SIGNAL_HandleCameraValue(struct _Instance *instance, struct Signal *signal)
 	CAMERA_SetValue(&theCamera, signal->data.misc.size.l, signal->data.cameraValue.value);
 	return 1;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -278,6 +291,7 @@ long SIGNAL_HandleStreamLevel(struct _Instance *instance, struct Signal *signal)
 
 	return 1;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -300,6 +314,7 @@ long SIGNAL_HandleFogNear(struct _Instance *instance, struct Signal *signal)
 	LIGHT_CalcDQPTable(LevelWithID);
 	return 1;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -322,6 +337,7 @@ long SIGNAL_HandleFogFar(struct _Instance *instance, struct Signal *signal)
 	LIGHT_CalcDQPTable(LevelWithID);
 	return 1;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -335,6 +351,7 @@ long SIGNAL_HandleCameraShake(struct _Instance *instance, struct Signal *signal)
 	CAMERA_SetShake((int)&theCamera, signal->data.misc.size.l, signal->data.cameraValue.value);
 	return 1;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -348,6 +365,7 @@ long SIGNAL_HandleCallSignal(struct _Instance *instance, struct Signal *signal)
 	COLLIDE_HandleSignal(instance, (struct Signal*)(signal->data.misc.size.l + 8), 1);
 	return 1;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -361,6 +379,7 @@ long SIGNAL_HandleStopPlayerControl(struct _Instance *instance, struct Signal *s
 	gameTrackerX.gameFlags |= 0x90;
 	return 1;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -374,6 +393,7 @@ long SIGNAL_HandleStartPlayerControl(struct _Instance *instance, struct Signal *
 	gameTrackerX.gameFlags &= 0x90;
 	return 1;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -391,6 +411,8 @@ void SIGNAL_RelocateCameraSpline(struct Signal *signal, long offset)
 		signal->data.cameraValue.value = offset + value;
 	else
 		signal->data.cameraValue.value = 0;
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -427,6 +449,7 @@ long SIGNAL_HandleCameraSpline(struct _Instance *instance, struct Signal *signal
 		dword_C64980 = 0;
 	return 1;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -447,6 +470,7 @@ long SIGNAL_HandleScreenWipe(struct _Instance *instance, struct Signal *signal)
 	gameTrackerX.wipeType = signal->data.misc.size.s[0];
 	return 1;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -459,6 +483,7 @@ long SIGNAL_HandleBlendStart(struct _Instance *instance, struct Signal *signal)
 #if defined(PC_VERSION)
 	return 1;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -474,6 +499,7 @@ long SIGNAL_HandleScreenWipeColor(struct _Instance *instance, struct Signal *sig
 	gameTrackerX.wipeColor.b = signal->data.misc.size.c[2];
 	return 1;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -488,6 +514,7 @@ long SIGNAL_HandleSetSlideAngle(struct _Instance *instance, struct Signal *signa
 		INSTANCE_Post(instance, 0x4000005, signal->data.misc.size.l);
 	return 1;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -502,6 +529,7 @@ long SIGNAL_HandleResetSlideAngle(struct _Instance *instance, struct Signal *sig
 		INSTANCE_Post(instance, 0x4000006, 0);
 	return 1;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -517,6 +545,7 @@ long SIGNAL_HandleSetCameraTilt(struct _Instance *instance, struct Signal *signa
 			(__int16)(((unsigned __int16)(-signal->data.misc.size.l % 360) + (-signal->data.misc.size.l % 360 < 0 ? 0x168 : 0)) << 12) / 360);
 	return 1;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -531,6 +560,7 @@ long SIGNAL_HandleSetCameraDistance(struct _Instance *instance, struct Signal *s
 		CAMERA_Adjust_distance(&theCamera, signal->data.misc.size.l);
 	return 1;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -540,6 +570,7 @@ long SIGNAL_HandleSetCameraDistance(struct _Instance *instance, struct Signal *s
 // long /*$ra*/ SIGNAL_HandleEnd(struct _Instance *instance /*$a0*/, struct Signal *signal /*$a1*/)
 long SIGNAL_HandleEnd(struct _Instance *instance, struct Signal *signal)
 { // line 744, offset 0x8001dfcc
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -618,7 +649,7 @@ long SIGNAL_IsThisStreamAWarpGate(struct Signal *signal)
 		// Start line: 1686
 	/* end block 2 */
 	// End Line: 1687
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -668,6 +699,7 @@ long SIGNAL_IsStreamSignal(struct Signal *signal, long *isWarpGate)
 	}
 	return v7;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -699,6 +731,7 @@ struct _MultiSignal * SIGNAL_RelocateSignal(struct _MultiSignal *multiSignal, lo
 	}
 	return (struct _MultiSignal*)&i->data;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -750,6 +783,7 @@ struct _MultiSignal * SIGNAL_FindSignal(struct Level *level, long id)
 		return 0;
 	return SignalListStart;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -770,6 +804,8 @@ void SIGNAL_OutOfWater(struct _Instance *instance)
 		if (startGoingOutOfWaterSignal)
 			COLLIDE_HandleSignal(instance, startGoingOutOfWaterSignal->signalList, 1, 0);
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -789,6 +825,8 @@ void SIGNAL_InWater(struct _Instance *instance)
 		if (startGoingIntoWaterSignal)
 			COLLIDE_HandleSignal(instance, startGoingIntoWaterSignal->signalList, 1, 0);
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 

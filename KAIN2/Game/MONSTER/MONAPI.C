@@ -21,7 +21,7 @@ void MonsterProcess(struct _Instance *instance, struct GameTracker *gameTracker)
 		// Start line: 330
 	/* end block 2 */
 	// End Line: 331
-
+			UNIMPLEMENTED();
 }
 
 
@@ -57,7 +57,7 @@ void MonsterInit(struct _Instance *instance, struct GameTracker *gameTracker)
 		// Start line: 491
 	/* end block 2 */
 	// End Line: 492
-
+			UNIMPLEMENTED();
 }
 
 
@@ -97,7 +97,7 @@ void SendHitObject(struct _Instance *instance, struct _Instance *hit, int type)
 		// Start line: 732
 	/* end block 2 */
 	// End Line: 733
-
+				UNIMPLEMENTED();
 }
 
 
@@ -195,7 +195,7 @@ void MonsterCollide(struct _Instance *instance, struct GameTracker *gameTracker)
 		// Start line: 798
 	/* end block 2 */
 	// End Line: 799
-
+							UNIMPLEMENTED();
 }
 
 
@@ -207,7 +207,7 @@ void MonsterAdditionalCollide(struct _Instance *instance, struct GameTracker *ga
 		// Start line: 1210
 	/* end block 1 */
 	// End Line: 1211
-
+	UNIMPLEMENTED();
 }
 
 
@@ -248,6 +248,8 @@ unsigned long MonsterQuery(struct _Instance *instance, unsigned long query)
 		// Start line: 1228
 	/* end block 2 */
 	// End Line: 1229
+
+				UNIMPLEMENTED();
 
 	return 0;
 }
@@ -291,7 +293,7 @@ void MonsterMessage(struct _Instance *instance, unsigned long message, unsigned 
 		// Start line: 1467
 	/* end block 2 */
 	// End Line: 1468
-
+			UNIMPLEMENTED();
 }
 
 
@@ -324,7 +326,7 @@ void AnimDistanceAndVel(struct Object *object, struct _MonsterAnim *mAnim)
 		// Start line: 1682
 	/* end block 2 */
 	// End Line: 1683
-
+				UNIMPLEMENTED();
 }
 
 
@@ -364,7 +366,7 @@ void TranslateAnimList(struct Object *object, struct _MonsterAnim *animList, int
 		// Start line: 2002
 	/* end block 2 */
 	// End Line: 2003
-
+					UNIMPLEMENTED();
 }
 
 
@@ -432,7 +434,7 @@ void MonsterTranslateAnim(struct Object *object)
 		// Start line: 2157
 	/* end block 2 */
 	// End Line: 2158
-
+						UNIMPLEMENTED();
 }
 
 
@@ -480,7 +482,7 @@ void MonsterRelocateTune(struct Object *object, long offset)
 		// Start line: 2499
 	/* end block 3 */
 	// End Line: 2500
-
+					UNIMPLEMENTED();
 }
 
 
@@ -506,7 +508,7 @@ void MonsterRelocateInstanceObject(struct _Instance *instance, long offset)
 		// Start line: 2641
 	/* end block 3 */
 	// End Line: 2642
-
+			UNIMPLEMENTED();
 }
 
 
@@ -529,6 +531,8 @@ void MONAPI_TurnHead(struct _Instance *instance, short *rotx, short *rotz, struc
 	}
 	else *rotz = 1024;
 	MON_LookInDirection(instance, -*rotx, *rotz);
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -543,6 +547,8 @@ void MONAPI_SetLookAround(struct _Instance *instance)
 	extraData = (struct _MonsterVars*)instance->extraData;
 	MON_EnableHeadMove(instance);
 	extraData->mode = 0x80000;
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -557,6 +563,8 @@ void MONAPI_ResetLookAround(struct _Instance *instance)
 	extraData = (struct _MonsterVars*)instance->extraData;
 	MON_DisableHeadMove(instance);
 	extraData->mode = 1;
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -565,7 +573,12 @@ void MONAPI_ResetLookAround(struct _Instance *instance)
 // long /*$ra*/ MONAPI_OkToLookAround(struct _Instance *instance /*$a0*/)
 long MONAPI_OkToLookAround(struct _Instance *instance)
 { // line 1338, offset 0x8007f138
+#if defined(PSX_VERSION)
+	UNIMPLEMENTED();
+	return 0;
+#elif defined(PC_VERSION)
 	return instance->currentMainState == 2;
+#endif
 }
 
 
@@ -582,7 +595,7 @@ void MONAPI_DeleteRegen(struct _MONAPI_Regenerator *regen)
 		// Start line: 2825
 	/* end block 2 */
 	// End Line: 2826
-
+	UNIMPLEMENTED();
 }
 
 
@@ -638,7 +651,7 @@ void MONAPI_ProcessGenerator()
 		// Start line: 2852
 	/* end block 3 */
 	// End Line: 2853
-
+						UNIMPLEMENTED();
 }
 
 
@@ -667,7 +680,7 @@ void MONAPI_AddToGenerator(struct _Instance *instance)
 		// Start line: 3028
 	/* end block 2 */
 	// End Line: 3029
-
+				UNIMPLEMENTED();
 }
 
 
@@ -697,6 +710,8 @@ void MONAPI_CheckGenerator(struct _Instance *instance)
 		memcpy(regenEntries, &regenEntries[1], result);
 	}
 	return result;
+#else
+	UNIMPLEMENTED();
 #endif
 }
 

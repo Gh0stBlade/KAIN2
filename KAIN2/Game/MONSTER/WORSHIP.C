@@ -21,7 +21,7 @@ void WORSHIP_Init(struct _Instance *instance)
 		// Start line: 94
 	/* end block 2 */
 	// End Line: 95
-
+			UNIMPLEMENTED();
 }
 
 
@@ -58,7 +58,7 @@ void WORSHIP_CombatEntry(struct _Instance *instance)
 		// Start line: 150
 	/* end block 2 */
 	// End Line: 151
-
+				UNIMPLEMENTED();
 }
 
 

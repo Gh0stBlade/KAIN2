@@ -27,6 +27,8 @@ void HUMAN_WaitForWeapon(struct _Instance *instance, struct GameTracker *gameTra
 		instance->flags2 = v4;
 		instance->processFunc = (void(*)())MonsterProcess;
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -57,7 +59,7 @@ struct _Instance * HUMAN_CreateWeapon(struct _Instance *instance, int weaponid, 
 		// Start line: 228
 	/* end block 2 */
 	// End Line: 229
-
+				UNIMPLEMENTED();
 	return null;
 }
 
@@ -90,7 +92,7 @@ void HUMAN_Init(struct _Instance *instance)
 		// Start line: 330
 	/* end block 2 */
 	// End Line: 331
-
+				UNIMPLEMENTED();
 }
 
 
@@ -102,7 +104,7 @@ void HUMAN_CleanUp(struct _Instance *instance)
 		// Start line: 431
 	/* end block 1 */
 	// End Line: 432
-
+	UNIMPLEMENTED();
 }
 
 
@@ -125,7 +127,7 @@ unsigned long HUMAN_Query(struct _Instance *instance, unsigned long query)
 		// Start line: 447
 	/* end block 2 */
 	// End Line: 448
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -147,7 +149,7 @@ void HUMAN_DeadEntry(struct _Instance *instance)
 		// Start line: 566
 	/* end block 2 */
 	// End Line: 567
-
+			UNIMPLEMENTED();
 }
 
 
@@ -168,7 +170,7 @@ void HUMAN_Dead(struct _Instance *instance)
 		// Start line: 608
 	/* end block 2 */
 	// End Line: 609
-
+			UNIMPLEMENTED();
 }
 
 
@@ -189,7 +191,7 @@ void HUMAN_StunnedEntry(struct _Instance *instance)
 		// Start line: 676
 	/* end block 2 */
 	// End Line: 677
-
+			UNIMPLEMENTED();
 }
 
 
@@ -210,7 +212,7 @@ void HUMAN_Stunned(struct _Instance *instance)
 		// Start line: 704
 	/* end block 2 */
 	// End Line: 705
-
+			UNIMPLEMENTED();
 }
 
 
@@ -231,7 +233,7 @@ void HUMAN_EmbraceEntry(struct _Instance *instance)
 		// Start line: 752
 	/* end block 2 */
 	// End Line: 753
-
+			UNIMPLEMENTED();
 }
 
 
@@ -255,7 +257,7 @@ void HUMAN_Embrace(struct _Instance *instance)
 		// Start line: 777
 	/* end block 2 */
 	// End Line: 778
-
+			UNIMPLEMENTED();
 }
 
 
@@ -276,7 +278,7 @@ void HUMAN_IdleEntry(struct _Instance *instance)
 		// Start line: 917
 	/* end block 2 */
 	// End Line: 918
-
+			UNIMPLEMENTED();
 }
 
 
@@ -300,7 +302,7 @@ void HUMAN_Idle(struct _Instance *instance)
 		// Start line: 935
 	/* end block 2 */
 	// End Line: 936
-
+			UNIMPLEMENTED();
 }
 
 
@@ -331,7 +333,7 @@ void HUMAN_Flee(struct _Instance *instance)
 		// Start line: 1053
 	/* end block 2 */
 	// End Line: 1054
-
+				UNIMPLEMENTED();
 }
 
 
@@ -368,7 +370,7 @@ void HUMAN_GetAngry()
 		// Start line: 1144
 	/* end block 3 */
 	// End Line: 1145
-
+				UNIMPLEMENTED();
 }
 
 
@@ -390,7 +392,7 @@ int HUMAN_TypeOfHuman(struct _Instance *instance)
 		// Start line: 1219
 	/* end block 2 */
 	// End Line: 1220
-
+			UNIMPLEMENTED();
 	return 0;
 }
 

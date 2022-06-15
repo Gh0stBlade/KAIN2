@@ -25,7 +25,7 @@ void razAlignYMoveRot(struct _Instance *dest, short distance, _Position *positio
 		// Start line: 24
 	/* end block 2 */
 	// End Line: 25
-
+			UNIMPLEMENTED();
 }
 
 
@@ -49,7 +49,7 @@ void razAlignYRotMove(struct _Instance *dest, short distance, _Position *positio
 		// Start line: 136
 	/* end block 2 */
 	// End Line: 137
-
+	UNIMPLEMENTED();
 }
 
 
@@ -72,7 +72,7 @@ void razAlignYRotMoveInterp(struct _Instance *source, struct _Instance *dest, sh
 		// Start line: 210
 	/* end block 2 */
 	// End Line: 211
-
+			UNIMPLEMENTED();
 }
 
 
@@ -84,7 +84,7 @@ void razAlignYRotInterp(struct _Instance *source, _Position *dest, unsigned char
 		// Start line: 306
 	/* end block 1 */
 	// End Line: 307
-
+	UNIMPLEMENTED();
 }
 
 
@@ -111,7 +111,7 @@ int razConstrictAngle(struct _Instance *instance)
 		// Start line: 390
 	/* end block 2 */
 	// End Line: 391
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -135,7 +135,7 @@ void razRotateUpperBody(struct _Instance *instance, struct evActionLookAroundDat
 		// Start line: 555
 	/* end block 2 */
 	// End Line: 556
-
+			UNIMPLEMENTED();
 }
 
 
@@ -152,7 +152,7 @@ void razSetFadeEffect(short source, short dest, int steps)
 		// Start line: 644
 	/* end block 2 */
 	// End Line: 645
-
+	UNIMPLEMENTED();
 }
 
 
@@ -169,7 +169,7 @@ int razPlaneShift(struct _Instance *instance)
 		// Start line: 679
 	/* end block 2 */
 	// End Line: 680
-
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -266,6 +266,8 @@ LABEL_31:
 			INSTANCE_Post(gameTrackerX.playerInstance, 262149, 0);
 		}
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -274,6 +276,7 @@ LABEL_31:
 // void /*$ra*/ razMaterialShift()
 void razMaterialShift()
 { // line 360, offset 0x800a5908
+	UNIMPLEMENTED();
 }
 
 int RAZIEL_OkToShift()
@@ -409,6 +412,7 @@ LABEL_32:
 	}
 	return 0;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -430,6 +434,7 @@ int razZeroAxis(long *x, long *y, int radius)
 	}
 	return result;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -456,6 +461,7 @@ int razAdjustSpeed(struct _Instance *instance, int minSpeed)
 	G2Anim_SetSpeedAdjustment(&instance->anim, v2);
 	return v2;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -492,6 +498,8 @@ void razLaunchForce(struct _Instance *instance)
 	sound.soundTimer = 0;
 	dword_B089B0 = 0;
 	dword_B089B4 = 0;
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -511,6 +519,7 @@ struct _Instance * razGetHeldItem()
 	}
 	return result;
 #else
+	UNIMPLEMENTED();
 	return NULL;
 #endif
 }
@@ -534,6 +543,7 @@ struct _Instance * razGetHeldWeapon()
 		return dword_B08804 != 0 ? Inst : 0;
 	return (INSTANCE_Query(LinkChild, 1) & 0x20) != 0 ? LinkChild : 0;
 #else
+	UNIMPLEMENTED();
 	return NULL;
 #endif
 }
@@ -543,6 +553,7 @@ struct _Instance * razGetHeldWeapon()
 // void /*$ra*/ razReaverBladeOff()
 void razReaverBladeOff()
 { // line 631, offset 0x800a5e78
+	UNIMPLEMENTED();
 }
 
 
@@ -550,6 +561,7 @@ void razReaverBladeOff()
 // void /*$ra*/ razReaverBladeOn()
 void razReaverBladeOn()
 { // line 639, offset 0x800a5ea8
+	UNIMPLEMENTED();
 }
 
 
@@ -557,6 +569,7 @@ void razReaverBladeOn()
 // int /*$ra*/ razReaverOff()
 int razReaverOff()
 { // line 649, offset 0x800a5ee8
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -604,6 +617,7 @@ LABEL_6:
 	}
 	return 1;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -613,6 +627,7 @@ LABEL_6:
 // void /*$ra*/ razReaverPickup(struct _Instance *instance /*$a2*/, struct _Instance *soulReaver /*$s0*/)
 void razReaverPickup(struct _Instance *instance, struct _Instance *soulReaver)
 { // line 691, offset 0x800a6054
+	UNIMPLEMENTED();
 }
 
 
@@ -627,6 +642,8 @@ void razReaverImbue(int reaverType)
 		debugRazielFlags2 = 1 << (reaverType + 9);
 		INSTANCE_Post(Inst, 0x800103, reaverType);
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -635,6 +652,7 @@ void razReaverImbue(int reaverType)
 // int /*$ra*/ razGetReaverFromMask(int reaverMask /*$a0*/)
 int razGetReaverFromMask(int reaverMask)
 { // line 731, offset 0x800a6168
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -643,6 +661,7 @@ int razGetReaverFromMask(int reaverMask)
 // void /*$ra*/ razReaverScale(int scale /*$s1*/)
 void razReaverScale(int scale)
 { // line 745, offset 0x800a618c
+	UNIMPLEMENTED();
 }
 
 
@@ -674,6 +693,8 @@ void razGetForwardNormal(struct _Instance *inst, struct _Instance *target)
 		stru_B087B8.y = v6.wNormal.vy;
 		stru_B087B8.z = v6.wNormal.vz;
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -682,6 +703,7 @@ void razGetForwardNormal(struct _Instance *inst, struct _Instance *target)
 // void /*$ra*/ razGetRotFromNormal(struct _SVector *normal /*$a0*/, struct _Rotation *rot /*$a2*/)
 void razGetRotFromNormal(struct _SVector *normal, struct _Rotation *rot)
 { // line 797, offset 0x800a62d8
+	UNIMPLEMENTED();
 }
 
 
@@ -760,6 +782,8 @@ void razCenterWithBlock(struct _Instance *inst, struct _Instance *target, int di
 		G2Anim_EnableController(&inst->anim, 0, 32);
 	G2EmulationSetInterpController_Vector(inst, 0, 32, &vec, 6, 0);
 	inst->rotation.z = rot.z;
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -768,6 +792,7 @@ void razCenterWithBlock(struct _Instance *inst, struct _Instance *target, int di
 // void /*$ra*/ razSetPauseTranslation(struct _Instance *instance /*$a0*/)
 void razSetPauseTranslation(struct _Instance *instance)
 { // line 870, offset 0x800a64f4
+	UNIMPLEMENTED();
 }
 
 
@@ -775,6 +800,7 @@ void razSetPauseTranslation(struct _Instance *instance)
 // void /*$ra*/ razResetPauseTranslation(struct _Instance *instance /*$a0*/)
 void razResetPauseTranslation(struct _Instance *instance)
 { // line 887, offset 0x800a6568
+	UNIMPLEMENTED();
 }
 
 
@@ -823,7 +849,7 @@ void razSelectMotionAnim(struct __CharacterState *In, int CurrentSection, int Fr
 		// Start line: 1982
 	/* end block 3 */
 	// End Line: 1983
-
+				UNIMPLEMENTED();
 }
 
 
@@ -869,6 +895,7 @@ int razApplyMotion(struct __CharacterState *In, int CurrentSection)
 	}
 	return -vector.y;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -882,7 +909,7 @@ void razResetMotion(struct _Instance *instance)
 		// Start line: 2733
 	/* end block 1 */
 	// End Line: 2734
-
+	UNIMPLEMENTED();
 }
 
 
@@ -895,6 +922,8 @@ void razSetDampingPhysics(struct _Instance *instance)
 	LOWORD(dword_B08928) = 0;
 	Mode = 4;
 	SetDampingPhysics(instance, *(_DWORD*)(dword_B08B3C + 68));
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -992,6 +1021,8 @@ LABEL_8:
 		TrailWaterFX(In->CharacterInstance, 9, 4, 1);
 		TrailWaterFX(In->CharacterInstance, 13, 4, 1);
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -1021,7 +1052,7 @@ void razSetSwimVelocity(struct _Instance *instance, int vel, int accl)
 		// Start line: 3062
 	/* end block 4 */
 	// End Line: 3063
-
+	UNIMPLEMENTED();
 }
 
 
@@ -1055,6 +1086,8 @@ void razSetWallCrawlNodes(struct _Instance *instance, struct evPhysicsWallCrawlD
 		vector.z = 0;
 		G2EmulationSetInterpController_Vector(instance, 14, 14, &vector, 3, 0);
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -1078,7 +1111,7 @@ int razSwitchVAnimCharacterGroup(struct _Instance *instance, int animGroup, int 
 		// Start line: 3233
 	/* end block 2 */
 	// End Line: 3234
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1101,7 +1134,7 @@ int razSwitchVAnimGroup(struct _Instance *instance, int section, int animGroup, 
 		// Start line: 3277
 	/* end block 2 */
 	// End Line: 3278
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1124,7 +1157,7 @@ void razSwitchVAnimCharacterSingle(struct _Instance *instance, int anim, int *fr
 		// Start line: 3336
 	/* end block 2 */
 	// End Line: 3337
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1143,7 +1176,7 @@ void razSwitchVAnimSingle(struct _Instance *instance, int section, int anim, int
 		// Start line: 3373
 	/* end block 2 */
 	// End Line: 3374
-
+	UNIMPLEMENTED();
 }
 
 
@@ -1176,6 +1209,8 @@ void razSwitchVAnim(struct _Instance *instance, int section, struct __VAnim *vAn
 	{
 		G2EmulationInstanceSwitchAnimationAlpha(instance, 0, vAnim->anim0, v5, v6, vAnim->mode, vAnim->alpha);
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -1257,6 +1292,7 @@ LABEL_10:
 	}
 	return v8;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -1285,7 +1321,7 @@ void razSwitchStringAnimation(struct _Instance *instance, int anim)
 		// Start line: 3568
 	/* end block 3 */
 	// End Line: 3569
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1311,7 +1347,7 @@ int CheckStringAnimation(struct _Instance *instance, int mode)
 		// Start line: 3617
 	/* end block 3 */
 	// End Line: 3618
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1324,7 +1360,7 @@ void razLaunchBubbles(int segments, int count, int type)
 		// Start line: 3504
 	/* end block 1 */
 	// End Line: 3505
-
+	UNIMPLEMENTED();
 }
 
 
@@ -1343,7 +1379,7 @@ void razSetCowlNoDraw(int mode)
 		// Start line: 3720
 	/* end block 2 */
 	// End Line: 3721
-
+	UNIMPLEMENTED();
 }
 
 
@@ -1364,7 +1400,7 @@ void razAttachControllers()
 		// Start line: 3748
 	/* end block 2 */
 	// End Line: 3749
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1399,7 +1435,7 @@ void razSetPlayerEvent()
 		// Start line: 3785
 	/* end block 3 */
 	// End Line: 3786
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1416,7 +1452,7 @@ void razClearPlayerEvent()
 		// Start line: 3995
 	/* end block 2 */
 	// End Line: 3996
-
+	UNIMPLEMENTED();
 }
 
 
@@ -1433,7 +1469,7 @@ void razSetPlayerEventHistory(unsigned long event)
 		// Start line: 4012
 	/* end block 2 */
 	// End Line: 4013
-
+	UNIMPLEMENTED();
 }
 
 
@@ -1453,6 +1489,7 @@ int razSideMoveSpiderCheck(struct _Instance *instance, int x)
 	PHYSICS_GenericLineCheckSetup(x, -320, 0, &endVec);
 	return (PHYSICS_CheckForValidMove(instance, &startVec, &endVec, 0) & 1) == 0;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -1468,6 +1505,7 @@ struct _Instance * RAZIEL_QueryEngagedInstance(int index)
 	else
 		return 0;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -1513,6 +1551,7 @@ int razUpdateSoundRamp(struct _Instance *instance, struct _SoundRamp *sound)
 	}
 	return v2;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -1534,6 +1573,8 @@ void razSetupSoundRamp(struct _Instance *instance, struct _SoundRamp *sound, int
 	sound->soundEndVolume = endVolume;
 	sound->soundTotalTime = timer;
 	sound->soundTimer = 0;
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -1558,6 +1599,8 @@ void RAZIEL_SetInteractiveMusic(int modifier, int action)
 			SOUND_ResetMusicModifier(modifier);
 		dword_B08974 &= ~v2;
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -1618,6 +1661,8 @@ void RAZIEL_DebugHurtRaziel()
 			dword_B08804 = 0;
 		goto LABEL_17;
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -1667,7 +1712,7 @@ void razPrepGlyph()
 		// Start line: 4416
 	/* end block 2 */
 	// End Line: 4417
-
+			UNIMPLEMENTED();
 }
 
 

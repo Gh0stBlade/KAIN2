@@ -5,7 +5,9 @@
 // void /*$ra*/ MON_TurnOffWeaponSpheres(struct _Instance *instance /*$s1*/)
 void MON_TurnOffWeaponSpheres(struct _Instance *instance)
 { // line 148, offset 0x8007f3e4
-#if defined(PC_VERSION)
+#if defined(PSX_VERSION)
+	UNIMPLEMENTED();
+#elif defined(PC_VERSION)
 	struct _Instance* LinkChild; // esi
 	struct _MonsterVars* mv; // ebp
 	struct _HModel* hmodel; // eax
@@ -64,7 +66,7 @@ void MON_TurnOnWeaponSpheres(struct _Instance *instance)
 		// Start line: 353
 	/* end block 3 */
 	// End Line: 354
-
+				UNIMPLEMENTED();
 }
 
 
@@ -105,7 +107,7 @@ void MON_TurnOnWeaponSphere(struct _Instance *instance, int segment)
 		// Start line: 404
 	/* end block 2 */
 	// End Line: 405
-
+				UNIMPLEMENTED();
 }
 
 
@@ -142,7 +144,7 @@ void MON_TurnOffBodySpheres(struct _Instance *instance)
 		// Start line: 471
 	/* end block 3 */
 	// End Line: 472
-
+				UNIMPLEMENTED();
 }
 
 
@@ -179,7 +181,7 @@ void MON_TurnOnBodySpheres(struct _Instance *instance)
 		// Start line: 511
 	/* end block 3 */
 	// End Line: 512
-
+				UNIMPLEMENTED();
 }
 
 
@@ -191,7 +193,7 @@ void MON_TurnOffAllSpheres(struct _Instance *instance)
 		// Start line: 550
 	/* end block 1 */
 	// End Line: 551
-
+	UNIMPLEMENTED();
 }
 
 
@@ -203,7 +205,7 @@ void MON_TurnOnAllSpheres(struct _Instance *instance)
 		// Start line: 568
 	/* end block 1 */
 	// End Line: 569
-
+	UNIMPLEMENTED();
 }
 
 
@@ -263,6 +265,8 @@ void MON_SwitchState(struct _Instance *instance, enum MonsterState state)
 		ENMYPLAN_ReleasePlanningWorkspace(pathSlotID);
 		mv->pathSlotID = -1;
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -284,6 +288,8 @@ void MON_SwitchStateDoEntry(struct _Instance *instance, enum MonsterState state)
 		((void(__cdecl*)(struct _Instance*))StateFuncs->entryFunction)(instance);
 		mv->mvFlags &= ~1;
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -295,6 +301,7 @@ int MON_TransNodeAnimation(struct _Instance *instance)
 #if defined(PC_VERSION)
 	return G2Anim_SegmentHasActiveChannels(&instance->anim, 0, 0x700);
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -313,6 +320,7 @@ struct _MonsterAnim * MON_GetAnim(struct _Instance *instance, char *animList, in
 	else
 		return (struct _MonsterAnim*)(16 * whichAnim + *((DWORD*)instance->data + 16));
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -380,6 +388,8 @@ void MON_PlayAnimID(struct _Instance *instance, int index, int mode)
 	mv->mvFlags = v10;
 	instance->anim.section[manim->controllingSection].callback = (int(__stdcall*)())MON_AnimCallback;
 	instance->anim.section[manim->controllingSection].callbackData = instance;
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -390,6 +400,8 @@ void MON_PlayAnimFromList(struct _Instance *instance, char *animList, int animty
 { // line 470, offset 0x8007fbc8
 #if defined(PC_VERSION)
 	MON_PlayAnimID(instance, animList[animtype], mode);
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -402,6 +414,7 @@ int MON_AnimIDPlaying(struct _Instance *instance, int index)
 	struct _MonsterAttributes *ma; // $v0
 	return *((DWORD*)instance->extraData + 47) == 16 * index + *((DWORD*)instance->data + 16);
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -414,6 +427,8 @@ void MON_PlayAnimIDIfNotPlaying(struct _Instance *instance, int index, int mode)
 #if defined(PC_VERSION)
 	if (*((DWORD*)instance->extraData + 47) != 16 * index + *((DWORD*)instance->data + 16))
 		MON_PlayAnimID(instance, index, mode);
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -425,6 +440,7 @@ int MON_AnimPlayingFromList(struct _Instance *instance, char *animList, int anim
 #if defined(PC_VERSION)
 	return *((DWORD*)instance->extraData + 47) == *((DWORD*)instance->data + 16) + 16 * animList[animtype];
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -447,7 +463,7 @@ void MON_PlayAnimFromListIfNotPlaying(struct _Instance *instance, char *animList
 		// Start line: 1033
 	/* end block 2 */
 	// End Line: 1034
-
+			UNIMPLEMENTED();
 }
 
 
@@ -459,7 +475,7 @@ void MON_PlayAnim(struct _Instance *instance, enum MonsterAnim animtype, int mod
 		// Start line: 1059
 	/* end block 1 */
 	// End Line: 1060
-
+	UNIMPLEMENTED();
 }
 
 
@@ -471,7 +487,7 @@ int MON_AnimPlaying(struct _Instance *instance, enum MonsterAnim animtype)
 		// Start line: 1076
 	/* end block 1 */
 	// End Line: 1077
-
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -484,7 +500,7 @@ void MON_PlayAnimIfNotPlaying(struct _Instance *instance, enum MonsterAnim animt
 		// Start line: 1093
 	/* end block 1 */
 	// End Line: 1094
-
+	UNIMPLEMENTED();
 }
 
 
@@ -506,7 +522,7 @@ long MON_AnimCallback(struct _G2Anim_Type *anim, int sectionID, enum _G2AnimCall
 		// Start line: 1132
 	/* end block 2 */
 	// End Line: 1133
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -541,7 +557,7 @@ void MON_AnimInit(struct _Instance *instance)
 		// Start line: 1203
 	/* end block 2 */
 	// End Line: 1204
-
+				UNIMPLEMENTED();
 }
 
 
@@ -560,7 +576,7 @@ short MON_FacingOffset(struct _Instance *instance, struct _Instance *target)
 		// Start line: 1309
 	/* end block 2 */
 	// End Line: 1310
-
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -606,7 +622,7 @@ int MON_CheckConditions(struct _Instance *instance, struct _MonsterIR *mir, char
 		// Start line: 1346
 	/* end block 4 */
 	// End Line: 1347
-
+				UNIMPLEMENTED();
 	return 0;
 }
 
@@ -649,7 +665,7 @@ int MON_ShouldIAttackInstance(struct _Instance *instance, struct _Instance *ei)
 		// Start line: 1455
 	/* end block 3 */
 	// End Line: 1456
-
+				UNIMPLEMENTED();
 	return 0;
 }
 
@@ -682,7 +698,7 @@ int MON_ShouldIAttack(struct _Instance *instance, struct _MonsterIR *enemy, stru
 		// Start line: 1527
 	/* end block 2 */
 	// End Line: 1528
-
+				UNIMPLEMENTED();
 	return 0;
 }
 
@@ -732,7 +748,7 @@ struct _MonsterAttackAttributes * MON_ChooseAttack(struct _Instance *instance, s
 		// Start line: 1707
 	/* end block 4 */
 	// End Line: 1708
-
+				UNIMPLEMENTED();
 	return null;
 }
 
@@ -764,7 +780,7 @@ int MON_ShouldIEvade(struct _Instance *instance)
 		// Start line: 1869
 	/* end block 2 */
 	// End Line: 1870
-
+				UNIMPLEMENTED();
 	return 0;
 }
 
@@ -794,7 +810,7 @@ int MON_ChooseLeftOrRight(struct _Instance *instance, struct _MonsterIR *enemy)
 		// Start line: 1940
 	/* end block 2 */
 	// End Line: 1941
-
+				UNIMPLEMENTED();
 	return 0;
 }
 
@@ -818,7 +834,7 @@ int MON_ChooseEvadeMove(struct _Instance *instance)
 		// Start line: 1989
 	/* end block 2 */
 	// End Line: 1990
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -882,7 +898,7 @@ int MON_ChooseCombatMove(struct _Instance *instance, int reason)
 		// Start line: 2057
 	/* end block 2 */
 	// End Line: 2058
-
+					UNIMPLEMENTED();
 	return 0;
 }
 
@@ -910,7 +926,7 @@ void MON_PlayRandomIdle(struct _Instance *instance, int mode)
 		// Start line: 2527
 	/* end block 2 */
 	// End Line: 2528
-
+			UNIMPLEMENTED();
 }
 
 
@@ -931,7 +947,7 @@ void MON_PlayCombatIdle(struct _Instance *instance, int mode)
 		// Start line: 2664
 	/* end block 2 */
 	// End Line: 2665
-
+			UNIMPLEMENTED();
 }
 
 
@@ -952,7 +968,7 @@ void MON_GetRandomPoint(_Position *out, _Position *in, short r)
 		// Start line: 2580
 	/* end block 2 */
 	// End Line: 2581
-
+			UNIMPLEMENTED();
 }
 
 
@@ -997,7 +1013,7 @@ int MON_GetRandomDestinationInWorld(struct _Instance *instance, _Position *in, s
 		// Start line: 2752
 	/* end block 2 */
 	// End Line: 2753
-
+				UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1019,7 +1035,7 @@ void MON_MoveForward(struct _Instance *instance)
 		// Start line: 2906
 	/* end block 2 */
 	// End Line: 2907
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1038,7 +1054,7 @@ int MON_TurnToPosition(struct _Instance *instance, _Position *position, short tu
 		// Start line: 2989
 	/* end block 2 */
 	// End Line: 2990
-
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1051,7 +1067,7 @@ void MON_MoveToPosition(struct _Instance *instance, _Position *position, short t
 		// Start line: 3029
 	/* end block 1 */
 	// End Line: 3030
-
+	UNIMPLEMENTED();
 }
 
 
@@ -1075,7 +1091,7 @@ int MON_OnGround(struct _Instance *instance)
 		// Start line: 3069
 	/* end block 2 */
 	// End Line: 3070
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1088,7 +1104,7 @@ void MON_ApplyPhysics(struct _Instance *instance)
 		// Start line: 3188
 	/* end block 1 */
 	// End Line: 3189
-
+	UNIMPLEMENTED();
 }
 
 
@@ -1126,6 +1142,8 @@ void MON_ChangeBehavior(struct _Instance *instance, int behavior)
 		MON_SwitchState(instance, v3);
 		extraData->behaviorState = behavior;
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -1190,7 +1208,7 @@ void MON_CheckEnvironment(struct _Instance *instance)
 		// Start line: 3284
 	/* end block 2 */
 	// End Line: 3285
-
+					UNIMPLEMENTED();
 }
 
 
@@ -1211,7 +1229,7 @@ void MON_CheckTerrainAndRespond(struct _Instance *instance, struct BSPTree *bsp,
 		// Start line: 3645
 	/* end block 2 */
 	// End Line: 3646
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1241,7 +1259,7 @@ unsigned long MON_CheckTerrain(struct _Instance *instance, struct BSPTree *bsp, 
 		// Start line: 3679
 	/* end block 2 */
 	// End Line: 3680
-
+				UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1266,7 +1284,7 @@ int MON_CheckPointSuitability(struct _Instance *instance, _Position *origin, _Po
 		// Start line: 3761
 	/* end block 2 */
 	// End Line: 3762
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1284,7 +1302,7 @@ unsigned long MON_GetTime(struct _Instance *instance)
 		// Start line: 3896
 	/* end block 2 */
 	// End Line: 3897
-
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1347,7 +1365,7 @@ void MON_BirthSoul(struct _Instance *instance, int link)
 		// Start line: 3931
 	/* end block 3 */
 	// End Line: 3932
-
+						UNIMPLEMENTED();
 }
 
 
@@ -1408,7 +1426,7 @@ void MON_ProcessIntro(struct _Instance *instance)
 		// Start line: 4082
 	/* end block 2 */
 	// End Line: 4083
-
+					UNIMPLEMENTED();
 }
 
 
@@ -1436,7 +1454,7 @@ void MON_SetDefaults(struct _Instance *instance)
 		// Start line: 4621
 	/* end block 3 */
 	// End Line: 4622
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1448,7 +1466,7 @@ void MON_GetPlanSlot(struct _MonsterVars *mv)
 		// Start line: 4749
 	/* end block 1 */
 	// End Line: 4750
-
+	UNIMPLEMENTED();
 }
 
 
@@ -1492,7 +1510,7 @@ int MON_DefaultPlanMovement(struct _Instance *instance, int anim, long distance)
 		// Start line: 4771
 	/* end block 2 */
 	// End Line: 4772
-
+					UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1523,7 +1541,7 @@ void MON_DropAllObjects(struct _Instance *instance)
 		// Start line: 5002
 	/* end block 2 */
 	// End Line: 5003
-
+				UNIMPLEMENTED();
 }
 
 
@@ -1544,7 +1562,7 @@ void MON_EnableHeadMove(struct _Instance *instance)
 		// Start line: 5042
 	/* end block 2 */
 	// End Line: 5043
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1565,7 +1583,7 @@ void MON_DisableHeadMove(struct _Instance *instance)
 		// Start line: 5086
 	/* end block 2 */
 	// End Line: 5087
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1604,6 +1622,8 @@ void MON_LookInDirection(struct _Instance *instance, short tx, short tz)
 			}
 		}
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -1655,6 +1675,8 @@ void MON_LookAtPos(struct _Instance *instance, _Position *position)
 	z = mv->lookAngleZ;
 	mv->lookAngleX = 0;
 	MON_LookInDirection(instance, 0, z);
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -1734,6 +1756,8 @@ void MON_ProcessLookAt(struct _Instance *instance)
 			MON_LookAtPos(instance, &mv->lookAtPosData);
 		}
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -1777,6 +1801,7 @@ int MON_TakeDamage(struct _Instance *instance, int damage, int type)
 	}
 	return 1;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -1826,6 +1851,8 @@ void MON_SetUpSaveInfo(struct _Instance *instance, struct _MonsterSaveInfo *save
 	}
 	if ((gameTrackerX.debugFlags2 & 1) != 0)
 		MON_Say();
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -1961,6 +1988,8 @@ LABEL_20:
 		else
 			MON_PlayAnimID(instance, v21, v22);
 	}
+#else
+UNIMPLEMENTED();
 #endif
 }
 
@@ -2045,6 +2074,8 @@ void MON_KillMonster(struct _Instance *instance)
 	flags = instance->flags;
 	flags = flags | 0x20;
 	instance->flags = flags;
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -2095,6 +2126,7 @@ int MON_ShouldIAmbushEnemy(struct _Instance *instance)
 	else
 		return 0;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -2150,7 +2182,7 @@ int MON_ShouldIFireAtTarget(struct _Instance *instance, struct _MonsterIR *targe
 		// Start line: 5882
 	/* end block 3 */
 	// End Line: 5883
-
+						UNIMPLEMENTED();
 	return 0;
 }
 
@@ -2193,6 +2225,7 @@ int MON_ShouldIFlee(struct _Instance *instance)
 	}
 	return (mv->mvFlags & 0x2000) != 0 && !mv->hitPoints;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -2222,6 +2255,8 @@ void MON_RelocateCoords(struct _Instance *instance, struct _SVector *offset)
 	v6 = mv->pathSlotID;
 	if (v6 != -1)
 		ENMYPLAN_RelocatePlanPositions(v6, offset);
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -2249,6 +2284,7 @@ int MON_ValidUnit(struct _Instance *instance, unsigned long unitId)
 	}
 	return 1;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -2279,6 +2315,7 @@ int MON_ValidPosition(struct _Instance *instance)
 	mv->lastValidPos = instance->position;
 	return 1;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -2293,6 +2330,8 @@ void MON_SphereWorldPos(MATRIX *mat, struct _HSphere *sphere, _Position *ret)
 	ret->x += mat->t[0];
 	ret->y += mat->t[1];
 	ret->z += mat->t[2];
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -2335,6 +2374,7 @@ struct _HPrim * MON_FindSphereForTerrain(struct _Instance *instance)
 	}
 	return usePrim;
 #else
+	UNIMPLEMENTED();
 	return NULL;
 #endif
 }
@@ -2362,7 +2402,7 @@ struct Intro * MON_FindNearestImpalingIntro(int unitID, _Position *position)
 		// Start line: 6271
 	/* end block 2 */
 	// End Line: 6272
-
+			UNIMPLEMENTED();
 	return null;
 }
 
@@ -2390,7 +2430,7 @@ struct Intro * MON_TestForTerrainImpale(struct _Instance *instance, struct _Terr
 		// Start line: 6385
 	/* end block 2 */
 	// End Line: 6386
-
+			UNIMPLEMENTED();
 	return null;
 }
 
@@ -2442,7 +2482,7 @@ void MON_MoveInstanceToImpalePoint(struct _Instance *instance)
 		// Start line: 6491
 	/* end block 2 */
 	// End Line: 6492
-
+				UNIMPLEMENTED();
 }
 
 
@@ -2477,6 +2517,7 @@ int MON_ReachableIntro(struct _Instance *instance, _Position *pos, _Position *in
 	/* end block 2 */
 	// End Line: 6606
 
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -2527,7 +2568,7 @@ int MON_SetVelocityTowardsImpalingObject(struct _Instance *instance, int checkOr
 		// Start line: 6905
 	/* end block 2 */
 	// End Line: 6906
-
+					UNIMPLEMENTED();
 	return 0;
 }
 
@@ -2561,7 +2602,7 @@ void MON_TurnOffSphereCollisions(struct _Instance *instance)
 		// Start line: 7067
 	/* end block 4 */
 	// End Line: 7068
-
+			UNIMPLEMENTED();
 }
 
 
@@ -2594,7 +2635,7 @@ void MON_TurnOnSphereCollisions(struct _Instance *instance)
 		// Start line: 7109
 	/* end block 4 */
 	// End Line: 7110
-
+			UNIMPLEMENTED();
 }
 
 
@@ -2619,7 +2660,7 @@ void MON_ProcessSpecialFade(struct _Instance *instance)
 		// Start line: 7148
 	/* end block 2 */
 	// End Line: 7149
-
+			UNIMPLEMENTED();
 }
 
 
@@ -2646,7 +2687,7 @@ void MON_StartSpecialFade(struct _Instance *instance, int fadeLevel, int fadeTim
 		// Start line: 7352
 	/* end block 3 */
 	// End Line: 7353
-
+			UNIMPLEMENTED();
 }
 
 
@@ -2669,7 +2710,7 @@ void MON_UnlinkFromRaziel(struct _Instance *instance)
 		// Start line: 7386
 	/* end block 2 */
 	// End Line: 7387
-
+			UNIMPLEMENTED();
 }
 
 
@@ -2690,7 +2731,7 @@ void MON_BurnInAir(struct _Instance *instance, int currentState)
 		// Start line: 7436
 	/* end block 2 */
 	// End Line: 7437
-
+			UNIMPLEMENTED();
 }
 
 
@@ -2728,7 +2769,7 @@ void MON_BirthMana(struct _Instance *instance)
 		// Start line: 7472
 	/* end block 2 */
 	// End Line: 7473
-
+					UNIMPLEMENTED();
 }
 
 
@@ -2749,7 +2790,7 @@ void MON_SoulSucked(struct _Instance *instance)
 		// Start line: 7505
 	/* end block 2 */
 	// End Line: 7506
-
+			UNIMPLEMENTED();
 }
 
 
@@ -2775,7 +2816,7 @@ int MON_SetUpKnockBack(struct _Instance *instance, struct _Instance *enemy, stru
 		// Start line: 7539
 	/* end block 2 */
 	// End Line: 7540
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -2803,7 +2844,7 @@ void MON_DoDrainEffects(struct _Instance *instance, struct _Instance *ei)
 		// Start line: 7610
 	/* end block 2 */
 	// End Line: 7611
-
+			UNIMPLEMENTED();
 }
 
 
@@ -2836,7 +2877,7 @@ void MON_SetFXHitData(struct _Instance *instance, struct evFXHitData *data, int 
 		// Start line: 7779
 	/* end block 3 */
 	// End Line: 7780
-
+				UNIMPLEMENTED();
 }
 
 
@@ -2848,7 +2889,7 @@ void MON_LaunchMonster(struct _Instance *instance, int zDirection, int power, in
 		// Start line: 7822
 	/* end block 1 */
 	// End Line: 7823
-
+	UNIMPLEMENTED();
 }
 
 

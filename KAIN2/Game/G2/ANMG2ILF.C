@@ -39,7 +39,9 @@ void G2Anim_GetRootMotionOverInterval(struct _G2Anim_Type* anim, short intervalS
 // void /*$ra*/ G2Anim_InterpToKeylistFrame(struct _G2Anim_Type *anim /*$s2*/, struct _G2AnimKeylist_Type *keylist /*$s4*/, int keylistID /*$s5*/, int targetFrame /*$s6*/, int duration /*stack 16*/)
 void G2Anim_InterpToKeylistFrame(struct _G2Anim_Type *anim, struct _G2AnimKeylist_Type *keylist, int keylistID, int targetFrame, int duration)
 { // line 292, offset 0x8008fa88
-#if defined(PC_VERSION)
+#if defined(PSX_VERSION)
+	UNIMPLEMENTED();
+#elif defined(PC_VERSION)
 	int sectionCount; // ecx
 	int v6; // edi
 	struct _G2AnimSection_Type* section; // esi
@@ -64,7 +66,9 @@ void G2Anim_InterpToKeylistFrame(struct _G2Anim_Type *anim, struct _G2AnimKeylis
 // void /*$ra*/ G2Anim_SetAlphaTable(struct _G2Anim_Type *anim /*$s2*/, struct _G2AnimAlphaTable_Type *table /*$s3*/)
 void G2Anim_SetAlphaTable(struct _G2Anim_Type *anim, struct _G2AnimAlphaTable_Type *table)
 { // line 412, offset 0x8008fb2c
-#if defined(PC_VERSION)
+#if defined(PSX_VERSION)
+	UNIMPLEMENTED();
+#elif defined(PC_VERSION)
 	int v2; // edx
 	struct _G2AnimInterpInfo_Type** p_interpInfo; // ecx
 
@@ -121,7 +125,9 @@ void G2Anim_SetCallback(struct _G2Anim_Type *anim, unsigned long (*func)(struct 
 // void /*$ra*/ G2Anim_SetLooping(struct _G2Anim_Type *anim /*$s2*/)
 void G2Anim_SetLooping(struct _G2Anim_Type *anim)
 { // line 518, offset 0x8008fbd8
-#if defined(PC_VERSION)
+#if defined(PSX_VERSION)
+	UNIMPLEMENTED();
+#elif defined(PC_VERSION)
 	int v1; // edx
 	unsigned int* p_alarmFlags; // eax
 	unsigned int v3; // ecx
@@ -154,7 +160,9 @@ void G2Anim_SetLooping(struct _G2Anim_Type *anim)
 // void /*$ra*/ G2Anim_SetNoLooping(struct _G2Anim_Type *anim /*$s2*/)
 void G2Anim_SetNoLooping(struct _G2Anim_Type *anim)
 { // line 565, offset 0x8008fc38
-#if defined(PC_VERSION)
+#if defined(PSX_VERSION)
+	UNIMPLEMENTED();
+#elif defined(PC_VERSION)
 	int v1; // ecx
 	struct _G2AnimSection_Type* section; // eax
 	unsigned __int8 flags; // dl
@@ -179,7 +187,9 @@ void G2Anim_SetNoLooping(struct _G2Anim_Type *anim)
 // void /*$ra*/ G2Anim_SetPaused(struct _G2Anim_Type *anim /*$s2*/)
 void G2Anim_SetPaused(struct _G2Anim_Type *anim)
 { // line 591, offset 0x8008fc98
-#if defined(PC_VERSION)
+#if defined(PSX_VERSION)
+	UNIMPLEMENTED();
+#elif defined(PC_VERSION)
 	int v1; // ecx
 	struct _G2AnimSection_Type* section; // eax
 	unsigned __int8 flags; // dl
@@ -204,7 +214,9 @@ void G2Anim_SetPaused(struct _G2Anim_Type *anim)
 // void /*$ra*/ G2Anim_SetSpeedAdjustment(struct _G2Anim_Type *anim /*$a0*/, long adjustment /*$a1*/)
 void G2Anim_SetSpeedAdjustment(struct _G2Anim_Type *anim, long adjustment)
 { // line 618, offset 0x8008fcf8
-#if defined(PC_VERSION)
+#if defined(PSX_VERSION)
+	UNIMPLEMENTED();
+#elif defined(PC_VERSION)
 	int v2; // eax
 	int* p_speedAdjustment; // ecx
 
@@ -227,7 +239,9 @@ void G2Anim_SetSpeedAdjustment(struct _G2Anim_Type *anim, long adjustment)
 // void /*$ra*/ G2Anim_SetUnpaused(struct _G2Anim_Type *anim /*$s2*/)
 void G2Anim_SetUnpaused(struct _G2Anim_Type *anim)
 { // line 649, offset 0x8008fd2c
-#if defined(PC_VERSION)
+#if defined(PSX_VERSION)
+	UNIMPLEMENTED();
+#elif defined(PC_VERSION)
 	int v1; // ecx
 	struct _G2AnimSection_Type* section; // eax
 	unsigned __int8 flags; // dl
@@ -292,10 +306,11 @@ short G2AnimKeylist_GetDuration(struct _G2AnimKeylist_Type *keylist)
 // int /*$ra*/ G2AnimKeylist_GetKeyframeCount(struct _G2AnimKeylist_Type *keylist /*$a0*/)
 int G2AnimKeylist_GetKeyframeCount(struct _G2AnimKeylist_Type *keylist)
 { // line 811, offset 0x8008fe34
-#if defined(PC_VERSION)
-	return ((keylist->keyCount - 1) * keylist->timePerKey + 2 * keylist->s0TailTime - 1) / keylist->s0TailTime;
-#else
+#if defined(PSX_VERSION)
+	UNIMPLEMENTED();
 	return 0;
+#elif defined(PC_VERSION)
+	return ((keylist->keyCount - 1) * keylist->timePerKey + 2 * keylist->s0TailTime - 1) / keylist->s0TailTime;
 #endif
 }
 
@@ -313,7 +328,10 @@ void G2AnimSection_ClearAlarm(struct _G2AnimSection_Type *section, unsigned long
 // int /*$ra*/ G2AnimSection_GetKeyframeNumber(struct _G2AnimSection_Type *section /*$s0*/)
 int G2AnimSection_GetKeyframeNumber(struct _G2AnimSection_Type *section)
 { // line 870, offset 0x8008fe80
-#if defined(PC_VERSION)
+#if defined(PSX_VERSION)
+	UNIMPLEMENTED();
+	return 0;
+#elif defined(PC_VERSION)
 	struct _G2AnimInterpInfo_Type* interpInfo; // eax
 
 	interpInfo = section->interpInfo;
@@ -321,8 +339,6 @@ int G2AnimSection_GetKeyframeNumber(struct _G2AnimSection_Type *section)
 		return interpInfo->targetTime / (int)section->keylist->s0TailTime;
 	else
 		return section->elapsedTime / (int)section->keylist->s0TailTime;
-#else
-	return 0;
 #endif
 }
 
@@ -331,10 +347,11 @@ int G2AnimSection_GetKeyframeNumber(struct _G2AnimSection_Type *section)
 // int /*$ra*/ G2AnimSection_GetStoredKeyframeNumber(struct _G2AnimSection_Type *section /*$a0*/)
 int G2AnimSection_GetStoredKeyframeNumber(struct _G2AnimSection_Type *section)
 { // line 974, offset 0x8008fedc
-#if defined(PC_VERSION)
-	return section->storedTime / (int)section->keylist->s0TailTime;
-#else
+#if defined(PSX_VERSION)
+	UNIMPLEMENTED();
 	return 0;
+#elif defined(PC_VERSION)
+	return section->storedTime / (int)section->keylist->s0TailTime;
 #endif
 }
 
@@ -358,6 +375,7 @@ enum _G2Bool_Enum G2AnimSection_IsInInterpolation(struct _G2AnimSection_Type *se
 	interpInfo = section->interpInfo;
 	return interpInfo && interpInfo->stateBlockList;
 #else
+	UNIMPLEMENTED();
 	return (_G2Bool_Enum)0;
 #endif
 }
@@ -376,6 +394,7 @@ short G2AnimSection_NextKeyframe(struct _G2AnimSection_Type *section)
 	FrameTime = G2Timer_GetFrameTime();
 	return G2AnimSection_UpdateOverInterval(section, FrameTime);
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -472,6 +491,8 @@ void G2AnimSection_SetNotRewinding(struct _G2AnimSection_Type *section)
 { // line 1270, offset 0x80090098
 #if defined(PC_VERSION)
 	section->flags &= ~4u;
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -500,5 +521,7 @@ void G2AnimSection_SwitchToKeylist(struct _G2AnimSection_Type *section, struct _
 { // line 1344, offset 0x800900d4
 #if defined(PC_VERSION)
 	G2AnimSection_SwitchToKeylistAtTime(section, keylist, keylistID, 0);
+#else
+	UNIMPLEMENTED();
 #endif
 }

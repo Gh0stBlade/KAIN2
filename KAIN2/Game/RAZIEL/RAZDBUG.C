@@ -15,7 +15,7 @@ void DebugProcess(struct _Instance *instance, struct __Player *player)
 		// Start line: 640
 	/* end block 2 */
 	// End Line: 641
-
+	UNIMPLEMENTED();
 }
 
 

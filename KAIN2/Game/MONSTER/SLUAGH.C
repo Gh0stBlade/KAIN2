@@ -21,7 +21,7 @@ unsigned long SLUAGH_Query(struct _Instance *instance, unsigned long query)
 		// Start line: 96
 	/* end block 2 */
 	// End Line: 97
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -80,6 +80,7 @@ void SLUAGH_DamageEffect(struct _Instance *instance, struct evFXHitData *data)
 		// Start line: 168
 	/* end block 2 */
 	// End Line: 169
+						UNIMPLEMENTED();
 
 }
 
@@ -103,7 +104,7 @@ void SLUAGH_Init(struct _Instance *instance)
 		// Start line: 298
 	/* end block 2 */
 	// End Line: 299
-
+			UNIMPLEMENTED();
 }
 
 
@@ -124,7 +125,7 @@ void SLUAGH_DeathEntry(struct _Instance *instance)
 		// Start line: 365
 	/* end block 2 */
 	// End Line: 366
-
+			UNIMPLEMENTED();
 }
 
 
@@ -152,7 +153,7 @@ void SLUAGH_Death(struct _Instance *instance)
 		// Start line: 417
 	/* end block 2 */
 	// End Line: 418
-
+				UNIMPLEMENTED();
 }
 
 
@@ -173,7 +174,7 @@ void SLUAGH_AttackEntry(struct _Instance *instance)
 		// Start line: 461
 	/* end block 2 */
 	// End Line: 462
-
+			UNIMPLEMENTED();
 }
 
 
@@ -213,7 +214,7 @@ void SLUAGH_Attack(struct _Instance *instance)
 		// Start line: 489
 	/* end block 2 */
 	// End Line: 490
-
+					UNIMPLEMENTED();
 }
 
 

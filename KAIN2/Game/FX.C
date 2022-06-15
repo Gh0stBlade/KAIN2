@@ -28,7 +28,7 @@ void FX_Init(struct _FXTracker *fxTracker)
 		// Start line: 240
 	/* end block 2 */
 	// End Line: 241
-
+			UNIMPLEMENTED();
 }
 
 
@@ -46,6 +46,8 @@ void FX_Die(struct _FX_PRIM *fxPrim, struct _FXTracker *fxTracker)
 	fxPrim->flags |= 0x10u;
 	LIST_DeleteFunc(fxPrim);
 	LIST_InsertFunc(&fxTracker->freePrimList, &fxPrim->node);
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -67,6 +69,7 @@ struct _FX_MATRIX * FX_GetMatrix(struct _FXTracker *fxTracker)
 	}
 	return v2;
 #else
+	UNIMPLEMENTED();
 	return NULL;
 #endif
 }
@@ -99,6 +102,7 @@ struct _FX_PRIM * FX_GetPrim(struct _FXTracker *fxTracker)
 	}
 	return result;
 #else
+	UNIMPLEMENTED();
 	return NULL;
 #endif
 }
@@ -135,6 +139,7 @@ struct _FXParticle * FX_GetParticle(struct _Instance *instance, short startSegme
 	}
 	return result;
 #else
+	UNIMPLEMENTED();
 	return NULL;
 #endif
 }
@@ -144,6 +149,7 @@ struct _FXParticle * FX_GetParticle(struct _Instance *instance, short startSegme
 // void /*$ra*/ FX_AniTexSetup(struct _FX_PRIM *fxPrim /*$a2*/, struct _MFace *mface /*$a1*/, struct _Model *model /*$a2*/, struct _FXTracker *fxTracker /*$a3*/)
 void FX_AniTexSetup(struct _FX_PRIM *fxPrim, struct _MFace *mface, struct _Model *model, struct _FXTracker *fxTracker)
 { // line 271, offset 0x80042200
+#if defined(PC_VERSION)
 	int flags; // edx
 	struct TextureMT3* color; // ecx
 
@@ -160,6 +166,9 @@ void FX_AniTexSetup(struct _FX_PRIM *fxPrim, struct _MFace *mface, struct _Model
 		fxPrim->flags = flags & 0xFFFFFFFA;
 		fxPrim->color = mface->color & 0x3FFFFFF | 0x20000000;
 	}
+#else
+	UNIMPLEMENTED();
+#endif
 }
 
 
@@ -356,6 +365,8 @@ void FX_StandardProcess(struct _FX_PRIM *fxPrim, struct _FXTracker *fxTracker)
 			}
 		}
 	}
+#else
+UNIMPLEMENTED();
 #endif
 }
 
@@ -435,6 +446,8 @@ void FX_ShatterProcess(struct _FX_PRIM *fxPrim, struct _FXTracker *fxTracker)
 		LIST_DeleteFunc(fxPrim);
 		LIST_InsertFunc(&fxTracker->freePrimList, &fxPrim->node);
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -472,7 +485,7 @@ void FX_DFacadeProcess(struct _FX_PRIM *fxPrim, struct _FXTracker *fxTracker)
 		// Start line: 1166
 	/* end block 2 */
 	// End Line: 1167
-
+				UNIMPLEMENTED();
 }
 
 
@@ -494,7 +507,7 @@ struct _FX_PRIM * _FX_BuildSingleFaceWithModel(struct _Model *model, struct _MFa
 		// Start line: 1677
 	/* end block 2 */
 	// End Line: 1678
-
+			UNIMPLEMENTED();
 	return null;
 }
 
@@ -507,7 +520,7 @@ struct _FX_PRIM * FX_BuildSingleFaceWithModel(struct _Model *model, struct _MFac
 		// Start line: 1745
 	/* end block 1 */
 	// End Line: 1746
-
+	UNIMPLEMENTED();
 	return null;
 }
 
@@ -529,7 +542,7 @@ void _FX_SetupLighting(struct _Instance *instance)
 		// Start line: 1834
 	/* end block 2 */
 	// End Line: 1835
-
+	UNIMPLEMENTED();
 }
 
 
@@ -552,7 +565,7 @@ long _FX_DoLighting(struct _MFace *mface)
 		// Start line: 1797
 	/* end block 2 */
 	// End Line: 1798
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -664,7 +677,7 @@ void _FX_BuildSegmentedSplinters(struct _Instance *instance, SVECTOR*center, SVE
 		// Start line: 1925
 	/* end block 3 */
 	// End Line: 1926
-
+				UNIMPLEMENTED();
 }
 
 
@@ -771,7 +784,7 @@ void _FX_BuildNonSegmentedSplinters(struct _Instance *instance, SVECTOR*center, 
 		// Start line: 2797
 	/* end block 2 */
 	// End Line: 2798
-
+				UNIMPLEMENTED();
 }
 
 
@@ -803,6 +816,8 @@ void _FX_BuildSplinters(struct _Instance *instance, SVECTOR*center, SVECTOR*vel,
 		else
 			FX_BuildSegmentedSplinters(instance, center, vel, accl, splintDef, fxTracker, fxSetup, fxProcess, v11);
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -821,6 +836,8 @@ void _FX_Build(struct _Instance *instance, SVECTOR*center, SVECTOR*vel, SVECTOR*
 		else
 			FX_BuildNonSegmentedSplinters(instance, center, vel, accl, 0, fxTracker, fxSetup, fxProcess, shardFlags);
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -837,6 +854,8 @@ void FX_Build(struct _Instance *instance, SVECTOR*center, SVECTOR*vel, SVECTOR*a
 		else
 			_FX_BuildNonSegmentedSplinters(instance, center, vel, accl, 0, fxTracker, fxSetup, fxProcess, 0);
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -873,6 +892,8 @@ void FX_UpdatePos(struct _FX_PRIM *fxPrim, struct _SVector *offset, int spritefl
 			}
 		}
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -931,6 +952,7 @@ void FX_Relocate(struct _SVector *offset)
 	}
 	return fxTracker;
 #else
+	UNIMPLEMENTED();
 	return;
 #endif
 }
@@ -957,6 +979,8 @@ void FX_UpdateTexturePointers(struct _FX_PRIM *fxPrim, struct Object *oldObject,
 			}
 		}
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -1017,6 +1041,8 @@ void FX_RelocateFXPointers(struct Object *oldObject, struct Object *newObject, l
 			}
 		}
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -1056,7 +1082,7 @@ void FX_ProcessList(struct _FXTracker *fxTracker)
 		// Start line: 4476
 	/* end block 3 */
 	// End Line: 4477
-
+				UNIMPLEMENTED();
 }
 
 extern struct _Instance* inst_Reaver;
@@ -1107,6 +1133,8 @@ void FX_DrawReaver(struct _PrimPool *primPool, unsigned long **ot, MATRIX *wcTra
 		FX_SoulReaverBlade(v3, ot);
 	}
 	inst_Reaver = 0;
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -1261,7 +1289,7 @@ void FX_DrawList(struct _FXTracker *fxTracker, struct GameTracker *gameTracker, 
 		// Start line: 4713
 	/* end block 2 */
 	// End Line: 4714
-
+						UNIMPLEMENTED();
 }
 
 
@@ -1344,7 +1372,7 @@ void FX_SimpleQuadSetup(struct _FX_PRIM *fxPrim, TDRFuncPtr_FX_SimpleQuadSetup1f
 		// Start line: 5454
 	/* end block 2 */
 	// End Line: 5455
-
+				UNIMPLEMENTED();
 }
 
 
@@ -1356,7 +1384,7 @@ void FX_WaterRingProcess(struct _FX_PRIM *fxPrim, struct _FXTracker *fxTracker)
 		// Start line: 6929
 	/* end block 1 */
 	// End Line: 6930
-
+	UNIMPLEMENTED();
 }
 
 
@@ -1387,7 +1415,7 @@ void FX_WaterBubbleProcess(struct _FX_PRIM *fxPrim, struct _FXTracker *fxTracker
 		// Start line: 6952
 	/* end block 2 */
 	// End Line: 6953
-
+				UNIMPLEMENTED();
 }
 
 
@@ -1399,7 +1427,7 @@ void FX_Sprite_Insert(struct NodeType *list, struct _FX_PRIM *fxPrim)
 		// Start line: 7148
 	/* end block 1 */
 	// End Line: 7149
-
+	UNIMPLEMENTED();
 }
 
 struct TextureMT3* FX_GetTextureObject(struct Object *object, int modelnum, int texnum)
@@ -1434,7 +1462,7 @@ void FX_MakeWaterBubble(struct _SVector *position, struct _SVector *vel, struct 
 		// Start line: 7189
 	/* end block 2 */
 	// End Line: 7190
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1456,7 +1484,7 @@ void FX_DrawScreenPoly(int transtype, unsigned long color, int zdepth)
 		// Start line: 7394
 	/* end block 2 */
 	// End Line: 7395
-
+			UNIMPLEMENTED();
 }
 
 POLY_GT4* FX_SetupPolyGT4(int x1, int y1, int x2, int y2, int otz, struct TextureMT3 *texture, long color0, long color1, long color2, long color3)
@@ -1695,7 +1723,7 @@ void FX_MakeGlyphIcon(_Position *position, struct Object *glyphObject, int size,
 		// Start line: 6394
 	/* end block 2 */
 	// End Line: 6395
-
+				UNIMPLEMENTED();
 }
 
 
@@ -1720,7 +1748,7 @@ void FX_SoulDustProcess(struct _FX_PRIM *fxPrim, struct _FXTracker *fxTracker)
 		// Start line: 7956
 	/* end block 2 */
 	// End Line: 7957
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1743,7 +1771,7 @@ void FX_MakeSoulDust(struct _Instance *instance, short segment)
 		// Start line: 8084
 	/* end block 2 */
 	// End Line: 8085
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1755,7 +1783,7 @@ void FX_WaterTrailProcess(struct _FX_PRIM *fxPrim, struct _FXTracker *fxTracker)
 		// Start line: 6734
 	/* end block 1 */
 	// End Line: 6735
-
+	UNIMPLEMENTED();
 }
 
 
@@ -1803,7 +1831,7 @@ void FX_MakeWaterTrail(struct _Instance *instance, int depth)
 		// Start line: 8277
 	/* end block 2 */
 	// End Line: 8278
-
+					UNIMPLEMENTED();
 }
 
 
@@ -1827,7 +1855,7 @@ struct _FXRibbon * FX_StartRibbon(struct _Instance *instance, short startSegment
 		// Start line: 6960
 	/* end block 2 */
 	// End Line: 6961
-
+			UNIMPLEMENTED();
 	return null;
 }
 
@@ -1850,7 +1878,7 @@ void FX_RibbonProcess(struct _FX_PRIM *fxPrim, struct _FXTracker *fxTracker)
 		// Start line: 7168
 	/* end block 2 */
 	// End Line: 7169
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1862,7 +1890,7 @@ void FX_ConstrictProcess(struct _FX_PRIM *fxPrim, struct _FXTracker *fxTracker)
 		// Start line: 8805
 	/* end block 1 */
 	// End Line: 8806
-
+	UNIMPLEMENTED();
 }
 
 
@@ -1879,7 +1907,7 @@ void FX_StartConstrict(struct _Instance *instance, struct _SVector *constrict_po
 		// Start line: 8989
 	/* end block 2 */
 	// End Line: 8990
-
+	UNIMPLEMENTED();
 }
 
 
@@ -1924,7 +1952,7 @@ void FX_EndConstrict(int ConstrictEnemyFlag, struct _Instance *instance)
 		// Start line: 9026
 	/* end block 2 */
 	// End Line: 9027
-
+				UNIMPLEMENTED();
 }
 
 
@@ -1946,7 +1974,7 @@ void FX_SubDividePrim(struct _FX_PRIM *fxPrim1, struct _FX_PRIM *fxPrim2)
 		// Start line: 9067
 	/* end block 2 */
 	// End Line: 9068
-
+	UNIMPLEMENTED();
 }
 
 
@@ -1985,7 +2013,7 @@ void FX_ContinueRibbon(struct _FXRibbon *ribbon, struct _FXTracker *fxTracker)
 		// Start line: 9166
 	/* end block 2 */
 	// End Line: 9167
-
+				UNIMPLEMENTED();
 }
 
 
@@ -2043,7 +2071,7 @@ void FX_StandardFXPrimProcess(struct _FX_PRIM *fxPrim, struct _FXTracker *fxTrac
 		// Start line: 9745
 	/* end block 2 */
 	// End Line: 9746
-
+				UNIMPLEMENTED();
 }
 
 
@@ -2066,7 +2094,7 @@ void FX_AttachedParticlePrimProcess(struct _FX_PRIM *fxPrim, struct _FXTracker *
 		// Start line: 10243
 	/* end block 2 */
 	// End Line: 10244
-
+			UNIMPLEMENTED();
 }
 
 
@@ -2091,7 +2119,7 @@ void FX_FlamePrimProcess(struct _FX_PRIM *fxPrim, struct _FXTracker *fxTracker)
 		// Start line: 10282
 	/* end block 2 */
 	// End Line: 10283
-
+			UNIMPLEMENTED();
 }
 
 
@@ -2122,7 +2150,7 @@ void FX_DFacadeParticleSetup(struct _FX_PRIM *fxPrim, SVECTOR*center, short halv
 		// Start line: 10375
 	/* end block 2 */
 	// End Line: 10376
-
+				UNIMPLEMENTED();
 }
 
 
@@ -2143,7 +2171,7 @@ struct _FX_PRIM * FX_Dot(struct _SVector *location, struct _SVector *vel, struct
 		// Start line: 10514
 	/* end block 2 */
 	// End Line: 10515
-
+			UNIMPLEMENTED();
 	return null;
 }
 
@@ -2152,6 +2180,7 @@ struct _FX_PRIM * FX_Dot(struct _SVector *location, struct _SVector *vel, struct
 // void /*$ra*/ FX_Blood(struct _SVector *location /*$s4*/, struct _SVector *input_vel /*$s1*/, struct _SVector *accel /*$s5*/, int amount /*$a3*/, long color /*stack 16*/, long size /*stack 20*/)
 void FX_Blood(struct _SVector *location, struct _SVector *input_vel, struct _SVector *accel, int amount, long color, long size)
 { // line 4336, offset 0x800485b8
+#if defined(PC_VERSION)
 	int i; // esi
 	struct _SVector vel; // [esp+4h] [ebp-8h] BYREF
 
@@ -2162,6 +2191,9 @@ void FX_Blood(struct _SVector *location, struct _SVector *input_vel, struct _SVe
 		vel.z = (rand() & 7) + input_vel->z * i / 128 - 4;
 		FX_Dot(location, &vel, accel, 0, color, 2 * size, 16, 1);
 	}
+#else
+	UNIMPLEMENTED();
+#endif
 }
 
 
@@ -2169,6 +2201,7 @@ void FX_Blood(struct _SVector *location, struct _SVector *input_vel, struct _SVe
 // void /*$ra*/ FX_Blood2(struct _SVector *location /*$a0*/, struct _SVector *input_vel /*$a1*/, struct _SVector *accel /*$a2*/, int amount /*$a3*/, long color /*stack 16*/, long dummyCrapShouldRemove /*stack 20*/)
 void FX_Blood2(struct _SVector *location, struct _SVector *input_vel, struct _SVector *accel, int amount, long color, long dummyCrapShouldRemove)
 { // line 4351, offset 0x800486f4
+#if defined(PC_VERSION)
 	int i; // esi
 	struct _SVector vel; // [esp+4h] [ebp-8h] BYREF
 
@@ -2179,6 +2212,9 @@ void FX_Blood2(struct _SVector *location, struct _SVector *input_vel, struct _SV
 		vel.z = (rand() & 7) + input_vel->z * i / 128 - 4;
 		FX_Dot(location, &vel, accel, 0, color, 8, 16, 1);
 	}
+#else
+	UNIMPLEMENTED();
+#endif
 }
 
 
@@ -2203,7 +2239,7 @@ void FX_Blood_Impale(struct _Instance *locinst, short locseg, struct _Instance *
 		// Start line: 8766
 	/* end block 2 */
 	// End Line: 8767
-
+			UNIMPLEMENTED();
 }
 
 
@@ -2225,7 +2261,7 @@ struct _FXParticle * FX_BloodCone(struct _Instance *instance, short startSegment
 		// Start line: 10745
 	/* end block 2 */
 	// End Line: 10746
-
+			UNIMPLEMENTED();
 	return null;
 }
 
@@ -2286,6 +2322,7 @@ struct _FXParticle * FX_GetTorchParticle(struct _Instance *instance, short start
 	}
 	return result;
 #else
+	UNIMPLEMENTED();
 	return NULL;
 #endif
 }
@@ -2309,7 +2346,7 @@ struct _FXParticle * FX_TorchFlame(struct _Instance *instance, short startSegmen
 		// Start line: 10917
 	/* end block 2 */
 	// End Line: 10918
-
+			UNIMPLEMENTED();
 	return null;
 }
 
@@ -2324,6 +2361,7 @@ int FX_GetMorphFadeVal()
 		return 4096 - result;
 	return result;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -2345,6 +2383,8 @@ void FX_ConvertCamPersToWorld(SVECTOR*campos, SVECTOR*worldpos)
 	gte_ldv0(campos);
 	gte_MVMVA(1, 0, 0, 0, 0);
 	gte_stsv(worldpos);
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -2357,6 +2397,8 @@ void FX_GetRandomScreenPt(SVECTOR*point)
 	point->vx = rand() % D3D_XRes;
 	point->vy = rand() % D3D_YRes;
 	point->vz = (rand() & 0xFFF) + 384;
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -2385,7 +2427,7 @@ void FX_ProcessSnow(struct _FX_PRIM *fxPrim, struct _FXTracker *fxTracker)
 		// Start line: 11162
 	/* end block 2 */
 	// End Line: 11163
-
+	UNIMPLEMENTED();
 }
 
 
@@ -2417,7 +2459,7 @@ void FX_ContinueSnow(struct _FXTracker *fxTracker)
 		// Start line: 11236
 	/* end block 2 */
 	// End Line: 11237
-
+			UNIMPLEMENTED();
 }
 
 
@@ -2438,7 +2480,7 @@ void FX_UpdateWind(struct _FXTracker *fxTracker)
 		// Start line: 11335
 	/* end block 2 */
 	// End Line: 11336
-
+			UNIMPLEMENTED();
 }
 
 
@@ -2459,7 +2501,7 @@ void FX_ProcessRain(struct _FX_PRIM *fxPrim, struct _FXTracker *fxTracker)
 		// Start line: 11389
 	/* end block 2 */
 	// End Line: 11390
-
+			UNIMPLEMENTED();
 }
 
 
@@ -2496,7 +2538,7 @@ void FX_ContinueRain(struct _FXTracker *fxTracker)
 		// Start line: 11452
 	/* end block 2 */
 	// End Line: 11453
-
+				UNIMPLEMENTED();
 }
 
 
@@ -2518,7 +2560,7 @@ void FX_MakeSpark(struct _Instance *instance, struct _Model *model, int segment)
 		// Start line: 11768
 	/* end block 2 */
 	// End Line: 11769
-
+			UNIMPLEMENTED();
 }
 
 
@@ -2567,7 +2609,7 @@ void FX_ContinueParticle(struct _FXParticle *currentParticle, struct _FXTracker 
 		// Start line: 11864
 	/* end block 2 */
 	// End Line: 11865
-
+					UNIMPLEMENTED();
 }
 
 
@@ -2588,7 +2630,7 @@ void FX_UpdraftPrimModify(struct _FX_PRIM *fxPrim, struct _Instance *instance, s
 		// Start line: 12443
 	/* end block 2 */
 	// End Line: 12444
-
+			UNIMPLEMENTED();
 }
 
 
@@ -2600,7 +2642,7 @@ void FX_MakeParticleTexFX(struct _FX_PRIM *fxPrim, struct _SVector *position, st
 		// Start line: 12463
 	/* end block 1 */
 	// End Line: 12464
-
+	UNIMPLEMENTED();
 }
 
 
@@ -2621,7 +2663,7 @@ void FX_MakeHitFX(struct _SVector *position)
 		// Start line: 12529
 	/* end block 2 */
 	// End Line: 12530
-
+			UNIMPLEMENTED();
 }
 
 
@@ -2633,7 +2675,7 @@ void FX_ContinueLightning(struct _FXLightning *zap, struct _FXTracker *fxTracker
 		// Start line: 12608
 	/* end block 1 */
 	// End Line: 12609
-
+	UNIMPLEMENTED();
 }
 
 
@@ -2650,7 +2692,7 @@ void FX_SetReaverInstance(struct _Instance *instance)
 		// Start line: 12633
 	/* end block 2 */
 	// End Line: 12634
-
+	UNIMPLEMENTED();
 }
 
 
@@ -2695,7 +2737,7 @@ void FX_SoulReaverBlade(struct _Instance *instance, unsigned long **drawot)
 		// Start line: 12648
 	/* end block 2 */
 	// End Line: 12649
-
+				UNIMPLEMENTED();
 }
 
 
@@ -2712,7 +2754,7 @@ void FX_ReaverBladeInit()
 		// Start line: 13200
 	/* end block 2 */
 	// End Line: 13201
-
+	UNIMPLEMENTED();
 }
 
 
@@ -2739,7 +2781,7 @@ void FX_SoulReaverWinding(struct _Instance *instance, struct _PrimPool *primPool
 		// Start line: 13213
 	/* end block 2 */
 	// End Line: 13214
-
+			UNIMPLEMENTED();
 }
 
 
@@ -2760,7 +2802,7 @@ void FX_UpdateInstanceWaterSplit(struct _Instance *instance)
 		// Start line: 13407
 	/* end block 2 */
 	// End Line: 13408
-
+			UNIMPLEMENTED();
 }
 
 
@@ -2777,7 +2819,7 @@ void FX_GetPlaneEquation(struct _SVector *normal, struct _SVector *poPlane, stru
 		// Start line: 13488
 	/* end block 2 */
 	// End Line: 13489
-
+	UNIMPLEMENTED();
 }
 
 
@@ -2801,7 +2843,7 @@ void FX_DoInstancePowerRing(struct _Instance *instance, long atuTime, long *colo
 		// Start line: 10872
 	/* end block 2 */
 	// End Line: 10873
-
+			UNIMPLEMENTED();
 }
 
 
@@ -2830,7 +2872,7 @@ void FX_UpdatePowerRing(struct _FXHalvePlane *ring)
 		// Start line: 13665
 	/* end block 2 */
 	// End Line: 13666
-
+			UNIMPLEMENTED();
 }
 
 
@@ -2842,7 +2884,7 @@ void FX_UpdateInstanceSplitRing(struct _FXHalvePlane *ring, struct _FXTracker *f
 		// Start line: 13978
 	/* end block 1 */
 	// End Line: 13979
-
+	UNIMPLEMENTED();
 }
 
 
@@ -2854,7 +2896,7 @@ void FX_UpdateGlowEffect(struct _FXGlowEffect *effect, struct _FXTracker *fxTrac
 		// Start line: 14025
 	/* end block 1 */
 	// End Line: 14026
-
+	UNIMPLEMENTED();
 }
 
 
@@ -2883,7 +2925,7 @@ void FX_InsertGeneralEffect(void *ptr)
 		// Start line: 14043
 	/* end block 4 */
 	// End Line: 14044
-
+	UNIMPLEMENTED();
 }
 
 
@@ -2905,7 +2947,7 @@ void FX_DeleteGeneralEffect(struct _FXGeneralEffect *effect)
 		// Start line: 14058
 	/* end block 2 */
 	// End Line: 14059
-
+			UNIMPLEMENTED();
 }
 
 
@@ -2935,7 +2977,7 @@ struct _FXGlowEffect * FX_DoInstanceOneSegmentGlow(struct _Instance *instance, l
 		// Start line: 14134
 	/* end block 2 */
 	// End Line: 14135
-
+				UNIMPLEMENTED();
 	return null;
 }
 
@@ -2953,7 +2995,7 @@ void FX_SetGlowFades(struct _FXGlowEffect *glowEffect, int fadein, int fadeout)
 		// Start line: 14271
 	/* end block 2 */
 	// End Line: 14272
-
+	UNIMPLEMENTED();
 }
 
 
@@ -2975,7 +3017,7 @@ struct _FXGlowEffect * FX_DoInstanceTwoSegmentGlow(struct _Instance *instance, l
 		// Start line: 14282
 	/* end block 2 */
 	// End Line: 14283
-
+			UNIMPLEMENTED();
 	return null;
 }
 
@@ -2997,7 +3039,7 @@ struct _FXGlowEffect * FX_DoInstanceManySegmentGlow(struct _Instance *instance, 
 		// Start line: 14318
 	/* end block 2 */
 	// End Line: 14319
-
+			UNIMPLEMENTED();
 	return null;
 }
 
@@ -3019,7 +3061,7 @@ struct _FXGlowEffect * FX_DoInstanceOneSegmentGlowWithTime(struct _Instance *ins
 		// Start line: 14343
 	/* end block 2 */
 	// End Line: 14344
-
+			UNIMPLEMENTED();
 	return null;
 }
 
@@ -3049,7 +3091,7 @@ void FX_StopAllGlowEffects(struct _Instance *instance, int fadeout_time)
 		// Start line: 14367
 	/* end block 2 */
 	// End Line: 14368
-
+			UNIMPLEMENTED();
 }
 
 
@@ -3078,7 +3120,7 @@ void FX_StopGlowEffect(struct _FXGlowEffect *glowEffect, int fadeout_time)
 		// Start line: 14433
 	/* end block 2 */
 	// End Line: 14434
-
+				UNIMPLEMENTED();
 }
 
 
@@ -3103,7 +3145,7 @@ void FX_DrawLightning(struct _FXLightning *zap, MATRIX *wcTransform, unsigned lo
 		// Start line: 14487
 	/* end block 2 */
 	// End Line: 14488
-
+			UNIMPLEMENTED();
 }
 
 
@@ -3155,7 +3197,7 @@ void FX_DrawAllGeneralEffects(MATRIX *wcTransform, struct _VertexPool *vertexPoo
 		// Start line: 14629
 	/* end block 2 */
 	// End Line: 14630
-
+				UNIMPLEMENTED();
 }
 
 
@@ -3204,7 +3246,7 @@ void FX_ContinueBlastRing(struct _FXBlastringEffect *blast, struct _FXTracker *f
 		// Start line: 14775
 	/* end block 3 */
 	// End Line: 14776
-
+				UNIMPLEMENTED();
 }
 
 
@@ -3225,7 +3267,7 @@ struct _FXBlastringEffect * FX_DoBlastRing(struct _Instance *instance, struct _S
 		// Start line: 14998
 	/* end block 2 */
 	// End Line: 14999
-
+			UNIMPLEMENTED();
 	return null;
 }
 
@@ -3258,7 +3300,7 @@ void FX_DrawBlastring(MATRIX *wcTransform, struct _FXBlastringEffect *blast)
 		// Start line: 15098
 	/* end block 2 */
 	// End Line: 15099
-
+			UNIMPLEMENTED();
 }
 
 
@@ -3270,7 +3312,7 @@ void FX_ContinueFlash(struct _FXFlash *flash, struct _FXTracker *fxTracker)
 		// Start line: 15190
 	/* end block 1 */
 	// End Line: 15191
-
+	UNIMPLEMENTED();
 }
 
 
@@ -3296,7 +3338,7 @@ void FX_DrawFlash(struct _FXFlash *flash)
 		// Start line: 15210
 	/* end block 2 */
 	// End Line: 15211
-
+			UNIMPLEMENTED();
 }
 
 
@@ -3327,7 +3369,7 @@ void FX_RelocateGeneric(struct Object *object, long offset)
 		// Start line: 15284
 	/* end block 4 */
 	// End Line: 15285
-
+			UNIMPLEMENTED();
 }
 
 
@@ -3371,7 +3413,7 @@ struct _FXParticle * FX_StartGenericParticle(struct _Instance *instance, int num
 		// Start line: 15309
 	/* end block 2 */
 	// End Line: 15310
-
+				UNIMPLEMENTED();
 	return null;
 }
 
@@ -3395,7 +3437,7 @@ void FX_StartGenericRibbon(struct _Instance *instance, int num, int segOverride,
 		// Start line: 15519
 	/* end block 2 */
 	// End Line: 15520
-
+			UNIMPLEMENTED();
 }
 
 
@@ -3449,7 +3491,7 @@ void FX_StartGenericGlow(struct _Instance *instance, int num, int segOverride, i
 		// Start line: 15602
 	/* end block 2 */
 	// End Line: 15603
-
+				UNIMPLEMENTED();
 }
 
 
@@ -3470,7 +3512,7 @@ struct _FXLightning * FX_CreateLightning(struct _Instance *instance, int lifeTim
 		// Start line: 15802
 	/* end block 2 */
 	// End Line: 15803
-
+			UNIMPLEMENTED();
 	return null;
 }
 
@@ -3483,7 +3525,7 @@ void FX_SetLightingPos(struct _FXLightning *zap, struct _Instance *startInstance
 		// Start line: 15928
 	/* end block 1 */
 	// End Line: 15929
-
+	UNIMPLEMENTED();
 }
 
 
@@ -3532,7 +3574,7 @@ struct _FXLightning * FX_StartGenericLightning(struct _Instance *instance, int n
 		// Start line: 15992
 	/* end block 3 */
 	// End Line: 15993
-
+					UNIMPLEMENTED();
 	return null;
 }
 
@@ -3567,7 +3609,7 @@ struct _FXBlastringEffect * FX_StartGenericBlastring(struct _Instance *instance,
 		// Start line: 16146
 	/* end block 3 */
 	// End Line: 16147
-
+			UNIMPLEMENTED();
 	return null;
 }
 
@@ -3597,7 +3639,7 @@ struct _FXFlash * FX_StartGenericFlash(struct _Instance *instance, int num)
 		// Start line: 16285
 	/* end block 3 */
 	// End Line: 16286
-
+			UNIMPLEMENTED();
 	return null;
 }
 
@@ -3630,7 +3672,7 @@ long FX_GetHealthColor(int currentHealth)
 		// Start line: 16393
 	/* end block 4 */
 	// End Line: 16394
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -3648,7 +3690,7 @@ void FX_Start_Snow(int percent)
 		// Start line: 16447
 	/* end block 2 */
 	// End Line: 16448
-
+	UNIMPLEMENTED();
 }
 
 
@@ -3665,7 +3707,7 @@ void FX_Start_Rain(int percent)
 		// Start line: 16457
 	/* end block 2 */
 	// End Line: 16458
-
+	UNIMPLEMENTED();
 }
 
 
@@ -3694,7 +3736,7 @@ void FX_StartLightbeam(struct _Instance *instance, int startSeg, int endSeg, int
 		// Start line: 16476
 	/* end block 3 */
 	// End Line: 16477
-
+			UNIMPLEMENTED();
 }
 
 
@@ -3764,7 +3806,7 @@ void FX_StartInstanceEffect(struct _Instance *instance, struct ObjectEffect *eff
 		// Start line: 16561
 	/* end block 2 */
 	// End Line: 16562
-
+				UNIMPLEMENTED();
 }
 
 
@@ -3786,7 +3828,7 @@ void FX_EndInstanceEffects(struct _Instance *instance)
 		// Start line: 17002
 	/* end block 2 */
 	// End Line: 17003
-
+			UNIMPLEMENTED();
 }
 
 
@@ -3808,7 +3850,7 @@ void FX_EndInstanceParticleEffects(struct _Instance *instance)
 		// Start line: 17040
 	/* end block 2 */
 	// End Line: 17041
-
+			UNIMPLEMENTED();
 }
 
 
@@ -3830,7 +3872,7 @@ void FX_GetSpiralPoint(int radius, int deg, int *x, int *y)
 		// Start line: 17092
 	/* end block 2 */
 	// End Line: 17093
-
+			UNIMPLEMENTED();
 }
 
 
@@ -3854,7 +3896,7 @@ void FX_GetLinePoint(int radius, int next_radius, int deg, int next_deg, int *pn
 		// Start line: 17184
 	/* end block 2 */
 	// End Line: 17185
-
+			UNIMPLEMENTED();
 }
 
 
@@ -3890,7 +3932,7 @@ void FX_CalcSpiral(int degchange)
 		// Start line: 17211
 	/* end block 2 */
 	// End Line: 17212
-
+			UNIMPLEMENTED();
 }
 
 
@@ -3947,7 +3989,7 @@ void FX_Spiral(struct _PrimPool *primPool, unsigned long **ot)
 		// Start line: 17543
 	/* end block 2 */
 	// End Line: 17544
-
+				UNIMPLEMENTED();
 }
 
 
@@ -3968,7 +4010,7 @@ void FX_Health_Spiral(int number, int current_health, int max_health)
 		// Start line: 18280
 	/* end block 2 */
 	// End Line: 18281
-
+			UNIMPLEMENTED();
 }
 
 
@@ -3980,7 +4022,7 @@ void FX_Spiral_Init()
 		// Start line: 18380
 	/* end block 1 */
 	// End Line: 18381
-
+	UNIMPLEMENTED();
 }
 
 void FX_DrawModel(struct Object* object, int model_num, struct _SVector* rotation, struct _SVector* position, struct _SVector* offset, int transflag)
@@ -4113,7 +4155,7 @@ void fx_calc_points(struct _SVector *points, int degrees, int radius, int radius
 		// Start line: 18657
 	/* end block 2 */
 	// End Line: 18658
-
+			UNIMPLEMENTED();
 }
 
 
@@ -4134,7 +4176,7 @@ long fx_get_startz(struct _SVector *position)
 		// Start line: 18700
 	/* end block 2 */
 	// End Line: 18701
-
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -4171,7 +4213,7 @@ void FX_DrawRing(MATRIX *wcTransform, struct _SVector *position, MATRIX *matrix,
 		// Start line: 18779
 	/* end block 3 */
 	// End Line: 18780
-
+			UNIMPLEMENTED();
 }
 
 
@@ -4188,7 +4230,7 @@ void fx_setTex(DVECTOR *x, unsigned char *uv, int tx, int offset)
 		// Start line: 18999
 	/* end block 2 */
 	// End Line: 19000
-
+	UNIMPLEMENTED();
 }
 
 
@@ -4222,7 +4264,7 @@ void FX_DrawRing2(MATRIX *wcTransform, struct _SVector *position, MATRIX *matrix
 		// Start line: 19122
 	/* end block 2 */
 	// End Line: 19123
-
+			UNIMPLEMENTED();
 }
 
 
@@ -4249,7 +4291,7 @@ void FX_DrawFField(MATRIX *wcTransform, struct _FXForceFieldEffect *field)
 		// Start line: 19458
 	/* end block 2 */
 	// End Line: 19459
-
+			UNIMPLEMENTED();
 }
 
 
@@ -4282,6 +4324,7 @@ struct _FXForceFieldEffect * FX_StartFField(struct _Instance *instance, int size
 	}
 	return result;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -4318,6 +4361,8 @@ void FX_EndFField(struct _Instance *instance)
 			i = (struct _FXForceFieldEffect*)i->next;
 		} while (i);
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -4380,6 +4425,8 @@ void FX_Draw_Glowing_Line(unsigned long **ot, long otz, DVECTOR *sxy0, DVECTOR *
 			p_nextPrim->tag = (ulong)&nextPrim[1];
 		}
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -4450,7 +4497,7 @@ void FX_Lightning(MATRIX *wcTransform, unsigned long **ot, MATRIX *mat, short de
 		// Start line: 19793
 	/* end block 2 */
 	// End Line: 19794
-
+					UNIMPLEMENTED();
 }
 
 
@@ -4532,7 +4579,7 @@ void FX_LightHouse(MATRIX *wcTransform, unsigned long **ot, struct _Instance *in
 		// Start line: 20062
 	/* end block 2 */
 	// End Line: 20063
-
+					UNIMPLEMENTED();
 }
 
 
@@ -4550,6 +4597,8 @@ void FX_StartPassthruFX(struct _Instance *instance, struct _SVector *normal, str
 	color = 0x20FF40;
 	FX_DoInstancePowerRing(instance, 8400, &color, 0, 2);
 	FX_DoInstancePowerRing(instance, 8400, &color, 0, 1);
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -4597,9 +4646,7 @@ void FX_EndPassthruFX(struct _Instance *instance)
 			v2 = next;
 		} while (next);
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
-
-
-
-

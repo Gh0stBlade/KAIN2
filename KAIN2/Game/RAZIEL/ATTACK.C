@@ -39,7 +39,7 @@ int StateHandlerDecodeHold(int *Message, int *Data)
 		// Start line: 32
 	/* end block 2 */
 	// End Line: 33
-
+				UNIMPLEMENTED();
 	return 0;
 }
 
@@ -148,7 +148,7 @@ void StateHandlerAttack2(struct __CharacterState *In, int CurrentSection, int Da
 		// Start line: 321
 	/* end block 2 */
 	// End Line: 322
-
+				UNIMPLEMENTED();
 }
 
 
@@ -187,7 +187,7 @@ void StateHandlerCannedReaction(struct __CharacterState *In, int CurrentSection,
 		// Start line: 1341
 	/* end block 2 */
 	// End Line: 1342
-
+				UNIMPLEMENTED();
 }
 
 
@@ -226,7 +226,7 @@ void StateHandlerStumble(struct __CharacterState *In, int CurrentSection, int Da
 		// Start line: 1609
 	/* end block 2 */
 	// End Line: 1610
-
+				UNIMPLEMENTED();
 }
 
 
@@ -265,7 +265,7 @@ void StateHandlerHitReaction(struct __CharacterState *In, int CurrentSection, in
 		// Start line: 1784
 	/* end block 2 */
 	// End Line: 1785
-
+					UNIMPLEMENTED();
 }
 
 
@@ -336,7 +336,7 @@ void StateHandlerThrow2(struct __CharacterState *In, int CurrentSection, int Dat
 		// Start line: 2098
 	/* end block 2 */
 	// End Line: 2099
-
+						UNIMPLEMENTED();
 }
 
 
@@ -365,7 +365,7 @@ void PointAt(struct _Instance *instance, _Position *Target, struct _Rotation *Ro
 		// Start line: 2830
 	/* end block 3 */
 	// End Line: 2831
-
+			UNIMPLEMENTED();
 }
 
 
@@ -389,7 +389,7 @@ void ThrowSetFocusPoint(struct _Instance *instance, struct _Rotation *rot)
 		// Start line: 2933
 	/* end block 2 */
 	// End Line: 2934
-
+			UNIMPLEMENTED();
 }
 
 
@@ -401,7 +401,7 @@ void LimitRotation(struct _Rotation *rot)
 		// Start line: 3047
 	/* end block 1 */
 	// End Line: 3048
-
+	UNIMPLEMENTED();
 }
 
 
@@ -468,7 +468,7 @@ void StateHandlerGrab(struct __CharacterState *In, int CurrentSection, int Data)
 		// Start line: 3171
 	/* end block 2 */
 	// End Line: 3172
-
+				UNIMPLEMENTED();
 }
 
 

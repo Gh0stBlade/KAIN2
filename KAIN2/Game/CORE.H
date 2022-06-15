@@ -62,6 +62,16 @@ typedef RECT PSX_RECT;
 #define setcode_ST(p, _code)	(((POLY_F4_SEMITRANS *)(p))->code = (u_char)(_code))
 #define setPolyFT4_ST(p) setlen_ST(p, 6),  setcode_ST(p, 0x2A)
 
+//Custom GTE macros
+#define gte_st_mac0( r0 ) \
+	((int*)&r0)[0] = MAC0;   \
+
+#define gte_st_mac1( r0 ) \
+	((int*)&r0)[1] = MAC1;   \
+
+#define gte_ld_vxy0( r0 )    \
+	((int*)&VX0)[0] = r0;     \
+
 #pragma warning(disable: 4101)//Unreferenced local var.
 #if defined(__ANDROID__)
 #define strcmpi strcmp

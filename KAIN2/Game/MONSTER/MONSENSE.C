@@ -16,6 +16,7 @@ struct _MonsterIR * MONSENSE_FindIR(struct _MonsterVars *mv, struct _Instance *i
 	}
 	return mir;
 #else
+	UNIMPLEMENTED();
 	return NULL;
 #endif
 }
@@ -111,7 +112,7 @@ int MONSENSE_See(struct _Instance *instance, struct evCollideInstanceStatsData *
 		// Start line: 194
 	/* end block 2 */
 	// End Line: 195
-
+							UNIMPLEMENTED();
 	return 0;
 }
 
@@ -135,7 +136,7 @@ int MONSENSE_Hear(struct _Instance *instance, struct evCollideInstanceStatsData 
 		// Start line: 270
 	/* end block 2 */
 	// End Line: 271
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -162,7 +163,7 @@ int MONSENSE_Smell(struct _Instance *instance, struct evCollideInstanceStatsData
 		// Start line: 320
 	/* end block 3 */
 	// End Line: 321
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -214,6 +215,7 @@ struct _MonsterIR * MONSENSE_FirstSense(struct _Instance *instance, struct _Inst
 	}
 	return mir;
 #else
+	UNIMPLEMENTED();
 	return NULL;
 #endif
 }
@@ -349,6 +351,8 @@ LABEL_10:
 			mir->mirFlags = v13;
 		}
 	}
+#else
+UNIMPLEMENTED();
 #endif
 }
 
@@ -388,7 +392,7 @@ void MONSENSE_SenseInstance(struct _Instance *instance, struct evCollideInstance
 		// Start line: 735
 	/* end block 2 */
 	// End Line: 736
-
+				UNIMPLEMENTED();
 }
 
 
@@ -421,7 +425,7 @@ void MONSENSE_StartMonsterIRList(struct _Instance *instance)
 		// Start line: 839
 	/* end block 2 */
 	// End Line: 840
-
+				UNIMPLEMENTED();
 }
 
 
@@ -452,7 +456,7 @@ struct _MonsterIR * MONSENSE_GetMonsterIR(struct _MonsterVars *mv)
 		// Start line: 978
 	/* end block 4 */
 	// End Line: 979
-
+			UNIMPLEMENTED();
 	return null;
 }
 
@@ -484,7 +488,7 @@ void MONSENSE_InitIRList(struct _MonsterVars *mv, struct _MonsterIR *list, int n
 		// Start line: 1016
 	/* end block 4 */
 	// End Line: 1017
-
+			UNIMPLEMENTED();
 }
 
 
@@ -515,7 +519,7 @@ struct _MonsterIR * MONSENSE_SetEnemy(struct _Instance *instance, struct _Instan
 		// Start line: 1049
 	/* end block 2 */
 	// End Line: 1050
-
+				UNIMPLEMENTED();
 	return null;
 }
 
@@ -543,7 +547,7 @@ void MONSENSE_ProcessIRList(struct _Instance *instance)
 		// Start line: 1138
 	/* end block 2 */
 	// End Line: 1139
-
+			UNIMPLEMENTED();
 }
 
 
@@ -566,7 +570,7 @@ void MONSENSE_SetupSenses(struct _Instance *instance)
 		// Start line: 1260
 	/* end block 2 */
 	// End Line: 1261
-
+			UNIMPLEMENTED();
 }
 
 
@@ -598,7 +602,7 @@ void MONSENSE_RemoveSenses(struct _Instance *instance)
 		// Start line: 1547
 	/* end block 4 */
 	// End Line: 1548
-
+			UNIMPLEMENTED();
 }
 
 
@@ -623,7 +627,7 @@ void MONSENSE_Radar(struct _Instance *instance)
 		// Start line: 1840
 	/* end block 2 */
 	// End Line: 1841
-
+			UNIMPLEMENTED();
 }
 
 
@@ -646,7 +650,7 @@ short MONSENSE_GetClosestFreeDirection(struct _Instance *instance, short angle, 
 		// Start line: 2013
 	/* end block 2 */
 	// End Line: 2014
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -679,7 +683,7 @@ int MONSENSE_GetDistanceInDirection(struct _Instance *instance, short angle)
 		// Start line: 2098
 	/* end block 4 */
 	// End Line: 2099
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -702,7 +706,7 @@ void MONSENSE_DoSenses(struct _Instance *instance)
 		// Start line: 2119
 	/* end block 2 */
 	// End Line: 2120
-
+			UNIMPLEMENTED();
 }
 
 
@@ -766,7 +770,7 @@ void MONSENSE_AdjustRadarFromObjects(struct _Instance *instance)
 		// Start line: 2195
 	/* end block 3 */
 	// End Line: 2196
-
+							UNIMPLEMENTED();
 }
 
 

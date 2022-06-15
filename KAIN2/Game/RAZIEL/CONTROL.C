@@ -20,6 +20,8 @@ void SetPhysics(struct _Instance *instance, short gravity, long x, long y, long 
 	instance->xVel = x;
 	instance->yVel = y;
 	instance->zVel = z;
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -57,6 +59,8 @@ void ResetPhysics(struct _Instance *instance, short gravity)
 	instance->zVel = 0;
 	instance->xAccl = 0;
 	instance->yAccl = 0;
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -77,6 +81,8 @@ void SetDampingPhysics(struct _Instance *instance, int damping)
 	v3->LinearForce.z = instance->zAccl;
 	v3->Friction = 4096;
 	v3->Type = 0;
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -106,6 +112,8 @@ void SetImpulsePhysics(struct _Instance *instance, struct __Player *player)
 			instance->position.z += instance->offset.z + player->iVelocity.z * dot / len;
 		}
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -123,6 +131,8 @@ void SetDropPhysics(struct _Instance *instance, struct __Player *player)
 	v2->LinearForce.z = -16;
 	v2->Friction = 4096;
 	v2->Type = 0;
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -133,6 +143,8 @@ void __cdecl GetPhysicsVelocity(struct _Instance* instance, SVECTOR* in_pos, SVE
 	MATRIX tp;
 	TransposeMatrix(instance->matrix, &tp);
 	ApplyMatrixSV(&tp, in_pos, out_pos);
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -159,6 +171,8 @@ void InitExternalForces(struct __Force *Forces, int MaxForces)
 		} while (v2);
 	}
 	dword_B08390 = Forces;
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -173,6 +187,8 @@ void SetExternalForce(struct __Force *In, short x, short y, short z, int Space, 
 	In->LinearForce.z = z;
 	In->Friction = Friction;
 	In->Type = (__int16)Space;
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -190,6 +206,8 @@ void SetExternalTransitionForce(struct __Force *in, struct _Instance *instance, 
 	zVel = instance->zVel;
 	in->Friction = time;
 	in->LinearForce.z = (z - zVel) / time;
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -257,6 +275,8 @@ void ProcessPhysics(struct __Player *player, struct __CharacterState *In, int Cu
 			return;
 		}
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -334,6 +354,8 @@ void ApplyExternalLocalForces(struct __Player *player, struct _Instance *instanc
 		} while (v6);
 	}
 	Out->y = -Out->y;
+#else
+	UNIMPLEMENTED();
 #endif
 }
 

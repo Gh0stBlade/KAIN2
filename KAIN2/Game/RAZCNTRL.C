@@ -26,5 +26,7 @@ void ProcessRazControl(long *command)
 		dword_C5517C = v1;
 	if (dword_C55180 > 2)
 		dword_C5517C = 0;
+#else
+	UNIMPLEMENTED();
 #endif
 }

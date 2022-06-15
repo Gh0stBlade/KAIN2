@@ -20,7 +20,7 @@ void PLANAPI_ConvertPlanIntoEnmyPlanDataFormat(struct PlanningNode *goalNode, st
 		// Start line: 262
 	/* end block 2 */
 	// End Line: 263
-
+			UNIMPLEMENTED();
 }
 
 
@@ -42,7 +42,7 @@ int PLANAPI_FindPathBetweenNodes(struct PlanningNode *startNode, struct Planning
 		// Start line: 317
 	/* end block 2 */
 	// End Line: 318
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -73,7 +73,7 @@ void PLANAPI_DoTimingCalcsAndDrawing(long startTime, struct PlanningNode *planni
 		// Start line: 361
 	/* end block 2 */
 	// End Line: 362
-
+			UNIMPLEMENTED();
 }
 
 
@@ -109,7 +109,7 @@ int PLANAPI_AddNodeOfTypeToPool(_Position *pos, int type)
 		// Start line: 552
 	/* end block 2 */
 	// End Line: 553
-
+				UNIMPLEMENTED();
 	return 0;
 }
 
@@ -138,7 +138,7 @@ void PLANAPI_DeleteNodesFromPoolByType(int nodeSource)
 		// Start line: 626
 	/* end block 3 */
 	// End Line: 627
-
+			UNIMPLEMENTED();
 }
 
 
@@ -166,7 +166,7 @@ void PLANAPI_DeleteNodeFromPoolByUnit(long streamUnitID)
 		// Start line: 688
 	/* end block 3 */
 	// End Line: 689
-
+			UNIMPLEMENTED();
 }
 
 
@@ -188,7 +188,7 @@ int PLANAPI_FindPathInGraphToTarget(_Position *startPos, struct EnemyPlanData *p
 		// Start line: 827
 	/* end block 2 */
 	// End Line: 828
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -221,7 +221,7 @@ void PLANAPI_InitPlanning(void *planningPool)
 		// Start line: 885
 	/* end block 4 */
 	// End Line: 886
-
+			UNIMPLEMENTED();
 }
 
 
@@ -253,7 +253,7 @@ short PLANAPI_PairType(struct PlanningNode *node1, struct PlanningNode *node2)
 		// Start line: 969
 	/* end block 4 */
 	// End Line: 970
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -287,7 +287,7 @@ int PLANAPI_PassThroughHit(struct PlanningNode *node1, struct PlanningNode *node
 		// Start line: 1002
 	/* end block 4 */
 	// End Line: 1003
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -311,7 +311,7 @@ int PLANAPI_CheckTargetToEnemyNode(struct PlanningNode **node1, struct PlanningN
 		// Start line: 1048
 	/* end block 2 */
 	// End Line: 1049
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -345,7 +345,7 @@ void PLANAPI_UpdatePlanningDatabase(struct GameTracker *gameTracker, struct _Ins
 		// Start line: 1116
 	/* end block 2 */
 	// End Line: 1117
-
+			UNIMPLEMENTED();
 }
 
 
@@ -362,7 +362,7 @@ int PLANAPI_NumNodesInPool(void *planningPool)
 		// Start line: 1492
 	/* end block 2 */
 	// End Line: 1493
-
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -417,7 +417,7 @@ void PLANAPI_InitPlanMkrList(struct _StreamUnit *streamUnit)
 		// Start line: 1507
 	/* end block 2 */
 	// End Line: 1508
-
+					UNIMPLEMENTED();
 }
 
 
@@ -448,7 +448,7 @@ int PLANAPI_GetFlags(int type)
 		// Start line: 1643
 	/* end block 4 */
 	// End Line: 1644
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -491,7 +491,7 @@ int PLANAPI_FindNodePositionInUnit(struct _StreamUnit *streamUnit, _Position *po
 		// Start line: 1692
 	/* end block 2 */
 	// End Line: 1693
-
+					UNIMPLEMENTED();
 	return 0;
 }
 
@@ -532,7 +532,7 @@ int PLANAPI_FindClosestNodePositionInUnit(struct _StreamUnit *streamUnit, _Posit
 		// Start line: 1749
 	/* end block 2 */
 	// End Line: 1750
-
+				UNIMPLEMENTED();
 	return 0;
 }
 

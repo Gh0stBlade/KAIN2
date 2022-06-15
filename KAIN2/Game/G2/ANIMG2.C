@@ -149,7 +149,7 @@ void G2Anim_Free(struct _G2Anim_Type *anim)
 		// Start line: 1048
 	/* end block 2 */
 	// End Line: 1049
-
+	UNIMPLEMENTED();
 }
 
 
@@ -171,7 +171,7 @@ void G2Anim_Restore(struct _G2Anim_Type *anim)
 		// Start line: 1162
 	/* end block 2 */
 	// End Line: 1163
-
+	UNIMPLEMENTED();
 }
 
 
@@ -221,7 +221,7 @@ void G2Anim_BuildTransforms(struct _G2Anim_Type *anim)
 		// Start line: 1238
 	/* end block 2 */
 	// End Line: 1239
-
+	UNIMPLEMENTED();
 }
 
 
@@ -256,7 +256,7 @@ void G2Anim_UpdateStoredFrame(struct _G2Anim_Type *anim)
 		// Start line: 1353
 	/* end block 2 */
 	// End Line: 1354
-
+	UNIMPLEMENTED();
 }
 
 
@@ -296,7 +296,7 @@ struct _G2AnimSection_Type * G2Anim_GetSectionWithSeg(struct _G2Anim_Type *anim,
 		// Start line: 1574
 	/* end block 5 */
 	// End Line: 1575
-
+	UNIMPLEMENTED();
 	return null;
 }
 
@@ -324,6 +324,7 @@ enum _G2Bool_Enum G2Anim_SegmentHasActiveChannels(struct _G2Anim_Type *anim, int
 	/* end block 2 */
 	// End Line: 1651
 
+	UNIMPLEMENTED();
 	return (_G2Bool_Enum)0;
 }
 
@@ -362,7 +363,7 @@ void G2Anim_GetSegChannelValue(struct _G2Anim_Type *anim, int segIndex, unsigned
 		// Start line: 1902
 	/* end block 2 */
 	// End Line: 1903
-
+	UNIMPLEMENTED();
 }
 
 void G2Anim_GetRootMotionFromTimeForDuration(struct _G2Anim_Type *anim, short durationStart, short duration, struct _G2SVector3_Type *motionVector)
@@ -605,6 +606,7 @@ void G2Anim_GetRootMotionFromTimeForDuration(struct _G2Anim_Type *anim, short du
 		jr      $ra
 		addiu   $sp, 0xE8
 #endif
+		UNIMPLEMENTED();
 }
 
 void G2AnimSection_SwitchToKeylistAtTime(struct _G2AnimSection_Type *section, struct _G2AnimKeylist_Type *keylist, int keylistID, short targetTime)
@@ -745,7 +747,7 @@ short G2AnimSection_UpdateOverInterval(struct _G2AnimSection_Type *section, shor
 		// Start line: 2725
 	/* end block 2 */
 	// End Line: 2726
-
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -801,7 +803,7 @@ short G2AnimSection_AdvanceOverInterval(struct _G2AnimSection_Type *section, sho
 		// Start line: 2959
 	/* end block 2 */
 	// End Line: 2960
-
+					UNIMPLEMENTED();
 	return 0;
 }
 
@@ -853,7 +855,7 @@ short G2AnimSection_RewindOverInterval(struct _G2AnimSection_Type *section, shor
 		// Start line: 3631
 	/* end block 2 */
 	// End Line: 3632
-
+					UNIMPLEMENTED();
 	return 0;
 }
 
@@ -883,7 +885,7 @@ void _G2Anim_BuildTransformsNoControllers(struct _G2Anim_Type *anim)
 		// Start line: 4114
 	/* end block 2 */
 	// End Line: 4115
-
+			UNIMPLEMENTED();
 }
 
 
@@ -915,7 +917,7 @@ void _G2Anim_BuildSegTransformNoControllers(struct _G2Matrix_Type *segMatrix, st
 		// Start line: 4369
 	/* end block 2 */
 	// End Line: 4370
-
+				UNIMPLEMENTED();
 }
 
 
@@ -957,7 +959,7 @@ void _G2Anim_BuildSegLocalRotMatrix(struct _G2AnimSegValue_Type *segValue, struc
 		// Start line: 4616
 	/* end block 2 */
 	// End Line: 4617
-
+					UNIMPLEMENTED();
 }
 
 
@@ -965,6 +967,9 @@ void _G2Anim_BuildSegLocalRotMatrix(struct _G2AnimSegValue_Type *segValue, struc
 // void /*$ra*/ wombat(unsigned char *segKeyList /*$a0*/, int flagBitOffset /*$a1*/, struct _G2AnimSegKeyflagInfo_Type *kfInfo /*$a2*/)
 void wombat(unsigned char *segKeyList, int flagBitOffset, struct _G2AnimSegKeyflagInfo_Type *kfInfo)
 { // line 2113, offset 0x80094288
+#if defined(PSX_VERSION)
+	UNIMPLEMENTED();
+#elif defined(PC_VERSION)
 	ulong* v3; // esi
 	ulong v4; // eax
 
@@ -973,6 +978,7 @@ void wombat(unsigned char *segKeyList, int flagBitOffset, struct _G2AnimSegKeyfl
 	v4 = *v3 >> (flagBitOffset - 32 * (flagBitOffset >> 5));
 	kfInfo->bitCount = 32 - (flagBitOffset & 0x1F);
 	kfInfo->flags = v4;
+#endif
 }
 
 
@@ -980,6 +986,14 @@ void wombat(unsigned char *segKeyList, int flagBitOffset, struct _G2AnimSegKeyfl
 // unsigned long /*$ra*/ kangaroo(struct _G2AnimSegKeyflagInfo_Type *kfInfo /*$a0*/)
 unsigned long kangaroo(struct _G2AnimSegKeyflagInfo_Type *kfInfo)
 { // line 2129, offset 0x800942c0
+
+#if defined(PSX_VERSION)
+	UNIMPLEMENTED();
+
+	return 0;
+
+#elif defined(PC_VERSION)
+
 	ulong* stream; // esi
 	ulong flags; // ecx
 	int v3; // edi
@@ -1007,6 +1021,7 @@ unsigned long kangaroo(struct _G2AnimSegKeyflagInfo_Type *kfInfo)
 		kfInfo->bitCount = v3 + 32;
 	}
 	return result;
+#endif
 }
 
 
@@ -1066,6 +1081,7 @@ void _G2Anim_InitializeSegValue(struct _G2Anim_Type *anim, struct _G2AnimSegValu
 	/* end block 3 */
 	// End Line: 4841
 
+	UNIMPLEMENTED();
 }
 
 
@@ -1120,7 +1136,7 @@ void _G2AnimSection_InitStatus(struct _G2AnimSection_Type *section, struct _G2An
 		// Start line: 4952
 	/* end block 2 */
 	// End Line: 4953
-
+	UNIMPLEMENTED();
 }
 
 
@@ -1178,7 +1194,7 @@ void FooBar(struct _G2AnimSection_Type *section, struct _G2Anim_Type *anim, int 
 		// Start line: 5213
 	/* end block 2 */
 	// End Line: 5214
-
+	UNIMPLEMENTED();
 }
 
 void _G2AnimSection_UpdateStoredFrameFromData(struct _G2AnimSection_Type *section, struct _G2Anim_Type *anim)
@@ -1220,7 +1236,9 @@ struct _G2Anim_Type* _G2AnimSection_GetAnim(struct _G2AnimSection_Type *section)
 // void /*$ra*/ _G2AnimSection_TriggerEffects(struct _G2AnimSection_Type *section /*$s1*/, short startTime /*$a1*/, short endTime /*$a2*/)
 void _G2AnimSection_TriggerEffects(struct _G2AnimSection_Type *section, short startTime, short endTime)
 { // line 2576, offset 0x80094bc0
-#if defined(PC_VERSION)
+#if defined(PSX_VERSION)
+	UNIMPLEMENTED();
+#elif defined(PC_VERSION)
 	struct _G2AnimFxHeader_Type* fxHeader; // esi
 	signed __int8 i; // dl
 	int sectionID; // ecx
@@ -1281,7 +1299,7 @@ void _G2Anim_FreeChanStatusBlockList(struct _G2AnimChanStatusBlock_Type *block)
 		// Start line: 5825
 	/* end block 2 */
 	// End Line: 5826
-
+			UNIMPLEMENTED();
 }
 
 long _G2AnimAlphaTable_GetValue(struct _G2AnimAlphaTable_Type *table, long trueAlpha)

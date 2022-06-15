@@ -29,7 +29,7 @@ void aadSubstituteVariables(struct AadSeqEvent *event, struct _AadSequenceSlot *
 		// Start line: 50
 	/* end block 4 */
 	// End Line: 51
-
+			UNIMPLEMENTED();
 }
 
 
@@ -43,6 +43,8 @@ void metaCmdSelectChannel(struct AadSeqEvent *event, struct _AadSequenceSlot *sl
 	v2 = event->dataByte[0];
 	if (v2 < 16)
 		slot->selectedChannel = v2;
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -70,6 +72,8 @@ void metaCmdSelectSlot(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 		slot->selectedSlotPtr = aadMem->sequenceSlots[v2];
 		slot->selectedSlotNum = v2;
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -86,6 +90,8 @@ void metaCmdAssignSequence(struct AadSeqEvent *event, struct _AadSequenceSlot *s
 	v3 = event->dataByte[0];
 	if (aadMem->dynamicBankStatus[selectedDynamicBank] == 2 && v3 < aadGetNumDynamicSequences(slot->selectedDynamicBank))
 		aadAssignDynamicSequence(selectedDynamicBank, v3, slot->selectedSlotNum);
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -94,6 +100,7 @@ void metaCmdAssignSequence(struct AadSeqEvent *event, struct _AadSequenceSlot *s
 // void /*$ra*/ metaCmdUsePrimaryTempo(struct AadSeqEvent *event /*$a0*/, struct _AadSequenceSlot *slot /*$a1*/)
 void metaCmdUsePrimaryTempo(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 { // line 110, offset 0x80055ac4
+	UNIMPLEMENTED();
 }
 
 
@@ -101,6 +108,7 @@ void metaCmdUsePrimaryTempo(struct AadSeqEvent *event, struct _AadSequenceSlot *
 // void /*$ra*/ metaCmdUseSecondaryTempo(struct AadSeqEvent *event /*$a0*/, struct _AadSequenceSlot *slot /*$a1*/)
 void metaCmdUseSecondaryTempo(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 { // line 117, offset 0x80055acc
+	UNIMPLEMENTED();
 }
 
 
@@ -120,6 +128,8 @@ void metaCmdSetTempo(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 	else
 		ppqn = 480;
 	aadSetSlotTempo(slot->selectedSlotNum, &v3);
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -138,6 +148,8 @@ void metaCmdChangeTempo(struct AadSeqEvent *event, struct _AadSequenceSlot *slot
 	v4[0] = 100 * selectedSlotPtr->tempo.quarterNoteTime / event->dataByte[0];
 	v4[1] = selectedSlotPtr->tempo.ppqn;
 	aadSetSlotTempo(selectedSlotNum, v4);
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -158,6 +170,8 @@ void metaCmdSetTempoFromSequence(struct AadSeqEvent *event, struct _AadSequenceS
 		aadGetTempoFromDynamicSequence(selectedDynamicBank, v3, v4);
 		aadSetSlotTempo(slot->selectedSlotNum, v4);
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -168,6 +182,8 @@ void metaCmdStartSlot(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 { // line 185, offset 0x80055c44
 #if defined(PC_VERSION)
 	aadStartSlot(slot->selectedSlotNum);
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -178,6 +194,8 @@ void metaCmdStopSlot(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 { // line 192, offset 0x80055c68
 #if defined(PC_VERSION)
 	aadStopSlot(slot->selectedSlotNum);
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -188,6 +206,8 @@ void metaCmdPauseSlot(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 { // line 199, offset 0x80055c8c
 #if defined(PC_VERSION)
 	aadPauseSlot(slot->selectedSlotNum);
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -198,6 +218,8 @@ void metaCmdResumeSlot(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 { // line 206, offset 0x80055cb0
 #if defined(PC_VERSION)
 	aadResumeSlot(slot->selectedSlotNum);
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -206,6 +228,7 @@ void metaCmdResumeSlot(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 // void /*$ra*/ metaCmdSetSlotBendRange(struct AadSeqEvent *event /*$a0*/, struct _AadSequenceSlot *slot /*$a1*/)
 void metaCmdSetSlotBendRange(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 { // line 213, offset 0x80055cd4
+	UNIMPLEMENTED();
 }
 
 
@@ -213,6 +236,7 @@ void metaCmdSetSlotBendRange(struct AadSeqEvent *event, struct _AadSequenceSlot 
 // void /*$ra*/ metaCmdSetChannelBendRange(struct AadSeqEvent *event /*$a0*/, struct _AadSequenceSlot *slot /*$a1*/)
 void metaCmdSetChannelBendRange(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 { // line 226, offset 0x80055cdc
+	UNIMPLEMENTED();
 }
 
 
@@ -223,6 +247,8 @@ void metaCmdSetSlotVolume(struct AadSeqEvent *event, struct _AadSequenceSlot *sl
 #if defined(PC_VERSION)
 	slot->selectedSlotPtr->slotVolume = event->dataByte[0];
 	aadUpdateSlotVolPan((int)slot->selectedSlotPtr, (int)slot->selectedSlotPtr);
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -234,6 +260,8 @@ void metaCmdSetSlotPan(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 #if defined(PC_VERSION)
 	slot->selectedSlotPtr->slotPan = event->dataByte[0];
 	aadUpdateSlotVolPan((int)slot->selectedSlotPtr, (int)slot->selectedSlotPtr);
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -245,6 +273,8 @@ void metaCmdSetChannelVolume(struct AadSeqEvent *event, struct _AadSequenceSlot 
 #if defined(PC_VERSION)
 	slot->selectedSlotPtr->volume[slot->selectedChannel] = event->dataByte[0];
 	aadUpdateChannelVolPan(slot->selectedSlotPtr, slot->selectedChannel);
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -256,6 +286,8 @@ void metaCmdSetChannelPan(struct AadSeqEvent *event, struct _AadSequenceSlot *sl
 #if defined(PC_VERSION)
 	slot->selectedSlotPtr->panPosition[slot->selectedChannel] = event->dataByte[0];
 	aadUpdateChannelVolPan(slot->selectedSlotPtr, slot->selectedChannel);
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -266,6 +298,8 @@ void metaCmdEnableSustainUpdate(struct AadSeqEvent *event, struct _AadSequenceSl
 { // line 280, offset 0x80055dc4
 #if defined(PC_VERSION)
 	slot->selectedSlotPtr->enableSustainUpdate |= 1 << slot->selectedChannel;
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -276,6 +310,8 @@ void metaCmdDisableSustainUpdate(struct AadSeqEvent *event, struct _AadSequenceS
 { // line 290, offset 0x80055de4
 #if defined(PC_VERSION)
 	slot->selectedSlotPtr->enableSustainUpdate &= ~(1 << slot->selectedChannel);
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -286,6 +322,8 @@ void metaCmdMuteChannel(struct AadSeqEvent *event, struct _AadSequenceSlot *slot
 { // line 300, offset 0x80055e08
 #if defined(PC_VERSION)
 	aadMuteChannels(slot->selectedSlotPtr, 1 << slot->selectedChannel);
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -296,6 +334,8 @@ void metaCmdUnMuteChannel(struct AadSeqEvent *event, struct _AadSequenceSlot *sl
 { // line 310, offset 0x80055e34
 #if defined(PC_VERSION)
 	aadUnMuteChannels(slot->selectedSlotPtr, 1 << slot->selectedChannel);
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -306,6 +346,8 @@ void metaCmdMuteChannelList(struct AadSeqEvent *event, struct _AadSequenceSlot *
 { // line 320, offset 0x80055e60
 #if defined(PC_VERSION)
 	aadMuteChannels(slot->selectedSlotPtr, event->dataByte[0] | (event->dataByte[1] << 8));
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -316,6 +358,8 @@ void metaCmdUnMuteChannelList(struct AadSeqEvent *event, struct _AadSequenceSlot
 { // line 330, offset 0x80055e90
 #if defined(PC_VERSION)
 	aadUnMuteChannels(slot->selectedSlotPtr, (event->dataByte[1] << 8) | event->dataByte[0]);
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -330,6 +374,8 @@ void metaCmdSetChannelMute(struct AadSeqEvent *event, struct _AadSequenceSlot *s
 	v2 = (event->dataByte[1] << 8) | event->dataByte[0];
 	aadUnMuteChannels(slot->selectedSlotPtr, ~v2);
 	aadMuteChannels(slot->selectedSlotPtr, v2);
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -361,7 +407,7 @@ void metaCmdDelayMute(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 		// Start line: 736
 	/* end block 4 */
 	// End Line: 737
-
+			UNIMPLEMENTED();
 }
 
 
@@ -383,7 +429,7 @@ void metaCmdUpdateMute(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 		// Start line: 763
 	/* end block 2 */
 	// End Line: 764
-
+			UNIMPLEMENTED();
 }
 
 
@@ -400,7 +446,7 @@ void metaCmdChannelVolumeFade(struct AadSeqEvent *event, struct _AadSequenceSlot
 		// Start line: 809
 	/* end block 2 */
 	// End Line: 810
-
+	UNIMPLEMENTED();
 }
 
 
@@ -417,7 +463,7 @@ void metaCmdChannelPanFade(struct AadSeqEvent *event, struct _AadSequenceSlot *s
 		// Start line: 837
 	/* end block 2 */
 	// End Line: 838
-
+	UNIMPLEMENTED();
 }
 
 
@@ -434,7 +480,7 @@ void metaCmdSlotVolumeFade(struct AadSeqEvent *event, struct _AadSequenceSlot *s
 		// Start line: 864
 	/* end block 2 */
 	// End Line: 865
-
+	UNIMPLEMENTED();
 }
 
 
@@ -451,7 +497,7 @@ void metaCmdSlotPanFade(struct AadSeqEvent *event, struct _AadSequenceSlot *slot
 		// Start line: 890
 	/* end block 2 */
 	// End Line: 891
-
+	UNIMPLEMENTED();
 }
 
 
@@ -482,7 +528,7 @@ void metaCmdSetChannelProgram(struct AadSeqEvent *event, struct _AadSequenceSlot
 		// Start line: 911
 	/* end block 4 */
 	// End Line: 912
-
+			UNIMPLEMENTED();
 }
 
 
@@ -499,7 +545,7 @@ void metaCmdSetChannelBasePriority(struct AadSeqEvent *event, struct _AadSequenc
 		// Start line: 948
 	/* end block 2 */
 	// End Line: 949
-
+	UNIMPLEMENTED();
 }
 
 
@@ -531,7 +577,7 @@ void metaCmdSetChannelTranspose(struct AadSeqEvent *event, struct _AadSequenceSl
 		// Start line: 979
 	/* end block 4 */
 	// End Line: 980
-
+			UNIMPLEMENTED();
 }
 
 
@@ -562,7 +608,7 @@ void metaCmdIgnoreChannelTranspose(struct AadSeqEvent *event, struct _AadSequenc
 		// Start line: 1003
 	/* end block 4 */
 	// End Line: 1004
-
+			UNIMPLEMENTED();
 }
 
 
@@ -593,7 +639,7 @@ void metaCmdRespectChannelTranspose(struct AadSeqEvent *event, struct _AadSequen
 		// Start line: 1024
 	/* end block 4 */
 	// End Line: 1025
-
+			UNIMPLEMENTED();
 }
 
 
@@ -610,7 +656,7 @@ void metaCmdSetChannelPitchMap(struct AadSeqEvent *event, struct _AadSequenceSlo
 		// Start line: 1052
 	/* end block 2 */
 	// End Line: 1053
-
+	UNIMPLEMENTED();
 }
 
 
@@ -627,7 +673,7 @@ void metaCmdIgnoreChannelPitchMap(struct AadSeqEvent *event, struct _AadSequence
 		// Start line: 1079
 	/* end block 2 */
 	// End Line: 1080
-
+	UNIMPLEMENTED();
 }
 
 
@@ -644,7 +690,7 @@ void metaCmdRespectChannelPitchMap(struct AadSeqEvent *event, struct _AadSequenc
 		// Start line: 1103
 	/* end block 2 */
 	// End Line: 1104
-
+	UNIMPLEMENTED();
 }
 
 
@@ -675,7 +721,7 @@ void metaCmdGetSequenceAssigned(struct AadSeqEvent *event, struct _AadSequenceSl
 		// Start line: 1122
 	/* end block 4 */
 	// End Line: 1123
-
+			UNIMPLEMENTED();
 }
 
 
@@ -709,7 +755,7 @@ void metaCmdGetTempo(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 		// Start line: 1147
 	/* end block 4 */
 	// End Line: 1148
-
+			UNIMPLEMENTED();
 }
 
 
@@ -740,7 +786,7 @@ void metaCmdGetSlotStatus(struct AadSeqEvent *event, struct _AadSequenceSlot *sl
 		// Start line: 1189
 	/* end block 4 */
 	// End Line: 1190
-
+			UNIMPLEMENTED();
 }
 
 
@@ -772,7 +818,7 @@ void metaCmdGetChannelMute(struct AadSeqEvent *event, struct _AadSequenceSlot *s
 		// Start line: 1213
 	/* end block 4 */
 	// End Line: 1214
-
+			UNIMPLEMENTED();
 }
 
 
@@ -804,7 +850,7 @@ void metaCmdGetChannelVolume(struct AadSeqEvent *event, struct _AadSequenceSlot 
 		// Start line: 1245
 	/* end block 4 */
 	// End Line: 1246
-
+			UNIMPLEMENTED();
 }
 
 
@@ -836,7 +882,7 @@ void metaCmdGetChannelPan(struct AadSeqEvent *event, struct _AadSequenceSlot *sl
 		// Start line: 1271
 	/* end block 4 */
 	// End Line: 1272
-
+			UNIMPLEMENTED();
 }
 
 
@@ -853,7 +899,7 @@ void metaCmdGetChannelTranspose(struct AadSeqEvent *event, struct _AadSequenceSl
 		// Start line: 1302
 	/* end block 2 */
 	// End Line: 1303
-
+	UNIMPLEMENTED();
 }
 
 
@@ -885,7 +931,7 @@ void metaCmdGetChannelProgram(struct AadSeqEvent *event, struct _AadSequenceSlot
 		// Start line: 1323
 	/* end block 4 */
 	// End Line: 1324
-
+			UNIMPLEMENTED();
 }
 
 
@@ -902,7 +948,7 @@ void metaCmdGetChannelBasePriority(struct AadSeqEvent *event, struct _AadSequenc
 		// Start line: 1361
 	/* end block 2 */
 	// End Line: 1362
-
+	UNIMPLEMENTED();
 }
 
 
@@ -919,7 +965,7 @@ void metaCmdGetChannelBendRange(struct AadSeqEvent *event, struct _AadSequenceSl
 		// Start line: 1395
 	/* end block 2 */
 	// End Line: 1396
-
+	UNIMPLEMENTED();
 }
 
 
@@ -950,7 +996,7 @@ void metaCmdGetSlotVolume(struct AadSeqEvent *event, struct _AadSequenceSlot *sl
 		// Start line: 1415
 	/* end block 4 */
 	// End Line: 1416
-
+			UNIMPLEMENTED();
 }
 
 
@@ -981,7 +1027,7 @@ void metaCmdGetSlotPan(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 		// Start line: 1439
 	/* end block 4 */
 	// End Line: 1440
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1013,7 +1059,7 @@ void metaCmdSetVariable(struct AadSeqEvent *event, struct _AadSequenceSlot *slot
 		// Start line: 1462
 	/* end block 4 */
 	// End Line: 1463
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1045,7 +1091,7 @@ void metaCmdCopyVariable(struct AadSeqEvent *event, struct _AadSequenceSlot *slo
 		// Start line: 1486
 	/* end block 4 */
 	// End Line: 1487
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1077,7 +1123,7 @@ void metaCmdAddVariable(struct AadSeqEvent *event, struct _AadSequenceSlot *slot
 		// Start line: 1513
 	/* end block 4 */
 	// End Line: 1514
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1109,7 +1155,7 @@ void metaCmdSubtractVariable(struct AadSeqEvent *event, struct _AadSequenceSlot 
 		// Start line: 1538
 	/* end block 4 */
 	// End Line: 1539
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1141,7 +1187,7 @@ void metaCmdSetVariableBits(struct AadSeqEvent *event, struct _AadSequenceSlot *
 		// Start line: 1563
 	/* end block 4 */
 	// End Line: 1564
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1173,7 +1219,7 @@ void metaCmdClearVariableBits(struct AadSeqEvent *event, struct _AadSequenceSlot
 		// Start line: 1588
 	/* end block 4 */
 	// End Line: 1589
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1190,7 +1236,7 @@ void aadGotoSequencePosition(struct _AadSequenceSlot *slot, int track, unsigned 
 		// Start line: 1611
 	/* end block 2 */
 	// End Line: 1612
-
+	UNIMPLEMENTED();
 }
 
 
@@ -1213,7 +1259,7 @@ void aadGotoSequenceLabel(struct _AadSequenceSlot *slot, int track, int labelNum
 		// Start line: 1656
 	/* end block 2 */
 	// End Line: 1657
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1245,7 +1291,7 @@ void metaCmdLoopStart(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 		// Start line: 1758
 	/* end block 4 */
 	// End Line: 1759
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1267,7 +1313,7 @@ void metaCmdLoopEnd(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 		// Start line: 1798
 	/* end block 2 */
 	// End Line: 1799
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1284,7 +1330,7 @@ void metaCmdLoopBreak(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 		// Start line: 1857
 	/* end block 2 */
 	// End Line: 1858
-
+	UNIMPLEMENTED();
 }
 
 
@@ -1301,7 +1347,7 @@ void metaCmdDefineLabel(struct AadSeqEvent *event, struct _AadSequenceSlot *slot
 		// Start line: 1875
 	/* end block 2 */
 	// End Line: 1876
-
+	UNIMPLEMENTED();
 }
 
 
@@ -1320,7 +1366,7 @@ void metaCmdGotoLabel(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 		// Start line: 1890
 	/* end block 2 */
 	// End Line: 1891
-
+	UNIMPLEMENTED();
 }
 
 
@@ -1339,7 +1385,7 @@ void metaCmdSetSequencePosition(struct AadSeqEvent *event, struct _AadSequenceSl
 		// Start line: 1914
 	/* end block 2 */
 	// End Line: 1915
-
+	UNIMPLEMENTED();
 }
 
 
@@ -1362,7 +1408,7 @@ void metaCmdBranchIfVarEqual(struct AadSeqEvent *event, struct _AadSequenceSlot 
 		// Start line: 1934
 	/* end block 2 */
 	// End Line: 1935
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1385,7 +1431,7 @@ void metaCmdBranchIfVarNotEqual(struct AadSeqEvent *event, struct _AadSequenceSl
 		// Start line: 1974
 	/* end block 2 */
 	// End Line: 1975
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1408,7 +1454,7 @@ void metaCmdBranchIfVarLess(struct AadSeqEvent *event, struct _AadSequenceSlot *
 		// Start line: 2014
 	/* end block 2 */
 	// End Line: 2015
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1431,7 +1477,7 @@ void metaCmdBranchIfVarGreater(struct AadSeqEvent *event, struct _AadSequenceSlo
 		// Start line: 2054
 	/* end block 2 */
 	// End Line: 2055
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1454,7 +1500,7 @@ void metaCmdBranchIfVarLessOrEqual(struct AadSeqEvent *event, struct _AadSequenc
 		// Start line: 2094
 	/* end block 2 */
 	// End Line: 2095
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1477,7 +1523,7 @@ void metaCmdBranchIfVarGreaterOrEqual(struct AadSeqEvent *event, struct _AadSequ
 		// Start line: 2134
 	/* end block 2 */
 	// End Line: 2135
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1500,7 +1546,7 @@ void metaCmdBranchIfVarBitsSet(struct AadSeqEvent *event, struct _AadSequenceSlo
 		// Start line: 2174
 	/* end block 2 */
 	// End Line: 2175
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1523,7 +1569,7 @@ void metaCmdBranchIfVarBitsClear(struct AadSeqEvent *event, struct _AadSequenceS
 		// Start line: 2209
 	/* end block 2 */
 	// End Line: 2210
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1540,7 +1586,7 @@ void metaCmdSubstituteVariableParam1(struct AadSeqEvent *event, struct _AadSeque
 		// Start line: 2245
 	/* end block 2 */
 	// End Line: 2246
-
+	UNIMPLEMENTED();
 }
 
 
@@ -1557,7 +1603,7 @@ void metaCmdSubstituteVariableParam2(struct AadSeqEvent *event, struct _AadSeque
 		// Start line: 2259
 	/* end block 2 */
 	// End Line: 2260
-
+	UNIMPLEMENTED();
 }
 
 
@@ -1574,7 +1620,7 @@ void metaCmdSubstituteVariableParam3(struct AadSeqEvent *event, struct _AadSeque
 		// Start line: 2273
 	/* end block 2 */
 	// End Line: 2274
-
+	UNIMPLEMENTED();
 }
 
 
@@ -1586,7 +1632,7 @@ void metaCmdEndSequence(struct AadSeqEvent *event, struct _AadSequenceSlot *slot
 		// Start line: 2284
 	/* end block 1 */
 	// End Line: 2285
-
+	UNIMPLEMENTED();
 }
 
 
@@ -1603,7 +1649,7 @@ void metaCmdPlaySoundEffect(struct AadSeqEvent *event, struct _AadSequenceSlot *
 		// Start line: 2521
 	/* end block 2 */
 	// End Line: 2522
-
+	UNIMPLEMENTED();
 }
 
 
@@ -1620,7 +1666,7 @@ void metaCmdStopSoundEffect(struct AadSeqEvent *event, struct _AadSequenceSlot *
 		// Start line: 2527
 	/* end block 2 */
 	// End Line: 2528
-
+	UNIMPLEMENTED();
 }
 
 
@@ -1637,7 +1683,7 @@ void metaCmdSetSoundEffectVolumePan(struct AadSeqEvent *event, struct _AadSequen
 		// Start line: 2533
 	/* end block 2 */
 	// End Line: 2534
-
+	UNIMPLEMENTED();
 }
 
 

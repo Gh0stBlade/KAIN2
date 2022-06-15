@@ -10,7 +10,7 @@ void mcassert(char *exp, char *file, long line)
 		// Start line: 20
 	/* end block 1 */
 	// End Line: 21
-
+	UNIMPLEMENTED();
 }
 
 

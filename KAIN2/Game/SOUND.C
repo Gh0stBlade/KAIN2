@@ -65,6 +65,8 @@ void SndCloseSfxChannel(int channelNum)
 #if defined(PC_VERSION)
 	if (channelNum < 16)
 		soundEffectChannelTbl[channelNum].inUse = 0;
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -78,6 +80,7 @@ struct SoundEffectChannel * SndGetSfxChannel(int channelNum)
 		return 0;
 	else return &soundEffectChannelTbl[channelNum];
 #else
+	UNIMPLEMENTED();
 	return NULL;
 #endif
 }
@@ -134,6 +137,8 @@ void SOUND_ProcessInstanceSounds(unsigned char *sfxFileData, struct SoundInstanc
 			}
 		}
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -208,6 +213,8 @@ void SOUND_EndInstanceSounds(unsigned char *sfxFileData, struct SoundInstance *s
 			}
 		}
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -246,6 +253,7 @@ int isOkayToPlaySound(int flags, int spectralPlane, int hidden, int burning)
 		&& ((flags & 0x80u) == 0 || burning);
 	return result;
 #else
+	UNIMPLEMENTED();
 	return NULL;
 #endif
 }
@@ -268,6 +276,8 @@ void setPeriodicSoundStateOff(struct SoundInstance *soundInst, struct ObjectPeri
 		offTimeVariation = sound->offTimeVariation;
 		soundInst->delay += offTimeVariation - rand() % (2 * offTimeVariation);
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -562,6 +572,8 @@ LABEL_68:
 			}
 		}
 	}
+#else
+UNIMPLEMENTED();
 #endif
 }
 
@@ -759,6 +771,8 @@ void processEventSound(_Position *position, struct SoundInstance *soundInst, str
 			}
 		}
 	}
+#else
+UNIMPLEMENTED();
 #endif
 }
 
@@ -767,8 +781,12 @@ void processEventSound(_Position *position, struct SoundInstance *soundInst, str
 // void /*$ra*/ SOUND_StartInstanceSound(struct SoundInstance *soundInst /*$a0*/)
 void SOUND_StartInstanceSound(struct SoundInstance *soundInst)
 { // line 566, offset 0x8003f3bc
+#if defined(PC_VERSION)
 	if ((soundInst->state & 0xF) == 1)
 		soundInst->state = 2;
+#else
+	UNIMPLEMENTED();
+#endif
 }
 
 
@@ -791,6 +809,8 @@ void SOUND_StopInstanceSound(struct SoundInstance *soundInst)
 		soundInst->channel = -1;
 	}
 	soundInst->state = 1;
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -855,6 +875,7 @@ int SOUND_IsInstanceSoundLoaded(unsigned char *sfxFileData, long soundNumber)
 	}
 	return 0;
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 
@@ -865,6 +886,7 @@ int SOUND_IsInstanceSoundLoaded(unsigned char *sfxFileData, long soundNumber)
 // void /*$ra*/ SOUND_SetInstanceSoundPitch(struct SoundInstance *soundInst /*$a0*/, long pitchChangeAmt /*$s1*/, long time /*$s0*/)
 void SOUND_SetInstanceSoundPitch(struct SoundInstance *soundInst, long pitchChangeAmt, long time)
 { // line 665, offset 0x8003f534
+#if defined(PC_VERSION)
 	WORD* v3; // ecx
 	int v4; // esi
 	bool v5; // zf
@@ -901,6 +923,9 @@ void SOUND_SetInstanceSoundPitch(struct SoundInstance *soundInst, long pitchChan
 			}
 		}
 	}
+#else
+	UNIMPLEMENTED();
+#endif
 }
 
 
@@ -962,6 +987,8 @@ void SOUND_SetInstanceSoundVolume(struct SoundInstance *soundInst, long volumeCh
 			}
 		}
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -987,7 +1014,7 @@ void processOneShotSound(_Position *position, int hidden, int burning, long *tri
 		// Start line: 1482
 	/* end block 2 */
 	// End Line: 1483
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1078,6 +1105,7 @@ unsigned long SOUND_Play3dSound(_Position *position, int sfxToneID, int pitch, i
 		}
 	}
 #endif
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1108,7 +1136,7 @@ unsigned long SOUND_Update3dSound(_Position *position, unsigned long handle, int
 		// Start line: 2084
 	/* end block 2 */
 	// End Line: 2085
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1126,7 +1154,7 @@ void SOUND_HandleGlobalValueSignal(int name, long data)
 		// Start line: 2314
 	/* end block 2 */
 	// End Line: 2315
-
+	UNIMPLEMENTED();
 }
 
 void SOUND_Init()
@@ -1195,7 +1223,7 @@ void SOUND_Free()
 		// Start line: 2571
 	/* end block 1 */
 	// End Line: 2572
-
+	UNIMPLEMENTED();
 }
 
 
@@ -1207,7 +1235,7 @@ void SOUND_SetMusicVariable(int variable, int value)
 		// Start line: 2456
 	/* end block 1 */
 	// End Line: 2457
-
+	UNIMPLEMENTED();
 }
 
 void SOUND_SetMusicVolume(int newVolume)
@@ -1258,7 +1286,7 @@ void SOUND_PauseAllSound()
 		// Start line: 2664
 	/* end block 2 */
 	// End Line: 2665
-
+	UNIMPLEMENTED();
 }
 
 
@@ -1275,7 +1303,7 @@ void SOUND_ResumeAllSound()
 		// Start line: 2683
 	/* end block 2 */
 	// End Line: 2684
-
+	UNIMPLEMENTED();
 }
 
 void SOUND_StopAllSound()
@@ -1304,6 +1332,7 @@ void SOUND_ResetAllSound()
 	/* end block 2 */
 	// End Line: 2726
 
+	UNIMPLEMENTED();
 }
 
 void SOUND_MusicOff()
@@ -1341,7 +1370,7 @@ void SOUND_MusicOn()
 		// Start line: 2795
 	/* end block 2 */
 	// End Line: 2796
-
+			UNIMPLEMENTED();
 }
 
 void SOUND_SfxOff()
@@ -1362,7 +1391,7 @@ int SndIsPlaying(unsigned long handle)
 		// Start line: 2722
 	/* end block 1 */
 	// End Line: 2723
-
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1375,7 +1404,7 @@ int SndIsPlayingOrRequested(unsigned long handle)
 		// Start line: 2863
 	/* end block 1 */
 	// End Line: 2864
-
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1388,7 +1417,7 @@ int SndTypeIsPlayingOrRequested(unsigned int sfxToneID)
 		// Start line: 2752
 	/* end block 1 */
 	// End Line: 2753
-
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1416,7 +1445,7 @@ void SndEndLoop(unsigned long handle)
 		// Start line: 2905
 	/* end block 2 */
 	// End Line: 2906
-
+	UNIMPLEMENTED();
 }
 
 
@@ -1440,7 +1469,7 @@ unsigned long SndPlayVolPan(unsigned int sample, unsigned short vol, unsigned sh
 		// Start line: 2918
 	/* end block 3 */
 	// End Line: 2919
-
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1453,7 +1482,7 @@ unsigned long SndUpdateVolPanPitch(unsigned long handle, unsigned short vol, uns
 		// Start line: 2842
 	/* end block 1 */
 	// End Line: 2843
-
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1471,7 +1500,7 @@ void musicLoadReturnFunc(int dynamicBankIndex, int errorStatus)
 		// Start line: 3021
 	/* end block 2 */
 	// End Line: 3022
-
+	UNIMPLEMENTED();
 }
 
 
@@ -1488,7 +1517,7 @@ void musicFadeoutReturnFunc()
 		// Start line: 3035
 	/* end block 2 */
 	// End Line: 3036
-
+	UNIMPLEMENTED();
 }
 
 
@@ -1500,7 +1529,7 @@ void musicEndCallbackFunc(long userData, int slot, int loopFlag)
 		// Start line: 3046
 	/* end block 1 */
 	// End Line: 3047
-
+	UNIMPLEMENTED();
 }
 
 
@@ -1526,7 +1555,7 @@ void SOUND_PutMusicCommand(int cmdType, int cmdData)
 		// Start line: 3087
 	/* end block 3 */
 	// End Line: 3088
-
+			UNIMPLEMENTED();
 }
 
 void SOUND_MusicInit()
@@ -1555,7 +1584,7 @@ int SOUND_IsMusicLoading()
 		// Start line: 3141
 	/* end block 2 */
 	// End Line: 3142
-
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1775,7 +1804,7 @@ void SOUND_PlaneShift(int newPlane)
 		// Start line: 3675
 	/* end block 1 */
 	// End Line: 3676
-
+	UNIMPLEMENTED();
 }
 
 void SOUND_ShutdownMusic()
@@ -1814,7 +1843,7 @@ void SOUND_SetMusicModifier(long modifier)
 		// Start line: 3804
 	/* end block 1 */
 	// End Line: 3805
-
+	UNIMPLEMENTED();
 }
 
 
@@ -1826,7 +1855,7 @@ void SOUND_ResetMusicModifier(long modifier)
 		// Start line: 3918
 	/* end block 1 */
 	// End Line: 3919
-
+	UNIMPLEMENTED();
 }
 
 

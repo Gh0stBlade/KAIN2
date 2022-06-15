@@ -138,7 +138,7 @@ long PIPE3D_MatrixColumnLength(MATRIX *transform, long column)
 		// Start line: 405
 	/* end block 2 */
 	// End Line: 406
-
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -155,7 +155,7 @@ void PIPE3D_NormalizeMatrix(MATRIX* target, MATRIX* source)
 	typedef struct {
 		long m[5]; // size=20, offset=0
 	} cmm;
-
+	UNIMPLEMENTED();
 }
 
 
@@ -194,7 +194,7 @@ void PIPE3D_TransformVerticesToWorld(struct _Instance *instance, struct _SVector
 		// Start line: 1506
 	/* end block 2 */
 	// End Line: 1507
-
+				UNIMPLEMENTED();
 }
 
 void PIPE3D_InstanceTransformAndDraw(struct _Instance* instance, struct _CameraCore_Type* cameraCore, struct _VertexPool* vertexPool, struct _PrimPool* primPool, unsigned long** ot, struct _Mirror* mirror)
@@ -217,6 +217,7 @@ void PIPE3D_InstanceTransformAndDraw(struct _Instance* instance, struct _CameraC
 	//s2 = instance
 	//s1 = cameraCore
 	//s0 = vertexPool
+	UNIMPLEMENTED();
 #if 0
 		lw      $v0, 0x1C($s2)
 		lh      $v1, 0x126($s2)
@@ -559,7 +560,7 @@ void PIPE3D_TransformFromZAxis(MATRIX *transform, struct _SVector *normal)
 		// Start line: 2588
 	/* end block 2 */
 	// End Line: 2589
-
+			UNIMPLEMENTED();
 }
 
 
@@ -581,7 +582,7 @@ void PIPE3D_CalcWorldToSplitPlaneTransform(MATRIX *wpTransform, struct _SVector 
 		// Start line: 2683
 	/* end block 2 */
 	// End Line: 2684
-
+			UNIMPLEMENTED();
 }
 
 
@@ -632,7 +633,7 @@ long PIPE3D_TransformAnimatedSplitInstanceVertices(struct _MVertex *vertexList, 
 		// Start line: 3376
 	/* end block 2 */
 	// End Line: 3377
-
+				UNIMPLEMENTED();
 	return 0;
 }
 
@@ -668,7 +669,7 @@ void PIPE3D_TransformSplitInstanceVertices(struct _MVertex *vertexList, struct _
 		// Start line: 3663
 	/* end block 2 */
 	// End Line: 3664
-
+				UNIMPLEMENTED();
 }
 
 
@@ -692,7 +693,7 @@ void PIPE3D_AnimateTextures(struct AniTex *aniTextures, long req_frame)
 		// Start line: 3795
 	/* end block 2 */
 	// End Line: 3796
-
+			UNIMPLEMENTED();
 }
 
 
@@ -722,7 +723,7 @@ void PIPE3D_AnimateTerrainTextures(struct DrMoveAniTex *aniTextures, long req_fr
 		// Start line: 4000
 	/* end block 3 */
 	// End Line: 4001
-
+			UNIMPLEMENTED();
 }
 
 
@@ -753,7 +754,7 @@ void PIPE3D_HalvePlaneInstanceTransformAndDraw(struct _Instance *instance, MATRI
 		// Start line: 4210
 	/* end block 2 */
 	// End Line: 4211
-
+			UNIMPLEMENTED();
 }
 
 
@@ -785,7 +786,7 @@ void PIPE3D_HalvePlaneGetRingPoints(struct _Instance *instance, MATRIX *wcTransf
 		// Start line: 4440
 	/* end block 2 */
 	// End Line: 4441
-
+			UNIMPLEMENTED();
 }
 
 
@@ -828,7 +829,7 @@ void PIPE3D_DoGlow(struct _Instance *instance, MATRIX *wcTransform, struct _Vert
 		// Start line: 4588
 	/* end block 2 */
 	// End Line: 4589
-
+					UNIMPLEMENTED();
 }
 
 
@@ -851,7 +852,7 @@ long PIPE3D_Segment2ScreenPt(struct _Instance *instance, MATRIX *wcTransform, in
 		// Start line: 4816
 	/* end block 2 */
 	// End Line: 4817
-
+			UNIMPLEMENTED();
 	return 0;
 }
 

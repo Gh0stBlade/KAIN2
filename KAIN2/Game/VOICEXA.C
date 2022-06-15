@@ -469,7 +469,7 @@ int VOICEXA_IsPlayingOrPaused()
 		// Start line: 1225
 	/* end block 4 */
 	// End Line: 1226
-
+	UNIMPLEMENTED();
 	return 0;
 }
 

@@ -48,7 +48,7 @@ void LIGHT_GetLightMatrix(struct _Instance *instance, struct Level *level, MATRI
 		// Start line: 145
 	/* end block 4 */
 	// End Line: 146
-
+				UNIMPLEMENTED();
 }
 
 
@@ -121,6 +121,8 @@ void LIGHT_PresetInstanceLight(struct _Instance *instance, short attenuate, MATR
 		--attenuatea;
 	} while (attenuatea);
 	SetColorMatrix(&colorM);
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -242,7 +244,7 @@ void LIGHT_CalcLightValue(struct _TFace *tface, struct _Instance *instance, stru
 		// Start line: 740
 	/* end block 2 */
 	// End Line: 741
-
+						UNIMPLEMENTED();
 }
 
 
@@ -261,7 +263,7 @@ void LIGHT_SetAmbientInstance(struct _Instance *instance, struct Level *level)
 		// Start line: 1247
 	/* end block 2 */
 	// End Line: 1248
-
+	UNIMPLEMENTED();
 }
 
 
@@ -284,7 +286,7 @@ void LIGHT_SetMatrixForLightGroupInstance(struct _Instance *instance, struct Lev
 		// Start line: 1275
 	/* end block 2 */
 	// End Line: 1276
-
+			UNIMPLEMENTED();
 }
 
 
@@ -337,6 +339,8 @@ void LIGHT_DrawShadow(MATRIX *wcTransform, struct _Instance *instance, struct _P
 			D3DDRAW_DrawShadow(0, ot, instance->fadeValue, &scTransform);
 #endif
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -476,6 +480,8 @@ void LIGHT_CalcShadowPositions(struct GameTracker *gameTracker)
 		LIGHT_CalcLightValue(first->tface, first, *tfaceLevel);
 		goto LABEL_38;
 	}
+#else
+UNIMPLEMENTED();
 #endif
 }
 
@@ -484,6 +490,7 @@ void LIGHT_CalcShadowPositions(struct GameTracker *gameTracker)
 // void /*$ra*/ LIGHT_Restore(struct LightInfo *lightInfo /*$a0*/)
 void LIGHT_Restore(struct LightInfo *lightInfo)
 { // line 1361, offset 0x80036c28
+	UNIMPLEMENTED();
 }
 
 void LIGHT_CalcDQPTable(struct Level *level)

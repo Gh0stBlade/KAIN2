@@ -151,7 +151,7 @@ void GlyphPost(struct _Instance *instance, unsigned long message, unsigned long 
 		// Start line: 509
 	/* end block 2 */
 	// End Line: 510
-
+			UNIMPLEMENTED();
 }
 
 
@@ -173,8 +173,7 @@ void _GlyphSwitchProcess(struct _Instance *instance, void (*func)(struct _Instan
 	/* end block 2 */
 	// End Line: 575
 
-			int testing = 0;
-			testing++;
+			UNIMPLEMENTED();
 
 }
 
@@ -186,6 +185,7 @@ int GlyphIsGlyphOpen(struct _Instance *instance)
 #if defined(PC_VERSION)
 	return *((__int16*)instance->extraData + 71);
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -208,7 +208,7 @@ int _GlyphIsGlyphSet(int glyph)
 		// Start line: 646
 	/* end block 2 */
 	// End Line: 647
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -221,7 +221,7 @@ int _GlyphIsGlyphUsable(int glyph)
 		// Start line: 673
 	/* end block 1 */
 	// End Line: 674
-
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -243,7 +243,7 @@ int _GlyphIsAnyGlyphSet()
 		// Start line: 682
 	/* end block 2 */
 	// End Line: 683
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -261,7 +261,7 @@ int _GlyphCost(struct _GlyphTuneData *glyphtunedata, int glyphNum)
 		// Start line: 709
 	/* end block 2 */
 	// End Line: 710
-
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -274,7 +274,7 @@ int GlyphIsPuppetShowModeOn()
 		// Start line: 720
 	/* end block 1 */
 	// End Line: 721
-
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -299,7 +299,7 @@ void _GlyphDefaultProcess(struct _Instance *instance, int data1, int data2)
 		// Start line: 745
 	/* end block 2 */
 	// End Line: 746
-
+			UNIMPLEMENTED();
 }
 
 void HUD_GetPlayerScreenPt(DVECTOR *center)
@@ -435,6 +435,8 @@ void GlyphDrawMenu(struct _Instance *instance)
 		extraData = v19;
 		v7 = v20;
 	}
+#else
+UNIMPLEMENTED();
 #endif
 }
 
@@ -452,7 +454,7 @@ long GlyphTime(int time)
 		// Start line: 1239
 	/* end block 2 */
 	// End Line: 1240
-
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -476,7 +478,7 @@ void ShrinkGlyphMenu(struct _Instance *instance)
 		// Start line: 1252
 	/* end block 2 */
 	// End Line: 1253
-
+			UNIMPLEMENTED();
 }
 
 
@@ -499,7 +501,7 @@ void EnlargeGlyphMenu(struct _Instance *instance)
 		// Start line: 1351
 	/* end block 2 */
 	// End Line: 1352
-
+			UNIMPLEMENTED();
 }
 
 void _GlyphOffProcess(struct _Instance *instance, int data1, int data2)
@@ -592,7 +594,7 @@ void _GlyphSelectProcess(struct _Instance *instance, int data1, int data2)
 		// Start line: 1524
 	/* end block 2 */
 	// End Line: 1525
-
+				UNIMPLEMENTED();
 }
 
 
@@ -613,7 +615,7 @@ void Glyph_StartSpell(struct _Instance *instance, int glyphnum)
 		// Start line: 1791
 	/* end block 2 */
 	// End Line: 1792
-
+			UNIMPLEMENTED();
 }
 
 
@@ -660,8 +662,7 @@ void Glyph_Broadcast(struct _Instance *sender, int glyphnum)
 		// Start line: 1875
 	/* end block 3 */
 	// End Line: 1876
-				int testing = 0;
-				testing++;
+				UNIMPLEMENTED();
 }
 
 
@@ -694,7 +695,7 @@ void Glyph_DoSpell(struct _Instance *instance, int glyphnum)
 		// Start line: 2104
 	/* end block 2 */
 	// End Line: 2105
-
+			UNIMPLEMENTED();
 }
 
 
@@ -711,7 +712,7 @@ void Glyph_EndFX()
 		// Start line: 2347
 	/* end block 2 */
 	// End Line: 2348
-
+	UNIMPLEMENTED();
 }
 
 
@@ -728,7 +729,7 @@ void Glyph_DoFX(struct _Instance *instance)
 		// Start line: 2362
 	/* end block 2 */
 	// End Line: 2363
-
+	UNIMPLEMENTED();
 }
 
 
@@ -759,7 +760,7 @@ void _GlyphGenericProcess(struct _Instance *instance, int data1, int data2)
 		// Start line: 2432
 	/* end block 2 */
 	// End Line: 2433
-
+				UNIMPLEMENTED();
 }
 
 
@@ -776,7 +777,7 @@ void GlyphTrigger()
 		// Start line: 2521
 	/* end block 2 */
 	// End Line: 2522
-
+	UNIMPLEMENTED();
 }
 
 
@@ -787,6 +788,8 @@ void MANNA_Pickup()
 #if defined(PC_VERSION)
 	dword_C55068 = 0x1E000;
 	LOWORD(dword_C5508C) = 24;
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -799,7 +802,7 @@ void HEALTHU_Pickup(struct _Instance *instance)
 		// Start line: 2566
 	/* end block 1 */
 	// End Line: 2567
-
+	UNIMPLEMENTED();
 }
 
 void HUD_Damp(short *val, short target, short *vel, short max)
@@ -841,7 +844,7 @@ void HUD_Setup_Chit_Count(int chits)
 		// Start line: 2658
 	/* end block 2 */
 	// End Line: 2659
-
+	UNIMPLEMENTED();
 }
 
 

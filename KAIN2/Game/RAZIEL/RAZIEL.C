@@ -154,7 +154,7 @@ void StateInitIdle(struct __CharacterState *In, int CurrentSection, int Ptr)
 		// Start line: 918
 	/* end block 2 */
 	// End Line: 919
-
+			UNIMPLEMENTED();
 }
 
 
@@ -195,7 +195,7 @@ void StateHandlerIdle(struct __CharacterState *In, int CurrentSection, int Data)
 		// Start line: 1248
 	/* end block 2 */
 	// End Line: 1249
-
+				UNIMPLEMENTED();
 }
 
 
@@ -244,7 +244,7 @@ void StateHandlerLookAround(struct __CharacterState *In, int CurrentSection, int
 		// Start line: 1925
 	/* end block 2 */
 	// End Line: 1926
-
+				UNIMPLEMENTED();
 }
 
 
@@ -278,7 +278,7 @@ void StateHandlerCrouch(struct __CharacterState *In, int CurrentSection, int Dat
 		// Start line: 2095
 	/* end block 2 */
 	// End Line: 2096
-
+				UNIMPLEMENTED();
 }
 
 
@@ -299,7 +299,7 @@ void StateHandlerDropAction(struct __CharacterState *In, int CurrentSection, int
 		// Start line: 2528
 	/* end block 2 */
 	// End Line: 2529
-
+			UNIMPLEMENTED();
 }
 
 
@@ -335,7 +335,7 @@ void StateHandlerSoulSuck(struct __CharacterState *In, int CurrentSection, int D
 		// Start line: 2698
 	/* end block 3 */
 	// End Line: 2699
-
+				UNIMPLEMENTED();
 }
 
 
@@ -356,7 +356,7 @@ void StateHandlerStartTurn(struct __CharacterState *In, int CurrentSection, int 
 		// Start line: 2961
 	/* end block 2 */
 	// End Line: 2962
-
+			UNIMPLEMENTED();
 }
 
 
@@ -373,7 +373,7 @@ void StateInitStartMove(struct __CharacterState *In, int CurrentSection, int Fra
 		// Start line: 3099
 	/* end block 2 */
 	// End Line: 3100
-
+	UNIMPLEMENTED();
 }
 
 
@@ -403,7 +403,7 @@ void StateHandlerStartMove(struct __CharacterState *In, int CurrentSection, int 
 		// Start line: 3277
 	/* end block 2 */
 	// End Line: 3278
-
+				UNIMPLEMENTED();
 }
 
 
@@ -420,7 +420,7 @@ void StateInitMove(struct __CharacterState *In, int CurrentSection, int Frames)
 		// Start line: 3647
 	/* end block 2 */
 	// End Line: 3648
-
+	UNIMPLEMENTED();
 }
 
 
@@ -451,7 +451,7 @@ void StateHandlerMove(struct __CharacterState *In, int CurrentSection, int Data)
 		// Start line: 4090
 	/* end block 2 */
 	// End Line: 4091
-
+				UNIMPLEMENTED();
 }
 
 
@@ -472,7 +472,7 @@ void StateHandlerStopMove(struct __CharacterState *In, int CurrentSection, int D
 		// Start line: 4448
 	/* end block 2 */
 	// End Line: 4449
-
+			UNIMPLEMENTED();
 }
 
 
@@ -493,7 +493,7 @@ void StateHandlerCompression(struct __CharacterState *In, int CurrentSection, in
 		// Start line: 4667
 	/* end block 2 */
 	// End Line: 4668
-
+			UNIMPLEMENTED();
 }
 
 
@@ -514,7 +514,7 @@ void StateHandlerJump(struct __CharacterState *In, int CurrentSection, int Data)
 		// Start line: 4888
 	/* end block 2 */
 	// End Line: 4889
-
+			UNIMPLEMENTED();
 }
 
 
@@ -545,7 +545,7 @@ void StateHandlerFall(struct __CharacterState *In, int CurrentSection, int Data)
 		// Start line: 5132
 	/* end block 2 */
 	// End Line: 5133
-
+			UNIMPLEMENTED();
 }
 
 
@@ -566,7 +566,7 @@ void StateHandlerSlide(struct __CharacterState *In, int CurrentSection, int Data
 		// Start line: 5560
 	/* end block 2 */
 	// End Line: 5561
-
+			UNIMPLEMENTED();
 }
 
 
@@ -623,7 +623,7 @@ void StateHandlerBlock(struct __CharacterState *In, int CurrentSection, int Data
 		// Start line: 5703
 	/* end block 2 */
 	// End Line: 5704
-
+				UNIMPLEMENTED();
 }
 
 
@@ -651,7 +651,7 @@ void StateHandlerDeCompression(struct __CharacterState *In, int CurrentSection, 
 		// Start line: 5926
 	/* end block 2 */
 	// End Line: 5927
-
+			UNIMPLEMENTED();
 }
 
 
@@ -693,7 +693,7 @@ void StateHandlerGlide(struct __CharacterState *In, int CurrentSection, int Data
 		// Start line: 6140
 	/* end block 2 */
 	// End Line: 6141
-
+				UNIMPLEMENTED();
 }
 
 
@@ -724,7 +724,7 @@ void StateHandlerHang(struct __CharacterState *In, int CurrentSection, int Data)
 		// Start line: 6555
 	/* end block 2 */
 	// End Line: 6556
-
+				UNIMPLEMENTED();
 }
 
 
@@ -759,7 +759,7 @@ void StateHandlerPushObject(struct __CharacterState *In, int CurrentSection, int
 		// Start line: 6882
 	/* end block 3 */
 	// End Line: 6883
-
+				UNIMPLEMENTED();
 }
 
 
@@ -803,7 +803,7 @@ void StateHandlerBreakOff(struct __CharacterState *In, int CurrentSection, int D
 		// Start line: 7040
 	/* end block 2 */
 	// End Line: 7041
-
+				UNIMPLEMENTED();
 }
 
 
@@ -876,7 +876,7 @@ void StateHandlerPullSwitch(struct __CharacterState *In, int CurrentSection, int
 		// Start line: 7314
 	/* end block 2 */
 	// End Line: 7315
-
+				UNIMPLEMENTED();
 }
 
 
@@ -932,7 +932,7 @@ void StateHandlerDragObject(struct __CharacterState *In, int CurrentSection, int
 		// Start line: 7700
 	/* end block 3 */
 	// End Line: 7701
-
+					UNIMPLEMENTED();
 }
 
 
@@ -962,7 +962,7 @@ void StateHandlerPickupObject(struct __CharacterState *In, int CurrentSection, i
 		// Start line: 8073
 	/* end block 2 */
 	// End Line: 8074
-
+				UNIMPLEMENTED();
 }
 
 
@@ -985,7 +985,7 @@ void StateHandlerAutoFace(struct __CharacterState *In, int CurrentSection, int D
 		// Start line: 8216
 	/* end block 2 */
 	// End Line: 8217
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1025,7 +1025,7 @@ void StateHandlerGlyphs(struct __CharacterState *In, int CurrentSection, int Dat
 		// Start line: 8645
 	/* end block 2 */
 	// End Line: 8646
-
+				UNIMPLEMENTED();
 }
 
 
@@ -1105,7 +1105,7 @@ void DefaultStateHandler(struct __CharacterState *In, int CurrentSection, int Da
 		// Start line: 9276
 	/* end block 2 */
 	// End Line: 9277
-
+				UNIMPLEMENTED();
 }
 
 
@@ -1180,7 +1180,7 @@ long RazielAnimCallback(struct _G2Anim_Type *anim, int sectionID, enum _G2AnimCa
 		// Start line: 10027
 	/* end block 2 */
 	// End Line: 10028
-
+					UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1209,7 +1209,7 @@ long RazielAnimCallbackDuringPause(struct _G2Anim_Type *anim, int sectionID, enu
 		// Start line: 10454
 	/* end block 2 */
 	// End Line: 10455
-
+				UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1535,7 +1535,7 @@ void RazielPost(struct _Instance *instance, unsigned long Message, unsigned long
 		// Start line: 10927
 	/* end block 2 */
 	// End Line: 10928
-
+				UNIMPLEMENTED();
 }
 
 
@@ -1583,7 +1583,7 @@ int SetStates(struct _Instance *instance, struct GameTracker *GT, long *controlC
 		// Start line: 11735
 	/* end block 2 */
 	// End Line: 11736
-
+				UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1627,7 +1627,7 @@ void ProcessConstrict()
 		// Start line: 12446
 	/* end block 3 */
 	// End Line: 12447
-
+					UNIMPLEMENTED();
 }
 
 
@@ -1653,7 +1653,7 @@ void RelocateConstrict(struct _SVector *offset)
 		// Start line: 12832
 	/* end block 3 */
 	// End Line: 12833
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1683,7 +1683,7 @@ void ProcessEffects(struct _Instance *instance)
 		// Start line: 12903
 	/* end block 2 */
 	// End Line: 12904
-
+				UNIMPLEMENTED();
 }
 
 
@@ -1704,7 +1704,7 @@ void ProcessHints()
 		// Start line: 13103
 	/* end block 2 */
 	// End Line: 13104
-
+			UNIMPLEMENTED();
 }
 
 
@@ -1732,7 +1732,7 @@ void ProcessInteractiveMusic(struct _Instance *instance)
 		// Start line: 13237
 	/* end block 2 */
 	// End Line: 13238
-
+			UNIMPLEMENTED();
 }
 
 void ProcessTimers(struct _Instance* instance)
@@ -1795,6 +1795,7 @@ void ProcessTimers(struct _Instance* instance)
 			//loc_800B30A8
 		}
 		//loc_800B30A8
+		UNIMPLEMENTED();
 #if 0
 
 		loc_800B2D74 :
@@ -2111,7 +2112,7 @@ void ProcessSpecialAbilities(struct _Instance *instance)
 		// Start line: 13635
 	/* end block 3 */
 	// End Line: 13636
-
+				UNIMPLEMENTED();
 }
 
 
@@ -2130,7 +2131,7 @@ int GetControllerMessages(long *controlCommand)
 		// Start line: 13895
 	/* end block 2 */
 	// End Line: 13896
-
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -2192,7 +2193,7 @@ void RazielAdditionalCollide(struct _Instance *instance, struct GameTracker *gam
 		// Start line: 14239
 	/* end block 3 */
 	// End Line: 14240
-
+				UNIMPLEMENTED();
 }
 
 
@@ -2213,7 +2214,7 @@ int GetEngageEvent(struct _Instance *instance)
 		// Start line: 14764
 	/* end block 2 */
 	// End Line: 14765
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -2242,7 +2243,7 @@ int SetupReaction(struct _Instance *player, struct _Instance *instance)
 		// Start line: 14808
 	/* end block 2 */
 	// End Line: 14809
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -2260,7 +2261,7 @@ int CheckHolding(struct _Instance *instance)
 		// Start line: 14918
 	/* end block 2 */
 	// End Line: 14919
-
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -2286,7 +2287,7 @@ void EnableWristCollision(struct _Instance *instance, int Side)
 		// Start line: 14947
 	/* end block 1 */
 	// End Line: 14948
-
+	UNIMPLEMENTED();
 }
 
 
@@ -2317,7 +2318,7 @@ int GetCollisionType(struct _Instance *instance)
 		// Start line: 15221
 	/* end block 2 */
 	// End Line: 15222
-
+				UNIMPLEMENTED();
 	return 0;
 }
 
@@ -2526,7 +2527,7 @@ void RazielCollide(struct _Instance *instance, struct GameTracker *gameTracker)
 		// Start line: 15836
 	/* end block 2 */
 	// End Line: 15837
-
+				UNIMPLEMENTED();
 }
 
 
@@ -2563,7 +2564,7 @@ void RAZIEL_TurnHead(struct _Instance *instance, short *rotx, short *rotz, struc
 		// Start line: 16013
 	/* end block 2 */
 	// End Line: 16014
-
+				UNIMPLEMENTED();
 }
 
 
@@ -2575,7 +2576,7 @@ void RAZIEL_SetLookAround(struct _Instance *instance)
 		// Start line: 16133
 	/* end block 1 */
 	// End Line: 16134
-
+	UNIMPLEMENTED();
 }
 
 
@@ -2587,7 +2588,7 @@ void RAZIEL_ResetLookAround(struct _Instance *instance)
 		// Start line: 16208
 	/* end block 1 */
 	// End Line: 16209
-
+	UNIMPLEMENTED();
 }
 
 
@@ -2604,7 +2605,7 @@ long RAZIEL_OkToLookAround(struct _Instance *playerInstance)
 		// Start line: 16280
 	/* end block 2 */
 	// End Line: 16281
-
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -2632,7 +2633,7 @@ void TrailWaterFX(struct _Instance *instance, int Segment, int Bubbles, int Type
 		// Start line: 16358
 	/* end block 2 */
 	// End Line: 16359
-
+			UNIMPLEMENTED();
 }
 
 

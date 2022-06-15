@@ -175,9 +175,13 @@ void aadSetMasterVolume(int volume)
 // void /*$ra*/ aadStartMasterVolumeFade(int targetVolume /*$a0*/, int volumeStep /*$a1*/, TDRFuncPtr_aadStartMasterVolumeFade2fadeCompleteCallback fadeCompleteCallback /*$a2*/)
 void aadStartMasterVolumeFade(int targetVolume, int volumeStep, TDRFuncPtr_aadStartMasterVolumeFade2fadeCompleteCallback fadeCompleteCallback)
 { // line 219, offset 0x80051880
+#if defined(PC_VERSION)
 	aadMem->masterVolFader.volumeStep = volumeStep;
 	aadMem->masterVolFader.targetVolume = targetVolume;
 	aadMem->masterVolFader.fadeCompleteCallback = fadeCompleteCallback;
+#else
+	UNIMPLEMENTED();
+#endif
 }
 
 void aadSetSfxMasterVolume(int volume)
@@ -215,7 +219,7 @@ void aadShutdown()
 		// Start line: 570
 	/* end block 1 */
 	// End Line: 571
-
+	UNIMPLEMENTED();
 }
 
 long aadSlotUpdateWrapper()
@@ -469,7 +473,7 @@ int aadLoadDynamicSoundBank(char *sndFileName, char *smpFileName, int dynamicBan
 		// Start line: 1528
 	/* end block 2 */
 	// End Line: 1529
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -492,7 +496,7 @@ void aadLoadDynamicSoundBankReturn(void *loadedDataPtr, void *data, void *data2)
 		// Start line: 1693
 	/* end block 2 */
 	// End Line: 1694
-
+			UNIMPLEMENTED();
 }
 
 
@@ -525,7 +529,7 @@ void aadLoadDynamicSoundBankReturn2(void *loadedDataPtr, long loadedDataSize, sh
 		// Start line: 1851
 	/* end block 2 */
 	// End Line: 1852
-
+				UNIMPLEMENTED();
 }
 
 int aadFreeDynamicSoundBank(int dynamicBankIndex)
@@ -577,7 +581,7 @@ int aadOpenDynamicSoundBank(unsigned char *soundBank, int dynamicBankIndex)
 		// Start line: 2186
 	/* end block 2 */
 	// End Line: 2187
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -706,7 +710,7 @@ void aadRelocateMusicMemoryEnd(struct MemHeader *newAddress, long offset, void *
 		// Start line: 2710
 	/* end block 2 */
 	// End Line: 2711
-
+				UNIMPLEMENTED();
 }
 
 void aadRelocateSfxMemory(void *oldAddress, int offset)
@@ -759,7 +763,7 @@ void aadPurgeLoadQueue()
 		// Start line: 3080
 	/* end block 2 */
 	// End Line: 3081
-
+	UNIMPLEMENTED();
 }
 
 void aadProcessLoadQueue()
@@ -1597,7 +1601,7 @@ int aadCheckSramFragmented()
 		// Start line: 5114
 	/* end block 4 */
 	// End Line: 5115
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1635,7 +1639,7 @@ void aadProcessSramDefrag()
 		// Start line: 5234
 	/* end block 2 */
 	// End Line: 5235
-
+				UNIMPLEMENTED();
 }
 
 
@@ -1652,7 +1656,7 @@ int aadIsSfxLoaded(unsigned int toneID)
 		// Start line: 5664
 	/* end block 2 */
 	// End Line: 5665
-
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1730,7 +1734,7 @@ void aadInitReverb()
 		// Start line: 6461
 	/* end block 1 */
 	// End Line: 6462
-
+	UNIMPLEMENTED();
 }
 
 void aadShutdownReverb()
@@ -1755,7 +1759,7 @@ unsigned long aadGetReverbSize()
 		// Start line: 6565
 	/* end block 1 */
 	// End Line: 6566
-
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1773,7 +1777,7 @@ int aadGetReverbDepth()
 		// Start line: 6576
 	/* end block 2 */
 	// End Line: 6577
-
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1791,7 +1795,7 @@ int aadGetNumDynamicSequences(int bank)
 		// Start line: 6592
 	/* end block 2 */
 	// End Line: 6593
-
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1858,7 +1862,7 @@ struct AadTempo * aadGetTempoFromDynamicSequence(int bank, int sequenceNumber, s
 		// Start line: 6761
 	/* end block 4 */
 	// End Line: 6762
-
+			UNIMPLEMENTED();
 	return null;
 }
 
@@ -1873,6 +1877,8 @@ void aadSetSlotTempo(int slotNumber, struct AadTempo *tempo)
 
 	tickTime = tempo->quarterNoteTime / tempo->ppqn;
 	tickTimeRemainder = ((tempo->quarterNoteTime % tempo->ppqn) * 65536) / tempo->ppqn;
+
+	UNIMPLEMENTED();
 #if 0
 		lw      $a3, -0x6428($gp)//aadMem
 		sll     $a0, 2
@@ -2039,6 +2045,7 @@ void aadStopAllSlots()
 // void /*$ra*/ aadDisableSlot(int slotNumber /*$a0*/)
 void aadDisableSlot(int slotNumber)
 { // line 3135, offset 0x80054418
+#if defined(PC_VERSION)
 	int v1; // esi
 	AadMemoryStruct* v2; // edi
 	int v3; // ecx
@@ -2072,6 +2079,9 @@ void aadDisableSlot(int slotNumber)
 			aadMem->voiceKeyOnRequest &= ~v3;
 		}
 	}
+#else
+	UNIMPLEMENTED();
+#endif
 }
 
 
@@ -2079,8 +2089,12 @@ void aadDisableSlot(int slotNumber)
 // void /*$ra*/ aadEnableSlot(int slotNumber /*$a0*/)
 void aadEnableSlot(int slotNumber)
 { // line 3146, offset 0x80054468
+#if defined(PC_VERSION)
 	if (slotNumber < aadMem->numSlots)
 		aadMem->sequenceSlots[slotNumber]->slotFlags &= ~1u;
+#else
+	UNIMPLEMENTED();
+#endif
 }
 
 
@@ -2122,6 +2136,8 @@ void aadPauseSlot(int slotNumber)
 			aadMem->voiceKeyOnRequest &= ~v3;
 		}
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -2153,6 +2169,8 @@ void aadResumeSlot(int slotNumber)
 			slot->status |= 1u;
 		}
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -2161,7 +2179,12 @@ void aadResumeSlot(int slotNumber)
 // int /*$ra*/ aadGetSlotStatus(int slotNumber /*$a0*/)
 int aadGetSlotStatus(int slotNumber)
 { // line 3184, offset 0x80054568
+#if defined(PSX_VERSION)
+	UNIMPLEMENTED();
+	return 0;
+#else
 	return aadMem->sequenceSlots[slotNumber]->status;
+#endif
 }
 
 void aadAllNotesOff(int slotNumber)
@@ -2222,6 +2245,7 @@ void aadAllNotesOff(int slotNumber)
 		v1->voiceKeyOffRequest |= v2;
 		aadMem->voiceKeyOnRequest &= ~v2;
 	}
+
 #endif
 }
 
@@ -2284,6 +2308,8 @@ void aadMuteChannels(struct _AadSequenceSlot *slot, unsigned long channelList)
 		v4->voiceKeyOffRequest |= v5;
 		aadMem->voiceKeyOnRequest &= ~v5;
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -2304,6 +2330,8 @@ void aadUnMuteChannels(struct _AadSequenceSlot *slot, unsigned long channelList)
 		v2 = ~v3 & channelList;
 	}
 	slot->channelMute &= ~v2;
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -2382,6 +2410,8 @@ void aadPauseSound()
 			++v2;
 		}
 	}
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -2399,6 +2429,8 @@ void aadCancelPauseSound()
 // void /*$ra*/ aadResumeSound()
 void aadResumeSound()
 { // line 3493, offset 0x8005485c
+
+#if defined(PC_VERSION)
 	int flags; // eax
 	AadMemoryStruct* v1; // eax
 	int v2; // edi
@@ -2423,6 +2455,9 @@ void aadResumeSound()
 			++v3;
 		}
 	}
+#else
+	UNIMPLEMENTED();
+#endif
 }
 
 

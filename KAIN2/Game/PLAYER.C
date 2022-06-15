@@ -11,6 +11,8 @@ void PLAYER_TurnHead(struct _Instance *instance, short *rotx, short *rotz, struc
 		RAZIEL_TurnHead(instance, rotx, rotz, gameTracker);
 	else
 		MONAPI_TurnHead(instance, rotx, rotz, gameTracker);
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -25,6 +27,7 @@ long PLAYER_OkToLookAround(struct _Instance *instance)
 	else
 		return MONAPI_OkToLookAround(instance);
 #else
+	UNIMPLEMENTED();
 	return 0;
 #endif
 }
@@ -39,6 +42,8 @@ void PLAYER_SetLookAround(struct _Instance *instance)
 		RAZIEL_SetLookAround(instance);
 	else
 		MONAPI_SetLookAround(instance);
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -52,5 +57,7 @@ void PLAYER_ReSetLookAround(struct _Instance *instance)
 		RAZIEL_ResetLookAround(instance);
 	else
 		MONAPI_ResetLookAround(instance);
+#else
+	UNIMPLEMENTED();
 #endif
 }

@@ -22,6 +22,8 @@ void SCRIPT_CombineEulerAngles(struct _Rotation *combinedRotation, struct _Rotat
 	z = euler.z;
 	combinedRotation->y = y;
 	combinedRotation->z = z;
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -124,7 +126,7 @@ void SCRIPT_InstanceSplineInit(struct _Instance *instance)
 		// Start line: 326
 	/* end block 2 */
 	// End Line: 327
-
+					UNIMPLEMENTED();
 }
 
 
@@ -167,7 +169,7 @@ short SCRIPTCountFramesInSpline(struct _Instance *instance)
 		// Start line: 468
 	/* end block 2 */
 	// End Line: 469
-
+				UNIMPLEMENTED();
 	return 0;
 }
 
@@ -189,7 +191,7 @@ struct Spline * ScriptGetPosSpline(struct _Instance *instance)
 		// Start line: 579
 	/* end block 2 */
 	// End Line: 580
-
+			UNIMPLEMENTED();
 	return null;
 }
 
@@ -211,7 +213,7 @@ struct RSpline * ScriptGetRotSpline(struct _Instance *instance)
 		// Start line: 598
 	/* end block 2 */
 	// End Line: 599
-
+			UNIMPLEMENTED();
 	return null;
 }
 
@@ -224,7 +226,7 @@ int SCRIPT_GetSplineFrameNumber(struct _Instance *instance, struct SplineDef *sp
 		// Start line: 623
 	/* end block 1 */
 	// End Line: 624
-
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -297,7 +299,7 @@ struct SplineDef * SCRIPT_GetPosSplineDef(struct _Instance *instance, struct Mul
 		// Start line: 702
 	/* end block 3 */
 	// End Line: 703
-
+			UNIMPLEMENTED();
 	return null;
 }
 
@@ -324,7 +326,7 @@ struct SplineDef * SCRIPT_GetRotSplineDef(struct _Instance *instance, struct Mul
 		// Start line: 726
 	/* end block 3 */
 	// End Line: 727
-
+			UNIMPLEMENTED();
 	return null;
 }
 
@@ -351,7 +353,7 @@ struct SplineDef * SCRIPT_GetScaleSplineDef(struct _Instance *instance, struct M
 		// Start line: 750
 	/* end block 3 */
 	// End Line: 751
-
+			UNIMPLEMENTED();
 	return null;
 }
 
@@ -428,7 +430,7 @@ void SCRIPT_RelativisticSpline(struct _Instance *instance, struct _SVector *poin
 		// Start line: 772
 	/* end block 2 */
 	// End Line: 773
-
+				UNIMPLEMENTED();
 }
 
 
@@ -511,7 +513,7 @@ void SCRIPT_InstanceSplineSet(struct _Instance *instance, short frameNum, struct
 		// Start line: 840
 	/* end block 2 */
 	// End Line: 841
-
+				UNIMPLEMENTED();
 }
 
 
@@ -594,7 +596,7 @@ long SCRIPT_SplineProcess(struct _Instance *instance, struct MultiSpline *multi,
 		// Start line: 1107
 	/* end block 2 */
 	// End Line: 1108
-
+					UNIMPLEMENTED();
 	return 0;
 }
 
@@ -618,7 +620,7 @@ long SCRIPT_InstanceSplineProcess(struct _Instance *instance, struct SplineDef *
 		// Start line: 1466
 	/* end block 2 */
 	// End Line: 1467
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -636,7 +638,7 @@ void SCRIPT_FadeOutProcess(struct _Instance *instance)
 		// Start line: 1832
 	/* end block 2 */
 	// End Line: 1833
-
+	UNIMPLEMENTED();
 }
 
 
@@ -695,7 +697,7 @@ void ScriptKillInstance(struct _Instance *instance, int effect)
 		// Start line: 1848
 	/* end block 2 */
 	// End Line: 1849
-
+					UNIMPLEMENTED();
 }
 
 

@@ -19,7 +19,7 @@ int SetEngagedInstance(struct __Player *player, struct evCollideInstanceStatsDat
 		// Start line: 8
 	/* end block 2 */
 	// End Line: 9
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -157,7 +157,7 @@ void UpdateEngagementList(struct evCollideInstanceStatsData *Ptr, struct __Playe
 		// Start line: 64
 	/* end block 2 */
 	// End Line: 65
-
+					UNIMPLEMENTED();
 }
 
 
@@ -178,7 +178,7 @@ long UpdateAutoFaceAngle(struct _Instance *player, struct _Instance *instance)
 		// Start line: 1243
 	/* end block 2 */
 	// End Line: 1244
-
+			UNIMPLEMENTED();
 	return 0;
 }
 

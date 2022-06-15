@@ -67,7 +67,7 @@ void StateHandlerPuppetShow(struct __CharacterState *In, int CurrentSection, int
 		// Start line: 16
 	/* end block 2 */
 	// End Line: 17
-
+					UNIMPLEMENTED();
 }
 
 
@@ -132,7 +132,7 @@ void StateHandlerMoveToPosition(struct __CharacterState *In, int CurrentSection,
 		// Start line: 217
 	/* end block 2 */
 	// End Line: 218
-
+					UNIMPLEMENTED();
 }
 
 
@@ -183,7 +183,7 @@ void DefaultPuppetStateHandler(struct __CharacterState *In, int CurrentSection, 
 		// Start line: 383
 	/* end block 2 */
 	// End Line: 384
-
+					UNIMPLEMENTED();
 }
 
 
@@ -221,7 +221,7 @@ void StateHandlerWarpGate(struct __CharacterState *In, int CurrentSection, int D
 		// Start line: 527
 	/* end block 2 */
 	// End Line: 528
-
+				UNIMPLEMENTED();
 }
 
 
@@ -251,7 +251,7 @@ void StateHandlerForcedGlide(struct __CharacterState *In, int CurrentSection, in
 		// Start line: 741
 	/* end block 2 */
 	// End Line: 742
-
+			UNIMPLEMENTED();
 }
 
 

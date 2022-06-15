@@ -468,7 +468,3 @@ int menudefs_pause_menu(void *gt, int index)
 
 	return index;
 }
-
-
-
-

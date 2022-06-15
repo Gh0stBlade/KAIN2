@@ -1,5 +1,6 @@
 #include "COLLIDES.H"
 
+#include "DRAWS.H"
 
 short ecostable[] = {
   0x0000,0x0006,0x000d,0x0013,0x0019,0x001f,0x0026,0x002c,0x0032,0x0039,0x003f,0x0045,0x004b,0x0052,0x0058,0x005e,0x0065,0x006b,0x0071,0x0077,0x007e,0x0084,0x008a,0x0090,0x0097,0x009d,0x00a3,0x00aa,0x00b0,0x00b6,0x00bc,0x00c3,
@@ -103,8 +104,394 @@ short ecostable[] = {
   0xf005,0xf005,0xf005,0xf004,0xf004,0xf004,0xf004,0xf003,0xf003,0xf003,0xf003,0xf002,0xf002,0xf002,0xf002,0xf002,0xf001,0xf001,0xf001,0xf001,0xf001,0xf001,0xf001,0xf000,0xf000,0xf000,0xf000,0xf000,0xf000,0xf000,0xf000,
   0xf000,0xf000 };
 
-void BSP_MarkVisibleLeaves_S(struct BSPTree* bsp, struct Camera* camera, struct _PolytopeList* polytopeList)
+void BSP_MarkVisibleLeaves_S(struct BSPTree* bsp, struct Camera* camera, struct _PolytopeList* polytopeList, unsigned long** drawot, int curTree, struct _Instance* savedLightInstance, _Terrain* terrain, struct GameTracker* gameTracker, _StreamUnit* currentUnit)
 {
+	//fp = drawot
+	//s0 = bsp
+	//s1 = curTree
+	//s2 = saveLightInstance
+	//s3 = curTree
+	//s4 = terrain
+	//s5 = gameTracker
+	//s6 = camera
+	//s7 = currentUnit
+
+	//v0 = camera->core.farPlane
+
+	getScratchAddr(0)[38] = (unsigned long)bsp;
+	getScratchAddr(0)[39] = (unsigned long)curTree;
+	getScratchAddr(0)[40] = (unsigned long)savedLightInstance;
+	getScratchAddr(0)[41] = (unsigned long)curTree;
+	getScratchAddr(0)[42] = (unsigned long)terrain;
+	getScratchAddr(0)[43] = (unsigned long)gameTracker;
+	getScratchAddr(0)[44] = (unsigned long)camera;
+	getScratchAddr(0)[45] = (unsigned long)currentUnit;
+
+	long s2 = depthQFogFar;
+	//s4 = &getScratchAddr(0);
+
+	//s5 = bsp
+	//s6 = camera
+	//fp = polytopeList
+
+	getScratchAddr(48)[0] = (unsigned long)getScratchAddr(48);
+
+	//s7 = &polytopeList->polytope
+	if (s2 >= camera->core.farPlane)
+	{
+		s2 = camera->core.farPlane;
+	}
+	//loc_80079520
+	//v0 = &camera->core.vvNormalWorVecMat[0];
+	//v1 = &getScratchAddr(0);
+	//t0 = 64
+
+	//loc_8007952C
+	for(int i = 64; i != 0; i -= 16)
+	{
+		unsigned int* pM = (unsigned int*)&camera->core.vvNormalWorVecMat[0].m[0][0];
+
+		getScratchAddr(0)[0 + i] = pM[0 * i];
+		getScratchAddr(0)[1 + i] = pM[1 * i];
+		getScratchAddr(0)[2 + i] = pM[2 * i];
+		getScratchAddr(0)[3 + i] = pM[3 * i];
+	}
+
+	gte_SetRotMatrix(getScratchAddr(0));
+	gte_ldv0(&camera->core.position);
+	gte_rtv0();
+	gte_stlvnl(camera->core.wcTransform);
+
+	gte_ldlvl(getScratchAddr(0)[8]);
+	gte_rtv0();
+
+	((short*)getScratchAddr(0))[32] = camera->core.position.x;
+	((short*)getScratchAddr(0))[33] = camera->core.position.y;
+	((short*)getScratchAddr(0))[34] = camera->core.position.z;
+
+	//t1 = camera->core.projDistance
+	//t2 = camera->core.cwTransform2
+
+	gte_st_mac0(getScratchAddr(0)[27]);
+	gte_st_mac1(getScratchAddr(0)[27]);
+
+	int v0 = (s2 << 15) / camera->core.projDistance;
+
+	gte_ld_vxy0(s2);
+	gte_SetRotMatrix(camera->core.cwTransform2);
+
+	int t0 = (camera->core.leftX - 160) * v0;
+	//t1 = camera->core.topY;
+	//t2 = camera->core.rightX;
+	//t3 = camera->core.bottomY;
+
+	//v1 = 0xFFFF0000
+	UNIMPLEMENTED();
+#if 0
+		lui     $v1, 0xFFFF
+		addi    $t1, -0x78
+		nop
+		nop
+		mult    $t1, $v0
+		addi    $t2, -0xA0
+		sra     $t0, 15
+		andi    $t0, 0xFFFF
+		mflo    $t1
+		nop
+		nop
+		mult    $t2, $v0
+		addi    $t3, -0x78
+		sll     $t1, 1
+		and $t1, $v1
+		mflo    $t2
+		nop
+		nop
+		mult    $t3, $v0
+		sra     $t2, 15
+		andi    $t2, 0xFFFF
+		mflo    $t3
+		sll     $t3, 1
+		and $t3, $v1
+		or $t7, $t0, $t1
+		mtc2    $t7, $0
+		nop
+		nop
+		cop2    0x486012
+		or $t7, $t2, $t1
+		mfc2    $t4, $9
+		mfc2    $t5, $10
+		mfc2    $t6, $11
+		mtc2    $t7, $0
+		sh      $t4, 0x46($s4)
+		sh      $t5, 0x48($s4)
+		sh      $t6, 0x4A($s4)
+		cop2    0x486012
+		or $t7, $t2, $t3
+		mfc2    $t4, $9
+		mfc2    $t5, $10
+		mfc2    $t6, $11
+		mtc2    $t7, $0
+		sh      $t4, 0x4C($s4)
+		sh      $t5, 0x4E($s4)
+		sh      $t6, 0x50($s4)
+		cop2    0x486012
+		or $t7, $t0, $t3
+		mfc2    $t4, $9
+		mfc2    $t5, $10
+		mfc2    $t6, $11
+		mtc2    $t7, $0
+		sh      $t4, 0x74($s4)
+		sh      $t5, 0x76($s4)
+		sh      $t6, 0x78($s4)
+		cop2    0x486012
+		mfc2    $t4, $9
+		mfc2    $t5, $10
+		mfc2    $t6, $11
+		li      $t7, dword_800D3360
+		sh      $t4, 0x7A($s4)
+		sh      $t5, 0x7C($s4)
+		sh      $t6, 0x7E($s4)
+		lh      $v1, (dword_800D3368 - 0x800D3360)($t7)
+		lh      $v0, (dword_800D3368 + 2 - 0x800D3360)($t7)
+		li      $at, 0x3E8
+		beq     $v1, $at, loc_80079758
+		li      $a2, 2
+		bgez    $zero, loc_80079764
+		nop
+
+		loc_80079758 :
+	beqz    $v0, loc_80079764
+		move    $a2, $zero
+		addi    $a2, 1
+
+		loc_80079764 :
+		lw      $v0, 0($s4)
+		lw      $v1, 4($s4)
+		lw      $t6, 8($s4)
+		lw      $t7, 0xC($s4)
+		lhu     $t8, 0x10($s4)
+		ctc2    $v0, $0
+		ctc2    $v1, $1
+		ctc2    $t6, $2
+		ctc2    $t7, $3
+		ctc2    $t8, $4
+		lw      $s1, 0($s5)
+		addi    $s0, 4
+
+		loc_80079794:
+	addi    $s0, -4
+		lw      $t0, 0($s1)
+		lw      $t1, 4($s1)
+		mtc2    $t0, $0
+		mtc2    $t1, $1
+		sra     $t0, $t1, 16
+		nop
+		cop2    0x486012
+		neg     $t0, $t0
+		lw      $v0, 0x60($s4)
+		lw      $t4, 0x64($s4)
+		lw      $t5, 0x68($s4)
+		li      $at, 2
+		bne     $a2, $at, loc_800797D4
+		nop
+		addi    $t0, -0x800
+
+		loc_800797D4:
+	mfc2    $t1, $25
+		mfc2    $t2, $26
+		mfc2    $t3, $27
+		sub     $t1, $v0
+		slt     $at, $t0, $t1
+		beqz    $at, loc_80079A3C
+		sub     $v0, $t2, $t4
+		slt     $at, $t0, $v0
+		beqz    $at, loc_80079A3C
+		sub     $v1, $t3, $t5
+		slt     $at, $t0, $v1
+		beqz    $at, loc_80079A3C
+		nop
+		lw      $v0, 0x20($s4)
+		lw      $v1, 0x24($s4)
+		lw      $t6, 0x28($s4)
+		ctc2    $v0, $0
+		ctc2    $v1, $1
+		ctc2    $t6, $2
+		nop
+		nop
+		cop2    0x486012
+		lw      $t4, 0x6C($s4)
+		lw      $t5, 0x70($s4)
+		mfc2    $t1, $25
+		mfc2    $t2, $26
+		sub     $v0, $t1, $t4
+		slt     $at, $t0, $v0
+		beqz    $at, loc_80079A14
+		sub     $v1, $t2, $t5
+		slt     $at, $t0, $v1
+		beqz    $at, loc_80079A14
+		nop
+		lh      $v0, 0xE($s1)
+		nop
+		andi    $v0, 1
+		beqz    $v0, loc_80079A0C
+		nop
+		beqz    $a2, loc_80079878
+		addi    $t4, $s1, 0x28  # '('
+		addi    $t4, $s1, 0x24  # '$'
+
+		loc_80079878:
+	lw      $t4, 0($t4)
+		lw      $v0, 0x40($s4)
+		lw      $v1, 0x44($s4)
+		lw      $t6, 0x48($s4)
+		lw      $t7, 0x4C($s4)
+		lhu     $t8, 0x50($s4)
+		lw      $t1, 8($s1)
+		lw      $t2, 0xC($s1)
+		ctc2    $v0, $0
+		ctc2    $v1, $1
+		ctc2    $t6, $2
+		ctc2    $t7, $3
+		ctc2    $t8, $4
+		mtc2    $t1, $0
+		mtc2    $t2, $1
+		lw      $v0, 0x10($s1)
+		nop
+		cop2    0x486012
+		sra     $t5, $t4, 16
+		sll     $t4, 16
+		sra     $t4, 16
+		lw      $a3, 0x14($s1)
+		lw      $t9, 0x18($s1)
+		mfc2    $t1, $25
+		mfc2    $t2, $26
+		mfc2    $t3, $27
+		sub     $t1, $v0
+		bltz    $t1, loc_8007997C
+		nop
+		beqz    $t9, loc_80079968
+		neg     $t0, $t1
+		slt     $at, $t4, $t1
+		beqz    $at, loc_80079960
+		sub     $v0, $t2, $t0
+		slt     $at, $t4, $v0
+		beqz    $at, loc_80079960
+		sub     $v1, $t3, $t0
+		slt     $at, $t4, $v1
+		beqz    $at, loc_80079960
+		nop
+		lw      $v0, 0x74($s4)
+		lw      $v1, 0x78($s4)
+		lw      $t6, 0x7C($s4)
+		ctc2    $v0, $0
+		ctc2    $v1, $1
+		ctc2    $t6, $2
+		nop
+		nop
+		cop2    0x486012
+		mfc2    $t1, $25
+		mfc2    $t2, $26
+		sub     $v0, $t1, $t0
+		slt     $at, $t4, $v0
+		beqz    $at, loc_80079960
+		sub     $v1, $t2, $t0
+		slt     $at, $t4, $v1
+		bnez    $at, loc_80079968
+		nop
+
+		loc_80079960 :
+	sw      $t9, 4($s0)
+		addi    $s0, 4
+
+		loc_80079968 :
+		beqz    $a3, loc_80079A14
+		nop
+		sw      $a3, 4($s0)
+		bgez    $zero, loc_80079A14
+		addi    $s0, 4
+
+		loc_8007997C :
+		beqz    $a3, loc_800799F8
+		neg     $t0, $t1
+		slt     $at, $t1, $t5
+		beqz    $at, loc_800799F0
+		sub     $v0, $t2, $t0
+		slt     $at, $v0, $t5
+		beqz    $at, loc_800799F0
+		sub     $v1, $t3, $t0
+		slt     $at, $v1, $t5
+		beqz    $at, loc_800799F0
+		nop
+		lw      $v0, 0x74($s4)
+		lw      $v1, 0x78($s4)
+		lw      $t6, 0x7C($s4)
+		ctc2    $v0, $0
+		ctc2    $v1, $1
+		ctc2    $t6, $2
+		nop
+		nop
+		cop2    0x486012
+		mfc2    $t1, $25
+		mfc2    $t2, $26
+		sub     $v0, $t1, $t0
+		slt     $at, $v0, $t5
+		beqz    $at, loc_800799F0
+		sub     $v1, $t2, $t0
+		slt     $at, $v1, $t5
+		bnez    $at, loc_800799F8
+		nop
+
+		loc_800799F0 :
+	sw      $a3, 4($s0)
+		addi    $s0, 4
+
+		loc_800799F8 :
+		beqz    $t9, loc_80079A14
+		nop
+		sw      $t9, 4($s0)
+		bgez    $zero, loc_80079A14
+		addi    $s0, 4
+
+		loc_80079A0C :
+		sw      $s1, 0($s7)
+		addi    $s7, 4
+
+		loc_80079A14 :
+		lw      $v0, 0($s4)
+		lw      $v1, 4($s4)
+		lw      $t6, 8($s4)
+		lw      $t7, 0xC($s4)
+		lhu     $t8, 0x10($s4)
+		ctc2    $v0, $0
+		ctc2    $v1, $1
+		ctc2    $t6, $2
+		ctc2    $t7, $3
+		ctc2    $t8, $4
+
+		loc_80079A3C :
+	lw      $s1, 0($s0)
+		nop
+		bne     $s1, $s0, loc_80079794
+		nop
+		sub     $v0, $s7, $fp
+		addi    $v0, -4
+		sra     $v0, 2
+		sw      $v0, 0($fp)
+		move    $t0, $s4
+		lw      $ra, 0xBC($t0)
+		lw      $s0, 0x98($t0)
+		lw      $s1, 0x9C($t0)
+		lw      $s2, 0xA0($t0)
+		lw      $s3, 0xA4($t0)
+		lw      $s4, 0xA8($t0)
+		lw      $s5, 0xAC($t0)
+		lw      $s6, 0xB0($t0)
+		lw      $s7, 0xB4($t0)
+		lw      $fp, 0xB8($t0)
+		jr      $ra
+		nop
+		# End of function sub_800794C0
+#endif
 }
 
 void G2Quat_FromEuler_S(_G2AnimQuatInfo_Type* quatInfo, _G2EulerAngles_Type* preQuat)

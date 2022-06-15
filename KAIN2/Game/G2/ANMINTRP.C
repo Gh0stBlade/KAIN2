@@ -224,7 +224,7 @@ void _G2AnimSection_UpdateStoredFrameFromQuat(struct _G2AnimSection_Type *sectio
 		// Start line: 434
 	/* end block 2 */
 	// End Line: 435
-
+	UNIMPLEMENTED();
 }
 
 void _G2AnimSection_InterpStateToQuat(struct _G2AnimSection_Type *section)

@@ -25,7 +25,7 @@ void InitAlgorithmicWings(struct _Instance *instance)
 		// Start line: 59
 	/* end block 3 */
 	// End Line: 60
-
+			UNIMPLEMENTED();
 }
 
 
@@ -51,7 +51,7 @@ void DeInitAlgorithmicWings(struct _Instance *instance)
 		// Start line: 225
 	/* end block 3 */
 	// End Line: 226
-
+			UNIMPLEMENTED();
 }
 
 
@@ -72,7 +72,7 @@ void AlgorithmicWings(struct _Instance *instance, struct evAnimationControllerDo
 		// Start line: 273
 	/* end block 2 */
 	// End Line: 274
-
+			UNIMPLEMENTED();
 }
 
 
@@ -115,7 +115,7 @@ void AlgorithmicNeck(struct _Instance *Player, struct _Instance *Target)
 		// Start line: 345
 	/* end block 2 */
 	// End Line: 346
-
+				UNIMPLEMENTED();
 }
 
 

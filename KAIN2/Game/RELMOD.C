@@ -76,6 +76,7 @@ void RELMOD_InitModulePointers(int baseaddr, int *relocs)
 // void /*$ra*/ RELMOD_RelocModulePointers(int baseaddr /*$a0*/, int offset /*$a1*/, int *relocs /*$a2*/)
 void RELMOD_RelocModulePointers(int baseaddr, int offset, int *relocs)
 { // line 42, offset 0x8007ca58
+#if defined(PC_VERSION)
 	int* v3; // esi
 	int i; // ecx
 	int v5; // eax
@@ -109,4 +110,7 @@ void RELMOD_RelocModulePointers(int baseaddr, int offset, int *relocs)
 			continue;
 		}
 	}
+#else
+	UNIMPLEMENTED();
+#endif
 }

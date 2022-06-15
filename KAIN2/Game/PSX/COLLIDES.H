@@ -61,7 +61,7 @@ extern void SetGp() ; // 0x80079158
 
 extern void memcpy() ; // 0x80079160
 
-extern void BSP_MarkVisibleLeaves_S(struct BSPTree* bsp, struct Camera* camera, struct _PolytopeList* polytopeList); // 0x80079218
+extern void BSP_MarkVisibleLeaves_S(struct BSPTree* bsp, struct Camera* camera, struct _PolytopeList* polytopeList, unsigned long** drawot, int curTree, struct _Instance* savedLightInstance, _Terrain* terrain, struct GameTracker* gameTracker, _StreamUnit* currentUnit); // 0x80079218
 
 extern void G2Quat_FromMatrix_S() ; // 0x800797E8
 

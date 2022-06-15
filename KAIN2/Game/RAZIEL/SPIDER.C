@@ -28,7 +28,7 @@ void StateHandlerWallGrab(struct __CharacterState *In, int CurrentSection, int D
 		// Start line: 24
 	/* end block 2 */
 	// End Line: 25
-
+			UNIMPLEMENTED();
 }
 
 
@@ -98,7 +98,7 @@ void StateHandlerWallIdle(struct __CharacterState *In, int CurrentSection, int D
 		// Start line: 209
 	/* end block 2 */
 	// End Line: 210
-
+				UNIMPLEMENTED();
 }
 
 
@@ -120,7 +120,7 @@ void StateHandlerWallDismount(struct __CharacterState *In, int CurrentSection, i
 		// Start line: 884
 	/* end block 2 */
 	// End Line: 885
-
+			UNIMPLEMENTED();
 }
 
 

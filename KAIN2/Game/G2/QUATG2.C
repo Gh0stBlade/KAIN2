@@ -6,10 +6,14 @@
 // void /*$ra*/ G2Quat_ToEuler(struct _G2Quat_Type *quat /*$a0*/, struct _G2EulerAngles_Type *euler /*$s0*/, int order /*$s1*/)
 void G2Quat_ToEuler(struct _G2Quat_Type *quat, struct _G2EulerAngles_Type *euler, int order)
 { // line 74, offset 0x80095ed8
+#if defined(PSX_VERSION)
+	UNIMPLEMENTED();
+#elif defined(PC_VERSION)
 	struct _G2Matrix_Type matrix; // [esp+0h] [ebp-20h] BYREF
 
 	G2Quat_ToMatrix((struct _G2EulerAngles_Type*)quat, &matrix);
 	G2EulerAngles_FromMatrix(euler, &matrix, order);
+#endif
 }
 
 BYTE byte_4F4BE0[] = { 1, 2, 0, 1, 0, 0, 0, 0, 0, 1, 2, 0, 0, 0, 0, 0 };
@@ -89,6 +93,8 @@ LABEL_9:
 		v7->z = x;
 	}
 	v7->order = order;
+#else
+	UNIMPLEMENTED();
 #endif
 }
 

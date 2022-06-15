@@ -20,7 +20,7 @@ int printf(char *fmt, ...)
 		// Start line: 114
 	/* end block 2 */
 	// End Line: 115
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -40,7 +40,7 @@ int sprintf(char *string, char *fmt)
 		// Start line: 172
 	/* end block 2 */
 	// End Line: 173
-
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -77,7 +77,7 @@ int vsprintf(char *str, char *fmtstr, void *argptr)
 		// Start line: 220
 	/* end block 2 */
 	// End Line: 221
-
+				UNIMPLEMENTED();
 	return 0;
 }
 
@@ -101,7 +101,7 @@ char * my_itoa(unsigned long value, char *str, int radix)
 		// Start line: 466
 	/* end block 2 */
 	// End Line: 467
-
+			UNIMPLEMENTED();
 	return null;
 }
 
@@ -124,7 +124,7 @@ int atoi(char *str)
 		// Start line: 590
 	/* end block 2 */
 	// End Line: 591
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -142,7 +142,7 @@ int mytolower(int c)
 		// Start line: 619
 	/* end block 2 */
 	// End Line: 620
-
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -165,7 +165,7 @@ int strcmpi(char *s1, char *s2)
 		// Start line: 630
 	/* end block 2 */
 	// End Line: 631
-
+			UNIMPLEMENTED();
 	return 0;
 }
 

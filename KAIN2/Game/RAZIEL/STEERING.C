@@ -15,7 +15,7 @@ int UpdateZoneDelta(int rc, int LastRC)
 		// Start line: 42
 	/* end block 2 */
 	// End Line: 43
-
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -42,7 +42,7 @@ int GetControllerInput(int *ZDirection, long *controlCommand)
 		// Start line: 71
 	/* end block 3 */
 	// End Line: 72
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -64,7 +64,7 @@ int DecodeDirection(int Source, int Destination, short *Difference, short *Zone)
 		// Start line: 253
 	/* end block 2 */
 	// End Line: 254
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -163,7 +163,7 @@ int ProcessMovement(struct _Instance *instance, long *controlCommand, struct Gam
 		// Start line: 376
 	/* end block 2 */
 	// End Line: 377
-
+				UNIMPLEMENTED();
 	return 0;
 }
 
@@ -192,7 +192,7 @@ void SteerTurn(struct _Instance *instance, int rc)
 		// Start line: 974
 	/* end block 2 */
 	// End Line: 975
-
+				UNIMPLEMENTED();
 }
 
 
@@ -204,7 +204,7 @@ void SteerMove(struct _Instance *instance, int rc)
 		// Start line: 1100
 	/* end block 1 */
 	// End Line: 1101
-
+	UNIMPLEMENTED();
 }
 
 
@@ -235,7 +235,7 @@ int SteerAutoFace(struct _Instance *instance, long *controlCommand)
 		// Start line: 1148
 	/* end block 3 */
 	// End Line: 1149
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -258,7 +258,7 @@ void SteerSwim(struct _Instance *instance)
 		// Start line: 1371
 	/* end block 2 */
 	// End Line: 1372
-
+			UNIMPLEMENTED();
 }
 
 
@@ -275,7 +275,7 @@ void SteerWallcrawling(struct _Instance *instance)
 		// Start line: 1523
 	/* end block 2 */
 	// End Line: 1524
-
+	UNIMPLEMENTED();
 }
 
 
@@ -287,7 +287,7 @@ void SteerDisableAutoFace(struct _Instance *instance)
 		// Start line: 1549
 	/* end block 1 */
 	// End Line: 1550
-
+	UNIMPLEMENTED();
 }
 
 
@@ -320,7 +320,7 @@ void SteerSwitchMode(struct _Instance *instance, int mode)
 		// Start line: 1611
 	/* end block 3 */
 	// End Line: 1612
-
+				UNIMPLEMENTED();
 }
 
 
@@ -360,6 +360,8 @@ void razInitWallCrawlSteering(struct _Instance *instance)
 	stru_B08AB8.z = 0;
 	stru_B08AB8.y = 0;
 	stru_B08AB8.x = 0;
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
@@ -382,6 +384,8 @@ void razDeinitWallCrawlSteering(struct _Instance *instance)
 	G2Anim_InterpDisableController(&instance->anim, 14, 14, 300);
 	G2Anim_InterpDisableController(&instance->anim, 50, 76, 300);
 	G2Anim_InterpDisableController(&instance->anim, 58, 76, 300);
+#else
+	UNIMPLEMENTED();
 #endif
 }
 
