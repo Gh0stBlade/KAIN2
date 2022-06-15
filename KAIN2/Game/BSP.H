@@ -1,7 +1,7 @@
 #ifndef BSP_H
 #define BSP_H
 
-#include "core.h"
+#include "CORE.H"
 
 struct _Sphere_noSq // hashcode: 0xA031058C (dec: -1607400052)
 {

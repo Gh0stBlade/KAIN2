@@ -55,12 +55,12 @@ int devstation; // offset 0x800D0E68
 struct BLK_FILL clearRect[2]; // offset 0x800D0F88
 DRAWENV draw[2]; // offset 0x800D0E6C
 DISPENV disp[2]; // offset 0x800D0E40
-struct InterfaceItem InterfaceItems[6] = { "\PUBLOGO.STR;1", 0, 0, 0, 1, 
-										   "\CRYLOGO.STR;1", 0, 0, 0, 5, 
-										   "\KAININT.STR;1", 0, 0, 0, -1,
-										   "\VERSE.STR;1", 0, 0, 0, 4, 
-										   "\CREDITS.STR;1", 0, 0, 0, -1,
-										   "\\kain2\\game\\psx\\mainmenu\\legal.tim", 165, 165, 1, -1, };
+struct InterfaceItem InterfaceItems[6] = { { "\\PUBLOGO.STR;1", 0, 0, 0, 1 },
+										   { "\\CRYLOGO.STR;1", 0, 0, 0, 5 },
+										   { "\\KAININT.STR;1", 0, 0, 0, -1 },
+										   { "\\VERSE.STR;1", 0, 0, 0, 4 },
+										   { "\\CREDITS.STR;1", 0, 0, 0, -1 },
+										   { "\\kain2\\game\\psx\\mainmenu\\legal.tim", 165, 165, 1, -1}, };
 
 void ClearDisplay()
 {
@@ -1051,8 +1051,8 @@ int MainG2(void *appData)
 		localstr_set_language(language_default);
 		GAMELOOP_SystemInit(gameTracker);
 
-		gameTracker->lastLvl = 255;
-		gameTracker->currentLvl = 255;
+		gameTracker->lastLvl = -1;
+		gameTracker->currentLvl = -1;
 		gameTracker->disp = &disp;
 
 		ProcessArgs(&gameTracker->baseAreaName[0], gameTracker);

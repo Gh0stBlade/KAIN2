@@ -91,7 +91,7 @@ void InitStates(struct _Instance* PlayerInstance)
 	Raziel.Senses.EngagedMask = 0;
 	Raziel.idleInstance = NULL;
 	Raziel.soulReaver = NULL;
-	Raziel.fallZVelocity = 0xFFFFFFE0;
+	Raziel.fallZVelocity = -32;
 
 	G2EmulationSetAnimation(&Raziel.State, 0, 0, 0, 0);
 	G2EmulationSetMode(&Raziel.State, 0, 2);
@@ -112,7 +112,7 @@ void InitStates(struct _Instance* PlayerInstance)
 
 	InitExternalForces(&ExternalForces[0], 4);
 
-	ResetPhysics(PlayerInstance, 0xFFFFFFF0);
+	ResetPhysics(PlayerInstance, -16);
 
 	ExtraRot = NULL;
 
@@ -130,7 +130,7 @@ void InitStates(struct _Instance* PlayerInstance)
 	InitGlyphSystem(PlayerInstance);
 
 	Raziel.slipSlope = 0xB50;
-	Raziel.terminator = 0xFFFFFFFF;
+	Raziel.terminator = -1;
 
 	gameTrackerX.raziel_collide_override = 0;
 }
