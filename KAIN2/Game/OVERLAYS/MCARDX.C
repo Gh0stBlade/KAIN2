@@ -32,7 +32,7 @@ void sub_801A03D4(struct mcard_t* card, struct mcmenu_t* mcmenu, struct mcpsx_di
 {
 	memset(card, 0, sizeof(struct mcard_t));
 
-	card->mcpsx = ((struct mcpsx_t*)card + 1);
+	card->mcpsx = (struct mcpsx_t*)((struct mcard_t*)card + 1);
 	
 	sub_8019FC00(card->mcpsx, card);
 	sub_801A039C(card);
