@@ -87,6 +87,7 @@ void GAMELOOP_AllocStaticMemory()
 	enemyPlanPool = MEMPACK_Malloc(1000, 6);
 	GlobalObjects = (struct _ObjectTracker*)MEMPACK_Malloc(1728, 6);
 	G2Anim_Install();
+	UNIMPLEMENTED();
 }
 
 
@@ -186,7 +187,7 @@ void GAMELOOP_SetGameTime(long timeOfDay)
 		// Start line: 942
 	/* end block 2 */
 	// End Line: 943
-
+			UNIMPLEMENTED();
 }
 
 
@@ -217,7 +218,7 @@ int GAMELOOP_GetTimeOfDay()
 		// Start line: 982
 	/* end block 4 */
 	// End Line: 983
-
+			UNIMPLEMENTED();
 	return 0;
 }
 
@@ -235,7 +236,7 @@ int GAMELOOP_GetTimeOfDayIdx(int timeOfDay)
 		// Start line: 1049
 	/* end block 2 */
 	// End Line: 1050
-
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -476,7 +477,7 @@ void GAMELOOP_StreamLevelLoadAndInit(char *baseAreaName, struct GameTracker *gam
 		// Start line: 2613
 	/* end block 2 */
 	// End Line: 2614
-
+	UNIMPLEMENTED();
 }
 
 void GAMELOOP_SetScreenWipe(int time, int maxTime, int type)
@@ -672,7 +673,7 @@ int CheckForNoBlend(struct _ColorType *Color)
 		// Start line: 3780
 	/* end block 2 */
 	// End Line: 3781
-
+	UNIMPLEMENTED();
 	return 0;
 }
 
@@ -688,6 +689,7 @@ void BlendToColor(struct _ColorType *target, struct _ColorType *current, struct 
 	//v1 = dest->r
 
 	MIN(target->r - dest->r, 0);
+	UNIMPLEMENTED();
 #if 0
 		subu    $v0, $a0, $v1
 		bltz    $v0, loc_8002EB78
@@ -896,7 +898,7 @@ void MainRenderLevel(struct _StreamUnit* currentUnit, unsigned long** drawot)
 
 				ApplyMatrix(&cam_mat_save, (SVECTOR*)&tmp, (VECTOR*)&theCamera.core.wcTransform->t[0]);
 
-				BSP_MarkVisibleLeaves_S(bsp, &theCamera, gPolytopeList);
+				BSP_MarkVisibleLeaves_S(bsp, &theCamera, gPolytopeList, drawot, curTree, saveLightInstance, terrain, gameTracker, currentUnit);
 
 				gameTracker->primPool->nextPrim = gameTracker->drawDisplayPolytopeListFunc(gPolytopeList, terrain, &theCamera, gameTracker->primPool, drawot, &bsp->globalOffset);
 
@@ -959,7 +961,7 @@ void StreamIntroInstancesForUnit(struct _StreamUnit *currentUnit)
 		// Start line: 4500
 	/* end block 2 */
 	// End Line: 4501
-
+	UNIMPLEMENTED();
 }
 
 
@@ -1003,7 +1005,7 @@ long StreamRenderLevel(struct _StreamUnit *currentUnit, struct Level *mainLevel,
 		// Start line: 4534
 	/* end block 2 */
 	// End Line: 4535
-
+				UNIMPLEMENTED();
 	return 0;
 }
 
@@ -1221,7 +1223,7 @@ void GAMELOOP_DisplayFrame(struct GameTracker* gameTracker)
 
 	drawot = gameTracker->drawOT;
 
-	if (!(gameTrackerX.gameFlags & 0x8000000) && pause_redraw_flag != 0)
+	if (!(gameTrackerX.gameFlags & 0x8000000) || pause_redraw_flag != 0)
 	{
 		if (pause_redraw_flag != 0)
 		{
@@ -1243,9 +1245,11 @@ void GAMELOOP_DisplayFrame(struct GameTracker* gameTracker)
 				gameTrackerX.primPool->nextPrim = &gameTrackerX.primPool->prim[0];
 			}
 		}
+		else
+		{
+			pause_redraw_prim = gameTrackerX.primPool->nextPrim;
+		}
 
-		pause_redraw_prim = gameTrackerX.primPool->nextPrim;
-		
 		gameTrackerX.displayFrameCount++;
 		gameTrackerX.visibleInstances = 0;
 
@@ -1895,7 +1899,11 @@ void ResetDrawPage()
 // void /*$ra*/ GAMELOOP_Set24FPS()
 void GAMELOOP_Set24FPS()
 { // line 2914, offset 0x800300b0
+#if defined(PC_VERSION)
 	gameTrackerX.frameRate24fps = 1;
+#else
+	UNIMPLEMENTED();
+#endif
 }
 
 
@@ -1903,7 +1911,11 @@ void GAMELOOP_Set24FPS()
 // void /*$ra*/ GAMELOOP_Reset24FPS()
 void GAMELOOP_Reset24FPS()
 { // line 2920, offset 0x800300c0
+#if defined(PC_VERSION)
 	gameTrackerX.frameRate24fps = 0;
+#else
+	UNIMPLEMENTED();
+#endif
 }
 
 void GAMELOOP_DoTimeProcess()
@@ -2406,7 +2418,7 @@ void GAMELOOP_ChangeMode()
 	long* controlCommand;
 
 	controlCommand = &gameTrackerX.controlCommand[0][0];
-
+	printf("%x\n", controlCommand[1]);
 	if (!(gameTrackerX.debugFlags & 0x40000))
 	{
 		if (!(gameTrackerX.debugFlags & 0x200000))
@@ -2584,6 +2596,7 @@ void GAMELOOP_ChangeMode()
 // void /*$ra*/ GAMELOOP_RequestLevelChange(char *name /*$s2*/, short number /*$a1*/, struct GameTracker *gameTracker /*$s0*/)
 void GAMELOOP_RequestLevelChange(char *name, short number, struct GameTracker *gameTracker)
 { // line 3664, offset 0x80030e7c
+#if defined(PC_VERSION)
 	if (!gameTracker->levelChange)
 	{
 		gameTracker->gameFlags |= 1u;
@@ -2592,6 +2605,9 @@ void GAMELOOP_RequestLevelChange(char *name, short number, struct GameTracker *g
 		gameTracker->levelChange = 1;
 		gameTracker->levelDone = 1;
 	}
+#else
+	UNIMPLEMENTED();
+#endif
 }
 
 void PSX_GameLoop(struct GameTracker *gameTracker)
@@ -2616,6 +2632,7 @@ MATRIX * GAMELOOP_GetMatrices(int numMatrices)
 	gameTrackerX.primPool->nextPrim = v2;
 	return result;
 #else
+	UNIMPLEMENTED();
 	return NULL;
 #endif
 }
@@ -2625,7 +2642,12 @@ MATRIX * GAMELOOP_GetMatrices(int numMatrices)
 // struct GameTracker * /*$ra*/ GAMELOOP_GetGT()
 struct GameTracker * GAMELOOP_GetGT()
 { // line 3720, offset 0x80030f5c
+#if defined(PC_VERSION)
 	return &gameTrackerX;
+#else
+	UNIMPLEMENTED();
+	return NULL;
+#endif
 }
 
 

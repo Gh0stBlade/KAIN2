@@ -502,6 +502,7 @@ long MEMPACK_MemoryValidFunc(char *address)
 	return address != (char*)0xFAFBFCFD && address && *(address - 6) == 1;
 #else
 	UNIMPLEMENTED();
+	return 0;
 #endif
 }
 
