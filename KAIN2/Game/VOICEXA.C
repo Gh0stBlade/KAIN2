@@ -119,7 +119,7 @@ void processCdCommands(struct XAVoiceTracker* vt)
 	}
 	else
 	{
-		if (vt->cdCmdQueue != 0 && vt->cdStatus != 1)
+		if (vt->cdCmdsQueued != 0 && vt->cdStatus != 1)
 		{
 			vt->cdStatus = 1;
 		
