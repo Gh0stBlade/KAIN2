@@ -308,25 +308,27 @@ void MEMORY_MergeAddresses(struct MemHeader *firstAddress, struct MemHeader *sec
 
 void MEMPACK_Return(char *address, long takeBackSize)
 {
-	struct MemHeader *memAddress;
-	struct MemHeader *nextAddress;
+	struct MemHeader* memAddress;
+	struct MemHeader* nextAddress;
 	
-	memAddress = (struct MemHeader*)address;
+	takeBackSize = (takeBackSize >> 2) << 2;
 
-	if (((takeBackSize >> 2) << 2) >= 8)
+	if (takeBackSize >= sizeof(struct MemHeader))
 	{
-		memAddress--;
-		memAddress->memSize -= ((takeBackSize >> 2) << 2);
-		newMemTracker.currentMemoryUsed -= ((takeBackSize >> 2) << 2);
+		memAddress = (struct MemHeader*)((char*)address - 8);
+		memAddress->memSize -= takeBackSize;
 
+		newMemTracker.currentMemoryUsed -= takeBackSize;
 		memAddress = (struct MemHeader*)((char*)memAddress + memAddress->memSize);
+
 		memAddress->magicNumber = DEFAULT_MEM_MAGIC;
 		memAddress->memStatus = 0;
 		memAddress->memType = 0;
-		memAddress->memSize = ((takeBackSize >> 2) << 2);
-		nextAddress = (struct MemHeader*)((char*)memAddress + memAddress->memSize);
+		memAddress->memSize = takeBackSize;
 
-		if ((char*)nextAddress != newMemTracker.lastMemoryAddress)
+		nextAddress = (struct MemHeader*)((char*)memAddress + takeBackSize);
+
+		if ((char*)nextAddress != (char*)newMemTracker.lastMemoryAddress)
 		{
 			MEMORY_MergeAddresses(memAddress, nextAddress);
 		}
