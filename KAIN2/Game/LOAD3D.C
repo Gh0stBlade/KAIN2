@@ -906,7 +906,7 @@ void LOAD_NonBlockingReadFile(struct _NonBlockLoadEntry *loadEntry)
 	{
 		if (loadEntry->loadAddr == NULL)
 		{
-			loadEntry->loadAddr = (long*)MEMPACK_Malloc((u_long)loadEntry->loadSize, (u_char)loadEntry->memType);
+			loadEntry->loadAddr = (long*)MEMPACK_Malloc(loadEntry->loadSize, loadEntry->memType);
 		}
 
 		LOAD_CdReadFromBigFile(loadEntry->filePos, (unsigned long*)loadEntry->loadAddr, loadEntry->loadSize, loadEntry->checksumType, loadEntry->checksum);

@@ -110,6 +110,7 @@ long MEMPACK_RelocatableType(long memType)
 char * MEMPACK_Malloc(unsigned long allocSize, unsigned char memType)
 {
 #ifdef PSX_VERSION
+	
 	struct MemHeader* bestAddress;
 	long relocatableMemory;
 	int curMem;
@@ -117,15 +118,33 @@ char * MEMPACK_Malloc(unsigned long allocSize, unsigned char memType)
 	long topOffset;
 
 	relocatableMemory = MEMPACK_RelocatableType(memType);
-	
+
 	allocSize = ((allocSize + 11) >> 2) << 2;
 
-	if (newMemTracker.doingGarbageCollection == 0)
+	while (1)
 	{
-		if (relocatableMemory != 0)
+		if (newMemTracker.doingGarbageCollection == 0)
 		{
-			MEMPACK_DoGarbageCollection();
-
+			if (relocatableMemory != 0)
+			{
+				MEMPACK_DoGarbageCollection();
+#
+				if (relocatableMemory != 0)
+				{
+					bestAddress = MEMPACK_GetSmallestBlockTopBottom(allocSize);
+				}
+				else
+				{
+					bestAddress = MEMPACK_GetSmallestBlockBottomTop(allocSize);
+				}
+			}
+			else
+			{
+				bestAddress = MEMPACK_GetSmallestBlockBottomTop(allocSize);
+			}
+		}
+		else
+		{
 			if (relocatableMemory != 0)
 			{
 				bestAddress = MEMPACK_GetSmallestBlockTopBottom(allocSize);
@@ -135,55 +154,47 @@ char * MEMPACK_Malloc(unsigned long allocSize, unsigned char memType)
 				bestAddress = MEMPACK_GetSmallestBlockBottomTop(allocSize);
 			}
 		}
-		else
-		{
-			bestAddress = MEMPACK_GetSmallestBlockBottomTop(allocSize);
-		}	
-	}
-	else
-	{
-		if (relocatableMemory != 0)
-		{
-			bestAddress = MEMPACK_GetSmallestBlockTopBottom(allocSize);
-		}
-		else
-		{
-			bestAddress = MEMPACK_GetSmallestBlockBottomTop(allocSize);
-		}
-	}
 
-	if (bestAddress == NULL)
-	{
-		curMem = newMemTracker.currentMemoryUsed;
-		STREAM_TryAndDumpANonResidentObject();
-	
-		if (curMem == newMemTracker.currentMemoryUsed)
+		if (bestAddress == NULL)
 		{
-			if (memType != 16)
+			curMem = newMemTracker.currentMemoryUsed;
+
+			STREAM_TryAndDumpANonResidentObject();
+
+			if (curMem == newMemTracker.currentMemoryUsed)
 			{
-				MEMPACK_ReportMemory2();
-				DEBUG_FatalError("Trying to fit memory size %d Type = %d\nAvalible memory : used = % d, free = % d\n", allocSize, memType, newMemTracker.currentMemoryUsed, newMemTracker.totalMemory - newMemTracker.currentMemoryUsed);
+				if (memType != 16)
+				{
+					MEMPACK_ReportMemory2();
+					DEBUG_FatalError("Trying to fit memory size %d Type = %d\nAvailable memory : used = % d, free = % d", allocSize, memType, newMemTracker.currentMemoryUsed, newMemTracker.totalMemory - newMemTracker.currentMemoryUsed);
+				}
+
+				return NULL;
 			}
 		}
-	}
-	
-	topOffset = bestAddress->memSize;
-	if (topOffset - allocSize < 8)
-	{
-		allocSize = topOffset;
+		else
+		{
+			break;
+		}
 	}
 
-	if (allocSize != topOffset)
+	if ((unsigned int)bestAddress->memSize - allocSize < 8)
+	{
+		allocSize = bestAddress->memSize;
+	}
+
+	if (allocSize != bestAddress->memSize)
 	{
 		if (relocatableMemory != 0)
 		{
 			address = (struct MemHeader*)((char*)bestAddress + allocSize);
+
 			address->magicNumber = DEFAULT_MEM_MAGIC;
 			address->memStatus = 0;
 			address->memType = 0;
 			address->memSize = bestAddress->memSize - allocSize;
 			
-			bestAddress->magicNumber = DEFAULT_MEM_MAGIC;
+			bestAddress->magicNumber = 1;
 			bestAddress->memStatus = 1;
 			bestAddress->memType = memType;
 			bestAddress->memSize = allocSize;
@@ -192,9 +203,8 @@ char * MEMPACK_Malloc(unsigned long allocSize, unsigned char memType)
 		}
 		else
 		{
-			topOffset -= allocSize;
-			
-			address = (struct MemHeader*)((char*)bestAddress + topOffset);
+			address = (struct MemHeader*)((char*)bestAddress + (bestAddress->memSize - allocSize));
+
 			address->magicNumber = DEFAULT_MEM_MAGIC;
 			address->memStatus = 1;
 			address->memType = memType;
@@ -205,11 +215,21 @@ char * MEMPACK_Malloc(unsigned long allocSize, unsigned char memType)
 			bestAddress->magicNumber = DEFAULT_MEM_MAGIC;
 			bestAddress->memStatus = 0;
 			bestAddress->memType = 0;
-			bestAddress->memSize = topOffset;
+			bestAddress->memSize = (bestAddress->memSize - allocSize);
 
 			bestAddress = address;
 		}
 	}
+	else
+	{
+		bestAddress->magicNumber = DEFAULT_MEM_MAGIC;
+		bestAddress->memStatus = 1;
+		bestAddress->memType = memType;
+		bestAddress->memSize = allocSize;
+
+		newMemTracker.currentMemoryUsed += allocSize;
+	}
+
 	return (char*)(bestAddress + 1);
 
 #else
@@ -560,7 +580,7 @@ char * MEMPACK_GarbageCollectMalloc(unsigned long *allocSize, unsigned char memT
 
 void MEMPACK_GarbageSplitMemoryNow(unsigned long allocSize, struct MemHeader *bestAddress, long memType, unsigned long freeSize)
 {
-	struct MemHeader* address = (struct MemHeader*)(char*)bestAddress + allocSize;
+	struct MemHeader* address = (struct MemHeader*)((char*)bestAddress + allocSize);
 
 	if (freeSize != 0)
 	{
@@ -633,14 +653,20 @@ void MEMPACK_DoGarbageCollection()
 					foundOpening = 2;
 					break;
 				}
-
 			}
 			else
 			{
 				foundOpening = 1;
 			}
 
+			struct MemHeader* last = relocateAddress;
 			relocateAddress = (struct MemHeader*)((char*)relocateAddress + relocateAddress->memSize);
+
+			if ((char*)relocateAddress >= newMemTracker.lastMemoryAddress)
+			{
+				int testing = 0;
+				testing++;
+			}
 		}
 
 		if (foundOpening == 2)
@@ -691,7 +717,7 @@ void MEMPACK_DoGarbageCollection()
 					aadRelocateSfxMemory(relocateAddress, newAddress - (char*)relocateAddress);
 				}
 
-				MEMPACK_GarbageSplitMemoryNow(holdSize, (struct MemHeader*)newAddress - 8, addressMemType, freeSize);
+				MEMPACK_GarbageSplitMemoryNow(holdSize, (struct MemHeader*)((char*)newAddress - 8), addressMemType, freeSize);
 			}
 		}
 		else
