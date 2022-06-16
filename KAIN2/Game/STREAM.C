@@ -1323,7 +1323,7 @@ void STREAM_LoadMainVram(struct GameTracker *gameTracker, char *baseAreaName, st
 	M_TrackClutUpdate = 0;
 
 	vramBuffer->yOffset = 0;
-	vramBuffer->lengthOfLeftOverData;
+	vramBuffer->lengthOfLeftOverData = 0;
 	
 	LOAD_NonBlockingBufferedLoad(vramName, (void*)VRAM_TransferBufferToVram, vramBuffer, NULL);
 }
@@ -2518,27 +2518,27 @@ void STREAM_PackVRAMObject(struct _ObjectTracker *objectTracker)
 
 	if (vramSize->x != -1 && VRAM_GetObjectVramSpace(vramSize, objectTracker) != 0)
 	{
-			vramBlock = (struct _BlockVramEntry*)objectTracker->vramBlock;
+		vramBlock = (struct _BlockVramEntry*)objectTracker->vramBlock;
 
-			if (vramBlock != NULL)
-			{
-				AdjustVramCoordsObject(SCREEN_WIDTH, 0, vramBlock->x, vramBlock->y, objectTracker->object);
-			}
+		if (vramBlock != NULL)
+		{
+			AdjustVramCoordsObject(SCREEN_WIDTH, 0, vramBlock->x, vramBlock->y, objectTracker->object);
+		}
 			
-			sprintf(fileName, "\\kain2\\object\\%s\\%s.crm", objectTracker->name, objectTracker->name);
+		sprintf(fileName, "\\kain2\\object\\%s\\%s.crm", objectTracker->name, objectTracker->name);
 			
-			vramBuffer = (struct VramBuffer*)MEMPACK_Malloc((vramBlock->w << 1) + sizeof(VramBuffer), 0x23);
+		vramBuffer = (struct VramBuffer*)MEMPACK_Malloc((vramBlock->w << 1) + sizeof(VramBuffer), 0x23);
 			
-			vramBuffer->lineOverFlow = (short*)((char*)vramBuffer + sizeof(VramBuffer));
-			vramBuffer->flags = 0;
-			vramBuffer->x = vramBlock->x;
-			vramBuffer->y = vramBlock->y;
-			vramBuffer->w = vramBlock->w;
-			vramBuffer->yOffset = 0;
-			vramBuffer->lengthOfLeftOverData = 0;
-			vramBuffer->h = vramBlock->h;
+		vramBuffer->lineOverFlow = (short*)(vramBuffer + 1);
+		vramBuffer->flags = 0;
+		vramBuffer->x = vramBlock->x;
+		vramBuffer->y = vramBlock->y;
+		vramBuffer->w = vramBlock->w;
+		vramBuffer->yOffset = 0;
+		vramBuffer->lengthOfLeftOverData = 0;
+		vramBuffer->h = vramBlock->h;
 			
-			LOAD_NonBlockingBufferedLoad(fileName, (void*)VRAM_TransferBufferToVram, vramBuffer, objectTracker);
+		LOAD_NonBlockingBufferedLoad(fileName, (void*)VRAM_TransferBufferToVram, vramBuffer, objectTracker);
 	}
 	else
 	{

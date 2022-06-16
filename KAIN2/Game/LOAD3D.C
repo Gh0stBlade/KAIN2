@@ -1025,7 +1025,7 @@ void LOAD_CleanUpBuffers()
 void * LOAD_InitBuffers()
 {
 #if defined(PSXPC_VERSION)
-	loadStatus.buffer1 = MEMPACK_Malloc(2048*129, 0x23);
+	loadStatus.buffer1 = MEMPACK_Malloc(2048*219, 0x23);
 	loadStatus.buffer2 = MEMPACK_Malloc(2048, 0x23);
 #else
 	loadStatus.buffer1 = MEMPACK_Malloc(2048, 0x23);

@@ -18,7 +18,7 @@ struct NewMemTracker newMemTracker;
 unsigned long mem_used, mem_total;
 
 #if defined(PSXPC_VERSION) || defined(PC_VERSION)
-char memBuffer[/*0x11F18C */ (ONE_MB * 8)];
+char memBuffer[0x11F18C + ONE_MB * 8];
 void* overlayAddress = memBuffer; // 0x800CE194
 #else
 void* overlayAddress; // For PSX this is quite clearly set by the linker script maybe.
@@ -189,7 +189,7 @@ char * MEMPACK_Malloc(unsigned long allocSize, unsigned char memType)
 			address->memType = 0;
 			address->memSize = bestAddress->memSize - allocSize;
 			
-			bestAddress->magicNumber = 1;
+			bestAddress->magicNumber = DEFAULT_MEM_MAGIC;
 			bestAddress->memStatus = 1;
 			bestAddress->memType = memType;
 			bestAddress->memSize = allocSize;
@@ -609,20 +609,17 @@ void MEMPACK_GarbageCollectFree(struct MemHeader *memAddress)
 	}
 
 	secondAddress = memAddress;
+	memAddress = newMemTracker.rootNode;
 
-	if ((char*)newMemTracker.rootNode != (char*)newMemTracker.lastMemoryAddress)
+	while ((char*)memAddress != (char*)newMemTracker.lastMemoryAddress)
 	{
-		do
+		if (((char*)memAddress + memAddress->memSize) == (char*)secondAddress)
 		{
-			if (((char*)memAddress + memAddress->memSize) == (char*)secondAddress)
-			{
-				MEMORY_MergeAddresses(memAddress, (struct MemHeader*)((char*)memAddress + memAddress->memSize));
-				break;
-			}
+			MEMORY_MergeAddresses(memAddress, (struct MemHeader*)((char*)memAddress + memAddress->memSize));
+			break;
+		}
 
-			memAddress = (struct MemHeader*)((char*)memAddress + memAddress->memSize);
-		
-		} while ((char*)memAddress != (char*)newMemTracker.lastMemoryAddress);
+		memAddress = (struct MemHeader*)((char*)memAddress + memAddress->memSize);
 	}
 }
 
