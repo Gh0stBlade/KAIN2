@@ -593,7 +593,7 @@ void MEMPACK_GarbageSplitMemoryNow(unsigned long allocSize, struct MemHeader *be
 
 void MEMPACK_GarbageCollectFree(struct MemHeader *memAddress)
 {
-	struct MemHeader* secondAddress; // $v1
+	struct MemHeader* secondAddress;
 	
 	memAddress->memStatus = 0;
 	memAddress->memType = 0;
@@ -602,23 +602,26 @@ void MEMPACK_GarbageCollectFree(struct MemHeader *memAddress)
 
 	secondAddress = (struct MemHeader*)((char*)memAddress + memAddress->memSize);
 
-	if ((char*)secondAddress != newMemTracker.lastMemoryAddress)
+	if ((char*)secondAddress != (char*)newMemTracker.lastMemoryAddress)
 	{
 		MEMORY_MergeAddresses(memAddress, secondAddress);
 	}
-	
+
 	secondAddress = memAddress;
-	memAddress = newMemTracker.rootNode;
 
-	while ((char*)memAddress != newMemTracker.lastMemoryAddress)
+	if ((char*)newMemTracker.rootNode != (char*)newMemTracker.lastMemoryAddress)
 	{
-		if (((char*)memAddress + newMemTracker.rootNode->memSize) == (char*)secondAddress)
+		do
 		{
-			MEMORY_MergeAddresses(memAddress, (struct MemHeader*)((char*)memAddress + newMemTracker.rootNode->memSize));
-			break;
-		}
+			if (((char*)memAddress + memAddress->memSize) == (char*)secondAddress)
+			{
+				MEMORY_MergeAddresses(memAddress, (struct MemHeader*)(memAddress + memAddress->memSize));
+				break;
+			}
 
-		memAddress = (struct MemHeader*)((char*)memAddress + newMemTracker.rootNode->memSize);
+			memAddress = (struct MemHeader*)(memAddress + memAddress->memSize);
+		
+		} while ((char*)memAddress != (char*)newMemTracker.lastMemoryAddress);
 	}
 }
 
