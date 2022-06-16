@@ -640,15 +640,15 @@ void MEMPACK_DoGarbageCollection()
 
 	while (done == 0)
 	{
-		relocateAddress = newMemTracker.rootNode;
+		relocateAddress = (struct MemHeader*)newMemTracker.rootNode;
+		
 		foundOpening = 0;
 
-		while ((unsigned int)relocateAddress != (unsigned int)newMemTracker.lastMemoryAddress)
+		while ((char*)relocateAddress != (char*)newMemTracker.lastMemoryAddress)
 		{
 			if (relocateAddress->memStatus != 0)
 			{
-				if (MEMPACK_RelocatableType(relocateAddress->memType) != 0 && foundOpening == 1 &&
-					relocateAddress->memStatus != 2)
+				if (MEMPACK_RelocatableType(relocateAddress->memType) != 0 && foundOpening == 1 && relocateAddress->memStatus != 2)
 				{
 					foundOpening = 2;
 					break;
@@ -659,65 +659,59 @@ void MEMPACK_DoGarbageCollection()
 				foundOpening = 1;
 			}
 
-			struct MemHeader* last = relocateAddress;
 			relocateAddress = (struct MemHeader*)((char*)relocateAddress + relocateAddress->memSize);
-
-			if ((char*)relocateAddress >= newMemTracker.lastMemoryAddress)
-			{
-				int testing = 0;
-				testing++;
-			}
 		}
 
 		if (foundOpening == 2)
 		{
 			addressMemType = relocateAddress->memType;
-			addressSize = relocateAddress->memSize - 8;
+			addressSize = relocateAddress->memSize - sizeof(struct MemHeader);
+
 			MEMPACK_GarbageCollectFree(relocateAddress);
+
 			holdSize = addressSize;
-			newAddress = MEMPACK_GarbageCollectMalloc((unsigned long*)&holdSize, (unsigned char)addressMemType, (unsigned long*)&freeSize);
-			relocateAddress++;
+			newAddress = MEMPACK_GarbageCollectMalloc((unsigned long*)&holdSize, addressMemType, (unsigned long*)&freeSize);
+			oldAddress = (char*)(relocateAddress + 1);
 
 			if (newAddress != NULL)
 			{
 				if (addressMemType == 2)
 				{
-					RemoveIntroducedLights((struct Level*)relocateAddress);
-
+					RemoveIntroducedLights((struct Level*)oldAddress);
 				}
 				else if (addressMemType == 4)
 				{
 					aadRelocateMusicMemoryBegin();
 				}
 
-				memcpy(newAddress, (char*)relocateAddress, addressSize);
+				memcpy(newAddress, oldAddress, addressSize);
 
-				if (addressMemType == 4)
+				if (addressMemType == 2)
 				{
-					MEMPACK_RelocateAreaType(relocateAddress - 1, newAddress - (char*)relocateAddress, (struct Level*)relocateAddress);
+					MEMPACK_RelocateAreaType((struct MemHeader*)(newAddress - 8), newAddress - oldAddress, (struct Level*)oldAddress);
 				}
 				else if (addressMemType == 1)
 				{
-					MEMPACK_RelocateObjectType((struct MemHeader*)newAddress - 8, newAddress - (char*)relocateAddress, (struct Object*)relocateAddress);
+					MEMPACK_RelocateObjectType((struct MemHeader*)(newAddress - 8), newAddress - oldAddress, (struct Object*)oldAddress);
 				}
 				else if (addressMemType == 14)
 				{
-					STREAM_UpdateInstanceCollisionInfo((struct _HModel*)relocateAddress, (struct _HModel*)newAddress);
+					STREAM_UpdateInstanceCollisionInfo((struct _HModel*)oldAddress, (struct _HModel*)newAddress);
 				}
 				else if (addressMemType == 44)
 				{
-					MEMPACK_RelocateCDMemory((struct MemHeader*)newAddress - 8, newAddress - (char*)relocateAddress, (struct _BigFileDir*)relocateAddress);
+					MEMPACK_RelocateCDMemory((struct MemHeader*)(newAddress - 8), newAddress - oldAddress, (struct _BigFileDir*)oldAddress);
 				}
 				else if (addressMemType == 4)
 				{
-					aadRelocateMusicMemoryEnd((struct MemHeader*)relocateAddress, newAddress - (char*)relocateAddress, NULL);
+					aadRelocateMusicMemoryEnd((struct MemHeader*)oldAddress, newAddress - oldAddress);
 				}
 				else if (addressMemType == 47)
 				{
-					aadRelocateSfxMemory(relocateAddress, newAddress - (char*)relocateAddress);
+					aadRelocateSfxMemory(oldAddress, newAddress - oldAddress);
 				}
 
-				MEMPACK_GarbageSplitMemoryNow(holdSize, (struct MemHeader*)((char*)newAddress - 8), addressMemType, freeSize);
+				MEMPACK_GarbageSplitMemoryNow(holdSize, (struct MemHeader*)(newAddress - 8), addressMemType, freeSize);
 			}
 		}
 		else

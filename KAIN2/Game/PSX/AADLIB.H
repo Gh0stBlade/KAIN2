@@ -363,7 +363,7 @@ extern int aadOpenDynamicSoundBank(unsigned char *soundBank, int dynamicBankInde
 extern int aadLoadDynamicSfx(char *fileName, long directoryID, long flags); // 0x80052550
 extern int aadFreeDynamicSfx(int handle); // 0x80052604
 extern void aadRelocateMusicMemoryBegin(); // 0x800526E0
-extern void aadRelocateMusicMemoryEnd(struct MemHeader *newAddress, long offset, void *oldAddress); // 0x800526FC
+extern void aadRelocateMusicMemoryEnd(struct MemHeader *newAddress, long offset); // 0x800526FC
 extern void aadRelocateSfxMemory(void *oldAddress, int offset); // 0x80052924
 extern int aadGetNumLoadsQueued(); // 0x8005298C
 extern void aadPurgeLoadQueue(); // 0x800529A0
