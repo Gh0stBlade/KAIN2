@@ -530,28 +530,33 @@ long MEMPACK_MemoryValidFunc(char *address)
 char * MEMPACK_GarbageCollectMalloc(unsigned long *allocSize, unsigned char memType, unsigned long *freeSize)
 {
 	struct MemHeader* bestAddress;
-
-	allocSize[0] = ((allocSize[0] + 11) >> 2) << 2;
-	bestAddress = MEMPACK_GetSmallestBlockTopBottom(allocSize[0]);
 	
+	allocSize[0] = ((allocSize[0] + 11) >> 2) << 2;
+
+	bestAddress = MEMPACK_GetSmallestBlockTopBottom(allocSize[0]);
+
 	if (bestAddress == NULL)
 	{
 		STREAM_DumpNonResidentObjects();
+
 		bestAddress = MEMPACK_GetSmallestBlockTopBottom(allocSize[0]);
 
 		if (bestAddress == NULL)
 		{
-			if (memType == 16)
+			if (memType != 16)
+			{
+				MEMPACK_ReportMemory();
+
+				DEBUG_FatalError("Trying to fit memory size %d Type = %d\nAvalible memory : used = % d, free = %d\n", allocSize[0], memType, newMemTracker.currentMemoryUsed, newMemTracker.totalMemory - newMemTracker.currentMemoryUsed);
+			}
+			else
 			{
 				return NULL;
 			}
-
-			MEMPACK_ReportMemory();
-			DEBUG_FatalError("Trying to fit memory size %d Type = %d\nAvailable memory : used = %d, free = %d", allocSize[0], memType, newMemTracker.currentMemoryUsed, newMemTracker.totalMemory - newMemTracker.currentMemoryUsed);
 		}
 	}
 
-	if (allocSize[0] - bestAddress->memSize < 8)
+	if ((unsigned int)bestAddress->memSize - allocSize[0] < 8)
 	{
 		allocSize[0] = bestAddress->memSize;
 	}
@@ -559,10 +564,12 @@ char * MEMPACK_GarbageCollectMalloc(unsigned long *allocSize, unsigned char memT
 	if (allocSize[0] != bestAddress->memSize)
 	{
 		freeSize[0] = bestAddress->memSize - allocSize[0];
+
 		bestAddress->magicNumber = DEFAULT_MEM_MAGIC;
 		bestAddress->memStatus = 1;
 		bestAddress->memType = memType;
 		bestAddress->memSize = allocSize[0];
+
 		newMemTracker.currentMemoryUsed += allocSize[0];
 	}
 	else
@@ -571,11 +578,13 @@ char * MEMPACK_GarbageCollectMalloc(unsigned long *allocSize, unsigned char memT
 		bestAddress->memStatus = 1;
 		bestAddress->memType = memType;
 		bestAddress->memSize = allocSize[0];
+
 		newMemTracker.currentMemoryUsed += allocSize[0];
+
 		freeSize[0] = 0;
 	}
 
-	return (char*)bestAddress + 1;
+	return (char*)(bestAddress + 1);
 }
 
 void MEMPACK_GarbageSplitMemoryNow(unsigned long allocSize, struct MemHeader *bestAddress, long memType, unsigned long freeSize)
@@ -615,11 +624,11 @@ void MEMPACK_GarbageCollectFree(struct MemHeader *memAddress)
 		{
 			if (((char*)memAddress + memAddress->memSize) == (char*)secondAddress)
 			{
-				MEMORY_MergeAddresses(memAddress, (struct MemHeader*)(memAddress + memAddress->memSize));
+				MEMORY_MergeAddresses(memAddress, (struct MemHeader*)((char*)memAddress + memAddress->memSize));
 				break;
 			}
 
-			memAddress = (struct MemHeader*)(memAddress + memAddress->memSize);
+			memAddress = (struct MemHeader*)((char*)memAddress + memAddress->memSize);
 		
 		} while ((char*)memAddress != (char*)newMemTracker.lastMemoryAddress);
 	}
