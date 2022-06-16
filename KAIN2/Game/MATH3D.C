@@ -389,7 +389,7 @@ long MATH3D_FastSqrt0(long square)
 
 		return result;
 	}
-	UNIMPLEMENTED();
+
 	return 0;
 
 #elif defined(PC_VERSION)

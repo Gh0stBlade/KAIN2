@@ -204,7 +204,7 @@ struct AadDynamicBankLoadInfo // hashcode: 0x6A3AE9FB (dec: 1782245883)
 	char smpFileName[32]; // size=32, offset=32
 	int dynamicBankIndex; // size=0, offset=64
 	int loadOption; // size=0, offset=68
-	void (*userCallbackProc)(); // size=0, offset=72
+	void (*userCallbackProc)(int, int); // size=0, offset=72
 	unsigned long sramDataSize; // size=0, offset=76
 	unsigned long nextSramAddr; // size=0, offset=80
 	unsigned long flags; // size=0, offset=84
