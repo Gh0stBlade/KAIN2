@@ -713,32 +713,29 @@ void aadRelocateMusicMemoryEnd(struct MemHeader *newAddress, long offset)
 
 void aadRelocateSfxMemory(void *oldAddress, int offset)
 {
-	struct _AadDynSfxFileHdr *snfFile;
-	
-	snfFile = aadMem->firstDynSfxFile;
+	struct _AadDynSfxFileHdr* snfFile;
 
-	if (oldAddress == snfFile)
+	snfFile = aadMem->firstDynSfxFile;
+	
+	if ((char*)oldAddress == (char*)snfFile)
 	{
 		snfFile = (struct _AadDynSfxFileHdr*)((char*)snfFile + offset);
 		aadMem->firstDynSfxFile = snfFile;
 	}
 
-	if (snfFile != NULL)
+	while (snfFile != NULL)
 	{
-		do
+		if ((char*)oldAddress == (char*)snfFile->prevDynSfxFile)
 		{
-			if (oldAddress == snfFile->prevDynSfxFile)
-			{
-				snfFile->prevDynSfxFile = (struct _AadDynSfxFileHdr*)((char*)oldAddress + offset);
-			}
-			if (oldAddress == snfFile->nextDynSfxFile)
-			{
-				snfFile->nextDynSfxFile = (struct _AadDynSfxFileHdr*)((char*)oldAddress + offset);
-			}
+			snfFile->prevDynSfxFile = (struct _AadDynSfxFileHdr*)((char*)oldAddress + offset);
+		}
 
-			snfFile = snfFile->nextDynSfxFile;
+		if ((char*)oldAddress == (char*)snfFile->nextDynSfxFile)
+		{
+			snfFile->nextDynSfxFile = (struct _AadDynSfxFileHdr*)((char*)oldAddress + offset);
+		}
 
-		} while (snfFile != NULL);
+		snfFile = snfFile->nextDynSfxFile;
 	}
 }
 
