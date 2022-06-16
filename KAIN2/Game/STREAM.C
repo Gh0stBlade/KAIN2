@@ -173,9 +173,7 @@ void STREAM_LoadObjectReturn(void* loadData, void* data, void* data2)
 
 	if ((object->oflags2 & 0x800000))
 	{
-		eprinterr("Name: %s\n", objectTracker->name);
 		sprintf(objDsfxFileName, "\\kain2\\sfx\\object\\%s\\%s.snf", objectTracker->name, objectTracker->name);
-		eprinterr("Name2: %s\n", objDsfxFileName);
 
 		object->sfxFileHandle = 0;
 

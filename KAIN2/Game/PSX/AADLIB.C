@@ -846,9 +846,6 @@ void aadProcessLoadQueue()
 					p[0] = 0;
 				}
 
-				eprinterr("Name4: %s\n", areaName);
-				eprinterr("Name5: %s\n", p);
-
 				if ((loadReq->flags & 0x1))
 				{
 					sprintf(info->snfFileName, "\\kain2\\area\\%s\\bin\\%s.snf", areaName, loadReq->fileName);
@@ -858,9 +855,6 @@ void aadProcessLoadQueue()
 				{
 					sprintf(info->snfFileName, "\\kain2\\sfx\\object\\%s\\%s.snf", loadReq->fileName, loadReq->fileName);
 					sprintf(info->smfFileName, "\\kain2\\sfx\\object\\%s\\%s.smf", loadReq->fileName, loadReq->fileName);
-				
-					eprinterr("Name3: %s\n", info->snfFileName);
-					eprinterr("Name6: %s\n", loadReq->fileName);
 				}
 				
 				info->fileHandle = loadReq->handle;

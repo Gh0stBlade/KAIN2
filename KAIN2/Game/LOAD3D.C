@@ -668,8 +668,6 @@ int LOAD_SetupFileInfo(struct _NonBlockLoadEntry *loadEntry)
 
 	if (fileInfo == NULL)
 	{
-		eprinterr("Failed to find %s\n", loadEntry->fileName);
-
 		if (loadEntry->dirHash == loadStatus.bigFile.currentDirID)
 		{
 			DEBUG_FatalError("CD ERROR: File %s does not exist\n", &loadEntry->fileName[0]);
@@ -839,12 +837,6 @@ struct _BigFileEntry * LOAD_GetBigFileEntryByHash(long hash)
 	int i;
 	struct _BigFileEntry* entry;
 
-	eprinterr("Finding hash %d\n", hash);
-	if (hash == -1713633768)
-	{
-		int testing = 0;
-		testing++;
-	}
 	if (loadStatus.bigFile.currentDir != NULL && loadStatus.currentDirLoading == 0 && loadStatus.bigFile.currentDir->numFiles != 0)
 	{
 		i = loadStatus.bigFile.currentDir->numFiles;
