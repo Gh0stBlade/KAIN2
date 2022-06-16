@@ -27,13 +27,13 @@ jobs:
       - name: Download BIGFILE.DAT
         uses: carlosperate/download-file-action@v1.1.1
         with:
-          file-url: 'https://legacyofkain.co.uk/KAIN2/ASSETS/REVIEW/BIGFILE.DAT'
+          file-url: 'https://legacyofkain.co.uk/KAIN2/ASSETS/DEMO/BIGFILE.DAT'
           location: '${{github.workspace}}/Build_EMSDK/Assets'
           
       - name: Download LOCALS.TBL
         uses: carlosperate/download-file-action@v1.1.1
         with:
-          file-url: 'https://legacyofkain.co.uk/KAIN2/ASSETS/REVIEW/LOCALS.TBL'
+          file-url: 'https://legacyofkain.co.uk/KAIN2/ASSETS/DEMO/LOCALS.TBL'
           location: '${{github.workspace}}/Build_EMSDK/Assets'
 
       - name: Configure CMake
