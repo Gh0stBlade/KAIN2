@@ -1663,7 +1663,7 @@ void SOUND_ProcessMusicLoad()
 
 									if (LOAD_DoesFileExist(sndFileName) != 0)
 									{
-										strcpy(musicInfo.currentMusicName, sndFileName);
+										strcpy(musicInfo.currentMusicName, musicName);
 										
 										musicInfo.state = 1;
 										musicInfo.nextState = 2;
