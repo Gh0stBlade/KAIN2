@@ -2372,8 +2372,10 @@ char* find_eol(char* text)
 			{
 				break;
 			}
+			
+			text++;
 
-		} while (*text++ != 0);
+		} while (*text != 0);
 	}
 
 	return text;
@@ -2389,7 +2391,10 @@ void draw_menu_item(struct GameTracker *gt, struct debug_format_t *fmt, char *te
 		eol = find_eol(text);
 
 		c = eol[0];
+
+#if !defined(PSXPC_VERSION)//Shouldn't be required and causes a crash!
 		eol[0] = 0;
+#endif
 
 		if (fmt->is_centered != 0)
 		{
