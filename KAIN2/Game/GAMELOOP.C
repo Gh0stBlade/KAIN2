@@ -158,7 +158,7 @@ void GAMELOOP_ClearGameTracker()
 	gameTrackerX.gameData.asmData.drawBackFaces = 0;
 	pause_redraw_flag = 0;
 	pause_redraw_prim = NULL;
-#if !defined(_DEBUG)
+#if !defined(_DEBUG) || (!defined(__EMSCRIPTEN__) && !defined(_DEBUG))
 	gameTrackerX.debugFlags |= 0x40000;
 #endif
 }
