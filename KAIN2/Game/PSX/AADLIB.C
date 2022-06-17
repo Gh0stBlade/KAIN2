@@ -499,7 +499,7 @@ int aadLoadDynamicSoundBank(char *sndFileName, char *smpFileName, int dynamicBan
 	info->flags = 0;
 	info->userCallbackProc = func;
 
-	aadMem->nonBlockLoadProc(sndFileName, aadLoadDynamicSoundBankReturn, info, NULL, (void**)&aadMem->dynamicSoundBankData[0], 4);
+	aadMem->nonBlockLoadProc(sndFileName, (void*)&aadLoadDynamicSoundBankReturn, info, NULL, (void**)&aadMem->dynamicSoundBankData[0], 4);
 	
 	return 0;
 }
@@ -531,7 +531,7 @@ void aadLoadDynamicSoundBankReturn(void *loadedDataPtr, void *data, void *data2)
 	}
 	else
 	{
-		aadMem->nonBlockBufferedLoadProc(&((struct AadDynamicBankLoadInfo*)data)->smpFileName[0], aadLoadDynamicSoundBankReturn2, data, NULL);
+		aadMem->nonBlockBufferedLoadProc(&((struct AadDynamicBankLoadInfo*)data)->smpFileName[0], (void*)&aadLoadDynamicSoundBankReturn2, data, NULL);
 	}
 }
 
