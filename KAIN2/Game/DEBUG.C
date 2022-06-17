@@ -2075,9 +2075,9 @@ void maybe_change_menu_choice(struct GameTracker *gt, struct DebugMenuLine *menu
 
 	nitems = num_menu_items(menu);
 
-	if ((command[1] & 0x1))
+	if (!(command[1] & 0x1))
 	{
-		incr = ((command[1] & 0x1) >> 1) & 0x1;
+		incr = (command[1] >> 1) & 0x1;
 	}
 	else
 	{
@@ -2104,7 +2104,6 @@ void maybe_change_menu_choice(struct GameTracker *gt, struct DebugMenuLine *menu
 						SndPlay(5);
 
 						debugMenuChoice = choice;
-
 					}
 				}
 
@@ -2441,8 +2440,8 @@ void draw_menu(struct GameTracker* gt, struct DebugMenuLine* menu)
 {
 	struct debug_format_t fmt;
 	int i;
-	int xpos;
-	int ypos;
+	int xpos = 0;
+	int ypos = 0;
 
 	fmt.xpos = cem_x_base;
 	fmt.ypos = cem_y_base;
@@ -2458,10 +2457,13 @@ void draw_menu(struct GameTracker* gt, struct DebugMenuLine* menu)
 	}
 
 	i = 0;
-	
-	do
+
+	while (menu->type != DEBUG_LINE_TYPE_ENDLIST)
 	{
-		if (i != 0 && menu->type == DEBUG_LINE_TYPE_FORMAT)
+		xpos = fmt.xpos;
+		ypos = fmt.ypos;
+
+		if (menu->type == DEBUG_LINE_TYPE_FORMAT)
 		{
 			adjust_format(menu->text, &fmt);
 			menu++;
@@ -2483,16 +2485,16 @@ void draw_menu(struct GameTracker* gt, struct DebugMenuLine* menu)
 
 				FONT_Print(">");
 			}
-			
+
 			draw_menu_item(gt, &fmt, menu->text);
 
 			if (fmt.is_centered != 0)
 			{
-				FONT_SetCursor(cem_line_width >> 1, ypos);
+				FONT_SetCursor(xpos + (cem_line_width >> 1), ypos);
 			}
 			else
 			{
-				FONT_SetCursor(cem_line_width, ypos);
+				FONT_SetCursor(xpos + cem_line_width, ypos);
 			}
 
 			if (menu->type != DEBUG_LINE_TYPE_BIT)
@@ -2520,11 +2522,9 @@ void draw_menu(struct GameTracker* gt, struct DebugMenuLine* menu)
 					menu++;
 				}
 			}
+			i++;
 		}
-
-		i++;
-
-	} while (menu->type != DEBUG_LINE_TYPE_ENDLIST);
+	}
 }
 
 void DEBUG_Menu(struct GameTracker* gt)
@@ -2543,11 +2543,11 @@ void DEBUG_Menu(struct GameTracker* gt)
 	{
 		if (pre_process_functions(gt, menu) == 0)
 		{
-			if (menu[debugMenuChoice++].type < DEBUG_LINE_TYPE_FORMAT)
+			if (menu[choice].type < DEBUG_LINE_TYPE_FORMAT)
 			{
 				do
 				{
-				} while (menu[debugMenuChoice++].type >= DEBUG_LINE_TYPE_FORMAT);
+				} while (menu[choice++].type >= DEBUG_LINE_TYPE_FORMAT);
 			}
 
 			draw_menu(gt, menu);
