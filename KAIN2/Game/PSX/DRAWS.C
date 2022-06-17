@@ -2100,6 +2100,8 @@ unsigned long* DRAW_DisplayPolytopeList_S(struct _PolytopeList* polytopeList, st
 	short y;
 	short z;
 
+	UNIMPLEMENTED();
+	return (unsigned long*)primPool->nextPrim;
 	gte_SetRotMatrix(camera->core.wcTransform);
 	gte_SetTransMatrix(camera->core.wcTransform);
 

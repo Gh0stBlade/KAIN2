@@ -20,7 +20,7 @@
 #endif
 
 #else
-#if 1//defined(DEBUG_PRINTS)
+#if defined(DEBUG_PRINTS)
 #define eprintf(fmt, ...) printf("[EMU] " fmt, ##__VA_ARGS__)
 #define eprinterr(fmt, ...) eprintf("[%s] - " fmt, FUNCNAME, ##__VA_ARGS__);
 #else

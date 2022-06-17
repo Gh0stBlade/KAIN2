@@ -88,14 +88,14 @@ void PIPE3D_CalculateWCTransform(struct _CameraCore_Type *cameraCore)
 	gte_SetRotMatrix(cam_wcTrans);
 	gte_ldv0(&v0);
 	gte_mvmva(1, 0, 0, 3, 0);
-	gte_stlvnl(v1);
+	gte_stlvnl(&v1);
 
 	TransMatrix(cam_wcTrans, &v1);
 
 	gte_SetRotMatrix(cameraCore->wcTransform2);
 	gte_ldv0(&v0);
 	gte_mvmva(1, 0, 0, 3, 0);
-	gte_stlvnl(v1);
+	gte_stlvnl(&v1);
 
 	TransMatrix(cameraCore->wcTransform2, &v1);
 }
@@ -441,7 +441,7 @@ void PIPE3D_InstanceListTransformAndDrawFunc(struct _StreamUnit* unit, unsigned 
 		gte_SetRotMatrix(&cameraCore->vvNormalWorVecMat[0]);
 		gte_ldv0(&bsPos);
 		gte_mvmva(1, 0, 0, 3, 0);
-		gte_stlvnl(dpv[0]);
+		gte_stlvnl(&dpv[0]);
 
 		dpv[0].vx -= cameraCore->vvPlaneConsts[0];
 
@@ -452,7 +452,7 @@ void PIPE3D_InstanceListTransformAndDrawFunc(struct _StreamUnit* unit, unsigned 
 			gte_SetRotMatrix(&cameraCore->vvNormalWorVecMat[1]);
 			gte_ldv0(&bsPos);
 			gte_mvmva(1, 0, 0, 3, 0);
-			gte_stlvnl(dpv[1]);
+			gte_stlvnl(&dpv[1]);
 
 			if (-maxRad < dpv[1].vx - cameraCore->vvPlaneConsts[3] &&
 				-maxRad < dpv[1].vy - cameraCore->vvPlaneConsts[4])

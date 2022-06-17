@@ -89,12 +89,12 @@ void CAMERA_CalcVVClipInfo(struct Camera* camera)
 	gte_SetRotMatrix(&camera->core.vvNormalWorVecMat[0]);
 	gte_ldv0(&camera->core.position);
 	gte_mvmva(1, 0, 0, 3, 0);
-	gte_stlvnl(camera->core.vvPlaneConsts[0]);
+	gte_stlvnl(&camera->core.vvPlaneConsts[0]);
 
 	gte_SetRotMatrix(&camera->core.vvNormalWorVecMat[1]);
 	gte_ldv0(&camera->core.position);
 	gte_mvmva(1, 0, 0, 3, 0);
-	gte_stlvnl(camera->core.vvPlaneConsts[3]);
+	gte_stlvnl(&camera->core.vvPlaneConsts[3]);
 }
 
 void CAMERA_SetViewVolume(struct Camera *camera)

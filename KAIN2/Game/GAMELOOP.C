@@ -158,7 +158,9 @@ void GAMELOOP_ClearGameTracker()
 	gameTrackerX.gameData.asmData.drawBackFaces = 0;
 	pause_redraw_flag = 0;
 	pause_redraw_prim = NULL;
+#if !defined(_DEBUG)
 	gameTrackerX.debugFlags |= 0x40000;
+#endif
 }
 
 void GAMELOOP_CalcGameTime()
@@ -2418,7 +2420,10 @@ void GAMELOOP_ChangeMode()
 	long* controlCommand;
 
 	controlCommand = &gameTrackerX.controlCommand[0][0];
-	printf("%x\n", controlCommand[1]);
+	if (controlCommand[1] != 0)
+	{
+		printf("%x\n", controlCommand[1]);
+	}
 	if (!(gameTrackerX.debugFlags & 0x40000))
 	{
 		if (!(gameTrackerX.debugFlags & 0x200000))
