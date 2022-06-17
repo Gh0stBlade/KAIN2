@@ -1698,7 +1698,6 @@ void SOUND_ProcessMusicLoad()
 			aadStartSlot(0);
 			musicInfo.state = 0;
 		}
-		return;
 		break;
 	case 4:
 		if (musicInfo.errorStatus == 0)
