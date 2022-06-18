@@ -2152,7 +2152,7 @@ void handle_line_type_long(struct GameTracker *gt, struct DebugMenuLine *line)
 			incr = -incr;
 		}
 
-		line->var_address[0] += incr;
+		((long*)line->var_address)[0] += incr;
 	}
 }
 
