@@ -2165,7 +2165,7 @@ void handle_line_type_bit(struct GameTracker *gt, struct DebugMenuLine *line)
 	}
 	else if ((gt->controlCommand[0][1] & 0x8))
 	{
-		((long*)line->var_address)[0] |= ~line->bit_mask;
+		((long*)line->var_address)[0] &= ~line->bit_mask;
 	}
 }
 
