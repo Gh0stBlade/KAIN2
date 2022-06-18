@@ -50,7 +50,7 @@ struct DebugMenuLine // hashcode: 0x1BD18E81 (dec: 466718337)
 struct debug_dispatch_t // hashcode: 0x928EA8E4 (dec: -1836144412)
 {
 	enum DEBUG_LINE_TYPE type; // size=4, offset=0
-	void (*fn)(); // size=0, offset=4
+	void (*fn)(struct GameTracker*, struct DebugMenuLine*); // size=0, offset=4
 };
 
 extern struct DebugMenuLine AlukaMenu[10];
