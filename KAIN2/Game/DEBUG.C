@@ -2554,11 +2554,12 @@ void DEBUG_Menu(struct GameTracker* gt)
 	{
 		if (pre_process_functions(gt, menu) == 0)
 		{
-			if (menu[choice].type < DEBUG_LINE_TYPE_FORMAT)
+			if (menu[choice].type >= DEBUG_LINE_TYPE_FORMAT)
 			{
 				do
 				{
-				} while (menu[choice++].type >= DEBUG_LINE_TYPE_FORMAT);
+					choice++;
+				} while (menu[choice].type < DEBUG_LINE_TYPE_FORMAT);
 			}
 
 			draw_menu(gt, menu);
