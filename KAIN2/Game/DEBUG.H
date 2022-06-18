@@ -53,6 +53,16 @@ struct debug_dispatch_t // hashcode: 0x928EA8E4 (dec: -1836144412)
 	void (*fn)(struct GameTracker*, struct DebugMenuLine*); // size=0, offset=4
 };
 
+enum option_ctrl_t 
+{
+	option_ctrl_bogus = 0,
+	option_ctrl_none = 1,
+	option_ctrl_select = 2,
+	option_ctrl_left = 3,
+	option_ctrl_right = 4,
+	option_ctrl_num_states = 5,
+};
+
 extern struct DebugMenuLine AlukaMenu[10];
 extern struct DebugMenuLine AshVillageMenu[7];
 extern struct DebugMenuLine OracleMenu[10];
