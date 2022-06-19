@@ -5,6 +5,7 @@
 #include "PSX/MAIN.H"
 #include "FONT.H"
 #include "SOUND.H"
+#include "RAZIEL/RAZLIB.H"
 
 #ifdef PC_VERSION
 #pragma warning(disable: 4101)
@@ -13,6 +14,9 @@
 #if defined(PSXPC_VERSION)
 #include <assert.h>
 #endif
+
+long debugHealthLevel;
+long debugManaLevel;
 
 void DEBUG_FillUpHealth(long* var);
 void DEBUG_FogLoad();
@@ -40,7 +44,15 @@ unsigned long debugRazielFlags1;
 unsigned long debugRazielFlags2;
 unsigned long debugRazielFlags3;
 
-struct DebugMenuLine debugHealthSystemMenu[7];
+struct DebugMenuLine debugHealthSystemMenu[7] = {
+	{ DEBUG_LINE_TYPE_MENU, 0, 0, "MAIN MENU...", (long*)&standardMenu[0], 0},
+	{ DEBUG_LINE_TYPE_MENU, 0, 0, "RAZIEL MENU...", (long*)&debugRazielMenu[0], 0},
+	{ DEBUG_LINE_TYPE_LONG, 1, 4, "HEALTH LEVEL", (long*)&debugHealthLevel, (long)&DEBUG_UpdateHealth},
+	{ DEBUG_LINE_TYPE_LONG, 1, 6, "MANA LEVEL", (long*)&debugManaLevel, (long)&DEBUG_UpdateMana},
+	{ DEBUG_LINE_TYPE_BIT, 0, 0, "INVINCIBLE", (long*)&gameTrackerX.debugFlags2, 0x100000},
+	{ DEBUG_LINE_TYPE_ACTION, 0, 0, "HURT RAZIEL", (long*)&RAZIEL_DebugHurtRaziel, 0},
+	{ DEBUG_LINE_TYPE_ENDLIST, 0, 0, "RAZIEL MENU...", (long*)&gameTrackerX.debugFlags, 0},
+};
 struct DebugMenuLine cameraMenu[1];
 struct DebugMenuLine fogMenu[1];
 struct DebugMenuLine debugSoundMenu[1];
@@ -2153,6 +2165,23 @@ void handle_line_type_long(struct GameTracker *gt, struct DebugMenuLine *line)
 		}
 
 		((long*)line->var_address)[0] += incr;
+
+		if (((long*)line->var_address)[0] < line->lower)
+		{
+			((long*)line->var_address)[0] = line->lower;
+		}
+
+		if (line->upper < ((long*)line->var_address)[0])
+		{
+			((long*)line->var_address)[0] = line->upper;
+		}
+		
+		typedef void* (*fptr)(long*);
+		
+		if (line->bit_mask != 0)
+		{
+			((fptr)line->var_address)((long*)line->bit_mask);
+		}
 	}
 }
 
