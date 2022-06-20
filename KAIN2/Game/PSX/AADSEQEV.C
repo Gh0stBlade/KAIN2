@@ -128,6 +128,9 @@ int aadQueueNextEvent(struct _AadSequenceSlot *slot, int track)
 	int n;
 	int i;
 	
+	static int calls = 0;
+	calls++;
+
 	if ((slot->trackFlags[track] & 0x18))
 	{
 		return -1;
@@ -143,7 +146,7 @@ int aadQueueNextEvent(struct _AadSequenceSlot *slot, int track)
 	seqData = slot->sequencePosition[track];
 	deltaTime = *seqData++;
 
-	if (deltaTime & 0x80)
+	if ((deltaTime & 0x80))
 	{
 		deltaTime &= 0x7F;
 

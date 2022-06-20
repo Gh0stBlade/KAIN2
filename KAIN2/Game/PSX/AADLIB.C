@@ -298,13 +298,20 @@ void aadSlotUpdate()
 
 						do
 						{
-
+							static int calls = 0;
+							
 							for (track = 0; track < 16; track++)
 							{
 								if (slot->sequencePosition[track] != NULL)
 								{
 									while (slot->eventsInQueue[track] < 3)
 									{
+										calls++;
+										if (calls == 78)
+										{
+											int testing = 0;
+											testing++;
+										}
 										if (aadQueueNextEvent(slot, track) != 0)
 										{
 											break;
@@ -325,7 +332,6 @@ void aadSlotUpdate()
 										{
 											seqEventPtr = &slot->eventQueue[slot->eventOut[track]][track];
 
-
 											if (slot->tempo.currentTick >= seqEventPtr->deltaTime + slot->lastEventExecutedTime[track])
 											{
 												slot->lastEventExecutedTime[track] += seqEventPtr->deltaTime;
@@ -338,6 +344,10 @@ void aadSlotUpdate()
 												}
 												
 												aadExecuteEvent(seqEventPtr, slot);
+											}
+											else
+											{
+												break;
 											}
 
 											slotDone = 0;
