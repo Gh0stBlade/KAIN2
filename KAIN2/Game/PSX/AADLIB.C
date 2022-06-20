@@ -320,10 +320,11 @@ void aadSlotUpdate()
 								{
 									if (slot->eventsInQueue[track] != 0)
 									{
-										seqEventPtr = &slot->eventQueue[slot->eventOut[track]][track];
-
 										do
 										{
+											seqEventPtr = &slot->eventQueue[slot->eventOut[track]][track];
+
+
 											if (slot->tempo.currentTick >= slot->eventQueue[slot->eventOut[track]][track].deltaTime + slot->lastEventExecutedTime[track])
 											{
 												slot->lastEventExecutedTime[track] = slot->eventQueue[slot->eventOut[track]][track].deltaTime + slot->lastEventExecutedTime[track];
