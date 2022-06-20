@@ -226,7 +226,7 @@ void aadExecuteEvent(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 
 		if (event->statusByte < 78)
 		{
-			midiEventFunction[eventType](event, slot);
+			midiMetaEventFunction[eventType](event, slot);
 		}
 	}
 
