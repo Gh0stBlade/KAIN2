@@ -284,7 +284,7 @@ void aadSlotUpdate()
 				{
 					slot = aadMem->sequenceSlots[slotNumber];
 
-					if ((slot->status & 0x1) && (slot->slotFlags & 0x1))
+					if ((slot->status & 0x1) && !(slot->slotFlags & 0x1))
 					{
 						slot->tempo.currentTick += slot->tempo.ticksPerUpdate;
 						slot->tempo.currentError += slot->tempo.errorPerUpdate;
@@ -304,7 +304,7 @@ void aadSlotUpdate()
 								{
 									while (slot->eventsInQueue[track] < 3)
 									{
-										if (aadQueueNextEvent(slot, track) == 1)
+										if (aadQueueNextEvent(slot, track) != 0)
 										{
 											break;
 										}
@@ -320,6 +320,8 @@ void aadSlotUpdate()
 								{
 									if (slot->eventsInQueue[track] != 0)
 									{
+										seqEventPtr = &slot->eventQueue[slot->eventOut[track]][track];
+
 										do
 										{
 											if (slot->tempo.currentTick >= slot->eventQueue[slot->eventOut[track]][track].deltaTime + slot->lastEventExecutedTime[track])
@@ -332,8 +334,7 @@ void aadSlotUpdate()
 												{
 													slot->eventOut[track] = 0;
 												}
-
-												seqEventPtr = &slot->eventQueue[slot->eventOut[track]][track];
+												
 												aadExecuteEvent(seqEventPtr, slot);
 											}
 
@@ -1773,7 +1774,7 @@ void aadInitSequenceSlot(struct _AadSequenceSlot *slot)
 
 	seqHdr = (struct AadSequenceHdr*)aadMem->dynamicSequenceAddressTbl[bank][slot->sequenceNumberAssigned];
 
-	for (i = 0; i < 16; i++, seqHdr++)
+	for (i = 0; i < 16; i++)
 	{
 		if (i < seqHdr->numTracks)
 		{

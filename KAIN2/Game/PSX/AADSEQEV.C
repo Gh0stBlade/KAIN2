@@ -4,7 +4,7 @@
 #include "AADSQCMD.H"
 #include <assert.h>
 
-char midiDataByteCount[8];
+char midiDataByteCount[8] = { 2, 2, 2, 2, 1, 1, 2, 2 };
 
 int aadQueueNextEvent(struct _AadSequenceSlot *slot, int track)
 {
@@ -47,7 +47,8 @@ int aadQueueNextEvent(struct _AadSequenceSlot *slot, int track)
 	{
 		seqData++;
 		seqEvent.statusByte = *seqData++;
-		
+		n = *seqData;
+
 		if (seqEvent.statusByte == 0x44)
 		{
 			slot->trackFlags[track] |= 0x8;
