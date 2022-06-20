@@ -1270,9 +1270,9 @@ void aadGotoSequenceLabel(struct _AadSequenceSlot *slot, int track, int labelNum
 		do
 		{
 			slot->eventsInQueue[track]--;
-			slot->eventOut[track]--;
+			slot->eventOut[track]++;
 
-			if (slot->eventOut[track] == -1)
+			if (slot->eventOut[track] == 4)
 			{
 				slot->eventOut[track] = 0;
 			}
