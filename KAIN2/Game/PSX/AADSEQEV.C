@@ -161,7 +161,7 @@ int aadQueueNextEvent(struct _AadSequenceSlot *slot, int track)
 	{
 		seqData++;
 		seqEvent.statusByte = *seqData++;
-		n = *seqData;
+		n = *seqData++;
 
 		if (seqEvent.statusByte == 0x44)
 		{
@@ -188,7 +188,7 @@ int aadQueueNextEvent(struct _AadSequenceSlot *slot, int track)
 	}
 
 	i = 0;
-	while (n-- != -1)
+	while (--n != -1)
 	{
 		seqEvent.dataByte[i++] = *seqData++;
 	}
