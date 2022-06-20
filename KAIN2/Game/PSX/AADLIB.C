@@ -15,6 +15,7 @@ unsigned char* smfDataPtr;
 unsigned long smfBytesLeft;
 struct AadDynamicSfxLoadInfo* smfInfo;
 unsigned long __hblankEvent;
+unsigned long aadUpdateRate[4] = { 0x411AAAAB, 0x208D5555, 0x4E200000, 0x27100000 };
 
 #include <stddef.h>
 
@@ -325,9 +326,9 @@ void aadSlotUpdate()
 											seqEventPtr = &slot->eventQueue[slot->eventOut[track]][track];
 
 
-											if (slot->tempo.currentTick >= slot->eventQueue[slot->eventOut[track]][track].deltaTime + slot->lastEventExecutedTime[track])
+											if (slot->tempo.currentTick >= seqEventPtr->deltaTime + slot->lastEventExecutedTime[track])
 											{
-												slot->lastEventExecutedTime[track] = slot->eventQueue[slot->eventOut[track]][track].deltaTime + slot->lastEventExecutedTime[track];
+												slot->lastEventExecutedTime[track] += seqEventPtr->deltaTime;
 												slot->eventOut[track]++;
 												slot->eventsInQueue[track]--;
 
@@ -1941,8 +1942,8 @@ void aadSetSlotTempo(int slotNumber, struct AadTempo *tempo)
 	slot = aadMem->sequenceSlots[slotNumber];
 	tickTime = ((tempo->quarterNoteTime / tempo->ppqn) << 16) + ((unsigned int)((tempo->quarterNoteTime % tempo->ppqn) << 16) / tempo->ppqn);
 	slot->tempo.tickTimeFixed = tickTime;
-	slot->tempo.ticksPerUpdate = (((unsigned int*)&aadMem->masterVolFader)[aadMem->updateMode & 3]) / tickTime;
-	slot->tempo.errorPerUpdate = (((unsigned int*)&aadMem->masterVolFader)[aadMem->updateMode & 3]) % slot->tempo.tickTimeFixed;
+	slot->tempo.ticksPerUpdate = (aadUpdateRate[aadMem->updateMode & 3]) / tickTime;
+	slot->tempo.errorPerUpdate = (aadUpdateRate[aadMem->updateMode & 3]) % slot->tempo.tickTimeFixed;
 	slot->tempo.quarterNoteTime = tempo->quarterNoteTime;
 	slot->tempo.ppqn = tempo->ppqn;
 }

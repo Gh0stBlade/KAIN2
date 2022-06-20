@@ -136,13 +136,14 @@ int aadQueueNextEvent(struct _AadSequenceSlot *slot, int track)
 	if ((slot->trackFlags[track] & 0x20))
 	{
 		deltaTime = slot->tempo.currentTick;
-		slot->eventsInQueue[track] = deltaTime;
+		slot->lastEventExecutedTime[track] = deltaTime;
 		slot->trackFlags[track] &= 0xDF;
 	}
 	
 	seqData = slot->sequencePosition[track];
+	deltaTime = *seqData++;
 
-	if (*seqData++ & 0x80)
+	if (deltaTime & 0x80)
 	{
 		deltaTime &= 0x7F;
 
@@ -187,7 +188,7 @@ int aadQueueNextEvent(struct _AadSequenceSlot *slot, int track)
 	}
 
 	i = 0;
-	while (--n != -1)
+	while (n-- != -1)
 	{
 		seqEvent.dataByte[i++] = *seqData++;
 	}
