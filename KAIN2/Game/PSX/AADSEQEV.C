@@ -6,6 +6,119 @@
 
 char midiDataByteCount[8] = { 2, 2, 2, 2, 1, 1, 2, 2 };
 
+void (*midiEventFunction[8])(struct AadSeqEvent* event, struct _AadSequenceSlot* slot) = {
+
+	&midiNoteOff,
+	&midiNoteOn,
+	&midiPolyphonicAftertouch,
+	&midiControlChange,
+	&midiProgramChange,
+	&midiChannelAftertouch,
+	&midiPitchWheelControl,
+	&midiMetaEvent
+};
+
+void (*midiControlFunction[16])(struct AadSeqEvent* event, struct _AadSequenceSlot* slot) = {
+	&midiControlBankSelect,
+	&midiControlDummy,
+	&midiControlDummy,
+	&midiControlDummy,
+	&midiControlDummy,
+	&midiControlDummy,
+	&midiControlDummy,
+	&midiControlVolume,
+	&midiControlDummy,
+	&midiControlDummy,
+	&midiControlPan,
+	&midiControlCallback,
+	&midiControlDummy,
+	&midiControlDummy,
+	&midiControlDummy,
+	&midiControlDummy
+};
+
+	
+void (*midiMetaEventFunction[78])(struct AadSeqEvent* event, struct _AadSequenceSlot* slot) = { 
+	&metaCmdSelectChannel, 
+	&metaCmdSelectSlot,
+	&metaCmdAssignSequence,
+	&metaCmdUsePrimaryTempo,
+	&metaCmdUseSecondaryTempo,
+	&metaCmdSetTempo,
+	&metaCmdSetTempoFromSequence,
+	&metaCmdChangeTempo,
+	&metaCmdStartSlot,
+	&metaCmdStopSlot,
+	&metaCmdPauseSlot,
+	&metaCmdResumeSlot,
+	&metaCmdSetSlotBendRange,
+	&metaCmdSetChannelBendRange,
+	&metaCmdSetSlotVolume,
+	&metaCmdSetSlotPan,
+	&metaCmdSetChannelVolume,
+	&metaCmdSetChannelPan,
+	&metaCmdMuteChannel,
+	&metaCmdUnMuteChannel,
+	&metaCmdMuteChannelList,
+	&metaCmdUnMuteChannelList,
+	&metaCmdChannelVolumeFade,
+	&metaCmdChannelPanFade,
+	&metaCmdSlotVolumeFade,
+	&metaCmdSlotPanFade,
+	&metaCmdSetChannelProgram,
+	&metaCmdSetChannelBasePriority,
+	&metaCmdSetChannelTranspose,
+	&metaCmdIgnoreChannelTranspose,
+	&metaCmdRespectChannelTranspose,
+	&metaCmdSetChannelPitchMap,
+	&metaCmdIgnoreChannelPitchMap,
+	&metaCmdRespectChannelPitchMap,
+	&metaCmdGetSequenceAssigned,
+	&metaCmdGetTempo,
+	&metaCmdGetSlotStatus,
+	&metaCmdGetSlotVolume,
+	&metaCmdGetSlotPan,
+	&metaCmdGetChannelVolume,
+	&metaCmdGetChannelPan,
+	&metaCmdGetChannelMute,
+	&metaCmdGetChannelBendRange,
+	&metaCmdGetChannelTranspose,
+	&metaCmdGetChannelProgram,
+	&metaCmdGetChannelBasePriority,
+	&metaCmdLoopStart,
+	&metaCmdLoopEnd,
+	&metaCmdLoopBreak,
+	&metaCmdDefineLabel,
+	&metaCmdGotoLabel,
+	&metaCmdSetVariable,
+	&metaCmdCopyVariable,
+	&metaCmdAddVariable,
+	&metaCmdSubtractVariable,
+	&metaCmdSetVariableBits,
+	&metaCmdClearVariableBits,
+	&metaCmdBranchIfVarEqual,
+	&metaCmdBranchIfVarNotEqual,
+	&metaCmdBranchIfVarLess,
+	&metaCmdBranchIfVarGreater,
+	&metaCmdBranchIfVarLessOrEqual,
+	&metaCmdBranchIfVarGreaterOrEqual,
+	&metaCmdBranchIfVarBitsSet,
+	&metaCmdBranchIfVarBitsClear,
+	&metaCmdSubstituteVariableParam1,
+	&metaCmdSubstituteVariableParam2,
+	&metaCmdSubstituteVariableParam3,
+	&metaCmdEndSequence,
+	&metaCmdPlaySoundEffect,
+	&metaCmdStopSoundEffect,
+	&metaCmdSetSoundEffectVolumePan,
+	&metaCmdSetSequencePosition,
+	&metaCmdEnableSustainUpdate,
+	&metaCmdDisableSustainUpdate,
+	&metaCmdSetChannelMute,
+	&metaCmdDelayMute,
+	&metaCmdUpdateMute,
+};
+
 int aadQueueNextEvent(struct _AadSequenceSlot *slot, int track)
 {
 	struct AadSeqEvent seqEvent;
@@ -100,32 +213,23 @@ void aadExecuteEvent(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 	int eventType;
 
 	eventType = event->statusByte;
-	
+
 	if ((eventType & 0x80))
 	{
-		//eventType >>= 2
-		//v0 = (eventType >> 2) + 0x1C
-		//v1 = &midiEventFunction
-		//v0 = midiEventFunction[(eventType >> 2) + 0x1C];
-		//midiEventFunction[(eventType >> 2) + 0x1C]();
-		assert(0);//Unimplemented?!?!
+		midiEventFunction[((eventType >> 4) & 0x7)](event, slot);
 	}
 	else
 	{
-		//loc_80055050
 		aadSubstituteVariables(event, slot);
 
 		eventType = event->statusByte & 0x7F;
 
 		if (event->statusByte < 78)
 		{
-			//a0 = event
-			//midiMetaEventFunction[event](event, slot);
-			assert(0);//Unimplemented?!?!?
+			midiEventFunction[eventType](event, slot);
 		}
-		//loc_80055090
 	}
-	//loc_80055088
+
 #elif defined(PC_VERSION)
 	if ((event->statusByte & 0x80u) == 0)
 	{
