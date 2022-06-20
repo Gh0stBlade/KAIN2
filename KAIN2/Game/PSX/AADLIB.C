@@ -2306,7 +2306,6 @@ void aadMuteChannels(struct _AadSequenceSlot *slot, unsigned long channelList)
 					vmask |= voice->voiceMask;
 				}
 			}
-
 		}
 	}
 
