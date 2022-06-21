@@ -261,27 +261,29 @@ void aadSlotUpdate()
 			SpuGetAllKeysStatus(aadMem->voiceStatus);
 
 			vmask = 1;
-
+			
 			for (i = 0; i < 24; i++, vmask <<= 1)
 			{
 				if (aadMem->voiceStatus[i] == 3)
 				{
 					aadMem->voiceKeyOffRequest |= vmask;
 				}
-				else if ((aadMem->voiceKeyOffRequest & vmask))
+				else if ((aadMem->voiceKeyOffRequest & vmask) != 0)
 				{
 					if (aadMem->voiceStatus[i] == 0 || aadMem->voiceStatus[i] == 2)
 					{
-						aadMem->voiceKeyOffRequest = aadMem->voiceKeyOffRequest & ~vmask;
+						aadMem->voiceKeyOffRequest &= ~vmask;
+					}
+					else
+					{
+						aadMem->voiceKeyOffRequest = ~vmask;
 					}
 				}
 			}
 
 			if (!(aadMem->flags & 0x4) && aadMem->numSlots > 0)
 			{
-				slotNumber = 0;
-
-				do
+				for (slotNumber = 0; slotNumber < aadMem->numSlots; slotNumber++)
 				{
 					slot = aadMem->sequenceSlots[slotNumber];
 
@@ -293,25 +295,17 @@ void aadSlotUpdate()
 						if (slot->tempo.currentError >= slot->tempo.tickTimeFixed)
 						{
 							slot->tempo.currentError -= slot->tempo.tickTimeFixed;
-							slot->tempo.currentTick += 1;
+							slot->tempo.currentTick++;
 						}
-
+						
 						do
 						{
-							static int calls = 0;
-							
 							for (track = 0; track < 16; track++)
 							{
 								if (slot->sequencePosition[track] != NULL)
 								{
 									while (slot->eventsInQueue[track] < 3)
 									{
-										calls++;
-										if (calls == 78)
-										{
-											int testing = 0;
-											testing++;
-										}
 										if (aadQueueNextEvent(slot, track) != 0)
 										{
 											break;
@@ -319,85 +313,79 @@ void aadSlotUpdate()
 									}
 								}
 							}
-
+							
 							slotDone = 1;
 
-							for (track = 0; track < 16; track++)
+							if (slot->sequencePosition[track] != NULL)
 							{
-								if (slot->sequencePosition[track] != 0)
+								for (track = 0; track < 16; track++)
 								{
-									if (slot->eventsInQueue[track] != 0)
+									while (slot->eventsInQueue[track] != 0)
 									{
-										do
+										seqEventPtr = &slot->eventQueue[slot->eventOut[track]][track];
+
+										if (slot->tempo.currentTick >= seqEventPtr->deltaTime + slot->lastEventExecutedTime[track])
 										{
-											seqEventPtr = &slot->eventQueue[slot->eventOut[track]][track];
+											slot->lastEventExecutedTime[track] = seqEventPtr->deltaTime + slot->lastEventExecutedTime[track];
+											slot->eventsInQueue[track]--;
+											slot->eventOut[track]++;
 
-											if (slot->tempo.currentTick >= seqEventPtr->deltaTime + slot->lastEventExecutedTime[track])
+											if (slot->eventOut[track] == 4)
 											{
-												slot->lastEventExecutedTime[track] += seqEventPtr->deltaTime;
-												slot->eventOut[track]++;
-												slot->eventsInQueue[track]--;
+												slot->eventOut[track] = 0;
+											}
 
-												if (slot->eventOut[track] == 4)
-												{
-													slot->eventOut[track] = 0;
-												}
-												
-												aadExecuteEvent(seqEventPtr, slot);
-											}
-											else
-											{
-												break;
-											}
+											aadExecuteEvent(seqEventPtr, slot);
 
 											slotDone = 0;
-										} while (slot->eventsInQueue[track] != 0);
+										}
 									}
 								}
 							}
 						} while (slotDone == 0);
 					}
-			
-				} while (++slotNumber < aadMem->numSlots);
+				}
 			}
 			
 			while (aadMem->sfxSlot.commandsInQueue != 0)
 			{
+				newVol = 32;
+
 				aadExecuteSfxCommand(&aadMem->sfxSlot.commandQueue[aadMem->sfxSlot.commandOut]);
 
 				aadMem->sfxSlot.commandOut++;
 				aadMem->sfxSlot.commandsInQueue--;
 
-				if (aadMem->sfxSlot.commandOut == 32)
+				if (aadMem->sfxSlot.commandOut == 255)
 				{
 					aadMem->sfxSlot.commandOut = 0;
 				}
 			}
 			
 			aadMem->voiceKeyOffRequest = aadMem->voiceKeyOffRequest & ~aadMem->voiceKeyOnRequest;
-
+			
 			if (aadMem->voiceKeyOffRequest != 0)
 			{
 				SpuSetKey(0, aadMem->voiceKeyOffRequest);
 			}
 
 			SpuSetReverbVoice(1, aadMem->voiceReverbRequest);
-
 			SpuSetReverbVoice(0, ~aadMem->voiceReverbRequest);
 
 			if (aadMem->voiceKeyOnRequest != 0)
 			{
 				SpuSetKey(1, aadMem->voiceKeyOnRequest);
-
 				aadMem->voiceKeyOnRequest = 0;
 			}
 		}
-
+		
 		fadeComplete = 0;
 		
 		if (aadMem->masterVolFader.volumeStep != 0)
 		{
-			newVol = aadMem->masterVolume + aadMem->masterVolFader.volumeStep;
+			newVol = aadMem->masterVolume;
+
+			newVol += aadMem->masterVolFader.volumeStep;
 
 			if (aadMem->masterVolFader.volumeStep < 0)
 			{
@@ -410,11 +398,11 @@ void aadSlotUpdate()
 					fadeComplete = 1;
 				}
 			}
-			
+
 			if (fadeComplete != 0)
 			{
-				newVol = aadMem->masterVolFader.targetVolume;
 				aadMem->masterVolFader.volumeStep = 0;
+
 				if (aadMem->masterVolFader.fadeCompleteCallback != NULL)
 				{
 					aadMem->masterVolFader.fadeCompleteCallback();
@@ -448,6 +436,7 @@ void aadSlotUpdate()
 				if (fadeComplete != 0)
 				{
 					newVol = aadMem->musicMasterVolFader.targetVolume;
+
 					aadMem->musicMasterVolFader.volumeStep = 0;
 
 					if (aadMem->musicMasterVolFader.fadeCompleteCallback != NULL)
@@ -459,6 +448,7 @@ void aadSlotUpdate()
 				aadSetMusicMasterVolume(newVol);
 			}
 		}
+
 		aadMem->updateCounter++;
 	}
 }

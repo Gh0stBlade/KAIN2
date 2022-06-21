@@ -1113,7 +1113,7 @@ void metaCmdAddVariable(struct AadSeqEvent *event, struct _AadSequenceSlot *slot
 	int destVariable;
 	
 	destVariable = event->dataByte[1];
-	value - event->dataByte[0];
+	value = event->dataByte[0];
 
 	if (destVariable < 128)
 	{
