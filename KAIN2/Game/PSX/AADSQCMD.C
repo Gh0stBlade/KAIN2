@@ -3,6 +3,7 @@
 #include "AADLIB.H"
 #include "AADSEQEV.H"
 
+
 void aadSubstituteVariables(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 {
 	unsigned char trackFlags;
@@ -154,7 +155,7 @@ void metaCmdSetTempo(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 #if defined(PSX_VERSION)
 	struct AadTempo tempo;
 
-	tempo.quarterNoteTime |= event->dataByte[0] << 16;
+	tempo.quarterNoteTime = event->dataByte[0] << 16;
 	tempo.quarterNoteTime |= event->dataByte[1] << 8;
 	tempo.quarterNoteTime |= event->dataByte[2];
 

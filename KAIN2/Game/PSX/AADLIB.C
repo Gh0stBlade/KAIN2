@@ -297,7 +297,7 @@ void aadSlotUpdate()
 							slot->tempo.currentError -= slot->tempo.tickTimeFixed;
 							slot->tempo.currentTick++;
 						}
-						
+
 						do
 						{
 							for (track = 0; track < 16; track++)
@@ -312,18 +312,29 @@ void aadSlotUpdate()
 										}
 									}
 								}
+								else
+								{
+									break;
+								}
 							}
-							
+
 							slotDone = 1;
 
-							if (slot->sequencePosition[track] != NULL)
+
+							for (track = 0; track < 16; track++)
 							{
-								for (track = 0; track < 16; track++)
+								if (slot->sequencePosition[track] != NULL)
 								{
 									while (slot->eventsInQueue[track] != 0)
 									{
 										seqEventPtr = &slot->eventQueue[slot->eventOut[track]][track];
 
+
+										if (seqEventPtr->deltaTime == 48)
+										{
+											int testing = 0;
+											testing++;
+										}
 										if (slot->tempo.currentTick >= seqEventPtr->deltaTime + slot->lastEventExecutedTime[track])
 										{
 											slot->lastEventExecutedTime[track] = seqEventPtr->deltaTime + slot->lastEventExecutedTime[track];
@@ -339,7 +350,15 @@ void aadSlotUpdate()
 
 											slotDone = 0;
 										}
+										else
+										{
+											break;
+										}
 									}
+								}
+								else
+								{
+									break;
 								}
 							}
 						} while (slotDone == 0);
