@@ -594,7 +594,7 @@ void midiControlVolume(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 	channel = event->statusByte & 0xF;
 	slot->volume[channel] = event->dataByte[1];
 
-	if ((slot->enableSustainUpdate >> channel) != 0)
+	if (((slot->enableSustainUpdate >> channel) & 0x1) != 0)
 	{
 		aadUpdateChannelVolPan(slot, channel);
 	}
