@@ -3,6 +3,7 @@
 #include "AADLIB.H"
 #include "AADSEQEV.H"
 
+#define DEBUG_SCRIPT
 
 void aadSubstituteVariables(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 {
@@ -12,7 +13,7 @@ void aadSubstituteVariables(struct AadSeqEvent *event, struct _AadSequenceSlot *
 
 	if ((trackFlags & 0x7))
 	{
-		if ((unsigned int)event->statusByte - 65 >= 3)
+		if ((unsigned int)(event->statusByte - 65) >= 3)
 		{
 			if ((trackFlags & 0x1))
 			{
@@ -52,6 +53,10 @@ void metaCmdSelectChannel(struct AadSeqEvent *event, struct _AadSequenceSlot *sl
 		slot->selectedChannel = channelNumber;
 	}
 
+#if defined(DEBUG_SCRIPT)
+	printf("Selected Channel = %d\n", channelNumber);
+#endif
+
 #elif defined(PC_VERSION)
 	int v2; // eax
 
@@ -67,24 +72,19 @@ void metaCmdSelectSlot(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 
 	int slotNumber;
 
-	slotNumber = event->dataByte[0];
+	slotNumber = event->dataByte[0];//v1
 
 	if (slotNumber < aadMem->numSlots)
 	{
 		slot->selectedSlotNum = slotNumber;
 		
 		slot->selectedSlotPtr = aadMem->sequenceSlots[slotNumber];
-		
-		return;
 	}
-
-	if (slotNumber == 127)
+	else if (slotNumber == 127)
 	{
 		slot->selectedSlotPtr = slot;
 
 		slot->selectedSlotNum = slot->thisSlotNumber;
-
-		return;
 	}
 
 #elif defined(PC_VERSION)
@@ -163,6 +163,10 @@ void metaCmdSetTempo(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 
 	aadSetSlotTempo(slot->selectedSlotNum, &tempo);
 
+#if defined(DEBUG_SCRIPT)
+	printf("Set Slot %d TempoQNT: %d TempoPPQN: %d\n", slot->selectedSlotNum, tempo.quarterNoteTime, tempo.ppqn);
+#endif
+
 #elif defined(PC_VERSION)
 	struct _AadSequenceSlot* selectedSlotPtr; // eax
 	int v3; // [esp+0h] [ebp-8h] BYREF
@@ -234,6 +238,9 @@ void metaCmdStartSlot(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 {
 #if defined(PSX_VERSION)
 	aadStartSlot(slot->selectedSlotNum);
+#if defined(DEBUG_SCRIPT)
+	printf("Start Slot %d\n", slot->selectedSlotNum);
+#endif
 #elif defined(PC_VERSION)
 	aadStartSlot(slot->selectedSlotNum);
 #endif
@@ -243,6 +250,9 @@ void metaCmdStopSlot(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 {
 #if defined(PSX_VERSION)
 	aadStopSlot(slot->selectedSlotNum);
+#if defined(DEBUG_SCRIPT)
+	printf("Stop Slot %d\n", slot->selectedSlotNum);
+#endif
 #elif defined(PC_VERSION)
 	aadStopSlot(slot->selectedSlotNum);
 #endif
@@ -298,6 +308,10 @@ void metaCmdSetSlotVolume(struct AadSeqEvent *event, struct _AadSequenceSlot *sl
 	slot->selectedSlotPtr->slotVolume = volume;
 
 	aadUpdateSlotVolPan(slot->selectedSlotPtr);
+
+#if defined(DEBUG_SCRIPT)
+	printf("Set Slot %d Volume %d\n", slot->selectedSlotNum, volume);
+#endif
 
 #elif defined(PC_VERSION)
 	slot->selectedSlotPtr->slotVolume = event->dataByte[0];
@@ -395,6 +409,9 @@ void metaCmdUnMuteChannel(struct AadSeqEvent *event, struct _AadSequenceSlot *sl
 void metaCmdMuteChannelList(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 {
 #if defined(PSX_VERSION)
+#if defined(DEBUG_SCRIPT)
+	printf("Mute Channels %x\n", (event->dataByte[1] << 8 | event->dataByte[0]));
+#endif
 	aadMuteChannels(slot->selectedSlotPtr, (event->dataByte[1] << 8 | event->dataByte[0]));
 #elif defined(PC_VERSION)
 	aadMuteChannels(slot->selectedSlotPtr, event->dataByte[0] | (event->dataByte[1] << 8));
@@ -405,6 +422,9 @@ void metaCmdUnMuteChannelList(struct AadSeqEvent *event, struct _AadSequenceSlot
 {
 #if defined(PSX_VERSION)
 	aadUnMuteChannels(slot->selectedSlotPtr, (event->dataByte[1] << 8 | event->dataByte[0]));
+#if defined(DEBUG_SCRIPT)
+	printf("Unmute Channels %x\n", (event->dataByte[1] << 8 | event->dataByte[0]));
+#endif
 #elif defined(PC_VERSION)
 	aadUnMuteChannels(slot->selectedSlotPtr, (event->dataByte[1] << 8) | event->dataByte[0]);
 #endif
@@ -1087,6 +1107,9 @@ void metaCmdSetVariable(struct AadSeqEvent *event, struct _AadSequenceSlot *slot
 
 	if (destVariable < 128)
 	{
+#if defined(DEBUG_SCRIPT)
+		printf("Set var_%d = %d\n", destVariable, value);
+#endif
 		aadMem->userVariables[destVariable] = value;
 	}
 }
@@ -1101,6 +1124,9 @@ void metaCmdCopyVariable(struct AadSeqEvent *event, struct _AadSequenceSlot *slo
 
 	if (srcVariable < 128 && destVariable < 128)
 	{
+#if defined(DEBUG_SCRIPT)
+		printf("Copy var_%d to var_%d\n", srcVariable, destVariable);
+#endif
 		aadMem->userVariables[destVariable] = aadMem->userVariables[srcVariable];
 	}
 }
@@ -1115,6 +1141,9 @@ void metaCmdAddVariable(struct AadSeqEvent *event, struct _AadSequenceSlot *slot
 
 	if (destVariable < 128)
 	{
+#if defined(DEBUG_SCRIPT)
+		printf("Set var_%d = %d\n", destVariable, aadMem->userVariables[destVariable] + value);
+#endif
 		aadMem->userVariables[destVariable] += value;
 	}
 }
@@ -1241,6 +1270,10 @@ void aadGotoSequenceLabel(struct _AadSequenceSlot *slot, int track, int labelNum
 	bank = slot->sequenceAssignedDynamicBank;
 	seqHdr = (struct AadSequenceHdr*)aadMem->dynamicSequenceAddressTbl[bank][slot->sequenceNumberAssigned];
 	trackOffset = ((unsigned long*)(seqHdr + 1))[track];
+
+#if defined(DEBUG_SCRIPT)
+	printf("Goto label %d\n", labelNumber);
+#endif
 	
 	slot->sequencePosition[track] = (unsigned char*)(char*)seqHdr + trackOffset + aadMem->dynamicSequenceLabelOffsetTbl[bank][labelNumber];
 
@@ -1264,36 +1297,24 @@ void aadGotoSequenceLabel(struct _AadSequenceSlot *slot, int track, int labelNum
 	return;
 }
 
-
-// autogenerated function stub: 
-// void /*$ra*/ metaCmdLoopStart(struct AadSeqEvent *event /*$a0*/, struct _AadSequenceSlot *slot /*$a1*/)
 void metaCmdLoopStart(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
-{ // line 845, offset 0x80056520
-	/* begin block 1 */
-		// Start line: 847
-		// Start offset: 0x80056520
-		// Variables:
-			int nestLevel; // $a2
-			int track; // $a3
-	/* end block 1 */
-	// End offset: 0x8005657C
-	// End Line: 862
+{
+	int nestLevel; // $a2
+	int track; // $a3
 
-	/* begin block 2 */
-		// Start line: 1756
-	/* end block 2 */
-	// End Line: 1757
+	track = event->track;
+	nestLevel = slot->loopCurrentNestLevel[track];
 
-	/* begin block 3 */
-		// Start line: 1757
-	/* end block 3 */
-	// End Line: 1758
+	if (nestLevel < 4)
+	{
+		slot->loopSequencePosition[nestLevel][track] = slot->sequencePosition[track];
 
-	/* begin block 4 */
-		// Start line: 1758
-	/* end block 4 */
-	// End Line: 1759
-			UNIMPLEMENTED();
+		slot->loopCounter[nestLevel][track] = event->dataByte[0];
+
+		slot->loopCurrentNestLevel[track]++;
+	}
+
+	slot->trackFlags[track] &= 0xEF;
 }
 
 
@@ -1375,6 +1396,9 @@ void metaCmdBranchIfVarEqual(struct AadSeqEvent *event, struct _AadSequenceSlot 
 
 	if (aadMem->userVariables[variableNum] == value)
 	{
+#if defined(DEBUG_SCRIPT)
+		printf("if var_%d == %d\n", variableNum, value);
+#endif
 		aadGotoSequenceLabel(slot, event->track, labelNum);
 	}
 }
@@ -1391,6 +1415,7 @@ void metaCmdBranchIfVarNotEqual(struct AadSeqEvent* event, struct _AadSequenceSl
 
 	if (aadMem->userVariables[variableNum] != value)
 	{
+		printf("if var_%d != %d\n", variableNum, value);
 		aadGotoSequenceLabel(slot, event->track, labelNum);
 	}
 }
@@ -1407,6 +1432,7 @@ void metaCmdBranchIfVarLess(struct AadSeqEvent *event, struct _AadSequenceSlot *
 
 	if (aadMem->userVariables[variableNum] < value)
 	{
+		printf("if var_%d < %d\n", variableNum, value);
 		aadGotoSequenceLabel(slot, event->track, labelNum);
 	}
 }
@@ -1423,6 +1449,9 @@ void metaCmdBranchIfVarGreater(struct AadSeqEvent *event, struct _AadSequenceSlo
 
 	if (value < aadMem->userVariables[variableNum])
 	{
+#if defined(DEBUG_SCRIPT)
+		printf("if %d < var_%d\n", value, variableNum);
+#endif
 		aadGotoSequenceLabel(slot, event->track, labelNum);
 	}
 }
@@ -1485,6 +1514,9 @@ void metaCmdBranchIfVarBitsSet(struct AadSeqEvent *event, struct _AadSequenceSlo
 
 	if ((aadMem->userVariables[variableNum] & mask) != 0)
 	{
+#if defined(DEBUG_SCRIPT)
+		printf("if var_%d & %x\n", variableNum, mask);
+#endif
 		aadGotoSequenceLabel(slot, event->track, labelNum);
 	}
 }
