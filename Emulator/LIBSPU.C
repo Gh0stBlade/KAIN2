@@ -1339,6 +1339,34 @@ long SpuSetMute(long on_off)
 
 long _SpuIsInAllocateArea_(long addr)
 {
+    if (_spu_memList == 0)
+    {
+        return 0;
+    }
+
+    int i = 0;
+    
+    while (i++)
+    {
+        if (!(((long*)_spu_memList + i * 8)[0] & 0x8000))
+        {
+            if ((((long*)_spu_memList + i * 8)[0] & 0x4000))
+            {
+                return 0;
+            }
+
+            if (!(((long*)_spu_memList + i * 8)[0] & 0xFFFFFFF))
+            {
+                return 1;
+            }
+
+            if (addr < ((long*)_spu_memList + i * 8)[0] + ((long*)_spu_memList + i * 8)[1])
+            {
+                return 1;
+            }
+        }
+    }
+
     return 0;
 }
 
