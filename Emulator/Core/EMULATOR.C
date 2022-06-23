@@ -4,6 +4,7 @@
 #include "EMULATOR_GLOBALS.H"
 #include "Public/EMULATOR_PUBLIC.H"
 #include "Debug/CRASHHANDLER.H"
+#include "Debug/BOUNTY_LIST.H"
 #include "Core/Input/EMULATOR_INPUT.H"
 #include "Setup/Platform/EMULATOR_PLATFORM_SETUP.H"
 
@@ -5171,6 +5172,9 @@ void Emulator_DoDebugKeys(int nKey, bool down)
 				break;
 			case SDL_SCANCODE_5:
 				Emulator_SaveVRAM("VRAM.TGA", 0, 0, VRAM_WIDTH, VRAM_HEIGHT, TRUE);
+				break;
+			case SDL_SCANCODE_6:
+				Emulator_SaveBountyList();
 				break;
 #endif
 		}

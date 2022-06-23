@@ -32,7 +32,15 @@
 #if defined(__EMSCRIPTEN__) || !defined(DEBUG_PRINTS)
 #define UNIMPLEMENTED()
 #else
+#if defined(_WIN32) && defined(_DEBUG)
+
+#include "Core/Debug/BOUNTY_LIST.H"
+
+#define UNIMPLEMENTED() eprinterr("Unimplemented!\n"); \
+		Emulator_AddBounty(FUNCNAME); 
+#else
 #define UNIMPLEMENTED() eprinterr("Unimplemented!\n");
+#endif
 #endif
 
 #endif
