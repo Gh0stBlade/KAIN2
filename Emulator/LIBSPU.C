@@ -1337,10 +1337,36 @@ long SpuSetMute(long on_off)
 	return 0;
 }
 
+long _SpuIsInAllocateArea_(long addr)
+{
+    return 0;
+}
+
 long SpuSetReverb(long on_off)
 {
-	UNIMPLEMENTED();
-	return 0;
+    if (on_off != 0)
+    {
+        if (on_off == 1)
+        {
+            if (_spu_rev_reserve_wa != on_off && _SpuIsInAllocateArea_(_spu_rev_offsetaddr) != 0)
+            {
+                _spu_RXX[213] &= 0xFF7F;
+                _spu_rev_flag = 0;
+            }
+            else
+            {
+                _spu_RXX[213] |= 0x80;
+                _spu_rev_flag = on_off;
+            }
+        }
+    }
+    else
+    {
+        _spu_RXX[213] &= 0xFF7F;
+        _spu_rev_flag = 0;
+    }
+
+	return _spu_rev_flag;
 }
 
 unsigned long _SpuSetAnyVoice(long on_off, unsigned long voice_bit, int a2, int a3)
