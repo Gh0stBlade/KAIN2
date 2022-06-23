@@ -31,7 +31,7 @@ IXAudio2MasteringVoice* pMasterVoice = NULL;
 IXAudio2SourceVoice* pSourceVoices[24];
 #endif
 
-unsigned int voicePitces[24];
+unsigned int voicePitches[24];
 unsigned int voiceStartAddrs[24];
 
 #include <string.h>
@@ -699,9 +699,31 @@ void SpuSetKey(long on_off, unsigned long voice_bit)
             unsigned char* wave = new unsigned char[vagSize * 8];
             unsigned int waveSize = decodeVAG((unsigned char*)&spuSoundBuffer[voiceStartAddrs[i]], vagSize, wave);
            
+#if defined(_DEBUG)
+            char name[64];
+            sprintf(name, "%x.wav", voiceStartAddrs[i]);
+            FILE* f = fopen(name, "wb+");
+
+            unsigned int riffHeader[] = {
+                0x46464952, 0x000029C1, 0x45564157, 0x20746D66,
+                0x00000010, 0x00010001, 0x00002B11, 0x00005622,
+                0x00100002, 0x61746164, 0x00002958
+            };
+
+            riffHeader[10] = waveSize;
+            riffHeader[6] = voicePitches[i];
+
+            if (f != NULL)
+            {
+                fwrite(riffHeader, sizeof(riffHeader), 1, f);
+                fwrite(wave, waveSize, 1, f);
+                fclose(f);
+            }
+#endif
+
 #if defined(OPENAL)
             alGenBuffers(1, &alBuffers[i]);
-            alBufferData(alBuffers[i], AL_FORMAT_MONO16, wave, waveSize, voicePitces[i]);
+            alBufferData(alBuffers[i], AL_FORMAT_MONO16, wave, waveSize, voicePitches[i]);
             alSourcei(alSources[i], AL_BUFFER, alBuffers[i]);
             alSourcePlay(alSources[i]);
 
@@ -838,7 +860,12 @@ void _spu_Fw(unsigned char* addr, unsigned long size)
 #if defined(OPENAL) || defined(XAUDIO2)
     ((unsigned long*)&spuSoundBuffer[_spu_tsa])[-1] = size;
     memcpy(&spuSoundBuffer[_spu_tsa], addr, size);
-    __spu_transferCallback();
+
+    if (__spu_transferCallback != NULL)
+    {
+        __spu_transferCallback();
+    }
+
 #else
 
 	if (_spu_trans_mode == 0)
@@ -1318,7 +1345,7 @@ long SpuSetReverb(long on_off)
 
 unsigned long _SpuSetAnyVoice(long on_off, unsigned long voice_bit, int a2, int a3)
 {
-    UNIMPLEMENTED();
+    //UNIMPLEMENTED();
     return 0;
 }
 
@@ -1400,16 +1427,15 @@ void SpuSetVoicePitch(int vNum, unsigned short pitch)
 
 #if defined(OPENAL) || defined(XAUDIO2)
 
-    switch (pitch)
+    float frequency = (float)pitch / 4096.0f * 44100.0f;
+
+    if (frequency > 44100.0f)
     {
-    case 0x400:
-        voicePitces[vNum] = 11025;
-        break;
-    default:
-        voicePitces[vNum] = 0;
-        eprinterr("[EMU-SPU]: Unknown pitch: %d\n", pitch);
-        break;
+        frequency = 44100.0f;
     }
+
+    voicePitches[vNum] = (unsigned int)frequency;
+
 #endif
 }
 
@@ -1430,9 +1456,58 @@ SpuTransferCallbackProc SpuSetTransferCallback(SpuTransferCallbackProc func)
     return prev;
 }
 
-void SpuSetVoiceADSRAttr(int vNum, unsigned short AR, unsigned short DR, unsigned short SR, unsigned short RR, unsigned short SL, long ARmode, long SRmode, long RRmode)
+void SpuSetVoiceADSRAttr(int vNum, unsigned short AR, unsigned short DR, unsigned short SR, unsigned short RR/*arg_10*/, unsigned short SL/*arg_14*/, long ARmode/*arg_18*/, long SRmode, long RRmode)
 {
-    UNIMPLEMENTED();
+    SR = (SR & 0x7F) << 6;
+    AR = ((AR & 0x7F) << 8) & 0xF;
+    DR = DR << 4;
+    AR |= DR;
+    SR |= (RR & 0x1F);
+    AR |= (SL & 0xF);
+    AR |= (((ARmode ^ 5) < 1) << 15);
+
+    int t0 = 16384;
+    
+    unsigned short* pVoice = &_spu_RXX[vNum << 3];
+    pVoice[4] = AR;
+
+    if (SRmode == 5)
+    {
+        t0 = 32768;
+    }
+    else if (SRmode >= 6)
+    {
+        if (SRmode == 7)
+        {
+            t0 = 49152;
+        }
+    }
+    else if (SRmode == 1)
+    {
+        t0 = 0;
+    }
+
+    if (RRmode == 7)
+    {
+        t0 |= 0x20;
+        RRmode = SR | t0;
+    }
+    else
+    {
+        RRmode = SR | t0;
+    }
+ 
+    pVoice = &_spu_RXX[vNum << 3];
+    pVoice[5] = RRmode;
+
+    int var_4 = 1;
+    int var_8 = 0;
+
+    while (var_8 < 2)
+    {
+        var_4 *= 13;
+        var_8++;
+    }
 }
 
 void SpuSetVoiceStartAddr(int vNum, unsigned long startAddr)
@@ -1446,7 +1521,7 @@ void SpuSetVoiceStartAddr(int vNum, unsigned long startAddr)
         var_4 *= 13;
     }
 #if defined(OPENAL) || defined(XAUDIO2)
-    voiceStartAddrs[vNum] = startAddr / 8;
+    voiceStartAddrs[vNum] = _spu_tsa;// startAddr / 8;
 #endif
 }
 
