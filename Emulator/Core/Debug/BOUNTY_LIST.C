@@ -36,7 +36,7 @@ void Emulator_AddBounty(const char* functionName)
 void Emulator_SaveBountyList()
 {
 	char fileName[128];
-	sprintf(fileName, "VALKYRIE_RUNTIME_BOUNTY_LIST_%s.txt", GAME_NAME);
+	sprintf(fileName, "VALKYRIE_RUNTIME_BOUNTY_LIST_%s.txt", SHORT_GAME_NAME);
 	FILE* f = fopen(fileName, "wb+");
 
 	if (f != NULL)
