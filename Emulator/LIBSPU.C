@@ -1481,14 +1481,14 @@ void SpuSetVoicePitch(int vNum, unsigned short pitch)
 
 #if defined(OPENAL) || defined(XAUDIO2)
 
-    float frequency = (float)pitch / 4096.0f * 44100.0f;
+    unsigned int frequency = pitch * 44100 / 4096;
 
-    if (frequency > 44100.0f)
+    if (frequency > 44100)
     {
-        frequency = 44100.0f;
+        frequency = 44100;
     }
 
-    voicePitches[vNum] = (unsigned int)frequency;
+    voicePitches[vNum] = frequency;
 
 #endif
 }

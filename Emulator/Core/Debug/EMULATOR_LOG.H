@@ -37,7 +37,7 @@
 #include "Core/Debug/BOUNTY_LIST.H"
 
 #define UNIMPLEMENTED() eprinterr("Unimplemented!\n"); \
-		Emulator_AddBounty(FUNCNAME); 
+		Emulator_AddBounty(FUNCNAME);
 #else
 #define UNIMPLEMENTED() eprinterr("Unimplemented!\n");
 #endif

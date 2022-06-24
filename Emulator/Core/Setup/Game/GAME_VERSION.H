@@ -4,6 +4,10 @@
 /* Name of the Game */
 #define GAME_NAME "Legacy of Kain: Soul Reaver"
 
+/* Short Name of the Game */
+
+#define SHORT_GAME_NAME "KAIN2"
+
 /* Default window sizes */
 #define GAME_WINDOW_WIDTH (512)
 #define GAME_WINDOW_HEIGHT (240)

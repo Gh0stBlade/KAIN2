@@ -2,6 +2,19 @@ cmake_minimum_required (VERSION 3.0)
 
 project (KAIN2_${TARGET_ARCH})
 
+#Disable MinSizeRel and RelWithDebInfo add Final.
+#set(CMAKE_CONFIGURATION_TYPES "Debug;Release;Final")
+
+#SET(CMAKE_CXX_FLAGS_FINAL ${CMAKE_CXX_FLAGS_RELEASE} CACHE STRING "Flags used by the C++ compiler during Final builds." FORCE)
+
+#SET(CMAKE_C_FLAGS_FINAL ${CMAKE_C_FLAGS_RELEASE} CACHE STRING "Flags used by the C compiler during Final builds." FORCE)
+
+#SET(CMAKE_EXE_LINKER_FLAGS_FINAL ${CMAKE_EXE_LINKER_FLAGS_RELEASE} CACHE STRING "Flags used by the linker during Final builds." FORCE)
+
+#SET(CMAKE_SHARED_LINKER_FLAGS_FINAL ${CMAKE_SHARED_LINKER_FLAGS_RELEASE} CACHE STRING "Flags used by the shared linker during Final builds." FORCE)
+
+#MARK_AS_ADVANCED(CMAKE_CXX_FLAGS_FINAL CMAKE_C_FLAGS_FINAL CMAKE_EXE_LINKER_FLAGS_FINAL CMAKE_SHARED_LINKER_FLAGS_FINAL)
+
 #Enable 32-bit address for tag
 OPTIONAL_DEFINE(USE_32_BIT_ADDR "Enable/Disable 32-bit address for tag" ON)
 OPTIONAL_DEFINE(NO_CD "Enable/Disable ISO mode for Emulator" ON)
@@ -73,6 +86,9 @@ ${OPENGL_gl_LIBRARY}
 ${GLEW_LIBRARY}
 ${OPENAL_LIBRARY}
 )
+
+#For "Final"
+set(${CMAKE_EXE_LINKER_FLAGS_FINAL} CACHE STRING ${CMAKE_EXE_LINKER_FLAGS_RELEASE})
 
 if(MSVC)
 	add_dependencies(${PROJECT_NAME} ${EMULATOR_TARGET_NAME})

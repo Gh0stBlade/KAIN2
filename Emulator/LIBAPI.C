@@ -352,7 +352,7 @@ unsigned long GetSp()
 
 unsigned long GetGp()
 {
-	UNIMPLEMENTED();
+	//UNIMPLEMENTED();
 	return 0;
 }
 

@@ -1,5 +1,5 @@
 #include "BOUNTY_LIST.H"
-
+#include "Core/Setup/Game/GAME_VERSION.H"
 #include <iostream>
 #include <array>
 
@@ -35,7 +35,9 @@ void Emulator_AddBounty(const char* functionName)
 
 void Emulator_SaveBountyList()
 {
-	FILE* f = fopen("BOUNTY_LIST.TXT", "wb+");
+	char fileName[128];
+	sprintf(fileName, "VALKYRIE_RUNTIME_BOUNTY_LIST_%s.txt", GAME_NAME);
+	FILE* f = fopen(fileName, "wb+");
 
 	if (f != NULL)
 	{
