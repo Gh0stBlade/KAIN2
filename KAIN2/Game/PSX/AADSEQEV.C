@@ -322,36 +322,36 @@ void midiNoteOn(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 				{
 					for (t = progAtr->firstTone; t < progAtr->firstTone + progAtr->numTones; t++)
 					{
-						if (midiNote >= (toneAtrTbl + progAtr->firstTone + t)->minNote &&
-							(toneAtrTbl + progAtr->firstTone + t)->maxNote >= midiNote)
+						if (midiNote >= (toneAtrTbl + t)->minNote &&
+							(toneAtrTbl + t)->maxNote >= midiNote)
 						{
-							voice = aadAllocateVoice((toneAtrTbl + progAtr->firstTone + t)->priority);
+							voice = aadAllocateVoice((toneAtrTbl + t)->priority);
 
 							if (voice != NULL)
 							{
-								waveStartAddr = ((unsigned long*)aadMem->dynamicWaveAddr[dynBank])[(toneAtrTbl + progAtr->firstTone + t)->waveIndex];
+								waveStartAddr = ((unsigned long*)aadMem->dynamicWaveAddr[dynBank])[(toneAtrTbl + t)->waveIndex];
 
-								if ((toneAtrTbl + progAtr->firstTone + t)->pitchBendMax != 0 && slot->pitchWheel[channel] == 8192)
+								if ((toneAtrTbl + t)->pitchBendMax != 0 && slot->pitchWheel[channel] == 8192)
 								{
-									aadPlayTonePitchBend((toneAtrTbl + progAtr->firstTone + t), waveStartAddr, progAtr, transposedNote, event->dataByte[1], slot->volume[channel], slot->panPosition[channel], slot->slotVolume, slot->masterVolPtr[0], voice, slot->pitchWheel[channel]);
+									aadPlayTonePitchBend((toneAtrTbl + t), waveStartAddr, progAtr, transposedNote, event->dataByte[1], slot->volume[channel], slot->panPosition[channel], slot->slotVolume, slot->masterVolPtr[0], voice, slot->pitchWheel[channel]);
 
 									voice->voiceMask = 0;
 								}
 								else
 								{
-									aadPlayTone((progAtr->firstTone + toneAtrTbl), waveStartAddr, progAtr, transposedNote, event->dataByte[1], slot->volume[channel], slot->panPosition[channel], slot->slotVolume, slot->masterVolPtr[0], voice, 0);
+									aadPlayTone((toneAtrTbl + t), waveStartAddr, progAtr, transposedNote, event->dataByte[1], slot->volume[channel], slot->panPosition[channel], slot->slotVolume, slot->masterVolPtr[0], voice, 0);
 
 									voice->voiceMask = 0;
 								}
 
 								voice->voiceID = slot->slotID | channel;
 								voice->note = midiNote;
-								voice->priority = (progAtr->firstTone + toneAtrTbl)->priority;
+								voice->priority = (toneAtrTbl + t)->priority;
 								voice->program = slot->currentProgram[channel];
 								voice->volume = event->dataByte[1];
 								voice->updateVol = slot->volume[channel];
 								voice->progAtr = progAtr;
-								voice->toneAtr = progAtr->firstTone + toneAtrTbl;
+								voice->toneAtr = toneAtrTbl + t;
 								voice->pan = slot->panPosition[channel];
 							}
 						}
