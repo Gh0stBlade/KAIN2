@@ -5243,14 +5243,22 @@ void Emulator_UpdateInput()
 	Emulator_DoPollEvent();
 
 #if defined(SDL2)
-	kbInputs = UpdateKeyboardInput();
+
+	if (padAllowCommunication)
+	{
+		kbInputs = UpdateKeyboardInput();
+	}
+	else
+	{
+		kbInputs = 0xFFFFu;
+	}
 
 	//Update pad
 	if (SDL_NumJoysticks() > 0)
 	{
 		for (int i = 0; i < MAX_CONTROLLERS; i++)
 		{
-			if (padHandle[i] != NULL)
+			if (padHandle[i] != NULL && padAllowCommunication)
 			{
 				unsigned short controllerInputs = UpdateGameControllerInput(padHandle[i]);
 
@@ -5267,6 +5275,11 @@ void Emulator_UpdateInput()
 				{
 					Emulator_RumbleGameController(padHandle[i], padRumbleData[i]);
 				}
+			}
+			else
+			{
+				unsigned short controllerInputs = 0xFFFFu;
+				((unsigned short*)padData[i])[1] = kbInputs & controllerInputs;
 			}
 		}
 	}

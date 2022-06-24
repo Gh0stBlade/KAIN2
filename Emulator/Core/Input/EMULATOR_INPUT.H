@@ -26,4 +26,6 @@ extern const unsigned char* keyboardStateDebug;
 
 #endif
 
+extern int padAllowCommunication;
+
 #endif

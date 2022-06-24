@@ -53,12 +53,12 @@ int PadChkVsync()
 
 void PadStartCom()
 {
-	UNIMPLEMENTED();
+	padAllowCommunication = 1;
 }
 
 void PadStopCom()
 {
-	UNIMPLEMENTED();
+	padAllowCommunication = 0;
 }
 
 unsigned int PadEnableCom(unsigned int unk00)

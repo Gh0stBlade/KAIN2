@@ -5,6 +5,7 @@
 int g_initialisedPadSubsystem = FALSE;
 unsigned char* padData[MAX_CONTROLLERS];
 unsigned char* padDataDebug[MAX_CONTROLLERS];
+int padAllowCommunication = 1;
 
 #if defined(SDL2)
 

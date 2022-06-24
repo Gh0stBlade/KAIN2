@@ -38,4 +38,6 @@ extern SDL_GameController* padHandle[];
 extern unsigned char* padData[];
 extern unsigned char* padRumbleData[];
 
+extern int padAllowCommunication;
+
 #endif
