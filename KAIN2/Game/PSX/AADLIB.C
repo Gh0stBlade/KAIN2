@@ -329,12 +329,12 @@ void aadSlotUpdate()
 									{
 										seqEventPtr = &slot->eventQueue[slot->eventOut[track]][track];
 
-
 										if (seqEventPtr->deltaTime == 48)
 										{
 											int testing = 0;
 											testing++;
 										}
+										
 										if (slot->tempo.currentTick >= seqEventPtr->deltaTime + slot->lastEventExecutedTime[track])
 										{
 											slot->lastEventExecutedTime[track] = seqEventPtr->deltaTime + slot->lastEventExecutedTime[track];
@@ -1799,7 +1799,7 @@ void aadInitSequenceSlot(struct _AadSequenceSlot *slot)
 	{
 		if (i < seqHdr->numTracks)
 		{
-			slot->sequencePosition[i] = (unsigned char*)(char*)seqHdr + ((int*)seqHdr)[4];
+			slot->sequencePosition[i] = (unsigned char*)(char*)seqHdr + ((int*)seqHdr)[4 + i];
 		}
 		else
 		{
@@ -1969,7 +1969,7 @@ void aadStartSlot(int slotNumber)
 
 		if (!(slot->status & 0x1))
 		{
-			if (slot->status != 255)
+			if (slot->sequenceNumberAssigned != 255)
 			{
 				aadInitSequenceSlot(slot);
 				slot->status |= 0x1;
