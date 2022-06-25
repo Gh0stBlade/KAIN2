@@ -465,6 +465,8 @@ void ShrinkGlyphMenu(struct _Instance *instance)
 	int time;
 	short accl;
 
+	return;
+
 #define GET_GLYPH_RADIUS(x) (x * 150) < 0 ? (4095 >> 12) : (x >> 12)
 
 	data = (struct __GlyphData*)instance->extraData;
@@ -539,7 +541,7 @@ void _GlyphOffProcess(struct _Instance *instance, int data1, int data2)
 	struct __GlyphData* data;
 
 	data = (struct __GlyphData*)instance->extraData;
-
+	
 	ShrinkGlyphMenu(instance);
 
 	while (1)
