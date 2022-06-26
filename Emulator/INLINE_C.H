@@ -463,10 +463,8 @@ extern int gte_ldlzc(int input);
 #define gte_rtpt() \
 	docop2(0x0280030);
 
-#define gte_rt() __asm__ volatile (				\
-	"nop;"							\
-	"nop;"							\
-	".word 0x000000ff" )
+#define gte_rt() \
+	docop2(0x0480012);
 
 #define gte_rtv0() \
 	docop2(0x0486012);
