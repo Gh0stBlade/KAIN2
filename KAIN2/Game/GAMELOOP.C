@@ -2420,10 +2420,7 @@ void GAMELOOP_ChangeMode()
 	long* controlCommand;
 
 	controlCommand = &gameTrackerX.controlCommand[0][0];
-	if (controlCommand[1] != 0)
-	{
-		printf("%x\n", controlCommand[1]);
-	}
+
 	if (!(gameTrackerX.debugFlags & 0x40000))
 	{
 		if (!(gameTrackerX.debugFlags & 0x200000))

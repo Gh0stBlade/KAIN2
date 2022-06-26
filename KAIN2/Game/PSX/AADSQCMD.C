@@ -1388,7 +1388,6 @@ void metaCmdBranchIfVarLess(struct AadSeqEvent *event, struct _AadSequenceSlot *
 
 	if (aadMem->userVariables[variableNum] < value)
 	{
-		printf("if var_%d < %d\n", variableNum, value);
 		aadGotoSequenceLabel(slot, event->track, labelNum);
 	}
 }
