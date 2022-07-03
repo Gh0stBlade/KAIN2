@@ -3,6 +3,13 @@
 
 #include "STREAM.H"
 #include "BSP.H"
+#include "SIGNAL.H"
+
+struct SignalResetStruct 
+{
+	struct _MultiSignal* mSignal; // size=904, offset=0
+	long timeLeft; // size=0, offset=4
+};
 
 struct evShadowSegmentData 
 {
