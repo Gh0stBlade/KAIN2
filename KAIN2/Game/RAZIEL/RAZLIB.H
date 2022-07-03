@@ -6,6 +6,12 @@
 #include "MONSTER/MONSTER.H"
 #include "PLAYER.H"
 
+struct __razController 
+{
+	unsigned short segment; // size=0, offset=0
+	unsigned short type; // size=0, offset=2
+};
+
 struct __EngagedInstance 
 {
 	struct _Instance* instance; // size=668, offset=0
