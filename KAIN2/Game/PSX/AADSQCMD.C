@@ -389,7 +389,7 @@ void metaCmdUnMuteChannel(struct AadSeqEvent *event, struct _AadSequenceSlot *sl
 void metaCmdMuteChannelList(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 {
 #if defined(PSX_VERSION)
-	aadMuteChannels(slot->selectedSlotPtr, (event->dataByte[1] << 8 | event->dataByte[0]));
+	aadMuteChannels(slot->selectedSlotPtr, (unsigned char)event->dataByte[0] | ((unsigned char)event->dataByte[1] << 8));
 #elif defined(PC_VERSION)
 	aadMuteChannels(slot->selectedSlotPtr, event->dataByte[0] | (event->dataByte[1] << 8));
 #endif
@@ -398,7 +398,7 @@ void metaCmdMuteChannelList(struct AadSeqEvent *event, struct _AadSequenceSlot *
 void metaCmdUnMuteChannelList(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 {
 #if defined(PSX_VERSION)
-	aadUnMuteChannels(slot->selectedSlotPtr, (event->dataByte[1] << 8 | event->dataByte[0]));
+	aadUnMuteChannels(slot->selectedSlotPtr, (((unsigned char)event->dataByte[1] << 8) | (unsigned char)event->dataByte[0]));
 #elif defined(PC_VERSION)
 	aadUnMuteChannels(slot->selectedSlotPtr, (event->dataByte[1] << 8) | event->dataByte[0]);
 #endif

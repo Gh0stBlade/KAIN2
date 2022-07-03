@@ -56,7 +56,6 @@ struct AadSynthVoice* aadAllocateVoice(int priority)
 				voice->flags |= 0x2;
 				return voice;
 			}
-
 		}
 	}
 
