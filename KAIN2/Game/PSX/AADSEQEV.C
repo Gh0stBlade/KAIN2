@@ -333,15 +333,15 @@ void midiNoteOn(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 
 								if ((toneAtrTbl + t)->pitchBendMax != 0 && slot->pitchWheel[channel] == 8192)
 								{
-									aadPlayTonePitchBend((toneAtrTbl + t), waveStartAddr, progAtr, transposedNote, event->dataByte[1], slot->volume[channel], slot->panPosition[channel], slot->slotVolume, slot->masterVolPtr[0], voice, slot->pitchWheel[channel]);
+									aadPlayTonePitchBend((toneAtrTbl + t), waveStartAddr, progAtr, transposedNote, event->dataByte[1], slot->volume[channel], slot->panPosition[channel], slot->slotVolume, slot->masterVolPtr[channel], voice, slot->pitchWheel[channel]);
 
-									voice->voiceMask = 0;
+									voice->handle = 0;
 								}
 								else
 								{
-									aadPlayTone((toneAtrTbl + t), waveStartAddr, progAtr, transposedNote, event->dataByte[1], slot->volume[channel], slot->panPosition[channel], slot->slotVolume, slot->masterVolPtr[0], voice, 0);
+									aadPlayTone((toneAtrTbl + t), waveStartAddr, progAtr, transposedNote, event->dataByte[1], slot->volume[channel], slot->panPosition[channel], slot->slotVolume, slot->masterVolPtr[channel], voice, 0);
 
-									voice->voiceMask = 0;
+									voice->handle = 0;
 								}
 
 								voice->voiceID = slot->slotID | channel;
@@ -573,7 +573,16 @@ void midiProgramChange(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 
 	channel = event->statusByte & 0xF;
 	
-	slot->currentProgram[channel] = event->dataByte[0];
+	slot->currentProgram[channel] = (unsigned char)event->dataByte[0];
+
+	static int calls = 0;
+	calls++;
+
+	if (calls == 6)
+	{
+		int testing = 0;
+		testing++;
+	}
 
 #elif defined(PC_VERSION)
 	slot->currentProgram[event->statusByte & 0xF] = event->dataByte[0];
