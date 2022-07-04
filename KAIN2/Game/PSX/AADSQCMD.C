@@ -149,9 +149,9 @@ void metaCmdSetTempo(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 #if defined(PSX_VERSION)
 	struct AadTempo tempo;
 
-	tempo.quarterNoteTime = event->dataByte[0] << 16;
-	tempo.quarterNoteTime |= event->dataByte[1] << 8;
-	tempo.quarterNoteTime |= event->dataByte[2];
+	tempo.quarterNoteTime = (unsigned char)event->dataByte[0] << 16;
+	tempo.quarterNoteTime |= (unsigned char)event->dataByte[1] << 8;
+	tempo.quarterNoteTime |= (unsigned char)event->dataByte[2];
 
 	tempo.ppqn = slot->selectedSlotPtr->tempo.ppqn;
 
