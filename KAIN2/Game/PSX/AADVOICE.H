@@ -10,5 +10,8 @@ extern void aadPlayTone(struct AadToneAtr *toneAtr, unsigned long waveStartAddr,
 
 extern void aadPlayTonePitchBend(struct AadToneAtr *toneAtr, unsigned long waveStartAddr, struct AadProgramAtr *progAtr, int midiNote, int volume, int masterVolume, int masterPan, int slotVolume, int masterMasterVol, struct AadSynthVoice *voice, int pitchWheelPos); // 0x80058064
 
+extern unsigned long aadStepsPerCent[];
+
+extern short aadPitchTable[];
 
 #endif
