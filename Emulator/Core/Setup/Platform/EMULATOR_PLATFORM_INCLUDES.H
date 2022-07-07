@@ -21,6 +21,9 @@
 #include <SDL2/SDL.h>
 #elif (defined(_WINDOWS) || defined(__MINGW32__) || defined(__linux__)) && !defined(__ANDROID__) && !defined(UWP)
 #include <SDL.h>
+#if defined(SDL2_MIXER)
+#include <SDL_mixer.h>
+#endif
 #if defined(VULKAN)
 #include <SDL_vulkan.h>
 #include <vulkan/vulkan.h>

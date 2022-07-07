@@ -266,7 +266,8 @@ void BSP_MarkVisibleLeaves_S(struct BSPTree* bsp, struct Camera* camera, struct 
 
 	gte_st_mac0(getScratchAddr(0)[27]);
 	gte_st_mac1(getScratchAddr(0)[27]);
-
+	UNIMPLEMENTED();//Camera needs implementing or division by zero will occurr
+	return;//not ready/unimpl
 	int v0 = (s2 << 15) / camera->core.projDistance;
 
 	gte_ld_vxy0(s2);

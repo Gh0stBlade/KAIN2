@@ -147,8 +147,7 @@ int aadQueueNextEvent(struct _AadSequenceSlot *slot, int track)
 	
 	if ((slot->trackFlags[track] & 0x20))
 	{
-		deltaTime = slot->tempo.currentTick;
-		slot->lastEventExecutedTime[track] = deltaTime;
+		slot->lastEventExecutedTime[track] = slot->tempo.currentTick;
 		slot->trackFlags[track] &= 0xDF;
 	}
 	
@@ -227,6 +226,14 @@ void aadExecuteEvent(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 	int eventType;
 
 	eventType = event->statusByte;
+	static int calls = 0;
+	calls++;
+
+	if (calls == 0x4d700)
+	{
+		int testing = 0;
+		testing++;
+	}
 
 	if ((eventType & 0x80))
 	{
@@ -328,6 +335,8 @@ void midiNoteOn(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 				progAtr = aadMem->dynamicProgramAtr[dynBank] + slot->currentProgram[channel];
 				toneAtrTbl = aadMem->dynamicToneAtr[dynBank];
 
+				//v0 = progAtr->firstTone
+				//v1 = aadMem->dynamicToneAtr[firstTone]
 				if (progAtr->firstTone < progAtr->firstTone + progAtr->numTones)
 				{
 					for (t = progAtr->firstTone; t < progAtr->firstTone + progAtr->numTones; t++)
@@ -345,13 +354,13 @@ void midiNoteOn(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 								calls++;
 								if ((toneAtrTbl + t)->pitchBendMax != 0 && slot->pitchWheel[channel] != 8192)
 								{
-									aadPlayTonePitchBend((toneAtrTbl + t), waveStartAddr, progAtr, transposedNote, event->dataByte[1], slot->volume[channel], slot->panPosition[channel], slot->slotVolume, slot->masterVolPtr[channel], voice, slot->pitchWheel[channel]);
+									aadPlayTonePitchBend((toneAtrTbl + t), waveStartAddr, progAtr, transposedNote, event->dataByte[1], slot->volume[channel], slot->panPosition[channel], slot->slotVolume, slot->masterVolPtr[0], voice, slot->pitchWheel[channel]);
 
 									voice->handle = 0;
 								}
 								else
 								{
-									aadPlayTone((toneAtrTbl + t), waveStartAddr, progAtr, transposedNote, event->dataByte[1], slot->volume[channel], slot->panPosition[channel], slot->slotVolume, slot->masterVolPtr[channel], voice, 0);
+									aadPlayTone((toneAtrTbl + t), waveStartAddr, progAtr, transposedNote, event->dataByte[1], slot->volume[channel], slot->panPosition[channel], slot->slotVolume, slot->masterVolPtr[0], voice, 0);
 
 									voice->handle = 0;
 								}

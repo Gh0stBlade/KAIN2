@@ -268,15 +268,21 @@ void aadSlotUpdate()
 				{
 					aadMem->voiceKeyOffRequest |= vmask;
 				}
-				else if ((aadMem->voiceKeyOffRequest & vmask) != 0)
+				else
 				{
-					if (aadMem->voiceStatus[i] == 0 || aadMem->voiceStatus[i] == 2)
+					if ((aadMem->voiceKeyOffRequest & vmask) != 0)
 					{
-						aadMem->voiceKeyOffRequest &= ~vmask;
-					}
-					else
-					{
-						aadMem->voiceKeyOffRequest = ~vmask;
+						if (aadMem->voiceStatus[i] != 0)
+						{
+							if (aadMem->voiceStatus[i] == 2)
+							{
+								aadMem->voiceKeyOffRequest &= ~vmask;
+							}
+						}
+						else
+						{
+							aadMem->voiceKeyOffRequest &= ~vmask;
+						}
 					}
 				}
 			}
@@ -337,7 +343,7 @@ void aadSlotUpdate()
 										
 										if (slot->tempo.currentTick >= seqEventPtr->deltaTime + slot->lastEventExecutedTime[track])
 										{
-											slot->lastEventExecutedTime[track] = seqEventPtr->deltaTime + slot->lastEventExecutedTime[track];
+											slot->lastEventExecutedTime[track] += seqEventPtr->deltaTime;
 											slot->eventsInQueue[track]--;
 											slot->eventOut[track]++;
 
@@ -2319,9 +2325,9 @@ void aadMuteChannels(struct _AadSequenceSlot *slot, unsigned long channelList)
 			{
 				voice = &aadMem->synthVoice[i];
 
-				if (voice->voiceID == slot->slotID)
+				if (voice->voiceID == (slot->slotID | channel))
 				{
-					voice->voiceID = -1;
+					voice->voiceID = 255;
 					vmask |= voice->voiceMask;
 				}
 			}
@@ -2545,7 +2551,3 @@ void aadResumeSound()
 	UNIMPLEMENTED();
 #endif
 }
-
-
-
-

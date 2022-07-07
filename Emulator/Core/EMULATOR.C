@@ -2169,8 +2169,15 @@ static int Emulator_InitialiseSDL2(char* windowName, int width, int height)
 #endif
 
 #if defined(SDL2)
+
+	unsigned int flags = SDL_INIT_VIDEO | SDL_INIT_TIMER;
+
+#if defined(SDL2_MIXER)
+	flags |= SDL_INIT_AUDIO;
+#endif
+
 	//Initialise SDL2
-	if (SDL_Init(SDL_INIT_VIDEO) == 0)
+	if (SDL_Init(flags) == 0)
 	{
 		SDL_version ver;
 		SDL_GetVersion(&ver);
@@ -2325,7 +2332,7 @@ void Emulator_Initialise(char* windowName, int width, int height)
 #endif
 
 #if !defined(__ANDROID__)
-	counter_thread = std::thread(Emulator_CounterLoop);
+	//counter_thread = std::thread(Emulator_CounterLoop);
 #endif
 }
 
@@ -2348,21 +2355,31 @@ void Emulator_CounterLoop()
 #else
 		current_time = 0;
 #endif
-		//if (current_time > last_time + 1000)
+		static int calls = 0;
+		calls++;
+
+		if (current_time > last_time + 1000)
 		{
+			printf("CALLS: %d\n", calls);
+			calls = 0;
 			for (int i = 0; i < 3; i++)
 			{
 				//if (!counters[i].IsStopped)
 				{
-					counters[i].cycle += COUNTER_UPDATE_INTERVAL;
+					
 					//counters[i].cycle = SDL_GetTicks() - start;
-					if (counters[i].target > 0 && counters[i].target >= counters[i].cycle)
+					if (counters[i].target > 0)
 					{
-						counters[i].cycle %= counters[i].target;
+						counters[i].cycle += counters[i].value;
 
-						if (counters[i].padding00 != NULL)
+						if (counters[i].cycle >= counters[i].target)
 						{
-							counters[i].padding00();
+							counters[i].cycle %= counters[i].target;
+
+							if (counters[i].padding00 != NULL)
+							{
+								//counters[i].padding00();
+							}
 						}
 					}
 				}
@@ -2370,6 +2387,15 @@ void Emulator_CounterLoop()
 			last_time = current_time;
 		}
 	}
+}
+
+unsigned int Emulator_CounterWrapper(unsigned int interval, void* pTimerID)
+{
+	unsigned int timerID = ((unsigned int*)pTimerID)[0];
+	
+	counters[timerID].padding00();
+	
+	return 1000/60;
 }
 
 void Emulator_GenerateLineArray(struct Vertex* vertex, short* p0, short* p1)

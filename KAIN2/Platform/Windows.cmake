@@ -5,7 +5,9 @@ if(MSVC AND NOT WINDOWS_STORE)
 
 #Find libs
 find_package(SDL2 REQUIRED)
-
+set(SDL2_MIXER_PATH ${EXTERN_LIB_PATH}/SDL2_mixer)
+find_package(SDL2_mixer REQUIRED)
+include_directories(${SDL2_MIXER_INCLUDE_DIR})
 if(USE_VULKAN)
 find_package(Vulkan REQUIRED)
 include_directories(${Vulkan_INCLUDE_DIR})

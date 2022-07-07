@@ -4546,7 +4546,6 @@ typedef struct WarpRoom WarpRoom;
 
 typedef struct PlanningNode PlanningNode;
 
-typedef struct VramBuffer VramBuffer;
 
 union PHYSOBS_71fake // Hashcode: 0xF2195964 (dec: -233219740)
 {

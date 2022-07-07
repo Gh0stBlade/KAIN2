@@ -155,7 +155,7 @@ void aadPlayTone(struct AadToneAtr *toneAtr, unsigned long waveStartAddr, struct
 #define GET_VOLUME_SQUARED(x) (x) * (x) 
 #define GET_MASTER_PAN_LEFT(x, y) (x * (GET_VOLUME_SQUARED((128 - y)) - 1)) >> 12
 #define GET_MASTER_PAN_RIGHT(x, y) (x * (GET_VOLUME_SQUARED((y + 1)) + 1)) >> 12
-#define GET_MASTER_VOL(x, y) (y * (x - 1)) >> 14
+#define GET_MASTER_VOL(x, y) (y * (x)) >> 14
 
 	masterVolumeSquared = GET_VOLUME_SQUARED(volume + 1) - 1;
 	voiceVol.left = masterVolumeSquared;
@@ -189,7 +189,7 @@ void aadPlayTone(struct AadToneAtr *toneAtr, unsigned long waveStartAddr, struct
 		}
 	}
 
-	masterVolumeSquared = GET_VOLUME_SQUARED(masterVolume + 1);
+	masterVolumeSquared = GET_VOLUME_SQUARED(masterVolume + 1) - 1;
 	voiceVol.left = GET_MASTER_VOL(masterVolumeSquared, voiceVol.left);
 	voiceVol.right = GET_MASTER_VOL(masterVolumeSquared, voiceVol.right);
 
@@ -210,7 +210,7 @@ void aadPlayTone(struct AadToneAtr *toneAtr, unsigned long waveStartAddr, struct
 
 	voiceVol.left = pitchIndex;
 	voiceVol.right = a2;
-	voiceVol.left = a1;
+	voiceVol.left = t0 >> 14;
 	voiceVol.right = t2 >> 14;
 
 	a1 = (t0 >> 14) << 16;

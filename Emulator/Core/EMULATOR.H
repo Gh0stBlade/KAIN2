@@ -103,7 +103,7 @@ typedef struct
 	typedef long (*CallbackProc)(void);
 
 	CallbackProc padding00;
-	unsigned int padding01;
+	unsigned int timerID;
 } SysCounter;
 
 extern SysCounter counters[3];
@@ -252,6 +252,7 @@ extern void Emulator_SetBlendMode(BlendMode blendMode);
 extern void Emulator_CounterLoop();
 extern int Emulator_BeginScene();
 extern void Emulator_EndScene();
+extern unsigned int Emulator_CounterWrapper(unsigned int interval, void* pTimerID);
 
 extern void Emulator_GenerateLineArray(struct Vertex* vertex, short* p0, short* p1);
 extern void Emulator_GenerateVertexArrayTriangle(struct Vertex* vertex, short* p0, short* p1, short* p2);

@@ -41,7 +41,8 @@
 
 #if defined(OGL) || defined(D3D9) || defined(D3D11) || defined(D3D12) || defined(VULKAN)
 #define SDL2
-#define OPENAL
+#define SDL2_MIXER
+//#define OPENAL
 #endif
 
 #if defined(OGL)

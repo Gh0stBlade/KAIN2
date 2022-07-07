@@ -4,7 +4,15 @@
 #include "EMULATOR.H"
 #include "LIBAPI.H"
 
-#if defined(OPENAL)
+#if defined(SDL2_MIXER)
+
+#define SPU_MAX_CHANNELS 24
+#define SPU_PLAYBACK_FREQUENCY (44100)
+unsigned char* frequencyConvertedChunks[SPU_MAX_CHANNELS];
+Mix_Chunk* mixerChunks[SPU_MAX_CHANNELS];
+bool channelPlaying[SPU_MAX_CHANNELS];
+
+#elif defined(OPENAL)
 
 #if defined(__EMSCRIPTEN__)
 #include <AL/al.h>
@@ -19,7 +27,7 @@ ALCcontext* alContext = NULL;
 
 ALuint alSources[24];
 ALuint alBuffers[24];
-ALuint alBufferSizes[24];
+ALboolean alHasAudioData[24];
 
 #elif defined(XAUDIO2)
 
@@ -33,6 +41,7 @@ IXAudio2SourceVoice* pSourceVoices[24];
 
 unsigned int voicePitches[24];
 unsigned int voiceStartAddrs[24];
+unsigned int voiceLengths[24];
 
 #include <string.h>
 
@@ -67,6 +76,8 @@ unsigned short _spu_rev_attr[] =
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
+int _spu_zerobuf[256];///@TODO might need zero init
+
 short _spu_RQ[10];
 
 SpuCommonAttr dword_424;//Might be wrong struct, need to check
@@ -96,11 +107,16 @@ int _spu_mem_mode_plus = 3;
 void* _spu_transferCallback = NULL;///@TODO initial value check
 int _spu_inTransfer = 0;///@TODO initial value check
 int _spu_IRQCallback = 0;
+int dword_800CED70 = 0;
 unsigned short _spu_tsa = 0;
 int PrimaryDMAControlRegister = 0;///@TODO check initials wil likely be stripped though
 int* dword_E10 = &PrimaryDMAControlRegister;//Base address is 1F8010F0.
+int _spu_keystat_last = 0;
+char spuSoundBuffer[524288];
+char convertedSpuSoundBuffer[524288 * 4];
 
-char spuSoundBuffer[520191];
+long spuWriteSizes[1024];
+int lastWriteIndex = 0;
 
 #if defined(__EMSCRIPTEN__)
 void Emulator_PollAudio()
@@ -114,12 +130,13 @@ void Emulator_PollAudio()
 }
 #endif
 
-unsigned int decodeVAG(unsigned char* vag, unsigned int length, unsigned char* out)
+unsigned int decodeVAG(unsigned char* vag, unsigned char* out)
 {
     int predict_nr, shift_factor, flags;
-    int s;
-    double s_1 = 0.0f;
-    double s_2 = 0.0f;
+    int i;
+    int d, s;
+    static double s_1 = 0.0f;
+    static double s_2 = 0.0f;
     unsigned int result_length = 0;
     unsigned short* wav = (unsigned short*)out;
     double samples[28];
@@ -131,10 +148,11 @@ unsigned int decodeVAG(unsigned char* vag, unsigned int length, unsigned char* o
                     {  122.0f / 64.0f, -60.0f / 64.0f } };
 
 
-    for(unsigned int i = 0; i < length; i++)
+    while (1)
     {
-        predict_nr = *vag >> 4;
-        shift_factor = *vag++ & 0xF;
+        predict_nr = *vag++;
+        shift_factor = predict_nr & 0xf;
+        predict_nr >>= 4;
         flags = *vag++;
 
         if (flags == 7)
@@ -142,33 +160,41 @@ unsigned int decodeVAG(unsigned char* vag, unsigned int length, unsigned char* o
             break;
         }
 
-        for (i = 0; i < 28; i += 2, vag++)
+        for (i = 0; i < 28; i += 2) 
         {
-            s = (*vag & 0xF) << 12;
+            d = *vag++;
+            s = (d & 0xf) << 12;
+            
             if (s & 0x8000)
             {
-                s |= 0xFFFF0000;
+                s |= 0xffff0000;
             }
-
+            
             samples[i] = (double)(s >> shift_factor);
-            s = (*vag & 0xF0) << 8;
-
+            
+            s = (d & 0xf0) << 8;
+            
             if (s & 0x8000)
             {
-                s |= 0xFFFF0000;
+                s |= 0xffff0000;
             }
 
             samples[i + 1] = (double)(s >> shift_factor);
         }
 
-        for (i = 0; i < 28; i++) 
+        for (i = 0; i < 28; i++)
         {
             samples[i] = samples[i] + s_1 * f[predict_nr][0] + s_2 * f[predict_nr][1];
             s_2 = s_1;
             s_1 = samples[i];
-            *wav++ = (int)(s_1 + 0.5f);
+            d = (int)(samples[i] + 0.5);
+            *out++ = d & 0xff;
+            *out++ = d >> 8;
             result_length += sizeof(unsigned short);
         }
+
+        if (flags == 1)
+            break;
     }
 
     return result_length;
@@ -620,6 +646,137 @@ void SpuSetVoiceAttr(SpuVoiceAttr* arg)//
 #endif
 }
 
+#if defined(SDL2_MIXER)
+
+int Mix_ChangeFrequency(Mix_Chunk* chunk, int freq)
+{
+    Uint16 format;
+    int channels;
+    Mix_QuerySpec(NULL, &format, &channels);
+
+    SDL_AudioCVT cvt;
+    int channel;
+    SDL_BuildAudioCVT(&cvt, format, 1, freq, format, channels, SPU_PLAYBACK_FREQUENCY);
+
+    if (cvt.needed)
+    {
+        for (channel = 0; channel < SPU_MAX_CHANNELS; channel++)
+            if (!Mix_Playing(channel)) break; //Find a free channel
+
+        if (channel > 0)
+        {
+            int testing = 0;
+            testing++;
+        }
+        if (channel == SPU_MAX_CHANNELS)
+        {
+            eprinterr("Fatal: Channels overloaded!\n");
+            return -1;
+        }
+
+        //Set converter lenght and buffer
+        cvt.len = chunk->alen;
+        cvt.buf = (Uint8*)SDL_malloc(cvt.len * cvt.len_mult);
+        if (cvt.buf == NULL)
+        {
+            return -1;
+        }
+
+        //Copy the Mix_Chunk data to the new chunk and make the conversion
+        SDL_memcpy(cvt.buf, chunk->abuf, chunk->alen);
+        if (SDL_ConvertAudio(&cvt) < 0)
+        {
+            SDL_free(cvt.buf);
+            return -1;
+        }
+
+        //If it was sucessfull put it on the original Mix_Chunk
+        chunk->abuf = cvt.buf;
+        chunk->alen = cvt.len_cvt;
+
+        //If there was a chunk in this channel delete it
+        if (frequencyConvertedChunks[channel] != NULL)
+            SDL_free(frequencyConvertedChunks[channel]);
+
+        frequencyConvertedChunks[channel] = cvt.buf;
+        return channel;
+
+    }
+    else
+    {
+        return -1;
+    }
+}
+
+void Mix_SPUUpdatePlayingChannels()
+{
+    for (int channel = 0; channel < SPU_MAX_CHANNELS; channel++)
+    {
+        if (Mix_Playing(channel)) 
+        {
+            channelPlaying[channel] = true;
+        }
+        else
+        {
+            channelPlaying[channel] = false;
+        }
+    }
+}
+Mix_Chunk* Mix_SPULoadAudioChunk(int vNum, unsigned char* address)
+{
+    if (address == NULL)
+    {
+        return NULL;
+    }
+
+    Mix_Chunk* waveChunk = Mix_QuickLoad_RAW(address, voiceLengths[vNum]);
+    
+    return waveChunk;
+}
+
+void Mix_ChannelFinishedPlayingCallback(int channel)
+{
+    unsigned char* waveChunk = frequencyConvertedChunks[channel];
+    frequencyConvertedChunks[channel] = NULL;
+    SDL_free(waveChunk);
+
+    Mix_Chunk* mixerChunk = mixerChunks[channel];
+    mixerChunks[channel] = NULL;
+    Mix_FreeChunk(mixerChunk);
+}
+
+void Mix_SPUPlay(int vNum, unsigned char* address)
+{
+    Mix_Chunk* waveChunk = Mix_SPULoadAudioChunk(vNum, address);
+
+    static int lastChannel = -1;
+
+    if (waveChunk != NULL)
+    {
+        Uint8* bkp_buf = waveChunk->abuf;
+        Uint32 bkp_len = waveChunk->alen;
+
+        int channel = Mix_ChangeFrequency(waveChunk, voicePitches[vNum]);
+        mixerChunks[channel] = waveChunk;
+
+        Mix_SPUUpdatePlayingChannels();
+
+        Mix_PlayChannel(channel, waveChunk, 0);
+
+        if (channel == lastChannel)
+        {
+            printf("Channel: %d\n", channel);
+        }
+
+        waveChunk->abuf = bkp_buf;
+        waveChunk->alen = bkp_len;
+
+        lastChannel = channel;
+    }
+}
+
+#endif
+
 void SpuSetKey(long on_off, unsigned long voice_bit)
 {
     voice_bit &= 0xFFFFFF;
@@ -691,15 +848,35 @@ void SpuSetKey(long on_off, unsigned long voice_bit)
 
     for (int i = 0; i < 24; i++)
     {
-        if (_spu_keystat & (1 << i))
+        if (_spu_keystat_last & (1 << i))
         {
 
-#if defined(OPENAL) || defined(XAUDIO2)
-            unsigned long vagSize = ((unsigned long*)&spuSoundBuffer[voiceStartAddrs[i]])[-1];
-            unsigned char* wave = new unsigned char[vagSize * 8];
-            unsigned int waveSize = decodeVAG((unsigned char*)&spuSoundBuffer[voiceStartAddrs[i]], vagSize, wave);
-           
-#if defined(_DEBUG)
+#if defined(SDL2_MIXER)
+
+
+
+#elif defined(OPENAL)
+            ALint state;
+
+            alGetSourcei(alSources[i], AL_SOURCE_STATE, &state);
+
+            if (state != AL_PLAYING && alHasAudioData[i])
+            {
+                alHasAudioData[i] = FALSE;
+                alDeleteBuffers(1, &alBuffers[i]);
+            }
+#endif
+        }
+
+        if (_spu_keystat & (1 << i))
+        {
+#if defined(SDL2_MIXER)
+            Mix_SPUPlay(i, (unsigned char*)&convertedSpuSoundBuffer[voiceStartAddrs[i] * 4]);
+#elif defined(OPENAL) || defined(XAUDIO2)
+            unsigned int realWaveSize = voiceStartAddrs[i] * 4;
+            unsigned char* wave = (unsigned char*)&convertedSpuSoundBuffer[voiceStartAddrs[i] * 4];
+
+#if defined(_DEBUG) && 0
             char name[64];
             sprintf(name, "%x.wav", voiceStartAddrs[i]);
             FILE* f = fopen(name, "wb+");
@@ -722,20 +899,17 @@ void SpuSetKey(long on_off, unsigned long voice_bit)
 #endif
 
 #if defined(OPENAL)
-            alGenBuffers(1, &alBuffers[i]);
-            alBufferData(alBuffers[i], AL_FORMAT_MONO16, wave, waveSize, voicePitches[i]);
-            alSourcei(alSources[i], AL_BUFFER, alBuffers[i]);
-            alSourcePlay(alSources[i]);
 
-            ALint state;
-            alGetSourcei(alSources[i], AL_SOURCE_STATE, &state);
-
-            while (state == AL_PLAYING) 
+            //Error coppied twice!
+            if (alHasAudioData[i] == FALSE)
             {
-                alGetSourcei(alSources[i], AL_SOURCE_STATE, &state);
+                alGenBuffers(1, &alBuffers[i]);
+                alBufferData(alBuffers[i], AL_FORMAT_MONO16, wave, realWaveSize, voicePitches[i]);
+                alSourcei(alSources[i], AL_BUFFER, alBuffers[i]);
+                alSourcePlay(alSources[i]);
+                alHasAudioData[i] = TRUE;
             }
 
-            alDeleteBuffers(1, &alBuffers[i]);
 #elif defined(XAUDIO2)
             WAVEFORMATEX wfex;
             wfex.wFormatTag = WAVE_FORMAT_PCM;
@@ -774,10 +948,11 @@ void SpuSetKey(long on_off, unsigned long voice_bit)
             pSourceVoices[i]->DestroyVoice();
 
 #endif
-            delete[] wave;
 #endif
         }
     }
+
+    _spu_keystat_last |= _spu_keystat;
 }
 
 void SpuSetKeyOnWithAttr(SpuVoiceAttr* attr)//(F)
@@ -850,16 +1025,224 @@ long SpuGetKeyStatus(unsigned long voice_bit)
 	return 0;
 }
 
-void _spu_t(int mode, int flag)
+
+void sub_CB0()
 {
-	UNIMPLEMENTED();
+    dword_800CED70 &= 0xF0FFFFFF;
+    dword_800CED70 |= 0x22000000;
+}
+
+void sub_C88()
+{
+    dword_800CED70 &= 0xF0FFFFFF;
+    dword_800CED70 |= 0x20000000;
+}
+
+int _spu_t(int mode, int flag, int a2)
+{
+	//arg_0 = mode
+    //arg_4 = flag
+    //arg_8 = a2
+    //arg_C = a3
+
+    //s0 = &flag
+    //a2 = 1
+
+    if (mode == 1)
+    {
+        //loc_830
+        //a1 = _spu_RXX
+        //a0 = _spu_tsa
+        _spu_zerobuf[8] = 0;//asc_E40 + 0x10  # ""
+        int start = 0;//v1
+
+        if (_spu_RXX[211] != _spu_tsa)
+        {
+            start++;
+
+            do
+            {
+                if (start < 3841)
+                {
+                    start++;
+
+                    if (_spu_RXX[211] == _spu_tsa)
+                    {
+                        break;
+                    }
+                }
+                else
+                {
+                    return -2;
+                }
+
+            } while (1);
+        }
+        
+        _spu_RXX[213] &= 0xFFCF;
+        _spu_RXX[213] |= 0x20;
+        
+        return 0;
+    }
+    else if(mode >= 2)
+    {
+        //loc_7EC
+        if (mode == 2)
+        {
+            //loc_804
+            _spu_RXX[211] = flag >> _spu_mem_mode_plus;
+         
+            return 0;
+        }
+        else if (mode == 3)
+        {
+            //loc_904
+     
+            //v0 = _spu_zerobuf[8]
+            short a0 = 0x20;
+            if (_spu_zerobuf[8] == a2)
+            {
+                a0 = 0x30;
+            }
+
+            //a1 = _spu_RXX
+            int start = 0;
+            //v0 = _spu_RXX[213];
+
+            start++;
+            if ((_spu_RXX[213] & 0x30) != a0)
+            {
+                do
+                {
+                    if (start < 3841)
+                    {
+                        start++;
+
+                        if ((_spu_RXX[213] & 0x30) == a0)
+                        {
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        return -2;
+                    }
+
+                } while (1);
+            }
+            else
+            {
+                int a2 = 0x1000000;
+                //s0 = &flag + 1
+                // 
+                //loc_95C
+                if (_spu_zerobuf[8] == 1)
+                {
+                    sub_CB0();
+                }
+                else
+                {
+                    sub_C88();
+                }
+
+                //loc_98C
+#if 0
+
+                loc_98C :
+                lw      $a0, -4($s0)
+                    sw      $a0, dword_E54
+                    lw      $a0, 0($s0)
+                    lw      $a1, dword_E04
+                    srl     $v1, $a0, 6
+                    andi    $v0, $a0, 0x3F
+                    sltu    $v0, $zero, $v0
+                    lw      $a0, dword_E54
+                    addu    $v1, $v0
+                    sw      $v1, dword_E58
+                    sw      $a0, 0($a1)
+                    lw      $v0, dword_E58
+                    lw      $v1, dword_E08
+                    sll     $v0, 16
+                    ori     $v0, 0x10
+                    sw      $v0, 0($v1)
+                    lw      $v1, asc_E40 + 0x10  # ""
+                    li      $v0, 1
+                    bne     $v1, $v0, loc_A00
+                    ori     $a2, 0x201
+                    li      $a2, 0x1000200
+
+                    loc_A00:
+                lw      $v0, dword_E0C
+                    nop
+                    sw      $a2, 0($v0)
+                    move    $v0, $zero
+
+                    loc_A14 :
+                lw      $ra, 0x10 + var_s4($sp)
+                    lw      $s0, 0x10 + var_s0($sp)
+                    jr      $ra
+                    addiu   $sp, 0x18
+#endif
+            }
+        }
+        else
+        {
+            return 0;
+        }
+    }
+    else if (mode == 0)
+    {
+        _spu_zerobuf[8] = a2;
+
+        int start = 0;
+        
+        if (_spu_RXX[211] != _spu_tsa)
+        {
+            start++;
+
+            do
+            {
+                if (start < 3841)
+                {
+                    start++;
+
+                    if (_spu_RXX[211] == _spu_tsa)
+                    {
+                        break;
+                    }
+                }
+                else
+                {
+                    return -2;
+                }
+
+            } while (1);
+        }
+        //loc_8E0
+        _spu_RXX[213] |= 0x30;
+        return 0;
+    }
+    else
+    {
+        return 0;
+    }
 }
 
 void _spu_Fw(unsigned char* addr, unsigned long size)
 {
-#if defined(OPENAL) || defined(XAUDIO2)
-    ((unsigned long*)&spuSoundBuffer[_spu_tsa])[-1] = size;
+#if defined(SDL2_MIXER)
+    memcpy(&spuSoundBuffer[_spu_tsa << _spu_mem_mode_plus], addr, size);
+
+    if (__spu_transferCallback != NULL)
+    {
+        __spu_transferCallback();
+    }
+#elif defined(OPENAL) || defined(XAUDIO2)
     memcpy(&spuSoundBuffer[_spu_tsa], addr, size);
+    
+    spuWriteSizes[lastWriteIndex++] = size * 4;
+    
+    decodeVAG((unsigned char*)&spuSoundBuffer[_spu_tsa], size, (unsigned char*)&convertedSpuSoundBuffer[_spu_tsa * 4]);
 
     if (__spu_transferCallback != NULL)
     {
@@ -868,15 +1251,18 @@ void _spu_Fw(unsigned char* addr, unsigned long size)
 
 #else
 
-	if (_spu_trans_mode == 0)
-	{
-		//v0 = _spu_tsa
-		//a1 = _spu_mem_mode_plus
-		//a0 = 2
-		_spu_t(2, _spu_tsa << _spu_mem_mode_plus);
-		_spu_t(1, _spu_tsa << _spu_mem_mode_plus);
-
+    if (_spu_trans_mode == 0)
+    {
+        _spu_t(2, _spu_tsa << _spu_mem_mode_plus, 0);
+        _spu_t(1, _spu_tsa << _spu_mem_mode_plus, 0);
+        _spu_t(3, size, 2);
     }
+    else
+    {
+        UNIMPLEMENTED();
+    }
+
+
 #endif
 }
 
@@ -1287,7 +1673,19 @@ void SpuInit(void)//(F)
 {
     _SpuInit(0);
 
-#if defined(OPENAL)
+#if defined(SDL2_MIXER)
+
+    Mix_Init(0);///@TODO MIX_QUIT!
+
+    if (Mix_OpenAudio(SPU_PLAYBACK_FREQUENCY, MIX_DEFAULT_FORMAT, 2, 4096) < 0)
+    {
+        eprinterr("[SDL2_MIXER]: Failed to Mix_OpenAudio! %s\n", Mix_GetError());
+    }
+
+    Mix_AllocateChannels(SPU_MAX_CHANNELS);
+    Mix_ChannelFinished(Mix_ChannelFinishedPlayingCallback);
+
+#elif defined(OPENAL)
     alDevice = alcOpenDevice(NULL);
 
     if (alDevice == NULL)
@@ -1479,7 +1877,7 @@ void SpuSetVoicePitch(int vNum, unsigned short pitch)
     short* p = (short*)&_spu_RXX[vNum << 2];
     p[3] = pitch;
 
-#if defined(OPENAL) || defined(XAUDIO2)
+#if defined(SDL2_MIXER) || defined(OPENAL) || defined(XAUDIO2)
 
     unsigned int frequency = pitch * 44100 / 4096;
 
@@ -1570,12 +1968,14 @@ void SpuSetVoiceStartAddr(int vNum, unsigned long startAddr)
 
     var_4 = _spu_FsetRXXa((vNum << 3) | 0x3, startAddr);
 
+    //Converted to size or next offset?
     for (int i = 0; i < 2; i++)
     {
-        var_4 *= 13;
+       var_4 *= 13;
     }
-#if defined(OPENAL) || defined(XAUDIO2)
-    voiceStartAddrs[vNum] = _spu_tsa;// startAddr / 8;
+#if defined(SDL2_MIXER) || defined(OPENAL) || defined(XAUDIO2)
+    voiceStartAddrs[vNum] = startAddr;//startAddr / 8;//_spu_tsa;
+    voiceLengths[vNum] = decodeVAG((unsigned char*)&spuSoundBuffer[voiceStartAddrs[vNum]], (unsigned char*)&convertedSpuSoundBuffer[voiceStartAddrs[vNum] * 4]);
 #endif
 }
 
@@ -1588,7 +1988,9 @@ void SpuSetVoiceVolume(int vNum, short volL, short volR)
     p[0] = volL;
     p[1] = volR;
 
-#if defined(OPENAL)
+#if defined(SDL2_MIXER)
+    Mix_Volume(vNum, volL / 255);
+#elif defined(OPENAL)
     alSourcef(alSources[vNum], AL_GAIN, volL / 32767.0f);///@FIXME only left supported?
 #elif defined(XAUDIO2)
    pMasterVoice->SetVolume(volL / 32767.0f, 0);

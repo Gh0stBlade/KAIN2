@@ -17,21 +17,21 @@ void aadSubstituteVariables(struct AadSeqEvent *event, struct _AadSequenceSlot *
 			{
 				trackFlags &= 0xFE;
 
-				event->dataByte[0] = aadMem->userVariables[event->dataByte[0]];
+				event->dataByte[0] = aadMem->userVariables[(unsigned char)event->dataByte[0]];
 			}
 
 			if ((trackFlags & 0x2))
 			{
 				trackFlags &= 0xFD;
 				
-				event->dataByte[1] = aadMem->userVariables[event->dataByte[1]];
+				event->dataByte[1] = aadMem->userVariables[(unsigned char)event->dataByte[1]];
 			}
 			
 			if ((trackFlags & 0x4))
 			{
 				trackFlags &= 0xFB;
 
-				event->dataByte[2] = aadMem->userVariables[event->dataByte[2]];
+				event->dataByte[2] = aadMem->userVariables[(unsigned char)event->dataByte[2]];
 			}
 
 			slot->trackFlags[event->track] = trackFlags;
@@ -44,7 +44,7 @@ void metaCmdSelectChannel(struct AadSeqEvent *event, struct _AadSequenceSlot *sl
 #if defined(PSX_VERSION)
 	int channelNumber;
 
-	channelNumber = event->dataByte[0];
+	channelNumber = (unsigned char)event->dataByte[0];
 
 	if (channelNumber < 16)
 	{
@@ -110,7 +110,7 @@ void metaCmdAssignSequence(struct AadSeqEvent* event, struct _AadSequenceSlot* s
 	int bank;
 
 	bank = slot->selectedDynamicBank;
-	sequenceNumber = event->dataByte[0];
+	sequenceNumber = (unsigned char)event->dataByte[0];
 
 	if (aadMem->dynamicBankStatus[bank] == 2 && sequenceNumber < aadGetNumDynamicSequences(bank))
 	{
@@ -195,15 +195,15 @@ void metaCmdChangeTempo(struct AadSeqEvent *event, struct _AadSequenceSlot *slot
 void metaCmdSetTempoFromSequence(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 {
 #if defined(PSX_VERSION)
-	int sequenceNumber;
-	struct AadTempo tempo;
-	int bank;
+	int sequenceNumber;//s1
+	struct AadTempo tempo;//-24
+	int bank;//s0
 
 	bank = slot->selectedDynamicBank;
 	
-	sequenceNumber = event->dataByte[0];
+	sequenceNumber = (unsigned char)event->dataByte[0];
 
-	if (aadMem->dynamicBankStatus[bank] == 2 && aadGetNumDynamicSequences(bank) != 0)
+	if (aadMem->dynamicBankStatus[bank] == 2 && sequenceNumber < aadGetNumDynamicSequences(bank))
 	{
 		aadGetTempoFromDynamicSequence(bank, sequenceNumber, &tempo);
 		aadSetSlotTempo(slot->selectedSlotNum, &tempo);
@@ -287,7 +287,7 @@ void metaCmdSetSlotVolume(struct AadSeqEvent *event, struct _AadSequenceSlot *sl
 #if defined(PSX_VERSION)
 	int volume;
 
-	volume = event->dataByte[0];
+	volume = (unsigned char)event->dataByte[0];
 
 	slot->selectedSlotPtr->slotVolume = volume;
 
@@ -1076,8 +1076,8 @@ void metaCmdSetVariable(struct AadSeqEvent *event, struct _AadSequenceSlot *slot
 	int value;
 	int destVariable;
 
-	destVariable = event->dataByte[1];
-	value = event->dataByte[0];
+	destVariable = (unsigned char)event->dataByte[1];
+	value = (unsigned char)event->dataByte[0];
 
 	if (destVariable < 128)
 	{
@@ -1090,8 +1090,8 @@ void metaCmdCopyVariable(struct AadSeqEvent *event, struct _AadSequenceSlot *slo
 	int srcVariable;
 	int destVariable;
 	
-	srcVariable = event->dataByte[0];
-	destVariable = event->dataByte[1];
+	srcVariable = (unsigned char)event->dataByte[0];
+	destVariable = (unsigned char)event->dataByte[1];
 
 	if (srcVariable < 128 && destVariable < 128)
 	{
@@ -1104,8 +1104,8 @@ void metaCmdAddVariable(struct AadSeqEvent *event, struct _AadSequenceSlot *slot
 	int value;
 	int destVariable;
 	
-	destVariable = event->dataByte[1];
-	value = event->dataByte[0];
+	destVariable = (unsigned char)event->dataByte[1];
+	value = (unsigned char)event->dataByte[0];
 
 	if (destVariable < 128)
 	{
@@ -1222,7 +1222,6 @@ void aadGotoSequencePosition(struct _AadSequenceSlot *slot, int track, unsigned 
 		{
 			slot->eventOut[track] = 0;
 		}
-
 	}
 
 	slot->trackFlags[track] &= 0xE7;
@@ -1237,7 +1236,6 @@ void aadGotoSequenceLabel(struct _AadSequenceSlot *slot, int track, int labelNum
 	bank = slot->sequenceAssignedDynamicBank;
 	seqHdr = (struct AadSequenceHdr*)aadMem->dynamicSequenceAddressTbl[bank][slot->sequenceNumberAssigned];
 	trackOffset = ((unsigned long*)(seqHdr + 1))[track];
-	
 	slot->sequencePosition[track] = (unsigned char*)(char*)seqHdr + trackOffset + aadMem->dynamicSequenceLabelOffsetTbl[bank][labelNumber];
 
 	if (slot->eventsInQueue[track] != 0)
@@ -1272,7 +1270,7 @@ void metaCmdLoopStart(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 	{
 		slot->loopSequencePosition[nestLevel][track] = slot->sequencePosition[track];
 
-		slot->loopCounter[nestLevel][track] = event->dataByte[0];
+		slot->loopCounter[nestLevel][track] = (unsigned char)event->dataByte[0];
 
 		slot->loopCurrentNestLevel[track]++;
 	}
@@ -1324,7 +1322,7 @@ void metaCmdDefineLabel(struct AadSeqEvent *event, struct _AadSequenceSlot *slot
 
 void metaCmdGotoLabel(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 { 
-	aadGotoSequenceLabel(slot, event->track, event->dataByte[0]);
+	aadGotoSequenceLabel(slot, event->track, (unsigned char)event->dataByte[0]);
 }
 
 
@@ -1352,9 +1350,9 @@ void metaCmdBranchIfVarEqual(struct AadSeqEvent *event, struct _AadSequenceSlot 
 	int value;
 	int labelNum;
 
-	variableNum = event->dataByte[0];
-	value = event->dataByte[1];
-	labelNum = event->dataByte[2];
+	variableNum = (unsigned char)event->dataByte[0];
+	value = (unsigned char)event->dataByte[1];
+	labelNum = (unsigned char)event->dataByte[2];
 
 	if (aadMem->userVariables[variableNum] == value)
 	{
@@ -1368,9 +1366,9 @@ void metaCmdBranchIfVarNotEqual(struct AadSeqEvent* event, struct _AadSequenceSl
 	int value;
 	int labelNum;
 
-	variableNum = event->dataByte[0];
-	value = event->dataByte[1];
-	labelNum = event->dataByte[2];
+	variableNum = (unsigned char)event->dataByte[0];
+	value = (unsigned char)event->dataByte[1];
+	labelNum = (unsigned char)event->dataByte[2];
 
 	if (aadMem->userVariables[variableNum] != value)
 	{
@@ -1384,9 +1382,9 @@ void metaCmdBranchIfVarLess(struct AadSeqEvent *event, struct _AadSequenceSlot *
 	int value;
 	int labelNum;
 	
-	variableNum = event->dataByte[0];
-	value = event->dataByte[1];
-	labelNum = event->dataByte[2];
+	variableNum = (unsigned char)event->dataByte[0];
+	value = (unsigned char)event->dataByte[1];
+	labelNum = (unsigned char)event->dataByte[2];
 
 	if (aadMem->userVariables[variableNum] < value)
 	{
@@ -1400,9 +1398,9 @@ void metaCmdBranchIfVarGreater(struct AadSeqEvent *event, struct _AadSequenceSlo
 	int value;
 	int labelNum;
 
-	variableNum = event->dataByte[0];
-	value = event->dataByte[1];
-	labelNum = event->dataByte[2];
+	variableNum = (unsigned char)event->dataByte[0];
+	value = (unsigned char)event->dataByte[1];
+	labelNum = (unsigned char)event->dataByte[2];
 
 	if (value < aadMem->userVariables[variableNum])
 	{
@@ -1462,9 +1460,9 @@ void metaCmdBranchIfVarBitsSet(struct AadSeqEvent *event, struct _AadSequenceSlo
 	int mask;
 	int labelNum;
 	
-	variableNum = event->dataByte[0];
-	mask = event->dataByte[1];
-	labelNum = event->dataByte[2];
+	variableNum = (unsigned char)event->dataByte[0];
+	mask = (unsigned char)event->dataByte[1];
+	labelNum = (unsigned char)event->dataByte[2];
 
 	if ((aadMem->userVariables[variableNum] & mask) != 0)
 	{

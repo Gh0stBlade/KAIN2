@@ -85,6 +85,13 @@ long StartRCnt(long spec)//(F)
 {
 	spec &= 0xFFFF;
 	dword_300[1] |= dword_308[spec];
+
+	if (counters[spec].padding00 != NULL)
+	{
+		counters[spec].timerID = spec;
+		SDL_AddTimer(1000/60, Emulator_CounterWrapper, &counters[spec].timerID);
+	}
+
 	return spec < 3 ? 1 : 0;
 }
 
