@@ -5,7 +5,7 @@
 #include <assert.h>
 
 #define MIDI_MAGIC (0x4D546864)
-#define MIDI_VERSION (0)
+#define MIDI_VERSION (1)
 #define MIDI_TRK_MAGIC (0x4D54726B)
 
 #define IS_MIDI_EVENT(x) ((x & 0x80) != 0)
@@ -147,26 +147,42 @@ void MIDI_Save(char* midiFilePath, unsigned int dataLength, AadSoundBankHdr* sou
 	for (int i = 0; i < soundBankHeader->numSequences; i++)
 	{
 		AadSequenceHdr* seqHdr = (AadSequenceHdr*)&sequenceBase[sequenceOffsetTbl[i]];
-		AadSequenceHdr* nextSeqHdr = (AadSequenceHdr*)&sequenceBase[sequenceOffsetTbl[i + 1]];
+		AadSequenceHdr* nextSeqHdr = NULL;
+		
+		if (i + 1 == soundBankHeader->numSequences)
+		{
+			unsigned int offset = (char*)&sequenceBase[sequenceOffsetTbl[0]] - (char*)soundBankHeader;
+			nextSeqHdr = (AadSequenceHdr*)&sequenceBase[dataLength - sequenceOffsetTbl[i] - offset];
+		}
+		else
+		{
+			nextSeqHdr = (AadSequenceHdr*)&sequenceBase[sequenceOffsetTbl[i + 1]];
+		}
+
+		if (i == 3)
+		{
+			int testing = 0;
+			testing++;
+		}
 
 		unsigned int sequenceLength = ((char*)nextSeqHdr - (char*)seqHdr) - sizeof(AadSequenceHdr) - (seqHdr->numTracks * sizeof(unsigned int));
 
 		long runningStatus[16] = {};
 
+		char nameBuff[256];
+		sprintf(nameBuff, "%s_%d_.MID", midiFilePath, i);
+		FILE* f = fopen(nameBuff, "wb+");
+
+		MIDI_WriteUInt32(f, MIDI_MAGIC);
+		MIDI_WriteUInt32(f, 6);
+		MIDI_WriteUInt16(f, MIDI_VERSION);
+		MIDI_WriteUInt16(f, seqHdr->numTracks);
+		MIDI_WriteUInt16(f, seqHdr->ppqn);
+
 		//Every track
 		for (int t = 0; t < seqHdr->numTracks; t++)
 		{
-			char nameBuff[256];
-			sprintf(nameBuff, "%s_%d_track_%d.MID", midiFilePath, i, t);
-			FILE* f = fopen(nameBuff, "wb+");
-
-			MIDI_WriteUInt32(f, MIDI_MAGIC);
-			MIDI_WriteUInt32(f, 6);
-			MIDI_WriteUInt16(f, MIDI_VERSION);
-			MIDI_WriteUInt16(f, 0x1);
-			MIDI_WriteUInt16(f, seqHdr->ppqn);
 			MIDI_WriteUInt32(f, MIDI_TRK_MAGIC);
-
 			MIDI_WriteUInt32(f, 0);//Dummy
 
 			unsigned int trkStart = ftell(f);
@@ -194,101 +210,38 @@ void MIDI_Save(char* midiFilePath, unsigned int dataLength, AadSoundBankHdr* sou
 
 			AadSeqEvent seqEvent = {};
 
-
 			unsigned int trkStartOffset = ((int*)seqHdr)[4 + t];
 			unsigned int trkNextStartOffset = ((int*)seqHdr)[4 + t + 1];
 			unsigned int trkLength = trkNextStartOffset - trkStartOffset;
 
-			if (i + 1 >= seqHdr->numTracks)
-			{
-				trkLength = sequenceLength;
-			}
 			unsigned char* sequencePosition = (unsigned char*)(char*)seqHdr + trkStartOffset;
 
-#if 1
-			fwrite(sequencePosition, trkLength - 3, 1, f);
-#else
-
-			while (ftell(f) - sequenceStart < trkLength)
+			if (t + 1 >= seqHdr->numTracks)
 			{
-				unsigned long deltaTime = *sequencePosition;
-
-				MIDI_WriteUInt8(f, *sequencePosition);
-
-				if (*sequencePosition & 0x80)
-				{
-					deltaTime = *sequencePosition & 0x7F;
-
-					while ((*sequencePosition++ & 0x80))
-					{
-						MIDI_WriteUInt8(f, *sequencePosition);
-						deltaTime = (deltaTime << 7) | (*sequencePosition & 0x7F);
-					}
-				}
-				else
-				{
-					sequencePosition++;
-				}
-
-				seqEvent.track = i;
-				seqEvent.deltaTime = deltaTime;
-
-				long numDataBytes = 0;
-
-				MIDI_WriteUInt8(f, *sequencePosition);
-
-				if (*sequencePosition == 0xFF)
-				{
-					sequencePosition++;
-
-					MIDI_WriteUInt8(f, *sequencePosition);
-					seqEvent.statusByte = *sequencePosition++;
-
-					numDataBytes = *sequencePosition++;
-
-					MIDI_WriteUInt8(f, numDataBytes);
-				}
-				else
-				{
-					if (*sequencePosition & 0x80)
-					{
-						seqEvent.statusByte = *sequencePosition;
-						MIDI_WriteUInt8(f, *sequencePosition);
-
-						runningStatus[t] = *sequencePosition++;
-						MIDI_WriteUInt8(f, *sequencePosition);
-
-						numDataBytes = midiDataByteCount[(seqEvent.statusByte >> 4) & 0x7];
-					}
-					else
-					{
-						seqEvent.statusByte = runningStatus[t];
-					}
-
-					MIDI_WriteUInt8(f, numDataBytes);
-				}
-
-				for (int n = 0; n < numDataBytes; n++)
-				{
-					MIDI_WriteUInt8(f, *sequencePosition);
-					seqEvent.dataByte[n] = *sequencePosition++;
-				}
-
-
-				if ((seqEvent.statusByte & 0x80))
-				{
-					switch (((seqEvent.statusByte >> 4) & 0x7))
-					{
-					case 1:
-					{
-						int testing = 0;
-						testing++;
-						break;
-					}
-					}
-				}
+				trkLength = (char*)nextSeqHdr - (char*)sequencePosition;
 			}
-#endif
+
+			if (i == 3 && t == 3)
+			{
+				int testing = 0;
+				testing++;
+			}
+
+
+			unsigned char* pData = &sequencePosition[trkLength-1];
+
+			if (*pData == 0)
+			{
+				while (*pData == 0)
+				{
+					pData--;
+				}
+
+				pData += 2;
+
+			}
+
+			fwrite(sequencePosition, pData-sequencePosition, 1, f);
 
 			//Write end of track just incase
 #if 1
@@ -302,14 +255,15 @@ void MIDI_Save(char* midiFilePath, unsigned int dataLength, AadSoundBankHdr* sou
 
 			unsigned int trkLen = trkEnd - trkStart;
 
+
 			fseek(f, trkStart - sizeof(unsigned int), SEEK_SET);
 
 			MIDI_WriteUInt32(f, trkLen);
 
 			fseek(f, trkEnd, SEEK_SET);
-
-			fclose(f);
 		}
+
+		fclose(f);
 	}
 }
 
