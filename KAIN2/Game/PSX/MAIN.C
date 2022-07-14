@@ -117,27 +117,19 @@ void InitMainTracker(struct MainTracker *mainTracker)
 	mainTracker->done = 0;
 }
 
-char* FindTextInLine(char* search_match, char* search_str)
+char* FindTextInLine(char* search_match, char* search_str)//Matches - 93.38%
 {
 	char* match_pos;
 
-#if defined(__EMSCRIPTEN__)
-	return NULL;///@FIXME this is crashing for this platform!
-#endif
+	match_pos = search_match;
 
-	if (*search_str != 0)
+	while (*search_str != 0 && *search_str != '\n')
 	{
-		match_pos = search_match;
-
-		while (*search_str != '\n')
+		if (*search_str != '\r')
 		{
-			if (*search_str == '\r')
+			if ((*search_str | 0x20) == (*match_pos | 0x20))
 			{
-				break;
-			}
-
-			if ((*search_str++ | 0x20) == (*match_pos | 0x20))
-			{
+				search_str++;
 				match_pos++;
 			}
 			else
@@ -149,11 +141,10 @@ char* FindTextInLine(char* search_match, char* search_str)
 			{
 				return search_str;
 			}
-
-			if (*search_str == 0)
-			{
-				return NULL;
-			}
+		}
+		else
+		{
+			break;
 		}
 	}
 
