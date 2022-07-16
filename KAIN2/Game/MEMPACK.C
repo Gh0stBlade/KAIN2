@@ -46,15 +46,11 @@ void MEMPACK_Init()//Matching - 51.54%
 	newMemTracker.lastMemoryAddress = (char*)newMemTracker.rootNode + newMemTracker.rootNode->memSize;
 }
 
-struct MemHeader * MEMPACK_GetSmallestBlockTopBottom(long allocSize)
+struct MemHeader* MEMPACK_GetSmallestBlockTopBottom(long allocSize)//Matching - 100.0%
 { 
-	struct MemHeader* address;
-	struct MemHeader* bestAddress;
-	
-	address = newMemTracker.rootNode;
-	
-	bestAddress = NULL;
-	
+	struct MemHeader* address = newMemTracker.rootNode;
+	struct MemHeader* bestAddress = NULL;
+
 	while ((char*)address != (char*)newMemTracker.lastMemoryAddress)
 	{
 		if (address->memStatus == 0 && address->memSize >= allocSize && bestAddress == NULL)
