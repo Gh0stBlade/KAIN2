@@ -94,9 +94,9 @@ long MEMPACK_RelocatableType(long memType)//Matching - 100.0%
 	return 0;
 }
 
-char * MEMPACK_Malloc(unsigned long allocSize, unsigned char memType)
+char* MEMPACK_Malloc(unsigned long allocSize, unsigned char memType)//Matching - 80.11%
 {
-#ifdef PSX_VERSION
+#if defined(PSX_VERSION)
 	
 	struct MemHeader* bestAddress;
 	long relocatableMemory;
@@ -106,40 +106,22 @@ char * MEMPACK_Malloc(unsigned long allocSize, unsigned char memType)
 
 	relocatableMemory = MEMPACK_RelocatableType(memType);
 
-	allocSize = ((allocSize + 11) >> 2) << 2;
+	allocSize = ((allocSize + 11) / 4) * 4;
 
 	while (1)
 	{
-		if (newMemTracker.doingGarbageCollection == 0)
+		if (newMemTracker.doingGarbageCollection == 0 && relocatableMemory != 0)
 		{
-			if (relocatableMemory != 0)
-			{
-				MEMPACK_DoGarbageCollection();
-#
-				if (relocatableMemory != 0)
-				{
-					bestAddress = MEMPACK_GetSmallestBlockTopBottom(allocSize);
-				}
-				else
-				{
-					bestAddress = MEMPACK_GetSmallestBlockBottomTop(allocSize);
-				}
-			}
-			else
-			{
-				bestAddress = MEMPACK_GetSmallestBlockBottomTop(allocSize);
-			}
+			MEMPACK_DoGarbageCollection();
 		}
-		else
+
+		if (relocatableMemory != 0)
 		{
-			if (relocatableMemory != 0)
-			{
-				bestAddress = MEMPACK_GetSmallestBlockTopBottom(allocSize);
-			}
-			else
-			{
-				bestAddress = MEMPACK_GetSmallestBlockBottomTop(allocSize);
-			}
+			bestAddress = MEMPACK_GetSmallestBlockTopBottom(allocSize);
+		}
+		else if (relocatableMemory == 0)
+		{
+			bestAddress = MEMPACK_GetSmallestBlockBottomTop(allocSize);
 		}
 
 		if (bestAddress == NULL)
@@ -156,7 +138,7 @@ char * MEMPACK_Malloc(unsigned long allocSize, unsigned char memType)
 					DEBUG_FatalError("Trying to fit memory size %d Type = %d\nAvailable memory : used = % d, free = % d", allocSize, memType, newMemTracker.currentMemoryUsed, newMemTracker.totalMemory - newMemTracker.currentMemoryUsed);
 				}
 
-				return NULL;
+				break;
 			}
 		}
 		else
@@ -165,9 +147,10 @@ char * MEMPACK_Malloc(unsigned long allocSize, unsigned char memType)
 		}
 	}
 
-	if ((unsigned int)bestAddress->memSize - allocSize < 8)
+	topOffset = bestAddress->memSize - allocSize;
+	if ((unsigned int)topOffset < 8)
 	{
-		allocSize = bestAddress->memSize;
+		allocSize = topOffset;
 	}
 
 	if (allocSize != bestAddress->memSize)
@@ -180,10 +163,10 @@ char * MEMPACK_Malloc(unsigned long allocSize, unsigned char memType)
 			address->memStatus = 0;
 			address->memType = 0;
 			address->memSize = bestAddress->memSize - allocSize;
-			
+
 			bestAddress->magicNumber = DEFAULT_MEM_MAGIC;
-			bestAddress->memStatus = 1;
 			bestAddress->memType = memType;
+			bestAddress->memStatus = 1;
 			bestAddress->memSize = allocSize;
 
 			newMemTracker.currentMemoryUsed += allocSize;
@@ -210,8 +193,8 @@ char * MEMPACK_Malloc(unsigned long allocSize, unsigned char memType)
 	else
 	{
 		bestAddress->magicNumber = DEFAULT_MEM_MAGIC;
-		bestAddress->memStatus = 1;
 		bestAddress->memType = memType;
+		bestAddress->memStatus = 1;
 		bestAddress->memSize = allocSize;
 
 		newMemTracker.currentMemoryUsed += allocSize;
