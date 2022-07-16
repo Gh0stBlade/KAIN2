@@ -65,14 +65,10 @@ struct MemHeader* MEMPACK_GetSmallestBlockTopBottom(long allocSize)//Matching - 
 	return bestAddress;
 }
 
-struct MemHeader * MEMPACK_GetSmallestBlockBottomTop(long allocSize)
+struct MemHeader* MEMPACK_GetSmallestBlockBottomTop(long allocSize)//Matching - 100.0%
 { 
-	struct MemHeader* address;
-	struct MemHeader* bestAddress;
-
-	address = newMemTracker.rootNode;
-
-	bestAddress = NULL;
+	struct MemHeader* address = newMemTracker.rootNode;
+	struct MemHeader* bestAddress = NULL;
 
 	while ((char*)address != (char*)newMemTracker.lastMemoryAddress)
 	{
@@ -84,7 +80,7 @@ struct MemHeader * MEMPACK_GetSmallestBlockBottomTop(long allocSize)
 
 		address = (struct MemHeader*)((char*)address + address->memSize);
 	}
-	
+
 	return bestAddress;
 }
 
