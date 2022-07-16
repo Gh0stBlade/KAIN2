@@ -485,11 +485,11 @@ long MEMPACK_MemoryValidFunc(char* address)//Matching - 100.0%
 }
 
 
-char * MEMPACK_GarbageCollectMalloc(unsigned long *allocSize, unsigned char memType, unsigned long *freeSize)
+char* MEMPACK_GarbageCollectMalloc(unsigned long *allocSize, unsigned char memType, unsigned long *freeSize)//Matching - 98.62%
 {
 	struct MemHeader* bestAddress;
 	
-	allocSize[0] = ((allocSize[0] + 11) >> 2) << 2;
+	allocSize[0] = ((allocSize[0] + 11) / 4) * 4;
 
 	bestAddress = MEMPACK_GetSmallestBlockTopBottom(allocSize[0]);
 
@@ -545,7 +545,7 @@ char * MEMPACK_GarbageCollectMalloc(unsigned long *allocSize, unsigned char memT
 	return (char*)(bestAddress + 1);
 }
 
-void MEMPACK_GarbageSplitMemoryNow(unsigned long allocSize, struct MemHeader *bestAddress, long memType, unsigned long freeSize)
+void MEMPACK_GarbageSplitMemoryNow(unsigned long allocSize, struct MemHeader *bestAddress, long memType, unsigned long freeSize)//Matching - 96.11%
 {
 	struct MemHeader* address = (struct MemHeader*)((char*)bestAddress + allocSize);
 
@@ -558,7 +558,7 @@ void MEMPACK_GarbageSplitMemoryNow(unsigned long allocSize, struct MemHeader *be
 	}
 }
 
-void MEMPACK_GarbageCollectFree(struct MemHeader *memAddress)
+void MEMPACK_GarbageCollectFree(struct MemHeader *memAddress)//Matching - 95.11%
 {
 	struct MemHeader* secondAddress;
 	
@@ -589,7 +589,7 @@ void MEMPACK_GarbageCollectFree(struct MemHeader *memAddress)
 	}
 }
 
-void MEMPACK_DoGarbageCollection()
+void MEMPACK_DoGarbageCollection()//Matching - 98.66%
 { 
 	struct MemHeader* relocateAddress;
 	long foundOpening;
