@@ -8,8 +8,6 @@
 #include "RESOLVE.H"
 #include "GAMELOOP.H"
 
-#include <assert.h>//Temporary
-
 #include <stdlib.h>
 
 #define false	0
@@ -215,7 +213,7 @@ void LOAD_CdReadReady(unsigned char intr, unsigned char *result)
 #endif
 }
 
-void LOAD_UpdateCheckSum(long bytes)
+void LOAD_UpdateCheckSum(long bytes)//Matching - 95.59%
 {
 	if (loadStatus.currentQueueFile.checksumType == 1 && bytes != 0)
 	{
@@ -226,7 +224,7 @@ void LOAD_UpdateCheckSum(long bytes)
 	}
 }
 
-void LOAD_DoCDReading()
+void LOAD_DoCDReading()//Matching - 83.60%
 {
 	long bytesLoaded;
 	long readSoFar;
