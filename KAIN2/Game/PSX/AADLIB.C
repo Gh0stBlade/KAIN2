@@ -242,7 +242,8 @@ long aadSlotUpdateWrapper()
 	return 0;
 }
 
-void aadSlotUpdate()
+
+void aadSlotUpdate()//Matching - 97.37%
 {
 	struct _AadSequenceSlot* slot;
 	struct AadSeqEvent* seqEventPtr;
@@ -260,9 +261,7 @@ void aadSlotUpdate()
 		{
 			SpuGetAllKeysStatus(aadMem->voiceStatus);
 
-			vmask = 1;
-			
-			for (i = 0; i < 24; i++, vmask <<= 1)
+			for (i = 0, vmask = 1; i < 24; i++, vmask <<= 1)
 			{
 				if (aadMem->voiceStatus[i] == 3)
 				{
@@ -287,7 +286,7 @@ void aadSlotUpdate()
 				}
 			}
 
-			if (!(aadMem->flags & 0x4) && aadMem->numSlots > 0)
+			if (!(aadMem->flags & 0x4))
 			{
 				for (slotNumber = 0; slotNumber < aadMem->numSlots; slotNumber++)
 				{
@@ -335,12 +334,12 @@ void aadSlotUpdate()
 									{
 										seqEventPtr = &slot->eventQueue[slot->eventOut[track]][track];
 
-										if (seqEventPtr->deltaTime == 48)
+										if (seqEventPtr->statusByte == 0x14)
 										{
 											int testing = 0;
 											testing++;
 										}
-										
+
 										if (slot->tempo.currentTick >= seqEventPtr->deltaTime + slot->lastEventExecutedTime[track])
 										{
 											slot->lastEventExecutedTime[track] += seqEventPtr->deltaTime;
@@ -371,24 +370,23 @@ void aadSlotUpdate()
 					}
 				}
 			}
-			
+
+			newVol = 32;
+
 			while (aadMem->sfxSlot.commandsInQueue != 0)
 			{
-				newVol = 32;
-
 				aadExecuteSfxCommand(&aadMem->sfxSlot.commandQueue[aadMem->sfxSlot.commandOut]);
 
-				aadMem->sfxSlot.commandOut++;
 				aadMem->sfxSlot.commandsInQueue--;
 
-				if (aadMem->sfxSlot.commandOut == 255)
+				if (++aadMem->sfxSlot.commandOut == newVol)
 				{
 					aadMem->sfxSlot.commandOut = 0;
 				}
 			}
-			
+
 			aadMem->voiceKeyOffRequest = aadMem->voiceKeyOffRequest & ~aadMem->voiceKeyOnRequest;
-			
+
 			if (aadMem->voiceKeyOffRequest != 0)
 			{
 				SpuSetKey(0, aadMem->voiceKeyOffRequest);
@@ -403,9 +401,9 @@ void aadSlotUpdate()
 				aadMem->voiceKeyOnRequest = 0;
 			}
 		}
-		
+
 		fadeComplete = 0;
-		
+
 		if (aadMem->masterVolFader.volumeStep != 0)
 		{
 			newVol = aadMem->masterVolume;
@@ -418,6 +416,7 @@ void aadSlotUpdate()
 			}
 			else
 			{
+
 				if (aadMem->masterVolFader.targetVolume < newVol)
 				{
 					fadeComplete = 1;
@@ -426,6 +425,8 @@ void aadSlotUpdate()
 
 			if (fadeComplete != 0)
 			{
+				aadMem->masterVolFader.targetVolume = newVol;
+
 				aadMem->masterVolFader.volumeStep = 0;
 
 				if (aadMem->masterVolFader.fadeCompleteCallback != NULL)
@@ -477,6 +478,7 @@ void aadSlotUpdate()
 		aadMem->updateCounter++;
 	}
 }
+
 
 unsigned long aadCreateFourCharID(char a, char b, char c, char d)
 { 
