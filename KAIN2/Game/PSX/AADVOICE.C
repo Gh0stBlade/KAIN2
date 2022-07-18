@@ -143,8 +143,8 @@ void SpuSetVoiceADSR1ADSR2(int vNum, unsigned short adsr1, unsigned short adsr2)
 	SpuSetVoiceADSRAttr(vNum, ar, dr, sr, rr, sl, arm, srm, rrm);
 }
 
-void aadPlayTone(struct AadToneAtr *toneAtr, unsigned long waveStartAddr, struct AadProgramAtr *progAtr, int midiNote, int volume, int masterVolume, int masterPan, int slotVolume, int masterMasterVol, struct AadSynthVoice *voice, int pitchOffset)
-{ 
+void aadPlayTone(struct AadToneAtr* toneAtr, unsigned long waveStartAddr, struct AadProgramAtr* progAtr, int midiNote, int volume, int masterVolume, int masterPan, int slotVolume, int masterMasterVol, struct AadSynthVoice* voice, int pitchOffset)
+{
 	struct AadVolume voiceVol;
 	int pitch;
 	int finePitch;
@@ -153,95 +153,84 @@ void aadPlayTone(struct AadToneAtr *toneAtr, unsigned long waveStartAddr, struct
 	unsigned long masterVolumeSquared;
 
 #define GET_VOLUME_SQUARED(x) (x) * (x) 
-#define GET_MASTER_PAN_LEFT(x, y) (x * (GET_VOLUME_SQUARED((128 - y)) - 1)) >> 12
-#define GET_MASTER_PAN_RIGHT(x, y) (x * (GET_VOLUME_SQUARED((y + 1)) + 1)) >> 12
-#define GET_MASTER_VOL(x, y) (y * (x)) >> 14
+#define GET_MASTER_PAN_LEFT(x, y) ((short)x * (GET_VOLUME_SQUARED((128 - y)) - 1)) >> 12
+#define GET_MASTER_PAN_RIGHT(x, y) ((short)x * (GET_VOLUME_SQUARED((y + 1)) + 1)) >> 12
+#define GET_MASTER_VOL_SHIFT(x, y) (y * (x)) >> 14
+#define GET_MASTER_VOL(x, y) (y * (x))
 
-	masterVolumeSquared = GET_VOLUME_SQUARED(volume + 1) - 1;
-	voiceVol.left = masterVolumeSquared;
-	voiceVol.right = masterVolumeSquared;
-	
+	voiceVol.right = GET_VOLUME_SQUARED(volume + 1) - 1;
+	voiceVol.left = GET_VOLUME_SQUARED(volume + 1) - 1;
+
 	if (!(aadMem->flags & 0x1))
 	{
 		if (masterPan >= 65)
 		{
-			voiceVol.right = GET_MASTER_PAN_LEFT(masterPan, masterVolumeSquared);
+			voiceVol.left = GET_MASTER_PAN_LEFT(voiceVol.left, masterPan);
 		}
 		else if (masterPan < 63)
 		{
-			voiceVol.left = GET_MASTER_PAN_RIGHT(masterPan, masterVolumeSquared);
+			voiceVol.right = GET_MASTER_PAN_RIGHT(voiceVol.right, masterPan);
 		}
 	}
 
 	masterVolumeSquared = GET_VOLUME_SQUARED(toneAtr->volume + 1) - 1;
-	voiceVol.right = (voiceVol.right * masterVolumeSquared) >> 14;
 	voiceVol.left = (voiceVol.left * masterVolumeSquared) >> 14;
+	voiceVol.right = (voiceVol.right * masterVolumeSquared) >> 14;
 
 	if (!(aadMem->flags & 0x1))
 	{
 		if (toneAtr->panPosition >= 65)
 		{
-			voiceVol.right = GET_MASTER_PAN_LEFT(voiceVol.left, toneAtr->panPosition);
+			voiceVol.left = GET_MASTER_PAN_LEFT(voiceVol.left, toneAtr->panPosition);
 		}
 		else if (toneAtr->panPosition < 63)
 		{
-			voiceVol.left = GET_MASTER_PAN_RIGHT(voiceVol.right, toneAtr->panPosition);
+			voiceVol.right = GET_MASTER_PAN_RIGHT(voiceVol.right, toneAtr->panPosition);
 		}
 	}
 
 	masterVolumeSquared = GET_VOLUME_SQUARED(masterVolume + 1) - 1;
-	voiceVol.left = GET_MASTER_VOL(masterVolumeSquared, voiceVol.left);
-	voiceVol.right = GET_MASTER_VOL(masterVolumeSquared, voiceVol.right);
+	voiceVol.left = GET_MASTER_VOL_SHIFT(masterVolumeSquared, voiceVol.left);
+	voiceVol.right = GET_MASTER_VOL_SHIFT(masterVolumeSquared, voiceVol.right);
 
 	tmp = GET_VOLUME_SQUARED(progAtr->volume + 1);
 	pitch = tmp - 1;
-	masterVolumeSquared = voiceVol.left * pitch;
 
 	tmp = GET_VOLUME_SQUARED(slotVolume + 1);
-	int a2 = (voiceVol.right * pitch) >> 14;
-	pitchIndex = masterVolumeSquared >> 14;
 	masterVolumeSquared = tmp - 1;
-	int a1 = (pitchIndex * masterVolumeSquared) >> 14;
 
-	int a0 = GET_VOLUME_SQUARED(masterMasterVol + 1);
-	int t2 = a2 * masterVolumeSquared;
-	int t0 = a1 * (a0 - 1);
-	int v1 = tmp *  masterVolumeSquared;
+	voiceVol.left = (voiceVol.left * masterVolumeSquared) >> 14;
+	voiceVol.right = ((voiceVol.right * pitch) >> 14);
 
-	voiceVol.left = pitchIndex;
-	voiceVol.right = a2;
-	voiceVol.left = t0 >> 14;
-	voiceVol.right = t2 >> 14;
+	voiceVol.left = (voiceVol.left * masterVolumeSquared) >> 14;
+	voiceVol.right = (voiceVol.right * pitch) >> 14;
 
-	a1 = (t0 >> 14) << 16;
-	voiceVol.left = a1 >> 16;
-
-	v1 = (t2 >> 14) * (a0 - 1);
-	voiceVol.right = v1 >> 14;
+	voiceVol.left = (voiceVol.left * masterVolumeSquared) >> 14;
+	voiceVol.right = (voiceVol.right * pitch) >> 14;
 
 	SpuSetVoiceVolume(voice->voiceNum, voiceVol.left, voiceVol.right);
 
 	pitchIndex = midiNote - (toneAtr->centerNote - 60);
+
 	if ((toneAtr->centerFine & 0x80))
 	{
-		finePitch = 256;
-		masterMasterVol = aadStepsPerCent[pitchIndex];
-		finePitch -= toneAtr->centerFine;
-		finePitch = aadPitchTable[pitchIndex] - ((masterMasterVol * 100) >> 23);
+		pitchIndex = 256 - toneAtr->centerFine;
+		finePitch = toneAtr->centerFine;
+		tmp = (aadStepsPerCent[pitchIndex] * 100) * finePitch;
+		finePitch = aadPitchTable[pitchIndex * pitchIndex] + (tmp >> 23);
 	}
 	else
 	{
-		masterMasterVol = aadStepsPerCent[pitchIndex];
 		finePitch = toneAtr->centerFine;
-		tmp = (masterMasterVol * 100) * finePitch;
+		tmp = (aadStepsPerCent[pitchIndex] * 100) * finePitch;
 		finePitch = aadPitchTable[pitchIndex] + (tmp >> 23);
 	}
 
-	SpuSetVoicePitch(voice->voiceNum, finePitch);
+	SpuSetVoicePitch(voice->voiceNum, (finePitch + pitchOffset) & 0xFFFF);
 	SpuSetVoiceStartAddr(voice->voiceNum, waveStartAddr);
 	SpuSetVoiceADSR1ADSR2(voice->voiceNum, toneAtr->adsr1, toneAtr->adsr2);
 
-	if (toneAtr->centerNote == 4)
+	if (toneAtr->mode == 4)
 	{
 		aadMem->voiceReverbRequest |= voice->voiceMask;
 	}
@@ -253,7 +242,8 @@ void aadPlayTone(struct AadToneAtr *toneAtr, unsigned long waveStartAddr, struct
 	aadMem->voiceKeyOnRequest |= voice->voiceMask;
 }
 
-void aadPlayTonePitchBend(struct AadToneAtr *toneAtr, unsigned long waveStartAddr, struct AadProgramAtr *progAtr, int midiNote, int volume, int masterVolume, int masterPan, int slotVolume, int masterMasterVol, struct AadSynthVoice *voice, int pitchWheelPos)
+
+void aadPlayTonePitchBend(struct AadToneAtr *toneAtr, unsigned long waveStartAddr, struct AadProgramAtr *progAtr, int midiNote, int volume, int masterVolume, int masterPan, int slotVolume, int masterMasterVol, struct AadSynthVoice *voice, int pitchWheelPos)//Matching - 73.28%
 {
 	struct AadVolume voiceVol; // stack offset -32
 	int pitch; // $a1
