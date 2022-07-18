@@ -1207,7 +1207,7 @@ void aadGotoSequencePosition(struct _AadSequenceSlot *slot, int track, unsigned 
 	slot->trackFlags[track] &= 0xE7;
 }
 
-void aadGotoSequenceLabel(struct _AadSequenceSlot *slot, int track, int labelNumber)
+void aadGotoSequenceLabel(struct _AadSequenceSlot *slot, int track, int labelNumber)//Matching - 99.67%
 {
 	struct AadSequenceHdr* seqHdr;
 	unsigned long trackOffset;
