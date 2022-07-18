@@ -1902,7 +1902,7 @@ int aadGetNumDynamicSequences(int bank)
 	return 0;
 }
 
-int aadAssignDynamicSequence(int bank, int sequenceNumber, int slotNumber)
+int aadAssignDynamicSequence(int bank, int sequenceNumber, int slotNumber)//Matching - 99.27%
 { 
 	struct AadTempo tempo;
 	struct _AadSequenceSlot* slot;
@@ -1929,7 +1929,7 @@ int aadAssignDynamicSequence(int bank, int sequenceNumber, int slotNumber)
 	slot->enableSustainUpdate = 0;
 	slot->ignoreTranspose = 0;
 
-	for (i = 15; i >= 0; i--)
+	for (i = 0; i < 16; i++)
 	{
 		slot->transpose[i] = 0;
 	}
