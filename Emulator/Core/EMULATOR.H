@@ -200,6 +200,9 @@ struct ShaderID {
 };
 
 typedef D3D12_RENDER_TARGET_VIEW_DESC* RenderTargetID;
+
+extern bool begin_pass_flag;
+extern bool begin_commands_flag;
 #elif defined(VULKAN)
 
 struct TextureImage

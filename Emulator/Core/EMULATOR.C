@@ -3839,10 +3839,10 @@ ShaderID Shader_Compile_Internal(const DWORD* vs_data, const DWORD* ps_data, con
 
 	D3D11_SAMPLER_DESC sampDesc;
 	ZeroMemory(&sampDesc, sizeof(sampDesc));
-	sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
-	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
-	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
-	sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+	sampDesc.Filter = D3D11_FILTER_MIN_MAG_POINT_MIP_LINEAR;
+	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
 	sampDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
 	sampDesc.MinLOD = -D3D11_FLOAT32_MAX;
 	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
@@ -3977,10 +3977,10 @@ ShaderID Shader_Compile_Internal(const DWORD* vs_data, const DWORD* ps_data, con
 
 	D3D12_STATIC_SAMPLER_DESC staticSamplerDesc;
 	ZeroMemory(&staticSamplerDesc, sizeof(staticSamplerDesc));
-	staticSamplerDesc.Filter = D3D12_FILTER_MIN_MAG_MIP_POINT;
-	staticSamplerDesc.AddressU = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
-	staticSamplerDesc.AddressV = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
-	staticSamplerDesc.AddressW = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
+	staticSamplerDesc.Filter = D3D12_FILTER_MIN_MAG_POINT_MIP_LINEAR;
+	staticSamplerDesc.AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+	staticSamplerDesc.AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+	staticSamplerDesc.AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
 	staticSamplerDesc.ShaderRegister = 0;
 	staticSamplerDesc.RegisterSpace = 0;
 	staticSamplerDesc.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
@@ -4010,6 +4010,7 @@ ShaderID Shader_Compile_Internal(const DWORD* vs_data, const DWORD* ps_data, con
 	g_activePipelineState = NULL;
 
 	Emulator_EndCommandBuffer();
+	Emulator_WaitForPreviousFrame();
 
 #undef OFFSETOF
 
@@ -4590,6 +4591,8 @@ void Emulator_GenerateCommonTextures()
 	commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(whiteTexture.m_textureResource, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE));
 	Emulator_EndCommandBuffer();
 
+	Emulator_WaitForPreviousFrame();
+
 	D3D12_DESCRIPTOR_HEAP_DESC srvHeapDesc = {};
 	srvHeapDesc.NumDescriptors = 1;
 	srvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
@@ -4634,6 +4637,7 @@ void Emulator_GenerateCommonTextures()
 	UpdateSubresources(commandList, rg8lutTexture.m_textureResource, rg8lutTexture.m_uploadHeap, 0, 0, 1, &srd);
 	commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(rg8lutTexture.m_textureResource, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE));
 	Emulator_EndCommandBuffer();
+	Emulator_WaitForPreviousFrame();
 
 	ZeroMemory(&srvHeapDesc, sizeof(srvHeapDesc));
 	srvHeapDesc.NumDescriptors = 1;
@@ -5379,9 +5383,7 @@ void Emulator_UpdateVRAM()
 
 	if (begin_commands_flag)
 	{
-		D3D12_RANGE readRange;
-		readRange.Begin = 0;
-		readRange.End = 0;
+		CD3DX12_RANGE readRange(0, 0);
 
 		void* pTextureData = NULL;
 
@@ -6004,7 +6006,9 @@ void Emulator_SwapWindow()
 
 	HRESULT hr = swapChain->Present(g_swapInterval, 0);
 	
+#if defined(D3D12)
 	Emulator_WaitForPreviousFrame();
+#endif
 
 	if (hr == DXGI_ERROR_DEVICE_REMOVED || hr == DXGI_ERROR_DEVICE_RESET) {
 		Emulator_ResetDevice();
@@ -6617,39 +6621,18 @@ void Emulator_UpdateVertexBuffer(const Vertex *vertices, int num_vertices)
 
 	if (begin_commands_flag)
 	{
-		///@FIXME this is not updating the vertex buffer properly which is why the blit is failing!
-#if 0//WORKING
-		//Below leaks resource because we can't free it until everything has finished executing later on.
-		HRESULT hr = d3ddev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer(num_vertices * sizeof(Vertex)), D3D12_RESOURCE_STATE_GENERIC_READ, NULL, IID_PPV_ARGS(&tmpHeap));
-
-		assert(SUCCEEDED(hr));
-
 		commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(dynamic_vertex_buffer[frameIndex], D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_COPY_DEST));
 
-		void** pMap = NULL;
+		void* pMap = NULL;
 		CD3DX12_RANGE readRange(0, 0);
-		hr = tmpHeap->Map(0, &readRange, (void**)(&pMap));
+		HRESULT hr = dynamic_vertex_buffer_heap[frameIndex]->Map(0, &readRange, &pMap);
 		assert(SUCCEEDED(hr));
 
-		memcpy(pMap, vertices, num_vertices * sizeof(Vertex));
-		tmpHeap->Unmap(0, NULL);
-
-		commandList->CopyBufferRegion(dynamic_vertex_buffer[frameIndex], dynamic_vertex_buffer_index * sizeof(Vertex), tmpHeap, 0, num_vertices * sizeof(Vertex));
-		commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(dynamic_vertex_buffer[frameIndex], D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_GENERIC_READ));
-#else
-		commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(dynamic_vertex_buffer[frameIndex], D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_COPY_DEST));
-
-		void** pMap = NULL;
-		CD3DX12_RANGE readRange(0, 0);
-		HRESULT hr = dynamic_vertex_buffer_heap[frameIndex]->Map(0, &readRange, (void**)(&pMap));
-		assert(SUCCEEDED(hr));
-
-		memcpy(pMap, vertices, num_vertices * sizeof(Vertex));
+		memcpy((char*)pMap + dynamic_vertex_buffer_index * sizeof(Vertex), vertices, num_vertices * sizeof(Vertex));
 		dynamic_vertex_buffer_heap[frameIndex]->Unmap(0, NULL);
 
-		commandList->CopyBufferRegion(dynamic_vertex_buffer[frameIndex], dynamic_vertex_buffer_index * sizeof(Vertex), dynamic_vertex_buffer_heap[frameIndex], 0, num_vertices * sizeof(Vertex));
+		commandList->CopyBufferRegion(dynamic_vertex_buffer[frameIndex], dynamic_vertex_buffer_index * sizeof(Vertex), dynamic_vertex_buffer_heap[frameIndex], dynamic_vertex_buffer_index * sizeof(Vertex), num_vertices * sizeof(Vertex));
 		commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(dynamic_vertex_buffer[frameIndex], D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_GENERIC_READ));
-#endif
 	}
 
 #elif defined(VULKAN)
@@ -6896,6 +6879,8 @@ int Emulator_BeginCommandBuffer()
 		return begin_commands_flag;
 	}
 
+	Emulator_WaitForPreviousFrame();
+
 	int last_begin_commands_flag = begin_commands_flag;
 
 	HRESULT hr = commandAllocator->Reset();
@@ -6943,7 +6928,6 @@ void Emulator_WaitForPreviousFrame()
 	assert(SUCCEEDED(commandQueue->Signal(fence, fenceV)));
 	fenceValue[frameIndex]++;
 
-	// Wait until the previous frame is finished.
 	if (fence->GetCompletedValue() < fenceV)
 	{
 		assert(SUCCEEDED(fence->SetEventOnCompletion(fenceV, fenceEvent)));
