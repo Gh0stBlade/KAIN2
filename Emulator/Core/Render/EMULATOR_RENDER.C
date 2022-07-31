@@ -675,8 +675,8 @@ void Emulator_ResetPolyState()
 
 void Emulator_DrawSplit(const VertexBufferSplit& split)
 {
-	Emulator_SetTexture(split.textureId, split.texFormat);
 	Emulator_SetBlendMode(split.blendMode);
+	Emulator_SetTexture(split.textureId, split.texFormat);
 #if defined(_PATCH)
 	Emulator_Ortho2D(0, activeDrawEnv.clip.w, activeDrawEnv.clip.h, 0, 0.0f, 1.0f);
 #endif

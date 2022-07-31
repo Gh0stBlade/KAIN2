@@ -151,7 +151,8 @@ enum TexFormat
 {
 	TF_4_BIT,
 	TF_8_BIT,
-	TF_16_BIT
+	TF_16_BIT,
+	TF_COUNT
 };
 
 #define MAX_NUM_POLY_BUFFER_VERTICES (12040)
@@ -196,7 +197,8 @@ struct ShaderID {
 	D3D12_SHADER_BYTECODE PS;
 	D3D12_INPUT_LAYOUT_DESC IL;
 	ID3D12RootSignature* RS;
-	ID3D12PipelineState* GPS;
+	ID3D12PipelineState* GPS[BM_COUNT];
+	FLOAT BF[4];
 };
 
 typedef D3D12_RENDER_TARGET_VIEW_DESC* RenderTargetID;
@@ -327,6 +329,7 @@ extern int Emulator_BeginCommandBuffer();
 extern void Emulator_EndCommandBuffer();
 extern void Emulator_SetShader(const ShaderID& shader);
 extern void Emulator_DestroyGlobalShaders();
+void Emulator_CreateGraphicsPipelineState(ShaderID* shader, D3D12_GRAPHICS_PIPELINE_STATE_DESC* pso);
 #elif defined(VULKAN)
 extern void Emulator_CreateRasterState(int wireframe);
 extern void Emulator_CreateVulkanBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);

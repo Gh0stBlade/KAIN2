@@ -351,13 +351,10 @@ TextureID rg8lutTexture;
 	ID3D12Device* d3ddev = NULL;
 	ID3D12CommandQueue* commandQueue = NULL;
 	IDXGISwapChain3* swapChain = NULL;
-	ID3D12PipelineState* g_activePipelineState = NULL;
 	ID3D12Resource* projectionMatrixBuffer[frameCount];
 	D3D12_CONSTANT_BUFFER_VIEW_DESC projectionMatrixBufferView;
 	ID3D12DescriptorHeap* projectionMatrixBufferHeap[frameCount];
 
-	D3D12_BLEND_DESC blendDesc;
-	D3D12_RASTERIZER_DESC rsd;
 	ID3D12DescriptorHeap* renderTargetDescriptorHeap;
 	int renderTargetDescriptorSize = 0;
 	int frameIndex = 0;
@@ -374,6 +371,8 @@ TextureID rg8lutTexture;
 	bool begin_commands_flag = FALSE;
 
 	unsigned int dynamic_vertex_buffer_index = 0;
+
+	int g_CurrentBlendMode = BM_NONE;
 
 #elif defined(VULKAN)
 	VkBuffer dynamic_vertex_buffer;
@@ -3840,9 +3839,9 @@ ShaderID Shader_Compile_Internal(const DWORD* vs_data, const DWORD* ps_data, con
 	D3D11_SAMPLER_DESC sampDesc;
 	ZeroMemory(&sampDesc, sizeof(sampDesc));
 	sampDesc.Filter = D3D11_FILTER_MIN_MAG_POINT_MIP_LINEAR;
-	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-	sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+	sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
 	sampDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
 	sampDesc.MinLOD = -D3D11_FLOAT32_MAX;
 	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
@@ -3870,18 +3869,15 @@ ShaderID Shader_Compile_Internal(const DWORD* vs_data, const DWORD* ps_data, con
 {
 	ShaderID shader = {};
 	HRESULT hr;
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC pipelineStateDesc = {};
 	static int shaderCount = 0;
 
 	D3D12_SHADER_BYTECODE vertexShaderByteCode;
 	vertexShaderByteCode.pShaderBytecode = vs_data;
 	vertexShaderByteCode.BytecodeLength = vs_size;
-	pipelineStateDesc.VS = vertexShaderByteCode;
 
 	D3D12_SHADER_BYTECODE pixelShaderByteCode;
 	pixelShaderByteCode.pShaderBytecode = ps_data;
 	pixelShaderByteCode.BytecodeLength = ps_size;
-	pipelineStateDesc.PS = pixelShaderByteCode;
 
 #define OFFSETOF(T, E)     ((size_t)&(((T*)0)->E))
 
@@ -3895,36 +3891,6 @@ ShaderID Shader_Compile_Internal(const DWORD* vs_data, const DWORD* ps_data, con
 		{ "TEXCOORD", 0, DXGI_FORMAT_R8G8B8A8_UINT,		 0, OFFSETOF(Vertex, u), D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 		{ "COLOR",    0, DXGI_FORMAT_R8G8B8A8_UNORM,	 0, OFFSETOF(Vertex, r), D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 	};
-
-	
-	pipelineStateDesc.InputLayout = { INPUT_LAYOUT, sizeof(INPUT_LAYOUT) /  sizeof(D3D12_INPUT_ELEMENT_DESC)};
-	pipelineStateDesc.RasterizerState = rsd;
-
-	blendDesc.AlphaToCoverageEnable = FALSE;
-	blendDesc.IndependentBlendEnable = FALSE;
-	const D3D12_RENDER_TARGET_BLEND_DESC defaultRenderTargetBlendDesc =
-	{
-		  FALSE,FALSE,
-		  D3D12_BLEND_ONE, D3D12_BLEND_ZERO, D3D12_BLEND_OP_ADD,
-		  D3D12_BLEND_ONE, D3D12_BLEND_ZERO, D3D12_BLEND_OP_ADD,
-		  D3D12_LOGIC_OP_NOOP,
-		  D3D12_COLOR_WRITE_ENABLE_ALL,
-	};
-
-	for (unsigned int i = 0; i < D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT; i++)
-	{
-		blendDesc.RenderTarget[i] = defaultRenderTargetBlendDesc;
-	}
-
-	pipelineStateDesc.BlendState = blendDesc;
-	pipelineStateDesc.DepthStencilState.DepthEnable = FALSE;
-	pipelineStateDesc.DepthStencilState.StencilEnable = FALSE;
-	pipelineStateDesc.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
-	pipelineStateDesc.SampleMask = UINT_MAX;
-	pipelineStateDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-	pipelineStateDesc.NumRenderTargets = 1;
-	pipelineStateDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
-	pipelineStateDesc.SampleDesc.Count = 1;
 
 	//Create root signature
 	D3D12_DESCRIPTOR_RANGE rangesVertex[1];
@@ -3978,9 +3944,9 @@ ShaderID Shader_Compile_Internal(const DWORD* vs_data, const DWORD* ps_data, con
 	D3D12_STATIC_SAMPLER_DESC staticSamplerDesc;
 	ZeroMemory(&staticSamplerDesc, sizeof(staticSamplerDesc));
 	staticSamplerDesc.Filter = D3D12_FILTER_MIN_MAG_POINT_MIP_LINEAR;
-	staticSamplerDesc.AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
-	staticSamplerDesc.AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
-	staticSamplerDesc.AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+	staticSamplerDesc.AddressU = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
+	staticSamplerDesc.AddressV = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
+	staticSamplerDesc.AddressW = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
 	staticSamplerDesc.ShaderRegister = 0;
 	staticSamplerDesc.RegisterSpace = 0;
 	staticSamplerDesc.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
@@ -4004,10 +3970,27 @@ ShaderID Shader_Compile_Internal(const DWORD* vs_data, const DWORD* ps_data, con
 	Emulator_BeginCommandBuffer();
 	commandList->SetGraphicsRootSignature(shader.RS);
 
-	pipelineStateDesc.pRootSignature = shader.RS;
-	assert(!FAILED(d3ddev->CreateGraphicsPipelineState(&pipelineStateDesc, IID_PPV_ARGS(&shader.GPS))));
-	commandList->SetPipelineState(shader.GPS);
-	g_activePipelineState = NULL;
+	DXGI_SAMPLE_DESC sampleDesc;
+	ZeroMemory(&sampleDesc, sizeof(sampleDesc));
+	sampleDesc.Count = 1;
+
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC pso;
+	ZeroMemory(&pso, sizeof(pso));
+	pso.InputLayout = { INPUT_LAYOUT, sizeof(INPUT_LAYOUT) / sizeof(D3D12_INPUT_ELEMENT_DESC) };
+	pso.pRootSignature = shader.RS;
+	pso.VS = vertexShaderByteCode;
+	pso.PS = pixelShaderByteCode;
+	pso.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+	pso.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+	pso.SampleDesc = sampleDesc;
+	pso.SampleMask = 0xFFFFFFFF;
+	pso.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
+	pso.NumRenderTargets = 1;
+	D3D12_DEPTH_STENCIL_DESC depthStencilDesc = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
+	depthStencilDesc.DepthEnable = FALSE;
+	pso.DepthStencilState = depthStencilDesc;
+
+	Emulator_CreateGraphicsPipelineState(&shader, &pso);
 
 	Emulator_EndCommandBuffer();
 	Emulator_WaitForPreviousFrame();
@@ -4947,9 +4930,8 @@ void Emulator_SetShader(const ShaderID &shader)
 	if (begin_commands_flag && begin_pass_flag && !g_resetDeviceOnNextFrame)
 	{
 		commandList->SetGraphicsRootSignature(shader.RS);
-		commandList->SetPipelineState(shader.GPS);
-		g_activePipelineState = shader.GPS;
-		
+		commandList->SetPipelineState(shader.GPS[g_CurrentBlendMode]);
+		commandList->OMSetBlendFactor(shader.BF);
 		Emulator_SetConstantBuffers();
 	}
 
@@ -4997,8 +4979,12 @@ void Emulator_SetTexture(TextureID texture, TexFormat texFormat)
 	if (g_lastBoundTexture[0].textureImage == texture.textureImage && g_lastBoundTexture[1].textureImage == rg8lutTexture.textureImage) {
 		//return;
 	}
-#else
+#elif defined(D3D12)
 	if (g_lastBoundTexture[0].m_textureResource == texture.m_textureResource && g_lastBoundTexture[1].m_textureResource == rg8lutTexture.m_textureResource) {
+		//return;
+	}
+#else
+	if (g_lastBoundTexture[0] == texture && g_lastBoundTexture[1] == rg8lutTexture) {
 		//return;
 	}
 #endif
@@ -5461,6 +5447,7 @@ void Emulator_BlitVRAM()
 	}
 
 	Emulator_SetTexture(vramTexture, TF_16_BIT);
+	Emulator_SetBlendMode(BM_NONE);
 	Emulator_SetShader(g_blit_shader);
 
 #if defined(_PATCH2)
@@ -5504,7 +5491,6 @@ void Emulator_BlitVRAM()
 #endif
 
 	Emulator_UpdateVertexBuffer(blit_vertices, 6);
-	Emulator_SetBlendMode(BM_NONE);
 	Emulator_DrawTriangles(0, 2);
 }
 
@@ -5586,9 +5572,12 @@ int Emulator_BeginScene()
 #if defined(VULKAN)
 	g_lastBoundTexture[0].textureImage = NULL;
 	g_lastBoundTexture[1].textureImage = NULL;
-#else
+#elif defined(D3D12)
 	g_lastBoundTexture[0].m_textureResource = NULL;
 	g_lastBoundTexture[1].m_textureResource = NULL;
+#else
+	g_lastBoundTexture[0] = NULL;
+	g_lastBoundTexture[1] = NULL;
 #endif
 
 #if defined(OGL) || defined(OGLES)
@@ -6356,8 +6345,7 @@ void Emulator_SetBlendMode(BlendMode blendMode)
 	}
 	}
 #elif defined(D3D12)
-	///@D3D12
-	UNIMPLEMENTED();
+	g_CurrentBlendMode = blendMode;
 #elif defined(VULKAN)
 
 	
@@ -6743,12 +6731,161 @@ void Emulator_SetDefaultRenderTarget()
 
 #elif defined(D3D12)
 
+void Emulator_CreateGraphicsPipelineState(ShaderID* shader, D3D12_GRAPHICS_PIPELINE_STATE_DESC* pso)
+{
+	for (int i = 0; i < BM_COUNT; i++)
+	{
+		switch (i)
+		{
+		case BM_NONE:
+		{
+			D3D12_BLEND_DESC bd;
+			ZeroMemory(&bd, sizeof(bd));
+			bd.AlphaToCoverageEnable = FALSE;
+			bd.IndependentBlendEnable = FALSE;
+			bd.RenderTarget[0].BlendEnable = TRUE;
+			bd.RenderTarget[0].SrcBlend = D3D12_BLEND_ONE;
+			bd.RenderTarget[0].DestBlend = D3D12_BLEND_ZERO;
+			bd.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+			bd.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
+			bd.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
+			bd.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+			bd.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+
+			pso->BlendState = bd;
+
+			shader->BF[0] = 1.0f;
+			shader->BF[1] = 1.0f;
+			shader->BF[2] = 1.0f;
+			shader->BF[3] = 1.0f;
+
+			break;
+		}
+		case BM_AVERAGE:
+		{
+			D3D12_BLEND_DESC bd;
+			ZeroMemory(&bd, sizeof(bd));
+			bd.AlphaToCoverageEnable = FALSE;
+			bd.IndependentBlendEnable = TRUE;
+			bd.RenderTarget[0].BlendEnable = TRUE;
+			bd.RenderTarget[0].SrcBlend = D3D12_BLEND_BLEND_FACTOR;
+			bd.RenderTarget[0].DestBlend = D3D12_BLEND_BLEND_FACTOR;
+			bd.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+			bd.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_BLEND_FACTOR;
+			bd.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_BLEND_FACTOR;
+			bd.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+			bd.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+
+			pso->BlendState = bd;
+
+			shader->BF[0] = 128.0f * (1.0f / 255.0f);
+			shader->BF[1] = 128.0f * (1.0f / 255.0f);
+			shader->BF[2] = 128.0f * (1.0f / 255.0f);
+			shader->BF[3] = 128.0f * (1.0f / 255.0f);
+			break;
+		}
+		case BM_ADD:
+		{
+			D3D12_BLEND_DESC bd;
+			ZeroMemory(&bd, sizeof(bd));
+			bd.AlphaToCoverageEnable = FALSE;
+			bd.IndependentBlendEnable = TRUE;
+			bd.RenderTarget[0].BlendEnable = TRUE;
+			bd.RenderTarget[0].SrcBlend = D3D12_BLEND_ONE;
+			bd.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
+			bd.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+			bd.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
+			bd.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ONE;
+			bd.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+			bd.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+
+			pso->BlendState = bd;
+
+			shader->BF[0] = 1.0f;
+			shader->BF[1] = 1.0f;
+			shader->BF[2] = 1.0f;
+			shader->BF[3] = 1.0f;
+			break;
+		}
+		case BM_SUBTRACT:
+		{
+			D3D12_BLEND_DESC bd;
+			ZeroMemory(&bd, sizeof(bd));
+			bd.AlphaToCoverageEnable = FALSE;
+			bd.IndependentBlendEnable = TRUE;
+			bd.RenderTarget[0].BlendEnable = TRUE;
+			bd.RenderTarget[0].SrcBlend = D3D12_BLEND_ONE;
+			bd.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
+			bd.RenderTarget[0].BlendOp = D3D12_BLEND_OP_REV_SUBTRACT;
+			bd.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
+			bd.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ONE;
+			bd.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_REV_SUBTRACT;
+			bd.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+
+			pso->BlendState = bd;
+
+			shader->BF[0] = 1.0f;
+			shader->BF[1] = 1.0f;
+			shader->BF[2] = 1.0f;
+			shader->BF[3] = 1.0f;
+			break;
+		}
+		case BM_ADD_QUATER_SOURCE:
+		{
+			D3D12_BLEND_DESC bd;
+			ZeroMemory(&bd, sizeof(bd));
+			bd.AlphaToCoverageEnable = FALSE;
+			bd.IndependentBlendEnable = TRUE;
+			bd.RenderTarget[0].BlendEnable = TRUE;
+			bd.RenderTarget[0].SrcBlend = D3D12_BLEND_BLEND_FACTOR;
+			bd.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
+			bd.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+			bd.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_BLEND_FACTOR;
+			bd.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ONE;
+			bd.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+			bd.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+
+			pso->BlendState = bd;
+
+			shader->BF[0] = 64.0f * (1.0f / 255.0f);
+			shader->BF[1] = 64.0f * (1.0f / 255.0f);
+			shader->BF[2] = 64.0f * (1.0f / 255.0f);
+			shader->BF[3] = 64.0f * (1.0f / 255.0f);
+			break;
+		}
+		}
+
+		assert(!FAILED(d3ddev->CreateGraphicsPipelineState(pso, IID_PPV_ARGS(&shader->GPS[i]))));
+	}
+}
+
 void Emulator_DestroyGlobalShaders()
 {
-	if (g_gte_shader_4.GPS != NULL)
+	for (int i = 0; i < BM_COUNT; i++)
 	{
-		g_gte_shader_4.GPS->Release();
-		g_gte_shader_4.GPS = NULL;
+		if (g_gte_shader_4.GPS[i] != NULL)
+		{
+			g_gte_shader_4.GPS[i]->Release();
+			g_gte_shader_4.GPS[i] = NULL;
+		}
+
+		if (g_gte_shader_8.GPS[i] != NULL)
+		{
+			g_gte_shader_8.GPS[i]->Release();
+			g_gte_shader_8.GPS[i] = NULL;
+		}
+
+		if (g_gte_shader_16.GPS[i] != NULL)
+		{
+			g_gte_shader_16.GPS[i]->Release();
+			g_gte_shader_16.GPS[i] = NULL;
+		}
+
+		if (g_blit_shader.GPS[i] != NULL)
+		{
+			g_blit_shader.GPS[i]->Release();
+			g_blit_shader.GPS[i] = NULL;
+		}
 	}
 
 	if (g_gte_shader_4.RS != NULL)
@@ -6757,34 +6894,16 @@ void Emulator_DestroyGlobalShaders()
 		g_gte_shader_4.RS = NULL;
 	}
 
-	if (g_gte_shader_8.GPS != NULL)
-	{
-		g_gte_shader_8.GPS->Release();
-		g_gte_shader_8.GPS = NULL;
-	}
-
 	if (g_gte_shader_8.RS != NULL)
 	{
 		g_gte_shader_8.RS->Release();
 		g_gte_shader_8.RS = NULL;
 	}
 
-	if (g_gte_shader_16.GPS != NULL)
-	{
-		g_gte_shader_16.GPS->Release();
-		g_gte_shader_16.GPS = NULL;
-	}
-
 	if (g_gte_shader_16.RS != NULL)
 	{
 		g_gte_shader_16.RS->Release();
 		g_gte_shader_16.RS = NULL;
-	}
-
-	if (g_blit_shader.GPS != NULL)
-	{
-		g_blit_shader.GPS->Release();
-		g_blit_shader.GPS = NULL;
 	}
 
 	if (g_blit_shader.RS != NULL)
@@ -6909,17 +7028,7 @@ void Emulator_BeginPass()
 
 void Emulator_CreateRasterState(int wireframe)
 {
-	rsd.FillMode = wireframe ? D3D12_FILL_MODE_WIREFRAME : D3D12_FILL_MODE_SOLID;
-	rsd.CullMode = D3D12_CULL_MODE_NONE;
-	rsd.FrontCounterClockwise = FALSE;
-	rsd.DepthBias = D3D12_DEFAULT_DEPTH_BIAS;
-	rsd.DepthBiasClamp = D3D12_DEFAULT_DEPTH_BIAS_CLAMP;
-	rsd.SlopeScaledDepthBias = D3D12_DEFAULT_SLOPE_SCALED_DEPTH_BIAS;
-	rsd.DepthClipEnable = FALSE;
-	rsd.MultisampleEnable = FALSE;
-	rsd.AntialiasedLineEnable = FALSE;
-	rsd.ForcedSampleCount = 0;
-	rsd.ConservativeRaster = D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF;
+	UNIMPLEMENTED();
 }
 
 void Emulator_WaitForPreviousFrame()
