@@ -103,7 +103,9 @@ typedef struct
 	typedef long (*CallbackProc)(void);
 
 	CallbackProc padding00;
-	unsigned int timerID;
+	unsigned int timerIndex;
+	SDL_TimerID timerId;
+	unsigned int startTick;
 } SysCounter;
 
 extern SysCounter counters[3];
@@ -179,12 +181,22 @@ struct ShaderID {
 
 typedef ID3D11RenderTargetView* RenderTargetID;
 #elif defined(D3D12)
-typedef void* TextureID;
+
+struct D3D12TextureWrapper
+{
+	ID3D12Resource* m_textureResource;
+	ID3D12DescriptorHeap* m_srvHeap;
+	ID3D12Resource* m_uploadHeap;
+};
+
+typedef D3D12TextureWrapper TextureID;
 
 struct ShaderID {
 	D3D12_SHADER_BYTECODE VS;
 	D3D12_SHADER_BYTECODE PS;
 	D3D12_INPUT_LAYOUT_DESC IL;
+	ID3D12RootSignature* RS;
+	ID3D12PipelineState* GPS;
 };
 
 typedef D3D12_RENDER_TARGET_VIEW_DESC* RenderTargetID;
@@ -300,9 +312,18 @@ extern void Emulator_DestroyConstantBuffers();
 extern void Emulator_CreateRasterState(int wireframe);
 extern void Emulator_SetDefaultRenderTarget();
 #elif defined(D3D12)
+extern void Emulator_CreateConstantBuffers();
+extern void Emulator_UpdateProjectionConstantBuffer(float* ortho);
+extern void Emulator_SetConstantBuffers();
 extern void Emulator_CreateRasterState(int wireframe);
+extern void Emulator_SetDefaultRenderTarget();
 extern void Emulator_WaitForPreviousFrame();
 extern void Emulator_BeginPass();
+extern void Emulator_EndPass();
+extern int Emulator_BeginCommandBuffer();
+extern void Emulator_EndCommandBuffer();
+extern void Emulator_SetShader(const ShaderID& shader);
+extern void Emulator_DestroyGlobalShaders();
 #elif defined(VULKAN)
 extern void Emulator_CreateRasterState(int wireframe);
 extern void Emulator_CreateVulkanBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);

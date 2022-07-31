@@ -344,15 +344,18 @@ TextureID rg8lutTexture;
 #elif defined(D3D12)
 	const unsigned int frameCount = 2;
 	
-	ID3D12Resource* dynamic_vertex_buffer = NULL;
+	static ID3D12Resource* tmpHeap = NULL;
+	ID3D12Resource* dynamic_vertex_buffer[frameCount];
+	ID3D12Resource* dynamic_vertex_buffer_heap[frameCount];
 	D3D12_VERTEX_BUFFER_VIEW dynamic_vertex_buffer_view;
 	ID3D12Device* d3ddev = NULL;
 	ID3D12CommandQueue* commandQueue = NULL;
 	IDXGISwapChain3* swapChain = NULL;
-	ID3D12PipelineState* pipelineState = NULL;
-	//ID3D11RenderTargetView* renderTargetView;
-	//ID3D11Buffer* projectionMatrixBuffer;
-	//ID3D11SamplerState* samplerState;
+	ID3D12PipelineState* g_activePipelineState = NULL;
+	ID3D12Resource* projectionMatrixBuffer[frameCount];
+	D3D12_CONSTANT_BUFFER_VIEW_DESC projectionMatrixBufferView;
+	ID3D12DescriptorHeap* projectionMatrixBufferHeap[frameCount];
+
 	D3D12_BLEND_DESC blendDesc;
 	D3D12_RASTERIZER_DESC rsd;
 	ID3D12DescriptorHeap* renderTargetDescriptorHeap;
@@ -361,13 +364,16 @@ TextureID rg8lutTexture;
 	ID3D12Resource* renderTargets[frameCount];
 	ID3D12CommandAllocator* commandAllocator;
 	ID3D12GraphicsCommandList* commandList;
-	ID3D12RootSignature* rootSignature;
 	ID3D12Fence* fence;
 	HANDLE fenceEvent;
-	UINT64 fenceValue;
+	UINT64 fenceValue[frameCount];
+
+	ID3D12Resource* vramBaseTexture;
 
 	bool begin_pass_flag = FALSE;
 	bool begin_commands_flag = FALSE;
+
+	unsigned int dynamic_vertex_buffer_index = 0;
 
 #elif defined(VULKAN)
 	VkBuffer dynamic_vertex_buffer;
@@ -493,8 +499,8 @@ void Emulator_ResetDevice()
 	}
 
 	d3dpp.PresentationInterval = g_swapInterval ? D3DPRESENT_INTERVAL_ONE : D3DPRESENT_INTERVAL_IMMEDIATE;
-	d3dpp.BackBufferWidth      = windowWidth;
-	d3dpp.BackBufferHeight     = windowHeight;
+	d3dpp.BackBufferWidth = windowWidth;
+	d3dpp.BackBufferHeight = windowHeight;
 	HRESULT hr = d3ddev->Reset(&d3dpp);
 	assert(!FAILED(hr));
 #if defined(D3D9)
@@ -504,7 +510,7 @@ void Emulator_ResetDevice()
 #endif
 	assert(!FAILED(hr));
 
-	d3ddev->SetRenderState(D3DRS_ZENABLE,  D3DZB_FALSE);
+	d3ddev->SetRenderState(D3DRS_ZENABLE, D3DZB_FALSE);
 	d3ddev->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 	d3ddev->SetSamplerState(1, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
 	d3ddev->SetSamplerState(1, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
@@ -663,7 +669,7 @@ void Emulator_ResetDevice()
 	Emulator_CreateGlobalShaders();
 	Emulator_CreateConstantBuffers();
 	Emulator_GenerateCommonTextures();
-	
+
 	vram_need_update = TRUE;
 	UINT offset = 0;
 	UINT stride = sizeof(Vertex);
@@ -673,31 +679,386 @@ void Emulator_ResetDevice()
 	Emulator_CreateRasterState(FALSE);
 #elif defined(D3D12)
 
-	D3D12_HEAP_PROPERTIES heapProperties;
-	heapProperties.Type = D3D12_HEAP_TYPE_UPLOAD;
-	heapProperties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
-	heapProperties.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
-	heapProperties.CreationNodeMask = 1;
-	heapProperties.VisibleNodeMask = 1;
+	//for (int i = frameIndex ^ 1; i < frameCount; ++i)
+	{
+		//Emulator_WaitForPreviousFrame();
+	}
 
-	D3D12_RESOURCE_DESC vertexBufferResourceDesc;
-	vertexBufferResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-	vertexBufferResourceDesc.Alignment = 0;
-	vertexBufferResourceDesc.Width = sizeof(Vertex) * MAX_NUM_POLY_BUFFER_VERTICES;
-	vertexBufferResourceDesc.Height = 1;
-	vertexBufferResourceDesc.DepthOrArraySize = 1;
-	vertexBufferResourceDesc.MipLevels = 1;
-	vertexBufferResourceDesc.Format = DXGI_FORMAT_UNKNOWN;
-	vertexBufferResourceDesc.SampleDesc.Count = 1;
-	vertexBufferResourceDesc.SampleDesc.Quality = 0;
-	vertexBufferResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-	vertexBufferResourceDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
+	if (d3ddev != NULL)
+	{
+		d3ddev->Release();
+		d3ddev = NULL;
+	}
 
-	HRESULT hr = d3ddev->CreateCommittedResource(&heapProperties, D3D12_HEAP_FLAG_NONE, &vertexBufferResourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, NULL, IID_PPV_ARGS(&dynamic_vertex_buffer));
+	if (swapChain != NULL)
+	{
+		swapChain->Release();
+		swapChain = NULL;
+	}
+
+	if (commandQueue != NULL)
+	{
+		commandQueue->Release();
+		commandQueue = NULL;
+	}
+
+	if (renderTargetDescriptorHeap != NULL)
+	{
+		renderTargetDescriptorHeap->Release();
+		renderTargetDescriptorHeap = NULL;
+	}
+
+	if (commandList != NULL)
+	{
+		commandList->Release();
+		commandList = NULL;
+	}
+
+	fence->Release();
+	commandAllocator->Release();
+
+	for (int i = 0; i < frameCount; i++)
+	{
+		renderTargets[i]->Release();
+		projectionMatrixBufferHeap[i]->Release();
+		projectionMatrixBuffer[i]->Release();
+		fenceValue[i] = 0;
+	}
+
+	for (int i = 0; i < frameCount; i++)
+	{
+		if (dynamic_vertex_buffer[i] = NULL)
+		{
+			dynamic_vertex_buffer[i]->Release();
+			dynamic_vertex_buffer[i] = NULL;
+		}
+
+		if (dynamic_vertex_buffer_heap[i] = NULL)
+		{
+			dynamic_vertex_buffer_heap[i]->Release();
+			dynamic_vertex_buffer_heap[i] = NULL;
+		}
+	}
+
+	Emulator_DestroyGlobalShaders();
+
+	if (vramBaseTexture != NULL)
+	{
+		vramBaseTexture->Release();
+		vramBaseTexture = NULL;
+	}
+
+	if (rg8lutTexture.m_textureResource != NULL)
+	{
+		rg8lutTexture.m_textureResource->Release();
+		rg8lutTexture.m_textureResource = NULL;
+	}
+
+	if (rg8lutTexture.m_srvHeap != NULL)
+	{
+		rg8lutTexture.m_srvHeap->Release();
+		rg8lutTexture.m_srvHeap = NULL;
+	}
+
+	if (rg8lutTexture.m_uploadHeap != NULL)
+	{
+		rg8lutTexture.m_uploadHeap->Release();
+		rg8lutTexture.m_uploadHeap = NULL;
+	}
+
+	if (whiteTexture.m_textureResource != NULL)
+	{
+		whiteTexture.m_textureResource->Release();
+		whiteTexture.m_textureResource = NULL;
+	}
+
+	if (whiteTexture.m_srvHeap != NULL)
+	{
+		whiteTexture.m_srvHeap->Release();
+		whiteTexture.m_srvHeap = NULL;
+	}
+
+	if (whiteTexture.m_uploadHeap != NULL)
+	{
+		whiteTexture.m_uploadHeap->Release();
+		whiteTexture.m_uploadHeap = NULL;
+	}
+
+	if (vramTexture.m_textureResource != NULL)
+	{
+		vramTexture.m_textureResource->Release();
+		vramTexture.m_textureResource = NULL;
+	}
+
+	if (vramTexture.m_srvHeap != NULL)
+	{
+		vramTexture.m_srvHeap->Release();
+		vramTexture.m_srvHeap = NULL;
+	}
+
+	if (vramTexture.m_uploadHeap != NULL)
+	{
+		vramTexture.m_uploadHeap->Release();
+		vramTexture.m_uploadHeap = NULL;
+	}
+
+	CloseHandle(fenceEvent);
+
+	SDL_SysWMinfo wmInfo;
+	SDL_VERSION(&wmInfo.version);
+	SDL_GetWindowWMInfo(g_window, &wmInfo);
+
+	IDXGIFactory2* factory = NULL;
+	HRESULT hr = CreateDXGIFactory2(DXGI_CREATE_FACTORY_DEBUG, IID_PPV_ARGS(&factory));
+
+	if (!SUCCEEDED(hr)) {
+		eprinterr("Failed to create DXGI factory2!\n");
+		return;
+	}
+
+	int adapterIndex = 0;
+	int adapterFound = FALSE;
+	IDXGIAdapter1* adapter = NULL;
+	while (factory->EnumAdapters1(adapterIndex, &adapter) != DXGI_ERROR_NOT_FOUND)
+	{
+		DXGI_ADAPTER_DESC1 adapterDesc;
+		adapter->GetDesc1(&adapterDesc);
+
+		if (adapterDesc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE)
+		{
+			continue;
+		}
+
+		hr = D3D12CreateDevice(adapter, D3D_FEATURE_LEVEL_12_0, _uuidof(ID3D12Device), NULL);
+
+		if (SUCCEEDED(hr))
+		{
+			adapterFound = TRUE;
+			break;
+		}
+
+		adapterIndex++;
+	}
+
+	if (!adapterFound) {
+		eprinterr("Failed to locate D3D12 compatible adapter!\n");
+		return;
+	}
+
+	ID3D12Debug* debugController;
+	if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController))))
+	{
+		debugController->EnableDebugLayer();
+	}
+
+	hr = D3D12CreateDevice(adapter, D3D_FEATURE_LEVEL_12_0, IID_PPV_ARGS(&d3ddev));
+	if (!SUCCEEDED(hr)) {
+		eprinterr("Failed to create D3D12 device!\n");
+		return;
+	}
+
+	hr = d3ddev->GetDeviceRemovedReason();
+
+	D3D12_COMMAND_QUEUE_DESC commandQDesc;
+	ZeroMemory(&commandQDesc, sizeof(D3D12_COMMAND_QUEUE_DESC));
+	commandQDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
+	commandQDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
+
+	hr = d3ddev->CreateCommandQueue(&commandQDesc, IID_PPV_ARGS(&commandQueue));
+	if (!SUCCEEDED(hr)) {
+		eprinterr("Failed to create D3D12 command queue!\n");
+		return;
+	}
+
+	DXGI_SAMPLE_DESC sampleDesc;
+	ZeroMemory(&sampleDesc, sizeof(DXGI_SAMPLE_DESC));
+	sampleDesc.Count = 1;
+
+	DXGI_SWAP_CHAIN_DESC1 swapChainDesc;
+	ZeroMemory(&swapChainDesc, sizeof(DXGI_SWAP_CHAIN_DESC1));
+	swapChainDesc.BufferCount = frameCount;
+	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
+	swapChainDesc.SampleDesc = sampleDesc;
+	swapChainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
+	swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	swapChainDesc.SampleDesc.Count = 1;
+	swapChainDesc.SampleDesc.Quality = 0;
+	swapChainDesc.Width = windowWidth;
+	swapChainDesc.Height = windowHeight;
+
+	DXGI_SWAP_CHAIN_FULLSCREEN_DESC swapChainFSDesc;
+	ZeroMemory(&swapChainFSDesc, sizeof(swapChainFSDesc));
+	swapChainFSDesc.Windowed = TRUE;
+
+	IDXGISwapChain1* tempSwapChain;
+
+	hr = factory->CreateSwapChainForHwnd(commandQueue, wmInfo.info.win.window, &swapChainDesc, &swapChainFSDesc, NULL, &tempSwapChain);
+
+	if (!SUCCEEDED(hr)) {
+		eprinterr("Failed to create swap chain!\n");
+		return;
+	}
+
+	swapChain = (IDXGISwapChain3*)tempSwapChain;
+	frameIndex = swapChain->GetCurrentBackBufferIndex();
+
+	D3D12_DESCRIPTOR_HEAP_DESC heapDesc;
+	ZeroMemory(&heapDesc, sizeof(D3D12_DESCRIPTOR_HEAP_DESC));
+	heapDesc.NumDescriptors = frameCount;
+	heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
+	heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+
+	hr = d3ddev->CreateDescriptorHeap(&heapDesc, IID_PPV_ARGS(&renderTargetDescriptorHeap));
+	if (!SUCCEEDED(hr)) {
+		eprinterr("Failed to create RTV Descripter heap!\n");
+		return;
+	}
+
+	renderTargetDescriptorSize = d3ddev->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+
+	CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(renderTargetDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
+
+	for (int i = 0; i < frameCount; i++)
+	{
+		hr = swapChain->GetBuffer(i, IID_PPV_ARGS(&renderTargets[i]));
+		if (FAILED(hr))
+		{
+			return;
+		}
+
+		d3ddev->CreateRenderTargetView(renderTargets[i], NULL, rtvHandle);
+
+		rtvHandle.Offset(1, renderTargetDescriptorSize);
+	}
+
+	hr = d3ddev->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&commandAllocator));
+	if (FAILED(hr))
+	{
+		return;
+	}
+
+	hr = d3ddev->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, commandAllocator, NULL, IID_PPV_ARGS(&commandList));
+	if (FAILED(hr))
+	{
+		return;
+	}
+
+	commandList->Close();
+
+	hr = d3ddev->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence));
+	if (FAILED(hr))
+	{
+		return;
+	}
+
+	for (int i = 0; i < frameCount; i++)
+	{
+		fenceValue[i] = 0;
+	}
+
+	fenceEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+	if (fenceEvent == NULL)
+	{
+		eprinterr("Failed to create fence event!\n");
+		return;
+	}
+
+	for (int i = 0; i < frameCount; i++)
+	{
+		hr = d3ddev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer(MAX_NUM_POLY_BUFFER_VERTICES * sizeof(Vertex)), D3D12_RESOURCE_STATE_GENERIC_READ, NULL, IID_PPV_ARGS(&dynamic_vertex_buffer[i]));
+		assert(SUCCEEDED(hr));
+
+		hr = d3ddev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer(MAX_NUM_POLY_BUFFER_VERTICES * sizeof(Vertex)), D3D12_RESOURCE_STATE_GENERIC_READ, NULL, IID_PPV_ARGS(&dynamic_vertex_buffer_heap[i]));
+		assert(SUCCEEDED(hr));
+	}
+
+	D3D12_RESOURCE_DESC td;
+
+	ZeroMemory(&td, sizeof(td));
+	td.Width = VRAM_WIDTH;
+	td.Height = VRAM_HEIGHT;
+	td.MipLevels = td.DepthOrArraySize = 1;
+	td.Format = DXGI_FORMAT_R8G8_UNORM;
+	td.SampleDesc.Count = 1;
+	td.Flags = D3D12_RESOURCE_FLAG_NONE;
+	td.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+
+	hr = d3ddev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE, &td, D3D12_RESOURCE_STATE_COPY_DEST, NULL, IID_PPV_ARGS(&vramTexture.m_textureResource));
 	assert(!FAILED(hr));
-	
-	commandList->IASetVertexBuffers(0, 1, &dynamic_vertex_buffer_view);
-	Emulator_CreateRasterState(FALSE);
+
+	hr = d3ddev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE, &td, D3D12_RESOURCE_STATE_GENERIC_READ, NULL, IID_PPV_ARGS(&vramTexture.m_uploadHeap));
+	assert(!FAILED(hr));
+
+	D3D12_DESCRIPTOR_HEAP_DESC srvHeapDesc;
+	ZeroMemory(&srvHeapDesc, sizeof(srvHeapDesc));
+	srvHeapDesc.NumDescriptors = 1;
+	srvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+	srvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+	hr = d3ddev->CreateDescriptorHeap(&srvHeapDesc, IID_PPV_ARGS(&vramTexture.m_srvHeap));
+	assert(SUCCEEDED(hr));
+
+	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	srvDesc.Format = td.Format;
+	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.Texture2D.MipLevels = 1;
+	d3ddev->CreateShaderResourceView(vramTexture.m_textureResource, &srvDesc, vramTexture.m_srvHeap->GetCPUDescriptorHandleForHeapStart());
+
+
+	Emulator_CreateConstantBuffers();
+	Emulator_CreateGlobalShaders();
+	Emulator_GenerateCommonTextures();
+
+	D3D12_RESOURCE_DESC textureResourceDesc;
+	textureResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+	textureResourceDesc.Alignment = 0;
+	textureResourceDesc.Width = VRAM_WIDTH * VRAM_HEIGHT * sizeof(short);
+	textureResourceDesc.Height = 1;
+	textureResourceDesc.DepthOrArraySize = 1;
+	textureResourceDesc.MipLevels = 1;
+	textureResourceDesc.Format = DXGI_FORMAT_UNKNOWN;
+	textureResourceDesc.SampleDesc.Count = 1;
+	textureResourceDesc.SampleDesc.Quality = 0;
+	textureResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+	textureResourceDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
+
+	hr = d3ddev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), D3D12_HEAP_FLAG_NONE, &textureResourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, NULL, IID_PPV_ARGS(&vramBaseTexture));
+	assert(!FAILED(hr));
+
+	ZeroMemory(&textureResourceDesc, sizeof(textureResourceDesc));
+	textureResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+	textureResourceDesc.Alignment = 0;
+	textureResourceDesc.Width = MAX_NUM_POLY_BUFFER_VERTICES * sizeof(Vertex);
+	textureResourceDesc.Height = 1;
+	textureResourceDesc.DepthOrArraySize = 1;
+	textureResourceDesc.MipLevels = 1;
+	textureResourceDesc.Format = DXGI_FORMAT_UNKNOWN;
+	textureResourceDesc.SampleDesc.Count = 1;
+	textureResourceDesc.SampleDesc.Quality = 0;
+	textureResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+	textureResourceDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
+
+	for (int i = 0; i < frameCount; i++)
+	{
+		hr = d3ddev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer(MAX_NUM_POLY_BUFFER_VERTICES * sizeof(Vertex)), D3D12_RESOURCE_STATE_GENERIC_READ, NULL, IID_PPV_ARGS(&dynamic_vertex_buffer[i]));
+		assert(SUCCEEDED(hr));
+
+		hr = d3ddev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer(MAX_NUM_POLY_BUFFER_VERTICES * sizeof(Vertex)), D3D12_RESOURCE_STATE_GENERIC_READ, NULL, IID_PPV_ARGS(&dynamic_vertex_buffer_heap[i]));
+		assert(SUCCEEDED(hr));
+	}
+
+	if (begin_pass_flag)
+	{
+		begin_commands_flag = FALSE;
+		begin_pass_flag = FALSE;
+		Emulator_BeginPass();
+	}
+	else if (begin_commands_flag)
+	{
+		begin_commands_flag = FALSE;
+		Emulator_BeginCommandBuffer();
+	}
 #elif defined(VULKAN)
 
 	if (dynamic_vertex_buffer) {
@@ -706,7 +1067,7 @@ void Emulator_ResetDevice()
 	}
 
 	enum ShaderID::ShaderType lastShaderBound = g_activeShader.T;
-	
+
 	Emulator_DestroySyncObjects();
 	Emulator_DestroyGlobalShaders();
 	Emulator_DestroyConstantBuffers();
@@ -828,7 +1189,7 @@ void Emulator_ResetDevice()
 	bufferInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
 	bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-	if (vkCreateBuffer(device, &bufferInfo, NULL, &dynamic_vertex_buffer) != VK_SUCCESS) 
+	if (vkCreateBuffer(device, &bufferInfo, NULL, &dynamic_vertex_buffer) != VK_SUCCESS)
 	{
 		eprinterr("Failed to create vertex buffer!\n");
 		assert(FALSE);
@@ -842,7 +1203,7 @@ void Emulator_ResetDevice()
 	allocInfo.allocationSize = memRequirements.size;
 	allocInfo.memoryTypeIndex = Emulator_FindMemoryType(memRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
-	if (vkAllocateMemory(device, &allocInfo, NULL, &dynamic_vertex_buffer_memory) != VK_SUCCESS) 
+	if (vkAllocateMemory(device, &allocInfo, NULL, &dynamic_vertex_buffer_memory) != VK_SUCCESS)
 	{
 		eprinterr("Failed to allocate vertex buffer!\n");
 		assert(FALSE);
@@ -865,7 +1226,7 @@ void Emulator_ResetDevice()
 	}
 
 #if 0
-	
+
 	Emulator_BeginPass();
 
 	switch (lastShaderBound)
@@ -1151,29 +1512,30 @@ static int Emulator_InitialiseD3D12Context(char* windowName)
 		return FALSE;
 	}
 
-	DXGI_MODE_DESC backBufferDesc;
-	ZeroMemory(&backBufferDesc, sizeof(DXGI_MODE_DESC));
-	backBufferDesc.Width = windowWidth;
-	backBufferDesc.Height = windowHeight;
-	backBufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-
 	DXGI_SAMPLE_DESC sampleDesc;
 	ZeroMemory(&sampleDesc, sizeof(DXGI_SAMPLE_DESC));
 	sampleDesc.Count = 1;
 
-	DXGI_SWAP_CHAIN_DESC swapChainDesc;
-	ZeroMemory(&swapChainDesc, sizeof(DXGI_SWAP_CHAIN_DESC));
+	DXGI_SWAP_CHAIN_DESC1 swapChainDesc;
+	ZeroMemory(&swapChainDesc, sizeof(DXGI_SWAP_CHAIN_DESC1));
 	swapChainDesc.BufferCount = frameCount;
-	swapChainDesc.BufferDesc = backBufferDesc;
 	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
-	swapChainDesc.OutputWindow = wmInfo.info.win.window;
 	swapChainDesc.SampleDesc = sampleDesc;
-	swapChainDesc.Windowed = TRUE;
+	swapChainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
+	swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	swapChainDesc.SampleDesc.Count = 1;
+	swapChainDesc.SampleDesc.Quality = 0;
+	swapChainDesc.Width = windowWidth;
+	swapChainDesc.Height = windowHeight;
+	
+	DXGI_SWAP_CHAIN_FULLSCREEN_DESC swapChainFSDesc;
+	ZeroMemory(&swapChainFSDesc, sizeof(swapChainFSDesc));
+	swapChainFSDesc.Windowed = TRUE;
 
-	IDXGISwapChain* tempSwapChain;
+	IDXGISwapChain1* tempSwapChain;
 
-	hr = factory->CreateSwapChain(commandQueue, &swapChainDesc, &tempSwapChain);
+	hr = factory->CreateSwapChainForHwnd(commandQueue, wmInfo.info.win.window, &swapChainDesc, &swapChainFSDesc, NULL, &tempSwapChain);
 
 	if (!SUCCEEDED(hr)) {
 		eprinterr("Failed to create swap chain!\n");
@@ -1197,7 +1559,7 @@ static int Emulator_InitialiseD3D12Context(char* windowName)
 
 	renderTargetDescriptorSize = d3ddev->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 
-	D3D12_CPU_DESCRIPTOR_HANDLE renderTargetHandle(renderTargetDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
+	CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(renderTargetDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
 
 	for (int i = 0; i < frameCount; i++)
 	{
@@ -1207,9 +1569,9 @@ static int Emulator_InitialiseD3D12Context(char* windowName)
 			return FALSE;
 		}
 
-		d3ddev->CreateRenderTargetView(renderTargets[i], nullptr, renderTargetHandle);
+		d3ddev->CreateRenderTargetView(renderTargets[i], NULL, rtvHandle);
 
-		renderTargetHandle.ptr += (1 * renderTargetDescriptorSize);
+		rtvHandle.Offset(1, renderTargetDescriptorSize);
 	}
 
 	hr = d3ddev->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&commandAllocator));
@@ -1232,6 +1594,11 @@ static int Emulator_InitialiseD3D12Context(char* windowName)
 		return FALSE;
 	}
 
+	for (int i = 0; i < frameCount; i++)
+	{
+		fenceValue[i] = 0;
+	}
+
 	fenceEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
 	if (fenceEvent == NULL)
 	{
@@ -1239,63 +1606,13 @@ static int Emulator_InitialiseD3D12Context(char* windowName)
 		return FALSE;
 	}
 
-	D3D12_DESCRIPTOR_RANGE rangesVertex[1];
-	rangesVertex[0].BaseShaderRegister = 0;
-	rangesVertex[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
-	rangesVertex[0].NumDescriptors = 1;
-	rangesVertex[0].RegisterSpace = 0;
-	rangesVertex[0].OffsetInDescriptorsFromTableStart = 0;
-
-	D3D12_DESCRIPTOR_RANGE rangesPixel[1];
-	rangesPixel[0].BaseShaderRegister = 0;
-	rangesPixel[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER;
-	rangesPixel[0].NumDescriptors = 1;
-	rangesPixel[0].RegisterSpace = 0;
-	rangesPixel[0].OffsetInDescriptorsFromTableStart = 0;
-
-	D3D12_DESCRIPTOR_RANGE rangesSRV[1];
-	rangesSRV[0].BaseShaderRegister = 0;
-	rangesSRV[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
-	rangesSRV[0].NumDescriptors = 1;
-	rangesSRV[0].RegisterSpace = 0;
-	rangesSRV[0].OffsetInDescriptorsFromTableStart = 0;
-
-	D3D12_ROOT_PARAMETER rootParameters[3];
-	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
-	rootParameters[0].DescriptorTable.NumDescriptorRanges = sizeof(rangesVertex) / sizeof(D3D12_DESCRIPTOR_RANGE);
-	rootParameters[0].DescriptorTable.pDescriptorRanges = rangesVertex;
-	
-	rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-	rootParameters[1].DescriptorTable.NumDescriptorRanges = sizeof(rangesPixel) / sizeof(D3D12_DESCRIPTOR_RANGE);
-	rootParameters[1].DescriptorTable.pDescriptorRanges = rangesPixel;
-
-	rootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-	rootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-	rootParameters[2].DescriptorTable.NumDescriptorRanges = sizeof(rangesSRV) / sizeof(D3D12_DESCRIPTOR_RANGE);
-	rootParameters[2].DescriptorTable.pDescriptorRanges = rangesSRV;
-
-	D3D12_ROOT_SIGNATURE_DESC rootSignatureDesc;
-	rootSignatureDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
-	rootSignatureDesc.NumParameters = sizeof(rootParameters) / sizeof(D3D12_ROOT_PARAMETER);
-	rootSignatureDesc.pParameters = rootParameters;
-	rootSignatureDesc.NumStaticSamplers = 0;
-	rootSignatureDesc.pStaticSamplers = nullptr;
-
-	ID3DBlob* errorBlob;
-	ID3DBlob* signature;
-	hr = D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1, &signature, &errorBlob);
-	if (FAILED(hr))
+	for (int i = 0; i < frameCount; i++)
 	{
-		printf("%s\n", errorBlob->GetBufferPointer());
-		return FALSE;
-	}
+		hr = d3ddev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer(MAX_NUM_POLY_BUFFER_VERTICES * sizeof(Vertex)), D3D12_RESOURCE_STATE_GENERIC_READ, NULL, IID_PPV_ARGS(&dynamic_vertex_buffer[i]));
+		assert(SUCCEEDED(hr));
 
-	hr = d3ddev->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(), IID_PPV_ARGS(&rootSignature));
-	if (FAILED(hr))
-	{
-		return FALSE;
+		hr = d3ddev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer(MAX_NUM_POLY_BUFFER_VERTICES * sizeof(Vertex)), D3D12_RESOURCE_STATE_GENERIC_READ, NULL, IID_PPV_ARGS(&dynamic_vertex_buffer_heap[i]));
+		assert(SUCCEEDED(hr));
 	}
 
 	return TRUE;
@@ -2355,13 +2672,9 @@ void Emulator_CounterLoop()
 #else
 		current_time = 0;
 #endif
-		static int calls = 0;
-		calls++;
 
 		if (current_time > last_time + 1000)
 		{
-			printf("CALLS: %d\n", calls);
-			calls = 0;
 			for (int i = 0; i < 3; i++)
 			{
 				//if (!counters[i].IsStopped)
@@ -2378,7 +2691,7 @@ void Emulator_CounterLoop()
 
 							if (counters[i].padding00 != NULL)
 							{
-								//counters[i].padding00();
+								counters[i].padding00();
 							}
 						}
 					}
@@ -2394,8 +2707,8 @@ unsigned int Emulator_CounterWrapper(unsigned int interval, void* pTimerID)
 	unsigned int timerID = ((unsigned int*)pTimerID)[0];
 	
 	counters[timerID].padding00();
-	
-	return 1000/60;
+
+	return interval;
 }
 
 void Emulator_GenerateLineArray(struct Vertex* vertex, short* p0, short* p1)
@@ -3541,7 +3854,7 @@ ShaderID Shader_Compile_Internal(const DWORD* vs_data, const DWORD* ps_data, con
 	return shader;
 }
 #elif defined(D3D12)
-///@D3D12
+
 #include "shaders/D3D12/gte_shader_4_vs.h"
 #include "shaders/D3D12/gte_shader_4_ps.h"
 #include "shaders/D3D12/gte_shader_8_vs.h"
@@ -3558,6 +3871,7 @@ ShaderID Shader_Compile_Internal(const DWORD* vs_data, const DWORD* ps_data, con
 	ShaderID shader = {};
 	HRESULT hr;
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC pipelineStateDesc = {};
+	static int shaderCount = 0;
 
 	D3D12_SHADER_BYTECODE vertexShaderByteCode;
 	vertexShaderByteCode.pShaderBytecode = vs_data;
@@ -3584,7 +3898,6 @@ ShaderID Shader_Compile_Internal(const DWORD* vs_data, const DWORD* ps_data, con
 
 	
 	pipelineStateDesc.InputLayout = { INPUT_LAYOUT, sizeof(INPUT_LAYOUT) /  sizeof(D3D12_INPUT_ELEMENT_DESC)};
-	pipelineStateDesc.pRootSignature = rootSignature;
 	pipelineStateDesc.RasterizerState = rsd;
 
 	blendDesc.AlphaToCoverageEnable = FALSE;
@@ -3598,8 +3911,10 @@ ShaderID Shader_Compile_Internal(const DWORD* vs_data, const DWORD* ps_data, con
 		  D3D12_COLOR_WRITE_ENABLE_ALL,
 	};
 
-	for (UINT i = 0; i < D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT; ++i)
+	for (unsigned int i = 0; i < D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT; i++)
+	{
 		blendDesc.RenderTarget[i] = defaultRenderTargetBlendDesc;
+	}
 
 	pipelineStateDesc.BlendState = blendDesc;
 	pipelineStateDesc.DepthStencilState.DepthEnable = FALSE;
@@ -3610,13 +3925,95 @@ ShaderID Shader_Compile_Internal(const DWORD* vs_data, const DWORD* ps_data, con
 	pipelineStateDesc.NumRenderTargets = 1;
 	pipelineStateDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
 	pipelineStateDesc.SampleDesc.Count = 1;
-	assert(!FAILED(d3ddev->CreateGraphicsPipelineState(&pipelineStateDesc, IID_PPV_ARGS(&pipelineState))));
 
-	///@TODO one per shader needs switching
-	commandList->SetPipelineState(pipelineState);
-	commandList->SetGraphicsRootSignature(rootSignature);
+	//Create root signature
+	D3D12_DESCRIPTOR_RANGE rangesVertex[1];
+	rangesVertex[0].BaseShaderRegister = 0;
+	rangesVertex[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
+	rangesVertex[0].NumDescriptors = 1;
+	rangesVertex[0].RegisterSpace = 0;
+	rangesVertex[0].OffsetInDescriptorsFromTableStart = 0;
+
+	D3D12_DESCRIPTOR_RANGE rangesPixelVramTexture[1];
+	rangesPixelVramTexture[0].BaseShaderRegister = 0;
+	rangesPixelVramTexture[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+	rangesPixelVramTexture[0].NumDescriptors = 1;
+	rangesPixelVramTexture[0].RegisterSpace = 0;
+	rangesPixelVramTexture[0].OffsetInDescriptorsFromTableStart = 0;
+
+	D3D12_DESCRIPTOR_RANGE rangesPixelrg8lutTexture[1];
+	rangesPixelrg8lutTexture[0].BaseShaderRegister = 1;
+	rangesPixelrg8lutTexture[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+	rangesPixelrg8lutTexture[0].NumDescriptors = 1;
+	rangesPixelrg8lutTexture[0].RegisterSpace = 0;
+	rangesPixelrg8lutTexture[0].OffsetInDescriptorsFromTableStart = 0;
+
+	D3D12_ROOT_PARAMETER rootParameters[3];
+	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+	rootParameters[0].DescriptorTable.NumDescriptorRanges = sizeof(rangesPixelVramTexture) / sizeof(D3D12_DESCRIPTOR_RANGE);
+	rootParameters[0].DescriptorTable.pDescriptorRanges = rangesPixelVramTexture;
+
+	rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+	rootParameters[1].DescriptorTable.NumDescriptorRanges = sizeof(rangesPixelrg8lutTexture) / sizeof(D3D12_DESCRIPTOR_RANGE);
+	rootParameters[1].DescriptorTable.pDescriptorRanges = rangesPixelrg8lutTexture;
+
+	rootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	rootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
+	rootParameters[2].DescriptorTable.NumDescriptorRanges = sizeof(rangesVertex) / sizeof(D3D12_DESCRIPTOR_RANGE);
+	rootParameters[2].DescriptorTable.pDescriptorRanges = rangesVertex;
+
+	D3D12_ROOT_PARAMETER rootParametersBlit[2];
+	rootParametersBlit[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	rootParametersBlit[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+	rootParametersBlit[0].DescriptorTable.NumDescriptorRanges = sizeof(rangesPixelVramTexture) / sizeof(D3D12_DESCRIPTOR_RANGE);
+	rootParametersBlit[0].DescriptorTable.pDescriptorRanges = rangesPixelVramTexture;
+
+	rootParametersBlit[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	rootParametersBlit[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+	rootParametersBlit[1].DescriptorTable.NumDescriptorRanges = sizeof(rangesPixelrg8lutTexture) / sizeof(D3D12_DESCRIPTOR_RANGE);
+	rootParametersBlit[1].DescriptorTable.pDescriptorRanges = rangesPixelrg8lutTexture;
+
+	D3D12_STATIC_SAMPLER_DESC staticSamplerDesc;
+	ZeroMemory(&staticSamplerDesc, sizeof(staticSamplerDesc));
+	staticSamplerDesc.Filter = D3D12_FILTER_MIN_MAG_MIP_POINT;
+	staticSamplerDesc.AddressU = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
+	staticSamplerDesc.AddressV = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
+	staticSamplerDesc.AddressW = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
+	staticSamplerDesc.ShaderRegister = 0;
+	staticSamplerDesc.RegisterSpace = 0;
+	staticSamplerDesc.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+
+	D3D12_ROOT_SIGNATURE_DESC rootSignatureDesc;
+	rootSignatureDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
+	rootSignatureDesc.NumParameters = shaderCount == 3 ? 2 : 3;
+	rootSignatureDesc.pParameters = shaderCount == 3 ? rootParametersBlit : rootParameters;
+	rootSignatureDesc.NumStaticSamplers = 1;
+	rootSignatureDesc.pStaticSamplers = &staticSamplerDesc;
+
+	ID3DBlob* errorBlob;
+	ID3DBlob* signature;
+	hr = D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1, &signature, &errorBlob);
+	//printf("%s\n", errorBlob->GetBufferPointer());
+	assert(!FAILED(hr));
+
+	hr = d3ddev->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(), IID_PPV_ARGS(&shader.RS));
+	assert(!FAILED(hr));
+
+	Emulator_BeginCommandBuffer();
+	commandList->SetGraphicsRootSignature(shader.RS);
+
+	pipelineStateDesc.pRootSignature = shader.RS;
+	assert(!FAILED(d3ddev->CreateGraphicsPipelineState(&pipelineStateDesc, IID_PPV_ARGS(&shader.GPS))));
+	commandList->SetPipelineState(shader.GPS);
+	g_activePipelineState = NULL;
+
+	Emulator_EndCommandBuffer();
 
 #undef OFFSETOF
+
+	shaderCount++;//Hack
 
 	return shader;
 }
@@ -3825,6 +4222,7 @@ void Emulator_CreateGlobalShaders()
 
 #if defined(VULKAN)
 	Emulator_CreateDescriptorSets();
+
 	Emulator_SetShader(g_gte_shader_4);
 #endif
 
@@ -4162,7 +4560,96 @@ void Emulator_GenerateCommonTextures()
 	t->Release();
 
 #elif defined(D3D12)
-	UNIMPLEMENTED();
+	D3D12_RESOURCE_DESC td;
+
+	ZeroMemory(&td, sizeof(td));
+	td.Width = 1;
+	td.Height = 1;
+	td.MipLevels = td.DepthOrArraySize = 1;
+	td.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+	td.SampleDesc.Count = 1;
+	td.Flags = D3D12_RESOURCE_FLAG_NONE;
+	td.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+
+	HRESULT hr = d3ddev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE, &td, D3D12_RESOURCE_STATE_COPY_DEST, NULL, IID_PPV_ARGS(&whiteTexture.m_textureResource));
+	assert(!FAILED(hr));
+
+	unsigned int uploadBufferSize = td.Width * td.Height * sizeof(unsigned int);
+
+	hr = d3ddev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer(uploadBufferSize), D3D12_RESOURCE_STATE_GENERIC_READ, NULL, IID_PPV_ARGS(&whiteTexture.m_uploadHeap));
+	assert(!FAILED(hr));
+
+	D3D12_SUBRESOURCE_DATA srd;
+	ZeroMemory(&srd, sizeof(srd));
+	srd.pData = (void*)&pixelData;
+	srd.RowPitch = td.Width * sizeof(unsigned int);
+	srd.SlicePitch = 0;
+
+	Emulator_BeginCommandBuffer();
+	UpdateSubresources(commandList, whiteTexture.m_textureResource, whiteTexture.m_uploadHeap, 0, 0, 1, &srd);
+	commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(whiteTexture.m_textureResource, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE));
+	Emulator_EndCommandBuffer();
+
+	D3D12_DESCRIPTOR_HEAP_DESC srvHeapDesc = {};
+	srvHeapDesc.NumDescriptors = 1;
+	srvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+	srvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+	hr = d3ddev->CreateDescriptorHeap(&srvHeapDesc, IID_PPV_ARGS(&whiteTexture.m_srvHeap));
+	assert(SUCCEEDED(hr));
+
+
+	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	srvDesc.Format = td.Format;
+	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.Texture2D.MipLevels = 1;
+	d3ddev->CreateShaderResourceView(whiteTexture.m_textureResource, &srvDesc, whiteTexture.m_srvHeap->GetCPUDescriptorHandleForHeapStart());
+
+
+
+	ZeroMemory(&td, sizeof(td));
+	td.Width = LUT_WIDTH;
+	td.Height = LUT_HEIGHT;
+	td.MipLevels = td.DepthOrArraySize = 1;
+	td.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	td.SampleDesc.Count = 1;
+	td.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+
+
+	hr = d3ddev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE, &td, D3D12_RESOURCE_STATE_COPY_DEST, NULL, IID_PPV_ARGS(&rg8lutTexture.m_textureResource));
+	assert(!FAILED(hr));
+
+	uploadBufferSize = td.Width * td.Height * sizeof(unsigned int);
+
+	hr = d3ddev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer(uploadBufferSize), D3D12_RESOURCE_STATE_GENERIC_READ, NULL, IID_PPV_ARGS(&rg8lutTexture.m_uploadHeap));
+	assert(!FAILED(hr));
+
+
+	ZeroMemory(&srd, sizeof(srd));
+	srd.pData = (void*)Emulator_GenerateRG8LUT();
+	srd.RowPitch = td.Width * sizeof(unsigned int);
+	srd.SlicePitch = 0;
+
+	Emulator_BeginCommandBuffer();
+	UpdateSubresources(commandList, rg8lutTexture.m_textureResource, rg8lutTexture.m_uploadHeap, 0, 0, 1, &srd);
+	commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(rg8lutTexture.m_textureResource, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE));
+	Emulator_EndCommandBuffer();
+
+	ZeroMemory(&srvHeapDesc, sizeof(srvHeapDesc));
+	srvHeapDesc.NumDescriptors = 1;
+	srvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+	srvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+	hr = d3ddev->CreateDescriptorHeap(&srvHeapDesc, IID_PPV_ARGS(&rg8lutTexture.m_srvHeap));
+	assert(SUCCEEDED(hr));
+
+
+	ZeroMemory(&srvDesc, sizeof(srvDesc));
+	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	srvDesc.Format = td.Format;
+	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.Texture2D.MipLevels = 1;
+	d3ddev->CreateShaderResourceView(rg8lutTexture.m_textureResource, &srvDesc, rg8lutTexture.m_srvHeap->GetCPUDescriptorHandleForHeapStart());
+
 #elif defined(VULKAN)
 	int texWidth = 1;
 	int texHeight = 1;
@@ -4206,11 +4693,11 @@ int Emulator_CreateCommonResources()
 {
 	memset(vram, 0, VRAM_WIDTH * VRAM_HEIGHT * sizeof(unsigned short));
 	Emulator_GenerateCommonTextures();
-#if !defined(VULKAN)
+#if !defined(VULKAN) && !defined(D3D12)
 	Emulator_CreateGlobalShaders();
 #endif
 
-#if defined(D3D11) || defined(VULKAN)
+#if defined(D3D11) || defined(VULKAN) || defined(D3D12)
 	Emulator_CreateConstantBuffers();
 #endif
 
@@ -4310,7 +4797,77 @@ int Emulator_CreateCommonResources()
 		return FALSE;
 	}
 #elif defined(D3D12)
-	UNIMPLEMENTED();
+	D3D12_RESOURCE_DESC td;
+
+	ZeroMemory(&td, sizeof(td));
+	td.Width = VRAM_WIDTH;
+	td.Height = VRAM_HEIGHT;
+	td.MipLevels = td.DepthOrArraySize = 1;
+	td.Format = DXGI_FORMAT_R8G8_UNORM;
+	td.SampleDesc.Count = 1;
+	td.Flags = D3D12_RESOURCE_FLAG_NONE;
+	td.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+
+	D3D12_HEAP_PROPERTIES heapProperties;
+	heapProperties.Type = D3D12_HEAP_TYPE_DEFAULT;
+	heapProperties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
+	heapProperties.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
+	heapProperties.CreationNodeMask = 1;
+	heapProperties.VisibleNodeMask = 1;
+
+	HRESULT hr = d3ddev->CreateCommittedResource(&heapProperties, D3D12_HEAP_FLAG_NONE, &td, D3D12_RESOURCE_STATE_COPY_DEST, NULL, IID_PPV_ARGS(&vramTexture.m_textureResource));
+	assert(!FAILED(hr));
+
+	hr = d3ddev->CreateCommittedResource(&heapProperties, D3D12_HEAP_FLAG_NONE, &td, D3D12_RESOURCE_STATE_GENERIC_READ, NULL, IID_PPV_ARGS(&vramTexture.m_uploadHeap));
+	assert(!FAILED(hr));
+
+	D3D12_DESCRIPTOR_HEAP_DESC srvHeapDesc = {};
+	srvHeapDesc.NumDescriptors = 1;
+	srvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+	srvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+	hr = d3ddev->CreateDescriptorHeap(&srvHeapDesc, IID_PPV_ARGS(&vramTexture.m_srvHeap));
+	assert(SUCCEEDED(hr));
+
+	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	srvDesc.Format = td.Format;
+	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.Texture2D.MipLevels = 1;
+	d3ddev->CreateShaderResourceView(vramTexture.m_textureResource, &srvDesc, vramTexture.m_srvHeap->GetCPUDescriptorHandleForHeapStart());
+
+	ZeroMemory(&td, sizeof(td));
+	td.Width = LUT_WIDTH;
+	td.Height = LUT_HEIGHT;
+	td.MipLevels = td.DepthOrArraySize = 1;
+	td.Format = DXGI_FORMAT_R8G8_UNORM;
+	td.SampleDesc.Count = 1;
+	td.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+
+	D3D12_RESOURCE_DESC textureResourceDesc;
+	textureResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+	textureResourceDesc.Alignment = 0;
+	textureResourceDesc.Width = VRAM_WIDTH * VRAM_HEIGHT * sizeof(short);
+	textureResourceDesc.Height = 1;
+	textureResourceDesc.DepthOrArraySize = 1;
+	textureResourceDesc.MipLevels = 1;
+	textureResourceDesc.Format = DXGI_FORMAT_UNKNOWN;
+	textureResourceDesc.SampleDesc.Count = 1;
+	textureResourceDesc.SampleDesc.Quality = 0;
+	textureResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+	textureResourceDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
+
+
+	ZeroMemory(&heapProperties, sizeof(heapProperties));
+	heapProperties.Type = D3D12_HEAP_TYPE_UPLOAD;
+	heapProperties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
+	heapProperties.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
+	heapProperties.CreationNodeMask = 1;
+	heapProperties.VisibleNodeMask = 1;
+
+	hr = d3ddev->CreateCommittedResource(&heapProperties, D3D12_HEAP_FLAG_NONE, &textureResourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, NULL, IID_PPV_ARGS(&vramBaseTexture));
+	assert(!FAILED(hr));
+
+	Emulator_CreateGlobalShaders();
 #elif defined(VULKAN)
 	int texWidth = VRAM_WIDTH;
 	int texHeight = VRAM_HEIGHT;
@@ -4363,8 +4920,7 @@ void Emulator_Ortho2D(float left, float right, float bottom, float top, float zn
 	Emulator_UpdateProjectionConstantBuffer(&ortho[0]);
 	Emulator_SetConstantBuffers();
 #elif defined(D3D12)
-	///@D3D12
-	UNIMPLEMENTED();
+	Emulator_UpdateProjectionConstantBuffer(ortho);
 #elif defined(VULKAN)
 	Emulator_UpdateProjectionConstantBuffer(ortho);
 #else
@@ -4384,8 +4940,15 @@ void Emulator_SetShader(const ShaderID &shader)
 	d3dcontext->PSSetShader(shader.PS, NULL, 0);
 	d3dcontext->IASetInputLayout(shader.IL);
 #elif defined(D3D12)
-	///@D3D12
-	UNIMPLEMENTED();
+	if (begin_commands_flag && begin_pass_flag && !g_resetDeviceOnNextFrame)
+	{
+		commandList->SetGraphicsRootSignature(shader.RS);
+		commandList->SetPipelineState(shader.GPS);
+		g_activePipelineState = shader.GPS;
+		
+		Emulator_SetConstantBuffers();
+	}
+
 #elif defined(VULKAN)
 	g_shaderStages[VERTEX_BIT] = shader.VS;
 	g_shaderStages[FRAGMENT_BIT] = shader.PS;
@@ -4431,7 +4994,7 @@ void Emulator_SetTexture(TextureID texture, TexFormat texFormat)
 		//return;
 	}
 #else
-	if (g_lastBoundTexture[0] == texture && g_lastBoundTexture[1] == rg8lutTexture) {
+	if (g_lastBoundTexture[0].m_textureResource == texture.m_textureResource && g_lastBoundTexture[1].m_textureResource == rg8lutTexture.m_textureResource) {
 		//return;
 	}
 #endif
@@ -4460,8 +5023,12 @@ void Emulator_SetTexture(TextureID texture, TexFormat texFormat)
 	d3dcontext->PSSetShaderResources(1, 1, &rg8lutTexture);
 	d3dcontext->PSSetSamplers(0, 1, &samplerState);
 #elif defined(D3D12)
-	///@D3D12
-	UNIMPLEMENTED();
+	ID3D12DescriptorHeap* ppHeapsSRV[] = { texture.m_srvHeap };
+	commandList->SetDescriptorHeaps(_countof(ppHeapsSRV), ppHeapsSRV);
+	commandList->SetGraphicsRootDescriptorTable(0, texture.m_srvHeap->GetGPUDescriptorHandleForHeapStart());
+	ID3D12DescriptorHeap* ppHeapsSRV2[] = { rg8lutTexture.m_srvHeap };
+	commandList->SetDescriptorHeaps(_countof(ppHeapsSRV2), ppHeapsSRV2);
+	commandList->SetGraphicsRootDescriptorTable(1, rg8lutTexture.m_srvHeap->GetGPUDescriptorHandleForHeapStart());
 #elif defined(VULKAN)
 	g_activeTexture = texture;
 	if (g_activeTexture.textureImage == vramTexture.textureImage)
@@ -4513,8 +5080,8 @@ extern void Emulator_Clear(int x, int y, int w, int h, unsigned char r, unsigned
 	d3dcontext->ClearRenderTargetView(renderTargetView, clearColor);
 #elif defined(D3D12)
 	FLOAT clearColor[4]{ r / 255.0f, g / 255.0f, b / 255.0f, 1.0f };
-	D3D12_CPU_DESCRIPTOR_HANDLE renderTargetHandle(renderTargetDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
-	commandList->ClearRenderTargetView(renderTargetHandle, clearColor, 0, NULL);
+	CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(renderTargetDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), frameIndex, d3ddev->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV));
+	commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, NULL);
 #elif defined(VULKAN)
 	VkClearColorValue clearColor = { r / 255.0f, g / 255.0f, b / 255.0f, 1.0f };
 	
@@ -4808,6 +5375,34 @@ void Emulator_UpdateVRAM()
 	assert(!FAILED(hr));
 	memcpy(sr.pData, vram, VRAM_WIDTH * VRAM_HEIGHT * sizeof(short));
 	d3dcontext->Unmap(vramBaseTexture, 0);
+#elif defined(D3D12)
+
+	if (begin_commands_flag)
+	{
+		D3D12_RANGE readRange;
+		readRange.Begin = 0;
+		readRange.End = 0;
+
+		void* pTextureData = NULL;
+
+		HRESULT hr = vramBaseTexture->Map(0, &readRange, (void**)&pTextureData);
+		assert(!FAILED(hr));
+		memcpy(pTextureData, vram, (VRAM_WIDTH * VRAM_HEIGHT) * sizeof(short));
+		vramBaseTexture->Unmap(0, NULL);
+
+		D3D12_PLACED_SUBRESOURCE_FOOTPRINT footprint = {};
+		footprint.Footprint.Width = VRAM_WIDTH;
+		footprint.Footprint.Height = VRAM_HEIGHT;
+		footprint.Footprint.Depth = 1;
+		footprint.Footprint.RowPitch = VRAM_WIDTH * sizeof(short);
+		footprint.Footprint.Format = DXGI_FORMAT_R8G8_UNORM;
+
+		CD3DX12_TEXTURE_COPY_LOCATION src(vramBaseTexture, footprint);
+		CD3DX12_TEXTURE_COPY_LOCATION dest(vramTexture.m_textureResource, 0);
+
+		commandList->CopyTextureRegion(&dest, 0, 0, 0, &src, NULL);
+	}
+
 #elif defined(VULKAN)
 
 	TextureID newVramTexture;
@@ -4990,8 +5585,8 @@ int Emulator_BeginScene()
 	g_lastBoundTexture[0].textureImage = NULL;
 	g_lastBoundTexture[1].textureImage = NULL;
 #else
-	g_lastBoundTexture[0] = NULL;
-	g_lastBoundTexture[1] = NULL;
+	g_lastBoundTexture[0].m_textureResource = NULL;
+	g_lastBoundTexture[1].m_textureResource = NULL;
 #endif
 
 #if defined(OGL) || defined(OGLES)
@@ -5005,7 +5600,15 @@ int Emulator_BeginScene()
 	UINT offset = 0;
 	d3dcontext->IASetVertexBuffers(0, 1, &dynamic_vertex_buffer, &stride, &offset);
 #elif defined(D3D12)
+	dynamic_vertex_buffer_index = 0;
+	Emulator_UpdateVRAM();
 	Emulator_BeginPass();
+
+	dynamic_vertex_buffer_view.BufferLocation = dynamic_vertex_buffer[frameIndex]->GetGPUVirtualAddress();
+	dynamic_vertex_buffer_view.StrideInBytes = sizeof(Vertex);
+	dynamic_vertex_buffer_view.SizeInBytes = MAX_NUM_POLY_BUFFER_VERTICES * sizeof(Vertex);
+
+	commandList->IASetVertexBuffers(0, 1, &dynamic_vertex_buffer_view);
 
 #elif defined(VULKAN)
 	dynamic_vertex_buffer_index = 0;
@@ -5026,7 +5629,7 @@ int Emulator_BeginScene()
 	#error
 #endif
 
-#if !defined(VULKAN)
+#if !defined(VULKAN) && !defined(D3D12)
 	Emulator_UpdateVRAM();
 #endif
 
@@ -5401,13 +6004,11 @@ void Emulator_SwapWindow()
 
 	HRESULT hr = swapChain->Present(g_swapInterval, 0);
 	
+	Emulator_WaitForPreviousFrame();
+
 	if (hr == DXGI_ERROR_DEVICE_REMOVED || hr == DXGI_ERROR_DEVICE_RESET) {
 		Emulator_ResetDevice();
 	}
-
-#if defined(D3D12)
-	frameIndex = (frameIndex + 1) % 2;
-#endif
 
 #elif defined(VULKAN)
 	VkPipelineStageFlags waitDestStageMask = VK_PIPELINE_STAGE_TRANSFER_BIT;
@@ -5490,7 +6091,7 @@ void Emulator_WaitForTimestep(int count)
 
 void Emulator_EndScene()
 {
-#if defined(VULKAN)
+#if defined(VULKAN) || defined(D3D12)
 	dynamic_vertex_buffer_index = 0;
 	Emulator_EndPass();
 #endif
@@ -5522,20 +6123,7 @@ void Emulator_EndScene()
 #elif defined(D3D9) || defined(XED3D)
 	d3ddev->EndScene();
 #elif defined(D3D12)
-	D3D12_RESOURCE_BARRIER presentBarrier;
-	presentBarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-	presentBarrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-	presentBarrier.Transition.pResource = renderTargets[frameIndex];
-	presentBarrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
-	presentBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
-	presentBarrier.Transition.Subresource =D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-	commandList->ResourceBarrier(1, &presentBarrier);
-	commandList->Close();
 
-	ID3D12CommandList* ppCommandLists[] = { commandList };
-	commandQueue->ExecuteCommandLists(sizeof(ppCommandLists) / sizeof(commandList), ppCommandLists);
-	HRESULT hr = commandQueue->Signal(fence, fenceValue);
-	assert(!FAILED(hr));
 #elif defined(VULKAN)
 
 #endif
@@ -5973,9 +6561,7 @@ void Emulator_SetRenderTarget(const RenderTargetID &frameBufferObject)
 #elif defined(D3D11)
 	d3dcontext->OMSetRenderTargets(1, &frameBufferObject, NULL);
 #elif defined(D3D12)
-	///@TODO
-	UNIMPLEMENTED();
-	assert(false);
+	
 #elif defined(VULKAN)
 #else
     #error
@@ -6028,20 +6614,44 @@ void Emulator_UpdateVertexBuffer(const Vertex *vertices, int num_vertices)
 	memcpy(sr.pData, vertices, num_vertices * sizeof(Vertex));
 	d3dcontext->Unmap(dynamic_vertex_buffer, 0);
 #elif defined(D3D12)
-	char* pVertexData = NULL;
-	
-	D3D12_RANGE readRange;
-	readRange.Begin = 0;
-	readRange.End = 0;
 
-	HRESULT hr = dynamic_vertex_buffer->Map(0, &readRange, (void**)&pVertexData);
-	assert(!FAILED(hr));
-	memcpy(pVertexData, vertices, num_vertices * sizeof(Vertex));
-	dynamic_vertex_buffer->Unmap(0, NULL);
-	
-	dynamic_vertex_buffer_view.BufferLocation = dynamic_vertex_buffer->GetGPUVirtualAddress();
-	dynamic_vertex_buffer_view.StrideInBytes = sizeof(Vertex);
-	dynamic_vertex_buffer_view.SizeInBytes = num_vertices * sizeof(Vertex);
+	if (begin_commands_flag)
+	{
+		///@FIXME this is not updating the vertex buffer properly which is why the blit is failing!
+#if 0//WORKING
+		//Below leaks resource because we can't free it until everything has finished executing later on.
+		HRESULT hr = d3ddev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer(num_vertices * sizeof(Vertex)), D3D12_RESOURCE_STATE_GENERIC_READ, NULL, IID_PPV_ARGS(&tmpHeap));
+
+		assert(SUCCEEDED(hr));
+
+		commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(dynamic_vertex_buffer[frameIndex], D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_COPY_DEST));
+
+		void** pMap = NULL;
+		CD3DX12_RANGE readRange(0, 0);
+		hr = tmpHeap->Map(0, &readRange, (void**)(&pMap));
+		assert(SUCCEEDED(hr));
+
+		memcpy(pMap, vertices, num_vertices * sizeof(Vertex));
+		tmpHeap->Unmap(0, NULL);
+
+		commandList->CopyBufferRegion(dynamic_vertex_buffer[frameIndex], dynamic_vertex_buffer_index * sizeof(Vertex), tmpHeap, 0, num_vertices * sizeof(Vertex));
+		commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(dynamic_vertex_buffer[frameIndex], D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_GENERIC_READ));
+#else
+		commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(dynamic_vertex_buffer[frameIndex], D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_COPY_DEST));
+
+		void** pMap = NULL;
+		CD3DX12_RANGE readRange(0, 0);
+		HRESULT hr = dynamic_vertex_buffer_heap[frameIndex]->Map(0, &readRange, (void**)(&pMap));
+		assert(SUCCEEDED(hr));
+
+		memcpy(pMap, vertices, num_vertices * sizeof(Vertex));
+		dynamic_vertex_buffer_heap[frameIndex]->Unmap(0, NULL);
+
+		commandList->CopyBufferRegion(dynamic_vertex_buffer[frameIndex], dynamic_vertex_buffer_index * sizeof(Vertex), dynamic_vertex_buffer_heap[frameIndex], 0, num_vertices * sizeof(Vertex));
+		commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(dynamic_vertex_buffer[frameIndex], D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_GENERIC_READ));
+#endif
+	}
+
 #elif defined(VULKAN)
 	void* data = NULL;
 	if (vkMapMemory(device, dynamic_vertex_buffer_memory, dynamic_vertex_buffer_index * sizeof(Vertex), num_vertices * sizeof(Vertex), 0, &data) != VK_SUCCESS)
@@ -6072,8 +6682,12 @@ void Emulator_DrawTriangles(int start_vertex, int triangles)
 #elif defined(D3D11)
 	d3dcontext->Draw(triangles * 3, start_vertex);
 #elif defined(D3D12)
-	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	commandList->DrawInstanced(triangles, 1, start_vertex, 0);
+	if (!g_resetDeviceOnNextFrame)
+	{
+		commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		commandList->DrawInstanced(triangles * 3, 1, dynamic_vertex_buffer_index, 0);
+		dynamic_vertex_buffer_index += triangles * 3;
+	}
 #elif defined(VULKAN)
 	if (!g_resetDeviceOnNextFrame)
 	{
@@ -6146,15 +6760,124 @@ void Emulator_SetDefaultRenderTarget()
 
 #elif defined(D3D12)
 
+void Emulator_DestroyGlobalShaders()
+{
+	if (g_gte_shader_4.GPS != NULL)
+	{
+		g_gte_shader_4.GPS->Release();
+		g_gte_shader_4.GPS = NULL;
+	}
+
+	if (g_gte_shader_4.RS != NULL)
+	{
+		g_gte_shader_4.RS->Release();
+		g_gte_shader_4.RS = NULL;
+	}
+
+	if (g_gte_shader_8.GPS != NULL)
+	{
+		g_gte_shader_8.GPS->Release();
+		g_gte_shader_8.GPS = NULL;
+	}
+
+	if (g_gte_shader_8.RS != NULL)
+	{
+		g_gte_shader_8.RS->Release();
+		g_gte_shader_8.RS = NULL;
+	}
+
+	if (g_gte_shader_16.GPS != NULL)
+	{
+		g_gte_shader_16.GPS->Release();
+		g_gte_shader_16.GPS = NULL;
+	}
+
+	if (g_gte_shader_16.RS != NULL)
+	{
+		g_gte_shader_16.RS->Release();
+		g_gte_shader_16.RS = NULL;
+	}
+
+	if (g_blit_shader.GPS != NULL)
+	{
+		g_blit_shader.GPS->Release();
+		g_blit_shader.GPS = NULL;
+	}
+
+	if (g_blit_shader.RS != NULL)
+	{
+		g_blit_shader.RS->Release();
+		g_blit_shader.RS = NULL;
+	}
+}
+
+void Emulator_SetDefaultRenderTarget()
+{
+	CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(renderTargetDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), frameIndex, renderTargetDescriptorSize);
+	commandList->OMSetRenderTargets(1, &rtvHandle, FALSE, NULL);
+}
+
+void Emulator_SetConstantBuffers()
+{
+	ID3D12DescriptorHeap* ppHeapsCBV[] = { projectionMatrixBufferHeap[frameIndex]};
+	commandList->SetDescriptorHeaps(_countof(ppHeapsCBV), ppHeapsCBV);
+	commandList->SetGraphicsRootDescriptorTable(2, projectionMatrixBufferHeap[frameIndex]->GetGPUDescriptorHandleForHeapStart());
+}
+
+void Emulator_CreateConstantBuffers()
+{
+	unsigned int projectionMatrixBufferSize = ((sizeof(float) * 16) + 255) & ~255;
+
+	for (int i = 0; i < frameCount; i++)
+	{
+		D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
+		heapDesc.NumDescriptors = 1;
+		heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+		heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+		HRESULT hr = d3ddev->CreateDescriptorHeap(&heapDesc, IID_PPV_ARGS(&projectionMatrixBufferHeap[i]));
+		assert(SUCCEEDED(hr));
+	}
+
+	for (int i = 0; i < frameCount; i++)
+	{
+		d3ddev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer(projectionMatrixBufferSize), D3D12_RESOURCE_STATE_GENERIC_READ, NULL, IID_PPV_ARGS(&projectionMatrixBuffer[i]));
+
+		D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc;
+		ZeroMemory(&cbvDesc, sizeof(cbvDesc));
+		cbvDesc.BufferLocation = projectionMatrixBuffer[i]->GetGPUVirtualAddress();
+		cbvDesc.SizeInBytes = projectionMatrixBufferSize;
+		d3ddev->CreateConstantBufferView(&cbvDesc, projectionMatrixBufferHeap[i]->GetCPUDescriptorHandleForHeapStart());
+	
+		void** pMap = NULL;
+		CD3DX12_RANGE readRange(0, 0);
+		HRESULT hr = projectionMatrixBuffer[i]->Map(0, &readRange, (void**)(&pMap));
+		ZeroMemory(pMap, projectionMatrixBufferSize);
+		projectionMatrixBuffer[i]->Unmap(0, NULL);
+	}
+}
+
+void Emulator_UpdateProjectionConstantBuffer(float* ortho)
+{
+	void** pMap = NULL;
+	CD3DX12_RANGE readRange(0, 0);
+	HRESULT hr = projectionMatrixBuffer[frameIndex]->Map(0, &readRange, (void**)(&pMap));
+	memcpy(pMap, ortho, (sizeof(float) * 16));
+	projectionMatrixBuffer[frameIndex]->Unmap(0, &readRange);
+}
+
 void Emulator_EndCommandBuffer()
 {
 	commandList->Close();
+
+	ID3D12CommandList* ppCommandLists[] = { commandList };
+	commandQueue->ExecuteCommandLists(sizeof(ppCommandLists) / sizeof(commandList), ppCommandLists);
 
 	begin_commands_flag = FALSE;
 }
 
 void Emulator_EndPass()
 {
+	commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(renderTargets[frameIndex], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
 
 	Emulator_EndCommandBuffer();
 
@@ -6177,7 +6900,7 @@ int Emulator_BeginCommandBuffer()
 
 	HRESULT hr = commandAllocator->Reset();
 	assert(!FAILED(hr));
-	hr = commandList->Reset(commandAllocator, pipelineState);
+	hr = commandList->Reset(commandAllocator, NULL);
 	assert(!FAILED(hr));
 
 	begin_commands_flag = TRUE;
@@ -6187,33 +6910,17 @@ int Emulator_BeginCommandBuffer()
 
 void Emulator_BeginPass()
 {
-	Emulator_WaitForPreviousFrame();
-
-	D3D12_RESOURCE_BARRIER barrier;
-	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-	barrier.Transition.pResource = renderTargets[frameIndex];
-	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
-	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
-	barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-	commandList->ResourceBarrier(1, &barrier);
-
-	D3D12_CPU_DESCRIPTOR_HANDLE renderTargetViewHandle;
-	renderTargetViewHandle = renderTargetDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
-	unsigned int renderTargetViewDescriptorSize;
-	renderTargetViewDescriptorSize = d3ddev->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-	if (frameIndex == 1)
-	{
-		renderTargetViewHandle.ptr += renderTargetViewDescriptorSize;
-	}
-
-	commandList->SetGraphicsRootSignature(rootSignature);
-
 	Emulator_BeginCommandBuffer();
+
+	if (!begin_pass_flag)
+	{
+		commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(renderTargets[frameIndex], D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET));
+		CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(renderTargetDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), frameIndex, renderTargetDescriptorSize);
+		commandList->OMSetRenderTargets(1, &rtvHandle, FALSE, NULL);
+	}
 
 	begin_pass_flag = TRUE;
 }
-
 
 void Emulator_CreateRasterState(int wireframe)
 {
@@ -6232,14 +6939,14 @@ void Emulator_CreateRasterState(int wireframe)
 
 void Emulator_WaitForPreviousFrame()
 {
-	const UINT64 fenceVal = fenceValue;
-	commandQueue->Signal(fence, fenceVal);
-	fenceValue++;
+	const UINT64 fenceV = fenceValue[frameIndex];
+	assert(SUCCEEDED(commandQueue->Signal(fence, fenceV)));
+	fenceValue[frameIndex]++;
 
 	// Wait until the previous frame is finished.
-	if (fence->GetCompletedValue() < fenceVal)
+	if (fence->GetCompletedValue() < fenceV)
 	{
-		fence->SetEventOnCompletion(fenceVal, fenceEvent);
+		assert(SUCCEEDED(fence->SetEventOnCompletion(fenceV, fenceEvent)));
 		WaitForSingleObject(fenceEvent, INFINITE);
 	}
 

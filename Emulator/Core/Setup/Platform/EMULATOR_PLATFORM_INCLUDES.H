@@ -72,8 +72,7 @@
 #include <SDL_syswm.h>
 #endif
 #elif defined(D3D12)
-#include <Windows.h>
-#include <d3d12.h>
+#include <d3dx12.h>
 #include <SDL_syswm.h>
 #include <dxgi1_4.h>
 #elif defined(XED3D)

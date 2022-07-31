@@ -72,7 +72,7 @@ void Emulator_AddSplit(bool semiTrans, int page, TextureID textureId)
 #if defined(VULKAN)
 	if (curSplit.blendMode == blendMode && curSplit.texFormat == texFormat && curSplit.textureId.textureImage == textureId.textureImage)
 #else
-	if (curSplit.blendMode == blendMode && curSplit.texFormat == texFormat && curSplit.textureId == textureId)
+	if (curSplit.blendMode == blendMode && curSplit.texFormat == texFormat && curSplit.textureId.m_textureResource == textureId.m_textureResource)
 #endif
 	{
 		return;
@@ -678,6 +678,7 @@ void Emulator_DrawSplit(const VertexBufferSplit& split)
 #if defined(_PATCH)
 	Emulator_Ortho2D(0, activeDrawEnv.clip.w, activeDrawEnv.clip.h, 0, 0.0f, 1.0f);
 #endif
+
 	Emulator_DrawTriangles(split.vIndex, split.vCount / 3);
 }
 
