@@ -131,7 +131,7 @@ void (*midiMetaEventFunction[78])(struct AadSeqEvent* event, struct _AadSequence
 	&metaCmdUpdateMute
 };
 
-int aadQueueNextEvent(struct _AadSequenceSlot *slot, int track)
+int aadQueueNextEvent(struct _AadSequenceSlot* slot, int track)
 {
 	struct AadSeqEvent seqEvent;
 	unsigned char* seqData;
@@ -139,33 +139,23 @@ int aadQueueNextEvent(struct _AadSequenceSlot *slot, int track)
 	int c;
 	int n;
 	int i;
-	
+
 	if ((slot->trackFlags[track] & 0x18))
 	{
 		return -1;
 	}
-	
+
 	if ((slot->trackFlags[track] & 0x20))
 	{
 		slot->lastEventExecutedTime[track] = slot->tempo.currentTick;
 		slot->trackFlags[track] &= 0xDF;
 	}
-	
+
 	seqData = slot->sequencePosition[track];
-	deltaTime = *seqData;
 
-	if (*seqData & 0x80)
+	for ((deltaTime = *seqData++); (deltaTime & 0x80);)
 	{
-		deltaTime = *seqData & 0x7F;
-
-		while ((*seqData++ & 0x80))
-		{
-			deltaTime = (deltaTime << 7) | (*seqData & 0x7F);
-		}
-	}
-	else
-	{
-		seqData++;
+		deltaTime = (*seqData << 7) | ((*seqData++) & 0x7F);
 	}
 
 	seqEvent.track = track;
@@ -186,18 +176,20 @@ int aadQueueNextEvent(struct _AadSequenceSlot *slot, int track)
 			slot->trackFlags[track] |= 0x10;
 		}
 	}
-	else 
+	else
 	{
 		if (*seqData & 0x80)
 		{
-			seqEvent.statusByte = *seqData;
-			slot->runningStatus[track] = *seqData++;
+			seqEvent.statusByte = *seqData++;
+
+			slot->runningStatus[track] = *seqData;
+
 		}
 		else
 		{
 			seqEvent.statusByte = slot->runningStatus[track];
 		}
-		
+
 		n = midiDataByteCount[(seqEvent.statusByte >> 4) & 0x7];
 	}
 
@@ -208,32 +200,24 @@ int aadQueueNextEvent(struct _AadSequenceSlot *slot, int track)
 	}
 
 	slot->sequencePosition[track] = seqData;
-	slot->eventQueue[slot->eventIn[track]][track] = seqEvent;
-	slot->eventsInQueue[track]++;
-	slot->eventIn[track]++;
 
-	if (slot->eventIn[track] == 4)
+	slot->eventQueue[slot->eventIn[track]][track] = seqEvent;
+
+	slot->eventsInQueue[track]++;
+
+	if (++slot->eventIn[track] == 4)
 	{
 		slot->eventIn[track] = 0;
 	}
 
 	return 0;
 }
-
-void aadExecuteEvent(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
+void aadExecuteEvent(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)//Matching - 82.11%
 {
 #if defined(PSX_VERSION)
 	int eventType;
 
 	eventType = event->statusByte;
-	static int calls = 0;
-	calls++;
-
-	if (calls == 0x4d700)
-	{
-		int testing = 0;
-		testing++;
-	}
 
 	if ((eventType & 0x80))
 	{
@@ -283,11 +267,11 @@ void midiNoteOff(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 	UNIMPLEMENTED();
 }
 
-void midiNoteOn(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
+void midiNoteOn(struct AadSeqEvent* event, struct _AadSequenceSlot* slot)//Matching - 99.66%
 {
-	struct AadProgramAtr *progAtr;
-	struct AadToneAtr *toneAtrTbl;
-	struct AadSynthVoice *voice;
+	struct AadProgramAtr* progAtr;
+	struct AadToneAtr* toneAtrTbl;
+	struct AadSynthVoice* voice;
 	int channel;
 	int midiNote;
 	int transposedNote;
@@ -299,15 +283,15 @@ void midiNoteOn(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 
 	if (!((slot->channelMute >> channel) & 0x1) && slot->currentProgram[channel] != 255)
 	{
-		midiNote = event->dataByte[0];
-		
+		midiNote = (unsigned char)event->dataByte[0];
+
 		if (event->dataByte[1] == 0)
 		{
-			for(t = 0; t < 24; t++)
+			for (t = 0; t < 24; t++)
 			{
 				voice = &aadMem->synthVoice[t];
-		
-				if (voice->voiceID == (slot->slotID | channel) && voice->note == midiNote && aadMem->voiceStatus[t] != 0 && aadMem->voiceStatus[t] == 2)
+
+				if (voice->voiceID == (slot->slotID | channel) && voice->note == midiNote && aadMem->voiceStatus[t] != 0 && aadMem->voiceStatus[t] != 2)
 				{
 					aadMem->voiceKeyOffRequest |= voice->voiceMask;
 
@@ -319,13 +303,13 @@ void midiNoteOn(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 		}
 		else
 		{
-			if(!((slot->ignoreTranspose >> channel) & 0x1))
+			if (((slot->ignoreTranspose >> channel) & 0x1))
 			{
-				transposedNote = (midiNote + slot->transpose[channel]) & 0xFF;
+				transposedNote = midiNote;
 			}
 			else
 			{
-				transposedNote = midiNote;
+				transposedNote = (midiNote + slot->transpose[channel]) & 0xFF;
 			}
 
 			dynBank = slot->currentDynamicBank[channel];
@@ -335,46 +319,40 @@ void midiNoteOn(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 				progAtr = aadMem->dynamicProgramAtr[dynBank] + slot->currentProgram[channel];
 				toneAtrTbl = aadMem->dynamicToneAtr[dynBank];
 
-				//v0 = progAtr->firstTone
-				//v1 = aadMem->dynamicToneAtr[firstTone]
-				if (progAtr->firstTone < progAtr->firstTone + progAtr->numTones)
+
+				for (t = progAtr->firstTone; t < progAtr->firstTone + progAtr->numTones; t++)
 				{
-					for (t = progAtr->firstTone; t < progAtr->firstTone + progAtr->numTones; t++)
+					if (midiNote >= (toneAtrTbl + t)->minNote &&
+						(toneAtrTbl + t)->maxNote >= midiNote)
 					{
-						if (midiNote >= (toneAtrTbl + t)->minNote &&
-							(toneAtrTbl + t)->maxNote >= midiNote)
+						voice = aadAllocateVoice((toneAtrTbl + t)->priority);
+
+						if (voice != NULL)
 						{
-							voice = aadAllocateVoice((toneAtrTbl + t)->priority);
+							waveStartAddr = ((unsigned long*)aadMem->dynamicWaveAddr[dynBank])[(toneAtrTbl + t)->waveIndex];
 
-							if (voice != NULL)
+							if ((toneAtrTbl + t)->pitchBendMax != 0 && slot->pitchWheel[channel] != 8192)
 							{
-								waveStartAddr = ((unsigned long*)aadMem->dynamicWaveAddr[dynBank])[(toneAtrTbl + t)->waveIndex];
+								aadPlayTonePitchBend((toneAtrTbl + t), waveStartAddr, progAtr, transposedNote, event->dataByte[1], slot->volume[channel], slot->panPosition[channel], slot->slotVolume, slot->masterVolPtr[0], voice, slot->pitchWheel[channel]);
 
-								static int calls = 0;
-								calls++;
-								if ((toneAtrTbl + t)->pitchBendMax != 0 && slot->pitchWheel[channel] != 8192)
-								{
-									aadPlayTonePitchBend((toneAtrTbl + t), waveStartAddr, progAtr, transposedNote, event->dataByte[1], slot->volume[channel], slot->panPosition[channel], slot->slotVolume, slot->masterVolPtr[0], voice, slot->pitchWheel[channel]);
-
-									voice->handle = 0;
-								}
-								else
-								{
-									aadPlayTone((toneAtrTbl + t), waveStartAddr, progAtr, transposedNote, event->dataByte[1], slot->volume[channel], slot->panPosition[channel], slot->slotVolume, slot->masterVolPtr[0], voice, 0);
-
-									voice->handle = 0;
-								}
-
-								voice->voiceID = slot->slotID | channel;
-								voice->note = midiNote;
-								voice->priority = (toneAtrTbl + t)->priority;
-								voice->program = slot->currentProgram[channel];
-								voice->volume = event->dataByte[1];
-								voice->updateVol = slot->volume[channel];
-								voice->progAtr = progAtr;
-								voice->toneAtr = toneAtrTbl + t;
-								voice->pan = slot->panPosition[channel];
+								voice->handle = 0;
 							}
+							else
+							{
+								aadPlayTone((toneAtrTbl + t), waveStartAddr, progAtr, transposedNote, event->dataByte[1], slot->volume[channel], slot->panPosition[channel], slot->slotVolume, slot->masterVolPtr[0], voice, 0);
+
+								voice->handle = 0;
+							}
+
+							voice->voiceID = slot->slotID | channel;
+							voice->priority = (toneAtrTbl + t)->priority;
+							voice->note = midiNote;
+							voice->program = slot->currentProgram[channel];
+							voice->volume = event->dataByte[1];
+							voice->updateVol = slot->volume[channel];
+							voice->pan = slot->panPosition[channel];
+							voice->progAtr = progAtr;
+							voice->toneAtr = toneAtrTbl + t;
 						}
 					}
 				}
@@ -382,7 +360,6 @@ void midiNoteOn(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 		}
 	}
 }
-
 
 // autogenerated function stub: 
 // void /*$ra*/ aadUpdateChannelVolPan(struct _AadSequenceSlot *slot /*$s4*/, int channel /*$s5*/)
@@ -598,7 +575,7 @@ void midiControlChange(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 {
 	int controlNumber;
 	
-	controlNumber = event->dataByte[0] & 0xF;
+	controlNumber = (unsigned char)event->dataByte[0] & 0xF;
 
 	midiControlFunction[controlNumber](event, slot);
 }
@@ -650,7 +627,7 @@ void midiPitchWheelControl(struct AadSeqEvent *event, struct _AadSequenceSlot *s
 
 	channel = event->statusByte & 0xF;
 
-	slot->pitchWheel[channel] = (event->dataByte[0] | (event->dataByte[1] << 7));
+	slot->pitchWheel[channel] = ((unsigned char)event->dataByte[0] | ((unsigned char)event->dataByte[1] << 7));
 	
 	aadUpdateChannelPitchBend(slot, channel);
 #elif defined(PC_VERSION)
@@ -702,7 +679,7 @@ void midiControlVolume(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 	int channel;
 
 	channel = event->statusByte & 0xF;
-	slot->volume[channel] = event->dataByte[1];
+	slot->volume[channel] = (unsigned char)event->dataByte[1];
 
 	if (((slot->enableSustainUpdate >> channel) & 0x1) != 0)
 	{

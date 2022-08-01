@@ -149,21 +149,23 @@ void MIDI_Save(char* midiFilePath, unsigned int dataLength, AadSoundBankHdr* sou
 		AadSequenceHdr* seqHdr = (AadSequenceHdr*)&sequenceBase[sequenceOffsetTbl[i]];
 		AadSequenceHdr* nextSeqHdr = NULL;
 		
+		if (i == 4)
+		{
+			int testing = 0;
+			testing++;
+		}
+
 		if (i + 1 == soundBankHeader->numSequences)
 		{
 			unsigned int offset = (char*)&sequenceBase[sequenceOffsetTbl[0]] - (char*)soundBankHeader;
-			nextSeqHdr = (AadSequenceHdr*)&sequenceBase[dataLength - sequenceOffsetTbl[i] - offset];
+			nextSeqHdr = (AadSequenceHdr*)&sequenceBase[dataLength - offset];
 		}
 		else
 		{
 			nextSeqHdr = (AadSequenceHdr*)&sequenceBase[sequenceOffsetTbl[i + 1]];
 		}
 
-		if (i == 3)
-		{
-			int testing = 0;
-			testing++;
-		}
+
 
 		unsigned int sequenceLength = ((char*)nextSeqHdr - (char*)seqHdr) - sizeof(AadSequenceHdr) - (seqHdr->numTracks * sizeof(unsigned int));
 
@@ -186,6 +188,18 @@ void MIDI_Save(char* midiFilePath, unsigned int dataLength, AadSoundBankHdr* sou
 			MIDI_WriteUInt32(f, 0);//Dummy
 
 			unsigned int trkStart = ftell(f);
+
+			if (t == 0)
+			{
+				MIDI_WriteUInt8(f, 0x00);
+				MIDI_WriteUInt8(f, 0xFF);
+				MIDI_WriteUInt8(f, 0x51);
+				MIDI_WriteUInt8(f, 0x03);
+				MIDI_WriteUInt8(f, (seqHdr->quarterNoteTime >> 16) & 0xFF);
+				MIDI_WriteUInt8(f, (seqHdr->quarterNoteTime >> 8) & 0xFF);
+				MIDI_WriteUInt8(f, (seqHdr->quarterNoteTime) & 0xFF);
+			}
+
 
 #if 0
 			// every SMF should have GM Reset

@@ -18,8 +18,14 @@ struct NewMemTracker newMemTracker;
 unsigned long mem_used, mem_total;
 
 #if defined(PSXPC_VERSION) || defined(PC_VERSION)
+
+#if defined(UWP)
+char* memBuffer = NULL;
+unsigned int overlayAddress = 0; // 0x800CE194
+#else
 char memBuffer[0x11F18C + ONE_MB * 8];
 unsigned int overlayAddress = (int)memBuffer; // 0x800CE194
+#endif
 #else
 unsigned int overlayAddress; // For PSX this is quite clearly set by the linker script maybe.
 #endif
@@ -28,8 +34,21 @@ void MEMPACK_Init()//Matching - 51.54%
 {
 #if defined(PSX_VERSION)
 #if defined(PSXPC_VERSION)
+#if defined(UWP)
+	SYSTEM_INFO info;
+	GetSystemInfo(&info);
+
+	LPVOID base = info.lpMinimumApplicationAddress;
+	unsigned int totalSize = 0x11F18C + (ONE_MB * 8);
+	memBuffer = (char*)VirtualAlloc(base, totalSize, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
+	overlayAddress = (unsigned int)memBuffer;
+	newMemTracker.totalMemory = totalSize;
+	memset(&memBuffer[0], 0, totalSize);
+#else
 	newMemTracker.totalMemory = sizeof(memBuffer);
 	memset(&memBuffer[0], 0, sizeof(memBuffer));
+#endif
+	
 	newMemTracker.rootNode = (struct MemHeader*)&memBuffer[0];
 #else
 	newMemTracker.totalMemory = (BASE_ADDRESS + (TWO_MB - (ONE_MB / 256))) - overlayAddress;
@@ -98,7 +117,11 @@ char* MEMPACK_Malloc(unsigned long allocSize, unsigned char memType)//Matching -
 {
 #if defined(PSX_VERSION)
 	
+#if defined(UWP)
+	struct MemHeader* bestAddress = NULL;
+#else
 	struct MemHeader* bestAddress;
+#endif
 	long relocatableMemory;
 	int curMem;
 	struct MemHeader* address;

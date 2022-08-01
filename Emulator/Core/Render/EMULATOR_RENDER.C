@@ -53,6 +53,11 @@ unsigned short s_lastPolyType = 0xFFFF;
 #if defined(USE_32_BIT_ADDR)
 unsigned int actualTerminator[2] { 0xFFFFFFFF, 0};
 unsigned int terminatorOT[2] = { (unsigned int)&actualTerminator, 0};
+
+#if defined(_WIN64)
+unsigned int terminatorAddr = 0;
+#endif
+
 #else
 unsigned int actualTerminator = -1;
 unsigned int terminatorOT = (unsigned int)&actualTerminator;
@@ -732,7 +737,11 @@ void Emulator_AggregatePTAGsToSplits(u_long* p, bool singlePrimitive)
 
 		// P_TAG as primitive list
 		//do
+#if defined(_WIN64)
+		while ((uintptr_t)pTag != (uintptr_t)terminatorAddr)
+#else
 		while ((uintptr_t)pTag != (uintptr_t)&terminatorOT)
+#endif
 		{
 			if (pTag->len > 0)
 			{

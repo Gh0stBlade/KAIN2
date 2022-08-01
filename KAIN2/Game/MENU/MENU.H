@@ -42,7 +42,7 @@ enum menu_ctrl_t // Hashcode: 0xE0BD1E93 (dec: -524476781)
 
 struct menu_item_t // hashcode: 0xF260D8A8 (dec: -228534104)
 {
-	char* text; // size=0, offset=0
+	char* PTR_32 text; // size=0, offset=0
 	int (*fn)(void*, long, enum menu_ctrl_t); // size=0, offset=4
 	long parameter; // size=0, offset=8
 	long flags; // size=0, offset=12

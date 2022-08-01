@@ -8,7 +8,7 @@
 #include "MEMPACK.H"
 #include "STREAM.H"
 
-char soundBuffer[13256];
+char soundBuffer[sizeof(AadMemoryStruct) + (sizeof(_AadSequenceSlot) * 4)];
 
 struct MusicLoadInfo musicInfo; // offset 0x800D1510
 
@@ -1169,7 +1169,7 @@ void SOUND_Init()
 	initAttr.updateMode = 1;
 
 	aadGetMemorySize(&initAttr);
-	aadInit(&initAttr, (unsigned char*)soundBuffer);
+	aadInit(&initAttr, (unsigned char*)&soundBuffer[0]);
 	gameTrackerX.sound.gMasterVol = 16383;
 	SOUND_SetMusicVolume(127);
 	SOUND_SetSfxVolume(127);
@@ -1613,8 +1613,8 @@ void SOUND_ProcessMusicLoad()
 
 							if (musicInfo.currentMusicPlane != 0)
 							{
-								musicName[2] = 's';
-								musicName[3] = 'p';
+								musicName[2] = 'm';
+								musicName[3] = 'a';
 							}
 							else
 							{
@@ -1622,9 +1622,16 @@ void SOUND_ProcessMusicLoad()
 								musicName[3] = 'a';
 							}
 
+							musicName[0] = 'u';
+							musicName[1] = 'r';
+
 							musicName[4] = 0;
 
+#if defined(UWP)
+							if (_strcmpi(musicName, musicInfo.currentMusicName) != 0)
+#else
 							if (strcmpi(musicName, musicInfo.currentMusicName) != 0)
+#endif
 							{
 								if (musicInfo.currentMusicName[0] != 0)
 								{

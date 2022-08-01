@@ -22,7 +22,12 @@ int dword_3410 = 0;
 char byte_3352 = 0;
 
 #if defined(USE_32_BIT_ADDR)
-extern  unsigned int terminatorOT[];
+#if defined(_WIN64)
+extern unsigned int terminatorOT[];
+extern unsigned int terminatorAddr;
+#else
+extern unsigned int terminatorOT[];
+#endif
 #else
 extern unsigned int terminatorOT = -1;
 #endif
@@ -91,8 +96,23 @@ int ClearImage2(RECT16* rect, u_char r, u_char g, u_char b)
 
 int DrawSync(int mode)
 {
+#if defined(D3D12)
+	int closeBuffer = FALSE;
+	if (!begin_commands_flag)
+	{
+		Emulator_BeginCommandBuffer();
+		closeBuffer = TRUE;
+	}
+#endif
 	// Update VRAM seems needed to be here
 	Emulator_UpdateVRAM();
+
+#if defined(D3D12)
+	if (closeBuffer == TRUE)
+	{
+		Emulator_EndCommandBuffer();
+	}
+#endif
 
 	if (drawsync_callback != NULL)
 	{
@@ -175,13 +195,20 @@ int StoreImage(RECT16* rect, u_long* p)
 
 u_long* ClearOTag(u_long* ot, int n)
 {
+#if defined(_WIN64)
+	terminatorAddr = (unsigned int)ot;
+#endif
 	//Nothing to do here.
 	if (n == 0)
 		return NULL;
 
 	//last is special terminator
 #if defined(USE_32_BIT_ADDR)
+#if defined(_WIN64)
+	setaddr(&ot[n - 2], terminatorAddr);
+#else
 	setaddr(&ot[n - 2], &terminatorOT);
+#endif
 	setlen(&ot[n - 2], 0);
 #else
 	setaddr(&ot[n - 1], &terminatorOT);
@@ -207,12 +234,19 @@ u_long* ClearOTag(u_long* ot, int n)
 
 u_long* ClearOTagR(u_long* ot, int n)
 {
+#if defined(_WIN64)
+	terminatorAddr = (unsigned int)ot + n * (sizeof(unsigned int) * 2);
+#endif
 	//Nothing to do here.
 	if (n == 0)
 		return NULL;
 
 	//First is special terminator
+#if defined(_WIN64)
+	setaddr(ot, terminatorAddr);
+#else
 	setaddr(ot, &terminatorOT);
+#endif
 	setlen(ot, 0);
 
 #if defined(USE_32_BIT_ADDR)

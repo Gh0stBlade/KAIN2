@@ -21,7 +21,7 @@ short aadPitchTable[85] = {
   0x32cb,0x35d1,0x3904,0x3c68,0x3fff
 };
 
-struct AadSynthVoice* aadAllocateVoice(int priority)
+struct AadSynthVoice* aadAllocateVoice(int priority)//Matching - 70.49%
 {
 	int i;
 	int lowestPriSus;
@@ -36,15 +36,15 @@ struct AadSynthVoice* aadAllocateVoice(int priority)
 	lowestPriRelVoice = NULL;
 	lowestPriSusVoice = NULL;
 
-	voice = &aadMem->synthVoice[0];
-
-	for (i = 0; i < 24; i++, voice++)
+	for (i = 0; i < 24; i++)
 	{
+		voice = &aadMem->synthVoice[i];
+
 		if (!(voice->flags & 0x1))
 		{
 			if (aadMem->voiceStatus[i] != 0)
 			{
-				if (aadMem->voiceStatus[i] != 2)
+				if (aadMem->voiceStatus[i] == 2)
 				{
 					if (voice->priority < lowestPriRel)
 					{
@@ -61,12 +61,12 @@ struct AadSynthVoice* aadAllocateVoice(int priority)
 					}
 				}
 			}
-			else
-			{
-				aadMem->voiceStatus[i] = 1;
-				voice->flags |= 0x2;
-				return voice;
-			}
+		}
+		else
+		{
+			aadMem->voiceStatus[i] = 1;
+			voice->flags |= 0x2;
+			return voice;
 		}
 	}
 
@@ -80,12 +80,9 @@ struct AadSynthVoice* aadAllocateVoice(int priority)
 		lowestPriSusVoice->flags |= 2;
 		return lowestPriSusVoice;
 	}
-	else
-	{
-		return NULL;
-	}
-}
 
+	return voice;
+}
 void SpuSetVoiceADSR1ADSR2(int vNum, unsigned short adsr1, unsigned short adsr2)
 { 
 	unsigned short sl;

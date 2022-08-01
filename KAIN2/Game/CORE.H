@@ -40,6 +40,12 @@ typedef RECT PSX_RECT;
 
 #elif defined(PSXPC_VERSION)
 
+#include <EMULATOR_PUBLIC.H>
+
+#if defined(UWP)
+#include <Windows.h>
+#endif
+
 #include <LIBAPI.H>
 #include <LIBETC.H>
 #include <LIBGTE.H>
@@ -52,8 +58,6 @@ typedef RECT PSX_RECT;
 #include <LIBPRESS.H>
 #include <INLINE_C.H>
 
-#include <EMULATOR_PUBLIC.H>
-
 #define LoadImage LoadImagePSX
 #define PSX_EnterCriticalSection	EnterCriticalSection
 #define PSX_ExitCriticalSection		ExitCriticalSection
@@ -61,6 +65,12 @@ typedef RECT PSX_RECT;
 #define setlen_ST( p, _len) 	(((POLY_F4_SEMITRANS *)(p))->len  = (u_char)(_len))
 #define setcode_ST(p, _code)	(((POLY_F4_SEMITRANS *)(p))->code = (u_char)(_code))
 #define setPolyFT4_ST(p) setlen_ST(p, 6),  setcode_ST(p, 0x2A)
+
+#if defined(_WIN64)
+#define PTR_32 __ptr32
+#else
+#define PTR_32 0
+#endif
 
 //Custom GTE macros
 #define gte_st_mac0( r0 ) \
@@ -76,10 +86,6 @@ typedef RECT PSX_RECT;
 #if defined(__ANDROID__)
 #define strcmpi strcmp
 #define _strcmpi strcmp
-#endif
-
-#if defined(UWP)
-#define strcmpi _strcmpi
 #endif
 
 #if defined(__EMSCRIPTEN__)

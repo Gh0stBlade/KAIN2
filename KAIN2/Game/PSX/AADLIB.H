@@ -1,6 +1,8 @@
 #ifndef AADLIB_H
 #define AADLIB_H
 
+#include "CORE.H"
+
 typedef long (*TDRFuncPtr_aadInstallUpdateFunc0updateFuncPtr)();
 typedef void (*TDRFuncPtr_aadInstallEndSequenceCallback)();
 typedef void (*TDRFuncPtr_aadInstallEndSequenceCallback0callbackProc)();
@@ -77,8 +79,8 @@ struct _AadDynSfxFileHdr // hashcode: 0xB9609773 (dec: -1184852109)
 	unsigned short uniqueID; // size=0, offset=6
 	unsigned short handle; // size=0, offset=8
 	unsigned short numSfxInFile; // size=0, offset=10
-	struct _AadDynSfxFileHdr* prevDynSfxFile; // size=20, offset=12
-	struct _AadDynSfxFileHdr* nextDynSfxFile; // size=20, offset=16
+	struct _AadDynSfxFileHdr* PTR_32 prevDynSfxFile; // size=20, offset=12
+	struct _AadDynSfxFileHdr* PTR_32 nextDynSfxFile; // size=20, offset=16
 };
 
 struct AadDynSfxAttr // hashcode: 0x20751E4B (dec: 544546379)
@@ -115,11 +117,11 @@ struct _AadSequenceSlot // hashcode: 0xD7421DD6 (dec: -683532842)
 	unsigned char eventIn[16]; // size=16, offset=792
 	unsigned char eventOut[16]; // size=16, offset=808
 	unsigned char eventsInQueue[16]; // size=16, offset=824
-	unsigned char(*sequencePosition[16]); // size=64, offset=840
+	unsigned char* sequencePosition[16]; // size=64, offset=840
 	unsigned long lastEventExecutedTime[16]; // size=64, offset=904
 	unsigned char runningStatus[16]; // size=16, offset=968
 	unsigned char trackFlags[16]; // size=16, offset=984
-	unsigned char(*loopSequencePosition[4][16]); // size=256, offset=1000
+	unsigned char* loopSequencePosition[4][16]; // size=256, offset=1000
 	unsigned char loopCurrentNestLevel[16]; // size=16, offset=1256
 	unsigned char loopCounter[4][16]; // size=64, offset=1272
 	struct _AadSequenceSlot* selectedSlotPtr; // size=1488, offset=1336
@@ -292,7 +294,7 @@ typedef struct AadMemoryStruct // hashcode: 0x46CEF45B (dec: 1187968091)
 	int musicMasterVol; // size=0, offset=32
 	int flags; // size=0, offset=36
 	struct AadVolFader musicMasterVolFader; // size=12, offset=40
-	struct _AadSequenceSlot(*sequenceSlots[8]); // size=32, offset=52
+	struct _AadSequenceSlot* sequenceSlots[8]; // size=32, offset=52
 	struct AadSfxSlot sfxSlot; // size=392, offset=84
 	struct AadSynthVoice synthVoice[24]; // size=672, offset=476
 	char voiceStatus[24]; // size=24, offset=1148
@@ -300,14 +302,14 @@ typedef struct AadMemoryStruct // hashcode: 0x46CEF45B (dec: 1187968091)
 	unsigned long voiceKeyOffRequest; // size=0, offset=1220
 	unsigned long voiceKeyOnRequest; // size=0, offset=1224
 	unsigned long voiceReverbRequest; // size=0, offset=1228
-	struct AadSoundBankHdr(*dynamicSoundBankHdr[2]); // size=8, offset=1232
-	struct AadProgramAtr(*dynamicProgramAtr[2]); // size=8, offset=1240
-	struct AadToneAtr(*dynamicToneAtr[2]); // size=8, offset=1248
-	unsigned long(*dynamicWaveAddr[2]); // size=8, offset=1256
-	unsigned char(**dynamicSequenceAddressTbl[2]); // size=8, offset=1264
-	unsigned long(*dynamicSequenceLabelOffsetTbl[2]); // size=8, offset=1272
+	struct AadSoundBankHdr* dynamicSoundBankHdr[2]; // size=8, offset=1232
+	struct AadProgramAtr* dynamicProgramAtr[2]; // size=8, offset=1240
+	struct AadToneAtr* dynamicToneAtr[2]; // size=8, offset=1248
+	unsigned long* dynamicWaveAddr[2]; // size=8, offset=1256
+	unsigned char** dynamicSequenceAddressTbl[2]; // size=8, offset=1264
+	unsigned long* dynamicSequenceLabelOffsetTbl[2]; // size=8, offset=1272
 	int dynamicBankStatus[2]; // size=8, offset=1280
-	unsigned char(*dynamicSoundBankData[2]); // size=8, offset=1288
+	unsigned char* dynamicSoundBankData[2]; // size=8, offset=1288
 	unsigned long dynamicSoundBankSramData[2]; // size=8, offset=1296
 	struct AadDynamicLoadRequest loadRequestQueue[16]; // size=448, offset=1304
 	struct AadDynamicBankLoadInfo dynamicBankLoadInfo; // size=88, offset=1752

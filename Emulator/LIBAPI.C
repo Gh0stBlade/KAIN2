@@ -22,7 +22,7 @@ long SetRCnt(long spec, unsigned short target, long mode)//(F)
 		return 0;
 	}
 
-	counters[spec].value = 0;
+	counters[spec].value = 0x1C00;
 	counters[spec].target = target;
 
 	if (spec < 2)
@@ -50,7 +50,7 @@ long SetRCnt(long spec, unsigned short target, long mode)//(F)
 		value |= 0x10;
 	}//loc_180
 
-	counters[spec].value = value;
+	counters[spec].value |= value;
 
 	return 1;
 }
@@ -88,8 +88,11 @@ long StartRCnt(long spec)//(F)
 
 	if (counters[spec].padding00 != NULL)
 	{
-		counters[spec].timerID = spec;
-		SDL_AddTimer(1000/60, Emulator_CounterWrapper, &counters[spec].timerID);
+		counters[spec].timerIndex = spec;
+#if !defined(UWP)
+		counters[spec].startTick = SDL_GetTicks();
+		SDL_AddTimer(counters[spec].target >> 4, Emulator_CounterWrapper, &counters[spec].timerIndex);
+#endif
 	}
 
 	return spec < 3 ? 1 : 0;
@@ -97,6 +100,9 @@ long StartRCnt(long spec)//(F)
 
 long StopRCnt(long spec)//TODO
 {
+#if !defined(UWP)
+	SDL_RemoveTimer(counters[spec & 0xFFFF].timerId);
+#endif
 	return 0;
 }
 

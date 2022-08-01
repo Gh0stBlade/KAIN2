@@ -1213,6 +1213,8 @@ void CriticalDampValue(long dampMode, short *sourceVal, short targetVal, short *
 {
 	short maxVel;
 	short useVel;
+
+#if !defined(UWP)
 	
 	if (smooth != 0)
 	{
@@ -1465,6 +1467,7 @@ void CriticalDampValue(long dampMode, short *sourceVal, short targetVal, short *
 	{
 		sourceVal[0] = targetVal;
 	}
+#endif
 }
 
 

@@ -35,7 +35,7 @@
 #include "MENU/MENU.H"
 #include "MENU/MENUDEFS.H"
 
-#include <assert.h>
+//#include <assert.h>
 
 char* primBase;
 unsigned long(**gOt[2]); // offset 0x800D0C0C
@@ -408,7 +408,11 @@ void GAMELOOP_LevelLoadAndInit(char *baseAreaName, struct GameTracker *gameTrack
 	{
 		for (i = 0; i < streamUnit->level->numIntros; i++)
 		{
+#if defined(UWP)
+			if (_strcmpi(streamUnit->level->introList[i].name, "raziel") == 0)
+#else
 			if (strcmpi(streamUnit->level->introList[i].name, "raziel") == 0)
+#endif
 			{
 				INSTANCE_IntroduceInstance(&streamUnit->level->introList[i], (short)streamUnit->StreamUnitID);
 				break;
@@ -1213,7 +1217,11 @@ void GAMELOOP_DisplayFrame(struct GameTracker* gameTracker)
 	int numportals;
 	int d;
 	struct _StreamUnit* mainStreamUnit;
+#if defined(UWP)
+	void* savedNextPrim = NULL;
+#else
 	void* savedNextPrim;
+#endif
 	struct _StreamUnit* toStreamUnit;
 	long toStreamUnitID;
 	struct StreamUnitPortal* streamPortal2;

@@ -50,7 +50,7 @@ endif()
 
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${KAIN2_SRCS})
 
-if(MSVC AND NOT WINDOWS_STORE)
+if(MSVC)
 set_target_properties(
 ${PROJECT_NAME} PROPERTIES OUTPUT_NAME "KAIN2" SUFFIX ".exe"
 )
@@ -91,7 +91,7 @@ ${OPENAL_LIBRARY}
 #For "Final"
 set(${CMAKE_EXE_LINKER_FLAGS_FINAL} CACHE STRING ${CMAKE_EXE_LINKER_FLAGS_RELEASE})
 
-if(MSVC)
+if(MSVC AND NOT WINDOWS_STORE)
 	add_dependencies(${PROJECT_NAME} ${EMULATOR_TARGET_NAME})
 
 	set_target_properties(
@@ -103,10 +103,16 @@ if(MSVC)
 	PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY ${TARGET_BINARY_DIR}
 	)
 
-set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${ROOT_DIR}/Binaries")	
-set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "")
-set_target_properties(${PROJECT_NAME} PROPERTIES DEBUG_POSTFIX "_${TARGET_ARCH}_Debug")
-set_target_properties(${PROJECT_NAME} PROPERTIES RELEASE_POSTFIX "_${TARGET_ARCH}_Release")
+	set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${ROOT_DIR}/Binaries")	
+	set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "")
+	set_target_properties(${PROJECT_NAME} PROPERTIES DEBUG_POSTFIX "_${TARGET_ARCH}_Debug")
+	set_target_properties(${PROJECT_NAME} PROPERTIES RELEASE_POSTFIX "_${TARGET_ARCH}_Release")
+endif()
+
+if(WINDOWS_STORE)
+	set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "")
+	set_target_properties(${PROJECT_NAME} PROPERTIES DEBUG_POSTFIX "_${TARGET_ARCH}")
+	set_target_properties(${PROJECT_NAME} PROPERTIES RELEASE_POSTFIX "_${TARGET_ARCH}")
 endif()
 
 add_definitions(-DPSXPC_VERSION)

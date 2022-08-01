@@ -55,7 +55,7 @@ extern struct _LoadQueueEntry * STREAM_SetUpQueueEntry(char *fileName, void *ret
 
 extern void STREAM_QueueNonblockingLoads(char *fileName, unsigned char memType, void *retFunc, void *retData, void *retData2, void **retPointer, long relocateBinary); // 0x800601B4
 
-extern void LOAD_LoadToAddress(char *fileName, void *loadAddr, long relocateBinary); // 0x80060240
+extern void LOAD_LoadToAddress(char *fileName, void* loadAddr, long relocateBinary); // 0x80060240
 
 extern void LOAD_NonBlockingBinaryLoad(char *fileName, void *retFunc, void *retData, void *retData2, void **retPointer, int memType); // 0x800602A8
 

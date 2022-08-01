@@ -618,9 +618,8 @@ void MAIN_MainMenuInit()
 		{
 			break;
 		}
-		
-		aadProcessLoadQueue();
 
+		aadProcessLoadQueue();
 	} while (1);
 
 	mainMenuScreen = MAIN_LoadTim("\\kain2\\game\\psx\\frontend\\title1.tim");
@@ -1155,7 +1154,7 @@ int MainG2(void *appData)
 				while ((unsigned)mainTracker->movieNum < 6)
 				{
 					item = &InterfaceItems[mainTracker->movieNum];
-					gameTrackerX.gameFlags &= 0x1;
+					gameTrackerX.gameFlags &= -2;
 					show_screen(&item->name[0]);
 #if defined(PSXPC_VERSION)
 					DrawOTag(NULL);
@@ -1182,11 +1181,6 @@ int MainG2(void *appData)
 					{
 						goto checkMovie;
 					}
-				}
-
-				if (item->nextItem != 1)
-				{
-					mainTracker->mainState = 6;
 				}
 				
 				FONT_ReloadFont();

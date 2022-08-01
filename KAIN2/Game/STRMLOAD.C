@@ -456,7 +456,7 @@ void STREAM_QueueNonblockingLoads(char *fileName, unsigned char memType, void *r
 	}
 }
 
-void LOAD_LoadToAddress(char *fileName, void *loadAddr, long relocateBinary)
+void LOAD_LoadToAddress(char *fileName, void* loadAddr, long relocateBinary)
 {
 	struct _LoadQueueEntry *currentEntry;
 	

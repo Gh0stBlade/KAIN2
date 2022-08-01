@@ -6,7 +6,7 @@
 #include <stddef.h>
 
 struct LocalizationHeader* LocalizationTable;
-char** LocalStrings;
+char** PTR_32 LocalStrings;
 
 enum language_t localstr_get_language()
 { 
@@ -27,14 +27,22 @@ void localstr_set_language(enum language_t lang)
 
 	if (LocalizationTable != NULL)
 	{
+#if defined(_WIN64)
+		LocalStrings = (char**)((uintptr_t)LocalizationTable + sizeof(struct LocalizationHeader));
+#else
 		LocalStrings = (char**)LocalizationTable + 4;
+#endif
 		voiceList = (XAVoiceListEntry*)(char*)(LocalizationTable + LocalizationTable->XATableOffset);
 
 		if (LocalizationTable->numStrings > 0)
 		{
 			for (i = 0; i < LocalizationTable->numStrings; i++)
 			{
+#if defined(_WIN64)
+				((unsigned int*)LocalStrings)[i] += (uintptr_t)LocalizationTable;
+#else
 				LocalStrings[i] = LocalStrings[i] + (unsigned int)LocalizationTable;
+#endif
 			}
 		}
 
@@ -42,7 +50,7 @@ void localstr_set_language(enum language_t lang)
 	}
 }
 
-char* localstr_get(enum localstr_t id)
+char* PTR_32 localstr_get(enum localstr_t id)
 {
 	static char BlankStr[2] = { '.', 0x0 };
 
@@ -52,6 +60,10 @@ char* localstr_get(enum localstr_t id)
 	}
 	else
 	{
+#if defined(_WIN64)
+		return (char* PTR_32)((unsigned int*)LocalStrings)[id];
+#else
 		return LocalStrings[id];
+#endif
 	}
 }

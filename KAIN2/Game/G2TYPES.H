@@ -61,24 +61,24 @@ struct Object // hashcode: 0xEC12E9AC (dec: -334304852)
 	short sfxFileHandle; // size=0, offset=6
 	short numModels; // size=0, offset=8
 	short numAnims; // size=0, offset=10
-	struct _Model** modelList; // size=56, offset=12
-	struct _G2AnimKeylist_Type** animList; // size=20, offset=16
+	struct _Model** PTR_32 modelList; // size=56, offset=12
+	struct _G2AnimKeylist_Type** PTR_32 animList; // size=20, offset=16
 	short introDist; // size=0, offset=20
 	short vvIntroDist; // size=0, offset=22
 	short removeDist; // size=0, offset=24
 	short vvRemoveDist; // size=0, offset=26
-	void* data; // size=0, offset=28
-	char* script; // size=0, offset=32
-	char* name; // size=0, offset=36
-	unsigned char* soundData; // size=0, offset=40
+	void* PTR_32 data; // size=0, offset=28
+	char* PTR_32 script; // size=0, offset=32
+	char* PTR_32 name; // size=0, offset=36
+	unsigned char* PTR_32 soundData; // size=0, offset=40
 	long oflags2; // size=0, offset=44
 	short sectionA; // size=0, offset=48
 	short sectionB; // size=0, offset=50
 	short sectionC; // size=0, offset=52
 	short numberOfEffects; // size=0, offset=54
-	struct ObjectEffect* effectList; // size=4, offset=56
-	unsigned long* relocList; // size=0, offset=60
-	void* relocModule; // size=0, offset=64
+	struct ObjectEffect* PTR_32 effectList; // size=4, offset=56
+	unsigned long* PTR_32 relocList; // size=0, offset=60
+	void* PTR_32 relocModule; // size=0, offset=64
 	struct VramSize vramSize; // size=8, offset=68
 };
 

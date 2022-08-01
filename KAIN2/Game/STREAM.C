@@ -95,7 +95,11 @@ int FindObjectName(char *name)
 	{
 		if (otr->objectStatus != 0)
 		{
+#if defined(UWP)
+			if (_strcmpi(otr->name, name) == 0)
+#else
 			if (strcmpi(otr->name, name) == 0)
+#endif
 			{
 				return i;
 			}

@@ -2,7 +2,7 @@
 #include "LIBSN.H"
 #include <stdio.h>
 
-uintptr_t fileHandle = 0;
+FILE* fileHandle = 0;
 
 #define INVALID_FILE_HANDLE (-1)
 
@@ -12,7 +12,7 @@ int PCinit()
 	return 0;
 }
 
-uintptr_t PCopen(char* name, int flags, int perms)
+FILE* PCopen(char* name, int flags, int perms)
 {
 	//TOMB5 hack for CUTSEQ.JIZ
 	if (name[0] == '\\')
@@ -33,17 +33,17 @@ uintptr_t PCopen(char* name, int flags, int perms)
 	switch (flags)
 	{
 	case 0:
-		fileHandle = (uintptr_t)fopen(name, "rb");
+		fileHandle = (FILE*)fopen(name, "rb");
 		break;
 	case 1:
-		fileHandle = (uintptr_t)fopen(name, "wb");
+		fileHandle = (FILE*)fopen(name, "wb");
 		break;
 	case 2:
-		fileHandle = (uintptr_t)fopen(name, "rwb");
+		fileHandle = (FILE*)fopen(name, "rwb");
 		break;
 	}
 
-	return fileHandle == 0 ? INVALID_FILE_HANDLE : fileHandle;
+	return fileHandle == 0 ? (FILE*)INVALID_FILE_HANDLE : fileHandle;
 }
 
 int PCcreat(char* name, int perms)
@@ -52,23 +52,23 @@ int PCcreat(char* name, int perms)
 	return 0;
 }
 
-int PClseek(uintptr_t fd, int offset, int mode)
+int PClseek(FILE* fd, int offset, int mode)
 {
-	fseek((FILE*)fd, offset, mode);
-	return ftell((FILE*)fd);
+	fseek(fd, offset, mode);
+	return ftell(fd);
 }
 
-int PCread(uintptr_t fd, char* buff, int len)
+int PCread(FILE* fd, char* buff, int len)
 {
- 	return fread(buff, len, 1, (FILE*)fd);
+ 	return fread(buff, len, 1, fd);
 }
 
-int PCwrite(uintptr_t fd, char* buff, int len)
+int PCwrite(FILE* fd, char* buff, int len)
 {
-	return fwrite(buff, len, 1, (FILE*)fd);
+	return fwrite(buff, len, 1, fd);
 }
 
-int PCclose(uintptr_t fd)
+int PCclose(FILE* fd)
 {
-	return fclose((FILE*)fd);
+	return fclose(fd);
 }

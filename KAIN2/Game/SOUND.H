@@ -1,6 +1,8 @@
 #ifndef SOUND_H
 #define SOUND_H
 
+#include "PSX/AADLIB.H"
+
 struct _AnimSoundData_Type 
 {
 	short sfxToneID; // size=0, offset=0
@@ -30,7 +32,7 @@ struct MusicLoadInfo // hashcode: 0xC8F67C40 (dec: -923370432)
 	int numCmdsInQueue; // size=0, offset=72
 };
 
-extern char soundBuffer[13256];
+extern char soundBuffer[sizeof(AadMemoryStruct) + (sizeof(_AadSequenceSlot) * 4)];
 
 extern struct MusicLoadInfo musicInfo; // offset 0x800D1510
 

@@ -406,7 +406,12 @@ void LOAD_ProcessReadQueue()
 char * LOAD_ReadFileFromCD(char *filename, int memType)
 { 
 #if defined(PSXPC_VERSION) && defined(NO_CD)
+#if defined(_WIN64)
+	FILE* fp;
+#else
 	long fp;
+#endif
+
 	int i;
 	char* readBuffer;
 	long fileSize;
@@ -418,7 +423,11 @@ char * LOAD_ReadFileFromCD(char *filename, int memType)
 	{
 		fp = PCopen(filename, 0, 0);
 
+#if defined(_WIN64)
+		if (fp != (FILE*)-1)
+#else
 		if (fp != -1)
+#endif
 		{
 			PCinit();
 			break;
@@ -487,7 +496,7 @@ char * LOAD_ReadFileFromCD(char *filename, int memType)
 }
 #endif
 
-void LOAD_CdReadFromBigFile(long fileOffset, unsigned long *loadAddr, long bytes, long chksumLevel, long checksum)
+void LOAD_CdReadFromBigFile(long fileOffset, unsigned long* loadAddr, long bytes, long chksumLevel, long checksum)
 {
 	loadStatus.currentQueueFile.readSize = bytes;
 	loadStatus.currentQueueFile.readCurSize = 0;
@@ -528,7 +537,11 @@ void LOAD_InitCdLoader(char *bigFileName, char *voiceFileName)
 	for (i = 0; i < 10; i++)
 	{
 		loadStatus.bigFile.bigfileFileHandle = PCopen(bigFileName, 0, 0);
+#if defined(_WIN64)
+		if (loadStatus.bigFile.bigfileFileHandle != (FILE*) -1)
+#else
 		if (loadStatus.bigFile.bigfileFileHandle != -1)
+#endif
 		{
 			break;
 		}
@@ -943,43 +956,35 @@ void LOAD_LoadTIM2(long *addr, long x_pos, long y_pos, long width, long height)
 }
 #endif
 
-long LOAD_RelocBinaryData(long *data, long fileSize)
+long LOAD_RelocBinaryData(long* data, long fileSize)
 {
 	long* lastMoveDest;
 	long tableSize;
 	struct RedirectList redirectListX;
 	struct RedirectList* redirectList;
 
+	fileSize = ((fileSize + 3) >> 2);
+
 	redirectList = &redirectListX;
-	fileSize += 3;
+
 	redirectList->data = data + 1;
-	redirectListX.numPointers = data[0];
 
-	if (redirectListX.numPointers + 512 < 0)
+	redirectList->numPointers = data[0];
+
+	tableSize = (redirectList->numPointers + 512 < 0) ? (redirectList->numPointers + 1023) : (redirectList->numPointers + 512);
+	tableSize /= 512;
+	tableSize *= 512;
+
+	RESOLVE_Pointers(redirectList, &data[tableSize], data);
+
+	lastMoveDest = &data[fileSize - (tableSize)];
+
+	while (data < lastMoveDest)
 	{
-		tableSize = (((data[0] & 0x3FF) >> 9) << 9);
-		RESOLVE_Pointers(redirectList, (long*)((char*)data + ((data[0] & 0x3FF) << 11)), data);
-
-		lastMoveDest = (long*)((char*)data + (((fileSize >> 2) - tableSize) << 2));
-		while (data < lastMoveDest)
-		{
-			*data++ = ((long*)(((data[0] & 0x3FF) << 11) + (char*)data))[0];
-		}
-	}
-	else
-	{
-		tableSize = (((redirectListX.numPointers + 512) >> 9) << 9);
-		RESOLVE_Pointers(redirectList, (long*)((char*)data + (((redirectListX.numPointers + 512) >> 9) << 11)), data);
-
-		lastMoveDest = (long*)((char*)data + (((fileSize >> 2) - tableSize) << 2));
-
-		while (data < lastMoveDest)
-		{
-			*data++ = ((long*)((char*)data + (((redirectListX.numPointers + 512) >> 9) << 11)))[0];
-		}
+		*data++ = data[tableSize];
 	}
 
-	return tableSize << 2;
+	return (tableSize * 4);
 }
 
 void LOAD_CleanUpBuffers()
@@ -997,7 +1002,7 @@ void LOAD_CleanUpBuffers()
 	}
 }
 
-void * LOAD_InitBuffers()
+void* LOAD_InitBuffers()
 {
 #if defined(PSXPC_VERSION)
 	loadStatus.buffer1 = MEMPACK_Malloc(2048*219, 0x23);

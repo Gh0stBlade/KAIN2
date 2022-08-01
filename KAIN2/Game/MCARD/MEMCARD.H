@@ -218,7 +218,7 @@ union MEMCARD_196fake // Hashcode: 0xF7F7C377 (dec: -134757513)
 
 struct mcmenu_table_t // hashcode: 0xB78C7C17 (dec: -1215529961)
 {
-	int (*data_size)(); // size=0, offset=0
+	int  (*data_size)(); // size=0, offset=0
 	void (*initialize)(mcmenu_t*, memcard_t*, int); // size=0, offset=4
 	void (*terminate)(); // size=0, offset=8
 	void (*begin)(); // size=0, offset=12

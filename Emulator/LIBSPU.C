@@ -4,13 +4,15 @@
 #include "EMULATOR.H"
 #include "LIBAPI.H"
 
+#define SPU_MAX_CHANNELS 24
+
 #if defined(SDL2_MIXER)
 
-#define SPU_MAX_CHANNELS 24
-#define SPU_PLAYBACK_FREQUENCY (44100)
 unsigned char* frequencyConvertedChunks[SPU_MAX_CHANNELS];
 Mix_Chunk* mixerChunks[SPU_MAX_CHANNELS];
 bool channelPlaying[SPU_MAX_CHANNELS];
+
+#define SPU_PLAYBACK_FREQUENCY (44100)
 
 #elif defined(OPENAL)
 
@@ -29,6 +31,8 @@ ALuint alSources[24];
 ALuint alBuffers[24];
 ALboolean alHasAudioData[24];
 
+#define SPU_PLAYBACK_FREQUENCY (44100)
+
 #elif defined(XAUDIO2)
 
 #include <xaudio2.h>
@@ -37,6 +41,8 @@ ALboolean alHasAudioData[24];
 IXAudio2* pXAudio2 = NULL;
 IXAudio2MasteringVoice* pMasterVoice = NULL;
 IXAudio2SourceVoice* pSourceVoices[24];
+
+#define SPU_PLAYBACK_FREQUENCY (44100)
 #endif
 
 unsigned int voicePitches[24];
@@ -130,29 +136,32 @@ void Emulator_PollAudio()
 }
 #endif
 
-unsigned int decodeVAG(unsigned char* vag, unsigned char* out)
+int CLAMP16(int x) 
 {
-    int predict_nr, shift_factor, flags;
+    if (x > 32767) x = 32767;
+    else if (x < -32768) x = -32768;
+
+    return x;
+}
+
+unsigned int decodeVAG(unsigned char* vag, unsigned short* out)
+{
+    int predict_nr, shift, flags;
     int i;
     int d, s;
-    static double s_1 = 0.0f;
-    static double s_2 = 0.0f;
+    int s_1 = 0;
+    int s_2 = 0;
     unsigned int result_length = 0;
-    unsigned short* wav = (unsigned short*)out;
-    double samples[28];
-
-    double f[5][2] = { { 0.0f, 0.0 },
-                    {   60.0f / 64.0f,  0.0f },
-                    {  115.0f / 64.0f, -52.0f / 64.0f },
-                    {   98.0f / 64.0f, -55.0f / 64.0f },
-                    {  122.0f / 64.0f, -60.0f / 64.0f } };
+    int sample;
+    int filter;
+    int filterTablePos[5] = { 0, 60, 115, 98, 122 };
+    int filterTableNeg[5] = { 0, 0, -52, -55, -60 };
 
 
     while (1)
     {
-        predict_nr = *vag++;
-        shift_factor = predict_nr & 0xf;
-        predict_nr >>= 4;
+        shift = *vag & 0xF;
+        filter = (*vag++ & 0x70) >> 4;
         flags = *vag++;
 
         if (flags == 7)
@@ -160,37 +169,41 @@ unsigned int decodeVAG(unsigned char* vag, unsigned char* out)
             break;
         }
 
+        if (shift > 12) shift = 9;
+        if (filter > 4) filter = 4;
+
+        int filterPos = filterTablePos[filter];
+        int filterNeg = filterTableNeg[filter];
+
         for (i = 0; i < 28; i += 2) 
         {
             d = *vag++;
-            s = (d & 0xf) << 12;
-            
-            if (s & 0x8000)
+            if (d != 0)
             {
-                s |= 0xffff0000;
+                int testing = 0;
+                testing++;
             }
+            sample = (int)(short)((d & 0xF) << 12);
+            sample = (sample >> shift);
+            sample += ((s_1 * filterPos + s_2 * filterNeg + 32) >> 6);
+            sample = CLAMP16(sample);
             
-            samples[i] = (double)(s >> shift_factor);
-            
-            s = (d & 0xf0) << 8;
-            
-            if (s & 0x8000)
-            {
-                s |= 0xffff0000;
-            }
+            *out++ = sample;
 
-            samples[i + 1] = (double)(s >> shift_factor);
-        }
+            s_2 = s_1; 
+            s_1 = sample;
 
-        for (i = 0; i < 28; i++)
-        {
-            samples[i] = samples[i] + s_1 * f[predict_nr][0] + s_2 * f[predict_nr][1];
-            s_2 = s_1;
-            s_1 = samples[i];
-            d = (int)(samples[i] + 0.5);
-            *out++ = d & 0xff;
-            *out++ = d >> 8;
-            result_length += sizeof(unsigned short);
+            sample = (int)(short)((d & 0xf0) << 8);
+            sample = (sample >> shift);
+            sample += ((s_1 * filterPos + s_2 * filterNeg + 32) >> 6);
+            sample = CLAMP16(sample);
+
+            *out++ = sample;
+
+            s_2 = s_1; 
+            s_1 = sample;
+
+            result_length += sizeof(unsigned int);
         }
 
         if (flags == 1)
@@ -663,11 +676,6 @@ int Mix_ChangeFrequency(Mix_Chunk* chunk, int freq)
         for (channel = 0; channel < SPU_MAX_CHANNELS; channel++)
             if (!Mix_Playing(channel)) break; //Find a free channel
 
-        if (channel > 0)
-        {
-            int testing = 0;
-            testing++;
-        }
         if (channel == SPU_MAX_CHANNELS)
         {
             eprinterr("Fatal: Channels overloaded!\n");
@@ -708,20 +716,6 @@ int Mix_ChangeFrequency(Mix_Chunk* chunk, int freq)
     }
 }
 
-void Mix_SPUUpdatePlayingChannels()
-{
-    for (int channel = 0; channel < SPU_MAX_CHANNELS; channel++)
-    {
-        if (Mix_Playing(channel)) 
-        {
-            channelPlaying[channel] = true;
-        }
-        else
-        {
-            channelPlaying[channel] = false;
-        }
-    }
-}
 Mix_Chunk* Mix_SPULoadAudioChunk(int vNum, unsigned char* address)
 {
     if (address == NULL)
@@ -730,6 +724,28 @@ Mix_Chunk* Mix_SPULoadAudioChunk(int vNum, unsigned char* address)
     }
 
     Mix_Chunk* waveChunk = Mix_QuickLoad_RAW(address, voiceLengths[vNum]);
+
+#if defined(_DEBUG) && 0
+    char name[64];
+    sprintf(name, "%x_%d.wav", voiceStartAddrs[vNum], voicePitches[vNum]);
+    FILE* f = fopen(name, "wb+");
+
+    unsigned int riffHeader[] = {
+        0x46464952, 0x000029C1, 0x45564157, 0x20746D66,
+        0x00000010, 0x00010001, 0x00002B11, 0x00005622,
+        0x00100002, 0x61746164, 0x00002958
+    };
+
+    riffHeader[10] = voiceLengths[vNum];
+    riffHeader[6] = voicePitches[vNum];
+
+    if (f != NULL)
+    {
+        fwrite(riffHeader, sizeof(riffHeader), 1, f);
+        fwrite((unsigned char*)&convertedSpuSoundBuffer[voiceStartAddrs[vNum] * 4], voiceLengths[vNum], 1, f);
+        fclose(f);
+    }
+#endif
     
     return waveChunk;
 }
@@ -749,8 +765,6 @@ void Mix_SPUPlay(int vNum, unsigned char* address)
 {
     Mix_Chunk* waveChunk = Mix_SPULoadAudioChunk(vNum, address);
 
-    static int lastChannel = -1;
-
     if (waveChunk != NULL)
     {
         Uint8* bkp_buf = waveChunk->abuf;
@@ -759,19 +773,10 @@ void Mix_SPUPlay(int vNum, unsigned char* address)
         int channel = Mix_ChangeFrequency(waveChunk, voicePitches[vNum]);
         mixerChunks[channel] = waveChunk;
 
-        Mix_SPUUpdatePlayingChannels();
-
         Mix_PlayChannel(channel, waveChunk, 0);
-
-        if (channel == lastChannel)
-        {
-            printf("Channel: %d\n", channel);
-        }
 
         waveChunk->abuf = bkp_buf;
         waveChunk->alen = bkp_len;
-
-        lastChannel = channel;
     }
 }
 
@@ -870,33 +875,12 @@ void SpuSetKey(long on_off, unsigned long voice_bit)
 
         if (_spu_keystat & (1 << i))
         {
+
 #if defined(SDL2_MIXER)
             Mix_SPUPlay(i, (unsigned char*)&convertedSpuSoundBuffer[voiceStartAddrs[i] * 4]);
 #elif defined(OPENAL) || defined(XAUDIO2)
-            unsigned int realWaveSize = voiceStartAddrs[i] * 4;
+            unsigned int realWaveSize = voiceLengths[i];
             unsigned char* wave = (unsigned char*)&convertedSpuSoundBuffer[voiceStartAddrs[i] * 4];
-
-#if defined(_DEBUG) && 0
-            char name[64];
-            sprintf(name, "%x.wav", voiceStartAddrs[i]);
-            FILE* f = fopen(name, "wb+");
-
-            unsigned int riffHeader[] = {
-                0x46464952, 0x000029C1, 0x45564157, 0x20746D66,
-                0x00000010, 0x00010001, 0x00002B11, 0x00005622,
-                0x00100002, 0x61746164, 0x00002958
-            };
-
-            riffHeader[10] = waveSize;
-            riffHeader[6] = voicePitches[i];
-
-            if (f != NULL)
-            {
-                fwrite(riffHeader, sizeof(riffHeader), 1, f);
-                fwrite(wave, waveSize, 1, f);
-                fclose(f);
-            }
-#endif
 
 #if defined(OPENAL)
 
@@ -910,7 +894,7 @@ void SpuSetKey(long on_off, unsigned long voice_bit)
                 alHasAudioData[i] = TRUE;
             }
 
-#elif defined(XAUDIO2)
+#elif defined(XAUDIO2) && !defined(UWP)
             WAVEFORMATEX wfex;
             wfex.wFormatTag = WAVE_FORMAT_PCM;
             wfex.nChannels = 1;
@@ -1238,17 +1222,12 @@ void _spu_Fw(unsigned char* addr, unsigned long size)
         __spu_transferCallback();
     }
 #elif defined(OPENAL) || defined(XAUDIO2)
-    memcpy(&spuSoundBuffer[_spu_tsa], addr, size);
-    
-    spuWriteSizes[lastWriteIndex++] = size * 4;
-    
-    decodeVAG((unsigned char*)&spuSoundBuffer[_spu_tsa], size, (unsigned char*)&convertedSpuSoundBuffer[_spu_tsa * 4]);
+    memcpy(&spuSoundBuffer[_spu_tsa << _spu_mem_mode_plus], addr, size);
 
     if (__spu_transferCallback != NULL)
     {
         __spu_transferCallback();
     }
-
 #else
 
     if (_spu_trans_mode == 0)
@@ -1677,7 +1656,7 @@ void SpuInit(void)//(F)
 
     Mix_Init(0);///@TODO MIX_QUIT!
 
-    if (Mix_OpenAudio(SPU_PLAYBACK_FREQUENCY, MIX_DEFAULT_FORMAT, 2, 4096) < 0)
+    if (Mix_OpenAudio(SPU_PLAYBACK_FREQUENCY, MIX_DEFAULT_FORMAT, 1, 1024) < 0)
     {
         eprinterr("[SDL2_MIXER]: Failed to Mix_OpenAudio! %s\n", Mix_GetError());
     }
@@ -1879,13 +1858,18 @@ void SpuSetVoicePitch(int vNum, unsigned short pitch)
 
 #if defined(SDL2_MIXER) || defined(OPENAL) || defined(XAUDIO2)
 
-    unsigned int frequency = pitch * 44100 / 4096;
-
-    if (frequency > 44100)
+    if (pitch > 0x3FFF)
     {
-        frequency = 44100;
+        pitch = 0x3FFF;
     }
 
+    if (pitch < 1)
+    {
+        pitch = 1;
+    }
+
+    unsigned int frequency = pitch * SPU_PLAYBACK_FREQUENCY / 4096;
+    
     voicePitches[vNum] = frequency;
 
 #endif
@@ -1975,7 +1959,7 @@ void SpuSetVoiceStartAddr(int vNum, unsigned long startAddr)
     }
 #if defined(SDL2_MIXER) || defined(OPENAL) || defined(XAUDIO2)
     voiceStartAddrs[vNum] = startAddr;//startAddr / 8;//_spu_tsa;
-    voiceLengths[vNum] = decodeVAG((unsigned char*)&spuSoundBuffer[voiceStartAddrs[vNum]], (unsigned char*)&convertedSpuSoundBuffer[voiceStartAddrs[vNum] * 4]);
+    voiceLengths[vNum] = decodeVAG((unsigned char*)&spuSoundBuffer[voiceStartAddrs[vNum]], (unsigned short*)(unsigned char*)&convertedSpuSoundBuffer[voiceStartAddrs[vNum] * 4]);
 #endif
 }
 
@@ -1989,7 +1973,23 @@ void SpuSetVoiceVolume(int vNum, short volL, short volR)
     p[1] = volR;
 
 #if defined(SDL2_MIXER)
-    Mix_Volume(vNum, volL / 255);
+
+#define VOL_MAX 16383
+#define VOL_MIN 0
+
+#define MIXER_VOL_MAX 128
+#define MIXER_VOL_MIN 0
+
+#define GET_VOL(x) (((x - VOL_MIN) * (MIXER_VOL_MAX - MIXER_VOL_MIN)) / (VOL_MAX - VOL_MIN)) + MIXER_VOL_MIN
+#define GET_VOL_PAN(x) (((x - VOL_MIN) * (MIXER_VOL_MAX - MIXER_VOL_MIN)) / (VOL_MAX - VOL_MIN)) + MIXER_VOL_MIN
+
+    int newVolL = GET_VOL(volL);
+    int newVolR = GET_VOL(volR);
+
+    int newVol = newVolL < newVolR ? newVolR : newVolL;
+
+    Mix_Volume(vNum, newVol);
+    Mix_SetPanning(vNum, volL / 128, volR / 128);
 #elif defined(OPENAL)
     alSourcef(alSources[vNum], AL_GAIN, volL / 32767.0f);///@FIXME only left supported?
 #elif defined(XAUDIO2)

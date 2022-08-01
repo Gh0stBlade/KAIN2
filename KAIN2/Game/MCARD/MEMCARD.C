@@ -25,9 +25,9 @@ int MEMCARD_IsWrongVersion(struct memcard_t *memcard)
 	return result;
 }
 
-void load(struct memcard_t *memcard)
+void load(struct memcard_t* memcard)
 {
-	struct Object *object;
+	struct Object* object;
 	
 	if ((gameTrackerX.gameFlags & 0x8000000))
 	{

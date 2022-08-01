@@ -1,23 +1,19 @@
 #include "CORE.H"
 #include "RESOLVE.H"
 
-void RESOLVE_Pointers(struct RedirectList *redirectList, long *data, long *baseAddr)
+void RESOLVE_Pointers(struct RedirectList *redirectList, long *data, long *baseAddr)//Matching - 100%
 {
 #if defined (PSX_VERSION)
 	long* rdList;
 	int i;
 	long* handle;
 
-	i = redirectList->numPointers;
 	rdList = redirectList->data;
 
-	if (i != 0)
+	for (i = redirectList->numPointers; i != 0; i--, rdList++)
 	{
-		do
-		{
-			handle = (long*)((char*)data + *rdList++);
-			*handle = (long)(handle[0] + (char*)baseAddr);
-		} while (--i != 0);
+		handle = (long*)((char*)data + *rdList);
+		*handle += (long)((char*)baseAddr);
 	}
 
 #elif defined(PC_VERSION)

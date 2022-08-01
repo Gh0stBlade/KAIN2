@@ -40,7 +40,7 @@ struct _BigFileDir // hashcode: 0x4E39D3E2 (dec: 1312412642)
 struct _BigFile // hashcode: 0x50C273F3 (dec: 1354920947)
 {
 #if defined(PSXPC_VERSION) && defined(NO_CD)
-	long bigfileFileHandle;
+	FILE* bigfileFileHandle;
 #endif
 	long bigfileBaseOffset; // size=0, offset=0
 	struct _BigFileDir* rootDir; // size=4, offset=4
@@ -120,7 +120,7 @@ extern void LOAD_SetupFileToDoCDReading(); // 0x800370A8
 extern void LOAD_SetupFileToDoBufferedCDReading(); // 0x80037124
 extern void LOAD_ProcessReadQueue(); // 0x80037198
 extern char * LOAD_ReadFileFromCD(char *filename, int memType); // 0x80037314
-extern void LOAD_CdReadFromBigFile(long fileOffset, unsigned long *loadAddr, long bytes, long chksumLevel, long checksum); // 0x800373F4
+extern void LOAD_CdReadFromBigFile(long fileOffset, unsigned long* loadAddr, long bytes, long chksumLevel, long checksum); // 0x800373F4
 extern struct _BigFileDir * LOAD_ReadDirectory(struct _BigFileDirEntry *dirEntry); // 0x80037420
 extern void LOAD_InitCdLoader(char *bigFileName, char *voiceFileName); // 0x80037488
 extern int LOAD_SetupFileInfo(struct _NonBlockLoadEntry *loadEntry); // 0x800375DC
@@ -133,7 +133,7 @@ extern long LOAD_DoesFileExist(char *fileName); // 0x800379AC
 extern void LOAD_NonBlockingReadFile(struct _NonBlockLoadEntry *loadEntry); // 0x800379E0
 extern void LOAD_LoadTIM(long *addr, long x_pos, long y_pos, long clut_x, long clut_y); // 0x80037A9C
 extern void LOAD_LoadTIM2(long *addr, long x_pos, long y_pos, long width, long height); // 0x80037B3C
-extern long LOAD_RelocBinaryData(long *data, long fileSize); // 0x80037B84
+extern long LOAD_RelocBinaryData(long* data, long fileSize); // 0x80037B84
 extern void LOAD_CleanUpBuffers(); // 0x80037C3C
 extern void * LOAD_InitBuffers(); // 0x80037C84
 extern void LOAD_InitCdStreamMode(); // 0x80037CD4

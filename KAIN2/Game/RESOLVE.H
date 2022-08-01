@@ -1,6 +1,8 @@
 #ifndef RESOLVE_H
 #define RESOLVE_H
 
+#include "CORE.H"
+
 struct RedirectList // hashcode: 0x4C185B3B (dec: 1276664635)
 {
 	long numPointers; // size=0, offset=0

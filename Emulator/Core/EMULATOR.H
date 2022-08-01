@@ -104,7 +104,9 @@ typedef struct
 
 	CallbackProc padding00;
 	unsigned int timerIndex;
+#if !defined(UWP)
 	SDL_TimerID timerId;
+#endif
 	unsigned int startTick;
 } SysCounter;
 
