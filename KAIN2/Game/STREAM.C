@@ -2507,10 +2507,10 @@ void RelocateStreamPortals(struct StreamUnitPortal *StreamUnitList, int NumStrea
 
 void STREAM_PackVRAMObject(struct _ObjectTracker *objectTracker)
 { 
-	struct VramSize *vramSize;
-	struct VramBuffer *vramBuffer;
+	struct VramSize* vramSize;
+	struct VramBuffer* vramBuffer;
 	char fileName[64];
-	struct _BlockVramEntry *vramBlock;
+	struct _BlockVramEntry* vramBlock;
 	
 	vramSize = &objectTracker->object->vramSize;
 
@@ -2520,6 +2520,7 @@ void STREAM_PackVRAMObject(struct _ObjectTracker *objectTracker)
 
 		if (vramBlock != NULL)
 		{
+			///@FIXME crash-UWP disable LARGEADDRESSAWARE!
 			AdjustVramCoordsObject(SCREEN_WIDTH, 0, vramBlock->x, vramBlock->y, objectTracker->object);
 		}
 			

@@ -76,20 +76,19 @@ void STREAM_InitLoader(char *bigFileName, char *voiceFileName)
 }
 
 void STREAM_RemoveQueueHead()
-{ 
-	struct _LoadQueueEntry *entry;
-	
-	entry = loadHead;
+{
+	struct _LoadQueueEntry* entry = loadHead;
+
 	loadHead = entry->next;
-	
+
 	if (loadHead == NULL)
 	{
 		loadTail = NULL;
 	}
 
 	entry->next = loadFree;
-	loadFree = entry;
 	numLoads--;
+	loadFree = entry;
 }
 
 void STREAM_RemoveQueueEntry(struct _LoadQueueEntry *entry, struct _LoadQueueEntry *prev)
@@ -113,9 +112,9 @@ void STREAM_RemoveQueueEntry(struct _LoadQueueEntry *entry, struct _LoadQueueEnt
 	numLoads--;
 }
 
-struct _LoadQueueEntry * STREAM_AddQueueEntryToTail()
+struct _LoadQueueEntry* STREAM_AddQueueEntryToTail()
 { 
-	struct _LoadQueueEntry *entry;
+	struct _LoadQueueEntry* entry;
 	
 	entry = loadFree;
 	if (entry == NULL)

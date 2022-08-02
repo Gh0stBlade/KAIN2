@@ -2043,7 +2043,7 @@ void INSTANCE_DefaultInit(struct _Instance* instance, struct Object* object, int
 	int numHPrims;
 	int numModels;
 	struct _HPrim* hprim;
-	struct _Model** pModel;
+	struct _Model* PTR_32* PTR_32 pModel;
 	struct _HModel* hmodel;
 	struct _Model* model;
 	struct _Segment* seg;

@@ -61,8 +61,8 @@ struct Object // hashcode: 0xEC12E9AC (dec: -334304852)
 	short sfxFileHandle; // size=0, offset=6
 	short numModels; // size=0, offset=8
 	short numAnims; // size=0, offset=10
-	struct _Model** PTR_32 modelList; // size=56, offset=12
-	struct _G2AnimKeylist_Type** PTR_32 animList; // size=20, offset=16
+	struct _Model* PTR_32 * PTR_32 modelList; // size=56, offset=12
+	struct _G2AnimKeylist_Type* PTR_32 * PTR_32  animList; // size=20, offset=16
 	short introDist; // size=0, offset=20
 	short vvIntroDist; // size=0, offset=22
 	short removeDist; // size=0, offset=24
@@ -85,10 +85,10 @@ struct Object // hashcode: 0xEC12E9AC (dec: -334304852)
 struct _ObjectTracker // hashcode: 0xFE4678BF (dec: -28936001)
 {
 	char name[16]; // size=16, offset=0
-	struct Object* object; // size=76, offset=16
+	struct Object* PTR_32 object; // size=76, offset=16
 	short objectStatus; // size=0, offset=20
 	short numInUse; // size=0, offset=22
-	void* vramBlock; // size=0, offset=24
+	void* PTR_32 vramBlock; // size=0, offset=24
 	char numObjectsUsing; // size=0, offset=28
 	char objectsUsing[7]; // size=7, offset=29
 };
@@ -103,10 +103,10 @@ struct Intro // hashcode: 0x796E766D (dec: 2037282413)
 	short maxRad; // size=0, offset=38
 	long maxRadSq; // size=0, offset=40
 	long flags; // size=0, offset=44
-	void* data; // size=0, offset=48
-	struct _Instance* instance; // size=616, offset=52
-	struct MultiSpline* multiSpline; // size=0, offset=56
-	void* dsignal; // size=0, offset=60
+	void* PTR_32 data; // size=0, offset=48
+	struct _Instance* PTR_32 instance; // size=616, offset=52
+	struct MultiSpline* PTR_32 multiSpline; // size=0, offset=56
+	void* PTR_32 dsignal; // size=0, offset=60
 	short specturalLightGroup; // size=0, offset=64
 	short meshColor; // size=0, offset=66
 	_Position spectralPosition; // size=6, offset=68
@@ -119,24 +119,24 @@ struct _Terrain // hashcode: 0x5D541B4E (dec: 1565793102)
 	short spad; // size=0, offset=2
 	long lpad2; // size=0, offset=4
 	long numIntros; // size=0, offset=8
-	struct Intro* introList; // size=76, offset=12
+	struct Intro* PTR_32 introList; // size=76, offset=12
 	long numVertices; // size=0, offset=16
 	long numFaces; // size=0, offset=20
 	long numNormals; // size=0, offset=24
-	struct _TVertex* vertexList; // size=12, offset=28
-	struct _TFace* faceList; // size=12, offset=32
-	struct _Normal* normalList; // size=8, offset=36
-	struct DrMoveAniTex* aniList; // size=8, offset=40
+	struct _TVertex* PTR_32 vertexList; // size=12, offset=28
+	struct _TFace* PTR_32 faceList; // size=12, offset=32
+	struct _Normal* PTR_32 normalList; // size=8, offset=36
+	struct DrMoveAniTex* PTR_32 aniList; // size=8, offset=40
 	long pad; // size=0, offset=44
-	void* StreamUnits; // size=0, offset=48
-	struct TextureFT3* StartTextureList; // size=12, offset=52
-	struct TextureFT3* EndTextureList; // size=12, offset=56
-	struct _MorphVertex* MorphDiffList; // size=14, offset=60
-	struct _MorphColor* MorphColorList; // size=2, offset=64
+	void* PTR_32 StreamUnits; // size=0, offset=48
+	struct TextureFT3* PTR_32 StartTextureList; // size=12, offset=52
+	struct TextureFT3* PTR_32 EndTextureList; // size=12, offset=56
+	struct _MorphVertex* PTR_32 MorphDiffList; // size=14, offset=60
+	struct _MorphColor* PTR_32 MorphColorList; // size=2, offset=64
 	long numBSPTrees; // size=0, offset=68
-	struct BSPTree* BSPTreeArray; // size=36, offset=72
-	short* morphNormalIdx; // size=0, offset=76
-	struct _MultiSignal* signals; // size=904, offset=80
+	struct BSPTree* PTR_32 BSPTreeArray; // size=36, offset=72
+	short* PTR_32 morphNormalIdx; // size=0, offset=76
+	struct _MultiSignal* PTR_32 signals; // size=904, offset=80
 };
 
 #endif

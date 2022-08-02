@@ -58,7 +58,7 @@ struct Event // hashcode: 0x68F4AD26 (dec: 1760865574)
 struct EventPointers 
 {
 	long numPuzzles; // size=0, offset=0
-	struct Event* eventInstances[1]; // size=4, offset=4
+	struct Event* PTR_32 eventInstances[1]; // size=4, offset=4
 };
 
 struct EventTimer // hashcode: 0xAA55BC81 (dec: -1437221759)

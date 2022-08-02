@@ -38,9 +38,9 @@ void MEMPACK_Init()//Matching - 51.54%
 	SYSTEM_INFO info;
 	GetSystemInfo(&info);
 
-	LPVOID base = info.lpMinimumApplicationAddress;
+	LPVOID base = (LPVOID)info.lpMinimumApplicationAddress;
 	unsigned int totalSize = 0x11F18C + (ONE_MB * 8);
-	memBuffer = (char*)VirtualAlloc(base, totalSize, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
+	memBuffer = (char*)VirtualAlloc(NULL, totalSize, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
 	overlayAddress = (unsigned int)memBuffer;
 	newMemTracker.totalMemory = totalSize;
 	memset(&memBuffer[0], 0, totalSize);
@@ -870,7 +870,7 @@ void MEMPACK_RelocateObjectType(struct MemHeader* newAddress, long offset, struc
 
 	//v0 = object->animList
 	p = NULL;
-	object->modelList = (struct _Model**)p;
+	object->modelList = (struct _Model* PTR_32* PTR_32)p;
 
 	if (object->animList != NULL)
 	{
@@ -879,7 +879,7 @@ void MEMPACK_RelocateObjectType(struct MemHeader* newAddress, long offset, struc
 	//loc_80051554
 	//v0 = object->soundData
 
-	object->animList = (struct _G2AnimKeylist_Type**)p;
+	object->animList = (struct _G2AnimKeylist_Type* PTR_32 * PTR_32)p;
 
 	p = NULL;
 

@@ -65,7 +65,7 @@ struct OBTABLE_114fake // hashcode: 0xA297FC58 (dec: -1567097768)
 struct ObjectAccess // hashcode: 0x1268C513 (dec: 308856083)
 {
 	char* objectName; // size=0, offset=0
-	void* object; // size=0, offset=4
+	void* PTR_32 object; // size=0, offset=4
 };
 
 union OBTABLE_196fake // Hashcode: 0x921E9F5C (dec: -1843486884)

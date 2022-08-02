@@ -40,20 +40,20 @@ struct _SFXMkr
 
 struct Level // hashcode: 0x012B0198 (dec: 19595672)
 {
-	struct _Terrain* terrain; // size=84, offset=0
-	struct LightList* lightList; // size=12, offset=4
+	struct _Terrain* PTR_32 terrain; // size=84, offset=0
+	struct LightList* PTR_32 lightList; // size=12, offset=4
 	long numVMObjects; // size=0, offset=8
-	struct _VMObject* vmobjectList; // size=60, offset=12
+	struct _VMObject* PTR_32 vmobjectList; // size=60, offset=12
 	long numSpotLights; // size=0, offset=16
-	struct SpotLight* spotLightList; // size=40, offset=20
+	struct SpotLight* PTR_32 spotLightList; // size=40, offset=20
 	long numPointLights; // size=0, offset=24
-	struct PointLight* pointLightList; // size=24, offset=28
+	struct PointLight* PTR_32 pointLightList; // size=24, offset=28
 	long numSpotSpecturalLights; // size=0, offset=32
-	struct SpotLight* spotSpecturalLightList; // size=40, offset=36
+	struct SpotLight* PTR_32 spotSpecturalLightList; // size=40, offset=36
 	long numPointSpecturalLights; // size=0, offset=40
-	struct PointLight* pointSpecturalLightList; // size=24, offset=44
+	struct PointLight* PTR_32 pointSpecturalLightList; // size=24, offset=44
 	long numBGObjects; // size=0, offset=48
-	struct _BGObject* bgObjectList; // size=24, offset=52
+	struct _BGObject* PTR_32 bgObjectList; // size=24, offset=52
 	long waterZLevel; // size=0, offset=56
 	unsigned char backColorR; // size=0, offset=60
 	unsigned char backColorG; // size=0, offset=61
@@ -70,47 +70,47 @@ struct Level // hashcode: 0x012B0198 (dec: 19595672)
 	unsigned short waterFogFar; // size=0, offset=76
 	unsigned short waterFogNear; // size=0, offset=78
 	long depthQBlendStart; // size=0, offset=80
-	struct LightList* spectrallightList; // size=12, offset=84
+	struct LightList* PTR_32 spectrallightList; // size=12, offset=84
 	long numCameras; // size=0, offset=88
-	void* cameraList; // size=0, offset=92
+	void* PTR_32 cameraList; // size=0, offset=92
 	long bspPlaneError; // size=0, offset=96
 	long numVGroups; // size=0, offset=100
-	struct _VGroup* vGroupList; // size=12, offset=104
+	struct _VGroup* PTR_32 vGroupList; // size=12, offset=104
 	long deathZ; // size=0, offset=108
 	long flags; // size=0, offset=112
-	struct _MultiSignal* startSignal; // size=904, offset=116
+	struct _MultiSignal* PTR_32 startSignal; // size=904, offset=116
 	long numIntros; // size=0, offset=120
-	struct Intro* introList; // size=76, offset=124
-	struct DrMoveAniTex* bgAniList; // size=8, offset=128
+	struct Intro* PTR_32 introList; // size=76, offset=124
+	struct DrMoveAniTex* PTR_32 bgAniList; // size=8, offset=128
 	long numHotSpots; // size=0, offset=132
-	struct _HotSpot* hotSpotList; // size=8, offset=136
-	void* objectNameList; // size=0, offset=140
+	struct _HotSpot* PTR_32 hotSpotList; // size=8, offset=136
+	void* PTR_32 objectNameList; // size=0, offset=140
 	long depthQFogStart; // size=0, offset=144
 	long morphLastStep; // size=0, offset=148
-	char* worldName; // size=0, offset=152
+	char* PTR_32 worldName; // size=0, offset=152
 	struct VramSize vramSize; // size=8, offset=156
 	unsigned short holdFogFar; // size=0, offset=164
 	unsigned short holdFogNear; // size=0, offset=166
 	long numberEnemyUnits; // size=0, offset=168
-	char** enemyUnitsNames; // size=0, offset=172
-	long** timesSignalList; // size=0, offset=176
-	struct _MultiSignal* spectralSignal; // size=904, offset=180
-	struct _MultiSignal* materialSignal; // size=904, offset=184
-	struct _MultiSignal* startUnitLoadedSignal; // size=904, offset=188
-	struct _MultiSignal* startUnitMainSignal; // size=904, offset=192
-	struct _MultiSignal* startGoingIntoWaterSignal; // size=904, offset=196
-	struct _MultiSignal* startGoingOutOfWaterSignal; // size=904, offset=200
+	char* PTR_32 * PTR_32 enemyUnitsNames; // size=0, offset=172
+	long* PTR_32 * PTR_32 timesSignalList; // size=0, offset=176
+	struct _MultiSignal* PTR_32 spectralSignal; // size=904, offset=180
+	struct _MultiSignal* PTR_32 materialSignal; // size=904, offset=184
+	struct _MultiSignal* PTR_32 startUnitLoadedSignal; // size=904, offset=188
+	struct _MultiSignal* PTR_32 startUnitMainSignal; // size=904, offset=192
+	struct _MultiSignal* PTR_32 startGoingIntoWaterSignal; // size=904, offset=196
+	struct _MultiSignal* PTR_32 startGoingOutOfWaterSignal; // size=904, offset=200
 	long unitFlags; // size=0, offset=204
-	struct _MultiSignal* SignalListStart; // size=904, offset=208
-	struct _MultiSignal* SignalListEnd; // size=904, offset=212
+	struct _MultiSignal* PTR_32 SignalListStart; // size=904, offset=208
+	struct _MultiSignal* PTR_32 SignalListEnd; // size=904, offset=212
 	long numBSPLeaves; // size=0, offset=216
-	struct EventPointers* PuzzleInstances; // size=0, offset=220
+	struct EventPointers* PTR_32 PuzzleInstances; // size=0, offset=220
 	long NumberOfPlanMarkers; // size=0, offset=224
-	struct _PlanMkr* PlanMarkerList; // size=8, offset=228
+	struct _PlanMkr* PTR_32 PlanMarkerList; // size=8, offset=228
 	long NumberOfSFXMarkers; // size=0, offset=232
-	struct _SFXMkr* SFXMarkerList; // size=36, offset=236
+	struct _SFXMkr* PTR_32 SFXMarkerList; // size=36, offset=236
 	unsigned long versionNumber; // size=0, offset=240
-	char* dynamicMusicName; // size=0, offset=244
+	char* PTR_32 dynamicMusicName; // size=0, offset=244
 	long streamUnitID; // size=0, offset=248
 	struct TClassAttr tClassAttr[16]; // size=64, offset=252
 	short TODLighting[4][3]; // size=24, offset=316
@@ -126,8 +126,8 @@ struct Level // hashcode: 0x012B0198 (dec: 19595672)
 	unsigned char TODbackColorG; // size=0, offset=381
 	unsigned char TODbackColorB; // size=0, offset=382
 	unsigned char cpad3; // size=0, offset=383
-	struct LightGroup* razielLightGroup; // size=64, offset=384
-	struct LightGroup* razielSpectralLightGroup; // size=64, offset=388
+	struct LightGroup* PTR_32 razielLightGroup; // size=64, offset=384
+	struct LightGroup* PTR_32 razielSpectralLightGroup; // size=64, offset=388
 };
 
 struct _StreamUnit // hashcode: 0xAC366E40 (dec: -1405718976)
@@ -163,7 +163,7 @@ struct StreamUnitPortal // hashcode: 0x7C52D8D9 (dec: 2085804249)
 	short maxy; // size=0, offset=34
 	short maxz; // size=0, offset=36
 	short pad2; // size=0, offset=38
-	struct _StreamUnit* toStreamUnit; // size=64, offset=40
+	struct _StreamUnit* PTR_32 toStreamUnit; // size=64, offset=40
 	struct _SVector t1[3]; // size=24, offset=44
 	struct _SVector t2[3]; // size=24, offset=68
 };

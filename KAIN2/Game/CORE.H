@@ -313,8 +313,8 @@ typedef struct _HFaceInfo // hashcode: 0x0E79FF8C (dec: 242876300)
 
 typedef struct NodeType // hashcode: 0x5BF613D7 (dec: 1542853591)
 {
-	struct NodeType* prev; // size=8, offset=0
-	struct NodeType* next; // size=8, offset=4
+	struct NodeType* PTR_32 prev; // size=8, offset=0
+	struct NodeType* PTR_32 next; // size=8, offset=4
 } NodeType;
 
 #if defined(PC_VERSION)
