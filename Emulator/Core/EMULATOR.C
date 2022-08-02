@@ -61,7 +61,7 @@ int g_PreviousBlendMode = BM_NONE;
 #if defined(D3D11)
 ID3D11Texture2D* vramBaseTexture;
 
-#if defined(UWP)
+#if defined(UWP) && !defined(UWP_SDL2)
 
 using namespace Windows::Gaming::Input;
 
@@ -584,7 +584,8 @@ void Emulator_ResetDevice()
 #else
 	sd.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 #endif
-#if defined(SDL2)
+
+#if defined(SDL2) && !defined(UWP_SDL2)
 	sd.OutputWindow = wmInfo.info.win.window;
 #endif
 
@@ -614,7 +615,11 @@ void Emulator_ResetDevice()
 
 	assert(!FAILED(hr));
 
+#if defined(UWP_SDL2)
+	hr = dxgiFactory->CreateSwapChainForCoreWindow(d3ddev, reinterpret_cast<IUnknown*>(wmInfo.info.winrt.window), &sd, NULL, &swapChain);
+#else
 	hr = dxgiFactory->CreateSwapChainForCoreWindow(d3ddev, reinterpret_cast<IUnknown*>(g_window), &sd, NULL, &swapChain);
+#endif
 
 	assert(!FAILED(hr));
 #else
@@ -1357,7 +1362,7 @@ static int Emulator_InitialiseD3D11Context(char* windowName)
 #else
 	sd.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 #endif
-#if defined(SDL2)
+#if defined(SDL2) && !defined(UWP_SDL2)
 	sd.OutputWindow = wmInfo.info.win.window;
 #endif
 
@@ -2603,7 +2608,7 @@ void Emulator_Initialise(char* windowName, int width, int height)
 	eprintf("VERSION: %d.%d\n", EMULATOR_MAJOR_VERSION, EMULATOR_MINOR_VERSION);
 	eprintf("Compile Date: %s Time: %s\n", EMULATOR_COMPILE_DATE, EMULATOR_COMPILE_TIME);
 	
-#if defined(UWP)
+#if defined(UWP) && !defined(UWP_SDL2)
 	g_windowName = windowName;
 	//Thread required because UI will block game execution
 	g_uiThread = std::thread(CreateUWPApplication);
@@ -2618,6 +2623,7 @@ void Emulator_Initialise(char* windowName, int width, int height)
 
 	if (Emulator_InitialiseSDL2(finalWindowName, width, height) == FALSE)
 	{
+		eprinterr(SDL_GetError());
 		eprinterr("Failed to Intialise SDL2\n");
 		Emulator_ShutDown();
 	}

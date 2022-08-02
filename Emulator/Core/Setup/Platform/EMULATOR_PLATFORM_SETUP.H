@@ -5,6 +5,8 @@
 
 #if defined(WINAPI_FAMILY) && (WINAPI_FAMILY == WINAPI_FAMILY_APP)
 #define UWP
+#define UWP_SDL2
+#define DEBUG_PRINTS
 #endif
 
 #ifndef _CRT_SECURE_NO_WARNINGS
@@ -14,7 +16,7 @@
 /*
  * Platform specific emulator setup
  */
-#if (defined(_WINDOWS) || defined(__APPLE__) || defined(__linux__) || defined(__MINGW32__)) && !defined(__ANDROID__) && (!defined(UWP))
+#if (defined(_WINDOWS) || defined(__APPLE__) || defined(__linux__) || defined(__MINGW32__)) && !defined(__ANDROID__) && (defined(UWP_SDL2))
 
 #if defined(_DEBUG)
 #define DEBUG_PRINTS
@@ -25,7 +27,7 @@
 //#define OGLES_VERSION 3
 
 //Open Graphics Library
-#define OGL
+//#define OGL
 
 //Vulkan
 //#define VULKAN
@@ -39,7 +41,7 @@
 //Direct3D12
 //#define D3D12
 
-#if defined(OGL) || defined(D3D9) || defined(D3D11) || defined(D3D12) || defined(VULKAN)
+#if defined(OGL) || defined(D3D9) || defined(D3D11) || defined(D3D12) || defined(VULKAN) || defined(UWP_SDL2)
 #define SDL2
 #define SDL2_MIXER
 //#define OPENAL

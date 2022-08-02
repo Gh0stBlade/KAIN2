@@ -5,6 +5,8 @@ Message("Compiling for Windows Store!")
 #Setup project include directories
 
 include_directories(${SDL2_INCLUDE_DIR})
+include_directories(${EXTERN_LIB_PATH}/SDL/include)
+include_directories(${EXTERN_LIB_PATH}/SDL_mixer/include)
 
 set(CMAKE_C_FLAGS           "${CMAKE_C_FLAGS} /ZW")
 set(CMAKE_C_FLAGS_DEBUG     "${CMAKE_C_FLAGS_DEBUG} /ZW")
