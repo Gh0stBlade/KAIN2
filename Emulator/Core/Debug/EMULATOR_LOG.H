@@ -21,8 +21,15 @@
 
 #else
 #if defined(DEBUG_PRINTS)
-#define eprintf(fmt, ...) printf("[EMU] " fmt, ##__VA_ARGS__)
-#define eprinterr(fmt, ...) eprintf("[%s] - " fmt, FUNCNAME, ##__VA_ARGS__);
+#if defined(UWP)
+	extern void Emulator_Log(const char* file, const char* func, int line, const char* fmt, ...);
+	#define eprintf(fmt, ...) Emulator_Log(__FILE__, FUNCNAME, __LINE__, fmt, __VA_ARGS__)
+	#define eprinterr(fmt, ...) eprintf(fmt, ##__VA_ARGS__);
+#else
+	#define eprintf(fmt, ...) printf("[EMU] " fmt, ##__VA_ARGS__)
+	#define eprinterr(fmt, ...) eprintf("[%s] - " fmt, FUNCNAME, ##__VA_ARGS__);
+#endif
+
 #else
 #define eprintf(...) 
 #define eprinterr(...)
