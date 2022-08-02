@@ -2,7 +2,7 @@ if(WINDOWS_STORE AND DEFINED PLATFORM_DURANGO)
 
 target_link_directories(${PROJECT_NAME} PUBLIC ${ROOT_DIR}/Build_Durango/Emulator/$(Configuration))
 target_link_libraries(${PROJECT_NAME} xaudio2.lib)
-set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "${LINK_FLAGS} /LARGEADDRESSAWARE:NO")
+set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "${LINK_FLAGS} /LARGEADDRESSAWARE:YES")
 
 set(CMAKE_C_FLAGS           "${CMAKE_C_FLAGS} /ZW")
 set(CMAKE_C_FLAGS_DEBUG     "${CMAKE_C_FLAGS_DEBUG} /ZW")
