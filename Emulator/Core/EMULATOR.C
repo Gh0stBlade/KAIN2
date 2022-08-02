@@ -63,6 +63,8 @@ ID3D11Texture2D* vramBaseTexture;
 
 #if defined(UWP)
 
+using namespace Windows::Gaming::Input;
+
 using namespace Windows::ApplicationModel;
 using namespace Windows::ApplicationModel::Core;
 using namespace Windows::ApplicationModel::Activation;
@@ -81,6 +83,7 @@ int g_windowReady = 0;
 ref class App sealed : public IFrameworkView
 {
 	bool WindowClosed;
+	unsigned int kbInputs;
 
 public:
 	virtual void Initialize(CoreApplicationView^ AppView)
@@ -104,12 +107,12 @@ public:
 
 		Window->KeyUp +=
 			ref new TypedEventHandler<CoreWindow^, KeyEventArgs^>(this, &App::OnKeyReleased);
+	
+		kbInputs = 0xFFFF;
 	}
 
 	void App::OnKeyPressed(CoreWindow^ sender, KeyEventArgs^ args)
 	{
-		unsigned short kbInputs = 0xFFFF;
-
 		if (args->VirtualKey == Windows::System::VirtualKey::X)//Square
 		{
 			kbInputs &= ~0x8000;
@@ -187,8 +190,6 @@ public:
 
 	void App::OnKeyReleased(CoreWindow^ sender, KeyEventArgs^ args)
 	{
-		unsigned short kbInputs = ((unsigned short*)padData[0])[1];
-
 		if (args->VirtualKey == Windows::System::VirtualKey::X)//Square
 		{
 			kbInputs |= 0x8000;
