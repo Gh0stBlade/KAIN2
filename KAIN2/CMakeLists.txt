@@ -75,6 +75,7 @@ include("Platform/Linux.cmake")
 include("Platform/Emscripten.cmake")
 include("Platform/Android.cmake")
 include("Platform/WindowsStore.cmake")
+include("Platform/Durango.cmake")
 
 BuildPreProcessorDefinitions()
 

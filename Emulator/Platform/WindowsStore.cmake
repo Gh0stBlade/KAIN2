@@ -1,4 +1,4 @@
-if(WINDOWS_STORE)
+if(WINDOWS_STORE AND NOT DEFINED PLATFORM_DURANGO)
 
 Message("Compiling for Windows Store!")
 

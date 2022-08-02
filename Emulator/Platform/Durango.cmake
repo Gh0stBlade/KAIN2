@@ -1,7 +1,8 @@
-if(WINDOWS_STORE AND NOT DEFINED PLATFORM_DUARNGO)
+if(WINDOWS_STORE AND DEFINED PLATFORM_DURANGO)
 
-target_link_directories(${PROJECT_NAME} PUBLIC ${ROOT_DIR}/Build_UWP/Emulator/$(Configuration))
-target_link_libraries(${PROJECT_NAME} xaudio2.lib)
+Message("Compiling for Durango!")
+
+#Setup project include directories
 
 set(CMAKE_C_FLAGS           "${CMAKE_C_FLAGS} /ZW")
 set(CMAKE_C_FLAGS_DEBUG     "${CMAKE_C_FLAGS_DEBUG} /ZW")
@@ -11,7 +12,5 @@ set(CMAKE_CXX_FLAGS_DEBUG   "${CMAKE_CXX_FLAGS_DEBUG} /ZW")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /ZW")
 
 add_definitions(-D_CRT_SECURE_NO_WARNINGS)
-
-set(PSX_LIB Valkyrie.lib)
 
 endif()

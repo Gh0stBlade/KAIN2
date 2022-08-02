@@ -340,6 +340,7 @@ External/
 /Build_Emscripten/*
 /Build_EMSDK/*
 /Build_UWP/*
+/Build_Durango/*
 Emulator/Shaders/D3D9/*.h
 Emulator/Shaders/D3D11/*.h
 Emulator/Shaders/D3D12/*.h
