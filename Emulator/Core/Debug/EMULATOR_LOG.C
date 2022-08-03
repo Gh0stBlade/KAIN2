@@ -3,27 +3,29 @@
 #include "Core/Setup/Platform/EMULATOR_PLATFORM_SETUP.H"
 #include "Core/Setup/Platform/EMULATOR_PLATFORM_INCLUDES.H"
 
-#if defined(UWP)
+#if defined(UWP) || defined(_WIN32)
 
 #include <stdio.h>
 
-
-void Emulator_Log(const char* file, const char* func, int line, const char* fmt, ...) 
+void Emulator_Log(enum LOG_TYPE lt, const char* file, const char* func, int line, const char* fmt, ...) 
 {
-    char buff[1024];
-    sprintf(buff, "[F:%s:%s:L%d] - %s", file, func, line, fmt);
-
-#if 0
+#if !defined(UWP) && (defined(_WIN32) || defined(_WIN64))
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
-    for (int k = 1; k < 255; k++)
-    {
-        SetConsoleTextAttribute(hConsole, k);
-        printf("%3d  %s\n", k, "I want to be nice today!");
-    }
-#endif
+    SetConsoleTextAttribute(hConsole, lt);
+    printf("[F:%s:%s:L%d] - ", file, func, line, fmt);
+    
+    va_list arglist;
+    va_start(arglist, fmt);
+    vprintf(fmt, arglist);
+    va_end(arglist);
+#else
+    char buff[1024];
+    sprintf(buff, "[F:%s:%s:L%d] - %s\n", file, func, line, fmt);
 
     OutputDebugStringA(buff);
+
+#endif
 }
 
 #endif

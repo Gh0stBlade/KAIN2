@@ -21,13 +21,24 @@
 
 #else
 #if defined(DEBUG_PRINTS)
+
+enum LOG_TYPE
+{
+	LT_DEFAULT = 7,
+	LT_WARNING = 6,
+	LT_ERROR = 4,
+};
+
+extern void Emulator_Log(enum LOG_TYPE lt, const char* file, const char* func, int line, const char* fmt, ...);
+
 #if defined(UWP)
-	extern void Emulator_Log(const char* file, const char* func, int line, const char* fmt, ...);
-	#define eprintf(fmt, ...) Emulator_Log(__FILE__, FUNCNAME, __LINE__, fmt, __VA_ARGS__)
-	#define eprinterr(fmt, ...) eprintf(fmt, ##__VA_ARGS__);
+	#define eprintf(c, fmt, ...) Emulator_Log(c, __FILE__, FUNCNAME, __LINE__, fmt, __VA_ARGS__)
+	#define eprinterr(fmt, ...) eprintf(LT_ERROR, fmt, ##__VA_ARGS__);
 #else
-	#define eprintf(fmt, ...) printf("[EMU] " fmt, ##__VA_ARGS__)
-	#define eprinterr(fmt, ...) eprintf("[%s] - " fmt, FUNCNAME, ##__VA_ARGS__);
+	#define eprint(c, fmt, ...) Emulator_Log(c, __FILE__, FUNCNAME, __LINE__, fmt, __VA_ARGS__)
+	#define eprintf(fmt, ...) eprint(LT_DEFAULT, fmt, ##__VA_ARGS__);
+	#define eprintwarn(fmt, ...) eprint(LT_WARNING, fmt, ##__VA_ARGS__);
+	#define eprinterr(fmt, ...) eprint(LT_ERROR, fmt, ##__VA_ARGS__);
 #endif
 
 #else
@@ -43,7 +54,7 @@
 
 #include "Core/Debug/BOUNTY_LIST.H"
 
-#define UNIMPLEMENTED() eprinterr("Unimplemented!\n"); \
+#define UNIMPLEMENTED() eprintwarn("Unimplemented!\n"); \
 		Emulator_AddBounty(FUNCNAME);
 #else
 #define UNIMPLEMENTED() eprinterr("Unimplemented!\n");
