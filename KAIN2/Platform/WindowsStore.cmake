@@ -1,4 +1,4 @@
-if(WINDOWS_STORE AND NOT DEFINED PLATFORM_DUARNGO)
+if(WINDOWS_STORE AND NOT DEFINED PLATFORM_DURANGO)
 
 target_link_directories(${PROJECT_NAME} PUBLIC ${ROOT_DIR}/Build_UWP/Emulator/$(Configuration) ${EXTERN_LIB_PATH}/SDL_mixer/VisualC-WinRT/x64/Debug/SDL_mixer-UWP ${EXTERN_LIB_PATH}/SDL/VisualC-WinRT/x64/Debug/SDL-UWP)
 target_link_libraries(${PROJECT_NAME} SDL2.lib SDL2_mixer.lib)

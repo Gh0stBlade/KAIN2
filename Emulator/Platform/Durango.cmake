@@ -3,6 +3,8 @@ if(WINDOWS_STORE AND DEFINED PLATFORM_DURANGO)
 Message("Compiling for Durango!")
 
 #Setup project include directories
+include_directories(${EXTERN_LIB_PATH}/SDL/include)
+include_directories(${EXTERN_LIB_PATH}/SDL_mixer/include)
 
 set(CMAKE_C_FLAGS           "${CMAKE_C_FLAGS} /ZW")
 set(CMAKE_C_FLAGS_DEBUG     "${CMAKE_C_FLAGS_DEBUG} /ZW")

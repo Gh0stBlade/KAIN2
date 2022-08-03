@@ -3,8 +3,6 @@ if(WINDOWS_STORE AND NOT DEFINED PLATFORM_DURANGO)
 Message("Compiling for Windows Store!")
 
 #Setup project include directories
-
-include_directories(${SDL2_INCLUDE_DIR})
 include_directories(${EXTERN_LIB_PATH}/SDL/include)
 include_directories(${EXTERN_LIB_PATH}/SDL_mixer/include)
 
