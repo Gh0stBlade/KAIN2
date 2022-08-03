@@ -14,7 +14,7 @@ extern "C" {
 #if defined(_WIN64)
 #define PTR_32 __ptr32
 #else
-#define PTR_32 0
+#define PTR_32
 #endif
 
 extern int PCinit();

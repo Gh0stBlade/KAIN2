@@ -37,7 +37,11 @@ void do_check_controller(void *gt)
 	}
 }
 
+#if defined(_WIN64)
+int do_push_menu(void *gt, long long menuparam, enum menu_ctrl_t ctrl)
+#else
 int do_push_menu(void *gt, long menuparam, enum menu_ctrl_t ctrl)
+#endif
 {
 	if (ctrl != menu_ctrl_engage)
 	{
@@ -52,7 +56,11 @@ int do_push_menu(void *gt, long menuparam, enum menu_ctrl_t ctrl)
 	return 1;
 }
 
+#if defined(_WIN64)
+int do_pop_menu(void *gt, long long param, enum menu_ctrl_t ctrl)
+#else
 int do_pop_menu(void *gt, long param, enum menu_ctrl_t ctrl)
+#endif
 {
 	if (ctrl != menu_ctrl_engage)
 	{
@@ -64,7 +72,11 @@ int do_pop_menu(void *gt, long param, enum menu_ctrl_t ctrl)
 	return 1;
 }
 
-int do_function(void *gt, long fnparam, enum menu_ctrl_t ctrl)
+#if defined(_WIN64)
+int do_function(void *gt, long long fnparam, enum menu_ctrl_t ctrl)
+#else
+int do_function(void* gt, long fnparam, enum menu_ctrl_t ctrl)
+#endif
 { 
 	if (ctrl == menu_ctrl_engage)
 	{
@@ -77,7 +89,11 @@ int do_function(void *gt, long fnparam, enum menu_ctrl_t ctrl)
 	return 0;
 }
 
+#if defined(_WIN64)
+int do_start_game(void *gt, long long parameter, enum menu_ctrl_t ctrl)
+#else
 int do_start_game(void *gt, long parameter, enum menu_ctrl_t ctrl)
+#endif
 {
 	if (ctrl == menu_ctrl_engage)
 	{
@@ -96,7 +112,11 @@ int do_start_game(void *gt, long parameter, enum menu_ctrl_t ctrl)
 	return 0;
 }
 
+#if defined(_WIN64)
+int do_save_menu(void *gt, long long parameter, enum menu_ctrl_t ctrl)
+#else
 int do_save_menu(void *gt, long parameter, enum menu_ctrl_t ctrl)
+#endif
 { 
 	if (menu_ctrl_engage == menu_ctrl_engage)
 	{
@@ -199,7 +219,11 @@ void set_volume(enum sfx_t sfx, int cooked)
 	}
 }
 
+#if defined(_WIN64)
+int do_sound_adjust(void *gt, long long sfxparam, enum menu_ctrl_t ctrl)
+#else
 int do_sound_adjust(void *gt, long sfxparam, enum menu_ctrl_t ctrl)
+#endif
 {
 	int volume;
 	
@@ -235,8 +259,11 @@ void sound_item(void *gt, char *text, enum sfx_t sfx)
 {
 	menu_item(((struct GameTracker*)gt)->menu, do_sound_adjust, sfx, "%s %d", text, get_volume(gt, sfx));
 }
-
+#if defined(_WIN64)
+int menudefs_toggle_dualshock(void* gt, long long param, enum menu_ctrl_t ctrl)
+#else
 int menudefs_toggle_dualshock(void *gt, long param, enum menu_ctrl_t ctrl)
+#endif
 { 
 	if ((unsigned int)ctrl - 3 < 2)
 	{
@@ -311,7 +338,11 @@ int main_menu(void *gt, int index)
 	do_check_controller(gt);
 	
 	menu_item(((GameTracker*)gt)->menu, do_start_game, 0, localstr_get(LOCALSTR_start_game));
+#if defined(_WIN64)
+	menu_item(((GameTracker*)gt)->menu, do_push_menu, (long long)&options_menu, localstr_get(LOCALSTR_options));
+#else
 	menu_item(((GameTracker*)gt)->menu, do_push_menu, (long)&options_menu, localstr_get(LOCALSTR_options));
+#endif
 
 	if (index < 0)
 	{
@@ -321,7 +352,11 @@ int main_menu(void *gt, int index)
 	return index;
 }
 
-int do_main_menu(void *gt, long param, enum menu_ctrl_t ctrl)
+#if defined(_WIN64)
+int do_main_menu(void *gt, long long param, enum menu_ctrl_t ctrl)
+#else
+int do_main_menu(void* gt, long param, enum menu_ctrl_t ctrl)
+#endif
 { 
 	if (StartGameFading == 0 && (ctrl == menu_ctrl_start || ctrl == menu_ctrl_engage))
 	{

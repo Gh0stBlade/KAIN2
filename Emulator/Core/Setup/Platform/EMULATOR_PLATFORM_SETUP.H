@@ -16,7 +16,7 @@
 /*
  * Platform specific emulator setup
  */
-#if (defined(_WINDOWS) || defined(__APPLE__) || defined(__linux__) || defined(__MINGW32__)) && !defined(__ANDROID__) && (defined(UWP_SDL2))
+#if (defined(_WINDOWS) || defined(__APPLE__) || defined(__linux__) || defined(__MINGW32__)) && !defined(__ANDROID__) || (defined(UWP_SDL2))
 
 #if defined(_DEBUG) && !defined(UWP_SDL2)
 #define DEBUG_PRINTS
@@ -36,7 +36,7 @@
 //#define D3D9
 
 //Direct3D11
-//#define D3D11
+#define D3D11
 
 //Direct3D12
 //#define D3D12

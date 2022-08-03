@@ -104,7 +104,7 @@ typedef struct
 
 	CallbackProc padding00;
 	unsigned int timerIndex;
-#if !defined(UWP)
+#if defined(UWP_SDL2) || defined(SDL2)
 	SDL_TimerID timerId;
 #endif
 	unsigned int startTick;

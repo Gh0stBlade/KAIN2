@@ -63,7 +63,11 @@ void menu_pop(struct menu_t *menu)
 	menu->nmenus--;
 }
 
+#if defined(_WIN64)
+void menu_item_flags(struct menu_t *menu, int (*fn)(void*, long long, enum menu_ctrl_t), long parameter, long flags, char *format, ...)
+#else
 void menu_item_flags(struct menu_t *menu, int (*fn)(void*, long, enum menu_ctrl_t), long parameter, long flags, char *format, ...)
+#endif
 { 
 	struct menu_item_t *item;
 	va_list ap;
@@ -81,7 +85,11 @@ void menu_item_flags(struct menu_t *menu, int (*fn)(void*, long, enum menu_ctrl_
 	menu->nbytes += strlen(item->text) + 1;
 }
 
+#if defined(_WIN64)
+void menu_item(struct menu_t *menu, int (*fn)(void*, long long, enum menu_ctrl_t), long long parameter, char* format, ...)
+#else
 void menu_item(struct menu_t *menu, int (*fn)(void*, long, enum menu_ctrl_t), long parameter, char* format, ...)
+#endif
 { 
 	struct menu_item_t* item;
 	va_list ap;

@@ -63,8 +63,8 @@ int aadInit(struct AadInitAttr *attributes, unsigned char *memoryPtr)
 		aadMem->memoryMallocProc = attributes->memoryMallocProc;
 		aadMem->memoryFreeProc = attributes->memoryFreeProc;
 		
-		memset(aadMem->sfxToneMasterList, 255, sizeof(aadMem->sfxToneMasterList));
-		memset(aadMem->sfxWaveMasterList, 255, sizeof(aadMem->sfxWaveMasterList));
+		memset(aadMem->sfxToneMasterList, -1, sizeof(aadMem->sfxToneMasterList));
+		memset(aadMem->sfxWaveMasterList, -1, sizeof(aadMem->sfxWaveMasterList));
 		
 		aadMem->sramDescriptorTbl[0].prevIndex = 255;
 		aadMem->nextSramDescIndex = 1;
@@ -1568,6 +1568,7 @@ void aadLoadDynamicSfxReturn2(void *loadedDataPtr, long loadedDataSize, short st
 			}
 			
 #if defined(_WIN64)
+			uintptr_t* test = (uintptr_t*)info - ((unsigned)info->bytesToLoad - 148);
 			memcpy(((uintptr_t*)info - ((uintptr_t)info->bytesToLoad - 148)), &dataPtr[dataOffset], n);
 #else
 			memcpy(((char*)info - (unsigned)(info->bytesToLoad - 148)), &dataPtr[dataOffset], n);

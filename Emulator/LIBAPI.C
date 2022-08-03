@@ -89,7 +89,7 @@ long StartRCnt(long spec)//(F)
 	if (counters[spec].padding00 != NULL)
 	{
 		counters[spec].timerIndex = spec;
-#if !defined(UWP)
+#if defined(UWP_SDL2) || defined(SDL2)
 		counters[spec].startTick = SDL_GetTicks();
 		SDL_AddTimer(counters[spec].target >> 4, Emulator_CounterWrapper, &counters[spec].timerIndex);
 #endif
@@ -100,7 +100,7 @@ long StartRCnt(long spec)//(F)
 
 long StopRCnt(long spec)//TODO
 {
-#if !defined(UWP)
+#if defined(UWP_SDL2) || defined(SDL2)
 	SDL_RemoveTimer(counters[spec & 0xFFFF].timerId);
 #endif
 	return 0;

@@ -2627,7 +2627,6 @@ void Emulator_Initialise(char* windowName, int width, int height)
 
 	if (Emulator_InitialiseSDL2(finalWindowName, width, height) == FALSE)
 	{
-		eprinterr(SDL_GetError());
 		eprinterr("Failed to Intialise SDL2\n");
 		Emulator_ShutDown();
 	}
