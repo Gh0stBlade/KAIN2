@@ -1568,9 +1568,10 @@ void aadLoadDynamicSfxReturn2(void *loadedDataPtr, long loadedDataSize, short st
 			}
 			
 #if defined(_WIN64)
-			uintptr_t* test = (uintptr_t*)info - ((unsigned)info->bytesToLoad - 148);
-			memcpy(((uintptr_t*)info - ((uintptr_t)info->bytesToLoad - 148)), &dataPtr[dataOffset], n);
+			char* test = ((char*)info - ((uintptr_t)info->bytesToLoad - 148));
+			memcpy(((char*)info - ((uintptr_t)info->bytesToLoad - 148)), &dataPtr[dataOffset], n);
 #else
+			char* test = ((char*)info - (unsigned)(info->bytesToLoad - 148));
 			memcpy(((char*)info - (unsigned)(info->bytesToLoad - 148)), &dataPtr[dataOffset], n);
 #endif
 			dataOffset += n;

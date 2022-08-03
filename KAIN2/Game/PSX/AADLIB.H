@@ -226,7 +226,7 @@ struct AadDynamicSfxLoadInfo // hashcode: 0xEDD41D4C (dec: -304865972)
 	int error; // size=0, offset=108
 	unsigned long waveTransferAddr; // size=0, offset=112
 	unsigned long totalSramUsed; // size=0, offset=116
-	struct _AadDynSfxFileHdr* snfFile; // size=20, offset=120
+	struct _AadDynSfxFileHdr* PTR_32 snfFile; // size=20, offset=120
 	struct AadDynSfxAttr attr; // size=24, offset=124
 };
 
