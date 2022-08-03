@@ -306,7 +306,7 @@ typedef struct AadMemoryStruct // hashcode: 0x46CEF45B (dec: 1187968091)
 	struct AadProgramAtr* dynamicProgramAtr[2]; // size=8, offset=1240
 	struct AadToneAtr* dynamicToneAtr[2]; // size=8, offset=1248
 	unsigned long* dynamicWaveAddr[2]; // size=8, offset=1256
-	unsigned char** dynamicSequenceAddressTbl[2]; // size=8, offset=1264
+	unsigned char* PTR_32 * PTR_32 dynamicSequenceAddressTbl[2]; // size=8, offset=1264
 	unsigned long* dynamicSequenceLabelOffsetTbl[2]; // size=8, offset=1272
 	int dynamicBankStatus[2]; // size=8, offset=1280
 	unsigned char* dynamicSoundBankData[2]; // size=8, offset=1288
