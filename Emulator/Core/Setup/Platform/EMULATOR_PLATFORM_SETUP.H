@@ -6,7 +6,7 @@
 #if defined(WINAPI_FAMILY) && (WINAPI_FAMILY == WINAPI_FAMILY_APP)
 #define UWP
 #define UWP_SDL2
-#define DEBUG_PRINTS
+//#define DEBUG_PRINTS
 #endif
 
 #ifndef _CRT_SECURE_NO_WARNINGS
@@ -18,7 +18,7 @@
  */
 #if (defined(_WINDOWS) || defined(__APPLE__) || defined(__linux__) || defined(__MINGW32__)) && !defined(__ANDROID__) && (defined(UWP_SDL2))
 
-#if defined(_DEBUG)
+#if defined(_DEBUG) && !defined(UWP_SDL2)
 #define DEBUG_PRINTS
 #endif
 

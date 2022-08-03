@@ -615,10 +615,10 @@ void Emulator_ResetDevice()
 
 	assert(!FAILED(hr));
 
-#if defined(UWP_SDL2)
+#if defined(UWP) && defined(SDL2)
 	hr = dxgiFactory->CreateSwapChainForCoreWindow(d3ddev, reinterpret_cast<IUnknown*>(wmInfo.info.winrt.window), &sd, NULL, &swapChain);
 #else
-	hr = dxgiFactory->CreateSwapChainForCoreWindow(d3ddev, reinterpret_cast<IUnknown*>(g_window), &sd, NULL, &swapChain);
+	hr = dxgiFactory->CreateSwapChainForComposition(d3ddev, &sd, NULL, &swapChain);
 #endif
 
 	assert(!FAILED(hr));
@@ -1406,7 +1406,11 @@ static int Emulator_InitialiseD3D11Context(char* windowName)
 		return FALSE;
 	}
 
+#if defined(UWP) && defined(SDL2)
+	hr = dxgiFactory->CreateSwapChainForCoreWindow(d3ddev, reinterpret_cast<IUnknown*>(wmInfo.info.winrt.window), &sd, NULL, &swapChain);
+#else
 	hr = dxgiFactory->CreateSwapChainForComposition(d3ddev, &sd, NULL, &swapChain);
+#endif
 
 	if (!SUCCEEDED(hr)) {
 		eprinterr("Failed to create swapchain\n");
