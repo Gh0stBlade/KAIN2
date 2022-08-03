@@ -38,9 +38,13 @@ void MEMPACK_Init()//Matching - 51.54%
 	SYSTEM_INFO info;
 	GetSystemInfo(&info);
 
-	LPVOID base = (LPVOID)info.lpMinimumApplicationAddress;
+#if defined(PLATFORM_DURANGO) || 1
+	LPVOID base = (LPVOID)0x1FFFFFFF;
+#else
+	LPVOID base = (LPVOID)NULL;
+#endif
 	unsigned int totalSize = 0x11F18C + (ONE_MB * 8);
-	memBuffer = (char*)VirtualAlloc(NULL, totalSize, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
+	memBuffer = (char*)VirtualAlloc(base, totalSize, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
 	overlayAddress = (unsigned int)memBuffer;
 	newMemTracker.totalMemory = totalSize;
 	memset(&memBuffer[0], 0, totalSize);

@@ -3,7 +3,7 @@
 
 #if defined(PSXPC_VERSION)
 #include "CORE.H"
-#if defined(SDL2)
+#if defined(SDL2) && defined(UWP_SDL2)
 #undef R13
 #undef R12
 #undef R11

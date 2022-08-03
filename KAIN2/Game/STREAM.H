@@ -186,7 +186,7 @@ extern void STREAM_Init(); // 0x800585EC
 extern int FindObjectName(char *name); // 0x80058618
 extern struct _ObjectTracker * FindObjectInTracker(struct Object *object); // 0x80058684
 extern struct _StreamUnit * FindStreamUnitFromLevel(struct Level *level); // 0x800586D4
-extern void STREAM_LoadObjectReturn(void *loadData, void *data, void *data2); // 0x80058724
+extern void STREAM_LoadObjectReturn(void *loadData, void* PTR_32 data, void *data2); // 0x80058724
 extern void STREAM_DumpMonster(struct _ObjectTracker *dumpee); // 0x8005882C
 extern int STREAM_InList(char *name, char **nameList); // 0x800588A0
 extern int STREAM_IsSpecialMonster(char *name); // 0x80058908
@@ -270,7 +270,7 @@ extern void STREAM_OffsetInstancePosition(struct _Instance *instance, struct _SV
 extern void STREAM_SetInstancePosition(struct _Instance *instance, struct evPositionData *data); // 0x8005BEC0
 extern void RelocateInstances(struct _SVector *offset); // 0x8005BF18
 extern void RelocateStreamPortals(struct StreamUnitPortal *StreamUnitList, int NumStreamUnits, struct _SVector *offset); // 0x8005BF74
-extern void STREAM_PackVRAMObject(struct _ObjectTracker *objectTracker); // 0x8005C0A4
+extern void STREAM_PackVRAMObject(struct _ObjectTracker* PTR_32 objectTracker); // 0x8005C0A4
 extern void MORPH_SetupInstanceFlags(struct _Instance *instance); // 0x8005C1A4
 extern void MORPH_SetupInstanceListFlags(); // 0x8005C2D8
 extern void MORPH_InMorphInstanceListFlags(); // 0x8005C320

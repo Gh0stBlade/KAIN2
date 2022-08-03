@@ -158,14 +158,14 @@ struct _StreamUnit * FindStreamUnitFromLevel(struct Level *level)
 	return null;
 }
 
-void STREAM_LoadObjectReturn(void* loadData, void* data, void* data2)
+void STREAM_LoadObjectReturn(void* loadData, void* PTR_32 data, void* data2)
 {
 	struct Object* object;
-	struct _ObjectTracker* objectTracker;
+	struct _ObjectTracker* PTR_32 objectTracker;
 	char objDsfxFileName[64];
 
 	object = (struct Object*)loadData;
-	objectTracker = (struct _ObjectTracker*)data;
+	objectTracker = (struct _ObjectTracker* PTR_32)data;
 	GetRCnt(0xF2000000);
 
 	if ((object->oflags & 0x8000000) && object->relocList != NULL && object->relocModule != NULL)
@@ -433,7 +433,7 @@ int InsertGlobalObject(char *name, struct GameTracker *gameTracker)
 		strcpy(otr->name, name);
 
 		otr->objectStatus = 1;
-		LOAD_NonBlockingBinaryLoad(string, (void*)STREAM_LoadObjectReturn, otr, NULL, (void**)&otr->object, 1);
+		LOAD_NonBlockingBinaryLoad(string, (void*)STREAM_LoadObjectReturn, (void*)otr, NULL, (void**)&otr->object, 1);
 		otr->numInUse = 0;
 		otr->numObjectsUsing = 0;
 	}
@@ -2505,7 +2505,7 @@ void RelocateStreamPortals(struct StreamUnitPortal *StreamUnitList, int NumStrea
 			UNIMPLEMENTED();
 }
 
-void STREAM_PackVRAMObject(struct _ObjectTracker *objectTracker)
+void STREAM_PackVRAMObject(struct _ObjectTracker* PTR_32 objectTracker)
 { 
 	struct VramSize* vramSize;
 	struct VramBuffer* vramBuffer;
@@ -2520,7 +2520,6 @@ void STREAM_PackVRAMObject(struct _ObjectTracker *objectTracker)
 
 		if (vramBlock != NULL)
 		{
-			///@FIXME crash-UWP disable LARGEADDRESSAWARE!
 			AdjustVramCoordsObject(SCREEN_WIDTH, 0, vramBlock->x, vramBlock->y, objectTracker->object);
 		}
 			
