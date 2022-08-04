@@ -3,39 +3,34 @@
 #include "AADLIB.H"
 #include "AADSEQEV.H"
 
-void aadSubstituteVariables(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
+void aadSubstituteVariables(struct AadSeqEvent* event, struct _AadSequenceSlot* slot)//Matching - 91.96%
 {
-	unsigned char trackFlags;
-	
-	trackFlags = slot->trackFlags[event->track];
+	unsigned char trackFlags = slot->trackFlags[event->track];
 
-	if ((trackFlags & 0x7))
+	if ((trackFlags & 0x7) && (unsigned char)(event->statusByte - 0x41) >= 3)
 	{
-		if ((unsigned int)(event->statusByte - 65) >= 3)
+		if ((trackFlags & 0x1))
 		{
-			if ((trackFlags & 0x1))
-			{
-				trackFlags &= 0xFE;
+			trackFlags &= 0xFE;
 
-				event->dataByte[0] = aadMem->userVariables[(unsigned char)event->dataByte[0]];
-			}
-
-			if ((trackFlags & 0x2))
-			{
-				trackFlags &= 0xFD;
-				
-				event->dataByte[1] = aadMem->userVariables[(unsigned char)event->dataByte[1]];
-			}
-			
-			if ((trackFlags & 0x4))
-			{
-				trackFlags &= 0xFB;
-
-				event->dataByte[2] = aadMem->userVariables[(unsigned char)event->dataByte[2]];
-			}
-
-			slot->trackFlags[event->track] = trackFlags;
+			event->dataByte[0] = aadMem->userVariables[(unsigned char)event->dataByte[0]];
 		}
+
+		if ((trackFlags & 0x2))
+		{
+			trackFlags &= 0xFD;
+
+			event->dataByte[1] = aadMem->userVariables[(unsigned char)event->dataByte[1]];
+		}
+
+		if ((trackFlags & 0x4))
+		{
+			trackFlags &= 0xFB;
+
+			event->dataByte[2] = aadMem->userVariables[(unsigned char)event->dataByte[2]];
+		}
+
+		slot->trackFlags[event->track] = trackFlags;
 	}
 }
 
@@ -50,6 +45,8 @@ void metaCmdSelectChannel(struct AadSeqEvent *event, struct _AadSequenceSlot *sl
 	{
 		slot->selectedChannel = channelNumber;
 	}
+
+	eprintinf("[MIDI]: Set Channel Number: %d\n", channelNumber);
 
 #elif defined(PC_VERSION)
 	int v2; // eax
@@ -66,20 +63,25 @@ void metaCmdSelectSlot(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 
 	int slotNumber;
 
-	slotNumber = event->dataByte[0];//v1
+	slotNumber = (unsigned char)event->dataByte[0];
 
 	if (slotNumber < aadMem->numSlots)
 	{
 		slot->selectedSlotNum = slotNumber;
 		
 		slot->selectedSlotPtr = aadMem->sequenceSlots[slotNumber];
+
+		eprintinf("[MIDI]: Set Slot Number: %d\n", slotNumber);
 	}
 	else if (slotNumber == 127)
 	{
 		slot->selectedSlotPtr = slot;
 
 		slot->selectedSlotNum = slot->thisSlotNumber;
+
+		eprintinf("[MIDI]: Set Slot Number: %d\n", slot->thisSlotNumber);
 	}
+
 
 #elif defined(PC_VERSION)
 	int v2; // eax
@@ -115,6 +117,7 @@ void metaCmdAssignSequence(struct AadSeqEvent* event, struct _AadSequenceSlot* s
 	if (aadMem->dynamicBankStatus[bank] == 2 && sequenceNumber < aadGetNumDynamicSequences(bank))
 	{
 		aadAssignDynamicSequence(bank, sequenceNumber, slot->selectedSlotNum);
+		eprintinf("[MIDI]: Assign dynamic bank: %d to sequence: %d\n", bank, sequenceNumber);
 	}
 
 #elif defined(PC_VERSION)
@@ -152,6 +155,8 @@ void metaCmdSetTempo(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 
 	aadSetSlotTempo(slot->selectedSlotNum, &tempo);
 
+	eprintinf("[MIDI]: Set Slot: %d Tempo: %d\n", slot->selectedSlotNum, tempo.quarterNoteTime);
+
 #elif defined(PC_VERSION)
 	struct _AadSequenceSlot* selectedSlotPtr; // eax
 	int v3; // [esp+0h] [ebp-8h] BYREF
@@ -179,6 +184,9 @@ void metaCmdChangeTempo(struct AadSeqEvent *event, struct _AadSequenceSlot *slot
 	tempo.ppqn = selectedSlot->tempo.ppqn;
 
 	aadSetSlotTempo(slot->selectedSlotNum, &tempo);
+
+	eprintinf("[MIDI]: Change Slot: %d Tempo: %d\n", slot->selectedSlotNum, tempo.quarterNoteTime);
+
 #elif defined(PC_VERSION)
 	struct _AadSequenceSlot* selectedSlotPtr; // ecx
 	int selectedSlotNum; // edx
@@ -209,6 +217,8 @@ void metaCmdSetTempoFromSequence(struct AadSeqEvent *event, struct _AadSequenceS
 	{
 		aadGetTempoFromDynamicSequence(bank, sequenceNumber, &tempo);
 		aadSetSlotTempo(slot->selectedSlotNum, &tempo);
+
+		eprintinf("[MIDI]: Set Slot: %d Tempo: %d Sequence: %d\n", slot->selectedSlotNum, tempo.quarterNoteTime, sequenceNumber);
 	}
 
 #elif defined(PC_VERSION)
@@ -230,6 +240,8 @@ void metaCmdStartSlot(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 {
 #if defined(PSX_VERSION)
 	aadStartSlot(slot->selectedSlotNum);
+	eprintinf("[MIDI]: Start Slot: %d\n", slot->selectedSlotNum);
+
 #elif defined(PC_VERSION)
 	aadStartSlot(slot->selectedSlotNum);
 #endif
@@ -239,6 +251,8 @@ void metaCmdStopSlot(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 {
 #if defined(PSX_VERSION)
 	aadStopSlot(slot->selectedSlotNum);
+	eprintinf("[MIDI]: Stop Slot: %d\n", slot->selectedSlotNum);
+
 #elif defined(PC_VERSION)
 	aadStopSlot(slot->selectedSlotNum);
 #endif
@@ -260,6 +274,8 @@ void metaCmdResumeSlot(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 {
 #if defined(PSX_VERSION)
 	aadResumeSlot(slot->selectedSlotNum);
+	eprintinf("[MIDI]: Resume Slot: %d\n", slot->selectedSlotNum);
+
 #elif defined(PC_VERSION)
 	aadResumeSlot(slot->selectedSlotNum);
 #endif
@@ -292,6 +308,8 @@ void metaCmdSetSlotVolume(struct AadSeqEvent *event, struct _AadSequenceSlot *sl
 
 	aadUpdateSlotVolPan(slot->selectedSlotPtr);
 
+	eprintinf("[MIDI]: Update Slot:%d Vol: %d\n", slot->selectedSlotNum, volume);
+
 #elif defined(PC_VERSION)
 	slot->selectedSlotPtr->slotVolume = event->dataByte[0];
 	aadUpdateSlotVolPan((int)slot->selectedSlotPtr, (int)slot->selectedSlotPtr);
@@ -309,6 +327,9 @@ void metaCmdSetSlotPan(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 	pan = (unsigned char)event->dataByte[0];
 
 	aadUpdateSlotVolPan(slot->selectedSlotPtr);
+
+	eprintinf("[MIDI]: Update Slot:%d Pan: %d\n", slot->selectedSlotNum, pan);
+
 #endif
 }
 
@@ -325,6 +346,9 @@ void metaCmdSetChannelVolume(struct AadSeqEvent *event, struct _AadSequenceSlot 
 	slot->selectedSlotPtr->volume[slot->selectedChannel] = volume;
 
 	aadUpdateChannelVolPan(slot->selectedSlotPtr, slot->selectedChannel);
+
+	eprintinf("[MIDI]: Set Channel: %d Volume: %d\n", slot->selectedChannel, volume);
+
 #endif
 }
 
@@ -349,6 +373,9 @@ void metaCmdEnableSustainUpdate(struct AadSeqEvent *event, struct _AadSequenceSl
 	channel = slot->selectedChannel;
 
 	slot->selectedSlotPtr->enableSustainUpdate = (1 << channel);
+
+	eprintinf("[MIDI]: Set Channel: %d Sustain Update: %d\n", slot->selectedChannel, slot->selectedSlotPtr->enableSustainUpdate);
+
 
 #elif defined(PC_VERSION)
 	slot->selectedSlotPtr->enableSustainUpdate |= 1 << slot->selectedChannel;
@@ -395,6 +422,8 @@ void metaCmdMuteChannelList(struct AadSeqEvent *event, struct _AadSequenceSlot *
 {
 #if defined(PSX_VERSION)
 	aadMuteChannels(slot->selectedSlotPtr, (unsigned char)event->dataByte[0] | ((unsigned char)event->dataByte[1] << 8));
+	eprintinf("[MIDI]: Set Muted Channel List: %d\n", (unsigned char)event->dataByte[0] | ((unsigned char)event->dataByte[1] << 8));
+
 #elif defined(PC_VERSION)
 	aadMuteChannels(slot->selectedSlotPtr, event->dataByte[0] | (event->dataByte[1] << 8));
 #endif
@@ -404,6 +433,8 @@ void metaCmdUnMuteChannelList(struct AadSeqEvent *event, struct _AadSequenceSlot
 {
 #if defined(PSX_VERSION)
 	aadUnMuteChannels(slot->selectedSlotPtr, (((unsigned char)event->dataByte[1] << 8) | (unsigned char)event->dataByte[0]));
+	eprintinf("[MIDI]: Set Un-Muted Channel List: %d\n", (((unsigned char)event->dataByte[1] << 8) | (unsigned char)event->dataByte[0]));
+
 #elif defined(PC_VERSION)
 	aadUnMuteChannels(slot->selectedSlotPtr, (event->dataByte[1] << 8) | event->dataByte[0]);
 #endif
@@ -587,9 +618,12 @@ void metaCmdSetChannelTranspose(struct AadSeqEvent *event, struct _AadSequenceSl
 	int transpose;
 	
 	channel = slot->selectedChannel;
-	transpose = event->dataByte[0];
+	transpose = (unsigned char)event->dataByte[0];
 
 	slot->selectedSlotPtr->transpose[channel] = transpose;
+
+	eprintinf("[MIDI]: Set Channel: %d Transpose: %d\n", channel, transpose);
+
 }
 
 
@@ -754,6 +788,10 @@ void metaCmdGetTempo(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 		aadMem->userVariables[variableNum1] = quarterNoteTime;
 		aadMem->userVariables[variableNum2] = quarterNoteTime >> 8;
 		aadMem->userVariables[variableNum3] = quarterNoteTime >> 16;
+
+		eprintinf("[MIDI]: Set Variable: %d Value: %d\n", variableNum1, aadMem->userVariables[variableNum1]);
+		eprintinf("[MIDI]: Set Variable: %d Value: %d\n", variableNum2, aadMem->userVariables[variableNum2]);
+		eprintinf("[MIDI]: Set Variable: %d Value: %d\n", variableNum3, aadMem->userVariables[variableNum3]);
 	}
 }
 
@@ -766,6 +804,7 @@ void metaCmdGetSlotStatus(struct AadSeqEvent *event, struct _AadSequenceSlot *sl
 	if (variableNum < 128)
 	{
 		aadMem->userVariables[variableNum] = slot->selectedSlotPtr->status;
+		eprintinf("[MIDI]: Set Variable: %d\n", variableNum, slot->selectedSlotPtr->status);
 	}
 }
 
@@ -1021,6 +1060,9 @@ void metaCmdSetVariable(struct AadSeqEvent *event, struct _AadSequenceSlot *slot
 	if (destVariable < 128)
 	{
 		aadMem->userVariables[destVariable] = value;
+
+		eprintinf("[MIDI]: Set Variable: %d Value: %d\n", destVariable, value);
+
 	}
 }
 
@@ -1035,6 +1077,8 @@ void metaCmdCopyVariable(struct AadSeqEvent *event, struct _AadSequenceSlot *slo
 	if (srcVariable < 128 && destVariable < 128)
 	{
 		aadMem->userVariables[destVariable] = aadMem->userVariables[srcVariable];
+		eprintinf("[MIDI]: Set Variable: %d  = Variable %d Value: %d\n", destVariable, srcVariable, aadMem->userVariables[srcVariable]);
+
 	}
 }
 
@@ -1049,6 +1093,7 @@ void metaCmdAddVariable(struct AadSeqEvent *event, struct _AadSequenceSlot *slot
 	if (destVariable < 128)
 	{
 		aadMem->userVariables[destVariable] += value;
+		eprintinf("[MIDI]: Add Variable: %d Value: %d\n", destVariable, value);
 	}
 }
 
@@ -1148,9 +1193,12 @@ void metaCmdClearVariableBits(struct AadSeqEvent *event, struct _AadSequenceSlot
 			UNIMPLEMENTED();
 }
 
-void aadGotoSequencePosition(struct _AadSequenceSlot *slot, int track, unsigned char *newPosition)
+void aadGotoSequencePosition(struct _AadSequenceSlot *slot, int track, unsigned char *newPosition)//Matching - 100%
 {
 	slot->sequencePosition[track] = newPosition;
+
+	eprintinf("[MIDI]: Track: %d Goto Sequence Position: %x\n", track, newPosition);
+
 
 	while (slot->eventsInQueue[track] != 0)
 	{
@@ -1177,6 +1225,15 @@ void aadGotoSequenceLabel(struct _AadSequenceSlot *slot, int track, int labelNum
 	trackOffset = ((unsigned long*)(seqHdr + 1))[track];
 	slot->sequencePosition[track] = (unsigned char*)(char*)seqHdr + trackOffset + aadMem->dynamicSequenceLabelOffsetTbl[bank][labelNumber];
 
+
+	if (labelNumber == 204)
+	{
+		int testing = 0;
+		testing++;
+	}
+	eprintinf("[MIDI]: Track: %d Goto Sequence Position: %x Label: %d\n", track, slot->sequencePosition[track], labelNumber);
+
+
 	if (slot->eventsInQueue[track] != 0)
 	{
 		do
@@ -1197,10 +1254,10 @@ void aadGotoSequenceLabel(struct _AadSequenceSlot *slot, int track, int labelNum
 	return;
 }
 
-void metaCmdLoopStart(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
+void metaCmdLoopStart(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)//Matching - 100%
 {
-	int nestLevel; // $a2
-	int track; // $a3
+	int nestLevel;
+	int track;
 
 	track = event->track;
 	nestLevel = slot->loopCurrentNestLevel[track];
@@ -1215,9 +1272,12 @@ void metaCmdLoopStart(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 	}
 
 	slot->trackFlags[track] &= 0xEF;
+
+	eprintinf("[MIDI]: Loop Start Track: %d\n", track);
+
 }
 
-void metaCmdLoopEnd(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
+void metaCmdLoopEnd(struct AadSeqEvent* event, struct _AadSequenceSlot* slot)//Matching - 93.19%
 {
 	int prevNestLevel;
 	int track;
@@ -1233,9 +1293,12 @@ void metaCmdLoopEnd(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 		}
 		else
 		{
-			slot->loopCurrentNestLevel[track]--;
+			slot->loopCurrentNestLevel[track] = prevNestLevel;
 		}
 	}
+
+	eprintinf("[MIDI]: Loop End Track: %d\n", track);
+
 }
 
 void metaCmdLoopBreak(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
@@ -1270,6 +1333,7 @@ void metaCmdBranchIfVarEqual(struct AadSeqEvent *event, struct _AadSequenceSlot 
 	if (aadMem->userVariables[variableNum] == value)
 	{
 		aadGotoSequenceLabel(slot, event->track, labelNum);
+		eprintinf("[MIDI]: if Variable_%d == %d\n", variableNum, value);
 	}
 }
 
@@ -1286,10 +1350,12 @@ void metaCmdBranchIfVarNotEqual(struct AadSeqEvent* event, struct _AadSequenceSl
 	if (aadMem->userVariables[variableNum] != value)
 	{
 		aadGotoSequenceLabel(slot, event->track, labelNum);
+		eprintinf("[MIDI]: if Variable_%d != %d\n", variableNum, value);
+
 	}
 }
 
-void metaCmdBranchIfVarLess(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
+void metaCmdBranchIfVarLess(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)//Matching - 99%
 {
 	int variableNum;
 	int value;
@@ -1302,10 +1368,12 @@ void metaCmdBranchIfVarLess(struct AadSeqEvent *event, struct _AadSequenceSlot *
 	if (aadMem->userVariables[variableNum] < value)
 	{
 		aadGotoSequenceLabel(slot, event->track, labelNum);
+		eprintinf("[MIDI]: if Variable_%d < %d\n", variableNum, value);
+
 	}
 }
 
-void metaCmdBranchIfVarGreater(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
+void metaCmdBranchIfVarGreater(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)//Matching - 99.25%
 {
 	int variableNum;
 	int value;
@@ -1318,6 +1386,8 @@ void metaCmdBranchIfVarGreater(struct AadSeqEvent *event, struct _AadSequenceSlo
 	if (value < aadMem->userVariables[variableNum])
 	{
 		aadGotoSequenceLabel(slot, event->track, labelNum);
+		eprintinf("[MIDI]: if %d < Variable_%d\n", value, variableNum);
+
 	}
 }
 
@@ -1334,10 +1404,12 @@ void metaCmdBranchIfVarLessOrEqual(struct AadSeqEvent* event, struct _AadSequenc
 	if (aadMem->userVariables[variableNum] <= value)
 	{
 		aadGotoSequenceLabel(slot, event->track, labelNum);
+		eprintinf("[MIDI]: if Variable_%d <= %d\n", variableNum, value);
+
 	}
 }
 
-void metaCmdBranchIfVarGreaterOrEqual(struct AadSeqEvent* event, struct _AadSequenceSlot* slot)
+void metaCmdBranchIfVarGreaterOrEqual(struct AadSeqEvent* event, struct _AadSequenceSlot* slot)//Matching - 99%
 {
 	int variableNum;
 	int value;
@@ -1350,6 +1422,7 @@ void metaCmdBranchIfVarGreaterOrEqual(struct AadSeqEvent* event, struct _AadSequ
 	if (value <= aadMem->userVariables[variableNum])
 	{
 		aadGotoSequenceLabel(slot, event->track, labelNum);
+		eprintinf("[MIDI]: if %d <= Variable_%d\n", value, variableNum);
 	}
 }
 
@@ -1366,6 +1439,8 @@ void metaCmdBranchIfVarBitsSet(struct AadSeqEvent *event, struct _AadSequenceSlo
 	if ((aadMem->userVariables[variableNum] & mask) != 0)
 	{
 		aadGotoSequenceLabel(slot, event->track, labelNum);
+		eprintinf("[MIDI]: Variable_%d (%d) & %x\n", variableNum, aadMem->userVariables[variableNum], mask);
+
 	}
 }
 
@@ -1429,6 +1504,9 @@ void metaCmdEndSequence(struct AadSeqEvent *event, struct _AadSequenceSlot *slot
 	{
 		aadMem->endSequenceCallback(aadMem->endSequenceCallbackData, slot->thisSlotNumber, 0);
 	}
+
+	eprintinf("[MIDI]: End Sequence Track: %d\n", event->track);
+
 }
 
 

@@ -1,7 +1,8 @@
-#include "EMULATOR_LOG.H"
-
 #include "Core/Setup/Platform/EMULATOR_PLATFORM_SETUP.H"
 #include "Core/Setup/Platform/EMULATOR_PLATFORM_INCLUDES.H"
+
+
+#include "EMULATOR_LOG.H"
 
 #if defined(UWP) || defined(_WIN32)
 
@@ -13,8 +14,12 @@ void Emulator_Log(enum LOG_TYPE lt, const char* file, const char* func, int line
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
     SetConsoleTextAttribute(hConsole, lt);
-    printf("[F:%s:%s:L%d] - ", file, func, line, fmt);
-    
+
+    if (lt != LT_INFO)
+    {
+        printf("[F:%s:%s:L%d] - ", file, func, line, fmt);
+    }
+
     va_list arglist;
     va_start(arglist, fmt);
     vprintf(fmt, arglist);

@@ -131,7 +131,7 @@ void (*midiMetaEventFunction[78])(struct AadSeqEvent* event, struct _AadSequence
 	&metaCmdUpdateMute
 };
 
-int aadQueueNextEvent(struct _AadSequenceSlot* slot, int track)//Matching - 94.24%
+int aadQueueNextEvent(struct _AadSequenceSlot* slot, int track)//Matching - 98.60%
 {
 	struct AadSeqEvent seqEvent;
 	unsigned char* seqData;
@@ -186,9 +186,7 @@ int aadQueueNextEvent(struct _AadSequenceSlot* slot, int track)//Matching - 94.2
 		if (*seqData & 0x80)
 		{
 			seqEvent.statusByte = *seqData++;
-
-			slot->runningStatus[track] = *seqData;
-
+			slot->runningStatus[track] = seqEvent.statusByte;
 		}
 		else
 		{
@@ -206,7 +204,7 @@ int aadQueueNextEvent(struct _AadSequenceSlot* slot, int track)//Matching - 94.2
 
 	slot->sequencePosition[track] = seqData;
 
-	slot->eventQueue[slot->eventIn[track]][track] = seqEvent;
+	memcpy(&slot->eventQueue[slot->eventIn[track]][track], &seqEvent, sizeof(seqEvent));
 
 	slot->eventsInQueue[track]++;
 	slot->eventIn[track]++;
@@ -582,15 +580,6 @@ void midiProgramChange(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 	channel = event->statusByte & 0xF;
 	
 	slot->currentProgram[channel] = (unsigned char)event->dataByte[0];
-
-	static int calls = 0;
-	calls++;
-
-	if (calls == 6)
-	{
-		int testing = 0;
-		testing++;
-	}
 
 #elif defined(PC_VERSION)
 	slot->currentProgram[event->statusByte & 0xF] = event->dataByte[0];

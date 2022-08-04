@@ -27,6 +27,7 @@ enum LOG_TYPE
 	LT_DEFAULT = 7,
 	LT_WARNING = 6,
 	LT_ERROR = 4,
+	LT_INFO = 11
 };
 
 extern void Emulator_Log(enum LOG_TYPE lt, const char* file, const char* func, int line, const char* fmt, ...);
@@ -37,6 +38,7 @@ extern void Emulator_Log(enum LOG_TYPE lt, const char* file, const char* func, i
 #else
 	#define eprint(c, fmt, ...) Emulator_Log(c, __FILE__, FUNCNAME, __LINE__, fmt, __VA_ARGS__)
 	#define eprintf(fmt, ...) eprint(LT_DEFAULT, fmt, ##__VA_ARGS__);
+	#define eprintinf(fmt, ...) eprint(LT_INFO, fmt, ##__VA_ARGS__);
 	#define eprintwarn(fmt, ...) eprint(LT_WARNING, fmt, ##__VA_ARGS__);
 	#define eprinterr(fmt, ...) eprint(LT_ERROR, fmt, ##__VA_ARGS__);
 #endif

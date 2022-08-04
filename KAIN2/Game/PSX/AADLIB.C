@@ -300,6 +300,11 @@ void aadSlotUpdate()//Matching - 97.37%
 						{
 							for (track = 0; track < 16; track++)
 							{
+								if (track == 0xE)
+								{
+									int testing = 0;
+									testing++;
+								}
 								if (slot->sequencePosition[track] != NULL)
 								{
 									while (slot->eventsInQueue[track] < 3)
@@ -321,13 +326,18 @@ void aadSlotUpdate()//Matching - 97.37%
 
 							for (track = 0; track < 16; track++)
 							{
+								if (track == 0xE)
+								{
+									int testing = 0;
+									testing++;
+								}
 								if (slot->sequencePosition[track] != NULL)
 								{
 									while (slot->eventsInQueue[track] != 0)
 									{
 										seqEventPtr = &slot->eventQueue[slot->eventOut[track]][track];
 
-										if (seqEventPtr->statusByte == 0x14)
+										if (seqEventPtr->statusByte >= 0xC0)
 										{
 											int testing = 0;
 											testing++;
@@ -1975,7 +1985,7 @@ void aadSetSlotTempo(int slotNumber, struct AadTempo *tempo)
 	slot->tempo.ppqn = tempo->ppqn;
 }
 
-void aadStartSlot(int slotNumber)
+void aadStartSlot(int slotNumber)//Matching - 99.35%
 {
 	struct _AadSequenceSlot *slot;
 
@@ -2407,7 +2417,7 @@ void aadMuteChannels(struct _AadSequenceSlot *slot, unsigned long channelList)
 #endif
 }
 
-void aadUnMuteChannels(struct _AadSequenceSlot *slot, unsigned long channelList)
+void aadUnMuteChannels(struct _AadSequenceSlot* slot, unsigned long channelList)//Matching - 100%
 {
 #if defined(PSX_VERSION)
 	unsigned long delayedUnMute;
