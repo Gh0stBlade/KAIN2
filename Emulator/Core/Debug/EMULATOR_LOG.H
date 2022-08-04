@@ -1,6 +1,8 @@
 #ifndef EMULATOR_LOG_H
 #define EMULATOR_LOG_H
 
+#include "Core/Setup/Platform/EMULATOR_PLATFORM_SETUP.H"
+
 #ifdef _MSC_VER
 #define FUNCNAME __FUNCTION__
 #else
@@ -33,8 +35,11 @@ enum LOG_TYPE
 extern void Emulator_Log(enum LOG_TYPE lt, const char* file, const char* func, int line, const char* fmt, ...);
 
 #if defined(UWP)
-	#define eprintf(c, fmt, ...) Emulator_Log(c, __FILE__, FUNCNAME, __LINE__, fmt, __VA_ARGS__)
-	#define eprinterr(fmt, ...) eprintf(LT_ERROR, fmt, ##__VA_ARGS__);
+	#define eprint(c, fmt, ...) Emulator_Log(c, __FILE__, FUNCNAME, __LINE__, fmt, __VA_ARGS__)
+	#define eprintf(fmt, ...) eprint(LT_DEFAULT, fmt, ##__VA_ARGS__);
+	#define eprintinf(fmt, ...) eprint(LT_INFO, fmt, ##__VA_ARGS__);
+	#define eprintwarn(fmt, ...) eprint(LT_WARNING, fmt, ##__VA_ARGS__);
+	#define eprinterr(fmt, ...) eprint(LT_ERROR, fmt, ##__VA_ARGS__);
 #else
 	#define eprint(c, fmt, ...) Emulator_Log(c, __FILE__, FUNCNAME, __LINE__, fmt, __VA_ARGS__)
 	#define eprintf(fmt, ...) eprint(LT_DEFAULT, fmt, ##__VA_ARGS__);
@@ -44,7 +49,10 @@ extern void Emulator_Log(enum LOG_TYPE lt, const char* file, const char* func, i
 #endif
 
 #else
-#define eprintf(...) 
+#define eprint(...)
+#define eprintf(...)
+#define eprintinf(...)
+#define eprintwarn(...)
 #define eprinterr(...)
 #endif
 #endif

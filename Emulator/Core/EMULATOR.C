@@ -621,6 +621,7 @@ void Emulator_ResetDevice()
 	hr = dxgiFactory->CreateSwapChainForComposition(d3ddev, &sd, NULL, &swapChain);
 #endif
 
+	///@FIXME Crash-UWP likely something not being free'd resulting in window not being free.
 	assert(!FAILED(hr));
 #else
 	HRESULT hr = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, deviceCreationFlags, NULL, 0, D3D11_SDK_VERSION, &sd, &swapChain, &d3ddev, NULL, &d3dcontext);
@@ -2716,6 +2717,12 @@ unsigned int Emulator_CounterWrapper(unsigned int interval, void* pTimerID)
 	unsigned int timerID = ((unsigned int*)pTimerID)[0];
 	
 	counters[timerID].padding00();
+
+	static int count = 0;
+	wchar_t buff[32];
+	_swprintf(buff, L"%d\n", count);
+	OutputDebugStringW(buff);
+	count++;
 
 	return interval;
 }

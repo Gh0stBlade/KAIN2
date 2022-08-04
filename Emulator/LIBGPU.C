@@ -22,6 +22,13 @@ int dword_3410 = 0;
 char byte_3352 = 0;
 
 #if defined(USE_32_BIT_ADDR)
+
+struct OrderingTable
+{
+	unsigned long addr;
+	unsigned long len;
+};
+
 #if defined(_WIN64)
 extern unsigned int terminatorOT[];
 extern unsigned int terminatorAddr;
@@ -234,6 +241,8 @@ u_long* ClearOTag(u_long* ot, int n)
 
 u_long* ClearOTagR(u_long* ot, int n)
 {
+	struct OrderingTable* ordt = (struct OrderingTable*)ot;
+
 #if defined(_WIN64)
 	terminatorAddr = (unsigned int)ot + n * (sizeof(unsigned int) * 2);
 #endif
@@ -245,22 +254,22 @@ u_long* ClearOTagR(u_long* ot, int n)
 #if defined(_WIN64)
 	setaddr(ot, terminatorAddr);
 #else
-	setaddr(ot, &terminatorOT);
+	setaddr(ordt, &terminatorOT);
 #endif
-	setlen(ot, 0);
+	setlen(ordt, 0);
 
 #if defined(USE_32_BIT_ADDR)
-	for (int i = 2; i < n * 2; i += 2)
+	for (int i = 1; i < n; i++)
 #else
 	for (int i = 1; i < n; i++)
 #endif
 	{
 #if defined(USE_32_BIT_ADDR)
-		setaddr(&ot[i], (unsigned long)&ot[i - 2]);
+		setaddr(&ordt[i], (unsigned long)&ordt[i - 1]);
 #else
 		setaddr(&ot[i], (unsigned long)&ot[i - 1]);
 #endif
-		setlen(&ot[i], 0);
+		setlen(&ordt[i], 0);
 	}
 
 	return NULL;
