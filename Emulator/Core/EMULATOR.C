@@ -339,7 +339,8 @@ TextureID rg8lutTexture;
 #endif
 	ID3D11RenderTargetView  *renderTargetView;
 	ID3D11Buffer			*projectionMatrixBuffer;
-	ID3D11SamplerState		*samplerState;
+	ID3D11SamplerState		*samplerState = NULL;
+	ID3D11SamplerState		*rg8lutSamplerState = NULL;
 	ID3D11BlendState		*blendState;
 	ID3D11RasterizerState	*rasterState;
 #elif defined(D3D12)
@@ -3853,18 +3854,6 @@ ShaderID Shader_Compile_Internal(const DWORD* vs_data, const DWORD* ps_data, con
 	hr = d3ddev->CreateInputLayout(INPUT_LAYOUT, sizeof(INPUT_LAYOUT) / sizeof(D3D11_INPUT_ELEMENT_DESC), vs_data, vs_size, &shader.IL);
 	assert(!FAILED(hr));
 
-	D3D11_SAMPLER_DESC sampDesc;
-	ZeroMemory(&sampDesc, sizeof(sampDesc));
-	sampDesc.Filter = D3D11_FILTER_MIN_MAG_POINT_MIP_LINEAR;
-	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
-	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
-	sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
-	sampDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
-	sampDesc.MinLOD = -D3D11_FLOAT32_MAX;
-	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
-	sampDesc.MaxAnisotropy = 1;
-	d3ddev->CreateSamplerState(&sampDesc, &samplerState);///@FIXME can be created more than once on same pointer? bug!
-
 #undef OFFSETOF
 
 	return shader;
@@ -5028,7 +5017,40 @@ void Emulator_SetTexture(TextureID texture, TexFormat texFormat)
 #elif defined(D3D11)
 	d3dcontext->PSSetShaderResources(0, 1, &texture);
 	d3dcontext->PSSetShaderResources(1, 1, &rg8lutTexture);
-	d3dcontext->PSSetSamplers(0, 1, &samplerState);
+
+	if (samplerState == NULL)
+	{
+		D3D11_SAMPLER_DESC sampDesc;
+		ZeroMemory(&sampDesc, sizeof(sampDesc));
+		sampDesc.Filter = D3D11_FILTER_MIN_MAG_POINT_MIP_LINEAR;
+		sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+		sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+		sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+		sampDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+		sampDesc.MinLOD = -D3D11_FLOAT32_MAX;
+		sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
+		sampDesc.MaxAnisotropy = 1;
+		d3ddev->CreateSamplerState(&sampDesc, &samplerState);
+	}
+
+	if (rg8lutSamplerState == NULL)
+	{
+		D3D11_SAMPLER_DESC sampDesc;
+		ZeroMemory(&sampDesc, sizeof(sampDesc));
+		sampDesc.Filter = D3D11_FILTER_MIN_MAG_POINT_MIP_LINEAR;
+		sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+		sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+		sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+		sampDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+		sampDesc.MinLOD = -D3D11_FLOAT32_MAX;
+		sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
+		sampDesc.MaxAnisotropy = 1;
+		d3ddev->CreateSamplerState(&sampDesc, &rg8lutSamplerState);
+	}
+
+	ID3D11SamplerState* samplerStates[2] = { samplerState, rg8lutSamplerState };
+
+	d3dcontext->PSSetSamplers(0, 2, samplerStates);
 #elif defined(D3D12)
 	ID3D12DescriptorHeap* ppHeapsSRV[] = { texture.m_srvHeap };
 	commandList->SetDescriptorHeaps(_countof(ppHeapsSRV), ppHeapsSRV);

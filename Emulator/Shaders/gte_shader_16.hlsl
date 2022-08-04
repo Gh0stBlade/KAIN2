@@ -58,6 +58,7 @@ struct VS_OUTPUT {
 	SamplerState s_lut : register(s1);
 #else
 	SamplerState samplerState : register(s0);
+	SamplerState samplerStateLUT : register(s1);
 	Texture2D s_texture : register(t0);
 	Texture2D s_lut : register(t1);
 #endif
@@ -76,7 +77,7 @@ struct VS_OUTPUT {
 #ifdef D3D9
 		float4 color = tex2D(s_lut, color_rg);
 #else
-		float4 color = s_lut.Sample(samplerState, color_rg);
+		float4 color = s_lut.Sample(samplerStateLUT, color_rg);
 #endif
 
 		color = color * In.v_color;
