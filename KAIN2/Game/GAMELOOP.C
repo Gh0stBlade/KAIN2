@@ -1104,7 +1104,7 @@ void GAMELOOP_AddClearPrim(unsigned long** drawot, int override)
 		setlen(blkfill, 3);
 	
 #if defined(_WIN64)
-		addPrim(drawot[3071 * 2], blkfill);
+		addPrim(drawot[3071], blkfill);
 #else
 		addPrim(drawot[3071 * 2], blkfill);
 #endif
