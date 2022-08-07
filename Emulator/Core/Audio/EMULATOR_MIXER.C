@@ -3,7 +3,7 @@
 
 #include "Core/Debug/EMULATOR_LOG.H"
 
-unsigned char MixChannelToSpuChannel[SPU_MAX_CHANNELS];
+extern int _spu_keystat_last;
 
 #if defined(SDL2_MIXER)
 
@@ -11,20 +11,23 @@ SDL_TimerID audioTimer;
 Mix_Chunk* mixerChunks[SPU_MAX_CHANNELS];
 unsigned char* frequencyConvertedChunks[SPU_MAX_CHANNELS];
 
-int Mix_ChangeFrequency(Mix_Chunk* chunk, int freq, int vNum)
+int Mix_ChangeFrequency(Mix_Chunk* chunk, int vNum)
 {
     Uint16 format;
     int channels;
     Mix_QuerySpec(NULL, &format, &channels);
 
     SDL_AudioCVT cvt;
-    int channel;
-    SDL_BuildAudioCVT(&cvt, format, 1, freq, format, channels, SPU_PLAYBACK_FREQUENCY);
+    int channel = vNum;
+    SDL_BuildAudioCVT(&cvt, format, 1, channelList[vNum].voicePitches, format, channels, SPU_PLAYBACK_FREQUENCY);
 
     if (cvt.needed)
     {
-        for (channel = 0; channel < SPU_MAX_CHANNELS; channel++)
-            if (!Mix_Playing(channel)) break; //Find a free channel
+        if (Mix_Playing(channel))
+        {
+            Mix_HaltChannel(channel);
+            return -1;
+        }
 
         if (channel == SPU_MAX_CHANNELS)
         {
@@ -57,7 +60,6 @@ int Mix_ChangeFrequency(Mix_Chunk* chunk, int freq, int vNum)
             SDL_free(frequencyConvertedChunks[channel]);
 
         frequencyConvertedChunks[channel] = cvt.buf;
-        MixChannelToSpuChannel[channel] = vNum;
         return channel;
 
     }
@@ -67,10 +69,6 @@ int Mix_ChangeFrequency(Mix_Chunk* chunk, int freq, int vNum)
     }
 }
 
-#include <stdio.h>
-
-FILE* f = NULL;
-
 Mix_Chunk* Mix_LoadAudioChunk(int vNum, unsigned char* address)
 {
     if (address == NULL)
@@ -78,17 +76,10 @@ Mix_Chunk* Mix_LoadAudioChunk(int vNum, unsigned char* address)
         return NULL;
     }
 
-    if (f == NULL)
-    {
-        f = fopen("DEBUG.BIN", "wb+");
-    }
+    unsigned short pcm[AUDIO_CHUNK_SIZE_PCM/2];
+    unsigned int pcmLength = SPU_DecodeAudioFrame(address, pcm, &channelList[vNum]);
 
-    unsigned short pcm[28];
-    SPU_DecodeAudioFrame(address, pcm, &channelList[vNum]);
-
-    fwrite(pcm, sizeof(unsigned short) * 28, 1, f);
-
-    Mix_Chunk* waveChunk = Mix_QuickLoad_RAW((unsigned char*)pcm, 56);
+    Mix_Chunk* waveChunk = Mix_QuickLoad_RAW((unsigned char*)pcm, pcmLength);
 
     return waveChunk;
 }
@@ -103,8 +94,16 @@ void Mix_ChannelFinishedPlayingCallback(int channel)
     mixerChunks[channel] = NULL;
     Mix_FreeChunk(mixerChunk);
 
-    channelList[MixChannelToSpuChannel[channel]].voicePositions += 32;
-    channelList[MixChannelToSpuChannel[channel]].voicePlaying = 0;
+    if (channelList[channel].voiceEndFlag)//End flag
+    {
+        _spu_keystat_last &= ~(1 << channel);
+        SPU_InitialiseChannelKeepStartAddrAndPitch(channel);
+    }
+    else
+    {
+        channelList[channel].voicePosition += AUDIO_CHUNK_SIZE;
+        channelList[channel].voiceNew = TRUE;
+    }
 }
 
 void Mix_Play(int vNum, unsigned char* address)
@@ -113,12 +112,18 @@ void Mix_Play(int vNum, unsigned char* address)
 
     if (waveChunk != NULL)
     {
+        while (Mix_Playing(vNum))
+        {
+            SDL_Delay(1);
+        }
+
         Uint8* bkp_buf = waveChunk->abuf;
         Uint32 bkp_len = waveChunk->alen;
-
-        int channel = Mix_ChangeFrequency(waveChunk, channelList[vNum].voicePitches, vNum);
+        
+        int channel = Mix_ChangeFrequency(waveChunk, vNum);
+     
         mixerChunks[channel] = waveChunk;
-
+        
         Mix_PlayChannel(channel, waveChunk, 0);
 
         waveChunk->abuf = bkp_buf;
@@ -130,7 +135,7 @@ void Mix_Initialise()
 {
     Mix_Init(0);///@TODO MIX_QUIT!
 
-    if (Mix_OpenAudio(SPU_PLAYBACK_FREQUENCY, MIX_DEFAULT_FORMAT, 1, 1024) < 0)
+    if (Mix_OpenAudio(SPU_PLAYBACK_FREQUENCY, MIX_DEFAULT_FORMAT, 1, AUDIO_CHUNK_SIZE_PCM) < 0)
     {
         eprinterr("[SDL2_MIXER]: Failed to Mix_OpenAudio! %s\n", Mix_GetError());
     }

@@ -2719,11 +2719,11 @@ unsigned int Emulator_CounterWrapper(unsigned int interval, void* pTimerID)
 	
 	counters[timerID].padding00();
 
-	static int count = 0;
-	wchar_t buff[32];
-	_swprintf(buff, L"%d\n", count);
-	OutputDebugStringW(buff);
-	count++;
+	//static int count = 0;
+	//wchar_t buff[32];
+	//_swprintf(buff, L"%d\n", count);
+	//OutputDebugStringW(buff);
+	//count++;
 
 	return interval;
 }

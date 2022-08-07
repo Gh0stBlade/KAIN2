@@ -24,8 +24,6 @@ ALuint alSources[24];
 ALuint alBuffers[24];
 ALboolean alHasAudioData[24];
 
-#define SPU_PLAYBACK_FREQUENCY (44100)
-
 #elif defined(XAUDIO2)
 
 #include <xaudio2.h>
@@ -35,7 +33,6 @@ IXAudio2* pXAudio2 = NULL;
 IXAudio2MasteringVoice* pMasterVoice = NULL;
 IXAudio2SourceVoice* pSourceVoices[24];
 
-#define SPU_PLAYBACK_FREQUENCY (44100)
 #endif
 
 Channel channelList[SPU_MAX_CHANNELS];

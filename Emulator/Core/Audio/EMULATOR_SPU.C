@@ -1,34 +1,104 @@
 #include "EMULATOR_SPU.H"
 
+#include <thread>
+
 extern int _spu_keystat_last;
 extern char spuSoundBuffer[524288];
 
+std::thread thread;
+
 void SPU_Initialise()
 {
-    for (int i = 0; i < 24; i++)
+    for (int i = 0; i < SPU_MAX_CHANNELS; i++)
     {
-        channelList[i].voicePlaying = 0;
-        channelList[i].s_1 = 0;
-        channelList[i].s_2 = 0;
+        SPU_InitialiseChannel(i);
     }
 
 #if defined(SDL2)
-    SDL_AddTimer(1000 / 60, SPU_Update, NULL);
+    thread = std::thread(SPU_Update);
+    //SDL_AddTimer(1000/SPU_FPS, SPU_Update, NULL);
+
 #endif
 }
 
-unsigned int SPU_Update(unsigned int interval, void* pTimerID)
+void SPU_InitialiseChannel(int vNum)
 {
-    for (int i = 0; i < 24; i++)
+    struct Channel* channel = &channelList[vNum];
+    channel->voiceNum = vNum;
+    channel->voicePlaying = 0;
+    channel->voiceEnd = NULL;
+    channel->voicePitches = 0;
+    channel->voicePosition = NULL;
+    channel->voiceStartAddrs = 0;
+    channel->voiceEndFlag = 0;
+    channel->voiceNew = TRUE;
+    channel->voiceLength = -1;
+    channel->s_1 = 0;
+    channel->s_2 = 0;
+}
+
+void SPU_InitialiseChannelKeepStartAddrAndPitch(int vNum)
+{
+    struct Channel* channel = &channelList[vNum];
+    channel->voiceNum = vNum;
+    channel->voicePlaying = 0;
+    channel->voiceEnd = NULL;
+    channel->voicePosition = NULL;
+    channel->voiceEndFlag = 0;
+    channel->voiceNew = TRUE;
+    channel->voiceLength = -1;
+    channel->s_1 = 0;
+    channel->s_2 = 0;
+}
+
+int SPU_GetADPCMSize(unsigned char* pADPCM)
+{
+    int resultSize = 0;
+    
+    //End flag
+    while (pADPCM[1] != 7)
     {
-        if (_spu_keystat_last & (1 << i) && channelList[i].voicePlaying == 0)
+        resultSize += 16;
+        pADPCM += 16;
+    }
+    
+    return resultSize + 16;
+}
+
+void SPU_Update()
+{
+    while (TRUE)
+    {
+        for (int i = 0; i < SPU_MAX_CHANNELS; i++)
         {
-            Mix_Play(i, (unsigned char*)&spuSoundBuffer[channelList[i].voiceStartAddrs + channelList[i].voicePositions]);
-            channelList[i].voicePlaying = 1;
+            if (_spu_keystat_last & (1 << i) && channelList[i].voiceNew == TRUE)
+            {
+                unsigned char* pADPCM = (unsigned char*)&spuSoundBuffer[channelList[i].voiceStartAddrs];
+
+                if (channelList[i].voicePosition == NULL)
+                {
+                    channelList[i].voicePosition = pADPCM;
+                }
+
+                if (channelList[i].voiceLength == -1)
+                {
+                    float time = (float)((SPU_GetADPCMSize(pADPCM) / SPU_ADPCM_FRAME_SIZE) * SPU_PCM_FRAME_SIZE) / (float)(channelList[i].voicePitches * 2 * 16 / 8);
+                    channelList[i].voiceLength = (int)(time * 1000.0f);
+                }
+
+                if (channelList[i].voiceEnd == NULL)
+                {
+                    channelList[i].voiceEnd = &pADPCM[SPU_GetADPCMSize(pADPCM)];
+                }
+
+                Mix_Play(i, channelList[i].voicePosition);
+
+                channelList[i].voicePlaying = TRUE;
+                channelList[i].voiceNew = FALSE;
+            }
         }
     }
-
-    return interval;
+    //return interval;
 }
 
 int CLAMP16(int x)
@@ -52,8 +122,7 @@ unsigned int SPU_DecodeAudioFrame(unsigned char* vag, unsigned short* out, struc
     int filterTablePos[5] = { 0, 60, 115, 98, 122 };
     int filterTableNeg[5] = { 0, 0, -52, -55, -60 };
 
-
-    while (1)
+    for(int f = 0; f < SPU_MS_PER_UPDATE; f++)
     {
         shift = *vag & 0xF;
         filter = (*vag++ & 0x70) >> 4;
@@ -61,6 +130,7 @@ unsigned int SPU_DecodeAudioFrame(unsigned char* vag, unsigned short* out, struc
 
         if (flags == 7)
         {
+            channel->voiceEndFlag = TRUE;
             break;
         }
 
@@ -99,11 +169,6 @@ unsigned int SPU_DecodeAudioFrame(unsigned char* vag, unsigned short* out, struc
 
         channel->s_1 = s_1;
         channel->s_2 = s_2;
-        //1 frame
-        break;
-
-        if (flags == 1)
-            break;
     }
 
     return result_length;
