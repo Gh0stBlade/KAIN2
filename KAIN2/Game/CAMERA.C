@@ -85,7 +85,7 @@ void CAMERA_CalculateViewVolumeNormals(struct Camera *camera)
 	CAMERA_Normalize((_SVector*)&camera->core.viewVolumeNormal[3]);
 
 	camera->core.viewVolumeNormal[4].x = (((unsigned int)(n3.y * n2.z) - (unsigned int)(n3.z * n2.y)) >> 12);
-	camera->core.viewVolumeNormal[4].y = (((unsigned int)(n3.x * n2.z) - (unsigned int)(n3.z * n2.x)) >> 12);
+	camera->core.viewVolumeNormal[4].y = -(((unsigned int)(n3.x * n2.z) - (unsigned int)(n3.z * n2.x)) >> 12);
 	camera->core.viewVolumeNormal[4].z = (((unsigned int)(n3.x * n2.y) - (unsigned int)(n3.y * n2.x)) >> 12);
 
 	CAMERA_Normalize((_SVector*)&camera->core.viewVolumeNormal[4]);
@@ -95,9 +95,9 @@ void CAMERA_CalcVVClipInfo(struct Camera* camera)
 {
 	ApplyMatrixSV(camera->core.cwTransform2, (SVECTOR*)&camera->core.viewVolumeNormal[0], (SVECTOR*)&camera->core.vvNormalWorVecMat[0].m[0][0]);
 	ApplyMatrixSV(camera->core.cwTransform2, (SVECTOR*)&camera->core.viewVolumeNormal[1], (SVECTOR*)&camera->core.vvNormalWorVecMat[0].m[1][0]);
-	ApplyMatrixSV(camera->core.cwTransform2, (SVECTOR*)&camera->core.viewVolumeNormal[2], (SVECTOR*)&camera->core.vvNormalWorVecMat[1].m[0][0]);
-	ApplyMatrixSV(camera->core.cwTransform2, (SVECTOR*)&camera->core.viewVolumeNormal[3], (SVECTOR*)&camera->core.vvNormalWorVecMat[1].m[1][0]);
-	ApplyMatrixSV(camera->core.cwTransform2, (SVECTOR*)&camera->core.viewVolumeNormal[4], (SVECTOR*)&camera->core.vvNormalWorVecMat[1].m[2][0]);
+	ApplyMatrixSV(camera->core.cwTransform2, (SVECTOR*)&camera->core.viewVolumeNormal[2], (SVECTOR*)&camera->core.vvNormalWorVecMat[0].m[2][0]);
+	ApplyMatrixSV(camera->core.cwTransform2, (SVECTOR*)&camera->core.viewVolumeNormal[3], (SVECTOR*)&camera->core.vvNormalWorVecMat[1].m[0][0]);
+	ApplyMatrixSV(camera->core.cwTransform2, (SVECTOR*)&camera->core.viewVolumeNormal[4], (SVECTOR*)&camera->core.vvNormalWorVecMat[1].m[1][0]);
 
 	gte_SetRotMatrix(&camera->core.vvNormalWorVecMat[0]);
 	gte_ldv0(&camera->core.position);
