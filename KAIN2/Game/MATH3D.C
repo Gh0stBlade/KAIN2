@@ -401,7 +401,7 @@ long MATH3D_FastSqrt0(long square)
 		{
 			do
 			{
-				mask >>= 2;
+				mask >>= 1;
 				
 				remainder = mask & square;
 			
@@ -425,7 +425,9 @@ long MATH3D_FastSqrt0(long square)
 
 		while (--shift != -1)
 		{
-			mask >>= 2;
+			mask >>= 1;
+
+			mask_squared >>= 2;
 
 			remainder = square - result_shift;
 			remainder -= mask_squared;
@@ -440,8 +442,6 @@ long MATH3D_FastSqrt0(long square)
 				
 				result |= mask;
 			}
-		
-			mask >>= 1;
 		}
 
 		return result;
