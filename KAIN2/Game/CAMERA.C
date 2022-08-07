@@ -39,11 +39,11 @@ void CAMERA_CalculateViewVolumeNormals(struct Camera *camera)
 	int y1;
 	int y2;
 
-	x1 = (camera->core.leftX - 160) << 4;
+	x1 = ((unsigned int)camera->core.leftX - 160) << 4;
 	projDistance = camera->core.projDistance << 4;
-	x2 = (camera->core.rightX - 160) << 4;
-	y1 = (camera->core.topY - 120) << 4;
-	y2 = (camera->core.bottomY - 120) << 4;
+	x2 = ((unsigned int)camera->core.rightX - 160) << 4;
+	y1 = ((unsigned int)camera->core.topY - 120) << 4;
+	y2 = ((unsigned int)camera->core.bottomY - 120) << 4;
 
 	n0.z = projDistance;
 	n1.z = projDistance;
@@ -66,27 +66,27 @@ void CAMERA_CalculateViewVolumeNormals(struct Camera *camera)
 	camera->core.viewVolumeNormal[0].y = 0;
 	camera->core.viewVolumeNormal[0].z = 4096;
 
-	camera->core.viewVolumeNormal[1].x = (((n0.y * n1.z) - (n0.z * n1.y)) >> 12);
-	camera->core.viewVolumeNormal[1].y = -(((n0.x * n1.z) - (n0.z * n1.x)) >> 12);
-	camera->core.viewVolumeNormal[1].z = (((n0.x * n1.y) - (n0.y * n1.x)) >> 12);
+	camera->core.viewVolumeNormal[1].x = (((unsigned int)(n0.y * n1.z) - (unsigned int)(n0.z * n1.y)) >> 12);
+	camera->core.viewVolumeNormal[1].y = -(((unsigned int)(n0.x * n1.z) - (unsigned int)(n0.z * n1.x)) >> 12);
+	camera->core.viewVolumeNormal[1].z = (((unsigned int)(n0.x * n1.y) - (unsigned int)(n0.y * n1.x)) >> 12);
 
 	CAMERA_Normalize((_SVector*)&camera->core.viewVolumeNormal[1]);
 
-	camera->core.viewVolumeNormal[2].x = (((n2.y * n0.z) - (n2.z * n0.y)) >> 12);
-	camera->core.viewVolumeNormal[2].y = -(((n2.x * n0.z) - (n2.z * n0.x)) >> 12);
-	camera->core.viewVolumeNormal[2].z = (((n2.x * n0.y) - (n2.y * n0.x)) >> 12);
+	camera->core.viewVolumeNormal[2].x = (((unsigned int)(n2.y * n0.z) - (unsigned int)(n2.z * n0.y)) >> 12);
+	camera->core.viewVolumeNormal[2].y = -(((unsigned int)(n2.x * n0.z) - (unsigned int)(n2.z * n0.x)) >> 12);
+	camera->core.viewVolumeNormal[2].z = (((unsigned int)(n2.x * n0.y) - (unsigned int)(n2.y * n0.x)) >> 12);
 
 	CAMERA_Normalize((_SVector*)&camera->core.viewVolumeNormal[2]);
 
-	camera->core.viewVolumeNormal[3].x = (((n1.y * n3.z) - (n1.z * n3.y)) >> 12);
-	camera->core.viewVolumeNormal[3].y = -(((n1.x * n3.z) - (n1.z * n3.x)) >> 12);
-	camera->core.viewVolumeNormal[3].z = (((n1.x * n3.y) - (n1.y * n3.x)) >> 12);
+	camera->core.viewVolumeNormal[3].x = (((unsigned int)(n1.y * n3.z) - (unsigned int)(n1.z * n3.y)) >> 12);
+	camera->core.viewVolumeNormal[3].y = -(((unsigned int)(n1.x * n3.z) - (unsigned int)(n1.z * n3.x)) >> 12);
+	camera->core.viewVolumeNormal[3].z = (((unsigned int)(n1.x * n3.y) - (unsigned int)(n1.y * n3.x)) >> 12);
 
 	CAMERA_Normalize((_SVector*)&camera->core.viewVolumeNormal[3]);
 
-	camera->core.viewVolumeNormal[4].x = (((n3.y * n2.z) - (n3.z * n2.y)) >> 12);
-	camera->core.viewVolumeNormal[4].y = -(((n3.x * n2.z) - (n3.z * n2.x)) >> 12);
-	camera->core.viewVolumeNormal[4].z = (((n3.x * n2.y) - (n3.y * n2.x)) >> 12);
+	camera->core.viewVolumeNormal[4].x = (((unsigned int)(n3.y * n2.z) - (unsigned int)(n3.z * n2.y)) >> 12);
+	camera->core.viewVolumeNormal[4].y = (((unsigned int)(n3.x * n2.z) - (unsigned int)(n3.z * n2.x)) >> 12);
+	camera->core.viewVolumeNormal[4].z = (((unsigned int)(n3.x * n2.y) - (unsigned int)(n3.y * n2.x)) >> 12);
 
 	CAMERA_Normalize((_SVector*)&camera->core.viewVolumeNormal[4]);
 }
@@ -95,7 +95,7 @@ void CAMERA_CalcVVClipInfo(struct Camera* camera)
 {
 	ApplyMatrixSV(camera->core.cwTransform2, (SVECTOR*)&camera->core.viewVolumeNormal[0], (SVECTOR*)&camera->core.vvNormalWorVecMat[0].m[0][0]);
 	ApplyMatrixSV(camera->core.cwTransform2, (SVECTOR*)&camera->core.viewVolumeNormal[1], (SVECTOR*)&camera->core.vvNormalWorVecMat[0].m[1][0]);
-	ApplyMatrixSV(camera->core.cwTransform2, (SVECTOR*)&camera->core.viewVolumeNormal[2], (SVECTOR*)&camera->core.vvNormalWorVecMat[0].m[2][0]);
+	ApplyMatrixSV(camera->core.cwTransform2, (SVECTOR*)&camera->core.viewVolumeNormal[2], (SVECTOR*)&camera->core.vvNormalWorVecMat[1].m[0][0]);
 	ApplyMatrixSV(camera->core.cwTransform2, (SVECTOR*)&camera->core.viewVolumeNormal[3], (SVECTOR*)&camera->core.vvNormalWorVecMat[1].m[1][0]);
 	ApplyMatrixSV(camera->core.cwTransform2, (SVECTOR*)&camera->core.viewVolumeNormal[4], (SVECTOR*)&camera->core.vvNormalWorVecMat[1].m[2][0]);
 
@@ -505,7 +505,7 @@ void CAMERA_Initialize(struct Camera *camera)
 	camera->core.leftX = 0;
 	camera->core.rightX = 320;
 	camera->core.topY = 0;
-	camera->core.bottomY = 200;
+	camera->maxVel = 200;
 	camera->always_rotate_flag = 0;
 	camera->follow_flag = 0;
 	camera->real_focuspoint.x = camera->focusPoint.x;
