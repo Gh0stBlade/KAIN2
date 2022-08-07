@@ -14,6 +14,18 @@ MATRIX wcTransformX;
 MATRIX wcTransform2X;
 MATRIX cwTransform2X;
 
+long playerCameraMode;
+short Camera_lookHeight;
+short Camera_lookDist;
+int CameraCenterDelay;
+short CenterFlag;
+short combat_cam_distance;
+long roll_target;
+long current_roll_amount;
+int roll_inc;
+short combat_cam_angle;
+short combat_cam_weight;
+
 void CAMERA_CalculateViewVolumeNormals(struct Camera *camera)
 {
 	short projDistance;
@@ -403,19 +415,10 @@ void CAMERA_SetMode(struct Camera *camera, long mode)
 
 void CAMERA_Initialize(struct Camera *camera)
 {
-	long i; // $s2
+	long i;
 
-	//s1 = camera
-
-	//a1 = 0
-	//a2 = 0x4C4
 	memset(camera, 0, sizeof(Camera));
 
-	i = 0;
-
-
-
-	//loc_80015F18
 	for (i = 0; i < 16; i++)
 	{
 #define RAND(i, c) int r = rand(); int r2 = r; if(r < 0) { r2 = r + 255; } camera_shakeOffset[i].c = (r - ((r2 >> 8) << 8)) - 128;
@@ -454,29 +457,22 @@ void CAMERA_Initialize(struct Camera *camera)
 		camera_shakeOffset[i].z = (r - r2) - 128;
 	}
 
-	//a0 = 0x13240
-	//v0 = 0xFC7
-	//v1 = 0x5DC
-
 	camera->core.rotation.x = 4039;
 	camera->targetRotation.x = 4039;
 	camera->focusRotation.x = 4039;
 	camera->targetFocusRotation.x = 4039;
 
-	//v0 = 2250
 	camera->focusDistanceList[0][0] = 1500;
 	camera->focusDistanceList[1][0] = 1500;
 	camera->focusDistanceList[0][1] = 2250;
 	camera->focusDistanceList[1][1] = 2000;
 	camera->focusDistanceList[2][2] = 2000;
 	
-	//v1 = (short)camera->focusDistanceList[0][1]
-	//v0 = 0xA28
 	camera->focusDistanceList[0][2] = 3200;
 	camera->focusDistanceList[1][2] = 2600;
 	camera->focusDistanceList[2][0] = 1200;
 	camera->focusDistanceList[2][1] = 1600;
-	//v0 = 0xFC7
+	
 	camera->tiltList[0][0] = 4039;
 	camera->tiltList[0][1] = 4039;
 	camera->tiltList[0][2] = 4039;
@@ -487,127 +483,89 @@ void CAMERA_Initialize(struct Camera *camera)
 	camera->tiltList[2][1] = 4039;
 	camera->tiltList[2][2] = 4039;
 
-	constexpr int test = 556 - offsetof(Camera, focusDistanceList[2][1]);
-	//v0 = 0x118
 	camera->smallBaseSphere.radiusSquared = 78400;
 	camera->focusSphere.radiusSquared = 78400;
 	camera->posSphere.radiusSquared = 78400;
-
-	//a0 = 0x140
 	camera->smallBaseSphere.radius = 320;
 	camera->focusSphere.radius = 320;
 	camera->posSphere.radius = 320;
-
 	camera->core.nearPlane = 50;
-
-	//v0 = 0x2EE0
 	camera->core.projDistance = 320;
-
 	camera->targetFocusDistance = (short)camera->focusDistanceList[0][1];
 	camera->focusDistance = (short)camera->focusDistanceList[0][1];
 	camera->core.farPlane = 12000;
-
-	//v0 = 0xF0
 	camera->core.bottomY = 240;
-	//v0 = &wcTransformX
 	camera->core.wcTransform = &wcTransformX;
-	//v0 = &wcTransform2X
 	camera->core.wcTransform2 = &wcTransform2X;
-	//v0 = &cwTransform2X
 	camera->core.cwTransform2 = &cwTransform2X;
+	camera->smooth = 16;
+	camera->core.leftX = 0;
+	camera->core.rightX = 320;
+	camera->core.topY = 0;
+	camera->core.bottomY = 200;
+	camera->always_rotate_flag = 0;
+	camera->follow_flag = 0;
+	camera->real_focuspoint.x = camera->focusPoint.x;
+	camera->real_focuspoint.y = camera->focusPoint.y;
+	camera->real_focuspoint.z = camera->focusPoint.z;
+	camera->minFocusDistance = 512;
+	camera->Spline01 = NULL;
+	camera->Spline00 = NULL;
 
-	UNIMPLEMENTED();
-#if 0
-		li      $v0, 0x10
-		sh      $v0, 0x1C4($s1)
-		li      $v0, 0xC8
-		sw      $zero, 0xA0($s1)
-		sw      $a0, 0xA4($s1)
-		sw      $zero, 0xA8($s1)
-		sh      $v0, 0x194($s1)
-		sh      $zero, 0x4AE($s1)
-		sh      $zero, 0x4B0($s1)
-		ulw     $a3, 0x100($s1)
-		lh      $t0, 0x104($s1)
-		usw     $a3, 0x4A8($s1)
-		sh      $t0, 0x4AC($s1)
-		lhu     $v1, 0x104($s1)
-		li      $v0, 0x200
-		sw      $v0, 0x1FC($s1)
-		lw      $v0, 0xE8($s1)
-		li      $s3, 0x1000
-		sw      $zero, 0x420($s1)
-		sw      $zero, 0x41C($s1)
-		sh      $zero, -0x71BC($gp)
-		sh      $zero, -0x71BA($gp)
-		sw      $s3, 0x200($s1)
-		sh      $v1, 0x4BA($s1)
-		lw      $v1, 0x108($s1)
-		ori     $v0, 0x800
-		beqz    $v1, loc_80016110
-		sw      $v0, 0xE8($s1)
-		jal     sub_8001C224
-		move    $a0, $s1
+	shorten_count = 0;
+	shorten_flag = 0;
 
-		loc_80016110 :
-	move    $a0, $s1
-		li      $s2, 2
-		lw      $a1, -0x6E88($gp)
-		li      $s0, 1
-		sh      $s0, 0x1F4($s1)
-		jal     sub_80015A3C
-		sh      $zero, 0xF0($s1)
-		addiu   $a0, $s1, 8
-		li      $v0, 0xBB8
-		sw      $v0, 0x21C($s1)
-		lw      $v0, 0xE8($s1)
-		li      $v1, 0xFFFFFFFF
-		sw      $zero, 0x218($s1)
-		sh      $s0, 0x40C($s1)
-		sh      $s3, 0xBE($s1)
-		sh      $s3, 0xBC($s1)
-		sh      $s3, 0xBA($s1)
-		sh      $v1, 0x278($s1)
-		sh      $v1, 0x27A($s1)
-		ori     $v0, 0x8000
-		sw      $v0, 0xE8($s1)
+	camera->maxFocusDistance = 4096;
 
-		loc_80016164:
-	sw      $zero, 0x27C($a0)
-		addiu   $s2, -1
-		bgez    $s2, loc_80016164
-		addiu   $a0, -4
-		move    $a0, $s1
-		li      $a1, 0x140
-		move    $v0, $a1
-		jal     sub_80014F2C
-		sw      $v0, 0x68($s1)
-		sh      $zero, 0x436($s1)
-		lw      $ra, 0x10 + var_s10($sp)
-		lw      $s3, 0x10 + var_sC($sp)
-		lw      $s2, 0x10 + var_s8($sp)
-		lw      $s1, 0x10 + var_s4($sp)
-		lw      $s0, 0x10 + var_s0($sp)
-		li      $v0, 0x200
-		sh      $v0, -0x5374($gp)
-		li      $v0, 0x28A
-		sh      $v0, -0x5372($gp)
-		li      $v0, 0xA
-		sw      $v0, -0x4EA4($gp)
-		li      $v0, 0xFFFFFFFF
-		sh      $v0, -0x5424($gp)
-		li      $v0, 0xBB8
-		sh      $v0, -0x542C($gp)
-		li      $v0, 0x1000
-		sw      $zero, -0x71B4($gp)
-		sw      $zero, -0x71B0($gp)
-		sw      $zero, -0x71AC($gp)
-		sh      $zero, -0x542A($gp)
-		sh      $v0, -0x5428($gp)
-		sh      $zero, -0x5426($gp)
-		jr      $ra
-		addiu   $sp, 0x28
-#endif
+	camera->focuspoint_fallz = camera->focusPoint.z;
+
+	camera->flags |= 0x800;
+
+	if (camera->focusInstance != NULL)
+	{
+		CAMERA_EndLook(camera);
+	}
+
+	camera->presetIndex = 1;
+	camera->mode = 0;
+
+	CAMERA_SetMode(camera, playerCameraMode);
+
+	camera->maxXYDist = 3000;
+	camera->minXYDist = 0;
+	camera->rotDirection = 1;
+
+	camera->core.screenScale.z = 4096;
+	camera->core.screenScale.y = 4096;
+	camera->core.screenScale.x = 4096;
+
+	camera->stack = -1;
+	camera->targetStack = -1;
+
+	camera->flags |= 0x8000;
+
+	for (i = 0; i < 3; i++)
+	{
+		camera->savedMode[i] = 0;
+	}
+
+	camera->core.projDistance = 320;
+
+	CAMERA_SetProjDistance(camera, 320);
+
+	camera->data.Cinematic.cinema_done = 0;
+
+	Camera_lookHeight = 512;
+	Camera_lookDist = 650;
+	CameraCenterDelay = 10;
+	CenterFlag = -1;
+	combat_cam_distance = 3000;
+	roll_target = 0;
+	current_roll_amount = 0;
+	roll_inc = 0;
+	combat_cam_angle = 0;
+	combat_cam_weight = 4096;
+	combat_cam_debounce = 0;
 }
 
 void CAMERA_SetInstanceFocus(struct Camera *camera, struct _Instance *instance)
