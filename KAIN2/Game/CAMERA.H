@@ -208,6 +208,7 @@ struct Camera // hashcode: 0x0670C20F (dec: 108053007)
 			long hit; // size=0, offset=16
 		} Follow; // size=20, offset=76, found in object files: debug.o, debug.o
 	} data; // size=96, offset=1060, found in object files: debug.o, debug.o
+
 	long cuckooTimer; // size=0, offset=1156
 	short teleportZRot; // size=0, offset=1160
 	short extraZRot; // size=0, offset=1162
