@@ -51,6 +51,8 @@ struct RazielData
 	int SwimPhysicsSurfKickDecel; // size=0, offset=156
 };
 
+extern int ControlFlag;
+
 extern void InitStates(struct _Instance *PlayerInstance); // 0x800A80C8
 
 extern void StateInitIdle(struct __CharacterState *In, int CurrentSection, int Ptr); // 0x800A83B0
