@@ -3399,23 +3399,27 @@ long NormalClip(long sxy0, long sxy1, long sxy2)
 
 MATRIX* TransposeMatrix(MATRIX* m0, MATRIX* m1)
 {
-    m1->m[0][2] = m0->m[0][0];
-    m1->m[1][0] = m0->m[0][1];
+    int t1 = ((int*)m0)[0];
+    int t2 = ((int*)m0)[1];
 
-    m1->m[0][0] = m0->m[0][2];
-    m1->m[0][1] = m0->m[1][0];
+    ((int*)m1)[1] = t1;
+    ((int*)m1)[0] = t2;
 
-    m1->m[2][0] = m0->m[1][1];
-    m1->m[2][1] = m0->m[1][2];
+    ((short*)m1)[0] = t1 & 0xFFFF;
 
-    m1->m[1][1] = m0->m[2][0];
-    m1->m[1][2] = m0->m[2][1];
+    int t3 = ((int*)m0)[2];
+    t1 = ((int*)m0)[3];
 
-    m1->m[2][0] = m0->m[0][2];
-    m1->m[1][1] = m0->m[1][1];
+    ((int*)m1)[3] = t3;
+    ((int*)m1)[2] = t1;
 
-    m1->m[0][2] = m0->m[2][0];
-    m1->m[2][2] = m0->m[2][2];
+    ((short*)m1)[6] = t2 & 0xFFFF;
+    ((short*)m1)[4] = t3 & 0xFFFF;
+    
+    t2 = ((short*)m0)[8];
+
+    ((short*)m1)[2] = t1 & 0xFFFF;
+    ((short*)m1)[8] = t2 & 0xFFFF;
 
     return m1;
 }
@@ -3751,68 +3755,48 @@ long RotAverageNclip4(SVECTOR* v0, SVECTOR* v1, SVECTOR* v2, SVECTOR* v3, long* 
 MATRIX* MulMatrix0(MATRIX* m0, MATRIX* m1, MATRIX* m2)
 {
     VECTOR v0;
-    SVECTOR v1;//t3, t4, t5
-    SVECTOR v2;//t6, t7, t8
-    SVECTOR v3;//t0, t2, t1
+    SVECTOR r0;
+    SVECTOR r1;
+    SVECTOR r2;
 
     gte_SetRotMatrix(m0);
 
-    v0.vx = m1->m[0][2] | m1->m[1][0] << 16;
-    v0.vy = m1->m[2][0] | m1->m[2][1] << 16;
-
-    gte_ldv0(&v0);
-
-    gte_mvmva(1, 0, 0, 3, 0);
-   
-    gte_stsv(&v1);
-
-    //
-    v0.vx = m1->m[0][1] | m1->m[1][2] << 16;
-    v0.vy = m1->m[2][1];
+    ((int*)&v0)[0] = ((unsigned short*)m1)[0] | (((int*)m1)[1] & 0xFFFF0000);
+    ((int*)&v0)[1] = ((int*)m1)[3];
 
     gte_ldv0(&v0);
 
     gte_mvmva(1, 0, 0, 3, 0);
 
-    gte_stsv(&v2);
-
-    constexpr int test = offsetof(MATRIX, m[2][2]);
-
-    v0.vx = m1->m[0][2] | m1->m[1][1] << 16;
-    v0.vy = m1->m[2][2];
+    ((int*)&v0)[0] = ((unsigned short*)m1)[1] | (((int*)m1)[2] << 16);
+    ((int*)&v0)[1] = ((short*)m1)[7];
+    
+    gte_stsv(&r0);
 
     gte_ldv0(&v0);
 
     gte_mvmva(1, 0, 0, 3, 0);
 
-    gte_stsv(&v3);
+    ((int*)&v0)[0] = ((unsigned short*)m1)[2] | (((int*)m1)[2] & 0xFFFF0000);
+    ((int*)&v0)[1] = ((int*)m1)[4];
 
-#if 0
-        .text : 000001B4                 andi    $t3, 0xFFFF
-        .text : 000001B8                 sll     $t6, 16
-        .text : 000001BC or $t6, $t3
-        .text : 000001C0                 sw      $t6, 0($a2)
-        .text : 000001C4                 andi    $t5, 0xFFFF
-        .text : 000001C8                 sll     $t8, 16
-        .text : 000001CC or $t8, $t5
-        .text : 000001D0                 sw      $t8, 0xC($a2)
-        .text : 000001D4                 mfc2    $t0, $9
-        .text : 000001D8                 mfc2    $t1, $10
-        .text : 000001DC                 andi    $t0, 0xFFFF
-        .text : 000001E0                 sll     $t4, 16
-        .text : 000001E4 or $t0, $t4
-        .text : 000001E8                 sw      $t0, 4($a2)
-        .text : 000001EC                 andi    $t7, 0xFFFF
-        .text : 000001F0                 sll     $t1, 16
-        .text : 000001F4 or $t1, $t7
-        .text : 000001F8                 sw      $t1, 8($a2)
-        .text : 000001FC                 swc2    $11, 0x10($a2)
-        .text : 00000200                 move    $v0, $a2
-        .text : 00000204                 jr      $ra
-        .text : 00000208                 nop
-#endif
+    gte_stsv(&r1);
 
-    return NULL;
+    gte_ldv0(&v0);
+
+    gte_mvmva(1, 0, 0, 3, 0);
+
+    ((int*)m2)[0] = (r1.vx << 16) | (r0.vx & 0xFFFF);
+    ((int*)m2)[3] = (r1.vz << 16) | (r0.vz & 0xFFFF);
+
+    gte_stsv(&r2);
+
+    ((int*)m2)[1] = (r0.vy << 16) | (r2.vx & 0xFFFF);
+    ((int*)m2)[2] = (r2.vy << 16) | (r1.vy & 0xFFFF);
+
+    ((int*)m2)[4] = r2.vz;
+
+    return m2;
 }
 
 MATRIX* MulMatrix(MATRIX* m0, MATRIX* m1)
