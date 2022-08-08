@@ -1038,7 +1038,7 @@ struct _Instance* INSTANCE_IntroduceInstance(struct Intro* intro, short streamUn
 	struct SavedIntroSpline* savedIntroSpline;
 	struct MultiSpline* spline;
 	struct SavedIntroSmall* savedIntroSmall;
-
+	
 	attachInst = NULL;
 	index = NULL;
 

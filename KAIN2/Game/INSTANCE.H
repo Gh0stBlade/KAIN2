@@ -188,9 +188,7 @@ struct _Instance {
 	struct _SVector scale; // size=8, offset=132
 	long attachedID; // size=0, offset=140
 	long attachedSegment; // size=0, offset=144
-#if !defined(PSX_VERSION)///@TODO Disabled, causing undefined issues 
 	MATRIX relativeMatrix; // size=32, offset=148
-#endif
 	struct _TFace* tface; // size=12, offset=180
 	struct _TFace* oldTFace; // size=12, offset=184
 	void* tfaceLevel; // size=0, offset=188
