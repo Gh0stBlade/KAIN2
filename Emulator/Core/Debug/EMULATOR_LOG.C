@@ -7,7 +7,7 @@
 
 void Emulator_Log(enum LOG_TYPE lt, const char* file, const char* func, int line, const char* fmt, ...) 
 {
-#if !defined(UWP) && (defined(_WIN32) || defined(_WIN64))
+#if !defined(UWP) && (defined(_WIN32) || defined(_WIN64)) && defined(DEBUG_PRINTS)
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
     SetConsoleTextAttribute(hConsole, lt);
