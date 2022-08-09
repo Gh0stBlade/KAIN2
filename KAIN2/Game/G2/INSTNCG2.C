@@ -1,108 +1,55 @@
 #include "CORE.H"
 #include "INSTNCG2.H"
+#include "G2/ANIMG2.H"
 
-void G2Instance_BuildTransformsForList(struct _Instance *listHead)
+void G2Instance_BuildTransformsForList(struct _Instance* listHead)
 {
-	struct _Instance *instance; // $s0
+	struct _Instance* instance;
 
 	instance = listHead;
-	//s1 = instance
+
 	if (instance != NULL)
 	{
-		//loc_80094EEC
-		if (instance->LinkParent == NULL)
+		while (instance->LinkParent != NULL)
 		{
-			if (!(instance->flags2 & 0x1))
+			if ((instance->flags2 & 0x1) || (instance->flags & 0x100000) && 
+				
+				instance->oldPos.x == instance->position.x &&
+				instance->oldPos.y == instance->position.y &&
+				instance->oldPos.z == instance->position.z &&
+				instance->oldRotation.x == instance->rotation.x &&
+				instance->oldRotation.y == instance->rotation.y &&
+				instance->oldRotation.z == instance->rotation.z &&
+				instance->matrix != NULL && instance->object->animList == NULL ||
+				(instance->object->oflags2 & 0x40000000) || !(instance->anim.flags & 0x1))
 			{
-				if ((instance->flags & 0x100000))
-				{
-					if (instance->oldPos.x == instance->position.x &&
-						instance->oldPos.y == instance->position.y &&
-						instance->oldPos.z == instance->position.z &&
-						instance->oldRotation.x == instance->rotation.x &&
-						instance->oldRotation.y == instance->rotation.y &&
-						instance->oldRotation.z == instance->rotation.z && 
-						instance->matrix != NULL)
-					{
-
-					}
-					//loc_80094FD4
-				}
-				//loc_80094FD4
+				_G2Instance_BuildDeactivatedTransforms(instance);
 			}
-			//loc_80094FC4
+			else
+			{
+				G2Instance_BuildTransforms(instance);
+			}
+
+			instance = instance->next;
 		}
-		//loc_80094FDC
 	}
-	//loc_80094FEC
-#if 0
 
-		lw      $v1, 0x1C($s0)
-		nop
-		lw      $v0, 0x10($v1)
-		nop
-		beqz    $v0, loc_80094FC4
-		nop
-		lw      $v0, 0x2C($v1)
-		lui     $v1, 0x4000
-		and $v0, $v1
-		bnez    $v0, loc_80094FC4
-		nop
-		lhu     $v0, 0x1D6($s0)
-		nop
-		andi    $v0, 1
-		bnez    $v0, loc_80094FD4
-		nop
+	instance = listHead;
 
-		loc_80094FC4 :
-	jal     sub_800958F4
-		move    $a0, $s0
-		j       loc_80094FDC
-		nop
+	while (instance != NULL)
+	{
+		if (instance->rebuildCallback != NULL)
+		{
+			if (instance->rebuildCallback(instance) != FALSE)
+			{
+				G2Anim_UpdateStoredFrame(&instance->anim);
 
-		loc_80094FD4 :
-	jal     sub_8009504C
-		move    $a0, $s0
+				G2Instance_RebuildTransforms(instance);
+			}
+		}
 
-		loc_80094FDC :
-	lw      $s0, 8($s0)
-		nop
-		bnez    $s0, loc_80094EEC
-		nop
-
-		loc_80094FEC :
-	move    $s0, $s1
-		beqz    $s0, loc_80095038
-		nop
-
-		loc_80094FF8 :
-	lw      $v0, 0x27C($s0)
-		nop
-		beqz    $v0, loc_80095028
-		nop
-		jalr    $v0
-		move    $a0, $s0
-		beqz    $v0, loc_80095028
-		nop
-		jal     sub_80092EDC
-		addiu   $a0, $s0, 0x1C8
-		jal     sub_800950A8
-		move    $a0, $s0
-
-		loc_80095028 :
-	lw      $s0, 8($s0)
-		nop
-		bnez    $s0, loc_80094FF8
-		nop
-
-		loc_80095038 :
-	lw      $ra, 0x10 + var_s8($sp)
-		lw      $s1, 0x10 + var_s4($sp)
-		lw      $s0, 0x10 + var_s0($sp)
-		jr      $ra
-		addiu   $sp, 0x20
-#endif
-		UNIMPLEMENTED();
+		instance = instance->next;
+	}
 }
 
 

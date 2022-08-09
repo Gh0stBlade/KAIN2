@@ -253,7 +253,7 @@ struct _Instance {
 	long work8; // size=0, offset=448
 	long work9; // size=0, offset=452
 	struct _G2Anim_Type anim; // size=180, offset=456
-	enum _G2Bool_Enum* rebuildCallback(); // size=4, offset=636
+	enum _G2Bool_Enum (*rebuildCallback)(struct _Instance* instance); // size=4, offset=636
 	short splineFlags; // size=0, offset=640
 	short targetFrame; // size=0, offset=642
 	short clipBeg; // size=0, offset=644
