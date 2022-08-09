@@ -2,36 +2,36 @@
 #include "INSTNCG2.H"
 #include "G2/ANIMG2.H"
 
-void G2Instance_BuildTransformsForList(struct _Instance* listHead)
+void G2Instance_BuildTransformsForList(struct _Instance* listHead)//Matching - 99.74%
 {
 	struct _Instance* instance;
 
 	instance = listHead;
 
-	if (instance != NULL)
+	while (instance != NULL)
 	{
-		while (instance->LinkParent != NULL)
+		if (instance->LinkParent == NULL)
 		{
-			if ((instance->flags2 & 0x1) || (instance->flags & 0x100000) && 
-				
-				instance->oldPos.x == instance->position.x &&
-				instance->oldPos.y == instance->position.y &&
-				instance->oldPos.z == instance->position.z &&
-				instance->oldRotation.x == instance->rotation.x &&
-				instance->oldRotation.y == instance->rotation.y &&
-				instance->oldRotation.z == instance->rotation.z &&
-				instance->matrix != NULL && instance->object->animList == NULL ||
-				(instance->object->oflags2 & 0x40000000) || !(instance->anim.flags & 0x1))
+			if ((instance->flags2 & 0x1) || ((instance->flags & 0x100000) &&
+				(instance->oldPos.x == instance->position.x) &&
+				(instance->oldPos.y == instance->position.y) &&
+				(instance->oldPos.z == instance->position.z) &&
+				(instance->oldRotation.x == instance->rotation.x) &&
+				(instance->oldRotation.y == instance->rotation.y) &&
+				(instance->oldRotation.z == instance->rotation.z) &&
+				(instance->matrix != NULL) && (((instance->object->animList == NULL)) ||
+				(instance->object->oflags2 & 0x40000000) || !(instance->anim.flags & 0x1))))
 			{
+
 				_G2Instance_BuildDeactivatedTransforms(instance);
 			}
 			else
 			{
 				G2Instance_BuildTransforms(instance);
 			}
-
-			instance = instance->next;
 		}
+
+		instance = instance->next;
 	}
 
 	instance = listHead;
