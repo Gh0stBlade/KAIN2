@@ -275,14 +275,9 @@ extern int gte_ldlzc(int input);
 	:							\
 	: "r"( r0 ) )
 
-#define gte_ldsvrtrow0( r0 ) __asm__ volatile (			\
-	"lw	$12, 0( %0 );"					\
-	"lw	$13, 4( %0 );"					\
-	"ctc2	$12, $0;"					\
-	"ctc2	$13, $1"					\
-	:							\
-	: "r"( r0 )						\
-	: "$12", "$13" )
+#define gte_ldsvrtrow0( r0 ) \
+	((int*)&R11)[0] = ((int*)r0)[0];   \
+	((int*)&R13)[0] = ((int*)r0)[1];   \
 
 #define gte_SetRotMatrix( r0 )          \
 	((int*)&R11)[0] = ((int*)r0)[0];   \
@@ -290,6 +285,9 @@ extern int gte_ldlzc(int input);
 	((int*)&R22)[0] = ((int*)r0)[2];   \
 	((int*)&R31)[0] = ((int*)r0)[3];   \
 	((int*)&R33)[0] = ((int*)r0)[4];
+
+#define gte_ldsvrtrow1( r0 )          \
+	((int*)&R22)[0] = ((int*)r0)[2];   \
 
 #define gte_ldsvllrow0( r0 ) __asm__ volatile (			\
 	"lw	$12, 0( %0 );"					\
@@ -1070,6 +1068,9 @@ extern int gte_ldlzc(int input);
 	((int*)r0)[1] = MAC2;       \
 	((int*)r0)[2] = MAC3;       \
 
+#define gte_stmac( r0, i )		 \
+	((int*)r0)[i] = gteRegs.CP2D.p[ 24 + i ].sd; \
+
 #define gte_stlvnl0( r0 )	\
 	r0 = OFY;	
 
@@ -1384,6 +1385,9 @@ extern int gte_ldlzc(int input);
 	:							\
 	:							\
 	: "$12" )
+
+#define gte_ldw(r0, r1) \
+	gteRegs.CP2D.p[r0].d = r1; \
 
 
 #endif
