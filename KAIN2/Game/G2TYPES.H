@@ -113,6 +113,19 @@ struct Intro // hashcode: 0x796E766D (dec: 2037282413)
 	short spad; // size=0, offset=74
 };
 
+struct TextureFT3 
+{
+	unsigned char u0; // size=0, offset=0
+	unsigned char v0; // size=0, offset=1
+	unsigned short clut; // size=0, offset=2
+	unsigned char u1; // size=0, offset=4
+	unsigned char v1; // size=0, offset=5
+	unsigned short tpage; // size=0, offset=6
+	unsigned char u2; // size=0, offset=8
+	unsigned char v2; // size=0, offset=9
+	unsigned short attr; // size=0, offset=10
+};
+
 struct _Terrain // hashcode: 0x5D541B4E (dec: 1565793102)
 {
 	short UnitChangeFlags; // size=0, offset=0
