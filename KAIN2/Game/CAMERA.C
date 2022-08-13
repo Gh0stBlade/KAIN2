@@ -7,6 +7,7 @@
 #include "GAMELOOP.H"
 #include "COLLIDE.H"
 #include "PSX/COLLIDES.H"
+#include "RAZIEL/RAZLIB.H"
 
 short camera_still;
 short shorten_flag;
@@ -2396,42 +2397,37 @@ void CAMERA_CombatCamDist(struct Camera *camera)
 
 void CAMERA_GenericCameraProcess(struct Camera* camera)
 {
-	struct _Instance* focusInstance; // $s1
-	struct _Position targetCamPos; // stack offset -32
-	short angle; // $a0
-	struct _Rotation test_rot; // stack offset -24
-	struct _Instance* warpInstance; // $v0
-	int tmp; // $v0
-	int mod; // $v1
-	int dist; // $a3
-	short _x1; // $v1
-	short _y1; // $a0
-	short _z1; // $a1
-	struct _Position* _v0; // $v0
-	struct _Position* _v1; // $v0
-	struct _Position target; // stack offset -24
+	struct _Instance* focusInstance;
+	struct _Position targetCamPos;
+	short angle;
+	struct _Rotation test_rot;
+	struct _Instance* warpInstance;
+	int tmp;
+	int mod;
+	int dist;
+	short _x1;
+	short _y1;
+	short _z1;
+	struct _Position* _v0;
+	struct _Position* _v1;
+	struct _Position target;
 
-	//s0 = camera
-	//v1 = 0x10000
 	focusInstance = camera->focusInstance;
 
-	//v0 = 0x40
 	if ((camera->flags & 0x1) || (camera->instance_mode & 0x4000000))
 	{
 		camera->rotationVel.z = 64;
 	}
-	//loc_80019FB0
+
 	if (!(camera->instance_mode & 0x2000000))
 	{
 		combat_cam_weight = 2048;
 	}
 
-	//loc_80019FC8
 	CAMERA_SetMaxVel(camera);
 
 	CAMERA_SetFocus(camera, &camera->targetFocusPoint);
 
-	//a0 = camera
 	if ((camera->flags & 0x10000) || (camera->instance_mode & 0x4000000))
 	{
 		CAMERA_FollowPlayerTilt(camera, focusInstance);
@@ -2444,265 +2440,171 @@ void CAMERA_GenericCameraProcess(struct Camera* camera)
 		{
 			CAMERA_CalcRotation(&test_rot, &camera->targetFocusPoint, &camera->core.position);
 
-			CAMERA_SignedAngleDifference(test_rot.z, camera->focusRotation.z);
+			angle = CAMERA_SignedAngleDifference(test_rot.z, camera->focusRotation.z);
 
-			//Continue here. v1 = 0x49c(s0)
+			if ((camera->instance_mode & 0x2))
+			{
+				angle >>= 1;
+			}
+			else
+			{
+				angle = (angle * 3) >> 2;
+			}
+			
+			camera->targetFocusRotation.z = camera->focusRotation.z + angle;
 		}
-		//loc_8001A0EC
 	}
-	//loc_8001A0EC
-#if 0
 
-		lw      $v1, 0x49C($s0)
-		nop
-		andi    $v1, 2
-		beqz    $v1, loc_8001A0C8
-		move    $a0, $v0
-		sll     $v0, $a0, 16
-		j       loc_8001A0DC
-		sra     $a0, $v0, 17
+	if (camera->instance_mode < 0)
+	{
+		warpInstance = RAZIEL_QueryEngagedInstance(14);
 
-		loc_8001A0C8:
-	sll     $v1, $a0, 16
-		sra     $v1, 16
-		sll     $v0, $v1, 1
-		addu    $v0, $v1
-		srl     $a0, $v0, 2
+		if (warpInstance != NULL)
+		{
+			camera->tfaceTilt = 3988;
 
-		loc_8001A0DC :
-		lhu     $v0, 0x140($s0)
-		nop
-		addu    $v0, $a0
-		sh      $v0, 0x1B6($s0)
+			camera->rotationVel.z = 64;
 
-		loc_8001A0EC :
-		lw      $v1, 0x49C($s0)
-		nop
-		bgez    $v1, loc_8001A150
-		nop
-		jal     sub_800A7C04
-		li      $a0, 0xE
-		beqz    $v0, loc_8001A244
-		li      $v1, 0xF94
-		lh      $v0, 0x78($v0)
-		sh      $v1, 0x1BA($s0)
-		li      $v1, 0x40  # '@'
-		sh      $v1, 0x188($s0)
-		li      $v1, 8
-		sh      $v1, 0x1C4($s0)
-		li      $v1, 1
-		sh      $v1, 0x4AE($s0)
-		sh      $zero, 0x408($s0)
-		andi    $v0, 0xFFF
-		addiu   $v0, -0x401
-		sltiu   $v0, 0x7FF
-		xori    $v0, 1
-		sll     $v0, 11
-		sh      $v0, 0x1C0($s0)
-		j       loc_8001A244
-		sh      $v0, 0x1B6($s0)
+			camera->smooth = 8;
 
-		loc_8001A150:
-	lw      $a0, 0xE8($s0)
-		nop
-		andi    $v0, $a0, 0x2000
-		bnez    $v0, loc_8001A174
-		lui     $v0, 0x200
-		lui     $v0, 0x2000
-		and $v0, $v1, $v0
-		beqz    $v0, loc_8001A188
-		lui     $v0, 0x200
+			camera->always_rotate_flag = 1;
 
-		loc_8001A174:
-	and $v0, $v1, $v0
-		bnez    $v0, loc_8001A244
-		li      $v0, 0x40  # '@'
-		j       loc_8001A1A4
-		sh      $v0, 0x188($s0)
+			camera->forced_movement = 0;
 
-		loc_8001A188 :
-		lui     $v0, 1
-		and $v0, $a0, $v0
-		bnez    $v0, loc_8001A1A4
-		lui     $v0, 0x400
-		and $v0, $v1, $v0
-		beqz    $v0, loc_8001A1B4
-		andi    $v0, $v1, 0x400
+			tmp = (((((warpInstance->rotation.z & 0xFFF) - 1025) < 0x7FF) ^ 1)) << 11;
 
-		loc_8001A1A4:
-	jal     sub_8001CD64
-		move    $a0, $s0
-		j       loc_8001A244
-		nop
+			camera->collisionTargetFocusRotation.z = tmp;
 
-		loc_8001A1B4 :
-	beqz    $v0, loc_8001A23C
-		nop
-		lw      $v0, 0x498($s0)
-		nop
-		andi    $v0, 0x400
-		bnez    $v0, loc_8001A23C
-		nop
-		lh      $v1, 0xB4($s0)
-		nop
-		bgez    $v1, loc_8001A1E4
-		move    $v0, $v1
-		addiu   $v0, $v1, 0x3FF
+			camera->targetFocusRotation.z = tmp;
+		}
+	}
+	else
+	{
+		if ((camera->flags & 0x2000) || (camera->instance_mode & 0x20000000))
+		{
+			if (!(camera->instance_mode & 0x2000000))
+			{
+				camera->rotationVel.z = 64;
 
-		loc_8001A1E4:
-	sra     $v0, 10
-		sll     $v0, 10
-		subu    $v0, $v1, $v0
-		sll     $v0, 16
-		sra     $v1, $v0, 16
-		slti    $v0, $v1, 0x201
-		bnez    $v0, loc_8001A20C
-		li      $v0, 0x400
-		j       loc_8001A210
-		subu    $v1, $v0, $v1
+				CAMERA_FollowGoBehindPlayer(camera);
+			}
+		}
+		else
+		{
+			if ((camera->flags & 0x10000) || (camera->instance_mode & 0x4000000))
+			{
+				CAMERA_FollowGoBehindPlayer(camera);
+			}
+			else
+			{
+				if ((camera->instance_mode & 0x400) && !(camera->prev_instance_mode & 0x400))
+				{
+					tmp = camera->core.rotation.z < 0 ? camera->core.rotation.z + 1023 : camera->core.rotation.z;
+					tmp >>= 10;
+					tmp <<= 10;
 
-		loc_8001A20C :
-	negu    $v1, $v1
+					mod = camera->core.rotation.z - tmp;
 
-		loc_8001A210 :
-	bgez    $v1, loc_8001A21C
-		move    $v0, $v1
-		negu    $v0, $v0
+					if (mod >= 513)
+					{
+						mod = 1024 - mod;
+					}
+					else
+					{
+						mod = -mod;
+					}
 
-		loc_8001A21C :
-	slti    $v0, 0x81
-		bnez    $v0, loc_8001A23C
-		nop
-		lh      $v0, 0xB4($s0)
-		nop
-		addu    $v1, $v0
-		andi    $v1, 0xFFF
-		sh      $v1, 0x1B6($s0)
+					if (mod < 0)
+					{
+						tmp = mod;
+						tmp = -tmp;
+					}
+					else
+					{
+						tmp = mod;
+					}
 
-		loc_8001A23C:
-	jal     sub_8001CC68
-		move    $a0, $s0
+					if (tmp >= 129)
+					{
+						camera->targetFocusRotation.z = (mod + camera->core.rotation.z) & 0xFFF;
+					}
+				}
 
-		loc_8001A244 :
-	lw      $v0, 0xE8($s0)
-		nop
-		andi    $v0, 0x1800
-		bnez    $v0, loc_8001A2AC
-		lui     $v1, 0x200
-		lw      $v0, 0x49C($s0)
-		nop
-		and $v0, $v1
-		beqz    $v0, loc_8001A280
-		addiu   $a0, $sp, 0x28 + var_10
-		jal     sub_80019CA4
-		move    $a0, $s0
-		lh      $a3, -0x542C($gp)
-		j       loc_8001A28C
-		addiu   $a0, $sp, 0x28 + var_10
+				CAMERA_FollowGoBehindPlayerWithTimer(camera);
+			}
+		}
+	}
 
-		loc_8001A280 :
-	lh      $a3, 0x1A8($s0)
-		nop
-		sh      $a3, -0x542C($gp)
+	if (!(camera->flags & 0x1800))
+	{
+		if ((camera->instance_mode & 0x2000000))
+		{
+			CAMERA_CombatCamDist(camera);
+		}
 
-		loc_8001A28C :
-		addiu   $a1, $s0, 0x100
-		jal     sub_800169BC
-		addiu   $a2, $s0, 0x13C
-		move    $a0, $s0
-		addiu   $a1, $sp, 0x28 + var_10
-		jal     sub_8001D584
-		move    $a2, $zero
-		sw      $v0, 0x480($s0)
+		combat_cam_distance = camera->targetFocusDistance;
 
-		loc_8001A2AC:
-	lw      $v0, 0x49C($s0)
-		nop
-		bgez    $v0, loc_8001A2C0
-		li      $v0, 0x7D0
-		sh      $v0, 0x1B0($s0)
+		CAMERA_CalcPosition(&targetCamPos, &camera->focusPoint, &camera->focusRotation, combat_cam_distance);
+	
+		camera->data.Follow.hit = CAMERA_DoCameraCollision2(camera, &targetCamPos, 0);
+	}
+	
+	if (camera->instance_mode < 0)
+	{
+		camera->collisionTargetFocusDistance = 2000;
+	}
 
-		loc_8001A2C0 :
-		jal     sub_8001C438
-		move    $a0, $s0
-		jal     sub_8001C508
-		move    $a0, $s0
-		jal     sub_8001C6F0
-		move    $a0, $s0
-		lw      $v0, 0xE8($s0)
-		nop
-		andi    $v0, 0x1800
-		beqz    $v0, loc_8001A330
-		addiu   $v0, $s0, 0x1AA
-		lhu     $v1, 0x1AA($s0)
-		lhu     $a0, 2($v0)
-		lhu     $a1, 4($v0)
-		addiu   $v0, $s0, 0x100
-		sh      $v1, 0x100($s0)
-		sh      $a0, 2($v0)
-		sh      $a1, 4($v0)
-		lw      $v0, 0xE8($s0)
-		lhu     $v1, 0x1A8($s0)
-		andi    $v0, 0x1000
-		beqz    $v0, loc_8001A3B0
-		sh      $v1, 0x106($s0)
-		lh      $a1, 0x488($s0)
-		jal     sub_8001624C
-		move    $a0, $s0
-		j       loc_8001A3B4
-		move    $a0, $s0
+	CAMERA_UpdateFocusDistance(camera);
 
-		loc_8001A330 :
-	ulw     $t0, 0x1AA($s0)
-		lh      $t1, 0x1AE($s0)
-		usw     $t0, 0x28 + var_8($sp)
-		sh      $t1, 0x28 + var_4($sp)
-		lw      $v0, 0xE8($s0)
-		lui     $s1, 1
-		and $v0, $s1
-		bnez    $v0, loc_8001A368
-		addiu   $a2, $sp, 0x28 + var_8
-		lhu     $v0, 0x104($s0)
-		nop
-		sh      $v0, 0x28 + var_4($sp)
+	CAMERA_UpdateFocusTilt(camera);
 
-		loc_8001A368:
-	li      $a0, 1
-		addiu   $a1, $s0, 0x100
-		addiu   $v0, $s0, 0x160
-		sw      $v0, 0x28 + var_18($sp)
-		lh      $v0, 0x194($s0)
-		addiu   $a3, $s0, 0x158
-		jal     sub_80017334
-		sw      $v0, 0x28 + var_14($sp)
-		lw      $v0, 0xE8($s0)
-		nop
-		and $v0, $s1
-		bnez    $v0, loc_8001A3B0
-		nop
-		lh      $a1, 0x104($s0)
-		lh      $a2, 0x1AE($s0)
-		jal     sub_80019A34
-		move    $a0, $s0
-		sh      $v0, 0x104($s0)
+	CAMERA_UpdateFocusRotate(camera);
 
-		loc_8001A3B0:
-	move    $a0, $s0
 
-		loc_8001A3B4 :
-	jal     sub_8001CF48
-		addiu   $a1, $s0, 0x13C
-		jal     sub_8001CDA0
-		move    $a0, $s0
-		jal     sub_8001C5D4
-		move    $a0, $s0
-		lw      $ra, 0x28 + var_sC($sp)
-		lw      $s2, 0x28 + var_s8($sp)
-		lw      $s1, 0x28 + var_s4($sp)
-		lw      $s0, 0x28 + var_s0($sp)
-		jr      $ra
-		addiu   $sp, 0x38
-#endif
+	if ((camera->flags & 0x1800))
+	{
+		_v0 = &camera->targetFocusPoint;
+		_v1 = &camera->focusPoint;
+
+		_x1 = _v0->x;
+		_y1 = _v0->y;
+		_z1 = _v0->z;
+
+		_v1->x = _x1;
+		_v1->y = _y1;
+		_v1->z = _z1;
+
+		camera->focusDistance  = camera->targetFocusDistance;
+	
+		if ((camera->flags & 0x1000))
+		{
+			CAMERA_SetZRotation(camera, camera->teleportZRot);
+		}
+	}
+	else
+	{
+		target.x = camera->targetFocusPoint.x;
+		target.y = camera->targetFocusPoint.y;
+		target.z = camera->targetFocusPoint.z;
+
+		if (!(camera->flags & 0x10000))
+		{
+			target.z = camera->focusPoint.z;
+		}
+
+		CriticalDampPosition(1, &camera->focusPoint, &target, &camera->focusPointVel, &camera->focusPointAccl, camera->maxVel);
+
+		if (!(camera->flags & 0x10000))
+		{
+			camera->focusPoint.z = CAMERA_update_z_damped(camera, camera->focusPoint.z, camera->targetFocusPoint.z);
+		}
+	}
+
+	CAMERA_CalcFollowPosition(camera, &camera->focusRotation);
+
+	CAMERA_CalculateLead(camera);
+
+	CAMERA_UpdateFocusRoll(camera);
 }
 
 
@@ -3614,7 +3516,13 @@ void CAMERA_UpdateFocusRotationX(struct Camera* camera, struct _Instance* focusI
 
 					//a1 = camera->focusRotation.z
 					//a0 = &normal
-					CAMERA_CalcTilt(&normal, camera->focusRotation.z);
+					int x = CAMERA_CalcTilt(&normal, camera->focusRotation.z);
+					int tilt = ((x * 8) + x);
+					tilt < 0 ? ((tilt + 15) >> 4) : tilt >> 4;
+					camera->targetTilt = tilt;
+
+					//v0 = camera->targetTilt
+					//continue this here
 				}
 				//loc_8001C93C
 			}
@@ -3624,16 +3532,6 @@ void CAMERA_UpdateFocusRotationX(struct Camera* camera, struct _Instance* focusI
 	}
 	//loc_8001C938
 #if 0
-		jal     sub_800188E0
-		addiu   $a0, $sp, 0x20 + var_8
-		sll     $v1, $v0, 3
-		addu    $v0, $v1, $v0
-		bgez    $v0, loc_8001C8A4
-		nop
-		addiu   $v0, 0xF
-
-		loc_8001C8A4:
-	sra     $v0, 4
 		sh      $v0, 0x19E($s0)
 		sll     $v0, 16
 		sra     $v1, $v0, 16
