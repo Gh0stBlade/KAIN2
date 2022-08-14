@@ -895,7 +895,7 @@ void CAMERA_Lock(struct Camera* camera, long lock)
 void CAMERA_Unlock(struct Camera* camera, long unlock)
 {
 #if defined(PSX_VERSION)
-	camera->lock |= ~unlock;
+	camera->lock &= ~unlock;
 #elif defined(PC_VERSION)
 	camera->lock &= ~unlock;
 #endif
