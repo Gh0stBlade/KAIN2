@@ -682,10 +682,8 @@ extern int gte_ldlzc(int input);
 	"nop;"							\
 	".word 0x00000eff" )
 
-#define gte_sqr0() __asm__ volatile (				\
-	"nop;"							\
-	"nop;"							\
-	".word 0x00000f3f" )
+#define gte_sqr0() \
+	docop2(0x0A00428);
 
 #define gte_ncs() __asm__ volatile (				\
 	"nop;"							\
