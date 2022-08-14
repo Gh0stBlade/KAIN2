@@ -4000,26 +4000,21 @@ void CAMERA_CalculateLead(struct Camera *camera)
 
 void CAMERA_CalcFollowPosition(struct Camera* camera, struct _Rotation* rotation)
 { 
-	struct _Instance* focusInstance; // $s2
-	short _x1; // $v0
-	short _y1; // $v1
-	short _z1; // $a0
-	struct _Rotation* _v0; // $v0
-	short target_rotx; // $s0
-	int hypotXY; // $s3
-	int smooth; // $v1
-	int diff; // $a0
-	struct _Vector dpv; // stack offset -40
-	int zdiff; // $a0
-	int velz; // $a1
-	int ground; // $a0
-	int pos; // $v1
+	struct _Instance* focusInstance;
+	short _x1;
+	short _y1;
+	short _z1;
+	struct _Rotation* _v0;
+	short target_rotx;
+	int hypotXY;
+	int smooth;
+	int diff;
+	struct _Vector dpv;
+	int zdiff;
+	int velz;
+	int ground;
+	int pos;
 
-	//s1 = camera
-	//s0 = rotation
-
-	//a0 = &camera->targetPos
-	//a1 = &camera->focusPoint
 	focusInstance = camera->focusInstance;
 
 	CAMERA_CalcPosition(&camera->targetPos, &camera->focusPoint, rotation, camera->focusDistance);
@@ -4041,16 +4036,11 @@ void CAMERA_CalcFollowPosition(struct Camera* camera, struct _Rotation* rotation
 	if (!(camera->flags & 0x10000))
 	{
 		camera->actual_x_rot -= camera->x_rot_change;
-		//a0 = camera->x_rot_change
-		//v1 = camera->real_focuspoint.x - camera->targetPos.x
-		//a1 = camera->targetPos.x
+
 		dpv.x = camera->real_focuspoint.x - camera->targetPos.x;
-		//v0 = camera->real_focuspoint.y - camera->targetPos.y
-		//v1 = 
 		dpv.z = 0;
 		dpv.y = camera->real_focuspoint.y - camera->targetPos.y;
 
-		//v0 = &dpv
 		gte_ldlvl(dpv);
 
 		gte_sqr0();
@@ -4059,180 +4049,112 @@ void CAMERA_CalcFollowPosition(struct Camera* camera, struct _Rotation* rotation
 
 		hypotXY = MATH3D_FastSqrt0(dpv.x + dpv.y);
 
-		//v0 = camera->real_focuspoint.z
-		//a0 = camera->targetPos.x
-
 		diff = ratan2(camera->real_focuspoint.z - camera->targetPos.x, hypotXY);
 
 		target_rotx = diff;
 
 		if ((camera->instance_mode & 0x1038))
 		{
-			//v1 = focusInstance->shadowPosition.z
-			//v0 = focusInstance->position.z
-			//a1 = camera->focusInstanceVelVec.z
+			velz = camera->focusInstanceVelVec.z;
 
 			if (focusInstance->shadowPosition.z != focusInstance->position.z)
 			{
-				if (camera->focusInstanceVelVec.z < 0)
+				if (velz < 0)
 				{
+					if (velz < -260)
+					{
+						if (-520 - velz > 0)
+						{
+							velz = 0;
+						}
+					}
 
+					pos = camera->real_focuspoint.z + (velz * 2);
+
+					ground = focusInstance->shadowPosition.z + 352;
+
+					if (pos < ground)
+					{
+						ground -= camera->targetPos.z;
+					}
+					else
+					{
+						ground = pos - camera->targetPos.z;
+					}
+
+					target_rotx = ratan2(ground, hypotXY);
+
+					if (CAMERA_SignedAngleDifference(target_rotx, camera->actual_x_rot) < 0)
+					{
+						target_rotx = camera->actual_x_rot;
+					}
 				}
-				//loc_8001D128
+
+				target_rotx = camera->core.rotation.x;
 			}
-			//loc_8001D12C
 		}
-		//loc_8001D104
+		else
+		{
+			if (CAMERA_AngleDifference(target_rotx, camera->core.rotation.x) < 4)
+			{
+				target_rotx = camera->core.rotation.x;
+			}
+		}
+
+		if ((camera->flags & 0x1800))
+		{
+			camera->actual_x_rot = target_rotx;
+			camera->x_rot_change = 0;
+		}
+
+		zdiff = CAMERA_SignedAngleDifference(target_rotx, camera->actual_x_rot);
+
+		if ((camera->instance_mode & 0x2000))
+		{
+			if (zdiff >= 81)
+			{
+				smooth = zdiff - 80 / 3;
+
+				if (smooth >= 4)
+				{
+					if (smooth >= 25)
+					{
+						smooth = 24;
+					}
+					else
+					{
+						smooth = 4;
+					}
+				}
+				else
+				{
+					smooth = 4;
+				}
+			}
+		}
+		else
+		{
+			smooth = 24;
+		}
+
+		if (smooth != 0)
+		{
+			CriticalDampAngle(1, &camera->actual_x_rot, target_rotx, &camera->actual_vel_x, &camera->actual_acc_x, smooth);
+		}
+		else
+		{
+			camera->actual_acc_x = 0;
+			camera->actual_vel_x = 0;
+		}
+
+		camera->core.rotation.x = camera->actual_x_rot;
 	}
-	//loc_8001D210
-#if 0
-		bgez    $a1, loc_8001D128
-		slti    $v0, $a1, -0x104
-		beqz    $v0, loc_8001D098
-		li      $v0, 0xFFFFFDF8
-		subu    $a1, $v0, $a1
-		blez    $a1, loc_8001D098
-		nop
-		move    $a1, $zero
+	else
+	{
+		camera->actual_x_rot = camera->core.rotation.x;
+	}
 
-		loc_8001D098 :
-	lh      $v0, 0x124($s2)
-		lh      $v1, 0x4AC($s1)
-		addiu   $a0, $v0, 0x160
-		sll     $v0, $a1, 1
-		addu    $v1, $v0
-		slt     $v0, $v1, $a0
-		beqz    $v0, loc_8001D0C4
-		nop
-		lh      $v0, 0x19C($s1)
-		j       loc_8001D0D0
-		subu    $a0, $v0
-
-		loc_8001D0C4 :
-	lh      $v0, 0x19C($s1)
-		nop
-		subu    $a0, $v1, $v0
-
-		loc_8001D0D0 :
-	jal     ratan2
-		move    $a1, $s3
-		move    $s0, $v0
-		lh      $a1, 0x4B2($s1)
-		sll     $v0, 16
-		jal     sub_80016768
-		sra     $a0, $v0, 16
-		sll     $v0, 16
-		blez    $v0, loc_8001D12C
-		nop
-		lhu     $s0, 0x4B2($s1)
-		j       loc_8001D12C
-		nop
-
-		loc_8001D104 :
-	lh      $a1, 0xB0($s1)
-		sll     $a0, 16
-		jal     sub_800166F0
-		sra     $a0, 16
-		sll     $v0, 16
-		sra     $v0, 16
-		slti    $v0, 4
-		beqz    $v0, loc_8001D12C
-		nop
-
-		loc_8001D128 :
-	lhu     $s0, 0xB0($s1)
-
-		loc_8001D12C :
-		lw      $v0, 0xE8($s1)
-		nop
-		andi    $v0, 0x1800
-		beqz    $v0, loc_8001D148
-		nop
-		sh      $s0, 0x4B2($s1)
-		sh      $zero, 0x4B8($s1)
-
-		loc_8001D148:
-	sll     $a0, $s0, 16
-		lh      $a1, 0x4B2($s1)
-		jal     sub_80016768
-		sra     $a0, 16
-		sll     $v0, 16
-		lw      $v1, 0x49C($s1)
-		nop
-		andi    $v1, 0x2000
-		beqz    $v1, loc_8001D1C0
-		sra     $a0, $v0, 16
-		slti    $v0, $a0, 0x51  # 'Q'
-		bnez    $v0, loc_8001D1B0
-		lui     $v1, 0x5555
-		li      $v1, 0x55555556
-		addiu   $v0, $a0, -0x50
-		mult    $v0, $v1
-		sra     $v0, 31
-		mfhi    $t0
-		subu    $v1, $t0, $v0
-		slti    $v0, $v1, 4
-		bnez    $v0, loc_8001D1B8
-		slti    $v0, $v1, 0x19
-		bnez    $v0, loc_8001D1C4
-		nop
-		j       loc_8001D1C4
-		li      $v1, 0x18
-
-		loc_8001D1B0:
-	blez    $a0, loc_8001D1C4
-		li      $v1, 0x18
-
-		loc_8001D1B8 :
-		j       loc_8001D1C4
-		li      $v1, 4
-
-		loc_8001D1C0 :
-		li      $v1, 0x18
-
-		loc_8001D1C4 :
-		beqz    $v1, loc_8001D1FC
-		li      $a0, 1
-		addiu   $a1, $s1, 0x4B2
-		sll     $a2, $s0, 16
-		sra     $a2, 16
-		addiu   $a3, $s1, 0x4B4
-		addiu   $v0, $s1, 0x4B6
-		sw      $v0, 0x28 + var_18($sp)
-		sll     $v0, $v1, 16
-		sra     $v0, 16
-		jal     sub_800179F8
-		sw      $v0, 0x28 + var_14($sp)
-		j       loc_8001D204
-		nop
-
-		loc_8001D1FC :
-	sh      $zero, 0x4B6($s1)
-		sh      $zero, 0x4B4($s1)
-
-		loc_8001D204 :
-		lhu     $v0, 0x4B2($s1)
-		j       loc_8001D21C
-		sh      $v0, 0xB0($s1)
-
-		loc_8001D210 :
-		lhu     $v0, 0xB0($s1)
-		nop
-		sh      $v0, 0x4B2($s1)
-
-		loc_8001D21C :
-		lhu     $v0, 0xB4($s1)
-		nop
-		sh      $v0, 0xFC($s1)
-		lw      $ra, 0x28 + var_s10($sp)
-		lw      $s3, 0x28 + var_sC($sp)
-		lw      $s2, 0x28 + var_s8($sp)
-		lw      $s1, 0x28 + var_s4($sp)
-		lw      $s0, 0x28 + var_s0($sp)
-		jr      $ra
-		addiu   $sp, 0x40
-#endif
-
+	camera->lagZ = camera->core.rotation.z;
 }
 
 
