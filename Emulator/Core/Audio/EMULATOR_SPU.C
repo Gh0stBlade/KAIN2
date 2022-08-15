@@ -4,7 +4,7 @@
 
 extern int _spu_keystat_last;
 extern char spuSoundBuffer[524288];
-
+extern char MixChannelToSPUChannel[SPU_MAX_CHANNELS];
 std::thread thread;
 
 void SPU_Initialise()
@@ -15,8 +15,13 @@ void SPU_Initialise()
     }
 
 #if defined(SDL2)
+#if defined(SPU_USE_TIMER)
+    SDL_AddTimer(1000 / SPU_FPS, SPU_Update, NULL);
+#else
+#if !defined(SINGLE_THREADED) || 1
     thread = std::thread(SPU_Update);
-    //SDL_AddTimer(1000/SPU_FPS, SPU_Update, NULL);
+#endif
+#endif
 
 #endif
 }
@@ -25,13 +30,12 @@ void SPU_InitialiseChannel(int vNum)
 {
     struct Channel* channel = &channelList[vNum];
     channel->voiceNum = vNum;
-    channel->voicePlaying = 0;
     channel->voiceEnd = NULL;
     channel->voicePitches = 0;
     channel->voicePosition = NULL;
     channel->voiceStartAddrs = 0;
     channel->voiceEndFlag = 0;
-    channel->voiceNew = TRUE;
+    channel->voiceFlags = Channel::Flags::VOICE_NEW;
     channel->voiceLength = -1;
     channel->s_1 = 0;
     channel->s_2 = 0;
@@ -41,11 +45,10 @@ void SPU_InitialiseChannelKeepStartAddrAndPitch(int vNum)
 {
     struct Channel* channel = &channelList[vNum];
     channel->voiceNum = vNum;
-    channel->voicePlaying = 0;
     channel->voiceEnd = NULL;
     channel->voicePosition = NULL;
     channel->voiceEndFlag = 0;
-    channel->voiceNew = TRUE;
+    channel->voiceFlags = Channel::Flags::VOICE_NEW;
     channel->voiceLength = -1;
     channel->s_1 = 0;
     channel->s_2 = 0;
@@ -58,47 +61,65 @@ int SPU_GetADPCMSize(unsigned char* pADPCM)
     //End flag
     while (pADPCM[1] != 7)
     {
-        resultSize += 16;
+        resultSize += 56;
         pADPCM += 16;
     }
     
-    return resultSize + 16;
+    return resultSize;
 }
 
+#if defined(SPU_USE_TIMER)
+unsigned int SPU_Update(unsigned int interval, void* pTimerID)
+#else
 void SPU_Update()
+#endif
 {
+#if !defined(SPU_USE_TIMER) && !defined(SINGLE_THREADED) && 0
     while (TRUE)
     {
+#endif
         for (int i = 0; i < SPU_MAX_CHANNELS; i++)
         {
-            if (_spu_keystat_last & (1 << i) && channelList[i].voiceNew == TRUE)
+#if defined(OPENAL)
+            ALint state;
+            alGetSourcei(alSources[i], AL_SOURCE_STATE, &state);
+            if (state != AL_PLAYING && alBuffers[i] != 0)
+            {
+                Mix_ChannelFinishedPlayingCallback(i);
+            }
+#endif
+
+            if (_spu_keystat_last & (1 << i) && (channelList[i].voiceFlags & Channel::Flags::VOICE_NEW))
             {
                 unsigned char* pADPCM = (unsigned char*)&spuSoundBuffer[channelList[i].voiceStartAddrs];
 
-                if (channelList[i].voicePosition == NULL)
+                if (channelList[i].voicePosition == NULL && (channelList[i].voiceFlags & Channel::Flags::VOICE_NEW))
                 {
                     channelList[i].voicePosition = pADPCM;
                 }
 
-                if (channelList[i].voiceLength == -1)
+                if (channelList[i].voiceLength == -1 && (channelList[i].voiceFlags & Channel::Flags::VOICE_NEW))//TODO should pass voicePosition instead to get actual size per chunk
                 {
                     float time = (float)((SPU_GetADPCMSize(pADPCM) / SPU_ADPCM_FRAME_SIZE) * SPU_PCM_FRAME_SIZE) / (float)(channelList[i].voicePitches * 2 * 16 / 8);
                     channelList[i].voiceLength = (int)(time * 1000.0f);
                 }
 
-                if (channelList[i].voiceEnd == NULL)
+                if (channelList[i].voiceEnd == NULL && (channelList[i].voiceFlags & Channel::Flags::VOICE_NEW))
                 {
                     channelList[i].voiceEnd = &pADPCM[SPU_GetADPCMSize(pADPCM)];
                 }
 
-                Mix_Play(i, channelList[i].voicePosition);
+                Mix_Play(i, channelList[i].voicePosition, channelList[i].voiceLength);
 
-                channelList[i].voicePlaying = TRUE;
-                channelList[i].voiceNew = FALSE;
+                channelList[i].voiceFlags |= Channel::Flags::VOICE_PLAYING;
+                channelList[i].voiceFlags &= ~Channel::Flags::VOICE_NEW;
             }
         }
+#if !defined(SPU_USE_TIMER) && !defined(SINGLE_THREADED) && 0
     }
-    //return interval;
+#elif defined(SPU_USE_TIMER)
+    return interval;
+#endif
 }
 
 int CLAMP16(int x)
@@ -122,7 +143,11 @@ unsigned int SPU_DecodeAudioFrame(unsigned char* vag, unsigned short* out, struc
     int filterTablePos[5] = { 0, 60, 115, 98, 122 };
     int filterTableNeg[5] = { 0, 0, -52, -55, -60 };
 
-    for(int f = 0; f < SPU_MS_PER_UPDATE; f++)
+#if defined(OLD_SYSTEM)
+    while(1)
+#else
+    for (int f = 0; f < SPU_MS_PER_UPDATE; f++)
+#endif
     {
         shift = *vag & 0xF;
         filter = (*vag++ & 0x70) >> 4;

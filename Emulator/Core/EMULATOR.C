@@ -38,7 +38,11 @@ const char* renderBackendName = "OpenGLES 3.0";
 #endif
 #endif
 
+#if defined(_DEBUG)//60FPS
+#define FIXED_TIME_STEP    16
+#else
 #define FIXED_TIME_STEP    33
+#endif
 #define SWAP_INTERVAL      1
 
 unsigned int g_resetDeviceOnNextFrame = FALSE;
@@ -2713,11 +2717,45 @@ void Emulator_CounterLoop()
 	}
 }
 
+#if defined(USE_THREADS)
+void Emulator_CounterWrapper(int timerID)
+#else
 unsigned int Emulator_CounterWrapper(unsigned int interval, void* pTimerID)
+#endif
 {
+#if !defined(USE_THREADS)
 	unsigned int timerID = ((unsigned int*)pTimerID)[0];
-	
-	counters[timerID].padding00();
+#endif
+
+	{
+#if defined(USE_THREADS)
+#define CW_FPS 61
+
+		int now = SDL_GetTicks();
+		int lastFrame = SDL_GetTicks();
+
+		while (TRUE)
+		{
+			now = SDL_GetTicks();
+			int delta = now - lastFrame;
+			lastFrame = now;
+
+			if (delta < (1000 / CW_FPS))
+			{
+				Sleep((1000 / CW_FPS) - delta);
+			}
+
+			counters[timerID].padding00();
+		}
+		
+#else
+		if (counters[timerID].padding00 != NULL)
+		{
+			counters[timerID].padding00();
+		}
+#endif
+			
+	}
 
 	//static int count = 0;
 	//wchar_t buff[32];
@@ -2725,7 +2763,9 @@ unsigned int Emulator_CounterWrapper(unsigned int interval, void* pTimerID)
 	//OutputDebugStringW(buff);
 	//count++;
 
+#if !defined(USE_THREADS)
 	return interval;
+#endif
 }
 
 void Emulator_GenerateLineArray(struct Vertex* vertex, short* p0, short* p1)
@@ -6019,6 +6059,12 @@ unsigned int Emulator_GetFPS()
 
 void Emulator_SwapWindow()
 {
+	unsigned int timer = 1;
+
+#if defined(SINGLE_THREADED)
+	Emulator_CounterWrapper(0, &timer);
+#endif
+
 	Emulator_WaitForTimestep(1);
 
 #if defined(RO_DOUBLE_BUFFERED)

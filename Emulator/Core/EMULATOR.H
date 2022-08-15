@@ -12,6 +12,12 @@
 #include "Setup/Platform/EMULATOR_PLATFORM_INCLUDES.H"
 #include "Debug/EMULATOR_LOG.H"
 
+//#define USE_THREADS
+
+#if defined(USE_THREADS)
+#include <thread>
+#endif
+
 #ifndef TRUE
 #define TRUE		1
 #endif
@@ -104,8 +110,10 @@ typedef struct
 
 	CallbackProc padding00;
 	unsigned int timerIndex;
-#if defined(UWP_SDL2) || defined(SDL2)
+#if defined(UWP_SDL2) || defined(SDL2) && !defined(USE_THREADS)
 	SDL_TimerID timerId;
+#else
+	std::thread timerId;
 #endif
 	unsigned int startTick;
 } SysCounter;
@@ -271,7 +279,12 @@ extern void Emulator_SetBlendMode(BlendMode blendMode);
 extern void Emulator_CounterLoop();
 extern int Emulator_BeginScene();
 extern void Emulator_EndScene();
+
+#if defined(USE_THREADS)
+extern void Emulator_CounterWrapper(int timerID);
+#else
 extern unsigned int Emulator_CounterWrapper(unsigned int interval, void* pTimerID);
+#endif
 
 extern void Emulator_GenerateLineArray(struct Vertex* vertex, short* p0, short* p1);
 extern void Emulator_GenerateVertexArrayTriangle(struct Vertex* vertex, short* p0, short* p1, short* p2);

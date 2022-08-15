@@ -23,6 +23,9 @@
 #include <SDL.h>
 #if defined(SDL2_MIXER)
 #include <SDL_mixer.h>
+#elif defined(OPENAL)
+#include <al.h>
+#include <alc.h>
 #endif
 #if defined(VULKAN)
 #include <SDL_vulkan.h>

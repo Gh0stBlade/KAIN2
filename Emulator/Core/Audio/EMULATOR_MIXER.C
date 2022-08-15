@@ -1,5 +1,6 @@
 #include "EMULATOR_MIXER.H"
 #include "EMULATOR_SPU.H"
+#include "EMULATOR_RESAMPLE.H"
 
 #include "Core/Debug/EMULATOR_LOG.H"
 
@@ -9,65 +10,9 @@ extern int _spu_keystat_last;
 
 SDL_TimerID audioTimer;
 Mix_Chunk* mixerChunks[SPU_MAX_CHANNELS];
-unsigned char* frequencyConvertedChunks[SPU_MAX_CHANNELS];
+char MixChannelToSPUChannel[SPU_MAX_CHANNELS];
 
-int Mix_ChangeFrequency(Mix_Chunk* chunk, int vNum)
-{
-    Uint16 format;
-    int channels;
-    Mix_QuerySpec(NULL, &format, &channels);
-
-    SDL_AudioCVT cvt;
-    int channel = vNum;
-    SDL_BuildAudioCVT(&cvt, format, 1, channelList[vNum].voicePitches, format, channels, SPU_PLAYBACK_FREQUENCY);
-
-    if (cvt.needed)
-    {
-        if (Mix_Playing(channel))
-        {
-            Mix_HaltChannel(channel);
-            return -1;
-        }
-
-        if (channel == SPU_MAX_CHANNELS)
-        {
-            eprinterr("Fatal: Channels overloaded!\n");
-            return -1;
-        }
-
-        //Set converter lenght and buffer
-        cvt.len = chunk->alen;
-        cvt.buf = (Uint8*)SDL_malloc(cvt.len * cvt.len_mult);
-        if (cvt.buf == NULL)
-        {
-            return -1;
-        }
-
-        //Copy the Mix_Chunk data to the new chunk and make the conversion
-        SDL_memcpy(cvt.buf, chunk->abuf, chunk->alen);
-        if (SDL_ConvertAudio(&cvt) < 0)
-        {
-            SDL_free(cvt.buf);
-            return -1;
-        }
-
-        //If it was sucessfull put it on the original Mix_Chunk
-        chunk->abuf = cvt.buf;
-        chunk->alen = cvt.len_cvt;
-
-        //If there was a chunk in this channel delete it
-        if (frequencyConvertedChunks[channel] != NULL)
-            SDL_free(frequencyConvertedChunks[channel]);
-
-        frequencyConvertedChunks[channel] = cvt.buf;
-        return channel;
-
-    }
-    else
-    {
-        return -1;
-    }
-}
+extern int SPU_GetADPCMSize(unsigned char* pADPCM);
 
 Mix_Chunk* Mix_LoadAudioChunk(int vNum, unsigned char* address)
 {
@@ -76,58 +21,83 @@ Mix_Chunk* Mix_LoadAudioChunk(int vNum, unsigned char* address)
         return NULL;
     }
 
-    unsigned short pcm[AUDIO_CHUNK_SIZE_PCM/2];
+#if defined(OLD_SYSTEM)
+    unsigned int tempPcmLength = SPU_GetADPCMSize(address) * 2;
+    unsigned short* pcm = new unsigned short[tempPcmLength];
+#else
+    unsigned short pcm[AUDIO_CHUNK_SIZE_PCM / 2];
+#endif
     unsigned int pcmLength = SPU_DecodeAudioFrame(address, pcm, &channelList[vNum]);
 
+    int resampledPCMLength = 0;
+    unsigned char* resampledPCM = Resample_PCM(channelList[vNum].voicePitches, SPU_PLAYBACK_FREQUENCY, (short*)&pcm[0], pcmLength, &resampledPCMLength);
+
+#if defined(OLD_SYSTEM)
+    delete[] pcm;
+    pcm = NULL;
+#endif
+
+#if 1
+    Mix_Chunk* waveChunk = Mix_QuickLoad_RAW(resampledPCM, resampledPCMLength);
+#else
     Mix_Chunk* waveChunk = Mix_QuickLoad_RAW((unsigned char*)pcm, pcmLength);
+#endif
 
     return waveChunk;
 }
 
 void Mix_ChannelFinishedPlayingCallback(int channel)
 {
-    unsigned char* waveChunk = frequencyConvertedChunks[channel];
-    frequencyConvertedChunks[channel] = NULL;
-    SDL_free(waveChunk);
-
     Mix_Chunk* mixerChunk = mixerChunks[channel];
-    mixerChunks[channel] = NULL;
-    Mix_FreeChunk(mixerChunk);
+    int vNum = MixChannelToSPUChannel[channel];
 
-    if (channelList[channel].voiceEndFlag)//End flag
+    if (mixerChunk != NULL)
     {
-        _spu_keystat_last &= ~(1 << channel);
-        SPU_InitialiseChannelKeepStartAddrAndPitch(channel);
+        Resample_Free(mixerChunk->abuf);
+
+        mixerChunks[channel] = NULL;
+        Mix_FreeChunk(mixerChunk);
+    }
+
+    if (channelList[vNum].voiceEndFlag)//End flag
+    {
+        _spu_keystat_last &= ~(1 << vNum);
+        SPU_InitialiseChannelKeepStartAddrAndPitch(vNum);
+        MixChannelToSPUChannel[channel] = 0;
     }
     else
     {
-        channelList[channel].voicePosition += AUDIO_CHUNK_SIZE;
-        channelList[channel].voiceNew = TRUE;
+        channelList[vNum].voicePosition += AUDIO_CHUNK_SIZE;
+        channelList[vNum].voiceFlags |= Channel::Flags::VOICE_NEW;
     }
 }
 
-void Mix_Play(int vNum, unsigned char* address)
+void Mix_Play(int vNum, unsigned char* address, int timeMs)
 {
+    //Stops if channel assigned twice which is wrong.
+    //while (Mix_Playing(vNum))//Hack?
+    //{
+    //    Mix_HaltChannel(vNum);
+    //}
+
     Mix_Chunk* waveChunk = Mix_LoadAudioChunk(vNum, address);
 
     if (waveChunk != NULL)
     {
-        while (Mix_Playing(vNum))
+        int actualChannel;
+        for (actualChannel = 0; actualChannel < SPU_MAX_CHANNELS; actualChannel++)
         {
-            SDL_Delay(1);
+            if(!Mix_Playing(actualChannel))
+            {
+                break;
+            }
         }
-
-        Uint8* bkp_buf = waveChunk->abuf;
-        Uint32 bkp_len = waveChunk->alen;
         
-        int channel = Mix_ChangeFrequency(waveChunk, vNum);
-     
-        mixerChunks[channel] = waveChunk;
-        
-        Mix_PlayChannel(channel, waveChunk, 0);
+        //Mix_PlayChannel(actualChannel, waveChunk, 0);
+        Mix_PlayChannelTimed(actualChannel, waveChunk, 0, timeMs);
+        mixerChunks[actualChannel] = waveChunk;
 
-        waveChunk->abuf = bkp_buf;
-        waveChunk->alen = bkp_len;
+        MixChannelToSPUChannel[actualChannel] = vNum;
     }
 }
 
@@ -135,13 +105,92 @@ void Mix_Initialise()
 {
     Mix_Init(0);///@TODO MIX_QUIT!
 
-    if (Mix_OpenAudio(SPU_PLAYBACK_FREQUENCY, MIX_DEFAULT_FORMAT, 1, AUDIO_CHUNK_SIZE_PCM) < 0)
+    if (Mix_OpenAudio(SPU_PLAYBACK_FREQUENCY, MIX_DEFAULT_FORMAT, 2, 1024) < 0)
     {
         eprinterr("[SDL2_MIXER]: Failed to Mix_OpenAudio! %s\n", Mix_GetError());
     }
 
     Mix_AllocateChannels(SPU_MAX_CHANNELS);
     Mix_ChannelFinished(Mix_ChannelFinishedPlayingCallback);
+}
+
+#elif defined(OPENAL)
+
+SDL_TimerID audioTimer;
+ALuint mixerChunks[SPU_MAX_CHANNELS];
+char MixChannelToSPUChannel[SPU_MAX_CHANNELS];
+
+extern int SPU_GetADPCMSize(unsigned char* pADPCM);
+
+ALuint Mix_LoadAudioChunk(int vNum, unsigned char* address)
+{
+    if (address == NULL)
+    {
+        return NULL;
+    }
+
+#if defined(OLD_SYSTEM)
+    unsigned int tempPcmLength = SPU_GetADPCMSize(address) * 2;
+    unsigned short* pcm = new unsigned short[tempPcmLength];
+#else
+    unsigned short pcm[AUDIO_CHUNK_SIZE_PCM / 2];
+#endif
+    unsigned int pcmLength = SPU_DecodeAudioFrame(address, pcm, &channelList[vNum]);
+
+#if !defined(OPENAL)
+    int resampledPCMLength = 0;
+    unsigned char* resampledPCM = Resample_PCM(channelList[vNum].voicePitches, SPU_PLAYBACK_FREQUENCY, (short*)&pcm[0], pcmLength, &resampledPCMLength);
+#endif
+
+#if 1
+    alGenBuffers(1, &alBuffers[vNum]);
+    alBufferData(alBuffers[vNum], AL_FORMAT_MONO16, pcm, pcmLength, channelList[vNum].voicePitches);
+    unsigned int err = alGetError();
+    err++;
+#else
+    Mix_Chunk* waveChunk = Mix_QuickLoad_RAW((unsigned char*)pcm, pcmLength);
+#endif
+
+#if defined(OLD_SYSTEM)
+    delete[] pcm;
+    pcm = NULL;
+#endif
+
+    return alBuffers[vNum];
+}
+
+void Mix_ChannelFinishedPlayingCallback(int channel)
+{
+    alDeleteBuffers(1, &alBuffers[channel]);
+    alBuffers[channel] = 0;
+
+    if (channelList[channel].voiceEndFlag)//End flag
+    {
+        _spu_keystat_last &= ~(1 << channel);
+        SPU_InitialiseChannelKeepStartAddrAndPitch(channel);
+        MixChannelToSPUChannel[channel] = 0;
+    }
+    else
+    {
+        channelList[channel].voicePosition += AUDIO_CHUNK_SIZE;
+        channelList[channel].voiceFlags |= Channel::Flags::VOICE_NEW;
+    }
+}
+
+void Mix_Play(int vNum, unsigned char* address, int timeMs)
+{
+    ALuint waveChunk = Mix_LoadAudioChunk(vNum, address);
+
+    if (waveChunk != NULL)
+    {
+        alSourcei(alSources[vNum], AL_BUFFER, alBuffers[vNum]);
+        alSourcePlay(alSources[vNum]);
+    }
+}
+
+void Mix_Initialise()
+{
+   
 }
 
 #endif

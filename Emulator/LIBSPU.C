@@ -639,6 +639,8 @@ void SpuSetKey(long on_off, unsigned long voice_bit)
     }
 
     _spu_keystat_last |= _spu_keystat;
+
+    SDL_Delay(8);
 }
 
 void SpuSetKeyOnWithAttr(SpuVoiceAttr* attr)//(F)
@@ -916,34 +918,13 @@ int _spu_t(int mode, int flag, int a2)
 
 void _spu_Fw(unsigned char* addr, unsigned long size)
 {
-#if defined(SDL2_MIXER)
+#if defined(SDL2_MIXER) || defined(OPENAL)
     memcpy(&spuSoundBuffer[_spu_tsa << _spu_mem_mode_plus], addr, size);
 
     if (__spu_transferCallback != NULL)
     {
         __spu_transferCallback();
     }
-#elif defined(OPENAL) || defined(XAUDIO2)
-    memcpy(&spuSoundBuffer[_spu_tsa << _spu_mem_mode_plus], addr, size);
-
-    if (__spu_transferCallback != NULL)
-    {
-        __spu_transferCallback();
-    }
-#else
-
-    if (_spu_trans_mode == 0)
-    {
-        _spu_t(2, _spu_tsa << _spu_mem_mode_plus, 0);
-        _spu_t(1, _spu_tsa << _spu_mem_mode_plus, 0);
-        _spu_t(3, size, 2);
-    }
-    else
-    {
-        UNIMPLEMENTED();
-    }
-
-
 #endif
 }
 
@@ -1357,7 +1338,6 @@ void SpuInit(void)//(F)
 #if defined(SDL2_MIXER)
 
     Mix_Initialise();
-    SPU_Initialise();
 
 #elif defined(OPENAL)
     alDevice = alcOpenDevice(NULL);
@@ -1380,7 +1360,7 @@ void SpuInit(void)//(F)
     alListener3f(AL_VELOCITY, 0.0f, 0.0f, 0.0f);
     alListenerfv(AL_ORIENTATION, orient);
 
-    for (int i = 0; i < 24; i++)
+    for (int i = 0; i < SPU_MAX_CHANNELS; i++)
     {
         alGenSources(1, &alSources[i]);
         alSourcef(alSources[i], AL_PITCH, 1);
@@ -1390,6 +1370,8 @@ void SpuInit(void)//(F)
         alSourcei(alSources[i], AL_LOOPING, AL_FALSE);
     }
     
+    SPU_Initialise();
+
 #elif defined(XAUDIO2)
 
     CoInitializeEx(0, 0);
@@ -1563,7 +1545,7 @@ void SpuSetVoicePitch(int vNum, unsigned short pitch)
         pitch = 1;
     }
 
-    unsigned int frequency = pitch * SPU_PLAYBACK_FREQUENCY / 4096;
+    unsigned int frequency = pitch * 44100 / 4096;
     
     channelList[vNum].voicePitches = frequency;
 
@@ -1650,10 +1632,42 @@ void SpuSetVoiceStartAddr(int vNum, unsigned long startAddr)
     //Converted to size or next offset?
     for (int i = 0; i < 2; i++)
     {
-       var_4 *= 13;
+        var_4 *= 13;
     }
 #if defined(SDL2_MIXER) || defined(OPENAL) || defined(XAUDIO2)
+
+    int foundFree = FALSE;
+
+    //IF the voice is playing find a free channel (hack!)
+    if (channelList[vNum].voiceFlags & Channel::Flags::VOICE_PLAYING)
+    {
+        for (int i = 0; i < SPU_MAX_CHANNELS; i++)
+        {
+            if ((channelList[i].voiceFlags & Channel::Flags::VOICE_NEW) && !(channelList[i].voiceFlags & Channel::Flags::VOICE_PLAYING) && _spu_keystat_last & (1 << vNum))
+            {
+                foundFree = TRUE;
+                //Key on! hacky
+                _spu_keystat_last |= (1 << i);
+               
+                //Copy values in
+                channelList[i].voicePitches = channelList[vNum].voicePitches;
+                vNum = i;
+
+                break;
+            }
+        }
+    }
+    else
+    {
+        foundFree = TRUE;
+    }
+
+    //If this occurs channel pool is exhausted!
+    SDL_assert(foundFree);
+
     channelList[vNum].voiceStartAddrs = startAddr;//startAddr / 8;//_spu_tsa;
+    channelList[vNum].voiceFlags = Channel::Flags::VOICE_NEW;
+    channelList[vNum].voicePosition = NULL;
 #endif
 }
 
@@ -1685,7 +1699,7 @@ void SpuSetVoiceVolume(int vNum, short volL, short volR)
     Mix_Volume(vNum, newVol);
     Mix_SetPanning(vNum, volL / 128, volR / 128);
 #elif defined(OPENAL)
-    alSourcef(alSources[vNum], AL_GAIN, volL / 32767.0f);///@FIXME only left supported?
+    alSourcef(alSources[vNum], AL_GAIN, /*volL /*/ 32767.0f);///@FIXME only left supported?
 #elif defined(XAUDIO2)
    pMasterVoice->SetVolume(volL / 32767.0f, 0);
 #endif
