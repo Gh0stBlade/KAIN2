@@ -1067,7 +1067,7 @@ extern int gte_ldlzc(int input);
 	((int*)r0)[2] = MAC3;       \
 
 #define gte_stmac( r0, i )		 \
-	((int*)r0)[i] = gteRegs.CP2D.p[ 24 + i ].sd; \
+	((int*)r0)[0] = gteRegs.CP2D.p[ 24 + i ].sd; \
 
 #define gte_stlvnl0( r0 )	\
 	r0 = OFY;	
