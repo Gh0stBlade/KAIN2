@@ -210,6 +210,7 @@ void BSP_MarkVisibleLeaves_S(struct BSPTree* bsp, struct Camera* camera, struct 
 
 	//v0 = camera->core.farPlane
 
+	///@WIN64 needs patching to uintptr_t
 	getScratchAddr(0)[38] = (unsigned long)bsp;
 	getScratchAddr(0)[39] = (unsigned long)curTree;
 	getScratchAddr(0)[40] = (unsigned long)savedLightInstance;
@@ -226,9 +227,11 @@ void BSP_MarkVisibleLeaves_S(struct BSPTree* bsp, struct Camera* camera, struct 
 	//s6 = camera
 	//fp = polytopeList
 
-	getScratchAddr(48)[0] = (unsigned long)getScratchAddr(48);
+	unsigned long* s0 = &getScratchAddr(48)[0];
+	s0[0] = (unsigned long)getScratchAddr(48);
 
-	//s7 = &polytopeList->polytope
+	unsigned long* s7 = (unsigned long*)&polytopeList->polytope;
+
 	if (s2 >= camera->core.farPlane)
 	{
 		s2 = camera->core.farPlane;
@@ -239,23 +242,30 @@ void BSP_MarkVisibleLeaves_S(struct BSPTree* bsp, struct Camera* camera, struct 
 	//t0 = 64
 
 	//loc_8007952C
-	for(int i = 64; i != 0; i -= 16)
+	for(int i = 0; i < 4; i++)
 	{
 		unsigned int* pM = (unsigned int*)&camera->core.vvNormalWorVecMat[0].m[0][0];
 
-		getScratchAddr(0)[0 + i] = pM[0 * i];
-		getScratchAddr(0)[1 + i] = pM[1 * i];
-		getScratchAddr(0)[2 + i] = pM[2 * i];
-		getScratchAddr(0)[3 + i] = pM[3 * i];
+		unsigned long* addr = &getScratchAddr(0)[0 + i];
+		unsigned long* addr1 = &getScratchAddr(0)[1 + i];
+
+		getScratchAddr(0)[0 + (i * 4)] = pM[0 + (i * 4)];
+		getScratchAddr(0)[1 + (i * 4)] = pM[1 + (i * 4)];
+		getScratchAddr(0)[2 + (i * 4)] = pM[2 + (i * 4)];
+		getScratchAddr(0)[3 + (i * 4)] = pM[3 + (i * 4)];
 	}
 
 	gte_SetRotMatrix(getScratchAddr(0));
-	gte_ldv0(&camera->core.position);
+	gte_ldv0(&camera->core.position);///@FIXME not inited/updated so this code fails!!
 	gte_rtv0();
-	gte_stlvnl(camera->core.wcTransform);
+	gte_stlvnl(&getScratchAddr(0)[24]);
 
-	gte_ldlvl(getScratchAddr(0)[8]);
+	gte_ldsvrtrow0(&getScratchAddr(0)[8]);
+	gte_ldsvrtrow1(&getScratchAddr(0)[8]);
 	gte_rtv0();
+
+	gte_stmac(&getScratchAddr(0)[27], 1);
+	gte_stmac(&getScratchAddr(0)[28], 2);
 
 	((short*)getScratchAddr(0))[32] = camera->core.position.x;
 	((short*)getScratchAddr(0))[33] = camera->core.position.y;
@@ -264,327 +274,325 @@ void BSP_MarkVisibleLeaves_S(struct BSPTree* bsp, struct Camera* camera, struct 
 	//t1 = camera->core.projDistance
 	//t2 = camera->core.cwTransform2
 
-	gte_st_mac0(getScratchAddr(0)[27]);
-	gte_st_mac1(getScratchAddr(0)[27]);
-	UNIMPLEMENTED();//Camera needs implementing or division by zero will occurr
-	return;//not ready/unimpl
 	int v0 = (s2 << 15) / camera->core.projDistance;
 
-	gte_ld_vxy0(s2);
+	gte_ldw(1, s2);
 	gte_SetRotMatrix(camera->core.cwTransform2);
 
-	int t0 = (camera->core.leftX - 160) * v0;
-	//t1 = camera->core.topY;
-	//t2 = camera->core.rightX;
-	//t3 = camera->core.bottomY;
+	int t0 = (((camera->core.leftX - 160) * v0) >> 15) & 0xFFFF;
+	int t1 = (((camera->core.topY - 120) * v0) << 1) & 0xFFFF0000;
+	int t2 = (((camera->core.rightX - 160) * v0) >> 15) & 0xFFFF;
+	int t3 = (((camera->core.bottomY - 120) * v0) << 1) & 0xFFFF0000;
+	
+	SVECTOR result;
 
 	//v1 = 0xFFFF0000
-	UNIMPLEMENTED();
-#if 0
-		lui     $v1, 0xFFFF
-		addi    $t1, -0x78
-		nop
-		nop
-		mult    $t1, $v0
-		addi    $t2, -0xA0
-		sra     $t0, 15
-		andi    $t0, 0xFFFF
-		mflo    $t1
-		nop
-		nop
-		mult    $t2, $v0
-		addi    $t3, -0x78
-		sll     $t1, 1
-		and $t1, $v1
-		mflo    $t2
-		nop
-		nop
-		mult    $t3, $v0
-		sra     $t2, 15
-		andi    $t2, 0xFFFF
-		mflo    $t3
-		sll     $t3, 1
-		and $t3, $v1
-		or $t7, $t0, $t1
-		mtc2    $t7, $0
-		nop
-		nop
-		cop2    0x486012
-		or $t7, $t2, $t1
-		mfc2    $t4, $9
-		mfc2    $t5, $10
-		mfc2    $t6, $11
-		mtc2    $t7, $0
-		sh      $t4, 0x46($s4)
-		sh      $t5, 0x48($s4)
-		sh      $t6, 0x4A($s4)
-		cop2    0x486012
-		or $t7, $t2, $t3
-		mfc2    $t4, $9
-		mfc2    $t5, $10
-		mfc2    $t6, $11
-		mtc2    $t7, $0
-		sh      $t4, 0x4C($s4)
-		sh      $t5, 0x4E($s4)
-		sh      $t6, 0x50($s4)
-		cop2    0x486012
-		or $t7, $t0, $t3
-		mfc2    $t4, $9
-		mfc2    $t5, $10
-		mfc2    $t6, $11
-		mtc2    $t7, $0
-		sh      $t4, 0x74($s4)
-		sh      $t5, 0x76($s4)
-		sh      $t6, 0x78($s4)
-		cop2    0x486012
-		mfc2    $t4, $9
-		mfc2    $t5, $10
-		mfc2    $t6, $11
-		li      $t7, dword_800D3360
-		sh      $t4, 0x7A($s4)
-		sh      $t5, 0x7C($s4)
-		sh      $t6, 0x7E($s4)
-		lh      $v1, (dword_800D3368 - 0x800D3360)($t7)
-		lh      $v0, (dword_800D3368 + 2 - 0x800D3360)($t7)
-		li      $at, 0x3E8
-		beq     $v1, $at, loc_80079758
-		li      $a2, 2
-		bgez    $zero, loc_80079764
-		nop
+	gte_ldw(0, t0 | t1);
+	gte_rtv0();
+	gte_stsv(&result);
+	gte_ldw(0, t2 | t1);
 
-		loc_80079758 :
-	beqz    $v0, loc_80079764
-		move    $a2, $zero
-		addi    $a2, 1
+	((short*)getScratchAddr(0))[35] = result.vx;
+	((short*)getScratchAddr(0))[36] = result.vy;
+	((short*)getScratchAddr(0))[37] = result.vz;
 
-		loc_80079764 :
-		lw      $v0, 0($s4)
-		lw      $v1, 4($s4)
-		lw      $t6, 8($s4)
-		lw      $t7, 0xC($s4)
-		lhu     $t8, 0x10($s4)
-		ctc2    $v0, $0
-		ctc2    $v1, $1
-		ctc2    $t6, $2
-		ctc2    $t7, $3
-		ctc2    $t8, $4
-		lw      $s1, 0($s5)
-		addi    $s0, 4
+	gte_rtv0();
+	gte_stsv(&result);
+	gte_ldw(0, t2 | t3);
 
-		loc_80079794:
-	addi    $s0, -4
-		lw      $t0, 0($s1)
-		lw      $t1, 4($s1)
-		mtc2    $t0, $0
-		mtc2    $t1, $1
-		sra     $t0, $t1, 16
-		nop
-		cop2    0x486012
-		neg     $t0, $t0
-		lw      $v0, 0x60($s4)
-		lw      $t4, 0x64($s4)
-		lw      $t5, 0x68($s4)
-		li      $at, 2
-		bne     $a2, $at, loc_800797D4
-		nop
-		addi    $t0, -0x800
+	((short*)getScratchAddr(0))[38] = result.vx;
+	((short*)getScratchAddr(0))[39] = result.vy;
+	((short*)getScratchAddr(0))[40] = result.vz;
+	
+	gte_rtv0();
+	gte_stsv(&result);
+	gte_ldw(0, t0 | t3);
 
-		loc_800797D4:
-	mfc2    $t1, $25
-		mfc2    $t2, $26
-		mfc2    $t3, $27
-		sub     $t1, $v0
-		slt     $at, $t0, $t1
-		beqz    $at, loc_80079A3C
-		sub     $v0, $t2, $t4
-		slt     $at, $t0, $v0
-		beqz    $at, loc_80079A3C
-		sub     $v1, $t3, $t5
-		slt     $at, $t0, $v1
-		beqz    $at, loc_80079A3C
-		nop
-		lw      $v0, 0x20($s4)
-		lw      $v1, 0x24($s4)
-		lw      $t6, 0x28($s4)
-		ctc2    $v0, $0
-		ctc2    $v1, $1
-		ctc2    $t6, $2
-		nop
-		nop
-		cop2    0x486012
-		lw      $t4, 0x6C($s4)
-		lw      $t5, 0x70($s4)
-		mfc2    $t1, $25
-		mfc2    $t2, $26
-		sub     $v0, $t1, $t4
-		slt     $at, $t0, $v0
-		beqz    $at, loc_80079A14
-		sub     $v1, $t2, $t5
-		slt     $at, $t0, $v1
-		beqz    $at, loc_80079A14
-		nop
-		lh      $v0, 0xE($s1)
-		nop
-		andi    $v0, 1
-		beqz    $v0, loc_80079A0C
-		nop
-		beqz    $a2, loc_80079878
-		addi    $t4, $s1, 0x28  # '('
-		addi    $t4, $s1, 0x24  # '$'
+	((short*)getScratchAddr(0))[58] = result.vx;
+	((short*)getScratchAddr(0))[59] = result.vy;
+	((short*)getScratchAddr(0))[60] = result.vz;
 
-		loc_80079878:
-	lw      $t4, 0($t4)
-		lw      $v0, 0x40($s4)
-		lw      $v1, 0x44($s4)
-		lw      $t6, 0x48($s4)
-		lw      $t7, 0x4C($s4)
-		lhu     $t8, 0x50($s4)
-		lw      $t1, 8($s1)
-		lw      $t2, 0xC($s1)
-		ctc2    $v0, $0
-		ctc2    $v1, $1
-		ctc2    $t6, $2
-		ctc2    $t7, $3
-		ctc2    $t8, $4
-		mtc2    $t1, $0
-		mtc2    $t2, $1
-		lw      $v0, 0x10($s1)
-		nop
-		cop2    0x486012
-		sra     $t5, $t4, 16
-		sll     $t4, 16
-		sra     $t4, 16
-		lw      $a3, 0x14($s1)
-		lw      $t9, 0x18($s1)
-		mfc2    $t1, $25
-		mfc2    $t2, $26
-		mfc2    $t3, $27
-		sub     $t1, $v0
-		bltz    $t1, loc_8007997C
-		nop
-		beqz    $t9, loc_80079968
-		neg     $t0, $t1
-		slt     $at, $t4, $t1
-		beqz    $at, loc_80079960
-		sub     $v0, $t2, $t0
-		slt     $at, $t4, $v0
-		beqz    $at, loc_80079960
-		sub     $v1, $t3, $t0
-		slt     $at, $t4, $v1
-		beqz    $at, loc_80079960
-		nop
-		lw      $v0, 0x74($s4)
-		lw      $v1, 0x78($s4)
-		lw      $t6, 0x7C($s4)
-		ctc2    $v0, $0
-		ctc2    $v1, $1
-		ctc2    $t6, $2
-		nop
-		nop
-		cop2    0x486012
-		mfc2    $t1, $25
-		mfc2    $t2, $26
-		sub     $v0, $t1, $t0
-		slt     $at, $t4, $v0
-		beqz    $at, loc_80079960
-		sub     $v1, $t2, $t0
-		slt     $at, $t4, $v1
-		bnez    $at, loc_80079968
-		nop
+	gte_rtv0();
+	gte_stsv(&result);
 
-		loc_80079960 :
-	sw      $t9, 4($s0)
-		addi    $s0, 4
+	((short*)getScratchAddr(0))[61] = result.vx;
+	((short*)getScratchAddr(0))[62] = result.vy;
+	((short*)getScratchAddr(0))[63] = result.vz;
 
-		loc_80079968 :
-		beqz    $a3, loc_80079A14
-		nop
-		sw      $a3, 4($s0)
-		bgez    $zero, loc_80079A14
-		addi    $s0, 4
 
-		loc_8007997C :
-		beqz    $a3, loc_800799F8
-		neg     $t0, $t1
-		slt     $at, $t1, $t5
-		beqz    $at, loc_800799F0
-		sub     $v0, $t2, $t0
-		slt     $at, $v0, $t5
-		beqz    $at, loc_800799F0
-		sub     $v1, $t3, $t0
-		slt     $at, $v1, $t5
-		beqz    $at, loc_800799F0
-		nop
-		lw      $v0, 0x74($s4)
-		lw      $v1, 0x78($s4)
-		lw      $t6, 0x7C($s4)
-		ctc2    $v0, $0
-		ctc2    $v1, $1
-		ctc2    $t6, $2
-		nop
-		nop
-		cop2    0x486012
-		mfc2    $t1, $25
-		mfc2    $t2, $26
-		sub     $v0, $t1, $t0
-		slt     $at, $v0, $t5
-		beqz    $at, loc_800799F0
-		sub     $v1, $t2, $t0
-		slt     $at, $v1, $t5
-		bnez    $at, loc_800799F8
-		nop
+	//t7 = gameTrackerX
+	//v1 = gameTrackerX.gameData.asmData.MorphTime
+	//v0 = gameTrackerX.gameData.asmData.MorphType
+	//at = 0x3E8
 
-		loc_800799F0 :
-	sw      $a3, 4($s0)
-		addi    $s0, 4
+	int a2 = 2;
+	if (gameTrackerX.gameData.asmData.MorphTime == 1000 || 0 < 0)
+	{
+		if (gameTrackerX.gameData.asmData.MorphType == 0)
+		{
+			a2 = 0;
+		}
+		else
+		{
+			a2 = 1;
+		}
+	}
+	
+	//loc_80079764
+	gte_SetRotMatrix(getScratchAddr(0));
 
-		loc_800799F8 :
-		beqz    $t9, loc_80079A14
-		nop
-		sw      $t9, 4($s0)
-		bgez    $zero, loc_80079A14
-		addi    $s0, 4
+	struct BSPTree* bspTree = bsp;//s5
 
-		loc_80079A0C :
-		sw      $s1, 0($s7)
-		addi    $s7, 4
+	struct _BSPNode* bspRoot = bsp->bspRoot;//s1
+	s0++;
 
-		loc_80079A14 :
-		lw      $v0, 0($s4)
-		lw      $v1, 4($s4)
-		lw      $t6, 8($s4)
-		lw      $t7, 0xC($s4)
-		lhu     $t8, 0x10($s4)
-		ctc2    $v0, $0
-		ctc2    $v1, $1
-		ctc2    $t6, $2
-		ctc2    $t7, $3
-		ctc2    $t8, $4
+	//loc_80079794
+	do
+	{
+		s0--;//WATCH_ME
 
-		loc_80079A3C :
-	lw      $s1, 0($s0)
-		nop
-		bne     $s1, $s0, loc_80079794
-		nop
-		sub     $v0, $s7, $fp
-		addi    $v0, -4
-		sra     $v0, 2
-		sw      $v0, 0($fp)
-		move    $t0, $s4
-		lw      $ra, 0xBC($t0)
-		lw      $s0, 0x98($t0)
-		lw      $s1, 0x9C($t0)
-		lw      $s2, 0xA0($t0)
-		lw      $s3, 0xA4($t0)
-		lw      $s4, 0xA8($t0)
-		lw      $s5, 0xAC($t0)
-		lw      $s6, 0xB0($t0)
-		lw      $s7, 0xB4($t0)
-		lw      $fp, 0xB8($t0)
-		jr      $ra
-		nop
-		# End of function sub_800794C0
-#endif
+		gte_ldv0(&bspRoot->sphere.position.x);
+
+		t0 = -bspRoot->sphere.radius;
+
+		gte_rtv0();
+
+		if (a2 == 2)
+		{
+			t0 -= 2048;
+		}
+		//loc_800797D4
+		VECTOR v;//t1, t2, t3
+		gte_stlvnl(&v);
+
+		///@TODO tomorrow debug these values in the if statements to see if they match the psx version.
+		///Something suspicious going on with this.
+	
+		if (t0 < (v.vx - (int)getScratchAddr(0)[24]))
+		{
+			if (t0 < v.vy - (int)getScratchAddr(0)[25])
+			{
+				if (t0 < v.vz - (int)getScratchAddr(0)[26])
+				{
+					VECTOR v1;
+					v1.vx = getScratchAddr(0)[8];
+					v1.vy = getScratchAddr(0)[9];
+					v1.vz = getScratchAddr(0)[10];
+
+					gte_ldsvrtrow0(&v1);
+					gte_ldsvrtrow1(&v1);
+
+					gte_rtv0();
+
+					int t4 = getScratchAddr(0)[27];
+					int t5 = getScratchAddr(0)[28];
+
+					gte_stmac(&t1, 1);
+					gte_stmac(&t2, 2);
+
+					v0 = t1 - t4;
+
+					if (t0 < t1 - t4 && t0 < t2 - t5)
+					{
+						if ((bspRoot->flags & 0x1))
+						{
+							int* t44 = NULL;
+
+							if (a2 == 0)
+							{
+								t44 = (int*)&bspRoot->front_material_error;
+							}
+							else
+							{
+								t44 = (int*)&bspRoot->front_spectral_error;
+							}
+
+							//loc_80079878
+							t4 = t44[0];
+
+
+							gte_SetRotMatrix(&getScratchAddr(0)[16]);
+
+							gte_ldv0(&bspRoot->a);
+
+							//v0 = bsp->bspRoot->d
+
+							gte_rtv0();
+
+							t5 = t4 >> 16;
+							t4 <<= 16;
+							t4 >>= 16;
+
+							void* a3 = bspRoot->front;
+							void* t9 = bspRoot->back;
+
+							VECTOR v2;
+							gte_stlvnl(&v2);
+
+							t1 = v2.vx - bspRoot->d;
+
+							if (t1 >= 0)
+							{
+								t0 = -t1;
+
+								if (t9 != NULL)
+								{
+									if (t4 < t1 && t4 < t2 - t0 && t4 < t3 - t0)
+									{
+										gte_ldsvrtrow0(&getScratchAddr(0)[29]);
+										gte_ldsvrtrow1(&getScratchAddr(0)[29]);
+
+										gte_rtv0();
+
+										gte_stmac(&t1, 1);
+										gte_stmac(&t2, 2);
+
+										if (t4 < t1 - t0 && t4 < t2 - t0)
+										{
+											s0[1] = (unsigned long)t9;
+											s0++;
+										}
+										else
+										{
+											//loc_80079960
+											s0[1] = (unsigned long)t9;
+											s0++;
+										}
+									}
+									else
+									{
+										//loc_80079960
+										s0[1] = (unsigned long)t9;
+										s0++;
+									}
+								}
+
+								//loc_80079968
+								if (a3 != NULL)
+								{
+									s0[1] = (unsigned long)a3;
+									s0++;
+
+									if (0 < 0)
+									{
+										t0 = -t1;
+										//loc_8007997C
+										if (a3 != NULL)
+										{
+											if (t1 < t5 && t2 - t0 < t5 && t3 - t0 < t5)
+											{
+												gte_ldsvrtrow0(&getScratchAddr(0)[29]);
+												gte_ldsvrtrow1(&getScratchAddr(0)[29]);
+
+												gte_rtv0();
+
+												gte_stmac(&t1, 1);
+												gte_stmac(&t2, 2);
+
+												if (t1 - t0 >= t5 && t2 - t0 >= t5)
+												{
+													s0[1] = (unsigned long)a3;
+													s0++;
+												}
+												//loc_800799F0
+											}
+											else
+											{
+												//loc_800799F0
+												s0[1] = (unsigned long)a3;
+												s0++;
+											}
+										}
+										//loc_800799F8
+
+										if (t9 != NULL)
+										{
+											s0[1] = (unsigned long)t9;
+											s0++;
+
+											if (0 < 0)
+											{
+												s7[0] = (unsigned long)bspRoot;
+												s7++;
+											}
+											//loc_80079A14
+										}
+										//loc_80079A14
+									}
+									//loc_80079A14
+								}
+								//loc_80079A14
+
+							}
+							else
+							{
+								//loc_8007997C
+								t0 = -t1;
+								if (a3 != NULL)
+								{
+									if (t1 < t5 && t2 - t0 < t5 && t3 - t0 < t5)
+									{
+										gte_ldsvrtrow0(&getScratchAddr(0)[29]);
+										gte_ldsvrtrow1(&getScratchAddr(0)[29]);
+
+										gte_rtv0();
+
+										gte_stmac(&t1, 1);
+										gte_stmac(&t2, 2);
+
+										if (t1 - t0 >= t5 && t2 - t0 >= t5)
+										{
+											s0[1] = (unsigned long)a3;
+											s0++;
+										}
+										//loc_800799F0
+									}
+									else
+									{
+										//loc_800799F0
+										s0[1] = (unsigned long)a3;
+										s0++;
+									}
+								}
+
+								//loc_800799F8
+								if (t9 != NULL)
+								{
+									s0[1] = (unsigned long)t9;
+									s0++;
+
+									if (0 < 0)
+									{
+										s7[0] = (unsigned long)bspRoot;
+										s7++;
+									}
+									//loc_80079A14
+								}
+							}
+
+						}
+						else
+						{
+							//loc_80079A0C
+							s7[0] = (unsigned long)bspRoot;
+							s7++;
+						}
+					}
+					//loc_80079A14
+					gte_SetRotMatrix(&getScratchAddr(0)[0]);
+				}
+			}
+		}
+		//loc_80079A3C
+		bspRoot = (struct _BSPNode*)s0[0];
+
+	}while (bspRoot != (struct _BSPNode*)s0);
+
+	int test = ((char*)s7 - (char*)polytopeList);
+
+	polytopeList->numPolytopes = (((char*)s7 - (char*)polytopeList) - 4) >> 2;
+
+	//t0 = &getScratchAddr(0); //Maybe for caller don't delete!
 }
 
 void G2Quat_FromEuler_S(_G2AnimQuatInfo_Type* quatInfo, _G2EulerAngles_Type* preQuat)
