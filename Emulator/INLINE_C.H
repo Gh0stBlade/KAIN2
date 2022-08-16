@@ -1385,7 +1385,7 @@ extern int gte_ldlzc(int input);
 	: "$12" )
 
 #define gte_ldw(r0, r1) \
-	gteRegs.CP2D.p[r0].d = r1; \
+	gteRegs.CP2D.p[r0].sd = r1; \
 
 
 #endif
