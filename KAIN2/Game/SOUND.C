@@ -1613,17 +1613,14 @@ void SOUND_ProcessMusicLoad()
 
 							if (musicInfo.currentMusicPlane != 0)
 							{
-								musicName[2] = 'm';
-								musicName[3] = 'a';
+								musicName[2] = 's';
+								musicName[3] = 'p';
 							}
 							else
 							{
 								musicName[2] = 'm';
 								musicName[3] = 'a';
 							}
-
-							musicName[0] = 'u';
-							musicName[1] = 'r';
 
 							musicName[4] = 0;
 

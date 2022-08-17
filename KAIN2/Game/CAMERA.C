@@ -4019,7 +4019,7 @@ void CAMERA_CalcFollowPosition(struct Camera* camera, struct _Rotation* rotation
 
 	focusInstance = camera->focusInstance;
 
-#if 1
+#if 0
 	eprinterr("[HACK]: Camera distance hack is enabled!\n");
 
 	//The below is set by EVENT_* code however since it's largely unimplemented it's never set yet!
@@ -4043,9 +4043,50 @@ void CAMERA_CalcFollowPosition(struct Camera* camera, struct _Rotation* rotation
 
 	CAMERA_CalcPosition(&camera->targetPos, &camera->focusPoint, rotation, camera->focusDistance);
 
+#if 0
 	camera->core.position.x = camera->targetPos.x;
 	camera->core.position.y = camera->targetPos.y;
 	camera->core.position.z = camera->targetPos.z;
+
+#else
+	eprinterr("%x\n", gameTrackerX.controlCommand[0][1]);
+
+	if ((gameTrackerX.controlCommand[0][1] & 0x10))
+	{
+		if ((gameTrackerX.controlCommand[0][1] & 0x1))
+		{
+			camera->core.position.z += 128;
+		}
+
+		if ((gameTrackerX.controlCommand[0][1] & 0x2))
+		{
+			camera->core.position.z -= 128;
+		}
+	}
+	else
+	{
+		if ((gameTrackerX.controlCommand[0][1] & 0x1))
+		{
+			camera->core.position.y += 128;
+		}
+
+		if ((gameTrackerX.controlCommand[0][1] & 0x2))
+		{
+			camera->core.position.y -= 128;
+		}
+	}
+
+
+	if ((gameTrackerX.controlCommand[0][1] & 0x4))
+	{
+		rotation->z += 0xFC7;
+	}
+
+	if ((gameTrackerX.controlCommand[0][1] & 0x8))
+	{
+		rotation->z += -0xFC7;
+	}
+#endif
 
 	_x1 = rotation->x;
 	_y1 = rotation->y;

@@ -1685,8 +1685,12 @@ unsigned long* DRAW_DisplaySubdivPolytope_S(struct _BSPNode** polytope, struct _
 	int t8;
 	int t5;
 	int t6;
+	int t7;
 	int t9;
 	int v0;
+	struct _TVertex* a33;
+	struct _TVertex* a00;
+	struct _TVertex* a22;
 
 	if (v1 != 0)
 	{
@@ -1703,7 +1707,7 @@ unsigned long* DRAW_DisplaySubdivPolytope_S(struct _BSPNode** polytope, struct _
 		if (a3 == 0)
 		{
 			a3 = t8 & 0xFFFF;
-			struct _TVertex* a33 = &vertexList[a3];
+			a33 = &vertexList[a3];
 
 			gte_ldv0(a33);
 
@@ -1711,7 +1715,7 @@ unsigned long* DRAW_DisplaySubdivPolytope_S(struct _BSPNode** polytope, struct _
 
 			gte_rtps();
 
-			struct _TVertex* a00 = &vertexList[a0];
+			a00 = &vertexList[a0];
 
 			gte_stdp(t4[47]);
 
@@ -1722,7 +1726,7 @@ unsigned long* DRAW_DisplaySubdivPolytope_S(struct _BSPNode** polytope, struct _
 
 			gte_rtps();
 
-			struct _TVertex* a22 = &vertexList[a2];
+			a22 = &vertexList[a2];
 
 			gte_stdp(t4[48]);
 
@@ -1738,7 +1742,7 @@ unsigned long* DRAW_DisplaySubdivPolytope_S(struct _BSPNode** polytope, struct _
 			struct TextureFT3* s0 = &StartTextureList[s1->attr / 12];
 
 		
-			int t7 = ((int*)s0)[0];
+			t7 = ((int*)s0)[0];
 			s7 = ((int*)s0)[1];
 			v1 = ((int*)s0)[2];
 
@@ -2254,23 +2258,18 @@ unsigned long* DRAW_DisplaySubdivPolytope_S(struct _BSPNode** polytope, struct _
 												v1 = t4[32];
 												v0 = t4[31];
 
-												//((int*)pNextPrim)[7] = t5;
-												//((int*)pNextPrim)[4] = v1;
-												//((int*)pNextPrim)[1] = v0;
-												//((int*)pNextPrim)[8] = t3;
+												((int*)pNextPrim)[8] = t5;
+												((int*)pNextPrim)[5] = v1;
+												((int*)pNextPrim)[2] = v0;
+												((int*)pNextPrim)[9] = t3;
 
-												//unsigned long* a22 = (unsigned long*)(t8 + (char*)drawot);
+												addPrim(drawot[(t8 / 4) * 2], pNextPrim);
+												setlen(pNextPrim, 9);
+
+												pNextPrim[3] = t1;
+												pNextPrim[6] = t2;
 												
-												//ADDPRIM
-												//v0 = a22[0];
-												//v1 = (unsigned long)pNextPrim & 0xFFFFFF;
-												//a22[0] = v1;
-												//v0 |= 0x9000000;//SETLEN?
-												//pNextPrim[0] = v0;
-												//pNextPrim[2] = t1;
-												//pNextPrim[5] = t2;
-												
-												//pNextPrim += 0x28 / 4;//sizeof(POLY_FT4);
+												pNextPrim += sizeof(POLY_FT4) / 4;
 
 												if (0 >= 0)
 												{
@@ -2358,15 +2357,14 @@ unsigned long* DRAW_DisplaySubdivPolytope_S(struct _BSPNode** polytope, struct _
 
 												a2 = t4[48];
 
-												//pNextPrim[4] = t1;
+												pNextPrim[4] = t1;
 
 												t1 = RGB2;
 
-												//v1 = 0x30000000
 												t1 = t5 - t1;
 												t1 |= 0x30000000;
 
-												///pNextPrim[2] = t1;
+												pNextPrim[3] = t1;
 
 												IR0 = a2;
 
@@ -2375,38 +2373,31 @@ unsigned long* DRAW_DisplaySubdivPolytope_S(struct _BSPNode** polytope, struct _
 												gte_dpcs();
 
 												a2 = t4[49];
-												///pNextPrim[5] = t2;
-												///pNextPrim[1] = v0;
+												pNextPrim[6] = t2;
+												pNextPrim[2] = v0;
 
 												t1 = RGB2;
 
 												t1 = t5 - t1;
-												///pNextPrim[4] = t1;
+												pNextPrim[5] = t1;
 
 												IR0 = a2;
 
-												///v1 = (unsigned long)pNextPrim & 0xFFFFFF;
-
-												///unsigned long* t88 = (unsigned long*)((t8 / 4) + drawot);
-
 												gte_dpcs();
 
-												//ADDPRIM
-												//v0 = t88[0];
-												//t88[0] = v1;
-												//int at = 0x7000000;//SETLEN
-												//v0 |= at;
-												//pNextPrim[0] = v0;
+												addPrim(drawot[(t8 / 4) * 2], pNextPrim);
+												setlen(pNextPrim, 7);
 
-												//pNextPrim[7] = t3;
+												
+												pNextPrim[8] = t3;
 
 												t1 = RGB2;
 
 												t1 = t5 - t1;
-												//pNextPrim[6] = t1;
+												pNextPrim[7] = t1;
 
-												///pNextPrim += 0x20 / 4;
-
+												pNextPrim += (0x20 + 4) / 4;
+												
 											no_depthQ:
 												s1++;
 
@@ -2662,55 +2653,58 @@ subdiv_begin:
 		RES1 = v1;
 
 	not_liquid_26:
+		t5 = ((int*)a33)[0];
+		t9 = ((short*)a33)[2];
 
-		///@TODO below code is temp continue from loc_800260EC
-		s1++;
+		t6 = ((int*)a00)[0];
+		t3 = ((short*)a00)[2];
 
-		if (s1 < s6)
-		{
-			goto loc_80026660;
-		}
-		else
-		{
-			return pNextPrim;
-		}
+		v1 = ((int*)a22)[0];
+		t7 = ((short*)a22)[2];
+
+		v0 = t5 << 16;
+		v0 >>= 16;
+
+		t8 = t5 >> 16;
+		t1 = t6 << 16;
+		t1 >>= 16;
+		t2 = t6 >> 16;
+
+		t4[12] = t6;
+		t4[13] = t3;
+		t4[10] = t5;
+		t4[11] = t9;
+		
+		t5 = v1 << 16;
+		t5 >>= 16;
+		t6 = v1 >> 16;
+
+		t4[14] = v1;
+		t4[15] = t7;
+
+		v1 = v0 + t1;
+		v1 >>= 1;
+
+		((short*)t4)[32] = v1;
+		v1 = t8 + t2;
+		v1 >>= 1;
+
+		((short*)t4)[33] = v1;
+
+		v1 = t9 + t3;
+		v1 >>= 1;
+
+		((short*)t4)[34] = v1;
+
+		v1 = t1 + t5;
+		v1 >>= 1;
+
+
+		((short*)t4)[36] = v1;
 	}
 	//loc_800260EC
 #if 0
 
-		loc_800260EC :
-	lw      $t5, 0($a3)
-		lh      $t9, 4($a3)
-		lw      $t6, 0($a0)
-		lh      $t3, 4($a0)
-		lw      $v1, 0($a2)
-		lh      $t7, 4($a2)
-		sll     $v0, $t5, 16
-		sra     $v0, 16
-		sra     $t8, $t5, 16
-		sll     $t1, $t6, 16
-		sra     $t1, 16
-		sra     $t2, $t6, 16
-		sw      $t6, 0x30($t4)
-		sw      $t3, 0x34($t4)
-		sw      $t5, 0x28($t4)
-		sw      $t9, 0x2C($t4)
-		sll     $t5, $v1, 16
-		sra     $t5, 16
-		sra     $t6, $v1, 16
-		sw      $v1, 0x38($t4)
-		sw      $t7, 0x3C($t4)
-		addu    $v1, $v0, $t1
-		sra     $v1, 1
-		sh      $v1, 0x40($t4)
-		addu    $v1, $t8, $t2
-		sra     $v1, 1
-		sh      $v1, 0x42($t4)
-		addu    $v1, $t9, $t3
-		sra     $v1, 1
-		sh      $v1, 0x44($t4)
-		addu    $v1, $t1, $t5
-		sra     $v1, 1
 		sh      $v1, 0x48($t4)
 		addu    $v1, $t2, $t6
 		sra     $v1, 1
