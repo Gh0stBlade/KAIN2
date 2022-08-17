@@ -469,6 +469,8 @@ void CAMERA_Initialize(struct Camera *camera)
 	camera->focusRotation.x = 4039;
 	camera->targetFocusRotation.x = 4039;
 
+	long* test = &camera->focusDistanceList[0][0];
+
 	camera->focusDistanceList[0][0] = 1500;
 	camera->focusDistanceList[1][0] = 1500;
 	camera->focusDistanceList[0][1] = 2250;
@@ -4016,6 +4018,28 @@ void CAMERA_CalcFollowPosition(struct Camera* camera, struct _Rotation* rotation
 	int pos;
 
 	focusInstance = camera->focusInstance;
+
+#if 1
+	eprinterr("[HACK]: Camera distance hack is enabled!\n");
+
+	//The below is set by EVENT_* code however since it's largely unimplemented it's never set yet!
+	camera->focusDistance = 1500;
+
+	//The below is the first frame's camera rotation, something is unimplemented so it's not set yet!
+	eprinterr("[HACK]: Camera default rotation hack is enabled!\n");
+
+	rotation->x = 0xFC7;
+	rotation->y = 0;
+	rotation->z = 0;
+
+	//The below is the first frame's camera rotation, something is unimplemented so it's not set yet!
+	eprinterr("[HACK]: Camera default focus point hack is enabled!\n");
+
+	camera->focusPoint.x = 0xFF63;
+	camera->focusPoint.y = 0xFB3A;
+	camera->focusPoint.z = 0xEE84;
+
+#endif
 
 	CAMERA_CalcPosition(&camera->targetPos, &camera->focusPoint, rotation, camera->focusDistance);
 

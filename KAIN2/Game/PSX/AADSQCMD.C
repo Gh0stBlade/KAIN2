@@ -3,6 +3,9 @@
 #include "AADLIB.H"
 #include "AADSEQEV.H"
 
+#undef eprintinf
+#define eprintinf
+
 void aadSubstituteVariables(struct AadSeqEvent* event, struct _AadSequenceSlot* slot)//Matching - 91.96%
 {
 	unsigned char trackFlags = slot->trackFlags[event->track];

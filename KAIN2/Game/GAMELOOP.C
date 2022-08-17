@@ -449,7 +449,7 @@ void GAMELOOP_LevelLoadAndInit(char *baseAreaName, struct GameTracker *gameTrack
 	gameTracker->wipeType = 10;
 	gameTracker->hideBG = 0;
 	gameTracker->wipeTime = 30;
-	gameTracker->maxWipeTime = 30;
+	gameTracker->maxWipeTime = 30 * FRAMERATE_MULT;
 
 	if (streamUnit->level->startSignal != NULL)
 	{
@@ -489,7 +489,7 @@ void GAMELOOP_StreamLevelLoadAndInit(char *baseAreaName, struct GameTracker *gam
 
 void GAMELOOP_SetScreenWipe(int time, int maxTime, int type)
 {
-	gameTrackerX.maxWipeTime = maxTime;
+	gameTrackerX.maxWipeTime = maxTime * FRAMERATE_MULT;
 	gameTrackerX.wipeTime = time;
 	gameTrackerX.wipeType = type;
 }
@@ -2286,7 +2286,7 @@ void GAMELOOP_Process(struct GameTracker* gameTracker)
 					{
 						if (StreamTracker.StreamList[d].used == 2)
 						{
-							///VM_ProcessVMObjectList_S(StreamTracker.StreamList[d].level, theCamera);
+							//VM_ProcessVMObjectList_S(StreamTracker.StreamList[d].level, theCamera);
 						}
 					}
 
@@ -2328,18 +2328,18 @@ void GAMELOOP_Process(struct GameTracker* gameTracker)
 			getScratchAddr(1)[0] = ((unsigned long*)&theCamera.core.position.z)[0];
 #if 0
 			sw      $sp, 0($t0)
-li      $t4, 0x1F8003F0
-move    $sp, $t4
+				li      $t4, 0x1F8003F0
+				move    $sp, $t4
 #endif
 
-G2Instance_BuildTransformsForList(gameTracker->instanceList->first);
+				G2Instance_BuildTransformsForList(gameTracker->instanceList->first);
 
 #if 0
-//t0 = &StackSave
-addiu   $t0, $gp, -0x45AC
-lw      $sp, 0($t0)
+			//t0 = &StackSave
+			addiu   $t0, $gp, -0x45AC
+				lw      $sp, 0($t0)
 #endif
-DEBUG_Process(gameTracker);
+				DEBUG_Process(gameTracker);
 		}
 
 		if (gameTracker->levelDone == 0)

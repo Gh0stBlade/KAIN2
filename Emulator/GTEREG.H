@@ -109,7 +109,7 @@ extern int docop2(int op);
 }
 #endif
 
-/* Data Registers mtc2 mfc2 */
+/* Data Registers mtc2 mfc2, lwc2/swc2 */
 #define VX0  (gteRegs.CP2D.p[ 0 ].sw.l)
 #define VY0  (gteRegs.CP2D.p[ 0 ].sw.h)
 #define VZ0  (gteRegs.CP2D.p[ 1 ].sw.l)

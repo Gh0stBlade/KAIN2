@@ -109,6 +109,8 @@ typedef RECT PSX_RECT;
 #define SCREEN_WIDTH		512
 #define SCREEN_HEIGHT		240
 
+#define FRAMERATE_MULT      2
+
 #define ONE_MB				1048576
 #define TWO_MB				ONE_MB * 2
 #if defined(PC_VERSION) || defined(PSXPC_VERSION)

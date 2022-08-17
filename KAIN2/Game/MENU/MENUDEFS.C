@@ -361,8 +361,8 @@ int do_main_menu(void* gt, long param, enum menu_ctrl_t ctrl)
 	if (StartGameFading == 0 && (ctrl == menu_ctrl_start || ctrl == menu_ctrl_engage))
 	{
 		((GameTracker*)gt)->wipeType = 10;
-		((GameTracker*)gt)->wipeTime = -20;
-		((GameTracker*)gt)->maxWipeTime = 20;
+		((GameTracker*)gt)->wipeTime = -20 * FRAMERATE_MULT;
+		((GameTracker*)gt)->maxWipeTime = 20 * FRAMERATE_MULT;
 		StartGameFading = 1;
 		return 1;
 	}
@@ -390,8 +390,8 @@ char* flashStart()
 			womp_background("\\kain2\\game\\psx\\bkgdmenu.tim");
 			
 			gameTrackerX.wipeType = 10;
-			gameTrackerX.wipeTime = 20;
-			gameTrackerX.maxWipeTime = 20;
+			gameTrackerX.wipeTime = 20 * FRAMERATE_MULT;
+			gameTrackerX.maxWipeTime = 20 * FRAMERATE_MULT;
 			
 			StartGameFading = 0;
 
@@ -403,25 +403,25 @@ char* flashStart()
 	}
 	else
 	{
-		counter = (counter + 1) % 60;
+		counter = (counter + 1) % (60 * FRAMERATE_MULT);
 		
-		if (counter < 10)
+		if (counter < (10 * FRAMERATE_MULT))
 		{
 			intpl = 0;
 		}
-		else if (counter < 30)
+		else if (counter < (30 * FRAMERATE_MULT))
 		{
-			intpl = ((counter - 10) << 12) / 20;
+			intpl = ((counter - (10 * FRAMERATE_MULT)) << 12) / (20 * FRAMERATE_MULT);
 		}
 		else
 		{
-			if (counter < 40)
+			if (counter < (40 * FRAMERATE_MULT))
 			{
 				intpl = 4096;
 			}
 			else
 			{
-				intpl = ((60 - counter) << 12) / 20;
+				intpl = (((60 * FRAMERATE_MULT) - counter) << 12) / (20 * FRAMERATE_MULT);
 			}
 		}
 

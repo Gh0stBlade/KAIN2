@@ -662,10 +662,8 @@ extern int gte_ldlzc(int input);
 	"nop;"							\
 	".word 0x00000dff" )
 
-#define gte_dpcs() __asm__ volatile (				\
-	"nop;"							\
-	"nop;"							\
-	".word 0x00000e3f" )
+#define gte_dpcs() \
+	docop2(0x0780010);
 
 #define gte_dpct() __asm__ volatile (				\
 	"nop;"							\
@@ -971,11 +969,11 @@ extern int gte_ldlzc(int input);
 	: "r"( r0 )						\
 	: "memory" )
 
-#define gte_stdp( r0 ) __asm__ volatile (			\
-	"swc2	$8, 0( %0 )"					\
-	:							\
-	: "r"( r0 )						\
-	: "memory" )
+#define gte_stdp( r0 ) \
+	r0 = IR0
+
+#define gte_stflag_1( r0 ) \
+	r0 = FLAG
 
 #define gte_stflg( r0 ) __asm__ volatile (			\
 	"cfc2	$12, $31;"					\
@@ -1008,6 +1006,11 @@ extern int gte_ldlzc(int input);
 	:							\
 	: "r"( r0 ), "r"( r1 ), "r"( r2 )			\
 	: "memory" )
+
+#define gte_stsz3( r0, r1, r2 ) \
+	r0 = SZ1; \
+	r1 = SZ2; \
+	r2 = SZ3; \
 
 #define gte_stsz4( r0, r1, r2, r3 ) __asm__ volatile (		\
 	"swc2	$16, 0( %0 );"					\

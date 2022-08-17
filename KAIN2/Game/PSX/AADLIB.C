@@ -232,6 +232,11 @@ long aadSlotUpdateWrapper()
 
 	//SetGp(curGp);
 
+#if defined(SINGLE_THREADED) || 1
+	extern void SPU_Update();
+	SPU_Update();
+#endif
+
 	return 0;
 }
 

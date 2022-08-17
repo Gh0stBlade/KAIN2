@@ -119,7 +119,7 @@ extern void not_liquid_26() ; // 0x80025D8C
 
 extern void next_tface_subdiv() ; // 0x80026284
 
-extern void DRAW_DisplaySubdivPolytope_S(struct _BSPNode* polytope, struct _Terrain* terrain); // 0x8002629C
+extern unsigned long* DRAW_DisplaySubdivPolytope_S(struct _BSPNode** polytope, struct _Terrain* terrain, unsigned long* pNextPrim, unsigned long** drawot); // 0x8002629C
 
 extern void do_poly() ; // 0x80026430
 

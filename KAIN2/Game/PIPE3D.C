@@ -5,6 +5,7 @@
 #include "MATH3D.H"
 #include "STREAM.H"
 #include "LIGHT3D.H"
+#include "PSX/COLLIDES.H"
 
 void PIPE3D_AspectAdjustMatrix(MATRIX* matrix)
 {
@@ -35,6 +36,10 @@ void PIPE3D_CalculateWCTransform(struct _CameraCore_Type *cameraCore)
 	{
 		MATH3D_SetUnityMatrix(&user_rotation);
 
+		RotMatrixZ(-cameraCore->rotation.z, &user_rotation);
+		RotMatrixX(-cameraCore->rotation.x, &user_rotation);
+		RotMatrixY(-cameraCore->rotation.y, &user_rotation);
+
 		v0.vx = -cameraCore->position.x;
 		v0.vy = -cameraCore->position.y;
 		v0.vz = -cameraCore->position.z;
@@ -42,6 +47,10 @@ void PIPE3D_CalculateWCTransform(struct _CameraCore_Type *cameraCore)
 	else
 	{
 		MATH3D_SetUnityMatrix(&user_rotation);
+
+		RotMatrixZ(-cameraCore->rotation.z, &user_rotation);
+		RotMatrixX(-cameraCore->rotation.x, &user_rotation);
+		RotMatrixY(-cameraCore->rotation.y, &user_rotation);
 
 		v0.vx = -cameraCore->debugPos.x;
 		v0.vy = -cameraCore->debugPos.y;
