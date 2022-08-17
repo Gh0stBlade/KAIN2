@@ -6,6 +6,40 @@
 
 //#define DEBUG_POLY_COUNT
 
+struct POLY_G3_SEMITRANS 
+{
+#if defined(USE_32_BIT_ADDR)
+	unsigned long tag;
+#if defined(PGXP)
+	unsigned short len;
+	unsigned short pgxp_index;
+#else
+	unsigned long len;
+#endif
+#else
+	unsigned long tag;
+#endif
+	unsigned long dr_tpage; // size=0, offset=4
+	unsigned char r0; // size=0, offset=8
+	unsigned char g0; // size=0, offset=9
+	unsigned char b0; // size=0, offset=10
+	unsigned char code; // size=0, offset=11
+	short x0; // size=0, offset=12
+	short y0; // size=0, offset=14
+	unsigned char r1; // size=0, offset=16
+	unsigned char g1; // size=0, offset=17
+	unsigned char b1; // size=0, offset=18
+	unsigned char pad1; // size=0, offset=19
+	short x1; // size=0, offset=20
+	short y1; // size=0, offset=22
+	unsigned char r2; // size=0, offset=24
+	unsigned char g2; // size=0, offset=25
+	unsigned char b2; // size=0, offset=26
+	unsigned char pad2; // size=0, offset=27
+	short x2; // size=0, offset=28
+	short y2; // size=0, offset=30
+};
+
 struct POLY_F4_SEMITRANS
 {
 #if defined(USE_32_BIT_ADDR)
@@ -115,6 +149,8 @@ int ParsePrimitive(uintptr_t primPtr)
 
 	int blend_mode = 0;
 
+	int dr_tpage = 0;
+
 	if (textured)
 	{
 		if ((pTag->code & 0x1) != 0)
@@ -145,6 +181,7 @@ int ParsePrimitive(uintptr_t primPtr)
 		{
 			if (IsValidCode(((POLY_F4_SEMITRANS*)pTag)->code))
 			{
+				dr_tpage = 1;
 				code = ((POLY_F4_SEMITRANS*)pTag)->code;
 			}
 		}
@@ -171,14 +208,6 @@ int ParsePrimitive(uintptr_t primPtr)
 		};
 
 		BLK_FILL* poly = (BLK_FILL*)pTag;
-
-		//HACK
-		int primitive_size2 = sizeof(BLK_FILL);
-		if (poly->w == 0xC80C|| poly->w > 0x200)	
-			return primitive_size2;
-
-		eprinterr("GPU HACK ENABLED!");
-		//ENDHACK
 
 		short* blackImage = new short[poly->w * poly->h];
 		memset(blackImage, 0, poly->w * poly->h * sizeof(short));
@@ -250,7 +279,7 @@ int ParsePrimitive(uintptr_t primPtr)
 	}
 	case 0x28:
 	{
-		if (semi_transparent)
+		if (dr_tpage)
 		{
 			POLY_F4_SEMITRANS* poly = (POLY_F4_SEMITRANS*)pTag;
 
@@ -313,20 +342,45 @@ int ParsePrimitive(uintptr_t primPtr)
 	}
 	case 0x30:
 	{
-		POLY_G3* poly = (POLY_G3*)pTag;
+		if (dr_tpage)
+		{
+			POLY_G3_SEMITRANS* poly = (POLY_G3_SEMITRANS*)pTag;
 
-		Emulator_AddSplit(semi_transparent, activeDrawEnv.tpage, whiteTexture);
+			activeDrawEnv.tpage = (poly->dr_tpage & 0xFFFF);
 
-		Emulator_GenerateVertexArrayTriangle(&g_vertexBuffer[g_vertexIndex], &poly->x0, &poly->x1, &poly->x2);
-		Emulator_GenerateTexcoordArrayTriangleZero(&g_vertexBuffer[g_vertexIndex], 1);
-		Emulator_GenerateColourArrayTriangle(&g_vertexBuffer[g_vertexIndex], &poly->r0, &poly->r1, &poly->r2);
+			Emulator_AddSplit(semi_transparent, activeDrawEnv.tpage, whiteTexture);
 
-		g_vertexIndex += 3;
+			Emulator_GenerateVertexArrayTriangle(&g_vertexBuffer[g_vertexIndex], &poly->x0, &poly->x1, &poly->x2);
+			Emulator_GenerateTexcoordArrayTriangleZero(&g_vertexBuffer[g_vertexIndex], 1);
+			Emulator_GenerateColourArrayTriangle(&g_vertexBuffer[g_vertexIndex], &poly->r0, &poly->r1, &poly->r2);
 
-		primitive_size = sizeof(POLY_G3);
+			Emulator_MakeTriangle();
+
+			g_vertexIndex += 3;
+			primitive_size = sizeof(POLY_G3_SEMITRANS);
 #if defined(DEBUG_POLY_COUNT)
-		polygon_count++;
+			polygon_count++;
 #endif
+		}
+		else
+		{
+			POLY_G3* poly = (POLY_G3*)pTag;
+
+			Emulator_AddSplit(semi_transparent, activeDrawEnv.tpage, whiteTexture);
+
+			Emulator_GenerateVertexArrayTriangle(&g_vertexBuffer[g_vertexIndex], &poly->x0, &poly->x1, &poly->x2);
+			Emulator_GenerateTexcoordArrayTriangleZero(&g_vertexBuffer[g_vertexIndex], 1);
+			Emulator_GenerateColourArrayTriangle(&g_vertexBuffer[g_vertexIndex], &poly->r0, &poly->r1, &poly->r2);
+
+			Emulator_MakeTriangle();
+
+			g_vertexIndex += 3;
+
+			primitive_size = sizeof(POLY_G3);
+#if defined(DEBUG_POLY_COUNT)
+			polygon_count++;
+#endif
+		}
 		break;
 	}
 	case 0x34:
