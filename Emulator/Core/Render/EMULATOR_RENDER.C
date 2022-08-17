@@ -172,6 +172,14 @@ int ParsePrimitive(uintptr_t primPtr)
 
 		BLK_FILL* poly = (BLK_FILL*)pTag;
 
+		//HACK
+		int primitive_size2 = sizeof(BLK_FILL);
+		if (poly->w == 0xC80C|| poly->w > 0x200)	
+			return primitive_size2;
+
+		eprinterr("GPU HACK ENABLED!");
+		//ENDHACK
+
 		short* blackImage = new short[poly->w * poly->h];
 		memset(blackImage, 0, poly->w * poly->h * sizeof(short));
 

@@ -1686,25 +1686,15 @@ unsigned long* DRAW_DisplaySubdivPolytope_S(struct _BSPNode** polytope, struct _
 	int t5;
 	int t6;
 	int t9;
+	int v0;
 
 	if (v1 != 0)
 	{
 		s6 = &s1[v1];
 		struct TextureFT3* StartTextureList = terrain->StartTextureList;//fp
-		//s3 = 0x9000000
-		//a1 = 0xFFFFFF
-
-		static int calls = 0;
-		calls++;
-
-		if (calls == 16)
-		{
-			int testing = 0;
-			testing++;
-		}
 
 	loc_80026660:
-		int v0 = ((int*)&s1->u1)[0];
+		v0 = ((int*)&s1->u1)[0];
 		t8 = ((int*)&s1->u0)[0];
 		t6 = v0 >> 16;
 		int a3 = t6 & 0x4;
@@ -1738,7 +1728,6 @@ unsigned long* DRAW_DisplaySubdivPolytope_S(struct _BSPNode** polytope, struct _
 
 			gte_ldv0(a22);
 
-			int v0;
 			gte_stflag_1(v0);
 
 			gte_rtps();
@@ -1751,7 +1740,7 @@ unsigned long* DRAW_DisplaySubdivPolytope_S(struct _BSPNode** polytope, struct _
 		
 			int t7 = ((int*)s0)[0];
 			s7 = ((int*)s0)[1];
-			int v1 = ((int*)s0)[2];
+			v1 = ((int*)s0)[2];
 
 			gte_stflag_1(v0);
 
@@ -2120,15 +2109,14 @@ unsigned long* DRAW_DisplaySubdivPolytope_S(struct _BSPNode** polytope, struct _
 										t8 = t9;
 									}
 
+									v0 = t5;
 									if (t8 >= t5)
 									{
-										v0 = t5;
 										t5 = t8;
 										t8 = v0;
 									}
 
 									v0 = t6 >> 8;
-
 									if (t7 >= t8)
 									{
 										t7 = t8;
@@ -2166,6 +2154,7 @@ unsigned long* DRAW_DisplaySubdivPolytope_S(struct _BSPNode** polytope, struct _
 												{
 													goto not_liquid_54;
 												}
+
 												t9 = RGB1;
 												t6 = RGB2;
 												v1 = RES1;
@@ -2328,6 +2317,7 @@ unsigned long* DRAW_DisplaySubdivPolytope_S(struct _BSPNode** polytope, struct _
 
 												v1 = t4[46];
 
+
 												v0 = t6 & 0x1;
 												t5 &= 0x2;
 												v0 |= t5;
@@ -2336,6 +2326,8 @@ unsigned long* DRAW_DisplaySubdivPolytope_S(struct _BSPNode** polytope, struct _
 
 												if (v1 >= t9 || v0 != 0)
 												{
+													v0 = ((char*)t4)[218];
+
 													goto no_blend2;
 												}
 
@@ -2366,7 +2358,7 @@ unsigned long* DRAW_DisplaySubdivPolytope_S(struct _BSPNode** polytope, struct _
 
 												a2 = t4[48];
 
-												///pNextPrim[3] = t1;
+												//pNextPrim[4] = t1;
 
 												t1 = RGB2;
 
@@ -2406,12 +2398,12 @@ unsigned long* DRAW_DisplaySubdivPolytope_S(struct _BSPNode** polytope, struct _
 												//v0 |= at;
 												//pNextPrim[0] = v0;
 
-												pNextPrim[7] = t3;
+												//pNextPrim[7] = t3;
 
 												t1 = RGB2;
 
 												t1 = t5 - t1;
-												pNextPrim[6] = t1;
+												//pNextPrim[6] = t1;
 
 												///pNextPrim += 0x20 / 4;
 
@@ -2459,7 +2451,7 @@ unsigned long* DRAW_DisplaySubdivPolytope_S(struct _BSPNode** polytope, struct _
 	return pNextPrim;
 
 no_blend2:
-	pNextPrim[9] = RGB2;
+	pNextPrim[-9] = RGB2;
 	s1++;
 
 	if (s1 < s6)
@@ -2472,7 +2464,7 @@ no_blend2:
 	}
 
 draw_trans_fog:
-	int v0 = 0x2000000;
+	v0 = 0x2000000;
 	//rgb0code
 	gteRegs.CP2D.p[6].d = a2;
 	a2 = RGB2;
