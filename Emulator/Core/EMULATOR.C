@@ -536,7 +536,21 @@ void Emulator_ResetDevice()
 	vramTexture->Release();
 	vramBaseTexture->Release();
 	whiteTexture->Release();
-	rg8lutTexture->Release();
+	
+	if (rg8lutTexture != NULL)
+	{
+		rg8lutTexture->Release();
+	}
+
+	if (samplerState != NULL)
+	{
+		samplerState->Release();
+	}
+	
+	if (rg8lutSamplerState != NULL)
+	{
+		rg8lutSamplerState->Release();
+	}
 
 	swapChain = NULL;
 	d3ddev = NULL;
@@ -544,6 +558,9 @@ void Emulator_ResetDevice()
 	renderTargetView = NULL;
 	vramTexture = NULL;
 	vramBaseTexture = NULL;
+	rg8lutTexture = NULL;
+	samplerState = NULL;
+	rg8lutSamplerState = NULL;
 
 #if defined(SDL2)
 	SDL_SysWMinfo wmInfo;
