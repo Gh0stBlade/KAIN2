@@ -25,21 +25,17 @@ extern int gte_ldlzc(int input);
    * Type 1 functions
    */
 
-#define gte_ldv0( r0 )                      \
+#define gte_ldv0( r0 )                     \
 	((int*)&VX0)[0] = ((int*)r0)[0];       \
 	((int*)&VZ0)[0] = ((int*)r0)[1];       \
 
-#define gte_ldv1( r0 ) __asm__ volatile (			\
-	"lwc2	$2, 0( %0 );"					\
-	"lwc2	$3, 4( %0 )"					\
-	:							\
-	: "r"( r0 ) )
+#define gte_ldv1( r0 )                     \
+	((int*)&VX1)[0] = ((int*)r0)[0];       \
+	((int*)&VZ1)[0] = ((int*)r0)[1];       \
 
-#define gte_ldv2( r0 ) __asm__ volatile (			\
-	"lwc2	$4, 0( %0 );"					\
-	"lwc2	$5, 4( %0 )"					\
-	:							\
-	: "r"( r0 ) )
+#define gte_ldv2( r0 )                     \
+	((int*)&VX2)[0] = ((int*)r0)[0];       \
+	((int*)&VZ2)[0] = ((int*)r0)[1];       \
 
 #define gte_ldv3( r0, r1, r2 )                \
 	VX0             = ((short*)&r0)[0];       \
@@ -665,10 +661,8 @@ extern int gte_ldlzc(int input);
 #define gte_dpcs() \
 	docop2(0x0780010);
 
-#define gte_dpct() __asm__ volatile (				\
-	"nop;"							\
-	"nop;"							\
-	".word 0x00000e7f" )
+#define gte_dpct() \
+	docop2(0x0F8002A);
 
 #define gte_intpl() __asm__ volatile (				\
 	"nop;"							\
