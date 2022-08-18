@@ -109,7 +109,9 @@ void SPU_Update()
                     channelList[i].voiceEnd = &pADPCM[SPU_GetADPCMSize(pADPCM)];
                 }
 
+#if defined(OPENAL) || defined(SDL2_MIXER)
                 Mix_Play(i, channelList[i].voicePosition, channelList[i].voiceLength);
+#endif
 
                 channelList[i].voiceFlags |= Channel::Flags::VOICE_PLAYING;
                 channelList[i].voiceFlags &= ~Channel::Flags::VOICE_NEW;
