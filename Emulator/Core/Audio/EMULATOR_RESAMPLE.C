@@ -1,3 +1,4 @@
+#if 0
 #include <soxr.h>
 
 #include "EMULATOR_SPU.H"
@@ -36,3 +37,4 @@ void Resample_Free(unsigned char* data)
 {
     delete[] data;
 }
+#endif

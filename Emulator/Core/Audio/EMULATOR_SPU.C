@@ -155,7 +155,7 @@ unsigned int SPU_DecodeAudioFrame(unsigned char* vag, unsigned short* out, struc
 
         if (flags == 7)
         {
-            channel->voiceEndFlag = TRUE;
+            channel->voiceEndFlag = 1;//TRUE;
             break;
         }
 

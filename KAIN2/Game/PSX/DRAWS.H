@@ -107,51 +107,10 @@ extern void do_super_subdiv() ; // 0x80025A58
 
 extern void super_clip() ; // 0x80025AC4
 
-extern long DRAW_DisplayTFace_S(unsigned long** pNextPrim, unsigned long** drawot, int s2, unsigned long* t4); // 0x80025ACC
-
-extern void rLL2() ; // 0x80025C98
-
-extern void rLL2A() ; // 0x80025CA0
-
-extern void subdiv_begin() ; // 0x80025CA8
-
-extern void not_liquid_26() ; // 0x80025D8C
-
-extern void next_tface_subdiv() ; // 0x80026284
+extern long DRAW_DisplayTFace_S(unsigned long** pNextPrim, unsigned long** drawot, int s2, unsigned long* t4, int t1, int t2, int t3); // 0x80025ACC
 
 extern unsigned long* DRAW_DisplaySubdivPolytope_S(struct _BSPNode** polytope, struct _Terrain* terrain, unsigned long* pNextPrim, unsigned long** drawot); // 0x8002629C
 
-extern void do_poly() ; // 0x80026430
-
-extern void positive() ; // 0x80026660
-
-extern void not_quad() ; // 0x80026720
-
-extern void no_subdiv() ; // 0x80026734
-
-extern void maxL1() ; // 0x80026770
-
-extern void maxL2() ; // 0x80026784
-
-extern void minL1() ; // 0x80026794
-
-extern void not_liquid_54() ; // 0x800268CC
-
-extern void depthQface() ; // 0x80026910
-
-extern void no_depthQ() ; // 0x80026A54
-
-extern void skip_tface() ; // 0x80026A6C
-
-extern void no_blend2() ; // 0x80026A84
-
-extern void end_of_polytope() ; // 0x80026AA0
-
-extern void draw_trans_fog() ; // 0x80026AD0
-
-extern void OK() ; // 0x80026B04
-
-extern void no_depthQ2() ; // 0x80026BBC
 
 extern unsigned long* DRAW_DisplayPolytopeList_S(struct _PolytopeList* polytopeList, struct _Terrain* terrain, struct Camera* camera, struct _PrimPool* primPool, unsigned long** drawot, struct _Position* globalOffset);
 

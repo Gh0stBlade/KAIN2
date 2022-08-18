@@ -5587,7 +5587,10 @@ void Emulator_BlitVRAM()
 #endif
 
 	Emulator_UpdateVertexBuffer(blit_vertices, 6);
+	Emulator_SetWireframe(FALSE);
+
 	Emulator_DrawTriangles(0, 2);
+	Emulator_SetWireframe(g_wireframeMode);
 }
 
 void Emulator_DoDebugKeys(int nKey, bool down); // forward decl

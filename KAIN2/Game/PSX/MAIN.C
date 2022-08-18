@@ -198,8 +198,13 @@ void ProcessArgs(char *baseAreaName, struct GameTracker *gameTracker)
 		ExtractWorldName(worldName, (char*)argData);
 		ExtractLevelNum(levelNum, (char*)argData);
 		
+#if defined(OVERRIDE_LEVEL)
+#define LEVEL_NAME "chrono"
+#define LEVEL_NUM "1"
+		sprintf(baseAreaName, "%s%s", LEVEL_NAME, LEVEL_NUM);
+#else
 		sprintf(baseAreaName, "%s%s", worldName, levelNum);
-
+#endif
 		if (FindTextInLine((char*)"-NOSOUND", (char*)argData) != 0)
 		{
 			nosound = 1;
