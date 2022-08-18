@@ -4020,9 +4020,9 @@ void LoadAverageCol(u_char* v0, u_char* v1, long p0, long p1, u_char* v2)
     gte_ldcv(v1);
     gte_gpl();
 
-    v2[0] = OFY >> 12;
-    v2[1] = H >> 12;
-    v2[2] = DQA >> 12;
+    v2[0] = MAC1 >> 12;
+    v2[1] = MAC2 >> 12;
+    v2[2] = MAC3 >> 12;
 }
 
 static unsigned short rsin_tbl[] = {
