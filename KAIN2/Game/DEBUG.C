@@ -2227,7 +2227,7 @@ void handle_line_type_long(struct GameTracker *gt, struct DebugMenuLine *line)
 		
 		if (line->bit_mask != 0)
 		{
-			((fptr)line->var_address)((long*)line->bit_mask);
+			((fptr)line->bit_mask)((long*)line->var_address);
 		}
 	}
 }
