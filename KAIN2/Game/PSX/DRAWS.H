@@ -107,7 +107,7 @@ extern void do_super_subdiv() ; // 0x80025A58
 
 extern void super_clip() ; // 0x80025AC4
 
-extern void DRAW_DisplayTFace_S() ; // 0x80025ACC
+extern long DRAW_DisplayTFace_S(unsigned long** pNextPrim, unsigned long** drawot, int s2, unsigned long* t4); // 0x80025ACC
 
 extern void rLL2() ; // 0x80025C98
 
