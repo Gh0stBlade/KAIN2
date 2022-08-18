@@ -993,14 +993,6 @@ extern int gte_ldlzc(int input);
 	: "r"( r0 )						\
 	: "memory" )
 
-#define gte_stsz3( r0, r1, r2 ) __asm__ volatile (		\
-	"swc2	$17, 0( %0 );"					\
-	"swc2	$18, 0( %1 );"					\
-	"swc2	$19, 0( %2 )"					\
-	:							\
-	: "r"( r0 ), "r"( r1 ), "r"( r2 )			\
-	: "memory" )
-
 #define gte_stsz3( r0, r1, r2 ) \
 	r0 = SZ1; \
 	r1 = SZ2; \

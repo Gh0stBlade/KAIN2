@@ -1521,37 +1521,18 @@ long DRAW_DisplayTFace_S(unsigned long** pNextPrim, unsigned long** drawot, int 
 	return v0 & 0;
 
 do_super_subdiv:
-	t4[55] = (unsigned long)pNextPrim;
-	t4[56] = t1;
-	t4[57] = t2;
-	t4[58] = t3;
-	t4[59] = t6;
+	//t4[55] = (unsigned long)pNextPrim;
+	//t4[56] = t1;
+	//t4[57] = t2;
+	//t4[58] = t3;
+	//t4[59] = t6;
 	///t4[60] = a1;
 	///t4[61] = a2;
 
 
-	DRAW_Zclip_subdiv((POLY_GT3*)pNextPrim, drawot, 0);
-#if 0
-		nop
-		lui     $t4, 0x1F80
-		lw      $t0, 0x1F8000DC
-		lw      $t1, 0x1F8000E0
-		lw      $t2, 0x1F8000E4
-		lw      $t3, 0x1F8000E8
-		lw      $t6, 0x1F8000EC
-		lw      $a1, 0x1F8000F0
-		lw      $a2, 0x1F8000F4
-		lw      $ra, 0x1F8000F8
-		beqz    $v0, locret_80025E24
-		nop
-		move    $t0, $v0
-		jr      $ra
-		and $v0, $zero
+	//DRAW_Zclip_subdiv((POLY_GT3*)pNextPrim, drawot, 0);
 
-		locret_80025E24 :
-	jr      $ra
-		xori    $v0, $zero, 1
-#endif
+	return 0;
 }
 
 
@@ -1636,6 +1617,7 @@ unsigned long* DRAW_DisplaySubdivPolytope_S(struct _BSPNode** polytope, struct _
 
 	if (v1 != 0)
 	{
+
 		s6 = &s1[v1];
 		StartTextureList = terrain->StartTextureList;//fp
 
@@ -2813,6 +2795,7 @@ subdiv_begin:
 
 		//rgb0code
 		gteRegs.CP2D.p[6].sd = t7;
+
 
 		if (DRAW_DisplayTFace_S(&pNextPrim, drawot, s2, t4, t1, t2, t3) <= 0)
 		{

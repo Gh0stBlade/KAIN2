@@ -306,6 +306,7 @@ short MATH3D_FastAtan2(long y, long x)
 
 long MATH3D_FastSqrt(long square)
 {
+
 #if defined(PSX_VERSION)
 	unsigned long result; // $t0
 	long remainder; // $v0
@@ -313,6 +314,9 @@ long MATH3D_FastSqrt(long square)
 	long shift; // $a2
 	long mask_squared; // $a3
 	long result_shift; // $v1
+
+	UNIMPLEMENTED();
+	return 0;
 
 	shift = 0x1F;
 
