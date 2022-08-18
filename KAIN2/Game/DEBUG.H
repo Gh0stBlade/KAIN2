@@ -101,8 +101,10 @@ extern unsigned long debugRazielFlags1;
 extern unsigned long debugRazielFlags2;
 extern unsigned long debugRazielFlags3;
 
+extern void DEBUG_UpdateFog(long* var);
 extern void DEBUG_UpdateHealth(long *var); // 0x80012EC0
 extern void DEBUG_UpdateMana(long *var); // 0x80012EE4
+extern void DEBUG_FogRestore();
 extern void DEBUG_FillUpHealth(long *var); // 0x80012F08
 extern void process_cheat_codes(struct GameTracker *gt, long *ctrl); // 0x80012F30
 extern void DEBUG_Process(struct GameTracker *gameTracker); // 0x800131F8
