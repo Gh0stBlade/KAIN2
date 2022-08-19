@@ -99,7 +99,7 @@ unsigned int terminatorOT = (unsigned int)&actualTerminator;
 
 int IsValidCode(int code)
 {
-	return code >= 0x20 && code <= 0x7C;
+	return code >= 0x20 && code <= 0x80;
 }
 
 void Emulator_AddSplit(bool semiTrans, int page, TextureID textureId)
@@ -688,8 +688,23 @@ int ParsePrimitive(uintptr_t primPtr)
 		break;
 	}
 	case 0x80: {
-		eprinterr("DR_MOVE unimplemented\n");
+
+		DR_MOVE* poly = (DR_MOVE*)pTag;
+		RECT16 r;
+		
+		int x = poly->code[2] & 0xFFFF;
+		int y = ((poly->code[2] >> 16) & 0xFFFF) & 0x1FF;
+
+		r.x = poly->code[3] & 0xFFFF;
+		r.y = ((poly->code[3] >> 16) & 0xFFFF) & 0x1FF;
+		
+		r.w = poly->code[4] & 0xFFFF;
+		r.h = ((poly->code[4] >> 16) & 0xFFFF);
+		
+		MoveImage(&r, x, y);
+
 		primitive_size = sizeof(DR_MOVE);
+
 		break;
 	}
 	default:
