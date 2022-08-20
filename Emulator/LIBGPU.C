@@ -1,4 +1,5 @@
 #include "LIBGPU.H"
+#include "LIBGTE.H"
 
 #include "EMULATOR.H"
 #include "EMULATOR_GLOBALS.H"
@@ -408,17 +409,7 @@ void DrawOTagEnv(u_long* p, DRAWENV* env)
 	} while (g_emulatorPaused);
 
 #if defined(PGXP)
-	// Reset the ztable.
-	memset(&pgxp_vertex_buffer[0], 0, pgxp_vertex_index * sizeof(PGXPVertex));
-
-	// Reset the ztable index of.
-	pgxp_vertex_index = 0;
-
-	// Reset last quad match
-	last_pgxp_quad_match = 0;
-
-	// Reset last tri match
-	last_pgxp_tri_match = 0;
+	Emulator_ResetPGXPCache();
 #endif
 }
 
@@ -455,11 +446,7 @@ void DrawOTag(u_long* p)
 	Emulator_EndScene();
 
 #if defined(PGXP)
-	/* Reset the ztable */
-	memset(&pgxp_vertex_buffer[0], 0, pgxp_vertex_index * sizeof(PGXPVertex));
-
-	/* Reset the ztable index of */
-	pgxp_vertex_index = 0;
+	Emulator_ResetPGXPCache();
 #endif
 }
 
@@ -498,11 +485,7 @@ void DrawPrim(void* p)
 #endif
 
 #if defined(PGXP)
-	/* Reset the ztable */
-	memset(&pgxp_vertex_buffer[0], 0, pgxp_vertex_index * sizeof(PGXPVertex));
-
-	/* Reset the ztable index of */
-	pgxp_vertex_index = 0;
+	Emulator_ResetPGXPCache();
 #endif
 }
 

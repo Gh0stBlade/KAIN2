@@ -73,10 +73,13 @@ extern MATRIX* RotMatrixZ(long r, MATRIX* m);
 
 #if defined(PGXP)
 #define MAX_NUM_VERTICES 32768
+#define PGXP_MAGIC_FLAG 0x8000
+#define PGXP_INDEX_BITS 0x7FFF
 
 struct PGXPVertex
 {
 	unsigned int originalSXY2;
+	unsigned int originalSZ3;
 	float x;
 	float y;
 	float z;
@@ -84,9 +87,6 @@ struct PGXPVertex
 };
 
 extern struct PGXPVertex pgxp_vertex_buffer[MAX_NUM_VERTICES];
-extern int pgxp_vertex_index;
-extern int last_pgxp_quad_match;
-extern int last_pgxp_tri_match;
 extern int pgxp_vertex_count;
 #endif
 

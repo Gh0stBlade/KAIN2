@@ -852,7 +852,7 @@ extern int gte_ldlzc(int input);
 	  */
 
 #define gte_stsxy( r0 )          \
-	((int*)&r0)[0] = SXY2;       \
+	((int*)r0)[0] = SXY2;       \
 
 #define gte_stsxy3( r0, r1, r2 ) \
 	((int*)&r0)[0] = SXY0;       \

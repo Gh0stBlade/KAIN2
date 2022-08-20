@@ -11,11 +11,6 @@
 
 #if defined(PGXP)
 #define MAX_NUM_VERTICES 32768
-//Index of last vertex added to vertex buffer
-int pgxp_vertex_index = 0;
-
-int last_pgxp_quad_match = 0;
-int last_pgxp_tri_match = 0;
 
 int pgxp_vertex_count = 0;
 
@@ -2165,19 +2160,33 @@ int docop2(int op) {
         SZ2 = SZ3;
         SZ3 = Lm_D(m_mac3, 1);
         h_over_sz3 = Lm_E(gte_divide(H, SZ3));
+
         SXY0 = SXY1;
         SXY1 = SXY2;
         SX2 = int(Lm_G1(F((long long)OFX + ((long long)IR1 * h_over_sz3)) >> 16));
         SY2 = int(Lm_G2(F((long long)OFY + ((long long)IR2 * h_over_sz3)) >> 16));
 
 #if defined(PGXP)
-        pgxp_vertex_buffer[pgxp_vertex_index].originalSXY2 = SXY2;
-        pgxp_vertex_buffer[pgxp_vertex_index].x = (Lm_G1_ia((long long)OFX + (long long)(IR1 * h_over_sz3))) / (float)(1 << 16);
-        pgxp_vertex_buffer[pgxp_vertex_index].y = (Lm_G2_ia((long long)OFY + (long long)(IR2 * h_over_sz3))) / (float)(1 << 16);
-        pgxp_vertex_buffer[pgxp_vertex_index++].z = max(SZ3, H / 2) / (float)(1 << 16);
+        pgxp_vertex_buffer[pgxp_vertex_count].originalSXY2 = SXY2;
+        pgxp_vertex_buffer[pgxp_vertex_count].originalSZ3 = SZ3;
+
+        pgxp_vertex_buffer[pgxp_vertex_count].x = (Lm_G1_ia((long long)OFX + (long long)(IR1 * h_over_sz3))) / (float)(1 << 16);
+        pgxp_vertex_buffer[pgxp_vertex_count].y = (Lm_G2_ia((long long)OFY + (long long)(IR2 * h_over_sz3))) / (float)(1 << 16);
+        pgxp_vertex_buffer[pgxp_vertex_count].z = (float)max(SZ3, H / 2);
+
+        pgxp_vertex_count++;
+
+        if (SXY2 == 0x0042006c)
+        {
+
+            int testing = 0;
+            testing++;
+        }
 #endif
+
         MAC0 = int(F((long long)DQB + ((long long)DQA * h_over_sz3)));
         IR0 = Lm_H(m_mac0, 1);
+
         return 1;
 
     case 0x06:
@@ -2559,14 +2568,18 @@ int docop2(int op) {
             SXY1 = SXY2;
             SX2 = Lm_G1(F((long long)OFX + ((long long)IR1 * h_over_sz3)) >> 16);
             SY2 = Lm_G2(F((long long)OFY + ((long long)IR2 * h_over_sz3)) >> 16);
+        }
 
 #if defined(PGXP)
-            pgxp_vertex_buffer[pgxp_vertex_index].originalSXY2 = SXY2;
-            pgxp_vertex_buffer[pgxp_vertex_index].x = Lm_G1_ia((long long)OFX + (long long)(IR1 * h_over_sz3)) / (float)(1 << 16);
-            pgxp_vertex_buffer[pgxp_vertex_index].y = Lm_G2_ia((long long)OFY + (long long)(IR2 * h_over_sz3)) / (float)(1 << 16);
-            pgxp_vertex_buffer[pgxp_vertex_index++].z = max(SZ3, H / 2) / (float)(1 << 16);
+        pgxp_vertex_buffer[pgxp_vertex_count].originalSXY2 = SXY2;
+        pgxp_vertex_buffer[pgxp_vertex_count].originalSZ3 = SZ3;
+        pgxp_vertex_buffer[pgxp_vertex_count].x = Lm_G1_ia((long long)OFX + (long long)(IR1 * h_over_sz3)) / (float)(1 << 16);
+        pgxp_vertex_buffer[pgxp_vertex_count].y = Lm_G2_ia((long long)OFY + (long long)(IR2 * h_over_sz3)) / (float)(1 << 16);
+        pgxp_vertex_buffer[pgxp_vertex_count].z = (float)max(SZ3, H / 2);
+
+        pgxp_vertex_count++;
+
 #endif
-        }
 
         MAC0 = int(F((long long)DQB + ((long long)DQA * h_over_sz3)));
         IR0 = Lm_H(m_mac0, 1);
