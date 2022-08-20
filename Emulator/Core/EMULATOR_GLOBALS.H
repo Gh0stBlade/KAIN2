@@ -25,6 +25,7 @@ extern unsigned int DMAControlRegister;
 extern int assetsLoaded;
 extern int g_emulatorPaused;
 extern int g_polygonSelected;
+extern int g_otSize;
 
 #if defined(SDL2)
 extern unsigned short UpdateGameControllerInput(SDL_GameController* pad);

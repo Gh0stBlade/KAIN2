@@ -45,6 +45,9 @@ extern void Emulator_UpdateInput();
 /* Usually called at the end of main function */
 extern void Emulator_ShutDown();
 
+/* Usually called at the beginning of main function, for PGXP purposes only! */
+extern void Emulator_HintOTSize(int ots);
+
 #ifdef __cplusplus
 }
 #endif

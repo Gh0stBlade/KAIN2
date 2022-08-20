@@ -9,6 +9,7 @@
 #include "Setup/Platform/EMULATOR_PLATFORM_SETUP.H"
 
 #include "LIBGPU.H"
+#include "LIBGTE.H"
 #include "LIBETC.H"
 #include "LIBPAD.H"
 #if !defined(__ANDROID__)
@@ -470,6 +471,7 @@ TextureID rg8lutTexture;
 #endif
 #endif
 
+int g_otSize = 0;
 int windowWidth = 0;
 int windowHeight = 0;
 char* pVirtualMemory = NULL;
@@ -2502,6 +2504,10 @@ static int Emulator_InitialiseGLESContext(char* windowName)
 
 #endif
 
+void Emulator_HintOTSize(int ots)
+{
+	g_otSize = ots;
+}
 
 static int Emulator_InitialiseSDL2(char* windowName, int width, int height)
 {
@@ -2830,7 +2836,17 @@ void Emulator_GenerateLineArray(struct Vertex* vertex, short* p0, short* p1)
 	} // TODO diagonal line alignment
 }
 
-void Emulator_GenerateVertexArrayTriangle(struct Vertex* vertex, short* p0, short* p1, short* p2)
+#if defined(PGXP)
+void Emulator_ResetPGXPCache()
+{
+	// Reset the ztable.
+	memset(&pgxp_vertex_buffer[0], 0, pgxp_vertex_count * sizeof(PGXPVertex));
+
+	pgxp_vertex_count = 0;
+}
+#endif
+
+void Emulator_GenerateVertexArrayTriangle(struct Vertex* vertex, short* p0, short* p1, short* p2, short z)
 {
 	assert(p0);
 	assert(p1);
@@ -2841,38 +2857,37 @@ void Emulator_GenerateVertexArrayTriangle(struct Vertex* vertex, short* p0, shor
 	PGXPVertex* pgxp_vertex_1 = NULL;
 	PGXPVertex* pgxp_vertex_2 = NULL;
 
-	//Locate each vertex based on SXY2 (very slow)
-	for (int i = 0; i < pgxp_vertex_index; i++)
+	for (int i = 0; i < pgxp_vertex_count; i++)
 	{
-		if (pgxp_vertex_0 && pgxp_vertex_1 && pgxp_vertex_2) {
+		if (pgxp_vertex_0 != NULL && pgxp_vertex_1 != NULL && pgxp_vertex_2 != NULL)
+		{
 			break;
 		}
 
-		if (pgxp_vertex_0 == NULL)
+		if(pgxp_vertex_buffer[i].used == TRUE)
 		{
-			if (((unsigned int*)p0)[0] == pgxp_vertex_buffer[i].originalSXY2)
-			{
-				pgxp_vertex_0 = &pgxp_vertex_buffer[i];
-				continue;
-			}
+			//continue;
 		}
 
-		if (pgxp_vertex_1 == NULL)
+		if (pgxp_vertex_buffer[i].originalSXY2 == ((unsigned int*)p0)[0] && pgxp_vertex_0 == NULL /*&& pgxp_vertex_buffer[i].originalSZ3 <= z + 4096*/)
 		{
-			if (((unsigned int*)p1)[0] == pgxp_vertex_buffer[i].originalSXY2)
-			{
-				pgxp_vertex_1 = &pgxp_vertex_buffer[i];
-				continue;
-			}
+			pgxp_vertex_0 = &pgxp_vertex_buffer[i];
+			pgxp_vertex_0->used = TRUE;
+			continue;
 		}
 
-		if (pgxp_vertex_2 == NULL)
+		if (pgxp_vertex_buffer[i].originalSXY2 == ((unsigned int*)p1)[0] && pgxp_vertex_1 == NULL /*&& pgxp_vertex_buffer[i].originalSZ3 <= z + 4096*/ )
 		{
-			if (((unsigned int*)p2)[0] == pgxp_vertex_buffer[i].originalSXY2)
-			{
-				pgxp_vertex_2 = &pgxp_vertex_buffer[i];
-				continue;
-			}
+			pgxp_vertex_1 = &pgxp_vertex_buffer[i];
+			pgxp_vertex_1->used = TRUE;
+			continue;
+		}
+
+		if (pgxp_vertex_buffer[i].originalSXY2 == ((unsigned int*)p2)[0] && pgxp_vertex_2 == NULL /* && pgxp_vertex_buffer[i].originalSZ3 <= z + 4096*/)
+		{
+			pgxp_vertex_2 = &pgxp_vertex_buffer[i];
+			pgxp_vertex_2->used = TRUE;
+			continue;
 		}
 	}
 
@@ -2927,7 +2942,7 @@ void Emulator_GenerateVertexArrayTriangle(struct Vertex* vertex, short* p0, shor
 #endif
 }
 
-void Emulator_GenerateVertexArrayQuad(struct Vertex* vertex, short* p0, short* p1, short* p2, short* p3)
+void Emulator_GenerateVertexArrayQuad(struct Vertex* vertex, short* p0, short* p1, short* p2, short* p3, short z)
 {
 	assert(p0);
 	assert(p1);
@@ -2935,52 +2950,50 @@ void Emulator_GenerateVertexArrayQuad(struct Vertex* vertex, short* p0, short* p
 	assert(p3);
 
 #if defined(PGXP)
+
 	PGXPVertex* pgxp_vertex_0 = NULL;
 	PGXPVertex* pgxp_vertex_1 = NULL;
 	PGXPVertex* pgxp_vertex_2 = NULL;
 	PGXPVertex* pgxp_vertex_3 = NULL;
 
-	//Locate each vertex based on SXY2 (very slow)
-	for (int i = 0; i < pgxp_vertex_index; i++)
+	for (int i = 0; i < pgxp_vertex_count; i++)
 	{
-		if (pgxp_vertex_0 && pgxp_vertex_1 && pgxp_vertex_2 && pgxp_vertex_3) {
+		if (pgxp_vertex_0 != NULL && pgxp_vertex_1 != NULL && pgxp_vertex_2 != NULL && pgxp_vertex_3 != NULL)
+		{
 			break;
 		}
 
-		if (pgxp_vertex_0 == NULL)
+		if (pgxp_vertex_buffer[i].used == TRUE)
 		{
-			if (((unsigned int*)p0)[0] == pgxp_vertex_buffer[i].originalSXY2)
-			{
-				pgxp_vertex_0 = &pgxp_vertex_buffer[i];
-				continue;
-			}
+			//continue;
 		}
 
-		if (pgxp_vertex_1 == NULL)
+		if (pgxp_vertex_buffer[i].originalSXY2 == ((unsigned int*)p0)[0] && pgxp_vertex_0 == NULL)
 		{
-			if (((unsigned int*)p1)[0] == pgxp_vertex_buffer[i].originalSXY2)
-			{
-				pgxp_vertex_1 = &pgxp_vertex_buffer[i];
-				continue;
-			}
+			pgxp_vertex_0 = &pgxp_vertex_buffer[i];
+			pgxp_vertex_0->used = TRUE;
+			continue;
 		}
 
-		if (pgxp_vertex_2 == NULL)
+		if (pgxp_vertex_buffer[i].originalSXY2 == ((unsigned int*)p1)[0] && pgxp_vertex_1 == NULL)
 		{
-			if (((unsigned int*)p2)[0] == pgxp_vertex_buffer[i].originalSXY2)
-			{
-				pgxp_vertex_2 = &pgxp_vertex_buffer[i];
-				continue;
-			}
+			pgxp_vertex_1 = &pgxp_vertex_buffer[i];
+			pgxp_vertex_1->used = TRUE;
+			continue;
 		}
 
-		if (pgxp_vertex_3 == NULL)
+		if (pgxp_vertex_buffer[i].originalSXY2 == ((unsigned int*)p2)[0] && pgxp_vertex_2 == NULL)
 		{
-			if (((unsigned int*)p3)[0] == pgxp_vertex_buffer[i].originalSXY2)
-			{
-				pgxp_vertex_3 = &pgxp_vertex_buffer[i];
-				continue;
-			}
+			pgxp_vertex_2 = &pgxp_vertex_buffer[i];
+			pgxp_vertex_2->used = TRUE;
+			continue;
+		}
+
+		if (pgxp_vertex_buffer[i].originalSXY2 == ((unsigned int*)p3)[0] && pgxp_vertex_3 == NULL)
+		{
+			pgxp_vertex_3 = &pgxp_vertex_buffer[i];
+			pgxp_vertex_3->used = TRUE;
+			continue;
 		}
 	}
 
@@ -3067,22 +3080,33 @@ void Emulator_GenerateVertexArrayQuad(struct Vertex* vertex, short* p0, short* p
 #endif
 }
 
-void Emulator_GenerateVertexArrayRect(struct Vertex* vertex, short* p0, short w, short h)
+void Emulator_GenerateVertexArrayRect(struct Vertex* vertex, short* p0, short w, short h, short z)
 {
 	assert(p0);
 
 #if defined(PGXP)
 	PGXPVertex* pgxp_vertex_0 = NULL;
 
-	//Locate each vertex based on SXY2 (very slow)
-	for (int i = 0; i < pgxp_vertex_index; i++)
+	for (int i = 0; i < pgxp_vertex_count; i++)
 	{
-		if (((unsigned int*)p0)[0] == pgxp_vertex_buffer[i].originalSXY2)
+		if (pgxp_vertex_0 != NULL)
 		{
-			pgxp_vertex_0 = &pgxp_vertex_buffer[i];
 			break;
 		}
+
+		if (pgxp_vertex_buffer[i].used == TRUE)
+		{
+			//continue;
+		}
+
+		if (pgxp_vertex_buffer[i].originalSXY2 == ((unsigned int*)p0)[0] && pgxp_vertex_0 == NULL)
+		{
+			pgxp_vertex_0 = &pgxp_vertex_buffer[i];
+			pgxp_vertex_0->used = TRUE;
+			continue;
+		}
 	}
+
 
 	if (pgxp_vertex_0 != NULL)
 	{
