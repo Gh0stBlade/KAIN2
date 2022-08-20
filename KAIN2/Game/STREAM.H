@@ -4,6 +4,50 @@
 #include "SIGNAL.H"
 #include "INSTANCE.H"
 
+struct _VMOffset {
+	short dx; // size=0, offset=0
+	short dy; // size=0, offset=2
+	short dz; // size=0, offset=4
+};
+struct _VMColorOffset {
+	char dr; // size=0, offset=0
+	char dg; // size=0, offset=1
+	char db; // size=0, offset=2
+};
+struct _VMInterpolated {
+	short tvIdx; // size=0, offset=0
+	short startIdx; // size=0, offset=2
+	short endIdx; // size=0, offset=4
+	short time; // size=0, offset=6
+};
+struct _VMOffsetTable {
+	long numVMOffsets; // size=0, offset=0
+	union {
+		struct _VMOffset moveOffsets; // size=6, offset=0
+		struct _VMColorOffset colorOffsets; // size=3, offset=0
+	} offsets; // size=6, offset=4
+};
+struct _VMObject {
+	unsigned short flags; // size=0, offset=0
+	short bspIdx; // size=0, offset=2
+	short materialIdx; // size=0, offset=4
+	short spectralIdx; // size=0, offset=6
+	short currentIdx; // size=0, offset=8
+	short timeScale; // size=0, offset=10
+	long timer; // size=0, offset=12
+	struct _Position position; // size=6, offset=16
+	short radius; // size=0, offset=22
+	long radiusSquared; // size=0, offset=24
+	long numVMOffsetTables; // size=0, offset=28
+	struct _VMOffsetTable** vmoffsetTableList; // size=12, offset=32
+	struct _VMOffsetTable* curVMOffsetTable; // size=12, offset=36
+	long numVMVertices; // size=0, offset=40
+	void* vmvertexList; // size=0, offset=44
+	long numVMInterpolated; // size=0, offset=48
+	struct _VMInterpolated* vminterpolatedList; // size=8, offset=52
+	char* name; // size=0, offset=56
+};
+
 struct WarpGateLoadInfo
 {
 	int warpgate_in_use; // size=0, offset=0
