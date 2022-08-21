@@ -3255,6 +3255,63 @@ void CompMatrixLV(MATRIX* m0, MATRIX* m1, MATRIX* m2)
     m2->t[2] = MAC3 + m0->t[2];
 }
 
+MATRIX* CompMatrix(MATRIX* m0, MATRIX* m1, MATRIX* m2)
+{
+    VECTOR v;
+
+    gte_SetRotMatrix(m0);
+
+    v.vx = ((unsigned short*)m1)[0] | (((unsigned int*)m1)[1] & 0xFFFF0000);
+    v.vy = ((unsigned int*)m1)[3];
+
+    gte_ldv0(&v);
+    gte_rtv0();
+
+    v.vx = ((unsigned short*)m1)[1] | (((unsigned int*)m1)[2] << 16);
+    v.vy = ((unsigned short*)m1)[7];
+
+    SVECTOR v1;
+
+    gte_stsv(&v1);
+
+    gte_ldv0(&v);
+
+    gte_rtv0();
+
+    SVECTOR v2;
+
+    gte_stsv(&v2);
+
+    v.vx = ((unsigned short*)m1)[2] | (((unsigned int*)m1)[2] & 0xFFFF0000);
+    v.vy = ((unsigned int*)m1)[2] & 0xFFFF0000;
+
+    gte_ldv0(&v);
+
+    gte_rtv0();
+
+    ((unsigned int*)m2)[0] = (v2.vx << 16) | v1.vx;
+    ((unsigned int*)m2)[3] = (v2.vz << 16) | v1.vz;
+
+    SVECTOR v3;
+
+    gte_stsv(&v3);
+    v.vx = ((unsigned short*)m1)[10] | (((unsigned int*)m1)[6] << 16);
+    v.vy = ((unsigned int*)m1)[7];
+    gte_rtv0();
+
+    ((unsigned int*)m2)[1] = v3.vx | (v1.vy << 16);
+    ((unsigned int*)m2)[2] = v3.vy | (v2.vy << 16);
+
+    VECTOR v4;
+    gte_stlvnl(&v4);
+
+    m2->t[0] = v.vx + m1->t[0];
+    m2->t[1] = v.vy + m1->t[1];
+    m2->t[1] = v.vz + m1->t[2];
+
+    return m2;
+}
+
 long RotAverageNclip3(SVECTOR* v0, SVECTOR* v1, SVECTOR* v2, long* sxy0, long* sxy1/*arg_10*/, long* sxy2/*arg_14*/, long* p/*arg_18*/, long* otz/*arg_1C*/, long* flag/*arg_20*/)
 {
     VX0 = v0->vx;
