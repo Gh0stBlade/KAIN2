@@ -2,6 +2,43 @@
 #define DRAW_H
 
 #include "VRAM.H"
+#include "CORE.H"
+
+struct UVTYPE 
+{
+	unsigned char u; // size=0, offset=0
+	unsigned char v; // size=0, offset=1
+	short pad; // size=0, offset=2
+};
+
+struct SP_SUBDIV_STRUCT 
+{
+	struct _SVector vertex0; // size=8, offset=0
+	struct _SVector vertex1; // size=8, offset=8
+	struct _SVector vertex2; // size=8, offset=16
+	SVECTOR face_v0; // size=8, offset=24
+	SVECTOR face_v1; // size=8, offset=32
+	SVECTOR face_v2; // size=8, offset=40
+	SVECTOR face_v01; // size=8, offset=48
+	SVECTOR face_v12; // size=8, offset=56
+	SVECTOR face_v20; // size=8, offset=64
+	struct UVTYPE face_uv0; // size=4, offset=72
+	struct UVTYPE face_uv1; // size=4, offset=76
+	struct UVTYPE face_uv2; // size=4, offset=80
+	struct UVTYPE face_uv01; // size=4, offset=84
+	struct UVTYPE face_uv12; // size=4, offset=88
+	struct UVTYPE face_uv20; // size=4, offset=92
+	struct _ColorType color0; // size=4, offset=96
+	struct _ColorType color1; // size=4, offset=100
+	struct _ColorType color2; // size=4, offset=104
+	struct _ColorType color01; // size=4, offset=108
+	struct _ColorType color12; // size=4, offset=112
+	struct _ColorType color20; // size=4, offset=116
+	struct _Vector out[4]; // size=48, offset=120
+	long color[4]; // size=16, offset=168
+	long texinfo[3]; // size=12, offset=184
+	DVECTOR sxy[4]; // size=16, offset=196
+};
 
 struct POLY_F4_SEMITRANS 
 {
