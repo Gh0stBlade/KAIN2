@@ -210,10 +210,19 @@ int ParsePrimitive(uintptr_t primPtr, short* z)
 
 		BLK_FILL* poly = (BLK_FILL*)pTag;
 
-		short* blackImage = new short[poly->w * poly->h];
-		memset(blackImage, 0, poly->w * poly->h * sizeof(short));
+		int r5 = poly->r0 * 31 / 255;
+		int g5 = poly->g0 * 31 / 255;
+		int b5 = poly->b0 * 31 / 255;
+		int a1 = 0;
 
-		/// @TODO colour of buffer from rgb
+		unsigned short colour = (unsigned short)(r5 << 1 | g5 << 6 | b5 << 11 | a1);
+
+		unsigned short* blackImage = new unsigned short[poly->w * poly->h];
+
+		for (int i = 0; i < poly->w * poly->h; i++)
+		{
+			blackImage[i] = colour;
+		}
 
 		RECT16 r;
 		r.x = poly->x0;
@@ -762,9 +771,6 @@ void Emulator_DrawSplit(const VertexBufferSplit& split)
 {
 	Emulator_SetBlendMode(split.blendMode);
 	Emulator_SetTexture(split.textureId, split.texFormat);
-#if defined(_PATCH)
-	Emulator_Ortho2D(0, activeDrawEnv.clip.w, activeDrawEnv.clip.h, 0, 0.0f, 1.0f);
-#endif
 
 	Emulator_DrawTriangles(split.vIndex, split.vCount / 3);
 }
