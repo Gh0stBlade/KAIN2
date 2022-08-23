@@ -1398,7 +1398,7 @@ long DRAW_DisplayTFace_S(unsigned long** pNextPrim, unsigned long** drawot, int 
 
 						gte_dpct();
 
-						unsigned long** a00 = &drawot[s2 / 4];
+						unsigned long** a00 = &drawot[(s2 / 4) * 2];
 
 						v0 = t5 >> 16;
 						v1 = t7 >> 16;
@@ -2223,7 +2223,7 @@ unsigned long* DRAW_DisplaySubdivPolytope_S(struct _BSPNode** polytope, struct _
 												pNextPrim[9] = t3;
 												pNextPrim[6] = t2;
 
-												t5 = ((char*)t4)[0x7F];
+												t5 = ((char*)t4)[127];
 
 												pNextPrim[5] = RGB2;
 
@@ -2257,6 +2257,8 @@ unsigned long* DRAW_DisplaySubdivPolytope_S(struct _BSPNode** polytope, struct _
 
 												if (v0 != 0)
 												{
+													v0 = 0x2000000;
+
 													goto draw_trans_fog;
 												}
 
@@ -2384,7 +2386,7 @@ draw_trans_fog:
 	a2 = RGB2;
 	a2 |= 0x2000000;
 
-	pNextPrim[-18] = a2;
+	pNextPrim[-9] = a2;
 
 	t5 = t4[51];
 	at = 0xFF000000;
@@ -2403,65 +2405,60 @@ OK:
 	v1 &= 0xFF9F;
 	v1 |= 0x20;
 
-	((short*)pNextPrim)[7] = v1;
+	((short*)pNextPrim)[-7] = v1;
 
 	a2 = t4[48];
-	pNextPrim[2] = t1;
+	pNextPrim[3] = t1;
 	t1 = RGB2;
 	v1 = 0x34000000;
 	t1 = t5 - t1;
 	t1 |= v1;
 	
-	pNextPrim[1] = t1;
+	pNextPrim[2] = t1;
 
-	a2 = IR0;
+	IR0 = a2;
 	at = 0xFF9FFFFF;
 	v1 = s7 & at;
 
-	pNextPrim[6] = v1;
+	pNextPrim[7] = v1;
 
 	gte_dpcs();
 
 	v0 = pNextPrim[-7];
 	v1 = pNextPrim[-1];
 
-	pNextPrim[3] = v0;
-	pNextPrim[9] = v1;
+	pNextPrim[4] = v0;
+	pNextPrim[10] = v1;
 
 	a2 = ((short*)t4)[106];
-	((short*)pNextPrim)[7] = a2;
+	((short*)pNextPrim)[8] = a2;
 
 	a2 = t4[49];
-	pNextPrim[5] = t2;
+	pNextPrim[6] = t2;
 
 	t1 = RGB2;
 
 	t1 = t5 - t1;
 	
-	pNextPrim[4] = t1;
+	pNextPrim[5] = t1;
 
 	IR0 = a2;
 
 	v1 = (unsigned long)pNextPrim & 0xFFFFFF;
 
-	t88 = (unsigned long*)((t8 / 4) + drawot);
-
 	gte_dpcs();
 
-	//ADDPRIM
-	//v0 = t88[0];
-	//t88[0] = v1;
-	//v0 |= 0x9000000;//SETLEN
-	//pNextPrim[0] = v0;
-	pNextPrim[8] = t3;
+	setlen(pNextPrim, 9);
+	addPrim(drawot[(t8 / 4) * 2], pNextPrim);
+	pNextPrim[9] = t3;
 
 	t1 = RGB2;
 
 	t1 = t5 - t1;
 
-	pNextPrim[7];
+	pNextPrim[8] = t1;
 
-	//pNextPrim += 0x28 / 4;
+	pNextPrim += sizeof(POLY_GT3) / 4;
 
 	s1++;
 
