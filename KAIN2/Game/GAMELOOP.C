@@ -687,37 +687,44 @@ void BlendToColor(struct _ColorType *target, struct _ColorType *current, struct 
 	//a0 = target->r;
 	//v1 = dest->r
 
-	MIN(target->r - dest->r, 0);
-	UNIMPLEMENTED();
+	if ((target->r - dest->r) >= 0)
+	{
+		if ((target->r - dest->r) >= 5)
+		{
+			dest->code = 0;
+		}
+		else
+		{
+			//loc_8002EB88
+			if((target->g - dest->g) >= 0)
+			{
+				if ((target->g - dest->g) >= 5)
+				{
+					dest->code = 0;
+				}
+			}
+			else
+			{
+				//loc_8002EBB0
+				if ((dest->g - target->g) < 5)
+				{
+
+				}
+			}
+		}
+	}
+	else
+	{
+		//loc_8002EB78
+		if ((dest->r - target->r) < 5)
+		{
+
+		}
+	}
+	//loc_8002EC08
 #if 0
-		subu    $v0, $a0, $v1
-		bltz    $v0, loc_8002EB78
-		slti    $v0, 5
-		bnez    $v0, loc_8002EB88
-		nop
-		j       loc_8002EC08
-		sb      $zero, 3($s0)
-
-		loc_8002EB78:
-	subu    $v0, $v1, $a0
-		slti    $v0, 5
-		beqz    $v0, loc_8002EC04
-		nop
-
-		loc_8002EB88 :
-	lbu     $a0, 1($s1)
-		lbu     $v1, 1($s0)
-		nop
-		subu    $v0, $a0, $v1
-		bltz    $v0, loc_8002EBB0
-		slti    $v0, 5
-		bnez    $v0, loc_8002EBC0
-		nop
-		j       loc_8002EC08
-		sb      $zero, 3($s0)
-
 		loc_8002EBB0:
-	subu    $v0, $v1, $a0
+		subu    $v0, $v1, $a0
 		slti    $v0, 5
 		beqz    $v0, loc_8002EC04
 		nop
@@ -820,7 +827,7 @@ void MainRenderLevel(struct _StreamUnit* currentUnit, unsigned long** drawot)
 
 	tod = GAMELOOP_GetTimeOfDay();
 
-	if (tod == 600 || tod != 1800 || !(level->unitFlags & 0x2))
+	if (tod == 600 && tod != 1800 || !(level->unitFlags & 0x2))
 	{
 		if (gameTrackerX.gameData.asmData.MorphTime == 1000)
 		{
@@ -1245,7 +1252,7 @@ void GAMELOOP_DisplayFrame(struct GameTracker* gameTracker)
 
 			ClearOTagR((unsigned long*)gameTrackerX.drawOT, 3072);
 
-			if (pause_redraw_prim != 0)
+			if (pause_redraw_prim != NULL)
 			{
 				gameTrackerX.primPool->nextPrim = (unsigned long*)pause_redraw_prim;
 			}
@@ -1377,7 +1384,7 @@ void GAMELOOP_DisplayFrame(struct GameTracker* gameTracker)
 						
 						theCamera.core.leftX = v1 >> 9;
 
-						int v0 = ((cliprect.x << 2) + cliprect.x) << 6;
+						int v0 = ((cliprect.x << 2) + cliprect.x) << 6;///@MACRO
 						if (v1 < 0)
 						{
 							v1 += SCREEN_WIDTH - 1;
@@ -1553,11 +1560,11 @@ void GAMELOOP_DrawSavedOT(unsigned long** newOT)
 	tag = gameTrackerX.savedOTStart;
 	y = draw[gameTrackerX.drawPage].ofs[1];
 
-	if (tag != gameTrackerX.savedOTEnd)
+	if (tag != (P_TAG*)gameTrackerX.savedOTEnd)
 	{
 		do
 		{
-			if ((tag->code & 0xFFFFFFFC) == 0x34)
+			if (getcode(tag) == 0x34)
 			{
 				tpage = ((POLY_GT3*)tag)->tpage;
 
@@ -1573,7 +1580,7 @@ void GAMELOOP_DrawSavedOT(unsigned long** newOT)
 					}
 				}
 			}
-			else if ((tag->code & 0xFFFFFFFC) == 0x24)
+			else if (getcode(tag) == 0x24)
 			{
 				tpage = ((POLY_FT3*)tag)->tpage;
 
@@ -1589,7 +1596,7 @@ void GAMELOOP_DrawSavedOT(unsigned long** newOT)
 					}
 				}
 			}
-			else if ((tag->code == 0xE3))
+			else if (getcode(tag) == 0xE3)
 			{
 				if (y != 0)
 				{
@@ -1603,18 +1610,15 @@ void GAMELOOP_DrawSavedOT(unsigned long** newOT)
 				}
 			}
 
-#if defined(PSXPC_VERSION)
-			tag = (P_TAG*)tag->addr;
-#elif defined(PSX_VERSION)
-			tag = nextPrim(tag);
-#endif
+			tag = (P_TAG*)nextPrim(tag);
+
 		} while (tag != gameTrackerX.savedOTEnd);
 	}
 
 #if defined(PSXPC_VERSION)
-	setaddr(gameTrackerX.savedOTEnd, getaddr(newOT + 3071 * 2));
+	setaddr(gameTrackerX.savedOTEnd, newOT + 3071 * 2);
 #else
-	setaddr(gameTrackerX.savedOTEnd, (unsigned long)newOT + 3071) & 0xFFFFFF);
+	setaddr(gameTrackerX.savedOTEnd, newOT + 3071);
 #endif
 
 	DrawOTag((unsigned long*)gameTrackerX.savedOTStart);
@@ -1723,6 +1727,303 @@ void GAMELOOP_Set_Pause_Redraw()
 #endif
 }
 
+void SaveOT()
+{
+#if 1
+	P_TAG* var_a0;
+	P_TAG* var_s0;
+	P_TAG* var_s1;
+	long temp_a2;
+	long temp_v0;
+	long temp_v0_2;
+	long temp_v0_3;
+
+	DrawSync(0);
+
+	var_s0 = NULL;
+	var_a0 = (P_TAG*)(gameTrackerX.drawOT + 3071 * 2);
+	var_s1 = NULL;
+
+	if (var_a0->len != 0) {
+		goto block_4;
+	}
+loop_2:
+	temp_v0 = var_a0->addr;
+	var_a0 = (P_TAG*)(temp_v0);
+	if (temp_v0 == -1) {
+		goto block_5;
+	}
+	if (var_a0->len == 0) {
+		goto loop_2;
+	}
+block_4:
+	if (var_a0->addr != -1) {
+		goto block_6;
+	}
+block_5:
+	gameTrackerX.savedOTStart = NULL;
+	return;
+block_6:
+	gameTrackerX.savedOTStart = var_a0;
+	if (var_a0->addr == -1) {
+		goto block_17;
+	}
+	goto loop_10;
+block_8:
+	temp_v0_2 = var_a0->addr;
+	if (temp_v0_2 == 0xFFFFFF) {
+		goto block_17;
+	}
+	var_s1 = var_s0;
+	var_s0 = var_a0;
+	var_a0 = (P_TAG*)(temp_v0_2);
+loop_10:
+	if (var_a0->len != 0) {
+		goto block_8;
+	}
+	if (var_a0->addr == -1) {
+		goto block_17;
+	}
+	if (var_a0->len != 0) {
+		goto block_15;
+	}
+loop_13:
+	temp_v0_3 = var_a0->addr;
+	if (temp_v0_3 == -1) {
+		goto block_15;
+	}
+	var_a0 = (P_TAG*)(temp_v0_3);
+	if (var_a0->len == 0) {
+		goto loop_13;
+	}
+block_15:
+	var_s0->addr = ((long)var_a0);
+
+	temp_a2 = var_a0->addr;
+	if (temp_a2 != -1) {
+		goto loop_10;
+	}
+	if (temp_a2 != -1) {
+		goto block_19;
+	}
+block_17:
+	if (var_s1 == NULL) {
+		goto block_19;
+	}
+	gameTrackerX.savedOTEnd = var_s1;
+	var_s1->addr |= -1;
+	return;
+block_19:
+	gameTrackerX.savedOTEnd = var_a0;
+	return;
+#else
+	P_TAG* tag; // $a0
+	P_TAG* last; // $s0
+	P_TAG* lastlast; // $s1
+	P_TAG* tag2; // $v0
+
+	DrawSync(0);
+
+	last = NULL;
+	
+#if defined(PSXPC_VERSION)
+	tag = (P_TAG*)(gameTrackerX.drawOT + 3071 * 2);
+#else
+	tag = (P_TAG*)(gameTrackerX.drawOT + 3071);
+#endif
+
+	lastlast = NULL;
+
+	if (tag->len != 0) 
+	{
+		goto block_4;
+	}
+
+loop_2:
+	tag2 = tag;
+	tag = (P_TAG*)nextPrim(tag);
+
+	if (tag2->addr == -1) 
+	{
+		goto block_5;
+	}
+
+	if (tag->len == 0) 
+	{
+		goto loop_2;
+	}
+block_4:
+	if (tag->addr != -1)
+	{
+		goto block_6;
+	}
+block_5:
+	gameTrackerX.savedOTStart = NULL;
+	return;
+block_6:
+	gameTrackerX.savedOTStart = tag;
+	
+	if (tag->addr == -1) 
+	{
+		goto block_17;
+	}
+	
+	goto loop_10;
+
+block_8:
+	if (tag->addr == -1) 
+	{
+		goto block_17;
+	}
+	lastlast = last;
+	last = tag;
+	tag = (P_TAG*)nextPrim(tag);
+loop_10:
+	if (tag->len != 0) 
+	{
+		goto block_8;
+	}
+	if (tag->addr == -1) 
+	{
+		goto block_17;
+	}
+	if (tag->len != 0) 
+	{
+		goto block_15;
+	}
+loop_13:
+	if (tag->addr == -1)
+	{
+		goto block_15;
+	}
+	tag = (P_TAG*)nextPrim(tag);
+	if (tag->len == 0) 
+	{
+		goto loop_13;
+	}
+block_15:
+	last->addr = (unsigned long)tag;
+	if (tag->addr != -1) 
+	{
+		goto loop_10;
+	}
+	if (tag->addr != -1) 
+	{
+		goto block_19;
+	}
+block_17:
+	if (lastlast == NULL) 
+	{
+		goto block_19;
+	}
+	gameTrackerX.savedOTEnd = lastlast;
+	lastlast->addr = -1;
+	return;
+block_19:
+	gameTrackerX.savedOTEnd = tag;
+	return;
+#endif
+}
+
+
+#if 0//Old
+
+void SaveOT()
+{
+	P_TAG* tag; // $a0
+	P_TAG* last; // $s0
+	P_TAG* lastlast; // $s1
+
+	DrawSync(0);
+	
+	last = NULL;
+#if defined(PSXPC_VERSION)
+	tag = (P_TAG*)(gameTrackerX.drawOT + 3071 * 2);
+#elif defined(PSX_VERSION)
+	tag = (P_TAG*)(gameTrackerX.drawOT + 3071);
+#endif
+	lastlast = NULL;
+
+	if (tag->len == 0) {
+	loop_2:
+#if defined(PSXPC_VERSION)
+		tag = (P_TAG*)tag->addr;
+#elif defined(PSX_VERSION)
+		tag = (P_TAG*)(unsigned long)tag->addr | 0x80000000;
+#endif
+		if (tag->addr != -1) {
+			if (tag->len != 0) {
+				goto block_4;
+			}
+			goto loop_2;
+		}
+		goto block_5;
+	}
+block_4:
+	if (tag->addr == -1)
+	{
+	block_5:
+		gameTrackerX.savedOTStart = NULL;
+		return;
+	}
+	gameTrackerX.savedOTStart = tag;
+	if (tag->addr != -1) {
+	loop_10:
+		if (tag->len == 0) {
+			if (tag->addr != -1) {
+				if (tag->len == 0) {
+				loop_13:
+					if (tag->addr != -1) {
+#if defined(PSXPC_VERSION)
+						tag = (P_TAG*)tag->addr;
+#elif defined(PSX_VERSION)
+						tag = (P_TAG*)(unsigned long)tag->addr | 0x80000000;
+#endif
+						if (tag->len == 0) {
+							goto loop_13;
+						}
+					}
+				}
+#if defined(PSXPC_VERSION)
+				last->addr = (unsigned long)tag;
+#elif defined(PSX_VERSION)
+				last->addr = (unsigned long)(tag) & 0xFFFFFF;
+#endif
+				if (tag->addr == -1) {
+					if (tag->addr == -1) {
+						goto block_17;
+					}
+					goto block_19;
+				}
+				goto loop_10;
+			}
+			goto block_17;
+		}
+		if (tag->addr != -1) {
+			lastlast = last;
+			last = tag;
+#if defined(PSXPC_VERSION)
+			tag = (P_TAG*)tag->addr;
+#elif defined(PSX_VERSION)
+			tag = (P_TAG*)(unsigned long)tag->addr | 0x80000000;
+#endif
+			goto loop_10;
+		}
+		goto block_17;
+	}
+block_17:
+	if (lastlast != NULL) {
+		gameTrackerX.savedOTEnd = lastlast;
+		lastlast->addr = -1;
+		return;
+	}
+block_19:
+	gameTrackerX.savedOTEnd = tag;
+}
+
+#endif
+
+#if 0//Older
 void SaveOT()
 {
 	P_TAG* tag; // $a0
@@ -1890,6 +2191,7 @@ loc_80030250:
 		}
 	}
 }
+#endif
 
 void ResetDrawPage()
 { 
@@ -2278,7 +2580,7 @@ void GAMELOOP_Process(struct GameTracker* gameTracker)
 					{
 						if (StreamTracker.StreamList[d].used == 2)
 						{
-							//VM_ProcessVMObjectList_S(StreamTracker.StreamList[d].level, theCamera);
+							VM_ProcessVMObjectList_S(StreamTracker.StreamList[d].level, &theCamera);
 						}
 					}
 
@@ -2656,19 +2958,11 @@ MATRIX* GAMELOOP_GetMatrices(int numMatrices)
 #endif
 }
 
-
-// autogenerated function stub: 
-// struct GameTracker * /*$ra*/ GAMELOOP_GetGT()
-struct GameTracker * GAMELOOP_GetGT()
-{ // line 3720, offset 0x80030f5c
+struct GameTracker* GAMELOOP_GetGT()
+{
 #if defined(PC_VERSION)
 	return &gameTrackerX;
 #else
-	UNIMPLEMENTED();
-	return NULL;
+	return &gameTrackerX;
 #endif
 }
-
-
-
-
