@@ -144,7 +144,7 @@ int maybe_start(struct memcard_t *memcard)
 			load(memcard);
 		}
 		memcard->running = 1;
-		memcard->table->begin();
+		memcard->table->begin(memcard->mcmenu);
 	}
 	
 	return 1;
