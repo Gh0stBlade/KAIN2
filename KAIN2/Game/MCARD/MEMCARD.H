@@ -219,13 +219,13 @@ union MEMCARD_196fake // Hashcode: 0xF7F7C377 (dec: -134757513)
 struct mcmenu_table_t // hashcode: 0xB78C7C17 (dec: -1215529961)
 {
 	int  (*data_size)(); // size=0, offset=0
-	void (*initialize)(mcmenu_t*, memcard_t*, int); // size=0, offset=4
+	void (*initialize)(struct mcmenu_t*, struct memcard_t*, int); // size=0, offset=4
 	void (*terminate)(); // size=0, offset=8
-	void (*begin)(mcmenu_t*); // size=0, offset=12
-	void (*end)(); // size=0, offset=16
-	int (*set_buffer)(mcmenu_t*, void*, int); // size=0, offset=20
-	int (*main)(mcmenu_t*, int index); // size=0, offset=24
-	int (*pause)(mcmenu_t*, int index); // size=0, offset=28
+	void (*begin)(struct mcmenu_t*); // size=0, offset=12
+	void (*end)(struct mcmenu_t*); // size=0, offset=16
+	int (*set_buffer)(struct mcmenu_t*, void*, int); // size=0, offset=20
+	int (*main)(struct mcmenu_t*, int index); // size=0, offset=24
+	int (*pause)(struct mcmenu_t*, int index); // size=0, offset=28
 	char* versionID; // size=0, offset=32
 };
 
@@ -295,6 +295,5 @@ extern void memcard_pop(void *opaque); // 0x800B9C8C
 extern void memcard_start(void *opaque); // 0x800B9CC8
 extern void memcard_load(void *opaque); // 0x800B9D0C
 extern void memcard_save(void *opaque); // 0x800B9D58
-extern void memcard_item(void *opaque, TDRFuncPtr_memcard_item1fn fn, long parameter, long flags, char *text); // 0x800B9D78
-
+extern void memcard_item(void* opaque, int (*fn)(void*, long, enum menu_ctrl_t), long parameter, long flags, char* text);
 #endif
