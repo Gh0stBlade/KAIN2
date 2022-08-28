@@ -75,7 +75,7 @@ void unload(struct memcard_t* memcard)
 	{
 		if ((char*)memcard != (char*)&gameTrackerX.primPool->prim)
 		{
-			MEMPACK_Free((char*)memcard);
+			MEMPACK_Free((char*)memcard->object);
 		}
 
 		memcard->object = NULL;
