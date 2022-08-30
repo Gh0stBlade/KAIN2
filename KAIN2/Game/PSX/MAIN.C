@@ -198,8 +198,8 @@ void ProcessArgs(char *baseAreaName, struct GameTracker *gameTracker)
 		ExtractWorldName(worldName, (char*)argData);
 		ExtractLevelNum(levelNum, (char*)argData);
 		
-#if defined(OVERRIDE_LEVEL)
-#define LEVEL_NAME "chrono"
+#if defined(OVERRIDE_LEVEL) || 0
+#define LEVEL_NAME "cliff"
 #define LEVEL_NUM "1"
 		sprintf(baseAreaName, "%s%s", LEVEL_NAME, LEVEL_NUM);
 #else
@@ -1029,6 +1029,7 @@ int MainG2(void *appData)
 
 #if defined(PSXPC_VERSION)
 	Emulator_Initialise(GAME_NAME, GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT);
+	Emulator_HintOTSize(3071);
 #endif
 
 	menuPos = 0;
