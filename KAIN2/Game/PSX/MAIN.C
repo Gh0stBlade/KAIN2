@@ -1083,7 +1083,7 @@ int MainG2(void *appData)
 					STREAM_DumpAllLevels(0, 0);
 					RemoveAllObjects(gameTracker);
 
-					while (aadGetNumLoadsQueued() != 0 || aadMem->updateCounter != 0)
+					while (aadGetNumLoadsQueued() != 0 || aadMem->sramDefragInfo.status != 0)
 					{
 						SOUND_UpdateSound();
 						STREAM_PollLoadQueue();
