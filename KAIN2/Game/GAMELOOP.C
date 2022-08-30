@@ -1116,8 +1116,8 @@ void GAMELOOP_AddClearPrim(unsigned long** drawot, int override)
 	}
 	else
 	{
-		blkfill = &clearRect[gameTrackerX.drawPage];
-		((struct BLK_FILL*)gameTrackerX.savedOTStart)->y0 = blkfill->y0;
+		blkfill = (struct BLK_FILL*)gameTrackerX.savedOTStart;
+		blkfill->y0 = clearRect[gameTrackerX.drawPage].y0;
 	}
 }
 
