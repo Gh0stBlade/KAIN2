@@ -1715,3 +1715,9 @@ void SpuGetCommonAttr(SpuCommonAttr* attr)
 {
     UNIMPLEMENTED();
 }
+
+unsigned long SpuRead(unsigned char* addr, unsigned long size)
+{
+    UNIMPLEMENTED();
+    return 0;
+}
