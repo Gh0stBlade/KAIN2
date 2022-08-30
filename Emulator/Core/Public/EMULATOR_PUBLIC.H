@@ -18,10 +18,6 @@
 extern void Emulator_PollAudio();
 #endif
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 extern void Emulator_SaveVRAM(const char* outputFileName, int x, int y, int width, int height, int bReadFromFrameBuffer);
 
 /* Usually called at the beginning of main function */
@@ -47,9 +43,5 @@ extern void Emulator_ShutDown();
 
 /* Usually called at the beginning of main function, for PGXP purposes only! */
 extern void Emulator_HintOTSize(int ots);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

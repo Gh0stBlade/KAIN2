@@ -6,6 +6,7 @@ External/
 /Build_EMSDK/*
 /Build_UWP/*
 /Build_Durango/*
+/Build_PSP2/*
 Emulator/Shaders/D3D9/*.h
 Emulator/Shaders/D3D11/*.h
 Emulator/Shaders/D3D12/*.h

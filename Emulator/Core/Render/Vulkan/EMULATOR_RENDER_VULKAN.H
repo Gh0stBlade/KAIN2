@@ -1,0 +1,5 @@
+#ifndef EMULATOR_RENDER_VULKAN_H
+#define EMULATOR_RENDER_VULKAN_H
+
+
+#endif

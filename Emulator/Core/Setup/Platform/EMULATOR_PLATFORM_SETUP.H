@@ -3,6 +3,16 @@
 
 //#define DEBUG_PRINTS
 
+#ifndef TRUE
+#define TRUE		1
+#endif
+#ifndef FALSE
+#define FALSE		0
+#endif
+#ifndef NULL
+#define NULL		0
+#endif
+
 #if defined(WINAPI_FAMILY) && (WINAPI_FAMILY == WINAPI_FAMILY_APP)
 #define UWP
 #define UWP_SDL2

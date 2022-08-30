@@ -11,21 +11,12 @@
 #include "Setup/Platform/EMULATOR_PLATFORM_SETUP.H"
 #include "Setup/Platform/EMULATOR_PLATFORM_INCLUDES.H"
 #include "Debug/EMULATOR_LOG.H"
+#include "Core/Render/EMULATOR_RENDER_COMMON.H"
 
 //#define USE_THREADS
 
 #if defined(USE_THREADS)
 #include <thread>
-#endif
-
-#ifndef TRUE
-#define TRUE		1
-#endif
-#ifndef FALSE
-#define FALSE		0
-#endif
-#ifndef NULL
-#define NULL		0
 #endif
 
 #if !((defined OGL) || (defined(OGLES) && OGLES_VERSION == 3))
@@ -34,23 +25,10 @@
 #define glDeleteVertexArrays    glDeleteVertexArraysOES
 #endif
 
-
 #if defined(OGL) || defined(OGLES)
 #define VRAM_FORMAT            GL_RG
 #define VRAM_INTERNAL_FORMAT   GL_RG8
 #endif
-
-#define LUT_WIDTH (256)
-#define LUT_HEIGHT (256)
-
-#define VRAM_WIDTH (1024)
-#define VRAM_HEIGHT (512)
-
-#define TPAGE_WIDTH (256)
-#define TPAGE_HEIGHT (256)
-
-#define CLUT_WIDTH (16)
-#define CLUT_HEIGHT (1)
 
 #define CTR_RUNNING (0)
 #define CTR_STOPPED (1)
@@ -120,67 +98,14 @@ typedef struct
 
 extern SysCounter counters[3];
 
-#pragma pack(push,1)
-struct Vertex
-{
-#if defined(PGXP)
-	float  x, y, page, clut;
-#else
-	short  x, y, page, clut;
-#endif
-	u_char u, v, bright, dither;
-	u_char r, g, b, a;
-#if defined(PGXP)
-	float z, w;
-#endif
-};
-#pragma pack(pop)
+extern unsigned short vram[];
 
-enum ShaderAttrib
-{
-	a_position,
-	a_texcoord,
-	a_color,
-#if defined(PGXP)
-	a_w,
-	a_z
-#endif
-};
-
-enum BlendMode
-{
-	BM_NONE,
-	BM_AVERAGE,
-	BM_ADD,
-	BM_SUBTRACT,
-	BM_ADD_QUATER_SOURCE,
-	BM_COUNT
-};
-
-enum TexFormat
-{
-	TF_4_BIT,
-	TF_8_BIT,
-	TF_16_BIT,
-	TF_COUNT
-};
-
-#define MAX_NUM_POLY_BUFFER_VERTICES (12040)
-#define MAX_NUM_INDEX_BUFFERS        (4096)
-
-#if defined(OGLES) || defined(OGL)
+#if defined(OGLES)
 typedef GLuint TextureID;
 typedef GLuint ShaderID;
 typedef GLuint RenderTargetID;
 #elif defined(D3D9) || defined(XED3D)
-typedef IDirect3DTexture9* TextureID;
 
-struct ShaderID {
-	IDirect3DVertexShader9* VS;
-	IDirect3DPixelShader9* PS;
-};
-
-typedef IDirect3DSurface9* RenderTargetID;
 #elif defined(D3D11)
 typedef ID3D11ShaderResourceView* TextureID;
 
@@ -251,30 +176,21 @@ typedef void* RenderTargetID;
 
 extern ShaderID* g_shaders[];
 
-#else
-	#error
 #endif
 
-extern int vram_need_update;
+
 extern bool begin_scene_flag;
 extern bool vbo_was_dirty_flag;
 extern TextureID rg8lutTexture;
 extern TextureID whiteTexture;
 extern TextureID vramTexture;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-extern void* Emulator_GenerateRG8LUT();
-extern int  Emulator_CreateCommonResources();
 extern void Emulator_SaveVRAM(const char* outputFileName, int x, int y, int width, int height, int bReadFromFrameBuffer);
 extern void Emulator_CopyVRAM(unsigned short* src, int x, int y, int w, int h, int dst_x, int dst_y);
 extern void Emulator_ReadVRAM(unsigned short* dst, int x, int y, int dst_w, int dst_h);
 extern void Emulator_UpdateVRAM();
 extern void Emulator_BlitVRAM();
 extern void Emulator_ShutDown();
-extern void Emulator_SwapWindow();
 extern void Emulator_SetBlendMode(BlendMode blendMode);
 extern void Emulator_CounterLoop();
 extern int Emulator_BeginScene();
@@ -309,13 +225,10 @@ extern void Emulator_GenerateColourArrayQuad(struct Vertex* vertex, unsigned cha
 extern void Emulator_DestroyTexture(TextureID texture);
 extern void Emulator_Clear(int x, int y, int w, int h, unsigned char r, unsigned char g, unsigned char b);
 extern void Emulator_SetViewPort(int x, int y, int width, int height);
-extern void Emulator_SetTexture(TextureID texture, TexFormat texFormat);
 extern void Emulator_SetRenderTarget(const RenderTargetID& render_target);
 extern void Emulator_SetWireframe(bool enable);
-extern void Emulator_UpdateVertexBuffer(const Vertex* vertices, int count);
 extern void Emulator_DrawTriangles(int start_vertex, int triangles);
 extern void Emulator_UpdateToActiveDrawEnv();
-extern void Emulator_Ortho2D(float left, float right, float bottom, float top, float znear, float zfar);
 
 extern void Emulator_CreateGlobalShaders();
 extern void Emulator_DestroyGlobalShaders();
@@ -323,12 +236,11 @@ extern void Emulator_GenerateCommonTextures();
 
 extern void Emulator_DoPollEvent();
 extern void Emulator_UpdateInput();
+extern void Emulator_CreateMemoryCard(int channel);
 
-#ifdef __cplusplus
-}
-#endif
-
-#if defined(D3D11)
+#if defined(OGL)
+extern int Emulator_InitialiseGLContext(char* windowName);
+#elif defined(D3D11)
 extern void Emulator_CreateConstantBuffers();
 extern void Emulator_UpdateProjectionConstantBuffer(float* ortho);
 extern void Emulator_SetConstantBuffers();
@@ -390,11 +302,6 @@ extern void Emulator_DestroyDescriptorPool();
 extern void Emulator_DestroyVulkanRenderPass();
 extern void Emulator_SetShader(const ShaderID& shader);
 extern void Emulator_DestroyVulkanImageViews();
-
-extern ShaderID g_gte_shader_4;
-extern ShaderID g_gte_shader_8;
-extern ShaderID g_gte_shader_16;
-extern ShaderID g_blit_shader;
 #endif
 
 #if defined(D3D9) || defined(XED3D)

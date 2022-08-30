@@ -6,7 +6,7 @@
 #include "Debug/CRASHHANDLER.H"
 #include "Debug/BOUNTY_LIST.H"
 #include "Core/Input/EMULATOR_INPUT.H"
-#include "Setup/Platform/EMULATOR_PLATFORM_SETUP.H"
+#include "Core/Render/EMULATOR_RENDER_COMMON.H"
 
 #include "LIBGPU.H"
 #include "LIBGTE.H"
@@ -17,36 +17,10 @@
 #endif
 #include <assert.h>
 
-#if defined(_DEBUG)
-extern "C" int docop2(int op);
-#endif
 
-#if defined(D3D9)
-const char* renderBackendName = "D3D9";
-#elif defined(D3D11)
-const char* renderBackendName = "D3D11";
-#elif defined(D3D12)
-const char* renderBackendName = "D3D12";
-#elif defined(VULKAN)
-const char* renderBackendName = "Vulkan";
-#elif defined(OGL)
-const char* renderBackendName = "OpenGL 3.3";
-#elif defined(OGLES)
-#if OGLES_VERSION == 2
-const char* renderBackendName = "OpenGLES 2.0";
-#elif OGLES_VERSION == 3
-const char* renderBackendName = "OpenGLES 3.0";
+#if defined(SDL2) || (defined(OGLES) && defined(_WINDOWS))
+extern SDL_Window* g_window;
 #endif
-#endif
-
-#if defined(_DEBUG)//60FPS
-#define FIXED_TIME_STEP    16
-#else
-#define FIXED_TIME_STEP    33
-#endif
-#define SWAP_INTERVAL      1
-
-unsigned int g_resetDeviceOnNextFrame = FALSE;
 
 #if defined(NTSC_VERSION)
 #define COUNTER_UPDATE_INTERVAL (263)
@@ -56,12 +30,6 @@ unsigned int g_resetDeviceOnNextFrame = FALSE;
 
 #include <stdio.h>
 #include <string.h>
-
-#if defined(SDL2) || (defined(OGLES) && defined(_WINDOWS))
-SDL_Window* g_window = NULL;
-#endif
-
-int g_PreviousBlendMode = BM_NONE;
 
 #if defined(D3D11)
 ID3D11Texture2D* vramBaseTexture;
@@ -321,18 +289,10 @@ void CreateUWPApplication()
 #endif
 
 #endif
-TextureID vramTexture;
-TextureID whiteTexture;
-TextureID rg8lutTexture;
 
-#if defined(OGLES) || defined(OGL)
+#if defined(OGLES)
 	GLuint dynamic_vertex_buffer;
 	GLuint dynamic_vertex_array;
-#elif defined(D3D9) || defined(XED3D)
-	IDirect3DVertexBuffer9 *dynamic_vertex_buffer = NULL;
-	IDirect3D9             *d3d;
-	IDirect3DDevice9       *d3ddev;
-	D3DPRESENT_PARAMETERS  d3dpp;
 #elif defined(D3D11)
 	ID3D11Buffer			*dynamic_vertex_buffer = NULL;
 	ID3D11Device			*d3ddev;
@@ -472,8 +432,6 @@ TextureID rg8lutTexture;
 #endif
 
 int g_otSize = 0;
-int windowWidth = 0;
-int windowHeight = 0;
 char* pVirtualMemory = NULL;
 SysCounter counters[3] = { 0 };
 #if !defined(__ANDROID__)
@@ -484,19 +442,13 @@ std::thread counter_thread;
 #define free SDL_free
 #endif
 
-unsigned int g_swapTime;
-int g_swapInterval = SWAP_INTERVAL;
-int g_wireframeMode = 0;
 int g_texturelessMode = 0;
 int g_emulatorPaused = 0;
-TextureID g_lastBoundTexture[2];
-int vram_need_update = TRUE;
 
+#if !defined(OGL) && !defined(D3D9)
 void Emulator_ResetDevice()
 {
-#if defined(OGL)
-	SDL_GL_SetSwapInterval(g_swapInterval);
-#elif defined(EGL) || defined(OGLES)///@TODO &&
+#if defined(EGL) || defined(OGLES)///@TODO &&
 	extern EGLDisplay eglDisplay;
 	eglSwapInterval(eglDisplay, g_swapInterval);
 #elif defined(D3D9) || defined(XED3D)
@@ -1280,7 +1232,7 @@ void Emulator_ResetDevice()
 }
 
 #if defined(D3D9) || defined(XED3D)
-static int Emulator_InitialiseD3D9Context(char* windowName)
+int Emulator_InitialiseD3D9Context(char* windowName)
 {
 #if defined(SDL2)
 	g_window = SDL_CreateWindow(windowName, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, windowWidth, windowHeight, SDL_WINDOW_RESIZABLE);
@@ -1331,6 +1283,7 @@ static int Emulator_InitialiseD3D9Context(char* windowName)
 
 	return TRUE;
 }
+#endif
 #endif
 
 #if defined(D3D11)
@@ -2390,27 +2343,6 @@ static int Emulator_InitialiseVulkanContext(char* windowName)
 }
 #endif
 
-static int Emulator_InitialiseGLContext(char* windowName)
-{
-#if defined(SDL2)
-	g_window = SDL_CreateWindow(windowName, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, windowWidth, windowHeight, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
-#endif
-
-#if defined(OGL)
-	SDL_GL_CreateContext(g_window);
-#endif
-
-#if defined(SDL2)
-	if (g_window == NULL)
-	{
-		eprinterr("Failed to initialise SDL window or GL context!\n");
-		return FALSE;
-	}
-#endif
-
-	return TRUE;
-}
-
 #if defined(OGLES)
 EGLint majorVersion = 0, minorVersion = 0;
 EGLContext eglContext = NULL;
@@ -2517,10 +2449,6 @@ static int Emulator_InitialiseSDL2(char* windowName, int width, int height)
 #else
 	windowWidth  = width;
 	windowHeight = height;
-#endif
-
-#if defined(_DEBUG)	
-	docop2(0x1A0003E);
 #endif
 
 #if defined(SDL2)
@@ -2948,6 +2876,70 @@ void Emulator_GenerateVertexArrayQuad(struct Vertex* vertex, short* p0, short* p
 	assert(p1);
 	assert(p2);
 	assert(p3);
+
+	//If vertical line quad
+	if (p0[0] == p1[0] && p0[0] == p2[0] && p0[0] == p3[0])
+	{
+		short maxXY[2];
+		short minXY[2];
+
+		short x = p0[0];
+		short minY = p0[1];
+		short maxY = p0[1];
+
+		if (minY > p1[1])
+		{
+			minY = p1[1];
+		}
+
+		if (minY > p2[1])
+		{
+			minY = p2[1];
+		}
+
+		if (minY > p3[1])
+		{
+			minY = p3[1];
+		}
+
+		if (maxY < p1[1])
+		{
+			maxY = p1[1];
+		}
+
+		if (maxY < p2[1])
+		{
+			maxY = p2[1];
+		}
+
+		if (maxY < p3[1])
+		{
+			maxY = p3[1];
+		}
+
+		minXY[0] = x;
+		minXY[1] = minY;
+		maxXY[0] = x;
+		maxXY[1] = maxY;
+
+		//Emulator_GenerateLineArray(vertex, &minXY[0], &maxXY[0]);
+
+		//return;
+
+		vertex[0].x = (float)x;
+		vertex[0].y = (float)minY;
+
+		vertex[1].x = (float)x + 1;
+		vertex[1].y = (float)minY;
+
+		vertex[2].x = (float)x + 1;
+		vertex[2].y = (float)maxY;
+
+		vertex[3].x = (float)x;
+		vertex[3].y = (float)maxY;
+
+		return;
+	}
 
 #if defined(PGXP)
 
@@ -3570,12 +3562,7 @@ void Emulator_GenerateColourArrayQuad(struct Vertex* vertex, unsigned char* col0
 	}
 }
 
-ShaderID g_gte_shader_4;
-ShaderID g_gte_shader_8;
-ShaderID g_gte_shader_16;
-ShaderID g_blit_shader;
-
-#if defined(OGLES) || defined(OGL)
+#if defined(OGLES)
 GLint u_Projection;
 
 #define GTE_DISCARD\
@@ -3869,32 +3856,7 @@ ShaderID Shader_Compile(const char *source)
 }
 #elif defined(D3D9) || defined(XED3D)
 
-#include "shaders/D3D9/gte_shader_4_vs.h"
-#include "shaders/D3D9/gte_shader_4_ps.h"
-#include "shaders/D3D9/gte_shader_8_vs.h"
-#include "shaders/D3D9/gte_shader_8_ps.h"
-#include "shaders/D3D9/gte_shader_16_vs.h"
-#include "shaders/D3D9/gte_shader_16_ps.h"
-#include "shaders/D3D9/blit_shader_vs.h"
-#include "shaders/D3D9/blit_shader_ps.h"
 
-// shader registers
-const int u_Projection = 0;
-
-LPDIRECT3DVERTEXDECLARATION9 vertexDecl;
-
-#define Shader_Compile(name) Shader_Compile_Internal((DWORD*)name##_vs, (DWORD*)name##_ps)
-
-ShaderID Shader_Compile_Internal(const DWORD *vs_data, const DWORD *ps_data)
-{
-	ShaderID shader;
-	HRESULT hr;
-	hr = d3ddev->CreateVertexShader(vs_data, &shader.VS);
-	assert(!FAILED(hr));
-	hr = d3ddev->CreatePixelShader(ps_data, &shader.PS);
-	assert(!FAILED(hr));
-	return shader;
-}
 
 #elif defined(D3D11)
 
@@ -4271,36 +4233,9 @@ ShaderID Shader_Compile_Internal(const DWORD* vs_data, const DWORD* ps_data, con
 
 	return shader;
 }
-
-#else
-    #error
 #endif
 
-void Emulator_CreateGlobalShaders()
-{
-#if defined(D3D12) || defined(VULKAN)
-	Emulator_CreateRasterState(FALSE);
-#endif
 
-#if defined(VULKAN)
-	Emulator_SetViewPort(0, 0, windowWidth, windowHeight);//For intial viewport
-#endif
-
-	g_gte_shader_4  = Shader_Compile(gte_shader_4);
-	g_gte_shader_8  = Shader_Compile(gte_shader_8);
-	g_gte_shader_16 = Shader_Compile(gte_shader_16);
-	g_blit_shader   = Shader_Compile(blit_shader);
-
-#if defined(VULKAN)
-	Emulator_CreateDescriptorSets();
-
-	Emulator_SetShader(g_gte_shader_4);
-#endif
-
-#if defined(OGL) || defined(OGLES)
-	u_Projection = glGetUniformLocation(g_gte_shader_4, "Projection");
-#endif
-}
 
 #if defined(D3D11)
 void Emulator_DestroyGlobalShaders()
@@ -4468,65 +4403,7 @@ void Emulator_DestroyGlobalShaders()
 }
 #endif
 
-unsigned short vram[VRAM_WIDTH * VRAM_HEIGHT];
-
-unsigned char rgLUT[LUT_WIDTH * LUT_HEIGHT * sizeof(unsigned int)];
-
-void* Emulator_GenerateRG8LUT()
-{
-#pragma pack(push, 1)
-	struct pixel
-	{
-#if defined(D3D9)
-		unsigned char b;
-		unsigned char g;
-		unsigned char r;
-		unsigned char a;
-#else
-		unsigned char r;
-		unsigned char g;
-		unsigned char b;
-		unsigned char a;
-#endif
-	};
-#pragma pack(pop)
-
-	for (int y = 0; y < LUT_HEIGHT; y++)
-	{
-		for (int x = 0; x < LUT_WIDTH; x++)
-		{	
-			short c = (y << 8) | x;
-
-			pixel* p = (pixel*)&rgLUT[(y * (LUT_HEIGHT * sizeof(unsigned int))) + x * sizeof(unsigned int)];
-
-			p->a = 255;// ((c & 0x8000)) << 3;
-			p->b = ((c & 0x7C00) >> 10) << 3;
-			p->g = ((c & 0x3E0) >> 5) << 3;
-			p->r = ((c & 0x1F)) << 3;
-
-		}
-	}
-
-#if !defined(__EMSCRIPTEN__) && !defined(__ANDROID__) && defined(DEBUG_RG8LUT)
-	FILE* f = fopen("RG8LUT.TGA", "wb");
-	unsigned char TGAheader[12] = { 0,0,2,0,0,0,0,0,0,0,0,0 };
-	unsigned char header[6];
-	header[0] = (LUT_WIDTH % 256);
-	header[1] = (LUT_WIDTH / 256);
-	header[2] = (LUT_HEIGHT % 256);
-	header[3] = (LUT_HEIGHT / 256);
-	header[4] = 32;
-	header[5] = 0;
-
-	fwrite(TGAheader, sizeof(unsigned char), 12, f);
-	fwrite(header, sizeof(unsigned char), 6, f);
-	fwrite(rgLUT, sizeof(rgLUT), 1, f);
-	fclose(f);
-#endif
-
-	return rgLUT;
-}
-
+#if !defined(OGL) && !defined(D3D9)
 void Emulator_GenerateCommonTextures()
 {
 	unsigned int pixelData = 0xFFFFFFFF;
@@ -4762,7 +4639,9 @@ void Emulator_GenerateCommonTextures()
 	#error
 #endif
 }
+#endif
 
+#if !defined(OGL) && !defined(D3D9)
 int Emulator_CreateCommonResources()
 {
 	memset(vram, 0, VRAM_WIDTH * VRAM_HEIGHT * sizeof(unsigned short));
@@ -4775,7 +4654,7 @@ int Emulator_CreateCommonResources()
 	Emulator_CreateConstantBuffers();
 #endif
 
-#if defined(OGL) || defined(OGLES)
+#if defined(OGLES)
 	glDisable(GL_DEPTH_TEST);
 	glBlendColor(0.5f, 0.5f, 0.5f, 0.25f);
 
@@ -4955,14 +4834,13 @@ int Emulator_CreateCommonResources()
 	Emulator_TransitionImageLayout(vramTexture.textureImage, VK_FORMAT_R8G8_UNORM, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
 	Emulator_CreateGlobalShaders();
-#else
-	#error
 #endif
 
 	Emulator_ResetDevice();
 
 	return TRUE;
 }
+
 
 void Emulator_Ortho2D(float left, float right, float bottom, float top, float znear, float zfar)
 {
@@ -4986,7 +4864,7 @@ void Emulator_Ortho2D(float left, float right, float bottom, float top, float zn
 		x, y, z, 1
 	};
 
-#if defined(OGL) || defined(OGLES)
+#if defined(OGLES)
 	glUniformMatrix4fv(u_Projection, 1, GL_FALSE, ortho);
 #elif defined(D3D9) || defined(XED3D)
 	d3ddev->SetVertexShaderConstantF(u_Projection, ortho, 4);
@@ -4997,11 +4875,11 @@ void Emulator_Ortho2D(float left, float right, float bottom, float top, float zn
 	Emulator_UpdateProjectionConstantBuffer(ortho);
 #elif defined(VULKAN)
 	Emulator_UpdateProjectionConstantBuffer(ortho);
-#else
-	#error
 #endif
 }
+#endif
 
+#if !defined(OGL) && !defined(D3D9)
 void Emulator_SetShader(const ShaderID &shader)
 {
 #if defined(OGL) || defined(OGLES)
@@ -5040,7 +4918,9 @@ void Emulator_SetShader(const ShaderID &shader)
 	Emulator_Ortho2D(0.0f, activeDispEnv.disp.w, activeDispEnv.disp.h, 0.0f, 0.0f, 1.0f);
 #endif
 }
+#endif
 
+#if !defined(OGL) && !defined(D3D9)
 void Emulator_SetTexture(TextureID texture, TexFormat texFormat)
 {
 	switch (texFormat)
@@ -5159,7 +5039,9 @@ void Emulator_SetTexture(TextureID texture, TexFormat texFormat)
 	g_lastBoundTexture[0] = texture;
 	g_lastBoundTexture[1] = rg8lutTexture;
 }
+#endif
 
+#if !defined(OGL) && !defined(D3D9)
 void Emulator_DestroyTexture(TextureID texture)
 {
 #if defined(OGL) || defined(OGLES)
@@ -5175,8 +5057,10 @@ void Emulator_DestroyTexture(TextureID texture)
     #error
 #endif
 }
+#endif
 
-extern void Emulator_Clear(int x, int y, int w, int h, unsigned char r, unsigned char g, unsigned char b)
+#if !defined(OGL) && !defined(D3D9)
+void Emulator_Clear(int x, int y, int w, int h, unsigned char r, unsigned char g, unsigned char b)
 {
 // TODO clear rect if it's necessary
 ///@FIXME set scissor!
@@ -5219,10 +5103,11 @@ extern void Emulator_Clear(int x, int y, int w, int h, unsigned char r, unsigned
 	#error
 #endif
 }
+#endif
 
 #define NOFILE 0
 
-#if !defined(__EMSCRIPTEN__) && !defined(__ANDROID__)
+#if !defined(__EMSCRIPTEN__) && !defined(__ANDROID__) && !defined(OGL) && !defined(D3D9)
 
 void Emulator_SaveVRAM(const char* outputFileName, int x, int y, int width, int height, int bReadFromFrameBuffer)
 {
@@ -5273,6 +5158,7 @@ void Emulator_SaveVRAM(const char* outputFileName, int x, int y, int width, int 
 }
 #endif
 
+#if !defined(OGL) && !defined(D3D9)
 void Emulator_StoreFrameBuffer(int x, int y, int w, int h)
 {
 	short *fb = (short*)malloc(w * h * sizeof(short));
@@ -5407,6 +5293,7 @@ void Emulator_StoreFrameBuffer(int x, int y, int w, int h)
 
 	vram_need_update = TRUE;
 }
+#endif
 
 void Emulator_CopyVRAM(unsigned short *src, int x, int y, int w, int h, int dst_x, int dst_y)
 {
@@ -5441,6 +5328,7 @@ void Emulator_ReadVRAM(unsigned short *dst, int x, int y, int dst_w, int dst_h)
 	}
 }
 
+#if !defined(OGL) && !defined(D3D9)
 void Emulator_UpdateVRAM()
 {
 	if (!vram_need_update) {
@@ -5557,6 +5445,7 @@ void Emulator_UpdateVRAM()
 
 #endif
 }
+#endif
 
 void Emulator_BlitVRAM()
 {
@@ -5674,9 +5563,6 @@ void Emulator_DoPollEvent()
 #endif
 }
 
-bool begin_scene_flag = FALSE;
-bool vbo_was_dirty_flag = FALSE;
-
 int Emulator_BeginScene()
 {
 	Emulator_DoPollEvent();
@@ -5703,7 +5589,7 @@ int Emulator_BeginScene()
 	g_lastBoundTexture[1] = NULL;
 #endif
 
-#if defined(OGL) || defined(OGLES)
+#if defined(OGLES)
 	glBindVertexArray(dynamic_vertex_array);
 #elif defined(D3D9) || defined(XED3D)
 	d3ddev->BeginScene();
@@ -5739,18 +5625,13 @@ int Emulator_BeginScene()
 	}
 
 	vkCmdBindVertexBuffers(commandBuffers[currentFrame], 0, 1, vertexBuffers, offsets);
-#else
-	#error
 #endif
 
 #if !defined(VULKAN) && !defined(D3D12)
 	Emulator_UpdateVRAM();
 #endif
 
-#if !defined(_PATCH)
 	Emulator_SetViewPort(0, 0, windowWidth, windowHeight);
-	Emulator_Ortho2D(0.0f, activeDispEnv.disp.w, activeDispEnv.disp.h, 0.0f, 0.0f, 1.0f);
-#endif
 
 	begin_scene_flag = TRUE;
 
@@ -5791,6 +5672,63 @@ int Emulator_GetScreenshotNumber(int mode)
 	return fileNumber - 1;
 }
 
+void Emulator_CreateMemoryCard(int channel)
+{
+	char buf[16];
+	sprintf(&buf[0], "%ld.MCD", channel);
+	FILE* f = fopen(buf, "wb+");
+#define MEMCARD_LENGTH 0x1C000
+	unsigned short magic = 0x434D;
+	fwrite(&magic, sizeof(unsigned short), 1, f);
+
+	fseek(f, 125, SEEK_CUR);
+	
+	unsigned char unk4 = 0xE;
+	fwrite(&unk4, sizeof(unsigned char), 1, f);
+
+	for (int i = 0; i < 15; i++)
+	{
+		unsigned char unk1 = 0xA0;
+
+		fwrite(&unk1, sizeof(unsigned char), 1, f);
+		fseek(f, 7, SEEK_CUR);
+
+		unsigned short unk2 = 0xFFFF;
+		fwrite(&unk2, sizeof(unsigned short), 1, f);
+		fseek(f, 117, SEEK_CUR);
+
+		fwrite(&unk1, sizeof(unsigned char), 1, f);
+	}
+
+	for (int i = 0; i < 20; i++)
+	{
+		unsigned int unk3 = 0xFFFFFFFF;
+		fwrite(&unk3, sizeof(unsigned int), 1, f);
+		fseek(f, 124, SEEK_CUR);
+	}
+
+	for (int i = 0; i < 864; i++)
+	{
+		unsigned int unk5 = 0xFFFFFFFF;
+		fwrite(&unk5, sizeof(unsigned int), 1, f);
+	}
+
+	fwrite(&magic, sizeof(unsigned short), 1, f);
+
+	fseek(f, 125, SEEK_CUR);
+
+	unk4 = 0xE;
+	fwrite(&unk4, sizeof(unsigned char), 1, f);
+
+	for (int i = 0; i < 30720; i++)
+	{
+		unsigned int unk6 = 0xFFFFFFFF;
+		fwrite(&unk6, sizeof(unsigned int), 1, f);
+	}
+
+	fclose(f);
+
+}
 void Emulator_TakeScreenshot(int mode)
 {
 #if defined(SDL2)
@@ -6101,6 +6039,7 @@ unsigned int Emulator_GetFPS()
 	
 }
 
+#if !defined(OGL) && !defined(D3D9)
 void Emulator_SwapWindow()
 {
 	unsigned int timer = 1;
@@ -6180,7 +6119,9 @@ void Emulator_SwapWindow()
 	glFinish();
 #endif
 }
+#endif
 
+#if !defined(OGL) && !defined(D3D9)
 void Emulator_WaitForTimestep(int count)
 {
 #if defined(SDL2)
@@ -6210,6 +6151,7 @@ void Emulator_WaitForTimestep(int count)
 	g_swapTime = GetTickCount();
 #endif
 }
+#endif
 
 void Emulator_EndScene()
 {
@@ -6289,6 +6231,7 @@ void Emulator_ShutDown()
 	exit(EXIT_SUCCESS);
 }
 
+#if !defined(OGL) && !defined(D3D9)
 void Emulator_SetBlendMode(BlendMode blendMode)
 {
 	if (g_PreviousBlendMode == blendMode)
@@ -6606,6 +6549,7 @@ void Emulator_SetBlendMode(BlendMode blendMode)
 
 	g_PreviousBlendMode = blendMode;
 }
+#endif
 
 void Emulator_SetPGXPVertexCount(int vertexCount)
 {
@@ -6614,6 +6558,7 @@ void Emulator_SetPGXPVertexCount(int vertexCount)
 #endif
 }
 
+#if !defined(OGL) && !defined(D3D9)
 void Emulator_SetViewPort(int x, int y, int width, int height)
 {
 	float offset_x = (float)activeDispEnv.screen.x;
@@ -6689,6 +6634,9 @@ void Emulator_SetRenderTarget(const RenderTargetID &frameBufferObject)
 #endif
 }
 
+#endif
+
+#if !defined(OGL) && !defined(D3D9)
 void Emulator_SetWireframe(bool enable)
 {
 #if defined(OGL)
@@ -6705,7 +6653,9 @@ void Emulator_SetWireframe(bool enable)
 #error
 #endif
 }
+#endif
 
+#if !defined(OGL) && !defined(D3D9)
 void Emulator_UpdateVertexBuffer(const Vertex *vertices, int num_vertices)
 {
 	assert(num_vertices <= MAX_NUM_POLY_BUFFER_VERTICES);
@@ -6767,7 +6717,9 @@ void Emulator_UpdateVertexBuffer(const Vertex *vertices, int num_vertices)
 
 	vbo_was_dirty_flag = TRUE;
 }
+#endif
 
+#if !defined(OGL) && !defined(D3D9)
 void Emulator_DrawTriangles(int start_vertex, int triangles)
 {
 	if(triangles <= 0)
@@ -6798,6 +6750,7 @@ void Emulator_DrawTriangles(int start_vertex, int triangles)
 	#error
 #endif
 }
+#endif
 
 #if defined(D3D11)
 void Emulator_CreateConstantBuffers()

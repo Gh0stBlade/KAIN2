@@ -1,0 +1,5 @@
+#ifndef EMULATOR_RENDER_D3D12_H
+#define EMULATOR_RENDER_D3D12_H
+
+
+#endif

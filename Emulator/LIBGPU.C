@@ -1,19 +1,11 @@
 #include "LIBGPU.H"
-#include "LIBGTE.H"
-
 #include "EMULATOR.H"
 #include "EMULATOR_GLOBALS.H"
-#include "Render/EMULATOR_RENDER.H"
 #include "Public/EMULATOR_PUBLIC.H"
 
 #include <stdint.h>
 
 #include "LIBETC.H"
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <assert.h>
 
 
 DISPENV activeDispEnv;
@@ -441,8 +433,8 @@ void DrawOTag(u_long* p)
 	}
 
 	Emulator_AggregatePTAGsToSplits(p, FALSE);
-
 	Emulator_DrawAggregatedSplits();
+
 	Emulator_EndScene();
 
 #if defined(PGXP)

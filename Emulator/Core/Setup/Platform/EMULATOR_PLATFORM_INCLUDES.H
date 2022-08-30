@@ -2,6 +2,12 @@
 #define EMULATOR_PLATFORM_INCLUDES_H
 
 /*
+ * Assert inclusion
+ */
+
+#include "Core/Debug/EMULATOR_ASSERT.H"
+
+/*
  * glew.h inclusion.
  */
 
@@ -46,6 +52,7 @@
 
 #if defined (OGL)
 #include <SDL_opengl.h>///@FIXME see mac!
+#include "Core/Render/OGL/EMULATOR_RENDER_OGL.H"
 #elif defined (OGLES)
 #if OGLES_VERSION == 2
 #define GL_GLEXT_PROTOTYPES
@@ -55,6 +62,7 @@
 #include <GLES3/gl3.h>
 #endif
 #include <EGL/egl.h>
+#include "Core/Render/OGL/EMULATOR_RENDER_OGLES.H"
 #if defined(__EMSCRIPTEN__)
 #include <SDL2/SDL_egl.h>
 #include <SDL2/SDL_syswm.h>
@@ -65,6 +73,7 @@
 #include <Windows.h>
 #include <d3d9.h>
 #include <SDL_syswm.h>
+#include "Core/Render/D3D9/EMULATOR_RENDER_D3D9.H"
 #elif defined(D3D11)
 #if defined(UWP)
 #include <d3d11_3.h>
@@ -74,20 +83,24 @@
 #if defined(SDL2)
 #include <SDL_syswm.h>
 #endif
+#include "Core/Render/D3D11/EMULATOR_RENDER_D3D11.H"
 #elif defined(D3D12)
 #include <d3dx12.h>
 #include <SDL_syswm.h>
 #include <dxgi1_4.h>
+#include "Core/Render/D3D12/EMULATOR_RENDER_D3D12.H"
 #elif defined(XED3D)
 #include <xtl.h>
 #include <xgraphics.h>
 #if _XDK_VER != 21256
 #error "Invalid XDK version"
 #endif
+#include "Core/Render/XED3D/EMULATOR_RENDER_XED3D.H"
 #endif
 
 #if !defined (__EMSCRIPTEN__)
   //#include <SDL_gamecontroller.h>
 #endif
+
 
 #endif

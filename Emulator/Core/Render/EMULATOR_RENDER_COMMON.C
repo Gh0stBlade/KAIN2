@@ -1,4 +1,4 @@
-#include "EMULATOR_RENDER.H"
+#include "EMULATOR_RENDER_COMMON.H"
 #include "EMULATOR_GLOBALS.H"
 #include "LIBGPU.H"
 
@@ -6,6 +6,34 @@
 #include <string.h>
 
 //#define DEBUG_POLY_COUNT
+int vram_need_update;
+
+unsigned short vram[VRAM_WIDTH * VRAM_HEIGHT];
+
+unsigned char rgLUT[LUT_WIDTH * LUT_HEIGHT * sizeof(unsigned int)];
+
+unsigned int g_swapTime;
+int g_wireframeMode = 0;
+int g_swapInterval = SWAP_INTERVAL;
+int g_PreviousBlendMode = BM_NONE;
+int windowWidth = 0;
+int windowHeight = 0;
+unsigned int g_resetDeviceOnNextFrame = FALSE;
+unsigned int g_resettingDevice = FALSE;
+
+bool begin_scene_flag = FALSE;
+bool vbo_was_dirty_flag = FALSE;
+TextureID g_lastBoundTexture[2];
+
+ShaderID g_gte_shader_4;
+ShaderID g_gte_shader_8;
+ShaderID g_gte_shader_16;
+ShaderID g_blit_shader;
+
+TextureID vramTexture;
+TextureID whiteTexture;
+TextureID rg8lutTexture;
+
 
 struct POLY_G3_SEMITRANS 
 {
@@ -806,7 +834,7 @@ void Emulator_DrawAggregatedSplits()
 	Emulator_ClearVBO();
 }
 
-void Emulator_AggregatePTAGsToSplits(u_long* p, bool singlePrimitive)
+void Emulator_AggregatePTAGsToSplits(unsigned long* p, bool singlePrimitive)
 {
 	if (!p)
 		return;
@@ -844,4 +872,58 @@ void Emulator_AggregatePTAGsToSplits(u_long* p, bool singlePrimitive)
 			pTag = (P_TAG*)pTag->addr;
 		}
 	}
+}
+
+void* Emulator_GenerateRG8LUT()
+{
+#pragma pack(push, 1)
+	struct pixel
+	{
+#if defined(D3D9)
+		unsigned char b;
+		unsigned char g;
+		unsigned char r;
+		unsigned char a;
+#else
+		unsigned char r;
+		unsigned char g;
+		unsigned char b;
+		unsigned char a;
+#endif
+	};
+#pragma pack(pop)
+
+	for (int y = 0; y < LUT_HEIGHT; y++)
+	{
+		for (int x = 0; x < LUT_WIDTH; x++)
+		{
+			short c = (y << 8) | x;
+
+			pixel* p = (pixel*)&rgLUT[(y * (LUT_HEIGHT * sizeof(unsigned int))) + x * sizeof(unsigned int)];
+
+			p->a = 255;// ((c & 0x8000)) << 3;
+			p->b = ((c & 0x7C00) >> 10) << 3;
+			p->g = ((c & 0x3E0) >> 5) << 3;
+			p->r = ((c & 0x1F)) << 3;
+		}
+	}
+
+#if !defined(__EMSCRIPTEN__) && !defined(__ANDROID__) && defined(DEBUG_RG8LUT)
+	FILE* f = fopen("RG8LUT.TGA", "wb");
+	unsigned char TGAheader[12] = { 0,0,2,0,0,0,0,0,0,0,0,0 };
+	unsigned char header[6];
+	header[0] = (LUT_WIDTH % 256);
+	header[1] = (LUT_WIDTH / 256);
+	header[2] = (LUT_HEIGHT % 256);
+	header[3] = (LUT_HEIGHT / 256);
+	header[4] = 32;
+	header[5] = 0;
+
+	fwrite(TGAheader, sizeof(unsigned char), 12, f);
+	fwrite(header, sizeof(unsigned char), 6, f);
+	fwrite(rgLUT, sizeof(rgLUT), 1, f);
+	fclose(f);
+#endif
+
+	return &rgLUT[0];
 }
