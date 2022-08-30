@@ -170,7 +170,7 @@ void DisplayMenuBox(int x0, int x1, int y0, int y1)
 	ext.xmin = x0;
 	ext.xmax = x1;
 
-	ot = &primPool->nextPrim;
+	ot = gameTrackerX.drawOT + (1 * 2);
 
 	while (y1 < (dy[slice0] << 1))
 	{
