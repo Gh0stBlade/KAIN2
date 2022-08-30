@@ -852,7 +852,7 @@ extern int gte_ldlzc(int input);
 	  */
 
 #define gte_stsxy( r0 )          \
-	((int*)r0)[0] = SXY2;       \
+	((int*)r0)[0] = SXY2;        \
 
 #define gte_stsxy3( r0, r1, r2 ) \
 	((int*)&r0)[0] = SXY0;       \
@@ -987,11 +987,8 @@ extern int gte_ldlzc(int input);
 	: "r"( r0 )						\
 	: "$12", "$13", "memory" )
 
-#define gte_stsz( r0 ) __asm__ volatile (			\
-	"swc2	$19, 0( %0 )"					\
-	:							\
-	: "r"( r0 )						\
-	: "memory" )
+#define gte_stsz( r0 )          \
+	((int*)r0)[0] = SZ3;        \
 
 #define gte_stsz3( r0, r1, r2 ) \
 	r0 = SZ1; \
@@ -1109,13 +1106,11 @@ extern int gte_ldlzc(int input);
 	: "r"( r0 )						\
 	: "memory" )
 
-#define gte_strgb3( r0, r1, r2 ) __asm__ volatile (		\
-	"swc2	$20, 0( %0 );"					\
-	"swc2	$21, 0( %1 );"					\
-	"swc2	$22, 0( %2 )"					\
-	:							\
-	: "r"( r0 ), "r"( r1 ), "r"( r2 )			\
-	: "memory" )
+#define gte_strgb3( r0, r1, r2 ) \
+	((int*)r0)[0] = RGB0;        \
+	((int*)r1)[0] = RGB1;        \
+	((int*)r2)[0] = RGB2;        \
+
 
 #define gte_strgb3_g3( r0 ) __asm__ volatile (			\
 	"swc2	$20, 4( %0 );"					\
