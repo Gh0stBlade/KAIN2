@@ -119,6 +119,13 @@ long MemCardAccept(long chan)
 	char buf[16];
 	sprintf(&buf[0], "%ld.MCD", chan);
 	memoryCards[chan] = fopen(&buf[0], "rb");
+
+	if (memoryCards[chan] == NULL)
+	{
+		Emulator_CreateMemoryCard(chan);
+		memoryCards[chan] = fopen(&buf[0], "rb");
+	}
+
 	memoryCardCmds = McFuncAccept;
 
 	unsigned int fileMagic = 0;
@@ -305,5 +312,5 @@ long MemCardGetDirentry(long chan, char* name, struct DIRENTRY* dir, long* files
 	memoryCardResult = 0;
 	memoryCardStatus = 1;
 
-	return 0;
+	return  files[0];
 }
