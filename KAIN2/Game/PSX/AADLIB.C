@@ -1107,7 +1107,7 @@ void aadLoadDynamicSfxReturn(void* loadedDataPtr, void* data, void* data2)
 						{
 							p = p->nextDynSfxFile;
 
-						} while (p != NULL);
+						} while (p->nextDynSfxFile != NULL);
 					}
 
 					p->nextDynSfxFile = info->snfFile;
