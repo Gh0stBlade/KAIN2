@@ -197,7 +197,8 @@ extern	int (*GPU_printf)(const char *fmt, ...);
 #define getcode(p)   		(u_char)(((P_TAG *)(p))->code)
 #define getaddr(p)   		(u_long)(((P_TAG *)(p))->addr)
 
-#define nextPrim(p)  		(void *)((((P_TAG *)(p))->addr)|0x80000000)
+#define nextPrim(p)  		(void *)((((P_TAG *)(p))->addr))
+//#define nextPrim(p)  		(void *)((((P_TAG *)(p))->addr)|0x80000000)//Original incompat with PC
 #define isendprim(p) 		((((P_TAG *)(p))->addr)==0xffffff)
 
 #if defined(PGXP)
