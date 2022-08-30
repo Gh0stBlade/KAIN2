@@ -11,12 +11,42 @@ extern long sub_80163DDC(void* data /*s0*/);
 extern long sub_80163DC8(void* data /*s0*/);
 extern long sub_80164598(void* data /*s0*/, long val, long flag);
 extern long sub_801645B8(void* data /*s0*/, long val, long flag);
+extern long sub_801C7F78(void* data /*s0*/, long val, long flag);
 extern long sub_80163EB0(void* data /*s0*/);
 extern long sub_801645E0(void* data /*s0*/, long val, long flag);
 extern long sub_801638CC();
 extern void sub_80163D38(struct mcpsx_t* mcpsx, int err);
 
 int dword_801691B0[3] = { 2, 0, 0 };
+int dword_80168FD4[10] = { 0, 0, 1, 1, 2, 2, 3, 3, 4, 4 };
+
+unsigned short charTable[] = {
+	0x8140, 0x8149, 0x8168, 0x8194, 0x8190, 0x8193, 0x8195, 0x8166, 0x8169, 0x816A,
+	0x8196, 0x817B, 0x8143, 0x817C, 0x8144, 0x815E, 0x8146, 0x8147, 0x8171, 0x8181,
+	0x8172, 0x8148, 0x8197, 0x816D, 0x818F, 0x816E, 0x814F, 0x8151, 0x8165, 0x816F, 
+	0x8162, 0x8170, 0x8150
+};
+
+struct CharTable
+{
+	unsigned short low;
+	unsigned short high;
+};
+
+CharTable charTable2[] = {
+	{ 0x824F, 0x0030 },
+	{ 0x8260, 0x0041 },
+	{ 0x8281, 0x0061 },
+};
+
+
+const char* gameIdentifier[] = {
+	"BASLUS-00708",
+	"BESLES-02024",
+	"BESLES-02025",
+	"BESLES-02026",
+	"BESLES-02027",
+};
 
 
 long sub_80164E34(struct mcmenu_t* mcmenu, long flag, long flag2, long index)
@@ -30,6 +60,165 @@ long sub_80164E34(struct mcmenu_t* mcmenu, long flag, long flag2, long index)
 	{
 		mcmenu->state.fsm = (enum fsm_t)flag;
 	}
+
+	return -1;
+}
+
+void sub_801C86B8(struct mcpsx_directory_t* mcdir, int slot)
+{
+	language_t lang = localstr_get_language();//s0
+
+	memset(mcdir, 0, sizeof(mcpsx_directory_t));
+	memcpy(&mcdir->name[0], gameIdentifier[lang], 12);
+	sprintf(&mcdir->name[12], "kain %c", slot + 97);
+	printf("SetName: %s\n", mcdir->name);
+}
+
+unsigned short sub_801C82FC(char c)
+{
+	//a2 = c
+	int v1 = 0;
+	int a0 = 0;
+	//a1 = c
+	if (c < 0x20)
+	{
+		return 0;
+	}
+
+	if (c < 0x30)
+	{
+		int a0 = 0x3F;
+		if (a0 == 0)
+		{
+			a0 += 0x1F;
+			assert(FALSE);//unimpl
+		}
+		else
+		{
+			return charTable[c - 0x3F];
+		}
+	}
+
+	if (c < 0x3A)
+	{
+		int a0 = 0x1F;
+		assert(FALSE);//unimpl
+	}
+
+	if (c < 0x5B)
+	{
+		v1 = 1;
+
+		if (a0 == 0)
+		{
+			a0 = 0x1F;
+			return c + charTable2[v1].low - charTable2[v1].high;
+		}
+		else
+		{
+			a0 = 0x1F;
+			assert(FALSE);//unimpl
+		}
+	}
+
+	if (c < 0x61)
+	{
+		assert(FALSE);//unimpl
+	}
+
+	if (c < 0x7B)
+	{
+		v1 = 2;
+		if (a0 == 0)
+		{
+			a0 = 0x1F;
+			return c + charTable2[v1].low - charTable2[v1].high;
+		}
+		else
+		{
+			a0 = 0x1F;
+			assert(FALSE);//unimpl
+		}
+	}
+
+	if (c < 0x7F)
+	{
+		assert(FALSE);//unimpl
+	}
+
+	return 0;
+}
+
+void sub_801C83E0(const char* name, char* buff)
+{
+	short* b = (short*)buff;
+
+	while (*name != 0)
+	{
+		unsigned short v0 = sub_801C82FC(*name++);
+		unsigned short v1 = (v0 & 0xFF00) >> 8;
+		
+		v0 &= 0xFF;
+		v0 <<= 8;
+		v1 |= v0;
+		*b++ = v1;
+	}
+
+	*b = 0;
+}
+
+void sub_801C8624(void* buff, const char* name)
+{
+	char* v0 = ((char*)buff) + 4;
+
+	sub_801C83E0(name, v0);
+}
+
+void sub_801C87C4(void* buff, const char* name)
+{
+	sub_801C8624(buff, name);
+}
+
+void sub_801C73F8(struct mcard_t* mcard, struct mcpsx_directory_t* dir, int nblocks, void* buffer, int nbytes)
+{
+	mcard->state.fsm = fsmcard_create;
+	mcard->params.filename = dir->name;
+	mcard->params.nblocks = nblocks;
+	mcard->params.buffer = buffer;
+	mcard->params.nbytes = nbytes;
+}
+
+long sub_801653F0(struct mcmenu_t* mcmenu, long flag, long flag2, long index)
+{
+	memcard_item(mcmenu->opaque, NULL, 0, 4, localstr_get(LOCALSTR_saving));
+
+	memcard_item(mcmenu->opaque, NULL, 0, 0, localstr_get(LOCALSTR_done));
+
+	if (flag == 4)
+	{
+		mcmenu->state.fsm = fsm_save_complete;
+	}
+
+	return -1;
+}
+
+long sub_801C8108(struct mcmenu_t* mcmenu, long flag, long flag2, long index)
+{
+	sub_801C86B8(&mcmenu->params.directory[mcmenu->params.nfiles], mcmenu->state.slot);
+
+	char buff[32];
+	sprintf(buff, "Legacy Of Kain: Soul Reaver %c", mcmenu->state.slot + 0x41);
+
+	sub_801C87C4(mcmenu->params.buffer, buff);
+
+	sub_801C73F8(mcmenu->mcard, &mcmenu->params.directory[mcmenu->params.nfiles], mcmenu->params.nblocks, mcmenu->params.buffer, mcmenu->params.nbytes);
+
+	memcard_item(mcmenu->opaque, NULL, 0, 4, localstr_get(LOCALSTR_saving));
+	memcard_item(mcmenu->opaque, NULL, 0, 0, localstr_get(LOCALSTR_done));
+	
+	GAMELOOP_GetGT()->gameFlags |= 0x20000800;
+
+	mcmenu->state.fsm = fsm_saving;
 
 	return -1;
 }
@@ -58,8 +247,8 @@ long (*mcardxFuncTable3[12])(struct mcmenu_t*, long, long, long) = {
 	NULL,
 	NULL,
 	NULL,
-	NULL,
-	NULL,
+	sub_801653F0,
+	sub_801C8108,
 };
 
 //0x8016384C
@@ -94,10 +283,51 @@ long (*mcardxFuncTable[12])(void*, long, long) = {
 	NULL,
 	NULL,
 	NULL,
-	NULL,
+	sub_801C7F78,
 	NULL,
 	NULL,
 };
+
+int sub_801C7630(void* opaque, long param, menu_ctrl_t ctrl)
+{
+	//s1 = param
+	//s0 = ctrl
+	struct mcmenu_t* mcmenu;
+	
+	mcmenu = (struct mcmenu_t*)gt2mcmenu(opaque);
+
+	if (ctrl == menu_ctrl_engage)
+	{
+		mcmenu->state.fsm = (fsm_t)param;
+		return 1;
+	}
+	else if (ctrl == menu_ctrl_cancel)
+	{
+		memcard_pop(mcmenu->opaque);
+		GAMELOOP_GetGT()->gameFlags &= 0xDFFFFFFF;
+		return 1;
+	}
+
+	return 0;
+}
+
+int sub_801C75C4(void* opaque, long param, menu_ctrl_t ctrl)
+{
+	struct mcmenu_t* mcmenu;
+
+	mcmenu = (struct mcmenu_t*)gt2mcmenu(opaque);
+
+	if ((unsigned int)ctrl - 5 < menu_ctrl_down)
+	{
+		memcard_pop(mcmenu->opaque);
+
+		GAMELOOP_GetGT()->gameFlags &= 0xDFFFFFFF;
+
+		return 1;
+	}
+
+	return 0;
+}
 
 long sub_80164E7C(struct mcmenu_t* mcmenu, long flag, long flag2, long index)
 {
@@ -122,6 +352,7 @@ long sub_80164E7C(struct mcmenu_t* mcmenu, long flag, long flag2, long index)
 	}
 	if (mcmenu->params.nblocks >= 16)
 	{
+		assert(FALSE);
 	}
 
 	if (flag2 != 0)
@@ -138,7 +369,20 @@ long sub_80164E7C(struct mcmenu_t* mcmenu, long flag, long flag2, long index)
 			mcardxFuncTable3[mcmenu->state.fsm](mcmenu, 1, 0, index);
 		}
 	}
+	else
+	{
+		memcard_item(mcmenu->opaque, NULL, NULL, 4, localstr_get(LOCALSTR_choose_save_file));
+		memcard_item(mcmenu->opaque, sub_801C7630, 11, 0, localstr_get(LOCALSTR_create_file));
 
+		if (index < 0)
+		{
+			index = 1;
+		}
+
+		memcard_item(mcmenu->opaque, sub_801C75C4, 0, 0, localstr_get(LOCALSTR_go_back));
+
+		return index;
+	}
 
 	return -1;
 }
@@ -363,6 +607,41 @@ long sub_801645B8(void* data /*s0*/, long val, long flag)
 	return mcard->state.status;
 }
 
+void sub_801C7428(struct mcard_t* mcard, struct mcpsx_directory_t* dir, void* buffer, int nbytes)
+{
+	mcard->state.fsm = fsmcard_directory;
+	mcard->params.directory = dir;
+	mcard->params.filename = (char*)buffer;
+	mcard->params.nbytes = nbytes;
+}
+
+long sub_801C7F78(void* data /*s0*/, long val, long flag)
+{
+	struct mcard_t* mcard = (struct mcard_t*)data;
+	struct mcmenu_t* mcmenu = gameTrackerX.memcard->mcmenu;
+
+	sub_801C86B8(&mcmenu->params.directory[mcmenu->params.nfiles], mcmenu->state.slot);
+
+	char buff[32];
+
+	sprintf(buff, "Legacy Of Kain: Soul Reaver %c", flag + 0x41);
+
+	sub_801C87C4(mcmenu->params.buffer, buff);
+
+	memcard_item(mcmenu->opaque, NULL, 0, 4, localstr_get(LOCALSTR_saving));
+	memcard_item(mcmenu->opaque, NULL, 0, 0, localstr_get(LOCALSTR_done));
+
+	memcard_save(mcmenu->opaque);
+
+	GAMELOOP_GetGT()->gameFlags |= 0x20000800;
+
+	sub_801C7428(mcmenu->mcard, &mcmenu->params.directory[mcmenu->state.slot], mcmenu->params.buffer, mcmenu->params.nbytes);
+
+	mcmenu->state.fsm = fsm_saving;
+
+	return -1;
+}
+
 long sub_80164598(void* data /*s0*/, long val, long flag)
 {
 	struct mcard_t* mcard = (struct mcard_t*)data;
@@ -494,9 +773,27 @@ void sub_80164380(struct mcard_t* mcard)//80164380
 	mcard->state.not_exists = 0;
 }
 
+void sub_80163D04(struct mcpsx_t* mcpsx)
+{
+	sub_80163C8C(mcpsx);
+
+	MemCardStop();
+
+	mcpsx->state.mode = mode_initialized;
+}
+
+void sub_80164990(struct mcard_t* mcmenu)
+{
+	sub_80163D04(mcmenu->mcpsx);
+}
+
 void MCARDX_end(struct mcmenu_t* mcmenu)//801648A4
 {
-	UNIMPLEMENTED();
+	//s0 = mcmenu
+	sub_80164990(mcmenu->mcard);
+
+	mcmenu->state.running = 0;
+
 	return;
 }
 
@@ -592,9 +889,10 @@ int sub_80164C04(struct mcmenu_t* mcmenu, int index, int a2)
 
 	if (ret != mcmenu->state.status)
 	{
-		if (ret < 4)
+		if ((unsigned int)ret < 4)
 		{
-			assert(FALSE);
+			mcmenu->state.status = (mcard_status_t)ret;
+			mcmenu->state.fsm = (fsm_t)dword_80168FD4[ret * 2 + 1];
 		}
 	}
 
@@ -624,4 +922,65 @@ int MCARDX_main(struct mcmenu_t* mcmenu, int index)//80165578
 	do_check_controller(gt);
 
 	return sub_80164C04(mcmenu, index, 1);
+}
+
+int sub_801C6C54(struct mcpsx_t* mcpsx)
+{
+	if (mcpsx->state.sync != sync_idle)
+	{
+		return 8;
+	}
+
+	mcpsx->state.observed = 1;
+
+	return mcpsx->state.err;
+}
+
+void sub_801C7174(struct mcard_t* mcard)
+{
+	//s0 = mcard
+	//s1 = 1
+	int ret;
+
+	ret = sub_801C6C54(mcard->mcpsx);
+	
+	if (ret != mcard->state.err && ret != 0 && ret < 0)
+	{
+		assert(FALSE);//unimpl
+	}
+
+	if (mcard->state.fsm >= 6)
+	{
+		mcard->state.status = mcard_status_accessing;
+	}
+
+	if (mcard->state.fsm < fsmcard_error)
+	{
+
+	}
+}
+
+int sub_801C78C4(struct mcmenu_t* mcmenu, int index, int flag)
+{
+	//s3 = mcmenu
+	//s2 = index
+	//sp(0x70) = flag
+	//sp(0x38) = GAMELOOP_GetGT();
+
+	sub_801C7174(mcmenu->mcard);
+	return 0;
+}
+
+//x2
+int MCARDX_pause(struct mcmenu_t* mcmenu, int index)//801C82A4
+{
+	struct GameTracker* gt;
+	
+	gt = GAMELOOP_GetGT();
+	
+	gt->gameFlags |= 0x20000000;
+
+	do_check_controller(gt);
+
+	return sub_80164C04(mcmenu, index, 0);
 }

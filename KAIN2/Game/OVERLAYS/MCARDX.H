@@ -12,5 +12,6 @@ extern void MCARDX_end(struct mcmenu_t* mcmenu);
 extern int MCARDX_main(struct mcmenu_t* mcmenu, int index);
 extern void sub_80163C8C(struct mcpsx_t* mcpsx);
 extern void sub_80164380(struct mcard_t* mcard);
+extern int MCARDX_pause(struct mcmenu_t* mcmenu, int index);
 
 #endif
