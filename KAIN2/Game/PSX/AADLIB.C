@@ -1042,9 +1042,9 @@ void aadProcessLoadQueue()
 			aadMem->numSlots = 0;
 			aadMem->sramDefragInfo.status = 1;
 		}
+		
+		aadProcessSramDefrag();
 	}
-
-	aadProcessSramDefrag();
 }
 
 void aadLoadDynamicSfxAbort(struct AadDynamicSfxLoadInfo *info, int error)
@@ -1620,6 +1620,11 @@ void aadLoadDynamicSfxReturn2(void *loadedDataPtr, long loadedDataSize, short st
 				{
 					info->smfLoadingState = 1;
 					info->bytesToLoad = 24;
+				}
+				else
+				{
+					aadLoadDynamicSfxDone(info);
+					return;
 				}
 			}
 			else
