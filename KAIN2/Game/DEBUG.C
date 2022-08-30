@@ -8,6 +8,7 @@
 #include "RAZIEL/RAZLIB.H"
 #include "STREAM.H"
 #include "LIGHT3D.H"
+#include "SAVEINFO.H"
 
 #ifdef PC_VERSION
 #pragma warning(disable: 4101)
@@ -58,11 +59,11 @@ struct DebugMenuLine debugHealthSystemMenu[7] = {
 
 struct DebugMenuLine cameraMenu[1];
 
-long debugFogFar;
-long debugFogNear;
-long debugFogRed;
-long debugFogGrn;
-long debugFogBlu;
+long debugFogFar = 11500;
+long debugFogNear = 1065;
+long debugFogRed = 0;
+long debugFogGrn = 0;
+long debugFogBlu = 0;
 
 struct DebugMenuLine fogMenu[8] = {
 	{ DEBUG_LINE_TYPE_MENU, 0, 0, "", (long*)&standardMenu[0], 0 },
@@ -2700,7 +2701,23 @@ void DEBUG_ExitGame()
 
 void DEBUG_ReloadCurrentLevel()
 {
-	UNIMPLEMENTED();
+	if (gameTrackerX.levelChange == 0)
+	{
+		if ((gameTrackerX.streamFlags & 0x200000))
+		{
+			SAVE_SaveGame();
+		}
+
+		gameTrackerX.gameFlags |= 0x1;
+
+		SOUND_ResetAllSound();
+
+		gameTrackerX.levelChange = 1;
+
+		gameTrackerX.levelDone = 4;
+	}
+
+	gameTrackerX.gameMode = 0;
 }
 
 void DEBUG_LevelSelectNew()
@@ -2774,7 +2791,6 @@ void DEBUG_ViewVram(struct GameTracker *gameTracker)
 
 void DEBUG_CaptureScreen(struct GameTracker *gameTracker)
 {
-	// Intentionally empty
 }
 
 
