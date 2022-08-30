@@ -97,7 +97,7 @@ int do_start_game(void *gt, long parameter, enum menu_ctrl_t ctrl)
 {
 	if (ctrl == menu_ctrl_engage)
 	{
-		if (MEMCARD_IsWrongVersion(((GameTracker*)gt)->memcard) == 0 && 0)///@FIXME force game to start for now!
+		if (MEMCARD_IsWrongVersion(((GameTracker*)gt)->memcard) == 0)
 		{
 			menu_push(((GameTracker*)gt)->menu, memcard_main_menu);
 			return 1;
@@ -118,7 +118,7 @@ int do_save_menu(void *gt, long long parameter, enum menu_ctrl_t ctrl)
 int do_save_menu(void *gt, long parameter, enum menu_ctrl_t ctrl)
 #endif
 { 
-	if (menu_ctrl_engage == menu_ctrl_engage)
+	if (ctrl == menu_ctrl_engage)
 	{
 		menu_push(((struct GameTracker*)gt)->menu, memcard_pause_menu);
 		return 1;
