@@ -17,7 +17,7 @@ extern void COLLIDE_NearestPointOnPlane_S() ; // 0x80078124
 
 extern void VM_ProcessVMObjectSetColor_S() ; // 0x800786A8
 
-extern void VM_ProcessVMObjectList_S() ; // 0x8007871C
+extern void VM_ProcessVMObjectList_S(struct Level* level, struct Camera* camera); // 0x8007871C
 
 extern void BSP_SphereIntersectsViewVolume_S() ; // 0x800787E0
 

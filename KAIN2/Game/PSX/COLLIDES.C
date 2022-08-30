@@ -775,3 +775,8 @@ void RotMatrixZ(long r, MATRIX* m)
 
 	return;
 }
+
+void VM_ProcessVMObjectList_S(struct Level* level, struct Camera* camera)
+{
+	UNIMPLEMENTED();
+}
