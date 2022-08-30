@@ -411,17 +411,17 @@ void DrawCallback()
 	}
 }
 
-void FadeOutSayingLoading(struct GameTracker *gameTracker)
+void FadeOutSayingLoading(struct GameTracker* gameTracker)
 { 
-	struct POLY_F4_SEMITRANS *transPrim;
-	unsigned long **drawot;
+	struct POLY_F4_SEMITRANS* transPrim;
+	unsigned long** drawot;
 	long fadeTime;
 
 	fadeTime = 0;
 	drawot = gameTracker->drawOT;
 	transPrim = (struct POLY_F4_SEMITRANS*)gameTracker->primPool->nextPrim;
 
-	DRAW_TranslucentQuad(0, 0, SCREEN_WIDTH, 0, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0, 0, 2, gameTracker->primPool, drawot);
+	DRAW_TranslucentQuad(0, 0, SCREEN_WIDTH, 0, 0, SCREEN_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0, 0, 2, gameTracker->primPool, drawot);
 	FONT_Flush();
 	
 	do
