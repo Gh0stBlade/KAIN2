@@ -185,16 +185,27 @@ void DisplayMenuBox(int x0, int x1, int y0, int y1)
 
 		for (i = 0; i < 15; i++)
 		{
+			//Degenerate triangle fix.
+#if defined(PSXPC_VERSION)
+			DRAW_TranslucentQuad(ext.xmin + i + 1, ext.ymax - dy[i], ext.xmin + k, ext.ymax - dy[k], ext.xmin + i + 1, ext.ymin + dy[i], ext.xmin + k, ext.ymin + dy[k], 0, 0, 0, 0, primPool, ot);
+
+			DRAW_TranslucentQuad(ext.xmax - i + 1, ext.ymax - dy[i], ext.xmax - k, ext.ymax - dy[k], ext.xmax - i + 1, ext.ymin + dy[i], ext.xmax - k, ext.ymin + dy[k], 0, 0, 0, 0, primPool, ot);
+
+#else
 			DRAW_TranslucentQuad(ext.xmin + i, ext.ymax - dy[i], ext.xmin + k, ext.ymax - dy[k], ext.xmin + i, ext.ymin + dy[i], ext.xmin + k, ext.ymin + dy[k], 0, 0, 0, 0, primPool, ot);
 
 			DRAW_TranslucentQuad(ext.xmax - i, ext.ymax - dy[i], ext.xmax - k, ext.ymax - dy[k], ext.xmax - i, ext.ymin + dy[i], ext.xmax - k, ext.ymin + dy[k], 0, 0, 0, 0, primPool, ot);
+#endif
 
 			i = k;
 			k = i + 1;
 		}
 
+#if defined(PSXPC_VERSION)
+		DRAW_TranslucentQuad(ext.xmin + 15, ext.ymax, ext.xmax - 15 + 1, ext.ymax, ext.xmin + 15, ext.ymin, ext.xmax - 15 + 1, ext.ymin, 0, 0, 0, 0, primPool, ot);
+#else
 		DRAW_TranslucentQuad(ext.xmin + 15, ext.ymax, ext.xmax - 15, ext.ymax, ext.xmin + 15, ext.ymin, ext.xmax - 15, ext.ymin, 0, 0, 0, 0, primPool, ot);
-
+#endif
 		i = slice0;
 	}
 }
