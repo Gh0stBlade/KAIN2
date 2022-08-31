@@ -776,7 +776,39 @@ void RotMatrixZ(long r, MATRIX* m)
 	return;
 }
 
-void VM_ProcessVMObjectList_S(struct Level* level, struct Camera* camera)
+void sub_80078458()
 {
 	UNIMPLEMENTED();
+}
+
+void VM_ProcessVMObjectList_S(struct Level* level, struct Camera* camera)
+{
+	long timer;
+	long i;
+
+	for(i = 0; i < level->numVMObjects; i++)
+	{
+		if (!(level->vmobjectList[i].flags & 0x2))
+		{
+			timer = level->vmobjectList[i].timer + 1;
+
+			if (timer < level->vmobjectList[i].curVMOffsetTable->numVMOffsets)
+			{
+				timer = 0;
+			}
+
+			level->vmobjectList->timer = timer;
+
+			if (BSP_SphereIntersectsViewVolume_S(&level->vmobjectList[i].position) != 0)
+			{
+				sub_80078458();
+			}
+		}
+	}
+}
+
+long BSP_SphereIntersectsViewVolume_S(struct _Position* position)
+{
+	UNIMPLEMENTED();
+	return 0;
 }
