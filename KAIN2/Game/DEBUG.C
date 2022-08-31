@@ -2695,7 +2695,7 @@ void DEBUG_ExitGame()
 
 	gameTrackerX.levelChange = 1;
 	gameTrackerX.gameMode = 0;
-	gameTrackerX.levelDone = 1;
+	gameTrackerX.levelDone = 2;
 	gameTrackerX.gameFlags |= 0x1;
 }
 
@@ -2722,7 +2722,45 @@ void DEBUG_ReloadCurrentLevel()
 
 void DEBUG_LevelSelectNew()
 {
-	UNIMPLEMENTED();
+	char* name;
+	short number;
+	char* p;
+	char saveChar;
+
+	saveChar = 0;
+	p = currentMenu[debugMenuChoice].text;
+	number = currentMenu[debugMenuChoice].lower;
+	name = p;
+	
+	while (*p != 0)
+	{
+		if (*p == 0x9 || *p == 0x20 || *p == 0xA)
+		{
+			saveChar = *p;
+			
+			*p = 0;
+			
+			break;
+		}
+
+		p++;
+	}
+
+	if ((gameTrackerX.streamFlags & 0x200000))
+	{
+		SAVE_SaveGame();
+	}
+
+	GAMELOOP_RequestLevelChange(name, number, &gameTrackerX);
+	
+	gameTrackerX.levelDone = 4;
+
+	if (saveChar != 0)
+	{
+		saveChar = *p;
+	}
+
+	gameTrackerX.gameMode = 0;
 }
 
 void DEBUG_SetViewVram()
