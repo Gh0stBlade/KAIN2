@@ -2727,8 +2727,21 @@ void DEBUG_LevelSelectNew()
 	char* p;
 	char saveChar;
 
+	//Because we can't write to const char* on modern systems.
+#if defined(PSXPC_VERSION)
+	char menuText[32];
+	memset(menuText, 0, sizeof(menuText));
+	memcpy(menuText, currentMenu[debugMenuChoice].text, strlen(currentMenu[debugMenuChoice].text));
+#endif
+
 	saveChar = 0;
+
+#if defined(PSXPC_VERSION)
+	p = menuText;
+#else
 	p = currentMenu[debugMenuChoice].text;
+#endif
+
 	number = currentMenu[debugMenuChoice].lower;
 	name = p;
 	
