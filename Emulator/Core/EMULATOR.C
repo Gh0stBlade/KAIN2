@@ -32,7 +32,7 @@ extern SDL_Window* g_window;
 #include <string.h>
 
 #if defined(D3D11)
-ID3D11Texture2D* vramBaseTexture;
+
 
 #if defined(UWP) && !defined(UWP_SDL2)
 
@@ -294,20 +294,7 @@ void CreateUWPApplication()
 	GLuint dynamic_vertex_buffer;
 	GLuint dynamic_vertex_array;
 #elif defined(D3D11)
-	ID3D11Buffer			*dynamic_vertex_buffer = NULL;
-	ID3D11Device			*d3ddev;
-	ID3D11DeviceContext		*d3dcontext;
-#if defined(UWP)
-	IDXGISwapChain1			*swapChain;
-#else
-	IDXGISwapChain			*swapChain;
-#endif
-	ID3D11RenderTargetView  *renderTargetView;
-	ID3D11Buffer			*projectionMatrixBuffer;
-	ID3D11SamplerState		*samplerState = NULL;
-	ID3D11SamplerState		*rg8lutSamplerState = NULL;
-	ID3D11BlendState		*blendState;
-	ID3D11RasterizerState	*rasterState;
+
 #elif defined(D3D12)
 	const unsigned int frameCount = 2;
 	
@@ -445,7 +432,7 @@ std::thread counter_thread;
 int g_texturelessMode = 0;
 int g_emulatorPaused = 0;
 
-#if !defined(OGL) && !defined(D3D9)
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11)
 void Emulator_ResetDevice()
 {
 #if defined(EGL) || defined(OGLES)///@TODO &&
@@ -1286,7 +1273,7 @@ int Emulator_InitialiseD3D9Context(char* windowName)
 #endif
 #endif
 
-#if defined(D3D11)
+#if defined(D3D11) && 0
 static int Emulator_InitialiseD3D11Context(char* windowName)
 {
 #if defined(SDL2)
@@ -3858,49 +3845,9 @@ ShaderID Shader_Compile(const char *source)
 
 
 
-#elif defined(D3D11)
-
-#include "shaders/D3D11/gte_shader_4_vs.h"
-#include "shaders/D3D11/gte_shader_4_ps.h"
-#include "shaders/D3D11/gte_shader_8_vs.h"
-#include "shaders/D3D11/gte_shader_8_ps.h"
-#include "shaders/D3D11/gte_shader_16_vs.h"
-#include "shaders/D3D11/gte_shader_16_ps.h"
-#include "shaders/D3D11/blit_shader_vs.h"
-#include "shaders/D3D11/blit_shader_ps.h"
+#elif defined(D3D11) && 0
 
 
-#define Shader_Compile(name) Shader_Compile_Internal((DWORD*)name##_vs, (DWORD*)name##_ps, sizeof(name##_vs), sizeof(name##_ps))
-
-ShaderID Shader_Compile_Internal(const DWORD* vs_data, const DWORD* ps_data, const unsigned int vs_size, const unsigned int ps_size)
-{
-	ShaderID shader;
-	HRESULT hr;
-
-	hr = d3ddev->CreateVertexShader(vs_data, vs_size, NULL, &shader.VS);
-	assert(!FAILED(hr));
-	hr = d3ddev->CreatePixelShader(ps_data, ps_size, NULL, &shader.PS);
-	assert(!FAILED(hr));
-#define OFFSETOF(T, E)     ((size_t)&(((T*)0)->E))
-
-	const D3D11_INPUT_ELEMENT_DESC INPUT_LAYOUT[] =
-	{
-#if defined(PGXP)
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, OFFSETOF(Vertex, x), D3D11_INPUT_PER_VERTEX_DATA, 0 },
-#else	
-		{ "POSITION", 0, DXGI_FORMAT_R16G16B16A16_SINT,  0, OFFSETOF(Vertex, x), D3D11_INPUT_PER_VERTEX_DATA, 0 },
-#endif
-		{ "TEXCOORD", 0, DXGI_FORMAT_R8G8B8A8_UINT,		 0, OFFSETOF(Vertex, u), D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "COLOR",    0, DXGI_FORMAT_R8G8B8A8_UNORM,	 0, OFFSETOF(Vertex, r), D3D11_INPUT_PER_VERTEX_DATA, 0 },
-};
-
-	hr = d3ddev->CreateInputLayout(INPUT_LAYOUT, sizeof(INPUT_LAYOUT) / sizeof(D3D11_INPUT_ELEMENT_DESC), vs_data, vs_size, &shader.IL);
-	assert(!FAILED(hr));
-
-#undef OFFSETOF
-
-	return shader;
-}
 #elif defined(D3D12)
 
 #include "shaders/D3D12/gte_shader_4_vs.h"
@@ -4235,26 +4182,7 @@ ShaderID Shader_Compile_Internal(const DWORD* vs_data, const DWORD* ps_data, con
 }
 #endif
 
-
-
-#if defined(D3D11)
-void Emulator_DestroyGlobalShaders()
-{
-	g_gte_shader_4.VS->Release();
-	g_gte_shader_4.PS->Release();
-	g_gte_shader_4.IL->Release();
-	g_gte_shader_8.VS->Release();
-	g_gte_shader_8.PS->Release();
-	g_gte_shader_8.IL->Release();
-	g_gte_shader_16.VS->Release();
-	g_gte_shader_16.PS->Release();
-	g_gte_shader_16.IL->Release();
-	g_blit_shader.VS->Release();
-	g_blit_shader.PS->Release();
-	g_blit_shader.IL->Release();
-}
-
-#elif defined(VULKAN)
+#if defined(VULKAN)
 void Emulator_DestroyGlobalShaders()
 {
 	if (g_gte_shader_4.VS.module)
@@ -4403,7 +4331,7 @@ void Emulator_DestroyGlobalShaders()
 }
 #endif
 
-#if !defined(OGL) && !defined(D3D9)
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11)
 void Emulator_GenerateCommonTextures()
 {
 	unsigned int pixelData = 0xFFFFFFFF;
@@ -4641,7 +4569,7 @@ void Emulator_GenerateCommonTextures()
 }
 #endif
 
-#if !defined(OGL) && !defined(D3D9)
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11)
 int Emulator_CreateCommonResources()
 {
 	memset(vram, 0, VRAM_WIDTH * VRAM_HEIGHT * sizeof(unsigned short));
@@ -4879,7 +4807,7 @@ void Emulator_Ortho2D(float left, float right, float bottom, float top, float zn
 }
 #endif
 
-#if !defined(OGL) && !defined(D3D9)
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11)
 void Emulator_SetShader(const ShaderID &shader)
 {
 #if defined(OGL) || defined(OGLES)
@@ -4920,7 +4848,7 @@ void Emulator_SetShader(const ShaderID &shader)
 }
 #endif
 
-#if !defined(OGL) && !defined(D3D9)
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11)
 void Emulator_SetTexture(TextureID texture, TexFormat texFormat)
 {
 	switch (texFormat)
@@ -5041,7 +4969,7 @@ void Emulator_SetTexture(TextureID texture, TexFormat texFormat)
 }
 #endif
 
-#if !defined(OGL) && !defined(D3D9)
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11)
 void Emulator_DestroyTexture(TextureID texture)
 {
 #if defined(OGL) || defined(OGLES)
@@ -5059,7 +4987,7 @@ void Emulator_DestroyTexture(TextureID texture)
 }
 #endif
 
-#if !defined(OGL) && !defined(D3D9)
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11)
 void Emulator_Clear(int x, int y, int w, int h, unsigned char r, unsigned char g, unsigned char b)
 {
 // TODO clear rect if it's necessary
@@ -5107,7 +5035,7 @@ void Emulator_Clear(int x, int y, int w, int h, unsigned char r, unsigned char g
 
 #define NOFILE 0
 
-#if !defined(__EMSCRIPTEN__) && !defined(__ANDROID__) && !defined(OGL) && !defined(D3D9)
+#if !defined(__EMSCRIPTEN__) && !defined(__ANDROID__) && !defined(OGL) && !defined(D3D9) && !defined(D3D11)
 
 void Emulator_SaveVRAM(const char* outputFileName, int x, int y, int width, int height, int bReadFromFrameBuffer)
 {
@@ -5158,7 +5086,7 @@ void Emulator_SaveVRAM(const char* outputFileName, int x, int y, int width, int 
 }
 #endif
 
-#if !defined(OGL) && !defined(D3D9)
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11)
 void Emulator_StoreFrameBuffer(int x, int y, int w, int h)
 {
 	short *fb = (short*)malloc(w * h * sizeof(short));
@@ -5328,7 +5256,7 @@ void Emulator_ReadVRAM(unsigned short *dst, int x, int y, int dst_w, int dst_h)
 	}
 }
 
-#if !defined(OGL) && !defined(D3D9)
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11)
 void Emulator_UpdateVRAM()
 {
 	if (!vram_need_update) {
@@ -6039,7 +5967,7 @@ unsigned int Emulator_GetFPS()
 	
 }
 
-#if !defined(OGL) && !defined(D3D9)
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11)
 void Emulator_SwapWindow()
 {
 	unsigned int timer = 1;
@@ -6121,7 +6049,7 @@ void Emulator_SwapWindow()
 }
 #endif
 
-#if !defined(OGL) && !defined(D3D9)
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11)
 void Emulator_WaitForTimestep(int count)
 {
 #if defined(SDL2)
@@ -6158,15 +6086,6 @@ void Emulator_EndScene()
 #if defined(VULKAN) || defined(D3D12)
 	dynamic_vertex_buffer_index = 0;
 	Emulator_EndPass();
-#endif
-
-#if defined(_PATCH)
-	if (activeDispEnv.disp.x != activeDrawEnv.clip.x || activeDispEnv.disp.y != activeDrawEnv.clip.y)
-	{
-	}
-	Emulator_StoreFrameBuffer(activeDrawEnv.clip.x, activeDrawEnv.clip.y, activeDrawEnv.clip.w, activeDrawEnv.clip.h);
-
-	//Emulator_StoreFrameBuffer(activeDispEnv.disp.x, activeDispEnv.disp.y, activeDispEnv.disp.w, activeDispEnv.disp.h);
 #endif
 
 	if (!begin_scene_flag)
@@ -6231,7 +6150,7 @@ void Emulator_ShutDown()
 	exit(EXIT_SUCCESS);
 }
 
-#if !defined(OGL) && !defined(D3D9)
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11)
 void Emulator_SetBlendMode(BlendMode blendMode)
 {
 	if (g_PreviousBlendMode == blendMode)
@@ -6558,7 +6477,7 @@ void Emulator_SetPGXPVertexCount(int vertexCount)
 #endif
 }
 
-#if !defined(OGL) && !defined(D3D9)
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11)
 void Emulator_SetViewPort(int x, int y, int width, int height)
 {
 	float offset_x = (float)activeDispEnv.screen.x;
@@ -6636,8 +6555,8 @@ void Emulator_SetRenderTarget(const RenderTargetID &frameBufferObject)
 
 #endif
 
-#if !defined(OGL) && !defined(D3D9)
-void Emulator_SetWireframe(bool enable)
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11)
+void Emulator_SetWireframe(bool enable) 
 {
 #if defined(OGL)
 	glPolygonMode(GL_FRONT_AND_BACK, enable ? GL_LINE : GL_FILL);
@@ -6655,7 +6574,7 @@ void Emulator_SetWireframe(bool enable)
 }
 #endif
 
-#if !defined(OGL) && !defined(D3D9)
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11)
 void Emulator_UpdateVertexBuffer(const Vertex *vertices, int num_vertices)
 {
 	assert(num_vertices <= MAX_NUM_POLY_BUFFER_VERTICES);
@@ -6719,7 +6638,7 @@ void Emulator_UpdateVertexBuffer(const Vertex *vertices, int num_vertices)
 }
 #endif
 
-#if !defined(OGL) && !defined(D3D9)
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11)
 void Emulator_DrawTriangles(int start_vertex, int triangles)
 {
 	if(triangles <= 0)
@@ -6752,66 +6671,7 @@ void Emulator_DrawTriangles(int start_vertex, int triangles)
 }
 #endif
 
-#if defined(D3D11)
-void Emulator_CreateConstantBuffers()
-{
-	D3D11_BUFFER_DESC cbd;
-	ZeroMemory(&cbd, sizeof(D3D11_BUFFER_DESC));
-	cbd.Usage = D3D11_USAGE_DEFAULT;
-	cbd.ByteWidth = sizeof(float) * 16;
-	cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	cbd.CPUAccessFlags = 0;
-	cbd.MiscFlags = 0;
-	HRESULT hr = d3ddev->CreateBuffer(&cbd, NULL, &projectionMatrixBuffer);
-	assert(SUCCEEDED(hr));
-}
-
-void Emulator_UpdateProjectionConstantBuffer(float* ortho)
-{
-	d3dcontext->UpdateSubresource(projectionMatrixBuffer, 0, NULL, ortho, 0, 0);
-}
-
-void Emulator_SetConstantBuffers()
-{
-	d3dcontext->VSSetConstantBuffers(0, 1, &projectionMatrixBuffer);
-}
-
-void Emulator_DestroyConstantBuffers()
-{
-	projectionMatrixBuffer->Release();
-}
-
-void Emulator_CreateRasterState(int wireframe)
-{
-	if (rasterState != NULL)
-	{
-		rasterState->Release();
-		rasterState = NULL;
-	}
-
-	D3D11_RASTERIZER_DESC rsd;
-	ZeroMemory(&rsd, sizeof(rsd));
-	rsd.FillMode = wireframe ? D3D11_FILL_WIREFRAME : D3D11_FILL_SOLID;
-	rsd.CullMode = D3D11_CULL_NONE;
-	rsd.FrontCounterClockwise = FALSE;
-	rsd.DepthBias = FALSE;
-	rsd.DepthBiasClamp = 0;
-	rsd.SlopeScaledDepthBias = 0;
-	rsd.DepthClipEnable = FALSE;
-	rsd.ScissorEnable = FALSE;
-	rsd.MultisampleEnable = FALSE;
-	rsd.AntialiasedLineEnable = FALSE;
-	HRESULT hr = d3ddev->CreateRasterizerState(&rsd, &rasterState);
-	assert(!FAILED(hr));
-	d3dcontext->RSSetState(rasterState);
-}
-
-void Emulator_SetDefaultRenderTarget()
-{
-	d3dcontext->OMSetRenderTargets(1, &renderTargetView, NULL);
-}
-
-#elif defined(D3D12)
+#if defined(D3D12)
 
 void Emulator_CreateGraphicsPipelineState(ShaderID* shader, D3D12_GRAPHICS_PIPELINE_STATE_DESC* pso)
 {

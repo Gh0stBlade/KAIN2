@@ -11,7 +11,7 @@ extern void Emulator_WaitForTimestep(int count);
 extern void Emulator_GenerateCommonTextures();
 extern void Emulator_CreateGlobalShaders();
 extern void Emulator_DestroyTextures();
-extern void Emulator_DestroyShaders();
+extern void Emulator_DestroyGlobalShaders();
 extern void Emulator_CreateVertexBuffer();
 
 const char* renderBackendName = "OpenGL 3.3";
@@ -299,7 +299,7 @@ void Emulator_ResetDevice()
 
 		Emulator_DestroyTextures();
 
-		Emulator_DestroyShaders();
+		Emulator_DestroyGlobalShaders();
 
 		Emulator_CreateGlobalShaders();
 
@@ -322,7 +322,7 @@ void Emulator_DestroyTextures()
 	whiteTexture = 0;
 }
 
-void Emulator_DestroyShaders()
+void Emulator_DestroyGlobalShaders()
 {
 	glDeleteProgram(g_gte_shader_4);
 	glDeleteProgram(g_gte_shader_8);

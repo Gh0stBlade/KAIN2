@@ -107,15 +107,7 @@ typedef GLuint RenderTargetID;
 #elif defined(D3D9) || defined(XED3D)
 
 #elif defined(D3D11)
-typedef ID3D11ShaderResourceView* TextureID;
 
-struct ShaderID {
-	ID3D11VertexShader* VS;
-	ID3D11PixelShader* PS;
-	ID3D11InputLayout* IL;
-};
-
-typedef ID3D11RenderTargetView* RenderTargetID;
 #elif defined(D3D12)
 
 struct D3D12TextureWrapper
