@@ -82,6 +82,19 @@ struct _SFXMkr
 	long inSpectral; // size=0, offset=32
 };
 
+struct _BGObject 
+{
+	short flags; // size=0, offset=0
+	short numFaces; // size=0, offset=2
+	struct _BVertex* vertexList; // size=8, offset=4
+	struct _BFace* faceList; // size=12, offset=8
+	short x; // size=0, offset=12
+	short y; // size=0, offset=14
+	short z; // size=0, offset=16
+	short radius; // size=0, offset=18
+	long numVertices; // size=0, offset=20
+};
+
 struct Level // hashcode: 0x012B0198 (dec: 19595672)
 {
 	struct _Terrain* PTR_32 terrain; // size=84, offset=0
@@ -210,6 +223,21 @@ struct StreamUnitPortal // hashcode: 0x7C52D8D9 (dec: 2085804249)
 	struct _StreamUnit* PTR_32 toStreamUnit; // size=64, offset=40
 	struct _SVector t1[3]; // size=24, offset=44
 	struct _SVector t2[3]; // size=24, offset=68
+};
+
+struct _BVertex {
+	short x; // size=0, offset=0
+	short y; // size=0, offset=2
+	short z; // size=0, offset=4
+	short pad; // size=0, offset=6
+};
+struct _BFace 
+{
+	short v0; // size=0, offset=0
+	short v1; // size=0, offset=2
+	short v2; // size=0, offset=4
+	short pad; // size=0, offset=6
+	struct TextureFT3* texture; // size=12, offset=8
 };
 
 struct STracker // hashcode: 0xAED5E069 (dec: -1361715095)
