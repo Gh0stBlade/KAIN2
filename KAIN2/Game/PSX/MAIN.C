@@ -517,6 +517,11 @@ void MAIN_ShowLoadingScreen()
 		screen_to_vram(loadingScreen, gameTrackerX.gameData.asmData.dispPage);
 		MEMPACK_Free((char*)loadingScreen);
 	}
+
+#if defined(PSXPC_VERSION)
+	VSync(0);
+	GAMEPAD_Process(&gameTrackerX);
+#endif
 }
 
 long * MAIN_LoadTim(char *name)
@@ -862,11 +867,6 @@ void GameLoop()
 		FONT_ReloadFont();
 		DrawSync(0);
 
-#if defined(PSXPC_VERSION)
-		DrawOTag(NULL);
-		GAMEPAD_Process(&gameTrackerX);
-#endif
-
 		STREAM_Init();
 		gameTracker->frameCount = 0;
 		GAMELOOP_LevelLoadAndInit(&gameTracker->baseAreaName[0], gameTracker);
@@ -1138,11 +1138,6 @@ int MainG2(void *appData)
 				MAIN_ShowLoadingScreen();
 				FONT_ReloadFont();
 				DrawSync(0);
-
-#if defined(PSXPC_VERSION)
-				VSync(0);
-				GAMEPAD_Process(&gameTrackerX);
-#endif
 
 				STREAM_Init();
 				gameTracker->frameCount = 0;
