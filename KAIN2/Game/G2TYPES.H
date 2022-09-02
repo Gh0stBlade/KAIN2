@@ -126,6 +126,11 @@ struct TextureFT3
 	unsigned short attr; // size=0, offset=10
 };
 
+struct _MorphColor 
+{
+	short morphColor15; // size=0, offset=0
+};
+
 struct _Terrain // hashcode: 0x5D541B4E (dec: 1565793102)
 {
 	short UnitChangeFlags; // size=0, offset=0
