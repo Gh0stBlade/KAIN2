@@ -9,6 +9,29 @@
 
 #include "BSP.H"
 
+struct _VMVertex
+{
+	short count;
+	short timer;
+};
+
+struct _BGObject_Face
+{
+	short v0;
+	short v1;
+	short v2;
+	short unknown2;
+};
+
+struct _VM_Face
+{
+	short v0;
+	short v1;
+	short v2;
+	short v3;
+	short v4;
+};
+
 extern void COLLIDE_NearestPointOnLine_S() ; // 0x80077F3C
 
 extern void COLLIDE_IntersectLineAndPlane_S() ; // 0x8007804C

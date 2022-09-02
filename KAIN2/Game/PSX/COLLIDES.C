@@ -776,10 +776,336 @@ void RotMatrixZ(long r, MATRIX* m)
 	return;
 }
 
-void sub_80078458()
+void sub_80078458(struct _VMObject* vmobject, struct Level* level)
 {
-	UNIMPLEMENTED();
+	struct _VMOffsetTable* currentVMOffset;//$a0
+	struct _Terrain* terrain;//s7
+	long dz;//s6
+	struct _VMColorOffset* colorOffset;//$s4
+	struct _VMOffset* moveOffset;//$s4
+	long morphTime;
+	long morphType;
+	struct _MorphColor* morphColor;
+	short t2;
+	short v0;
+	struct _VMOffset* move0;//t3
+	struct _TVertex* vertex0;//t3
+	struct _TVertex* bgv0;//t3
+	struct _TVertex* bgv1;//t3
+	struct _TVertex* bgv2;//t3
+	struct _BGObject_Face* f;
+	VECTOR color;
+	CVECTOR rcolor;
+	long color2;
+	CVECTOR colOffset;
+	unsigned char colRTemp;
+	unsigned char colGTemp;
+	int r;
+	int g;
+	int b;
+	long i;//t1
+	struct _BGObject* bgObject;
+	struct _VMVertex* vmVertex;
+	VECTOR vertex;
+	SVECTOR sv;
+	struct _VM_Face* vf;
+
+	currentVMOffset = vmobject->curVMOffsetTable;
+	terrain = level->terrain;
+
+	dz = level->waterZLevel;
+
+	if ((vmobject->flags & 0x10))
+	{
+		dz -= (terrain->BSPTreeArray + vmobject->bspIdx)->globalOffset.z;
+	}
+	//0x78490
+
+	colorOffset = &currentVMOffset->offsets.colorOffsets;
+	moveOffset = &currentVMOffset->offsets.moveOffsets;
+	
+	if ((vmobject->flags & 0x4))
+	{
+		if (vmobject->numVMVertices != 0)
+		{
+			if (vmobject->numVMVertices == 0x14)
+			{
+				int testing = 0;
+				testing++;
+			}
+
+			morphTime = gameTrackerX.gameData.asmData.MorphTime;
+			morphType = gameTrackerX.gameData.asmData.MorphType;
+
+			if (morphTime != 1000)
+			{
+				morphTime = (morphTime * 4096) / 1000;
+
+				if (morphTime == 0)
+				{
+					morphTime = 1;
+				}
+
+				if (morphType != 0)
+				{
+					morphTime = 4096 - morphTime;
+				}
+
+				morphColor = level->terrain->MorphColorList;
+
+				if (0 < 0)
+				{
+					morphTime = 0;
+
+					if (morphType != 0)
+					{
+						morphColor = level->terrain->MorphColorList;
+					}
+				}
+			}
+			else
+			{
+				//0x78524
+				morphTime = 0;
+
+				if (morphType != 0)
+				{
+					morphColor = level->terrain->MorphColorList;
+				}
+			}
+
+			//0x78534
+			for (i = 0; i < vmobject->numVMVertices; i++)
+			{
+				vmVertex = (struct _VMVertex*)vmobject->vmvertexList + i;
+
+				t2 = vmVertex->timer + vmobject->timer;
+				v0 = vmVertex->count;
+
+				if (t2 >= currentVMOffset->numVMOffsets)
+				{
+					t2 -= currentVMOffset->numVMOffsets;
+				}
+
+				vertex0 = &level->terrain->vertexList[v0];
+
+				if (morphTime != 0)
+				{
+					gte_lddp(morphTime);
+
+					color.vx = ((((morphColor + v0)->morphColor15 & 0x1F) << 3) - ((vertex0->rgb15 & 0x1F) << 3)) << 4;
+					color.vy = ((((morphColor + v0)->morphColor15 & 0x3E0) >> 2) - ((vertex0->rgb15 & 0x3E0) >> 2)) << 4;
+					color.vz = ((((morphColor + v0)->morphColor15 & 0x7C00) >> 7) - ((vertex0->rgb15 & 0x7C00) >> 7)) << 4;
+
+					gte_ldcv(((long*)&color));
+
+					MAC1 = ((vertex0->rgb15 & 0x1F) << 3) << 4;
+					MAC2 = ((vertex0->rgb15 & 0x3E0) >> 2) << 4;
+					MAC3 = ((vertex0->rgb15 & 0x7C00) >> 7) << 4;
+
+					gte_gpl12();
+
+					gte_strgb(&rcolor);//t4, t5, t6
+
+					if (0 < 0)
+					{
+						if (morphTime != 0)
+						{
+							color2 = (morphColor + v0)->morphColor15;
+
+							if (0 < 0)
+							{
+								color2 = vertex0->rgb15;
+							}
+						}
+						else
+						{
+							//0x7862C
+							color2 = vertex0->rgb15;
+						}
+
+						rcolor.r = (color2 & 0x1F) << 3;
+						rcolor.g = (color2 & 0x3E0) >> 2;
+						rcolor.b = (color2 & 0x7C00) >> 7;
+					}
+				}
+				else
+				{
+					if (morphType != 0)
+					{
+						color2 = (morphColor + v0)->morphColor15;
+
+						if (0 < 0)
+						{
+							color2 = vertex0->rgb15;
+						}
+					}
+					else
+					{
+						//0x7862C
+						color2 = vertex0->rgb15;
+					}
+
+					rcolor.r = (color2 & 0x1F) << 3;//t4
+					rcolor.g = (color2 & 0x3E0) >> 2;//t5
+					rcolor.b = (color2 & 0x7C00) >> 7;//t6
+				}
+
+				//0x7864C
+				colOffset.r = colorOffset[t2].dr;//t7
+				colOffset.g = colorOffset[t2].dg;//t8
+				colOffset.b = colorOffset[t2].db;//t9
+
+				//v1 = vertex->vertex.z;
+
+				if ((vmobject->flags & 0x10) && dz < vertex0->vertex.z)
+				{
+					colOffset.r = 0;
+					colOffset.b = 0;
+					colOffset.g = 0;
+				}
+				//0x7868C
+
+				if (morphType != 0 && morphTime == 0 && (vmobject->flags & 0x100))
+				{
+					colRTemp = colOffset.r;
+					colOffset.r = colOffset.g;
+					colOffset.g = colRTemp;
+				}
+
+				r = rcolor.r + colOffset.r;//t4 + t7
+				g = rcolor.g + colOffset.g;//t5 + t8
+				b = rcolor.b + colOffset.b;//t6 + t9
+
+				if ((r & 0xFF00) != 0)
+				{
+					if (r < 0)
+					{
+						r = 0;
+					}
+					else
+					{
+						r = 255;
+					}
+				}
+
+				//0x786C8
+				if ((g & 0xFF00) != 0)
+				{
+					if (g < 0)
+					{
+						g = 0;
+					}
+					else
+					{
+						g = 255;
+					}
+				}
+
+				if ((b & 0xFF00) != 0)
+				{
+					if (b < 0)
+					{
+						b = 0;
+					}
+					else
+					{
+						b = 255;
+					}
+				}
+
+				vertex0->r0 = r;
+				vertex0->g0 = g;
+				vertex0->b0 = b;
+			}
+		}
+		//0x7870C
+
+		//t1 = level->numBGObjects
+		//t0 = 
+		f = (struct _BGObject_Face*)level->bgObjectList;
+
+		for (i = level->numBGObjects; i != 0; i--)
+		{
+			bgv0 = &level->terrain->vertexList[f[i].v1];//s4
+			bgv1 = &level->terrain->vertexList[f[i].v2];//s5
+
+			vertex.vx = bgv1->vertex.x - bgv0->vertex.x;
+			vertex.vy = bgv1->vertex.y - bgv0->vertex.y;
+			vertex.vz = bgv1->vertex.z - bgv0->vertex.z;
+
+			gte_lddp(f->unknown2);
+			gte_ldcv(((long*)&vertex));
+			gte_gpf12();
+
+			bgv2 = &level->terrain->vertexList[f[i].v0];//s5
+
+			gte_stsv(&sv);//t7, t8, t9
+
+			//bgv2->vertex.x = bgv0->vertex.x + sv.vx;
+			//bgv2->vertex.y = bgv0->vertex.y + sv.vy;
+			//bgv2->vertex.z = bgv0->vertex.z + sv.vz;
+		}
+
+		if (0 >= 0)
+		{
+			return;
+		}
+	}
+	//0x787F4
+	if ((vmobject->flags & 0x8))
+	{
+		for (i = 0; i < vmobject->numVMVertices; i++)
+		{
+			vf = (struct _VM_Face*)vmobject->vmvertexList + i;
+
+			int t2 = vf->v4 + vmobject->timer;
+
+			if (t2 >= currentVMOffset->numVMOffsets)
+			{
+				t2 -= currentVMOffset->numVMOffsets;
+			}
+
+			int t4 = vf->v1;
+			int t5 = vf->v2;
+			int t6 = vf->v3;
+
+			vertex0 = &level->terrain->vertexList[vf->v0];//t3
+			move0 = &moveOffset[t2];//t2
+
+			vertex0->vertex.x = t4 + move0->dx;
+			vertex0->vertex.y = t5 + move0->dy;
+			vertex0->vertex.z = t6 + move0->dz;
+		}
+		//0x78878
+		//t1 = level->numBGObjects
+
+		for(i = level->numBGObjects; i != 0; i--)
+		{
+			bgv0 = &level->terrain->vertexList[((struct _BGObject_Face*)&level->bgObjectList[i])->v1];//s4
+			bgv1 = &level->terrain->vertexList[((struct _BGObject_Face*)&level->bgObjectList[i])->v2];//s5
+
+			vertex.vx = bgv1->vertex.x - bgv0->vertex.x;
+			vertex.vy = bgv1->vertex.y - bgv0->vertex.y;
+			vertex.vz = bgv1->vertex.z - bgv0->vertex.z;
+
+			gte_lddp(((struct _BGObject_Face*)&level->bgObjectList[i])->unknown2);
+			gte_ldcv(((long*)&vertex));
+			gte_gpf12();
+
+			bgv2 = &level->terrain->vertexList[((struct _BGObject_Face*)&level->bgObjectList[i])->v0];//t3
+
+			gte_stsv(&sv);//t7, t8, t9
+
+			bgv2->vertex.x = bgv0->vertex.x + sv.vx;
+			bgv2->vertex.y = bgv0->vertex.y + sv.vy;
+			bgv2->vertex.z = bgv0->vertex.z + sv.vz;
+		}
+		//0x78948
+	}
+	//0x78948
 }
+
 
 void VM_ProcessVMObjectList_S(struct Level* level, struct Camera* camera)
 {
@@ -792,16 +1118,16 @@ void VM_ProcessVMObjectList_S(struct Level* level, struct Camera* camera)
 		{
 			timer = level->vmobjectList[i].timer + 1;
 
-			if (timer < level->vmobjectList[i].curVMOffsetTable->numVMOffsets)
+			if (timer >= level->vmobjectList[i].curVMOffsetTable->numVMOffsets)
 			{
 				timer = 0;
 			}
 
-			level->vmobjectList->timer = timer;
+			level->vmobjectList[i].timer = timer;
 
-			if (BSP_SphereIntersectsViewVolume_S(&level->vmobjectList[i].position) != 0)
+			//if (BSP_SphereIntersectsViewVolume_S(&level->vmobjectList[i].position) != 0)
 			{
-				sub_80078458();
+				sub_80078458(&level->vmobjectList[i], level);
 			}
 		}
 	}
