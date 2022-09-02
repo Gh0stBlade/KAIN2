@@ -97,7 +97,11 @@ int do_start_game(void *gt, long parameter, enum menu_ctrl_t ctrl)
 {
 	if (ctrl == menu_ctrl_engage)
 	{
+#if defined(__EMSCRIPTEN__)
+		if (MEMCARD_IsWrongVersion(((GameTracker*)gt)->memcard) == 0 && 0)//Skip for now
+#else
 		if (MEMCARD_IsWrongVersion(((GameTracker*)gt)->memcard) == 0)
+#endif
 		{
 			menu_push(((GameTracker*)gt)->menu, memcard_main_menu);
 			return 1;

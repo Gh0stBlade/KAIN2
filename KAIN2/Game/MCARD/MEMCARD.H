@@ -1,6 +1,8 @@
 #ifndef MEMCARD_H
 #define MEMCARD_H
 
+#include "MENU/MENU.H"
+
 enum mcpsx_err_t // Hashcode: 0xB64074E4 (dec: -1237289756)
 {
 	mcpsx_err_none = 0,
