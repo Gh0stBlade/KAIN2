@@ -73,6 +73,33 @@ struct _Segment
 	struct _HInfo* PTR_32 hInfo; // size=24, offset=20
 };
 
+struct DrMoveAniTexSrcInfo 
+{
+	short pixSrcX; // size=0, offset=0
+	short pixSrcY; // size=0, offset=2
+	short clutSrcX; // size=0, offset=4
+	short clutSrcY; // size=0, offset=6
+};
+
+struct DrMoveAniTexDestInfo
+{
+	short pixDstX; // size=0, offset=0
+	short pixDstY; // size=0, offset=2
+	short pixW; // size=0, offset=4
+	short pixH; // size=0, offset=6
+	short clutDstX; // size=0, offset=8
+	short clutDstY; // size=0, offset=10
+	short clutW; // size=0, offset=12
+	short clutH; // size=0, offset=14
+	short pixCurrentX; // size=0, offset=16
+	short pixCurrentY; // size=0, offset=18
+	short clutCurrentX; // size=0, offset=20
+	short clutCurrentY; // size=0, offset=22
+	long numFrames; // size=0, offset=24
+	long speed; // size=0, offset=28
+	struct DrMoveAniTexSrcInfo frame; // size=8, offset=32
+};
+
 struct DrMoveAniTex 
 {
 	long numAniTextues; // size=0, offset=0
