@@ -1227,12 +1227,16 @@ int aadWaveMalloc(unsigned short waveID, unsigned long waveSize)
 			{
 				do
 				{
-					sramDescIndex = i;
-					
-					if (((i + 1) & 0x7F) != i)
+					if (((i + 1) & 0x7F) == i)
 					{
-						next = sramDescTbl + sramDescIndex;
+						return 255;
 					}
+
+					next = sramDescTbl + sramDescIndex;
+
+					sramDescIndex = i + 1;
+
+					i = ((i + 1) & 0x7F);
 
 				} while ((next->waveID & 0x8000) != 0);
 
@@ -1450,21 +1454,31 @@ void aadLoadSingleDynSfx(struct AadDynamicSfxLoadInfo *info)
 		
 		toneAttr = &aadMem->sfxToneAttrTbl[i];
 		
-		while ((toneAttr->referenceCount & 0x7F) != 0)
+		if (toneAttr->referenceCount != 0)
 		{
-			if (((i + 1) & 0x7F) != i)
+			while (((i + 1) & 0x7F) != i)
 			{
-				toneAttr = &aadMem->sfxToneAttrTbl[((i + 1) & 0x7F)];
-			}
-			else
-			{
-				info->smfLoadingState = 2;
+				if (((i + 1) & 0x7F) != i)
+				{
+					toneAttr = &aadMem->sfxToneAttrTbl[((i + 1) & 0x7F)];
 
-				aadFreeSingleDynSfx(attr->sfxID);
+					if (toneAttr->referenceCount == 0)
+					{
+						break;
+					}
+				}
+				else
+				{
+					info->smfLoadingState = 2;
 
-				aadMem->sfxToneMasterList[attr->sfxID] = 0xFE;
+					aadFreeSingleDynSfx(attr->sfxID);
 
-				setSramFullAlarm();
+					aadMem->sfxToneMasterList[attr->sfxID] = 0xFE;
+
+					setSramFullAlarm();
+				}
+
+				i = ((i + 1) & 0x7F);
 			}
 		}
 
@@ -1551,11 +1565,19 @@ void aadLoadSingleDynSfx(struct AadDynamicSfxLoadInfo *info)
 	}
 }
 
+#if defined(PSXPC_VERSION)
+int inCallback = FALSE;
+#endif
+
 void HackCallback()
 { 
 	SpuSetTransferCallback(NULL);
 
+	inCallback = TRUE;
+
 	aadLoadDynamicSfxReturn2(smfDataPtr, smfBytesLeft, NULL, smfInfo, NULL);
+
+	inCallback = FALSE;
 }
 
 void aadLoadDynamicSfxReturn2(void *loadedDataPtr, long loadedDataSize, short status, void *data1, void *data2)
@@ -1638,20 +1660,24 @@ void aadLoadDynamicSfxReturn2(void *loadedDataPtr, long loadedDataSize, short st
 
 			if (bytesRemaining < n)
 			{
-				bytesRemaining = n;
+				n = bytesRemaining;
 			}
-
-			aadWaitForSramTransferComplete();
 
 			bytesRemaining -= n;
 
+			aadWaitForSramTransferComplete();
+
+#if !defined(PSXPC_VERSION)
 			SpuSetTransferCallback(HackCallback);
+#endif
+
 			SpuSetTransferStartAddr(info->waveTransferAddr);
 			SpuWrite(&dataPtr[dataOffset], n);
 
 			dataOffset += n;
 
 			info->waveTransferAddr += n;
+
 			info->bytesToLoad -= n;
 
 			if (info->bytesToLoad == 0)
@@ -1673,12 +1699,32 @@ void aadLoadDynamicSfxReturn2(void *loadedDataPtr, long loadedDataSize, short st
 						smfDataPtr = &dataPtr[dataOffset];
 						smfBytesLeft = bytesRemaining;
 						smfInfo = info;
+
+#if !defined(PSXPC_VERSION)
 						return;
+#endif
 					}
 					else
 					{
 						SpuSetTransferCallback(NULL);
 					}
+				}
+			}
+			else
+			{
+				if (bytesRemaining != 0)
+				{
+					smfDataPtr = &dataPtr[dataOffset];
+					smfBytesLeft = bytesRemaining;
+					smfInfo = info;
+
+#if !defined(PSXPC_VERSION)
+					return;
+#endif
+				}
+				else
+				{
+					SpuSetTransferCallback(NULL);
 				}
 			}
 		}
