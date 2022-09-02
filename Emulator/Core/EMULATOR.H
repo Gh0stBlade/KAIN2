@@ -201,6 +201,7 @@ extern void Emulator_ResetPGXPCache();
 
 extern void Emulator_GenerateVertexArrayTriangle(struct Vertex* vertex, short* p0, short* p1, short* p2, short z);
 extern void Emulator_GenerateVertexArrayQuad(struct Vertex* vertex, short* p0, short* p1, short* p2, short* p3, short z);
+extern void Emulator_DoSplitHackQuad(short* p0, short* p1, short* p2, short* p3);
 extern void Emulator_GenerateVertexArrayRect(struct Vertex* vertex, short* p0, short w, short h, short z);
 
 extern void Emulator_GenerateTexcoordArrayTriangle(struct Vertex* vertex, unsigned char* uv0, unsigned char* uv1, unsigned char* uv2, short page, short clut, unsigned char dither);

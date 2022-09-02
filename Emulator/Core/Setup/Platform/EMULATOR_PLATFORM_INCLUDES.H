@@ -62,7 +62,7 @@
 #include <GLES3/gl3.h>
 #endif
 #include <EGL/egl.h>
-#include "Core/Render/OGL/EMULATOR_RENDER_OGLES.H"
+#include "Core/Render/OGLES/EMULATOR_RENDER_OGLES.H"
 #if defined(__EMSCRIPTEN__)
 #include <SDL2/SDL_egl.h>
 #include <SDL2/SDL_syswm.h>

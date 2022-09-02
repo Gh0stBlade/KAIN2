@@ -1,7 +1,7 @@
+#include "LIBGPU.H"
 #include "EMULATOR_RENDER_OGL.H"
 #include "Core/Debug/EMULATOR_LOG.H"
 #include "Core/Render/EMULATOR_RENDER_COMMON.H"
-#include "LIBGPU.H"
 #include <stdio.h>
 
 #if defined(OGL)
@@ -689,7 +689,6 @@ void Emulator_UpdateVertexBuffer(const Vertex* vertices, int num_vertices)
 
 	vbo_was_dirty_flag = TRUE;
 }
-
 
 void Emulator_SetViewPort(int x, int y, int width, int height)
 {

@@ -16,7 +16,7 @@ char byte_3352 = 0;
 
 #if defined(USE_32_BIT_ADDR)
 
-struct OrderingTable
+struct OrderingTable///@TODO delete?
 {
 	unsigned long addr;
 	unsigned long len;

@@ -1,7 +1,7 @@
+#include "LIBGPU.H"
 #include "EMULATOR_RENDER_XED3D.H"
 #include "Core/Debug/EMULATOR_LOG.H"
 #include "Core/Render/EMULATOR_RENDER_COMMON.H"
-#include "LIBGPU.H"
 #include <stdio.h>
 
 #if defined(XED3D)

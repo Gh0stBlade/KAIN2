@@ -1100,11 +1100,9 @@ extern int gte_ldlzc(int input);
 	: "r"( r0 )						\
 	: "$12", "$13", "$14", "memory" )
 
-#define gte_strgb( r0 ) __asm__ volatile (			\
-	"swc2	$22, 0( %0 )"					\
-	:							\
-	: "r"( r0 )						\
-	: "memory" )
+#define gte_strgb( r0 )			 \
+	((int*)r0)[0] = RGB0;        \
+
 
 #define gte_strgb3( r0, r1, r2 ) \
 	((int*)r0)[0] = RGB0;        \

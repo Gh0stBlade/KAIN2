@@ -1,6 +1,6 @@
+#include "LIBGPU.H"
 #include "EMULATOR_RENDER_COMMON.H"
 #include "EMULATOR_GLOBALS.H"
-#include "LIBGPU.H"
 
 #include <assert.h>
 #include <string.h>
@@ -12,6 +12,7 @@ unsigned short vram[VRAM_WIDTH * VRAM_HEIGHT];
 
 unsigned char rgLUT[LUT_WIDTH * LUT_HEIGHT * sizeof(unsigned int)];
 
+int splitAgain = FALSE;
 unsigned int g_swapTime;
 int g_wireframeMode = 0;
 int g_swapInterval = SWAP_INTERVAL;
@@ -131,6 +132,8 @@ int IsValidCode(int code)
 	return code >= 0x20 && code <= 0x80;
 }
 
+extern int splitAgain;
+
 void Emulator_AddSplit(bool semiTrans, int page, TextureID textureId)
 {
 	VertexBufferSplit& curSplit = g_splits[g_splitIndex];
@@ -142,7 +145,7 @@ void Emulator_AddSplit(bool semiTrans, int page, TextureID textureId)
 #elif defined(D3D12)
 	if (curSplit.blendMode == blendMode && curSplit.texFormat == texFormat && curSplit.textureId.m_textureResource == textureId.m_textureResource)
 #else
-	if (curSplit.blendMode == blendMode && curSplit.texFormat == texFormat && curSplit.textureId == textureId)
+	if (curSplit.blendMode == blendMode && curSplit.texFormat == texFormat && curSplit.textureId == textureId && !splitAgain)
 #endif
 	{
 		return;
@@ -166,6 +169,7 @@ void Emulator_MakeTriangle()
 	g_vertexBuffer[g_vertexIndex + 3] = g_vertexBuffer[g_vertexIndex];
 	g_vertexBuffer[g_vertexIndex + 4] = g_vertexBuffer[g_vertexIndex + 2];
 }
+
 
 // parses primitive and pushes it to VBO
 // returns primitive size
@@ -322,6 +326,8 @@ int ParsePrimitive(uintptr_t primPtr, short* z)
 			POLY_F4_SEMITRANS* poly = (POLY_F4_SEMITRANS*)pTag;
 
 			activeDrawEnv.tpage = (poly->dr_tpage & 0xFFFF);
+
+			//Emulator_DoSplitHackQuad(&poly->x0, &poly->x1, &poly->x3, &poly->x2);
 
 			Emulator_AddSplit(semi_transparent, activeDrawEnv.tpage, whiteTexture);
 

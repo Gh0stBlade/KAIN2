@@ -22,6 +22,8 @@
 extern SDL_Window* g_window;
 #endif
 
+extern int splitAgain;
+
 #if defined(NTSC_VERSION)
 #define COUNTER_UPDATE_INTERVAL (263)
 #else
@@ -291,8 +293,7 @@ void CreateUWPApplication()
 #endif
 
 #if defined(OGLES)
-	GLuint dynamic_vertex_buffer;
-	GLuint dynamic_vertex_array;
+
 #elif defined(D3D11)
 
 #elif defined(D3D12)
@@ -432,7 +433,7 @@ std::thread counter_thread;
 int g_texturelessMode = 0;
 int g_emulatorPaused = 0;
 
-#if !defined(OGL) && !defined(D3D9) && !defined(D3D11)
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES)
 void Emulator_ResetDevice()
 {
 #if defined(EGL) || defined(OGLES)///@TODO &&
@@ -2330,7 +2331,7 @@ static int Emulator_InitialiseVulkanContext(char* windowName)
 }
 #endif
 
-#if defined(OGLES)
+#if defined(OGLES) && 0
 EGLint majorVersion = 0, minorVersion = 0;
 EGLContext eglContext = NULL;
 EGLSurface eglSurface = NULL;
@@ -2857,76 +2858,25 @@ void Emulator_GenerateVertexArrayTriangle(struct Vertex* vertex, short* p0, shor
 #endif
 }
 
+
+void Emulator_DoSplitHackQuad(short* p0, short* p1, short* p2, short* p3)
+{
+	if (p0[0] == p1[0] && p0[0] == p2[0] && p0[0] == p3[0])
+	{
+		splitAgain = TRUE;
+	}
+	else
+	{
+		splitAgain = FALSE;
+	}
+}
+
 void Emulator_GenerateVertexArrayQuad(struct Vertex* vertex, short* p0, short* p1, short* p2, short* p3, short z)
 {
 	assert(p0);
 	assert(p1);
 	assert(p2);
 	assert(p3);
-
-	//If vertical line quad
-	if (p0[0] == p1[0] && p0[0] == p2[0] && p0[0] == p3[0])
-	{
-		short maxXY[2];
-		short minXY[2];
-
-		short x = p0[0];
-		short minY = p0[1];
-		short maxY = p0[1];
-
-		if (minY > p1[1])
-		{
-			minY = p1[1];
-		}
-
-		if (minY > p2[1])
-		{
-			minY = p2[1];
-		}
-
-		if (minY > p3[1])
-		{
-			minY = p3[1];
-		}
-
-		if (maxY < p1[1])
-		{
-			maxY = p1[1];
-		}
-
-		if (maxY < p2[1])
-		{
-			maxY = p2[1];
-		}
-
-		if (maxY < p3[1])
-		{
-			maxY = p3[1];
-		}
-
-		minXY[0] = x;
-		minXY[1] = minY;
-		maxXY[0] = x;
-		maxXY[1] = maxY;
-
-		//Emulator_GenerateLineArray(vertex, &minXY[0], &maxXY[0]);
-
-		//return;
-
-		vertex[0].x = (float)x;
-		vertex[0].y = (float)minY;
-
-		vertex[1].x = (float)x + 1;
-		vertex[1].y = (float)minY;
-
-		vertex[2].x = (float)x + 1;
-		vertex[2].y = (float)maxY;
-
-		vertex[3].x = (float)x;
-		vertex[3].y = (float)maxY;
-
-		return;
-	}
 
 #if defined(PGXP)
 
@@ -3549,7 +3499,7 @@ void Emulator_GenerateColourArrayQuad(struct Vertex* vertex, unsigned char* col0
 	}
 }
 
-#if defined(OGLES)
+#if defined(OGLES) && 0
 GLint u_Projection;
 
 #define GTE_DISCARD\
@@ -4331,7 +4281,7 @@ void Emulator_DestroyGlobalShaders()
 }
 #endif
 
-#if !defined(OGL) && !defined(D3D9) && !defined(D3D11)
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES)
 void Emulator_GenerateCommonTextures()
 {
 	unsigned int pixelData = 0xFFFFFFFF;
@@ -4569,7 +4519,7 @@ void Emulator_GenerateCommonTextures()
 }
 #endif
 
-#if !defined(OGL) && !defined(D3D9) && !defined(D3D11)
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES)
 int Emulator_CreateCommonResources()
 {
 	memset(vram, 0, VRAM_WIDTH * VRAM_HEIGHT * sizeof(unsigned short));
@@ -4807,7 +4757,7 @@ void Emulator_Ortho2D(float left, float right, float bottom, float top, float zn
 }
 #endif
 
-#if !defined(OGL) && !defined(D3D9) && !defined(D3D11)
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES)
 void Emulator_SetShader(const ShaderID &shader)
 {
 #if defined(OGL) || defined(OGLES)
@@ -4848,7 +4798,7 @@ void Emulator_SetShader(const ShaderID &shader)
 }
 #endif
 
-#if !defined(OGL) && !defined(D3D9) && !defined(D3D11)
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES)
 void Emulator_SetTexture(TextureID texture, TexFormat texFormat)
 {
 	switch (texFormat)
@@ -4969,7 +4919,7 @@ void Emulator_SetTexture(TextureID texture, TexFormat texFormat)
 }
 #endif
 
-#if !defined(OGL) && !defined(D3D9) && !defined(D3D11)
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES)
 void Emulator_DestroyTexture(TextureID texture)
 {
 #if defined(OGL) || defined(OGLES)
@@ -4987,7 +4937,7 @@ void Emulator_DestroyTexture(TextureID texture)
 }
 #endif
 
-#if !defined(OGL) && !defined(D3D9) && !defined(D3D11)
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES)
 void Emulator_Clear(int x, int y, int w, int h, unsigned char r, unsigned char g, unsigned char b)
 {
 // TODO clear rect if it's necessary
@@ -5035,7 +4985,7 @@ void Emulator_Clear(int x, int y, int w, int h, unsigned char r, unsigned char g
 
 #define NOFILE 0
 
-#if !defined(__EMSCRIPTEN__) && !defined(__ANDROID__) && !defined(OGL) && !defined(D3D9) && !defined(D3D11)
+#if !defined(__EMSCRIPTEN__) && !defined(__ANDROID__) && !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES)
 
 void Emulator_SaveVRAM(const char* outputFileName, int x, int y, int width, int height, int bReadFromFrameBuffer)
 {
@@ -5086,7 +5036,7 @@ void Emulator_SaveVRAM(const char* outputFileName, int x, int y, int width, int 
 }
 #endif
 
-#if !defined(OGL) && !defined(D3D9) && !defined(D3D11)
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES)
 void Emulator_StoreFrameBuffer(int x, int y, int w, int h)
 {
 	short *fb = (short*)malloc(w * h * sizeof(short));
@@ -5256,7 +5206,7 @@ void Emulator_ReadVRAM(unsigned short *dst, int x, int y, int dst_w, int dst_h)
 	}
 }
 
-#if !defined(OGL) && !defined(D3D9) && !defined(D3D11)
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES)
 void Emulator_UpdateVRAM()
 {
 	if (!vram_need_update) {
@@ -5600,63 +5550,6 @@ int Emulator_GetScreenshotNumber(int mode)
 	return fileNumber - 1;
 }
 
-void Emulator_CreateMemoryCard(int channel)
-{
-	char buf[16];
-	sprintf(&buf[0], "%ld.MCD", channel);
-	FILE* f = fopen(buf, "wb+");
-#define MEMCARD_LENGTH 0x1C000
-	unsigned short magic = 0x434D;
-	fwrite(&magic, sizeof(unsigned short), 1, f);
-
-	fseek(f, 125, SEEK_CUR);
-	
-	unsigned char unk4 = 0xE;
-	fwrite(&unk4, sizeof(unsigned char), 1, f);
-
-	for (int i = 0; i < 15; i++)
-	{
-		unsigned char unk1 = 0xA0;
-
-		fwrite(&unk1, sizeof(unsigned char), 1, f);
-		fseek(f, 7, SEEK_CUR);
-
-		unsigned short unk2 = 0xFFFF;
-		fwrite(&unk2, sizeof(unsigned short), 1, f);
-		fseek(f, 117, SEEK_CUR);
-
-		fwrite(&unk1, sizeof(unsigned char), 1, f);
-	}
-
-	for (int i = 0; i < 20; i++)
-	{
-		unsigned int unk3 = 0xFFFFFFFF;
-		fwrite(&unk3, sizeof(unsigned int), 1, f);
-		fseek(f, 124, SEEK_CUR);
-	}
-
-	for (int i = 0; i < 864; i++)
-	{
-		unsigned int unk5 = 0xFFFFFFFF;
-		fwrite(&unk5, sizeof(unsigned int), 1, f);
-	}
-
-	fwrite(&magic, sizeof(unsigned short), 1, f);
-
-	fseek(f, 125, SEEK_CUR);
-
-	unk4 = 0xE;
-	fwrite(&unk4, sizeof(unsigned char), 1, f);
-
-	for (int i = 0; i < 30720; i++)
-	{
-		unsigned int unk6 = 0xFFFFFFFF;
-		fwrite(&unk6, sizeof(unsigned int), 1, f);
-	}
-
-	fclose(f);
-
-}
 void Emulator_TakeScreenshot(int mode)
 {
 #if defined(SDL2)
@@ -5725,6 +5618,63 @@ void Emulator_TakeScreenshot(int mode)
 #endif
 }
 #endif
+
+void Emulator_CreateMemoryCard(int channel)
+{
+	char buf[16];
+	sprintf(&buf[0], "%ld.MCD", channel);
+	FILE* f = fopen(buf, "wb+");
+#define MEMCARD_LENGTH 0x1C000
+	unsigned short magic = 0x434D;
+	fwrite(&magic, sizeof(unsigned short), 1, f);
+
+	fseek(f, 125, SEEK_CUR);
+
+	unsigned char unk4 = 0xE;
+	fwrite(&unk4, sizeof(unsigned char), 1, f);
+
+	for (int i = 0; i < 15; i++)
+	{
+		unsigned char unk1 = 0xA0;
+
+		fwrite(&unk1, sizeof(unsigned char), 1, f);
+		fseek(f, 7, SEEK_CUR);
+
+		unsigned short unk2 = 0xFFFF;
+		fwrite(&unk2, sizeof(unsigned short), 1, f);
+		fseek(f, 117, SEEK_CUR);
+
+		fwrite(&unk1, sizeof(unsigned char), 1, f);
+	}
+
+	for (int i = 0; i < 20; i++)
+	{
+		unsigned int unk3 = 0xFFFFFFFF;
+		fwrite(&unk3, sizeof(unsigned int), 1, f);
+		fseek(f, 124, SEEK_CUR);
+	}
+
+	for (int i = 0; i < 864; i++)
+	{
+		unsigned int unk5 = 0xFFFFFFFF;
+		fwrite(&unk5, sizeof(unsigned int), 1, f);
+	}
+
+	fwrite(&magic, sizeof(unsigned short), 1, f);
+
+	fseek(f, 125, SEEK_CUR);
+
+	unk4 = 0xE;
+	fwrite(&unk4, sizeof(unsigned char), 1, f);
+
+	for (int i = 0; i < 30720; i++)
+	{
+		unsigned int unk6 = 0xFFFFFFFF;
+		fwrite(&unk6, sizeof(unsigned int), 1, f);
+	}
+
+	fclose(f);
+}
 
 void Emulator_DoDebugKeys(int nKey, bool down)
 {
@@ -5967,7 +5917,7 @@ unsigned int Emulator_GetFPS()
 	
 }
 
-#if !defined(OGL) && !defined(D3D9) && !defined(D3D11)
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES)
 void Emulator_SwapWindow()
 {
 	unsigned int timer = 1;
@@ -6049,7 +5999,7 @@ void Emulator_SwapWindow()
 }
 #endif
 
-#if !defined(OGL) && !defined(D3D9) && !defined(D3D11)
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES)
 void Emulator_WaitForTimestep(int count)
 {
 #if defined(SDL2)
@@ -6150,7 +6100,7 @@ void Emulator_ShutDown()
 	exit(EXIT_SUCCESS);
 }
 
-#if !defined(OGL) && !defined(D3D9) && !defined(D3D11)
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES)
 void Emulator_SetBlendMode(BlendMode blendMode)
 {
 	if (g_PreviousBlendMode == blendMode)
@@ -6477,7 +6427,7 @@ void Emulator_SetPGXPVertexCount(int vertexCount)
 #endif
 }
 
-#if !defined(OGL) && !defined(D3D9) && !defined(D3D11)
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES)
 void Emulator_SetViewPort(int x, int y, int width, int height)
 {
 	float offset_x = (float)activeDispEnv.screen.x;
@@ -6555,7 +6505,7 @@ void Emulator_SetRenderTarget(const RenderTargetID &frameBufferObject)
 
 #endif
 
-#if !defined(OGL) && !defined(D3D9) && !defined(D3D11)
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES)
 void Emulator_SetWireframe(bool enable) 
 {
 #if defined(OGL)
@@ -6574,7 +6524,7 @@ void Emulator_SetWireframe(bool enable)
 }
 #endif
 
-#if !defined(OGL) && !defined(D3D9) && !defined(D3D11)
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES)
 void Emulator_UpdateVertexBuffer(const Vertex *vertices, int num_vertices)
 {
 	assert(num_vertices <= MAX_NUM_POLY_BUFFER_VERTICES);
@@ -6638,7 +6588,7 @@ void Emulator_UpdateVertexBuffer(const Vertex *vertices, int num_vertices)
 }
 #endif
 
-#if !defined(OGL) && !defined(D3D9) && !defined(D3D11)
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES)
 void Emulator_DrawTriangles(int start_vertex, int triangles)
 {
 	if(triangles <= 0)
