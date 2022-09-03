@@ -8,51 +8,24 @@
 
 #if defined(_DEBUG)
 
-struct _BigFileEntry
+void Emulator_ReadFileWIN(const char* filePath, void* buff, int size)
 {
-	long fileHash;
-	long fileLen;
-	long filePos;
-	long checkSumFull;
-};
-
-#define MAX_NUM_LOAD_ATTEMPTS 255
-
-void* Emulator_GetBigFileEntryByHash(long hash)
-{
-	FILE* f = fopen("bigfile.txt", "r");
-	char* fileName = NULL;
-	struct _BigFileEntry bigFileEntry;
-	long fileHash = 0;
-	int fileSize = 0;
-
+	FILE* f = fopen(filePath, "rb");
+	
 	if (f != NULL)
 	{
-		char buffer[64];
-
-		while (fgets(buffer, 64, f)) 
-		{
-			buffer[strcspn(buffer, "\n")] = 0;
-			sscanf(buffer, "%x", &fileHash);
-			fileName = &buffer[9];
-
-			if (hash == fileHash)
-			{
-				break;
-			}
-		}
-
+		fread(buff, size, 1, f);
 		fclose(f);
+	}
+}
 
-		Emulator_GetFileSize(fileName, &fileSize);
-
-		bigFileEntry.checkSumFull = 0;
-		bigFileEntry.fileHash = fileHash;
-		bigFileEntry.fileLen = fileSize;
-		bigFileEntry.filePos = 0;
-
-		return &bigFileEntry;
-
+FILE* Emulator_OpenFile(const char* filePath, const char* mode, int* outSize)
+{
+	FILE* f = fopen(filePath, mode);
+	
+	if (f != NULL)
+	{
+		return f;
 	}
 
 	return NULL;
@@ -60,36 +33,41 @@ void* Emulator_GetBigFileEntryByHash(long hash)
 
 void Emulator_OpenReadWIN(long hash, void* buff, int size)
 {
-	FILE* f = fopen("bigfile.txt", "r");
-	char* fileName = NULL;
-	struct _BigFileEntry bigFileEntry;
-	long fileHash = 0;
 	int fileSize = 0;
+	Emulator_GetFileSize("bigfile.lst", &fileSize);
+	char* fileBuffer = new char[fileSize];
+	Emulator_ReadFileWIN("bigfile.lst", fileBuffer, fileSize);
+	char* fileName = NULL;
+	long fileHash = 0;
 
-	if (f != NULL)
+	char* pLine = &fileBuffer[0];
+
+	while (pLine != NULL && pLine < &fileBuffer[fileSize])
 	{
-		char buffer[64];
+		sscanf(pLine, "%x", &fileHash);
+		fileName = &pLine[9];
 
-		while (fgets(buffer, 64, f))
+		if (hash == fileHash)
 		{
-			buffer[strcspn(buffer, "\n")] = 0;
-			sscanf(buffer, "%x", &fileHash);
-			fileName = &buffer[9];
-
-			if (hash == fileHash)
+			FILE* f = fopen(fileName, "rb");
+			if (f != NULL)
 			{
-				break;
+				fread(buff, size, 1, f);
+				fclose(f);
 			}
+
+			break;
 		}
 
-		fclose(f);
-
-		f = fopen(fileName, "rb");
-		fread(buff, size, 1, f);
-		fclose(f);
+		pLine = strchr(pLine, 0) + 1;
 	}
 
 	return;
+}
+
+void Emulator_OpenReadFPWIN(const char* filePath, void* buff, int size)
+{
+	Emulator_ReadFileWIN(filePath, buff, size);
 }
 
 void Emulator_GetFileSizeWIN(const char* filePath, int* outSize)

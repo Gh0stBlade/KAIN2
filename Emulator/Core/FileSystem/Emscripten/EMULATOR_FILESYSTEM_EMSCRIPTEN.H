@@ -6,7 +6,10 @@
 
 #if defined(__EMSCRIPTEN__)
 extern void Emulator_OpenReadEM(long hash, void* buff, int size);
-extern FILE* Emulator_OpenFile(const char* filePath, const char* mode, int* outSize);
+extern void Emulator_OpenReadFPEM(const char* filePath, void* buff, int size);
+extern void Emulator_GetFileSizeEM(const char* filePath, int* outSize);
+extern void* Emulator_OpenFile(const char* filePath, const char* mode, int* outSize);
+extern void Emulator_ReadFileEM(const char* filePath, void* buff, int size);
 #endif
 
 #endif

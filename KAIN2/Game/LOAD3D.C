@@ -422,6 +422,22 @@ void LOAD_ProcessReadQueue()
 #ifndef PC_VERSION
 char* LOAD_ReadFileFromCD(char* filename, int memType)
 { 
+#if defined(_DEBUG) || defined(__EMSCRIPTEN__)
+	char* readBuffer;
+	extern void Emulator_GetFileSize(const char* filePath, int* outSize);
+	extern void Emulator_OpenReadFP(const char* filePath, void* buff, int size);
+
+	int fileSize = 0;
+	
+	Emulator_GetFileSize(filename, &fileSize);	
+
+	readBuffer = MEMPACK_Malloc(fileSize, memType);
+	if (readBuffer != NULL)
+	{
+		Emulator_OpenReadFP(filename, readBuffer, fileSize);
+		return readBuffer;
+	}
+#else
 #if defined(PSXPC_VERSION) && defined(NO_CD)
 #if defined(_WIN64) || defined(_WIN32) || defined(__EMSCRIPTEN__)
 	FILE* fp;
@@ -509,6 +525,7 @@ char* LOAD_ReadFileFromCD(char* filename, int memType)
 	}
 
 	return NULL;
+#endif
 #endif
 }
 #endif

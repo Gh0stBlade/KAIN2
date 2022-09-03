@@ -14,7 +14,7 @@ enum language_t localstr_get_language()
 }
 
 #if defined(PSXPC_VERSION) && defined(NO_CD)
-	#define LOCALS_TBL "\\LOCALS.TBL"
+	#define LOCALS_TBL "LOCALS.TBL"
 #else
 	#define LOCALS_TBL "\\LOCALS.TBL;1"
 #endif

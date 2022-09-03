@@ -42,9 +42,7 @@ struct _BigFileDir // hashcode: 0x4E39D3E2 (dec: 1312412642)
 
 struct _BigFile // hashcode: 0x50C273F3 (dec: 1354920947)
 {
-#if defined(__EMSCRIPTEN__)
-	const char* fileName;
-#elif defined(PSXPC_VERSION) && defined(NO_CD)
+#if defined(PSXPC_VERSION) && defined(NO_CD)
 	FILE* bigfileFileHandle;
 #endif
 	long bigfileBaseOffset; // size=0, offset=0
@@ -74,7 +72,7 @@ struct _NonBlockLoadEntry // hashcode: 0x722059B4 (dec: 1914722740)
 	void* retData; // size=0, offset=44
 	void* retData2; // size=0, offset=48
 	void** retPointer; // size=0, offset=52
-#ifdef PSX_VERSION
+#if defined(PSX_VERSION)
 	char fileName[48]; // size=48, offset=52
 #endif
 };
