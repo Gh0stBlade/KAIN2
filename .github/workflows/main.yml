@@ -20,21 +20,6 @@ jobs:
       
       - name: Create Build Directory
         run: cmake -E make_directory ${{github.workspace}}/Build_EMSDK
-        
-      - name: Create Assets Directory
-        run: cmake -E make_directory ${{github.workspace}}/Build_EMSDK/Assets
-        
-      - name: Download BIGFILE.DAT
-        uses: carlosperate/download-file-action@v1.1.1
-        with:
-          file-url: 'https://legacyofkain.co.uk/KAIN2/ASSETS/DEMO/BIGFILE.DAT'
-          location: '${{github.workspace}}/Build_EMSDK/Assets'
-          
-      - name: Download LOCALS.TBL
-        uses: carlosperate/download-file-action@v1.1.1
-        with:
-          file-url: 'https://legacyofkain.co.uk/KAIN2/ASSETS/DEMO/LOCALS.TBL'
-          location: '${{github.workspace}}/Build_EMSDK/Assets'
 
       - name: Configure CMake
         run: emcmake cmake . -B%cd%"/Build_EMSDK/"
