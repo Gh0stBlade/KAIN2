@@ -40,6 +40,6 @@ jobs:
           username: ${{secrets.FTP_USER}}
           password: ${{secrets.FTP_PASSWORD}}
           local_dir: ${{github.workspace}}/Build_EMSDK/kain2/Deploy/
-          server_dir: /KAIN2/
+          server_dir: ./KAIN2/
           secure: false
         
