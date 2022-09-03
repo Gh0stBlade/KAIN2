@@ -129,15 +129,19 @@ FILE* Emulator_OpenFile(const char* filePath, const char* mode, int* outSize)
 		
 		emscripten_wget_data(fullName, &outBuff, outSize, &err);
 
+		printf("%x\n", buff);
+
 		if (err != 0)
 		{
 			printf("Failed to open file wget %s!\n", filePath);
 			return NULL;
 		}
 
-		printf("%s - size: %d", fullName, *outSize);
+		printf("%x\n", buff);
 
 		err = 0;
+
+		printf("%s\n", filePath);
 		emscripten_idb_store(SHORT_GAME_NAME, filePath, outBuff, *outSize, &err);
 
 		if (err != 0)
