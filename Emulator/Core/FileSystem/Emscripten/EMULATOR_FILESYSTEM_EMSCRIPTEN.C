@@ -129,45 +129,24 @@ FILE* Emulator_OpenFile(const char* filePath, const char* mode, int* outSize)
 	{
 		const char* urlName = "https://legacyofkain.co.uk";
 		char fullName[256];
-		int err = -1;
-		int attempts = 0;
+		int err = 0;
 
 		sprintf(fullName, "%s//%s//ASSETS//REVIEW//%s", urlName, SHORT_GAME_NAME, filePath);
 		
-		while (attempts++ != MAX_NUM_LOAD_ATTEMPTS)
-		{
-			emscripten_wget_data(fullName, &outBuff, outSize, &err);
-		}
+		emscripten_wget_data(fullName, &outBuff, outSize, &err);
 
-		if (attempts >= MAX_NUM_LOAD_ATTEMPTS)
+		if (err != 0)
 		{
 			printf("Failed to open file wget %s after %d attempts!\n", filePath, attempts);
 			return NULL;
 		}
 
+		err = 0;
+		emscripten_idb_store(SHORT_GAME_NAME, filePath, outBuff, *outSize, &err);
+
 		if (err != 0)
-		{
-			printf("Error when wget file data!\n");
-			return NULL;
-		}
-
-		err = -1;
-		attempts = 0;
-
-		while (attempts++ != MAX_NUM_LOAD_ATTEMPTS)
-		{
-			emscripten_idb_store(SHORT_GAME_NAME, filePath, outBuff, *outSize, &err);
-		}
-
-		if (attempts >= MAX_NUM_LOAD_ATTEMPTS)
 		{
 			printf("Failed to store file indexed db %s after %d attempts!\n", filePath, attempts);
-			return NULL;
-		}
-
-		if (err != 0)
-		{
-			printf("Error when store file data!\n");
 			return NULL;
 		}
 
