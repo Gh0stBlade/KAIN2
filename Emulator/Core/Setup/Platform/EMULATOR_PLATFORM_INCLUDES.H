@@ -30,8 +30,13 @@
 #if defined(SDL2_MIXER)
 #include <SDL_mixer.h>
 #elif defined(OPENAL)
+#if defined(__EMSCRIPTEN__)
+//#include <AL/al.h>
+//#include <AL/alc.h>
+#else
 #include <al.h>
 #include <alc.h>
+#endif
 #endif
 #if defined(VULKAN)
 #include <SDL_vulkan.h>
@@ -98,9 +103,6 @@
 #include "Core/Render/XED3D/EMULATOR_RENDER_XED3D.H"
 #endif
 
-#if !defined (__EMSCRIPTEN__)
-  //#include <SDL_gamecontroller.h>
-#endif
-
+#include "Core/FileSystem/EMULATOR_FILESYSTEM_COMMON.H"
 
 #endif
