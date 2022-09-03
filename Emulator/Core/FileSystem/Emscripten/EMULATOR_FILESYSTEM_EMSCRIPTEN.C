@@ -134,7 +134,7 @@ FILE* Emulator_OpenFile(const char* filePath, const char* mode, int* outSize)
 
 		sprintf(fullName, "%s//%s//ASSETS//REVIEW//%s", urlName, SHORT_GAME_NAME, filePath);
 		
-		while (err != 0 && attempts++ != MAX_NUM_LOAD_ATTEMPTS)
+		while (attempts++ != MAX_NUM_LOAD_ATTEMPTS)
 		{
 			emscripten_wget_data(fullName, &outBuff, outSize, &err);
 		}
@@ -145,10 +145,16 @@ FILE* Emulator_OpenFile(const char* filePath, const char* mode, int* outSize)
 			return NULL;
 		}
 
+		if (err != 0)
+		{
+			printf("Error when wget file data!\n");
+			return NULL;
+		}
+
 		err = -1;
 		attempts = 0;
 
-		while (err != 0 && attempts++ != MAX_NUM_LOAD_ATTEMPTS)
+		while (attempts++ != MAX_NUM_LOAD_ATTEMPTS)
 		{
 			emscripten_idb_store(SHORT_GAME_NAME, filePath, outBuff, *outSize, &err);
 		}
@@ -156,6 +162,12 @@ FILE* Emulator_OpenFile(const char* filePath, const char* mode, int* outSize)
 		if (attempts >= MAX_NUM_LOAD_ATTEMPTS)
 		{
 			printf("Failed to store file indexed db %s after %d attempts!\n", filePath, attempts);
+			return NULL;
+		}
+
+		if (err != 0)
+		{
+			printf("Error when store file data!\n");
 			return NULL;
 		}
 
