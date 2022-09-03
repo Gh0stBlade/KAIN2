@@ -127,7 +127,7 @@ FILE* Emulator_OpenFile(const char* filePath, const char* mode, int* outSize)
 	}
 	else
 	{
-		const char* urlName = "https://legacyofkain.co.uk/";
+		const char* urlName = "https://legacyofkain.co.uk";
 		char fullName[256];
 		int err = -1;
 		int attempts = 0;

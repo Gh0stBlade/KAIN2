@@ -873,7 +873,7 @@ struct _BigFileEntry* LOAD_GetBigFileEntryByHash(long hash)
 { 
 	int i;
 	struct _BigFileEntry* entry;
-#if defined(_DEBUG)
+#if defined(_DEBUG) || defined(__EMSCRIPTEN__)
 	extern void* Emulator_GetBigFileEntryByHash(long hash);
 	return (struct _BigFileEntry*)Emulator_GetBigFileEntryByHash(hash);
 #else
