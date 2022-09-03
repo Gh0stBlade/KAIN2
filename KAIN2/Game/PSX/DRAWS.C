@@ -2793,6 +2793,8 @@ subdiv_begin:
 		//rgb0code
 		gteRegs.CP2D.p[6].sd = t7;
 
+		UNIMPLEMENTED();
+		return pNextPrim;
 
 		if (DRAW_DisplayTFace_S(&pNextPrim, drawot, s2, t4, t1, t2, t3) <= 0)
 		{

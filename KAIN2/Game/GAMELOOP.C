@@ -278,7 +278,9 @@ struct _StreamUnit * LoadLevels(char *baseAreaName, struct GameTracker *gameTrac
 
 	strcpy(oldArea, baseAreaName);
 
+#if !defined(_DEBUG) && !defined(__EMSCRIPTEN__)
 	LOAD_ChangeDirectory(baseAreaName);
+#endif
 
 	streamUnit = STREAM_LoadLevel(baseAreaName, NULL, 0);
 	

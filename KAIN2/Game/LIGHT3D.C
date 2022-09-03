@@ -530,7 +530,7 @@ void LIGHT_CalcDQPTable(struct Level *level)
 	
 		depthQFogStart = (-dqa * 4096) / ((level->fogFar * 4096) / (level->fogFar - level->fogNear));
 
-		if (level->backColorR != 0 && level->backColorG != 0)
+		if (level->backColorR != 0 && level->backColorG != 0)///@check maybe b too
 		{
 			depthQBlendStart = (-dqa * 4096) / ((level->fogFar * 4096) / (level->fogFar - level->fogNear));
 		}

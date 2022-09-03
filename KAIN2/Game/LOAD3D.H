@@ -14,6 +14,9 @@ struct _ReadQueueEntry // hashcode: 0x5360DCDA (dec: 1398856922)
 	void* retFunc; // size=0, offset=32
 	void* retData; // size=0, offset=36
 	void* retData2; // size=0, offset=40
+#if defined(_DEBUG) || defined(__EMSCRIPTEN__)
+	long fileHash;
+#endif
 };
 
 struct _BigFileDirEntry // hashcode: 0x7D70C603 (dec: 2104542723)
@@ -39,7 +42,9 @@ struct _BigFileDir // hashcode: 0x4E39D3E2 (dec: 1312412642)
 
 struct _BigFile // hashcode: 0x50C273F3 (dec: 1354920947)
 {
-#if defined(PSXPC_VERSION) && defined(NO_CD)
+#if defined(__EMSCRIPTEN__)
+	const char* fileName;
+#elif defined(PSXPC_VERSION) && defined(NO_CD)
 	FILE* bigfileFileHandle;
 #endif
 	long bigfileBaseOffset; // size=0, offset=0
@@ -120,7 +125,11 @@ extern void LOAD_SetupFileToDoCDReading(); // 0x800370A8
 extern void LOAD_SetupFileToDoBufferedCDReading(); // 0x80037124
 extern void LOAD_ProcessReadQueue(); // 0x80037198
 extern char * LOAD_ReadFileFromCD(char *filename, int memType); // 0x80037314
+#if defined(_DEBUG) || defined(__EMSCRIPTEN__)
+extern void LOAD_CdReadFromBigFile(long fileOffset, unsigned long* loadAddr, long bytes, long chksumLevel, long checksum, long fileHash); // 0x800373F4
+#else
 extern void LOAD_CdReadFromBigFile(long fileOffset, unsigned long* loadAddr, long bytes, long chksumLevel, long checksum); // 0x800373F4
+#endif
 extern struct _BigFileDir * LOAD_ReadDirectory(struct _BigFileDirEntry *dirEntry); // 0x80037420
 extern void LOAD_InitCdLoader(char *bigFileName, char *voiceFileName); // 0x80037488
 extern int LOAD_SetupFileInfo(struct _NonBlockLoadEntry *loadEntry); // 0x800375DC

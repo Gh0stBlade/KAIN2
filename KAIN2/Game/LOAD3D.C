@@ -245,7 +245,11 @@ void LOAD_DoCDReading()//Matching - 83.60%
 
 	if (state == 5)
 	{
+#if defined(_DEBUG) || defined(__EMSCRIPTEN__)//Disable checksum
+		if (loadStatus.currentQueueFile.checksumType != 0 && 0)
+#else
 		if (loadStatus.currentQueueFile.checksumType != 0 && loadStatus.checksum != loadStatus.currentQueueFile.checksum)
+#endif
 		{
 			loadStatus.currentQueueFile.readStatus = 7;
 		}
@@ -293,7 +297,13 @@ void LOAD_SetupFileToDoCDReading()
 		loadStatus.currentSector = loadStatus.bigFile.bigfileBaseOffset + (loadStatus.currentQueueFile.readStartPos >> 11);
 	}
 
-#if defined(PSXPC_VERSION) && defined(NO_CD)
+#if defined(_DEBUG) || defined(__EMSCRIPTEN__)
+	extern void Emulator_OpenRead(long fileHash, void* buff, int size);
+	Emulator_OpenRead(loadStatus.currentQueueFile.fileHash, loadStatus.currentQueueFile.readStartDest, loadStatus.currentQueueFile.readSize);
+	loadStatus.bytesTransferred = (loadStatus.currentQueueFile.readSize - loadStatus.currentQueueFile.readCurSize);
+	loadStatus.state = 4;
+	LOAD_CdDataReady();
+#elif defined(PSXPC_VERSION) && defined(NO_CD)
 	PClseek(loadStatus.bigFile.bigfileFileHandle, loadStatus.currentQueueFile.readStartPos, 0);
 	PCread(loadStatus.bigFile.bigfileFileHandle, (char*)loadStatus.currentQueueFile.readStartDest, loadStatus.currentQueueFile.readSize);
 	loadStatus.bytesTransferred = (loadStatus.currentQueueFile.readSize - loadStatus.currentQueueFile.readCurSize);
@@ -326,7 +336,13 @@ void LOAD_SetupFileToDoBufferedCDReading()
 	{
 		loadStatus.currentSector = loadStatus.bigFile.bigfileBaseOffset + (loadStatus.currentQueueFile.readStartPos >> 11);
 	}
-#if defined(PSXPC_VERSION) && defined(NO_CD)
+#if defined(_DEBUG) || defined(__EMSCRIPTEN__)
+	extern void Emulator_OpenRead(long fileHash, void* buff, int size);
+	Emulator_OpenRead(loadStatus.currentQueueFile.fileHash, loadStatus.currentQueueFile.readStartDest, loadStatus.currentQueueFile.readSize);
+	loadStatus.bytesTransferred = (loadStatus.currentQueueFile.readSize - loadStatus.currentQueueFile.readCurSize);
+	loadStatus.state = 4;
+	LOAD_CdDataReady();
+#elif defined(PSXPC_VERSION) && defined(NO_CD)
 	PClseek(loadStatus.bigFile.bigfileFileHandle, loadStatus.currentQueueFile.readStartPos, 0);
 	PCread(loadStatus.bigFile.bigfileFileHandle, (char*)loadStatus.currentQueueFile.readStartDest, loadStatus.currentQueueFile.readSize);
 	loadStatus.bytesTransferred = (loadStatus.currentQueueFile.readSize - loadStatus.currentQueueFile.readCurSize);
@@ -402,8 +418,9 @@ void LOAD_ProcessReadQueue()
 #endif
 }
 
+
 #ifndef PC_VERSION
-char * LOAD_ReadFileFromCD(char *filename, int memType)
+char* LOAD_ReadFileFromCD(char* filename, int memType)
 { 
 #if defined(PSXPC_VERSION) && defined(NO_CD)
 #if defined(_WIN64) || defined(_WIN32) || defined(__EMSCRIPTEN__)
@@ -496,7 +513,11 @@ char * LOAD_ReadFileFromCD(char *filename, int memType)
 }
 #endif
 
+#if defined(_DEBUG) || defined(__EMSCRIPTEN__)
+void LOAD_CdReadFromBigFile(long fileOffset, unsigned long* loadAddr, long bytes, long chksumLevel, long checksum, long fileHash)
+#else
 void LOAD_CdReadFromBigFile(long fileOffset, unsigned long* loadAddr, long bytes, long chksumLevel, long checksum)
+#endif
 {
 	loadStatus.currentQueueFile.readSize = bytes;
 	loadStatus.currentQueueFile.readCurSize = 0;
@@ -505,6 +526,9 @@ void LOAD_CdReadFromBigFile(long fileOffset, unsigned long* loadAddr, long bytes
 	loadStatus.currentQueueFile.readStatus = 1;
 	loadStatus.currentQueueFile.checksumType = chksumLevel;
 	loadStatus.currentQueueFile.checksum = checksum;
+#if defined(_DEBUG) || defined(__EMSCRIPTEN__)
+	loadStatus.currentQueueFile.fileHash = fileHash;
+#endif
 }
 
 struct _BigFileDir * LOAD_ReadDirectory(struct _BigFileDirEntry *dirEntry)
@@ -516,8 +540,12 @@ struct _BigFileDir * LOAD_ReadDirectory(struct _BigFileDirEntry *dirEntry)
 	sizeOfDir = (dirEntry->numFiles * sizeof(_BigFileEntry)) + sizeof(long);
 	dir = (_BigFileDir*)MEMPACK_Malloc(sizeOfDir, 0x2C);
 	
+#if defined(_DEBUG) || defined(__EMSCRIPTEN__)
+	LOAD_CdReadFromBigFile(dirEntry->subDirOffset, (unsigned long*)dir, sizeOfDir, 0, 0, 0);
+#else
 	LOAD_CdReadFromBigFile(dirEntry->subDirOffset, (unsigned long*)dir, sizeOfDir, 0, 0);
-	
+#endif
+
 	return dir;
 #else
 	return NULL;
@@ -527,6 +555,7 @@ struct _BigFileDir * LOAD_ReadDirectory(struct _BigFileDirEntry *dirEntry)
 #ifndef PC_VERSION
 void LOAD_InitCdLoader(char *bigFileName, char *voiceFileName)
 {
+#if !defined(_DEBUG) && !defined(__EMSCRIPTEN__)
 #if defined(PSXPC_VERSION) && defined(NO_CD)
 	CdlFILE fp;
 	long i;
@@ -560,7 +589,11 @@ void LOAD_InitCdLoader(char *bigFileName, char *voiceFileName)
 		loadStatus.bigFile.cachedDirID = 0;
 		loadStatus.bigFile.searchDirID = 0;
 
+#if defined(_DEBUG) || defined(__EMSCRIPTEN__)
+		LOAD_CdReadFromBigFile(0, (unsigned long*)&loadStatus.bigFile.numSubDirs, sizeof(loadStatus.bigFile.numSubDirs), 0, 0, 0);
+#else
 		LOAD_CdReadFromBigFile(0, (unsigned long*)&loadStatus.bigFile.numSubDirs, sizeof(loadStatus.bigFile.numSubDirs), 0, 0);
+#endif
 
 		do
 		{
@@ -570,8 +603,12 @@ void LOAD_InitCdLoader(char *bigFileName, char *voiceFileName)
 
 
 		ptr = MEMPACK_Malloc((loadStatus.bigFile.numSubDirs << 3) + 4, 8);
-
+#if defined(_DEBUG) || defined(__EMSCRIPTEN__)
+		LOAD_CdReadFromBigFile(0, (unsigned long*)ptr, (loadStatus.bigFile.numSubDirs << 3) + 4, 0, 0, 0);
+#else
 		LOAD_CdReadFromBigFile(0, (unsigned long*)ptr, (loadStatus.bigFile.numSubDirs << 3) + 4, 0, 0);
+#endif
+
 		ptr += 4;
 		loadStatus.bigFile.subDirList = (struct _BigFileDirEntry*)ptr;
 
@@ -651,11 +688,12 @@ void LOAD_InitCdLoader(char *bigFileName, char *voiceFileName)
 		} while (LOAD_IsFileLoading() != 0);
 	}
 #endif
+#endif
 }
 
 #endif
 
-int LOAD_SetupFileInfo(struct _NonBlockLoadEntry *loadEntry)
+int LOAD_SetupFileInfo(struct _NonBlockLoadEntry* loadEntry)
 { 
 #if defined(PSX_VERSION) || (PSXPC_VERSION)
 	struct _BigFileEntry *fileInfo;
@@ -699,6 +737,9 @@ void LOAD_CD_ReadPartOfFile(struct _NonBlockLoadEntry *loadEntry)
 		currentQueueReq->retData = loadEntry->retData;
 		loadStatus.changeDir = 0;
 		currentQueueReq->retData2 = loadEntry->retData2;
+#if defined(_DEBUG) || defined(__EMSCRIPTEN__)
+		currentQueueReq->fileHash = loadEntry->fileHash;
+#endif
 	}
 	else
 	{
@@ -828,11 +869,14 @@ long LOAD_HashUnit(char *name)
 	return (hash << 16) >> 16;
 }
 
-struct _BigFileEntry * LOAD_GetBigFileEntryByHash(long hash)
+struct _BigFileEntry* LOAD_GetBigFileEntryByHash(long hash)
 { 
 	int i;
 	struct _BigFileEntry* entry;
-
+#if defined(_DEBUG)
+	extern void* Emulator_GetBigFileEntryByHash(long hash);
+	return (struct _BigFileEntry*)Emulator_GetBigFileEntryByHash(hash);
+#else
 	if (loadStatus.bigFile.currentDir != NULL && loadStatus.currentDirLoading == 0 && loadStatus.bigFile.currentDir->numFiles != 0)
 	{
 		i = loadStatus.bigFile.currentDir->numFiles;
@@ -865,9 +909,10 @@ struct _BigFileEntry * LOAD_GetBigFileEntryByHash(long hash)
 	} while (i-- != 0);
 
 	return NULL;
+#endif
 }
 
-struct _BigFileEntry * LOAD_GetBigFileEntry(char *fileName)
+struct _BigFileEntry* LOAD_GetBigFileEntry(char* fileName)
 {
 	return 	LOAD_GetBigFileEntryByHash(LOAD_HashName(fileName));
 }
@@ -888,7 +933,7 @@ long LOAD_DoesFileExist(char *fileName)
 }
 #endif
 
-void LOAD_NonBlockingReadFile(struct _NonBlockLoadEntry *loadEntry)
+void LOAD_NonBlockingReadFile(struct _NonBlockLoadEntry* loadEntry)
 { 
 	if (LOAD_SetupFileInfo(loadEntry) != 0)
 	{
@@ -897,8 +942,11 @@ void LOAD_NonBlockingReadFile(struct _NonBlockLoadEntry *loadEntry)
 			loadEntry->loadAddr = (long*)MEMPACK_Malloc(loadEntry->loadSize, loadEntry->memType);
 		}
 
+#if defined(_DEBUG) || defined(__EMSCRIPTEN__)
+		LOAD_CdReadFromBigFile(loadEntry->filePos, (unsigned long*)loadEntry->loadAddr, loadEntry->loadSize, loadEntry->checksumType, loadEntry->checksum, loadEntry->fileHash);
+#else
 		LOAD_CdReadFromBigFile(loadEntry->filePos, (unsigned long*)loadEntry->loadAddr, loadEntry->loadSize, loadEntry->checksumType, loadEntry->checksum);
-
+#endif
 		loadStatus.changeDir = 0;
 	}
 	else

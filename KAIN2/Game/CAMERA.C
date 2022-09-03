@@ -4055,12 +4055,12 @@ void CAMERA_CalcFollowPosition(struct Camera* camera, struct _Rotation* rotation
 	{
 		if ((gameTrackerX.controlCommand[0][1] & 0x1))
 		{
-			camera->core.position.z += 128;
+			camera->core.position.z += 128*8;
 		}
 
 		if ((gameTrackerX.controlCommand[0][1] & 0x2))
 		{
-			camera->core.position.z -= 128;
+			camera->core.position.z -= 128*8;
 		}
 	}
 	else

@@ -524,12 +524,12 @@ void MAIN_ShowLoadingScreen()
 #endif
 }
 
-long * MAIN_LoadTim(char *name)
+long* MAIN_LoadTim(char* name)
 {
 	return LOAD_ReadFile(name, 11);
 }
 
-void init_menus(struct GameTracker *gt)
+void init_menus(struct GameTracker* gt)
 { 
 	struct menu_t* menu;
 	
@@ -882,7 +882,9 @@ void GameLoop()
 
 		break;
 	case 4:
+#if !defined(_DEBUG) && !defined(__EMSCRIPTEN__)
 		LOAD_ChangeDirectory("Menustuff");
+#endif
 
 	checkMovie:
 		while ((unsigned)mainTracker->movieNum < 6)
@@ -980,7 +982,9 @@ void GameLoop()
 	case 8:
 		ProcessArgs(gameTracker->baseAreaName, gameTracker);
 		MAIN_ResetGame();
+#if !defined(_DEBUG) && !defined(__EMSCRIPTEN__)
 		LOAD_ChangeDirectory("Menustuff");
+#endif
 		MAIN_MainMenuInit();
 		MAIN_InitVolume();
 		SAVE_ClearMemory(&gameTrackerX);
@@ -1154,7 +1158,10 @@ int MainG2(void *appData)
 
 				break;
 			case 4:
+
+#if !defined(_DEBUG) && !defined(__EMSCRIPTEN__)
 				LOAD_ChangeDirectory("Menustuff");
+#endif
 
 				checkMovie:
 				while ((unsigned)mainTracker->movieNum < 6)
@@ -1247,7 +1254,9 @@ int MainG2(void *appData)
 			case 8:
 				ProcessArgs(gameTracker->baseAreaName, gameTracker);
 				MAIN_ResetGame();
+#if !defined(_DEBUG) && !defined(__EMSCRIPTEN__)
 				LOAD_ChangeDirectory("Menustuff");
+#endif
 				MAIN_MainMenuInit();
 				MAIN_InitVolume();
 				SAVE_ClearMemory(&gameTrackerX);

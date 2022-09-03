@@ -6,6 +6,7 @@
 #include "STREAM.H"
 #include "LIGHT3D.H"
 #include "PSX/COLLIDES.H"
+#include "G2/MAING2.H"
 
 void PIPE3D_AspectAdjustMatrix(MATRIX* matrix)
 {
@@ -226,27 +227,32 @@ void PIPE3D_InstanceTransformAndDraw(struct _Instance* instance, struct _CameraC
 	//s2 = instance
 	//s1 = cameraCore
 	//s0 = vertexPool
-	UNIMPLEMENTED();
+	object = instance->object;
+	//v1 = instance->currentModel;
+	matrixPool = instance->matrix;
+
+	model = object->modelList[instance->currentModel];
+
+	//s7 = primPool
+	if (matrixPool != NULL)
+	{
+		LIGHT_PresetInstanceLight(instance, 2048, &lm);
+
+		poolVertex = (_PVertex*)&vertexPool->vertex[0];
+		vertexColor = (CVECTOR*)&vertexPool->color[0];
+
+		//a1 = 0xE0
+		//a2 = model->numVertices
+		vertexList = model->vertexList;
+
+		if (224 >= model->numVertices * 4)
+		{
+
+		}
+		//loc_8003B154
+	}
+	//loc_8003B384
 #if 0
-		lw      $v0, 0x1C($s2)
-		lh      $v1, 0x126($s2)
-		lw      $s3, 0x40($s2)
-		lw      $v0, 0xC($v0)
-		sll     $v1, 2
-		addu    $v1, $v0
-		lw      $s4, 0($v1)
-		beqz    $s3, loc_8003B384
-		move    $s7, $a3
-		li      $a1, 0x800
-		jal     sub_80035E40
-		addiu   $a2, $sp, 0x48 + var_28
-		move    $s5, $s0
-		addiu   $s6, $s5, 0x1080
-		li      $a1, 0xE0
-		lw      $a2, 0($s4)
-		lw      $s0, 4($s4)
-		sll     $a0, $a2, 1
-		slt     $v0, $a1, $a0
 		bnez    $v0, loc_8003B154
 		li      $v1, 0x20  # ' '
 		li      $s5, 0x1F800080
@@ -741,7 +747,7 @@ void PIPE3D_AnimateTerrainTextures(struct DrMoveAniTex* aniTextures, long req_fr
 					prim[6] = ((int*)dest)[1];
 
 					setlen(prim, 5);
-					addPrim(otl, prim);
+					addPrim(otl[0], prim);
 
 					((int*)&dest->pixCurrentX)[0] = ((int*)&src->pixSrcX)[0];
 
@@ -759,7 +765,7 @@ void PIPE3D_AnimateTerrainTextures(struct DrMoveAniTex* aniTextures, long req_fr
 					prim[6] = ((int*)&dest->clutW)[0];
 
 					setlen(prim, 5);
-					addPrim(otl, prim);
+					addPrim(otl[0], prim);
 
 					prim += (0x18 / 4) + 1;
 
