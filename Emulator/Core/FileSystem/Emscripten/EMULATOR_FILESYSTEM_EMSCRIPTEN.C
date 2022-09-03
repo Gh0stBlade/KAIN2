@@ -18,8 +18,6 @@ struct _BigFileEntry
 	long checkSumFull;
 };
 
-#define MAX_NUM_LOAD_ATTEMPTS 255
-
 void* Emulator_GetBigFileEntryByHash(long hash)
 {
 	char* fileName = NULL;
@@ -106,17 +104,13 @@ FILE* Emulator_OpenFile(const char* filePath, const char* mode, int* outSize)
 
 	if (fileExists && fileExistsErr == 0)
 	{
-		int err = -1;
-		int attempts = 0;
+		int err = 0;
 
-		while (err != 0 && attempts++ != MAX_NUM_LOAD_ATTEMPTS)
-		{
-			emscripten_idb_load(SHORT_GAME_NAME, filePath, &outBuff, outSize, &err);
-		}
+		emscripten_idb_load(SHORT_GAME_NAME, filePath, &outBuff, outSize, &err);
 
-		if (attempts >= MAX_NUM_LOAD_ATTEMPTS)
+		if (err != 0)
 		{
-			printf("Failed to open file indexed db %s after %d attempts!\n", filePath, attempts);
+			printf("Failed to open file indexed db %s!\n", filePath);
 			return NULL;
 		}
 
@@ -137,7 +131,7 @@ FILE* Emulator_OpenFile(const char* filePath, const char* mode, int* outSize)
 
 		if (err != 0)
 		{
-			printf("Failed to open file wget %s after %d attempts!\n", filePath, attempts);
+			printf("Failed to open file wget %s!\n", filePath);
 			return NULL;
 		}
 
@@ -146,7 +140,7 @@ FILE* Emulator_OpenFile(const char* filePath, const char* mode, int* outSize)
 
 		if (err != 0)
 		{
-			printf("Failed to store file indexed db %s after %d attempts!\n", filePath, attempts);
+			printf("Failed to store file indexed db %s!\n", filePath);
 			return NULL;
 		}
 
