@@ -135,6 +135,8 @@ FILE* Emulator_OpenFile(const char* filePath, const char* mode, int* outSize)
 			return NULL;
 		}
 
+		printf("%s - size: %d", fullName, *outSize);
+
 		err = 0;
 		emscripten_idb_store(SHORT_GAME_NAME, filePath, outBuff, *outSize, &err);
 
