@@ -34,7 +34,7 @@ jobs:
         run: copy ${{github.workspace}}/Build_EMSDK/kain2/KAIN2_Web.*  ${{github.workspace}}/Build_EMSDK/kain2/Deploy/
         
       - name: Deploy to FTP
-        uses: dennisameling/ftp-upload-action@v1.0.8
+        uses: dennisameling/ftp-upload-action@v1.0.6
         with:
           server: ${{secrets.FTP_SERVER}}
           username: ${{secrets.FTP_USER}}
