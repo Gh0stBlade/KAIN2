@@ -137,7 +137,7 @@ FILE* Emulator_OpenFile(const char* filePath, const char* mode, int* outSize)
 			return NULL;
 		}
 
-		printf("%x\n", buff);
+		printf("%x\n", outBuff);
 
 		err = 0;
 
