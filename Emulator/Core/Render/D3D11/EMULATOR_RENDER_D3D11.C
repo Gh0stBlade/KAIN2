@@ -57,9 +57,9 @@ ShaderID Shader_Compile_Internal(const DWORD* vs_data, const DWORD* ps_data, con
 	HRESULT hr;
 
 	hr = d3ddev->CreateVertexShader(vs_data, vs_size, NULL, &shader.VS);
-	assert(!FAILED(hr));
+	eassert(!FAILED(hr));
 	hr = d3ddev->CreatePixelShader(ps_data, ps_size, NULL, &shader.PS);
-	assert(!FAILED(hr));
+	eassert(!FAILED(hr));
 #define OFFSETOF(T, E)     ((size_t)&(((T*)0)->E))
 
 	const D3D11_INPUT_ELEMENT_DESC INPUT_LAYOUT[] =
@@ -74,7 +74,7 @@ ShaderID Shader_Compile_Internal(const DWORD* vs_data, const DWORD* ps_data, con
 	};
 
 	hr = d3ddev->CreateInputLayout(INPUT_LAYOUT, sizeof(INPUT_LAYOUT) / sizeof(D3D11_INPUT_ELEMENT_DESC), vs_data, vs_size, &shader.IL);
-	assert(!FAILED(hr));
+	eassert(!FAILED(hr));
 
 #undef OFFSETOF
 
@@ -208,14 +208,14 @@ void Emulator_ResetDevice()
 	assert(!FAILED(hr));
 #else
 	HRESULT hr = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, deviceCreationFlags, NULL, 0, D3D11_SDK_VERSION, &sd, &swapChain, &d3ddev, NULL, &d3dcontext);
-	assert(!FAILED(hr));
+	eassert(!FAILED(hr));
 #endif
 	ID3D11Texture2D* backBuffer;
 	hr = swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&backBuffer);
-	assert(!FAILED(hr));
+	eassert(!FAILED(hr));
 
 	hr = d3ddev->CreateRenderTargetView(backBuffer, NULL, &renderTargetView);
-	assert(!FAILED(hr));
+	eassert(!FAILED(hr));
 
 	backBuffer->Release();
 
@@ -228,7 +228,7 @@ void Emulator_ResetDevice()
 	vbd.MiscFlags = 0;
 
 	hr = d3ddev->CreateBuffer(&vbd, NULL, &dynamic_vertex_buffer);
-	assert(!FAILED(hr));
+	eassert(!FAILED(hr));
 
 	D3D11_TEXTURE2D_DESC td;
 	ZeroMemory(&td, sizeof(td));
@@ -244,7 +244,7 @@ void Emulator_ResetDevice()
 	td.SampleDesc.Quality = 0;
 	td.Usage = D3D11_USAGE_DYNAMIC;
 	hr = d3ddev->CreateTexture2D(&td, NULL, &vramBaseTexture);
-	assert(!FAILED(hr));
+	eassert(!FAILED(hr));
 	D3D11_SHADER_RESOURCE_VIEW_DESC srvd;
 	ZeroMemory(&srvd, sizeof(D3D11_SHADER_RESOURCE_VIEW_DESC));
 	srvd.Format = td.Format;
@@ -253,7 +253,7 @@ void Emulator_ResetDevice()
 	srvd.Texture2D.MipLevels = 1;
 
 	d3ddev->CreateShaderResourceView(vramBaseTexture, &srvd, &vramTexture);
-	assert(!FAILED(hr));
+	eassert(!FAILED(hr));
 
 	Emulator_CreateGlobalShaders();
 	Emulator_CreateConstantBuffers();
@@ -450,7 +450,7 @@ void Emulator_GenerateCommonTextures()
 	srd.SysMemSlicePitch = 0;
 
 	HRESULT hr = d3ddev->CreateTexture2D(&td, &srd, &t);
-	assert(!FAILED(hr));
+	eassert(!FAILED(hr));
 	D3D11_SHADER_RESOURCE_VIEW_DESC srvd;
 	ZeroMemory(&srvd, sizeof(srvd));
 	srvd.Format = td.Format;
@@ -458,7 +458,7 @@ void Emulator_GenerateCommonTextures()
 	srvd.Texture2D.MipLevels = td.MipLevels;
 	srvd.Texture2D.MostDetailedMip = 0;
 	hr = d3ddev->CreateShaderResourceView(t, &srvd, &whiteTexture);
-	assert(!FAILED(hr));
+	eassert(!FAILED(hr));
 	t->Release();
 
 	ZeroMemory(&td, sizeof(td));
@@ -479,14 +479,14 @@ void Emulator_GenerateCommonTextures()
 	srd.SysMemSlicePitch = 0;
 
 	hr = d3ddev->CreateTexture2D(&td, &srd, &t);
-	assert(!FAILED(hr));
+	eassert(!FAILED(hr));
 	ZeroMemory(&srvd, sizeof(srvd));
 	srvd.Format = td.Format;
 	srvd.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 	srvd.Texture2D.MipLevels = td.MipLevels;
 	srvd.Texture2D.MostDetailedMip = 0;
 	hr = d3ddev->CreateShaderResourceView(t, &srvd, &rg8lutTexture);
-	assert(!FAILED(hr));
+	eassert(!FAILED(hr));
 	t->Release();
 }
 
@@ -692,7 +692,7 @@ void Emulator_StoreFrameBuffer(int x, int y, int w, int h)
 
 	ID3D11Texture2D* backBuffer;
 	HRESULT hr = swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&backBuffer);
-	assert(!FAILED(hr));
+	eassert(!FAILED(hr));
 	ID3D11Texture2D* newBackBuffer = NULL;
 	D3D11_TEXTURE2D_DESC description;
 	backBuffer->GetDesc(&description);
@@ -700,12 +700,12 @@ void Emulator_StoreFrameBuffer(int x, int y, int w, int h)
 	description.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
 	description.Usage = D3D11_USAGE_STAGING;
 	hr = d3ddev->CreateTexture2D(&description, NULL, &newBackBuffer);
-	assert(!FAILED(hr));
+	eassert(!FAILED(hr));
 	d3dcontext->CopyResource(newBackBuffer, backBuffer);
 	D3D11_MAPPED_SUBRESOURCE resource;
 	unsigned int subResource = D3D11CalcSubresource(0, 0, 0);
 	hr = d3dcontext->Map(newBackBuffer, subResource, D3D11_MAP_READ_WRITE, 0, &resource);
-	assert(!FAILED(hr));
+	eassert(!FAILED(hr));
 
 	int* data = (int*)resource.pData;
 
@@ -761,7 +761,7 @@ void Emulator_CreateConstantBuffers()
 	cbd.CPUAccessFlags = 0;
 	cbd.MiscFlags = 0;
 	HRESULT hr = d3ddev->CreateBuffer(&cbd, NULL, &projectionMatrixBuffer);
-	assert(SUCCEEDED(hr));
+	eassert(SUCCEEDED(hr));
 }
 
 void Emulator_UpdateProjectionConstantBuffer(float* ortho)
@@ -800,7 +800,7 @@ void Emulator_CreateRasterState(int wireframe)
 	rsd.MultisampleEnable = FALSE;
 	rsd.AntialiasedLineEnable = FALSE;
 	HRESULT hr = d3ddev->CreateRasterizerState(&rsd, &rasterState);
-	assert(!FAILED(hr));
+	eassert(!FAILED(hr));
 	d3dcontext->RSSetState(rasterState);
 }
 
@@ -813,7 +813,7 @@ void Emulator_UpdateVRAM()
 
 	D3D11_MAPPED_SUBRESOURCE sr;
 	HRESULT hr = d3dcontext->Map(vramBaseTexture, 0, D3D11_MAP_WRITE_DISCARD, 0, &sr);
-	assert(!FAILED(hr));
+	eassert(!FAILED(hr));
 	memcpy(sr.pData, vram, VRAM_WIDTH * VRAM_HEIGHT * sizeof(short));
 	d3dcontext->Unmap(vramBaseTexture, 0);
 }
@@ -851,7 +851,7 @@ void Emulator_SetBlendMode(BlendMode blendMode)
 		bd.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
 		bd.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 		HRESULT hr = d3ddev->CreateBlendState(&bd, &blendState);
-		assert(SUCCEEDED(hr));
+		eassert(SUCCEEDED(hr));
 		FLOAT blendFactor[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
 		d3dcontext->OMSetBlendState(blendState, blendFactor, -1);
 	}
@@ -878,7 +878,7 @@ void Emulator_SetBlendMode(BlendMode blendMode)
 		bd.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
 		bd.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 		HRESULT hr = d3ddev->CreateBlendState(&bd, &blendState);
-		assert(SUCCEEDED(hr));
+		eassert(SUCCEEDED(hr));
 		FLOAT blendFactor[4] = { 128.0f * (1.0f / 255.0f), 128.0f * (1.0f / 255.0f), 128.0f * (1.0f / 255.0f), 128.0f * (1.0f / 255.0f) };
 		d3dcontext->OMSetBlendState(blendState, blendFactor, -1);
 		break;
@@ -898,7 +898,7 @@ void Emulator_SetBlendMode(BlendMode blendMode)
 		bd.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
 		bd.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 		HRESULT hr = d3ddev->CreateBlendState(&bd, &blendState);
-		assert(SUCCEEDED(hr));
+		eassert(SUCCEEDED(hr));
 		FLOAT blendFactor[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
 		d3dcontext->OMSetBlendState(blendState, blendFactor, -1);
 		break;
@@ -918,7 +918,7 @@ void Emulator_SetBlendMode(BlendMode blendMode)
 		bd.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_REV_SUBTRACT;
 		bd.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 		HRESULT hr = d3ddev->CreateBlendState(&bd, &blendState);
-		assert(SUCCEEDED(hr));
+		eassert(SUCCEEDED(hr));
 		FLOAT blendFactor[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
 		d3dcontext->OMSetBlendState(blendState, blendFactor, -1);
 		break;
@@ -938,7 +938,7 @@ void Emulator_SetBlendMode(BlendMode blendMode)
 		bd.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
 		bd.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 		HRESULT hr = d3ddev->CreateBlendState(&bd, &blendState);
-		assert(SUCCEEDED(hr));
+		eassert(SUCCEEDED(hr));
 		FLOAT blendFactor[4] = { 64.0f * (1.0f / 255.0f), 64.0f * (1.0f / 255.0f), 64.0f * (1.0f / 255.0f), 64.0f * (1.0f / 255.0f) };
 		d3dcontext->OMSetBlendState(blendState, blendFactor, -1);
 		break;
@@ -958,7 +958,7 @@ void Emulator_DrawTriangles(int start_vertex, int triangles)
 
 void Emulator_UpdateVertexBuffer(const Vertex* vertices, int num_vertices)
 {
-	assert(num_vertices <= MAX_NUM_POLY_BUFFER_VERTICES);
+	eassert(num_vertices <= MAX_NUM_POLY_BUFFER_VERTICES);
 
 	if (num_vertices <= 0)
 		return;

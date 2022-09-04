@@ -228,7 +228,7 @@ extern void Emulator_DestroyGlobalShaders();
 extern void Emulator_GenerateCommonTextures();
 
 extern void Emulator_DoPollEvent();
-extern void Emulator_UpdateInput();
+extern void Emulator_UpdateInput(int poll);
 extern void Emulator_CreateMemoryCard(int channel);
 
 #if defined(OGL)

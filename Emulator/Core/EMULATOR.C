@@ -5386,6 +5386,111 @@ void Emulator_BlitVRAM()
 
 void Emulator_DoDebugKeys(int nKey, bool down); // forward decl
 
+#if defined(TOUCH_UI)
+
+unsigned short resultTouchKeysPressed = 0;
+
+struct Quad
+{
+	DVECTOR p[4];
+};
+
+int Emulator_IsPointInSquare(int x, int y, struct Quad* q)
+{
+	if((x > q->p[0].vx || x > q->p[1].vx || x > q->p[2].vx || x > q->p[3].vx)
+	&& (x < q->p[0].vx || x < q->p[1].vx || x < q->p[2].vx || x < q->p[3].vx)
+	&& (y > q->p[0].vy || y > q->p[1].vy || y > q->p[2].vy || y > q->p[3].vy)
+	&& (y < q->p[0].vy || y < q->p[1].vy || y < q->p[2].vy || y > q->p[3].vy))
+	{
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
+void Emulator_HandleTouchEvent(int x, int y)
+{
+	int rx = (x * 512) / windowWidth;
+	int ry  = (y * 240) / windowHeight;
+
+	int dist = 16;
+	int cx = 32;
+	int cy = 180;
+
+	unsigned short mapper[4] = {
+		0x8,
+		0x4,
+		0x2,
+		0x1,
+	};
+	
+	//printf("X: %d, Y: %d, RX: %d, RY: %d\n", x, y, rx, ry);
+
+	for (int i = 0; i < 4; i++)
+	{
+		int dx = (i % 2) ? 0 : 1;
+		int dy = dx ? 0 : 1;
+		int ndist = (i >= 2) ? dist : -dist;
+
+		int mx = dx ? ndist * 2 : 0;
+		int my = dy ? ndist * 2 : 0;
+
+		Quad q;
+
+		q.p[0].vx = cx + mx;
+		q.p[0].vy = cy + my;
+
+		q.p[1].vx = cx + mx + 32;
+		q.p[1].vy = cy + my;
+
+		q.p[2].vx = cx + mx;
+		q.p[2].vy = cy + my + 32;
+
+		q.p[3].vx = cx + mx + 32;
+		q.p[3].vy = cy + my + 32;
+
+		if (Emulator_IsPointInSquare(rx, ry, &q))
+		{
+			resultTouchKeysPressed |= mapper[i] << 4;
+		}
+	}
+
+	cx = 512 - 64;
+	cy = 180;
+	
+	for (int i = 0; i < 4; i++)
+	{
+		int dx = (i % 2) ? 0 : 1;
+		int dy = dx ? 0 : 1;
+		int ndist = (i >= 2) ? dist : -dist;
+
+		int mx = dx ? ndist * 2 : 0;
+		int my = dy ? ndist * 2 : 0;
+
+		Quad q;
+
+		q.p[0].vx = cx + mx;
+		q.p[0].vy = cy + my;
+
+		q.p[1].vx = cx + mx + 32;
+		q.p[1].vy = cy + my;
+
+		q.p[2].vx = cx + mx;
+		q.p[2].vy = cy + my + 32;
+
+		q.p[3].vx = cx + mx + 32;
+		q.p[3].vy = cy + my + 32;
+
+		if (Emulator_IsPointInSquare(rx, ry, &q))
+		{
+			resultTouchKeysPressed |= mapper[i] << 12;
+		}
+	}
+
+	Emulator_UpdateInput(0);
+}
+#endif
+
 void Emulator_DoPollEvent()
 {
 #if defined(SDL2)
@@ -5394,6 +5499,14 @@ void Emulator_DoPollEvent()
 	{
 		switch (event.type)
 		{
+#if defined(TOUCH_UI)
+			case SDL_MOUSEBUTTONDOWN:
+				Emulator_HandleTouchEvent(event.button.x, event.button.y);
+				break;
+			case SDL_FINGERDOWN:
+				Emulator_HandleTouchEvent(event.tfinger.x, event.tfinger.y);
+			break;
+#endif
 			case SDL_CONTROLLERDEVICEADDED:
 				Emulator_AddController(event.cdevice.which);
 				break;
@@ -5796,16 +5909,23 @@ void Emulator_TranslateControllerType(void* padData, SDL_GameController* padHand
 }
 #endif
 
-void Emulator_UpdateInput()
+void Emulator_UpdateInput(int poll)
 {
 	// also poll events here
-	Emulator_DoPollEvent();
+	if (poll)
+	{
+		Emulator_DoPollEvent();
+	}
 
 #if defined(SDL2)
 
 	if (padAllowCommunication)
 	{
 		kbInputs = UpdateKeyboardInput();
+
+#if defined(TOUCH_UI)
+		kbInputs &= ~resultTouchKeysPressed;
+#endif
 	}
 	else
 	{
@@ -6061,9 +6181,11 @@ void Emulator_EndScene()
 
 #endif
 
+	resultTouchKeysPressed = 0;
+
 	begin_scene_flag = FALSE;
 	vbo_was_dirty_flag = FALSE;
-	
+
 	Emulator_SwapWindow();
 }
 

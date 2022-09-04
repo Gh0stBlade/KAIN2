@@ -432,7 +432,11 @@ void DrawOTag(u_long* p)
 		Emulator_BlitVRAM();
 	}
 
+
 	Emulator_AggregatePTAGsToSplits(p, FALSE);
+
+	Emulator_DrawTouchUI();
+
 	Emulator_DrawAggregatedSplits();
 
 	Emulator_EndScene();

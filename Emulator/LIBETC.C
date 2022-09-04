@@ -45,7 +45,7 @@ static int numFrames = 0;
 int VSync(int mode)
 {
 	Emulator_DoPollEvent();
-	Emulator_UpdateInput();
+	Emulator_UpdateInput(0);
 
 #if defined(SDL2)
 	lastTime = currentTime;

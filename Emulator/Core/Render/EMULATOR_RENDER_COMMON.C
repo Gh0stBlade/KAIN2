@@ -828,7 +828,7 @@ void Emulator_DrawAggregatedSplits()
 			eprintf("==========================================\n");
 		}
 
-		Emulator_UpdateInput();
+		Emulator_UpdateInput(1);
 	}
 
 	// next code ideally should be called before EndScene
@@ -933,3 +933,63 @@ void* Emulator_GenerateRG8LUT()
 
 	return &rgLUT[0];
 }
+
+#if defined(TOUCH_UI)
+void Emulator_DrawTouchUI()
+{
+	unsigned long OT[4];
+	char polygonBuffer[sizeof(POLY_GT4) * 32];
+	char* p = &polygonBuffer[0];
+
+	ClearOTagR(OT, 4 / 2);
+
+	int dist = 16;
+	int cx = 32;
+	int cy = 180;
+
+	for (int i = 0; i < 4; i++)
+	{
+		int dx = (i % 2) ? 0 : 1;
+		int dy = dx ? 0 : 1;
+		int ndist = (i >= 2) ? dist : -dist;
+		
+		int mx = dx ? ndist * 2 : 0;
+		int my = dy ? ndist * 2 : 0;
+
+		setPolyG4(p);
+		setSemiTrans(p, 1);
+		setRGB0((POLY_G4*)p, 127, 127, 127);
+		setRGB1((POLY_G4*)p, 127, 127, 127);
+		setRGB2((POLY_G4*)p, 127, 127, 127);
+		setRGB3((POLY_G4*)p, 127, 127, 127);
+		setXY4((POLY_G4*)p, cx + mx, cy + my, cx + mx + 32, cy + my, cx + mx, cy + my + 32, cx + mx + 32, cy + my + 32);
+		addPrim(OT, p);
+		p += sizeof(POLY_G4);
+	}
+	
+	cx = 512-64;
+	cy = 180;
+
+	for (int i = 0; i < 4; i++)
+	{
+		int dx = (i % 2) ? 0 : 1;
+		int dy = dx ? 0 : 1;
+		int ndist = (i >= 2) ? dist : -dist;
+
+		int mx = dx ? ndist * 2 : 0;
+		int my = dy ? ndist * 2 : 0;
+
+		setPolyG4(p);
+		setSemiTrans(p, 1);
+		setRGB0((POLY_G4*)p, 127, 127, 127);
+		setRGB1((POLY_G4*)p, 127, 127, 127);
+		setRGB2((POLY_G4*)p, 127, 127, 127);
+		setRGB3((POLY_G4*)p, 127, 127, 127);
+		setXY4((POLY_G4*)p, cx + mx, cy + my, cx + mx + 32, cy + my, cx + mx, cy + my + 32, cx + mx + 32, cy + my + 32);
+		addPrim(OT, p);
+		p += sizeof(POLY_G4);
+	}
+
+	Emulator_AggregatePTAGsToSplits(OT, FALSE);
+}
+#endif

@@ -36,7 +36,7 @@ extern void Emulator_WaitForTimestep(int count);
 extern void Emulator_StoreFrameBuffer(int x, int y, int w, int h);
 
 /* Explicitly updates emulator input loop */
-extern void Emulator_UpdateInput();
+extern void Emulator_UpdateInput(int poll);
 
 /* Usually called at the end of main function */
 extern void Emulator_ShutDown();

@@ -2,6 +2,7 @@
 #define EMULATOR_PLATFORM_SETUP_H
 
 //#define DEBUG_PRINTS
+#define TOUCH_UI
 
 #ifndef TRUE
 #define TRUE		1
