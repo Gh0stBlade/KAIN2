@@ -93,7 +93,7 @@ struct GameTracker // hashcode: 0x4EB3EFC5 (dec: 1320415173)
 	long gameFlags; // size=0, offset=320
 	long streamFlags; // size=0, offset=324
 	void (*drawNonAnimatedSegmentFunc)(); // size=0, offset=328
-	void (*drawAnimatedModelFunc)(struct _Model*, struct _PVertex*, struct _PrimPool*, unsigned long**); // size=0, offset=332
+	void (*drawAnimatedModelFunc)(struct _Model*, struct _PVertex*, struct _PrimPool*, unsigned long**, CVECTOR*); // size=0, offset=332
 	unsigned long* (*drawDisplayPolytopeListFunc)(struct _PolytopeList* polytopeList, struct _Terrain* terrain, struct Camera* camera, struct  _PrimPool* primPool, unsigned long** drawot, struct _Position* globalOffset); // size=0, offset=336
 	void (*drawBgFunc)(); // size=0, offset=340
 	struct Level* mainDrawUnit; // size=392, offset=344
@@ -230,7 +230,13 @@ extern void GAMELOOP_Process(struct GameTracker *gameTracker); // 0x800302D0
 extern void GAMELOOP_ModeStartRunning(); // 0x80030920
 extern void GAMELOOP_ModeStartPause(); // 0x800309F8
 extern void GAMELOOP_ChangeMode(); // 0x80030AD0
-extern void GAMELOOP_RequestLevelChange(char *name, short number, struct GameTracker *gameTracker); // 0x80030E7C
+#if defined(__EMSCRIPTEN__)
+extern "C" {
+#endif
+	extern void GAMELOOP_RequestLevelChange(char* name, short number, struct GameTracker* gameTracker); // 0x80030E7C
+#if defined(__EMSCRIPTEN__)
+}
+#endif
 extern void PSX_GameLoop(struct GameTracker *gameTracker); // 0x80030EFC
 extern MATRIX * GAMELOOP_GetMatrices(int numMatrices); // 0x80030F28
 extern struct GameTracker * GAMELOOP_GetGT(); // 0x80030F5C
