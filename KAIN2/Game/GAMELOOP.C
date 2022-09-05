@@ -2904,9 +2904,20 @@ void GAMELOOP_ChangeMode()
 	}
 }
 
+#if defined(__EMSCRIPTEN__)
+EMSCRIPTEN_KEEPALIVE
+#endif
 void GAMELOOP_RequestLevelChange(char* name, short number, struct GameTracker* gameTracker)
 {
 #if defined(PSX_VERSION)
+
+#if defined(__EMSCRIPTEN__)
+	//Hack
+	if (gameTracker == NULL)
+	{
+		gameTracker = &gameTrackerX;
+	}
+#endif
 	
 	if (gameTrackerX.levelChange == 0)
 	{
