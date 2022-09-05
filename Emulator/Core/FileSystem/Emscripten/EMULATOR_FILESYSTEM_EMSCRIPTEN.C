@@ -47,8 +47,6 @@ void Emulator_ReadFileEM(const char* filePath, void* buff, int size)
 
 		emscripten_wget_data(fullName, &outBuff, &outSize, &err);
 		
-		printf("WGET: %d bytes!", outSize);
-
 		if (err != 0)
 		{
 			printf("Failed to open file wget %s!\n", filePath);

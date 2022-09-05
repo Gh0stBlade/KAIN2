@@ -5524,9 +5524,11 @@ void Emulator_DoPollEvent()
 		{
 #if defined(TOUCH_UI)
 			case SDL_MOUSEBUTTONDOWN:
+			case SDL_MOUSEBUTTONUP:
 				Emulator_HandleTouchEvent(event.button.x, event.button.y);
 				break;
 			case SDL_FINGERDOWN:
+			case SDL_FINGERUP:
 				Emulator_HandleTouchEvent((int)event.tfinger.x, (int)event.tfinger.y);
 			break;
 #endif

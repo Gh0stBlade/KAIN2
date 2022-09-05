@@ -811,7 +811,7 @@ void GameLoop()
 			STREAM_DumpAllLevels(0, 0);
 			RemoveAllObjects(gameTracker);
 
-			while (aadGetNumLoadsQueued() != 0 || aadMem->updateCounter != 0)
+			while (aadGetNumLoadsQueued() != 0 || aadMem->sramDefragInfo.status != 0)
 			{
 				SOUND_UpdateSound();
 				STREAM_PollLoadQueue();
@@ -882,6 +882,7 @@ void GameLoop()
 
 		break;
 	case 4:
+
 #if !defined(_DEBUG) && !defined(__EMSCRIPTEN__)
 		LOAD_ChangeDirectory("Menustuff");
 #endif
@@ -890,7 +891,7 @@ void GameLoop()
 		while ((unsigned)mainTracker->movieNum < 6)
 		{
 			item = &InterfaceItems[mainTracker->movieNum];
-			gameTrackerX.gameFlags &= 0x1;
+			gameTrackerX.gameFlags &= -2;
 			show_screen(&item->name[0]);
 #if defined(PSXPC_VERSION)
 			DrawOTag(NULL);
@@ -917,11 +918,6 @@ void GameLoop()
 			{
 				goto checkMovie;
 			}
-		}
-
-		if (item->nextItem != 1)
-		{
-			mainTracker->mainState = 6;
 		}
 
 		FONT_ReloadFont();
