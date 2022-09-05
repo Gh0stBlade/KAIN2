@@ -324,7 +324,7 @@ void PIPE3D_InstanceTransformAndDraw(struct _Instance* instance, struct _CameraC
 
 					if ((object->oflags2 & 0x1000) || pval < 4090)
 					{
-						gameTrackerX.drawAnimatedModelFunc(model, poolVertex, primPool, ot);
+						gameTrackerX.drawAnimatedModelFunc(model, poolVertex, primPool, ot, vertexColor);
 					}
 				}
 
