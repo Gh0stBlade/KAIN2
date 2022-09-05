@@ -5511,8 +5511,6 @@ void Emulator_HandleTouchEvent(int x, int y)
 			resultTouchKeysPressed |= mapper[i] << 12;
 		}
 	}
-
-	Emulator_UpdateInput(0);
 }
 #endif
 
@@ -5529,7 +5527,7 @@ void Emulator_DoPollEvent()
 				Emulator_HandleTouchEvent(event.button.x, event.button.y);
 				break;
 			case SDL_FINGERDOWN:
-				Emulator_HandleTouchEvent(event.tfinger.x, event.tfinger.y);
+				Emulator_HandleTouchEvent((int)event.tfinger.x, (int)event.tfinger.y);
 			break;
 #endif
 			case SDL_CONTROLLERDEVICEADDED:

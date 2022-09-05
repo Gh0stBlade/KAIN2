@@ -14,7 +14,7 @@ void Emulator_Log(enum LOG_TYPE lt, const char* file, const char* func, int line
 
     if (lt != LT_INFO)
     {
-        printf("[F:%s:%s:L%d] - ", file, func, line, fmt);
+        printf("[F:%s:%s:L%d] - ", file, func, line);
     }
 
     va_list arglist;

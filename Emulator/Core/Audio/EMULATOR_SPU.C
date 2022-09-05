@@ -134,9 +134,9 @@ int CLAMP16(int x)
 
 unsigned int SPU_DecodeAudioFrame(unsigned char* vag, unsigned short* out, struct Channel* channel)
 {
-    int predict_nr, shift, flags;
+    int shift, flags;
     int i;
-    int d, s;
+    int d;
     int s_1 = channel->s_1;
     int s_2 = channel->s_2;
     unsigned int result_length = 0;

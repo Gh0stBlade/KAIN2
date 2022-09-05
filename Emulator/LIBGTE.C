@@ -2907,7 +2907,7 @@ void DpqColor(CVECTOR* v0, long p, CVECTOR* v1)
     G = v0->g;
     B = v0->b;
     CODE = v0->cd;
-    IR0 = p;
+    IR0 = (short)p;
     
     docop2(0x780010);
 
@@ -4081,12 +4081,12 @@ void LoadAverageCol(u_char* v0, u_char* v1, long p0, long p1, u_char* v2)
 {
     int lzc;
 
-    gte_lddp(p0);
+    gte_lddp((short)p0);
     gte_ldcv(v0);
     gte_gpf0();
     gte_stlzc(lzc);
 
-    gte_lddp(p1);
+    gte_lddp((short)p1);
     gte_ldcv(v1);
     gte_gpl();
 

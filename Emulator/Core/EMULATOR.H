@@ -58,7 +58,7 @@
 #define SCREENSHOT_MODE_TGA 0
 #define SCREENSHOT_MODE_BMP 1
 
-typedef struct
+typedef struct SysCounter
 {
 	unsigned int i_cycle;
 

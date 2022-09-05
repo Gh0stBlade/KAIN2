@@ -41,7 +41,7 @@ void Emulator_SaveBountyList()
 
 	if (f != NULL)
 	{
-		for (int i = 0; i < lastIndex; i++)
+		for (unsigned int i = 0; i < lastIndex; i++)
 		{
 			fprintf(f, "%s Calls: %d\n", bountyList[i].c_str(), bountyListCalls[i]);
 		}
