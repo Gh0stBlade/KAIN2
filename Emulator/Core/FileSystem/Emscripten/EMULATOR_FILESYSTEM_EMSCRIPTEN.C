@@ -58,7 +58,6 @@ void Emulator_ReadFileEM(const char* filePath, void* buff, int size)
 		err = 0;
 
 		emscripten_idb_store(SHORT_GAME_NAME, filePath, outBuff, outSize, &err);
-		printf("STORE: %d bytes!", outSize);
 
 		if (err != 0)
 		{
@@ -77,8 +76,6 @@ void Emulator_ReadFileEM(const char* filePath, void* buff, int size)
 
 void Emulator_OpenReadEM(long hash, void* buff, int size)
 {
-	printf("Requesting: %x\n", hash);
-
 	int fileSize = 0;
 	Emulator_GetFileSize("bigfile.lst", &fileSize);
 	char* fileBuffer = new char[fileSize];
