@@ -2905,10 +2905,10 @@ void GAMELOOP_ChangeMode()
 }
 
 #if defined(__EMSCRIPTEN__)
-EMSCRIPTEN_KEEPALIVE
-extern "C" {
-#endif
+void EMSCRIPTEN_KEEPALIVE GAMELOOP_RequestLevelChange(char* name, short number, struct GameTracker* gameTracker)
+#else
 void GAMELOOP_RequestLevelChange(char* name, short number, struct GameTracker* gameTracker)
+#endif
 {
 #if defined(PSX_VERSION)
 
@@ -2944,9 +2944,6 @@ void GAMELOOP_RequestLevelChange(char* name, short number, struct GameTracker* g
 	}
 #endif
 }
-#if defined(__EMSCRIPTEN__)
-}
-#endif
 
 void PSX_GameLoop(struct GameTracker *gameTracker)
 {
