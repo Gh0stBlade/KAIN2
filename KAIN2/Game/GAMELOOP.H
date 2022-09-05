@@ -93,7 +93,7 @@ struct GameTracker // hashcode: 0x4EB3EFC5 (dec: 1320415173)
 	long gameFlags; // size=0, offset=320
 	long streamFlags; // size=0, offset=324
 	void (*drawNonAnimatedSegmentFunc)(); // size=0, offset=328
-	void (*drawAnimatedModelFunc)(); // size=0, offset=332
+	void (*drawAnimatedModelFunc)(struct _Model*, struct _PVertex*, struct _PrimPool*, unsigned long**); // size=0, offset=332
 	unsigned long* (*drawDisplayPolytopeListFunc)(struct _PolytopeList* polytopeList, struct _Terrain* terrain, struct Camera* camera, struct  _PrimPool* primPool, unsigned long** drawot, struct _Position* globalOffset); // size=0, offset=336
 	void (*drawBgFunc)(); // size=0, offset=340
 	struct Level* mainDrawUnit; // size=392, offset=344

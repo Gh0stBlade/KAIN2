@@ -15,7 +15,7 @@ extern long depthQFogFar;
 extern long depthQBlendStart;
 extern long depthQPTable;
 
-extern void modelFadeValue() ; // 0x800CE18C
+extern long modelFadeValue;
 
 extern void lowerSplitPush() ; // 0x800CE190
 
@@ -29,7 +29,7 @@ extern void TimerTick() ; // 0x80024E78
 
 extern int CheckVolatile(void* a0) ; // 0x80024EB0
 
-extern void DRAW_AnimatedModel_S() ; // 0x80024EBC
+extern void DRAW_AnimatedModel_S(struct _Model* model, struct _PVertex* poolVertex, struct _PrimPool* primPool, unsigned long** ot); // 0x80024EBC
 
 extern void anim_loop_top() ; // 0x80024FA0
 
@@ -116,7 +116,7 @@ extern unsigned long* DRAW_DisplayPolytopeList_S(struct _PolytopeList* polytopeL
 
 //extern void DRAW_DisplayPolytopeList_S(struct _VertexPool*, struct _Terrain*, struct Camera*, struct _PrimPool*, unsigned int**, _Position*) ; // 0x80026BD4
 
-extern void PIPE3D_TransformAnimatedInstanceVertices_S() ; // 0x80026E10
+extern long PIPE3D_TransformAnimatedInstanceVertices_S(struct _VertexPool* vertexPool, struct _PVertex* poolVertex, struct _Model* model, MATRIX* wcTransform, MATRIX* matrixPool, MATRIX* lm, CVECTOR* vertexColor, CVECTOR* perVertexColor); // 0x80026E10
 
 extern void DRAW_MFace3_S() ; // 0x80027C48
 

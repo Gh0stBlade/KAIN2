@@ -209,227 +209,134 @@ void PIPE3D_TransformVerticesToWorld(struct _Instance *instance, struct _SVector
 
 void PIPE3D_InstanceTransformAndDraw(struct _Instance* instance, struct _CameraCore_Type* cameraCore, struct _VertexPool* vertexPool, struct _PrimPool* primPool, unsigned long** ot, struct _Mirror* mirror)
 {
-	struct Object* object; // $v0
-	struct _Model* model; // $s4
-	MATRIX* matrixPool; // $s3
-	MATRIX lm; // stack offset -80
-	long flags; // $s1
-	struct _MVertex* vertexList; // $s0
-	struct _PVertex* poolVertex; // $s5
-	CVECTOR* vertexColor; // $s6
-	long spadOffset; // $v1
-	long spadFree; // $a1
-	long allocSize; // $a0
-	long BackColorSave; // stack offset -44
-	long BlendStartSave; // $s0
-	int pval; // stack offset -48
+	struct Object* object;
+	struct _Model* model;
+	MATRIX* matrixPool;
+	MATRIX lm;
+	long flags;
+	struct _MVertex* vertexList;
+	struct _PVertex* poolVertex;
+	CVECTOR* vertexColor;
+	long spadOffset;
+	long spadFree;
+	long allocSize;
+	long BackColorSave;
+	long BlendStartSave;
+	int pval;
 
-	//s2 = instance
-	//s1 = cameraCore
-	//s0 = vertexPool
 	object = instance->object;
-	//v1 = instance->currentModel;
+	
 	matrixPool = instance->matrix;
 
 	model = object->modelList[instance->currentModel];
 
-	//s7 = primPool
 	if (matrixPool != NULL)
 	{
 		LIGHT_PresetInstanceLight(instance, 2048, &lm);
 
 		poolVertex = (_PVertex*)&vertexPool->vertex[0];
+		
 		vertexColor = (CVECTOR*)&vertexPool->color[0];
 
-		//a1 = 0xE0
-		//a2 = model->numVertices
+		spadFree = 224;
+		
 		vertexList = model->vertexList;
 
-		if (224 >= model->numVertices * 4)
+		spadOffset = 32;
+		
+		if (spadFree >= model->numVertices * 4)
 		{
-
+			poolVertex = (struct _PVertex*)getScratchAddr(32);
+			spadOffset += model->numVertices * 4 + 32;
+			spadFree -= model->numVertices * 4 + 32;
 		}
-		//loc_8003B154
+
+		if (spadFree >= model->numVertices)
+		{
+			vertexColor = (CVECTOR*)getScratchAddr(spadOffset);
+		}
+
+		modelFadeValue = INSTANCE_GetFadeValue(instance);
+
+		flags = PIPE3D_TransformAnimatedInstanceVertices_S(vertexPool, poolVertex, model, cameraCore->wcTransform, matrixPool, &lm, vertexColor, instance->perVertexColor);
+
+		LIGHT_PresetInstanceLight(instance, 4096, &lm);
+
+		MulMatrix0(&lm, matrixPool + instance->lightMatrix, &lm);
+
+		SetLightMatrix(&lm);
+
+		if ((flags & 0x8000))
+		{
+			flags &= 0x7FFF6FFF;
+		}
+		
+		object = instance->object;
+
+		if (!(flags & 0xFFFFEFFF) || !(object->oflags2 & 0x2000))
+		{
+			BlendStartSave = 0;
+
+			if (primPool->nextPrim  + (model->numFaces  * 48) < primPool->lastPrim)
+			{
+				object = instance->object;
+
+				BackColorSave = 0;
+
+				if (!(object->oflags2 & 0x1000))
+				{
+					SetRotMatrix(theCamera.core.wcTransform);
+					
+					SetTransMatrix(theCamera.core.wcTransform);
+
+					gte_ldv0(&instance->position);
+
+					gte_rtps();
+				}
+
+				gte_stdp(pval);
+
+				if (instance->petrifyValue != 0)
+				{
+					BlendStartSave = depthQBlendStart;
+
+					depthQBackColor = 0x707070;
+					
+					depthQBlendStart = depthQFogStart;
+					
+					BackColorSave = depthQBackColor;
+
+					LoadAverageCol((unsigned char*)&BackColorSave, (unsigned char*)&depthQBackColor, pval, ONE - pval, (unsigned char*)&depthQBackColor);
+				
+					if (instance->petrifyValue < pval)
+					{
+						gte_lddp(pval);
+					}
+					else
+					{
+						gte_lddp(pval);
+					}
+				}
+
+				if (modelFadeValue < 4094)
+				{
+					object = instance->object;
+
+					if ((object->oflags2 & 0x1000) || pval < 4090)
+					{
+						gameTrackerX.drawAnimatedModelFunc(model, poolVertex, primPool, ot);
+					}
+				}
+
+				if (instance->petrifyValue != 0)
+				{
+					depthQBlendStart = BlendStartSave;
+
+					depthQBackColor = BackColorSave;
+				}
+			}
+		}
 	}
-	//loc_8003B384
-#if 0
-		bnez    $v0, loc_8003B154
-		li      $v1, 0x20  # ' '
-		li      $s5, 0x1F800080
-		addu    $v1, $a0, $v1
-		subu    $a1, $a0
-
-		loc_8003B154 :
-	slt     $v0, $a1, $a2
-		bnez    $v0, loc_8003B168
-		sll     $v1, 2
-		lui     $v0, 0x1F80
-		addu    $s6, $v1, $v0
-
-		loc_8003B168 :
-	jal     sub_800358E4
-		move    $a0, $s2
-		move    $a0, $s0
-		addiu   $s0, $sp, 0x48 + var_28
-		sw      $s3, 0x48 + var_38($sp)
-		sw      $s0, 0x48 + var_34($sp)
-		sw      $s6, 0x48 + var_30($sp)
-		lw      $v1, 0x298($s2)
-		move    $a1, $s5
-		sw      $v1, 0x48 + var_2C($sp)
-		lw      $a3, 0x60($s1)
-		sw      $v0, -0x6FA4($gp)
-		jal     sub_80027170
-		move    $a2, $s4
-		move    $s1, $v0
-		move    $a0, $s2
-		li      $a1, 0x1000
-		jal     sub_80035E40
-		move    $a2, $s0
-		move    $a0, $s0
-		lh      $a1, 0x106($s2)
-		move    $a2, $s0
-		sll     $a1, 5
-		jal     sub_800BDEFC
-		addu    $a1, $s3, $a1
-		jal     sub_800BDE7C
-		move    $a0, $s0
-		andi    $v0, $s1, 0x8000
-		beqz    $v0, loc_8003B1E8
-		lui     $v0, 0x7FFF
-		li      $v0, 0x7FFF6FFF
-		and $s1, $v0
-
-		loc_8003B1E8 :
-	li      $v0, 0xFFFFEFFF
-		and $v0, $s1, $v0
-		beqz    $v0, loc_8003B214
-		nop
-		lw      $v0, 0x1C($s2)
-		nop
-		lw      $v0, 0x2C($v0)
-		nop
-		andi    $v0, 0x2000
-		beqz    $v0, loc_8003B384
-		nop
-
-		loc_8003B214 :
-	lw      $v0, 0x10($s4)
-		lw      $a0, 8($s7)
-		sll     $v1, $v0, 1
-		addu    $v1, $v0
-		lw      $v0, 4($s7)
-		sll     $v1, 4
-		addu    $v0, $v1
-		sltu    $v0, $a0
-		beqz    $v0, loc_8003B384
-		move    $s0, $zero
-		lw      $v0, 0x1C($s2)
-		nop
-		lw      $v0, 0x2C($v0)
-		nop
-		andi    $v0, 0x1000
-		bnez    $v0, loc_8003B288
-		sw      $zero, 0x48 + var_4($sp)
-		lw      $a0, -0x5310($gp)
-		jal     SetRotMatrix
-		nop
-		lw      $a0, -0x5310($gp)
-		jal     SetTransMatrix
-		nop
-		addiu   $v0, $s2, 0x5C  # '\'
-		lwc2    $0, 0($v0)
-		lwc2    $1, 4($v0)
-		nop
-		nop
-		cop2    0x180001
-
-		loc_8003B288:
-	addiu   $v0, $sp, 0x48 + var_8
-		swc2    $8, 0($v0)
-		lh      $v0, 0x172($s2)
-		nop
-		beqz    $v0, loc_8003B308
-		lui     $v0, 0x70  # 'p'
-		li      $v0, 0x707070
-		addiu   $a0, $sp, 0x48 + var_4
-		addiu   $a1, $gp, -0x6FAC
-		lw      $s0, -0x6FB8($gp)
-		lw      $v1, -0x6FAC($gp)
-		lw      $a2, 0x48 + var_8($sp)
-		li      $a3, 0x1000
-		sw      $v0, -0x6FAC($gp)
-		lw      $v0, -0x6FB4($gp)
-		subu    $a3, $a2
-		sw      $v1, 0x48 + var_4($sp)
-		sw      $v0, -0x6FB8($gp)
-		jal     sub_800BCEA0
-		sw      $a1, 0x48 + var_38($sp)
-		lh      $v0, 0x172($s2)
-		lw      $v1, 0x48 + var_8($sp)
-		nop
-		slt     $v0, $v1
-		beqz    $v0, loc_8003B2FC
-		nop
-		mtc2    $v1, $8
-		j       loc_8003B308
-		nop
-
-		loc_8003B2FC :
-	lhu     $t0, 0x172($s2)
-		nop
-		mtc2    $t0, $8
-
-		loc_8003B308 :
-	lw      $v0, -0x6FA4($gp)
-		nop
-		slti    $v0, 0xFFE
-		beqz    $v0, loc_8003B368
-		nop
-		lw      $v0, 0x1C($s2)
-		nop
-		lw      $v0, 0x2C($v0)
-		nop
-		andi    $v0, 0x1000
-		bnez    $v0, loc_8003B34C
-		move    $a0, $s4
-		lw      $v0, 0x48 + var_8($sp)
-		nop
-		slti    $v0, 0xFFA
-		beqz    $v0, loc_8003B368
-		nop
-
-		loc_8003B34C :
-	move    $a1, $s5
-		lw      $v0, -0x40EC($gp)
-		lw      $a3, 0x48 + arg_10($sp)
-		move    $a2, $s7
-		jalr    $v0
-		sw      $s6, 0x48 + var_38($sp)
-		sw      $v0, 4($s7)
-
-		loc_8003B368:
-	lh      $v0, 0x172($s2)
-		nop
-		beqz    $v0, loc_8003B384
-		nop
-		lw      $v0, 0x48 + var_4($sp)
-		sw      $s0, -0x6FB8($gp)
-		sw      $v0, -0x6FAC($gp)
-
-		loc_8003B384:
-	lw      $ra, 0x48 + var_s20($sp)
-		lw      $s7, 0x48 + var_s1C($sp)
-		lw      $s6, 0x48 + var_s18($sp)
-		lw      $s5, 0x48 + var_s14($sp)
-		lw      $s4, 0x48 + var_s10($sp)
-		lw      $s3, 0x48 + var_sC($sp)
-		lw      $s2, 0x48 + var_s8($sp)
-		lw      $s1, 0x48 + var_s4($sp)
-		lw      $s0, 0x48 + var_s0($sp)
-		jr      $ra
-		addiu   $sp, 0x70
-#endif
 }
 
 void PIPE3D_InstanceListTransformAndDrawFunc(struct _StreamUnit* unit, unsigned long** ot, struct _CameraCore_Type* cameraCore, struct _Instance* instance)
