@@ -234,7 +234,7 @@ void PIPE3D_InstanceTransformAndDraw(struct _Instance* instance, struct _CameraC
 	{
 		LIGHT_PresetInstanceLight(instance, 2048, &lm);
 
-		poolVertex = (_PVertex*)&vertexPool->vertex[0];
+		poolVertex = (struct _PVertex*)&vertexPool->vertex[0];
 		
 		vertexColor = (CVECTOR*)&vertexPool->color[0];
 
@@ -277,7 +277,7 @@ void PIPE3D_InstanceTransformAndDraw(struct _Instance* instance, struct _CameraC
 		{
 			BlendStartSave = 0;
 
-			if (primPool->nextPrim  + (model->numFaces  * 48) < primPool->lastPrim)
+			if (primPool->nextPrim + (model->numFaces * 12) < primPool->lastPrim)
 			{
 				object = instance->object;
 
