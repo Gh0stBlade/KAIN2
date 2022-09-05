@@ -935,10 +935,19 @@ void* Emulator_GenerateRG8LUT()
 }
 
 #if defined(TOUCH_UI)
+extern unsigned short resultTouchKeysPressed;
+
 void Emulator_DrawTouchUI()
 {
+	unsigned short mapper[4] = {
+		0x8,
+		0x1,
+		0x2,
+		0x4,
+	};
+
 	unsigned long OT[4];
-	char polygonBuffer[sizeof(POLY_GT4) * 32];
+	char polygonBuffer[sizeof(POLY_F4) * 32];
 	char* p = &polygonBuffer[0];
 
 	ClearOTagR(OT, 4 / 2);
@@ -955,16 +964,17 @@ void Emulator_DrawTouchUI()
 		
 		int mx = dx ? ndist * 2 : 0;
 		int my = dy ? ndist * 2 : 0;
-
-		setPolyG4(p);
+		int pressed = (resultTouchKeysPressed & mapper[i] << 4) != 0;
+		
+		setPolyF4(p);
 		setSemiTrans(p, 1);
-		setRGB0((POLY_G4*)p, 127, 127, 127);
-		setRGB1((POLY_G4*)p, 127, 127, 127);
-		setRGB2((POLY_G4*)p, 127, 127, 127);
-		setRGB3((POLY_G4*)p, 127, 127, 127);
-		setXY4((POLY_G4*)p, cx + mx, cy + my, cx + mx + 32, cy + my, cx + mx, cy + my + 32, cx + mx + 32, cy + my + 32);
+		setRGB0((POLY_F4*)p, 127, pressed ? 0 : 127, pressed ? 0 : 127);
+		//setRGB1((POLY_F4*)p, 127, pressed ? 0 : 127, pressed ? 0 : 127);
+		//setRGB2((POLY_F4*)p, 127, pressed ? 0 : 127, pressed ? 0 : 127);
+		//setRGB3((POLY_F4*)p, 127, pressed ? 0 : 127, pressed ? 0 : 127);
+		setXY4((POLY_F4*)p, cx + mx, cy + my, cx + mx + 32, cy + my, cx + mx, cy + my + 32, cx + mx + 32, cy + my + 32);
 		addPrim(OT, p);
-		p += sizeof(POLY_G4);
+		p += sizeof(POLY_F4);
 	}
 	
 	cx = 512-64;
@@ -979,15 +989,16 @@ void Emulator_DrawTouchUI()
 		int mx = dx ? ndist * 2 : 0;
 		int my = dy ? ndist * 2 : 0;
 
-		setPolyG4(p);
+		int pressed = (resultTouchKeysPressed & mapper[i] << 12) != 0;
+		setPolyF4(p);
 		setSemiTrans(p, 1);
-		setRGB0((POLY_G4*)p, 127, 127, 127);
-		setRGB1((POLY_G4*)p, 127, 127, 127);
-		setRGB2((POLY_G4*)p, 127, 127, 127);
-		setRGB3((POLY_G4*)p, 127, 127, 127);
-		setXY4((POLY_G4*)p, cx + mx, cy + my, cx + mx + 32, cy + my, cx + mx, cy + my + 32, cx + mx + 32, cy + my + 32);
+		setRGB0((POLY_F4*)p, 127, pressed ? 0 : 127, pressed ? 0 : 127);
+		//setRGB1((POLY_F4*)p, 127, pressed ? 0 : 127, pressed ? 0 : 127);
+		//setRGB2((POLY_F4*)p, 127, pressed ? 0 : 127, pressed ? 0 : 127);
+		//setRGB3((POLY_F4*)p, 127, pressed ? 0 : 127, pressed ? 0 : 127);
+		setXY4((POLY_F4*)p, cx + mx, cy + my, cx + mx + 32, cy + my, cx + mx, cy + my + 32, cx + mx + 32, cy + my + 32);
 		addPrim(OT, p);
-		p += sizeof(POLY_G4);
+		p += sizeof(POLY_F4);
 	}
 
 	Emulator_AggregatePTAGsToSplits(OT, FALSE);

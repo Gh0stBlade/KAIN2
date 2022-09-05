@@ -203,9 +203,21 @@ void UpdateGameControllerAnalogInput(SDL_GameController* pad, void* analogR, voi
 }
 #endif
 
+unsigned short UpdateTouchInput()
+{
+#if defined(TOUCH_UI)
+	extern unsigned short resultTouchKeysPressed;
+	unsigned short ret = 0xFFFF;
+	ret &= ~resultTouchKeysPressed;
+	return ret;
+#else
+	return 0xFFFF;
+#endif
+}
+
 unsigned short UpdateKeyboardInput()
 {
-	unsigned short ret = 0xFFFF;
+	unsigned short ret = UpdateTouchInput();
 
 #if defined(SDL2)
 	//Not initialised yet

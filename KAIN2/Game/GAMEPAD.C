@@ -943,6 +943,10 @@ void GAMEPAD_Process(struct GameTracker *gameTracker)
 	GAMEPAD_GetData(gameTracker->controlData);
 	GAMEPAD_Commands(gameTracker->controlCommand, gameTracker->controlData, 0);
 	GAMEPAD_Commands(gameTracker->controlCommand, gameTracker->controlData, 1);
+
+#if defined(PSXPC_VERSION) && defined(TOUCH_UI)
+	Emulator_ResetTouchInput();
+#endif
 }
 
 

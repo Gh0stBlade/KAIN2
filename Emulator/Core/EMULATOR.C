@@ -5397,15 +5397,40 @@ struct Quad
 
 int Emulator_IsPointInSquare(int x, int y, struct Quad* q)
 {
-	if((x > q->p[0].vx || x > q->p[1].vx || x > q->p[2].vx || x > q->p[3].vx)
-	&& (x < q->p[0].vx || x < q->p[1].vx || x < q->p[2].vx || x < q->p[3].vx)
-	&& (y > q->p[0].vy || y > q->p[1].vy || y > q->p[2].vy || y > q->p[3].vy)
-	&& (y < q->p[0].vy || y < q->p[1].vy || y < q->p[2].vy || y > q->p[3].vy))
+	short maxX = q->p[0].vx;
+	short minX = q->p[0].vx;
+	short maxY = q->p[0].vy;
+	short minY = q->p[0].vy;
+
+	for (int i = 0; i < 4; i++)
 	{
-		return TRUE;
+		if (maxX < q->p[i].vx)
+		{
+			maxX = q->p[i].vx;
+		}
+
+		if (q->p[i].vx < minX)
+		{
+			minX = q->p[i].vx;
+		}
+
+		if (maxY < q->p[i].vy)
+		{
+			maxY = q->p[i].vy;
+		}
+
+		if (q->p[i].vy < minY)
+		{
+			minY = q->p[i].vy;
+		}
 	}
 
-	return FALSE;
+	if (x < minX || x > maxX || y < minY || y > maxY) 
+	{
+		return FALSE;
+	}
+
+	return TRUE;
 }
 
 void Emulator_HandleTouchEvent(int x, int y)
@@ -5419,9 +5444,9 @@ void Emulator_HandleTouchEvent(int x, int y)
 
 	unsigned short mapper[4] = {
 		0x8,
-		0x4,
-		0x2,
 		0x1,
+		0x2,
+		0x4,
 	};
 	
 	//printf("X: %d, Y: %d, RX: %d, RY: %d\n", x, y, rx, ry);
@@ -5922,10 +5947,6 @@ void Emulator_UpdateInput(int poll)
 	if (padAllowCommunication)
 	{
 		kbInputs = UpdateKeyboardInput();
-
-#if defined(TOUCH_UI)
-		kbInputs &= ~resultTouchKeysPressed;
-#endif
 	}
 	else
 	{
@@ -6181,12 +6202,15 @@ void Emulator_EndScene()
 
 #endif
 
-	resultTouchKeysPressed = 0;
-
 	begin_scene_flag = FALSE;
 	vbo_was_dirty_flag = FALSE;
 
 	Emulator_SwapWindow();
+}
+
+void Emulator_ResetTouchInput()
+{
+	resultTouchKeysPressed = 0;
 }
 
 void Emulator_ShutDown()

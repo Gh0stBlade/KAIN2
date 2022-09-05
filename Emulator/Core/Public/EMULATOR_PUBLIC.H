@@ -44,4 +44,7 @@ extern void Emulator_ShutDown();
 /* Usually called at the beginning of main function, for PGXP purposes only! */
 extern void Emulator_HintOTSize(int ots);
 
+/* Explicitly resets touch input data, usually called after Emulator_UpdateInput and the game finished processing input */
+extern void Emulator_ResetTouchInput();
+
 #endif
