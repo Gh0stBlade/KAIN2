@@ -5511,6 +5511,36 @@ void Emulator_HandleTouchEvent(int x, int y)
 			resultTouchKeysPressed |= mapper[i] << 12;
 		}
 	}
+
+	cx = 512 / 2;
+	cy = 240 - 32;
+	dist = 32;
+
+	for (int i = 0; i < 2; i++)
+	{
+		int dx = (i % 2) ? 0 : 1;
+		int ndist = (i != 0) ? dist : -dist;
+		int mx = dx ? ndist * 2 : 0;
+
+		Quad q;
+
+		q.p[0].vx = cx + mx;
+		q.p[0].vy = cy;
+
+		q.p[1].vx = cx + mx + 32;
+		q.p[1].vy = cy;
+
+		q.p[2].vx = cx + mx;
+		q.p[2].vy = cy + 16;
+
+		q.p[3].vx = cx + mx + 32;
+		q.p[3].vy = cy + 16;
+
+		if (Emulator_IsPointInSquare(rx, ry, &q))
+		{
+			resultTouchKeysPressed |= mapper[!i];
+		}
+	}
 }
 #endif
 

@@ -1001,6 +1001,29 @@ void Emulator_DrawTouchUI()
 		p += sizeof(POLY_F4);
 	}
 
+	cx = 512 / 2;
+	cy = 240 - 32;
+	dist = 32;
+
+	for (int i = 0; i < 2; i++)
+	{
+		int dx = (i % 2) ? 0 : 1;
+		int ndist = (i != 0) ? dist : -dist;
+
+		int mx = dx ? ndist * 2 : 0;
+
+		int pressed = (resultTouchKeysPressed & mapper[!i]) != 0;
+		setPolyF4(p);
+		setSemiTrans(p, 1);
+		setRGB0((POLY_F4*)p, 127, pressed ? 0 : 127, pressed ? 0 : 127);
+		//setRGB1((POLY_F4*)p, 127, pressed ? 0 : 127, pressed ? 0 : 127);
+		//setRGB2((POLY_F4*)p, 127, pressed ? 0 : 127, pressed ? 0 : 127);
+		//setRGB3((POLY_F4*)p, 127, pressed ? 0 : 127, pressed ? 0 : 127);
+		setXY4((POLY_F4*)p, cx + mx, cy, cx + mx + 32, cy, cx + mx, cy + 16, cx + mx + 32, cy + 16);
+		addPrim(OT, p);
+		p += sizeof(POLY_F4);
+	}
+
 	Emulator_AggregatePTAGsToSplits(OT, FALSE);
 }
 #endif
