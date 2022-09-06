@@ -388,7 +388,7 @@ unsigned short UpdateKeyboardInputDebug()
 }
 
 #if defined(__EMSCRIPTEN__)
-void  EMSCRIPTEN_KEEPALIVE Emulator_SetFocus(int state)
+void EMSCRIPTEN_KEEPALIVE Emulator_SetFocus(int state)
 {
 	int enabled = state ? SDL_ENABLE : SDL_DISABLE;
 	SDL_EventState(SDL_TEXTINPUT, enabled);

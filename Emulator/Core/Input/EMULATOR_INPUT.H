@@ -30,7 +30,9 @@ extern const unsigned char* keyboardStateDebug;
 
 #include <emscripten.h>
 
-extern void  EMSCRIPTEN_KEEPALIVE Emulator_SetFocus(int state);
+extern "C" {
+extern void EMSCRIPTEN_KEEPALIVE Emulator_SetFocus(int state);
+}
 #endif
 
 extern int padAllowCommunication;
