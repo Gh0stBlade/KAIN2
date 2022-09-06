@@ -386,3 +386,16 @@ unsigned short UpdateKeyboardInputDebug()
 #endif
 	return ret;
 }
+
+#if defined(__EMSCRIPTEN__)
+void  EMSCRIPTEN_KEEPALIVE Emulator_SetFocus(int state)
+{
+	int enabled = state ? SDL_ENABLE : SDL_DISABLE;
+	SDL_EventState(SDL_TEXTINPUT, enabled);
+	SDL_EventState(SDL_KEYDOWN, enabled);
+	SDL_EventState(SDL_KEYUP, enabled);
+	SDL_EventState(SDL_MOUSEMOTION, enabled);
+	SDL_EventState(SDL_MOUSEBUTTONDOWN, enabled);
+	SDL_EventState(SDL_MOUSEBUTTONUP, enabled);
+}
+#endif

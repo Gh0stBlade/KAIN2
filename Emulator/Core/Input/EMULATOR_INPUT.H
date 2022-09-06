@@ -26,6 +26,13 @@ extern const unsigned char* keyboardStateDebug;
 
 #endif
 
+#if defined(__EMSCRIPTEN__)
+
+#include <emscripten.h>
+
+extern void  EMSCRIPTEN_KEEPALIVE Emulator_SetFocus(int state);
+#endif
+
 extern int padAllowCommunication;
 
 #endif
