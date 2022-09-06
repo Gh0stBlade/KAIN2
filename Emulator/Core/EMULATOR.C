@@ -5553,11 +5553,9 @@ void Emulator_DoPollEvent()
 		switch (event.type)
 		{
 #if defined(TOUCH_UI)
-			case SDL_MOUSEBUTTONDOWN:
 			case SDL_MOUSEBUTTONUP:
 				Emulator_HandleTouchEvent(event.button.x, event.button.y);
 				break;
-			case SDL_FINGERDOWN:
 			case SDL_FINGERUP:
 				Emulator_HandleTouchEvent((int)event.tfinger.x, (int)event.tfinger.y);
 			break;
@@ -5600,8 +5598,9 @@ void Emulator_DoPollEvent()
 					nKey = SDL_SCANCODE_LCTRL;
 				else if (nKey == SDL_SCANCODE_RALT)
 					nKey = SDL_SCANCODE_LALT;
-
+#if defined(_DEBUG)
 				Emulator_DoDebugKeys(nKey, (event.type == SDL_KEYUP) ? FALSE : TRUE);
+#endif
 				break;
 			}
 		}
