@@ -4,7 +4,7 @@ set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -sASYNCIFY --std=c++11 -s
 set(SDL2_LIBRARIES "-s USE_SDL=2")
 
 add_definitions("-sEXTRA_EXPORTED_RUNTIME_METHODS='[\"cwrap\"]'")
-add_definitions("-sEXPORTED_FUNCTIONS='[\"GAMELOOP_RequestLevelChange\"]'")
+add_definitions("-s EXPORTED_FUNCTIONS=['GAMELOOP_RequestLevelChange','Emulator_SetFocus']")
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-error=format-security -Wno-narrowing -Wno-nonportable-include-path")
 set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -Wno-error=format-security -Wno-narrowing -Wno-nonportable-include-path")
