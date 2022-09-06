@@ -4260,6 +4260,1512 @@ unsigned long* DRAW_DisplayPolytopeList_S(struct _PolytopeList* polytopeList, st
 
 long PIPE3D_TransformAnimatedInstanceVertices_S(struct _VertexPool* vertexPool, struct _PVertex* poolVertex, struct _Model* model, MATRIX* wcTransform, MATRIX* matrixPool, MATRIX* lm, CVECTOR* vertexColor, CVECTOR* perVertexColor)
 {
+	unsigned long* scratchAddr;//t3
+	long ret;//a2
+	//t0 = poolVertex
+	scratchAddr = getScratchAddr(0);
+
+	if (model->numSegments > 0)
+	{
+		//t1 = matrixPool
+		//t8 = model->segmentList
+		//t9 = vertexPool
+		//s1 = vertexColor
+		//s2 = &gNormalList
+		//s6 = perVertexColor
+		//sizeof(struct _VertexPool);
+		memcpy(scratchAddr, wcTransform, sizeof(MATRIX));
+
+		ret = -1;
+		//s0 = lm
+
+		if (vertexColor != NULL)
+		{
+			memcpy(&scratchAddr[13], lm, sizeof(MATRIX));
+
+			if (perVertexColor == NULL)
+			{
+				///gte_ldrgb(0x34FFFFFF);
+
+				//loc_80027244
+				//a0 = ((int*)model->segment->firstVertex);
+				//v0 = model->segment->lastVertex
+
+				//t7 = v0 << 3
+				if (model->segmentList->lastVertex + 1 != 0)
+				{
+					//t7 = t9 + t7
+				}
+				//loc_80027710
+			}
+			//loc_800279CC
+		}
+		//loc_80027728
+	}
+	//loc_80027F84
+#if 0
+		addu    $t7, $t9, $t7
+		andi    $t4, $a0, 0xFFFF
+		sll     $a1, $t4, 3
+		addu    $a1, $t9, $a1
+		addiu   $v0, $t3, 0x34  # '4'
+		addiu   $v1, $t3, 0x48  # 'H'
+		lw      $t4, 0($v0)
+		lw      $t5, 4($v0)
+		ctc2    $t4, $0
+		ctc2    $t5, $1
+		lw      $t4, 8($v0)
+		lw      $t5, 0xC($v0)
+		lw      $t6, 0x10($v0)
+		ctc2    $t4, $2
+		ctc2    $t5, $3
+		ctc2    $t6, $4
+		lhu     $t4, 0($t1)
+		lhu     $t5, 6($t1)
+		lhu     $t6, 0xC($t1)
+		mtc2    $t4, $9
+		mtc2    $t5, $10
+		mtc2    $t6, $11
+		nop
+		nop
+		cop2    0x49E012
+		mfc2    $t4, $9
+		mfc2    $t5, $10
+		mfc2    $t6, $11
+		sh      $t4, 0($v1)
+		sh      $t5, 6($v1)
+		sh      $t6, 0xC($v1)
+		lhu     $t4, 2($t1)
+		lhu     $t5, 8($t1)
+		lhu     $t6, 0xE($t1)
+		mtc2    $t4, $9
+		mtc2    $t5, $10
+		mtc2    $t6, $11
+		nop
+		nop
+		cop2    0x49E012
+		mfc2    $t4, $9
+		mfc2    $t5, $10
+		mfc2    $t6, $11
+		sh      $t4, 2($v1)
+		sh      $t5, 8($v1)
+		sh      $t6, 0xE($v1)
+		lhu     $t4, 4($t1)
+		lhu     $t5, 0xA($t1)
+		lhu     $t6, 0x10($t1)
+		mtc2    $t4, $9
+		mtc2    $t5, $10
+		mtc2    $t6, $11
+		nop
+		nop
+		cop2    0x49E012
+		mfc2    $t4, $9
+		mfc2    $t5, $10
+		mfc2    $t6, $11
+		sh      $t4, 4($v1)
+		sh      $t5, 0xA($v1)
+		sh      $t6, 0x10($v1)
+		lw      $t4, 0($v1)
+		lw      $t5, 4($v1)
+		ctc2    $t4, $8
+		ctc2    $t5, $9
+		lw      $t4, 8($v1)
+		lw      $t5, 0xC($v1)
+		lw      $t6, 0x10($v1)
+		ctc2    $t4, $10
+		ctc2    $t5, $11
+		ctc2    $t6, $12
+		addiu   $v0, $t3, 0
+		addiu   $v1, $t3, 0x20  # ' '
+		lw      $t4, 0($v0)
+		lw      $t5, 4($v0)
+		ctc2    $t4, $0
+		ctc2    $t5, $1
+		lw      $t4, 8($v0)
+		lw      $t5, 0xC($v0)
+		lw      $t6, 0x10($v0)
+		ctc2    $t4, $2
+		ctc2    $t5, $3
+		ctc2    $t6, $4
+		lhu     $t4, 0($t1)
+		lhu     $t5, 6($t1)
+		lhu     $t6, 0xC($t1)
+		mtc2    $t4, $9
+		mtc2    $t5, $10
+		mtc2    $t6, $11
+		nop
+		nop
+		cop2    0x49E012
+		mfc2    $t4, $9
+		mfc2    $t5, $10
+		mfc2    $t6, $11
+		sh      $t4, 0($v1)
+		sh      $t5, 6($v1)
+		sh      $t6, 0xC($v1)
+		lhu     $t4, 2($t1)
+		lhu     $t5, 8($t1)
+		lhu     $t6, 0xE($t1)
+		mtc2    $t4, $9
+		mtc2    $t5, $10
+		mtc2    $t6, $11
+		nop
+		nop
+		cop2    0x49E012
+		mfc2    $t4, $9
+		mfc2    $t5, $10
+		mfc2    $t6, $11
+		sh      $t4, 2($v1)
+		sh      $t5, 8($v1)
+		sh      $t6, 0xE($v1)
+		lhu     $t4, 4($t1)
+		lhu     $t5, 0xA($t1)
+		lhu     $t6, 0x10($t1)
+		mtc2    $t4, $9
+		mtc2    $t5, $10
+		mtc2    $t6, $11
+		nop
+		nop
+		cop2    0x49E012
+		mfc2    $t4, $9
+		mfc2    $t5, $10
+		mfc2    $t6, $11
+		sh      $t4, 4($v1)
+		sh      $t5, 0xA($v1)
+		sh      $t6, 0x10($v1)
+		lw      $t4, 0x14($v0)
+		lw      $t5, 0x18($v0)
+		lw      $t6, 0x1C($v0)
+		ctc2    $t4, $5
+		ctc2    $t5, $6
+		ctc2    $t6, $7
+		lhu     $t5, 0x18($t1)
+		lhu     $t4, 0x14($t1)
+		sll     $t5, 16
+		or $t4, $t5
+		mtc2    $t4, $0
+		lwc2    $1, 0x1C($t1)
+		nop
+		nop
+		cop2    0x480012
+		mfc2    $t4, $9
+		mfc2    $t5, $10
+		mfc2    $t6, $11
+		ctc2    $t4, $5
+		ctc2    $t5, $6
+		ctc2    $t6, $7
+		lw      $t4, 0($v1)
+		lw      $t5, 4($v1)
+		ctc2    $t4, $0
+		ctc2    $t5, $1
+		lw      $t4, 8($v1)
+		lw      $t5, 0xC($v1)
+		lw      $t6, 0x10($v1)
+		ctc2    $t4, $2
+		ctc2    $t5, $3
+		ctc2    $t6, $4
+		lw      $v0, 0($a1)
+		lw      $v1, 4($a1)
+		lw      $t5, 8($a1)
+		lw      $t6, 0xC($a1)
+		lw      $a0, 0x10($a1)
+		lw      $s0, 0x14($a1)
+		addiu   $t4, $a1, 0x10
+		sltu    $t4, $t7, $t4
+		bnez    $t4, loc_80027600
+		nop
+
+		loc_80027500 :
+	mtc2    $v0, $0
+		mtc2    $v1, $1
+		mtc2    $t5, $2
+		mtc2    $t6, $3
+		mtc2    $a0, $4
+		mtc2    $s0, $5
+		srl     $s3, $v1, 16
+		srl     $s4, $t6, 16
+		cop2    0x280030
+		srl     $s5, $s0, 16
+		sll     $s3, 3
+		sll     $s4, 3
+		sll     $s5, 3
+		addu    $s3, $s2, $s3
+		addu    $s4, $s2, $s4
+		addu    $s5, $s2, $s5
+		lw      $v0, 0($s3)
+		lw      $v1, 4($s3)
+		lw      $t5, 0($s4)
+		lw      $t6, 4($s4)
+		lw      $a0, 0($s5)
+		lw      $s0, 4($s5)
+		swc2    $12, 0($t0)
+		swc2    $17, 4($t0)
+		swc2    $13, 8($t0)
+		cfc2    $t4, $31
+		swc2    $18, 0xC($t0)
+		and $a2, $t4
+		swc2    $14, 0x10($t0)
+		swc2    $19, 0x14($t0)
+		mfc2    $t4, $8
+		lw      $s4, dword_800D05F4
+		nop
+		beqz    $s4, loc_80027598
+		nop
+		mtc2    $s4, $8
+		move    $t4, $s4
+
+		loc_80027598 :
+	mtc2    $v0, $0
+		mtc2    $v1, $1
+		mtc2    $t5, $2
+		mtc2    $t6, $3
+		mtc2    $a0, $4
+		mtc2    $s0, $5
+		beqz    $t4, loc_800275C4
+		addiu   $a1, 0x18
+		cop2    0xF80416
+		bgez    $zero, loc_800275CC
+		addiu   $t4, $a1, 0x10
+
+		loc_800275C4:
+	cop2    0xD80420
+		addiu   $t4, $a1, 0x10
+
+		loc_800275CC :
+		lw      $v0, 0($a1)
+		lw      $v1, 4($a1)
+		lw      $t5, 8($a1)
+		lw      $t6, 0xC($a1)
+		lw      $a0, 0x10($a1)
+		lw      $s0, 0x14($a1)
+		swc2    $20, 0($s1)
+		swc2    $21, 4($s1)
+		swc2    $22, 8($s1)
+		addiu   $s1, 0xC
+		sltu    $t4, $t7, $t4
+		beqz    $t4, loc_80027500
+		addiu   $t0, 0x18
+
+		loc_80027600:
+	slt     $at, $t7, $a1
+		bnez    $at, loc_80027710
+		nop
+		mtc2    $v0, $0
+		mtc2    $v1, $1
+		addiu   $a1, 8
+		srl     $s3, $v1, 16
+		cop2    0x180001
+		sll     $s3, 3
+		addu    $s3, $s2, $s3
+		lw      $v0, 0($s3)
+		lw      $v1, 4($s3)
+		swc2    $14, 0($t0)
+		swc2    $19, 4($t0)
+		cfc2    $a0, $31
+		mfc2    $s3, $8
+		lw      $s4, dword_800D05F4
+		nop
+		beqz    $s4, loc_8002765C
+		nop
+		mtc2    $s4, $8
+		move    $s3, $s4
+
+		loc_8002765C :
+	mtc2    $v0, $0
+		mtc2    $v1, $1
+		beqz    $s3, loc_80027678
+		nop
+		cop2    0xE80413
+		bgez    $zero, loc_8002767C
+		nop
+
+		loc_80027678 :
+	cop2    0xC8041E
+
+		loc_8002767C :
+		addiu   $t0, 8
+		swc2    $22, 0($s1)
+		addiu   $s1, 4
+		slt     $at, $t7, $a1
+		bnez    $at, loc_80027710
+		and $a2, $a0
+		mtc2    $t5, $0
+		mtc2    $t6, $1
+		srl     $s3, $t6, 16
+		sll     $s3, 3
+		cop2    0x180001
+		addu    $s3, $s2, $s3
+		lw      $v0, 0($s3)
+		lw      $v1, 4($s3)
+		swc2    $14, 0($t0)
+		swc2    $19, 4($t0)
+		cfc2    $a0, $31
+		mfc2    $s3, $8
+		lw      $s4, dword_800D05F4
+		nop
+		beqz    $s4, loc_800276E0
+		nop
+		mtc2    $s4, $8
+		move    $s3, $s4
+
+		loc_800276E0 :
+	mtc2    $v0, $0
+		mtc2    $v1, $1
+		beqz    $s3, loc_800276FC
+		nop
+		cop2    0xE80413
+		bgez    $zero, loc_80027700
+		nop
+
+		loc_800276FC :
+	cop2    0xC8041E
+
+		loc_80027700 :
+		addiu   $t0, 8
+		and $a2, $a0
+		swc2    $22, 0($s1)
+		addiu   $s1, 4
+
+		loc_80027710 :
+		addiu   $t1, 0x20  # ' '
+		addiu   $t2, -1
+		bnez    $t2, loc_80027244
+		addiu   $t8, 0x18
+		bgez    $zero, loc_80027F84
+		nop
+
+		loc_80027728 :
+	lw      $a0, 8($t8)
+		nop
+		sra     $v0, $a0, 16
+		addiu   $v1, $v0, 1
+		beqz    $v1, loc_800279B4
+		sll     $t7, $v0, 3
+		addu    $t7, $t9, $t7
+		andi    $t4, $a0, 0xFFFF
+		sll     $a1, $t4, 3
+		addu    $a1, $t9, $a1
+		addiu   $v0, $t3, 0
+		addiu   $v1, $t3, 0x20  # ' '
+		lw      $t4, 0($v0)
+		lw      $t5, 4($v0)
+		ctc2    $t4, $0
+		ctc2    $t5, $1
+		lw      $t4, 8($v0)
+		lw      $t5, 0xC($v0)
+		lw      $t6, 0x10($v0)
+		ctc2    $t4, $2
+		ctc2    $t5, $3
+		ctc2    $t6, $4
+		lhu     $t4, 0($t1)
+		lhu     $t5, 6($t1)
+		lhu     $t6, 0xC($t1)
+		mtc2    $t4, $9
+		mtc2    $t5, $10
+		mtc2    $t6, $11
+		nop
+		nop
+		cop2    0x49E012
+		mfc2    $t4, $9
+		mfc2    $t5, $10
+		mfc2    $t6, $11
+		sh      $t4, 0($v1)
+		sh      $t5, 6($v1)
+		sh      $t6, 0xC($v1)
+		lhu     $t4, 2($t1)
+		lhu     $t5, 8($t1)
+		lhu     $t6, 0xE($t1)
+		mtc2    $t4, $9
+		mtc2    $t5, $10
+		mtc2    $t6, $11
+		nop
+		nop
+		cop2    0x49E012
+		mfc2    $t4, $9
+		mfc2    $t5, $10
+		mfc2    $t6, $11
+		sh      $t4, 2($v1)
+		sh      $t5, 8($v1)
+		sh      $t6, 0xE($v1)
+		lhu     $t4, 4($t1)
+		lhu     $t5, 0xA($t1)
+		lhu     $t6, 0x10($t1)
+		mtc2    $t4, $9
+		mtc2    $t5, $10
+		mtc2    $t6, $11
+		nop
+		nop
+		cop2    0x49E012
+		mfc2    $t4, $9
+		mfc2    $t5, $10
+		mfc2    $t6, $11
+		sh      $t4, 4($v1)
+		sh      $t5, 0xA($v1)
+		sh      $t6, 0x10($v1)
+		lw      $t4, 0x14($v0)
+		lw      $t5, 0x18($v0)
+		lw      $t6, 0x1C($v0)
+		ctc2    $t4, $5
+		ctc2    $t5, $6
+		ctc2    $t6, $7
+		lhu     $t5, 0x18($t1)
+		lhu     $t4, 0x14($t1)
+		sll     $t5, 16
+		or $t4, $t5
+		mtc2    $t4, $0
+		lwc2    $1, 0x1C($t1)
+		nop
+		nop
+		cop2    0x480012
+		mfc2    $t4, $9
+		mfc2    $t5, $10
+		mfc2    $t6, $11
+		ctc2    $t4, $5
+		ctc2    $t5, $6
+		ctc2    $t6, $7
+		lw      $t4, 0($v1)
+		lw      $t5, 4($v1)
+		ctc2    $t4, $0
+		ctc2    $t5, $1
+		lw      $t4, 8($v1)
+		lw      $t5, 0xC($v1)
+		lw      $t6, 0x10($v1)
+		ctc2    $t4, $2
+		ctc2    $t5, $3
+		ctc2    $t6, $4
+		lw      $v0, 0($a1)
+		lw      $v1, 4($a1)
+		lw      $t5, 8($a1)
+		lw      $t6, 0xC($a1)
+		lw      $a0, 0x10($a1)
+		lw      $s0, 0x14($a1)
+		addiu   $t4, $a1, 0x10
+		sltu    $t4, $t7, $t4
+		bnez    $t4, loc_80027948
+		nop
+
+		loc_800278D8 :
+	mtc2    $v0, $0
+		mtc2    $v1, $1
+		mtc2    $t5, $2
+		mtc2    $t6, $3
+		mtc2    $a0, $4
+		mtc2    $s0, $5
+		nop
+		nop
+		cop2    0x280030
+		swc2    $12, 0($t0)
+		addiu   $a1, 0x18
+		swc2    $17, 4($t0)
+		swc2    $13, 8($t0)
+		cfc2    $t4, $31
+		swc2    $18, 0xC($t0)
+		and $a2, $t4
+		swc2    $14, 0x10($t0)
+		addiu   $t4, $a1, 0x10
+		swc2    $19, 0x14($t0)
+		lw      $v0, 0($a1)
+		lw      $v1, 4($a1)
+		lw      $t5, 8($a1)
+		lw      $t6, 0xC($a1)
+		lw      $a0, 0x10($a1)
+		lw      $s0, 0x14($a1)
+		sltu    $t4, $t7, $t4
+		beqz    $t4, loc_800278D8
+		addiu   $t0, 0x18
+
+		loc_80027948:
+	slt     $at, $t7, $a1
+		bnez    $at, loc_800279B4
+		nop
+		mtc2    $v0, $0
+		mtc2    $v1, $1
+		addiu   $a1, 8
+		nop
+		cop2    0x180001
+		swc2    $14, 0($t0)
+		swc2    $19, 4($t0)
+		cfc2    $a0, $31
+		mfc2    $s3, $8
+		addiu   $t0, 8
+		slt     $at, $t7, $a1
+		bnez    $at, loc_800279B4
+		and $a2, $a0
+		mtc2    $t5, $0
+		mtc2    $t6, $1
+		nop
+		nop
+		cop2    0x180001
+		swc2    $14, 0($t0)
+		swc2    $19, 4($t0)
+		cfc2    $a0, $31
+		mfc2    $s3, $8
+		addiu   $t0, 8
+		and $a2, $a0
+
+		loc_800279B4 :
+	addiu   $t1, 0x20  # ' '
+		addiu   $t2, -1
+		bnez    $t2, loc_80027728
+		addiu   $t8, 0x18
+		bgez    $zero, loc_80027F84
+		nop
+
+		loc_800279CC :
+	li      $v0, 0x34FFFFFF
+		mtc2    $v0, $6
+
+		loc_800279D8 :
+	lw      $a0, 8($t8)
+		nop
+		sra     $v0, $a0, 16
+		addiu   $v1, $v0, 1
+		beqz    $v1, loc_80027F74
+		sll     $t7, $v0, 3
+		addu    $t7, $t9, $t7
+		andi    $t4, $a0, 0xFFFF
+		sll     $a1, $t4, 3
+		addu    $a1, $t9, $a1
+		addiu   $v0, $t3, 0x34  # '4'
+		addiu   $v1, $t3, 0x48  # 'H'
+		lw      $t4, 0($v0)
+		lw      $t5, 4($v0)
+		ctc2    $t4, $0
+		ctc2    $t5, $1
+		lw      $t4, 8($v0)
+		lw      $t5, 0xC($v0)
+		lw      $t6, 0x10($v0)
+		ctc2    $t4, $2
+		ctc2    $t5, $3
+		ctc2    $t6, $4
+		lhu     $t4, 0($t1)
+		lhu     $t5, 6($t1)
+		lhu     $t6, 0xC($t1)
+		mtc2    $t4, $9
+		mtc2    $t5, $10
+		mtc2    $t6, $11
+		nop
+		nop
+		cop2    0x49E012
+		mfc2    $t4, $9
+		mfc2    $t5, $10
+		mfc2    $t6, $11
+		sh      $t4, 0($v1)
+		sh      $t5, 6($v1)
+		sh      $t6, 0xC($v1)
+		lhu     $t4, 2($t1)
+		lhu     $t5, 8($t1)
+		lhu     $t6, 0xE($t1)
+		mtc2    $t4, $9
+		mtc2    $t5, $10
+		mtc2    $t6, $11
+		nop
+		nop
+		cop2    0x49E012
+		mfc2    $t4, $9
+		mfc2    $t5, $10
+		mfc2    $t6, $11
+		sh      $t4, 2($v1)
+		sh      $t5, 8($v1)
+		sh      $t6, 0xE($v1)
+		lhu     $t4, 4($t1)
+		lhu     $t5, 0xA($t1)
+		lhu     $t6, 0x10($t1)
+		mtc2    $t4, $9
+		mtc2    $t5, $10
+		mtc2    $t6, $11
+		nop
+		nop
+		cop2    0x49E012
+		mfc2    $t4, $9
+		mfc2    $t5, $10
+		mfc2    $t6, $11
+		sh      $t4, 4($v1)
+		sh      $t5, 0xA($v1)
+		sh      $t6, 0x10($v1)
+		lw      $t4, 0($v1)
+		lw      $t5, 4($v1)
+		ctc2    $t4, $8
+		ctc2    $t5, $9
+		lw      $t4, 8($v1)
+		lw      $t5, 0xC($v1)
+		lw      $t6, 0x10($v1)
+		ctc2    $t4, $10
+		ctc2    $t5, $11
+		ctc2    $t6, $12
+		addiu   $v0, $t3, 0
+		addiu   $v1, $t3, 0x20  # ' '
+		lw      $t4, 0($v0)
+		lw      $t5, 4($v0)
+		ctc2    $t4, $0
+		ctc2    $t5, $1
+		lw      $t4, 8($v0)
+		lw      $t5, 0xC($v0)
+		lw      $t6, 0x10($v0)
+		ctc2    $t4, $2
+		ctc2    $t5, $3
+		ctc2    $t6, $4
+		lhu     $t4, 0($t1)
+		lhu     $t5, 6($t1)
+		lhu     $t6, 0xC($t1)
+		mtc2    $t4, $9
+		mtc2    $t5, $10
+		mtc2    $t6, $11
+		nop
+		nop
+		cop2    0x49E012
+		mfc2    $t4, $9
+		mfc2    $t5, $10
+		mfc2    $t6, $11
+		sh      $t4, 0($v1)
+		sh      $t5, 6($v1)
+		sh      $t6, 0xC($v1)
+		lhu     $t4, 2($t1)
+		lhu     $t5, 8($t1)
+		lhu     $t6, 0xE($t1)
+		mtc2    $t4, $9
+		mtc2    $t5, $10
+		mtc2    $t6, $11
+		nop
+		nop
+		cop2    0x49E012
+		mfc2    $t4, $9
+		mfc2    $t5, $10
+		mfc2    $t6, $11
+		sh      $t4, 2($v1)
+		sh      $t5, 8($v1)
+		sh      $t6, 0xE($v1)
+		lhu     $t4, 4($t1)
+		lhu     $t5, 0xA($t1)
+		lhu     $t6, 0x10($t1)
+		mtc2    $t4, $9
+		mtc2    $t5, $10
+		mtc2    $t6, $11
+		nop
+		nop
+		cop2    0x49E012
+		mfc2    $t4, $9
+		mfc2    $t5, $10
+		mfc2    $t6, $11
+		sh      $t4, 4($v1)
+		sh      $t5, 0xA($v1)
+		sh      $t6, 0x10($v1)
+		lw      $t4, 0x14($v0)
+		lw      $t5, 0x18($v0)
+		lw      $t6, 0x1C($v0)
+		ctc2    $t4, $5
+		ctc2    $t5, $6
+		ctc2    $t6, $7
+		lhu     $t5, 0x18($t1)
+		lhu     $t4, 0x14($t1)
+		sll     $t5, 16
+		or $t4, $t5
+		mtc2    $t4, $0
+		lwc2    $1, 0x1C($t1)
+		nop
+		nop
+		cop2    0x480012
+		mfc2    $t4, $9
+		mfc2    $t5, $10
+		mfc2    $t6, $11
+		ctc2    $t4, $5
+		ctc2    $t5, $6
+		ctc2    $t6, $7
+		lw      $t4, 0($v1)
+		lw      $t5, 4($v1)
+		ctc2    $t4, $0
+		ctc2    $t5, $1
+		lw      $t4, 8($v1)
+		lw      $t5, 0xC($v1)
+		lw      $t6, 0x10($v1)
+		ctc2    $t4, $2
+		ctc2    $t5, $3
+		ctc2    $t6, $4
+		lw      $v0, 0($a1)
+		lw      $v1, 4($a1)
+		lw      $t5, 8($a1)
+		lw      $t6, 0xC($a1)
+		lw      $a0, 0x10($a1)
+		lw      $s0, 0x14($a1)
+		addiu   $t4, $a1, 0x10
+		sltu    $t4, $t7, $t4
+		bnez    $t4, loc_80027E34
+		nop
+
+		loc_80027C94 :
+	mtc2    $v0, $0
+		mtc2    $v1, $1
+		mtc2    $t5, $2
+		mtc2    $t6, $3
+		mtc2    $a0, $4
+		mtc2    $s0, $5
+		srl     $s3, $v1, 16
+		srl     $s4, $t6, 16
+		cop2    0x280030
+		srl     $s5, $s0, 16
+		sll     $s3, 3
+		sll     $s4, 3
+		sll     $s5, 3
+		addu    $s3, $s2, $s3
+		addu    $s4, $s2, $s4
+		addu    $s5, $s2, $s5
+		lw      $v0, 0($s3)
+		lw      $v1, 4($s3)
+		lw      $t5, 0($s6)
+		swc2    $12, 0($t0)
+		swc2    $17, 4($t0)
+		swc2    $13, 8($t0)
+		cfc2    $t4, $31
+		swc2    $18, 0xC($t0)
+		and $a2, $t4
+		swc2    $14, 0x10($t0)
+		swc2    $19, 0x14($t0)
+		mfc2    $t4, $8
+		lw      $s3, dword_800D05F4
+		nop
+		beqz    $s3, loc_80027D20
+		nop
+		mtc2    $s3, $8
+		move    $t4, $s3
+
+		loc_80027D20 :
+	lui     $at, 0x4000
+		and $s3, $t5, $at
+		bnez    $s3, loc_80027D58
+		move    $s3, $t5
+		mtc2    $v0, $0
+		mtc2    $v1, $1
+		mtc2    $t5, $6
+		beqz    $t4, loc_80027D50
+		nop
+		cop2    0xE80413
+		bgez    $zero, loc_80027D54
+		nop
+
+		loc_80027D50 :
+	cop2    0x108041B
+
+		loc_80027D54 :
+		mfc2    $s3, $22
+
+		loc_80027D58 :
+	nop
+		sw      $s3, 0($s1)
+		lw      $v0, 0($s4)
+		lw      $v1, 4($s4)
+		lw      $t5, 4($s6)
+		nop
+		lui     $at, 0x4000
+		and $s3, $t5, $at
+		bnez    $s3, loc_80027DA8
+		move    $s3, $t5
+		mtc2    $v0, $0
+		mtc2    $v1, $1
+		mtc2    $t5, $6
+		beqz    $t4, loc_80027DA0
+		nop
+		cop2    0xE80413
+		bgez    $zero, loc_80027DA4
+		nop
+
+		loc_80027DA0 :
+	cop2    0x108041B
+
+		loc_80027DA4 :
+		mfc2    $s3, $22
+
+		loc_80027DA8 :
+	nop
+		sw      $s3, 4($s1)
+		lw      $v0, 0($s5)
+		lw      $v1, 4($s5)
+		lw      $t5, 8($s6)
+		nop
+		lui     $at, 0x4000
+		and $s3, $t5, $at
+		bnez    $s3, loc_80027DF8
+		move    $s3, $t5
+		mtc2    $v0, $0
+		mtc2    $v1, $1
+		mtc2    $t5, $6
+		beqz    $t4, loc_80027DF0
+		nop
+		cop2    0xE80413
+		bgez    $zero, loc_80027DF4
+		nop
+
+		loc_80027DF0 :
+	cop2    0x108041B
+
+		loc_80027DF4 :
+		mfc2    $s3, $22
+
+		loc_80027DF8 :
+	nop
+		sw      $s3, 8($s1)
+		addiu   $a1, 0x18
+		addiu   $t4, $a1, 0x10
+		lw      $v0, 0($a1)
+		lw      $v1, 4($a1)
+		lw      $t5, 8($a1)
+		lw      $t6, 0xC($a1)
+		lw      $a0, 0x10($a1)
+		lw      $s0, 0x14($a1)
+		addiu   $s1, 0xC
+		addiu   $s6, 0xC
+		sltu    $t4, $t7, $t4
+		beqz    $t4, loc_80027C94
+		addiu   $t0, 0x18
+
+		loc_80027E34:
+	slt     $at, $t7, $a1
+		bnez    $at, loc_80027F74
+		nop
+		mtc2    $v0, $0
+		mtc2    $v1, $1
+		srl     $s3, $v1, 16
+		sll     $s3, 3
+		cop2    0x180001
+		addu    $s3, $s2, $s3
+		lw      $v0, 0($s3)
+		lw      $v1, 4($s3)
+		lw      $s3, 0($s6)
+		addiu   $a1, 8
+		swc2    $14, 0($t0)
+		swc2    $19, 4($t0)
+		cfc2    $a0, $31
+		mfc2    $t4, $8
+		lw      $s4, dword_800D05F4
+		nop
+		beqz    $s4, loc_80027E94
+		nop
+		mtc2    $s4, $8
+		move    $t4, $s4
+
+		loc_80027E94 :
+	lui     $at, 0x4000
+		and $s4, $s3, $at
+		bnez    $s4, loc_80027ECC
+		move    $s4, $s3
+		mtc2    $v0, $0
+		mtc2    $v1, $1
+		mtc2    $s4, $6
+		beqz    $t4, loc_80027EC4
+		nop
+		cop2    0xE80413
+		bgez    $zero, loc_80027EC8
+		nop
+
+		loc_80027EC4 :
+	cop2    0x108041B
+
+		loc_80027EC8 :
+		mfc2    $s4, $22
+
+		loc_80027ECC :
+	nop
+		sw      $s4, 0($s1)
+		addiu   $t0, 8
+		addiu   $s6, 4
+		addiu   $s1, 4
+		slt     $at, $t7, $a1
+		bnez    $at, loc_80027F74
+		and $a2, $a0
+		mtc2    $t5, $0
+		mtc2    $t6, $1
+		nop
+		nop
+		cop2    0x180001
+		srl     $s3, $t6, 16
+		sll     $s3, 3
+		addu    $s3, $s2, $s3
+		lw      $v0, 0($s3)
+		lw      $v1, 4($s3)
+		lw      $s3, 0($s6)
+		swc2    $14, 0($t0)
+		swc2    $19, 4($t0)
+		cfc2    $a0, $31
+		lui     $at, 0x4000
+		and $s4, $s3, $at
+		bnez    $s4, loc_80027F5C
+		move    $s4, $s3
+		mtc2    $v0, $0
+		mtc2    $v1, $1
+		mtc2    $s4, $6
+		beqz    $t4, loc_80027F54
+		nop
+		cop2    0xE80413
+		bgez    $zero, loc_80027F58
+		nop
+
+		loc_80027F54 :
+	cop2    0x108041B
+
+		loc_80027F58 :
+		mfc2    $s4, $22
+
+		loc_80027F5C :
+	nop
+		sw      $s4, 0($s1)
+		addiu   $t0, 8
+		addiu   $s6, 4
+		and $a2, $a0
+		addiu   $s1, 4
+
+		loc_80027F74:
+	addiu   $t1, 0x20  # ' '
+		addiu   $t2, -1
+		bnez    $t2, loc_800279D8
+		addiu   $t8, 0x18
+
+		loc_80027F84 :
+		lw      $s6, 0x74($t3)
+		lw      $s5, 0x70($t3)
+		lw      $s4, 0x6C($t3)
+		lw      $s3, 0x68($t3)
+		lw      $s2, 0x64($t3)
+		lw      $s1, 0x60($t3)
+		lw      $s0, 0x5C($t3)
+		jr      $ra
+		move    $v0, $a2
+		# End of function sub_80027170
+
+
+
+
+	sub_80027FA8:
+	cfc2    $t0, $31
+		lui     $t1, 6
+		and $t0, $t1
+		bnez    $t0, locret_8002842C
+		nop
+		cop2    0x1400006
+		mfc2    $t0, $24
+		nop
+		bgez    $t0, locret_8002842C
+		andi    $t1, $v0, 4
+		beqz    $t1, loc_80027FE8
+		nop
+		cop2    0x158002D
+		mfc2    $t6, $7
+		j       loc_80028014
+		nop
+
+		loc_80027FE8 :
+	mfc2    $t0, $17
+		mfc2    $t1, $18
+		mfc2    $t2, $19
+		slt     $t3, $t0, $t1
+		bnez    $t3, loc_80028004
+		nop
+		move    $t1, $t0
+
+		loc_80028004 :
+	slt     $t3, $t1, $t2
+		bnez    $t3, loc_80028014
+		sra     $t6, $t2, 2
+		sra     $t6, $t1, 2
+
+		loc_80028014 :
+		andi    $t0, $v0, 2
+		beqz    $t0, loc_80028030
+		nop
+		lb      $t0, 0xB($v1)
+		nop
+		sll     $t0, 1
+		add     $t6, $t0
+
+		loc_80028030 :
+	lw      $t0, 0x8C($fp)
+		sll     $t6, 2
+		add     $t6, $t0
+		blez    $t6, locret_8002842C
+		slti    $t0, $t6, 0x3000
+		beqz    $t0, locret_8002842C
+		andi    $t0, $v0, 1
+		bnez    $t0, loc_80028228
+		andi    $t0, $v0, 2
+		bnez    $t0, loc_8002811C
+		nop
+		swc2    $12, 8($s0)
+		swc2    $13, 0xC($s0)
+		swc2    $14, 0x10($s0)
+		andi    $t0, $v0, 8
+		beqz    $t0, loc_80028080
+		nop
+		sw      $v1, 4($s0)
+		j       loc_800280E0
+		nop
+
+		loc_80028080 :
+	lw      $t0, 0x4C($fp)
+		nop
+		lwc2    $0, 0($t0)
+		lwc2    $1, 4($t0)
+		mtc2    $v1, $6
+		nop
+		nop
+		cop2    0xE80413
+		li      $t1, 0xFFFFFF
+		addu    $t0, $t6, $s1
+		lw      $t3, 0($t0)
+		li      $t2, 4
+		sw      $t3, 0($s0)
+		and $t3, $s0, $t1
+		sb      $t2, 3($s0)
+		sw      $t3, 0($t0)
+		swc2    $22, 4($s0)
+		lbu     $t0, 7($s0)
+		nop
+		or $t0, $s3
+		sb      $t0, 7($s0)
+		j       locret_8002842C
+		addi    $s0, 0x14
+
+		loc_800280E0:
+	lbu     $t0, 7($s0)
+		nop
+		or $t0, $s3
+		sb      $t0, 7($s0)
+		li      $t1, 0xFFFFFF
+		addu    $t0, $t6, $s1
+		lw      $t3, 0($t0)
+		li      $t2, 4
+		sw      $t3, 0($s0)
+		and $t3, $s0, $t1
+		sb      $t2, 3($s0)
+		sw      $t3, 0($t0)
+		j       locret_8002842C
+		addi    $s0, 0x14
+
+		loc_8002811C:
+	swc2    $12, 8($s0)
+		swc2    $13, 0x10($s0)
+		swc2    $14, 0x18($s0)
+		mfc2    $t0, $8
+		nop
+		bnez    $t0, loc_800285F4
+		andi    $t0, $v0, 8
+		beqz    $t0, loc_80028154
+		nop
+		lw      $t0, 0xC($v1)
+		nop
+		sw      $t0, 4($s0)
+		j       loc_800281D4
+		nop
+
+		loc_80028154 :
+	lw      $t0, 0x4C($fp)
+		nop
+		lwc2    $0, 0($t0)
+		lwc2    $1, 4($t0)
+		lw      $t0, 0xC($v1)
+		nop
+		mtc2    $t0, $6
+		nop
+		nop
+		cop2    0xE80413
+		lw      $t0, 0($s5)
+		lw      $t1, 0($s6)
+		lw      $t2, 0($s7)
+		sw      $t0, 0xC($s0)
+		sw      $t1, 0x14($s0)
+		sw      $t2, 0x1C($s0)
+		li      $t1, 0xFFFFFF
+		addu    $t0, $t6, $s1
+		lw      $t3, 0($t0)
+		li      $t2, 7
+		sw      $t3, 0($s0)
+		and $t3, $s0, $t1
+		sb      $t2, 3($s0)
+		sw      $t3, 0($t0)
+		swc2    $22, 4($s0)
+		lbu     $t0, 7($s0)
+		nop
+		or $t0, $s3
+		sb      $t0, 7($s0)
+		j       locret_8002842C
+		addi    $s0, 0x20  # ' '
+
+		loc_800281D4:
+	lw      $t0, 0($s5)
+		lw      $t1, 0($s6)
+		lw      $t2, 0($s7)
+		sw      $t0, 0xC($s0)
+		sw      $t1, 0x14($s0)
+		sw      $t2, 0x1C($s0)
+		lbu     $t0, 7($s0)
+		nop
+		or $t0, $s3
+		sb      $t0, 7($s0)
+		li      $t1, 0xFFFFFF
+		addu    $t0, $t6, $s1
+		lw      $t3, 0($t0)
+		li      $t2, 7
+		sw      $t3, 0($s0)
+		and $t3, $s0, $t1
+		sb      $t2, 3($s0)
+		sw      $t3, 0($t0)
+		j       locret_8002842C
+		addi    $s0, 0x20  # ' '
+
+		loc_80028228:
+	andi    $t0, $v0, 2
+		bnez    $t0, loc_8002835C
+		mfc2    $t0, $8
+		nop
+		bnez    $t0, loc_80028524
+		lui     $t0, 0xE100
+		beqz    $s3, loc_800282D4
+		li      $t0, 0xE1000268
+		sw      $t0, 4($s0)
+		swc2    $12, 0xC($s0)
+		swc2    $13, 0x14($s0)
+		swc2    $14, 0x1C($s0)
+		lw      $t0, 0x4C($fp)
+		lw      $t1, 0x50($fp)
+		lw      $t2, 0x54($fp)
+		lwc2    $0, 0($t0)
+		lwc2    $1, 4($t0)
+		lwc2    $2, 0($t1)
+		lwc2    $3, 4($t1)
+		lwc2    $4, 0($t2)
+		lwc2    $5, 4($t2)
+		mtc2    $v1, $6
+		nop
+		nop
+		cop2    0xF80416
+		li      $t1, 0xFFFFFF
+		addu    $t0, $t6, $s1
+		lw      $t3, 0($t0)
+		li      $t2, 7
+		sw      $t3, 0($s0)
+		and $t3, $s0, $t1
+		sb      $t2, 3($s0)
+		sw      $t3, 0($t0)
+		swc2    $20, 8($s0)
+		swc2    $21, 0x10($s0)
+		swc2    $22, 0x18($s0)
+		lbu     $t0, 0xB($s0)
+		nop
+		or $t0, $s3
+		sb      $t0, 0xB($s0)
+		j       locret_8002842C
+		addi    $s0, 0x20  # ' '
+
+		loc_800282D4:
+	swc2    $12, 8($s0)
+		swc2    $13, 0x10($s0)
+		swc2    $14, 0x18($s0)
+		lw      $t0, 0x4C($fp)
+		lw      $t1, 0x50($fp)
+		lw      $t2, 0x54($fp)
+		lwc2    $0, 0($t0)
+		lwc2    $1, 4($t0)
+		lwc2    $2, 0($t1)
+		lwc2    $3, 4($t1)
+		lwc2    $4, 0($t2)
+		lwc2    $5, 4($t2)
+		mtc2    $v1, $6
+		nop
+		nop
+		cop2    0xF80416
+		li      $t1, 0xFFFFFF
+		addu    $t0, $t6, $s1
+		lw      $t3, 0($t0)
+		li      $t2, 6
+		sw      $t3, 0($s0)
+		and $t3, $s0, $t1
+		sb      $t2, 3($s0)
+		sw      $t3, 0($t0)
+		swc2    $20, 4($s0)
+		swc2    $21, 0xC($s0)
+		swc2    $22, 0x14($s0)
+		lbu     $t0, 7($s0)
+		nop
+		or $t0, $s3
+		sb      $t0, 7($s0)
+		j       locret_8002842C
+		addi    $s0, 0x1C
+
+		loc_8002835C:
+	swc2    $12, 8($s0)
+		swc2    $13, 0x14($s0)
+		swc2    $14, 0x20($s0)
+		mfc2    $t0, $8
+		nop
+		bnez    $t0, loc_8002868C
+		lw      $t0, 0x4C($fp)
+		lw      $t1, 0x50($fp)
+		lw      $t2, 0x54($fp)
+		lui     $t3, 0x3400
+		li      $t4, 0x2FFFFFF
+		and $t0, $t4
+		or $t0, $t3
+		sw      $t0, 4($s0)
+		and $t1, $t4
+		or $t1, $t3
+		sw      $t1, 0x10($s0)
+		and $t2, $t4
+		or $t2, $t3
+		sw      $t2, 0x1C($s0)
+		lw      $t3, 0x80($fp)
+		lw      $t0, 0($s5)
+		lw      $t1, 0($s6)
+		lw      $t2, 0($s7)
+		beqz    $t3, loc_800283DC
+		srl     $t3, $t1, 16
+		andi    $t3, 0xFF9F
+		ori     $t3, 0x20  # ' '
+		andi    $t1, 0xFFFF
+		sll     $t3, 16
+		or $t1, $t3
+
+		loc_800283DC :
+	sw      $t0, 0xC($s0)
+		sw      $t1, 0x18($s0)
+		sw      $t2, 0x24($s0)
+		lbu     $t0, 7($s0)
+		nop
+		or $t0, $s3
+		sb      $t0, 7($s0)
+		li      $t1, 0xFFFFFF
+		addu    $t0, $t6, $s1
+		lw      $t3, 0($t0)
+		li      $t2, 9
+		sw      $t3, 0($s0)
+		and $t3, $s0, $t1
+		sb      $t2, 3($s0)
+		sw      $t3, 0($t0)
+		lw      $t3, 0x80($fp)
+		addi    $s0, 0x28  # '('
+		bnez    $t3, loc_80028434
+		nop
+
+		locret_8002842C :
+	jr      $ra
+		nop
+
+		loc_80028434 :
+	mtc2    $t3, $8
+		li      $t0, 0x808080
+		mfc2    $t1, $12
+		mfc2    $t2, $13
+		mfc2    $t3, $14
+		mtc2    $t0, $6
+		sw      $t1, 8($s0)
+		sw      $t2, 0x10($s0)
+		sw      $t3, 0x18($s0)
+		cop2    0x780010
+		srl     $t0, $t1, 16
+		sb      $t0, 0xD($s0)
+		srl     $t0, $t2, 16
+		sb      $t0, 0x15($s0)
+		srl     $t0, $t3, 16
+		sb      $t0, 0x1D($s0)
+		andi    $t1, 0xFFFF
+		andi    $t2, 0xFFFF
+		andi    $t3, 0xFFFF
+		slt     $at, $t2, $t1
+		bnez    $at, loc_800284A4
+		nop
+		slt     $at, $t3, $t1
+		bnez    $at, loc_800284B8
+		nop
+		bgez    $zero, loc_800284BC
+		andi    $t0, $t1, 0xFFC0
+
+		loc_800284A4:
+	slt     $at, $t3, $t2
+		bnez    $at, loc_800284B8
+		nop
+		bgez    $zero, loc_800284BC
+		andi    $t0, $t2, 0xFFC0
+
+		loc_800284B8 :
+		andi    $t0, $t3, 0xFFC0
+
+		loc_800284BC :
+		subu    $t1, $t0
+		subu    $t2, $t0
+		subu    $t3, $t0
+		sb      $t1, 0xC($s0)
+		sb      $t2, 0x14($s0)
+		sb      $t3, 0x1C($s0)
+		lw      $t1, 0x88($fp)
+		srl     $t0, 6
+		or $t0, $t1
+		sh      $t0, 0x16($s0)
+		li      $t1, 0xFFFFFF
+		addu    $t0, $t6, $s1
+		lw      $t3, 0($t0)
+		li      $t2, 7
+		sw      $t3, 0($s0)
+		and $t3, $s0, $t1
+		sb      $t2, 3($s0)
+		sw      $t3, 0($t0)
+		mfc2    $t0, $22
+		li      $t1, 0x24808080
+		subu    $t0, $t1, $t0
+		sw      $t0, 4($s0)
+		j       locret_8002842C
+		addiu   $s0, 0x20  # ' '
+
+		loc_80028524:
+	cfc2    $t0, $21
+		cfc2    $t1, $22
+		cfc2    $t3, $23
+		sw      $t0, 0x70($fp)
+		sw      $t1, 0x74($fp)
+		sw      $t3, 0x78($fp)
+		lb      $t0, 0x7C($fp)
+		lb      $t1, 0x7D($fp)
+		lb      $t3, 0x7E($fp)
+		sll     $t0, 4
+		sll     $t1, 4
+		sll     $t3, 4
+		ctc2    $t0, $21
+		ctc2    $t1, $22
+		ctc2    $t3, $23
+		lw      $t0, 0x4C($fp)
+		lw      $t1, 0x50($fp)
+		lw      $t2, 0x54($fp)
+		lwc2    $0, 0($t0)
+		lwc2    $1, 4($t0)
+		lwc2    $2, 0($t1)
+		lwc2    $3, 4($t1)
+		lwc2    $4, 0($t2)
+		lwc2    $5, 4($t2)
+		mtc2    $v1, $6
+		nop
+		nop
+		cop2    0xF80416
+		li      $t1, 0xFFFFFF
+		addu    $t0, $t6, $s1
+		lw      $t3, 0($t0)
+		li      $t2, 6
+		sw      $t3, 0($s0)
+		and $t3, $s0, $t1
+		sb      $t2, 3($s0)
+		sw      $t3, 0($t0)
+		lw      $t1, 0x70($fp)
+		lw      $t2, 0x74($fp)
+		lw      $t3, 0x78($fp)
+		swc2    $20, 4($s0)
+		swc2    $21, 0xC($s0)
+		swc2    $22, 0x14($s0)
+		lbu     $t0, 7($s0)
+		nop
+		or $t0, $s3
+		sb      $t0, 7($s0)
+		ctc2    $t1, $21
+		ctc2    $t2, $22
+		ctc2    $t3, $23
+		j       locret_8002842C
+		addi    $s0, 0x1C
+
+		loc_800285F4:
+	lw      $t0, 0x4C($fp)
+		nop
+		lwc2    $0, 0($t0)
+		lwc2    $1, 4($t0)
+		lw      $t0, 0xC($v1)
+		lui     $t1, 0xEFFF
+		lui     $t2, 0x200
+		li      $t1, 0xEFFFFFFF
+		or $t0, $t2, $t0
+		and $t0, $t1, $t0
+		mtc2    $t0, $6
+		nop
+		nop
+		cop2    0xE80413
+		lw      $t0, 0($s5)
+		lw      $t1, 0($s6)
+		lw      $t2, 0($s7)
+		lui     $t3, 0x20  # ' '
+		or $t1, $t3, $t1
+		sw      $t0, 0xC($s0)
+		sw      $t1, 0x14($s0)
+		sw      $t2, 0x1C($s0)
+		li      $t1, 0xFFFFFF
+		addu    $t0, $t6, $s1
+		lw      $t3, 0($t0)
+		li      $t2, 7
+		sw      $t3, 0($s0)
+		and $t3, $s0, $t1
+		sb      $t2, 3($s0)
+		sw      $t3, 0($t0)
+		swc2    $22, 4($s0)
+		lbu     $t0, 7($s0)
+		nop
+		or $t0, $s3
+		sb      $t0, 7($s0)
+		j       loc_8002871C
+		addi    $s0, 0x20  # ' '
+
+		loc_8002868C:
+	lw      $t0, 0x4C($fp)
+		lw      $t1, 0x50($fp)
+		lw      $t2, 0x54($fp)
+		lui     $t3, 0x3600
+		li      $t4, 0xFFFFFF
+		and $t0, $t4
+		or $t0, $t3
+		sw      $t0, 4($s0)
+		and $t1, $t4
+		or $t1, $t3
+		sw      $t1, 0x10($s0)
+		and $t2, $t4
+		or $t2, $t3
+		sw      $t2, 0x1C($s0)
+		lw      $t0, 0($s5)
+		lw      $t1, 0($s6)
+		lw      $t2, 0($s7)
+		lui     $t3, 0x20  # ' '
+		or $t1, $t3, $t1
+		sw      $t0, 0xC($s0)
+		sw      $t1, 0x18($s0)
+		sw      $t2, 0x24($s0)
+		li      $t1, 0xFFFFFF
+		addu    $t0, $t6, $s1
+		lw      $t3, 0($t0)
+		li      $t2, 9
+		sw      $t3, 0($s0)
+		and $t3, $s0, $t1
+		sb      $t2, 3($s0)
+		sw      $t3, 0($t0)
+		swc2    $12, 8($s0)
+		swc2    $13, 0x14($s0)
+		swc2    $14, 0x20($s0)
+		addi    $s0, 0x28  # '('
+
+		loc_8002871C:
+	lw      $t4, dword_800D05EC
+		nop
+		mtc2    $t4, $6
+		nop
+		nop
+		cop2    0x780010
+		li      $t1, 0xFFFFFF
+		addu    $t0, $t6, $s1
+		lw      $t3, 0($t0)
+		li      $t2, 6
+		sw      $t3, 0($s0)
+		and $t3, $s0, $t1
+		sb      $t2, 3($s0)
+		sw      $t3, 0($t0)
+		mfc2    $t0, $22
+		lui     $t1, 0x3000
+		or $t4, $t1, $t4
+		sub     $t0, $t4, $t0
+		sw      $t0, 4($s0)
+		sw      $t0, 0xC($s0)
+		sw      $t0, 0x14($s0)
+		swc2    $12, 8($s0)
+		swc2    $13, 0x10($s0)
+		swc2    $14, 0x18($s0)
+		j       locret_8002842C
+		addiu   $s0, 0x1C
+#endif
 	UNIMPLEMENTED();
 	return 0;
 }
