@@ -29,7 +29,7 @@ enum BlendMode
 	BM_ADD,
 	BM_SUBTRACT,
 	BM_ADD_QUATER_SOURCE,
-	BM_COUNT
+	BM_COUNT,
 };
 
 enum TexFormat
@@ -37,7 +37,7 @@ enum TexFormat
 	TF_4_BIT,
 	TF_8_BIT,
 	TF_16_BIT,
-	TF_COUNT
+	TF_COUNT,
 };
 
 #pragma pack(push,1)
@@ -68,7 +68,7 @@ struct VertexBufferSplit
 extern void Emulator_ClearVBO();
 extern void Emulator_ResetPolyState();
 extern void Emulator_AggregatePTAGsToSplits(unsigned long* p, int singlePrimitive);
-extern void Emulator_DrawSplit(const struct VertexBufferSplit split);
+extern void Emulator_DrawSplit(const struct VertexBufferSplit* split);
 extern void Emulator_DrawAggregatedSplits();
 
 #if defined(TOUCH_UI)

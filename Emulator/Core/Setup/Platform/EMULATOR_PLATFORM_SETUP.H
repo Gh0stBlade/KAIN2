@@ -3,6 +3,7 @@
 
 #if defined(SN_TARGET_PSP2)
 		typedef unsigned int uintptr_t;
+		#define EXIT_SUCCESS (0)
 #endif
 
 //#define DEBUG_PRINTS
@@ -91,6 +92,8 @@
 #endif
 #if defined(SN_TARGET_PSP2)
 #define GXM
+#define NO_BOUNTY_LIST_EXPORT
+#define NO_FILESYSTEM
 #endif
 
  /*

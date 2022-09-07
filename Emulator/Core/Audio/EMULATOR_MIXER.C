@@ -173,7 +173,7 @@ void Mix_ChannelFinishedPlayingCallback(int channel)
     else
     {
         channelList[channel].voicePosition += AUDIO_CHUNK_SIZE;
-        channelList[channel].voiceFlags |= Channel::Flags::VOICE_NEW;
+        channelList[channel].voiceFlags |= VOICE_NEW;
     }
 }
 

@@ -5,6 +5,8 @@
 
 #include <stdio.h>
 
+#if !defined(NO_FILESYSTEM)
+
 void Emulator_OpenRead(long fileHash, void* buff, int size)
 {
 #if defined(__EMSCRIPTEN__)
@@ -88,3 +90,4 @@ void* Emulator_GetBigFileEntryByHash(long hash)
 
 	return NULL;
 }
+#endif

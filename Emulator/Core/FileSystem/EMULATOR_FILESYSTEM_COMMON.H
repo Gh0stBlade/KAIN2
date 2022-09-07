@@ -8,8 +8,10 @@
 #include "Core/FileSystem/Emscripten/EMULATOR_FILESYSTEM_EMSCRIPTEN.H"
 #endif
 
+#if !defined(NO_FILESYSTEM)
 extern void Emulator_OpenRead(long hash, void* buff, int size);
 extern void Emulator_OpenReadFP(const char* filePath, void* buff, int size);
 extern void Emulator_GetFileSize(const char* filePath, int* outSize);
+#endif
 
 #endif

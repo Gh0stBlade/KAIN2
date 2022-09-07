@@ -1,6 +1,6 @@
 #include "EMULATOR_LOG.H"
 
-#if defined(UWP) || defined(_WIN32)
+#if defined(UWP) || defined(_WIN32) && !defined(SN_TARGET_PSP2)
 
 #include <Windows.h>
 #include <stdio.h>

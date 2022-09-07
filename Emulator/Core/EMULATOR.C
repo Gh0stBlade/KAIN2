@@ -12,7 +12,7 @@
 #include "LIBGTE.H"
 #include "LIBETC.H"
 #include "LIBPAD.H"
-#if !defined(__ANDROID__)
+#if !defined(__ANDROID__) && !defined(SN_TARGET_PSP2)
 #include <thread>
 #endif
 #include <assert.h>
@@ -425,7 +425,7 @@ void CreateUWPApplication()
 int g_otSize = 0;
 char* pVirtualMemory = NULL;
 SysCounter counters[3] = { 0 };
-#if !defined(__ANDROID__)
+#if !defined(__ANDROID__) && !defined(SN_TARGET_PSP2)
 std::thread counter_thread;
 #endif
 #if defined(__ANDROID__)
@@ -3258,8 +3258,8 @@ void Emulator_GenerateTexcoordArrayRect(struct Vertex* vertex, unsigned char* uv
 	//assert(int(uv[0]) + w <= 255);
 	//assert(int(uv[1]) + h <= 255);
 	// TODO
-	if (int(uv[0]) + w > 255) w = 255 - uv[0];
-	if (int(uv[1]) + h > 255) h = 255 - uv[1];
+	if ((int)uv[0] + w > 255) w = 255 - uv[0];
+	if ((int)uv[1] + h > 255) h = 255 - uv[1];
 
 	const unsigned char bright = 2;
 	const unsigned char dither = 0;
@@ -4517,7 +4517,7 @@ void Emulator_GenerateCommonTextures()
 	Emulator_CopyBufferToImage(rg8lutTexture.stagingBuffer, rg8lutTexture.textureImage, static_cast<uint32_t>(LUT_WIDTH), static_cast<uint32_t>(LUT_HEIGHT));
 	Emulator_TransitionImageLayout(rg8lutTexture.textureImage, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 #else
-	#error
+	//#error
 #endif
 }
 #endif
@@ -4732,7 +4732,7 @@ void Emulator_Ortho2D(float left, float right, float bottom, float top, float zn
 	float x = (left + right) / (left - right);
 	float y = (bottom + top) / (bottom - top);
 
-#if defined(OGL) || defined(OGLES) // -1..1
+#if defined(OGL) || defined(OGLES) || defined(GXM) // -1..1
 	float z = (znear + zfar) / (znear - zfar);
 #elif defined(D3D9) || defined (XED3D) || defined(D3D11) || defined(D3D12) || defined(VULKAN)// 0..1
 	float z = znear / (znear - zfar);
@@ -4792,7 +4792,7 @@ void Emulator_SetShader(const ShaderID shader)
 		vkCmdBindPipeline(commandBuffers[currentFrame], VK_PIPELINE_BIND_POINT_GRAPHICS, g_graphicsPipeline);
 	}
 #else
-	#error
+	//#error
 #endif
 
 #if !defined(_PATCH)
@@ -4802,7 +4802,7 @@ void Emulator_SetShader(const ShaderID shader)
 #endif
 
 #if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES)
-void Emulator_SetTexture(TextureID texture, TexFormat texFormat)
+void Emulator_SetTexture(TextureID texture, enum TexFormat texFormat)
 {
 	switch (texFormat)
 	{
@@ -4914,7 +4914,7 @@ void Emulator_SetTexture(TextureID texture, TexFormat texFormat)
 	vkCmdBindDescriptorSets(commandBuffers[currentFrame], VK_PIPELINE_BIND_POINT_GRAPHICS, g_activeShader.PL, 0, 1, &descriptorSets[currentFrame][g_activeDescriptor], 0, NULL);
 
 #else
-	#error
+	//#error
 #endif
 
 	g_lastBoundTexture[0] = texture;
@@ -4935,7 +4935,7 @@ void Emulator_DestroyTexture(TextureID texture)
 #elif defined(VULKAN)
 	UNIMPLEMENTED();
 #else
-    #error
+    //#error
 #endif
 }
 #endif
@@ -4981,7 +4981,7 @@ void Emulator_Clear(int x, int y, int w, int h, unsigned char r, unsigned char g
 	Emulator_TransitionImageLayout(swapchainImages[0], VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
 	Emulator_EndSingleTimeCommands(buff2);
 #else
-	#error
+	//#error
 #endif
 }
 #endif
@@ -5111,6 +5111,11 @@ void Emulator_StoreFrameBuffer(int x, int y, int w, int h)
 #define SWAP_RB
 #elif defined(D3D12) || defined(VULKAN)
 #define FLIP_Y (fy)
+	int* data = NULL;
+	assert(FALSE);//Needs implementing for framebuffer write backs!
+	return;
+#elif defined(GXM)
+	#define FLIP_Y (fy)
 	int* data = NULL;
 	assert(FALSE);//Needs implementing for framebuffer write backs!
 	return;
@@ -5364,7 +5369,7 @@ void Emulator_BlitVRAM()
 	u_char b = activeDispEnv.disp.h / 8 + t;
 #endif
 
-	Vertex blit_vertices[] =
+	struct Vertex blit_vertices[] =
 	{
 		{ +1, +1,    0, 0,    r, t,    0, 0,    0, 0, 0, 0 },
 		{ -1, -1,    0, 0,    l, b,    0, 0,    0, 0, 0, 0 },
@@ -5387,7 +5392,7 @@ void Emulator_BlitVRAM()
 	Emulator_SetWireframe(g_wireframeMode);
 }
 
-void Emulator_DoDebugKeys(int nKey, bool down); // forward decl
+void Emulator_DoDebugKeys(int nKey, int down); // forward decl
 
 #if defined(TOUCH_UI)
 
@@ -5463,7 +5468,7 @@ void Emulator_HandleTouchEvent(int x, int y)
 		int mx = dx ? ndist * 2 : 0;
 		int my = dy ? ndist * 2 : 0;
 
-		Quad q;
+		struct Quad q;
 
 		q.p[0].vx = cx + mx;
 		q.p[0].vy = cy + my;
@@ -5495,7 +5500,7 @@ void Emulator_HandleTouchEvent(int x, int y)
 		int mx = dx ? ndist * 2 : 0;
 		int my = dy ? ndist * 2 : 0;
 
-		Quad q;
+		struct Quad q;
 
 		q.p[0].vx = cx + mx;
 		q.p[0].vy = cy + my;
@@ -5525,7 +5530,7 @@ void Emulator_HandleTouchEvent(int x, int y)
 		int ndist = (i != 0) ? dist : -dist;
 		int mx = dx ? ndist * 2 : 0;
 
-		Quad q;
+		struct Quad q;
 
 		q.p[0].vx = cx + mx;
 		q.p[0].vy = cy;
@@ -5846,7 +5851,7 @@ void Emulator_CreateMemoryCard(int channel)
 	fclose(f);
 }
 
-void Emulator_DoDebugKeys(int nKey, bool down)
+void Emulator_DoDebugKeys(int nKey, int down)
 {
 #if defined(SDL2)
 
@@ -5903,7 +5908,9 @@ void Emulator_DoDebugKeys(int nKey, bool down)
 				Emulator_SaveVRAM("VRAM.TGA", 0, 0, VRAM_WIDTH, VRAM_HEIGHT, TRUE);
 				break;
 			case SDL_SCANCODE_6:
+#if !defined(NO_BOUNTY_LIST_EXPORT)
 				Emulator_SaveBountyList();
+#endif
 				break;
 #endif
 		}
@@ -6164,7 +6171,7 @@ void Emulator_SwapWindow()
 
 	currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
 #else
-	#error
+	//#error
 #endif
 #else
 	glFinish();
@@ -6275,11 +6282,13 @@ void Emulator_ShutDown()
 	SDL_Quit();
 #endif
 
+#if !defined(SN_TARGET_PSP2)
 	exit(EXIT_SUCCESS);
+#endif
 }
 
 #if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES)
-void Emulator_SetBlendMode(BlendMode blendMode)
+void Emulator_SetBlendMode(enum BlendMode blendMode)
 {
 	if (g_PreviousBlendMode == blendMode)
 	{
@@ -6591,7 +6600,7 @@ void Emulator_SetBlendMode(BlendMode blendMode)
 #endif
 
 #else
-	#error
+	//#error
 #endif
 
 	g_PreviousBlendMode = blendMode;
@@ -6661,11 +6670,11 @@ void Emulator_SetViewPort(int x, int y, int width, int height)
 		vkCmdSetViewport(commandBuffers[currentFrame], 0, 1, &g_viewport);
 	}
 #else
-	#error
+	//#error
 #endif
 }
 
-void Emulator_SetRenderTarget(const RenderTargetID &frameBufferObject)
+void Emulator_SetRenderTarget(const RenderTargetID frameBufferObject)
 {
 #if defined(OGL) || defined(OGLES)
 	glBindFramebuffer(GL_FRAMEBUFFER, frameBufferObject);
@@ -6677,14 +6686,14 @@ void Emulator_SetRenderTarget(const RenderTargetID &frameBufferObject)
 	
 #elif defined(VULKAN)
 #else
-    #error
+ //   #error
 #endif
 }
 
 #endif
 
 #if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES)
-void Emulator_SetWireframe(bool enable) 
+void Emulator_SetWireframe(int enable) 
 {
 #if defined(OGL)
 	glPolygonMode(GL_FRONT_AND_BACK, enable ? GL_LINE : GL_FILL);
@@ -6697,13 +6706,13 @@ void Emulator_SetWireframe(bool enable)
 #elif defined(OGLES)
 
 #else
-#error
+//#error
 #endif
 }
 #endif
 
 #if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES)
-void Emulator_UpdateVertexBuffer(const Vertex *vertices, int num_vertices)
+void Emulator_UpdateVertexBuffer(const struct Vertex *vertices, int num_vertices)
 {
 	assert(num_vertices <= MAX_NUM_POLY_BUFFER_VERTICES);
 
@@ -6759,7 +6768,7 @@ void Emulator_UpdateVertexBuffer(const Vertex *vertices, int num_vertices)
 	memcpy(data, vertices, num_vertices * sizeof(Vertex));
 	vkUnmapMemory(device, dynamic_vertex_buffer_memory);
 #else
-	#error
+	//#error
 #endif
 
 	vbo_was_dirty_flag = TRUE;
@@ -6794,7 +6803,7 @@ void Emulator_DrawTriangles(int start_vertex, int triangles)
 		dynamic_vertex_buffer_index += triangles * 3;
 	}
 #else
-	#error
+	//#error
 #endif
 }
 #endif

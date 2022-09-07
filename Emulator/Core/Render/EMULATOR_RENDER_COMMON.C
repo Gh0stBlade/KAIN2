@@ -36,7 +36,7 @@ TextureID whiteTexture;
 TextureID rg8lutTexture;
 
 
-struct POLY_G3_SEMITRANS 
+typedef struct POLY_G3_SEMITRANS 
 {
 #if defined(USE_32_BIT_ADDR)
 	unsigned long tag;
@@ -68,9 +68,9 @@ struct POLY_G3_SEMITRANS
 	unsigned char pad2; // size=0, offset=27
 	short x2; // size=0, offset=28
 	short y2; // size=0, offset=30
-};
+} POLY_G3_SEMITRANS;
 
-struct POLY_F4_SEMITRANS
+typedef struct POLY_F4_SEMITRANS
 {
 #if defined(USE_32_BIT_ADDR)
 	unsigned long tag;
@@ -97,7 +97,7 @@ struct POLY_F4_SEMITRANS
 	short y2; // size=0, offset=22
 	short x3; // size=0, offset=24
 	short y3; // size=0, offset=26
-};
+} POLY_F4_SEMITRANS;
 
 
 #if defined(DEBUG_POLY_COUNT)
@@ -115,7 +115,7 @@ unsigned short s_lastSemiTrans = 0xFFFF;
 unsigned short s_lastPolyType = 0xFFFF;
 
 #if defined(USE_32_BIT_ADDR)
-unsigned int actualTerminator[2] { 0xFFFFFFFF, 0};
+unsigned int actualTerminator[2] = { 0xFFFFFFFF, 0};
 unsigned int terminatorOT[2] = { (unsigned int)&actualTerminator, 0};
 
 #if defined(_WIN64)
@@ -134,32 +134,32 @@ int IsValidCode(int code)
 
 extern int splitAgain;
 
-void Emulator_AddSplit(bool semiTrans, int page, TextureID textureId)
+void Emulator_AddSplit(int semiTrans, int page, TextureID textureId)
 {
-	VertexBufferSplit& curSplit = g_splits[g_splitIndex];
-	BlendMode blendMode = semiTrans ? GET_TPAGE_BLEND(page) : BM_NONE;
-	TexFormat texFormat = GET_TPAGE_FORMAT(page);
+	struct VertexBufferSplit* curSplit = &g_splits[g_splitIndex];
+	enum BlendMode curBlendMode = (enum BlendMode)(semiTrans ? GET_TPAGE_BLEND(page) : BM_NONE);
+	enum TexFormat curTexFormat = (enum TexFormat)GET_TPAGE_FORMAT(page);
 
 #if defined(VULKAN)
-	if (curSplit.blendMode == blendMode && curSplit.texFormat == texFormat && curSplit.textureId.textureImage == textureId.textureImage)
+	if (curSplit->blendMode == curBlendMode && curSplit->texFormat == curTexFormat && curSplit->textureId.textureImage == textureId->textureImage)
 #elif defined(D3D12)
-	if (curSplit.blendMode == blendMode && curSplit.texFormat == texFormat && curSplit.textureId.m_textureResource == textureId.m_textureResource)
+	if (curSplit->blendMode == curBlendMode && curSplit->texFormat == curTexFormat && curSplit->textureId.m_textureResource == textureId->m_textureResource)
 #else
-	if (curSplit.blendMode == blendMode && curSplit.texFormat == texFormat && curSplit.textureId == textureId && !splitAgain)
+	if (curSplit->blendMode == curBlendMode && curSplit->texFormat == curTexFormat && curSplit->textureId == textureId && !splitAgain)
 #endif
 	{
 		return;
 	}
 
-	curSplit.vCount = g_vertexIndex - curSplit.vIndex;
+	curSplit->vCount = g_vertexIndex - curSplit->vIndex;
 
-	VertexBufferSplit& split = g_splits[++g_splitIndex];
+	struct VertexBufferSplit* split = &g_splits[++g_splitIndex];
 
-	split.textureId = textureId;
-	split.vIndex = g_vertexIndex;
-	split.vCount = 0;
-	split.blendMode = blendMode;
-	split.texFormat = texFormat;
+	split->textureId = textureId;
+	split->vIndex = g_vertexIndex;
+	split->vCount = 0;
+	split->blendMode = curBlendMode;
+	split->texFormat = curTexFormat;
 }
 
 
@@ -222,7 +222,7 @@ int ParsePrimitive(uintptr_t primPtr, short* z)
 	else
 	{
 		//Do black fill
-		struct BLK_FILL
+		typedef struct BLK_FILL
 		{
 #if defined(USE_32_BIT_ADDR)
 			unsigned long tag; // size=0, offset=0
@@ -238,7 +238,7 @@ int ParsePrimitive(uintptr_t primPtr, short* z)
 			unsigned short y0;
 			unsigned short w;
 			unsigned short h;
-		};
+		} BLK_FILL;
 
 		BLK_FILL* poly = (BLK_FILL*)pTag;
 
@@ -249,7 +249,7 @@ int ParsePrimitive(uintptr_t primPtr, short* z)
 
 		unsigned short colour = (unsigned short)(r5 << 1 | g5 << 6 | b5 << 11 | a1);
 
-		unsigned short* blackImage = new unsigned short[poly->w * poly->h];
+		unsigned short* blackImage = (unsigned short*)malloc(poly->w * poly->h * sizeof(unsigned short));
 
 		for (int i = 0; i < poly->w * poly->h; i++)
 		{
@@ -265,13 +265,13 @@ int ParsePrimitive(uintptr_t primPtr, short* z)
 		LoadImagePSX(&r, (unsigned long*)blackImage);
 		Emulator_UpdateVRAM();
 
-		delete[] blackImage;
+		free(blackImage);
 
 		int primitive_size = sizeof(BLK_FILL);
 		return primitive_size;
 	}
 
-	bool semi_transparent = (code & 2) != 0;
+	int semi_transparent = (code & 2) != 0;
 
 	int primitive_size = -1;	// -1
 
@@ -791,7 +791,7 @@ void Emulator_ClearVBO()
 {
 	g_vertexIndex = 0;
 	g_splitIndex = 0;
-	g_splits[g_splitIndex].texFormat = (TexFormat)0xFFFF;
+	g_splits[g_splitIndex].texFormat = (enum TexFormat)0xFFFF;
 }
 
 void Emulator_ResetPolyState()
@@ -801,7 +801,7 @@ void Emulator_ResetPolyState()
 }
 
 
-void Emulator_DrawSplit(const VertexBufferSplit* split)
+void Emulator_DrawSplit(const struct VertexBufferSplit* split)
 {
 	Emulator_SetBlendMode(split->blendMode);
 	Emulator_SetTexture(split->textureId, split->texFormat);
@@ -905,7 +905,7 @@ void* Emulator_GenerateRG8LUT()
 		{
 			short c = (y << 8) | x;
 
-			pixel* p = (pixel*)&rgLUT[(y * (LUT_HEIGHT * sizeof(unsigned int))) + x * sizeof(unsigned int)];
+			struct pixel* p = (struct pixel*)&rgLUT[(y * (LUT_HEIGHT * sizeof(unsigned int))) + x * sizeof(unsigned int)];
 
 			p->a = 255;// ((c & 0x8000)) << 3;
 			p->b = ((c & 0x7C00) >> 10) << 3;

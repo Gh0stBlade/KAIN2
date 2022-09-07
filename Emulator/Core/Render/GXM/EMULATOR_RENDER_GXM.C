@@ -16,12 +16,10 @@ extern void Emulator_CreateVertexBuffer();
 
 const char* renderBackendName = "OpenGL 3.3";
 
-GLuint dynamic_vertex_buffer;
-GLuint dynamic_vertex_array;
+unsigned int dynamic_vertex_buffer;
+unsigned int dynamic_vertex_array;
 
-SDL_Window* g_window = NULL;
-
-GLint u_Projection;
+unsigned int u_Projection;
 
 #define GTE_DISCARD\
 	"		if (color_rg.x + color_rg.y == 0.0) { discard; }\n"
@@ -204,26 +202,15 @@ GTE_DECODE_RG
 "	}\n"
 "#endif\n";
 
-void Shader_CheckShaderStatus(GLuint shader)
+void Shader_CheckShaderStatus(unsigned int shader)
 {
 	char info[1024];
-	glGetShaderInfoLog(shader, sizeof(info), NULL, info);
-	if (info[0] && strlen(info) > 8)
-	{
-		eprinterr("%s\n", info);
-		eassert(FALSE);
-	}
 }
 
-void Shader_CheckProgramStatus(GLuint program)
+void Shader_CheckProgramStatus(unsigned int program)
 {
 	char info[1024];
-	glGetProgramInfoLog(program, sizeof(info), NULL, info);
-	if (info[0] && strlen(info) > 8)
-	{
-		eprinterr("%s\n", info);
-		eassert(FALSE);
-	}
+	
 }
 
 ShaderID Shader_Compile(const char* source)
@@ -244,47 +231,11 @@ ShaderID Shader_Compile(const char* source)
 	const char* vs_list[] = { GLSL_HEADER_VERT, source };
 	const char* fs_list[] = { GLSL_HEADER_FRAG, source };
 
-	GLuint program = glCreateProgram();
-
-	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertexShader, 2, vs_list, NULL);
-	glCompileShader(vertexShader);
-	Shader_CheckShaderStatus(vertexShader);
-	glAttachShader(program, vertexShader);
-	glDeleteShader(vertexShader);
-
-	GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShader, 2, fs_list, NULL);
-	glCompileShader(fragmentShader);
-	Shader_CheckShaderStatus(fragmentShader);
-	glAttachShader(program, fragmentShader);
-	glDeleteShader(fragmentShader);
-
-	glBindAttribLocation(program, a_position, "a_position");
-	glBindAttribLocation(program, a_texcoord, "a_texcoord");
-	glBindAttribLocation(program, a_color, "a_color");
-
-#if defined(PGXP)
-	glBindAttribLocation(program, a_z, "a_z");
-	glBindAttribLocation(program, a_w, "a_w");
-#endif
-
-	glLinkProgram(program);
-	Shader_CheckProgramStatus(program);
-
-	glUseProgram(program);
-	glUniform1i(glGetUniformLocation(program, "s_texture"), 0);
-	glUniform1i(glGetUniformLocation(program, "s_lut"), 1);
-	glUseProgram(0);
-
-	return program;
+	return 0;
 }
 
 void Emulator_DestroyVertexBuffer()
 {
-	glDeleteBuffers(1, &dynamic_vertex_buffer);
-	glDeleteVertexArrays(1, &dynamic_vertex_array);
-
 	dynamic_vertex_buffer = 0;
 	dynamic_vertex_array = 0;
 }
@@ -313,9 +264,6 @@ void Emulator_ResetDevice()
 
 void Emulator_DestroyTextures()
 {
-	glDeleteTextures(1, &vramTexture);
-	glDeleteTextures(1, &rg8lutTexture);
-	glDeleteTextures(1, &whiteTexture);
 
 	vramTexture = 0;
 	rg8lutTexture = 0;
@@ -324,10 +272,7 @@ void Emulator_DestroyTextures()
 
 void Emulator_DestroyGlobalShaders()
 {
-	glDeleteProgram(g_gte_shader_4);
-	glDeleteProgram(g_gte_shader_8);
-	glDeleteProgram(g_gte_shader_16);
-	glDeleteProgram(g_blit_shader);
+	
 
 	g_gte_shader_4 = 0;
 	g_gte_shader_8 = 0;
@@ -335,21 +280,8 @@ void Emulator_DestroyGlobalShaders()
 	g_blit_shader = 0;
 }
 
-int Emulator_InitialiseGLContext(char* windowName)
+int Emulator_InitialiseGXMContext(char* windowName)
 {
-#if defined(SDL2)
-	g_window = SDL_CreateWindow(windowName, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, windowWidth, windowHeight, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
-#endif
-
-	SDL_GL_CreateContext(g_window);
-
-#if defined(SDL2)
-	if (g_window == NULL)
-	{
-		eprinterr("Failed to initialise SDL window or GL context!\n");
-		return FALSE;
-	}
-#endif
 
 	return TRUE;
 }
@@ -361,63 +293,19 @@ void Emulator_CreateGlobalShaders()
 	g_gte_shader_16 = Shader_Compile(gte_shader_16);
 	g_blit_shader = Shader_Compile(blit_shader);
 
-	u_Projection = glGetUniformLocation(g_gte_shader_4, "Projection");
+	//u_Projection = glGetUniformLocation(g_gte_shader_4, "Projection");
 }
 
 void Emulator_GenerateCommonTextures()
 {
 	unsigned int pixelData = 0xFFFFFFFF;
 
-	glGenTextures(1, &whiteTexture);
-	glBindTexture(GL_TEXTURE_2D, whiteTexture);
 	
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, &pixelData);
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	glGenTextures(1, &rg8lutTexture);
-	glBindTexture(GL_TEXTURE_2D, rg8lutTexture);
-	
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, LUT_WIDTH, LUT_HEIGHT, 0, GL_RGBA, GL_UNSIGNED_BYTE, Emulator_GenerateRG8LUT());
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	glGenTextures(1, &vramTexture);
-	glBindTexture(GL_TEXTURE_2D, vramTexture);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexImage2D(GL_TEXTURE_2D, 0, VRAM_INTERNAL_FORMAT, VRAM_WIDTH, VRAM_HEIGHT, 0, VRAM_FORMAT, GL_UNSIGNED_BYTE, NULL);
-
-	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void Emulator_CreateVertexBuffer()///@TODO OGLES
 {
-	glGenBuffers(1, &dynamic_vertex_buffer);
-	glGenVertexArrays(1, &dynamic_vertex_array);
-	glBindVertexArray(dynamic_vertex_array);
-	glBindBuffer(GL_ARRAY_BUFFER, dynamic_vertex_buffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * MAX_NUM_POLY_BUFFER_VERTICES, NULL, GL_DYNAMIC_DRAW);
-	glEnableVertexAttribArray(a_position);
-	glEnableVertexAttribArray(a_texcoord);
-
-	glEnableVertexAttribArray(a_color);
-#if defined(PGXP)
-	glVertexAttribPointer(a_position, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), &((Vertex*)NULL)->x);
-#else
-	glVertexAttribPointer(a_position, 4, GL_SHORT, GL_FALSE, sizeof(Vertex), &((Vertex*)NULL)->x);
-#endif
-	glVertexAttribPointer(a_texcoord, 4, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(Vertex), &((Vertex*)NULL)->u);
-	glVertexAttribPointer(a_color, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Vertex), &((Vertex*)NULL)->r);
-#if defined(PGXP)
-	glVertexAttribPointer(a_z, 1, GL_FLOAT, GL_FALSE, sizeof(Vertex), &((Vertex*)NULL)->z);
-	glVertexAttribPointer(a_w, 1, GL_FLOAT, GL_FALSE, sizeof(Vertex), &((Vertex*)NULL)->w);
-
-	glEnableVertexAttribArray(a_z);
-	glEnableVertexAttribArray(a_w);
-#endif
+	
 }
 
 int Emulator_CreateCommonResources()
@@ -427,9 +315,6 @@ int Emulator_CreateCommonResources()
 	Emulator_GenerateCommonTextures();
 	
 	Emulator_CreateGlobalShaders();
-
-	glDisable(GL_DEPTH_TEST);
-	glBlendColor(0.5f, 0.5f, 0.5f, 0.25f);
 
 	Emulator_CreateVertexBuffer();
 
@@ -458,21 +343,21 @@ void Emulator_Ortho2D(float left, float right, float bottom, float top, float zn
 	///@TODO this generates an error sometimes
 	//eprinterr("GL Error: %x\n", glGetError());
 
-	glUniformMatrix4fv(u_Projection, 1, GL_FALSE, ortho);
+	//glUniformMatrix4fv(u_Projection, 1, GL_FALSE, ortho);
 
 	//eprinterr("GL Error: %x\n", glGetError());
 }
 
 void Emulator_SetShader(const ShaderID shader)
 {
-	glUseProgram(shader);
+	//glUseProgram(shader);
 	
 	//eprinterr("GL_Error: %x\n", glGetError());
 	Emulator_Ortho2D(0.0f, activeDispEnv.disp.w, activeDispEnv.disp.h, 0.0f, 0.0f, 1.0f);
 	//eprinterr("GL_Error: %x\n", glGetError());
 }
 
-void Emulator_SetTexture(TextureID texture, TexFormat texFormat)
+void Emulator_SetTexture(TextureID texture, enum TexFormat texFormat)
 {
 	switch (texFormat)
 	{
@@ -495,32 +380,18 @@ void Emulator_SetTexture(TextureID texture, TexFormat texFormat)
 		//return;
 	}
 
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, rg8lutTexture);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
 	g_lastBoundTexture[0] = texture;
 	g_lastBoundTexture[1] = rg8lutTexture;
 }
 
 void Emulator_DestroyTexture(TextureID texture)
 {
-	glDeleteTextures(1, &texture);
+	
 }
 
 void Emulator_Clear(int x, int y, int w, int h, unsigned char r, unsigned char g, unsigned char b)
 {
-	glClearColor(r / 255.0f, g / 255.0f, b / 255.0f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
+	
 }
 
 #define NOFILE 0
@@ -574,7 +445,7 @@ void Emulator_StoreFrameBuffer(int x, int y, int w, int h)
 	short* fb = (short*)malloc(w * h * sizeof(short));
 
 	int* data = (int*)malloc(w * h * sizeof(int));
-	glReadPixels(x, y, w, h, GL_RGBA, GL_UNSIGNED_BYTE, data);
+	//glReadPixels(x, y, w, h, GL_RGBA, GL_UNSIGNED_BYTE, data);
 
 #define FLIP_Y (h - fy - 1)
 #define SWAP_RB
@@ -623,17 +494,14 @@ void Emulator_UpdateVRAM()
 		return;
 	}
 	vram_need_update = FALSE;
-
-	glBindTexture(GL_TEXTURE_2D, vramTexture);
-	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, VRAM_WIDTH, VRAM_HEIGHT, VRAM_FORMAT, GL_UNSIGNED_BYTE, vram);
 }
 
-void Emulator_SetWireframe(bool enable)
+void Emulator_SetWireframe(int enable)
 {
-	glPolygonMode(GL_FRONT_AND_BACK, enable ? GL_LINE : GL_FILL);
+	
 }
 
-void Emulator_SetBlendMode(BlendMode blendMode)
+void Emulator_SetBlendMode(enum BlendMode blendMode)
 {
 	if (g_PreviousBlendMode == blendMode)
 	{
@@ -642,30 +510,7 @@ void Emulator_SetBlendMode(BlendMode blendMode)
 
 	if (g_PreviousBlendMode == BM_NONE)
 	{
-		glEnable(GL_BLEND);
-	}
-
-	switch (blendMode)
-	{
-	case BM_NONE:
-		glDisable(GL_BLEND);
-		break;
-	case BM_AVERAGE:
-		glBlendFunc(GL_CONSTANT_COLOR, GL_CONSTANT_COLOR);
-		glBlendEquation(GL_FUNC_ADD);
-		break;
-	case BM_ADD:
-		glBlendFunc(GL_ONE, GL_ONE);
-		glBlendEquation(GL_FUNC_ADD);
-		break;
-	case BM_SUBTRACT:
-		glBlendFunc(GL_ONE, GL_ONE);
-		glBlendEquation(GL_FUNC_REVERSE_SUBTRACT);
-		break;
-	case BM_ADD_QUATER_SOURCE:
-		glBlendFunc(GL_CONSTANT_ALPHA, GL_ONE);
-		glBlendEquation(GL_FUNC_ADD);
-		break;
+		
 	}
 
 	g_PreviousBlendMode = blendMode;
@@ -674,18 +519,14 @@ void Emulator_DrawTriangles(int start_vertex, int triangles)
 {
 	if (triangles <= 0)
 		return;
-
-	glDrawArrays(GL_TRIANGLES, start_vertex, triangles * 3);
 }
 
-void Emulator_UpdateVertexBuffer(const Vertex* vertices, int num_vertices)
+void Emulator_UpdateVertexBuffer(const struct Vertex* vertices, int num_vertices)
 {
 	eassert(num_vertices <= MAX_NUM_POLY_BUFFER_VERTICES);
 
 	if (num_vertices <= 0)
 		return;
-
-	glBufferSubData(GL_ARRAY_BUFFER, 0, num_vertices * sizeof(Vertex), vertices);
 
 	vbo_was_dirty_flag = TRUE;
 }
@@ -695,7 +536,6 @@ void Emulator_SetViewPort(int x, int y, int width, int height)
 	float offset_x = (float)activeDispEnv.screen.x;
 	float offset_y = (float)activeDispEnv.screen.y;
 
-	glViewport(x + offset_x, y + -offset_y, width, height);
 }
 
 void Emulator_SwapWindow()
@@ -707,12 +547,11 @@ void Emulator_SwapWindow()
 #endif
 
 	Emulator_WaitForTimestep(1);
-
-	SDL_GL_SwapWindow(g_window);
 }
 
 void Emulator_WaitForTimestep(int count)
 {
+#if 0
 	if (g_swapInterval > 0)
 	{
 		int delta = g_swapTime + FIXED_TIME_STEP * count - SDL_GetTicks();
@@ -723,11 +562,11 @@ void Emulator_WaitForTimestep(int count)
 	}
 
 	g_swapTime = SDL_GetTicks();
+#endif
 }
 
-void Emulator_SetRenderTarget(const RenderTargetID& frameBufferObject)
+void Emulator_SetRenderTarget(const RenderTargetID frameBufferObject)
 {
-	glBindFramebuffer(GL_FRAMEBUFFER, frameBufferObject);
 }
 
 #endif

@@ -1,7 +1,7 @@
 #ifndef CRASHHANDLER_H
 #define CRASHHANDLER_H
 
-#if defined (_WINDOWS)
+#if defined (_WINDOWS) && !defined(SN_TARGET_PSP2)
 #include <windows.h>
 #include <Dbghelp.h>
 #include <tchar.h>

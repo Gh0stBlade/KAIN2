@@ -1,6 +1,6 @@
 #include "Setup/Platform/EMULATOR_PLATFORM_SETUP.H"
 
-#if defined(_WINDOWS) && !defined(UWP)
+#if defined(_WINDOWS) && !defined(UWP) && !defined(SN_TARGET_PSP2)
 
 #include <windows.h>
 #include <Dbghelp.h>

@@ -35,7 +35,7 @@ IXAudio2SourceVoice* pSourceVoices[24];
 
 #endif
 
-Channel channelList[SPU_MAX_CHANNELS];
+struct Channel channelList[SPU_MAX_CHANNELS];
 
 #include <string.h>
 
@@ -1639,11 +1639,11 @@ void SpuSetVoiceStartAddr(int vNum, unsigned long startAddr)
     int foundFree = FALSE;
 
     //IF the voice is playing find a free channel (hack!)
-    if (channelList[vNum].voiceFlags & Channel::Flags::VOICE_PLAYING)
+    if (channelList[vNum].voiceFlags & VOICE_PLAYING)
     {
         for (int i = 0; i < SPU_MAX_CHANNELS; i++)
         {
-            if ((channelList[i].voiceFlags & Channel::Flags::VOICE_NEW) && !(channelList[i].voiceFlags & Channel::Flags::VOICE_PLAYING) && _spu_keystat_last & (1 << vNum))
+            if ((channelList[i].voiceFlags & VOICE_NEW) && !(channelList[i].voiceFlags & VOICE_PLAYING) && _spu_keystat_last & (1 << vNum))
             {
                 foundFree = TRUE;
                 //Key on! hacky
@@ -1666,7 +1666,7 @@ void SpuSetVoiceStartAddr(int vNum, unsigned long startAddr)
     SDL_assert(foundFree);
 
     channelList[vNum].voiceStartAddrs = startAddr;//startAddr / 8;//_spu_tsa;
-    channelList[vNum].voiceFlags = Channel::Flags::VOICE_NEW;
+    channelList[vNum].voiceFlags = VOICE_NEW;
     channelList[vNum].voicePosition = NULL;
 #endif
 }

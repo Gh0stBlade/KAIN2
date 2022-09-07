@@ -1,11 +1,13 @@
 #include "EMULATOR_SPU.H"
 
+#if !defined(SN_TARGET_PSP2)
 #include <thread>
+std::thread thread;
+#endif
 
 extern int _spu_keystat_last;
 extern char spuSoundBuffer[524288];
 extern char MixChannelToSPUChannel[SPU_MAX_CHANNELS];
-std::thread thread;
 
 void SPU_Initialise()
 {
@@ -35,7 +37,7 @@ void SPU_InitialiseChannel(int vNum)
     channel->voicePosition = NULL;
     channel->voiceStartAddrs = 0;
     channel->voiceEndFlag = 0;
-    channel->voiceFlags = Channel::Flags::VOICE_NEW;
+    channel->voiceFlags = VOICE_NEW;
     channel->voiceLength = -1;
     channel->s_1 = 0;
     channel->s_2 = 0;
@@ -48,7 +50,7 @@ void SPU_InitialiseChannelKeepStartAddrAndPitch(int vNum)
     channel->voiceEnd = NULL;
     channel->voicePosition = NULL;
     channel->voiceEndFlag = 0;
-    channel->voiceFlags = Channel::Flags::VOICE_NEW;
+    channel->voiceFlags = VOICE_NEW;
     channel->voiceLength = -1;
     channel->s_1 = 0;
     channel->s_2 = 0;
@@ -89,22 +91,22 @@ void SPU_Update()
             }
 #endif
 
-            if (_spu_keystat_last & (1 << i) && (channelList[i].voiceFlags & Channel::Flags::VOICE_NEW))
+            if (_spu_keystat_last & (1 << i) && (channelList[i].voiceFlags & VOICE_NEW))
             {
                 unsigned char* pADPCM = (unsigned char*)&spuSoundBuffer[channelList[i].voiceStartAddrs];
 
-                if (channelList[i].voicePosition == NULL && (channelList[i].voiceFlags & Channel::Flags::VOICE_NEW))
+                if (channelList[i].voicePosition == NULL && (channelList[i].voiceFlags & VOICE_NEW))
                 {
                     channelList[i].voicePosition = pADPCM;
                 }
 
-                if (channelList[i].voiceLength == -1 && (channelList[i].voiceFlags & Channel::Flags::VOICE_NEW))//TODO should pass voicePosition instead to get actual size per chunk
+                if (channelList[i].voiceLength == -1 && (channelList[i].voiceFlags & VOICE_NEW))//TODO should pass voicePosition instead to get actual size per chunk
                 {
                     float time = (float)((SPU_GetADPCMSize(pADPCM) / SPU_ADPCM_FRAME_SIZE) * SPU_PCM_FRAME_SIZE) / (float)(channelList[i].voicePitches * 2 * 16 / 8);
                     channelList[i].voiceLength = (int)(time * 1000.0f);
                 }
 
-                if (channelList[i].voiceEnd == NULL && (channelList[i].voiceFlags & Channel::Flags::VOICE_NEW))
+                if (channelList[i].voiceEnd == NULL && (channelList[i].voiceFlags & VOICE_NEW))
                 {
                     channelList[i].voiceEnd = &pADPCM[SPU_GetADPCMSize(pADPCM)];
                 }
@@ -113,8 +115,8 @@ void SPU_Update()
                 Mix_Play(i, channelList[i].voicePosition, channelList[i].voiceLength);
 #endif
 
-                channelList[i].voiceFlags |= Channel::Flags::VOICE_PLAYING;
-                channelList[i].voiceFlags &= ~Channel::Flags::VOICE_NEW;
+                channelList[i].voiceFlags |= VOICE_PLAYING;
+                channelList[i].voiceFlags &= ~VOICE_NEW;
             }
         }
 #if !defined(SPU_USE_TIMER) && !defined(SINGLE_THREADED) && 0

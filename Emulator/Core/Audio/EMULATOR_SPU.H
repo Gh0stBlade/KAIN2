@@ -15,13 +15,14 @@
 //#define SPU_USE_TIMER 1
 #define OLD_SYSTEM
 
+enum Flags
+{
+    VOICE_NEW = (1 << 0),
+    VOICE_PLAYING = (1 << 1),
+};
+
 struct Channel
 {
-    enum Flags
-    {
-        VOICE_NEW = (1 << 0),
-        VOICE_PLAYING = (1 << 1),
-    };
     int voiceNum;
     unsigned int voicePitches;
     unsigned int voiceStartAddrs;
@@ -35,7 +36,7 @@ struct Channel
 
 };
 
-extern Channel channelList[SPU_MAX_CHANNELS];
+extern struct Channel channelList[SPU_MAX_CHANNELS];
 
 extern void Mix_Play(int vNum, unsigned char* address, int timeMs);
 extern unsigned int SPU_DecodeAudioFrame(unsigned char* vag, unsigned short* out, struct Channel* channel);
