@@ -1,4 +1,4 @@
-if(MSVC AND NOT(WINDOWS_STORE))
+if(MSVC AND NOT(WINDOWS_STORE) AND NOT (PLATFORM_PSP2))
 
 Message("Compiling for Windows!")
 
