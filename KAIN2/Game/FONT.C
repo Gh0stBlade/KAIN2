@@ -295,6 +295,45 @@ void FONT_Init()
 		fontTracker.font_vramV = (y & 0xFF);
 
 		FONT_MakeSpecialFogClut(x, y & 0x7F);
+
+#if defined(PSXPC_VERSION)
+		for (int i = 0; i < 10; i++)
+		{
+			short xc[4];
+			short yc[4];
+			short xOff = 0;
+
+			switch (i)
+			{
+			case 0:
+				xOff = 0;
+				break;
+			case 1:
+				xOff = 11;
+				break;
+			case 2:
+				xOff = 24;
+				break;
+			case 3:
+				xOff = 35;
+				break;
+			}
+
+			xc[0] = x + xOff;
+			yc[0] = y + 77;
+
+			xc[1] = x + xOff + 11;
+			yc[1] = y + 77;
+
+			xc[2] = x + xOff;
+			yc[2] = y + 77 + 11;
+
+			xc[3] = x + xOff + 11;
+			yc[3] = y + 77 + 11;
+
+			Emulator_HintTouchFontUIButton(fontTracker.font_tpage, fontTracker.font_clut, &xc[0], &yc[0], i);
+		}
+#endif
 	}
 
 	fontTracker.font_xpos = 10;

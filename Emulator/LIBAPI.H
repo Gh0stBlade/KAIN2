@@ -48,10 +48,12 @@ extern long format(char* unk00);
 //extern long rename(char* unk00, char *);
 extern long cd(char* unk00);
 
+#if !defined(SN_TARGET_PSP2)
 extern long LoadTest(char*  unk00, struct EXEC *);
 extern long Load(char * unk00, struct EXEC *);
 extern long Exec(struct EXEC * unk00, long, char **);
 extern long LoadExec(char * unk00, unsigned long, unsigned long);
+#endif
 
 extern long InitPAD(char * unk00,long ,char *,long);
 extern long StartPAD();

@@ -1,6 +1,10 @@
 #ifndef EMULATOR_PLATFORM_SETUP_H
 #define EMULATOR_PLATFORM_SETUP_H
 
+#if defined(SN_TARGET_PSP2)
+		typedef unsigned int uintptr_t;
+#endif
+
 //#define DEBUG_PRINTS
 #define TOUCH_UI
 
@@ -27,7 +31,7 @@
 /*
  * Platform specific emulator setup
  */
-#if (defined(_WINDOWS) || defined(__APPLE__) || defined(__linux__) || defined(__MINGW32__)) && !defined(__ANDROID__) || (defined(UWP_SDL2))
+#if (defined(_WINDOWS) || defined(__APPLE__) || defined(__linux__) || defined(__MINGW32__)) && !defined(__ANDROID__) && !defined(SN_TARGET_PSP2) || (defined(UWP_SDL2))
 
 #if defined(_DEBUG) && !defined(UWP_SDL2)
 #define DEBUG_PRINTS
@@ -52,7 +56,7 @@
 //Direct3D12
 //#define D3D12
 
-#if defined(OGL) || defined(D3D9) || defined(D3D11) || defined(D3D12) || defined(VULKAN) || defined(UWP_SDL2)
+#if defined(OGL) || defined(D3D9) || defined(D3D11) || defined(D3D12) || defined(VULKAN) || defined(UWP_SDL2) && !defined(SN_TARGET_PSP2)
 #define SDL2
 //#define SDL2_MIXER
 #define OPENAL
@@ -84,6 +88,9 @@
 #if defined(UWP)//UWP
 #define D3D11
 #define XAUDIO2
+#endif
+#if defined(SN_TARGET_PSP2)
+#define GXM
 #endif
 
  /*

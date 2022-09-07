@@ -47,4 +47,7 @@ extern void Emulator_HintOTSize(int ots);
 /* Explicitly resets touch input data, usually called after Emulator_UpdateInput and the game finished processing input */
 extern void Emulator_ResetTouchInput();
 
+/* Hint which font glyphs to use for emulator touch UI, useful to use same font as game! */
+extern void Emulator_HintTouchFontUIButton(short tpage, short clut, short* x, short* y, int buttonIndex);
+
 #endif

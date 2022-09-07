@@ -198,7 +198,7 @@ void Emulator_Ortho2D(float left, float right, float bottom, float top, float zn
 	d3ddev->SetVertexShaderConstantF(u_Projection, ortho, 4);
 }
 
-void Emulator_SetShader(const ShaderID& shader)
+void Emulator_SetShader(const ShaderID shader)
 {
 	d3ddev->SetVertexShader(shader.VS);
 	d3ddev->SetPixelShader(shader.PS);

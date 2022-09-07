@@ -1,7 +1,6 @@
 #ifndef EMULATOR_RENDER_D3D11_H
 #define EMULATOR_RENDER_D3D11_H
 
-
 #include "Core/Setup/Platform/EMULATOR_PLATFORM_SETUP.H"
 #include "Core/Setup/Platform/EMULATOR_PLATFORM_INCLUDES.H"
 

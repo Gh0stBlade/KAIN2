@@ -17,6 +17,7 @@
 #endif
 #include <assert.h>
 
+int g_useHintedTouchUIFont = FALSE;
 
 #if defined(SDL2) || (defined(OGLES) && defined(_WINDOWS))
 extern SDL_Window* g_window;
@@ -32,6 +33,8 @@ extern int splitAgain;
 
 #include <stdio.h>
 #include <string.h>
+
+struct TouchButtonVRAM touchButtonsUI[10];
 
 #if defined(D3D11)
 
@@ -3431,7 +3434,7 @@ void Emulator_GenerateColourArrayTriangle(struct Vertex* vertex, unsigned char* 
 	vertex[2].a = 255;
 }
 
-void Emulator_GenerateColourArrayQuad(struct Vertex* vertex, unsigned char* col0, unsigned char* col1, unsigned char* col2, unsigned char* col3, bool bMaxCol)
+void Emulator_GenerateColourArrayQuad(struct Vertex* vertex, unsigned char* col0, unsigned char* col1, unsigned char* col2, unsigned char* col3, int bMaxCol)
 {
 	assert(col0);
 	assert(col1);
@@ -4758,7 +4761,7 @@ void Emulator_Ortho2D(float left, float right, float bottom, float top, float zn
 #endif
 
 #if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES)
-void Emulator_SetShader(const ShaderID &shader)
+void Emulator_SetShader(const ShaderID shader)
 {
 #if defined(OGL) || defined(OGLES)
 	glUseProgram(shader);
@@ -5440,7 +5443,7 @@ void Emulator_HandleTouchEvent(int x, int y)
 
 	int dist = 16;
 	int cx = 32;
-	int cy = 180;
+	int cy = 172;
 
 	unsigned short mapper[4] = {
 		0x8,
@@ -5481,7 +5484,7 @@ void Emulator_HandleTouchEvent(int x, int y)
 	}
 
 	cx = 512 - 64;
-	cy = 180;
+	cy = 172;
 	
 	for (int i = 0; i < 4; i++)
 	{
@@ -7529,3 +7532,21 @@ void Emulator_DestroyDescriptorSetLayout()
 }
 
 #endif
+
+void Emulator_HintTouchFontUIButton(short tpage, short clut, short* x, short* y, int buttonIndex)
+{
+	g_useHintedTouchUIFont = TRUE;
+	
+	struct TouchButtonVRAM* touchButton = &touchButtonsUI[buttonIndex];
+
+	touchButton->tpage = tpage;
+	touchButton->clut = clut;
+
+	for (int i = 0; i < 4; i++)
+	{
+		touchButton->u[i] = x[i];
+		touchButton->v[i] = y[i];
+		touchButton->w = 11;
+		touchButton->h = 11;
+	}
+}

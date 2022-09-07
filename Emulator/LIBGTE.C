@@ -1967,7 +1967,7 @@ int BOUNDS(/*int44*/long long value, int max_flag, int min_flag) {
     if (value/*.negative_overflow()*/ < (long long)-0x8000000000)
         FLAG |= min_flag;
 
-    return int(gte_shift(value/*.value()*/, m_sf));
+    return (int)gte_shift(value/*.value()*/, m_sf);
 }
 
 unsigned int gte_divide(unsigned short numerator, unsigned short denominator)
@@ -2018,8 +2018,8 @@ int Lm_B2(int a, int lm) { return LIM(a, 0x7fff, -0x8000 * !lm, (1 << 31) | (1 <
 int Lm_B3(int a, int lm) { return LIM(a, 0x7fff, -0x8000 * !lm, (1 << 22)); }
 
 int Lm_B3_sf(long long value, int sf, int lm) {
-    int value_sf = int(gte_shift(value, sf));
-    int value_12 = int(gte_shift(value, 1));
+    int value_sf = (int)gte_shift(value, sf);
+    int value_12 = (int)gte_shift(value, 1);
     int max = 0x7fff;
     int min = 0;
     if (lm == 0)
@@ -2039,7 +2039,7 @@ int Lm_B3_sf(long long value, int sf, int lm) {
 int Lm_C1(int a) { return LIM(a, 0x00ff, 0x0000, (1 << 21)); }
 int Lm_C2(int a) { return LIM(a, 0x00ff, 0x0000, (1 << 20)); }
 int Lm_C3(int a) { return LIM(a, 0x00ff, 0x0000, (1 << 19)); }
-int Lm_D(long long a, int sf) { return LIM(int(gte_shift(a, sf)), 0xffff, 0x0000, (1 << 31) | (1 << 18)); }
+int Lm_D(long long a, int sf) { return LIM((int)gte_shift(a, sf), 0xffff, 0x0000, (1 << 31) | (1 << 18)); }
 
 unsigned int Lm_E(unsigned int result) {
     if (result == 0xffffffff) {
@@ -2075,7 +2075,7 @@ int Lm_G1(long long a) {
         return -0x400;
     }
 
-    return int(a);
+    return (int)a;
 }
 
 int Lm_G2(long long a) {
@@ -2089,7 +2089,7 @@ int Lm_G2(long long a) {
         return -0x400;
     }
 
-    return int(a);
+    return (int)a;
 }
 
 int Lm_G1_ia(long long a) {
@@ -2099,7 +2099,7 @@ int Lm_G1_ia(long long a) {
     if (a < -0x4000000)
         return -0x4000000;
 
-    return int(a);
+    return (int)a;
 }
 
 int Lm_G2_ia(long long a) {
@@ -2109,12 +2109,12 @@ int Lm_G2_ia(long long a) {
     if (a < -0x4000000)
         return -0x4000000;
 
-    return int(a);
+    return (int)a;
 }
 
 int Lm_H(long long value, int sf) {
     long long value_sf = gte_shift(value, sf);
-    int value_12 = int(gte_shift(value, 1));
+    int value_12 = (int)gte_shift(value, 1);
     int max = 0x1000;
     int min = 0x0000;
 
@@ -2163,8 +2163,8 @@ int docop2(int op) {
 
         SXY0 = SXY1;
         SXY1 = SXY2;
-        SX2 = int(Lm_G1(F((long long)OFX + ((long long)IR1 * h_over_sz3)) >> 16));
-        SY2 = int(Lm_G2(F((long long)OFY + ((long long)IR2 * h_over_sz3)) >> 16));
+        SX2 = (int)Lm_G1(F((long long)OFX + ((long long)IR1 * h_over_sz3)) >> 16);
+		SY2 = (int)Lm_G2(F((long long)OFY + ((long long)IR2 * h_over_sz3)) >> 16);
 
 #if defined(PGXP)
         pgxp_vertex_buffer[pgxp_vertex_count].originalSXY2 = SXY2;
@@ -2183,8 +2183,7 @@ int docop2(int op) {
             testing++;
         }
 #endif
-
-        MAC0 = int(F((long long)DQB + ((long long)DQA * h_over_sz3)));
+		MAC0 = (int)F((long long)DQB + ((long long)DQA * h_over_sz3));
         IR0 = Lm_H(m_mac0, 1);
 
         return 1;
@@ -2193,8 +2192,7 @@ int docop2(int op) {
 #ifdef GTE_LOG
         GTELOG("%08x NCLIP", op);
 #endif
-
-        MAC0 = int(F((long long)(SX0 * SY1) + (SX1 * SY2) + (SX2 * SY0) - (SX0 * SY2) - (SX1 * SY0) - (SX2 * SY1)));
+		MAC0 = (int)F((long long)(SX0 * SY1) + (SX1 * SY2) + (SX2 * SY0) - (SX0 * SY2) - (SX1 * SY0) - (SX2 * SY1));
         return 1;
 
     case 0x0c:
@@ -2534,7 +2532,7 @@ int docop2(int op) {
         GTELOG("%08x AVSZ3", op);
 #endif
 
-        MAC0 = int(F((long long)(ZSF3 * SZ1) + (ZSF3 * SZ2) + (ZSF3 * SZ3)));
+        MAC0 = (int)F((long long)(ZSF3 * SZ1) + (ZSF3 * SZ2) + (ZSF3 * SZ3));
         OTZ = Lm_D(m_mac0, 1);
         return 1;
 
@@ -2542,8 +2540,7 @@ int docop2(int op) {
 #ifdef GTE_LOG
         GTELOG("%08x AVSZ4", op);
 #endif
-
-        MAC0 = int(F((long long)(ZSF4 * SZ0) + (ZSF4 * SZ1) + (ZSF4 * SZ2) + (ZSF4 * SZ3)));
+		MAC0 = (int)F((long long)(ZSF4 * SZ0) + (ZSF4 * SZ1) + (ZSF4 * SZ2) + (ZSF4 * SZ3));
         OTZ = Lm_D(m_mac0, 1);
         return 1;
 
@@ -2580,8 +2577,7 @@ int docop2(int op) {
         pgxp_vertex_count++;
 
 #endif
-
-        MAC0 = int(F((long long)DQB + ((long long)DQA * h_over_sz3)));
+		MAC0 = (int)F((long long)DQB + ((long long)DQA * h_over_sz3));
         IR0 = Lm_H(m_mac0, 1);
         return 1;
 
@@ -2875,7 +2871,7 @@ long DivideFT4(SVECTOR* v0, SVECTOR* v1, SVECTOR* v2, SVECTOR* v3, long* sxy0/*a
     r2 = &divp4->r2;
     r3 = &divp4->r3;
 
-    constexpr int test = offsetof(DIVPOLYGON4, r3.sxy);
+    //constexpr int test = offsetof(DIVPOLYGON4, r3.sxy);
     //constexpr int test2 = offsetof(RVECTOR, r0->sxy);
 
     divp4->cr[0].r0 = r0;

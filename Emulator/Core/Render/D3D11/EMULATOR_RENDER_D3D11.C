@@ -559,7 +559,7 @@ void Emulator_Ortho2D(float left, float right, float bottom, float top, float zn
 	Emulator_SetConstantBuffers();
 }
 
-void Emulator_SetShader(const ShaderID& shader)
+void Emulator_SetShader(const ShaderID shader)
 {
 	d3dcontext->VSSetShader(shader.VS, NULL, 0);
 	d3dcontext->PSSetShader(shader.PS, NULL, 0);
@@ -818,7 +818,7 @@ void Emulator_UpdateVRAM()
 	d3dcontext->Unmap(vramBaseTexture, 0);
 }
 
-void Emulator_SetWireframe(bool enable)
+void Emulator_SetWireframe(int enable)
 {
 	Emulator_CreateRasterState(enable ? TRUE : FALSE);
 }

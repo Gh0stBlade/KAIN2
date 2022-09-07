@@ -640,7 +640,7 @@ void SpuSetKey(long on_off, unsigned long voice_bit)
 
     _spu_keystat_last |= _spu_keystat;
 
-    SDL_Delay(8);
+    //SDL_Delay(8);
 }
 
 void SpuSetKeyOnWithAttr(SpuVoiceAttr* attr)//(F)

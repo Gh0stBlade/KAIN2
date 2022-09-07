@@ -1,10 +1,10 @@
 #include "LIBGPU.H"
-#include "EMULATOR_RENDER_OGL.H"
+#include "EMULATOR_RENDER_GXM.H"
 #include "Core/Debug/EMULATOR_LOG.H"
 #include "Core/Render/EMULATOR_RENDER_COMMON.H"
 #include <stdio.h>
 
-#if defined(OGL)
+#if defined(GXM)
 
 extern void Emulator_DoPollEvent();
 extern void Emulator_WaitForTimestep(int count);

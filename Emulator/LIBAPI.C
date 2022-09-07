@@ -1,6 +1,6 @@
 #include "LIBAPI.H"
 
-#if !defined(__ANDROID__)
+#if !defined(__ANDROID__)&& !defined(SN_TARGET_PSP2)
 #include <thread>
 #endif
 
@@ -118,7 +118,7 @@ long StopRCnt(long spec)//TODO
 
 static void infiniteFunctionCall(long(*func)())
 {
-	while (true)
+	while (TRUE)
 	{
 		func();
 	}
@@ -262,11 +262,14 @@ long format(char* unk00)
 	UNIMPLEMENTED();
 	return 0;
 }
+
+#if !defined(SN_TARGET_PSP2)
 long rename(char* unk00, char* unk01)
 {
 	UNIMPLEMENTED();
 	return 0;
 }
+#endif
 
 long cd(char* unk00)
 {
@@ -274,6 +277,7 @@ long cd(char* unk00)
 	return 0;
 }
 
+#if !defined(SN_TARGET_PSP2)
 long LoadTest(char*  unk00, struct EXEC* unk01)
 {
 	UNIMPLEMENTED();
@@ -286,6 +290,7 @@ long Load(char * unk00, struct EXEC* unk01)
 	return 0;
 }
 
+
 long Exec(struct EXEC * unk00, long unk01, char** unk02)
 {
 	UNIMPLEMENTED();
@@ -297,6 +302,7 @@ long LoadExec(char * unk00, unsigned long unk01, unsigned long unk02)
 	UNIMPLEMENTED();
 	return 0;
 }
+#endif
 
 long InitPAD(char * unk00, long unk01, char* unk02, long unk03)
 {

@@ -58,6 +58,8 @@
 #define SCREENSHOT_MODE_TGA 0
 #define SCREENSHOT_MODE_BMP 1
 
+typedef long (*CallbackProc)(void);
+
 typedef struct SysCounter
 {
 	unsigned int i_cycle;
@@ -84,14 +86,14 @@ typedef struct SysCounter
 		unsigned short unk02;
 	};
 
-	typedef long (*CallbackProc)(void);
-
 	CallbackProc padding00;
 	unsigned int timerIndex;
+#if !defined(SN_TARGET_PSP2)
 #if defined(UWP_SDL2) || defined(SDL2) && !defined(USE_THREADS)
 	SDL_TimerID timerId;
 #else
 	std::thread timerId;
+#endif
 #endif
 	unsigned int startTick;
 } SysCounter;
@@ -170,9 +172,20 @@ extern ShaderID* g_shaders[];
 
 #endif
 
+struct TouchButtonVRAM
+{
+	short tpage;
+	short clut;
+	short u[4];
+	short v[4];
+	short w;
+	short h;
+};
 
-extern bool begin_scene_flag;
-extern bool vbo_was_dirty_flag;
+extern struct TouchButtonVRAM touchButtonsUI[10];
+
+extern int begin_scene_flag;
+extern int vbo_was_dirty_flag;
 extern TextureID rg8lutTexture;
 extern TextureID whiteTexture;
 extern TextureID vramTexture;
@@ -183,7 +196,7 @@ extern void Emulator_ReadVRAM(unsigned short* dst, int x, int y, int dst_w, int 
 extern void Emulator_UpdateVRAM();
 extern void Emulator_BlitVRAM();
 extern void Emulator_ShutDown();
-extern void Emulator_SetBlendMode(BlendMode blendMode);
+extern void Emulator_SetBlendMode(enum BlendMode blendMode);
 extern void Emulator_CounterLoop();
 extern int Emulator_BeginScene();
 extern void Emulator_EndScene();
@@ -213,13 +226,13 @@ extern void Emulator_GenerateTexcoordArrayQuadZero(struct Vertex* vertex, unsign
 
 extern void Emulator_GenerateColourArrayLine(struct Vertex* vertex, unsigned char* col0, unsigned char* col1);
 extern void Emulator_GenerateColourArrayTriangle(struct Vertex* vertex, unsigned char* col0, unsigned char* col1, unsigned char* col2);
-extern void Emulator_GenerateColourArrayQuad(struct Vertex* vertex, unsigned char* col0, unsigned char* col1, unsigned char* col2, unsigned char* col3, bool bMaxCol);
+extern void Emulator_GenerateColourArrayQuad(struct Vertex* vertex, unsigned char* col0, unsigned char* col1, unsigned char* col2, unsigned char* col3, int bMaxCol);
 
 extern void Emulator_DestroyTexture(TextureID texture);
 extern void Emulator_Clear(int x, int y, int w, int h, unsigned char r, unsigned char g, unsigned char b);
 extern void Emulator_SetViewPort(int x, int y, int width, int height);
-extern void Emulator_SetRenderTarget(const RenderTargetID& render_target);
-extern void Emulator_SetWireframe(bool enable);
+extern void Emulator_SetRenderTarget(const RenderTargetID render_target);
+extern void Emulator_SetWireframe(int enable);
 extern void Emulator_DrawTriangles(int start_vertex, int triangles);
 extern void Emulator_UpdateToActiveDrawEnv();
 
@@ -251,7 +264,7 @@ extern void Emulator_BeginPass();
 extern void Emulator_EndPass();
 extern int Emulator_BeginCommandBuffer();
 extern void Emulator_EndCommandBuffer();
-extern void Emulator_SetShader(const ShaderID& shader);
+extern void Emulator_SetShader(const ShaderID shader);
 extern void Emulator_DestroyGlobalShaders();
 void Emulator_CreateGraphicsPipelineState(ShaderID* shader, D3D12_GRAPHICS_PIPELINE_STATE_DESC* pso);
 #elif defined(VULKAN)
@@ -293,7 +306,7 @@ extern void Emulator_DestroyVulkanFrameBuffers();
 extern void Emulator_DestroyDescriptorSetLayout();
 extern void Emulator_DestroyDescriptorPool();
 extern void Emulator_DestroyVulkanRenderPass();
-extern void Emulator_SetShader(const ShaderID& shader);
+extern void Emulator_SetShader(const ShaderID shader);
 extern void Emulator_DestroyVulkanImageViews();
 #endif
 

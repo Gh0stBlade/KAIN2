@@ -17,6 +17,8 @@
 #include "Core/Render/VULKAN/EMULATOR_RENDER_D3D12.H"
 #elif defined(XED3D)
 #include "Core/Render/XED3D/EMULATOR_RENDER_XED3D.H"
+#elif defined(GXM)
+#include "Core/Render/GXM/EMULATOR_RENDER_GXM.H"
 #endif
 
 
@@ -59,14 +61,14 @@ struct VertexBufferSplit
 	TextureID      textureId;
 	unsigned short vIndex;
 	unsigned short vCount;
-	BlendMode      blendMode;
-	TexFormat      texFormat;
+	enum BlendMode blendMode;
+	enum TexFormat texFormat;
 };
 
 extern void Emulator_ClearVBO();
 extern void Emulator_ResetPolyState();
-extern void Emulator_AggregatePTAGsToSplits(unsigned long* p, bool singlePrimitive);
-extern void Emulator_DrawSplit(const VertexBufferSplit& split);
+extern void Emulator_AggregatePTAGsToSplits(unsigned long* p, int singlePrimitive);
+extern void Emulator_DrawSplit(const struct VertexBufferSplit split);
 extern void Emulator_DrawAggregatedSplits();
 
 #if defined(TOUCH_UI)
@@ -83,8 +85,8 @@ extern int windowHeight;
 extern unsigned int g_resetDeviceOnNextFrame;
 extern unsigned int g_resettingDevice;
 extern TextureID g_lastBoundTexture[];
-extern bool begin_scene_flag;
-extern bool vbo_was_dirty_flag;
+extern int begin_scene_flag;
+extern int vbo_was_dirty_flag;
 
 extern ShaderID g_gte_shader_4;
 extern ShaderID g_gte_shader_8;
@@ -128,9 +130,9 @@ extern int vram_need_update;
 extern void* Emulator_GenerateRG8LUT();
 extern void Emulator_SwapWindow();
 extern void Emulator_ResetDevice();
-extern void Emulator_SetShader(const ShaderID& shader);
-extern void Emulator_SetTexture(TextureID texture, TexFormat texFormat);
-extern void Emulator_UpdateVertexBuffer(const Vertex* vertices, int count);
+extern void Emulator_SetShader(const ShaderID shader);
+extern void Emulator_SetTexture(TextureID texture, enum TexFormat texFormat);
+extern void Emulator_UpdateVertexBuffer(const struct Vertex* vertices, int count);
 extern int Emulator_CreateCommonResources();
 extern void Emulator_Ortho2D(float left, float right, float bottom, float top, float znear, float zfar);
 extern const char* renderBackendName;
