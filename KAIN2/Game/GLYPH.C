@@ -42,7 +42,7 @@ void GlyphInit(struct _Instance* instance, struct GameTracker* gameTracker)
 	}
 	else
 	{
-		data = (struct __GlyphData*)MEMPACK_Malloc(sizeof(__GlyphData), 0x1D);
+		data = (struct __GlyphData*)MEMPACK_Malloc(sizeof(struct __GlyphData), 0x1D);
 
 		instance->extraData = data;
 		

@@ -38,6 +38,11 @@ struct _SavedIntroWithIntro
 	_Position position; // size=6, offset=26
 };
 
+struct evControlSaveDataData {
+  long length; // size=0, offset=0
+  void *data; // size=0, offset=4
+};
+
 struct _SavedIntro 
 {
 	unsigned char savedID; // size=0, offset=0

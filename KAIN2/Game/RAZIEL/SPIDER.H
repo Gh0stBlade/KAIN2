@@ -1,6 +1,7 @@
 #ifndef SPIDER_H
 #define SPIDER_H
 
+#include "PLAYER.H"
 
 extern void StateHandlerWallGrab(struct __CharacterState *In, int CurrentSection, int Data); // 0x800A0E58
 

@@ -1,6 +1,7 @@
 #ifndef VM_H
 #define VM_H
 
+#include "STREAM.H"
 
 extern void VM_Tick(long time); // 0x8004F638
 

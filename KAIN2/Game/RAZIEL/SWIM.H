@@ -1,6 +1,7 @@
 #ifndef SWIM_H
 #define SWIM_H
 
+#include "PLAYER.H"
 
 extern void StateHandlerInitSwim(struct __CharacterState *In, int CurrentSection, int Data); // 0x8009EEFC
 

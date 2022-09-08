@@ -3,6 +3,15 @@
 
 #include "SIGNAL.H"
 #include "INSTANCE.H"
+#include "PLAN/PLANAPI.H"
+
+struct evPositionData // hashcode: 0x853C21E0 (dec: -2059656736)
+{
+	short x; // size=0, offset=0
+	short y; // size=0, offset=2
+	short z; // size=0, offset=4
+	short pad; // size=0, offset=6
+};
 
 struct _VMOffset {
 	short dx; // size=0, offset=0
@@ -333,7 +342,7 @@ extern void RelocateLevelWithInstances(struct Level *level, struct _SVector *off
 extern void RelocateTerrain(struct _Terrain *terrain, struct _SVector *offset); // 0x8005B970
 extern void RelocateVMObjects(struct _VMObject *vobjectlist, long numvmobjs, struct _SVector *offset); // 0x8005BA60
 extern void RelocateBGObjects(struct _BGObject *BGObjList, long numBGObjs, struct _SVector *offset); // 0x8005BAB8
-extern void RelocatePlanPool(struct PlanningNode *planPool, struct _SVector *offset); // 0x8005BB5C
+extern void RelocatePlanPool(struct PlanningNode *planPool, _SVector *offset); // 0x8005BB5C
 extern void RelocatePlanMarkers(struct _PlanMkr *planMkrList, int numPlanMkrs, struct _SVector *offset); // 0x8005BC10
 extern void RelocateSFXMarkers(struct _SFXMkr *sfxMkrList, int numSFXMkrs, struct _SVector *offset); // 0x8005BC64
 extern void STREAM_AdjustMultiSpline(struct MultiSpline *multi, struct _SVector *offset); // 0x8005BCB0

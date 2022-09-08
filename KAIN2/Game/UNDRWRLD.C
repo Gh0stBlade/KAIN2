@@ -193,7 +193,7 @@ void UNDERWORLD_InitDisplayProcess()
 	}
 #endif
 
-	ScreenMorphArray = (struct UW_ScreenXY*)MEMPACK_Malloc(sizeof(UW_ScreenXY) * 9, 0x18);
+	ScreenMorphArray = (struct UW_ScreenXY*)MEMPACK_Malloc(sizeof(struct UW_ScreenXY) * 9, 0x18);
 	
 	for (row = 0; row < 3; row++)
 	{

@@ -1880,7 +1880,7 @@ loc_80034008://:(
 			instance->intro = parent->intro;
 			instance->introData = parent->introData;
 
-			LIGHT_GetAmbient((_ColorType*)&instance->light_color, instance);
+			LIGHT_GetAmbient((struct _ColorType*)&instance->light_color, instance);
 
 			if ((instance->object->oflags & 0x100))
 			{

@@ -1,6 +1,7 @@
 #ifndef PUPPET_H
 #define PUPPET_H
 
+#include "PLAYER.H"
 
 extern void StateHandlerPuppetShow(struct __CharacterState *In, int CurrentSection, int Data); // 0x8009A984
 

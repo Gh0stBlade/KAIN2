@@ -8,7 +8,7 @@
 unsigned int unk_E21BC = 0x40000001;//0x800E21BC
 
 int buffer_count = 0;//800F3360
-BufferInfo buffer_details;//800F330C
+struct BufferInfo buffer_details;//800F330C
 int unk_F3350 = 0;//800F3350
 int unk_F3354 = 0;//800F3354
 int unk_F3358 = 0;//800F3358
@@ -157,7 +157,7 @@ int CINEMAX_ActuallyPlay(char* strfile, unsigned short mask, int buffers)
 }
 
 //0x800E1414
-void CINEMAX_InitBufferDetails(char* b1, char* b2, char* b3, char* b4, BufferInfo* bd)
+void CINEMAX_InitBufferDetails(char* b1, char* b2, char* b3, char* b4, struct BufferInfo* bd)
 {
 	//v1 = 0x100
 	bd->unk_22 = 256;//w?
@@ -204,7 +204,7 @@ void CINEMAX_Unknown()
 }
 
 //0x800E1658
-int CINEMAX_E1658(BufferInfo* buffer_info)
+int CINEMAX_E1658(struct BufferInfo* buffer_info)
 {
 	//s2 = buffer_info
 	//s0 = 0x96
@@ -226,7 +226,7 @@ int CINEMAX_E1658(BufferInfo* buffer_info)
 	return 0;
 }
 
-int CINEMAX_E1708(BufferInfo* buffer_info)
+int CINEMAX_E1708(struct BufferInfo* buffer_info)
 {
 	unsigned long* nextstream;
 	StHEADER* header;

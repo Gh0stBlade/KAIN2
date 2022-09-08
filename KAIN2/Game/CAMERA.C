@@ -424,7 +424,7 @@ void CAMERA_Initialize(struct Camera *camera)
 {
 	long i;
 
-	memset(camera, 0, sizeof(Camera));
+	memset(camera, 0, sizeof(struct Camera));
 
 	for (i = 0; i < 16; i++)
 	{
@@ -3693,7 +3693,7 @@ void CAMERA_UpdateFocusRotationX(struct Camera* camera, struct _Instance* focusI
 	//v1 = ((char*)((struct _Terrain*)focusInstance->tfaceLevel)->StartTextureList) + focusInstance->tface->textoff;
 	if (focusInstance->tface != NULL && focusInstance->tfaceLevel != NULL && focusInstance->tface->textoff != 0xFFFF)
 	{
-		if (((TextureFT3*)((char*)((struct _Terrain*)focusInstance->tfaceLevel)->StartTextureList) + focusInstance->tface->textoff)->attr & 0x80000)
+		if (((struct TextureFT3*)((char*)((struct _Terrain*)focusInstance->tfaceLevel)->StartTextureList) + focusInstance->tface->textoff)->attr & 0x80000)
 		{
 			if (dist < 2912)
 			{

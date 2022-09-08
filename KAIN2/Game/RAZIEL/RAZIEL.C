@@ -1341,7 +1341,7 @@ unsigned long RazielQuery(struct _Instance *instance, unsigned long Query)
 	}
 	case 24:
 	{
-		int ret = SetControlSaveDataData(sizeof(PlayerSaveData), &data);
+		int ret = SetControlSaveDataData(sizeof(struct PlayerSaveData), &data);
 
 		data.abilities = Raziel.Abilities;
 		data.currentPlane = Raziel.CurrentPlane;

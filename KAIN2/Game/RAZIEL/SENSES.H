@@ -1,6 +1,7 @@
 #ifndef SENSES_H
 #define SENSES_H
 
+#include "PLAYER.H"
 
 extern int SetEngagedInstance(struct __Player *player, struct evCollideInstanceStatsData *Ptr, unsigned long Attribute); // 0x800A3394
 

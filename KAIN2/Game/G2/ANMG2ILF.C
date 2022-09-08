@@ -423,7 +423,7 @@ void G2AnimSection_SetInterpInfo(struct _G2AnimSection_Type *section, struct _G2
 	
 	if (section->interpInfo != NULL)
 	{
-		memset(section->interpInfo, 0, sizeof(_G2AnimInterpInfo_Type));
+		memset(section->interpInfo, 0, sizeof(struct _G2AnimInterpInfo_Type));
 	}
 
 #elif defined(PC_VERSION)

@@ -1,6 +1,7 @@
 #ifndef ATTACK_H
 #define ATTACK_H
 
+#include "PLAYER.H"
 
 extern int StateHandlerDecodeHold(int *Message, int *Data); // 0x8009BB00
 

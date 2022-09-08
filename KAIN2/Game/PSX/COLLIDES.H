@@ -54,7 +54,7 @@ extern void rmzyx_3() ; // 0x80078950
 
 extern void rmzyx_onlyz() ; // 0x80078A20
 
-extern void RotMatrix() ; // 0x80078A4C
+//extern void RotMatrix() ; // 0x80078A4C
 
 extern void rm_1() ; // 0x80078A88
 
@@ -74,13 +74,13 @@ extern void RMZ_0() ; // 0x80078E50
 
 extern void ApplyMatrix_S() ; // 0x80078F60
 
-extern void ScaleMatrix() ; // 0x80078FB0
+//extern void ScaleMatrix() ; // 0x80078FB0
 
-extern void rsin() ; // 0x80079098
+//extern void rsin() ; // 0x80079098
 
 extern void rsin_exit() ; // 0x800790C0
 
-extern void rcos() ; // 0x800790C8
+//extern void rcos() ; // 0x800790C8
 
 extern void rcos_exit() ; // 0x800790F0
 
@@ -88,9 +88,9 @@ extern void MATH3D_racos_S() ; // 0x800790F8
 
 extern void SetGp() ; // 0x80079158
 
-extern void memcpy() ; // 0x80079160
+//extern void memcpy() ; // 0x80079160
 
-extern void BSP_MarkVisibleLeaves_S(struct BSPTree* bsp, struct Camera* camera, struct _PolytopeList* polytopeList, unsigned long** drawot, int curTree, struct _Instance* savedLightInstance, _Terrain* terrain, struct GameTracker* gameTracker, _StreamUnit* currentUnit); // 0x80079218
+extern void BSP_MarkVisibleLeaves_S(struct BSPTree* bsp, struct Camera* camera, struct _PolytopeList* polytopeList, unsigned long** drawot, int curTree, struct _Instance* savedLightInstance, struct _Terrain* terrain, struct GameTracker* gameTracker, struct _StreamUnit* currentUnit); // 0x80079218
 
 extern void G2Quat_FromMatrix_S() ; // 0x800797E8
 

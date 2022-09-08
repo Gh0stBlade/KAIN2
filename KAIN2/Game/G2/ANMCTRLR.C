@@ -714,7 +714,7 @@ struct _G2AnimController_Type* _G2AnimController_Create(int segNumber, int type)
 	
 	controller = (struct _G2AnimController_Type*)G2PoolMem_Allocate(&_controllerPool);
 
-	memset(controller, 0, sizeof(_G2AnimController_Type));
+	memset(controller, 0, sizeof(struct _G2AnimController_Type));
 
 	controller->next = 0;
 	controller->segNumber = segNumber;

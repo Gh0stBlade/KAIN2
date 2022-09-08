@@ -1,6 +1,8 @@
 #ifndef SOUL_H
 #define SOUL_H
 
+#include "MONSTER.H"
+
 struct SOUL_114fake // hashcode: 0x75056227 (dec: 1963287079)
 {
 	struct {

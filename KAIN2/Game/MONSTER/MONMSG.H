@@ -1,6 +1,7 @@
 #ifndef MONMSG_H
 #define MONMSG_H
 
+#include "MONSTER.H"
 
 extern int MON_GroundMoveQueueHandler(struct _Instance *instance); // 0x800847B8
 

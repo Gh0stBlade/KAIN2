@@ -2,6 +2,7 @@
 #define SOUND_H
 
 #include "PSX/AADLIB.H"
+#include "INSTANCE.H"
 
 struct _AnimSoundData_Type 
 {
@@ -9,6 +10,52 @@ struct _AnimSoundData_Type
 	short volume; // size=0, offset=2
 	short pitch; // size=0, offset=4
 	short minVolDistance; // size=0, offset=6
+};
+
+struct ObjectOneShotSound {
+  unsigned char type; // size=0, offset=0
+  unsigned char numSfxIDs; // size=0, offset=1
+  unsigned char soundInst; // size=0, offset=2
+  unsigned char flags; // size=0, offset=3
+  unsigned short minVolDistance; // size=0, offset=4
+  short pitch; // size=0, offset=6
+  unsigned short pitchVariation; // size=0, offset=8
+  unsigned char maxVolume; // size=0, offset=10
+  unsigned char maxVolVariation; // size=0, offset=11
+  unsigned char initialDelay; // size=0, offset=12
+  unsigned char initialDelayVariation; // size=0, offset=13
+};
+
+struct ObjectEventSound {
+  unsigned char type; // size=0, offset=0
+  unsigned char numSfxIDs; // size=0, offset=1
+  unsigned char soundInst; // size=0, offset=2
+  unsigned char flags; // size=0, offset=3
+  unsigned short minVolDistance; // size=0, offset=4
+  short pitch; // size=0, offset=6
+  unsigned short pitchVariation; // size=0, offset=8
+  unsigned char maxVolume; // size=0, offset=10
+  unsigned char maxVolVariation; // size=0, offset=11
+  unsigned char initialDelay; // size=0, offset=12
+  unsigned char initialDelayVariation; // size=0, offset=13
+};
+
+struct ObjectPeriodicSound {
+  unsigned char type; // size=0, offset=0
+  unsigned char numSfxIDs; // size=0, offset=1
+  unsigned char soundInst; // size=0, offset=2
+  unsigned char flags; // size=0, offset=3
+  unsigned short minVolDistance; // size=0, offset=4
+  short pitch; // size=0, offset=6
+  unsigned short pitchVariation; // size=0, offset=8
+  unsigned char maxVolume; // size=0, offset=10
+  unsigned char maxVolVariation; // size=0, offset=11
+  unsigned char initialDelay; // size=0, offset=12
+  unsigned char initialDelayVariation; // size=0, offset=13
+  unsigned char onTime; // size=0, offset=14
+  unsigned char onTimeVariation; // size=0, offset=15
+  unsigned char offTime; // size=0, offset=16
+  unsigned char offTimeVariation; // size=0, offset=17
 };
 
 struct MusicLoadCmd // hashcode: 0x575883B8 (dec: 1465418680)
@@ -32,7 +79,7 @@ struct MusicLoadInfo // hashcode: 0xC8F67C40 (dec: -923370432)
 	int numCmdsInQueue; // size=0, offset=72
 };
 
-extern char soundBuffer[sizeof(AadMemoryStruct) + (sizeof(_AadSequenceSlot) * 4)];
+extern char soundBuffer[sizeof(struct AadMemoryStruct) + (sizeof(struct _AadSequenceSlot) * 4)];
 
 extern struct MusicLoadInfo musicInfo; // offset 0x800D1510
 

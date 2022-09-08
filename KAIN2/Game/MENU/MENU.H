@@ -27,7 +27,7 @@ struct menu_stack_t // hashcode: 0x04101191 (dec: 68161937)
 	struct menu_format_t format; // size=28, offset=8
 };
 
-enum menu_ctrl_t // Hashcode: 0xE0BD1E93 (dec: -524476781)
+typedef enum menu_ctrl_t // Hashcode: 0xE0BD1E93 (dec: -524476781)
 {
 	menu_ctrl_none = 0,
 	menu_ctrl_up = 1,
@@ -38,7 +38,7 @@ enum menu_ctrl_t // Hashcode: 0xE0BD1E93 (dec: -524476781)
 	menu_ctrl_cancel = 6,
 	menu_ctrl_start = 7,
 	menu_ctrl_num_items = 8,
-};
+}menu_ctrl_t;
 
 struct menu_item_t // hashcode: 0xF260D8A8 (dec: -228534104)
 {
@@ -53,7 +53,7 @@ struct menu_item_t // hashcode: 0xF260D8A8 (dec: -228534104)
 	long flags; // size=0, offset=12
 };
 
-enum menu_sound_t // Hashcode: 0x0248C7C9 (dec: 38324169)
+typedef enum menu_sound_t // Hashcode: 0x0248C7C9 (dec: 38324169)
 {
 	menu_sound_none = 0,
 	menu_sound_default = 1,
@@ -61,7 +61,7 @@ enum menu_sound_t // Hashcode: 0x0248C7C9 (dec: 38324169)
 	menu_sound_adjust = 3,
 	menu_sound_engage = 4,
 	menu_sound_pop = 5,
-};
+}menu_sound_t;
 
 struct menu_t // hashcode: 0x8AB0D2F2 (dec: -1968123150)
 {

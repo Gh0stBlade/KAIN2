@@ -34,16 +34,16 @@ void load(struct memcard_t* memcard)
 	
 	if ((gameTrackerX.gameFlags & 0x8000000))
 	{
-		object = (Object*)&gameTrackerX.primPool->prim[0];
+		object = (struct Object*)&gameTrackerX.primPool->prim[0];
 	}
 	else
 	{
-		object = (Object*)MEMPACK_Malloc(40000, 0x2B);
+		object = (struct Object*)MEMPACK_Malloc(40000, 0x2B);
 	}
 
 	LOAD_LoadToAddress("\\kain2\\object\\mcardx\\mcardx.drm", object, 1);
 
-	memcard->table = (mcmenu_table_t*)object->relocModule;
+	memcard->table = (struct mcmenu_table_t*)object->relocModule;
 	RELMOD_InitModulePointers((int)object->relocModule, (int*)object->relocList);
 	memcard->object = object;
 
@@ -107,7 +107,7 @@ int memcard_initialize(struct memcard_t *memcard, void *gt, int nblocks, void *b
 {
 	int header_size;
 	
-	memset(memcard, 0, sizeof(memcard_t));
+	memset(memcard, 0, sizeof(struct memcard_t));
 
 	load(memcard);
 	
@@ -157,7 +157,7 @@ int memcard_main_menu(void *gt, int index)
 {
 	struct memcard_t *memcard;
 	
-	memcard = ((GameTracker*)gt)->memcard;
+	memcard = ((struct GameTracker*)gt)->memcard;
 	
 	if (maybe_start(memcard) != 0)
 	{

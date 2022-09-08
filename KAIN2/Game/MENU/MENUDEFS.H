@@ -3,13 +3,13 @@
 
 #include "MENU.H"
 
-enum sfx_t : int 
+typedef enum sfx_t
 {
 	sfx_sound = 0,
 	sfx_music = 1,
 	sfx_voice = 2,
 	sfx_error = 3,
-};
+}sfx_t;
 
 union MENUDEFS_71fake // Hashcode: 0x2BC919B9 (dec: 734599609)
 {

@@ -335,7 +335,7 @@ int STREAM_PollLoadQueue()
 				if (queueEntry->loadEntry.retFunc != NULL)
 				{
 					typedef void (*retFunc)(void*, void*, void*);
-					retFunc returnFunction = retFunc(queueEntry->loadEntry.retFunc);
+					retFunc returnFunction = (retFunc)queueEntry->loadEntry.retFunc;
 					returnFunction(queueEntry->loadEntry.loadAddr, queueEntry->loadEntry.retData, queueEntry->loadEntry.retData2);
 				}
 
@@ -582,7 +582,7 @@ void LOAD_AbortFileLoad(char *fileName, void *retFunc)
 				}
 
 				typedef void (*ret)(long*, void*, void*);
-				ret returnFunction = ret(retFunc);
+				ret returnFunction = (ret)retFunc;
 				returnFunction(entry->loadEntry.loadAddr, entry->loadEntry.retData, entry->loadEntry.retData2);
 				
 				STREAM_RemoveQueueEntry(entry, prev);
@@ -595,7 +595,3 @@ void LOAD_AbortFileLoad(char *fileName, void *retFunc)
 		}
 	}
 }
-
-
-
-

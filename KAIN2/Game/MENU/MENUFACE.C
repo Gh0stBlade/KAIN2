@@ -52,7 +52,7 @@ void menuface_initialize()
 
 		if (addr != NULL)
 		{
-			FaceButtons = (_ButtonTexture*)MEMPACK_Malloc(sizeof(_ButtonTexture) * 56, 0x2D);
+			FaceButtons = (struct _ButtonTexture*)MEMPACK_Malloc(sizeof(struct _ButtonTexture) * 56, 0x2D);
 
 			if (FaceButtons == NULL)
 			{

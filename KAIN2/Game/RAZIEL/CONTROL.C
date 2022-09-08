@@ -152,7 +152,7 @@ void SetDropPhysics(struct _Instance *instance, struct __Player *player)
 }
 
 // unused
-void __cdecl GetPhysicsVelocity(struct _Instance* instance, SVECTOR* in_pos, SVECTOR* out_pos)
+void GetPhysicsVelocity(struct _Instance* instance, SVECTOR* in_pos, SVECTOR* out_pos)
 {
 #if defined(PC_VERSION)
 	MATRIX tp;

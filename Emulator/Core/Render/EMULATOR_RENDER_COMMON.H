@@ -22,23 +22,25 @@
 #endif
 
 
-enum BlendMode
+typedef enum BlendMode 
 {
 	BM_NONE,
 	BM_AVERAGE,
 	BM_ADD,
 	BM_SUBTRACT,
 	BM_ADD_QUATER_SOURCE,
-	BM_COUNT,
-};
+	BM_COUNT
 
-enum TexFormat
+} BlendMode;
+
+typedef enum TexFormat 
 {
 	TF_4_BIT,
 	TF_8_BIT,
 	TF_16_BIT,
 	TF_COUNT,
-};
+
+} TexFormat;
 
 #pragma pack(push,1)
 struct Vertex

@@ -299,7 +299,7 @@ void EVENT_RemoveTimer(struct EventTimer *timer)
 void EVENT_InitTimers()
 {
 	numActiveEventTimers = 0;
-	memset(&eventTimerArray[0], 0, sizeof(EventTimer) * 24);
+	memset(&eventTimerArray[0], 0, sizeof(struct EventTimer) * 24);
 }
 
 void EVENT_InitTerrainMovement()

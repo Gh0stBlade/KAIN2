@@ -3,6 +3,20 @@
 
 typedef long (*TDRFuncPtr_COLLIDE_LineWithBoxFace6collideBoundFunc)();
 
+struct _PCollideInfo 
+{
+  short type; // size=0, offset=0
+  short segment; // size=0, offset=2
+  void *prim; // size=0, offset=4
+  struct _Instance *inst; // size=0, offset=8
+  SVECTOR wNormal; // size=8, offset=12
+  SVECTOR *newPoint; // size=8, offset=20
+  SVECTOR *oldPoint; // size=8, offset=24
+  SVECTOR cldPoint; // size=8, offset=28
+  long collideType; // size=0, offset=36
+  struct _Instance *instance; // size=0, offset=40
+};
+
 struct _CollideInfo // hashcode: 0xCA2DF5E9 (dec: -902957591)
 {
 	void* level; // size=0, offset=0
@@ -81,8 +95,8 @@ extern long COLLIDE_WithinXZBounds(struct _SVector *point, struct _HBox *hbox); 
 extern long COLLIDE_WithinXYBounds(struct _SVector *point, struct _HBox *hbox); // 0x8001EC18
 extern void COLLIDE_LineWithBoxFace(short startDist, long lineDist, short planeDist, struct _SVector *start, struct _Vector *line, struct _HBox *hbox, TDRFuncPtr_COLLIDE_LineWithBoxFace6collideBoundFunc collideBoundFunc, struct _SVector *normal); // 0x8001EC74
 extern long COLLIDE_IntersectLineAndBox(struct _SVector *point0, struct _SVector *normal0, struct _SVector *point1, struct _SVector *normal1, struct _SVector *end, struct _SVector *start, struct _HBox *hbox); // 0x8001EE20
-extern struct _TFace * COLLIDE_PointAndTerrain(struct _Terrain *terrain, struct _PCollideInfo *pcollideInfo, struct _LCollideInfo *lcol); // 0x8001F09C
-extern struct _TFace * COLLIDE_PointAndTerrainFunc(struct _Terrain *terrain, struct _PCollideInfo *pCollideInfo, int Flags, short *Backface_Flag, long ignoreAttr, long acceptAttr, struct _LCollideInfo *lcolinfo); // 0x8001F0CC
+extern struct _TFace* COLLIDE_PointAndTerrain(struct _Terrain *terrain, struct _PCollideInfo *pcollideInfo, struct _LCollideInfo *lcol); // 0x8001F09C
+extern struct _TFace* COLLIDE_PointAndTerrainFunc(struct _Terrain *terrain, struct _PCollideInfo *pCollideInfo, int Flags, short *Backface_Flag, long ignoreAttr, long acceptAttr, struct _LCollideInfo *lcolinfo); // 0x8001F0CC
 extern int COLLIDE_PointAndHFace(struct _SVector *newPos, struct _SVector *oldPos, struct _HFace *hface, struct _Model *model, struct _SVector *hfNormal); // 0x8001FC64
 extern void COLLIDE_PointAndInstance(struct _PCollideInfo *pcollideInfo, struct _Instance *instance); // 0x8001FEAC
 extern void COLLIDE_PointAndInstanceTrivialReject(struct _PCollideInfo *pcollideInfo, struct _Instance *instance); // 0x800206E0

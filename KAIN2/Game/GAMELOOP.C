@@ -402,9 +402,9 @@ void GAMELOOP_LevelLoadAndInit(char *baseAreaName, struct GameTracker *gameTrack
 
 	}
 	
-	gameTrackerX.introFX = (Object*)objectAccess[6].object;
+	gameTrackerX.introFX = (struct Object*)objectAccess[6].object;
 
-	fontsObject = (Object*)objectAccess[2].object;
+	fontsObject = (struct Object*)objectAccess[2].object;
 	RENDER_currentStreamUnitID = (unsigned short)gameTrackerX.StreamUnitID;
 
 	if (streamUnit->level->numIntros > 0)
@@ -823,7 +823,7 @@ void MainRenderLevel(struct _StreamUnit* currentUnit, unsigned long** drawot)
 		}
 	}
 
-	BlendToColor((_ColorType*)&BackColor, (_ColorType*)&currentUnit->FogColor, (_ColorType*)&currentUnit->FogColor);
+	BlendToColor((struct _ColorType*)&BackColor, (struct _ColorType*)&currentUnit->FogColor, (struct _ColorType*)&currentUnit->FogColor);
 
 	depthQBackColor = currentUnit->FogColor;
 
@@ -840,7 +840,7 @@ void MainRenderLevel(struct _StreamUnit* currentUnit, unsigned long** drawot)
 	depthQFogStart = level->fogNear;
 	depthQFogFar = level->fogFar;
 
-	if (CheckForNoBlend((_ColorType*)&depthQBackColor) == 0)
+	if (CheckForNoBlend((struct _ColorType*)&depthQBackColor) == 0)
 	{
 		depthQBlendStart = depthQFogStart;
 	}
@@ -849,13 +849,13 @@ void MainRenderLevel(struct _StreamUnit* currentUnit, unsigned long** drawot)
 		depthQBlendStart = 0xFFFF;
 	}
 
-	clearRect[0].r0 = ((_ColorType*)&depthQBackColor)->r;
-	clearRect[0].g0 = ((_ColorType*)&depthQBackColor)->g;
-	clearRect[0].b0 = ((_ColorType*)&depthQBackColor)->b;
+	clearRect[0].r0 = ((struct _ColorType*)&depthQBackColor)->r;
+	clearRect[0].g0 = ((struct _ColorType*)&depthQBackColor)->g;
+	clearRect[0].b0 = ((struct _ColorType*)&depthQBackColor)->b;
 
-	clearRect[1].r0 = ((_ColorType*)&depthQBackColor)->r;
-	clearRect[1].g0 = ((_ColorType*)&depthQBackColor)->g;
-	clearRect[1].b0 = ((_ColorType*)&depthQBackColor)->b;
+	clearRect[1].r0 = ((struct _ColorType*)&depthQBackColor)->r;
+	clearRect[1].g0 = ((struct _ColorType*)&depthQBackColor)->g;
+	clearRect[1].b0 = ((struct _ColorType*)&depthQBackColor)->b;
 
 	PIPE3D_AnimateTerrainTextures(terrain->aniList, gameTracker->frameCount, gameTracker->primPool, drawot);
 	PIPE3D_AnimateTerrainTextures(level->bgAniList, gameTracker->frameCount, gameTracker->primPool, drawot);

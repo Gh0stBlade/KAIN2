@@ -5,80 +5,79 @@
 extern "C" {
 #endif
 
-struct AnalogueData 
+typedef unsigned short PadData;
+
+typedef struct MouseData
 {
-	unsigned short pad; // size=0, offset=0
-	unsigned char xR; // size=0, offset=2
-	unsigned char yR; // size=0, offset=3
-	unsigned char xL; // size=0, offset=4
-	unsigned char yL; // size=0, offset=5
-};
+	unsigned short buttons;
+	signed char xOffset;
+	signed char yOffset;
+}
+MouseData;
 
-	typedef unsigned short PadData;
+typedef struct NegconData
+{
+	unsigned short digitalButtons;               /* Bit mask of plain keys. */
+	char centralTwist;                           /* Analogue twisting thing.*/
+	char buttonI;                                /* The I analogue button.  */
+	char buttonII;                               /* The II analogue button. */
+	char topLeft;                                /* The analogue tl button. */
+}
+NegconData;
 
-	typedef struct MouseData
+typedef struct AnalogueData {
+  unsigned short pad; // size=0, offset=0
+  unsigned char xR; // size=0, offset=2
+  unsigned char yR; // size=0, offset=3
+  unsigned char xL; // size=0, offset=4
+  unsigned char yL; // size=0, offset=5
+}AnalogueData;
+
+typedef struct AnalogjoyData
+{
+	unsigned short digitalButtons;               /* Bit mask of plain keys. */
+	unsigned char  right_x;
+	unsigned char  right_y;
+	unsigned char  left_x;
+	unsigned char  left_y;
+} AnalogjoyData;
+
+typedef struct TapCtrllerData
+{
+	unsigned char transStatus;  /* 0xff = no pad, bad pad, bad transmission */
+	unsigned char dataFormat;            /* Top 4 bits = type of controller */
+
+	union                                         /* Controller data union. */                   /* Controller data union. */
 	{
-		unsigned short buttons;
-		signed char xOffset;
-		signed char yOffset;
+		PadData    pad;                                 /* Plain pad.       */
+		NegconData negcon;                              /* Namco controller.*/
 	}
-	MouseData;
+	data;
+}
+TapCtrllerData;
 
-	typedef struct NegconData
-	{
-		unsigned short digitalButtons;               /* Bit mask of plain keys. */
-		char centralTwist;                           /* Analogue twisting thing.*/
-		char buttonI;                                /* The I analogue button.  */
-		char buttonII;                               /* The II analogue button. */
-		char topLeft;                                /* The analogue tl button. */
-	}
-	NegconData;
+typedef struct MultiTapData
+{
+	TapCtrllerData ctrllers[4];               /* Just 4 controller packets. */
+}
+MultiTapData;
 
-	typedef struct AnalogjoyData
-	{
-		unsigned short digitalButtons;               /* Bit mask of plain keys. */
-		unsigned char  right_x;
-		unsigned char  right_y;
-		unsigned char  left_x;
-		unsigned char  left_y;
-	} AnalogjoyData;
-
-	typedef struct TapCtrllerData
-	{
-		unsigned char transStatus;  /* 0xff = no pad, bad pad, bad transmission */
-		unsigned char dataFormat;            /* Top 4 bits = type of controller */
-
-		union                                         /* Controller data union. */                   /* Controller data union. */
-		{
-			PadData    pad;                                 /* Plain pad.       */
-			NegconData negcon;                              /* Namco controller.*/
-		}
-		data;
-	}
-	TapCtrllerData;
-
-	typedef struct MultiTapData
-	{
-		TapCtrllerData ctrllers[4];               /* Just 4 controller packets. */
-	}
-	MultiTapData;
-
-	typedef struct ControllerPacket
-	{
-		unsigned char transStatus;  /* 0xff = no pad, bad pad, bad transmission */
-		unsigned char dataFormat;            /* Top 4 bits = type of controller */
+typedef struct ControllerPacket
+{
+	unsigned char transStatus;  /* 0xff = no pad, bad pad, bad transmission */
+	unsigned char dataFormat;            /* Top 4 bits = type of controller */
 										   /* Bottom 4 == shorts of data written */
-		union                                         /* Controller data union. */
-		{
-			PadData       pad;                     /* Plain pad.       */
-			MouseData     mouse;                   /* Mouse.           */
-			NegconData    negcon;                  /* Namco controller.*/
-			AnalogjoyData joystick;				/* Analog Joystick  */
-			MultiTapData  tap;                     /* 4-way multi-tap. */
-			AnalogueData analogue;
-		}
-		data;
-	} ControllerPacket;
+	union                                         /* Controller data union. */
+	{
+		PadData       pad;                     /* Plain pad.       */
+		MouseData     mouse;                   /* Mouse.           */
+		NegconData    negcon;                  /* Namco controller.*/
+		AnalogjoyData joystick;				/* Analog Joystick  */
+		MultiTapData  tap;                     /* 4-way multi-tap. */
+		AnalogueData analogue;
+	}
+	data;
+} ControllerPacket;
 
 struct JoypadMappingStruct 
 {

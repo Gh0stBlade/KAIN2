@@ -1,6 +1,8 @@
 #ifndef MEMPACK_H
 #define MEMPACK_H
 
+#include "LOAD3D.H"
+
 #if defined(_LANGUAGE_C_PLUS_PLUS)||defined(__cplusplus)||defined(c_plusplus)
 extern "C" {
 #endif

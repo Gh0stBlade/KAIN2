@@ -1,6 +1,7 @@
 #ifndef AADSQCMD_H
 #define AADSQCMD_H
 
+#include "AADLIB.H"
 
 extern void aadSubstituteVariables(struct AadSeqEvent *event, struct _AadSequenceSlot *slot); // 0x80055928
 

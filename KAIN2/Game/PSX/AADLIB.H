@@ -3,6 +3,8 @@
 
 #include "CORE.H"
 
+#include "MEMPACK.H"
+
 typedef long (*TDRFuncPtr_aadInstallUpdateFunc0updateFuncPtr)();
 typedef void (*TDRFuncPtr_aadInstallEndSequenceCallback)();
 typedef void (*TDRFuncPtr_aadInstallEndSequenceCallback0callbackProc)();

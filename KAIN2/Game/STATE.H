@@ -1,7 +1,9 @@
 #ifndef STATE_H
 #define STATE_H
 
+#include "PLAYER.H"
 #include "MONSTER/MONSTER.H"
+#include "PHYSOBS.H"
 
 typedef void (*TDRFuncPtr_StateSwitchStateCharacterData1NewProcess)();
 

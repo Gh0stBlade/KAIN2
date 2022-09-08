@@ -1,4 +1,4 @@
-#include "../core.H"
+#include "CORE.H"
 #include "ANMDECMP.H"
 
 DWORD dword_4F4AA0[] =

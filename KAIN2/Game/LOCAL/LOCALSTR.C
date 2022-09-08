@@ -32,7 +32,7 @@ void localstr_set_language(enum language_t lang)
 #else
 		LocalStrings = (char**)LocalizationTable + 4;
 #endif
-		voiceList = (XAVoiceListEntry*)(char*)(LocalizationTable + LocalizationTable->XATableOffset);
+		voiceList = (struct XAVoiceListEntry*)(char*)(LocalizationTable + LocalizationTable->XATableOffset);
 
 		if (LocalizationTable->numStrings > 0)
 		{

@@ -19,6 +19,40 @@ typedef void (*TDRFuncPtr_FX_BuildSingleFaceWithModel6fxSetup)();
 typedef void (*TDRFuncPtr_FX_BuildSingleFaceWithModel7fxProcess)();
 typedef void (*TDRFuncPtr_FX_SimpleQuadSetup1fxProcess)();
 
+struct _FXGlowEffect {
+  void *next; // size=0, offset=0
+  void *continue_process; // size=0, offset=4
+  struct _Instance *instance; // size=668, offset=8
+  unsigned char effectType; // size=0, offset=12
+  unsigned char type; // size=0, offset=13
+  short lifeTime; // size=0, offset=14
+  unsigned long diffTime; // size=0, offset=16
+  long *colorArray; // size=0, offset=20
+  long currentColor; // size=0, offset=24
+  short numColors; // size=0, offset=28
+  short colorBlendCycle; // size=0, offset=30
+  short width; // size=0, offset=32
+  short height; // size=0, offset=34
+  unsigned char numSegments; // size=0, offset=36
+  unsigned char SegmentInc; // size=0, offset=37
+  short segment; // size=0, offset=38
+  short fadein_time; // size=0, offset=40
+  short fadeout_time; // size=0, offset=42
+};
+
+struct FXSplinter {
+  short flags; // size=0, offset=0
+  short soundFx; // size=0, offset=2
+  short chunkVelXY; // size=0, offset=4
+  short chunkVelZ; // size=0, offset=6
+  short chunkVelRng; // size=0, offset=8
+  short triVelRng; // size=0, offset=10
+  short lifetime; // size=0, offset=12
+  short faceLimit; // size=0, offset=14
+  short rotRateRng; // size=0, offset=16
+  short gravityZ; // size=0, offset=18
+};
+
 struct _FXGeneralEffect // hashcode: 0xC4783451 (dec: -998755247)
 {
 	void* next; // size=0, offset=0
@@ -171,6 +205,19 @@ struct _FXLightning // hashcode: 0x552145A3 (dec: 1428243875)
 	long glow_color; // size=0, offset=56
 };
 
+struct __BubbleParams {
+  short DisperseFrames; // size=0, offset=0
+  short KillScale; // size=0, offset=2
+  short MinSplashSize; // size=0, offset=4
+  short MaxSpeed; // size=0, offset=6
+  short MaxSpeedRange; // size=0, offset=8
+  short ScaleRate; // size=0, offset=10
+  short ScaleRateRange; // size=0, offset=12
+  short StartScale; // size=0, offset=14
+  short StartScaleRange; // size=0, offset=16
+  short UniqueBubbles; // size=0, offset=18
+};
+
 struct _FXFlash // hashcode: 0xD3DE17A3 (dec: -740419677)
 {
 	void* next; // size=0, offset=0
@@ -269,28 +316,6 @@ struct _FXHalvePlane // hashcode: 0x10EBCD5A (dec: 283888986)
 	long* colorArray; // size=0, offset=36
 	short numColors; // size=0, offset=40
 	short colorBlendLife; // size=0, offset=42
-};
-
-struct _FXGlowEffect // hashcode: 0xCE07D6ED (dec: -838347027)
-{
-	void* next; // size=0, offset=0
-	void* continue_process; // size=0, offset=4
-	struct _Instance* instance; // size=616, offset=8
-	unsigned char effectType; // size=0, offset=12
-	unsigned char type; // size=0, offset=13
-	short lifeTime; // size=0, offset=14
-	unsigned long diffTime; // size=0, offset=16
-	long* colorArray; // size=0, offset=20
-	long currentColor; // size=0, offset=24
-	short numColors; // size=0, offset=28
-	short colorBlendCycle; // size=0, offset=30
-	short width; // size=0, offset=32
-	short height; // size=0, offset=34
-	unsigned char numSegments; // size=0, offset=36
-	unsigned char SegmentInc; // size=0, offset=37
-	short segment; // size=0, offset=38
-	short fadein_time; // size=0, offset=40
-	short fadeout_time; // size=0, offset=42
 };
 
 struct _FXTracker // hashcode: 0xCC65A064 (dec: -865755036)

@@ -33,7 +33,7 @@ struct CharTable
 	unsigned short high;
 };
 
-CharTable charTable2[] = {
+struct CharTable charTable2[] = {
 	{ 0x824F, 0x0030 },
 	{ 0x8260, 0x0041 },
 	{ 0x8281, 0x0061 },
@@ -68,7 +68,7 @@ void sub_801C86B8(struct mcpsx_directory_t* mcdir, int slot)
 {
 	language_t lang = localstr_get_language();//s0
 
-	memset(mcdir, 0, sizeof(mcpsx_directory_t));
+	memset(mcdir, 0, sizeof(struct mcpsx_directory_t));
 	memcpy(&mcdir->name[0], gameIdentifier[lang], 12);
 	sprintf(&mcdir->name[12], "kain %c", slot + 97);
 	printf("SetName: %s\n", mcdir->name);

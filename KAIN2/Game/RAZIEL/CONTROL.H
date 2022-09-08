@@ -1,6 +1,8 @@
 #ifndef CONTROL_H
 #define CONTROL_H
 
+#include "PLAYER.H"
+
 struct __Force 
 {
 	int Type; // size=0, offset=0

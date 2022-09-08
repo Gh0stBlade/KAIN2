@@ -1,6 +1,7 @@
 #ifndef AADVOICE_H
 #define AADVOICE_H
 
+#include "AADLIB.H"
 
 extern struct AadSynthVoice * aadAllocateVoice(int priority); // 0x80057A98
 

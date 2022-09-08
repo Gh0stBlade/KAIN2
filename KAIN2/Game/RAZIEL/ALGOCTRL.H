@@ -1,6 +1,13 @@
 #ifndef ALGOCTRL_H
 #define ALGOCTRL_H
 
+struct evAnimationControllerDoneData // hashcode: 0x06BA7BE4 (dec: 112884708)
+{
+	struct _Instance *instance; // size=616, offset=0
+	long segment; // size=0, offset=4
+	long type; // size=0, offset=8
+	int data; // size=0, offset=12
+};
 
 extern void InitAlgorithmicWings(struct _Instance *instance); // 0x800A1C24
 

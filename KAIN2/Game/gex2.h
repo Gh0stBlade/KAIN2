@@ -14,10 +14,10 @@ enum _G2AnimCallbackMsg_Enum // Hashcode: 0xA8F4A89C (dec: -1460361060)
 	G2ANIM_MSG_PLAYEFFECT = 6,
 };
 
-enum _G2Bool_Enum // Hashcode: 0xFDD7E4E7 (dec: -36182809)
+typedef enum _G2Bool_Enum // Hashcode: 0xFDD7E4E7 (dec: -36182809)
 {
 	G2FALSE = 0,
-};
+} _G2Bool_Enum;
 
 struct _G2SVector3_Type // hashcode: 0x60FF7CCD (dec: 1627356365)
 {

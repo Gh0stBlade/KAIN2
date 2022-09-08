@@ -1,6 +1,7 @@
 #ifndef PLANPOOL_H
 #define PLANPOOL_H
 
+#include "PLANAPI.H"
 
 extern int PLANPOOL_NumNodesInPlan(struct PlanningNode *goalNode, struct PlanningNode *planningPool); // 0x80099208
 

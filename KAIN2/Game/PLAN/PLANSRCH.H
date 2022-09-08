@@ -1,6 +1,8 @@
 #ifndef PLANSRCH_H
 #define PLANSRCH_H
 
+#include "PLANAPI.H"
+
 
 extern int PLANSRCH_ValidNode(struct PlanningNode *node, int validNodeTypes); // 0x80099DAC
 

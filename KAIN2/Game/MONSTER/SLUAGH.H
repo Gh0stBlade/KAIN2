@@ -1,6 +1,8 @@
 #ifndef SLUAGH_H
 #define SLUAGH_H
 
+#include "MONSTER.H"
+
 struct SLUAGH_114fake // hashcode: 0x17BD51C9 (dec: 398283209)
 {
 	struct {

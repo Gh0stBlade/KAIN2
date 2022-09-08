@@ -5,7 +5,7 @@
 void ENMYPLAN_InitEnemyPlanPool(void *enemyPlanPool)
 {
 	int i = 9;
-	EnemyPlanSlotData* planningSlot = &((EnemyPlanSlotData*)enemyPlanPool)[9];
+	struct EnemyPlanSlotData* planningSlot = &((struct EnemyPlanSlotData*)enemyPlanPool)[9];
 	do
 	{
 		planningSlot->slotInUse = 0;

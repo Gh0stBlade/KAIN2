@@ -49,7 +49,7 @@ int do_push_menu(void *gt, long menuparam, enum menu_ctrl_t ctrl)
 	}
 	
 	typedef int (*ret)(void*, int);
-	ret returnFunction = ret(menuparam);
+	ret returnFunction = (ret)menuparam;
 
 	menu_push(((struct GameTracker*)gt)->menu, returnFunction);
 
@@ -80,9 +80,9 @@ int do_function(void* gt, long fnparam, enum menu_ctrl_t ctrl)
 { 
 	if (ctrl == menu_ctrl_engage)
 	{
-		typedef void (*ret)();
-		ret((void*)fnparam)();
-
+		typedef void (*retFunction)();
+		retFunction ret = (retFunction)fnparam;
+		ret();
 		return 1;
 	}
 
@@ -98,12 +98,12 @@ int do_start_game(void *gt, long parameter, enum menu_ctrl_t ctrl)
 	if (ctrl == menu_ctrl_engage)
 	{
 #if defined(__EMSCRIPTEN__)
-		if (MEMCARD_IsWrongVersion(((GameTracker*)gt)->memcard) == 0 && 0)//Skip for now
+		if (MEMCARD_IsWrongVersion(((struct GameTracker*)gt)->memcard) == 0 && 0)//Skip for now
 #else
-		if (MEMCARD_IsWrongVersion(((GameTracker*)gt)->memcard) == 0)
+		if (MEMCARD_IsWrongVersion(((struct GameTracker*)gt)->memcard) == 0)
 #endif
 		{
-			menu_push(((GameTracker*)gt)->menu, memcard_main_menu);
+			menu_push(((struct GameTracker*)gt)->menu, memcard_main_menu);
 			return 1;
 		}
 		else
@@ -296,7 +296,7 @@ int options_menu(void *gt, int index)
 
 	do_check_controller(gt);
 	
-	menu_item_flags(((GameTracker*)gt)->menu, NULL, 0, 4, localstr_get(LOCALSTR_options));
+	menu_item_flags(((struct GameTracker*)gt)->menu, NULL, 0, 4, localstr_get(LOCALSTR_options));
 	
 	sound_item(gt, localstr_get(LOCALSTR_sound), sfx_sound);
 	sound_item(gt, localstr_get(LOCALSTR_music), sfx_music);
@@ -308,15 +308,15 @@ int options_menu(void *gt, int index)
 	{
 		if (GAMEPAD_DualShockEnabled() == 0)
 		{
-			menu_item(((GameTracker*)gt)->menu, menudefs_toggle_dualshock, 0, localstr_get(LOCALSTR_vibration_off));
+			menu_item(((struct GameTracker*)gt)->menu, menudefs_toggle_dualshock, 0, localstr_get(LOCALSTR_vibration_off));
 		}
 		else
 		{
-			menu_item(((GameTracker*)gt)->menu, menudefs_toggle_dualshock, 0, localstr_get(LOCALSTR_vibration_on));
+			menu_item(((struct GameTracker*)gt)->menu, menudefs_toggle_dualshock, 0, localstr_get(LOCALSTR_vibration_on));
 		}
 	}
 	
-	menu_item(((GameTracker*)gt)->menu, do_pop_menu, 0, localstr_get(LOCALSTR_done));
+	menu_item(((struct GameTracker*)gt)->menu, do_pop_menu, 0, localstr_get(LOCALSTR_done));
 
 	if (dualShock != wasDualShock && index >= 4)
 	{
@@ -335,17 +335,17 @@ int options_menu(void *gt, int index)
 
 int main_menu(void *gt, int index)
 {
-	menu_format(((GameTracker*)gt)->menu, 1, MAIN_XPOS, MAIN_YPOS, MAIN_WIDTH, LINESKIP, ITEMSKIP, 0);
+	menu_format(((struct GameTracker*)gt)->menu, 1, MAIN_XPOS, MAIN_YPOS, MAIN_WIDTH, LINESKIP, ITEMSKIP, 0);
 	
 	MENUFACE_ChangeStateRandomly(index);
 	
 	do_check_controller(gt);
 	
-	menu_item(((GameTracker*)gt)->menu, do_start_game, 0, localstr_get(LOCALSTR_start_game));
+	menu_item(((struct GameTracker*)gt)->menu, do_start_game, 0, localstr_get(LOCALSTR_start_game));
 #if defined(_WIN64)
-	menu_item(((GameTracker*)gt)->menu, do_push_menu, (long long)&options_menu, localstr_get(LOCALSTR_options));
+	menu_item(((struct GameTracker*)gt)->menu, do_push_menu, (long long)&options_menu, localstr_get(LOCALSTR_options));
 #else
-	menu_item(((GameTracker*)gt)->menu, do_push_menu, (long)&options_menu, localstr_get(LOCALSTR_options));
+	menu_item(((struct GameTracker*)gt)->menu, do_push_menu, (long)&options_menu, localstr_get(LOCALSTR_options));
 #endif
 
 	if (index < 0)
@@ -364,9 +364,9 @@ int do_main_menu(void* gt, long param, enum menu_ctrl_t ctrl)
 { 
 	if (StartGameFading == 0 && (ctrl == menu_ctrl_start || ctrl == menu_ctrl_engage))
 	{
-		((GameTracker*)gt)->wipeType = 10;
-		((GameTracker*)gt)->wipeTime = -20 * FRAMERATE_MULT;
-		((GameTracker*)gt)->maxWipeTime = 20 * FRAMERATE_MULT;
+		((struct GameTracker*)gt)->wipeType = 10;
+		((struct GameTracker*)gt)->wipeTime = -20 * FRAMERATE_MULT;
+		((struct GameTracker*)gt)->maxWipeTime = 20 * FRAMERATE_MULT;
 		StartGameFading = 1;
 		return 1;
 	}
@@ -449,8 +449,8 @@ int menudefs_main_menu(void *gt, int index)
 	}
 
 	check_hack_attract();
-	menu_format(((GameTracker*)gt)->menu, 1, 366, 144, 100, LINESKIP, ITEMSKIP, 0);
-	menu_item(((GameTracker*)gt)->menu, do_main_menu, 0, flashStart());
+	menu_format(((struct GameTracker*)gt)->menu, 1, 366, 144, 100, LINESKIP, ITEMSKIP, 0);
+	menu_item(((struct GameTracker*)gt)->menu, do_main_menu, 0, flashStart());
 
 	if (index >= 0)
 	{

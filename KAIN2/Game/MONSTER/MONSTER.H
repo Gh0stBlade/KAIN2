@@ -1,6 +1,8 @@
 #ifndef MONSTER_H
 #define MONSTER_H
 
+#include "MONLIB.H"
+
 enum MonsterAnim // Hashcode: 0x13BE1EAB (dec: 331226795)
 {
 	MONSTER_ANIM_HIT1 = 0,
@@ -328,6 +330,12 @@ struct _MONAPI_Regenerator // hashcode: 0x37E0AA1B (dec: 937470491)
 	unsigned long regenTime; // size=0, offset=0
 	short introUniqueID; // size=0, offset=4
 	short streamUnitID; // size=0, offset=6
+};
+
+struct burntTuneType // hashcode: 0x127E6332 (dec: 310272818)
+{
+	int burntDist; // size=0, offset=0
+	int fadeDelta; // size=0, offset=4
 };
 
 struct __Event // hashcode: 0xBC16D673 (dec: -1139353997)

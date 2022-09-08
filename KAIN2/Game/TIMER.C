@@ -114,9 +114,10 @@ unsigned long TIMER_TimeDiff(unsigned long x)
 }
 
 // pc exclusive, unused
+#if defined(PC_VERSION)
 void* __cdecl TIMER_TimeDiff2(unsigned int a1)
 {
-#if defined(PC_VERSION)
+
 	unsigned __int16 RCnt; // ax
 	unsigned int v3; // edx
 	unsigned int v4; // ecx
@@ -143,8 +144,5 @@ void* __cdecl TIMER_TimeDiff2(unsigned int a1)
 		return (void*)(14 * (v5 + 65535 * v4) / 1000);
 	else
 		return 4293263;
-#else
-	UNIMPLEMENTED();
-	return 0;
-#endif
 }
+#endif

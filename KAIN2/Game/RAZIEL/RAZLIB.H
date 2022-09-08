@@ -6,6 +6,66 @@
 #include "MONSTER/MONSTER.H"
 #include "PLAYER.H"
 
+struct evPhysicsSwimData // hashcode: 0x947F2BE5 (dec: -1803605019)
+{
+	short CheckDepth; // size=0, offset=0
+	short SwimDepth; // size=0, offset=2
+	short WadeDepth; // size=0, offset=4
+	short TreadDepth; // size=0, offset=6
+	struct _SVector *iVelocity; // size=8, offset=8
+	short Depth; // size=0, offset=12
+	short WaterDepth; // size=0, offset=14
+	short rc; // size=0, offset=16
+	short pad; // size=0, offset=18
+	int WaterLevel; // size=0, offset=20
+};
+
+struct evPhysicsWallCrawlData // hashcode: 0x27DFBF06 (dec: 668974854)
+{
+	short Segment; // size=0, offset=0
+	short Length; // size=0, offset=2
+	short ForwardOffset; // size=0, offset=4
+	short NormalDistance; // size=0, offset=6
+	struct _SVector DropNormal; // size=8, offset=8
+	struct _SVector ForwardNormal; // size=8, offset=16
+	_Position NewPosition; // size=6, offset=24
+	struct _Rotation DropRotation; // size=8, offset=30
+	short ForwardXRotation; // size=0, offset=38
+	int rc; // size=0, offset=40
+};
+
+struct evActionLookAroundData // hashcode: 0x27BD6BB6 (dec: 666725302)
+{
+	short *rotx; // size=0, offset=0
+	short *rotz; // size=0, offset=4
+	short minx; // size=0, offset=8
+	short maxx; // size=0, offset=10
+	short minz; // size=0, offset=12
+	short maxz; // size=0, offset=14
+};
+struct __VAnim // hashcode: 0xDC662191 (dec: -597286511)
+{
+	unsigned char anim0; // size=0, offset=0
+	unsigned char anim1; // size=0, offset=1
+	unsigned char anim2; // size=0, offset=2
+	unsigned char frames; // size=0, offset=3
+	unsigned char mode; // size=0, offset=4
+	unsigned char alpha; // size=0, offset=5
+	unsigned short frame; // size=0, offset=6
+};
+
+struct _SoundRamp // hashcode: 0xB5503009 (dec: -1253036023)
+{
+	unsigned long soundHandle; // size=0, offset=0
+	long soundTimer; // size=0, offset=4
+	long soundTotalTime; // size=0, offset=8
+	unsigned long soundDistance; // size=0, offset=12
+	short soundStartPitch; // size=0, offset=16
+	short soundEndPitch; // size=0, offset=18
+	short soundStartVolume; // size=0, offset=20
+	short soundEndVolume; // size=0, offset=22
+};
+
 struct __razController 
 {
 	unsigned short segment; // size=0, offset=0

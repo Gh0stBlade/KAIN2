@@ -1,6 +1,7 @@
 #ifndef DRAWS_H
 #define DRAWS_H
 
+#include "G2/MAING2.H"
 #include "BSP.H"
 
 struct _PolytopeList 

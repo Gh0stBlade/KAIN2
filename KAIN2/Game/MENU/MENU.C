@@ -8,12 +8,12 @@
 
 int menu_data_size()
 { 
-	return sizeof(menu_t);
+	return sizeof(struct menu_t);
 }
 
 void menu_initialize(struct menu_t *menu, void *opaque)
 { 
-	memset(menu, 0, sizeof(menu_t));
+	memset(menu, 0, sizeof(struct menu_t));
 
 	menu->nmenus = -1;
 	menu->opaque = opaque;

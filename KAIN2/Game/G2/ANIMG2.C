@@ -115,7 +115,7 @@ struct _G2AnimSection_Type * G2Anim_AddSection(struct _G2Anim_Type *anim, int fi
 
 	section = &anim->section[anim->sectionCount];
 
-	memset(section, 0, sizeof(_G2AnimSection_Type));
+	memset(section, 0, sizeof(struct _G2AnimSection_Type));
 
 	section->storedTime = -1;
 	section->firstSeg = firstSegID;

@@ -7,6 +7,7 @@
 
 typedef struct _Instance _Instance;
 struct _SavedIntro;
+struct _SavedIntroWithIntro;
 
 struct _HFace 
 {

@@ -1402,8 +1402,8 @@ void FX_WaterBubbleProcess(struct _FX_PRIM *fxPrim, struct _FXTracker *fxTracker
 			// Start line: 2833
 			// Start offset: 0x80045EFC
 			// Variables:
-				struct Object *waterfx; // $v1
-				struct _Model *wxring; // $s1
+				//struct Object *waterfx; // $v1
+				//struct _Model *wxring; // $s1
 		/* end block 1.1 */
 		// End offset: 0x80046018
 		// End Line: 2863

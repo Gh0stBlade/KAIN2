@@ -1,6 +1,8 @@
 #ifndef ENMYPLAN_H
 #define ENMYPLAN_H
 
+#include "PLANAPI.H"
+
 extern void ENMYPLAN_InitEnemyPlanPool(void *enemyPlanPool); // 0x800965A4
 
 extern int ENMYPLAN_GetNextAvailablePlanningSlot(); // 0x800965C4

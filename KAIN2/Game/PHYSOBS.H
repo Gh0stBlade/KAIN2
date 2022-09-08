@@ -1,6 +1,84 @@
 #ifndef PHYSOBS_H
 #define PHYSOBS_H
 
+#include "COLLIDE.H"
+
+struct LightTableEntry {
+  short r; // size=0, offset=0
+  short g; // size=0, offset=2
+  short b; // size=0, offset=4
+  short radius; // size=0, offset=6
+};
+
+struct PhysObData {
+  long Mode; // size=0, offset=0
+  short xForce; // size=0, offset=4
+  short yForce; // size=0, offset=6
+  struct _Instance *Force; // size=668, offset=8
+  short LinkNode; // size=0, offset=12
+  short px; // size=0, offset=14
+  short py; // size=0, offset=16
+  short pz; // size=0, offset=18
+  short rx1; // size=0, offset=20
+  short ry1; // size=0, offset=22
+  short rz1; // size=0, offset=24
+  short Segment1; // size=0, offset=26
+  short rx2; // size=0, offset=28
+  short ry2; // size=0, offset=30
+  short rz2; // size=0, offset=32
+  short Segment2; // size=0, offset=34
+  short Steps; // size=0, offset=36
+  short Step; // size=0, offset=38
+  short PathNumber; // size=0, offset=40
+  short Pad1; // size=0, offset=42
+  struct _HInfo *RightCollision; // size=24, offset=44
+  struct _HInfo *LeftCollision; // size=24, offset=48
+  short burnAmpl; // size=0, offset=52
+  short throwFlags; // size=0, offset=54
+  short initialXRot; // size=0, offset=56
+  short xRotVel; // size=0, offset=58
+  short yRotVel; // size=0, offset=60
+  short zRotVel; // size=0, offset=62
+  struct _Instance *throwingInstance; // size=668, offset=64
+  int physObTimer; // size=0, offset=68
+};
+
+struct evObjectThrowData {
+  short type; // size=0, offset=0
+  short spinType; // size=0, offset=2
+  union {
+    struct _Instance *target; // size=668, offset=0
+    struct _Position position; // size=6, offset=0
+    struct _Rotation direction; // size=8, offset=0
+    struct _Position throwVector; // size=6, offset=0
+  } data; // size=8, offset=4
+  struct _SVector angularVel; // size=8, offset=12
+  unsigned short speed; // size=0, offset=20
+  short gravity; // size=0, offset=22
+  short initialXRot; // size=0, offset=24
+  short zVel; // size=0, offset=26
+};
+
+struct _PhysObLight 
+{
+  unsigned char length; // size=0, offset=0
+  unsigned char segment; // size=0, offset=1
+  short speed; // size=0, offset=2
+  struct LightTableEntry *lightTable; // size=8, offset=4
+};
+
+struct evPhysicsSlideData 
+{
+  struct _SVector ForwardVector; // size=8, offset=0
+  struct _SVector ForwardNormal; // size=8, offset=8
+  struct _SVector DropNormal; // size=8, offset=16
+  short Segment; // size=0, offset=24
+  short DropOffset; // size=0, offset=26
+  short UpperOffset; // size=0, offset=28
+  short Height; // size=0, offset=30
+  struct _Instance *UpperInstance; // size=668, offset=32
+  int Dot; // size=0, offset=36
+};
 
 extern void PHYSOB_PlayDropSound(struct _Instance *instance); // 0x80068700
 
@@ -76,7 +154,7 @@ extern void PhysicalObjectPost(struct _Instance *instance, unsigned long Message
 
 extern long PhysobAnimCallback(struct _G2Anim_Type *anim, int sectionID, enum _G2AnimCallbackMsg_Enum message, long messageDataA, long messageDataB, void *data); // 0x8006CCC4
 
-extern void CheckForceCollision(struct _Instance *instance, struct _Instance *hitinst, struct _TFace *tface, struct _CollideInfo *collideInfo, struct _SVector *dir, int obliqueFlg); // 0x8006CD68
+extern void CheckForceCollision(struct _Instance *instance, struct _Instance *hitinst, struct _TFace *tface, struct _CollideInfo *collideInfo, _SVector *dir, int obliqueFlg); // 0x8006CD68
 
 extern int GetObliqueDirection(struct _Instance *instance, struct _SVector *dir); // 0x8006CFD4
 

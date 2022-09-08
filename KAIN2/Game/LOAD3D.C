@@ -554,8 +554,8 @@ struct _BigFileDir * LOAD_ReadDirectory(struct _BigFileDirEntry *dirEntry)
 	struct _BigFileDir* dir;
 	long sizeOfDir;
 	
-	sizeOfDir = (dirEntry->numFiles * sizeof(_BigFileEntry)) + sizeof(long);
-	dir = (_BigFileDir*)MEMPACK_Malloc(sizeOfDir, 0x2C);
+	sizeOfDir = (dirEntry->numFiles * sizeof(struct _BigFileEntry)) + sizeof(long);
+	dir = (struct _BigFileDir*)MEMPACK_Malloc(sizeOfDir, 0x2C);
 	
 #if defined(_DEBUG) || defined(__EMSCRIPTEN__)
 	LOAD_CdReadFromBigFile(dirEntry->subDirOffset, (unsigned long*)dir, sizeOfDir, 0, 0, 0);

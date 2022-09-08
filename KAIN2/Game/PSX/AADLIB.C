@@ -1730,19 +1730,19 @@ void aadLoadDynamicSfxReturn2(void *loadedDataPtr, long loadedDataSize, short st
 		}
 		else if (info->smfLoadingState == 0)
 		{
-			if (((_AadDynSfxFileHdr*)dataPtr)->snfID != aadCreateFourCharID('a', 'S', 'M', 'F'))
+			if (((struct _AadDynSfxFileHdr*)dataPtr)->snfID != aadCreateFourCharID('a', 'S', 'M', 'F'))
 			{
 				aadLoadDynamicSfxAbort(info, 0x100B);
 			}
 			else
 			{
-				if (((_AadDynSfxFileHdr*)dataPtr)->snfVersion != 0x100)
+				if (((struct _AadDynSfxFileHdr*)dataPtr)->snfVersion != 0x100)
 				{
 					aadLoadDynamicSfxAbort(info, 0x100C);
 				}
 				else
 				{
-					if (((_AadDynSfxFileHdr*)dataPtr)->uniqueID != info->snfFile->uniqueID)
+					if (((struct _AadDynSfxFileHdr*)dataPtr)->uniqueID != info->snfFile->uniqueID)
 					{
 						aadLoadDynamicSfxAbort(info, 0x100D);
 					}
@@ -1750,7 +1750,7 @@ void aadLoadDynamicSfxReturn2(void *loadedDataPtr, long loadedDataSize, short st
 					{
 						dataOffset += 16;
 
-						if (((_AadDynSfxFileHdr*)dataPtr)->handle != info->snfFile->numSfxInFile)
+						if (((struct _AadDynSfxFileHdr*)dataPtr)->handle != info->snfFile->numSfxInFile)
 						{
 
 							aadLoadDynamicSfxAbort(info, 0x100D);

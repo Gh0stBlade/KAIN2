@@ -3,7 +3,7 @@
 
 #include "MENU/MENU.H"
 
-enum mcpsx_err_t // Hashcode: 0xB64074E4 (dec: -1237289756)
+typedef enum mcpsx_err_t // Hashcode: 0xB64074E4 (dec: -1237289756)
 {
 	mcpsx_err_none = 0,
 	mcpsx_err_card_not_exist = 1,
@@ -16,9 +16,9 @@ enum mcpsx_err_t // Hashcode: 0xB64074E4 (dec: -1237289756)
 	mcpsx_err_busy = 8,
 	mcpsx_error = 9,
 	mcpsx_err_num_items = 10,
-};
+} mcpsx_err_t;
 
-enum mcpsx_func_t // Hashcode: 0xA495DFC7 (dec: -1533681721)
+typedef enum mcpsx_func_t // Hashcode: 0xA495DFC7 (dec: -1533681721)
 {
 	func_none = 0,
 	func_exist = 1,
@@ -31,27 +31,27 @@ enum mcpsx_func_t // Hashcode: 0xA495DFC7 (dec: -1533681721)
 	func_unformat = 8,
 	func_directory = 9,
 	func_num_items = 10,
-};
+}mcpsx_func_t;
 
-enum mcpsx_sync_t // Hashcode: 0xC0D85FD5 (dec: -1059561515)
+typedef enum mcpsx_sync_t // Hashcode: 0xC0D85FD5 (dec: -1059561515)
 {
 	sync_idle = -1,
 	sync_busy = 0,
 	sync_done = 1,
 	sync_func = 2,
 	sync_num_items = 3,
-};
+}mcpsx_sync_t;
 
-enum mcpsx_mode_t // Hashcode: 0x8A03A4E4 (dec: -1979472668)
+typedef enum mcpsx_mode_t // Hashcode: 0x8A03A4E4 (dec: -1979472668)
 {
 	mode_bogus = 0,
 	mode_initialized = 1,
 	mode_running = 2,
 	mode_terminated = 3,
 	mode_num_items = 4,
-};
+}mcpsx_mode_t;
 
-enum state_t // Hashcode: 0x67CC6ED5 (dec: 1741450965)
+typedef enum state_t // Hashcode: 0x67CC6ED5 (dec: 1741450965)
 {
 	fsmcard_card_not_exist = 0,
 	fsmcard_card_invalid = 1,
@@ -67,9 +67,9 @@ enum state_t // Hashcode: 0x67CC6ED5 (dec: 1741450965)
 	fsmcard_read = 11,
 	fsmcard_error = 12,
 	fsmcard_num_items = 13,
-};
+}state_t;
 
-enum fsm_t // Hashcode: 0x64C4BA3C (dec: 1690614332)
+typedef enum fsm_t // Hashcode: 0x64C4BA3C (dec: 1690614332)
 {
 	fsm_card_not_exist = 0,
 	fsm_card_invalid = 1,
@@ -86,9 +86,9 @@ enum fsm_t // Hashcode: 0x64C4BA3C (dec: 1690614332)
 	fsm_save_complete = 12,
 	fsm_error = 13,
 	fsm_num_items = 14,
-};
+}fsm_t;
 
-enum mcard_status_t // Hashcode: 0xD1B8064B (dec: -776468917)
+typedef enum mcard_status_t // Hashcode: 0xD1B8064B (dec: -776468917)
 {
 	mcard_status_card_not_exist = 0,
 	mcard_status_card_invalid = 1,
@@ -98,7 +98,7 @@ enum mcard_status_t // Hashcode: 0xD1B8064B (dec: -776468917)
 	mcard_status_accessing = 5,
 	mcard_status_error = 6,
 	mcard_status_num_items = 7,
-};
+}mcard_status_t;
 
 struct mcpsx_directory_t // hashcode: 0xED9CBF92 (dec: -308494446)
 {
@@ -275,7 +275,7 @@ struct mcmenu
 	struct mcpsx_t dummy3; // size=56, offset=456
 };
 
-extern mcmenu gMcmenu;
+extern struct mcmenu gMcmenu;
 
 typedef int (*TDRFuncPtr_memcard_item1fn)();
 

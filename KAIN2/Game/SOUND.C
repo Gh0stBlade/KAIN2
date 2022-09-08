@@ -8,7 +8,7 @@
 #include "MEMPACK.H"
 #include "STREAM.H"
 
-char soundBuffer[sizeof(AadMemoryStruct) + (sizeof(_AadSequenceSlot) * 4)];
+char soundBuffer[sizeof(struct AadMemoryStruct) + (sizeof(struct _AadSequenceSlot) * 4)];
 
 struct MusicLoadInfo musicInfo; // offset 0x800D1510
 

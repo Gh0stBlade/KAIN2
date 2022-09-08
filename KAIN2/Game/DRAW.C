@@ -226,7 +226,7 @@ void DRAW_DrawButton(struct _ButtonTexture *button, short x, short y, unsigned l
 	}
 }
 
-void DRAW_LoadButton(long *addr, _ButtonTexture *button)
+void DRAW_LoadButton(long *addr, struct _ButtonTexture *button)
 { 
 	PSX_RECT vramRect;
 	long *paletteAddr;

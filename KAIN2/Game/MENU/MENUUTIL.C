@@ -11,35 +11,35 @@ enum menu_ctrl_t menu_get_ctrl(void *gt)
 {
 	enum menu_ctrl_t ctrl;
 	
-	if ((((GameTracker*)gt)->controlCommand[0][1] & 0x1))
+	if ((((struct GameTracker*)gt)->controlCommand[0][1] & 0x1))
 	{
 		ctrl = menu_ctrl_up;
 	}
-	else if ((((GameTracker*)gt)->controlCommand[0][1] & 0x2))
+	else if ((((struct GameTracker*)gt)->controlCommand[0][1] & 0x2))
 	{
 		ctrl = menu_ctrl_down;
 	}
-	else if ((((GameTracker*)gt)->controlCommand[0][1] & 0x4))
+	else if ((((struct GameTracker*)gt)->controlCommand[0][1] & 0x4))
 	{
 		ctrl = menu_ctrl_left;
 	}
-	else if ((((GameTracker*)gt)->controlCommand[0][1] & 0x8))
+	else if ((((struct GameTracker*)gt)->controlCommand[0][1] & 0x8))
 	{
 		ctrl = menu_ctrl_right;
 	}
-	else if ((((GameTracker*)gt)->controlCommand[0][1] & 0x80) && !(((GameTracker*)gt)->controlCommand[0][0] & 0x300))
+	else if ((((struct GameTracker*)gt)->controlCommand[0][1] & 0x80) && !(((struct GameTracker*)gt)->controlCommand[0][0] & 0x300))
 	{
 		ctrl = menu_ctrl_engage;
 	}
 	else
 	{
-		if ((((GameTracker*)gt)->controlCommand[0][1] & 0x10))
+		if ((((struct GameTracker*)gt)->controlCommand[0][1] & 0x10))
 		{
 			ctrl = menu_ctrl_cancel;
 		}
 		else
 		{
-			if ((((GameTracker*)gt)->controlCommand[0][1] & 0x4000))
+			if ((((struct GameTracker*)gt)->controlCommand[0][1] & 0x4000))
 			{
 				ctrl = menu_ctrl_start;
 

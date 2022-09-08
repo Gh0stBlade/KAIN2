@@ -1,6 +1,7 @@
 #ifndef PLAN_H
 #define PLAN_H
 
+#include "PLANAPI.H"
 
 extern long PLAN_CalcMinDistFromExistingNodes(_Position *pos, struct PlanningNode *planningPool, int distanceType); // 0x80097188
 

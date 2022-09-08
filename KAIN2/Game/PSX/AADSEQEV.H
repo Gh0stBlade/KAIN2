@@ -1,6 +1,7 @@
 #ifndef AADSEQEV_H
 #define AADSEQEV_H
 
+#include "AADLIB.H"
 
 extern int aadQueueNextEvent(struct _AadSequenceSlot *slot, int track); // 0x800548E8
 

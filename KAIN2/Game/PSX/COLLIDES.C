@@ -196,7 +196,7 @@ short ecostable[3072] = {
   (short)0xf005,(short)0xf005,(short)0xf004,(short)0xf004,(short)0xf004,(short)0xf004,(short)0xf003,(short)0xf003,(short)0xf003,(short)0xf003,(short)0xf002,(short)0xf002,(short)0xf002,(short)0xf002,(short)0xf002,(short)0xf001,
   (short)0xf001,(short)0xf001,(short)0xf001,(short)0xf001,(short)0xf001,(short)0xf001,(short)0xf000,(short)0xf000,(short)0xf000,(short)0xf000,(short)0xf000,(short)0xf000,(short)0xf000,(short)0xf000,(short)0xf000,(short)0xf000 };
 
-void BSP_MarkVisibleLeaves_S(struct BSPTree* bsp, struct Camera* camera, struct _PolytopeList* polytopeList, unsigned long** drawot, int curTree, struct _Instance* savedLightInstance, _Terrain* terrain, struct GameTracker* gameTracker, _StreamUnit* currentUnit)
+void BSP_MarkVisibleLeaves_S(struct BSPTree* bsp, struct Camera* camera, struct _PolytopeList* polytopeList, unsigned long** drawot, int curTree, struct _Instance* savedLightInstance, struct _Terrain* terrain, struct GameTracker* gameTracker, struct _StreamUnit* currentUnit)
 {
 	//fp = drawot
 	//s0 = bsp
@@ -595,7 +595,7 @@ void BSP_MarkVisibleLeaves_S(struct BSPTree* bsp, struct Camera* camera, struct 
 	//t0 = &getScratchAddr(0); //Maybe for caller don't delete!
 }
 
-void G2Quat_FromEuler_S(_G2AnimQuatInfo_Type* quatInfo, _G2EulerAngles_Type* preQuat)
+void G2Quat_FromEuler_S(struct _G2AnimQuatInfo_Type* quatInfo, struct _G2EulerAngles_Type* preQuat)
 {
 }
 

@@ -1,7 +1,7 @@
 #ifndef LOCALSTR_H
 #define LOCALSTR_H
 
-enum language_t // Hashcode: 0x2F13EDA4 (dec: 789835172)
+typedef enum language_t // Hashcode: 0x2F13EDA4 (dec: 789835172)
 {
 	language_default = -1,
 	language_english = 0,
@@ -10,7 +10,7 @@ enum language_t // Hashcode: 0x2F13EDA4 (dec: 789835172)
 	language_italian = 3,
 	language_spanish = 4,
 	language_num_states = 5,
-};
+}language_t;
 
 struct LocalizationHeader // hashcode: 0x40BDAC32 (dec: 1086172210)
 {

@@ -69,6 +69,7 @@ int VSync(int mode)
 
 	return SDL_GetTicks();
 #elif 1
+#if !defined(SN_TARGET_PSP2)
 	if (mode < 0)
 		return GetTickCount() - g_swapTime;
 
@@ -82,6 +83,9 @@ int VSync(int mode)
 	}
 
 	return GetTickCount();
+#else
+	return 0;
+#endif
 #else
 	return 0;
 #endif

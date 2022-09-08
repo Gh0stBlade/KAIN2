@@ -1,6 +1,8 @@
 #ifndef MISSILE_H
 #define MISSILE_H
 
+#include "MONSTER.H"
+
 struct MISSILE_114fake // hashcode: 0xA1EFD7AB (dec: -1578117205)
 {
 	struct {

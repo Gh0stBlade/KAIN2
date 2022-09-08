@@ -137,8 +137,8 @@ extern int splitAgain;
 void Emulator_AddSplit(int semiTrans, int page, TextureID textureId)
 {
 	struct VertexBufferSplit* curSplit = &g_splits[g_splitIndex];
-	enum BlendMode curBlendMode = (enum BlendMode)(semiTrans ? GET_TPAGE_BLEND(page) : BM_NONE);
-	enum TexFormat curTexFormat = (enum TexFormat)GET_TPAGE_FORMAT(page);
+	BlendMode curBlendMode = semiTrans ? GET_TPAGE_BLEND(page) : BM_NONE;
+	TexFormat curTexFormat = GET_TPAGE_FORMAT(page);
 
 #if defined(VULKAN)
 	if (curSplit->blendMode == curBlendMode && curSplit->texFormat == curTexFormat && curSplit->textureId.textureImage == textureId->textureImage)
@@ -948,7 +948,7 @@ void Emulator_DrawTouchUI()
 	};
 
 	unsigned long OT[4];
-	char polygonBuffer[sizeof(POLY_FT4) * 32];
+	char polygonBuffer[sizeof(POLY_F4) * 32];
 	char* p = &polygonBuffer[0];
 
 	ClearOTagR(OT, 4 / 2);
@@ -967,15 +967,15 @@ void Emulator_DrawTouchUI()
 		int my = dy ? ndist * 2 : 0;
 		int pressed = (resultTouchKeysPressed & mapper[i] << 4) != 0;
 		
-		setPolyFT4(p);
-		//setSemiTrans(p, 1);
-		setRGB0((POLY_FT4*)p, 127, pressed ? 0 : 127, pressed ? 0 : 127);
+		setPolyF4(p);
+		setSemiTrans(p, 1);
+		setRGB0((POLY_F4*)p, 127, pressed ? 0 : 127, pressed ? 0 : 127);
 		//((POLY_FT4*)p)->clut = touchButtonsUI[i].clut;
 		//((POLY_FT4*)p)->tpage = touchButtonsUI[i].tpage;
 		//setUV4((POLY_FT4*)p, touchButtonsUI[i].u[0], touchButtonsUI[i].v[0], touchButtonsUI[i].u[1], touchButtonsUI[i].v[1], touchButtonsUI[i].u[2], touchButtonsUI[i].v[2], touchButtonsUI[i].u[3], touchButtonsUI[i].v[3]);
-		setXY4((POLY_FT4*)p, cx + mx, cy + my, cx + mx + 32, cy + my, cx + mx, cy + my + 32, cx + mx + 32, cy + my + 32);
+		setXY4((POLY_F4*)p, cx + mx, cy + my, cx + mx + 32, cy + my, cx + mx, cy + my + 32, cx + mx + 32, cy + my + 32);
 		addPrim(OT, p);
-		p += sizeof(POLY_FT4);
+		p += sizeof(POLY_F4);
 	}
 	
 	cx = 512-64;
@@ -991,12 +991,12 @@ void Emulator_DrawTouchUI()
 		int my = dy ? ndist * 2 : 0;
 
 		int pressed = (resultTouchKeysPressed & mapper[i] << 12) != 0;
-		setPolyFT4(p);
+		setPolyF4(p);
 		setSemiTrans(p, 1);
-		setRGB0((POLY_FT4*)p, 127, pressed ? 0 : 127, pressed ? 0 : 127);
-		setXY4((POLY_FT4*)p, cx + mx, cy + my, cx + mx + 32, cy + my, cx + mx, cy + my + 32, cx + mx + 32, cy + my + 32);
+		setRGB0((POLY_F4*)p, 127, pressed ? 0 : 127, pressed ? 0 : 127);
+		setXY4((POLY_F4*)p, cx + mx, cy + my, cx + mx + 32, cy + my, cx + mx, cy + my + 32, cx + mx + 32, cy + my + 32);
 		addPrim(OT, p);
-		p += sizeof(POLY_FT4);
+		p += sizeof(POLY_F4);
 	}
 
 	cx = 512 / 2;

@@ -27,6 +27,9 @@ void DEBUG_SetViewVram();
 void DEBUG_ReloadCurrentLevel();
 void DEBUG_LevelSelectNew();
 
+char pauseFormatString[20];
+char mainFormatString[20];
+
 struct debug_dispatch_t debug_dispatch_table[5] = { 
 	{ DEBUG_LINE_TYPE_BIT, handle_line_type_bit },
 	{ DEBUG_LINE_TYPE_LONG, handle_line_type_long },
@@ -35,7 +38,7 @@ struct debug_dispatch_t debug_dispatch_table[5] = {
 	{ DEBUG_LINE_TYPE_MENU, handle_line_type_menu }
 };
 
-char* the_format_string = mainMenu[0].text;
+char* the_format_string = &mainFormatString[0];
 int cem_x_base = 40; // offset 0x800d014c
 int cem_y_base = 20; // offset 0x800d0150
 int cem_cursor_width = 20; // offset 0x800d0154
@@ -77,8 +80,6 @@ struct DebugMenuLine fogMenu[8] = {
 };
 
 struct DebugMenuLine debugSoundMenu[1];
-
-char pauseFormatString[20];
 
 struct DebugMenuLine standardMenu[12] =
 {

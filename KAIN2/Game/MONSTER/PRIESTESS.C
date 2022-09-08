@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include "CORE.H"
 
-void __cdecl PRIESTS_Init(struct _Instance* instance)
+void PRIESTS_Init(struct _Instance* instance)
 {
 #if defined(PC_VERSION)
 	__int16* v1; // ebx
@@ -42,7 +42,7 @@ void __cdecl PRIESTS_Init(struct _Instance* instance)
 	UNIMPLEMENTED();
 #endif
 }
-void __cdecl PRIESTS_CleanUp(struct _Instance* instance)
+void  PRIESTS_CleanUp(struct _Instance* instance)
 {
 #if defined(PC_VERSION)
 	struct _MonsterVars* mv; // eax
@@ -61,7 +61,7 @@ void __cdecl PRIESTS_CleanUp(struct _Instance* instance)
 #endif
 }
 
-u_long __cdecl PRIESTS_Query(struct _Instance* instance, unsigned long data)
+u_long  PRIESTS_Query(struct _Instance* instance, unsigned long data)
 {
 #if defined(PC_VERSION)
 	char result; // al
@@ -80,7 +80,7 @@ u_long __cdecl PRIESTS_Query(struct _Instance* instance, unsigned long data)
 #endif
 }
 
-void __cdecl PRIESTS_Message(struct _Instance* instance, unsigned int message, unsigned int data)
+void  PRIESTS_Message(struct _Instance* instance, unsigned int message, unsigned int data)
 {
 #if defined(PC_VERSION)
 	struct _MonsterVars* mv; // edx
@@ -151,7 +151,7 @@ void __cdecl PRIESTS_Message(struct _Instance* instance, unsigned int message, u
 #endif
 }
 
-void __cdecl PRIESTS_IdleEntry(struct _Instance* instance)
+void  PRIESTS_IdleEntry(struct _Instance* instance)
 {
 #if defined(PC_VERSION)
 	struct _MonsterVars* mv; // esi
@@ -177,12 +177,12 @@ void __cdecl PRIESTS_IdleEntry(struct _Instance* instance)
 #endif
 }
 // TODO: fill me
-void __cdecl PRIESTS_Idle(struct _Instance* instance)
+void  PRIESTS_Idle(struct _Instance* instance)
 {
 	UNIMPLEMENTED();
 }
 
-void __cdecl PRIESTS_PursueEntry(struct _Instance* instance)
+void  PRIESTS_PursueEntry(struct _Instance* instance)
 {
 #if defined(PC_VERSION)
 	if ((((struct _MonsterVars*)instance->extraData)->mvFlags & 4) != 0)
@@ -192,7 +192,7 @@ void __cdecl PRIESTS_PursueEntry(struct _Instance* instance)
 #endif
 }
 
-void __cdecl PRIESTS_Pursue(struct _Instance* instance)
+void  PRIESTS_Pursue(struct _Instance* instance)
 {
 #if defined(PC_VERSION)
 	if ((((struct _MonsterVars*)instance->extraData)->mvFlags & 4) != 0)
@@ -209,7 +209,7 @@ void __cdecl PRIESTS_Pursue(struct _Instance* instance)
 #endif
 }
 
-void __cdecl PRIESTS_FleeEntry(struct _Instance* instance)
+void  PRIESTS_FleeEntry(struct _Instance* instance)
 {
 #if defined(PC_VERSION)
 	struct _MonsterVars* mv; // esi
@@ -231,7 +231,7 @@ void __cdecl PRIESTS_FleeEntry(struct _Instance* instance)
 #endif
 }
 
-void __cdecl PRIESTS_Flee(struct _Instance* instance)
+void  PRIESTS_Flee(struct _Instance* instance)
 {
 #if defined(PC_VERSION)
 	struct _MonsterVars* mv; // eax
@@ -304,7 +304,7 @@ void __cdecl PRIESTS_Flee(struct _Instance* instance)
 }
 
 // ------------------ unlinked code ------------------
-struct _Instance* __cdecl PRIESTS_InstanceToPossess(struct _Instance* instance)
+struct _Instance*  PRIESTS_InstanceToPossess(struct _Instance* instance)
 {
 #if defined(PC_VERSION)
 	struct _Instance* nextinst; // esi
@@ -335,7 +335,7 @@ struct _Instance* __cdecl PRIESTS_InstanceToPossess(struct _Instance* instance)
 #endif
 }
 
-void __cdecl PRIESTS_DoAttackAnim(_Instance* instance, int a2)
+void  PRIESTS_DoAttackAnim(_Instance* instance, int a2)
 {
 #if defined(PC_VERSION)
 	struct _MonsterAttributes* ma; // ecx

@@ -1,6 +1,9 @@
 #ifndef ANMCTRLR_H
 #define ANMCTRLR_H
 
+#include "gex2.h"
+#include "ANIMG2.H"
+
 extern void G2Anim_AttachControllerToSeg(struct _G2Anim_Type *anim, int segNumber, int type); // 0x80090318
 extern void G2Anim_DetachControllerFromSeg(struct _G2Anim_Type *anim, int segNumber, int type); // 0x80090350
 extern void G2Anim_EnableController(struct _G2Anim_Type *anim, int segNumber, int type); // 0x80090418
