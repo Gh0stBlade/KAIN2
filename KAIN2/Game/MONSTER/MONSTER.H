@@ -1,8 +1,6 @@
 #ifndef MONSTER_H
 #define MONSTER_H
 
-#include "MONLIB.H"
-
 enum MonsterAnim // Hashcode: 0x13BE1EAB (dec: 331226795)
 {
 	MONSTER_ANIM_HIT1 = 0,
@@ -54,7 +52,7 @@ enum MonsterAnim // Hashcode: 0x13BE1EAB (dec: 331226795)
 	MONSTER_NUM_ANIMS = 46,
 };
 
-enum MonsterState // Hashcode: 0xCAD17293 (dec: -892243309)
+typedef enum MonsterState
 {
 	MONSTER_STATE_BIRTH = 0,
 	MONSTER_STATE_PURSUE = 1,
@@ -88,7 +86,7 @@ enum MonsterState // Hashcode: 0xCAD17293 (dec: -892243309)
 	MONSTER_STATE_TERRAINIMPALEDEATH = 29,
 	MONSTER_STATE_PETRIFIED = 30,
 	MONSTER_NUM_STATES = 31,
-};
+}MonsterState;
 
 typedef void (*TDRFuncPtr_MONSTER_ProcessClosestVerts2processVert_cb)();
 typedef void (*TDRFuncPtr_MONTABLE_GetCleanUpFunc)();

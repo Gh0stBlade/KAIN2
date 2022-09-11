@@ -34,9 +34,9 @@ extern void MON_TurnOffAllSpheres(struct _Instance *instance); // 0x8007F7F8
 
 extern void MON_TurnOnAllSpheres(struct _Instance *instance); // 0x8007F824
 
-extern void MON_SwitchState(struct _Instance *instance, enum MonsterState state); // 0x8007F850
+extern void MON_SwitchState(struct _Instance *instance, MonsterState state); // 0x8007F850
 
-extern void MON_SwitchStateDoEntry(struct _Instance *instance, enum MonsterState state); // 0x8007F94C
+extern void MON_SwitchStateDoEntry(struct _Instance *instance, MonsterState state); // 0x8007F94C
 
 extern int MON_TransNodeAnimation(struct _Instance *instance); // 0x8007F9B4
 
