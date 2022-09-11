@@ -11,7 +11,7 @@ Emulator/Shaders/D3D9/*.h
 Emulator/Shaders/D3D11/*.h
 Emulator/Shaders/D3D12/*.h
 Emulator/Shaders/Vulkan/*.h
+Emulator/Shaders/GXM/*.gxp
+Emulator/Shaders/GXM/*.gxp.obj
+Emulator/Shaders/GXM/*.sdb
 /Binaries/*
-*.gxp.obj
-*.gxp
-*.sdb

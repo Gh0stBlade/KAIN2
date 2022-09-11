@@ -14,7 +14,11 @@ enum language_t localstr_get_language()
 }
 
 #if defined(PSXPC_VERSION) && defined(NO_CD)
-	#define LOCALS_TBL "LOCALS.TBL"
+	#if defined(SN_TARGET_PSP2)
+		#define LOCALS_TBL "ux0:app\\TEST12345\\LOCALS.TBL"
+	#else
+		#define LOCALS_TBL "LOCALS.TBL"
+	#endif
 #else
 	#define LOCALS_TBL "\\LOCALS.TBL;1"
 #endif

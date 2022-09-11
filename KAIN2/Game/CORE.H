@@ -13,7 +13,7 @@
 
 #elif defined(PSX_VERSION) && !defined(PSXPC_VERSION)
 
-#include <SYS/TYPES.H>
+#include <SYSTEM/TYPES.H>
 #include <LIBAPI.H>
 #include <LIBETC.H>
 #include <LIBGTE.H>
@@ -48,11 +48,11 @@ typedef RECT PSX_RECT;
 
 #include <LIBAPI.H>
 #include <LIBETC.H>
+#include <LIBGPU.H>
 #include <LIBGTE.H>
 #include <LIBSPU.H>
 #include <LIBCD.H>
 #include <LIBPAD.H>
-#include <LIBGPU.H>
 #include <LIBSN.H>
 #include <LIBMCRD.H>
 #include <LIBPRESS.H>

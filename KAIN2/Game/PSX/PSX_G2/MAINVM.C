@@ -13,6 +13,8 @@
 
 struct _G2AppDataVM_Type _appDataVM;
 
+EMULATOR_THREAD_DEF
+
 #if defined(PSXPC_VERSION) && !defined(UWP) || defined(UWP_SDL2) && !defined(__EMSCRIPTEN__)
 int main(int argc, char *argv[])
 #elif defined(UWP)
