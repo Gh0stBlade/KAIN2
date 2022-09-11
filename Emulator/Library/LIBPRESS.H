@@ -2,7 +2,7 @@
 #ifndef _LIBPRESS_H_
 #define _LIBPRESS_H_
 
-#include "TYPES.H"
+#include "SYSTEM/TYPES.H"
 
 /*
  *  (C) Copyright 1995 Sony Corporation,Tokyo,Japan. All Rights Reserved

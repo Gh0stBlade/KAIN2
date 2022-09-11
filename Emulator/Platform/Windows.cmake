@@ -11,13 +11,6 @@ list(APPEND CMAKE_LIBRARY_PATH ${EXTERN_LIB_PATH}/glew-2.2.0/lib/Release/Win32)
 
 #Find libs
 find_package(SDL2 REQUIRED)
-set(SDL2_MIXER_PATH ${EXTERN_LIB_PATH}/SDL2_mixer)
-find_package(SDL2_mixer REQUIRED)
-set(SOX_PATH ${EXTERN_LIB_PATH}/soxr-master)
-set(SOX_LIBRARY ${SOX_PATH}/Build/src/Release/soxr.lib)
-include_directories(${SOX_PATH}/src)
-include_directories(${SDL2_MIXER_INCLUDE_DIR})
-include_directories(${OPENAL_INCLUDE_DIR})
 find_package(OpenAL REQUIRED)
 include_directories(${OPENAL_INCLUDE_DIR})
 if(USE_VULKAN)

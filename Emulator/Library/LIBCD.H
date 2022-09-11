@@ -1,7 +1,7 @@
 #ifndef LIBCD_H
 #define LIBCD_H
 
-#include "TYPES.H"
+#include "SYSTEM/TYPES.H"
 
 
 #define DECODE_BCD(x) (((x) >> 4) * 10 + ((x) & 0xF))

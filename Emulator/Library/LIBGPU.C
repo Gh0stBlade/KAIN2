@@ -409,6 +409,8 @@ void DrawOTag(u_long* p)
 {
 	VSync(0);
 
+	printf("DRAWOTAG!\n");
+
 	if (Emulator_BeginScene())
 	{
 		Emulator_ClearVBO();

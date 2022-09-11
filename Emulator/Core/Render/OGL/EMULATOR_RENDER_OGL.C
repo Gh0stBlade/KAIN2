@@ -628,7 +628,7 @@ void Emulator_UpdateVRAM()
 	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, VRAM_WIDTH, VRAM_HEIGHT, VRAM_FORMAT, GL_UNSIGNED_BYTE, vram);
 }
 
-void Emulator_SetWireframe(bool enable)
+void Emulator_SetWireframe(int enable)
 {
 	glPolygonMode(GL_FRONT_AND_BACK, enable ? GL_LINE : GL_FILL);
 }
@@ -692,8 +692,8 @@ void Emulator_UpdateVertexBuffer(const Vertex* vertices, int num_vertices)
 
 void Emulator_SetViewPort(int x, int y, int width, int height)
 {
-	float offset_x = (float)activeDispEnv.screen.x;
-	float offset_y = (float)activeDispEnv.screen.y;
+	short offset_x = activeDispEnv.screen.x;
+	short offset_y = activeDispEnv.screen.y;
 
 	glViewport(x + offset_x, y + -offset_y, width, height);
 }

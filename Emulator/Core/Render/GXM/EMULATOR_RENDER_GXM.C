@@ -1,10 +1,38 @@
-#include "LIBGPU.H"
-#include "EMULATOR_RENDER_GXM.H"
-#include "Core/Debug/EMULATOR_LOG.H"
-#include "Core/Render/EMULATOR_RENDER_COMMON.H"
-#include <stdio.h>
+#include "Core/Setup/Platform/EMULATOR_PLATFORM_SETUP.H"
+#include "Core/Setup/Platform/EMULATOR_PLATFORM_INCLUDES.H"
 
 #if defined(GXM)
+
+#include <stdio.h>
+#include <kernel.h>
+#include <kernel/threadmgr.h>
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
+#include <scetypes.h>
+#include <sceconst.h>
+#include <kernel.h>
+#include <display.h>
+#include <ctrl.h>
+
+SceGxmContext* g_context = NULL;
+SceGxmShaderPatcher* g_shaderPatcher;
+SceUID g_patcherBufUid;
+SceUID g_patcherCombinedUsseUid;
+
+#define	DISPLAY_WIDTH			960
+#define	DISPLAY_HEIGHT			544
+#define	DISPLAY_STRIDE			1024
+
+#define	DISPLAY_BUFFER_COUNT	3
+#define	DISPLAY_PENDING_SWAPS	2
+#define	DISPLAY_BUFFER_SIZE		((4 * DISPLAY_STRIDE * DISPLAY_HEIGHT + 0xfffffU) & ~0xfffffU)
+#define	DISPLAY_ALIGN_WIDTH		((DISPLAY_WIDTH  + SCE_GXM_TILE_SIZEX - 1) & ~(SCE_GXM_TILE_SIZEX - 1))
+#define	DISPLAY_ALIGN_HEIGHT	((DISPLAY_HEIGHT + SCE_GXM_TILE_SIZEY - 1) & ~(SCE_GXM_TILE_SIZEY - 1))
+
+#define	PATCHER_BUFFER_SIZE			(64*1024)
+#define	PATCHER_COMBINED_USSE_SIZE	(64*1024)
+#define SAMPLE_NAME SHORT_GAME_NAME
 
 extern void Emulator_DoPollEvent();
 extern void Emulator_WaitForTimestep(int count);
@@ -19,219 +47,157 @@ const char* renderBackendName = "OpenGL 3.3";
 unsigned int dynamic_vertex_buffer;
 unsigned int dynamic_vertex_array;
 
+void* g_contextHost;
+
+SceUID g_vdmRingBufUid;
+SceUID g_vertexRingBufUid;
+SceUID g_fragmentRingBufUid;
+SceUID g_fragmentUsseRingBufUid;
+SceUInt32 ringbufFragmentUsseOffset;
+
+void* vramTextureBuff = NULL;
+void* whiteTextureBuff = NULL;
+void* rg8lutTextureBuff = NULL;
+
+SceGxmTexture vramTextureCtl;
+SceGxmTexture whiteTextureCtl;
+SceGxmTexture rg8lutTextureCtl;
+
 unsigned int u_Projection;
 
-#define GTE_DISCARD\
-	"		if (color_rg.x + color_rg.y == 0.0) { discard; }\n"
-
-#define GTE_DECODE_RG\
-	"		fragColor = texture2D(s_lut, color_rg);\n"
-
-#define GTE_FETCH_DITHER_FUNC\
-	"		mat4 dither = mat4(\n"\
-	"			-4.0,  +0.0,  -3.0,  +1.0,\n"\
-	"			+2.0,  -2.0,  +3.0,  -1.0,\n"\
-	"			-3.0,  +1.0,  -4.0,  +0.0,\n"\
-	"			+3.0,  -1.0,  +2.0,  -2.0) / 255.0;\n"\
-	"		vec3 DITHER(const ivec2 dc) { \n"\
-	"		for (int i = 0; i < 4; i++) {"\
-	"			for (int j = 0; j < 4; j++) {"\
-	"			if(i == dc.x && j == dc.y) {"\
-	"				return vec3(dither[i][j] * v_texcoord.w); }\n"\
-	"				}"\
-	"			}"\
-	"		}"
-
-#define GTE_DITHERING\
-	"		fragColor *= v_color;\n"\
-	"		ivec2 dc = ivec2(fract(gl_FragCoord.xy / 4.0) * 4.0);\n"\
-	"		fragColor.xyz += DITHER(dc);\n"
-
-#define GTE_FETCH_VRAM_FUNC\
-		"	uniform sampler2D s_texture;\n"\
-		"	uniform sampler2D s_lut;\n"\
-		"	vec2 VRAM(vec2 uv) { return texture2D(s_texture, uv).rg; }\n"
-
-#if defined(PGXP)
-#define GTE_PERSPECTIVE_CORRECTION \
-		"		gl_Position.z = a_z;\n" \
-		"		gl_Position *= a_w;\n"
-#else
-#define GTE_PERSPECTIVE_CORRECTION
-#endif
-
-const char* gte_shader_4 =
-"varying vec4 v_texcoord;\n"
-"varying vec4 v_color;\n"
-"varying vec4 v_page_clut;\n"
-"#ifdef VERTEX\n"
-"	attribute vec4 a_position;\n"
-"	attribute vec4 a_texcoord; // uv, color multiplier, dither\n"
-"	attribute vec4 a_color;\n"
-"	attribute float a_z;\n"
-"	attribute float a_w;\n"
-"	uniform mat4 Projection;\n"
-"	void main() {\n"
-"		v_texcoord = a_texcoord;\n"
-"		v_color = a_color;\n"
-"		v_color.xyz *= a_texcoord.z;\n"
-"		v_page_clut.x = fract(a_position.z / 16.0) * 1024.0;\n"
-"		v_page_clut.y = floor(a_position.z / 16.0) * 256.0;\n"
-"		v_page_clut.z = fract(a_position.w / 64.0);\n"
-"		v_page_clut.w = floor(a_position.w / 64.0) / 512.0;\n"
-"		gl_Position = Projection * vec4(a_position.xy, 0.0, 1.0);\n"
-GTE_PERSPECTIVE_CORRECTION
-"	}\n"
-"#else\n"
-GTE_FETCH_DITHER_FUNC
-GTE_FETCH_VRAM_FUNC
-"	void main() {\n"
-"		vec2 uv = (v_texcoord.xy * vec2(0.25, 1.0) + v_page_clut.xy) * vec2(1.0 / 1024.0, 1.0 / 512.0);\n"
-"		vec2 comp = VRAM(uv);\n"
-"		int index = int(fract(v_texcoord.x / 4.0 + 0.0001) * 4.0);\n"
-"\n"
-"		float v = 0.0;\n"
-"		if(index / 2 == 0) { \n"
-"			v = comp[0] * (255.0 / 16.0);\n"
-"		} else {	\n"
-"			v = comp[1] * (255.0 / 16.0);\n"
-"		}\n"
-"		float f = floor(v);\n"
-"\n"
-"		vec2 c = vec2( (v - f) * 16.0, f );\n"
-"\n"
-"		vec2 clut_pos = v_page_clut.zw;\n"
-"		clut_pos.x += mix(c[0], c[1], fract(float(index) / 2.0) * 2.0) / 1024.0;\n"
-"		vec2 color_rg = VRAM(clut_pos);\n"
-GTE_DISCARD
-GTE_DECODE_RG
-GTE_DITHERING
-"	}\n"
-"#endif\n";
-
-const char* gte_shader_8 =
-"varying vec4 v_texcoord;\n"
-"varying vec4 v_color;\n"
-"varying vec4 v_page_clut;\n"
-"#ifdef VERTEX\n"
-"	attribute vec4 a_position;\n"
-"	attribute vec4 a_texcoord; // uv, color multiplier, dither\n"
-"	attribute vec4 a_color;\n"
-"	attribute float a_z;\n"
-"	attribute float a_w;\n"
-"	uniform mat4 Projection;\n"
-"	void main() {\n"
-"		v_texcoord = a_texcoord;\n"
-"		v_color = a_color;\n"
-"		v_color.xyz *= a_texcoord.z;\n"
-"		v_page_clut.x = fract(a_position.z / 16.0) * 1024.0;\n"
-"		v_page_clut.y = floor(a_position.z / 16.0) * 256.0;\n"
-"		v_page_clut.z = fract(a_position.w / 64.0);\n"
-"		v_page_clut.w = floor(a_position.w / 64.0) / 512.0;\n"
-"		gl_Position = Projection * vec4(a_position.xy, 0.0, 1.0);\n"
-GTE_PERSPECTIVE_CORRECTION
-"	}\n"
-"#else\n"
-GTE_FETCH_VRAM_FUNC
-GTE_FETCH_DITHER_FUNC
-"	void main() {\n"
-"		vec2 uv = (v_texcoord.xy * vec2(0.5, 1.0) + v_page_clut.xy) * vec2(1.0 / 1024.0, 1.0 / 512.0);\n"
-"		vec2 comp = VRAM(uv);\n"
-"\n"
-"		vec2 clut_pos = v_page_clut.zw;\n"
-"		int index = int(mod(v_texcoord.x, 2.0));\n"
-"		if(index == 0) { \n"
-"			clut_pos.x += comp[0] * 255.0 / 1024.0;\n"
-"		} else {	\n"
-"			clut_pos.x += comp[1] * 255.0 / 1024.0;\n"
-"		}\n"
-"		vec2 color_rg = VRAM(clut_pos);\n"
-GTE_DISCARD
-GTE_DECODE_RG
-GTE_DITHERING
-"	}\n"
-"#endif\n";
-
-const char* gte_shader_16 =
-"varying vec4 v_texcoord;\n"
-"varying vec4 v_color;\n"
-"#ifdef VERTEX\n"
-"	attribute vec4 a_position;\n"
-"	attribute vec4 a_texcoord; // uv, color multiplier, dither\n"
-"	attribute vec4 a_color;\n"
-"	attribute float a_z;\n"
-"	attribute float a_w;\n"
-"	uniform mat4 Projection;\n"
-"	void main() {\n"
-"		vec2 page\n;"
-"		page.x = fract(a_position.z / 16.0) * 1024.0\n;"
-"		page.y = floor(a_position.z / 16.0) * 256.0;\n;"
-"		v_texcoord = a_texcoord;\n"
-"		v_texcoord.xy += page;\n"
-"		v_texcoord.xy *= vec2(1.0 / 1024.0, 1.0 / 512.0);\n"
-"		v_color = a_color;\n"
-"		v_color.xyz *= a_texcoord.z;\n"
-"		gl_Position = Projection * vec4(a_position.xy, 0.0, 1.0);\n"
-GTE_PERSPECTIVE_CORRECTION
-"	}\n"
-"#else\n"
-GTE_FETCH_VRAM_FUNC
-GTE_FETCH_DITHER_FUNC
-"	void main() {\n"
-"		vec2 color_rg = VRAM(v_texcoord.xy);\n"
-GTE_DISCARD
-GTE_DECODE_RG
-GTE_DITHERING
-"	}\n"
-"#endif\n";
-
-const char* blit_shader =
-"varying vec4 v_texcoord;\n"
-"#ifdef VERTEX\n"
-"	attribute vec4 a_position;\n"
-"	attribute vec4 a_texcoord;\n"
-"	void main() {\n"
-"		v_texcoord = a_texcoord * vec4(8.0 / 1024.0, 8.0 / 512.0, 0.0, 0.0);\n"
-"		gl_Position = vec4(a_position.xy, 0.0, 1.0);\n"
-"	}\n"
-"#else\n"
-GTE_FETCH_VRAM_FUNC
-"	void main() {\n"
-"		vec2 color_rg = VRAM(v_texcoord.xy);\n"
-GTE_DECODE_RG
-"	}\n"
-"#endif\n";
-
-void Shader_CheckShaderStatus(unsigned int shader)
+void* Emulator_GAlloc(SceKernelMemBlockType type, SceUInt32 size, SceUInt32 alignment, SceUInt32 attribs, SceInt32* uid)
 {
-	char info[1024];
+	void* mem = NULL;
+	int res;
+
+	if (type == SCE_KERNEL_MEMBLOCK_TYPE_USER_CDRAM_RWDATA)
+	{
+		if (alignment > 0x40000)
+		{
+			return NULL;
+		}
+
+		size = (size + 0x3FFFFU) & ~0x3FFFFU;
+	}
+	else 
+	{
+		if (alignment > 0x1000)
+		{
+			return NULL;
+		}
+
+		size = (size + 0xFFFU) & ~0xFFFU;
+	}
+
+	res = sceKernelAllocMemBlock(SAMPLE_NAME, type, size, NULL);
+	if (res < SCE_OK)
+	{
+		return NULL;
+	}
+
+	*uid = res;
+
+	res = sceKernelGetMemBlockBase(*uid, &mem);
+	if (res != SCE_OK)
+	{
+		return NULL;
+	}
+
+	res = sceGxmMapMemory(mem, size, attribs);
+	if (res != SCE_OK)
+	{
+		return NULL;
+	}
+
+	return mem;
 }
 
-void Shader_CheckProgramStatus(unsigned int program)
+void* Emulator_USSE_Alloc(uint32_t size, SceUID* uid, uint32_t* usseOffset)
 {
-	char info[1024];
-	
+	void* mem = NULL;
+	int	res;
+
+	size = (size + 0xFFFU) & ~0xFFFU;
+
+	res = sceKernelAllocMemBlock(SAMPLE_NAME, SCE_KERNEL_MEMBLOCK_TYPE_USER_RWDATA_UNCACHE, size, NULL);
+
+	if (res < SCE_OK)
+	{
+		return NULL;
+	}
+
+	*uid = res;
+
+	res = sceKernelGetMemBlockBase(*uid, &mem);
+
+	if (res != SCE_OK)
+	{	
+		return NULL;
+	}
+
+	res = sceGxmMapFragmentUsseMemory(mem, size, usseOffset);
+	if (res != SCE_OK)
+	{
+		return NULL;
+	}
+
+	return mem;
 }
 
-ShaderID Shader_Compile(const char* source)
+
+void* Emulator_Combined_USSE_Alloc(uint32_t size, SceUID* uid, uint32_t* vertexUsseOffset, uint32_t* fragmentUsseOffset)
 {
-	const char* GLSL_HEADER_VERT =
-		"#version 330\n"
-		"#define VERTEX\n"
-		"#define varying   out\n"
-		"#define attribute in\n"
-		"#define texture2D texture\n";
+	void* mem = NULL;
+	int	res;
 
-	const char* GLSL_HEADER_FRAG =
-		"#version 330\n"
-		"#define varying     in\n"
-		"#define texture2D   texture\n"
-		"out vec4 fragColor;\n";
+	size = (size + 0xFFFU) & ~0xFFFU;
 
-	const char* vs_list[] = { GLSL_HEADER_VERT, source };
-	const char* fs_list[] = { GLSL_HEADER_FRAG, source };
+	res = sceKernelAllocMemBlock(SAMPLE_NAME, SCE_KERNEL_MEMBLOCK_TYPE_USER_RWDATA_UNCACHE, size, NULL);
+	if (res < SCE_OK)
+	{
+		return NULL;
+	}
 
-	return 0;
+	*uid = res;
+
+	res = sceKernelGetMemBlockBase(*uid, &mem);
+	if (res != SCE_OK)
+	{
+		return NULL;
+	}
+
+	res = sceGxmMapVertexUsseMemory(mem, size, vertexUsseOffset);
+	if (res != SCE_OK)
+	{	
+		return NULL;
+	}
+	res = sceGxmMapFragmentUsseMemory(mem, size, fragmentUsseOffset);
+	if (res != SCE_OK)
+	{
+		return NULL;
+	}
+
+	return mem;
+}
+
+void* Emulator_PatcherHostAlloc(void* data, uint32_t size)
+{
+	return malloc(size);
+}
+
+void Emulator_PatcherHostFree(void* data, void* mem)
+{
+	free(mem);
+}
+
+ShaderID Shader_Compile_Internal(const SceGxmProgram source_vs, const SceGxmProgram source_fs)
+{
+	ShaderID shader;
+ 
+	sceGxmShaderPatcherRegisterProgram(g_shaderPatcher, &source_vs, &shader.VSID);
+	sceGxmShaderPatcherRegisterProgram(g_shaderPatcher, &source_fs, &shader.FSID);
+
+	return shader;
 }
 
 void Emulator_DestroyVertexBuffer()
@@ -272,16 +238,85 @@ void Emulator_DestroyTextures()
 
 void Emulator_DestroyGlobalShaders()
 {
-	
+	//g_gte_shader_4 = 0;
+	//g_gte_shader_8 = 0;
+	//g_gte_shader_16 = 0;
+	//g_blit_shader = 0;
+}
 
-	g_gte_shader_4 = 0;
-	g_gte_shader_8 = 0;
-	g_gte_shader_16 = 0;
-	g_blit_shader = 0;
+void Emulator_DisplayCallback(const void *data)
+{
+
 }
 
 int Emulator_InitialiseGXMContext(char* windowName)
 {
+	SceGxmInitializeParams initParam;
+	memset(&initParam, 0, sizeof(SceGxmInitializeParams));
+	initParam.flags = 0;
+	initParam.displayQueueMaxPendingCount = DISPLAY_PENDING_SWAPS;
+	initParam.displayQueueCallback = Emulator_DisplayCallback;
+	initParam.displayQueueCallbackDataSize = sizeof(Display);
+	initParam.parameterBufferSize = SCE_GXM_DEFAULT_PARAMETER_BUFFER_SIZE;
+	sceGxmInitialize(&initParam);
+
+	g_contextHost = malloc(SCE_GXM_MINIMUM_CONTEXT_HOST_MEM_SIZE);
+
+	void* ringbufVdm = NULL;
+	void* ringbufVertex = NULL;
+	void* ringbufFragment = NULL;
+	void* ringbufFragmentUsse = NULL;
+
+	ringbufVdm = Emulator_GAlloc(SCE_KERNEL_MEMBLOCK_TYPE_USER_RWDATA_UNCACHE, SCE_GXM_DEFAULT_VDM_RING_BUFFER_SIZE, 4, SCE_GXM_MEMORY_ATTRIB_READ, &g_vdmRingBufUid);
+	ringbufVertex = Emulator_GAlloc(SCE_KERNEL_MEMBLOCK_TYPE_USER_RWDATA_UNCACHE, SCE_GXM_DEFAULT_VERTEX_RING_BUFFER_SIZE, 4, SCE_GXM_MEMORY_ATTRIB_READ, &g_vertexRingBufUid);
+	ringbufFragment = Emulator_GAlloc(SCE_KERNEL_MEMBLOCK_TYPE_USER_RWDATA_UNCACHE, SCE_GXM_DEFAULT_FRAGMENT_RING_BUFFER_SIZE, 4, SCE_GXM_MEMORY_ATTRIB_READ, &g_fragmentRingBufUid);
+	ringbufFragmentUsse = Emulator_USSE_Alloc(SCE_GXM_DEFAULT_FRAGMENT_USSE_RING_BUFFER_SIZE, &g_fragmentUsseRingBufUid, &ringbufFragmentUsseOffset);
+
+	SceGxmContextParams ctxParam;
+	memset(&ctxParam, 0, sizeof(SceGxmContextParams));
+	ctxParam.hostMem                       = g_contextHost;
+	ctxParam.hostMemSize                   = SCE_GXM_MINIMUM_CONTEXT_HOST_MEM_SIZE;
+	ctxParam.vdmRingBufferMem              = ringbufVdm;
+	ctxParam.vdmRingBufferMemSize          = SCE_GXM_DEFAULT_VDM_RING_BUFFER_SIZE;
+	ctxParam.vertexRingBufferMem           = ringbufVertex;
+	ctxParam.vertexRingBufferMemSize       = SCE_GXM_DEFAULT_VERTEX_RING_BUFFER_SIZE;
+	ctxParam.fragmentRingBufferMem         = ringbufFragment;
+	ctxParam.fragmentRingBufferMemSize     = SCE_GXM_DEFAULT_FRAGMENT_RING_BUFFER_SIZE;
+	ctxParam.fragmentUsseRingBufferMem     = ringbufFragmentUsse;
+	ctxParam.fragmentUsseRingBufferMemSize = SCE_GXM_DEFAULT_FRAGMENT_USSE_RING_BUFFER_SIZE;
+	ctxParam.fragmentUsseRingBufferOffset  = ringbufFragmentUsseOffset;
+
+	sceGxmCreateContext(&ctxParam, &g_context);
+
+		void* patcherBuf = NULL;
+	patcherBuf = Emulator_GAlloc(SCE_KERNEL_MEMBLOCK_TYPE_USER_RWDATA_UNCACHE, PATCHER_BUFFER_SIZE, 4, SCE_GXM_MEMORY_ATTRIB_READ | SCE_GXM_MEMORY_ATTRIB_WRITE, &g_patcherBufUid);
+
+	void* patcherCombinedUsse = NULL;
+	SceUInt32 patcherVertexUsseOffset;
+	SceUInt32 patcherFragmentUsseOffset;
+	patcherCombinedUsse = Emulator_Combined_USSE_Alloc(PATCHER_COMBINED_USSE_SIZE, &g_patcherCombinedUsseUid, &patcherVertexUsseOffset, &patcherFragmentUsseOffset);
+
+	SceGxmShaderPatcherParams ptchParam;
+	memset(&ptchParam, 0, sizeof(SceGxmShaderPatcherParams));
+	ptchParam.userData                  = NULL;
+	ptchParam.hostAllocCallback         = &Emulator_PatcherHostAlloc;
+	ptchParam.hostFreeCallback          = &Emulator_PatcherHostFree;
+	ptchParam.bufferAllocCallback       = NULL;
+	ptchParam.bufferFreeCallback        = NULL;
+	ptchParam.bufferMem                 = patcherBuf;
+	ptchParam.bufferMemSize             = PATCHER_BUFFER_SIZE;
+	ptchParam.vertexUsseAllocCallback   = NULL;
+	ptchParam.vertexUsseFreeCallback    = NULL;
+	ptchParam.vertexUsseMem             = patcherCombinedUsse;
+	ptchParam.vertexUsseMemSize         = PATCHER_COMBINED_USSE_SIZE;
+	ptchParam.vertexUsseOffset          = patcherVertexUsseOffset;
+	ptchParam.fragmentUsseAllocCallback = NULL;
+	ptchParam.fragmentUsseFreeCallback  = NULL;
+	ptchParam.fragmentUsseMem           = patcherCombinedUsse;
+	ptchParam.fragmentUsseMemSize       = PATCHER_COMBINED_USSE_SIZE;
+	ptchParam.fragmentUsseOffset        = patcherFragmentUsseOffset;
+
+	sceGxmShaderPatcherCreate(&ptchParam, &g_shaderPatcher);
 
 	return TRUE;
 }
@@ -300,7 +335,25 @@ void Emulator_GenerateCommonTextures()
 {
 	unsigned int pixelData = 0xFFFFFFFF;
 
+	whiteTextureBuff = Emulator_GAlloc(SCE_KERNEL_MEMBLOCK_TYPE_USER_CDRAM_RWDATA, 1 * 1 * sizeof(unsigned int), SCE_GXM_TEXTURE_ALIGNMENT, SCE_GXM_MEMORY_ATTRIB_READ, whiteTexture);
+	memcpy(whiteTextureBuff, &pixelData, 1 * 1 * sizeof(unsigned int));
+	sceGxmTextureInitLinear(&whiteTextureCtl, whiteTextureBuff, SCE_GXM_TEXTURE_FORMAT_A8R8G8B8, 1, 1, 1);
+	sceGxmTextureSetMinFilter(&whiteTextureCtl, SCE_GXM_TEXTURE_FILTER_LINEAR);
+	sceGxmTextureSetMagFilter(&whiteTextureCtl, SCE_GXM_TEXTURE_FILTER_LINEAR);
+	sceGxmTextureSetMipFilter(&whiteTextureCtl, SCE_GXM_TEXTURE_MIP_FILTER_DISABLED);
+
+	rg8lutTextureBuff = Emulator_GAlloc(SCE_KERNEL_MEMBLOCK_TYPE_USER_CDRAM_RWDATA, LUT_WIDTH * LUT_HEIGHT * sizeof(unsigned int), SCE_GXM_TEXTURE_ALIGNMENT, SCE_GXM_MEMORY_ATTRIB_READ, rg8lutTexture);
+	memcpy(rg8lutTextureBuff, Emulator_GenerateRG8LUT(), LUT_WIDTH * LUT_HEIGHT * sizeof(unsigned int));
+	sceGxmTextureInitLinear(&rg8lutTextureCtl, rg8lutTextureBuff, SCE_GXM_TEXTURE_FORMAT_A8R8G8B8, LUT_WIDTH, LUT_HEIGHT, 1);
+	sceGxmTextureSetMinFilter(&rg8lutTextureCtl, SCE_GXM_TEXTURE_FILTER_LINEAR);
+	sceGxmTextureSetMagFilter(&rg8lutTextureCtl, SCE_GXM_TEXTURE_FILTER_LINEAR);
+	sceGxmTextureSetMipFilter(&rg8lutTextureCtl, SCE_GXM_TEXTURE_MIP_FILTER_DISABLED);
 	
+	vramTextureBuff = Emulator_GAlloc(SCE_KERNEL_MEMBLOCK_TYPE_USER_CDRAM_RWDATA, VRAM_WIDTH * VRAM_HEIGHT * sizeof(unsigned int), SCE_GXM_TEXTURE_ALIGNMENT, SCE_GXM_MEMORY_ATTRIB_READ, rg8lutTexture);
+	sceGxmTextureInitLinear(&vramTextureCtl, vramTextureBuff, SCE_GXM_TEXTURE_FORMAT_A8L8, LUT_WIDTH, LUT_HEIGHT, 1);
+	sceGxmTextureSetMinFilter(&vramTextureCtl, SCE_GXM_TEXTURE_FILTER_LINEAR);
+	sceGxmTextureSetMagFilter(&vramTextureCtl, SCE_GXM_TEXTURE_FILTER_LINEAR);
+	sceGxmTextureSetMipFilter(&vramTextureCtl, SCE_GXM_TEXTURE_MIP_FILTER_DISABLED);
 }
 
 void Emulator_CreateVertexBuffer()///@TODO OGLES
@@ -311,10 +364,13 @@ void Emulator_CreateVertexBuffer()///@TODO OGLES
 int Emulator_CreateCommonResources()
 {
 	memset(vram, 0, VRAM_WIDTH * VRAM_HEIGHT * sizeof(unsigned short));
-	
+
 	Emulator_GenerateCommonTextures();
-	
+
 	Emulator_CreateGlobalShaders();
+
+	///glDisable(GL_DEPTH_TEST);
+	//glBlendColor(0.5f, 0.5f, 0.5f, 0.25f);
 
 	Emulator_CreateVertexBuffer();
 

@@ -35,7 +35,6 @@ TextureID vramTexture;
 TextureID whiteTexture;
 TextureID rg8lutTexture;
 
-
 typedef struct POLY_G3_SEMITRANS 
 {
 #if defined(USE_32_BIT_ADDR)

@@ -1,7 +1,7 @@
 #ifndef LIBGTE_H
 #define LIBGTE_H
 
-#include "TYPES.H"
+#include "SYSTEM/TYPES.H"
 
 #include "GTEREG.H"
 

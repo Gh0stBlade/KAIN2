@@ -366,7 +366,7 @@ void Emulator_UpdateVRAM()
 	vramTexture->UnlockRect(0);
 }
 
-void Emulator_SetWireframe(bool enable)
+void Emulator_SetWireframe(int enable)
 {
 	d3ddev->SetRenderState(D3DRS_FILLMODE, enable ? D3DFILL_WIREFRAME : D3DFILL_SOLID);
 }
@@ -440,8 +440,8 @@ void Emulator_UpdateVertexBuffer(const Vertex* vertices, int num_vertices)
 
 void Emulator_SetViewPort(int x, int y, int width, int height)
 {
-	float offset_x = (float)activeDispEnv.screen.x;
-	float offset_y = (float)activeDispEnv.screen.y;
+	short offset_x = activeDispEnv.screen.x;
+	short offset_y = activeDispEnv.screen.y;
 
 	D3DVIEWPORT9 viewport;
 	viewport.X = x + offset_x;

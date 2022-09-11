@@ -2529,6 +2529,11 @@ static int Emulator_InitialiseSDL2(char* windowName, int width, int height)
 		eprinterr("Failed to Initialise Vulkan Context!\n");
 		return FALSE;
 	}
+#elif defined(GXM)
+	if(Emulator_InitialiseGXMContext(windowName) == FALSE)
+	{
+		eprinterr("Failed to Initialise GXM Context!\n");
+	}
 #endif
 
 	return TRUE;

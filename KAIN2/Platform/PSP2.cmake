@@ -15,8 +15,8 @@ target_include_directories(${PROJECT_NAME} PRIVATE "$ENV{SCE_PSP2_SDK_DIR}/targe
 target_link_directories(${PROJECT_NAME} PUBLIC ${ROOT_DIR}/Build_PSP2/Emulator/$(Configuration))
 
 #set(CMAKE_STATIC_LIBRARY_SUFFIX ".self")
-set(CMAKE_C_STANDARD_LIBRARIES "libc_stub.a")
-set(CMAKE_CXX_STANDARD_LIBRARIES "libc_stub.a")
+set(CMAKE_C_STANDARD_LIBRARIES "libc_stub.a libSceGxm_stub.a")
+set(CMAKE_CXX_STANDARD_LIBRARIES "libc_stub.a libSceGxm_stub.a")
 
 set(PSX_LIB Valkyrie.lib)
 

@@ -1,10 +1,22 @@
-#ifdef D3D9
+#if defined (D3D9) || defined(GXM)
 	#define SV_TARGET COLOR0
+
+#if defined(D3D9)	
 	#define ARG_VPOS ,float2 coord : VPOS
+#elif defined(GXM)
+	#define ARG_VPOS ,float2 coord : WPOS
+#endif
 	#define FRAG_COORD coord.xy
 #else
 	#define FRAG_COORD In.v_position.xy
 	#define ARG_VPOS
+#endif
+
+
+#ifdef GXM
+#define Texture2D sampler2D
+#define uint4 int4
+#define uint int
 #endif
 
 struct VS_INPUT {
@@ -20,7 +32,7 @@ struct VS_INPUT {
 };
 
 struct VS_OUTPUT {
-#ifdef D3D9
+#if defined(D3D9) || defined(GXM)
 	float4 v_position  : POSITION;
 #else
 	float4 v_position  : SV_POSITION;
@@ -54,19 +66,25 @@ struct VS_OUTPUT {
 		return Out;
 	}
 #else
-#ifdef D3D9
+#if defined(D3D9)
 	SamplerState s_texture : register(s0);
 	SamplerState s_lut : register(s1);
+#elif defined(GXM)
+
 #else
-	SamplerState samplerState : register(s0);
-	SamplerState samplerStateLUT : register(s1);
 	Texture2D s_texture : register(t0);
 	Texture2D s_lut : register(t1);
+	SamplerState samplerState : register(s0);
+	SamplerState samplerStateLUT : register(s1);
 #endif
 
+#if defined(GXM)
+	float4 main(VS_OUTPUT In ARG_VPOS, uniform sampler2D s_texture : register(s0), uniform sampler2D s_lut : register(s1)) : SV_TARGET {
+#else
 	float4 main(VS_OUTPUT In ARG_VPOS) : SV_TARGET {
+#endif
 		float2 uv = (In.v_texcoord.xy * float2(0.25, 1.0) + In.v_page_clut.xy) * float2(1.0 / 1024.0, 1.0 / 512.0);
-#ifdef D3D9
+#if defined(D3D9) || defined(GXM)
 		float2 comp = tex2D(s_texture, uv).ra;
 #else
 		float2 comp = s_texture.Sample(samplerState, uv).rg;
@@ -80,7 +98,7 @@ struct VS_OUTPUT {
 
 		float2 clut_pos = In.v_page_clut.zw;
 		clut_pos.x += lerp(c[0], c[1], frac(float(index) / 2.0) * 2.0) / 1024.0;
-#ifdef D3D9
+#if defined(D3D9) || defined(GXM)
 		float2 clut_color = tex2D(s_texture, clut_pos).ra;
 #else
 		float2 clut_color = s_texture.Sample(samplerState, clut_pos).rg;
@@ -89,7 +107,7 @@ struct VS_OUTPUT {
 		{
 			discard;
 		}
-#ifdef D3D9
+#if defined(D3D9) || defined(GXM)
 		float4 color = tex2D(s_lut, clut_color);
 #else
 		float4 color = s_lut.Sample(samplerStateLUT, clut_color);

@@ -20,14 +20,6 @@ set(OPT_DEFINITIONS "")
 #Extract current source folder name.
 get_filename_component(PLATFORM_SPECIFIC_FOLDER_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)
 
-#Enable NTSC mode
-OPTIONAL_DEFINE(NTSC_VERSION "Enable/Disable NTSC Mode" ON)
-
-#Enable 32-bit address for tag
-OPTIONAL_DEFINE(USE_32_BIT_ADDR "Enable/Disable 32-bit address for tag" ON)
-
-#Setup platform specific / game code include folder
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 #Recursively locate the source files for SPEC_PSX.
 file(GLOB_RECURSE EMULATOR_SPECIFIC_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/*.C  ${CMAKE_CURRENT_SOURCE_DIR}/*.S ${CMAKE_CURRENT_SOURCE_DIR}/*.H ${CMAKE_CURRENT_SOURCE_DIR}/*.CUR ${CMAKE_CURRENT_SOURCE_DIR}/*.RC)
 
@@ -35,11 +27,8 @@ file(GLOB_RECURSE EMULATOR_SPECIFIC_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/*.C  ${CMAK
 list(FILTER EMULATOR_SPECIFIC_SRCS EXCLUDE REGEX "/Platform/Android/*")
 
 set(EMULATOR_PUBLIC_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Core/Public/ CACHE INTERNAL  "")
-set(EMULATOR_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/ CACHE INTERNAL "")
+set(EMULATOR_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR} CACHE INTERNAL "")
 set(EMULATOR_TARGET_NAME ${PROJECT_NAME} CACHE INTERNAL "")
-
-include_directories(${EMULATOR_PUBLIC_INCLUDE_DIR})
-include_directories(${EMULATOR_INCLUDE_DIR}/Core/)
 
 #Group solution source files to correct folders.
 #source_group(${PLATFORM_SPECIFIC_FOLDER_NAME} FILES ${EMULATOR_SPECIFIC_SRCS})
@@ -62,6 +51,18 @@ include("Platform/Android.cmake")
 include("Platform/WindowsStore.cmake")
 include("Platform/Durango.cmake")
 include("Platform/PSP2.cmake")
+
+include_directories(${EMULATOR_PUBLIC_INCLUDE_DIR})
+include_directories(${EMULATOR_INCLUDE_DIR}/Core/)
+include_directories(${EMULATOR_INCLUDE_DIR}/Library/)
+#Setup platform specific / game code include folder
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+
+#Enable NTSC mode
+OPTIONAL_DEFINE(NTSC_VERSION "Enable/Disable NTSC Mode" ON)
+
+#Enable 32-bit address for tag
+OPTIONAL_DEFINE(USE_32_BIT_ADDR "Enable/Disable 32-bit address for tag" ON)
 
 if (NOT ANDROID)
 BuildPreProcessorDefinitions()

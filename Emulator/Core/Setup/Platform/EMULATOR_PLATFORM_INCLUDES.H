@@ -101,6 +101,9 @@
 #error "Invalid XDK version"
 #endif
 #include "Core/Render/XED3D/EMULATOR_RENDER_XED3D.H"
+#elif defined(SN_TARGET_PSP2)
+#include <gxm.h>
+#include "Core/Render/GXM/EMULATOR_RENDER_GXM.H"
 #endif
 
 #include "Core/FileSystem/EMULATOR_FILESYSTEM_COMMON.H"

@@ -556,7 +556,7 @@ void Emulator_Ortho2D(float left, float right, float bottom, float top, float zn
 	//eprinterr("GL Error: %x\n", glGetError());
 }
 
-void Emulator_SetShader(const ShaderID& shader)
+void Emulator_SetShader(const ShaderID shader)
 {
 	glUseProgram(shader);
 

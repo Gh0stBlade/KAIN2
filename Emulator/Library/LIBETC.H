@@ -1,7 +1,7 @@
 #ifndef LIBETC_H
 #define LIBETC_H
 
-#include "TYPES.H"
+#include "SYSTEM/TYPES.H"
 
 #if defined(__ANDROID__)
 #ifdef __cplusplus

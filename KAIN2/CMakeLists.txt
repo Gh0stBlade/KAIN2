@@ -15,10 +15,6 @@ project (KAIN2_${TARGET_ARCH})
 
 #MARK_AS_ADVANCED(CMAKE_CXX_FLAGS_FINAL CMAKE_C_FLAGS_FINAL CMAKE_EXE_LINKER_FLAGS_FINAL CMAKE_SHARED_LINKER_FLAGS_FINAL)
 
-#Enable 32-bit address for tag
-OPTIONAL_DEFINE(USE_32_BIT_ADDR "Enable/Disable 32-bit address for tag" ON)
-OPTIONAL_DEFINE(NO_CD "Enable/Disable ISO mode for Emulator" ON)
-
 file(GLOB_RECURSE KAIN2_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/*.c ${CMAKE_CURRENT_SOURCE_DIR}/*.h ${CMAKE_CURRENT_SOURCE_DIR}/*.cur ${CMAKE_CURRENT_SOURCE_DIR}/*.rc)
 list(FILTER KAIN2_SRCS EXCLUDE REGEX "/PC/*")
 
@@ -33,6 +29,7 @@ endif()
 
 if(ANDROID)
 include_directories(${EMULATOR_INCLUDE_DIR}/Core/)
+include_directories(${EMULATOR_INCLUDE_DIR}/Library/)
 
 add_library(
 ${PROJECT_NAME}
@@ -67,6 +64,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/Game/)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${EMULATOR_PUBLIC_INCLUDE_DIR})
 include_directories(${EMULATOR_INCLUDE_DIR})
+include_directories(${EMULATOR_INCLUDE_DIR}/Library)
 
 #Include all platform specific cmake files.
 include("Platform/Windows.cmake")
@@ -77,6 +75,10 @@ include("Platform/Android.cmake")
 include("Platform/WindowsStore.cmake")
 include("Platform/Durango.cmake")
 include("Platform/PSP2.cmake")
+
+#Enable 32-bit address for tag
+OPTIONAL_DEFINE(USE_32_BIT_ADDR "Enable/Disable 32-bit address for tag" ON)
+OPTIONAL_DEFINE(NO_CD "Enable/Disable ISO mode for Emulator" ON)
 
 BuildPreProcessorDefinitions()
 

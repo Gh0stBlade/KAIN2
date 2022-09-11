@@ -1,10 +1,22 @@
-#ifdef D3D9
+#if defined (D3D9) || defined(GXM)
 	#define SV_TARGET COLOR0
+
+#if defined(D3D9)	
 	#define ARG_VPOS ,float2 coord : VPOS
+#elif defined(GXM)
+	#define ARG_VPOS ,float2 coord : WPOS
+#endif
 	#define FRAG_COORD coord.xy
 #else
 	#define FRAG_COORD In.v_position.xy
 	#define ARG_VPOS
+#endif
+
+
+#ifdef GXM
+#define Texture2D sampler2D
+#define uint4 int4
+#define uint int
 #endif
 
 struct VS_INPUT {
@@ -20,7 +32,7 @@ struct VS_INPUT {
 };
 
 struct VS_OUTPUT {
-#ifdef D3D9
+#if defined(D3D9) || defined(GXM)
 	float4 v_position  : POSITION;
 #else
 	float4 v_position  : SV_POSITION;
@@ -53,9 +65,11 @@ struct VS_OUTPUT {
 		return Out;
 	}
 #else
-#ifdef D3D9
+#if defined(D3D9)
 	SamplerState s_texture : register(s0);
 	SamplerState s_lut : register(s1);
+#elif defined(GXM)
+
 #else
 	SamplerState samplerState : register(s0);
 	SamplerState samplerStateLUT : register(s1);
@@ -63,8 +77,12 @@ struct VS_OUTPUT {
 	Texture2D s_lut : register(t1);
 #endif
 
+#if defined(GXM)
+	float4 main(VS_OUTPUT In ARG_VPOS, uniform sampler2D s_texture : register(s0), uniform sampler2D s_lut : register(s1)) : SV_TARGET {
+#else
 	float4 main(VS_OUTPUT In ARG_VPOS) : SV_TARGET {
-#ifdef D3D9
+#endif
+#if defined(D3D9) || defined(GXM)
 		float2 color_rg = tex2D(s_texture, In.v_texcoord.xy).ra;
 #else
 		float2 color_rg = s_texture.Sample(samplerState, In.v_texcoord.xy).rg;
@@ -74,7 +92,7 @@ struct VS_OUTPUT {
 			discard;
 		}
 		
-#ifdef D3D9
+#if defined(D3D9) || defined(GXM)
 		float4 color = tex2D(s_lut, color_rg);
 #else
 		float4 color = s_lut.Sample(samplerStateLUT, color_rg);

@@ -8,6 +8,18 @@
 
 #if defined(GXM)
 
+typedef struct 
+{
+	int test;
+	//SceGxmShaderPatcherId VSID;
+	//SceGxmShaderPatcherId FSID;
+}ShaderID;
+
+typedef struct 
+{
+	void* address;
+} Display;
+
 enum ShaderAttrib
 {
 	a_position,
@@ -19,12 +31,26 @@ enum ShaderAttrib
 #endif
 };
 
-typedef unsigned int TextureID;
-typedef unsigned int ShaderID;
+typedef SceUID TextureID;
+
 typedef unsigned int RenderTargetID;
 
-extern int Emulator_InitialiseGLContext(char* windowName);
-extern ShaderID Shader_Compile(const char* source);
+extern int Emulator_InitialiseGXMContext(char* windowName);
+extern ShaderID Shader_Compile_Internal(const SceGxmProgram source_vs, const SceGxmProgram source_fs);
+
+extern const SceGxmProgram	blit_shader_vs;
+extern const SceGxmProgram	blit_shader_fs;
+
+extern const SceGxmProgram	gte_shader_4_vs;
+extern const SceGxmProgram	gte_shader_4_fs;
+
+extern const SceGxmProgram	gte_shader_8_vs;
+extern const SceGxmProgram	gte_shader_8_fs;
+
+extern const SceGxmProgram	gte_shader_16_vs;
+extern const SceGxmProgram	gte_shader_16_fs;
+
+#define Shader_Compile(name) Shader_Compile_Internal((const SceGxmProgram*)name##_vs, (const SceGxmProgram*)name##_fs)
 
 #endif
 
