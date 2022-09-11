@@ -721,7 +721,7 @@ void Emulator_UpdateVRAM()
 	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, VRAM_WIDTH, VRAM_HEIGHT, VRAM_FORMAT, GL_UNSIGNED_BYTE, vram);
 }
 
-void Emulator_SetWireframe(bool enable)
+void Emulator_SetWireframe(int enable)
 {
 	
 }

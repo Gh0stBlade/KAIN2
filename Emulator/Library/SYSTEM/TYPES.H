@@ -1,5 +1,5 @@
-#ifndef	_SYS_TYPES_H
-#define	_SYS_TYPES_H
+#ifndef	__SYS_TYPES_H
+#define	__SYS_TYPES_H
 
 #if !defined(__APPLE__)
 /* major part of a device */
