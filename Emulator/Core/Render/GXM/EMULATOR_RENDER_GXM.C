@@ -4,19 +4,20 @@
 #include "Core/Render/EMULATOR_RENDER_COMMON.H"
 #include <stdio.h>
 
-#if defined(GXM)
+#if defined(SN_TARGET_PSP2)
 
-#include <stdio.h>
-#include <kernel.h>
-#include <kernel/threadmgr.h>
-#include <stdlib.h>
 #include <string.h>
-#include <math.h>
-#include <scetypes.h>
+#include <stdlib.h>
 #include <sceconst.h>
+#include <libdbg.h>
 #include <kernel.h>
 #include <display.h>
 #include <ctrl.h>
+#include <gxm.h>
+#include <math.h>
+#include <stdio.h>
+
+#include <gxm/program.h>
 
 SceGxmContext* g_context = NULL;
 SceGxmShaderPatcher* g_shaderPatcher;
@@ -35,7 +36,7 @@ SceUID g_patcherCombinedUsseUid;
 
 #define	PATCHER_BUFFER_SIZE			(64*1024)
 #define	PATCHER_COMBINED_USSE_SIZE	(64*1024)
-#define SAMPLE_NAME SHORT_GAME_NAME
+#define SAMPLE_NAME "KAIN2"//SHORT_GAME_NAME
 
 extern void Emulator_DoPollEvent();
 extern void Emulator_WaitForTimestep(int count);
@@ -45,7 +46,7 @@ extern void Emulator_DestroyTextures();
 extern void Emulator_DestroyGlobalShaders();
 extern void Emulator_CreateVertexBuffer();
 
-const char* renderBackendName = "OpenGL 3.3";
+const char* renderBackendName = "GXM";
 
 unsigned int dynamic_vertex_buffer;
 unsigned int dynamic_vertex_array;
@@ -68,7 +69,7 @@ SceGxmTexture rg8lutTextureCtl;
 
 unsigned int u_Projection;
 
-void* Emulator_GAlloc(SceKernelMemBlockType type, SceUInt32 size, SceUInt32 alignment, SceUInt32 attribs, SceInt32* uid)
+void* Emulator_GAlloc(SceKernelMemBlockType type, SceUInt32 size, SceUInt32 alignment, SceUInt32 attribs, SceUID* uid)
 {
 	void* mem = NULL;
 	int res;
@@ -193,12 +194,12 @@ void Emulator_PatcherHostFree(void* data, void* mem)
 	free(mem);
 }
 
-ShaderID Shader_Compile_Internal(const SceGxmProgram source_vs, const SceGxmProgram source_fs)
+ShaderID Shader_Compile_Internal(const SceGxmProgram* source_vs, const SceGxmProgram* source_fs)
 {
 	ShaderID shader;
  
-	sceGxmShaderPatcherRegisterProgram(g_shaderPatcher, &source_vs, &shader.VSID);
-	sceGxmShaderPatcherRegisterProgram(g_shaderPatcher, &source_fs, &shader.FSID);
+	sceGxmShaderPatcherRegisterProgram(g_shaderPatcher, source_vs, &shader.VSID);
+	sceGxmShaderPatcherRegisterProgram(g_shaderPatcher, source_fs, &shader.FSID);
 
 	return shader;
 }
@@ -338,21 +339,21 @@ void Emulator_GenerateCommonTextures()
 {
 	unsigned int pixelData = 0xFFFFFFFF;
 
-	whiteTextureBuff = Emulator_GAlloc(SCE_KERNEL_MEMBLOCK_TYPE_USER_CDRAM_RWDATA, 1 * 1 * sizeof(unsigned int), SCE_GXM_TEXTURE_ALIGNMENT, SCE_GXM_MEMORY_ATTRIB_READ, whiteTexture);
+	whiteTextureBuff = Emulator_GAlloc(SCE_KERNEL_MEMBLOCK_TYPE_USER_CDRAM_RWDATA, 1 * 1 * sizeof(unsigned int), SCE_GXM_TEXTURE_ALIGNMENT, SCE_GXM_MEMORY_ATTRIB_READ, &whiteTexture);
 	memcpy(whiteTextureBuff, &pixelData, 1 * 1 * sizeof(unsigned int));
 	sceGxmTextureInitLinear(&whiteTextureCtl, whiteTextureBuff, SCE_GXM_TEXTURE_FORMAT_A8R8G8B8, 1, 1, 1);
 	sceGxmTextureSetMinFilter(&whiteTextureCtl, SCE_GXM_TEXTURE_FILTER_LINEAR);
 	sceGxmTextureSetMagFilter(&whiteTextureCtl, SCE_GXM_TEXTURE_FILTER_LINEAR);
 	sceGxmTextureSetMipFilter(&whiteTextureCtl, SCE_GXM_TEXTURE_MIP_FILTER_DISABLED);
 
-	rg8lutTextureBuff = Emulator_GAlloc(SCE_KERNEL_MEMBLOCK_TYPE_USER_CDRAM_RWDATA, LUT_WIDTH * LUT_HEIGHT * sizeof(unsigned int), SCE_GXM_TEXTURE_ALIGNMENT, SCE_GXM_MEMORY_ATTRIB_READ, rg8lutTexture);
+	rg8lutTextureBuff = Emulator_GAlloc(SCE_KERNEL_MEMBLOCK_TYPE_USER_CDRAM_RWDATA, LUT_WIDTH * LUT_HEIGHT * sizeof(unsigned int), SCE_GXM_TEXTURE_ALIGNMENT, SCE_GXM_MEMORY_ATTRIB_READ, &rg8lutTexture);
 	memcpy(rg8lutTextureBuff, Emulator_GenerateRG8LUT(), LUT_WIDTH * LUT_HEIGHT * sizeof(unsigned int));
 	sceGxmTextureInitLinear(&rg8lutTextureCtl, rg8lutTextureBuff, SCE_GXM_TEXTURE_FORMAT_A8R8G8B8, LUT_WIDTH, LUT_HEIGHT, 1);
 	sceGxmTextureSetMinFilter(&rg8lutTextureCtl, SCE_GXM_TEXTURE_FILTER_LINEAR);
 	sceGxmTextureSetMagFilter(&rg8lutTextureCtl, SCE_GXM_TEXTURE_FILTER_LINEAR);
 	sceGxmTextureSetMipFilter(&rg8lutTextureCtl, SCE_GXM_TEXTURE_MIP_FILTER_DISABLED);
 	
-	vramTextureBuff = Emulator_GAlloc(SCE_KERNEL_MEMBLOCK_TYPE_USER_CDRAM_RWDATA, VRAM_WIDTH * VRAM_HEIGHT * sizeof(unsigned int), SCE_GXM_TEXTURE_ALIGNMENT, SCE_GXM_MEMORY_ATTRIB_READ, rg8lutTexture);
+	vramTextureBuff = Emulator_GAlloc(SCE_KERNEL_MEMBLOCK_TYPE_USER_CDRAM_RWDATA, VRAM_WIDTH * VRAM_HEIGHT * sizeof(unsigned int), SCE_GXM_TEXTURE_ALIGNMENT, SCE_GXM_MEMORY_ATTRIB_READ, &vramTexture);
 	sceGxmTextureInitLinear(&vramTextureCtl, vramTextureBuff, SCE_GXM_TEXTURE_FORMAT_A8L8, LUT_WIDTH, LUT_HEIGHT, 1);
 	sceGxmTextureSetMinFilter(&vramTextureCtl, SCE_GXM_TEXTURE_FILTER_LINEAR);
 	sceGxmTextureSetMagFilter(&vramTextureCtl, SCE_GXM_TEXTURE_FILTER_LINEAR);

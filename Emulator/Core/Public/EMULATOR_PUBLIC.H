@@ -53,6 +53,10 @@ extern void Emulator_HintTouchFontUIButton(short tpage, short clut, short* x, sh
 
 /* Used for PSP2 */
 #if defined(SN_TARGET_PSP2)
+
+#include <stdio.h>
+#include <kernel/threadmgr.h>
+
 #define EMULATOR_THREAD_DEF const char sce_user_main_thread_name[] = "basic_main_thr"; \
 							int	sce_user_main_thread_priority = SCE_KERNEL_DEFAULT_PRIORITY_USER; \
 							unsigned int sce_user_main_thread_stack_size = SCE_KERNEL_STACK_SIZE_DEFAULT_USER_MAIN;

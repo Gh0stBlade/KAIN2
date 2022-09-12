@@ -4,7 +4,7 @@
 #if defined(D3D9)	
 	#define ARG_VPOS ,float2 coord : VPOS
 #elif defined(GXM)
-	#define ARG_VPOS ,float2 coord : WPOS
+	#define ARG_VPOS ,float2 coord : WPOS///@FIXME VPOS!
 #endif
 	#define FRAG_COORD coord.xy
 #else

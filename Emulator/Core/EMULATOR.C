@@ -16,6 +16,7 @@
 #include <thread>
 #endif
 #include <assert.h>
+#include <stdlib.h>
 
 int g_useHintedTouchUIFont = FALSE;
 
@@ -2529,7 +2530,7 @@ static int Emulator_InitialiseSDL2(char* windowName, int width, int height)
 		eprinterr("Failed to Initialise Vulkan Context!\n");
 		return FALSE;
 	}
-#elif defined(GXM)
+#elif defined(SN_TARGET_PSP2)
 	if(Emulator_InitialiseGXMContext(windowName) == FALSE)
 	{
 		eprinterr("Failed to Initialise GXM Context!\n");
@@ -4737,7 +4738,7 @@ void Emulator_Ortho2D(float left, float right, float bottom, float top, float zn
 	float x = (left + right) / (left - right);
 	float y = (bottom + top) / (bottom - top);
 
-#if defined(OGL) || defined(OGLES) || defined(GXM) // -1..1
+#if defined(OGL) || defined(OGLES) || defined(SN_TARGET_PSP2) // -1..1
 	float z = (znear + zfar) / (znear - zfar);
 #elif defined(D3D9) || defined (XED3D) || defined(D3D11) || defined(D3D12) || defined(VULKAN)// 0..1
 	float z = znear / (znear - zfar);
@@ -5119,7 +5120,7 @@ void Emulator_StoreFrameBuffer(int x, int y, int w, int h)
 	int* data = NULL;
 	assert(FALSE);//Needs implementing for framebuffer write backs!
 	return;
-#elif defined(GXM)
+#elif defined(SN_TARGET_PSP2)
 	#define FLIP_Y (fy)
 	int* data = NULL;
 	assert(FALSE);//Needs implementing for framebuffer write backs!

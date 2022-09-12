@@ -4,6 +4,7 @@
 
 #include <assert.h>
 #include <string.h>
+#include <stdlib.h>
 
 //#define DEBUG_POLY_COUNT
 int vram_need_update;

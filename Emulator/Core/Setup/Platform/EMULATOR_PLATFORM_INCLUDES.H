@@ -103,6 +103,7 @@
 #include "Core/Render/XED3D/EMULATOR_RENDER_XED3D.H"
 #elif defined(SN_TARGET_PSP2)
 #include <gxm.h>
+#include <kernel.h>
 #include "Core/Render/GXM/EMULATOR_RENDER_GXM.H"
 #endif
 

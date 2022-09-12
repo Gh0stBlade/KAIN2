@@ -27,7 +27,7 @@ set(ROOT_DIR ${ROOT_DIR} "${CMAKE_CURRENT_SOURCE_DIR}")
 set(EXTERN_LIB_PATH ${EXTERN_LIB_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/External")
 
 #Extract target architecture (MSVC only)
-if (MSVC)
+if (MSVC OR DEFINED PLATFORM_PSP2)
 	if(${PLATFORM_DURANGO})
         set(TARGET_ARCH "Durango64")
 	elseif(${PLATFORM_PSP2})

@@ -1,19 +1,31 @@
 #ifndef EMULATOR_RENDER_GXM_H
 #define EMULATOR_RENDER_GXM_H
 
+
 #include "Core/Setup/Platform/EMULATOR_PLATFORM_SETUP.H"
 #include "Core/Setup/Platform/EMULATOR_PLATFORM_INCLUDES.H"
 
 #include <string.h>
 
-#if defined(GXM)
+#if defined(SN_TARGET_PSP2)
+
+#include <string.h>
+#include <stdlib.h>
+#include <sceconst.h>
+#include <libdbg.h>
+#include <kernel.h>
+#include <display.h>
+#include <ctrl.h>
+#include <gxm.h>
+#include <math.h>
+#include <stdio.h>
+#include <gxm.h>
 
 typedef struct 
 {
-	int test;
-	//SceGxmShaderPatcherId VSID;
-	//SceGxmShaderPatcherId FSID;
-}ShaderID;
+	SceGxmShaderPatcherId VSID;
+	SceGxmShaderPatcherId FSID;
+} ShaderID;
 
 typedef struct 
 {
@@ -36,19 +48,18 @@ typedef SceUID TextureID;
 typedef unsigned int RenderTargetID;
 
 extern int Emulator_InitialiseGXMContext(char* windowName);
-extern ShaderID Shader_Compile_Internal(const SceGxmProgram source_vs, const SceGxmProgram source_fs);
 
-extern const SceGxmProgram	blit_shader_vs;
-extern const SceGxmProgram	blit_shader_fs;
+extern const SceGxmProgram*	blit_shader_vs;
+extern const SceGxmProgram*	blit_shader_fs;
 
-extern const SceGxmProgram	gte_shader_4_vs;
-extern const SceGxmProgram	gte_shader_4_fs;
+extern const SceGxmProgram*	gte_shader_4_vs;
+extern const SceGxmProgram*	gte_shader_4_fs;
 
-extern const SceGxmProgram	gte_shader_8_vs;
-extern const SceGxmProgram	gte_shader_8_fs;
+extern const SceGxmProgram*	gte_shader_8_vs;
+extern const SceGxmProgram*	gte_shader_8_fs;
 
-extern const SceGxmProgram	gte_shader_16_vs;
-extern const SceGxmProgram	gte_shader_16_fs;
+extern const SceGxmProgram*	gte_shader_16_vs;
+extern const SceGxmProgram*	gte_shader_16_fs;
 
 #define Shader_Compile(name) Shader_Compile_Internal((const SceGxmProgram*)name##_vs, (const SceGxmProgram*)name##_fs)
 

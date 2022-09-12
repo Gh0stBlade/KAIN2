@@ -1,14 +1,13 @@
-#if defined (D3D9) || defined(GXM)
-	#define SV_TARGET COLOR0
-
-#if defined(D3D9)	
-	#define ARG_VPOS ,float2 coord : VPOS
-#elif defined(GXM)
-	#define ARG_VPOS ,float2 coord : WPOS
+#ifdef VERTEX
+	float2 coord : VPOS;
 #endif
+
+#if defined (D3D9)
+	#define SV_TARGET COLOR0
+	#define ARG_VPOS ,float2 coord : VPOS
 	#define FRAG_COORD coord.xy
 #else
-	#define FRAG_COORD In.v_position.xy
+	#define FRAG_COORD coord.xy
 	#define ARG_VPOS
 #endif
 
@@ -79,7 +78,8 @@ struct VS_OUTPUT {
 #endif
 
 #if defined(GXM)
-	float4 main(VS_OUTPUT In ARG_VPOS, uniform sampler2D s_texture : register(s0), uniform sampler2D s_lut : register(s1)) : SV_TARGET {
+	
+	float4 main(VS_OUTPUT In ARG_VPOS, uniform sampler2D s_texture : register(s0), uniform sampler2D s_lut : register(s1)) {
 #else
 	float4 main(VS_OUTPUT In ARG_VPOS) : SV_TARGET {
 #endif

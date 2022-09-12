@@ -1,4 +1,4 @@
-SET PATH=%PATH%;C:\Program Files (x86)\SCE\PSP2 SDKs\0.996\host_tools\build\bin
+SET PATH=%PATH%;C:\Program Files (x86)\SCE\PSP2 SDKs\1.600\host_tools\build\bin
 
 mkdir GXM
 
