@@ -75,6 +75,7 @@ include("Platform/Android.cmake")
 include("Platform/WindowsStore.cmake")
 include("Platform/Durango.cmake")
 include("Platform/PSP2.cmake")
+include("Platform/NX.cmake")
 
 #Enable 32-bit address for tag
 OPTIONAL_DEFINE(USE_32_BIT_ADDR "Enable/Disable 32-bit address for tag" ON)
@@ -120,6 +121,13 @@ if(WINDOWS_STORE)
 	set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "")
 	set_target_properties(${PROJECT_NAME} PROPERTIES DEBUG_POSTFIX "_${TARGET_ARCH}")
 	set_target_properties(${PROJECT_NAME} PROPERTIES RELEASE_POSTFIX "_${TARGET_ARCH}")
+endif()
+
+if(DEFINED PLATFORM_PSP2)
+	set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${ROOT_DIR}/Binaries/PSP2")	
+	set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "")
+	set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "EBOOT")
+	set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".BIN")
 endif()
 
 add_definitions(-DPSXPC_VERSION)

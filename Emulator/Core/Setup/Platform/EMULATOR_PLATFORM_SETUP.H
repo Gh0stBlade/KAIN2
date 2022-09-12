@@ -32,7 +32,7 @@
 /*
  * Platform specific emulator setup
  */
-#if (defined(_WINDOWS) || defined(__APPLE__) || defined(__linux__) || defined(__MINGW32__)) && !defined(__ANDROID__) && !defined(SN_TARGET_PSP2) || (defined(UWP_SDL2))
+#if (defined(_WINDOWS) || defined(__APPLE__) || defined(__linux__) || defined(__MINGW32__)) && !defined(__ANDROID__) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX) || (defined(UWP_SDL2))
 
 #if defined(_DEBUG) && !defined(UWP_SDL2)
 #define DEBUG_PRINTS
@@ -92,6 +92,10 @@
 #endif
 #if defined(SN_TARGET_PSP2)
 #define GXM
+#define NO_BOUNTY_LIST_EXPORT
+#define NO_FILESYSTEM
+#endif
+#if defined(PLATFORM_NX)
 #define NO_BOUNTY_LIST_EXPORT
 #define NO_FILESYSTEM
 #endif

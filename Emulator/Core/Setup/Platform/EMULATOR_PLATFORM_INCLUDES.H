@@ -25,7 +25,7 @@
 #include <SDL2/SDL_opengl.h>
 #elif defined(__EMSCRIPTEN__)
 #include <SDL2/SDL.h>
-#elif (defined(_WINDOWS) || defined(__MINGW32__) || defined(__linux__)) && !defined(__ANDROID__) && !defined(SN_TARGET_PSP2) || defined(UWP_SDL2)
+#elif (defined(_WINDOWS) || defined(__MINGW32__) || defined(__linux__)) && !defined(__ANDROID__) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX) || defined(UWP_SDL2)
 #include <SDL.h>
 #if defined(SDL2_MIXER)
 #include <SDL_mixer.h>
@@ -105,6 +105,25 @@
 #include <gxm.h>
 #include <kernel.h>
 #include "Core/Render/GXM/EMULATOR_RENDER_GXM.H"
+#elif defined(PLATFORM_NX)
+#include <nn/nn_Assert.h>
+
+#include <nn/os.h>
+#include <nn/fs.h>
+#include <nn/init.h>
+#include <nn/vi.h>
+#include <nn/gfx.h>
+
+#if NN_GFX_IS_TARGET_NVN
+#include <nvn/nvn.h>
+#include <nvn/nvn_FuncPtrInline.h>
+#endif
+
+#if defined( NN_BUILD_TARGET_PLATFORM_OS_NN ) && defined( NN_BUILD_APISET_NX )
+#include <nv/nv_MemoryManagement.h>
+#endif
+
+#include "Core/Render/NX/EMULATOR_RENDER_NX.H"
 #endif
 
 #include "Core/FileSystem/EMULATOR_FILESYSTEM_COMMON.H"

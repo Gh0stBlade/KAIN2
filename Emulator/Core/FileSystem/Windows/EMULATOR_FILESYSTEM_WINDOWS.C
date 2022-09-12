@@ -6,7 +6,7 @@
 
 #include <stdio.h>
 
-#if defined(_DEBUG)
+#if defined(_DEBUG) && !defined(NO_FILESYSTEM)
 
 void Emulator_ReadFileWIN(const char* filePath, void* buff, int size)
 {

@@ -19,6 +19,8 @@
 #include "Core/Render/XED3D/EMULATOR_RENDER_XED3D.H"
 #elif defined(SN_TARGET_PSP2)
 #include "Core/Render/GXM/EMULATOR_RENDER_GXM.H"
+#elif defined(PLATFORM_NX)
+#include "Core/Render/NX/EMULATOR_RENDER_NX.H"
 #endif
 
 

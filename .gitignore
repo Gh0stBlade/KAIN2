@@ -7,6 +7,7 @@ External/
 /Build_UWP/*
 /Build_Durango/*
 /Build_PSP2/*
+/Build_NX/*
 Emulator/Shaders/D3D9/*.h
 Emulator/Shaders/D3D11/*.h
 Emulator/Shaders/D3D12/*.h

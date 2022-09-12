@@ -21,16 +21,19 @@
 #include <stdio.h>
 #include <gxm.h>
 
-typedef struct 
+typedef struct ShaderID
 {
 	SceGxmShaderPatcherId VSID;
 	SceGxmShaderPatcherId FSID;
+
+	SceGxmVertexProgram* VP;
+	SceGxmFragmentProgram* FP;
 } ShaderID;
 
-typedef struct 
+typedef struct DisplayData
 {
 	void* address;
-} Display;
+} DisplayData;
 
 enum ShaderAttrib
 {
@@ -49,19 +52,19 @@ typedef unsigned int RenderTargetID;
 
 extern int Emulator_InitialiseGXMContext(char* windowName);
 
-extern const SceGxmProgram*	blit_shader_vs;
-extern const SceGxmProgram*	blit_shader_fs;
+extern const SceGxmProgram	blit_shader_vs;
+extern const SceGxmProgram	blit_shader_fs;
 
-extern const SceGxmProgram*	gte_shader_4_vs;
-extern const SceGxmProgram*	gte_shader_4_fs;
+extern const SceGxmProgram	gte_shader_4_vs;
+extern const SceGxmProgram	gte_shader_4_fs;
 
-extern const SceGxmProgram*	gte_shader_8_vs;
-extern const SceGxmProgram*	gte_shader_8_fs;
+extern const SceGxmProgram	gte_shader_8_vs;
+extern const SceGxmProgram	gte_shader_8_fs;
 
-extern const SceGxmProgram*	gte_shader_16_vs;
-extern const SceGxmProgram*	gte_shader_16_fs;
+extern const SceGxmProgram	gte_shader_16_vs;
+extern const SceGxmProgram	gte_shader_16_fs;
 
-#define Shader_Compile(name) Shader_Compile_Internal((const SceGxmProgram*)name##_vs, (const SceGxmProgram*)name##_fs)
+#define Shader_Compile(name, flag) Shader_Compile_Internal((const SceGxmProgram*)&name##_vs, (const SceGxmProgram*)&name##_fs, flag)
 
 #endif
 

@@ -3,7 +3,7 @@
 
 #if defined(PSXPC_VERSION)
 #include "CORE.H"
-#if defined(SDL2) && defined(UWP_SDL2) || defined(_WIN32) && !defined(SN_TARGET_PSP2)
+#if defined(SDL2) && defined(UWP_SDL2) || defined(_WIN32) && !defined(SN_TARGET_PSP2)  && !defined(PLATFORM_NX)
 #undef R13
 #undef R12
 #undef R11
@@ -15,15 +15,21 @@ struct _G2AppDataVM_Type _appDataVM;
 
 EMULATOR_THREAD_DEF
 
-#if defined(PSXPC_VERSION) && !defined(UWP) || defined(UWP_SDL2) && !defined(__EMSCRIPTEN__)
+#if defined(PSXPC_VERSION) && !defined(UWP) && !defined(PLATFORM_NX) || defined(UWP_SDL2) && !defined(__EMSCRIPTEN__)
 int main(int argc, char *argv[])
 #elif defined(UWP)
 int main(Platform::Array<Platform::String^>^ args)
+#elif defined(PLATFORM_NX)
+extern "C" void nnMain()
 #else
 int main()
 #endif
 { 
-	return MainG2(&_appDataVM);
+#if defined(PLATFORM_NX)
+    MainG2(&_appDataVM);
+#else
+    return MainG2(&_appDataVM);
+#endif
 }
 
 #if defined(UWP_SDL2)

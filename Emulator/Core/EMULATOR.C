@@ -12,7 +12,7 @@
 #include "LIBGTE.H"
 #include "LIBETC.H"
 #include "LIBPAD.H"
-#if !defined(__ANDROID__) && !defined(SN_TARGET_PSP2)
+#if !defined(__ANDROID__) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX)
 #include <thread>
 #endif
 #include <assert.h>
@@ -426,7 +426,7 @@ void CreateUWPApplication()
 int g_otSize = 0;
 char* pVirtualMemory = NULL;
 SysCounter counters[3] = { 0 };
-#if !defined(__ANDROID__) && !defined(SN_TARGET_PSP2)
+#if !defined(__ANDROID__) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX)
 std::thread counter_thread;
 #endif
 #if defined(__ANDROID__)
@@ -437,7 +437,7 @@ std::thread counter_thread;
 int g_texturelessMode = 0;
 int g_emulatorPaused = 0;
 
-#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2)
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX)
 void Emulator_ResetDevice()
 {
 #if defined(EGL) || defined(OGLES)///@TODO &&
@@ -2535,6 +2535,11 @@ static int Emulator_InitialiseSDL2(char* windowName, int width, int height)
 	{
 		eprinterr("Failed to Initialise GXM Context!\n");
 	}
+#elif defined(PLATFORM_NX)
+	if (Emulator_InitialiseNXContext(windowName) == FALSE)
+	{
+		eprinterr("Failed to Initialise NX Context!\n");
+	}
 #endif
 
 	return TRUE;
@@ -2614,6 +2619,8 @@ void Emulator_Initialise(char* windowName, int width, int height)
 #if !defined(__ANDROID__)
 	//counter_thread = std::thread(Emulator_CounterLoop);
 #endif
+
+	printf("FINISHED INIT!");
 }
 
 void Emulator_CounterLoop()
@@ -4290,7 +4297,7 @@ void Emulator_DestroyGlobalShaders()
 }
 #endif
 
-#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2)
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX)
 void Emulator_GenerateCommonTextures()
 {
 	unsigned int pixelData = 0xFFFFFFFF;
@@ -4528,7 +4535,7 @@ void Emulator_GenerateCommonTextures()
 }
 #endif
 
-#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2)
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX)
 int Emulator_CreateCommonResources()
 {
 	memset(vram, 0, VRAM_WIDTH * VRAM_HEIGHT * sizeof(unsigned short));
@@ -4738,7 +4745,7 @@ void Emulator_Ortho2D(float left, float right, float bottom, float top, float zn
 	float x = (left + right) / (left - right);
 	float y = (bottom + top) / (bottom - top);
 
-#if defined(OGL) || defined(OGLES) || defined(SN_TARGET_PSP2) // -1..1
+#if defined(OGL) || defined(OGLES) || defined(SN_TARGET_PSP2) || defined(PLATFORM_NX) // -1..1
 	float z = (znear + zfar) / (znear - zfar);
 #elif defined(D3D9) || defined (XED3D) || defined(D3D11) || defined(D3D12) || defined(VULKAN)// 0..1
 	float z = znear / (znear - zfar);
@@ -4766,7 +4773,7 @@ void Emulator_Ortho2D(float left, float right, float bottom, float top, float zn
 }
 #endif
 
-#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2)
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX)
 void Emulator_SetShader(const ShaderID shader)
 {
 #if defined(OGL) || defined(OGLES)
@@ -4807,7 +4814,7 @@ void Emulator_SetShader(const ShaderID shader)
 }
 #endif
 
-#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2)
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX)
 void Emulator_SetTexture(TextureID texture, enum TexFormat texFormat)
 {
 	switch (texFormat)
@@ -4928,7 +4935,7 @@ void Emulator_SetTexture(TextureID texture, enum TexFormat texFormat)
 }
 #endif
 
-#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2)
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX)
 void Emulator_DestroyTexture(TextureID texture)
 {
 #if defined(OGL) || defined(OGLES)
@@ -4946,7 +4953,7 @@ void Emulator_DestroyTexture(TextureID texture)
 }
 #endif
 
-#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2)
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX)
 void Emulator_Clear(int x, int y, int w, int h, unsigned char r, unsigned char g, unsigned char b)
 {
 // TODO clear rect if it's necessary
@@ -4994,7 +5001,7 @@ void Emulator_Clear(int x, int y, int w, int h, unsigned char r, unsigned char g
 
 #define NOFILE 0
 
-#if !defined(__EMSCRIPTEN__) && !defined(__ANDROID__) && !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2)
+#if !defined(__EMSCRIPTEN__) && !defined(__ANDROID__) && !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX)
 
 void Emulator_SaveVRAM(const char* outputFileName, int x, int y, int width, int height, int bReadFromFrameBuffer)
 {
@@ -5045,7 +5052,7 @@ void Emulator_SaveVRAM(const char* outputFileName, int x, int y, int width, int 
 }
 #endif
 
-#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2)
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX)
 void Emulator_StoreFrameBuffer(int x, int y, int w, int h)
 {
 	short *fb = (short*)malloc(w * h * sizeof(short));
@@ -5125,6 +5132,11 @@ void Emulator_StoreFrameBuffer(int x, int y, int w, int h)
 	int* data = NULL;
 	assert(FALSE);//Needs implementing for framebuffer write backs!
 	return;
+#elif defined(PLATFORM_NX)
+#define FLIP_Y (fy)
+	int* data = NULL;
+	assert(FALSE);//Needs implementing for framebuffer write backs!
+	return;
 #endif
 
 	unsigned int   *data_src = (unsigned int*)data;
@@ -5154,6 +5166,7 @@ void Emulator_StoreFrameBuffer(int x, int y, int w, int h)
 		dst += VRAM_WIDTH;
 	}
 #elif 1
+
 	short* ptr = (short*)vram + VRAM_WIDTH * y + x;
 
 	for (int fy = 0; fy < h; fy++) {
@@ -5220,7 +5233,7 @@ void Emulator_ReadVRAM(unsigned short *dst, int x, int y, int dst_w, int dst_h)
 	}
 }
 
-#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2)
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX)
 void Emulator_UpdateVRAM()
 {
 	if (!vram_need_update) {
@@ -6103,7 +6116,7 @@ unsigned int Emulator_GetFPS()
 	
 }
 
-#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2)
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX)
 void Emulator_SwapWindow()
 {
 	unsigned int timer = 1;
@@ -6185,7 +6198,7 @@ void Emulator_SwapWindow()
 }
 #endif
 
-#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2)
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX)
 void Emulator_WaitForTimestep(int count)
 {
 #if defined(SDL2)
@@ -6293,7 +6306,7 @@ void Emulator_ShutDown()
 #endif
 }
 
-#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2)
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX)
 void Emulator_SetBlendMode(enum BlendMode blendMode)
 {
 	if (g_PreviousBlendMode == blendMode)
@@ -6620,7 +6633,7 @@ void Emulator_SetPGXPVertexCount(int vertexCount)
 #endif
 }
 
-#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2)
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX)
 void Emulator_SetViewPort(int x, int y, int width, int height)
 {
 	float offset_x = (float)activeDispEnv.screen.x;
@@ -6698,7 +6711,7 @@ void Emulator_SetRenderTarget(const RenderTargetID frameBufferObject)
 
 #endif
 
-#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2)
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX)
 void Emulator_SetWireframe(int enable) 
 {
 #if defined(OGL)
@@ -6717,7 +6730,7 @@ void Emulator_SetWireframe(int enable)
 }
 #endif
 
-#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2)
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX)
 void Emulator_UpdateVertexBuffer(const struct Vertex *vertices, int num_vertices)
 {
 	assert(num_vertices <= MAX_NUM_POLY_BUFFER_VERTICES);
@@ -6781,7 +6794,7 @@ void Emulator_UpdateVertexBuffer(const struct Vertex *vertices, int num_vertices
 }
 #endif
 
-#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2)
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX)
 void Emulator_DrawTriangles(int start_vertex, int triangles)
 {
 	if(triangles <= 0)
