@@ -113,6 +113,7 @@
 #include <nn/init.h>
 #include <nn/vi.h>
 #include <nn/gfx.h>
+#include <nvn/nvn.h>
 
 #if NN_GFX_IS_TARGET_NVN
 #include <nvn/nvn.h>
@@ -123,7 +124,7 @@
 #include <nv/nv_MemoryManagement.h>
 #endif
 
-#include "Core/Render/NX/EMULATOR_RENDER_NX.H"
+#include "Core/Render/NN/EMULATOR_RENDER_NN.H"
 #endif
 
 #include "Core/FileSystem/EMULATOR_FILESYSTEM_COMMON.H"

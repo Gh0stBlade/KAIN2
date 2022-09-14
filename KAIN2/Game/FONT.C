@@ -276,7 +276,9 @@ void FONT_Init()
 	short x;
 	short y;
 
+	printf("CHECKVRAMSLOT!\n");
 	FONT_vramBlock = VRAM_CheckVramSlot(&x, &y, 16, 128, 3, -1);
+	printf("CHECKVRAMSLOTEND: %x!\n", FONT_vramBlock);
 
 	if (FONT_vramBlock != NULL)
 	{

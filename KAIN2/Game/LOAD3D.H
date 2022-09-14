@@ -123,7 +123,7 @@ extern void LOAD_SetupFileToDoCDReading(); // 0x800370A8
 extern void LOAD_SetupFileToDoBufferedCDReading(); // 0x80037124
 extern void LOAD_ProcessReadQueue(); // 0x80037198
 extern char * LOAD_ReadFileFromCD(char *filename, int memType); // 0x80037314
-#if defined(_DEBUG) || defined(__EMSCRIPTEN__)
+#if defined(_DEBUG) && !defined(NO_FILESYSTEM) || defined(__EMSCRIPTEN__)
 extern void LOAD_CdReadFromBigFile(long fileOffset, unsigned long* loadAddr, long bytes, long chksumLevel, long checksum, long fileHash); // 0x800373F4
 #else
 extern void LOAD_CdReadFromBigFile(long fileOffset, unsigned long* loadAddr, long bytes, long chksumLevel, long checksum); // 0x800373F4

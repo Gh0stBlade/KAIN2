@@ -15,4 +15,5 @@ Emulator/Shaders/Vulkan/*.h
 Emulator/Shaders/GXM/*.gxp
 Emulator/Shaders/GXM/*.gxp.obj
 Emulator/Shaders/GXM/*.sdb
+Emulator/Shaders/NVN/*.bnsh
 /Binaries/*

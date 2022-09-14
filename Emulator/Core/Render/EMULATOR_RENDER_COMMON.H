@@ -20,7 +20,7 @@
 #elif defined(SN_TARGET_PSP2)
 #include "Core/Render/GXM/EMULATOR_RENDER_GXM.H"
 #elif defined(PLATFORM_NX)
-#include "Core/Render/NX/EMULATOR_RENDER_NX.H"
+#include "Core/Render/NN/EMULATOR_RENDER_NN.H"
 #endif
 
 
@@ -62,7 +62,11 @@ struct Vertex
 
 struct VertexBufferSplit
 {
+#if defined(PLATFORM_NX)
+	TextureID*      textureId;
+#else
 	TextureID      textureId;
+#endif
 	unsigned short vIndex;
 	unsigned short vCount;
 	enum BlendMode blendMode;
@@ -88,10 +92,24 @@ extern int windowWidth;
 extern int windowHeight;
 extern unsigned int g_resetDeviceOnNextFrame;
 extern unsigned int g_resettingDevice;
+#if defined(PLATFORM_NX)
+extern TextureID* g_lastBoundTexture[];
+#else
 extern TextureID g_lastBoundTexture[];
+#endif
 extern int begin_scene_flag;
 extern int vbo_was_dirty_flag;
 
+#if defined(PLATFORM_NX)
+extern ShaderID* g_gte_shader_4;
+extern ShaderID* g_gte_shader_8;
+extern ShaderID* g_gte_shader_16;
+extern ShaderID* g_blit_shader;
+
+extern TextureID* vramTexture;
+extern TextureID* whiteTexture;
+extern TextureID* rg8lutTexture;
+#else
 extern ShaderID g_gte_shader_4;
 extern ShaderID g_gte_shader_8;
 extern ShaderID g_gte_shader_16;
@@ -100,6 +118,7 @@ extern ShaderID g_blit_shader;
 extern TextureID vramTexture;
 extern TextureID whiteTexture;
 extern TextureID rg8lutTexture;
+#endif
 
 extern unsigned short vram[];
 extern unsigned char rgLUT[];
@@ -134,8 +153,14 @@ extern int vram_need_update;
 extern void* Emulator_GenerateRG8LUT();
 extern void Emulator_SwapWindow();
 extern void Emulator_ResetDevice();
+#if defined(PLATFORM_NX)
+extern void Emulator_SetShader(ShaderID* shader);
+extern void Emulator_SetTexture(TextureID* texture, enum TexFormat texFormat);
+#else
 extern void Emulator_SetShader(const ShaderID shader);
 extern void Emulator_SetTexture(TextureID texture, enum TexFormat texFormat);
+#endif
+
 extern void Emulator_UpdateVertexBuffer(const struct Vertex* vertices, int count);
 extern int Emulator_CreateCommonResources();
 extern void Emulator_Ortho2D(float left, float right, float bottom, float top, float znear, float zfar);

@@ -25,16 +25,21 @@ unsigned int g_resettingDevice = FALSE;
 
 int begin_scene_flag = FALSE;
 int vbo_was_dirty_flag = FALSE;
+
+#if defined(PLATFORM_NX)
+TextureID* g_lastBoundTexture[2];
+#else
 TextureID g_lastBoundTexture[2];
+#endif
 
-ShaderID g_gte_shader_4;
-ShaderID g_gte_shader_8;
-ShaderID g_gte_shader_16;
-ShaderID g_blit_shader;
+ShaderID* g_gte_shader_4;
+ShaderID* g_gte_shader_8;
+ShaderID* g_gte_shader_16;
+ShaderID* g_blit_shader;
 
-TextureID vramTexture;
-TextureID whiteTexture;
-TextureID rg8lutTexture;
+TextureID* vramTexture;
+TextureID* whiteTexture;
+TextureID* rg8lutTexture;
 
 typedef struct POLY_G3_SEMITRANS 
 {
@@ -134,7 +139,11 @@ int IsValidCode(int code)
 
 extern int splitAgain;
 
+#if defined(PLATFORM_NX)
+void Emulator_AddSplit(int semiTrans, int page, TextureID* textureId)
+#else
 void Emulator_AddSplit(int semiTrans, int page, TextureID textureId)
+#endif
 {
 	struct VertexBufferSplit* curSplit = &g_splits[g_splitIndex];
 	BlendMode curBlendMode = semiTrans ? GET_TPAGE_BLEND(page) : BM_NONE;

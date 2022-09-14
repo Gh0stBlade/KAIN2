@@ -60,7 +60,7 @@ void STREAM_InitLoader(char *bigFileName, char *voiceFileName)
 { 
 	int i;
 
-#if !defined(_DEBUG) && !defined(__EMSCRIPTEN__)
+#if !defined(_DEBUG) && !defined(__EMSCRIPTEN__) || defined(NO_FILESYSTEM)
 	LOAD_InitCdLoader(bigFileName, voiceFileName);
 #endif
 

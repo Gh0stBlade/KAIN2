@@ -2536,7 +2536,7 @@ static int Emulator_InitialiseSDL2(char* windowName, int width, int height)
 		eprinterr("Failed to Initialise GXM Context!\n");
 	}
 #elif defined(PLATFORM_NX)
-	if (Emulator_InitialiseNXContext(windowName) == FALSE)
+	if (Emulator_InitialiseNNContext(windowName) == FALSE)
 	{
 		eprinterr("Failed to Initialise NX Context!\n");
 	}
@@ -5656,6 +5656,9 @@ int Emulator_BeginScene()
 #elif defined(D3D12)
 	g_lastBoundTexture[0].m_textureResource = NULL;
 	g_lastBoundTexture[1].m_textureResource = NULL;
+#elif defined(PLATFORM_NX)
+	//g_lastBoundTexture[0] = NULL;
+	//g_lastBoundTexture[1] = NULL;
 #else
 	g_lastBoundTexture[0] = NULL;
 	g_lastBoundTexture[1] = NULL;
@@ -5697,9 +5700,15 @@ int Emulator_BeginScene()
 	}
 
 	vkCmdBindVertexBuffers(commandBuffers[currentFrame], 0, 1, vertexBuffers, offsets);
+#elif defined(PLATFORM_NX)
+	dynamic_vertex_buffer_index = 0;
+
+	Emulator_UpdateVRAM();
+	Emulator_BeginPass();
+	Emulator_SetVertexBuffer();
 #endif
 
-#if !defined(VULKAN) && !defined(D3D12)
+#if !defined(VULKAN) && !defined(D3D12) && !defined(PLATFORM_NX)
 	Emulator_UpdateVRAM();
 #endif
 
@@ -6232,8 +6241,10 @@ void Emulator_WaitForTimestep(int count)
 
 void Emulator_EndScene()
 {
-#if defined(VULKAN) || defined(D3D12)
+#if defined(VULKAN) || defined(D3D12) || defined(PLATFORM_NX)
+
 	dynamic_vertex_buffer_index = 0;
+
 	Emulator_EndPass();
 #endif
 

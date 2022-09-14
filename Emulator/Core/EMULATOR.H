@@ -186,9 +186,16 @@ extern struct TouchButtonVRAM touchButtonsUI[10];
 
 extern int begin_scene_flag;
 extern int vbo_was_dirty_flag;
+
+#if defined(PLATFORM_NX)
+extern TextureID* rg8lutTexture;
+extern TextureID* whiteTexture;
+extern TextureID* vramTexture;
+#else
 extern TextureID rg8lutTexture;
 extern TextureID whiteTexture;
 extern TextureID vramTexture;
+#endif
 
 extern void Emulator_SaveVRAM(const char* outputFileName, int x, int y, int width, int height, int bReadFromFrameBuffer);
 extern void Emulator_CopyVRAM(unsigned short* src, int x, int y, int w, int h, int dst_x, int dst_y);
