@@ -28,9 +28,6 @@ int vbo_was_dirty_flag = FALSE;
 
 #if defined(PLATFORM_NX)
 TextureID* g_lastBoundTexture[2];
-#else
-TextureID g_lastBoundTexture[2];
-#endif
 
 ShaderID* g_gte_shader_4;
 ShaderID* g_gte_shader_8;
@@ -40,6 +37,18 @@ ShaderID* g_blit_shader;
 TextureID* vramTexture;
 TextureID* whiteTexture;
 TextureID* rg8lutTexture;
+#else
+TextureID g_lastBoundTexture[2];
+
+ShaderID g_gte_shader_4;
+ShaderID g_gte_shader_8;
+ShaderID g_gte_shader_16;
+ShaderID g_blit_shader;
+
+TextureID vramTexture;
+TextureID whiteTexture;
+TextureID rg8lutTexture;
+#endif
 
 typedef struct POLY_G3_SEMITRANS 
 {
