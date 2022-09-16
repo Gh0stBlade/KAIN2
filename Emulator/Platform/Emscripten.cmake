@@ -9,4 +9,6 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${USE_FLAGS} -Wno-error=format-security 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${USE_FLAGS} -Wno-error=format-security -Wno-narrowing -Wno-nonportable-include-path -pthread")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${USE_FLAGS}")
 
+set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-s EXPORTED_RUNTIME_METHODS='[\"ccall\",\"cwrap\"]'")
+
 endif()
