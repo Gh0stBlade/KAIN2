@@ -900,35 +900,19 @@ void Emulator_AggregatePTAGsToSplits(unsigned long* p, int singlePrimitive)
 
 void* Emulator_GenerateRG8LUT()
 {
-#pragma pack(push, 1)
-	struct pixel
+	for (unsigned short y = 0; y < LUT_HEIGHT; y++)
 	{
-#if defined(D3D9)
-		unsigned char b;
-		unsigned char g;
-		unsigned char r;
-		unsigned char a;
-#else
-		unsigned char r;
-		unsigned char g;
-		unsigned char b;
-		unsigned char a;
-#endif
-	};
-#pragma pack(pop)
+		unsigned char* row = rgLUT + y * (LUT_HEIGHT * 4);
 
-	for (int y = 0; y < LUT_HEIGHT; y++)
-	{
-		for (int x = 0; x < LUT_WIDTH; x++)
+		for (unsigned short x = 0; x < LUT_WIDTH; x++)
 		{
-			short c = (y << 8) | x;
+			unsigned short c = (y << 8) | x;
 
-			struct pixel* p = (struct pixel*)&rgLUT[(y * (LUT_HEIGHT * sizeof(unsigned int))) + x * sizeof(unsigned int)];
-
-			p->a = 255;// ((c & 0x8000)) << 3;
-			p->b = ((c & 0x7C00) >> 10) << 3;
-			p->g = ((c & 0x3E0) >> 5) << 3;
-			p->r = ((c & 0x1F)) << 3;
+			unsigned char* pixel = row + x * 4;
+			pixel[0] = (unsigned char)((c & 0x1F)) << 3;
+			pixel[1] = (unsigned char)((c & 0x3E0) >> 5) << 3;
+			pixel[2] = (unsigned char)(((c & 0x7C00) >> 10) << 3);
+			pixel[3] = (unsigned char)0xFF;
 		}
 	}
 
@@ -949,7 +933,7 @@ void* Emulator_GenerateRG8LUT()
 	fclose(f);
 #endif
 
-	return &rgLUT[0];
+	return rgLUT;
 }
 
 #if defined(TOUCH_UI)

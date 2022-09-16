@@ -34,6 +34,7 @@ typedef struct TextureID
 	nn::gfx::DescriptorSlot textureDescriptor;
 	int offset;
 	int size;
+	int pitch;
 } TextureID;
 
 typedef struct ShaderID

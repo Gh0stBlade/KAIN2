@@ -370,7 +370,7 @@ void Emulator_GenerateCommonTextures()
 
 	glGenTextures(1, &whiteTexture);
 	glBindTexture(GL_TEXTURE_2D, whiteTexture);
-	
+
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, &pixelData);
@@ -378,7 +378,7 @@ void Emulator_GenerateCommonTextures()
 
 	glGenTextures(1, &rg8lutTexture);
 	glBindTexture(GL_TEXTURE_2D, rg8lutTexture);
-	
+
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, LUT_WIDTH, LUT_HEIGHT, 0, GL_RGBA, GL_UNSIGNED_BYTE, Emulator_GenerateRG8LUT());
@@ -423,9 +423,9 @@ void Emulator_CreateVertexBuffer()///@TODO OGLES
 int Emulator_CreateCommonResources()
 {
 	memset(vram, 0, VRAM_WIDTH * VRAM_HEIGHT * sizeof(unsigned short));
-	
+
 	Emulator_GenerateCommonTextures();
-	
+
 	Emulator_CreateGlobalShaders();
 
 	glDisable(GL_DEPTH_TEST);
@@ -454,7 +454,7 @@ void Emulator_Ortho2D(float left, float right, float bottom, float top, float zn
 		0, 0, c, 0,
 		x, y, z, 1
 	};
-	
+
 	///@TODO this generates an error sometimes
 	//eprinterr("GL Error: %x\n", glGetError());
 
@@ -466,7 +466,7 @@ void Emulator_Ortho2D(float left, float right, float bottom, float top, float zn
 void Emulator_SetShader(const ShaderID shader)
 {
 	glUseProgram(shader);
-	
+
 	//eprinterr("GL_Error: %x\n", glGetError());
 	Emulator_Ortho2D(0.0f, activeDispEnv.disp.w, activeDispEnv.disp.h, 0.0f, 0.0f, 1.0f);
 	//eprinterr("GL_Error: %x\n", glGetError());
@@ -533,7 +533,7 @@ void Emulator_SaveVRAM(const char* outputFileName, int x, int y, int width, int 
 	return;
 #endif
 	FILE* f = fopen(outputFileName, "wb");
-	
+
 	if (f == NULL)
 	{
 		return;
@@ -692,8 +692,8 @@ void Emulator_UpdateVertexBuffer(const Vertex* vertices, int num_vertices)
 
 void Emulator_SetViewPort(int x, int y, int width, int height)
 {
-	short offset_x = activeDispEnv.screen.x;
-	short offset_y = activeDispEnv.screen.y;
+	float offset_x = (float)activeDispEnv.screen.x;
+	float offset_y = (float)activeDispEnv.screen.y;
 
 	glViewport(x + offset_x, y + -offset_y, width, height);
 }

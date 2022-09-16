@@ -6,6 +6,7 @@
 
 #if defined(PLATFORM_NX)
 
+nn::gfx::Texture g_Texture;
 nn::gfx::Texture g_vramTexture;
 nn::gfx::Texture g_rg8lutTexture;
 nn::gfx::Texture g_whiteTexture;
@@ -238,7 +239,6 @@ ShaderID* Shader_Compile(const char* path_vs, const char* path_ps)
 	int slotVRAMTexture = program->PS.GetInterfaceSlot(nn::gfx::ShaderStage_Pixel, nn::gfx::ShaderInterfaceType_Sampler, "s_texture");
 	int slotLUTTexture = program->PS.GetInterfaceSlot(nn::gfx::ShaderStage_Pixel, nn::gfx::ShaderInterfaceType_Sampler, "s_lut");
 
-
 	if (slotVRAMTexture >= 0)
 	{
 		program->textureBindings[SLOT_VRAM] = slotVRAMTexture;
@@ -366,19 +366,19 @@ void Emulator_InitialiseMemoryPool()
 	{
 		nn::gfx::MemoryPoolProperty_CpuCached | nn::gfx::MemoryPoolProperty_GpuCached,
 		nn::gfx::MemoryPoolProperty_CpuUncached | nn::gfx::MemoryPoolProperty_GpuCached,
-		nn::gfx::MemoryPoolProperty_CpuInvisible | nn::gfx::MemoryPoolProperty_GpuCached | nn::gfx::MemoryPoolProperty_Compressible
+		nn::gfx::MemoryPoolProperty_CpuInvisible | nn::gfx::MemoryPoolProperty_GpuCached
+			| nn::gfx::MemoryPoolProperty_Compressible
 	};
-
 	nn::gfx::MemoryPool::InfoType info;
-
-	for (int idxMemoryPool = 0; idxMemoryPool < MemoryPoolType_End; idxMemoryPool++)
+	for (int idxMemoryPool = 0; idxMemoryPool < MemoryPoolType_End; ++idxMemoryPool)
 	{
 		info.SetDefault();
 		info.SetMemoryPoolProperty(MemoryPoolProperty[idxMemoryPool]);
 		size_t alignment = nn::gfx::MemoryPool::GetPoolMemoryAlignment(&g_Device, info);
 		size_t granularity = nn::gfx::MemoryPool::GetPoolMemorySizeGranularity(&g_Device, info);
 		g_pPoolMemory[idxMemoryPool] = malloc(MemoryPoolSize[idxMemoryPool]);
-		void* pPoolMemoryAligned = nn::util::BytePtr(g_pPoolMemory[idxMemoryPool]).AlignUp(alignment).Get();
+		void* pPoolMemoryAligned = nn::util::BytePtr(
+			g_pPoolMemory[idxMemoryPool]).AlignUp(alignment).Get();
 		size_t memoryPoolSizeAligned = nn::util::align_down(MemoryPoolSize[idxMemoryPool], granularity);
 		info.SetPoolMemory(pPoolMemoryAligned, memoryPoolSizeAligned);
 		g_MemoryPool[idxMemoryPool].Initialize(&g_Device, info);
@@ -855,19 +855,15 @@ void Emulator_CreateGlobalShaders()
 	g_blit_shader = Shader_Compile("NVN/blit_shader_vs.glsl", "NVN/blit_shader_ps.glsl");
 }
 
-void Emulator_GenerateCommonTextures()
+void Emulator_CreateTexture(TextureID* texture, int width, int height, char* initialData, nn::gfx::ImageFormat type)
 {
-	nn::gfx::MemoryPool& memoryPool = g_MemoryPool[MemoryPoolType_CpuCached_GpuCached];
-
 	nn::gfx::Texture::InfoType info;
-	whiteTexture = &GET_TEXTURE();
-
 	info.SetDefault();
 	info.SetGpuAccessFlags(nn::gfx::GpuAccess_Texture);
-	info.SetWidth(256);
-	info.SetHeight(256);
+	info.SetWidth(width);
+	info.SetHeight(height);
 	info.SetImageStorageDimension(nn::gfx::ImageStorageDimension_2d);
-	info.SetImageFormat(nn::gfx::ImageFormat_R8_G8_B8_A8_Unorm);
+	info.SetImageFormat(type);
 	info.SetMipCount(1);
 	info.SetTileMode(nn::gfx::TileMode_Linear);
 
@@ -875,135 +871,65 @@ void Emulator_GenerateCommonTextures()
 	size_t size = nn::gfx::Texture::CalculateMipDataSize(&g_Device, info);
 	size_t pitch = nn::gfx::Texture::GetRowPitch(&g_Device, info);
 	ptrdiff_t& offset = g_MemoryPoolOffset[MemoryPoolType_CpuCached_GpuCached];
+	nn::gfx::MemoryPool& memoryPool = g_MemoryPool[MemoryPoolType_CpuCached_GpuCached];
 	offset = nn::util::align_up(offset, alignment);
 
-	uint8_t* pixels = nn::util::BytePtr(memoryPool.Map(), offset).Get< uint8_t >();
-	for (int y = 0; y < info.GetHeight(); ++y)
+	if (initialData != NULL)
 	{
-		uint8_t* row = pixels + y * pitch;
-		for (int x = 0; x < info.GetWidth(); ++x)
-		{
-			uint8_t* pixel = row + x * 4;
-			pixel[0] = 0xFF;
-			pixel[1] = 0xFF;
-			pixel[2] = 0xFF;
-			pixel[3] = 0xFF;
-		}
-	}
-	memoryPool.FlushMappedRange(offset, size);
-	memoryPool.Unmap();
+		uint8_t* pixels = nn::util::BytePtr(memoryPool.Map(), offset).Get< uint8_t >();
 
-	whiteTexture->texture.Initialize(&g_Device, info, &memoryPool, offset, size);
+		for (int i = 0; i < info.GetHeight(); i++)
+		{
+			memcpy(pixels, initialData, info.GetWidth() * 4);
+			pixels += pitch;
+			initialData += info.GetWidth() * 4;
+		}
+
+		memoryPool.FlushMappedRange(offset, size);
+		memoryPool.Unmap();
+	}
+
+	texture->texture.Initialize(&g_Device, info, &memoryPool, offset, size);
+	texture->offset = offset;
+	texture->size = size;
+	texture->pitch = pitch;
 	offset += size;
+
 
 	nn::gfx::TextureView::InfoType texViewInfo;
 	texViewInfo.SetDefault();
 	texViewInfo.SetImageDimension(nn::gfx::ImageDimension_2d);
-	texViewInfo.SetImageFormat(nn::gfx::ImageFormat_R8_G8_B8_A8_Unorm);
-	texViewInfo.SetTexturePtr(&whiteTexture->texture);
+	texViewInfo.SetImageFormat(type);
+	texViewInfo.SetTexturePtr(&texture->texture);
 	texViewInfo.SetChannelMapping(nn::gfx::ChannelMapping_Red, nn::gfx::ChannelMapping_Green, nn::gfx::ChannelMapping_Blue, nn::gfx::ChannelMapping_Alpha);
-	whiteTexture->textureView.Initialize(&g_Device, texViewInfo);
+	texture->textureView.Initialize(&g_Device, texViewInfo);
+}
 
-	//
+void Emulator_GenerateCommonTextures()
+{
+	whiteTexture = &GET_TEXTURE();
+	unsigned int pixelData = 0xFFFFFFFF;
+	Emulator_CreateTexture(whiteTexture, 1, 1, (char*)&pixelData, nn::gfx::ImageFormat_R8_G8_B8_A8_Unorm);
+
 	rg8lutTexture = &GET_TEXTURE();
+	Emulator_CreateTexture(rg8lutTexture, LUT_WIDTH, LUT_HEIGHT, (char*)Emulator_GenerateRG8LUT(), nn::gfx::ImageFormat_R8_G8_B8_A8_Unorm);
 
-	info.SetDefault();
-	info.SetGpuAccessFlags(nn::gfx::GpuAccess_Texture);
-	info.SetWidth(256);
-	info.SetHeight(256);
-	info.SetImageStorageDimension(nn::gfx::ImageStorageDimension_2d);
-	info.SetImageFormat(nn::gfx::ImageFormat_R8_G8_B8_A8_Unorm);
-	info.SetMipCount(1);
-	info.SetTileMode(nn::gfx::TileMode_Linear);
-	info.SetSwizzle(0);
-
-	alignment = nn::gfx::Texture::CalculateMipDataAlignment(&g_Device, info);
-	size = nn::gfx::Texture::CalculateMipDataSize(&g_Device, info);
-	pitch = nn::gfx::Texture::GetRowPitch(&g_Device, info);
-	offset = g_MemoryPoolOffset[MemoryPoolType_CpuCached_GpuCached];
-	offset = nn::util::align_up(offset, alignment);
-
-	pixels = nn::util::BytePtr(memoryPool.Map(), offset).Get< uint8_t >();
-	int lasty = 0;
-	for (int y = 0; y < info.GetHeight(); ++y)
-	{
-		lasty = y;
-		uint8_t* row = pixels + y * pitch;
-		for (int x = 0; x < info.GetWidth(); ++x)
-		{
-			uint8_t* pixel = row + x * 4;
-			pixel[0] = static_cast<uint8_t>(x);
-			pixel[1] = static_cast<uint8_t>(y);
-			pixel[2] = 0x00;
-			pixel[3] = 0xFF;
-		}
-	}
-	memoryPool.FlushMappedRange(offset, size);
-	memoryPool.Unmap();
-
-	rg8lutTexture->texture.Initialize(&g_Device, info, &memoryPool, offset, size);
-	offset += size;
-
-	texViewInfo.SetDefault();
-	texViewInfo.SetImageDimension(nn::gfx::ImageDimension_2d);
-	texViewInfo.SetImageFormat(nn::gfx::ImageFormat_R8_G8_B8_A8_Unorm);
-	texViewInfo.SetTexturePtr(&rg8lutTexture->texture);
-	texViewInfo.SetChannelMapping(nn::gfx::ChannelMapping_Red, nn::gfx::ChannelMapping_Green, nn::gfx::ChannelMapping_Blue, nn::gfx::ChannelMapping_Alpha);
-	rg8lutTexture->textureView.Initialize(&g_Device, texViewInfo);
-
-	//
 	vramTexture = &GET_TEXTURE();
-	info.SetDefault();
-	info.SetGpuAccessFlags(nn::gfx::GpuAccess_Texture);
-	info.SetWidth(VRAM_WIDTH);
-	info.SetHeight(VRAM_HEIGHT);
-	info.SetImageStorageDimension(nn::gfx::ImageStorageDimension_2d);
-	info.SetImageFormat(nn::gfx::ImageFormat_R8_G8_Unorm);
-	info.SetMipCount(1);
-	info.SetTileMode(nn::gfx::TileMode_Linear);
+	Emulator_CreateTexture(vramTexture, VRAM_WIDTH, VRAM_HEIGHT, NULL, nn::gfx::ImageFormat_R8_G8_Unorm);
 
-	alignment = nn::gfx::Texture::CalculateMipDataAlignment(&g_Device, info);
-	size = nn::gfx::Texture::CalculateMipDataSize(&g_Device, info);
-	pitch = nn::gfx::Texture::GetRowPitch(&g_Device, info);
-	offset = g_MemoryPoolOffset[MemoryPoolType_CpuCached_GpuCached];
-	offset = nn::util::align_up(offset, alignment);
+	//TEMP
 
-	pixels = nn::util::BytePtr(memoryPool.Map(), offset).Get< uint8_t >();
-	for (int y = 0; y < info.GetHeight(); ++y)
-	{
-		uint8_t* row = pixels + y * pitch;
-		for (int x = 0; x < info.GetWidth(); ++x)
-		{
-			uint8_t* pixel = row + x * 4;
-			pixel[0] = static_cast<uint8_t>(x);
-			pixel[1] = static_cast<uint8_t>(y);
-			pixel[2] = 0x00;
-			pixel[3] = 0xFF;
-		}
-	}
-	memoryPool.FlushMappedRange(offset, size);
-	memoryPool.Unmap();
+	//ENDTEMP
 
-
-	vramTexture->texture.Initialize(&g_Device, info, &memoryPool, offset, size);
-	offset += size;
-
-	texViewInfo.SetDefault();
-	texViewInfo.SetImageDimension(nn::gfx::ImageDimension_2d);
-	texViewInfo.SetImageFormat(nn::gfx::ImageFormat_R8_G8_Unorm);
-	texViewInfo.SetTexturePtr(&vramTexture->texture);
-	texViewInfo.SetChannelMapping(nn::gfx::ChannelMapping_Red, nn::gfx::ChannelMapping_Green, nn::gfx::ChannelMapping_Blue, nn::gfx::ChannelMapping_Alpha);
-	vramTexture->textureView.Initialize(&g_Device, texViewInfo);
-
-	g_TextureDescriptorPool.GetDescriptorSlot(&whiteTexture->textureDescriptor, g_TextureDescriptorBaseIndex + SLOT_DUMMY);
-	g_TextureDescriptorPool.GetDescriptorSlot(&rg8lutTexture->textureDescriptor, g_TextureDescriptorBaseIndex + SLOT_LUT);
 	g_TextureDescriptorPool.GetDescriptorSlot(&vramTexture->textureDescriptor, g_TextureDescriptorBaseIndex + SLOT_VRAM);
+	g_TextureDescriptorPool.GetDescriptorSlot(&rg8lutTexture->textureDescriptor, g_TextureDescriptorBaseIndex + SLOT_LUT);
+	g_TextureDescriptorPool.GetDescriptorSlot(&whiteTexture->textureDescriptor, g_TextureDescriptorBaseIndex + SLOT_DUMMY);
 
 	g_TextureDescriptorPool.BeginUpdate();
 	{
-		g_TextureDescriptorPool.SetTextureView(g_TextureDescriptorBaseIndex + SLOT_DUMMY, &whiteTexture->textureView);
-		g_TextureDescriptorPool.SetTextureView(g_TextureDescriptorBaseIndex + SLOT_LUT, &rg8lutTexture->textureView);
 		g_TextureDescriptorPool.SetTextureView(g_TextureDescriptorBaseIndex + SLOT_VRAM, &vramTexture->textureView);
+		g_TextureDescriptorPool.SetTextureView(g_TextureDescriptorBaseIndex + SLOT_LUT, &rg8lutTexture->textureView);
+		g_TextureDescriptorPool.SetTextureView(g_TextureDescriptorBaseIndex + SLOT_DUMMY, &whiteTexture->textureView);
 	}
 	g_TextureDescriptorPool.EndUpdate();
 }
@@ -1102,8 +1028,17 @@ void Emulator_SetTexture(TextureID* texture, TexFormat texFormat)
 
 	nn::gfx::DescriptorSlot samplerDescriptor;
 	g_SamplerDescriptorPool.GetDescriptorSlot(&samplerDescriptor, g_SamplerDescriptorBaseIndex);
-	g_CommandBuffer.SetTextureAndSampler(shader->textureBindings[0], nn::gfx::ShaderStage_Pixel, texture->textureDescriptor, samplerDescriptor);
-	g_CommandBuffer.SetTextureAndSampler(shader->textureBindings[1], nn::gfx::ShaderStage_Pixel, rg8lutTexture->textureDescriptor, samplerDescriptor);
+	nn::gfx::DescriptorSlot textureDescriptor;
+	g_TextureDescriptorPool.GetDescriptorSlot(&textureDescriptor, g_TextureDescriptorBaseIndex + SLOT_VRAM);
+
+	nn::gfx::DescriptorSlot textureDescriptor2;
+	g_TextureDescriptorPool.GetDescriptorSlot(&textureDescriptor2, g_TextureDescriptorBaseIndex + SLOT_LUT);
+
+	g_CommandBuffer.SetTextureStateTransition(&texture->texture, NULL, nn::gfx::TextureState_DataTransfer, 0, nn::gfx::TextureState_ShaderRead, nn::gfx::ShaderStageBit_Pixel);
+	g_CommandBuffer.SetTextureStateTransition(&rg8lutTexture->texture, NULL, nn::gfx::TextureState_DataTransfer, 0, nn::gfx::TextureState_ShaderRead, nn::gfx::ShaderStageBit_Pixel);
+
+	g_CommandBuffer.SetTextureAndSampler(shader->textureBindings[SLOT_VRAM], nn::gfx::ShaderStage_Pixel, textureDescriptor, samplerDescriptor);
+	g_CommandBuffer.SetTextureAndSampler(shader->textureBindings[SLOT_LUT], nn::gfx::ShaderStage_Pixel, textureDescriptor2, samplerDescriptor);
 
 	g_lastBoundTexture[0] = texture;
 	g_lastBoundTexture[1] = rg8lutTexture;
@@ -1224,11 +1159,18 @@ void Emulator_UpdateVRAM()
 	}
 	vram_need_update = FALSE;
 
-	//nn::gfx::MemoryPool& memoryPool = g_MemoryPool[MemoryPoolType_CpuCached_GpuCached];
-	//uint8_t* pixels = nn::util::BytePtr(memoryPool.Map(), vramTexture->offset).Get< uint8_t >();
-	//memcpy(pixels, vram, VRAM_WIDTH * VRAM_HEIGHT * sizeof(unsigned short));
-	//memoryPool.FlushMappedRange(vramTexture->offset, vramTexture->size);
-	//memoryPool.Unmap();
+	nn::gfx::MemoryPool& memoryPool = g_MemoryPool[MemoryPoolType_CpuCached_GpuCached];
+	uint8_t* pixels = nn::util::BytePtr(memoryPool.Map(), vramTexture->offset).Get< uint8_t >();
+	uint8_t* src = (uint8_t*)&vram;
+
+	for (int i = 0; i < VRAM_HEIGHT; i++)
+	{
+		memcpy(pixels, src, VRAM_WIDTH * 2);
+		pixels += vramTexture->pitch;
+		src += VRAM_WIDTH * 2;
+	}
+	memoryPool.FlushMappedRange(vramTexture->offset, vramTexture->size);
+	memoryPool.Unmap();
 }
 
 void Emulator_SetWireframe(int enable)
