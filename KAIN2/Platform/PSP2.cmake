@@ -1,4 +1,7 @@
-if(DEFINED PLATFORM_PSP2)
+if(DEFINED ${PLATFORM_PSP2})
+
+message(warning "message text")
+
 
 string(REGEX REPLACE "(-D|/D)[^ ]* " "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 

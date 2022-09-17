@@ -70,8 +70,6 @@ const size_t MemoryPoolSize[MemoryPoolType_End] =
 	20 * 1024 * 1024
 };
 
-ShaderID* g_lastShader = NULL;
-
 void* g_pPoolMemory[MemoryPoolType_End] = {};
 ptrdiff_t g_MemoryPoolOffset[MemoryPoolType_End] = {};
 
@@ -98,6 +96,7 @@ nn::gfx::DepthStencilState g_DepthStencilState;
 nn::gfx::Buffer g_VertexBuffer;
 nn::gfx::Buffer g_ConstantBuffer;
 nn::gfx::Sampler g_Sampler;
+nn::gfx::Sampler g_Sampler2;
 nn::gfx::DescriptorPool g_BufferDescriptorPool;
 nn::gfx::DescriptorPool g_SamplerDescriptorPool;
 NVNtextureBuilder g_textureBuilder;
@@ -150,29 +149,20 @@ ShaderID* Shader_Compile(const char* path_vs, const char* path_ps)
 
 	nn::gfx::Shader::InfoType info;
 	info.SetDefault();
-	info.SetSeparationEnabled(true);
-	nn::gfx::ShaderCode code;
+	info.SetSeparationEnabled(false);
+	nn::gfx::ShaderCode codeVS;
+	nn::gfx::ShaderCode codePS;
 
-	code.codeSize = static_cast<uint32_t>(vs_size);
-	code.pCode = vs_list;
-	info.SetShaderCodePtr(nn::gfx::ShaderStage_Vertex, &code);
+	codeVS.codeSize = static_cast<uint32_t>(vs_size);
+	codeVS.pCode = vs_list;
+	codePS.codeSize = static_cast<uint32_t>(ps_size);
+	codePS.pCode = ps_list;
+	info.SetShaderCodePtr(nn::gfx::ShaderStage_Vertex, &codeVS);
+	info.SetShaderCodePtr(nn::gfx::ShaderStage_Pixel, &codePS);
 	info.SetSourceFormat(nn::gfx::ShaderSourceFormat_Glsl);
 	info.SetCodeType(nn::gfx::ShaderCodeType_Source);
 	
-	nn::gfx::ShaderInitializeResult result = program->VS.Initialize(&g_Device, info);
-	NN_ASSERT(result == nn::gfx::ShaderInitializeResult_Success);
-	NN_UNUSED(result);
-
-	info.SetDefault();
-	info.SetSeparationEnabled(true);
-	
-	code.codeSize = static_cast<uint32_t>(ps_size);
-	code.pCode = ps_list;
-	info.SetShaderCodePtr(nn::gfx::ShaderStage_Pixel, &code);
-	info.SetSourceFormat(nn::gfx::ShaderSourceFormat_Glsl);
-	info.SetCodeType(nn::gfx::ShaderCodeType_Source);
-	
-	result = program->PS.Initialize(&g_Device, info);
+	nn::gfx::ShaderInitializeResult result = program->VSPS.Initialize(&g_Device, info);
 	NN_ASSERT(result == nn::gfx::ShaderInitializeResult_Success);
 	NN_UNUSED(result);
 
@@ -193,7 +183,7 @@ ShaderID* Shader_Compile(const char* path_vs, const char* path_ps)
 #endif
 		attribs[0].SetOffset(OFFSETOF(Vertex, x));
 
-		int slotPosition = program->VS.GetInterfaceSlot(nn::gfx::ShaderStage_Vertex, nn::gfx::ShaderInterfaceType_Input, "a_position");
+		int slotPosition = program->VSPS.GetInterfaceSlot(nn::gfx::ShaderStage_Vertex, nn::gfx::ShaderInterfaceType_Input, "a_position");
 		if (slotPosition >= 0)
 		{
 			attribs[0].SetShaderSlot(slotPosition);
@@ -205,7 +195,7 @@ ShaderID* Shader_Compile(const char* path_vs, const char* path_ps)
 		attribs[1].SetBufferIndex(0);
 		attribs[1].SetFormat(nn::gfx::AttributeFormat_8_8_8_8_UintToFloat);
 		attribs[1].SetOffset(OFFSETOF(Vertex, u));
-		int slotTexcoord = program->VS.GetInterfaceSlot(nn::gfx::ShaderStage_Vertex, nn::gfx::ShaderInterfaceType_Input, "a_texcoord");
+		int slotTexcoord = program->VSPS.GetInterfaceSlot(nn::gfx::ShaderStage_Vertex, nn::gfx::ShaderInterfaceType_Input, "a_texcoord");
 		if (slotTexcoord >= 0)
 		{
 			attribs[1].SetShaderSlot(slotTexcoord);
@@ -217,7 +207,7 @@ ShaderID* Shader_Compile(const char* path_vs, const char* path_ps)
 		attribs[2].SetBufferIndex(0);
 		attribs[2].SetFormat(nn::gfx::AttributeFormat_8_8_8_8_UintToFloat);
 		attribs[2].SetOffset(OFFSETOF(Vertex, r));
-		int slotColor = program->VS.GetInterfaceSlot(nn::gfx::ShaderStage_Vertex, nn::gfx::ShaderInterfaceType_Input, "a_color");
+		int slotColor = program->VSPS.GetInterfaceSlot(nn::gfx::ShaderStage_Vertex, nn::gfx::ShaderInterfaceType_Input, "a_color");
 		if (slotColor >= 0)
 		{
 			attribs[2].SetShaderSlot(slotColor);
@@ -236,8 +226,8 @@ ShaderID* Shader_Compile(const char* path_vs, const char* path_ps)
 	g_pMemory.Advance(size);
 	program->vertexState.Initialize(&g_Device, vsInfo, NULL);
 
-	int slotVRAMTexture = program->PS.GetInterfaceSlot(nn::gfx::ShaderStage_Pixel, nn::gfx::ShaderInterfaceType_Sampler, "s_texture");
-	int slotLUTTexture = program->PS.GetInterfaceSlot(nn::gfx::ShaderStage_Pixel, nn::gfx::ShaderInterfaceType_Sampler, "s_lut");
+	int slotVRAMTexture = program->VSPS.GetInterfaceSlot(nn::gfx::ShaderStage_Pixel, nn::gfx::ShaderInterfaceType_Sampler, "s_texture");
+	int slotLUTTexture = program->VSPS.GetInterfaceSlot(nn::gfx::ShaderStage_Pixel, nn::gfx::ShaderInterfaceType_Sampler, "s_lut");
 
 	if (slotVRAMTexture >= 0)
 	{
@@ -515,11 +505,15 @@ void Emulator_InitialiseSampler()
 {
 	nn::gfx::Sampler::InfoType info;
 	info.SetDefault();
-	info.SetFilterMode(nn::gfx::FilterMode_MinLinear_MagLinear_MipPoint);
+	info.SetFilterMode(nn::gfx::FilterMode_MinPoint_MagPoint_MipPoint);
+
+	g_Sampler.Initialize(&g_Device, info);
+
+	info.SetDefault();
+	info.SetFilterMode(nn::gfx::FilterMode_MinPoint_MagPoint_MipPoint);
 	info.SetAddressU(nn::gfx::TextureAddressMode_ClampToEdge);
 	info.SetAddressV(nn::gfx::TextureAddressMode_ClampToEdge);
-	info.SetAddressW(nn::gfx::TextureAddressMode_ClampToEdge);
-	g_Sampler.Initialize(&g_Device, info);
+	g_Sampler2.Initialize(&g_Device, info);
 }
 
 void Emulator_InitialiseBufferDescriptorPool()
@@ -540,7 +534,7 @@ void Emulator_InitialiseSamplerDescriptorPool()
 	nn::gfx::DescriptorPool::InfoType info;
 	info.SetDefault();
 	info.SetDescriptorPoolType(nn::gfx::DescriptorPoolType_Sampler);
-	info.SetSlotCount(g_SamplerDescriptorBaseIndex + 1);
+	info.SetSlotCount(g_SamplerDescriptorBaseIndex + SLOT_MAX);
 	size_t size = nn::gfx::DescriptorPool::CalculateDescriptorPoolSize(&g_Device, info);
 	ptrdiff_t& offset = g_MemoryPoolOffset[MemoryPoolType_CpuUncached_GpuCached];
 	offset = nn::util::align_up(offset, nn::gfx::DescriptorPool::GetDescriptorPoolAlignment(&g_Device, info));
@@ -553,7 +547,7 @@ void Emulator_InitialiseTextureDescriptorPool()
 	nn::gfx::DescriptorPool::InfoType info;
 	info.SetDefault();
 	info.SetDescriptorPoolType(nn::gfx::DescriptorPoolType_TextureView);
-	info.SetSlotCount(g_TextureDescriptorBaseIndex + 3);
+	info.SetSlotCount(g_TextureDescriptorBaseIndex + SLOT_MAX);
 	size_t size = nn::gfx::DescriptorPool::CalculateDescriptorPoolSize(&g_Device, info);
 	ptrdiff_t& offset = g_MemoryPoolOffset[MemoryPoolType_CpuUncached_GpuCached];
 	offset = nn::util::align_up(offset, nn::gfx::DescriptorPool::GetDescriptorPoolAlignment(&g_Device, info));
@@ -735,7 +729,8 @@ void Emulator_BeginPass()
 
 	g_SamplerDescriptorPool.BeginUpdate();
 	{
-		g_SamplerDescriptorPool.SetSampler(g_SamplerDescriptorBaseIndex, &g_Sampler);
+		g_SamplerDescriptorPool.SetSampler(g_SamplerDescriptorBaseIndex + SLOT_VRAM, &g_Sampler);
+		g_SamplerDescriptorPool.SetSampler(g_SamplerDescriptorBaseIndex + SLOT_LUT, &g_Sampler2);
 	}
 	g_SamplerDescriptorPool.EndUpdate();
 }
@@ -855,7 +850,7 @@ void Emulator_CreateGlobalShaders()
 	g_blit_shader = Shader_Compile("NVN/blit_shader_vs.glsl", "NVN/blit_shader_ps.glsl");
 }
 
-void Emulator_CreateTexture(TextureID* texture, int width, int height, char* initialData, nn::gfx::ImageFormat type)
+void Emulator_CreateTexture(TextureID* texture, int width, int height, char* initialData, nn::gfx::ImageFormat type, int bytesPerPixel)
 {
 	nn::gfx::Texture::InfoType info;
 	info.SetDefault();
@@ -880,9 +875,9 @@ void Emulator_CreateTexture(TextureID* texture, int width, int height, char* ini
 
 		for (int i = 0; i < info.GetHeight(); i++)
 		{
-			memcpy(pixels, initialData, info.GetWidth() * 4);
+			memcpy(pixels, initialData, info.GetWidth() * bytesPerPixel);
 			pixels += pitch;
-			initialData += info.GetWidth() * 4;
+			initialData += info.GetWidth() * bytesPerPixel;
 		}
 
 		memoryPool.FlushMappedRange(offset, size);
@@ -895,7 +890,6 @@ void Emulator_CreateTexture(TextureID* texture, int width, int height, char* ini
 	texture->pitch = pitch;
 	offset += size;
 
-
 	nn::gfx::TextureView::InfoType texViewInfo;
 	texViewInfo.SetDefault();
 	texViewInfo.SetImageDimension(nn::gfx::ImageDimension_2d);
@@ -905,17 +899,19 @@ void Emulator_CreateTexture(TextureID* texture, int width, int height, char* ini
 	texture->textureView.Initialize(&g_Device, texViewInfo);
 }
 
+unsigned char pixelData[64 * 64 * sizeof(unsigned int)];
+
 void Emulator_GenerateCommonTextures()
 {
 	whiteTexture = &GET_TEXTURE();
-	unsigned int pixelData = 0xFFFFFFFF;
-	Emulator_CreateTexture(whiteTexture, 1, 1, (char*)&pixelData, nn::gfx::ImageFormat_R8_G8_B8_A8_Unorm);
+	memset(pixelData, 0xFF, sizeof(pixelData));
+	Emulator_CreateTexture(whiteTexture, 64, 64, (char*)&pixelData, nn::gfx::ImageFormat_R8_G8_B8_A8_Unorm, sizeof(unsigned int));
 
 	rg8lutTexture = &GET_TEXTURE();
-	Emulator_CreateTexture(rg8lutTexture, LUT_WIDTH, LUT_HEIGHT, (char*)Emulator_GenerateRG8LUT(), nn::gfx::ImageFormat_R8_G8_B8_A8_Unorm);
+	Emulator_CreateTexture(rg8lutTexture, LUT_WIDTH, LUT_HEIGHT, (char*)Emulator_GenerateRG8LUT(), nn::gfx::ImageFormat_R8_G8_B8_A8_Unorm, sizeof(unsigned int));
 
 	vramTexture = &GET_TEXTURE();
-	Emulator_CreateTexture(vramTexture, VRAM_WIDTH, VRAM_HEIGHT, NULL, nn::gfx::ImageFormat_R8_G8_Unorm);
+	Emulator_CreateTexture(vramTexture, VRAM_WIDTH, VRAM_HEIGHT, NULL, nn::gfx::ImageFormat_R8_G8_Unorm, sizeof(unsigned short));
 
 	//TEMP
 
@@ -979,45 +975,8 @@ void Emulator_Ortho2D(float left, float right, float bottom, float top, float zn
 	g_ConstantBuffer.Unmap();
 }
 
-void Emulator_SetShader(ShaderID* shader)
+void Emulator_SetTextureAndShader(TextureID* texture, ShaderID* shader)
 {
-	g_CommandBuffer.SetShader(&shader->VS, nn::gfx::ShaderStageBit_Vertex);
-	g_CommandBuffer.SetShader(&shader->PS, nn::gfx::ShaderStageBit_Pixel);
-	
-	g_CommandBuffer.SetVertexState(&shader->vertexState);
-
-	nn::gfx::DescriptorSlot constantBufferDescriptor;
-	g_BufferDescriptorPool.GetDescriptorSlot(&constantBufferDescriptor, g_BufferDescriptorBaseIndex);
-
-	shader->u_projection = shader->VS.GetInterfaceSlot(nn::gfx::ShaderStage_Vertex, nn::gfx::ShaderInterfaceType_ConstantBuffer, "Mat");
-	if (shader->u_projection >= 0)
-	{
-		Emulator_Ortho2D(0.0f, activeDispEnv.disp.w, activeDispEnv.disp.h, 0.0f, 0.0f, 1.0f);
-
-		g_CommandBuffer.SetConstantBuffer(shader->u_projection, nn::gfx::ShaderStage_Vertex, constantBufferDescriptor);
-	}
-}
-
-void Emulator_SetTexture(TextureID* texture, TexFormat texFormat)
-{
-	ShaderID* shader = g_lastShader;
-
-	switch (texFormat)
-	{
-	case TF_4_BIT:
-		shader = g_gte_shader_4;
-		Emulator_SetShader(g_gte_shader_4);
-		break;
-	case TF_8_BIT:
-		shader = g_gte_shader_8;
-		Emulator_SetShader(g_gte_shader_8);
-		break;
-	case TF_16_BIT:
-		shader = g_gte_shader_16;
-		Emulator_SetShader(g_gte_shader_16);
-		break;
-	}
-
 	if (g_texturelessMode) {
 		//texture = whiteTexture;
 	}
@@ -1026,19 +985,32 @@ void Emulator_SetTexture(TextureID* texture, TexFormat texFormat)
 		//return;
 	}
 
-	nn::gfx::DescriptorSlot samplerDescriptor;
-	g_SamplerDescriptorPool.GetDescriptorSlot(&samplerDescriptor, g_SamplerDescriptorBaseIndex);
-	nn::gfx::DescriptorSlot textureDescriptor;
-	g_TextureDescriptorPool.GetDescriptorSlot(&textureDescriptor, g_TextureDescriptorBaseIndex + SLOT_VRAM);
+	g_CommandBuffer.SetShader(&shader->VSPS, nn::gfx::ShaderStageBit_Vertex);
+	g_CommandBuffer.SetShader(&shader->VSPS, nn::gfx::ShaderStageBit_Pixel);
 
-	nn::gfx::DescriptorSlot textureDescriptor2;
-	g_TextureDescriptorPool.GetDescriptorSlot(&textureDescriptor2, g_TextureDescriptorBaseIndex + SLOT_LUT);
+	g_CommandBuffer.SetVertexState(&shader->vertexState);
+
+	nn::gfx::DescriptorSlot constantBufferDescriptor;
+	g_BufferDescriptorPool.GetDescriptorSlot(&constantBufferDescriptor, g_BufferDescriptorBaseIndex);
+
+	shader->u_projection = shader->VSPS.GetInterfaceSlot(nn::gfx::ShaderStage_Vertex, nn::gfx::ShaderInterfaceType_ConstantBuffer, "Mat");
+	if (shader->u_projection >= 0)
+	{
+		Emulator_Ortho2D(0.0f, activeDispEnv.disp.w, activeDispEnv.disp.h, 0.0f, 0.0f, 1.0f);
+
+		g_CommandBuffer.SetConstantBuffer(shader->u_projection, nn::gfx::ShaderStage_Vertex, constantBufferDescriptor);
+	}
+
+	nn::gfx::DescriptorSlot samplerDescriptor;
+	nn::gfx::DescriptorSlot samplerDescriptor2;
+	g_SamplerDescriptorPool.GetDescriptorSlot(&samplerDescriptor, g_SamplerDescriptorBaseIndex + SLOT_VRAM);
+	g_SamplerDescriptorPool.GetDescriptorSlot(&samplerDescriptor2, g_SamplerDescriptorBaseIndex + SLOT_LUT);
 
 	g_CommandBuffer.SetTextureStateTransition(&texture->texture, NULL, nn::gfx::TextureState_DataTransfer, 0, nn::gfx::TextureState_ShaderRead, nn::gfx::ShaderStageBit_Pixel);
 	g_CommandBuffer.SetTextureStateTransition(&rg8lutTexture->texture, NULL, nn::gfx::TextureState_DataTransfer, 0, nn::gfx::TextureState_ShaderRead, nn::gfx::ShaderStageBit_Pixel);
 
-	g_CommandBuffer.SetTextureAndSampler(shader->textureBindings[SLOT_VRAM], nn::gfx::ShaderStage_Pixel, textureDescriptor, samplerDescriptor);
-	g_CommandBuffer.SetTextureAndSampler(shader->textureBindings[SLOT_LUT], nn::gfx::ShaderStage_Pixel, textureDescriptor2, samplerDescriptor);
+	g_CommandBuffer.SetTextureAndSampler(shader->textureBindings[SLOT_VRAM], nn::gfx::ShaderStage_Pixel, texture->textureDescriptor, samplerDescriptor);
+	g_CommandBuffer.SetTextureAndSampler(shader->textureBindings[SLOT_LUT], nn::gfx::ShaderStage_Pixel, rg8lutTexture->textureDescriptor, samplerDescriptor2);
 
 	g_lastBoundTexture[0] = texture;
 	g_lastBoundTexture[1] = rg8lutTexture;
@@ -1159,18 +1131,20 @@ void Emulator_UpdateVRAM()
 	}
 	vram_need_update = FALSE;
 
-	nn::gfx::MemoryPool& memoryPool = g_MemoryPool[MemoryPoolType_CpuCached_GpuCached];
-	uint8_t* pixels = nn::util::BytePtr(memoryPool.Map(), vramTexture->offset).Get< uint8_t >();
-	uint8_t* src = (uint8_t*)&vram;
+	vramTexture->texture.Finalize(&g_Device);
+	vramTexture->textureView.Finalize(&g_Device);
+	ptrdiff_t& offset = g_MemoryPoolOffset[MemoryPoolType_CpuCached_GpuCached];
+	offset -= vramTexture->size;
 
-	for (int i = 0; i < VRAM_HEIGHT; i++)
+	Emulator_CreateTexture(vramTexture, VRAM_WIDTH, VRAM_HEIGHT, (char*)&vram[0], nn::gfx::ImageFormat_R8_G8_Unorm, sizeof(short));
+	
+	g_TextureDescriptorPool.GetDescriptorSlot(&vramTexture->textureDescriptor, g_TextureDescriptorBaseIndex + SLOT_VRAM);
+
+	g_TextureDescriptorPool.BeginUpdate();
 	{
-		memcpy(pixels, src, VRAM_WIDTH * 2);
-		pixels += vramTexture->pitch;
-		src += VRAM_WIDTH * 2;
+		g_TextureDescriptorPool.SetTextureView(g_TextureDescriptorBaseIndex + SLOT_VRAM, &vramTexture->textureView);
 	}
-	memoryPool.FlushMappedRange(vramTexture->offset, vramTexture->size);
-	memoryPool.Unmap();
+	g_TextureDescriptorPool.EndUpdate();
 }
 
 void Emulator_SetWireframe(int enable)

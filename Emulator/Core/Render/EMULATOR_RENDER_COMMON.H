@@ -155,10 +155,11 @@ extern void Emulator_SwapWindow();
 extern void Emulator_ResetDevice();
 #if defined(PLATFORM_NX)
 extern void Emulator_SetShader(ShaderID* shader);
-extern void Emulator_SetTexture(TextureID* texture, enum TexFormat texFormat);
+extern void Emulator_SetTextureAndShader(TextureID* texture, ShaderID* shader);
+extern ShaderID* Emulator_GetGTEShader(TexFormat texFormat);
 #else
-extern void Emulator_SetShader(const ShaderID shader);
-extern void Emulator_SetTexture(TextureID texture, enum TexFormat texFormat);
+extern void Emulator_SetTextureAndShader(TextureID texture, ShaderID shader);
+extern ShaderID Emulator_GetGTEShader(TexFormat texFormat);
 #endif
 
 extern void Emulator_UpdateVertexBuffer(const struct Vertex* vertices, int count);

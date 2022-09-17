@@ -5360,9 +5360,8 @@ void Emulator_BlitVRAM()
 		return;
 	}
 
-	Emulator_SetTexture(vramTexture, TF_16_BIT);
+	Emulator_SetTextureAndShader(vramTexture, Emulator_GetGTEShader(TF_COUNT));
 	Emulator_SetBlendMode(BM_NONE);
-	Emulator_SetShader(g_blit_shader);
 
 #if defined(_PATCH2)
 	u_char l, t, r, b; 

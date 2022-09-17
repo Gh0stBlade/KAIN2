@@ -2,14 +2,14 @@
 
 out vec4 fragColor;
 
-out vec4 v_texcoord;
-out vec4 v_color;
-out vec4 v_page_clut;
+varying vec4 v_texcoord;
+varying vec4 v_color;
+varying vec4 v_page_clut;
 
 uniform sampler2D s_texture;
 uniform sampler2D s_lut;
 
-vec2 VRAM(vec2 uv) { return texture2D(s_texture, uv).rg; }
+vec2 VRAM(vec2 uv) { return texture(s_texture, uv).rg; }
 
 	mat4 dither = mat4(
 			-4.0,  +0.0,  -3.0,  +1.0,
@@ -37,7 +37,7 @@ void main() {
 	}
 	vec2 color_rg = VRAM(clut_pos);
 	if (color_rg.x + color_rg.y == 0.0) { discard; }
-	fragColor = texture2D(s_lut, color_rg);
+	fragColor = texture(s_lut, color_rg);
 		fragColor *= v_color;
 		ivec2 dc = ivec2(fract(gl_FragCoord.xy / 4.0) * 4.0);
 		fragColor.xyz += DITHER(dc);

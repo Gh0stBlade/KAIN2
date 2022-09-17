@@ -2,7 +2,7 @@
 				
 out vec4 fragColor;
 
-out vec4 v_texcoord;
+varying vec4 v_texcoord;
 
 uniform sampler2D s_texture;
 uniform sampler2D s_lut;

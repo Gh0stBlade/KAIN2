@@ -39,8 +39,7 @@ typedef struct TextureID
 
 typedef struct ShaderID
 {
-	nn::gfx::Shader VS;
-	nn::gfx::Shader PS;
+	nn::gfx::Shader VSPS;
 	nn::gfx::VertexState vertexState;
 	int u_projection;
 	int textureBindings[SLOT_MAX];

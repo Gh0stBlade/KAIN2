@@ -19,8 +19,22 @@ enum ShaderAttrib
 #endif
 };
 
+enum TextureSlot
+{
+	SLOT_VRAM,
+	SLOT_LUT,
+	SLOT_DUMMY,
+	SLOT_MAX
+};
+
 typedef GLuint TextureID;
-typedef GLuint ShaderID;
+
+typedef struct ShaderID
+{
+	GLuint program;
+	GLuint textures[SLOT_MAX];
+}ShaderID;
+
 typedef GLuint RenderTargetID;
 
 extern int Emulator_InitialiseGLContext(char* windowName);

@@ -818,11 +818,32 @@ void Emulator_ResetPolyState()
 	s_lastPolyType = 0xFFFF;
 }
 
+#if defined(PLATFORM_NX)
+ShaderID* Emulator_GetGTEShader(TexFormat texFormat)
+#else
+ShaderID Emulator_GetGTEShader(TexFormat texFormat)
+#endif
+{
+	switch (texFormat)
+	{
+	case TF_4_BIT:
+		return g_gte_shader_4;
+		break;
+	case TF_8_BIT:
+		return g_gte_shader_8;
+		break;
+	case TF_16_BIT:
+		return g_gte_shader_16;
+		break;
+	}
+
+	return g_blit_shader;
+}
 
 void Emulator_DrawSplit(const struct VertexBufferSplit* split)
 {
 	Emulator_SetBlendMode(split->blendMode);
-	Emulator_SetTexture(split->textureId, split->texFormat);
+	Emulator_SetTextureAndShader(split->textureId, Emulator_GetGTEShader(split->texFormat));
 
 	Emulator_DrawTriangles(split->vIndex, split->vCount / 3);
 }

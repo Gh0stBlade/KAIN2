@@ -1,15 +1,19 @@
 #version 330
-out vec4 v_texcoord;out vec4 v_color;out vec4 v_page_clut;
-out gl_PerVertex
+
+varying vec4 v_texcoord;
+varying vec4 v_color;
+varying vec4 v_page_clut;
+
+out gl_PerVertex
 {
 	vec4 gl_Position;
 };
 	
-in vec4 a_position;
-in vec4 a_texcoord; // uv, color multiplier, dither
-in vec4 a_color;
-in float a_z;
-in float a_w;
+attribute vec4 a_position;
+attribute vec4 a_texcoord; // uv, color multiplier, dither
+attribute vec4 a_color;
+attribute float a_z;
+attribute float a_w;
 
 layout(std140) uniform Mat
 {
