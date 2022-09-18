@@ -104,6 +104,8 @@ int PadGetState(int port)
 	}
 
 	return 0;
+#elif defined(PLATFORM_NX)
+	return PadStateStable;
 #else
 	return 0;
 #endif

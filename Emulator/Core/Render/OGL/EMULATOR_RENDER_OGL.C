@@ -226,6 +226,41 @@ void Shader_CheckProgramStatus(GLuint program)
 	}
 }
 
+#include <vector>
+#include <string>
+
+void GetFirstNMessages(GLuint numMsgs)
+{
+	GLint maxMsgLen = 0;
+	glGetIntegerv(GL_MAX_DEBUG_MESSAGE_LENGTH, &maxMsgLen);
+
+	std::vector<GLchar> msgData(numMsgs * maxMsgLen);
+	std::vector<GLenum> sources(numMsgs);
+	std::vector<GLenum> types(numMsgs);
+	std::vector<GLenum> severities(numMsgs);
+	std::vector<GLuint> ids(numMsgs);
+	std::vector<GLsizei> lengths(numMsgs);
+
+	GLuint numFound = glGetDebugMessageLog(numMsgs, maxMsgLen, &sources[0], &types[0], &ids[0], &severities[0], &lengths[0], &msgData[0]);
+
+	sources.resize(numFound);
+	types.resize(numFound);
+	severities.resize(numFound);
+	ids.resize(numFound);
+	lengths.resize(numFound);
+
+	std::vector<std::string> messages;
+	messages.reserve(numFound);
+
+	std::vector<GLchar>::iterator currPos = msgData.begin();
+	for (size_t msg = 0; msg < lengths.size(); ++msg)
+	{
+		messages.push_back(std::string(currPos, currPos + lengths[msg] - 1));
+		currPos = currPos + lengths[msg];
+		printf("%s\n", messages[msg].c_str());
+	}
+}
+
 ShaderID Shader_Compile(const char* source)
 {
 	const char* GLSL_HEADER_VERT =
@@ -330,6 +365,11 @@ void Emulator_DestroyTextures()
 	whiteTexture = 0;
 }
 
+void GLAPIENTRY Emulator_HandleGLDebug(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
+{
+	eprinterr("%s\n", message);
+}
+
 void Emulator_DestroyGlobalShaders()
 {
 	glUseProgram(0);
@@ -372,25 +412,25 @@ unsigned char pixelData[64 * 64 * sizeof(unsigned int)];
 void Emulator_GenerateCommonTextures()
 {
 	memset(pixelData, 0xFF, sizeof(pixelData));
+	
 	glGenTextures(1, &whiteTexture);
-
+	glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_2D, whiteTexture);
-
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 64, 64, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixelData);
 
 	glGenTextures(1, &rg8lutTexture);
+	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, rg8lutTexture);
-
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, LUT_WIDTH, LUT_HEIGHT, 0, GL_RGBA, GL_UNSIGNED_BYTE, Emulator_GenerateRG8LUT());
-
+	
 	glGenTextures(1, &vramTexture);
+	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, vramTexture);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);

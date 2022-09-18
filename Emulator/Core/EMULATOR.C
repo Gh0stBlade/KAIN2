@@ -2485,6 +2485,10 @@ static int Emulator_InitialiseSDL2(char* windowName, int width, int height)
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+
+#if defined(_DEBUG)
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
+#endif
 #endif
 	}
 	else
@@ -2596,6 +2600,13 @@ void Emulator_Initialise(char* windowName, int width, int height)
 		eprinterr("Failed to Intialise GLEW\n");
 		Emulator_ShutDown();
 	}
+
+#if defined(_DEBUG)
+	extern void GLAPIENTRY Emulator_HandleGLDebug(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar * message, const void* userParam);
+	glEnable(GL_DEBUG_OUTPUT);
+	glDebugMessageCallback(&Emulator_HandleGLDebug, NULL);
+#endif
+
 #endif
 
 	if (Emulator_InitialiseCore() == FALSE)
@@ -6059,6 +6070,23 @@ void Emulator_UpdateInput(int poll)
 			((unsigned short*)padData[0])[2] = 128;//Maybe not required.
 			((unsigned short*)padData[0])[3] = 128;
 		}
+	}
+#elif defined(PLATFORM_NX)
+	extern void Emulator_UpdateInputNVN();
+	Emulator_UpdateInputNVN();
+
+	if (padAllowCommunication && padData[0] != NULL)
+	{
+		extern unsigned short UpdateTouchInput();
+		kbInputs = UpdateTouchInput();
+
+		((unsigned short*)padData[0])[1] = kbInputs;
+		((unsigned short*)padData[0])[2] = 128;//Maybe not required.
+		((unsigned short*)padData[0])[3] = 128;
+	}
+	else
+	{
+		kbInputs = 0xFFFFu;
 	}
 #endif
 

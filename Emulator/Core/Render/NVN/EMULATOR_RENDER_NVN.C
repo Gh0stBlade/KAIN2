@@ -1,11 +1,12 @@
 #include "LIBGPU.H"
-#include "EMULATOR_RENDER_NN.H"
+#include "EMULATOR_RENDER_NVN.H"
 #include "Core/Debug/EMULATOR_LOG.H"
 #include "Core/Render/EMULATOR_RENDER_COMMON.H"
 #include <stdio.h>
 
 #if defined(PLATFORM_NX)
 
+nn::gfx::BlendState g_BlendState[BM_COUNT];
 nn::gfx::Texture g_Texture;
 nn::gfx::Texture g_vramTexture;
 nn::gfx::Texture g_rg8lutTexture;
@@ -29,7 +30,7 @@ extern void Emulator_DestroyTextures();
 extern void Emulator_DestroyGlobalShaders();
 extern void Emulator_CreateVertexBuffer();
 
-const char* renderBackendName = "NN";
+const char* renderBackendName = "NVN";
 
 enum MemoryPoolType
 {
@@ -91,7 +92,6 @@ nn::gfx::ResTextureFile* g_pResTextureFile;
 
 nn::gfx::ViewportScissorState* g_ViewportScissor = NULL;
 nn::gfx::RasterizerState g_RasterizerState;
-nn::gfx::BlendState g_BlendState;
 nn::gfx::DepthStencilState g_DepthStencilState;
 nn::gfx::Buffer g_VertexBuffer;
 nn::gfx::Buffer g_ConstantBuffer;
@@ -391,7 +391,7 @@ void Emulator_InitialiseSwapChain()
 	info.SetLayer(g_layer);
 	info.SetWidth(width);
 	info.SetHeight(height);
-	info.SetFormat(nn::gfx::ImageFormat_R8_G8_B8_A8_UnormSrgb);
+	info.SetFormat(nn::gfx::ImageFormat_R8_G8_B8_A8_Unorm);
 	info.SetBufferCount(2);
 
 	if (NN_STATIC_CONDITION(nn::gfx::SwapChain::IsMemoryPoolRequired))
@@ -437,22 +437,6 @@ void Emulator_InitialiseRasterizerState()
 	g_RasterizerState.Initialize(&g_Device, info);
 }
 
-void Emulator_InitialiseBlendState()
-{
-	nn::gfx::BlendState::InfoType info;
-	info.SetDefault();
-	nn::gfx::BlendTargetStateInfo targetInfo;
-	{
-		targetInfo.SetDefault();
-	};
-	info.SetBlendTargetStateInfoArray(&targetInfo, 1);
-	size_t size = nn::gfx::BlendState::GetRequiredMemorySize(info);
-	g_pMemory.AlignUp(nn::gfx::BlendState::RequiredMemoryInfo_Alignment);
-	g_BlendState.SetMemory(g_pMemory.Get(), size);
-	g_pMemory.Advance(size);
-	g_BlendState.Initialize(&g_Device, info);
-}
-
 void Emulator_InitialiseDepthStencilState()
 {
 	nn::gfx::DepthStencilState::InfoType info;
@@ -482,6 +466,87 @@ void Emulator_InitialiseVertexBuffer()
 	}
 }
 
+void Emulator_InitialiseBlendStates()
+{
+	
+	for (int i = 0; i < BM_COUNT; i++)
+	{
+		nn::gfx::BlendState::InfoType info;
+		nn::gfx::BlendTargetStateInfo targetInfo;
+		targetInfo.SetDefault();
+		info.SetDefault();
+		info.SetBlendTargetStateInfoArray(&targetInfo, 1);
+		size_t size = nn::gfx::BlendState::GetRequiredMemorySize(info);
+		g_pMemory.AlignUp(nn::gfx::BlendState::RequiredMemoryInfo_Alignment);
+		g_BlendState[i].SetMemory(g_pMemory.Get(), size);
+		g_pMemory.Advance(size);
+		switch (i)
+		{
+		case BM_NONE:
+			break;
+		case BM_AVERAGE:
+			targetInfo.SetBlendEnabled(TRUE);
+
+			targetInfo.SetSourceColorBlendFactor(nn::gfx::BlendFactor_ConstantColor);
+			targetInfo.SetDestinationColorBlendFactor(nn::gfx::BlendFactor_ConstantColor);
+			targetInfo.SetColorBlendFunction(nn::gfx::BlendFunction_Add);
+
+			targetInfo.SetSourceAlphaBlendFactor(nn::gfx::BlendFactor_ConstantColor);
+			targetInfo.SetDestinationAlphaBlendFactor(nn::gfx::BlendFactor_ConstantColor);
+			targetInfo.SetAlphaBlendFunction(nn::gfx::BlendFunction_Add);
+
+			info.SetIndependentBlendEnabled(TRUE);
+			info.SetBlendConstant(128.0f * (1.0f / 255.0f), 128.0f * (1.0f / 255.0f), 128.0f * (1.0f / 255.0f), 128.0f * (1.0f / 255.0f));
+			break;
+		case BM_ADD:
+			targetInfo.SetBlendEnabled(TRUE);
+
+			targetInfo.SetSourceColorBlendFactor(nn::gfx::BlendFactor_One);
+			targetInfo.SetDestinationColorBlendFactor(nn::gfx::BlendFactor_One);
+			targetInfo.SetColorBlendFunction(nn::gfx::BlendFunction_Add);
+
+			targetInfo.SetSourceAlphaBlendFactor(nn::gfx::BlendFactor_One);
+			targetInfo.SetDestinationAlphaBlendFactor(nn::gfx::BlendFactor_One);
+			targetInfo.SetAlphaBlendFunction(nn::gfx::BlendFunction_Add);
+
+			info.SetIndependentBlendEnabled(TRUE);
+			info.SetBlendConstant(1.0f, 1.0f, 1.0f, 1.0f);
+
+			break;
+		case BM_SUBTRACT:
+			targetInfo.SetBlendEnabled(TRUE);
+
+			targetInfo.SetSourceColorBlendFactor(nn::gfx::BlendFactor_One);
+			targetInfo.SetDestinationColorBlendFactor(nn::gfx::BlendFactor_One);
+			targetInfo.SetColorBlendFunction(nn::gfx::BlendFunction_ReverseSubtract);
+
+			targetInfo.SetSourceAlphaBlendFactor(nn::gfx::BlendFactor_One);
+			targetInfo.SetDestinationAlphaBlendFactor(nn::gfx::BlendFactor_One);
+			targetInfo.SetAlphaBlendFunction(nn::gfx::BlendFunction_ReverseSubtract);
+
+			info.SetIndependentBlendEnabled(TRUE);
+			info.SetBlendConstant(1.0f, 1.0f, 1.0f, 1.0f);
+			break;
+		case BM_ADD_QUATER_SOURCE:
+			targetInfo.SetBlendEnabled(TRUE);
+
+			targetInfo.SetSourceColorBlendFactor(nn::gfx::BlendFactor_ConstantAlpha);
+			targetInfo.SetDestinationColorBlendFactor(nn::gfx::BlendFactor_One);
+			targetInfo.SetColorBlendFunction(nn::gfx::BlendFunction_Add);
+
+			targetInfo.SetSourceAlphaBlendFactor(nn::gfx::BlendFactor_ConstantAlpha);
+			targetInfo.SetDestinationAlphaBlendFactor(nn::gfx::BlendFactor_One);
+			targetInfo.SetAlphaBlendFunction(nn::gfx::BlendFunction_Add);
+
+			info.SetIndependentBlendEnabled(TRUE);
+			info.SetBlendConstant(64.0f * (1.0f / 255.0f), 64.0f * (1.0f / 255.0f), 64.0f * (1.0f / 255.0f), 64.0f * (1.0f / 255.0f));
+			break;
+		}
+
+		g_BlendState[i].Initialize(&g_Device, info);
+	}
+}
+
 void Emulator_InitialiseConstantBuffer()
 {
 	nn::gfx::Buffer::InfoType info;
@@ -506,9 +571,9 @@ void Emulator_InitialiseSampler()
 	nn::gfx::Sampler::InfoType info;
 	info.SetDefault();
 	info.SetFilterMode(nn::gfx::FilterMode_MinPoint_MagPoint_MipLinear);
-	info.SetAddressU(nn::gfx::TextureAddressMode_ClampToEdge);
-	info.SetAddressV(nn::gfx::TextureAddressMode_ClampToEdge);
-	//info.SetAddressW(nn::gfx::TextureAddressMode_Repeat);
+	info.SetAddressU(nn::gfx::TextureAddressMode_Repeat);
+	info.SetAddressV(nn::gfx::TextureAddressMode_Repeat);
+	info.SetAddressW(nn::gfx::TextureAddressMode_Repeat);
 	info.SetComparisonFunction(nn::gfx::ComparisonFunction_Always);
 	info.SetMinLod(-3.402823466E+38f);
 	info.SetMaxLod(3.402823466E+38f);
@@ -520,7 +585,7 @@ void Emulator_InitialiseSampler()
 	info.SetFilterMode(nn::gfx::FilterMode_MinPoint_MagPoint_MipLinear);
 	info.SetAddressU(nn::gfx::TextureAddressMode_ClampToEdge);
 	info.SetAddressV(nn::gfx::TextureAddressMode_ClampToEdge);
-	//info.SetAddressW(nn::gfx::TextureAddressMode_Repeat);
+	info.SetAddressW(nn::gfx::TextureAddressMode_Repeat);
 	info.SetComparisonFunction(nn::gfx::ComparisonFunction_Always);
 	info.SetMinLod(-3.402823466E+38f);
 	info.SetMaxLod(3.402823466E+38f);
@@ -665,7 +730,7 @@ void Emulator_InitialiseGfxObjects()
 	Emulator_InitialiseCommandBuffer();
 
 	Emulator_InitialiseRasterizerState();
-	Emulator_InitialiseBlendState();
+	Emulator_InitialiseBlendStates();
 	Emulator_InitialiseDepthStencilState();
 
 	Emulator_InitialiseVertexBuffer();
@@ -728,7 +793,6 @@ void Emulator_BeginPass()
 	g_CommandBuffer.SetDescriptorPool(&g_SamplerDescriptorPool);
 
 	g_CommandBuffer.SetRasterizerState(&g_RasterizerState);
-	g_CommandBuffer.SetBlendState(&g_BlendState);
 	g_CommandBuffer.SetDepthStencilState(&g_DepthStencilState);
 
 	g_BufferDescriptorPool.BeginUpdate();
@@ -771,7 +835,7 @@ void FinalizeGfxObjects()
 	g_VertexBuffer.Finalize(&g_Device);
 
 	g_RasterizerState.Finalize(&g_Device);
-	g_BlendState.Finalize(&g_Device);
+	//g_BlendState.Finalize(&g_Device);
 	g_DepthStencilState.Finalize(&g_Device);
 
 	g_BufferDescriptorPool.Finalize(&g_Device);
@@ -1171,23 +1235,7 @@ void Emulator_SetBlendMode(BlendMode blendMode)
 		return;
 	}
 
-	if (g_PreviousBlendMode == BM_NONE)
-	{
-	}
-
-	switch (blendMode)
-	{
-	case BM_NONE:
-		break;
-	case BM_AVERAGE:
-		break;
-	case BM_ADD:
-		break;
-	case BM_SUBTRACT:
-		break;
-	case BM_ADD_QUATER_SOURCE:
-		break;
-	}
+	g_CommandBuffer.SetBlendState(&g_BlendState[blendMode]);
 
 	g_PreviousBlendMode = blendMode;
 }
@@ -1233,7 +1281,7 @@ void Emulator_SetViewPort(int x, int y, int width, int height)
 
 	nn::gfx::ViewportScissorState::InfoType info;
 	info.SetDefault();
-	//info.SetScissorEnabled(true);
+
 	nn::gfx::ViewportStateInfo viewportInfo;
 	{
 		viewportInfo.SetDefault();
@@ -1242,16 +1290,8 @@ void Emulator_SetViewPort(int x, int y, int width, int height)
 		viewportInfo.SetWidth(static_cast<float>(width));
 		viewportInfo.SetHeight(static_cast<float>(height));
 	}
-	nn::gfx::ScissorStateInfo scissorInfo;
-	{
-		scissorInfo.SetDefault();
-		scissorInfo.SetOriginX(x + offset_x);
-		scissorInfo.SetOriginY(y + -offset_y);
-		scissorInfo.SetWidth(width);
-		scissorInfo.SetHeight(height);
-	}
+
 	info.SetViewportStateInfoArray(&viewportInfo, 1);
-	//info.SetScissorStateInfoArray(&scissorInfo, 1);
 	
 	g_ViewportScissor->Initialize(&g_Device, info);
 

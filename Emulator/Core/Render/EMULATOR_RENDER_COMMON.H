@@ -20,7 +20,7 @@
 #elif defined(SN_TARGET_PSP2)
 #include "Core/Render/GXM/EMULATOR_RENDER_GXM.H"
 #elif defined(PLATFORM_NX)
-#include "Core/Render/NN/EMULATOR_RENDER_NN.H"
+#include "Core/Render/NVN/EMULATOR_RENDER_NVN.H"
 #endif
 
 

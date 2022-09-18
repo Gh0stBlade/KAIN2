@@ -124,7 +124,10 @@
 #include <nv/nv_MemoryManagement.h>
 #endif
 
-#include "Core/Render/NN/EMULATOR_RENDER_NN.H"
+#include <nn/hid.h>
+#include <nn/hid/hid_TouchScreen.h>
+
+#include "Core/Render/NVN/EMULATOR_RENDER_NVN.H"
 #endif
 
 #include "Core/FileSystem/EMULATOR_FILESYSTEM_COMMON.H"
