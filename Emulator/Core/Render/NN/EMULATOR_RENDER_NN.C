@@ -205,7 +205,7 @@ ShaderID* Shader_Compile(const char* path_vs, const char* path_ps)
 		attribs[2].SetDefault();
 		attribs[2].SetNamePtr("a_color");
 		attribs[2].SetBufferIndex(0);
-		attribs[2].SetFormat(nn::gfx::AttributeFormat_8_8_8_8_UintToFloat);
+		attribs[2].SetFormat(nn::gfx::AttributeFormat_8_8_8_8_Unorm);
 		attribs[2].SetOffset(OFFSETOF(Vertex, r));
 		int slotColor = program->VSPS.GetInterfaceSlot(nn::gfx::ShaderStage_Vertex, nn::gfx::ShaderInterfaceType_Input, "a_color");
 		if (slotColor >= 0)
@@ -505,14 +505,26 @@ void Emulator_InitialiseSampler()
 {
 	nn::gfx::Sampler::InfoType info;
 	info.SetDefault();
-	info.SetFilterMode(nn::gfx::FilterMode_MinPoint_MagPoint_MipPoint);
+	info.SetFilterMode(nn::gfx::FilterMode_MinPoint_MagPoint_MipLinear);
+	info.SetAddressU(nn::gfx::TextureAddressMode_ClampToEdge);
+	info.SetAddressV(nn::gfx::TextureAddressMode_ClampToEdge);
+	//info.SetAddressW(nn::gfx::TextureAddressMode_Repeat);
+	info.SetComparisonFunction(nn::gfx::ComparisonFunction_Always);
+	info.SetMinLod(-3.402823466E+38f);
+	info.SetMaxLod(3.402823466E+38f);
+	info.SetMaxAnisotropy(1);
 
 	g_Sampler.Initialize(&g_Device, info);
 
 	info.SetDefault();
-	info.SetFilterMode(nn::gfx::FilterMode_MinPoint_MagPoint_MipPoint);
+	info.SetFilterMode(nn::gfx::FilterMode_MinPoint_MagPoint_MipLinear);
 	info.SetAddressU(nn::gfx::TextureAddressMode_ClampToEdge);
 	info.SetAddressV(nn::gfx::TextureAddressMode_ClampToEdge);
+	//info.SetAddressW(nn::gfx::TextureAddressMode_Repeat);
+	info.SetComparisonFunction(nn::gfx::ComparisonFunction_Always);
+	info.SetMinLod(-3.402823466E+38f);
+	info.SetMaxLod(3.402823466E+38f);
+	info.SetMaxAnisotropy(1);
 	g_Sampler2.Initialize(&g_Device, info);
 }
 
