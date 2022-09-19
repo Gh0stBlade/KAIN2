@@ -26,7 +26,7 @@ unsigned int g_resettingDevice = FALSE;
 int begin_scene_flag = FALSE;
 int vbo_was_dirty_flag = FALSE;
 
-#if defined(PLATFORM_NX)
+#if defined(PLATFORM_NX) || defined(PLATFORM_NX_ARM)
 TextureID* g_lastBoundTexture[2];
 
 ShaderID* g_gte_shader_4;
@@ -148,7 +148,7 @@ int IsValidCode(int code)
 
 extern int splitAgain;
 
-#if defined(PLATFORM_NX)
+#if defined(PLATFORM_NX) || defined(PLATFORM_NX_ARM)
 void Emulator_AddSplit(int semiTrans, int page, TextureID* textureId)
 #else
 void Emulator_AddSplit(int semiTrans, int page, TextureID textureId)
@@ -818,7 +818,7 @@ void Emulator_ResetPolyState()
 	s_lastPolyType = 0xFFFF;
 }
 
-#if defined(PLATFORM_NX)
+#if defined(PLATFORM_NX) || defined(PLATFORM_NX_ARM)
 ShaderID* Emulator_GetGTEShader(TexFormat texFormat)
 #else
 ShaderID Emulator_GetGTEShader(TexFormat texFormat)

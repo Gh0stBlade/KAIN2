@@ -105,7 +105,7 @@
 #include <gxm.h>
 #include <kernel.h>
 #include "Core/Render/GXM/EMULATOR_RENDER_GXM.H"
-#elif defined(PLATFORM_NX)
+#elif defined(PLATFORM_NX) || defined(PLATFORM_NX_ARM)
 #include <nn/nn_Assert.h>
 
 #include <nn/os.h>

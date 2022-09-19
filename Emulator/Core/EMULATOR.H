@@ -88,7 +88,7 @@ typedef struct SysCounter
 
 	CallbackProc padding00;
 	unsigned int timerIndex;
-#if !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX)
+#if !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX) && !defined(PLATFORM_NX_ARM)
 #if defined(UWP_SDL2) || defined(SDL2) && !defined(USE_THREADS)
 	SDL_TimerID timerId;
 #else
@@ -187,7 +187,7 @@ extern struct TouchButtonVRAM touchButtonsUI[10];
 extern int begin_scene_flag;
 extern int vbo_was_dirty_flag;
 
-#if defined(PLATFORM_NX)
+#if defined(PLATFORM_NX) || defined(PLATFORM_NX_ARM)
 extern TextureID* rg8lutTexture;
 extern TextureID* whiteTexture;
 extern TextureID* vramTexture;

@@ -95,7 +95,7 @@
 #define NO_BOUNTY_LIST_EXPORT
 #define NO_FILESYSTEM
 #endif
-#if defined(PLATFORM_NX)
+#if defined(PLATFORM_NX) || defined(PLATFORM_NX_ARM)
 #define NO_BOUNTY_LIST_EXPORT
 #define NO_FILESYSTEM
 #endif

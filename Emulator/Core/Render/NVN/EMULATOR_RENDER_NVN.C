@@ -4,7 +4,7 @@
 #include "Core/Render/EMULATOR_RENDER_COMMON.H"
 #include <stdio.h>
 
-#if defined(PLATFORM_NX)
+#if defined(PLATFORM_NX) || defined(PLATFORM_NX_ARM)
 
 nn::gfx::BlendState g_BlendState[BM_COUNT];
 nn::gfx::Texture g_Texture;

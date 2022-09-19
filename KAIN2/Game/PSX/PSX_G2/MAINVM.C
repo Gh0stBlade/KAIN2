@@ -3,7 +3,7 @@
 
 #if defined(PSXPC_VERSION)
 #include "CORE.H"
-#if defined(SDL2) && defined(UWP_SDL2) || defined(_WIN32) && !defined(SN_TARGET_PSP2)  && !defined(PLATFORM_NX)
+#if defined(SDL2) && defined(UWP_SDL2) || defined(_WIN32) && !defined(SN_TARGET_PSP2)  && !defined(PLATFORM_NX)  && !defined(PLATFORM_NX_ARM)
 #undef R13
 #undef R12
 #undef R11
@@ -19,13 +19,13 @@ EMULATOR_THREAD_DEF
 int main(int argc, char *argv[])
 #elif defined(UWP)
 int main(Platform::Array<Platform::String^>^ args)
-#elif defined(PLATFORM_NX)
+#elif defined(PLATFORM_NX) || defined(PLATFORM_NX_ARM)
 extern "C" void nnMain()
 #else
 int main()
 #endif
 { 
-#if defined(PLATFORM_NX)
+#if defined(PLATFORM_NX) || defined(PLATFORM_NX_ARM)
     MainG2(&_appDataVM);
 #else
     return MainG2(&_appDataVM);

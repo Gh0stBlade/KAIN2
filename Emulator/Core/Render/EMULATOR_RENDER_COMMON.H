@@ -19,7 +19,7 @@
 #include "Core/Render/XED3D/EMULATOR_RENDER_XED3D.H"
 #elif defined(SN_TARGET_PSP2)
 #include "Core/Render/GXM/EMULATOR_RENDER_GXM.H"
-#elif defined(PLATFORM_NX)
+#elif defined(PLATFORM_NX) || defined(PLATFORM_NX_ARM)
 #include "Core/Render/NVN/EMULATOR_RENDER_NVN.H"
 #endif
 
@@ -62,7 +62,7 @@ struct Vertex
 
 struct VertexBufferSplit
 {
-#if defined(PLATFORM_NX)
+#if defined(PLATFORM_NX) || defined(PLATFORM_NX_ARM)
 	TextureID*      textureId;
 #else
 	TextureID      textureId;
@@ -92,7 +92,7 @@ extern int windowWidth;
 extern int windowHeight;
 extern unsigned int g_resetDeviceOnNextFrame;
 extern unsigned int g_resettingDevice;
-#if defined(PLATFORM_NX)
+#if defined(PLATFORM_NX) || defined(PLATFORM_NX_ARM)
 extern TextureID* g_lastBoundTexture[];
 #else
 extern TextureID g_lastBoundTexture[];
@@ -100,7 +100,7 @@ extern TextureID g_lastBoundTexture[];
 extern int begin_scene_flag;
 extern int vbo_was_dirty_flag;
 
-#if defined(PLATFORM_NX)
+#if defined(PLATFORM_NX) || defined(PLATFORM_NX_ARM)
 extern ShaderID* g_gte_shader_4;
 extern ShaderID* g_gte_shader_8;
 extern ShaderID* g_gte_shader_16;
@@ -153,7 +153,7 @@ extern int vram_need_update;
 extern void* Emulator_GenerateRG8LUT();
 extern void Emulator_SwapWindow();
 extern void Emulator_ResetDevice();
-#if defined(PLATFORM_NX)
+#if defined(PLATFORM_NX) || defined(PLATFORM_NX_ARM)
 extern void Emulator_SetShader(ShaderID* shader);
 extern void Emulator_SetTextureAndShader(TextureID* texture, ShaderID* shader);
 extern ShaderID* Emulator_GetGTEShader(TexFormat texFormat);

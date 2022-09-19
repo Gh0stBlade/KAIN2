@@ -6,7 +6,7 @@
 
 #include <string.h>
 
-#if defined(PLATFORM_NX)
+#if defined(PLATFORM_NX) || defined(PLATFORM_NX_ARM)
 
 enum ShaderAttrib
 {
