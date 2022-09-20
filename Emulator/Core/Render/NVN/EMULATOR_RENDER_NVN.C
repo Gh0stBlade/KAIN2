@@ -3,6 +3,7 @@
 #include "Core/Debug/EMULATOR_LOG.H"
 #include "Core/Render/EMULATOR_RENDER_COMMON.H"
 #include <stdio.h>
+#include <stdlib.h>
 
 #if defined(PLATFORM_NX) || defined(PLATFORM_NX_ARM)
 
