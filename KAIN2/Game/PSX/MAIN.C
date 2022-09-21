@@ -300,16 +300,12 @@ void InitDisplay()
 		setRGB0(&clearRect[i], 0, 0, 0);
 	}
 
-	printf("ClearDisplay\n");
 	ClearDisplay();
-	printf("ClearDisplayEnd\n");
 	
 	ClearOTagR((u_long*)gameTrackerX.drawOT, 3072);
 	ClearOTagR((u_long*)gameTrackerX.dispOT, 3072);
 	
-	printf("ClearImage\n");
 	ClearImage(&r, 0, 255, 0);
-	printf("ClearImageEnd\n");
 #else
 	TILE* t; // eax
 	u_long tag; // edx
@@ -545,16 +541,11 @@ void init_menus(struct GameTracker* gt)
 void MAIN_DoMainInit()
 {
 	InitDisplay();
-	printf("DO INITGEOM!\n");
 	InitGeom();
-	printf("END INITGEOM!\n");
 	SetGeomOffset(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
 	SetGeomScreen(320);
-	printf("DO VRAM!\n");
 	VRAM_InitVramBlockCache();
-	printf("END DO VRAM!\n");
 	FONT_Init();
-	printf("END FONT_Init!\n");
 	gameTrackerX.reqDisp = NULL;
 
 	VSyncCallback(VblTick);
@@ -1068,8 +1059,6 @@ int MainG2(void *appData)
 		InitMainTracker(mainTracker);
 		MAIN_DoMainInit();
 
-		printf("END MAIN_DoMainInit!\n");
-
 		mainTracker->mainState = 6;
 		mainTracker->movieNum = 0;
 
@@ -1222,7 +1211,6 @@ int MainG2(void *appData)
 				}
 				break;
 			case 6:
-				printf("LOADING CINE!\n");
 				CINE_Load();
 				if (mainTracker->movieNum >= 0)
 				{
