@@ -302,8 +302,8 @@ ShaderID Shader_Compile(const char* source)
 	glBindAttribLocation(shader.program, a_color, "a_color");
 
 #if defined(PGXP)
-	glBindAttribLocation(program, a_z, "a_z");
-	glBindAttribLocation(program, a_w, "a_w");
+	glBindAttribLocation(shader.program, a_z, "a_z");
+	glBindAttribLocation(shader.program, a_w, "a_w");
 #endif
 
 	glLinkProgram(shader.program);
@@ -378,6 +378,11 @@ void Emulator_DestroyGlobalShaders()
 	glDeleteProgram(g_gte_shader_8.program);
 	glDeleteProgram(g_gte_shader_16.program);
 	glDeleteProgram(g_blit_shader.program);
+
+	g_gte_shader_4.program = 0;
+	g_gte_shader_8.program = 0;
+	g_gte_shader_16.program = 0;
+	g_blit_shader.program = 0;
 }
 
 int Emulator_InitialiseGLContext(char* windowName)
@@ -437,8 +442,6 @@ void Emulator_GenerateCommonTextures()
 	glTexImage2D(GL_TEXTURE_2D, 0, VRAM_INTERNAL_FORMAT, VRAM_WIDTH, VRAM_HEIGHT, 0, VRAM_FORMAT, GL_UNSIGNED_BYTE, NULL);
 
 	glBindTexture(GL_TEXTURE_2D, 0);
-	
-
 }
 
 void Emulator_CreateVertexBuffer()///@TODO OGLES

@@ -103,9 +103,7 @@ extern SysCounter counters[3];
 extern unsigned short vram[];
 
 #if defined(OGLES)
-typedef GLuint TextureID;
-typedef GLuint ShaderID;
-typedef GLuint RenderTargetID;
+
 #elif defined(D3D9) || defined(XED3D)
 
 #elif defined(D3D11)
