@@ -12,10 +12,12 @@ target_link_directories(${PROJECT_NAME} PRIVATE "$ENV{NINTENDO_SDK_ROOT}/Librari
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE "NN_SDK_BUILD_RELEASE")
 
-set_property(TARGET ${PROJECT_NAME} PROPERTY VS_USER_PROPS "$(NintendoSdkSamplePropertySheetDirectory)NintendoSdkSampleSpec_NX.props $(NintendoSdkSamplePropertySheetDirectory)NintendoSdkSampleBuildType_Debug.props $(NintendoSdkSamplePropertySheetDirectory)NintendoSdkSampleVcProjectSettings.props")
-
 target_compile_definitions(${PROJECT_NAME} PRIVATE "PLATFORM_NX_ARM")
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE "NN_NINTENDO_SDK")
+
+set(NX_PROPS ${CMAKE_CURRENT_SOURCE_DIR}/Platform/NX/Props/NX32.user.props CACHE INTERNAL "")
+
+set_property(TARGET ${PROJECT_NAME} PROPERTY VS_USER_PROPS "${NX_PROPS}")
 
 endif()
