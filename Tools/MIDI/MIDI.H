@@ -1,8 +1,23 @@
 #ifndef MIDI_H
 #define MIDI_H
 
+//#define AKUJI
+
 struct AadSoundBankHdr
 {
+#if defined(AKUJI)
+	unsigned long bankID;
+	unsigned short headerSize;
+	unsigned char unknown;
+	unsigned char numPrograms;
+	unsigned short numTones;
+	unsigned short numWaves;
+	unsigned short numSequences;
+	unsigned short numLabels;
+	unsigned short reverbMode;
+	unsigned short reverbDepth;
+	unsigned short unknown3[19];
+#else
 	unsigned long bankID;
 	unsigned long headerSize;
 	int bankVersion;
@@ -13,6 +28,7 @@ struct AadSoundBankHdr
 	int numLabels;
 	int reverbMode;
 	int reverbDepth;
+#endif
 };
 
 struct AadSeqEvent
@@ -25,12 +41,19 @@ struct AadSeqEvent
 
 struct AadSequenceHdr
 {
+#if defined(AKUJI)
+	unsigned long sequenceID;
+	unsigned long quarterNoteTime;
+	unsigned short ppqn;
+	unsigned short version;
+#else
 	unsigned long sequenceID;
 	unsigned long quarterNoteTime;
 	unsigned short ppqn;
 	unsigned short version;
 	unsigned short numTracks;
 	unsigned short unused;
+#endif
 };
 
 struct AadProgramAtr
