@@ -395,7 +395,7 @@ int VRAM_DeleteFreeVram(short x, short y, short w, short h)
 int VRAM_InsertFreeVram(short x, short y, short w, short h, int flags)
 {
 	struct _BlockVramEntry* useBlock;
-	printf("Inserting VRAM block!\n");
+
 	if ((x & 0x3F) && (64 - (x & 0x3F)) < w)
 	{
 		useBlock = VRAM_GetOpenBlock();

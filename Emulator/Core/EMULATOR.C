@@ -2630,8 +2630,6 @@ void Emulator_Initialise(char* windowName, int width, int height)
 #if !defined(__ANDROID__)
 	//counter_thread = std::thread(Emulator_CounterLoop);
 #endif
-
-	printf("FINISHED INIT!");
 }
 
 void Emulator_CounterLoop()
