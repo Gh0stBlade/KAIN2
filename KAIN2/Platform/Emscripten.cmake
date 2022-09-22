@@ -3,9 +3,9 @@ if(EMSCRIPTEN)
 set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -sASYNCIFY -g3 --std=c++11 -s FETCH_DEBUG -s USE_WEBGL2=1 -s FULL_ES3=1 -s USE_PTHREADS=1 -s WASM=1 -s GLOBAL_BASE=1024 -s ALLOW_MEMORY_GROWTH=1 -lopenal -s USE_SDL=2 -s TOTAL_MEMORY=1024MB -sPTHREAD_POOL_SIZE=32")
 set(SDL2_LIBRARIES "-s USE_SDL=2")
 
-add_definitions("-s EXPORTED_RUNTIME_METHODS='[\"ccall\",\"cwrap\",\"GAMELOOP_RequestLevelChange\",\"Emulator_SetFocus\"]'")
+add_definitions("-s EXPORTED_RUNTIME_METHODS='[\"ccall\",\"cwrap\"]'")
 add_definitions("-s EXTRA_EXPORTED_RUNTIME_METHODS='[\"ccall\",\"cwrap\"]'")
-
+add_definitions("-s EXPORTED_FUNCTIONS='[\"GAMELOOP_RequestLevelChange\",\"Emulator_SetFocus\"]'")
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-error=format-security -Wno-narrowing -Wno-nonportable-include-path")
 set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -Wno-error=format-security -Wno-narrowing -Wno-nonportable-include-path")
