@@ -21,8 +21,10 @@ jobs:
       - name: Create Build Directory
         run: cmake -E make_directory ${{github.workspace}}/Build_EMSDK
 
-      - name: Configure CMake
+      - name: Seek to Project Generation Directory
         run: cd "${{github.workspace}}/Emulator/Platform/Emscripten/"
+        
+      - name: Configure CMake        
         run: ./"Generate Project Files.bat"
 
       - name: Build
