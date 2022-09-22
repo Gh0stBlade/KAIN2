@@ -25,7 +25,7 @@ jobs:
         run: cd "${{github.workspace}}/Emulator/Platform/Emscripten/"
         
       - name: Configure CMake        
-        run: cmd /c "START /b Generate-Project-Files.bat"
+        run: cmd.exe /k Generate-Project-Files.bat
 
       - name: Build
         run: cmake --build ./Build_EMSDK --config Release
