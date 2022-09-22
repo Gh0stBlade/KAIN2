@@ -509,7 +509,6 @@ void LOAD_PlayXA(int number)
 long* LOAD_ReadFile(char *fileName, unsigned char memType)
 { 
 	void *loadAddr;
-	printf("Reading: %s\n", fileName);
 	STREAM_QueueNonblockingLoads(fileName, memType, NULL, NULL, NULL, &loadAddr, 0);
 
 	while (STREAM_PollLoadQueue() != 0)

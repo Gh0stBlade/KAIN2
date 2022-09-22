@@ -533,7 +533,7 @@ int Emulator_CreateCommonResources()
 
 	Emulator_CreateVertexBuffer();
 
-	Emulator_ResetDevice();
+	//Emulator_ResetDevice();
 
 	return TRUE;
 }
@@ -555,12 +555,7 @@ void Emulator_Ortho2D(float left, float right, float bottom, float top, float zn
 		x, y, z, 1
 	};
 
-	///@TODO this generates an error sometimes
-	//eprinterr("GL Error: %x\n", glGetError());
-
 	glUniformMatrix4fv(u_Projection, 1, GL_FALSE, ortho);
-
-	//eprinterr("GL Error: %x\n", glGetError());
 }
 
 void Emulator_SetShader(const ShaderID shader)
