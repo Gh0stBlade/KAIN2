@@ -22,7 +22,7 @@ jobs:
         run: cmake -E make_directory ${{github.workspace}}/Build_EMSDK
 
       - name: Configure CMake
-        run: emcmake cmake -DCMAKE_SHARED_LINKER_FLAGS="-sDEFAULT_LIBRARY_FUNCS_TO_INCLUDE=Emulator_SetFocus -sEXPORTED_FUNCTIONS=Emulator_SetFocus"  -DCMAKE_EXE_LINKER_FLAGS="-sEXPORTED_RUNTIME_METHODS=ccall,cwrap -sEXPORTED_FUNCTIONS=_GAMELOOP_RequestLevelChange" . -B%cd%"/Build_EMSDK/"
+        run: "${{github.workspace}}/Emulator/Platform/Emscripten/Generate Project Files.bat"
 
       - name: Build
         run: cmake --build ./Build_EMSDK --config Release
