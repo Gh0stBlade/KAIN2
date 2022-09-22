@@ -30,9 +30,16 @@ extern const unsigned char* keyboardStateDebug;
 
 #include <emscripten.h>
 
+#if defined(_LANGUAGE_C_PLUS_PLUS) || defined(__cplusplus) || defined(c_plusplus)
 extern "C" {
+#endif
+
 extern void EMSCRIPTEN_KEEPALIVE Emulator_SetFocus(int state);
+
+#if defined(_LANGUAGE_C_PLUS_PLUS) || defined(__cplusplus) || defined(c_plusplus)
 }
+#endif
+
 #endif
 
 extern int padAllowCommunication;

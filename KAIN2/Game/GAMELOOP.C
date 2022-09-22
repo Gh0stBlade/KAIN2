@@ -2905,7 +2905,7 @@ void GAMELOOP_ChangeMode()
 }
 
 #if defined(__EMSCRIPTEN__)
-void EMSCRIPTEN_KEEPALIVE GAMELOOP_RequestLevelChange(char* name, short number, struct GameTracker* gameTracker)
+void GAMELOOP_RequestLevelChange(char* name, short number, struct GameTracker* gameTracker)
 #else
 void GAMELOOP_RequestLevelChange(char* name, short number, struct GameTracker* gameTracker)
 #endif
