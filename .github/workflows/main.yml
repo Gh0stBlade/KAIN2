@@ -22,7 +22,7 @@ jobs:
         run: cmake -E make_directory ${{github.workspace}}/Build_EMSDK
 
       - name: Configure CMake
-        run: "${{github.workspace}}/Emulator/Platform/Emscripten/Generate Project Files.bat"
+        run: \"${{github.workspace}}/Emulator/Platform/Emscripten/Generate Project Files.bat\"
 
       - name: Build
         run: cmake --build ./Build_EMSDK --config Release
