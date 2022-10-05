@@ -50,7 +50,6 @@ struct _PolytopeList* gPolytopeList; // offset 0x800d2fb4
 struct GameTracker gameTrackerX;
 struct Camera theCamera;
 struct _PrimPool primPool0, primPool1;
-WORD word_C54F8C;
 
 struct _InstanceList* instanceList; // offset 0x800D0C20
 struct _InstancePool* instancePool; // offset 0x800D0C24

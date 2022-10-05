@@ -298,9 +298,10 @@ void LOAD_SetupFileToDoCDReading()
 	}
 
 #if defined(_DEBUG) && !defined(NO_FILESYSTEM) || defined(__EMSCRIPTEN__)
-	extern void Emulator_OpenRead(long fileHash, void* buff, int size);
-	Emulator_OpenRead(loadStatus.currentQueueFile.fileHash, loadStatus.currentQueueFile.readStartDest, loadStatus.currentQueueFile.readSize);
+	extern void Emulator_OpenRead(char* fileName, void* buff, int size);
+	Emulator_OpenRead(LOAD_HashToName(loadStatus.currentQueueFile.fileHash), loadStatus.currentQueueFile.readStartDest, loadStatus.currentQueueFile.readSize);
 	loadStatus.bytesTransferred = (loadStatus.currentQueueFile.readSize - loadStatus.currentQueueFile.readCurSize);
+	
 	loadStatus.state = 4;
 	LOAD_CdDataReady();
 #elif defined(PSXPC_VERSION) && defined(NO_CD)
@@ -336,12 +337,16 @@ void LOAD_SetupFileToDoBufferedCDReading()
 	{
 		loadStatus.currentSector = loadStatus.bigFile.bigfileBaseOffset + (loadStatus.currentQueueFile.readStartPos >> 11);
 	}
+
 #if defined(_DEBUG) && !defined(NO_FILESYSTEM) || defined(__EMSCRIPTEN__)
-	extern void Emulator_OpenRead(long fileHash, void* buff, int size);
-	Emulator_OpenRead(loadStatus.currentQueueFile.fileHash, loadStatus.currentQueueFile.readStartDest, loadStatus.currentQueueFile.readSize);
+	extern void Emulator_OpenRead(char* fileName, void* buff, int size);
+
+	Emulator_OpenRead(LOAD_HashToName(loadStatus.currentQueueFile.fileHash), loadStatus.currentQueueFile.readStartDest, loadStatus.currentQueueFile.readSize);
 	loadStatus.bytesTransferred = (loadStatus.currentQueueFile.readSize - loadStatus.currentQueueFile.readCurSize);
+
 	loadStatus.state = 4;
 	LOAD_CdDataReady();
+
 #elif defined(PSXPC_VERSION) && defined(NO_CD)
 	PClseek(loadStatus.bigFile.bigfileFileHandle, loadStatus.currentQueueFile.readStartPos, 0);
 	PCread(loadStatus.bigFile.bigfileFileHandle, (char*)loadStatus.currentQueueFile.readStartDest, loadStatus.currentQueueFile.readSize);
@@ -609,7 +614,7 @@ void LOAD_InitCdLoader(char *bigFileName, char *voiceFileName)
 #if defined(_DEBUG) && !defined(NO_FILESYSTEM)  || defined(__EMSCRIPTEN__)
 		LOAD_CdReadFromBigFile(0, (unsigned long*)&loadStatus.bigFile.numSubDirs, sizeof(loadStatus.bigFile.numSubDirs), 0, 0, 0);
 #else
-		LOAD_CdReadFromBigFile(0, (unsigned long*)&loadStatus.bigFile.numSubDirs, sizeof(loadStatus.bigFile.numSubDirs), 0, 0);
+		LOAD_CdReadFromBigFile(0, (unsigned long*)&loadStatus.bigFile.numSubDirs, sizeof(long), 0, 0);
 #endif
 
 		do
@@ -891,8 +896,17 @@ struct _BigFileEntry* LOAD_GetBigFileEntryByHash(long hash)
 	int i;
 	struct _BigFileEntry* entry;
 #if defined(_DEBUG) && !defined(NO_FILESYSTEM) || defined(__EMSCRIPTEN__)
-	extern void* Emulator_GetBigFileEntryByHash(long hash);
-	return (struct _BigFileEntry*)Emulator_GetBigFileEntryByHash(hash);
+	static struct _BigFileEntry bigFileEntry;
+
+	int fileSize = 0;
+	Emulator_GetFileSize(LOAD_HashToName(hash), &fileSize);
+
+	bigFileEntry.checkSumFull = 0;
+	bigFileEntry.fileHash = hash;
+	bigFileEntry.fileLen = fileSize;
+	bigFileEntry.filePos = 0;
+
+	return &bigFileEntry;
 #else
 	if (loadStatus.bigFile.currentDir != NULL && loadStatus.currentDirLoading == 0 && loadStatus.bigFile.currentDir->numFiles != 0)
 	{
@@ -931,7 +945,7 @@ struct _BigFileEntry* LOAD_GetBigFileEntryByHash(long hash)
 
 struct _BigFileEntry* LOAD_GetBigFileEntry(char* fileName)
 {
-	return 	LOAD_GetBigFileEntryByHash(LOAD_HashName(fileName));
+	return LOAD_GetBigFileEntryByHash(LOAD_HashName(fileName));
 }
 
 #ifndef PC_VERSION
@@ -1200,6 +1214,39 @@ void LOAD_StopLoad()
 	}
 }
 
+#if !defined(NO_FILESYSTEM)
 
+#define FILESYSTEM_BUFFER_LENGTH (262144)
 
+char filesystemTOC[FILESYSTEM_BUFFER_LENGTH];
 
+extern void Emulator_OpenRead(char* fileName, void* buff, int size);
+
+void LOAD_InitialiseFileSystemTOC()
+{
+	Emulator_OpenRead("bigfile.lst", filesystemTOC, -1);
+	return;
+}
+
+char* LOAD_HashToName(long fileHash)
+{
+	char* pLine = &filesystemTOC[0];
+	char* fileName = NULL;
+	long hash = 0;
+
+	while (pLine != NULL && pLine < &filesystemTOC[FILESYSTEM_BUFFER_LENGTH])
+	{
+		sscanf(pLine, "%x", &hash);
+		fileName = &pLine[9];
+		pLine = strchr(pLine, 0) + 1;
+
+		if (fileHash == hash)
+		{
+			break;
+		}
+	}
+
+	return fileName;
+}
+
+#endif

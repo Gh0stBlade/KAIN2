@@ -95,7 +95,6 @@ int CINE_Load()
 		attempts++;
 		STREAM_PollLoadQueue();
 		VSync(0);
-
 	} while (attempts < 400);
 	
 	if (attempts < 400)

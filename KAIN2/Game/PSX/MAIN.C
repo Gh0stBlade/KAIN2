@@ -939,6 +939,7 @@ void GameLoop()
 		}
 		break;
 	case 6:
+
 		CINE_Load();
 		if (mainTracker->movieNum >= 0)
 		{
@@ -972,11 +973,22 @@ void GameLoop()
 			SOUND_StopAllSound();
 		}
 
+		if (mainTracker->movieNum < 0)
+		{
+			mainTracker->mainState = 8;
+		}
+
+		if (nosound == 0)
+		{
+			SOUND_StopAllSound();
+		}
+
 		break;
 	case 7:
 		mainTracker->movieNum = 1;
 		break;
 	case 8:
+
 		ProcessArgs(gameTracker->baseAreaName, gameTracker);
 		MAIN_ResetGame();
 #if !defined(_DEBUG) && !defined(__EMSCRIPTEN__) || defined(NO_FILESYSTEM)
@@ -994,7 +1006,7 @@ void GameLoop()
 	case 3:
 	case 5:
 	default:
-		break;
+		break;		
 	}
 
 	STREAM_PollLoadQueue();

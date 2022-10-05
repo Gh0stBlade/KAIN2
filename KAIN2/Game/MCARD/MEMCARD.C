@@ -40,11 +40,12 @@ void load(struct memcard_t* memcard)
 	{
 		object = (struct Object*)MEMPACK_Malloc(40000, 0x2B);
 	}
-
+	printf("LOADING MCARDX!\n");
 	LOAD_LoadToAddress("\\kain2\\object\\mcardx\\mcardx.drm", object, 1);
-
 	memcard->table = (struct mcmenu_table_t*)object->relocModule;
+
 	RELMOD_InitModulePointers((int)object->relocModule, (int*)object->relocList);
+	
 	memcard->object = object;
 
 #if !defined(PSXPC_VERSION)
@@ -109,7 +110,9 @@ int memcard_initialize(struct memcard_t *memcard, void *gt, int nblocks, void *b
 	
 	memset(memcard, 0, sizeof(struct memcard_t));
 
+#if !defined(__EMSCRIPTEN__)//Crashes on Emscripten!
 	load(memcard);
+#endif
 	
 	header_size = 0;
 	memcard->wrongVerison = 0;

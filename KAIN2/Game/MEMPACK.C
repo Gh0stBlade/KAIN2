@@ -24,7 +24,7 @@ char* memBuffer = NULL;
 unsigned int overlayAddress = 0; // 0x800CE194
 #else
 char memBuffer[0x11F18C + ONE_MB * 8];
-unsigned int overlayAddress = (int)memBuffer; // 0x800CE194
+unsigned int overlayAddress = (int)&memBuffer[0]; // 0x800CE194
 #endif
 #else
 unsigned int overlayAddress; // For PSX this is quite clearly set by the linker script maybe.

@@ -62,6 +62,8 @@ void STREAM_InitLoader(char *bigFileName, char *voiceFileName)
 
 #if !defined(_DEBUG) && !defined(__EMSCRIPTEN__) || defined(NO_FILESYSTEM)
 	LOAD_InitCdLoader(bigFileName, voiceFileName);
+#elif !defined(NO_FILESYSTEM)
+	LOAD_InitialiseFileSystemTOC();
 #endif
 
 	loadFree = &LoadQueue[0];
@@ -232,6 +234,7 @@ int STREAM_PollLoadQueue()
 				else
 				{
 					queueEntry->status = 2;
+
 					if (queueEntry->mempackUsed != 0)
 					{
 						MEMPACK_SetMemoryBeingStreamed((char*)queueEntry->loadEntry.loadAddr);
@@ -456,7 +459,7 @@ void STREAM_QueueNonblockingLoads(char *fileName, unsigned char memType, void *r
 
 void LOAD_LoadToAddress(char *fileName, void* loadAddr, long relocateBinary)
 {
-	struct _LoadQueueEntry *currentEntry;
+	struct _LoadQueueEntry* currentEntry;
 	
 	currentEntry = STREAM_SetUpQueueEntry(fileName, NULL, NULL, NULL, NULL, 0);
 	currentEntry->loadEntry.loadAddr = (long*)loadAddr;

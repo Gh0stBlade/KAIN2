@@ -12,7 +12,7 @@
 
 unsigned short SpecialFogClut;
 struct _BlockVramEntry* FONT_vramBlock; // offset 0x800D05E4
-static WORD font_clut;
+//static WORD font_clut; //Probably PC stuff
 struct FontTracker fontTracker;
 struct Object* fontsObject;
 
@@ -487,7 +487,6 @@ long FONT_Get2DImageIndex(unsigned char c)
 void drawChar2DPoly(long fpi, long x, long y)
 {
 #if defined(PSX_VERSION)
-
 	unsigned long** drawOT; // $s1
 	POLY_FT4* textPoly; // $a3
 	long xl; // $t8

@@ -153,6 +153,11 @@ extern void LOAD_UpdateBigFilePointers(struct _BigFileDir *oldDir, struct _BigFi
 extern int LOAD_IsFileLoading(); // 0x80037EC8
 extern void LOAD_StopLoad(); // 0x80037ED4
 
+#if !defined(NO_FILESYSTEM)
+extern void LOAD_InitialiseFileSystemTOC();
+extern char* LOAD_HashToName(long fileHash);
+#endif
+
 #if defined(_LANGUAGE_C_PLUS_PLUS)||defined(__cplusplus)||defined(c_plusplus)
 }
 #endif

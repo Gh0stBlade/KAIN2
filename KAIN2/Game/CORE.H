@@ -128,12 +128,14 @@ typedef RECT PSX_RECT;
 #define null	0
 typedef unsigned long long QWORD;
 
+#if !defined(PLATFORM_NX_ARM)
 #ifndef WINAPI
 typedef unsigned char BYTE;
 typedef unsigned int DWORD;
 typedef unsigned short WORD;
 #ifndef PSX_VERSION//?
 typedef unsigned int bool;
+#endif
 #endif
 #endif
 

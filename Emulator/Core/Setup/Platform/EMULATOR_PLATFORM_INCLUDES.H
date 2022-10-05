@@ -122,12 +122,19 @@
 
 #if defined( NN_BUILD_TARGET_PLATFORM_OS_NN ) && defined( NN_BUILD_APISET_NX )
 #include <nv/nv_MemoryManagement.h>
+#include <nvnTool/nvnTool_GlslcInterface.h>
 #endif
+
 
 #include <nn/hid.h>
 #include <nn/hid/hid_TouchScreen.h>
 
 #include "Core/Render/NVN/EMULATOR_RENDER_NVN.H"
+
+#if defined(PLATFORM_NX_ARM)
+#undef u
+#endif
+
 #endif
 
 #include "Core/FileSystem/EMULATOR_FILESYSTEM_COMMON.H"

@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<!-- このファイルのファイル名を変更しないでください -->
+<!-- このファイルを直接編集しないでください -->
+
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Choose>
+    <When Condition="'$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildProjectDirectory), NintendoSdkRootMark))' != ''">
+      <PropertyGroup>
+        <NINTENDO_SDK_ROOT>$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildProjectDirectory), NintendoSdkRootMark))</NINTENDO_SDK_ROOT>
+      </PropertyGroup>
+    </When>
+    <When Condition="'$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildProjectDirectory), NintendoSdkRootDefinition.props))' != ''">
+      <PropertyGroup>
+        <NintendoSdkRootDefinitionFile>$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildProjectDirectory), NintendoSdkRootDefinition.props))\NintendoSdkRootDefinition.props</NintendoSdkRootDefinitionFile>
+      </PropertyGroup>
+    </When>
+  </Choose>
+  <Import Project="$(NintendoSdkRootDefinitionFile)" Condition="'$(NintendoSdkRootDefinitionFile)' != ''" />
+  <PropertyGroup Condition="'$(NINTENDO_SDK_ROOT)' != ''">
+    <NintendoSdkRoot>$(NINTENDO_SDK_ROOT)\</NintendoSdkRoot>
+  </PropertyGroup>
+  <Choose>
+    <When Condition="Exists('$(NintendoSdkRoot)Build\Vc\ForApplication\NintendoSdkVcProjectSettings.props')">
+      <PropertyGroup>
+        <NintendoSdkApplicationPropertySheetDirectory>$(NintendoSdkRoot)Build\Vc\ForApplication\</NintendoSdkApplicationPropertySheetDirectory>
+      </PropertyGroup>
+    </When>
+    <When Condition="Exists('$(NintendoSdkRoot)Common\Build\Vc\ForApplication\NintendoSdkVcProjectSettings.props')">
+      <PropertyGroup>
+        <NintendoSdkApplicationPropertySheetDirectory>$(NintendoSdkRoot)Common\Build\Vc\ForApplication\</NintendoSdkApplicationPropertySheetDirectory>
+      </PropertyGroup>
+    </When>
+  </Choose>
+  <Choose>
+    <When Condition="Exists('$(NintendoSdkRoot)Samples\Build\Vc\NintendoSdkSampleVcProjectSettings.props')">
+      <PropertyGroup>
+        <NintendoSdkSamplePropertySheetDirectory>$(NintendoSdkRoot)Samples\Build\Vc\</NintendoSdkSamplePropertySheetDirectory>
+      </PropertyGroup>
+    </When>
+  </Choose>
+</Project>
