@@ -333,13 +333,10 @@ void Emulator_InitialiseLayer()
 	NN_ASSERT(result.IsSuccess());
 	NN_UNUSED(result);
 
-	result = nn::vi::GetDisplayResolution(&windowWidth, &windowHeight, g_display);
-	NN_ASSERT(result.IsSuccess());
+	windowWidth = 1280;
+	windowHeight = 720;
 
 	result = nn::vi::CreateLayer(&g_layer, g_display);
-	NN_ASSERT(result.IsSuccess());
-
-	result = nn::vi::SetLayerScalingMode(g_layer, nn::vi::ScalingMode_FitToLayer);
 	NN_ASSERT(result.IsSuccess());
 }
 
@@ -380,18 +377,12 @@ void Emulator_InitialiseMemoryPool()
 nn::gfx::SwapChain g_SwapChain;
 void Emulator_InitialiseSwapChain()
 {
-	int width;
-	int height;
-	nn::Result result = nn::vi::GetDisplayResolution(&width, &height, g_display);
-	NN_ASSERT(result.IsSuccess());
-	NN_UNUSED(result);
-
 	nn::gfx::SwapChain::InfoType info;
 
 	info.SetDefault();
 	info.SetLayer(g_layer);
-	info.SetWidth(width);
-	info.SetHeight(height);
+	info.SetWidth(windowWidth);
+	info.SetHeight(windowHeight);
 	info.SetFormat(nn::gfx::ImageFormat_R8_G8_B8_A8_Unorm);
 	info.SetBufferCount(2);
 
@@ -675,11 +666,11 @@ void Emulator_InitialiseResShaderFile()
 	{
 		nn::gfx::ResShaderProgram* pProgram = pContainer->GetResShaderProgram(idxVariation);
 		nn::gfx::ShaderInitializeResult result = pProgram->Initialize(&g_Device);
-		NN_ASSERT_EQUAL(result, nn::gfx::ShaderInitializeResult_Success);
+		//NN_ASSERT_EQUAL(result, nn::gfx::ShaderInitializeResult_Success);
 		NN_UNUSED(result);
 	}
 
-#if NN_GFX_IS_TARGET_NVN
+#if NN_GFX_IS_TARGET_NVN && 0
 	g_MaxScratchMemory = nn::gfx::NvnGetMaxRecommendedScratchMemorySize(&g_Device, &g_pResShaderFile, 1);
 	int scratchMemoryAlignment;
 	nvnDeviceGetInteger(g_Device.ToData()->pNvnDevice,
@@ -715,7 +706,7 @@ void Emulator_InitialiseGfxObjects()
 
 	Emulator_InitialiseDevice();
 
-#if NN_GFX_IS_TARGET_NVN
+#if NN_GFX_IS_TARGET_NVN && 0
 	nn::gfx::Device::DataType& deviceData = nn::gfx::AccessorToData(g_Device);
 	nvnDeviceGetInteger(deviceData.pNvnDevice,
 		NVN_DEVICE_INFO_RESERVED_TEXTURE_DESCRIPTORS, &g_TextureDescriptorBaseIndex);
