@@ -32,16 +32,18 @@ enum LOG_TYPE
 	LT_INFO = 11
 };
 
+#define __FILENAME__ (strrchr(__FILE__, '\\') ? strrchr(__FILE__, '\\') + 1 : __FILE__)
+
 extern void Emulator_Log(enum LOG_TYPE lt, const char* file, const char* func, int line, const char* fmt, ...);
 
 #if defined(UWP)
-	#define eprint(c, fmt, ...) Emulator_Log(c, __FILE__, FUNCNAME, __LINE__, fmt, __VA_ARGS__)
+	#define eprint(c, fmt, ...) Emulator_Log(c, __FILENAME__, FUNCNAME, __LINE__, fmt, __VA_ARGS__)
 	#define eprintf(fmt, ...) eprint(LT_DEFAULT, fmt, ##__VA_ARGS__);
 	#define eprintinf(fmt, ...) eprint(LT_INFO, fmt, ##__VA_ARGS__);
 	#define eprintwarn(fmt, ...) eprint(LT_WARNING, fmt, ##__VA_ARGS__);
 	#define eprinterr(fmt, ...) eprint(LT_ERROR, fmt, ##__VA_ARGS__);
 #else
-	#define eprint(c, fmt, ...) Emulator_Log(c, __FILE__, FUNCNAME, __LINE__, fmt, __VA_ARGS__)
+	#define eprint(c, fmt, ...) Emulator_Log(c, __FILENAME__, FUNCNAME, __LINE__, fmt, __VA_ARGS__)
 	#define eprintf(fmt, ...) eprint(LT_DEFAULT, fmt, ##__VA_ARGS__);
 	#define eprintinf(fmt, ...) eprint(LT_INFO, fmt, ##__VA_ARGS__);
 	#define eprintwarn(fmt, ...) eprint(LT_WARNING, fmt, ##__VA_ARGS__);
