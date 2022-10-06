@@ -5746,7 +5746,7 @@ int Emulator_DoesFileExist(const char* fileName)
 	return 0;
 }
 
-char* screenshotExtensions[] = { ".TGA", ".BMP" };
+char* screenshotExtensions[] = { "TGA", "BMP" };
 
 int Emulator_GetScreenshotNumber(int mode)
 {
