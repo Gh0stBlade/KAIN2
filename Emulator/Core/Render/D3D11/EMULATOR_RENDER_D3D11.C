@@ -568,6 +568,59 @@ void Emulator_SetShader(const ShaderID shader)
 	Emulator_Ortho2D(0.0f, activeDispEnv.disp.w, activeDispEnv.disp.h, 0.0f, 0.0f, 1.0f);
 }
 
+void Emulator_SetTextureAndShader(TextureID texture, ShaderID shader)
+{
+	Emulator_SetShader(shader);
+
+	if (g_texturelessMode) {
+		texture = whiteTexture;
+	}
+
+	if (g_lastBoundTexture[0] == texture && g_lastBoundTexture[1] == rg8lutTexture) {
+		//return;
+	}
+
+	d3dcontext->PSSetShaderResources(0, 1, &texture);
+	d3dcontext->PSSetShaderResources(1, 1, &rg8lutTexture);
+
+	if (samplerState == NULL)
+	{
+		D3D11_SAMPLER_DESC sampDesc;
+		ZeroMemory(&sampDesc, sizeof(sampDesc));
+		sampDesc.Filter = D3D11_FILTER_MIN_MAG_POINT_MIP_LINEAR;
+		sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+		sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+		sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+		sampDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+		sampDesc.MinLOD = -D3D11_FLOAT32_MAX;
+		sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
+		sampDesc.MaxAnisotropy = 1;
+		d3ddev->CreateSamplerState(&sampDesc, &samplerState);
+	}
+
+	if (rg8lutSamplerState == NULL)
+	{
+		D3D11_SAMPLER_DESC sampDesc;
+		ZeroMemory(&sampDesc, sizeof(sampDesc));
+		sampDesc.Filter = D3D11_FILTER_MIN_MAG_POINT_MIP_LINEAR;
+		sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+		sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+		sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+		sampDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+		sampDesc.MinLOD = -D3D11_FLOAT32_MAX;
+		sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
+		sampDesc.MaxAnisotropy = 1;
+		d3ddev->CreateSamplerState(&sampDesc, &rg8lutSamplerState);
+	}
+
+	ID3D11SamplerState* samplerStates[2] = { samplerState, rg8lutSamplerState };
+
+	d3dcontext->PSSetSamplers(0, 2, samplerStates);
+
+	g_lastBoundTexture[0] = texture;
+	g_lastBoundTexture[1] = rg8lutTexture;
+}
+
 void Emulator_SetTexture(TextureID texture, TexFormat texFormat)
 {
 	switch (texFormat)
