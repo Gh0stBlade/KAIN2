@@ -108,7 +108,7 @@ struct VS_OUTPUT {
 			discard;
 		}
 #if defined(D3D9) || defined(GXM)
-		float4 color = tex2D(s_lut, clut_color);
+		float4 color = tex2D(s_lut, clut_color).bgra;
 #else
 		float4 color = s_lut.Sample(samplerStateLUT, clut_color);
 #endif

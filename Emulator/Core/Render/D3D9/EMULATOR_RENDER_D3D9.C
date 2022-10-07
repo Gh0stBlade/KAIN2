@@ -206,6 +206,25 @@ void Emulator_SetShader(const ShaderID shader)
 	Emulator_Ortho2D(0.0f, activeDispEnv.disp.w, activeDispEnv.disp.h, 0.0f, 0.0f, 1.0f);
 }
 
+void Emulator_SetTextureAndShader(TextureID texture, ShaderID shader)
+{
+	Emulator_SetShader(shader);
+
+	if (g_texturelessMode) {
+		texture = whiteTexture;
+	}
+
+	if (g_lastBoundTexture[0] == texture && g_lastBoundTexture[1] == rg8lutTexture) {
+		//return;
+	}
+
+	d3ddev->SetTexture(0, texture);
+	d3ddev->SetTexture(1, rg8lutTexture);
+
+	g_lastBoundTexture[0] = texture;
+	g_lastBoundTexture[1] = rg8lutTexture;
+}
+
 void Emulator_SetTexture(TextureID texture, TexFormat texFormat)
 {
 	switch (texFormat)

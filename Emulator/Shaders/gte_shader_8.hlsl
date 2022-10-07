@@ -93,7 +93,7 @@ struct VS_OUTPUT {
 		float2 clut_pos = In.v_page_clut.zw;
 		clut_pos.x += comp[int(fmod(In.v_texcoord.x, 2.0))] * 255.0 / 1024.0;
 #if defined(D3D9) || defined(GXM)
-		float2 clut_color = tex2D(s_texture, clut_pos).ra * 255.0;
+		float2 clut_color = tex2D(s_texture, clut_pos).ra;
 #else
 		float2 clut_color = s_texture.Sample(samplerState, clut_pos).rg;
 #endif
@@ -103,7 +103,7 @@ struct VS_OUTPUT {
 			discard;
 		}
 #if defined(D3D9) || defined(GXM)
-		float4 color = tex2D(s_lut, clut_color);
+		float4 color = tex2D(s_lut, clut_color).bgra;
 #else		
 		float4 color = s_lut.Sample(samplerStateLUT, clut_color);
 #endif
