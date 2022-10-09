@@ -52,10 +52,10 @@
 //#define D3D9
 
 //Direct3D11
-//#define D3D11
+#define D3D11
 
 //Direct3D12
-#define D3D12
+//#define D3D12
 
 #if !defined(_DEBUG)
 #define NO_FILESYSTEM
