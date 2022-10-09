@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ShiftWindow</class>
+ <widget class="QMainWindow" name="ShiftWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1280</width>
+    <height>720</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Shift Editor (D3D11)</string>
+  </property>
+  <widget class="QWidget" name="centralwidget"/>
+  <action name="actionOpen">
+   <property name="text">
+    <string>Open</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="text">
+    <string>Save</string>
+   </property>
+  </action>
+  <action name="actionClose">
+   <property name="text">
+    <string>Close</string>
+   </property>
+  </action>
+  <action name="actionMouse">
+   <property name="icon">
+    <iconset resource="Theme/shiftresources.qrc">
+     <normaloff>:/Dark/Toolbar1.png</normaloff>:/Dark/Toolbar1.png</iconset>
+   </property>
+   <property name="text">
+    <string>Mouse</string>
+   </property>
+  </action>
+  <action name="actionTranslate">
+   <property name="icon">
+    <iconset resource="Theme/shiftresources.qrc">
+     <normaloff>:/Dark/Toolbar2.png</normaloff>:/Dark/Toolbar2.png</iconset>
+   </property>
+   <property name="text">
+    <string>Translate</string>
+   </property>
+  </action>
+  <action name="actionRotate">
+   <property name="icon">
+    <iconset resource="Theme/shiftresources.qrc">
+     <normaloff>:/Dark/Toolbar3.png</normaloff>:/Dark/Toolbar3.png</iconset>
+   </property>
+   <property name="text">
+    <string>Rotate</string>
+   </property>
+  </action>
+  <action name="actionScale">
+   <property name="icon">
+    <iconset resource="Theme/shiftresources.qrc">
+     <normaloff>:/Dark/Toolbar4.png</normaloff>:/Dark/Toolbar4.png</iconset>
+   </property>
+   <property name="text">
+    <string>Scale</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="Theme/shiftresources.qrc"/>
+  <include location="Theme/shiftresources.qrc"/>
+  <include location="Theme/shiftresources.qrc"/>
+ </resources>
+ <connections/>
+</ui>

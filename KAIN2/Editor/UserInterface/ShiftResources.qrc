@@ -1,0 +1,40 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Dark/Toolbar1.png</file>
+        <file>Dark/Toolbar2.png</file>
+        <file>Dark/Toolbar3.png</file>
+        <file>Dark/Toolbar4.png</file>
+        <file>Dark/Toolbar5.png</file>
+        <file>Dark/Toolbar6.png</file>
+        <file>Dark/Toolbar7.png</file>
+        <file>Dark/Toolbar8.png</file>
+        <file>Dark/Toolbar9.png</file>
+        <file>Dark/Toolbar10.png</file>
+        <file>Dark/Toolbar11.png</file>
+        <file>Dark/Toolbar12.png</file>
+        <file>Dark/Toolbar13.png</file>
+        <file>Dark/Toolbar14.png</file>
+        <file>Dark/Toolbar15.png</file>
+        <file>Dark/Toolbar16.png</file>
+        <file>Dark/Toolbar17.png</file>
+        <file>Dark/Toolbar18.png</file>
+        <file>Dark/Toolbar19.png</file>
+        <file>Dark/Toolbar20.png</file>
+        <file>Dark/Toolbar21.png</file>
+        <file>Dark/Toolbar22.png</file>
+        <file>Dark/Toolbar23.png</file>
+        <file>Dark/Toolbar24.png</file>
+        <file>Dark/Toolbar25.png</file>
+        <file>Dark/Toolbar26.png</file>
+        <file>Dark/Toolbar27.png</file>
+        <file>Dark/Toolbar28.png</file>
+        <file>Dark/Toolbar29.png</file>
+        <file>Dark/Toolbar30.png</file>
+        <file>Dark/Toolbar31.png</file>
+        <file>Dark/DockClose.png</file>
+        <file>Dark/DockMinimise.png</file>
+        <file>Dark/DockPin.png</file>
+        <file>Dark/Engine.ico</file>
+        <file>Dark/Main.qss</file>
+    </qresource>
+</RCC>
