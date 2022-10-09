@@ -1,9 +1,9 @@
-#include "CORE.H"
+#include "Game/CORE.H"
 
 #include "CINEMAX.H"
 
-#include "PSX/SUPPORT.H"
-#include "MEMPACK.H"
+#include "Game/PSX/SUPPORT.H"
+#include "Game/MEMPACK.H"
 
 unsigned int unk_E21BC = 0x40000001;//0x800E21BC
 

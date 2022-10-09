@@ -1,10 +1,10 @@
-#include "CORE.H"
+#include "Game/CORE.H"
 #include "ANMINTRP.H"
 #include "ANIMG2.H"
 #include "ANMG2ILF.H"
-#include "PSX/PSX_G2/QUATVM.H"
+#include "Game/PSX/PSX_G2/QUATVM.H"
 #include "POOLMMG2.H"
-#include "PSX/COLLIDES.H"
+#include "Game/PSX/COLLIDES.H"
 
 struct _G2AnimSegValue_Type _segValues[80];
 

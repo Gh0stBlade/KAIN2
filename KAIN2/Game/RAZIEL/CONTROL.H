@@ -1,7 +1,7 @@
 #ifndef CONTROL_H
 #define CONTROL_H
 
-#include "PLAYER.H"
+#include "Game/PLAYER.H"
 
 struct __Force 
 {

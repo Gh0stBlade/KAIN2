@@ -1,6 +1,6 @@
-#include "CORE.H"
+#include "Game/CORE.H"
 #include "POOLMMG2.H"
-#include "MEMPACK.H"
+#include "Game/MEMPACK.H"
 
 void G2PoolMem_InitPool(void *voidPool, int blockCount, int blockSize)
 {

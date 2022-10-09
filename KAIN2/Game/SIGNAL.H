@@ -28,7 +28,7 @@ struct Signal // hashcode: 0xA0225F88 (dec: -1608360056)
 			short y; // size=0, offset=2
 			short z; // size=0, offset=4
 			short zrot; // size=0, offset=6
-			struct _SVector offset; // size=8, offset=8
+			_SVector offset; // size=8, offset=8
 		} teleport; // size=16, offset=0, found in object files: player.o, player.o
 		struct {
 			long index; // size=0, offset=0

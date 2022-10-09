@@ -2,7 +2,7 @@
 
 #include "CORE.H"
 #include "STREAM.H"
-#include "INSTANCE.H"
+#include "Game/INSTANCE.H"
 #include "GAMELOOP.H"
 #include "DEBUG.H"
 #include "STRMLOAD.H"

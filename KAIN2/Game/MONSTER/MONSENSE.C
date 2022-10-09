@@ -1,4 +1,4 @@
-#include "CORE.H"
+#include "Game/CORE.H"
 #include "MONSENSE.H"
 #include "MONSTER.H"
 

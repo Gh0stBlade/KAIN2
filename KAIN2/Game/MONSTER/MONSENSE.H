@@ -1,7 +1,7 @@
 #ifndef MONSENSE_H
 #define MONSENSE_H
 
-#include "INSTANCE.H"
+#include "Game/INSTANCE.H"
 #include "MONSTER.H"
 
 extern struct _MonsterIR * MONSENSE_FindIR(struct _MonsterVars *mv, struct _Instance *instance); // 0x80085AA4

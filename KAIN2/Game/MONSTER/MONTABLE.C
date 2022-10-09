@@ -1,4 +1,4 @@
-#include "CORE.H"
+#include "Game/CORE.H"
 
 #if 0
 struct _MonsterState monstate_tbl[] =

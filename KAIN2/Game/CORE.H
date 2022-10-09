@@ -333,7 +333,7 @@ typedef struct NodeType // hashcode: 0x5BF613D7 (dec: 1542853591)
 
 #include "SPLINE.H"
 #include "CAMERA.H"
-#include "INSTANCE.H"
+#include "Game/INSTANCE.H"
 #include "COLLIDE.H"
 #include "PHYSICS.H"
 
@@ -345,7 +345,7 @@ typedef struct NodeType // hashcode: 0x5BF613D7 (dec: 1542853591)
 #elif defined(PSX_VERSION) || defined(PSXPC_VERSION)
 #include "gex2.h"
 #include "VRAM.H"
-#include "INSTANCE.H"//For struct LightInstance
+#include "Game/INSTANCE.H"//For struct LightInstance
 #endif
 
 #if defined(PC_VERSION)

@@ -1,7 +1,7 @@
 #ifndef MAINVM_H
 #define MAINVM_H
 
-#include "CORE.H"
+#include "Game/CORE.H"
 
 struct _G2AppDataVM_Type // hashcode: 0xC1BF7B11 (dec: -1044415727)
 {

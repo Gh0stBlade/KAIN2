@@ -1,9 +1,9 @@
 #ifndef AADLIB_H
 #define AADLIB_H
 
-#include "CORE.H"
+#include "Game/CORE.H"
 
-#include "MEMPACK.H"
+#include "Game/MEMPACK.H"
 
 typedef long (*TDRFuncPtr_aadInstallUpdateFunc0updateFuncPtr)();
 typedef void (*TDRFuncPtr_aadInstallEndSequenceCallback)();

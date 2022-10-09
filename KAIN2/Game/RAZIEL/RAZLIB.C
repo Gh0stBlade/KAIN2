@@ -1,9 +1,9 @@
-#include "CORE.H"
-#include "GAMELOOP.H"
+#include "Game/CORE.H"
+#include "Game/GAMELOOP.H"
 #include "HEALTH.H"
-#include "FONT.H"
+#include "Game/FONT.H"
 #include "RAZLIB.H"
-#include "G2/ANMCTRLR.H"
+#include "Game/G2/ANMCTRLR.H"
 #include "RAZIEL.H"
 
 struct __Player Raziel;

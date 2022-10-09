@@ -1,7 +1,7 @@
-#include "CORE.H"
+#include "Game/CORE.H"
 #include "AADLIB.H"
-#include "SOUND.H"
-#include "LOAD3D.H"
+#include "Game/SOUND.H"
+#include "Game/LOAD3D.H"
 #include "AADSEQEV.H"
 #include "AADSFX.H"
 #include "AADLIB.H"
@@ -232,7 +232,7 @@ long aadSlotUpdateWrapper()
 
 	//SetGp(curGp);
 
-#if defined(SINGLE_THREADED) || 1
+#if defined(SINGLE_THREADED) || 1 && !defined(__ANDROID__)
 	extern void SPU_Update();
 	SPU_Update();
 #endif

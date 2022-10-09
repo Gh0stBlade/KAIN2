@@ -1,9 +1,9 @@
-#include "CORE.H"
+#include "Game/CORE.H"
 #include "MENUUTIL.H"
-#include "GAMELOOP.H"
+#include "Game/GAMELOOP.H"
 #include "MENU.H"
-#include "FONT.H"
-#include "SOUND.H"
+#include "Game/FONT.H"
+#include "Game/SOUND.H"
 
 struct menu_sound_entry_t the_menu_sounds[6] = { menu_sound_none, 5, menu_sound_default, 5, menu_sound_select, 5, menu_sound_adjust, 5, menu_sound_engage, 5, menu_sound_pop, 5, };
 

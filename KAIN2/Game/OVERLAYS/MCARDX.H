@@ -1,9 +1,9 @@
 #ifndef MCARDX_H
 #define MCARDX_H
 
-#include "CORE.H"
+#include "Game/CORE.H"
 
-#include "MCARD/MEMCARD.H"
+#include "Game/MCARD/MEMCARD.H"
 
 extern void MCARDX_initialize(struct mcmenu_t* mcmenu, struct memcard_t* memcard, int nblocks);
 extern int MCARDX_set_buffer(struct mcmenu_t* mcmenu, void* buffer, int nbytes);

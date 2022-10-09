@@ -1,7 +1,7 @@
 #ifndef ANMDECMP_H
 #define ANMDECMP_H
 
-#include "gex2.h"
+#include "Game/gex2.h"
 #include "ANIMG2.H"
 
 extern void _G2Anim_DecompressChannel_AdaptiveDelta(struct _G2AnimDecompressChannelInfo_Type *dcInfo, struct _G2AnimChanStatus_Type *status); // 0x800900F4

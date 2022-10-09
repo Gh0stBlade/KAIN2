@@ -1,4 +1,4 @@
-#include "CORE.H"
+#include "Game/CORE.H"
 #include "ANIMG2.H"
 #include "POOLMMG2.H"
 #include "ANMG2ILF.H"

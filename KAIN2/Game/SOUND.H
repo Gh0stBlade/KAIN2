@@ -2,7 +2,7 @@
 #define SOUND_H
 
 #include "PSX/AADLIB.H"
-#include "INSTANCE.H"
+#include "Game/INSTANCE.H"
 
 struct _AnimSoundData_Type 
 {

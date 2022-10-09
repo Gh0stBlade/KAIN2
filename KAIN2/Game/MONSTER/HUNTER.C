@@ -1,4 +1,4 @@
-#include "CORE.H"
+#include "Game/CORE.H"
 
 #if defined(PC_VERSION)
 struct _MonsterStateChoice HUNTER_StateChoiceTable[] =

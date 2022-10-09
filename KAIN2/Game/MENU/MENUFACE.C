@@ -1,9 +1,9 @@
-#include "CORE.H"
-#include "GAMELOOP.H"
+#include "Game/CORE.H"
+#include "Game/GAMELOOP.H"
 #include "MENUFACE.H"
-#include "DRAW.H"
-#include "STRMLOAD.H"
-#include "MEMPACK.H"
+#include "Game/DRAW.H"
+#include "Game/STRMLOAD.H"
+#include "Game/MEMPACK.H"
 
 int hack_initialized;
 struct menuface_t MenuFaces[8] = { 236, 49,  48, 48, 2, -1, 0, 0, 0,

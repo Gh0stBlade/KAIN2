@@ -4,7 +4,7 @@
 /* thing in actuality.                        */
 /* ========================================== */
 #include <stdlib.h>
-#include "CORE.H"
+#include "Game/CORE.H"
 
 void PRIESTS_Init(struct _Instance* instance)
 {

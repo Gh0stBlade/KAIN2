@@ -1,13 +1,13 @@
 #ifndef COLLIDES_H
 #define COLLIDES_H
 
-#include "CAMERA.H"
+#include "Game/CAMERA.H"
 
-#include "STREAM.H"
+#include "Game/STREAM.H"
 
 #include "DRAWS.H"
 
-#include "BSP.H"
+#include "Game/BSP.H"
 
 struct _VMVertex
 {

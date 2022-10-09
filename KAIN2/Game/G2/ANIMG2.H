@@ -1,7 +1,7 @@
 #ifndef ANIMG2_H
 #define ANIMG2_H
 
-#include "gex2.h"
+#include "Game/gex2.h"
 
 struct _G2AnimController_Type // hashcode: 0x74838F3C (dec: 1954778940)
 {

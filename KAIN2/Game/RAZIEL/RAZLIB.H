@@ -1,10 +1,10 @@
 #ifndef RAZLIB_H
 #define RAZLIB_H
 
-#include "CORE.H"
-#include "INSTANCE.H"
-#include "MONSTER/MONSTER.H"
-#include "PLAYER.H"
+#include "Game/CORE.H"
+#include "Game/INSTANCE.H"
+#include "Game/MONSTER/MONSTER.H"
+#include "Game/PLAYER.H"
 
 struct evPhysicsSwimData // hashcode: 0x947F2BE5 (dec: -1803605019)
 {

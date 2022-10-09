@@ -1,7 +1,7 @@
-#include "CORE.H"
+#include "Game/CORE.H"
 #include "LOCALSTR.H"
-#include "LOAD3D.H"
-#include "VOICEXA.H"
+#include "Game/LOAD3D.H"
+#include "Game/VOICEXA.H"
 
 #include <stddef.h>
 

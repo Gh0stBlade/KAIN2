@@ -1,4 +1,4 @@
-#include "CORE.H"
+#include "Game/CORE.H"
 
 //0001:00000000       _ALUKA_ControllersEnabled  00401000 f   aluka.obj
 //0001:00000020       _ALUKA_SetPitch            00401020 f   aluka.obj

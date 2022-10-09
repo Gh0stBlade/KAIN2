@@ -84,6 +84,19 @@ struct PIPE3D_240fake // hashcode: 0xB73CD4A8 (dec: -1220750168)
 	long m[5]; // size=20, offset=0
 };
 
+struct AniTexInfo 
+{
+	struct TextureMT3* texture; // size=16, offset=0
+	long numFrames; // size=0, offset=4
+	long speed; // size=0, offset=8
+};
+
+struct AniTex 
+{
+	long numAniTextues; // size=0, offset=0
+	struct AniTexInfo aniTexInfo; // size=12, offset=4
+};
+
 #if defined(_LANGUAGE_C_PLUS_PLUS)||defined(__cplusplus)||defined(c_plusplus)
 extern "C" {
 #endif

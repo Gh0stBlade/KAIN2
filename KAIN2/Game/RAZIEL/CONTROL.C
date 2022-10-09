@@ -1,4 +1,4 @@
-#include "CORE.H"
+#include "Game/CORE.H"
 #include "CONTROL.H"
 
 struct __Force* dword_B08390;

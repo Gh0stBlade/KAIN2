@@ -1,4 +1,4 @@
-#include "CORE.H"
+#include "Game/CORE.H"
 #include "AADSQCMD.H"
 #include "AADLIB.H"
 #include "AADSEQEV.H"

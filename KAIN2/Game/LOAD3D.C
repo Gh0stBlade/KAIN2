@@ -444,7 +444,7 @@ char* LOAD_ReadFileFromCD(char* filename, int memType)
 	}
 #else
 #if defined(PSXPC_VERSION) && defined(NO_CD)
-#if defined(_WIN64) || defined(_WIN32) || defined(__EMSCRIPTEN__) || defined(PLATFORM_NX_ARM)
+#if defined(_WIN64) || defined(_WIN32) || defined(__EMSCRIPTEN__) || defined(PLATFORM_NX_ARM) || defined(__ANDROID__)
 	FILE* fp;
 #else
 	long fp;
@@ -461,7 +461,7 @@ char* LOAD_ReadFileFromCD(char* filename, int memType)
 	{
 		fp = PCopen(filename, 0, 0);
 
-#if defined(_WIN64) || defined(_WIN32) || defined(__EMSCRIPTEN__) || defined(PLATFORM_NX_ARM)
+#if defined(_WIN64) || defined(_WIN32) || defined(__EMSCRIPTEN__) || defined(PLATFORM_NX_ARM) || defined(__ANDROID__)
 		if (fp != (FILE*)-1)
 #else
 		if (fp != -1)
@@ -588,7 +588,7 @@ void LOAD_InitCdLoader(char *bigFileName, char *voiceFileName)
 	for (i = 0; i < 10; i++)
 	{
 		loadStatus.bigFile.bigfileFileHandle = PCopen(bigFileName, 0, 0);
-#if defined(_WIN64) || defined(_WIN32) || defined(__EMSCRIPTEN__) || defined(PLATFORM_NX_ARM)
+#if defined(_WIN64) || defined(_WIN32) || defined(__EMSCRIPTEN__) || defined(PLATFORM_NX_ARM) || defined(__ANDROID__)
 		if (loadStatus.bigFile.bigfileFileHandle != (FILE*) -1)
 #else
 		if (loadStatus.bigFile.bigfileFileHandle != -1)

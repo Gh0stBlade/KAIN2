@@ -2,7 +2,7 @@
 #define STREAM_H
 
 #include "SIGNAL.H"
-#include "INSTANCE.H"
+#include "Game/INSTANCE.H"
 #include "PLAN/PLANAPI.H"
 
 struct evPositionData // hashcode: 0x853C21E0 (dec: -2059656736)

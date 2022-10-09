@@ -1,8 +1,8 @@
 #include "MAINVM.H"
-#include "PSX/MAIN.H"
+#include "Game/PSX/MAIN.H"
 
 #if defined(PSXPC_VERSION)
-#include "CORE.H"
+#include "Game/CORE.H"
 #if defined(SDL2) && defined(UWP_SDL2) || defined(_WIN32) && !defined(SN_TARGET_PSP2)  && !defined(PLATFORM_NX)  && !defined(PLATFORM_NX_ARM)
 #undef R13
 #undef R12

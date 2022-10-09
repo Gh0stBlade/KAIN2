@@ -1,10 +1,10 @@
-#include "CORE.H"
+#include "Game/CORE.H"
 #include "MCARDX.H"
-#include "PSX/MAIN.H"
-#include "GAMELOOP.H"
-#include "MCARD/MEMCARD.H"
-#include "MENU/MENUDEFS.H"
-#include "LOCAL/LOCALSTR.H"
+#include "Game/PSX/MAIN.H"
+#include "Game/GAMELOOP.H"
+#include "Game/MCARD/MEMCARD.H"
+#include "Game/MENU/MENUDEFS.H"
+#include "Game/LOCAL/LOCALSTR.H"
 #include <assert.h>
 
 extern long sub_80163DDC(void* data /*s0*/);

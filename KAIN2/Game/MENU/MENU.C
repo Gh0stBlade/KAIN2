@@ -1,8 +1,8 @@
-#include "CORE.H"
+#include "Game/CORE.H"
 #include "MENU.H"
 #include "MENUDEFS.H"
 #include "MENUUTIL.H"
-#include "DRAW.H"
+#include "Game/DRAW.H"
 
 #include <assert.h>
 

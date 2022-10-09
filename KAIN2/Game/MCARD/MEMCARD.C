@@ -1,15 +1,15 @@
-#include "CORE.H"
+#include "Game/CORE.H"
 #include "MEMCARD.H"
-#include "GAMELOOP.H"
-#include "MEMPACK.H"
-#include "STRMLOAD.H"
-#include "RELMOD.H"
-#include "MENU/MENU.H"
-#include "PSX/MAIN.H"
-#include "SAVEINFO.H"
+#include "Game/GAMELOOP.H"
+#include "Game/MEMPACK.H"
+#include "Game/STRMLOAD.H"
+#include "Game/RELMOD.H"
+#include "Game/MENU/MENU.H"
+#include "Game/PSX/MAIN.H"
+#include "Game/SAVEINFO.H"
 
 #if defined(PSXPC_VERSION)
-#include "OVERLAYS/MCARDX.H"
+#include "Game/OVERLAYS/MCARDX.H"
 #endif
 
 struct memcard_t gMemcard;

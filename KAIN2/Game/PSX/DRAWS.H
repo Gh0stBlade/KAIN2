@@ -1,8 +1,8 @@
 #ifndef DRAWS_H
 #define DRAWS_H
 
-#include "G2/MAING2.H"
-#include "BSP.H"
+#include "Game/G2/MAING2.H"
+#include "Game/BSP.H"
 
 struct _PolytopeList 
 {

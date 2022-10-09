@@ -1,8 +1,8 @@
-#include "CORE.H"
+#include "Game/CORE.H"
 #include "INSTNCG2.H"
-#include "G2/ANIMG2.H"
-#include "MATH3D.H"
-#include "CAMERA.H"
+#include "Game/G2/ANIMG2.H"
+#include "Game/MATH3D.H"
+#include "Game/CAMERA.H"
 
 void G2Instance_BuildTransformsForList(struct _Instance* listHead)//Matching - 99.74%
 {

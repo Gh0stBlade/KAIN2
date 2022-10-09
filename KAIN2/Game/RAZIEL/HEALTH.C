@@ -1,6 +1,6 @@
-#include "CORE.H"
+#include "Game/CORE.H"
 #include "HEALTH.H"
-#include "GAMELOOP.H"
+#include "Game/GAMELOOP.H"
 #include "RAZLIB.H"
 
 void InitHealthSystem()
