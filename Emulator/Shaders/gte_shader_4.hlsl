@@ -7,7 +7,7 @@
 	#define ARG_VPOS ,float2 coord : VPOS
 	#define FRAG_COORD coord.xy
 #else
-	#define FRAG_COORD coord.xy
+	#define FRAG_COORD In.v_position.xy
 	#define ARG_VPOS
 #endif
 

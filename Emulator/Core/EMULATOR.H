@@ -110,28 +110,7 @@ extern unsigned short vram[];
 
 #elif defined(D3D12)
 
-struct D3D12TextureWrapper
-{
-	ID3D12Resource* m_textureResource;
-	ID3D12DescriptorHeap* m_srvHeap;
-	ID3D12Resource* m_uploadHeap;
-};
 
-typedef D3D12TextureWrapper TextureID;
-
-struct ShaderID {
-	D3D12_SHADER_BYTECODE VS;
-	D3D12_SHADER_BYTECODE PS;
-	D3D12_INPUT_LAYOUT_DESC IL;
-	ID3D12RootSignature* RS;
-	ID3D12PipelineState* GPS[BM_COUNT];
-	FLOAT BF[4];
-};
-
-typedef D3D12_RENDER_TARGET_VIEW_DESC* RenderTargetID;
-
-extern bool begin_pass_flag;
-extern bool begin_commands_flag;
 #elif defined(VULKAN)
 
 struct TextureImage

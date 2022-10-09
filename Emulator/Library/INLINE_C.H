@@ -49,15 +49,16 @@ extern int gte_ldlzc(int input);
 	VZ2             = ((short*)&r2)[2];       \
 
 
-#define gte_ldv3c( r0 ) __asm__ volatile (			\
-	"lwc2	$0, 0( %0 );"					\
-	"lwc2	$1, 4( %0 );"					\
-	"lwc2	$2, 8( %0 );"					\
-	"lwc2	$3, 12( %0 );"					\
-	"lwc2	$4, 16( %0 );"					\
-	"lwc2	$5, 20( %0 )"					\
-	:							\
-	: "r"( r0 ) )
+#define gte_ldv3c( r0 )                     \
+	VX0             = ((int*)&r0)[0];       \
+	VY0             = ((int*)&r0)[1];       \
+	VZ0             = ((int*)&r0)[2];       \
+	VX1             = ((int*)&r0)[3];       \
+	VY1             = ((int*)&r0)[4];       \
+	VZ1             = ((int*)&r0)[5];       \
+	VX2             = ((int*)&r0)[6];       \
+	VY2             = ((int*)&r0)[7];       \
+	VZ2             = ((int*)&r0)[8];       \
 
 #define gte_ldv3c_vertc( r0 ) __asm__ volatile (		\
 	"lwc2	$0, 0( %0 );"					\
@@ -85,10 +86,8 @@ extern int gte_ldlzc(int input);
 	:							\
 	: "r"( r0 ) )
 
-#define gte_ldrgb( r0 ) __asm__ volatile (			\
-	"lwc2	$6, 0( %0 )"					\
-	:							\
-	: "r"( r0 ) )
+#define gte_ldrgb( r0 )         \
+	gteRegs.CP2D.p[ 6 ].sd = r0; \
 
 #define gte_ldrgb3( r0, r1, r2 ) __asm__ volatile (		\
 	"lwc2	$20, 0( %0 );"					\
@@ -141,16 +140,10 @@ extern int gte_ldlzc(int input);
 	IR2 = r0[1];   \
 	IR3 = r0[2];
 
-#define gte_ldclmv( r0 ) __asm__ volatile (			\
-	"lhu	$12, 0( %0 );"					\
-	"lhu	$13, 6( %0 );"					\
-	"lhu	$14, 12( %0 );"					\
-	"mtc2	$12, $9;"					\
-	"mtc2	$13, $10;"					\
-	"mtc2	$14, $11"					\
-	:							\
-	: "r"( r0 )						\
-	: "$12", "$13", "$14" )
+#define gte_ldclmv( r0 ) \
+	IR1 = ((short*)r0)[0]; \
+	IR2 = ((short*)r0)[3]; \
+	IR3 = ((short*)r0)[6];
 
 #define gte_lddp( r0 ) \
 	IR0 = r0
@@ -211,10 +204,8 @@ extern int gte_ldlzc(int input);
 	:							\
 	: "r"( r0 ) )
 
-#define gte_ldlzc( r0 ) __asm__ volatile (			\
-	"mtc2	%0, $30"					\
-	:							\
-	: "r"( r0 ) )
+#define gte_ldlzc( r0 ) \
+	r0 = LZCR;          \
 
 #define gte_SetRGBcd( r0 ) __asm__ volatile (			\
 	"lwc2	$6, 0( %0 )"					\
@@ -294,20 +285,12 @@ extern int gte_ldlzc(int input);
 	: "r"( r0 )						\
 	: "$12", "$13" )
 
-#define gte_SetLightMatrix( r0 ) __asm__ volatile ( 		\
-	"lw	$12, 0( %0 );"					\
-	"lw	$13, 4( %0 );"					\
-	"ctc2	$12, $8;"					\
-	"ctc2	$13, $9;"					\
-	"lw	$12, 8( %0 );"					\
-	"lw	$13, 12( %0 );"					\
-	"lw	$14, 16( %0 );"					\
-	"ctc2	$12, $10;"					\
-	"ctc2	$13, $11;"					\
-	"ctc2	$14, $12"					\
-	:							\
-	: "r"( r0 )						\
-	: "$12", "$13", "$14" )
+#define gte_SetLightMatrix( r0 )       \
+	((int*)&IR0)[0]  = ((int*)r0)[0];   \
+	((int*)&IR1)[0]  = ((int*)r0)[1];   \
+	((int*)&IR2)[0]  = ((int*)r0)[2];   \
+	((int*)&IR3)[0]  = ((int*)r0)[3];   \
+	((int*)&SXY0)[0] = ((int*)r0)[4];  \
 
 #define gte_ldsvlcrow0( r0 ) __asm__ volatile (			\
 	"lw	$12, 0( %0 );"					\
@@ -473,10 +456,8 @@ extern int gte_ldlzc(int input);
 	"nop;"							\
 	".word 0x000001bf" )
 
-#define gte_rtir() __asm__ volatile (				\
-	"nop;"							\
-	"nop;"							\
-	".word 0x000001ff" )
+#define gte_rtir() \
+	docop2(0x049E012);
 
 #define gte_rtir_sf0() __asm__ volatile (			\
 	"nop;"							\
@@ -682,20 +663,16 @@ extern int gte_ldlzc(int input);
 	"nop;"							\
 	".word 0x00000f7f" )
 
-#define gte_nct() __asm__ volatile (				\
-	"nop;"							\
-	"nop;"							\
-	".word 0x00000fbf" )
+#define gte_nct() \
+	docop2(0x0D80420);
 
 #define gte_ncds() __asm__ volatile (				\
 	"nop;"							\
 	"nop;"							\
 	".word 0x00000fff" )
 
-#define gte_ncdt() __asm__ volatile (				\
-	"nop;"							\
-	"nop;"							\
-	".word 0x0000103f" )
+#define gte_ncdt() \
+	docop2(0x0F80416);
 
 #define gte_nccs() __asm__ volatile (				\
 	"nop;"							\
@@ -879,11 +856,8 @@ extern int gte_ldlzc(int input);
 	: "r"( r0 )						\
 	: "memory" )
 
-#define gte_stsxy0( r0 ) __asm__ volatile (			\
-	"swc2	$12, 0( %0 )"					\
-	:							\
-	: "r"( r0 )						\
-	: "memory" )
+#define gte_stsxy0( r0 )          \
+	((int*)r0)[0] = SXY0;        \
 
 #define gte_stsxy01( r0, r1 ) __asm__ volatile (		\
 	"swc2	$12, 0( %0 );"					\
@@ -1039,13 +1013,10 @@ extern int gte_ldlzc(int input);
 #define gte_stopz( r0 ) \
 	((int*)&r0)[0] = MAC0;       \
 
-#define gte_stlvl( r0 ) __asm__ volatile (			\
-	"swc2	$9, 0( %0 );"					\
-	"swc2	$10, 4( %0 );"					\
-	"swc2	$11, 8( %0 )"					\
-	:							\
-	: "r"( r0 )						\
-	: "memory" )
+#define gte_stlvl( r0 )         \
+	((int*)r0)[0] = IR1;        \
+	((int*)r0)[1] = IR2;        \
+	((int*)r0)[2] = IR3;        \
 
 #define gte_stlvnl( r0 )		 \
 	((int*)r0)[0] = MAC1;       \
@@ -1069,16 +1040,10 @@ extern int gte_ldlzc(int input);
 	((short*)r0)[1] = IR2;   \
 	((short*)r0)[2] = IR3;
 
-#define gte_stclmv( r0 ) __asm__ volatile (			\
-	"mfc2	$12, $9;"					\
-	"mfc2	$13, $10;"					\
-	"mfc2	$14, $11;"					\
-	"sh	$12, 0( %0 );"					\
-	"sh	$13, 6( %0 );"					\
-	"sh	$14, 12( %0 )"					\
-	:							\
-	: "r"( r0 )						\
-	: "$12", "$13", "$14", "memory" )
+#define gte_stclmv( r0 )     \
+	((short*)r0)[0] = IR1;   \
+	((short*)r0)[3] = IR2;   \
+	((short*)r0)[6] = IR3;
 
 #define gte_stbv( r0 ) __asm__ volatile (			\
 	"mfc2	$12, $9;"					\

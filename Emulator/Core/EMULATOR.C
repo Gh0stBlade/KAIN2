@@ -12,7 +12,7 @@
 #include "LIBGTE.H"
 #include "LIBETC.H"
 #include "LIBPAD.H"
-#if !defined(__ANDROID__) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX)  && !defined(PLATFORM_NX_ARM)  && !defined(PLATFORM_NX_ARM)
+#if !defined(__ANDROID__) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX)  && !defined(PLATFORM_NX_ARM) && !defined(D3D12)  && !defined(PLATFORM_NX_ARM) && !defined(D3D12)
 #include <thread>
 #endif
 #include <assert.h>
@@ -301,37 +301,7 @@ void CreateUWPApplication()
 #elif defined(D3D11)
 
 #elif defined(D3D12)
-	const unsigned int frameCount = 2;
-	
-	static ID3D12Resource* tmpHeap = NULL;
-	ID3D12Resource* dynamic_vertex_buffer[frameCount];
-	ID3D12Resource* dynamic_vertex_buffer_heap[frameCount];
-	D3D12_VERTEX_BUFFER_VIEW dynamic_vertex_buffer_view;
-	ID3D12Device* d3ddev = NULL;
-	ID3D12CommandQueue* commandQueue = NULL;
-	IDXGISwapChain3* swapChain = NULL;
-	ID3D12Resource* projectionMatrixBuffer[frameCount];
-	D3D12_CONSTANT_BUFFER_VIEW_DESC projectionMatrixBufferView;
-	ID3D12DescriptorHeap* projectionMatrixBufferHeap[frameCount];
 
-	ID3D12DescriptorHeap* renderTargetDescriptorHeap;
-	int renderTargetDescriptorSize = 0;
-	int frameIndex = 0;
-	ID3D12Resource* renderTargets[frameCount];
-	ID3D12CommandAllocator* commandAllocator;
-	ID3D12GraphicsCommandList* commandList;
-	ID3D12Fence* fence;
-	HANDLE fenceEvent;
-	UINT64 fenceValue[frameCount];
-
-	ID3D12Resource* vramBaseTexture;
-
-	bool begin_pass_flag = FALSE;
-	bool begin_commands_flag = FALSE;
-
-	unsigned int dynamic_vertex_buffer_index = 0;
-
-	int g_CurrentBlendMode = BM_NONE;
 
 #elif defined(VULKAN)
 	VkBuffer dynamic_vertex_buffer;
@@ -426,7 +396,7 @@ void CreateUWPApplication()
 int g_otSize = 0;
 char* pVirtualMemory = NULL;
 SysCounter counters[3] = { 0 };
-#if !defined(__ANDROID__) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX) && !defined(PLATFORM_NX_ARM)
+#if !defined(__ANDROID__) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX) && !defined(PLATFORM_NX_ARM) && !defined(D3D12)
 std::thread counter_thread;
 #endif
 #if defined(__ANDROID__)
@@ -437,7 +407,7 @@ std::thread counter_thread;
 int g_texturelessMode = 0;
 int g_emulatorPaused = 0;
 
-#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX)  && !defined(PLATFORM_NX_ARM)  
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX)  && !defined(PLATFORM_NX_ARM) && !defined(D3D12)  
 void Emulator_ResetDevice()
 {
 #if defined(EGL) || defined(OGLES)///@TODO &&
@@ -1415,187 +1385,7 @@ static int Emulator_InitialiseD3D11Context(char* windowName)
 #endif
 
 #if defined(D3D12)
-static int Emulator_InitialiseD3D12Context(char* windowName)
-{
-#if defined(SDL2)
-	g_window = SDL_CreateWindow(windowName, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, windowWidth, windowHeight, SDL_WINDOW_RESIZABLE);
-	if (g_window == NULL)
-	{
-		eprinterr("Failed to initialise SDL window!\n");
-		return FALSE;
-	}
-#endif
-	SDL_SysWMinfo wmInfo;
-	SDL_VERSION(&wmInfo.version);
-	SDL_GetWindowWMInfo(g_window, &wmInfo);
-	
-	IDXGIFactory2* factory = NULL;
-	HRESULT hr = CreateDXGIFactory2(DXGI_CREATE_FACTORY_DEBUG, IID_PPV_ARGS(&factory));
-	
-	if (!SUCCEEDED(hr)) {
-		eprinterr("Failed to create DXGI factory2!\n");
-		return FALSE;
-	}
 
-	int adapterIndex = 0;
-	int adapterFound = FALSE;
-	IDXGIAdapter1* adapter = NULL;
-	while (factory->EnumAdapters1(adapterIndex, &adapter) != DXGI_ERROR_NOT_FOUND)
-	{
-		DXGI_ADAPTER_DESC1 adapterDesc;
-		adapter->GetDesc1(&adapterDesc);
-
-		if (adapterDesc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE)
-		{
-			continue;
-		}
-
-		hr = D3D12CreateDevice(adapter, D3D_FEATURE_LEVEL_11_0, _uuidof(ID3D12Device), NULL);
-
-		if (SUCCEEDED(hr))
-		{
-			adapterFound = TRUE;
-			break;
-		}
-
-		adapterIndex++;
-	}
-
-	if (!adapterFound) {
-		eprinterr("Failed to locate D3D12 compatible adapter!\n");
-		return FALSE;
-	}
-
-	ID3D12Debug* debugController;
-	if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController))))
-	{
-		debugController->EnableDebugLayer();
-	}
-
-	hr = D3D12CreateDevice(adapter, D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&d3ddev));
-	if (!SUCCEEDED(hr)) {
-		eprinterr("Failed to create D3D12 device!\n");
-		return FALSE;
-	}
-
-	hr = d3ddev->GetDeviceRemovedReason();
-
-	D3D12_COMMAND_QUEUE_DESC commandQDesc;
-	ZeroMemory(&commandQDesc, sizeof(D3D12_COMMAND_QUEUE_DESC));
-	commandQDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
-	commandQDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
-
-	hr = d3ddev->CreateCommandQueue(&commandQDesc, IID_PPV_ARGS(&commandQueue));
-	if (!SUCCEEDED(hr)) {
-		eprinterr("Failed to create D3D12 command queue!\n");
-		return FALSE;
-	}
-
-	DXGI_SAMPLE_DESC sampleDesc;
-	ZeroMemory(&sampleDesc, sizeof(DXGI_SAMPLE_DESC));
-	sampleDesc.Count = 1;
-
-	DXGI_SWAP_CHAIN_DESC1 swapChainDesc;
-	ZeroMemory(&swapChainDesc, sizeof(DXGI_SWAP_CHAIN_DESC1));
-	swapChainDesc.BufferCount = frameCount;
-	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
-	swapChainDesc.SampleDesc = sampleDesc;
-	swapChainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
-	swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	swapChainDesc.SampleDesc.Count = 1;
-	swapChainDesc.SampleDesc.Quality = 0;
-	swapChainDesc.Width = windowWidth;
-	swapChainDesc.Height = windowHeight;
-	
-	DXGI_SWAP_CHAIN_FULLSCREEN_DESC swapChainFSDesc;
-	ZeroMemory(&swapChainFSDesc, sizeof(swapChainFSDesc));
-	swapChainFSDesc.Windowed = TRUE;
-
-	IDXGISwapChain1* tempSwapChain;
-
-	hr = factory->CreateSwapChainForHwnd(commandQueue, wmInfo.info.win.window, &swapChainDesc, &swapChainFSDesc, NULL, &tempSwapChain);
-
-	if (!SUCCEEDED(hr)) {
-		eprinterr("Failed to create swap chain!\n");
-		return FALSE;
-	}
-
-	swapChain = (IDXGISwapChain3*)tempSwapChain;
-	frameIndex = swapChain->GetCurrentBackBufferIndex();
-
-	D3D12_DESCRIPTOR_HEAP_DESC heapDesc;
-	ZeroMemory(&heapDesc, sizeof(D3D12_DESCRIPTOR_HEAP_DESC));
-	heapDesc.NumDescriptors = frameCount;
-	heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
-	heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-
-	hr = d3ddev->CreateDescriptorHeap(&heapDesc, IID_PPV_ARGS(&renderTargetDescriptorHeap));
-	if (!SUCCEEDED(hr)) {
-		eprinterr("Failed to create RTV Descripter heap!\n");
-		return FALSE;
-	}
-
-	renderTargetDescriptorSize = d3ddev->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-
-	CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(renderTargetDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
-
-	for (int i = 0; i < frameCount; i++)
-	{
-		hr = swapChain->GetBuffer(i, IID_PPV_ARGS(&renderTargets[i]));
-		if (FAILED(hr))
-		{
-			return FALSE;
-		}
-
-		d3ddev->CreateRenderTargetView(renderTargets[i], NULL, rtvHandle);
-
-		rtvHandle.Offset(1, renderTargetDescriptorSize);
-	}
-
-	hr = d3ddev->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&commandAllocator));
-	if (FAILED(hr))
-	{
-		return FALSE;
-	}
-	
-	hr = d3ddev->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, commandAllocator, NULL, IID_PPV_ARGS(&commandList));
-	if (FAILED(hr))
-	{
-		return FALSE;
-	}
-
-	commandList->Close();
-
-	hr = d3ddev->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence));
-	if (FAILED(hr))
-	{
-		return FALSE;
-	}
-
-	for (int i = 0; i < frameCount; i++)
-	{
-		fenceValue[i] = 0;
-	}
-
-	fenceEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
-	if (fenceEvent == NULL)
-	{
-		eprinterr("Failed to create fence event!\n");
-		return FALSE;
-	}
-
-	for (int i = 0; i < frameCount; i++)
-	{
-		hr = d3ddev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer(MAX_NUM_POLY_BUFFER_VERTICES * sizeof(Vertex)), D3D12_RESOURCE_STATE_GENERIC_READ, NULL, IID_PPV_ARGS(&dynamic_vertex_buffer[i]));
-		assert(SUCCEEDED(hr));
-
-		hr = d3ddev->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer(MAX_NUM_POLY_BUFFER_VERTICES * sizeof(Vertex)), D3D12_RESOURCE_STATE_GENERIC_READ, NULL, IID_PPV_ARGS(&dynamic_vertex_buffer_heap[i]));
-		assert(SUCCEEDED(hr));
-	}
-
-	return TRUE;
-}
 #endif
 
 #if defined(VULKAN)
@@ -3823,155 +3613,8 @@ ShaderID Shader_Compile(const char *source)
 #elif defined(D3D11) && 0
 
 
-#elif defined(D3D12)
+#elif defined(D3D12) && 0
 
-#include "shaders/D3D12/gte_shader_4_vs.h"
-#include "shaders/D3D12/gte_shader_4_ps.h"
-#include "shaders/D3D12/gte_shader_8_vs.h"
-#include "shaders/D3D12/gte_shader_8_ps.h"
-#include "shaders/D3D12/gte_shader_16_vs.h"
-#include "shaders/D3D12/gte_shader_16_ps.h"
-#include "shaders/D3D12/blit_shader_vs.h"
-#include "shaders/D3D12/blit_shader_ps.h"
-
-#define Shader_Compile(name) Shader_Compile_Internal((DWORD*)name##_vs, (DWORD*)name##_ps, sizeof(name##_vs), sizeof(name##_ps))
-
-ShaderID Shader_Compile_Internal(const DWORD* vs_data, const DWORD* ps_data, const unsigned int vs_size, const unsigned int ps_size)
-{
-	ShaderID shader = {};
-	HRESULT hr;
-	static int shaderCount = 0;
-
-	D3D12_SHADER_BYTECODE vertexShaderByteCode;
-	vertexShaderByteCode.pShaderBytecode = vs_data;
-	vertexShaderByteCode.BytecodeLength = vs_size;
-
-	D3D12_SHADER_BYTECODE pixelShaderByteCode;
-	pixelShaderByteCode.pShaderBytecode = ps_data;
-	pixelShaderByteCode.BytecodeLength = ps_size;
-
-#define OFFSETOF(T, E)     ((size_t)&(((T*)0)->E))
-
-	const D3D12_INPUT_ELEMENT_DESC INPUT_LAYOUT[] =
-	{
-#if defined(PGXP)
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, OFFSETOF(Vertex, x), D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-#else	
-		{ "POSITION", 0, DXGI_FORMAT_R16G16B16A16_SINT,  0, OFFSETOF(Vertex, x), D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-#endif
-		{ "TEXCOORD", 0, DXGI_FORMAT_R8G8B8A8_UINT,		 0, OFFSETOF(Vertex, u), D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-		{ "COLOR",    0, DXGI_FORMAT_R8G8B8A8_UNORM,	 0, OFFSETOF(Vertex, r), D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-	};
-
-	//Create root signature
-	D3D12_DESCRIPTOR_RANGE rangesVertex[1];
-	rangesVertex[0].BaseShaderRegister = 0;
-	rangesVertex[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
-	rangesVertex[0].NumDescriptors = 1;
-	rangesVertex[0].RegisterSpace = 0;
-	rangesVertex[0].OffsetInDescriptorsFromTableStart = 0;
-
-	D3D12_DESCRIPTOR_RANGE rangesPixelVramTexture[1];
-	rangesPixelVramTexture[0].BaseShaderRegister = 0;
-	rangesPixelVramTexture[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
-	rangesPixelVramTexture[0].NumDescriptors = 1;
-	rangesPixelVramTexture[0].RegisterSpace = 0;
-	rangesPixelVramTexture[0].OffsetInDescriptorsFromTableStart = 0;
-
-	D3D12_DESCRIPTOR_RANGE rangesPixelrg8lutTexture[1];
-	rangesPixelrg8lutTexture[0].BaseShaderRegister = 1;
-	rangesPixelrg8lutTexture[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
-	rangesPixelrg8lutTexture[0].NumDescriptors = 1;
-	rangesPixelrg8lutTexture[0].RegisterSpace = 0;
-	rangesPixelrg8lutTexture[0].OffsetInDescriptorsFromTableStart = 0;
-
-	D3D12_ROOT_PARAMETER rootParameters[3];
-	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-	rootParameters[0].DescriptorTable.NumDescriptorRanges = sizeof(rangesPixelVramTexture) / sizeof(D3D12_DESCRIPTOR_RANGE);
-	rootParameters[0].DescriptorTable.pDescriptorRanges = rangesPixelVramTexture;
-
-	rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-	rootParameters[1].DescriptorTable.NumDescriptorRanges = sizeof(rangesPixelrg8lutTexture) / sizeof(D3D12_DESCRIPTOR_RANGE);
-	rootParameters[1].DescriptorTable.pDescriptorRanges = rangesPixelrg8lutTexture;
-
-	rootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-	rootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
-	rootParameters[2].DescriptorTable.NumDescriptorRanges = sizeof(rangesVertex) / sizeof(D3D12_DESCRIPTOR_RANGE);
-	rootParameters[2].DescriptorTable.pDescriptorRanges = rangesVertex;
-
-	D3D12_ROOT_PARAMETER rootParametersBlit[2];
-	rootParametersBlit[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-	rootParametersBlit[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-	rootParametersBlit[0].DescriptorTable.NumDescriptorRanges = sizeof(rangesPixelVramTexture) / sizeof(D3D12_DESCRIPTOR_RANGE);
-	rootParametersBlit[0].DescriptorTable.pDescriptorRanges = rangesPixelVramTexture;
-
-	rootParametersBlit[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-	rootParametersBlit[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-	rootParametersBlit[1].DescriptorTable.NumDescriptorRanges = sizeof(rangesPixelrg8lutTexture) / sizeof(D3D12_DESCRIPTOR_RANGE);
-	rootParametersBlit[1].DescriptorTable.pDescriptorRanges = rangesPixelrg8lutTexture;
-
-	D3D12_STATIC_SAMPLER_DESC staticSamplerDesc;
-	ZeroMemory(&staticSamplerDesc, sizeof(staticSamplerDesc));
-	staticSamplerDesc.Filter = D3D12_FILTER_MIN_MAG_POINT_MIP_LINEAR;
-	staticSamplerDesc.AddressU = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
-	staticSamplerDesc.AddressV = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
-	staticSamplerDesc.AddressW = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
-	staticSamplerDesc.ShaderRegister = 0;
-	staticSamplerDesc.RegisterSpace = 0;
-	staticSamplerDesc.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-
-	D3D12_ROOT_SIGNATURE_DESC rootSignatureDesc;
-	rootSignatureDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
-	rootSignatureDesc.NumParameters = shaderCount == 3 ? 2 : 3;
-	rootSignatureDesc.pParameters = shaderCount == 3 ? rootParametersBlit : rootParameters;
-	rootSignatureDesc.NumStaticSamplers = 1;
-	rootSignatureDesc.pStaticSamplers = &staticSamplerDesc;
-
-	ID3DBlob* errorBlob;
-	ID3DBlob* signature;
-	hr = D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1, &signature, &errorBlob);
-	//printf("%s\n", errorBlob->GetBufferPointer());
-	assert(!FAILED(hr));
-
-	hr = d3ddev->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(), IID_PPV_ARGS(&shader.RS));
-	assert(!FAILED(hr));
-
-	Emulator_BeginCommandBuffer();
-	commandList->SetGraphicsRootSignature(shader.RS);
-
-	DXGI_SAMPLE_DESC sampleDesc;
-	ZeroMemory(&sampleDesc, sizeof(sampleDesc));
-	sampleDesc.Count = 1;
-
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC pso;
-	ZeroMemory(&pso, sizeof(pso));
-	pso.InputLayout = { INPUT_LAYOUT, sizeof(INPUT_LAYOUT) / sizeof(D3D12_INPUT_ELEMENT_DESC) };
-	pso.pRootSignature = shader.RS;
-	pso.VS = vertexShaderByteCode;
-	pso.PS = pixelShaderByteCode;
-	pso.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-	pso.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
-	pso.SampleDesc = sampleDesc;
-	pso.SampleMask = 0xFFFFFFFF;
-	pso.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
-	pso.NumRenderTargets = 1;
-	D3D12_DEPTH_STENCIL_DESC depthStencilDesc = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
-	depthStencilDesc.DepthEnable = FALSE;
-	pso.DepthStencilState = depthStencilDesc;
-
-	Emulator_CreateGraphicsPipelineState(&shader, &pso);
-
-	Emulator_EndCommandBuffer();
-	Emulator_WaitForPreviousFrame();
-
-#undef OFFSETOF
-
-	shaderCount++;//Hack
-
-	return shader;
-}
 #elif defined(VULKAN)
 
 #include "shaders/Vulkan/gte_shader_4_vs.h"
@@ -4306,7 +3949,7 @@ void Emulator_DestroyGlobalShaders()
 }
 #endif
 
-#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX)  && !defined(PLATFORM_NX_ARM) 
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX)  && !defined(PLATFORM_NX_ARM) && !defined(D3D12) 
 void Emulator_GenerateCommonTextures()
 {
 	unsigned int pixelData = 0xFFFFFFFF;
@@ -4544,7 +4187,7 @@ void Emulator_GenerateCommonTextures()
 }
 #endif
 
-#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX)  && !defined(PLATFORM_NX_ARM) 
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX)  && !defined(PLATFORM_NX_ARM) && !defined(D3D12) 
 int Emulator_CreateCommonResources()
 {
 	memset(vram, 0, VRAM_WIDTH * VRAM_HEIGHT * sizeof(unsigned short));
@@ -4782,7 +4425,7 @@ void Emulator_Ortho2D(float left, float right, float bottom, float top, float zn
 }
 #endif
 
-#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX)  && !defined(PLATFORM_NX_ARM) 
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX)  && !defined(PLATFORM_NX_ARM) && !defined(D3D12) 
 void Emulator_SetShader(const ShaderID shader)
 {
 #if defined(OGL) || defined(OGLES)
@@ -4823,7 +4466,7 @@ void Emulator_SetShader(const ShaderID shader)
 }
 #endif
 
-#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX)  && !defined(PLATFORM_NX_ARM) 
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX)  && !defined(PLATFORM_NX_ARM) && !defined(D3D12) 
 void Emulator_SetTexture(TextureID texture, enum TexFormat texFormat)
 {
 	switch (texFormat)
@@ -4944,7 +4587,7 @@ void Emulator_SetTexture(TextureID texture, enum TexFormat texFormat)
 }
 #endif
 
-#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX)  && !defined(PLATFORM_NX_ARM) 
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX)  && !defined(PLATFORM_NX_ARM) && !defined(D3D12) 
 void Emulator_DestroyTexture(TextureID texture)
 {
 #if defined(OGL) || defined(OGLES)
@@ -4962,7 +4605,7 @@ void Emulator_DestroyTexture(TextureID texture)
 }
 #endif
 
-#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX)  && !defined(PLATFORM_NX_ARM) 
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX)  && !defined(PLATFORM_NX_ARM) && !defined(D3D12) 
 void Emulator_Clear(int x, int y, int w, int h, unsigned char r, unsigned char g, unsigned char b)
 {
 // TODO clear rect if it's necessary
@@ -5010,7 +4653,7 @@ void Emulator_Clear(int x, int y, int w, int h, unsigned char r, unsigned char g
 
 #define NOFILE 0
 
-#if !defined(__EMSCRIPTEN__) && !defined(__ANDROID__) && !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX)  && !defined(PLATFORM_NX_ARM) 
+#if !defined(__EMSCRIPTEN__) && !defined(__ANDROID__) && !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX)  && !defined(PLATFORM_NX_ARM) && !defined(D3D12)
 
 void Emulator_SaveVRAM(const char* outputFileName, int x, int y, int width, int height, int bReadFromFrameBuffer)
 {
@@ -5061,7 +4704,7 @@ void Emulator_SaveVRAM(const char* outputFileName, int x, int y, int width, int 
 }
 #endif
 
-#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX)  && !defined(PLATFORM_NX_ARM) 
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX)  && !defined(PLATFORM_NX_ARM) && !defined(D3D12) 
 void Emulator_StoreFrameBuffer(int x, int y, int w, int h)
 {
 	short *fb = (short*)malloc(w * h * sizeof(short));
@@ -5242,7 +4885,7 @@ void Emulator_ReadVRAM(unsigned short *dst, int x, int y, int dst_w, int dst_h)
 	}
 }
 
-#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX)  && !defined(PLATFORM_NX_ARM) 
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX)  && !defined(PLATFORM_NX_ARM) && !defined(D3D12) 
 void Emulator_UpdateVRAM()
 {
 	if (!vram_need_update) {
@@ -5716,7 +5359,7 @@ int Emulator_BeginScene()
 	Emulator_SetVertexBuffer();
 #endif
 
-#if !defined(VULKAN) && !defined(D3D12) && !defined(PLATFORM_NX)  && !defined(PLATFORM_NX_ARM) 
+#if !defined(VULKAN) && !defined(D3D12) && !defined(PLATFORM_NX)  && !defined(PLATFORM_NX_ARM) && !defined(D3D12) 
 	Emulator_UpdateVRAM();
 #endif
 
@@ -6150,7 +5793,7 @@ unsigned int Emulator_GetFPS()
 	
 }
 
-#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX)  && !defined(PLATFORM_NX_ARM) 
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX)  && !defined(PLATFORM_NX_ARM) && !defined(D3D12) 
 void Emulator_SwapWindow()
 {
 	unsigned int timer = 1;
@@ -6232,7 +5875,7 @@ void Emulator_SwapWindow()
 }
 #endif
 
-#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX)  && !defined(PLATFORM_NX_ARM) 
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX)  && !defined(PLATFORM_NX_ARM) && !defined(D3D12) 
 void Emulator_WaitForTimestep(int count)
 {
 #if defined(SDL2)
@@ -6342,7 +5985,7 @@ void Emulator_ShutDown()
 #endif
 }
 
-#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX)  && !defined(PLATFORM_NX_ARM) 
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX)  && !defined(PLATFORM_NX_ARM) && !defined(D3D12) 
 void Emulator_SetBlendMode(enum BlendMode blendMode)
 {
 	if (g_PreviousBlendMode == blendMode)
@@ -6669,7 +6312,7 @@ void Emulator_SetPGXPVertexCount(int vertexCount)
 #endif
 }
 
-#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX)  && !defined(PLATFORM_NX_ARM) 
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX)  && !defined(PLATFORM_NX_ARM) && !defined(D3D12) 
 void Emulator_SetViewPort(int x, int y, int width, int height)
 {
 	float offset_x = (float)activeDispEnv.screen.x;
@@ -6747,7 +6390,7 @@ void Emulator_SetRenderTarget(const RenderTargetID frameBufferObject)
 
 #endif
 
-#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX)  && !defined(PLATFORM_NX_ARM) 
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX)  && !defined(PLATFORM_NX_ARM) && !defined(D3D12) 
 void Emulator_SetWireframe(int enable) 
 {
 #if defined(OGL)
@@ -6766,7 +6409,7 @@ void Emulator_SetWireframe(int enable)
 }
 #endif
 
-#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX)  && !defined(PLATFORM_NX_ARM) 
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX)  && !defined(PLATFORM_NX_ARM) && !defined(D3D12) 
 void Emulator_UpdateVertexBuffer(const struct Vertex *vertices, int num_vertices)
 {
 	assert(num_vertices <= MAX_NUM_POLY_BUFFER_VERTICES);
@@ -6830,7 +6473,7 @@ void Emulator_UpdateVertexBuffer(const struct Vertex *vertices, int num_vertices
 }
 #endif
 
-#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX)  && !defined(PLATFORM_NX_ARM) 
+#if !defined(OGL) && !defined(D3D9) && !defined(D3D11) && !defined(OGLES) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX)  && !defined(PLATFORM_NX_ARM) && !defined(D3D12) 
 void Emulator_DrawTriangles(int start_vertex, int triangles)
 {
 	if(triangles <= 0)
@@ -6863,7 +6506,7 @@ void Emulator_DrawTriangles(int start_vertex, int triangles)
 }
 #endif
 
-#if defined(D3D12)
+#if defined(D3D12) && 0
 
 void Emulator_CreateGraphicsPipelineState(ShaderID* shader, D3D12_GRAPHICS_PIPELINE_STATE_DESC* pso)
 {

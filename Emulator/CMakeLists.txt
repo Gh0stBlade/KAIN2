@@ -70,7 +70,7 @@ OPTIONAL_DEFINE(NTSC_VERSION "Enable/Disable NTSC Mode" ON)
 #Enable 32-bit address for tag
 OPTIONAL_DEFINE(USE_32_BIT_ADDR "Enable/Disable 32-bit address for tag" ON)
 
-if (NOT ANDROID)
+if(NOT ANDROID)
 BuildPreProcessorDefinitions()
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE GLEW_STATIC)

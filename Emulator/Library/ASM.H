@@ -69,7 +69,7 @@
 #define k1	$27
 #define gp	$28	/* global pointer */
 #define sp	$29	/* stack pointer */
-#define fp	$30	/* frame pointer */
+//#define fp	$30	/* frame pointer */
 #define ra	$31	/* return address */
 #endif
 

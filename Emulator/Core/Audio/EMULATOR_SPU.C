@@ -1,6 +1,6 @@
 #include "EMULATOR_SPU.H"
 
-#if !defined(SN_TARGET_PSP2)
+#if !defined(SN_TARGET_PSP2) && !defined(__ANDROID__)
 #include <thread>
 std::thread thread;
 #endif

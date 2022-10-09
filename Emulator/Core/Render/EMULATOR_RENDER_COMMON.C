@@ -161,7 +161,7 @@ void Emulator_AddSplit(int semiTrans, int page, TextureID textureId)
 #if defined(VULKAN)
 	if (curSplit->blendMode == curBlendMode && curSplit->texFormat == curTexFormat && curSplit->textureId.textureImage == textureId->textureImage)
 #elif defined(D3D12)
-	if (curSplit->blendMode == curBlendMode && curSplit->texFormat == curTexFormat && curSplit->textureId.m_textureResource == textureId->m_textureResource)
+	if (curSplit->blendMode == curBlendMode && curSplit->texFormat == curTexFormat && curSplit->textureId.m_textureResource == textureId.m_textureResource)
 #else
 	if (curSplit->blendMode == curBlendMode && curSplit->texFormat == curTexFormat && curSplit->textureId == textureId && !splitAgain)
 #endif

@@ -52,10 +52,10 @@
 //#define D3D9
 
 //Direct3D11
-#define D3D11
+//#define D3D11
 
 //Direct3D12
-//#define D3D12
+#define D3D12
 
 #if !defined(_DEBUG)
 #define NO_FILESYSTEM
@@ -80,6 +80,7 @@
 #define OGLES
 #define OGLES_VERSION (3)
 #define SDL2
+#define NO_FILESYSTEM
 #elif defined(_XBOX)
 #define XED3D
 #endif
