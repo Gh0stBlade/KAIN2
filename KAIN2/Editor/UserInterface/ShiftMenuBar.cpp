@@ -23,7 +23,7 @@ Shift::MenuBar::MenuBar(QWidget* parent) : QMenuBar(parent)
 
     m_labelVersion = new QLabel(this);
     char versionBuff[32];
-    //sprintf(versionBuff, "V 1.0.%d (0x%x)", g_GIT_COMMIT_COUNT, g_GIT_COMMIT_COUNT);
+    sprintf(versionBuff, "V 1.0.%d (0x%x)", 0, 0);
     m_labelVersion->setText(versionBuff);
     m_labelVersion->move(340, 2);
     m_labelVersion->setStyleSheet("color:rgb(91, 91, 91);");

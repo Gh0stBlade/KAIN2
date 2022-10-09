@@ -8,33 +8,17 @@
 
 #include "ShiftRightPane.h"
 
-void Shift::D3D11Frame::initialiseD3D11(HWND windowHandle, int width, int height)
+#include <thread>
+
+extern HWND g_overrideHWND;
+extern int g_overrideWidth;
+extern int g_overrideHeight;
+
+void Shift::D3D11Frame::initialiseHWND(HWND windowHandle, int width, int height)
 {
-#if 1//OLD_RENDERER || 1
-    //g_engine.getRenderer()->InitialiseD3D11(1920, 1080, windowHandle);
-
-    if (!Editor::InitScene()) {
-        printf("Failed to initialise scene!\n");
-    }
-
-    //if (!g_engine.m_initialised) {
-    //    g_engine.Initialise();
-   // }
-#else
-    Shift::Init init;
-    Shift::PCSettings settings;
-
-    init.PreInitialiseDX(true, &settings, false);
-
-    bool firstTime[4];
-    firstTime[0] = settings.ReadFromRegistry(L"SOFTWARE\\Crystal Dynamics\\Tomb Raider\\Graphics");
-
-    Shift::GameWindowDX11::m_window = windowHandle;
-
-    init.InitialiseDX(Shift::GameWindowDX11::m_window, &settings);
-    Shift::CoreSystems coreSystems;
-    coreSystems.Init();
-#endif
+    g_overrideHWND = windowHandle;
+    g_overrideWidth = width;
+    g_overrideHeight = height;
 }
 
 void Shift::D3D11Frame::render()
@@ -44,38 +28,7 @@ void Shift::D3D11Frame::render()
 
 void Shift::D3D11Frame::paintEvent(QPaintEvent* event)
 {
-    //QFrame::paintEvent(event);
 
-    static QElapsedTimer deltaTimer;
-    static float deltaTime = 0.0f;
-    
-    //if (g_engine.m_initialised)
-    {
-        deltaTimer.start();
-
-       // g_engine.DrawScene(deltaTime, static_cast<float>(QTime::currentTime().msec()));
-#if 0
-        QPainter p(this);
-        p.setRenderHint(QPainter::Antialiasing);
-        QPainterPath path;
-        path.addRoundedRect(QRectF(10, 10, 100, 50), 10, 10);
-        QPen pen(Qt::black, 10);
-        p.setPen(pen);
-        p.fillPath(path, Qt::red);
-        p.drawPath(path);
-        update();
-#else
-        //QPainter painter(this);
-       // painter.setPen(Qt::yellow);
-       // painter.drawText(0, 20, "One");
-       // painter.setPen(Qt::red);
-       // painter.drawText(QFontMetrics(painter.font()).size(Qt::TextSingleLine, "One ").width(), 20, "Two");
-#endif
-        deltaTime = static_cast<float>(deltaTimer.elapsed()) / 1000.0f;
-        //g_engine.setCurrentDeltaTime(deltaTime);
-        //qDebug() << "Dt:" << static_cast<float>(deltaTimer.elapsed()) / 1000.0f;
-        deltaTimer.restart();
-    }
 }
 
 QPaintEngine* Shift::D3D11Frame::paintEngine()
@@ -85,25 +38,11 @@ QPaintEngine* Shift::D3D11Frame::paintEngine()
 
 void Shift::D3D11Frame::resizeEvent(QResizeEvent* event)
 {
-#if 0
-    if (g_engine.m_initialised)
-    {
-        int oldW = event->size().width();
-        int oldH = event->size().height();
+    int oldW = event->size().width();
+    int oldH = event->size().height();
 
-        int pixelRatio = devicePixelRatio();
-        int newW = width() * pixelRatio + (width() * pixelRatio % 2);
-        int newH = height() * devicePixelRatio();
-
-        QSize currentSize = QSize(newW, newH);
-        QSize newSize = getRatio(currentSize);
-#if defined(_DEBUG)
-        //newSize.setWidth(1920);
-        //newSize.setHeight(1080);
-#endif
-        g_engine.getRenderer()->ResizeBuffers(newSize.width(), newSize.height());
-    }
-#endif
+    g_overrideWidth = oldW;
+    g_overrideHeight = oldH;
 }
 
 void Shift::D3D11Frame::keyPressEvent(QKeyEvent* event)
@@ -344,11 +283,5 @@ void Shift::D3D11Frame::mouseMoveEvent(QMouseEvent* event)
 
 void Shift::D3D11Frame::renderWidget()
 {
-    //setUpdatesEnabled(true);
-    if (m_tabWidget != nullptr)
-    {
-        //m_tabWidget->setTabText(0, g_engine.m_scene.getSceneName());
-    }
 
-    update();
 }

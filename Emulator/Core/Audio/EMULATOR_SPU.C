@@ -2,7 +2,7 @@
 
 #if !defined(SN_TARGET_PSP2) && !defined(__ANDROID__)
 #include <thread>
-std::thread thread;
+std::thread audioThread;
 #endif
 
 extern int _spu_keystat_last;
@@ -21,7 +21,7 @@ void SPU_Initialise()
     SDL_AddTimer(1000 / SPU_FPS, SPU_Update, NULL);
 #else
 #if !defined(SINGLE_THREADED) || 1
-    thread = std::thread(SPU_Update);
+    audioThread = std::thread(SPU_Update);
 #endif
 #endif
 

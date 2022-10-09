@@ -26,7 +26,7 @@ Shift::CenterPane::CenterPane(Shift::Panes* panes, QWidget* parent)
 	m_d3d11Viewport = new Shift::D3D11Frame(panes, m_tabWidget);
 	m_d3d11Viewport->setObjectName("ShiftViewport");
 	m_d3d11Viewport->setFocusPolicy(Qt::ClickFocus);
-	m_d3d11Viewport->initialiseD3D11((HWND)m_d3d11Viewport->winId(), m_d3d11Viewport->width(), m_d3d11Viewport->height());
+	m_d3d11Viewport->initialiseHWND((HWND)m_d3d11Viewport->winId(), m_d3d11Viewport->width(), m_d3d11Viewport->height());
 #endif
 	
 

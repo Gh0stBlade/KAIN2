@@ -26,6 +26,7 @@ extern ID3D11Buffer* dynamic_vertex_buffer;
 
 extern int Emulator_InitialiseD3D11Context(char* windowName);
 extern ShaderID Shader_Compile(const char* source);
+extern void Emulator_DestroyRender();
 
 #endif
 

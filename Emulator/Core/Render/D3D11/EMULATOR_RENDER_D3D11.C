@@ -20,6 +20,9 @@ extern void Emulator_SetConstantBuffers();
 
 const char* renderBackendName = "D3D11";
 
+HWND g_overrideHWND = NULL;
+int g_overrideWidth = -1;
+int g_overrideHeight = -1;
 ID3D11Texture2D* vramBaseTexture = NULL;
 ID3D11Buffer* dynamic_vertex_buffer = NULL;
 ID3D11Device* d3ddev = NULL;
@@ -101,16 +104,19 @@ void Emulator_ResetDevice()
 	if (rg8lutTexture != NULL)
 	{
 		rg8lutTexture->Release();
+		rg8lutTexture = NULL;
 	}
 
 	if (samplerState != NULL)
 	{
 		samplerState->Release();
+		samplerState = NULL;
 	}
 
 	if (rg8lutSamplerState != NULL)
 	{
 		rg8lutSamplerState->Release();
+		rg8lutSamplerState = NULL;
 	}
 
 	swapChain = NULL;
@@ -119,9 +125,6 @@ void Emulator_ResetDevice()
 	renderTargetView = NULL;
 	vramTexture = NULL;
 	vramBaseTexture = NULL;
-	rg8lutTexture = NULL;
-	samplerState = NULL;
-	rg8lutSamplerState = NULL;
 
 #if defined(SDL2)
 	SDL_SysWMinfo wmInfo;
@@ -169,7 +172,7 @@ void Emulator_ResetDevice()
 #endif
 
 #if defined(SDL2) && !defined(UWP_SDL2)
-	sd.OutputWindow = wmInfo.info.win.window;
+	sd.OutputWindow = g_overrideHWND == NULL ? wmInfo.info.win.window : g_overrideHWND;
 #endif
 
 #if defined(_DEBUG)
@@ -271,16 +274,20 @@ void Emulator_ResetDevice()
 int Emulator_InitialiseD3D11Context(char* windowName)
 {
 #if defined(SDL2)
-	g_window = SDL_CreateWindow(windowName, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, windowWidth, windowHeight, SDL_WINDOW_RESIZABLE);
-	if (g_window == NULL)
-	{
-		eprinterr("Failed to initialise SDL window!\n");
-		return FALSE;
-	}
-
 	SDL_SysWMinfo wmInfo;
-	SDL_VERSION(&wmInfo.version);
-	SDL_GetWindowWMInfo(g_window, &wmInfo);
+
+	if (g_overrideHWND == NULL)
+	{
+		g_window = SDL_CreateWindow(windowName, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, windowWidth, windowHeight, SDL_WINDOW_RESIZABLE);
+		if (g_window == NULL)
+		{
+			eprinterr("Failed to initialise SDL window!\n");
+			return FALSE;
+		}
+		
+		SDL_VERSION(&wmInfo.version);
+		SDL_GetWindowWMInfo(g_window, &wmInfo);
+	}
 #endif
 
 	DXGI_MODE_DESC bd;
@@ -322,7 +329,7 @@ int Emulator_InitialiseD3D11Context(char* windowName)
 	sd.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 #endif
 #if defined(SDL2) && !defined(UWP_SDL2)
-	sd.OutputWindow = wmInfo.info.win.window;
+	sd.OutputWindow = g_overrideHWND == NULL ? wmInfo.info.win.window : g_overrideHWND;
 #endif
 
 #if defined(_DEBUG)
@@ -413,17 +420,29 @@ void Emulator_CreateGlobalShaders()
 void Emulator_DestroyGlobalShaders()
 {
 	g_gte_shader_4.VS->Release();
+	g_gte_shader_4.VS = NULL;
 	g_gte_shader_4.PS->Release();
+	g_gte_shader_4.PS = NULL;
 	g_gte_shader_4.IL->Release();
+	g_gte_shader_4.IL = NULL;
 	g_gte_shader_8.VS->Release();
+	g_gte_shader_8.VS = NULL;
 	g_gte_shader_8.PS->Release();
+	g_gte_shader_8.PS = NULL;
 	g_gte_shader_8.IL->Release();
+	g_gte_shader_8.IL = NULL;
 	g_gte_shader_16.VS->Release();
+	g_gte_shader_16.VS = NULL;
 	g_gte_shader_16.PS->Release();
+	g_gte_shader_16.PS = NULL;
 	g_gte_shader_16.IL->Release();
+	g_gte_shader_16.IL = NULL;
 	g_blit_shader.VS->Release();
+	g_blit_shader.VS = NULL;
 	g_blit_shader.PS->Release();
+	g_blit_shader.PS = NULL;
 	g_blit_shader.IL->Release();
+	g_blit_shader.IL = NULL;
 }
 
 void Emulator_GenerateCommonTextures()
@@ -830,6 +849,7 @@ void Emulator_SetConstantBuffers()
 void Emulator_DestroyConstantBuffers()
 {
 	projectionMatrixBuffer->Release();
+	projectionMatrixBuffer = NULL;
 }
 
 void Emulator_CreateRasterState(int wireframe)
@@ -1069,6 +1089,68 @@ void Emulator_WaitForTimestep(int count)
 void Emulator_SetRenderTarget(const RenderTargetID& frameBufferObject)
 {
 	d3dcontext->OMSetRenderTargets(1, &frameBufferObject, NULL);
+}
+
+void Emulator_DestroyRender()
+{
+	if (dynamic_vertex_buffer) {
+		dynamic_vertex_buffer->Release();
+		dynamic_vertex_buffer = NULL;
+	}
+
+	if (rasterState != NULL)
+	{
+		rasterState->Release();
+		rasterState = NULL;
+	}
+
+	Emulator_DestroyGlobalShaders();
+	Emulator_DestroyConstantBuffers();
+	swapChain->Release();
+	swapChain = NULL;
+	d3ddev->Release();
+	d3ddev = NULL;
+	d3dcontext->Release();
+	d3dcontext = NULL;
+	renderTargetView->Release();
+	renderTargetView = NULL;
+	vramTexture->Release();
+	vramTexture = NULL;
+	vramBaseTexture->Release();
+	vramBaseTexture = NULL;
+	whiteTexture->Release();
+	whiteTexture = NULL;
+
+	if (rg8lutTexture != NULL)
+	{
+		rg8lutTexture->Release();
+	}
+
+	if (samplerState != NULL)
+	{
+		samplerState->Release();
+	}
+
+	if (rg8lutSamplerState != NULL)
+	{
+		rg8lutSamplerState->Release();
+	}
+
+	if (blendState != NULL)
+	{
+		blendState->Release();
+		blendState = NULL;
+	}
+
+	swapChain = NULL;
+	d3ddev = NULL;
+	d3dcontext = NULL;
+	renderTargetView = NULL;
+	vramTexture = NULL;
+	vramBaseTexture = NULL;
+	rg8lutTexture = NULL;
+	samplerState = NULL;
+	rg8lutSamplerState = NULL;
 }
 
 #endif

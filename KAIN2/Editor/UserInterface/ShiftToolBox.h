@@ -35,5 +35,6 @@ namespace Shift
 
 	private slots:
 		void DoScreenShot();
+		void DoDebugGame();
 	};
 }

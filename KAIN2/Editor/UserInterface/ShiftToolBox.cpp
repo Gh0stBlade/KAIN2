@@ -1,5 +1,7 @@
 #include "ShiftToolBox.h"
 
+#include <thread>
+
 Shift::ToolBox::ToolBox(QWidget* parent) : QTabWidget(parent)
 {
 	setObjectName(tr("ShiftToolBox"));
@@ -29,6 +31,7 @@ Shift::ToolBox::ToolBox(QWidget* parent) : QTabWidget(parent)
 	m_toolButton31->setIcon(QIcon(":/Dark/Toolbar31.png"));
 	m_toolButton31->setMinimumSize(26, 26);
 	m_toolButton31->setMaximumSize(26, 26);
+	connect(m_toolButton31, SIGNAL(pressed()), this, SLOT(DoDebugGame()));
 
 	m_generalLayout = new QHBoxLayout;
 	m_generalLayout->setSpacing(0);
@@ -106,6 +109,34 @@ Shift::ToolBox::~ToolBox()
 	{
 		delete m_generalWidget;
 	}
+}
+
+std::thread* gameThread;
+extern struct _G2AppDataVM_Type _appDataVM;
+extern int MainG2(void* appData);
+extern int stopGameThread;
+
+void Shift::ToolBox::DoDebugGame()
+{
+	if (gameThread != NULL)
+	{
+		stopGameThread = 1;
+
+		while (stopGameThread)
+		{
+			_sleep(100);
+		}
+
+		if (gameThread->joinable())
+		{
+			gameThread->join();
+		}
+
+		delete gameThread;
+		gameThread = NULL;
+	}
+
+	gameThread = new std::thread(MainG2, &_appDataVM);
 }
 
 void Shift::ToolBox::DoScreenShot()

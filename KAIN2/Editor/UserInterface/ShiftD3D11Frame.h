@@ -22,15 +22,12 @@ namespace Shift
             setAttribute(Qt::WA_PaintOnScreen, true);
             setAttribute(Qt::WA_NativeWindow, true);
             m_dragging = false;
-            m_labelItemsCount = new QLabel(this);
-            m_labelItemsCount->setText("Debug");
-            m_labelItemsCount->show();
             m_panes = panes;
             m_tabWidget = tabWidget;
         }
 
         virtual  QPaintEngine* paintEngine();
-        virtual void initialiseD3D11(HWND windowHandle, int width, int height);
+        virtual void initialiseHWND(HWND windowHandle, int width, int height);
         virtual void resizeEvent(QResizeEvent* event) override;
         void keyPressEvent(QKeyEvent* event) override;
         void mousePressEvent(QMouseEvent* event) override;

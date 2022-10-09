@@ -5967,21 +5967,36 @@ void Emulator_ShutDown()
 	d3d->Release();
 	///@TODO release shaders.
 #elif defined(D3D11)
-	d3ddev->Release();
-	d3dcontext->Release();
-	vramBaseTexture->Release();
+	if (dynamic_vertex_buffer) {
+		dynamic_vertex_buffer->Release();
+		dynamic_vertex_buffer = NULL;
+	}
+
+	Emulator_DestroyRender();
+	
 	///@TODO release shaders.
 #elif defined(D3D12)
 	///@TODO D3D12
 #endif
 
 #if defined(SDL2)
-	SDL_DestroyWindow(g_window);
+	if (g_window != NULL)
+	{
+		SDL_DestroyWindow(g_window);
+	}
+
 	SDL_Quit();
 #endif
 
+	extern std::thread audioThread;
+
+	if(audioThread.joinable())
+	{
+		audioThread.join();
+	}
+
 #if !defined(SN_TARGET_PSP2)
-	exit(EXIT_SUCCESS);
+	//exit(EXIT_SUCCESS);
 #endif
 }
 

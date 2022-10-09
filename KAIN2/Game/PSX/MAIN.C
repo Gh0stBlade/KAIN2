@@ -62,6 +62,10 @@ struct InterfaceItem InterfaceItems[6] = { { "\\PUBLOGO.STR;1", 0, 0, 0, 1 },
 										   { "\\CREDITS.STR;1", 0, 0, 0, -1 },
 										   { "\\kain2\\game\\psx\\mainmenu\\legal.tim", 165, 165, 1, -1}, };
 
+#if defined(EDITOR)
+int stopGameThread = 0;
+#endif
+
 void ClearDisplay()
 {
 #ifdef PSX_VERSION
@@ -1077,6 +1081,12 @@ int MainG2(void *appData)
 #if !defined(__EMSCRIPTEN__)
 		while (mainTracker->done == 0)
 		{
+#if defined(EDITOR)
+			if (stopGameThread != 0)
+			{
+				break;
+			}
+#endif
 			switch (mainTrackerX.mainState)
 			{
 			case 1:
@@ -1306,6 +1316,10 @@ int MainG2(void *appData)
 
 #if defined(PSXPC_VERSION)
 	Emulator_ShutDown();
+
+#if defined(EDITOR)
+	stopGameThread = 0;
+#endif
 #endif
 
 	return 0;
