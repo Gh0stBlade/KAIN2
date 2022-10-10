@@ -41,7 +41,7 @@ extern int PadIdentifier;
 
 extern char scratchData[4096];
 
-#define getScratchAddr(offset)  ((u_long *)(&scratchData+(offset)*4))
+#define getScratchAddr(offset)  ((u_long *)(&scratchData[0]+(offset)*4))
 
 #define MODE_NTSC 0
 #define MODE_PAL 1 
