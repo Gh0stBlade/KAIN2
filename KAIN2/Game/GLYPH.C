@@ -1033,6 +1033,7 @@ void HUD_Draw()
 	struct _SVector accl;
 	struct _SVector HUD_Cap_Rot;
 
+#if !defined(EDITOR)
 	if ((theCamera.instance_mode & 0x80000000))
 	{
 		warpDraw += (gameTrackerX.timeMult >> 4);
@@ -1326,4 +1327,5 @@ void HUD_Draw()
 			}
 		}
 	}
+#endif
 }

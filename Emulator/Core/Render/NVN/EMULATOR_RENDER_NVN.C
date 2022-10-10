@@ -1297,7 +1297,7 @@ void Emulator_SwapWindow()
 {
 	unsigned int timer = 1;
 
-#if defined(SINGLE_THREADED)
+#if defined(SINGLE_THREADED_AUDIO)
 	Emulator_CounterWrapper(0, &timer);
 #endif
 

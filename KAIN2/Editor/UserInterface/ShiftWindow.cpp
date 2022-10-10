@@ -5,6 +5,7 @@
 #include "UserInterface/Editor_UI.h"
 #include <qimagereader.h>
 
+class ShiftWindow* g_ShiftWindow;
 
 ShiftWindow::ShiftWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -12,6 +13,7 @@ ShiftWindow::ShiftWindow(QWidget *parent)
 {
     ui->setupUi(this);
     DoUserInterface();
+    g_ShiftWindow = this;
 }
 
 void ShiftWindow::DoUserInterface()

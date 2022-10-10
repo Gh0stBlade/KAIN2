@@ -2979,3 +2979,10 @@ struct GameTracker* GAMELOOP_GetGT()
 	return &gameTrackerX;
 #endif
 }
+
+#if defined(EDITOR)
+char* GAMELOOP_GetBaseAreaName()
+{
+	return GAMELOOP_GetGT()->baseAreaName;
+}
+#endif

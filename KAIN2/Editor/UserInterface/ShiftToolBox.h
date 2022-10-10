@@ -22,6 +22,8 @@ namespace Shift
 		Shift::ToolButton* m_toolButton29;
 		Shift::ToolButton* m_toolButton30;
 		Shift::ToolButton* m_toolButton31;
+		Shift::ToolButton* m_toolButton32;
+		Shift::ToolButton* m_toolButton33;
 		QLabel* m_labelGeneral;
 		QLabel* m_labelObjects;
 		QLabel* m_labelDesign;
@@ -36,5 +38,7 @@ namespace Shift
 	private slots:
 		void DoScreenShot();
 		void DoDebugGame();
+		void DoPlayGame();
+		void DoStopGame();
 	};
 }

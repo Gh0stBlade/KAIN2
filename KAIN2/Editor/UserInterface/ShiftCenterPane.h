@@ -22,6 +22,11 @@ namespace Shift
 		QWidget* getViewportWidget();
 		QDockWidget* getViewportDockWidget();
 
+		QTabWidget* getTabWidget()
+		{
+			return m_tabWidget;
+		}
+
 	private:
 		QDockWidget* m_viewportWidget;
 		QHBoxLayout* m_boxLayout;

@@ -9,6 +9,8 @@
 //#define DEBUG_POLY_COUNT
 int vram_need_update;
 
+int g_DisableTouchUI;
+
 unsigned short vram[VRAM_WIDTH * VRAM_HEIGHT];
 
 unsigned char rgLUT[LUT_WIDTH * LUT_HEIGHT * sizeof(unsigned int)];
@@ -963,6 +965,11 @@ extern unsigned short resultTouchKeysPressed;
 
 void Emulator_DrawTouchUI()
 {
+	if (g_DisableTouchUI)
+	{
+		return;
+	}
+
 	unsigned short mapper[4] = {
 		0x8,
 		0x1,

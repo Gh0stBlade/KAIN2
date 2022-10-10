@@ -1,5 +1,7 @@
 #include "ShiftToolBox.h"
 
+#include "ShiftWindow.h"
+
 #include <thread>
 
 Shift::ToolBox::ToolBox(QWidget* parent) : QTabWidget(parent)
@@ -33,6 +35,20 @@ Shift::ToolBox::ToolBox(QWidget* parent) : QTabWidget(parent)
 	m_toolButton31->setMaximumSize(26, 26);
 	connect(m_toolButton31, SIGNAL(pressed()), this, SLOT(DoDebugGame()));
 
+	m_toolButton32 = new Shift::ToolButton();
+	m_toolButton32->setObjectName(tr("toolbar32"));
+	m_toolButton32->setIcon(QIcon(":/Dark/Toolbar32.png"));
+	m_toolButton32->setMinimumSize(26, 26);
+	m_toolButton32->setMaximumSize(26, 26);
+	connect(m_toolButton32, SIGNAL(pressed()), this, SLOT(DoPlayGame()));
+
+	m_toolButton33 = new Shift::ToolButton();
+	m_toolButton33->setObjectName(tr("toolbar33"));
+	m_toolButton33->setIcon(QIcon(":/Dark/Toolbar33.png"));
+	m_toolButton33->setMinimumSize(26, 26);
+	m_toolButton33->setMaximumSize(26, 26);
+	connect(m_toolButton33, SIGNAL(pressed()), this, SLOT(DoStopGame()));
+
 	m_generalLayout = new QHBoxLayout;
 	m_generalLayout->setSpacing(0);
 	m_generalLayout->setContentsMargins(0, 0, 0, 0);
@@ -41,6 +57,8 @@ Shift::ToolBox::ToolBox(QWidget* parent) : QTabWidget(parent)
 	m_generalLayout->addWidget(m_toolButton29);
 	m_generalLayout->addWidget(m_toolButton30);
 	m_generalLayout->addWidget(m_toolButton31);
+	m_generalLayout->addWidget(m_toolButton32);
+	m_generalLayout->addWidget(m_toolButton33);
 	m_generalWidget->setLayout(m_generalLayout);
 
 	m_labelObjects = new QLabel;
@@ -115,28 +133,48 @@ std::thread* gameThread;
 extern struct _G2AppDataVM_Type _appDataVM;
 extern int MainG2(void* appData);
 extern int stopGameThread;
+extern int g_DisableTouchUI;
 
 void Shift::ToolBox::DoDebugGame()
 {
+	g_DisableTouchUI = 1;
+
 	if (gameThread != NULL)
 	{
-		stopGameThread = 1;
-
-		while (stopGameThread)
-		{
-			_sleep(100);
-		}
-
-		if (gameThread->joinable())
-		{
-			gameThread->join();
-		}
-
-		delete gameThread;
-		gameThread = NULL;
+		DoStopGame();
 	}
 
 	gameThread = new std::thread(MainG2, &_appDataVM);
+}
+
+void Shift::ToolBox::DoPlayGame()
+{
+	g_DisableTouchUI = 1;
+
+	if (gameThread != NULL)
+	{
+		DoStopGame();
+	}
+
+	gameThread = new std::thread(MainG2, &_appDataVM);
+}
+
+void Shift::ToolBox::DoStopGame()
+{
+	stopGameThread = 1;
+
+	while (stopGameThread)
+	{
+		_sleep(100);
+	}
+
+	if (gameThread->joinable())
+	{
+		gameThread->join();
+	}
+
+	delete gameThread;
+	gameThread = NULL;
 }
 
 void Shift::ToolBox::DoScreenShot()

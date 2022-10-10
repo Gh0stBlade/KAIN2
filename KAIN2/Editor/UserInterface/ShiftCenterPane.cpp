@@ -15,20 +15,11 @@ Shift::CenterPane::CenterPane(Shift::Panes* panes, QWidget* parent)
 	m_tabWidget = new QTabWidget(m_viewportWidget);
 	m_tabWidget->setObjectName("ShiftViewportTabWidget");
 	m_viewportWidget->setWidget(m_tabWidget);
-#if 0
-	m_d3d11Window = new Shift::D3D11Window;
-	QWidget* ww = QWidget::createWindowContainer(m_d3d11Window);
-	ww->setGeometry(0, 0, 400, 400);
-	ww->setAutoFillBackground(false);
-	m_d3d11Window->setObjectName("ShiftViewport");
-	m_boxLayout->setGeometry(QRect(0,0,400,400));
-#else
+
 	m_d3d11Viewport = new Shift::D3D11Frame(panes, m_tabWidget);
 	m_d3d11Viewport->setObjectName("ShiftViewport");
 	m_d3d11Viewport->setFocusPolicy(Qt::ClickFocus);
 	m_d3d11Viewport->initialiseHWND((HWND)m_d3d11Viewport->winId(), m_d3d11Viewport->width(), m_d3d11Viewport->height());
-#endif
-	
 
 #if 0
 	m_labelItemsCount = new Shift::Label(m_tabWidget);
@@ -53,7 +44,7 @@ Shift::CenterPane::CenterPane(Shift::Panes* panes, QWidget* parent)
 	m_tabWidget->addTab(m_d3d11Viewport, QObject::tr("Untitled*"));
 
 	m_timer = new QTimer(m_d3d11Viewport);
-	parent->connect(m_timer, &QTimer::timeout, m_d3d11Viewport, &Shift::D3D11Frame::renderWidget);
+	parent->connect(m_timer, &QTimer::timeout, m_d3d11Viewport, &Shift::D3D11Frame::render);
 	m_timer->setInterval(1000.0f / 60.0f);
 	m_timer->start();
 }

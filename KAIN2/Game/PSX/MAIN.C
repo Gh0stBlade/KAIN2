@@ -712,7 +712,9 @@ long MAIN_DoMainMenu(struct GameTracker *gameTracker, struct MainTracker *mainTr
 	mainMenuTimeOut++;
 	GAMELOOP_FlipScreenAndDraw(gameTracker, drawot);
 
+#if !defined(EDITOR)
 	if (mainMenuFading != 0 && gameTracker->wipeTime == -1)
+#endif
 	{
 		MAIN_StartGame();
 	}

@@ -1,4 +1,6 @@
 #include "ShiftD3D11Frame.h"
+#include "ShiftWindow.h"
+#include "./ui_shiftwindow.h"
 
 #include "UserInterface/Editor_Window.h"
 #include "UserInterface/Editor_UI.h"
@@ -9,6 +11,8 @@
 #include "ShiftRightPane.h"
 
 #include <thread>
+
+extern char* GAMELOOP_GetBaseAreaName();
 
 extern HWND g_overrideHWND;
 extern int g_overrideWidth;
@@ -23,12 +27,18 @@ void Shift::D3D11Frame::initialiseHWND(HWND windowHandle, int width, int height)
 
 void Shift::D3D11Frame::render()
 {
+    static char lastAreaName[32];
 
+    if (strcmp(lastAreaName, GAMELOOP_GetBaseAreaName()))
+    {
+        strcpy(lastAreaName, GAMELOOP_GetBaseAreaName());
+        g_ShiftWindow->getPanes()->m_centerPane->getTabWidget()->setTabText(0, lastAreaName);
+    }
 }
 
 void Shift::D3D11Frame::paintEvent(QPaintEvent* event)
 {
-
+    
 }
 
 QPaintEngine* Shift::D3D11Frame::paintEngine()
@@ -283,5 +293,5 @@ void Shift::D3D11Frame::mouseMoveEvent(QMouseEvent* event)
 
 void Shift::D3D11Frame::renderWidget()
 {
-
+    
 }

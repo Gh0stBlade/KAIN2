@@ -25,6 +25,16 @@ public:
     ShiftWindow(QWidget* parent = nullptr);
     ~ShiftWindow();
 
+    Ui::ShiftWindow* getUI()
+    {
+        return ui;
+    }
+
+    Shift::Panes* getPanes()
+    {
+        return &m_panes;
+    }
+
 private:
     Ui::ShiftWindow* ui;
     void DoUserInterface();
@@ -38,3 +48,5 @@ private:
 
     Shift::Panes m_panes;
 };
+
+extern class ShiftWindow* g_ShiftWindow;

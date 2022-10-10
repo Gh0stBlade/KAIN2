@@ -20,7 +20,7 @@ void SPU_Initialise()
 #if defined(SPU_USE_TIMER)
     SDL_AddTimer(1000 / SPU_FPS, SPU_Update, NULL);
 #else
-#if !defined(SINGLE_THREADED) || 1
+#if !defined(SINGLE_THREADED_AUDIO) || 1
     audioThread = std::thread(SPU_Update);
 #endif
 #endif
@@ -76,7 +76,7 @@ unsigned int SPU_Update(unsigned int interval, void* pTimerID)
 void SPU_Update()
 #endif
 {
-#if !defined(SPU_USE_TIMER) && !defined(SINGLE_THREADED) && 0
+#if !defined(SPU_USE_TIMER) && !defined(SINGLE_THREADED_AUDIO) && 0
     while (TRUE)
     {
 #endif
@@ -119,7 +119,7 @@ void SPU_Update()
                 channelList[i].voiceFlags &= ~VOICE_NEW;
             }
         }
-#if !defined(SPU_USE_TIMER) && !defined(SINGLE_THREADED) && 0
+#if !defined(SPU_USE_TIMER) && !defined(SINGLE_THREADED_AUDIO) && 0
     }
 #elif defined(SPU_USE_TIMER)
     return interval;
