@@ -161,20 +161,23 @@ void Shift::ToolBox::DoPlayGame()
 
 void Shift::ToolBox::DoStopGame()
 {
-	stopGameThread = 1;
-
-	while (stopGameThread)
+	if (gameThread != NULL)
 	{
-		_sleep(100);
-	}
+		stopGameThread = 1;
 
-	if (gameThread->joinable())
-	{
-		gameThread->join();
-	}
+		while (stopGameThread)
+		{
+			_sleep(100);
+		}
 
-	delete gameThread;
-	gameThread = NULL;
+		if (gameThread->joinable())
+		{
+			gameThread->join();
+		}
+
+		delete gameThread;
+		gameThread = NULL;
+	}
 }
 
 void Shift::ToolBox::DoScreenShot()
