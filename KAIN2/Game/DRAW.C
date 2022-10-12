@@ -8,6 +8,7 @@
 #include "FONT.H"
 #include "MENU/MENU.H"
 #include "PIPE3D.H"
+#include "Game/PSX/COLLIDES.H"
 
 short pause_redraw_flag; // offset 0x800d2fd4
 void* pause_redraw_prim; // offset 0x800d2fd8

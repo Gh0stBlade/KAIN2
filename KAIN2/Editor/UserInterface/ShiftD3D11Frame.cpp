@@ -5,12 +5,20 @@
 #include "UserInterface/Editor_Window.h"
 #include "UserInterface/Editor_UI.h"
 
+#include "Game/CAMERA.H"
+#include "Game/PSX/COLLIDES.H"
+
 #include <QTime>
 #include <QPainter>
 
 #include "ShiftRightPane.h"
 
 #include <thread>
+
+extern struct Camera theCamera;
+
+extern struct _Rotation overrideEditorRotation;
+extern struct _Position overrideEditorPosition;
 
 extern char* GAMELOOP_GetBaseAreaName();
 
@@ -57,47 +65,66 @@ void Shift::D3D11Frame::resizeEvent(QResizeEvent* event)
 
 void Shift::D3D11Frame::keyPressEvent(QKeyEvent* event)
 {
-    if (event->key() == Qt::Key_Space)
+    int speed = 8;
+
+    if (event->modifiers() & Qt::ControlModifier)  speed /= 2;
+    if (event->modifiers() & Qt::ShiftModifier) speed *= 2;
+
+    if (event->key() == Qt::Key_W)
     {
-        //g_engine.loadZone("survival_den_puzzleroom");
-        //g_engine.loadZone("qt_stalkerfight");
-        //g_engine.loadZone("mb_readyroom");
-        //g_engine.loadZone("oceanvista");
-        //g_engine.loadZone("test_leveleditor1");
-        //g_engine.loadZone("survival_den97");
-        //g_engine.loadZone("main_menu_1");
-        //g_engine.loadZone("tr_06_monastery");
-        //g_engine.loadModel("v2_lara");
-        Editor::UI::InitialiseCamera();
+        short theta = overrideEditorRotation.x;
+        short phi = overrideEditorRotation.z;
+
+        int xMove = speed * rsin(phi) * rcos(theta);
+        int yMove = speed * rcos(phi) * rcos(theta);
+        int zMove = speed * rsin(theta);
+
+        overrideEditorPosition.x -= xMove >> 20;
+        overrideEditorPosition.y += yMove >> 20;
+        overrideEditorPosition.z += zMove >> 8;
+    }
+    
+    if (event->key() == Qt::Key_S)
+    {
+        short theta = overrideEditorRotation.x;
+        short phi = overrideEditorRotation.z;
+
+        int xMove = speed * rsin(phi) * rcos(theta);
+        int yMove = speed * rcos(phi) * rcos(theta);
+        int zMove = speed * rsin(theta);
+
+        overrideEditorPosition.x += xMove >> 20;
+        overrideEditorPosition.y -= yMove >> 20;
+        overrideEditorPosition.z -= zMove >> 8;
     }
 
-    if (event->key() == Qt::Key_M)
+    if (event->key() == Qt::Key_A)
     {
-        //MenuManager menuManager;
-        //menuManager.Init();
+        short theta = overrideEditorRotation.x;
+        short phi = overrideEditorRotation.z;
+
+        int xMove = speed * rcos(phi) * rcos(theta);
+        int yMove = speed * rsin(phi) * rcos(theta);
+        int zMove = speed * rsin(theta);
+
+        overrideEditorPosition.x -= xMove >> 20;
+        overrideEditorPosition.y -= yMove >> 20;
+        overrideEditorPosition.z += zMove >> 8;
     }
 
-    int flags = 0;
-
-    //if (event->key() == Qt::Key_W) flags |= Engine::Camera::MOVE_FORWARD;
-    //if (event->key() == Qt::Key_S) flags |= Engine::Camera::MOVE_BACK;
-    //if (event->key() == Qt::Key_A) flags |= Engine::Camera::MOVE_LEFT;
-    //if (event->key() == Qt::Key_D) flags |= Engine::Camera::MOVE_RIGHT;
-
-#define CAMERA_MAX_SPEED 10000.0f
-
-    float speed = 0.0f;// (g_engine.getCurrentDeltaTime())* CAMERA_MAX_SPEED;
-
-    if (speed != 0.0f)
+    if (event->key() == Qt::Key_D)
     {
-        int testing = 0;
-        testing++;
+        short theta = overrideEditorRotation.x;
+        short phi = overrideEditorRotation.z;
+
+        int xMove = speed * rcos(phi) * rcos(theta);
+        int yMove = speed * rsin(phi) * rcos(theta);
+        int zMove = speed * rsin(theta);
+
+        overrideEditorPosition.x += xMove >> 20;
+        overrideEditorPosition.y += yMove >> 20;
+        overrideEditorPosition.z -= zMove >> 8;
     }
-
-    if (event->modifiers() & Qt::ControlModifier)  speed /= 4.0f;
-    if (event->modifiers() & Qt::ShiftModifier) speed *= 4.0f;
-
-    //Engine::g_camera.move(flags, speed);
 }
 
 void Shift::D3D11Frame::mousePressEvent(QMouseEvent* event)
@@ -284,8 +311,14 @@ void Shift::D3D11Frame::mouseMoveEvent(QMouseEvent* event)
 
     if (m_dragging)
     {
-#define CAM_MOUSE_SENSITIVITY 0.003f
-        //Engine::g_camera.rotate(delta.y() * CAM_MOUSE_SENSITIVITY, -delta.x() * CAM_MOUSE_SENSITIVITY);
+#define CAM_MOUSE_SENSITIVITY 2
+
+        int cameraRotZ = delta.x() * CAM_MOUSE_SENSITIVITY % 4096;
+        int cameraRotX = delta.y() * CAM_MOUSE_SENSITIVITY % 4096;
+        
+        overrideEditorRotation.z += cameraRotZ;
+        overrideEditorRotation.x += cameraRotX;
+
         m_previousMousePosition = event->pos();
         return;
     }

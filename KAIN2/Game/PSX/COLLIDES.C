@@ -776,6 +776,34 @@ void RotMatrixZ(long r, MATRIX* m)
 	return;
 }
 
+short rsin(long a)
+{
+	int idx = a & 0x7FF;
+
+	if ((a & 0x800))
+	{
+		return -ecostable[idx];
+	}
+	else
+	{
+		return ecostable[idx];
+	}
+}
+
+short rcos(long a)
+{
+	int idx = a & 0x7FF;
+
+	if ((a & 0x800))
+	{
+		return -ecostable[1024 + idx];
+	}
+	else
+	{
+		return ecostable[1024 + idx];
+	}
+}
+
 void sub_80078458(struct _VMObject* vmobject, struct Level* level)
 {
 	struct _VMOffsetTable* currentVMOffset;//$a0

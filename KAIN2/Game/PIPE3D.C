@@ -8,6 +8,11 @@
 #include "PSX/COLLIDES.H"
 #include "G2/MAING2.H"
 
+#if defined(EDITOR)
+struct _Rotation overrideEditorRotation;
+struct _Position overrideEditorPosition;
+#endif
+
 void PIPE3D_AspectAdjustMatrix(MATRIX* matrix)
 {
 	matrix->m[1][0] = matrix->m[1][0];
@@ -26,6 +31,16 @@ void PIPE3D_CalculateWCTransform(struct _CameraCore_Type *cameraCore)
 	MATRIX* cam_wcTrans;
 	SVECTOR v0;
 	VECTOR v1;
+
+#if defined(EDITOR)
+	cameraCore->rotation.x = overrideEditorRotation.x;
+	cameraCore->rotation.y = overrideEditorRotation.y;
+	cameraCore->rotation.z = overrideEditorRotation.z;
+
+	cameraCore->position.x = overrideEditorPosition.x;
+	cameraCore->position.y = overrideEditorPosition.y;
+	cameraCore->position.z = overrideEditorPosition.z;
+#endif
 
 	cam_wcTrans = cameraCore->wcTransform;
 	

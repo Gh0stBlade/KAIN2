@@ -80,7 +80,11 @@ include("Platform/NX_Arm.cmake")
 
 #Enable 32-bit address for tag
 OPTIONAL_DEFINE(USE_32_BIT_ADDR "Enable/Disable 32-bit address for tag" ON)
+
 OPTIONAL_DEFINE(NO_CD "Enable/Disable ISO mode for Emulator" ON)
+
+#Enable KAIN2 mode
+OPTIONAL_DEFINE(KAIN2 "Enable/Disable KAIN2 code" ON)
 
 BuildPreProcessorDefinitions()
 

@@ -3,6 +3,11 @@
 
 #include "CORE.H"
 
+//Qt defines signals!
+#if defined(EDITOR)
+#undef signals
+#endif
+
 struct _ColorType // hashcode: 0x440E837C (dec: 1141801852)
 {
 	unsigned char r; // size=0, offset=0

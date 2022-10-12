@@ -4157,6 +4157,7 @@ static int sin_1(int a)
     return sin;
 }
 
+#if !defined(KAIN2)
 int rsin(int a)
 {
     if (a >= 0)
@@ -4206,6 +4207,7 @@ int rcos(int a)
 
     return cos;
 }
+#endif
 
 short ratan_tbl[] = {
   0x0000,0x0001,0x0002,0x0002,0x0003,0x0003,0x0004,0x0005,0x0005,0x0006,0x0007,0x0007,0x0008,0x0009,0x0009,0x000a,

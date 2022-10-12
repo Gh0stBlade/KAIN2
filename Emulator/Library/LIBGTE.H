@@ -48,8 +48,10 @@ extern void SetDQA(int iDQA);
 extern void SetDQB(int iDQB);
 extern void SetFogNear(long a, long h);
 extern void LoadAverageCol(u_char* v0, u_char* v1, long p0, long p1, u_char* v2);
+#if !defined(KAIN2)
 extern int rsin(int a);
 extern int rcos(int a);
+#endif
 extern long ratan2(long y, long x);
 extern long DivideFT4(SVECTOR* v0, SVECTOR* v1, SVECTOR* v2, SVECTOR* v3, long* sxy0, long* sxy1, long* sxy2, long* sxy3, CVECTOR* col0, POLY_FT4* poly, long otz, DIVPOLYGON4* divp4);
 extern void DpqColor(CVECTOR* v0, long p, CVECTOR* v1);

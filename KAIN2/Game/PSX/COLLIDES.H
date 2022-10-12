@@ -76,11 +76,11 @@ extern void ApplyMatrix_S() ; // 0x80078F60
 
 //extern void ScaleMatrix() ; // 0x80078FB0
 
-//extern void rsin() ; // 0x80079098
+extern short rsin(long a); // 0x80079098
 
 extern void rsin_exit() ; // 0x800790C0
 
-//extern void rcos() ; // 0x800790C8
+extern short rcos(long a); // 0x800790C8
 
 extern void rcos_exit() ; // 0x800790F0
 

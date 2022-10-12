@@ -70,6 +70,9 @@ OPTIONAL_DEFINE(NTSC_VERSION "Enable/Disable NTSC Mode" ON)
 #Enable 32-bit address for tag
 OPTIONAL_DEFINE(USE_32_BIT_ADDR "Enable/Disable 32-bit address for tag" ON)
 
+#Enable KAIN2 mode
+OPTIONAL_DEFINE(KAIN2 "Enable/Disable KAIN2 code" ON)
+
 if(NOT ANDROID)
 BuildPreProcessorDefinitions()
 
