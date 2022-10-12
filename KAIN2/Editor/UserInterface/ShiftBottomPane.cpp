@@ -3,9 +3,24 @@
 Shift::BottomPane::BottomPane(QWidget* parent)
 {
 	m_consoleWidget = new QDockWidget(QObject::tr("Console"), parent);
-	m_consoleWidget->setObjectName("console");
+	m_consoleWidget->setObjectName("ShiftConsole");
 	m_consoleWidget->setAllowedAreas(Qt::BottomDockWidgetArea);
-	//m_consoleWidget->setStyleSheet("QDockWidget#" + consoleWidget->objectName() + " { background-color: rgb(51, 51, 51); color: rgb(194, 194, 194);} QDockWidget#" + consoleWidget->objectName() + "::title { border-style: solid; border-width: 1px; border-color: rgb(169, 169, 169); background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #4F4F4F, stop: 1.0 #343434);}");
+
+	m_groupBox = new QGroupBox;
+	m_consoleWidget->setWidget(m_groupBox);
+
+	m_boxLayout = new QHBoxLayout(m_groupBox);;
+
+	m_textBox = new QLineEdit;
+	m_textBox->setText(QObject::tr("(Enter Command)"));
+	m_textBox->setObjectName("ShiftConsoleTextBox");
+
+	m_button = new QPushButton;
+	m_button->setText(QObject::tr("Run"));
+	m_button->setObjectName("ShiftConsoleButton");
+
+	m_boxLayout->addWidget(m_textBox);
+	m_boxLayout->addWidget(m_button);
 }
 
 Shift::BottomPane::~BottomPane()
@@ -13,6 +28,21 @@ Shift::BottomPane::~BottomPane()
 	if (m_consoleWidget != nullptr)
 	{
 		delete m_consoleWidget;
+	}
+
+	if (m_groupBox != nullptr)
+	{
+		delete m_groupBox;
+	}
+
+	if (m_textBox != nullptr)
+	{
+		delete m_textBox;
+	}
+
+	if (m_button != nullptr)
+	{
+		delete m_button;
 	}
 }
 

@@ -571,6 +571,9 @@ QTabWidget#ShiftViewportTabWidget::pane {
 	border-right: 1px solid rgb(169, 169, 169);
 	border-top: 1px solid rgb(169, 169, 169);
 	height:18px;
+	width: 56px;
+	padding-left: 6px;
+	padding-right: 4px;
 	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #4F4F4F, stop: 1.0 #343434);
 }
 
@@ -643,4 +646,26 @@ QLabel {
 	color: green;
 	border-radius: 6px;
 	border-color:rgba(0, 0, 0, 0);
+}
+
+
+QLineEdit#ShiftConsoleTextBox
+{
+	border-radius: 5px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: rgb(79, 79, 79);
+	color: rgb(194, 194, 194);
+	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #4F4F4F, stop: 1.0 #343434);
+}
+
+
+QPushButton#ShiftConsoleButton
+{
+	border-radius: 5px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: rgb(79, 79, 79);
+	color: rgb(194, 194, 194);
+	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #4F4F4F, stop: 1.0 #343434);
 }
