@@ -386,16 +386,10 @@ extern int gte_ldlzc(int input);
 	: "r"( r0 )						\
 	: "$12", "$13", "$14" )
 
-#define gte_ld_intpol_sv1( r0 ) __asm__ volatile (		\
-	"lh	$12, 0( %0 );"					\
-	"lh	$13, 2( %0 );"					\
-	"lh	$14, 4( %0 );"					\
-	"mtc2	$12, $9;"					\
-	"mtc2	$13, $10;"					\
-	"mtc2	$14, $11"					\
-	:							\
-	: "r"( r0 )						\
-	: "$12", "$13", "$14" )
+#define gte_ld_intpol_sv1( r0 ) \
+	IR1 = ((short*)r0)[0]; \
+	IR2 = ((short*)r0)[1]; \
+	IR3 = ((short*)r0)[2]; \
 
 #define gte_ldfc( r0 ) __asm__ volatile (			\
 	"lw	$12, 0( %0 );"					\

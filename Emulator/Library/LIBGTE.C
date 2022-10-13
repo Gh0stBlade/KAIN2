@@ -4075,7 +4075,18 @@ void SetFogNear(long a, long h)
 
 void LoadAverageShort12(SVECTOR* v0, SVECTOR* v1, long p0, long p1, SVECTOR* v2)
 {
-    UNIMPLEMENTED();
+    gte_lddp(p0);
+    gte_ld_intpol_sv1(v0);
+    gte_gpf12();
+
+    int LZC = 0;
+    gte_stlzc(LZC);
+
+    gte_lddp(p1);
+    gte_ld_intpol_sv1(v1);
+    gte_gpl12();
+
+    gte_stsv(v2);
 }
 
 void LoadAverageCol(u_char* v0, u_char* v1, long p0, long p1, u_char* v2)
