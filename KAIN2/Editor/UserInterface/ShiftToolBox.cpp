@@ -49,6 +49,13 @@ Shift::ToolBox::ToolBox(QWidget* parent) : QTabWidget(parent)
 	m_toolButton33->setMaximumSize(26, 26);
 	connect(m_toolButton33, SIGNAL(pressed()), this, SLOT(DoStopGame()));
 
+	m_toolButton34 = new Shift::ToolButton();
+	m_toolButton34->setObjectName(tr("toolbar34"));
+	m_toolButton34->setIcon(QIcon(":/Dark/Toolbar34.png"));
+	m_toolButton34->setMinimumSize(26, 26);
+	m_toolButton34->setMaximumSize(26, 26);
+	connect(m_toolButton34, SIGNAL(pressed()), this, SLOT(DoMorph()));
+
 	m_generalLayout = new QHBoxLayout;
 	m_generalLayout->setSpacing(0);
 	m_generalLayout->setContentsMargins(0, 0, 0, 0);
@@ -59,6 +66,7 @@ Shift::ToolBox::ToolBox(QWidget* parent) : QTabWidget(parent)
 	m_generalLayout->addWidget(m_toolButton31);
 	m_generalLayout->addWidget(m_toolButton32);
 	m_generalLayout->addWidget(m_toolButton33);
+	m_generalLayout->addWidget(m_toolButton34);
 	m_generalWidget->setLayout(m_generalLayout);
 
 	m_labelObjects = new QLabel;
@@ -116,6 +124,21 @@ Shift::ToolBox::~ToolBox()
 	if (m_toolButton31 != nullptr)
 	{
 		delete m_toolButton31;
+	}
+
+	if (m_toolButton32 != nullptr)
+	{
+		delete m_toolButton32;
+	}
+
+	if (m_toolButton33 != nullptr)
+	{
+		delete m_toolButton33;
+	}
+
+	if (m_toolButton34 != nullptr)
+	{
+		delete m_toolButton34;
 	}
 
 	if (m_generalLayout != nullptr)
@@ -177,6 +200,17 @@ void Shift::ToolBox::DoStopGame()
 
 		delete gameThread;
 		gameThread = NULL;
+	}
+}
+extern "C" {
+	extern void MORPH_ToggleMorph();
+}
+
+void Shift::ToolBox::DoMorph()
+{
+	if (gameThread != NULL)
+	{
+		MORPH_ToggleMorph();
 	}
 }
 

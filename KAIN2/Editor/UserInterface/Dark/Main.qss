@@ -519,6 +519,54 @@ QToolButton#toolbar31:pressed {
 	border-radius: 2px;
 }
 
+QToolButton#toolbar32 {
+	background-color:rgba(77,77,77,0);
+	border-color:rgb(92,92,92);
+	border-width: 1px;
+	border-style: solid;
+	border-radius: 2px;
+}
+
+QToolButton#toolbar32:pressed {
+	background-color: qradialgradient(cx:0.5, cy:0.5, fx:0.5, fy:0.5, radius:0.5, stop:0 #B93C3C, stop:1 #590202);
+	border-color:rgb(92,92,92);
+	border-width: 1px;
+	border-style: solid;
+	border-radius: 2px;
+}
+
+QToolButton#toolbar33 {
+	background-color:rgba(77,77,77,0);
+	border-color:rgb(92,92,92);
+	border-width: 1px;
+	border-style: solid;
+	border-radius: 2px;
+}
+
+QToolButton#toolbar33:pressed {
+	background-color: qradialgradient(cx:0.5, cy:0.5, fx:0.5, fy:0.5, radius:0.5, stop:0 #B93C3C, stop:1 #590202);
+	border-color:rgb(92,92,92);
+	border-width: 1px;
+	border-style: solid;
+	border-radius: 2px;
+}
+
+QToolButton#toolbar34 {
+	background-color:rgba(77,77,77,0);
+	border-color:rgb(92,92,92);
+	border-width: 1px;
+	border-style: solid;
+	border-radius: 2px;
+}
+
+QToolButton#toolbar34:pressed {
+	background-color: qradialgradient(cx:0.5, cy:0.5, fx:0.5, fy:0.5, radius:0.5, stop:0 #B93C3C, stop:1 #590202);
+	border-color:rgb(92,92,92);
+	border-width: 1px;
+	border-style: solid;
+	border-radius: 2px;
+}
+
 QComboBox {
 	border: 1px solid black;
 	color: white;

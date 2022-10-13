@@ -24,6 +24,7 @@ namespace Shift
 		Shift::ToolButton* m_toolButton31;
 		Shift::ToolButton* m_toolButton32;
 		Shift::ToolButton* m_toolButton33;
+		Shift::ToolButton* m_toolButton34;
 		QLabel* m_labelGeneral;
 		QLabel* m_labelObjects;
 		QLabel* m_labelDesign;
@@ -40,5 +41,6 @@ namespace Shift
 		void DoDebugGame();
 		void DoPlayGame();
 		void DoStopGame();
+		void DoMorph();
 	};
 }
