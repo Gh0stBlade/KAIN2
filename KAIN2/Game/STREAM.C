@@ -3339,7 +3339,7 @@ void MORPH_ToggleMorph()
 				{
 					level->spectralSignal->flags |= 0x1;
 
-					SIGNAL_HandleSignal(gameTrackerX.playerInstance, &level->materialSignal->signalList[0], 8);
+					SIGNAL_HandleSignal(gameTrackerX.playerInstance, &level->spectralSignal->signalList[0], 8);
 					EVENT_AddSignalToReset(level->spectralSignal);
 				}
 			}
