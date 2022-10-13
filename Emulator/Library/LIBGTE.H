@@ -47,6 +47,7 @@ extern MATRIX* ScaleMatrix(MATRIX* m, VECTOR* v);
 extern void SetDQA(int iDQA);
 extern void SetDQB(int iDQB);
 extern void SetFogNear(long a, long h);
+extern void LoadAverageShort12(SVECTOR* v0, SVECTOR* v1, long p0, long p1, SVECTOR* v2);
 extern void LoadAverageCol(u_char* v0, u_char* v1, long p0, long p1, u_char* v2);
 #if !defined(KAIN2)
 extern int rsin(int a);
