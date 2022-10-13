@@ -351,7 +351,7 @@ struct __MessageQueue // hashcode: 0x473062B5 (dec: 1194353333)
 
 struct __State // hashcode: 0xA27CC1F7 (dec: -1568882185)
 {
-	void (*Process)(); // size=0, offset=0
+	void (*Process)(struct __CharacterState*, int, int); // size=0, offset=0
 	struct __MessageQueue Event; // size=136, offset=4
 	struct __MessageQueue Defer; // size=136, offset=140
 	int Data1; // size=0, offset=276
