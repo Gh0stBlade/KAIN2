@@ -643,7 +643,7 @@ QGroupBox {
 
 QLabel {
 	background-color: rgba(0, 0, 0, 127);
-	color: green;
+	color: rgb(194, 194, 194);
 	border-radius: 6px;
 	border-color:rgba(0, 0, 0, 0);
 }

@@ -9,7 +9,7 @@ Shift::BottomPane::BottomPane(QWidget* parent)
 	m_groupBox = new QGroupBox;
 	m_consoleWidget->setWidget(m_groupBox);
 
-	m_boxLayout = new QHBoxLayout(m_groupBox);;
+	m_boxLayout = new QHBoxLayout(m_groupBox);
 
 	m_textBox = new QLineEdit;
 	m_textBox->setText(QObject::tr("(Enter Command)"));

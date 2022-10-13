@@ -5,16 +5,23 @@
 #include <QLabel>
 #include <QTabWidget>
 #include <QObject>
+#include <QComboBox>
+#include <QVBoxLayout>
+#include <QTimer>
 
 namespace Shift
 {
-	class LeftPane
+	class LeftPane : public QVBoxLayout
 	{
+		Q_OBJECT
+
 	public:
 		LeftPane(QWidget* parent);
 		~LeftPane();
 		QDockWidget* getZoneSliceManagerWidget();
 		QDockWidget* getPlacementBrowserWidget();
+
+		void update();
 
 	private:
 		QDockWidget* m_zoneSliceManagerWidget;
@@ -27,5 +34,10 @@ namespace Shift
         QLabel* m_labelInUse;
         QLabel* m_labelFav;
 		QGroupBox* m_groupBox;
+		QComboBox* m_comboBox;
+		QTimer* m_timer;
+
+	private slots:
+		void zoneIndexChanged(int index);
 	};
 }

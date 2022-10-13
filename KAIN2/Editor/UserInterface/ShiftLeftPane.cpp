@@ -1,5 +1,14 @@
 #include "ShiftLeftPane.h"
 
+#include "ShiftRightPane.h"
+
+#include "Game/STREAM.H"
+#include "Game/GAMELOOP.H"
+
+extern struct GameTracker gameTrackerX;
+
+extern enum Shift::RightPane::PaneIndex g_activeRightPane;
+
 Shift::LeftPane::LeftPane(QWidget* parent)
 {
     m_zoneSliceManagerWidget = new QDockWidget(QObject::tr("ZoneSliceManager"), parent);
@@ -7,7 +16,14 @@ Shift::LeftPane::LeftPane(QWidget* parent)
     m_groupBox = new QGroupBox;
     m_zoneSliceManagerWidget->setWidget(m_groupBox);
     m_groupBox->setGeometry(0, 23, 278, 700);
-    m_groupBox->setTitle("Debug");
+    m_groupBox->setTitle("Zones");
+
+    m_comboBox = new QComboBox(m_groupBox);
+    m_comboBox->setGeometry(23, 23, 75, 20);
+    m_groupBox->setLayout(this);
+
+    addWidget(m_groupBox);
+
     m_zoneSliceManagerWidget->setObjectName("zoneslicemanager");
     m_zoneSliceManagerWidget->setAllowedAreas(Qt::LeftDockWidgetArea);
     m_zoneSliceManagerWidget->setFixedWidth(278);
@@ -39,6 +55,13 @@ Shift::LeftPane::LeftPane(QWidget* parent)
     m_placementBrowserTabWidget->addTab(m_labelInUse, QObject::tr("In Use"));
     m_placementBrowserTabWidget->addTab(m_labelFav, QObject::tr("*"));
     m_placementBrowserWidget->setWidget(m_placementBrowserTabWidget);
+
+    m_timer = new QTimer(m_groupBox);
+    parent->connect(m_timer, &QTimer::timeout, this, &Shift::LeftPane::update);
+    m_timer->setInterval(1000.0f / 10.0f);
+    m_timer->start();
+
+    connect(m_comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(zoneIndexChanged(int)));
 }
 
 Shift::LeftPane::~LeftPane()
@@ -73,6 +96,11 @@ Shift::LeftPane::~LeftPane()
         delete m_labelFav;
     }
 
+    if (m_comboBox != nullptr)
+    {
+        delete m_comboBox;
+    }
+
     if (m_groupBox != nullptr)
     {
         delete m_groupBox;
@@ -97,4 +125,22 @@ QDockWidget* Shift::LeftPane::getZoneSliceManagerWidget()
 QDockWidget* Shift::LeftPane::getPlacementBrowserWidget()
 {
     return m_placementBrowserWidget;
+}
+
+void Shift::LeftPane::update()
+{
+    if (gameTrackerX.gameMode == 0 && gameTrackerX.level != nullptr)
+    {
+        if (m_comboBox != nullptr)
+        {
+            m_comboBox->clear();
+        
+            m_comboBox->addItem(gameTrackerX.baseAreaName);
+        }
+    }
+}
+
+void Shift::LeftPane::zoneIndexChanged(int index)
+{
+    g_activeRightPane = Shift::RightPane::UNIT_PROPERTIES;
 }
