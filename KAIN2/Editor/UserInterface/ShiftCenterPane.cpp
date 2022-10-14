@@ -3,6 +3,8 @@
 #include <QPainter>
 #include <QFile>
 
+extern char g_lastAreaName[32];
+
 Shift::CenterPane::CenterPane(Shift::Panes* panes, QWidget* parent)
 {
 	m_viewportWidget = new QDockWidget(QObject::tr(""));
@@ -41,7 +43,7 @@ Shift::CenterPane::CenterPane(Shift::Panes* panes, QWidget* parent)
 
 	m_labelUntitled = new QLabel;
 	m_labelUntitled->setText("Untitled*");
-	m_tabWidget->addTab(m_d3d11Viewport, QObject::tr("Untitled*"));
+	m_tabWidget->addTab(m_d3d11Viewport, g_lastAreaName);
 
 	m_timer = new QTimer(m_d3d11Viewport);
 	parent->connect(m_timer, &QTimer::timeout, m_d3d11Viewport, &Shift::D3D11Frame::render);

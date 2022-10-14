@@ -15,6 +15,10 @@
 
 #include <thread>
 
+extern std::thread* gameThread;
+
+char g_lastAreaName[32];
+
 bool g_wipeScreen = false;
 
 extern unsigned int g_resetDeviceOnNextFrame;
@@ -39,13 +43,23 @@ void Shift::D3D11Frame::initialiseHWND(HWND windowHandle, int width, int height)
 
 void Shift::D3D11Frame::render()
 {
-    static char lastAreaName[32];
-
-    if (strcmp(lastAreaName, GAMELOOP_GetBaseAreaName()))
+    //TODO if running
+    if (gameThread != NULL)
     {
-        strcpy(lastAreaName, GAMELOOP_GetBaseAreaName());
-        g_ShiftWindow->getPanes()->m_centerPane->getTabWidget()->setTabText(0, lastAreaName);
+        if (strcmp(g_lastAreaName, GAMELOOP_GetBaseAreaName()))
+        {
+            strcpy(g_lastAreaName, GAMELOOP_GetBaseAreaName());
+
+            g_ShiftWindow->getPanes()->m_centerPane->getTabWidget()->setTabText(0, g_lastAreaName);
+        }
     }
+    else
+    {
+        strcpy(g_lastAreaName, "Untitled*");
+
+        g_ShiftWindow->getPanes()->m_centerPane->getTabWidget()->setTabText(0, g_lastAreaName);
+    }
+
 
     if (g_wipeScreen)
     {
