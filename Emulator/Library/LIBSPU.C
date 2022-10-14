@@ -1335,54 +1335,7 @@ void SpuInit(void)//(F)
 {
     _SpuInit(0);
 
-#if defined(SDL2_MIXER)
-
-    Mix_Initialise();
-
-#elif defined(OPENAL)
-    alDevice = alcOpenDevice(NULL);
-
-    if (alDevice == NULL)
-    {
-        eprinterr("Failed to create OpenAL device!\n");
-        return;
-    }
-
-    alContext = alcCreateContext(alDevice, NULL);
-    if (alcMakeContextCurrent(alContext) == NULL)
-    {
-        eprinterr("Failed to create OpenAL context!\n");
-        return;
-    }
-
-    ALfloat orient[] = { 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f };
-    alListener3f(AL_POSITION, 0.0f, 0.0f, 1.0f);
-    alListener3f(AL_VELOCITY, 0.0f, 0.0f, 0.0f);
-    alListenerfv(AL_ORIENTATION, orient);
-
-    for (int i = 0; i < SPU_MAX_CHANNELS; i++)
-    {
-        alGenSources(1, &alSources[i]);
-        alSourcef(alSources[i], AL_PITCH, 1);
-        alSourcef(alSources[i], AL_GAIN, 1);
-        alSource3f(alSources[i], AL_POSITION, 0, 0, 0);
-        alSource3f(alSources[i], AL_VELOCITY, 0, 0, 0);
-        alSourcei(alSources[i], AL_LOOPING, AL_FALSE);
-    }
-    
     SPU_Initialise();
-
-#elif defined(XAUDIO2)
-
-    CoInitializeEx(0, 0);
-
-    HRESULT hr = XAudio2Create(&pXAudio2, 0, XAUDIO2_DEFAULT_PROCESSOR);
-
-    assert(SUCCEEDED(hr));
-
-    hr = pXAudio2->CreateMasteringVoice(&pMasterVoice);
-    assert(SUCCEEDED(hr));
-#endif
 }
 
 long SpuSetMute(long on_off)

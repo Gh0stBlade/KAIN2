@@ -60,5 +60,12 @@ extern ALuint alBuffers[SPU_MAX_CHANNELS];
 extern void Mix_ChannelFinishedPlayingCallback(int channel);
 #endif
 
+#if !defined(SN_TARGET_PSP2) && !defined(__ANDROID__)
+#include <thread>
+extern std::thread audioThread;
+#endif
+
+extern void SPU_Destroy();
+
 
 #endif

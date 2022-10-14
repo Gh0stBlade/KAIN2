@@ -1,8 +1,18 @@
 #include "EMULATOR_SPU.H"
+#include "Debug/EMULATOR_LOG.H"
 
 #if !defined(SN_TARGET_PSP2) && !defined(__ANDROID__)
 #include <thread>
 std::thread audioThread;
+#endif
+
+#if defined(OPENAL)
+extern ALCdevice* alDevice;
+extern ALCcontext* alContext;
+
+extern ALuint alSources[24];
+extern ALuint alBuffers[24];
+extern ALboolean alHasAudioData[24];
 #endif
 
 extern int _spu_keystat_last;
@@ -11,6 +21,53 @@ extern char MixChannelToSPUChannel[SPU_MAX_CHANNELS];
 
 void SPU_Initialise()
 {
+#if defined(SDL2_MIXER)
+
+    Mix_Initialise();
+
+#elif defined(OPENAL)
+
+    alDevice = alcOpenDevice(NULL);
+
+    if (alDevice == NULL)
+    {
+        eprinterr("Failed to create OpenAL device!\n");
+        return;
+    }
+
+    alContext = alcCreateContext(alDevice, NULL);
+    if (alcMakeContextCurrent(alContext) == NULL)
+    {
+        eprinterr("Failed to create OpenAL context!\n");
+        return;
+    }
+
+    ALfloat orient[] = { 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f };
+    alListener3f(AL_POSITION, 0.0f, 0.0f, 1.0f);
+    alListener3f(AL_VELOCITY, 0.0f, 0.0f, 0.0f);
+    alListenerfv(AL_ORIENTATION, orient);
+
+    for (int i = 0; i < SPU_MAX_CHANNELS; i++)
+    {
+        alGenSources(1, &alSources[i]);
+        alSourcef(alSources[i], AL_PITCH, 1);
+        alSourcef(alSources[i], AL_GAIN, 1);
+        alSource3f(alSources[i], AL_POSITION, 0, 0, 0);
+        alSource3f(alSources[i], AL_VELOCITY, 0, 0, 0);
+        alSourcei(alSources[i], AL_LOOPING, AL_FALSE);
+    }
+#elif defined(XAUDIO2)
+
+    CoInitializeEx(0, 0);
+
+    HRESULT hr = XAudio2Create(&pXAudio2, 0, XAUDIO2_DEFAULT_PROCESSOR);
+
+    assert(SUCCEEDED(hr));
+
+    hr = pXAudio2->CreateMasteringVoice(&pMasterVoice);
+    assert(SUCCEEDED(hr));
+#endif
+
     for (int i = 0; i < SPU_MAX_CHANNELS; i++)
     {
         SPU_InitialiseChannel(i);
@@ -21,10 +78,32 @@ void SPU_Initialise()
     SDL_AddTimer(1000 / SPU_FPS, SPU_Update, NULL);
 #else
 #if !defined(SINGLE_THREADED_AUDIO) || 1
-    audioThread = std::thread(SPU_Update);
+    //audioThread = std::thread(SPU_Update);
 #endif
 #endif
 
+#endif
+}
+
+void SPU_Destroy()
+{
+    for (int i = 0; i < SPU_MAX_CHANNELS; i++)
+    {
+        SPU_InitialiseChannel(i);
+    }
+
+#if defined(OPENAL)
+    for (int i = 0; i < SPU_MAX_CHANNELS; i++)
+    {
+        alDeleteSources(1, &alSources[i]);
+        alSources[i] = 0;
+    }
+
+    alcDestroyContext(alContext);
+    alcCloseDevice(alDevice);
+
+    alContext = NULL;
+    alDevice = NULL;
 #endif
 }
 

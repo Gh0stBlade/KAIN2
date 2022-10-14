@@ -7,6 +7,7 @@
 #include "Debug/BOUNTY_LIST.H"
 #include "Core/Input/EMULATOR_INPUT.H"
 #include "Core/Render/EMULATOR_RENDER_COMMON.H"
+#include "Audio/EMULATOR_SPU.H"
 
 #include "LIBGPU.H"
 #include "LIBGTE.H"
@@ -5952,6 +5953,18 @@ void Emulator_ResetTouchInput()
 
 void Emulator_ShutDown()
 {
+	//Stop counters
+#if defined(UWP_SDL2) || defined(SDL2) && !defined(USE_THREADS)
+	for (int i = 0; i < 3; i++)
+	{
+		SDL_RemoveTimer(counters[i].timerId);
+		counters[i].timerId = 0;
+	}
+#else
+	eassert(FALSE);//TODO join and leave thread
+	//counters[spec].timerId = std::thread(Emulator_CounterWrapper, spec);
+#endif
+
 #if defined(OGL) || defined(OGLES)
 	Emulator_DestroyTexture(vramTexture);
 	Emulator_DestroyTexture(whiteTexture);
@@ -5973,7 +5986,8 @@ void Emulator_ShutDown()
 	}
 
 	Emulator_DestroyRender();
-	
+	SPU_Destroy();
+
 	///@TODO release shaders.
 #elif defined(D3D12)
 	///@TODO D3D12
@@ -5987,8 +6001,6 @@ void Emulator_ShutDown()
 
 	SDL_Quit();
 #endif
-
-	extern std::thread audioThread;
 
 	if(audioThread.joinable())
 	{
