@@ -15,6 +15,8 @@
 
 #include <thread>
 
+extern unsigned int g_resetDeviceOnNextFrame;
+
 extern struct Camera theCamera;
 
 extern struct _Rotation overrideEditorRotation;
@@ -61,6 +63,8 @@ void Shift::D3D11Frame::resizeEvent(QResizeEvent* event)
 
     g_overrideWidth = oldW;
     g_overrideHeight = oldH;
+
+    g_resetDeviceOnNextFrame = true;
 }
 
 void Shift::D3D11Frame::keyPressEvent(QKeyEvent* event)

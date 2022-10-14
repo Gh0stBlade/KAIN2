@@ -51,6 +51,7 @@ void Shift::MenuBar::DoOpenZone()
 
     const char* zoneNames[] = {
                 "stone5",
+                "fire3",
                 "train9",
                 "push1",
     };

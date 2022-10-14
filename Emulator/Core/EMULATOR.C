@@ -5363,7 +5363,7 @@ int Emulator_BeginScene()
 	Emulator_UpdateVRAM();
 #endif
 
-	Emulator_SetViewPort(0, 0, windowWidth, windowHeight);
+	Emulator_SetViewPort(0, 0, g_overrideWidth != -1 ? g_overrideWidth : windowWidth, g_overrideHeight != -1 ? g_overrideHeight : windowHeight);
 
 	begin_scene_flag = TRUE;
 

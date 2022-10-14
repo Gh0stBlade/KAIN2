@@ -90,6 +90,8 @@ extern int g_PreviousBlendMode;
 extern int g_texturelessMode;
 extern int windowWidth;
 extern int windowHeight;
+extern int g_overrideWidth;
+extern int g_overrideHeight;
 extern unsigned int g_resetDeviceOnNextFrame;
 extern unsigned int g_resettingDevice;
 #if defined(PLATFORM_NX) || defined(PLATFORM_NX_ARM)
