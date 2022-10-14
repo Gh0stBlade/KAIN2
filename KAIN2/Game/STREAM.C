@@ -722,7 +722,7 @@ void RemoveAllObjects(struct GameTracker *gameTracker)
 			UNIMPLEMENTED();
 }
 
-struct Level * STREAM_GetLevelWithID(long id)
+struct Level* STREAM_GetLevelWithID(long id)
 { 
 #if defined(PSX_VERSION)
 	struct Level* retLevel;
