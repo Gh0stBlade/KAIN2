@@ -7,6 +7,7 @@
 #include "FONT.H"
 #include "OBTABLE.H"
 #include "SOUND.H"
+#include "PSX/COLLIDES.H"
 
 short glyph_time;
 short glyph_trigger;
