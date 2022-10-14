@@ -15,6 +15,8 @@ namespace Shift
     public:
         UnitPropertiesPane(QWidget* parent = nullptr);
         ~UnitPropertiesPane();
+        void update();
+        void destroy();
 
     private:
         QLabel* m_backColourSpectralLabel;

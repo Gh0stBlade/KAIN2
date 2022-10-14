@@ -8,6 +8,7 @@
 extern struct GameTracker gameTrackerX;
 
 extern enum Shift::RightPane::PaneIndex g_activeRightPane;
+extern enum Shift::RightPane::PaneIndex g_lastActiveRightPane;
 
 Shift::LeftPane::LeftPane(QWidget* parent)
 {
@@ -129,18 +130,49 @@ QDockWidget* Shift::LeftPane::getPlacementBrowserWidget()
 
 void Shift::LeftPane::update()
 {
-    if (gameTrackerX.gameMode == 0 && gameTrackerX.level != nullptr)
+    int numUsedStreams = 0;
+    for (int i = 0; i < 16; i++)
     {
-        if (m_comboBox != nullptr)
+        if (StreamTracker.StreamList[i].used == 2)
+        {
+            numUsedStreams++;
+        }
+    }
+
+    if (gameTrackerX.gameMode == 0 && gameTrackerX.level != nullptr && m_comboBox->count() < numUsedStreams)
+    {
+        if (m_comboBox->count() != 0)
         {
             m_comboBox->clear();
-        
-            m_comboBox->addItem(gameTrackerX.baseAreaName);
+        }
+
+        for (int i = 0; i < 16; i++)
+        {
+            if (StreamTracker.StreamList[i].used == 2)
+            {
+                m_comboBox->addItem(StreamTracker.StreamList[i].level->worldName);
+            }
         }
     }
 }
 
 void Shift::LeftPane::zoneIndexChanged(int index)
 {
+    g_lastActiveRightPane = Shift::RightPane::NONE;
     g_activeRightPane = Shift::RightPane::UNIT_PROPERTIES;
+
+    int numUsedStreams = 0;
+
+    for (int i = 0; i < 16; i++)
+    {
+        if (StreamTracker.StreamList[i].used == 2)
+        {
+            if (numUsedStreams == index)
+            {
+                g_selectedUnit = StreamTracker.StreamList[i].level;
+            }
+
+            numUsedStreams++;
+        }
+    }
 }

@@ -13,6 +13,8 @@
 #include "ShiftBottomPane.h"
 #include "ShiftPanes.h"
 
+#undef flush
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class ShiftWindow; }
 QT_END_NAMESPACE

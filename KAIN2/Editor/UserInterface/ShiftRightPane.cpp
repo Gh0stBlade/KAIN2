@@ -6,6 +6,8 @@
 enum Shift::RightPane::PaneIndex g_activeRightPane = Shift::RightPane::PaneIndex::NONE;
 enum Shift::RightPane::PaneIndex g_lastActiveRightPane = Shift::RightPane::PaneIndex::NONE;
 
+struct Level* g_selectedUnit = nullptr;
+
 Shift::RightPane::RightPane(QWidget* parent)
 {
     m_shiftPropertyEditorWidget = new QDockWidget(QObject::tr("ShiftPropertyEditor"), parent);
@@ -46,21 +48,6 @@ QDockWidget* Shift::RightPane::getShiftPropertyEditorWidget()
 {
 	return m_shiftPropertyEditorWidget;
 }
-
-#if 0
-void Shift::RightPane::populateRenderableProperties(Engine::Resource::RenderableMesh* mesh, int instance)
-{
-    if (m_layout != nullptr)
-    {
-        delete m_layout;
-    }
-
-    m_groupBox->setTitle("Properties:");
-    m_layout = new Shift::RenderablePropertiesPane(mesh, instance, m_shiftPropertyEditorWidget);
-    m_groupBox->setLayout(m_layout);
-    m_groupBox->setGeometry(0, 23, 278, 725);
-}
-#endif
 
 void Shift::RightPane::populateUnitProperties()
 {

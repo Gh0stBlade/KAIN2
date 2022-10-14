@@ -7,6 +7,11 @@
 #include <QVBoxLayout>
 #include <QTimer>
 
+#include "Game/STREAM.H"
+#include "Game/GAMELOOP.H"
+
+extern struct Level* g_selectedUnit;
+
 namespace Shift
 {
 	class RightPane : public QVBoxLayout
