@@ -156,7 +156,7 @@ if(DEFINED PLATFORM_PSP2)
 	set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".BIN")
 endif()
 
-#add_custom_command(TARGET ${PROJECT_NAME} PRE_BUILD COMMAND ${CMAKE_COMMAND} -P ${ROOT_PATH}/CMake/EngineVersion.cmake)
+add_custom_command(TARGET ${PROJECT_NAME} PRE_BUILD COMMAND ${CMAKE_COMMAND} -P ${ROOT_DIR}/CMake/EngineVersion.cmake)
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD COMMAND "${WINDEPLOYQT_EXECUTABLE}" --verbose 1 --no-translations --no-svg --no-opengl --no-opengl-sw --no-compiler-runtime --no-system-d3d-compiler --${CMAKE_BUILD_TYPE} \"$<TARGET_FILE:${PROJECT_NAME}>\" COMMENT "Deploying Qt...")
 
 add_definitions(-DPSXPC_VERSION)
