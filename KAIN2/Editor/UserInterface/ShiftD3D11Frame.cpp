@@ -15,6 +15,8 @@
 
 #include <thread>
 
+bool g_wipeScreen = false;
+
 extern unsigned int g_resetDeviceOnNextFrame;
 
 extern struct Camera theCamera;
@@ -43,6 +45,13 @@ void Shift::D3D11Frame::render()
     {
         strcpy(lastAreaName, GAMELOOP_GetBaseAreaName());
         g_ShiftWindow->getPanes()->m_centerPane->getTabWidget()->setTabText(0, lastAreaName);
+    }
+
+    if (g_wipeScreen)
+    {
+        update();
+
+        g_wipeScreen = false;
     }
 }
 

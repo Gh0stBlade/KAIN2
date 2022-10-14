@@ -4,6 +4,8 @@
 
 #include <thread>
 
+extern bool g_wipeScreen;
+
 Shift::ToolBox::ToolBox(QWidget* parent) : QTabWidget(parent)
 {
 	setObjectName(tr("ShiftToolBox"));
@@ -200,6 +202,8 @@ void Shift::ToolBox::DoStopGame()
 
 		delete gameThread;
 		gameThread = NULL;
+
+		g_wipeScreen = true;
 	}
 }
 extern "C" {
