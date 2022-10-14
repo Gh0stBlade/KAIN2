@@ -2,6 +2,7 @@
 #define PHYSOBS_H
 
 #include "COLLIDE.H"
+#include "Game/PHYSICS.H"
 
 struct LightTableEntry {
   short r; // size=0, offset=0
@@ -65,19 +66,6 @@ struct _PhysObLight
   unsigned char segment; // size=0, offset=1
   short speed; // size=0, offset=2
   struct LightTableEntry *lightTable; // size=8, offset=4
-};
-
-struct evPhysicsSlideData 
-{
-  struct _SVector ForwardVector; // size=8, offset=0
-  struct _SVector ForwardNormal; // size=8, offset=8
-  struct _SVector DropNormal; // size=8, offset=16
-  short Segment; // size=0, offset=24
-  short DropOffset; // size=0, offset=26
-  short UpperOffset; // size=0, offset=28
-  short Height; // size=0, offset=30
-  struct _Instance *UpperInstance; // size=668, offset=32
-  int Dot; // size=0, offset=36
 };
 
 extern void PHYSOB_PlayDropSound(struct _Instance *instance); // 0x80068700

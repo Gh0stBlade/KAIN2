@@ -1,6 +1,8 @@
 #ifndef PHYSICS_H
 #define PHYSICS_H
 
+#include "Game/COLLIDE.H"
+
 struct evPhysicsGravityData // hashcode: 0xD13BDF0D (dec: -784605427)
 {
 	short UpperOffset; // size=0, offset=0
@@ -22,20 +24,6 @@ struct evPhysicsSlideData // hashcode: 0x42A65F7B (dec: 1118199675)
 	short Height; // size=0, offset=30
 	struct _Instance* UpperInstance; // size=616, offset=32
 	int Dot; // size=0, offset=36
-};
-
-struct _PCollideInfo // hashcode: 0x32613C4B (dec: 845233227)
-{
-	short type; // size=0, offset=0
-	short segment; // size=0, offset=2
-	void* prim; // size=0, offset=4
-	struct _Instance* inst; // size=0, offset=8
-	SVECTOR wNormal; // size=8, offset=12
-	SVECTOR* newPoint; // size=8, offset=20
-	SVECTOR* oldPoint; // size=8, offset=24
-	SVECTOR cldPoint; // size=8, offset=28
-	long collideType; // size=0, offset=36
-	struct _Instance* instance; // size=0, offset=40
 };
 
 struct evPhysicsDropOffData // hashcode: 0x240C7D71 (dec: 604798321)
@@ -109,10 +97,6 @@ struct evPhysicsLinkedMoveData // hashcode: 0xB4C6EBA9 (dec: -1262031959)
 	struct _SVector rotDelta; // size=8, offset=16
 };
 
-#if defined(_LANGUAGE_C_PLUS_PLUS)||defined(__cplusplus)||defined(c_plusplus)
-extern "C" {
-#endif
-
 extern void SetNoPtCollideInFamily(struct _Instance *instance); // 0x80074628
 extern void ResetNoPtCollideInFamily(struct _Instance *instance); // 0x80074670
 extern void PHYSICS_CheckLineInWorld(struct _Instance *instance, struct _PCollideInfo *pcollideInfo); // 0x800746BC
@@ -149,9 +133,5 @@ extern int PHYSICS_CheckDontGrabEdge(struct _PCollideInfo *CInfo); // 0x80077CB0
 extern void PHYSICS_GenericLineCheckSetup(short x, short y, short z, SVECTOR*inVec); // 0x80077DD8
 extern void PHYSICS_GenericLineCheck(struct _Instance *instance, MATRIX *transMat, MATRIX *rotMat, struct _PCollideInfo *cInfo); // 0x80077DE8
 extern void PHYSICS_GenericLineCheckMask(struct _Instance *instance, MATRIX *transMat, MATRIX *rotMat, struct _PCollideInfo *cInfo); // 0x80077E0C
-
-#if defined(_LANGUAGE_C_PLUS_PLUS)||defined(__cplusplus)||defined(c_plusplus)
-}
-#endif
 
 #endif
