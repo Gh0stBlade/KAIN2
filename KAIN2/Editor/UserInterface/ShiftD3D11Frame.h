@@ -30,6 +30,7 @@ namespace Shift
         virtual void initialiseHWND(HWND windowHandle, int width, int height);
         virtual void resizeEvent(QResizeEvent* event) override;
         void keyPressEvent(QKeyEvent* event) override;
+        void keyReleaseEvent(QKeyEvent* event) override;
         void mousePressEvent(QMouseEvent* event) override;
         void mouseReleaseEvent(QMouseEvent* event) override;
         void mouseMoveEvent(QMouseEvent* event) override;
@@ -49,5 +50,7 @@ namespace Shift
         QSize getRatio(QSize currentResolution);
         Shift::Panes* m_panes;
         QTabWidget* m_tabWidget;
+
+        void setCameraSpeed(int speed);
     };
 }

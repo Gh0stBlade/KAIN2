@@ -21,6 +21,23 @@ char g_lastAreaName[32];
 
 bool g_wipeScreen = false;
 
+enum CameraDirection
+{
+    DIR_NONE,
+    DIR_UP     = (1 << 0),
+    DIR_DOWN   = (1 << 1),
+    DIR_LEFT   = (1 << 2),
+    DIR_RIGHT  = (1 << 3),
+};
+
+#define MAX_CAMERA_SPEED 5
+#define MAX_CAMERA_DELAY 8
+
+static int g_cameraSpeed = 0;
+static int g_cameraMoveDirection = 0;
+static int g_cameraLastMoveDirection = 0;
+static int g_cameraMoveDelay = 0;
+
 extern unsigned int g_resetDeviceOnNextFrame;
 
 extern struct Camera theCamera;
@@ -43,6 +60,80 @@ void Shift::D3D11Frame::initialiseHWND(HWND windowHandle, int width, int height)
 
 void Shift::D3D11Frame::render()
 {
+    if ((g_cameraMoveDirection & CameraDirection::DIR_UP) || (g_cameraMoveDirection & CameraDirection::DIR_DOWN) || (g_cameraMoveDirection & CameraDirection::DIR_LEFT) || (g_cameraMoveDirection & CameraDirection::DIR_RIGHT))
+    {
+        setCameraSpeed(g_cameraSpeed + 1);
+    }
+
+    if ((g_cameraMoveDirection & CameraDirection::DIR_UP) || (g_cameraLastMoveDirection & CameraDirection::DIR_UP))
+    {
+        short theta = overrideEditorRotation.x;
+        short phi = overrideEditorRotation.z;
+
+        int xMove = g_cameraSpeed * rsin(phi) * rcos(theta);
+        int yMove = g_cameraSpeed * rcos(phi) * rcos(theta);
+        int zMove = g_cameraSpeed * rsin(theta);
+
+        overrideEditorPosition.x -= xMove >> 20;
+        overrideEditorPosition.y += yMove >> 20;
+        overrideEditorPosition.z += zMove >> 8;
+    }
+
+    if ((g_cameraMoveDirection & CameraDirection::DIR_DOWN) || (g_cameraLastMoveDirection & CameraDirection::DIR_DOWN))
+    {
+        short theta = overrideEditorRotation.x;
+        short phi = overrideEditorRotation.z;
+
+        int xMove = g_cameraSpeed * rsin(phi) * rcos(theta);
+        int yMove = g_cameraSpeed * rcos(phi) * rcos(theta);
+        int zMove = g_cameraSpeed * rsin(theta);
+
+        overrideEditorPosition.x += xMove >> 20;
+        overrideEditorPosition.y -= yMove >> 20;
+        overrideEditorPosition.z -= zMove >> 8;
+    }
+
+    if ((g_cameraMoveDirection & CameraDirection::DIR_LEFT) || (g_cameraLastMoveDirection & CameraDirection::DIR_LEFT))
+    {
+        short theta = overrideEditorRotation.x;
+        short phi = overrideEditorRotation.z + 1024;
+
+        int xMove = g_cameraSpeed * rsin(phi) * rcos(theta);
+        int yMove = g_cameraSpeed * rcos(phi) * rcos(theta);
+        int zMove = g_cameraSpeed * rsin(theta);
+
+        overrideEditorPosition.x -= xMove >> 20;
+        overrideEditorPosition.y += yMove >> 20;
+    }
+
+    if ((g_cameraMoveDirection & CameraDirection::DIR_RIGHT) || (g_cameraLastMoveDirection & CameraDirection::DIR_RIGHT))
+    {
+        short theta = overrideEditorRotation.x;
+        short phi = overrideEditorRotation.z + 1024;
+
+        int xMove = g_cameraSpeed * rsin(phi) * rcos(theta);
+        int yMove = g_cameraSpeed * rcos(phi) * rcos(theta);
+        int zMove = g_cameraSpeed * rsin(theta);
+
+        overrideEditorPosition.x += xMove >> 20;
+        overrideEditorPosition.y -= yMove >> 20;
+    }
+
+    if (g_cameraSpeed != 0)
+    {
+        g_cameraMoveDelay++;
+    }
+
+    if (g_cameraSpeed > 0 && g_cameraMoveDirection == 0 && g_cameraMoveDelay >= MAX_CAMERA_DELAY)
+    {
+        if (--g_cameraSpeed == 0)
+        {
+            g_cameraMoveDelay = 0;
+
+            g_cameraLastMoveDirection = 0;
+        }
+    }
+    
     //TODO if running
     if (gameThread != NULL)
     {
@@ -59,7 +150,6 @@ void Shift::D3D11Frame::render()
 
         g_ShiftWindow->getPanes()->m_centerPane->getTabWidget()->setTabText(0, g_lastAreaName);
     }
-
 
     if (g_wipeScreen)
     {
@@ -92,66 +182,60 @@ void Shift::D3D11Frame::resizeEvent(QResizeEvent* event)
 
 void Shift::D3D11Frame::keyPressEvent(QKeyEvent* event)
 {
-    int speed = 8;
-
-    if (event->modifiers() & Qt::ControlModifier)  speed /= 2;
-    if (event->modifiers() & Qt::ShiftModifier) speed *= 2;
+    if (event->modifiers() & Qt::ControlModifier)  g_cameraSpeed /= 2;
+    if (event->modifiers() & Qt::ShiftModifier) g_cameraSpeed *= 2;
 
     if (event->key() == Qt::Key_W)
     {
-        short theta = overrideEditorRotation.x;
-        short phi = overrideEditorRotation.z;
-
-        int xMove = speed * rsin(phi) * rcos(theta);
-        int yMove = speed * rcos(phi) * rcos(theta);
-        int zMove = speed * rsin(theta);
-
-        overrideEditorPosition.x -= xMove >> 20;
-        overrideEditorPosition.y += yMove >> 20;
-        overrideEditorPosition.z += zMove >> 8;
+        g_cameraMoveDirection |= CameraDirection::DIR_UP;
     }
     
     if (event->key() == Qt::Key_S)
     {
-        short theta = overrideEditorRotation.x;
-        short phi = overrideEditorRotation.z;
-
-        int xMove = speed * rsin(phi) * rcos(theta);
-        int yMove = speed * rcos(phi) * rcos(theta);
-        int zMove = speed * rsin(theta);
-
-        overrideEditorPosition.x += xMove >> 20;
-        overrideEditorPosition.y -= yMove >> 20;
-        overrideEditorPosition.z -= zMove >> 8;
+        g_cameraMoveDirection |= CameraDirection::DIR_DOWN;
     }
 
     if (event->key() == Qt::Key_A)
     {
-        short theta = overrideEditorRotation.x;
-        short phi = overrideEditorRotation.z;
-
-        int xMove = speed * rcos(phi) * rcos(theta);
-        int yMove = speed * rsin(phi) * rcos(theta);
-        int zMove = speed * rsin(theta);
-
-        overrideEditorPosition.x -= xMove >> 20;
-        overrideEditorPosition.y -= yMove >> 20;
-        overrideEditorPosition.z += zMove >> 8;
+        g_cameraMoveDirection |= CameraDirection::DIR_LEFT;
     }
 
     if (event->key() == Qt::Key_D)
     {
-        short theta = overrideEditorRotation.x;
-        short phi = overrideEditorRotation.z;
-
-        int xMove = speed * rcos(phi) * rcos(theta);
-        int yMove = speed * rsin(phi) * rcos(theta);
-        int zMove = speed * rsin(theta);
-
-        overrideEditorPosition.x += xMove >> 20;
-        overrideEditorPosition.y += yMove >> 20;
-        overrideEditorPosition.z -= zMove >> 8;
+        g_cameraMoveDirection |= CameraDirection::DIR_RIGHT;
     }
+}
+
+void Shift::D3D11Frame::keyReleaseEvent(QKeyEvent* event)
+{
+    if (event->isAutoRepeat())
+    {
+        return;
+    }
+
+    g_cameraLastMoveDirection = g_cameraMoveDirection;
+
+    if (event->key() == Qt::Key_W)
+    {
+        g_cameraMoveDirection &= ~CameraDirection::DIR_UP;
+    }
+
+    if (event->key() == Qt::Key_S)
+    {
+        g_cameraMoveDirection &= ~CameraDirection::DIR_DOWN;
+    }
+
+    if (event->key() == Qt::Key_A)
+    {
+        g_cameraMoveDirection &= ~CameraDirection::DIR_LEFT;
+    }
+
+    if (event->key() == Qt::Key_D)
+    {
+        g_cameraMoveDirection &= ~CameraDirection::DIR_RIGHT;
+    }
+
+    g_cameraMoveDelay = 0;
 }
 
 void Shift::D3D11Frame::mousePressEvent(QMouseEvent* event)
@@ -315,6 +399,16 @@ QSize Shift::D3D11Frame::getRatio(QSize currentResolution)
     }
 
     return QSize(w, h);
+}
+
+void Shift::D3D11Frame::setCameraSpeed(int speed)
+{
+    if (speed > MAX_CAMERA_SPEED)
+    {
+        speed = MAX_CAMERA_SPEED;
+    }
+
+    g_cameraSpeed = speed;
 }
 
 void Shift::D3D11Frame::mouseReleaseEvent(QMouseEvent* event)
