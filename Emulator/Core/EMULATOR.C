@@ -9,6 +9,15 @@
 #include "Core/Render/EMULATOR_RENDER_COMMON.H"
 #include "Audio/EMULATOR_SPU.H"
 
+#if defined(_WINDOWS)
+#if defined(MEM_CHECK) || 1
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
+#include <vld.h>
+#endif
+#endif
+
 #include "LIBGPU.H"
 #include "LIBGTE.H"
 #include "LIBETC.H"
@@ -2362,6 +2371,11 @@ static int Emulator_InitialiseCore()
 
 void Emulator_Initialise(char* windowName, int width, int height)
 {
+#if defined(MEM_CHECK) || 1
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	_crtBreakAlloc = 171;
+#endif
+
 	eprintf("Initialising %s.\n", EMULATOR_NAME);
 	eprintf("VERSION: %d.%d\n", EMULATOR_MAJOR_VERSION, EMULATOR_MINOR_VERSION);
 	eprintf("Compile Date: %s Time: %s\n", EMULATOR_COMPILE_DATE, EMULATOR_COMPILE_TIME);
@@ -5246,7 +5260,7 @@ void Emulator_DoPollEvent()
 				SDL_GameControllerClose(padHandle[event.cdevice.which]);
 				break;
 			case SDL_QUIT:
-				Emulator_ShutDown();
+				g_closeOnNextFrame = TRUE;
 				break;
 			case SDL_WINDOWEVENT:
 				switch (event.window.event)
@@ -5261,7 +5275,7 @@ void Emulator_DoPollEvent()
 					g_resetDeviceOnNextFrame = TRUE;
 					break;
 				case SDL_WINDOWEVENT_CLOSE:
-					Emulator_ShutDown();
+					g_closeOnNextFrame = TRUE;
 					break;
 				}
 				break;
@@ -5290,12 +5304,6 @@ void Emulator_DoPollEvent()
 int Emulator_BeginScene()
 {
 	Emulator_DoPollEvent();
-
-	if (g_resetDeviceOnNextFrame == TRUE)
-	{
-		Emulator_ResetDevice();
-		g_resetDeviceOnNextFrame = FALSE;
-	}
 
 	if (begin_scene_flag)
 		return FALSE;
@@ -5944,6 +5952,17 @@ void Emulator_EndScene()
 	vbo_was_dirty_flag = FALSE;
 
 	Emulator_SwapWindow();
+
+	if (g_resetDeviceOnNextFrame == TRUE)
+	{
+		Emulator_ResetDevice();
+		g_resetDeviceOnNextFrame = FALSE;
+	}
+
+	if (g_closeOnNextFrame == TRUE)
+	{
+		Emulator_ShutDown();
+	}
 }
 
 void Emulator_ResetTouchInput()
@@ -5980,10 +5999,6 @@ void Emulator_ShutDown()
 	d3d->Release();
 	///@TODO release shaders.
 #elif defined(D3D11)
-	if (dynamic_vertex_buffer) {
-		dynamic_vertex_buffer->Release();
-		dynamic_vertex_buffer = NULL;
-	}
 
 	Emulator_DestroyRender();
 	SPU_Destroy();
@@ -6007,8 +6022,14 @@ void Emulator_ShutDown()
 		audioThread.join();
 	}
 
+#if defined(_WINDOWS)
+#if defined(MEM_CHECK) || 1
+	_CrtDumpMemoryLeaks();
+#endif
+#endif
+
 #if !defined(SN_TARGET_PSP2)
-	//exit(EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 #endif
 }
 

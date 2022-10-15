@@ -93,6 +93,7 @@ extern int windowHeight;
 extern int g_overrideWidth;
 extern int g_overrideHeight;
 extern unsigned int g_resetDeviceOnNextFrame;
+extern unsigned int g_closeOnNextFrame;
 extern unsigned int g_resettingDevice;
 #if defined(PLATFORM_NX) || defined(PLATFORM_NX_ARM)
 extern TextureID* g_lastBoundTexture[];

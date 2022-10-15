@@ -33,12 +33,12 @@ IDXGISwapChain1* swapChain;
 #else
 IDXGISwapChain* swapChain;
 #endif
-ID3D11RenderTargetView* renderTargetView;
-ID3D11Buffer* projectionMatrixBuffer;
+ID3D11RenderTargetView* renderTargetView = NULL;
+ID3D11Buffer* projectionMatrixBuffer = NULL;
 ID3D11SamplerState* samplerState = NULL;
 ID3D11SamplerState* rg8lutSamplerState = NULL;
-ID3D11BlendState* blendState;
-ID3D11RasterizerState* rasterState;
+ID3D11BlendState* blendState = NULL;
+ID3D11RasterizerState* rasterState = NULL;
 
 SDL_Window* g_window = NULL;
 
@@ -86,45 +86,7 @@ ShaderID Shader_Compile_Internal(const DWORD* vs_data, const DWORD* ps_data, con
 
 void Emulator_ResetDevice()
 {
-	if (dynamic_vertex_buffer) {
-		dynamic_vertex_buffer->Release();
-		dynamic_vertex_buffer = NULL;
-	}
-
-	Emulator_DestroyGlobalShaders();
-	Emulator_DestroyConstantBuffers();
-	swapChain->Release();
-	d3ddev->Release();
-	d3dcontext->Release();
-	renderTargetView->Release();
-	vramTexture->Release();
-	vramBaseTexture->Release();
-	whiteTexture->Release();
-
-	if (rg8lutTexture != NULL)
-	{
-		rg8lutTexture->Release();
-		rg8lutTexture = NULL;
-	}
-
-	if (samplerState != NULL)
-	{
-		samplerState->Release();
-		samplerState = NULL;
-	}
-
-	if (rg8lutSamplerState != NULL)
-	{
-		rg8lutSamplerState->Release();
-		rg8lutSamplerState = NULL;
-	}
-
-	swapChain = NULL;
-	d3ddev = NULL;
-	d3dcontext = NULL;
-	renderTargetView = NULL;
-	vramTexture = NULL;
-	vramBaseTexture = NULL;
+	Emulator_DestroyRender();
 
 #if defined(SDL2)
 	SDL_SysWMinfo wmInfo;
@@ -909,26 +871,6 @@ void Emulator_SetBlendMode(BlendMode blendMode)
 		blendState = NULL;
 	}
 
-	if (g_PreviousBlendMode == BM_NONE)
-	{
-		D3D11_BLEND_DESC bd;
-		ZeroMemory(&bd, sizeof(bd));
-		bd.AlphaToCoverageEnable = FALSE;
-		bd.IndependentBlendEnable = FALSE;
-		bd.RenderTarget[0].BlendEnable = TRUE;
-		bd.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
-		bd.RenderTarget[0].DestBlend = D3D11_BLEND_ZERO;
-		bd.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
-		bd.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
-		bd.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
-		bd.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
-		bd.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
-		HRESULT hr = d3ddev->CreateBlendState(&bd, &blendState);
-		eassert(SUCCEEDED(hr));
-		FLOAT blendFactor[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
-		d3dcontext->OMSetBlendState(blendState, blendFactor, -1);
-	}
-
 	switch (blendMode)
 	{
 	case BM_NONE:
@@ -1068,7 +1010,7 @@ void Emulator_SwapWindow()
 	HRESULT hr = swapChain->Present(g_swapInterval, 0);
 
 	if (hr == DXGI_ERROR_DEVICE_REMOVED || hr == DXGI_ERROR_DEVICE_RESET) {
-		Emulator_ResetDevice();
+		g_resetDeviceOnNextFrame = TRUE;
 	}
 }
 
@@ -1093,6 +1035,8 @@ void Emulator_SetRenderTarget(const RenderTargetID& frameBufferObject)
 
 void Emulator_DestroyRender()
 {
+	d3dcontext->ClearState();
+
 	if (dynamic_vertex_buffer) {
 		dynamic_vertex_buffer->Release();
 		dynamic_vertex_buffer = NULL;
@@ -1106,34 +1050,44 @@ void Emulator_DestroyRender()
 
 	Emulator_DestroyGlobalShaders();
 	Emulator_DestroyConstantBuffers();
-	swapChain->Release();
-	swapChain = NULL;
-	d3ddev->Release();
-	d3ddev = NULL;
-	d3dcontext->Release();
-	d3dcontext = NULL;
-	renderTargetView->Release();
-	renderTargetView = NULL;
-	vramTexture->Release();
-	vramTexture = NULL;
-	vramBaseTexture->Release();
-	vramBaseTexture = NULL;
-	whiteTexture->Release();
-	whiteTexture = NULL;
+
+	ID3D11RenderTargetView* nullViews[] = { NULL };
+	d3dcontext->OMSetRenderTargets(_countof(nullViews), nullViews, NULL);
+
+	if (vramTexture != NULL)
+	{
+		vramTexture->Release();
+		vramTexture = NULL;
+	}
+
+	if (vramBaseTexture != NULL)
+	{
+		vramBaseTexture->Release();
+		vramBaseTexture = NULL;
+	}
+
+	if (whiteTexture != NULL)
+	{
+		whiteTexture->Release();
+		whiteTexture = NULL;
+	}
 
 	if (rg8lutTexture != NULL)
 	{
 		rg8lutTexture->Release();
+		rg8lutTexture = NULL;
 	}
 
 	if (samplerState != NULL)
 	{
 		samplerState->Release();
+		samplerState = NULL;
 	}
 
 	if (rg8lutSamplerState != NULL)
 	{
 		rg8lutSamplerState->Release();
+		rg8lutSamplerState = NULL;
 	}
 
 	if (blendState != NULL)
@@ -1142,15 +1096,37 @@ void Emulator_DestroyRender()
 		blendState = NULL;
 	}
 
-	swapChain = NULL;
-	d3ddev = NULL;
-	d3dcontext = NULL;
-	renderTargetView = NULL;
-	vramTexture = NULL;
-	vramBaseTexture = NULL;
-	rg8lutTexture = NULL;
-	samplerState = NULL;
-	rg8lutSamplerState = NULL;
+	if (swapChain != NULL)
+	{
+		swapChain->Release();
+		swapChain = NULL;
+	}
+
+	if (renderTargetView != NULL)
+	{
+		renderTargetView->Release();
+		renderTargetView = NULL;
+	}
+
+	d3dcontext->Flush();
+
+	if (d3dcontext != NULL)
+	{
+		d3dcontext->Release();
+		d3dcontext = NULL;
+	}
+
+
+	ID3D11Debug* debug;
+	d3ddev->QueryInterface(IID_PPV_ARGS(&debug));
+	debug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
+	debug->Release();
+	if (d3ddev != NULL)
+	{
+		ulong test = d3ddev->Release();
+		d3ddev = NULL;
+		test++;
+	}
 }
 
 #endif

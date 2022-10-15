@@ -23,6 +23,7 @@ int g_PreviousBlendMode = BM_NONE;
 int windowWidth = 0;
 int windowHeight = 0;
 unsigned int g_resetDeviceOnNextFrame = FALSE;
+unsigned int g_closeOnNextFrame = FALSE;
 unsigned int g_resettingDevice = FALSE;
 
 int begin_scene_flag = FALSE;
