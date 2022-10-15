@@ -4087,7 +4087,7 @@ void FX_DrawModel(struct Object* object, int model_num, struct _SVector* rotatio
 				{
 					texture = (struct TextureMT3*)mface->color;
 
-					gte_ldv3(vertexList[mface->face.v0], vertexList[mface->face.v1], vertexList[mface->face.v2]);
+					gte_ldv3(&vertexList[mface->face.v0], &vertexList[mface->face.v1], &vertexList[mface->face.v2]);
 					gte_rtpt();
 
 					poly->u0 = texture->u0;

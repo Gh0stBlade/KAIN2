@@ -104,6 +104,18 @@ struct _BGObject
 	long numVertices; // size=0, offset=20
 };
 
+struct LightGroup 
+{
+	MATRIX lightMatrix; // size=32, offset=0
+	MATRIX colorMatrix; // size=32, offset=32
+};
+struct LightList 
+{
+	CVECTOR ambient; // size=4, offset=0
+	long numLightGroups; // size=0, offset=4
+	struct LightGroup* lightGroupList; // size=64, offset=8
+};
+
 struct Level // hashcode: 0x012B0198 (dec: 19595672)
 {
 	struct _Terrain* PTR_32 terrain; // size=84, offset=0
