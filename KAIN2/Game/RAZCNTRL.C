@@ -1,58 +1,42 @@
 #include "CORE.H"
 #include "RAZCNTRL.H"
 
+extern long RazielCommands[10];
+static int Pending;
+static int Up;
+static int Down;
 
-void ProcessRazControl(long *command)
+void ProcessRazControl(long* command)
 {
 #if defined(PSX_VERSION)
 
-#if 0
-	sub_80070C08:
-	lw      $v0, 0($a0)
-		lw      $v1, -0x5B74($gp)
-		nop
-		and $v0, $v1
-		beqz    $v0, loc_80070C38
-		nop
-		lw      $v0, -0x5B4C($gp)
-		sw      $zero, -0x5B50($gp)
-		addiu   $v0, 1
-		sw      $v0, -0x5B4C($gp)
-		j       loc_80070C58
-		nop
+	if ((command[0] & RazielCommands[2]))
+	{
+		Up = 0;
+	
+		Down++;
+	}
+	else
+	{
+		Up++;
 
-		loc_80070C38 :
-	lw      $v0, -0x5B50($gp)
-		lw      $v1, -0x5B4C($gp)
-		addiu   $v0, 1
-		sw      $v0, -0x5B50($gp)
-		beqz    $v1, loc_80070C54
-		nop
-		sw      $v1, -0x5B54($gp)
+		if (Down != 0)
+		{
+			Pending = Down;
+		}
+		
+		Down = 0;
+	}
 
-		loc_80070C54:
-	sw      $zero, -0x5B4C($gp)
+	if (Down >= 6)
+	{
+		Pending = Down;
+	}
 
-		loc_80070C58 :
-		lw      $v1, -0x5B4C($gp)
-		nop
-		slti    $v0, $v1, 6
-		bnez    $v0, loc_80070C70
-		nop
-		sw      $v1, -0x5B54($gp)
-
-		loc_80070C70:
-	lw      $v0, -0x5B50($gp)
-		nop
-		slti    $v0, 3
-		bnez    $v0, locret_80070C88
-		nop
-		sw      $zero, -0x5B54($gp)
-
-		locret_80070C88:
-	jr      $ra
-		nop
-#endif
+	if (Up >= 3)
+	{
+		Pending = 0;
+	}
 
 #elif defined(PC_VERSION)
 	int v1; // eax
