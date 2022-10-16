@@ -31,7 +31,7 @@ jobs:
         run: cmake -E make_directory ${{github.workspace}}/Build_EMSDK/kain2/Deploy/
         
       - name: Copy to Deployment Folder
-        run: copy ${{github.workspace}}/Build_EMSDK/kain2/KAIN2_Web.*  ${{github.workspace}}/Build_EMSDK/kain2/Deploy/
+        run: copy ${{github.workspace}}/Build_EMSDK/KAIN2/Game/KAIN2_Web.*  ${{github.workspace}}/Build_EMSDK/KAIN2/Deploy/
         
       - name: Deploy to FTP
         uses: dennisameling/ftp-upload-action@v1.0.6
