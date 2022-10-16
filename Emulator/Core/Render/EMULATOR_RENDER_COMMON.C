@@ -387,6 +387,7 @@ int ParsePrimitive(uintptr_t primPtr, short* z)
 	case 0x2C:
 	{
 		POLY_FT4* poly = (POLY_FT4*)pTag;
+		
 		activeDrawEnv.tpage = poly->tpage;
 
 		Emulator_AddSplit(semi_transparent, poly->tpage, vramTexture);

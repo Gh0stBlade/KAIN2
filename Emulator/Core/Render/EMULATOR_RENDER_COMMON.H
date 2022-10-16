@@ -140,7 +140,7 @@ extern int vram_need_update;
 #define CLUT_WIDTH (16)
 #define CLUT_HEIGHT (1)
 
-#define MAX_NUM_POLY_BUFFER_VERTICES (12040)
+#define MAX_NUM_POLY_BUFFER_VERTICES (20000)
 #define MAX_NUM_INDEX_BUFFERS        (4096)
 
 #define VRAM_FORMAT            GL_RG
