@@ -16,8 +16,14 @@ ShiftWindow::ShiftWindow(QWidget *parent)
     g_ShiftWindow = this;
 }
 
+extern const char* renderBackendName;
+
 void ShiftWindow::DoUserInterface()
 {
+    char windowNameBuff[128];
+    sprintf(windowNameBuff, "Shift Editor (%s)", renderBackendName);
+    setWindowTitle(windowNameBuff);
+
     DoMenuBar();
     DoToolBar();
     DoToolBox();

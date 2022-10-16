@@ -92,6 +92,7 @@ extern int windowWidth;
 extern int windowHeight;
 extern int g_overrideWidth;
 extern int g_overrideHeight;
+extern HWND g_overrideHWND;
 extern unsigned int g_resetDeviceOnNextFrame;
 extern unsigned int g_closeOnNextFrame;
 extern unsigned int g_resettingDevice;
@@ -169,4 +170,8 @@ extern void Emulator_UpdateVertexBuffer(const struct Vertex* vertices, int count
 extern int Emulator_CreateCommonResources();
 extern void Emulator_Ortho2D(float left, float right, float bottom, float top, float znear, float zfar);
 extern const char* renderBackendName;
+
+extern int Emulator_GetWindowWidth();
+extern int Emulator_GetWindowHeight();
+
 #endif

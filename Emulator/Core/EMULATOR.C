@@ -5374,7 +5374,7 @@ int Emulator_BeginScene()
 	Emulator_UpdateVRAM();
 #endif
 
-	Emulator_SetViewPort(0, 0, g_overrideWidth != -1 ? g_overrideWidth : windowWidth, g_overrideHeight != -1 ? g_overrideHeight : windowHeight);
+	Emulator_SetViewPort(0, 0, Emulator_GetWindowWidth(), Emulator_GetWindowHeight());
 
 	begin_scene_flag = TRUE;
 
@@ -5415,18 +5415,147 @@ int Emulator_GetScreenshotNumber(int mode)
 	return fileNumber - 1;
 }
 
+int Emulator_GetWindowWidth()
+{
+	return g_overrideWidth != -1 ? g_overrideWidth : windowWidth;
+}
+
+int Emulator_GetWindowHeight()
+{
+	return g_overrideHeight != -1 ? g_overrideHeight : windowHeight;
+}
+
 void Emulator_TakeScreenshot(int mode)
 {
 #if defined(SDL2)
-	unsigned char* pixels = new unsigned char[windowWidth * windowHeight * sizeof(unsigned int)];
+	int width = Emulator_GetWindowWidth();
+	int height = Emulator_GetWindowHeight();
+
+	unsigned char* pixels = new unsigned char[width * height * sizeof(unsigned int)];
+	
+#if defined(_WINDOWS)
+	if (g_overrideHWND != NULL)
+	{
+		HDC hdcScreen;
+		HDC hdcWindow;
+		HDC hdcMemDC = NULL;
+		HBITMAP hbmScreen = NULL;
+		BITMAP bmpScreen;
+		DWORD dwBytesWritten = 0;
+		DWORD dwSizeofDIB = 0;
+		HANDLE hFile = NULL;
+		char* lpbitmap = NULL;
+		HANDLE hDIB = NULL;
+		DWORD dwBmpSize = 0;
+
+		hdcScreen = GetDC(g_overrideHWND);
+		hdcWindow = GetDC(g_overrideHWND);
+
+		hdcMemDC = CreateCompatibleDC(hdcWindow);
+
+		if (!hdcMemDC)
+		{
+			return;
+		}
+
+		RECT rcClient;
+		GetClientRect(g_overrideHWND, &rcClient);
+
+		SetStretchBltMode(hdcWindow, HALFTONE);
+
+		if (!StretchBlt(hdcWindow,
+			0, 0,
+			rcClient.right, rcClient.bottom,
+			hdcScreen,
+			0, 0,
+			rcClient.right,
+			rcClient.bottom,
+			SRCCOPY | CAPTUREBLT))
+		{
+			return;
+		}
+
+		hbmScreen = CreateCompatibleBitmap(hdcWindow, rcClient.right - rcClient.left, rcClient.bottom - rcClient.top);
+
+		if (!hbmScreen)
+		{
+			return;
+		}
+
+		SelectObject(hdcMemDC, hbmScreen);
+
+		if (!BitBlt(hdcMemDC,
+			0, 0,
+			rcClient.right - rcClient.left, rcClient.bottom - rcClient.top,
+			hdcWindow,
+			0, 0,
+			SRCCOPY | CAPTUREBLT))
+		{
+			return;
+		}
+
+		GetObject(hbmScreen, sizeof(BITMAP), &bmpScreen);
+
+		BITMAPFILEHEADER   bmfHeader;
+		BITMAPINFOHEADER   bi;
+
+		bi.biSize = sizeof(BITMAPINFOHEADER);
+		bi.biWidth = bmpScreen.bmWidth;
+		bi.biHeight = bmpScreen.bmHeight;
+		bi.biPlanes = 1;
+		bi.biBitCount = 32;
+		bi.biCompression = BI_RGB;
+		bi.biSizeImage = 0;
+		bi.biXPelsPerMeter = 0;
+		bi.biYPelsPerMeter = 0;
+		bi.biClrUsed = 0;
+		bi.biClrImportant = 0;
+
+		dwBmpSize = ((bmpScreen.bmWidth * bi.biBitCount + 31) / 32) * 4 * bmpScreen.bmHeight;
+
+		hDIB = GlobalAlloc(GHND, dwBmpSize);
+		lpbitmap = (char*)GlobalLock(hDIB);
+
+		GetDIBits(hdcWindow, hbmScreen, 0, (UINT)bmpScreen.bmHeight, lpbitmap, (BITMAPINFO*)&bi, DIB_RGB_COLORS);
+
+		char buff[64];
+		sprintf(buff, "SCREENSHOT_%d.%s", Emulator_GetScreenshotNumber(SCREENSHOT_MODE_BMP), screenshotExtensions[SCREENSHOT_MODE_BMP]);
+
+		hFile = CreateFile(buff, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+
+		dwSizeofDIB = dwBmpSize + sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER);
+
+		bmfHeader.bfOffBits = (DWORD)sizeof(BITMAPFILEHEADER) + (DWORD)sizeof(BITMAPINFOHEADER);
+
+		bmfHeader.bfSize = dwSizeofDIB;
+
+		bmfHeader.bfType = 0x4D42;
+
+		WriteFile(hFile, (LPSTR)&bmfHeader, sizeof(BITMAPFILEHEADER), &dwBytesWritten, NULL);
+		WriteFile(hFile, (LPSTR)&bi, sizeof(BITMAPINFOHEADER), &dwBytesWritten, NULL);
+		WriteFile(hFile, (LPSTR)lpbitmap, dwBmpSize, &dwBytesWritten, NULL);
+
+		GlobalUnlock(hDIB);
+		GlobalFree(hDIB);
+
+		CloseHandle(hFile);
+
+		DeleteObject(hbmScreen);
+		DeleteObject(hdcMemDC);
+		ReleaseDC(NULL, hdcScreen);
+		ReleaseDC(g_overrideHWND, hdcWindow);
+
+		return;
+	}
+#endif
 
 #if defined(OGL) || defined(OGLES)
-	glReadPixels(0, 0, windowWidth, windowHeight, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+	glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
 #endif
 
 	if (mode == SCREENSHOT_MODE_TGA)
 	{
-		SDL_Surface* surface = SDL_CreateRGBSurfaceFrom(pixels, windowWidth, windowHeight, 8 * 4, windowWidth * 4, 0, 0, 0, 0);
+		SDL_Surface* surface = SDL_CreateRGBSurfaceFrom(pixels, width, height, 8 * 4, width * 4, 0, 0, 0, 0);
 
 		char buff[64];
 		sprintf(buff, "SCREENSHOT_%d.%s", Emulator_GetScreenshotNumber(mode), screenshotExtensions[mode]);
@@ -5434,10 +5563,10 @@ void Emulator_TakeScreenshot(int mode)
 		FILE* f = fopen(buff, "wb");
 		unsigned char TGAheader[12] = { 0,0,2,0,0,0,0,0,0,0,0,0 };
 		unsigned char header[6];
-		header[0] = (windowWidth % 256);
-		header[1] = (windowWidth / 256);
-		header[2] = (windowHeight % 256);
-		header[3] = (windowHeight / 256);
+		header[0] = (width % 256);
+		header[1] = (width / 256);
+		header[2] = (height % 256);
+		header[3] = (height / 256);
 		header[4] = 32;
 		header[5] = 0;
 
@@ -5454,9 +5583,9 @@ void Emulator_TakeScreenshot(int mode)
 
 		pixel* p = (pixel*)surface->pixels;
 
-		for (int y = 0; y < windowHeight; y++)
+		for (int y = 0; y < height; y++)
 		{
-			for (int x = 0; x < windowWidth; x++)
+			for (int x = 0; x < width; x++)
 			{
 				unsigned char temp = p->b;
 				p->b = p->r;
@@ -5465,14 +5594,14 @@ void Emulator_TakeScreenshot(int mode)
 			}
 		}
 
-		fwrite(surface->pixels, windowWidth * windowHeight * sizeof(unsigned int), 1, f);
+		fwrite(surface->pixels, width * height * sizeof(unsigned int), 1, f);
 		fclose(f);
 
 		SDL_FreeSurface(surface);
 	}
 	else if (mode == SCREENSHOT_MODE_BMP)
 	{
-		SDL_Surface* surface = SDL_CreateRGBSurfaceFrom(pixels, windowWidth, windowHeight, 8 * 4, windowWidth * 4, 0, 0, 0, 0);
+		SDL_Surface* surface = SDL_CreateRGBSurfaceFrom(pixels, width, height, 8 * 4, width * 4, 0, 0, 0, 0);
 		char buff[64];
 		sprintf(buff, "SCREENSHOT_%d.%s", Emulator_GetScreenshotNumber(mode), screenshotExtensions[mode]);
 		SDL_SaveBMP(surface, buff);

@@ -294,6 +294,10 @@ extern void Emulator_SetShader(const ShaderID shader);
 extern void Emulator_DestroyVulkanImageViews();
 #endif
 
+extern int Emulator_GetWindowWidth();
+extern int Emulator_GetWindowHeight();
+
+
 #if defined(D3D9) || defined(XED3D)
 extern IDirect3DDevice9* d3ddev;
 #endif

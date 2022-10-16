@@ -1167,6 +1167,10 @@ void COLLIDE_PointAndWorld(struct _PCollideInfo* pcollideInfo, struct Level* lev
 	struct _Terrain* terrain; // $s4
 	struct Level* thislevel; // $s0
 
+#if !defined(_DEBUG) || 1
+	return;
+#endif
+
 	//s5 = pcollideInfo
 	//s6 = level
 

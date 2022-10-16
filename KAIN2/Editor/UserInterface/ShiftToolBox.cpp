@@ -218,7 +218,9 @@ void Shift::ToolBox::DoMorph()
 	}
 }
 
+extern void Emulator_TakeScreenshot(int mode);
+
 void Shift::ToolBox::DoScreenShot()
 {
-	//g_engine.getRenderer()->m_createScreenShot = true;
+	Emulator_TakeScreenshot(0);
 }
