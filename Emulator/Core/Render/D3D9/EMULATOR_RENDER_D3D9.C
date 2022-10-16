@@ -19,6 +19,9 @@ D3DPRESENT_PARAMETERS  d3dpp;
 
 SDL_Window* g_window = NULL;
 
+int g_overrideWidth = -1;
+int g_overrideHeight = -1;
+
 #include "shaders/D3D9/gte_shader_4_vs.h"
 #include "shaders/D3D9/gte_shader_4_ps.h"
 #include "shaders/D3D9/gte_shader_8_vs.h"

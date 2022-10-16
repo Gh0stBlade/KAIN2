@@ -49,6 +49,9 @@ GLuint dynamic_vertex_array;
 
 SDL_Window* g_window = NULL;
 
+int g_overrideWidth = -1;
+int g_overrideHeight = -1;
+
 GLint u_Projection;
 
 #define GTE_DISCARD\

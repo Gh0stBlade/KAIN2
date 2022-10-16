@@ -30,12 +30,11 @@ enum CameraDirection
     DIR_RIGHT  = (1 << 3),
 };
 
-#define MAX_CAMERA_SPEED 5
-#define MAX_CAMERA_DELAY 8
+#define MAX_CAMERA_SPEED 4
+#define MAX_CAMERA_DELAY 32
 
 static int g_cameraSpeed = 0;
 static int g_cameraMoveDirection = 0;
-static int g_cameraLastMoveDirection = 0;
 static int g_cameraMoveDelay = 0;
 
 extern unsigned int g_resetDeviceOnNextFrame;
@@ -65,7 +64,7 @@ void Shift::D3D11Frame::render()
         setCameraSpeed(g_cameraSpeed + 1);
     }
 
-    if ((g_cameraMoveDirection & CameraDirection::DIR_UP) || (g_cameraLastMoveDirection & CameraDirection::DIR_UP))
+    if ((g_cameraMoveDirection & CameraDirection::DIR_UP))
     {
         short theta = overrideEditorRotation.x;
         short phi = overrideEditorRotation.z;
@@ -79,7 +78,7 @@ void Shift::D3D11Frame::render()
         overrideEditorPosition.z += zMove >> 8;
     }
 
-    if ((g_cameraMoveDirection & CameraDirection::DIR_DOWN) || (g_cameraLastMoveDirection & CameraDirection::DIR_DOWN))
+    if ((g_cameraMoveDirection & CameraDirection::DIR_DOWN))
     {
         short theta = overrideEditorRotation.x;
         short phi = overrideEditorRotation.z;
@@ -93,7 +92,7 @@ void Shift::D3D11Frame::render()
         overrideEditorPosition.z -= zMove >> 8;
     }
 
-    if ((g_cameraMoveDirection & CameraDirection::DIR_LEFT) || (g_cameraLastMoveDirection & CameraDirection::DIR_LEFT))
+    if ((g_cameraMoveDirection & CameraDirection::DIR_LEFT))
     {
         short theta = overrideEditorRotation.x;
         short phi = overrideEditorRotation.z + 1024;
@@ -106,7 +105,7 @@ void Shift::D3D11Frame::render()
         overrideEditorPosition.y += yMove >> 20;
     }
 
-    if ((g_cameraMoveDirection & CameraDirection::DIR_RIGHT) || (g_cameraLastMoveDirection & CameraDirection::DIR_RIGHT))
+    if ((g_cameraMoveDirection & CameraDirection::DIR_RIGHT))
     {
         short theta = overrideEditorRotation.x;
         short phi = overrideEditorRotation.z + 1024;
@@ -121,16 +120,16 @@ void Shift::D3D11Frame::render()
 
     if (g_cameraSpeed != 0)
     {
-        g_cameraMoveDelay++;
+        g_cameraMoveDelay--;
     }
-
-    if (g_cameraSpeed > 0 && g_cameraMoveDirection == 0 && g_cameraMoveDelay >= MAX_CAMERA_DELAY)
+    else
     {
-        if (--g_cameraSpeed == 0)
+        if (g_cameraSpeed > 0 && g_cameraMoveDelay <= 0)
         {
-            g_cameraMoveDelay = 0;
-
-            g_cameraLastMoveDirection = 0;
+            if (--g_cameraSpeed == 0)
+            {
+                g_cameraMoveDelay = 0;
+            }
         }
     }
     
@@ -204,17 +203,12 @@ void Shift::D3D11Frame::keyPressEvent(QKeyEvent* event)
     {
         g_cameraMoveDirection |= CameraDirection::DIR_RIGHT;
     }
+
+    g_cameraMoveDelay = MAX_CAMERA_DELAY;
 }
 
 void Shift::D3D11Frame::keyReleaseEvent(QKeyEvent* event)
 {
-    if (event->isAutoRepeat())
-    {
-        return;
-    }
-
-    g_cameraLastMoveDirection = g_cameraMoveDirection;
-
     if (event->key() == Qt::Key_W)
     {
         g_cameraMoveDirection &= ~CameraDirection::DIR_UP;
@@ -235,7 +229,7 @@ void Shift::D3D11Frame::keyReleaseEvent(QKeyEvent* event)
         g_cameraMoveDirection &= ~CameraDirection::DIR_RIGHT;
     }
 
-    g_cameraMoveDelay = 0;
+    g_cameraMoveDelay = MAX_CAMERA_DELAY;
 }
 
 void Shift::D3D11Frame::mousePressEvent(QMouseEvent* event)

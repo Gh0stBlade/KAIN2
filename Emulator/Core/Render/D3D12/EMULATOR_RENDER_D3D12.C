@@ -54,6 +54,9 @@ int g_CurrentBlendMode = BM_NONE;
 
 SDL_Window* g_window = NULL;
 
+int g_overrideWidth = -1;
+int g_overrideHeight = -1;
+
 void Emulator_EndCommandBuffer()
 {
 	commandList->Close();

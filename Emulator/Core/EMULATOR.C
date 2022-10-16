@@ -10,11 +10,11 @@
 #include "Audio/EMULATOR_SPU.H"
 
 #if defined(_WINDOWS)
-#if defined(MEM_CHECK) || 1
+#if defined(MEM_CHECK)
 #define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>
 #include <crtdbg.h>
-#include <vld.h>
+//#include <vld.h>
 #endif
 #endif
 
@@ -2371,9 +2371,11 @@ static int Emulator_InitialiseCore()
 
 void Emulator_Initialise(char* windowName, int width, int height)
 {
-#if defined(MEM_CHECK) || 1
+#if defined(_WINDOWS)
+#if defined(MEM_CHECK)
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	_crtBreakAlloc = 171;
+#endif
 #endif
 
 	eprintf("Initialising %s.\n", EMULATOR_NAME);
@@ -6023,13 +6025,14 @@ void Emulator_ShutDown()
 	}
 
 #if defined(_WINDOWS)
-#if defined(MEM_CHECK) || 1
+#if defined(MEM_CHECK)
 	_CrtDumpMemoryLeaks();
 #endif
 #endif
 
 #if !defined(SN_TARGET_PSP2)
-	exit(EXIT_SUCCESS);
+	//Disabled as editor needs to run still.
+	//exit(EXIT_SUCCESS);
 #endif
 }
 

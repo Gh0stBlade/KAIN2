@@ -2451,7 +2451,7 @@ unsigned long* DRAW_DisplaySubdivPolytope_S(struct _BSPNode** polytope, struct _
 
 			t4[54] = v1;
 
-			gte_stopz(v0);
+			gte_stopz(&v0);
 
 			if (v0 >= 0)
 			{
@@ -4372,7 +4372,7 @@ long PIPE3D_TransformAnimatedInstanceVertices_S(struct _VertexPool* vertexPool, 
 							}
 							//loc_80027598
 
-							gte_ldv3(gNormalList[((MATRIX*)&vertexPool->vertex[model->segmentList->lastVertex])->m[0][1]], gNormalList[((MATRIX*)&vertexPool->vertex[model->segmentList->lastVertex])->m[1][0]], gNormalList[((MATRIX*)&vertexPool->vertex[model->segmentList->lastVertex])->m[1][2]]);
+							gte_ldv3(&gNormalList[((MATRIX*)&vertexPool->vertex[model->segmentList->lastVertex])->m[0][1]], &gNormalList[((MATRIX*)&vertexPool->vertex[model->segmentList->lastVertex])->m[1][0]], &gNormalList[((MATRIX*)&vertexPool->vertex[model->segmentList->lastVertex])->m[1][2]]);
 
 							a1++;
 

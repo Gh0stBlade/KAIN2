@@ -1,6 +1,7 @@
 #include "BOUNTY_LIST.H"
 #include "Core/Setup/Game/GAME_VERSION.H"
 #include "Core/Setup/Platform/EMULATOR_PLATFORM_SETUP.H"
+#include "Debug/EMULATOR_ASSERT.H"
 
 #if !defined(NO_BOUNTY_LIST_EXPORT)
 
@@ -17,6 +18,8 @@ void Emulator_AddBounty(const char* functionName)
 #if !defined(NO_BOUNTY_LIST_EXPORT)
 	int alreadyHasBounty = 0;
 	int currentBountyIndex = lastIndex;
+
+	eassert(lastIndex < 4096);
 
 	if (lastIndex > 0)
 	{
@@ -46,6 +49,8 @@ void Emulator_SaveBountyList()
 	char fileName[128];
 	sprintf(fileName, "VALKYRIE_RUNTIME_BOUNTY_LIST_%s.txt", SHORT_GAME_NAME);
 	FILE* f = fopen(fileName, "wb+");
+
+	eassert(lastIndex < 4096);
 
 	if (f != NULL)
 	{

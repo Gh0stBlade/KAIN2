@@ -55,6 +55,9 @@ unsigned int dynamic_vertex_array;
 
 void* g_contextHost;
 
+int g_overrideWidth = -1;
+int g_overrideHeight = -1;
+
 SceUID g_vdmRingBufUid;
 SceUID g_vertexRingBufUid;
 SceUID g_fragmentRingBufUid;

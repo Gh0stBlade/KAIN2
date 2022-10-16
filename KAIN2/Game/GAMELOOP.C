@@ -330,6 +330,11 @@ struct _StreamUnit * LoadLevels(char *baseAreaName, struct GameTracker *gameTrac
 	_v->y = -(_y0 + _y1);
 	_v->z = -(_z0 + _z1);
 
+#if defined(EDITOR)
+	extern struct _SVector g_relocationOffset;
+	g_relocationOffset = offset;
+#endif
+
 	PreloadAllConnectedUnits(streamUnit, &offset);
 	
 	return streamUnit;
@@ -1305,6 +1310,10 @@ void GAMELOOP_DisplayFrame(struct GameTracker* gameTracker)
 			if (!(gameTrackerX.debugFlags & 0x8000))
 			{
 				MainRenderLevel(mainStreamUnit, drawot);
+#if defined(EDITOR)
+				extern void Editor_DoDebug();
+				Editor_DoDebug();
+#endif
 			}
 		}
 

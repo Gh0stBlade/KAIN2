@@ -105,6 +105,9 @@ NVNtextureBuilder g_textureBuilder;
 unsigned int dynamic_vertex_buffer;
 unsigned int dynamic_vertex_array;
 
+int g_overrideWidth = -1;
+int g_overrideHeight = -1;
+
 int FRAME_INDEX = 0;
 
 ShaderID* Shader_Compile(const char* path_vs, const char* path_ps)
