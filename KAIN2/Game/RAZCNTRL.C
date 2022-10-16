@@ -1,10 +1,10 @@
 #include "CORE.H"
 #include "RAZCNTRL.H"
 
-extern long RazielCommands[10];
-static int Pending;
-static int Up;
-static int Down;
+long RazielCommands[10];
+int Pending;
+int Up;
+int Down;
 
 void ProcessRazControl(long* command)
 {
