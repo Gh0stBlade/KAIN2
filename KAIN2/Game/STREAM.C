@@ -1064,7 +1064,7 @@ void STREAM_ConnectStream(struct _StreamUnit* streamUnit)
 					
 					commapos = strchr(text, ',');
 
-					signalID = 0;
+					hookedUp = 0;
 
 					if (commapos != NULL)
 					{
