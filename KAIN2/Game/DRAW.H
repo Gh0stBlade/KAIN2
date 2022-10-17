@@ -72,6 +72,8 @@ typedef struct POLY_F4_SEMITRANS
 extern short pause_redraw_flag; // offset 0x800d2fd4
 extern void* pause_redraw_prim; // offset 0x800d2fd8
 extern short RENDER_currentStreamUnitID;
+extern int InStreamUnit;
+extern unsigned long** hackOT;
 
 extern void fDRAW_SPLIT_INTPL_XYZ(struct _SVector *newVertex, struct _SVector *pvb, struct _SVector *pvc); // 0x8002A5B0
 
