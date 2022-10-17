@@ -1054,7 +1054,7 @@ long StreamRenderLevel(struct _StreamUnit* currentUnit, struct Level* mainLevel,
 	{
 		bsp = &terrain->BSPTreeArray[curTree];
 
-		if (bsp->ID >= 0 && (bsp->flags & 0x1))
+		if (bsp->ID >= 0 && !(bsp->flags & 0x1))
 		{
 			theCamera.core.position.x = cam_pos_save.x - bsp->globalOffset.x;
 			theCamera.core.position.y = cam_pos_save.y - bsp->globalOffset.y;
