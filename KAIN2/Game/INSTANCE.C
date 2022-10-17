@@ -791,31 +791,36 @@ long INSTANCE_Introduced(struct Intro* intro, short streamUnitID)
 	long ret;
 
 	instance = gameTrackerX.instanceList->first;
+	
 	ret = 0;
 
-	if (instance != NULL)
+	while (instance != NULL)
 	{
-		do
-		{
-			next = instance->next;
+		next = instance->next;
 
-			if (intro->UniqueID == instance->introUniqueID)
-			{
-				intro->flags |= 0x8;
-				ret = 1;
-				break;
-			}
-
-		} while (next != NULL);
-	}
-	
-	if (ret == 0)
-	{
-		if (SAVE_HasSavedIntro(intro, streamUnitID) || SAVE_IsIntroDeadDead(intro))
+		if (intro->UniqueID == instance->introUniqueID)
 		{
-			intro->flags |= 0x8;
 			ret = 1;
+
+			intro->flags |= 0x8;
+			
+			break;
 		}
+
+		instance = next;
+	}
+
+	if (SAVE_HasSavedIntro(intro, streamUnitID) == 0)
+	{
+		if (SAVE_IsIntroDeadDead(intro) == 0)
+		{
+			return ret;
+		}
+	}
+	else
+	{
+		intro->flags |= 0x8;
+		ret = 1;
 	}
 
 	return ret;
