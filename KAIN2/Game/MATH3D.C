@@ -306,17 +306,13 @@ short MATH3D_FastAtan2(long y, long x)
 
 long MATH3D_FastSqrt(long square)
 {
-
 #if defined(PSX_VERSION)
-	unsigned long result; // $t0
-	long remainder; // $v0
-	long mask; // $a1
-	long shift; // $a2
-	long mask_squared; // $a3
-	long result_shift; // $v1
-
-	UNIMPLEMENTED();
-	return 0;
+	unsigned long result;
+	long remainder;
+	long mask;
+	long shift;
+	long mask_squared;
+	long result_shift;
 
 	shift = 0x1F;
 
@@ -332,16 +328,16 @@ long MATH3D_FastSqrt(long square)
 				shift--;
 			} while ((mask & square) == 0);
 		}
-		//loc_80039DD8
 
 		shift >>= 1;
 		remainder = shift + 6;
 		result_shift = 1;
-		mask = 1 << remainder;
+		result = result_shift << remainder;
+		mask = result;
+		result_shift = result_shift << (shift << result_shift);
+		mask_squared = result_shift;
 
-		mask_squared = 1 << (shift << 1);
-
-		square -= result_shift;
+		square -= mask_squared;
 
 		while (--shift != -1)
 		{
@@ -351,9 +347,12 @@ long MATH3D_FastSqrt(long square)
 			remainder = square - remainder;
 
 			mask >>= 1;
-			result_shift >>= 1;
 
-			if (remainder >= 0)
+			if (remainder < 0)
+			{
+				result_shift >>= 1;
+			}
+			else
 			{
 				square = remainder;
 
@@ -363,16 +362,38 @@ long MATH3D_FastSqrt(long square)
 				result |= mask;
 			}
 		}
-		
+
 		mask_squared >>= 2;
+		square <<= 12;
+		result_shift <<= 12;
+		mask_squared = 4096;
+		mask >>= 1;
 
-		UNIMPLEMENTED();
-		//TODO below code!
+
+		while (mask != 0)
+		{
+			mask_squared >>= 2;
+			remainder = result_shift + mask_squared;
+			remainder = square - remainder;
+
+			if (remainder < 0)
+			{
+				result_shift >>= 1;
+			}
+			else
+			{
+				square = remainder;
+				remainder = result_shift >> 1;
+				result_shift = remainder + mask_squared;
+				result |= mask;
+			}
+			mask >>= 1;
+		}
+
 		return result;
-
 	}
-	//locret_80039E90
 
+	return 0;
 #elif defined(PC_VERSION)
 	int v1; // eax
 	int v2; // ebp
