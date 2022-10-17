@@ -92,7 +92,9 @@ extern int windowWidth;
 extern int windowHeight;
 extern int g_overrideWidth;
 extern int g_overrideHeight;
+#if defined(D3D11)
 extern HWND g_overrideHWND;
+#endif
 extern unsigned int g_resetDeviceOnNextFrame;
 extern unsigned int g_closeOnNextFrame;
 extern unsigned int g_resettingDevice;

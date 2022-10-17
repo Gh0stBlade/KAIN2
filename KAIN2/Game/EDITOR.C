@@ -472,7 +472,7 @@ void Editor_DoDebug()
 
 	//Editor_DrawCameraSplines();
 
-	Editor_DrawInstancesAsCubes();
+	//Editor_DrawInstancesAsCubes();
 
 	//Editor_DrawSouls();
 }

@@ -5386,6 +5386,16 @@ int Emulator_BeginScene()
 	return TRUE;
 }
 
+int Emulator_GetWindowWidth()
+{
+	return g_overrideWidth != -1 ? g_overrideWidth : windowWidth;
+}
+
+int Emulator_GetWindowHeight()
+{
+	return g_overrideHeight != -1 ? g_overrideHeight : windowHeight;
+}
+
 #if !defined(__EMSCRIPTEN__) && !defined(__ANDROID__)
 int Emulator_DoesFileExist(const char* fileName)
 {
@@ -5413,16 +5423,6 @@ int Emulator_GetScreenshotNumber(int mode)
 	} while (Emulator_DoesFileExist(buff) == 1);
 
 	return fileNumber - 1;
-}
-
-int Emulator_GetWindowWidth()
-{
-	return g_overrideWidth != -1 ? g_overrideWidth : windowWidth;
-}
-
-int Emulator_GetWindowHeight()
-{
-	return g_overrideHeight != -1 ? g_overrideHeight : windowHeight;
 }
 
 void Emulator_TakeScreenshot(int mode)

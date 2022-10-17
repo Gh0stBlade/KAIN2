@@ -1639,7 +1639,7 @@ void STREAM_DumpUnit(struct _StreamUnit* streamUnit, long doSave)
 	{
 		STREAM_FillOutFileNames(streamUnit->baseAreaName, dramName, NULL, NULL);
 
-		LOAD_AbortFileLoad(dramName, &STREAM_StreamLoadLevelAbort);
+		LOAD_AbortFileLoad(dramName, (void*)&STREAM_StreamLoadLevelAbort);
 
 		streamUnit->used = 0;
 	}
