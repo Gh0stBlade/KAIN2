@@ -95,4 +95,6 @@ extern void HUD_Setup_Chit_Count(int chits); // 0x8007C254
 extern void HUD_Update(); // 0x8007C28C
 extern void HUD_Draw(); // 0x8007C4C0
 
+extern int hud_warp_arrow_flash;
+
 #endif
