@@ -4108,7 +4108,7 @@ void FX_DrawModel(struct Object* object, int model_num, struct _SVector* rotatio
 					*(unsigned int*)&poly->r1 = color;
 					*(unsigned int*)&poly->r0 = color;
 
-					gte_stopz(clip);
+					gte_stopz(&clip);
 
 					if (clip < 0)
 					{
