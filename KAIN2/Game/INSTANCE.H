@@ -9,6 +9,13 @@ typedef struct _Instance _Instance;
 struct _SavedIntro;
 struct _SavedIntroWithIntro;
 
+struct SavedDeadDeadBits
+{
+	unsigned char savedID; // size=0, offset=0
+	unsigned char shiftedSaveSize; // size=0, offset=1
+	char deadDeadBits[832]; // size=832, offset=2
+};
+
 struct _HFace 
 {
 	short v0; // size=0, offset=0
