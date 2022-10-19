@@ -173,5 +173,6 @@ extern long RAZIEL_OkToLookAround(struct _Instance *playerInstance); // 0x800B47
 
 extern void TrailWaterFX(struct _Instance *instance, int Segment, int Bubbles, int Type); // 0x800B4810
 
+extern struct _G2SVector3_Type* ExtraRot;
 
 #endif
