@@ -856,9 +856,7 @@ void _FX_Build(struct _Instance *instance, SVECTOR*center, SVECTOR*vel, SVECTOR*
 void FX_Build(struct _Instance* instance, SVECTOR* center, SVECTOR* vel, SVECTOR* accl, struct _FXTracker* fxTracker, TDRFuncPtr_FX_Build5fxSetup fxSetup, TDRFuncPtr_FX_Build6fxProcess fxProcess)
 {
 #if defined(PSX_VERSION)
-
-
-
+	_FX_Build(instance, center, vel, accl, fxTracker, fxSetup, fxProcess, 0);
 #elif defined(PC_VERSION)
 	if (MEMPACK_MemoryValidFunc((char*)instance->object))
 	{
