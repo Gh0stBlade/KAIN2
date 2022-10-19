@@ -3348,6 +3348,8 @@ struct _Instance* INSTANCE_GetChildLinkedToSegment(struct _Instance* instance, i
 		child = child->LinkSibling;
 	}
 
+	return child;
+
 #elif defined(PC_VERSION)
 	struct _Instance* child; // eax
 
