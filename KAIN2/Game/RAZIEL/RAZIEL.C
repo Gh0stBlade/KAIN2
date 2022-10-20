@@ -2367,7 +2367,7 @@ int SetupReaction(struct _Instance *player, struct _Instance *instance)
 
 int CheckHolding(struct _Instance* instance)
 {
-	return NULL < instance->LinkChild;
+	return 0 < instance->LinkChild;
 }
 
 void DisableWristCollision(struct _Instance *instance, int Side)
