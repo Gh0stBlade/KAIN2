@@ -456,7 +456,7 @@ void MON_BirthEntry(struct _Instance* instance)
 void MON_Birth(struct _Instance* instance)
 {
 #if defined(PSX_VERSION)
-	MON_SwitchState(instance, 2);
+	MON_SwitchState(instance, MONSTER_STATE_IDLE);
 #elif defined(PC_VERSION)
 	MON_SwitchState(instance, MONSTER_STATE_IDLE);
 #endif
