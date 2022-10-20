@@ -629,7 +629,7 @@ void _SoulReaverAnimate(struct _Instance *instance)
 int SoulReaverFire()
 {
 #if defined(PSX_VERSION)
-	FireReaverFlag = 0;
+	return FireReaverFlag;
 #elif defined(PC_VERSION)
 	return word_C55188;
 #endif
