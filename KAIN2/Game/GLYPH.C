@@ -248,6 +248,7 @@ int _GlyphIsAnyGlyphSet()
 
 int _GlyphCost(struct _GlyphTuneData* glyphtunedata, int glyphNum)
 {
+	//Original with bug fix: glyphtunedata->glyph_costs[glyphNum];
 	((unsigned char*)&glyphtunedata->glyph_darkness)[glyphNum + 1];///@BUG (In original code it's loading from 3, should be 4);
 }
 
