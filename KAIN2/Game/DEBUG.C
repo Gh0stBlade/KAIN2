@@ -1824,6 +1824,11 @@ struct DebugMenuLine pauseMenu[7] = {
 	},
 };
 
+void DEBUG_SetGameTime(long* var)
+{
+	GAMELOOP_SetGameTime(var[0]);
+}
+
 void DEBUG_UpdateFog(long* var)
 {
 	struct _StreamUnit* currentUnit;
