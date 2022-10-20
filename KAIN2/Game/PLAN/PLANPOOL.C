@@ -42,12 +42,12 @@ int PLANPOOL_CountBitsSetInLong(long mylong)
 
 	while (1)
 	{
+		numBitsSet++;
+
 		if (!(mylong & (mylong - 1)))
 		{
 			break;
 		}
-
-		numBitsSet++;
 	}
 
 	return numBitsSet;
