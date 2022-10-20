@@ -1854,7 +1854,7 @@ int WARPGATE_IsWarpgateActive()
 
 int WARPGATE_IsWarpgateUsable()
 {
-	return (wgloadInfo.loading ^ 4) < 1;
+	return ((short)wgloadInfo.loading ^ 4) < 1;
 }
 
 int WARPGATE_IsWarpgateReady()
