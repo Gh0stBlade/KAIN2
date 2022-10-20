@@ -259,7 +259,7 @@ void voiceCmdPause(struct XAVoiceTracker *vt, short cmdParam)
 	}
 }
 
-void voiceCmdResume(struct XAVoiceTracker *vt, short cmdParam)
+void voiceCmdResume(struct XAVoiceTracker* vt, short cmdParam)
 { 
 	if (vt->voiceStatus == 3)
 	{
@@ -267,7 +267,7 @@ void voiceCmdResume(struct XAVoiceTracker *vt, short cmdParam)
 	}
 }
 
-void voiceCmdNull(struct XAVoiceTracker *vt, short cmdParam)
+void voiceCmdNull(struct XAVoiceTracker* vt, short cmdParam)
 {
 }
 
