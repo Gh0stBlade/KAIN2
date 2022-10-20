@@ -2894,7 +2894,6 @@ void DEBUG_FatalError(const char *fmt, ...)
 
 void DEBUG_ProcessSecondController(struct GameTracker *gameTracker)
 {
-	// Intentionally empty
 }
 
 void DEBUG_ProcessCheat(struct GameTracker *gameTracker)
