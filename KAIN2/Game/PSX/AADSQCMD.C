@@ -604,7 +604,6 @@ void metaCmdSetChannelTranspose(struct AadSeqEvent *event, struct _AadSequenceSl
 	slot->selectedSlotPtr->transpose[channel] = transpose;
 
 	eprintinf("[MIDI]: Set Channel: %d Transpose: %d\n", channel, transpose);
-
 }
 
 
