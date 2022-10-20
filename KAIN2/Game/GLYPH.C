@@ -117,7 +117,7 @@ void GlyphProcess(struct _Instance *instance, struct GameTracker *gameTracker)
 #endif
 }
 
-unsigned long GlyphQuery(struct _Instance *instance, unsigned long query)
+unsigned long GlyphQuery(struct _Instance* instance, unsigned long query)
 {
 	if (query == 1)
 	{
