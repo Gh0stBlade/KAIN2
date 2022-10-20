@@ -23,6 +23,20 @@ struct PlanningNode // hashcode: 0xDB9F3065 (dec: -610324379)
 	long streamUnitID; // size=0, offset=24
 };
 
+struct PoolManagementData 
+{
+	char state; // size=0, offset=0
+	unsigned char numNodesInPool; // size=0, offset=1
+	struct _Position playerPosAtLastPlanMkrUpdate; // size=6, offset=2
+	struct PlanningNode* expansionNode1; // size=28, offset=8
+	struct PlanningNode* expansionNode2; // size=28, offset=12
+	unsigned short* distanceMatrix[32]; // size=4, offset=16
+	unsigned short pairType; // size=0, offset=20
+	struct _Position peakPos; // size=6, offset=22
+	unsigned char currentNode; // size=0, offset=28
+	unsigned char currentBit; // size=0, offset=29
+};
+
 struct EnemyPlanSlotData // hashcode: 0x72FA4FBD (dec: 1929007037)
 {
 	char slotInUse; // size=0, offset=0
