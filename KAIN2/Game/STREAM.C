@@ -1193,7 +1193,7 @@ void STREAM_FinishLoad(struct _StreamUnit *streamUnit)
 	{
 		level->startUnitLoadedSignal->flags |= 0x1;
 		
-		SIGNAL_HandleSignal(gameTrackerX.playerInstance, &level->startUnitLoadedSignal->signalList[0], 8);
+		SIGNAL_HandleSignal(gameTrackerX.playerInstance, &level->startUnitLoadedSignal->signalList[0], 0);
 		
 		EVENT_AddSignalToReset(level->startUnitLoadedSignal);
 	}
