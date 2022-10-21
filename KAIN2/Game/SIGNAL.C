@@ -463,7 +463,7 @@ long SIGNAL_HandleScreenWipeColor(struct _Instance* instance, struct Signal* sig
 	gameTrackerX.wipeColor.r = signal->data.color.r;
 	gameTrackerX.wipeColor.g = signal->data.color.g;
 	gameTrackerX.wipeColor.b = signal->data.color.b;
-	return 1
+	return 1;
 #elif defined(PC_VERSION)
 	gameTrackerX.wipeColor.r = signal->data.misc.size.c[0];
 	gameTrackerX.wipeColor.g = signal->data.misc.size.c[1];
