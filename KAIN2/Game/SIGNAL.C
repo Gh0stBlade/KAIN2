@@ -109,6 +109,7 @@ long SIGNAL_HandleCameraLock(struct _Instance* instance, struct Signal* signal)
 {
 #if defined(PSX_VERSION)
 	CAMERA_Lock(&theCamera, signal->data.cameraLock);
+	return 1;
 #elif defined(PC_VERSION)
 	CAMERA_Lock((struct Camera*)&theCamera, signal->data.misc.size.l);
 	return 1;
