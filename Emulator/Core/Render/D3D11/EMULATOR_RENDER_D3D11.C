@@ -1117,15 +1117,17 @@ void Emulator_DestroyRender()
 	}
 
 
+#if defined(_DEBUG) && 0
 	ID3D11Debug* debug;
 	d3ddev->QueryInterface(IID_PPV_ARGS(&debug));
 	debug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
 	debug->Release();
+#endif
+
 	if (d3ddev != NULL)
 	{
-		ulong test = d3ddev->Release();
+		d3ddev->Release();
 		d3ddev = NULL;
-		test++;
 	}
 }
 
