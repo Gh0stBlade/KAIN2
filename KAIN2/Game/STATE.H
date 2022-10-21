@@ -5,6 +5,11 @@
 #include "MONSTER/MONSTER.H"
 #include "PHYSOBS.H"
 
+struct evShadowSegmentData {
+	unsigned long totalShadowSegments; // size=0, offset=0
+	unsigned short shadowSegments[4]; // size=8, offset=4
+};
+
 typedef void (*TDRFuncPtr_StateSwitchStateCharacterData1NewProcess)();
 
 typedef void (*TDRFuncPtr_StateSwitchStateCharacterDataDefault1NewProcess)();
