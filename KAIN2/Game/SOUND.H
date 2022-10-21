@@ -79,6 +79,27 @@ struct MusicLoadInfo // hashcode: 0xC8F67C40 (dec: -923370432)
 	int numCmdsInQueue; // size=0, offset=72
 };
 
+struct SoundEffectChannel {
+	unsigned char inUse; // size=0, offset=0
+	unsigned char unused; // size=0, offset=1
+	unsigned short unused1; // size=0, offset=2
+	unsigned long handle; // size=0, offset=4
+	short volume; // size=0, offset=8
+	short volumeChangeTime; // size=0, offset=10
+	short volumeChangeTimeSave; // size=0, offset=12
+	short volumeChangePerUpdate; // size=0, offset=14
+	short volumeChangeSign; // size=0, offset=16
+	short volumeChangeErrPerUpdate; // size=0, offset=18
+	short volumeChangeError; // size=0, offset=20
+	short pitch; // size=0, offset=22
+	short pitchChangeTime; // size=0, offset=24
+	short pitchChangeTimeSave; // size=0, offset=26
+	short pitchChangePerUpdate; // size=0, offset=28
+	short pitchChangeSign; // size=0, offset=30
+	short pitchChangeErrPerUpdate; // size=0, offset=32
+	short pitchChangeError; // size=0, offset=34
+};
+
 extern char soundBuffer[sizeof(struct AadMemoryStruct) + (sizeof(struct _AadSequenceSlot) * 4)];
 
 extern struct MusicLoadInfo musicInfo; // offset 0x800D1510
