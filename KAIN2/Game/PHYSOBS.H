@@ -11,6 +11,13 @@ struct LightTableEntry {
   short radius; // size=0, offset=6
 };
 
+struct PhysObProperties {
+    unsigned short version; // size=0, offset=0
+    unsigned short family; // size=0, offset=2
+    unsigned short ID; // size=0, offset=4
+    unsigned short Type; // size=0, offset=6
+};
+
 struct PhysObData {
   long Mode; // size=0, offset=0
   short xForce; // size=0, offset=4
