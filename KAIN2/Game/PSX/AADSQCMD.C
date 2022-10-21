@@ -887,7 +887,7 @@ void metaCmdGetSlotPan(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 			UNIMPLEMENTED();
 }
 
-void metaCmdSetVariable(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
+void metaCmdSetVariable(struct AadSeqEvent* event, struct _AadSequenceSlot* slot)
 {
 	int value;
 	int destVariable;
@@ -900,7 +900,6 @@ void metaCmdSetVariable(struct AadSeqEvent *event, struct _AadSequenceSlot *slot
 		aadMem->userVariables[destVariable] = value;
 
 		eprintinf("[MIDI]: Set Variable: %d Value: %d\n", destVariable, value);
-
 	}
 }
 
