@@ -4,11 +4,8 @@
 #include "PLAYER.H"
 #include "MONSTER/MONSTER.H"
 #include "PHYSOBS.H"
+#include "Game/EVENT.H"
 
-struct evShadowSegmentData {
-	unsigned long totalShadowSegments; // size=0, offset=0
-	unsigned short shadowSegments[4]; // size=8, offset=4
-};
 
 typedef void (*TDRFuncPtr_StateSwitchStateCharacterData1NewProcess)();
 
