@@ -857,12 +857,12 @@ void GameLoop()
 		if ((gameTrackerX.streamFlags & 0x1000000))
 		{
 			play_movie(&InterfaceItems[2].name[0]);
-			gameTrackerX.streamFlags &= 0x1000000;
+			gameTrackerX.streamFlags &= 0xFEFFFFFF;
 		}
 
 		if ((gameTrackerX.streamFlags & 0x200000))
 		{
-			gameTrackerX.streamFlags &= 0x200000;
+			gameTrackerX.streamFlags &= 0xFFDFFFFF;
 		}
 
 		if (nosound == 0)
@@ -1147,12 +1147,12 @@ int MainG2(void *appData)
 				if ((gameTrackerX.streamFlags & 0x1000000))
 				{
 					play_movie(&InterfaceItems[2].name[0]);
-					gameTrackerX.streamFlags &= 0x1000000;
+					gameTrackerX.streamFlags &= 0xFEFFFFFF;
 				}
 
 				if ((gameTrackerX.streamFlags & 0x200000))
 				{
-					gameTrackerX.streamFlags &= 0x200000;
+					gameTrackerX.streamFlags &= 0xFFDFFFFF;
 				}
 
 				if (nosound == 0)
