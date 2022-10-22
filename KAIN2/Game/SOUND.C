@@ -1527,9 +1527,6 @@ void SOUND_ProcessMusicLoad()
 								musicName[3] = 'a';
 							}
 
-							musicName[0] = 'u';
-							musicName[1] = 'r';
-
 							musicName[4] = 0;
 
 #if defined(UWP)
