@@ -4,6 +4,24 @@
 #include "COLLIDE.H"
 #include "Game/PHYSICS.H"
 
+struct PhysObSplinter {
+    long numSplintData; // size=0, offset=0
+    void* splinterData; // size=0, offset=4
+};
+struct PhysObWeaponAttributes {
+    long Damage; // size=0, offset=0
+    long AltDamage; // size=0, offset=4
+    short knockBackDistance; // size=0, offset=8
+    char knockBackFrames; // size=0, offset=10
+    char dropSound; // size=0, offset=11
+    char Class; // size=0, offset=12
+    char ThrowSphere; // size=0, offset=13
+    char LeftHandSphere; // size=0, offset=14
+    char RightHandSphere; // size=0, offset=15
+    struct _PhysObLight* Light; // size=0, offset=16
+    struct PhysObSplinter splinter; // size=8, offset=20
+};
+
 struct LightTableEntry {
   short r; // size=0, offset=0
   short g; // size=0, offset=2
