@@ -524,7 +524,7 @@ struct _MonsterSaveInfo // hashcode: 0x3088BC75 (dec: 814267509)
 	unsigned int causeOfDeath; // size=3, offset=117
 };
 
-typedef struct _MonsterFunctionTable // hashcode: 0x82983F8D (dec: -2103951475)
+struct _MonsterFunctionTable // hashcode: 0x82983F8D (dec: -2103951475)
 {
 	void (*initFunc)(struct _Instance* instance); // size=0, offset=0
 	void (*cleanUpFunc)(struct _Instance* instance); // size=0, offset=4
@@ -534,7 +534,7 @@ typedef struct _MonsterFunctionTable // hashcode: 0x82983F8D (dec: -2103951475)
 	struct _MonsterStateChoice* stateFuncs; // size=12, offset=20
 	char* versionID; // size=0, offset=24
 	char* localVersionID; // size=0, offset=28
-} _MonsterFunctionTable;
+};
 
 // base inclusion for functions
 #include "MONAPI.H"
