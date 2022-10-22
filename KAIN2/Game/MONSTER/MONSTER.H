@@ -530,7 +530,7 @@ struct _MonsterFunctionTable // hashcode: 0x82983F8D (dec: -2103951475)
 	void (*cleanUpFunc)(struct _Instance* instance); // size=0, offset=4
 	void (*damageEffectFunc)(struct _Instance* instance, struct evFXHitData* data); // size=0, offset=8
 	unsigned long (*queryFunc)(struct _Instance* instance, unsigned long data); // size=0, offset=12
-	void (*messageFunc)(struct _Instance* instance, unsigned int message, unsigned int data); // size=0, offset=16
+	void (*messageFunc)(struct _Instance* instance, unsigned long message, unsigned long data); // size=0, offset=16
 	struct _MonsterStateChoice* stateFuncs; // size=12, offset=20
 	char* versionID; // size=0, offset=24
 	char* localVersionID; // size=0, offset=28
