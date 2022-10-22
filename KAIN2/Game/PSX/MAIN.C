@@ -689,7 +689,7 @@ long MAIN_DoMainMenu(struct GameTracker *gameTracker, struct MainTracker *mainTr
 {
 	unsigned long **drawot;
 
-#if !defined(HACK_60_FPS) && 1
+#if !defined(HACK_60_FPS)
 	gameTrackerX.timeMult = 1;
 #else
 	gameTrackerX.timeMult = 4096;

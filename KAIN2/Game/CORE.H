@@ -109,7 +109,7 @@ typedef RECT PSX_RECT;
 #define SCREEN_WIDTH		512
 #define SCREEN_HEIGHT		240
 
-#if defined(_DEBUG)
+#if defined(_DEBUG) && 0
 #define FRAMERATE_MULT      2
 #else
 #define FRAMERATE_MULT      1
