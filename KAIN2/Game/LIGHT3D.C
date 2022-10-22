@@ -258,7 +258,7 @@ void LIGHT_CalcLightValue(struct _TFace *tface, struct _Instance *instance, stru
 
 void LIGHT_SetAmbientInstance(struct _Instance* instance, struct Level* level)
 {
-	SetBackColor((instance->light_color & 0xFF), ((instance->light_color >> 8) & 0xFF), ((instance->light_color >> 16) & 0xFF));
+	SetBackColor(((struct _ColorType*)&instance->light_color)->r, ((struct _ColorType*)&instance->light_color)->g, ((struct _ColorType*)&instance->light_color)->b);
 }
 
 
