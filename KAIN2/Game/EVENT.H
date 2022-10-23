@@ -5,6 +5,12 @@
 #include "BSP.H"
 #include "SIGNAL.H"
 
+struct evControlSaveDataData 
+{
+	long length; // size=0, offset=0
+	void* data; // size=0, offset=4
+};
+
 struct SignalResetStruct 
 {
 	struct _MultiSignal* mSignal; // size=904, offset=0
