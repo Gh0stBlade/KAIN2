@@ -11,6 +11,12 @@ struct evControlSaveDataData
 	void* data; // size=0, offset=4
 };
 
+struct evObjectIdleData 
+{
+	long mode; // size=0, offset=0
+	struct _Instance* instance; // size=668, offset=4
+};
+
 struct SignalResetStruct 
 {
 	struct _MultiSignal* mSignal; // size=904, offset=0
