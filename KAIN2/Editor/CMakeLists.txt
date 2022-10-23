@@ -13,6 +13,9 @@ set (CMAKE_PREFIX_PATH "C:\\Qt\\5.15.2\\msvc2019\\")
 
 find_package(Qt5 COMPONENTS Widgets Gui Core REQUIRED)
 
+set(glm_DIR "${EXTERN_LIB_PATH}/glm-0.9.9.8/cmake/glm/")
+find_package(glm REQUIRED)
+
 #Disable MinSizeRel and RelWithDebInfo add Final.
 #set(CMAKE_CONFIGURATION_TYPES "Debug;Release;Final")
 
@@ -118,6 +121,7 @@ Qt5::Widgets
 Qt5::Core
 Qt5::Gui
 Qt5::GuiPrivate
+glm::glm
 )
 
 #For "Final"
