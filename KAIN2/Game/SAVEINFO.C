@@ -1177,6 +1177,15 @@ void SAVE_DebugSaveGame()
 {
 }
 
+void SAVE_LoadSaveGame()
+{
+	gameTrackerX.streamFlags |= 0x200000;
+
+	GAMELOOP_RequestLevelChange("under", 1, &gameTrackerX);
+
+	gameTrackerX.gameMode = 0;
+}
+
 long SAVE_SizeOfFreeSpace()
 {
 	return savedInfoTracker.EndOfMemory - savedInfoTracker.InfoEnd;
