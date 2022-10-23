@@ -32,5 +32,6 @@ extern void ProcessPhysics(struct __Player *player, struct __CharacterState *In,
 
 extern void ApplyExternalLocalForces(struct __Player *player, struct _Instance *instance, struct __Force *Forces, int MaxForces, struct _Vector *Out); // 0x8009A7D0
 
+extern int PhysicsMode;
 
 #endif
