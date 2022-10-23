@@ -268,6 +268,9 @@ struct STracker // hashcode: 0xAED5E069 (dec: -1361715095)
 
 typedef struct StreamUnitPortal StreamUnitPortal;
 
+extern struct WarpRoom WarpRoomArray[14];
+extern long CurrentWarpNumber;
+
 #if defined(_LANGUAGE_C_PLUS_PLUS)||defined(__cplusplus)||defined(c_plusplus)
 extern "C" {
 #endif
