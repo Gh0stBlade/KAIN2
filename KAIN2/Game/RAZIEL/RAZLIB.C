@@ -1029,6 +1029,7 @@ void razSetDampingPhysics(struct _Instance* instance)
 {
 #if defined(PSX_VERSION)
 	Raziel.RotationSegment = 0;
+	
 	Raziel.extraRot.x = 0;
 
 	PhysicsMode = 4;
