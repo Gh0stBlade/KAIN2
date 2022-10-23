@@ -149,7 +149,7 @@ extern int vram_need_update;
 #define VRAM_FORMAT            GL_RG
 #define VRAM_INTERNAL_FORMAT   GL_RG8
 
-#if defined(_DEBUG)//60FPS
+#if defined(_DEBUG) && 0//60FPS
 #define FIXED_TIME_STEP    16
 #else
 #define FIXED_TIME_STEP    33
