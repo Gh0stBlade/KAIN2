@@ -4,12 +4,7 @@
 #include "STREAM.H"
 #include "BSP.H"
 #include "SIGNAL.H"
-
-struct evControlSaveDataData 
-{
-	long length; // size=0, offset=0
-	void* data; // size=0, offset=4
-};
+#include "Game/SAVEINFO.H"
 
 struct evObjectIdleData 
 {
