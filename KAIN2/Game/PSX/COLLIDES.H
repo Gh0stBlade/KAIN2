@@ -94,7 +94,7 @@ extern void BSP_MarkVisibleLeaves_S(struct BSPTree* bsp, struct Camera* camera, 
 
 extern void G2Quat_FromMatrix_S() ; // 0x800797E8
 
-extern void G2Quat_ToMatrix_S() ; // 0x800799F4
+extern void G2Quat_ToMatrix_S(struct _G2Quat_Type* quat, struct _G2Matrix_Type* matrix); // 0x800799F4
 
 extern void G2Quat_FromEuler_S(struct _G2AnimQuatInfo_Type* quatInfo, struct _G2EulerAngles_Type* preQuat) ; // 0x80079AE4
 
