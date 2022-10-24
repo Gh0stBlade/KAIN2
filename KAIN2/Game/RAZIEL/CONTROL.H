@@ -10,7 +10,7 @@ struct __Force
 	short Friction; // size=0, offset=16
 };
 
-extern struct __Force ExternalForces[];
+extern struct __Force* ExternalForces[4];
 
 extern void SetPhysics(struct _Instance *instance, short gravity, long x, long y, long z); // 0x8009A1B0
 

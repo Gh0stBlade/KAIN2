@@ -113,7 +113,7 @@ void InitStates(struct _Instance* PlayerInstance)
 
 	razSetCowlNoDraw(1);
 
-	InitExternalForces(&ExternalForces[0], 4);
+	InitExternalForces(ExternalForces[0], 4);
 
 	ResetPhysics(PlayerInstance, -16);
 
