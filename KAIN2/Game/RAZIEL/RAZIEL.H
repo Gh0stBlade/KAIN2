@@ -177,4 +177,6 @@ extern struct _G2SVector3_Type* ExtraRot;
 
 extern struct RazielData* PlayerData;
 
+extern struct __Force ExternalForces[4];
+
 #endif

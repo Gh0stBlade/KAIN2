@@ -900,10 +900,6 @@ void G2EmulationSwitchAnimation(struct __CharacterState* In, int CurrentSection,
 	}
 
 	G2EmulationInstanceSwitchAnimation(In->CharacterInstance, CurrentSection, NewAnim, NewFrame, Frames, Mode);
-
-	//var_8 = Frames;
-	//var_4 = Mode
-
 }
 
 

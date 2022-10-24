@@ -30,6 +30,7 @@ int ControlFlag;
 struct _G2SVector3_Type* ExtraRot;
 int WaterStatus;
 _Normal Norm;
+struct __Force ExternalForces[4];
 
 void InitStates(struct _Instance* PlayerInstance)
 {
@@ -113,7 +114,7 @@ void InitStates(struct _Instance* PlayerInstance)
 
 	razSetCowlNoDraw(1);
 
-	InitExternalForces(ExternalForces[0], 4);
+	InitExternalForces(&ExternalForces[0], 4);
 
 	ResetPhysics(PlayerInstance, -16);
 
