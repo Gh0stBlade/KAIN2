@@ -87,16 +87,14 @@ void SPU_Initialise()
 
 void SPU_Destroy()
 {
-    for (int i = 0; i < SPU_MAX_CHANNELS; i++)
-    {
-        SPU_InitialiseChannel(i);
-    }
-
 #if defined(OPENAL)
     for (int i = 0; i < SPU_MAX_CHANNELS; i++)
     {
+        alSourceStop(alSources[i]);
         alDeleteSources(1, &alSources[i]);
+        alDeleteBuffers(1, &alBuffers[i]);
         alSources[i] = 0;
+        alBuffers[i] = 0;
     }
 
     alcDestroyContext(alContext);
@@ -105,6 +103,11 @@ void SPU_Destroy()
     alContext = NULL;
     alDevice = NULL;
 #endif
+
+    for (int i = 0; i < SPU_MAX_CHANNELS; i++)
+    {
+        SPU_InitialiseChannel(i);
+    }
 }
 
 void SPU_InitialiseChannel(int vNum)
@@ -116,7 +119,7 @@ void SPU_InitialiseChannel(int vNum)
     channel->voicePosition = NULL;
     channel->voiceStartAddrs = 0;
     channel->voiceEndFlag = 0;
-    channel->voiceFlags = VOICE_NEW;
+    channel->voiceFlags = VOICE_INITIAL;
     channel->voiceLength = -1;
     channel->s_1 = 0;
     channel->s_2 = 0;
@@ -129,7 +132,7 @@ void SPU_InitialiseChannelKeepStartAddrAndPitch(int vNum)
     channel->voiceEnd = NULL;
     channel->voicePosition = NULL;
     channel->voiceEndFlag = 0;
-    channel->voiceFlags = VOICE_NEW;
+    channel->voiceFlags = VOICE_INITIAL;
     channel->voiceLength = -1;
     channel->s_1 = 0;
     channel->s_2 = 0;

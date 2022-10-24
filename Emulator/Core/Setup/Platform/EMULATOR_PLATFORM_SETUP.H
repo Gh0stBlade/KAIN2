@@ -62,7 +62,9 @@
 #endif
 
 #if defined(OGL) || defined(D3D9) || defined(D3D11) || defined(D3D12) || defined(VULKAN) || defined(UWP_SDL2) && !defined(SN_TARGET_PSP2)
-#define SDL2
+#if !defined(EDITOR)
+	#define SDL2
+#endif
 //#define SDL2_MIXER
 #define OPENAL
 #endif

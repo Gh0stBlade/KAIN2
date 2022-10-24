@@ -1097,13 +1097,8 @@ extern int gte_ldlzc(int input);
 	: "r"( r0 ), "r"( r1 )					\
 	: "$12", "$13", "memory" )
 
-#define gte_ReadGeomScreen( r0 ) __asm__ volatile (		\
-	"cfc2	$12, $26;"					\
-	"nop;"							\
-	"sw	$12, 0( %0 )"					\
-	:							\
-	: "r"( r0 )						\
-	: "$12", "memory" )
+#define gte_ReadGeomScreen( r0 ) \
+		((int*)r0)[0] = H;
 
 #define gte_ReadRotMatrix( r0 ) __asm__ volatile (		\
 	"cfc2	$12, $0;"					\
