@@ -1348,7 +1348,7 @@ void STREAM_UpdateObjectPointer(struct Object *oldObject, struct Object *newObje
 				UNIMPLEMENTED();
 }
 
-void STREAM_UpdateInstanceCollisionInfo(struct _HModel *oldHModel, struct _HModel *newHModel)
+void STREAM_UpdateInstanceCollisionInfo(struct _HModel* oldHModel, struct _HModel* newHModel)
 {
 	struct _Instance* instance;
 
