@@ -21,6 +21,11 @@
 
 long debugHealthLevel;
 long debugManaLevel;
+short debugOrgFogFar; // offset 0x800d20d4
+short debugOrgFogNear; // offset 0x800d20c4
+unsigned char debugOrgFogRed; // offset 0x800d20c8
+unsigned char debugOrgFogGrn; // offset 0x800d20cc
+unsigned char debugOrgFogBlu; // offset 0x800d20d0
 
 void DEBUG_FillUpHealth(long* var);
 void DEBUG_FogLoad();
@@ -1864,6 +1869,14 @@ void DEBUG_UpdateMana(long* var)
 
 void DEBUG_FogRestore()
 {
+	debugFogRed = debugOrgFogRed;
+	debugFogGrn = debugOrgFogGrn;
+	debugFogBlu = debugOrgFogBlu;
+
+	debugFogFar = debugOrgFogFar;
+	debugFogNear = debugOrgFogNear;
+
+	DEBUG_UpdateFog(NULL);
 }
 
 void DEBUG_FillUpHealth(long* var)
