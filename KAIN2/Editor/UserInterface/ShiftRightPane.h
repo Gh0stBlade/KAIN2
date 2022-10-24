@@ -36,7 +36,6 @@ namespace Shift
 	private:
 		QDockWidget* m_shiftPropertyEditorWidget;
 		QGroupBox* m_groupBox;
-		QComboBox* m_comboBox;
 		QVBoxLayout* m_layout;
 		QTimer* m_timer;
 	};

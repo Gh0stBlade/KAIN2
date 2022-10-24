@@ -7,47 +7,6 @@
 ///@FIXME should ideally fix this sometime.
 #pragma warning( disable : 4100 )
 
-#if 0
-int WINAPI WinMain(HINSTANCE hInstance,	HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
-{
-	HWND hWnd;
-	if (!Editor::CreateEditorWindow(hInstance, nShowCmd, windowWidth, windowHeight, hWnd)) {
-		printf("Failed to create editor window!\n");
-		return false;
-	}
-
-	if (!g_engine.getRenderer()->InitialiseD3D11(windowWidth, windowHeight, hWnd)) {
-		printf("Failed to initialise D3D11!\n");
-		return false;
-	}
-
-	if (!Editor::UI::Initalise(hWnd)) {
-		printf("Failed to initialise editor ui!\n");
-		return false;
-	}
-
-	if (!Editor::InitScene()) {
-		printf("Failed to initialise scene!\n");
-		return false;
-	}
-
-	Editor::UI::ApplyTheme();
-
-	if (!g_engine.m_initialised) {
-		g_engine.Initialise();
-	}
-
-	Editor::MessageLoop();
-	
-	Editor::ReleaseObjects();
-
-	Editor::UI::Shutdown();
-
-	return 0;
-}
-#else
-
-
 int main(int argc, char* argv[])
 {
 	QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
@@ -56,7 +15,7 @@ int main(int argc, char* argv[])
 
 	QFile styleFile(":/Dark/Main.qss");
 	styleFile.open(QFile::ReadOnly);
-	
+
 	QString style(styleFile.readAll());
 	a.setStyleSheet(style);
 
@@ -76,5 +35,3 @@ int main(int argc, char* argv[])
 	w.show();
 	return a.exec();
 }
-
-#endif

@@ -28,21 +28,25 @@ Shift::BottomPane::~BottomPane()
 	if (m_consoleWidget != nullptr)
 	{
 		delete m_consoleWidget;
+		m_consoleWidget = nullptr;
 	}
 
 	if (m_groupBox != nullptr)
 	{
 		delete m_groupBox;
+		m_groupBox = nullptr;
 	}
 
 	if (m_textBox != nullptr)
 	{
 		delete m_textBox;
+		m_textBox = nullptr;
 	}
 
 	if (m_button != nullptr)
 	{
 		delete m_button;
+		m_button = nullptr;
 	}
 }
 

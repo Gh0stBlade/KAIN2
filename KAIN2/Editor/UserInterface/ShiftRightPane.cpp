@@ -33,11 +33,6 @@ Shift::RightPane::~RightPane()
         delete m_groupBox;
     }
 
-    if (m_comboBox != nullptr)
-    {
-        delete m_comboBox;
-    }
-
     if (m_shiftPropertyEditorWidget != nullptr)
     {
         delete m_shiftPropertyEditorWidget;

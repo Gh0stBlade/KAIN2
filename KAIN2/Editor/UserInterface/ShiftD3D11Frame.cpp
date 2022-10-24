@@ -242,8 +242,24 @@ void Shift::D3D11Frame::mousePressEvent(QMouseEvent* event)
     }
 }
 
-void Shift::D3D11Frame::pickRayVector(float mouseX, float mouseY, float ClientWidth, float ClientHeight, DirectX::XMVECTOR& rayPos, DirectX::XMVECTOR& rayDir)
+extern void Editor_RayCast(int mouseX, int mouseY, int clientWidth, int clientHeight, VECTOR* rayPos, VECTOR* rayDir);
+
+void Shift::D3D11Frame::pickRayVector(int mouseX, int mouseY, int ClientWidth, int ClientHeight, VECTOR* rayPos, VECTOR* rayDir)
 {
+#if 0//Scrapped no mouse offset stuff. so it will always be 0,0,0->0,0,-1
+    short theta = overrideEditorRotation.x;
+    short phi = overrideEditorRotation.z;
+
+    int xMove = 1024 * rsin(phi) * rcos(theta);
+    int yMove = 1024 * rcos(phi) * rcos(theta);
+    int zMove = 1024 * rsin(theta);
+
+    VECTOR resultPosition;
+    resultPosition.vx = overrideEditorPosition.x - xMove >> 20;
+    resultPosition.vy = overrideEditorPosition.y + yMove >> 20;
+    resultPosition.vz = overrideEditorPosition.z + zMove >> 8;
+#endif
+
 #if 0
     //Normalized device coordinates
     DirectX::XMVECTOR pickRayViewSpace = DirectX::XMVectorSet(
@@ -414,9 +430,9 @@ void Shift::D3D11Frame::mouseReleaseEvent(QMouseEvent* event)
     }
     else if (event->button() == Qt::LeftButton)
     {
-        static DirectX::XMVECTOR rayPosition, rayDirection;
-        pickRayVector(event->localPos().x(), event->localPos().y(), windowWidthf, windowHeightf, rayPosition, rayDirection);
-        CheckIfRayIntersectedWithAnySceneObject(rayPosition, rayDirection);
+        VECTOR rayPosition, rayDirection;
+        pickRayVector(event->localPos().x(), event->localPos().y(), g_overrideWidth, g_overrideHeight, &rayPosition, &rayDirection);
+        //CheckIfRayIntersectedWithAnySceneObject(rayPosition, rayDirection);
     }
 }
 

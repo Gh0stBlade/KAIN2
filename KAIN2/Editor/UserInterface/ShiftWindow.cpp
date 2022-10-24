@@ -81,36 +81,43 @@ ShiftWindow::~ShiftWindow()
     if (m_panes.m_menuBar != nullptr)
     {
         delete m_panes.m_menuBar;
+        m_panes.m_menuBar = nullptr;
     }
 
     if (m_panes.m_toolBar != nullptr)
     {
         delete m_panes.m_toolBar;
+        m_panes.m_toolBar = nullptr;
     }
 
     if (m_panes.m_leftPane != nullptr)
     {
         delete m_panes.m_leftPane;
+        m_panes.m_leftPane = nullptr;
     }
 
     if (m_panes.m_centerPane != nullptr)
     {
         delete m_panes.m_centerPane;
+        m_panes.m_centerPane = nullptr;
     }
 
     if (m_panes.m_rightPane != nullptr)
     {
         delete m_panes.m_rightPane;
+        m_panes.m_rightPane = nullptr;
     }
 
     if (m_panes.m_bottomPane != nullptr)
     {
         delete m_panes.m_bottomPane;
+        m_panes.m_bottomPane = nullptr;
     }
 
     if (m_panes.m_toolBox != nullptr)
     {
         delete m_panes.m_toolBox;
+        m_panes.m_toolBox = nullptr;
     }
 }
 

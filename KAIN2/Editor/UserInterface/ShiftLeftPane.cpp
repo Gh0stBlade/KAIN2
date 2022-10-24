@@ -21,10 +21,9 @@ Shift::LeftPane::LeftPane(QWidget* parent)
 
     m_comboBox = new QComboBox(m_groupBox);
     m_comboBox->setGeometry(23, 23, 75, 20);
-    m_groupBox->setLayout(this);
+    //m_groupBox->setLayout(this);
 
-    addWidget(m_groupBox);
-
+    m_zoneSliceManagerWidget->setObjectName("zoneslicemanager");
     m_zoneSliceManagerWidget->setObjectName("zoneslicemanager");
     m_zoneSliceManagerWidget->setAllowedAreas(Qt::LeftDockWidgetArea);
     m_zoneSliceManagerWidget->setFixedWidth(278);
@@ -70,51 +69,68 @@ Shift::LeftPane::~LeftPane()
     if (m_labelObjects != nullptr)
     {
         delete m_labelObjects;
+        m_labelObjects = nullptr;
     }
 
     if (m_labelMeshes != nullptr)
     {
         delete m_labelMeshes;
+        m_labelMeshes = nullptr;
     }
 
     if (m_labelOther != nullptr)
     {
         delete m_labelOther;
+        m_labelOther = nullptr;
     }
 
     if (m_labelUnits != nullptr)
     {
         delete m_labelUnits;
+        m_labelUnits = nullptr;
     }
 
     if (m_labelInUse != nullptr)
     {
         delete m_labelInUse;
+        m_labelInUse = nullptr;
     }
 
     if (m_labelFav != nullptr)
     {
         delete m_labelFav;
+        m_labelFav = nullptr;
+    }
+
+    if (m_timer != nullptr)
+    {
+        m_timer->stop();
+        delete m_timer;
+        m_timer = nullptr;
     }
 
     if (m_comboBox != nullptr)
     {
         delete m_comboBox;
+        m_comboBox = nullptr;
     }
 
     if (m_groupBox != nullptr)
     {
         delete m_groupBox;
+        m_groupBox = nullptr;
     }
 
     if (m_zoneSliceManagerWidget != nullptr)
     {
         delete m_zoneSliceManagerWidget;
+        m_zoneSliceManagerWidget = nullptr;
     }
 
     if (m_placementBrowserWidget != nullptr)
     {
         delete m_placementBrowserWidget;
+        m_placementBrowserWidget = nullptr;
     }
 }
 
@@ -170,6 +186,20 @@ void Shift::LeftPane::zoneIndexChanged(int index)
             if (numUsedStreams == index)
             {
                 g_selectedUnit = StreamTracker.StreamList[i].level;
+
+                for (int j = 0; j < g_selectedUnit->numIntros; j++)
+                {
+                    struct Intro* intro = &g_selectedUnit->introList[j];
+
+                    if (!(strcmp(intro->name, "raziel")))
+                    {
+                        extern struct _Position overrideEditorPosition;
+
+                        overrideEditorPosition.x = intro->position.x;
+                        overrideEditorPosition.y = intro->position.y;
+                        overrideEditorPosition.z = intro->position.z;
+                    }
+                }
             }
 
             numUsedStreams++;

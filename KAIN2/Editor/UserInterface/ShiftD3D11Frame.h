@@ -9,6 +9,7 @@
 
 #include <DirectXMath.h>
 #include "ShiftPanes.h"
+#include "Game/CORE.H"
 
 namespace Shift
 {
@@ -44,7 +45,7 @@ namespace Shift
         bool m_dragging;
         QPoint m_previousMousePosition;
         QLabel* m_labelItemsCount;
-        void pickRayVector(float mouseX, float mouseY, float ClientWidth, float ClientHeight, DirectX::XMVECTOR& rayPos, DirectX::XMVECTOR& rayDir);
+        void pickRayVector(int mouseX, int mouseY, int ClientWidth, int ClientHeight, VECTOR* rayPos, VECTOR* rayDir);
         //bool rayBoxIntersect(DirectX::XMVECTOR& rpos, DirectX::XMVECTOR& rdir, Engine::Vector3& boxMin, Engine::Vector3& boxMax, DirectX::XMMATRIX& transform);
         void CheckIfRayIntersectedWithAnySceneObject(DirectX::XMVECTOR& rayPosition, DirectX::XMVECTOR& rayDirection);
         QSize getRatio(QSize currentResolution);

@@ -51,9 +51,13 @@ void Shift::MenuBar::DoOpenZone()
     m_zoneComboBox = new QComboBox(m_groupBox);
 
     const char* zoneNames[] = {
+                "train6",
+                "train5",
+                "under4",
                 "under2",
                 "under3",
                 "pillars9",
+                "stone4",
                 "stone5",
                 "fire3",
                 "train9",
