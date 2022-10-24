@@ -161,6 +161,7 @@ ALuint Mix_LoadAudioChunk(int vNum, unsigned char* address)
 
 void Mix_ChannelFinishedPlayingCallback(int channel)
 {
+    alSourceStop(alSources[channel]);
     alDeleteBuffers(1, &alBuffers[channel]);
     alBuffers[channel] = 0;
 

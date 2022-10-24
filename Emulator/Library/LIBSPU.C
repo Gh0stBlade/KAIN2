@@ -1596,7 +1596,7 @@ void SpuSetVoiceStartAddr(int vNum, unsigned long startAddr)
     {
         for (int i = 0; i < SPU_MAX_CHANNELS; i++)
         {
-            if ((channelList[i].voiceFlags & VOICE_NEW) && !(channelList[i].voiceFlags & VOICE_PLAYING) && _spu_keystat_last & (1 << vNum))
+            if ((channelList[i].voiceFlags == VOICE_INITIAL) && _spu_keystat_last & (1 << vNum))
             {
                 foundFree = TRUE;
                 //Key on! hacky

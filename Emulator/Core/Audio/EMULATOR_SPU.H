@@ -20,6 +20,7 @@
 
 enum Flags
 {
+    VOICE_INITIAL = 0,
     VOICE_NEW = (1 << 0),
     VOICE_PLAYING = (1 << 1),
 };
