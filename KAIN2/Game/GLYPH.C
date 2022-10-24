@@ -182,7 +182,7 @@ int _GlyphIsGlyphSet(int glyph)
 
 	abilities = INSTANCE_Query(gameTrackerX.playerInstance, 0x24) | debugRazielFlags3;
 	
-	return abilities & 1 << (glyph + 0x11);
+	return abilities & (1 << (glyph + 0x11));
 }
 
 int _GlyphIsGlyphUsable(int glyph)
