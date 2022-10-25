@@ -9,6 +9,7 @@ External/
 /Build_PSP2/*
 /Build_NX_Win/*
 /Build_NX_Arm/*
+/Build_Linux/*
 Emulator/Shaders/D3D9/*.h
 Emulator/Shaders/D3D11/*.h
 Emulator/Shaders/D3D12/*.h
@@ -18,3 +19,5 @@ Emulator/Shaders/GXM/*.gxp.obj
 Emulator/Shaders/GXM/*.sdb
 Emulator/Shaders/NVN/*.bnsh
 /Binaries/*
+
+/.vs/*

@@ -83,7 +83,7 @@ typedef RECT PSX_RECT;
 	((int*)&VX0)[0] = r0;     \
 
 #pragma warning(disable: 4101)//Unreferenced local var.
-#if defined(__ANDROID__) || defined(SN_TARGET_PSP2) || defined(PLATFORM_NX_ARM)
+#if defined(__ANDROID__) || defined(SN_TARGET_PSP2) || defined(PLATFORM_NX_ARM) || defined(__linux__)
 #define strcmpi strcmp
 #define _strcmpi strcmp
 #endif

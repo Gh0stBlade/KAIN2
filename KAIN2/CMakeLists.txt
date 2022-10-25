@@ -1,5 +1,5 @@
 set(KAIN2_ROOT ${CMAKE_CURRENT_SOURCE_DIR})
 add_subdirectory(Game)
-if(NOT EMSCRIPTEN AND NOT ANDROID)
+if(NOT UNIX AND NOT EMSCRIPTEN AND NOT ANDROID)
 add_subdirectory(Editor)
 endif()

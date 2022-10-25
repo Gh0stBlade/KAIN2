@@ -50,7 +50,7 @@ typedef	struct	label_t	{
 	int	val[12];
 } label_t;
 
-#if !defined(__ANDROID__)
+#if !defined(__ANDROID__) && !defined(__linux__)
 typedef	struct	_quad { long val[2]; } quad;
 typedef	long	daddr_t;
 typedef	char *	caddr_t;
