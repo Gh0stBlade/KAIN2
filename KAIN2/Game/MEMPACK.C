@@ -298,7 +298,7 @@ char * MEMPACK_MallocFailOk(unsigned long allocSize, unsigned char memType)
 	return null;
 }
 
-void MEMORY_MergeAddresses(struct MemHeader *firstAddress, struct MemHeader *secondAddress)//Matching - 100.0%
+void MEMORY_MergeAddresses(struct MemHeader* firstAddress, struct MemHeader* secondAddress)//Matching - 100.0%
 {
 	if (firstAddress->memStatus == 0 && secondAddress->memStatus == 0)
 	{
