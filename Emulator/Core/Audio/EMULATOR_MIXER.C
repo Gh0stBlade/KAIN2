@@ -117,77 +117,9 @@ void Mix_Initialise()
 #elif defined(OPENAL)
 
 SDL_TimerID audioTimer;
-ALuint mixerChunks[SPU_MAX_CHANNELS];
 char MixChannelToSPUChannel[SPU_MAX_CHANNELS];
 
 extern int SPU_GetADPCMSize(unsigned char* pADPCM);
-
-ALuint Mix_LoadAudioChunk(int vNum, unsigned char* address)
-{
-    if (address == NULL)
-    {
-        return NULL;
-    }
-
-#if defined(OLD_SYSTEM)
-    unsigned int tempPcmLength = SPU_GetADPCMSize(address) * 2;
-    unsigned short* pcm = new unsigned short[tempPcmLength];
-#else
-    unsigned short pcm[AUDIO_CHUNK_SIZE_PCM / 2];
-#endif
-    unsigned int pcmLength = SPU_DecodeAudioFrame(address, pcm, &channelList[vNum]);
-
-#if !defined(OPENAL)
-    int resampledPCMLength = 0;
-    unsigned char* resampledPCM = Resample_PCM(channelList[vNum].voicePitches, SPU_PLAYBACK_FREQUENCY, (short*)&pcm[0], pcmLength, &resampledPCMLength);
-#endif
-
-#if 1
-    alGenBuffers(1, &alBuffers[vNum]);
-    alBufferData(alBuffers[vNum], AL_FORMAT_MONO16, pcm, pcmLength, channelList[vNum].voicePitches);
-    unsigned int err = alGetError();
-    err++;
-#else
-    Mix_Chunk* waveChunk = Mix_QuickLoad_RAW((unsigned char*)pcm, pcmLength);
-#endif
-
-#if defined(OLD_SYSTEM)
-    delete[] pcm;
-    pcm = NULL;
-#endif
-
-    return alBuffers[vNum];
-}
-
-void Mix_ChannelFinishedPlayingCallback(int channel)
-{
-    alSourceStop(alSources[channel]);
-    alDeleteBuffers(1, &alBuffers[channel]);
-    alBuffers[channel] = 0;
-
-    if (channelList[channel].voiceEndFlag)//End flag
-    {
-        _spu_keystat_last &= ~(1 << channel);
-        SPU_InitialiseChannelKeepStartAddrAndPitch(channel);
-        MixChannelToSPUChannel[channel] = 0;
-    }
-    else
-    {
-        channelList[channel].voicePosition += AUDIO_CHUNK_SIZE;
-        channelList[channel].voiceFlags |= VOICE_NEW;
-    }
-}
-
-void Mix_Play(int vNum, unsigned char* address, int timeMs)
-{
-    ALuint waveChunk = Mix_LoadAudioChunk(vNum, address);
-
-    if (waveChunk != NULL)
-    {
-        alSourcei(alSources[vNum], AL_BUFFER, alBuffers[vNum]);
-        alSourcePlay(alSources[vNum]);
-    }
-}
 
 void Mix_Initialise()
 {

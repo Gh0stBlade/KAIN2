@@ -20,8 +20,8 @@
 ALCdevice* alDevice = NULL;
 ALCcontext* alContext = NULL;
 
-ALuint alSources[24];
-ALuint alBuffers[24];
+ALuint alSources[SPU_MAX_CHANNELS];
+ALuint alBuffers[SPU_MAX_CHANNELS];
 ALboolean alHasAudioData[24];
 
 #elif defined(XAUDIO2)
@@ -36,6 +36,8 @@ IXAudio2SourceVoice* pSourceVoices[24];
 #endif
 
 struct Channel channelList[SPU_MAX_CHANNELS];
+short g_spuLeftVol = 0;
+short g_spuRightVol = 0;
 
 #include <string.h>
 
@@ -1412,6 +1414,13 @@ unsigned long _SpuSetAnyVoice(long on_off, unsigned long voice_bit, int a2, int 
 
 unsigned long SpuSetReverbVoice(long on_off, unsigned long voice_bit)
 {
+    for (int i = 0; i < 32; i++)
+    {
+        if (voice_bit & (1 << i))
+        {
+            channelList[i].reverb = TRUE;
+        }
+    }
     return _SpuSetAnyVoice(on_off, voice_bit, 204, 205);
 }
 
@@ -1453,6 +1462,8 @@ void SpuFree(unsigned long addr)
 
 void SpuSetCommonMasterVolume(short mvol_left, short mvol_right)//(F)
 {
+    g_spuLeftVol = mvol_left & 0x7FFF;
+    g_spuRightVol = mvol_right & 0x7FFF;
     _spu_RXX[192] = mvol_left & 0x7FFF;
     _spu_RXX[193] = mvol_right & 0x7FFF;
 }
@@ -1501,6 +1512,7 @@ void SpuSetVoicePitch(int vNum, unsigned short pitch)
     unsigned int frequency = pitch * 44100 / 4096;
     
     channelList[vNum].voicePitches = frequency;
+    channelList[vNum].voiceSteps = pitch;
 
 #endif
 }
@@ -1592,27 +1604,16 @@ void SpuSetVoiceStartAddr(int vNum, unsigned long startAddr)
     int foundFree = FALSE;
 
     //IF the voice is playing find a free channel (hack!)
-    if (channelList[vNum].voiceFlags & VOICE_PLAYING)
+    for (int i = 0; i < SPU_MAX_CHANNELS; i++)
     {
-        for (int i = 0; i < SPU_MAX_CHANNELS; i++)
+        if ((channelList[i].voiceFlags == VOICE_INITIAL))
         {
-            if ((channelList[i].voiceFlags == VOICE_INITIAL) && _spu_keystat_last & (1 << vNum))
-            {
-                foundFree = TRUE;
-                //Key on! hacky
-                _spu_keystat_last |= (1 << i);
-               
-                //Copy values in
-                channelList[i].voicePitches = channelList[vNum].voicePitches;
-                vNum = i;
-
-                break;
-            }
+            foundFree = TRUE;
+            //Key on! hacky
+            _spu_keystat_last |= (1 << vNum);
+            
+            break;
         }
-    }
-    else
-    {
-        foundFree = TRUE;
     }
 
     //If this occurs channel pool is exhausted!
@@ -1652,7 +1653,8 @@ void SpuSetVoiceVolume(int vNum, short volL, short volR)
     Mix_Volume(vNum, newVol);
     Mix_SetPanning(vNum, volL / 128, volR / 128);
 #elif defined(OPENAL)
-    alSourcef(alSources[vNum], AL_GAIN, /*volL /*/ 32767.0f);///@FIXME only left supported?
+    channelList[vNum].volL = volL;
+    channelList[vNum].volR = volR;
 #elif defined(XAUDIO2)
    pMasterVoice->SetVolume(volL / 32767.0f, 0);
 #endif
