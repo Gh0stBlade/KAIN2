@@ -48,7 +48,7 @@ struct AadSynthVoice* aadAllocateVoice(int priority)//Matching - 70.49%
 				{
 					if (voice->priority < lowestPriRel)
 					{
-						lowestPriRel = voice->priority;
+						lowestPriRel = priority;
 						lowestPriRelVoice = voice;
 					}
 				}
@@ -61,28 +61,32 @@ struct AadSynthVoice* aadAllocateVoice(int priority)//Matching - 70.49%
 					}
 				}
 			}
-		}
-		else
-		{
-			aadMem->voiceStatus[i] = 1;
-			voice->flags |= 0x2;
-			return voice;
+			else
+			{
+				aadMem->voiceStatus[i] = 1;
+
+				voice->flags |= 0x2;
+
+				return voice;
+			}
 		}
 	}
 
 	if (priority >= lowestPriRel)
 	{
-		lowestPriRelVoice->flags |= 2;
+		lowestPriRelVoice->flags |= 0x2;
 		return lowestPriRelVoice;
 	}
-	else if (priority >= lowestPriSus)
+
+	if (priority >= lowestPriSus)
 	{
-		lowestPriSusVoice->flags |= 2;
+		lowestPriSusVoice->flags |= 0x2;
 		return lowestPriSusVoice;
 	}
 
-	return voice;
+	return NULL;
 }
+
 void SpuSetVoiceADSR1ADSR2(int vNum, unsigned short adsr1, unsigned short adsr2)
 { 
 	unsigned short sl;
