@@ -199,7 +199,7 @@ void aadPlayTone(struct AadToneAtr* toneAtr, unsigned long waveStartAddr, struct
 
 	tmp = GET_VOLUME_SQUARED(slotVolume + 1);
 	masterVolumeSquared = tmp - 1;
-
+/* WTF?
 	voiceVol.left = (voiceVol.left * masterVolumeSquared) >> 14;
 	voiceVol.right = ((voiceVol.right * pitch) >> 14);
 
@@ -208,7 +208,7 @@ void aadPlayTone(struct AadToneAtr* toneAtr, unsigned long waveStartAddr, struct
 
 	voiceVol.left = (voiceVol.left * masterVolumeSquared) >> 14;
 	voiceVol.right = (voiceVol.right * pitch) >> 14;
-
+*/
 	SpuSetVoiceVolume(voice->voiceNum, voiceVol.left, voiceVol.right);
 
 	pitchIndex = midiNote - (toneAtr->centerNote - 60);

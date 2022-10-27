@@ -232,11 +232,6 @@ long aadSlotUpdateWrapper()
 
 	//SetGp(curGp);
 
-#if defined(SINGLE_THREADED_AUDIO) || 1 && !defined(__ANDROID__)// && !defined(EDITOR)
-	extern void SPU_Update();
-	SPU_Update();
-#endif
-
 	return 0;
 }
 

@@ -2245,7 +2245,7 @@ static int Emulator_InitialiseSDL2(char* windowName, int width, int height)
 
 #if defined(SDL2)
 
-	unsigned int flags = SDL_INIT_VIDEO | SDL_INIT_TIMER;
+	unsigned int flags = SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_AUDIO;
 
 #if defined(SDL2_MIXER)
 	flags |= SDL_INIT_AUDIO;
@@ -6147,11 +6147,6 @@ void Emulator_ShutDown()
 
 	SDL_Quit();
 #endif
-
-	if(audioThread.joinable())
-	{
-		audioThread.join();
-	}
 
 #if defined(_WINDOWS)
 #if defined(MEM_CHECK)

@@ -1489,7 +1489,7 @@ void SpuSetReverbModeDepth(short depth_left, short depth_right)//(F)
 
 void SpuGetVoicePitch(int vNum, unsigned short* pitch)
 {
-
+    *pitch = channelList[vNum].pitch;
 }
 
 void SpuSetVoicePitch(int vNum, unsigned short pitch)
@@ -1497,24 +1497,7 @@ void SpuSetVoicePitch(int vNum, unsigned short pitch)
     short* p = (short*)&_spu_RXX[vNum << 2];
     p[3] = pitch;
 
-#if defined(SDL2_MIXER) || defined(OPENAL) || defined(XAUDIO2)
-
-    if (pitch > 0x3FFF)
-    {
-        pitch = 0x3FFF;
-    }
-
-    if (pitch < 1)
-    {
-        pitch = 1;
-    }
-
-    unsigned int frequency = pitch * 44100 / 4096;
-    
-    channelList[vNum].voicePitches = frequency;
-    channelList[vNum].voiceSteps = pitch;
-
-#endif
+    channelList[vNum].pitch = pitch;
 }
 
 void SpuSetCommonCDMix(long cd_mix)
@@ -1606,7 +1589,7 @@ void SpuSetVoiceStartAddr(int vNum, unsigned long startAddr)
     //IF the voice is playing find a free channel (hack!)
     for (int i = 0; i < SPU_MAX_CHANNELS; i++)
     {
-        if ((channelList[i].voiceFlags == VOICE_INITIAL))
+        if (!channelList[i].data)
         {
             foundFree = TRUE;
             //Key on! hacky
@@ -1619,9 +1602,7 @@ void SpuSetVoiceStartAddr(int vNum, unsigned long startAddr)
     //If this occurs channel pool is exhausted!
     SDL_assert(foundFree);
 
-    channelList[vNum].voiceStartAddrs = startAddr;//startAddr / 8;//_spu_tsa;
-    channelList[vNum].voiceFlags = VOICE_NEW;
-    channelList[vNum].voicePosition = NULL;
+    channelList[vNum].data = (uint8_t*)spuSoundBuffer + startAddr;//startAddr / 8;//_spu_tsa;
 #endif
 }
 
@@ -1634,30 +1615,8 @@ void SpuSetVoiceVolume(int vNum, short volL, short volR)
     p[0] = volL;
     p[1] = volR;
 
-#if defined(SDL2_MIXER)
-
-#define VOL_MAX 16383
-#define VOL_MIN 0
-
-#define MIXER_VOL_MAX 128
-#define MIXER_VOL_MIN 0
-
-#define GET_VOL(x) (((x - VOL_MIN) * (MIXER_VOL_MAX - MIXER_VOL_MIN)) / (VOL_MAX - VOL_MIN)) + MIXER_VOL_MIN
-#define GET_VOL_PAN(x) (((x - VOL_MIN) * (MIXER_VOL_MAX - MIXER_VOL_MIN)) / (VOL_MAX - VOL_MIN)) + MIXER_VOL_MIN
-
-    int newVolL = GET_VOL(volL);
-    int newVolR = GET_VOL(volR);
-
-    int newVol = newVolL < newVolR ? newVolR : newVolL;
-
-    Mix_Volume(vNum, newVol);
-    Mix_SetPanning(vNum, volL / 128, volR / 128);
-#elif defined(OPENAL)
     channelList[vNum].volL = volL;
     channelList[vNum].volR = volR;
-#elif defined(XAUDIO2)
-   pMasterVoice->SetVolume(volL / 32767.0f, 0);
-#endif
 }
 
 long SpuClearReverbWorkArea(long mode)
