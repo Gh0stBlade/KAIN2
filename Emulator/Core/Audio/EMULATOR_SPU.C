@@ -46,7 +46,7 @@ int32_t vagProcessBlock(Channel* channel, int16_t* dst)
     uint8_t shift = pred & 0x0F;
     pred >>= 4;
 
-    if (flags == 7)
+    if (flags & 1)
     {
         return 0;
     }
