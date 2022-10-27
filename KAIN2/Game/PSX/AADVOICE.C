@@ -159,56 +159,46 @@ void aadPlayTone(struct AadToneAtr* toneAtr, unsigned long waveStartAddr, struct
 #define GET_MASTER_VOL_SHIFT(x, y) (y * (x)) >> 14
 #define GET_MASTER_VOL(x, y) (y * (x))
 
-	voiceVol.right = GET_VOLUME_SQUARED(volume + 1) - 1;
-	voiceVol.left = GET_VOLUME_SQUARED(volume + 1) - 1;
+
+	voiceVol.right = ((volume + 1) * (volume + 1)) - 1;
+	voiceVol.left = ((volume + 1) * (volume + 1)) - 1;
 
 	if (!(aadMem->flags & 0x1))
 	{
-		if (masterPan >= 65)
+		if (masterPan >= 0x41)
 		{
-			voiceVol.left = GET_MASTER_PAN_LEFT(voiceVol.left, masterPan);
+			voiceVol.left = ((((volume + 1) * (volume + 1)) - 1) * (((0x80 - masterPan) * (0x80 - masterPan)) - 1) >> 12);
 		}
-		else if (masterPan < 63)
+		else if (masterPan < 0x3F)
 		{
-			voiceVol.right = GET_MASTER_PAN_RIGHT(voiceVol.right, masterPan);
+			voiceVol.right = ((((volume + 1) * (volume + 1)) - 1) * (((masterPan + 1) * (masterPan + 1)) + 1) >> 12);
 		}
 	}
 
-	masterVolumeSquared = GET_VOLUME_SQUARED(toneAtr->volume + 1) - 1;
-	voiceVol.left = (voiceVol.left * masterVolumeSquared) >> 14;
-	voiceVol.right = (voiceVol.right * masterVolumeSquared) >> 14;
+	voiceVol.left = (voiceVol.left * (((toneAtr->volume + 1) * (toneAtr->volume + 1)) - 1)) >> 14;
+	voiceVol.right = (voiceVol.right * (((toneAtr->volume + 1) * (toneAtr->volume + 1)) - 1)) >> 14;
 
 	if (!(aadMem->flags & 0x1))
 	{
 		if (toneAtr->panPosition >= 65)
 		{
-			voiceVol.left = GET_MASTER_PAN_LEFT(voiceVol.left, toneAtr->panPosition);
+			voiceVol.left = (voiceVol.right * (((0x80 - toneAtr->panPosition) * (0x80 - toneAtr->panPosition)) - 1)) >> 12;
 		}
 		else if (toneAtr->panPosition < 63)
 		{
-			voiceVol.right = GET_MASTER_PAN_RIGHT(voiceVol.right, toneAtr->panPosition);
+			voiceVol.right = (voiceVol.left * (((toneAtr->panPosition + 1) * (toneAtr->panPosition + 1)) + 1)) >> 12;
 		}
 	}
 
-	masterVolumeSquared = GET_VOLUME_SQUARED(masterVolume + 1) - 1;
-	voiceVol.left = GET_MASTER_VOL_SHIFT(masterVolumeSquared, voiceVol.left);
-	voiceVol.right = GET_MASTER_VOL_SHIFT(masterVolumeSquared, voiceVol.right);
+	voiceVol.left = (voiceVol.left * (((masterVolume + 1) * (masterVolume + 1)) - 1)) >> 14;
+	voiceVol.right = (voiceVol.right * (((masterVolume + 1) * (masterVolume + 1)) - 1)) >> 14;
+	voiceVol.left = (voiceVol.left * (((progAtr->volume + 1) * (progAtr->volume + 1)) - 1)) >> 14;
+	voiceVol.right = (voiceVol.right * (((progAtr->volume + 1) * (progAtr->volume + 1)) - 1)) >> 14;
+	voiceVol.left = (voiceVol.left * (((slotVolume + 1) * (slotVolume + 1)) - 1)) >> 14;
+	voiceVol.right = (voiceVol.right * (((slotVolume + 1) * (slotVolume + 1)) - 1)) >> 14;
+	voiceVol.left = (voiceVol.left * (((masterMasterVol + 1) * (masterMasterVol + 1)) - 1)) >> 14;
+	voiceVol.right = (voiceVol.right * (((masterMasterVol + 1) * (masterMasterVol + 1)) - 1)) >> 14;
 
-	tmp = GET_VOLUME_SQUARED(progAtr->volume + 1);
-	pitch = tmp - 1;
-
-	tmp = GET_VOLUME_SQUARED(slotVolume + 1);
-	masterVolumeSquared = tmp - 1;
-/* WTF?
-	voiceVol.left = (voiceVol.left * masterVolumeSquared) >> 14;
-	voiceVol.right = ((voiceVol.right * pitch) >> 14);
-
-	voiceVol.left = (voiceVol.left * masterVolumeSquared) >> 14;
-	voiceVol.right = (voiceVol.right * pitch) >> 14;
-
-	voiceVol.left = (voiceVol.left * masterVolumeSquared) >> 14;
-	voiceVol.right = (voiceVol.right * pitch) >> 14;
-*/
 	SpuSetVoiceVolume(voice->voiceNum, voiceVol.left, voiceVol.right);
 
 	pitchIndex = midiNote - (toneAtr->centerNote - 60);
@@ -216,15 +206,13 @@ void aadPlayTone(struct AadToneAtr* toneAtr, unsigned long waveStartAddr, struct
 	if ((toneAtr->centerFine & 0x80))
 	{
 		pitchIndex = 256 - toneAtr->centerFine;
-		finePitch = toneAtr->centerFine;
-		tmp = (aadStepsPerCent[pitchIndex] * 100) * finePitch;
-		finePitch = aadPitchTable[pitchIndex * pitchIndex] + (tmp >> 23);
+		tmp = toneAtr->centerFine * ((unsigned short)aadStepsPerCent[pitchIndex] * 100);
+		finePitch = (unsigned short)aadPitchTable[pitchIndex * pitchIndex] - (tmp >> 23);
 	}
 	else
 	{
-		finePitch = toneAtr->centerFine;
-		tmp = (aadStepsPerCent[pitchIndex] * 100) * finePitch;
-		finePitch = aadPitchTable[pitchIndex] + (tmp >> 23);
+		tmp = aadStepsPerCent[pitchIndex] * 100 * toneAtr->centerFine >> 23;
+		finePitch = tmp + (unsigned short)aadPitchTable[pitchIndex];
 	}
 
 	SpuSetVoicePitch(voice->voiceNum, (finePitch + pitchOffset) & 0xFFFF);
