@@ -46,11 +46,6 @@ int32_t vagProcessBlock(Channel* channel, int16_t* dst)
     uint8_t shift = pred & 0x0F;
     pred >>= 4;
 
-    if (flags & 1)
-    {
-        return 0;
-    }
-
     for (i = 0; i < 14; i++)
     {
         d = *src++;
@@ -58,7 +53,29 @@ int32_t vagProcessBlock(Channel* channel, int16_t* dst)
         *dst++ = vagPredicate((d & 0xF0) <<  8, pred, shift, &s1, &s2);
     }
 
-    channel->pos += 16;
+    if (flags & 4) // set loop start
+    {
+        channel->loop = channel->data + channel->pos;
+        channel->loop_s1 = channel->s1;
+        channel->loop_s2 = channel->s2;
+    }
+
+    if (flags & 1) // end
+    {
+        if (flags & 2) // goto loop start
+        {
+            eassert(channel->loop);
+            src = channel->loop;
+            s1 = channel->loop_s1;
+            s2 = channel->loop_s2;
+        }
+        else
+        {
+            return 0; // stop TODO Release
+        }
+    }
+
+    channel->pos = src - channel->data;
     channel->s1 = s1;
     channel->s2 = s2;
 
@@ -84,9 +101,6 @@ void fillVAG(Channel* channel, int32_t count)
             if (!vagProcessBlock(channel, channel->block))
             {
                 channel->data = NULL;
-                channel->pos = 0;
-                channel->s1 = 0;
-                channel->s2 = 0;
                 blockPos = BLOCK_END;
                 break;
             }
@@ -162,4 +176,13 @@ void SPU_Destroy()
 {
     SDL_PauseAudioDevice(gAudioDevice,1);
     SDL_CloseAudioDevice(gAudioDevice);
+}
+
+void SPU_ResetChannel(Channel* channel, uint8_t* data)
+{
+    channel->pos = 0;
+    channel->s1 = 0;
+    channel->s2 = 0;
+    channel->data = data;
+    channel->loop = NULL;
 }

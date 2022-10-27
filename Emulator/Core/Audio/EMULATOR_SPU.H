@@ -32,6 +32,8 @@ typedef struct Channel
     int32_t blockPos;
     int16_t block[28];
     uint8_t* data;
+    uint8_t* loop;
+    int32_t loop_s1, loop_s2;
 } channel;
 
 extern short g_spuLeftVol;
@@ -41,6 +43,6 @@ extern struct Channel channelList[SPU_MAX_CHANNELS];
 
 void SPU_Initialise();
 void SPU_Destroy();
-
+void SPU_ResetChannel(Channel* channel, uint8_t* data);
 
 #endif

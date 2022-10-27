@@ -1583,9 +1583,7 @@ void SpuSetVoiceStartAddr(int vNum, unsigned long startAddr)
         var_4 *= 13;
     }
 
-#if defined(SDL2_MIXER) || defined(OPENAL) || defined(XAUDIO2)
-    channelList[vNum].data = (uint8_t*)spuSoundBuffer + startAddr;//startAddr / 8;//_spu_tsa;
-#endif
+    SPU_ResetChannel(channelList + vNum, (uint8_t*)spuSoundBuffer + startAddr);
 }
 
 void SpuSetVoiceVolume(int vNum, short volL, short volR)
