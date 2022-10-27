@@ -21,7 +21,7 @@ short aadPitchTable[85] = {
   0x32cb,0x35d1,0x3904,0x3c68,0x3fff
 };
 
-struct AadSynthVoice* aadAllocateVoice(int priority)//Matching - 70.49%
+struct AadSynthVoice* aadAllocateVoice(int priority)//Matching - 99.67%
 {
 	int i;
 	int lowestPriSus;
@@ -42,7 +42,15 @@ struct AadSynthVoice* aadAllocateVoice(int priority)//Matching - 70.49%
 
 		if (!(voice->flags & 0x1))
 		{
-			if (aadMem->voiceStatus[i] != 0)
+			if (aadMem->voiceStatus[i] == 0)
+			{
+				aadMem->voiceStatus[i] = 1;
+
+				voice->flags |= 0x2;
+
+				return voice;
+			}
+			else
 			{
 				if (aadMem->voiceStatus[i] == 2)
 				{
@@ -60,14 +68,6 @@ struct AadSynthVoice* aadAllocateVoice(int priority)//Matching - 70.49%
 						lowestPriSusVoice = voice;
 					}
 				}
-			}
-			else
-			{
-				aadMem->voiceStatus[i] = 1;
-
-				voice->flags |= 0x2;
-
-				return voice;
 			}
 		}
 	}
