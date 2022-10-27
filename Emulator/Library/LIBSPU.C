@@ -217,7 +217,7 @@ void SpuGetAllKeysStatus(char* status)
 	{
 		if ((_spu_keystat & (1 << i)))
 		{
-			if ((unsigned short)_spu_RXX[(i << 3) + 6] != 0)
+			if (channelList[i].data) //(unsigned short)_spu_RXX[(i << 3) + 6] != 0)
 			{
 				*status = 1;
 			}
@@ -229,7 +229,7 @@ void SpuGetAllKeysStatus(char* status)
 		else
 		{
 			//loc_330
-			if (_spu_RXX[(i << 3) + 6] != 0)
+            if (channelList[i].data)//_spu_RXX[(i << 3) + 6] != 0)
 			{
 				*status = 2;
 			}
@@ -1582,26 +1582,8 @@ void SpuSetVoiceStartAddr(int vNum, unsigned long startAddr)
     {
         var_4 *= 13;
     }
+
 #if defined(SDL2_MIXER) || defined(OPENAL) || defined(XAUDIO2)
-
-    int foundFree = FALSE;
-
-    //IF the voice is playing find a free channel (hack!)
-    for (int i = 0; i < SPU_MAX_CHANNELS; i++)
-    {
-        if (!channelList[i].data)
-        {
-            foundFree = TRUE;
-            //Key on! hacky
-            _spu_keystat_last |= (1 << vNum);
-            
-            break;
-        }
-    }
-
-    //If this occurs channel pool is exhausted!
-    SDL_assert(foundFree);
-
     channelList[vNum].data = (uint8_t*)spuSoundBuffer + startAddr;//startAddr / 8;//_spu_tsa;
 #endif
 }

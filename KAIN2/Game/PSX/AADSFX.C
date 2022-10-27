@@ -502,7 +502,7 @@ void aadExecuteSfxCommand(struct AadSfxCommand *sfxCmd)
 #endif
 }
 
-void sfxCmdPlayTone(struct AadSfxCommand *sfxCmd)
+void sfxCmdPlayTone(struct AadSfxCommand* sfxCmd)
 {
 #if defined(PSX_VERSION)
 	unsigned long handle;

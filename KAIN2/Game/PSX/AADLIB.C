@@ -117,8 +117,8 @@ int aadInit(struct AadInitAttr *attributes, unsigned char *memoryPtr)
 
 		for (slotNumber = 0; slotNumber < 24; slotNumber++)
 		{
-			aadMem->synthVoice[slotNumber].voiceID = 255;
 			aadMem->synthVoice[slotNumber].voiceMask = 1 << slotNumber;
+			aadMem->synthVoice[slotNumber].voiceID = 255;
 			aadMem->synthVoice[slotNumber].voiceNum = slotNumber;
 		}
 
@@ -2164,7 +2164,7 @@ int aadAssignDynamicSequence(int bank, int sequenceNumber, int slotNumber)//Matc
 	return 0;
 }
 
-struct AadTempo * aadGetTempoFromDynamicSequence(int bank, int sequenceNumber, struct AadTempo *tempo)
+struct AadTempo* aadGetTempoFromDynamicSequence(int bank, int sequenceNumber, struct AadTempo* tempo)//Matching - 99.75%
 {
 	struct AadSequenceHdr *seqHdr;
 	
