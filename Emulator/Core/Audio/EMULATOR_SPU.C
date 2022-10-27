@@ -25,7 +25,7 @@ short audioBuffer[28 * 2 * 4];
 unsigned short audioBufferPos = 0;
 
 
-short finalAudioBuffer[SPU_FINAL_BUFFER_SIZE];
+short finalAudioBuffer[512 * 32];
 unsigned short finalAudioBufferPos = 0;
 
 short gauss[512] = {
@@ -455,11 +455,11 @@ void SPU_Update()
 
     bufferReady = FALSE;
 
-    if (finalAudioBufferPos >= SPU_FINAL_BUFFER_SIZE)
+    if (finalAudioBufferPos >= (sizeof(finalAudioBuffer) / sizeof(short)) - 16)
     {
         //Add to buffer
         alGenBuffers(1, &alBuffers[0]);
-        alBufferData(alBuffers[0], AL_FORMAT_STEREO16, finalAudioBuffer, SPU_FINAL_BUFFER_SIZE, 44100);
+        alBufferData(alBuffers[0], AL_FORMAT_STEREO16, finalAudioBuffer, sizeof(finalAudioBuffer), 44100);
 
         memset(finalAudioBuffer, 0, sizeof(finalAudioBuffer));
 
