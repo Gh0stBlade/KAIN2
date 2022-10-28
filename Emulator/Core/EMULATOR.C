@@ -5433,7 +5433,7 @@ void Emulator_TakeScreenshot(int mode)
 
 	unsigned char* pixels = new unsigned char[width * height * sizeof(unsigned int)];
 	
-#if defined(_WINDOWS)
+#if defined(_WINDOWS) && defined(D3D11)
 	if (g_overrideHWND != NULL)
 	{
 		HDC hdcScreen;
