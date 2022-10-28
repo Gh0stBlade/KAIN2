@@ -9,21 +9,6 @@
 
 #if defined(OPENAL)
 
-#if defined(__EMSCRIPTEN__)
-#include <AL/al.h>
-#include <AL/alc.h>
-#else
-#include <al.h>
-#include <alc.h>
-#endif
-
-ALCdevice* alDevice = NULL;
-ALCcontext* alContext = NULL;
-
-ALuint alSources[SPU_MAX_CHANNELS];
-ALuint alBuffers[SPU_MAX_CHANNELS];
-ALboolean alHasAudioData[24];
-
 #elif defined(XAUDIO2)
 
 #include <xaudio2.h>
@@ -933,7 +918,7 @@ int _spu_t(int mode, int flag, int a2)
 
 void _spu_Fw(unsigned char* addr, unsigned long size)
 {
-#if defined(SDL2_MIXER) || defined(OPENAL)
+#if defined(SDL2)
     memcpy(&spuSoundBuffer[_spu_tsa << _spu_mem_mode_plus], addr, size);
 
     if (__spu_transferCallback != NULL)
