@@ -643,6 +643,19 @@ void SpuSetKey(long on_off, unsigned long voice_bit)
     _spu_keystat_last |= _spu_keystat;
 
     //SDL_Delay(8);
+
+    // temporary hack
+    if (on_off == 0)
+    {
+        int32_t i;
+        for (i = 0; i < SPU_MAX_CHANNELS; i++)
+        {
+            if (voice_bit & (1 << i))
+            {
+                channelList[i].data = NULL; // TODO just reset the channel ADSR to Release
+            }
+        }
+    }
 }
 
 void SpuSetKeyOnWithAttr(SpuVoiceAttr* attr)//(F)
