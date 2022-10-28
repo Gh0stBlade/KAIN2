@@ -87,7 +87,7 @@ struct AadSynthVoice* aadAllocateVoice(int priority)//Matching - 99.67%
 	return NULL;
 }
 
-void SpuSetVoiceADSR1ADSR2(int vNum, unsigned short adsr1, unsigned short adsr2)//Matching - 97.62%
+void SpuSetVoiceADSR1ADSR2(int vNum, unsigned short adsr1, unsigned short adsr2)//Matching - 100.0%
 { 
 	unsigned short sl;
 	unsigned short dr;
@@ -102,7 +102,6 @@ void SpuSetVoiceADSR1ADSR2(int vNum, unsigned short adsr1, unsigned short adsr2)
 	dr = ((adsr1 & 0xFFFF) >> 4) & 0xF;
 	ar = ((adsr1 & 0xFFFF) >> 8) & 0x7F;
 	arm = 1;
-	sr = adsr2;
 
 	if ((adsr1 & 0x8000))
 	{
@@ -116,7 +115,7 @@ void SpuSetVoiceADSR1ADSR2(int vNum, unsigned short adsr1, unsigned short adsr2)
 		rrm = 7;
 	}
 
-	sr = (sr >> 6) & 0x7F;
+	sr = (adsr2 >> 6) & 0x7F;
 
 	if ((adsr2 & 0x4000))
 	{
