@@ -768,7 +768,7 @@ int aadLoadDynamicSfx(char *fileName, long directoryID, long flags)
 	return 0;
 }
 
-int aadFreeDynamicSfx(int handle)
+int aadFreeDynamicSfx(int handle)//Matching - 99.73%
 {
 	struct AadDynamicLoadRequest* loadReq;
 	int i;
@@ -788,21 +788,23 @@ int aadFreeDynamicSfx(int handle)
 		i = (i + 1) & 0xF;
 	}
 
-	if (aadMem->numLoadReqsQueued < 16)
+	if (aadMem->numLoadReqsQueued >= 16)
 	{
-		loadReq = &aadMem->loadRequestQueue[i + ((aadMem->nextLoadReqOut - 1) & 0xF)];
+		return 0x100F;
+	}
+	else
+	{
+		loadReq = &aadMem->loadRequestQueue[((aadMem->nextLoadReqOut - 1) & 0xF)];
 
 		aadMem->nextLoadReqOut = ((aadMem->nextLoadReqOut - 1) & 0xF);
-		
+
 		loadReq->type = 1;
 		loadReq->handle = handle;
-		
-		aadMem->numLoadReqsQueued++;
 
-		return 0;
+		aadMem->numLoadReqsQueued++;
 	}
 
-	return 0x100F;
+	return 0;
 }
 
 void aadRelocateMusicMemoryBegin()
@@ -1134,20 +1136,20 @@ void aadLoadDynamicSfxReturn(void* loadedDataPtr, void* data, void* data2)
 	}
 }
 
-int aadWaveMalloc(unsigned short waveID, unsigned long waveSize)
-{ 
-	struct AadNewSramBlockDesc *sramDesc;
-	struct AadNewSramBlockDesc *bestFit;
-	struct AadNewSramBlockDesc *next;
-	struct AadNewSramBlockDesc *sramDescTbl;
+int aadWaveMalloc(unsigned short waveID, unsigned long waveSize)//Matching - 85.99%
+{
+	struct AadNewSramBlockDesc* sramDesc;
+	struct AadNewSramBlockDesc* bestFit;
+	struct AadNewSramBlockDesc* next;
+	struct AadNewSramBlockDesc* sramDescTbl;
 	unsigned long safeWaveSize;
 	int i;
 	int sramDescIndex;
 	int bestFitIndex;
-	
+
 	waveSize >>= 3;
 	safeWaveSize = (waveSize & 0xFFFFFFF8);
-	
+
 	if ((waveSize & 0x7))
 	{
 		safeWaveSize += 8;
@@ -1158,8 +1160,7 @@ int aadWaveMalloc(unsigned short waveID, unsigned long waveSize)
 	sramDescTbl = &aadMem->sramDescriptorTbl[0];
 	next = sramDescTbl + sramDescIndex;
 
-	i = 128;
-	for(i = 128; next != NULL; i--)
+	for (i = 128; next != NULL; i--)
 	{
 		if (--i == -1)
 		{
@@ -1173,6 +1174,7 @@ int aadWaveMalloc(unsigned short waveID, unsigned long waveSize)
 				bestFitIndex = sramDescIndex;
 				bestFit = next;
 			}
+
 		}
 
 		if ((char)next->nextIndex >= 0)
@@ -1206,9 +1208,9 @@ int aadWaveMalloc(unsigned short waveID, unsigned long waveSize)
 				{
 					next->address -= bestFit->size;
 					next->size += (bestFit->size - waveSize);
-					
+
 					bestFit->size = waveSize;
-				
+
 					return 255;
 				}
 			}
@@ -1240,7 +1242,7 @@ int aadWaveMalloc(unsigned short waveID, unsigned long waveSize)
 			else
 			{
 				aadMem->nextSramDescIndex = (aadMem->nextSramDescIndex + 8) & 0x7F;
-				
+
 				next->waveID = 0x8000;
 				next->address = bestFit->address + waveSize;
 				next->prevIndex = bestFitIndex;
@@ -1251,7 +1253,7 @@ int aadWaveMalloc(unsigned short waveID, unsigned long waveSize)
 				{
 					(sramDescTbl + next->nextIndex)->prevIndex = sramDescIndex;
 				}
-				
+
 				bestFit->size = waveSize;
 				bestFit->nextIndex = sramDescIndex;
 			}
@@ -1261,6 +1263,7 @@ int aadWaveMalloc(unsigned short waveID, unsigned long waveSize)
 
 	return 255;
 }
+
 
 unsigned long aadGetSramBlockAddr(int handle)
 {
