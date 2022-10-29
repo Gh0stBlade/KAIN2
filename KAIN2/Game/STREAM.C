@@ -3233,7 +3233,7 @@ void MORPH_ToggleMorph()
 	struct Level* level;
 	int i;
 
-	SOUND_PlaneShift(gameTrackerX.gameData.asmData.MorphType < 1);
+	SOUND_PlaneShift(gameTrackerX.gameData.asmData.MorphType == 0);
 
 	INSTANCE_Broadcast(NULL, 10, 0x1000020, gameTrackerX.gameData.asmData.MorphType);
 
