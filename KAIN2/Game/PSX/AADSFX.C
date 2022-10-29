@@ -364,15 +364,13 @@ unsigned long aadSetSfxVolPanPitch(unsigned long handle, int volume, int pan, in
 #endif
 }
 
-unsigned long createSfxHandle(unsigned int toneID)
+unsigned long createSfxHandle(unsigned int toneID)//Matching - 99.44%
 {
 #if defined(PSX_VERSION)
 
+	aadMem->sfxSlot.handleCounter++;
+
 	if (aadMem->sfxSlot.handleCounter == 0)
-	{
-		aadMem->sfxSlot.handleCounter += 2;
-	}
-	else
 	{
 		aadMem->sfxSlot.handleCounter += 1;
 	}
