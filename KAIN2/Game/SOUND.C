@@ -1592,10 +1592,6 @@ void SOUND_ProcessMusicLoad()
 								musicName[3] = 'a';
 							}
 
-							musicName[0] = 'u';
-							musicName[1] = 'w';
-							musicName[2] = 'm';
-							musicName[3] = 'a';
 							musicName[4] = 0;
 
 #if defined(UWP)
@@ -1657,7 +1653,7 @@ void SOUND_ProcessMusicLoad()
 		}
 		break;
 	case 2:
-		if (aadAssignDynamicSequence(0, 2, 0) == 0)
+		if (aadAssignDynamicSequence(0, 0, 0) == 0)
 		{
 			aadStartSlot(0);
 			musicInfo.state = 0;
