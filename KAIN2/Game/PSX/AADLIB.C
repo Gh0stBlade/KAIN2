@@ -1270,7 +1270,7 @@ unsigned long aadGetSramBlockAddr(int handle)
 	return 0;
 }
 
-void aadWaveFree(int handle)
+void aadWaveFree(int handle)//Matching - 99.93%
 {
 	struct AadNewSramBlockDesc* sramDesc;
 	struct AadNewSramBlockDesc* sramDescTbl;
@@ -1295,7 +1295,7 @@ void aadWaveFree(int handle)
 
 				sramDesc->nextIndex = next->nextIndex;
 
-				if ((char)next->nextIndex >= 0)
+				if ((char)sramDesc->nextIndex << 24 >= 0)
 				{
 					(sramDescTbl + sramDesc->nextIndex)->prevIndex = handle;
 				}
@@ -1309,9 +1309,12 @@ void aadWaveFree(int handle)
 			if (!(prev->waveID & 0x4000))
 			{
 				prev->size += sramDesc->size;
-				prev->waveID = 0;
 
-				if ((char)prev->nextIndex >= 0)
+				sramDesc->waveID = 0;
+
+				prev->nextIndex = sramDesc->nextIndex;
+
+				if ((char)prev->nextIndex << 24 >= 0)
 				{
 					(sramDescTbl + sramDesc->nextIndex)->prevIndex = sramDesc->prevIndex;
 				}
