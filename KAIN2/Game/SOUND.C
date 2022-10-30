@@ -1720,11 +1720,11 @@ void SOUND_ProcessMusicLoad()
 	}
 }
 
-void SOUND_UpdateSound()
+void SOUND_UpdateSound()//Matching - 88.37%
 {
 	aadProcessLoadQueue();
 
-	if (!(gameTrackerX.debugFlags & 0x40000) && (gSramFullMsgCnt == 0 || gSramFullMsgCnt == 0))
+	if ((gameTrackerX.debugFlags & 0x40000) || gSramFullAlarm == 0 && gSramFullMsgCnt != 0)
 	{
 		if (gSramFullMsgCnt == 0)
 		{
