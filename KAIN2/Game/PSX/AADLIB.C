@@ -913,7 +913,7 @@ void aadPurgeLoadQueue()
 	aadMem->numLoadReqsQueued = 0;
 }
 
-void aadProcessLoadQueue()
+void aadProcessLoadQueue()//Matching - 78.45%
 {
 	struct AadDynamicSfxLoadInfo* info;
 	int i;
@@ -927,7 +927,7 @@ void aadProcessLoadQueue()
 
 	if (!(info->flags & 0x1))
 	{
-		for(i = 0; i < 2; i++)
+		for (i = 0; i < 2; i++)
 		{
 			if (aadMem->dynamicBankStatus[i] == 1)
 			{
@@ -943,8 +943,55 @@ void aadProcessLoadQueue()
 
 			aadMem->numLoadReqsQueued--;
 
-			if (loadReq->type == 1)
+			switch (loadReq->type)
 			{
+			case 0:
+
+				strcpy(areaName, loadReq->fileName);
+
+				p = strpbrk(areaName, "0123456789");
+
+				if (p != NULL)
+				{
+					p[0] = 0;
+				}
+
+				if ((loadReq->flags & 0x1))
+				{
+					sprintf(info->snfFileName, "\\kain2\\area\\%s\\bin\\%s.snf", areaName, loadReq->fileName);
+					sprintf(info->smfFileName, "\\kain2\\area\\%s\\bin\\%s.smf", areaName, loadReq->fileName);
+				}
+				else
+				{
+					sprintf(info->snfFileName, "\\kain2\\sfx\\object\\%s\\%s.snf", loadReq->fileName, loadReq->fileName);
+					sprintf(info->smfFileName, "\\kain2\\sfx\\object\\%s\\%s.smf", loadReq->fileName, loadReq->fileName);
+				}
+
+				info->fileHandle = loadReq->handle;
+
+				gSramFullAlarm = 0;
+
+				info->directoryID = loadReq->directoryID;
+				info->flags = 1;
+				info->snfFile = NULL;
+				info->error = 0;
+				info->totalSramUsed = 0;
+				info->loadFlags = loadReq->flags;
+
+
+				if (loadReq->directoryID != 0)
+				{
+					LOAD_SetSearchDirectory(loadReq->directoryID);
+				}
+
+				aadMem->nonBlockLoadProc(info->snfFileName, (void*)aadLoadDynamicSfxReturn, info, NULL, (void**)&info->snfFile, 0x2F);
+
+				if (info->directoryID != 0)
+				{
+					LOAD_SetSearchDirectory(0);
+				}
+				break;
+			case 1:
 				snfFile = aadMem->firstDynSfxFile;
 
 				while (snfFile != NULL)
@@ -981,65 +1028,22 @@ void aadProcessLoadQueue()
 
 					snfFile = snfFile->nextDynSfxFile;
 				}
-				
+
 				if (aadCheckSramFragmented() != 0)
 				{
 					gDefragRequest = 1;
 				}
-			}
-			else if (loadReq->type == 0)
-			{
-				strcpy(areaName, loadReq->fileName);
-				
-				p = strpbrk(areaName, "0123456789");
-				
-				if (p != NULL)
-				{
-					p[0] = 0;
-				}
+				break;
 
-				if ((loadReq->flags & 0x1))
-				{
-					sprintf(info->snfFileName, "\\kain2\\area\\%s\\bin\\%s.snf", areaName, loadReq->fileName);
-					sprintf(info->smfFileName, "\\kain2\\area\\%s\\bin\\%s.smf", areaName, loadReq->fileName);
-				}
-				else
-				{
-					sprintf(info->snfFileName, "\\kain2\\sfx\\object\\%s\\%s.snf", loadReq->fileName, loadReq->fileName);
-					sprintf(info->smfFileName, "\\kain2\\sfx\\object\\%s\\%s.smf", loadReq->fileName, loadReq->fileName);
-				}
-				
-				info->fileHandle = loadReq->handle;
-				
-				gSramFullAlarm = 0;
-				
-				info->directoryID = loadReq->directoryID;
-				info->flags = 1;
-				info->snfFile = NULL;
-				info->error = 0;
-				info->totalSramUsed = 0;
-				info->loadFlags = loadReq->flags;
-
-				if (loadReq->directoryID != 0)
-				{
-					LOAD_SetSearchDirectory(loadReq->directoryID);
-				}
-
-				aadMem->nonBlockLoadProc(info->snfFileName, (void*)aadLoadDynamicSfxReturn, info, NULL, (void**)&info->snfFile, 0x2F);
-
-				if (info->directoryID != 0)
-				{
-					LOAD_SetSearchDirectory(0);
-				}
 			}
 		}
-		
+
 		if (gDefragRequest != 0 && SOUND_IsMusicLoading() == 0)
 		{
 			aadMem->numSlots = 0;
 			aadMem->sramDefragInfo.status = 1;
 		}
-		
+
 		aadProcessSramDefrag();
 	}
 }
@@ -1136,7 +1140,7 @@ void aadLoadDynamicSfxReturn(void* loadedDataPtr, void* data, void* data2)
 	}
 }
 
-int aadWaveMalloc(unsigned short waveID, unsigned long waveSize)//Matching - 85.99%
+int aadWaveMalloc(unsigned short waveID, unsigned long waveSize)//Matching - 93.39%
 {
 	struct AadNewSramBlockDesc* sramDesc;
 	struct AadNewSramBlockDesc* bestFit;
@@ -1162,7 +1166,7 @@ int aadWaveMalloc(unsigned short waveID, unsigned long waveSize)//Matching - 85.
 
 	for (i = 128; next != NULL; i--)
 	{
-		if (--i == -1)
+		if (i - 1 == -1)
 		{
 			break;
 		}
@@ -1174,7 +1178,6 @@ int aadWaveMalloc(unsigned short waveID, unsigned long waveSize)//Matching - 85.
 				bestFitIndex = sramDescIndex;
 				bestFit = next;
 			}
-
 		}
 
 		if ((char)next->nextIndex >= 0)
@@ -1182,8 +1185,12 @@ int aadWaveMalloc(unsigned short waveID, unsigned long waveSize)//Matching - 85.
 			if (next->nextIndex != sramDescIndex)
 			{
 				sramDescIndex = next->nextIndex;
-				next = NULL;
+
 				next = sramDescTbl + sramDescIndex;
+			}
+			else
+			{
+				next = NULL;
 			}
 		}
 		else
@@ -1206,7 +1213,7 @@ int aadWaveMalloc(unsigned short waveID, unsigned long waveSize)//Matching - 85.
 
 				if (!(next->waveID & 0x4000))
 				{
-					next->address -= bestFit->size;
+					next->address -= bestFit->size - waveSize;
 					next->size += (bestFit->size - waveSize);
 
 					bestFit->size = waveSize;
@@ -1219,10 +1226,9 @@ int aadWaveMalloc(unsigned short waveID, unsigned long waveSize)//Matching - 85.
 
 			next = sramDescTbl + sramDescIndex;
 
-			i = sramDescIndex;
 			if ((next->waveID & 0x8000))
 			{
-				do
+				for (i = sramDescIndex; (next->waveID & 0x8000) != 0; i++)
 				{
 					if (((i + 1) & 0x7F) == i)
 					{
@@ -1231,38 +1237,32 @@ int aadWaveMalloc(unsigned short waveID, unsigned long waveSize)//Matching - 85.
 
 					next = sramDescTbl + sramDescIndex;
 
-					sramDescIndex = i + 1;
-
-					i = ((i + 1) & 0x7F);
-
-				} while ((next->waveID & 0x8000) != 0);
-
-				return 255;
-			}
-			else
-			{
-				aadMem->nextSramDescIndex = (aadMem->nextSramDescIndex + 8) & 0x7F;
-
-				next->waveID = 0x8000;
-				next->address = bestFit->address + waveSize;
-				next->prevIndex = bestFitIndex;
-				next->size = bestFit->size - waveSize;
-				next->nextIndex = bestFit->nextIndex;
-
-				if ((char)next->nextIndex >= 0)
-				{
-					(sramDescTbl + next->nextIndex)->prevIndex = sramDescIndex;
+					sramDescIndex = i;
 				}
-
-				bestFit->size = waveSize;
-				bestFit->nextIndex = sramDescIndex;
 			}
+
+			aadMem->nextSramDescIndex = (aadMem->nextSramDescIndex + 8) & 0x7F;
+
+			next->waveID = 0x8000;
+			next->address = bestFit->address + waveSize;
+			next->size = bestFit->size - waveSize;
+			next->prevIndex = bestFitIndex;
+			next->nextIndex = bestFit->nextIndex;
+
+			if ((char)next->nextIndex >= 0)
+			{
+				(sramDescTbl + next->nextIndex)->prevIndex = sramDescIndex;
+			}
+
+			bestFit->size = waveSize;
+			bestFit->nextIndex = sramDescIndex;
 		}
 		return bestFitIndex;
 	}
 
 	return 255;
 }
+
 
 
 unsigned long aadGetSramBlockAddr(int handle)
@@ -1289,27 +1289,27 @@ void aadWaveFree(int handle)
 		sramDescTbl = &aadMem->sramDescriptorTbl[0];
 		sramDesc = sramDescTbl + handle;
 		sramDesc->waveID = 0x8000;
-		
-		if (sramDesc->nextIndex >= 0)
+
+		if ((char)sramDesc->nextIndex >= 0)
 		{
 			next = sramDescTbl + sramDesc->nextIndex;
-			
+
 			if (!(next->waveID & 0x4000))
 			{
 				sramDesc->size += next->size;
-				
+
 				next->waveID = 0;
-				
+
 				sramDesc->nextIndex = next->nextIndex;
 
-				if (next->nextIndex >= 0)
+				if ((char)next->nextIndex >= 0)
 				{
 					(sramDescTbl + sramDesc->nextIndex)->prevIndex = handle;
 				}
 			}
 		}
 
-		if (sramDesc->prevIndex >= 0)
+		if ((char)sramDesc->prevIndex >= 0)
 		{
 			prev = sramDescTbl + sramDesc->prevIndex;
 
@@ -1317,8 +1317,8 @@ void aadWaveFree(int handle)
 			{
 				prev->size += sramDesc->size;
 				prev->waveID = 0;
-				
-				if (prev->nextIndex >= 0)
+
+				if ((char)prev->nextIndex >= 0)
 				{
 					(sramDescTbl + sramDesc->nextIndex)->prevIndex = sramDesc->prevIndex;
 				}
@@ -1420,9 +1420,8 @@ void setSramFullAlarm()
 	gSramFreeBlocks = numFreeBlocks;
 }
 
-void aadLoadSingleDynSfx(struct AadDynamicSfxLoadInfo *info)
-{ 
-
+void aadLoadSingleDynSfx(struct AadDynamicSfxLoadInfo* info)
+{
 	int i; // $a0
 	struct AadLoadedSfxToneAttr* toneAttr; // $a1
 	struct AadLoadedSfxWaveAttr* waveAttr; // $s0
@@ -1432,6 +1431,12 @@ void aadLoadSingleDynSfx(struct AadDynamicSfxLoadInfo *info)
 	info->waveTransferAddr = NULL;
 
 	attr = &info->attr;
+
+	if (attr->sfxID == 0x1A)
+	{
+		int testing = 0;
+		testing++;
+	}
 
 	if (aadMem->sfxToneMasterList[info->attr.sfxID] == 0xFE)
 	{
@@ -1450,11 +1455,11 @@ void aadLoadSingleDynSfx(struct AadDynamicSfxLoadInfo *info)
 	}
 	else
 	{
-		toneAttr = &aadMem->sfxToneAttrTbl[aadMem->nextToneIndex];
-
-		for (i = (aadMem->nextToneIndex); toneAttr->referenceCount != 0; i = i + 1)
+		for (i = (aadMem->nextToneIndex + 1), toneAttr = &aadMem->sfxToneAttrTbl[aadMem->nextToneIndex]; toneAttr->referenceCount != 0; i++)
 		{
-			if (((i + 1) & 0x7F) == aadMem->nextToneIndex)
+			i &= 0x7F;
+
+			if (i == aadMem->nextToneIndex)
 			{
 				aadMem->sfxToneMasterList[attr->sfxID] = 0xFE;
 
@@ -1465,7 +1470,7 @@ void aadLoadSingleDynSfx(struct AadDynamicSfxLoadInfo *info)
 				return;
 			}
 
-			toneAttr = &aadMem->sfxToneAttrTbl[i & 0x7F];
+			toneAttr = &aadMem->sfxToneAttrTbl[i];
 		}
 
 		aadMem->nextToneIndex = (aadMem->nextToneIndex + 8) & 0x7F;
@@ -1483,41 +1488,39 @@ void aadLoadSingleDynSfx(struct AadDynamicSfxLoadInfo *info)
 			waveAttr = &aadMem->sfxWaveAttrTbl[attr->waveID];
 
 			waveAttr->referenceCount++;
+
+			info->smfLoadingState = 2;
+
+			return;
 		}
 	}
 
 	i = aadMem->nextWaveIndex;
+	goto start;
 	do
 	{
-		//for( waveAttr->referenceCount != 0; i++)
-		//{
 		if (i >= 0x78)
 		{
 			i = 0;
-		}
-
-		waveAttr = &aadMem->sfxWaveAttrTbl[i++];
-
-		if (waveAttr->referenceCount == 0)
-		{
-			i--;
-			break;
 		}
 
 		if (i == aadMem->nextWaveIndex)
 		{
 			aadFreeSingleDynSfx(attr->sfxID);
 
-			info->smfLoadingState = 2;
-
 			aadMem->sfxToneMasterList[attr->sfxID] = 0xFE;
 
 			setSramFullAlarm();
 
+			info->smfLoadingState = 2;
+
 			return;
 		}
+	start:
+		waveAttr = &aadMem->sfxWaveAttrTbl[i++];
 
-	} while (1);
+	} while (waveAttr->referenceCount != 0);
+	i--;
 
 	aadMem->nextWaveIndex += 8;
 
@@ -1531,7 +1534,7 @@ void aadLoadSingleDynSfx(struct AadDynamicSfxLoadInfo *info)
 	aadMem->sfxWaveMasterList[attr->waveID] = i;
 
 	handle = aadWaveMalloc(attr->waveID, attr->waveSize);
-	
+
 	waveAttr->sramHandle = handle;
 
 	if (handle << 24 >= 0)
@@ -1544,11 +1547,11 @@ void aadLoadSingleDynSfx(struct AadDynamicSfxLoadInfo *info)
 	{
 		aadFreeSingleDynSfx(attr->sfxID);
 
-		info->smfLoadingState = 2;
-
 		aadMem->sfxToneMasterList[attr->sfxID] = 0xFE;
 
 		setSramFullAlarm();
+
+		info->smfLoadingState = 2;
 
 		return;
 	}
@@ -1756,42 +1759,55 @@ void aadLoadDynamicSfxReturn2(void *loadedDataPtr, long loadedDataSize, short st
 	}
 }
 
-
-// autogenerated function stub: 
-// int /*$ra*/ aadCheckSramFragmented()
 int aadCheckSramFragmented()
-{ // line 2172, offset 0x800539f4
-	/* begin block 1 */
-		// Start line: 2174
-		// Start offset: 0x800539F4
-		// Variables:
-			struct AadNewSramBlockDesc *sramDescTbl; // $v1
-			struct AadNewSramBlockDesc *sramDesc; // $a1
-			long totalFree; // $t0
-			long smallestFree; // $t1
-			long numFreeBlocks; // $a3
-			int i; // $a2
-			int defragNeeded; // $v1
-	/* end block 1 */
-	// End offset: 0x80053AA0
-	// End Line: 2216
+{
+	struct AadNewSramBlockDesc* sramDescTbl;
+	struct AadNewSramBlockDesc* sramDesc;
+	long totalFree;
+	long smallestFree;
+	long numFreeBlocks;
+	int i;
+	int defragNeeded;
 
-	/* begin block 2 */
-		// Start line: 5103
-	/* end block 2 */
-	// End Line: 5104
+	totalFree = 0;
+	smallestFree = 999999;
+	numFreeBlocks = 0;
 
-	/* begin block 3 */
-		// Start line: 5104
-	/* end block 3 */
-	// End Line: 5105
+	sramDescTbl = &aadMem->sramDescriptorTbl[0];
+	sramDesc = sramDescTbl + aadMem->firstSramBlockDescIndex;
 
-	/* begin block 4 */
-		// Start line: 5114
-	/* end block 4 */
-	// End Line: 5115
-			UNIMPLEMENTED();
-	return 0;
+	for (i = 0x80; i != 0 && sramDesc != NULL; i--)
+	{
+		if (!(sramDesc->waveID & 0x4000))
+		{
+			numFreeBlocks++;
+
+			totalFree += sramDesc->size;
+
+			if (sramDesc->size < smallestFree)
+			{
+				smallestFree = sramDesc->size;
+			}
+		}
+
+		if ((char)sramDesc->nextIndex >= 0)
+		{
+			sramDesc = sramDescTbl + sramDesc->nextIndex;
+		}
+		else
+		{
+			sramDesc = NULL;
+		}
+	}
+	
+	defragNeeded = 0;
+
+	if (numFreeBlocks >= 3)
+	{
+		defragNeeded = smallestFree < (totalFree >> 2);
+	}
+
+	return defragNeeded;
 }
 
 void aadProcessSramDefrag()//Matching - 74.32%
