@@ -568,21 +568,13 @@ void aadLoadDynamicSoundBankReturn(void *loadedDataPtr, void *data, void *data2)
 	}
 }
 
-void aadLoadDynamicSoundBankReturn2(void *loadedDataPtr, long loadedDataSize, short status, void *data1, void *data2)
+void aadLoadDynamicSoundBankReturn2(void* loadedDataPtr, long loadedDataSize, short status, void* data1, void* data2)//Matching - 96.94%
 {
-#if defined(UWP)
-	unsigned char *dataPtr = NULL;
-	struct AadDynamicBankLoadInfo *info;
-	int dynamicBankIndex;
-	int error;
-	int i;
-#else
 	unsigned char* dataPtr;
 	struct AadDynamicBankLoadInfo* info;
 	int dynamicBankIndex;
 	int error;
 	int i;
-#endif
 
 	info = (struct AadDynamicBankLoadInfo*)data1;
 	error = status < 256;
@@ -597,7 +589,7 @@ void aadLoadDynamicSoundBankReturn2(void *loadedDataPtr, long loadedDataSize, sh
 			error = (status >> 8) | 0x80;
 
 			aadMem->dynamicBankStatus[dynamicBankIndex] = error;
-			
+
 			if (aadMem->dynamicSoundBankData[dynamicBankIndex] != NULL)
 			{
 				aadMem->memoryFreeProc((char*)aadMem->dynamicSoundBankData[dynamicBankIndex]);
@@ -615,22 +607,26 @@ void aadLoadDynamicSoundBankReturn2(void *loadedDataPtr, long loadedDataSize, sh
 		if (!(info->flags & 0x1))
 		{
 			dataPtr = (unsigned char*)loadedDataPtr;
-			dataPtr += 4;
+
+			dataPtr = dataPtr + 4;
 
 			info->flags |= 0x1;
+
 			info->sramDataSize = ((unsigned long*)dataPtr)[0];
-			
+
 			dataPtr += 4;
+
 			loadedDataSize -= 8;
 
-			if (info->loadOption == 0 || info->loadOption != 1)
+			if (info->loadOption == 0 || info->sramDataSize != 1)
 			{
 				info->nextSramAddr = 302800;
 			}
 			else
 			{
-				info->nextSramAddr = (524288 - info->sramDataSize) - aadGetReverbSize();
+				info->nextSramAddr = (524288 - aadGetReverbSize() - info->sramDataSize);
 			}
+
 
 			aadMem->dynamicSoundBankSramData[dynamicBankIndex] = info->nextSramAddr;
 		}
@@ -645,12 +641,9 @@ void aadLoadDynamicSoundBankReturn2(void *loadedDataPtr, long loadedDataSize, sh
 
 		if (status == 1)
 		{
-			if (aadMem->dynamicSoundBankHdr[dynamicBankIndex]->numWaves > 0)
+			for (i = 0; i < aadMem->dynamicSoundBankHdr[dynamicBankIndex]->numWaves; i++)
 			{
-				for (i = 0; i < aadMem->dynamicSoundBankHdr[dynamicBankIndex]->numWaves; i++)
-				{
-					aadMem->dynamicWaveAddr[dynamicBankIndex][i] += aadMem->dynamicSoundBankSramData[dynamicBankIndex];
-				}
+				aadMem->dynamicWaveAddr[dynamicBankIndex][i] += aadMem->dynamicSoundBankSramData[dynamicBankIndex];
 			}
 
 			aadMem->dynamicBankStatus[dynamicBankIndex] = 2;
