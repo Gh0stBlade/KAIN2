@@ -745,9 +745,9 @@ int aadOpenDynamicSoundBank(unsigned char *soundBank, int dynamicBankIndex)
 	return 0;
 }
 
-int aadLoadDynamicSfx(char *fileName, long directoryID, long flags)
+int aadLoadDynamicSfx(char *fileName, long directoryID, long flags)//Matching - 99.78%
 { 
-	struct AadDynamicLoadRequest *loadReq;
+	struct AadDynamicLoadRequest* loadReq;
 
 	if (aadMem->numLoadReqsQueued < 16)
 	{
@@ -1580,12 +1580,12 @@ void HackCallback()
 	inCallback = FALSE;
 }
 
-void aadLoadDynamicSfxReturn2(void *loadedDataPtr, long loadedDataSize, short status, void *data1, void *data2)
-{ 
-	unsigned char *dataPtr;
+void aadLoadDynamicSfxReturn2(void* loadedDataPtr, long loadedDataSize, short status, void* data1, void* data2)//Matching - 96.80%
+{
+	unsigned char* dataPtr;
 	unsigned long dataOffset;
 	unsigned long bytesRemaining;
-	struct AadDynamicSfxLoadInfo *info;
+	struct AadDynamicSfxLoadInfo* info;
 	unsigned long n;
 
 	info = (struct AadDynamicSfxLoadInfo*)data1;
@@ -1595,26 +1595,64 @@ void aadLoadDynamicSfxReturn2(void *loadedDataPtr, long loadedDataSize, short st
 
 	while (bytesRemaining != 0)
 	{
-		if (info->smfLoadingState == 1)
+		switch (info->smfLoadingState)
 		{
+		case 0:
+			if (((struct _AadDynSfxFileHdr*)dataPtr)->snfID != aadCreateFourCharID('a', 'S', 'M', 'F'))
+			{
+				aadLoadDynamicSfxAbort(info, 0x100B);
+
+				return;
+			}
+			else
+			{
+				if (((struct _AadDynSfxFileHdr*)dataPtr)->snfVersion != 0x100)
+				{
+					aadLoadDynamicSfxAbort(info, 0x100C);
+
+					return;
+				}
+				else
+				{
+					if (((struct _AadDynSfxFileHdr*)dataPtr)->uniqueID != info->snfFile->uniqueID || ((struct _AadDynSfxFileHdr*)dataPtr)->handle != info->snfFile->numSfxInFile)
+					{
+						aadLoadDynamicSfxAbort(info, 0x100D);
+
+						return;
+					}
+					else
+					{
+						dataOffset += 16;
+						bytesRemaining -= 16;
+						info->numSfxToLoad = info->snfFile->numSfxInFile;
+						info->smfLoadingState = 1;
+						info->bytesToLoad = 24;
+					}
+				}
+			}
+			break;
+		case 1:
 			n = info->bytesToLoad;
-			
+
 			if (bytesRemaining < n)
 			{
 				n = bytesRemaining;
 			}
-			
+
 #if defined(_WIN64)
-			char* test = ((char*)info - ((uintptr_t)info->bytesToLoad - 148));
-			memcpy(((char*)info - ((uintptr_t)info->bytesToLoad - 148)), &dataPtr[dataOffset], n);
+			//char* test = ((char*)info - ((uintptr_t)info->bytesToLoad + 148));
+			memcpy(((char*)info - ((uintptr_t)info->bytesToLoad + 148)), &dataPtr[dataOffset], n);
 #else
-			char* test = ((char*)info - (unsigned)(info->bytesToLoad - 148));
-			memcpy(((char*)info - (unsigned)(info->bytesToLoad - 148)), &dataPtr[dataOffset], n);
+			//char* test = ((char*)info - (unsigned)(info->bytesToLoad + 148));
+			memcpy((char*)info - (info->bytesToLoad - 148), &dataPtr[dataOffset], n);
 #endif
 			dataOffset += n;
+
 			bytesRemaining -= n;
 
-			if (info->bytesToLoad - n == 0)
+			info->bytesToLoad -= n;
+
+			if (info->bytesToLoad == 0)
 			{
 				aadLoadSingleDynSfx(info);
 				info->bytesToLoad = info->attr.waveSize;
@@ -1623,11 +1661,11 @@ void aadLoadDynamicSfxReturn2(void *loadedDataPtr, long loadedDataSize, short st
 			{
 				info->bytesToLoad = info->bytesToLoad - n;
 			}
-		}
-		else if (info->smfLoadingState == 2)
-		{
+			break;
+
+		case 2:
 			n = info->bytesToLoad;
-			
+
 			if (bytesRemaining < n)
 			{
 				n = bytesRemaining;
@@ -1635,8 +1673,9 @@ void aadLoadDynamicSfxReturn2(void *loadedDataPtr, long loadedDataSize, short st
 
 			dataOffset += n;
 			bytesRemaining -= n;
+			info->bytesToLoad -= n;
 
-			if (info->bytesToLoad - n == 0)
+			if (info->bytesToLoad == 0)
 			{
 				if (--info->numSfxToLoad != 0)
 				{
@@ -1649,13 +1688,9 @@ void aadLoadDynamicSfxReturn2(void *loadedDataPtr, long loadedDataSize, short st
 					return;
 				}
 			}
-			else
-			{
-				info->bytesToLoad = info->bytesToLoad - n;
-			}
-		}
-		else if (info->smfLoadingState == 3)
-		{
+			break;
+
+		case 3:
 			n = info->bytesToLoad;
 
 			if (bytesRemaining < n)
@@ -1688,13 +1723,18 @@ void aadLoadDynamicSfxReturn2(void *loadedDataPtr, long loadedDataSize, short st
 				{
 					SpuSetTransferCallback(NULL);
 					aadLoadDynamicSfxDone(info);
+					return;
 				}
 				else
 				{
 					info->smfLoadingState = 1;
 					info->bytesToLoad = 24;
 
-					if (bytesRemaining != 0)
+					if (bytesRemaining == 0)
+					{
+						SpuSetTransferCallback(NULL);
+					}
+					else
 					{
 						smfDataPtr = &dataPtr[dataOffset];
 						smfBytesLeft = bytesRemaining;
@@ -1703,10 +1743,6 @@ void aadLoadDynamicSfxReturn2(void *loadedDataPtr, long loadedDataSize, short st
 #if !defined(PSXPC_VERSION)
 						return;
 #endif
-					}
-					else
-					{
-						SpuSetTransferCallback(NULL);
 					}
 				}
 			}
@@ -1727,42 +1763,7 @@ void aadLoadDynamicSfxReturn2(void *loadedDataPtr, long loadedDataSize, short st
 					SpuSetTransferCallback(NULL);
 				}
 			}
-		}
-		else if (info->smfLoadingState == 0)
-		{
-			if (((struct _AadDynSfxFileHdr*)dataPtr)->snfID != aadCreateFourCharID('a', 'S', 'M', 'F'))
-			{
-				aadLoadDynamicSfxAbort(info, 0x100B);
-			}
-			else
-			{
-				if (((struct _AadDynSfxFileHdr*)dataPtr)->snfVersion != 0x100)
-				{
-					aadLoadDynamicSfxAbort(info, 0x100C);
-				}
-				else
-				{
-					if (((struct _AadDynSfxFileHdr*)dataPtr)->uniqueID != info->snfFile->uniqueID)
-					{
-						aadLoadDynamicSfxAbort(info, 0x100D);
-					}
-					else
-					{
-						dataOffset += 16;
-
-						if (((struct _AadDynSfxFileHdr*)dataPtr)->handle != info->snfFile->numSfxInFile)
-						{
-
-							aadLoadDynamicSfxAbort(info, 0x100D);
-						}
-
-						bytesRemaining -= 16;
-						info->smfLoadingState = 1;
-						info->bytesToLoad = 24;
-						info->numSfxToLoad = info->snfFile->numSfxInFile;
-					}
-				}
-			}
+			break;
 		}
 	}
 }
