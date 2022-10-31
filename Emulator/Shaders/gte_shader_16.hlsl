@@ -42,11 +42,13 @@ struct VS_OUTPUT {
 };
 
 #ifdef VERTEX
-#ifdef D3D12
+#if defined(D3D12)
 	cbuffer ConstantBuffer : register(b0)
 	{
 		float4x4 Projection;
 	};
+#elif defined(GXM)
+	uniform float4x4 Projection;
 #else
 	float4x4 Projection : register(c0);
 #endif

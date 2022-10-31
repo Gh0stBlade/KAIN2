@@ -47,11 +47,13 @@ struct VS_OUTPUT {
 
 #ifdef VERTEX
 
-#ifdef D3D12
+#if defined(D3D12)
 	cbuffer ConstantBuffer : register(b0)
 	{
 		float4x4 Projection;
 	};
+#elif defined(GXM)
+	uniform float4x4 Projection;
 #else
 	float4x4 Projection : register(c0);
 #endif
@@ -82,7 +84,6 @@ struct VS_OUTPUT {
 #endif
 
 #if defined(GXM)
-	
 	float4 main(VS_OUTPUT In ARG_VPOS, uniform sampler2D s_texture : register(s0), uniform sampler2D s_lut : register(s1)) {
 #else
 	float4 main(VS_OUTPUT In ARG_VPOS) : SV_TARGET {

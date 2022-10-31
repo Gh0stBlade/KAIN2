@@ -28,6 +28,9 @@ typedef struct ShaderID
 
 	SceGxmVertexProgram* VP;
 	SceGxmFragmentProgram* FP;
+
+	const SceGxmProgram* PRG;
+
 } ShaderID;
 
 typedef struct DisplayData

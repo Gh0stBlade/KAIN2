@@ -41,21 +41,18 @@ void VRAM_PrintInfo()
 	}
 }
 
-void VRAM_InitVramBlockCache()
-{ 
+void VRAM_InitVramBlockCache()//Matching - 94.38%
+{
 	int i;
-	
-	i = 89;
 
 	openVramBlocks = NULL;
 	usedVramBlocks = NULL;
 	numOfBlocksUsed = 0;
 
-	do
+	for (i = 89; i >= 0; i--)
 	{
 		vramBlockList[i].flags = 0;
-
-	} while (i--);
+	}
 
 	VRAM_InsertFreeVram(SCREEN_WIDTH, SCREEN_HEIGHT + 16, SCREEN_WIDTH, SCREEN_HEIGHT + 16, 1);
 	VRAM_InitMorphPalettes();
@@ -144,7 +141,7 @@ void VRAM_GarbageCollect()
 	}
 }
 
-int VRAM_InsertFreeBlock(struct _BlockVramEntry* block)
+int VRAM_InsertFreeBlock(struct _BlockVramEntry* block)//Matching - 99.44%
 {
 	struct _BlockVramEntry* next;
 	struct _BlockVramEntry* prev;
@@ -166,7 +163,6 @@ int VRAM_InsertFreeBlock(struct _BlockVramEntry* block)
 		prev = next;
 		next = prev->next;
 	}
-
 
 	if (prev == NULL)
 	{
@@ -396,7 +392,7 @@ int VRAM_InsertFreeVram(short x, short y, short w, short h, int flags)
 {
 	struct _BlockVramEntry* useBlock;
 
-	if ((x & 0x3F) && (64 - (x & 0x3F)) < w)
+	if ((x & 0x3F) != 0 && (64 - (x & 0x3F)) < w)
 	{
 		useBlock = VRAM_GetOpenBlock();
 
@@ -413,6 +409,7 @@ int VRAM_InsertFreeVram(short x, short y, short w, short h, int flags)
 		VRAM_InsertFreeBlock(useBlock);
 
 		useBlock = VRAM_GetOpenBlock();
+
 		useBlock->w = (w - 64) + (x & 0x3F);
 		useBlock->next = NULL;
 		useBlock->flags = flags;

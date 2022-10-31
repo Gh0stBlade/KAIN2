@@ -83,27 +83,27 @@ void* Emulator_GraphicsAlloc(SceKernelMemBlockType type, uint32_t size, uint32_t
 
 	if (type == SCE_KERNEL_MEMBLOCK_TYPE_USER_CDRAM_RWDATA) 
 	{
-		SCE_DBG_ASSERT(alignment <= 256*1024);
-		size = ALIGN(size, 256*1024);
-	} 
+		SCE_DBG_ASSERT(alignment <= 256 * 1024);
+		size = ALIGN(size, 256 * 1024);
+	}
 	else 
 	{
-		SCE_DBG_ASSERT(alignment <= 4*1024);
-		size = ALIGN(size, 4*1024);
+		SCE_DBG_ASSERT(alignment <= 4 * 1024);
+		size = ALIGN(size, 4 * 1024);
 	}
-
+	
 	UNUSED(alignment);
 
 	*uid = sceKernelAllocMemBlock("basic", type, size, NULL);
 	SCE_DBG_ASSERT(*uid >= SCE_OK);
 
-	void *mem = NULL;
+	void* mem = NULL;
 	err = sceKernelGetMemBlockBase(*uid, &mem);
 	SCE_DBG_ASSERT(err == SCE_OK);
 
 	err = sceGxmMapMemory(mem, size, attribs);
 	SCE_DBG_ASSERT(err == SCE_OK);
-	
+
 	return mem;
 }
 
@@ -221,16 +221,16 @@ ShaderID Shader_Compile_Internal(const SceGxmProgram* source_vs, const SceGxmPro
 		err =sceGxmShaderPatcherRegisterProgram(g_shaderPatcher, source_fs, &shader.FSID);
 		SCE_DBG_ASSERT(err == SCE_OK);
 
-		const SceGxmProgram* vProgram = sceGxmShaderPatcherGetProgramFromId(shader.VSID);
-		SCE_DBG_ASSERT(vProgram);
+		shader.PRG = sceGxmShaderPatcherGetProgramFromId(shader.VSID);
+		SCE_DBG_ASSERT(shader.PRG);
 	
-		const SceGxmProgramParameter* paramPositionAttribute = sceGxmProgramFindParameterByName(vProgram, "In.a_position");
+		const SceGxmProgramParameter* paramPositionAttribute = sceGxmProgramFindParameterByName(shader.PRG, "In.a_position");
 		SCE_DBG_ASSERT(paramPositionAttribute && (sceGxmProgramParameterGetCategory(paramPositionAttribute) == SCE_GXM_PARAMETER_CATEGORY_ATTRIBUTE));
 	
-		const SceGxmProgramParameter* paramTexcoordAttribute = sceGxmProgramFindParameterByName(vProgram, "In.a_texcoord");
+		const SceGxmProgramParameter* paramTexcoordAttribute = sceGxmProgramFindParameterByName(shader.PRG, "In.a_texcoord");
 		SCE_DBG_ASSERT(paramTexcoordAttribute && (sceGxmProgramParameterGetCategory(paramTexcoordAttribute) == SCE_GXM_PARAMETER_CATEGORY_ATTRIBUTE));
 	
-		const SceGxmProgramParameter* paramColorAttribute = sceGxmProgramFindParameterByName(vProgram, "In.a_color");
+		const SceGxmProgramParameter* paramColorAttribute = sceGxmProgramFindParameterByName(shader.PRG, "In.a_color");
 		SCE_DBG_ASSERT(paramColorAttribute && (sceGxmProgramParameterGetCategory(paramColorAttribute) == SCE_GXM_PARAMETER_CATEGORY_ATTRIBUTE));
 
 		SceGxmVertexAttribute basicVertexAttributes[3];
@@ -264,7 +264,7 @@ ShaderID Shader_Compile_Internal(const SceGxmProgram* source_vs, const SceGxmPro
 		err = sceGxmShaderPatcherCreateVertexProgram(g_shaderPatcher, shader.VSID, basicVertexAttributes, 3, basicVertexStreams, 1, &shader.VP);
 		SCE_DBG_ASSERT(err == SCE_OK);
 
-		err = sceGxmShaderPatcherCreateFragmentProgram(g_shaderPatcher, shader.FSID, SCE_GXM_OUTPUT_REGISTER_FORMAT_UCHAR4, SCE_GXM_MULTISAMPLE_NONE, NULL, sceGxmShaderPatcherGetProgramFromId(shader.VSID), &shader.FP);
+		err = sceGxmShaderPatcherCreateFragmentProgram(g_shaderPatcher, shader.FSID, SCE_GXM_OUTPUT_REGISTER_FORMAT_UCHAR4, SCE_GXM_MULTISAMPLE_NONE, NULL, shader.PRG, &shader.FP);
 		SCE_DBG_ASSERT(err == SCE_OK);
 	}
 	else
@@ -274,13 +274,13 @@ ShaderID Shader_Compile_Internal(const SceGxmProgram* source_vs, const SceGxmPro
 		err =sceGxmShaderPatcherRegisterProgram(g_shaderPatcher, source_fs, &shader.FSID);
 		SCE_DBG_ASSERT(err == SCE_OK);
 
-		const SceGxmProgram* vProgram = sceGxmShaderPatcherGetProgramFromId(shader.VSID);
-		SCE_DBG_ASSERT(vProgram);
+		shader.PRG = sceGxmShaderPatcherGetProgramFromId(shader.VSID);
+		SCE_DBG_ASSERT(shader.PRG);
 	
-		const SceGxmProgramParameter* paramPositionAttribute = sceGxmProgramFindParameterByName(vProgram, "In.a_position");
+		const SceGxmProgramParameter* paramPositionAttribute = sceGxmProgramFindParameterByName(shader.PRG, "In.a_position");
 		SCE_DBG_ASSERT(paramPositionAttribute && (sceGxmProgramParameterGetCategory(paramPositionAttribute) == SCE_GXM_PARAMETER_CATEGORY_ATTRIBUTE));
 	
-		const SceGxmProgramParameter* paramTexcoordAttribute = sceGxmProgramFindParameterByName(vProgram, "In.a_texcoord");
+		const SceGxmProgramParameter* paramTexcoordAttribute = sceGxmProgramFindParameterByName(shader.PRG, "In.a_texcoord");
 		SCE_DBG_ASSERT(paramTexcoordAttribute && (sceGxmProgramParameterGetCategory(paramTexcoordAttribute) == SCE_GXM_PARAMETER_CATEGORY_ATTRIBUTE));
 
 		SceGxmVertexAttribute basicVertexAttributes[2];
@@ -307,9 +307,10 @@ ShaderID Shader_Compile_Internal(const SceGxmProgram* source_vs, const SceGxmPro
 		err = sceGxmShaderPatcherCreateVertexProgram(g_shaderPatcher, shader.VSID, basicVertexAttributes, 2, basicVertexStreams, 1, &shader.VP);
 		SCE_DBG_ASSERT(err == SCE_OK);
 
-		err = sceGxmShaderPatcherCreateFragmentProgram(g_shaderPatcher, shader.FSID, SCE_GXM_OUTPUT_REGISTER_FORMAT_UCHAR4, SCE_GXM_MULTISAMPLE_NONE, NULL, sceGxmShaderPatcherGetProgramFromId(shader.VSID), &shader.FP);
+		err = sceGxmShaderPatcherCreateFragmentProgram(g_shaderPatcher, shader.FSID, SCE_GXM_OUTPUT_REGISTER_FORMAT_UCHAR4, SCE_GXM_MULTISAMPLE_NONE, NULL, shader.PRG, &shader.FP);
 		SCE_DBG_ASSERT(err == SCE_OK);
 	}
+
 
 	return shader;
 }
@@ -377,11 +378,9 @@ int Emulator_InitialiseGXMContext(char* windowName)
 	SCE_DBG_ASSERT(err == SCE_OK);
 
 	SceUID vdmRingBufferUid;
-	void* vdmRingBuffer = Emulator_GraphicsAlloc(SCE_KERNEL_MEMBLOCK_TYPE_USER_RWDATA_UNCACHE, SCE_GXM_DEFAULT_VDM_RING_BUFFER_SIZE, 4, SCE_GXM_MEMORY_ATTRIB_READ, &vdmRingBufferUid);
-	
+	void *vdmRingBuffer = Emulator_GraphicsAlloc(SCE_KERNEL_MEMBLOCK_TYPE_USER_RWDATA_UNCACHE, SCE_GXM_DEFAULT_VDM_RING_BUFFER_SIZE, 4, SCE_GXM_MEMORY_ATTRIB_READ, &vdmRingBufferUid);
 	SceUID vertexRingBufferUid;
-	void* vertexRingBuffer = Emulator_GraphicsAlloc(SCE_KERNEL_MEMBLOCK_TYPE_USER_RWDATA_UNCACHE, SCE_GXM_DEFAULT_VERTEX_RING_BUFFER_SIZE, 4, SCE_GXM_MEMORY_ATTRIB_READ, &vertexRingBufferUid);
-	
+	void *vertexRingBuffer = Emulator_GraphicsAlloc(SCE_KERNEL_MEMBLOCK_TYPE_USER_RWDATA_UNCACHE, SCE_GXM_DEFAULT_VERTEX_RING_BUFFER_SIZE, 4, SCE_GXM_MEMORY_ATTRIB_READ, &vertexRingBufferUid);
 	SceUID fragmentRingBufferUid;
 	void* fragmentRingBuffer = Emulator_GraphicsAlloc(SCE_KERNEL_MEMBLOCK_TYPE_USER_RWDATA_UNCACHE, SCE_GXM_DEFAULT_FRAGMENT_RING_BUFFER_SIZE, 4, SCE_GXM_MEMORY_ATTRIB_READ, &fragmentRingBufferUid);
 	SceUID fragmentUsseRingBufferUid;
@@ -390,17 +389,17 @@ int Emulator_InitialiseGXMContext(char* windowName)
 
 	SceGxmContextParams ctxParam;
 	memset(&ctxParam, 0, sizeof(SceGxmContextParams));
-	ctxParam.hostMem						= malloc(SCE_GXM_MINIMUM_CONTEXT_HOST_MEM_SIZE);
-	ctxParam.hostMemSize					= SCE_GXM_MINIMUM_CONTEXT_HOST_MEM_SIZE;
-	ctxParam.vdmRingBufferMem				= vdmRingBuffer;
-	ctxParam.vdmRingBufferMemSize			= SCE_GXM_DEFAULT_VDM_RING_BUFFER_SIZE;
-	ctxParam.vertexRingBufferMem			= vertexRingBuffer;
-	ctxParam.vertexRingBufferMemSize		= SCE_GXM_DEFAULT_VERTEX_RING_BUFFER_SIZE;
-	ctxParam.fragmentRingBufferMem			= fragmentRingBuffer;
-	ctxParam.fragmentRingBufferMemSize		= SCE_GXM_DEFAULT_FRAGMENT_RING_BUFFER_SIZE;
-	ctxParam.fragmentUsseRingBufferMem		= fragmentUsseRingBuffer;
-	ctxParam.fragmentUsseRingBufferMemSize	= SCE_GXM_DEFAULT_FRAGMENT_USSE_RING_BUFFER_SIZE;
-	ctxParam.fragmentUsseRingBufferOffset	= fragmentUsseRingBufferOffset;
+	ctxParam.hostMem = malloc(SCE_GXM_MINIMUM_CONTEXT_HOST_MEM_SIZE);
+	ctxParam.hostMemSize = SCE_GXM_MINIMUM_CONTEXT_HOST_MEM_SIZE;
+	ctxParam.vdmRingBufferMem = vdmRingBuffer;
+	ctxParam.vdmRingBufferMemSize = SCE_GXM_DEFAULT_VDM_RING_BUFFER_SIZE;
+	ctxParam.vertexRingBufferMem = vertexRingBuffer;
+	ctxParam.vertexRingBufferMemSize = SCE_GXM_DEFAULT_VERTEX_RING_BUFFER_SIZE;
+	ctxParam.fragmentRingBufferMem = fragmentRingBuffer;
+	ctxParam.fragmentRingBufferMemSize = SCE_GXM_DEFAULT_FRAGMENT_RING_BUFFER_SIZE;
+	ctxParam.fragmentUsseRingBufferMem = fragmentUsseRingBuffer;
+	ctxParam.fragmentUsseRingBufferMemSize = SCE_GXM_DEFAULT_FRAGMENT_USSE_RING_BUFFER_SIZE;
+	ctxParam.fragmentUsseRingBufferOffset = fragmentUsseRingBufferOffset;
 	
 	SceGxmContext* context = NULL;
 	err = sceGxmCreateContext(&ctxParam, &g_context);
@@ -416,7 +415,7 @@ int Emulator_InitialiseGXMContext(char* windowName)
 	rtParam.multisampleLocations	= 0;
 	rtParam.driverMemBlock		= SCE_UID_INVALID_UID;
 
-	SceGxmRenderTarget *renderTarget;
+	SceGxmRenderTarget* renderTarget;
 	err = sceGxmCreateRenderTarget(&rtParam, &renderTarget);
 	SCE_DBG_ASSERT(err == SCE_OK);
 
@@ -425,13 +424,13 @@ int Emulator_InitialiseGXMContext(char* windowName)
 	SceGxmColorSurface displaySurface[DISPLAY_BUFFER_COUNT];
 	SceGxmSyncObject* displayBufferSync[DISPLAY_BUFFER_COUNT];
 
-	for (uint32_t i = 0; i < DISPLAY_BUFFER_COUNT; i++) 
+	for (uint32_t i = 0; i < DISPLAY_BUFFER_COUNT; ++i) 
 	{
-		displayBufferData[i] = Emulator_GraphicsAlloc(SCE_KERNEL_MEMBLOCK_TYPE_USER_CDRAM_RWDATA, ALIGN(4*DISPLAY_STRIDE_IN_PIXELS*DISPLAY_HEIGHT, 1*1024*1024), SCE_GXM_COLOR_SURFACE_ALIGNMENT, SCE_GXM_MEMORY_ATTRIB_READ | SCE_GXM_MEMORY_ATTRIB_WRITE, &displayBufferUid[i]);
+		displayBufferData[i] = Emulator_GraphicsAlloc(SCE_KERNEL_MEMBLOCK_TYPE_USER_CDRAM_RWDATA,ALIGN(4 * DISPLAY_STRIDE_IN_PIXELS * DISPLAY_HEIGHT, 1 * 1024 * 1024), SCE_GXM_COLOR_SURFACE_ALIGNMENT, SCE_GXM_MEMORY_ATTRIB_READ | SCE_GXM_MEMORY_ATTRIB_WRITE, &displayBufferUid[i]);
 
 		for (uint32_t y = 0; y < DISPLAY_HEIGHT; ++y) 
 		{
-			uint32_t* row = (uint32_t *)displayBufferData[i] + y*DISPLAY_STRIDE_IN_PIXELS;
+			uint32_t* row = (uint32_t*)displayBufferData[i] + y * DISPLAY_STRIDE_IN_PIXELS;
 			for (uint32_t x = 0; x < DISPLAY_WIDTH; ++x) 
 			{
 				row[x] = 0xff000000;
@@ -490,9 +489,6 @@ void Emulator_CreateGlobalShaders()
 	g_gte_shader_8 = Shader_Compile(gte_shader_8, 1);
 	g_gte_shader_16 = Shader_Compile(gte_shader_16, 1);
 	g_blit_shader = Shader_Compile(blit_shader, 0);
-
-	const SceGxmProgram* gte_4_program = sceGxmShaderPatcherGetProgramFromId(g_gte_shader_4.VSID);
-	u_Projection = sceGxmProgramFindParameterByName(gte_4_program, "Projection");
 }
 
 void Emulator_GenerateCommonTextures()
@@ -562,16 +558,24 @@ void Emulator_Ortho2D(float left, float right, float bottom, float top, float zn
 		x, y, z, 1
 	};
 	
-		void* vertexDefaultBuffer = NULL;
-		sceGxmReserveVertexDefaultUniformBuffer(g_context, &vertexDefaultBuffer);
-		sceGxmSetUniformDataF(vertexDefaultBuffer, u_Projection, 0, 16*4, ortho);
+	void* vertexDefaultBuffer = NULL;
+	sceGxmReserveVertexDefaultUniformBuffer(g_context, &vertexDefaultBuffer);
+	printf("SETTING BUFF: %d!\n", (int)vertexDefaultBuffer);
+
+	sceGxmSetUniformDataF(vertexDefaultBuffer, u_Projection, 0, 16, ortho);
 }
 
 void Emulator_SetShader(const ShaderID shader)
 {
+	printf("SETTING SHADER!\n");
+	
+	u_Projection = sceGxmProgramFindParameterByName(shader.PRG, "Projection");
+	SCE_DBG_ASSERT(u_Projection && (sceGxmProgramParameterGetCategory(u_Projection) == SCE_GXM_PARAMETER_CATEGORY_UNIFORM));
+
 	sceGxmSetVertexProgram(g_context, shader.VP);
 	sceGxmSetFragmentProgram(g_context, shader.FP);
-	
+
+	printf("u_Projection: %d, prog: %d\n", (int)u_Projection, (int)shader.PRG);
 	Emulator_Ortho2D(0.0f, activeDispEnv.disp.w, activeDispEnv.disp.h, 0.0f, 0.0f, 1.0f);
 }
 
