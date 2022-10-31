@@ -22,7 +22,7 @@ endif()
 
 include_directories(${SDL2_INCLUDE_DIR})
 
-target_link_directories(${PROJECT_NAME} PUBLIC ${ROOT_DIR}/Build/Emulator/$(Configuration))
+target_link_directories(${PROJECT_NAME} PUBLIC ${ROOT_DIR}/Build/Build_Win32/Emulator/$(Configuration))
 
 set(PSX_LIB Valkyrie.lib)
 
