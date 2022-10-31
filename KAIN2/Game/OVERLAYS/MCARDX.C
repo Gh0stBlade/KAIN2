@@ -549,9 +549,6 @@ long sub_80163FC8(struct mcpsx_t* mcpsx)
 
 long sub_80164258(struct mcpsx_t* mcpsx, struct mcpsx_directory_t* directory, long* nfilesptr)
 {
-	//s0 = mcpsx
-	//s1 = directory
-	//s2 = nfilesptr
 	if (sub_80163F28(mcpsx) == 0)
 	{
 		return 0;
@@ -564,6 +561,7 @@ long sub_80164258(struct mcpsx_t* mcpsx, struct mcpsx_directory_t* directory, lo
 	mcpsx->params.directory = directory;
 	mcpsx->params.nfilesptr = nfilesptr;
 
+	return 1;
 }
 
 long sub_801645E0(void* data /*s0*/, long val, long flag)
