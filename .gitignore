@@ -2,14 +2,15 @@ Build/
 External/
 
 /kain2/*.filters
-/Build_Emscripten/*
-/Build_EMSDK/*
-/Build_UWP/*
-/Build_Durango/*
-/Build_PSP2/*
-/Build_NX_Win/*
-/Build_NX_Arm/*
-/Build_Linux/*
+/Build/Build_Emscripten/*
+/Build/Build_EMSDK/*
+/Build/Build_UWP/*
+/Build/Build_Durango/*
+/Build/Build_PSP2/*
+/Build/Build_NX_Win/*
+/Build/Build_NX_Arm/*
+/Build/Build_Linux/*
+/Build/Build_Win32/*
 Emulator/Shaders/D3D9/*.h
 Emulator/Shaders/D3D11/*.h
 Emulator/Shaders/D3D12/*.h
