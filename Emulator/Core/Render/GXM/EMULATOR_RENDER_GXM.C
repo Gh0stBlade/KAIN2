@@ -602,6 +602,28 @@ void Emulator_SetTexture(TextureID texture, enum TexFormat texFormat)
 	g_lastBoundTexture[1] = rg8lutTexture;
 }
 
+void Emulator_SetTextureAndShader(TextureID texture, ShaderID shader)
+{
+	Emulator_SetShader(shader);
+
+	if (g_texturelessMode) {
+		texture = whiteTexture;
+	}
+
+	if (g_lastBoundTexture[0] == texture && g_lastBoundTexture[1] == rg8lutTexture) {
+		//return;
+	}
+
+	//glActiveTexture(GL_TEXTURE0);
+	//glBindTexture(GL_TEXTURE_2D, texture);
+
+	//glActiveTexture(GL_TEXTURE1);
+	//glBindTexture(GL_TEXTURE_2D, rg8lutTexture);
+
+	//g_lastBoundTexture[0] = texture;
+	//g_lastBoundTexture[1] = rg8lutTexture;
+}
+
 void Emulator_DestroyTexture(TextureID texture)
 {
 	

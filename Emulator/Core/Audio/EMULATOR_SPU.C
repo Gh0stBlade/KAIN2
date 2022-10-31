@@ -7,7 +7,9 @@
 #define BLOCK_END    (28 << PITCH_SHIFT)
 
 int32_t gSamples[SND_SAMPLES * 2]; // stereo
+#if defined(SDL2)
 SDL_AudioDeviceID gAudioDevice;
+#endif
 
 const int8_t SPU_POS[] = { 0, 60, 115,  98, 122 };
 const int8_t SPU_NEG[] = { 0,  0, -52, -55, -60 };
@@ -154,13 +156,15 @@ void sndFill(void* udata, uint8_t* stream, int32_t len)
 void SPU_Initialise()
 {
     int32_t i;
+#if defined(SDL2)
     SDL_AudioSpec desired, obtained;
+#endif
 
     for (i = 0; i < SPU_MAX_CHANNELS; i++)
     {
         channelList[i].blockPos = BLOCK_END;
     }
-
+#if defined(SDL2)
     desired.freq     = 44100;
     desired.format   = AUDIO_S16SYS;
     desired.channels = 2;
@@ -170,12 +174,15 @@ void SPU_Initialise()
 
     gAudioDevice = SDL_OpenAudioDevice(NULL, 0, &desired, &obtained, 0);
     SDL_PauseAudioDevice(gAudioDevice, 0);
+#endif
 }
 
 void SPU_Destroy()
 {
+#if defined(SDL2)
     SDL_PauseAudioDevice(gAudioDevice,1);
     SDL_CloseAudioDevice(gAudioDevice);
+#endif
 }
 
 void SPU_ResetChannel(Channel* channel, uint8_t* data)

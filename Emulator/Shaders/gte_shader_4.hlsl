@@ -6,6 +6,10 @@
 	#define SV_TARGET COLOR0
 	#define ARG_VPOS ,float2 coord : VPOS
 	#define FRAG_COORD coord.xy
+#elif defined(GXM)
+	#define SV_TARGET COLOR0
+	#define ARG_VPOS ,float2 coord : WPOS///@FIXME VPOS!
+	#define FRAG_COORD coord.xy
 #else
 	#define FRAG_COORD In.v_position.xy
 	#define ARG_VPOS
