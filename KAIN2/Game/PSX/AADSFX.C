@@ -500,7 +500,7 @@ void aadExecuteSfxCommand(struct AadSfxCommand *sfxCmd)
 #endif
 }
 
-void sfxCmdPlayTone(struct AadSfxCommand* sfxCmd)
+void sfxCmdPlayTone(struct AadSfxCommand* sfxCmd)//Matching - 88.08%
 {
 #if defined(PSX_VERSION)
 	unsigned long handle;
@@ -515,13 +515,16 @@ void sfxCmdPlayTone(struct AadSfxCommand* sfxCmd)
 
 	handle = sfxCmd->ulongParam;
 
-	if (aadMem->sfxToneMasterList[handle & 0xFFFF] < 0xFE)
-	{
-		sfxToneAttr = &aadMem->sfxToneAttrTbl[aadMem->sfxToneMasterList[handle & 0xFFFF]];
+	i = aadMem->sfxToneMasterList[handle & 0xFFFF];
 
-		if (aadMem->sfxWaveMasterList[sfxToneAttr->waveID] < 0xFE)
+	if (i < 0xFE)
+	{
+		sfxToneAttr = &aadMem->sfxToneAttrTbl[i];
+		i = aadMem->sfxWaveMasterList[sfxToneAttr->waveID];
+
+		if (i < 0xFE)
 		{
-			sfxWaveAttr = &aadMem->sfxWaveAttrTbl[aadMem->sfxWaveMasterList[sfxToneAttr->waveID]];//+3
+			sfxWaveAttr = &aadMem->sfxWaveAttrTbl[i];//+3
 			waveAddr = aadGetSramBlockAddr(sfxWaveAttr->sramHandle);
 			toneAtr = &sfxToneAttr->toneAttr;
 			midiNote = toneAtr->minNote;
@@ -532,16 +535,16 @@ void sfxCmdPlayTone(struct AadSfxCommand* sfxCmd)
 			{
 				aadPlayTone(toneAtr, waveAddr, progAtr, midiNote, 0x7F, sfxCmd->dataByte[0], sfxCmd->dataByte[1], aadMem->sfxSlot.sfxVolume, aadMem->sfxMasterVol, voice, sfxCmd->shortParam);
 
-				voice->handle = handle;
+				voice->volume = 127;
 				voice->voiceID = 208;
 				voice->note = midiNote;
-				voice->priority = sfxToneAttr->toneAttr.priority;
-				voice->volume = 127;
 				voice->program = 1;
 				voice->updateVol = sfxCmd->dataByte[0];
+				voice->priority = sfxToneAttr->toneAttr.priority;
 				voice->progAtr = progAtr;
 				voice->toneAtr = toneAtr;
 				voice->pan = sfxCmd->dataByte[1];
+				voice->handle = handle;
 			}
 		}
 	}

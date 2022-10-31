@@ -3243,7 +3243,7 @@ void MORPH_ToggleMorph()
 
 	gameTrackerX.gameData.asmData.MorphTime = 0;
 
-	SOUND_Play3dSound(&gameTrackerX.playerInstance->position, 26, 0xFFFFFEA2, 127, 32767);
+	SOUND_Play3dSound(&gameTrackerX.playerInstance->position, 26, -350, 127, 32767);
 
 	for (i = 0; i < 16; i++)
 	{

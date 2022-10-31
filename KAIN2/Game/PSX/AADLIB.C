@@ -1133,7 +1133,7 @@ void aadLoadDynamicSfxReturn(void* loadedDataPtr, void* data, void* data2)
 	}
 }
 
-int aadWaveMalloc(unsigned short waveID, unsigned long waveSize)//Matching - 93.39%
+int aadWaveMalloc(unsigned short waveID, unsigned long waveSize) //Matching - 97.98%
 {
 	struct AadNewSramBlockDesc* sramDesc;
 	struct AadNewSramBlockDesc* bestFit;
@@ -1153,14 +1153,16 @@ int aadWaveMalloc(unsigned short waveID, unsigned long waveSize)//Matching - 93.
 	}
 
 	bestFit = NULL;
+	bestFitIndex = 255;
 	sramDescIndex = aadMem->firstSramBlockDescIndex;
 	sramDescTbl = &aadMem->sramDescriptorTbl[0];
 	next = sramDescTbl + sramDescIndex;
 
-	for (i = 128; next != NULL; i--)
+	for (i = 128; next != NULL;)
 	{
-		if (i - 1 == -1)
+		if (--i == -1)
 		{
+			i++;
 			break;
 		}
 
@@ -1192,8 +1194,6 @@ int aadWaveMalloc(unsigned short waveID, unsigned long waveSize)//Matching - 93.
 		}
 	}
 
-	i++;
-
 	if (bestFit != NULL)
 	{
 		bestFit->waveID = waveID | 0xC000;
@@ -1211,7 +1211,7 @@ int aadWaveMalloc(unsigned short waveID, unsigned long waveSize)//Matching - 93.
 
 					bestFit->size = waveSize;
 
-					return 255;
+					return bestFitIndex;
 				}
 			}
 
@@ -1219,18 +1219,21 @@ int aadWaveMalloc(unsigned short waveID, unsigned long waveSize)//Matching - 93.
 
 			next = sramDescTbl + sramDescIndex;
 
+
 			if ((next->waveID & 0x8000))
 			{
-				for (i = sramDescIndex; (next->waveID & 0x8000) != 0; i++)
+				for (i = sramDescIndex; (next->waveID & 0x8000) != 0; i = i + 1 & 0x7F, i++)
 				{
 					if (((i + 1) & 0x7F) == i)
 					{
 						return 255;
 					}
+					else
+					{
+						sramDescIndex = i;
+					}
 
 					next = sramDescTbl + sramDescIndex;
-
-					sramDescIndex = i;
 				}
 			}
 
@@ -1255,8 +1258,6 @@ int aadWaveMalloc(unsigned short waveID, unsigned long waveSize)//Matching - 93.
 
 	return 255;
 }
-
-
 
 unsigned long aadGetSramBlockAddr(int handle)
 {
@@ -1416,13 +1417,14 @@ void setSramFullAlarm()
 	gSramFreeBlocks = numFreeBlocks;
 }
 
-void aadLoadSingleDynSfx(struct AadDynamicSfxLoadInfo* info)//Matching - 88%
+void aadLoadSingleDynSfx(struct AadDynamicSfxLoadInfo* info)//Matching - 86.56%
 {
 	int i; // $a0
 	struct AadLoadedSfxToneAttr* toneAttr; // $a1
 	struct AadLoadedSfxWaveAttr* waveAttr; // $s0
 	struct AadDynSfxAttr* attr; // $s1
 	int handle;
+	int temp;
 
 	info->waveTransferAddr = NULL;
 
@@ -1452,27 +1454,19 @@ void aadLoadSingleDynSfx(struct AadDynamicSfxLoadInfo* info)//Matching - 88%
 	else
 	{
 		toneAttr = &aadMem->sfxToneAttrTbl[aadMem->nextToneIndex];
-		i = (aadMem->nextToneIndex);
 
-		if (toneAttr->referenceCount != 0)
+		for (i = ((aadMem->nextToneIndex)); toneAttr->referenceCount != 0;)
 		{
-			for (; toneAttr->referenceCount != 0; i++)
+			if (((i + 1) & 0x7F) == aadMem->nextToneIndex)
 			{
-				if (((i + 1) & 0x7F) == aadMem->nextToneIndex)
-				{
-					setSramFullAlarm();
+				info->smfLoadingState = 2;
 
-					info->smfLoadingState = 2;
+				aadMem->sfxToneMasterList[attr->sfxID] = 0xFE;
 
-
-					aadMem->sfxToneMasterList[attr->sfxID] = 0xFE;
-
-
-					return;
-				}
-
-				toneAttr = &aadMem->sfxToneAttrTbl[i];
+				return;
 			}
+
+			toneAttr = &aadMem->sfxToneAttrTbl[++i];
 		}
 
 		aadMem->nextToneIndex = (aadMem->nextToneIndex + 8) & 0x7F;
@@ -1485,9 +1479,11 @@ void aadLoadSingleDynSfx(struct AadDynamicSfxLoadInfo* info)//Matching - 88%
 
 		aadMem->sfxToneMasterList[attr->sfxID] = i;
 
-		if (aadMem->sfxWaveMasterList[attr->waveID] != 0xFF)
+		i = aadMem->sfxWaveMasterList[attr->waveID];
+
+		if (i != 0xFF)
 		{
-			waveAttr = &aadMem->sfxWaveAttrTbl[attr->waveID];
+			waveAttr = &aadMem->sfxWaveAttrTbl[i];
 
 			waveAttr->referenceCount++;
 
@@ -1495,15 +1491,23 @@ void aadLoadSingleDynSfx(struct AadDynamicSfxLoadInfo* info)//Matching - 88%
 
 			return;
 		}
+		else
+		{
+			i = aadMem->nextToneIndex;
+			waveAttr = &aadMem->sfxWaveAttrTbl[i];
+		}
 	}
 
-
-	waveAttr = &aadMem->sfxWaveAttrTbl[aadMem->nextWaveIndex];
-	i = aadMem->nextWaveIndex;
-
 	goto start;
-	while (waveAttr->referenceCount != 0)
+
+
+	for (i = aadMem->sfxWaveMasterList[attr->waveID]; ; i++)
 	{
+		if (waveAttr->referenceCount == 0)
+		{
+			break;
+		}
+
 		if (i >= 0x78)
 		{
 			i = 0;
@@ -1515,16 +1519,15 @@ void aadLoadSingleDynSfx(struct AadDynamicSfxLoadInfo* info)//Matching - 88%
 
 			setSramFullAlarm();
 
-			info->smfLoadingState = 2;
-
 			aadMem->sfxToneMasterList[attr->sfxID] = 0xFE;
+
+			info->smfLoadingState = 2;
 
 			return;
 		}
-
 	start:
-		waveAttr = &aadMem->sfxWaveAttrTbl[i++];
-	};
+		waveAttr = &aadMem->sfxWaveAttrTbl[i];
+	}
 
 	i--;
 
@@ -1555,9 +1558,9 @@ void aadLoadSingleDynSfx(struct AadDynamicSfxLoadInfo* info)//Matching - 88%
 
 		setSramFullAlarm();
 
-		info->smfLoadingState = 2;
-
 		aadMem->sfxToneMasterList[attr->sfxID] = 0xFE;
+
+		info->smfLoadingState = 2;
 	}
 }
 
