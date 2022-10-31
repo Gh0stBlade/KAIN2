@@ -1,6 +1,7 @@
-# Legacy of Kain: Soul Reaver decompile
+# Legacy of Kain: Soul Reaver Decompile
 
-kain2 is an attempt to decompile Soul Reaver.
+<img src="https://i.imgur.com/1uoxlcq.png"/>
 
-## License
-[The Unlicense](https://unlicense.org/)
+<img src="https://i.imgur.com/ZUkb6Sn.png"/>
+
+<img src="https://i.imgur.com/pOaaEeh.png"/>
