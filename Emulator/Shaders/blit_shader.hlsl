@@ -49,7 +49,7 @@ struct VS_OUTPUT {
 #endif
 
 #if defined(GXM)
-	float4 main(VS_OUTPUT In, uniform sampler2D s_texture : register(s0), uniform sampler2D s_lut : register(s1)) : SV_TARGET {
+	float4 main(VS_OUTPUT In, uniform sampler2D s_texture : register(s0), uniform sampler2D s_lut : register(s1)) {
 #else
 	float4 main(VS_OUTPUT In) : SV_TARGET {
 #endif
@@ -58,7 +58,7 @@ struct VS_OUTPUT {
 		float4 color = tex2D(s_lut, color_rg).bgra;
 #elif defined(GXM)
 		float2 color_rg = tex2D(s_texture, In.v_texcoord.xy).rg;
-		float4 color = tex2D(s_lut, color_rg).bgra;
+		float4 color = tex2D(s_lut, color_rg);
 #else
 		float2 color_rg = s_texture.Sample(samplerState, In.v_texcoord.xy).rg;
 		float4 color = s_lut.Sample(samplerStateLUT, color_rg);

@@ -981,9 +981,6 @@ void Emulator_DrawTriangles(int start_vertex, int triangles)
 	if (triangles <= 0)
 		return;
 
-	
-	//d3dcontext->Draw(triangles * 3, start_vertex);
-
 	d3dcontext->DrawIndexed(triangles * 3, 0, start_vertex);
 }
 

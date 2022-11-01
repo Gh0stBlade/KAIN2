@@ -81,7 +81,7 @@ struct VS_OUTPUT {
 #endif
 
 #if defined(GXM)
-	float4 main(VS_OUTPUT In ARG_VPOS, uniform sampler2D s_texture : register(s0), uniform sampler2D s_lut : register(s1)) : SV_TARGET {
+	float4 main(VS_OUTPUT In ARG_VPOS, uniform sampler2D s_texture : register(s0), uniform sampler2D s_lut : register(s1)) {
 #else
 	float4 main(VS_OUTPUT In ARG_VPOS) : SV_TARGET {
 #endif
@@ -108,8 +108,10 @@ struct VS_OUTPUT {
 		{
 			discard;
 		}
-#if defined(D3D9) || defined(GXM)
+#if defined(D3D9)
 		float4 color = tex2D(s_lut, clut_color).bgra;
+#elif defined(GXM)
+		float4 color = tex2D(s_lut, clut_color);
 #else		
 		float4 color = s_lut.Sample(samplerStateLUT, clut_color);
 #endif

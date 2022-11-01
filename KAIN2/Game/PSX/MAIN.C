@@ -724,7 +724,7 @@ long MAIN_DoMainMenu(struct GameTracker *gameTracker, struct MainTracker *mainTr
 
 #if defined(PSXPC_VERSION) && defined(NO_CD)
 	#if defined(SN_TARGET_PSP2)
-		#define BIGFILE_DAT "ux0:app\\TEST12345\\BIGFILE.DAT"
+		#define BIGFILE_DAT "ux0:app\\test12345\\bigfile.dat"
 	#else
 		#define BIGFILE_DAT "BIGFILE.DAT"
 	#endif
