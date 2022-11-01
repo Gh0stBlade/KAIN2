@@ -30,6 +30,7 @@ typedef struct ShaderID
 	SceGxmFragmentProgram* FP;
 
 	const SceGxmProgram* PRG;
+	int isGTE;
 
 } ShaderID;
 
@@ -49,11 +50,18 @@ enum ShaderAttrib
 #endif
 };
 
-typedef SceUID TextureID;
+typedef struct TextureID
+{
+	SceUID Uid;
+    void *bufferData;
+	SceGxmTexture texture;
+} TextureID;
 
 typedef unsigned int RenderTargetID;
 
 extern int Emulator_InitialiseGXMContext(char* windowName);
+extern void Emulator_BeginRenderScene();
+extern void Emulator_EndRenderScene();
 
 extern const SceGxmProgram	blit_shader_vs;
 extern const SceGxmProgram	blit_shader_fs;

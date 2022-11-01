@@ -5329,6 +5329,9 @@ int Emulator_BeginScene()
 #elif defined(PLATFORM_NX)
 	//g_lastBoundTexture[0] = NULL;
 	//g_lastBoundTexture[1] = NULL;
+#elif defined(GXM)
+	//g_lastBoundTexture[0] = NULL;
+	//g_lastBoundTexture[1] = NULL;
 #else
 	g_lastBoundTexture[0] = NULL;
 	g_lastBoundTexture[1] = NULL;
@@ -5376,6 +5379,9 @@ int Emulator_BeginScene()
 	Emulator_UpdateVRAM();
 	Emulator_BeginPass();
 	Emulator_SetVertexBuffer();
+
+#elif defined(GXM)
+	Emulator_BeginRenderScene();
 #endif
 
 #if !defined(VULKAN) && !defined(D3D12) && !defined(PLATFORM_NX)  && !defined(PLATFORM_NX_ARM) && !defined(D3D12) 
@@ -6089,6 +6095,10 @@ void Emulator_EndScene()
 
 	begin_scene_flag = FALSE;
 	vbo_was_dirty_flag = FALSE;
+
+#if defined(GXM)
+	Emulator_EndRenderScene();
+#endif
 
 	Emulator_SwapWindow();
 
