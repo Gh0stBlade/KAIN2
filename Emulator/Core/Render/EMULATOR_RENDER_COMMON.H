@@ -144,6 +144,7 @@ extern int vram_need_update;
 #define CLUT_HEIGHT (1)
 
 #define MAX_NUM_POLY_BUFFER_VERTICES (20000)
+#define MAX_NUM_INDEX_BUFFER_INDICES (65535)
 #define MAX_NUM_INDEX_BUFFERS        (4096)
 
 #define VRAM_FORMAT            GL_RG
@@ -168,7 +169,8 @@ extern void Emulator_SetTextureAndShader(TextureID texture, ShaderID shader);
 extern ShaderID Emulator_GetGTEShader(TexFormat texFormat);
 #endif
 
-extern void Emulator_UpdateVertexBuffer(const struct Vertex* vertices, int count);
+extern void Emulator_UpdateVertexBuffer(const struct Vertex* vertices, int num_vertices);
+extern void Emulator_UpdateIndexBuffer(const unsigned short* indices, int num_indices);
 extern int Emulator_CreateCommonResources();
 extern void Emulator_Ortho2D(float left, float right, float bottom, float top, float znear, float zfar);
 extern const char* renderBackendName;

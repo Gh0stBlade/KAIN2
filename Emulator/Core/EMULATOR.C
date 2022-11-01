@@ -5067,12 +5067,20 @@ void Emulator_BlitVRAM()
 		{ +1, +1,    0, 0,    r, t,    0, 0,    0, 0, 0, 0 },
 	};
 
+	unsigned short blit_indices[] =
+	{
+		0, 1, 2,
+		3, 5, 4,
+	};
+
 #if defined(_PATCH)
 	Emulator_SetViewPort(0.0f, 0.0f, windowWidth, windowHeight);
 	Emulator_Ortho2D(0.0f, windowWidth, windowHeight, 0.0f, 0.0f, 1.0f);
 #endif
 
 	Emulator_UpdateVertexBuffer(blit_vertices, 6);
+	Emulator_UpdateIndexBuffer(blit_indices, 6);
+
 	Emulator_SetWireframe(FALSE);
 
 	Emulator_DrawTriangles(0, 2);
@@ -6154,9 +6162,9 @@ void Emulator_ShutDown()
 #endif
 #endif
 
-#if !defined(SN_TARGET_PSP2)
+#if !defined(SN_TARGET_PSP2) && !defined(EDITOR)
 	//Disabled as editor needs to run still.
-	//exit(EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 #endif
 }
 

@@ -25,6 +25,7 @@ int g_overrideWidth = -1;
 int g_overrideHeight = -1;
 ID3D11Texture2D* vramBaseTexture = NULL;
 ID3D11Buffer* dynamic_vertex_buffer = NULL;
+ID3D11Buffer* dynamic_index_buffer = NULL;
 ID3D11Device* d3ddev = NULL;
 ID3D11DeviceContext* d3dcontext = NULL;
 
@@ -195,6 +196,17 @@ void Emulator_ResetDevice()
 	hr = d3ddev->CreateBuffer(&vbd, NULL, &dynamic_vertex_buffer);
 	eassert(!FAILED(hr));
 
+	D3D11_BUFFER_DESC ibd;
+	ZeroMemory(&ibd, sizeof(ibd));
+	ibd.Usage = D3D11_USAGE_DYNAMIC;
+	ibd.ByteWidth = sizeof(unsigned short) * MAX_NUM_INDEX_BUFFER_INDICES;
+	ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	ibd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	ibd.MiscFlags = 0;
+
+	hr = d3ddev->CreateBuffer(&ibd, NULL, &dynamic_index_buffer);
+	eassert(!FAILED(hr));
+
 	D3D11_TEXTURE2D_DESC td;
 	ZeroMemory(&td, sizeof(td));
 	td.ArraySize = 1;
@@ -228,6 +240,7 @@ void Emulator_ResetDevice()
 	UINT offset = 0;
 	UINT stride = sizeof(Vertex);
 	d3dcontext->IASetVertexBuffers(0, 1, &dynamic_vertex_buffer, &stride, &offset);
+	d3dcontext->IASetIndexBuffer(dynamic_index_buffer, DXGI_FORMAT_R16_UINT, 0);
 	d3dcontext->OMSetRenderTargets(1, &renderTargetView, NULL);
 	d3dcontext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	Emulator_CreateRasterState(FALSE);
@@ -968,7 +981,10 @@ void Emulator_DrawTriangles(int start_vertex, int triangles)
 	if (triangles <= 0)
 		return;
 
-	d3dcontext->Draw(triangles * 3, start_vertex);
+	
+	//d3dcontext->Draw(triangles * 3, start_vertex);
+
+	d3dcontext->DrawIndexed(triangles * 3, 0, start_vertex);
 }
 
 void Emulator_UpdateVertexBuffer(const Vertex* vertices, int num_vertices)
@@ -984,6 +1000,19 @@ void Emulator_UpdateVertexBuffer(const Vertex* vertices, int num_vertices)
 	d3dcontext->Unmap(dynamic_vertex_buffer, 0);
 
 	vbo_was_dirty_flag = TRUE;
+}
+
+void Emulator_UpdateIndexBuffer(const unsigned short* indices, int num_indices)
+{
+	eassert(num_indices <= MAX_NUM_INDEX_BUFFER_INDICES);
+
+	if (num_indices <= 0)
+		return;
+
+	D3D11_MAPPED_SUBRESOURCE sr;
+	d3dcontext->Map(dynamic_index_buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &sr);
+	memcpy(sr.pData, indices, num_indices * sizeof(unsigned short));
+	d3dcontext->Unmap(dynamic_index_buffer, 0);
 }
 
 void Emulator_SetViewPort(int x, int y, int width, int height)
@@ -1040,6 +1069,11 @@ void Emulator_DestroyRender()
 	if (dynamic_vertex_buffer) {
 		dynamic_vertex_buffer->Release();
 		dynamic_vertex_buffer = NULL;
+	}
+
+	if (dynamic_index_buffer) {
+		dynamic_index_buffer->Release();
+		dynamic_index_buffer = NULL;
 	}
 
 	if (rasterState != NULL)
