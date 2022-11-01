@@ -990,7 +990,7 @@ long StreamRenderLevel(struct _StreamUnit* currentUnit, struct Level* mainLevel,
 
 	theCamera.core.farPlane = level->fogFar;
 
-	if (CheckForNoBlend((_ColorType*)&depthQBackColor) == 0)
+	if (CheckForNoBlend((struct _ColorType*)&depthQBackColor) == 0)
 	{
 		depthQBlendStart = depthQFogStart;
 	}

@@ -35,7 +35,7 @@ int16_t vagPredicate(int16_t value, uint8_t pred, uint8_t shift, int32_t* s1, in
     return s;
 }
 
-int32_t vagProcessBlock(Channel* channel, int16_t* dst)
+int32_t vagProcessBlock(struct Channel* channel, int16_t* dst)
 {
     int32_t i;
     uint8_t d;
@@ -84,7 +84,7 @@ int32_t vagProcessBlock(Channel* channel, int16_t* dst)
     return 1;
 }
 
-void fillVAG(Channel* channel, int32_t count)
+void fillVAG(struct Channel* channel, int32_t count)
 {
     int32_t i, value;
 
@@ -133,7 +133,7 @@ void convertSamples(int16_t* dst, int32_t* src, int32_t count)
 void fillSamples(int16_t* buffer, int32_t count)
 {
     int32_t i;
-    Channel* channel = channelList;
+    struct Channel* channel = channelList;
 
     memset(gSamples, 0, sizeof(gSamples));
 
@@ -185,7 +185,7 @@ void SPU_Destroy()
 #endif
 }
 
-void SPU_ResetChannel(Channel* channel, uint8_t* data)
+void SPU_ResetChannel(struct Channel* channel, uint8_t* data)
 {
     channel->pos = 0;
     channel->s1 = 0;

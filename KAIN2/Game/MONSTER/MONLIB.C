@@ -896,7 +896,7 @@ void MON_PlayCombatIdle(struct _Instance* instance, int mode)
 		anim = 10;
 	}
 
-	MON_PlayAnimIfNotPlaying(instance, (MonsterAnim)anim, mode);
+	MON_PlayAnimIfNotPlaying(instance, (enum MonsterAnim)anim, mode);
 }
 
 

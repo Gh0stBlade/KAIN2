@@ -43,6 +43,6 @@ extern struct Channel channelList[SPU_MAX_CHANNELS];
 
 void SPU_Initialise();
 void SPU_Destroy();
-void SPU_ResetChannel(Channel* channel, uint8_t* data);
+void SPU_ResetChannel(struct Channel* channel, uint8_t* data);
 
 #endif

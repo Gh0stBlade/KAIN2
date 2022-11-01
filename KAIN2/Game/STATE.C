@@ -720,7 +720,7 @@ int SetShadowSegmentData(unsigned long total)
 {
 	struct evShadowSegmentData* Ptr;
 	
-	Ptr = (struct evShadowSegmentData*)CIRC_Alloc(sizeof(evShadowSegmentData));
+	Ptr = (struct evShadowSegmentData*)CIRC_Alloc(sizeof(struct evShadowSegmentData));
 
 	Ptr->totalShadowSegments = total;
 
