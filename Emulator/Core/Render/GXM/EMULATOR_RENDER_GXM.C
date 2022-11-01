@@ -24,7 +24,7 @@
 #define DISPLAY_HEIGHT				544
 #define DISPLAY_STRIDE_IN_PIXELS	1024
 
-#define DISPLAY_COLOR_FORMAT		SCE_GXM_COLOR_FORMAT_A8B8G8R8
+#define DISPLAY_COLOR_FORMAT		SCE_GXM_COLOR_FORMAT_A8R8G8B8
 #define DISPLAY_PIXEL_FORMAT		SCE_DISPLAY_PIXELFORMAT_A8B8G8R8
 
 #define DISPLAY_BUFFER_COUNT		3
@@ -420,7 +420,7 @@ SceGxmTexture rg8lutTextureCtl;
 
 #define	UNUSED(a)					(void)(a)
 
-const SceGxmProgramParameter* u_Projection;
+SceGxmProgramParameter* u_Projection;
 
 ShaderID Shader_Compile_Internal(const SceGxmProgram* source_vs, const SceGxmProgram* source_fs, int gte_shader)
 {
@@ -465,7 +465,7 @@ ShaderID Shader_Compile_Internal(const SceGxmProgram* source_vs, const SceGxmPro
 		basicVertexAttributes[1].streamIndex = 0;
 		basicVertexAttributes[1].offset = OFFSETOF(struct Vertex, u);
 		basicVertexAttributes[1].format = SCE_GXM_ATTRIBUTE_FORMAT_U8;
-		basicVertexAttributes[1].componentCount = 2;
+		basicVertexAttributes[1].componentCount = 4;
 		basicVertexAttributes[1].regIndex = sceGxmProgramParameterGetResourceIndex(paramTexcoordAttribute);
 	
 		basicVertexAttributes[2].streamIndex = 0;
@@ -481,7 +481,7 @@ ShaderID Shader_Compile_Internal(const SceGxmProgram* source_vs, const SceGxmPro
 		err = sceGxmShaderPatcherCreateVertexProgram(g_shaderPatcher, shader.VSID, basicVertexAttributes, 3, basicVertexStreams, 1, &shader.VP);
 		SCE_DBG_ASSERT(err == SCE_OK);
 
-		err = sceGxmShaderPatcherCreateFragmentProgram(g_shaderPatcher, shader.FSID, SCE_GXM_OUTPUT_REGISTER_FORMAT_UCHAR4, SCE_GXM_MULTISAMPLE_NONE, NULL, shader.PRG, &shader.FP);
+		err = sceGxmShaderPatcherCreateFragmentProgram(g_shaderPatcher, shader.FSID, SCE_GXM_OUTPUT_REGISTER_FORMAT_FLOAT, SCE_GXM_MULTISAMPLE_NONE, NULL, shader.PRG, &shader.FP);
 		SCE_DBG_ASSERT(err == SCE_OK);
 	}
 	else
@@ -515,7 +515,7 @@ ShaderID Shader_Compile_Internal(const SceGxmProgram* source_vs, const SceGxmPro
 		basicVertexAttributes[1].streamIndex = 0;
 		basicVertexAttributes[1].offset = OFFSETOF(struct Vertex, u);
 		basicVertexAttributes[1].format = SCE_GXM_ATTRIBUTE_FORMAT_U8;
-		basicVertexAttributes[1].componentCount = 2;
+		basicVertexAttributes[1].componentCount = 4;
 		basicVertexAttributes[1].regIndex = sceGxmProgramParameterGetResourceIndex(paramTexcoordAttribute);
 	
 		basicVertexStreams[0].stride = sizeof(struct Vertex);
@@ -524,7 +524,7 @@ ShaderID Shader_Compile_Internal(const SceGxmProgram* source_vs, const SceGxmPro
 		err = sceGxmShaderPatcherCreateVertexProgram(g_shaderPatcher, shader.VSID, basicVertexAttributes, 2, basicVertexStreams, 1, &shader.VP);
 		SCE_DBG_ASSERT(err == SCE_OK);
 
-		err = sceGxmShaderPatcherCreateFragmentProgram(g_shaderPatcher, shader.FSID, SCE_GXM_OUTPUT_REGISTER_FORMAT_UCHAR4, SCE_GXM_MULTISAMPLE_NONE, NULL, shader.PRG, &shader.FP);
+		err = sceGxmShaderPatcherCreateFragmentProgram(g_shaderPatcher, shader.FSID, SCE_GXM_OUTPUT_REGISTER_FORMAT_FLOAT, SCE_GXM_MULTISAMPLE_NONE, NULL, shader.PRG, &shader.FP);
 		SCE_DBG_ASSERT(err == SCE_OK);
 	}
 
@@ -758,20 +758,26 @@ void Emulator_GenerateCommonTextures()
 
 	memset(pixelData, 0xFF, sizeof(pixelData));
 
-	err = sceGxmTextureInitLinear(&whiteTexture.texture, pixelData, SCE_GXM_TEXTURE_FORMAT_U8U8U8U8_RGBA, 64, 64, 0);
+	err = sceGxmTextureInitLinear(&whiteTexture.texture, pixelData, SCE_GXM_TEXTURE_FORMAT_U8U8U8U8_ABGR, 64, 64, 0);
 	sceGxmTextureSetMagFilter(&whiteTexture.texture, SCE_GXM_TEXTURE_FILTER_LINEAR);
 	sceGxmTextureSetMinFilter(&whiteTexture.texture, SCE_GXM_TEXTURE_FILTER_LINEAR);
+
 	SCE_DBG_ASSERT(err == SCE_OK);
 
-	err = sceGxmTextureInitLinear(&rg8lutTexture.texture, Emulator_GenerateRG8LUT(), SCE_GXM_TEXTURE_FORMAT_U8U8U8U8_RGBA, LUT_WIDTH, LUT_HEIGHT, 0);
+	err = sceGxmTextureInitLinear(&rg8lutTexture.texture, Emulator_GenerateRG8LUT(), SCE_GXM_TEXTURE_FORMAT_U8U8U8U8_ABGR, LUT_WIDTH, LUT_HEIGHT, 0);
 	sceGxmTextureSetMagFilter(&rg8lutTexture.texture, SCE_GXM_TEXTURE_FILTER_LINEAR);
 	sceGxmTextureSetMinFilter(&rg8lutTexture.texture, SCE_GXM_TEXTURE_FILTER_LINEAR);
+	sceGxmTextureSetUAddrMode(&rg8lutTexture.texture, SCE_GXM_TEXTURE_ADDR_CLAMP);
+	sceGxmTextureSetVAddrMode(&rg8lutTexture.texture, SCE_GXM_TEXTURE_ADDR_CLAMP);
+	
 	SCE_DBG_ASSERT(err == SCE_OK);
 
-	err = sceGxmTextureInitLinear(&vramTexture.texture, NULL, SCE_GXM_TEXTURE_FORMAT_U8U8_00RG, VRAM_WIDTH, VRAM_HEIGHT, 0);
+	err = sceGxmTextureInitLinear(&vramTexture.texture, vram, SCE_GXM_TEXTURE_FORMAT_G8R8, VRAM_WIDTH, VRAM_HEIGHT, 0);
 	SCE_DBG_ASSERT(err == SCE_OK);
 	sceGxmTextureSetMagFilter(&vramTexture.texture, SCE_GXM_TEXTURE_FILTER_LINEAR);
 	sceGxmTextureSetMinFilter(&vramTexture.texture, SCE_GXM_TEXTURE_FILTER_LINEAR);
+	sceGxmTextureSetUAddrMode(&vramTexture.texture, SCE_GXM_TEXTURE_ADDR_REPEAT);
+	sceGxmTextureSetVAddrMode(&vramTexture.texture, SCE_GXM_TEXTURE_ADDR_REPEAT);
 }
 
 void Emulator_CreateVertexBuffer()
@@ -791,9 +797,6 @@ int Emulator_CreateCommonResources()
 	Emulator_GenerateCommonTextures();
 
 	Emulator_CreateGlobalShaders();
-
-	///glDisable(GL_DEPTH_TEST);
-	//glBlendColor(0.5f, 0.5f, 0.5f, 0.25f);
 
 	Emulator_CreateVertexBuffer();
 
@@ -815,10 +818,10 @@ void Emulator_Ortho2D(float left, float right, float bottom, float top, float zn
 	float z = (znear + zfar) / (znear - zfar);
 
 	float ortho[16] = {
-		a, 0, 0, 0,
-		0, b, 0, 0,
-		0, 0, c, 0,
-		x, y, z, 1
+		a, 0, 0, x,
+		0, b, 0, y,
+		0, 0, c, z,
+		0, 0, 0, 1
 	};
 	
 	void* vertexDefaultBuffer = NULL;
@@ -881,8 +884,8 @@ void Emulator_SetTextureAndShader(TextureID texture, ShaderID shader)
 		//return;
 	//}
 
-	sceGxmSetFragmentTexture(g_context, 0, &texture);
-	sceGxmSetFragmentTexture(g_context, 1, &rg8lutTexture);
+	sceGxmSetFragmentTexture(g_context, 0, &texture.texture);
+	sceGxmSetFragmentTexture(g_context, 1, &rg8lutTexture.texture);
 
 	//g_lastBoundTexture[0] = texture;
 	//g_lastBoundTexture[1] = rg8lutTexture;
@@ -998,11 +1001,16 @@ void Emulator_UpdateVRAM()
 		return;
 	}
 	vram_need_update = FALSE;
+
+	graphicsFree(vramTexture.Uid);
+	int err = sceGxmTextureInitLinear(&vramTexture.texture, vram, SCE_GXM_TEXTURE_FORMAT_G8R8, VRAM_WIDTH, VRAM_HEIGHT, 0);
+	SCE_DBG_ASSERT(err == SCE_OK);
+	sceGxmTextureSetMagFilter(&vramTexture.texture, SCE_GXM_TEXTURE_FILTER_LINEAR);
+	sceGxmTextureSetMinFilter(&vramTexture.texture, SCE_GXM_TEXTURE_FILTER_LINEAR);
 }
 
 void Emulator_SetWireframe(int enable)
 {
-	
 }
 
 void Emulator_SetBlendMode(enum BlendMode blendMode)
@@ -1058,7 +1066,7 @@ void Emulator_SetViewPort(int x, int y, int width, int height)
 	float offset_x = (float)activeDispEnv.screen.x;
 	float offset_y = (float)activeDispEnv.screen.y;
 
-	//sceGxmSetViewport(g_context, offset_x, width, offset_y, height, 0.0f, 0.0f);
+	//sceGxmSetViewport(g_context, offset_x, 1.0f, offset_y, 1.0f, 1.0f, 1.0f);
 }
 
 void Emulator_SwapWindow()

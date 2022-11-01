@@ -48,7 +48,7 @@ struct VS_OUTPUT {
 		float4x4 Projection;
 	};
 #elif defined(GXM)
-	uniform float4x4 Projection;
+	uniform float4x4 Projection : register(c0);
 #else
 	float4x4 Projection : register(c0);
 #endif
@@ -84,8 +84,10 @@ struct VS_OUTPUT {
 #else
 	float4 main(VS_OUTPUT In ARG_VPOS) : SV_TARGET {
 #endif
-#if defined(D3D9) || defined(GXM)
+#if defined(D3D9)
 		float2 color_rg = tex2D(s_texture, In.v_texcoord.xy).ra;
+#elif defined(GXM)
+		float2 color_rg = tex2D(s_texture, In.v_texcoord.xy).rg;
 #else
 		float2 color_rg = s_texture.Sample(samplerState, In.v_texcoord.xy).rg;
 #endif

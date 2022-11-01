@@ -53,8 +53,11 @@ struct VS_OUTPUT {
 #else
 	float4 main(VS_OUTPUT In) : SV_TARGET {
 #endif
-#if defined(D3D9) || defined(GXM)
+#if defined(D3D9)
 		float2 color_rg = tex2D(s_texture, In.v_texcoord.xy).ra;
+		float4 color = tex2D(s_lut, color_rg).bgra;
+#elif defined(GXM)
+		float2 color_rg = tex2D(s_texture, In.v_texcoord.xy).rg;
 		float4 color = tex2D(s_lut, color_rg).bgra;
 #else
 		float2 color_rg = s_texture.Sample(samplerState, In.v_texcoord.xy).rg;

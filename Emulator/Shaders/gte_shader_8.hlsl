@@ -49,7 +49,7 @@ struct VS_OUTPUT {
 		float4x4 Projection;
 	};
 #elif defined(GXM)
-	uniform float4x4 Projection;
+	uniform float4x4 Projection : register(c0);
 #else
 	float4x4 Projection : register(c0);
 #endif
@@ -86,16 +86,20 @@ struct VS_OUTPUT {
 	float4 main(VS_OUTPUT In ARG_VPOS) : SV_TARGET {
 #endif
 		float2 uv = (In.v_texcoord.xy * float2(0.5, 1.0) + In.v_page_clut.xy) * float2(1.0 / 1024.0, 1.0 / 512.0);
-#if defined(D3D9) || defined(GXM)
+#if defined(D3D9)
 		float2 comp = tex2D(s_texture, uv).ra;
+#elif defined(GXM)
+		float2 comp = tex2D(s_texture, uv).rg;
 #else
 		float2 comp = s_texture.Sample(samplerState, uv).rg;
 #endif
 
 		float2 clut_pos = In.v_page_clut.zw;
 		clut_pos.x += comp[int(fmod(In.v_texcoord.x, 2.0))] * 255.0 / 1024.0;
-#if defined(D3D9) || defined(GXM)
+#if defined(D3D9)
 		float2 clut_color = tex2D(s_texture, clut_pos).ra;
+#elif defined(GXM)
+		float2 clut_color = tex2D(s_texture, clut_pos).rg;
 #else
 		float2 clut_color = s_texture.Sample(samplerState, clut_pos).rg;
 #endif
