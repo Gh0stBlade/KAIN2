@@ -144,10 +144,10 @@ void* MONTABLE_GetDamageEffectFunc(struct _Instance* instance)
 
 	if (ft != NULL && ft->damageEffectFunc != NULL)
 	{
-		return ft->damageEffectFunc;
+		return (void*)ft->damageEffectFunc;
 	}
 
-	return DefaultFunctionTable.damageEffectFunc;
+	return (void*)DefaultFunctionTable.damageEffectFunc;
 
 #elif defined(PC_VERSION)
 	void* relocModule; // eax
@@ -172,10 +172,10 @@ void* MONTABLE_GetInitFunc(struct _Instance* instance)
 
 	if (ft != NULL && ft->initFunc != NULL)
 	{
-		return ft->initFunc;
+		return (void*)ft->initFunc;
 	}
 
-	return DefaultFunctionTable.initFunc;
+	return (void*)DefaultFunctionTable.initFunc;
 
 #elif defined(PC_VERSION)
 	TDRFuncPtr_MONTABLE_GetInitFunc* relocModule; // eax
@@ -200,10 +200,10 @@ void* MONTABLE_GetCleanUpFunc(struct _Instance *instance)
 
 	if (ft != NULL && ft->cleanUpFunc != NULL)
 	{
-		return ft->cleanUpFunc;
+		return (void*)ft->cleanUpFunc;
 	}
 
-	return DefaultFunctionTable.queryFunc;
+	return (void*)DefaultFunctionTable.queryFunc;
 #elif defined(PC_VERSION)
 	struct _MonsterFunctionTable* relocModule; // eax
 	TDRFuncPtr_MONTABLE_GetCleanUpFunc result; // eax

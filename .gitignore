@@ -2,6 +2,7 @@ Build/
 External/
 
 /kain2/*.filters
+/Build/*
 /Build/Build_Emscripten/*
 /Build/Build_EMSDK/*
 /Build/Build_UWP/*

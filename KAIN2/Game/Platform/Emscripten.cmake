@@ -13,7 +13,7 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2 -s TOTAL_MEMORY=1024
 
 link_directories(${ROOT_DIR}/Build_EMSDK/Emulator/)
 
-set(PSX_LIB ${ROOT_DIR}/Build_EMSDK/Emulator/libValkyrie.a)
+set(PSX_LIB ${ROOT_DIR}/Build/Build_EMSDK/Emulator/libValkyrie.a)
 
 set(CMAKE_EXECUTABLE_SUFFIX ".html")
 
