@@ -49,7 +49,7 @@ struct VS_OUTPUT {
 #endif
 
 #if defined(GXM)
-	float4 main(VS_OUTPUT In, uniform sampler2D s_texture : register(s0), uniform sampler2D s_lut : register(s1)) {
+	float4 main(VS_OUTPUT In, uniform sampler2D s_texture : TEXUNIT0, uniform sampler2D s_lut : TEXUNIT1) {
 #else
 	float4 main(VS_OUTPUT In) : SV_TARGET {
 #endif

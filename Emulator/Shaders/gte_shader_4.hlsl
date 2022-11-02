@@ -84,7 +84,7 @@ struct VS_OUTPUT {
 #endif
 
 #if defined(GXM)
-	float4 main(VS_OUTPUT In ARG_VPOS, uniform sampler2D s_texture : register(s0), uniform sampler2D s_lut : register(s1)) {
+	float4 main(VS_OUTPUT In ARG_VPOS, uniform sampler2D s_texture : TEXUNIT0, uniform sampler2D s_lut : TEXUNIT1) {
 #else
 	float4 main(VS_OUTPUT In ARG_VPOS) : SV_TARGET {
 #endif
@@ -94,7 +94,7 @@ struct VS_OUTPUT {
 #elif defined(GXM)
 		float2 comp = tex2D(s_texture, uv).rg;
 #else
-		float2 comp = s_texture.Sample(samplerState, uv).rg;
+		float2 comp = s_texture.Sample(samplerState, uv).gr;
 #endif
 		uint index = int(frac(In.v_texcoord.x / 4.0 + 0.0001) * 4.0);
 

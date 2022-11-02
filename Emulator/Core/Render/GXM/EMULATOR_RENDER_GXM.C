@@ -51,40 +51,22 @@ SceUID g_patcherCombinedUsseUid;
 unsigned int g_backBufferIndex = 0;
 unsigned int g_frontBufferIndex = 0;
 
+SceCtrlData	g_ctrlData;
 
-//SAMPLE
-
-
-/*	Data structure to pass through the display queue.  This structure is
-	serialized during sceGxmDisplayQueueAddEntry, and is used to pass
-	arbitrary data to the display callback function, called from an internal
-	thread once the back buffer is ready to be displayed.
-
-	In this example, we only need to pass the base address of the buffer.
-*/
-
-// Callback function for displaying a buffer
 static void displayCallback(const void *callbackData);
 
-// Callback function to allocate memory for the shader patcher
 static void *patcherHostAlloc(void *userData, uint32_t size);
 
-// Callback function to allocate memory for the shader patcher
 static void patcherHostFree(void *userData, void *mem);
 
-// Helper function to allocate memory and map it for the GPU
 static void *graphicsAlloc(SceKernelMemBlockType type, uint32_t size, uint32_t alignment, uint32_t attribs, SceUID *uid);
 
-// Helper function to free memory mapped to the GPU
 static void graphicsFree(SceUID uid);
 
-// Helper function to allocate memory and map it as vertex USSE code for the GPU
 static void *vertexUsseAlloc(uint32_t size, SceUID *uid, uint32_t *usseOffset);
 
-// Helper function to free memory mapped as vertex USSE code for the GPU
 static void vertexUsseFree(SceUID uid);
 
-// Helper function to allocate memory and map it as fragment USSE code for the GPU
 static void *fragmentUsseAlloc(uint32_t size, SceUID *uid, uint32_t *usseOffset);
 
 // Helper function to free memory mapped as fragment USSE code for the GPU
@@ -567,8 +549,34 @@ void Emulator_DisplayCallback(const void *data)
 
 }
 
+extern unsigned char* padData[2];
+
 void Emulator_BeginRenderScene()
 {
+
+	SceCtrlData ct[6];
+	unsigned int btn;
+	int res;
+	unsigned short kbInputs = 0xFFFF;
+
+	res = sceCtrlReadBufferPositive(0, &ct[0], 6);
+
+	btn = 0;
+	for(int i = 0; i < res; i++)
+	{
+		btn |= ct[i].buttons;
+	}
+
+	if((btn & SCE_CTRL_CROSS))
+	{
+		printf("CROSS PRESSED!\n");
+		kbInputs &= ~0x4000;
+	}
+
+	((unsigned short*)padData[0])[1] = kbInputs;
+	((unsigned short*)padData[0])[2] = 128;//Maybe not required.
+	((unsigned short*)padData[0])[3] = 128;
+
 	sceGxmBeginScene(g_context, 0, g_renderTarget, NULL, NULL, g_displayBufferSync[g_backBufferIndex], &g_displaySurface[g_backBufferIndex], &g_depthSurface);
 }
 
@@ -576,6 +584,7 @@ void Emulator_EndRenderScene()
 {
 	sceGxmEndScene(g_context, NULL, NULL);
 	sceGxmFinish(g_context);
+	sceGxmPadHeartbeat(&g_displaySurface[g_backBufferIndex], g_displayBufferSync[g_backBufferIndex]);
 }
 
 int Emulator_InitialiseGXMContext(char* windowName)
@@ -751,7 +760,7 @@ void Emulator_GenerateCommonTextures()
 	sceGxmTextureInitLinear(&whiteTexture.texture, whiteTextureBuff, SCE_GXM_TEXTURE_FORMAT_A8B8G8R8, 1, 1, 0);
 	sceGxmTextureSetMinFilter(&whiteTexture.texture, SCE_GXM_TEXTURE_FILTER_LINEAR);
 	sceGxmTextureSetMagFilter(&whiteTexture.texture, SCE_GXM_TEXTURE_FILTER_LINEAR);
-	//sceGxmTextureSetMipFilter(&whiteTexture.texture, SCE_GXM_TEXTURE_MIP_FILTER_DISABLED);
+	sceGxmTextureSetMipFilter(&whiteTexture.texture, SCE_GXM_TEXTURE_MIP_FILTER_DISABLED);
 
 	rg8lutTextureBuff = graphicsAlloc(SCE_KERNEL_MEMBLOCK_TYPE_USER_CDRAM_RWDATA, LUT_WIDTH * LUT_HEIGHT * sizeof(unsigned int), SCE_GXM_TEXTURE_ALIGNMENT, SCE_GXM_MEMORY_ATTRIB_READ, &rg8lutTexture.Uid);
 	memcpy(rg8lutTextureBuff, Emulator_GenerateRG8LUT(), LUT_WIDTH * LUT_HEIGHT * sizeof(unsigned int));
@@ -760,7 +769,7 @@ void Emulator_GenerateCommonTextures()
 	sceGxmTextureSetMagFilter(&rg8lutTexture.texture, SCE_GXM_TEXTURE_FILTER_POINT);
 	sceGxmTextureSetUAddrMode(&rg8lutTexture.texture, SCE_GXM_TEXTURE_ADDR_CLAMP);
 	sceGxmTextureSetVAddrMode(&rg8lutTexture.texture, SCE_GXM_TEXTURE_ADDR_CLAMP);
-	//sceGxmTextureSetMipFilter(&rg8lutTexture.texture, SCE_GXM_TEXTURE_MIP_FILTER_DISABLED);
+	sceGxmTextureSetMipFilter(&rg8lutTexture.texture, SCE_GXM_TEXTURE_MIP_FILTER_DISABLED);
 	
 	vramTextureBuff = graphicsAlloc(SCE_KERNEL_MEMBLOCK_TYPE_USER_CDRAM_RWDATA, VRAM_WIDTH * VRAM_HEIGHT * sizeof(unsigned short), SCE_GXM_TEXTURE_ALIGNMENT, SCE_GXM_MEMORY_ATTRIB_READ, &vramTexture.Uid);
 	sceGxmTextureInitLinear(&vramTexture.texture, vramTextureBuff, SCE_GXM_TEXTURE_FORMAT_U8U8_GR, VRAM_WIDTH, VRAM_HEIGHT, 0);
@@ -768,7 +777,7 @@ void Emulator_GenerateCommonTextures()
 	sceGxmTextureSetMagFilter(&vramTexture.texture, SCE_GXM_TEXTURE_FILTER_POINT);
 	sceGxmTextureSetUAddrMode(&vramTexture.texture, SCE_GXM_TEXTURE_ADDR_REPEAT);
 	sceGxmTextureSetVAddrMode(&vramTexture.texture, SCE_GXM_TEXTURE_ADDR_REPEAT);
-	//sceGxmTextureSetMipFilter(&vramTexture.texture, SCE_GXM_TEXTURE_MIP_FILTER_DISABLED);
+	sceGxmTextureSetMipFilter(&vramTexture.texture, SCE_GXM_TEXTURE_MIP_FILTER_DISABLED);
 #else
 	int err = SCE_OK;
 	UNUSED(err);
@@ -810,9 +819,7 @@ void Emulator_CreateVertexBuffer()
 void Emulator_CreateIndexBuffer()
 {
 	dynamic_index_buffer[0] = (unsigned short*)graphicsAlloc(SCE_KERNEL_MEMBLOCK_TYPE_USER_RWDATA_UNCACHE, sizeof(unsigned short) * MAX_NUM_INDEX_BUFFER_INDICES, 2, SCE_GXM_MEMORY_ATTRIB_READ, &dynamic_index_buffer_id[0]);
-	printf("DIB: %d\n", (int)dynamic_index_buffer[0]);
 	dynamic_index_buffer[1] = (unsigned short*)graphicsAlloc(SCE_KERNEL_MEMBLOCK_TYPE_USER_RWDATA_UNCACHE, sizeof(unsigned short) * 16, 2, SCE_GXM_MEMORY_ATTRIB_READ, &dynamic_index_buffer_id[1]);
-	printf("DIB2: %d\n", (int)dynamic_index_buffer[1]);
 }
 
 int Emulator_CreateCommonResources()
@@ -1033,8 +1040,10 @@ void Emulator_UpdateVRAM()
 	vramTextureBuff = graphicsAlloc(SCE_KERNEL_MEMBLOCK_TYPE_USER_CDRAM_RWDATA, VRAM_WIDTH * VRAM_HEIGHT * sizeof(unsigned short), SCE_GXM_TEXTURE_ALIGNMENT, SCE_GXM_MEMORY_ATTRIB_READ, &vramTexture.Uid);
 	memcpy(vramTextureBuff, vram, VRAM_WIDTH * VRAM_HEIGHT* sizeof(unsigned short));
 	sceGxmTextureInitLinear(&vramTexture.texture, vramTextureBuff, SCE_GXM_TEXTURE_FORMAT_U8U8_GR, VRAM_WIDTH, VRAM_HEIGHT, 0);
-	sceGxmTextureSetMinFilter(&vramTexture.texture, SCE_GXM_TEXTURE_FILTER_LINEAR);
-	sceGxmTextureSetMagFilter(&vramTexture.texture, SCE_GXM_TEXTURE_FILTER_LINEAR);
+	sceGxmTextureSetMinFilter(&vramTexture.texture, SCE_GXM_TEXTURE_FILTER_POINT);
+	sceGxmTextureSetMagFilter(&vramTexture.texture, SCE_GXM_TEXTURE_FILTER_POINT);
+	sceGxmTextureSetUAddrMode(&vramTexture.texture, SCE_GXM_TEXTURE_ADDR_REPEAT);
+	sceGxmTextureSetVAddrMode(&vramTexture.texture, SCE_GXM_TEXTURE_ADDR_REPEAT);
 	sceGxmTextureSetMipFilter(&vramTexture.texture, SCE_GXM_TEXTURE_MIP_FILTER_DISABLED);
 #else
 	int err = sceGxmTextureInitLinear(&vramTexture.texture, vram, SCE_GXM_TEXTURE_FORMAT_U8U8_GR, VRAM_WIDTH, VRAM_HEIGHT, 0);
@@ -1088,8 +1097,6 @@ void Emulator_UpdateIndexBuffer(const unsigned short* indices, int num_indices)
 	if (num_indices <= 0)
 		return;
 
-	printf("I-Buff: %d\n", (int)g_activeIndexBuffer);
-	printf("Indices: %d\n", (int)num_indices);
 	memcpy(dynamic_index_buffer[g_activeIndexBuffer], indices, num_indices * sizeof(unsigned short));
 }
 
