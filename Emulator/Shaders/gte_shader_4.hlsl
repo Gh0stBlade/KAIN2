@@ -94,7 +94,7 @@ struct VS_OUTPUT {
 #elif defined(GXM)
 		float2 comp = tex2D(s_texture, uv).rg;
 #else
-		float2 comp = s_texture.Sample(samplerState, uv).gr;
+		float2 comp = s_texture.Sample(samplerState, uv).rg;
 #endif
 		uint index = int(frac(In.v_texcoord.x / 4.0 + 0.0001) * 4.0);
 

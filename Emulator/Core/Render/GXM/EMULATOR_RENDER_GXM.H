@@ -80,8 +80,6 @@ extern const SceGxmProgram	gte_shader_8_fs;
 extern const SceGxmProgram	gte_shader_16_vs;
 extern const SceGxmProgram	gte_shader_16_fs;
 
-extern int g_activeIndexBuffer;
-
 #define Shader_Compile(name, flag) Shader_Compile_Internal((const SceGxmProgram*)&name##_vs, (const SceGxmProgram*)&name##_fs, flag)
 
 #endif
