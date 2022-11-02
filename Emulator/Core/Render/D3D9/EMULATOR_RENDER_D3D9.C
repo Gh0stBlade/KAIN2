@@ -13,6 +13,7 @@ extern void Emulator_WaitForTimestep(int count);
 const char* renderBackendName = "D3D9";
 
 IDirect3DVertexBuffer9* dynamic_vertex_buffer = NULL;
+IDirect3DIndexBuffer9* dynamic_index_buffer = NULL;
 IDirect3D9* d3d;
 IDirect3DDevice9* d3ddev;
 D3DPRESENT_PARAMETERS  d3dpp;
@@ -55,6 +56,12 @@ void Emulator_ResetDevice()
 		dynamic_vertex_buffer = NULL;
 	}
 
+	if (dynamic_index_buffer)
+	{
+		dynamic_index_buffer->Release();
+		dynamic_index_buffer = NULL;
+	}
+
 	d3dpp.PresentationInterval = g_swapInterval ? D3DPRESENT_INTERVAL_ONE : D3DPRESENT_INTERVAL_IMMEDIATE;
 	d3dpp.BackBufferWidth = windowWidth;
 	d3dpp.BackBufferHeight = windowHeight;
@@ -64,6 +71,15 @@ void Emulator_ResetDevice()
 	hr = d3ddev->CreateVertexBuffer(sizeof(Vertex) * MAX_NUM_POLY_BUFFER_VERTICES, D3DUSAGE_WRITEONLY | D3DUSAGE_DYNAMIC, D3DFMT_UNKNOWN, D3DPOOL_DEFAULT, &dynamic_vertex_buffer, NULL);
 	
 	assert(!FAILED(hr));
+
+	d3ddev->SetStreamSource(0, dynamic_vertex_buffer, 0, sizeof(struct Vertex));
+
+	hr = d3ddev->CreateIndexBuffer(sizeof(unsigned short) * MAX_NUM_INDEX_BUFFER_INDICES, D3DUSAGE_WRITEONLY | D3DUSAGE_DYNAMIC, D3DFMT_INDEX16, D3DPOOL_DEFAULT, &dynamic_index_buffer, NULL);
+
+	assert(!FAILED(hr));
+
+	d3ddev->SetIndices(dynamic_index_buffer);
+
 
 	d3ddev->SetRenderState(D3DRS_ZENABLE, D3DZB_FALSE);
 	d3ddev->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
@@ -442,7 +458,7 @@ void Emulator_DrawTriangles(int start_vertex, int triangles)
 	if (triangles <= 0)
 		return;
 	
-	d3ddev->DrawPrimitive(D3DPT_TRIANGLELIST, start_vertex, triangles);
+	d3ddev->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, start_vertex, 0, triangles * 3, 0, triangles);
 }
 
 void Emulator_UpdateVertexBuffer(const Vertex* vertices, int num_vertices)
@@ -458,6 +474,19 @@ void Emulator_UpdateVertexBuffer(const Vertex* vertices, int num_vertices)
 	dynamic_vertex_buffer->Unlock();
 
 	vbo_was_dirty_flag = TRUE;
+}
+
+void Emulator_UpdateIndexBuffer(const unsigned short* indices, int num_indices)
+{
+	assert(num_indices <= MAX_NUM_INDEX_BUFFER_INDICES);
+
+	if (num_indices <= 0)
+		return;
+
+	void* ptr;
+	dynamic_index_buffer->Lock(0, 0, &ptr, D3DLOCK_DISCARD);
+	memcpy(ptr, indices, num_indices * sizeof(unsigned short));
+	dynamic_index_buffer->Unlock();
 }
 
 void Emulator_SetViewPort(int x, int y, int width, int height)
