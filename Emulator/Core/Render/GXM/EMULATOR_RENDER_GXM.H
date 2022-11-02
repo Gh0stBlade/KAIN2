@@ -21,18 +21,23 @@
 #include <stdio.h>
 #include <gxm.h>
 
+
+#define BM_COUNT 5
+
 typedef struct ShaderID
 {
 	SceGxmShaderPatcherId VSID;
 	SceGxmShaderPatcherId FSID;
 
 	SceGxmVertexProgram* VP;
-	SceGxmFragmentProgram* FP;
+	SceGxmFragmentProgram* FP[BM_COUNT];
 
 	const SceGxmProgram* PRG;
 	int isGTE;
 
 } ShaderID;
+
+#undef BM_COUNT
 
 typedef struct DisplayData
 {
@@ -74,6 +79,8 @@ extern const SceGxmProgram	gte_shader_8_fs;
 
 extern const SceGxmProgram	gte_shader_16_vs;
 extern const SceGxmProgram	gte_shader_16_fs;
+
+extern int g_activeIndexBuffer;
 
 #define Shader_Compile(name, flag) Shader_Compile_Internal((const SceGxmProgram*)&name##_vs, (const SceGxmProgram*)&name##_fs, flag)
 

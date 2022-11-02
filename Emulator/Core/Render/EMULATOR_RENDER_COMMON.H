@@ -24,7 +24,7 @@
 #endif
 
 
-typedef enum BlendMode 
+typedef enum BlendMode
 {
 	BM_NONE,
 	BM_AVERAGE,

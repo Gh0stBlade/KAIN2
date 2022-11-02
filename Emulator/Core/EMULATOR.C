@@ -5078,12 +5078,20 @@ void Emulator_BlitVRAM()
 	Emulator_Ortho2D(0.0f, windowWidth, windowHeight, 0.0f, 0.0f, 1.0f);
 #endif
 
+#if defined(SN_TARGET_PSP2)
+	g_activeIndexBuffer = 1;//HACK
+#endif
+
 	Emulator_UpdateVertexBuffer(blit_vertices, 6);
 	Emulator_UpdateIndexBuffer(blit_indices, 6);
 	
 	Emulator_SetWireframe(FALSE);
 
 	Emulator_DrawTriangles(0, 2);
+
+#if defined(SN_TARGET_PSP2)
+	g_activeIndexBuffer = 0;//HACK
+#endif
 
 	Emulator_SetWireframe(g_wireframeMode);
 }

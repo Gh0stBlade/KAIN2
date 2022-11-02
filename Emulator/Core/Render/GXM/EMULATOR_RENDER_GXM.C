@@ -35,6 +35,10 @@
 
 #define SAMPLE_NAME SHORT_GAME_NAME
 
+int g_CurrentBlendMode = BM_NONE;
+SceGxmDepthStencilSurface g_depthSurface;
+SceUID g_depthBufferUid;
+void* g_depthBufferData = NULL;
 SceGxmContext* g_context = NULL;
 SceGxmShaderPatcher* g_shaderPatcher = NULL;
 SceGxmRenderTarget* g_renderTarget = NULL;
@@ -46,6 +50,7 @@ SceUID g_patcherBufUid;
 SceUID g_patcherCombinedUsseUid;
 unsigned int g_backBufferIndex = 0;
 unsigned int g_frontBufferIndex = 0;
+
 
 //SAMPLE
 
@@ -291,10 +296,11 @@ extern void Emulator_CreateIndexBuffer();
 
 const char* renderBackendName = "GXM";
 
-SceUID dynamic_vertex_buffer_id;
-SceUID dynamic_index_buffer_id;
-struct Vertex* dynamic_vertex_buffer;
-unsigned short* dynamic_index_buffer;
+int g_activeIndexBuffer;
+SceUID dynamic_vertex_buffer_id[2];
+SceUID dynamic_index_buffer_id[2];
+struct Vertex* dynamic_vertex_buffer[2];
+unsigned short* dynamic_index_buffer[2];
 unsigned int dynamic_vertex_array;
 
 void* g_contextHost;
@@ -315,6 +321,62 @@ void* rg8lutTextureBuff = NULL;
 #define	UNUSED(a)					(void)(a)
 
 SceGxmProgramParameter* u_Projection;
+
+SceGxmBlendInfo Emulator_GetBlendInfo(int blendMode)
+{
+	SceGxmBlendInfo blendInfo;
+
+	switch (blendMode)
+	{
+	case BM_NONE:
+		blendInfo.colorSrc = SCE_GXM_BLEND_FACTOR_ONE;
+		blendInfo.colorDst = SCE_GXM_BLEND_FACTOR_ZERO;
+		blendInfo.colorFunc = SCE_GXM_BLEND_FUNC_ADD;
+		blendInfo.alphaSrc = SCE_GXM_BLEND_FACTOR_ONE;
+		blendInfo.alphaDst = SCE_GXM_BLEND_FACTOR_ZERO;
+		blendInfo.alphaFunc = SCE_GXM_BLEND_FUNC_ADD;
+		blendInfo.colorMask = SCE_GXM_COLOR_MASK_ALL;
+		break;
+	case BM_AVERAGE:
+		blendInfo.colorSrc = SCE_GXM_BLEND_FACTOR_SRC_COLOR;
+		blendInfo.colorDst = SCE_GXM_BLEND_FACTOR_DST_COLOR;
+		blendInfo.colorFunc = SCE_GXM_BLEND_FUNC_ADD;
+		blendInfo.alphaSrc = SCE_GXM_BLEND_FACTOR_SRC_COLOR;
+		blendInfo.alphaDst = SCE_GXM_BLEND_FACTOR_DST_COLOR;
+		blendInfo.alphaFunc = SCE_GXM_BLEND_FUNC_ADD;
+		blendInfo.colorMask = SCE_GXM_COLOR_MASK_ALL;
+		break;
+	case BM_ADD:
+		blendInfo.colorSrc = SCE_GXM_BLEND_FACTOR_ONE;
+		blendInfo.colorDst = SCE_GXM_BLEND_FACTOR_ONE;
+		blendInfo.colorFunc = SCE_GXM_BLEND_FUNC_ADD;
+		blendInfo.alphaSrc = SCE_GXM_BLEND_FACTOR_ONE;
+		blendInfo.alphaDst = SCE_GXM_BLEND_FACTOR_ONE;
+		blendInfo.alphaFunc = SCE_GXM_BLEND_FUNC_ADD;
+		blendInfo.colorMask = SCE_GXM_COLOR_MASK_ALL;
+		break;
+	case BM_SUBTRACT:
+		blendInfo.colorSrc = SCE_GXM_BLEND_FACTOR_ONE;
+		blendInfo.colorDst = SCE_GXM_BLEND_FACTOR_ONE;
+		blendInfo.colorFunc = SCE_GXM_BLEND_FUNC_REVERSE_SUBTRACT;
+		blendInfo.alphaSrc = SCE_GXM_BLEND_FACTOR_ONE;
+		blendInfo.alphaDst = SCE_GXM_BLEND_FACTOR_ONE;
+		blendInfo.alphaFunc = SCE_GXM_BLEND_FUNC_REVERSE_SUBTRACT;
+		blendInfo.colorMask = SCE_GXM_COLOR_MASK_ALL;
+		break;
+	case BM_ADD_QUATER_SOURCE:
+		blendInfo.colorSrc = SCE_GXM_BLEND_FACTOR_SRC_COLOR;
+		blendInfo.colorDst = SCE_GXM_BLEND_FACTOR_ONE;
+		blendInfo.colorFunc = SCE_GXM_BLEND_FUNC_ADD;
+		blendInfo.alphaSrc = SCE_GXM_BLEND_FACTOR_SRC_COLOR;
+		blendInfo.alphaDst = SCE_GXM_BLEND_FACTOR_ONE;
+		blendInfo.alphaFunc = SCE_GXM_BLEND_FUNC_ADD;
+		blendInfo.colorMask = SCE_GXM_COLOR_MASK_ALL;
+		break;
+	}
+
+	return blendInfo;
+}
 
 ShaderID Shader_Compile_Internal(const SceGxmProgram* source_vs, const SceGxmProgram* source_fs, int gte_shader)
 {
@@ -375,8 +437,13 @@ ShaderID Shader_Compile_Internal(const SceGxmProgram* source_vs, const SceGxmPro
 		err = sceGxmShaderPatcherCreateVertexProgram(g_shaderPatcher, shader.VSID, basicVertexAttributes, 3, basicVertexStreams, 1, &shader.VP);
 		SCE_DBG_ASSERT(err == SCE_OK);
 
-		err = sceGxmShaderPatcherCreateFragmentProgram(g_shaderPatcher, shader.FSID, SCE_GXM_OUTPUT_REGISTER_FORMAT_UCHAR4, SCE_GXM_MULTISAMPLE_NONE, NULL, shader.PRG, &shader.FP);
-		SCE_DBG_ASSERT(err == SCE_OK);
+		for(int i = 0; i < BM_COUNT; i++)
+		{
+			SceGxmBlendInfo blendInfo = Emulator_GetBlendInfo(i);
+
+			err = sceGxmShaderPatcherCreateFragmentProgram(g_shaderPatcher, shader.FSID, SCE_GXM_OUTPUT_REGISTER_FORMAT_UCHAR4, SCE_GXM_MULTISAMPLE_NONE, &blendInfo, shader.PRG, &shader.FP);
+			SCE_DBG_ASSERT(err == SCE_OK);
+		}
 	}
 	else
 	{
@@ -418,26 +485,38 @@ ShaderID Shader_Compile_Internal(const SceGxmProgram* source_vs, const SceGxmPro
 		err = sceGxmShaderPatcherCreateVertexProgram(g_shaderPatcher, shader.VSID, basicVertexAttributes, 2, basicVertexStreams, 1, &shader.VP);
 		SCE_DBG_ASSERT(err == SCE_OK);
 
-		err = sceGxmShaderPatcherCreateFragmentProgram(g_shaderPatcher, shader.FSID, SCE_GXM_OUTPUT_REGISTER_FORMAT_UCHAR4, SCE_GXM_MULTISAMPLE_NONE, NULL, shader.PRG, &shader.FP);
-		SCE_DBG_ASSERT(err == SCE_OK);
-	}
+		for(int i = 0; i < BM_COUNT; i++)
+		{
+			SceGxmBlendInfo blendInfo = Emulator_GetBlendInfo(i);
 
+			err = sceGxmShaderPatcherCreateFragmentProgram(g_shaderPatcher, shader.FSID, SCE_GXM_OUTPUT_REGISTER_FORMAT_UCHAR4, SCE_GXM_MULTISAMPLE_NONE, &blendInfo, shader.PRG, &shader.FP[i]);
+			SCE_DBG_ASSERT(err == SCE_OK);
+		}
+	}
 
 	return shader;
 }
 
 void Emulator_DestroyVertexBuffer()
 {
-	dynamic_vertex_buffer = NULL;
+	dynamic_vertex_buffer[0] = NULL;
 
-	graphicsFree(dynamic_vertex_buffer_id);
+	dynamic_vertex_buffer[1] = NULL;
+
+	graphicsFree(dynamic_vertex_buffer_id[0]);
+
+	graphicsFree(dynamic_vertex_buffer_id[1]);
 }
 
 void Emulator_DestroyIndexBuffer()
 {
-	dynamic_index_buffer = NULL
-		;
-	graphicsFree(dynamic_index_buffer_id);
+	dynamic_index_buffer[0] = NULL;
+
+	dynamic_index_buffer[1] = NULL;
+
+	graphicsFree(dynamic_index_buffer_id[0]);
+
+	graphicsFree(dynamic_index_buffer_id[1]);
 }
 
 void Emulator_ResetDevice()
@@ -490,7 +569,7 @@ void Emulator_DisplayCallback(const void *data)
 
 void Emulator_BeginRenderScene()
 {
-	sceGxmBeginScene(g_context, 0, g_renderTarget, NULL, NULL, g_displayBufferSync[g_backBufferIndex], &g_displaySurface[g_backBufferIndex], NULL);
+	sceGxmBeginScene(g_context, 0, g_renderTarget, NULL, NULL, g_displayBufferSync[g_backBufferIndex], &g_displaySurface[g_backBufferIndex], &g_depthSurface);
 }
 
 void Emulator_EndRenderScene()
@@ -515,6 +594,9 @@ int Emulator_InitialiseGXMContext(char* windowName)
 
 	sceRazorGpuCaptureSetTrigger( 100, "app0:basic.sgx" );
 #endif
+
+	windowWidth = DISPLAY_WIDTH;
+	windowHeight = DISPLAY_HEIGHT;
 
 	SceGxmInitializeParams initializeParams;
 	memset(&initializeParams, 0, sizeof(SceGxmInitializeParams));
@@ -596,6 +678,17 @@ int Emulator_InitialiseGXMContext(char* windowName)
 		SCE_DBG_ASSERT(err == SCE_OK);
 	}
 
+	const unsigned int alignedWidth = ALIGN(DISPLAY_WIDTH, SCE_GXM_TILE_SIZEX);
+	const unsigned int alignedHeight = ALIGN(DISPLAY_HEIGHT, SCE_GXM_TILE_SIZEY);
+	unsigned int sampleCount = alignedWidth*alignedHeight;
+	unsigned int depthStrideInSamples = alignedWidth;
+
+	g_depthBufferData = graphicsAlloc(SCE_KERNEL_MEMBLOCK_TYPE_USER_RWDATA_UNCACHE, 4*sampleCount, SCE_GXM_DEPTHSTENCIL_SURFACE_ALIGNMENT, SCE_GXM_MEMORY_ATTRIB_READ | SCE_GXM_MEMORY_ATTRIB_WRITE, &g_depthBufferUid);
+	
+	err = sceGxmDepthStencilSurfaceInit(&g_depthSurface, SCE_GXM_DEPTH_STENCIL_FORMAT_S8D24, SCE_GXM_DEPTH_STENCIL_SURFACE_TILED, depthStrideInSamples, g_depthBufferData, NULL);
+
+	SCE_DBG_ASSERT(err == SCE_OK);
+
 	const uint32_t patcherBufferSize		= 64*1024;
 	const uint32_t patcherVertexUsseSize 	= 64*1024;
 	const uint32_t patcherFragmentUsseSize 	= 64*1024;
@@ -658,20 +751,24 @@ void Emulator_GenerateCommonTextures()
 	sceGxmTextureInitLinear(&whiteTexture.texture, whiteTextureBuff, SCE_GXM_TEXTURE_FORMAT_A8B8G8R8, 1, 1, 0);
 	sceGxmTextureSetMinFilter(&whiteTexture.texture, SCE_GXM_TEXTURE_FILTER_LINEAR);
 	sceGxmTextureSetMagFilter(&whiteTexture.texture, SCE_GXM_TEXTURE_FILTER_LINEAR);
-	sceGxmTextureSetMipFilter(&whiteTexture.texture, SCE_GXM_TEXTURE_MIP_FILTER_DISABLED);
+	//sceGxmTextureSetMipFilter(&whiteTexture.texture, SCE_GXM_TEXTURE_MIP_FILTER_DISABLED);
 
 	rg8lutTextureBuff = graphicsAlloc(SCE_KERNEL_MEMBLOCK_TYPE_USER_CDRAM_RWDATA, LUT_WIDTH * LUT_HEIGHT * sizeof(unsigned int), SCE_GXM_TEXTURE_ALIGNMENT, SCE_GXM_MEMORY_ATTRIB_READ, &rg8lutTexture.Uid);
 	memcpy(rg8lutTextureBuff, Emulator_GenerateRG8LUT(), LUT_WIDTH * LUT_HEIGHT * sizeof(unsigned int));
 	sceGxmTextureInitLinear(&rg8lutTexture.texture, rg8lutTextureBuff, SCE_GXM_TEXTURE_FORMAT_A8B8G8R8, LUT_WIDTH, LUT_HEIGHT, 0);
-	sceGxmTextureSetMinFilter(&rg8lutTexture.texture, SCE_GXM_TEXTURE_FILTER_LINEAR);
-	sceGxmTextureSetMagFilter(&rg8lutTexture.texture, SCE_GXM_TEXTURE_FILTER_LINEAR);
-	sceGxmTextureSetMipFilter(&rg8lutTexture.texture, SCE_GXM_TEXTURE_MIP_FILTER_DISABLED);
+	sceGxmTextureSetMinFilter(&rg8lutTexture.texture, SCE_GXM_TEXTURE_FILTER_POINT);
+	sceGxmTextureSetMagFilter(&rg8lutTexture.texture, SCE_GXM_TEXTURE_FILTER_POINT);
+	sceGxmTextureSetUAddrMode(&rg8lutTexture.texture, SCE_GXM_TEXTURE_ADDR_CLAMP);
+	sceGxmTextureSetVAddrMode(&rg8lutTexture.texture, SCE_GXM_TEXTURE_ADDR_CLAMP);
+	//sceGxmTextureSetMipFilter(&rg8lutTexture.texture, SCE_GXM_TEXTURE_MIP_FILTER_DISABLED);
 	
 	vramTextureBuff = graphicsAlloc(SCE_KERNEL_MEMBLOCK_TYPE_USER_CDRAM_RWDATA, VRAM_WIDTH * VRAM_HEIGHT * sizeof(unsigned short), SCE_GXM_TEXTURE_ALIGNMENT, SCE_GXM_MEMORY_ATTRIB_READ, &vramTexture.Uid);
 	sceGxmTextureInitLinear(&vramTexture.texture, vramTextureBuff, SCE_GXM_TEXTURE_FORMAT_U8U8_GR, VRAM_WIDTH, VRAM_HEIGHT, 0);
-	sceGxmTextureSetMinFilter(&vramTexture.texture, SCE_GXM_TEXTURE_FILTER_LINEAR);
-	sceGxmTextureSetMagFilter(&vramTexture.texture, SCE_GXM_TEXTURE_FILTER_LINEAR);
-	sceGxmTextureSetMipFilter(&vramTexture.texture, SCE_GXM_TEXTURE_MIP_FILTER_DISABLED);
+	sceGxmTextureSetMinFilter(&vramTexture.texture, SCE_GXM_TEXTURE_FILTER_POINT);
+	sceGxmTextureSetMagFilter(&vramTexture.texture, SCE_GXM_TEXTURE_FILTER_POINT);
+	sceGxmTextureSetUAddrMode(&vramTexture.texture, SCE_GXM_TEXTURE_ADDR_REPEAT);
+	sceGxmTextureSetVAddrMode(&vramTexture.texture, SCE_GXM_TEXTURE_ADDR_REPEAT);
+	//sceGxmTextureSetMipFilter(&vramTexture.texture, SCE_GXM_TEXTURE_MIP_FILTER_DISABLED);
 #else
 	int err = SCE_OK;
 	UNUSED(err);
@@ -705,12 +802,17 @@ void Emulator_GenerateCommonTextures()
 
 void Emulator_CreateVertexBuffer()
 {
-	dynamic_vertex_buffer = (struct Vertex*)graphicsAlloc(SCE_KERNEL_MEMBLOCK_TYPE_USER_RWDATA_UNCACHE, sizeof(struct Vertex) * MAX_NUM_POLY_BUFFER_VERTICES, 4, SCE_GXM_MEMORY_ATTRIB_READ, &dynamic_vertex_buffer_id);
+	dynamic_vertex_buffer[0] = (struct Vertex*)graphicsAlloc(SCE_KERNEL_MEMBLOCK_TYPE_USER_RWDATA_UNCACHE, sizeof(struct Vertex) * MAX_NUM_POLY_BUFFER_VERTICES, 4, SCE_GXM_MEMORY_ATTRIB_READ, &dynamic_vertex_buffer_id[0]);
+
+	dynamic_vertex_buffer[1] = (struct Vertex*)graphicsAlloc(SCE_KERNEL_MEMBLOCK_TYPE_USER_RWDATA_UNCACHE, sizeof(struct Vertex) * 16, 4, SCE_GXM_MEMORY_ATTRIB_READ, &dynamic_vertex_buffer_id[1]);
 }
 
 void Emulator_CreateIndexBuffer()
 {
-	dynamic_index_buffer = (unsigned short*)graphicsAlloc(SCE_KERNEL_MEMBLOCK_TYPE_USER_RWDATA_UNCACHE, sizeof(unsigned short) * MAX_NUM_INDEX_BUFFER_INDICES, 2, SCE_GXM_MEMORY_ATTRIB_READ, &dynamic_index_buffer_id);
+	dynamic_index_buffer[0] = (unsigned short*)graphicsAlloc(SCE_KERNEL_MEMBLOCK_TYPE_USER_RWDATA_UNCACHE, sizeof(unsigned short) * MAX_NUM_INDEX_BUFFER_INDICES, 2, SCE_GXM_MEMORY_ATTRIB_READ, &dynamic_index_buffer_id[0]);
+	printf("DIB: %d\n", (int)dynamic_index_buffer[0]);
+	dynamic_index_buffer[1] = (unsigned short*)graphicsAlloc(SCE_KERNEL_MEMBLOCK_TYPE_USER_RWDATA_UNCACHE, sizeof(unsigned short) * 16, 2, SCE_GXM_MEMORY_ATTRIB_READ, &dynamic_index_buffer_id[1]);
+	printf("DIB2: %d\n", (int)dynamic_index_buffer[1]);
 }
 
 int Emulator_CreateCommonResources()
@@ -759,8 +861,9 @@ void Emulator_SetShader(const ShaderID shader)
 		u_Projection = sceGxmProgramFindParameterByName(shader.PRG, "Projection");
 		SCE_DBG_ASSERT(u_Projection && (sceGxmProgramParameterGetCategory(u_Projection) == SCE_GXM_PARAMETER_CATEGORY_UNIFORM));
 	}
+
 	sceGxmSetVertexProgram(g_context, shader.VP);
-	sceGxmSetFragmentProgram(g_context, shader.FP);
+	sceGxmSetFragmentProgram(g_context, shader.FP[g_CurrentBlendMode]);
 
 	if(shader.isGTE)
 	{
@@ -952,11 +1055,7 @@ void Emulator_SetBlendMode(enum BlendMode blendMode)
 		return;
 	}
 
-	if (g_PreviousBlendMode == BM_NONE)
-	{
-		
-	}
-
+	g_CurrentBlendMode = blendMode;
 	g_PreviousBlendMode = blendMode;
 }
 
@@ -965,8 +1064,8 @@ void Emulator_DrawTriangles(int start_vertex, int triangles)
 	if (triangles <= 0)
 		return;
 
-	sceGxmSetVertexStream(g_context, 0, dynamic_vertex_buffer + start_vertex);
-	sceGxmDraw(g_context, SCE_GXM_PRIMITIVE_TRIANGLES, SCE_GXM_INDEX_FORMAT_U16, dynamic_index_buffer, triangles * 3);
+	sceGxmSetVertexStream(g_context, 0, dynamic_vertex_buffer[g_activeIndexBuffer] + start_vertex);
+	sceGxmDraw(g_context, SCE_GXM_PRIMITIVE_TRIANGLES, SCE_GXM_INDEX_FORMAT_U16, dynamic_index_buffer[g_activeIndexBuffer], triangles * 3);
 	sceGxmFinish(g_context);
 }
 
@@ -977,7 +1076,7 @@ void Emulator_UpdateVertexBuffer(const struct Vertex* vertices, int num_vertices
 	if (num_vertices <= 0)
 		return;
 
-	memcpy(dynamic_vertex_buffer, vertices, num_vertices * sizeof(struct Vertex));
+	memcpy(dynamic_vertex_buffer[g_activeIndexBuffer], vertices, num_vertices * sizeof(struct Vertex));
 
 	vbo_was_dirty_flag = TRUE;
 }
@@ -989,9 +1088,9 @@ void Emulator_UpdateIndexBuffer(const unsigned short* indices, int num_indices)
 	if (num_indices <= 0)
 		return;
 
-	printf("I-Buff: %d\n", (int)dynamic_index_buffer);
+	printf("I-Buff: %d\n", (int)g_activeIndexBuffer);
 	printf("Indices: %d\n", (int)num_indices);
-	memcpy(dynamic_index_buffer, indices, num_indices * sizeof(unsigned short));
+	memcpy(dynamic_index_buffer[g_activeIndexBuffer], indices, num_indices * sizeof(unsigned short));
 }
 
 void Emulator_SetViewPort(int x, int y, int width, int height)
@@ -1002,7 +1101,8 @@ void Emulator_SetViewPort(int x, int y, int width, int height)
 	int vh = DISPLAY_HEIGHT;
 	int sw = width / 2;
     int sh = height / 2;
-    //sceGxmSetViewport(g_context, (float)((x + offset_x) + sw), (float)sw, (float)(vh - (y + -offset_y) - sh), (float)(-sh), 0.0f, 1.0f);
+
+    sceGxmSetViewport(g_context, (float)((x + offset_x) + sw), (float)sw, (float)(vh - (y + -offset_y) - sh), (float)(-sh), 0.0f, 1.0f);
 }
 
 void Emulator_SwapWindow()
