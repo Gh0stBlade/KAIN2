@@ -93,41 +93,6 @@
 #error "Invalid XDK version"
 #endif
 #include "Core/Render/XED3D/EMULATOR_RENDER_XED3D.H"
-#elif defined(SN_TARGET_PSP2)
-#include <gxm.h>
-#include <kernel.h>
-#include <stdint.h>
-#include "Core/Render/GXM/EMULATOR_RENDER_GXM.H"
-#elif defined(PLATFORM_NX) || defined(PLATFORM_NX_ARM)
-#include <nn/nn_Assert.h>
-
-#include <nn/os.h>
-#include <nn/fs.h>
-#include <nn/init.h>
-#include <nn/vi.h>
-#include <nn/gfx.h>
-#include <nvn/nvn.h>
-
-#if NN_GFX_IS_TARGET_NVN
-#include <nvn/nvn.h>
-#include <nvn/nvn_FuncPtrInline.h>
-#endif
-
-#if defined( NN_BUILD_TARGET_PLATFORM_OS_NN ) && defined( NN_BUILD_APISET_NX )
-#include <nv/nv_MemoryManagement.h>
-#include <nvnTool/nvnTool_GlslcInterface.h>
-#endif
-
-
-#include <nn/hid.h>
-#include <nn/hid/hid_TouchScreen.h>
-
-#include "Core/Render/NVN/EMULATOR_RENDER_NVN.H"
-
-#if defined(PLATFORM_NX_ARM)
-#undef u
-#endif
-
 #endif
 
 #include "Core/FileSystem/EMULATOR_FILESYSTEM_COMMON.H"
