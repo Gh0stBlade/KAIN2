@@ -1,0 +1,6 @@
+[submodule "External/SDL"]
+	path = External/SDL
+	url = https://github.com/libsdl-org/SDL.git
+[submodule "External/glew"]
+	path = External/glew
+	url = https://github.com/nigels-com/glew.git
