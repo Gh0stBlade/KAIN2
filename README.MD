@@ -25,7 +25,7 @@ There may be plans to bring an "Definitive Edition" of Soul Reaver. This will be
 
 # Compiling:
 
-Please visit <a href="https://github.com/Gh0stBlade/KAIN2/blob/master/CONTRIBUTING.md"></a> for basic setup, build instructions and contribution guidelines.
+Please visit <a href="https://github.com/Gh0stBlade/KAIN2/blob/master/CONTRIBUTING.md">here</a> for basic setup, build instructions and contribution guidelines.
 
 Current estimate for completion is between 3-4 years. Volunteers are welcome!
 Contact us on the Discord server channel https://discord.gg/KYSx8Q7 #kain2
