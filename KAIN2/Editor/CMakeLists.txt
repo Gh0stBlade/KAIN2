@@ -141,6 +141,13 @@ if(MSVC AND NOT WINDOWS_STORE)
 	set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "")
 	set_target_properties(${PROJECT_NAME} PROPERTIES DEBUG_POSTFIX "_${TARGET_ARCH}_Debug")
 	set_target_properties(${PROJECT_NAME} PROPERTIES RELEASE_POSTFIX "_${TARGET_ARCH}_Release")
+	
+	target_link_libraries(
+	${PROJECT_NAME}
+	d3d9.lib
+	d3d11.lib
+	d3d12.lib
+	)
 endif()
 
 if(WINDOWS_STORE)

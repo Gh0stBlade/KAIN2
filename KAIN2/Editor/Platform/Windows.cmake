@@ -1,15 +1,11 @@
 if(MSVC AND NOT WINDOWS_STORE AND NOT PLATFORM_PSP2 AND NOT PLATFORM_NX AND NOT PLATFORM_NX_ARM)
 
 #SET(USE_VULKAN TRUE)
-#SET(USE_D3D9 TRUE)
 
 #Find libs
 if(USE_VULKAN)
 find_package(Vulkan REQUIRED)
 include_directories(${Vulkan_INCLUDE_DIR})
-elseif(USE_D3D9)
-find_package(D3D9 REQUIRED)
-include_directories(${DIRECTX_INCLUDE_DIRS})
 else()
 find_package(OpenGL REQUIRED)
 endif()
