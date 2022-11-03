@@ -25,6 +25,6 @@ Please select a platform:
   7. Build KAIN2_Win32
 
 # Game files setup:
-  1. By default (debug builds) all files must be extracted from BIGFILE.DAT to run as it is coded to load files externally and not packed into one file.
-  2. By default (release builds) always load files from BIGFILE.DAT which must be in the same folder as the main executable.
-  3. Move BIGFILE.DAT and LOCALS.TBL to where the built executable is located.
+  1. By default (debug builds) all files must be extracted from `BIGFILE.DAT` to run as it is coded to load files externally and not packed into one file.
+  2. By default (release builds) always load files from `BIGFILE.DAT` which must be in the same folder as the main executable.
+  3. Move `BIGFILE.DAT` and `LOCALS.TBL` to where the built executable is located.
