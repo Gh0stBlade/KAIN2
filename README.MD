@@ -9,13 +9,14 @@
 <img src="https://i.imgur.com/pOaaEeh.png"/>
 
 # Technology Used (Libraries):
-Valkyrie Emulator – Custom technology created to port PS1 games easily to PC.
-Various cross platform libraries such as SDL2.
+1. Valkyrie Emulator – Custom technology created to port PS1 games easily to PC.
+2. SDL2
+3. glew
 
 # Supported Platforms:
 Windows 7-11, Linux, UWP, Xbox One/Series X(UWP), Switch (W.I.P), Web (Emscripten), Android and PSVita. There are plans to support more platforms than what is currently listed.
 
-# Project scope:
+# Project Scope:
 We want to achieve the same functionality as the PlayStation version of Soul Reaver by decompiling the code and making a modern port of the game as the original source was lost. This is achieved by translating MIPS r3000a ASM to C. 
 
 In addition, there should be a video settings menu where different rendering APIs can be selected (D3D9, D3D11, D3D12, OpenGL, Vulkan etc.) intoduced at a later point.
@@ -25,7 +26,7 @@ There may be plans to bring an "Definitive Edition" of Soul Reaver. This will be
 
 # Compiling:
 
-Please visit <a href="https://github.com/Gh0stBlade/KAIN2/blob/master/CONTRIBUTING.md"></a> for basic setup, build instructions and contribution guidelines.
+Please visit <a href="https://github.com/Gh0stBlade/KAIN2/blob/main/CONTRIBUTING.MD">here</a> for basic setup, build instructions and contribution guidelines.
 
 Current estimate for completion is between 3-4 years. Volunteers are welcome!
 Contact us on the Discord server channel https://discord.gg/KYSx8Q7 #kain2
