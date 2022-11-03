@@ -21,7 +21,7 @@ We want to achieve the same functionality as the PlayStation version of Soul Rea
 In addition, there should be a video settings menu where different rendering APIs can be selected (D3D9, D3D11, D3D12, OpenGL, Vulkan etc.) intoduced at a later point.
 Main advantages from the original pc port are: the restoration of the dynamic music system, potential for adding new levels, touchscreen support, multiplatform, full controller support, achievements, etc.
 
-There may be plans to bring an "Enhanced Edition" of Soul Reaver. This will be by including certain enhancements such as removing the software renderer in the future and include a full hardware rendered version of the game.
+There may be plans to bring an "Definitive Edition" of Soul Reaver. This will be by including certain enhancements such as removing the software renderer in the future and include a full hardware rendered version of the game.
 
 # Compiling:
 
