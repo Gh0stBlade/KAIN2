@@ -1,7 +1,31 @@
 # Legacy of Kain: Soul Reaver Decompile
 
+<a href="https://legacyofkain.co.uk">Live WebGL Demo</a>
+
 <img src="https://i.imgur.com/1uoxlcq.png"/>
 
 <img src="https://i.imgur.com/ZUkb6Sn.png"/>
 
 <img src="https://i.imgur.com/pOaaEeh.png"/>
+
+# Technology Used (Libraries):
+Valkyrie Emulator – Custom technology created to port PS1 games easily to PC.
+Various cross platform libraries such as SDL2.
+
+# Supported Platforms:
+Windows 7-11, Linux, UWP, Xbox One/Series X(UWP), Switch (W.I.P), Web (Emscripten), Android and PSVita. There are plans to support more platforms than what is currently listed.
+
+# Project scope:
+We want to achieve the same functionality as the PlayStation version of Soul Reaver by decompiling the code and making a modern port of the game as the original source was lost. This is achieved by translating MIPS r3000a ASM to C. 
+
+In addition, there should be a video settings menu where different rendering APIs can be selected (D3D9, D3D11, D3D12, OpenGL, Vulkan etc.) intoduced at a later point.
+Main advantages from the original pc port are: the restoration of the dynamic music system, potential for adding new levels, touchscreen support, multiplatform, full controller support, achievements, etc.
+
+There may be plans to bring an "Enhanced Edition" of Soul Reaver. This will be by including certain enhancements such as removing the software renderer in the future and include a full hardware rendered version of the game.
+
+# Compiling:
+
+Please visit <a href="https://github.com/Gh0stBlade/KAIN2/blob/master/CONTRIBUTING.md"></a> for basic setup, build instructions and contribution guidelines.
+
+Current estimate for completion is between 3-4 years. Volunteers are welcome!
+Contact us on the Discord server channel https://discord.gg/KYSx8Q7 #kain2
