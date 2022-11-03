@@ -81,9 +81,6 @@ include("Platform/Emscripten.cmake")
 include("Platform/Android.cmake")
 include("Platform/WindowsStore.cmake")
 include("Platform/Durango.cmake")
-include("Platform/PSP2.cmake")
-include("Platform/NX_Win.cmake")
-include("Platform/NX_Arm.cmake")
 
 #Enable 32-bit address for tag
 OPTIONAL_DEFINE(USE_32_BIT_ADDR "Enable/Disable 32-bit address for tag" ON)

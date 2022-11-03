@@ -5,7 +5,6 @@
 #include "LIBAPI.H"
 
 #include "Core/Audio/EMULATOR_SPU.H"
-#include "Core/Audio/EMULATOR_MIXER.H"
 
 #if defined(OPENAL)
 
