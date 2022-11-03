@@ -1,5 +1,5 @@
 add_subdirectory(SDL)
-set_target_properties(SDL2 PROPERTIES FOLDER "Libs/3rdParty")
+set_target_properties(SDL2 PROPERTIES FOLDER "Libs/3rdParty/SDL2")
 set_target_properties(SDL2-static PROPERTIES FOLDER "Libs/3rdParty/SDL2")
 set_target_properties(SDL2main PROPERTIES FOLDER "Libs/3rdParty/SDL2")
 set_target_properties(SDL2_test PROPERTIES FOLDER "Libs/3rdParty/SDL2")

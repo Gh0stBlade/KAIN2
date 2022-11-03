@@ -100,11 +100,8 @@ ${PROJECT_NAME}
 ${PSX_LIB}
 SDL2-static
 SDL2main
-${SDL2_MIXER_LIBRARY}
 ${OPENGL_gl_LIBRARY}
 libglew_static
-${OPENAL_LIBRARY}
-${SOX_LIBRARY}
 )
 
 #For "Final"
