@@ -18,7 +18,7 @@ Please select a platform:
 # Windows
   1. Install Visual Studio 17 2022.
   2. Install GitHub or GitHub Desktop.
-  3. Install CMake.
+  3. Install CMake (3.24.1 or higher).
   4. Clone the project (and all sub modules) using GitHub desktop or Git command line.
   5. Navigate to `Emulator/Platform/Windows` and execute `Generate-Project-Files.bat` to generate the project files (or you can do this via CMake commandline but you must always select Win32 architecture).
   6. Open the Solution file located at `(ROOT)/Build/Build_Win32/Soul Reaver.sln`
