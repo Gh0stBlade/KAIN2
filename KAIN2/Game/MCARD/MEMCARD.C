@@ -40,7 +40,7 @@ void load(struct memcard_t* memcard)
 	{
 		object = (struct Object*)MEMPACK_Malloc(40000, 0x2B);
 	}
-	printf("LOADING MCARDX!\n");
+
 	LOAD_LoadToAddress("\\kain2\\object\\mcardx\\mcardx.drm", object, 1);
 	memcard->table = (struct mcmenu_table_t*)object->relocModule;
 
