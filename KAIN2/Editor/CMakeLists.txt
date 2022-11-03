@@ -13,9 +13,6 @@ set (CMAKE_PREFIX_PATH "C:\\Qt\\5.15.2\\msvc2019\\")
 
 find_package(Qt5 COMPONENTS Widgets Gui Core REQUIRED)
 
-set(glm_DIR "${EXTERN_LIB_PATH}/glm-0.9.9.8/cmake/glm/")
-find_package(glm REQUIRED)
-
 #Disable MinSizeRel and RelWithDebInfo add Final.
 #set(CMAKE_CONFIGURATION_TYPES "Debug;Release;Final")
 
@@ -111,17 +108,17 @@ BuildPreProcessorDefinitions()
 target_link_libraries(
 ${PROJECT_NAME}
 ${PSX_LIB}
-${SDL2_LIBRARY}
+SDL2-static
+SDL2main
 ${SDL2_MIXER_LIBRARY}
 ${OPENGL_gl_LIBRARY}
-${GLEW_LIBRARY}
+#${GLEW_LIBRARY}
 ${OPENAL_LIBRARY}
 ${SOX_LIBRARY}
 Qt5::Widgets
 Qt5::Core
 Qt5::Gui
 Qt5::GuiPrivate
-glm::glm
 )
 
 #For "Final"

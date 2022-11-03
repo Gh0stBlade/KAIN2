@@ -97,10 +97,11 @@ BuildPreProcessorDefinitions()
 target_link_libraries(
 ${PROJECT_NAME}
 ${PSX_LIB}
-${SDL2_LIBRARY}
+SDL2-static
+SDL2main
 ${SDL2_MIXER_LIBRARY}
 ${OPENGL_gl_LIBRARY}
-${GLEW_LIBRARY}
+#${GLEW_LIBRARY}
 ${OPENAL_LIBRARY}
 ${SOX_LIBRARY}
 )

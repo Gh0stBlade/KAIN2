@@ -4,7 +4,6 @@ if(MSVC AND NOT WINDOWS_STORE AND NOT PLATFORM_PSP2 AND NOT PLATFORM_NX AND NOT 
 #SET(USE_D3D9 TRUE)
 
 #Find libs
-find_package(SDL2 REQUIRED)
 if(USE_VULKAN)
 find_package(Vulkan REQUIRED)
 include_directories(${Vulkan_INCLUDE_DIR})
@@ -13,14 +12,9 @@ find_package(D3D9 REQUIRED)
 include_directories(${DIRECTX_INCLUDE_DIRS})
 else()
 find_package(OpenGL REQUIRED)
-#We want to link GLEW statically
-set(GLEW_USE_STATIC_LIBS ON)
-find_package(GLEW REQUIRED)
-#Setup project include directories
-include_directories(${GLEW_INCLUDE_DIR})
 endif()
 
-include_directories(${SDL2_INCLUDE_DIR})
+include_directories(${EXTERN_LIB_PATH}/SDL/Include)
 
 target_link_directories(${PROJECT_NAME} PUBLIC ${ROOT_DIR}/Build/Build_Win32/Emulator/$(Configuration))
 
