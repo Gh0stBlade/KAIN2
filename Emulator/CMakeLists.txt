@@ -61,7 +61,6 @@ include("Platform/NX_Arm.cmake")
 include_directories(${EMULATOR_PUBLIC_INCLUDE_DIR})
 include_directories(${EMULATOR_INCLUDE_DIR}/Core/)
 include_directories(${EMULATOR_INCLUDE_DIR}/Library/)
-#Setup platform specific / game code include folder
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 #Enable NTSC mode

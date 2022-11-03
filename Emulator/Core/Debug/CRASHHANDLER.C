@@ -1,4 +1,4 @@
-#include "Setup/Platform/EMULATOR_PLATFORM_SETUP.H"
+#include "Core/Setup/Platform/EMULATOR_PLATFORM_SETUP.H"
 
 #if defined(_WINDOWS) && !defined(UWP) && !defined(SN_TARGET_PSP2)
 

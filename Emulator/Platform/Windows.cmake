@@ -16,6 +16,7 @@ else()
 find_package(OpenGL REQUIRED)
 endif()
 
+include_directories(${EXTERN_LIB_PATH}/glew-cmake/Include)
 include_directories(${EXTERN_LIB_PATH}/SDL/Include)
 
 endif()

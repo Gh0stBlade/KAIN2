@@ -13,7 +13,6 @@ find_package(GLEW REQUIRED)
 set(GLEW_USE_STATIC_LIBS ON)
 
 #Setup project include directories
-include_directories(${GLEW_INCLUDE_DIR})
 include_directories(${SDL2_INCLUDE_DIR})
 
 set(PSX_LIB libValkyrie.a)

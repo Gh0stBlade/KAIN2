@@ -1081,7 +1081,7 @@ void Emulator_DrawTriangles(int start_vertex, int triangles)
 	printf("Drawing: %d Start: %d\n", triangles, start_vertex);
 	sceGxmSetVertexStream(g_context, 0, dynamic_vertex_buffer + start_vertex);
 	sceGxmDraw(g_context, SCE_GXM_PRIMITIVE_TRIANGLES, SCE_GXM_INDEX_FORMAT_U16, dynamic_index_buffer, triangles * 3);
-	sceGxmMidSceneFlush(g_context, SCE_GXM_MIDSCENE_PRESERVE_DEFAULT_UNIFORM_BUFFERS, NULL, NULL);
+	//sceGxmMidSceneFlush(g_context, SCE_GXM_MIDSCENE_PRESERVE_DEFAULT_UNIFORM_BUFFERS, NULL, NULL);
 }
 
 void Emulator_UpdateVertexBuffer(const struct Vertex* vertices, int num_vertices)

@@ -1,7 +1,7 @@
 #include "BOUNTY_LIST.H"
 #include "Core/Setup/Game/GAME_VERSION.H"
 #include "Core/Setup/Platform/EMULATOR_PLATFORM_SETUP.H"
-#include "Debug/EMULATOR_ASSERT.H"
+#include "Core/Debug/EMULATOR_ASSERT.H"
 
 #if !defined(NO_BOUNTY_LIST_EXPORT)
 

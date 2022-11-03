@@ -1,6 +1,6 @@
 #include "EMULATOR_INPUT.H"
 
-#include "EMULATOR.H"
+#include "Core/EMULATOR.H"
 
 int g_initialisedPadSubsystem = FALSE;
 unsigned char* padData[MAX_CONTROLLERS];
