@@ -35,6 +35,9 @@ artifacts:
      name: Binaries
   
 after_build:
+  - cmd: dir
   - cmd: cd %clone_folder%
+  - cmd: dir
   - cmd: cd Binaries
+  - cmd: dir
   - 7z a KAIN2.zip %configuration%
