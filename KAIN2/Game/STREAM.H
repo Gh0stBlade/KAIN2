@@ -5,6 +5,13 @@
 #include "Game/INSTANCE.H"
 #include "PLAN/PLANAPI.H"
 
+struct evObjectAbsorbData 
+{
+	struct _Instance* force; // size=668, offset=0
+	unsigned short node; // size=0, offset=4
+	unsigned short steps; // size=0, offset=6
+};
+
 struct evControlInitIdleData 
 {
 	int mode; // size=0, offset=0
