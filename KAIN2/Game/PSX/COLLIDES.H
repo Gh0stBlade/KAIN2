@@ -44,7 +44,9 @@ extern void VM_ProcessVMObjectList_S(struct Level* level, struct Camera* camera)
 
 extern long BSP_SphereIntersectsViewVolume_S(struct _Position* position) ; // 0x800787E0
 
+#if defined(PSXPC_VERSION) && defined(PSX_VERSION)
 extern void RotMatrixZYX() ; // 0x800788B8
+#endif
 
 extern void rmzyx_1() ; // 0x800788F4
 
@@ -62,9 +64,11 @@ extern void rm_2() ; // 0x80078ABC
 
 extern void rm_3() ; // 0x80078AE4
 
+#if defined(PSXPC_VERSION) && defined(PSX_VERSION)
 extern void RotMatrixX(long r, MATRIX* m);
 extern void RotMatrixY(long r, MATRIX* m);
 extern void RotMatrixZ(long r, MATRIX* m);
+#endif
 
 extern void RMX_0() ; // 0x80078BE8
 
@@ -76,11 +80,15 @@ extern void ApplyMatrix_S() ; // 0x80078F60
 
 //extern void ScaleMatrix() ; // 0x80078FB0
 
+#if defined(PSXPC_VERSION) && defined(PSX_VERSION)
 extern short rsin(long a); // 0x80079098
+#endif
 
 extern void rsin_exit() ; // 0x800790C0
 
+#if defined(PSXPC_VERSION) && defined(PSX_VERSION)
 extern short rcos(long a); // 0x800790C8
+#endif
 
 extern void rcos_exit() ; // 0x800790F0
 

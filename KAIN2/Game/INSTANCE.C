@@ -3522,7 +3522,7 @@ unsigned long INSTANCE_DefaultAnimCallback(struct _G2Anim_Type* anim, int sectio
 #if 0
 		slti    $v0, $s1, 0x3E8
 		bnez    $v0, loc_80035A7C
-		addiu   $a0, $s3, 0x5C  # '\'
+		addiu   $a0, $s3, 0x5C
 		li      $v0, 0x10624DD3
 		mult    $s1, $v0
 		move    $a0, $s3
@@ -3539,7 +3539,7 @@ unsigned long INSTANCE_DefaultAnimCallback(struct _G2Anim_Type* anim, int sectio
 		subu    $s1, $v0
 		bne     $s0, $v0, loc_80035AAC
 		move    $v0, $zero
-		addiu   $a0, $s3, 0x5C  # '\'
+		addiu   $a0, $s3, 0x5C
 
 		loc_80035A7C:
 	lh      $a1, 0($s2)

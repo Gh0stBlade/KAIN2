@@ -2154,6 +2154,7 @@ void handle_line_type_long(struct GameTracker *gt, struct DebugMenuLine *line)
 { 
 	long* command;
 	int incr;
+	typedef void* (*fptr)(long*);
 
 	command = &gt->controlCommand[0][0];
 
@@ -2192,8 +2193,6 @@ void handle_line_type_long(struct GameTracker *gt, struct DebugMenuLine *line)
 		{
 			((long*)line->var_address)[0] = line->upper;
 		}
-		
-		typedef void* (*fptr)(long*);
 		
 		if (line->bit_mask != 0)
 		{
@@ -2819,10 +2818,10 @@ void DEBUG_PageFlip()
 void DEBUG_FatalError(const char *fmt, ...)
 { 
 	char msg[256];
+	va_list ap;
 
 	FONT_Flush();
 
-	va_list ap;
 	va_start(ap, fmt);
 	vsprintf(msg, fmt, ap);
 	FONT_Print(msg);

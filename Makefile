@@ -6,8 +6,8 @@
 # ISOXML	- Name of mkpsxiso ISO project script
 #---------------------------------------------------------------------------------
 TARGET      = MAIN
-PROGADDR	= 0x00010000
-SOURCES		= KAIN2/Game/
+PROGADDR	= 0x80010000
+SOURCES		= KAIN2/Game/ KAIN2/Game/PSX
 INCLUDES	= KAIN2/ KAIN2/Game
 DEFS		= PSX_VERSION DISC_VERSION NTSC_VERSION
 ISOXML		= KAIN2.XML
@@ -64,7 +64,7 @@ OFILES		= $(AFILES:.MIP=.obj) $(CFILES:.C=.obj)
 # Default rule, compiles all source files
 #---------------------------------------------------------------------------------
 all: $(OFILES)
-	$(CC) -Xo$(PROGADDR) $(CFLAGS) $(addprefix -L,$(LIBDIRS)) $(addprefix -l,$(LIBS)) $(OFILES) $(ROFILES)
+	$(CC) -Xo$(PROGADDR) $(CFLAGS) $(addprefix -L,$(LIBDIRS)) $(addprefix -l,$(LIBS)) $(OFILES)
 ifeq "$(USE_SLINK)" "TRUE"
 	PSX_SLINK.BAT
 else

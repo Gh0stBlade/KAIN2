@@ -1353,11 +1353,11 @@ unsigned long MATH3D_SquareLength(long x, long y, long z)
 {
 #if defined(PSX_VERSION)///@FIXME inaccurate for PSX but same functionality. See ASM.
 	long v[3];
+	long r[3];
+
 	v[0] = x;
 	v[1] = y;
 	v[2] = z;
-
-	long r[3];
 
 	gte_ldcv(v);
 	gte_sqr0();

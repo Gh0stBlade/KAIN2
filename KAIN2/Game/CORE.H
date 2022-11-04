@@ -13,7 +13,7 @@
 
 #elif defined(PSX_VERSION) && !defined(PSXPC_VERSION)
 
-#include <SYSTEM/TYPES.H>
+#include <SYS/TYPES.H>
 #include <LIBAPI.H>
 #include <LIBETC.H>
 #include <LIBGTE.H>
@@ -27,16 +27,18 @@
 #include <INLINE_C.H>
 #include <STDARG.H>
 
+#define UNIMPLEMENTED()
+
 #undef LoadImage
-#define LoadImage LoadImagePSX
+#define LoadImagePSX LoadImage
 #define PSX_EnterCriticalSection	EnterCriticalSection
 #define PSX_ExitCriticalSection		ExitCriticalSection
 #define setAbr(p, abr) ((p)->dr_tpage) |= ((short)abr << 5)
-#define setlen_ST( p, _len) 	(((POLY_F4_SEMITRANS *)(p))->len  = (u_char)(_len))
-#define setcode_ST(p, _code)	(((POLY_F4_SEMITRANS *)(p))->code = (u_char)(_code))
-#define setPolyFT4_ST(p) setlen_ST(p, 6),  setcode_ST(p, 0x2A)
+#define setPolyFT4_ST(p) setlen(p, 6),  setcode(p, 0x2A)
 
 typedef RECT PSX_RECT;
+
+#define PTR_32
 
 #elif defined(PSXPC_VERSION)
 

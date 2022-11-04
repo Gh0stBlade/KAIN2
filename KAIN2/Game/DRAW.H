@@ -50,8 +50,6 @@ typedef struct POLY_F4_SEMITRANS
 #else
 	unsigned long len;
 #endif
-#else
-	unsigned long tag;
 #endif
 
 	unsigned long dr_tpage; // size=0, offset=4

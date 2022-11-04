@@ -1310,7 +1310,8 @@ void GAMELOOP_DisplayFrame(struct GameTracker* gameTracker)
 	PSX_RECT cliprect;
 	int streamID;
 	struct _Instance* instance;
-
+	int v0;///@fixme macro
+	int v1;///@fixme macro
 	drawot = gameTracker->drawOT;
 
 	if (!(gameTrackerX.gameFlags & 0x8000000) || pause_redraw_flag != 0)
@@ -1454,7 +1455,7 @@ void GAMELOOP_DisplayFrame(struct GameTracker* gameTracker)
 
 					if (draw != 0)
 					{
-						int v1 = ((cliprect.x << 2) + cliprect.x) << 6;
+						v1 = ((cliprect.x << 2) + cliprect.x) << 6;
 						if (v1 < 0)
 						{
 							v1 += SCREEN_WIDTH - 1;
@@ -1462,7 +1463,7 @@ void GAMELOOP_DisplayFrame(struct GameTracker* gameTracker)
 						
 						theCamera.core.leftX = v1 >> 9;
 
-						int v0 = ((cliprect.x << 2) + cliprect.x) << 6;///@MACRO
+						v0 = ((cliprect.x << 2) + cliprect.x) << 6;///@MACRO
 						if (v1 < 0)
 						{
 							v1 += SCREEN_WIDTH - 1;

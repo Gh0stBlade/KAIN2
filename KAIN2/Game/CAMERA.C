@@ -471,8 +471,6 @@ void CAMERA_Initialize(struct Camera *camera)
 	camera->focusRotation.x = 4039;
 	camera->targetFocusRotation.x = 4039;
 
-	long* test = &camera->focusDistanceList[0][0];
-
 	camera->focusDistanceList[0][0] = 1500;
 	camera->focusDistanceList[1][0] = 1500;
 	camera->focusDistanceList[0][1] = 2250;
@@ -3625,6 +3623,7 @@ void CAMERA_UpdateFocusRotate(struct Camera *camera)
 
 void CAMERA_UpdateFocusRotationX(struct Camera* camera, struct _Instance* focusInstance)
 {
+#if defined(PSXPC_VERSION) && defined(PSX_VERSION)
 	short cameraPlayerRotX; // $a1
 	short dist; // $s1
 	short tfaceFlag; // $s2
@@ -3670,6 +3669,7 @@ void CAMERA_UpdateFocusRotationX(struct Camera* camera, struct _Instance* focusI
 		//loc_8001C938
 	}
 	//loc_8001C938
+#endif
 #if 0
 		sh      $v0, 0x19E($s0)
 		sll     $v0, 16
@@ -4028,7 +4028,7 @@ void CAMERA_CalcFollowPosition(struct Camera* camera, struct _Rotation* rotation
 		dpv.z = 0;
 		dpv.y = camera->real_focuspoint.y - camera->targetPos.y;
 
-		gte_ldlvl(dpv);
+		gte_ldlvl(&dpv);
 
 		gte_sqr0();
 

@@ -603,6 +603,7 @@ void G2Quat_FromEuler_S(struct _G2AnimQuatInfo_Type* quatInfo, struct _G2EulerAn
 {
 }
 
+#if defined(PSXPC_VERSION) && defined(PSX_VERSION)
 void RotMatrixX(long r, MATRIX* m)
 {
 	int v0;
@@ -779,6 +780,7 @@ void RotMatrixZ(long r, MATRIX* m)
 
 	return;
 }
+#endif
 
 short rsin(long a)
 {

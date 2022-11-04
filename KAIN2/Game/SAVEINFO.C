@@ -1151,7 +1151,7 @@ LABEL_6:
 	}
 	else
 	{
-		GXFilePrint(`string');
+		//GXFilePrint(`string');
 		dword_C5529C = dword_C55290 + 24576;
 		dword_C55294 = (SavedIntroSmall*)(dword_C552A8 + dword_C55290);
 		dword_C55298 = (SavedIntroSmall*)(dword_C552A8 + dword_C55290);
