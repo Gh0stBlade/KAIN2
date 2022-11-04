@@ -1,7 +1,6 @@
 #include "ShiftMenuBar.h"
 
 #include "Engine_Version.h"
-#include "UserInterface/Editor_UI.h"
 #include "Game/GAMELOOP.H"
 
 Shift::MenuBar::MenuBar(QWidget* parent) : QMenuBar(parent)
@@ -51,6 +50,7 @@ void Shift::MenuBar::DoOpenZone()
     m_zoneComboBox = new QComboBox(m_groupBox);
 
     const char* zoneNames[] = {
+#if 0
                 "train6",
                 "train5",
                 "under4",
@@ -62,6 +62,15 @@ void Shift::MenuBar::DoOpenZone()
                 "fire3",
                 "train9",
                 "push1",
+#else
+                "huba2",
+                "cliff1",
+                "tower8",
+                "fire6",
+                "aluka47",
+                "nightb3",
+                "tomb1",
+#endif
     };
 
     for (int i = 0; i < sizeof(zoneNames) / sizeof(uintptr_t); i++)

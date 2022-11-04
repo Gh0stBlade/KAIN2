@@ -1,7 +1,5 @@
 #include "ShiftD3D11Window.h"
 
-#include "UserInterface/Editor_Window.h"
-#include "UserInterface/Editor_UI.h"
 #include <QtGui/private/qpaintdevicewindow_p.h>
 #include <QTime>
 #include <QPainter>

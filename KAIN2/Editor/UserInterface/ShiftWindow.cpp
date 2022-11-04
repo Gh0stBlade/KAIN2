@@ -1,8 +1,6 @@
 #include "ShiftWindow.h"
 #include "./ui_shiftwindow.h"
 
-#include "UserInterface/Editor_Window.h"
-#include "UserInterface/Editor_UI.h"
 #include <qimagereader.h>
 
 class ShiftWindow* g_ShiftWindow;

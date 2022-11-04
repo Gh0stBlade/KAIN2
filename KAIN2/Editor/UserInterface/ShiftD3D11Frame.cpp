@@ -2,9 +2,6 @@
 #include "ShiftWindow.h"
 #include "./ui_shiftwindow.h"
 
-#include "UserInterface/Editor_Window.h"
-#include "UserInterface/Editor_UI.h"
-
 #include "Game/CAMERA.H"
 #include "Game/PSX/COLLIDES.H"
 
