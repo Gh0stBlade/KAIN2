@@ -23,7 +23,7 @@ platform:
   #- x64
   
 before_build:
-  - cmd: cd %clone_folder%/Emulator/Platform/Windows
+  - cmd: cd %clone_folder%
   - cmd: cd KAIN2
   - cmd: cd Emulator
   - cmd: cd Platform
