@@ -1,7 +1,5 @@
 #include "INLINE_C.H"
-
 #include "LIBGTE.H"
-#include "GTEREG.H"
 
 #if 0
 void gte_SetGeomScreen(int h)

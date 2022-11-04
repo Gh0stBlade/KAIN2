@@ -1,6 +1,7 @@
 #ifndef R3000_H
 #define R3000_H
 
+#if 0
 #define	K0BASE		0x80000000
 #define	K0SIZE		0x20000000
 #define	K1BASE		0xA0000000
@@ -232,4 +233,5 @@ extern int (*c0vec_tbl[])();
 #define EXCEPT_GDB    	4
 #define EXCEPT_INT    	9
 #define EXCEPT_ELSE    	0xff
+#endif
 #endif /* _R3000_H */

@@ -92,7 +92,8 @@ extern int windowWidth;
 extern int windowHeight;
 extern int g_overrideWidth;
 extern int g_overrideHeight;
-#if defined(D3D11)
+#if defined(D3D11) || (defined(OGL) && defined(_WINDOWS))
+#include <Windows.h>//OGL
 extern HWND g_overrideHWND;
 #endif
 extern unsigned int g_resetDeviceOnNextFrame;

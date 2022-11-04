@@ -7,7 +7,13 @@
 #include <QTimer>
 #include <QStackedLayout>
 
-#include "ShiftD3D11Frame.h"
+#include "Core/Setup/Platform/EMULATOR_PLATFORM_SETUP.H"
+
+#if defined(D3D11)
+#include "ShiftD3D1Frame.h"
+#elif defined(OGL)
+#include "ShiftOGLFrame.h"
+#endif
 #include "ShiftD3D11Window.h"
 #include "ShiftLabel.h"
 #include "ShiftPanes.h"
@@ -32,8 +38,11 @@ namespace Shift
 		QHBoxLayout* m_boxLayout;
 		QStackedLayout* m_stackedLayout;
 		QTabWidget* m_tabWidget;
-		Shift::D3D11Frame* m_d3d11Viewport;
-		//Shift::D3D11Window* m_d3d11Window;
+#if defined(D3D11)
+		Shift::D3D11Frame* m_viewport;
+#elif defined(OGL)
+		Shift::OGLFrame* m_viewport;
+#endif
 		Shift::Label* m_labelItemsCount;
 		QLabel* m_labelUntitled;
 		QTimer* m_timer;

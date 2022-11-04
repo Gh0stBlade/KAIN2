@@ -18,35 +18,28 @@ Shift::CenterPane::CenterPane(Shift::Panes* panes, QWidget* parent)
 	m_tabWidget->setObjectName("ShiftViewportTabWidget");
 	m_viewportWidget->setWidget(m_tabWidget);
 
-	m_d3d11Viewport = new Shift::D3D11Frame(panes, m_tabWidget);
-	m_d3d11Viewport->setObjectName("ShiftViewport");
-	m_d3d11Viewport->setFocusPolicy(Qt::ClickFocus);
-	m_d3d11Viewport->initialiseHWND((HWND)m_d3d11Viewport->winId(), m_d3d11Viewport->width(), m_d3d11Viewport->height());
-
-#if 0
-	m_labelItemsCount = new Shift::Label(m_tabWidget);
-	//m_labelItemsCount->setAutoFillBackground(false);
-	//m_labelItemsCount->setText("1 Items");
-	//m_labelItemsCount->move(30, 390);
-	//m_labelItemsCount->raise();
-	//m_labelItemsCount->setAutoFillBackground(true);
-	//m_labelItemsCount->repaint();
-	//m_labelItemsCount->setAttribute(Qt::WA_TranslucentBackground, true);
-	//m_labelItemsCount->setAutoFillBackground(false);
-
-
-	QPalette palette = m_labelItemsCount->palette();
-	palette.setColor(m_labelItemsCount->backgroundRole(), Qt::yellow);
-	palette.setColor(m_labelItemsCount->foregroundRole(), Qt::yellow);
-	m_labelItemsCount->setPalette(palette);
+#if defined(D3D11)
+	m_viewport = new Shift::D3D11Frame(panes, m_tabWidget);
+	m_viewport->setObjectName("ShiftViewport");
+	m_viewport->setFocusPolicy(Qt::ClickFocus);
+	m_viewport->initialiseHWND((HWND)m_viewport->winId(), m_viewport->width(), m_viewport->height());
+#elif defined(OGL)
+	m_viewport = new Shift::OGLFrame(panes, m_tabWidget);
+	m_viewport->setObjectName("ShiftViewport");
+	m_viewport->setFocusPolicy(Qt::ClickFocus);
+	m_viewport->initialiseHWND((HWND)m_viewport->winId(), m_viewport->width(), m_viewport->height());
 #endif
 
 	m_labelUntitled = new QLabel;
 	m_labelUntitled->setText("Untitled*");
-	m_tabWidget->addTab(m_d3d11Viewport, g_lastAreaName);
+	m_tabWidget->addTab(m_viewport, g_lastAreaName);
 
-	m_timer = new QTimer(m_d3d11Viewport);
-	parent->connect(m_timer, &QTimer::timeout, m_d3d11Viewport, &Shift::D3D11Frame::render);
+	m_timer = new QTimer(m_viewport);
+#if defined(D3D11)
+	parent->connect(m_timer, &QTimer::timeout, m_viewport, &Shift::D3D11Frame::render);
+#else
+	parent->connect(m_timer, &QTimer::timeout, m_viewport, &Shift::OGLFrame::render);
+#endif
 	m_timer->setInterval(1000.0f / 60.0f);
 	m_timer->start();
 }
@@ -58,9 +51,9 @@ Shift::CenterPane::~CenterPane()
 		delete m_timer;
 	}
 
-	if (m_d3d11Viewport != nullptr)
+	if (m_viewport != nullptr)
 	{
-		delete m_d3d11Viewport;
+		delete m_viewport;
 	}
 
 	if (m_boxLayout != nullptr)

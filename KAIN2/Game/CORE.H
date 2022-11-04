@@ -126,18 +126,6 @@ typedef RECT PSX_RECT;
 #define DEFAULT_MEM_MAGIC				PACK_MAGIC_USHORT(0xB, 0xA, 0xD, 0xE)
 
 #define null	0
-typedef unsigned long long QWORD;
-
-#if !defined(PLATFORM_NX_ARM)
-#ifndef WINAPI
-typedef unsigned char BYTE;
-typedef unsigned int DWORD;
-typedef unsigned short WORD;
-#ifndef PSX_VERSION//?
-typedef unsigned int bool;
-#endif
-#endif
-#endif
 
 #ifndef ABS//I know one of the psyq headers has this so maybe we should just use the one from psyq at some point.
 #define ABS(x) ((x)<0 ? -(x) : (x))

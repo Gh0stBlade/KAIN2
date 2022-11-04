@@ -6,6 +6,10 @@
 
 #if defined(OGL)
 
+#if defined(_WINDOWS)
+HWND g_overrideHWND = NULL;
+#endif
+
 extern void Emulator_DoPollEvent();
 extern void Emulator_WaitForTimestep(int count);
 extern void Emulator_GenerateCommonTextures();
@@ -405,10 +409,27 @@ void Emulator_DestroyGlobalShaders()
 int Emulator_InitialiseGLContext(char* windowName)
 {
 #if defined(SDL2)
+#if defined(_WINDOWS) && defined(EDITOR)
+
+	if (g_overrideHWND != NULL)
+	{
+		g_window = SDL_CreateWindowFrom(g_overrideHWND);
+		SDL_GLContext context = SDL_GL_CreateContext(g_window);
+
+		SDL_GL_MakeCurrent(g_window, context);
+
+	}
+	else
+	{
+		eassert(FALSE);//?
+	}
+#else
 	g_window = SDL_CreateWindow(windowName, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, windowWidth, windowHeight, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
-#endif
 
 	SDL_GL_CreateContext(g_window);
+#endif
+#endif
+
 
 #if defined(SDL2)
 	if (g_window == NULL)

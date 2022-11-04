@@ -16,12 +16,12 @@
 
 namespace Shift
 {
-    class D3D11Frame : public QFrame
+    class OGLFrame : public QFrame
     {
         Q_OBJECT
 
     public:
-        D3D11Frame(Shift::Panes* panes, QTabWidget* tabWidget, QWidget* parent = nullptr)
+        OGLFrame(Shift::Panes* panes, QTabWidget* tabWidget, QWidget* parent = nullptr)
         {
             setAttribute(Qt::WA_PaintOnScreen, true);
             setAttribute(Qt::WA_NativeWindow, true);
