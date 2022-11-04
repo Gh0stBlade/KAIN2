@@ -12,7 +12,7 @@ configuration:
 #- Debug
 - Release
 
-clone_folder: c:/projects/KAIN2
+clone_folder: c:/projects/
 
 build:
   project: c:/projects/KAIN2/Build/Build_Win32/Soul Reaver.sln
