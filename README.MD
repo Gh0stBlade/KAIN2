@@ -1,5 +1,7 @@
 # Legacy of Kain: Soul Reaver Decompile
 
+<a href="https://ci.appveyor.com/project/Gh0stBlade/kain2"><img src="https://ci.appveyor.com/api/projects/status/7btarl3b6babqcsc?svg=true"/></a>
+
 <a href="https://legacyofkain.co.uk">Live WebGL Demo</a>
 
 <img src="https://i.imgur.com/1uoxlcq.png"/>

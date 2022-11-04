@@ -12,8 +12,7 @@ Please select a platform:
   3. ~~Mac~~
   4. ~~Android~~
   5. ~~Web (Emscripten)~~
-  6. ~~PlayStation Vita~~
-  7. ~~Nitnendo Switch~~
+  6. ~~UWP~~
 
 # Windows
   1. Install Visual Studio 17 2022.
@@ -25,6 +24,6 @@ Please select a platform:
   7. Build KAIN2_Win32
 
 # Game files setup:
-  1. By default (debug builds) all files must be extracted from `BIGFILE.DAT` to run as it is coded to load files externally and not packed into one file.
+  1. By default (debug builds) all files must be extracted from `BIGFILE.DAT` to run as it is coded to load files externally and not packed into one file. (You can do this using the tool in Tools/LST (build it then drag and drop BIGFILE.DAT ontop, copy BIGFILE.LST and /KAIN2/ folder to where the executable is located))
   2. By default (release builds) always load files from `BIGFILE.DAT` which must be in the same folder as the main executable.
   3. Move `BIGFILE.DAT` and `LOCALS.TBL` to where the built executable is located.
