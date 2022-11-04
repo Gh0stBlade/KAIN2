@@ -579,7 +579,7 @@ long INSTANCE_InstanceGroupNumber(struct _Instance* instance)
 	}
 	else
 	{
-		if (strcmp((char*)instance->data, "raziel__"))
+		if (strcmp(instance->object->name, "raziel__"))
 		{
 			result &= 0xFFFFFFFD;
 			result &= 0xFFFFFFFE;
