@@ -24,6 +24,10 @@ platform:
   
 before_build:
   - cmd: cd %clone_folder%/Emulator/Platform/Windows
+  - cmd: cd KAIN2
+  - cmd: cd Emulator
+  - cmd: cd Platform
+  - cmd: cd Windows
   - cmd: run Generate-Project-Files.bat
   
 artifacts:
