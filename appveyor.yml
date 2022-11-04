@@ -35,5 +35,6 @@ artifacts:
      name: Binaries
   
 after_build:
-  - cmd: cd Build/Build_Win32/
-  - 7z a KAIN2.zip
+  - cmd: cd Binaries
+  - cmd: cd %configuration%
+  - 7z a KAIN2.zip %configuration%
