@@ -1,0 +1,35 @@
+version: 1.0.{build}
+
+branches:
+  only:
+  - main
+  
+skip_tags: true
+
+image: Visual Studio 2022
+
+configuration:
+#- Debug
+- Release
+
+clone_folder: c:/projects/KAIN2
+
+build:
+  project: c:/projects/KAIN2/Build/Build_Win32/Soul Reaver.sln
+  verbosity: minimal
+  
+platform:
+  - Win32
+  #- x64
+  
+before_build:
+  - cmd: cd %clone_folder%/Emulator/Platform/Windows
+  - cmd: run Generate-Project-Files.bat
+  
+artifacts:
+   - path: Binaries/%configuration%/*.zip
+     name: Binaries
+  
+after_build:
+  - cmd: cd Build/Build_Win32/
+  - 7z a KAIN2.zip
