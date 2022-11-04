@@ -4,6 +4,14 @@
 #include <string>
 #include <assert.h>
 #include <map>
+#if defined _MSC_VER
+#include <Windows.h>
+#include <direct.h>
+#elif defined __GNUC__
+#include <sys/types.h>
+#include <sys/stat.h>
+#endif
+
 
 std::map<unsigned int, const char*> finalListing;
 
@@ -3437,19 +3445,75 @@ void BIGFILE_AddToList(unsigned int hash, char* fileName)
 	}
 }
 
-#include <filesystem> // or #include <filesystem> for C++17 and up
+char* BIGFILE_GetFolder(char* folderName, char* fileName)
+{
+	int length = strlen(fileName) - 1;
+	char* p = &fileName[length];
 
-namespace fs = std::filesystem;
+	while(*p != '\\')
+	{
+		p--;
+	}
 
+	for (int i = 0; i != p - fileName + 1; i++)
+	{
+		folderName[i] = fileName[i];
+	}
+
+	return folderName;
+}
+
+void BIGFILE_CreateDirectories(char* filePath)
+{
+	char name[256];
+	char* p = filePath;
+	char* q = name;
+
+	while (*p)
+	{
+		if (('\\' == *p) || ('/' == *p))
+		{
+			if (':' != *(p - 1))
+			{
+#if defined(_WIN32)
+				CreateDirectory(name, NULL);
+#endif
+			}
+		}
+		*q++ = *p++;
+		*q = '\0';
+	}
+#if defined(_WIN32)
+	CreateDirectory(name, NULL);
+#endif
+}
 
 void BIGFILE_WriteFile(char* fileName, unsigned int offset, unsigned int size)
 {
-	std::filesystem::path p(fileName);
-	fs::create_directories(p.parent_path());
+#if defined(_WIN32)
+	char folderName[MAX_PATH];
+	memset(folderName, 0, sizeof(folderName));
+	BIGFILE_GetFolder(folderName, fileName);
+
+	char executablePath[MAX_PATH];
+	memset(executablePath, 0, sizeof(executablePath));
+
+	char fullPath[MAX_PATH];
+	memset(fullPath, 0, sizeof(fullPath));
+
+
+	GetModuleFileName(NULL, executablePath, MAX_PATH);
+	BIGFILE_GetFolder(fullPath, executablePath);
+	strcat(fullPath, folderName);
+	BIGFILE_CreateDirectories(fullPath);
+
+#else 
+	mkdir(BIGFILE_GetFolder(folderName, fileName), 0700);
+#endif
+
 	FILE* f = fopen("BIGFILE.DAT", "rb");
 
 	char* buff = new char[size];
-
 
 	if (f != NULL)
 	{
