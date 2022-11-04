@@ -27,7 +27,7 @@ before_build:
   - cmd: cd Emulator
   - cmd: cd Platform
   - cmd: cd Windows
-  - cmd: run Generate-Project-Files.bat
+  - cmd: Generate-Project-Files.bat
   
 artifacts:
    - path: Binaries/%configuration%/*.zip
