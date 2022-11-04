@@ -5,6 +5,13 @@
 #include "Game/INSTANCE.H"
 #include "PLAN/PLANAPI.H"
 
+struct evControlInitIdleData 
+{
+	int mode; // size=0, offset=0
+	int frame; // size=0, offset=4
+	int frames; // size=0, offset=8
+};
+
 struct evControlInitHangData 
 {
 	struct _Instance* instance; // size=668, offset=0
