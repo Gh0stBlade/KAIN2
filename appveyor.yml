@@ -24,6 +24,7 @@ platform:
   
 before_build:
   - cmd: cd %clone_folder%
+  - cmd: git submodule update --init --recursive
   - cmd: cd Emulator
   - cmd: cd Platform
   - cmd: cd Windows
