@@ -64,8 +64,8 @@ void Emulator_ResetDevice()
 	}
 
 	d3dpp.PresentationInterval = g_swapInterval ? D3DPRESENT_INTERVAL_ONE : D3DPRESENT_INTERVAL_IMMEDIATE;
-	d3dpp.BackBufferWidth = windowWidth;
-	d3dpp.BackBufferHeight = windowHeight;
+	d3dpp.BackBufferWidth = Emulator_GetWindowWidth();
+	d3dpp.BackBufferHeight = Emulator_GetWindowHeight();
 	HRESULT hr = d3ddev->Reset(&d3dpp);
 	assert(!FAILED(hr));
 	
@@ -92,11 +92,14 @@ void Emulator_ResetDevice()
 int Emulator_InitialiseD3D9Context(char* windowName)
 {
 #if defined(SDL2)
-	g_window = SDL_CreateWindow(windowName, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, windowWidth, windowHeight, SDL_WINDOW_RESIZABLE);
-	if (g_window == NULL)
+	if (g_overrideHWND == NULL)
 	{
-		eprinterr("Failed to initialise SDL window!\n");
-		return FALSE;
+		g_window = SDL_CreateWindow(windowName, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, windowWidth, windowHeight, SDL_WINDOW_RESIZABLE);
+		if (g_window == NULL)
+		{
+			eprinterr("Failed to initialise SDL window!\n");
+			return FALSE;
+		}
 	}
 
 	SDL_SysWMinfo wmInfo;
@@ -108,10 +111,10 @@ int Emulator_InitialiseD3D9Context(char* windowName)
 	d3dpp.Windowed = TRUE;
 	d3dpp.BackBufferCount = 1;
 	d3dpp.BackBufferFormat = D3DFMT_A8R8G8B8;
-	d3dpp.BackBufferWidth = windowWidth;
-	d3dpp.BackBufferHeight = windowHeight;
+	d3dpp.BackBufferWidth = Emulator_GetWindowWidth();
+	d3dpp.BackBufferHeight = Emulator_GetWindowHeight();
 	d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
-	d3dpp.hDeviceWindow = wmInfo.info.win.window;
+	d3dpp.hDeviceWindow = g_overrideHWND == NULL ? wmInfo.info.win.window : g_overrideHWND;
 	d3dpp.EnableAutoDepthStencil = TRUE;
 	d3dpp.AutoDepthStencilFormat = D3DFMT_D24S8;
 	d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_ONE;
