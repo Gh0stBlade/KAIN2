@@ -20,6 +20,7 @@ D3DPRESENT_PARAMETERS  d3dpp;
 
 SDL_Window* g_window = NULL;
 
+HWND g_overrideHWND = NULL;
 int g_overrideWidth = -1;
 int g_overrideHeight = -1;
 

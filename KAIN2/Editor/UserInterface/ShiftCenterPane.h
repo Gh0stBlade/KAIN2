@@ -9,7 +9,9 @@
 
 #include "Core/Setup/Platform/EMULATOR_PLATFORM_SETUP.H"
 
-#if defined(D3D11)
+#if defined(D3D9)
+#include "ShiftD3D9Frame.h"
+#elif defined(D3D11)
 #include "ShiftD3D11Frame.h"
 #elif defined(OGL)
 #include "ShiftOGLFrame.h"
@@ -38,7 +40,10 @@ namespace Shift
 		QHBoxLayout* m_boxLayout;
 		QStackedLayout* m_stackedLayout;
 		QTabWidget* m_tabWidget;
-#if defined(D3D11)
+
+#if defined(D3D9)
+		Shift::D3D9Frame* m_viewport;
+#elif defined(D3D11)
 		Shift::D3D11Frame* m_viewport;
 #elif defined(OGL)
 		Shift::OGLFrame* m_viewport;
