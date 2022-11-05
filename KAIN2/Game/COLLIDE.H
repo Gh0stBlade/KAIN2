@@ -1,7 +1,24 @@
 #ifndef COLLIDE_H
 #define COLLIDE_H
 
+#include "Game/CORE.H"
+
 typedef long (*TDRFuncPtr_COLLIDE_LineWithBoxFace6collideBoundFunc)();
+
+struct IandTScratch 
+{
+	MATRIX posMatrix; // size=32, offset=0
+	struct _SVector normal; // size=8, offset=32
+	struct _Vector dpv; // size=12, offset=40
+	struct _SVector planePoint; // size=8, offset=52
+	struct _SVector line; // size=8, offset=60
+	struct _SVector oldPos; // size=8, offset=68
+	struct _SVector newPos; // size=8, offset=76
+	int i; // size=0, offset=84
+	long in_spectral; // size=0, offset=88
+	short* normalList; // size=0, offset=92
+	struct _TVertex* vertexList; // size=12, offset=96
+};
 
 struct _PCollideInfo 
 {
