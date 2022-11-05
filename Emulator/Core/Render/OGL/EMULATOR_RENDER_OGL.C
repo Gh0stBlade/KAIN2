@@ -4,11 +4,56 @@
 #include "Core/Render/EMULATOR_RENDER_COMMON.H"
 #include <stdio.h>
 
+#include <gl/GL.h>
+
 #if defined(OGL)
 
 #if defined(_WINDOWS)
 HWND g_overrideHWND = NULL;
 #endif
+
+PFNGLCREATEPROGRAMPROC              glCreateProgram;
+PFNGLDELETEPROGRAMPROC              glDeleteProgram;
+PFNGLLINKPROGRAMPROC                glLinkProgram;
+PFNGLUSEPROGRAMPROC                 glUseProgram;
+PFNGLGETPROGRAMINFOLOGPROC          glGetProgramInfoLog;
+PFNGLCREATESHADERPROC               glCreateShader;
+PFNGLDELETESHADERPROC               glDeleteShader;
+PFNGLSHADERSOURCEPROC               glShaderSource;
+PFNGLATTACHSHADERPROC               glAttachShader;
+PFNGLCOMPILESHADERPROC              glCompileShader;
+PFNGLGETSHADERINFOLOGPROC           glGetShaderInfoLog;
+PFNGLGETUNIFORMLOCATIONPROC         glGetUniformLocation;
+PFNGLUNIFORM1IPROC                  glUniform1i;
+PFNGLUNIFORMMATRIX4FVPROC           glUniformMatrix4fv;
+PFNGLBINDATTRIBLOCATIONPROC         glBindAttribLocation;
+PFNGLENABLEVERTEXATTRIBARRAYPROC    glEnableVertexAttribArray;
+PFNGLDISABLEVERTEXATTRIBARRAYPROC   glDisableVertexAttribArray;
+PFNGLVERTEXATTRIBPOINTERPROC        glVertexAttribPointer;
+PFNGLGETPROGRAMIVPROC               glGetProgramiv;
+
+PFNGLDELETEVERTEXARRAYSPROC         glDeleteVertexArrays;
+// Render to texture
+PFNGLGENFRAMEBUFFERSPROC                     glGenFramebuffers;
+PFNGLBINDFRAMEBUFFERPROC                     glBindFramebuffer;
+PFNGLGENRENDERBUFFERSPROC                    glGenRenderbuffers;
+PFNGLBINDRENDERBUFFERPROC                    glBindRenderbuffer;
+PFNGLFRAMEBUFFERTEXTURE2DPROC                glFramebufferTexture2D;
+PFNGLFRAMEBUFFERRENDERBUFFERPROC             glFramebufferRenderbuffer;
+PFNGLRENDERBUFFERSTORAGEPROC                 glRenderbufferStorage;
+PFNGLCHECKFRAMEBUFFERSTATUSPROC              glCheckFramebufferStatus;
+PFNGLDELETEFRAMEBUFFERSPROC                  glDeleteFramebuffers;
+PFNGLDELETERENDERBUFFERSPROC                 glDeleteRenderbuffers;
+PFNGLGETFRAMEBUFFERATTACHMENTPARAMETERIVPROC glGetFramebufferAttachmentParameteriv;
+// Mesh
+PFNGLGENBUFFERSARBPROC              glGenBuffers;
+PFNGLDELETEBUFFERSARBPROC           glDeleteBuffers;
+PFNGLBINDBUFFERARBPROC              glBindBuffer;
+PFNGLBUFFERDATAARBPROC              glBufferData;
+PFNGLBUFFERSUBDATAARBPROC           glBufferSubData;
+PFNGLGENVERTEXARRAYSPROC            glGenVertexArrays;
+PFNGLBINDVERTEXARRAYPROC            glBindVertexArray;
+PFNGLDRAWELEMENTSBASEVERTEXPROC     glDrawElementsBaseVertex;
 
 extern void Emulator_DoPollEvent();
 extern void Emulator_WaitForTimestep(int count);
@@ -236,41 +281,6 @@ void Shader_CheckProgramStatus(GLuint program)
 	}
 }
 
-#include <vector>
-#include <string>
-
-void GetFirstNMessages(GLuint numMsgs)
-{
-	GLint maxMsgLen = 0;
-	glGetIntegerv(GL_MAX_DEBUG_MESSAGE_LENGTH, &maxMsgLen);
-
-	std::vector<GLchar> msgData(numMsgs * maxMsgLen);
-	std::vector<GLenum> sources(numMsgs);
-	std::vector<GLenum> types(numMsgs);
-	std::vector<GLenum> severities(numMsgs);
-	std::vector<GLuint> ids(numMsgs);
-	std::vector<GLsizei> lengths(numMsgs);
-
-	GLuint numFound = glGetDebugMessageLog(numMsgs, maxMsgLen, &sources[0], &types[0], &ids[0], &severities[0], &lengths[0], &msgData[0]);
-
-	sources.resize(numFound);
-	types.resize(numFound);
-	severities.resize(numFound);
-	ids.resize(numFound);
-	lengths.resize(numFound);
-
-	std::vector<std::string> messages;
-	messages.reserve(numFound);
-
-	std::vector<GLchar>::iterator currPos = msgData.begin();
-	for (size_t msg = 0; msg < lengths.size(); ++msg)
-	{
-		messages.push_back(std::string(currPos, currPos + lengths[msg] - 1));
-		currPos = currPos + lengths[msg];
-		printf("%s\n", messages[msg].c_str());
-	}
-}
-
 ShaderID Shader_Compile(const char* source)
 {
 	const char* GLSL_HEADER_VERT =
@@ -386,11 +396,6 @@ void Emulator_DestroyTextures()
 	whiteTexture = 0;
 }
 
-void GLAPIENTRY Emulator_HandleGLDebug(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
-{
-	eprinterr("%s\n", message);
-}
-
 void Emulator_DestroyGlobalShaders()
 {
 	glUseProgram(0);
@@ -404,6 +409,191 @@ void Emulator_DestroyGlobalShaders()
 	g_gte_shader_8.program = 0;
 	g_gte_shader_16.program = 0;
 	g_blit_shader.program = 0;
+}
+
+int Emulator_InitialiseGLExtensions()
+{
+	glGetShaderInfoLog = (PFNGLGETSHADERINFOLOGPROC)SDL_GL_GetProcAddress("glGetShaderInfoLog");
+	if (glGetShaderInfoLog == NULL)
+	{
+		return FALSE;
+	}
+
+	glGetProgramInfoLog = (PFNGLGETPROGRAMINFOLOGPROC)SDL_GL_GetProcAddress("glGetProgramInfoLog");
+	if (glGetProgramInfoLog == NULL)
+	{
+		return FALSE;
+	}
+
+	glCreateProgram = (PFNGLCREATEPROGRAMPROC)SDL_GL_GetProcAddress("glCreateProgram");
+	if (glCreateProgram == NULL)
+	{
+		return FALSE;
+	}
+
+	glCreateShader = (PFNGLCREATESHADERPROC)SDL_GL_GetProcAddress("glCreateShader");
+	if (glCreateShader == NULL)
+	{
+		return FALSE;
+	}
+
+	glShaderSource = (PFNGLSHADERSOURCEPROC)SDL_GL_GetProcAddress("glShaderSource");
+	if (glShaderSource == NULL)
+	{
+		return FALSE;
+	}
+
+	glCompileShader = (PFNGLCOMPILESHADERPROC)SDL_GL_GetProcAddress("glCompileShader");
+	if (glCompileShader == NULL)
+	{
+		return FALSE;
+	}
+
+	glAttachShader = (PFNGLATTACHSHADERPROC)SDL_GL_GetProcAddress("glAttachShader");
+	if (glAttachShader == NULL)
+	{
+		return FALSE;
+	}
+
+	glDeleteShader = (PFNGLDELETESHADERPROC)SDL_GL_GetProcAddress("glDeleteShader");
+	if (glDeleteShader == NULL)
+	{
+		return FALSE;
+	}
+
+	glBindAttribLocation = (PFNGLBINDATTRIBLOCATIONPROC)SDL_GL_GetProcAddress("glBindAttribLocation");
+	if (glBindAttribLocation == NULL)
+	{
+		return FALSE;
+	}
+
+	glLinkProgram = (PFNGLLINKPROGRAMPROC)SDL_GL_GetProcAddress("glLinkProgram");
+	if (glLinkProgram == NULL)
+	{
+		return FALSE;
+	}
+
+	glUseProgram = (PFNGLUSEPROGRAMPROC)SDL_GL_GetProcAddress("glUseProgram");
+	if (glUseProgram == NULL)
+	{
+		return FALSE;
+	}
+
+	glGetUniformLocation = (PFNGLGETUNIFORMLOCATIONPROC)SDL_GL_GetProcAddress("glGetUniformLocation");
+	if (glGetUniformLocation == NULL)
+	{
+		return FALSE;
+	}
+
+	glUniform1i = (PFNGLUNIFORM1IPROC)SDL_GL_GetProcAddress("glUniform1i");
+	if (glUniform1i == NULL)
+	{
+		return FALSE;
+	}
+
+	glDeleteBuffers = (PFNGLDELETEBUFFERSARBPROC)SDL_GL_GetProcAddress("glDeleteBuffers");
+	if (glDeleteBuffers == NULL)
+	{
+		return FALSE;
+	}
+
+	glDeleteVertexArrays = (PFNGLDELETEVERTEXARRAYSPROC)SDL_GL_GetProcAddress("glDeleteVertexArrays");
+	if (glDeleteVertexArrays == NULL)
+	{
+		return FALSE;
+	}
+
+	glDeleteProgram = (PFNGLDELETEPROGRAMPROC)SDL_GL_GetProcAddress("glDeleteProgram");
+	if (glDeleteProgram == NULL)
+	{
+		return FALSE;
+	}
+
+	glGenBuffers = (PFNGLGENBUFFERSARBPROC)SDL_GL_GetProcAddress("glGenBuffers");
+	if (glGenBuffers == NULL)
+	{
+		return FALSE;
+	}
+
+	glGenVertexArrays = (PFNGLGENVERTEXARRAYSPROC)SDL_GL_GetProcAddress("glGenVertexArrays");
+	if (glGenVertexArrays == NULL)
+	{
+		return FALSE;
+	}
+
+	glBindVertexArray = (PFNGLBINDVERTEXARRAYPROC)SDL_GL_GetProcAddress("glBindVertexArray");
+	if (glBindVertexArray == NULL)
+	{
+		return FALSE;
+	}
+
+	glBindBuffer = (PFNGLBINDBUFFERARBPROC)SDL_GL_GetProcAddress("glBindBuffer");
+	if (glBindBuffer == NULL)
+	{
+		return FALSE;
+	}
+
+	glBufferData = (PFNGLBUFFERDATAARBPROC)SDL_GL_GetProcAddress("glBufferData");
+	if (glBufferData == NULL)
+	{
+		return FALSE;
+	}
+
+	glEnableVertexAttribArray = (PFNGLENABLEVERTEXATTRIBARRAYPROC)SDL_GL_GetProcAddress("glEnableVertexAttribArray");
+	if (glEnableVertexAttribArray == NULL)
+	{
+		return FALSE;
+	}
+
+	glVertexAttribPointer = (PFNGLVERTEXATTRIBPOINTERPROC)SDL_GL_GetProcAddress("glVertexAttribPointer");
+	if (glVertexAttribPointer == NULL)
+	{
+		return FALSE;
+	}
+
+	glUniformMatrix4fv = (PFNGLUNIFORMMATRIX4FVPROC)SDL_GL_GetProcAddress("glUniformMatrix4fv");
+	if (glUniformMatrix4fv == NULL)
+	{
+		return FALSE;
+	}
+
+	glDrawElementsBaseVertex = (PFNGLDRAWELEMENTSBASEVERTEXPROC)SDL_GL_GetProcAddress("glDrawElementsBaseVertex");
+	if (glDrawElementsBaseVertex == NULL)
+	{
+		return FALSE;
+	}
+
+	glBufferSubData = (PFNGLBUFFERSUBDATAARBPROC)SDL_GL_GetProcAddress("glBufferSubData");
+	if (glBufferSubData == NULL)
+	{
+		return FALSE;
+	}
+
+	glBindFramebuffer = (PFNGLBINDFRAMEBUFFERPROC)SDL_GL_GetProcAddress("glBindFramebuffer");
+	if (glBindFramebuffer == NULL)
+	{
+		return FALSE;
+	}
+
+	//glActiveTexture = (GL_ActiveTextureARB_Func)SDL_GL_GetProcAddress("glActiveTexture");
+	//if (glActiveTexture == NULL)
+	//{
+	//	return FALSE;
+	//}
+
+	//glBlendColor = (GL_BlefndColorARB_Func)SDL_GL_GetProcAddress("glBlendColor");
+	//if (glBlendColor == NULL)
+	//{
+	//	return FALSE;
+	//}
+
+	//glBlendEquation = (GL_BlendEquationARB_Func)SDL_GL_GetProcAddress("glBlendEquation");
+	//if (glBlendEquation == NULL)
+	//{
+	//	return FALSE;
+	//}
+
+	return TRUE;
 }
 
 int Emulator_InitialiseGLContext(char* windowName)
@@ -438,6 +628,12 @@ int Emulator_InitialiseGLContext(char* windowName)
 		return FALSE;
 	}
 #endif
+
+	if (Emulator_InitialiseGLExtensions() == FALSE)
+	{
+		eprinterr("Failed to initialise OpenGL extensions!\n");
+		return FALSE;
+	}
 
 	return TRUE;
 }

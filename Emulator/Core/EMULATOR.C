@@ -2349,21 +2349,6 @@ static int Emulator_InitialiseSDL2(char* windowName, int width, int height)
 	return TRUE;
 }
 
-static int Emulator_InitialiseGLEW()
-{
-#if defined(GLEW)
-	glewExperimental = GL_TRUE;
-
-	GLenum err = glewInit();
-
-	if (err != GLEW_OK)
-	{
-		return FALSE;
-	}
-#endif
-	return TRUE;
-}
-
 static int Emulator_InitialiseCore()
 {
 	return TRUE;
@@ -2401,19 +2386,10 @@ void Emulator_Initialise(char* windowName, int width, int height)
 		Emulator_ShutDown();
 	}
 
-#if defined(GLEW)
-	if (Emulator_InitialiseGLEW() == FALSE)
-	{
-		eprinterr("Failed to Intialise GLEW\n");
-		Emulator_ShutDown();
-	}
-
 #if defined(_DEBUG)
 	extern void GLAPIENTRY Emulator_HandleGLDebug(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar * message, const void* userParam);
 	glEnable(GL_DEBUG_OUTPUT);
 	glDebugMessageCallback(&Emulator_HandleGLDebug, NULL);
-#endif
-
 #endif
 
 	if (Emulator_InitialiseCore() == FALSE)
