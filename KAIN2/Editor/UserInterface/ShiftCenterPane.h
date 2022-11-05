@@ -10,7 +10,7 @@
 #include "Core/Setup/Platform/EMULATOR_PLATFORM_SETUP.H"
 
 #if defined(D3D11)
-#include "ShiftD3D1Frame.h"
+#include "ShiftD3D11Frame.h"
 #elif defined(OGL)
 #include "ShiftOGLFrame.h"
 #endif
