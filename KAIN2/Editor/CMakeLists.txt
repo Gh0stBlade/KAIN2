@@ -90,6 +90,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${EMULATOR_PUBLIC_INCLUDE_DIR})
 include_directories(${EMULATOR_INCLUDE_DIR})
 include_directories(${EMULATOR_INCLUDE_DIR}/Library)
+include_directories(${KAIN2_ROOT}/Game)
 
 #Include all platform specific cmake files.
 include("Platform/Windows.cmake")
