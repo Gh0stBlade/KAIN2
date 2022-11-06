@@ -6,6 +6,5 @@ set(TOOL_ROOT_DIR ${TOOL_ROOT_DIR} "${CMAKE_CURRENT_SOURCE_DIR}")
 #Add each tool project
 if(NOT(DEFINED ENV{TRAVIS} OR DEFINED ENV{APPVEYOR}))
 	add_subdirectory(MIDI)
-	#add_subdirectory(SEQ)
 	add_subdirectory(LST)
 endif()
