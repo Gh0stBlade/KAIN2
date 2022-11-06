@@ -1,6 +1,6 @@
 #include "LIBPRESS.H"
 
-#include "EMULATOR.H"
+#include "Core/EMULATOR.H"
 
 void DecDCTin(u_long* buf, int mode)
 {

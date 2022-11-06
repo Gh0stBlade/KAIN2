@@ -1,7 +1,7 @@
 #include "LIBPAD.H"
 
 #include "LIBETC.H"
-#include "EMULATOR.H"
+#include "Core/EMULATOR.H"
 
 #if defined(SDL2)
 #if defined(__EMSCRIPTEN__)
@@ -11,7 +11,7 @@
 #endif
 #endif
 
-#include "Input/EMULATOR_INPUT.H"
+#include "Core/Input/EMULATOR_INPUT.H"
 
 void PadInitDirect(unsigned char* pad1, unsigned char* pad2)
 {

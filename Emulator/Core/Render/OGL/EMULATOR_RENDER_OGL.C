@@ -236,41 +236,6 @@ void Shader_CheckProgramStatus(GLuint program)
 	}
 }
 
-#include <vector>
-#include <string>
-
-void GetFirstNMessages(GLuint numMsgs)
-{
-	GLint maxMsgLen = 0;
-	glGetIntegerv(GL_MAX_DEBUG_MESSAGE_LENGTH, &maxMsgLen);
-
-	std::vector<GLchar> msgData(numMsgs * maxMsgLen);
-	std::vector<GLenum> sources(numMsgs);
-	std::vector<GLenum> types(numMsgs);
-	std::vector<GLenum> severities(numMsgs);
-	std::vector<GLuint> ids(numMsgs);
-	std::vector<GLsizei> lengths(numMsgs);
-
-	GLuint numFound = glGetDebugMessageLog(numMsgs, maxMsgLen, &sources[0], &types[0], &ids[0], &severities[0], &lengths[0], &msgData[0]);
-
-	sources.resize(numFound);
-	types.resize(numFound);
-	severities.resize(numFound);
-	ids.resize(numFound);
-	lengths.resize(numFound);
-
-	std::vector<std::string> messages;
-	messages.reserve(numFound);
-
-	std::vector<GLchar>::iterator currPos = msgData.begin();
-	for (size_t msg = 0; msg < lengths.size(); ++msg)
-	{
-		messages.push_back(std::string(currPos, currPos + lengths[msg] - 1));
-		currPos = currPos + lengths[msg];
-		printf("%s\n", messages[msg].c_str());
-	}
-}
-
 ShaderID Shader_Compile(const char* source)
 {
 	const char* GLSL_HEADER_VERT =
@@ -386,11 +351,6 @@ void Emulator_DestroyTextures()
 	whiteTexture = 0;
 }
 
-void GLAPIENTRY Emulator_HandleGLDebug(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
-{
-	eprinterr("%s\n", message);
-}
-
 void Emulator_DestroyGlobalShaders()
 {
 	glUseProgram(0);
@@ -413,11 +373,10 @@ int Emulator_InitialiseGLContext(char* windowName)
 
 	if (g_overrideHWND != NULL)
 	{
+		SDL_SetHint(SDL_HINT_VIDEO_FOREIGN_WINDOW_OPENGL, "1");
 		g_window = SDL_CreateWindowFrom(g_overrideHWND);
-		SDL_GLContext context = SDL_GL_CreateContext(g_window);
-
-		SDL_GL_MakeCurrent(g_window, context);
-
+		SDL_GL_MakeCurrent(g_window, SDL_GL_CreateContext(g_window));
+		SDL_SetWindowSize(g_window, Emulator_GetWindowWidth(), Emulator_GetWindowHeight());
 	}
 	else
 	{

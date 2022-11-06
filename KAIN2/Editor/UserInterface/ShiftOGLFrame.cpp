@@ -132,7 +132,6 @@ void Shift::OGLFrame::render()
         }
     }
     
-    //TODO if running
     if (gameThread != NULL)
     {
         if (strcmp(g_lastAreaName, GAMELOOP_GetBaseAreaName()))
@@ -172,8 +171,17 @@ void Shift::OGLFrame::resizeEvent(QResizeEvent* event)
     int oldW = event->size().width();
     int oldH = event->size().height();
 
-    g_overrideWidth = oldW;
-    g_overrideHeight = oldH;
+    RECT rect;
+    int width = 0;
+    int height = 0;
+    if (GetWindowRect(g_overrideHWND, &rect))
+    {
+        width = rect.right - rect.left;
+        height = rect.bottom - rect.top;
+    }
+
+    g_overrideWidth = width;
+    g_overrideHeight = height;
 
     g_resetDeviceOnNextFrame = true;
 }

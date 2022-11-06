@@ -1,5 +1,5 @@
 #include "EMULATOR_SPU.H"
-#include "Debug/EMULATOR_LOG.H"
+#include "Core/Debug/EMULATOR_LOG.H"
 
 #define SND_SAMPLES  1024
 #define PITCH_SHIFT  12

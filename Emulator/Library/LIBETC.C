@@ -1,7 +1,7 @@
 #include "LIBETC.H"
 
-#include "Public/EMULATOR_PUBLIC.H"
-#include "EMULATOR.H"
+#include "Core/Public/EMULATOR_PUBLIC.H"
+#include "Core/EMULATOR.H"
 
 #if defined(_WINDOWS)
 #include <d3d9.h>
@@ -11,7 +11,7 @@
 #include <assert.h>
 #endif
 
-#include "Input/EMULATOR_INPUT.H"
+#include "Core/Input/EMULATOR_INPUT.H"
 
 char scratchData[4096];///@TODO check size
 

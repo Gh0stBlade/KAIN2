@@ -5,7 +5,7 @@
 #endif
 
 #include <stdio.h>
-#include "EMULATOR.H"
+#include "Core/EMULATOR.H"
 
 int sp = 0;
 

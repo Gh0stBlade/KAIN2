@@ -2407,13 +2407,6 @@ void Emulator_Initialise(char* windowName, int width, int height)
 		eprinterr("Failed to Intialise GLEW\n");
 		Emulator_ShutDown();
 	}
-
-#if defined(_DEBUG)
-	extern void GLAPIENTRY Emulator_HandleGLDebug(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar * message, const void* userParam);
-	glEnable(GL_DEBUG_OUTPUT);
-	glDebugMessageCallback(&Emulator_HandleGLDebug, NULL);
-#endif
-
 #endif
 
 	if (Emulator_InitialiseCore() == FALSE)
