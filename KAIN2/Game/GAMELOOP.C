@@ -952,9 +952,8 @@ void StreamIntroInstancesForUnit(struct _StreamUnit* currentUnit)
 {
 	if (currentUnit->used == 2)
 	{
-		//SBSP_IntroduceInstances(currentUnit->level->terrain, currentUnit->StreamUnitID);
+		SBSP_IntroduceInstances(currentUnit->level->terrain, currentUnit->StreamUnitID);
 	}
-	UNIMPLEMENTED();
 }
 
 long StreamRenderLevel(struct _StreamUnit* currentUnit, struct Level* mainLevel, unsigned long** drawot, long portalFogColor)
