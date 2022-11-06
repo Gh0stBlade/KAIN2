@@ -239,12 +239,16 @@ void BIGFILE_ProcessDirectory(FILE* f, int numSubDirectories)
 void BIGFILE_SaveListing()
 {
 	FILE* f = fopen("bigfile.lst", "wb+");
+	char sep = 0;
 
 	if (f != NULL)
 	{
 		for (auto const& lst : finalListing)
 		{
-			fprintf(f, "%x %s ", lst.first, lst.second);
+			fprintf(f, "%x", lst.first);
+			fwrite(&sep, sizeof(char), 1, f);
+			fprintf(f, "%s", lst.second);
+			fwrite(&sep, sizeof(char), 1, f);
 		}
 
 		fclose(f);
