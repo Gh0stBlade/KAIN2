@@ -603,11 +603,10 @@ int Emulator_InitialiseGLContext(char* windowName)
 
 	if (g_overrideHWND != NULL)
 	{
+		SDL_SetHint(SDL_HINT_VIDEO_FOREIGN_WINDOW_OPENGL, "1");
 		g_window = SDL_CreateWindowFrom(g_overrideHWND);
-		SDL_GLContext context = SDL_GL_CreateContext(g_window);
-
-		SDL_GL_MakeCurrent(g_window, context);
-
+		SDL_GL_MakeCurrent(g_window, SDL_GL_CreateContext(g_window));
+		SDL_SetWindowSize(g_window, Emulator_GetWindowWidth(), Emulator_GetWindowHeight());
 	}
 	else
 	{

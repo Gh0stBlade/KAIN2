@@ -1,7 +1,7 @@
 #include "LIBGPU.H"
-#include "EMULATOR.H"
-#include "EMULATOR_GLOBALS.H"
-#include "Public/EMULATOR_PUBLIC.H"
+#include "Core/EMULATOR.H"
+#include "Core/EMULATOR_GLOBALS.H"
+#include "Core/Public/EMULATOR_PUBLIC.H"
 
 #include <stdint.h>
 

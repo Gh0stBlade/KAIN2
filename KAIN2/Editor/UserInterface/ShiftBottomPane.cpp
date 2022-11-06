@@ -25,18 +25,6 @@ Shift::BottomPane::BottomPane(QWidget* parent)
 
 Shift::BottomPane::~BottomPane()
 {
-	if (m_consoleWidget != nullptr)
-	{
-		delete m_consoleWidget;
-		m_consoleWidget = nullptr;
-	}
-
-	if (m_groupBox != nullptr)
-	{
-		delete m_groupBox;
-		m_groupBox = nullptr;
-	}
-
 	if (m_textBox != nullptr)
 	{
 		delete m_textBox;
@@ -47,6 +35,18 @@ Shift::BottomPane::~BottomPane()
 	{
 		delete m_button;
 		m_button = nullptr;
+	}
+
+	if (m_groupBox != nullptr)
+	{
+		delete m_groupBox;
+		m_groupBox = nullptr;
+	}
+
+	if (m_consoleWidget != nullptr)
+	{
+		delete m_consoleWidget;
+		m_consoleWidget = nullptr;
 	}
 }
 

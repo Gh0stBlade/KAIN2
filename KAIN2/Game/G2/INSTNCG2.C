@@ -89,7 +89,7 @@ void G2Instance_RebuildTransforms(struct _Instance *instance)
 #endif
 }
 
-struct _G2AnimKeylist_Type * G2Instance_GetKeylist(struct _Instance *instance, int id)
+struct _G2AnimKeylist_Type* G2Instance_GetKeylist(struct _Instance* instance, int id)
 {
 	return instance->object->animList[id];
 }

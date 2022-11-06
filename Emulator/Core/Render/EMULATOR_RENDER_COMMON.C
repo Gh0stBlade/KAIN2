@@ -1,6 +1,6 @@
 #include "LIBGPU.H"
 #include "EMULATOR_RENDER_COMMON.H"
-#include "EMULATOR_GLOBALS.H"
+#include "Core/EMULATOR_GLOBALS.H"
 
 #include <assert.h>
 #include <string.h>

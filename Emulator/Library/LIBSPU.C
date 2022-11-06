@@ -1,7 +1,7 @@
 #include "LIBSPU.H"
 #include "LIBETC.H"
 #include <stdio.h>
-#include "EMULATOR.H"
+#include "Core/EMULATOR.H"
 #include "LIBAPI.H"
 
 #include "Core/Audio/EMULATOR_SPU.H"

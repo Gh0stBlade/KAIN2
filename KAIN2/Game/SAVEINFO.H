@@ -43,6 +43,15 @@ struct evControlSaveDataData {
   void *data; // size=0, offset=4
 };
 
+struct SavedEvent 
+{
+	unsigned char savedID; // size=0, offset=0
+	unsigned char shiftedSaveSize; // size=0, offset=1
+	short areaID; // size=0, offset=2
+	short eventNumber; // size=0, offset=4
+	short eventVariables[5]; // size=10, offset=6
+};
+
 struct _SavedIntro 
 {
 	unsigned char savedID; // size=0, offset=0

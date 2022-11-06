@@ -1,6 +1,6 @@
-#include "ShiftOGLFrame.h"
+#include "ShiftD3D9Frame.h"
 
-#if defined(OGL)
+#if defined(D3D9)
 #include "ShiftWindow.h"
 #include "ui_shiftwindow.h"
 
@@ -45,18 +45,19 @@ extern struct _Position overrideEditorPosition;
 
 extern char* GAMELOOP_GetBaseAreaName();
 
+
 extern HWND g_overrideHWND;
 extern int g_overrideWidth;
 extern int g_overrideHeight;
 
-void Shift::OGLFrame::initialiseHWND(HWND windowHandle, int width, int height)
+void Shift::D3D9Frame::initialiseHWND(HWND windowHandle, int width, int height)
 {
     g_overrideHWND = windowHandle;
     g_overrideWidth = width;
     g_overrideHeight = height;
 }
 
-void Shift::OGLFrame::render()
+void Shift::D3D9Frame::render()
 {
     if ((g_cameraMoveDirection & CameraDirection::DIR_UP) || (g_cameraMoveDirection & CameraDirection::DIR_DOWN) || (g_cameraMoveDirection & CameraDirection::DIR_LEFT) || (g_cameraMoveDirection & CameraDirection::DIR_RIGHT))
     {
@@ -132,6 +133,7 @@ void Shift::OGLFrame::render()
         }
     }
     
+    //TODO if running
     if (gameThread != NULL)
     {
         if (strcmp(g_lastAreaName, GAMELOOP_GetBaseAreaName()))
@@ -156,37 +158,28 @@ void Shift::OGLFrame::render()
     }
 }
 
-void Shift::OGLFrame::paintEvent(QPaintEvent* event)
+void Shift::D3D9Frame::paintEvent(QPaintEvent* event)
 {
     
 }
 
-QPaintEngine* Shift::OGLFrame::paintEngine()
+QPaintEngine* Shift::D3D9Frame::paintEngine()
 {
     return NULL;
 }
 
-void Shift::OGLFrame::resizeEvent(QResizeEvent* event)
+void Shift::D3D9Frame::resizeEvent(QResizeEvent* event)
 {
     int oldW = event->size().width();
     int oldH = event->size().height();
 
-    RECT rect;
-    int width = 0;
-    int height = 0;
-    if (GetWindowRect(g_overrideHWND, &rect))
-    {
-        width = rect.right - rect.left;
-        height = rect.bottom - rect.top;
-    }
-
-    g_overrideWidth = width;
-    g_overrideHeight = height;
+    g_overrideWidth = oldW;
+    g_overrideHeight = oldH;
 
     g_resetDeviceOnNextFrame = true;
 }
 
-void Shift::OGLFrame::keyPressEvent(QKeyEvent* event)
+void Shift::D3D9Frame::keyPressEvent(QKeyEvent* event)
 {
     if (event->modifiers() & Qt::ControlModifier)  g_cameraSpeed /= 2;
     if (event->modifiers() & Qt::ShiftModifier) g_cameraSpeed *= 2;
@@ -214,7 +207,7 @@ void Shift::OGLFrame::keyPressEvent(QKeyEvent* event)
     g_cameraMoveDelay = MAX_CAMERA_DELAY;
 }
 
-void Shift::OGLFrame::keyReleaseEvent(QKeyEvent* event)
+void Shift::D3D9Frame::keyReleaseEvent(QKeyEvent* event)
 {
     if (event->key() == Qt::Key_W)
     {
@@ -239,7 +232,7 @@ void Shift::OGLFrame::keyReleaseEvent(QKeyEvent* event)
     g_cameraMoveDelay = MAX_CAMERA_DELAY;
 }
 
-void Shift::OGLFrame::mousePressEvent(QMouseEvent* event)
+void Shift::D3D9Frame::mousePressEvent(QMouseEvent* event)
 {
     if (event->button() == Qt::RightButton)
     {
@@ -251,7 +244,7 @@ void Shift::OGLFrame::mousePressEvent(QMouseEvent* event)
 
 extern void Editor_RayCast(int mouseX, int mouseY, int clientWidth, int clientHeight, VECTOR* rayPos, VECTOR* rayDir);
 
-void Shift::OGLFrame::pickRayVector(int mouseX, int mouseY, int ClientWidth, int ClientHeight, VECTOR* rayPos, VECTOR* rayDir)
+void Shift::D3D9Frame::pickRayVector(int mouseX, int mouseY, int ClientWidth, int ClientHeight, VECTOR* rayPos, VECTOR* rayDir)
 {
 #if 0//Scrapped no mouse offset stuff. so it will always be 0,0,0->0,0,-1
     short theta = overrideEditorRotation.x;
@@ -288,7 +281,7 @@ void Shift::OGLFrame::pickRayVector(int mouseX, int mouseY, int ClientWidth, int
 }
 
 #if 0
-bool Shift::OGLFrame::rayBoxIntersect(DirectX::XMVECTOR& rpos, DirectX::XMVECTOR& rdir, Engine::Vector3& boxMin, Engine::Vector3& boxMax, DirectX::XMMATRIX& transform)
+bool Shift::D3D9Frame::rayBoxIntersect(DirectX::XMVECTOR& rpos, DirectX::XMVECTOR& rdir, Engine::Vector3& boxMin, Engine::Vector3& boxMax, DirectX::XMMATRIX& transform)
 {
     Engine::Vector3 dirfrac;
     // r.dir is unit direction vector of ray
@@ -336,7 +329,7 @@ bool Shift::OGLFrame::rayBoxIntersect(DirectX::XMVECTOR& rpos, DirectX::XMVECTOR
 #endif
 
 #if 0
-void Shift::OGLFrame::CheckIfRayIntersectedWithAnySceneObject(DirectX::XMVECTOR& rayPosition, DirectX::XMVECTOR& rayDirection)
+void Shift::D3D9Frame::CheckIfRayIntersectedWithAnySceneObject(DirectX::XMVECTOR& rayPosition, DirectX::XMVECTOR& rayDirection)
 {
     bool bSelected = false;
 
@@ -401,7 +394,7 @@ void Shift::OGLFrame::CheckIfRayIntersectedWithAnySceneObject(DirectX::XMVECTOR&
 }
 #endif
 
-QSize Shift::OGLFrame::getRatio(QSize currentResolution)
+QSize Shift::D3D9Frame::getRatio(QSize currentResolution)
 {
     int w = currentResolution.width();
     int h = currentResolution.height();
@@ -420,7 +413,7 @@ QSize Shift::OGLFrame::getRatio(QSize currentResolution)
     return QSize(w, h);
 }
 
-void Shift::OGLFrame::setCameraSpeed(int speed)
+void Shift::D3D9Frame::setCameraSpeed(int speed)
 {
     if (speed > MAX_CAMERA_SPEED)
     {
@@ -430,7 +423,7 @@ void Shift::OGLFrame::setCameraSpeed(int speed)
     g_cameraSpeed = speed;
 }
 
-void Shift::OGLFrame::mouseReleaseEvent(QMouseEvent* event)
+void Shift::D3D9Frame::mouseReleaseEvent(QMouseEvent* event)
 {
     if (event->button() == Qt::RightButton)
     {
@@ -445,7 +438,7 @@ void Shift::OGLFrame::mouseReleaseEvent(QMouseEvent* event)
     }
 }
 
-void Shift::OGLFrame::mouseMoveEvent(QMouseEvent* event)
+void Shift::D3D9Frame::mouseMoveEvent(QMouseEvent* event)
 {
     QPoint delta = event->pos() - m_previousMousePosition;
 
@@ -464,7 +457,7 @@ void Shift::OGLFrame::mouseMoveEvent(QMouseEvent* event)
     }
 }
 
-void Shift::OGLFrame::renderWidget()
+void Shift::D3D9Frame::renderWidget()
 {
     
 }

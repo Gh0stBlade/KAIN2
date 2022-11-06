@@ -9,16 +9,18 @@ Shift::CenterPane::CenterPane(Shift::Panes* panes, QWidget* parent)
 {
 	m_viewportWidget = new QDockWidget(QObject::tr(""));
 	m_viewportWidget->setObjectName("viewport");
-
-	m_boxLayout = new QHBoxLayout;
-	m_viewportWidget->setLayout(m_boxLayout);
 	m_viewportWidget->show();
 	
 	m_tabWidget = new QTabWidget(m_viewportWidget);
 	m_tabWidget->setObjectName("ShiftViewportTabWidget");
 	m_viewportWidget->setWidget(m_tabWidget);
 
-#if defined(D3D11)
+#if defined(D3D9)
+	m_viewport = new Shift::D3D9Frame(panes, m_tabWidget);
+	m_viewport->setObjectName("ShiftViewport");
+	m_viewport->setFocusPolicy(Qt::ClickFocus);
+	m_viewport->initialiseHWND((HWND)m_viewport->winId(), m_viewport->width(), m_viewport->height());
+#elif defined(D3D11)
 	m_viewport = new Shift::D3D11Frame(panes, m_tabWidget);
 	m_viewport->setObjectName("ShiftViewport");
 	m_viewport->setFocusPolicy(Qt::ClickFocus);
@@ -35,9 +37,11 @@ Shift::CenterPane::CenterPane(Shift::Panes* panes, QWidget* parent)
 	m_tabWidget->addTab(m_viewport, g_lastAreaName);
 
 	m_timer = new QTimer(m_viewport);
-#if defined(D3D11)
+#if defined(D3D9)
+	parent->connect(m_timer, &QTimer::timeout, m_viewport, &Shift::D3D9Frame::render);
+#elif defined(D3D11)
 	parent->connect(m_timer, &QTimer::timeout, m_viewport, &Shift::D3D11Frame::render);
-#else
+#elif defined(OGL)
 	parent->connect(m_timer, &QTimer::timeout, m_viewport, &Shift::OGLFrame::render);
 #endif
 	m_timer->setInterval(1000.0f / 60.0f);
@@ -54,11 +58,6 @@ Shift::CenterPane::~CenterPane()
 	if (m_viewport != nullptr)
 	{
 		delete m_viewport;
-	}
-
-	if (m_boxLayout != nullptr)
-	{
-		delete m_boxLayout;
 	}
 
 	if (m_labelItemsCount != nullptr)

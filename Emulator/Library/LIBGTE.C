@@ -1,5 +1,5 @@
-#include "EMULATOR.H"
-#include "Public/EMULATOR_PUBLIC.H"
+#include "Core/EMULATOR.H"
+#include "Core/Public/EMULATOR_PUBLIC.H"
 #include "INLINE_C.H"
 
 #include "LIBGTE.H"

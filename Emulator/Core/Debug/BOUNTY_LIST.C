@@ -6,10 +6,11 @@
 #if !defined(NO_BOUNTY_LIST_EXPORT)
 
 #include <iostream>
-#include <array>
 
-std::array<std::string, 4096> bountyList;
-std::array<unsigned int, 4096> bountyListCalls;
+#define MAX_NUM_BOUNTIES 4096
+
+const char* bountyList[MAX_NUM_BOUNTIES];
+unsigned int bountyListCalls[MAX_NUM_BOUNTIES];
 unsigned int lastIndex = 0;
 #endif
 
@@ -19,7 +20,7 @@ void Emulator_AddBounty(const char* functionName)
 	int alreadyHasBounty = 0;
 	int currentBountyIndex = lastIndex;
 
-	eassert(lastIndex < 4096);
+	eassert(lastIndex < MAX_NUM_BOUNTIES);
 
 	if (lastIndex > 0)
 	{
@@ -56,7 +57,7 @@ void Emulator_SaveBountyList()
 	{
 		for (unsigned int i = 0; i < lastIndex; i++)
 		{
-			fprintf(f, "%s Calls: %d\n", bountyList[i].c_str(), bountyListCalls[i]);
+			fprintf(f, "%s Calls: %d\n", bountyList[i], bountyListCalls[i]);
 		}
 		fclose(f);
 	}

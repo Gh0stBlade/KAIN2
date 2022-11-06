@@ -99,7 +99,7 @@ void Emulator_ResetDevice()
 	ZeroMemory(&bd, sizeof(DXGI_MODE_DESC));
 
 	bd.Width = Emulator_GetWindowWidth();
-	bd.Height = g_overrideHeight != -1 ? g_overrideHeight : windowHeight;
+	bd.Height = Emulator_GetWindowHeight();
 	bd.RefreshRate.Numerator = 60;
 	bd.RefreshRate.Denominator = 1;
 	bd.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -287,8 +287,8 @@ int Emulator_InitialiseD3D11Context(char* windowName)
 	sd.BufferDesc = bd;
 #else
 	sd.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
-	sd.Width = windowWidth;
-	sd.Height = windowHeight;
+	sd.Width = Emulator_GetWindowWidth();
+	sd.Height = Emulator_GetWindowHeight();
 #endif
 #if !defined(UWP)
 	sd.BufferCount = 1;

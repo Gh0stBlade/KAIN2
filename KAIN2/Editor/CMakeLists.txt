@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 3.0)
 
-project (Editor_${TARGET_ARCH})
+project (EDITOR_${TARGET_ARCH})
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -28,6 +28,12 @@ find_package(Qt5 COMPONENTS Widgets Gui Core REQUIRED)
 
 file(GLOB_RECURSE EDITOR_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/*.c ${CMAKE_CURRENT_SOURCE_DIR}/*.h ${CMAKE_CURRENT_SOURCE_DIR}/*.cur ${CMAKE_CURRENT_SOURCE_DIR}/*.rc ${CMAKE_CURRENT_SOURCE_DIR}/*.qrc ${CMAKE_CURRENT_SOURCE_DIR}/*.ui ${CMAKE_CURRENT_SOURCE_DIR}/*.qss)
 file(GLOB_RECURSE KAIN2_SRCS ${KAIN2_ROOT}/*.C ${KAIN2_ROOT}/*.H)
+file(GLOB_RECURSE EMULATOR_SPECIFIC_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/../../Emulator/*.C ${CMAKE_CURRENT_SOURCE_DIR}/../../Emulator/*.H)
+#Exclude Android temporary files folder.
+if(NOT ANDROID)
+list(FILTER EMULATOR_SPECIFIC_SRCS EXCLUDE REGEX "/Platform/Android/*")
+endif()
+
 list(FILTER KAIN2_SRCS EXCLUDE REGEX "/PC/*")
 
 set(RESOURCE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/EDITOR.RC")
@@ -35,7 +41,6 @@ list(APPEND EDITOR_SRCS ${RESOURCE_PATH})
 
 if(ANDROID)
 #Recursively locate the source files for Emulator.
-file(GLOB_RECURSE EMULATOR_SPECIFIC_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/../Emulator/*.C ${CMAKE_CURRENT_SOURCE_DIR}/../Emulator/*.H)
 list(FILTER EMULATOR_SPECIFIC_SRCS EXCLUDE REGEX "/Platform/Android/*")
 endif()
 
@@ -54,12 +59,15 @@ add_executable(
 ${PROJECT_NAME}
 WIN32
 ${EDITOR_SRCS}
+${EMULATOR_SPECIFIC_SRCS}
 ${KAIN2_SRCS}
 )
 endif()
 
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${EDITOR_SRCS})
 source_group(TREE ${KAIN2_ROOT} FILES ${KAIN2_SRCS})
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/../../ FILES ${EMULATOR_SPECIFIC_SRCS})
+
 
 if(MSVC)
 set_target_properties(
@@ -81,6 +89,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${EMULATOR_PUBLIC_INCLUDE_DIR})
 include_directories(${EMULATOR_INCLUDE_DIR})
 include_directories(${EMULATOR_INCLUDE_DIR}/Library)
+include_directories(${KAIN2_ROOT}/Game)
 
 #Include all platform specific cmake files.
 include("Platform/Windows.cmake")
@@ -90,9 +99,6 @@ include("Platform/Emscripten.cmake")
 include("Platform/Android.cmake")
 include("Platform/WindowsStore.cmake")
 include("Platform/Durango.cmake")
-include("Platform/PSP2.cmake")
-include("Platform/NX_Win.cmake")
-include("Platform/NX_Arm.cmake")
 
 #Enable 32-bit address for tag
 OPTIONAL_DEFINE(USE_32_BIT_ADDR "Enable/Disable 32-bit address for tag" ON)
@@ -108,7 +114,6 @@ BuildPreProcessorDefinitions()
 
 target_link_libraries(
 ${PROJECT_NAME}
-${PSX_LIB}
 SDL2-static
 SDL2main
 ${OPENGL_gl_LIBRARY}
@@ -124,8 +129,6 @@ set(${CMAKE_EXE_LINKER_FLAGS_FINAL} CACHE STRING ${CMAKE_EXE_LINKER_FLAGS_RELEAS
 endif()
 
 if(MSVC AND NOT WINDOWS_STORE)
-	add_dependencies(${PROJECT_NAME} ${EMULATOR_TARGET_NAME})
-
 	set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS_DEBUG "/SUBSYSTEM:CONSOLE")
 	set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS_RELWITHDEBINFO "/SUBSYSTEM:CONSOLE")
 	set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:CONSOLE")
@@ -159,6 +162,10 @@ if(DEFINED PLATFORM_PSP2)
 endif()
 
 add_custom_command(TARGET ${PROJECT_NAME} PRE_BUILD COMMAND ${CMAKE_COMMAND} -P ${ROOT_DIR}/CMake/EngineVersion.cmake)
+
+get_target_property(_qt5_qmake_location Qt5::qmake IMPORTED_LOCATION)
+execute_process(COMMAND "${_qt5_qmake_location}" -query QT_INSTALL_PREFIX RESULT_VARIABLE return_code OUTPUT_VARIABLE qt5_install_prefix OUTPUT_STRIP_TRAILING_WHITESPACE)
+set(WINDEPLOYQT_EXECUTABLE "${qt5_install_prefix}/bin/windeployqt.exe")
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD COMMAND "${WINDEPLOYQT_EXECUTABLE}" --verbose 1 --no-translations --no-svg --no-opengl --no-opengl-sw --no-compiler-runtime --no-system-d3d-compiler --${CMAKE_BUILD_TYPE} \"$<TARGET_FILE:${PROJECT_NAME}>\" COMMENT "Deploying Qt...")
 
 add_definitions(-DPSXPC_VERSION)

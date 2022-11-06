@@ -2386,12 +2386,6 @@ void Emulator_Initialise(char* windowName, int width, int height)
 		Emulator_ShutDown();
 	}
 
-#if defined(_DEBUG)
-	extern void GLAPIENTRY Emulator_HandleGLDebug(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar * message, const void* userParam);
-	glEnable(GL_DEBUG_OUTPUT);
-	glDebugMessageCallback(&Emulator_HandleGLDebug, NULL);
-#endif
-
 	if (Emulator_InitialiseCore() == FALSE)
 	{
 		eprinterr("Failed to Intialise Emulator Core.\n");
@@ -5424,7 +5418,7 @@ void Emulator_TakeScreenshot(int mode)
 
 	unsigned char* pixels = new unsigned char[width * height * sizeof(unsigned int)];
 	
-#if defined(_WINDOWS) && defined(D3D11)
+#if defined(_WINDOWS) && (defined(D3D11) || defined(OGL))
 	if (g_overrideHWND != NULL)
 	{
 		HDC hdcScreen;

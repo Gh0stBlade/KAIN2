@@ -6,7 +6,13 @@
 #include "Game/CAMERA.H"
 #include "BSP.H"
 
+
 #if defined(EDITOR)
+
+extern struct Level* g_selectedUnit;
+
+extern int g_overrideWidth;
+extern int g_overrideHeight;
 
 RECT16 screen_clip;
 
@@ -62,84 +68,6 @@ extern struct Camera theCamera;
 
 extern struct _Rotation overrideEditorRotation;
 extern struct _Position overrideEditorPosition;
-
-int test_clip(RECT16* clip, short x, short y) {
-
-	// Tests which corners of the screen a point lies outside of
-#define CLIP_LEFT	1
-#define CLIP_RIGHT	2
-#define CLIP_TOP	4
-#define CLIP_BOTTOM	8
-
-
-	int result = 0;
-
-	if (x < clip->x) {
-		result |= CLIP_LEFT;
-	}
-
-	if (x >= (clip->x + (clip->w - 1))) {
-		result |= CLIP_RIGHT;
-	}
-
-	if (y < clip->y) {
-		result |= CLIP_TOP;
-	}
-
-	if (y >= (clip->y + (clip->h - 1))) {
-		result |= CLIP_BOTTOM;
-	}
-
-	return result;
-
-}
-
-int tri_clip(RECT16* clip, DVECTOR* v0, DVECTOR* v1, DVECTOR* v2) {
-
-	// Returns non-zero if a triangle is outside the screen boundaries
-
-	short c[3];
-
-	c[0] = test_clip(clip, v0->vx, v0->vy);
-	c[1] = test_clip(clip, v1->vx, v1->vy);
-	c[2] = test_clip(clip, v2->vx, v2->vy);
-
-	if ((c[0] & c[1]) == 0)
-		return 0;
-	if ((c[1] & c[2]) == 0)
-		return 0;
-	if ((c[2] & c[0]) == 0)
-		return 0;
-
-	return 1;
-}
-
-int quad_clip(RECT16* clip, DVECTOR* v0, DVECTOR* v1, DVECTOR* v2, DVECTOR* v3) {
-
-	// Returns non-zero if a quad is outside the screen boundaries
-
-	short c[4];
-
-	c[0] = test_clip(clip, v0->vx, v0->vy);
-	c[1] = test_clip(clip, v1->vx, v1->vy);
-	c[2] = test_clip(clip, v2->vx, v2->vy);
-	c[3] = test_clip(clip, v3->vx, v3->vy);
-
-	if ((c[0] & c[1]) == 0)
-		return 0;
-	if ((c[1] & c[2]) == 0)
-		return 0;
-	if ((c[2] & c[3]) == 0)
-		return 0;
-	if ((c[3] & c[0]) == 0)
-		return 0;
-	if ((c[0] & c[2]) == 0)
-		return 0;
-	if ((c[1] & c[3]) == 0)
-		return 0;
-
-	return 1;
-}
 
 void Editor_BillboardSprite(struct _Position* position, struct _Rotation* rotation)
 {
@@ -439,9 +367,9 @@ void Editor_DrawInstancesAsCubes()
 			gte_rtps();
 			gte_stsxy(&pol4->x3);
 
-			if (quad_clip(&screen_clip, (DVECTOR*)&pol4->x0, (DVECTOR*)&pol4->x1, (DVECTOR*)&pol4->x2, (DVECTOR*)&pol4->x3))
+			//if (quad_clip(&screen_clip, (DVECTOR*)&pol4->x0, (DVECTOR*)&pol4->x1, (DVECTOR*)&pol4->x2, (DVECTOR*)&pol4->x3))
 			{
-				continue;
+			//	continue;
 			}
 
 			setcode(pol4, 0x28);
@@ -466,9 +394,271 @@ void Editor_DrawInstancesAsCubes()
 	}
 }
 
+struct _BoundingBox Editor_CreateUnitBBOX()
+{
+	struct _Terrain* terrain = g_selectedUnit->terrain;
+	struct _BoundingBox box;
+	SVECTOR max;
+
+	box.minX = 0;
+	box.minY = 0;
+	box.minZ = 0;
+
+	box.maxX = 0;
+	box.maxY = 0;
+	box.maxZ = 0;
+
+	for (int i = 0; i < terrain->numVertices; i++)
+	{
+		struct _TVertex* vertex = &terrain->vertexList[i];
+
+		if (vertex->vertex.x < box.minX)
+		{
+			box.minX = vertex->vertex.x;
+		}
+
+		if (vertex->vertex.x > box.maxX)
+		{
+			box.maxX = vertex->vertex.x;
+		}
+
+		if (vertex->vertex.y < box.minY)
+		{
+			box.minY = vertex->vertex.y;
+		}
+
+		if (vertex->vertex.y > box.maxY)
+		{
+			box.maxY = vertex->vertex.y;
+		}
+
+		if (vertex->vertex.z < box.minZ)
+		{
+			box.minZ = vertex->vertex.z;
+		}
+
+		if (vertex->vertex.z > box.maxZ)
+		{
+			box.maxZ = vertex->vertex.z;
+		}
+	}
+
+	return box;
+}
+
+void Editor_DrawCameraLine(int clickX, int clickY)
+{
+#if 0
+	int mouseX = clickX / (g_overrideWidth * 0.5f) - 1.0f;
+	int mouseY = clickY / (g_overrideHeight * 0.5f) - 1.0f;
+
+	glm::mat4 proj = glm::perspective(FoV, AspectRatio, theCamera.core.nearPlane, theCamera.core.farPlane);
+	glm::mat4 view = glm::lookAt(glm::vec3(0.0f), CameraDirection, CameraUpVector);
+
+	glm::mat4 invVP = glm::inverse(proj * view);
+	glm::vec4 screenPos = glm::vec4(mouseX, -mouseY, 1.0f, 1.0f);
+	glm::vec4 worldPos = invVP * screenPos;
+
+	glm::vec3 dir = glm::normalize(glm::vec3(worldPos));
+#endif
+}
+
+void Editor_DrawUnitBBOX(struct _BoundingBox box, struct _Position offset)
+{
+	//TODO use leaves system
+	//TODO use "DRAWBBOX" function at xyz location etc etc.
+	//TODO use leaves box
+	LINE_F2* line = (LINE_F2*)gameTrackerX.primPool->nextPrim;
+	SVECTOR verts[24];
+
+	verts[0].vx = box.minX;
+	verts[0].vy = box.maxY;
+	verts[0].vz = box.minZ;
+	verts[1].vx = box.minX;
+	verts[1].vy = box.maxY;
+	verts[1].vz = box.maxZ;
+
+	verts[2].vx = box.minX;
+	verts[2].vy = box.maxY;
+	verts[2].vz = box.maxZ;
+	verts[3].vx = box.maxX;
+	verts[3].vy = box.maxY;
+	verts[3].vz = box.maxZ;
+
+	verts[4].vx = box.maxX;
+	verts[4].vy = box.maxY;
+	verts[4].vz = box.maxZ;
+	verts[5].vx = box.maxX;
+	verts[5].vy = box.maxY;
+	verts[5].vz = box.minZ;
+
+	verts[6].vx = box.maxX;
+	verts[6].vy = box.maxY;
+	verts[6].vz = box.minZ;
+	verts[7].vx = box.minX;
+	verts[7].vy = box.maxY;
+	verts[7].vz = box.minZ;
+
+	verts[8].vx = box.minX;
+	verts[8].vy = box.minY;
+	verts[8].vz = box.minZ;
+	verts[9].vx = box.minX;
+	verts[9].vy = box.minY;
+	verts[9].vz = box.maxZ;
+
+	verts[10].vx = box.minX;
+	verts[10].vy = box.minY;
+	verts[10].vz = box.maxZ;
+	verts[11].vx = box.maxX;
+	verts[11].vy = box.minY;
+	verts[11].vz = box.maxZ;
+
+	verts[12].vx = box.maxX;
+	verts[12].vy = box.minY;
+	verts[12].vz = box.maxZ;
+	verts[13].vx = box.maxX;
+	verts[13].vy = box.minY;
+	verts[13].vz = box.minZ;
+
+	verts[14].vx = box.maxX;
+	verts[14].vy = box.minY;
+	verts[14].vz = box.minZ;
+	verts[15].vx = box.minX;
+	verts[15].vy = box.minY;
+	verts[15].vz = box.minZ;
+
+	verts[16].vx = box.minX;
+	verts[16].vy = box.maxY;
+	verts[16].vz = box.minZ;
+	verts[17].vx = box.minX;
+	verts[17].vy = box.minY;
+	verts[17].vz = box.minZ;
+
+	verts[18].vx = box.minX;
+	verts[18].vy = box.maxY;
+	verts[18].vz = box.maxZ;
+	verts[19].vx = box.minX;
+	verts[19].vy = box.minY;
+	verts[19].vz = box.maxZ;
+
+	verts[20].vx = box.maxX;
+	verts[20].vy = box.maxY;
+	verts[20].vz = box.maxZ;
+	verts[21].vx = box.maxX;
+	verts[21].vy = box.minY;
+	verts[21].vz = box.maxZ;
+
+	verts[22].vx = box.maxX;
+	verts[22].vy = box.maxY;
+	verts[22].vz = box.minZ;
+	verts[23].vx = box.maxX;
+	verts[23].vy = box.minY;
+	verts[23].vz = box.minZ;
+
+	unsigned long** drawot = gameTrackerX.drawOT;
+
+	int p = 0;
+	struct _Position cam_pos_save;
+	MATRIX cam_mat_save;
+
+	cam_pos_save.x = theCamera.core.position.x;
+	cam_pos_save.y = theCamera.core.position.y;
+	cam_pos_save.z = theCamera.core.position.z;
+
+	cam_mat_save.m[0][0] = theCamera.core.wcTransform->m[0][0];
+	cam_mat_save.m[0][1] = theCamera.core.wcTransform->m[0][1];
+	cam_mat_save.m[0][2] = theCamera.core.wcTransform->m[0][2];
+	cam_mat_save.m[1][0] = theCamera.core.wcTransform->m[1][0];
+	cam_mat_save.m[1][1] = theCamera.core.wcTransform->m[1][1];
+	cam_mat_save.m[1][2] = theCamera.core.wcTransform->m[1][2];
+	cam_mat_save.m[2][0] = theCamera.core.wcTransform->m[2][0];
+	cam_mat_save.m[2][1] = theCamera.core.wcTransform->m[2][1];
+	cam_mat_save.m[2][2] = theCamera.core.wcTransform->m[2][2];
+
+	cam_mat_save.t[0] = theCamera.core.wcTransform->t[0];
+	cam_mat_save.t[1] = theCamera.core.wcTransform->t[1];
+	cam_mat_save.t[2] = theCamera.core.wcTransform->t[2];
+
+	theCamera.core.position.x = cam_pos_save.x - offset.x;
+	theCamera.core.position.y = cam_pos_save.y - offset.y;
+	theCamera.core.position.z = cam_pos_save.z - offset.z;
+
+	SVECTOR tmp;
+	tmp.vx = -(cam_pos_save.x - offset.x);
+	tmp.vy = -(cam_pos_save.y - offset.y);
+	tmp.vz = -(cam_pos_save.z - offset.z);
+
+	ApplyMatrix(&cam_mat_save, &tmp, (VECTOR*)&theCamera.core.wcTransform->t[0]);
+
+	SetRotMatrix(theCamera.core.wcTransform);
+	SetTransMatrix(theCamera.core.wcTransform);
+
+	for (int i = 0; i < 24; i+=2)
+	{
+		gte_ldv0(&verts[i].vx);
+		gte_ldv1(&verts[i + 1].vx);
+
+		gte_rtpt();
+
+		gte_avsz3();
+		gte_stotz(&p);
+
+		if (((p >> 2) >= 3071) || ((p >> 2) <= 0))
+			continue;
+
+		setLineF2(line);
+		
+		gte_stsxy0(&line->x0);
+		gte_stsxy1(&line->x1);
+
+		setRGB0(line, 255, 255, 255);
+
+		addPrim(drawot + ((p >> 2) * 2), line);
+
+		line++;
+
+		gameTrackerX.primPool->numPrims++;
+	}
+
+	gameTrackerX.primPool->nextPrim = (unsigned long*)line;
+
+	theCamera.core.position.x = cam_pos_save.x;
+	theCamera.core.position.y = cam_pos_save.y;
+	theCamera.core.position.z = cam_pos_save.z;
+
+	theCamera.core.wcTransform->m[0][0] = cam_mat_save.m[0][0];
+	theCamera.core.wcTransform->m[0][1] = cam_mat_save.m[0][1];
+	theCamera.core.wcTransform->m[0][2] = cam_mat_save.m[0][2];
+	theCamera.core.wcTransform->m[1][0] = cam_mat_save.m[1][0];
+	theCamera.core.wcTransform->m[1][1] = cam_mat_save.m[1][1];
+	theCamera.core.wcTransform->m[1][2] = cam_mat_save.m[1][2];
+	theCamera.core.wcTransform->m[2][0] = cam_mat_save.m[2][0];
+	theCamera.core.wcTransform->m[2][1] = cam_mat_save.m[2][1];
+	theCamera.core.wcTransform->m[2][2] = cam_mat_save.m[2][2];
+
+	theCamera.core.wcTransform->t[0] = cam_mat_save.t[0];
+	theCamera.core.wcTransform->t[1] = cam_mat_save.t[1];
+	theCamera.core.wcTransform->t[2] = cam_mat_save.t[2];
+}
+
+void Editor_CreateAndDrawUnitBBOX()
+{
+	if (g_selectedUnit != NULL)
+	{
+		if (g_selectedUnit->terrain != NULL)
+		{
+			Editor_DrawUnitBBOX(Editor_CreateUnitBBOX(), g_selectedUnit->terrain->BSPTreeArray->globalOffset);
+		}
+	}
+}
+
 void Editor_DoDebug()
 {
 	setRECT16(&screen_clip, 0, 0, 512, 240);
+
+	//Editor_DrawCameraLine(g_selectedUnit->terrain->BSPTreeArray->globalOffset);
+
+	Editor_CreateAndDrawUnitBBOX();
 
 	//Editor_DrawCameraSplines();
 

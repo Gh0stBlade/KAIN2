@@ -9,7 +9,7 @@ skip_tags: true
 image: Visual Studio 2022
 
 configuration:
-#- Debug
+- Debug
 - Release
 
 clone_folder: c:/projects/KAIN2

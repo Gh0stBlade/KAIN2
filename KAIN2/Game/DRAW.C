@@ -41,7 +41,7 @@ void DRAW_InitShadow()
 	int n; // $s3
 	int inc; // $s4
 	int deg; // $s2
-	
+	int x;//? macro
 	deg = 0;
 	inc = 1677721;
 	n = 0;
@@ -50,7 +50,7 @@ void DRAW_InitShadow()
 	
 	//if(;
 	//int v0 = ;
-	int x = rcos(deg < 0 ? (deg + 0xFFF) >> 12 : deg >> 12); x < 0 ? (x + 0x1F) >> 5 : (x >> 5);
+	x = rcos(deg < 0 ? (deg + 0xFFF) >> 12 : deg >> 12); x < 0 ? (x + 0x1F) >> 5 : (x >> 5);
 	shadow_vertices[n].vx = x;
 	UNIMPLEMENTED();
 #if 0
@@ -286,7 +286,7 @@ void DRAW_LoadButton(long *addr, struct _ButtonTexture *button)
 	DrawSync(0);
 }
 
-void DRAW_FreeButton(struct _ButtonTexture *button)
+void DRAW_FreeButton(struct _ButtonTexture* button)
 {
 	VRAM_ClearVramBlock(button->vramBlock);
 }
@@ -655,41 +655,35 @@ int DRAW_DisplayTFace_zclipped_C(SVECTOR* vertex0, SVECTOR* vertex1, SVECTOR* ve
 			}
 
 			//loc_8002C36C
+			//v0 = (sp->out[0].x + sp->(next_point_in_vv >> 12)) << 1;
+			next_point_in_vv = ((sp->out[0].x + (next_point_in_vv >> 12)) << 1) + 256;
 
+			if (next_point_in_vv >= 1024)
+			{
+				next_point_in_vv = 1023;
+			}
+			
+			if (next_point_in_vv < -1023)//loc_8002C390
+			{
+				next_point_in_vv = -63;
+			}
+
+			//loc_8002C39C
+
+			((short*)ptr)[-1] = next_point_in_vv;
+
+			//t0 = sp + next
+			//a3 = sp
+
+			MIN((sp->out[next].y - sp->out[0].y) * current_point_in_vv, (sp->out[next].y - sp->out[0].y) + 0xFFF);
+		
+			//loc_8002C3C4
 		}
 		//loc_8002C52C
 	}
 	//loc_8002C884
 
 #if 0
-		loc_8002C36C:
-	sra     $v0, $v1, 12
-		addu    $v0, $a0, $v0
-		sll     $v0, 1
-		addiu   $v1, $v0, 0x100
-		slti    $v0, $v1, 0x400
-		bnez    $v0, loc_8002C390
-		slti    $v0, $v1, -0x3FF
-		li      $v1, 0x3FF
-		slti    $v0, $v1, -0x3FF
-
-		loc_8002C390:
-	beqz    $v0, loc_8002C39C
-		nop
-		li      $v1, 0xFFFFFC01
-
-		loc_8002C39C :
-		sh      $v1, -2($t3)
-		lw      $v0, 0x7C($t0)
-		lw      $v1, 0x7C($a3)
-		nop
-		subu    $v0, $v1
-		mult    $v0, $t1
-		mflo    $v0
-		bgez    $v0, loc_8002C3C4
-		nop
-		addiu   $v0, 0xFFF
-
 		loc_8002C3C4:
 	sra     $v0, 12
 		addu    $v0, $v1, $v0
@@ -1096,7 +1090,7 @@ long* DRAW_Zclip_subdiv(POLY_GT3* texture, unsigned long** ot, int ndiv)
 	sp->face_v01.vz = ((sp->face_v0.vz + sp->face_v1.vz) + ((sp->face_v0.vz + sp->face_v1.vz) >> 31) >> 1);
 
 	sp->face_v12.vx = ((sp->face_v1.vx + sp->face_v2.vx) + ((sp->face_v1.vx + sp->face_v2.vx) >> 31) >> 1);
-	sp->face_v12.vy = ((sp->face_v1.vy +  sp->face_v2.vy) + ((sp->face_v1.vy +  sp->face_v2.vy) >> 31) >> 1);
+	sp->face_v12.vy = ((sp->face_v1.vy + sp->face_v2.vy) + ((sp->face_v1.vy + sp->face_v2.vy) >> 31) >> 1);
 	sp->face_v12.vz = ((sp->face_v1.vz + sp->face_v2.vz) + ((sp->face_v1.vz + sp->face_v2.vz) >> 31) >> 1);
 
 	sp->face_v20.vx = ((sp->face_v2.vx + sp->face_v0.vx) + ((sp->face_v2.vx + sp->face_v0.vx) >> 31) >> 1);

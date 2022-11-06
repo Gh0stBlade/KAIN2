@@ -41,13 +41,16 @@
 //Open Graphics Library (Embedded Systems)
 //#define OGLES
 //#define OGLES_VERSION 3
+//Needs new IBO implementing
 
 //Open Graphics Library
 #define OGL
 
 //Vulkan
 //#define VULKAN
-
+//Needs moving from Emulator.C
+//Needs new IBO implementing
+		
 //Direct3D9
 //#define D3D9
 
@@ -56,15 +59,14 @@
 
 //Direct3D12
 //#define D3D12
+//Needs new IBO implementing
 
 #if !defined(_DEBUG)
 #define NO_FILESYSTEM
 #endif
 
 #if defined(OGL) || defined(D3D9) || defined(D3D11) || defined(D3D12) || defined(VULKAN) || defined(UWP_SDL2) && !defined(SN_TARGET_PSP2)
-#if !defined(EDITOR)
-	#define SDL2
-#endif
+#define SDL2
 //#define SDL2_MIXER
 //#define OPENAL
 #endif
