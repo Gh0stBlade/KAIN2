@@ -9,9 +9,6 @@ Shift::CenterPane::CenterPane(Shift::Panes* panes, QWidget* parent)
 {
 	m_viewportWidget = new QDockWidget(QObject::tr(""));
 	m_viewportWidget->setObjectName("viewport");
-
-	m_boxLayout = new QHBoxLayout;
-	m_viewportWidget->setLayout(m_boxLayout);
 	m_viewportWidget->show();
 	
 	m_tabWidget = new QTabWidget(m_viewportWidget);
@@ -61,11 +58,6 @@ Shift::CenterPane::~CenterPane()
 	if (m_viewport != nullptr)
 	{
 		delete m_viewport;
-	}
-
-	if (m_boxLayout != nullptr)
-	{
-		delete m_boxLayout;
 	}
 
 	if (m_labelItemsCount != nullptr)

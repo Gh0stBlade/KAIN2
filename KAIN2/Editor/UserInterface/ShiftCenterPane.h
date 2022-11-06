@@ -37,7 +37,6 @@ namespace Shift
 
 	private:
 		QDockWidget* m_viewportWidget;
-		QHBoxLayout* m_boxLayout;
 		QStackedLayout* m_stackedLayout;
 		QTabWidget* m_tabWidget;
 
