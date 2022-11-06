@@ -748,7 +748,7 @@ void HEALTHU_Pickup(struct _Instance *instance)
 	UNIMPLEMENTED();
 }
 
-void HUD_Damp(short *val, short target, short *vel, short max)
+void HUD_Damp(short* val, short target, short* vel, short max)
 {
 	short accl;
 

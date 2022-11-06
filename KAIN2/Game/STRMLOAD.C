@@ -144,9 +144,9 @@ struct _LoadQueueEntry* STREAM_AddQueueEntryToTail()
 	return entry;
 }
 
-struct _LoadQueueEntry * STREAM_AddQueueEntryToHead()
+struct _LoadQueueEntry* STREAM_AddQueueEntryToHead()
 {
-	struct _LoadQueueEntry *entry;
+	struct _LoadQueueEntry* entry;
 
 	entry = loadFree;
 
@@ -204,7 +204,6 @@ int STREAM_PollLoadQueue()
 	struct _LoadQueueEntry* queueEntry;
 	long size;
 	struct _LoadQueueEntry* newQueue;
-
 	LOAD_ProcessReadQueue();
 
 	if (loadHead != NULL)
@@ -224,7 +223,7 @@ int STREAM_PollLoadQueue()
 
 				queueEntry->endLoadTime = TIMER_GetTimeMS();
 				LOAD_NonBlockingReadFile(&queueEntry->loadEntry);
-				
+
 				if (LOAD_ChangeDirectoryFlag() != 0)
 				{
 					newQueue = STREAM_AddQueueEntryToHead();
@@ -404,10 +403,11 @@ struct _LoadQueueEntry* STREAM_SetUpQueueEntry(char *fileName, void *retFunc, vo
 	{
 		currentEntry = STREAM_AddQueueEntryToTail();
 	}
-	
-	strcpy(&currentEntry->loadEntry.fileName[0], fileName);
+
+	strcpy(currentEntry->loadEntry.fileName, fileName);
 	
 	currentEntry->loadEntry.fileHash = LOAD_HashName(fileName);
+
 	currentEntry->loadEntry.dirHash = LOAD_GetSearchDirectory();
 	currentEntry->loadEntry.posInFile = 0;
 	currentEntry->loadEntry.checksumType = 1;
@@ -540,7 +540,7 @@ long* LOAD_ReadFile(char *fileName, unsigned char memType)
 { 
 	void *loadAddr;
 	STREAM_QueueNonblockingLoads(fileName, memType, NULL, NULL, NULL, &loadAddr, 0);
-
+	
 	while (STREAM_PollLoadQueue() != 0)
 	{
 	}
@@ -591,6 +591,8 @@ void LOAD_AbortFileLoad(char *fileName, void *retFunc)
 	struct _LoadQueueEntry *entry;
 	struct _LoadQueueEntry *prev;
 	long hash;
+	typedef void (*ret)(long*, void*, void*);
+	ret returnFunction;//?
 
 	if (loadHead != NULL)
 	{
@@ -610,8 +612,7 @@ void LOAD_AbortFileLoad(char *fileName, void *retFunc)
 					LOAD_CleanUpBuffers();
 				}
 
-				typedef void (*ret)(long*, void*, void*);
-				ret returnFunction = (ret)retFunc;
+				returnFunction = (ret)retFunc;
 				returnFunction(entry->loadEntry.loadAddr, entry->loadEntry.retData, entry->loadEntry.retData2);
 				
 				STREAM_RemoveQueueEntry(entry, prev);
