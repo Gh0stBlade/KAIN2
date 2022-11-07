@@ -591,6 +591,7 @@ int Emulator_InitialiseGLExtensions()
 		return FALSE;
 	}
 
+	glBlendEquationEXT = (PFNGLBLENDEQUATIONEXTPROC)SDL_GL_GetProcAddress("glBlendEquationEXT");
 	if (glBlendEquationEXT == NULL)
 	{
 		return FALSE;
