@@ -433,16 +433,6 @@ void GAMELOOP_LevelLoadAndInit(char *baseAreaName, struct GameTracker *gameTrack
 	extern struct _Rotation overrideEditorRotation;
 	
 	overrideEditorPosition = theCamera.core.position;
-
-#if 0
-	overrideEditorPosition.x = 0x03FD;
-	overrideEditorPosition.y = 0xFD88;
-	overrideEditorPosition.z = 0xEF07;
-
-	overrideEditorRotation.x = 0x0FC7;
-	overrideEditorRotation.y = 0x0000;
-	overrideEditorRotation.z = 0x0CB3;
-#endif
 #endif
 
 	SetFogNearFar(streamUnit->level->fogNear, streamUnit->level->fogFar, 320);

@@ -2085,6 +2085,7 @@ long DRAW_DisplayTFace_S(unsigned long** pNextPrim, unsigned long** drawot, int 
 	int t7 = 0xF00200;
 
 	int a0 = SXY0;
+
 	int t5 = SXY1;
 	
 	int v0 = a0 & v1;
@@ -2142,7 +2143,7 @@ long DRAW_DisplayTFace_S(unsigned long** pNextPrim, unsigned long** drawot, int 
 
 						gte_dpct();
 
-						unsigned long** a00 = &drawot[(s2 / 4) * 2];
+						unsigned long* a00 = drawot[(a2 / 4) * 2];
 
 						v0 = t5 >> 16;
 						v1 = t7 >> 16;
@@ -2240,7 +2241,7 @@ long DRAW_DisplayTFace_S(unsigned long** pNextPrim, unsigned long** drawot, int 
 						pNextPrim[0][5] = RGB1;
 						pNextPrim[0][8] = RGB2;
 
-						pNextPrim[0] += 0x28 / 4;
+						pNextPrim[0] += sizeof(POLY_GT3) / 4;
 
 					}
 					//locret_80025FF8
@@ -2399,12 +2400,10 @@ unsigned long* DRAW_DisplaySubdivPolytope_S(struct _BSPNode** polytope, struct _
 
 			gte_rtps();
 
-
 			s2 |= v0;
 
 			s0 = &StartTextureList[s1->attr / 12];
 
-		
 			t7 = ((int*)s0)[0];
 			s7 = ((int*)s0)[1];
 			v1 = ((int*)s0)[2];
@@ -2427,7 +2426,6 @@ unsigned long* DRAW_DisplaySubdivPolytope_S(struct _BSPNode** polytope, struct _
 
 			if (v0 >= 0)
 			{
-				//at = 0x26000
 				t7 = s2 & 0x26000;
 				s2 = 0x6000;
 
@@ -2496,13 +2494,14 @@ unsigned long* DRAW_DisplaySubdivPolytope_S(struct _BSPNode** polytope, struct _
 										{
 											t7 = -t7;
 										}
+
 										v0 = t4[6];
 
 										if (t5 >= t7)
 										{
 											t7 = t5;
 										}
-										//loc_80026844
+
 										t5 = a33->vertex.z;
 
 										t9 = t5 - t9;
@@ -2552,7 +2551,6 @@ unsigned long* DRAW_DisplaySubdivPolytope_S(struct _BSPNode** polytope, struct _
 											gte_gpl12();
 
 											t4[31] = RGB2;
-
 										}
 										//loc_800268C8
 
@@ -2591,7 +2589,7 @@ unsigned long* DRAW_DisplaySubdivPolytope_S(struct _BSPNode** polytope, struct _
 										t5 = a00->vertex.z;
 										t9 = t5 - t9;
 
-										t5 = ((int*)v0)[4];
+										t5 = ((short*)v0)[8];
 										if (t9 < 0)
 										{
 											t9 = -t9;
@@ -2678,7 +2676,7 @@ unsigned long* DRAW_DisplaySubdivPolytope_S(struct _BSPNode** polytope, struct _
 
 										t9 = t5 - t9;
 
-										t5 = ((int*)v0)[4];
+										t5 = ((short*)v0)[8];
 										if (t9 < 0)
 										{
 											t9 = -t9;
@@ -2802,7 +2800,8 @@ unsigned long* DRAW_DisplaySubdivPolytope_S(struct _BSPNode** polytope, struct _
 											if (t7 < v1)
 											{
 												v1 = t4[44];
-												if (t7 < 0x280)
+
+												if (t7 < 640)
 												{
 													goto subdiv_begin;
 												}
@@ -2879,6 +2878,7 @@ unsigned long* DRAW_DisplaySubdivPolytope_S(struct _BSPNode** polytope, struct _
 
 												//rgb0code
 												gteRegs.CP2D.p[6].sd = t4[32];
+												
 												IR0 = v0;
 
 												gte_dpcs();
@@ -3120,8 +3120,6 @@ no_blend2:
 	}
 
 draw_trans_fog:
-	v0 = 0x2000000;
-	//rgb0code
 	gteRegs.CP2D.p[6].d = a2;
 	a2 = RGB2;
 	a2 |= 0x2000000;
@@ -3150,9 +3148,9 @@ OK:
 	a2 = t4[48];
 	pNextPrim[3] = t1;
 	t1 = RGB2;
-	v1 = 0x34000000;
+
 	t1 = t5 - t1;
-	t1 |= v1;
+	t1 |= 0x34000000;
 	
 	pNextPrim[2] = t1;
 
@@ -3171,7 +3169,7 @@ OK:
 	pNextPrim[10] = v1;
 
 	a2 = ((short*)t4)[106];
-	((short*)pNextPrim)[8] = a2;
+	((short*)pNextPrim)[9] = a2;
 
 	a2 = t4[49];
 	pNextPrim[6] = t2;
@@ -3183,8 +3181,6 @@ OK:
 	pNextPrim[5] = t1;
 
 	IR0 = a2;
-
-	v1 = (unsigned long)pNextPrim & 0xFFFFFF;
 
 	gte_dpcs();
 
@@ -3211,16 +3207,17 @@ OK:
 		return pNextPrim;
 	}
 
+
 subdiv_begin:
 	
 	if ((t6 & 0x8))
 	{
-		t9 = RGB0;
-		t6 = RGB1;
+		t9 = RGB1;
+		t6 = RGB2;
 		v1 = RES1;
 
-		RGB0 = 0;
 		RGB1 = 0;
+		RGB2 = 0;
 		RES1 = 0;
 
 		t5 = 0x1000;
@@ -3359,7 +3356,6 @@ subdiv_begin:
 		v1 = t1 + t5;
 		v1 >>= 1;
 
-
 		((short*)t4)[36] = v1;
 
 		v1 = t2 + t6;
@@ -3401,8 +3397,8 @@ subdiv_begin:
 
 		t4[22] = t8;
 		t4[23] = t9;
-
 		t4[24] = v0;
+
 		v1 = t1 + t3;
 		v1 >>= 1;
 		((char*)t4)[100] = v1;
@@ -3534,7 +3530,7 @@ subdiv_begin:
 		gteRegs.CP2D.p[6].sd = t7;
 
 		UNIMPLEMENTED();
-		return pNextPrim;//disabled for now
+		return pNextPrim;
 
 		if (DRAW_DisplayTFace_S(&pNextPrim, drawot, s2, t4, t1, t2, t3) <= 0)
 		{
