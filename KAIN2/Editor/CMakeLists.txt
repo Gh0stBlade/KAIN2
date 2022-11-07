@@ -83,7 +83,6 @@ ${PROJECT_NAME} PROPERTIES FOLDER "Build Targets/PlayStation"
 set(TARGET_BINARY_DIR "${PROJECT_BINARY_DIR}/${CMAKE_CFG_INTDIR}")
 
 add_dependencies(${PROJECT_NAME} SDL2)
-add_dependencies(${PROJECT_NAME} libglew_static)
 
 include_directories(${KAIN2_ROOT})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
@@ -118,7 +117,6 @@ ${PROJECT_NAME}
 SDL2-static
 SDL2main
 ${OPENGL_gl_LIBRARY}
-libglew_static
 Qt5::Widgets
 Qt5::Core
 Qt5::Gui

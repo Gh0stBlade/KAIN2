@@ -8,15 +8,6 @@
 #include "Core/Debug/EMULATOR_ASSERT.H"
 
 /*
- * glew.h inclusion.
- */
-
-#if defined(GLEW)
-#define GL_GLEXT_PROTOTYPES 1
-#include <GL/glew.h>
-#endif
-
-/*
  * SDL2.H inclusion.
  */
 
@@ -48,7 +39,8 @@
 #endif
 
 #if defined (OGL)
-#include <SDL_opengl.h>///@FIXME see mac!
+#include <SDL_opengl.h>
+#include <SDL_opengl_glext.h>
 #include "Core/Render/OGL/EMULATOR_RENDER_OGL.H"
 #elif defined (OGLES)
 #if OGLES_VERSION == 2

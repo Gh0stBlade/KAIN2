@@ -13,7 +13,6 @@
 # Technology Used (Libraries):
 1. Valkyrie Emulator – Custom technology created to port PS1 games easily to PC.
 2. SDL2
-3. glew
 
 # Supported Platforms:
 Windows 7-11, Linux, UWP, Xbox One/Series X(UWP), Switch (W.I.P), Web (Emscripten), Android and PSVita. There are plans to support more platforms than what is currently listed.

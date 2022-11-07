@@ -72,8 +72,6 @@ OPTIONAL_DEFINE(KAIN2 "Enable/Disable KAIN2 code" ON)
 if(NOT ANDROID)
 BuildPreProcessorDefinitions()
 
-target_compile_definitions(${PROJECT_NAME} PRIVATE GLEW_STATIC)
-
 set_target_properties(
 ${PROJECT_NAME} PROPERTIES OUTPUT_NAME "Valkyrie"
 ${PROJECT_NAME} PROPERTIES FOLDER "Libs"

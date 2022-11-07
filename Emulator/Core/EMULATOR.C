@@ -2349,21 +2349,6 @@ static int Emulator_InitialiseSDL2(char* windowName, int width, int height)
 	return TRUE;
 }
 
-static int Emulator_InitialiseGLEW()
-{
-#if defined(GLEW)
-	glewExperimental = GL_TRUE;
-
-	GLenum err = glewInit();
-
-	if (err != GLEW_OK)
-	{
-		return FALSE;
-	}
-#endif
-	return TRUE;
-}
-
 static int Emulator_InitialiseCore()
 {
 	return TRUE;
@@ -2400,14 +2385,6 @@ void Emulator_Initialise(char* windowName, int width, int height)
 		eprinterr("Failed to Intialise SDL2\n");
 		Emulator_ShutDown();
 	}
-
-#if defined(GLEW)
-	if (Emulator_InitialiseGLEW() == FALSE)
-	{
-		eprinterr("Failed to Intialise GLEW\n");
-		Emulator_ShutDown();
-	}
-#endif
 
 	if (Emulator_InitialiseCore() == FALSE)
 	{
