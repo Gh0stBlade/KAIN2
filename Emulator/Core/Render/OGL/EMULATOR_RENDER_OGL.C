@@ -31,9 +31,7 @@ PFNGLENABLEVERTEXATTRIBARRAYPROC    glEnableVertexAttribArray;
 PFNGLDISABLEVERTEXATTRIBARRAYPROC   glDisableVertexAttribArray;
 PFNGLVERTEXATTRIBPOINTERPROC        glVertexAttribPointer;
 PFNGLGETPROGRAMIVPROC               glGetProgramiv;
-
-PFNGLDELETEVERTEXARRAYSPROC         glDeleteVertexArrays;
-// Render to texture
+PFNGLDELETEVERTEXARRAYSPROC					 glDeleteVertexArrays;
 PFNGLGENFRAMEBUFFERSPROC                     glGenFramebuffers;
 PFNGLBINDFRAMEBUFFERPROC                     glBindFramebuffer;
 PFNGLGENRENDERBUFFERSPROC                    glGenRenderbuffers;
@@ -45,7 +43,6 @@ PFNGLCHECKFRAMEBUFFERSTATUSPROC              glCheckFramebufferStatus;
 PFNGLDELETEFRAMEBUFFERSPROC                  glDeleteFramebuffers;
 PFNGLDELETERENDERBUFFERSPROC                 glDeleteRenderbuffers;
 PFNGLGETFRAMEBUFFERATTACHMENTPARAMETERIVPROC glGetFramebufferAttachmentParameteriv;
-// Mesh
 PFNGLGENBUFFERSARBPROC              glGenBuffers;
 PFNGLDELETEBUFFERSARBPROC           glDeleteBuffers;
 PFNGLBINDBUFFERARBPROC              glBindBuffer;
@@ -54,6 +51,13 @@ PFNGLBUFFERSUBDATAARBPROC           glBufferSubData;
 PFNGLGENVERTEXARRAYSPROC            glGenVertexArrays;
 PFNGLBINDVERTEXARRAYPROC            glBindVertexArray;
 PFNGLDRAWELEMENTSBASEVERTEXPROC     glDrawElementsBaseVertex;
+PFNGLBLENDEQUATIONEXTPROC			glBlendEquationEXT;
+PFNGLACTIVETEXTUREARBPROC			glActiveTextureARB2;
+PFNGLBLENDCOLOREXTPROC				glBlendColorEXT;
+
+#define glBlendColor glBlendColorEXT
+#define glActiveTexture glActiveTextureARB2
+#define glBlendEquation glBlendEquationEXT
 
 extern void Emulator_DoPollEvent();
 extern void Emulator_WaitForTimestep(int count);
@@ -575,23 +579,22 @@ int Emulator_InitialiseGLExtensions()
 		return FALSE;
 	}
 
-	//glActiveTexture = (GL_ActiveTextureARB_Func)SDL_GL_GetProcAddress("glActiveTexture");
-	//if (glActiveTexture == NULL)
-	//{
-	//	return FALSE;
-	//}
+	glActiveTextureARB2 = (PFNGLACTIVETEXTUREARBPROC)SDL_GL_GetProcAddress("glActiveTextureARB");
+	if (glActiveTextureARB2 == NULL)
+	{
+		return FALSE;
+	}
 
-	//glBlendColor = (GL_BlefndColorARB_Func)SDL_GL_GetProcAddress("glBlendColor");
-	//if (glBlendColor == NULL)
-	//{
-	//	return FALSE;
-	//}
+	glBlendColorEXT = (PFNGLBLENDCOLOREXTPROC)SDL_GL_GetProcAddress("glBlendColorEXT");
+	if (glBlendColorEXT == NULL)
+	{
+		return FALSE;
+	}
 
-	//glBlendEquation = (GL_BlendEquationARB_Func)SDL_GL_GetProcAddress("glBlendEquation");
-	//if (glBlendEquation == NULL)
-	//{
-	//	return FALSE;
-	//}
+	if (glBlendEquationEXT == NULL)
+	{
+		return FALSE;
+	}
 
 	return TRUE;
 }
