@@ -2232,6 +2232,7 @@ long DRAW_DisplayTFace_S(unsigned long** pNextPrim, unsigned long** drawot, int 
 						}
 
 						addPrim(a00, pNextPrim[0]);
+						setlen(pNextPrim[0], 9);
 
 						pNextPrim[0][3] = SXY0;
 						pNextPrim[0][6] = SXY1;
@@ -2266,7 +2267,7 @@ long DRAW_DisplayTFace_S(unsigned long** pNextPrim, unsigned long** drawot, int 
 	return v0 & 0;
 
 do_super_subdiv:
-	t4[55] = (unsigned long)pNextPrim;
+	t4[55] = (unsigned long)pNextPrim[0];
 	t4[56] = t1;
 	t4[57] = t2;
 	t4[58] = t3;
@@ -2274,7 +2275,7 @@ do_super_subdiv:
 	t4[60] = 0xFFFFFF;
 	t4[61] = a2;
 
-	DRAW_Zclip_subdiv((POLY_GT3*)pNextPrim, drawot, 0);
+	DRAW_Zclip_subdiv((POLY_GT3*)pNextPrim[0], drawot, 0);
 
 	return 0;
 }
@@ -3528,7 +3529,7 @@ subdiv_begin:
 
 		//rgb0code
 		gteRegs.CP2D.p[6].sd = t7;
-
+		
 		UNIMPLEMENTED();
 		return pNextPrim;
 
@@ -3559,11 +3560,8 @@ subdiv_begin:
 
 			if (DRAW_DisplayTFace_S(&pNextPrim, drawot, s2, t4, t1, t2, t3) <= 0)
 			{
-				v0 = ((short*)t4)[45];
-				v1 = ((short*)t4)[47];
-
-				((short*)t4)[51] = v0;
-				((short*)t4)[55] = v1;
+				((short*)t4)[51] = ((short*)t4)[45];
+				((short*)t4)[55] = ((short*)t4)[47];
 
 				gte_ldv0(&t4[16]);
 				gte_ldv1(&t4[18]);
