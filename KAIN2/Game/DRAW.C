@@ -469,8 +469,8 @@ int DRAW_DisplayTFace_zclipped_C(SVECTOR* vertex0, SVECTOR* vertex1, SVECTOR* ve
 	long clip; // $s0
 	int next_point_in_vv; // $v1
 	int current_point_in_vv; // $t1
-	int next; // $t6, t0
-	long clip_tmp; // $a0, v1
+	int next; // $t6, $t0
+	long clip_tmp; // $a0, $v1
 	long zval; // stack offset -48
 	SVECTOR* tmpptr; // $v0
 	long zn; // $v1
@@ -485,574 +485,592 @@ int DRAW_DisplayTFace_zclipped_C(SVECTOR* vertex0, SVECTOR* vertex1, SVECTOR* ve
 	long temp2; // $t0
 	long temp3; // $t1
 
-	//s4 = primPool
 	//fp = color0
-
 	sp = (struct SP_SUBDIV_STRUCT*)getScratchAddr(128);
+	//s4 = primPool
+
+	//arg_0 = vertex0
+	//arg_4 = vertex1
+	//arg_8 = vertex2
+	//arg_c = uv0
 
 	gte_ldv0(vertex0);
+
 	gte_rt();
-	gte_stlvnl(getScratchAddr(158));
+
+	gte_stlvnl(&sp->out[0]);
+
+	//s6 = vertex1
 
 	gte_ldv0(vertex1);
+
 	gte_rt();
-	gte_stlvnl(getScratchAddr(161));
+
+	gte_stlvnl(&sp->out[1]);
 
 	gte_ldv0(vertex2);
+
 	gte_rt();
-	gte_stlvnl(getScratchAddr(164));
+
+	gte_stlvnl(&sp->out[2]);
+
+	//v0 = sp->out[0].z
 
 	point = 0;
 	//v0 = 2
-	if (sp->out[0].z >= 160 || sp->out[3].z >= 160 || sp->out[2].z >= 160)
+	if (sp->out[0].z >= 160 && sp->out[1].z >= 160 && sp->out[2].z >= 160)
 	{
+		return 0;//Disabled this is causing bad polys for now.
+		point = 0;
+
 		//loc_8002C188
 		maxz = 160;
-
 		//s7 = uv0
+
 		prim = (POLY_GT4*)primPool->nextPrim;
 
-		//v0 = ((long*)uv0)[0];
+		
+		sp->texinfo[0] = *(long*)uv0;
+
 		clip = 0xFFFF;
 
-		sp->texinfo[0] = ((long*)uv0)[0];
-
 		//s5 = uv1
-
 		n = 0;
 
-		sp->texinfo[1] = ((long*)uv1)[0];
+		sp->texinfo[1] = *(long*)uv1;
 
 		//s2 = 0
 
-
-		sp->texinfo[2] = ((long*)uv2)[0];
+		//s6 = uv2
 
 		//a3 = sp
+
+		//v1 = *(int*)uv2
+
 		//s1 = sp
 
 		sp->color[0] = color0;
 
 		//v0 = color1
 
-		ptr = (long*)prim + 1;
+		ptr = (long*)&prim->r0;
 
 		sp->color[1] = color1;
 
 		//v0 = color2
 
-		//t3 = prim+0xA
+		//t3 = &prim->y0
 
+		sp->texinfo[2] = *(long*)uv2;
 		sp->color[2] = color2;
 
 		//loc_8002C1E4
-		next = n + 1;
-
-		if (next >= 3)
+		for(n = 0; n < 3; n++)
 		{
-			next = 0;
-		}
+			next = n + 1;
 
-		//v1 = next << 1
-		//v1 += next
-		//v1 <<= 2;
-		//v1 = sp + v1
-		//v0 = (sp->out[0].z < 160) ^ 1
-		//v1 = !(sp->out[next].z < 160)
-
-		if (!(sp->out[0].z < 160))
-		{
-			if (n != 1)
+			if (next >= 3)
 			{
-				if (n < 2 || n != 2)
+				next = 0;
+			}
+
+			//loc_8002C1F8
+			//v0 = sp->out[0].z
+			//v1 = sp->out[next].z
+
+
+			current_point_in_vv = (sp->out[n].z < 0xA0) ^ 1;
+			next_point_in_vv = (sp->out[next].z < 0xA0) ^ 1;
+
+			//v0 = 1
+			if (current_point_in_vv != 0)
+			{
+				if (n == 1)
 				{
-					//loc_8002C240
+					tmpptr = vertex1;
+				}
+				else if (n < 2)
+				{
 					tmpptr = vertex0;
+				}
+				else if (n == 2)
+				{
+					tmpptr = vertex2;
 				}
 				else
 				{
-					//loc_8002C258
-					tmpptr = vertex2;
+					tmpptr = vertex1;
+				}
+
+				gte_ldv0(tmpptr);
+				gte_rtps();
+
+				//v0 = sp->texinfo[0]
+
+				*(long*)&prim->u0 = sp->texinfo[n];
+
+				//v0 = sp->color[0];
+				ptr[0] = sp->color[n];
+
+				tmpptr = (SVECTOR*)(ptr + 1);
+
+				gte_stsxy(tmpptr);
+
+				ptr = (long*)&prim->y0;
+
+				gte_stsxy(&sp->sxy[point]);
+
+				//v0 = &zval
+				gte_stsz(&zval);
+
+				if (maxz < zval)
+				{
+					maxz = zval;
+				}
+
+				//loc_8002C2C4
+
+				//v0 = prim->x0
+				//t0 = prim->y0
+
+				clip_tmp = ((short*)ptr)[-1] >> 31;
+				if (((short*)ptr)[0] < 0)
+				{
+					clip_tmp |= 0x2;
+				}
+				//loc_8002C2DC
+
+				if (((short*)ptr)[-1] >= SCREEN_WIDTH + 1)
+				{
+					clip_tmp |= 0x4;
+				}
+
+				if (((short*)ptr)[0] >= SCREEN_HEIGHT + 1)
+				{
+					clip_tmp |= 0x8;
+				}
+
+				clip &= clip_tmp;
+
+				point++;//?
+				ptr += 3;
+			}
+			//loc_8002C308
+			if (current_point_in_vv != 1)
+			{
+				//t0 = sp + next
+
+				//v1 = (sp->out[0].z - sp->out[next].z)
+				//a0 = sp->out[next].z
+
+				//v0 = ((sp->out[0].z - 0xA0) >> 12) / (sp->out[0].z - sp->out[next].z)
+
+				//v1 = (sp->out[next].x - sp->out[0].x)
+				//a0 = sp->out[0].x
+
+				interp1 = ABS(((sp->out[n].z - 0xA0) >> 12) / (sp->out[n].z - sp->out[next].z));
+
+				//loc_8002C354
+				zn = (sp->out[next].x - sp->out[n].x) * interp1;
+
+				interp2 = 4096 - interp1;
+
+				if (zn < 0)
+				{
+					zn += 4095;
+				}
+
+				//loc_8002C36C
+
+				//v0 = ((sp->out[0].x) + (zn >> 12)) << 1
+				zn = (((sp->out[n].x) + (zn >> 12)) << 1) + 256;
+
+				if (zn >= 1024)
+				{
+					zn = 1023;
+				}
+
+
+				if (zn < -0x3FF)
+				{
+					zn = -1023;
+				}
+
+				//loc_8002C39C
+				((short*)ptr)[3] = zn;
+
+				zn = (sp->out[next].y - sp->out[n].y) * interp1;//v0
+				//v1 = sp->out[0].y
+				if (zn < 0)
+				{
+					zn = 1023;
+				}
+
+				zn = ((sp->out[n].y + (zn >> 12)) << 1) + 120;//$v1
+
+				if (zn >= 1024)
+				{
+					zn = 1023;
+				}
+
+				if (zn < -1023)
+				{
+					zn = -1023;
+				}
+				//loc_8002C3F4
+				((short*)ptr)[4] = zn;
+
+				gte_lddp(interp2);
+
+				IR1 = ((unsigned char*)&sp->texinfo[n])[0];//s2 probably i (before next)
+				IR2 = ((unsigned char*)&sp->texinfo[n])[1];
+
+				gte_gpf12();
+
+				gte_lddp(interp1);
+				IR1 = ((unsigned char*)&sp->texinfo[next])[0];
+				IR2 = ((unsigned char*)&sp->texinfo[next])[1];
+
+				gte_gpl12();
+
+				//v0 = ptr + 8
+				gte_stbv(&((char*)ptr)[8]);
+
+				gte_lddp(interp2);
+
+
+				IR1 = ((unsigned char*)&sp->color[n])[0];//s2 probably i (before next)
+				IR2 = ((unsigned char*)&sp->color[n])[1];
+				IR3 = ((unsigned char*)&sp->color[n])[2];
+
+				gte_gpf12();
+
+				gte_lddp(interp1);
+				IR1 = ((unsigned char*)&sp->color[0])[0];
+				IR2 = ((unsigned char*)&sp->color[0])[1];
+				IR2 = ((unsigned char*)&sp->color[0])[2];
+
+				gte_gpl12();
+
+				gte_stcv(ptr);
+
+				//v0 = point << 2
+
+				//v1 = (long*)(&((short*)ptr)[-1])[0];
+				//v0 += sp
+				*(long*)&sp->sxy[point] = ((long*)&((short*)ptr)[-1])[0];
+
+				x = ((short*)ptr)[-1];//v0
+				y = ((short*)ptr)[0];//a0
+
+				clip_tmp = y >> 31;
+
+				if (y < 0)
+				{
+					clip_tmp |= 0x2;
+				}
+
+				if (x >= SCREEN_WIDTH + 1)
+				{
+					clip_tmp |= 0x4;
+				}
+
+				if (y >= SCREEN_HEIGHT + 1)
+				{
+					clip_tmp |= 0x8;
+				}
+
+				clip &= clip_tmp;
+
+				point++;//?
+				ptr += 3;
+			}
+			//loc_8002C52C
+		}
+
+		//v0 = 2
+		if (clip == 0)
+		{
+			maxz >>= 2;
+
+			if (maxz < 3072)
+			{
+				if (ndiv == 0)
+				{
+					flag = 0;
+					if (point > 0)
+					{
+						//t1 = sp
+						//loc_8002C57C
+						for(n = 0; n < point; n++)
+						{
+							next = n + 1;
+
+							if (next >= point)
+							{
+								next = 0;
+							}
+
+							//v0 = next << 2
+
+							//a0 = sp->sxy[0]
+							//v1 = sp->sxy[next]
+							temp1 = sp->sxy[0].vx - sp->sxy[next].vx;
+
+							if (temp1 < 0)
+							{
+								temp1 = sp->sxy[next].vx - sp->sxy[0].vx;
+							}
+
+							if (temp1 < 1024)
+							{
+								//a0 = sp->sxy[0]
+								//v1 = sp->sxy[next]
+								temp1 = sp->sxy[0].vy - sp->sxy[next].vy;
+
+								if (temp1 >= 0 || temp1 < 512)
+								{
+									continue;
+								}
+								//loc_8002C5F8
+
+								temp1 = sp->sxy[next].vy - sp->sxy[0].vy;
+
+								if (temp1 < 512)
+								{
+									continue;
+								}
+
+								flag = 1;
+								break;
+							}
+							//loc_8002C5F8
+						}
+					}
+					//loc_8002C614
+					if (flag == 0)
+					{
+						if (point == 4)
+						{
+							//v0 = sp->sxy[1].vy
+							//v1 = sp->sxy[1].vx
+
+							//a0 = sp->sxy[1].vy
+
+							temp2 = sp->sxy[1].vy - sp->sxy[1].vx;
+
+							if (temp2 < 0)
+							{
+								temp2 = sp->sxy[1].vx - sp->sxy[1].vy;
+							}
+
+							if (temp2 < 1024)
+							{
+
+								//v0 = sp->sxy[2].vy
+								//v1 = sp->sxy[0].vx
+
+								//a0 = sp->sxy[2].vy
+
+								temp3 = sp->sxy[2].vy - sp->sxy[0].vx;
+
+								if (temp3 < 0)
+								{
+									temp3 = sp->sxy[0].vx - sp->sxy[2].vy;
+
+									if (temp3 >= 512)
+									{
+										flag = 1;
+									}
+								}
+								else if (temp3 >= 512)
+								{
+									flag = 1;
+								}
+
+							}
+							else
+							{
+								//loc_8002C6A0
+								flag = 1;
+							}
+						}
+						//loc_8002C6A4
+
+						if (flag != 0)
+						{
+							//s6 = vertex0
+							//s7 = vertex1
+							//s5 = vertex2
+
+							gte_ldv0(vertex0);
+							gte_ldv1(vertex1);
+							gte_ldv2(vertex2);
+
+							//a0 = &sp->color[0];
+							//v0 = ((CVECTOR)&sp->color[0])->cd
+
+							//v1 = &sp->color[1]
+							//v0 = ((CVECTOR)&sp->color[1])->cd
+							((CVECTOR*)&sp->color[1])->cd = ((CVECTOR*)&sp->color[0])->cd;
+							//v0 = &sp->color[2];
+
+							gte_ldrgb3(&sp->color[0], &sp->color[1], &sp->color[2]);
+
+							gteRegs.CP2D.p[6].sd = sp->color[2];//hack
+
+							//s6 = uv0
+							prim->u0 = uv0->u;
+							prim->v0 = uv0->v;
+
+							prim->u1 = uv1->u;
+							prim->v1 = uv1->v;
+
+							prim->u2 = uv2->u;
+							prim->v2 = uv2->v;
+
+							DRAW_Zclip_subdiv((POLY_GT3*)prim, ot, 1);
+
+							return 1;
+						}
+					}
+					else
+					{
+
+						//loc_8002C6AC
+													//s6 = vertex0
+							//s7 = vertex1
+							//s5 = vertex2
+
+						gte_ldv0(vertex0);
+						gte_ldv1(vertex1);
+						gte_ldv2(vertex2);
+
+						//a0 = &sp->color[0];
+						//v0 = ((CVECTOR)&sp->color[0])->cd
+
+						//v1 = &sp->color[1]
+						//v0 = ((CVECTOR)&sp->color[1])->cd
+						((CVECTOR*)&sp->color[1])->cd = ((CVECTOR*)&sp->color[0])->cd;
+						//v0 = &sp->color[2];
+
+						gte_ldrgb3(&sp->color[0], &sp->color[1], &sp->color[2]);
+
+						gteRegs.CP2D.p[6].sd = sp->color[2];//hack
+
+						//s6 = uv0
+						prim->u0 = uv0->u;
+						prim->v0 = uv0->v;
+
+						prim->u1 = uv1->u;
+						prim->v1 = uv1->v;
+
+						prim->u2 = uv2->u;
+						prim->v2 = uv2->v;
+
+						DRAW_Zclip_subdiv((POLY_GT3*)prim, ot, 1);
+
+						return 1;
+					}
+				}
+				//loc_8002C744
+
+				SXY0 = *(long*)&prim->x0;
+				SXY1 = *(long*)&prim->x1;
+				SXY2 = *(long*)&prim->x2;
+
+				gte_nclip();
+
+				//v0 = ((unsigned short*)&sp->texinfo)[1];
+
+				prim->clut = ((unsigned short*)&sp->texinfo)[1];
+				prim->tpage = ((unsigned short*)&sp->texinfo[1])[1];
+
+				//v0 = &opz
+				gte_stopz(&opz);
+
+				if (opz > 0)
+				{
+					return 4;
+				}
+
+				//v0 = 4
+				if (point == 3)
+				{
+					//a2 = 0xFFFFFF
+					//v0 = color0 >> 24
+					//a1 = maxz << 2
+
+					prim->code = color0 >> 24;
+
+					//s6 = ot
+
+					//v0 = 1
+
+					setlen(prim, 9);
+
+#if defined(PSXPC_VERSION)
+					addPrim(ot[maxz * 2], prim);
+#else
+					addPrim(ot[maxz], prim);
+#endif
+					primPool->nextPrim += sizeof(POLY_GT3) / sizeof(unsigned long);
+				
+					primPool->numPrims++;
+
+					return 1;
+				}
+				//loc_8002C7F0
+				if (point == 4)
+				{
+					//a2 = 0xFFFFFF
+					//v0 = color0 >> 24
+
+					temp1 = *(long*)&prim->r2;
+					temp2 = *(long*)&prim->x2;
+					temp3 = *(long*)&prim->u2;
+
+					//v1 = *(long*)&prim->r3;
+					//a0 = *(long*)&prim->x3;
+					//a1 = *(long*)&prim->u3;
+
+					prim->code = (color0 >> 24) | 0x8;
+
+					//v0 = 1
+
+					*(long*)&prim->r2 = *(long*)&prim->r3;
+					*(long*)&prim->x2 = *(long*)&prim->x3;
+					*(long*)&prim->u2 = *(long*)&prim->u3;
+
+					*(long*)&prim->r3 = temp1;
+					*(long*)&prim->x3 = temp2;
+					*(long*)&prim->u3 = temp3;
+
+					//s7 = ot
+					//a1 = ot[maxz]
+
+
+					setlen(prim, 12);
+
+#if defined(PSXPC_VERSION)
+					addPrim(ot[maxz * 2], prim);
+#else
+					addPrim(ot[maxz], prim);
+#endif
+					primPool->nextPrim += sizeof(POLY_GT4) / sizeof(unsigned long);
+
+					primPool->numPrims++;
+
+					return 1;
 				}
 			}
-			else
-			{
-				//loc_8002C24C
-				tmpptr = vertex1;
-			}
-
-			//loc_8002C25C
-			gte_ldv0(tmpptr);
-
-			gte_rtps();
-
-			((unsigned long*)(&prim->u0))[0] = sp->texinfo[0];
-			ptr[0] = sp->color[0];
-			gte_stsxy(ptr + 1);
-			gte_stsxy(&sp->sxy[point]);
-			//v0 = &sp->sxy[point]
-
-			//v0 = &zval
-			gte_stsz(&zval);
-
-			if (maxz < zval)
-			{
-				maxz = zval;
-			}
-			//loc_8002C2C4
-
-			//v0 = ((short*)prim->x0)[0]
-			//t0 = prim+0xA
-
-			clip_tmp = ((short*)prim->x0)[0] >> 31;
-
-			if (((short*)prim)[5] < 0)
-			{
-				clip_tmp |= 0x2;
-			}
-
-			if (((short*)prim->x0)[0] >= 513)
-			{
-				clip_tmp |= 0x4;
-			}
-
-			if (((short*)prim)[5] >= 241)
-			{
-				clip_tmp |= 0x8;
-			}
-
-			clip &= clip_tmp;
-			point++;
-
-			//t3 += 0xC; 
-			//t8 += 0xC;
-			ptr += 3;
-
+			//loc_8002C7F8
+			return 2;
 		}
-		//loc_8002C308
-		if (!(sp->out[0].z < 160) != !(sp->out[next].z < 160))
-		{
-			//v0 = t6 << 1
-			//v0 += t6
-			//v0 <<= 2
-			//v0 =  sp->out[next].z / (((sp->out[0].z - 0xA0) << 12) - sp->out[next].z);
-			next_point_in_vv = sp->out[0].x - sp->out[next].x;
-			current_point_in_vv = sp->out[next].z / (((sp->out[0].z - 0xA0) << 12) - sp->out[next].z);
-
-			if (current_point_in_vv < 0)
-			{
-				current_point_in_vv = -current_point_in_vv;
-			}
-			//loc_8002C354
-
-			next_point_in_vv = next_point_in_vv * current_point_in_vv;
-
-			interp2 = 4096 - current_point_in_vv;
-
-			if (next_point_in_vv < 4096)
-			{
-				next_point_in_vv = 4095;
-			}
-
-			//loc_8002C36C
-			//v0 = (sp->out[0].x + sp->(next_point_in_vv >> 12)) << 1;
-			next_point_in_vv = ((sp->out[0].x + (next_point_in_vv >> 12)) << 1) + 256;
-
-			if (next_point_in_vv >= 1024)
-			{
-				next_point_in_vv = 1023;
-			}
-			
-			if (next_point_in_vv < -1023)//loc_8002C390
-			{
-				next_point_in_vv = -63;
-			}
-
-			//loc_8002C39C
-
-			((short*)ptr)[-1] = next_point_in_vv;
-
-			//t0 = sp + next
-			//a3 = sp
-
-			MIN((sp->out[next].y - sp->out[0].y) * current_point_in_vv, (sp->out[next].y - sp->out[0].y) + 0xFFF);
-		
-			//loc_8002C3C4
-		}
-		//loc_8002C52C
+		//loc_8002C884
 	}
 	//loc_8002C884
-
-#if 0
-		loc_8002C3C4:
-	sra     $v0, 12
-		addu    $v0, $v1, $v0
-		sll     $v0, 1
-		addiu   $v1, $v0, 0x78  # 'x'
-		slti    $v0, $v1, 0x400
-		bnez    $v0, loc_8002C3E8
-		slti    $v0, $v1, -0x3FF
-		li      $v1, 0x3FF
-		slti    $v0, $v1, -0x3FF
-
-		loc_8002C3E8:
-	beqz    $v0, loc_8002C3F4
-		nop
-		li      $v1, 0xFFFFFC01
-
-		loc_8002C3F4 :
-		sh      $v1, 0($t3)
-		mtc2    $a2, $8
-		addiu   $v0, $s2, 0xB8
-		addu    $v0, $t2, $v0
-		lbu     $t4, 0($v0)
-		lbu     $t5, 1($v0)
-		mtc2    $t4, $9
-		mtc2    $t5, $10
-		nop
-		nop
-		cop2    0x198003D
-		mtc2    $t1, $8
-		sll     $v1, $t6, 2
-		addiu   $v0, $v1, 0xB8
-		addu    $v0, $t2, $v0
-		lbu     $t4, 0($v0)
-		lbu     $t5, 1($v0)
-		mtc2    $t4, $9
-		mtc2    $t5, $10
-		nop
-		nop
-		cop2    0x1A8003E
-		addiu   $v0, $t8, 8
-		mfc2    $t4, $9
-		mfc2    $t5, $10
-		sb      $t4, 0($v0)
-		sb      $t5, 1($v0)
-		mtc2    $a2, $8
-		addiu   $v0, $s2, 0xA8
-		addu    $v0, $t2, $v0
-		lbu     $t4, 0($v0)
-		lbu     $t5, 1($v0)
-		lbu     $t6, 2($v0)
-		mtc2    $t4, $9
-		mtc2    $t5, $10
-		mtc2    $t6, $11
-		nop
-		nop
-		cop2    0x198003D
-		mtc2    $t1, $8
-		addiu   $v1, 0xA8
-		addu    $v1, $t2, $v1
-		lbu     $t4, 0($v1)
-		lbu     $t5, 1($v1)
-		lbu     $t6, 2($v1)
-		mtc2    $t4, $9
-		mtc2    $t5, $10
-		mtc2    $t6, $11
-		nop
-		nop
-		cop2    0x1A8003E
-		mfc2    $t4, $9
-		mfc2    $t5, $10
-		mfc2    $t6, $11
-		sb      $t4, 0($t8)
-		sb      $t5, 1($t8)
-		sb      $t6, 2($t8)
-		sll     $v0, $a1, 2
-		lw      $v1, -2($t3)
-		addu    $v0, $t2
-		sw      $v1, 0xC4($v0)
-		lh      $v0, -2($t3)
-		lh      $a0, 0($t3)
-		nop
-		bgez    $a0, loc_8002C500
-		srl     $v1, $v0, 31
-		ori     $v1, 2
-
-		loc_8002C500:
-	slti    $v0, 0x201
-		bnez    $v0, loc_8002C510
-		slti    $v0, $a0, 0xF1
-		ori     $v1, 4
-
-		loc_8002C510 :
-		bnez    $v0, loc_8002C51C
-		nop
-		ori     $v1, 8
-
-		loc_8002C51C :
-		and $s0, $v1
-		addiu   $a1, 1
-		addiu   $t3, 0xC
-		addiu   $t8, 0xC
-
-		loc_8002C52C :
-		addiu   $s2, 4
-		addiu   $a3, 0xC
-		addiu   $t7, 1
-		slti    $v0, $t7, 3
-		bnez    $v0, loc_8002C1E4
-		addiu   $s1, 4
-		bnez    $s0, loc_8002C884
-		li      $v0, 2
-		sra     $s3, 2
-		slti    $v0, $s3, 0xC00
-		beqz    $v0, loc_8002C7F8
-		nop
-		lw      $s5, 0x18 + arg_2C($sp)
-		nop
-		bnez    $s5, loc_8002C744
-		move    $t7, $zero
-		blez    $a1, loc_8002C614
-		move    $t3, $t7
-		move    $t1, $t2
-		addiu   $t0, $t7, 1
-
-		loc_8002C57C:
-	slt     $v0, $t0, $a1
-		bnez    $v0, loc_8002C590
-		sll     $v0, $t0, 2
-		move    $t0, $zero
-		sll     $v0, $t0, 2
-
-		loc_8002C590 :
-		addu    $v0, $t2, $v0
-		lh      $a0, 0xC4($t1)
-		lh      $v1, 0xC4($v0)
-		nop
-		subu    $v0, $a0, $v1
-		bgez    $v0, loc_8002C5B4
-		slti    $v0, 0x400
-		subu    $v0, $v1, $a0
-		slti    $v0, 0x400
-
-		loc_8002C5B4:
-	beqz    $v0, loc_8002C5F8
-		sll     $v0, $t0, 2
-		addu    $v0, $t2, $v0
-		lh      $a0, 0xC6($t1)
-		lh      $v1, 0xC6($v0)
-		nop
-		subu    $v0, $a0, $v1
-		bltz    $v0, loc_8002C5E8
-		slti    $v0, 0x200
-		beqz    $v0, loc_8002C5F8
-		nop
-		j       loc_8002C604
-		addiu   $t1, 4
-
-		loc_8002C5E8:
-	subu    $v0, $v1, $a0
-		slti    $v0, 0x200
-		bnez    $v0, loc_8002C600
-		nop
-
-		loc_8002C5F8 :
-	j       loc_8002C614
-		li      $t3, 1
-
-		loc_8002C600 :
-		addiu   $t1, 4
-
-		loc_8002C604 :
-		addiu   $t7, 1
-		slt     $v0, $t7, $a1
-		bnez    $v0, loc_8002C57C
-		addiu   $t0, $t7, 1
-
-		loc_8002C614 :
-		bnez    $t3, loc_8002C6AC
-		nop
-		li      $v0, 4
-		bne     $a1, $v0, loc_8002C6A4
-		nop
-		lhu     $v0, 0xD0($t2)
-		lhu     $v1, 0xC8($t2)
-		sll     $v0, 16
-		sra     $a0, $v0, 16
-		sll     $v1, 16
-		sra     $v1, 16
-		subu    $v0, $a0, $v1
-		bgez    $v0, loc_8002C654
-		slti    $v0, 0x400
-		subu    $v0, $v1, $a0
-		slti    $v0, 0x400
-
-		loc_8002C654:
-	beqz    $v0, loc_8002C6A0
-		nop
-		lhu     $v0, 0xD2($t2)
-		lhu     $v1, 0xCA($t2)
-		sll     $v0, 16
-		sra     $a0, $v0, 16
-		sll     $v1, 16
-		sra     $v1, 16
-		subu    $v0, $a0, $v1
-		bltz    $v0, loc_8002C690
-		slti    $v0, 0x200
-		beqz    $v0, loc_8002C6A0
-		nop
-		j       loc_8002C6A4
-		nop
-
-		loc_8002C690 :
-	subu    $v0, $v1, $a0
-		slti    $v0, 0x200
-		bnez    $v0, loc_8002C6A4
-		nop
-
-		loc_8002C6A0 :
-	li      $t3, 1
-
-		loc_8002C6A4 :
-		beqz    $t3, loc_8002C744
-		nop
-
-		loc_8002C6AC :
-	lw      $s6, 0x18 + arg_0($sp)
-		lw      $s7, 0x18 + arg_4($sp)
-		lw      $s5, 0x18 + arg_8($sp)
-		lwc2    $0, 0($s6)
-		lwc2    $1, 4($s6)
-		lwc2    $2, 0($s7)
-		lwc2    $3, 4($s7)
-		lwc2    $4, 0($s5)
-		lwc2    $5, 4($s5)
-		addiu   $a0, $t2, 0xA8
-		lbu     $v0, 0xAB($t2)
-		addiu   $v1, $t2, 0xAC
-		sb      $v0, 0xB3($t2)
-		addiu   $v0, $t2, 0xB0
-		lwc2    $20, 0($a0)
-		lwc2    $21, 0($v1)
-		lwc2    $22, 0($v0)
-		lwc2    $6, 0($v0)
-		lw      $s6, 0x18 + arg_C($sp)
-		nop
-		lw      $v0, 0($s6)
-		nop
-		sw      $v0, 0xC($t9)
-		lw      $s7, 0x18 + arg_10($sp)
-		nop
-		lw      $v0, 0($s7)
-		nop
-		sw      $v0, 0x18($t9)
-		lw      $s5, 0x18 + arg_14($sp)
-		nop
-		lw      $v0, 0($s5)
-		move    $a0, $t9
-		sw      $v0, 0x24($t9)
-		lw      $a1, 0x18 + arg_28($sp)
-		jal     sub_8002C8B4
-		li      $a2, 1
-		j       loc_8002C884
-		li      $v0, 1
-
-		loc_8002C744:
-	lw      $s6, 8($t9)
-		lw      $s7, 0x14($t9)
-		lw      $s5, 0x20($t9)
-		mtc2    $s6, $12
-		mtc2    $s5, $14
-		mtc2    $s7, $13
-		nop
-		nop
-		cop2    0x1400006
-		lhu     $v0, 0xBA($t2)
-		nop
-		sh      $v0, 0xE($t9)
-		lhu     $v0, 0xBE($t2)
-		nop
-		sh      $v0, 0x1A($t9)
-		addiu   $v0, $sp, 0x18 + var_4
-		swc2    $24, 0($v0)
-		lw      $v0, 0x18 + var_4($sp)
-		nop
-		bgtz    $v0, loc_8002C884
-		li      $v0, 4
-		li      $v0, 3
-		bne     $a1, $v0, loc_8002C7F0
-		li      $v0, 4
-		li      $a2, 0xFFFFFF
-		sra     $v0, $fp, 24
-		sll     $a1, $s3, 2
-		sb      $v0, 7($t9)
-		lw      $s6, 0x18 + arg_28($sp)
-		li      $v0, 1
-		addu    $a1, $s6
-		lw      $v1, 0($a1)
-		lui     $a0, 0x900
-		and $v1, $a2
-		or $v1, $a0
-		and $a2, $t9, $a2
-		sw      $v1, 0($t9)
-		sw      $a2, 0($a1)
-		lw      $v1, 4($s4)
-		lw      $a0, 0($s4)
-		j       loc_8002C878
-		addiu   $v1, 0x28  # '('
-
-		loc_8002C7F0:
-	beq     $a1, $v0, loc_8002C800
-		lui     $a2, 0xFF
-
-		loc_8002C7F8 :
-		j       loc_8002C884
-		li      $v0, 2
-
-		loc_8002C800 :
-		li      $a2, 0xFFFFFF
-		sra     $v0, $fp, 24
-		lw      $a3, 0x1C($t9)
-		lw      $t0, 0x20($t9)
-		lw      $t1, 0x24($t9)
-		lw      $v1, 0x28($t9)
-		lw      $a0, 0x2C($t9)
-		lw      $a1, 0x30($t9)
-		ori     $v0, 8
-		sb      $v0, 7($t9)
-		li      $v0, 1
-		sw      $v1, 0x1C($t9)
-		sw      $a0, 0x20($t9)
-		sw      $a1, 0x24($t9)
-		sw      $a3, 0x28($t9)
-		sw      $t0, 0x2C($t9)
-		sw      $t1, 0x30($t9)
-		lw      $s7, 0x18 + arg_28($sp)
-		sll     $a1, $s3, 2
-		addu    $a1, $s7
-		lw      $v1, 0($a1)
-		lui     $a0, 0xC00
-		and $v1, $a2
-		or $v1, $a0
-		and $a2, $t9, $a2
-		sw      $v1, 0($t9)
-		sw      $a2, 0($a1)
-		lw      $v1, 4($s4)
-		lw      $a0, 0($s4)
-		addiu   $v1, 0x34  # '4'
-
-		loc_8002C878:
-	addu    $a0, $v0
-		sw      $v1, 4($s4)
-		sw      $a0, 0($s4)
-
-		loc_8002C884 :
-		lw      $ra, 0x18 + var_s24($sp)
-		lw      $fp, 0x18 + var_s20($sp)
-		lw      $s7, 0x18 + var_s1C($sp)
-		lw      $s6, 0x18 + var_s18($sp)
-		lw      $s5, 0x18 + var_s14($sp)
-		lw      $s4, 0x18 + var_s10($sp)
-		lw      $s3, 0x18 + var_sC($sp)
-		lw      $s2, 0x18 + var_s8($sp)
-		lw      $s1, 0x18 + var_s4($sp)
-		lw      $s0, 0x18 + var_s0($sp)
-		jr      $ra
-		addiu   $sp, 0x40
-#endif
-
-	return 0;
+	return 2;
 }
 
 long* DRAW_Zclip_subdiv(POLY_GT3* texture, unsigned long** ot, int ndiv)
@@ -1070,9 +1088,14 @@ long* DRAW_Zclip_subdiv(POLY_GT3* texture, unsigned long** ot, int ndiv)
 	
 	gte_strgb3(&sp->color0, &sp->color1, &sp->color2);
 	
-	gte_ldv0(&sp->vertex0);
-	gte_ldv1(&sp->vertex1);
-	gte_ldv2(&sp->vertex2);
+	((int*)&sp->vertex0)[0] = ((int*)&VX0)[0];
+	((int*)&sp->vertex0)[1] = ((int*)&VZ0)[0];
+
+	((int*)&sp->vertex1)[0] = ((int*)&VX1)[0];
+	((int*)&sp->vertex1)[1] = ((int*)&VZ1)[0];
+
+	((int*)&sp->vertex2)[0] = ((int*)&VX2)[0];
+	((int*)&sp->vertex2)[1] = ((int*)&VZ2)[0];
 
 	primPool = gameTrackerX.primPool;
 
@@ -1085,37 +1108,37 @@ long* DRAW_Zclip_subdiv(POLY_GT3* texture, unsigned long** ot, int ndiv)
 	((int*)&sp->face_v2.vz)[0] = ((int*)&sp->vertex2.z)[0];
 	((int*)&sp->face_v0.vx)[0] = ((int*)&sp->vertex0.x)[0];
 
-	sp->face_v01.vx = ((sp->face_v0.vx + sp->face_v1.vx) + ((sp->face_v0.vx + sp->face_v1.vx) >> 31) >> 1);
-	sp->face_v01.vy = ((sp->face_v0.vy + sp->face_v1.vy) + ((sp->face_v0.vy + sp->face_v1.vy) >> 31) >> 1);
-	sp->face_v01.vz = ((sp->face_v0.vz + sp->face_v1.vz) + ((sp->face_v0.vz + sp->face_v1.vz) >> 31) >> 1);
+	sp->face_v01.vx = (((unsigned int)sp->face_v1.vx + (unsigned int)sp->face_v0.vx) + (((unsigned int)sp->face_v1.vx + (unsigned int)sp->face_v0.vx) >> 31) >> 1);
+	sp->face_v01.vy = (((unsigned int)sp->face_v1.vy + (unsigned int)sp->face_v0.vy) + (((unsigned int)sp->face_v1.vy + (unsigned int)sp->face_v0.vy) >> 31) >> 1);
+	sp->face_v01.vz = (((unsigned int)sp->face_v1.vz + (unsigned int)sp->face_v0.vz) + (((unsigned int)sp->face_v1.vz + (unsigned int)sp->face_v0.vz) >> 31) >> 1);
 
-	sp->face_v12.vx = ((sp->face_v1.vx + sp->face_v2.vx) + ((sp->face_v1.vx + sp->face_v2.vx) >> 31) >> 1);
-	sp->face_v12.vy = ((sp->face_v1.vy + sp->face_v2.vy) + ((sp->face_v1.vy + sp->face_v2.vy) >> 31) >> 1);
-	sp->face_v12.vz = ((sp->face_v1.vz + sp->face_v2.vz) + ((sp->face_v1.vz + sp->face_v2.vz) >> 31) >> 1);
+	sp->face_v12.vx = (((unsigned int)sp->face_v2.vx + (unsigned int)sp->face_v1.vx) + (((unsigned int)sp->face_v2.vx + (unsigned int)sp->face_v1.vx) >> 31) >> 1);
+	sp->face_v12.vy = (((unsigned int)sp->face_v2.vy + (unsigned int)sp->face_v1.vy) + (((unsigned int)sp->face_v2.vy + (unsigned int)sp->face_v1.vy) >> 31) >> 1);
+	sp->face_v12.vz = (((unsigned int)sp->face_v2.vz + (unsigned int)sp->face_v1.vz) + (((unsigned int)sp->face_v2.vz + (unsigned int)sp->face_v1.vz) >> 31) >> 1);
 
-	sp->face_v20.vx = ((sp->face_v2.vx + sp->face_v0.vx) + ((sp->face_v2.vx + sp->face_v0.vx) >> 31) >> 1);
-	sp->face_v20.vy = ((sp->face_v2.vy + sp->face_v0.vy) + ((sp->face_v2.vy + sp->face_v0.vy) >> 31) >> 1);
-	sp->face_v20.vz = ((sp->face_v2.vz + sp->face_v0.vz) + ((sp->face_v2.vz + sp->face_v0.vz) >> 31) >> 1);
+	sp->face_v20.vx = (((unsigned int)sp->face_v0.vx + (unsigned int)sp->face_v2.vx) + (((unsigned int)sp->face_v0.vx + (unsigned int)sp->face_v2.vx) >> 31) >> 1);
+	sp->face_v20.vy = (((unsigned int)sp->face_v0.vy + (unsigned int)sp->face_v2.vy) + (((unsigned int)sp->face_v0.vy + (unsigned int)sp->face_v2.vy) >> 31) >> 1);
+	sp->face_v20.vz = (((unsigned int)sp->face_v0.vz + (unsigned int)sp->face_v2.vz) + (((unsigned int)sp->face_v0.vz + (unsigned int)sp->face_v2.vz) >> 31) >> 1);
 
-	((int*)&sp->face_uv0)[0] = ((int*)texture)[3];
-	((int*)&sp->face_uv1)[0] = ((int*)texture)[6];
+	((int*)&sp->face_uv0)[0] = ((int*)texture)[4];
+	((int*)&sp->face_uv1)[0] = ((int*)texture)[7];
+	((int*)&sp->face_uv2)[0] = ((int*)texture)[10];
 	
 	sp->face_uv01.u = (sp->face_uv0.u + sp->face_uv1.u) >> 1;
 	sp->face_uv12.pad = sp->face_uv1.pad;
 	sp->face_uv01.pad = sp->face_uv1.pad;
 	sp->face_uv01.v = (sp->face_uv0.v + sp->face_uv1.v) >> 1;
-	sp->face_uv2.v = (sp->face_uv1.u + sp->face_uv2.v) >> 1;
+	sp->face_uv12.u = (sp->face_uv1.u + sp->face_uv2.u) >> 1;
 	sp->face_uv12.v = (sp->face_uv1.v + sp->face_uv2.v) >> 1;
-	sp->face_uv20.u = (sp->face_uv2.v + sp->face_uv0.v) >> 1;
+	sp->face_uv20.u = (sp->face_uv2.u + sp->face_uv0.u) >> 1;
 	sp->face_uv20.v = (sp->face_uv2.v + sp->face_uv0.v) >> 1;
-	
 	sp->face_uv20.pad = sp->face_uv0.pad;
 	
 	sp->color01.r = (sp->color0.r + sp->color1.r) >> 1;
 	sp->color01.g = (sp->color0.g + sp->color1.g) >> 1;
 	sp->color01.b = (sp->color0.b + sp->color1.b) >> 1;
 	
-	sp->color12.r = (sp->color0.b + sp->color1.b) >> 1;
+	sp->color12.r = (sp->color1.r + sp->color2.r) >> 1;
 	sp->color12.g = (sp->color1.g + sp->color2.g) >> 1;
 	sp->color12.b = (sp->color1.b + sp->color2.b) >> 1;
 	
@@ -1123,18 +1146,18 @@ long* DRAW_Zclip_subdiv(POLY_GT3* texture, unsigned long** ot, int ndiv)
 	sp->color20.g = (sp->color2.g + sp->color0.g) >> 1;
 	sp->color20.b = (sp->color2.b + sp->color0.b) >> 1;
 
-	sp->color12.code = sp->color0.code;
+	sp->color20.code = sp->color0.code;
 	sp->color01.code = sp->color0.code;
 
 	clip = DRAW_DisplayTFace_zclipped_C(&sp->face_v0, &sp->face_v01, &sp->face_v20, &sp->face_uv0, &sp->face_uv01, &sp->face_uv20, ((long*)&sp->color0)[0], ((long*)&sp->color01)[0], ((long*)&sp->color20)[0], primPool, ot, ndiv);
-	clip |= DRAW_DisplayTFace_zclipped_C(&sp->face_v20, &sp->face_v12, &sp->face_v2, &sp->face_uv20, &sp->face_uv12, &sp->face_uv2, ((long*)&sp->color0)[0], ((long*)&sp->color12)[0], ((long*)&sp->color2)[0], primPool, ot, ndiv);
+	clip |= DRAW_DisplayTFace_zclipped_C(&sp->face_v20, &sp->face_v12, &sp->face_v2, &sp->face_uv20, &sp->face_uv12, &sp->face_uv2, ((long*)&sp->color20)[0], ((long*)&sp->color12)[0], ((long*)&sp->color2)[0], primPool, ot, ndiv);
 	
 	sp->face_uv01.pad = sp->face_uv0.pad;
 	sp->face_uv20.pad = sp->face_uv1.pad;
 	
 	clip |= DRAW_DisplayTFace_zclipped_C(&sp->face_v01, &sp->face_v12, &sp->face_v20, &sp->face_uv01, &sp->face_uv12, &sp->face_uv20, ((long*)&sp->color01)[0], ((long*)&sp->color12)[0], ((long*)&sp->color20)[0], primPool, ot, ndiv);
 	clip |= DRAW_DisplayTFace_zclipped_C(&sp->face_v01, &sp->face_v1, &sp->face_v12, &sp->face_uv01, &sp->face_uv1, &sp->face_uv12, ((long*)&sp->color01)[0], ((long*)&sp->color1)[0], ((long*)&sp->color12)[0], primPool, ot, ndiv);
-
+	
 	if ((clip & 0x5) != 0x4)
 	{
 		return (long*)primPool->nextPrim;
