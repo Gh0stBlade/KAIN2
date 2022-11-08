@@ -108,7 +108,7 @@ extern void do_super_subdiv() ; // 0x80025A58
 
 extern void super_clip() ; // 0x80025AC4
 
-extern long DRAW_DisplayTFace_S(unsigned long** pNextPrim, unsigned long** drawot, int s2, unsigned long* t4, int t1, int t2, int t3); // 0x80025ACC
+extern long DRAW_DisplayTFace_S(unsigned long** pNextPrim, unsigned long** drawot, int s2, unsigned long* t4, int t1, int t2, int t3, int t6, struct _TVertex* a2); // 0x80025ACC
 
 extern unsigned long* DRAW_DisplaySubdivPolytope_S(struct _BSPNode** polytope, struct _Terrain* terrain, unsigned long* pNextPrim, unsigned long** drawot); // 0x8002629C
 

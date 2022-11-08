@@ -2073,9 +2073,9 @@ void super_clip()
 }
 
 
-long DRAW_DisplayTFace_S(unsigned long** pNextPrim, unsigned long** drawot, int s2, unsigned long* t4, int t1, int t2, int t3)
+long DRAW_DisplayTFace_S(unsigned long** pNextPrim, unsigned long** drawot, int s2, unsigned long* t4, int t1, int t2, int t3, int t6, struct _TVertex* a2)
 { 
-	int a2 = 0;
+	int a22 = 0;
 	int t8 = FLAG;
 
 	gte_nclip();
@@ -2094,8 +2094,6 @@ long DRAW_DisplayTFace_S(unsigned long** pNextPrim, unsigned long** drawot, int 
 	v0 = t5 & v0;
 	v0 = t9 & v0;
 	a0 = (unsigned int)t7 - (unsigned int)a0;
-
-	int t6 = 0;
 
 	if (v0 == 0)
 	{
@@ -2130,12 +2128,12 @@ long DRAW_DisplayTFace_S(unsigned long** pNextPrim, unsigned long** drawot, int 
 					}
 
 					v0 = ((char*)t4)[200];
-					a2 = t5 & 0xFFFC;
+					a22 = t5 & 0xFFFC;
 					v0 <<= 4;
 
 					a2 += v0;
 
-					if (a2 < 12288 && a2 >= 160)
+					if (a22 < 12288 && a22 >= 160)
 					{
 						t5 = SXY0;
 						t7 = SXY1;
@@ -2143,7 +2141,7 @@ long DRAW_DisplayTFace_S(unsigned long** pNextPrim, unsigned long** drawot, int 
 
 						gte_dpct();
 
-						unsigned long* a00 = drawot[(a2 / 4) * 2];
+						unsigned long* a00 = drawot[(a22 / 4) * 2];
 
 						v0 = t5 >> 16;
 						v1 = t7 >> 16;
@@ -2273,11 +2271,26 @@ do_super_subdiv:
 	t4[58] = t3;
 	t4[59] = t6;
 	t4[60] = 0xFFFFFF;
-	t4[61] = a2;
+	t4[61] = (unsigned long)a2;
 
-	DRAW_Zclip_subdiv((POLY_GT3*)pNextPrim[0], drawot, 0);
+	long* ret = DRAW_Zclip_subdiv((POLY_GT3*)pNextPrim[0], drawot, 0);
 
-	return 0;
+	pNextPrim[0] = (unsigned long*)t4[55];
+	t1 = t4[56];
+	t2 = t4[57];
+	t3 = t4[58];
+	t6 = t4[59];
+	//a1 = t4[60];
+	a2 = (struct _TVertex*)t4[61];
+
+	if (ret != NULL)
+	{
+		pNextPrim[0] = (unsigned long*)ret;
+
+		return 0;
+	}
+
+	return 1;
 }
 
 
@@ -3530,10 +3543,7 @@ subdiv_begin:
 		//rgb0code
 		gteRegs.CP2D.p[6].sd = t7;
 		
-		UNIMPLEMENTED();
-		return pNextPrim;
-
-		if (DRAW_DisplayTFace_S(&pNextPrim, drawot, s2, t4, t1, t2, t3) <= 0)
+		if (DRAW_DisplayTFace_S(&pNextPrim, drawot, s2, t4, t1, t2, t3, t6, a22) <= 0)
 		{
 			gte_ldv0(&t4[20]);
 			gte_ldv1(&t4[18]);
@@ -3558,7 +3568,7 @@ subdiv_begin:
 			//rgb0code
 			gteRegs.CP2D.p[6].sd = t7;
 
-			if (DRAW_DisplayTFace_S(&pNextPrim, drawot, s2, t4, t1, t2, t3) <= 0)
+			if (DRAW_DisplayTFace_S(&pNextPrim, drawot, s2, t4, t1, t2, t3, t6, a22) <= 0)
 			{
 				((short*)t4)[51] = ((short*)t4)[45];
 				((short*)t4)[55] = ((short*)t4)[47];
@@ -3586,7 +3596,7 @@ subdiv_begin:
 				//rgb0code
 				gteRegs.CP2D.p[6].sd = t7;
 
-				if(DRAW_DisplayTFace_S(&pNextPrim, drawot, s2, t4, t1, t2, t3) <= 0)
+				if(DRAW_DisplayTFace_S(&pNextPrim, drawot, s2, t4, t1, t2, t3, t6, a22) <= 0)
 				{
 					gte_ldv0(&t4[16]);
 					gte_ldv1(&t4[12]);
@@ -3611,10 +3621,10 @@ subdiv_begin:
 					//rgb0code
 					gteRegs.CP2D.p[6].sd = t7;
 
-					if (DRAW_DisplayTFace_S(&pNextPrim, drawot, s2, t4, t1, t2, t3) <= 0)
-					{
-						s2 = 0x80000000;
+					s2 = 0x80000000;///@CHECKME
 
+					if (DRAW_DisplayTFace_S(&pNextPrim, drawot, s2, t4, t1, t2, t3, t6, a22) <= 0)
+					{
 						((char*)t4)[200]++;
 
 						s2 = 0x66000;
@@ -3641,7 +3651,7 @@ subdiv_begin:
 
 						gteRegs.CP2D.p[6].sd = t7;
 
-						DRAW_DisplayTFace_S(&pNextPrim, drawot, s2, t4, t1, t2, t3);
+						DRAW_DisplayTFace_S(&pNextPrim, drawot, s2, t4, t1, t2, t3, t6, a22);
 
 						//
 						((short*)t4)[53] = ((short*)t4)[45];
@@ -3668,7 +3678,7 @@ subdiv_begin:
 
 						gteRegs.CP2D.p[6].sd = t7;
 
-						DRAW_DisplayTFace_S(&pNextPrim, drawot, s2, t4, t1, t2, t3);
+						DRAW_DisplayTFace_S(&pNextPrim, drawot, s2, t4, t1, t2, t3, t6, a22);
 						//
 						gte_ldv0(&t4[10]);
 						gte_ldv1(&t4[20]);
@@ -3692,7 +3702,7 @@ subdiv_begin:
 
 						gteRegs.CP2D.p[6].sd = t7;
 
-						DRAW_DisplayTFace_S(&pNextPrim, drawot, s2, t4, t1, t2, t3);
+						DRAW_DisplayTFace_S(&pNextPrim, drawot, s2, t4, t1, t2, t3, t6, a22);
 					}
 				}
 			}
