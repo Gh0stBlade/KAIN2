@@ -196,6 +196,8 @@ short ecostable[3072] = {
   (short)0xf005,(short)0xf005,(short)0xf004,(short)0xf004,(short)0xf004,(short)0xf004,(short)0xf003,(short)0xf003,(short)0xf003,(short)0xf003,(short)0xf002,(short)0xf002,(short)0xf002,(short)0xf002,(short)0xf002,(short)0xf001,
   (short)0xf001,(short)0xf001,(short)0xf001,(short)0xf001,(short)0xf001,(short)0xf001,(short)0xf000,(short)0xf000,(short)0xf000,(short)0xf000,(short)0xf000,(short)0xf000,(short)0xf000,(short)0xf000,(short)0xf000,(short)0xf000 };
 
+
+///@FIXME this function produces bad leaves.
 void BSP_MarkVisibleLeaves_S(struct BSPTree* bsp, struct Camera* camera, struct _PolytopeList* polytopeList, unsigned long** drawot, int curTree, struct _Instance* savedLightInstance, struct _Terrain* terrain, struct GameTracker* gameTracker, struct _StreamUnit* currentUnit)
 {
 	//fp = drawot
@@ -227,8 +229,8 @@ void BSP_MarkVisibleLeaves_S(struct BSPTree* bsp, struct Camera* camera, struct 
 	//s6 = camera
 	//fp = polytopeList
 
-	unsigned long* s0 = &getScratchAddr(48)[0];
-	s0[0] = (unsigned long)getScratchAddr(48);
+	unsigned long* s0 = getScratchAddr(48);
+	s0[0] = (unsigned long)s0;
 
 	unsigned long* s7 = (unsigned long*)&polytopeList->polytope;
 
@@ -258,14 +260,14 @@ void BSP_MarkVisibleLeaves_S(struct BSPTree* bsp, struct Camera* camera, struct 
 	gte_SetRotMatrix(getScratchAddr(0));
 	gte_ldv0(&camera->core.position);///@FIXME not inited/updated so this code fails!!
 	gte_rtv0();
-	gte_stlvnl(&getScratchAddr(0)[24]);
+	gte_stlvnl(getScratchAddr(24));
 
-	gte_ldsvrtrow0(&getScratchAddr(0)[8]);
-	gte_ldsvrtrow1(&getScratchAddr(0)[8]);
+	gte_ldsvrtrow0(getScratchAddr(8));
+	gte_ldsvrtrow1(getScratchAddr(10));
 	gte_rtv0();
 
-	gte_stmac(&getScratchAddr(0)[27], 1);
-	gte_stmac(&getScratchAddr(0)[28], 2);
+	gte_stmac(getScratchAddr(27), 1);
+	gte_stmac(getScratchAddr(28), 2);
 
 	((short*)getScratchAddr(0))[32] = camera->core.position.x;
 	((short*)getScratchAddr(0))[33] = camera->core.position.y;
@@ -349,7 +351,7 @@ void BSP_MarkVisibleLeaves_S(struct BSPTree* bsp, struct Camera* camera, struct 
 	//loc_80079794
 	do
 	{
-		s0--;//WATCH_ME
+		s0--;
 
 		gte_ldv0(&bspRoot->sphere.position.x);
 
@@ -365,9 +367,6 @@ void BSP_MarkVisibleLeaves_S(struct BSPTree* bsp, struct Camera* camera, struct 
 		VECTOR v;//t1, t2, t3
 		gte_stlvnl(&v);
 
-		///@TODO tomorrow debug these values in the if statements to see if they match the psx version.
-		///Something suspicious going on with this.
-	
 		if (t0 < (v.vx - (int)getScratchAddr(0)[24]))
 		{
 			if (t0 < v.vy - (int)getScratchAddr(0)[25])
@@ -379,8 +378,8 @@ void BSP_MarkVisibleLeaves_S(struct BSPTree* bsp, struct Camera* camera, struct 
 					v1.vy = getScratchAddr(0)[9];
 					v1.vz = getScratchAddr(0)[10];
 
-					gte_ldsvrtrow0(&v1);
-					gte_ldsvrtrow1(&v1);
+					gte_ldsvrtrow0(&v1.vx);
+					gte_ldsvrtrow1(&v1.vz);
 
 					gte_rtv0();
 
@@ -415,8 +414,6 @@ void BSP_MarkVisibleLeaves_S(struct BSPTree* bsp, struct Camera* camera, struct 
 
 							gte_ldv0(&bspRoot->a);
 
-							//v0 = bsp->bspRoot->d
-
 							gte_rtv0();
 
 							t5 = t4 >> 16;
@@ -430,6 +427,8 @@ void BSP_MarkVisibleLeaves_S(struct BSPTree* bsp, struct Camera* camera, struct 
 							gte_stlvnl(&v2);
 
 							t1 = v2.vx - bspRoot->d;
+							t2 = v2.vy;
+							t3 = v2.vz;
 
 							if (t1 >= 0)
 							{
@@ -440,21 +439,15 @@ void BSP_MarkVisibleLeaves_S(struct BSPTree* bsp, struct Camera* camera, struct 
 									if (t4 < t1 && t4 < t2 - t0 && t4 < t3 - t0)
 									{
 										gte_ldsvrtrow0(&getScratchAddr(0)[29]);
-										gte_ldsvrtrow1(&getScratchAddr(0)[29]);
+										gte_ldsvrtrow1(&getScratchAddr(0)[31]);
 
 										gte_rtv0();
 
 										gte_stmac(&t1, 1);
 										gte_stmac(&t2, 2);
 
-										if (t4 < t1 - t0 && t4 < t2 - t0)
+										if (t4 < t1 - t0 || t4 >= t2 - t0)
 										{
-											s0[1] = (unsigned long)t9;
-											s0++;
-										}
-										else
-										{
-											//loc_80079960
 											s0[1] = (unsigned long)t9;
 											s0++;
 										}
@@ -482,7 +475,7 @@ void BSP_MarkVisibleLeaves_S(struct BSPTree* bsp, struct Camera* camera, struct 
 											if (t1 < t5 && t2 - t0 < t5 && t3 - t0 < t5)
 											{
 												gte_ldsvrtrow0(&getScratchAddr(0)[29]);
-												gte_ldsvrtrow1(&getScratchAddr(0)[29]);
+												gte_ldsvrtrow1(&getScratchAddr(0)[31]);
 
 												gte_rtv0();
 
@@ -522,7 +515,6 @@ void BSP_MarkVisibleLeaves_S(struct BSPTree* bsp, struct Camera* camera, struct 
 									//loc_80079A14
 								}
 								//loc_80079A14
-
 							}
 							else
 							{
@@ -533,14 +525,14 @@ void BSP_MarkVisibleLeaves_S(struct BSPTree* bsp, struct Camera* camera, struct 
 									if (t1 < t5 && t2 - t0 < t5 && t3 - t0 < t5)
 									{
 										gte_ldsvrtrow0(&getScratchAddr(0)[29]);
-										gte_ldsvrtrow1(&getScratchAddr(0)[29]);
+										gte_ldsvrtrow1(&getScratchAddr(0)[31]);
 
 										gte_rtv0();
 
 										gte_stmac(&t1, 1);
 										gte_stmac(&t2, 2);
 
-										if (t1 - t0 >= t5 && t2 - t0 >= t5)
+										if (t1 - t0 >= t5 || t2 - t0 >= t5)
 										{
 											s0[1] = (unsigned long)a3;
 											s0++;
@@ -569,7 +561,6 @@ void BSP_MarkVisibleLeaves_S(struct BSPTree* bsp, struct Camera* camera, struct 
 									//loc_80079A14
 								}
 							}
-
 						}
 						else
 						{
@@ -591,8 +582,6 @@ void BSP_MarkVisibleLeaves_S(struct BSPTree* bsp, struct Camera* camera, struct 
 	int test = ((char*)s7 - (char*)polytopeList);
 
 	polytopeList->numPolytopes = (((char*)s7 - (char*)polytopeList) - 4) >> 2;
-
-	//t0 = &getScratchAddr(0); //Maybe for caller don't delete!
 }
 
 void G2Quat_ToMatrix_S(struct _G2Quat_Type* quat, struct _G2Matrix_Type* matrix)
