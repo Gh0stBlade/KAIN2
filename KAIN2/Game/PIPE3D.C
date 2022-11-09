@@ -112,14 +112,14 @@ void PIPE3D_CalculateWCTransform(struct _CameraCore_Type *cameraCore)
 
 	gte_SetRotMatrix(cam_wcTrans);
 	gte_ldv0(&v0);
-	gte_mvmva(1, 0, 0, 3, 0);
+	gte_rtv0();
 	gte_stlvnl(&v1);
 
 	TransMatrix(cam_wcTrans, &v1);
 
 	gte_SetRotMatrix(cameraCore->wcTransform2);
 	gte_ldv0(&v0);
-	gte_mvmva(1, 0, 0, 3, 0);
+	gte_rtv0();
 	gte_stlvnl(&v1);
 
 	TransMatrix(cameraCore->wcTransform2, &v1);
