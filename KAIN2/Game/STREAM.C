@@ -2341,7 +2341,7 @@ void RelocateSFXMarkers(struct _SFXMkr* sfxMkrList, int numSFXMkrs, struct _SVec
 	oy = offset->y;
 	oz = offset->z;
 
-	for (i = numSFXMkrs; i != 0; i--)
+	for (i = 0; i != numSFXMkrs; i++)
 	{
 		sfxMkrList[i].pos.x += ox;
 		sfxMkrList[i].pos.y += oy;
