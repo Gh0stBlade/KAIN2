@@ -1386,13 +1386,13 @@ void GAMELOOP_DisplayFrame(struct GameTracker* gameTracker)
 		}
 
 		numportals = ((int*)mainLevel->terrain->StreamUnits)[0];
-		streamPortal = (struct StreamUnitPortal*)((int*)mainLevel->terrain->StreamUnits + 1);
+		streamPortal = (struct StreamUnitPortal*)((char*)mainLevel->terrain->StreamUnits + 0x4);
 
 		if (numportals > 0)
 		{
 			for (d = 0; d < numportals; d++, streamPortal++)
 			{
-				toStreamUnit = (struct _StreamUnit*)((int*)mainLevel->terrain->StreamUnits + 11)[0];
+				toStreamUnit = streamPortal->toStreamUnit;
 				toStreamUnitID = ((int*)mainLevel->terrain->StreamUnits + 6)[0];
 				
 				if (toStreamUnit == NULL || toStreamUnit->FrameCount != gameTrackerX.displayFrameCount)
@@ -1451,27 +1451,16 @@ void GAMELOOP_DisplayFrame(struct GameTracker* gameTracker)
 						}
 						
 						theCamera.core.leftX = v1 >> 9;
-
-						v0 = ((cliprect.x << 2) + cliprect.x) << 6;///@MACRO
-						if (v1 < 0)
-						{
-							v1 += SCREEN_WIDTH - 1;
-						}
-		
-						theCamera.core.leftX = v1 >> 9;
-
-						v0 = cliprect.x + cliprect.w;
-
-						v1 = (((v0 << 2) + v0) << 6);
-
 						theCamera.core.topY = cliprect.y;
 
-						if (v1 < 0)
+						v0 = (((cliprect.x + cliprect.w) << 2) + (cliprect.x + cliprect.w)) << 6;///@MACRO
+						if (v0 < 0)
 						{
-							v1 += SCREEN_WIDTH - 1;
+							v0 += SCREEN_WIDTH - 1;
 						}
+		
+						theCamera.core.rightX = v0 >> 9;
 
-						theCamera.core.rightX = v1 >> 9;
 						theCamera.core.bottomY = cliprect.y + cliprect.h;
 
 						CAMERA_SetViewVolume(&theCamera);
