@@ -3438,7 +3438,7 @@ int AddVertex(VECTOR* v0, PSX_RECT* rect)
 	return -1;
 }
 
-int GetPlaneDist(int k, int j, int i, VECTOR *v)
+int GetPlaneDist(int k, int j, int i, VECTOR* v)//Matching - 100%
 {
 	return (((v->vx >> 12) - (theCamera.core.position.x << 4)) * theCamera.core.vvNormalWorVecMat[k].m[j][0]) + 
 		   (((v->vy >> 12) - (theCamera.core.position.y << 4)) * theCamera.core.vvNormalWorVecMat[k].m[j][1]) + 
@@ -3538,6 +3538,8 @@ int AddClippedTri(SVECTOR* iv, PSX_RECT* cliprect, int *minz)
 						newnumvert++;
 
 						CalcVert(&dst[l + 1], &src[l_1], &src[l], clip1, clip0, k, j);
+					
+						newnumvert++;
 					}
 					else
 					{
@@ -3545,6 +3547,8 @@ int AddClippedTri(SVECTOR* iv, PSX_RECT* cliprect, int *minz)
 						dst[l].vy = src[l].vy;
 						dst[l].vz = src[l].vz;
 						dst[l].pad = src[l].pad;
+
+						newnumvert++;
 					}
 				}
 				else
@@ -3552,10 +3556,11 @@ int AddClippedTri(SVECTOR* iv, PSX_RECT* cliprect, int *minz)
 					if (clip1 > 0)
 					{
 						CalcVert(&dst[l], &src[l], &src[l_1], clip0, clip1, k, j);
+
+						newnumvert++;
 					}
 				}
 
-				newnumvert++;
 				clip0 = clip1;
 				l++;
 				l_1++;
