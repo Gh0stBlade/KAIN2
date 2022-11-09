@@ -2667,7 +2667,7 @@ void GAMELOOP_Process(struct GameTracker* gameTracker)
 		
 			CAMERA_Process(&theCamera);
 			PIPE3D_CalculateWCTransform(&theCamera.core);
-			theCamera.core.wcTransform->t[0] = 0;
+			//theCamera.core.wcTransform2->t[0] = 0;//? padding?
 			PIPE3D_InvertTransform(theCamera.core.cwTransform2, theCamera.core.wcTransform2);
 			CAMERA_CalcVVClipInfo(&theCamera);
 
