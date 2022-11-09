@@ -1007,7 +1007,7 @@ void STREAM_ConnectStream(struct _StreamUnit* streamUnit)
 				numportals = ((long*)mainUnit->level->terrain->StreamUnits)[0];
 				streamPortal = (struct StreamUnitPortal*)((long*)mainUnit->level->terrain->StreamUnits + 1);
 
-				for (i = 0; i < numportals; i++)
+				for (i = 0; i < numportals; i++, streamPortal++)
 				{
 					if (signalID == streamPortal[i].MSignalID)
 					{
