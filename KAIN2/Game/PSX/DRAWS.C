@@ -2157,57 +2157,55 @@ long DRAW_DisplayTFace_S(unsigned long** pNextPrim, unsigned long** drawot, int 
 						}
 
 						t5 <<= 16;
+						t7 <<= 16;
 
 						if (t8 >= 512)
 						{
 							goto do_super_subdiv;
 						}
 
-						t7 <<= 16;
+						t9 <<= 16;
 
 						if (v1 < -511)
 						{
 							goto do_super_subdiv;
 						}
 
-						t9 <<= 16;
+						t5 >>= 16;
 
 						if (v1 >= 512)
 						{
 							goto do_super_subdiv;
 						}
 
-						t5 >>= 16;
+						t7 >>= 16;
 
 						if (t6 < -511)
 						{
 							goto do_super_subdiv;
 						}
 
-						t7 >>= 16;
+						t9 >>= 16;
 
 						if (t6 >= 512)
 						{
 							goto do_super_subdiv;
 						}
 
-						t9 >>= 16;
-
 						t8 = t5 - t7;
+						v1 = t5 - t9;
 
 						if (t8 < -1023)
 						{
 							goto do_super_subdiv;
 						}
 
-						v1 = t5 - t9;
+						t6 = t9 - t7;
 
 						if (t8 >= 1024)
 						{
 							goto do_super_subdiv;
 						}
-
-						t6 = t9 - t7;
 
 						if (v1 < -1023)
 						{
@@ -2244,12 +2242,12 @@ long DRAW_DisplayTFace_S(unsigned long** pNextPrim, unsigned long** drawot, int 
 
 					}
 					//locret_80025FF8
-					return v0 & 0;
+					return 0;
 				}
 				else
 				{
 					//locret_80026000
-					return 0 ^ 1;
+					return 1;
 				}
 			}
 			else
@@ -2259,10 +2257,10 @@ long DRAW_DisplayTFace_S(unsigned long** pNextPrim, unsigned long** drawot, int 
 			}
 		}
 		//locret_80025FF8
-		return v0 & 0;
+		return 0;
 	}
 	//locret_80025FF8
-	return v0 & 0;
+	return 0;
 
 do_super_subdiv:
 	t4[55] = (unsigned long)pNextPrim[0];
@@ -2273,7 +2271,7 @@ do_super_subdiv:
 	t4[60] = 0xFFFFFF;
 	t4[61] = (unsigned long)a2;
 
-	long* ret = DRAW_Zclip_subdiv((POLY_GT3*)pNextPrim[0], drawot, 0);
+	long* ret = NULL;// DRAW_Zclip_subdiv((POLY_GT3*)pNextPrim[0], drawot, 0);
 
 	pNextPrim[0] = (unsigned long*)t4[55];
 	t1 = t4[56];
@@ -3621,7 +3619,7 @@ subdiv_begin:
 					//rgb0code
 					gteRegs.CP2D.p[6].sd = t7;
 
-					s2 = 0x80000000;///@CHECKME
+					s2 = 0x80000000;
 
 					if (DRAW_DisplayTFace_S(&pNextPrim, drawot, s2, t4, t1, t2, t3, t6, a22) <= 0)
 					{
@@ -3716,15 +3714,16 @@ subdiv_begin:
 		}
 		else
 		{
-			return pNextPrim;
+			goto end_of_polytope;
 		}
-
 	}
 	else
 	{
 		//loc_800260EC
 		goto not_liquid_26;
 	}
+
+end_of_polytope:
 
 	return pNextPrim;
 }
