@@ -518,9 +518,8 @@ int DRAW_DisplayTFace_zclipped_C(SVECTOR* vertex0, SVECTOR* vertex1, SVECTOR* ve
 
 	point = 0;
 	//v0 = 2
-	if (sp->out[0].z >= 160 && sp->out[1].z >= 160 && sp->out[2].z >= 160)
+	if (sp->out[0].z >= 160 || sp->out[1].z >= 160 || sp->out[2].z >= 160)
 	{
-		return 0;//Disabled this is causing bad polys for now.
 		point = 0;
 
 		//loc_8002C188
@@ -553,7 +552,7 @@ int DRAW_DisplayTFace_zclipped_C(SVECTOR* vertex0, SVECTOR* vertex1, SVECTOR* ve
 
 		//v0 = color1
 
-		ptr = (long*)&prim->r0;
+		ptr = (long*)&prim->y0;
 
 		sp->color[1] = color1;
 
@@ -582,6 +581,11 @@ int DRAW_DisplayTFace_zclipped_C(SVECTOR* vertex0, SVECTOR* vertex1, SVECTOR* ve
 			current_point_in_vv = (sp->out[n].z < 0xA0) ^ 1;
 			next_point_in_vv = (sp->out[next].z < 0xA0) ^ 1;
 
+			if (sp->out[n].z <= 0xA0)
+			{
+				int testing = 0;
+				testing++;
+			}
 			//v0 = 1
 			if (current_point_in_vv != 0)
 			{
@@ -607,16 +611,14 @@ int DRAW_DisplayTFace_zclipped_C(SVECTOR* vertex0, SVECTOR* vertex1, SVECTOR* ve
 
 				//v0 = sp->texinfo[0]
 
-				*(long*)&prim->u0 = sp->texinfo[n];
+				((long*)&((short*)ptr)[1])[0] = sp->texinfo[n];
 
 				//v0 = sp->color[0];
-				ptr[0] = sp->color[n];
+				((long*)&((short*)ptr)[-3])[0] = sp->color[n];
 
-				tmpptr = (SVECTOR*)(ptr + 1);
+				tmpptr = (SVECTOR*)((short*)ptr - 1);
 
 				gte_stsxy(tmpptr);
-
-				ptr = (long*)&prim->y0;
 
 				gte_stsxy(&sp->sxy[point]);
 
@@ -630,22 +632,22 @@ int DRAW_DisplayTFace_zclipped_C(SVECTOR* vertex0, SVECTOR* vertex1, SVECTOR* ve
 
 				//loc_8002C2C4
 
-				//v0 = prim->x0
-				//t0 = prim->y0
+				x = ((short*)ptr)[-1];
+				y = ((short*)ptr)[0];
 
-				clip_tmp = ((short*)ptr)[-1] >> 31;
-				if (((short*)ptr)[0] < 0)
+				clip_tmp = (unsigned int)x >> 31;
+				if (y < 0)
 				{
 					clip_tmp |= 0x2;
 				}
 				//loc_8002C2DC
 
-				if (((short*)ptr)[-1] >= SCREEN_WIDTH + 1)
+				if (x >= SCREEN_WIDTH + 1)
 				{
 					clip_tmp |= 0x4;
 				}
 
-				if (((short*)ptr)[0] >= SCREEN_HEIGHT + 1)
+				if (y >= SCREEN_HEIGHT + 1)
 				{
 					clip_tmp |= 0x8;
 				}
@@ -656,7 +658,7 @@ int DRAW_DisplayTFace_zclipped_C(SVECTOR* vertex0, SVECTOR* vertex1, SVECTOR* ve
 				ptr += 3;
 			}
 			//loc_8002C308
-			if (current_point_in_vv != 1)
+			if (current_point_in_vv != next_point_in_vv)
 			{
 				//t0 = sp + next
 
@@ -668,7 +670,8 @@ int DRAW_DisplayTFace_zclipped_C(SVECTOR* vertex0, SVECTOR* vertex1, SVECTOR* ve
 				//v1 = (sp->out[next].x - sp->out[0].x)
 				//a0 = sp->out[0].x
 
-				interp1 = ABS(((sp->out[n].z - 0xA0) >> 12) / (sp->out[n].z - sp->out[next].z));
+				int temp = ((sp->out[n].z - 0xA0) << 12) / (sp->out[n].z - sp->out[next].z);
+				interp1 = ABS(((sp->out[n].z - 0xA0) << 12) / (sp->out[n].z - sp->out[next].z));
 
 				//loc_8002C354
 				zn = (sp->out[next].x - sp->out[n].x) * interp1;
@@ -697,13 +700,13 @@ int DRAW_DisplayTFace_zclipped_C(SVECTOR* vertex0, SVECTOR* vertex1, SVECTOR* ve
 				}
 
 				//loc_8002C39C
-				((short*)ptr)[3] = zn;
+				((short*)ptr)[-1] = zn;
 
 				zn = (sp->out[next].y - sp->out[n].y) * interp1;//v0
 				//v1 = sp->out[0].y
 				if (zn < 0)
 				{
-					zn = 1023;
+					zn += 4095;
 				}
 
 				zn = ((sp->out[n].y + (zn >> 12)) << 1) + 120;//$v1
@@ -718,7 +721,7 @@ int DRAW_DisplayTFace_zclipped_C(SVECTOR* vertex0, SVECTOR* vertex1, SVECTOR* ve
 					zn = -1023;
 				}
 				//loc_8002C3F4
-				((short*)ptr)[4] = zn;
+				((short*)ptr)[0] = zn;
 
 				gte_lddp(interp2);
 
@@ -734,7 +737,7 @@ int DRAW_DisplayTFace_zclipped_C(SVECTOR* vertex0, SVECTOR* vertex1, SVECTOR* ve
 				gte_gpl12();
 
 				//v0 = ptr + 8
-				gte_stbv(&((char*)ptr)[8]);
+				gte_stbv(&((char*)ptr)[2]);
 
 				gte_lddp(interp2);
 
@@ -746,13 +749,13 @@ int DRAW_DisplayTFace_zclipped_C(SVECTOR* vertex0, SVECTOR* vertex1, SVECTOR* ve
 				gte_gpf12();
 
 				gte_lddp(interp1);
-				IR1 = ((unsigned char*)&sp->color[0])[0];
-				IR2 = ((unsigned char*)&sp->color[0])[1];
-				IR2 = ((unsigned char*)&sp->color[0])[2];
+				IR1 = ((unsigned char*)&sp->color[next])[0];
+				IR2 = ((unsigned char*)&sp->color[next])[1];
+				IR2 = ((unsigned char*)&sp->color[next])[2];
 
 				gte_gpl12();
 
-				gte_stcv(ptr);
+				gte_stcv((ptr - 6));
 
 				//v0 = point << 2
 
@@ -763,7 +766,7 @@ int DRAW_DisplayTFace_zclipped_C(SVECTOR* vertex0, SVECTOR* vertex1, SVECTOR* ve
 				x = ((short*)ptr)[-1];//v0
 				y = ((short*)ptr)[0];//a0
 
-				clip_tmp = y >> 31;
+				clip_tmp = (unsigned int)x >> 31;
 
 				if (y < 0)
 				{
@@ -793,6 +796,11 @@ int DRAW_DisplayTFace_zclipped_C(SVECTOR* vertex0, SVECTOR* vertex1, SVECTOR* ve
 		{
 			maxz >>= 2;
 
+			if (maxz == 0x136)
+			{
+				int testing = 0;
+				testing++;
+			}
 			if (maxz < 3072)
 			{
 				if (ndiv == 0)
@@ -815,34 +823,45 @@ int DRAW_DisplayTFace_zclipped_C(SVECTOR* vertex0, SVECTOR* vertex1, SVECTOR* ve
 
 							//a0 = sp->sxy[0]
 							//v1 = sp->sxy[next]
-							temp1 = sp->sxy[0].vx - sp->sxy[next].vx;
+							temp1 = sp->sxy[n].vx - sp->sxy[next].vx;
 
 							if (temp1 < 0)
 							{
-								temp1 = sp->sxy[next].vx - sp->sxy[0].vx;
+								temp1 = sp->sxy[next].vx - sp->sxy[n].vx;
 							}
 
 							if (temp1 < 1024)
 							{
 								//a0 = sp->sxy[0]
 								//v1 = sp->sxy[next]
-								temp1 = sp->sxy[0].vy - sp->sxy[next].vy;
+								temp1 = sp->sxy[n].vy - sp->sxy[next].vy;
 
-								if (temp1 >= 0 || temp1 < 512)
+								if (temp1 >= 0)
 								{
-									continue;
+									if(temp1 < 512)
+									{
+										continue;
+									}
+									else
+									{
+										flag = 1;
+										break;
+									}
 								}
-								//loc_8002C5F8
-
-								temp1 = sp->sxy[next].vy - sp->sxy[0].vy;
-
-								if (temp1 < 512)
+								else
 								{
-									continue;
-								}
+									//loc_8002C5E8
+									temp1 = sp->sxy[next].vy - sp->sxy[n].vy;
 
-								flag = 1;
-								break;
+									if (temp1 < 512)
+									{
+										continue;
+									}
+									else
+									{
+										break;
+									}
+								}
 							}
 							//loc_8002C5F8
 						}
@@ -1103,22 +1122,27 @@ long* DRAW_Zclip_subdiv(POLY_GT3* texture, unsigned long** ot, int ndiv)
 	
 	((int*)&sp->face_v1.vx)[0] = ((int*)&sp->vertex1.x)[0];
 	((int*)&sp->face_v0.vz)[0] = ((int*)&sp->vertex0.z)[0];
-	((int*)&sp->face_v1.vz)[0] = ((int*)&sp->vertex2.z)[0];
+	((int*)&sp->face_v1.vz)[0] = ((int*)&sp->vertex1.z)[0];
 	((int*)&sp->face_v2.vx)[0] = ((int*)&sp->vertex2.x)[0];
 	((int*)&sp->face_v2.vz)[0] = ((int*)&sp->vertex2.z)[0];
 	((int*)&sp->face_v0.vx)[0] = ((int*)&sp->vertex0.x)[0];
 
-	sp->face_v01.vx = (((unsigned int)sp->face_v1.vx + (unsigned int)sp->face_v0.vx) + (((unsigned int)sp->face_v1.vx + (unsigned int)sp->face_v0.vx) >> 31) >> 1);
-	sp->face_v01.vy = (((unsigned int)sp->face_v1.vy + (unsigned int)sp->face_v0.vy) + (((unsigned int)sp->face_v1.vy + (unsigned int)sp->face_v0.vy) >> 31) >> 1);
-	sp->face_v01.vz = (((unsigned int)sp->face_v1.vz + (unsigned int)sp->face_v0.vz) + (((unsigned int)sp->face_v1.vz + (unsigned int)sp->face_v0.vz) >> 31) >> 1);
+	//v0 = sp->face_v0.vx
+	//v1 = sp->face_v1.vx
 
-	sp->face_v12.vx = (((unsigned int)sp->face_v2.vx + (unsigned int)sp->face_v1.vx) + (((unsigned int)sp->face_v2.vx + (unsigned int)sp->face_v1.vx) >> 31) >> 1);
-	sp->face_v12.vy = (((unsigned int)sp->face_v2.vy + (unsigned int)sp->face_v1.vy) + (((unsigned int)sp->face_v2.vy + (unsigned int)sp->face_v1.vy) >> 31) >> 1);
-	sp->face_v12.vz = (((unsigned int)sp->face_v2.vz + (unsigned int)sp->face_v1.vz) + (((unsigned int)sp->face_v2.vz + (unsigned int)sp->face_v1.vz) >> 31) >> 1);
+	//v1 = ((sp->face_v0.vx + sp->face_v1.vx) >> 31)
 
-	sp->face_v20.vx = (((unsigned int)sp->face_v0.vx + (unsigned int)sp->face_v2.vx) + (((unsigned int)sp->face_v0.vx + (unsigned int)sp->face_v2.vx) >> 31) >> 1);
-	sp->face_v20.vy = (((unsigned int)sp->face_v0.vy + (unsigned int)sp->face_v2.vy) + (((unsigned int)sp->face_v0.vy + (unsigned int)sp->face_v2.vy) >> 31) >> 1);
-	sp->face_v20.vz = (((unsigned int)sp->face_v0.vz + (unsigned int)sp->face_v2.vz) + (((unsigned int)sp->face_v0.vz + (unsigned int)sp->face_v2.vz) >> 31) >> 1);
+	sp->face_v01.vx = (((unsigned int)sp->face_v0.vx + (unsigned int)sp->face_v1.vx) + (((unsigned int)sp->face_v0.vx + (unsigned int)sp->face_v1.vx) >> 31) >> 1);
+	sp->face_v01.vy = (((unsigned int)sp->face_v0.vy + (unsigned int)sp->face_v1.vy) + (((unsigned int)sp->face_v0.vy + (unsigned int)sp->face_v1.vy) >> 31) >> 1);
+	sp->face_v01.vz = (((unsigned int)sp->face_v0.vz + (unsigned int)sp->face_v1.vz) + (((unsigned int)sp->face_v0.vz + (unsigned int)sp->face_v1.vz) >> 31) >> 1);
+
+	sp->face_v12.vx = (((unsigned int)sp->face_v1.vx + (unsigned int)sp->face_v2.vx) + (((unsigned int)sp->face_v1.vx + (unsigned int)sp->face_v2.vx) >> 31) >> 1);
+	sp->face_v12.vy = (((unsigned int)sp->face_v1.vy + (unsigned int)sp->face_v2.vy) + (((unsigned int)sp->face_v1.vy + (unsigned int)sp->face_v2.vy) >> 31) >> 1);
+	sp->face_v12.vz = (((unsigned int)sp->face_v1.vz + (unsigned int)sp->face_v2.vz) + (((unsigned int)sp->face_v1.vz + (unsigned int)sp->face_v2.vz) >> 31) >> 1);
+
+	sp->face_v20.vx = (((unsigned int)sp->face_v2.vx + (unsigned int)sp->face_v0.vx) + (((unsigned int)sp->face_v2.vx + (unsigned int)sp->face_v0.vx) >> 31) >> 1);
+	sp->face_v20.vy = (((unsigned int)sp->face_v2.vy + (unsigned int)sp->face_v0.vy) + (((unsigned int)sp->face_v2.vy + (unsigned int)sp->face_v0.vy) >> 31) >> 1);
+	sp->face_v20.vz = (((unsigned int)sp->face_v2.vz + (unsigned int)sp->face_v0.vz) + (((unsigned int)sp->face_v2.vz + (unsigned int)sp->face_v0.vz) >> 31) >> 1);
 
 	((int*)&sp->face_uv0)[0] = ((int*)texture)[4];
 	((int*)&sp->face_uv1)[0] = ((int*)texture)[7];
