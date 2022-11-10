@@ -572,21 +572,10 @@ int DRAW_DisplayTFace_zclipped_C(SVECTOR* vertex0, SVECTOR* vertex1, SVECTOR* ve
 			{
 				next = 0;
 			}
+			
+			current_point_in_vv = (sp->out[n].z < 160) ^ 1;
+			next_point_in_vv = (sp->out[next].z < 160) ^ 1;
 
-			//loc_8002C1F8
-			//v0 = sp->out[0].z
-			//v1 = sp->out[next].z
-
-
-			current_point_in_vv = (sp->out[n].z < 0xA0) ^ 1;
-			next_point_in_vv = (sp->out[next].z < 0xA0) ^ 1;
-
-			if (sp->out[n].z <= 0xA0)
-			{
-				int testing = 0;
-				testing++;
-			}
-			//v0 = 1
 			if (current_point_in_vv != 0)
 			{
 				if (n == 1)
@@ -660,17 +649,6 @@ int DRAW_DisplayTFace_zclipped_C(SVECTOR* vertex0, SVECTOR* vertex1, SVECTOR* ve
 			//loc_8002C308
 			if (current_point_in_vv != next_point_in_vv)
 			{
-				//t0 = sp + next
-
-				//v1 = (sp->out[0].z - sp->out[next].z)
-				//a0 = sp->out[next].z
-
-				//v0 = ((sp->out[0].z - 0xA0) >> 12) / (sp->out[0].z - sp->out[next].z)
-
-				//v1 = (sp->out[next].x - sp->out[0].x)
-				//a0 = sp->out[0].x
-
-				int temp = ((sp->out[n].z - 0xA0) << 12) / (sp->out[n].z - sp->out[next].z);
 				interp1 = ABS(((sp->out[n].z - 0xA0) << 12) / (sp->out[n].z - sp->out[next].z));
 
 				//loc_8002C354
@@ -796,11 +774,6 @@ int DRAW_DisplayTFace_zclipped_C(SVECTOR* vertex0, SVECTOR* vertex1, SVECTOR* ve
 		{
 			maxz >>= 2;
 
-			if (maxz == 0x136)
-			{
-				int testing = 0;
-				testing++;
-			}
 			if (maxz < 3072)
 			{
 				if (ndiv == 0)
@@ -824,7 +797,7 @@ int DRAW_DisplayTFace_zclipped_C(SVECTOR* vertex0, SVECTOR* vertex1, SVECTOR* ve
 							//a0 = sp->sxy[0]
 							//v1 = sp->sxy[next]
 							temp1 = sp->sxy[n].vx - sp->sxy[next].vx;
-
+							
 							if (temp1 < 0)
 							{
 								temp1 = sp->sxy[next].vx - sp->sxy[n].vx;
@@ -832,8 +805,6 @@ int DRAW_DisplayTFace_zclipped_C(SVECTOR* vertex0, SVECTOR* vertex1, SVECTOR* ve
 
 							if (temp1 < 1024)
 							{
-								//a0 = sp->sxy[0]
-								//v1 = sp->sxy[next]
 								temp1 = sp->sxy[n].vy - sp->sxy[next].vy;
 
 								if (temp1 >= 0)
@@ -859,11 +830,17 @@ int DRAW_DisplayTFace_zclipped_C(SVECTOR* vertex0, SVECTOR* vertex1, SVECTOR* ve
 									}
 									else
 									{
+										flag = 1;
 										break;
 									}
 								}
 							}
-							//loc_8002C5F8
+							else
+							{
+								//loc_8002C5F8
+								flag = 1;
+								break;
+							}
 						}
 					}
 					//loc_8002C614
@@ -871,11 +848,6 @@ int DRAW_DisplayTFace_zclipped_C(SVECTOR* vertex0, SVECTOR* vertex1, SVECTOR* ve
 					{
 						if (point == 4)
 						{
-							//v0 = sp->sxy[1].vy
-							//v1 = sp->sxy[1].vx
-
-							//a0 = sp->sxy[1].vy
-
 							temp2 = sp->sxy[1].vy - sp->sxy[1].vx;
 
 							if (temp2 < 0)
@@ -885,12 +857,6 @@ int DRAW_DisplayTFace_zclipped_C(SVECTOR* vertex0, SVECTOR* vertex1, SVECTOR* ve
 
 							if (temp2 < 1024)
 							{
-
-								//v0 = sp->sxy[2].vy
-								//v1 = sp->sxy[0].vx
-
-								//a0 = sp->sxy[2].vy
-
 								temp3 = sp->sxy[2].vy - sp->sxy[0].vx;
 
 								if (temp3 < 0)
@@ -906,7 +872,6 @@ int DRAW_DisplayTFace_zclipped_C(SVECTOR* vertex0, SVECTOR* vertex1, SVECTOR* ve
 								{
 									flag = 1;
 								}
-
 							}
 							else
 							{
@@ -939,14 +904,11 @@ int DRAW_DisplayTFace_zclipped_C(SVECTOR* vertex0, SVECTOR* vertex1, SVECTOR* ve
 							gteRegs.CP2D.p[6].sd = sp->color[2];//hack
 
 							//s6 = uv0
-							prim->u0 = uv0->u;
-							prim->v0 = uv0->v;
+							*(long*)&prim->u0 = *(long*)&uv0->u;
 
-							prim->u1 = uv1->u;
-							prim->v1 = uv1->v;
+							*(long*)&prim->u1 = *(long*)&uv1->u;
 
-							prim->u2 = uv2->u;
-							prim->v2 = uv2->v;
+							*(long*)&prim->u2 = *(long*)&uv2->u;
 
 							DRAW_Zclip_subdiv((POLY_GT3*)prim, ot, 1);
 
@@ -978,14 +940,9 @@ int DRAW_DisplayTFace_zclipped_C(SVECTOR* vertex0, SVECTOR* vertex1, SVECTOR* ve
 						gteRegs.CP2D.p[6].sd = sp->color[2];//hack
 
 						//s6 = uv0
-						prim->u0 = uv0->u;
-						prim->v0 = uv0->v;
-
-						prim->u1 = uv1->u;
-						prim->v1 = uv1->v;
-
-						prim->u2 = uv2->u;
-						prim->v2 = uv2->v;
+						*(long*)&prim->u0 = *(long*)&uv0->u;
+						*(long*)&prim->u1 = *(long*)&uv1->u;
+						*(long*)&prim->u2 = *(long*)&uv2->u;
 
 						DRAW_Zclip_subdiv((POLY_GT3*)prim, ot, 1);
 
@@ -993,10 +950,9 @@ int DRAW_DisplayTFace_zclipped_C(SVECTOR* vertex0, SVECTOR* vertex1, SVECTOR* ve
 					}
 				}
 				//loc_8002C744
-
 				SXY0 = *(long*)&prim->x0;
-				SXY1 = *(long*)&prim->x1;
-				SXY2 = *(long*)&prim->x2;
+				SXY2 = *(long*)&prim->x1;
+				SXY1 = *(long*)&prim->x2;
 
 				gte_nclip();
 
@@ -1045,9 +1001,9 @@ int DRAW_DisplayTFace_zclipped_C(SVECTOR* vertex0, SVECTOR* vertex1, SVECTOR* ve
 					//a2 = 0xFFFFFF
 					//v0 = color0 >> 24
 
-					temp1 = *(long*)&prim->r2;
-					temp2 = *(long*)&prim->x2;
-					temp3 = *(long*)&prim->u2;
+					temp1 = *(long*)&prim->r2;//t0
+					temp2 = *(long*)&prim->x2;//t1
+					temp3 = *(long*)&prim->u2;//t2
 
 					//v1 = *(long*)&prim->r3;
 					//a0 = *(long*)&prim->x3;
@@ -1126,12 +1082,7 @@ long* DRAW_Zclip_subdiv(POLY_GT3* texture, unsigned long** ot, int ndiv)
 	((int*)&sp->face_v2.vx)[0] = ((int*)&sp->vertex2.x)[0];
 	((int*)&sp->face_v2.vz)[0] = ((int*)&sp->vertex2.z)[0];
 	((int*)&sp->face_v0.vx)[0] = ((int*)&sp->vertex0.x)[0];
-
-	//v0 = sp->face_v0.vx
-	//v1 = sp->face_v1.vx
-
-	//v1 = ((sp->face_v0.vx + sp->face_v1.vx) >> 31)
-
+	
 	sp->face_v01.vx = (((unsigned int)sp->face_v0.vx + (unsigned int)sp->face_v1.vx) + (((unsigned int)sp->face_v0.vx + (unsigned int)sp->face_v1.vx) >> 31) >> 1);
 	sp->face_v01.vy = (((unsigned int)sp->face_v0.vy + (unsigned int)sp->face_v1.vy) + (((unsigned int)sp->face_v0.vy + (unsigned int)sp->face_v1.vy) >> 31) >> 1);
 	sp->face_v01.vz = (((unsigned int)sp->face_v0.vz + (unsigned int)sp->face_v1.vz) + (((unsigned int)sp->face_v0.vz + (unsigned int)sp->face_v1.vz) >> 31) >> 1);
