@@ -645,6 +645,12 @@ int DRAW_DisplayTFace_zclipped_C(SVECTOR* vertex0, SVECTOR* vertex1, SVECTOR* ve
 
 				point++;//?
 				ptr += 3;
+
+				if (point == 4)
+				{
+					int testing = 0;
+					testing++;
+				}
 			}
 			//loc_8002C308
 			if (current_point_in_vv != next_point_in_vv)
@@ -733,7 +739,7 @@ int DRAW_DisplayTFace_zclipped_C(SVECTOR* vertex0, SVECTOR* vertex1, SVECTOR* ve
 
 				gte_gpl12();
 
-				gte_stcv((ptr - 6));
+				gte_stcv(((short*)ptr - 3));
 
 				//v0 = point << 2
 
@@ -783,7 +789,7 @@ int DRAW_DisplayTFace_zclipped_C(SVECTOR* vertex0, SVECTOR* vertex1, SVECTOR* ve
 					{
 						//t1 = sp
 						//loc_8002C57C
-						for(n = 0; n < point; n++)
+						for (n = 0; n < point; n++)
 						{
 							next = n + 1;
 
@@ -792,28 +798,27 @@ int DRAW_DisplayTFace_zclipped_C(SVECTOR* vertex0, SVECTOR* vertex1, SVECTOR* ve
 								next = 0;
 							}
 
-							//v0 = next << 2
-
-							//a0 = sp->sxy[0]
-							//v1 = sp->sxy[next]
 							temp1 = sp->sxy[n].vx - sp->sxy[next].vx;
-							
+
 							if (temp1 < 0)
 							{
 								temp1 = sp->sxy[next].vx - sp->sxy[n].vx;
 							}
 
-							if (temp1 < 1024)
+							if (temp1 >= 1024)
+							{
+								flag = 1;
+								break;
+							}
+							else
 							{
 								temp1 = sp->sxy[n].vy - sp->sxy[next].vy;
 
-								if (temp1 >= 0)
+								if (temp1 < 0)
 								{
-									if(temp1 < 512)
-									{
-										continue;
-									}
-									else
+									temp1 = sp->sxy[next].vy - sp->sxy[n].vy;
+
+									if (temp1 >= 512)
 									{
 										flag = 1;
 										break;
@@ -821,28 +826,16 @@ int DRAW_DisplayTFace_zclipped_C(SVECTOR* vertex0, SVECTOR* vertex1, SVECTOR* ve
 								}
 								else
 								{
-									//loc_8002C5E8
-									temp1 = sp->sxy[next].vy - sp->sxy[n].vy;
-
-									if (temp1 < 512)
-									{
-										continue;
-									}
-									else
+									if (temp1 >= 512)
 									{
 										flag = 1;
 										break;
 									}
 								}
 							}
-							else
-							{
-								//loc_8002C5F8
-								flag = 1;
-								break;
-							}
 						}
 					}
+
 					//loc_8002C614
 					if (flag == 0)
 					{
