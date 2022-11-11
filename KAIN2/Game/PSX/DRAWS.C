@@ -2131,7 +2131,7 @@ long DRAW_DisplayTFace_S(unsigned long** pNextPrim, unsigned long** drawot, int 
 					a22 = t5 & 0xFFFC;
 					v0 <<= 4;
 
-					a2 += v0;
+					a22 += v0;
 
 					if (a22 < 12288 && a22 >= 160)
 					{
@@ -2271,7 +2271,7 @@ do_super_subdiv:
 	t4[60] = 0xFFFFFF;
 	t4[61] = (unsigned long)a2;
 
-	long* ret = NULL;// DRAW_Zclip_subdiv((POLY_GT3*)pNextPrim[0], drawot, 0);
+	long* ret = DRAW_Zclip_subdiv((POLY_GT3*)pNextPrim[0], drawot, 0);
 
 	pNextPrim[0] = (unsigned long*)t4[55];
 	t1 = t4[56];
@@ -2481,7 +2481,7 @@ unsigned long* DRAW_DisplaySubdivPolytope_S(struct _BSPNode** polytope, struct _
 									t4[31] = t8;
 
 									t7 = t4[6];
-									
+
 									if (t7 != 0)
 									{
 										t7 = ((int*)a33)[0];
@@ -2744,20 +2744,22 @@ unsigned long* DRAW_DisplaySubdivPolytope_S(struct _BSPNode** polytope, struct _
 									{
 										t7 = t4[43];
 
-										if (!(t6 & 0x2) || t7 == 0)
+										if (!(t6 & 0x2))
 										{
-											//loc_80026A80
-										not_quad:
-											t9 = MAC0;
-											t9 += 20000;
-											t4[43] = t9;
-
-											if (t9 < 0)
-											{
-												goto subdiv_begin;
-											}
+											goto not_quad;
 										}
-										else
+
+										if (t7 != 0)
+										{
+											goto subdiv_begin;
+										}
+										//loc_80026A80
+									not_quad:
+										t9 = MAC0;
+										t9 += 20000;
+										t4[43] = t9;
+
+										if (t9 < 0)
 										{
 											goto subdiv_begin;
 										}
@@ -2890,7 +2892,7 @@ unsigned long* DRAW_DisplaySubdivPolytope_S(struct _BSPNode** polytope, struct _
 
 												//rgb0code
 												gteRegs.CP2D.p[6].sd = t4[32];
-												
+
 												IR0 = v0;
 
 												gte_dpcs();
@@ -2943,13 +2945,10 @@ unsigned long* DRAW_DisplaySubdivPolytope_S(struct _BSPNode** polytope, struct _
 
 												pNextPrim[3] = t1;
 												pNextPrim[6] = t2;
-												
+
 												pNextPrim += sizeof(POLY_FT4) / 4;
 
-												if (0 >= 0)
-												{
-													goto no_depthQ;
-												}
+												goto no_depthQ;
 
 											depthQface:
 
@@ -2990,7 +2989,6 @@ unsigned long* DRAW_DisplaySubdivPolytope_S(struct _BSPNode** polytope, struct _
 												gte_dpcs();
 
 												v1 = t4[46];
-
 
 												v0 = t6 & 0x1;
 												t5 &= 0x2;
@@ -3038,8 +3036,11 @@ unsigned long* DRAW_DisplaySubdivPolytope_S(struct _BSPNode** polytope, struct _
 
 												t1 = RGB2;
 
+												v1 = 0x30000000;
+
 												t1 = t5 - t1;
-												t1 |= 0x30000000;
+
+												t1 |= v1;
 
 												pNextPrim[3] = t1;
 
@@ -3051,7 +3052,7 @@ unsigned long* DRAW_DisplaySubdivPolytope_S(struct _BSPNode** polytope, struct _
 
 												a2 = t4[49];
 												pNextPrim[6] = t2;
-												pNextPrim[2] = v0;
+												pNextPrim[2] = v0;///@FIXME debug me, POLY_G3_SEMITRANS!
 
 												t1 = RGB2;
 
@@ -3065,7 +3066,7 @@ unsigned long* DRAW_DisplaySubdivPolytope_S(struct _BSPNode** polytope, struct _
 												addPrim(drawot[(t8 / 4) * 2], pNextPrim);
 												setlen(pNextPrim, 7);
 
-												
+
 												pNextPrim[8] = t3;
 
 												t1 = RGB2;
@@ -3074,7 +3075,7 @@ unsigned long* DRAW_DisplaySubdivPolytope_S(struct _BSPNode** polytope, struct _
 												pNextPrim[7] = t1;
 
 												pNextPrim += (0x20 + 4) / 4;
-												
+
 											no_depthQ:
 												s1++;
 
@@ -3084,15 +3085,47 @@ unsigned long* DRAW_DisplaySubdivPolytope_S(struct _BSPNode** polytope, struct _
 												}
 												else
 												{
-													return pNextPrim;
+													goto end_of_polytope;
 												}
 											}
+											else
+											{
+												goto skip_tface;
+											}
+										}
+										else
+										{
+											goto skip_tface;
 										}
 									}
+									else
+									{
+										goto skip_tface;
+									}
+								}
+								else
+								{
+									goto skip_tface;
 								}
 							}
+							else
+							{
+								goto skip_tface;
+							}
+						}
+						else
+						{
+							goto skip_tface;
 						}
 					}
+					else
+					{
+						goto skip_tface;
+					}
+				}
+				else
+				{
+					goto skip_tface;
 				}
 			}
 			else
@@ -3100,23 +3133,24 @@ unsigned long* DRAW_DisplaySubdivPolytope_S(struct _BSPNode** polytope, struct _
 				goto do_poly;
 			}
 		}
-		//loc_80026DCC
+	skip_tface:
 		s1++;
 
 		t4[43] = 0;
-
+	
 		if (s1 < s6)
 		{
 			goto loc_80026660;
 		}
 		else
 		{
-			return pNextPrim;
+			goto end_of_polytope;
 		}
 	}
-	
-	//loc_80026E00
-	return pNextPrim;
+	else
+	{
+		goto end_of_polytope;
+	}
 
 no_blend2:
 	pNextPrim[-9] = RGB2;
@@ -3128,7 +3162,7 @@ no_blend2:
 	}
 	else
 	{
-		return pNextPrim;
+		goto end_of_polytope;
 	}
 
 draw_trans_fog:
@@ -3216,7 +3250,7 @@ OK:
 	}
 	else
 	{
-		return pNextPrim;
+		goto end_of_polytope;
 	}
 
 
@@ -3232,7 +3266,7 @@ subdiv_begin:
 		RGB2 = 0;
 		RES1 = 0;
 
-		t5 = 0x1000;
+		t5 = 4096;
 
 		v0 = SZ1;
 
@@ -3619,8 +3653,6 @@ subdiv_begin:
 					//rgb0code
 					gteRegs.CP2D.p[6].sd = t7;
 
-					s2 = 0x80000000;
-
 					if (DRAW_DisplayTFace_S(&pNextPrim, drawot, s2, t4, t1, t2, t3, t6, a22) <= 0)
 					{
 						((char*)t4)[200]++;
@@ -3701,6 +3733,10 @@ subdiv_begin:
 						gteRegs.CP2D.p[6].sd = t7;
 
 						DRAW_DisplayTFace_S(&pNextPrim, drawot, s2, t4, t1, t2, t3, t6, a22);
+					}
+					else
+					{
+						s2 = 0x80000000;
 					}
 				}
 			}
@@ -4139,6 +4175,9 @@ unsigned long* DRAW_DisplayPolytopeList_S(struct _PolytopeList* polytopeList, st
 	short x;
 	short y;
 	short z;
+	unsigned long* retPrim;
+
+	retPrim = primPool->nextPrim;
 
 	gte_SetRotMatrix(camera->core.wcTransform);
 	gte_SetTransMatrix(camera->core.wcTransform);
@@ -4202,13 +4241,13 @@ unsigned long* DRAW_DisplayPolytopeList_S(struct _PolytopeList* polytopeList, st
 				}
 			}
 
-			primPool->nextPrim = DRAW_DisplaySubdivPolytope_S(pStart, terrain, primPool->nextPrim, drawot);
+			retPrim = DRAW_DisplaySubdivPolytope_S(pStart, terrain, retPrim, drawot);
 		}
 
 		pStart++;
 	}
 
-	return (unsigned long*)primPool->nextPrim;
+	return retPrim;
 }
 
 long PIPE3D_TransformAnimatedInstanceVertices_S(struct _VertexPool* vertexPool, struct _PVertex* poolVertex, struct _Model* model, MATRIX* wcTransform, MATRIX* matrixPool, MATRIX* lm, CVECTOR* vertexColor, CVECTOR* perVertexColor)
