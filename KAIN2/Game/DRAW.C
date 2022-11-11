@@ -645,12 +645,6 @@ int DRAW_DisplayTFace_zclipped_C(SVECTOR* vertex0, SVECTOR* vertex1, SVECTOR* ve
 
 				point++;//?
 				ptr += 3;
-
-				if (point == 4)
-				{
-					int testing = 0;
-					testing++;
-				}
 			}
 			//loc_8002C308
 			if (current_point_in_vv != next_point_in_vv)
@@ -745,7 +739,7 @@ int DRAW_DisplayTFace_zclipped_C(SVECTOR* vertex0, SVECTOR* vertex1, SVECTOR* ve
 
 				//v1 = (long*)(&((short*)ptr)[-1])[0];
 				//v0 += sp
-				*(long*)&sp->sxy[point] = ((long*)&((short*)ptr)[-1])[0];
+				*(long*)&sp->sxy[point] = *(long*)&((short*)ptr)[-1];
 
 				x = ((short*)ptr)[-1];//v0
 				y = ((short*)ptr)[0];//a0
@@ -785,9 +779,9 @@ int DRAW_DisplayTFace_zclipped_C(SVECTOR* vertex0, SVECTOR* vertex1, SVECTOR* ve
 				if (ndiv == 0)
 				{
 					flag = 0;
+
 					if (point > 0)
 					{
-						//t1 = sp
 						//loc_8002C57C
 						for (n = 0; n < point; n++)
 						{
@@ -841,20 +835,20 @@ int DRAW_DisplayTFace_zclipped_C(SVECTOR* vertex0, SVECTOR* vertex1, SVECTOR* ve
 					{
 						if (point == 4)
 						{
-							temp2 = sp->sxy[1].vy - sp->sxy[1].vx;
+							temp2 = sp->sxy[2].vx - sp->sxy[1].vx;
 
 							if (temp2 < 0)
 							{
-								temp2 = sp->sxy[1].vx - sp->sxy[1].vy;
+								temp2 = sp->sxy[1].vx - sp->sxy[3].vx;
 							}
 
 							if (temp2 < 1024)
 							{
-								temp3 = sp->sxy[2].vy - sp->sxy[0].vx;
+								temp3 = sp->sxy[3].vy - sp->sxy[1].vx;
 
 								if (temp3 < 0)
 								{
-									temp3 = sp->sxy[0].vx - sp->sxy[2].vy;
+									temp3 = sp->sxy[0].vx - sp->sxy[3].vy;
 
 									if (temp3 >= 512)
 									{
@@ -876,27 +870,17 @@ int DRAW_DisplayTFace_zclipped_C(SVECTOR* vertex0, SVECTOR* vertex1, SVECTOR* ve
 
 						if (flag != 0)
 						{
-							//s6 = vertex0
-							//s7 = vertex1
-							//s5 = vertex2
-
+							///@FIXME never called!
 							gte_ldv0(vertex0);
 							gte_ldv1(vertex1);
 							gte_ldv2(vertex2);
 
-							//a0 = &sp->color[0];
-							//v0 = ((CVECTOR)&sp->color[0])->cd
-
-							//v1 = &sp->color[1]
-							//v0 = ((CVECTOR)&sp->color[1])->cd
 							((CVECTOR*)&sp->color[1])->cd = ((CVECTOR*)&sp->color[0])->cd;
-							//v0 = &sp->color[2];
 
 							gte_ldrgb3(&sp->color[0], &sp->color[1], &sp->color[2]);
 
 							gteRegs.CP2D.p[6].sd = sp->color[2];//hack
 
-							//s6 = uv0
 							*(long*)&prim->u0 = *(long*)&uv0->u;
 
 							*(long*)&prim->u1 = *(long*)&uv1->u;
