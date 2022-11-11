@@ -579,7 +579,7 @@ void BSP_MarkVisibleLeaves_S(struct BSPTree* bsp, struct Camera* camera, struct 
 
 	}while (bspRoot != (struct _BSPNode*)s0);
 
-	polytopeList->numPolytopes = (((char*)s7 - (char*)polytopeList) - 4) >> 2;
+	polytopeList->numPolytopes = 1;// (((char*)s7 - (char*)polytopeList) - 4) >> 2;
 }
 
 void G2Quat_ToMatrix_S(struct _G2Quat_Type* quat, struct _G2Matrix_Type* matrix)
