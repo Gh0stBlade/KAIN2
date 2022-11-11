@@ -729,7 +729,7 @@ int DRAW_DisplayTFace_zclipped_C(SVECTOR* vertex0, SVECTOR* vertex1, SVECTOR* ve
 				gte_lddp(interp1);
 				IR1 = ((unsigned char*)&sp->color[next])[0];
 				IR2 = ((unsigned char*)&sp->color[next])[1];
-				IR2 = ((unsigned char*)&sp->color[next])[2];
+				IR3 = ((unsigned char*)&sp->color[next])[2];
 
 				gte_gpl12();
 
@@ -1040,7 +1040,6 @@ int DRAW_DisplayTFace_zclipped_C(SVECTOR* vertex0, SVECTOR* vertex1, SVECTOR* ve
 				}
 			}
 			//loc_8002C7F8
-			return 2;
 		}
 		//loc_8002C884
 	}
