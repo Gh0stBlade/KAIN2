@@ -592,7 +592,7 @@ int DRAW_DisplayTFace_zclipped_C(SVECTOR* vertex0, SVECTOR* vertex1, SVECTOR* ve
 				}
 				else
 				{
-					tmpptr = vertex1;
+					tmpptr = vertex0;
 				}
 
 				gte_ldv0(tmpptr);
@@ -652,7 +652,7 @@ int DRAW_DisplayTFace_zclipped_C(SVECTOR* vertex0, SVECTOR* vertex1, SVECTOR* ve
 				interp1 = ABS(((sp->out[n].z - 0xA0) << 12) / (sp->out[n].z - sp->out[next].z));
 
 				//loc_8002C354
-				zn = (sp->out[next].x - sp->out[n].x) * interp1;
+				zn = ((unsigned int)sp->out[next].x - (unsigned int)sp->out[n].x) * interp1;
 
 				interp2 = 4096 - interp1;
 
@@ -672,7 +672,7 @@ int DRAW_DisplayTFace_zclipped_C(SVECTOR* vertex0, SVECTOR* vertex1, SVECTOR* ve
 				}
 
 
-				if (zn < -0x3FF)
+				if (zn < -1023)
 				{
 					zn = -1023;
 				}
@@ -867,10 +867,8 @@ int DRAW_DisplayTFace_zclipped_C(SVECTOR* vertex0, SVECTOR* vertex1, SVECTOR* ve
 							}
 						}
 						//loc_8002C6A4
-
 						if (flag != 0)
 						{
-							///@FIXME never called!
 							gte_ldv0(vertex0);
 							gte_ldv1(vertex1);
 							gte_ldv2(vertex2);
@@ -896,9 +894,9 @@ int DRAW_DisplayTFace_zclipped_C(SVECTOR* vertex0, SVECTOR* vertex1, SVECTOR* ve
 					{
 
 						//loc_8002C6AC
-													//s6 = vertex0
-							//s7 = vertex1
-							//s5 = vertex2
+						//s6 = vertex0
+						//s7 = vertex1
+						//s5 = vertex2
 
 						gte_ldv0(vertex0);
 						gte_ldv1(vertex1);
@@ -928,17 +926,14 @@ int DRAW_DisplayTFace_zclipped_C(SVECTOR* vertex0, SVECTOR* vertex1, SVECTOR* ve
 				}
 				//loc_8002C744
 				SXY0 = *(long*)&prim->x0;
-				SXY2 = *(long*)&prim->x1;
-				SXY1 = *(long*)&prim->x2;
+				SXY1 = *(long*)&prim->x1;
+				SXY2 = *(long*)&prim->x2;
 
 				gte_nclip();
-
-				//v0 = ((unsigned short*)&sp->texinfo)[1];
 
 				prim->clut = ((unsigned short*)&sp->texinfo)[1];
 				prim->tpage = ((unsigned short*)&sp->texinfo[1])[1];
 
-				//v0 = &opz
 				gte_stopz(&opz);
 
 				if (opz > 0)
@@ -946,7 +941,6 @@ int DRAW_DisplayTFace_zclipped_C(SVECTOR* vertex0, SVECTOR* vertex1, SVECTOR* ve
 					return 4;
 				}
 
-				//v0 = 4
 				if (point == 3)
 				{
 					//a2 = 0xFFFFFF
