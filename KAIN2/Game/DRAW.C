@@ -835,7 +835,7 @@ int DRAW_DisplayTFace_zclipped_C(SVECTOR* vertex0, SVECTOR* vertex1, SVECTOR* ve
 					{
 						if (point == 4)
 						{
-							temp2 = sp->sxy[2].vx - sp->sxy[1].vx;
+							temp2 = sp->sxy[3].vx - sp->sxy[1].vx;
 
 							if (temp2 < 0)
 							{
@@ -844,11 +844,11 @@ int DRAW_DisplayTFace_zclipped_C(SVECTOR* vertex0, SVECTOR* vertex1, SVECTOR* ve
 
 							if (temp2 < 1024)
 							{
-								temp3 = sp->sxy[3].vy - sp->sxy[1].vx;
+								temp3 = sp->sxy[1].vy - sp->sxy[3].vy;
 
 								if (temp3 < 0)
 								{
-									temp3 = sp->sxy[0].vx - sp->sxy[3].vy;
+									temp3 = sp->sxy[3].vy - sp->sxy[1].vy;
 
 									if (temp3 >= 512)
 									{
