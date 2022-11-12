@@ -976,12 +976,12 @@ void Emulator_SetBlendMode(BlendMode blendMode)
 	g_PreviousBlendMode = blendMode;
 }
 
-void Emulator_DrawTriangles(int start_vertex, int triangles)
+void Emulator_DrawTriangles(int start_vertex, int start_index, int triangles)
 {
 	if (triangles <= 0)
 		return;
 
-	d3dcontext->DrawIndexed(triangles * 3, 0, start_vertex);
+	d3dcontext->DrawIndexed(triangles * 3, start_index, 0);
 }
 
 void Emulator_UpdateVertexBuffer(const Vertex* vertices, int num_vertices)
