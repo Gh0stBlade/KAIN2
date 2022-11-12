@@ -68,6 +68,7 @@ struct VertexBufferSplit
 	TextureID      textureId;
 #endif
 	unsigned short vIndex;
+	unsigned short iIndex;
 	unsigned short vCount;
 	enum BlendMode blendMode;
 	enum TexFormat texFormat;

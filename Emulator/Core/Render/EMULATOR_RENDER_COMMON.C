@@ -182,11 +182,10 @@ void Emulator_AddSplit(int semiTrans, int page, TextureID textureId)
 
 	split->textureId = textureId;
 	split->vIndex = g_vertexIndex;
+	split->iIndex = g_indicesIndex;
 	split->vCount = 0;
 	split->blendMode = curBlendMode;
 	split->texFormat = curTexFormat;
-
-	g_indicesIndex = 0;
 }
 
 void Emulator_MakeIndex(int indexCount)
@@ -195,9 +194,9 @@ void Emulator_MakeIndex(int indexCount)
 
 	for (int i = 0; i < indexCount; i += 3)
 	{
-		g_indexBuffer[g_indicesIndex + 0] = g_indicesIndex + 0;
-		g_indexBuffer[g_indicesIndex + 1] = g_indicesIndex + 1;
-		g_indexBuffer[g_indicesIndex + 2] = g_indicesIndex + 2;
+		g_indexBuffer[g_indicesIndex + 0] = g_vertexIndex + i + 0;
+		g_indexBuffer[g_indicesIndex + 1] = g_vertexIndex + i + 1;
+		g_indexBuffer[g_indicesIndex + 2] = g_vertexIndex + i + 2;
 
 		g_indicesIndex += 3;
 	}
@@ -205,8 +204,6 @@ void Emulator_MakeIndex(int indexCount)
 
 void Emulator_MakeTriangle()
 {
-	static int direction = 0;
-
 	g_vertexBuffer[g_vertexIndex + 5] = g_vertexBuffer[g_vertexIndex + 3];
 	g_vertexBuffer[g_vertexIndex + 3] = g_vertexBuffer[g_vertexIndex];
 	g_vertexBuffer[g_vertexIndex + 4] = g_vertexBuffer[g_vertexIndex + 2];
@@ -894,7 +891,7 @@ void Emulator_DrawSplit(const struct VertexBufferSplit* split)
 	Emulator_SetBlendMode(split->blendMode);
 	Emulator_SetTextureAndShader(split->textureId, Emulator_GetGTEShader(split->texFormat));
 
-	Emulator_DrawTriangles(split->vIndex, split->vCount / 3);
+	Emulator_DrawTriangles(split->vIndex, split->iIndex, split->vCount / 3);
 }
 
 void Emulator_DrawAggregatedSplits()

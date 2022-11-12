@@ -945,12 +945,12 @@ void Emulator_SetBlendMode(BlendMode blendMode)
 
 	g_PreviousBlendMode = blendMode;
 }
-void Emulator_DrawTriangles(int start_vertex, int triangles)
+void Emulator_DrawTriangles(int start_vertex, int start_index, int triangles)
 {
 	if (triangles <= 0)
 		return;
 
-	glDrawElementsBaseVertex(GL_TRIANGLES, triangles * 3, GL_UNSIGNED_SHORT, NULL, start_vertex);
+	glDrawElements(GL_TRIANGLES, triangles * 3, GL_UNSIGNED_SHORT, (void*)(sizeof(unsigned short)*start_index));
 }
 
 void Emulator_UpdateVertexBuffer(const Vertex* vertices, int num_vertices)

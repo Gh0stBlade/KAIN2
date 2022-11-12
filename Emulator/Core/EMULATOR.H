@@ -217,7 +217,7 @@ extern void Emulator_Clear(int x, int y, int w, int h, unsigned char r, unsigned
 extern void Emulator_SetViewPort(int x, int y, int width, int height);
 extern void Emulator_SetRenderTarget(const RenderTargetID render_target);
 extern void Emulator_SetWireframe(int enable);
-extern void Emulator_DrawTriangles(int start_vertex, int triangles);
+extern void Emulator_DrawTriangles(int start_vertex, int start_index, int triangles);
 extern void Emulator_UpdateToActiveDrawEnv();
 
 extern void Emulator_CreateGlobalShaders();

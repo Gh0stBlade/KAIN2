@@ -5053,7 +5053,7 @@ void Emulator_BlitVRAM()
 	
 	Emulator_SetWireframe(FALSE);
 
-	Emulator_DrawTriangles(0, 2);
+	Emulator_DrawTriangles(0, 0, 2);
 
 	Emulator_SetWireframe(g_wireframeMode);
 }
