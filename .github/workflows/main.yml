@@ -19,19 +19,19 @@ jobs:
       - uses: mymindstorm/setup-emsdk@v11
       
       - name: Create Build Directory
-        run: cmake -E make_directory ${{github.workspace}}/Build_EMSDK
+        run: cmake -E make_directory ${{github.workspace}}/Build/Build_EMSDK
         
       - name: Configure CMake        
         run: cmd.exe /k ${{github.workspace}}/Emulator/Platform/Emscripten/Generate-Project-Files.bat
 
       - name: Build
-        run: cmake --build ./Build_EMSDK --config Release
+        run: cmake --build ./Build/Build_EMSDK --config Release
       
       - name: Create Deployment Directory
-        run: cmake -E make_directory ${{github.workspace}}/Build_EMSDK/kain2/Deploy/
+        run: cmake -E make_directory ${{github.workspace}}/Build/Build_EMSDK/kain2/Deploy/
         
       - name: Copy to Deployment Folder
-        run: copy ${{github.workspace}}/Build_EMSDK/KAIN2/Game/KAIN2_Web.*  ${{github.workspace}}/Build_EMSDK/KAIN2/Deploy/
+        run: copy ${{github.workspace}}/Build/Build_EMSDK/KAIN2/Game/KAIN2_Web.*  ${{github.workspace}}/Build/Build_EMSDK/KAIN2/Deploy/
         
       - name: Deploy to FTP
         uses: dennisameling/ftp-upload-action@v1.0.8
@@ -39,7 +39,7 @@ jobs:
           server: ${{secrets.FTP_SERVER}}
           username: ${{secrets.FTP_USER}}
           password: ${{secrets.FTP_PASSWORD}}
-          local_dir: ${{github.workspace}}/Build_EMSDK/kain2/Deploy/
+          local_dir: ${{github.workspace}}/Build/Build_EMSDK/kain2/Deploy/
           server_dir: ./
           secure: false
         
