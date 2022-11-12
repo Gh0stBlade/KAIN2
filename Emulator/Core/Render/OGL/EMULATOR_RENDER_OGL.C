@@ -681,7 +681,7 @@ void Emulator_GenerateCommonTextures()
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void Emulator_CreateVertexBuffer()///@TODO OGLES
+void Emulator_CreateVertexBuffer()
 {
 	glGenBuffers(1, &dynamic_vertex_buffer);
 	glGenVertexArrays(1, &dynamic_vertex_array);
@@ -945,6 +945,7 @@ void Emulator_SetBlendMode(BlendMode blendMode)
 
 	g_PreviousBlendMode = blendMode;
 }
+
 void Emulator_DrawTriangles(int start_vertex, int start_index, int triangles)
 {
 	if (triangles <= 0)
@@ -972,7 +973,7 @@ void Emulator_UpdateIndexBuffer(const unsigned short* indices, int num_indices)
 	if (num_indices <= 0)
 		return;
 
-	glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, num_indices * sizeof(Vertex), indices);
+	glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, num_indices * sizeof(unsigned short), indices);
 }
 
 void Emulator_SetViewPort(int x, int y, int width, int height)
