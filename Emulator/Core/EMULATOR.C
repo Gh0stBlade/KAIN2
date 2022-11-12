@@ -2564,7 +2564,7 @@ void Emulator_ResetPGXPCache()
 }
 #endif
 
-void Emulator_GenerateVertexArrayTriangle(struct Vertex* vertex, short* p0, short* p1, short* p2, short z)
+void Emulator_GenerateVertexArrayTriangle(struct Vertex* vertex, short* p0, short* p1, short* p2)
 {
 	assert(p0);
 	assert(p1);
@@ -2673,7 +2673,7 @@ void Emulator_DoSplitHackQuad(short* p0, short* p1, short* p2, short* p3)
 	}
 }
 
-void Emulator_GenerateVertexArrayQuad(struct Vertex* vertex, short* p0, short* p1, short* p2, short* p3, short z)
+void Emulator_GenerateVertexArrayQuad(struct Vertex* vertex, short* p0, short* p1, short* p2, short* p3)
 {
 	assert(p0);
 	assert(p1);
@@ -2811,7 +2811,7 @@ void Emulator_GenerateVertexArrayQuad(struct Vertex* vertex, short* p0, short* p
 #endif
 }
 
-void Emulator_GenerateVertexArrayRect(struct Vertex* vertex, short* p0, short w, short h, short z)
+void Emulator_GenerateVertexArrayRect(struct Vertex* vertex, short* p0, short w, short h)
 {
 	assert(p0);
 
