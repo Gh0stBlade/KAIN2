@@ -25,7 +25,7 @@ jobs:
         run: cmd.exe /k ${{github.workspace}}/Emulator/Platform/Emscripten/Generate-Project-Files.bat
 
       - name: Build
-        run: cmake --build ./Build/Build_EMSDK --config Release
+        run: cmake --build ${{github.workspace}}/Build/Build_EMSDK --config Release
       
       - name: Create Deployment Directory
         run: cmake -E make_directory ${{github.workspace}}/Build/Build_EMSDK/kain2/Deploy/
