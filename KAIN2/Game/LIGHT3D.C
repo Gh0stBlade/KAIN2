@@ -54,16 +54,73 @@ void LIGHT_GetLightMatrix(struct _Instance *instance, struct Level *level, MATRI
 void LIGHT_PresetInstanceLight(struct _Instance* instance, short attenuate, MATRIX* lm)
 {
 #if defined(PSX_VERSION)
-	MATRIX cm; // stack offset -80
-	long scale; // $a0
-	long scaleRGB[3]; // stack offset -48
-	int i; // $t3
-	int j; // $a3
-	struct CDLight* extraLight; // $s2
-	struct Level* level; // $s3
-	short tempRGB[3]; // stack offset -32
-	short* todRGB; // $v0
-	UNIMPLEMENTED();
+	MATRIX cm;
+	long scale;
+	long scaleRGB[3];
+	int i;
+	int j;
+	struct CDLight* extraLight;
+	struct Level* level;
+	short tempRGB[3];
+	short* todRGB;
+
+	extraLight = (struct CDLight*)instance->extraLight;
+
+	tempRGB[0] = 16;
+	tempRGB[1] = 16;
+	tempRGB[2] = 16;
+
+	level = STREAM_GetLevelWithID(instance->currentStreamUnitID);
+
+	LIGHT_GetLightMatrix(instance, level, lm, &cm);
+
+	if ((instance->flags & 0x200000))
+	{
+		scale = 2048;
+	}
+	else
+	{
+		scale = 4096;
+	}
+
+	if (attenuate != 4096)
+	{
+		scale = (scale * attenuate) >> 12;
+	}
+
+	if (instance->extraLight != NULL && !(instance->flags & 0x200000))
+	{
+		scale = ((4096 - instance->extraLightScale) * scale) >> 12;
+
+		scaleRGB[0] = scale + ((instance->extraLightScale * extraLight->r) >> 6);
+		scaleRGB[1] = scale + ((instance->extraLightScale * extraLight->g) >> 6);
+		scaleRGB[2] = scale + ((instance->extraLightScale * extraLight->b) >> 6);
+	}
+	else
+	{
+		scaleRGB[0] = scale;
+		scaleRGB[1] = scale;
+		scaleRGB[2] = scale;
+	}
+
+	if (level != NULL)
+	{
+		todRGB = &level->TODRedScale;
+	}
+	else
+	{
+		todRGB = &tempRGB[0];
+	}
+
+	for (i = 0; i < 3; i++)
+	{
+		for (j = 0; j < 3; j++)
+		{
+			cm.m[i][j] = MAX(MIN((cm.m[i][j] * (((scaleRGB[i] * todRGB[i]) << 4) >> 16)) >> 12, -32768), 32767);
+		}
+	}
+
+	SetColorMatrix(&cm);
 
 #elif defined(PC_VERSION)
 	int currentStreamUnitID; // eax
@@ -130,8 +187,6 @@ void LIGHT_PresetInstanceLight(struct _Instance* instance, short attenuate, MATR
 		--attenuatea;
 	} while (attenuatea);
 	SetColorMatrix(&colorM);
-#else
-	UNIMPLEMENTED();
 #endif
 }
 

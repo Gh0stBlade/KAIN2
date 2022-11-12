@@ -7,6 +7,15 @@ extern "C" {
 
 #include "CORE.H"
 
+struct CDLight {
+	struct NodeType node; // size=8, offset=0
+	unsigned char r; // size=0, offset=8
+	unsigned char g; // size=0, offset=9
+	unsigned char b; // size=0, offset=10
+	unsigned char flags; // size=0, offset=11
+	struct _Sphere sphere; // size=12, offset=12
+};
+
 extern void LIGHT_GetLightMatrix(struct _Instance *instance, struct Level *level, MATRIX *lightM, MATRIX *colorM); // 0x80035824
 extern void LIGHT_PresetInstanceLight(struct _Instance *instance, short attenuate, MATRIX *lm); // 0x80035B98
 extern void LIGHT_GetAmbient(struct _ColorType *color, struct _Instance *instance); // 0x80035D14
