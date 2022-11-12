@@ -158,16 +158,6 @@ void Shift::D3D9Frame::render()
     }
 }
 
-void Shift::D3D9Frame::paintEvent(QPaintEvent* event)
-{
-    
-}
-
-QPaintEngine* Shift::D3D9Frame::paintEngine()
-{
-    return NULL;
-}
-
 void Shift::D3D9Frame::resizeEvent(QResizeEvent* event)
 {
     int oldW = event->size().width();

@@ -23,14 +23,12 @@ namespace Shift
     public:
         OGLFrame(Shift::Panes* panes, QTabWidget* tabWidget, QWidget* parent = nullptr)
         {
-            setAttribute(Qt::WA_PaintOnScreen, true);
             setAttribute(Qt::WA_NativeWindow, true);
             m_dragging = false;
             m_panes = panes;
             m_tabWidget = tabWidget;
         }
 
-        virtual  QPaintEngine* paintEngine();
         virtual void initialiseHWND(HWND windowHandle, int width, int height);
         virtual void resizeEvent(QResizeEvent* event) override;
         void keyPressEvent(QKeyEvent* event) override;
@@ -40,9 +38,6 @@ namespace Shift
         void mouseMoveEvent(QMouseEvent* event) override;
         void render();
         void renderWidget();
-
-    protected:
-        virtual void paintEvent(QPaintEvent* event) override;
 
     private:
         bool m_dragging;

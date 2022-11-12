@@ -156,16 +156,6 @@ void Shift::OGLFrame::render()
     }
 }
 
-void Shift::OGLFrame::paintEvent(QPaintEvent* event)
-{
-    
-}
-
-QPaintEngine* Shift::OGLFrame::paintEngine()
-{
-    return NULL;
-}
-
 void Shift::OGLFrame::resizeEvent(QResizeEvent* event)
 {
     int oldW = event->size().width();
