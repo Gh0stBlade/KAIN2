@@ -1,4 +1,6 @@
+if(NOT EMSCRIPTEN)
 add_subdirectory(SDL)
+
 set_target_properties(SDL2 PROPERTIES FOLDER "Libs/3rdParty/SDL2")
 set_target_properties(SDL2-static PROPERTIES FOLDER "Libs/3rdParty/SDL2")
 set_target_properties(SDL2main PROPERTIES FOLDER "Libs/3rdParty/SDL2")
@@ -13,3 +15,4 @@ set_target_properties(uninstall PROPERTIES EXCLUDE_FROM_ALL True)
 set_target_properties(SDL2 PROPERTIES EXCLUDE_FROM_DEFAULT_BUILD True)
 set_target_properties(SDL2_test PROPERTIES EXCLUDE_FROM_DEFAULT_BUILD True)
 set_target_properties(uninstall PROPERTIES EXCLUDE_FROM_DEFAULT_BUILD True)
+endif()

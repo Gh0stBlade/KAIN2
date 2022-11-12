@@ -65,7 +65,9 @@ ${PROJECT_NAME} PROPERTIES FOLDER "Build Targets/PlayStation"
 
 set(TARGET_BINARY_DIR "${PROJECT_BINARY_DIR}/${CMAKE_CFG_INTDIR}")
 
+if(NOT EMSCRIPTEN)
 add_dependencies(${PROJECT_NAME} SDL2)
+endif()
 
 include_directories(${KAIN2_ROOT})
 include_directories(${EMULATOR_PUBLIC_INCLUDE_DIR})
@@ -91,6 +93,7 @@ OPTIONAL_DEFINE(KAIN2 "Enable/Disable KAIN2 code" ON)
 
 BuildPreProcessorDefinitions()
 
+if(NOT EMSCRIPTEN)
 target_link_libraries(
 ${PROJECT_NAME}
 ${PSX_LIB}
@@ -98,6 +101,13 @@ SDL2-static
 SDL2main
 ${OPENGL_gl_LIBRARY}
 )
+else()
+target_link_libraries(
+${PROJECT_NAME}
+${PSX_LIB}
+${OPENGL_gl_LIBRARY}
+)
+endif()
 
 #For "Final"
 if(NOT UNIX AND NOT EMSCRIPTEN AND NOT PLATFORM_PSP2 AND NOT PLATFORM_NX_ARM AND NOT ANDROID)
