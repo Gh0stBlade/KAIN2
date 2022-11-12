@@ -37,6 +37,7 @@ extern void Emulator_CreateGlobalShaders();
 extern void Emulator_DestroyTextures();
 extern void Emulator_DestroyGlobalShaders();
 extern void Emulator_CreateVertexBuffer();
+extern void Emulator_CreateIndexBuffer();
 
 #if OGLES_VERSION == 2
 const char* renderBackendName = "OpenGLES 2.0";
@@ -46,6 +47,8 @@ const char* renderBackendName = "OpenGLES 3.0";
 
 GLuint dynamic_vertex_buffer;
 GLuint dynamic_vertex_array;
+
+GLuint dynamic_index_buffer;
 
 SDL_Window* g_window = NULL;
 
@@ -344,6 +347,13 @@ void Emulator_DestroyVertexBuffer()
 	dynamic_vertex_array = 0;
 }
 
+void Emulator_DestroyIndexBuffer()
+{
+	glDeleteBuffers(1, &dynamic_index_buffer);
+
+	dynamic_index_buffer = 0;
+}
+
 void Emulator_ResetDevice()
 {
 	if (!g_resettingDevice)
@@ -351,6 +361,8 @@ void Emulator_ResetDevice()
 		g_resettingDevice = TRUE;
 
 		Emulator_DestroyVertexBuffer();
+
+		Emulator_DestroyIndexBuffer();
 
 		Emulator_DestroyTextures();
 
@@ -361,6 +373,8 @@ void Emulator_ResetDevice()
 		Emulator_GenerateCommonTextures();
 
 		Emulator_CreateVertexBuffer();
+
+		Emulator_CreateIndexBuffer();
 
 		g_resettingDevice = FALSE;
 	}
@@ -496,7 +510,7 @@ void Emulator_GenerateCommonTextures()
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void Emulator_CreateVertexBuffer()///@TODO OGLES
+void Emulator_CreateVertexBuffer()
 {
 	glGenBuffers(1, &dynamic_vertex_buffer);
 	glGenVertexArrays(1, &dynamic_vertex_array);
@@ -536,9 +550,19 @@ int Emulator_CreateCommonResources()
 
 	Emulator_CreateVertexBuffer();
 
+	Emulator_CreateIndexBuffer();
+
 	//Emulator_ResetDevice();
 
 	return TRUE;
+}
+
+void Emulator_CreateIndexBuffer()
+{
+	GLuint indexBuffer;
+	glGenBuffers(1, &dynamic_index_buffer);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, dynamic_index_buffer);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned short) * MAX_NUM_INDEX_BUFFER_INDICES, NULL, GL_DYNAMIC_DRAW);
 }
 
 void Emulator_Ortho2D(float left, float right, float bottom, float top, float znear, float zfar)
@@ -750,12 +774,13 @@ void Emulator_SetBlendMode(BlendMode blendMode)
 
 	g_PreviousBlendMode = blendMode;
 }
-void Emulator_DrawTriangles(int start_vertex, int triangles)
+
+void Emulator_DrawTriangles(int start_vertex, int start_index, int triangles)
 {
 	if (triangles <= 0)
 		return;
 
-	glDrawArrays(GL_TRIANGLES, start_vertex, triangles * 3);
+	glDrawElements(GL_TRIANGLES, triangles * 3, GL_UNSIGNED_SHORT, (void*)(sizeof(unsigned short) * start_index));
 }
 
 void Emulator_UpdateVertexBuffer(const Vertex* vertices, int num_vertices)
@@ -768,6 +793,16 @@ void Emulator_UpdateVertexBuffer(const Vertex* vertices, int num_vertices)
 	glBufferSubData(GL_ARRAY_BUFFER, 0, num_vertices * sizeof(Vertex), vertices);
 
 	vbo_was_dirty_flag = TRUE;
+}
+
+void Emulator_UpdateIndexBuffer(const unsigned short* indices, int num_indices)
+{
+	eassert(num_indices <= MAX_NUM_INDEX_BUFFER_INDICES);
+
+	if (num_indices <= 0)
+		return;
+
+	glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, num_indices * sizeof(unsigned short), indices);
 }
 
 void Emulator_SetViewPort(int x, int y, int width, int height)
