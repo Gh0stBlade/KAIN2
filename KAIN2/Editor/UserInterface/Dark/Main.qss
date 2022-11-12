@@ -686,6 +686,7 @@ QListView::item:selected {
 }
 
 QGroupBox {
+	color: white;
     background-color: rgb(79, 79, 79);
 }
 

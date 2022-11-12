@@ -82,7 +82,7 @@ ${PROJECT_NAME} PROPERTIES FOLDER "Build Targets/PlayStation"
 
 set(TARGET_BINARY_DIR "${PROJECT_BINARY_DIR}/${CMAKE_CFG_INTDIR}")
 
-#todo remove for editor!
+#Still used by OpenGL version of Editor.
 add_dependencies(${PROJECT_NAME} SDL2)
 
 include_directories(${KAIN2_ROOT})
