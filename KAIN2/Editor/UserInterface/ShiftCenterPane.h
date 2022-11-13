@@ -20,6 +20,8 @@
 #include "ShiftLabel.h"
 #include "ShiftPanes.h"
 
+#define MAX_GAME_INSTANCE_COUNT (6)
+
 namespace Shift
 {
 	class CenterPane
@@ -34,6 +36,8 @@ namespace Shift
 		{
 			return m_tabWidget;
 		}
+		
+		void addNewViewport();
 
 	private:
 		QDockWidget* m_viewportWidget;
@@ -41,14 +45,18 @@ namespace Shift
 		QTabWidget* m_tabWidget;
 
 #if defined(D3D9)
-		Shift::D3D9Frame* m_viewport;
+		Shift::D3D9Frame* m_viewport[MAX_GAME_INSTANCE_COUNT];
 #elif defined(D3D11)
-		Shift::D3D11Frame* m_viewport;
+		Shift::D3D11Frame* m_viewport[MAX_GAME_INSTANCE_COUNT];
 #elif defined(OGL)
-		Shift::OGLFrame* m_viewport;
+		Shift::OGLFrame* m_viewport[MAX_GAME_INSTANCE_COUNT];
 #endif
 		Shift::Label* m_labelItemsCount;
 		QLabel* m_labelUntitled;
-		QTimer* m_timer;
+		QTimer* m_timer[MAX_GAME_INSTANCE_COUNT];
+
+		Shift::Panes* m_panes;
+
+		int m_numViewports;
 	};
 }

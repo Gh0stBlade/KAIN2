@@ -5,6 +5,7 @@
 #include <thread>
 
 extern bool g_wipeScreen;
+extern int g_gameInstanceCount;
 
 Shift::ToolBox::ToolBox(QWidget* parent) : QTabWidget(parent)
 {
@@ -154,7 +155,12 @@ Shift::ToolBox::~ToolBox()
 	}
 }
 
-std::thread* gameThread;
+std::thread* gameThread[MAX_GAME_INSTANCE_COUNT] = {};
+struct _G2AppDataVM_Type
+{
+	int argc;//We hack this to the instance count.
+	int* argv;
+};
 extern struct _G2AppDataVM_Type _appDataVM;
 extern int MainG2(void* appData);
 extern int stopGameThread;
@@ -164,12 +170,20 @@ void Shift::ToolBox::DoDebugGame()
 {
 	g_DisableTouchUI = 1;
 
-	if (gameThread != NULL)
+	g_ShiftWindow->getPanes()->m_centerPane->addNewViewport();
+
+	int tabIndex = g_ShiftWindow->getPanes()->m_centerPane->getTabWidget()->currentIndex();
+
+	if (gameThread[tabIndex] != NULL)
 	{
 		DoStopGame();
 	}
 
-	gameThread = new std::thread(MainG2, &_appDataVM);
+	if (tabIndex < MAX_GAME_INSTANCE_COUNT)
+	{
+		_appDataVM.argc = g_gameInstanceCount++;
+		gameThread[tabIndex] = new std::thread(MainG2, &_appDataVM);
+	}
 }
 
 void Shift::ToolBox::DoPlayGame()
@@ -181,12 +195,18 @@ void Shift::ToolBox::DoPlayGame()
 		DoStopGame();
 	}
 
-	gameThread = new std::thread(MainG2, &_appDataVM);
+	if (g_gameInstanceCount < MAX_GAME_INSTANCE_COUNT)
+	{
+		_appDataVM.argc = g_gameInstanceCount++;
+		gameThread[g_ShiftWindow->getPanes()->m_centerPane->getTabWidget()->currentIndex()] = new std::thread(MainG2, &_appDataVM);
+	}
 }
 
 void Shift::ToolBox::DoStopGame()
 {
-	if (gameThread != NULL)
+	int tabIndex = g_ShiftWindow->getPanes()->m_centerPane->getTabWidget()->currentIndex();
+
+	if (gameThread[tabIndex] != NULL)
 	{
 		stopGameThread = 1;
 
@@ -195,13 +215,13 @@ void Shift::ToolBox::DoStopGame()
 			_sleep(100);
 		}
 
-		if (gameThread->joinable())
+		if (gameThread[tabIndex]->joinable())
 		{
-			gameThread->join();
+			gameThread[tabIndex]->join();
 		}
 
-		delete gameThread;
-		gameThread = NULL;
+		delete gameThread[tabIndex];
+		gameThread[tabIndex] = NULL;
 
 		g_wipeScreen = true;
 	}

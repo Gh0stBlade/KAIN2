@@ -22,7 +22,11 @@ extern void Emulator_PollAudio();
 extern void Emulator_SaveVRAM(const char* outputFileName, int x, int y, int width, int height, int bReadFromFrameBuffer);
 
 /* Usually called at the beginning of main function */
+#if defined(EDITOR)
+extern void Emulator_Initialise(char* windowName, int screenWidth, int screenHeight, int instance_index);
+#else
 extern void Emulator_Initialise(char* windowName, int screenWidth, int screenHeight);
+#endif
 
 /* Explicitly updates emulator debug input loop */
 extern void Emulator_UpdateInputDebug();

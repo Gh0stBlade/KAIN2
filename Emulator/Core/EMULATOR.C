@@ -29,6 +29,7 @@
 #include <stdlib.h>
 
 int g_useHintedTouchUIFont = FALSE;
+int thread_local g_instanceIndex = 0;
 
 #if defined(SDL2) || (defined(OGLES) && defined(_WINDOWS))
 extern SDL_Window* g_window;
@@ -2354,13 +2355,21 @@ static int Emulator_InitialiseCore()
 	return TRUE;
 }
 
+#if defined(EDITOR)
+void Emulator_Initialise(char* windowName, int width, int height, int instance_index)
+#else
 void Emulator_Initialise(char* windowName, int width, int height)
+#endif
 {
 #if defined(_WINDOWS)
 #if defined(MEM_CHECK)
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	_crtBreakAlloc = 171;
 #endif
+#endif
+
+#if defined(EDITOR)
+	g_instanceIndex = instance_index;
 #endif
 
 	eprintf("Initialising %s.\n", EMULATOR_NAME);
@@ -5253,7 +5262,7 @@ void Emulator_DoPollEvent()
 #if defined(__EMSCRIPTEN__)
 					SDL_SetWindowSize(g_window, windowWidth, windowHeight);
 #endif
-					g_resetDeviceOnNextFrame = TRUE;
+					g_resetDeviceOnNextFrame[g_instanceIndex] = TRUE;
 					break;
 				case SDL_WINDOWEVENT_CLOSE:
 					g_closeOnNextFrame = TRUE;
@@ -5373,12 +5382,12 @@ int Emulator_BeginScene()
 
 int Emulator_GetWindowWidth()
 {
-	return g_overrideWidth != -1 ? g_overrideWidth : windowWidth;
+	return g_overrideWidth[g_instanceIndex] != -1 ? g_overrideWidth[g_instanceIndex] : windowWidth;
 }
 
 int Emulator_GetWindowHeight()
 {
-	return g_overrideHeight != -1 ? g_overrideHeight : windowHeight;
+	return g_overrideHeight[g_instanceIndex] != -1 ? g_overrideHeight[g_instanceIndex] : windowHeight;
 }
 
 #if !defined(__EMSCRIPTEN__) && !defined(__ANDROID__)
@@ -5419,7 +5428,7 @@ void Emulator_TakeScreenshot(int mode)
 	unsigned char* pixels = new unsigned char[width * height * sizeof(unsigned int)];
 	
 #if defined(_WINDOWS) && (defined(D3D11) || defined(OGL))
-	if (g_overrideHWND != NULL)
+	if (g_overrideHWND[g_instanceIndex] != NULL)
 	{
 		HDC hdcScreen;
 		HDC hdcWindow;
@@ -5433,8 +5442,8 @@ void Emulator_TakeScreenshot(int mode)
 		HANDLE hDIB = NULL;
 		DWORD dwBmpSize = 0;
 
-		hdcScreen = GetDC(g_overrideHWND);
-		hdcWindow = GetDC(g_overrideHWND);
+		hdcScreen = GetDC(g_overrideHWND[g_instanceIndex]);
+		hdcWindow = GetDC(g_overrideHWND[g_instanceIndex]);
 
 		hdcMemDC = CreateCompatibleDC(hdcWindow);
 
@@ -5444,7 +5453,7 @@ void Emulator_TakeScreenshot(int mode)
 		}
 
 		RECT rcClient;
-		GetClientRect(g_overrideHWND, &rcClient);
+		GetClientRect(g_overrideHWND[g_instanceIndex], &rcClient);
 
 		SetStretchBltMode(hdcWindow, HALFTONE);
 
@@ -5528,7 +5537,7 @@ void Emulator_TakeScreenshot(int mode)
 		DeleteObject(hbmScreen);
 		DeleteObject(hdcMemDC);
 		ReleaseDC(NULL, hdcScreen);
-		ReleaseDC(g_overrideHWND, hdcWindow);
+		ReleaseDC(g_overrideHWND[g_instanceIndex], hdcWindow);
 
 		return;
 	}
@@ -6073,10 +6082,10 @@ void Emulator_EndScene()
 
 	Emulator_SwapWindow();
 
-	if (g_resetDeviceOnNextFrame == TRUE)
+	if (g_resetDeviceOnNextFrame[g_instanceIndex] == TRUE)
 	{
 		Emulator_ResetDevice();
-		g_resetDeviceOnNextFrame = FALSE;
+		g_resetDeviceOnNextFrame[g_instanceIndex] = FALSE;
 	}
 
 	if (g_closeOnNextFrame == TRUE)

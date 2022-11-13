@@ -3,7 +3,7 @@
 #include "Game/STREAM.H"
 #include "Game/GAMELOOP.H"
 
-extern struct GameTracker gameTrackerX;
+extern struct GameTracker thread_local gameTrackerX;
 
 extern struct Level* g_selectedUnit;
 

@@ -29,7 +29,7 @@ namespace Shift
             m_tabWidget = tabWidget;
         }
 
-        virtual void initialiseHWND(HWND windowHandle, int width, int height);
+        virtual void initialiseHWND(HWND windowHandle, int width, int height, int instanceCount);
         virtual void resizeEvent(QResizeEvent* event) override;
         void keyPressEvent(QKeyEvent* event) override;
         void keyReleaseEvent(QKeyEvent* event) override;

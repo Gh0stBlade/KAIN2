@@ -1047,7 +1047,12 @@ int MainG2(void *appData)
 	int timer;
 
 #if defined(PSXPC_VERSION)
+
+#if defined(EDITOR)
+	Emulator_Initialise(GAME_NAME, GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT, ((int*)appData)[0]);
+#else
 	Emulator_Initialise(GAME_NAME, GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT);
+#endif
 	Emulator_HintOTSize(3071);
 #endif
 

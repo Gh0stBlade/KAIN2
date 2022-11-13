@@ -22,7 +22,7 @@ int g_swapInterval = SWAP_INTERVAL;
 int g_PreviousBlendMode = BM_NONE;
 int windowWidth = 0;
 int windowHeight = 0;
-unsigned int g_resetDeviceOnNextFrame = FALSE;
+unsigned int g_resetDeviceOnNextFrame[6] = { FALSE, FALSE, FALSE, FALSE, FALSE, FALSE };
 unsigned int g_closeOnNextFrame = FALSE;
 unsigned int g_resettingDevice = FALSE;
 
@@ -41,16 +41,16 @@ TextureID* vramTexture;
 TextureID* whiteTexture;
 TextureID* rg8lutTexture;
 #else
-TextureID g_lastBoundTexture[2];
+TextureID thread_local g_lastBoundTexture[2];
 
-ShaderID g_gte_shader_4;
-ShaderID g_gte_shader_8;
-ShaderID g_gte_shader_16;
-ShaderID g_blit_shader;
+ShaderID thread_local g_gte_shader_4;
+ShaderID thread_local g_gte_shader_8;
+ShaderID thread_local g_gte_shader_16;
+ShaderID thread_local g_blit_shader;
 
-TextureID vramTexture;
-TextureID whiteTexture;
-TextureID rg8lutTexture;
+TextureID thread_local vramTexture;
+TextureID thread_local whiteTexture;
+TextureID thread_local rg8lutTexture;
 #endif
 
 typedef struct POLY_G3_SEMITRANS 

@@ -14,7 +14,7 @@
 
 #include <thread>
 
-extern std::thread* gameThread;
+extern std::thread* gameThread[MAX_GAME_INSTANCE_COUNT];
 
 char g_lastAreaName[32];
 
@@ -36,7 +36,7 @@ static int g_cameraSpeed = 0;
 static int g_cameraMoveDirection = 0;
 static int g_cameraMoveDelay = 0;
 
-extern unsigned int g_resetDeviceOnNextFrame;
+extern unsigned int g_resetDeviceOnNextFrame[MAX_GAME_INSTANCE_COUNT];
 
 extern struct Camera theCamera;
 
@@ -46,15 +46,15 @@ extern struct _Position overrideEditorPosition;
 extern char* GAMELOOP_GetBaseAreaName();
 
 
-extern HWND g_overrideHWND;
-extern int g_overrideWidth;
-extern int g_overrideHeight;
+extern HWND g_overrideHWND[MAX_GAME_INSTANCE_COUNT];
+extern int g_overrideWidth[MAX_GAME_INSTANCE_COUNT];
+extern int g_overrideHeight[MAX_GAME_INSTANCE_COUNT];
 
-void Shift::D3D11Frame::initialiseHWND(HWND windowHandle, int width, int height)
+void Shift::D3D11Frame::initialiseHWND(HWND windowHandle, int width, int height, int instance_index)
 {
-    g_overrideHWND = windowHandle;
-    g_overrideWidth = width;
-    g_overrideHeight = height;
+    g_overrideHWND[instance_index] = windowHandle;
+    g_overrideWidth[instance_index] = width;
+    g_overrideHeight[instance_index] = height;
 }
 
 void Shift::D3D11Frame::render()
@@ -163,10 +163,13 @@ void Shift::D3D11Frame::resizeEvent(QResizeEvent* event)
     int oldW = event->size().width();
     int oldH = event->size().height();
 
-    g_overrideWidth = oldW;
-    g_overrideHeight = oldH;
+    for (int i = 0; i < MAX_GAME_INSTANCE_COUNT; i++)
+    {
+        g_overrideWidth[i] = oldW;
+        g_overrideHeight[i] = oldH;
 
-    g_resetDeviceOnNextFrame = true;
+        g_resetDeviceOnNextFrame[i] = true;
+    }
 }
 
 void Shift::D3D11Frame::keyPressEvent(QKeyEvent* event)
@@ -422,8 +425,8 @@ void Shift::D3D11Frame::mouseReleaseEvent(QMouseEvent* event)
     }
     else if (event->button() == Qt::LeftButton)
     {
-        VECTOR rayPosition, rayDirection;
-        pickRayVector(event->localPos().x(), event->localPos().y(), g_overrideWidth, g_overrideHeight, &rayPosition, &rayDirection);
+        //VECTOR rayPosition, rayDirection;
+        //pickRayVector(event->localPos().x(), event->localPos().y(), g_overrideWidth[g_overrideIndex], g_overrideHeight[g_overrideIndex], &rayPosition, &rayDirection);
         //CheckIfRayIntersectedWithAnySceneObject(rayPosition, rayDirection);
     }
 }

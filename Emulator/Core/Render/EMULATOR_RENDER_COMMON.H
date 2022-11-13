@@ -91,19 +91,19 @@ extern int g_PreviousBlendMode;
 extern int g_texturelessMode;
 extern int windowWidth;
 extern int windowHeight;
-extern int g_overrideWidth;
-extern int g_overrideHeight;
+extern int g_overrideWidth[];
+extern int g_overrideHeight[];
 #if defined(D3D11) || (defined(OGL) && defined(_WINDOWS))
 #include <Windows.h>//OGL
-extern HWND g_overrideHWND;
+extern HWND g_overrideHWND[];
 #endif
-extern unsigned int g_resetDeviceOnNextFrame;
+extern unsigned int g_resetDeviceOnNextFrame[6];
 extern unsigned int g_closeOnNextFrame;
 extern unsigned int g_resettingDevice;
 #if defined(PLATFORM_NX) || defined(PLATFORM_NX_ARM)
 extern TextureID* g_lastBoundTexture[];
 #else
-extern TextureID g_lastBoundTexture[];
+extern TextureID thread_local g_lastBoundTexture[];
 #endif
 extern int begin_scene_flag;
 extern int vbo_was_dirty_flag;
@@ -118,14 +118,14 @@ extern TextureID* vramTexture;
 extern TextureID* whiteTexture;
 extern TextureID* rg8lutTexture;
 #else
-extern ShaderID g_gte_shader_4;
-extern ShaderID g_gte_shader_8;
-extern ShaderID g_gte_shader_16;
-extern ShaderID g_blit_shader;
+extern ShaderID thread_local g_gte_shader_4;
+extern ShaderID thread_local g_gte_shader_8;
+extern ShaderID thread_local g_gte_shader_16;
+extern ShaderID thread_local g_blit_shader;
 
-extern TextureID vramTexture;
-extern TextureID whiteTexture;
-extern TextureID rg8lutTexture;
+extern TextureID thread_local vramTexture;
+extern TextureID thread_local whiteTexture;
+extern TextureID thread_local rg8lutTexture;
 #endif
 
 extern unsigned short vram[];
@@ -176,6 +176,7 @@ extern void Emulator_UpdateIndexBuffer(const unsigned short* indices, int num_in
 extern int Emulator_CreateCommonResources();
 extern void Emulator_Ortho2D(float left, float right, float bottom, float top, float znear, float zfar);
 extern const char* renderBackendName;
+extern int thread_local g_instanceIndex;
 
 extern int Emulator_GetWindowWidth();
 extern int Emulator_GetWindowHeight();

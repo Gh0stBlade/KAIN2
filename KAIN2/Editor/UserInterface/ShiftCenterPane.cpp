@@ -5,6 +5,8 @@
 
 extern char g_lastAreaName[32];
 
+int g_gameInstanceCount = 0;
+
 Shift::CenterPane::CenterPane(Shift::Panes* panes, QWidget* parent)
 {
 	m_viewportWidget = new QDockWidget(QObject::tr(""));
@@ -15,49 +17,30 @@ Shift::CenterPane::CenterPane(Shift::Panes* panes, QWidget* parent)
 	m_tabWidget->setObjectName("ShiftViewportTabWidget");
 	m_viewportWidget->setWidget(m_tabWidget);
 
-#if defined(D3D9)
-	m_viewport = new Shift::D3D9Frame(panes, m_tabWidget);
-	m_viewport->setObjectName("ShiftViewport");
-	m_viewport->setFocusPolicy(Qt::ClickFocus);
-	m_viewport->initialiseHWND((HWND)m_viewport->winId(), m_viewport->width(), m_viewport->height());
-#elif defined(D3D11)
-	m_viewport = new Shift::D3D11Frame(panes, m_tabWidget);
-	m_viewport->setObjectName("ShiftViewport");
-	m_viewport->setFocusPolicy(Qt::ClickFocus);
-	m_viewport->initialiseHWND((HWND)m_viewport->winId(), m_viewport->width(), m_viewport->height());
-#elif defined(OGL)
-	m_viewport = new Shift::OGLFrame(panes, m_tabWidget);
-	m_viewport->setObjectName("ShiftViewport");
-	m_viewport->setFocusPolicy(Qt::ClickFocus);
-	m_viewport->initialiseHWND((HWND)m_viewport->winId(), m_viewport->width(), m_viewport->height());
-#endif
+	m_panes = panes;
 
-	m_labelUntitled = new QLabel;
-	m_labelUntitled->setText("Untitled*");
-	m_tabWidget->addTab(m_viewport, g_lastAreaName);
+	g_gameInstanceCount = 0;
 
-	m_timer = new QTimer(m_viewport);
-#if defined(D3D9)
-	parent->connect(m_timer, &QTimer::timeout, m_viewport, &Shift::D3D9Frame::render);
-#elif defined(D3D11)
-	parent->connect(m_timer, &QTimer::timeout, m_viewport, &Shift::D3D11Frame::render);
-#elif defined(OGL)
-	parent->connect(m_timer, &QTimer::timeout, m_viewport, &Shift::OGLFrame::render);
-#endif
-	m_timer->setInterval(1000.0f / 60.0f);
-	m_timer->start();
+	for (int i = 0; i < MAX_GAME_INSTANCE_COUNT; i++)
+	{
+		this->m_viewport[i] = nullptr;
+		this->m_timer[i] = nullptr;
+	}
 }
 
 Shift::CenterPane::~CenterPane()
 {
-	if (m_timer != nullptr)
+	for (int i = 0; i < MAX_GAME_INSTANCE_COUNT; i++)
 	{
-		delete m_timer;
-	}
+		if (m_timer[i] != nullptr)
+		{
+			delete m_timer[i];
+		}
 
-	if (m_viewport != nullptr)
-	{
-		delete m_viewport;
+		if (m_viewport[i] != nullptr)
+		{
+			delete m_viewport[i];
+		}
 	}
 
 	if (m_labelItemsCount != nullptr)
@@ -67,7 +50,7 @@ Shift::CenterPane::~CenterPane()
 
 	if (m_labelUntitled != nullptr)
 	{
-		delete m_labelUntitled;
+		//delete m_labelUntitled;
 	}
 
 	if (m_tabWidget != nullptr)
@@ -89,4 +72,52 @@ QWidget* Shift::CenterPane::getViewportWidget()
 QDockWidget* Shift::CenterPane::getViewportDockWidget()
 {
 	return m_viewportWidget;
+}
+
+void Shift::CenterPane::addNewViewport()
+{
+#if defined(D3D9)
+	m_viewport[g_gameInstanceCount] = new Shift::D3D9Frame(m_panes, m_tabWidget);
+	m_viewport[g_gameInstanceCount]->setObjectName("ShiftViewport");
+	m_viewport[g_gameInstanceCount]->setFocusPolicy(Qt::ClickFocus);
+	m_viewport[g_gameInstanceCount]->initialiseHWND((HWND)m_viewport[g_gameInstanceCount]->winId(), m_viewport[g_gameInstanceCount]->width(), m_viewport[g_gameInstanceCount]->height(), g_gameInstanceCount);
+#elif defined(D3D11)
+	m_viewport[g_gameInstanceCount] = new Shift::D3D11Frame(m_panes, m_tabWidget);
+	m_viewport[g_gameInstanceCount]->setObjectName("ShiftViewport");
+	m_viewport[g_gameInstanceCount]->setFocusPolicy(Qt::ClickFocus);
+	m_viewport[g_gameInstanceCount]->initialiseHWND((HWND)m_viewport[g_gameInstanceCount]->winId(), m_viewport[g_gameInstanceCount]->width(), m_viewport[g_gameInstanceCount]->height(), g_gameInstanceCount);
+#elif defined(OGL)
+	m_viewport[g_gameInstanceCount] = new Shift::OGLFrame(m_panes, m_tabWidget);
+	m_viewport[g_gameInstanceCount]->setObjectName("ShiftViewport");
+	m_viewport[g_gameInstanceCount]->setFocusPolicy(Qt::ClickFocus);
+	m_viewport[g_gameInstanceCount]->initialiseHWND((HWND)m_viewport[g_gameInstanceCount]->winId(), m_viewport[g_gameInstanceCount]->width(), m_viewport[g_gameInstanceCount]->height(), g_gameInstanceCount);
+#endif
+
+	char tabName[32];
+	int tabIndex = this->m_tabWidget->currentIndex();
+
+	if (g_gameInstanceCount == 0)
+	{
+		sprintf(tabName, "Untitled*");
+}
+	else
+	{
+		sprintf(tabName, "Untitled*(%d)", g_gameInstanceCount);
+	}
+
+	m_tabWidget->addTab(m_viewport[g_gameInstanceCount], tabName);
+
+	m_tabWidget->setCurrentIndex(m_tabWidget->count()-1);
+	tabIndex = this->m_tabWidget->currentIndex();
+
+	m_timer[tabIndex] = new QTimer(m_viewport[tabIndex]);
+#if defined(D3D9)
+	m_viewport[tabIndex]->connect(m_timer[tabIndex], &QTimer::timeout, m_viewport[tabIndex], &Shift::D3D9Frame::render);
+#elif defined(D3D11)
+	m_viewport[tabIndex]->connect(m_timer[tabIndex], &QTimer::timeout, m_viewport[tabIndex], &Shift::D3D11Frame::render);
+#elif defined(OGL)
+	m_viewport[tabIndex]->connect(m_timer[tabIndex], &QTimer::timeout, m_viewport[tabIndex], &Shift::OGLFrame::render);
+#endif
+	m_timer[tabIndex]->setInterval(1000.0f / 60.0f);
+	m_timer[tabIndex]->start();
 }

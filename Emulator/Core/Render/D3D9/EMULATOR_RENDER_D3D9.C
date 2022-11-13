@@ -20,9 +20,9 @@ D3DPRESENT_PARAMETERS  d3dpp;
 
 SDL_Window* g_window = NULL;
 
-HWND g_overrideHWND = NULL;
-int g_overrideWidth = -1;
-int g_overrideHeight = -1;
+HWND g_overrideHWND[MAX_NUM_GAME_INSTANCES] = { NULL, NULL, NULL, NULL, NULL, NULL };
+int g_overrideWidth[MAX_NUM_GAME_INSTANCES] = { -1, -1, -1, -1, -1, -1 };
+int g_overrideHeight[MAX_NUM_GAME_INSTANCES] = { -1, -1, -1, -1, -1, -1 };
 
 #include "shaders/D3D9/gte_shader_4_vs.h"
 #include "shaders/D3D9/gte_shader_4_ps.h"
@@ -92,7 +92,7 @@ void Emulator_ResetDevice()
 int Emulator_InitialiseD3D9Context(char* windowName)
 {
 #if defined(SDL2)
-	if (g_overrideHWND == NULL)
+	if (g_overrideHWND[g_instanceIndex] == NULL)
 	{
 		g_window = SDL_CreateWindow(windowName, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, windowWidth, windowHeight, SDL_WINDOW_RESIZABLE);
 		if (g_window == NULL)
@@ -114,7 +114,7 @@ int Emulator_InitialiseD3D9Context(char* windowName)
 	d3dpp.BackBufferWidth = Emulator_GetWindowWidth();
 	d3dpp.BackBufferHeight = Emulator_GetWindowHeight();
 	d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
-	d3dpp.hDeviceWindow = g_overrideHWND == NULL ? wmInfo.info.win.window : g_overrideHWND;
+	d3dpp.hDeviceWindow = g_overrideHWND[g_instanceIndex] == NULL ? wmInfo.info.win.window : g_overrideHWND[g_instanceIndex];
 	d3dpp.EnableAutoDepthStencil = TRUE;
 	d3dpp.AutoDepthStencilFormat = D3DFMT_D24S8;
 	d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_ONE;

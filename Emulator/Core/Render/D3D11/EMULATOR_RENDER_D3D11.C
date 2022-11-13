@@ -20,26 +20,28 @@ extern void Emulator_SetConstantBuffers();
 
 const char* renderBackendName = "D3D11";
 
-HWND g_overrideHWND = NULL;
-int g_overrideWidth = -1;
-int g_overrideHeight = -1;
-ID3D11Texture2D* vramBaseTexture = NULL;
-ID3D11Buffer* dynamic_vertex_buffer = NULL;
-ID3D11Buffer* dynamic_index_buffer = NULL;
-ID3D11Device* d3ddev = NULL;
-ID3D11DeviceContext* d3dcontext = NULL;
+int g_actualOverrideIndex = -1;
+HWND g_overrideHWND[MAX_NUM_GAME_INSTANCES] = { NULL, NULL, NULL, NULL, NULL, NULL};
+int g_overrideWidth[MAX_NUM_GAME_INSTANCES] = { -1, -1, -1, -1, -1, -1 };
+int g_overrideHeight[MAX_NUM_GAME_INSTANCES] = { -1, -1, -1, -1, -1, -1 };
+
+thread_local ID3D11Texture2D* vramBaseTexture = NULL;
+thread_local ID3D11Buffer* dynamic_vertex_buffer = NULL;
+thread_local ID3D11Buffer* dynamic_index_buffer = NULL;
+thread_local ID3D11Device* d3ddev = NULL;
+thread_local ID3D11DeviceContext* d3dcontext = NULL;
 
 #if defined(UWP)
-IDXGISwapChain1* swapChain;
+thread_local IDXGISwapChain1* swapChain;
 #else
-IDXGISwapChain* swapChain;
+thread_local IDXGISwapChain* swapChain;
 #endif
-ID3D11RenderTargetView* renderTargetView = NULL;
-ID3D11Buffer* projectionMatrixBuffer = NULL;
-ID3D11SamplerState* samplerState = NULL;
-ID3D11SamplerState* rg8lutSamplerState = NULL;
-ID3D11BlendState* blendState = NULL;
-ID3D11RasterizerState* rasterState = NULL;
+thread_local ID3D11RenderTargetView* renderTargetView = NULL;
+thread_local ID3D11Buffer* projectionMatrixBuffer = NULL;
+thread_local ID3D11SamplerState* samplerState = NULL;
+thread_local ID3D11SamplerState* rg8lutSamplerState = NULL;
+thread_local ID3D11BlendState* blendState = NULL;
+thread_local ID3D11RasterizerState* rasterState = NULL;
 
 SDL_Window* g_window = NULL;
 
@@ -135,7 +137,7 @@ void Emulator_ResetDevice()
 #endif
 
 #if defined(SDL2) && !defined(UWP_SDL2)
-	sd.OutputWindow = g_overrideHWND == NULL ? wmInfo.info.win.window : g_overrideHWND;
+	sd.OutputWindow = g_overrideHWND[g_instanceIndex] == NULL ? wmInfo.info.win.window : g_overrideHWND[g_instanceIndex];
 #endif
 
 #if defined(_DEBUG)
@@ -251,7 +253,7 @@ int Emulator_InitialiseD3D11Context(char* windowName)
 #if defined(SDL2)
 	SDL_SysWMinfo wmInfo;
 
-	if (g_overrideHWND == NULL)
+	if (g_overrideHWND[g_instanceIndex] == NULL)
 	{
 		g_window = SDL_CreateWindow(windowName, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, windowWidth, windowHeight, SDL_WINDOW_RESIZABLE);
 		if (g_window == NULL)
@@ -304,7 +306,7 @@ int Emulator_InitialiseD3D11Context(char* windowName)
 	sd.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 #endif
 #if defined(SDL2) && !defined(UWP_SDL2)
-	sd.OutputWindow = g_overrideHWND == NULL ? wmInfo.info.win.window : g_overrideHWND;
+	sd.OutputWindow = g_overrideHWND[g_instanceIndex] == NULL ? wmInfo.info.win.window : g_overrideHWND[g_instanceIndex];
 #endif
 
 #if defined(_DEBUG)
@@ -1036,7 +1038,7 @@ void Emulator_SwapWindow()
 	HRESULT hr = swapChain->Present(g_swapInterval, 0);
 
 	if (hr == DXGI_ERROR_DEVICE_REMOVED || hr == DXGI_ERROR_DEVICE_RESET) {
-		g_resetDeviceOnNextFrame = TRUE;
+		g_resetDeviceOnNextFrame[g_instanceIndex] = TRUE;
 	}
 }
 
