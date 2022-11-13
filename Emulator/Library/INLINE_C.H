@@ -282,12 +282,12 @@ extern int gte_ldlzc(int input);
 	: "r"( r0 )						\
 	: "$12", "$13" )
 
-#define gte_SetLightMatrix( r0 )       \
-	((int*)&IR0)[0]  = ((int*)r0)[0];   \
-	((int*)&IR1)[0]  = ((int*)r0)[1];   \
-	((int*)&IR2)[0]  = ((int*)r0)[2];   \
-	((int*)&IR3)[0]  = ((int*)r0)[3];   \
-	((int*)&SXY0)[0] = ((int*)r0)[4];  \
+#define gte_SetLightMatrix( r0 )        \
+	((int*)&L11)[0]  = ((int*)r0)[0];   \
+	((int*)&L13)[0]  = ((int*)r0)[1];   \
+	((int*)&L22)[0]  = ((int*)r0)[2];   \
+	((int*)&L31)[0]  = ((int*)r0)[3];   \
+	((int*)&L33)[0]  = ((int*)r0)[4];   \
 
 #define gte_ldsvlcrow0( r0 ) __asm__ volatile (			\
 	"lw	$12, 0( %0 );"					\
