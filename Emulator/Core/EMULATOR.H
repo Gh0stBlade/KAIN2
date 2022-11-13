@@ -169,9 +169,9 @@ extern TextureID* rg8lutTexture;
 extern TextureID* whiteTexture;
 extern TextureID* vramTexture;
 #else
-extern TextureID thread_local rg8lutTexture;
-extern TextureID thread_local whiteTexture;
-extern TextureID thread_local vramTexture;
+extern TextureID rg8lutTexture;
+extern TextureID whiteTexture;
+extern TextureID vramTexture;
 #endif
 
 extern void Emulator_SaveVRAM(const char* outputFileName, int x, int y, int width, int height, int bReadFromFrameBuffer);

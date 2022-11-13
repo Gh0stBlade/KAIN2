@@ -170,7 +170,12 @@ void Shift::ToolBox::DoDebugGame()
 {
 	g_DisableTouchUI = 1;
 
-	g_ShiftWindow->getPanes()->m_centerPane->addNewViewport();
+	int oldTabIndex = g_ShiftWindow->getPanes()->m_centerPane->getTabWidget()->currentIndex();
+
+	if (oldTabIndex == -1)
+	{
+		g_ShiftWindow->getPanes()->m_centerPane->addNewViewport();
+	}
 
 	int tabIndex = g_ShiftWindow->getPanes()->m_centerPane->getTabWidget()->currentIndex();
 
@@ -181,7 +186,6 @@ void Shift::ToolBox::DoDebugGame()
 
 	if (tabIndex < MAX_GAME_INSTANCE_COUNT)
 	{
-		_appDataVM.argc = g_gameInstanceCount++;
 		gameThread[tabIndex] = new std::thread(MainG2, &_appDataVM);
 	}
 }
@@ -190,15 +194,23 @@ void Shift::ToolBox::DoPlayGame()
 {
 	g_DisableTouchUI = 1;
 
-	if (gameThread != NULL)
+	int oldTabIndex = g_ShiftWindow->getPanes()->m_centerPane->getTabWidget()->currentIndex();
+
+	if (oldTabIndex == -1)
+	{
+		g_ShiftWindow->getPanes()->m_centerPane->addNewViewport();
+	}
+
+	int tabIndex = g_ShiftWindow->getPanes()->m_centerPane->getTabWidget()->currentIndex();
+
+	if (gameThread[tabIndex] != NULL)
 	{
 		DoStopGame();
 	}
 
-	if (g_gameInstanceCount < MAX_GAME_INSTANCE_COUNT)
+	if (tabIndex < MAX_GAME_INSTANCE_COUNT)
 	{
-		_appDataVM.argc = g_gameInstanceCount++;
-		gameThread[g_ShiftWindow->getPanes()->m_centerPane->getTabWidget()->currentIndex()] = new std::thread(MainG2, &_appDataVM);
+		gameThread[tabIndex] = new std::thread(MainG2, &_appDataVM);
 	}
 }
 
@@ -206,7 +218,7 @@ void Shift::ToolBox::DoStopGame()
 {
 	int tabIndex = g_ShiftWindow->getPanes()->m_centerPane->getTabWidget()->currentIndex();
 
-	if (gameThread[tabIndex] != NULL)
+	if (tabIndex != -1 && gameThread[tabIndex] != NULL)
 	{
 		stopGameThread = 1;
 

@@ -18,10 +18,10 @@ struct ShaderID {
 
 typedef ID3D11RenderTargetView* RenderTargetID;
 
-extern thread_local ID3D11Device* d3ddev;
-extern thread_local ID3D11DeviceContext* d3dcontext;
-extern thread_local ID3D11Texture2D* vramBaseTexture;
-extern thread_local ID3D11Buffer* dynamic_vertex_buffer;
+extern ID3D11Device* d3ddev;
+extern ID3D11DeviceContext* d3dcontext;
+extern ID3D11Texture2D* vramBaseTexture;
+extern ID3D11Buffer* dynamic_vertex_buffer;
 
 
 extern int Emulator_InitialiseD3D11Context(char* windowName);

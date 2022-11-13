@@ -9,7 +9,7 @@
 #if defined(OGL)
 
 #if defined(_WINDOWS)
-HWND g_overrideHWND[MAX_NUM_GAME_INSTANCES] = { NULL, NULL, NULL, NULL, NULL, NULL };
+HWND g_overrideHWND = NULL;
 #endif
 
 PFNGLCREATEPROGRAMPROC              glCreateProgram;
@@ -77,8 +77,8 @@ GLuint dynamic_index_buffer;
 
 SDL_Window* g_window = NULL;
 
-int g_overrideWidth[MAX_NUM_GAME_INSTANCES] = { -1, -1, -1, -1, -1, -1 };
-int g_overrideHeight[MAX_NUM_GAME_INSTANCES] = { -1, -1, -1, -1, -1, -1 };
+int g_overrideWidth = -1;
+int g_overrideHeight = -1;
 
 GLint u_Projection;
 
@@ -605,10 +605,10 @@ int Emulator_InitialiseGLContext(char* windowName)
 #if defined(SDL2)
 #if defined(_WINDOWS) && defined(EDITOR)
 
-	if (g_overrideHWND[g_instanceIndex] != NULL)
+	if (g_overrideHWND != NULL)
 	{
 		SDL_SetHint(SDL_HINT_VIDEO_FOREIGN_WINDOW_OPENGL, "1");
-		g_window = SDL_CreateWindowFrom(g_overrideHWND[g_instanceIndex]);
+		g_window = SDL_CreateWindowFrom(g_overrideHWND);
 		SDL_GL_MakeCurrent(g_window, SDL_GL_CreateContext(g_window));
 		SDL_SetWindowSize(g_window, Emulator_GetWindowWidth(), Emulator_GetWindowHeight());
 	}

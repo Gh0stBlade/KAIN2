@@ -36,7 +36,7 @@ static int g_cameraSpeed = 0;
 static int g_cameraMoveDirection = 0;
 static int g_cameraMoveDelay = 0;
 
-extern unsigned int g_resetDeviceOnNextFrame[MAX_GAME_INSTANCE_COUNT];
+extern unsigned int g_resetDeviceOnNextFrame;
 
 extern struct Camera theCamera;
 
@@ -45,15 +45,15 @@ extern struct _Position overrideEditorPosition;
 
 extern char* GAMELOOP_GetBaseAreaName();
 
-extern HWND g_overrideHWND[MAX_GAME_INSTANCE_COUNT];
-extern int g_overrideWidth[MAX_GAME_INSTANCE_COUNT];
-extern int g_overrideHeight[MAX_GAME_INSTANCE_COUNT];
+extern HWND g_overrideHWND;
+extern int g_overrideWidth;
+extern int g_overrideHeight;
 
 void Shift::OGLFrame::initialiseHWND(HWND windowHandle, int width, int height, int instance_index)
 {
-    g_overrideHWND[instance_index] = windowHandle;
-    g_overrideWidth[instance_index] = width;
-    g_overrideHeight[instance_index] = height;
+    g_overrideHWND = windowHandle;
+    g_overrideWidth = width;
+    g_overrideHeight = height;
 }
 
 void Shift::OGLFrame::render()
@@ -161,23 +161,20 @@ void Shift::OGLFrame::resizeEvent(QResizeEvent* event)
     int oldW = event->size().width();
     int oldH = event->size().height();
 
-    for (int i = 0; i < MAX_GAME_INSTANCE_COUNT; i++)
+    RECT rect;
+    int width = 0;
+    int height = 0;
+    if (GetWindowRect(g_overrideHWND, &rect))
     {
-        RECT rect;
-        int width = 0;
-        int height = 0;
-        if (GetWindowRect(g_overrideHWND[i], &rect))
-        {
-            width = rect.right - rect.left;
-            height = rect.bottom - rect.top;
-        }
-
-
-        g_overrideWidth[i] = width;
-        g_overrideHeight[i] = height;
-
-        g_resetDeviceOnNextFrame[i] = true;
+        width = rect.right - rect.left;
+        height = rect.bottom - rect.top;
     }
+
+
+    g_overrideWidth = width;
+    g_overrideHeight = height;
+
+    g_resetDeviceOnNextFrame = true;
 }
 
 void Shift::OGLFrame::keyPressEvent(QKeyEvent* event)

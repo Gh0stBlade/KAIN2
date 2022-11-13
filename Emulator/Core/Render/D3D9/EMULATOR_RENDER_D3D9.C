@@ -92,7 +92,7 @@ void Emulator_ResetDevice()
 int Emulator_InitialiseD3D9Context(char* windowName)
 {
 #if defined(SDL2)
-	if (g_overrideHWND[g_instanceIndex] == NULL)
+	if (g_overrideHWND == NULL)
 	{
 		g_window = SDL_CreateWindow(windowName, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, windowWidth, windowHeight, SDL_WINDOW_RESIZABLE);
 		if (g_window == NULL)
@@ -114,7 +114,7 @@ int Emulator_InitialiseD3D9Context(char* windowName)
 	d3dpp.BackBufferWidth = Emulator_GetWindowWidth();
 	d3dpp.BackBufferHeight = Emulator_GetWindowHeight();
 	d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
-	d3dpp.hDeviceWindow = g_overrideHWND[g_instanceIndex] == NULL ? wmInfo.info.win.window : g_overrideHWND[g_instanceIndex];
+	d3dpp.hDeviceWindow = g_overrideHWND == NULL ? wmInfo.info.win.window : g_overrideHWND;
 	d3dpp.EnableAutoDepthStencil = TRUE;
 	d3dpp.AutoDepthStencilFormat = D3DFMT_D24S8;
 	d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_ONE;
