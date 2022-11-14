@@ -4252,1002 +4252,720 @@ unsigned long* DRAW_DisplayPolytopeList_S(struct _PolytopeList* polytopeList, st
 
 long PIPE3D_TransformAnimatedInstanceVertices_S(struct _VertexPool* vertexPool, struct _PVertex* poolVertex, struct _Model* model, MATRIX* wcTransform, MATRIX* matrixPool, MATRIX* lm, CVECTOR* vertexColor, CVECTOR* perVertexColor)
 {
-#if 0
-	sub_80027170:
+	//t2 = model->numSegments
+	//t0 = poolVertex
+	//t3 = getScratchAddr(0);
+	int a2 = 0;
+	VECTOR t5andt6;
+	int t2 = model->numSegments;
+	struct _Segment* seg;//t8
+	int s33;
 
-	arg_10 = 0x10
-		arg_14 = 0x14
-		arg_18 = 0x18
-		arg_1C = 0x1C
+	if (t2 > 0)
+	{
+		//t1 = matrixPool
+		seg = model->segmentList;
+		//t9 = vertexPool
+		//s1 = vertexColor
+		//s2 = gNormalList
+		//s6 = perVertexColor
 
-		lw      $t2, 0x18($a2)
-		move    $t0, $a1
-		blez    $t2, loc_80027F84
-		lui     $t3, 0x1F80
-		sw      $s6, 0x1F800074
-		sw      $s5, 0x1F800070
-		sw      $s4, 0x1F80006C
-		sw      $s3, 0x1F800068
-		sw      $s2, 0x1F800064
-		sw      $s1, 0x1F800060
-		sw      $s0, 0x1F80005C
-		lw      $t1, arg_10($sp)
-		lw      $t8, 0x1C($a2)
-		move    $t9, $a0
-		lw      $s1, arg_18($sp)
-		li      $s2, dword_800CA454
-		lw      $s6, arg_1C($sp)
-		lw      $t4, 0($a3)
-		lw      $t5, 4($a3)
-		sw      $t4, 0($t3)
-		sw      $t5, 4($t3)
-		lw      $t4, 8($a3)
-		lw      $t5, 0xC($a3)
-		lw      $t6, 0x10($a3)
-		sw      $t4, 8($t3)
-		sw      $t5, 0xC($t3)
-		sw      $t6, 0x10($t3)
-		lw      $t4, 0x14($a3)
-		lw      $t5, 0x18($a3)
-		lw      $t6, 0x1C($a3)
-		sw      $t4, 0x14($t3)
-		sw      $t5, 0x18($t3)
-		sw      $t6, 0x1C($t3)
-		li      $at, 0xFFFFFFFF
-		or $a2, $at
-		beqz    $s1, loc_80027728
-		lw      $s0, arg_14($sp)
-		nop
-		lw      $t4, 0($s0)
-		lw      $t5, 4($s0)
-		sw      $t4, 0x34($t3)
-		sw      $t5, 0x38($t3)
-		lw      $t4, 8($s0)
-		lw      $t5, 0xC($s0)
-		lw      $t6, 0x10($s0)
-		sw      $t4, 0x3C($t3)
-		sw      $t5, 0x40($t3)
-		sw      $t6, 0x44($t3)
-		bnez    $s6, loc_800279CC
-		lui     $v0, 0x34FF
-		li      $v0, 0x34FFFFFF
-		mtc2    $v0, $6
+		//t4 = 
+		memcpy(getScratchAddr(0), wcTransform, sizeof(MATRIX));
 
-		loc_80027244 :
-	lw      $a0, 8($t8)
-		nop
-		sra     $v0, $a0, 16
-		addiu   $v1, $v0, 1
-		beqz    $v1, loc_80027710
-		sll     $t7, $v0, 3
-		addu    $t7, $t9, $t7
-		andi    $t4, $a0, 0xFFFF
-		sll     $a1, $t4, 3
-		addu    $a1, $t9, $a1
-		addiu   $v0, $t3, 0x34  # '4'
-		addiu   $v1, $t3, 0x48  # 'H'
-		lw      $t4, 0($v0)
-		lw      $t5, 4($v0)
-		ctc2    $t4, $0
-		ctc2    $t5, $1
-		lw      $t4, 8($v0)
-		lw      $t5, 0xC($v0)
-		lw      $t6, 0x10($v0)
-		ctc2    $t4, $2
-		ctc2    $t5, $3
-		ctc2    $t6, $4
-		lhu     $t4, 0($t1)
-		lhu     $t5, 6($t1)
-		lhu     $t6, 0xC($t1)
-		mtc2    $t4, $9
-		mtc2    $t5, $10
-		mtc2    $t6, $11
-		nop
-		nop
-		cop2    0x49E012
-		mfc2    $t4, $9
-		mfc2    $t5, $10
-		mfc2    $t6, $11
-		sh      $t4, 0($v1)
-		sh      $t5, 6($v1)
-		sh      $t6, 0xC($v1)
-		lhu     $t4, 2($t1)
-		lhu     $t5, 8($t1)
-		lhu     $t6, 0xE($t1)
-		mtc2    $t4, $9
-		mtc2    $t5, $10
-		mtc2    $t6, $11
-		nop
-		nop
-		cop2    0x49E012
-		mfc2    $t4, $9
-		mfc2    $t5, $10
-		mfc2    $t6, $11
-		sh      $t4, 2($v1)
-		sh      $t5, 8($v1)
-		sh      $t6, 0xE($v1)
-		lhu     $t4, 4($t1)
-		lhu     $t5, 0xA($t1)
-		lhu     $t6, 0x10($t1)
-		mtc2    $t4, $9
-		mtc2    $t5, $10
-		mtc2    $t6, $11
-		nop
-		nop
-		cop2    0x49E012
-		mfc2    $t4, $9
-		mfc2    $t5, $10
-		mfc2    $t6, $11
-		sh      $t4, 4($v1)
-		sh      $t5, 0xA($v1)
-		sh      $t6, 0x10($v1)
-		lw      $t4, 0($v1)
-		lw      $t5, 4($v1)
-		ctc2    $t4, $8
-		ctc2    $t5, $9
-		lw      $t4, 8($v1)
-		lw      $t5, 0xC($v1)
-		lw      $t6, 0x10($v1)
-		ctc2    $t4, $10
-		ctc2    $t5, $11
-		ctc2    $t6, $12
-		addiu   $v0, $t3, 0
-		addiu   $v1, $t3, 0x20  # ' '
-		lw      $t4, 0($v0)
-		lw      $t5, 4($v0)
-		ctc2    $t4, $0
-		ctc2    $t5, $1
-		lw      $t4, 8($v0)
-		lw      $t5, 0xC($v0)
-		lw      $t6, 0x10($v0)
-		ctc2    $t4, $2
-		ctc2    $t5, $3
-		ctc2    $t6, $4
-		lhu     $t4, 0($t1)
-		lhu     $t5, 6($t1)
-		lhu     $t6, 0xC($t1)
-		mtc2    $t4, $9
-		mtc2    $t5, $10
-		mtc2    $t6, $11
-		nop
-		nop
-		cop2    0x49E012
-		mfc2    $t4, $9
-		mfc2    $t5, $10
-		mfc2    $t6, $11
-		sh      $t4, 0($v1)
-		sh      $t5, 6($v1)
-		sh      $t6, 0xC($v1)
-		lhu     $t4, 2($t1)
-		lhu     $t5, 8($t1)
-		lhu     $t6, 0xE($t1)
-		mtc2    $t4, $9
-		mtc2    $t5, $10
-		mtc2    $t6, $11
-		nop
-		nop
-		cop2    0x49E012
-		mfc2    $t4, $9
-		mfc2    $t5, $10
-		mfc2    $t6, $11
-		sh      $t4, 2($v1)
-		sh      $t5, 8($v1)
-		sh      $t6, 0xE($v1)
-		lhu     $t4, 4($t1)
-		lhu     $t5, 0xA($t1)
-		lhu     $t6, 0x10($t1)
-		mtc2    $t4, $9
-		mtc2    $t5, $10
-		mtc2    $t6, $11
-		nop
-		nop
-		cop2    0x49E012
-		mfc2    $t4, $9
-		mfc2    $t5, $10
-		mfc2    $t6, $11
-		sh      $t4, 4($v1)
-		sh      $t5, 0xA($v1)
-		sh      $t6, 0x10($v1)
-		lw      $t4, 0x14($v0)
-		lw      $t5, 0x18($v0)
-		lw      $t6, 0x1C($v0)
-		ctc2    $t4, $5
-		ctc2    $t5, $6
-		ctc2    $t6, $7
-		lhu     $t5, 0x18($t1)
-		lhu     $t4, 0x14($t1)
-		sll     $t5, 16
-		or $t4, $t5
-		mtc2    $t4, $0
-		lwc2    $1, 0x1C($t1)
-		nop
-		nop
-		cop2    0x480012
-		mfc2    $t4, $9
-		mfc2    $t5, $10
-		mfc2    $t6, $11
-		ctc2    $t4, $5
-		ctc2    $t5, $6
-		ctc2    $t6, $7
-		lw      $t4, 0($v1)
-		lw      $t5, 4($v1)
-		ctc2    $t4, $0
-		ctc2    $t5, $1
-		lw      $t4, 8($v1)
-		lw      $t5, 0xC($v1)
-		lw      $t6, 0x10($v1)
-		ctc2    $t4, $2
-		ctc2    $t5, $3
-		ctc2    $t6, $4
-		lw      $v0, 0($a1)
-		lw      $v1, 4($a1)
-		lw      $t5, 8($a1)
-		lw      $t6, 0xC($a1)
-		lw      $a0, 0x10($a1)
-		lw      $s0, 0x14($a1)
-		addiu   $t4, $a1, 0x10
-		sltu    $t4, $t7, $t4
-		bnez    $t4, loc_80027600
-		nop
+		a2 |= 0xFFFFFFFF;
 
-		loc_80027500 :
-	mtc2    $v0, $0
-		mtc2    $v1, $1
-		mtc2    $t5, $2
-		mtc2    $t6, $3
-		mtc2    $a0, $4
-		mtc2    $s0, $5
-		srl     $s3, $v1, 16
-		srl     $s4, $t6, 16
-		cop2    0x280030
-		srl     $s5, $s0, 16
-		sll     $s3, 3
-		sll     $s4, 3
-		sll     $s5, 3
-		addu    $s3, $s2, $s3
-		addu    $s4, $s2, $s4
-		addu    $s5, $s2, $s5
-		lw      $v0, 0($s3)
-		lw      $v1, 4($s3)
-		lw      $t5, 0($s4)
-		lw      $t6, 4($s4)
-		lw      $a0, 0($s5)
-		lw      $s0, 4($s5)
-		swc2    $12, 0($t0)
-		swc2    $17, 4($t0)
-		swc2    $13, 8($t0)
-		cfc2    $t4, $31
-		swc2    $18, 0xC($t0)
-		and $a2, $t4
-		swc2    $14, 0x10($t0)
-		swc2    $19, 0x14($t0)
-		mfc2    $t4, $8
-		lw      $s4, dword_800D05F4
-		nop
-		beqz    $s4, loc_80027598
-		nop
-		mtc2    $s4, $8
-		move    $t4, $s4
+		//s0 = lm
+		if (vertexColor != NULL)
+		{
+			memcpy(getScratchAddr(13), lm, sizeof(MATRIX) - 12);
 
-		loc_80027598 :
-	mtc2    $v0, $0
-		mtc2    $v1, $1
-		mtc2    $t5, $2
-		mtc2    $t6, $3
-		mtc2    $a0, $4
-		mtc2    $s0, $5
-		beqz    $t4, loc_800275C4
-		addiu   $a1, 0x18
-		cop2    0xF80416
-		bgez    $zero, loc_800275CC
-		addiu   $t4, $a1, 0x10
+			if (perVertexColor == NULL)
+			{
+				gteRegs.CP2D.p[6].sd = 0x34FFFFFF;
 
-		loc_800275C4:
-	cop2    0xD80420
-		addiu   $t4, $a1, 0x10
+				//loc_80027244
+				do
+				{
+					//a0 = *(int*)&model->segmentList->firstVertex
+					//v0 = model->segmentList->lastVertex
+					//v1 = model->segmentList->lastVertex + 1
 
-		loc_800275CC :
-		lw      $v0, 0($a1)
-		lw      $v1, 4($a1)
-		lw      $t5, 8($a1)
-		lw      $t6, 0xC($a1)
-		lw      $a0, 0x10($a1)
-		lw      $s0, 0x14($a1)
-		swc2    $20, 0($s1)
-		swc2    $21, 4($s1)
-		swc2    $22, 8($s1)
-		addiu   $s1, 0xC
-		sltu    $t4, $t7, $t4
-		beqz    $t4, loc_80027500
-		addiu   $t0, 0x18
+					//t7 = model->segmentList->lastVertex << 3
 
-		loc_80027600:
-	slt     $at, $t7, $a1
-		bnez    $at, loc_80027710
-		nop
-		mtc2    $v0, $0
-		mtc2    $v1, $1
-		addiu   $a1, 8
-		srl     $s3, $v1, 16
-		cop2    0x180001
-		sll     $s3, 3
-		addu    $s3, $s2, $s3
-		lw      $v0, 0($s3)
-		lw      $v1, 4($s3)
-		swc2    $14, 0($t0)
-		swc2    $19, 4($t0)
-		cfc2    $a0, $31
-		mfc2    $s3, $8
-		lw      $s4, dword_800D05F4
-		nop
-		beqz    $s4, loc_8002765C
-		nop
-		mtc2    $s4, $8
-		move    $s3, $s4
+					if (seg->lastVertex + 1 != 0)
+					{
+						//t7 = vertexPool[model->segmentList->lastVertex];
+						//t4 = model->segmentList->firstVertex
+						//a1 = model->segmentList->firstVertex << 3
+						struct _PVertex* a1 = &vertexPool[seg->firstVertex].vertex[0];
 
-		loc_8002765C :
-	mtc2    $v0, $0
-		mtc2    $v1, $1
-		beqz    $s3, loc_80027678
-		nop
-		cop2    0xE80413
-		bgez    $zero, loc_8002767C
-		nop
+						//v0 = getScratchAddr(13);
+						//v1 = getScratchAddr(18);
+						gte_SetRotMatrix(getScratchAddr(13));
 
-		loc_80027678 :
-	cop2    0xC8041E
+						gte_ldclmv(&matrixPool->m[0][0]);
+						gte_rtir();
+						gte_stclmv(((short*)getScratchAddr(13)) + 0);
 
-		loc_8002767C :
-		addiu   $t0, 8
-		swc2    $22, 0($s1)
-		addiu   $s1, 4
-		slt     $at, $t7, $a1
-		bnez    $at, loc_80027710
-		and $a2, $a0
-		mtc2    $t5, $0
-		mtc2    $t6, $1
-		srl     $s3, $t6, 16
-		sll     $s3, 3
-		cop2    0x180001
-		addu    $s3, $s2, $s3
-		lw      $v0, 0($s3)
-		lw      $v1, 4($s3)
-		swc2    $14, 0($t0)
-		swc2    $19, 4($t0)
-		cfc2    $a0, $31
-		mfc2    $s3, $8
-		lw      $s4, dword_800D05F4
-		nop
-		beqz    $s4, loc_800276E0
-		nop
-		mtc2    $s4, $8
-		move    $s3, $s4
+						gte_ldclmv(&matrixPool->m[0][1]);
+						gte_rtir();
+						gte_stclmv(((short*)getScratchAddr(13)) + 1);
 
-		loc_800276E0 :
-	mtc2    $v0, $0
-		mtc2    $v1, $1
-		beqz    $s3, loc_800276FC
-		nop
-		cop2    0xE80413
-		bgez    $zero, loc_80027700
-		nop
+						gte_ldclmv(&matrixPool->m[0][2]);
+						gte_rtir();
+						gte_stclmv(((short*)getScratchAddr(13)) + 2);
 
-		loc_800276FC :
-	cop2    0xC8041E
+						gte_SetLightMatrix(getScratchAddr(18));
 
-		loc_80027700 :
-		addiu   $t0, 8
-		and $a2, $a0
-		swc2    $22, 0($s1)
-		addiu   $s1, 4
+						//v0 = getScratchAddr(0);
+						//v1 = getScratchAddr(8);
+						gte_SetRotMatrix(getScratchAddr(0));
 
-		loc_80027710 :
-		addiu   $t1, 0x20  # ' '
-		addiu   $t2, -1
-		bnez    $t2, loc_80027244
-		addiu   $t8, 0x18
-		bgez    $zero, loc_80027F84
-		nop
+						gte_ldclmv(&matrixPool->m[0][0]);
+						gte_rtir();
+						gte_stsv(((short*)getScratchAddr(8)) + 0);
 
-		loc_80027728 :
-	lw      $a0, 8($t8)
-		nop
-		sra     $v0, $a0, 16
-		addiu   $v1, $v0, 1
-		beqz    $v1, loc_800279B4
-		sll     $t7, $v0, 3
-		addu    $t7, $t9, $t7
-		andi    $t4, $a0, 0xFFFF
-		sll     $a1, $t4, 3
-		addu    $a1, $t9, $a1
-		addiu   $v0, $t3, 0
-		addiu   $v1, $t3, 0x20  # ' '
-		lw      $t4, 0($v0)
-		lw      $t5, 4($v0)
-		ctc2    $t4, $0
-		ctc2    $t5, $1
-		lw      $t4, 8($v0)
-		lw      $t5, 0xC($v0)
-		lw      $t6, 0x10($v0)
-		ctc2    $t4, $2
-		ctc2    $t5, $3
-		ctc2    $t6, $4
-		lhu     $t4, 0($t1)
-		lhu     $t5, 6($t1)
-		lhu     $t6, 0xC($t1)
-		mtc2    $t4, $9
-		mtc2    $t5, $10
-		mtc2    $t6, $11
-		nop
-		nop
-		cop2    0x49E012
-		mfc2    $t4, $9
-		mfc2    $t5, $10
-		mfc2    $t6, $11
-		sh      $t4, 0($v1)
-		sh      $t5, 6($v1)
-		sh      $t6, 0xC($v1)
-		lhu     $t4, 2($t1)
-		lhu     $t5, 8($t1)
-		lhu     $t6, 0xE($t1)
-		mtc2    $t4, $9
-		mtc2    $t5, $10
-		mtc2    $t6, $11
-		nop
-		nop
-		cop2    0x49E012
-		mfc2    $t4, $9
-		mfc2    $t5, $10
-		mfc2    $t6, $11
-		sh      $t4, 2($v1)
-		sh      $t5, 8($v1)
-		sh      $t6, 0xE($v1)
-		lhu     $t4, 4($t1)
-		lhu     $t5, 0xA($t1)
-		lhu     $t6, 0x10($t1)
-		mtc2    $t4, $9
-		mtc2    $t5, $10
-		mtc2    $t6, $11
-		nop
-		nop
-		cop2    0x49E012
-		mfc2    $t4, $9
-		mfc2    $t5, $10
-		mfc2    $t6, $11
-		sh      $t4, 4($v1)
-		sh      $t5, 0xA($v1)
-		sh      $t6, 0x10($v1)
-		lw      $t4, 0x14($v0)
-		lw      $t5, 0x18($v0)
-		lw      $t6, 0x1C($v0)
-		ctc2    $t4, $5
-		ctc2    $t5, $6
-		ctc2    $t6, $7
-		lhu     $t5, 0x18($t1)
-		lhu     $t4, 0x14($t1)
-		sll     $t5, 16
-		or $t4, $t5
-		mtc2    $t4, $0
-		lwc2    $1, 0x1C($t1)
-		nop
-		nop
-		cop2    0x480012
-		mfc2    $t4, $9
-		mfc2    $t5, $10
-		mfc2    $t6, $11
-		ctc2    $t4, $5
-		ctc2    $t5, $6
-		ctc2    $t6, $7
-		lw      $t4, 0($v1)
-		lw      $t5, 4($v1)
-		ctc2    $t4, $0
-		ctc2    $t5, $1
-		lw      $t4, 8($v1)
-		lw      $t5, 0xC($v1)
-		lw      $t6, 0x10($v1)
-		ctc2    $t4, $2
-		ctc2    $t5, $3
-		ctc2    $t6, $4
-		lw      $v0, 0($a1)
-		lw      $v1, 4($a1)
-		lw      $t5, 8($a1)
-		lw      $t6, 0xC($a1)
-		lw      $a0, 0x10($a1)
-		lw      $s0, 0x14($a1)
-		addiu   $t4, $a1, 0x10
-		sltu    $t4, $t7, $t4
-		bnez    $t4, loc_80027948
-		nop
+						gte_ldclmv(&matrixPool->m[0][1]);
+						gte_rtir();
+						gte_stsv(((short*)getScratchAddr(8)) + 1);
 
-		loc_800278D8 :
-	mtc2    $v0, $0
-		mtc2    $v1, $1
-		mtc2    $t5, $2
-		mtc2    $t6, $3
-		mtc2    $a0, $4
-		mtc2    $s0, $5
-		nop
-		nop
-		cop2    0x280030
-		swc2    $12, 0($t0)
-		addiu   $a1, 0x18
-		swc2    $17, 4($t0)
-		swc2    $13, 8($t0)
-		cfc2    $t4, $31
-		swc2    $18, 0xC($t0)
-		and $a2, $t4
-		swc2    $14, 0x10($t0)
-		addiu   $t4, $a1, 0x10
-		swc2    $19, 0x14($t0)
-		lw      $v0, 0($a1)
-		lw      $v1, 4($a1)
-		lw      $t5, 8($a1)
-		lw      $t6, 0xC($a1)
-		lw      $a0, 0x10($a1)
-		lw      $s0, 0x14($a1)
-		sltu    $t4, $t7, $t4
-		beqz    $t4, loc_800278D8
-		addiu   $t0, 0x18
+						gte_ldclmv(&matrixPool->m[0][2]);
+						gte_rtir();
+						gte_stsv(((short*)getScratchAddr(8)) + 2);
 
-		loc_80027948:
-	slt     $at, $t7, $a1
-		bnez    $at, loc_800279B4
-		nop
-		mtc2    $v0, $0
-		mtc2    $v1, $1
-		addiu   $a1, 8
-		nop
-		cop2    0x180001
-		swc2    $14, 0($t0)
-		swc2    $19, 4($t0)
-		cfc2    $a0, $31
-		mfc2    $s3, $8
-		addiu   $t0, 8
-		slt     $at, $t7, $a1
-		bnez    $at, loc_800279B4
-		and $a2, $a0
-		mtc2    $t5, $0
-		mtc2    $t6, $1
-		nop
-		nop
-		cop2    0x180001
-		swc2    $14, 0($t0)
-		swc2    $19, 4($t0)
-		cfc2    $a0, $31
-		mfc2    $s3, $8
-		addiu   $t0, 8
-		and $a2, $a0
+						gte_SetTransMatrix(getScratchAddr(0));
 
-		loc_800279B4 :
-	addiu   $t1, 0x20  # ' '
-		addiu   $t2, -1
-		bnez    $t2, loc_80027728
-		addiu   $t8, 0x18
-		bgez    $zero, loc_80027F84
-		nop
+						gte_ldv0(matrixPool);
+						gte_rt();
 
-		loc_800279CC :
-	li      $v0, 0x34FFFFFF
-		mtc2    $v0, $6
+						SVECTOR sv;
+						gte_stsv(&sv);
+						gte_ldtr(sv.vx, sv.vy, sv.vz);
 
-		loc_800279D8 :
-	lw      $a0, 8($t8)
-		nop
-		sra     $v0, $a0, 16
-		addiu   $v1, $v0, 1
-		beqz    $v1, loc_80027F74
-		sll     $t7, $v0, 3
-		addu    $t7, $t9, $t7
-		andi    $t4, $a0, 0xFFFF
-		sll     $a1, $t4, 3
-		addu    $a1, $t9, $a1
-		addiu   $v0, $t3, 0x34  # '4'
-		addiu   $v1, $t3, 0x48  # 'H'
-		lw      $t4, 0($v0)
-		lw      $t5, 4($v0)
-		ctc2    $t4, $0
-		ctc2    $t5, $1
-		lw      $t4, 8($v0)
-		lw      $t5, 0xC($v0)
-		lw      $t6, 0x10($v0)
-		ctc2    $t4, $2
-		ctc2    $t5, $3
-		ctc2    $t6, $4
-		lhu     $t4, 0($t1)
-		lhu     $t5, 6($t1)
-		lhu     $t6, 0xC($t1)
-		mtc2    $t4, $9
-		mtc2    $t5, $10
-		mtc2    $t6, $11
-		nop
-		nop
-		cop2    0x49E012
-		mfc2    $t4, $9
-		mfc2    $t5, $10
-		mfc2    $t6, $11
-		sh      $t4, 0($v1)
-		sh      $t5, 6($v1)
-		sh      $t6, 0xC($v1)
-		lhu     $t4, 2($t1)
-		lhu     $t5, 8($t1)
-		lhu     $t6, 0xE($t1)
-		mtc2    $t4, $9
-		mtc2    $t5, $10
-		mtc2    $t6, $11
-		nop
-		nop
-		cop2    0x49E012
-		mfc2    $t4, $9
-		mfc2    $t5, $10
-		mfc2    $t6, $11
-		sh      $t4, 2($v1)
-		sh      $t5, 8($v1)
-		sh      $t6, 0xE($v1)
-		lhu     $t4, 4($t1)
-		lhu     $t5, 0xA($t1)
-		lhu     $t6, 0x10($t1)
-		mtc2    $t4, $9
-		mtc2    $t5, $10
-		mtc2    $t6, $11
-		nop
-		nop
-		cop2    0x49E012
-		mfc2    $t4, $9
-		mfc2    $t5, $10
-		mfc2    $t6, $11
-		sh      $t4, 4($v1)
-		sh      $t5, 0xA($v1)
-		sh      $t6, 0x10($v1)
-		lw      $t4, 0($v1)
-		lw      $t5, 4($v1)
-		ctc2    $t4, $8
-		ctc2    $t5, $9
-		lw      $t4, 8($v1)
-		lw      $t5, 0xC($v1)
-		lw      $t6, 0x10($v1)
-		ctc2    $t4, $10
-		ctc2    $t5, $11
-		ctc2    $t6, $12
-		addiu   $v0, $t3, 0
-		addiu   $v1, $t3, 0x20  # ' '
-		lw      $t4, 0($v0)
-		lw      $t5, 4($v0)
-		ctc2    $t4, $0
-		ctc2    $t5, $1
-		lw      $t4, 8($v0)
-		lw      $t5, 0xC($v0)
-		lw      $t6, 0x10($v0)
-		ctc2    $t4, $2
-		ctc2    $t5, $3
-		ctc2    $t6, $4
-		lhu     $t4, 0($t1)
-		lhu     $t5, 6($t1)
-		lhu     $t6, 0xC($t1)
-		mtc2    $t4, $9
-		mtc2    $t5, $10
-		mtc2    $t6, $11
-		nop
-		nop
-		cop2    0x49E012
-		mfc2    $t4, $9
-		mfc2    $t5, $10
-		mfc2    $t6, $11
-		sh      $t4, 0($v1)
-		sh      $t5, 6($v1)
-		sh      $t6, 0xC($v1)
-		lhu     $t4, 2($t1)
-		lhu     $t5, 8($t1)
-		lhu     $t6, 0xE($t1)
-		mtc2    $t4, $9
-		mtc2    $t5, $10
-		mtc2    $t6, $11
-		nop
-		nop
-		cop2    0x49E012
-		mfc2    $t4, $9
-		mfc2    $t5, $10
-		mfc2    $t6, $11
-		sh      $t4, 2($v1)
-		sh      $t5, 8($v1)
-		sh      $t6, 0xE($v1)
-		lhu     $t4, 4($t1)
-		lhu     $t5, 0xA($t1)
-		lhu     $t6, 0x10($t1)
-		mtc2    $t4, $9
-		mtc2    $t5, $10
-		mtc2    $t6, $11
-		nop
-		nop
-		cop2    0x49E012
-		mfc2    $t4, $9
-		mfc2    $t5, $10
-		mfc2    $t6, $11
-		sh      $t4, 4($v1)
-		sh      $t5, 0xA($v1)
-		sh      $t6, 0x10($v1)
-		lw      $t4, 0x14($v0)
-		lw      $t5, 0x18($v0)
-		lw      $t6, 0x1C($v0)
-		ctc2    $t4, $5
-		ctc2    $t5, $6
-		ctc2    $t6, $7
-		lhu     $t5, 0x18($t1)
-		lhu     $t4, 0x14($t1)
-		sll     $t5, 16
-		or $t4, $t5
-		mtc2    $t4, $0
-		lwc2    $1, 0x1C($t1)
-		nop
-		nop
-		cop2    0x480012
-		mfc2    $t4, $9
-		mfc2    $t5, $10
-		mfc2    $t6, $11
-		ctc2    $t4, $5
-		ctc2    $t5, $6
-		ctc2    $t6, $7
-		lw      $t4, 0($v1)
-		lw      $t5, 4($v1)
-		ctc2    $t4, $0
-		ctc2    $t5, $1
-		lw      $t4, 8($v1)
-		lw      $t5, 0xC($v1)
-		lw      $t6, 0x10($v1)
-		ctc2    $t4, $2
-		ctc2    $t5, $3
-		ctc2    $t6, $4
-		lw      $v0, 0($a1)
-		lw      $v1, 4($a1)
-		lw      $t5, 8($a1)
-		lw      $t6, 0xC($a1)
-		lw      $a0, 0x10($a1)
-		lw      $s0, 0x14($a1)
-		addiu   $t4, $a1, 0x10
-		sltu    $t4, $t7, $t4
-		bnez    $t4, loc_80027E34
-		nop
+						gte_SetRotMatrix(getScratchAddr(8));
 
-		loc_80027C94 :
-	mtc2    $v0, $0
-		mtc2    $v1, $1
-		mtc2    $t5, $2
-		mtc2    $t6, $3
-		mtc2    $a0, $4
-		mtc2    $s0, $5
-		srl     $s3, $v1, 16
-		srl     $s4, $t6, 16
-		cop2    0x280030
-		srl     $s5, $s0, 16
-		sll     $s3, 3
-		sll     $s4, 3
-		sll     $s5, 3
-		addu    $s3, $s2, $s3
-		addu    $s4, $s2, $s4
-		addu    $s5, $s2, $s5
-		lw      $v0, 0($s3)
-		lw      $v1, 4($s3)
-		lw      $t5, 0($s6)
-		swc2    $12, 0($t0)
-		swc2    $17, 4($t0)
-		swc2    $13, 8($t0)
-		cfc2    $t4, $31
-		swc2    $18, 0xC($t0)
-		and $a2, $t4
-		swc2    $14, 0x10($t0)
-		swc2    $19, 0x14($t0)
-		mfc2    $t4, $8
-		lw      $s3, dword_800D05F4
-		nop
-		beqz    $s3, loc_80027D20
-		nop
-		mtc2    $s3, $8
-		move    $t4, $s3
+						struct _PVertex* t7 = &vertexPool[seg->lastVertex].vertex[0];
 
-		loc_80027D20 :
-	lui     $at, 0x4000
-		and $s3, $t5, $at
-		bnez    $s3, loc_80027D58
-		move    $s3, $t5
-		mtc2    $v0, $0
-		mtc2    $v1, $1
-		mtc2    $t5, $6
-		beqz    $t4, loc_80027D50
-		nop
-		cop2    0xE80413
-		bgez    $zero, loc_80027D54
-		nop
+						if (t7 >= &a1[2])
+						{
+							//loc_80027500
+							do
+							{
+								gte_ldv0(&a1[0]);
+								gte_ldv1(&a1[1]);
+								gte_ldv2(&a1[2]);
 
-		loc_80027D50 :
-	cop2    0x108041B
+								gte_rtpt();
 
-		loc_80027D54 :
-		mfc2    $s3, $22
+								struct _Normal* s3 = &gNormalList[a1[0].otz >> 16];
+								struct _Normal* s4 = &gNormalList[a1[1].otz >> 16];
+								struct _Normal* s5 = &gNormalList[a1[2].otz >> 16];
 
-		loc_80027D58 :
-	nop
-		sw      $s3, 0($s1)
-		lw      $v0, 0($s4)
-		lw      $v1, 4($s4)
-		lw      $t5, 4($s6)
-		nop
-		lui     $at, 0x4000
-		and $s3, $t5, $at
-		bnez    $s3, loc_80027DA8
-		move    $s3, $t5
-		mtc2    $v0, $0
-		mtc2    $v1, $1
-		mtc2    $t5, $6
-		beqz    $t4, loc_80027DA0
-		nop
-		cop2    0xE80413
-		bgez    $zero, loc_80027DA4
-		nop
+								((int*)poolVertex)[0] = SXY0;
+								((int*)poolVertex)[1] = SZ1;
+								((int*)poolVertex)[2] = SXY1;
 
-		loc_80027DA0 :
-	cop2    0x108041B
+								a2 &= FLAG;
 
-		loc_80027DA4 :
-		mfc2    $s3, $22
+								((int*)poolVertex)[3] = SZ2;
+								((int*)poolVertex)[4] = SXY2;
+								((int*)poolVertex)[5] = SZ3;
 
-		loc_80027DA8 :
-	nop
-		sw      $s3, 4($s1)
-		lw      $v0, 0($s5)
-		lw      $v1, 4($s5)
-		lw      $t5, 8($s6)
-		nop
-		lui     $at, 0x4000
-		and $s3, $t5, $at
-		bnez    $s3, loc_80027DF8
-		move    $s3, $t5
-		mtc2    $v0, $0
-		mtc2    $v1, $1
-		mtc2    $t5, $6
-		beqz    $t4, loc_80027DF0
-		nop
-		cop2    0xE80413
-		bgez    $zero, loc_80027DF4
-		nop
+								int t44;
+								gte_stdp(t44);
 
-		loc_80027DF0 :
-	cop2    0x108041B
+								if (modelFadeValue != 0)
+								{
+									gte_lddp(modelFadeValue);
+									t44 = modelFadeValue;
+								}
+								//loc_80027598
 
-		loc_80027DF4 :
-		mfc2    $s3, $22
+								gte_ldv0(s3);
+								gte_ldv1(s4);
+								gte_ldv2(s5);
 
-		loc_80027DF8 :
-	nop
-		sw      $s3, 8($s1)
-		addiu   $a1, 0x18
-		addiu   $t4, $a1, 0x10
-		lw      $v0, 0($a1)
-		lw      $v1, 4($a1)
-		lw      $t5, 8($a1)
-		lw      $t6, 0xC($a1)
-		lw      $a0, 0x10($a1)
-		lw      $s0, 0x14($a1)
-		addiu   $s1, 0xC
-		addiu   $s6, 0xC
-		sltu    $t4, $t7, $t4
-		beqz    $t4, loc_80027C94
-		addiu   $t0, 0x18
+								a1 += 3;
+								if (t44 != 0)
+								{
+									gte_ncdt();
+								}
+								else
+								{
+									//loc_800275C4
+									gte_nct();
+								}
 
-		loc_80027E34:
-	slt     $at, $t7, $a1
-		bnez    $at, loc_80027F74
-		nop
-		mtc2    $v0, $0
-		mtc2    $v1, $1
-		srl     $s3, $v1, 16
-		sll     $s3, 3
-		cop2    0x180001
-		addu    $s3, $s2, $s3
-		lw      $v0, 0($s3)
-		lw      $v1, 4($s3)
-		lw      $s3, 0($s6)
-		addiu   $a1, 8
-		swc2    $14, 0($t0)
-		swc2    $19, 4($t0)
-		cfc2    $a0, $31
-		mfc2    $t4, $8
-		lw      $s4, dword_800D05F4
-		nop
-		beqz    $s4, loc_80027E94
-		nop
-		mtc2    $s4, $8
-		move    $t4, $s4
+								//loc_800275CC
+								t5andt6.vx = ((int*)a1)[2];
+								t5andt6.vy = ((int*)a1)[3];
 
-		loc_80027E94 :
-	lui     $at, 0x4000
-		and $s4, $s3, $at
-		bnez    $s4, loc_80027ECC
-		move    $s4, $s3
-		mtc2    $v0, $0
-		mtc2    $v1, $1
-		mtc2    $s4, $6
-		beqz    $t4, loc_80027EC4
-		nop
-		cop2    0xE80413
-		bgez    $zero, loc_80027EC8
-		nop
+								gte_strgb3(&vertexColor[0], &vertexColor[1], &vertexColor[2]);
 
-		loc_80027EC4 :
-	cop2    0x108041B
+								vertexColor += 3;
+								poolVertex += 3;
 
-		loc_80027EC8 :
-		mfc2    $s4, $22
+							} while (t7 >= a1 + 2);
+						}
+						//loc_80027600
 
-		loc_80027ECC :
-	nop
-		sw      $s4, 0($s1)
-		addiu   $t0, 8
-		addiu   $s6, 4
-		addiu   $s1, 4
-		slt     $at, $t7, $a1
-		bnez    $at, loc_80027F74
-		and $a2, $a0
-		mtc2    $t5, $0
-		mtc2    $t6, $1
-		nop
-		nop
-		cop2    0x180001
-		srl     $s3, $t6, 16
-		sll     $s3, 3
-		addu    $s3, $s2, $s3
-		lw      $v0, 0($s3)
-		lw      $v1, 4($s3)
-		lw      $s3, 0($s6)
-		swc2    $14, 0($t0)
-		swc2    $19, 4($t0)
-		cfc2    $a0, $31
-		lui     $at, 0x4000
-		and $s4, $s3, $at
-		bnez    $s4, loc_80027F5C
-		move    $s4, $s3
-		mtc2    $v0, $0
-		mtc2    $v1, $1
-		mtc2    $s4, $6
-		beqz    $t4, loc_80027F54
-		nop
-		cop2    0xE80413
-		bgez    $zero, loc_80027F58
-		nop
+						if (t7 >= a1)
+						{
+							gte_ldv0(a1);
 
-		loc_80027F54 :
-	cop2    0x108041B
+							gte_rtps();
 
-		loc_80027F58 :
-		mfc2    $s4, $22
+							struct _Normal* s3 = &gNormalList[a1->otz >> 16];
 
-		loc_80027F5C :
-	nop
-		sw      $s4, 0($s1)
-		addiu   $t0, 8
-		addiu   $s6, 4
-		and $a2, $a0
-		addiu   $s1, 4
+							a1 += 1;
 
-		loc_80027F74:
-	addiu   $t1, 0x20  # ' '
-		addiu   $t2, -1
-		bnez    $t2, loc_800279D8
-		addiu   $t8, 0x18
+							((int*)poolVertex)[0] = SXY2;
+							((int*)poolVertex)[1] = SZ3;
 
-		loc_80027F84 :
-		lw      $s6, 0x74($t3)
-		lw      $s5, 0x70($t3)
-		lw      $s4, 0x6C($t3)
-		lw      $s3, 0x68($t3)
-		lw      $s2, 0x64($t3)
-		lw      $s1, 0x60($t3)
-		lw      $s0, 0x5C($t3)
-		jr      $ra
-		move    $v0, $a2
+							int a0 = FLAG;
+							gte_stdp(s33);
 
-#endif
-	
-	UNIMPLEMENTED();
-	return 0;
+							int s44 = modelFadeValue;
+
+							if (s44 != 0)
+							{
+								gte_lddp(s44);
+								s33 = s44;
+							}
+
+							//loc_8002765C
+							gte_ldv0(s3);
+
+							if (s3 != NULL)
+							{
+								gte_ncds();
+							}
+							else
+							{
+								gte_ncs();
+							}
+
+							//loc_8002767C
+							poolVertex += 1;
+
+							gte_strgb(&vertexColor[0]);
+
+							vertexColor += 1;
+
+							a2 &= a0;
+
+							if (t7 >= a1)
+							{
+								gte_ldv0(&t5andt6);
+
+								struct _Normal* s3 = &gNormalList[t5andt6.vy >> 16];
+
+								gte_rtps();
+
+								((int*)poolVertex)[0] = SXY2;
+								((int*)poolVertex)[1] = SZ3;
+
+								a0 = FLAG;
+
+								gte_stdp(s33);
+
+								s44 = modelFadeValue;
+
+								if (s44 != 0)
+								{
+									gte_lddp(s44);
+									s33 = s44;
+								}
+
+								//loc_800276E0
+								gte_ldv0(s3);
+
+								if (s33 != 0)
+								{
+									gte_ncds();
+								}
+								else
+								{
+									gte_ncs();
+								}
+
+								//loc_80027700
+								poolVertex += 1;
+								a2 &= a0;
+
+								gte_strgb(&vertexColor[0]);
+								vertexColor += 1;
+							}
+							//loc_80027710
+						}
+						//loc_80027710
+					}
+					//loc_80027710
+					matrixPool++;
+					seg++;
+
+				}while (--t2 != 0);
+			}
+			else
+			{
+				//loc_800279CC
+				gteRegs.CP2D.p[6].sd = 0x34FFFFFF;
+
+				//loc_800279D8
+				do
+				{
+					//a0 = *(int*)&seg->firstVertex
+					//v0 = seg->lastVertex;
+
+					if (seg->lastVertex + 1 != 0)
+					{
+						struct _PVertex* t7 = &vertexPool[seg->lastVertex].vertex[0];
+						struct _PVertex* a1 = &vertexPool[seg->firstVertex].vertex[0];
+
+						//v0 = getScratchAddr(13);
+						//v1 = getScratchAddr(18);
+
+						gte_SetRotMatrix(getScratchAddr(13));
+
+						gte_ldclmv(&matrixPool->m[0][0]);
+						gte_rtir();
+						gte_stclmv(((short*)getScratchAddr(18)) + 0);
+
+						gte_ldclmv(&matrixPool->m[0][1]);
+						gte_rtir();
+						gte_stclmv(((short*)getScratchAddr(18)) + 1);
+
+						gte_ldclmv(&matrixPool->m[0][2]);
+						gte_rtir();
+						gte_stclmv(((short*)getScratchAddr(18)) + 2);
+
+						gte_SetLightMatrix(getScratchAddr(18));
+
+						//v0 = getScratchAddr(0);
+						//v1 = getScratchAddr(8);
+
+						gte_SetRotMatrix(getScratchAddr(0));
+
+						gte_ldclmv(&matrixPool->m[0][0]);
+						gte_rtir();
+						gte_stclmv(((short*)getScratchAddr(8)) + 0);
+
+						gte_ldclmv(&matrixPool->m[0][1]);
+						gte_rtir();
+						gte_stclmv(((short*)getScratchAddr(8)) + 1);
+
+						gte_ldclmv(&matrixPool->m[0][2]);
+						gte_rtir();
+						gte_stclmv(((short*)getScratchAddr(8)) + 2);
+
+						gte_SetTransMatrix(getScratchAddr(5));
+
+						gte_ldv0(&matrixPool->t[0]);
+						gte_rt();
+
+						SVECTOR sv;
+						gte_stsv(&sv);
+
+						gte_ldtr(sv.vx, sv.vy, sv.vz);
+
+						gte_SetRotMatrix(getScratchAddr(8));
+
+						long v0[6];
+						v0[0] = ((int*)a1)[0];
+						v0[1] = ((int*)a1)[1];
+						v0[2] = ((int*)a1)[2];
+						v0[3] = ((int*)a1)[3];
+						v0[4] = ((int*)a1)[4];
+						v0[5] = ((int*)a1)[5];
+						v0[6] = ((int*)a1)[6];
+
+						struct _PVertex* t4 = a1 + 2;
+
+						if (t7 >= t4)
+						{
+							do
+							{
+								gte_SetRotMatrix(&v0);
+								gte_lddp(((int*)&v0)[5]);
+								gte_rtpt();
+
+								struct _Normal* s3 = &gNormalList[v0[1] >> 16];
+								struct _Normal* s4 = &gNormalList[v0[3] >> 16];
+								struct _Normal* s5 = &gNormalList[v0[5] >> 16];
+
+								((int*)poolVertex)[0] = SXY0;
+								((int*)poolVertex)[1] = SZ1;
+								((int*)poolVertex)[2] = SXY1;
+								((int*)poolVertex)[3] = SZ2;
+								((int*)poolVertex)[4] = SXY2;
+								((int*)poolVertex)[5] = SZ3;
+
+								a2 &= FLAG;
+
+								//v0 = ((int*)s3)[0]
+								//v1 = ((int*)s3)[1]
+								//t5 = ((int*)perVertexColor)[0]
+
+								int t44;
+								gte_stdp(t44);
+
+								s33 = modelFadeValue;
+
+								if (s33 != 0)
+								{
+									gte_lddp(s33);
+									t44 = s33;
+								}
+								//loc_80027D20
+
+								s33 = ((int*)perVertexColor)[0];
+								if (!(((int*)perVertexColor)[0] & 0x40000000))
+								{
+									gte_ldv0(s3);
+
+									gteRegs.CP2D.p[6].sd = ((int*)perVertexColor)[0];
+
+									if (t4 != NULL)
+									{
+										gte_ncds();
+									}
+									else
+									{
+										gte_nccs();
+									}
+
+									s33 = RGB2;
+
+								}
+								//loc_80027D58
+
+								((int*)vertexColor)[0] = s33;
+
+								//v0 = s4[0]
+								//v1 = s4[1]
+								//t5 = perVertexColor[1]
+
+								s33 = ((int*)perVertexColor)[1];
+
+								if (!(((int*)perVertexColor)[1] & 0x40000000))
+								{
+									gte_ldv0(s4);
+
+									gteRegs.CP2D.p[6].sd = ((int*)perVertexColor)[1];
+
+									if (t4 != NULL)
+									{
+										gte_ncds();
+									}
+									else
+									{
+										gte_nccs();
+									}
+
+									s33 = RGB2;
+
+								}
+								//loc_80027DA8
+								((int*)vertexColor)[1] = s33;
+
+								//v0 = s5[0]
+								//v1 = s5[1]
+								//t5 = ((int*)perVertexColor)[2]
+
+								s33 = ((int*)perVertexColor)[2];
+
+								if (!(((int*)perVertexColor)[2] & 0x40000000))
+								{
+									gte_ldv0(s5);
+
+									gteRegs.CP2D.p[6].sd = ((int*)perVertexColor)[2];
+
+									if (t4 != NULL)
+									{
+										gte_ncds();
+									}
+									else
+									{
+										gte_nccs();
+									}
+
+									s33 = RGB2;
+								}
+								//loc_80027DF8
+
+								((int*)vertexColor)[2] = s33;
+
+								a1 += 3;
+
+								t4 = a1 + 2;
+
+								v0[0] = ((int*)a1)[0];
+								v0[1] = ((int*)a1)[1];
+								v0[2] = ((int*)a1)[2];
+								v0[3] = ((int*)a1)[3];
+								v0[4] = ((int*)a1)[4];
+								v0[5] = ((int*)a1)[5];
+								v0[6] = ((int*)a1)[6];
+
+								vertexColor += 3;
+								perVertexColor += 3;
+								poolVertex += 3;
+
+							} while (t7 >= t4);
+						}
+						//loc_80027E34
+
+						if (t7 >= a1)
+						{
+							gte_ldv0(&v0[0]);
+
+							struct _Normal* s3 = &gNormalList[v0[1] >> 16];
+
+							gte_rtps();
+
+							//v0 = s3[0]
+							//v1 = s3[1]
+							//s3 = perVertexColor[0]
+
+							a1++;
+
+							((int*)poolVertex)[0] = SXY2;
+							((int*)poolVertex)[1] = SZ3;
+
+							int a0 = FLAG;
+
+							int t44;
+							gte_stdp(t44);
+
+							int s44 = modelFadeValue;
+
+							if (s44 != 0)
+							{
+								gte_lddp(s44);
+								t44 = s44;
+							}
+							//loc_80027E94
+
+							s44 = ((int*)perVertexColor)[0];
+							if (!(((int*)perVertexColor)[0] & 0x40000000))
+							{
+								gte_ldv0(s3);
+
+								gteRegs.CP2D.p[6].sd = s44;
+
+								if (t4 != NULL)
+								{
+									gte_ncds();
+								}
+								else
+								{
+									gte_nccs();
+								}
+
+								s44 = RGB2;
+
+							}
+							//loc_80027ECC
+
+							((int*)vertexColor)[0] = s44;
+							poolVertex++;
+							perVertexColor++;
+							vertexColor++;
+
+							a2 &= a0;
+
+							if (t7 >= a1)
+							{
+								gte_ldv0(&v0[2]);
+
+								gte_rtps();
+
+								struct _Normal* s3 = &gNormalList[v0[3] >> 16];
+
+								//v0 = s3[0]
+								//v1 = s3[1]
+
+								//s3 = ((int*)perVertexColor)[0]
+
+								((int*)poolVertex)[0] = SXY2;
+								((int*)poolVertex)[1] = SZ3;
+
+								a0 = FLAG;
+
+								s44 = ((int*)perVertexColor)[0];
+								if (!(((int*)perVertexColor)[0] & 0x40000000))
+								{
+									gte_ldv0(s3);
+
+									gteRegs.CP2D.p[6].sd = s44;
+
+									if (t4 != NULL)
+									{
+										gte_ncds();
+									}
+									else
+									{
+										gte_nccs();
+									}
+
+									s44 = RGB2;
+								}
+								//loc_80027F5C
+
+
+								((int*)vertexColor)[0] = s44;
+								poolVertex++;
+								perVertexColor++;
+								a2 &= a0;
+								vertexColor++;
+							}
+
+							//loc_80027F74
+						}
+						//loc_80027F74
+					}
+					//loc_80027F74
+					matrixPool++;
+					seg++;
+				}while (--t2 != 0);
+			}
+		}
+		else
+		{
+			//loc_80027728
+			do
+			{
+				//a0 = *(int*)&seg->firstVertex
+				//v0 = seg->lastVertex
+
+				if (seg->lastVertex + 1 != 0)
+				{
+					struct _PVertex* t7 = &vertexPool[seg->lastVertex].vertex[0];
+					//t4 = seg->firstVertex
+					struct _PVertex* a1 = &vertexPool[seg->firstVertex].vertex[0];
+
+					//v0 = getScratchAddr(0);
+					//v1 = getScratchAddr(8);
+
+					gte_SetRotMatrix(getScratchAddr(0));
+
+					gte_ldclmv(&matrixPool->m[0][0]);
+					gte_rtir();
+					gte_stclmv(((short*)getScratchAddr(8)) + 0);
+
+
+					gte_ldclmv(&matrixPool->m[0][1]);
+					gte_rtir();
+					gte_stclmv(((short*)getScratchAddr(8)) + 1);
+
+					gte_ldclmv(&matrixPool->m[0][2]);
+					gte_rtir();
+					gte_stclmv(((short*)getScratchAddr(8)) + 2);
+
+					gte_SetTransMatrix(getScratchAddr(5));
+
+					gte_ldv0(&matrixPool->t[0]);
+					gte_rt();
+
+					SVECTOR sv;
+					gte_stsv(&sv);
+
+					gte_ldtr(sv.vx, sv.vy, sv.vz);
+
+					gte_SetRotMatrix(getScratchAddr(8));
+
+					long v0[6];
+					v0[0] = ((int*)a1)[0];
+					v0[1] = ((int*)a1)[1];
+					v0[2] = ((int*)a1)[2];
+					v0[3] = ((int*)a1)[3];
+					v0[4] = ((int*)a1)[4];
+					v0[5] = ((int*)a1)[5];
+
+					if (t7 >= a1 + 2)
+					{
+						struct _PVertex* t4;
+						//loc_800278D8
+						do
+						{
+							gte_SetRotMatrix(a1);
+							gte_lddp(((int*)a1)[5]);
+							gte_rtpt();
+
+							((int*)poolVertex)[0] = SXY0;
+							((int*)poolVertex)[1] = SZ1;
+							((int*)poolVertex)[2] = SXY1;
+							((int*)poolVertex)[3] = SZ2;
+							((int*)poolVertex)[4] = SXY2;
+							((int*)poolVertex)[5] = SZ3;
+
+							a1 += 3;
+
+							a2 &= FLAG;
+
+							t4 = a1 + 2;
+
+							v0[0] = ((int*)a1)[0];
+							v0[1] = ((int*)a1)[1];
+							v0[2] = ((int*)a1)[2];
+							v0[3] = ((int*)a1)[3];
+							v0[4] = ((int*)a1)[4];
+							v0[5] = ((int*)a1)[5];
+
+							poolVertex += 3;
+
+						} while (t7 >= t4);
+					}
+					
+					//loc_80027948
+					if (t7 >= a1)
+					{
+						gte_ldv0(&v0[0]);
+
+						a1++;
+
+						gte_rtps();
+
+						((int*)poolVertex)[0] = SXY2;
+						((int*)poolVertex)[1] = SZ3;
+
+						gte_stdp(s33);
+
+						poolVertex += 1;
+
+						a2 &= FLAG;
+
+						if (t7 >= a1)
+						{
+							gte_ldv0(&v0[2]);
+
+							gte_rtps();
+
+							((int*)poolVertex)[0] = SXY2;
+							((int*)poolVertex)[1] = SZ3;
+
+							gte_stdp(s33);
+
+							poolVertex += 1;
+
+							a2 &= FLAG;
+						}
+						//loc_800279B4
+					}
+					//loc_800279B4
+				}
+				//loc_800279B4
+				matrixPool++;
+				seg++;
+			}while (--t2 != 0);
+
+			return a2;
+		}
+
+	}
+	//loc_80027F84
+	return a2;
 }
 
 
