@@ -4039,7 +4039,7 @@ void FX_DrawModel(struct Object* object, int model_num, struct _SVector* rotatio
 
 					if (clip < 0)
 					{
-						gte_stsxy3(poly->x0, poly->x1, poly->x2);
+						gte_stsxy3(&poly->x0, &poly->x1, &poly->x2);
 						setlen(poly, 9);
 
 #if defined(PSXPC_VERSION)

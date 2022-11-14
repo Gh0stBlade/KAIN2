@@ -3827,7 +3827,7 @@ long GetFogColor(struct StreamUnitPortal* portal, struct _StreamUnit* mainStream
 
 	gte_rtpt();
 
-	gte_stsz3(z1, z2, z3);
+	gte_stsz3(&z1, &z2, &z3);
 
 	if (z2 < z1)
 	{
@@ -3854,7 +3854,7 @@ long GetFogColor(struct StreamUnitPortal* portal, struct _StreamUnit* mainStream
 
 	gte_rtpt();
 
-	gte_stsz3(z1, z2, z3);
+	gte_stsz3(&z1, &z2, &z3);
 
 	if (z2 < z1)
 	{

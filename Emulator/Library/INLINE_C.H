@@ -160,12 +160,11 @@ extern int gte_ldlzc(int input);
 	:							\
 	: "r"( r0 ) )
 
-#define gte_ldsxy3( r0, r1, r2 ) __asm__ volatile (		\
-	"mtc2	%0, $12;"					\
-	"mtc2	%2, $14;"					\
-	"mtc2	%1, $13"					\
-	:							\
-	: "r"( r0 ), "r"( r1 ), "r"( r2 ) )
+#define gte_ldsxy3( r0, r1, r2 )     \
+	((int*)&SXY0)[0] = ((int*)r0)[0]; \
+	((int*)&SXY2)[0] = ((int*)r2)[0]; \
+	((int*)&SXY1)[0] = ((int*)r1)[0]; \
+
 
 #define gte_ldsxy3c( r0 ) __asm__ volatile (			\
 	"lwc2	$12, 0( %0 );"					\
@@ -174,12 +173,10 @@ extern int gte_ldlzc(int input);
 	:							\
 	: "r"( r0 ) )
 
-#define gte_ldsz3( r0, r1, r2 ) __asm__ volatile (		\
-	"mtc2	%0, $17;"					\
-	"mtc2	%1, $18;"					\
-	"mtc2	%2, $19"					\
-	:							\
-	: "r"( r0 ), "r"( r1 ), "r"( r2 ) )
+#define gte_ldsz3( r0, r1, r2 )     \
+	((int*)&SZ1)[0] = ((int*)r0)[0]; \
+	((int*)&SZ2)[0] = ((int*)r1)[0]; \
+	((int*)&SZ3)[0] = ((int*)r2)[0]; \
 
 #define gte_ldsz4( r0, r1, r2, r3 ) __asm__ volatile (	\
 	"mtc2	%0, $16;"					\
@@ -318,12 +315,10 @@ extern int gte_ldlzc(int input);
 	TRY = ((int*)r0)[6];   \
 	TRZ = ((int*)r0)[7];   
 
-#define gte_ldtr( r0, r1, r2 ) __asm__ volatile (		\
-	"ctc2	%0, $5;"					\
-	"ctc2	%1, $6;"					\
-	"ctc2	%2, $7"						\
-	:							\
-	: "r"( r0 ), "r"( r1 ), "r"( r2 ) )
+#define gte_ldtr( r0, r1, r2 ) \
+	TRX = r0;   \
+	TRY = r1;   \
+	TRZ = r2;   \
 
 #define gte_SetTransVector( r0 ) __asm__ volatile (		\
 	"lw	$12, 0( %0 );"					\
@@ -655,18 +650,14 @@ extern int gte_ldlzc(int input);
 #define gte_nct() \
 	docop2(0x0D80420);
 
-#define gte_ncds() __asm__ volatile (				\
-	"nop;"							\
-	"nop;"							\
-	".word 0x00000fff" )
+#define gte_ncds() \
+	docop2(0x0E80413);
 
 #define gte_ncdt() \
 	docop2(0x0F80416);
 
-#define gte_nccs() __asm__ volatile (				\
-	"nop;"							\
-	"nop;"							\
-	".word 0x0000107f" )
+#define gte_nccs() \
+	docop2(0x0108041B);
 
 #define gte_ncct() __asm__ volatile (				\
 	"nop;"							\
@@ -817,9 +808,9 @@ extern int gte_ldlzc(int input);
 	((int*)r0)[0] = SXY2;        \
 
 #define gte_stsxy3( r0, r1, r2 ) \
-	((int*)&r0)[0] = SXY0;       \
-	((int*)&r1)[0] = SXY1;       \
-	((int*)&r2)[0] = SXY2;       
+	((int*)r0)[0] = SXY0;        \
+	((int*)r1)[0] = SXY1;        \
+	((int*)r2)[0] = SXY2;       
 
 #define gte_stsxy3c( r0 ) __asm__ volatile (			\
 	"swc2	$12, 0( %0 );"					\
@@ -944,9 +935,9 @@ extern int gte_ldlzc(int input);
 	((int*)r0)[0] = SZ3;        \
 
 #define gte_stsz3( r0, r1, r2 ) \
-	r0 = SZ1; \
-	r1 = SZ2; \
-	r2 = SZ3; \
+	((int*)r0)[0] = SZ1; \
+	((int*)r1)[0] = SZ2; \
+	((int*)r2)[0] = SZ3; \
 
 #define gte_stsz4( r0, r1, r2, r3 ) __asm__ volatile (		\
 	"swc2	$16, 0( %0 );"					\
