@@ -4298,7 +4298,8 @@ long PIPE3D_TransformAnimatedInstanceVertices_S(struct _VertexPool* vertexPool, 
 						//t7 = vertexPool[model->segmentList->lastVertex];
 						//t4 = model->segmentList->firstVertex
 						//a1 = model->segmentList->firstVertex << 3
-						struct _PVertex* a1 = &vertexPool[seg->firstVertex].vertex[0];
+						struct _PVertex* t7 = &vertexPool->vertex[seg->lastVertex];
+						struct _PVertex* a1 = &vertexPool->vertex[seg->firstVertex];
 
 						//v0 = getScratchAddr(13);
 						//v1 = getScratchAddr(18);
@@ -4345,7 +4346,6 @@ long PIPE3D_TransformAnimatedInstanceVertices_S(struct _VertexPool* vertexPool, 
 
 						gte_SetRotMatrix(getScratchAddr(8));
 
-						struct _PVertex* t7 = &vertexPool[seg->lastVertex].vertex[0];
 
 						if (t7 >= &a1[2])
 						{
@@ -4520,8 +4520,8 @@ long PIPE3D_TransformAnimatedInstanceVertices_S(struct _VertexPool* vertexPool, 
 
 					if (seg->lastVertex + 1 != 0)
 					{
-						struct _PVertex* t7 = &vertexPool[seg->lastVertex].vertex[0];
-						struct _PVertex* a1 = &vertexPool[seg->firstVertex].vertex[0];
+						struct _PVertex* t7 = &vertexPool->vertex[seg->lastVertex];
+						struct _PVertex* a1 = &vertexPool->vertex[seg->firstVertex];
 
 						//v0 = getScratchAddr(13);
 						//v1 = getScratchAddr(18);
@@ -4841,9 +4841,9 @@ long PIPE3D_TransformAnimatedInstanceVertices_S(struct _VertexPool* vertexPool, 
 
 				if (seg->lastVertex + 1 != 0)
 				{
-					struct _PVertex* t7 = &vertexPool[seg->lastVertex].vertex[0];
+					struct _PVertex* t7 = &vertexPool->vertex[seg->lastVertex];
 					//t4 = seg->firstVertex
-					struct _PVertex* a1 = &vertexPool[seg->firstVertex].vertex[0];
+					struct _PVertex* a1 = &vertexPool->vertex[seg->firstVertex];
 
 					//v0 = getScratchAddr(0);
 					//v1 = getScratchAddr(8);
