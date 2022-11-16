@@ -60,7 +60,7 @@ void G2Anim_ResetInternalState()
 #endif
 }
 
-void G2Anim_Init(struct _G2Anim_Type *anim, struct _Model *modelData)
+void G2Anim_Init(struct _G2Anim_Type* anim, struct _Model *modelData)
 {
 #if defined(PSX_VERSION)
 	struct _G2AnimSection_Type* section;
@@ -73,7 +73,7 @@ void G2Anim_Init(struct _G2Anim_Type *anim, struct _Model *modelData)
 	anim->segMatrices = NULL;
 	anim->modelData = modelData;
 
-	memset(anim->disabledBits, 0, sizeof(anim->disabledBits) + sizeof(anim->section));
+	memset(&anim->disabledBits[0], 0, sizeof(anim->disabledBits) + sizeof(anim->section));
 
 	section = &anim->section[0];
 
@@ -905,8 +905,6 @@ void _G2Anim_BuildTransformsNoControllers(struct _G2Anim_Type* anim)
 	disabledMask = 1;
 	
 	disabledBits[0] = anim->disabledBits[0];
-
-	segIndex = 0;
 
 	disabledBits[1] = anim->disabledBits[1];
 	
