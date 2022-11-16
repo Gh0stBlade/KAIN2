@@ -197,7 +197,7 @@ void G2Anim_BuildTransforms(struct _G2Anim_Type* anim)
 	}
 
 	z = anim->rootTrans.z;
-	xy = ((unsigned long*)&anim->rootTrans)[2];
+	xy = ((unsigned long*)&anim->rootTrans.x)[0];
 
 	_segValues[0].trans.z = z;
 	((unsigned long*)&_segValues[0].trans.x)[0] = xy;
