@@ -2103,7 +2103,7 @@ void INSTANCE_DefaultInit(struct _Instance* instance, struct Object* object, int
 	instance->cachedTFaceLevel = NULL;
 	instance->data = object->data;
 
-	if (object->animList != NULL && (object->oflags2 & 0x40000000))
+	if (object->animList != NULL && !(object->oflags2 & 0x40000000))
 	{
 		G2Anim_Init(&instance->anim, object->modelList[modelNum]);
 		G2Anim_SwitchToKeylist(&instance->anim, G2Instance_GetKeylist(instance, 0), 0);
