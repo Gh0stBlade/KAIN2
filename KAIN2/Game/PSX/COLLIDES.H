@@ -45,7 +45,7 @@ extern void VM_ProcessVMObjectList_S(struct Level* level, struct Camera* camera)
 extern long BSP_SphereIntersectsViewVolume_S(struct _Position* position) ; // 0x800787E0
 
 #if defined(PSXPC_VERSION) && defined(PSX_VERSION)
-extern void RotMatrixZYX() ; // 0x800788B8
+extern MATRIX* RotMatrixZYX(SVECTOR* r, MATRIX* m); // 0x800788B8
 #endif
 
 extern void rmzyx_1() ; // 0x800788F4

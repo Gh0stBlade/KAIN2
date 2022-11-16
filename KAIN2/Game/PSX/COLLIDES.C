@@ -1159,3 +1159,132 @@ long BSP_SphereIntersectsViewVolume_S(struct _Position* position)
 	UNIMPLEMENTED();
 	return 0;
 }
+
+#if defined(PSXPC_VERSION) && defined(PSX_VERSION)
+MATRIX* RotMatrixZYX(SVECTOR* r, MATRIX* m)
+{
+	int t9 = r->vz;
+	int t8 = r->vy;
+	int t7 = r->vx;
+
+	int t0 = t9 & 0x7FF;
+	int t5 = ecostable[t0];
+	int t2 = ecostable[t0 + 1024];
+	int t3 = t9 & 0x800;
+
+	if (t3 != 0)
+	{
+		t5 = -t5;
+		t2 = -t2;
+	}
+
+	int t4 = t8 | t7;
+	int t1;
+	int t6;
+	int a0;
+
+	if (t4 != 0)
+	{
+		t0 = t8 & 0x7FF;
+		t4 = ecostable[t0];
+		t1 = ecostable[t0 + 1024];
+		t3 = t8 & 0x800;
+
+		if (t3 != 0)
+		{
+			t1 = -t1;
+			t4 = -t4;
+		}
+
+		t0 = t7 & 0x7FF;
+		t3 = ecostable[t7];
+		t0 = ecostable[t7 + 1024];
+		
+		t6 = t7 & 0x800;
+
+		if (t6 != 0)
+		{
+			t3 = -t3;
+			t0 = -t0;
+		}
+
+		IR1 = t1;
+		IR2 = t2;
+		IR3 = t5;
+
+		IR0 = t0;
+
+		int v0 = (t1 * t2) >> 12;
+
+		gte_gpf12();
+
+		m->m[2][0] = -t4;
+
+		t6 = IR2;
+		a0 = IR1;
+		t7 = IR3;
+
+		m->m[2][2] = a0;
+
+		IR1 = t1;
+		IR2 = t2;
+		IR3 = t5;
+
+		IR0 = t3;
+
+		gte_gpf12();
+
+		m->m[0][0] = v0;
+
+		v0 = (t1 * t5) >> 12;
+
+		a0 = IR1;
+		t8 = IR2;
+		t9 = IR3;
+
+		m->m[2][1] = a0;
+
+		IR1 = t6;
+		IR2 = t7;
+		IR3 = t8;
+
+		IR0 = t4;
+
+		gte_gpf12();
+
+		m->m[1][0] = v0;
+
+		v0 = (t9 * t4) >> 12;
+
+		a0 = IR1;
+		t0 = IR2;
+		t1 = IR3;
+
+		t2 = t1 - t7;
+		t3 = a0 + t9;
+		t4 = v0 + t6;
+		t5 = t0 - t8;
+
+		m->m[0][1] = t2;
+		m->m[0][2] = t3;
+		m->m[1][1] = t4;
+		m->m[1][2] = t5;
+	}
+	else
+	{
+		t5 <<= 16;
+		t0 = -t5;
+		t1 = t2 & 0xFFFF;
+		t0 |= t1;
+		t3 = 4096;
+
+		((int*)m)[0] = t0;
+		((int*)m)[1] = t5;
+		((int*)m)[2] = t1;
+		((int*)m)[3] = 0;
+		((int*)m)[4] = t3;
+	}
+
+	return m;
+}
+#endif
