@@ -3873,8 +3873,80 @@ MATRIX* MulMatrix(MATRIX* m0, MATRIX* m1)
 
 MATRIX* MulMatrix2(MATRIX* m0, MATRIX* m1)
 {
-    UNIMPLEMENTED();
-    return NULL;
+    VECTOR v;
+
+    gte_SetRotMatrix(m0);
+
+    int t0 = ((unsigned short*)m1)[0];
+    int t1 = ((int*)m1)[1] & 0xFFFF0000;
+    int t2 = ((int*)m1)[3];
+
+    t0 |= t1;
+
+    ((int*)&VX0)[0] = t0;
+    ((int*)&VZ0)[0] = t2; 
+
+    gte_rtv0();
+
+    t0 = ((unsigned short*)m1)[1];
+    t1 = ((int*)m1)[2] << 16;
+    t2 = ((short*)m1)[7];
+
+    t0 |= t1;
+
+    int t3 = IR1;
+    int t4 = IR2;
+    int t5 = IR3;
+
+    ((int*)&VX0)[0] = t0;
+    ((int*)&VZ0)[0] = t2;
+
+    gte_rtv0();
+
+    t0 = ((unsigned short*)m1)[2];
+    t1 = ((int*)m1)[2] & 0xFFFF0000;
+    t2 = ((int*)m1)[4];
+    t0 |= t1;
+
+    int t6 = IR1;
+    int t7 = IR2;
+    int t8 = IR3;
+
+    ((int*)&VX0)[0] = t0;
+    ((int*)&VZ0)[0] = t2;
+
+    gte_rtv0();
+
+    t3 &= 0xFFFF;
+    t6 <<= 16;
+    t6 |= t3;
+    
+    ((int*)m1)[0] = t6;
+
+    t5 &= 0xFFFF;
+    t8 <<= 16;
+    t8 |= t5;
+
+    ((int*)m1)[3] = t8;
+
+    t0 = IR1;
+    t1 = IR2;
+
+    t0 &= 0xFFFF;
+    t4 <<= 16;
+    t0 |= t4;
+
+    ((int*)m1)[1] = t0;
+
+    t7 &= 0xFFFF;
+    t1 <<= 16;
+    t1 |= t7;
+
+    ((int*)m1)[2] = t0;
+
+    ((int*)m1)[4] = IR3;
+
+    return m1;
 }
 
 void SetBackColor(long rbk, long gbk, long bbk)
