@@ -3,6 +3,8 @@
 #include "Game/G2/ANIMG2.H"
 #include "Game/MATH3D.H"
 #include "Game/CAMERA.H"
+#include "Game/PSX/COLLIDES.H"
+#include "Game/G2/ANMCTRLR.H"
 
 void G2Instance_BuildTransformsForList(struct _Instance* listHead)//Matching - 99.74%
 {
@@ -96,29 +98,25 @@ struct _G2AnimKeylist_Type* G2Instance_GetKeylist(struct _Instance* instance, in
 
 void _G2Instance_RebuildAnimatedTransforms(struct _Instance* instance)
 {
-	struct _Model* model; // $s7
-	struct _G2Matrix_Type* rootMatrix; // $s4
-	struct _Rotation pre_facade_rot; // stack offset -120
-	struct _G2Matrix_Type* segMatrix; // $a2
-	struct _G2Matrix_Type seg1RotMatrix; // stack offset -112
-	struct _G2Matrix_Type seg2RotMatrix; // stack offset -80
-	struct _G2SVector3_Type rotVector; // stack offset -48
-	long otx; // $s6
-	long oty; // $s5
-	long otz; // $s2
-	long segIndex; // $s1
-	VECTOR* ins_scale; // $v1
+	struct _Model* model;
+	struct _G2Matrix_Type* rootMatrix;
+	struct _Rotation pre_facade_rot;
+	struct _G2Matrix_Type* segMatrix;
+	struct _G2Matrix_Type seg1RotMatrix;
+	struct _G2Matrix_Type seg2RotMatrix;
+	struct _G2SVector3_Type rotVector;
+	long otx;
+	long oty;
+	long otz;
+	long segIndex;
+	VECTOR* ins_scale;
 	
-	//s3 = instance
 	rootMatrix = (struct _G2Matrix_Type*)instance->matrix;
 
 	if (rootMatrix != NULL)
 	{
-		//v1 = instance->currentModel
-		//v0 = instance->object
-		//a0 = instance->object->modelList
-		//v0 = instance->object->oflags
 		model = instance->object->modelList[instance->currentModel];
+		
 		rootMatrix--;
 
 		if (instance->object->oflags & 0x1)
@@ -129,258 +127,136 @@ void _G2Instance_RebuildAnimatedTransforms(struct _Instance* instance)
 			instance->rotation.y = 0;
 			instance->rotation.z = MATH3D_FastAtan2(theCamera.core.position.y - instance->position.y, theCamera.core.position.x - instance->position.x) + 3072;
 		}
-		//loc_800951D4
+
+		if ((instance->flags & 0x1) && instance->intro != NULL)
+		{
+			rootMatrix->rotScale[0][0] = instance->intro->multiSpline->curRotMatrix.m[0][0];
+			rootMatrix->rotScale[0][1] = instance->intro->multiSpline->curRotMatrix.m[0][1];
+			rootMatrix->rotScale[0][2] = instance->intro->multiSpline->curRotMatrix.m[0][2];
+
+			rootMatrix->rotScale[1][0] = instance->intro->multiSpline->curRotMatrix.m[1][0];
+			rootMatrix->rotScale[1][1] = instance->intro->multiSpline->curRotMatrix.m[1][1];
+			rootMatrix->rotScale[1][2] = instance->intro->multiSpline->curRotMatrix.m[1][2];
+
+			rootMatrix->rotScale[2][0] = instance->intro->multiSpline->curRotMatrix.m[2][0];
+			rootMatrix->rotScale[2][1] = instance->intro->multiSpline->curRotMatrix.m[2][1];
+			rootMatrix->rotScale[2][2] = instance->intro->multiSpline->curRotMatrix.m[2][2];
+			
+			rootMatrix->trans.x = instance->intro->multiSpline->curRotMatrix.t[0];
+			rootMatrix->trans.y = instance->intro->multiSpline->curRotMatrix.t[1];
+			rootMatrix->trans.z = instance->intro->multiSpline->curRotMatrix.t[2];
+		}
+		else
+		{
+			if (instance->LinkParent != NULL)
+			{
+				G2Anim_UpdateStoredFrame(&instance->anim);
+
+				G2Anim_GetSegChannelValue(&instance->anim, 1, (unsigned short*)&rotVector, 0x7);
+
+				RotMatrixZYX((SVECTOR*)&rotVector, (MATRIX*)&seg1RotMatrix);
+
+				G2Anim_GetSegChannelValue(&instance->anim, 2, (unsigned short*)&rotVector, 0x7);
+
+				RotMatrixZYX((SVECTOR*)&rotVector, (MATRIX*)&seg2RotMatrix);
+
+				MulMatrix2((MATRIX*)&seg1RotMatrix, (MATRIX*)&seg2RotMatrix);
+
+				TransposeMatrix((MATRIX*)&seg2RotMatrix, (MATRIX*)rootMatrix);
+
+				instance->matrix->m[0][0] = instance->LinkParent->matrix[instance->ParentLinkNode].m[0][0];
+				instance->matrix->m[0][1] = instance->LinkParent->matrix[instance->ParentLinkNode].m[0][1];
+				instance->matrix->m[0][2] = instance->LinkParent->matrix[instance->ParentLinkNode].m[0][2];
+
+				instance->matrix->m[1][0] = instance->LinkParent->matrix[instance->ParentLinkNode].m[1][0];
+				instance->matrix->m[1][1] = instance->LinkParent->matrix[instance->ParentLinkNode].m[1][1];
+				instance->matrix->m[1][2] = instance->LinkParent->matrix[instance->ParentLinkNode].m[1][2];
+
+				instance->matrix->m[2][0] = instance->LinkParent->matrix[instance->ParentLinkNode].m[2][0];
+				instance->matrix->m[2][1] = instance->LinkParent->matrix[instance->ParentLinkNode].m[2][1];
+				instance->matrix->m[2][2] = instance->LinkParent->matrix[instance->ParentLinkNode].m[2][2];
+
+				instance->matrix->t[0] = instance->LinkParent->matrix[instance->ParentLinkNode].t[0];
+				instance->matrix->t[1] = instance->LinkParent->matrix[instance->ParentLinkNode].t[1];
+				instance->matrix->t[2] = instance->LinkParent->matrix[instance->ParentLinkNode].t[2];
+
+				MulMatrix2(instance->matrix, (MATRIX*)rootMatrix);
+
+				instance->position.x = ((unsigned short*)&instance->matrix->t[0])[0];
+				instance->position.y = ((unsigned short*)&instance->matrix->t[0])[2];
+				instance->position.z = ((unsigned short*)&instance->matrix->t[0])[4];
+			}
+			else
+			{
+				RotMatrix((SVECTOR*)&instance->rotation, (MATRIX*)&rootMatrix);///@TODO don't use PsyQ (Valkyrie) version of this?
+			}
+		}
+
+		if (instance->scale.x != 4096 || instance->scale.y != 4096 || instance->scale.z != 4096)
+		{
+			ins_scale = (VECTOR*)getScratchAddr(8);
+
+			ins_scale->vx = instance->scale.x;
+			ins_scale->vy = instance->scale.y;
+			ins_scale->vz = instance->scale.z;
+
+			ScaleMatrix((MATRIX*)rootMatrix, ins_scale);
+
+			rootMatrix->scaleFlag = 1;
+		}
+
+		rootMatrix->trans.x = instance->position.x;
+		rootMatrix->trans.y = instance->position.y;
+		rootMatrix->trans.z = instance->position.z;
+
+		instance->anim.segMatrices = (struct _G2Matrix_Type*)instance->matrix;
+
+		G2Anim_BuildTransforms(&instance->anim);
+
+		if (instance->LinkParent != NULL)
+		{
+			otx = instance->matrix[0].t[0] - instance->matrix[3].t[0];
+			oty = instance->matrix[0].t[1] - instance->matrix[3].t[1];
+			otz = instance->matrix[0].t[2] - instance->matrix[3].t[2];
+
+			if (model->numSegments > 0)
+			{
+				for (segIndex = 0; segIndex < model->numSegments; segIndex++)
+				{
+					if ((G2Anim_IsControllerActive(&instance->anim, segIndex, 0x20)))
+					{
+						break;
+					}
+
+					instance->matrix[segIndex].t[0] += otx;
+					instance->matrix[segIndex].t[1] += oty;
+					instance->matrix[segIndex].t[2] += otz;
+				}
+			}
+
+			rootMatrix->trans.x = instance->matrix[0].t[0];
+			rootMatrix->trans.y = instance->matrix[0].t[1];
+			rootMatrix->trans.z = instance->matrix[0].t[2];
+		}
+
+		instance->position.x = rootMatrix->trans.x;
+		instance->position.y = rootMatrix->trans.y;
+		instance->position.z = rootMatrix->trans.z;
+
+		if ((instance->object->oflags & 0x4))
+		{
+			instance->rotation = pre_facade_rot;
+		}
+		
+		instance = instance->LinkChild;
+
+		while (instance != NULL)
+		{
+			G2Instance_BuildTransforms(instance);
+
+			instance = instance->LinkSibling;
+		}
 	}
-	//loc_8009552C
-#if 0
-		loc_800951D4:
-		lw      $v0, 0x14($s3)
-		nop
-		andi    $v0, 1
-		beqz    $v0, loc_80095248
-		nop
-		lw      $v0, 0x20($s3)
-		nop
-		beqz    $v0, loc_80095248
-		lui     $v1, 0x1000
-		lw      $v0, 0x38($v0)
-		nop
-		lw      $t0, 0x30($v0)
-		lw      $t1, 0x34($v0)
-		lw      $t2, 0x38($v0)
-		lw      $t3, 0x3C($v0)
-		sw      $t0, 0($s4)
-		sw      $t1, 4($s4)
-		sw      $t2, 8($s4)
-		sw      $t3, 0xC($s4)
-		lw      $t0, 0x40($v0)
-		lw      $t1, 0x44($v0)
-		lw      $t2, 0x48($v0)
-		lw      $t3, 0x4C($v0)
-		sw      $t0, 0x10($s4)
-		sw      $t1, 0x14($s4)
-		sw      $t2, 0x18($s4)
-		sw      $t3, 0x1C($s4)
-		j       loc_80095364
-		nop
-
-		loc_80095248 :
-	lw      $v0, 0x148($s3)
-		nop
-		beqz    $v0, loc_80095354
-		addiu   $s1, $s3, 0x1C8
-		jal     sub_80092EDC
-		move    $a0, $s1
-		move    $a0, $s1
-		li      $a1, 1
-		addiu   $s0, $sp, 0x60 + var_8
-		move    $a2, $s0
-		jal     sub_80093204
-		li      $a3, 7
-		move    $a0, $s0
-		addiu   $s2, $sp, 0x60 + var_48
-		jal     sub_80078B60
-		move    $a1, $s2
-		move    $a0, $s1
-		li      $a1, 2
-		move    $a2, $s0
-		jal     sub_80093204
-		li      $a3, 7
-		move    $a0, $s0
-		addiu   $s0, $sp, 0x60 + var_28
-		jal     sub_80078B60
-		move    $a1, $s0
-		move    $a0, $s2
-		jal     MulMatrix2
-		move    $a1, $s0
-		move    $a0, $s0
-		jal     TransposeMatrix
-		move    $a1, $s4
-		lw      $v0, 0x154($s3)
-		lw      $v1, 0x148($s3)
-		lw      $a0, 0x40($s3)
-		lw      $v1, 0x40($v1)
-		sll     $v0, 5
-		addu    $v0, $v1
-		lw      $t0, 0($v0)
-		lw      $t1, 4($v0)
-		lw      $t2, 8($v0)
-		lw      $t3, 0xC($v0)
-		sw      $t0, 0($a0)
-		sw      $t1, 4($a0)
-		sw      $t2, 8($a0)
-		sw      $t3, 0xC($a0)
-		lw      $t0, 0x10($v0)
-		lw      $t1, 0x14($v0)
-		lw      $t2, 0x18($v0)
-		lw      $t3, 0x1C($v0)
-		sw      $t0, 0x10($a0)
-		sw      $t1, 0x14($a0)
-		sw      $t2, 0x18($a0)
-		sw      $t3, 0x1C($a0)
-		lw      $a0, 0x40($s3)
-		jal     MulMatrix2
-		move    $a1, $s4
-		lw      $v0, 0x40($s3)
-		lw      $v1, 0x40($s3)
-		lhu     $v0, 0x14($v0)
-		nop
-		sh      $v0, 0x5C($s3)
-		lhu     $v0, 0x18($v1)
-		nop
-		sh      $v0, 0x5E($s3)
-		lhu     $v0, 0x1C($v1)
-		j       loc_80095360
-		sh      $v0, 0x60($s3)
-
-		loc_80095354:
-	addiu   $a0, $s3, 0x74  # 't'
-		jal     sub_80078CF4
-		move    $a1, $s4
-
-		loc_80095360 :
-	lui     $v1, 0x1000
-
-		loc_80095364 :
-		lw      $v0, 0x84($s3)
-		ori     $v1, 0x1000
-		bne     $v0, $v1, loc_80095384
-		lui     $v1, 0x1F80
-		lh      $v1, 0x88($s3)
-		li      $v0, 0x1000
-		beq     $v1, $v0, loc_800953B8
-		lui     $v1, 0x1F80
-
-		loc_80095384:
-	li      $v1, 0x1F800020
-		lh      $v0, 0x84($s3)
-		move    $a0, $s4
-		sw      $v0, 0($v1)
-		lh      $v0, 0x86($s3)
-		lui     $a1, 0x1F80
-		sw      $v0, 4($v1)
-		lh      $v0, 0x88($s3)
-		li      $a1, 0x1F800020
-		jal     sub_80079258
-		sw      $v0, 8($v1)
-		li      $v0, 1
-		sh      $v0, 0x12($s4)
-
-		loc_800953B8:
-	lh      $v0, 0x5C($s3)
-		nop
-		sw      $v0, 0x14($s4)
-		lh      $v0, 0x5E($s3)
-		nop
-		sw      $v0, 0x18($s4)
-		lh      $v0, 0x60($s3)
-		nop
-		sw      $v0, 0x1C($s4)
-		lw      $v0, 0x40($s3)
-		addiu   $a0, $s3, 0x1C8
-		jal     sub_80092E10
-		sw      $v0, 0x1DC($s3)
-		lw      $v0, 0x148($s3)
-		nop
-		beqz    $v0, loc_800954AC
-		nop
-		lw      $a2, 0x40($s3)
-		move    $s1, $zero
-		lw      $a1, 0x14($a2)
-		lw      $v1, 0x74($a2)
-		lw      $a0, 0x18($a2)
-		lw      $v0, 0x78($a2)
-		subu    $s6, $a1, $v1
-		subu    $s5, $a0, $v0
-		lw      $a0, 0x1C($a2)
-		lw      $v0, 0x7C($a2)
-		lw      $v1, 0x18($s7)
-		nop
-		blez    $v1, loc_8009548C
-		subu    $s2, $a0, $v0
-		addiu   $s0, $a2, 0x1C
-
-		loc_80095438:
-	addiu   $a0, $s3, 0x1C8
-		move    $a1, $s1
-		jal     sub_80090794
-		li      $a2, 0x20  # ' '
-		bnez    $v0, loc_8009548C
-		nop
-		addiu   $s1, 1
-		lw      $v0, -8($s0)
-		lw      $v1, 0($s0)
-		addu    $v0, $s6
-		sw      $v0, -8($s0)
-		lw      $v0, -4($s0)
-		addu    $v1, $s2
-		sw      $v1, 0($s0)
-		addu    $v0, $s5
-		sw      $v0, -4($s0)
-		lw      $v0, 0x18($s7)
-		nop
-		slt     $v0, $s1, $v0
-		bnez    $v0, loc_80095438
-		addiu   $s0, 0x20  # ' '
-
-		loc_8009548C:
-	lw      $v0, 0x40($s3)
-		nop
-		lw      $t0, 0x14($v0)
-		lw      $t1, 0x18($v0)
-		lw      $t2, 0x1C($v0)
-		sw      $t0, 0x14($s4)
-		sw      $t1, 0x18($s4)
-		sw      $t2, 0x1C($s4)
-
-		loc_800954AC:
-	lhu     $v0, 0x14($s4)
-		lw      $v1, 0x1C($s3)
-		sh      $v0, 0x5C($s3)
-		lhu     $v0, 0x18($s4)
-		nop
-		sh      $v0, 0x5E($s3)
-		lhu     $v0, 0x1C($s4)
-		nop
-		sh      $v0, 0x60($s3)
-		lw      $v0, 0($v1)
-		nop
-		andi    $v0, 4
-		beqz    $v0, loc_80095504
-		nop
-		ulw     $t0, 0x60 + var_50($sp)
-		ulw     $t1, 0x60 + var_4C($sp)
-		usw     $t0, 0x74($s3)
-		usw     $t1, 0x78($s3)
-
-		loc_80095504:
-	lw      $s3, 0x14C($s3)
-		nop
-		beqz    $s3, loc_8009552C
-		nop
-
-		loc_80095514 :
-	jal     sub_8009504C
-		move    $a0, $s3
-		lw      $s3, 0x150($s3)
-		nop
-		bnez    $s3, loc_80095514
-		nop
-
-		loc_8009552C :
-	lw      $ra, 0x60 + var_s20($sp)
-		lw      $s7, 0x60 + var_s1C($sp)
-		lw      $s6, 0x60 + var_s18($sp)
-		lw      $s5, 0x60 + var_s14($sp)
-		lw      $s4, 0x60 + var_s10($sp)
-		lw      $s3, 0x60 + var_sC($sp)
-		lw      $s2, 0x60 + var_s8($sp)
-		lw      $s1, 0x60 + var_s4($sp)
-		lw      $s0, 0x60 + var_s0($sp)
-		jr      $ra
-		addiu   $sp, 0x88
-#endif
-
 }
 
 void G2Instance_ClearMatrices(struct _Instance* instance)
