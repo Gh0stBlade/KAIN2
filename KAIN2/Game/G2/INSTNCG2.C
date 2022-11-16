@@ -188,7 +188,7 @@ void _G2Instance_RebuildAnimatedTransforms(struct _Instance* instance)
 			}
 			else
 			{
-				RotMatrix((SVECTOR*)&instance->rotation, (MATRIX*)&rootMatrix);///@TODO don't use PsyQ (Valkyrie) version of this?
+				RotMatrix((SVECTOR*)&instance->rotation, (MATRIX*)rootMatrix);///@TODO don't use PsyQ (Valkyrie) version of this?
 			}
 		}
 
@@ -386,7 +386,7 @@ void _G2Instance_RebuildNonAnimatedTransforms(struct _Instance* instance)
 				}
 			}
 
-			((short*)segMatrix)[9] = scale_flag;
+			segMatrix->m[2][3] = scale_flag;
 		}
 
 		instance = instance->LinkChild;
