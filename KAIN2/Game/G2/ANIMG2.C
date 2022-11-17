@@ -1299,7 +1299,7 @@ void FooBar(struct _G2AnimSection_Type *section, struct _G2Anim_Type *anim, int 
 	UNIMPLEMENTED();
 }
 
-void _G2AnimSection_UpdateStoredFrameFromData(struct _G2AnimSection_Type *section, struct _G2Anim_Type *anim)
+void _G2AnimSection_UpdateStoredFrameFromData(struct _G2AnimSection_Type* section, struct _G2Anim_Type* anim)
 {
 	short timePerKey;
 	long storedKey;
@@ -1310,22 +1310,19 @@ void _G2AnimSection_UpdateStoredFrameFromData(struct _G2AnimSection_Type *sectio
 	timePerKey = section->keylist->timePerKey;
 	targetKey = section->elapsedTime / timePerKey;
 
-	if (storedKey >= 0)
+	if (storedKey < 0 || targetKey < storedKey)
 	{
-		if (targetKey < storedKey)
-		{
-			_G2AnimSection_InitStatus(section, anim);
-			storedKey = -1;
-		}
-
-		timeOffset = ((section->elapsedTime - (targetKey * timePerKey)) >> 12) / timePerKey;
-
-		FooBar(section, anim, storedKey, targetKey, timeOffset);
-
-		section->flags |= 0x80;
-
-		section->storedTime = section->elapsedTime;
+		_G2AnimSection_InitStatus(section, anim);
+		storedKey = -1;
 	}
+
+	timeOffset = ((section->elapsedTime - (targetKey * timePerKey)) >> 12) / timePerKey;
+
+	FooBar(section, anim, storedKey, targetKey, timeOffset);
+
+	section->flags |= 0x80;
+
+	section->storedTime = section->elapsedTime;
 }
 
 struct _G2Anim_Type* _G2AnimSection_GetAnim(struct _G2AnimSection_Type* section)
