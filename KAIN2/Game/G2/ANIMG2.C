@@ -1224,14 +1224,14 @@ void _G2AnimSection_InitStatus(struct _G2AnimSection_Type* section, struct _G2An
 	{
 		wombat(segKeyList, flagBitOffset, &rotKfInfo);
 
-		flagBitOffset = bitsPerFlagType;
+		flagBitOffset += bitsPerFlagType;
 	}
 	
 	if ((activeChanBits & 0x2))
 	{
 		wombat(segKeyList, flagBitOffset, &scaleKfInfo);
 
-		flagBitOffset = bitsPerFlagType;
+		flagBitOffset += bitsPerFlagType;
 	}
 
 	if ((activeChanBits & 0x4))
