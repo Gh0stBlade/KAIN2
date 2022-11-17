@@ -1,6 +1,8 @@
 #ifndef VWRAITH_H
 #define VWRAITH_H
 
+#include "Game/MONSTER/MONSTER.H"
+
 struct VWRAITH_114fake // hashcode: 0x99946622 (dec: -1718327774)
 {
 	struct {
@@ -32,6 +34,8 @@ struct VWRAITH_114fake // hashcode: 0x99946622 (dec: -1718327774)
 		long hit; // size=0, offset=16
 	} Follow; // size=20, offset=76, found in object files: vwraith.o, vwraith.o
 };
+
+extern struct _MonsterFunctionTable VWRAITH_FunctionTable;
 
 extern void VWRAITH_MoveVertical(struct _Instance *instance, long targetZ, int velocity); // 0x8008E8F4
 extern void VWRAITH_Init(struct _Instance *instance); // 0x8008E94C

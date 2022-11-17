@@ -35,6 +35,7 @@ struct SLUAGH_114fake // hashcode: 0x17BD51C9 (dec: 398283209)
 	} Follow; // size=20, offset=76, found in object files: sluagh.o, sluagh.o
 };
 
+extern struct _MonsterFunctionTable SLUAGH_FunctionTable;
 extern unsigned long SLUAGH_Query(struct _Instance *instance, unsigned long query); // 0x8008D04C
 extern void SLUAGH_DamageEffect(struct _Instance *instance, struct evFXHitData *data); // 0x8008D0E0
 extern void SLUAGH_Init(struct _Instance *instance); // 0x8008D2D4

@@ -37,6 +37,8 @@ struct HUMAN_114fake // hashcode: 0xC7C43F22 (dec: -943440094)
 extern "C" {
 #endif
 
+extern struct _MonsterFunctionTable HUMAN_FunctionTable;
+
 extern void HUMAN_WaitForWeapon(struct _Instance *instance, struct GameTracker *gameTracker); // 0x8007CB40
 extern struct _Instance * HUMAN_CreateWeapon(struct _Instance *instance, int weaponid, int segment); // 0x8007CBB0
 extern void HUMAN_Init(struct _Instance *instance); // 0x8007CC84

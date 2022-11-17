@@ -2,6 +2,27 @@
 #include "MONSTER.H"
 #include "HUMAN.H"
 
+struct _MonsterStateChoice HUMAN_StateChoiceTable[] =
+{
+	{9, HUMAN_StunnedEntry, HUMAN_Stunned},
+	{0x17, HUMAN_DeadEntry, HUMAN_Dead},
+	{0x1B, HUMAN_EmbraceEntry, HUMAN_Embrace },
+	{2, HUMAN_IdleEntry, HUMAN_Idle},
+	{0x13, MON_FleeEntry, HUMAN_Flee},
+	{-1}
+};
+
+struct _MonsterFunctionTable HUMAN_FunctionTable =
+{
+	HUMAN_Init,
+	HUMAN_CleanUp,
+	0,
+	HUMAN_Query,
+	0,
+	HUMAN_StateChoiceTable,
+	__DATE__
+};
+
 typedef void (*TDRFuncPtr_MONTABLE_GetInitFunc)();
 extern void MonsterProcess(struct _Instance* instance, struct GameTracker* gameTracker);
 extern void MON_FleeEntry(struct _Instance* instance);
@@ -388,24 +409,3 @@ int HUMAN_TypeOfHuman(struct _Instance *instance)
 			UNIMPLEMENTED();
 	return 0;
 }
-
-struct _MonsterStateChoice HUMAN_StateChoiceTable[] =
-{
-	{9, HUMAN_StunnedEntry, HUMAN_Stunned},
-	{0x17, HUMAN_DeadEntry, HUMAN_Dead},
-	{0x1B, HUMAN_EmbraceEntry, HUMAN_Embrace },
-	{2, HUMAN_IdleEntry, HUMAN_Idle},
-	{0x13, MON_FleeEntry, HUMAN_Flee},
-	{-1}
-};
-
-struct _MonsterFunctionTable HUMAN_FunctionTable =
-{
-	HUMAN_Init,
-	HUMAN_CleanUp,
-	0,
-	HUMAN_Query,
-	0,
-	HUMAN_StateChoiceTable,
-	__DATE__
-};

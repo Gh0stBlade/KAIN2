@@ -35,6 +35,8 @@ struct SOUL_114fake // hashcode: 0x75056227 (dec: 1963287079)
 	} Follow; // size=20, offset=76, found in object files: soul.o, soul.o
 };
 
+extern struct _MonsterFunctionTable SOUL_FunctionTable;
+
 extern void SOUL_QueueHandler(struct _Instance *instance); // 0x8008D6D4
 extern void SOUL_Physics(struct _Instance *instance, long time); // 0x8008D770
 extern void SOUL_Fade(struct _Instance *instance); // 0x8008D7D0
