@@ -119,7 +119,7 @@ void _G2Instance_RebuildAnimatedTransforms(struct _Instance* instance)
 		
 		rootMatrix--;
 
-		if (instance->object->oflags & 0x1)
+		if (instance->object->oflags & 0x4)
 		{
 			pre_facade_rot = instance->rotation;
 			
