@@ -340,7 +340,7 @@ enum _G2Bool_Enum G2Anim_SegmentHasActiveChannels(struct _G2Anim_Type* anim, int
 	segFlagBits = segNumber;
 	flagBytesPerSeg = a0 >> 3;
 
-	segChanFlagStream = &((unsigned char*)(section->keylist + 1))[section->keylist->sectionCount << 2];
+	segChanFlagStream = (unsigned char*)&section->keylist->sectionData[section->keylist->sectionCount];
 	
 	if (segNumber < 0)
 	{
@@ -351,7 +351,7 @@ enum _G2Bool_Enum G2Anim_SegmentHasActiveChannels(struct _G2Anim_Type* anim, int
 
 	segNumber -= segFlagBits;
 
-	activeChanBits = ((unsigned char*)(section->keylist + 1))[section->keylist->sectionCount << 2];
+	activeChanBits = ((unsigned char*)&section->keylist->sectionData[section->keylist->sectionCount])[0];
 
 	if ((activeChanBits & 0x1))
 	{
@@ -1049,7 +1049,7 @@ void _G2Anim_BuildSegLocalRotMatrix(struct _G2AnimSegValue_Type* segValue, struc
 		xy = ((unsigned long*)&source->x)[0] & mask;
 
 		rot.z = z;
-		((unsigned long*)rot.x)[0] = xy;
+		((unsigned long*)&rot.x)[0] = xy;
 
 		RotMatrixZYX((SVECTOR*)dest, (MATRIX*)segMatrix);
 	}
