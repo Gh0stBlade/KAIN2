@@ -1063,13 +1063,17 @@ void wombat(unsigned char* segKeyList, int flagBitOffset, struct _G2AnimSegKeyfl
 	int flagBitShift;
 
 	flagDWordOffset = flagBitOffset >> 5;
-	
+
+	segKeyList = &segKeyList[flagDWordOffset << 2];
+
 	flagDWordOffset <<= 5;
 
-	kfInfo->stream = (unsigned long*)segKeyList + flagDWordOffset;
-	
+	kfInfo->stream = (unsigned long*)segKeyList;
+
 	flagBitShift = flagBitOffset - flagDWordOffset;
-	
+
+	kfInfo->bitCount = 32 - (flagBitOffset & 0x1F);
+
 	kfInfo->flags = kfInfo->stream[0] >> flagBitShift;
 
 #elif defined(PC_VERSION)
@@ -1206,7 +1210,7 @@ void _G2AnimSection_InitStatus(struct _G2AnimSection_Type* section, struct _G2An
 
 	bitsPerFlagType = ((anim->modelData->numSegments << 1) + anim->modelData->numSegments) + 7;
 
-	segKeyList = &((unsigned char*)(section->keylist + 1))[anim->modelData->numSegments >> 1];
+	segKeyList = (unsigned char*)&section->keylist->sectionData[section->keylist->sectionCount];
 	
 	activeChanBits = segKeyList[0];
 	
@@ -1235,7 +1239,7 @@ void _G2AnimSection_InitStatus(struct _G2AnimSection_Type* section, struct _G2An
 		wombat(segKeyList, flagBitOffset, &transKfInfo);
 	}
 
-	bitsPerFlagType = 0;
+	chanStatus = NULL;
 
 	_G2Anim_FreeChanStatusBlockList(section->chanStatusBlockList);
 
