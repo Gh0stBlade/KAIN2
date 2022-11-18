@@ -1041,7 +1041,7 @@ void _G2Anim_BuildSegLocalRotMatrix(struct _G2AnimSegValue_Type* segValue, struc
 
 	source = &segValue->rotQuat.rot;
 	
-	if (source[3].y != 0)
+	if (segValue->bIsQuat != 0)
 	{
 		G2Quat_ToMatrix_S(&segValue->rotQuat.quat, segMatrix);
 	}
