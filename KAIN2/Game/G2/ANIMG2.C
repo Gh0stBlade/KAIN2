@@ -1050,8 +1050,8 @@ void _G2Anim_BuildSegLocalRotMatrix(struct _G2AnimSegValue_Type* segValue, struc
 		mask = 0xFFF0FFF;
 
 		dest = &rot;
-		z = source->z & 0xFFF;
-		xy = ((unsigned long*)&source->x)[0] & mask;
+		z = segValue->rotQuat.rot.z & 0xFFF;
+		xy = ((unsigned long*)&segValue->rotQuat.rot.x)[0] & mask;
 
 		rot.z = z;
 		((unsigned long*)&rot.x)[0] = xy;
@@ -1175,19 +1175,24 @@ void _G2Anim_InitializeSegValue(struct _G2Anim_Type* anim, struct _G2AnimSegValu
 	unsigned long xy;
 
 	quat = &segValue->rotQuat.quat;
+	constexpr int test = offsetof(_G2AnimSegValue_Type, scale.x);
 
-	((unsigned long*)&quat->z)[0] = 0x10000000;
-	((unsigned long*)&segValue->scale.x)[0] = 0x10001000;
-	((unsigned long*)&quat->x)[0] = 0;
+	segValue->scale.x = 0x1000;
+	segValue->scale.y = 0x1000;
 	segValue->scale.z = 0x1000;
+
+	segValue->rotQuat.quat.x = 0;
+	segValue->rotQuat.quat.y = 0;
+	segValue->rotQuat.quat.z = 0;
+	segValue->rotQuat.quat.w = 0x1000;
 
 	segment = &anim->modelData->segmentList[segIndex];
 
 	xy = ((unsigned long*)&segment->px)[0];
-	zpad = ((unsigned long*)&segment->px)[1] & 0xFFFF;
+	zpad = ((unsigned long*)&segment->pz)[0] & 0xFFFF;
 
-	((unsigned long*)(quat + 2))[0] = xy;
-	((unsigned long*)(quat + 2))[1] = zpad;
+	((unsigned long*)(&segValue->trans.x))[0] = xy;
+	((unsigned long*)(&segValue->trans.z))[0] = zpad;
 }
 
 void _G2AnimSection_InitStatus(struct _G2AnimSection_Type* section, struct _G2Anim_Type* anim)
