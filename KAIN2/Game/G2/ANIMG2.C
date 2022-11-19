@@ -918,7 +918,12 @@ void _G2Anim_BuildTransformsNoControllers(struct _G2Anim_Type* anim)
 	enum _G2Bool_Enum bRootTransUpdated;
 	int segIndex;
 	int segCount;
+#if defined(PSXPC_VERSION)
+	unsigned long disabledBits[32];//bug caused by not using scratch pad, inited to zero!
+	memset(disabledBits, 0, sizeof(disabledBits));
+#else
 	unsigned long disabledBits[3];
+#endif
 	unsigned long disabledMask;
 	unsigned long parentMask;
 	unsigned long parentIndex;
@@ -1318,9 +1323,9 @@ void _G2AnimSection_InitStatus(struct _G2AnimSection_Type* section, struct _G2An
 						{
 							chanStatus++;
 						}
-					}
 
-					chanStatusChunkCount--;
+						chanStatusChunkCount--;
+					}
 				}
 				else
 				{
