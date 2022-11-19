@@ -26,11 +26,11 @@ extern void ClearBss() ; // 0x80024E4C
 
 extern void clearloop() ; // 0x80024E5C
 
-extern void TimerTick() ; // 0x80024E78
+extern long TimerTick() ; // 0x80024E78
 
 extern int CheckVolatile(void* a0) ; // 0x80024EB0
 
-extern void DRAW_AnimatedModel_S(struct _Model* model, struct _PVertex* poolVertex, struct _PrimPool* primPool, unsigned long** ot, CVECTOR* vertexColor); // 0x80024EBC
+extern long* DRAW_AnimatedModel_S(struct _Model* model, struct _PVertex* poolVertex, struct _PrimPool* primPool, unsigned long** ot, CVECTOR* vertexColor); // 0x80024EBC
 
 extern void anim_loop_top() ; // 0x80024FA0
 

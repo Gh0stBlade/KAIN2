@@ -82,10 +82,9 @@ void clearloop()
 	return;
 }
 
-void TimerTick() 
+long TimerTick() 
 {
-	gameTimer++;
-	return;
+	return ++gameTimer;
 }
 
 int CheckVolatile(void* a0) 
@@ -93,815 +92,484 @@ int CheckVolatile(void* a0)
 	return (int)a0;
 }
 
-void DRAW_AnimatedModel_S(struct _Model* model, struct _PVertex* poolVertex, struct _PrimPool* primPool, unsigned long** ot, CVECTOR* vertexColor)
+long* DRAW_AnimatedModel_S(struct _Model* model, struct _PVertex* poolVertex, struct _PrimPool* primPool, unsigned long** ot, CVECTOR* vertexColor)
 {
-#if 0
-	sub_8002521C:
+	int fp;
+	int v1;
+	int t0;
+	int a0;
+	int* t2;
 
-	arg_10 = 0x10
+	//s1 = vertexColor
+	//s3 = getScratchAddr(0);
 
-		lui     $v0, 0x1F80
-		sw      $fp, 0x1F800024
-		sw      $s7, 0x1F800020
-		sw      $s6, 0x1F80001C
-		sw      $s5, 0x1F800018
-		sw      $s4, 0x1F800014
-		sw      $s3, 0x1F800010
-		sw      $s2, 0x1F80000C
-		sw      $s1, 0x1F800008
-		sw      $s0, 0x1F800004
-		lw      $s1, arg_10($sp)
-		move    $s3, $v0
-		lw      $v0, dword_800D05E8
-		lw      $v1, dword_800D05E0
-		nop
-		slt     $v0, $v1
-		sw      $v0, 0x40($s3)
-		lh      $v1, word_800D2980
-		nop
-		sh      $v1, 0x44($s3)
-		lw      $v0, dword_800D05EC
-		li      $v1, dword_800D3360
-		lui     $t8, 0x800C
-		lw      $t5, (dword_800D3364 - 0x800D3360)($v1)
-		lw      $v1, (dword_800D3360 - 0x800D3360)($v1)
-		li      $t8, dword_800CA454
-		sw      $v1, 0($s3)
-		sw      $v0, 0x2C($s3)
-		xori    $t5, 1
-		sll     $t5, 4
-		ori     $t5, 0x100
-		sw      $t5, 0x3C($s3)
-		lw      $s7, 4($a2)
-		lw      $s6, 0x10($a0)
-		lw      $s4, 4($a0)
-		beqz    $s6, loc_800258A8
-		lui     $t3, 0xFF
-		lw      $v1, 0x14($a0)
-		li      $t3, 0xFFFFFF
-		move    $s5, $v1
-		sll     $v0, $s6, 1
-		addu    $v0, $s6
-		sll     $v0, 2
-		addu    $v1, $v0, $v1
-		sw      $v1, 0x48($s3)
-		mfc2    $a0, $8
-		lw      $s0, dword_800D05F4
-		nop
-		beqz    $s0, loc_80025300
-		lw      $t6, 4($s5)
-		mtc2    $s0, $8
+	//v0 = depthQFogFar
+	//v1 = depthQBlendStart
 
-		loc_80025300 :
-	lw      $t4, 0($s5)
-		srl     $v1, $t6, 24
-		andi    $v0, $t6, 0xFFFF
-		andi    $v1, 0x10
-		sll     $v0, 3
-		bnez    $v1, loc_80025890
-		addu    $t1, $a1, $v0
-		andi    $v0, $t4, 0xFFFF
-		lw      $t7, 0($t1)
-		srl     $v1, $t4, 13
-		sll     $v0, 3
-		addu    $t9, $a1, $v0
-		addu    $s2, $a1, $v1
-		lwc2    $12, 0($t9)
-		mtc2    $t7, $14
-		li      $t7, 0xF00200
-		lwc2    $13, 0($s2)
-		nop
-		nop
-		cop2    0x1400006
-		lw      $v0, 0($s3)
-		mfc2    $t5, $24
-		beqz    $v0, loc_80025368
-		lui     $v1, 0x8000
-		neg     $t5, $t5
+	getScratchAddr(16)[0] = depthQFogFar < depthQBlendStart;
+	((short*)getScratchAddr(0))[34] = SpecialFogClut;
 
-		loc_80025368 :
-	addi    $t5, 1
-		bgez    $t5, loc_80025890
-		addi    $t5, 4
-		li      $v1, unk_80008000
-		mfc2    $t2, $12
-		mfc2    $s6, $13
-		and $v0, $t2, $v1
-		mfc2    $t0, $14
-		and $v0, $s6, $v0
-		and $v0, $t0, $v0
-		bnez    $v0, loc_80025890
-		subu    $t2, $t7, $t2
-		and $v0, $t2, $v1
-		subu    $s6, $t7, $s6
-		and $v0, $s6, $v0
-		subu    $t0, $t7, $t0
-		and $v0, $t0, $v0
-		bnez    $v0, loc_80025890
-		srl     $v1, $t6, 24
-		lwc2    $17, 4($t9)
-		lwc2    $18, 4($s2)
-		lwc2    $19, 4($t1)
-		andi    $v0, $v1, 4
-		beqz    $v0, loc_800253E0
-		nop
-		cop2    0x158002D
-		lw      $t2, 8($s5)
-		mfc2    $t0, $7
-		j       loc_80025414
-		sll     $fp, $t0, 2
+	//v0 = depthQBackColor
+	//v1 = &gameTrackerX
 
-		loc_800253E0:
-	mfc2    $v1, $17
-		mfc2    $fp, $18
-		mfc2    $t0, $19
-		slt     $v0, $v1, $fp
-		bnez    $v0, loc_800253FC
-		nop
-		move    $fp, $v1
+	//t5 = ((gameTrackerX.gameData.asmData.drawBackFaces ^ 1) << 4) | 0x100
+	//v1 = gameTrackerX.gameData.asmData.dispPage
+	//t8 = &gNormalList[0];
+	getScratchAddr(0)[0] = gameTrackerX.gameData.asmData.dispPage;
+	getScratchAddr(11)[0] = depthQBackColor;
+	getScratchAddr(15)[0] = ((gameTrackerX.gameData.asmData.drawBackFaces ^ 1) << 4) | 0x100;
 
-		loc_800253FC :
-	slt     $v0, $fp, $t0
-		bnez    $v0, loc_8002540C
-		nop
-		move    $t0, $fp
+	long* s7 = (long*)primPool->nextPrim;
 
-		loc_8002540C :
-	lw      $t2, 8($s5)
-		andi    $fp, $t0, 0xFFFC
+	//s6 = model->numFaces
+	struct _MVertex* s4 = model->vertexList;
 
-		loc_80025414 :
-		bgtz    $t2, loc_80025430
-		nop
-		lw      $t7, 8($t2)
-		nop
-		sra     $v1, $t7, 24
-		sll     $v1, 3
-		addu    $fp, $v1
+	if (model->numFaces != 0)
+	{
+		//v1 = model->faceList
+		//t3 = 0xFFFFFF
+		struct _MFace* s5 = &model->faceList[0];
 
-		loc_80025430 :
-	slti    $v0, $fp, 0x3000
-		slt     $v1, $zero, $fp
-		and $v0, $v1
-		beqz    $v0, loc_80025890
-		lw      $v0, 0x40($s3)
-		srl     $v1, $t6, 24
-		bnez    $s0, loc_8002545C
-		nop
-		bnez    $v0, loc_8002545C
-		nop
-		bnez    $a0, loc_800258DC
+		getScratchAddr(18)[0] = (unsigned long)&model->faceList[model->numFaces];
 
-		loc_8002545C :
-	andi    $s6, $v1, 2
-		beqz    $s6, loc_800256E4
+		gte_stdp(a0);
 
-		loc_80025464 :
-	nop
-		bgez    $t5, loc_80025474
-		andi    $s6, $v1, 1
-		bnez    $s6, loc_80025588
+		int t6 = ((int*)&s5->face.v2)[0];
 
-		loc_80025474 :
-	srl     $v1, $t6, 13
-		andi    $v1, 0x7F8
-		addu    $v1, $t8, $v1
-		lwc2    $0, 0($v1)
-		lwc2    $1, 4($v1)
-		lwc2    $6, 0xC($t2)
-		beqz    $s0, loc_800254B0
-		nop
-		mfc2    $v1, $6
-		lui     $v0, 0x200
-		li      $at, 0xFEFFFFFF
-		and $v1, $at
-		or $v1, $v0, $v1
-		mtc2    $v1, $6
+		if (modelFadeValue != 0)
+		{
+			gte_lddp(modelFadeValue);
+		}
 
-		loc_800254B0 :
-	nop
-		nop
-		cop2    0xE80413
-		lw      $v0, 0($t2)
-		lw      $v1, 4($t2)
-		sw      $v0, 0xC($s7)
-		sw      $t7, 0x1C($s7)
-		beqz    $s0, loc_800254E8
-		srl     $v0, $v1, 16
-		andi    $v0, 0xFF9F
-		ori     $v0, 0x20  # ' '
-		andi    $v1, 0xFFFF
-		sll     $v0, 16
-		or $v1, $v0, $v1
+	anim_loop_top:
+		int t4 = ((int*)&s5->face.v0)[0];
+		int v1 = t6 >> 24;
+		int v0 = t6 & 0xFFFF;
+		v1 &= 0x10;
+		//v0 <<= 3
 
-		loc_800254E8 :
-	sw      $v1, 0x14($s7)
-		addu    $s6, $fp, $a3
-		lw      $v1, 0($s6)
-		lui     $v0, 0x700
-		or $v1, $v0
-		sw      $v1, 0($s7)
-		and $v0, $s7, $t3
-		sw      $v0, 0($s6)
-		beqz    $s0, loc_80025560
-		nop
-		mfc2    $v0, $22
-		lui     $v1, 0xEFFF
-		swc2    $12, 8($s7)
-		li      $v1, 0xEFFFFFFF
-		swc2    $13, 0x10($s7)
-		and $v0, $v1
-		swc2    $14, 0x18($s7)
-		sw      $v0, 4($s7)
-		lw      $v0, 0xC($t2)
-		nop
-		lui     $at, 0x200
-		and $v1, $v0, $at
-		bnez    $v1, loc_80025890
-		addiu   $s7, 0x20  # ' '
-		lui     $at, 0x10
-		and $v0, $t7, $at
-		bnez    $v0, loc_80025890
-		nop
-		j       loc_80025CD0
-		nop
+		if (v1 == 0)
+		{
+			struct _PVertex* t1 = &poolVertex[v0];
+			v0 = t4 & 0xFFFF;
+			int t7 = ((int*)&t1->x)[0];
+			v1 = t4 >> 16;
+			struct _PVertex* t9 = &poolVertex[v0];
+			struct _PVertex* s2 = &poolVertex[v1];
 
-		loc_80025560 :
-	mfc2    $v0, $22
-		lui     $v1, 0xEFFF
-		swc2    $12, 8($s7)
-		li      $v1, 0xEFFFFFFF
-		swc2    $13, 0x10($s7)
-		and $v0, $v1
-		swc2    $14, 0x18($s7)
-		sw      $v0, 4($s7)
-		j       loc_80025890
-		addiu   $s7, 0x20  # ' '
+			gte_ldsxy3(t9, t1, s2);
 
-		loc_80025588:
-	andi    $v0, $t4, 0xFFFF
-		srl     $s6, $t4, 16
-		sll     $v0, 2
-		addu    $t4, $v0, $s1
-		lw      $t4, 0($t4)
-		sll     $s6, 2
-		addu    $s6, $s1
-		lw      $s6, 0($s6)
-		andi    $t5, $t6, 0xFFFF
-		sll     $t5, 2
-		addu    $t5, $s1
-		lw      $t5, 0($t5)
-		and $a2, $t4, $s6
-		and $a2, $t5
-		lui     $at, 0x8000
-		and $t0, $a2, $at
-		bnez    $t0, loc_80025724
-		lw      $t0, 0xC($t2)
-		nop
-		lui     $at, 0xFF00
-		and $v0, $t0, $at
-		beqz    $s0, loc_800255F8
-		nop
-		li      $at, 0xFEFFFFFF
-		and $v0, $at
-		lui     $at, 0x200
-		or $v0, $at
+			t7 = 0xF00200;
 
-		loc_800255F8 :
-	and $t4, $t3
-		or $t4, $v0, $t4
-		sw      $t4, 4($s7)
-		and $s6, $t3
-		or $s6, $v0, $s6
-		sw      $s6, 0x10($s7)
-		and $t5, $t3
-		or $t5, $v0, $t5
-		sw      $t5, 0x1C($s7)
-		lw      $v1, 0($t2)
-		lw      $v0, 4($t2)
-		sw      $t7, 0x24($s7)
-		sw      $v1, 0xC($s7)
-		beqz    $s0, loc_80025688
-		nop
-		lui     $at, 0x200
-		and $v1, $t0, $at
-		bnez    $v1, loc_80025688
-		nop
-		lui     $at, 0x10
-		and $t7, $at
-		beqz    $t7, loc_80025670
-		nop
-		srl     $v1, $v0, 16
-		andi    $v1, 0xFF9F
-		andi    $v0, 0xFFFF
-		sll     $v1, 16
-		or $v0, $v1
-		bgez    $zero, loc_80025688
-		nop
+			gte_nclip();
 
-		loc_80025670 :
-	srl     $v1, $v0, 16
-		andi    $v1, 0xFF9F
-		ori     $v1, 0x20  # ' '
-		andi    $v0, 0xFFFF
-		sll     $v1, 16
-		or $v0, $v1
+			int t5;
+			gte_stopz(&t5);
 
-		loc_80025688 :
-	sw      $v0, 0x18($s7)
-		addu    $s6, $fp, $a3
-		lw      $v1, 0($s6)
-		lui     $v0, 0x900
-		or $v1, $v0
-		sw      $v1, 0($s7)
-		and $v0, $s7, $t3
-		sw      $v0, 0($s6)
-		swc2    $12, 8($s7)
-		swc2    $13, 0x14($s7)
-		swc2    $14, 0x20($s7)
-		lui     $at, 0x200
-		and $v1, $t0, $at
-		or $v0, $t7, $v1
-		xor $v0, $zero
-		sltiu   $v0, 1
-		xor $v1, $s0, $zero
-		sltu    $v1, $zero, $v1
-		and $v0, $v1
-		beqz    $v0, loc_80025890
-		addiu   $s7, 0x28  # '('
-		bgez    $zero, loc_80025CD0
-		nop
+			if (getScratchAddr(0)[0] != 0)
+			{
+				t5 = -t5;
+			}
 
-		loc_800256E4 :
-	andi    $s6, $v1, 1
-		beqz    $s6, loc_8002583C
-		andi    $v0, $t4, 0xFFFF
-		srl     $s6, $t4, 16
-		sll     $v0, 2
-		addu    $t4, $v0, $s1
-		lw      $t4, 0($t4)
-		sll     $s6, 2
-		addu    $s6, $s1
-		lw      $s6, 0($s6)
-		andi    $t5, $t6, 0xFFFF
-		sll     $t5, 2
-		addu    $t5, $s1
-		lw      $t5, 0($t5)
-		and $a2, $t4, $s6
-		and $a2, $t5
 
-		loc_80025724 :
-	lui     $at, 0x100
-		and $a2, $at
-		bnez    $a2, loc_800257E4
-		lw      $t4, 0($s5)
-		lw      $t6, 4($s5)
-		andi    $v0, $t4, 0xFFFF
-		srl     $s6, $t4, 16
-		sll     $v0, 3
-		addu    $v0, $s4
-		lh      $t4, 6($v0)
-		sll     $s6, 3
-		addu    $s6, $s4
-		sll     $t4, 3
-		addu    $t4, $t8, $t4
-		lh      $s6, 6($s6)
-		andi    $v0, $t6, 0xFFFF
-		sll     $v0, 3
-		addu    $v0, $s4
-		lh      $v0, 6($v0)
-		sll     $s6, 3
-		addu    $t5, $t8, $s6
-		lwc2    $0, 0($t4)
-		sll     $v0, 3
-		addu    $t6, $t8, $v0
-		lwc2    $1, 4($t4)
-		lwc2    $2, 0($t5)
-		lwc2    $3, 4($t5)
-		lwc2    $4, 0($t6)
-		lwc2    $5, 4($t6)
-		mtc2    $t2, $6
-		nop
-		nop
-		cop2    0xF80416
-		addu    $s6, $fp, $a3
-		lw      $v1, 0($s6)
-		lui     $v0, 0x600
-		or $v1, $v0
-		sw      $v1, 0($s7)
-		and $v0, $s7, $t3
-		sw      $v0, 0($s6)
-		swc2    $12, 8($s7)
-		swc2    $13, 0x10($s7)
-		swc2    $14, 0x18($s7)
-		swc2    $20, 4($s7)
-		swc2    $21, 0xC($s7)
-		swc2    $22, 0x14($s7)
-		j       loc_80025890
-		addiu   $s7, 0x1C
+			//loc_80025368
+		anim_dont_flip_backface:
+			t5 += 1;
 
-		loc_800257E4:
-	lui     $v0, 0x3000
-		and $t4, $t3
-		or $t4, $v0, $t4
-		sw      $t4, 4($s7)
-		and $s6, $t3
-		or $s6, $v0, $s6
-		sw      $s6, 0xC($s7)
-		and $t5, $t3
-		or $t5, $v0, $t5
-		sw      $t5, 0x14($s7)
-		addu    $s6, $fp, $a3
-		lw      $v1, 0($s6)
-		lui     $v0, 0x600
-		or $v1, $v0
-		sw      $v1, 0($s7)
-		and $v0, $s7, $t3
-		sw      $v0, 0($s6)
-		swc2    $12, 8($s7)
-		swc2    $13, 0x10($s7)
-		swc2    $14, 0x18($s7)
-		j       loc_80025890
-		addiu   $s7, 0x1C
+			if (t5 < 0)
+			{
+				t5 += 4;
 
-		loc_8002583C:
-	srl     $v1, $t6, 13
-		andi    $v1, 0x7F8
-		addu    $v1, $t8, $v1
-		lwc2    $0, 0($v1)
-		lwc2    $1, 4($v1)
-		mtc2    $t2, $6
-		nop
-		nop
-		cop2    0xE80413
-		addu    $s6, $fp, $a3
-		lw      $v1, 0($s6)
-		lui     $v0, 0x400
-		or $v1, $v0
-		sw      $v1, 0($s7)
-		and $v0, $s7, $t3
-		sw      $v0, 0($s6)
-		swc2    $12, 8($s7)
-		swc2    $13, 0xC($s7)
-		swc2    $14, 0x10($s7)
-		swc2    $22, 4($s7)
-		addiu   $s7, 0x14
+				int v1 = 0x80008000;
 
-		loc_80025890:
-	lw      $v0, 0x48($s3)
-		lw      $t6, 0x10($s5)
-		addiu   $s5, 0xC
-		sltu    $v0, $s5, $v0
-		bnez    $v0, loc_80025300
-		nop
+				VECTOR v;//t2, s6, t0
+				gte_stsxy3(&v.vx, &v.vy, &v.vz);
 
-		loc_800258A8 :
-	move    $v0, $s7
-		lui     $v1, 0x1F80
-		lw      $fp, 0x1F800024
-		lw      $s7, 0x1F800020
-		lw      $s6, 0x1F80001C
-		lw      $s5, 0x1F800018
-		lw      $s4, 0x1F800014
-		lw      $s3, 0x1F800010
-		lw      $s2, 0x1F80000C
-		lw      $s1, 0x1F800008
-		lw      $s0, 0x1F800004
-		jr      $ra
-		nop
+				int v0 = v.vx & v1;
+				v0 = v.vy & v0;
+				v0 = v.vz & v0;
 
-		loc_800258DC :
-	beqz    $s6, loc_80025B1C
-		nop
-		lw      $v0, 0xC($t2)
-		lui     $s6, 0x200
-		and $s6, $v0
-		bne     $zero, $s6, loc_80025464
-		nop
-		bgez    $t5, loc_80025904
-		andi    $s6, $v1, 1
-		bnez    $s6, loc_80025990
+				if (v0 == 0)
+				{
+					v.vx = t7 - v.vx;
+					v0 = v.vx & v1;
 
-		loc_80025904 :
-	srl     $v1, $t6, 13
-		andi    $v1, 0x7F8
-		addu    $v1, $t8, $v1
-		lwc2    $0, 0($v1)
-		lwc2    $1, 4($v1)
-		lw      $v0, 0xC($t2)
-		lui     $v1, 0xEFFF
-		lui     $s6, 0x200
-		li      $v1, 0xEFFFFFFF
-		or $v0, $s6, $v0
-		and $v0, $v1, $v0
-		mtc2    $v0, $6
-		nop
-		nop
-		cop2    0xE80413
-		lw      $v0, 0($t2)
-		lw      $v1, 4($t2)
-		lui     $s6, 0x20  # ' '
-		or $v1, $s6, $v1
-		sw      $v0, 0xC($s7)
-		sw      $v1, 0x14($s7)
-		sw      $t7, 0x1C($s7)
-		addu    $s6, $fp, $a3
-		lw      $v1, 0($s6)
-		lui     $v0, 0x700
-		or $v1, $v0
-		sw      $v1, 0($s7)
-		and $v0, $s7, $t3
-		sw      $v0, 0($s6)
-		swc2    $12, 8($s7)
-		swc2    $13, 0x10($s7)
-		swc2    $14, 0x18($s7)
-		swc2    $22, 4($s7)
-		j       loc_80025A34
-		addiu   $s7, 0x20  # ' '
+					v.vy = t7 - v.vy;
+					v0 = v.vy & v0;
 
-		loc_80025990:
-	andi    $v0, $t4, 0xFFFF
-		srl     $s6, $t4, 16
-		sll     $v0, 2
-		addu    $t4, $v0, $s1
-		lw      $t4, 0($t4)
-		nop
-		and $t4, $t3
-		lui     $v0, 0x3400
-		or $t4, $v0, $t4
-		sll     $s6, 2
-		addu    $s6, $s1
-		lw      $s6, 0($s6)
-		andi    $t5, $t6, 0xFFFF
-		sll     $t5, 2
-		addu    $t5, $s1
-		lw      $t5, 0($t5)
-		lui     $v0, 0x200
-		or $t4, $v0, $t4
-		or $s6, $v0, $s6
-		or $t5, $v0, $t5
-		sw      $t4, 4($s7)
-		sw      $s6, 0x10($s7)
-		sw      $t5, 0x1C($s7)
-		lw      $v0, 0($t2)
-		lw      $v1, 4($t2)
-		lui     $s6, 0x20  # ' '
-		or $v1, $s6, $v1
-		sw      $t7, 0x24($s7)
-		sw      $v0, 0xC($s7)
-		sw      $v1, 0x18($s7)
-		addu    $s6, $fp, $a3
-		lw      $v1, 0($s6)
-		lui     $v0, 0x900
-		or $v1, $v0
-		sw      $v1, 0($s7)
-		and $v0, $s7, $t3
-		sw      $v0, 0($s6)
-		swc2    $12, 8($s7)
-		swc2    $13, 0x14($s7)
-		swc2    $14, 0x20($s7)
-		addiu   $s7, 0x28  # '('
+					v.vz = t7 - v.vz;
+					v0 = v.vz & v0;
 
-		loc_80025A34:
-	lui     $at, 0x10
-		and $v0, $t7, $at
-		bnez    $v0, loc_80025A9C
-		lwc2    $6, 0x2C($s3)
-		lw      $t9, 0x2C($s3)
-		nop
-		cop2    0x780010
-		addu    $s6, $fp, $a3
-		lw      $v1, 0($s6)
-		lui     $v0, 0x600
-		or $v1, $v0
-		sw      $v1, 0($s7)
-		and $v0, $s7, $t3
-		sw      $v0, 0($s6)
-		mfc2    $v0, $22
-		lui     $v1, 0x3000
-		or $s6, $v1, $t9
-		sub     $v0, $s6, $v0
-		sw      $v0, 4($s7)
-		sw      $v0, 0xC($s7)
-		sw      $v0, 0x14($s7)
-		swc2    $12, 8($s7)
-		swc2    $13, 0x10($s7)
-		swc2    $14, 0x18($s7)
-		j       loc_80025890
-		addiu   $s7, 0x1C
+					if (v0 == 0)
+					{
+						v1 = t6 >> 24;
 
-		loc_80025A9C:
-	lwc2    $6, 0x2C($s3)
-		lw      $t9, 0x2C($s3)
-		nop
-		cop2    0x780010
-		lw      $v0, 0($t2)
-		lw      $v1, 4($t2)
-		lw      $s6, 8($t2)
-		sw      $v0, 0xC($s7)
-		sw      $v1, 0x18($s7)
-		sw      $s6, 0x24($s7)
-		lh      $v0, 0x44($s3)
-		nop
-		sh      $v0, 0xE($s7)
-		addu    $s6, $fp, $a3
-		lw      $v1, 0($s6)
-		lui     $v0, 0x900
-		or $v1, $v0
-		sw      $v1, 0($s7)
-		and $v0, $s7, $t3
-		sw      $v0, 0($s6)
-		mfc2    $v0, $22
-		lui     $v1, 0x3400
-		or $s6, $v1, $t9
-		sub     $v0, $s6, $v0
-		sw      $v0, 4($s7)
-		sw      $v0, 0x10($s7)
-		sw      $v0, 0x1C($s7)
-		swc2    $12, 8($s7)
-		swc2    $13, 0x14($s7)
-		swc2    $14, 0x20($s7)
-		j       loc_80025890
-		addiu   $s7, 0x28  # '('
+						gte_ldsz3(&t9->otz, &s2->otz, &t1->otz);
 
-		loc_80025B1C:
-	andi    $s6, $v1, 1
-		beqz    $s6, loc_80025C24
-		cfc2    $t5, $21
-		cfc2    $v0, $22
-		cfc2    $t7, $23
-		sw      $t5, 0x30($s3)
-		sw      $v0, 0x34($s3)
-		sw      $t7, 0x38($s3)
-		lb      $t5, 0x2C($s3)
-		lb      $v0, 0x2D($s3)
-		lb      $t7, 0x2E($s3)
-		sll     $t5, 4
-		sll     $v0, 4
-		sll     $t7, 4
-		ctc2    $t5, $21
-		ctc2    $v0, $22
-		ctc2    $t7, $23
-		andi    $v0, $t4, 0xFFFF
-		srl     $s6, $t4, 16
-		sll     $v0, 3
-		addu    $v0, $s4
-		lh      $t4, 6($v0)
-		sll     $s6, 3
-		addu    $s6, $s4
-		sll     $t4, 3
-		addu    $t4, $t8, $t4
-		lh      $s6, 6($s6)
-		andi    $v0, $t6, 0xFFFF
-		sll     $v0, 3
-		addu    $v0, $s4
-		lh      $v0, 6($v0)
-		sll     $s6, 3
-		addu    $t5, $t8, $s6
-		lwc2    $0, 0($t4)
-		sll     $v0, 3
-		addu    $t6, $t8, $v0
-		lwc2    $1, 4($t4)
-		lwc2    $2, 0($t5)
-		lwc2    $3, 4($t5)
-		lwc2    $4, 0($t6)
-		lwc2    $5, 4($t6)
-		mtc2    $t2, $6
-		nop
-		nop
-		cop2    0xF80416
-		addu    $s6, $fp, $a3
-		lw      $v1, 0($s6)
-		lui     $v0, 0x600
-		or $v1, $v0
-		sw      $v1, 0($s7)
-		and $v0, $s7, $t3
-		sw      $v0, 0($s6)
-		swc2    $12, 8($s7)
-		swc2    $13, 0x10($s7)
-		swc2    $14, 0x18($s7)
-		swc2    $20, 4($s7)
-		swc2    $21, 0xC($s7)
-		swc2    $22, 0x14($s7)
-		lw      $t5, 0x30($s3)
-		lw      $t6, 0x34($s3)
-		lw      $t7, 0x38($s3)
-		ctc2    $t5, $21
-		ctc2    $t6, $22
-		ctc2    $t7, $23
-		j       loc_80025890
-		addiu   $s7, 0x1C
+						if ((v1 & 0x4))
+						{
+							gte_avsz3();
 
-		loc_80025C24:
-	srl     $v1, $t6, 13
-		cfc2    $t5, $21
-		cfc2    $t6, $22
-		cfc2    $t7, $23
-		sw      $t5, 0x30($s3)
-		sw      $t6, 0x34($s3)
-		sw      $t7, 0x38($s3)
-		lb      $t5, 0x2C($s3)
-		lb      $t6, 0x2D($s3)
-		lb      $t7, 0x2E($s3)
-		sll     $t5, 4
-		sll     $t6, 4
-		sll     $t7, 4
-		ctc2    $t5, $21
-		ctc2    $t6, $22
-		ctc2    $t7, $23
-		andi    $v1, 0x7F8
-		addu    $v1, $t8, $v1
-		lwc2    $0, 0($v1)
-		lwc2    $1, 4($v1)
-		mtc2    $t2, $6
-		nop
-		nop
-		cop2    0xE80413
-		addu    $s6, $fp, $a3
-		lw      $v1, 0($s6)
-		lui     $v0, 0x400
-		or $v1, $v0
-		sw      $v1, 0($s7)
-		and $v0, $s7, $t3
-		sw      $v0, 0($s6)
-		swc2    $12, 8($s7)
-		swc2    $13, 0xC($s7)
-		swc2    $14, 0x10($s7)
-		swc2    $22, 4($s7)
-		lw      $t5, 0x30($s3)
-		lw      $t6, 0x34($s3)
-		lw      $t7, 0x38($s3)
-		ctc2    $t5, $21
-		ctc2    $t6, $22
-		ctc2    $t7, $23
-		j       loc_80025890
-		addiu   $s7, 0x14
+							t2 = (int*)s5->color;
 
-		loc_80025CD0:
-	li      $v0, 0x808080
-		mfc2    $t4, $12
-		mfc2    $t5, $13
-		mfc2    $t6, $14
-		mtc2    $v0, $6
-		sw      $t4, 8($s7)
-		sw      $t5, 0x10($s7)
-		sw      $t6, 0x18($s7)
-		cop2    0x780010
-		srl     $v0, $t4, 16
-		sb      $v0, 0xD($s7)
-		srl     $v0, $t5, 16
-		sb      $v0, 0x15($s7)
-		srl     $v0, $t6, 16
-		sb      $v0, 0x1D($s7)
-		andi    $t4, 0xFFFF
-		andi    $t5, 0xFFFF
-		andi    $t6, 0xFFFF
-		slt     $at, $t5, $t4
-		bnez    $at, loc_80025D3C
-		nop
-		slt     $at, $t6, $t4
-		bnez    $at, loc_80025D50
-		nop
-		bgez    $zero, loc_80025D54
-		andi    $v0, $t4, 0xFFC0
+							gte_stotz(&t0);
 
-		loc_80025D3C:
-	slt     $at, $t6, $t5
-		bnez    $at, loc_80025D50
-		nop
-		bgez    $zero, loc_80025D54
-		andi    $v0, $t5, 0xFFC0
+							fp = t0 << 2;
+							goto sort_avz_continue2;
+						}
+						else
+						{
+							//loc_800253E0
+						sort_max_z2:
+							gte_stsz3(&v1, &fp, &t0);
 
-		loc_80025D50 :
-		andi    $v0, $t6, 0xFFC0
+							if (v1 >= fp)
+							{
+								fp = v1;
+							}
 
-		loc_80025D54 :
-		subu    $t4, $v0
-		subu    $t5, $v0
-		subu    $t6, $v0
-		sb      $t4, 0xC($s7)
-		sb      $t5, 0x14($s7)
-		sb      $t6, 0x1C($s7)
-		lw      $v1, 0x1F80003C
-		srl     $v0, 6
-		or $v0, $v1
-		sh      $v0, 0x16($s7)
-		addu    $s6, $fp, $a3
-		lw      $v1, 0($s6)
-		lui     $v0, 0x700
-		or $v1, $v0
-		sw      $v1, 0($s7)
-		and $v0, $s7, $t3
-		sw      $v0, 0($s6)
-		mfc2    $v0, $22
-		li      $v1, 0x24808080
-		subu    $v0, $v1, $v0
-		sw      $v0, 4($s7)
-		j       loc_80025890
-		addiu   $s7, 0x20  # ' '
-		# End of function sub_8002521C
-#endif
-	return;
+						mm2L1:
+							if (fp >= t0)
+							{
+								t0 = fp;
+							}
+						mm2L2:
+							fp = t0 & 0xFFFC;
+
+							t2 = (int*)s5->color;
+
+						sort_avz_continue2:
+							if (t2 <= 0)
+							{
+								fp += ((t2[2] >> 24) << 3);
+							}
+
+						anim_no_pushsort:
+
+							v0 = fp < 0x3000;
+							v1 = 0 < fp;
+
+							if ((v0 & v1) != 0)
+							{
+								v0 = getScratchAddr(16)[0];
+								v1 = t6 >> 24;
+
+								if (modelFadeValue != 0 || v0 != 0 || a0 == 0)
+								{
+								not_colored_fog:
+									if ((v1 & 0x2))
+									{
+
+									anim_ft3:
+										if (t5 >= 0 || !(v1 & 0x1))
+										{
+										always_ft3:
+											v1 = t6 >> 13;
+											v1 &= 0x7F8;
+
+											struct _Normal* v11 = (struct _Normal*)(char*)&gNormalList + v1;
+
+											gte_ldv0(v11);
+
+											gteRegs.CP2D.p[6].sd = t2[3];
+
+											if (modelFadeValue != 0)
+											{
+												//v0 = 0x2000000
+												//at = 0xFEFFFFFF
+												gteRegs.CP2D.p[6].sd = 0x2000000 | (gteRegs.CP2D.p[6].sd & 0xFEFFFFFF);
+											}
+											//loc_800254B0
+										nofade_ft3_a:
+											gte_ncds();
+
+											s7[4] = t2[0];
+											s7[8] = t2[1];
+											v0 = v1 >> 16;
+
+											if (modelFadeValue != 0)
+											{
+												v0 &= 0xFF9F;
+												v0 |= 0x20;
+												v1 &= 0xFFFF;
+												v0 <<= 16;
+												v1 = v0 | v1;
+											}
+										nofade_ft3_b:
+											s7[5] = v1;
+											char* s6 = (char*)ot + (fp * 2);
+
+											setlen(s7, 7);
+											addPrim(s6, s7);
+
+											if (modelFadeValue != 0)
+											{
+												v0 = RGB2 & 0xEFFFFFFF;
+												s7[3] = SXY0;
+												s7[5] = SXY1;
+												s7[7] = SXY2;
+												s7[2] = v0;
+
+												s7 += 9;
+
+												if ((t2[3] & 0x2000000) || (t7 & 0x100000))
+												{
+													goto anim_next_mface;
+												}
+												else
+												{
+													//goto faded_backpoly;
+												}
+											}
+											else
+											{
+											nofade_ft3_c:
+												v0 = RGB2 & 0xEFFFFFFF;
+
+												s7[3] = SXY0;
+												s7[5] = SXY1;
+												s7[7] = SXY2;
+												s7[2] = v0;
+
+												s7 += 9;
+
+												goto anim_next_mface;
+											}
+										}
+										else
+										{
+											//loc_80025588
+										anim_gt3:
+											v0 = t4 & 0xFFFF;
+											int s6 = t4 >> 16;
+
+											CVECTOR* t44 = &vertexColor[v0];
+											CVECTOR* s66 = &vertexColor[s6];
+											CVECTOR* t55 = &vertexColor[t6 & 0xFFFF];
+											t4 = ((int*)t44)[0];
+											s6 = ((int*)s66)[0];
+											t5 = ((int*)t55)[0];
+											int a2 = t4 & s6;
+											a2 &= t5;
+
+											if (!(a2 & 0x80000000))
+											{
+												t0 = t2[3];
+												v0 = t0 & 0xFF000000;
+
+												if (modelFadeValue != 0)
+												{
+													v0 &= 0xFEFFFFFF;
+													v0 |= 0x2000000;
+												}
+											nofade_gt3_a:
+												t4 &= 0xFFFFFF;
+												t4 = v0 | t4;
+												s7[2] = t4;
+
+												s6 &= 0xFFFFFF;
+												s6 = v0 | s6;
+												s7[5] = s6;
+
+												t5 &= 0xFFFFFF;
+												t5 = v0 | t5;
+												s7[8] = t5;
+
+												v1 = t2[0];
+												v0 = t2[1];
+												s7[10] = t7;
+												s7[4] = v1;
+
+												if (modelFadeValue != 0 && !(t0 & 0x2000000))
+												{
+													if ((t7 & 0x100000))
+													{
+													nofade_gt3_b2:
+														v1 = v0 >> 16;
+														v1 &= 0xFF9F;
+														v1 |= 0x20;
+														v0 &= 0xFFFF;
+														v1 <<= 16;
+														v0 |= v1;
+													}
+													else
+													{
+														v1 = v0 >> 16;
+														v1 &= 0xFF9F;
+														v0 &= 0xFFFF;
+														v1 <<= 16;
+														v0 |= v1;
+													}
+													//loc_80025688
+												}
+												//loc_80025688
+											nofade_gt3_b:
+												s7[7] = v0;
+
+												unsigned long* s6 = ot[(fp / 4) * 2];
+
+												if (s7 == NULL)
+												{
+													assert(FALSE);
+												}
+
+												addPrim(s6, s7);
+												setlen(s7, 9);
+
+												gte_stsxy3(&s7[3], &s7[6], &s7[9]);
+
+												v1 = t0 & 0x2000000;
+												v0 = t7 | v1;
+												v0 ^= 0;
+												v0 = v0 < 1;
+												v1 = modelFadeValue ^ 0;
+												v1 = 0 < v1;
+												v0 &= v1;
+
+												s7 += 11;
+
+												if (v0 == 0)
+												{
+													goto anim_next_mface;
+												}
+												else
+												{
+													//goto faded_backpoly;
+												}
+											}
+											//loc_80025724
+										}
+									}
+									else
+									{
+									anim_nontext:
+										if ((v1 & 0x1))
+										{
+											v0 = t4 & 0xFFFF;
+											int s6 = t4 >> 16;
+											t4 = ((int*)vertexColor)[v0];
+											s6 = ((int*)vertexColor)[s6];
+											t5 = t6 & 0xFFFF;
+											s6 = ((int*)vertexColor)[t5];
+											int a2 = t4 & s6;
+											a2 &= t5;
+										anim_g3_from_t:
+											if (!(a2 & 0x1000000))
+											{
+												t4 = ((int*)&s5->face)[0];
+												t6 = ((int*)&s5->face)[1];
+
+												v0 = t4 & 0xFFFF;
+												s6 = t4 >> 16;
+
+												struct _MVertex* v00 = &s4[v0];
+												t4 = v00->normal;
+												struct _MVertex* s66 = &s4[s6];
+												struct _Normal* t44 = &gNormalList[t4];
+												s6 = s66->normal;
+												v0 = t6 & 0xFFFF;
+												v00 = &s4[v0];
+												v0 = v00->normal;
+												struct _Normal* t55 = &gNormalList[s6];
+												struct _Normal* t66 = &gNormalList[v0];
+
+												gte_ldv0(t44);
+												gte_ldv0(t55);
+												gte_ldv0(t66);
+
+												gteRegs.CP2D.p[6].sd = (int)t2;//bug?
+
+												gte_ncdt();
+
+												char* s6 = (char*)ot + (fp * 2);
+
+												setlen(s7, 6);
+												//addPrim(s6, s7);
+												gte_stsxy3(&s7[2], &s7[4], &s7[6]);
+												gte_strgb3(&s7[1], &s7[3], &s7[5]);
+
+												//s7 += 7;
+
+												goto anim_next_mface;
+											}
+											else
+											{
+												//loc_800257E4
+											anim_g3_overface:
+												t4 &= 0xFFFFFF;
+												t4 = 0x30000000 | t4;
+												s7[1] = t4;
+												s6 &= 0xFFFFFF;
+												s6 = 0x30000000 | s6;
+												s7[3] = s6;
+												t5 &= 0xFFFFFF;
+												t5 = 0x30000000 | t5;
+												s7[5] = t5;
+
+												char* s6 = (char*)ot + fp;
+
+												setlen(s7, 6);
+												addPrim(s6, s7);
+												gte_stsxy3(&s7[2], &s7[4], &s7[6]);
+
+												s7 += 7;
+
+												goto anim_next_mface;
+											}
+										}
+										else
+										{
+											//loc_8002583C
+										anim_f3:
+											v1 = t6 >> 13;
+											v1 &= 0x7F8;
+											struct _Normal* v11 = (struct _Normal*)(char*)&gNormalList[0] + v1;
+
+											gte_ldv0(v11);
+
+											gteRegs.CP2D.p[6].sd = (int)t2;//bug?
+
+											gte_ncds();
+
+											char* s6 = (char*)ot + fp;
+
+											setlen(s7, 4);
+											addPrim(s6, s7);
+
+											gte_stsxy3(&s7[2], &s7[3], &s7[4]);
+											gte_strgb(&s7[1]);
+
+											s7 += 5;
+										}
+									}
+								}
+								else
+								{
+									///goto fogged_face;
+								}
+							}
+							//loc_80025890
+						}
+					}
+					//loc_80025890
+				}
+				//loc_80025890
+			}
+			//loc_80025890
+			t5 += 4;
+		}
+		//loc_80025890
+	anim_next_mface:
+		t6 = ((int*)s5)[4];
+		s5++;
+		if ((unsigned long)s5 < getScratchAddr(18)[0])
+		{
+			goto anim_loop_top;
+		}
+	}
+	//loc_800258A8
+exit_AnimDraw:
+	return s7;
 }
 
 // autogenerated function stub: 
@@ -2443,7 +2111,7 @@ unsigned long* DRAW_DisplaySubdivPolytope_S(struct _BSPNode** polytope, struct _
 
 				if (t7 != 0)
 				{
-					gte_stsz3(t5, t8, t9);
+					gte_stsz3(&t5, &t8, &t9);
 
 					if (t5 < 2049)
 					{
@@ -2452,7 +2120,7 @@ unsigned long* DRAW_DisplaySubdivPolytope_S(struct _BSPNode** polytope, struct _
 						do_poly:
 							t9 = 0x80008000;
 							
-							gte_stsxy3(t1, t2, t3);
+							gte_stsxy3(&t1, &t2, &t3);
 
 							v0 = t1 & t9;
 							v0 = t2 & v0;
@@ -3063,7 +2731,7 @@ unsigned long* DRAW_DisplaySubdivPolytope_S(struct _BSPNode** polytope, struct _
 
 												gte_dpcs();
 
-												addPrim(drawot[(t8 / 4) * 2], pNextPrim);
+												//addPrim(drawot[(t8 / 4) * 2], pNextPrim);
 												setlen(pNextPrim, 7);
 
 
@@ -3074,7 +2742,7 @@ unsigned long* DRAW_DisplaySubdivPolytope_S(struct _BSPNode** polytope, struct _
 												t1 = t5 - t1;
 												pNextPrim[7] = t1;
 
-												pNextPrim += (0x20 + 4) / 4;
+												//pNextPrim += (0x20 + 4) / 4;
 
 											no_depthQ:
 												s1++;
@@ -4256,10 +3924,10 @@ long PIPE3D_TransformAnimatedInstanceVertices_S(struct _VertexPool* vertexPool, 
 	//t0 = poolVertex
 	//t3 = getScratchAddr(0);
 	int a2 = 0;
-	VECTOR t5andt6;
 	int t2 = model->numSegments;
 	struct _Segment* seg;//t8
 	int s33;
+	long v0[6];
 
 	if (t2 > 0)
 	{
@@ -4307,15 +3975,15 @@ long PIPE3D_TransformAnimatedInstanceVertices_S(struct _VertexPool* vertexPool, 
 
 						gte_ldclmv(&matrixPool->m[0][0]);
 						gte_rtir();
-						gte_stclmv(((short*)getScratchAddr(13)) + 0);
+						gte_stclmv(((short*)getScratchAddr(18)) + 0);
 
 						gte_ldclmv(&matrixPool->m[0][1]);
 						gte_rtir();
-						gte_stclmv(((short*)getScratchAddr(13)) + 1);
+						gte_stclmv(((short*)getScratchAddr(18)) + 1);
 
 						gte_ldclmv(&matrixPool->m[0][2]);
 						gte_rtir();
-						gte_stclmv(((short*)getScratchAddr(13)) + 2);
+						gte_stclmv(((short*)getScratchAddr(18)) + 2);
 
 						gte_SetLightMatrix(getScratchAddr(18));
 
@@ -4325,19 +3993,20 @@ long PIPE3D_TransformAnimatedInstanceVertices_S(struct _VertexPool* vertexPool, 
 
 						gte_ldclmv(&matrixPool->m[0][0]);
 						gte_rtir();
-						gte_stsv(((short*)getScratchAddr(8)) + 0);
+						gte_stclmv(((short*)getScratchAddr(8)) + 0);
 
 						gte_ldclmv(&matrixPool->m[0][1]);
 						gte_rtir();
-						gte_stsv(((short*)getScratchAddr(8)) + 1);
+						gte_stclmv(((short*)getScratchAddr(8)) + 1);
 
 						gte_ldclmv(&matrixPool->m[0][2]);
 						gte_rtir();
-						gte_stsv(((short*)getScratchAddr(8)) + 2);
+						gte_stclmv(((short*)getScratchAddr(8)) + 2);
 
 						gte_SetTransMatrix(getScratchAddr(0));
 
-						gte_ldv0(matrixPool);
+						gte_ldlv0(&matrixPool->t[0]);
+						
 						gte_rt();
 
 						SVECTOR sv;
@@ -4346,21 +4015,27 @@ long PIPE3D_TransformAnimatedInstanceVertices_S(struct _VertexPool* vertexPool, 
 
 						gte_SetRotMatrix(getScratchAddr(8));
 
+						v0[0] = ((int*)a1)[0];
+						v0[1] = ((int*)a1)[1];
+						v0[2] = ((int*)a1)[2];
+						v0[3] = ((int*)a1)[3];
+						v0[4] = ((int*)a1)[4];
+						v0[5] = ((int*)a1)[5];
 
 						if (t7 >= &a1[2])
 						{
 							//loc_80027500
 							do
 							{
-								gte_ldv0(&a1[0]);
-								gte_ldv1(&a1[1]);
-								gte_ldv2(&a1[2]);
+								gte_ldv0(&v0[0]);
+								gte_ldv1(&v0[2]);
+								gte_ldv2(&v0[4]);
 
 								gte_rtpt();
 
-								struct _Normal* s3 = &gNormalList[a1[0].otz >> 16];
-								struct _Normal* s4 = &gNormalList[a1[1].otz >> 16];
-								struct _Normal* s5 = &gNormalList[a1[2].otz >> 16];
+								struct _Normal* s3 = &gNormalList[v0[1] >> 16];
+								struct _Normal* s4 = &gNormalList[v0[3] >> 16];
+								struct _Normal* s5 = &gNormalList[v0[5] >> 16];
 
 								((int*)poolVertex)[0] = SXY0;
 								((int*)poolVertex)[1] = SZ1;
@@ -4398,8 +4073,12 @@ long PIPE3D_TransformAnimatedInstanceVertices_S(struct _VertexPool* vertexPool, 
 								}
 
 								//loc_800275CC
-								t5andt6.vx = ((int*)a1)[2];
-								t5andt6.vy = ((int*)a1)[3];
+								v0[0] = ((int*)a1)[0];
+								v0[1] = ((int*)a1)[1];
+								v0[2] = ((int*)a1)[2];
+								v0[3] = ((int*)a1)[3];
+								v0[4] = ((int*)a1)[4];
+								v0[5] = ((int*)a1)[5];
 
 								gte_strgb3(&vertexColor[0], &vertexColor[1], &vertexColor[2]);
 
@@ -4412,11 +4091,12 @@ long PIPE3D_TransformAnimatedInstanceVertices_S(struct _VertexPool* vertexPool, 
 
 						if (t7 >= a1)
 						{
-							gte_ldv0(a1);
+
+							gte_ldv0(&v0[0]);
 
 							gte_rtps();
 
-							struct _Normal* s3 = &gNormalList[a1->otz >> 16];
+							struct _Normal* s3 = &gNormalList[v0[1] >> 16];
 
 							a1 += 1;
 
@@ -4457,9 +4137,9 @@ long PIPE3D_TransformAnimatedInstanceVertices_S(struct _VertexPool* vertexPool, 
 
 							if (t7 >= a1)
 							{
-								gte_ldv0(&t5andt6);
+								gte_ldv0(&v0[2]);
 
-								struct _Normal* s3 = &gNormalList[t5andt6.vy >> 16];
+								struct _Normal* s3 = &gNormalList[v0[3] >> 16];
 
 								gte_rtps();
 
@@ -4561,7 +4241,7 @@ long PIPE3D_TransformAnimatedInstanceVertices_S(struct _VertexPool* vertexPool, 
 
 						gte_SetTransMatrix(getScratchAddr(5));
 
-						gte_ldv0(&matrixPool->t[0]);
+						gte_ldlv0(&matrixPool->t[0]);
 						gte_rt();
 
 						SVECTOR sv;
@@ -4571,14 +4251,12 @@ long PIPE3D_TransformAnimatedInstanceVertices_S(struct _VertexPool* vertexPool, 
 
 						gte_SetRotMatrix(getScratchAddr(8));
 
-						long v0[6];
 						v0[0] = ((int*)a1)[0];
 						v0[1] = ((int*)a1)[1];
 						v0[2] = ((int*)a1)[2];
 						v0[3] = ((int*)a1)[3];
 						v0[4] = ((int*)a1)[4];
 						v0[5] = ((int*)a1)[5];
-						v0[6] = ((int*)a1)[6];
 
 						struct _PVertex* t4 = a1 + 2;
 
@@ -4706,7 +4384,6 @@ long PIPE3D_TransformAnimatedInstanceVertices_S(struct _VertexPool* vertexPool, 
 								v0[3] = ((int*)a1)[3];
 								v0[4] = ((int*)a1)[4];
 								v0[5] = ((int*)a1)[5];
-								v0[6] = ((int*)a1)[6];
 
 								vertexColor += 3;
 								perVertexColor += 3;
@@ -4865,7 +4542,7 @@ long PIPE3D_TransformAnimatedInstanceVertices_S(struct _VertexPool* vertexPool, 
 
 					gte_SetTransMatrix(getScratchAddr(5));
 
-					gte_ldv0(&matrixPool->t[0]);
+					gte_ldlv0(&matrixPool->t[0]);
 					gte_rt();
 
 					SVECTOR sv;
