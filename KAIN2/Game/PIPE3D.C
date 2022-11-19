@@ -258,7 +258,7 @@ void PIPE3D_InstanceTransformAndDraw(struct _Instance* instance, struct _CameraC
 
 		modelFadeValue = INSTANCE_GetFadeValue(instance);
 
-		flags = PIPE3D_TransformAnimatedInstanceVertices_S(vertexPool, poolVertex, model, cameraCore->wcTransform, matrixPool, &lm, vertexColor, instance->perVertexColor);
+		flags = PIPE3D_TransformAnimatedInstanceVertices_S((_VertexPool*)vertexList, poolVertex, model, cameraCore->wcTransform, matrixPool, &lm, vertexColor, instance->perVertexColor);
 
 		LIGHT_PresetInstanceLight(instance, 4096, &lm);
 
