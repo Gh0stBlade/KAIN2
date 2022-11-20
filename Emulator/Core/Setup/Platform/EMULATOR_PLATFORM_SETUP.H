@@ -6,6 +6,8 @@
 		#define EXIT_SUCCESS (0)
 #endif
 
+#define MAX_NUM_GAME_INSTANCES (6)
+
 //#define DEBUG_PRINTS
 #define TOUCH_UI
 

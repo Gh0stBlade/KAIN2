@@ -2499,6 +2499,10 @@ unsigned int Emulator_CounterWrapper(unsigned int interval, void* pTimerID)
 			counters[timerID].padding00();
 		}
 
+#if defined(SDL2)
+		counters[timerID].cycle = SDL_GetTicks() - counters[timerID].startTick;
+#endif
+
 #endif
 			
 	}

@@ -102,16 +102,10 @@ extern int gte_ldlzc(int input);
 	:							\
 	: "r"( r0 ) )
 
-#define gte_ldlv0( r0 ) __asm__ volatile (			\
-	"lhu	$13, 4( %0 );"					\
-	"lhu	$12, 0( %0 );"					\
-	"sll	$13, $13, 16;"					\
-	"or	$12, $12, $13;"					\
-	"mtc2	$12, $0;"					\
-	"lwc2	$1, 8( %0 )"					\
-	:							\
-	: "r"( r0 )						\
-	: "$12", "$13" )
+#define gte_ldlv0( r0 ) \
+	VX0 = ((unsigned short*)r0)[0];          \
+	VY0 = ((unsigned short*)r0)[2]; \
+	VZ0 = ((unsigned int*)r0)[2];           \
 
 #define gte_ldlvl( r0 ) \
 	((int*)&VX0)[0] = ((int*)r0)[0];       \
