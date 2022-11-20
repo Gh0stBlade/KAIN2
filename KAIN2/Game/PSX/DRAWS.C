@@ -503,296 +503,308 @@ long* DRAW_AnimatedModel_S(struct _Model* model, struct _PVertex* poolVertex, st
 								v0 = getScratchAddr(16)[0];
 								v1 = t6 >> 24;
 
-								if (modelFadeValue != 0 || v0 != 0 || a0 == 0)
+								if (modelFadeValue != 0)
 								{
-								not_colored_fog:
-									if ((v1 & 0x2))
+									goto not_colored_fog;
+								}
+
+								if (v0 != 0)
+								{
+									goto not_colored_fog;
+								}
+
+								if (a0 == 0)
+								{
+									goto not_colored_fog;
+								}
+								else
+								{
+									//goto fogged_face
+									goto anim_next_mface;
+								}
+
+							not_colored_fog:
+								if ((v1 & 0x2))
+								{
+
+								anim_ft3:
+									if (t5 >= 0 || !(v1 & 0x1))
 									{
+									always_ft3:
+										v1 = t6 >> 13;
+										v1 &= 0x7F8;
 
-									anim_ft3:
-										if (t5 >= 0 || !(v1 & 0x1))
+										struct _Normal* v11 = (struct _Normal*)(char*)&gNormalList + v1;
+
+										gte_ldv0(v11);
+
+										gteRegs.CP2D.p[6].sd = t2[3];
+
+										if (modelFadeValue != 0)
 										{
-										always_ft3:
-											v1 = t6 >> 13;
-											v1 &= 0x7F8;
+											//v0 = 0x2000000
+											//at = 0xFEFFFFFF
+											gteRegs.CP2D.p[6].sd = 0x2000000 | (gteRegs.CP2D.p[6].sd & 0xFEFFFFFF);
+										}
+										//loc_800254B0
+									nofade_ft3_a:
+										gte_ncds();
 
-											struct _Normal* v11 = (struct _Normal*)(char*)&gNormalList + v1;
+										s7[4] = t2[0];
+										s7[8] = t7;
+										v0 = v1 >> 16;
 
-											gte_ldv0(v11);
+										if (modelFadeValue != 0)
+										{
+											v0 &= 0xFF9F;
+											v0 |= 0x20;
+											v1 &= 0xFFFF;
+											v0 <<= 16;
+											v1 = v0 | v1;
+										}
+									nofade_ft3_b:
+										s7[6] = v1;
+										char* s6 = (char*)ot + (fp * 2);
 
-											gteRegs.CP2D.p[6].sd = t2[3];
+										setlen(s7, 7);
+										addPrim(s6, s7);
 
-											if (modelFadeValue != 0)
+										if (modelFadeValue != 0)
+										{
+											v0 = RGB2 & 0xEFFFFFFF;
+											s7[3] = SXY0;
+											s7[5] = SXY1;
+											s7[7] = SXY2;
+											s7[2] = v0;
+
+											s7 += 9;
+
+											if ((t2[3] & 0x2000000) || (t7 & 0x100000))
 											{
-												//v0 = 0x2000000
-												//at = 0xFEFFFFFF
-												gteRegs.CP2D.p[6].sd = 0x2000000 | (gteRegs.CP2D.p[6].sd & 0xFEFFFFFF);
-											}
-											//loc_800254B0
-										nofade_ft3_a:
-											gte_ncds();
-
-											s7[4] = t2[0];
-											s7[8] = t7;
-											v0 = v1 >> 16;
-
-											if (modelFadeValue != 0)
-											{
-												v0 &= 0xFF9F;
-												v0 |= 0x20;
-												v1 &= 0xFFFF;
-												v0 <<= 16;
-												v1 = v0 | v1;
-											}
-										nofade_ft3_b:
-											s7[6] = v1;
-											char* s6 = (char*)ot + (fp * 2);
-
-											setlen(s7, 7);
-											//addPrim(s6, s7);
-
-											if (modelFadeValue != 0)
-											{
-												v0 = RGB2 & 0xEFFFFFFF;
-												s7[3] = SXY0;
-												s7[5] = SXY1;
-												s7[7] = SXY2;
-												s7[2] = v0;
-
-												s7 += 9;
-
-												if ((t2[3] & 0x2000000) || (t7 & 0x100000))
-												{
-													goto anim_next_mface;
-												}
-												else
-												{
-													goto anim_next_mface;
-													//goto faded_backpoly;
-												}
+												goto anim_next_mface;
 											}
 											else
 											{
-											nofade_ft3_c:
-												v0 = RGB2 & 0xEFFFFFFF;
-
-												s7[3] = SXY0;
-												s7[5] = SXY1;
-												s7[7] = SXY2;
-												s7[2] = v0;
-
-												//s7 += 9;
-
 												goto anim_next_mface;
+												//goto faded_backpoly;
 											}
 										}
 										else
 										{
-											//loc_80025588
-										anim_gt3:
-											v0 = t4 & 0xFFFF;
-											int s6 = t4 >> 16;
+										nofade_ft3_c:
+											v0 = RGB2 & 0xEFFFFFFF;
 
-											CVECTOR* t44 = &vertexColor[v0];
-											CVECTOR* s66 = &vertexColor[s6];
-											CVECTOR* t55 = &vertexColor[t6 & 0xFFFF];
-											t4 = ((int*)t44)[0];
-											s6 = ((int*)s66)[0];
-											t5 = ((int*)t55)[0];
-											int a2 = t4 & s6;
-											a2 &= t5;
+											s7[3] = SXY0;
+											s7[5] = SXY1;
+											s7[7] = SXY2;
+											s7[2] = v0;
 
-											if (!(a2 & 0x80000000))
-											{
-												t0 = t2[3];
-												v0 = t0 & 0xFF000000;
+											s7 += 9;
 
-												if (modelFadeValue != 0)
-												{
-													v0 &= 0xFEFFFFFF;
-													v0 |= 0x2000000;
-												}
-											nofade_gt3_a:
-												t4 &= 0xFFFFFF;
-												t4 = v0 | t4;
-												s7[2] = t4;
-
-												s6 &= 0xFFFFFF;
-												s6 = v0 | s6;
-												s7[5] = s6;
-
-												t5 &= 0xFFFFFF;
-												t5 = v0 | t5;
-												s7[8] = t5;
-
-												v1 = t2[0];
-												v0 = t2[1];
-												s7[10] = t7;
-												s7[4] = v1;
-
-												if (modelFadeValue != 0 && !(t0 & 0x2000000))
-												{
-													if ((t7 & 0x100000))
-													{
-													nofade_gt3_b2:
-														v1 = v0 >> 16;
-														v1 &= 0xFF9F;
-														v1 |= 0x20;
-														v0 &= 0xFFFF;
-														v1 <<= 16;
-														v0 |= v1;
-													}
-													else
-													{
-														v1 = v0 >> 16;
-														v1 &= 0xFF9F;
-														v0 &= 0xFFFF;
-														v1 <<= 16;
-														v0 |= v1;
-													}
-													//loc_80025688
-												}
-												//loc_80025688
-											nofade_gt3_b:
-												s7[7] = v0;
-
-												unsigned long* s6 = ot[(fp / 4) * 2];
-
-												addPrim(s6, s7);
-												setlen(s7, 9);
-
-												gte_stsxy3(&s7[3], &s7[6], &s7[9]);
-
-												v1 = t0 & 0x2000000;
-												v0 = t7 | v1;
-												v0 ^= 0;
-												v0 = v0 < 1;
-												v1 = modelFadeValue ^ 0;
-												v1 = 0 < v1;
-												v0 &= v1;
-
-												s7 += 11;
-
-												if (v0 == 0)
-												{
-													goto anim_next_mface;
-												}
-												else
-												{
-													goto anim_next_mface;
-													//goto faded_backpoly;
-												}
-											}
-											//loc_80025724
+											goto anim_next_mface;
 										}
 									}
 									else
 									{
-									anim_nontext:
-										if ((v1 & 0x1))
+										//loc_80025588
+									anim_gt3:
+										v0 = t4 & 0xFFFF;
+										int s6 = t4 >> 16;
+
+										CVECTOR* t44 = &vertexColor[v0];
+										CVECTOR* s66 = &vertexColor[s6];
+										CVECTOR* t55 = &vertexColor[t6 & 0xFFFF];
+										t4 = ((int*)t44)[0];
+										s6 = ((int*)s66)[0];
+										t5 = ((int*)t55)[0];
+										int a2 = t4 & s6;
+										a2 &= t5;
+
+										if (!(a2 & 0x80000000))
 										{
-											v0 = t4 & 0xFFFF;
-											int s6 = t4 >> 16;
-											t4 = ((int*)vertexColor)[v0];
-											s6 = ((int*)vertexColor)[s6];
-											t5 = t6 & 0xFFFF;
-											s6 = ((int*)vertexColor)[t5];
-											int a2 = t4 & s6;
-											a2 &= t5;
-										anim_g3_from_t:
-											if (!(a2 & 0x1000000))
+											t0 = t2[3];
+											v0 = t0 & 0xFF000000;
+
+											if (modelFadeValue != 0)
 											{
-												t4 = ((int*)&s5->face)[0];
-												t6 = ((int*)&s5->face)[1];
+												v0 &= 0xFEFFFFFF;
+												v0 |= 0x2000000;
+											}
+										nofade_gt3_a:
+											t4 &= 0xFFFFFF;
+											t4 = v0 | t4;
+											s7[2] = t4;
 
-												v0 = t4 & 0xFFFF;
-												s6 = t4 >> 16;
+											s6 &= 0xFFFFFF;
+											s6 = v0 | s6;
+											s7[5] = s6;
 
-												struct _MVertex* v00 = &s4[v0];
-												t4 = v00->normal;
-												struct _MVertex* s66 = &s4[s6];
-												struct _Normal* t44 = &gNormalList[t4];
-												s6 = s66->normal;
-												v0 = t6 & 0xFFFF;
-												v00 = &s4[v0];
-												v0 = v00->normal;
-												struct _Normal* t55 = &gNormalList[s6];
-												struct _Normal* t66 = &gNormalList[v0];
+											t5 &= 0xFFFFFF;
+											t5 = v0 | t5;
+											s7[8] = t5;
 
-												gte_ldv0(t44);
-												gte_ldv0(t55);
-												gte_ldv0(t66);
+											v1 = t2[0];
+											v0 = t2[1];
+											s7[10] = t7;
+											s7[4] = v1;
 
-												gteRegs.CP2D.p[6].sd = (int)t2;//bug?
+											if (modelFadeValue != 0 && !(t0 & 0x2000000))
+											{
+												if ((t7 & 0x100000))
+												{
+												nofade_gt3_b2:
+													v1 = v0 >> 16;
+													v1 &= 0xFF9F;
+													v1 |= 0x20;
+													v0 &= 0xFFFF;
+													v1 <<= 16;
+													v0 |= v1;
+												}
+												else
+												{
+													v1 = v0 >> 16;
+													v1 &= 0xFF9F;
+													v0 &= 0xFFFF;
+													v1 <<= 16;
+													v0 |= v1;
+												}
+												//loc_80025688
+											}
+											//loc_80025688
+										nofade_gt3_b:
+											s7[7] = v0;
 
-												gte_ncdt();
+											unsigned long* s6 = ot[(fp / 4) * 2];
 
-												char* s6 = (char*)ot + (fp * 2);
+											addPrim(s6, s7);
+											setlen(s7, 9);
 
-												setlen(s7, 6);
-												addPrim(s6, s7);
-												gte_stsxy3(&s7[3], &s7[5], &s7[7]);
-												gte_strgb3(&s7[2], &s7[4], &s7[6]);
+											gte_stsxy3(&s7[3], &s7[6], &s7[9]);
 
-												s7 += 8;
+											v1 = t0 & 0x2000000;
+											v0 = t7 | v1;
+											v0 ^= 0;
+											v0 = v0 < 1;
+											v1 = modelFadeValue ^ 0;
+											v1 = 0 < v1;
+											v0 &= v1;
 
+											s7 += 11;
+
+											if (v0 == 0)
+											{
 												goto anim_next_mface;
 											}
 											else
 											{
-												//loc_800257E4
-											anim_g3_overface:
-												t4 &= 0xFFFFFF;
-												t4 = 0x30000000 | t4;
-												s7[1] = t4;
-												s6 &= 0xFFFFFF;
-												s6 = 0x30000000 | s6;
-												s7[3] = s6;
-												t5 &= 0xFFFFFF;
-												t5 = 0x30000000 | t5;
-												s7[5] = t5;
-
-												char* s6 = (char*)ot + fp;
-
-												setlen(s7, 6);
-												addPrim(s6, s7);
-												gte_stsxy3(&s7[2], &s7[4], &s7[6]);
-
-												s7 += 7;
-
 												goto anim_next_mface;
+												//goto faded_backpoly;
 											}
 										}
-										else
-										{
-											//loc_8002583C
-										anim_f3:
-											v1 = t6 >> 13;
-											v1 &= 0x7F8;
-											struct _Normal* v11 = (struct _Normal*)(char*)&gNormalList[0] + v1;
-
-											gte_ldv0(v11);
-
-											gteRegs.CP2D.p[6].sd = (int)t2;//bug?
-
-											gte_ncds();
-
-											char* s6 = (char*)ot + fp;
-
-											setlen(s7, 4);
-											addPrim(s6, s7);
-
-											gte_stsxy3(&s7[2], &s7[3], &s7[4]);
-											gte_strgb(&s7[1]);
-
-											s7 += 5;
-										}
+										//loc_80025724
 									}
 								}
 								else
 								{
-									goto anim_next_mface;
-									///goto fogged_face;
+								anim_nontext:
+									if ((v1 & 0x1))
+									{
+										v0 = t4 & 0xFFFF;
+										int s6 = t4 >> 16;
+										t4 = ((int*)vertexColor)[v0];
+										s6 = ((int*)vertexColor)[s6];
+										t5 = t6 & 0xFFFF;
+										s6 = ((int*)vertexColor)[t5];
+										int a2 = t4 & s6;
+										a2 &= t5;
+									anim_g3_from_t:
+										if (!(a2 & 0x1000000))
+										{
+											t4 = ((int*)&s5->face)[0];
+											t6 = ((int*)&s5->face)[1];
+
+											v0 = t4 & 0xFFFF;
+											s6 = t4 >> 16;
+
+											struct _MVertex* v00 = &s4[v0];
+											t4 = v00->normal;
+											struct _MVertex* s66 = &s4[s6];
+											struct _Normal* t44 = &gNormalList[t4];
+											s6 = s66->normal;
+											v0 = t6 & 0xFFFF;
+											v00 = &s4[v0];
+											v0 = v00->normal;
+											struct _Normal* t55 = &gNormalList[s6];
+											struct _Normal* t66 = &gNormalList[v0];
+
+											gte_ldv0(t44);
+											gte_ldv0(t55);
+											gte_ldv0(t66);
+
+											gteRegs.CP2D.p[6].sd = (int)t2;//bug?
+
+											gte_ncdt();
+
+											char* s6 = (char*)ot + (fp * 2);
+
+											setlen(s7, 6);
+											addPrim(s6, s7);
+											gte_stsxy3(&s7[3], &s7[5], &s7[7]);
+											gte_strgb3(&s7[2], &s7[4], &s7[6]);
+
+											s7 += 8;
+
+											goto anim_next_mface;
+										}
+										else
+										{
+											//loc_800257E4
+										anim_g3_overface:
+											t4 &= 0xFFFFFF;
+											t4 = 0x30000000 | t4;
+											s7[1] = t4;
+											s6 &= 0xFFFFFF;
+											s6 = 0x30000000 | s6;
+											s7[3] = s6;
+											t5 &= 0xFFFFFF;
+											t5 = 0x30000000 | t5;
+											s7[5] = t5;
+
+											char* s6 = (char*)ot + fp;
+
+											setlen(s7, 6);
+											addPrim(s6, s7);
+											gte_stsxy3(&s7[2], &s7[4], &s7[6]);
+
+											s7 += 7;
+
+											goto anim_next_mface;
+										}
+									}
+									else
+									{
+										//loc_8002583C
+									anim_f3:
+										v1 = t6 >> 13;
+										v1 &= 0x7F8;
+										struct _Normal* v11 = (struct _Normal*)(char*)&gNormalList[0] + v1;
+
+										gte_ldv0(v11);
+
+										gteRegs.CP2D.p[6].sd = (int)t2;//bug?
+
+										gte_ncds();
+
+										char* s6 = (char*)ot + fp;
+
+										setlen(s7, 4);
+										addPrim(s6, s7);
+
+										gte_stsxy3(&s7[2], &s7[3], &s7[4]);
+										gte_strgb(&s7[1]);
+
+										s7 += 5;
+									}
 								}
 							}
 							//loc_80025890
@@ -4283,6 +4295,13 @@ long PIPE3D_TransformAnimatedInstanceVertices_S(struct _VertexPool* vertexPool, 
 								struct _Normal* s4 = &gNormalList[v0[3] >> 16];
 								struct _Normal* s5 = &gNormalList[v0[5] >> 16];
 
+								v0[0] = ((int*)s3)[0];
+								v0[1] = ((int*)s3)[1];
+								v0[2] = ((int*)s4)[0];
+								v0[3] = ((int*)s4)[1];
+								v0[4] = ((int*)s5)[0];
+								v0[5] = ((int*)s5)[1];
+
 								((int*)poolVertex)[0] = SXY0;
 								((int*)poolVertex)[1] = SZ1;
 								((int*)poolVertex)[2] = SXY1;
@@ -4303,9 +4322,9 @@ long PIPE3D_TransformAnimatedInstanceVertices_S(struct _VertexPool* vertexPool, 
 								}
 								//loc_80027598
 
-								gte_ldv0(s3);
-								gte_ldv1(s4);
-								gte_ldv2(s5);
+								gte_ldv0(&v0[0]);
+								gte_ldv1(&v0[2]);
+								gte_ldv2(&v0[4]);
 
 								a1 += 3;
 								if (t44 != 0)
@@ -4345,6 +4364,9 @@ long PIPE3D_TransformAnimatedInstanceVertices_S(struct _VertexPool* vertexPool, 
 
 							struct _Normal* s3 = &gNormalList[v0[1] >> 16];
 
+							v0[0] = ((int*)s3)[0];
+							v0[1] = ((int*)s3)[1];
+
 							((int*)poolVertex)[0] = SXY2;
 							((int*)poolVertex)[1] = SZ3;
 
@@ -4360,7 +4382,7 @@ long PIPE3D_TransformAnimatedInstanceVertices_S(struct _VertexPool* vertexPool, 
 							}
 
 							//loc_8002765C
-							gte_ldv0(s3);
+							gte_ldv0(&v0[0]);
 
 							if (s3 != NULL)
 							{
@@ -4386,6 +4408,9 @@ long PIPE3D_TransformAnimatedInstanceVertices_S(struct _VertexPool* vertexPool, 
 
 								struct _Normal* s3 = &gNormalList[v0[3] >> 16];
 
+								v0[0] = ((int*)s3)[0];
+								v0[1] = ((int*)s3)[1];
+
 								gte_rtps();
 
 								((int*)poolVertex)[0] = SXY2;
@@ -4404,7 +4429,7 @@ long PIPE3D_TransformAnimatedInstanceVertices_S(struct _VertexPool* vertexPool, 
 								}
 
 								//loc_800276E0
-								gte_ldv0(s3);
+								gte_ldv0(&v0[0]);
 
 								if (s33 != 0)
 								{
