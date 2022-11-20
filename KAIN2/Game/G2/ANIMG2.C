@@ -420,247 +420,119 @@ void G2Anim_GetSegChannelValue(struct _G2Anim_Type *anim, int segIndex, unsigned
 	UNIMPLEMENTED();
 }
 
-void G2Anim_GetRootMotionFromTimeForDuration(struct _G2Anim_Type *anim, short durationStart, short duration, struct _G2SVector3_Type *motionVector)
+void G2Anim_GetRootMotionFromTimeForDuration(struct _G2Anim_Type* anim, short durationStart, short duration, struct _G2SVector3_Type* motionVector)
 { 
-	struct _G2Anim_Type dummyAnim; // stack offset -216
-	struct _G2AnimSection_Type* section; // $s2
-	struct _G2AnimKeylist_Type* keylist; // $s4
-	short storedKeyEndTime; // $s2
-	short timePerKey; // $s0
-	short keyTime; // $a0
-	long alpha; // $a1
-	struct _G2AnimInterpInfo_Type* interpInfo; // $a0
+	struct _G2Anim_Type dummyAnim;
+	struct _G2AnimSection_Type* section;
+	struct _G2AnimKeylist_Type* keylist;
+	short storedKeyEndTime;
+	short timePerKey;
+	short keyTime;
+	long alpha;
+	struct _G2AnimInterpInfo_Type* interpInfo;
+	struct _G2SVector3_Type* dest;
+	struct _G2SVector3_Type* base;
+	struct _G2SVector3_Type* offset;
+	struct _G2SVector3_Type* vector;
 
-	struct _G2SVector3_Type* dest; // $s5
-	struct _G2SVector3_Type* base; // $v0
-	struct _G2SVector3_Type* offset; // $v1
-	//long alpha; // $a1
-	struct _G2SVector3_Type* vector; // $s5
-	//struct _G2SVector3_Type* dest; // $s5
-	//struct _G2SVector3_Type* base; // $s5
+	dest = motionVector;
+	
+	section = &anim->section[0];
+	
+	interpInfo = section->interpInfo;
+	
+	if (interpInfo != NULL && interpInfo->stateBlockList != NULL)
+	{
+		alpha = _G2AnimAlphaTable_GetValue(interpInfo->alphaTable, (durationStart << 12) / interpInfo->duration);
+	
+		base = &interpInfo->stateBlockList->quatInfo[0].srcTrans;
+		
+		offset = &interpInfo->stateBlockList->quatInfo[0].destTrans;
 
-#if 0
-	sub_800932B0:
+		MAC1 = base->x;
+		MAC2 = base->y;
+		MAC3 = base->z;
 
-	var_B8 = -0xB8
-		var_A8 = -0xA8
-		var_94 = -0x94
-		var_93 = -0x93
-		var_92 = -0x92
-		var_91 = -0x91
-		var_90 = -0x90
-		var_8E = -0x8E
-		var_70 = -0x70
-		var_6C = -0x6C
-		var_s0 = 0
-		var_s4 = 4
-		var_s8 = 8
-		var_sC = 0xC
-		var_s10 = 0x10
-		var_s14 = 0x14
-		var_s18 = 0x18
-		var_s1C = 0x1C
+		gte_ldsv(offset);
+		
+		gte_lddp(alpha);
 
-		addiu   $sp, -0xE8
-		move    $t0, $a0
-		sw      $s6, 0xC8 + var_s18($sp)
-		move    $s6, $a2
-		sw      $s5, 0xC8 + var_s14($sp)
-		move    $s5, $a3
-		sw      $s1, 0xC8 + var_s4($sp)
-		move    $s1, $a1
-		sw      $s2, 0xC8 + var_s8($sp)
-		addiu   $s2, $t0, 0x24  # '$'
-		sw      $ra, 0xC8 + var_s1C($sp)
-		sw      $s4, 0xC8 + var_s10($sp)
-		sw      $s3, 0xC8 + var_sC($sp)
-		sw      $s0, 0xC8 + var_s0($sp)
-		lw      $a0, 0x2C($s2)
-		nop
-		beqz    $a0, loc_800933EC
-		move    $s3, $s6
-		lw      $s0, 8($a0)
-		nop
-		beqz    $s0, loc_800933EC
-		sll     $v0, $a1, 16
-		lh      $v1, 0($a0)
-		sra     $v0, 4
-		div     $v0, $v1
-		mflo    $a1
-		lw      $a0, 4($a0)
-		jal     sub_80094E6C
-		nop
-		move    $a1, $v0
-		addiu   $v0, $s0, 0x20  # ' '
-		addiu   $v1, $s0, 0x26  # '&'
-		lhu     $t4, 0($v0)
-		lhu     $t5, 2($v0)
-		lhu     $t6, 4($v0)
-		mtc2    $t4, $25
-		mtc2    $t5, $26
-		mtc2    $t6, $27
-		lhu     $t4, 0($v1)
-		lhu     $t5, 2($v1)
-		lhu     $t6, 4($v1)
-		mtc2    $t4, $9
-		mtc2    $t5, $10
-		mtc2    $t6, $11
-		mtc2    $a1, $8
-		nop
-		nop
-		cop2    0x1A8003E
-		mfc2    $t4, $25
-		mfc2    $t5, $26
-		mfc2    $t6, $27
-		sh      $t4, 0($s5)
-		sh      $t5, 2($s5)
-		sh      $t6, 4($s5)
-		lw      $s4, 0x24($s2)
-		sll     $v0, $s6, 16
-		lh      $v1, 6($s4)
-		sra     $v0, 4
-		div     $v0, $v1
-		mflo    $a1
-		lh      $v0, 0($s5)
-		nop
-		mult    $v0, $a1
-		mflo    $t0
-		lh      $v0, 2($s5)
-		nop
-		mult    $v0, $a1
-		mflo    $v1
-		lh      $v0, 4($s5)
-		nop
-		mult    $v0, $a1
-		sra     $v0, $t0, 12
-		sh      $v0, 0($s5)
-		sra     $v0, $v1, 12
-		sh      $v0, 2($s5)
-		mflo    $a0
-		sra     $v0, $a0, 12
-		j       loc_80093560
-		sh      $v0, 4($s5)
+		gte_gpl12();
 
-		loc_800933EC:
-	lw      $s4, 0x24($s2)
-		sll     $v0, $s1, 16
-		lh      $a1, 6($s4)
-		sra     $v0, 16
-		div     $v0, $a1
-		mflo    $v0
-		lhu     $s0, 6($s4)
-		addiu   $v0, 1
-		mult    $s0, $v0
-		li      $a0, 1
-		lhu     $v1, 4($s4)
-		sb      $a0, 0xC8 + var_B8($sp)
-		mflo    $s2
-		lw      $a2, 0x10($t0)
-		addiu   $v1, -1
-		mult    $a1, $v1
-		sb      $zero, 0xC8 + var_93($sp)
-		sb      $zero, 0xC8 + var_92($sp)
-		sb      $a0, 0xC8 + var_91($sp)
-		sw      $s4, 0xC8 + var_70($sp)
-		sw      $zero, 0xC8 + var_6C($sp)
-		sw      $a2, 0xC8 + var_A8($sp)
-		negu    $v0, $s0
-		sh      $v0, 0xC8 + var_8E($sp)
-		sll     $v0, $s3, 16
-		sw      $zero, 0($s5)
-		mflo    $v1
-		beqz    $v0, loc_80093554
-		sh      $zero, 4($s5)
-		sll     $v0, $v1, 16
-		sra     $s6, $v0, 16
+		gte_stsv(&motionVector);
 
-		loc_80093468:
-	sll     $v0, $s1, 16
-		sra     $v0, 16
-		slt     $v0, $s6
-		bnez    $v0, loc_80093480
-		nop
-		lbu     $s0, 1($s4)
+		keylist = section->keylist;
 
-		loc_80093480:
-	sh      $s1, 0xC8 + var_90($sp)
-		addiu   $a0, $sp, 0xC8 + var_94
-		jal     sub_80094C10
-		addiu   $a1, $sp, 0xC8 + var_B8
-		subu    $v1, $s2, $s1
-		move    $a0, $v1
-		sll     $v1, 16
-		sll     $v0, $s3, 16
-		slt     $v0, $v1
-		beqz    $v0, loc_800934B4
-		sll     $v0, $a0, 16
-		move    $a0, $s3
-		sll     $v0, $a0, 16
+		dest->x = (dest->x * ((duration << 12) / keylist->timePerKey)) >> 12;
+		dest->y = (dest->y * ((duration << 12) / keylist->timePerKey)) >> 12;
+		dest->z = (dest->z * ((duration << 12) / keylist->timePerKey)) >> 12;
+	}
+	else
+	{
+		keylist = section->keylist;
 
-		loc_800934B4:
-	sra     $v1, $v0, 16
-		sll     $v0, $s0, 16
-		sra     $a1, $v0, 16
-		slt     $v0, $v1, $a1
-		beqz    $v0, loc_800934DC
-		sll     $v0, $v1, 12
-		div     $v0, $a1
-		mflo    $a1
-		j       loc_800934E0
-		nop
+		timePerKey = keylist->timePerKey;
 
-		loc_800934DC :
-	li      $a1, 0x1000
+		storedKeyEndTime = timePerKey * ((durationStart / keylist->timePerKey) + 1);
 
-		loc_800934E0 :
-		lhu     $t4, 0($s5)
-		lhu     $t5, 2($s5)
-		lhu     $t6, 4($s5)
-		mtc2    $t4, $25
-		mtc2    $t5, $26
-		mtc2    $t6, $27
-		addiu   $t1, $gp, -0x11F8
-		lhu     $t4, 0($t1)
-		lhu     $t5, 2($t1)
-		lhu     $t6, 4($t1)
-		mtc2    $t4, $9
-		mtc2    $t5, $10
-		mtc2    $t6, $11
-		mtc2    $a1, $8
-		nop
-		nop
-		cop2    0x1A8003E
-		mfc2    $t4, $25
-		mfc2    $t5, $26
-		mfc2    $t6, $27
-		sh      $t4, 0($s5)
-		sh      $t5, 2($s5)
-		sh      $t6, 4($s5)
-		move    $s1, $s2
-		subu    $v0, $s3, $a0
-		move    $s3, $v0
-		sll     $v0, 16
-		bnez    $v0, loc_80093468
-		addu    $s2, $s0
+		dummyAnim.sectionCount = 1;
+		dummyAnim.section[0].sectionID = 0;
+		dummyAnim.section[0].firstSeg = 0;
+		dummyAnim.section[0].segCount = 1;
+		dummyAnim.section[0].keylist = keylist;
+		dummyAnim.section[0].chanStatusBlockList = NULL;
+		dummyAnim.modelData = anim->modelData;
+		dummyAnim.section[0].storedTime = -timePerKey;
 
-		loc_80093554 :
-	lw      $a0, 0xC8 + var_6C($sp)
-		jal     sub_80094E2C
-		nop
+		dest->x = 0;
+		dest->y = 0;
+		dest->z = 0;
 
-		loc_80093560 :
-	lw      $ra, 0xC8 + var_s1C($sp)
-		lw      $s6, 0xC8 + var_s18($sp)
-		lw      $s5, 0xC8 + var_s14($sp)
-		lw      $s4, 0xC8 + var_s10($sp)
-		lw      $s3, 0xC8 + var_sC($sp)
-		lw      $s2, 0xC8 + var_s8($sp)
-		lw      $s1, 0xC8 + var_s4($sp)
-		lw      $s0, 0xC8 + var_s0($sp)
-		jr      $ra
-		addiu   $sp, 0xE8
-#endif
-		UNIMPLEMENTED();
+		while (duration != 0)
+		{
+			duration = (keylist->timePerKey * (keylist->keyCount - 1));
+
+			if (durationStart >= duration)
+			{
+				timePerKey = keylist->s0TailTime;
+			}
+
+			dummyAnim.section[0].elapsedTime = durationStart;
+
+			_G2AnimSection_UpdateStoredFrameFromData(dummyAnim.section, &dummyAnim);
+
+			if (MIN(duration, (storedKeyEndTime - durationStart)) < timePerKey)
+			{
+				alpha = (MIN(duration, (storedKeyEndTime - durationStart)) << 12) / timePerKey;
+			}
+			else
+			{
+				alpha = 0x1000;
+			}
+
+			MAC1 = dest->x;
+			MAC2 = dest->y;
+			MAC3 = dest->z;
+
+			vector = &_segValues[0].trans;
+
+			gte_ldsv(vector);
+			
+			gte_lddp(alpha);
+
+			gte_gpl12();
+
+			gte_stlvnl(dest);
+
+			durationStart = storedKeyEndTime;
+
+			duration = duration - (storedKeyEndTime - durationStart);
+
+			storedKeyEndTime += timePerKey;
+		}
+
+		_G2Anim_FreeChanStatusBlockList(dummyAnim.section[0].chanStatusBlockList);
+	}
 }
 
 void G2AnimSection_SwitchToKeylistAtTime(struct _G2AnimSection_Type *section, struct _G2AnimKeylist_Type *keylist, int keylistID, short targetTime)
@@ -672,6 +544,7 @@ void G2AnimSection_SwitchToKeylistAtTime(struct _G2AnimSection_Type *section, st
 	unsigned long xy;
 
 #if defined(PSXPC_VERSION)
+	eprintwarn("Check me.\n");
 	memset(&rootMotion, 0, sizeof(struct _G2SVector3_Type));
 #endif
 
@@ -740,19 +613,19 @@ void G2AnimSection_SwitchToKeylistAtTime(struct _G2AnimSection_Type *section, st
 	section->swAlarmTable = NULL;
 }
 
-void G2AnimSection_JumpToTime(struct _G2AnimSection_Type *section, short targetTime)
+void G2AnimSection_JumpToTime(struct _G2AnimSection_Type* section, short targetTime)
 {
-	struct _G2Anim_Type *anim;
+	struct _G2Anim_Type* anim;
 
 	anim = _G2AnimSection_GetAnim(section);
 
 	if (targetTime < section->elapsedTime)
 	{
-		section->keylist->timePerKey = -section->keylist->timePerKey;
+		section->storedTime = -section->keylist->timePerKey;
 	}
 
 	section->elapsedTime = targetTime;
-	
+
 	_G2AnimSection_UpdateStoredFrameFromData(section, anim);
 	
 	G2AnimSection_ClearAlarm(section, 0x3);
@@ -1040,7 +913,6 @@ void _G2Anim_BuildSegTransformNoControllers(struct _G2Matrix_Type* segMatrix, st
 	segMatrix->trans.z += parentMatrix->trans.z;
 }
 
-
 void _G2Anim_BuildSegLocalRotMatrix(struct _G2AnimSegValue_Type* segValue, struct _G2Matrix_Type* segMatrix)
 {
 	struct _G2SVector3_Type rot;
@@ -1067,7 +939,7 @@ void _G2Anim_BuildSegLocalRotMatrix(struct _G2AnimSegValue_Type* segValue, struc
 		rot.z = z;
 		((unsigned long*)&rot.x)[0] = xy;
 
-		RotMatrixZYX((SVECTOR*)dest, (MATRIX*)segMatrix);
+		//RotMatrixZYX((SVECTOR*)dest, (MATRIX*)segMatrix);
 	}
 }
 
@@ -1606,7 +1478,7 @@ void _G2AnimSection_UpdateStoredFrameFromData(struct _G2AnimSection_Type* sectio
 		storedKey = -1;
 	}
 
-	timeOffset = ((section->elapsedTime - (targetKey * timePerKey)) >> 12) / timePerKey;
+	timeOffset = ((section->elapsedTime - (targetKey * timePerKey)) << 12) / timePerKey;
 
 	FooBar(section, anim, storedKey, targetKey, timeOffset);
 
