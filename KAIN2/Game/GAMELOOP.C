@@ -3012,7 +3012,7 @@ MATRIX* GAMELOOP_GetMatrices(int numMatrices)
 
 	if (matrix + numMatrices < (MATRIX*)pool->lastPrim)
 	{
-		pool->nextPrim = (unsigned long*)matrix + numMatrices;
+		pool->nextPrim = (unsigned long*)(matrix + numMatrices);
 
 		return matrix;
 	}
