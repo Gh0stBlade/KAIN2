@@ -19,7 +19,12 @@ unsigned long TIMER_GetTimeMS()
 	ticks = GetRCnt(0xF2000000);
 	mticks = gameTimer;
 	ExitCriticalSection();
+
+#if defined(PSXPC_VERSION)
+	return ticks;
+#else
 	return (mticks >> 16) * 126819 + (ticks & 0xFFFF | mticks << 16) / 33869;
+#endif
 #else
 	unsigned __int64 result; // rax
 

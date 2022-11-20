@@ -356,8 +356,8 @@ void LOAD_SetupFileToDoBufferedCDReading()
 #else
 	CdIntToPos(loadStatus.currentSector, &loc);
 	CdControl(CdlReadN, &loc.minute, NULL);
-	loadStatus.cdWaitTime = TIMER_GetTimeMS();
 #endif
+	loadStatus.cdWaitTime = TIMER_GetTimeMS();
 #endif
 }
 
@@ -900,6 +900,11 @@ struct _BigFileEntry* LOAD_GetBigFileEntryByHash(long hash)
 
 	int fileSize = 0;
 	Emulator_GetFileSize(LOAD_HashToName(hash), &fileSize);
+
+	if (fileSize == 0)
+	{
+		return NULL;
+	}
 
 	bigFileEntry.checkSumFull = 0;
 	bigFileEntry.fileHash = hash;

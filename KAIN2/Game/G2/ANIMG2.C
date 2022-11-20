@@ -535,18 +535,13 @@ void G2Anim_GetRootMotionFromTimeForDuration(struct _G2Anim_Type* anim, short du
 	}
 }
 
-void G2AnimSection_SwitchToKeylistAtTime(struct _G2AnimSection_Type *section, struct _G2AnimKeylist_Type *keylist, int keylistID, short targetTime)
+void G2AnimSection_SwitchToKeylistAtTime(struct _G2AnimSection_Type* section, struct _G2AnimKeylist_Type* keylist, int keylistID, short targetTime)
 {
-	struct _G2Anim_Type *anim;
+	struct _G2Anim_Type* anim;
 	struct _G2SVector3_Type rootMotion;
-	struct _G2AnimInterpInfo_Type *interpInfo;
+	struct _G2AnimInterpInfo_Type* interpInfo;
 	unsigned short z;
 	unsigned long xy;
-
-#if defined(PSXPC_VERSION)
-	eprintwarn("Check me.\n");
-	memset(&rootMotion, 0, sizeof(struct _G2SVector3_Type));
-#endif
 
 	anim = _G2AnimSection_GetAnim(section);
 
@@ -939,7 +934,7 @@ void _G2Anim_BuildSegLocalRotMatrix(struct _G2AnimSegValue_Type* segValue, struc
 		rot.z = z;
 		((unsigned long*)&rot.x)[0] = xy;
 
-		//RotMatrixZYX((SVECTOR*)dest, (MATRIX*)segMatrix);
+		RotMatrixZYX((SVECTOR*)dest, (MATRIX*)segMatrix);
 	}
 }
 

@@ -54,7 +54,7 @@ extern short mainMenuFading; // offset 0x800CE6D2
 
 extern long DoMainMenu; // offset 0x800CE6C0
 
-extern struct InterfaceItem InterfaceItems[6]; // offset 0x800CE570
+extern struct InterfaceItem InterfaceItems[]; // offset 0x800CE570
 
 extern char mainOptionsInit; // offset 0x800CE560
 

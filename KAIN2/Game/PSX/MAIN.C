@@ -55,12 +55,29 @@ int devstation; // offset 0x800D0E68
 struct BLK_FILL clearRect[2]; // offset 0x800D0F88
 DRAWENV draw[2]; // offset 0x800D0E6C
 DISPENV disp[2]; // offset 0x800D0E40
-struct InterfaceItem InterfaceItems[6] = { { "\\PUBLOGO.STR;1", 0, 0, 0, 1 },
-										   { "\\CRYLOGO.STR;1", 0, 0, 0, 5 },
-										   { "\\KAININT.STR;1", 0, 0, 0, -1 },
-										   { "\\VERSE.STR;1", 0, 0, 0, 4 },
-										   { "\\CREDITS.STR;1", 0, 0, 0, -1 },
-										   { "\\kain2\\game\\psx\\mainmenu\\legal.tim", 165, 165, 1, -1}, };
+
+struct InterfaceItem InterfaceItems[] = 
+{ 
+	{ "\\PUBLOGO.STR;1", 0, 0, 0, 1 },
+	{ "\\CRYLOGO.STR;1", 0, 0, 0, 5 },
+	{ "\\KAININT.STR;1", 0, 0, 0, -1 },
+	{ "\\VERSE.STR;1", 0, 0, 0, 4 },
+	{ "\\CREDITS.STR;1", 0, 0, 0, -1 },
+#if defined(DEMO_BUILD) || 0
+	{ "\\kain2\\game\\psx\\mainmenu\\legal.tim", 330, 330, 1, 2},
+	{ "\\kain2\\game\\psx\\mainmenu\\instruct.tim", 1800, 10, 1, 7},
+	{ "\\kain2\\game\\psx\\mainmenu\\controls.tim", 1800, 10, 1, -1},
+	{ "\\kain2\\game\\psx\\mainmenu\\screens1.tim", 900, 10, 1, 11},
+	{ "\\kain2\\game\\psx\\mainmenu\\screens2.tim", 900, 10, 1, 10},
+	{ "\\kain2\\game\\psx\\mainmenu\\screens3.tim", 900, 10, 1, 11},
+	{ "\\kain2\\game\\psx\\mainmenu\\screens4.tim", 900, 10, 1, -1},
+	{ "\\kain2\\game\\psx\\mainmenu\\story.tim", 1800, 10, 1, 6},
+	{ "\\kain2\\game\\psx\\mainmenu\\usps.tim", 1800, 10, 1, 8},
+#else
+	{ "\\kain2\\game\\psx\\mainmenu\\legal.tim", 165, 165, 1, -1},
+#endif
+
+};
 
 #if defined(EDITOR)
 int stopGameThread = 0;
@@ -370,7 +387,7 @@ void StartTimer()
 {
 #ifdef PSX_VERSION
 	EnterCriticalSection();
-	__timerEvent = OpenEvent(0xF2000000, 2, 0x1000, NULL/*TimerTick*/);//TimerTick is commented out for now as the original PSX version uses ASM for this but still needs translating to C with propper compatible function declaration.
+	__timerEvent = OpenEvent(0xF2000000, 2, 0x1000, TimerTick);
 	EnableEvent(__timerEvent);
 	SetRCnt(0xF2000000, 0xFFFF, 0x1001);
 	StartRCnt(0xF2000000);
@@ -635,7 +652,11 @@ void MAIN_MainMenuInit()
 
 	mainMenuScreen = MAIN_LoadTim("\\kain2\\game\\psx\\frontend\\title1.tim");
 	VRAM_EnableTerrainArea();
+
+#define DEMO_BUILD
+#if !defined(DEMO_BUILD)//TODO face.tim load should return null if not exists.
 	menuface_initialize();
+#endif
 	currentMenu = mainMenu;
 	gameTrackerX.gameMode = 4;
 	menu_set(gameTrackerX.menu, menudefs_main_menu);
@@ -1189,8 +1210,12 @@ int MainG2(void *appData)
 				LOAD_ChangeDirectory("Menustuff");
 #endif
 
-				checkMovie:
+			checkMovie:
+#if !defined(DEMO_BUILD)
 				while ((unsigned)mainTracker->movieNum < 6)
+#else
+				while ((unsigned)mainTracker->movieNum < 14)
+#endif
 				{
 					item = &InterfaceItems[mainTracker->movieNum];
 					gameTrackerX.gameFlags &= -2;
