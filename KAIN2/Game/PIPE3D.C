@@ -348,15 +348,17 @@ void PIPE3D_InstanceListTransformAndDrawFunc(struct _StreamUnit* unit, unsigned 
 	struct Level* level;
 	SVECTOR bsPos;
 
+	level = unit->level;
+
+	vertexPool = gameTrackerX.vertexPool;
+
+	primPool = gameTrackerX.primPool;
+
 	bsPos.vx = instance->position.x;
 	bsPos.vy = instance->position.y;
 	bsPos.vz = instance->position.z;
 
-	level = unit->level;
-	vertexPool = gameTrackerX.vertexPool;
-	primPool = gameTrackerX.primPool;
-
-	if (unit == NULL || !(unit->flags & 0x1) || unit->StreamUnitID == gameTrackerX.StreamUnitID || WARPGATE_IsObjectOnWarpSide(instance) != 0)
+	if (unit == NULL || !(unit->flags & 0x1) || unit->StreamUnitID != gameTrackerX.StreamUnitID || WARPGATE_IsObjectOnWarpSide(instance))
 	{
 		maxRad = instance->object->modelList[instance->currentModel]->maxRad;
 
@@ -367,13 +369,17 @@ void PIPE3D_InstanceListTransformAndDrawFunc(struct _StreamUnit* unit, unsigned 
 
 		dpv[0].vx -= cameraCore->vvPlaneConsts[0];
 
-		if (-maxRad < dpv[0].vx && dpv[0].vx < cameraCore->farPlane + maxRad &&
+		if (-maxRad < dpv[0].vx && 
+			dpv[0].vx < cameraCore->farPlane + maxRad &&
 			-maxRad < dpv[0].vy - cameraCore->vvPlaneConsts[1] &&
 			-maxRad < dpv[0].vz - cameraCore->vvPlaneConsts[2])
 		{
 			gte_SetRotMatrix(&cameraCore->vvNormalWorVecMat[1]);
+
 			gte_ldv0(&bsPos);
+
 			gte_rtv0();
+
 			gte_stlvnl(&dpv[1]);
 
 			if (-maxRad < dpv[1].vx - cameraCore->vvPlaneConsts[3] &&
@@ -417,6 +423,7 @@ void PIPE3D_InstanceListTransformAndDrawFunc(struct _StreamUnit* unit, unsigned 
 			else
 			{
 				instance->flags &= 0xFFFFFDFF;
+
 			}
 		}
 		else
