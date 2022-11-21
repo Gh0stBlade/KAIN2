@@ -6092,6 +6092,10 @@ void Emulator_EndScene()
 	{
 		Emulator_ShutDown();
 	}
+
+#if defined(TOUCH_UI)
+	Emulator_ResetTouchInput();
+#endif
 }
 
 void Emulator_ResetTouchInput()
