@@ -479,6 +479,7 @@ int ParsePrimitive(uintptr_t primPtr)
 	case 0x34:
 	{
 		POLY_GT3* poly = (POLY_GT3*)pTag;
+
 		activeDrawEnv.tpage = poly->tpage;
 
 		Emulator_AddSplit(semi_transparent, poly->tpage, vramTexture);
@@ -929,10 +930,6 @@ void Emulator_AggregatePTAGsToSplits(unsigned long* p, int singlePrimitive)
 	if (!p)
 		return;
 
-	short startZ = g_otSize;
-
-	short* z = &startZ;
-
 	if (singlePrimitive)
 	{
 		// single primitive
@@ -958,7 +955,6 @@ void Emulator_AggregatePTAGsToSplits(unsigned long* p, int singlePrimitive)
 					break; // safe bailout
 			}
 
-			z[0]--;
 			pTag = (P_TAG*)pTag->addr;
 		}
 	}

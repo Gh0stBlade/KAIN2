@@ -156,8 +156,8 @@ extern int gte_ldlzc(int input);
 
 #define gte_ldsxy3( r0, r1, r2 )     \
 	((int*)&SXY0)[0] = ((int*)r0)[0]; \
-	((int*)&SXY2)[0] = ((int*)r2)[0]; \
 	((int*)&SXY1)[0] = ((int*)r1)[0]; \
+	((int*)&SXY2)[0] = ((int*)r2)[0]; \
 
 
 #define gte_ldsxy3c( r0 ) __asm__ volatile (			\
