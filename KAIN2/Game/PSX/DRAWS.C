@@ -401,7 +401,7 @@ long* DRAW_AnimatedModel_S(struct _Model* model, struct _PVertex* poolVertex, st
 			struct _PVertex* t9 = &poolVertex[v0];
 			struct _PVertex* s2 = &poolVertex[v1];
 
-			gte_ldsxy3(t9, t1, s2);
+			gte_ldsxy3(t9, s2, t1);
 
 			t7 = 0xF00200;
 
@@ -459,6 +459,7 @@ long* DRAW_AnimatedModel_S(struct _Model* model, struct _PVertex* poolVertex, st
 							gte_stotz(&t0);
 
 							fp = t0 << 2;
+							
 							goto sort_avz_continue2;
 						}
 						else
@@ -674,7 +675,7 @@ long* DRAW_AnimatedModel_S(struct _Model* model, struct _PVertex* poolVertex, st
 										nofade_gt3_b:
 											s7[7] = v0;
 
-											unsigned long* s6 = ot[(fp / 4) * 2];
+											char* s6 = (char*)ot + (fp * 2);
 
 											addPrim(s6, s7);
 											setlen(s7, 9);
@@ -770,7 +771,8 @@ long* DRAW_AnimatedModel_S(struct _Model* model, struct _PVertex* poolVertex, st
 											t5 = 0x30000000 | t5;
 											s7[5] = t5;
 
-											char* s6 = (char*)ot + fp;
+
+											char* s6 = (char*)ot + (fp * 2);
 
 											setlen(s7, 6);
 											addPrim(s6, s7);
@@ -795,7 +797,7 @@ long* DRAW_AnimatedModel_S(struct _Model* model, struct _PVertex* poolVertex, st
 
 										gte_ncds();
 
-										char* s6 = (char*)ot + fp;
+										char* s6 = (char*)ot + (fp * 2);
 
 										setlen(s7, 4);
 										addPrim(s6, s7);
@@ -4213,22 +4215,11 @@ long PIPE3D_TransformAnimatedInstanceVertices_S(struct _VertexPool* vertexPool, 
 				//loc_80027244
 				do
 				{
-					//a0 = *(int*)&model->segmentList->firstVertex
-					//v0 = model->segmentList->lastVertex
-					//v1 = model->segmentList->lastVertex + 1
-
-					//t7 = model->segmentList->lastVertex << 3
-
 					if (seg->lastVertex + 1 != 0)
 					{
-						//t7 = vertexPool[model->segmentList->lastVertex];
-						//t4 = model->segmentList->firstVertex
-						//a1 = model->segmentList->firstVertex << 3
 						struct _PVertex* t7 = &vertexPool->vertex[seg->lastVertex];
 						struct _PVertex* a1 = &vertexPool->vertex[seg->firstVertex];
 
-						//v0 = getScratchAddr(13);
-						//v1 = getScratchAddr(18);
 						gte_SetRotMatrix(getScratchAddr(13));
 
 						gte_ldclmv(&matrixPool->m[0][0]);
@@ -4245,8 +4236,6 @@ long PIPE3D_TransformAnimatedInstanceVertices_S(struct _VertexPool* vertexPool, 
 
 						gte_SetLightMatrix(getScratchAddr(18));
 
-						//v0 = getScratchAddr(0);
-						//v1 = getScratchAddr(8);
 						gte_SetRotMatrix(getScratchAddr(0));
 
 						gte_ldclmv(&matrixPool->m[0][0]);
