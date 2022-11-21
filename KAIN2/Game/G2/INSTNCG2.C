@@ -465,7 +465,7 @@ void _G2Instance_BuildDeactivatedTransforms(struct _Instance* instance)
 
 	if (instance->oldMatrix != NULL)
 	{
-		memcpy(segMatrix, startOldMatrix, numMatrices + 5);///@FIXME bug/size error?
+		memcpy(segMatrix, startOldMatrix, numMatrices * sizeof(MATRIX));
 	}
 	
 	instance = instance->LinkChild;
