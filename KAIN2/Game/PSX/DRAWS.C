@@ -487,7 +487,7 @@ long* DRAW_AnimatedModel_S(struct _Model* model, struct _PVertex* poolVertex, st
 
 							int flag = t6 >> 24;
 
-							if (t2 <= 0 || (flag & 0x2))///@FIXME this is because psx ver is loaded at 0x80000000 so if < 0 it's a ptr not a colour!
+							if (/*t2 <= 0 ||*/ (flag & 0x2))///@FIXME this is because psx ver is loaded at 0x80000000 so if < 0 it's a ptr not a colour!
 							{
 								t7 = t2[2];
 
