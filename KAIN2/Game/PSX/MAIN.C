@@ -653,10 +653,10 @@ void MAIN_MainMenuInit()
 	mainMenuScreen = MAIN_LoadTim("\\kain2\\game\\psx\\frontend\\title1.tim");
 	VRAM_EnableTerrainArea();
 
-#define DEMO_BUILD
 #if !defined(DEMO_BUILD)//TODO face.tim load should return null if not exists.
 	menuface_initialize();
 #endif
+
 	currentMenu = mainMenu;
 	gameTrackerX.gameMode = 4;
 	menu_set(gameTrackerX.menu, menudefs_main_menu);
