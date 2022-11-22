@@ -54,6 +54,8 @@ struct _PrimPool primPool0, primPool1;
 struct _InstanceList* instanceList; // offset 0x800D0C20
 struct _InstancePool* instancePool; // offset 0x800D0C24
 
+struct GameTracker* gameTracker;
+
 void GAMELOOP_AllocStaticMemory()
 {
 	instanceList = (struct _InstanceList*)MEMPACK_Malloc(sizeof(struct _InstanceList), 0x6);
@@ -1103,7 +1105,11 @@ void GAMELOOP_FlipScreenAndDraw(struct GameTracker* gameTracker, unsigned long**
 #endif
 	
 	gameTracker->drawTimerReturn = (long*)&gameTracker->drawTime;
+#if defined(PSXPC_VERSION)
+	gameTracker->usecsStartDraw = GetRCnt(0xF2000000);
+#else
 	gameTracker->usecsStartDraw = (GetRCnt(0xF2000000) & 0xFFFF) | (gameTimer << 16);
+#endif
 	gameTracker->gameData.asmData.dispPage = 1 - gameTracker->gameData.asmData.dispPage;
 
 #elif defined(PC_VERSION)
@@ -2288,6 +2294,10 @@ void GAMELOOP_DoTimeProcess()
 	unsigned long last;
 
 	holdTime = TIMER_GetTimeMS();
+
+	gameTrackerX.frameRateLock = 2;
+
+	printf("Last FPS: %d\n", VblTick);
 
 	if (!(gameTrackerX.gameFlags & 0x10000000))
 	{

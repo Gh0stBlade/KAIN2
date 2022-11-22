@@ -5,7 +5,7 @@
 extern "C" {
 #endif
 
-typedef unsigned short PadData;
+typedef unsigned short PadDataA;
 
 typedef struct MouseData
 {
@@ -49,7 +49,7 @@ typedef struct TapCtrllerData
 
 	union                                         /* Controller data union. */                   /* Controller data union. */
 	{
-		PadData    pad;                                 /* Plain pad.       */
+		PadDataA    pad;                                 /* Plain pad.       */
 		NegconData negcon;                              /* Namco controller.*/
 	}
 	data;
@@ -69,7 +69,7 @@ typedef struct ControllerPacket
 										   /* Bottom 4 == shorts of data written */
 	union                                         /* Controller data union. */
 	{
-		PadData       pad;                     /* Plain pad.       */
+		PadDataA       pad;                     /* Plain pad.       */
 		MouseData     mouse;                   /* Mouse.           */
 		NegconData    negcon;                  /* Namco controller.*/
 		AnalogjoyData joystick;				/* Analog Joystick  */
@@ -96,6 +96,8 @@ extern struct ControllerPacket gpbuffer1; // offset 0x800D0CD0
 extern struct ControllerPacket gpbuffer2; // offset 0x800D0D18
 
 extern int gamePadControllerOut;
+
+extern long* PadData;
 
 extern void GAMEPAD_Commands(long (*command)[5], long (*data)[5], long pad); // 0x80030F68
 extern int GAMEPAD_ControllerIsDualShock(); // 0x80031324

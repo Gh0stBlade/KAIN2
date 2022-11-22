@@ -35,6 +35,33 @@ struct __SensoryData // hashcode: 0x3A2E27FD (dec: 976103421)
 	unsigned long heldClass; // size=0, offset=80
 };
 
+struct __AttackItem {
+	unsigned char anim; // size=0, offset=0
+	unsigned char framesIn; // size=0, offset=1
+	unsigned char alphaIn; // size=0, offset=2
+	unsigned char framesOut; // size=0, offset=3
+	unsigned char switchDelay; // size=0, offset=4
+	unsigned char ignoreDelay; // size=0, offset=5
+	unsigned char segmentToGlow; // size=0, offset=6
+	unsigned char startCollisionFrame; // size=0, offset=7
+	unsigned char handsToCollide; // size=0, offset=8
+	unsigned char endCollisionFrame; // size=0, offset=9
+	unsigned char ribbonStartFrame; // size=0, offset=10
+	unsigned char ribbonStartSegment; // size=0, offset=11
+	unsigned char ribbonEndSegment; // size=0, offset=12
+	unsigned char ribbonLifeTime; // size=0, offset=13
+	unsigned char ribbonFaceLifeTime; // size=0, offset=14
+	unsigned char knockBackFrames; // size=0, offset=15
+	unsigned char glowFadeInFrames; // size=0, offset=16
+	unsigned char glowFadeOutFrames; // size=0, offset=17
+	unsigned short ribbonStartOpacity; // size=0, offset=18
+	unsigned long ribbonStartColor; // size=0, offset=20
+	unsigned long ribbonEndColor; // size=0, offset=24
+	unsigned long glowColor; // size=0, offset=28
+	unsigned short knockBackDistance; // size=0, offset=32
+	unsigned short hitPowerScale; // size=0, offset=34
+};
+
 struct __Player // hashcode: 0x0712E7A5 (dec: 118679461)
 {
 	int footPrint; // size=0, offset=0

@@ -25,6 +25,8 @@ unsigned short lastData[2];
 
 unsigned short psxData[2];
 
+long* PadData;
+
 long gDummyCommand[2][2]; // offset 0x800D0D60
 
 struct ControllerPacket readGPBuffer1; // offset 0x800D0CF4

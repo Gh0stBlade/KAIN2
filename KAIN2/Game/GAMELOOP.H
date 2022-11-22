@@ -172,10 +172,6 @@ struct GameTracker // hashcode: 0x4EB3EFC5 (dec: 1320415173)
 	char pad; // size=0, offset=623
 };
 
-#if defined(_LANGUAGE_C_PLUS_PLUS) || defined(__cplusplus) || defined(c_plusplus)
-extern "C" {
-#endif
-
 extern struct Camera theCamera;
 extern char* primBase;
 extern unsigned long(**gOt[2]); // offset 0x800D0C0C
@@ -239,8 +235,6 @@ extern void PSX_GameLoop(struct GameTracker *gameTracker); // 0x80030EFC
 extern MATRIX * GAMELOOP_GetMatrices(int numMatrices); // 0x80030F28
 extern struct GameTracker * GAMELOOP_GetGT(); // 0x80030F5C
 
-#if defined(_LANGUAGE_C_PLUS_PLUS) || defined(__cplusplus) || defined(c_plusplus)
-}
-#endif
+extern GameTracker* gameTracker;
 
 #endif

@@ -38,7 +38,14 @@ unsigned long TIMER_GetTimeMS()
 
 unsigned long TIMER_TimeDiff(unsigned long x)
 {
-#if defined(PSX_VERSION)
+#if defined(PSXPC_VERSION)
+	unsigned long ticks;
+
+	ticks = GetRCnt(0xF2000000);
+
+	return ticks - x;
+
+#elif defined(PSX_VERSION)
 	unsigned long intrs;
 	unsigned long ticks;
 	unsigned long prevIntrs;
