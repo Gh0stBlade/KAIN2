@@ -61,7 +61,7 @@ void InitStates(struct _Instance* PlayerInstance)
 		animSection->callback = (unsigned long (*)(struct _G2Anim_Type*, int, enum _G2AnimCallbackMsg_Enum, long, long, struct _Instance*)) & RazielAnimCallback;
 		animSection->callbackData = NULL;
 	
-		Raziel.State.SectionList[i].Event.Head = (int)&StateHandlerIdle;
+		Raziel.State.SectionList[i].Process = &StateHandlerIdle;
 
 		InitMessageQueue(&Raziel.State.SectionList[i].Event);
 		InitMessageQueue(&Raziel.State.SectionList[i].Defer);
