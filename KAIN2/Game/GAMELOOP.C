@@ -2295,13 +2295,15 @@ void GAMELOOP_DoTimeProcess()
 
 	holdTime = TIMER_GetTimeMS();
 
-	gameTrackerX.frameRateLock = 2;
-
 	if (!(gameTrackerX.gameFlags & 0x10000000))
 	{
 		gameTrackerX.totalTime = TIMER_TimeDiff(gameTrackerX.currentTicks);
 
+#if defined(PSXPC_VERSION)
+		gameTrackerX.currentTicks = GetRCnt(0xF2000000);
+#else
 		gameTrackerX.currentTicks = (GetRCnt(0xF2000000) & 0xFFFF) | (gameTimer << 16);
+#endif
 
 		if (gameTrackerX.frameRateLock <= 0)
 		{
@@ -2313,7 +2315,7 @@ void GAMELOOP_DoTimeProcess()
 			gameTrackerX.frameRateLock = 2;
 		}
 
-		if (gameTrackerX.decoupleGame == 0 || (gameTrackerX.gameFlags & 0x10000000))
+		if (gameTrackerX.decoupleGame == 0 && (gameTrackerX.gameFlags & 0x10000000))
 		{
 			if (gameTrackerX.frameRateLock == 1)
 			{
@@ -2342,7 +2344,7 @@ void GAMELOOP_DoTimeProcess()
 				last  = holdTime - gameTrackerX.currentTime;
 			}
 
-			if (gameTrackerX.frameRateLock == 1 || gameTrackerX.frameRate24fps != 0)
+			if (gameTrackerX.frameRateLock == 1 && gameTrackerX.frameRate24fps != 0)
 			{
 				last -= 9;
 			}
@@ -2363,6 +2365,7 @@ void GAMELOOP_DoTimeProcess()
 		}
 
 		gameTrackerX.timeMult = ((last << 12) / 33);
+		printf("TIME MULT: %x\n", gameTrackerX.timeMult);
 		gameTrackerX.timeSinceLastGameFrame += gameTrackerX.timeMult;
 		gameTrackerX.gameFramePassed = 0;
 		gameTrackerX.globalTimeMult = gameTrackerX.timeMult;
