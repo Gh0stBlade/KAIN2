@@ -2297,8 +2297,6 @@ void GAMELOOP_DoTimeProcess()
 
 	gameTrackerX.frameRateLock = 2;
 
-	printf("Last FPS: %d\n", VblTick);
-
 	if (!(gameTrackerX.gameFlags & 0x10000000))
 	{
 		gameTrackerX.totalTime = TIMER_TimeDiff(gameTrackerX.currentTicks);
@@ -2364,7 +2362,7 @@ void GAMELOOP_DoTimeProcess()
 			gameTrackerX.lastLoopTime = last;
 		}
 
-		gameTrackerX.timeMult = ((last << 12) % 0x3E0F83E1) >> 3;
+		gameTrackerX.timeMult = ((last << 12) / 33);
 		gameTrackerX.timeSinceLastGameFrame += gameTrackerX.timeMult;
 		gameTrackerX.gameFramePassed = 0;
 		gameTrackerX.globalTimeMult = gameTrackerX.timeMult;
