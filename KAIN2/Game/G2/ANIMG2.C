@@ -1558,11 +1558,11 @@ void FooBar(struct _G2AnimSection_Type* section, struct _G2Anim_Type* anim, int 
 						{
 							if (type == 0)
 							{
+								nextChanStatus.keyData = nextDCInfo.chanData[nextDCInfo.targetKey];
+
 								nextDCInfo.chanData = dcInfo.chanData;
 								
 								initDCInfo.chanData = dcInfo.chanData;
-
-								nextChanStatus.keyData = nextDCInfo.chanData[nextDCInfo.targetKey];
 							}
 							else
 							{
