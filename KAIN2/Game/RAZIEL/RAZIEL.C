@@ -1588,6 +1588,8 @@ void RazielPost(struct _Instance* instance, unsigned long Message, unsigned long
 		//loc_800B13CC
 	}
 	//loc_800B17BC
+	GAMELOOP_Reset24FPS();///TEMPORARY HACK
+	eprinterr("Temporary hack enabled!\n");
 #if 0
 
 		loc_800B13CC :
