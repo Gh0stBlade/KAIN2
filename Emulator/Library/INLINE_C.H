@@ -113,9 +113,9 @@ extern int gte_ldlzc(int input);
 	((int*)&VX1)[0] = ((int*)r0)[2];
 
 #define gte_ldsv( r0 )	\
-	((int*)&IR1)[0] = ((unsigned short*)&r0)[0];       \
-	((int*)&IR2)[0] = ((unsigned short*)&r0)[1];       \
-	((int*)&IR3)[0] = ((unsigned short*)&r0)[2];
+	((int*)&IR1)[0] = ((unsigned short*)r0)[0];       \
+	((int*)&IR2)[0] = ((unsigned short*)r0)[1];       \
+	((int*)&IR3)[0] = ((unsigned short*)r0)[2];
 
 #define gte_ldbv( r0 ) __asm__ volatile (			\
 	"lbu	$12, 0( %0 );"					\

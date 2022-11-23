@@ -490,9 +490,7 @@ void G2Anim_GetRootMotionFromTimeForDuration(struct _G2Anim_Type* anim, short du
 
 		while (duration != 0)
 		{
-			duration = (keylist->timePerKey * (keylist->keyCount - 1));
-
-			if (durationStart >= duration)
+			if (durationStart >= (keylist->timePerKey * (keylist->keyCount - 1)))
 			{
 				timePerKey = keylist->s0TailTime;
 			}
@@ -522,11 +520,13 @@ void G2Anim_GetRootMotionFromTimeForDuration(struct _G2Anim_Type* anim, short du
 
 			gte_gpl12();
 
-			gte_stlvnl(dest);
+			dest->x = MAC1;
+			dest->y = MAC2;
+			dest->z = MAC3;
 
 			durationStart = storedKeyEndTime;
 
-			duration = duration - (storedKeyEndTime - durationStart);
+			duration -= duration;
 
 			storedKeyEndTime += timePerKey;
 		}

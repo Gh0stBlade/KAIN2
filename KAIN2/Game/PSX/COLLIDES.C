@@ -613,16 +613,16 @@ void RotMatrixX(long r, MATRIX* m)
 	}
 
 	gte_lddp(v0);
-	gte_ldsv(m->m[1][0]);
+	gte_ldsv(&m->m[1][0]);
 	gte_gpf12();
 	gte_stsv(&r1);
 
 	gte_lddp(v1);
-	gte_ldsv(m->m[2][0]);
+	gte_ldsv(&m->m[2][0]);
 	gte_gpf12();
 	gte_stsv(&r2);
 
-	gte_ldsv(m->m[1][0]);
+	gte_ldsv(&m->m[1][0]);
 	gte_gpf12();
 	gte_stsv(&r3);
 
@@ -631,7 +631,7 @@ void RotMatrixX(long r, MATRIX* m)
 	r1.vz -= r2.vz;
 
 	gte_lddp(v0);
-	gte_ldsv(m->m[2][0]);
+	gte_ldsv(&m->m[2][0]);
 	gte_gpf12();
 	gte_stsv(&r4);
 
@@ -672,16 +672,16 @@ void RotMatrixY(long r, MATRIX* m)
 	}
 
 	gte_lddp(v0);
-	gte_ldsv(m->m[0][0]);
+	gte_ldsv(&m->m[0][0]);
 	gte_gpf12();
 	gte_stsv(&r1);
 
 	gte_lddp(v1);
-	gte_ldsv(m->m[2][0]);
+	gte_ldsv(&m->m[2][0]);
 	gte_gpf12();
 	gte_stsv(&r2);
 
-	gte_ldsv(m->m[0][0]);
+	gte_ldsv(&m->m[0][0]);
 	gte_gpf12();
 	gte_stsv(&r3);
 
@@ -690,7 +690,7 @@ void RotMatrixY(long r, MATRIX* m)
 	r1.vz += r2.vz;
 
 	gte_lddp(v0);
-	gte_ldsv(m->m[2][0]);
+	gte_ldsv(&m->m[2][0]);
 	gte_gpf12();
 	gte_stsv(&r4);
 
@@ -731,16 +731,16 @@ void RotMatrixZ(long r, MATRIX* m)
 	}
 
 	gte_lddp(v0);
-	gte_ldsv(m->m[0][0]);
+	gte_ldsv(&m->m[0][0]);
 	gte_gpf12();
 	gte_stsv(&r1);
 
 	gte_lddp(v1);
-	gte_ldsv(m->m[1][0]);
+	gte_ldsv(&m->m[1][0]);
 	gte_gpf12();
 	gte_stsv(&r2);
 
-	gte_ldsv(m->m[0][0]);
+	gte_ldsv(&m->m[0][0]);
 	gte_gpf12();
 	gte_stsv(&r3);
 
@@ -749,7 +749,7 @@ void RotMatrixZ(long r, MATRIX* m)
 	r1.vz -= r2.vz;
 
 	gte_lddp(v0);
-	gte_ldsv(m->m[1][0]);
+	gte_ldsv(&m->m[1][0]);
 	gte_gpf12();
 	gte_stsv(&r4);
 
