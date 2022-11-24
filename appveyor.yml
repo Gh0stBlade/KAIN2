@@ -24,6 +24,7 @@ platform:
   
 before_build:
   - cmd: cd %clone_folder%
+  - ps:  $env:GIT_COMMIT_COUNT = $(git rev-list --count HEAD)
   - cmd: git submodule update --init --recursive
   - cmd: cd Emulator
   - cmd: cd Platform
@@ -39,4 +40,16 @@ after_build:
   - cmd: cd ../
   - cmd: cd Binaries
   - cmd: cd %configuration%
-  - 7z a KAIN2.zip
+  - 7z a KAIN2-B$(GIT_COMMIT_COUNT)-Win32-$(configuration).zip
+
+deploy:
+  release: B$(GIT_COMMIT_COUNT)
+  description: 'Auto build B$(GIT_COMMIT_COUNT)'
+  provider: GitHub
+  auth_token:
+    secure: hLaU+617bEqExNi+kqicDsNM11QyKeMGYCSuchk7QCjHckEGZl8lmgON8tPsqztp
+  artifact: /.*\.zip/
+  draft: false
+  prerelease: true
+  on:
+    branch: main
