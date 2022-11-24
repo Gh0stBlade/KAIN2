@@ -20,5 +20,6 @@ Emulator/Shaders/GXM/*.gxp.obj
 Emulator/Shaders/GXM/*.sdb
 Emulator/Shaders/NVN/*.bnsh
 /Binaries/*
+/External/*
 
 /.vs/*

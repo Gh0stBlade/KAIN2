@@ -1517,7 +1517,7 @@ void razAttachControllers()
 
 void razSetPlayerEvent()
 {
-	void* process;
+	void (*process)(struct __CharacterState*, int, int);
 	int message;
 	int data;
 

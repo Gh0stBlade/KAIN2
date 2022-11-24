@@ -710,11 +710,7 @@ long MAIN_DoMainMenu(struct GameTracker *gameTracker, struct MainTracker *mainTr
 {
 	unsigned long **drawot;
 
-#if !defined(HACK_60_FPS)
 	gameTrackerX.timeMult = 1;
-#else
-	gameTrackerX.timeMult = 4096;
-#endif
 
 	drawot = gameTracker->drawOT;
 	DrawPrim(&clearRect[gameTracker->drawPage]);
@@ -778,7 +774,7 @@ void InitialiseGame(void* appData)
 	struct MainTracker* mainTracker;
 	struct GameTracker* gameTracker;
 
-	Emulator_Initialise("Legacy of Kain: Soul Reaver", SCREEN_WIDTH, SCREEN_HEIGHT);
+	Emulator_Initialise(GAME_NAME, GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT);
 
 	CheckForDevStation();
 
