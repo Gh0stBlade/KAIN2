@@ -40,7 +40,7 @@ after_build:
   - cmd: cd ../
   - cmd: cd Binaries
   - cmd: cd %configuration%
-  - ps: 7z a KAIN2-B%GIT_COMMIT_COUNT%-Win32-%configuration%.zip
+  - 7z a KAIN2-B%GIT_COMMIT_COUNT%-Win32-%configuration%.zip
 
 deploy:
   release: B$(GIT_COMMIT_COUNT)
