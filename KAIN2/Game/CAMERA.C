@@ -3867,9 +3867,37 @@ void CAMERA_FollowPlayerTilt(struct Camera *camera, struct _Instance *focusInsta
 
 void CAMERA_FollowGoBehindPlayerWithTimer(struct Camera* camera)
 {
-	struct _Instance* focusInstance; // $s1
+	struct _Instance* focusInstance;
+	
+	focusInstance = camera->focusInstance;
+	
+	if (camera->data.Follow.hit != 0)
+	{
+		camera->data.Follow.stopTimer = 0xE5A20000;
+	}
 
-	UNIMPLEMENTED();
+	if (CAMERA_FocusInstanceMoved(camera) != 0)
+	{
+		CameraCenterDelay *= 139264;
+	}
+	else
+	{
+		if (!(gameTrackerX.streamFlags & 0x100000))
+		{
+			camera->data.Follow.stopTimer += gameTrackerX.timeMult;
+		}
+	}
+
+	if (camera->data.Follow.stopTimer > 0)
+	{
+		Decouple_AngleMoveToward(&camera->targetFocusRotation.z, focusInstance->rotation.z + 2048,  32);
+
+		Decouple_AngleMoveToward(&camera->collisionTargetFocusRotation.z, focusInstance->rotation.z + 2048, 32);
+
+		CriticalDampAngle(1, &camera->focusRotation.z, camera->collisionTargetFocusRotation.z, &camera->focusRotVel.z, &camera->focusRotAccl.z, 32);
+	
+		camera->forced_movement = 1;
+	}
 }
 
 void CAMERA_FollowGoBehindPlayer(struct Camera* camera)
