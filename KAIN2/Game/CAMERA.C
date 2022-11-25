@@ -1282,7 +1282,7 @@ void CAMERA_SetFocus(struct Camera* camera, struct _Position* targetfocusPoint)
 
 	camera->real_focuspoint = *targetfocusPoint;
 
-	if ((camera->instance_mode & 0x2038) || (camera->instance_mode & 0x2000) && camera->focusInstanceVelVec.z >= 71)
+	if (!(camera->instance_mode & 0x2038) || (camera->instance_mode & 0x2000) && camera->focusInstanceVelVec.z >= 71)
 	{
 		camera->focuspoint_fallz = targetfocusPoint->z;
 	}
@@ -3344,7 +3344,7 @@ void CAMERA_GenericCameraProcess(struct Camera* camera)
 	CAMERA_UpdateFocusRotate(camera);
 
 
-	if ((camera->flags & 0x1800))
+	if (!(camera->flags & 0x1800))
 	{
 		_v0 = &camera->targetFocusPoint;
 		_v1 = &camera->focusPoint;
