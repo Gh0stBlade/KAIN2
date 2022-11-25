@@ -720,48 +720,48 @@ void CAMERA_SetMode(struct Camera* camera, long mode)
 #endif
 }
 
-void CAMERA_Initialize(struct Camera *camera)
+extern int rando();
+
+void CAMERA_Initialize(struct Camera* camera)
 {
 	long i;
+	long rand1;
+	long rand2;
 
 	memset(camera, 0, sizeof(struct Camera));
+	//var_s2 = 0;
 
 	for (i = 0; i < 16; i++)
 	{
-#define RAND(i, c) int r = rand(); int r2 = r; if(r < 0) { r2 = r + 255; } camera_shakeOffset[i].c = (r - ((r2 >> 8) << 8)) - 128;
+		rand1 = rand();
+		rand2 = rand1;
 
-		//RAND(i, x);
-		//RAND(i, y);
-		//RAND(i, z);
-
-		int r = rand();
-		int r2 = r;
-
-		if (r < 0)
+		if (rand1 < 0)
 		{
-			r2 = r + 255;
+			rand2 = rand1 & 0xFF;
 		}
 
-		camera_shakeOffset[i].x = (r - ((r2 >> 8) << 8)) - 128;
+		camera_shakeOffset[i].x = (rand1 - ((rand2 >> 8) << 8)) - 128;
 
-		r = rand();
-		r2 = r >> 8;
-		if (r < 0)
-		{
-			r2 = r + 255;
-		}
-		r2 <<= 8;
-		camera_shakeOffset[i].y = (r - r2) - 128;
+		rand1 = rand();
+		rand2 = rand1;
 
-		r = rand();
-		r2 = r >> 8;
-		if (r < 0)
+		if (rand1 < 0)
 		{
-			r2 = r + 255;
+			rand2 = rand1 & 0xFF;
 		}
 
-		r2 <<= 8;
-		camera_shakeOffset[i].z = (r - r2) - 128;
+		camera_shakeOffset[i].y = (rand1 - ((rand2 >> 8) << 8)) - 128;
+
+		rand1 = rand();
+		rand2 = rand1;
+
+		if (rand1 < 0)
+		{
+			rand2 = rand1 & 0xFF;
+		}
+
+		camera_shakeOffset[i].z = (rand1 - ((rand2 >> 8) << 8)) - 128;
 	}
 
 	camera->core.rotation.x = 4039;
@@ -774,12 +774,12 @@ void CAMERA_Initialize(struct Camera *camera)
 	camera->focusDistanceList[0][1] = 2250;
 	camera->focusDistanceList[1][1] = 2000;
 	camera->focusDistanceList[2][2] = 2000;
-	
+
 	camera->focusDistanceList[0][2] = 3200;
 	camera->focusDistanceList[1][2] = 2600;
 	camera->focusDistanceList[2][0] = 1200;
 	camera->focusDistanceList[2][1] = 1600;
-	
+
 	camera->tiltList[0][0] = 4039;
 	camera->tiltList[0][1] = 4039;
 	camera->tiltList[0][2] = 4039;
@@ -1155,27 +1155,137 @@ void CAMERA_CalcPosition(_Position* position, _Position* base, struct _Rotation*
 	position->z = _z1;
 }
 
-void CAMERA_SetFocus(struct Camera *camera, _Position *targetfocusPoint)
+void CAMERA_SetFocus(struct Camera* camera, struct _Position* targetfocusPoint)
 {
-	struct _Instance* focusInstance; // $s0
-	struct _Model* model; // $v0
-	struct _SVector temp1; // stack offset -64
-	struct _SVector offset; // stack offset -56
-	struct _SVector* segPosVector; // $v1
-	struct _Vector temp2; // stack offset -48
-	short _x1; // $v0, v0, v1
-	short _y1; // $a0, v1, a0
-	short _z1; // $v1, a0, v0
-	struct _SVector* _v0; // $s2
-	struct _Position* _v1; // $v0
-	short _x0; // $v0 v0 v1
-	short _y0; // $a2 v0 a0
-	short _z0; //     v1 a1
-	struct _Instance* instance; // $v0
-	struct _SVector output; // stack offset -32
+	struct _Instance* focusInstance;
+	struct _Model* model;
+	struct _SVector temp1;
+	struct _SVector offset;
+	struct _SVector* segPosVector;
+	struct _Vector temp2;
+	short _x1;
+	short _y1;
+	short _z1;
+	struct _SVector* _v0;
+	struct _Position* _v1;
+	short _x0;
+	short _y0;
+	short _z0;
+	struct _Instance* instance;
+	struct _SVector output;
 
-	///@TODO
-	UNIMPLEMENTED();
+	focusInstance = camera->focusInstance;
+
+	if ((camera->flags & 0x10000) || (camera->instance_mode & 0x4000000))
+	{
+		model = focusInstance->object->modelList[focusInstance->currentModel];
+
+		_v0 = &temp1;
+
+		segPosVector = (struct _SVector*)&model->segmentList[1].px;
+
+		_x0 = segPosVector->x;
+		_y0 = segPosVector->y;
+		_z0 = segPosVector->z;
+
+		_x1 = _v0->x;
+		_y1 = _v0->y;
+		_z1 = _v0->z;
+
+		ApplyMatrix(focusInstance->matrix + 1, (SVECTOR*)_v0, (VECTOR*)&temp2);
+
+		_v1 = &focusInstance->position;
+
+		_x1 = _v1->x;
+		_y1 = _v1->y;
+		_z1 = _v1->z;
+
+		targetfocusPoint->x = _x1;
+		targetfocusPoint->y = _y1;
+		targetfocusPoint->z = _z1;
+
+		if ((camera->flags & 0x10000))
+		{
+			_x0 = targetfocusPoint->x;
+			_y0 = targetfocusPoint->y;;
+			_z0 = targetfocusPoint->z;
+
+			_x1 = _v0->x;
+			_y1 = _v0->y;
+			_z1 = _v0->z;
+
+			_x0 += _x1;
+			_y0 += _y1;
+			_z0 += _z1;
+
+			targetfocusPoint->x = _x0;
+			targetfocusPoint->y = _y0;
+			targetfocusPoint->z = _z0;
+
+			if ((INSTANCE_Query(focusInstance, 0x9) & 0x40))
+			{
+				targetfocusPoint->z += 192;
+			}
+		}
+
+		camera->real_focuspoint = *targetfocusPoint;
+	}
+	else
+	{
+		if ((camera->instance_mode & 0x2000000))
+		{
+			_v1 = &focusInstance->position;
+
+			if ((unsigned int)(camera->mode - 12) < 2)
+			{
+				if (INSTANCE_Query(focusInstance, 0x22) != 0)
+				{
+					_v0 = &output;
+
+					LoadAverageShort12((SVECTOR*)&focusInstance->position, (SVECTOR*)&focusInstance->position, 4096 - combat_cam_weight, combat_cam_weight, (SVECTOR*)_v0);
+
+					_x0 = _v0->x;
+					_y0 = _v0->y;
+					_z0 = _v0->z;
+
+					targetfocusPoint->x = _x0;
+					targetfocusPoint->y = _y0;
+					targetfocusPoint->z = _z0;
+				}
+			}
+		}
+
+		_v1 = &focusInstance->position;
+	}
+
+	_x0 = _v1->x;
+	_y0 = _v1->y;
+	_z0 = _v1->z;
+
+	targetfocusPoint->x = _x0;
+	targetfocusPoint->y = _y0;
+	targetfocusPoint->z = _z0;
+
+	CAMERA_CalcFocusOffset(&offset, camera);
+
+	_x0 = targetfocusPoint->x;
+	_y0 = targetfocusPoint->y;
+	_z0 = targetfocusPoint->z;
+
+	_x1 = offset.x;
+	_y1 = offset.y;
+	_z1 = offset.z;
+
+	targetfocusPoint->x = _x0 + _x1;
+	targetfocusPoint->y = _y0 + _y1;
+	targetfocusPoint->z = _z0 + _z1;
+
+	camera->real_focuspoint = *targetfocusPoint;
+
+	if ((camera->instance_mode & 0x2038) || (camera->instance_mode & 0x2000) && camera->focusInstanceVelVec.z >= 71)
+	{
+		camera->focuspoint_fallz = targetfocusPoint->z;
+	}
 }
 
 void CAMERA_Lock(struct Camera* camera, long lock)
