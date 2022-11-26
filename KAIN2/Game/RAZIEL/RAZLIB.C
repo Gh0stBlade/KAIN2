@@ -505,6 +505,8 @@ int razZeroAxis(long* x, long* y, int radius)
 	*x = 0;
 	*y = 0;
 
+	return distance;
+
 #elif defined(PC_VERSION)
 	int result; // eax
 
