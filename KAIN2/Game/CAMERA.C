@@ -33,6 +33,26 @@ short combat_cam_weight;
 
 short CameraLookStickyFlag;
 
+long cameraMode;
+
+long camera_modeToIndex[] = {
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	1,
+	2,
+	0,
+};
+
 void CAMERA_CalculateViewVolumeNormals(struct Camera *camera)
 {
 	short projDistance;
@@ -477,38 +497,91 @@ void CAMERA_SetMode(struct Camera* camera, long mode)
 	case 11:
 	{
 		//loc_80015BB4
-		break;
-	}
-	}
 #if 0
 
 		loc_80015BB4:            # jumptable 80015AA4 cases 10, 11
-		lh      $a1, 0xF0($s2)
-		jal     sub_80015074
-		move    $a0, $s2
-		li      $v0, 5
-		bne     $s3, $v0, loc_80015BD4
-		move    $a0, $s2
-		jal     sub_80015854
-		li      $a1, 7
+			lh      $a1, 0xF0($s2)
+			jal     sub_80015074
+			move    $a0, $s2
+			li      $v0, 5
+			bne     $s3, $v0, loc_80015BD4
+			move    $a0, $s2
+			jal     sub_80015854
+			li      $a1, 7
 
-		loc_80015BD4:
-	jal     sub_80014FD0
-		move    $a0, $s2
+			loc_80015BD4:
+		jal     sub_80014FD0
+			move    $a0, $s2
+#endif
+		break;
+	}
+	}
 
-		def_80015AA4 : # jumptable 80015AA4 default case, cases 1, 5 - 9
-		sltiu   $v0, $s3, 0x11
+	if (mode < 17)
+	{
+		switch (mode)
+		{
+		case 0:
+		case 10:
+		case 11:
+		{
+#if 0
+			loc_80015EA4:            # jumptable 80015BFC cases 0, 10, 11
+				lhu     $v0, 0x1A8($s2)
+				nop
+				sh      $v0, 0x1B0($s2)
+				ulw     $t1, 0x1B2($s2)
+				ulw     $t2, 0x1B6($s2)
+				usw     $t1, 0x1BC($s2)
+				usw     $t2, 0x1C0($s2)
+#endif
+			break;
+		}
+		case 12:
+		case 13:
+		case 16:
 
-		loc_80015BE0:            # jumptable 80015BFC default case, cases 1, 3, 6 - 9, 14, 15
-		beqz    $v0, def_80015BFC
-		lui     $v0, 0x8001
-		li      $v0, jpt_80015BFC
-		sll     $v1, $s3, 2
-		addu    $v1, $v0
-		lw      $v0, 0($v1)
-		nop
-		jr      $v0              # switch jump
-		nop
+			CAMERA_SetProjDistance(camera, 320);
+
+			if (mode == 16)
+			{
+				mode = 12;
+
+				camera->flags |= 0x2000;
+			}
+			else
+			{
+				//loc_80015E08
+				camera->flags &= 0xFFFFDFFF;
+			}
+
+			cameraMode = mode;
+
+			gameTrackerX.gameFlags &= 0xFFFFFFBF;
+
+			camera->mode = mode;
+
+			camera->smooth = 8;
+
+			camera->data.Follow.stopTimer = 0xE5A20000;
+
+			camera->focusRotVel.z = 0;
+
+			camera->targetFocusDistance = camera->focusDistanceList[camera_modeToIndex[mode]][camera->lookSavedMode];
+
+			if (oldMode == 5)
+			{
+				if (camera->focusInstance != NULL)
+				{
+					CAMERA_SetFocus(camera, &camera->targetFocusPoint);
+				}
+			}
+			//loc_80015EA4
+			break;
+		}
+	}
+	//def_80015BFC
+#if 0
 
 		loc_80015C04 : # jumptable 80015BFC cases 2, 4, 5
 		move    $a0, $s2
@@ -643,71 +716,12 @@ void CAMERA_SetMode(struct Camera* camera, long mode)
 		j       loc_80015EA4     # jumptable 80015BFC cases 0, 10, 11
 		sw      $v0, 0xE8($s2)
 
-		loc_80015DE0:            # jumptable 80015BFC cases 12, 13, 16
-		move    $a0, $s2
-		jal     sub_80014F2C
-		li      $a1, 0x140
-		li      $v0, 0x10
-		bne     $s3, $v0, loc_80015E08
-		li      $v1, 0xFFFFDFFF
-		lw      $v0, 0xE8($s2)
-		li      $s3, 0xC
-		j       loc_80015E14
-		ori     $v0, 0x2000
-
-		loc_80015E08:
-	lw      $v0, 0xE8($s2)
-		nop
-		and $v0, $v1
-
-		loc_80015E14 :
-	sw      $v0, 0xE8($s2)
-		lw      $v0, -0x40F8($gp)//gameTrackerX.gameFlags
-		li      $v1, 0xFFFFFFBF
-		sw      $s3, -0x6E8C($gp)
-		and $v0, $v1
-		sw      $v0, -0x40F8($gp)//gameTrackerX.gameFlags
-		sll     $v0, $s3, 16
-		sra     $v0, 14
-		addiu   $v1, $gp, -0x71F8
-		addu    $v0, $v1
-		sh      $s3, 0xF0($s2)
-		lw      $a0, 0($v0)
-		lh      $v1, 0x1F4($s2)
-		sll     $v0, $a0, 1
-		addu    $v0, $a0
-		addu    $v0, $v1
-		sll     $v0, 2
-		addu    $v0, $s2, $v0
-		lhu     $v1, 0x22C($v0)
-		li      $v0, 8
-		sh      $v0, 0x1C4($s2)
-		lui     $v0, 0xE5A2
-		sw      $v0, 0x470($s2)
-		li      $v0, 5
-		sh      $zero, 0x170($s2)
-		bne     $s0, $v0, loc_80015EA4  # jumptable 80015BFC cases 0, 10, 11
-		sh      $v1, 0x1A8($s2)
-		lw      $v0, 0x108($s2)
-		nop
-		beqz    $v0, loc_80015EA4  # jumptable 80015BFC cases 0, 10, 11
-		move    $a0, $s2
-		jal     sub_80016AE4
-		addiu   $a1, $s2, 0x1AA
-		j       loc_80015EA4     # jumptable 80015BFC cases 0, 10, 11
-		nop
+		
 
 		def_80015BFC : # jumptable 80015BFC default case, cases 1, 3, 6 - 9, 14, 15
 		sh      $s3, 0xF0($s2)
 
-		loc_80015EA4:            # jumptable 80015BFC cases 0, 10, 11
-		lhu     $v0, 0x1A8($s2)
-		nop
-		sh      $v0, 0x1B0($s2)
-		ulw     $t1, 0x1B2($s2)
-		ulw     $t2, 0x1B6($s2)
-		usw     $t1, 0x1BC($s2)
-		usw     $t2, 0x1C0($s2)
+		
 
 		loc_80015ED0:
 	lw      $ra, 0x30 + var_s10($sp)
@@ -4696,7 +4710,7 @@ void CAMERA_FollowGoBehindPlayerWithTimer(struct Camera* camera)
 	}
 	else
 	{
-		if (!(gameTrackerX.streamFlags & 0x100000))
+		if ((gameTrackerX.streamFlags & 0x100000))
 		{
 			camera->data.Follow.stopTimer += gameTrackerX.timeMult;
 		}
