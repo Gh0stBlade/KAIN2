@@ -2200,7 +2200,7 @@ void CriticalDampAngle(long dampMode, short* currentVal, short target, short* ve
 
 	current = (currentVal[0] & 0xFFF);
 	
-	if (target >= current)
+	if (target - current >= 2048)
 	{
 		current = current + 4096;
 	}
