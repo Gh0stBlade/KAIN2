@@ -108,9 +108,9 @@ extern int gte_ldlzc(int input);
 	VZ0 = ((unsigned int*)r0)[2];           \
 
 #define gte_ldlvl( r0 ) \
-	((int*)&VX0)[0] = ((int*)r0)[0];       \
-	((int*)&VZ0)[0] = ((int*)r0)[1];       \
-	((int*)&VX1)[0] = ((int*)r0)[2];
+	((int*)&IR1)[0] = ((int*)r0)[0];       \
+	((int*)&IR2)[0] = ((int*)r0)[1];       \
+	((int*)&IR3)[0] = ((int*)r0)[2];
 
 #define gte_ldsv( r0 )	\
 	((int*)&IR1)[0] = ((unsigned short*)r0)[0];       \
