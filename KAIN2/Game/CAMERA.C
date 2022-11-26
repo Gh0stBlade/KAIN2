@@ -525,6 +525,7 @@ void CAMERA_SetMode(struct Camera* camera, long mode)
 		case 10:
 		case 11:
 		{
+			assert(FALSE);
 #if 0
 			loc_80015EA4:            # jumptable 80015BFC cases 0, 10, 11
 				lhu     $v0, 0x1A8($s2)
@@ -577,6 +578,9 @@ void CAMERA_SetMode(struct Camera* camera, long mode)
 				}
 			}
 			//loc_80015EA4
+
+			camera->collisionTargetFocusDistance = camera->targetFocusDistance;
+			camera->collisionTargetFocusRotation = camera->targetFocusRotation;
 			break;
 		}
 	}
@@ -962,25 +966,17 @@ void CAMERA_SetValue(struct Camera *camera, long index, long value)
 
 short CAMERA_AngleDifference(short angle0, short angle1)
 {
+	long temp;///@FIXME not in original, likely macro used for swap.
 	angle0 &= 0xFFF;
 	angle1 &= 0xFFF;
 
 #define GET_ANGLE(x, y) ((x - y) > 2048) ? (x | 4096) : (x)
+	
+	temp = angle0;
+	angle0 = (GET_ANGLE(angle0, angle1) < angle0 ? angle0 : angle1);
+	angle1 = (GET_ANGLE(angle1, angle0) < angle1 ? angle1 : temp);
 
-	angle0 = GET_ANGLE(angle0, angle1);
-	angle1 = GET_ANGLE(angle1, angle0);
-
-	if (angle1 < angle0)
-	{
-		angle1 = angle0;
-	}
-
-	if (angle0 < angle1)
-	{
-		angle0 = angle1;
-	}
-
-	return angle1 - angle0;
+	return angle0 - angle1;
 }
 
 short CAMERA_SignedAngleDifference(short angle0, short angle1)
@@ -4707,7 +4703,7 @@ void CAMERA_FollowGoBehindPlayerWithTimer(struct Camera* camera)
 	}
 	else
 	{
-		if ((gameTrackerX.streamFlags & 0x100000))
+		if (!(gameTrackerX.streamFlags & 0x100000))
 		{
 			camera->data.Follow.stopTimer += gameTrackerX.timeMult;
 		}
