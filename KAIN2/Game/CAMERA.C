@@ -4511,193 +4511,119 @@ void CAMERA_UpdateFocusRotate(struct Camera* camera)
 
 void CAMERA_UpdateFocusRotationX(struct Camera* camera, struct _Instance* focusInstance)
 {
-#if defined(PSXPC_VERSION) && defined(PSX_VERSION)
-	short cameraPlayerRotX; // $a1
-	short dist; // $s1
-	short tfaceFlag; // $s2
-	struct _Normal normal; // stack offset -24
-	int mult; // $v1
-	int tmpsmooth; // $t0
+	short cameraPlayerRotX;
+	short dist;
+	short tfaceFlag;
+	struct _Normal normal;
+	int mult;
+	int tmpsmooth;
 
-	//s0 = camera
-	//a0 = camera->core.rotation.z
 	dist = camera->targetFocusDistance;
+
 	tfaceFlag = 0;
 
-	//v0 = focusInstance->tface->textoff
-	//v1 = ((char*)((struct _Terrain*)focusInstance->tfaceLevel)->StartTextureList) + focusInstance->tface->textoff;
-	if (focusInstance->tface != NULL && focusInstance->tfaceLevel != NULL && focusInstance->tface->textoff != 0xFFFF)
+	if (focusInstance->tface != NULL && ((struct Level*)focusInstance->tfaceLevel)->terrain != NULL)
 	{
-		if (((struct TextureFT3*)((char*)((struct _Terrain*)focusInstance->tfaceLevel)->StartTextureList) + focusInstance->tface->textoff)->attr & 0x80000)
+		if (((struct _TFace*)focusInstance->tface)->textoff != 0xFFFF)
 		{
-			if (dist < 2912)
+			if (((struct TextureFT3*)((char*)((struct Level*)focusInstance->tfaceLevel)->terrain->StartTextureList) + ((struct _TFace*)focusInstance->tface)->textoff)->attr & 0x8000)
 			{
-				//v0 = tfaceFlag
-				COLLIDE_GetNormal(focusInstance->tface->normal, (short*)((struct _Terrain*)focusInstance->tfaceLevel)->normalList, (_SVector*)&normal);
-			
-				//v0 = tface_flag
-				if (normal.y < 3950)
+				if (dist < 2912)
 				{
-					tfaceFlag = 1;
+					COLLIDE_GetNormal(((struct _TFace*)focusInstance->tface)->normal, (short*)((struct Level*)focusInstance->tfaceLevel)->terrain->normalList, (struct _SVector*)&normal);
+				
+					if (normal.z < 3950)
+					{
+						tfaceFlag = 1;
 
-					//a1 = camera->focusRotation.z
-					//a0 = &normal
-					int x = CAMERA_CalcTilt(&normal, camera->focusRotation.z);
-					int tilt = ((x * 8) + x);
-					tilt < 0 ? ((tilt + 15) >> 4) : tilt >> 4;
-					camera->targetTilt = tilt;
+						camera->targetTilt = CAMERA_CalcTilt(&normal, camera->focusRotation.z) * 9;
+						if(camera->targetTilt < 0)
+						{
+							camera->targetTilt += 15;
+						}
 
-					//v0 = camera->targetTilt
-					//continue this here
+						camera->targetTilt >>= 4;
+
+						if (camera->targetTilt < -256)
+						{
+							camera->targetTilt = -256;
+						}
+						else if (camera->targetTilt >= 257)
+						{
+							camera->targetTilt = 256;
+						}
+
+						if ((2912 - dist) < 512)
+						{
+							camera->targetTilt = camera->targetTilt * (2912 - dist);
+
+							if (camera->targetTilt < 0)
+							{
+								camera->targetTilt = 511;
+							}
+
+							camera->targetTilt >>= 9;
+						}
+
+						CriticalDampAngle(1, &camera->tilt, camera->targetTilt, &camera->tiltVel, &camera->tiltAccl, 8);
+					}
 				}
-				//loc_8001C93C
 			}
-			//loc_8001C93C
 		}
-		//loc_8001C938
 	}
-	//loc_8001C938
-#endif
-#if 0
-		sh      $v0, 0x19E($s0)
-		sll     $v0, 16
-		sra     $v1, $v0, 16
-		slti    $v0, $v1, -0x100
-		bnez    $v0, loc_8001C8D0
-		li      $v0, 0xFFFFFF00
-		slti    $v0, $v1, 0x101
-		bnez    $v0, loc_8001C8D8
-		sll     $v0, $s1, 16
-		li      $v0, 0x100
 
-		loc_8001C8D0:
-	sh      $v0, 0x19E($s0)
-		sll     $v0, $s1, 16
+	if (tfaceFlag == 0)
+	{
+		tmpsmooth = 24;
 
-		loc_8001C8D8 :
-		sra     $v0, 16
-		li      $v1, 0xB60
-		subu    $v1, $v0
-		slti    $v0, $v1, 0x200
-		beqz    $v0, loc_8001C918
-		li      $a0, 1
-		lh      $v0, 0x19E($s0)
-		nop
-		mult    $v0, $v1
-		mflo    $v0
-		bgez    $v0, loc_8001C90C
-		nop
-		addiu   $v0, 0x1FF
+		if (!(camera->instance_mode & 0x38))
+		{
+			camera->targetTilt = 0;
+		}
 
-		loc_8001C90C:
-	sra     $v0, 9
-		sh      $v0, 0x19E($s0)
-		li      $a0, 1
+		if ((camera->instance_mode & 0x2000))
+		{
+			if (camera->real_focuspoint.z < camera->focuspoint_fallz)
+			{
+				camera->targetTilt = -384;
 
-		loc_8001C918 :
-		addiu   $a1, $s0, 0xFE
-		addiu   $a3, $s0, 0x144
-		lh      $a2, 0x19E($s0)
-		addiu   $v0, $s0, 0x146
-		sw      $v0, 0x20 + var_10($sp)
-		li      $v0, 8
-		jal     sub_800179F8
-		sw      $v0, 0x20 + var_C($sp)
+				tmpsmooth = 12;
+			}
+		}
 
-		loc_8001C938:
-	move    $v0, $s2
+		CriticalDampAngle(1, &camera->tilt, camera->targetTilt, &camera->tiltVel, &camera->tiltAccl, tmpsmooth);
+	}
 
-		loc_8001C93C :
-	bnez    $v0, loc_8001C9B0
-		nop
-		lw      $v0, 0x49C($s0)
-		nop
-		andi    $v0, 0x38
-		bnez    $v0, loc_8001C95C
-		li      $t0, 0x18
-		sh      $zero, 0x19E($s0)
+	cameraPlayerRotX = ((camera->extraXRot + camera->targetFocusRotation.x + camera->tilt) & 0xFFF);
 
-		loc_8001C95C:
-	lw      $v0, 0x49C($s0)
-		nop
-		andi    $v0, 0x2000
-		beqz    $v0, loc_8001C994
-		li      $a0, 1
-		lh      $v0, 0x4AC($s0)
-		lh      $v1, 0x4BA($s0)
-		nop
-		slt     $v0, $v1
-		beqz    $v0, loc_8001C994
-		li      $v0, 0xFFFFFE80
-		sh      $v0, 0x19E($s0)
-		li      $t0, 0xC
-		li      $a0, 1
+	if (cameraPlayerRotX - 769 < 1279)
+	{
+		cameraPlayerRotX = 768;
+	}
+	else
+	{
+		if (cameraPlayerRotX - 2048 < 1280)
+		{
+			cameraPlayerRotX = -768;
+		}
+	}
 
-		loc_8001C994:
-	addiu   $a1, $s0, 0xFE
-		addiu   $a3, $s0, 0x144
-		lh      $a2, 0x19E($s0)
-		addiu   $v0, $s0, 0x146
-		sw      $v0, 0x20 + var_10($sp)
-		jal     sub_800179F8
-		sw      $t0, 0x20 + var_C($sp)
+	cameraPlayerRotX = cameraPlayerRotX & 0xFFF;
 
-		loc_8001C9B0:
-	lhu     $v1, 0x1B2($s0)
-		lhu     $a0, 0xFE($s0)
-		lhu     $v0, 0x48C($s0)
-		addu    $v1, $a0
-		addu    $v0, $v1
-		andi    $v1, $v0, 0xFFF
-		addiu   $v0, $v1, -0x301
-		sltiu   $v0, 0x4FF
-		beqz    $v0, loc_8001C9E0
-		move    $a1, $v1
-		j       loc_8001C9F4
-		li      $a1, 0x300
+	camera->tfaceTilt = cameraPlayerRotX;
+	
+	if ((camera->instance_mode & 0x2000000))
+	{
+		if (cameraPlayerRotX >= 2049)
+		{
+			cameraPlayerRotX |= 0xF000;
+		}
 
-		loc_8001C9E0:
-	addiu   $v0, $v1, -0x800
-		sltiu   $v0, 0x500
-		beqz    $v0, loc_8001C9F8
-		andi    $a0, $a1, 0xFFF
-		li      $a1, 0xFFFFFD00
-
-		loc_8001C9F4 :
-		andi    $a0, $a1, 0xFFF
-
-		loc_8001C9F8 :
-		move    $a1, $a0
-		lw      $v0, 0x49C($s0)
-		lui     $v1, 0x200
-		and $v0, $v1
-		beqz    $v0, loc_8001CA40
-		sh      $a0, 0x1BA($s0)
-		slti    $v0, $a0, 0x801
-		bnez    $v0, loc_8001CA24
-		sll     $v0, $a1, 16
-		ori     $a1, $a0, 0xF000
-		sll     $v0, $a1, 16
-
-		loc_8001CA24:
-	lh      $v1, -0x542A($gp)
-		sra     $v0, 16
-		slt     $v1, $v0
-		lhu     $v0, -0x542A($gp)
-		beqz    $v1, loc_8001CA40
-		addiu   $v0, 0x1000
-		sh      $v0, 0x1BA($s0)
-
-		loc_8001CA40:
-	lw      $ra, 0x20 + var_sC($sp)
-		lw      $s2, 0x20 + var_s8($sp)
-		lw      $s1, 0x20 + var_s4($sp)
-		lw      $s0, 0x20 + var_s0($sp)
-		jr      $ra
-		addiu   $sp, 0x30
-#endif
-
-
+		if (combat_cam_angle < cameraPlayerRotX)
+		{
+			camera->tfaceTilt = combat_cam_angle | 0x1000;
+		}
+	}
 }
 
 
