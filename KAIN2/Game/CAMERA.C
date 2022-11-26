@@ -1585,7 +1585,7 @@ void CriticalDampValue(long dampMode, short *sourceVal, short targetVal, short *
 			}
 			else
 			{
-				accl[0] = ((targetVal - sourceVal[0]) >> 12) - vel[0];
+				accl[0] = ((targetVal - sourceVal[0]) >> 18) - vel[0];
 
 				useVel = vel[0] + accl[0];
 
@@ -4352,19 +4352,16 @@ void CAMERA_UpdateFocusTilt(struct Camera* camera)
 	{
 		camera->x_rot_change = camera->focusRotation.x;
 
-		if (camera->forced_movement == 3 || (camera->lock & 0x2))
+		if (camera->forced_movement != 3 && !(camera->lock & 0x2) || (camera->flags & 0x10000))
 		{
-			if ((camera->flags & 0x10000))
-			{
-				CriticalDampAngle(1, &camera->focusRotation.x, camera->tfaceTilt, &camera->focusRotVel.x, &camera->focusRotAccl.x, 32);
-			}
-			else
-			{
-				camera->focusRotation.x = camera->targetFocusRotation.x;
-			}
-
-			camera->x_rot_change = CAMERA_SignedAngleDifference(camera->x_rot_change, camera->focusRotation.x);
+			CriticalDampAngle(1, &camera->focusRotation.x, camera->tfaceTilt, &camera->focusRotVel.x, &camera->focusRotAccl.x, 32);
 		}
+		else
+		{
+			camera->focusRotation.x = camera->targetFocusRotation.x;
+		}
+
+		camera->x_rot_change = CAMERA_SignedAngleDifference(camera->x_rot_change, camera->focusRotation.x);
 	}
 }
 
