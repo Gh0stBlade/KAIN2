@@ -525,7 +525,6 @@ void CAMERA_SetMode(struct Camera* camera, long mode)
 		case 10:
 		case 11:
 		{
-			assert(FALSE);
 #if 0
 			loc_80015EA4:            # jumptable 80015BFC cases 0, 10, 11
 				lhu     $v0, 0x1A8($s2)
