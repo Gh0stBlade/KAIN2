@@ -4902,7 +4902,7 @@ void CAMERA_CalcFollowPosition(struct Camera* camera, struct _Rotation* rotation
 
 		hypotXY = MATH3D_FastSqrt0(dpv.x + dpv.y);
 
-		diff = ratan2(camera->real_focuspoint.z - camera->targetPos.x, hypotXY);
+		diff = ratan2(camera->real_focuspoint.z - camera->targetPos.z, hypotXY);
 
 		target_rotx = diff;
 
