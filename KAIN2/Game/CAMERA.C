@@ -1571,7 +1571,7 @@ void CriticalDampValue(long dampMode, short *sourceVal, short targetVal, short *
 			}
 			else
 			{
-				accl[0] = ((targetVal - sourceVal[0]) > 12) - vel[0];
+				accl[0] = ((targetVal - sourceVal[0]) >> 12) - vel[0];
 
 				useVel = vel[0] + accl[0];
 
