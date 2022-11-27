@@ -59,13 +59,13 @@ void EnMessageQueue(struct __MessageQueue* In, struct __Event* Element)
 	EnMessageQueueData(In, Element->ID, Element->Data);
 }
 
-void EnMessageQueueData(struct __MessageQueue* In, int ID, int Data)
+void EnMessageQueueData(struct __MessageQueue* In, int ID, int Data)//Matching - 100%
 {
 	int i;
 
 	In->Queue[In->Tail].ID = ID;
 	In->Queue[In->Tail].Data = Data;
-	
+
 	if (++In->Tail == 16)
 	{
 		In->Tail = 0;
@@ -75,16 +75,14 @@ void EnMessageQueueData(struct __MessageQueue* In, int ID, int Data)
 
 	if (i == In->Tail)
 	{
-		i++;
-
 		do
 		{
-			if (i == 16)
+			if (++i == 16)
 			{
 				i = 0;
 			}
 
-		} while (i++ != In->Tail);
+		} while (i != In->Tail);
 	}
 }
 
