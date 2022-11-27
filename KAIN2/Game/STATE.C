@@ -44,14 +44,14 @@ void PurgeMessageQueue(struct __MessageQueue* In)
 	In->Head = 0;
 }
 
-struct __Event* PeekMessageQueue(struct __MessageQueue* In)
+struct __Event* PeekMessageQueue(struct __MessageQueue* In)//Matching - 100%
 {
-	if (In->Head != In->Tail)
+	if (In->Head == In->Tail)
 	{
-		return &In->Queue[In->Head];
+		return NULL;
 	}
-	
-	return NULL;
+
+	return &In->Queue[In->Head];
 }
 
 void EnMessageQueue(struct __MessageQueue* In, struct __Event* Element)
