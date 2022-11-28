@@ -4,6 +4,10 @@
 #include "Game/MATH3D.H"
 #include "Game/RAZIEL/RAZLIB.H"
 #include "Game/CAMERA.H"
+#include "Game/G2/ANMCTRLR.H"
+#include "Game/STATE.H"
+#include "Game/GAMEPAD.H"
+#include "Game/RAZCNTRL.H"
 
 int ZoneDelta;
 int LastRC;
@@ -280,37 +284,96 @@ int ProcessMovement(struct _Instance* instance, long* controlCommand, struct Gam
 		//def_800A2504
 		break;
 	}
+	case 1:
+	{
+		Raziel.steeringVelocity = 256;
+
+		SteerTurn(instance, rc);
+
+		return rc;
+
+		break;
+	}
+	case 2:
+	{
+		SteerMove(instance, rc);
+
+		return rc;
+
+		break;
+	}
+	case 4:
+	{
+		rot.y = 0;
+		rot.x = 0;
+		rot.z = Raziel.steeringLockRotation - Raziel.LastBearing;
+
+		instance->rotation.z = Raziel.LastBearing;
+
+		if (rc != 0)
+		{
+			if (Raziel.Mode == 16)
+			{
+				instance->yVel = 40;
+			}
+			else
+			{
+				instance->yVel = 21;
+			}
+		}
+	
+		G2Anim_SetController_Vector(&instance->anim, 1, 0xE, &rot);
+
+		return rc;
+	}
+	case 5:
+	case 9:
+	{
+		if (rc != 0)
+		{
+			rc = SteerAutoFace(instance, controlCommand);
+
+			return rc;
+		}
+		else
+		{
+			if ((PadData[0] & RazielCommands[7]))
+			{
+				if ((Raziel.Senses.EngagedMask & 0x40))
+				{
+					SteerDisableAutoFace(instance);
+
+					Raziel.steeringVelocity = 128;
+
+					AngleMoveToward(&instance->rotation.z, MATH3D_AngleFromPosToPos(&instance->position, &Raziel.Senses.EngagedList[6].instance->position), gameTrackerX.timeMult >> 5);
+
+				}
+			}
+		}
+
+		return rc;
+
+		break;
+	}
+	case 11:
+	{
+		if (G2Anim_IsControllerActive(&instance->anim, 1, 0xE) == 0)
+		{
+			G2Anim_EnableController(&instance->anim, 1, 0xE);
+		}
+
+		G2EmulationSetInterpController_Vector(instance, 1, 0xE, &Raziel.extraRot, 5, 0);
+		
+		Raziel.steeringVelocity = 256;
+		
+		SteerTurn(instance, rc);
+
+		return rc;
+
+		break;
+	}
 	}
 #if 0
-		loc_800A250C : # jumptable 800A2504 case 11
-		addiu   $s0, $s1, 0x1C8
-		move    $a0, $s0
-		li      $a1, 1
-		jal     sub_80090794
-		li      $a2, 0xE
-		bnez    $v0, loc_800A253C
-		move    $a0, $s1
-		move    $a0, $s0
-		li      $a1, 1
-		jal     sub_80090558
-		li      $a2, 0xE
-		move    $a0, $s1
-
-		loc_800A253C :
-	li      $a1, 1
-		li      $a2, 0xE
-		addiu   $a3, $gp, -0x4C0
-		li      $v0, 5
-		sw      $v0, 0x30 + var_20($sp)
-		jal     sub_8007299C
-		sw      $zero, 0x30 + var_1C($sp)
-
-		
-
-		loc_800A2570 : # jumptable 800A2504 case 1
-		j       loc_800A2584
-		li      $v0, 0x100
-
 		loc_800A2578:            # jumptable 800A2504 case 18
 		j       loc_800A2584
 		li      $v0, 0x40  # '@'
@@ -318,47 +381,14 @@ int ProcessMovement(struct _Instance* instance, long* controlCommand, struct Gam
 		loc_800A2580:            # jumptable 800A2504 case 8
 		li      $v0, 0x60  # '`'
 
-		loc_800A2584:
-			sh      $v0, -0x644($gp)
 				move    $a0, $s1
 				jal     sub_800A28BC
 				move    $a1, $s2
 				j       loc_800A28A4
 				move    $v0, $s2
 
-				loc_800A259C : # jumptable 800A2504 case 2
-				move    $a0, $s1
-				jal     sub_800A2950
-				move    $a1, $s2
-				j       loc_800A28A4
-				move    $v0, $s2
+				
 
-				loc_800A25B0 : # jumptable 800A2504 case 4
-				lhu     $v0, -0x640($gp)
-				lhu     $v1, -0x64A($gp)
-				sh      $zero, 0x30 + var_16($sp)
-				sh      $zero, 0x30 + var_18($sp)
-				subu    $v0, $v1
-				sh      $v0, 0x30 + var_14($sp)
-				beqz    $s2, loc_800A25E8
-				sh      $v1, 0x78($s1)
-				lw      $v1, -0x670($gp)
-				li      $v0, 0x10
-				bne     $v1, $v0, loc_800A25E4
-				li      $v0, 0x15
-				li      $v0, 0x28  # '('
-
-				loc_800A25E4:
-			sw      $v0, 0x178($s1)
-
-				loc_800A25E8 :
-				addiu   $a0, $s1, 0x1C8
-				li      $a1, 1
-				li      $a2, 0xE
-				jal     sub_800909F4
-				addiu   $a3, $sp, 0x30 + var_18
-				j       loc_800A28A4
-				move    $v0, $s2
 
 				loc_800A2604 : # jumptable 800A2504 case 14
 				lw      $v0, -0x33C($gp)
@@ -416,45 +446,7 @@ int ProcessMovement(struct _Instance* instance, long* controlCommand, struct Gam
 				j       loc_800A281C
 				sll     $a2, 11
 
-				loc_800A26D4:            # jumptable 800A2504 cases 5, 9
-				beqz    $s2, loc_800A26EC
-				move    $a0, $s1
-
-				loc_800A26DC :
-			jal     sub_800A2A00
-				move    $a1, $s0
-				j       def_800A2504     # jumptable 800A2504 default case, case 3
-				move    $s2, $v0
-
-				loc_800A26EC :
-			lw      $v0, -0x33C($gp)
-				lw      $v1, -0x5B60($gp)
-				lw      $v0, 0($v0)
-				nop
-				and $v0, $v1
-				beqz    $v0, loc_800A28A4
-				move    $v0, $s2
-				lw      $v0, -0x5F4($gp)
-				nop
-				andi    $v0, 0x40
-				beqz    $v0, loc_800A28A4
-				move    $v0, $s2
-				jal     sub_800A2DB8
-				move    $a0, $s1
-				lw      $v0, -0x5F8($gp)
-				nop
-				lw      $a1, 0x30($v0)
-				addiu   $a0, $s1, 0x5C  # '\'
-				jal     sub_8003A21C
-				addiu   $a1, 0x5C  # '\'
-				addiu   $a0, $s1, 0x78  # 'x'
-				sll     $v0, 16
-				sra     $a1, $v0, 16
-				lw      $a2, -0x3FF8($gp)
-				li      $v0, 0x80
-				sh      $v0, -0x644($gp)
-				j       loc_800A281C
-				sll     $a2, 11
+				
 
 				loc_800A275C:            # jumptable 800A2504 cases 6, 17
 				beqz    $s2, loc_800A2770
@@ -569,7 +561,7 @@ int ProcessMovement(struct _Instance* instance, long* controlCommand, struct Gam
 				addiu   $sp, 0x40
 #endif
 
-	return 0;
+	return rc;
 }
 
 
