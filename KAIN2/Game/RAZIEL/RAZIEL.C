@@ -1,3 +1,5 @@
+
+
 #include "Game/CORE.H"
 #include "Game/PLAYER.H"
 #include "RAZIEL.H"
@@ -25,6 +27,8 @@
 #include "Game/TIMER.H"
 #include "Game/RAZIEL/STEERING.H"
 #include "Game/RAZIEL/ALGOCTRL.H"
+#include "Game/RAZIEL/PUPPET.H"
+#include "Game/RAZIEL/ATTACK.H"
 
 struct RazielData* PlayerData;
 struct _G2AnimInterpInfo_Type razInterpInfo[3];
@@ -188,8 +192,8 @@ void StateHandlerIdle(struct __CharacterState* In, int CurrentSection, int Data)
 	//s3 = 1
 	Anim = G2EmulationQueryAnimation(In, CurrentSection);
 
-	//s4 = In->SectionList[CurrentSection].;
-	//a0 = In->SectionList[CurrentSection].Event;
+	//s4 = &In->SectionList[CurrentSection];
+	//a0 = &In->SectionList[CurrentSection].Event;
 
 	//loc_800A8560
 	Ptr = PeekMessageQueue(&In->SectionList[CurrentSection].Event);
@@ -202,16 +206,122 @@ void StateHandlerIdle(struct __CharacterState* In, int CurrentSection, int Data)
 		case 0x2000000:
 		{
 			//loc_800A8A18
+			if ((Raziel.Senses.EngagedMask & 0x1) && Raziel.Senses.heldClass != 3)
+			{
+				Raziel.Mode = 0x200;
+
+				if (CurrentSection == 0)
+				{
+					Raziel.State.SectionList[0].Data1 = 0;
+
+					G2EmulationSwitchAnimationCharacter(In, 21, 0, 6, 1);
+
+					StateSwitchStateCharacterData(In, &StateHandlerPushObject, 0);
+				}
+				
+				//loc_800A8A74
+				ControlFlag &= 0xFFFFFFFE;
+
+			}
+			else
+			{
+				//loc_800A8A8C
+				if ((Raziel.Senses.EngagedMask & 0x8) && Raziel.Senses.heldClass != 3)
+				{
+					if (CurrentSection == 0)
+					{
+						StateSwitchStateCharacterData(In, &StateHandlerPullSwitch, 0);
+					}
+					//loc_800A8C88
+				}
+				else
+				{
+					//loc_800A8AC8
+
+					if ((Raziel.Senses.EngagedMask & 0x2010))
+					{
+						if (CurrentSection == 0)
+						{
+							if (Raziel.Senses.heldClass == 3)
+							{
+								heldInst = razGetHeldItem();
+
+								if (heldInst != NULL)
+								{
+									if ((INSTANCE_Query(heldInst, 0x2) & 0x20))
+									{
+										StateSwitchStateCharacterData(In, &StateHandlerBreakOff, 0);
+									}
+									//loc_800A8C88
+								}
+								//loc_800A8C88
+							}
+							else
+							{
+								//loc_800A8B28
+								StateSwitchStateCharacterData(In, &StateHandlerBreakOff, 0);
+							}
+						}
+						//loc_800A8C88
+					}
+					else
+					{
+						//loc_800A8B34
+						if ((Raziel.Senses.EngagedMask & 0x800))
+						{
+							if (CurrentSection == 1)
+							{
+								razReaverPickup(In->CharacterInstance, Raziel.Senses.EngagedList[11].instance);
+							}
+							//loc_800A8C88
+						}
+						else
+						{
+							//loc_800A8B60
+							if((Raziel.Senses.EngagedMask & 0x4000))
+							{
+								if (CurrentSection == 0)
+								{
+									StateSwitchStateCharacterData(In, &StateHandlerWarpGate, 0);
+								}
+							}
+							else
+							{
+								//loc_800A8B80
+								if (razPickupAndGrab(In, CurrentSection) != 0 && CurrentSection == 0 && !(Raziel.Senses.Flags & 0x80))
+								{
+									StateSwitchStateCharacterData(In, &StateHandlerAttack2, 0);
+								}
+								//loc_800A8C88
+							}
+						}
+					}
+				}
+			}
+	
+			//loc_800A8C88
+			//a0 = s6 + s1
 			break;
 		}
 		case 0x80000002:
 		{
-			//loc_800A87BC
+			if (CurrentSection == 0)
+			{
+				if ((PadData[0] & RazielCommands[1]))
+				{
+					StateSwitchStateCharacterData(In, &StateHandlerSoulSuck, 0);
+				}
+			}
+
 			break;
 		}
 		case 0x80000000:
 		{
 			//loc_800A8794
+			if (!(Raziel.Senses.Flags & 0x80))
+			{
+				StateSwitchStateData(In, CurrentSection, &StateHandlerAttack2,0);
+			}
 			break;
 		}
 		case 0x80000001:
@@ -221,7 +331,23 @@ void StateHandlerIdle(struct __CharacterState* In, int CurrentSection, int Data)
 		}
 		case 0x100001:
 		{
-			//loc_800A8674
+			if (CurrentSection == 0)
+			{
+				Raziel.Mode = 1;
+
+				Raziel.idleCount = 0;
+
+				ControlFlag = 0x2A109;
+
+				PhysicsMode = 3;
+
+				SteerSwitchMode(In->CharacterInstance, 0);
+
+				Raziel.movementMinRate = 0;
+			}
+			
+			StateInitIdle(In, CurrentSection, Ptr->Data);
+
 			break;
 		}
 		case 0x100000:
@@ -232,6 +358,102 @@ void StateHandlerIdle(struct __CharacterState* In, int CurrentSection, int Data)
 		case 0x100004:
 		{
 			//loc_800A86C0
+			if (CurrentSection == 0)
+			{
+				razReaverScale(4096);
+
+				razResetPauseTranslation(In->CharacterInstance);
+
+				COLLIDE_SegmentCollisionOn(In->CharacterInstance, 1);
+			}
+			//loc_800A8C88
+#if 0
+				lw      $a0, 0($s1)
+				jal     sub_800A63F4
+				nop
+				j       loc_800A8780
+				nop
+
+				loc_800A86E4 :
+			li      $v0, 0xD7
+				bne     $s5, $v0, loc_800A8708
+				li      $v0, 0xD6
+				lui     $v1, 0xFF7F
+				lw      $v0, -0x238($gp)
+				li      $v1, 0xFF7FFFFF
+				and $v0, $v1
+				sw      $v0, -0x238($gp)
+				li      $v0, 0xD6
+
+				loc_800A8708:
+			bne     $s5, $v0, loc_800A8738
+				move    $a0, $zero
+				move    $a0, $s1
+				move    $a1, $s2
+				li      $a2, 0xD7
+				move    $a3, $zero
+				li      $v0, 3
+				sw      $v0, 0x18 + var_8($sp)
+				jal     sub_80072080
+				sw      $s3, 0x18 + var_4($sp)
+				j       loc_800A8C88
+				addu    $a0, $s6, $s1
+
+				loc_800A8738 :
+			move    $a1, $a0
+				jal     sub_8007193C
+				li      $a2, 3
+				move    $a0, $s1
+				move    $a1, $s2
+				jal     sub_800A823C
+				move    $a2, $v0
+				bnez    $s2, loc_800A8C88
+				addu    $a0, $s6, $s1
+				lw      $v0, -0x420($gp)
+				lui     $v1, 1
+				and $v0, $v1
+				bnez    $v0, loc_800A8780
+				lui     $v1, 0xFFFF
+				lw      $v0, -0x238($gp)
+				li      $v1, 0xFFFF7FFF
+				and $v0, $v1
+				sw      $v0, -0x238($gp)
+
+				loc_800A8780:
+			lw      $a0, 0($s1)
+				jal     sub_80024BB0
+				li      $a1, 1
+				j       loc_800A8C88
+				addu    $a0, $s6, $s1
+
+				loc_800A8794 :
+			lw      $v0, -0x634($gp)
+				nop
+				andi    $v0, 0x80
+				bnez    $v0, loc_800A8C88
+				addu    $a0, $s6, $s1
+				move    $a0, $s1
+				move    $a1, $s2
+				lui     $a2, 0x800A
+				j       loc_800A89AC
+				li      $a2, sub_8009BDE4
+
+				loc_800A87BC :
+			bnez    $s2, loc_800A8C88
+				addu    $a0, $s6, $s1
+				lw      $v0, -0x33C($gp)
+				lw      $v1, -0x5B78($gp)
+				lw      $v0, 0($v0)
+				nop
+				and $v0, $v1
+				beqz    $v0, loc_800A8C88
+				lui     $a1, 0x800B
+				sw      $zero, -0x4C8($gp)
+				move    $a0, $s1
+				j       loc_800A8C68
+				li      $a1, sub_800A9AE0
+#endif
+
 			break;
 		}
 		case 0x4010400:
@@ -263,553 +485,12 @@ void StateHandlerIdle(struct __CharacterState* In, int CurrentSection, int Data)
 			//assert(FALSE);
 			break;
 		}
+
+		//loc_800A8C88
+		DeMessageQueue(&In->SectionList[CurrentSection].Event);
 	}
+
 	//loc_800A8C98
-#if 0
-		loc_800A8674 :
-		bnez    $s2, loc_800A86AC
-		move    $a0, $s1
-		li      $v0, 0x2A109
-		sw      $s3, -0x670($gp)
-		sw      $zero, -0x590($gp)
-		lw      $a0, 0($s1)
-		sw      $v0, -0x238($gp)
-		li      $v0, 3
-		sw      $v0, -0x2D0($gp)
-		jal     sub_800A2E4C
-		move    $a1, $zero
-		sh      $zero, -0x63C($gp)
-		move    $a0, $s1
-
-		loc_800A86AC :
-	lw      $a2, 4($s0)
-		jal     sub_800A823C
-		move    $a1, $s2
-		j       loc_800A8C88
-		addu    $a0, $s6, $s1
-
-		loc_800A86C0 :
-	bnez    $s2, loc_800A8C88
-		addu    $a0, $s6, $s1
-		jal     sub_800A6018
-		li      $a0, 0x1000
-		lw      $a0, 0($s1)
-		jal     sub_800A63F4
-		nop
-		j       loc_800A8780
-		nop
-
-		loc_800A86E4 :
-	li      $v0, 0xD7
-		bne     $s5, $v0, loc_800A8708
-		li      $v0, 0xD6
-		lui     $v1, 0xFF7F
-		lw      $v0, -0x238($gp)
-		li      $v1, 0xFF7FFFFF
-		and $v0, $v1
-		sw      $v0, -0x238($gp)
-		li      $v0, 0xD6
-
-		loc_800A8708:
-	bne     $s5, $v0, loc_800A8738
-		move    $a0, $zero
-		move    $a0, $s1
-		move    $a1, $s2
-		li      $a2, 0xD7
-		move    $a3, $zero
-		li      $v0, 3
-		sw      $v0, 0x18 + var_8($sp)
-		jal     sub_80072080
-		sw      $s3, 0x18 + var_4($sp)
-		j       loc_800A8C88
-		addu    $a0, $s6, $s1
-
-		loc_800A8738 :
-	move    $a1, $a0
-		jal     sub_8007193C
-		li      $a2, 3
-		move    $a0, $s1
-		move    $a1, $s2
-		jal     sub_800A823C
-		move    $a2, $v0
-		bnez    $s2, loc_800A8C88
-		addu    $a0, $s6, $s1
-		lw      $v0, -0x420($gp)
-		lui     $v1, 1
-		and $v0, $v1
-		bnez    $v0, loc_800A8780
-		lui     $v1, 0xFFFF
-		lw      $v0, -0x238($gp)
-		li      $v1, 0xFFFF7FFF
-		and $v0, $v1
-		sw      $v0, -0x238($gp)
-
-		loc_800A8780:
-	lw      $a0, 0($s1)
-		jal     sub_80024BB0
-		li      $a1, 1
-		j       loc_800A8C88
-		addu    $a0, $s6, $s1
-
-		loc_800A8794 :
-	lw      $v0, -0x634($gp)
-		nop
-		andi    $v0, 0x80
-		bnez    $v0, loc_800A8C88
-		addu    $a0, $s6, $s1
-		move    $a0, $s1
-		move    $a1, $s2
-		lui     $a2, 0x800A
-		j       loc_800A89AC
-		li      $a2, sub_8009BDE4
-
-		loc_800A87BC :
-	bnez    $s2, loc_800A8C88
-		addu    $a0, $s6, $s1
-		lw      $v0, -0x33C($gp)
-		lw      $v1, -0x5B78($gp)
-		lw      $v0, 0($v0)
-		nop
-		and $v0, $v1
-		beqz    $v0, loc_800A8C88
-		lui     $a1, 0x800B
-		sw      $zero, -0x4C8($gp)
-		move    $a0, $s1
-		j       loc_800A8C68
-		li      $a1, sub_800A9AE0
-
-		loc_800A87F0 :
-	j       loc_800A8C84
-		li      $s7, 1
-
-		loc_800A87F8 :
-		bnez    $s2, loc_800A8C88
-		addu    $a0, $s6, $s1
-		lw      $v0, 4($s0)
-		nop
-		beqz    $v0, loc_800A8824
-		nop
-		lw      $a0, 0($s1)
-		jal     sub_800A63F4
-		nop
-		j       loc_800A8C88
-		addu    $a0, $s6, $s1
-
-		loc_800A8824 :
-	lw      $a0, 0($s1)
-		jal     sub_800A6380
-		nop
-		j       loc_800A8C88
-		addu    $a0, $s6, $s1
-
-		loc_800A8838 :
-	lw      $v0, -0x33C($gp)
-		lw      $v1, -0x5B60($gp)
-		lw      $v0, 0($v0)
-		nop
-		and $v0, $v1
-		bnez    $v0, loc_800A8988
-		move    $a1, $s2
-		lh      $v1, -0x64C($gp)
-		nop
-		slti    $v0, $v1, -0x200
-		beqz    $v0, loc_800A88DC
-		slti    $v0, $v1, 0x201
-		bne     $s2, $s3, loc_800A889C
-		nop
-		jal     sub_800A5CBC
-		nop
-		bnez    $v0, loc_800A88B8
-		li      $a1, 1
-		move    $a0, $s1
-		li      $a2, 0x36  # '6'
-		move    $a3, $zero
-		li      $v0, 2
-		sw      $v0, 0x18 + var_8($sp)
-		j       loc_800A88B0
-		sw      $s2, 0x18 + var_4($sp)
-
-		loc_800A889C:
-	li      $a2, 0x36  # '6'
-		move    $a3, $zero
-		li      $v0, 2
-		sw      $v0, 0x18 + var_8($sp)
-		sw      $s3, 0x18 + var_4($sp)
-
-		loc_800A88B0 :
-		jal     sub_80072080
-		nop
-
-		loc_800A88B8 :
-	move    $a0, $s1
-		move    $a1, $s2
-		li      $a2, sub_800AA018
-		jal     sub_80072B04
-		move    $a3, $zero
-		li      $v0, 0x34  # '4'
-		j       loc_800A8C84
-		sw      $v0, 0x11C($s4)
-
-		loc_800A88DC:
-	bnez    $v0, loc_800A8968
-		nop
-		bne     $s2, $s3, loc_800A8924
-		move    $a0, $s1
-		lw      $v0, 0($s1)
-		nop
-		lw      $v0, 0x14C($v0)
-		nop
-		bnez    $v0, loc_800A894C
-		move    $a1, $s2
-		move    $a0, $s1
-		li      $a1, 1
-		li      $a2, 0x35  # '5'
-		move    $a3, $zero
-		li      $v0, 2
-		sw      $v0, 0x18 + var_8($sp)
-		j       loc_800A893C
-		sw      $s2, 0x18 + var_4($sp)
-
-		loc_800A8924:
-	move    $a1, $s2
-		li      $a2, 0x35  # '5'
-		move    $a3, $zero
-		li      $v0, 2
-		sw      $v0, 0x18 + var_8($sp)
-		sw      $s3, 0x18 + var_4($sp)
-
-		loc_800A893C:
-	jal     sub_80072080
-		nop
-		move    $a0, $s1
-		move    $a1, $s2
-
-		loc_800A894C :
-	li      $a2, sub_800AA018
-		jal     sub_80072B04
-		move    $a3, $zero
-		li      $v0, 0x33  # '3'
-		j       loc_800A8C84
-		sw      $v0, 0x11C($s4)
-
-		loc_800A8968:
-	bnez    $s7, loc_800A8C88
-		addu    $a0, $s6, $s1
-		lw      $v0, -0x65C($gp)
-		nop
-		slti    $v0, 0x1000
-		beqz    $v0, loc_800A89A0
-		move    $a0, $s1
-		move    $a1, $s2
-
-		loc_800A8988 :
-	li      $a2, sub_800AABA8
-		jal     sub_80072B04
-		li      $a3, 3
-		j       loc_800A8C88
-		addu    $a0, $s6, $s1
-
-		loc_800A89A0 :
-	move    $a1, $s2
-		li      $a2, sub_800AA2C4
-
-		loc_800A89AC :
-	jal     sub_80072B04
-		move    $a3, $zero
-		j       loc_800A8C88
-		addu    $a0, $s6, $s1
-
-		loc_800A89BC :
-	bnez    $s2, loc_800A8C88
-		addu    $a0, $s6, $s1
-		li      $a1, 0x10
-		move    $a2, $zero
-		move    $v0, $a1
-		sw      $v0, -0x670($gp)
-		lw      $v0, -0x238($gp)
-		lw      $a0, 0($s1)
-		or $v0, $a1
-		sw      $v0, -0x238($gp)
-		jal     sub_800A70BC
-		move    $a3, $a2
-		beqz    $v0, loc_800A8A08
-		move    $a0, $s1
-		sw      $s3, 0x18 + var_8($sp)
-		li      $a1, 0x22  # '"'
-		move    $a2, $zero
-		jal     sub_800723F0
-		li      $a3, 2
-
-		loc_800A8A08:
-	move    $a0, $s1
-		lui     $a1, 0x800B
-		j       loc_800A8C68
-		li      $a1, sub_800AB5AC
-
-		loc_800A8A18 :
-	lw      $v0, -0x5F4($gp)
-		nop
-		andi    $v0, 1
-		beqz    $v0, loc_800A8A8C
-		li      $v0, 3
-		lw      $v1, -0x5E4($gp)
-		nop
-		beq     $v1, $v0, loc_800A8A8C
-		li      $v0, 0x200
-		sw      $v0, -0x670($gp)
-		bnez    $s2, loc_800A8A74
-		sw      $zero, 0x11C($s4)
-		sw      $s3, 0x18 + var_8($sp)
-		move    $a0, $s1
-		li      $a1, 0x15
-		move    $a2, $zero
-		jal     sub_800723F0
-		li      $a3, 6
-		move    $a0, $s1
-		li      $a1, sub_800AD898
-		jal     sub_80072BD0
-		move    $a2, $zero
-
-		loc_800A8A74 :
-	lw      $v0, -0x238($gp)
-		li      $v1, 0xFFFFFFFE
-		and $v0, $v1
-		sw      $v0, -0x238($gp)
-		j       loc_800A8C88
-		addu    $a0, $s6, $s1
-
-		loc_800A8A8C :
-	lw      $v0, -0x5F4($gp)
-		nop
-		andi    $v0, 8
-		beqz    $v0, loc_800A8AC8
-		li      $v0, 3
-		lw      $v1, -0x5E4($gp)
-		nop
-		beq     $v1, $v0, loc_800A8AC8
-		nop
-		bnez    $s2, loc_800A8C88
-		addu    $a0, $s6, $s1
-		move    $a0, $s1
-		lui     $a1, 0x800B
-		j       loc_800A8C68
-		li      $a1, sub_800ADFBC
-
-		loc_800A8AC8 :
-	lw      $v1, -0x5F4($gp)
-		nop
-		andi    $v0, $v1, 0x2010
-		beqz    $v0, loc_800A8B34
-		andi    $v0, $v1, 0x800
-		bnez    $s2, loc_800A8C88
-		addu    $a0, $s6, $s1
-		lw      $v1, -0x5E4($gp)
-		li      $v0, 3
-		bne     $v1, $v0, loc_800A8B28
-		move    $a0, $s1
-		jal     sub_800A5C84
-		nop
-		beqz    $v0, loc_800A8C88
-		addu    $a0, $s6, $s1
-		move    $a0, $v0
-		jal     sub_80034648
-		li      $a1, 2
-		andi    $v0, 0x20
-		beqz    $v0, loc_800A8C84
-		lui     $a1, 0x800B
-		move    $a0, $s1
-		j       loc_800A8C68
-		li      $a1, sub_800ADBC4
-
-		loc_800A8B28 :
-	lui     $a1, 0x800B
-		j       loc_800A8C68
-		li      $a1, sub_800ADBC4
-
-		loc_800A8B34 :
-	beqz    $v0, loc_800A8B60
-		andi    $v0, $v1, 0x4000
-		bne     $s2, $s3, loc_800A8C88
-		addu    $a0, $s6, $s1
-		lw      $v0, -0x5F8($gp)
-		lw      $a0, 0($s1)
-		lw      $a1, 0x58($v0)
-		jal     sub_800A5EF8
-		nop
-		j       loc_800A8C88
-		addu    $a0, $s6, $s1
-
-		loc_800A8B60 :
-	beqz    $v0, loc_800A8B80
-		move    $a0, $s1
-		bnez    $s2, loc_800A8C88
-		addu    $a0, $s6, $s1
-		move    $a0, $s1
-		lui     $a1, 0x800A
-		j       loc_800A8C68
-		li      $a1, sub_8009B204
-
-		loc_800A8B80 :
-	jal     sub_800A58E8
-		move    $a1, $s2
-		beqz    $v0, loc_800A8C88
-		addu    $a0, $s6, $s1
-		bnez    $s2, loc_800A8C88
-		nop
-		lw      $v0, -0x634($gp)
-		nop
-		andi    $v0, 0x80
-		bnez    $v0, loc_800A8C88
-		lui     $a1, 0x800A
-		move    $a0, $s1
-		j       loc_800A8C68
-		li      $a1, sub_8009BDE4
-
-		loc_800A8BB8 :
-	lw      $v0, 4($s0)
-		nop
-		lw      $v0, 0x20($v0)
-		lui     $v1, 2
-		and $v0, $v1
-		beqz    $v0, loc_800A8C88
-		addu    $a0, $s6, $s1
-		lw      $v0, -0x5C8($gp)
-		nop
-		andi    $v0, 1
-		beqz    $v0, loc_800A8C88
-		li      $v0, 2
-		lw      $v1, -0x598($gp)
-		nop
-		bne     $v1, $v0, loc_800A8C88
-		lui     $v1, 1
-		lw      $v0, -0x424($gp)
-		nop
-		or $v0, $v1
-		sw      $v0, -0x424($gp)
-		j       loc_800A8C88
-		nop
-
-		loc_800A8C10 :
-	bnez    $s2, loc_800A8C88
-		addu    $a0, $s6, $s1
-		lw      $v1, -0x634($gp)
-		nop
-		andi    $v0, $v1, 4
-		beqz    $v0, loc_800A8C88
-		andi    $v0, $v1, 0x80
-		bnez    $v0, loc_800A8C48
-		addiu   $a0, $s1, 0x94
-		lw      $v0, -0x40F4($gp)//gameTrackerX.streamFlags
-		nop
-		andi    $v0, 4
-		beqz    $v0, loc_800A8C60
-		lui     $a1, 0x800B
-
-		loc_800A8C48:
-	li      $a1, unk_80000010
-		jal     sub_80070D38
-		move    $a2, $zero
-		j       loc_800A8C88
-		addu    $a0, $s6, $s1
-
-		loc_800A8C60 :
-	move    $a0, $s1
-		li      $a1, sub_800AF650
-
-		loc_800A8C68 :
-	jal     sub_80072BD0
-		move    $a2, $zero
-		j       loc_800A8C88
-		addu    $a0, $s6, $s1
-
-		loc_800A8C78 :
-	move    $a1, $s2
-
-		loc_800A8C7C :
-	jal     sub_800AFEE4
-		move    $a2, $fp
-
-		loc_800A8C84 :
-	addu    $a0, $s6, $s1
-
-		loc_800A8C88 :
-	jal     sub_80070C9C
-		addiu   $a0, 0xC
-		j       loc_800A8560
-		addu    $a0, $s6, $s1
-
-		loc_800A8C98 :
-	bnez    $s2, loc_800A8D70
-		nop
-		lw      $a0, 0($s1)
-		jal     sub_800B3A8C
-		nop
-		bnez    $v0, loc_800A8D70
-		li      $v0, 0x37  # '7'
-		beq     $s5, $v0, loc_800A8D70
-		li      $v0, 0xD6
-		beq     $s5, $v0, loc_800A8D70
-		nop
-		lw      $v0, -0x590($gp)
-		nop
-		addiu   $a0, $v0, 1
-		sltiu   $v0, $a0, 0x12D
-		sw      $a0, -0x590($gp)
-		bnez    $v0, loc_800A8D70
-		nop
-		li      $v0, 0x91A2B3C5
-		multu   $a0, $v0
-		mfhi    $t0
-		srl     $v1, $t0, 9
-		sll     $v0, $v1, 3
-		subu    $v0, $v1
-		sll     $v0, 5
-		addu    $v0, $v1
-		sll     $v0, 2
-		bne     $a0, $v0, loc_800A8D70
-		nop
-		lw      $v0, -0x58C($gp)
-		nop
-		beqz    $v0, loc_800A8D48
-		li      $a2, 1
-		li      $v0, 3
-		sw      $v0, 0x18 + var_8($sp)
-		move    $v0, $a2
-		sw      $v0, 0x18 + var_4($sp)
-		lw      $a0, 0($s1)
-		lw      $a1, -0x58C($gp)
-		jal     sub_80072304
-		move    $a3, $zero
-		j       loc_800A8D70
-		nop
-
-		loc_800A8D48 :
-	move    $a0, $s1
-		li      $a1, 0x18
-		move    $a2, $zero
-		li      $a3, 3
-		li      $v0, 1
-		jal     sub_800723F0
-		sw      $v0, 0x18 + var_8($sp)
-		lw      $a0, 0($s1)
-		jal     sub_80024C28
-		li      $a1, 1
-
-		loc_800A8D70:
-	lw      $ra, 0x18 + var_s24($sp)
-		lw      $fp, 0x18 + var_s20($sp)
-		lw      $s7, 0x18 + var_s1C($sp)
-		lw      $s6, 0x18 + var_s18($sp)
-		lw      $s5, 0x18 + var_s14($sp)
-		lw      $s4, 0x18 + var_s10($sp)
-		lw      $s3, 0x18 + var_sC($sp)
-		lw      $s2, 0x18 + var_s8($sp)
-		lw      $s1, 0x18 + var_s4($sp)
-		lw      $s0, 0x18 + var_s0($sp)
-		jr      $ra
-		addiu   $sp, 0x40
-#endif
-
 }
 
 
@@ -916,40 +597,410 @@ void StateHandlerDropAction(struct __CharacterState *In, int CurrentSection, int
 			UNIMPLEMENTED();
 }
 
+void StateHandlerSoulSuck(struct __CharacterState* In, int CurrentSection, int Data)
+{
+	struct __Event* Ptr; // $a0
+	int Anim; // $s3
+	struct evPhysicsSwimData* SwimData; // $v0
 
-// autogenerated function stub: 
-// void /*$ra*/ StateHandlerSoulSuck(struct __CharacterState *In /*$s1*/, int CurrentSection /*$s0*/, int Data /*$s5*/)
-void StateHandlerSoulSuck(struct __CharacterState *In, int CurrentSection, int Data)
-{ // line 1267, offset 0x800a9c68
-	/* begin block 1 */
-		// Start line: 1268
-		// Start offset: 0x800A9C68
-		// Variables:
-			struct __Event *Ptr; // $a0
-			int Anim; // $s3
+	//v0 = LoopCounter
+	//s1 = In
+	//s0 = CurrentSection
+	//s5 = Data
 
-		/* begin block 1.1 */
-			// Start line: 1375
-			// Start offset: 0x800AA130
-			// Variables:
-				struct evPhysicsSwimData *SwimData; // $v0
-		/* end block 1.1 */
-		// End offset: 0x800AA160
-		// End Line: 1382
-	/* end block 1 */
-	// End offset: 0x800AA17C
-	// End Line: 1390
+	if (!(LoopCounter & 0x3))
+	{
+		FX_MakeSoulDust(In->CharacterInstance, 16);
+	}
 
-	/* begin block 2 */
-		// Start line: 2693
-	/* end block 2 */
-	// End Line: 2694
+	Anim = G2EmulationQueryAnimation(In, CurrentSection);
 
-	/* begin block 3 */
-		// Start line: 2698
-	/* end block 3 */
-	// End Line: 2699
-				UNIMPLEMENTED();
+	//s4 = &In->SectionList[CurrentSection];
+	//s2 = 1
+
+	//loc_800A9B54
+	Ptr = PeekMessageQueue(&In->SectionList[CurrentSection].Event);
+
+	if (Ptr != NULL)
+	{
+		switch (Ptr->ID)
+		{
+		case 0x1000006:
+		{
+			//loc_800A9D8C
+			break;
+		}
+		case 0x100001:
+		{
+			//loc_800A9C20
+			//v0 = 2
+			if (CurrentSection == 0)
+			{
+				ControlFlag = 9;
+
+				//v0 = Raziel.Senses.EngagedMask
+
+				PhysicsMode = 3;
+
+				//a0 = In
+				if ((Raziel.Senses.EngagedMask & 0x1000) && Raziel.Senses.heldClass != 3)
+				{
+					razAlignYRotMove(Raziel.Senses.EngagedList[12].instance, 220, &In->CharacterInstance->position, &In->CharacterInstance->rotation, 0);
+
+					INSTANCE_Post(Raziel.Senses.EngagedList[12].instance, 0x1000014, 0x1);
+				}
+				//loc_800A9C90
+
+				G2EmulationSwitchAnimationAlpha(In, CurrentSection, 78, 0, 4, 1, 4);
+			}
+			//loc_800A9CB4
+			if (CurrentSection == 2)
+			{
+				G2EmulationSwitchAnimation(In, CurrentSection, 0, 0, 4, 2);
+			}
+
+			//loc_800A9CD8
+			if (CurrentSection == 1)
+			{
+				if (razGetHeldWeapon() != NULL || (Raziel.Senses.EngagedMask & 0x1000))
+				{
+					G2EmulationSwitchAnimation(In, CurrentSection, 94, 0, 4, 1);
+				}
+				else
+				{
+					//loc_800A9D04
+					G2EmulationSwitchAnimation(In, CurrentSection, 78, 0, 4, 1);
+				}
+
+				Raziel.Mode |= 0x10000000;
+			}
+			//loc_800A9FE4
+			break;
+		}
+		case 0x80000010:
+		{
+			//loc_800A9FE4
+			break;
+		}
+		case 0x100004:
+		{
+			//loc_800A9D40
+			break;
+		}
+		case 0x1000001:
+		{
+			//loc_800A9FE4
+			break;
+		}
+		case 0x4020000:
+		{
+			//loc_800A9FA8
+			break;
+		}
+		case 0x1000009:
+		{
+			//loc_800A9F80
+			break;
+		}
+		case 0x1000016:
+		{
+			//loc_800A9F48
+			break;
+		}
+		case 0x8000000:
+		{
+			//loc_800A9E40
+			break;
+		}
+		case 0x20000002:
+		{
+			//loc_800A9D8C
+			break;
+		}
+		}
+	}
+	//loc_800A9FF4
+#if 0
+		
+
+		loc_800A9C90 :
+	move    $a1, $s0
+		li      $a2, 0x4E  # 'N'
+		move    $a3, $zero
+		li      $v0, 4
+		sw      $v0, 0x20 + var_10($sp)
+		sw      $s2, 0x20 + var_C($sp)
+		jal     sub_800720C4
+		sw      $v0, 0x20 + var_8($sp)
+		li      $v0, 2
+
+		loc_800A9CB4:
+	bne     $s0, $v0, loc_800A9CD8
+		move    $a0, $s1
+		move    $a1, $v0
+		move    $a2, $zero
+		move    $a3, $a2
+		li      $v0, 4
+		sw      $v0, 0x20 + var_10($sp)
+		jal     sub_80072080
+		sw      $s0, 0x20 + var_C($sp)
+
+		loc_800A9CD8:
+	bne     $s0, $s2, loc_800A9FE4
+		nop
+		jal     sub_800A5CBC
+		nop
+		bnez    $v0, loc_800A9D04
+		move    $a0, $s1
+		lw      $v0, -0x5F4($gp)
+		nop
+		andi    $v0, 0x1000
+		beqz    $v0, loc_800A9D10
+		li      $a1, 1
+
+		loc_800A9D04:
+	li      $a1, 1
+		j       loc_800A9D14
+		li      $a2, 0x5E  # '^'
+
+		loc_800A9D10 :
+		li      $a2, 0x4E  # 'N'
+
+		loc_800A9D14 :
+		move    $a3, $zero
+		li      $v0, 4
+		sw      $v0, 0x20 + var_10($sp)
+		jal     sub_80072080
+		sw      $s0, 0x20 + var_C($sp)
+		lw      $v0, -0x670($gp)
+		lui     $v1, 0x1000
+		or $v0, $v1
+		sw      $v0, -0x670($gp)
+		j       loc_800A9FE4
+		nop
+
+		loc_800A9D40 :
+	bne     $s0, $s2, loc_800A9FE4
+		nop
+		jal     sub_800A76C4
+		li      $a0, 1
+		li      $a0, 0xEFFFFFFF
+		lw      $v0, -0x238($gp)
+		li      $v1, 0xFFFFFFBF
+		and $v0, $v1
+		sw      $v0, -0x238($gp)
+		lw      $v0, -0x670($gp)
+		lw      $v1, -0x5F4($gp)
+		and $v0, $a0
+		andi    $v1, 0x1000
+		sw      $v0, -0x670($gp)
+		beqz    $v1, loc_800A9FE4
+		lui     $a1, 0x100
+		j       loc_800A9E24
+		nop
+
+		loc_800A9D8C :
+	li      $v0, 0x4F  # 'O'
+		bne     $s3, $v0, loc_800A9DC4
+		move    $a0, $s1
+		move    $a1, $s0
+		li      $a2, 0x2F  # '/'
+		move    $a3, $zero
+		li      $v0, 3
+		sw      $v0, 0x20 + var_10($sp)
+		jal     sub_80072080
+		sw      $s2, 0x20 + var_C($sp)
+		jal     sub_80070CD8
+		addiu   $a0, $s4, 4
+		j       loc_800A9E08
+		nop
+
+		loc_800A9DC4 :
+	lw      $a2, -0x4C8($gp)
+		nop
+		bnez    $a2, loc_800A9DFC
+		move    $a1, $s0
+		move    $a0, $zero
+		move    $a1, $a0
+		jal     sub_8007193C
+		li      $a2, 3
+		move    $a0, $s1
+		move    $a1, $s0
+		li      $a2, sub_800A84E0
+		j       loc_800A9E00
+		move    $a3, $v0
+
+		loc_800A9DFC :
+	move    $a3, $zero
+
+		loc_800A9E00 :
+	jal     sub_80072B04
+		nop
+
+		loc_800A9E08 :
+	lw      $v0, -0x5F4($gp)
+		nop
+		andi    $v0, 0x1000
+		beqz    $v0, loc_800A9FE4
+		nop
+		bnez    $s0, loc_800A9FE4
+		lui     $a1, 0x100
+
+		loc_800A9E24:
+	lw      $v0, -0x5F8($gp)
+		li      $a1, 0x1000014
+		lw      $a0, 0x60($v0)
+		jal     sub_80034684
+		move    $a2, $zero
+		j       loc_800A9FE4
+		nop
+
+		loc_800A9E40 :
+	li      $v0, 0x2F  # '/'
+		bne     $s3, $v0, loc_800A9E98
+		li      $v0, 0x4E  # 'N'
+		lw      $a2, -0x4C8($gp)
+		nop
+		beqz    $a2, loc_800A9E68
+		move    $a0, $s1
+		move    $a1, $s0
+		j       loc_800A9E8C
+		move    $a3, $zero
+
+		loc_800A9E68 :
+	move    $a0, $zero
+		move    $a1, $a0
+		jal     sub_8007193C
+		li      $a2, 3
+		move    $a0, $s1
+		move    $a1, $s0
+		li      $a2, sub_800A84E0
+		move    $a3, $v0
+
+		loc_800A9E8C :
+	jal     sub_80072B04
+		nop
+		li      $v0, 0x4E  # 'N'
+
+		loc_800A9E98 :
+		bne     $s3, $v0, loc_800A9EC0
+		li      $v0, 0x50  # 'P'
+		move    $a0, $s1
+		move    $a1, $s0
+		li      $a2, 0x4F  # 'O'
+		move    $a3, $zero
+		sw      $zero, 0x20 + var_10($sp)
+		jal     sub_80072080
+		sw      $s2, 0x20 + var_C($sp)
+		li      $v0, 0x50  # 'P'
+
+		loc_800A9EC0:
+	bne     $s3, $v0, loc_800A9FE4
+		nop
+		lw      $v0, -0x33C($gp)
+		lw      $v1, -0x5B78($gp)
+		lw      $v0, 0($v0)
+		nop
+		and $v0, $v1
+		beqz    $v0, loc_800A9EF8
+		move    $a0, $s1
+		move    $a1, $s0
+		li      $a2, 0x4F  # 'O'
+		move    $a3, $zero
+		j       loc_800A9F94
+		li      $v0, 8
+
+		loc_800A9EF8:
+	lw      $a2, -0x4C8($gp)
+		nop
+		beqz    $a2, loc_800A9F18
+		move    $a1, $s0
+		jal     sub_80072B04
+		move    $a3, $zero
+		j       loc_800A9FE4
+		nop
+
+		loc_800A9F18 :
+	move    $a0, $zero
+		move    $a1, $a0
+		jal     sub_8007193C
+		li      $a2, 3
+		move    $a0, $s1
+		move    $a1, $s0
+		li      $a2, sub_800A84E0
+		jal     sub_80072B04
+		move    $a3, $v0
+		j       loc_800A9FE4
+		nop
+
+		loc_800A9F48 :
+	lw      $v0, -0x4174($gp)
+		nop
+		andi    $v0, 0x800
+		beqz    $v0, loc_800A9FE4
+		nop
+		bne     $s0, $s2, loc_800A9FE4
+		nop
+		lw      $a0, 4($a0)
+		jal     sub_800A4540
+		nop
+		jal     sub_800A7B20
+		li      $a0, 0x1000
+		j       loc_800A9FE4
+		nop
+
+		loc_800A9F80 :
+	move    $a0, $s1
+		move    $a1, $s0
+		li      $a2, 0x50  # 'P'
+		move    $a3, $zero
+		li      $v0, 2
+
+		loc_800A9F94 :
+		sw      $v0, 0x20 + var_10($sp)
+		jal     sub_80072080
+		sw      $s2, 0x20 + var_C($sp)
+		j       loc_800A9FE4
+		nop
+
+		loc_800A9FA8 :
+	lw      $v0, 4($a0)
+		nop
+		lhu     $v0, 0x10($v0)
+		nop
+		andi    $v0, 0x40
+		beqz    $v0, loc_800A9FE4
+		move    $a0, $s1
+		move    $a1, $s0
+		jal     sub_8009EE2C
+		move    $a2, $zero
+		j       loc_800A9FE4
+		nop
+
+		loc_800A9FD8 :
+	move    $a1, $s0
+
+		loc_800A9FDC :
+	jal     sub_800AFEE4
+		move    $a2, $s5
+
+		loc_800A9FE4 :
+	jal     sub_80070C9C
+		addiu   $a0, $s4, 4
+		j       loc_800A9B54
+		nop
+
+		loc_800A9FF4 :
+	lw      $ra, 0x20 + var_s18($sp)
+		lw      $s5, 0x20 + var_s14($sp)
+		lw      $s4, 0x20 + var_s10($sp)
+		lw      $s3, 0x20 + var_sC($sp)
+		lw      $s2, 0x20 + var_s8($sp)
+		lw      $s1, 0x20 + var_s4($sp)
+		lw      $s0, 0x20 + var_s0($sp)
+		jr      $ra
+		addiu   $sp, 0x40
+#endif
 }
 
 
@@ -2357,7 +2408,7 @@ void RazielPost(struct _Instance* instance, unsigned long Message, unsigned long
 		and $v0, $v1
 		bnez    $v0, loc_800B151C
 		nop
-		sw      $zero, -0x5F4($gp)
+		sw      $zero, Raziel.Senses.EngagedMask
 
 		loc_800B151C:
 	lw      $v0, -0x634($gp)
@@ -2705,7 +2756,7 @@ void RazielPost(struct _Instance* instance, unsigned long Message, unsigned long
 	move    $a0, $s3
 		jal     sub_80034648
 		li      $a1, 4
-		sw      $v0, -0x5E4($gp)
+		sw      $v0, Raziel.Senses.heldClass
 		li      $v1, 8
 		beq     $v0, $v1, loc_800B19AC
 		nop
@@ -2729,7 +2780,7 @@ void RazielPost(struct _Instance* instance, unsigned long Message, unsigned long
 		nop
 		bnez    $v0, loc_800B19E8
 		nop
-		sw      $zero, -0x5E4($gp)
+		sw      $zero, Raziel.Senses.heldClass
 
 		loc_800B19E8:
 	jal     sub_800A5D4C
@@ -2897,7 +2948,7 @@ void RazielPost(struct _Instance* instance, unsigned long Message, unsigned long
 #endif
 }
 
-int SetStates(struct _Instance* instance, struct GameTracker* GT, long* controlCommand, int AnalogLength)
+int SetStates(struct _Instance* instance, struct GameTracker* GT, long* controlCommand, int AnalogLength)//Matching - 92.36%
 {
 	int i;
 	int Event;
@@ -2923,12 +2974,12 @@ int SetStates(struct _Instance* instance, struct GameTracker* GT, long* controlC
 
 		if (Ptr != NULL)
 		{
-			EnMessageQueue(&Raziel.State.SectionList[i].Event, Ptr);
+			EnMessageQueue(&Raziel.State.SectionList[i].Defer, Ptr);
 			goto dequeue;
 		}
 	}
 
-	if (instance->offset.x != 0 && instance->offset.y != 0 && instance->offset.z != 0)
+	if (instance->offset.x != 0 || instance->offset.y != 0 || instance->offset.z != 0)
 	{
 		INSTANCE_Post(instance, 0x4000004, LoopCounter);
 
