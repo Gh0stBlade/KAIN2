@@ -76,19 +76,19 @@ void G2PoolMem_ResetPool(void *voidPool)
 #endif
 }
 
-void * G2PoolMem_Allocate(void *voidPool)
+void* G2PoolMem_Allocate(void* voidPool)//Matching - 100%
 {
 #if defined(PSX_VERSION)
 	int blockIndex;
 
-	if (((struct _G2PoolMemPool_Type*)voidPool)->stackTop < ((struct _G2PoolMemPool_Type*)voidPool)->stackSize)
+	if (((struct _G2PoolMemPool_Type*)voidPool)->stackTop >= ((struct _G2PoolMemPool_Type*)voidPool)->stackSize)
 	{
-		blockIndex = ((struct _G2PoolMemPool_Type*)voidPool)->stack[((struct _G2PoolMemPool_Type*)voidPool)->stackTop];
-		((struct _G2PoolMemPool_Type*)voidPool)->stackTop++;
-		return (char*)(((struct _G2PoolMemPool_Type*)voidPool)->blockPool) + (((struct _G2PoolMemPool_Type*)voidPool)->blockSize * blockIndex);
+		return NULL;
 	}
-	
-	return NULL;
+
+	blockIndex = ((struct _G2PoolMemPool_Type*)voidPool)->stack[((struct _G2PoolMemPool_Type*)voidPool)->stackTop];
+	((struct _G2PoolMemPool_Type*)voidPool)->stackTop++;
+	return (char*)(((struct _G2PoolMemPool_Type*)voidPool)->blockPool) + (((struct _G2PoolMemPool_Type*)voidPool)->blockSize * blockIndex);
 
 #elif defined(PC_VERSION)
 
