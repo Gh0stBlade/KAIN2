@@ -1329,11 +1329,13 @@ void _G2AnimSection_InitStatus(struct _G2AnimSection_Type* section, struct _G2An
 						{
 							chanStatusChunkCount = 8;
 
-							chanStatusNextBlockPtr[0] = (struct _G2AnimChanStatusBlock_Type*)G2PoolMem_Allocate(&_chanStatusBlockPool);
-							chanStatusNextBlockPtr[0]->next = NULL;
-							chanStatusNextBlockPtr = (struct _G2AnimChanStatusBlock_Type**)chanStatusNextBlockPtr[0];
+							chanStatusBlock = (struct _G2AnimChanStatusBlock_Type*)G2PoolMem_Allocate(&_chanStatusBlockPool);
 
-							chanStatus = chanStatusNextBlockPtr[0]->chunks;
+							chanStatusBlock->next = NULL;
+
+							chanStatusNextBlockPtr[0] = chanStatusBlock;
+
+							chanStatus = &chanStatusNextBlockPtr[0]->chunks[0];
 						}
 
 						if (type == 0x40)
