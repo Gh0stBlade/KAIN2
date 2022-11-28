@@ -27,3 +27,19 @@ Please select a platform:
   1. By default (debug builds) all files must be extracted from `BIGFILE.DAT` to run as it is coded to load files externally and not packed into one file. (You can do this using the tool in Tools/LST (build it then drag and drop BIGFILE.DAT ontop, copy BIGFILE.LST and /KAIN2/ folder to where the executable is located))
   2. By default (release builds) always load files from `BIGFILE.DAT` which must be in the same folder as the main executable.
   3. Move `BIGFILE.DAT` and `LOCALS.TBL` to where the built executable is located.
+
+# It is built, now what?
+
+If you wish to contribute functions to the project, it is important that you try to decompile the ones which are currently most needed. To find out which functions are higher priority, run the game in debug by launching `KAIN2_Win32_Debug.exe`. Whilst in-game press the number `6` on the keyboard. This will now have generated a _runtime bounty list_ called `VALKYRIE_RUNTIME_BOUNTY_LIST_KAIN2.txt`. If you open the bounty list, it should tell you which functions are being called but they're not currently implemented. Chose one to decompile.
+
+# How do I know if a function is matching?
+
+You can use http://decomp.me with the compiler set to `PsyQ 4.3` and `-O2` and `-G65536` compiler flags set to check if the code you decompiled matches when recompiled with the original compiler used for this game.
+
+# I have a matching function, how do I contribute it?
+
+We'd prefer that you follow the same commit style as what is currently being used i.e `[FILENAME]: Implement FUNCTIONNAME` and submit the commits via pull requests. Please ensure to link the decomp.me scratch where it's matching.
+
+
+
+
