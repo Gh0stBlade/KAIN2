@@ -8,7 +8,7 @@
 
 struct _G2AnimSegValue_Type _segValues[80];
 
-void G2AnimSection_InterpToKeylistAtTime(struct _G2AnimSection_Type *section, struct _G2AnimKeylist_Type *keylist, int keylistID, short targetTime, int duration)
+void G2AnimSection_InterpToKeylistAtTime(struct _G2AnimSection_Type* section, struct _G2AnimKeylist_Type* keylist, int keylistID, short targetTime, int duration)
 {
 	struct _G2Anim_Type *anim;
 	struct _G2AnimInterpInfo_Type *interpInfo;
@@ -362,7 +362,7 @@ void _G2AnimSection_InterpStateToQuat(struct _G2AnimSection_Type *section)
 	}
 }
 
-void _G2AnimSection_SegValueToQuat(struct _G2AnimSection_Type* section, int zeroOne)
+void _G2AnimSection_SegValueToQuat(struct _G2AnimSection_Type* section, int zeroOne)//Matching - 98.74%
 {
 	struct _G2AnimSegValue_Type* segValue;
 	struct _G2AnimInterpInfo_Type* interpInfo;
@@ -381,40 +381,41 @@ void _G2AnimSection_SegValueToQuat(struct _G2AnimSection_Type* section, int zero
 
 	while (segCount > 0)
 	{
-		preQuat.x = segValue[segCount].rotQuat.quat.x & 0xFFF;
-		preQuat.y = segValue[segCount].rotQuat.quat.y & 0xFFF;
-		preQuat.z = segValue[segCount].rotQuat.quat.z & 0xFFF;
+		preQuat.x = segValue->rotQuat.quat.x & 0xFFF;
+		preQuat.y = segValue->rotQuat.quat.y & 0xFFF;
+		preQuat.z = segValue->rotQuat.quat.z & 0xFFF;
 		preQuat.order = 0;
 
 		if (zeroOne == 0)
 		{
 			G2Quat_FromEuler_S(quatInfo, &preQuat);
 
-			quatInfo[quatInfoChunkCount].srcScale.x = segValue[segCount].scale.x;
-			quatInfo[quatInfoChunkCount].srcScale.y = segValue[segCount].scale.y;
-			quatInfo[quatInfoChunkCount].srcScale.z = segValue[segCount].scale.z;
+			quatInfo->srcScale.x = segValue->scale.x;
+			quatInfo->srcScale.y = segValue->scale.y;
+			quatInfo->srcScale.z = segValue->scale.z;
 
-			quatInfo[quatInfoChunkCount].srcTrans.x = segValue[segCount].trans.x;
-			quatInfo[quatInfoChunkCount].srcTrans.y = segValue[segCount].trans.y;
-			quatInfo[quatInfoChunkCount].srcTrans.z = segValue[segCount].trans.z;
+			quatInfo->srcTrans.x = segValue->trans.x;
+			quatInfo->srcTrans.y = segValue->trans.y;
+			quatInfo->srcTrans.z = segValue->trans.z;
 		}
 		else
 		{
 			G2Quat_FromEuler_S(&quatInfo[2], &preQuat);
 
-			quatInfo[quatInfoChunkCount].destScale.x = segValue[segCount].scale.x;
-			quatInfo[quatInfoChunkCount].destScale.y = segValue[segCount].scale.y;
-			quatInfo[quatInfoChunkCount].destScale.z = segValue[segCount].scale.z;
+			quatInfo->destScale.x = segValue->scale.x;
+			quatInfo->destScale.y = segValue->scale.y;
+			quatInfo->destScale.z = segValue->scale.z;
 
-			quatInfo[quatInfoChunkCount].destTrans.x = segValue[segCount].trans.x;
-			quatInfo[quatInfoChunkCount].destTrans.y = segValue[segCount].trans.y;
-			quatInfo[quatInfoChunkCount].destTrans.z = segValue[segCount].trans.z;
+			quatInfo->destTrans.x = segValue->trans.x;
+			quatInfo->destTrans.y = segValue->trans.y;
+			quatInfo->destTrans.z = segValue->trans.z;
 		}
 
+		segValue++;
 		segCount--;
-		quatInfoChunkCount--;
+		quatInfo++;
 
-		if (quatInfoChunkCount == 0)
+		if (--quatInfoChunkCount == 0)
 		{
 			stateBlockList = stateBlockList->next;
 			quatInfoChunkCount = 4;
