@@ -2,13 +2,13 @@
 #include "POOLMMG2.H"
 #include "Game/MEMPACK.H"
 
-void G2PoolMem_InitPool(void *voidPool, int blockCount, int blockSize)
+void G2PoolMem_InitPool(void *voidPool, int blockCount, int blockSize)//Matching - 100%
 {
 #if defined(PSX_VERSION)
 
 	((struct _G2PoolMemPool_Type*)voidPool)->blockPool = (struct _G2PoolMem_Type*)MEMPACK_Malloc(blockCount * blockSize, 0x19);
 	((struct _G2PoolMemPool_Type*)voidPool)->stack = (unsigned short*)MEMPACK_Malloc(blockCount * 4, 0x19);
-	((struct _G2PoolMemPool_Type*)voidPool)->blockSize = 0;
+	((struct _G2PoolMemPool_Type*)voidPool)->blockSize = blockSize;
 	((struct _G2PoolMemPool_Type*)voidPool)->stackSize = blockCount;
 
 	G2PoolMem_ResetPool(voidPool);
