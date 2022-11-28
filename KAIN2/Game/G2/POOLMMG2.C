@@ -34,7 +34,7 @@ void G2PoolMem_InitPool(void *voidPool, int blockCount, int blockSize)//Matching
 #endif
 }
 
-void G2PoolMem_ResetPool(void *voidPool)
+void G2PoolMem_ResetPool(void* voidPool)//Matching - 100%
 { 
 #if defined(PSX_VERSION)
 
@@ -51,7 +51,7 @@ void G2PoolMem_ResetPool(void *voidPool)
 		do
 		{
 		
-			pool->stack[blockIndex++] = 0;
+			pool->stack[blockIndex++] = blockIndex;
 	
 		} while (blockIndex < pool->stackSize);
 	}
