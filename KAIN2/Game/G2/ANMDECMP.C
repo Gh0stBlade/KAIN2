@@ -126,7 +126,7 @@ void _G2Anim_InitializeChannel_AdaptiveDelta(struct _G2AnimDecompressChannelInfo
 #endif
 }
 
-void _G2Anim_InitializeChannel_Linear(struct _G2AnimDecompressChannelInfo_Type* dcInfo, struct _G2AnimChanStatus_Type* status)
+void _G2Anim_InitializeChannel_Linear(struct _G2AnimDecompressChannelInfo_Type* dcInfo, struct _G2AnimChanStatus_Type* status)//Matching - 100%
 {
 #if defined(PSX_VERSION)
 	unsigned short* chanData;
@@ -134,11 +134,11 @@ void _G2Anim_InitializeChannel_Linear(struct _G2AnimDecompressChannelInfo_Type* 
 
 	chanData = dcInfo->chanData;
 
-	chanLength = chanData[0] & 0xFFF;
+	chanLength = (chanData[0] & 0xFFF) + 1;
 
 	status->keyData = chanData[1];
 
-	dcInfo->chanData = &chanData[chanLength + 1];
+	dcInfo->chanData = &chanData[chanLength];
 
 #elif defined(PC_VERSION)
 	u_short* chanData; // ecx
