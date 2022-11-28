@@ -153,9 +153,9 @@ extern void StateSwitchStateDataDefault(struct __CharacterState *In, int Current
 
 extern void StateSwitchStateCharacterDataDefault(struct __CharacterState *In, TDRFuncPtr_StateSwitchStateCharacterDataDefault1NewProcess NewProcess, int Data); // 0x80072518
 
-extern void StateSwitchStateData(struct __CharacterState *In, int CurrentSection, TDRFuncPtr_StateSwitchStateData2NewProcess NewProcess, int Data); // 0x80072590
+extern void StateSwitchStateData(struct __CharacterState *In, int CurrentSection, void (*NewProcess)(struct __CharacterState* In, int CurrentSection, int Data), int Data); // 0x80072590
 
-extern void StateSwitchStateCharacterData(struct __CharacterState *In, TDRFuncPtr_StateSwitchStateCharacterData1NewProcess NewProcess, int Data); // 0x8007265C
+extern void StateSwitchStateCharacterData(struct __CharacterState *In, void (*NewProcess)(struct __CharacterState* In, int CurrentSection, int Data), int Data); // 0x8007265C
 
 extern void StateGovernState(struct __CharacterState *In, int Frames); // 0x80072750
 
