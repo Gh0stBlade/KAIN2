@@ -25,7 +25,9 @@
 #include <LIBMCRD.H>
 #include <LIBPRESS.H>
 #include <INLINE_C.H>
+#include "INLINE_C_EXT.H"
 #include <STDARG.H>
+
 
 #define UNIMPLEMENTED()
 
@@ -59,6 +61,7 @@ typedef RECT PSX_RECT;
 #include <LIBMCRD.H>
 #include <LIBPRESS.H>
 #include <INLINE_C.H>
+#include "INLINE_C_EXT.H"
 
 #define LoadImage LoadImagePSX
 #define PSX_EnterCriticalSection	EnterCriticalSection
