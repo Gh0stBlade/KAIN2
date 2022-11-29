@@ -638,79 +638,87 @@ void G2AnimSection_JumpToTime(struct _G2AnimSection_Type* section, short targetT
 short G2AnimSection_UpdateOverInterval(struct _G2AnimSection_Type* section, short interval)
 {
 	struct _G2Anim_Type* anim;
-	struct _G2SVector3_Type motionVector;
 	struct _G2AnimInterpInfo_Type* interpInfo;
 	short elapsedTime;
 	unsigned short z;
 	unsigned long xy;
+	struct _G2SVector3_Type motionVector;
 
-	if (!(section->flags & 0x1))
+	if ((section->flags & 0x1))
 	{
-		interpInfo = section->interpInfo;
+		return 0;
+	}
 
-		if (interpInfo != NULL && interpInfo->stateBlockList != NULL)
+	interpInfo = section->interpInfo;
+
+	if (interpInfo != NULL && interpInfo->stateBlockList != NULL)
+	{
+		anim = _G2AnimSection_GetAnim(section);
+
+		anim->flags |= 0x1;
+
+		elapsedTime = (section->elapsedTime + ((interval * section->speedAdjustment) >> 12)) - interpInfo->duration;
+
+		if (elapsedTime >= 0)
 		{
-			anim = _G2AnimSection_GetAnim(section);
+			section->keylist->timePerKey = -section->keylist->timePerKey;
 
-			anim->flags |= 0x1;
+			G2AnimSection_JumpToTime(section, interpInfo->targetTime);
 
-			elapsedTime = section->elapsedTime;
-
-			if ((elapsedTime + ((interval * section->speedAdjustment) >> 12)) - interpInfo->duration >= 0)
+			if (section->firstSeg == 0)
 			{
-				section->keylist->timePerKey = -section->keylist->timePerKey;
+				//G2Anim_GetRootMotionOverInterval(anim, elapsedTime, interpInfo->duration, &motionVector);
 
-				G2AnimSection_JumpToTime(section, interpInfo->targetTime);
+				xy = ((int*)&motionVector.x)[0];
+				z = motionVector.z;
 
-				if (section->firstSeg == 0)
-				{
-					G2Anim_GetRootMotionOverInterval(anim, elapsedTime, interpInfo->duration, &motionVector);
+				((int*)&anim->rootTrans.x)[0] = xy;
+				anim->rootTrans.z = z;
 
-					anim->rootTrans.x = motionVector.x;
-					anim->rootTrans.y = motionVector.y;
-					anim->rootTrans.z = motionVector.z;
-
-					section->flags |= 0x80;
-				}
-
-				_G2Anim_FreeInterpStateBlockList(interpInfo->stateBlockList);
-
-				interpInfo->stateBlockList = NULL;
-
-				if ((section->flags & 0x2))
-				{
-					G2AnimSection_SetLoopRangeAll(section);
-				}
-
-				section->alarmFlags |= 0x10;
-
-				if (section->callback != NULL)
-				{
-					section->callback(anim, section->sectionID, G2ANIM_MSG_SECTION_INTERPDONE, 0, 0, (struct _Instance*)section->callbackData);
-				}
-
-				return (elapsedTime + ((interval * section->speedAdjustment) >> 12)) - interpInfo->duration;
+				section->flags |= 0x80;
 			}
 
-			section->elapsedTime = (elapsedTime + ((interval * section->speedAdjustment) >> 12));
+			_G2Anim_FreeInterpStateBlockList(interpInfo->stateBlockList);
 
-			return 0;
+			interpInfo->stateBlockList = NULL;
+
+			if ((section->flags & 0x2))
+			{
+				G2AnimSection_SetLoopRangeAll(section);
+			}
+
+			section->alarmFlags |= 0x10;
+
+			if (section->callback != NULL)
+			{
+				typedef void* (*func)(struct _G2Anim_Type*, int, enum _G2AnimCallbackMsg_Enum, long, long, struct _Instance*);
+				func callbackProc;
+				callbackProc = (func)section->callback;
+				callbackProc(anim, section->sectionID, G2ANIM_MSG_SECTION_INTERPDONE, 0, 0, (struct _Instance*)section->callbackData);
+			}
+
+			return elapsedTime;
+		}
+
+		section->elapsedTime = (elapsedTime + ((interval * section->speedAdjustment) >> 12));
+
+		return 0;
+	}
+	else
+	{
+		if ((section->flags & 0x4))
+		{
+			return G2AnimSection_RewindOverInterval(section, interval);
 		}
 		else
 		{
-			if ((section->flags & 0x4))
-			{
-				return G2AnimSection_RewindOverInterval(section, interval);
-			}
-			else
-			{
-				return G2AnimSection_AdvanceOverInterval(section, interval);
-			}
+			return G2AnimSection_AdvanceOverInterval(section, interval);
 		}
 	}
 
 	return 0;
 }
+
 
 short G2AnimSection_AdvanceOverInterval(struct _G2AnimSection_Type* section, short interval)
 {
