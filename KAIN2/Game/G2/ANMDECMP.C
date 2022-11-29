@@ -58,7 +58,7 @@ void _G2Anim_DecompressChannel_AdaptiveDelta(struct _G2AnimDecompressChannelInfo
 			index = 63;
 		}
 
-		predictedDelta = step >> 3;//a2, a3
+		predictedDelta = step >> 3;
 
 		if ((chanData[(storedKey >> 2)] >> ((storedKey & 0x3) << 2) & 0x4))
 		{
@@ -174,7 +174,7 @@ loop_2:
 		rangeInfo = chanData[2];
 		targetKey -= rangeLength;
 		rangeBase += rangeOffset;
-		chanData += 2;
+		chanData += 1;
 		goto loop_2;
 	}
 
@@ -187,14 +187,15 @@ void _G2Anim_InitializeChannel_AdaptiveDelta(struct _G2AnimDecompressChannelInfo
 	unsigned short* chanData;
 	int keyCount;
 
-	chanData = dcInfo->chanData;
 	keyCount = dcInfo->keylist->keyCount;
 
+	chanData = dcInfo->chanData;
+
 	status->index = ((unsigned char*)chanData)[0];
-	
+
 	status->keyData = chanData[1];
-	
-	dcInfo->chanData = &chanData[((status->index + 3) >> 2) + 2];
+
+	dcInfo->chanData = &chanData[((keyCount + 3) >> 2)] + 2;
 
 #elif defined(PC_VERSION)
 	u_short* chanData; // eax
