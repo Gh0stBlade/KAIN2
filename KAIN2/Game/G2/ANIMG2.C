@@ -1382,7 +1382,7 @@ void _G2AnimSection_InitStatus(struct _G2AnimSection_Type* section, struct _G2An
 	section->storedTime = -section->keylist->timePerKey;
 }
 
-void FooBar(struct _G2AnimSection_Type* section, struct _G2Anim_Type* anim, int decompressedKey, int targetKey, long timeOffset)
+void FooBar(struct _G2AnimSection_Type* section, struct _G2Anim_Type* anim, int decompressedKey, int targetKey, long timeOffset)//Matching - 99.12%
 {
 	struct _G2AnimDecompressChannelInfo_Type dcInfo;
 	struct _G2AnimSegValue_Type* segValue;
@@ -1404,7 +1404,7 @@ void FooBar(struct _G2AnimSection_Type* section, struct _G2Anim_Type* anim, int 
 	int flagBitOffset;
 	unsigned long activeChanBits;
 	unsigned char* segKeyList;
-	
+
 	flagBitOffset = ((section->firstSeg << 1) + section->firstSeg) + 8;
 
 	bitsPerFlagType = ((anim->modelData->numSegments << 1) + anim->modelData->numSegments) + 7;
@@ -1425,7 +1425,7 @@ void FooBar(struct _G2AnimSection_Type* section, struct _G2Anim_Type* anim, int 
 
 		flagBitOffset += bitsPerFlagType;
 	}
-	
+
 	if ((activeChanBits & 0x2))
 	{
 		wombat(segKeyList, flagBitOffset, &scaleKfInfo);
@@ -1442,20 +1442,20 @@ void FooBar(struct _G2AnimSection_Type* section, struct _G2Anim_Type* anim, int 
 
 	chanStatusChunkCount = 8;
 
+	chanStatus = &chanStatusBlock->chunks[0];
+
 	dcInfo.keylist = section->keylist;
 
-	chanStatus = &chanStatusBlock->chunks[0];
+	dcInfo.chanData = section->keylist->sectionData[section->sectionID];
 
 	dcInfo.storedKey = decompressedKey;
 
 	dcInfo.targetKey = targetKey;
 
-	dcInfo.chanData = section->keylist->sectionData[section->sectionID];
-
 	if (timeOffset != 0)
 	{
-		nextDCInfo.keylist = section->keylist;
-		nextDCInfo.chanData = section->keylist->sectionData[section->sectionID];
+		nextDCInfo.keylist = dcInfo.keylist;
+		nextDCInfo.chanData = dcInfo.chanData;
 		nextDCInfo.storedKey = targetKey;
 		nextDCInfo.targetKey = targetKey + 1;
 
@@ -1463,10 +1463,10 @@ void FooBar(struct _G2AnimSection_Type* section, struct _G2Anim_Type* anim, int 
 		{
 			if ((section->flags & 0x2))
 			{
-				initDCInfo.keylist = section->keylist;
-				initDCInfo.chanData = section->keylist->sectionData[section->sectionID];
-				initDCInfo.storedKey = -1;
-				initDCInfo.targetKey = 0;
+				initDCInfo.keylist = dcInfo.keylist;
+				initDCInfo.chanData = dcInfo.chanData;
+				nextDCInfo.storedKey = -1;
+				nextDCInfo.targetKey = 0;
 			}
 			else
 			{
@@ -1476,7 +1476,7 @@ void FooBar(struct _G2AnimSection_Type* section, struct _G2Anim_Type* anim, int 
 	}
 
 	segIndex = section->firstSeg;
-	
+
 	segValue = &_segValues[segIndex];
 
 	lastSeg = segIndex + section->segCount;
@@ -1486,9 +1486,9 @@ void FooBar(struct _G2AnimSection_Type* section, struct _G2Anim_Type* anim, int 
 		_G2Anim_InitializeSegValue(anim, segValue, segIndex);
 
 		segChanFlags = kangaroo(&rotKfInfo);
-		
+
 		segChanFlags |= kangaroo(&scaleKfInfo) << 4;
-		
+
 		segChanFlags |= kangaroo(&transKfInfo) << 8;
 
 		chanValue = (short*)segValue;
@@ -1504,93 +1504,99 @@ void FooBar(struct _G2AnimSection_Type* section, struct _G2Anim_Type* anim, int 
 					type = 0;
 				}
 
-				if (type != 0)
+				switch (type)
 				{
-					if (type == 0x20)
-					{
-						chanValue[0] = dcInfo.chanData[1];
-
-						dcInfo.chanData += 2;
-					}
-					else
-					{
-						if (type == 0x40)
-						{
-							_G2Anim_DecompressChannel_AdaptiveDelta(&dcInfo, chanStatus);
-						}
-						else if (type == 0x60)
-						{
-							_G2Anim_DecompressChannel_Linear(&dcInfo, chanStatus);
-						}
-
-						chanStatusChunkCount--;
-
-						chanValue[0] = chanStatus->keyData;
-
-						nextChanStatus = *chanStatus++;
-
-						if (chanStatusChunkCount == 0)
-						{
-							chanStatusChunkCount = 8;
-
-							chanStatus = &chanStatusBlock->chunks[0];
-						}
-					}
-				}
-				else
+				case 0:
 				{
 					chanValue[0] = dcInfo.chanData[targetKey];
 
 					dcInfo.chanData += dcInfo.keylist->keyCount;
+					break;
 				}
+				case 0x20:
+				{
+					chanValue[0] = dcInfo.chanData[1];
+
+					dcInfo.chanData += 2;
+					break;
+				}
+				default:
+					switch (type)
+					{
+					case 0x40:
+					{
+						_G2Anim_DecompressChannel_AdaptiveDelta(&dcInfo, chanStatus);
+						break;
+					}
+					case 0x60:
+					{
+						_G2Anim_DecompressChannel_Linear(&dcInfo, chanStatus);
+						break;
+					}
+					}
+					chanStatusChunkCount--;
+
+					chanValue[0] = chanStatus->keyData;
+
+					nextChanStatus = *chanStatus++;
+
+					if (chanStatusChunkCount == 0)
+					{
+						chanStatusBlock = chanStatusBlock->next;
+
+						chanStatusChunkCount = 8;
+
+						chanStatus = &chanStatusBlock->chunks[0];
+					}
+
+
+					break;
+				}
+
+
 
 				if (timeOffset != 0)
 				{
-					if (type == 0x40)
+					switch (type)
+					{
+					case 0:
+					{
+						nextChanStatus.keyData = nextDCInfo.chanData[nextDCInfo.targetKey];
+
+						nextDCInfo.chanData = dcInfo.chanData;
+
+						initDCInfo.chanData = dcInfo.chanData;
+						break;
+					}
+					case 0x20:
+					{
+						nextChanStatus.keyData = chanValue[0];
+
+						nextDCInfo.chanData = dcInfo.chanData;
+
+						initDCInfo.chanData = dcInfo.chanData;
+						break;
+					}
+					case 0x40:
 					{
 						if (nextDCInfo.storedKey == -1)
 						{
 							_G2Anim_InitializeChannel_AdaptiveDelta(&initDCInfo, &nextChanStatus);
 						}
 
-						_G2Anim_DecompressChannel_AdaptiveDelta(&initDCInfo, &nextChanStatus);
+						_G2Anim_DecompressChannel_AdaptiveDelta(&nextDCInfo, &nextChanStatus);
+						break;
 					}
-					else
+					case 0x60:
 					{
-						if (type >= 0x41)
+						if (nextDCInfo.storedKey == -1)
 						{
-							if (type == 0x60)
-							{
-								if (nextDCInfo.storedKey == -1)
-								{
-									_G2Anim_InitializeChannel_Linear(&nextDCInfo, &nextChanStatus);
-								}
-
-								_G2Anim_DecompressChannel_Linear(&nextDCInfo, &nextChanStatus);
-							}
+							_G2Anim_InitializeChannel_Linear(&initDCInfo, &nextChanStatus);
 						}
-						else
-						{
-							if (type == 0)
-							{
-								nextChanStatus.keyData = nextDCInfo.chanData[nextDCInfo.targetKey];
 
-								nextDCInfo.chanData = dcInfo.chanData;
-								
-								initDCInfo.chanData = dcInfo.chanData;
-							}
-							else
-							{
-								if (type == 0x20)
-								{
-									nextChanStatus.keyData = chanValue[0];
-
-									nextDCInfo.chanData = dcInfo.chanData;
-									
-									initDCInfo.chanData = dcInfo.chanData;
-								}
-							}
-						}
+						_G2Anim_DecompressChannel_Linear(&nextDCInfo, &nextChanStatus);
+						break;
+					}
 					}
 
 					nextChanStatus.keyData -= chanValue[0];
@@ -1613,13 +1619,13 @@ void FooBar(struct _G2AnimSection_Type* section, struct _G2Anim_Type* anim, int 
 			}
 
 			segChanFlags >>= 1;
-			
+
 			chanValue++;
 		}
-		
-		segIndex++;
 
 		segValue++;
+
+		segIndex++;
 	}
 }
 
