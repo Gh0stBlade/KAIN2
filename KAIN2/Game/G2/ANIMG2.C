@@ -1325,7 +1325,7 @@ void _G2AnimSection_InitStatus(struct _G2AnimSection_Type* section, struct _G2An
 					type = 0;
 				}
 
-				switch (type)
+				switch(type)
 				{
 				case 0:
 				{
@@ -1354,7 +1354,7 @@ void _G2AnimSection_InitStatus(struct _G2AnimSection_Type* section, struct _G2An
 						chanStatus = ((struct _G2AnimChanStatusBlock_Type*)chanStatusNextBlockPtr)->chunks;
 					}
 
-					switch (type)
+					switch(type)
 					{
 					case 0x40:
 					{

@@ -12,6 +12,10 @@
 	((unsigned short*)r0)[1] = ((int*)&MAC2)[0]; \
 	((unsigned short*)r0)[2] = ((int*)&MAC3)[0]; \
 
+#define gte_ldv0sv( r0 )                       \
+	((int*)&R11)[0] = ((unsigned short*)r0)[0] | ((unsigned short*)r0)[1]; \
+	((int*)&R13)[0] = ((unsigned short*)r0)[2];\
+
 #elif defined(PSX_VERSION)
 #define gte_ldlvnlsv( r0 ) __asm__ volatile (			\
 	"lhu	$12, 0( %0 );"					\
@@ -35,6 +39,17 @@
 	:							\
 	: "r"( r0 )						\
 	: "$12", "$13", "$14", "memory" )
+
+#define gte_ldv0sv( r0 ) __asm__ volatile (			\
+	"lhu	$12, 0( %0 );"					\
+	"lhu	$13, 2( %0 );"					\
+	"lhu	$14, 4( %0 );"					\
+    "or     $12, $13;" \
+	"ctc2	$12, $0;"					\
+	"ctc2	$14, $1;"					\
+	:							\
+	: "r"( r0 )						\
+	: "$12", "$13", "$14" )
 
 #endif
 

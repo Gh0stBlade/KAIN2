@@ -181,7 +181,7 @@ loop_2:
 	status->keyData = rangeBase + ((rangeOffset * targetKey) / rangeLength);
 }
 
-void _G2Anim_InitializeChannel_AdaptiveDelta(struct _G2AnimDecompressChannelInfo_Type* dcInfo, struct _G2AnimChanStatus_Type* status)
+void _G2Anim_InitializeChannel_AdaptiveDelta(struct _G2AnimDecompressChannelInfo_Type* dcInfo, struct _G2AnimChanStatus_Type* status)//Matching - 100%
 {
 #if defined(PSX_VERSION)
 	unsigned short* chanData;

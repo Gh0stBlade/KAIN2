@@ -14,8 +14,8 @@ void G2Quat_Slerp_VM(long ratio, struct _G2Quat_Type* quatA, struct _G2Quat_Type
 	long cosTemp2;
 
 	gte_ldsv(quatA);
-	
-	gte_ldv0(quatB);
+
+	gte_ldv0sv(quatB);
 
 	gte_rtir();
 
@@ -28,7 +28,7 @@ void G2Quat_Slerp_VM(long ratio, struct _G2Quat_Type* quatA, struct _G2Quat_Type
 	if (cos_t < 0)
 	{
 		cos_t = -cos_t;
-		
+
 		bflip = 1;
 	}
 	else
@@ -36,21 +36,25 @@ void G2Quat_Slerp_VM(long ratio, struct _G2Quat_Type* quatA, struct _G2Quat_Type
 		bflip = 0;
 	}
 
-	beta = 4096 - ratio;
-
 	if ((4096 - cos_t) > 0)
 	{
+		beta = 4096 - ratio;
+
 		theta = MATH3D_racos_S(cos_t);
 
 		beta = theta;
 
-		theta += spin << 12;
+		theta += (spin << 12);
 
 		theta = rsin(beta);
 
 		beta = (rsin(beta - (ratio * theta)) << 12) / theta;
 
 		ratio = (rsin(ratio) << 12) / theta;
+	}
+	else
+	{
+		beta = 4096 - ratio;
 	}
 
 	if (bflip != 0)
@@ -59,7 +63,7 @@ void G2Quat_Slerp_VM(long ratio, struct _G2Quat_Type* quatA, struct _G2Quat_Type
 	}
 
 	gte_ldsv(quatA);
-	
+
 	gte_lddp(beta);
 
 	gte_gpf12();
@@ -74,7 +78,7 @@ void G2Quat_Slerp_VM(long ratio, struct _G2Quat_Type* quatA, struct _G2Quat_Type
 
 	foo[3] += ((ratio * quatB->w) >> 12);
 
-	gte_stlvnl(&foo);
+	gte_stlvl(&foo);
 
 	cosTemp1 = 0x1000000 / MATH3D_FastSqrt(((foo[3] * foo[3] + foo[2] * foo[2] + foo[1] * foo[1] + foo[0] * foo[0]) + 2048) >> 12);
 
@@ -86,7 +90,4 @@ void G2Quat_Slerp_VM(long ratio, struct _G2Quat_Type* quatA, struct _G2Quat_Type
 
 	gte_stsv(quatOut);
 }
-
-
-
 
