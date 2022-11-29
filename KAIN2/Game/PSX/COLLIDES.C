@@ -584,6 +584,82 @@ void BSP_MarkVisibleLeaves_S(struct BSPTree* bsp, struct Camera* camera, struct 
 
 void G2Quat_ToMatrix_S(struct _G2Quat_Type* quat, struct _G2Matrix_Type* matrix)
 {
+	int t6 = quat->x;
+	int t9 = quat->w;
+	int t7 = quat->y;
+	int t8 = quat->z;
+
+	int v0 = t6 << 1;
+
+	IR0 = v0;
+	IR1 = t6;
+	IR2 = t9;
+	IR3 = t7;
+
+	gte_gpf12();
+
+	int a0 = ONE;
+
+	v0 = t7 << 1;
+
+	int t0 = MAC1;
+	int t1 = MAC2;
+	int t2 = MAC3;
+
+	IR0 = v0;
+	IR1 = t7;
+	IR2 = t9;
+	IR3 = t8;
+
+	gte_gpf12();
+
+	v0 = t8 << 1;
+
+	int t3 = MAC1;
+	int t4 = MAC2;
+	int t5 = MAC3;
+
+	IR0 = v0;
+	IR1 = t8;
+	IR2 = t9;
+	IR3 = t6;
+
+	gte_gpf12();
+
+	int v1 = t5 + t1;
+	v0 = t0 + t3;
+	v0 = a0 - v0;
+
+	((short*)matrix)[7] = v1;
+	((short*)matrix)[8] = v0;
+
+	t6 = MAC1;
+	t7 = MAC2;
+	t8 = MAC3;
+
+	v0 = t3 + t6;
+	v0 = a0 - v0;
+	v1 = t2 - t7;
+
+	((short*)matrix)[0] = v0;
+	((short*)matrix)[1] = v1;
+
+	v0 = t8 + t4;
+	v1 = t2 + t7;
+
+	((short*)matrix)[2] = v0;
+	((short*)matrix)[3] = v1;
+
+	v0 = t0 + t6;
+	v0 = a0 - v0;
+	v1 = t5 - t1;
+
+	((short*)matrix)[4] = v0;
+	((short*)matrix)[5] = v1;
+
+	v0 = t8 - t4;
+
+	((short*)matrix)[6] = v0;
 }
 
 void G2Quat_FromEuler_S(struct _G2Quat_Type* quatInfo, struct _G2EulerAngles_Type* preQuat)
