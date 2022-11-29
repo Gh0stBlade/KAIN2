@@ -797,6 +797,11 @@ short rcos(long a)
 	}
 }
 
+long MATH3D_racos_S(long a)
+{
+	return 0;
+}
+
 void sub_80078458(struct _VMObject* vmobject, struct Level* level)
 {
 	struct _VMOffsetTable* currentVMOffset;//$a0

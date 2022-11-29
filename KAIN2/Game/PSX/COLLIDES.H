@@ -92,7 +92,7 @@ extern short rcos(long a); // 0x800790C8
 
 extern void rcos_exit() ; // 0x800790F0
 
-extern void MATH3D_racos_S() ; // 0x800790F8
+extern long MATH3D_racos_S(long a); // 0x800790F8
 
 extern void SetGp() ; // 0x80079158
 

@@ -988,7 +988,7 @@ extern int gte_ldlzc(int input);
 	((int*)r0)[0] = gteRegs.CP2D.p[ 24 + i ].sd; \
 
 #define gte_stlvnl0( r0 )	\
-	r0 = OFY;	
+	((int*)r0)[0] = MAC1;	
 
 #define gte_stlvnl1( r0 )	\
 	r0 = H;	
