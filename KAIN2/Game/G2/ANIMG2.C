@@ -535,7 +535,7 @@ void G2Anim_GetRootMotionFromTimeForDuration(struct _G2Anim_Type* anim, short du
 	}
 }
 
-void G2AnimSection_SwitchToKeylistAtTime(struct _G2AnimSection_Type* section, struct _G2AnimKeylist_Type* keylist, int keylistID, short targetTime)
+void G2AnimSection_SwitchToKeylistAtTime(struct _G2AnimSection_Type* section, struct _G2AnimKeylist_Type* keylist, int keylistID, short targetTime)//Matching - 98.20%
 {
 	struct _G2Anim_Type* anim;
 	struct _G2SVector3_Type rootMotion;
@@ -608,7 +608,7 @@ void G2AnimSection_SwitchToKeylistAtTime(struct _G2AnimSection_Type* section, st
 	section->swAlarmTable = NULL;
 }
 
-void G2AnimSection_JumpToTime(struct _G2AnimSection_Type* section, short targetTime)
+void G2AnimSection_JumpToTime(struct _G2AnimSection_Type* section, short targetTime)//Matching - 92.13%
 {
 	struct _G2Anim_Type* anim;
 
@@ -622,7 +622,7 @@ void G2AnimSection_JumpToTime(struct _G2AnimSection_Type* section, short targetT
 	section->elapsedTime = targetTime;
 
 	_G2AnimSection_UpdateStoredFrameFromData(section, anim);
-	
+
 	G2AnimSection_ClearAlarm(section, 0x3);
 
 	section->flags &= 0x7F;
@@ -1225,14 +1225,13 @@ void _G2Anim_InitializeSegValue(struct _G2Anim_Type* anim, struct _G2AnimSegValu
 	((unsigned long*)(&segValue->trans.z))[0] = zpad;
 }
 
-void _G2AnimSection_InitStatus(struct _G2AnimSection_Type* section, struct _G2Anim_Type* anim)//Matching - 94.49%
+void _G2AnimSection_InitStatus(struct _G2AnimSection_Type* section, struct _G2Anim_Type* anim)//Matching - 97.69%
 {
 	struct _G2AnimDecompressChannelInfo_Type dcInfo;
 	struct _G2AnimSegValue_Type* segValue;
 	struct _G2AnimChanStatusBlock_Type** chanStatusNextBlockPtr;
 	struct _G2AnimChanStatusBlock_Type* chanStatusBlock;
 	struct _G2AnimChanStatus_Type* chanStatus;
-	int chanStatusChunkCount;
 	struct _G2AnimSegKeyflagInfo_Type rotKfInfo;
 	struct _G2AnimSegKeyflagInfo_Type scaleKfInfo;
 	struct _G2AnimSegKeyflagInfo_Type transKfInfo;
@@ -1240,10 +1239,11 @@ void _G2AnimSection_InitStatus(struct _G2AnimSection_Type* section, struct _G2An
 	unsigned long segChanFlags;
 	int segIndex;
 	int lastSeg;
-	int bitsPerFlagType;
 	int flagBitOffset;
 	unsigned long activeChanBits;
 	unsigned char* segKeyList;
+	int bitsPerFlagType;
+	int chanStatusChunkCount;
 
 	flagBitOffset = ((section->firstSeg << 1) + section->firstSeg) + 8;
 
@@ -1282,9 +1282,9 @@ void _G2AnimSection_InitStatus(struct _G2AnimSection_Type* section, struct _G2An
 
 	_G2Anim_FreeChanStatusBlockList(section->chanStatusBlockList);
 
-	chanStatusChunkCount = 0;
-
 	section->chanStatusBlockList = NULL;
+
+	chanStatusChunkCount = 0;
 
 	dcInfo.keylist = section->keylist;
 
@@ -1292,9 +1292,9 @@ void _G2AnimSection_InitStatus(struct _G2AnimSection_Type* section, struct _G2An
 
 	segIndex = section->firstSeg;
 
-	segValue = &_segValues[section->firstSeg];
-
 	lastSeg = segIndex + section->segCount;
+
+	segValue = &_segValues[segIndex];
 
 	chanStatusNextBlockPtr = &section->chanStatusBlockList;
 
@@ -1341,7 +1341,9 @@ void _G2AnimSection_InitStatus(struct _G2AnimSection_Type* section, struct _G2An
 
 						chanStatusNextBlockPtr[0] = chanStatusBlock;
 
-						chanStatus = &chanStatusNextBlockPtr[0]->chunks[0];
+						chanStatusNextBlockPtr = (struct _G2AnimChanStatusBlock_Type**)chanStatusBlock;
+
+						chanStatus = ((struct _G2AnimChanStatusBlock_Type*)chanStatusNextBlockPtr)->chunks;
 					}
 
 					switch (type)
@@ -1538,7 +1540,9 @@ void FooBar(struct _G2AnimSection_Type* section, struct _G2Anim_Type* anim, int 
 
 					chanValue[0] = chanStatus->keyData;
 
-					nextChanStatus = *chanStatus++;
+					nextChanStatus = chanStatus[0];
+
+					chanStatus++;
 
 					if (chanStatusChunkCount == 0)
 					{
@@ -1546,7 +1550,7 @@ void FooBar(struct _G2AnimSection_Type* section, struct _G2Anim_Type* anim, int 
 
 						chanStatusChunkCount = 8;
 
-						chanStatus = &chanStatusBlock->chunks[0];
+						chanStatus = chanStatusBlock->chunks;
 					}
 
 
@@ -1650,9 +1654,9 @@ void _G2AnimSection_UpdateStoredFrameFromData(struct _G2AnimSection_Type* sectio
 
 	FooBar(section, anim, storedKey, targetKey, timeOffset);
 
-	section->flags |= 0x80;
-
 	section->storedTime = section->elapsedTime;
+
+	section->flags |= 0x80;
 }
 
 struct _G2Anim_Type* _G2AnimSection_GetAnim(struct _G2AnimSection_Type* section)
