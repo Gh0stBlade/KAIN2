@@ -1225,7 +1225,7 @@ void _G2Anim_InitializeSegValue(struct _G2Anim_Type* anim, struct _G2AnimSegValu
 	((unsigned long*)(&segValue->trans.z))[0] = zpad;
 }
 
-void _G2AnimSection_InitStatus(struct _G2AnimSection_Type* section, struct _G2Anim_Type* anim)
+void _G2AnimSection_InitStatus(struct _G2AnimSection_Type* section, struct _G2Anim_Type* anim)//Matching - 94.49%
 {
 	struct _G2AnimDecompressChannelInfo_Type dcInfo;
 	struct _G2AnimSegValue_Type* segValue;
@@ -1250,9 +1250,9 @@ void _G2AnimSection_InitStatus(struct _G2AnimSection_Type* section, struct _G2An
 	bitsPerFlagType = ((anim->modelData->numSegments << 1) + anim->modelData->numSegments) + 7;
 
 	segKeyList = (unsigned char*)&section->keylist->sectionData[section->keylist->sectionCount];
-	
+
 	activeChanBits = segKeyList[0];
-	
+
 	bitsPerFlagType &= 0xFFFFFFF8;
 
 	rotKfInfo.stream = NULL;
@@ -1265,7 +1265,7 @@ void _G2AnimSection_InitStatus(struct _G2AnimSection_Type* section, struct _G2An
 
 		flagBitOffset += bitsPerFlagType;
 	}
-	
+
 	if ((activeChanBits & 0x2))
 	{
 		wombat(segKeyList, flagBitOffset, &scaleKfInfo);
@@ -1317,46 +1317,59 @@ void _G2AnimSection_InitStatus(struct _G2AnimSection_Type* section, struct _G2An
 					type = 0;
 				}
 
-				if (type != 0)
+				switch (type)
 				{
-					if (type == 0x20)
-					{
-						dcInfo.chanData = &dcInfo.chanData[2];
-					}
-					else
-					{
-						if (chanStatusChunkCount == 0)
-						{
-							chanStatusChunkCount = 8;
-
-							chanStatusBlock = (struct _G2AnimChanStatusBlock_Type*)G2PoolMem_Allocate(&_chanStatusBlockPool);
-
-							chanStatusBlock->next = NULL;
-
-							chanStatusNextBlockPtr[0] = chanStatusBlock;
-
-							chanStatus = &chanStatusNextBlockPtr[0]->chunks[0];
-						}
-
-						if (type == 0x40)
-						{
-							_G2Anim_InitializeChannel_AdaptiveDelta(&dcInfo, chanStatus++);
-						}
-						else if (type == 0x60)
-						{
-							_G2Anim_InitializeChannel_Linear(&dcInfo, chanStatus++);
-						}
-						else
-						{
-							chanStatus++;
-						}
-
-						chanStatusChunkCount--;
-					}
-				}
-				else
+				case 0:
 				{
 					dcInfo.chanData = &dcInfo.chanData[dcInfo.keylist->keyCount];
+					break;
+				}
+				case 0x20:
+				{
+					dcInfo.chanData = &dcInfo.chanData[2];
+					break;
+				}
+				default:
+				{
+					if (chanStatusChunkCount == 0)
+					{
+						chanStatusChunkCount = 8;
+
+						chanStatusBlock = (struct _G2AnimChanStatusBlock_Type*)G2PoolMem_Allocate(&_chanStatusBlockPool);
+
+						chanStatusBlock->next = NULL;
+
+						chanStatusNextBlockPtr[0] = chanStatusBlock;
+
+						chanStatus = &chanStatusNextBlockPtr[0]->chunks[0];
+					}
+
+					switch (type)
+					{
+					case 0x40:
+					{
+						_G2Anim_InitializeChannel_AdaptiveDelta(&dcInfo, chanStatus);
+
+						chanStatus++;
+						break;
+					}
+					case 0x60:
+					{
+						_G2Anim_InitializeChannel_Linear(&dcInfo, chanStatus);
+
+						chanStatus++;
+						break;
+					}
+					default:
+					{
+						chanStatus++;
+						break;
+					}
+					}
+
+					chanStatusChunkCount--;
+					break;
+				}
 				}
 			}
 			segChanFlags >>= 1;
