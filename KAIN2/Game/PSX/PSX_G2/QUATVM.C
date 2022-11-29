@@ -13,7 +13,7 @@ void G2Quat_Slerp_VM(long ratio, struct _G2Quat_Type* quatA, struct _G2Quat_Type
 	long cosTemp1;
 	long cosTemp2;
 
-	gte_ldlvl(quatA);
+	gte_ldsv(quatA);
 	
 	gte_ldv0(quatB);
 
@@ -58,7 +58,7 @@ void G2Quat_Slerp_VM(long ratio, struct _G2Quat_Type* quatA, struct _G2Quat_Type
 		ratio = -ratio;
 	}
 
-	gte_ldlvl(quatA);
+	gte_ldsv(quatA);
 	
 	gte_lddp(beta);
 
@@ -66,7 +66,7 @@ void G2Quat_Slerp_VM(long ratio, struct _G2Quat_Type* quatA, struct _G2Quat_Type
 
 	foo[3] = (beta * quatA->w) >> 12;
 
-	gte_ldlvl(quatB);
+	gte_ldsv(quatB);
 
 	gte_lddp(ratio);
 
