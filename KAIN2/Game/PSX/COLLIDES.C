@@ -799,7 +799,43 @@ short rcos(long a)
 
 long MATH3D_racos_S(long a)
 {
-	return 0;
+	int v0 = 512;
+	int t2 = 256;
+	int t3 = a;
+
+	if (a < 0)
+	{
+		t3 = -a;
+	}
+
+start:
+	int t1 = ecostable[v0 + 1024];
+	int t4 = 256;
+	int t5 = t1 - t3;
+
+	if (t5 != 0)
+	{
+		t2 >>= 1;
+
+		if (t5 < 0)
+		{
+			t4 = -t4;
+		}
+
+		v0 += t4;
+
+		if (t2 != 0)
+		{
+			goto start;
+		}
+	}
+
+	if (a < 0)
+	{
+		v0 = 2048 - v0;
+	}
+
+	return v0;
 }
 
 void sub_80078458(struct _VMObject* vmobject, struct Level* level)
