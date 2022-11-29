@@ -733,8 +733,8 @@ void G2Quat_FromEuler_S(struct _G2Quat_Type* quatInfo, struct _G2EulerAngles_Typ
 
 	int t6 = IR1;
 	int t7 = IR2;
-	t0 = IR0;
-
+	
+	IR0 = t0;
 	IR1 = t5;
 	IR2 = t4;
 
