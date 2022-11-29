@@ -586,8 +586,210 @@ void G2Quat_ToMatrix_S(struct _G2Quat_Type* quat, struct _G2Matrix_Type* matrix)
 {
 }
 
-void G2Quat_FromEuler_S(struct _G2AnimQuatInfo_Type* quatInfo, struct _G2EulerAngles_Type* preQuat)
+void G2Quat_FromEuler_S(struct _G2Quat_Type* quatInfo, struct _G2EulerAngles_Type* preQuat)
 {
+	int t0 = preQuat->x;
+	int t2 = preQuat->y;
+	int t4 = preQuat->z;
+
+	int a1 = preQuat->order;
+
+	//t8 = &ecostable
+	int v1 = t0;
+
+	if ((preQuat->order & 0x1))
+	{
+		t0 = t4;
+		t4 = v1;
+	}
+	//loc_80079DB8
+	t0 >>= 1;
+	if ((preQuat->order & 0x4))
+	{
+		t2 = -t2;
+	}
+	//loc_80079DC8
+	t2 >>= 1;
+	t4 >>= 1;
+	int t1 = t0 & 0x7FF;
+	int t3 = t0 & 0x800;
+
+	t0 = ecostable[t1];
+	t1 = ecostable[t1 + 1024];
+
+	if (t3 != 0)
+	{
+		t0 = -t0;
+		t1 = -t1;
+	}
+	//loc_80079DF8
+
+	t3 = t2 & 0x7FF;
+	int t5 = t2 & 0x800;
+
+	t2 = ecostable[t3];
+	t3 = ecostable[t3 + 1024];
+
+	if (t5 != 0)
+	{
+		t2 = -t2;
+		t3 = -t3;
+	}
+
+	//loc_80079E20
+	t5 = t4 & 0x7FF;
+	int t8 = t4 & 0x800;
+
+	t4 = ecostable[t5];
+	t5 = ecostable[t5 + 1024];
+
+	if (t8 != 0)
+	{
+		t4 = -t4;
+		t5 = -t5;
+	}
+
+	IR0 = t1;
+	IR1 = t5;
+	IR2 = t4;
+
+	gte_gpf12();
+
+	int t6 = IR1;
+	int t7 = IR2;
+	t0 = IR0;
+
+	IR1 = t5;
+	IR2 = t4;
+
+	gte_gpf12();
+
+	v1 = (a1 & 0x18) >> 2;
+	int v0 = a1 & 0x2;
+
+	t8 = IR1;
+	int t9 = IR2;
+
+	t0 = t7 + t8;
+
+	if (v0 != 0)
+	{
+		t5 = t6 - t9;
+
+		IR0 = t3;
+		IR1 = t0;
+		IR2 = t5;
+
+		gte_gpf0();
+
+		a1 &= 0x4;
+		a1 >>= 1;
+
+		t1 = t6 + t9;
+		t4 = t7 - t8;
+
+		t0 = IR1;
+		t5 = IR2;
+
+		IR0 = t2;
+		IR1 = t1;
+		IR2 = t4;
+
+		gte_gpf0();
+
+		t8 = v1 + a1;
+
+		t8 += 2;
+
+		t9 = v1 - a1;
+		if (t8 >= 5)
+		{
+			t8 -= 6;
+		}
+
+		t9 += 4;
+
+		t1 = IR1;
+		if (t9 >= 5)
+		{
+			t9 -= 6;
+		}
+
+		t4 = IR2;
+	}
+	else
+	{
+		//loc_80079F20
+		IR0 = t3;
+		IR1 = t8;
+		IR2 = t9;
+		IR3 = t7;
+
+		t5 = t3 * t6;
+
+		gte_gpf0();
+
+		a1 &= 0x4;
+		a1 >>= 1;
+
+		t0 = MAC1;
+		t1 = MAC2;
+		t4 = MAC3;
+
+		IR0 = t2;
+		IR1 = t7;
+		IR2 = t6;
+		IR3 = t8;
+
+		t7 = t2 * t9;
+
+		gte_gpf0();
+
+		t8 = v1 + a1;
+		t8 += 2;
+
+		t9 = v1 - a1;
+		if (t8 >= 5)
+		{
+			t8 -= 6;
+		}
+
+		t9 += 4;
+		t2 = MAC1;
+		if (t9 >= 5)
+		{
+			t9 -= 6;
+		}
+
+		t3 = MAC2;
+		t6 = MAC3;
+
+		t0 -= t2;
+		t1 += t3;
+		t4 -= t6;
+		t5 += t7;
+
+		t0 >>= 12;
+		t1 >>= 12;
+		t4 >>= 12;
+		t5 >>= 12;
+	}
+
+	//loc_80079FC8
+	struct _G2Quat_Type* v11 = (struct _G2Quat_Type*)((char*)quatInfo + v1);
+	struct _G2Quat_Type* t88 = (struct _G2Quat_Type*)((char*)quatInfo + t8);
+	struct _G2Quat_Type* t99 = (struct _G2Quat_Type*)((char*)quatInfo + t9);
+
+	if (a1 != 0)
+	{
+		t1 = -t1;
+	}
+
+	v11->x = t0;
+	t88->x = t1;
+	t99->x = t4;
+
+	quatInfo->w = t5;
 }
 
 #if defined(PSXPC_VERSION) && defined(PSX_VERSION)
