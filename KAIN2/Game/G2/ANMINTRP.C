@@ -172,17 +172,17 @@ void _G2AnimSection_UpdateStoredFrameFromQuat(struct _G2AnimSection_Type* sectio
 	interpInfo = section->interpInfo;
 
 	alpha = (section->elapsedTime * 4096) / interpInfo->duration;
-	
+
 	quatInfoChunkCount = 4;
-	
+
 	segCount = section->segCount;
 
 	alpha = _G2AnimAlphaTable_GetValue(interpInfo->alphaTable, alpha);
-	
+
 	stateBlockList = interpInfo->stateBlockList;
-	
+
 	segValue = &_segValues[section->firstSeg];
-	
+
 	quatInfo = stateBlockList->quatInfo;
 
 	if (segCount > 0)
@@ -197,20 +197,18 @@ void _G2AnimSection_UpdateStoredFrameFromQuat(struct _G2AnimSection_Type* sectio
 		{
 			G2Quat_Slerp_VM(alpha, &quatInfo->srcQuat, &quatInfo->destQuat, &newQuat, 0);
 
+			dest = &segValue->scale;
+			base = &quatInfo->srcScale;
+			offset = &quatInfo->destScale;
+
 			xy = GET_XY(source);
 			zw = GET_ZW(source);
 
-			dest = &segValue->scale;
 
 			SET_XY(segValue->rotQuat.quat, xy);
 			SET_ZW(segValue->rotQuat.quat, zw);
 
-			base = &quatInfo->srcScale;
-			offset = &quatInfo->destScale;
-
-			MAC1 = base->x;
-			MAC2 = base->y;
-			MAC3 = base->z;
+			gte_ldlvnlsv(base);
 
 			gte_ldsv(offset);
 
@@ -218,7 +216,7 @@ void _G2AnimSection_UpdateStoredFrameFromQuat(struct _G2AnimSection_Type* sectio
 
 			gte_gpl12();
 
-			gte_stlvnl(dest);
+			gte_stlvnlsv(dest);
 
 			dest = &segValue->trans;
 
@@ -226,9 +224,7 @@ void _G2AnimSection_UpdateStoredFrameFromQuat(struct _G2AnimSection_Type* sectio
 
 			offset = &quatInfo->destTrans;
 
-			MAC1 = base->x;
-			MAC2 = base->y;
-			MAC3 = base->z;
+			gte_ldlvnlsv(base);
 
 			gte_ldsv(offset);
 
@@ -236,7 +232,7 @@ void _G2AnimSection_UpdateStoredFrameFromQuat(struct _G2AnimSection_Type* sectio
 
 			gte_gpl12();
 
-			gte_stlvnl(dest);
+			gte_stlvnlsv(dest);
 
 			segCount--;
 			quatInfoChunkCount--;
@@ -249,7 +245,7 @@ void _G2AnimSection_UpdateStoredFrameFromQuat(struct _G2AnimSection_Type* sectio
 				quatInfo = stateBlockList->quatInfo;
 			}
 
-			segValue->bIsQuat = TRUE;
+			segValue->bIsQuat = 1;
 			segValue++;
 
 		} while (segCount > 0);
@@ -356,7 +352,7 @@ void _G2AnimSection_InterpStateToQuat(struct _G2AnimSection_Type *section)
 	}
 }
 
-void _G2AnimSection_SegValueToQuat(struct _G2AnimSection_Type* section, int zeroOne)//Matching - 98.74%
+void _G2AnimSection_SegValueToQuat(struct _G2AnimSection_Type* section, int zeroOne)//Matching - 98.79%
 {
 	struct _G2AnimSegValue_Type* segValue;
 	struct _G2AnimInterpInfo_Type* interpInfo;
@@ -382,7 +378,7 @@ void _G2AnimSection_SegValueToQuat(struct _G2AnimSection_Type* section, int zero
 
 		if (zeroOne == 0)
 		{
-			G2Quat_FromEuler_S(quatInfo, &preQuat);
+			G2Quat_FromEuler_S(&quatInfo->srcQuat, &preQuat);
 
 			quatInfo->srcScale.x = segValue->scale.x;
 			quatInfo->srcScale.y = segValue->scale.y;
@@ -394,7 +390,7 @@ void _G2AnimSection_SegValueToQuat(struct _G2AnimSection_Type* section, int zero
 		}
 		else
 		{
-			G2Quat_FromEuler_S(&quatInfo[2], &preQuat);
+			G2Quat_FromEuler_S(&quatInfo->destQuat, &preQuat);
 
 			quatInfo->destScale.x = segValue->scale.x;
 			quatInfo->destScale.y = segValue->scale.y;
