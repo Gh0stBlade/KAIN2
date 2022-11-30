@@ -1124,7 +1124,7 @@ void StateHandlerStartTurn(struct __CharacterState* In, int CurrentSection, int 
 			{
 				Raziel.Mode = 8;
 
-				if (razSwitchVAnimCharacterGroup(In->CharacterInstance, 0, NULL, NULL != 0))
+				if (razSwitchVAnimCharacterGroup(In->CharacterInstance, 0, NULL, NULL) != 0)
 				{
 					G2EmulationSwitchAnimationCharacter(In, 26, 0, 0, 1);
 				}

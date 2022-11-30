@@ -2365,7 +2365,6 @@ void GAMELOOP_DoTimeProcess()
 		}
 
 		gameTrackerX.timeMult = ((last << 12) / 33);
-		printf("TIME MULT: %x\n", gameTrackerX.timeMult);
 		gameTrackerX.timeSinceLastGameFrame += gameTrackerX.timeMult;
 		gameTrackerX.gameFramePassed = 0;
 		gameTrackerX.globalTimeMult = gameTrackerX.timeMult;
