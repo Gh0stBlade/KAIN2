@@ -760,6 +760,7 @@ void SteerSwitchMode(struct _Instance* instance, int mode)
 
 		break;
 	}
+	}
 
 	switch (mode)
 	{
@@ -770,6 +771,19 @@ void SteerSwitchMode(struct _Instance* instance, int mode)
 
 		Raziel.RotationSegment = 0;
 
+		break;
+	}
+	case 1:
+	case 2:
+	case 4:
+	case 5:
+	case 8:
+	case 9:
+	case 10:
+	case 15:
+	case 18:
+	{
+		Raziel.RotationSegment = 0;
 		break;
 	}
 	case 11:
@@ -790,7 +804,7 @@ void SteerSwitchMode(struct _Instance* instance, int mode)
 		Raziel.extraRot.x = rotx;
 
 		CAMERA_StartSwimThrowMode(&theCamera);
-		
+
 		CAMERA_SetLookRot(&theCamera, 4096 - Raziel.extraRot.x, 0);
 		break;
 	}
@@ -817,8 +831,6 @@ void SteerSwitchMode(struct _Instance* instance, int mode)
 		break;
 	}
 	}
-	}
-
 	Raziel.steeringMode = mode;
 }
 
