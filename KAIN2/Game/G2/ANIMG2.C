@@ -1728,7 +1728,7 @@ void _G2Anim_FreeChanStatusBlockList(struct _G2AnimChanStatusBlock_Type* block)
 	}
 }
 
-long _G2AnimAlphaTable_GetValue(struct _G2AnimAlphaTable_Type *table, long trueAlpha)
+long _G2AnimAlphaTable_GetValue(struct _G2AnimAlphaTable_Type* table, long trueAlpha)//Matching - 89%
 {
 	long position;
 	long positionInt;
@@ -1738,13 +1738,17 @@ long _G2AnimAlphaTable_GetValue(struct _G2AnimAlphaTable_Type *table, long trueA
 	if (table != NULL)
 	{
 		position = (table->size - 1) * trueAlpha;
+		
 		positionInt = position >> 12;
 
 		value = table->data[positionInt++];
+		
+		trueAlpha = table->data[positionInt];
+		
 		positionFrac = position & 0xFFF;
-
-		return value + ((table->data[positionInt] - value) * positionFrac) >> 12;
+		
+		return value + (((trueAlpha - value) * positionFrac) >> 12);
 	}
-	
+
 	return trueAlpha;
 }
