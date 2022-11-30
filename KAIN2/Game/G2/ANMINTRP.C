@@ -82,8 +82,6 @@ void G2AnimSection_InterpToKeylistAtTime(struct _G2AnimSection_Type* section, st
 
 	while (segCount > 0)
 	{
-		segCount--;
-
 		quatInfoChunkCount--;
 
 		quatInfo->destScale.x -= quatInfo->srcScale.x;
