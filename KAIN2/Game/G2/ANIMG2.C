@@ -183,17 +183,16 @@ void G2Anim_Restore(struct _G2Anim_Type *anim)
 	UNIMPLEMENTED();
 }
 
-void G2Anim_BuildTransforms(struct _G2Anim_Type* anim)
+void G2Anim_BuildTransforms(struct _G2Anim_Type* anim)//Matching - 89.71%
 {
 	unsigned short z;
 	unsigned long xy;
-	
+
 	G2Anim_UpdateStoredFrame(anim);
 
 	if ((anim->section[0].flags & 0x88) != 0x80)
 	{
-		anim->rootTrans.x = 0;
-		anim->rootTrans.y = 0;
+		((int*)&anim->rootTrans.x)[0] = 0;
 		anim->rootTrans.z = 0;
 	}
 
@@ -219,15 +218,14 @@ void G2Anim_BuildTransforms(struct _G2Anim_Type* anim)
 		_G2Anim_BuildTransformsNoControllers(anim);
 	}
 
-	anim->rootTrans.x = 0;
-	anim->rootTrans.y = 0;
+	((int*)&anim->rootTrans.x)[0] = 0;
 	anim->rootTrans.z = 0;
 
 	anim->section[0].flags &= 0x7F;
 	anim->flags &= 0xFFFE;
 }
 
-void G2Anim_UpdateStoredFrame(struct _G2Anim_Type* anim)
+void G2Anim_UpdateStoredFrame(struct _G2Anim_Type* anim)//Matching - 97.21%
 {
 	struct _G2AnimSection_Type* section;
 	short storedTime;
@@ -242,20 +240,22 @@ void G2Anim_UpdateStoredFrame(struct _G2Anim_Type* anim)
 	storedTime = section->storedTime;
 	elapsedTime = section->elapsedTime;
 
-	while (sectionCount-- > 0)
+	while (sectionCount > 0)
 	{
 		interpInfo = section->interpInfo;
 
 		if (interpInfo != NULL && interpInfo->stateBlockList != NULL)
 		{
 			_G2AnimSection_UpdateStoredFrameFromQuat(section);
-			section++;
 		}
 		else
 		{
 			_G2AnimSection_UpdateStoredFrameFromData(section, anim);
-			section++;
 		}
+
+		section++;
+
+		sectionCount--;
 	}
 
 	vector = &motionVector;
@@ -265,8 +265,7 @@ void G2Anim_UpdateStoredFrame(struct _G2Anim_Type* anim)
 		storedTime = 0;
 	}
 
-	vector->x = 0;
-	vector->y = 0;
+	((int*)&vector->x)[0] = 0;
 	vector->z = 0;
 
 	if (storedTime < elapsedTime)
@@ -278,7 +277,7 @@ void G2Anim_UpdateStoredFrame(struct _G2Anim_Type* anim)
 		G2Anim_GetRootMotionOverInterval(anim, elapsedTime, storedTime, vector);
 	}
 
-	if((anim->section[0].flags & 0x4))
+	if ((anim->section[0].flags & 0x4))
 	{
 		anim->rootTrans.x -= motionVector.x;
 		anim->rootTrans.y -= motionVector.y;
@@ -421,7 +420,7 @@ void G2Anim_GetSegChannelValue(struct _G2Anim_Type *anim, int segIndex, unsigned
 }
 
 void G2Anim_GetRootMotionFromTimeForDuration(struct _G2Anim_Type* anim, short durationStart, short duration, struct _G2SVector3_Type* motionVector)
-{ 
+{
 	struct _G2Anim_Type dummyAnim;
 	struct _G2AnimSection_Type* section;
 	struct _G2AnimKeylist_Type* keylist;
@@ -436,30 +435,28 @@ void G2Anim_GetRootMotionFromTimeForDuration(struct _G2Anim_Type* anim, short du
 	struct _G2SVector3_Type* vector;
 
 	dest = motionVector;
-	
+
 	section = &anim->section[0];
-	
+
 	interpInfo = section->interpInfo;
-	
+
 	if (interpInfo != NULL && interpInfo->stateBlockList != NULL)
 	{
 		alpha = _G2AnimAlphaTable_GetValue(interpInfo->alphaTable, (durationStart << 12) / interpInfo->duration);
-	
+
 		base = &interpInfo->stateBlockList->quatInfo[0].srcTrans;
-		
+
 		offset = &interpInfo->stateBlockList->quatInfo[0].destTrans;
 
-		MAC1 = base->x;
-		MAC2 = base->y;
-		MAC3 = base->z;
+		gte_ldlvnlsv(base);
 
 		gte_ldsv(offset);
-		
+
 		gte_lddp(alpha);
 
 		gte_gpl12();
 
-		gte_stsv(&motionVector);
+		gte_stlvnlsv(&motionVector);
 
 		keylist = section->keylist;
 
@@ -508,21 +505,17 @@ void G2Anim_GetRootMotionFromTimeForDuration(struct _G2Anim_Type* anim, short du
 				alpha = 0x1000;
 			}
 
-			MAC1 = dest->x;
-			MAC2 = dest->y;
-			MAC3 = dest->z;
+			gte_ldlvnlsv(dest);
 
 			vector = &_segValues[0].trans;
 
 			gte_ldsv(vector);
-			
+
 			gte_lddp(alpha);
 
 			gte_gpl12();
 
-			dest->x = MAC1;
-			dest->y = MAC2;
-			dest->z = MAC3;
+			gte_stlvnlsv(dest);
 
 			durationStart = storedKeyEndTime;
 
