@@ -6,7 +6,15 @@
 #include "G2/ANIMG2.H"
 #include "MEMPACK.H"
 
-struct _G2AnimAlphaTable_Type* G2AlphaTables[7];
+struct _G2AnimAlphaTable_Type* G2AlphaTables[7] = {
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+};
 
 char circBuf[4096];
 
@@ -686,7 +694,7 @@ int SetShadowSegmentData(unsigned long total)
 	return (int)Ptr;
 }
 
-void G2EmulationInit()
+void G2EmulationInit()//Matching - 98.37%
 {
 	G2AlphaTables[0] = NULL;
 
@@ -707,15 +715,14 @@ void G2EmulationInit()
 		G2AlphaTables[2]->data[0] = 0;
 		G2AlphaTables[2]->data[1] = 3072;
 		G2AlphaTables[2]->data[2] = 3840;
-		G2AlphaTables[2]->data[3] = 0x1000;
+		G2AlphaTables[2]->data[3] = 4096;
 	}
 
 	if (G2AlphaTables[3] == NULL)
 	{
 		G2AlphaTables[3] = (struct _G2AnimAlphaTable_Type*)MEMPACK_Malloc(0x6, 0x19);
 		G2AlphaTables[3]->size = 1;
-		G2AlphaTables[3]->data[0] = 0;
-		G2AlphaTables[3]->data[1] = 4096;
+		G2AlphaTables[3]->data[0] = 4096;
 	}
 
 	if (G2AlphaTables[4] == NULL)
@@ -789,7 +796,7 @@ void G2EmulationInstanceToInstanceSwitchAnimation(struct _Instance *instance, st
 			UNIMPLEMENTED();
 }
 
-void G2EmulationInstanceSwitchAnimation(struct _Instance* instance, int CurrentSection, int NewAnim, int NewFrame, int Frames, int Mode)
+void G2EmulationInstanceSwitchAnimation(struct _Instance* instance, int CurrentSection, int NewAnim, int NewFrame, int Frames, int Mode)//Matching - 97.70%
 {
 	struct _G2AnimSection_Type* animSection;
 	struct _G2AnimKeylist_Type* keylist;
@@ -820,7 +827,6 @@ void G2EmulationInstanceSwitchAnimation(struct _Instance* instance, int CurrentS
 		}
 	}
 }
-
 void G2EmulationInstanceSwitchAnimationAlpha(struct _Instance* instance, int CurrentSection, int NewAnim, int NewFrame, int Frames, int Mode, int AlphaTable)
 {
 #if defined(PSX_VERSION)
