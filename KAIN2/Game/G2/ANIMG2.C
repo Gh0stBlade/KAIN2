@@ -946,7 +946,7 @@ void _G2Anim_BuildTransformsNoControllers(struct _G2Anim_Type* anim)
 	int segIndex;
 	int segCount;
 #if defined(PSXPC_VERSION)
-	unsigned long disabledBits[32];//bug caused by not using scratch pad, inited to zero!
+	unsigned long disabledBits[100];//bug caused by not using scratch pad, inited to zero!
 	memset(disabledBits, 0, sizeof(disabledBits));
 #else
 	unsigned long disabledBits[3];
@@ -956,48 +956,50 @@ void _G2Anim_BuildTransformsNoControllers(struct _G2Anim_Type* anim)
 	unsigned long parentIndex;
 	unsigned long* disabledBitsArray;///@FIXME Not really here on original?
 
+	bRootTransUpdated = (enum _G2Bool_Enum)(((anim->section[0].flags & 0x88) == 0x80));
+
 	segMatrix = anim->segMatrices;
 
 	segment = anim->modelData->segmentList;
-	
-	disabledMask = 1;
-	
+
 	disabledBits[0] = anim->disabledBits[0];
 
 	disabledBits[1] = anim->disabledBits[1];
-	
+
 	disabledBits[2] = anim->disabledBits[2];
 
 	segCount = anim->modelData->numSegments;
 
-	bRootTransUpdated = (_G2Bool_Enum)(((anim->section[0].flags & 0x88) ^ 0x80) < 1);
-	
-	if (segCount > 0)
+	disabledMask = 1;
+
+	disabledBitsArray = &disabledBits[0];
+
+	for (segIndex = 0; segIndex < segCount; segIndex++, segMatrix++)
 	{
-		disabledBitsArray = &disabledBits[0];
-		
-		for (segIndex = 0; segIndex < segCount; segIndex++)
+
+		parentIndex = (unsigned short)segment[segIndex].parent;
+		parentMask = (parentIndex & 0x1F);
+
+		if ((short)parentIndex != -1 && (disabledBits[((short)parentIndex >> 5)] & (1 << parentMask)))
 		{
-			if (segment[segIndex].parent != -1 && (disabledBitsArray[segment[segIndex].parent >> 5] & (1 << (segment[segIndex].parent & 0x1F))))
-			{
-				disabledBitsArray[0] |= disabledMask;
-			}
+			disabledBitsArray[0] |= disabledMask;
+		}
 
-			if (!(disabledBitsArray[0] & disabledMask))
-			{
-				_G2Anim_BuildSegTransformNoControllers(&segMatrix[segIndex], &anim->segMatrices[segment[segIndex].parent], bRootTransUpdated, segIndex);
-			}
 
-			bRootTransUpdated = (_G2Bool_Enum)0;
+		if (!(disabledBitsArray[0] & disabledMask))
+		{
+			_G2Anim_BuildSegTransformNoControllers(segMatrix, &anim->segMatrices[segment[segIndex].parent], bRootTransUpdated, segIndex);
+		}
 
-			disabledMask <<= 1;
+		bRootTransUpdated = (enum _G2Bool_Enum)0;
 
-			if (disabledMask == 0)
-			{
-				disabledBitsArray++;
-				
-				disabledMask = 1;
-			}
+		disabledMask <<= 1;
+
+		if (disabledMask == 0)
+		{
+			disabledBitsArray++;
+
+			disabledMask = 1;
 		}
 	}
 }
@@ -1091,7 +1093,7 @@ void _G2Anim_BuildSegLocalRotMatrix(struct _G2AnimSegValue_Type* segValue, struc
 	}
 }
 
-void wombat(unsigned char* segKeyList, int flagBitOffset, struct _G2AnimSegKeyflagInfo_Type* kfInfo)
+void wombat(unsigned char* segKeyList, int flagBitOffset, struct _G2AnimSegKeyflagInfo_Type* kfInfo)//Matching - 100%
 {
 #if defined(PSX_VERSION)
 	int flagDWordOffset;
@@ -1101,15 +1103,13 @@ void wombat(unsigned char* segKeyList, int flagBitOffset, struct _G2AnimSegKeyfl
 
 	segKeyList = &segKeyList[flagDWordOffset << 2];
 
-	flagDWordOffset <<= 5;
+	flagBitShift = flagBitOffset - (flagDWordOffset << 5);
 
 	kfInfo->stream = (unsigned long*)segKeyList;
 
-	flagBitShift = flagBitOffset - flagDWordOffset;
+	kfInfo->flags = kfInfo->stream[0] >> flagBitShift;
 
 	kfInfo->bitCount = 32 - (flagBitOffset & 0x1F);
-
-	kfInfo->flags = kfInfo->stream[0] >> flagBitShift;
 
 #elif defined(PC_VERSION)
 	ulong* v3; // esi
@@ -1126,6 +1126,7 @@ void wombat(unsigned char* segKeyList, int flagBitOffset, struct _G2AnimSegKeyfl
 unsigned long kangaroo(struct _G2AnimSegKeyflagInfo_Type* kfInfo)
 {
 #if defined(PSX_VERSION)
+
 	unsigned long keyflags;
 	unsigned long tempFlags;
 
@@ -1136,12 +1137,12 @@ unsigned long kangaroo(struct _G2AnimSegKeyflagInfo_Type* kfInfo)
 		tempFlags = kfInfo->flags;
 
 		keyflags = tempFlags & 0x7;
-		
+
 		tempFlags >>= 3;
 
-		kfInfo->bitCount -= 3;
-		
 		kfInfo->flags = tempFlags;
+
+		kfInfo->bitCount -= 3;
 
 		if (kfInfo->bitCount <= 0)
 		{
@@ -1152,18 +1153,18 @@ unsigned long kangaroo(struct _G2AnimSegKeyflagInfo_Type* kfInfo)
 			if (kfInfo->bitCount < 0)
 			{
 				tempFlags = kfInfo->bitCount + 3;
-				
+
 				tempFlags = (kfInfo->flags << tempFlags) & 0x7;
 
 				keyflags |= tempFlags;
-				
+
 				kfInfo->flags = kfInfo->flags >> -kfInfo->bitCount;
 			}
 
 			kfInfo->bitCount += 32;
 		}
 	}
-	
+
 	return keyflags;
 
 #elif defined(PC_VERSION)
