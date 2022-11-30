@@ -456,7 +456,7 @@ void G2Anim_GetRootMotionFromTimeForDuration(struct _G2Anim_Type* anim, short du
 
 		gte_gpl12();
 
-		gte_stlvnlsv(&motionVector);
+		gte_stlvnlsv(motionVector);
 
 		keylist = section->keylist;
 
@@ -650,9 +650,9 @@ short G2AnimSection_UpdateOverInterval(struct _G2AnimSection_Type* section, shor
 
 		anim->flags |= 0x1;
 
-		elapsedTime = (section->elapsedTime + ((interval * section->speedAdjustment) >> 12)) - interpInfo->duration;
+		elapsedTime = section->elapsedTime;
 
-		if (elapsedTime >= 0)
+		if ((short)(elapsedTime + (((interval * section->speedAdjustment) >> 12)) - interpInfo->duration) >= 0)
 		{
 			section->keylist->timePerKey = -section->keylist->timePerKey;
 
@@ -660,7 +660,7 @@ short G2AnimSection_UpdateOverInterval(struct _G2AnimSection_Type* section, shor
 
 			if (section->firstSeg == 0)
 			{
-				//G2Anim_GetRootMotionOverInterval(anim, elapsedTime, interpInfo->duration, &motionVector);
+				G2Anim_GetRootMotionOverInterval(anim, elapsedTime, interpInfo->duration, &motionVector);
 
 				xy = ((int*)&motionVector.x)[0];
 				z = motionVector.z;
@@ -690,28 +690,28 @@ short G2AnimSection_UpdateOverInterval(struct _G2AnimSection_Type* section, shor
 				callbackProc(anim, section->sectionID, G2ANIM_MSG_SECTION_INTERPDONE, 0, 0, (struct _Instance*)section->callbackData);
 			}
 
-			return elapsedTime;
+			return (elapsedTime + (((interval * section->speedAdjustment) >> 12)) - (unsigned short)interpInfo->duration);
 		}
 
-		section->elapsedTime = (elapsedTime + ((interval * section->speedAdjustment) >> 12));
+		section->elapsedTime += ((((interval * section->speedAdjustment) >> 12)));
 
 		return 0;
 	}
 	else
 	{
-		if ((section->flags & 0x4))
+		if (!(section->flags & 0x4))
 		{
-			return G2AnimSection_RewindOverInterval(section, interval);
+			return G2AnimSection_AdvanceOverInterval(section, interval);
+
 		}
 		else
 		{
-			return G2AnimSection_AdvanceOverInterval(section, interval);
+			return G2AnimSection_RewindOverInterval(section, interval);
 		}
 	}
 
 	return 0;
 }
-
 
 short G2AnimSection_AdvanceOverInterval(struct _G2AnimSection_Type* section, short interval)
 {
