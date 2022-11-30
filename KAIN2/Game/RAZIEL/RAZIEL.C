@@ -1098,9 +1098,7 @@ void StateHandlerStartTurn(struct __CharacterState* In, int CurrentSection, int 
 		EnMessageQueueData(&In->SectionList[CurrentSection].Defer, 0x100000, 0);
 	}
 
-	Ptr = PeekMessageQueue(&In->SectionList[CurrentSection].Event);
-
-	while (Ptr != NULL)
+	while ((Ptr = PeekMessageQueue(&In->SectionList[CurrentSection].Event)) != NULL)
 	{
 		switch (Ptr->ID)
 		{
