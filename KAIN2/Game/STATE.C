@@ -1213,7 +1213,7 @@ void StateSwitchStateCharacterData(struct __CharacterState* In, void (*NewProces
 		{
 			PurgeMessageQueue(&In->SectionList[i].Event);
 
-			EnMessageQueueData(&In->SectionList[i].Event, 0x100004, 2);
+			EnMessageQueueData(&In->SectionList[i].Event, 0x100004, 0);
 
 			In->SectionList[i].Process(In, i, 0);
 
