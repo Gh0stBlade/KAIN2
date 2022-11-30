@@ -255,17 +255,17 @@ void _G2AnimSection_UpdateStoredFrameFromQuat(struct _G2AnimSection_Type* sectio
 	section->flags |= 0x80;
 }
 
-void _G2AnimSection_InterpStateToQuat(struct _G2AnimSection_Type *section)
+void _G2AnimSection_InterpStateToQuat(struct _G2AnimSection_Type* section)//Matching - 83.15%
 {
-	struct _G2AnimInterpInfo_Type *interpInfo;
-	struct _G2AnimInterpStateBlock_Type *stateBlockList;
-	struct _G2AnimQuatInfo_Type *quatInfo;
+	struct _G2AnimInterpInfo_Type* interpInfo;
+	struct _G2AnimInterpStateBlock_Type* stateBlockList;
+	struct _G2AnimQuatInfo_Type* quatInfo;
 	long alpha;
 	struct _G2Quat_Type newQuat;
 	int quatInfoChunkCount;
 	int segCount;
-	struct _G2Quat_Type *source;
-	struct _G2Quat_Type *dest;
+	struct _G2Quat_Type* source;
+	struct _G2Quat_Type* dest;
 	unsigned long zw;
 	unsigned long xy;
 
@@ -287,7 +287,7 @@ void _G2AnimSection_InterpStateToQuat(struct _G2AnimSection_Type *section)
 	if (segCount > 0)
 	{
 		source = &newQuat;
-		
+
 		do
 		{
 			struct _G2SVector3_Type* dest;
@@ -304,48 +304,42 @@ void _G2AnimSection_InterpStateToQuat(struct _G2AnimSection_Type *section)
 			dest = &quatInfo->srcScale;
 			offset = &quatInfo->destScale;
 
-			MAC0 = dest->x;
-			MAC1 = dest->y;
-			MAC2 = dest->z;
+			gte_ldlvnlsv(dest);
 
-			gte_ldsv(dest);
+			gte_ldsv(offset);
 
-			IR0 = alpha;
+			gte_lddp(alpha);
 
 			gte_gpl12();
 
-			dest->x = MAC1;
-			dest->y = MAC2;
-			dest->z = MAC3;
+			gte_stlvnlsv(dest);
 
 			dest = &quatInfo->srcTrans;
 			offset = &quatInfo->destTrans;
 
-			MAC0 = dest->x;
-			MAC1 = dest->y;
-			MAC2 = dest->z;
+			gte_ldlvnlsv(dest);
 
-			gte_ldsv(dest);
+			gte_ldsv(offset);
 
-			IR0 = alpha;
+			gte_lddp(alpha);
 
 			gte_gpl12();
 
-			dest->x = MAC1;
-			dest->y = MAC2;
-			dest->z = MAC3;
+			gte_stlvnlsv(dest);
 
 			segCount--;
-			
+
 			quatInfoChunkCount--;
-			
+
 			quatInfo++;
 
 			if (quatInfoChunkCount == 0)
 			{
 				stateBlockList = stateBlockList->next;
-				
+
 				quatInfoChunkCount = 4;
+
+				quatInfo = stateBlockList->quatInfo;
 			}
 
 		} while (segCount > 0);
