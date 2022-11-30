@@ -212,7 +212,7 @@ void StateHandlerIdle(struct __CharacterState* In, int CurrentSection, int Data)
 
 				if (CurrentSection == 0)
 				{
-					Raziel.State.SectionList[0].Data1 = 0;
+					Raziel.State.SectionList[CurrentSection].Data1 = 0;
 
 					G2EmulationSwitchAnimationCharacter(In, 21, 0, 6, 1);
 
@@ -479,6 +479,90 @@ void StateHandlerIdle(struct __CharacterState* In, int CurrentSection, int Data)
 		case 0x10000000:
 		{
 			//loc_800A8838
+			//v0 = PadData[0];
+			//v1 = RazielCommands[7];
+
+			//a1 = CurrentSection
+			if (!(PadData[0] & RazielCommands[7]))
+			{
+				//v1 = Raziel.Bearing
+
+				//s1 = In
+				//s2 = CurrentSection
+				//fp = Data
+
+				if (Raziel.Bearing < -512)
+				{
+					if (CurrentSection == 1)
+					{
+						if (razGetHeldWeapon() == NULL)
+						{
+							G2EmulationSwitchAnimation(In, CurrentSection, 54, 0, 2, 1);
+						}
+					}
+					else
+					{
+						G2EmulationSwitchAnimation(In, CurrentSection, 54, 0, 2, 1);
+					}
+
+					//loc_800A88B8
+					StateSwitchStateData(In, CurrentSection, &StateHandlerStartTurn, 0);
+
+					In->SectionList[CurrentSection].Data1 = 52;
+
+					//j loc_800A8C84
+				}
+				else
+				{
+					//loc_800A88DC
+					if (Raziel.Bearing >= -513)
+					{
+						//a0 = In
+						if (CurrentSection == 1)
+						{
+							//a1 = CurrentSection
+							if (In->CharacterInstance->LinkChild == NULL)
+							{
+								G2EmulationSwitchAnimation(In, CurrentSection, 53, 0, 2, 1);
+							}
+							//loc_800A894C
+						}
+						else
+						{
+							//loc_800A8924
+							G2EmulationSwitchAnimation(In, CurrentSection, 53, 0, 2, 1);
+						}
+
+						//loc_800A894C
+						StateSwitchStateData(In, CurrentSection, &StateHandlerStartTurn, 0);
+
+						In->SectionList[CurrentSection].Data1 = 51;
+					}
+
+					//loc_800A8968
+
+					//a0 = s6 + s1
+					if (blockForwardMotion == 0)
+					{
+						if (Raziel.Magnitude < 0x1000)
+						{
+							StateSwitchStateData(In, CurrentSection, &StateHandlerMove, 3);
+						}
+						else
+						{
+							//loc_800A89A0
+							StateSwitchStateData(In, CurrentSection, &StateHandlerStartMove, 0);
+						}
+					}
+					//loc_800A8C88
+				}
+			}
+			else
+			{
+				//loc_800A8988
+				StateSwitchStateData(In, CurrentSection, &StateHandlerMove, 3);
+			}
+
 			break;
 		}
 		default:
