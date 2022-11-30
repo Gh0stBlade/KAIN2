@@ -1221,12 +1221,14 @@ void StateSwitchStateCharacterData(struct __CharacterState* In, void (*NewProces
 
 			EnMessageQueueData(&In->SectionList[i].Event, 0x100001, Data);
 			
-			NewProcess(In, i, 0);
+			In->SectionList[i].Process = NewProcess;
+
+			In->SectionList[i].Process(In, i, 0);
 		}
 	}
 }
 
-void StateGovernState(struct __CharacterState* In, int Frames)
+void StateGovernState(struct __CharacterState* In, int Frames)//Matching - 83.13%
 {
 	struct __State* pSectionA;
 	struct __State* pSectionB;
@@ -1236,21 +1238,21 @@ void StateGovernState(struct __CharacterState* In, int Frames)
 	int keylistID;
 	int i;
 
-	for(i = 1; i < 3; i++)
+	for (i = 1; i < 3; i++)
 	{
-		pSectionA = &In->SectionList[i + 0];
-		pSectionB = &In->SectionList[i + 1];
+		pSectionA = &In->SectionList[i - 1];
+		pSectionB = &In->SectionList[i];
 
 		if (pSectionA->Process == pSectionB->Process)
 		{
-			animSectionA = &In->CharacterInstance->anim.section[i - 1];
-			animSectionB = &In->CharacterInstance->anim.section[i];
+			animSectionA = &In->CharacterInstance->anim.section[(char)i - 1];
+			animSectionB = &In->CharacterInstance->anim.section[(char)i];
 
 			if (animSectionA->keylistID == animSectionB->keylistID)
 			{
 				if (!(G2AnimSection_IsInInterpolation(animSectionA)) && !(G2AnimSection_IsInInterpolation(animSectionB)))
 				{
-					if ((G2AnimSection_GetKeyframeNumber(animSectionA) != G2AnimSection_GetKeyframeNumber(animSectionA)))
+					if (G2AnimSection_GetKeyframeNumber(animSectionA) != G2AnimSection_GetKeyframeNumber(animSectionB))
 					{
 						keylist = animSectionA->keylist;
 						keylistID = animSectionA->keylistID;
