@@ -796,7 +796,7 @@ void G2EmulationInstanceToInstanceSwitchAnimation(struct _Instance *instance, st
 			UNIMPLEMENTED();
 }
 
-void G2EmulationInstanceSwitchAnimation(struct _Instance* instance, int CurrentSection, int NewAnim, int NewFrame, int Frames, int Mode)//Matching - 97.70%
+void G2EmulationInstanceSwitchAnimation(struct _Instance* instance, int CurrentSection, int NewAnim, int NewFrame, int Frames, int Mode)//Matching - 99.43%
 {
 	struct _G2AnimSection_Type* animSection;
 	struct _G2AnimKeylist_Type* keylist;
@@ -807,7 +807,7 @@ void G2EmulationInstanceSwitchAnimation(struct _Instance* instance, int CurrentS
 
 	G2AnimSection_SetAlphaTable(animSection, NULL);
 
-	G2AnimSection_InterpToKeylistFrame(animSection, keylist, NewAnim, NewFrame, Frames * 100);
+	G2AnimSection_InterpToKeylistFrame(animSection, keylist, NewAnim, NewFrame, (short)(Frames * 100));
 
 	if (Mode == 0)
 	{
@@ -1203,32 +1203,33 @@ void StateSwitchStateData(struct __CharacterState* In, int CurrentSection, void 
 	EnMessageQueueData(&In->SectionList[CurrentSection].Event, 0x100004, 0);
 }
 
-void StateSwitchStateCharacterData(struct __CharacterState* In, void (*NewProcess)(struct __CharacterState* In, int CurrentSection, int Data), int Data)
+void StateSwitchStateCharacterData(struct __CharacterState* In, void (*NewProcess)(struct __CharacterState* In, int CurrentSection, int Data), int Data)//Matching - 99.67%
 {
 	int i;
+	typedef void (*func)(struct __CharacterState* In, int CurrentSection, int Data);
+	func callbackProc;
 
-	if (In->TotalSections > 0)
+	for (i = 0; i < In->TotalSections; i++)
 	{
-		for (i = 0; i < In->TotalSections; i++)
-		{
-			PurgeMessageQueue(&In->SectionList[i].Event);
+		PurgeMessageQueue(&In->SectionList[i].Event);
 
-			EnMessageQueueData(&In->SectionList[i].Event, 0x100004, 0);
+		EnMessageQueueData(&In->SectionList[i].Event, 0x100004, 0);
 
-			In->SectionList[i].Process(In, i, 0);
+		callbackProc = (func)In->SectionList[i].Process;
+		callbackProc(In, i, 0);
 
-			PurgeMessageQueue(&In->SectionList[i].Event);
+		PurgeMessageQueue(&In->SectionList[i].Event);
 
-			EnMessageQueueData(&In->SectionList[i].Event, 0x100001, Data);
-			
-			In->SectionList[i].Process = NewProcess;
+		EnMessageQueueData(&In->SectionList[i].Event, 0x100001, Data);
 
-			In->SectionList[i].Process(In, i, 0);
-		}
+		In->SectionList[i].Process = NewProcess;
+
+		callbackProc = (func)In->SectionList[i].Process;
+		callbackProc(In, i, 0);
 	}
 }
 
-void StateGovernState(struct __CharacterState* In, int Frames)//Matching - 83.13%
+void StateGovernState(struct __CharacterState* In, int Frames)//Matching - 90.26%
 {
 	struct __State* pSectionA;
 	struct __State* pSectionB;
@@ -1245,7 +1246,7 @@ void StateGovernState(struct __CharacterState* In, int Frames)//Matching - 83.13
 
 		if (pSectionA->Process == pSectionB->Process)
 		{
-			animSectionA = &In->CharacterInstance->anim.section[(char)i - 1];
+			animSectionA = &In->CharacterInstance->anim.section[(char)(i - 1)];
 			animSectionB = &In->CharacterInstance->anim.section[(char)i];
 
 			if (animSectionA->keylistID == animSectionB->keylistID)
@@ -1257,7 +1258,7 @@ void StateGovernState(struct __CharacterState* In, int Frames)//Matching - 83.13
 						keylist = animSectionA->keylist;
 						keylistID = animSectionA->keylistID;
 
-						G2AnimSection_InterpToKeylistFrame(animSectionB, keylist, keylistID, (G2AnimSection_GetKeyframeNumber(animSectionA) + Frames) % G2AnimKeylist_GetKeyframeCount(keylist), Frames * 100);
+						G2AnimSection_InterpToKeylistFrame(animSectionB, keylist, keylistID, (G2AnimSection_GetKeyframeNumber(animSectionA) + Frames) % G2AnimKeylist_GetKeyframeCount(keylist), (short)(Frames * 100));
 					}
 				}
 			}
