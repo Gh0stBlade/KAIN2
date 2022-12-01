@@ -406,7 +406,7 @@ void _G2AnimSection_SegValueToQuat(struct _G2AnimSection_Type* section, int zero
 	}
 }
 
-struct _G2AnimInterpStateBlock_Type* _G2Anim_AllocateInterpStateBlockList(struct _G2AnimSection_Type* section)//Matching - 92.63%
+struct _G2AnimInterpStateBlock_Type* _G2Anim_AllocateInterpStateBlockList(struct _G2AnimSection_Type* section)//Matching - 93.55%
 {
 	struct _G2AnimInterpInfo_Type* interpInfo;
 	struct _G2AnimInterpStateBlock_Type* newBlock;
@@ -422,46 +422,40 @@ struct _G2AnimInterpStateBlock_Type* _G2Anim_AllocateInterpStateBlockList(struct
 	{
 		newBlock = interpInfo->stateBlockList;
 
-		goto endLoop;
-
-	startLoop:
-		newBlock->next = (struct _G2AnimInterpStateBlock_Type*)G2PoolMem_Allocate(&_interpStateBlockPool);
-		
-		if (newBlock->next == NULL)
-		{
-			_G2Anim_FreeInterpStateBlockList(interpInfo->stateBlockList);
-
-			interpInfo->stateBlockList = NULL;
-			
-			return NULL;
-		}
-
-		newBlock = newBlock->next;
-
-	endLoop:
 		segCount -= 4;
 
-		if (segCount > 0)
+		while (segCount > 0)
 		{
-			goto startLoop;
+			newBlock->next = (struct _G2AnimInterpStateBlock_Type*)G2PoolMem_Allocate(&_interpStateBlockPool);
+
+			if (newBlock->next == NULL)
+			{
+				_G2Anim_FreeInterpStateBlockList(interpInfo->stateBlockList);
+
+				interpInfo->stateBlockList = NULL;
+
+				return NULL;
+			}
+
+			newBlock = newBlock->next;
+			segCount -= 4;
 		}
-
-		newBlock->next = NULL;
-
 	}
+
+	newBlock->next = NULL;
 
 	return interpInfo->stateBlockList;
 }
 
 void _G2Anim_FreeInterpStateBlockList(struct _G2AnimInterpStateBlock_Type* block)//Matching - 92.81%
 {
-	struct _G2AnimInterpStateBlock_Type *nextBlock;
+	struct _G2AnimInterpStateBlock_Type* nextBlock;
 	
 	while (block != NULL)
 	{
 		nextBlock = block->next;
 		
-		G2PoolMem_Free(& _interpStateBlockPool, block);
+		G2PoolMem_Free(&_interpStateBlockPool, block);
 
 		block = nextBlock;
 	}
