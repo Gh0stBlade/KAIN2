@@ -165,17 +165,17 @@ void _G2Anim_DecompressChannel_Linear(struct _G2AnimDecompressChannelInfo_Type* 
 	rangeBase = chanData[1];
 	rangeInfo = chanData[2];
 	chanData += 1;
-
-loop_2:
 	rangeLength = (rangeInfo & 0xF800) >> 0xB;
 	rangeOffset = (rangeInfo << 0x15) >> 0x15;
-	if (rangeLength < targetKey)
+
+	while (rangeLength < targetKey)
 	{
 		rangeInfo = chanData[2];
 		targetKey -= rangeLength;
 		rangeBase += rangeOffset;
 		chanData += 1;
-		goto loop_2;
+		rangeLength = (rangeInfo & 0xF800) >> 0xB;
+		rangeOffset = (rangeInfo << 0x15) >> 0x15;
 	}
 
 	status->keyData = rangeBase + ((rangeOffset * targetKey) / rangeLength);
