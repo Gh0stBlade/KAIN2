@@ -1088,7 +1088,7 @@ long MATH3D_racos_S(long a)
 
 start:
 	int t1 = ecostable[v0 + 1024];
-	int t4 = 256;
+	int t4 = t2;
 	int t5 = t1 - t3;
 
 	if (t5 != 0)
