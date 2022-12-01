@@ -221,7 +221,6 @@ void StateHandlerIdle(struct __CharacterState* In, int CurrentSection, int Data)
 				
 				//loc_800A8A74
 				ControlFlag &= 0xFFFFFFFE;
-
 			}
 			else
 			{
@@ -326,7 +325,19 @@ void StateHandlerIdle(struct __CharacterState* In, int CurrentSection, int Data)
 		}
 		case 0x80000001:
 		{
-			//loc_800A89BC
+			if (CurrentSection == 0)
+			{
+				Raziel.Mode = 0x10;
+
+				ControlFlag |= 0x10;
+
+				if (razSwitchVAnimCharacterGroup(In->CharacterInstance, 16, NULL, NULL) != 0)
+				{
+					G2EmulationSwitchAnimationCharacter(In, 34, 0, 2, 1);
+				}
+
+				StateSwitchStateCharacterData(In, &StateHandlerCompression, 0);
+			}
 			break;
 		}
 		case 0x100001:
@@ -353,6 +364,7 @@ void StateHandlerIdle(struct __CharacterState* In, int CurrentSection, int Data)
 		case 0x100000:
 		{
 			//loc_800A8C10
+			assert(FALSE);
 			break;
 		}
 		case 0x100004:
@@ -372,21 +384,25 @@ void StateHandlerIdle(struct __CharacterState* In, int CurrentSection, int Data)
 		case 0x4010400:
 		{
 			//loc_800A8BB8
+			assert(FALSE);
 			break;
 		}
 		case 0x4010080:
 		{
 			//loc_800A87F8
+			assert(FALSE);
 			break;
 		}
 		case 0x8000000:
 		{
 			//loc_800A86E4
+			assert(FALSE);
 			break;
 		}
 		case 0x4010401:
 		{
 			//loc_800A87F0
+			assert(FALSE);
 			break;
 		}
 		case 0x10000000:
@@ -428,7 +444,7 @@ void StateHandlerIdle(struct __CharacterState* In, int CurrentSection, int Data)
 				else
 				{
 					//loc_800A88DC
-					if (Raziel.Bearing >= -513)
+					if (Raziel.Bearing >= 513)
 					{
 						//a0 = In
 						if (CurrentSection == 1)
@@ -451,23 +467,25 @@ void StateHandlerIdle(struct __CharacterState* In, int CurrentSection, int Data)
 
 						In->SectionList[CurrentSection].Data1 = 51;
 					}
-
-					//loc_800A8968
-
-					//a0 = s6 + s1
-					if (blockForwardMotion == 0)
+					else
 					{
-						if (Raziel.Magnitude < 0x1000)
+						//loc_800A8968
+
+						//a0 = s6 + s1
+						if (blockForwardMotion == 0)
 						{
-							StateSwitchStateData(In, CurrentSection, &StateHandlerMove, 3);
+							if (Raziel.Magnitude < 0x1000)
+							{
+								StateSwitchStateData(In, CurrentSection, &StateHandlerMove, 3);
+							}
+							else
+							{
+								//loc_800A89A0
+								StateSwitchStateData(In, CurrentSection, &StateHandlerStartMove, 0);
+							}
 						}
-						else
-						{
-							//loc_800A89A0
-							StateSwitchStateData(In, CurrentSection, &StateHandlerStartMove, 0);
-						}
+						//loc_800A8C88
 					}
-					//loc_800A8C88
 				}
 			}
 			else
@@ -1091,9 +1109,7 @@ void StateHandlerStartMove(struct __CharacterState* In, int CurrentSection, int 
 	//s4 = Data
 	//s3 = In + CurrentSection
 
-	Ptr = PeekMessageQueue(&In->SectionList[CurrentSection].Event);
-
-	while (Ptr != NULL)
+	while ((Ptr = PeekMessageQueue(&In->SectionList[CurrentSection].Event)) != NULL)
 	{
 		switch (Ptr->ID)
 		{
@@ -1162,8 +1178,12 @@ void StateHandlerStartMove(struct __CharacterState* In, int CurrentSection, int 
 			
 			break;
 		}
+		case 0x08000003:
+		case 0x10000000:
+		case 0:
+			break;
 		default:
-			assert(FALSE);
+			///assert(FALSE);
 			break;
 		}
 

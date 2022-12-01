@@ -132,7 +132,7 @@ struct _G2AnimSection_Type * G2Anim_AddSection(struct _G2Anim_Type *anim, int fi
 	return section;
 }
 
-void G2Anim_Free(struct _G2Anim_Type* anim)
+void G2Anim_Free(struct _G2Anim_Type* anim)//Matching - 99.68%
 {
 	struct _G2AnimSection_Type* animSection;
 	int sectionID;
@@ -650,9 +650,9 @@ short G2AnimSection_UpdateOverInterval(struct _G2AnimSection_Type* section, shor
 
 		anim->flags |= 0x1;
 
-		elapsedTime = section->elapsedTime;
+		elapsedTime = section->elapsedTime + ((interval * section->speedAdjustment) >> 12) - (unsigned short)interpInfo->duration;
 
-		if ((short)(elapsedTime + (((interval * section->speedAdjustment) >> 12)) - interpInfo->duration) >= 0)
+		if (elapsedTime >= 0)
 		{
 			section->keylist->timePerKey = -section->keylist->timePerKey;
 
@@ -684,16 +684,13 @@ short G2AnimSection_UpdateOverInterval(struct _G2AnimSection_Type* section, shor
 
 			if (section->callback != NULL)
 			{
-				typedef void* (*func)(struct _G2Anim_Type*, int, enum _G2AnimCallbackMsg_Enum, long, long, struct _Instance*);
+				typedef unsigned long (*func)(struct _G2Anim_Type*, int, enum _G2AnimCallbackMsg_Enum, long, long, struct _Instance*);
 				func callbackProc;
 				callbackProc = (func)section->callback;
 				callbackProc(anim, section->sectionID, G2ANIM_MSG_SECTION_INTERPDONE, 0, 0, (struct _Instance*)section->callbackData);
+				return elapsedTime;
 			}
-
-			return (elapsedTime + (((interval * section->speedAdjustment) >> 12)) - (unsigned short)interpInfo->duration);
 		}
-
-		section->elapsedTime += ((((interval * section->speedAdjustment) >> 12)));
 
 		return 0;
 	}
@@ -945,16 +942,12 @@ void _G2Anim_BuildTransformsNoControllers(struct _G2Anim_Type* anim)
 	enum _G2Bool_Enum bRootTransUpdated;
 	int segIndex;
 	int segCount;
-#if defined(PSXPC_VERSION)
-	unsigned long disabledBits[100];//bug caused by not using scratch pad, inited to zero!
-	memset(disabledBits, 0, sizeof(disabledBits));
-#else
 	unsigned long disabledBits[3];
-#endif
 	unsigned long disabledMask;
 	unsigned long parentMask;
 	unsigned long parentIndex;
-	unsigned long* disabledBitsArray;///@FIXME Not really here on original?
+	unsigned long* disableBitsArray;
+
 
 	bRootTransUpdated = (enum _G2Bool_Enum)(((anim->section[0].flags & 0x88) == 0x80));
 
@@ -972,21 +965,21 @@ void _G2Anim_BuildTransformsNoControllers(struct _G2Anim_Type* anim)
 
 	disabledMask = 1;
 
-	disabledBitsArray = &disabledBits[0];
+	disableBitsArray = &disabledBits[0];
 
 	for (segIndex = 0; segIndex < segCount; segIndex++, segMatrix++)
 	{
 
-		parentIndex = (unsigned short)segment[segIndex].parent;
+		parentIndex = ((unsigned short*)&segment[segIndex].parent)[0];
 		parentMask = (parentIndex & 0x1F);
 
 		if ((short)parentIndex != -1 && (disabledBits[((short)parentIndex >> 5)] & (1 << parentMask)))
 		{
-			disabledBitsArray[0] |= disabledMask;
+			disableBitsArray[0] |= disabledMask;
 		}
 
 
-		if (!(disabledBitsArray[0] & disabledMask))
+		if (!(disableBitsArray[0] & disabledMask))
 		{
 			_G2Anim_BuildSegTransformNoControllers(segMatrix, &anim->segMatrices[segment[segIndex].parent], bRootTransUpdated, segIndex);
 		}
@@ -997,9 +990,9 @@ void _G2Anim_BuildTransformsNoControllers(struct _G2Anim_Type* anim)
 
 		if (disabledMask == 0)
 		{
-			disabledBitsArray++;
-
 			disabledMask = 1;
+
+			disableBitsArray++;
 		}
 	}
 }
@@ -1225,6 +1218,12 @@ void _G2Anim_InitializeSegValue(struct _G2Anim_Type* anim, struct _G2AnimSegValu
 
 	((unsigned long*)(&segValue->trans.x))[0] = xy;
 	((unsigned long*)(&segValue->trans.z))[0] = zpad;
+
+	if ((zpad & 0xFFFF0000))
+	{
+		int testing = 0;
+		testing++;
+	}
 }
 
 void _G2AnimSection_InitStatus(struct _G2AnimSection_Type* section, struct _G2Anim_Type* anim)//Matching - 97.69%
@@ -1555,11 +1554,8 @@ void FooBar(struct _G2AnimSection_Type* section, struct _G2Anim_Type* anim, int 
 						chanStatus = chanStatusBlock->chunks;
 					}
 
-
 					break;
 				}
-
-
 
 				if (timeOffset != 0)
 				{
