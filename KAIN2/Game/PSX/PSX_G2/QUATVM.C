@@ -46,9 +46,7 @@ void G2Quat_Slerp_VM(long ratio, struct _G2Quat_Type* quatA, struct _G2Quat_Type
 
 		theta += (spin << 12);
 
-		theta = rsin(beta);
-
-		beta = (rsin(beta - (ratio * theta)) << 12) / theta;
+		beta = (rsin(beta - ((ratio * theta))) << 12) / (theta = rsin(beta));
 
 		ratio = (rsin(ratio) << 12) / theta;
 	}
@@ -80,7 +78,7 @@ void G2Quat_Slerp_VM(long ratio, struct _G2Quat_Type* quatA, struct _G2Quat_Type
 
 	gte_stlvl(&foo);
 
-	cosTemp1 = 0x1000000 / MATH3D_FastSqrt(((foo[3] * foo[3] + foo[2] * foo[2] + foo[1] * foo[1] + foo[0] * foo[0]) + 2048) >> 12);
+	cosTemp1 = 0x1000000 / MATH3D_FastSqrt((((foo[3] * foo[3]) + (foo[2] * foo[2]) + (foo[1] * foo[1]) + (foo[0] * foo[0])) + 2048) >> 12);
 
 	gte_lddp(cosTemp1);
 
