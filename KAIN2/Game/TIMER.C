@@ -21,7 +21,7 @@ unsigned long TIMER_GetTimeMS()
 	ExitCriticalSection();
 
 #if defined(PSXPC_VERSION)
-	return ticks;
+	return SDL_GetTicks();
 #else
 	return (mticks >> 16) * 126819 + (ticks & 0xFFFF | mticks << 16) / 33869;
 #endif
@@ -41,9 +41,9 @@ unsigned long TIMER_TimeDiff(unsigned long x)
 #if defined(PSXPC_VERSION)
 	unsigned long ticks;
 
-	ticks = GetRCnt(0xF2000000);
+	//ticks = GetRCnt(0xF2000000);
 
-	return ticks - x;
+	return (SDL_GetTicks() - x);
 
 #elif defined(PSX_VERSION)
 	unsigned long intrs;

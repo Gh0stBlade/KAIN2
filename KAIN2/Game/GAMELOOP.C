@@ -2287,18 +2287,20 @@ void GAMELOOP_Reset24FPS()
 
 void GAMELOOP_DoTimeProcess()
 {
-	int holdTime;//s1
-	int lockRate;//a1
-	unsigned long last;//a0
+#if defined(PSX_VERSION)
+
+	int holdTime;
+	int lockRate;
+	unsigned long last;
 
 	holdTime = TIMER_GetTimeMS();
 
 	if (!(gameTrackerX.gameFlags & 0x10000000))
 	{
-		gameTrackerX.totalTime = SDL_GetTicks() - gameTrackerX.currentTicks;
+		gameTrackerX.totalTime = TIMER_TimeDiff(gameTrackerX.currentTicks);
 
 #if defined(PSXPC_VERSION)
-		gameTrackerX.currentTicks = SDL_GetTicks();
+		gameTrackerX.currentTicks = SDL_GetTicks() | (gameTimer << 16);
 #else
 		gameTrackerX.currentTicks = (GetRCnt(0xF2000000) & 0xFFFF) | (gameTimer << 16);
 #endif
@@ -2313,19 +2315,16 @@ void GAMELOOP_DoTimeProcess()
 			gameTrackerX.frameRateLock = 2;
 		}
 
-		if (gameTrackerX.decoupleGame == 0 || (gameTrackerX.gameFlags & 0x10000000))
+		if (gameTrackerX.decoupleGame == 0 && (gameTrackerX.gameFlags & 0x10000000))
 		{
 			if (gameTrackerX.frameRateLock == 1)
 			{
 				gameTrackerX.lastLoopTime = 33;
-
 			}
 			else if (gameTrackerX.frameRateLock == 2)
 			{
 				gameTrackerX.lastLoopTime = 50;
 			}
-
-			gameTrackerX.timeMult = ((gameTrackerX.lastLoopTime << 12) / 33);
 		}
 		else
 		{
@@ -2338,20 +2337,19 @@ void GAMELOOP_DoTimeProcess()
 				lockRate = 50;
 			}
 
+			last = lockRate;
+
 			if (gameTrackerX.lastLoopTime != -1)
 			{
-				last = lockRate - gameTrackerX.currentTime;
+				last = holdTime - gameTrackerX.currentTime;
 			}
 
-			if (gameTrackerX.frameRateLock == 1)
+			if (gameTrackerX.frameRateLock == 1 && gameTrackerX.frameRate24fps != 0)
 			{
-				if (gameTrackerX.frameRate24fps != 0)
-				{
-					last -= 9;
-				}
+				last -= 9;
 			}
 
-			if (last >= lockRate && gameTrackerX.gameData.asmData.MorphTime == 0x3E8)
+			if (last >= holdTime && gameTrackerX.gameData.asmData.MorphTime == 1000)
 			{
 				if (last >= 67)
 				{
@@ -2366,21 +2364,16 @@ void GAMELOOP_DoTimeProcess()
 			gameTrackerX.lastLoopTime = last;
 		}
 
-		gameTrackerX.timeMult = ((gameTrackerX.lastLoopTime << 12) / 33);
-	
-		gameTrackerX.gameFramePassed = 0;
-
+		gameTrackerX.timeMult = ((last << 12) / 33);
 		gameTrackerX.timeSinceLastGameFrame += gameTrackerX.timeMult;
-
+		gameTrackerX.gameFramePassed = 0;
 		gameTrackerX.globalTimeMult = gameTrackerX.timeMult;
 
-		while (gameTrackerX.timeSinceLastGameFrame >= 0x1001)
+		while (gameTrackerX.timeSinceLastGameFrame >= 4097)
 		{
-			gameTrackerX.timeSinceLastGameFrame -= 4096;
-
-			gameTrackerX.fps30Count++;
-
 			gameTrackerX.gameFramePassed = 1;
+			gameTrackerX.timeSinceLastGameFrame -= 4096;
+			gameTrackerX.fps30Count++;
 		}
 	}
 	else
@@ -2389,8 +2382,88 @@ void GAMELOOP_DoTimeProcess()
 	}
 
 	gameTrackerX.currentTime = holdTime;
-}
 
+#elif defined(PC_VERSION)
+	unsigned int TimeMS; // ebx
+	int frameRateLock; // eax
+	unsigned int lastLoopTime; // ecx
+	unsigned int timeSinceLastGameFrame; // eax
+	unsigned int fps30Count; // ecx
+
+	TimeMS = TIMER_GetTimeMS();
+	if ((gameTrackerX.gameFlags & 0x10000000) != 0)
+	{
+		gameTrackerX.lastLoopTime = -1;
+		goto LABEL_27;
+	}
+	gameTrackerX.totalTime = D3D_TimeDiff(gameTrackerX.currentTicks);
+	gameTrackerX.currentTicks = D3D_CurrentTime();
+	frameRateLock = gameTrackerX.frameRateLock;
+	if (gameTrackerX.frameRateLock < 1)
+	{
+		frameRateLock = 1;
+		gameTrackerX.frameRateLock = 1;
+	}
+	if (frameRateLock > 2)
+	{
+		frameRateLock = 2;
+		gameTrackerX.frameRateLock = 2;
+	}
+	if (gameTrackerX.decoupleGame && (gameTrackerX.gameFlags & 0x10000000) == 0)
+	{
+		lastLoopTime = 33;
+		if (frameRateLock == 2)
+			lastLoopTime = 50;
+		if (gameTrackerX.gameData.asmData.MorphTime != 1000)
+			lastLoopTime = 15;
+		if (gameTrackerX.lastLoopTime != -1)
+			lastLoopTime = TimeMS - gameTrackerX.currentTime;
+		if (lastLoopTime > 0x42)
+		{
+			lastLoopTime = 66;
+			gameTrackerX.lastLoopTime = 66;
+			goto LABEL_22;
+		}
+		goto LABEL_20;
+	}
+	if (frameRateLock == 1)
+	{
+		lastLoopTime = 33;
+		gameTrackerX.lastLoopTime = 33;
+		goto LABEL_22;
+	}
+	if (frameRateLock == 2)
+	{
+		lastLoopTime = 50;
+	LABEL_20:
+		gameTrackerX.lastLoopTime = lastLoopTime;
+		goto LABEL_22;
+	}
+	lastLoopTime = gameTrackerX.lastLoopTime;
+LABEL_22:
+	gameTrackerX.gameFramePassed = 0;
+	gameTrackerX.timeMult = (lastLoopTime << 12) / 0x21;
+	gameTrackerX.globalTimeMult = (lastLoopTime << 12) / 0x21;
+	gameTrackerX.timeSinceLastGameFrame += (lastLoopTime << 12) / 0x21;
+	timeSinceLastGameFrame = gameTrackerX.timeSinceLastGameFrame;
+	if (gameTrackerX.timeSinceLastGameFrame <= 0x1000)
+	{
+	LABEL_27:
+		gameTrackerX.currentTime = TimeMS;
+		return;
+	}
+	fps30Count = gameTrackerX.fps30Count;
+	do
+	{
+		timeSinceLastGameFrame -= 4096;
+		++fps30Count;
+		gameTrackerX.gameFramePassed = 1;
+	} while (timeSinceLastGameFrame > 0x1000);
+	gameTrackerX.fps30Count = fps30Count;
+	gameTrackerX.timeSinceLastGameFrame = timeSinceLastGameFrame;
+	gameTrackerX.currentTime = TimeMS;
+#endif
+}
 
 void GAMELOOP_Process(struct GameTracker* gameTracker)
 {
