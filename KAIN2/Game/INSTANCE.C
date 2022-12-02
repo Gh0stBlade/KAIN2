@@ -3486,89 +3486,47 @@ int INSTANCE_GetFadeValue(struct _Instance* instance)
 
 unsigned long INSTANCE_DefaultAnimCallback(struct _G2Anim_Type* anim, int sectionID, enum _G2AnimCallbackMsg_Enum message, long messageDataA, long messageDataB, struct _Instance* instance)
 {
-#if defined(PSX_VERSION) && 0
-	struct _AnimSoundData_Type* soundData; // $s2
-	int id; // $s0
-	int vol; // $s1
+#if defined(PSX_VERSION)
+	struct _AnimSoundData_Type* soundData;
+	int id;
+	int vol;
 
-	//s4 = messageDataA
-	//s3 = instance
-	//v0 = 6
-	//a1 = messageDataB
 	if (message == G2ANIM_MSG_PLAYEFFECT)
 	{
-		if (messageDataA != 0)
-		{
-			if (messageDataA == 1)
-			{
-				//loc_80035A9C
-			}
-			//j loc_80035AAC
-		}
-		else if (sectionID != 0)//s2 = messageDataB
+		if (messageDataA == 0)
 		{
 			soundData = (struct _AnimSoundData_Type*)messageDataB;
-			vol = soundData->volume;
 
-			if (vol >= 1000)
+			if (sectionID != 0)
 			{
+				vol = soundData->volume;
 
+				if (vol >= 1000)
+				{
+					vol %= 1000;
+
+					if (vol / 1000 != HUMAN_TypeOfHuman(instance))
+					{
+						return 0;
+					}
+				}
+			
+				SOUND_Play3dSound(&instance->position, soundData->sfxToneID, soundData->pitch, vol, soundData->minVolDistance);
+
+				return messageDataA;
 			}
-			//loc_80035A7C
 		}
-		//loc_80035AA8
+		else if (messageDataA == 1)
+		{
+			FX_StartInstanceEffect(instance, (struct ObjectEffect*)messageDataB, 0);
+		}
+		else
+		{
+			return messageDataA;
+		}
 	}
-	//loc_80035AA8
-#if 0
-		slti    $v0, $s1, 0x3E8
-		bnez    $v0, loc_80035A7C
-		addiu   $a0, $s3, 0x5C
-		li      $v0, 0x10624DD3
-		mult    $s1, $v0
-		move    $a0, $s3
-		sra     $v0, $v1, 31
-		mfhi    $t0
-		sra     $s0, $t0, 6
-		subu    $s0, $v0
-		sll     $v0, $s0, 5
-		subu    $v0, $s0
-		sll     $v0, 2
-		addu    $v0, $s0
-		sll     $v0, 3
-		jal     sub_8007D980
-		subu    $s1, $v0
-		bne     $s0, $v0, loc_80035AAC
-		move    $v0, $zero
-		addiu   $a0, $s3, 0x5C
 
-		loc_80035A7C:
-	lh      $a1, 0($s2)
-		lh      $a2, 4($s2)
-		lh      $v0, 6($s2)
-		move    $a3, $s1
-		jal     sub_8004004C
-		sw      $v0, 0x18 + var_8($sp)
-		j       loc_80035AAC
-		move    $v0, $s4
-
-		loc_80035A9C :
-	move    $a0, $s3
-		jal     sub_8004D238
-		move    $a2, $zero
-
-		loc_80035AA8 :
-	move    $v0, $s4
-
-		loc_80035AAC :
-	lw      $ra, 0x18 + var_s14($sp)
-		lw      $s4, 0x18 + var_s10($sp)
-		lw      $s3, 0x18 + var_sC($sp)
-		lw      $s2, 0x18 + var_s8($sp)
-		lw      $s1, 0x18 + var_s4($sp)
-		lw      $s0, 0x18 + var_s0($sp)
-		jr      $ra
-		addiu   $sp, 0x30
-#endif
+	return messageDataA;
 
 #elif defined(PC_VERSION)
 	int v7; // esi
