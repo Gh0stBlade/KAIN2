@@ -321,16 +321,16 @@ void G2AnimSection_ClearAlarm(struct _G2AnimSection_Type *section, unsigned long
 #endif
 }
 
-int G2AnimSection_GetKeyframeNumber(struct _G2AnimSection_Type* section)
+int G2AnimSection_GetKeyframeNumber(struct _G2AnimSection_Type* section)//Matching - 60.65%
 {
 #if defined(PSX_VERSION)
-	if (G2AnimSection_IsInInterpolation(section) == 0)
+	if (G2AnimSection_IsInInterpolation(section) != 0)
 	{
-		return section->elapsedTime / section->keylist->s0TailTime;
+		return section->interpInfo->targetTime / section->keylist->s0TailTime;
 	}
 	else
 	{
-		return section->interpInfo->targetTime / section->keylist->s0TailTime;
+		return section->elapsedTime / section->keylist->s0TailTime;
 	}
 #elif defined(PC_VERSION)
 	struct _G2AnimInterpInfo_Type* interpInfo; // eax
@@ -352,10 +352,10 @@ int G2AnimSection_GetStoredKeyframeNumber(struct _G2AnimSection_Type* section)
 #endif
 }
 
-void G2AnimSection_InterpToKeylistFrame(struct _G2AnimSection_Type *section, struct _G2AnimKeylist_Type *keylist, int keylistID, int targetFrame, int duration)
+void G2AnimSection_InterpToKeylistFrame(struct _G2AnimSection_Type* section, struct _G2AnimKeylist_Type* keylist, int keylistID, int targetFrame, int duration)//Matching - 99.69%
 {
 #if defined(PSX_VERSION)
-	G2AnimSection_InterpToKeylistAtTime(section, keylist, keylistID, targetFrame * keylist->s0TailTime, duration);
+	G2AnimSection_InterpToKeylistAtTime(section, keylist, keylistID, (short)(targetFrame * keylist->s0TailTime), (short)duration);
 #elif defined(PC_VERSION)
 	G2AnimSection_InterpToKeylistAtTime(section, keylist, keylistID, targetFrame * keylist->s0TailTime, duration);
 #endif

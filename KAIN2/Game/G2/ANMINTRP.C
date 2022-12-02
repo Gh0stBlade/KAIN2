@@ -10,15 +10,14 @@ struct _G2AnimSegValue_Type _segValues[80];
 
 void G2AnimSection_InterpToKeylistAtTime(struct _G2AnimSection_Type* section, struct _G2AnimKeylist_Type* keylist, int keylistID, short targetTime, int duration)
 {
-	struct _G2Anim_Type* anim;
-	struct _G2AnimInterpInfo_Type* interpInfo;
-	struct _G2AnimInterpStateBlock_Type* stateBlockList;
-	struct _G2AnimQuatInfo_Type* quatInfo;
-	unsigned long alarmFlags;
-	short elapsedTime;
-	int quatInfoChunkCount;
-	int segCount;
-
+	struct _G2Anim_Type* anim; // $s5
+	struct _G2AnimInterpInfo_Type* interpInfo; // $s3
+	struct _G2AnimInterpStateBlock_Type* stateBlockList; // $t0
+	struct _G2AnimQuatInfo_Type* quatInfo; // $a2
+	unsigned long alarmFlags; // $s0
+	short elapsedTime; // $s4
+	int quatInfoChunkCount; // $a3
+	int segCount; // $s2
 	if (duration == 0)
 	{
 		G2AnimSection_SwitchToKeylistAtTime(section, keylist, keylistID, targetTime);
@@ -82,6 +81,8 @@ void G2AnimSection_InterpToKeylistAtTime(struct _G2AnimSection_Type* section, st
 
 	while (segCount > 0)
 	{
+		segCount--;
+
 		quatInfoChunkCount--;
 
 		quatInfo->destScale.x -= quatInfo->srcScale.x;
@@ -92,25 +93,22 @@ void G2AnimSection_InterpToKeylistAtTime(struct _G2AnimSection_Type* section, st
 		quatInfo->destTrans.y -= quatInfo->srcTrans.y;
 		quatInfo->destTrans.z -= quatInfo->srcTrans.z;
 
+		quatInfo++;
+
 		if (quatInfoChunkCount == 0)
 		{
 			stateBlockList = stateBlockList->next;
 			quatInfoChunkCount = 4;
 			quatInfo = &stateBlockList->quatInfo[0];
 		}
-		quatInfo++;
-
-		segCount--;
 	}
-
-	segCount++;
 
 	interpInfo->targetTime = targetTime;
 	interpInfo->duration = duration;
 
 	if (!(section->flags & 0x2) && (alarmFlags & 0x3))
 	{
-		if (duration < (elapsedTime % section->keylist->s0TailTime) + 1)
+		if ((short)duration < (elapsedTime % section->keylist->s0TailTime) + 1)
 		{
 			elapsedTime = duration;
 		}
@@ -126,10 +124,12 @@ void G2AnimSection_InterpToKeylistAtTime(struct _G2AnimSection_Type* section, st
 		section->elapsedTime = 0;
 	}
 
-	section->keylist = keylist;
 	section->keylistID = keylistID;
 
+	section->keylist = keylist;
+
 	keylist->timePerKey = -keylist->timePerKey;
+
 	if ((section->flags & 0x2))
 	{
 		G2AnimSection_SetLoopRangeAll(section);

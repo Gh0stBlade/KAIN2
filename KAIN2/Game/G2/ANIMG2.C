@@ -61,7 +61,7 @@ void G2Anim_ResetInternalState()
 #endif
 }
 
-void G2Anim_Init(struct _G2Anim_Type* anim, struct _Model *modelData)
+void G2Anim_Init(struct _G2Anim_Type* anim, struct _Model* modelData)
 {
 #if defined(PSX_VERSION)
 	struct _G2AnimSection_Type* section;
@@ -76,10 +76,10 @@ void G2Anim_Init(struct _G2Anim_Type* anim, struct _Model *modelData)
 
 	memset(&anim->disabledBits[0], 0, sizeof(anim->disabledBits) + sizeof(anim->section));
 
-	section = &anim->section[0];
-
 	for (sectionID = 0; sectionID < 3; sectionID++, section++)
 	{
+		section = &anim->section[sectionID];
+
 		section->storedTime = -1;
 		section->swAlarmTable = NULL;
 		section->speedAdjustment = 4096;
@@ -628,7 +628,7 @@ void G2AnimSection_JumpToTime(struct _G2AnimSection_Type* section, short targetT
 	}
 }
 
-short G2AnimSection_UpdateOverInterval(struct _G2AnimSection_Type* section, short interval)
+short G2AnimSection_UpdateOverInterval(struct _G2AnimSection_Type* section, short interval)//Matching - 90.56%
 {
 	struct _G2Anim_Type* anim;
 	struct _G2AnimInterpInfo_Type* interpInfo;
@@ -636,6 +636,8 @@ short G2AnimSection_UpdateOverInterval(struct _G2AnimSection_Type* section, shor
 	unsigned short z;
 	unsigned long xy;
 	struct _G2SVector3_Type motionVector;
+	typedef unsigned long (*func)(struct _G2Anim_Type*, int, enum _G2AnimCallbackMsg_Enum, long, long, struct _Instance*);
+	func callbackProc;
 
 	if ((section->flags & 0x1))
 	{
@@ -684,15 +686,17 @@ short G2AnimSection_UpdateOverInterval(struct _G2AnimSection_Type* section, shor
 
 			if (section->callback != NULL)
 			{
-				typedef unsigned long (*func)(struct _G2Anim_Type*, int, enum _G2AnimCallbackMsg_Enum, long, long, struct _Instance*);
-				func callbackProc;
 				callbackProc = (func)section->callback;
 				callbackProc(anim, section->sectionID, G2ANIM_MSG_SECTION_INTERPDONE, 0, 0, (struct _Instance*)section->callbackData);
-				return elapsedTime;
 			}
-		}
 
-		return 0;
+			return elapsedTime;
+		}
+		else
+		{
+			section->elapsedTime = section->elapsedTime + ((interval * section->speedAdjustment) >> 12);
+			return 0;
+		}
 	}
 	else
 	{
@@ -710,7 +714,7 @@ short G2AnimSection_UpdateOverInterval(struct _G2AnimSection_Type* section, shor
 	return 0;
 }
 
-short G2AnimSection_AdvanceOverInterval(struct _G2AnimSection_Type* section, short interval)
+short G2AnimSection_AdvanceOverInterval(struct _G2AnimSection_Type* section, short interval)//Matching - 81.23%
 {
 	struct _G2AnimKeylist_Type* keylist;
 	short newTime;
@@ -725,6 +729,8 @@ short G2AnimSection_AdvanceOverInterval(struct _G2AnimSection_Type* section, sho
 	unsigned long message;
 	unsigned short z;
 	unsigned long xy;
+	typedef unsigned long (*func)(struct _G2Anim_Type*, int, enum _G2AnimCallbackMsg_Enum, long, long, struct _Instance*);
+	func callbackProc;
 
 	loopExtraTime = 0;
 
@@ -737,7 +743,7 @@ short G2AnimSection_AdvanceOverInterval(struct _G2AnimSection_Type* section, sho
 
 	anim->flags |= 0x1;
 
-	G2AnimSection_ClearAlarm(section, 0x3);
+	G2AnimSection_ClearAlarm(section, 3);
 
 	keylist = section->keylist;
 
@@ -762,19 +768,16 @@ short G2AnimSection_AdvanceOverInterval(struct _G2AnimSection_Type* section, sho
 
 		swAlarmTime = swAlarmTable[0];
 
-		while (swAlarmTime != -1)
+		while ((swAlarmTime = *swAlarmTable) != -1)
 		{
-			message = elapsedTime;
-
-			extraTime = elapsedTime + ((interval * section->speedAdjustment) >> 12);
-
-			if (message < swAlarmTime && extraTime >= swAlarmTime || section->storedTime <= 0 && message == swAlarmTime)
+			if (((elapsedTime < swAlarmTime != 0) && (extraTime >= swAlarmTime)) || ((section->storedTime <= 0) && (elapsedTime == swAlarmTime)))
 			{
 				section->alarmFlags |= 0x20;
 
 				if (section->callback != NULL)
 				{
-					section->callback(anim, section->sectionID, G2ANIM_MSG_SWALARMSET, elapsedTime, extraTime, (struct _Instance*)section->callbackData);
+					callbackProc = (func)section->callback;
+					callbackProc(anim, section->sectionID, G2ANIM_MSG_SWALARMSET, elapsedTime, extraTime, (struct _Instance*)section->callbackData);
 				}
 			}
 
@@ -787,26 +790,25 @@ short G2AnimSection_AdvanceOverInterval(struct _G2AnimSection_Type* section, sho
 	}
 
 	_G2AnimSection_TriggerEffects(section, elapsedTime, newTime);
-
 	extraTime = newTime - endTime;
 
-loop:
+loop_20:
 	if (extraTime >= 0)
 	{
-		message = 2;
-
 		if ((section->flags & 0x2))
 		{
+			message = 2;
+
 			section->alarmFlags |= 0x4;
 
 			G2AnimSection_JumpToTime(section, section->loopStartTime);
 
 			newTime = section->loopStartTime + extraTime;
 
-			loopExtraTime = (section->loopStartTime + extraTime) - endTime;
+			loopExtraTime = newTime - endTime;
 
-			_G2AnimSection_TriggerEffects(section, section->loopStartTime - 1, section->loopStartTime + extraTime);
-		
+			_G2AnimSection_TriggerEffects(section, section->loopStartTime - 1, newTime);
+
 			if (section->loopStartTime + extraTime >= endTime)
 			{
 				newTime = endTime - 1;
@@ -815,10 +817,10 @@ loop:
 		else
 		{
 			message = 1;
-			
-			section->alarmFlags |= 0x1;
 
 			newTime = endTime - 1;
+
+			section->alarmFlags |= 0x1;
 		}
 
 		if (section->firstSeg == 0)
@@ -830,47 +832,44 @@ loop:
 
 		if (section->callback != NULL)
 		{
-			swAlarmTime = section->callback(_G2AnimSection_GetAnim(section), section->sectionID, (enum _G2AnimCallbackMsg_Enum)message, newTime, extraTime, (struct _Instance*)section->callbackData);
-		
+			callbackProc = (func)section->callback;
+
+			swAlarmTime = callbackProc((struct _G2Anim_Type*)_G2AnimSection_GetAnim(section), section->sectionID, (enum _G2AnimCallbackMsg_Enum)message, newTime, extraTime, (struct _Instance*)section->callbackData);
+
 			if (swAlarmTime != newTime)
 			{
 				newTime = swAlarmTime;
+				G2AnimSection_JumpToTime(section, swAlarmTime);
+			}
+			else if ((section->flags & 0x2))
+			{
+				G2AnimSection_JumpToTime(section, swAlarmTime);
 
-				G2AnimSection_JumpToTime(section, newTime);
+				section->storedTime = section->loopStartTime;
 			}
 			else
 			{
-				if ((section->flags & 0x2))
-				{
-					G2AnimSection_JumpToTime(section, swAlarmTime);
-
-					section->storedTime = section->loopStartTime;
-				}
-				else
-				{
-					motionVector.x = 0;
-					motionVector.y = 0;
-					motionVector.z = 0;
-				}
+				((int*)&motionVector.x)[0] = 0;
+				motionVector.z = 0;
 			}
 		}
 
 		if (section->firstSeg == 0)
 		{
-			anim->rootTrans.x = motionVector.x;
-			anim->rootTrans.y = motionVector.y;
+			((int*)&anim->rootTrans.x)[0] = ((int*)&motionVector.x)[0];
+
 			anim->rootTrans.z = motionVector.z;
 
 			section->flags |= 0x80;
 		}
 
-		if((section->flags & 0x2))
+		if ((section->flags & 0x2))
 		{
 			endTime = section->loopEndTime;
 
 			extraTime = loopExtraTime;
 
-			goto loop;
+			goto loop_20;
 		}
 	}
 	else
@@ -879,7 +878,7 @@ loop:
 	}
 
 	section->elapsedTime = newTime;
-	
+
 	return extraTime;
 }
 
