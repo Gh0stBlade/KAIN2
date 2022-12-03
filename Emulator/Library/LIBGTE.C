@@ -4382,97 +4382,53 @@ long ratan2(long y, long x)
         y = -y;
     }
 
-    if (x == 0)
+    if (x != 0 || y != 0)
     {
-        if (y >= x)
+        if (y < x)
         {
-            return 0;
-        }
-    }
-
-    if (y < x)
-    {
-        if ((y & 0x7FE00000))
-        {
-            y = y / (x >> 10);
-
-            if (x == 0)
+            if ((y & 0x7FE00000))
             {
-                assert(FALSE);
+                y = y / (x >> 10);
+            }
+            else
+            {
+                y = (y << 10);
+                y /= x;
             }
 
-            if ((x >> 10) == -1 || y == 0x80000000)
-            {
-                assert(FALSE);
-            }
+            ratan = ratan_tbl[y];
         }
         else
         {
-            y = (y << 10);
-
-            if (x == 0)
+            if ((x & 0x7FE00000))
             {
-                assert(FALSE);
+                x = x / (y >> 10);
+            }
+            else
+            {
+                x = (x << 10);
+                x /= y;
             }
 
-            if (x == -1 || y == 0x80000000)
-            {
-                assert(FALSE);
-            }
-
-            y /= x;
+            ratan = 1024 - ratan_tbl[x];
         }
 
-        ratan = ratan_tbl[y];
+        if (a2 != 0)
+        {
+            ratan = 2048 - ratan;
+        }
+
+        if (a3 != 0)
+        {
+            ratan = -ratan;
+        }
+
+        return ratan;
     }
     else
     {
-        if ((x & 0x7FE00000))
-        {
-            x = x / (y >> 10);
-
-            if (y == 0)
-            {
-                assert(FALSE);
-            }
-
-            if (y == -1 || x == 0x80000000)
-            {
-                assert(FALSE);
-            }
-        }
-        else
-        {
-            x = (x << 10);
-
-            if (y == 0)
-            {
-                assert(FALSE);
-            }
-
-            if (y == -1 || x == 0x80000000)
-            {
-                assert(FALSE);
-            }
-
-            x /= y;
-
-        }
-        
-        ratan = 1024 - ratan_tbl[x];
+        return 0;
     }
-
-    if (a2 != 0)
-    {
-        ratan -= 2048;
-    }
-
-    if (a3 != 0)
-    {
-        ratan = -ratan;
-    }
-    
-    return ratan;
 }
 
 #if defined(__ANDROID__)
