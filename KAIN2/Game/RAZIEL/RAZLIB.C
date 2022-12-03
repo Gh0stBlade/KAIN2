@@ -491,20 +491,20 @@ LABEL_32:
 #endif
 }
 
-int razZeroAxis(long* x, long* y, int radius)
+int razZeroAxis(long* x, long* y, int radius)//Matching - 99.79%
 {
 #if defined(PSX_VERSION)
 	unsigned long distance;
-	
+
 	distance = MATH3D_SquareLength(*x, *y, 0);
 
 	if (distance < radius)
 	{
 		distance = 0;
-	}
 
-	*x = 0;
-	*y = 0;
+		*x = 0;
+		*y = 0;
+	}
 
 	return distance;
 
