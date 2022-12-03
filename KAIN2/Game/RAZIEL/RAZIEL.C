@@ -199,9 +199,27 @@ void StateInitIdle(struct __CharacterState* In, int CurrentSection, int Ptr)
 		}
 		else
 		{
-			if ((unsigned)data->mode - 2 < 3)
+			if ((unsigned)(data->mode - 2) >= 3)
 			{
 				data->mode = 0;
+
+				if (Raziel.Senses.heldClass == 3)
+				{
+					G2EmulationSwitchAnimation(In, 1, 98, 0, data->frames, 2);
+				}
+				else if (Raziel.Senses.heldClass = 0x1000)
+				{
+					if (data->mode == 0)
+					{
+						G2EmulationSwitchAnimation(In, 1, 117, 0, data->frames, 2);
+
+						razReaverScale(2800);
+					}
+					else
+					{
+						G2EmulationSwitchAnimation(In, 1, 137, 0, data->frames, 2);
+					}
+				}
 
 				if (Raziel.Senses.heldClass == 2)
 				{
@@ -214,27 +232,10 @@ void StateInitIdle(struct __CharacterState* In, int CurrentSection, int Ptr)
 						G2EmulationSwitchAnimation(In, 1, 126, 0, data->frames, 2);
 					}
 				}
-				else if (Raziel.Senses.heldClass >= 3)
-				{
-					if (Raziel.Senses.heldClass == 3)
-					{
-						G2EmulationSwitchAnimation(In, 1, 98, 0, data->frames, 2);
-					}
-					else if (Raziel.Senses.heldClass = 0x1000)
-					{
-						if (data->mode == 0)
-						{
-							G2EmulationSwitchAnimation(In, 1, 117, 0, data->frames, 2);
-					
-							razReaverScale(2800);
-						}
-						else
-						{
-							G2EmulationSwitchAnimation(In, 1, 137, 0, data->frames, 2);
-						}
-					}
-				}
-				else if (Raziel.Senses.heldClass != 0 && Raziel.Senses.heldClass == CurrentSection)
+			}
+			else
+			{
+				if (Raziel.Senses.heldClass != 0 && Raziel.Senses.heldClass == CurrentSection)
 				{
 					if (data->mode == 0)
 					{
@@ -1216,34 +1217,35 @@ void StateHandlerStartMove(struct __CharacterState* In, int CurrentSection, int 
 		{
 		case 0x4010080:
 		{
+			assert(FALSE);
 #if 0
-		if (CurrentSection == 2)
-		{
-			//loc_800AA804
-			if (Ptr->Data != 0)
+			if (CurrentSection == 2)
 			{
-				G2EmulationSetMode(In, CurrentSection, 1);
+				//loc_800AA804
+				if (Ptr->Data != 0)
+				{
+					G2EmulationSetMode(In, CurrentSection, 1);
+				}
+				else
+				{
+					//loc_800AA4C0
+					G2EmulationSetMode(In, CurrentSection, 0);
+				}
 			}
-			else
-			{
-				//loc_800AA4C0
-				G2EmulationSetMode(In, CurrentSection, 0);
-			}
-		}
-		//loc_800AA4D0
+			//loc_800AA4D0
 
-		//v1 = 0x80000000
-		if ((Raziel.passedMask & 0x2))
-		{
-			//v0 = PadData[0];
-
-			if ((PadData[0] & 0x8000000F))
+			//v1 = 0x80000000
+			if ((Raziel.passedMask & 0x2))
 			{
-				G2EmulationSetMode(In, CurrentSection, 2);
+				//v0 = PadData[0];
+
+				if ((PadData[0] & 0x8000000F))
+				{
+					G2EmulationSetMode(In, CurrentSection, 2);
+				}
+				//loc_800AA804
 			}
 			//loc_800AA804
-		}
-		//loc_800AA804
 #endif
 			break;
 		}
@@ -1251,13 +1253,13 @@ void StateHandlerStartMove(struct __CharacterState* In, int CurrentSection, int 
 		{
 			//loc_800AA420
 			StateInitStartMove(In, CurrentSection, Ptr->Data);
-			
+
 			In->SectionList[CurrentSection].Data2 = 1;
 
 			if (CurrentSection == 0)
 			{
 				Raziel.Mode &= 0x200800;
-				
+
 				Raziel.Mode |= 0x4;
 
 				ControlFlag = 0x2A119;
@@ -1276,12 +1278,19 @@ void StateHandlerStartMove(struct __CharacterState* In, int CurrentSection, int 
 
 				//j loc_800AA808
 			}
-			
+
+			break;
+		}
+		case 0x80000002:
+		{
+
+
 			break;
 		}
 		case 0x08000000:
 		case 0x08000003:
 		case 0x10000000:
+		case 0x08000001:
 		case 0:
 			break;
 		default:
@@ -1294,333 +1303,38 @@ void StateHandlerStartMove(struct __CharacterState* In, int CurrentSection, int 
 
 	}
 	//loc_800AA818
-#if 0
+	//v0 = PadData[0];
 
-		j       loc_800AA668
-		nop
+	if ((PadData[0] & 0x8000000F) && In->SectionList[CurrentSection].Data2 != 0)
+	{
+		if (++In->SectionList[CurrentSection].Data2 >= 8)
+		{
+			G2EmulationSetMode(In, CurrentSection, 2);
 
-		loc_800AA514 :
-	lw      $v0, -0x5F4($gp)
-		nop
-		andi    $v0, 0x20
-		beqz    $v0, loc_800AA538
-		nop
-		jal     sub_800A58E8
-		move    $a1, $s2
-		j       loc_800AA808
-		addu    $a0, $s0, $s1
+			ControlFlag &= 0xFFFFDFFF;
 
-		loc_800AA538 :
-	bnez    $s2, loc_800AA808
-		addu    $a0, $s0, $s1
-		lw      $v0, 0($s1)
-		nop
-		lw      $v0, 0xB4($v0)
-		nop
-		beqz    $v0, loc_800AA574
-		addiu   $a0, $s1, 0x94
-		lw      $a1, 0($a1)
-		jal     sub_80070D38
-		move    $a2, $zero
-		lw      $v0, -0x238($gp)
-		lui     $v1, 0x80
-		or $v0, $v1
-		sw      $v0, -0x238($gp)
+			In->SectionList[CurrentSection].Data2 = 0;
+		}
+	}
 
-		loc_800AA574:
-	bnez    $s2, loc_800AA808
-		addu    $a0, $s0, $s1
-		lw      $v0, -0x4C4($gp)
-		nop
-		andi    $v0, 7
-		bnez    $v0, loc_800AA5A0
-		move    $a0, $s1
-		jal     sub_80072844
-		move    $a1, $zero
-		bnez    $v0, loc_800AA5F8
-		nop
+	if (G2EmulationQueryFrame(In, CurrentSection) >= 11 && CurrentSection == 0 && CheckHolding(In->CharacterInstance) != 0)
+	{
+		StateSwitchStateData(In, 1, &StateHandlerMove, 11);
 
-		loc_800AA5A0 :
-	lw      $a0, -0x4C4($gp)
-		nop
-		andi    $v0, $a0, 1
-		beqz    $v0, loc_800AA5BC
-		andi    $v0, $a0, 2
-		j       loc_800AA5C8
-		li      $a0, 2
+		if ((void*)In->SectionList[1].Data1 == (void*)&StateHandlerStartMove)
+		{
+			StateHandlerMove(In, 2, 11);
+		}
+	}
 
-		loc_800AA5BC:
-	beqz    $v0, loc_800AA5C8
-		andi    $a0, 4
-		li      $a0, 3
+	if (Raziel.Magnitude != 0 && Raziel.Magnitude < 4096)
+	{
+		if ((Raziel.passedMask & 0x1))
+		{
+			StateSwitchStateData(In, CurrentSection, &StateHandlerMove, 0);
+		}
+	}
 
-		loc_800AA5C8 :
-		li      $a1, 5
-		jal     sub_8007193C
-		move    $a2, $a1
-		move    $a0, $s1
-		li      $a1, sub_800A84E0
-		jal     sub_80072BD0
-		move    $a2, $v0
-		lw      $v0, -0x238($gp)
-		li      $v1, 0xFFFFDFFF
-		and $v0, $v1
-		sw      $v0, -0x238($gp)
-
-		loc_800AA5F8:
-	lw      $v0, -0x238($gp)
-		nop
-		ori     $v0, 0x2000
-		sw      $v0, -0x238($gp)
-		j       loc_800AA808
-		addu    $a0, $s0, $s1
-
-		loc_800AA610 :
-	bnez    $s2, loc_800AA808
-		addu    $a0, $s0, $s1
-		move    $a1, $zero
-		move    $a2, $a1
-		li      $v0, 8
-		sw      $v0, -0x670($gp)
-		lw      $a0, 0($s1)
-		jal     sub_800A70BC
-		move    $a3, $a1
-		beqz    $v0, loc_800AA654
-		li      $v0, 1
-		sw      $v0, 0x18 + var_8($sp)
-		move    $a0, $s1
-		li      $a1, 0x1A
-		move    $a2, $zero
-		jal     sub_800723F0
-		move    $a3, $a2
-
-		loc_800AA654 :
-	move    $a0, $s1
-		li      $a1, sub_800AB5AC
-		jal     sub_80072BD0
-		move    $a2, $zero
-
-		loc_800AA668 :
-	lw      $v0, -0x238($gp)
-		li      $v1, 0xFFFFDFFF
-		and $v0, $v1
-		sw      $v0, -0x238($gp)
-		j       loc_800AA808
-		addu    $a0, $s0, $s1
-
-		loc_800AA680 :
-	lw      $v0, -0x4C4($gp)
-		nop
-		andi    $v0, 4
-		beqz    $v0, loc_800AA6EC
-		li      $v0, 1
-		bne     $s2, $v0, loc_800AA6D0
-		move    $a0, $s1
-		lw      $v0, -0x634($gp)
-		nop
-		andi    $v0, 0x80
-		bnez    $v0, loc_800AA808
-		addu    $a0, $s0, $s1
-		move    $a0, $s1
-		li      $a1, 1
-		li      $a2, sub_8009BDE4
-		jal     sub_80072B04
-		li      $a3, 0xA
-		j       loc_800AA808
-		addu    $a0, $s0, $s1
-
-		loc_800AA6D0 :
-	move    $a1, $s2
-		li      $a2, sub_800AABA8
-		jal     sub_80072B04
-		move    $a3, $zero
-		j       loc_800AA808
-		addu    $a0, $s0, $s1
-
-		loc_800AA6EC :
-	bnez    $s2, loc_800AA808
-		addu    $a0, $s0, $s1
-		lw      $v0, -0x634($gp)
-		nop
-		andi    $v0, 0x80
-		bnez    $v0, loc_800AA808
-		lui     $a1, 0x800A
-		move    $a0, $s1
-		j       loc_800AA7B8
-		li      $a1, sub_8009BDE4
-
-		loc_800AA714 :
-	move    $a1, $s2
-		li      $a2, sub_800AABA8
-		jal     sub_80072B04
-		li      $a3, 3
-		j       loc_800AA808
-		addu    $a0, $s0, $s1
-
-		loc_800AA730 :
-	bnez    $s2, loc_800AA808
-		addu    $a0, $s0, $s1
-		move    $a0, $s1
-		jal     sub_800727D8
-		move    $a1, $zero
-		slti    $v0, 7
-		bnez    $v0, loc_800AA808
-		addu    $a0, $s0, $s1
-		lw      $a0, 0($s1)
-		addiu   $a1, $gp, -0x9D0
-		sw      $zero, -0x2D0($gp)
-		jal     sub_8009A440
-		nop
-		lw      $a0, 0($s1)
-		nop
-		lw      $v0, 0x17C($a0)
-		nop
-		slti    $v0, -0x20
-		beqz    $v0, loc_800AA804
-		li      $a1, 0x18
-		move    $a2, $zero
-		jal     sub_800A70BC
-		move    $a3, $a2
-		beqz    $v0, loc_800AA7AC
-		li      $v0, 1
-		sw      $v0, 0x18 + var_8($sp)
-		move    $a0, $s1
-		li      $a1, 0x24  # '$'
-		move    $a2, $zero
-		jal     sub_800723F0
-		li      $a3, 4
-
-		loc_800AA7AC:
-	move    $a0, $s1
-		li      $a1, sub_800ABDA8
-
-		loc_800AA7B8 :
-	jal     sub_80072BD0
-		move    $a2, $zero
-		j       loc_800AA808
-		addu    $a0, $s0, $s1
-
-		loc_800AA7C8 :
-	move    $a0, $zero
-		li      $a1, 5
-		jal     sub_8007193C
-		move    $a2, $a1
-		move    $a0, $s1
-		move    $a1, $s2
-		li      $a2, sub_800A84E0
-		jal     sub_80072B04
-		move    $a3, $v0
-		j       loc_800AA808
-		addu    $a0, $s0, $s1
-
-		loc_800AA7F8 :
-	move    $a1, $s2
-
-		loc_800AA7FC :
-	jal     sub_800AFEE4
-		move    $a2, $s4
-
-		loc_800AA804 :
-	addu    $a0, $s0, $s1
-
-		loc_800AA808 :
-	jal     sub_80070C9C
-		addiu   $a0, 0xC
-		j       loc_800AA308
-		addu    $a0, $s0, $s1
-
-		loc_800AA818 :
-	lw      $v0, -0x33C($gp)
-		lui     $v1, 0x8000
-		lw      $v0, 0($v0)
-		li      $v1, unk_8000000F
-		and $v0, $v1
-		beqz    $v0, loc_800AA888
-		sll     $v0, $s2, 3
-		addu    $v0, $s2
-		sll     $v0, 3
-		subu    $v0, $s2
-		sll     $v0, 2
-		addu    $s0, $s1, $v0
-		lw      $v0, 0x120($s0)
-		nop
-		beqz    $v0, loc_800AA888
-		addiu   $v0, 1
-		sw      $v0, 0x120($s0)
-		slti    $v0, 8
-		bnez    $v0, loc_800AA88C
-		move    $a0, $s1
-		move    $a1, $s2
-		jal     sub_80072644
-		li      $a2, 1
-		lw      $v0, -0x238($gp)
-		li      $v1, 0xFFFFDFFF
-		sw      $zero, 0x120($s0)
-		and $v0, $v1
-		sw      $v0, -0x238($gp)
-
-		loc_800AA888:
-	move    $a0, $s1
-
-		loc_800AA88C :
-	jal     sub_800727D8
-		move    $a1, $s2
-		slti    $v0, 0xB
-		bnez    $v0, loc_800AA904
-		nop
-		bnez    $s2, loc_800AA904
-		nop
-		lw      $a0, 0($s1)
-		jal     sub_800B3A8C
-		nop
-		beqz    $v0, loc_800AA904
-		lui     $v0, 0x800B
-		lw      $v1, 0x124($s1)
-		addiu   $s0, $v0, (sub_800AA2C4 - 0x800B0000)
-		bne     $v1, $s0, loc_800AA8E0
-		move    $a0, $s1
-		li      $a1, 1
-		li      $a2, sub_800AABA8
-		jal     sub_80072B04
-		li      $a3, 0xB
-
-		loc_800AA8E0:
-	lw      $v0, 0x240($s1)
-		nop
-		bne     $v0, $s0, loc_800AA904
-		move    $a0, $s1
-		li      $a1, 2
-		li      $a2, sub_800AABA8
-		jal     sub_80072B04
-		li      $a3, 0xB
-
-		loc_800AA904:
-	lw      $v0, -0x65C($gp)
-		nop
-		beqz    $v0, loc_800AA944
-		slti    $v0, 0x1000
-		beqz    $v0, loc_800AA944
-		nop
-		lw      $v0, -0x4C4($gp)
-		nop
-		andi    $v0, 1
-		beqz    $v0, loc_800AA944
-		move    $a0, $s1
-		move    $a1, $s2
-		li      $a2, sub_800AABA8
-		jal     sub_80072B04
-		move    $a3, $zero
-
-		loc_800AA944 :
-	lw      $ra, 0x18 + var_s14($sp)
-		lw      $s4, 0x18 + var_s10($sp)
-		lw      $s3, 0x18 + var_sC($sp)
-		lw      $s2, 0x18 + var_s8($sp)
-		lw      $s1, 0x18 + var_s4($sp)
-		lw      $s0, 0x18 + var_s0($sp)
-		jr      $ra
-		addiu   $sp, 0x30
-#endif
 }
 
 void StateInitMove(struct __CharacterState* In, int CurrentSection, int Frames)
@@ -1723,6 +1437,57 @@ void StateHandlerMove(struct __CharacterState* In, int CurrentSection, int Data)
 		{
 			switch (Ptr->ID)
 			{
+			case 0x8000001:
+			{
+				//loc_800AADFC
+//v0 = PadData[0];
+//v1 = RazielCommands[6];
+
+				if (!(PadData[0] & RazielCommands[6]))
+				{
+					//loc_800AAE18
+					if (CurrentSection == 0)
+					{
+						if (In->CharacterInstance->tface != NULL)
+						{
+							EnMessageQueueData(&In->SectionList[CurrentSection].Defer, (int)In->CharacterInstance, 0);
+
+							ControlFlag |= 0x800000;
+						}
+						//loc_800AAE54
+						if (CurrentSection == 0)
+						{
+							if (Raziel.steeringMode == 9 || Raziel.steeringMode == 14 || Raziel.steeringMode == 15)
+							{
+								razApplyMotion(In, CurrentSection);
+							}
+							else
+							{
+								if (Raziel.Mode == 2 || Anim == 123 || Anim == 124)
+								{
+									StateSwitchStateCharacterData(In, &StateHandlerIdle, SetControlInitIdleData(0, 0, 3));
+								}
+								else
+								{
+									StateSwitchStateCharacterData(In, &StateHandlerCrouch, 0);
+								}
+							}
+						}
+					}
+					//loc_800AB21C
+				}
+				//loc_800AB21C
+#if 0
+
+					loc_800AAEDC :
+				bne     $v1, $v0, loc_800AAEF0
+					move    $a0, $s1
+					lui     $a1, 0x800B
+					j       loc_800AB1CC
+					li      $a1, sub_800A90E8
+#endif
+				break;
+			}
 			case 0x100001:
 			{
 				In->SectionList[CurrentSection].Data2 = -1;
@@ -1752,7 +1517,6 @@ void StateHandlerMove(struct __CharacterState* In, int CurrentSection, int Data)
 		else
 		{
 			//loc_800AAE54
-
 			if (CurrentSection == 0)
 			{
 				if (Raziel.steeringMode == 9 || Raziel.steeringMode == 14 || Raziel.steeringMode == 15)
@@ -1807,472 +1571,10 @@ void StateHandlerMove(struct __CharacterState* In, int CurrentSection, int Data)
 		DeMessageQueue(&In->SectionList[CurrentSection].Event);
 	}
 	//loc_800AB22C
-#if 0
-		beqz    $v1, loc_800AAE54
-		nop
-		bgtz    $v1, loc_800AACB0
-		lui     $v0, 0x401
-		li      $v0, unk_80000002
-		beq     $v1, $v0, loc_800AADFC
-		slt     $v0, $v1
-		bnez    $v0, loc_800AAC74
-		lui     $v0, 0x8000
-		beq     $v1, $v0, loc_800AB128
-		li      $v0, unk_80000001
-		beq     $v1, $v0, loc_800AB060
-		move    $a0, $s1
-		j       loc_800AB210
-		move    $a1, $s2
-
-		loc_800AAC74 :
-	li      $v0, unk_80000008
-		beq     $v1, $v0, loc_800AB218
-		slt     $v0, $v1
-		bnez    $v0, loc_800AAC9C
-		lui     $v0, 0x8000
-		li      $v0, unk_80000004
-		beq     $v1, $v0, loc_800AAFE0
-		move    $a0, $s1
-		j       loc_800AB210
-		move    $a1, $s2
-
-		loc_800AAC9C :
-	li      $v0, unk_80000010
-		beq     $v1, $v0, loc_800AAE18
-		move    $a0, $s1
-		j       loc_800AB210
-		move    $a1, $s2
-
-		loc_800AACB0 :
-	li      $v0, 0x4010080
-		beq     $v1, $v0, loc_800AAD98
-		slt     $v0, $v1
-		bnez    $v0, loc_800AAD04
-		lui     $v0, 0x2000
-		li      $v0, 0x100004
-		beq     $v1, $v0, loc_800AAD84
-		slt     $v0, $v1
-		bnez    $v0, loc_800AACF4
-		lui     $v0, 0x200
-		li      $v0, 0x100001
-		beq     $v1, $v0, loc_800AAD40
-		move    $a0, $s1
-		j       loc_800AB210
-		move    $a1, $s2
-
-		loc_800AACF4 :
-	beq     $v1, $v0, loc_800AADD8
-		move    $a0, $s1
-		j       loc_800AB210
-		move    $a1, $s2
-
-		loc_800AAD04 :
-	li      $v0, 0x20000004
-		beq     $v1, $v0, loc_800AB050
-		slt     $v0, $v1
-		bnez    $v0, loc_800AAD2C
-		lui     $v0, 0x2000
-		lui     $v0, 0x1000
-		beq     $v1, $v0, loc_800AAFA8
-		move    $a0, $s1
-		j       loc_800AB210
-		move    $a1, $s2
-
-		loc_800AAD2C :
-	li      $v0, 0x20000008
-		beq     $v1, $v0, loc_800AB050
-		move    $a0, $s1
-		j       loc_800AB210
-		move    $a1, $s2
-
-		
-
-		loc_800AAD84 :
-	move    $a0, $zero
-		jal     sub_80047C98
-		move    $a1, $a0
-		j       loc_800AB218
-		sw      $zero, 0x11C($s3)
-
-		loc_800AAD98 :
-		bnez    $s2, loc_800AB21C
-		addu    $a0, $s5, $s1
-		lw      $v0, 4($s0)
-		nop
-		beqz    $v0, loc_800AADC4
-		nop
-		lw      $a0, 0($s1)
-		jal     sub_800A63F4
-		nop
-		j       loc_800AB21C
-		addu    $a0, $s5, $s1
-
-		loc_800AADC4 :
-	lw      $a0, 0($s1)
-		jal     sub_800A6380
-		nop
-		j       loc_800AB21C
-		addu    $a0, $s5, $s1
-
-		loc_800AADD8 :
-	lw      $v0, -0x5F4($gp)
-		nop
-		andi    $v0, 0x20
-		beqz    $v0, loc_800AADFC
-		nop
-		jal     sub_800A58E8
-		move    $a1, $s2
-		j       loc_800AB21C
-		addu    $a0, $s5, $s1
-
-		loc_800AADFC :
-	lw      $v0, -0x33C($gp)
-		lw      $v1, -0x5B64($gp)
-		lw      $v0, 0($v0)
-		nop
-		and $v0, $v1
-		bnez    $v0, loc_800AB21C
-		addu    $a0, $s5, $s1
-
-		loc_800AAE18 :
-	bnez    $s2, loc_800AB21C
-		addu    $a0, $s5, $s1
-		lw      $v0, 0($s1)
-		nop
-		lw      $v0, 0xB4($v0)
-		nop
-		beqz    $v0, loc_800AAE54
-		addiu   $a0, $s1, 0x94
-		lw      $a1, 0($s0)
-		jal     sub_80070D38
-		move    $a2, $zero
-		lw      $v0, -0x238($gp)
-		lui     $v1, 0x80
-		or $v0, $v1
-		sw      $v0, -0x238($gp)
-
-		loc_800AAE54:
-	bnez    $s2, loc_800AB21C
-		addu    $a0, $s5, $s1
-		lw      $v1, -0x648($gp)
-		li      $v0, 9
-		beq     $v1, $v0, loc_800AAE7C
-		li      $v0, 0xE
-		beq     $v1, $v0, loc_800AAE7C
-		li      $v0, 0xF
-		bne     $v1, $v0, loc_800AAE90
-		nop
-
-		loc_800AAE7C :
-	move    $a0, $s1
-		jal     sub_800A6ABC
-		move    $a1, $s2
-		j       loc_800AB21C
-		addu    $a0, $s5, $s1
-
-		loc_800AAE90 :
-	lw      $v1, -0x670($gp)
-		nop
-		beq     $v1, $s4, loc_800AAEB0
-		li      $v0, 0x7B  # '{'
-		beq     $s6, $v0, loc_800AAEB0
-		li      $v0, 0x7C  # '|'
-		bne     $s6, $v0, loc_800AAEDC
-		lui     $v0, 0x100
-
-		loc_800AAEB0:
-	move    $a0, $zero
-		move    $a1, $a0
-		jal     sub_8007193C
-		li      $a2, 3
-		move    $a0, $s1
-		li      $a1, sub_800A84E0
-		jal     sub_80072BD0
-		move    $a2, $v0
-		j       loc_800AB21C
-		addu    $a0, $s5, $s1
-
-		loc_800AAEDC :
-	bne     $v1, $v0, loc_800AAEF0
-		move    $a0, $s1
-		lui     $a1, 0x800B
-		j       loc_800AB1CC
-		li      $a1, sub_800A90E8
-
-		loc_800AAEF0 :
-	lw      $v0, 4($s0)
-		nop
-		slti    $v0, 4
-		beqz    $v0, loc_800AAF60
-		lui     $v0, 0x80
-		lw      $a1, -0x238($gp)
-		nop
-		and $v0, $a1, $v0
-		bnez    $v0, loc_800AAF60
-		lui     $a0, 0x8000
-		lw      $v1, -0x33C($gp)
-		ori     $v0, $a1, 0x2000
-		sw      $v0, -0x238($gp)
-		lw      $v0, 0($v1)
-		li      $a0, unk_8000000F
-		and $v0, $a0
-		bnez    $v0, loc_800AB21C
-		addu    $a0, $s5, $s1
-		addiu   $a0, $s1, 0x94
-		lw      $a2, 4($s0)
-		move    $a1, $zero
-		jal     sub_80070D38
-		addiu   $a2, 1
-		move    $a0, $s1
-		jal     sub_800A6ABC
-		move    $a1, $zero
-		j       loc_800AB21C
-		addu    $a0, $s5, $s1
-
-		loc_800AAF60 :
-	lw      $v1, -0x4C4($gp)
-		nop
-		andi    $v0, $v1, 0x2000
-		beqz    $v0, loc_800AAF78
-		move    $a2, $zero
-		li      $a2, 0x1E
-
-		loc_800AAF78:
-	andi    $v0, $v1, 0x1000
-		beqz    $v0, loc_800AAF88
-		nop
-		li      $a2, 0x3C  # '<'
-
-		loc_800AAF88 :
-		bnez    $s2, loc_800AB21C
-		addu    $a0, $s5, $s1
-		move    $a0, $s1
-		lui     $a1, 0x800B
-		jal     sub_80072BD0
-		li      $a1, sub_800AB27C
-		j       loc_800AB21C
-		addu    $a0, $s5, $s1
-
-		loc_800AAFA8 :
-	lw      $v0, -0x65C($gp)
-		nop
-		slti    $v0, 0x1000
-		beqz    $v0, loc_800AAFCC
-		move    $a1, $s2
-		jal     sub_800AA964
-		li      $a2, 3
-		j       loc_800AB21C
-		addu    $a0, $s5, $s1
-
-		loc_800AAFCC :
-	move    $a0, $s1
-		jal     sub_800AA964
-		move    $a2, $zero
-		j       loc_800AB21C
-		addu    $a0, $s5, $s1
-
-		loc_800AAFE0 :
-	lw      $v0, -0x670($gp)
-		lui     $v1, 0x20  # ' '
-		and $v0, $v1
-		bnez    $v0, loc_800AB21C
-		addu    $a0, $s5, $s1
-		bne     $s2, $s4, loc_800AB018
-		move    $a0, $s1
-		li      $a1, 2
-		move    $a2, $zero
-		move    $a3, $a2
-		li      $v0, 3
-		sw      $v0, 0x18 + var_8($sp)
-		j       loc_800AB030
-		sw      $s2, 0x18 + var_4($sp)
-
-		loc_800AB018:
-	move    $a1, $s2
-		li      $a2, 1
-		move    $a3, $zero
-		li      $v0, 3
-		sw      $v0, 0x18 + var_8($sp)
-		sw      $s4, 0x18 + var_4($sp)
-
-		loc_800AB030:
-	jal     sub_80072080
-		nop
-		lw      $v0, -0x238($gp)
-		sw      $s4, -0x670($gp)
-		ori     $v0, 0x2000
-		sw      $v0, -0x238($gp)
-		j       loc_800AB21C
-		addu    $a0, $s5, $s1
-
-		loc_800AB050 :
-	li      $v0, 4
-		sw      $v0, -0x670($gp)
-		j       loc_800AB110
-		nop
-
-		loc_800AB060 :
-	bnez    $s2, loc_800AB21C
-		addu    $a0, $s5, $s1
-		lw      $v0, -0x33C($gp)
-		lw      $v1, -0x5B64($gp)
-		lw      $v0, 0($v0)
-		nop
-		and $v0, $v1
-		beqz    $v0, loc_800AB0BC
-		li      $a1, 0x20  # ' '
-		move    $a2, $zero
-		move    $v0, $a1
-		sw      $v0, -0x670($gp)
-		lw      $a0, 0($s1)
-		jal     sub_800A70BC
-		move    $a3, $a2
-		beqz    $v0, loc_800AB0FC
-		li      $v0, 1
-		sw      $v0, 0x18 + var_8($sp)
-		move    $a0, $s1
-		li      $a1, 0x1A
-		move    $a2, $zero
-		j       loc_800AB0F4
-		move    $a3, $v0
-
-		loc_800AB0BC :
-	move    $a1, $zero
-		move    $a2, $a1
-		li      $v0, 8
-		sw      $v0, -0x670($gp)
-		lw      $a0, 0($s1)
-		jal     sub_800A70BC
-		move    $a3, $a1
-		beqz    $v0, loc_800AB0FC
-		li      $v0, 1
-		sw      $v0, 0x18 + var_8($sp)
-		move    $a0, $s1
-		li      $a1, 0x1A
-		move    $a2, $zero
-		move    $a3, $a2
-
-		loc_800AB0F4 :
-	jal     sub_800723F0
-		nop
-
-		loc_800AB0FC :
-	move    $a0, $s1
-		li      $a1, sub_800AB5AC
-		jal     sub_80072BD0
-		move    $a2, $zero
-
-		loc_800AB110 :
-	lw      $v0, -0x238($gp)
-		li      $v1, 0xFFFFDFFF
-		and $v0, $v1
-		sw      $v0, -0x238($gp)
-		j       loc_800AB21C
-		addu    $a0, $s5, $s1
-
-		loc_800AB128 :
-	lw      $v0, -0x33C($gp)
-		lw      $v1, -0x5B60($gp)
-		lw      $v0, 0($v0)
-		nop
-		and $v0, $v1
-		bnez    $v0, loc_800AB1DC
-		li      $v0, 0x44  # 'D'
-		lw      $v1, 0x120($s3)
-		nop
-		bne     $v1, $v0, loc_800AB1A4
-		li      $v0, 0x38  # '8'
-		li      $v0, 1
-		bne     $s2, $v0, loc_800AB190
-		li      $v0, 0xC8
-		lw      $v0, -0x634($gp)
-		nop
-		andi    $v0, 0x80
-		bnez    $v0, loc_800AB190
-		li      $v0, 0xC8
-		move    $a0, $s1
-		li      $a1, 1
-		li      $a2, sub_8009BDE4
-		jal     sub_80072B04
-		li      $a3, 0xA
-		li      $v0, 0xC8
-
-		loc_800AB190:
-	sh      $v0, -0x5DC($gp)
-		li      $v0, 0xFFFFFFA0
-		sh      $v0, -0x5DA($gp)
-		j       loc_800AB21C
-		addu    $a0, $s5, $s1
-
-		loc_800AB1A4 :
-	bne     $v1, $v0, loc_800AB1DC
-		nop
-		jal     sub_800A5C84
-		nop
-		beqz    $v0, loc_800AB21C
-		addu    $a0, $s5, $s1
-		bnez    $s2, loc_800AB21C
-		lui     $a1, 0x800B
-		move    $a0, $s1
-		li      $a1, sub_800A9860
-
-		loc_800AB1CC :
-	jal     sub_80072BD0
-		move    $a2, $zero
-		j       loc_800AB21C
-		addu    $a0, $s5, $s1
-
-		loc_800AB1DC :
-	lw      $v0, -0x634($gp)
-		nop
-		andi    $v0, 0x80
-		bnez    $v0, loc_800AB21C
-		addu    $a0, $s5, $s1
-		move    $a0, $s1
-		move    $a1, $s2
-		li      $a2, sub_8009BDE4
-		jal     sub_80072B04
-		move    $a3, $zero
-		j       loc_800AB21C
-		addu    $a0, $s5, $s1
-
-		loc_800AB210 :
-	jal     sub_800AFEE4
-		move    $a2, $s7
-
-		loc_800AB218 :
-	addu    $a0, $s5, $s1
-
-		loc_800AB21C :
-	jal     sub_80070C9C
-		addiu   $a0, 0xC
-		j       loc_800AAC18
-		addu    $a0, $s5, $s1
-
-		loc_800AB22C :
-	bnez    $s2, loc_800AB250
-		lui     $v0, 0x800B
-		lw      $v1, 8($s1)
-		li      $v0, sub_800AABA8
-		beq     $v1, $v0, loc_800AB250
-		nop
-		lw      $a0, 0($s1)
-		jal     sub_800A6C4C
-		nop
-
-		loc_800AB250 :
-	lw      $ra, 0x18 + var_s20($sp)
-		lw      $s7, 0x18 + var_s1C($sp)
-		lw      $s6, 0x18 + var_s18($sp)
-		lw      $s5, 0x18 + var_s14($sp)
-		lw      $s4, 0x18 + var_s10($sp)
-		lw      $s3, 0x18 + var_sC($sp)
-		lw      $s2, 0x18 + var_s8($sp)
-		lw      $s1, 0x18 + var_s4($sp)
-		lw      $s0, 0x18 + var_s0($sp)
-		jr      $ra
-		addiu   $sp, 0x40
-#endif
+	if(CurrentSection == 0 && In->SectionList[CurrentSection].Process != &StateHandlerMove)
+	{
+		razResetMotion(In->CharacterInstance);
+	}
 }
 
 void StateHandlerStopMove(struct __CharacterState* In, int CurrentSection, int Data)
@@ -3184,7 +2486,7 @@ long RazielAnimCallback(struct _G2Anim_Type* anim, int sectionID, enum _G2AnimCa
 	struct __State* pSection; // $a0
 	struct _G2AnimSection_Type* animSection; // $a2
 	struct evAnimationControllerDoneData* ControllerData; // $v1
-	//struct __AlarmData* data; // $s0
+	struct __AlarmData* datax; // $s0
 	struct _Instance* inst; // $a0
 	int test; // $a0
 	struct _SoundRamp* soundRamp; // $t0
@@ -3242,17 +2544,28 @@ long RazielAnimCallback(struct _G2Anim_Type* anim, int sectionID, enum _G2AnimCa
 
 		break;
 	}
+	case G2ANIM_MSG_PLAYEFFECT:
+	{
+		if (messageDataA == 2)
+		{
+			datax = (struct __AlarmData*)messageDataB;
+			inst = razGetHeldWeapon();
+
+			switch (datax->data)
+			{
+			default:
+				assert(FALSE);
+				break;
+			}
+		}
+		//loc_800B0DAC
+		break;
+	}
 	default:
 		assert(FALSE);
 		break;
 	}
 #if 0
-		loc_800B0A04 : # jumptable 800B0904 case 6
-		li      $v0, 2
-		bne     $s5, $v0, loc_800B0DAC
-		nop
-		jal     sub_800A5CBC
-		move    $s0, $s2
 		lhu     $v1, 0($s0)
 		move    $a0, $v0
 		addiu   $v1, -1
@@ -4767,7 +4080,7 @@ int SetStates(struct _Instance* instance, struct GameTracker* GT, long* controlC
 			{
 				Event = message->ID;
 
-				if (Event == 0x8000)
+				if (Event == 0x80000000)
 				{
 					if (!(Raziel.Senses.EngagedMask & 0x681F))
 					{
@@ -4800,7 +4113,7 @@ int SetStates(struct _Instance* instance, struct GameTracker* GT, long* controlC
 			{
 				if ((Data1 & 0x1000))
 				{
-					Event = 0x1000001;
+					Event = 0x1000000;
 				}
 				else
 				{

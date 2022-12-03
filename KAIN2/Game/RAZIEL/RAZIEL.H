@@ -1,6 +1,11 @@
 #ifndef RAZIEL_H
 #define RAZIEL_H
 
+struct __AlarmData 
+{
+	short command; // size=0, offset=0
+	short data; // size=0, offset=2
+};
 
 struct RazielData 
 {
