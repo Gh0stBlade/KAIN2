@@ -867,36 +867,41 @@ void MATH3D_SetUnityMatrix(MATRIX *mat)
 void AngleMoveToward(short* current_ptr, short destination, short step)
 {
 #if defined(PSX_VERSION)
-	long diff;
-	short current;
+	long diff; // $a0
+	short current; // $s0
 
-	current = current_ptr[0];
-
-	diff = AngleDiff(current, destination);
+	current = *current_ptr;
+	diff = (short)AngleDiff(*current_ptr, destination);
 
 	if (diff != 0)
 	{
-		if (diff < 0)
+		if (ABS(diff) < step)
 		{
-			diff = -diff;
+			*current_ptr = destination;
 		}
-
-		if (diff < step)
+		else
 		{
-			current_ptr[0] = destination;
+			if (diff > 0)
+			{
+				*current_ptr = step & 0xFFF;
+			}
+			else
+			{
+				if (diff < 0)
+				{
+					*current_ptr = (current - step) & 0xFFF;
+				}
+				else
+				{
+					*current_ptr = (current & 0xFFF);
+				}
+			}
 		}
 	}
 	else
 	{
-		current_ptr[0] = destination;
+		*current_ptr = destination;
 	}
-
-	if (diff > 0)
-	{
-		current = step;
-	}
-	
-	current_ptr[0] = current & 0xFFF;
 
 #elif defined(PC_VERSION)
 	__int16 v3; // cx
