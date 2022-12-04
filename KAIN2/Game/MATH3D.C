@@ -941,7 +941,7 @@ void AngleMoveToward(short* current_ptr, short destination, short step)
 #endif
 }
 
-short AngleDiff(short current, short destination)
+short AngleDiff(short current, short destination)//Matching - 100%
 {
 #if defined(PSX_VERSION)
 
