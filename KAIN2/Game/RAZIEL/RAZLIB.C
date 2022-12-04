@@ -1262,7 +1262,7 @@ int razSwitchVAnimCharacterGroup(struct _Instance *instance, int animGroup, int 
 	return 0;
 }
 
-int razSwitchVAnimGroup(struct _Instance* instance, int section, int animGroup, int frame, int frames)
+int razSwitchVAnimGroup(struct _Instance* instance, int section, int animGroup, int frame, int frames)//Matching - 99.35%
 {
 	int index;
 	int rc;
@@ -1271,7 +1271,7 @@ int razSwitchVAnimGroup(struct _Instance* instance, int section, int animGroup, 
 
 	if (Raziel.Senses.heldClass != 0)
 	{
-		index = rc - 1;
+		index = Raziel.Senses.heldClass - 1;
 
 		if (index >= 3)
 		{
@@ -1310,12 +1310,12 @@ void razSwitchVAnimCharacterSingle(struct _Instance *instance, int anim, int *fr
 			UNIMPLEMENTED();
 }
 
-void razSwitchVAnimSingle(struct _Instance* instance, int section, int anim, int frame, int frames)
+void razSwitchVAnimSingle(struct _Instance* instance, int section, int anim, int frame, int frames)//Matching - 99.23%
 {
 	razSwitchVAnim(instance, section, &PlayerData->virtualAnimSingle[anim], frame, frames);
 }
 
-void razSwitchVAnim(struct _Instance* instance, int section, struct __VAnim* vAnim, int frame, int frames)
+void razSwitchVAnim(struct _Instance* instance, int section, struct __VAnim* vAnim, int frame, int frames)//Matching - 99.90%
 {
 #if defined(PSX_VERSION)
 	if (frame == -1)
