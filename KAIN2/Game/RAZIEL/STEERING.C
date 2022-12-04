@@ -142,26 +142,26 @@ int GetControllerInput(int* ZDirection, long* controlCommand)
 	return rc;
 }
 
-int DecodeDirection(int Source, int Destination, short* Difference, short* Zone)
+int DecodeDirection(int Source, int Destination, short* Difference, short* Zone)//Matching - 83.95%
 {
 	int rc; // $s1
 	long diff;///@FIXME not in original, likely macro used.
 
 	rc = 0;
-	
-	diff = AngleDiff(Destination, Source);
 
-	if ((diff & 0x1FF) < 0x3FF)
+	diff = AngleDiff((short)Destination, (short)Source);
+
+	Zone[0] = diff & 0x1FF;
+
+	if ((unsigned short)(diff & 0x1FF) < 0x3FF)
 	{
 		Difference[0] = diff;
-
-		Zone[0] = 0;
 
 		rc = 0x10000001;
 	}
 	else
 	{
-		if ((diff - 512) < 0x400)
+		if ((unsigned short)(diff - 512) < 0x400)
 		{
 			Zone[0] = 1024;
 
@@ -169,7 +169,7 @@ int DecodeDirection(int Source, int Destination, short* Difference, short* Zone)
 		}
 		else
 		{
-			if ((diff + 0x5FF) < 0x400)
+			if ((unsigned short)(diff + 0x5FF) < 0x400)
 			{
 				Zone[0] = -1024;
 
@@ -177,7 +177,7 @@ int DecodeDirection(int Source, int Destination, short* Difference, short* Zone)
 			}
 			else
 			{
-				if (diff >= 0x600)
+				if ((short)diff >= 0x600)
 				{
 					Zone[0] = 2048;
 
@@ -195,7 +195,7 @@ int DecodeDirection(int Source, int Destination, short* Difference, short* Zone)
 			}
 		}
 	}
-	
+
 	return rc;
 }
 
@@ -372,7 +372,6 @@ int ProcessMovement(struct _Instance* instance, long* controlCommand, struct Gam
 		break;
 	}
 	default:
-		assert(FALSE);
 		break;
 	}
 #if 0
