@@ -1284,6 +1284,11 @@ void StateHandlerStartMove(struct __CharacterState* In, int CurrentSection, int 
 
 			break;
 		}
+		case 0x08000000:
+		{
+			StateSwitchStateData(In, CurrentSection, &StateHandlerMove, 0);
+			break;
+		}
 		case 0x80000000:
 		{
 			assert(FALSE);
@@ -1507,6 +1512,25 @@ void StateHandlerMove(struct __CharacterState* In, int CurrentSection, int Data)
 
 				In->SectionList[CurrentSection].Data1 = 0;
 
+				break;
+			}
+			case 0x10000000:
+			{
+				//loc_800AAFA8
+				if (Raziel.Magnitude < 0x1000)
+				{
+					StateInitMove(In, CurrentSection, 3);
+				}
+				else
+				{
+					//loc_800AAFCC
+					StateInitMove(In, CurrentSection, 0);
+				}
+				break;
+			}
+			default:
+			{
+				assert(FALSE);
 				break;
 			}
 			}
