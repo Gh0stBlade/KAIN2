@@ -827,6 +827,7 @@ void G2EmulationInstanceSwitchAnimation(struct _Instance* instance, int CurrentS
 		}
 	}
 }
+
 void G2EmulationInstanceSwitchAnimationAlpha(struct _Instance* instance, int CurrentSection, int NewAnim, int NewFrame, int Frames, int Mode, int AlphaTable)
 {
 #if defined(PSX_VERSION)
@@ -980,11 +981,11 @@ void G2EmulationSetAnimation(struct __CharacterState *In, int CurrentSection, in
 #endif
 }
 
-void G2EmulationInstanceSetMode(struct _Instance* instance, int CurrentSection, int Mode)
+void G2EmulationInstanceSetMode(struct _Instance* instance, int CurrentSection, int Mode)//Matching - 99.38%
 {
 	struct _G2AnimSection_Type* animSection;
 
-	animSection = &instance->anim.section[CurrentSection];
+	animSection = &instance->anim.section[(char)CurrentSection];
 
 	if (Mode == 0)
 	{
