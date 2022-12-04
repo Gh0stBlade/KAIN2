@@ -2287,7 +2287,98 @@ void GAMELOOP_Reset24FPS()
 
 void GAMELOOP_DoTimeProcess()
 {
-#if defined(PSX_VERSION)
+#if defined(PSXPC_VERSION)
+	int holdTime;
+	int lockRate;
+	unsigned long last;
+
+	holdTime = TIMER_GetTimeMS();
+
+	if (!(gameTrackerX.gameFlags & 0x10000000))
+	{
+		gameTrackerX.totalTime = (unsigned long)TIMER_TimeDiff(gameTrackerX.currentTicks);
+
+		gameTrackerX.currentTicks = SDL_GetPerformanceCounter() / (SDL_GetPerformanceFrequency() / 1000000);
+
+		if (gameTrackerX.frameRateLock <= 0)
+		{
+			gameTrackerX.frameRateLock = 1;
+		}
+
+		if (gameTrackerX.frameRateLock >= 3)
+		{
+			gameTrackerX.frameRateLock = 2;
+		}
+
+		if (gameTrackerX.decoupleGame == 0 && (gameTrackerX.gameFlags & 0x10000000))
+		{
+			if (gameTrackerX.frameRateLock == 1)
+			{
+				gameTrackerX.lastLoopTime = 33;
+			}
+			else if (gameTrackerX.frameRateLock == 2)
+			{
+				gameTrackerX.lastLoopTime = 50;
+			}
+		}
+		else
+		{
+			if (gameTrackerX.frameRateLock == 1)
+			{
+				lockRate = 33;
+			}
+			else if (gameTrackerX.frameRateLock == 2)
+			{
+				lockRate = 50;
+			}
+
+			last = lockRate;
+
+			if (gameTrackerX.lastLoopTime != -1)
+			{
+				last = holdTime - gameTrackerX.currentTime;
+			}
+
+			if (gameTrackerX.frameRateLock == 1 && gameTrackerX.frameRate24fps != 0)
+			{
+				last -= 9;
+			}
+
+			if (last >= holdTime && gameTrackerX.gameData.asmData.MorphTime == 1000)
+			{
+				if (last >= 67)
+				{
+					last = 66;
+				}
+			}
+			else
+			{
+				last = lockRate;
+			}
+
+			gameTrackerX.lastLoopTime = last;
+		}
+
+		gameTrackerX.timeMult = ((last << 12) / 33);
+		gameTrackerX.timeSinceLastGameFrame += gameTrackerX.timeMult;
+		gameTrackerX.gameFramePassed = 0;
+		gameTrackerX.globalTimeMult = gameTrackerX.timeMult;
+
+		while (gameTrackerX.timeSinceLastGameFrame >= 4097)
+		{
+			gameTrackerX.gameFramePassed = 1;
+			gameTrackerX.timeSinceLastGameFrame -= 4096;
+			gameTrackerX.fps30Count++;
+		}
+	}
+	else
+	{
+		gameTrackerX.lastLoopTime = -1;
+	}
+
+	gameTrackerX.currentTime = holdTime;
+
+#elif defined(PSX_VERSION)
 
 	int holdTime;
 	int lockRate;
@@ -2299,11 +2390,7 @@ void GAMELOOP_DoTimeProcess()
 	{
 		gameTrackerX.totalTime = TIMER_TimeDiff(gameTrackerX.currentTicks);
 
-#if defined(PSXPC_VERSION)
-		gameTrackerX.currentTicks = SDL_GetTicks() | (gameTimer << 16);
-#else
 		gameTrackerX.currentTicks = (GetRCnt(0xF2000000) & 0xFFFF) | (gameTimer << 16);
-#endif
 
 		if (gameTrackerX.frameRateLock <= 0)
 		{

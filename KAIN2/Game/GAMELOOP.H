@@ -160,7 +160,11 @@ struct GameTracker // hashcode: 0x4EB3EFC5 (dec: 1320415173)
 	unsigned long globalTimeMult; // size=0, offset=580
 	unsigned long spectralTimeMult; // size=0, offset=584
 	unsigned long materialTimeMult; // size=0, offset=588
+#if defined(PSXPC_VERSION)
+	unsigned long long currentTicks; // size=0, offset=592
+#else
 	unsigned long currentTicks; // size=0, offset=592
+#endif
 	unsigned long totalTime; // size=0, offset=596
 	unsigned long idleTime; // size=0, offset=600
 	long visibleInstances; // size=0, offset=604
