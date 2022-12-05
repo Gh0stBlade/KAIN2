@@ -601,6 +601,8 @@ void StateHandlerIdle(struct __CharacterState* In, int CurrentSection, int Data)
 			break;
 		case 0:
 			break;
+		case 0x20000001:
+			break;
 		default:
 			assert(FALSE);
 			break;
@@ -1471,7 +1473,10 @@ void StateHandlerMove(struct __CharacterState* In, int CurrentSection, int Data)
 								}
 								else
 								{
-									StateSwitchStateCharacterData(In, &StateHandlerCrouch, 0);
+									if (Raziel.Mode == 0x1000000)
+									{
+										StateSwitchStateCharacterData(In, &StateHandlerCrouch, 0);
+									}
 								}
 							}
 						}
@@ -1528,6 +1533,10 @@ void StateHandlerMove(struct __CharacterState* In, int CurrentSection, int Data)
 				}
 				break;
 			}
+			case 0x08000000:
+				break;
+			case 0x08000003:
+				break;
 			default:
 			{
 				assert(FALSE);
@@ -3406,8 +3415,6 @@ void RazielPost(struct _Instance* instance, unsigned long Message, unsigned long
 		}
 	}
 	//loc_800B17BC
-	GAMELOOP_Reset24FPS();///TEMPORARY HACK
-	eprinterr("Temporary hack enabled!\n");
 #if 0
 		loc_800B14CC :
 		lw      $v0, -0x238($gp)
