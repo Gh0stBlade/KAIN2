@@ -527,8 +527,25 @@ int razZeroAxis(long* x, long* y, int radius)//Matching - 99.79%
 int razAdjustSpeed(struct _Instance* instance, int minSpeed)
 {
 #if defined(PSX_VERSION)
-	UNIMPLEMENTED();
-	return 0;
+	long adjustment;
+	int data;
+
+	if (Raziel.movementMaxAnalog < Raziel.Magnitude)
+	{
+		adjustment = Raziel.movementMaxRate;
+	}
+	else if (Raziel.Magnitude < Raziel.movementMinAnalog)
+	{
+		adjustment = Raziel.movementMinRate;
+	}
+	else
+	{
+		adjustment = Raziel.movementMaxRate - ((Raziel.movementMaxRate - Raziel.movementMinRate) / (Raziel.movementMaxAnalog - Raziel.Magnitude)) / (Raziel.movementMaxAnalog - Raziel.movementMinAnalog);
+	}
+
+	G2Anim_SetSpeedAdjustment(&instance->anim, adjustment);
+
+	return adjustment;
 #elif defined(PC_VERSION)
 	int v2; // esi
 
