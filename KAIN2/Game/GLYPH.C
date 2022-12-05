@@ -469,58 +469,52 @@ void _GlyphOffProcess(struct _Instance* instance, int data1, int data2)
 	struct __GlyphData* data;
 
 	data = (struct __GlyphData*)instance->extraData;
-	
+
 	ShrinkGlyphMenu(instance);
 
-	while (1)
-	{
-		Ptr = PeekMessageQueue(&data->messages);
 
-		if (Ptr != NULL)
+	while ((Ptr = PeekMessageQueue(&data->messages)) != NULL)
+	{
+		if (Ptr->ID != 0x100001)
 		{
-			if (Ptr->ID != 0x100001)
+			if (0x100001 >= Ptr->ID)
 			{
-				if (0x100001 >= Ptr->ID)
+				if (Ptr->ID != 0x80000010)
 				{
-					if (Ptr->ID != 0x80000010)
-					{
-						_GlyphDefaultProcess(instance, data1, data2);
-					}
-					else
-					{
-						if (data->process == &_GlyphSelectProcess)
-						{
-							_GlyphSwitchProcess(instance, _GlyphOffProcess);
-						}
-						else
-						{
-							_GlyphSwitchProcess(instance, _GlyphSelectProcess);
-						}
-					}
+					_GlyphDefaultProcess(instance, data1, data2);
 				}
 				else
 				{
-					if (Ptr->ID != 0x100004)
+					if (data->process == &_GlyphSelectProcess)
 					{
-						_GlyphDefaultProcess(instance, data1, data2);
+						_GlyphSwitchProcess(instance, _GlyphOffProcess);
+					}
+					else
+					{
+						_GlyphSwitchProcess(instance, _GlyphSelectProcess);
 					}
 				}
 			}
-
-			DeMessageQueue(&data->messages);
-		}
-		else
-		{
-			if (data->process == &_GlyphSelectProcess)
+			else
 			{
-				SndPlayVolPan(17, 127, 64, 0);
+				if (Ptr->ID != 0x100004)
+				{
+					_GlyphDefaultProcess(instance, data1, data2);
+				}
 			}
-
-			Glyph_DoFX(instance);
-
-			return;
 		}
+
+		DeMessageQueue(&data->messages);
 	}
+
+	if (data->process == &_GlyphSelectProcess)
+	{
+		SndPlayVolPan(17, 127, 64, 0);
+	}
+
+	Glyph_DoFX(instance);
+
+	return;
 }
 
 
