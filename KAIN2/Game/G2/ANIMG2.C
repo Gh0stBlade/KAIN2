@@ -417,9 +417,8 @@ void G2Anim_GetSegChannelValue(struct _G2Anim_Type *anim, int segIndex, unsigned
 	UNIMPLEMENTED();
 }
 
-void G2Anim_GetRootMotionFromTimeForDuration(struct _G2Anim_Type* anim, short durationStart, short duration, struct _G2SVector3_Type* motionVector)
+void G2Anim_GetRootMotionFromTimeForDuration(struct _G2Anim_Type* anim, short durationStart, short duration, struct _G2SVector3_Type* motionVector)//Matching - 43.84%
 {
-	struct _G2Anim_Type dummyAnim;
 	struct _G2AnimSection_Type* section;
 	struct _G2AnimKeylist_Type* keylist;
 	short storedKeyEndTime;
@@ -431,6 +430,7 @@ void G2Anim_GetRootMotionFromTimeForDuration(struct _G2Anim_Type* anim, short du
 	struct _G2SVector3_Type* base;
 	struct _G2SVector3_Type* offset;
 	struct _G2SVector3_Type* vector;
+	struct _G2Anim_Type dummyAnim;
 
 	dest = motionVector;
 
@@ -441,10 +441,10 @@ void G2Anim_GetRootMotionFromTimeForDuration(struct _G2Anim_Type* anim, short du
 	if (interpInfo != NULL && interpInfo->stateBlockList != NULL)
 	{
 		alpha = _G2AnimAlphaTable_GetValue(interpInfo->alphaTable, (durationStart << 12) / interpInfo->duration);
-
-		base = &interpInfo->stateBlockList->quatInfo[0].srcTrans;
-
-		offset = &interpInfo->stateBlockList->quatInfo[0].destTrans;
+	
+		base = &interpInfo->stateBlockList->quatInfo->srcTrans;
+		
+		offset = &interpInfo->stateBlockList->quatInfo->destTrans;
 
 		gte_ldlvnlsv(base);
 
@@ -458,9 +458,9 @@ void G2Anim_GetRootMotionFromTimeForDuration(struct _G2Anim_Type* anim, short du
 
 		keylist = section->keylist;
 
-		dest->x = (dest->x * ((duration << 12) / keylist->timePerKey)) >> 12;
-		dest->y = (dest->y * ((duration << 12) / keylist->timePerKey)) >> 12;
-		dest->z = (dest->z * ((duration << 12) / keylist->timePerKey)) >> 12;
+		motionVector->x = (motionVector->x * ((duration << 12) / keylist->timePerKey)) >> 12;
+		motionVector->y = (motionVector->y * ((duration << 12) / keylist->timePerKey)) >> 12;
+		motionVector->z = (motionVector->z * ((duration << 12) / keylist->timePerKey)) >> 12;
 	}
 	else
 	{
@@ -471,6 +471,7 @@ void G2Anim_GetRootMotionFromTimeForDuration(struct _G2Anim_Type* anim, short du
 		storedKeyEndTime = timePerKey * ((durationStart / keylist->timePerKey) + 1);
 
 		dummyAnim.sectionCount = 1;
+
 		dummyAnim.section[0].sectionID = 0;
 		dummyAnim.section[0].firstSeg = 0;
 		dummyAnim.section[0].segCount = 1;
@@ -479,31 +480,38 @@ void G2Anim_GetRootMotionFromTimeForDuration(struct _G2Anim_Type* anim, short du
 		dummyAnim.modelData = anim->modelData;
 		dummyAnim.section[0].storedTime = -timePerKey;
 
-		dest->x = 0;
-		dest->y = 0;
-		dest->z = 0;
+		motionVector->x = 0;
+		motionVector->y = 0;
+		motionVector->z = 0;
 
 		while (duration != 0)
 		{
-			if (durationStart >= (keylist->timePerKey * (keylist->keyCount - 1)))
+			if (durationStart >= duration)
 			{
 				timePerKey = keylist->s0TailTime;
 			}
 
 			dummyAnim.section[0].elapsedTime = durationStart;
 
-			_G2AnimSection_UpdateStoredFrameFromData(dummyAnim.section, &dummyAnim);
+			_G2AnimSection_UpdateStoredFrameFromData(&dummyAnim.section[0], &dummyAnim);
 
-			if (MIN(duration, (storedKeyEndTime - durationStart)) < timePerKey)
+			keyTime = storedKeyEndTime - durationStart;
+			
+			if (duration < keyTime)
 			{
-				alpha = (MIN(duration, (storedKeyEndTime - durationStart)) << 12) / timePerKey;
+				keyTime = duration;
+			}
+
+			if (keyTime < timePerKey)
+			{
+				alpha = (keyTime << 12) / timePerKey;
 			}
 			else
 			{
-				alpha = 0x1000;
+				alpha = 4096;
 			}
 
-			gte_ldlvnlsv(dest);
+			gte_ldlvnlsv(motionVector);
 
 			vector = &_segValues[0].trans;
 
@@ -513,11 +521,11 @@ void G2Anim_GetRootMotionFromTimeForDuration(struct _G2Anim_Type* anim, short du
 
 			gte_gpl12();
 
-			gte_stlvnlsv(dest);
+			gte_stlvnlsv(motionVector);
 
 			durationStart = storedKeyEndTime;
 
-			duration -= duration;
+			duration -= keyTime;
 
 			storedKeyEndTime += timePerKey;
 		}
@@ -711,7 +719,7 @@ short G2AnimSection_UpdateOverInterval(struct _G2AnimSection_Type* section, shor
 	return 0;
 }
 
-short G2AnimSection_AdvanceOverInterval(struct _G2AnimSection_Type* section, short interval)//Matching - 90.77%
+short G2AnimSection_AdvanceOverInterval(struct _G2AnimSection_Type* section, short interval)//Matching - 97.60%
 {
 	struct _G2AnimKeylist_Type* keylist;
 	short newTime;
@@ -726,8 +734,6 @@ short G2AnimSection_AdvanceOverInterval(struct _G2AnimSection_Type* section, sho
 	unsigned long message;
 	unsigned short z;
 	unsigned long xy;
-	typedef unsigned long (*func)(struct _G2Anim_Type*, int, enum _G2AnimCallbackMsg_Enum, long, long, struct _Instance*);
-	func callbackProc;
 
 	loopExtraTime = 0;
 
@@ -773,8 +779,7 @@ short G2AnimSection_AdvanceOverInterval(struct _G2AnimSection_Type* section, sho
 
 				if (section->callback != NULL)
 				{
-					callbackProc = (func)section->callback;
-					callbackProc(anim, section->sectionID, G2ANIM_MSG_SWALARMSET, elapsedTime, newTime, (struct _Instance*)section->callbackData);
+					section->callback(anim, section->sectionID, G2ANIM_MSG_SWALARMSET, elapsedTime, newTime, (struct _Instance*)section->callbackData);
 				}
 			}
 
@@ -830,9 +835,7 @@ short G2AnimSection_AdvanceOverInterval(struct _G2AnimSection_Type* section, sho
 
 			if (section->callback != NULL)
 			{
-				callbackProc = (func)section->callback;
-
-				swAlarmTime = callbackProc((struct _G2Anim_Type*)_G2AnimSection_GetAnim(section), section->sectionID, (enum _G2AnimCallbackMsg_Enum)message, newTime, extraTime, (struct _Instance*)section->callbackData);
+				swAlarmTime = section->callback((struct _G2Anim_Type*)_G2AnimSection_GetAnim(section), section->sectionID, (enum _G2AnimCallbackMsg_Enum)message, newTime, extraTime, (struct _Instance*)section->callbackData);
 
 				if (swAlarmTime != newTime)
 				{
@@ -861,16 +864,13 @@ short G2AnimSection_AdvanceOverInterval(struct _G2AnimSection_Type* section, sho
 				section->flags |= 0x80;
 			}
 
-			if ((section->flags & 0x2))
-			{
-				endTime = section->loopEndTime;
-
-				extraTime = loopExtraTime;
-			}
-			else
+			if (!(section->flags & 0x2))
 			{
 				break;
 			}
+
+			endTime = section->loopEndTime;
+			extraTime = loopExtraTime;
 		}
 		else
 		{
