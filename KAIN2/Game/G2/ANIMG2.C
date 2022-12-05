@@ -183,7 +183,7 @@ void G2Anim_Restore(struct _G2Anim_Type *anim)
 	UNIMPLEMENTED();
 }
 
-void G2Anim_BuildTransforms(struct _G2Anim_Type* anim)//Matching - 89.71%
+void G2Anim_BuildTransforms(struct _G2Anim_Type* anim)//Matching - 93.73%
 {
 	unsigned short z;
 	unsigned long xy;
@@ -1132,9 +1132,7 @@ unsigned long kangaroo(struct _G2AnimSegKeyflagInfo_Type* kfInfo)
 
 		keyflags = tempFlags & 0x7;
 
-		tempFlags >>= 3;
-
-		kfInfo->flags = tempFlags;
+		kfInfo->flags = tempFlags >> 3;
 
 		kfInfo->bitCount -= 3;
 
@@ -1146,9 +1144,7 @@ unsigned long kangaroo(struct _G2AnimSegKeyflagInfo_Type* kfInfo)
 
 			if (kfInfo->bitCount < 0)
 			{
-				tempFlags = kfInfo->bitCount + 3;
-
-				tempFlags = (kfInfo->flags << tempFlags) & 0x7;
+				tempFlags = (kfInfo->flags << (kfInfo->bitCount + 3)) & 0x7;
 
 				keyflags |= tempFlags;
 
@@ -1201,7 +1197,6 @@ void _G2Anim_InitializeSegValue(struct _G2Anim_Type* anim, struct _G2AnimSegValu
 	unsigned long xy;
 
 	quat = &segValue->rotQuat.quat;
-	constexpr int test = offsetof(_G2AnimSegValue_Type, scale.x);
 
 	segValue->scale.x = 0x1000;
 	segValue->scale.y = 0x1000;
@@ -1219,12 +1214,6 @@ void _G2Anim_InitializeSegValue(struct _G2Anim_Type* anim, struct _G2AnimSegValu
 
 	((unsigned long*)(&segValue->trans.x))[0] = xy;
 	((unsigned long*)(&segValue->trans.z))[0] = zpad;
-
-	if ((zpad & 0xFFFF0000))
-	{
-		int testing = 0;
-		testing++;
-	}
 }
 
 void _G2AnimSection_InitStatus(struct _G2AnimSection_Type* section, struct _G2Anim_Type* anim)//Matching - 97.98%
@@ -1627,7 +1616,7 @@ void FooBar(struct _G2AnimSection_Type* section, struct _G2Anim_Type* anim, int 
 	}
 }
 
-void _G2AnimSection_UpdateStoredFrameFromData(struct _G2AnimSection_Type* section, struct _G2Anim_Type* anim)
+void _G2AnimSection_UpdateStoredFrameFromData(struct _G2AnimSection_Type* section, struct _G2Anim_Type* anim)//Matching - 47.88%
 {
 	short timePerKey;
 	long storedKey;
@@ -1645,6 +1634,12 @@ void _G2AnimSection_UpdateStoredFrameFromData(struct _G2AnimSection_Type* sectio
 	}
 
 	timeOffset = ((section->elapsedTime - (targetKey * timePerKey)) << 12) / timePerKey;
+
+	if (timeOffset == 0xFFFFF14E || section->keylist->timePerKey == 0xFF2F)
+	{
+		int testing = 0;
+		testing++;
+	}
 
 	FooBar(section, anim, storedKey, targetKey, timeOffset);
 
@@ -1707,7 +1702,7 @@ void _G2AnimSection_TriggerEffects(struct _G2AnimSection_Type *section, short st
 #endif
 }
 
-void _G2Anim_FreeChanStatusBlockList(struct _G2AnimChanStatusBlock_Type* block)
+void _G2Anim_FreeChanStatusBlockList(struct _G2AnimChanStatusBlock_Type* block)//Matching - 92.81%
 {
 	struct _G2AnimChanStatusBlock_Type* nextBlock;
 	
