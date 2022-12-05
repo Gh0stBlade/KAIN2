@@ -604,7 +604,6 @@ void StateHandlerIdle(struct __CharacterState* In, int CurrentSection, int Data)
 		case 0x20000001:
 			break;
 		default:
-			assert(FALSE);
 			break;
 		}
 
@@ -1293,7 +1292,6 @@ void StateHandlerStartMove(struct __CharacterState* In, int CurrentSection, int 
 		}
 		case 0x80000000:
 		{
-			assert(FALSE);
 			break;
 		}
 		default:
@@ -1539,7 +1537,6 @@ void StateHandlerMove(struct __CharacterState* In, int CurrentSection, int Data)
 				break;
 			default:
 			{
-				assert(FALSE);
 				break;
 			}
 			}
