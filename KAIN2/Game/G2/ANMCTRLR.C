@@ -88,18 +88,18 @@ void G2Anim_InterpDisableController(struct _G2Anim_Type *anim, int segNumber, in
 			UNIMPLEMENTED();
 }
 
-enum _G2Bool_Enum G2Anim_IsControllerActive(struct _G2Anim_Type* anim, int segNumber, int type)
+enum _G2Bool_Enum G2Anim_IsControllerActive(struct _G2Anim_Type* anim, int segNumber, int type)//Matching - 99.74%
 {
 	struct _G2AnimController_Type* controller;
 
 	controller = _G2AnimControllerST_FindInList(segNumber, type, &anim->controllerList);
-	
-	if(controller != NULL)
+
+	if (controller == NULL)
 	{
-		return (_G2Bool_Enum)((controller->flags & 0x8000) < 1);
+		return (enum _G2Bool_Enum)0;
 	}
-	
-	return (_G2Bool_Enum)0;
+
+	return (enum _G2Bool_Enum)((controller->flags & 0x8000) < 0x8000);
 }
 
 
@@ -847,7 +847,7 @@ struct _G2AnimController_Type* _G2AnimControllerST_FindInList(int segNumber, int
 
 	controller = &_controllerPool.blockPool[listPtr[0]];
 
-	while (&_controllerPool.blockPool[0] < controller)
+	while (controller > &_controllerPool.blockPool[0])
 	{
 		if (controller->segNumber != segNumber || controller->type != type)
 		{
