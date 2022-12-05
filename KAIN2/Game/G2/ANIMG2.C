@@ -225,7 +225,7 @@ void G2Anim_BuildTransforms(struct _G2Anim_Type* anim)//Matching - 89.71%
 	anim->flags &= 0xFFFE;
 }
 
-void G2Anim_UpdateStoredFrame(struct _G2Anim_Type* anim)//Matching - 97.21%
+void G2Anim_UpdateStoredFrame(struct _G2Anim_Type* anim)//Matching - 99.84%
 {
 	struct _G2AnimSection_Type* section;
 	short storedTime;
@@ -240,7 +240,7 @@ void G2Anim_UpdateStoredFrame(struct _G2Anim_Type* anim)//Matching - 97.21%
 	storedTime = section->storedTime;
 	elapsedTime = section->elapsedTime;
 
-	while (sectionCount > 0)
+	for (; sectionCount > 0; sectionCount--)
 	{
 		interpInfo = section->interpInfo;
 
@@ -254,8 +254,6 @@ void G2Anim_UpdateStoredFrame(struct _G2Anim_Type* anim)//Matching - 97.21%
 		}
 
 		section++;
-
-		sectionCount--;
 	}
 
 	vector = &motionVector;
@@ -268,7 +266,7 @@ void G2Anim_UpdateStoredFrame(struct _G2Anim_Type* anim)//Matching - 97.21%
 	((int*)&vector->x)[0] = 0;
 	vector->z = 0;
 
-	if (storedTime < elapsedTime)
+	if (elapsedTime > storedTime)
 	{
 		G2Anim_GetRootMotionOverInterval(anim, storedTime, elapsedTime, vector);
 	}
@@ -1229,7 +1227,7 @@ void _G2Anim_InitializeSegValue(struct _G2Anim_Type* anim, struct _G2AnimSegValu
 	}
 }
 
-void _G2AnimSection_InitStatus(struct _G2AnimSection_Type* section, struct _G2Anim_Type* anim)//Matching - 97.69%
+void _G2AnimSection_InitStatus(struct _G2AnimSection_Type* section, struct _G2Anim_Type* anim)//Matching - 97.98%
 {
 	struct _G2AnimDecompressChannelInfo_Type dcInfo;
 	struct _G2AnimSegValue_Type* segValue;
@@ -1321,7 +1319,7 @@ void _G2AnimSection_InitStatus(struct _G2AnimSection_Type* section, struct _G2An
 					type = 0;
 				}
 
-				switch(type)
+				switch (type)
 				{
 				case 0:
 				{
@@ -1350,28 +1348,21 @@ void _G2AnimSection_InitStatus(struct _G2AnimSection_Type* section, struct _G2An
 						chanStatus = ((struct _G2AnimChanStatusBlock_Type*)chanStatusNextBlockPtr)->chunks;
 					}
 
-					switch(type)
+					switch (type)
 					{
 					case 0x40:
 					{
 						_G2Anim_InitializeChannel_AdaptiveDelta(&dcInfo, chanStatus);
-
-						chanStatus++;
 						break;
 					}
 					case 0x60:
 					{
 						_G2Anim_InitializeChannel_Linear(&dcInfo, chanStatus);
 
-						chanStatus++;
-						break;
-					}
-					default:
-					{
-						chanStatus++;
 						break;
 					}
 					}
+					chanStatus++;
 
 					chanStatusChunkCount--;
 					break;
@@ -1517,6 +1508,7 @@ void FooBar(struct _G2AnimSection_Type* section, struct _G2Anim_Type* anim, int 
 					chanValue[0] = dcInfo.chanData[targetKey];
 
 					dcInfo.chanData += dcInfo.keylist->keyCount;
+
 					break;
 				}
 				case 0x20:
@@ -1524,6 +1516,7 @@ void FooBar(struct _G2AnimSection_Type* section, struct _G2Anim_Type* anim, int 
 					chanValue[0] = dcInfo.chanData[1];
 
 					dcInfo.chanData += 2;
+
 					break;
 				}
 				default:
