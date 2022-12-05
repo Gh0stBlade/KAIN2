@@ -697,92 +697,31 @@ struct _G2AnimController_Type * _G2AnimController_Destroy(struct _G2AnimControll
 	return null;
 }
 
-void _G2AnimController_InsertIntoList(struct _G2AnimController_Type* controller, unsigned short* listPtr)
+void _G2AnimController_InsertIntoList(struct _G2AnimController_Type* controller, unsigned short* listPtr)//Matching - 63.95%
 {
-	struct _G2AnimController_Type* testController; // $a2
+	struct _G2AnimController_Type* testController;
 	
-	//a3 = controller
-	//v0 = listPtr[0]
-	//a0 = _controllerPool.blockPool;
-
 	testController = &_controllerPool.blockPool[listPtr[0]];
 
-	if (&_controllerPool.blockPool[0] < testController)
+	while (_controllerPool.blockPool < testController)
 	{
-
-		//t0 = controller->segNumber
-		//v1 = testController->segNumber
-
-		if (controller->segNumber >= testController->segNumber && testController->segNumber != controller->segNumber ||
-			testController->type >= controller->type)
+		if ((controller->segNumber >= testController->segNumber) && ((testController->segNumber != controller->segNumber) || (controller->type >= testController->type)))
 		{
-			//loc_80091DB0
-
+			listPtr = (unsigned short*)testController;
+			testController = &_controllerPool.blockPool[testController->next];
 		}
 	}
-	//loc_80091DDC
-#if 0
-		loc_80091DB0 :
-		move    $a1, $a2
-		lhu     $v0, 0($a2)
-		nop
-		sll     $v1, $v0, 3
-		addu    $v1, $v0
-		sll     $v1, 2
-		addu    $a2, $a0, $v1
-		sltu    $v0, $a0, $a2
-		bnez    $v0, loc_80091D7C
-		nop
 
-		loc_80091DD8 :
-	lw      $a0, -0xA7C($gp)
+	listPtr[0] = (controller - _controllerPool.blockPool) / sizeof(struct _G2AnimController_Type);
 
-		loc_80091DDC :
-		nop
-		subu    $a0, $a3, $a0
-		sll     $v1, $a0, 3
-		subu    $v1, $a0
-		sll     $v0, $v1, 6
-		addu    $v1, $v0
-		sll     $v1, 3
-		addu    $v1, $a0
-		sll     $v0, $v1, 15
-		subu    $v0, $v1
-		sll     $v0, 3
-		addu    $v0, $a0
-		sra     $v0, 2
-		sh      $v0, 0($a1)
-		lw      $a0, -0xA7C($gp)
+	do 
+	{
+		listPtr = (unsigned short*)controller;
+		controller = &_controllerPool.blockPool[listPtr[0]];
 
-		loc_80091E18:
-	move    $a1, $a3
-		lhu     $v0, 0($a3)
-		nop
-		sll     $v1, $v0, 3
-		addu    $v1, $v0
-		sll     $v1, 2
-		addu    $a3, $a0, $v1
-		sltu    $v0, $a0, $a3
-		bnez    $v0, loc_80091E18
-		nop
-		lw      $a0, -0xA7C($gp)
-		nop
-		subu    $a0, $a2, $a0
-		sll     $v1, $a0, 3
-		subu    $v1, $a0
-		sll     $v0, $v1, 6
-		addu    $v1, $v0
-		sll     $v1, 3
-		addu    $v1, $a0
-		sll     $v0, $v1, 15
-		subu    $v0, $v1
-		sll     $v0, 3
-		addu    $v0, $a0
-		sra     $v0, 2
-		jr      $ra
-		sh      $v0, 0($a1)
-#endif
+	} while (_controllerPool.blockPool < controller);
 
+	listPtr[0] = (testController - _controllerPool.blockPool) / sizeof(struct _G2AnimController_Type);
 }
 
 
