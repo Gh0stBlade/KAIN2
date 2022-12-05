@@ -8,143 +8,144 @@
 
 struct _G2AnimSegValue_Type _segValues[80];
 
-void G2AnimSection_InterpToKeylistAtTime(struct _G2AnimSection_Type* section, struct _G2AnimKeylist_Type* keylist, int keylistID, short targetTime, int duration)
+void G2AnimSection_InterpToKeylistAtTime(struct _G2AnimSection_Type* section, struct _G2AnimKeylist_Type* keylist, int keylistID, short targetTime, int duration)// Matching - 90.79%
 {
-	struct _G2Anim_Type* anim; // $s5
-	struct _G2AnimInterpInfo_Type* interpInfo; // $s3
-	struct _G2AnimInterpStateBlock_Type* stateBlockList; // $t0
-	struct _G2AnimQuatInfo_Type* quatInfo; // $a2
-	unsigned long alarmFlags; // $s0
-	short elapsedTime; // $s4
-	int quatInfoChunkCount; // $a3
-	int segCount; // $s2
+	struct _G2Anim_Type* anim;
+	struct _G2AnimInterpInfo_Type* interpInfo;
+	struct _G2AnimInterpStateBlock_Type* stateBlockList;
+	struct _G2AnimQuatInfo_Type* quatInfo;
+	unsigned long alarmFlags;
+	short elapsedTime;
+	int quatInfoChunkCount;
+	int segCount;
+
 	if (duration == 0)
 	{
 		G2AnimSection_SwitchToKeylistAtTime(section, keylist, keylistID, targetTime);
-		return;
-	}
-
-	anim = _G2AnimSection_GetAnim(section);
-
-	interpInfo = section->interpInfo;
-
-	segCount = section->segCount;
-
-	if (interpInfo->stateBlockList != NULL)
-	{
-		_G2AnimSection_InterpStateToQuat(section);
-	}
-	else if (_G2Anim_AllocateInterpStateBlockList(section) == NULL)
-	{
-		G2AnimSection_SwitchToKeylistAtTime(section, keylist, keylistID, targetTime);
-		return;
 	}
 	else
 	{
+		anim = _G2AnimSection_GetAnim(section);
+
+		interpInfo = section->interpInfo;
+
+		segCount = section->segCount;
+
+		if (interpInfo->stateBlockList != NULL)
+		{
+			_G2AnimSection_InterpStateToQuat(section);
+		}
+		else if (_G2Anim_AllocateInterpStateBlockList(section) == NULL)
+		{
+			G2AnimSection_SwitchToKeylistAtTime(section, keylist, keylistID, targetTime);
+			return;
+		}
+		else
+		{
+			section->interpInfo = NULL;
+
+			_G2AnimSection_UpdateStoredFrameFromData(section, anim);
+
+			section->interpInfo = interpInfo;
+
+			_G2AnimSection_SegValueToQuat(section, 0);
+		}
+
+		elapsedTime = section->elapsedTime;
+
+		alarmFlags = section->alarmFlags;
+
 		section->interpInfo = NULL;
+
+		G2AnimSection_SwitchToKeylistAtTime(section, keylist, keylistID, targetTime);
 
 		_G2AnimSection_UpdateStoredFrameFromData(section, anim);
 
 		section->interpInfo = interpInfo;
+		section->alarmFlags = alarmFlags;
+		section->elapsedTime = elapsedTime;
 
-		_G2AnimSection_SegValueToQuat(section, 0);
-	}
+		_G2AnimSection_SegValueToQuat(section, 1);
 
-	elapsedTime = section->elapsedTime;
+		stateBlockList = interpInfo->stateBlockList;
 
-	alarmFlags = section->alarmFlags;
+		quatInfoChunkCount = 4;
 
-	section->interpInfo = NULL;
+		quatInfo = &stateBlockList->quatInfo[0];
 
-	G2AnimSection_SwitchToKeylistAtTime(section, keylist, keylistID, targetTime);
-
-	_G2AnimSection_UpdateStoredFrameFromData(section, anim);
-
-	section->interpInfo = interpInfo;
-	section->alarmFlags = alarmFlags;
-	section->elapsedTime = elapsedTime;
-
-	_G2AnimSection_SegValueToQuat(section, 1);
-
-	stateBlockList = interpInfo->stateBlockList;
-
-	quatInfoChunkCount = 4;
-
-	quatInfo = &stateBlockList->quatInfo[0];
-
-	if ((quatInfo->destTrans.x | quatInfo->destTrans.y | quatInfo->destTrans.z) == 0)
-	{
-		quatInfo->srcTrans.x = 0;
-		quatInfo->srcTrans.y = 0;
-		quatInfo->srcTrans.z = 0;
-	}
-
-	while (segCount > 0)
-	{
-		segCount--;
-
-		quatInfoChunkCount--;
-
-		quatInfo->destScale.x -= quatInfo->srcScale.x;
-		quatInfo->destScale.y -= quatInfo->srcScale.y;
-		quatInfo->destScale.z -= quatInfo->srcScale.z;
-
-		quatInfo->destTrans.x -= quatInfo->srcTrans.x;
-		quatInfo->destTrans.y -= quatInfo->srcTrans.y;
-		quatInfo->destTrans.z -= quatInfo->srcTrans.z;
-
-		quatInfo++;
-
-		if (quatInfoChunkCount == 0)
+		if ((quatInfo->destTrans.x | quatInfo->destTrans.y | quatInfo->destTrans.z) == 0)
 		{
-			stateBlockList = stateBlockList->next;
-			quatInfoChunkCount = 4;
-			quatInfo = &stateBlockList->quatInfo[0];
+			quatInfo->srcTrans.x = 0;
+			quatInfo->srcTrans.y = 0;
+			quatInfo->srcTrans.z = 0;
 		}
-	}
 
-	interpInfo->targetTime = targetTime;
-	interpInfo->duration = duration;
-
-	if (!(section->flags & 0x2) && (alarmFlags & 0x3))
-	{
-		if ((short)duration < (elapsedTime % section->keylist->s0TailTime) + 1)
+		while (segCount > 0)
 		{
-			elapsedTime = duration;
+			segCount--;
+
+
+			quatInfo->destScale.x -= quatInfo->srcScale.x;
+			quatInfo->destScale.y -= quatInfo->srcScale.y;
+			quatInfo->destScale.z -= quatInfo->srcScale.z;
+
+			quatInfo->destTrans.x -= quatInfo->srcTrans.x;
+			quatInfo->destTrans.y -= quatInfo->srcTrans.y;
+			quatInfo->destTrans.z -= quatInfo->srcTrans.z;
+
+			quatInfo++;
+
+			if (--quatInfoChunkCount == 0)
+			{
+				stateBlockList = stateBlockList->next;
+				quatInfoChunkCount = 4;
+				quatInfo = &stateBlockList->quatInfo[0];
+			}
+		}
+
+		interpInfo->targetTime = targetTime;
+		interpInfo->duration = duration;
+
+		if (!(section->flags & 0x2) && (alarmFlags & 0x3))
+		{
+			if ((short)duration < (elapsedTime % section->keylist->s0TailTime) + 1)
+			{
+				elapsedTime = duration;
+			}
+			else
+			{
+				elapsedTime = (elapsedTime % section->keylist->s0TailTime) + 1;
+			}
+
+			section->elapsedTime = elapsedTime;
 		}
 		else
 		{
-			elapsedTime = (elapsedTime % section->keylist->s0TailTime) + 1;
+			section->elapsedTime = 0;
 		}
 
-		section->elapsedTime = elapsedTime;
+		section->keylist = keylist;
+
+		section->keylistID = keylistID;
+
+		section->storedTime = -section->keylist->timePerKey;
+
+		if ((section->flags & 0x2))
+		{
+			G2AnimSection_SetLoopRangeAll(section);
+		}
+
+		G2AnimSection_ClearAlarm(section, 0x3);
+
+		section->flags &= 0x7F;
+
+		G2AnimSection_SetUnpaused(section);
+
+		section->swAlarmTable = NULL;
+		section->interpInfo = interpInfo;
+
+		anim->flags |= 0x1;
 	}
-	else
-	{
-		section->elapsedTime = 0;
-	}
-
-	section->keylistID = keylistID;
-
-	section->keylist = keylist;
-
-	keylist->timePerKey = -keylist->timePerKey;
-
-	if ((section->flags & 0x2))
-	{
-		G2AnimSection_SetLoopRangeAll(section);
-	}
-
-	G2AnimSection_ClearAlarm(section, 0x3);
-
-	section->flags &= 0x7F;
-
-	G2AnimSection_SetUnpaused(section);
-
-	section->swAlarmTable = NULL;
-	section->interpInfo = interpInfo;
-
-	anim->flags |= 0x1;
 }
 
 void _G2AnimSection_UpdateStoredFrameFromQuat(struct _G2AnimSection_Type* section)
