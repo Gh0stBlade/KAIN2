@@ -546,6 +546,8 @@ int Emulator_CreateCommonResources()
 	Emulator_CreateGlobalShaders();
 
 	glDisable(GL_DEPTH_TEST);
+	glDepthMask(GL_FALSE);
+
 	glBlendColor(0.5f, 0.5f, 0.5f, 0.25f);
 
 	Emulator_CreateVertexBuffer();

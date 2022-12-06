@@ -8,6 +8,14 @@
 
 #if defined(OGL)
 
+// hint to the driver to use discrete GPU
+extern "C" {
+	// NVIDIA
+	__declspec(dllexport) int NvOptimusEnablement = 1;
+	// AMD
+	__declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
+}
+
 #if defined(_WINDOWS)
 HWND g_overrideHWND = NULL;
 #endif
@@ -725,6 +733,8 @@ int Emulator_CreateCommonResources()
 	Emulator_CreateGlobalShaders();
 
 	glDisable(GL_DEPTH_TEST);
+	glDepthMask(GL_FALSE);
+
 	glBlendColor(0.5f, 0.5f, 0.5f, 0.25f);
 
 	Emulator_CreateVertexBuffer();
