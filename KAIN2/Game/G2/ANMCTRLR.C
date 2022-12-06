@@ -66,6 +66,8 @@ void G2Anim_EnableController(struct _G2Anim_Type* anim, int segNumber, int type)
 		else
 		{
 			memset(&controller->data.quat.src, 0, sizeof(struct _G2Quat_Type) * 2);
+
+			_G2AnimController_InsertIntoList(controller, &anim->controllerList);
 		}
 	}
 }
