@@ -11,9 +11,9 @@ enum _G2Bool_Enum G2Anim_Install()
 {
 	struct _G2AnimController_Type *dummyController;
 
-	G2PoolMem_InitPool(&_chanStatusBlockPool, 180, 36);
-	G2PoolMem_InitPool(&_interpStateBlockPool, 96, 164);
-	G2PoolMem_InitPool(&_controllerPool, 122, 164);
+	G2PoolMem_InitPool(&_chanStatusBlockPool, 180, sizeof(struct _G2AnimChanStatusBlock_Type));
+	G2PoolMem_InitPool(&_interpStateBlockPool, 96, sizeof(struct _G2AnimInterpStateBlock_Type));
+	G2PoolMem_InitPool(&_controllerPool, 122, sizeof(struct _G2AnimController_Type));
 
 	dummyController = (struct _G2AnimController_Type*)G2PoolMem_Allocate(&_controllerPool);
 
@@ -417,7 +417,7 @@ void G2Anim_GetSegChannelValue(struct _G2Anim_Type *anim, int segIndex, unsigned
 	UNIMPLEMENTED();
 }
 
-void G2Anim_GetRootMotionFromTimeForDuration(struct _G2Anim_Type* anim, short durationStart, short duration, struct _G2SVector3_Type* motionVector)//Matching - 43.84%
+void G2Anim_GetRootMotionFromTimeForDuration(struct _G2Anim_Type* anim, short durationStart, short duration, struct _G2SVector3_Type* motionVector)
 {
 	struct _G2AnimSection_Type* section;
 	struct _G2AnimKeylist_Type* keylist;
@@ -431,6 +431,7 @@ void G2Anim_GetRootMotionFromTimeForDuration(struct _G2Anim_Type* anim, short du
 	struct _G2SVector3_Type* offset;
 	struct _G2SVector3_Type* vector;
 	struct _G2Anim_Type dummyAnim;
+	int off;
 
 	dest = motionVector;
 
@@ -441,9 +442,8 @@ void G2Anim_GetRootMotionFromTimeForDuration(struct _G2Anim_Type* anim, short du
 	if (interpInfo != NULL && interpInfo->stateBlockList != NULL)
 	{
 		alpha = _G2AnimAlphaTable_GetValue(interpInfo->alphaTable, (durationStart << 12) / interpInfo->duration);
-	
+
 		base = &interpInfo->stateBlockList->quatInfo->srcTrans;
-		
 		offset = &interpInfo->stateBlockList->quatInfo->destTrans;
 
 		gte_ldlvnlsv(base);
@@ -458,9 +458,11 @@ void G2Anim_GetRootMotionFromTimeForDuration(struct _G2Anim_Type* anim, short du
 
 		keylist = section->keylist;
 
-		motionVector->x = (motionVector->x * ((duration << 12) / keylist->timePerKey)) >> 12;
-		motionVector->y = (motionVector->y * ((duration << 12) / keylist->timePerKey)) >> 12;
-		motionVector->z = (motionVector->z * ((duration << 12) / keylist->timePerKey)) >> 12;
+		off = (duration << 12) / keylist->timePerKey;
+
+		motionVector->x = (motionVector->x * off) >> 12;
+		motionVector->y = (motionVector->y * off) >> 12;
+		motionVector->z = (motionVector->z * off) >> 12;
 	}
 	else
 	{
@@ -471,7 +473,6 @@ void G2Anim_GetRootMotionFromTimeForDuration(struct _G2Anim_Type* anim, short du
 		storedKeyEndTime = timePerKey * ((durationStart / keylist->timePerKey) + 1);
 
 		dummyAnim.sectionCount = 1;
-
 		dummyAnim.section[0].sectionID = 0;
 		dummyAnim.section[0].firstSeg = 0;
 		dummyAnim.section[0].segCount = 1;
@@ -480,13 +481,12 @@ void G2Anim_GetRootMotionFromTimeForDuration(struct _G2Anim_Type* anim, short du
 		dummyAnim.modelData = anim->modelData;
 		dummyAnim.section[0].storedTime = -timePerKey;
 
-		motionVector->x = 0;
-		motionVector->y = 0;
+		((int*)&motionVector->x)[0] = 0;
 		motionVector->z = 0;
 
 		while (duration != 0)
 		{
-			if (durationStart >= duration)
+			if (durationStart >= storedKeyEndTime)
 			{
 				timePerKey = keylist->s0TailTime;
 			}
@@ -496,7 +496,7 @@ void G2Anim_GetRootMotionFromTimeForDuration(struct _G2Anim_Type* anim, short du
 			_G2AnimSection_UpdateStoredFrameFromData(&dummyAnim.section[0], &dummyAnim);
 
 			keyTime = storedKeyEndTime - durationStart;
-			
+
 			if (duration < keyTime)
 			{
 				keyTime = duration;
@@ -1634,12 +1634,6 @@ void _G2AnimSection_UpdateStoredFrameFromData(struct _G2AnimSection_Type* sectio
 	}
 
 	timeOffset = ((section->elapsedTime - (targetKey * timePerKey)) << 12) / timePerKey;
-
-	if (timeOffset == 0xFFFFF14E || section->keylist->timePerKey == 0xFF2F)
-	{
-		int testing = 0;
-		testing++;
-	}
 
 	FooBar(section, anim, storedKey, targetKey, timeOffset);
 
