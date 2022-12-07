@@ -15,7 +15,7 @@ struct _G2AnimController_Type // hashcode: 0x74838F3C (dec: 1954778940)
 	struct _G2AnimAlphaTable_Type* alphaTable; // size=4, offset=16
 	union {
 		struct {
-			unsigned long (*function)(); // size=0, offset=0
+			unsigned long (*function)(struct _G2AnimController_Type*, struct _G2AnimSegValue_Type*, struct _G2Matrix_Type*, struct _G2Matrix_Type*); // size=0, offset=0
 			void* fnData; // size=0, offset=4
 		} callback; // size=8, offset=0, found in object files: AnimG2.o, AnimG2.o
 		struct {
