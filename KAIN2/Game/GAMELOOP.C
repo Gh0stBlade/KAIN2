@@ -1104,10 +1104,11 @@ void GAMELOOP_FlipScreenAndDraw(struct GameTracker* gameTracker, unsigned long**
 	}
 #endif
 	
-	gameTracker->drawTimerReturn = (long*)&gameTracker->drawTime;
 #if defined(PSXPC_VERSION)
-	gameTracker->usecsStartDraw = GetRCnt(0xF2000000);
+	gameTracker->drawTimerReturn = (unsigned long long*)&gameTracker->drawTime;
+	gameTracker->usecsStartDraw = SDL_GetPerformanceCounter() / (SDL_GetPerformanceFrequency() / 1000000);
 #else
+	gameTracker->drawTimerReturn = (long*)&gameTracker->drawTime;
 	gameTracker->usecsStartDraw = (GetRCnt(0xF2000000) & 0xFFFF) | (gameTimer << 16);
 #endif
 	gameTracker->gameData.asmData.dispPage = 1 - gameTracker->gameData.asmData.dispPage;
@@ -1568,7 +1569,11 @@ void GAMELOOP_DisplayFrame(struct GameTracker* gameTracker)
 
 	GAMELOOP_SwitchTheDrawBuffer(drawot);
 
+#if defined(PSXPC_VERSION)
+	gameTracker->idleTime = SDL_GetPerformanceCounter() / (SDL_GetPerformanceFrequency() / 1000000);
+#else
 	gameTracker->idleTime = (GetRCnt(0xF2000000) & 0xFFFF) | (gameTimer << 16);
+#endif
 
 	if (gameTracker->frameRateLock >= gameTracker->vblFrames)
 	{
@@ -1596,8 +1601,17 @@ void GAMELOOP_DisplayFrame(struct GameTracker* gameTracker)
 
 	GAMELOOP_HandleScreenWipes(drawot);
 
+#if defined(PSXPC_VERSION)
+	gameTracker->drawTimerReturn = (unsigned long long*)&gameTracker->drawTime;
+#else
 	gameTracker->drawTimerReturn = (long*)&gameTracker->drawTime;
+#endif
+
+#if defined(PSXPC_VERSION)
+	gameTracker->usecsStartDraw = SDL_GetPerformanceCounter() / (SDL_GetPerformanceFrequency() / 1000000);
+#else
 	gameTracker->usecsStartDraw = (GetRCnt(0xF2000000) & 0xFFFF) | (gameTimer << 16);
+#endif
 
 	if ((gameTrackerX.gameFlags & 0x8000000))
 	{
@@ -2288,7 +2302,7 @@ void GAMELOOP_Reset24FPS()
 void GAMELOOP_DoTimeProcess()
 {
 #if defined(PSXPC_VERSION)
-	int holdTime;
+	unsigned long long holdTime;
 	int lockRate;
 	unsigned long last;
 
@@ -2296,7 +2310,7 @@ void GAMELOOP_DoTimeProcess()
 
 	if (!(gameTrackerX.gameFlags & 0x10000000))
 	{
-		gameTrackerX.totalTime = (unsigned long)TIMER_TimeDiff(gameTrackerX.currentTicks);
+		gameTrackerX.totalTime = TIMER_TimeDiff(gameTrackerX.currentTicks);
 
 		gameTrackerX.currentTicks = SDL_GetPerformanceCounter() / (SDL_GetPerformanceFrequency() / 1000000);
 

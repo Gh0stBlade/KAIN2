@@ -81,8 +81,13 @@ struct GameTracker // hashcode: 0x4EB3EFC5 (dec: 1320415173)
 	void(*gSignal[16]); // size=64, offset=212
 	struct LightInfo* lightInfo; // size=1148, offset=276
 	void* reqDisp; // size=0, offset=280
+#if defined(PSXPC_VERSION)
+	unsigned long long* drawTimerReturn; // size=0, offset=284
+	unsigned long long usecsStartDraw; // size=0, offset=288
+#else
 	long* drawTimerReturn; // size=0, offset=284
 	long usecsStartDraw; // size=0, offset=288
+#endif
 	void* disp; // size=0, offset=292
 	unsigned long displayFrameCount; // size=0, offset=296
 	unsigned long frameCount; // size=0, offset=300
@@ -150,8 +155,13 @@ struct GameTracker // hashcode: 0x4EB3EFC5 (dec: 1320415173)
 	long multGameTime; // size=0, offset=544
 	short spectral_fadeValue; // size=0, offset=548
 	short material_fadeValue; // size=0, offset=550
+#if defined(PSXPC_VERSION)
+	unsigned long long drawTime; // size=0, offset=552
+	unsigned long long currentTime; // size=0, offset=556
+#else
 	unsigned long drawTime; // size=0, offset=552
 	unsigned long currentTime; // size=0, offset=556
+#endif
 	unsigned long currentMaterialTime; // size=0, offset=560
 	unsigned long currentSpectralTime; // size=0, offset=564
 	unsigned long currentTimeOfDayTime; // size=0, offset=568
@@ -162,11 +172,13 @@ struct GameTracker // hashcode: 0x4EB3EFC5 (dec: 1320415173)
 	unsigned long materialTimeMult; // size=0, offset=588
 #if defined(PSXPC_VERSION)
 	unsigned long long currentTicks; // size=0, offset=592
+	unsigned long long totalTime; // size=0, offset=596
+	unsigned long long idleTime; // size=0, offset=600
 #else
 	unsigned long currentTicks; // size=0, offset=592
-#endif
 	unsigned long totalTime; // size=0, offset=596
 	unsigned long idleTime; // size=0, offset=600
+#endif
 	long visibleInstances; // size=0, offset=604
 	int gameFramePassed; // size=0, offset=608
 	unsigned long timeSinceLastGameFrame; // size=0, offset=612
