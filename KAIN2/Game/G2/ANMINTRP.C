@@ -8,7 +8,7 @@
 
 struct _G2AnimSegValue_Type _segValues[80];
 
-void G2AnimSection_InterpToKeylistAtTime(struct _G2AnimSection_Type* section, struct _G2AnimKeylist_Type* keylist, int keylistID, short targetTime, int duration)// Matching - 90.79%
+void G2AnimSection_InterpToKeylistAtTime(struct _G2AnimSection_Type* section, struct _G2AnimKeylist_Type* keylist, int keylistID, short targetTime, int duration)// Matching - 92.40%
 {
 	struct _G2Anim_Type* anim;
 	struct _G2AnimInterpInfo_Type* interpInfo;
@@ -106,7 +106,7 @@ void G2AnimSection_InterpToKeylistAtTime(struct _G2AnimSection_Type* section, st
 		interpInfo->targetTime = targetTime;
 		interpInfo->duration = duration;
 
-		if (!(section->flags & 0x2) && (alarmFlags & 0x3))
+		if (!(section->flags & 0x2) && (section->alarmFlags & 0x3))
 		{
 			if ((short)duration < (elapsedTime % section->keylist->s0TailTime) + 1)
 			{
