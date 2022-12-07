@@ -767,12 +767,16 @@ struct _BlockVramEntry * VRAM_RearrangeVramsLayer(long whichLayer, short *AddX, 
 }
 #endif
 
-void VRAM_TransferBufferToVram(void *dataPtr, long dataSize, short status, void *data1, void *data2)
+void VRAM_TransferBufferToVram(void* dataPtr, long dataSize, short status, void *data1, void *data2)
 { 
 	struct VramBuffer* vramControl;
 	PSX_RECT rect;
-	long *nextOTag;
+	long* nextOTag;
+#if defined(PSXPC_VERSION)
+	unsigned long long* drawTimerReturn;
+#else
 	long *drawTimerReturn;
+#endif
 
 	nextOTag = (long*)BreakDraw();
 	
