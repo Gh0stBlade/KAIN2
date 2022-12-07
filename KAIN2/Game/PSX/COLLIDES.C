@@ -868,6 +868,11 @@ void G2Quat_FromEuler_S(struct _G2Quat_Type* quatInfo, struct _G2EulerAngles_Typ
 	quatInfo->w = t5;
 }
 
+void G2EulerAngles_ToMatrix_S(_G2Quat_Type quat, _G2Matrix_Type* matrix)
+{
+	UNIMPLEMENTED();
+}
+
 #if defined(PSXPC_VERSION) && defined(PSX_VERSION)
 void RotMatrixX(long r, MATRIX* m)
 {

@@ -112,5 +112,6 @@ extern void eul_2() ; // 0x80079B78
 
 extern void eul_3() ; // 0x80079BA0
 
+extern void G2EulerAngles_ToMatrix_S(struct _G2Quat_Type quat, struct _G2Matrix_Type* matrix);
 
 #endif
