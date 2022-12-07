@@ -473,7 +473,11 @@ void FadeOutSayingLoading(struct GameTracker* gameTracker)
 		}
 #endif
 		
-		gameTracker->drawTimerReturn = (long*)gameTracker->drawTime;
+#if defined(PSXPC_VERSION)
+		gameTracker->drawTimerReturn = (unsigned long long*)&gameTracker->drawTime;
+#else
+		gameTracker->drawTimerReturn = (long*)&gameTracker->drawTime;
+#endif
 		gameTracker->gameData.asmData.dispPage = 1 - gameTracker->gameData.asmData.dispPage;
 		
 		VSync(0);
