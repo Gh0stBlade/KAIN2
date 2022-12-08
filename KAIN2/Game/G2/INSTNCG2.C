@@ -26,7 +26,6 @@ void G2Instance_BuildTransformsForList(struct _Instance* listHead)//Matching - 9
 				(instance->matrix != NULL) && (((instance->object->animList == NULL)) ||
 				(instance->object->oflags2 & 0x40000000) || !(instance->anim.flags & 0x1))))
 			{
-
 				_G2Instance_BuildDeactivatedTransforms(instance);
 			}
 			else
@@ -96,7 +95,7 @@ struct _G2AnimKeylist_Type* G2Instance_GetKeylist(struct _Instance* instance, in
 	return instance->object->animList[id];
 }
 
-void _G2Instance_RebuildAnimatedTransforms(struct _Instance* instance)
+void _G2Instance_RebuildAnimatedTransforms(struct _Instance* instance)//Matching - 84.65%
 {
 	struct _Model* model;
 	struct _G2Matrix_Type* rootMatrix;
@@ -110,19 +109,19 @@ void _G2Instance_RebuildAnimatedTransforms(struct _Instance* instance)
 	long otz;
 	long segIndex;
 	VECTOR* ins_scale;
-	
+
 	rootMatrix = (struct _G2Matrix_Type*)instance->matrix;
 
 	if (rootMatrix != NULL)
 	{
 		model = instance->object->modelList[instance->currentModel];
-		
+
 		rootMatrix--;
 
 		if (instance->object->oflags & 0x4)
 		{
 			pre_facade_rot = instance->rotation;
-			
+
 			instance->rotation.x = 0;
 			instance->rotation.y = 0;
 			instance->rotation.z = MATH3D_FastAtan2(theCamera.core.position.y - instance->position.y, theCamera.core.position.x - instance->position.x) + 3072;
@@ -130,21 +129,7 @@ void _G2Instance_RebuildAnimatedTransforms(struct _Instance* instance)
 
 		if ((instance->flags & 0x1) && instance->intro != NULL)
 		{
-			rootMatrix->rotScale[0][0] = instance->intro->multiSpline->curRotMatrix.m[0][0];
-			rootMatrix->rotScale[0][1] = instance->intro->multiSpline->curRotMatrix.m[0][1];
-			rootMatrix->rotScale[0][2] = instance->intro->multiSpline->curRotMatrix.m[0][2];
-
-			rootMatrix->rotScale[1][0] = instance->intro->multiSpline->curRotMatrix.m[1][0];
-			rootMatrix->rotScale[1][1] = instance->intro->multiSpline->curRotMatrix.m[1][1];
-			rootMatrix->rotScale[1][2] = instance->intro->multiSpline->curRotMatrix.m[1][2];
-
-			rootMatrix->rotScale[2][0] = instance->intro->multiSpline->curRotMatrix.m[2][0];
-			rootMatrix->rotScale[2][1] = instance->intro->multiSpline->curRotMatrix.m[2][1];
-			rootMatrix->rotScale[2][2] = instance->intro->multiSpline->curRotMatrix.m[2][2];
-			
-			rootMatrix->trans.x = instance->intro->multiSpline->curRotMatrix.t[0];
-			rootMatrix->trans.y = instance->intro->multiSpline->curRotMatrix.t[1];
-			rootMatrix->trans.z = instance->intro->multiSpline->curRotMatrix.t[2];
+			memcpy(&rootMatrix->rotScale[0][0], &instance->intro->multiSpline->curRotMatrix.m[0][0], 32);
 		}
 		else
 		{
@@ -164,21 +149,7 @@ void _G2Instance_RebuildAnimatedTransforms(struct _Instance* instance)
 
 				TransposeMatrix((MATRIX*)&seg2RotMatrix, (MATRIX*)rootMatrix);
 
-				instance->matrix->m[0][0] = instance->LinkParent->matrix[instance->ParentLinkNode].m[0][0];
-				instance->matrix->m[0][1] = instance->LinkParent->matrix[instance->ParentLinkNode].m[0][1];
-				instance->matrix->m[0][2] = instance->LinkParent->matrix[instance->ParentLinkNode].m[0][2];
-
-				instance->matrix->m[1][0] = instance->LinkParent->matrix[instance->ParentLinkNode].m[1][0];
-				instance->matrix->m[1][1] = instance->LinkParent->matrix[instance->ParentLinkNode].m[1][1];
-				instance->matrix->m[1][2] = instance->LinkParent->matrix[instance->ParentLinkNode].m[1][2];
-
-				instance->matrix->m[2][0] = instance->LinkParent->matrix[instance->ParentLinkNode].m[2][0];
-				instance->matrix->m[2][1] = instance->LinkParent->matrix[instance->ParentLinkNode].m[2][1];
-				instance->matrix->m[2][2] = instance->LinkParent->matrix[instance->ParentLinkNode].m[2][2];
-
-				instance->matrix->t[0] = instance->LinkParent->matrix[instance->ParentLinkNode].t[0];
-				instance->matrix->t[1] = instance->LinkParent->matrix[instance->ParentLinkNode].t[1];
-				instance->matrix->t[2] = instance->LinkParent->matrix[instance->ParentLinkNode].t[2];
+				memcpy(&instance->matrix->m[0][0], &instance->LinkParent->matrix[instance->ParentLinkNode].m[0][0], 32);
 
 				MulMatrix2(instance->matrix, (MATRIX*)rootMatrix);
 
@@ -219,19 +190,16 @@ void _G2Instance_RebuildAnimatedTransforms(struct _Instance* instance)
 			oty = instance->matrix[0].t[1] - instance->matrix[3].t[1];
 			otz = instance->matrix[0].t[2] - instance->matrix[3].t[2];
 
-			if (model->numSegments > 0)
+			for (segIndex = 0; segIndex < model->numSegments; segIndex++)
 			{
-				for (segIndex = 0; segIndex < model->numSegments; segIndex++)
+				if ((G2Anim_IsControllerActive(&instance->anim, segIndex, 0x20)))
 				{
-					if ((G2Anim_IsControllerActive(&instance->anim, segIndex, 0x20)))
-					{
-						break;
-					}
-
-					instance->matrix[segIndex].t[0] += otx;
-					instance->matrix[segIndex].t[1] += oty;
-					instance->matrix[segIndex].t[2] += otz;
+					break;
 				}
+
+				instance->matrix[segIndex].t[0] += otx;
+				instance->matrix[segIndex].t[1] += oty;
+				instance->matrix[segIndex].t[2] += otz;
 			}
 
 			rootMatrix->trans.x = instance->matrix[0].t[0];
@@ -247,7 +215,7 @@ void _G2Instance_RebuildAnimatedTransforms(struct _Instance* instance)
 		{
 			instance->rotation = pre_facade_rot;
 		}
-		
+
 		instance = instance->LinkChild;
 
 		while (instance != NULL)
