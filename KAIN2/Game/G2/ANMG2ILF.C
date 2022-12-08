@@ -294,10 +294,10 @@ void G2Anim_SwitchToKeylist(struct _G2Anim_Type *anim, struct _G2AnimKeylist_Typ
 #endif
 }
 
-short G2AnimKeylist_GetDuration(struct _G2AnimKeylist_Type *keylist)
+short G2AnimKeylist_GetDuration(struct _G2AnimKeylist_Type* keylist)//Matching - 100%
 {
 #if defined(PSX_VERSION)
-	return keylist->s0TailTime + ((keylist->keyCount - 1) * keylist->timePerKey);
+	return keylist->s0TailTime + (keylist->timePerKey * (keylist->keyCount - 1));
 #elif defined(PC_VERSION)
 	return keylist->s0TailTime + (keylist->keyCount - 1) * keylist->timePerKey;
 #endif
@@ -306,7 +306,7 @@ short G2AnimKeylist_GetDuration(struct _G2AnimKeylist_Type *keylist)
 int G2AnimKeylist_GetKeyframeCount(struct _G2AnimKeylist_Type* keylist)
 {
 #if defined(PSX_VERSION)
-	return (((keylist->timePerKey * (keylist->keyCount - 1)) - 1) + (keylist->s0TailTime * 2)) / keylist->s0TailTime;
+	return (((keylist->timePerKey * (keylist->keyCount - 1))) + (keylist->s0TailTime * 2 - 1)) / keylist->s0TailTime;
 #elif defined(PC_VERSION)
 	return ((keylist->keyCount - 1) * keylist->timePerKey + 2 * keylist->s0TailTime - 1) / keylist->s0TailTime;
 #endif
