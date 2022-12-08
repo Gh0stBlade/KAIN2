@@ -149,7 +149,7 @@ void InitStates(struct _Instance* PlayerInstance)
 	gameTrackerX.raziel_collide_override = 0;
 }
 
-void StateInitIdle(struct __CharacterState* In, int CurrentSection, int Ptr)//Matching - 85.90%
+void StateInitIdle(struct __CharacterState* In, int CurrentSection, int Ptr)//Matching - 99.73%
 {
 	struct evControlInitIdleData* data;
 	struct _Instance* linkWeapon;
@@ -207,21 +207,16 @@ void StateInitIdle(struct __CharacterState* In, int CurrentSection, int Ptr)//Ma
 			switch (Raziel.Senses.heldClass)
 			{
 			case 0:
-				return;
 				break;
-			case 3:
-			{
-				G2EmulationSwitchAnimation(In, 1, 98, 0, data->frames, 2);
-			}
-			case 2:
+			case 1:
 			{
 				if (data->mode == 0)
 				{
-					G2EmulationSwitchAnimation(In, 1, 84, 0, data->frames, 2);
+					G2EmulationSwitchAnimation(In, 1, 50, 0, data->frames, 2);
 				}
 				else
 				{
-					G2EmulationSwitchAnimation(In, 1, 126, 0, data->frames, 2);
+					G2EmulationSwitchAnimation(In, 1, 127, 0, data->frames, 2);
 				}
 				break;
 			}
@@ -239,7 +234,7 @@ void StateInitIdle(struct __CharacterState* In, int CurrentSection, int Ptr)//Ma
 				}
 				break;
 			}
-			case 1:
+			case 2:
 			{
 				if (data->mode == 0)
 				{
@@ -249,6 +244,12 @@ void StateInitIdle(struct __CharacterState* In, int CurrentSection, int Ptr)//Ma
 				{
 					G2EmulationSwitchAnimation(In, 1, 126, 0, data->frames, 2);
 				}
+				break;
+			}
+
+			case 3:
+			{
+				G2EmulationSwitchAnimation(In, 1, 98, 0, data->frames, 2);
 				break;
 			}
 			default:
@@ -1201,7 +1202,7 @@ void StateHandlerStartTurn(struct __CharacterState* In, int CurrentSection, int 
 
 				PhysicsMode = 3;
 
-				SteerSwitchMode(In->CharacterInstance, Data);
+				SteerSwitchMode(In->CharacterInstance, 1);
 			}
 			break;
 		}
@@ -2547,16 +2548,16 @@ long RazielAnimCallback(struct _G2Anim_Type* anim, int sectionID, enum _G2AnimCa
 			switch (datax->data)
 			{
 			default:
+				assert(FALSE);
 				break;
 			}
 		}
 		//loc_800B0DAC
 		break;
 	}
-	default:
-		break;
 	}
 #if 0
+
 		lhu     $v1, 0($s0)
 		move    $a0, $v0
 		addiu   $v1, -1
@@ -2899,7 +2900,6 @@ long RazielAnimCallback(struct _G2Anim_Type* anim, int sectionID, enum _G2AnimCa
 				lw      $s0, 0x28 + var_s0($sp)
 				jr      $ra
 				addiu   $sp, 0x48
-				# End of function sub_800B087C
 #endif
 	return 0;
 }
@@ -3440,6 +3440,7 @@ void RazielPost(struct _Instance* instance, unsigned long Message, unsigned long
 		}
 	}
 	//loc_800B17BC
+	GAMELOOP_Reset24FPS();
 #if 0
 		loc_800B14CC :
 		lw      $v0, -0x238($gp)
@@ -4033,7 +4034,7 @@ int SetStates(struct _Instance* instance, struct GameTracker* GT, long* controlC
 
 		if (Ptr != NULL)
 		{
-			EnMessageQueue(&Raziel.State.SectionList[i].Defer, Ptr);
+			EnMessageQueue(&Raziel.State.SectionList[i].Event, Ptr);
 			continue;
 		}
 
