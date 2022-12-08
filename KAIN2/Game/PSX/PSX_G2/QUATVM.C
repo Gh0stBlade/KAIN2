@@ -3,7 +3,7 @@
 #include "Game/PSX/COLLIDES.H"
 #include "Game/MATH3D.H"
 
-void G2Quat_Slerp_VM(long ratio, struct _G2Quat_Type* quatA, struct _G2Quat_Type* quatB, struct _G2Quat_Type* quatOut, int spin)
+void G2Quat_Slerp_VM(long ratio, struct _G2Quat_Type* quatA, struct _G2Quat_Type* quatB, struct _G2Quat_Type* quatOut, int spin)//Matching - 75.88%
 {
 	long beta;
 	short theta;
@@ -38,15 +38,19 @@ void G2Quat_Slerp_VM(long ratio, struct _G2Quat_Type* quatA, struct _G2Quat_Type
 
 	if ((4096 - cos_t) > 0)
 	{
-		beta = 4096 - ratio;
-
-		theta = MATH3D_racos_S(cos_t);
-
-		beta = theta;
+		beta = theta = MATH3D_racos_S(cos_t);
 
 		theta += (spin << 12);
 
-		beta = (rsin(beta - ((ratio * theta))) << 12) / (theta = rsin(beta));
+		spin = rsin(beta);
+
+		cosTemp1 = (ratio * theta);
+
+		theta = spin;
+
+		ratio = cosTemp1 >> 12;
+
+		beta = ((rsin(beta - ratio) << 12) / theta);
 
 		ratio = (rsin(ratio) << 12) / theta;
 	}
@@ -78,7 +82,7 @@ void G2Quat_Slerp_VM(long ratio, struct _G2Quat_Type* quatA, struct _G2Quat_Type
 
 	gte_stlvl(&foo);
 
-	cosTemp1 = 0x1000000 / MATH3D_FastSqrt((((foo[3] * foo[3]) + (foo[2] * foo[2]) + (foo[1] * foo[1]) + (foo[0] * foo[0])) + 2048) >> 12);
+	cosTemp1 = 0x1000000 / MATH3D_FastSqrt((((foo[3] * foo[3]) + (foo[0] * foo[0]) + (foo[1] * foo[1]) + (foo[2] * foo[2])) + 2048) >> 12);
 
 	gte_lddp(cosTemp1);
 
@@ -88,4 +92,3 @@ void G2Quat_Slerp_VM(long ratio, struct _G2Quat_Type* quatA, struct _G2Quat_Type
 
 	gte_stsv(quatOut);
 }
-
