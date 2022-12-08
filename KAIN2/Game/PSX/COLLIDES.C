@@ -667,10 +667,8 @@ void G2Quat_FromEuler_S(struct _G2Quat_Type* quatInfo, struct _G2EulerAngles_Typ
 	int t0 = preQuat->x;
 	int t2 = preQuat->y;
 	int t4 = preQuat->z;
-
 	int a1 = preQuat->order;
 
-	//t8 = &ecostable
 	int v1 = t0;
 
 	if ((preQuat->order & 0x1))
@@ -756,7 +754,7 @@ void G2Quat_FromEuler_S(struct _G2Quat_Type* quatInfo, struct _G2EulerAngles_Typ
 		IR1 = t0;
 		IR2 = t5;
 
-		gte_gpf0();
+		gte_gpf12();
 
 		a1 &= 0x4;
 		a1 >>= 1;
@@ -771,7 +769,7 @@ void G2Quat_FromEuler_S(struct _G2Quat_Type* quatInfo, struct _G2EulerAngles_Typ
 		IR1 = t1;
 		IR2 = t4;
 
-		gte_gpf0();
+		gte_gpf12();
 
 		t8 = v1 + a1;
 
@@ -1085,6 +1083,9 @@ long MATH3D_racos_S(long a)
 	int v0 = 512;
 	int t2 = 256;
 	int t3 = a;
+	int t1;
+	int t4;
+	int t5;
 
 	if (a < 0)
 	{
@@ -1092,9 +1093,9 @@ long MATH3D_racos_S(long a)
 	}
 
 start:
-	int t1 = ecostable[v0 + 1024];
-	int t4 = t2;
-	int t5 = t1 - t3;
+	t1 = ecostable[v0 + 1024];
+	t4 = t2;
+	t5 = t1 - t3;
 
 	if (t5 != 0)
 	{
@@ -1485,7 +1486,7 @@ long BSP_SphereIntersectsViewVolume_S(struct _Position* position)
 }
 
 #if defined(PSXPC_VERSION) && defined(PSX_VERSION)
-MATRIX* RotMatrixZYX(SVECTOR* r, MATRIX* m)
+void RotMatrixZYX(SVECTOR* r, MATRIX* m)
 {
 	int t9 = r->vz;
 	int t8 = r->vy;
@@ -1535,7 +1536,6 @@ MATRIX* RotMatrixZYX(SVECTOR* r, MATRIX* m)
 		IR1 = t1;
 		IR2 = t2;
 		IR3 = t5;
-
 		IR0 = t0;
 
 		int v0 = (t1 * t2) >> 12;
@@ -1571,7 +1571,6 @@ MATRIX* RotMatrixZYX(SVECTOR* r, MATRIX* m)
 		IR1 = t6;
 		IR2 = t7;
 		IR3 = t8;
-
 		IR0 = t4;
 
 		gte_gpf12();
@@ -1608,7 +1607,5 @@ MATRIX* RotMatrixZYX(SVECTOR* r, MATRIX* m)
 		((int*)m)[3] = 0;
 		((int*)m)[4] = t3;
 	}
-
-	return m;
 }
 #endif
