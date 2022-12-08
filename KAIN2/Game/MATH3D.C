@@ -304,9 +304,8 @@ short MATH3D_FastAtan2(long y, long x)
 #endif
 }
 
-long MATH3D_FastSqrt(long square)
+long MATH3D_FastSqrt(long square)//Matching - 90.63%
 {
-#if defined(PSX_VERSION)
 	unsigned long result;
 	long remainder;
 	long mask;
@@ -329,17 +328,15 @@ long MATH3D_FastSqrt(long square)
 			} while ((mask & square) == 0);
 		}
 
-		shift >>= 1;
-		remainder = shift + 6;
-		result_shift = 1;
-		result = result_shift << remainder;
+		shift = shift >> 1;
+		result = 1 << (shift + 6);
 		mask = result;
-		result_shift = result_shift << (shift << result_shift);
+		result_shift = 1 << (shift << 1);
 		mask_squared = result_shift;
+		shift = shift - 1;
+		square = square - result_shift;
 
-		square -= mask_squared;
-
-		while (--shift != -1)
+		while (shift != -1)
 		{
 			mask_squared >>= 2;
 
@@ -361,6 +358,8 @@ long MATH3D_FastSqrt(long square)
 
 				result |= mask;
 			}
+
+			shift--;
 		}
 
 		mask_squared >>= 2;
@@ -368,7 +367,6 @@ long MATH3D_FastSqrt(long square)
 		result_shift <<= 12;
 		mask_squared = 4096;
 		mask >>= 1;
-
 
 		while (mask != 0)
 		{
@@ -394,86 +392,6 @@ long MATH3D_FastSqrt(long square)
 	}
 
 	return 0;
-#elif defined(PC_VERSION)
-	int v1; // eax
-	int v2; // ebp
-	int v3; // ebp
-	int v4; // edi
-	int v5; // edx
-	int v6; // ecx
-	int result; // eax
-	int v8; // esi
-	int v9; // ebp
-	int v10; // ebx
-	int v11; // ebp
-	int v12; // ecx
-	int v13; // esi
-	int v14; // edx
-	int v15; // edi
-	int i; // ebx
-	int v17; // ecx
-
-	if (!square)
-		return 0;
-	v1 = 0x80000000;
-	v2 = 31;
-	if (square >= 0)
-	{
-		do
-		{
-			v1 >>= 1;
-			--v2;
-		} while ((v1 & square) == 0);
-	}
-	v3 = v2 >> 1;
-	v4 = 1 << (v3 + 6);
-	v5 = 1 << (2 * v3);
-	v6 = v3;
-	result = v4;
-	v8 = square - v5;
-	v9 = v3 - 1;
-	v10 = v5;
-	if (v6)
-	{
-		v11 = v9 + 1;
-		do
-		{
-			v10 >>= 2;
-			v4 >>= 1;
-			v12 = v8 - v10 - v5;
-			if (v12 >= 0)
-			{
-				v5 = v10 + (v5 >> 1);
-				v8 = v12;
-				result |= v4;
-			}
-			else
-			{
-				v5 >>= 1;
-			}
-			--v11;
-		} while (v11);
-	}
-	v13 = v8 << 12;
-	v14 = v5 << 12;
-	v15 = v4 >> 1;
-	for (i = 4096; v15; v15 >>= 1)
-	{
-		i >>= 2;
-		v17 = v13 - i - v14;
-		if (v17 >= 0)
-		{
-			v14 = i + (v14 >> 1);
-			v13 = v17;
-			result |= v15;
-		}
-		else
-		{
-			v14 >>= 1;
-		}
-	}
-	return result;
-#endif
 }
 
 long MATH3D_FastSqrt0(long square)
