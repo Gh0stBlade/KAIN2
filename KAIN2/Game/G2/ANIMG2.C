@@ -634,7 +634,7 @@ void G2AnimSection_JumpToTime(struct _G2AnimSection_Type* section, short targetT
 	}
 }
 
-short G2AnimSection_UpdateOverInterval(struct _G2AnimSection_Type* section, short interval)//Matching - 90.56%
+short G2AnimSection_UpdateOverInterval(struct _G2AnimSection_Type* section, short interval)//Matching - 94.87%
 {
 	struct _G2Anim_Type* anim;
 	struct _G2AnimInterpInfo_Type* interpInfo;
@@ -642,8 +642,7 @@ short G2AnimSection_UpdateOverInterval(struct _G2AnimSection_Type* section, shor
 	unsigned short z;
 	unsigned long xy;
 	struct _G2SVector3_Type motionVector;
-	typedef unsigned long (*func)(struct _G2Anim_Type*, int, enum _G2AnimCallbackMsg_Enum, long, long, struct _Instance*);
-	func callbackProc;
+	short s4;
 
 	if ((section->flags & 0x1))
 	{
@@ -658,17 +657,19 @@ short G2AnimSection_UpdateOverInterval(struct _G2AnimSection_Type* section, shor
 
 		anim->flags |= 0x1;
 
-		elapsedTime = section->elapsedTime + ((interval * section->speedAdjustment) >> 12) - (unsigned short)interpInfo->duration;
+		elapsedTime = section->elapsedTime;
 
-		if (elapsedTime >= 0)
+		s4 = (elapsedTime + ((interval * section->speedAdjustment) >> 12)) - interpInfo->duration;
+
+		if (s4 >= 0)
 		{
-			section->keylist->timePerKey = -section->keylist->timePerKey;
+			section->storedTime = -section->keylist->timePerKey;
 
 			G2AnimSection_JumpToTime(section, interpInfo->targetTime);
 
 			if (section->firstSeg == 0)
 			{
-				G2Anim_GetRootMotionOverInterval(anim, elapsedTime, interpInfo->duration, &motionVector);
+				G2Anim_GetRootMotionOverInterval(anim, section->elapsedTime, interpInfo->duration, &motionVector);
 
 				xy = ((int*)&motionVector.x)[0];
 				z = motionVector.z;
@@ -690,18 +691,20 @@ short G2AnimSection_UpdateOverInterval(struct _G2AnimSection_Type* section, shor
 
 			section->alarmFlags |= 0x10;
 
-			if (section->callback != NULL)
+			if (section->callback == NULL)
 			{
-				callbackProc = (func)section->callback;
-				callbackProc(anim, section->sectionID, G2ANIM_MSG_SECTION_INTERPDONE, 0, 0, (struct _Instance*)section->callbackData);
+				return 0;
 			}
-
-			return elapsedTime;
+			else
+			{
+				section->callback(anim, section->sectionID, G2ANIM_MSG_SECTION_INTERPDONE, 0, 0, (struct _Instance*)section->callbackData);
+				return s4;
+			}
 		}
 		else
 		{
-			section->elapsedTime = section->elapsedTime + ((interval * section->speedAdjustment) >> 12);
-			return section->elapsedTime;
+			section->elapsedTime = elapsedTime + ((interval * section->speedAdjustment) >> 12);
+			return 0;
 		}
 	}
 	else
@@ -709,6 +712,7 @@ short G2AnimSection_UpdateOverInterval(struct _G2AnimSection_Type* section, shor
 		if (!(section->flags & 0x4))
 		{
 			return G2AnimSection_AdvanceOverInterval(section, interval);
+
 		}
 		else
 		{
@@ -869,8 +873,8 @@ short G2AnimSection_AdvanceOverInterval(struct _G2AnimSection_Type* section, sho
 				break;
 			}
 
-			endTime = section->loopEndTime;
 			extraTime = loopExtraTime;
+			endTime = section->loopEndTime;
 		}
 		else
 		{
@@ -936,21 +940,21 @@ short G2AnimSection_RewindOverInterval(struct _G2AnimSection_Type *section, shor
 	return 0;
 }
 
-void _G2Anim_BuildTransformsNoControllers(struct _G2Anim_Type* anim)
+void _G2Anim_BuildTransformsNoControllers(struct _G2Anim_Type* anim)//Matching - 81.39%
 {
 	struct _Segment* segment;
 	struct _G2Matrix_Type* segMatrix;
 	enum _G2Bool_Enum bRootTransUpdated;
 	int segIndex;
 	int segCount;
+#if defined(PSXPC_VERSION)
 	unsigned long disabledBits[3];
+#endif
 	unsigned long disabledMask;
 	unsigned long parentMask;
 	unsigned long parentIndex;
-	unsigned long* disableBitsArray;
-
-
-	bRootTransUpdated = (enum _G2Bool_Enum)(((anim->section[0].flags & 0x88) == 0x80));
+	unsigned long* disabledBitsArray;
+	unsigned short* parentIndexPtr;
 
 	segMatrix = anim->segMatrices;
 
@@ -962,38 +966,50 @@ void _G2Anim_BuildTransformsNoControllers(struct _G2Anim_Type* anim)
 
 	disabledBits[2] = anim->disabledBits[2];
 
+	bRootTransUpdated = (enum _G2Bool_Enum)(((anim->section[0].flags & 0x88) == 0x80));
+
 	segCount = anim->modelData->numSegments;
 
 	disabledMask = 1;
 
-	disableBitsArray = &disabledBits[0];
+	disabledBitsArray = &disabledBits[0];
 
-	for (segIndex = 0; segIndex < segCount; segIndex++, segMatrix++)
+	for (segIndex = 0, parentIndexPtr = (unsigned short*)&segment->parent; segIndex < segCount;)
 	{
+		parentIndex = parentIndexPtr[0];
 
-		parentIndex = ((unsigned short*)&segment[segIndex].parent)[0];
-		parentMask = (parentIndex & 0x1F);
-
-		if ((short)parentIndex != -1 && (disabledBits[((short)parentIndex >> 5)] & (1 << parentMask)))
+		if ((short)parentIndex != -1 && (disabledBits[((short)parentIndex >> 5)] & ((1 << (parentIndex & 0x1F)))))
 		{
-			disableBitsArray[0] |= disabledMask;
+			disabledBitsArray[0] |= disabledMask;
 		}
 
 
-		if (!(disableBitsArray[0] & disabledMask))
+		if (!(disabledBitsArray[0] & disabledMask))
 		{
-			_G2Anim_BuildSegTransformNoControllers(segMatrix, &anim->segMatrices[segment[segIndex].parent], bRootTransUpdated, segIndex);
+			_G2Anim_BuildSegTransformNoControllers(segMatrix, &anim->segMatrices[(short)parentIndexPtr[0]], bRootTransUpdated, segIndex);
 		}
 
 		bRootTransUpdated = (enum _G2Bool_Enum)0;
 
+		parentIndexPtr += 12;
+
+		segMatrix++;
+
 		disabledMask <<= 1;
+
+		segIndex++;
+
+		if ((segIndex % 32) == 0)
+		{
+			int testing = 0;
+			testing++;
+		}
 
 		if (disabledMask == 0)
 		{
-			disabledMask = 1;
+			disabledBitsArray++;
 
-			disableBitsArray++;
+			disabledMask = 1;
 		}
 	}
 }
@@ -1710,27 +1726,29 @@ void _G2Anim_FreeChanStatusBlockList(struct _G2AnimChanStatusBlock_Type* block)/
 	}
 }
 
-long _G2AnimAlphaTable_GetValue(struct _G2AnimAlphaTable_Type* table, long trueAlpha)//Matching - 89%
+long _G2AnimAlphaTable_GetValue(struct _G2AnimAlphaTable_Type* table, long trueAlpha)//Matching - 98.80%
 {
 	long position;
 	long positionInt;
 	long positionFrac;
 	long value;
 
-	if (table != NULL)
+	if (table == NULL)
+	{
+		return trueAlpha;
+	}
+	else
 	{
 		position = (table->size - 1) * trueAlpha;
-		
+
 		positionInt = position >> 12;
 
-		value = table->data[positionInt++];
-		
+		value = table->data[positionInt + 1];
+
 		trueAlpha = table->data[positionInt];
-		
+
 		positionFrac = position & 0xFFF;
-		
+
 		return value + (((trueAlpha - value) * positionFrac) >> 12);
 	}
-
-	return trueAlpha;
 }
