@@ -2548,7 +2548,7 @@ long RazielAnimCallback(struct _G2Anim_Type* anim, int sectionID, enum _G2AnimCa
 			switch (datax->data)
 			{
 			default:
-				assert(FALSE);
+				//assert(FALSE);
 				break;
 			}
 		}
