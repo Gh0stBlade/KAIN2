@@ -418,14 +418,12 @@ struct _G2AnimInterpStateBlock_Type* _G2Anim_AllocateInterpStateBlockList(struct
 	interpInfo = section->interpInfo;
 
 	interpInfo->stateBlockList = (struct _G2AnimInterpStateBlock_Type*)G2PoolMem_Allocate(&_interpStateBlockPool);
-
+	
 	if (interpInfo->stateBlockList != NULL)
 	{
 		newBlock = interpInfo->stateBlockList;
 
-		segCount -= 4;
-
-		while (segCount > 0)
+		while ((segCount -= 4) > 0)
 		{
 			newBlock->next = (struct _G2AnimInterpStateBlock_Type*)G2PoolMem_Allocate(&_interpStateBlockPool);
 
@@ -439,7 +437,6 @@ struct _G2AnimInterpStateBlock_Type* _G2Anim_AllocateInterpStateBlockList(struct
 			}
 
 			newBlock = newBlock->next;
-			segCount -= 4;
 		}
 	}
 

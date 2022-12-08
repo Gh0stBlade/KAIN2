@@ -1192,7 +1192,7 @@ void StateSwitchStateCharacterDataDefault(struct __CharacterState *In, TDRFuncPt
 			UNIMPLEMENTED();
 }
 
-void StateSwitchStateData(struct __CharacterState* In, int CurrentSection, void (*NewProcess)(struct __CharacterState* In, int CurrentSection, int Data), int Data)
+void StateSwitchStateData(struct __CharacterState* In, int CurrentSection, void (*NewProcess)(struct __CharacterState* In, int CurrentSection, int Data), int Data)//Matching - 99.61%
 {
 	PurgeMessageQueue(&In->SectionList[CurrentSection].Event);
 	EnMessageQueueData(&In->SectionList[CurrentSection].Event, 0x100001, Data);
