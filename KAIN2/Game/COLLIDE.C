@@ -3093,7 +3093,7 @@ void COLLIDE_InstanceListWithSignals(struct _InstanceList *instanceList)
 			UNIMPLEMENTED();
 }
 
-void COLLIDE_InstanceListTerrain(struct _InstanceList* instanceList)//Matching - 95.23%
+void COLLIDE_InstanceListTerrain(struct _InstanceList* instanceList)//Matching - 99.77%
 {
 	long i;
 	struct _Instance* instance;
@@ -3105,7 +3105,7 @@ void COLLIDE_InstanceListTerrain(struct _InstanceList* instanceList)//Matching -
 
 		while (instance != NULL)
 		{
-			if (instance->hModelList != NULL && (instance->flags2 & 0x24040000))
+			if (instance->hModelList != NULL && !(instance->flags2 & 0x24040000))
 			{
 				level = STREAM_GetLevelWithID(instance->currentStreamUnitID);
 
