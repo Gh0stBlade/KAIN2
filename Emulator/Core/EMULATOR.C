@@ -5261,6 +5261,7 @@ void Emulator_DoPollEvent()
 
 				g_touchAxis[0] = 0;
 				g_touchAxis[1] = 0;
+				break;
 			}
 			case SDL_FINGERDOWN:
 			{
@@ -5268,8 +5269,8 @@ void Emulator_DoPollEvent()
 
 				g_touchAxis[0] = (int)event.tfinger.x;
 				g_touchAxis[1] = (int)event.tfinger.y;
+				break;
 			}
-			break;
 #endif
 			case SDL_CONTROLLERDEVICEADDED:
 				Emulator_AddController(event.cdevice.which);
