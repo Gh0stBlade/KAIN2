@@ -1084,10 +1084,11 @@ int MATH3D_veclen2(int ix, int iy)
 {
 #if defined(PSX_VERSION)
 	int t;
+	int v1 = ix;
 
-	if (ix < 0)
+	if (v1 < 0)
 	{
-		ix = -ix;
+		v1 = -v1;
 	}
 
 	if (iy < 0)
@@ -1095,20 +1096,20 @@ int MATH3D_veclen2(int ix, int iy)
 		iy = -iy;
 	}
 
-	t = iy >> 1;
+	ix = iy >> 1;
 
-	if (ix < iy)
+	if (v1 < iy)
 	{
-		ix ^= iy;
-		iy ^= ix;
-		ix ^= iy;
+		v1 ^= iy;
+		iy ^= v1;
+		v1 ^= iy;
 
-		t = iy >> 1;
+		ix = iy >> 1;
 	}
 
-	t = iy + t;
+	ix = iy + ix;
 
-	return (((ix - (ix >> 5)) >> 7) - ix) + (t >> 2) + (t >> 6);
+	return ((v1 - (v1 >> 5)) - (v1 >> 7)) + (ix >> 2) + (ix >> 6);
 #elif defined(PC_VERSION)
 	int v2; // edx
 	int v3; // eax
