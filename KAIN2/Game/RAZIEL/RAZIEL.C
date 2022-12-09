@@ -1318,7 +1318,6 @@ void StateHandlerStartMove(struct __CharacterState* In, int CurrentSection, int 
 		}
 		default:
 			//loc_800AA7FC
-			printf("STATE: %x\n", Ptr->ID);
 			DefaultStateHandler(In, CurrentSection, Data);
 			break;
 		}
