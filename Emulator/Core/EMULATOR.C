@@ -5244,6 +5244,8 @@ void Emulator_DoPollEvent()
 
 				g_touchAxis[0] = (int)event.tfinger.x;
 				g_touchAxis[1] = (int)event.tfinger.y;
+
+				Emulator_HandleTouchEvent(g_touchAxis[0], g_touchAxis[1]);///@FIXME hack, don't know why this updates weirdly on emscripten yet!
 				break;
 			}
 			case SDL_MOUSEBUTTONDOWN:
@@ -5256,6 +5258,16 @@ void Emulator_DoPollEvent()
 				break;
 			}
 			case SDL_FINGERUP:
+			{
+				g_touchHeld = FALSE;
+
+				g_touchAxis[0] = 0;
+				g_touchAxis[1] = 0;
+
+				Emulator_HandleTouchEvent(g_touchAxis[0], g_touchAxis[1]);///@FIXME hack, don't know why this updates weirdly on emscripten yet!
+
+				break;
+			}
 			case SDL_MOUSEBUTTONUP:
 			{
 				g_touchHeld = FALSE;
@@ -5820,14 +5832,13 @@ void Emulator_UpdateInput(int poll)
 
 	if (padAllowCommunication)
 	{
+		Emulator_HandleTouchEvent(g_touchAxis[0], g_touchAxis[1]);
 		kbInputs = UpdateKeyboardInput();
 	}
 	else
 	{
 		kbInputs = 0xFFFFu;
 	}
-
-	Emulator_HandleTouchEvent(g_touchAxis[0], g_touchAxis[1]);
 
 	//Update pad
 	if (SDL_NumJoysticks() > 0)
