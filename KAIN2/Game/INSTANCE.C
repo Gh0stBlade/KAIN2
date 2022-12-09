@@ -2078,14 +2078,14 @@ void INSTANCE_BuildStaticShadow(struct _Instance* instance)
 {
 }
 
-void INSTANCE_DefaultInit(struct _Instance* instance, struct Object* object, int modelNum)
+void INSTANCE_DefaultInit(struct _Instance* instance, struct Object* object, int modelNum)//Matching - 96.32%
 {
 	int i;
 	int j;
 	int numHPrims;
 	int numModels;
 	struct _HPrim* hprim;
-	struct _Model* PTR_32* PTR_32 pModel;
+	struct _Model** pModel;
 	struct _HModel* hmodel;
 	struct _Model* model;
 	struct _Segment* seg;
@@ -2095,13 +2095,13 @@ void INSTANCE_DefaultInit(struct _Instance* instance, struct Object* object, int
 	struct _HSphere* hsphere;
 	struct _HBox* hbox;
 
-	memset(&instance->flags, 0, sizeof(_Instance) - 0x14);
-	
+	memset(&instance->flags, 0, sizeof(struct _Instance) - 0x14);
+
 	instance->object = object;
+	instance->data = object->data;
 	instance->currentModel = modelNum;
 	instance->cachedTFace = -1;
 	instance->cachedTFaceLevel = NULL;
-	instance->data = object->data;
 
 	if (object->animList != NULL && !(object->oflags2 & 0x40000000))
 	{
@@ -2109,32 +2109,32 @@ void INSTANCE_DefaultInit(struct _Instance* instance, struct Object* object, int
 		G2Anim_SwitchToKeylist(&instance->anim, G2Instance_GetKeylist(instance, 0), 0);
 		G2Anim_SetCallback(&instance->anim, INSTANCE_DefaultAnimCallback, instance);
 	}
-	
+
 	if ((object->oflags & 0x4000000))
 	{
 		instance->flags2 |= 0x4;
 	}
-	
-	if ((object->oflags & 0x2000000))
+
+	if ((object->oflags & 0x200))
 	{
 		instance->flags2 |= 0x40;
 	}
-	
+
 	if ((object->oflags & 0x8))
 	{
 		instance->flags2 |= 0x8000000;
 	}
-	
-	if (!(object->oflags & 0x1000000))
+
+	if (!(object->oflags & 0x1000800))
 	{
 		instance->flags |= 0x2000000;
 	}
-	
+
 	if ((object->oflags & 0x20000000))
 	{
 		instance->flags2 |= 0x20;
 	}
-	
+
 	numModels = object->numModels;
 	pModel = object->modelList;
 
@@ -2142,20 +2142,15 @@ void INSTANCE_DefaultInit(struct _Instance* instance, struct Object* object, int
 
 	for (i = numModels; i != 0; i--, pModel++)
 	{
-		for (j = pModel[0]->numSegments; j != 0; j--, seg++)
+		for (j = pModel[0]->numSegments, seg = pModel[0]->segmentList; j != 0; seg++, j--)
 		{
-			seg = pModel[0]->segmentList;
 
-			if (pModel[0]->numSegments != 0)
+
+			hinfo = seg->hInfo;
+
+			if (hinfo != NULL)
 			{
-				hinfo = seg->hInfo;
-
-				if (hinfo != NULL)
-				{
-					numHPrims += hinfo->numHFaces;
-					numHPrims += hinfo->numHSpheres;
-					numHPrims += hinfo->numHBoxes;
-				}
+				numHPrims += hinfo->numHFaces + hinfo->numHSpheres + hinfo->numHBoxes;
 			}
 		}
 	}
@@ -2166,56 +2161,50 @@ void INSTANCE_DefaultInit(struct _Instance* instance, struct Object* object, int
 
 		instance->hModelList = hmodel;
 		pModel = object->modelList;
-		hprim = hmodel->hPrimList;
-	
-		if (i != 0)
+		hprim = (struct _HPrim*)hmodel + object->numModels;
+
+		for (i = numModels; i != 0; i--, pModel++, hmodel++)
 		{
-			for(i = numModels; i != 0; i--, pModel++, hmodel++)
+			model = pModel[0];
+			hmodel->numHPrims = 0;
+			hmodel->hPrimList = hprim;
+			seg = model->segmentList;
+
+			for (j = 0; j < model->numSegments; j++, seg++)
 			{
-				model = pModel[0];
-				hmodel->numHPrims = 0;
-				hmodel->hPrimList = hprim;
-				seg = model->segmentList;
-
-				if (model->numSegments > 0)
+				hinfo = seg->hInfo;
+				if (hinfo != NULL)
 				{
-					for (j = 0; j < model->numSegments; j++, seg++)
+					hface = hinfo->hfaceList;
+					hsphere = hinfo->hsphereList;
+					hbox = hinfo->hboxList;
+
+					hmodel->numHPrims += hinfo->numHFaces + hinfo->numHSpheres + hinfo->numHBoxes;
+					for (k = hinfo->numHFaces; k != 0; hprim++, hface++, k--)
 					{
-						hinfo = seg->hInfo;
-						if (hinfo != NULL)
-						{
-							hface = hinfo->hfaceList;
-							hsphere = hinfo->hsphereList;
-							hbox = hinfo->hboxList;
+						hprim->hpFlags = 0x4D;
+						hprim->withFlags = 0x24;
+						hprim->type = 2;
+						hprim->segment = j;
+						hprim->data.hface = hface;
+					}
 
-							hmodel->numHPrims = hmodel->numHPrims + hinfo->numHFaces + hinfo->numHSpheres + hinfo->numHBoxes;
-							for (k = hinfo->numHFaces; k != 0; k--, hprim++, hface++)
-							{
-								hprim->hpFlags = 0x4D;
-								hprim->withFlags = 0x24;
-								hprim->type = 2;
-								hprim->segment = j;
-								hprim->data.hface = hface;
-							}
+					for (k = hinfo->numHSpheres; k != 0; hprim++, hsphere++, k--)
+					{
+						hprim->hpFlags = 0x2F;
+						hprim->withFlags = 0x76;
+						hprim->type = 1;
+						hprim->segment = j;
+						hprim->data.hsphere = hsphere;
+					}
 
-							for (k = hinfo->numHSpheres; k != 0; k--, hprim++, hsphere++)
-							{
-								hprim->hpFlags = 0x2F;
-								hprim->withFlags = 0x76;
-								hprim->type = 1;
-								hprim->segment = j;
-								hprim->data.hsphere = hsphere;
-							}
-
-							for (k = hinfo->numHBoxes; k != 0; k--, hprim++, hbox++)
-							{
-								hprim->hpFlags = 0x1D;
-								hprim->withFlags = 0x24;
-								hprim->type = 5;
-								hprim->segment = j;
-								hprim->data.hbox = hbox;
-							}
-						}
+					for (k = hinfo->numHBoxes; k != 0; hprim++, hbox++, k--)
+					{
+						hprim->hpFlags = 0x1D;
+						hprim->withFlags = 0x24;
+						hprim->type = 5;
+						hprim->segment = j;
+						hprim->data.hbox = hbox;
 					}
 				}
 			}
@@ -2232,7 +2221,6 @@ void INSTANCE_DefaultInit(struct _Instance* instance, struct Object* object, int
 		instance->maxCheckDistance = 12000;
 	}
 }
-
 
 
 // autogenerated function stub: 
