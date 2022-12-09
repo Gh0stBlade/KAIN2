@@ -29,6 +29,8 @@
 #include <stdlib.h>
 
 int g_useHintedTouchUIFont = FALSE;
+int g_touchHeld = FALSE;
+int g_touchAxis[2] = { 0, 0 };
 
 #if defined(SDL2) || (defined(OGLES) && defined(_WINDOWS))
 extern SDL_Window* g_window;
@@ -5236,11 +5238,37 @@ void Emulator_DoPollEvent()
 		switch (event.type)
 		{
 #if defined(TOUCH_UI)
-			case SDL_MOUSEBUTTONUP:
-				Emulator_HandleTouchEvent(event.button.x, event.button.y);
+			case SDL_MOUSEBUTTONDOWN:
+			{
+				g_touchHeld = TRUE;
+
+				g_touchAxis[0] = (int)event.button.x;
+				g_touchAxis[1] = (int)event.button.y;
+
 				break;
+			}
+			case SDL_MOUSEBUTTONUP:
+			{
+				g_touchHeld = FALSE;
+
+				g_touchAxis[0] = 0;
+				g_touchAxis[1] = 0;
+				break;
+			}
 			case SDL_FINGERUP:
-				Emulator_HandleTouchEvent((int)event.tfinger.x, (int)event.tfinger.y);
+			{
+				g_touchHeld = FALSE;
+
+				g_touchAxis[0] = 0;
+				g_touchAxis[1] = 0;
+			}
+			case SDL_FINGERDOWN:
+			{
+				g_touchHeld = TRUE;
+
+				g_touchAxis[0] = (int)event.tfinger.x;
+				g_touchAxis[1] = (int)event.tfinger.y;
+			}
 			break;
 #endif
 			case SDL_CONTROLLERDEVICEADDED:
@@ -5793,6 +5821,8 @@ void Emulator_UpdateInput(int poll)
 	{
 		Emulator_DoPollEvent();
 	}
+
+	Emulator_HandleTouchEvent(g_touchAxis[0], g_touchAxis[1]);
 
 #if defined(SDL2)
 
