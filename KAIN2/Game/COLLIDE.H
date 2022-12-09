@@ -62,7 +62,7 @@ struct SCollideInfo // hashcode: 0x0DEAD21F (dec: 233493023)
 {
 	struct _Sphere* sphere; // size=12, offset=0
 	SVECTOR* oldPos; // size=8, offset=4
-	void (*collideFunc)(); // size=0, offset=8
+	void (*collideFunc)(struct _Instance* instance, struct GameTracker* gameTracker); // size=0, offset=8
 	long id; // size=0, offset=12
 	long segment; // size=0, offset=16
 	struct _Instance* instance; // size=616, offset=20
