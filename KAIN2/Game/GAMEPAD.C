@@ -526,7 +526,6 @@ void GAMEPAD_Detect()
 	VSync(3);
 }
 
-
 void GAMEPAD_Init()
 {
 #if defined(PSX_VERSION)
@@ -713,7 +712,7 @@ void GAMEPAD_DetectInit()
 	}
 }
 
-void GAMEPAD_GetData(long(*data)[5])
+void GAMEPAD_GetData(long(*data)[5])//Matching - 87.92%
 {
 #if defined(PSX_VERSION)
 	long analogue_x;
@@ -774,7 +773,7 @@ void GAMEPAD_GetData(long(*data)[5])
 		{
 			GAMEPAD_DetectInit();
 		}
-		
+
 		psxData[0] = gpbuffer1.data.pad;
 		gamePadControllerOut = 0;
 
@@ -792,13 +791,13 @@ void GAMEPAD_GetData(long(*data)[5])
 		{
 			analogue_x = gpbuffer1.data.analogue.xL;
 			analogue_y = gpbuffer1.data.analogue.yL;
-			
-			if (analogue_x - 74 >= 109 && analogue_y < 74 && analogue_x - 128 < 183)
+
+			if ((unsigned)(analogue_x - 74) < 109 && analogue_y >= 74 && analogue_y < 183)
 			{
 				analogue_x = 128;
 				analogue_y = 128;
 			}
-	
+
 			data[0][3] = analogue_x - 128;
 			data[0][4] = analogue_y - 128;
 		}
