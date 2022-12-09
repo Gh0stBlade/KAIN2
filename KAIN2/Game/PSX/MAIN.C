@@ -773,40 +773,47 @@ void CloseGame()
 	ResetGraph(0);
 }
 
+int g_initiedGame = 0;
+
 void InitialiseGame(void* appData)
 {
 	struct MainTracker* mainTracker;
 	struct GameTracker* gameTracker;
 
-	Emulator_Initialise(GAME_NAME, GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT);
-
-	CheckForDevStation();
-
-	mainTracker = &mainTrackerX;
-	gameTracker = &gameTrackerX;
-	mainOptionsInit = 0;
-
-	if (MainG2_InitEngine(appData, SCREEN_WIDTH, SCREEN_HEIGHT, NULL) == 1)
+	if (g_initiedGame == 0)
 	{
-		MEMPACK_Init();
-		LOAD_InitCd();
-		StartTimer();
+		g_initiedGame = 1;
 
-		STREAM_InitLoader(BIGFILE_DAT, "");
+		Emulator_Initialise(GAME_NAME, GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT);
 
-		localstr_set_language(language_default);
-		GAMELOOP_SystemInit(gameTracker);
+		CheckForDevStation();
 
-		gameTracker->lastLvl = 255;
-		gameTracker->currentLvl = 255;
-		gameTracker->disp = &disp;
+		mainTracker = &mainTrackerX;
+		gameTracker = &gameTrackerX;
+		mainOptionsInit = 0;
 
-		ProcessArgs(&gameTracker->baseAreaName[0], gameTracker);
-		InitMainTracker(mainTracker);
-		MAIN_DoMainInit();
+		if (MainG2_InitEngine(appData, SCREEN_WIDTH, SCREEN_HEIGHT, NULL) == 1)
+		{
+			MEMPACK_Init();
+			LOAD_InitCd();
+			StartTimer();
 
-		mainTracker->mainState = 6;
-		mainTracker->movieNum = 0;
+			STREAM_InitLoader(BIGFILE_DAT, "");
+
+			localstr_set_language(language_default);
+			GAMELOOP_SystemInit(gameTracker);
+
+			gameTracker->lastLvl = 255;
+			gameTracker->currentLvl = 255;
+			gameTracker->disp = &disp;
+
+			ProcessArgs(&gameTracker->baseAreaName[0], gameTracker);
+			InitMainTracker(mainTracker);
+			MAIN_DoMainInit();
+
+			mainTracker->mainState = 6;
+			mainTracker->movieNum = 0;
+		}
 	}
 }
 
@@ -817,6 +824,8 @@ void GameLoop()
 	struct InterfaceItem* item;
 	long menuPos = 0;
 	int timer;
+
+	InitialiseGame(NULL);
 
 	Emulator_PollAudio();
 
@@ -1041,7 +1050,6 @@ void GameLoop()
 
 int MainG2(void* appData)
 {
-	InitialiseGame(appData);
 
 	emscripten_set_main_loop(GameLoop, 0, 1);
 
