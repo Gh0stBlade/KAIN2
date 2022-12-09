@@ -5816,8 +5816,6 @@ void Emulator_UpdateInput(int poll)
 		Emulator_DoPollEvent();
 	}
 
-	Emulator_HandleTouchEvent(g_touchAxis[0], g_touchAxis[1]);
-
 #if defined(SDL2)
 
 	if (padAllowCommunication)
@@ -5828,6 +5826,8 @@ void Emulator_UpdateInput(int poll)
 	{
 		kbInputs = 0xFFFFu;
 	}
+
+	Emulator_HandleTouchEvent(g_touchAxis[0], g_touchAxis[1]);
 
 	//Update pad
 	if (SDL_NumJoysticks() > 0)
