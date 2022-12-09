@@ -4425,10 +4425,8 @@ long ratan2(long y, long x)
 
         return ratan;
     }
-    else
-    {
-        return 0;
-    }
+
+    return 0;
 }
 
 #if defined(__ANDROID__)
