@@ -1051,7 +1051,7 @@ void GameLoop()
 int MainG2(void* appData)
 {
 
-	emscripten_set_main_loop(GameLoop, 0, 1);
+	emscripten_set_main_loop(GameLoop, 30, 1);
 
 	CloseGame();
 
