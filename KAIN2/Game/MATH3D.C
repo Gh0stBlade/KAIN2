@@ -801,7 +801,7 @@ void AngleMoveToward(short* current_ptr, short destination, short step)
 		{
 			if (diff > 0)
 			{
-				*current_ptr = step & 0xFFF;
+				*current_ptr = (current + step) & 0xFFF;
 			}
 			else
 			{
