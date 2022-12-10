@@ -3,7 +3,7 @@
 
 #if defined(PSXPC_VERSION)
 #include "Game/CORE.H"
-#if defined(SDL2) && defined(UWP_SDL2) || defined(_WIN32) && !defined(SN_TARGET_PSP2)  && !defined(PLATFORM_NX)  && !defined(PLATFORM_NX_ARM)
+#if defined(SDL2) || defined(__ANDROID__)&& defined(UWP_SDL2) || defined(_WIN32) && !defined(SN_TARGET_PSP2)  && !defined(PLATFORM_NX)  && !defined(PLATFORM_NX_ARM)
 #undef R13
 #undef R12
 #undef R11
@@ -16,7 +16,7 @@ struct _G2AppDataVM_Type _appDataVM;
 EMULATOR_THREAD_DEF
 
 #if !defined(EDITOR)
-#if defined(PSXPC_VERSION) && !defined(UWP) && !defined(PLATFORM_NX) && !defined(PLATFORM_NX_ARM) && !defined(__linux__) || defined(UWP_SDL2) && !defined(__EMSCRIPTEN__)
+#if defined(PSXPC_VERSION) || defined(__ANDROID__) && !defined(UWP) && !defined(PLATFORM_NX) && !defined(PLATFORM_NX_ARM) && !defined(__linux__) || defined(UWP_SDL2) && !defined(__EMSCRIPTEN__)
 int main(int argc, char *argv[])
 #elif defined(UWP)
 int main(Platform::Array<Platform::String^>^ args)

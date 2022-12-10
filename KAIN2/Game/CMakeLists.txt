@@ -28,15 +28,18 @@ set(RESOURCE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/KAIN2.RC")
 list(APPEND KAIN2_SRCS ${RESOURCE_PATH})
 
 if(ANDROID)
+
 #Recursively locate the source files for Emulator.
-file(GLOB_RECURSE EMULATOR_SPECIFIC_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/../Emulator/*.C ${CMAKE_CURRENT_SOURCE_DIR}/../Emulator/*.H)
+file(GLOB_RECURSE EMULATOR_SPECIFIC_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/../../Emulator/*.C ${CMAKE_CURRENT_SOURCE_DIR}/../../Emulator/*.H)
 list(FILTER EMULATOR_SPECIFIC_SRCS EXCLUDE REGEX "/Platform/Android/*")
 endif()
 
-if(ANDROID)
-include_directories(${EMULATOR_INCLUDE_DIR}/Core/)
-include_directories(${EMULATOR_INCLUDE_DIR}/Library/)
+include_directories(${KAIN2_ROOT})
+include_directories(${EMULATOR_PUBLIC_INCLUDE_DIR})
+include_directories(${EMULATOR_INCLUDE_DIR})
+include_directories(${EMULATOR_INCLUDE_DIR}/Library)
 
+if(ANDROID)
 add_library(
 ${PROJECT_NAME}
 SHARED
@@ -69,11 +72,6 @@ if(NOT EMSCRIPTEN)
 add_dependencies(${PROJECT_NAME} SDL2)
 endif()
 
-include_directories(${KAIN2_ROOT})
-include_directories(${EMULATOR_PUBLIC_INCLUDE_DIR})
-include_directories(${EMULATOR_INCLUDE_DIR})
-include_directories(${EMULATOR_INCLUDE_DIR}/Library)
-
 #Include all platform specific cmake files.
 include("Platform/Windows.cmake")
 include("Platform/Mingw.cmake")
@@ -93,18 +91,23 @@ OPTIONAL_DEFINE(KAIN2 "Enable/Disable KAIN2 code" ON)
 
 BuildPreProcessorDefinitions()
 
-if(NOT EMSCRIPTEN)
+if(EMSCRIPTEN)
 target_link_libraries(
 ${PROJECT_NAME}
 ${PSX_LIB}
-SDL2-static
-SDL2main
 ${OPENGL_gl_LIBRARY}
+)
+elseif(ANDROID)
+target_link_libraries(
+${PROJECT_NAME}
+${PSX_LIB}
 )
 else()
 target_link_libraries(
 ${PROJECT_NAME}
 ${PSX_LIB}
+SDL2-static
+SDL2main
 ${OPENGL_gl_LIBRARY}
 )
 endif()
