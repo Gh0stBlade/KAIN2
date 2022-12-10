@@ -3,7 +3,7 @@
 
 #if defined(PSXPC_VERSION)
 #include "Game/CORE.H"
-#if defined(SDL2) || defined(__ANDROID__)&& defined(UWP_SDL2) || defined(_WIN32) && !defined(SN_TARGET_PSP2)  && !defined(PLATFORM_NX)  && !defined(PLATFORM_NX_ARM)
+#if (defined(SDL2) || defined(__ANDROID__)) && defined(UWP_SDL2) || defined(_WIN32) && !defined(SN_TARGET_PSP2)  && !defined(PLATFORM_NX)  && !defined(PLATFORM_NX_ARM) && !defined(__EMSCRIPTEN__)
 #undef R13
 #undef R12
 #undef R11
