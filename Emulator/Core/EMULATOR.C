@@ -5229,8 +5229,18 @@ void Emulator_HandleTouchEvent(int x, int y)
 }
 #endif
 
+#if defined(__EMSCRIPTEN__)
+EM_JS(int, Emulator_GetCanvasWidth, (), { return canvas.width; });
+EM_JS(int, Emulator_GetCanvasHeight, (), { return canvas.height; });
+#endif
+
 void Emulator_DoPollEvent()
 {
+#if defined(__EMSCRIPTEN__)
+	windowWidth = Emulator_GetCanvasWidth();
+	windowHeight = Emulator_GetCanvasHeight();
+#endif
+
 #if defined(SDL2)
 	SDL_Event event;
 	while (SDL_PollEvent(&event))
@@ -5285,13 +5295,11 @@ void Emulator_DoPollEvent()
 			case SDL_WINDOWEVENT:
 				switch (event.window.event)
 				{
+				case SDL_WINDOWEVENT_SIZE_CHANGED:
 				case SDL_WINDOWEVENT_RESIZED:
 					windowWidth = event.window.data1;
 					windowHeight = event.window.data2;
 
-#if defined(__EMSCRIPTEN__)
-					SDL_SetWindowSize(g_window, windowWidth, windowHeight);
-#endif
 					g_resetDeviceOnNextFrame = TRUE;
 					break;
 				case SDL_WINDOWEVENT_CLOSE:
