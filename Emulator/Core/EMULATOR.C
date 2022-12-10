@@ -5242,10 +5242,8 @@ void Emulator_DoPollEvent()
 			{
 				g_touchHeld = TRUE;
 
-				g_touchAxis[0] = (int)event.tfinger.x;
-				g_touchAxis[1] = (int)event.tfinger.y;
-
-				Emulator_HandleTouchEvent(g_touchAxis[0], g_touchAxis[1]);///@FIXME hack, don't know why this updates weirdly on emscripten yet!
+				g_touchAxis[0] = (int)(event.tfinger.x * (float)windowWidth);
+				g_touchAxis[1] = (int)(event.tfinger.y * (float)windowHeight);
 				break;
 			}
 			case SDL_MOUSEBUTTONDOWN:
@@ -5263,8 +5261,6 @@ void Emulator_DoPollEvent()
 
 				g_touchAxis[0] = 0;
 				g_touchAxis[1] = 0;
-
-				Emulator_HandleTouchEvent(g_touchAxis[0], g_touchAxis[1]);///@FIXME hack, don't know why this updates weirdly on emscripten yet!
 
 				break;
 			}
@@ -5643,8 +5639,16 @@ void Emulator_TakeScreenshot(int mode)
 
 void Emulator_CreateMemoryCard(int channel)
 {
-	char buf[16];
+	char buf[128];
+
+#if defined(__ANDROID__)
+	sprintf(&buf[0], "/storage/self/primary/TOMB5/%ld.MCD", channel);
+#elif defined(_XBOX)
+	sprintf(&buf[0], "game:/%ld.MCD", channel);
+#else
 	sprintf(&buf[0], "%ld.MCD", channel);
+#endif
+
 	FILE* f = fopen(buf, "wb+");
 #define MEMCARD_LENGTH 0x1C000
 	unsigned short magic = 0x434D;
