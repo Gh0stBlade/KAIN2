@@ -35,7 +35,6 @@ set(EMULATOR_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR} CACHE INTERNAL "")
 set(EMULATOR_TARGET_NAME ${PROJECT_NAME} CACHE INTERNAL "")
 
 #Group solution source files to correct folders.
-#source_group(${PLATFORM_SPECIFIC_FOLDER_NAME} FILES ${EMULATOR_SPECIFIC_SRCS})
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${EMULATOR_SPECIFIC_SRCS})
 
 if(NOT ANDROID)
@@ -70,6 +69,7 @@ OPTIONAL_DEFINE(USE_32_BIT_ADDR "Enable/Disable 32-bit address for tag" ON)
 OPTIONAL_DEFINE(KAIN2 "Enable/Disable KAIN2 code" ON)
 
 if(NOT ANDROID)
+
 BuildPreProcessorDefinitions()
 
 set_target_properties(

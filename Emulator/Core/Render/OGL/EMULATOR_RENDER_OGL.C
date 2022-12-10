@@ -4,9 +4,9 @@
 #include "Core/Render/EMULATOR_RENDER_COMMON.H"
 #include <stdio.h>
 
-#include <gl/GL.h>
-
 #if defined(OGL)
+
+#include <gl/GL.h>
 
 // hint to the driver to use discrete GPU
 extern "C" {

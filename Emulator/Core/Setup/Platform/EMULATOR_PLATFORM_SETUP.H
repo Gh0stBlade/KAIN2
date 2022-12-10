@@ -82,11 +82,14 @@
 #define OGLES_VERSION (3)
 #define SDL2
 //Crashing / locking up in browser so disabled for now //#define OPENAL
+#define TOUCH_UI
 #elif defined(__ANDROID__)
 #define OGLES
 #define OGLES_VERSION (3)
 #define SDL2
 #define NO_FILESYSTEM
+#define NO_BOUNTY_LIST_EXPORT
+#define TOUCH_UI
 #elif defined(_XBOX)
 #define XED3D
 #endif

@@ -189,8 +189,6 @@ void UpdateGameControllerAnalogInput(SDL_GameController* pad, void* analogR, voi
 
 	if (ar != NULL)
 	{
-		constexpr int test = TRANSLATE(1);
-
 		ar->x = TRANSLATE(SDL_GameControllerGetAxis(pad, SDL_CONTROLLER_AXIS_RIGHTX));
 		ar->y = TRANSLATE(SDL_GameControllerGetAxis(pad, SDL_CONTROLLER_AXIS_RIGHTY));
 	}

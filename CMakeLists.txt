@@ -52,9 +52,6 @@ endif()
 
 #We want to be able to group projects in folders
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-if(ANDROID)
-add_subdirectory(${ROOT_DIR}/External/SDL/ EXCLUDE_FROM_ALL)
-endif()
 add_subdirectory(External)
 add_subdirectory(Emulator)
 add_subdirectory(KAIN2)

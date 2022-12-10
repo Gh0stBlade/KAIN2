@@ -79,8 +79,16 @@ long MemCardExist(long chan)
 	if (!bCanUseMemoryCardFuncs)
 		return 0;
 
-	char buf[16];
+	char buf[128];
+	
+#if defined(__ANDROID__)
+	sprintf(&buf[0], "/storage/self/primary/TOMB5/%ld.MCD", chan);
+#elif defined(_XBOX)
+	sprintf(&buf[0], "game:/%ld.MCD", chan);
+#else
 	sprintf(&buf[0], "%ld.MCD", chan);
+#endif
+
 	memoryCards[chan] = fopen(&buf[0], "rb");
 
 	memoryCardCmds = McFuncExist;
@@ -116,8 +124,15 @@ long MemCardAccept(long chan)
 	if (!bCanUseMemoryCardFuncs)
 		return 0;
 
-	char buf[16];
+	char buf[128];
+#if defined(__ANDROID__)
+	sprintf(&buf[0], "/storage/self/primary/TOMB5/%ld.MCD", chan);
+#elif defined(_XBOX)
+	sprintf(&buf[0], "game:/%ld.MCD", chan);
+#else
 	sprintf(&buf[0], "%ld.MCD", chan);
+#endif
+
 	memoryCards[chan] = fopen(&buf[0], "rb");
 
 	if (memoryCards[chan] == NULL)
@@ -150,8 +165,14 @@ long MemCardOpen(long chan, char* file, long flag)
 	if (!bCanUseMemoryCardFuncs)
 		return 0;
 
-	char buf[16];
+	char buf[128];
+#if defined(__ANDROID__)
+	sprintf(&buf[0], "/storage/self/primary/TOMB5/%ld.MCD", chan);
+#elif defined(_XBOX)
+	sprintf(&buf[0], "game:/%ld.MCD", chan);
+#else
 	sprintf(&buf[0], "%ld.MCD", chan);
+#endif
 
 	switch (flag)
 	{
@@ -283,8 +304,14 @@ MemCB MemCardCallback(MemCB func)
 
 long MemCardGetDirentry(long chan, char* name, struct DIRENTRY* dir, long* files, long ofs, long max)
 {
-	char buf[16];
+	char buf[128];
+#if defined(__ANDROID__)
+	sprintf(&buf[0], "/storage/self/primary/TOMB5/%ld.MCD", chan);
+#elif defined(_XBOX)
+	sprintf(&buf[0], "game:/%ld.MCD", chan);
+#else
 	sprintf(&buf[0], "%ld.MCD", chan);
+#endif
 	memoryCards[chan] = fopen(&buf[0], "rb");///@FIXME potential bug, if this is called twice then we can open a card twice. Maybe add a flag for whether memcard is open or not if original SDK did this.
 	fseek(memoryCards[chan], 0, SEEK_SET);
 
