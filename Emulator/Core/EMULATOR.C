@@ -5248,6 +5248,24 @@ void Emulator_DoPollEvent()
 		switch (event.type)
 		{
 #if defined(TOUCH_UI)
+			case SDL_MOUSEMOTION:
+			{
+				if (g_touchHeld)
+				{
+					g_touchAxis[0] = (int)event.button.x;
+					g_touchAxis[1] = (int)event.button.y;
+				}
+				break;
+			}
+			case SDL_FINGERMOTION:
+			{
+				if (g_touchHeld)
+				{
+					g_touchAxis[0] = (int)(event.tfinger.x * (float)windowWidth);
+					g_touchAxis[1] = (int)(event.tfinger.y * (float)windowHeight);
+				}
+				break;
+			}
 			case SDL_FINGERDOWN:
 			{
 				g_touchHeld = TRUE;
