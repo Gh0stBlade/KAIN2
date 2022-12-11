@@ -3064,21 +3064,32 @@ void GAMELOOP_ChangeMode()
 }
 
 #if defined(__EMSCRIPTEN__)
-void GAMELOOP_RequestLevelChange(char* name, short number, struct GameTracker* gameTracker)
-#else
-void GAMELOOP_RequestLevelChange(char* name, short number, struct GameTracker* gameTracker)
+extern "C"
+{
+void EMSCRIPTEN_KEEPALIVE GAMELOOP_RequestLevelChangeHTML(char* name, short number)
+{
+	struct GameTracker* gameTracker;
+
+	gameTracker = &gameTrackerX;
+
+	if (gameTrackerX.levelChange == 0)
+	{
+		gameTrackerX.gameFlags |= 0x1;
+
+		SOUND_ResetAllSound();
+
+		sprintf(gameTracker->baseAreaName, "%s%d", name, number);
+
+		gameTrackerX.levelChange = 1;
+
+		gameTrackerX.levelDone = 1;
+	}
+}
+}
 #endif
+void GAMELOOP_RequestLevelChange(char* name, short number, struct GameTracker* gameTracker)
 {
 #if defined(PSX_VERSION)
-
-#if defined(__EMSCRIPTEN__)
-	//Hack
-	if (gameTracker == NULL)
-	{
-		gameTracker = &gameTrackerX;
-	}
-#endif
-	
 	if (gameTrackerX.levelChange == 0)
 	{
 		gameTrackerX.gameFlags |= 0x1;

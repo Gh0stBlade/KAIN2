@@ -243,10 +243,14 @@ extern void GAMELOOP_ModeStartRunning(); // 0x80030920
 extern void GAMELOOP_ModeStartPause(); // 0x800309F8
 extern void GAMELOOP_ChangeMode(); // 0x80030AD0
 #if defined(__EMSCRIPTEN__)
-extern void GAMELOOP_RequestLevelChange(char* name, short number, struct GameTracker* gameTracker); // 0x80030E7C
-#else
-extern void GAMELOOP_RequestLevelChange(char* name, short number, struct GameTracker* gameTracker); // 0x80030E7C
+extern "C"
+{
+extern void EMSCRIPTEN_KEEPALIVE GAMELOOP_RequestLevelChangeHTML(char* name, short number); // 0x80030E7C
+}
 #endif
+
+extern void GAMELOOP_RequestLevelChange(char* name, short number, struct GameTracker* gameTracker); // 0x80030E7C
+
 extern void PSX_GameLoop(struct GameTracker *gameTracker); // 0x80030EFC
 extern MATRIX * GAMELOOP_GetMatrices(int numMatrices); // 0x80030F28
 extern struct GameTracker * GAMELOOP_GetGT(); // 0x80030F5C
