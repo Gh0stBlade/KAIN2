@@ -28,9 +28,11 @@
 #include <assert.h>
 #include <stdlib.h>
 
+#define MAX_NUM_FINGER_TOUCHES (2)
 int g_useHintedTouchUIFont = FALSE;
 int g_touchHeld = FALSE;
-int g_touchAxis[2] = { 0, 0 };
+int g_numTouchFingers = 0;
+int g_touchAxis[MAX_NUM_FINGER_TOUCHES][2] = { 0, 0, 0, 0};
 
 #if defined(SDL2) || (defined(OGLES) && defined(_WINDOWS))
 extern SDL_Window* g_window;
@@ -5248,47 +5250,104 @@ void Emulator_DoPollEvent()
 		switch (event.type)
 		{
 #if defined(TOUCH_UI)
+			case SDL_MULTIGESTURE:
+			{
+				g_numTouchFingers = event.mgesture.numFingers > MAX_NUM_FINGER_TOUCHES ? MAX_NUM_FINGER_TOUCHES : event.mgesture.numFingers;
+
+				break;
+			}
 			case SDL_MOUSEMOTION:
 			{
 				if (g_touchHeld)
 				{
-					g_touchAxis[0] = (int)event.button.x;
-					g_touchAxis[1] = (int)event.button.y;
+					g_numTouchFingers = 1;
+
+					g_touchAxis[0][0] = (int)event.button.x;
+					g_touchAxis[0][1] = (int)event.button.y;
 				}
 				break;
 			}
 			case SDL_FINGERMOTION:
 			{
-				if (g_touchHeld)
+				if (g_numTouchFingers > 0)
 				{
-					g_touchAxis[0] = (int)(event.tfinger.x * (float)windowWidth);
-					g_touchAxis[1] = (int)(event.tfinger.y * (float)windowHeight);
+					if (g_touchHeld)
+					{
+						for (int i = 0; i < g_numTouchFingers; i++)
+						{
+							SDL_Finger* f = SDL_GetTouchFinger(event.mgesture.touchId, i);
+
+							if (f != NULL)
+							{
+								g_touchAxis[i][0] = (int)(f->x * (float)windowWidth);
+								g_touchAxis[i][1] = (int)(f->y * (float)windowHeight);
+							}
+						}
+					}
 				}
+				else
+				{
+					g_touchAxis[0][0] = (int)(event.tfinger.x * (float)windowWidth);
+					g_touchAxis[0][1] = (int)(event.tfinger.y * (float)windowHeight);
+				}
+
 				break;
 			}
 			case SDL_FINGERDOWN:
 			{
-				g_touchHeld = TRUE;
+				if (g_numTouchFingers > 0)
+				{
+					for (int i = 0; i < g_numTouchFingers; i++)
+					{
+						SDL_Finger* f = SDL_GetTouchFinger(event.mgesture.touchId, i);
 
-				g_touchAxis[0] = (int)(event.tfinger.x * (float)windowWidth);
-				g_touchAxis[1] = (int)(event.tfinger.y * (float)windowHeight);
+						if (f != NULL)
+						{
+							g_touchHeld = TRUE;
+
+							g_touchAxis[i][0] = (int)(f->x * (float)windowWidth);
+							g_touchAxis[i][1] = (int)(f->y * (float)windowHeight);
+						}
+					}
+				}
+				else
+				{
+					g_numTouchFingers = 1;
+
+					g_touchHeld = TRUE;
+
+					g_touchAxis[0][0] = (int)(event.tfinger.x * (float)windowWidth);
+					g_touchAxis[0][1] = (int)(event.tfinger.y * (float)windowHeight);
+				}
 				break;
 			}
 			case SDL_MOUSEBUTTONDOWN:
 			{
 				g_touchHeld = TRUE;
 
-				g_touchAxis[0] = (int)event.button.x;
-				g_touchAxis[1] = (int)event.button.y;
+				g_numTouchFingers = 1;
+
+				g_touchAxis[0][0] = (int)event.button.x;
+				g_touchAxis[0][1] = (int)event.button.y;
 
 				break;
 			}
 			case SDL_FINGERUP:
 			{
-				g_touchHeld = FALSE;
+				for (int i = 0; i < g_numTouchFingers; i++)
+				{
+					SDL_Finger* f = SDL_GetTouchFinger(event.mgesture.touchId, i);
 
-				g_touchAxis[0] = 0;
-				g_touchAxis[1] = 0;
+					if (f == NULL)
+					{
+						g_touchAxis[i][0] = 0;
+						g_touchAxis[i][1] = 0;
+
+						g_numTouchFingers--;
+					}
+				}
+
+				g_touchHeld = g_numTouchFingers > 0 ? TRUE : FALSE;
 
 				break;
 			}
@@ -5296,8 +5355,8 @@ void Emulator_DoPollEvent()
 			{
 				g_touchHeld = FALSE;
 
-				g_touchAxis[0] = 0;
-				g_touchAxis[1] = 0;
+				g_numTouchFingers = 0;
+				
 				break;
 			}
 #endif
@@ -5862,7 +5921,11 @@ void Emulator_UpdateInput(int poll)
 
 	if (padAllowCommunication)
 	{
-		Emulator_HandleTouchEvent(g_touchAxis[0], g_touchAxis[1]);
+		for (int i = 0; i < g_numTouchFingers; i++)
+		{
+			Emulator_HandleTouchEvent(g_touchAxis[i][0], g_touchAxis[i][1]);
+		}
+
 		kbInputs = UpdateKeyboardInput();
 	}
 	else
