@@ -414,7 +414,9 @@ int Emulator_InitialiseGLESContext(char* windowName)
 	windowFlags |= SDL_WINDOW_RESIZABLE;
 #endif
 
+#if !defined(__EMSCRIPTEN__)
 	eglDisplay = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+#endif
 
 	g_window = SDL_CreateWindow(windowName, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, windowWidth, windowHeight, windowFlags);
 
@@ -423,6 +425,7 @@ int Emulator_InitialiseGLESContext(char* windowName)
 		eprinterr("Failed to create SDL window!\n");
 	}
 
+#if !defined(__EMSCRIPTEN__)
 	if (!eglInitialize(eglDisplay, &majorVersion, &minorVersion))
 	{
 		eprinterr("eglInitialize failure! Error: %x\n", eglGetError());
@@ -439,18 +442,18 @@ int Emulator_InitialiseGLESContext(char* windowName)
 			printf("Error code: %d\n", eglGetError());
 		}
 	}
-
+#endif
 	SDL_SysWMinfo systemInfo;
 	SDL_VERSION(&systemInfo.version);
 	SDL_GetWindowWMInfo(g_window, &systemInfo);
-#if defined(__EMSCRIPTEN__)
-	EGLNativeWindowType dummyWindow;
-	eglSurface = eglCreateWindowSurface(eglDisplay, eglConfig, (EGLNativeWindowType)dummyWindow, NULL);
-#elif defined(__ANDROID__)
+
+#if defined(__ANDROID__)
 	eglSurface = systemInfo.info.android.surface;
 #elif defined(__WINDOWS__)
 	eglSurface = eglCreateWindowSurface(eglDisplay, eglConfig, (EGLNativeWindowType)systemInfo.info.win.window, NULL);
 #endif
+
+#if !defined(__EMSCRIPTEN__)
 	if (eglSurface == EGL_NO_SURFACE)
 	{
 		eprinterr("eglSurface failure! Error: %x\n", eglGetError());
@@ -466,7 +469,9 @@ int Emulator_InitialiseGLESContext(char* windowName)
 	}
 
 	eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext);
-
+#else
+	SDL_GL_CreateContext(g_window);
+#endif
 	return TRUE;
 }
 

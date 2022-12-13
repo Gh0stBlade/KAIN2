@@ -97,18 +97,6 @@ char spuSoundBuffer[524288];
 long spuWriteSizes[1024];
 int lastWriteIndex = 0;
 
-#if defined(__EMSCRIPTEN__)
-void Emulator_PollAudio()
-{
-#if defined(OPENAL)
-    int numFrames = 0;
-
-    while (numFrames < 1)
-        alcGetIntegerv(alDevice, ALC_CAPTURE_SAMPLES, 1, &numFrames);
-#endif
-}
-#endif
-
 int _spu_note2pitch(int a0, int a1, int a2, int a3)
 {
     a3 += a1;
