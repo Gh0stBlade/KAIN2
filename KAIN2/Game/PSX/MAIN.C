@@ -827,8 +827,6 @@ void GameLoop()
 
 	InitialiseGame(NULL);
 
-	Emulator_PollAudio();
-
 	switch (mainTrackerX.mainState)
 	{
 	case 1:
