@@ -215,7 +215,7 @@ int STREAM_PollLoadQueue()
 			FONT_Print("%s status %d\n", &queueEntry->loadEntry.fileName[0], queueEntry->status);
 		}
 		
-		if (!(gameTrackerX.gameFlags & 0x8000000) || (queueEntry->status != 5 && queueEntry->status != 8 && queueEntry->status != 10))
+		if (!(gameTrackerX.gameFlags & 0x800) || (queueEntry->status != 5 && queueEntry->status != 8 && queueEntry->status != 10))
 		{
 			switch (queueEntry->status)
 			{
