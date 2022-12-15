@@ -5798,9 +5798,8 @@ void Emulator_DoDebugKeys(int nKey, int down)
 			if (g_swapInterval != 0)
 			{
 				g_swapInterval = 0;
-#if !defined(VULKAN)
-				Emulator_ResetDevice();
-#endif
+
+				g_resetDeviceOnNextFrame = TRUE;
 			}
 		}
 		else
@@ -5808,9 +5807,8 @@ void Emulator_DoDebugKeys(int nKey, int down)
 			if (g_swapInterval != SWAP_INTERVAL)
 			{
 				g_swapInterval = SWAP_INTERVAL;
-#if !defined(VULKAN)
-				Emulator_ResetDevice();
-#endif
+
+				g_resetDeviceOnNextFrame = TRUE;
 			}
 		}
 	}
@@ -6212,7 +6210,7 @@ void Emulator_EndScene()
 
 	if (g_resetDeviceOnNextFrame == TRUE)
 	{
-		Emulator_ResetDevice();
+		Emulator_ResetDevice(TRUE);
 		g_resetDeviceOnNextFrame = FALSE;
 	}
 
@@ -6245,29 +6243,13 @@ void Emulator_ShutDown()
 	//counters[spec].timerId = std::thread(Emulator_CounterWrapper, spec);
 #endif
 
-#if defined(OGL) || defined(OGLES)
-	Emulator_DestroyTexture(vramTexture);
-	Emulator_DestroyTexture(whiteTexture);
-	Emulator_DestroyTexture(rg8lutTexture);
-#endif
-
 #if defined(SDL2)
 	SDL_QuitSubSystem(SDL_INIT_GAMECONTROLLER);
 #endif
 
-#if defined(D3D9) || defined(XED3D)
-	d3ddev->Release();
-	d3d->Release();
-	///@TODO release shaders.
-#elif defined(D3D11)
-
 	Emulator_DestroyRender();
-	SPU_Destroy();
 
-	///@TODO release shaders.
-#elif defined(D3D12)
-	///@TODO D3D12
-#endif
+	SPU_Destroy();
 
 #if defined(SDL2)
 	if (g_window != NULL)

@@ -17,6 +17,8 @@ extern void Emulator_DestroyConstantBuffers();
 extern void Emulator_CreateRasterState(int wireframe);
 extern void Emulator_UpdateProjectionConstantBuffer(float* ortho);
 extern void Emulator_SetConstantBuffers();
+extern void Emulator_CreateVertexBuffer();
+extern void Emulator_CreateIndexBuffer();
 
 const char* renderBackendName = "D3D11";
 
@@ -32,9 +34,15 @@ ID3D11Device* d3ddev = NULL;
 ID3D11DeviceContext* d3dcontext = NULL;
 
 #if defined(UWP)
-IDXGISwapChain1* swapChain;
+IDXGISwapChain1* swapChain = NULL;
+IDXGIDevice3* dxgiDevice = NULL;
+IDXGIAdapter* dxgiAdapter = NULL;
+IDXGIFactory2* dxgiFactory = NULL;
 #else
-IDXGISwapChain* swapChain;
+IDXGISwapChain* swapChain = NULL;
+IDXGIDevice* dxgiDevice = NULL;
+IDXGIAdapter* dxgiAdapter = NULL;
+IDXGIFactory* dxgiFactory = NULL;
 #endif
 ID3D11RenderTargetView* renderTargetView = NULL;
 ID3D11Buffer* projectionMatrixBuffer = NULL;
@@ -87,10 +95,132 @@ ShaderID Shader_Compile_Internal(const DWORD* vs_data, const DWORD* ps_data, con
 	return shader;
 }
 
-void Emulator_ResetDevice()
+void Emulator_DestroyVertexBuffer()
 {
-	Emulator_DestroyRender();
+	if (dynamic_vertex_buffer)
+	{
+		dynamic_vertex_buffer->Release();
+		dynamic_vertex_buffer = NULL;
+	}
+}
 
+void Emulator_DestroyIndexBuffer()
+{
+	if (dynamic_index_buffer)
+	{
+		dynamic_index_buffer->Release();
+		dynamic_index_buffer = NULL;
+	}
+}
+
+void Emulator_DestroyRasterState()
+{
+	d3dcontext->RSSetState(NULL);
+
+	if (rasterState != NULL)
+	{
+		rasterState->Release();
+		rasterState = NULL;
+	}
+}
+
+void Emulator_DestroySamplerStates()
+{
+	ID3D11SamplerState* samplerStates[2] = { NULL, NULL };
+
+	d3dcontext->PSSetSamplers(0, 2, samplerStates);
+
+	if (samplerState != NULL)
+	{
+		samplerState->Release();
+		samplerState = NULL;
+	}
+
+	if (rg8lutSamplerState != NULL)
+	{
+		rg8lutSamplerState->Release();
+		rg8lutSamplerState = NULL;
+	}
+}
+
+void Emulator_DestroyBlendState()
+{
+	FLOAT blendFactor[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	d3dcontext->OMSetBlendState(NULL, blendFactor, -1);
+	
+	if (blendState != NULL)
+	{
+		blendState->Release();
+		blendState = NULL;
+	}
+}
+
+void Emulator_DestroySwapChain()
+{
+	if (swapChain != NULL)
+	{
+		swapChain->Release();
+		swapChain = NULL;
+	}
+
+	if (dxgiDevice != NULL)
+	{
+		dxgiDevice->Release();
+		dxgiDevice = NULL;
+	}
+
+	if (dxgiAdapter != NULL)
+	{
+		dxgiAdapter->Release();
+		dxgiAdapter = NULL;
+	}
+
+	if (dxgiFactory != NULL)
+	{
+		dxgiFactory->Release();
+		dxgiFactory = NULL;
+	}
+}
+
+void Emulator_DestroyBackBufferView()
+{
+	if (renderTargetView != NULL)
+	{
+		ID3D11RenderTargetView* nullViews[] = { NULL };
+		d3dcontext->OMSetRenderTargets(_countof(nullViews), nullViews, NULL);
+
+		renderTargetView->Release();
+		renderTargetView = NULL;
+	}
+}
+
+void Emulator_DestroyD3D11Context()
+{
+	if (d3dcontext != NULL)
+	{
+		d3dcontext->Flush();
+		d3dcontext->ClearState();
+		d3dcontext->Release();
+		d3dcontext = NULL;
+	}
+}
+
+void Emulator_DestroyD3D11Device()
+{
+	if (d3ddev != NULL)
+	{
+		d3ddev->Release();
+		d3ddev = NULL;
+	}
+}
+
+void Emulator_DestroyRender()
+{
+	Emulator_ResetDevice(FALSE);
+}
+
+void Emulator_CreateD3D11Device()
+{
 #if defined(SDL2)
 	SDL_SysWMinfo wmInfo;
 	SDL_VERSION(&wmInfo.version);
@@ -150,121 +280,20 @@ void Emulator_ResetDevice()
 	HRESULT hr = D3D11CreateDevice(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, deviceCreationFlags, NULL, 0, D3D11_SDK_VERSION, &d3ddev, NULL, &d3dcontext);
 	assert(!FAILED(hr));
 
-	IDXGIDevice3* dxgiDevice = NULL;
-	IDXGIAdapter* dxgiAdapter = NULL;
-	IDXGIFactory2* dxgiFactory = NULL;
-
-	hr = d3ddev->QueryInterface(__uuidof(IDXGIDevice3), (void**)&dxgiDevice);
-
-	assert(!FAILED(hr));
-
-	hr = dxgiDevice->GetAdapter(&dxgiAdapter);
-
-	assert(!FAILED(hr));
-
-	hr = dxgiAdapter->GetParent(__uuidof(IDXGIFactory2), (void**)&dxgiFactory);
-
-	assert(!FAILED(hr));
-
-#if defined(UWP) && defined(SDL2)
-	hr = dxgiFactory->CreateSwapChainForCoreWindow(d3ddev, reinterpret_cast<IUnknown*>(wmInfo.info.winrt.window), &sd, NULL, &swapChain);
-#else
-	hr = dxgiFactory->CreateSwapChainForComposition(d3ddev, &sd, NULL, &swapChain);
-#endif
-
 	///@FIXME Crash-UWP likely something not being free'd resulting in window not being free.
 	assert(!FAILED(hr));
 #else
-	HRESULT hr = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, deviceCreationFlags, NULL, 0, D3D11_SDK_VERSION, &sd, &swapChain, &d3ddev, NULL, &d3dcontext);
+	HRESULT hr = D3D11CreateDevice(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, deviceCreationFlags, NULL, 0, D3D11_SDK_VERSION, &d3ddev, NULL, &d3dcontext);
 	eassert(!FAILED(hr));
 #endif
-	ID3D11Texture2D* backBuffer;
-	hr = swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&backBuffer);
-	eassert(!FAILED(hr));
-
-	hr = d3ddev->CreateRenderTargetView(backBuffer, NULL, &renderTargetView);
-	eassert(!FAILED(hr));
-
-	backBuffer->Release();
-
-	D3D11_BUFFER_DESC vbd;
-	ZeroMemory(&vbd, sizeof(vbd));
-	vbd.Usage = D3D11_USAGE_DYNAMIC;
-	vbd.ByteWidth = sizeof(Vertex) * MAX_NUM_POLY_BUFFER_VERTICES;
-	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	vbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	vbd.MiscFlags = 0;
-
-	hr = d3ddev->CreateBuffer(&vbd, NULL, &dynamic_vertex_buffer);
-	eassert(!FAILED(hr));
-
-	D3D11_BUFFER_DESC ibd;
-	ZeroMemory(&ibd, sizeof(ibd));
-	ibd.Usage = D3D11_USAGE_DYNAMIC;
-	ibd.ByteWidth = sizeof(unsigned short) * MAX_NUM_INDEX_BUFFER_INDICES;
-	ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	ibd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	ibd.MiscFlags = 0;
-
-	hr = d3ddev->CreateBuffer(&ibd, NULL, &dynamic_index_buffer);
-	eassert(!FAILED(hr));
-
-	D3D11_TEXTURE2D_DESC td;
-	ZeroMemory(&td, sizeof(td));
-	td.ArraySize = 1;
-	td.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	td.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	td.Format = DXGI_FORMAT_R8G8_UNORM;
-	td.Width = VRAM_WIDTH;
-	td.Height = VRAM_HEIGHT;
-	td.MipLevels = 1;
-	td.MiscFlags = 0;
-	td.SampleDesc.Count = 1;
-	td.SampleDesc.Quality = 0;
-	td.Usage = D3D11_USAGE_DYNAMIC;
-	hr = d3ddev->CreateTexture2D(&td, NULL, &vramBaseTexture);
-	eassert(!FAILED(hr));
-	D3D11_SHADER_RESOURCE_VIEW_DESC srvd;
-	ZeroMemory(&srvd, sizeof(D3D11_SHADER_RESOURCE_VIEW_DESC));
-	srvd.Format = td.Format;
-	srvd.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-	srvd.Texture2D.MostDetailedMip = 0;
-	srvd.Texture2D.MipLevels = 1;
-
-	d3ddev->CreateShaderResourceView(vramBaseTexture, &srvd, &vramTexture);
-	eassert(!FAILED(hr));
-
-	Emulator_CreateGlobalShaders();
-	Emulator_CreateConstantBuffers();
-	Emulator_GenerateCommonTextures();
-
-	vram_need_update = TRUE;
-	UINT offset = 0;
-	UINT stride = sizeof(Vertex);
-	d3dcontext->IASetVertexBuffers(0, 1, &dynamic_vertex_buffer, &stride, &offset);
-	d3dcontext->IASetIndexBuffer(dynamic_index_buffer, DXGI_FORMAT_R16_UINT, 0);
-	d3dcontext->OMSetRenderTargets(1, &renderTargetView, NULL);
-	d3dcontext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	Emulator_CreateRasterState(FALSE);
 }
 
-int Emulator_InitialiseD3D11Context(char* windowName)
+void Emulator_CreateD3D11SwapChain()
 {
 #if defined(SDL2)
 	SDL_SysWMinfo wmInfo;
-
-	if (g_overrideHWND == NULL)
-	{
-		g_window = SDL_CreateWindow(windowName, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, windowWidth, windowHeight, SDL_WINDOW_RESIZABLE);
-		if (g_window == NULL)
-		{
-			eprinterr("Failed to initialise SDL window!\n");
-			return FALSE;
-		}
-		
-		SDL_VERSION(&wmInfo.version);
-		SDL_GetWindowWMInfo(g_window, &wmInfo);
-	}
+	SDL_VERSION(&wmInfo.version);
+	SDL_GetWindowWMInfo(g_window, &wmInfo);
 #endif
 
 	DXGI_MODE_DESC bd;
@@ -289,8 +318,8 @@ int Emulator_InitialiseD3D11Context(char* windowName)
 	sd.BufferDesc = bd;
 #else
 	sd.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
-	sd.Width = Emulator_GetWindowWidth();
-	sd.Height = Emulator_GetWindowHeight();
+	sd.Width = windowWidth;
+	sd.Height = windowHeight;
 #endif
 #if !defined(UWP)
 	sd.BufferCount = 1;
@@ -305,49 +334,23 @@ int Emulator_InitialiseD3D11Context(char* windowName)
 #else
 	sd.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 #endif
+
 #if defined(SDL2) && !defined(UWP_SDL2)
 	sd.OutputWindow = g_overrideHWND == NULL ? wmInfo.info.win.window : g_overrideHWND;
 #endif
 
-#if defined(_DEBUG)
-	unsigned int deviceCreationFlags = D3D11_CREATE_DEVICE_DEBUG;
-#else
-	unsigned int deviceCreationFlags = 0;
-#endif
-
 #if defined(UWP)
-
-	HRESULT hr = D3D11CreateDevice(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, deviceCreationFlags, NULL, 0, D3D11_SDK_VERSION, &d3ddev, NULL, &d3dcontext);
-
-	if (!SUCCEEDED(hr)) {
-		eprinterr("Failed to initialise D3D Device\n");
-		return FALSE;
-	}
-
-	IDXGIDevice3* dxgiDevice = NULL;
-	IDXGIAdapter* dxgiAdapter = NULL;
-	IDXGIFactory2* dxgiFactory = NULL;
-
 	hr = d3ddev->QueryInterface(__uuidof(IDXGIDevice3), (void**)&dxgiDevice);
 
-	if (!SUCCEEDED(hr)) {
-		eprinterr("Failed to query interface of dxgiDevice\n");
-		return FALSE;
-	}
+	assert(!FAILED(hr));
 
 	hr = dxgiDevice->GetAdapter(&dxgiAdapter);
 
-	if (!SUCCEEDED(hr)) {
-		eprinterr("Failed to get adapter\n");
-		return FALSE;
-	}
+	assert(!FAILED(hr));
 
 	hr = dxgiAdapter->GetParent(__uuidof(IDXGIFactory2), (void**)&dxgiFactory);
 
-	if (!SUCCEEDED(hr)) {
-		eprinterr("Failed to get factory\n");
-		return FALSE;
-	}
+	assert(!FAILED(hr));
 
 #if defined(UWP) && defined(SDL2)
 	hr = dxgiFactory->CreateSwapChainForCoreWindow(d3ddev, reinterpret_cast<IUnknown*>(wmInfo.info.winrt.window), &sd, NULL, &swapChain);
@@ -355,33 +358,121 @@ int Emulator_InitialiseD3D11Context(char* windowName)
 	hr = dxgiFactory->CreateSwapChainForComposition(d3ddev, &sd, NULL, &swapChain);
 #endif
 
-	if (!SUCCEEDED(hr)) {
-		eprinterr("Failed to create swapchain\n");
-		return FALSE;
-	}
+	///@FIXME Crash-UWP likely something not being free'd resulting in window not being free.
+	assert(!FAILED(hr));
 #else
-	HRESULT hr = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, deviceCreationFlags, NULL, 0, D3D11_SDK_VERSION, &sd, &swapChain, &d3ddev, NULL, &d3dcontext);
+	HRESULT hr = d3ddev->QueryInterface(__uuidof(IDXGIDevice), (void**)&dxgiDevice);
 
-	if (!SUCCEEDED(hr)) {
-		eprinterr("Failed to initialise D3D\n");
-		return FALSE;
+	assert(!FAILED(hr));
+
+	hr = dxgiDevice->GetAdapter(&dxgiAdapter);
+
+	assert(!FAILED(hr));
+
+	hr = dxgiAdapter->GetParent(__uuidof(IDXGIFactory), (void**)&dxgiFactory);
+
+	assert(!FAILED(hr));
+
+	hr = dxgiFactory->CreateSwapChain(d3ddev, &sd, &swapChain);
+	eassert(!FAILED(hr));
+#endif	
+}
+
+void Emulator_CreateBackBufferView()
+{
+	ID3D11Texture2D* backBuffer;
+	HRESULT hr = swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&backBuffer);
+	eassert(!FAILED(hr));
+
+	hr = d3ddev->CreateRenderTargetView(backBuffer, NULL, &renderTargetView);
+	eassert(!FAILED(hr));
+
+	backBuffer->Release();
+
+	d3dcontext->OMSetRenderTargets(1, &renderTargetView, NULL);
+}
+
+void Emulator_ResetDevice(int recreate)
+{
+	if (!g_resettingDevice)
+	{
+		g_resettingDevice = TRUE;
+
+		Emulator_DestroyVertexBuffer();
+
+		Emulator_DestroyIndexBuffer();
+
+		Emulator_DestroyTextures();
+
+		Emulator_DestroySamplerStates();
+
+		Emulator_DestroyGlobalShaders();
+
+		Emulator_DestroyConstantBuffers();
+
+		Emulator_DestroyRasterState();
+
+		Emulator_DestroyBlendState();
+
+		Emulator_DestroyBackBufferView();
+
+		Emulator_DestroySwapChain();
+
+		Emulator_DestroyD3D11Context();
+
+#if defined(_DEBUG) && 1
+		ID3D11Debug* debug;
+		d3ddev->QueryInterface(IID_PPV_ARGS(&debug));
+		debug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
+		debug->Release();
+#endif
+
+		Emulator_DestroyD3D11Device();
+
+		Emulator_CreateD3D11Device();
+		
+		Emulator_CreateD3D11SwapChain();
+		
+		Emulator_CreateBackBufferView();
+
+		Emulator_CreateGlobalShaders();
+
+		Emulator_CreateConstantBuffers();
+
+		Emulator_GenerateCommonTextures();
+
+		Emulator_CreateVertexBuffer();
+
+		Emulator_CreateIndexBuffer();
+
+		g_resettingDevice = FALSE;
+	}
+}
+
+int Emulator_InitialiseD3D11Context(char* windowName)
+{
+#if defined(SDL2)
+	SDL_SysWMinfo wmInfo;
+
+	if (g_overrideHWND == NULL)
+	{
+		g_window = SDL_CreateWindow(windowName, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, windowWidth, windowHeight, SDL_WINDOW_RESIZABLE);
+		if (g_window == NULL)
+		{
+			eprinterr("Failed to initialise SDL window!\n");
+			return FALSE;
+		}
+		
+		SDL_VERSION(&wmInfo.version);
+		SDL_GetWindowWMInfo(g_window, &wmInfo);
 	}
 #endif
 
-	ID3D11Texture2D* backBuffer;
-	hr = swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&backBuffer);
-	if (!SUCCEEDED(hr)) {
-		eprinterr("Failed to get back buffer!\n");
-		return FALSE;
-	}
+	Emulator_CreateD3D11Device();
 
-	hr = d3ddev->CreateRenderTargetView(backBuffer, NULL, &renderTargetView);
-	if (!SUCCEEDED(hr)) {
-		eprinterr("Failed to create render target view!\n");
-		return FALSE;
-	}
+	Emulator_CreateD3D11SwapChain();
 
-	backBuffer->Release();
+	Emulator_CreateBackBufferView();
 
 	return TRUE;
 }
@@ -394,42 +485,122 @@ void Emulator_CreateGlobalShaders()
 	g_blit_shader = Shader_Compile(blit_shader);
 }
 
+void Emulator_DestroyTextures()
+{
+	if (whiteTexture != NULL)
+	{
+		whiteTexture->Release();
+		whiteTexture = NULL;
+	}
+
+	if (rg8lutTexture != NULL)
+	{
+		rg8lutTexture->Release();
+		rg8lutTexture = NULL;
+	}
+
+	if (vramTexture != NULL)
+	{
+		vramTexture->Release();
+		vramTexture = NULL;
+	}
+
+	if (vramBaseTexture != NULL)
+	{
+		vramBaseTexture->Release();
+		vramBaseTexture = NULL;
+	}
+}
+
 void Emulator_DestroyGlobalShaders()
 {
-	g_gte_shader_4.VS->Release();
-	g_gte_shader_4.VS = NULL;
-	g_gte_shader_4.PS->Release();
-	g_gte_shader_4.PS = NULL;
-	g_gte_shader_4.IL->Release();
-	g_gte_shader_4.IL = NULL;
-	g_gte_shader_8.VS->Release();
-	g_gte_shader_8.VS = NULL;
-	g_gte_shader_8.PS->Release();
-	g_gte_shader_8.PS = NULL;
-	g_gte_shader_8.IL->Release();
-	g_gte_shader_8.IL = NULL;
-	g_gte_shader_16.VS->Release();
-	g_gte_shader_16.VS = NULL;
-	g_gte_shader_16.PS->Release();
-	g_gte_shader_16.PS = NULL;
-	g_gte_shader_16.IL->Release();
-	g_gte_shader_16.IL = NULL;
-	g_blit_shader.VS->Release();
-	g_blit_shader.VS = NULL;
-	g_blit_shader.PS->Release();
-	g_blit_shader.PS = NULL;
-	g_blit_shader.IL->Release();
-	g_blit_shader.IL = NULL;
+	d3dcontext->VSSetShader(NULL, NULL, 0);
+	d3dcontext->PSSetShader(NULL, NULL, 0);
+	d3dcontext->IASetInputLayout(NULL);
+
+	if (g_gte_shader_4.VS != NULL)
+	{
+		g_gte_shader_4.VS->Release();
+		g_gte_shader_4.VS = NULL;
+	}
+
+	if (g_gte_shader_4.PS != NULL)
+	{
+		g_gte_shader_4.PS->Release();
+		g_gte_shader_4.PS = NULL;
+	}
+
+	if (g_gte_shader_4.IL != NULL)
+	{
+		g_gte_shader_4.IL->Release();
+		g_gte_shader_4.IL  = NULL;
+	}
+
+	if (g_gte_shader_8.VS != NULL)
+	{
+		g_gte_shader_8.VS->Release();
+		g_gte_shader_8.VS = NULL;
+	}
+
+	if (g_gte_shader_8.PS != NULL)
+	{
+		g_gte_shader_8.PS->Release();
+		g_gte_shader_8.PS = NULL;
+	}
+
+	if (g_gte_shader_8.IL != NULL)
+	{
+		g_gte_shader_8.IL->Release();
+		g_gte_shader_8.IL = NULL;
+	}
+
+	if (g_gte_shader_16.VS != NULL)
+	{
+		g_gte_shader_16.VS->Release();
+		g_gte_shader_16.VS = NULL;
+	}
+
+	if (g_gte_shader_16.PS != NULL)
+	{
+		g_gte_shader_16.PS->Release();
+		g_gte_shader_16.PS = NULL;
+	}
+
+	if (g_gte_shader_16.IL != NULL)
+	{
+		g_gte_shader_16.IL->Release();
+		g_gte_shader_16.IL = NULL;
+	}
+
+	if (g_blit_shader.VS != NULL)
+	{
+		g_blit_shader.VS->Release();
+		g_blit_shader.VS = NULL;
+	}
+
+	if (g_blit_shader.PS != NULL)
+	{
+		g_blit_shader.PS->Release();
+		g_blit_shader.PS = NULL;
+	}
+
+	if (g_blit_shader.IL != NULL)
+	{
+		g_blit_shader.IL->Release();
+		g_blit_shader.IL = NULL;
+	}
 }
+
+unsigned char pixelData[64 * 64 * sizeof(unsigned int)];
 
 void Emulator_GenerateCommonTextures()
 {
-	unsigned int pixelData = 0xFFFFFFFF;
+	memset(pixelData, 0xFF, sizeof(pixelData));
 
 	D3D11_TEXTURE2D_DESC td;
 	ZeroMemory(&td, sizeof(td));
-	td.Width = 1;
-	td.Height = 1;
+	td.Width = 64;
+	td.Height = 64;
 	td.MipLevels = td.ArraySize = 1;
 	td.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
 	td.SampleDesc.Count = 1;
@@ -484,19 +655,7 @@ void Emulator_GenerateCommonTextures()
 	hr = d3ddev->CreateShaderResourceView(t, &srvd, &rg8lutTexture);
 	eassert(!FAILED(hr));
 	t->Release();
-}
 
-int Emulator_CreateCommonResources()
-{
-	memset(vram, 0, VRAM_WIDTH * VRAM_HEIGHT * sizeof(unsigned short));
-	
-	Emulator_GenerateCommonTextures();
-	
-	Emulator_CreateGlobalShaders();
-
-	Emulator_CreateConstantBuffers();
-
-	D3D11_TEXTURE2D_DESC td;
 	ZeroMemory(&td, sizeof(td));
 	td.ArraySize = 1;
 	td.BindFlags = D3D11_BIND_SHADER_RESOURCE;
@@ -510,26 +669,70 @@ int Emulator_CreateCommonResources()
 	td.SampleDesc.Quality = 0;
 	td.Usage = D3D11_USAGE_DYNAMIC;
 
-	if (FAILED(d3ddev->CreateTexture2D(&td, NULL, &vramBaseTexture)))
-	{
-		eprinterr("Failed to create render target texture!\n");
-		return FALSE;
-	}
+	hr = d3ddev->CreateTexture2D(&td, NULL, &vramBaseTexture);
+	eassert(!FAILED(hr));
 
-	D3D11_SHADER_RESOURCE_VIEW_DESC srvd;
 	ZeroMemory(&srvd, sizeof(D3D11_SHADER_RESOURCE_VIEW_DESC));
 	srvd.Format = td.Format;
 	srvd.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 	srvd.Texture2D.MostDetailedMip = 0;
 	srvd.Texture2D.MipLevels = 1;
 
-	if (FAILED(d3ddev->CreateShaderResourceView(vramBaseTexture, &srvd, &vramTexture)))
-	{
-		eprinterr("Failed to create shader resource view!\n");
-		return FALSE;
-	}
+	hr = d3ddev->CreateShaderResourceView(vramBaseTexture, &srvd, &vramTexture);
 
-	Emulator_ResetDevice();
+	eassert(!FAILED(hr));
+}
+
+void Emulator_CreateVertexBuffer()
+{
+	D3D11_BUFFER_DESC vbd;
+	ZeroMemory(&vbd, sizeof(vbd));
+	vbd.Usage = D3D11_USAGE_DYNAMIC;
+	vbd.ByteWidth = sizeof(Vertex) * MAX_NUM_POLY_BUFFER_VERTICES;
+	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	vbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	vbd.MiscFlags = 0;
+
+	HRESULT hr = d3ddev->CreateBuffer(&vbd, NULL, &dynamic_vertex_buffer);
+	eassert(!FAILED(hr));
+
+	UINT offset = 0;
+	UINT stride = sizeof(Vertex);
+
+	d3dcontext->IASetVertexBuffers(0, 1, &dynamic_vertex_buffer, &stride, &offset);
+}
+
+void Emulator_CreateIndexBuffer()
+{
+	D3D11_BUFFER_DESC ibd;
+	ZeroMemory(&ibd, sizeof(ibd));
+	ibd.Usage = D3D11_USAGE_DYNAMIC;
+	ibd.ByteWidth = sizeof(unsigned short) * MAX_NUM_INDEX_BUFFER_INDICES;
+	ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	ibd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	ibd.MiscFlags = 0;
+
+	HRESULT hr = d3ddev->CreateBuffer(&ibd, NULL, &dynamic_index_buffer);
+	eassert(!FAILED(hr));
+
+	d3dcontext->IASetIndexBuffer(dynamic_index_buffer, DXGI_FORMAT_R16_UINT, 0);
+
+	d3dcontext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+}
+
+int Emulator_CreateCommonResources()
+{
+	memset(vram, 0, VRAM_WIDTH * VRAM_HEIGHT * sizeof(unsigned short));
+
+	Emulator_GenerateCommonTextures();
+
+	Emulator_CreateGlobalShaders();
+
+	Emulator_CreateVertexBuffer();
+
+	Emulator_CreateIndexBuffer();
+
+	Emulator_ResetDevice(TRUE);
 
 	return TRUE;
 }
@@ -613,8 +816,8 @@ void Emulator_SetTextureAndShader(TextureID texture, ShaderID shader)
 
 	d3dcontext->PSSetSamplers(0, 2, samplerStates);
 
-	g_lastBoundTexture[0] = texture;
-	g_lastBoundTexture[1] = rg8lutTexture;
+	//g_lastBoundTexture[0] = texture;
+	//g_lastBoundTexture[1] = rg8lutTexture;
 }
 
 void Emulator_SetTexture(TextureID texture, TexFormat texFormat)
@@ -679,11 +882,6 @@ void Emulator_SetTexture(TextureID texture, TexFormat texFormat)
 
 	g_lastBoundTexture[0] = texture;
 	g_lastBoundTexture[1] = rg8lutTexture;
-}
-
-void Emulator_DestroyTexture(TextureID texture)
-{
-	texture->Release();
 }
 
 void Emulator_Clear(int x, int y, int w, int h, unsigned char r, unsigned char g, unsigned char b)
@@ -825,8 +1023,11 @@ void Emulator_SetConstantBuffers()
 
 void Emulator_DestroyConstantBuffers()
 {
-	projectionMatrixBuffer->Release();
-	projectionMatrixBuffer = NULL;
+	if (projectionMatrixBuffer != NULL)
+	{
+		projectionMatrixBuffer->Release();
+		projectionMatrixBuffer = NULL;
+	}
 }
 
 void Emulator_CreateRasterState(int wireframe)
@@ -1026,6 +1227,7 @@ void Emulator_SetViewPort(int x, int y, int width, int height)
 	viewport.Height = (float)height;
 	viewport.MinDepth = 0.0f;
 	viewport.MaxDepth = 1.0f;
+
 	d3dcontext->RSSetViewports(1, &viewport);
 }
 
@@ -1059,109 +1261,6 @@ void Emulator_WaitForTimestep(int count)
 void Emulator_SetRenderTarget(const RenderTargetID& frameBufferObject)
 {
 	d3dcontext->OMSetRenderTargets(1, &frameBufferObject, NULL);
-}
-
-void Emulator_DestroyRender()
-{
-	d3dcontext->ClearState();
-
-	if (dynamic_vertex_buffer) {
-		dynamic_vertex_buffer->Release();
-		dynamic_vertex_buffer = NULL;
-	}
-
-	if (dynamic_index_buffer) {
-		dynamic_index_buffer->Release();
-		dynamic_index_buffer = NULL;
-	}
-
-	if (rasterState != NULL)
-	{
-		rasterState->Release();
-		rasterState = NULL;
-	}
-
-	Emulator_DestroyGlobalShaders();
-	Emulator_DestroyConstantBuffers();
-
-	ID3D11RenderTargetView* nullViews[] = { NULL };
-	d3dcontext->OMSetRenderTargets(_countof(nullViews), nullViews, NULL);
-
-	if (vramTexture != NULL)
-	{
-		vramTexture->Release();
-		vramTexture = NULL;
-	}
-
-	if (vramBaseTexture != NULL)
-	{
-		vramBaseTexture->Release();
-		vramBaseTexture = NULL;
-	}
-
-	if (whiteTexture != NULL)
-	{
-		whiteTexture->Release();
-		whiteTexture = NULL;
-	}
-
-	if (rg8lutTexture != NULL)
-	{
-		rg8lutTexture->Release();
-		rg8lutTexture = NULL;
-	}
-
-	if (samplerState != NULL)
-	{
-		samplerState->Release();
-		samplerState = NULL;
-	}
-
-	if (rg8lutSamplerState != NULL)
-	{
-		rg8lutSamplerState->Release();
-		rg8lutSamplerState = NULL;
-	}
-
-	if (blendState != NULL)
-	{
-		blendState->Release();
-		blendState = NULL;
-	}
-
-	if (swapChain != NULL)
-	{
-		swapChain->Release();
-		swapChain = NULL;
-	}
-
-	if (renderTargetView != NULL)
-	{
-		renderTargetView->Release();
-		renderTargetView = NULL;
-	}
-
-	d3dcontext->Flush();
-
-	if (d3dcontext != NULL)
-	{
-		d3dcontext->Release();
-		d3dcontext = NULL;
-	}
-
-
-#if defined(_DEBUG) && 0
-	ID3D11Debug* debug;
-	d3ddev->QueryInterface(IID_PPV_ARGS(&debug));
-	debug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
-	debug->Release();
-#endif
-
-	if (d3ddev != NULL)
-	{
-		d3ddev->Release();
-		d3ddev = NULL;
-	}
 }
 
 #endif
