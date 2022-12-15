@@ -20,9 +20,9 @@ D3DPRESENT_PARAMETERS  d3dpp;
 
 SDL_Window* g_window = NULL;
 
-HWND g_overrideHWND[MAX_NUM_GAME_INSTANCES] = { NULL, NULL, NULL, NULL, NULL, NULL };
-int g_overrideWidth[MAX_NUM_GAME_INSTANCES] = { -1, -1, -1, -1, -1, -1 };
-int g_overrideHeight[MAX_NUM_GAME_INSTANCES] = { -1, -1, -1, -1, -1, -1 };
+HWND g_overrideHWND = NULL;
+int g_overrideWidth = -1;
+int g_overrideHeight = -1;
 
 #include "shaders/D3D9/gte_shader_4_vs.h"
 #include "shaders/D3D9/gte_shader_4_ps.h"
@@ -163,6 +163,11 @@ void Emulator_GenerateCommonTextures()
 	assert(!FAILED(hr));
 	memcpy(rect.pBits, Emulator_GenerateRG8LUT(), 256 * 256 * 4);
 	rg8lutTexture->UnlockRect(0);
+}
+
+void Emulator_CreateVertexBuffer()
+{
+
 }
 
 int Emulator_CreateCommonResources()
