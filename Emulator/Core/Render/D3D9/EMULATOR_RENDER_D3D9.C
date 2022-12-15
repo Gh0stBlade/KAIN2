@@ -242,11 +242,13 @@ void Emulator_CreateGlobalShaders()
 	g_blit_shader = Shader_Compile(blit_shader);
 }
 
+unsigned char pixelData[64 * 64 * sizeof(unsigned int)];
+
 void Emulator_GenerateCommonTextures()
 {
-	unsigned int pixelData = 0xFFFFFFFF;
+	memset(pixelData, 0xFF, sizeof(pixelData));
 
-	HRESULT hr = d3ddev->CreateTexture(1, 1, 1, 0, D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, &whiteTexture, NULL);
+	HRESULT hr = d3ddev->CreateTexture(64, 64, 1, 0, D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, &whiteTexture, NULL);
 	assert(!FAILED(hr));
 	D3DLOCKED_RECT rect;
 	hr = whiteTexture->LockRect(0, &rect, NULL, 0);
