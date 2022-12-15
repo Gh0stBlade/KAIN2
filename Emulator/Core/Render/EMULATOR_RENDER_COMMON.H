@@ -161,7 +161,7 @@ extern int vram_need_update;
 
 extern void* Emulator_GenerateRG8LUT();
 extern void Emulator_SwapWindow();
-extern void Emulator_ResetDevice();
+extern void Emulator_ResetDevice(int recreate);
 #if defined(PLATFORM_NX) || defined(PLATFORM_NX_ARM)
 extern void Emulator_SetShader(ShaderID* shader);
 extern void Emulator_SetTextureAndShader(TextureID* texture, ShaderID* shader);
@@ -179,5 +179,7 @@ extern const char* renderBackendName;
 
 extern int Emulator_GetWindowWidth();
 extern int Emulator_GetWindowHeight();
+
+extern void Emulator_DestroyRender();
 
 #endif
