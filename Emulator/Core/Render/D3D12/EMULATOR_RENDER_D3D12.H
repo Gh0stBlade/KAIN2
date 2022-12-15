@@ -8,17 +8,6 @@
 
 #if defined(D3D12)
 
-typedef enum BlendMode 
-{
-	BM_NONE,
-	BM_AVERAGE,
-	BM_ADD,
-	BM_SUBTRACT,
-	BM_ADD_QUATER_SOURCE,
-	BM_COUNT
-
-} BlendMode;
-
 #define FRAME_COUNT 2
 
 struct D3D12TextureWrapper

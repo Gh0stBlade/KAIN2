@@ -19,6 +19,7 @@ extern void Emulator_DestroyConstantBuffers();
 extern void Emulator_CreateRasterState(int wireframe);
 extern void Emulator_UpdateProjectionConstantBuffer(float* ortho);
 extern void Emulator_SetConstantBuffers();
+extern void Emulator_CreateIndexBuffer();
 
 const char* renderBackendName = "D3D12";
 
@@ -1543,7 +1544,8 @@ void Emulator_SetBlendMode(enum BlendMode blendMode)
 	g_CurrentBlendMode = blendMode;
 	g_PreviousBlendMode = blendMode;
 }
-void Emulator_DrawTriangles(int start_vertex, int triangles)
+
+void Emulator_DrawTriangles(int start_vertex, int start_index, int triangles)
 {
 	if (triangles <= 0)
 		return;
@@ -1580,6 +1582,46 @@ void Emulator_UpdateVertexBuffer(const Vertex* vertices, int num_vertices)
 	}
 
 	vbo_was_dirty_flag = TRUE;
+}
+
+void Emulator_UpdateIndexBuffer(const unsigned short* indices, int num_indices)
+{
+#if 1
+	eassert(num_indices <= MAX_NUM_INDEX_BUFFER_INDICES);
+
+	if (num_indices <= 0)
+		return;
+
+#if 0
+	if (begin_commands_flag)
+	{
+		commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(dynamic_vertex_buffer[frameIndex], D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_COPY_DEST));
+
+		void* pMap = NULL;
+		CD3DX12_RANGE readRange(0, 0);
+		HRESULT hr = dynamic_vertex_buffer_heap[frameIndex]->Map(0, &readRange, &pMap);
+		assert(SUCCEEDED(hr));
+
+		memcpy((char*)pMap + dynamic_vertex_buffer_index * sizeof(Vertex), vertices, num_vertices * sizeof(Vertex));
+		dynamic_vertex_buffer_heap[frameIndex]->Unmap(0, NULL);
+
+		commandList->CopyBufferRegion(dynamic_vertex_buffer[frameIndex], dynamic_vertex_buffer_index * sizeof(Vertex), dynamic_vertex_buffer_heap[frameIndex], dynamic_vertex_buffer_index * sizeof(Vertex), num_vertices * sizeof(Vertex));
+		commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(dynamic_vertex_buffer[frameIndex], D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_GENERIC_READ));
+	}
+#endif
+
+	vbo_was_dirty_flag = TRUE;
+#else
+	eassert(num_indices <= MAX_NUM_INDEX_BUFFER_INDICES);
+
+	if (num_indices <= 0)
+		return;
+
+	D3D11_MAPPED_SUBRESOURCE sr;
+	d3dcontext->Map(dynamic_index_buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &sr);
+	memcpy(sr.pData, indices, num_indices * sizeof(unsigned short));
+	d3dcontext->Unmap(dynamic_index_buffer, 0);
+#endif
 }
 
 void Emulator_SetViewPort(int x, int y, int width, int height)
