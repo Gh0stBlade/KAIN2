@@ -43,7 +43,6 @@
 //Open Graphics Library (Embedded Systems)
 //#define OGLES
 //#define OGLES_VERSION 3
-//Needs new IBO implementing
 
 //Open Graphics Library
 #define OGL

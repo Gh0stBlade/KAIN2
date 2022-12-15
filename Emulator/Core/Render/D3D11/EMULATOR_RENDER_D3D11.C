@@ -214,11 +214,6 @@ void Emulator_DestroyD3D11Device()
 	}
 }
 
-void Emulator_DestroyRender()
-{
-	Emulator_ResetDevice(FALSE);
-}
-
 void Emulator_CreateD3D11Device()
 {
 #if defined(SDL2)
@@ -429,21 +424,24 @@ void Emulator_ResetDevice(int recreate)
 
 		Emulator_DestroyD3D11Device();
 
-		Emulator_CreateD3D11Device();
-		
-		Emulator_CreateD3D11SwapChain();
-		
-		Emulator_CreateBackBufferView();
+		if (recreate)
+		{
+			Emulator_CreateD3D11Device();
 
-		Emulator_CreateGlobalShaders();
+			Emulator_CreateD3D11SwapChain();
 
-		Emulator_CreateConstantBuffers();
+			Emulator_CreateBackBufferView();
 
-		Emulator_GenerateCommonTextures();
+			Emulator_CreateGlobalShaders();
 
-		Emulator_CreateVertexBuffer();
+			Emulator_CreateConstantBuffers();
 
-		Emulator_CreateIndexBuffer();
+			Emulator_GenerateCommonTextures();
+
+			Emulator_CreateVertexBuffer();
+
+			Emulator_CreateIndexBuffer();
+		}
 
 		g_resettingDevice = FALSE;
 	}

@@ -354,7 +354,7 @@ void Emulator_DestroyIndexBuffer()
 	dynamic_index_buffer = 0;
 }
 
-void Emulator_ResetDevice()
+void Emulator_ResetDevice(int recreate)
 {
 	if (!g_resettingDevice)
 	{
@@ -368,13 +368,16 @@ void Emulator_ResetDevice()
 
 		Emulator_DestroyGlobalShaders();
 
-		Emulator_CreateGlobalShaders();
+		if (recreate)
+		{
+			Emulator_CreateGlobalShaders();
 
-		Emulator_GenerateCommonTextures();
+			Emulator_GenerateCommonTextures();
 
-		Emulator_CreateVertexBuffer();
+			Emulator_CreateVertexBuffer();
 
-		Emulator_CreateIndexBuffer();
+			Emulator_CreateIndexBuffer();
+		}
 
 		g_resettingDevice = FALSE;
 	}

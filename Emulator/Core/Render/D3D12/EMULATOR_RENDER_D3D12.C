@@ -431,7 +431,7 @@ ShaderID Shader_Compile_Internal(const DWORD* vs_data, const DWORD* ps_data, con
 	return shader;
 }
 
-void Emulator_ResetDevice()
+void Emulator_ResetDevice(int recreate)
 {
 	//for (int i = frameIndex ^ 1; i < frameCount; ++i)
 	{
@@ -1661,7 +1661,7 @@ void Emulator_SwapWindow()
 	Emulator_WaitForPreviousFrame();
 
 	if (hr == DXGI_ERROR_DEVICE_REMOVED || hr == DXGI_ERROR_DEVICE_RESET) {
-		Emulator_ResetDevice();
+		Emulator_ResetDevice(TRUE);
 	}
 }
 

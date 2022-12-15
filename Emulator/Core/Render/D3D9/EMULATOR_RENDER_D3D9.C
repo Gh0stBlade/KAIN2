@@ -73,7 +73,7 @@ void Emulator_DestroyIndexBuffer()
 	}
 }
 
-void Emulator_ResetDevice()
+void Emulator_ResetDevice(int recreate)
 {
 	if (!g_resettingDevice)
 	{
@@ -87,21 +87,22 @@ void Emulator_ResetDevice()
 
 		Emulator_DestroyGlobalShaders();
 
-		Emulator_CreateGlobalShaders();
+		if (recreate)
+		{
+			Emulator_CreateGlobalShaders();
 
+			Emulator_GenerateCommonTextures();
 
+			d3dpp.PresentationInterval = g_swapInterval ? D3DPRESENT_INTERVAL_ONE : D3DPRESENT_INTERVAL_IMMEDIATE;
+			d3dpp.BackBufferWidth = Emulator_GetWindowWidth();
+			d3dpp.BackBufferHeight = Emulator_GetWindowHeight();
+			HRESULT hr = d3ddev->Reset(&d3dpp);
+			assert(!FAILED(hr));
 
-		Emulator_GenerateCommonTextures();
+			Emulator_CreateVertexBuffer();
 
-		d3dpp.PresentationInterval = g_swapInterval ? D3DPRESENT_INTERVAL_ONE : D3DPRESENT_INTERVAL_IMMEDIATE;
-		d3dpp.BackBufferWidth = Emulator_GetWindowWidth();
-		d3dpp.BackBufferHeight = Emulator_GetWindowHeight();
-		HRESULT hr = d3ddev->Reset(&d3dpp);
-		assert(!FAILED(hr));
-
-		Emulator_CreateVertexBuffer();
-
-		Emulator_CreateIndexBuffer();
+			Emulator_CreateIndexBuffer();
+		}
 
 		g_resettingDevice = FALSE;
 	}
@@ -316,7 +317,7 @@ int Emulator_CreateCommonResources()
 
 	Emulator_CreateIndexBuffer();
 
-	Emulator_ResetDevice();
+	Emulator_ResetDevice(TRUE);
 
 	return TRUE;
 }
@@ -636,7 +637,7 @@ void Emulator_SwapWindow()
 	Emulator_WaitForTimestep(1);
 
 	if (d3ddev->Present(NULL, NULL, NULL, NULL) == D3DERR_DEVICELOST) {
-		Emulator_ResetDevice();
+		Emulator_ResetDevice(TRUE);
 	}
 }
 

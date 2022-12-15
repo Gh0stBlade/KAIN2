@@ -398,11 +398,6 @@ void Emulator_ResetDevice(int recreate)
 	}
 }
 
-void Emulator_DestroyRender()
-{
-	Emulator_ResetDevice(FALSE);
-}
-
 void Emulator_DestroyTextures()
 {
 	glBindTexture(1, 0);

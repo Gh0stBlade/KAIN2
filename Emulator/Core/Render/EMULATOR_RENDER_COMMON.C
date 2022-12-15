@@ -1093,4 +1093,10 @@ void Emulator_DrawTouchUI()
 
 	Emulator_AggregatePTAGsToSplits(OT, FALSE);
 }
+
+void Emulator_DestroyRender()
+{
+	Emulator_ResetDevice(FALSE);
+}
+
 #endif
