@@ -9,6 +9,12 @@
 
 extern void Emulator_DoPollEvent();
 extern void Emulator_WaitForTimestep(int count);
+extern void Emulator_GenerateCommonTextures();
+extern void Emulator_CreateGlobalShaders();
+extern void Emulator_DestroyTextures();
+extern void Emulator_DestroyGlobalShaders();
+extern void Emulator_CreateVertexBuffer();
+extern void Emulator_CreateIndexBuffer();
 
 const char* renderBackendName = "D3D9";
 
@@ -49,37 +55,56 @@ ShaderID Shader_Compile_Internal(const DWORD* vs_data, const DWORD* ps_data)
 	return shader;
 }
 
-void Emulator_ResetDevice()
+void Emulator_DestroyVertexBuffer()
 {
-	if (dynamic_vertex_buffer) 
+	if (dynamic_vertex_buffer)
 	{
 		dynamic_vertex_buffer->Release();
 		dynamic_vertex_buffer = NULL;
 	}
+}
 
+void Emulator_DestroyIndexBuffer()
+{
 	if (dynamic_index_buffer)
 	{
 		dynamic_index_buffer->Release();
 		dynamic_index_buffer = NULL;
 	}
+}
 
-	d3dpp.PresentationInterval = g_swapInterval ? D3DPRESENT_INTERVAL_ONE : D3DPRESENT_INTERVAL_IMMEDIATE;
-	d3dpp.BackBufferWidth = Emulator_GetWindowWidth();
-	d3dpp.BackBufferHeight = Emulator_GetWindowHeight();
-	HRESULT hr = d3ddev->Reset(&d3dpp);
-	assert(!FAILED(hr));
-	
-	hr = d3ddev->CreateVertexBuffer(sizeof(Vertex) * MAX_NUM_POLY_BUFFER_VERTICES, D3DUSAGE_WRITEONLY | D3DUSAGE_DYNAMIC, D3DFMT_UNKNOWN, D3DPOOL_DEFAULT, &dynamic_vertex_buffer, NULL);
-	
-	assert(!FAILED(hr));
+void Emulator_ResetDevice()
+{
+	if (!g_resettingDevice)
+	{
+		g_resettingDevice = TRUE;
 
-	d3ddev->SetStreamSource(0, dynamic_vertex_buffer, 0, sizeof(struct Vertex));
+		Emulator_DestroyVertexBuffer();
 
-	hr = d3ddev->CreateIndexBuffer(sizeof(unsigned short) * MAX_NUM_INDEX_BUFFER_INDICES, D3DUSAGE_WRITEONLY | D3DUSAGE_DYNAMIC, D3DFMT_INDEX16, D3DPOOL_DEFAULT, &dynamic_index_buffer, NULL);
+		Emulator_DestroyIndexBuffer();
 
-	assert(!FAILED(hr));
+		Emulator_DestroyTextures();
 
-	d3ddev->SetIndices(dynamic_index_buffer);
+		Emulator_DestroyGlobalShaders();
+
+		Emulator_CreateGlobalShaders();
+
+
+
+		Emulator_GenerateCommonTextures();
+
+		d3dpp.PresentationInterval = g_swapInterval ? D3DPRESENT_INTERVAL_ONE : D3DPRESENT_INTERVAL_IMMEDIATE;
+		d3dpp.BackBufferWidth = Emulator_GetWindowWidth();
+		d3dpp.BackBufferHeight = Emulator_GetWindowHeight();
+		HRESULT hr = d3ddev->Reset(&d3dpp);
+		assert(!FAILED(hr));
+
+		Emulator_CreateVertexBuffer();
+
+		Emulator_CreateIndexBuffer();
+
+		g_resettingDevice = FALSE;
+	}
 
 
 	d3ddev->SetRenderState(D3DRS_ZENABLE, D3DZB_FALSE);
@@ -87,6 +112,78 @@ void Emulator_ResetDevice()
 	d3ddev->SetSamplerState(1, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
 	d3ddev->SetSamplerState(1, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
 	d3ddev->SetSamplerState(1, D3DSAMP_ADDRESSW, D3DTADDRESS_WRAP);
+}
+
+void Emulator_DestroyTextures()
+{
+	if (whiteTexture != NULL)
+	{
+		whiteTexture->Release();
+		whiteTexture = NULL;
+	}
+
+	if (rg8lutTexture != NULL)
+	{
+		rg8lutTexture->Release();
+		rg8lutTexture = NULL;
+	}
+
+	if (vramTexture != NULL)
+	{
+		vramTexture->Release();
+		vramTexture = NULL;
+	}
+}
+
+void Emulator_DestroyGlobalShaders()
+{
+	if (g_gte_shader_4.VS != NULL)
+	{
+		g_gte_shader_4.VS->Release();
+		g_gte_shader_4.VS = NULL;
+	}
+
+	if (g_gte_shader_4.PS != NULL)
+	{
+		g_gte_shader_4.PS->Release();
+		g_gte_shader_4.PS = NULL;
+	}
+
+	if (g_gte_shader_8.VS != NULL)
+	{
+		g_gte_shader_8.VS->Release();
+		g_gte_shader_8.VS = NULL;
+	}
+
+	if (g_gte_shader_8.PS != NULL)
+	{
+		g_gte_shader_8.PS->Release();
+		g_gte_shader_8.PS = NULL;
+	}
+
+	if (g_gte_shader_16.VS != NULL)
+	{
+		g_gte_shader_16.VS->Release();
+		g_gte_shader_16.VS = NULL;
+	}
+
+	if (g_gte_shader_16.PS != NULL)
+	{
+		g_gte_shader_16.PS->Release();
+		g_gte_shader_16.PS = NULL;
+	}
+
+	if (g_blit_shader.VS != NULL)
+	{
+		g_blit_shader.VS->Release();
+		g_blit_shader.VS = NULL;
+	}
+
+	if (g_blit_shader.PS != NULL)
+	{
+		g_blit_shader.PS->Release();
+		g_blit_shader.PS = NULL;
+	}
 }
 
 int Emulator_InitialiseD3D9Context(char* windowName)
@@ -163,25 +260,20 @@ void Emulator_GenerateCommonTextures()
 	assert(!FAILED(hr));
 	memcpy(rect.pBits, Emulator_GenerateRG8LUT(), 256 * 256 * 4);
 	rg8lutTexture->UnlockRect(0);
+
+	hr = d3ddev->CreateTexture(VRAM_WIDTH, VRAM_HEIGHT, 1, 0, D3DFMT_A8L8, D3DPOOL_MANAGED, &vramTexture, NULL);
+	assert(!FAILED(hr));
 }
 
 void Emulator_CreateVertexBuffer()
 {
+	HRESULT hr = d3ddev->CreateVertexBuffer(sizeof(Vertex) * MAX_NUM_POLY_BUFFER_VERTICES, D3DUSAGE_WRITEONLY | D3DUSAGE_DYNAMIC, D3DFMT_UNKNOWN, D3DPOOL_DEFAULT, &dynamic_vertex_buffer, NULL);
 
-}
+	assert(!FAILED(hr));
 
-int Emulator_CreateCommonResources()
-{
-	memset(vram, 0, VRAM_WIDTH * VRAM_HEIGHT * sizeof(unsigned short));
-	Emulator_GenerateCommonTextures();
-	
-	Emulator_CreateGlobalShaders();
+	hr = d3ddev->SetStreamSource(0, dynamic_vertex_buffer, 0, sizeof(struct Vertex));
 
-	if (FAILED(d3ddev->CreateTexture(VRAM_WIDTH, VRAM_HEIGHT, 1, 0, D3DFMT_A8L8, D3DPOOL_MANAGED, &vramTexture, NULL)))
-	{
-		eprinterr("Failed to create render target texture!\n");
-		return FALSE;
-	}
+	assert(!FAILED(hr));
 
 #define OFFSETOF(T, E)     ((size_t)&(((T*)0)->E))
 
@@ -199,6 +291,28 @@ int Emulator_CreateCommonResources()
 	d3ddev->CreateVertexDeclaration(VERTEX_DECL, &vertexDecl);
 
 #undef OFFSETOF
+}
+
+void Emulator_CreateIndexBuffer()
+{
+	HRESULT hr = d3ddev->CreateIndexBuffer(sizeof(unsigned short) * MAX_NUM_INDEX_BUFFER_INDICES, D3DUSAGE_WRITEONLY | D3DUSAGE_DYNAMIC, D3DFMT_INDEX16, D3DPOOL_DEFAULT, &dynamic_index_buffer, NULL);
+
+	assert(!FAILED(hr));
+
+	d3ddev->SetIndices(dynamic_index_buffer);
+}
+
+int Emulator_CreateCommonResources()
+{
+	memset(vram, 0, VRAM_WIDTH * VRAM_HEIGHT * sizeof(unsigned short));
+
+	Emulator_GenerateCommonTextures();
+	
+	Emulator_CreateGlobalShaders();
+
+	Emulator_CreateVertexBuffer();
+
+	Emulator_CreateIndexBuffer();
 
 	Emulator_ResetDevice();
 
