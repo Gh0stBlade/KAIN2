@@ -33,7 +33,7 @@ IDXGISwapChain3* swapChain = NULL;
 ID3D12Resource* projectionMatrixBuffer[FRAME_COUNT];
 D3D12_CONSTANT_BUFFER_VIEW_DESC projectionMatrixBufferView;
 ID3D12DescriptorHeap* projectionMatrixBufferHeap[FRAME_COUNT];
-
+D3D12_RASTERIZER_DESC rasterStateDesc;
 ID3D12DescriptorHeap* renderTargetDescriptorHeap;
 int renderTargetDescriptorSize = 0;
 int frameIndex = 0;
@@ -105,10 +105,10 @@ void Emulator_CreateGraphicsPipelineState(ShaderID* shader, D3D12_GRAPHICS_PIPEL
 
 			pso->BlendState = bd;
 
-			shader->BF[0] = 1.0f;
-			shader->BF[1] = 1.0f;
-			shader->BF[2] = 1.0f;
-			shader->BF[3] = 1.0f;
+			shader->BF[i][0] = 1.0f;
+			shader->BF[i][1] = 1.0f;
+			shader->BF[i][2] = 1.0f;
+			shader->BF[i][3] = 1.0f;
 
 			break;
 		}
@@ -129,10 +129,10 @@ void Emulator_CreateGraphicsPipelineState(ShaderID* shader, D3D12_GRAPHICS_PIPEL
 
 			pso->BlendState = bd;
 
-			shader->BF[0] = 128.0f * (1.0f / 255.0f);
-			shader->BF[1] = 128.0f * (1.0f / 255.0f);
-			shader->BF[2] = 128.0f * (1.0f / 255.0f);
-			shader->BF[3] = 128.0f * (1.0f / 255.0f);
+			shader->BF[i][0] = 128.0f * (1.0f / 255.0f);
+			shader->BF[i][1] = 128.0f * (1.0f / 255.0f);
+			shader->BF[i][2] = 128.0f * (1.0f / 255.0f);
+			shader->BF[i][3] = 128.0f * (1.0f / 255.0f);
 			break;
 		}
 		case BM_ADD:
@@ -152,10 +152,10 @@ void Emulator_CreateGraphicsPipelineState(ShaderID* shader, D3D12_GRAPHICS_PIPEL
 
 			pso->BlendState = bd;
 
-			shader->BF[0] = 1.0f;
-			shader->BF[1] = 1.0f;
-			shader->BF[2] = 1.0f;
-			shader->BF[3] = 1.0f;
+			shader->BF[i][0] = 1.0f;
+			shader->BF[i][1] = 1.0f;
+			shader->BF[i][2] = 1.0f;
+			shader->BF[i][3] = 1.0f;
 			break;
 		}
 		case BM_SUBTRACT:
@@ -175,10 +175,10 @@ void Emulator_CreateGraphicsPipelineState(ShaderID* shader, D3D12_GRAPHICS_PIPEL
 
 			pso->BlendState = bd;
 
-			shader->BF[0] = 1.0f;
-			shader->BF[1] = 1.0f;
-			shader->BF[2] = 1.0f;
-			shader->BF[3] = 1.0f;
+			shader->BF[i][0] = 1.0f;
+			shader->BF[i][1] = 1.0f;
+			shader->BF[i][2] = 1.0f;
+			shader->BF[i][3] = 1.0f;
 			break;
 		}
 		case BM_ADD_QUATER_SOURCE:
@@ -198,10 +198,10 @@ void Emulator_CreateGraphicsPipelineState(ShaderID* shader, D3D12_GRAPHICS_PIPEL
 
 			pso->BlendState = bd;
 
-			shader->BF[0] = 64.0f * (1.0f / 255.0f);
-			shader->BF[1] = 64.0f * (1.0f / 255.0f);
-			shader->BF[2] = 64.0f * (1.0f / 255.0f);
-			shader->BF[3] = 64.0f * (1.0f / 255.0f);
+			shader->BF[i][0] = 64.0f * (1.0f / 255.0f);
+			shader->BF[i][1] = 64.0f * (1.0f / 255.0f);
+			shader->BF[i][2] = 64.0f * (1.0f / 255.0f);
+			shader->BF[i][3] = 64.0f * (1.0f / 255.0f);
 			break;
 		}
 		}
@@ -413,7 +413,7 @@ ShaderID Shader_Compile_Internal(const DWORD* vs_data, const DWORD* ps_data, con
 	pso.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
 	pso.SampleDesc = sampleDesc;
 	pso.SampleMask = 0xFFFFFFFF;
-	pso.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
+	pso.RasterizerState = rasterStateDesc;
 	pso.NumRenderTargets = 1;
 	D3D12_DEPTH_STENCIL_DESC depthStencilDesc = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
 	depthStencilDesc.DepthEnable = FALSE;
@@ -999,6 +999,8 @@ int Emulator_InitialiseD3D12Context(char* windowName)
 
 void Emulator_CreateGlobalShaders()
 {
+	Emulator_CreateRasterState(FALSE);
+
 	g_gte_shader_4 = Shader_Compile(gte_shader_4);
 	g_gte_shader_8 = Shader_Compile(gte_shader_8);
 	g_gte_shader_16 = Shader_Compile(gte_shader_16);
@@ -1262,7 +1264,7 @@ void Emulator_SetShader(const ShaderID shader)
 	{
 		commandList->SetGraphicsRootSignature(shader.RS);
 		commandList->SetPipelineState(shader.GPS[g_CurrentBlendMode]);
-		commandList->OMSetBlendFactor(shader.BF);
+		commandList->OMSetBlendFactor(shader.BF[g_CurrentBlendMode]);
 
 		Emulator_Ortho2D(0.0f, activeDispEnv.disp.w, activeDispEnv.disp.h, 0.0f, 0.0f, 1.0f);
 	}
@@ -1492,9 +1494,25 @@ void Emulator_DestroyConstantBuffers()
 	UNIMPLEMENTED();
 }
 
+void Emulator_UpdatePipelineStateObject()
+{
+
+}
+
 void Emulator_CreateRasterState(int wireframe)
 {
-	UNIMPLEMENTED();
+	ZeroMemory(&rasterStateDesc, sizeof(rasterStateDesc));
+	rasterStateDesc.FillMode = wireframe ? D3D12_FILL_MODE_WIREFRAME : D3D12_FILL_MODE_SOLID;
+	rasterStateDesc.CullMode = D3D12_CULL_MODE_NONE;
+	rasterStateDesc.FrontCounterClockwise = FALSE;
+	rasterStateDesc.DepthBias = FALSE;
+	rasterStateDesc.DepthBiasClamp = 0;
+	rasterStateDesc.SlopeScaledDepthBias = 0;
+	rasterStateDesc.DepthClipEnable = FALSE;
+	rasterStateDesc.MultisampleEnable = FALSE;
+	rasterStateDesc.AntialiasedLineEnable = FALSE;
+
+	Emulator_UpdatePipelineStateObject();
 }
 
 void Emulator_UpdateVRAM()
