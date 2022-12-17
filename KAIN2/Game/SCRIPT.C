@@ -116,7 +116,7 @@ void SCRIPT_InstanceSplineInit(struct _Instance* instance)
 
 					_x1 = start_point->x;
 					_y1 = start_point->y;
-					_x1 = start_point->z;
+					_z1 = start_point->z;
 
 					_v = &instance->position;
 
