@@ -242,16 +242,12 @@ ShaderID Shader_Compile_Internal(const unsigned int* vs_data, const unsigned int
 	}
 
 	VkDescriptorSetLayoutBinding descriptorLayoutUniformBuffer = { 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1, VK_SHADER_STAGE_VERTEX_BIT, NULL };
-	VkDescriptorSetLayoutBinding descriptorLayoutSampler = { 4, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_FRAGMENT_BIT, NULL };
-	VkDescriptorSetLayoutBinding descriptorLayoutSamplerLUT = { 5, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_FRAGMENT_BIT, NULL };
-	VkDescriptorSetLayoutBinding descriptorLayoutTexture = { 2, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, 1, VK_SHADER_STAGE_FRAGMENT_BIT, NULL };
-	VkDescriptorSetLayoutBinding descriptorLayoutTexture2 = { 3, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, 1, VK_SHADER_STAGE_FRAGMENT_BIT, NULL };
+	VkDescriptorSetLayoutBinding descriptorLayoutTexture = { 2, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_FRAGMENT_BIT, NULL };
+	VkDescriptorSetLayoutBinding descriptorLayoutTexture2 = { 3, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_FRAGMENT_BIT, NULL };
 
 	VkDescriptorSetLayoutBinding bindings[] =
 	{
 		descriptorLayoutUniformBuffer,
-		descriptorLayoutSampler,
-		descriptorLayoutSamplerLUT,
 		descriptorLayoutTexture,
 		descriptorLayoutTexture2,
 	};
@@ -260,7 +256,7 @@ ShaderID Shader_Compile_Internal(const unsigned int* vs_data, const unsigned int
 	memset(&resourceLayoutInfo, 0, sizeof(VkDescriptorSetLayoutCreateInfo));
 	resourceLayoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
 	resourceLayoutInfo.pNext = NULL;
-	resourceLayoutInfo.bindingCount = 5;
+	resourceLayoutInfo.bindingCount = 3;
 	resourceLayoutInfo.pBindings = bindings;
 
 	vkCreateDescriptorSetLayout(device, &resourceLayoutInfo, NULL, &shader.DL);
@@ -725,17 +721,13 @@ void Emulator_CreateDescriptorPool()
 {
 	for (int i = 0; i < 2; i++)
 	{
-		std::array<VkDescriptorPoolSize, 5> poolSizes{};
+		std::array<VkDescriptorPoolSize, 3> poolSizes{};
 		poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 		poolSizes[0].descriptorCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
 		poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
 		poolSizes[1].descriptorCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
 		poolSizes[2].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
 		poolSizes[2].descriptorCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
-		poolSizes[3].type = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
-		poolSizes[3].descriptorCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
-		poolSizes[4].type = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
-		poolSizes[4].descriptorCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
 
 		VkDescriptorPoolCreateInfo poolInfo{};
 		poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
@@ -799,14 +791,14 @@ void Emulator_CreateDescriptorSetLayout()
 		uboLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
 
 		VkDescriptorSetLayoutBinding samplerLayoutBinding{};
-		samplerLayoutBinding.binding = 4;
+		samplerLayoutBinding.binding = 2;
 		samplerLayoutBinding.descriptorCount = 1;
 		samplerLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
 		samplerLayoutBinding.pImmutableSamplers = NULL;
 		samplerLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
 
 		VkDescriptorSetLayoutBinding samplerLayoutBindingLUT{};
-		samplerLayoutBindingLUT.binding = 5;
+		samplerLayoutBindingLUT.binding = 3;
 		samplerLayoutBindingLUT.descriptorCount = 1;
 		samplerLayoutBindingLUT.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
 		samplerLayoutBindingLUT.pImmutableSamplers = NULL;
@@ -1095,7 +1087,7 @@ void Emulator_UpdateDescriptorSets()
 			textureInfo.imageView = texture.textureImageView;
 			textureInfo.sampler = VK_NULL_HANDLE;
 
-			std::array<VkWriteDescriptorSet, 4> descriptorWrites{};
+			std::array<VkWriteDescriptorSet, 3> descriptorWrites{};
 
 			descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 			descriptorWrites[0].dstSet = descriptorSets[i][j];
@@ -1115,9 +1107,9 @@ void Emulator_UpdateDescriptorSets()
 
 			descriptorWrites[2].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 			descriptorWrites[2].dstSet = descriptorSets[i][j];
-			descriptorWrites[2].dstBinding = 4;
+			descriptorWrites[2].dstBinding = 3;
 			descriptorWrites[2].dstArrayElement = 0;
-			descriptorWrites[2].descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
+			descriptorWrites[2].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
 			descriptorWrites[2].descriptorCount = 1;
 			descriptorWrites[2].pImageInfo = &textureInfo;
 
@@ -1371,7 +1363,7 @@ int Emulator_CreateCommonResources()
 
 	Emulator_CreateGlobalShaders();
 
-	//Emulator_ResetDevice(TRUE);
+	Emulator_ResetDevice(TRUE);
 
 	return TRUE;
 }
