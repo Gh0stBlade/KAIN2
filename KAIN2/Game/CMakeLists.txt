@@ -102,12 +102,18 @@ target_link_libraries(
 ${PROJECT_NAME}
 ${PSX_LIB}
 )
+elseif(WINDOWS_STORE)
+target_link_libraries(
+${PROJECT_NAME}
+${PSX_LIB}
+SDL2::SDL2-static
+)
 else()
 target_link_libraries(
 ${PROJECT_NAME}
 ${PSX_LIB}
-SDL2-static
-SDL2main
+SDL2::SDL2-static
+SDL2::SDL2main
 ${OPENGL_gl_LIBRARY}
 )
 endif()
@@ -136,6 +142,8 @@ if(MSVC AND NOT WINDOWS_STORE)
 	d3d9.lib
 	d3d11.lib
 	d3d12.lib
+	dxgi.lib
+	dxguid.lib
 	)
 endif()
 

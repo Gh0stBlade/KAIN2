@@ -14,7 +14,7 @@
 #elif defined(D3D12)
 #include "Core/Render/D3D12/EMULATOR_RENDER_D3D12.H"
 #elif defined(VULKAN)
-#include "Core/Render/VULKAN/EMULATOR_RENDER_D3D12.H"
+#include "Core/Render/VULKAN/EMULATOR_RENDER_VULKAN.H"
 #elif defined(XED3D)
 #include "Core/Render/XED3D/EMULATOR_RENDER_XED3D.H"
 #elif defined(SN_TARGET_PSP2)

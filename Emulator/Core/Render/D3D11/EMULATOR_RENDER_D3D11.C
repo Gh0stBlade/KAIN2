@@ -335,7 +335,7 @@ void Emulator_CreateD3D11SwapChain()
 #endif
 
 #if defined(UWP)
-	hr = d3ddev->QueryInterface(__uuidof(IDXGIDevice3), (void**)&dxgiDevice);
+	HRESULT hr = d3ddev->QueryInterface(__uuidof(IDXGIDevice3), (void**)&dxgiDevice);
 
 	assert(!FAILED(hr));
 

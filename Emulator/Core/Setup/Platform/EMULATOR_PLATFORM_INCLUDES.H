@@ -28,6 +28,7 @@
 #include <vector>
 #include <set>
 #include <array>
+#include "Core/Render/Vulkan/EMULATOR_RENDER_VULKAN.H"
 #endif
 #elif defined (__ANDROID__)
 #define DEBUG_PRINTS

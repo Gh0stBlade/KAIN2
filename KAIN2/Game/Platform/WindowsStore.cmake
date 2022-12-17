@@ -1,10 +1,6 @@
 if(WINDOWS_STORE AND NOT DEFINED PLATFORM_DURANGO)
 
-target_link_directories(${PROJECT_NAME} PUBLIC ${ROOT_DIR}/Build_UWP/Emulator/$(Configuration) ${EXTERN_LIB_PATH}/SDL_mixer/VisualC-WinRT/x64/Debug/SDL_mixer-UWP ${EXTERN_LIB_PATH}/SDL/VisualC-WinRT/x64/Debug/SDL-UWP)
-target_link_libraries(${PROJECT_NAME} SDL2.lib SDL2_mixer.lib)
-set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "${LINK_FLAGS} /LARGEADDRESSAWARE:NO")
-include_directories(${EXTERN_LIB_PATH}/SDL/include)
-include_directories(${EXTERN_LIB_PATH}/SDL_mixer/include)
+include_directories(${EXTERN_LIB_PATH}/SDL/Include)
 
 set(CMAKE_C_FLAGS           "${CMAKE_C_FLAGS} /ZW")
 set(CMAKE_C_FLAGS_DEBUG     "${CMAKE_C_FLAGS_DEBUG} /ZW")
@@ -16,5 +12,7 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /ZW")
 add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 
 set(PSX_LIB Valkyrie.lib)
+
+target_link_directories(${PROJECT_NAME} PUBLIC ${ROOT_DIR}/Build/Build_UWP/Emulator/$(Configuration))
 
 endif()
