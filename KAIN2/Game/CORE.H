@@ -48,6 +48,8 @@ typedef RECT PSX_RECT;
 
 #if defined(UWP)
 #include <Windows.h>
+
+#define strcmpi _strcmpi
 #endif
 
 #include <LIBAPI.H>

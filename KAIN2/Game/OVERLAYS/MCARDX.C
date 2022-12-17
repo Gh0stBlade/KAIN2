@@ -288,7 +288,11 @@ long (*mcardxFuncTable[12])(void*, long, long) = {
 	NULL,
 };
 
+#if defined(_WIN64)
+int sub_801C7630(void* opaque, long long param, menu_ctrl_t ctrl)
+#else
 int sub_801C7630(void* opaque, long param, menu_ctrl_t ctrl)
+#endif
 {
 	//s1 = param
 	//s0 = ctrl
@@ -311,7 +315,11 @@ int sub_801C7630(void* opaque, long param, menu_ctrl_t ctrl)
 	return 0;
 }
 
+#if defined(_WIN64)
+int sub_801C75C4(void* opaque, long long param, menu_ctrl_t ctrl)
+#else
 int sub_801C75C4(void* opaque, long param, menu_ctrl_t ctrl)
+#endif
 {
 	struct mcmenu_t* mcmenu;
 
