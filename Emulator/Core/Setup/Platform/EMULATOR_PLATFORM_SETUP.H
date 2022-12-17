@@ -45,11 +45,10 @@
 //#define OGLES_VERSION 3
 
 //Open Graphics Library
-//#define OGL
+#define OGL
 
 //Vulkan
-#define VULKAN
-//Needs moving from Emulator.C
+//#define VULKAN
 //Needs new IBO implementing
 		
 //Direct3D9
