@@ -225,9 +225,9 @@ ShaderID Shader_Compile_Internal(const unsigned int* vs_data, const unsigned int
 	samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
 	samplerInfo.magFilter = VK_FILTER_NEAREST;
 	samplerInfo.minFilter = VK_FILTER_NEAREST;
-	samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
-	samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
-	samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+	samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+	samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+	samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
 	samplerInfo.anisotropyEnable = VK_TRUE;
 	samplerInfo.maxAnisotropy = properties.limits.maxSamplerAnisotropy;
 	samplerInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
@@ -237,6 +237,28 @@ ShaderID Shader_Compile_Internal(const unsigned int* vs_data, const unsigned int
 	samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
 
 	if (vkCreateSampler(device, &samplerInfo, nullptr, &shader.SS) != VK_SUCCESS)
+	{
+		eprinterr("Failed to create sampler state!\n");
+	}
+
+	VkSamplerCreateInfo samplerInfoLUT;
+	memset(&samplerInfoLUT, 0, sizeof(VkSamplerCreateInfo));
+
+	samplerInfoLUT.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+	samplerInfoLUT.magFilter = VK_FILTER_NEAREST;
+	samplerInfoLUT.minFilter = VK_FILTER_NEAREST;
+	samplerInfoLUT.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+	samplerInfoLUT.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+	samplerInfoLUT.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+	samplerInfoLUT.anisotropyEnable = VK_TRUE;
+	samplerInfoLUT.maxAnisotropy = properties.limits.maxSamplerAnisotropy;
+	samplerInfoLUT.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
+	samplerInfoLUT.unnormalizedCoordinates = VK_FALSE;
+	samplerInfoLUT.compareEnable = VK_FALSE;
+	samplerInfoLUT.compareOp = VK_COMPARE_OP_ALWAYS;
+	samplerInfoLUT.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
+
+	if (vkCreateSampler(device, &samplerInfoLUT, nullptr, &shader.SSLUT) != VK_SUCCESS)
 	{
 		eprinterr("Failed to create sampler state!\n");
 	}
@@ -790,35 +812,21 @@ void Emulator_CreateDescriptorSetLayout()
 		uboLayoutBinding.pImmutableSamplers = NULL;
 		uboLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
 
-		VkDescriptorSetLayoutBinding samplerLayoutBinding{};
-		samplerLayoutBinding.binding = 2;
-		samplerLayoutBinding.descriptorCount = 1;
-		samplerLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-		samplerLayoutBinding.pImmutableSamplers = NULL;
-		samplerLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
-
-		VkDescriptorSetLayoutBinding samplerLayoutBindingLUT{};
-		samplerLayoutBindingLUT.binding = 3;
-		samplerLayoutBindingLUT.descriptorCount = 1;
-		samplerLayoutBindingLUT.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-		samplerLayoutBindingLUT.pImmutableSamplers = NULL;
-		samplerLayoutBindingLUT.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
-
 		VkDescriptorSetLayoutBinding textureLayoutBinding{};
 		textureLayoutBinding.binding = 2;
 		textureLayoutBinding.descriptorCount = 1;
-		textureLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
+		textureLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
 		textureLayoutBinding.pImmutableSamplers = NULL;
 		textureLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
 
 		VkDescriptorSetLayoutBinding textureLayoutBinding2{};
 		textureLayoutBinding2.binding = 3;
 		textureLayoutBinding2.descriptorCount = 1;
-		textureLayoutBinding2.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
+		textureLayoutBinding2.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
 		textureLayoutBinding2.pImmutableSamplers = NULL;
 		textureLayoutBinding2.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
 
-		std::array<VkDescriptorSetLayoutBinding, 5> bindings = { uboLayoutBinding, samplerLayoutBinding, samplerLayoutBindingLUT, textureLayoutBinding, textureLayoutBinding2 };
+		std::array<VkDescriptorSetLayoutBinding, 3> bindings = { uboLayoutBinding, textureLayoutBinding, textureLayoutBinding2 };
 		VkDescriptorSetLayoutCreateInfo layoutInfo{};
 		layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
 		layoutInfo.bindingCount = static_cast<uint32_t>(bindings.size());
@@ -1084,8 +1092,8 @@ void Emulator_UpdateDescriptorSets()
 
 			VkDescriptorImageInfo textureInfo{};
 			textureInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-			textureInfo.imageView = texture.textureImageView;
-			textureInfo.sampler = VK_NULL_HANDLE;
+			textureInfo.imageView = rg8lutTexture.textureImageView;
+			textureInfo.sampler = g_shaders[0]->SSLUT;
 
 			std::array<VkWriteDescriptorSet, 3> descriptorWrites{};
 

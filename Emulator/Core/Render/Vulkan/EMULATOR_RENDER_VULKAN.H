@@ -31,6 +31,7 @@ struct ShaderID
 	VkPipelineShaderStageCreateInfo PS;
 	VkDescriptorSetLayout DL;
 	VkSampler SS;
+	VkSampler SSLUT;
 	VkPipeline GP;
 	VkPipelineLayout PL;
 };
