@@ -102,53 +102,6 @@ extern SysCounter counters[3];
 
 extern unsigned short vram[];
 
-#if defined(OGLES)
-
-#elif defined(D3D9) || defined(XED3D)
-
-#elif defined(D3D11)
-
-#elif defined(D3D12)
-
-
-#elif defined(VULKAN)
-
-struct TextureImage
-{
-	VkImage textureImage;
-	VkDeviceMemory textureImageMemory;
-	VkBuffer stagingBuffer;
-	VkDeviceMemory stagingBufferMemory;
-	VkImageView textureImageView;
-};
-
-typedef TextureImage TextureID;
-
-struct ShaderID 
-{
-	enum ShaderType
-	{
-		gte_4,
-		gte_8,
-		gte_16,
-		blit,
-	};
-
-	enum ShaderType T;
-	VkPipelineShaderStageCreateInfo VS;
-	VkPipelineShaderStageCreateInfo PS;
-	VkDescriptorSetLayout DL;
-	VkSampler SS;
-	VkPipeline GP;
-	VkPipelineLayout PL;
-};
-
-typedef void* RenderTargetID;
-
-extern ShaderID* g_shaders[];
-
-#endif
-
 struct TouchButtonVRAM
 {
 	short tpage;
@@ -236,7 +189,7 @@ extern void Emulator_UpdateProjectionConstantBuffer(float* ortho);
 extern void Emulator_SetConstantBuffers();
 extern void Emulator_DestroyConstantBuffers();
 extern void Emulator_CreateRasterState(int wireframe);
-extern void Emulator_SetDefaultRenderTarget();
+//extern void Emulator_SetDefaultRenderTarget();
 #elif defined(D3D12)
 extern void Emulator_CreateConstantBuffers();
 extern void Emulator_UpdateProjectionConstantBuffer(float* ortho);
@@ -251,47 +204,6 @@ extern void Emulator_EndCommandBuffer();
 extern void Emulator_SetShader(const ShaderID shader);
 extern void Emulator_DestroyGlobalShaders();
 void Emulator_CreateGraphicsPipelineState(ShaderID* shader, D3D12_GRAPHICS_PIPELINE_STATE_DESC* pso);
-#elif defined(VULKAN)
-extern void Emulator_CreateRasterState(int wireframe);
-extern void Emulator_CreateVulkanBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
-extern void Emulator_BeginPass();
-extern void Emulator_EndPass();
-extern VkImageView Emulator_CreateImageView(VkImage image, VkFormat format);
-extern unsigned int Emulator_FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
-extern void Emulator_CreateBlitShaderDescriptors();
-extern void Emulator_CreateConstantBuffers();
-extern void Emulator_CopyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
-extern void Emulator_EndSingleTimeCommands(VkCommandBuffer commandBuffer);
-extern void Emulator_TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
-extern void Emulator_UpdateProjectionConstantBuffer(float* ortho);
-extern void Emulator_CreatePipelineState(ShaderID& shader, VkPipeline* pipeline, VkPipelineColorBlendStateCreateInfo* colourBlendState);
-extern int Emulator_BeginCommandBuffer();
-extern void Emulator_EndCommandBuffer();
-extern VkCommandBuffer Emulator_BeginSingleTimeCommands();
-extern void Emulator_DestroyConstantBuffers();
-extern void Emulator_SelectVulkanPhysicalDevice();
-extern void Emulator_SelectVulkanQueueFamily();
-extern int Emulator_CreateVulkanDevice();
-extern int Emulator_CreateVulkanSwapChain();
-extern void Emulator_CreateVulkanImageViews();
-extern void Emulator_CreateVulkanRenderPass();
-extern void Emulator_CreateVulkanFrameBuffers();
-extern void Emulator_CreateVulkanCommandPool();
-extern void Emulator_CreateVulkanCommandBuffers();
-extern void Emulator_CreateSyncObjects();
-extern void Emulator_CreateUniformBuffers();
-extern void Emulator_CreateDescriptorPool();
-extern void Emulator_CreateDescriptorSetLayout();
-extern void Emulator_CreateImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory);
-extern void Emulator_DestroyVulkanCommandPool();
-extern void Emulator_DestroyVulkanCommandBuffers();
-extern void Emulator_DestroySyncObjects();
-extern void Emulator_DestroyVulkanFrameBuffers();
-extern void Emulator_DestroyDescriptorSetLayout();
-extern void Emulator_DestroyDescriptorPool();
-extern void Emulator_DestroyVulkanRenderPass();
-extern void Emulator_SetShader(const ShaderID shader);
-extern void Emulator_DestroyVulkanImageViews();
 #endif
 
 extern int Emulator_GetWindowWidth();
