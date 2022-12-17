@@ -9,6 +9,7 @@
 
 const char* renderBackendName = "Vulkan";
 
+extern void Emulator_CreateGraphicsPipelineState(ShaderID* shader);
 extern VkCommandBuffer Emulator_BeginSingleTimeCommands();
 extern void Emulator_CopyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
 extern int Emulator_BeginCommandBuffer();
@@ -25,7 +26,7 @@ extern void Emulator_DestroyGlobalShaders();
 extern void Emulator_CreateVulkanBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
 extern void Emulator_DestroyConstantBuffers();
 extern void Emulator_CreateGlobalShaders();
-extern void Emulator_CreatePipelineState(ShaderID& shader, VkPipeline* pipeline, VkPipelineColorBlendStateCreateInfo* colourBlendState);
+extern void Emulator_CreatePipelineState(ShaderID* shader, VkPipeline* pipeline, VkPipelineColorBlendStateCreateInfo* colourBlendState);
 extern VkImageView Emulator_CreateImageView(VkImage image, VkFormat format);
 extern void Emulator_CreateRasterState(int wireframe);
 extern void Emulator_CreateImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory);
@@ -45,6 +46,7 @@ extern void Emulator_SetShader(const ShaderID shader);
 VkBuffer dynamic_vertex_buffer;
 VkDeviceMemory dynamic_vertex_buffer_memory;
 VkDeviceSize dynamic_vertex_buffer_index;
+int g_CurrentBlendMode = BM_NONE;
 
 std::vector<const char*> g_validationLayers = {
 		"VK_LAYER_KHRONOS_validation"
@@ -118,10 +120,6 @@ VkDescriptorSetLayout descriptorSetLayout[2];
 std::vector<VkDescriptorSet> descriptorSets[2];
 int g_activeDescriptor = 0;
 
-VkPipelineColorBlendAttachmentState g_colorBlendAttachment;
-VkPipelineColorBlendStateCreateInfo g_colorBlend;
-
-VkPipeline g_graphicsPipeline;
 unsigned int g_vertexBufferMemoryBound = FALSE;
 unsigned int imageIndex = 0;
 bool begin_pass_flag = FALSE;
@@ -297,25 +295,7 @@ ShaderID Shader_Compile_Internal(const unsigned int* vs_data, const unsigned int
 		assert(FALSE);
 	}
 
-	VkPipelineColorBlendAttachmentState colorBlendAttachment;
-	memset(&colorBlendAttachment, 0, sizeof(VkPipelineColorBlendAttachmentState));
-
-	colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
-	colorBlendAttachment.blendEnable = VK_FALSE;
-
-	VkPipelineColorBlendStateCreateInfo colorBlending;
-	memset(&colorBlending, 0, sizeof(VkPipelineColorBlendStateCreateInfo));
-	colorBlending.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
-	colorBlending.logicOpEnable = VK_FALSE;
-	colorBlending.logicOp = VK_LOGIC_OP_COPY;
-	colorBlending.attachmentCount = 1;
-	colorBlending.pAttachments = &colorBlendAttachment;
-	colorBlending.blendConstants[0] = 0.0f;
-	colorBlending.blendConstants[1] = 0.0f;
-	colorBlending.blendConstants[2] = 0.0f;
-	colorBlending.blendConstants[3] = 0.0f;
-
-	Emulator_CreatePipelineState(shader, &shader.GP, &colorBlending);
+	Emulator_CreateGraphicsPipelineState(&shader);
 
 	shader.T = (enum ShaderID::ShaderType)shaderType++;
 
@@ -1189,10 +1169,13 @@ void Emulator_DestroyGlobalShaders()
 		g_gte_shader_4.PL = VK_NULL_HANDLE;
 	}
 
-	if (g_gte_shader_4.GP)
+	for (int i = 0; i < 4; i++)
 	{
-		vkDestroyPipeline(device, g_gte_shader_4.GP, NULL);
-		g_gte_shader_4.GP = VK_NULL_HANDLE;
+		if (g_gte_shader_4.GP)
+		{
+			vkDestroyPipeline(device, g_gte_shader_4.GP[i], NULL);
+			g_gte_shader_4.GP[i] = VK_NULL_HANDLE;
+		}
 	}
 
 	if (g_gte_shader_4.SS)
@@ -1225,10 +1208,13 @@ void Emulator_DestroyGlobalShaders()
 		g_gte_shader_8.PL = VK_NULL_HANDLE;
 	}
 
-	if (g_gte_shader_8.GP)
+	for (int i = 0; i < 4; i++)
 	{
-		vkDestroyPipeline(device, g_gte_shader_8.GP, NULL);
-		g_gte_shader_8.GP = VK_NULL_HANDLE;
+		if (g_gte_shader_8.GP)
+		{
+			vkDestroyPipeline(device, g_gte_shader_8.GP[i], NULL);
+			g_gte_shader_8.GP[i] = VK_NULL_HANDLE;
+		}
 	}
 
 	if (g_gte_shader_8.SS)
@@ -1261,10 +1247,13 @@ void Emulator_DestroyGlobalShaders()
 		g_gte_shader_16.PL = VK_NULL_HANDLE;
 	}
 
-	if (g_gte_shader_16.GP)
+	for (int i = 0; i < 4; i++)
 	{
-		vkDestroyPipeline(device, g_gte_shader_16.GP, NULL);
-		g_gte_shader_16.GP = VK_NULL_HANDLE;
+		if (g_gte_shader_16.GP)
+		{
+			vkDestroyPipeline(device, g_gte_shader_16.GP[i], NULL);
+			g_gte_shader_16.GP[i] = VK_NULL_HANDLE;
+		}
 	}
 
 	if (g_gte_shader_16.SS)
@@ -1297,10 +1286,13 @@ void Emulator_DestroyGlobalShaders()
 		g_blit_shader.PL = VK_NULL_HANDLE;
 	}
 
-	if (g_blit_shader.GP)
+	for (int i = 0; i < 4; i++)
 	{
-		vkDestroyPipeline(device, g_blit_shader.GP, NULL);
-		g_blit_shader.GP = VK_NULL_HANDLE;
+		if (g_blit_shader.GP)
+		{
+			vkDestroyPipeline(device, g_blit_shader.GP[i], NULL);
+			g_blit_shader.GP[i] = VK_NULL_HANDLE;
+		}
 	}
 
 	if (g_blit_shader.SS)
@@ -1401,12 +1393,11 @@ void Emulator_SetShader(const ShaderID shader)
 {
 	g_shaderStages[VERTEX_BIT] = shader.VS;
 	g_shaderStages[FRAGMENT_BIT] = shader.PS;
-	g_graphicsPipeline = shader.GP;
 	g_activeShader = shader;
 
 	if (begin_commands_flag && begin_pass_flag && !g_resetDeviceOnNextFrame)
 	{
-		vkCmdBindPipeline(commandBuffers[currentFrame], VK_PIPELINE_BIND_POINT_GRAPHICS, g_graphicsPipeline);
+		vkCmdBindPipeline(commandBuffers[currentFrame], VK_PIPELINE_BIND_POINT_GRAPHICS, shader.GP[g_CurrentBlendMode]);
 	}
 
 	Emulator_Ortho2D(0.0f, activeDispEnv.disp.w, activeDispEnv.disp.h, 0.0f, 0.0f, 1.0f);
@@ -1622,7 +1613,7 @@ void Emulator_CreateRasterState(int wireframe)
 	g_rasterizer.depthBiasEnable = VK_FALSE;
 }
 
-void Emulator_CreatePipelineState(ShaderID& shader, VkPipeline* pipeline, VkPipelineColorBlendStateCreateInfo* colourBlendState)
+void Emulator_CreatePipelineState(ShaderID* shader, VkPipeline* pipeline, VkPipelineColorBlendStateCreateInfo* colourBlendState)
 {
 	VkPipelineVertexInputStateCreateInfo vertexInputInfo;
 	memset(&vertexInputInfo, 0, sizeof(VkPipelineVertexInputStateCreateInfo));
@@ -1660,7 +1651,7 @@ void Emulator_CreatePipelineState(ShaderID& shader, VkPipeline* pipeline, VkPipe
 	multisampling.sampleShadingEnable = VK_FALSE;
 	multisampling.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
 
-	VkPipelineShaderStageCreateInfo shaderStages[] = { shader.VS, shader.PS };
+	VkPipelineShaderStageCreateInfo shaderStages[] = { shader->VS, shader->PS };
 
 	VkGraphicsPipelineCreateInfo pipelineInfo;
 	memset(&pipelineInfo, 0, sizeof(VkGraphicsPipelineCreateInfo));
@@ -1672,16 +1663,9 @@ void Emulator_CreatePipelineState(ShaderID& shader, VkPipeline* pipeline, VkPipe
 	pipelineInfo.pViewportState = &viewportState;
 	pipelineInfo.pRasterizationState = &g_rasterizer;
 	pipelineInfo.pMultisampleState = &multisampling;
-	if (colourBlendState == NULL)
-	{
-		pipelineInfo.pColorBlendState = &g_colorBlend;
-	}
-	else
-	{
-		pipelineInfo.pColorBlendState = colourBlendState;
-	}
+	pipelineInfo.pColorBlendState = colourBlendState;
 
-	pipelineInfo.layout = shader.PL;
+	pipelineInfo.layout = shader->PL;
 	pipelineInfo.renderPass = render_pass;
 	pipelineInfo.subpass = 0;
 	pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
@@ -2044,127 +2028,115 @@ void Emulator_SetBlendMode(enum BlendMode blendMode)
 		return;
 	}
 
-	memset(&g_colorBlendAttachment, 0, sizeof(VkPipelineColorBlendAttachmentState));
-
-	memset(&g_colorBlend, 0, sizeof(VkPipelineColorBlendStateCreateInfo));
-	g_colorBlend.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
-	g_colorBlend.logicOpEnable = VK_FALSE;
-	g_colorBlend.logicOp = VK_LOGIC_OP_COPY;
-	g_colorBlend.attachmentCount = 1;
-	g_colorBlend.pAttachments = &g_colorBlendAttachment;
-
-	g_colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
-
-	if (g_PreviousBlendMode == BM_NONE)
-	{
-		g_colorBlendAttachment.blendEnable = VK_TRUE;
-		g_colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
-		g_colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ZERO;
-		g_colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
-		g_colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
-		g_colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
-		g_colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
-
-		g_colorBlend.blendConstants[0] = 1.0f;
-		g_colorBlend.blendConstants[1] = 1.0f;
-		g_colorBlend.blendConstants[2] = 1.0f;
-		g_colorBlend.blendConstants[3] = 1.0f;
-	}
-
-	switch (blendMode)
-	{
-	case BM_NONE:
-	{
-		g_colorBlendAttachment.blendEnable = VK_FALSE;
-		g_colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
-		g_colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ZERO;
-		g_colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
-		g_colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
-		g_colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
-		g_colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
-
-		g_colorBlend.blendConstants[0] = 1.0f;
-		g_colorBlend.blendConstants[1] = 1.0f;
-		g_colorBlend.blendConstants[2] = 1.0f;
-		g_colorBlend.blendConstants[3] = 1.0f;
-		break;
-	}
-	case BM_AVERAGE:
-	{
-		g_colorBlendAttachment.blendEnable = VK_TRUE;
-		g_colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_CONSTANT_COLOR;
-		g_colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_CONSTANT_COLOR;
-		g_colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
-		g_colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_CONSTANT_COLOR;
-		g_colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_CONSTANT_COLOR;
-		g_colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
-
-		g_colorBlend.blendConstants[0] = 128.0f * (1.0f / 255.0f);
-		g_colorBlend.blendConstants[1] = 128.0f * (1.0f / 255.0f);
-		g_colorBlend.blendConstants[2] = 128.0f * (1.0f / 255.0f);
-		g_colorBlend.blendConstants[3] = 128.0f * (1.0f / 255.0f);
-		break;
-	}
-	case BM_ADD:
-	{
-		g_colorBlendAttachment.blendEnable = VK_TRUE;
-		g_colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
-		g_colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ONE;
-		g_colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
-		g_colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
-		g_colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
-		g_colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
-
-		g_colorBlend.blendConstants[0] = 1.0f;
-		g_colorBlend.blendConstants[1] = 1.0f;
-		g_colorBlend.blendConstants[2] = 1.0f;
-		g_colorBlend.blendConstants[3] = 1.0f;
-		break;
-	}
-	case BM_SUBTRACT:
-	{
-		g_colorBlendAttachment.blendEnable = VK_TRUE;
-		g_colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
-		g_colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ONE;
-		g_colorBlendAttachment.colorBlendOp = VK_BLEND_OP_REVERSE_SUBTRACT;
-		g_colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
-		g_colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
-		g_colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_REVERSE_SUBTRACT;
-
-		g_colorBlend.blendConstants[0] = 1.0f;
-		g_colorBlend.blendConstants[1] = 1.0f;
-		g_colorBlend.blendConstants[2] = 1.0f;
-		g_colorBlend.blendConstants[3] = 1.0f;
-		break;
-	}
-	case BM_ADD_QUATER_SOURCE:
-	{
-		g_colorBlendAttachment.blendEnable = VK_TRUE;
-		g_colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_CONSTANT_COLOR;
-		g_colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ONE;
-		g_colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
-		g_colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_CONSTANT_COLOR;
-		g_colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
-		g_colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
-
-		g_colorBlend.blendConstants[0] = 64.0f * (1.0f / 255.0f);
-		g_colorBlend.blendConstants[1] = 64.0f * (1.0f / 255.0f);
-		g_colorBlend.blendConstants[2] = 64.0f * (1.0f / 255.0f);
-		g_colorBlend.blendConstants[3] = 64.0f * (1.0f / 255.0f);
-		break;
-	}
-	}
-
-
-	Emulator_CreatePipelineState(g_activeShader, &g_activeShader.GP, NULL);
-	g_graphicsPipeline = g_activeShader.GP;
-
-	if (begin_pass_flag)
-	{
-		vkCmdBindPipeline(commandBuffers[currentFrame], VK_PIPELINE_BIND_POINT_GRAPHICS, g_graphicsPipeline);
-	}
-
+	g_CurrentBlendMode = blendMode;
 	g_PreviousBlendMode = blendMode;
+}
+
+void Emulator_CreateGraphicsPipelineState(ShaderID* shader)
+{
+	VkPipelineColorBlendAttachmentState colorBlendAttachment;
+	VkPipelineColorBlendStateCreateInfo colorBlend;
+
+	memset(&colorBlendAttachment, 0, sizeof(VkPipelineColorBlendAttachmentState));
+	
+	memset(&colorBlend, 0, sizeof(VkPipelineColorBlendStateCreateInfo));
+	
+	colorBlend.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
+	colorBlend.logicOpEnable = VK_FALSE;
+	colorBlend.logicOp = VK_LOGIC_OP_COPY;
+	colorBlend.attachmentCount = 1;
+	colorBlend.pAttachments = &colorBlendAttachment;
+
+	colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+
+	for (int i = 0; i < BM_COUNT; i++)
+	{
+		switch (i)
+		{
+		case BM_NONE:
+		{
+			colorBlendAttachment.blendEnable = VK_FALSE;
+			colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
+			colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ZERO;
+			colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
+			colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+			colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+			colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
+
+			colorBlend.blendConstants[0] = 1.0f;
+			colorBlend.blendConstants[1] = 1.0f;
+			colorBlend.blendConstants[2] = 1.0f;
+			colorBlend.blendConstants[3] = 1.0f;
+			break;
+		}
+		case BM_AVERAGE:
+		{
+			colorBlendAttachment.blendEnable = VK_TRUE;
+			colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_CONSTANT_COLOR;
+			colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_CONSTANT_COLOR;
+			colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
+			colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_CONSTANT_COLOR;
+			colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_CONSTANT_COLOR;
+			colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
+
+			colorBlend.blendConstants[0] = 128.0f * (1.0f / 255.0f);
+			colorBlend.blendConstants[1] = 128.0f * (1.0f / 255.0f);
+			colorBlend.blendConstants[2] = 128.0f * (1.0f / 255.0f);
+			colorBlend.blendConstants[3] = 128.0f * (1.0f / 255.0f);
+			break;
+		}
+		case BM_ADD:
+		{
+			colorBlendAttachment.blendEnable = VK_TRUE;
+			colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
+			colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ONE;
+			colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
+			colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+			colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+			colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
+
+			colorBlend.blendConstants[0] = 1.0f;
+			colorBlend.blendConstants[1] = 1.0f;
+			colorBlend.blendConstants[2] = 1.0f;
+			colorBlend.blendConstants[3] = 1.0f;
+			break;
+		}
+		case BM_SUBTRACT:
+		{
+			colorBlendAttachment.blendEnable = VK_TRUE;
+			colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
+			colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ONE;
+			colorBlendAttachment.colorBlendOp = VK_BLEND_OP_REVERSE_SUBTRACT;
+			colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+			colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+			colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_REVERSE_SUBTRACT;
+
+			colorBlend.blendConstants[0] = 1.0f;
+			colorBlend.blendConstants[1] = 1.0f;
+			colorBlend.blendConstants[2] = 1.0f;
+			colorBlend.blendConstants[3] = 1.0f;
+			break;
+		}
+		case BM_ADD_QUATER_SOURCE:
+		{
+			colorBlendAttachment.blendEnable = VK_TRUE;
+			colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_CONSTANT_COLOR;
+			colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ONE;
+			colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
+			colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_CONSTANT_COLOR;
+			colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+			colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
+
+			colorBlend.blendConstants[0] = 64.0f * (1.0f / 255.0f);
+			colorBlend.blendConstants[1] = 64.0f * (1.0f / 255.0f);
+			colorBlend.blendConstants[2] = 64.0f * (1.0f / 255.0f);
+			colorBlend.blendConstants[3] = 64.0f * (1.0f / 255.0f);
+			break;
+		}
+		}
+
+		Emulator_CreatePipelineState(shader, &shader->GP[i], &colorBlend);
+	}
 }
 
 void Emulator_DrawTriangles(int start_vertex, int start_index, int triangles)

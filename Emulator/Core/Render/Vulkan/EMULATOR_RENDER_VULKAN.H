@@ -16,6 +16,8 @@ struct TextureImage
 
 typedef TextureImage TextureID;
 
+#define MAX_NUM_BLEND_MODES (5)
+
 struct ShaderID
 {
 	enum ShaderType
@@ -32,7 +34,7 @@ struct ShaderID
 	VkDescriptorSetLayout DL;
 	VkSampler SS;
 	VkSampler SSLUT;
-	VkPipeline GP;
+	VkPipeline GP[MAX_NUM_BLEND_MODES];
 	VkPipelineLayout PL;
 };
 
