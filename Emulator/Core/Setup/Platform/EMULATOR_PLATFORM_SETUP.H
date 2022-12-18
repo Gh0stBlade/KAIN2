@@ -45,11 +45,10 @@
 //#define OGLES_VERSION 3
 
 //Open Graphics Library
-//#define OGL
+#define OGL
 
 //Vulkan
-#define VULKAN
-//Needs new IBO implementing
+//#define VULKAN
 		
 //Direct3D9
 //#define D3D9

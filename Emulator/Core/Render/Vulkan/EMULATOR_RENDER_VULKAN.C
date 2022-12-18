@@ -970,8 +970,6 @@ void Emulator_ResetDevice(int recreate)
 		begin_commands_flag = FALSE;
 		Emulator_BeginCommandBuffer();
 	}
-
-	g_renderInitialised = TRUE;
 }
 
 int Emulator_InitialiseVulkanContext(char* windowName)

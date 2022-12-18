@@ -88,7 +88,6 @@ extern void Emulator_DrawAggregatedSplits();
 extern void Emulator_DrawTouchUI();
 #endif
 
-extern int g_renderInitialised;
 extern int g_swapInterval;
 extern int g_wireframeMode;
 extern unsigned int g_swapTime;

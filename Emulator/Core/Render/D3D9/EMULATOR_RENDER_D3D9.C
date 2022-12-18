@@ -587,7 +587,7 @@ void Emulator_DrawTriangles(int start_vertex, int start_index, int triangles)
 	d3ddev->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, triangles * 3, start_index, triangles);
 }
 
-void Emulator_UpdateVertexBuffer(const Vertex* vertices, int num_vertices)
+void Emulator_UpdateVertexBuffer(const struct Vertex* vertices, int num_vertices, int vertex_start_index, int use_offset)
 {
 	assert(num_vertices <= MAX_NUM_POLY_BUFFER_VERTICES);
 
@@ -595,14 +595,20 @@ void Emulator_UpdateVertexBuffer(const Vertex* vertices, int num_vertices)
 		return;
 
 	void* ptr;
-	dynamic_vertex_buffer->Lock(0, 0, &ptr, D3DLOCK_DISCARD);
+	dynamic_vertex_buffer->Lock(vertex_start_index * sizeof(Vertex), num_vertices * sizeof(Vertex), &ptr, D3DLOCK_DISCARD);
+
+	if (use_offset)
+	{
+		vertices += vertex_start_index;
+	}
+
 	memcpy(ptr, vertices, num_vertices * sizeof(Vertex));
 	dynamic_vertex_buffer->Unlock();
 
 	vbo_was_dirty_flag = TRUE;
 }
 
-void Emulator_UpdateIndexBuffer(const unsigned short* indices, int num_indices)
+void Emulator_UpdateIndexBuffer(const unsigned short* indices, int num_indices, int face_start_index, int use_offset)
 {
 	assert(num_indices <= MAX_NUM_INDEX_BUFFER_INDICES);
 
@@ -610,7 +616,13 @@ void Emulator_UpdateIndexBuffer(const unsigned short* indices, int num_indices)
 		return;
 
 	void* ptr;
-	dynamic_index_buffer->Lock(0, 0, &ptr, D3DLOCK_DISCARD);
+	dynamic_index_buffer->Lock(face_start_index * sizeof(unsigned short), num_indices * sizeof(unsigned short), &ptr, D3DLOCK_DISCARD);
+	
+	if (use_offset)
+	{
+		indices += face_start_index;
+	}
+	
 	memcpy(ptr, indices, num_indices * sizeof(unsigned short));
 	dynamic_index_buffer->Unlock();
 }

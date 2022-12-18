@@ -104,6 +104,7 @@ int DrawSync(int mode)
 		closeBuffer = TRUE;
 	}
 #endif
+
 	// Update VRAM seems needed to be here
 	Emulator_UpdateVRAM();
 
@@ -119,11 +120,13 @@ int DrawSync(int mode)
 		drawsync_callback();
 	}
 
+#if !defined(VULKAN)
 	if (g_splitIndex > 0) // don't do flips if nothing to draw.
 	{
 		Emulator_DrawAggregatedSplits();
 		Emulator_EndScene();
 	}
+#endif
 
 	VSync(0);
 
@@ -412,10 +415,11 @@ void DrawOTag(u_long* p)
 	if (Emulator_BeginScene())
 	{
 		Emulator_ClearVBO();
+
 		Emulator_ResetPolyState();
 
 #if defined(UWP)
-		Emulator_SetDefaultRenderTarget();
+		//Emulator_SetDefaultRenderTarget();
 #endif
 	}
 
@@ -431,7 +435,6 @@ void DrawOTag(u_long* p)
 	{
 		Emulator_BlitVRAM();
 	}
-
 
 	Emulator_AggregatePTAGsToSplits(p, FALSE);
 
@@ -453,10 +456,11 @@ void DrawPrim(void* p)
 	if (Emulator_BeginScene())
 	{
 		Emulator_ClearVBO();
+
 		Emulator_ResetPolyState();
 
 #if defined(UWP)
-		Emulator_SetDefaultRenderTarget();
+		//Emulator_SetDefaultRenderTarget();
 #endif
 
 		if (activeDrawEnv.isbg)

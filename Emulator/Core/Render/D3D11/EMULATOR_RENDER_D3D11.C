@@ -1185,7 +1185,7 @@ void Emulator_DrawTriangles(int start_vertex, int start_index, int triangles)
 	d3dcontext->DrawIndexed(triangles * 3, start_index, 0);
 }
 
-void Emulator_UpdateVertexBuffer(const Vertex* vertices, int num_vertices)
+void Emulator_UpdateVertexBuffer(const struct Vertex* vertices, int num_vertices, int vertex_start_index, int use_offset)
 {
 	eassert(num_vertices <= MAX_NUM_POLY_BUFFER_VERTICES);
 
@@ -1193,23 +1193,34 @@ void Emulator_UpdateVertexBuffer(const Vertex* vertices, int num_vertices)
 		return;
 
 	D3D11_MAPPED_SUBRESOURCE sr;
-	d3dcontext->Map(dynamic_vertex_buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &sr);
-	memcpy(sr.pData, vertices, num_vertices * sizeof(Vertex));
+	d3dcontext->Map(dynamic_vertex_buffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &sr);
+	
+	if (use_offset)
+	{
+		vertices += vertex_start_index;
+	}
+	
+	memcpy((struct Vertex*)sr.pData + vertex_start_index, vertices, num_vertices * sizeof(Vertex));
 	d3dcontext->Unmap(dynamic_vertex_buffer, 0);
 
 	vbo_was_dirty_flag = TRUE;
 }
 
-void Emulator_UpdateIndexBuffer(const unsigned short* indices, int num_indices)
+void Emulator_UpdateIndexBuffer(const unsigned short* indices, int num_indices, int face_start_index, int use_offset)
 {
 	eassert(num_indices <= MAX_NUM_INDEX_BUFFER_INDICES);
 
 	if (num_indices <= 0)
 		return;
 
+	if (use_offset)
+	{
+		indices += face_start_index;
+	}
+
 	D3D11_MAPPED_SUBRESOURCE sr;
-	d3dcontext->Map(dynamic_index_buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &sr);
-	memcpy(sr.pData, indices, num_indices * sizeof(unsigned short));
+	d3dcontext->Map(dynamic_index_buffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &sr);
+	memcpy((unsigned short*)sr.pData + face_start_index, indices, num_indices * sizeof(unsigned short));
 	d3dcontext->Unmap(dynamic_index_buffer, 0);
 }
 

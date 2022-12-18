@@ -967,26 +967,36 @@ void Emulator_DrawTriangles(int start_vertex, int start_index, int triangles)
 	glDrawElements(GL_TRIANGLES, triangles * 3, GL_UNSIGNED_SHORT, (void*)(sizeof(unsigned short)*start_index));
 }
 
-void Emulator_UpdateVertexBuffer(const Vertex* vertices, int num_vertices)
+void Emulator_UpdateVertexBuffer(const struct Vertex* vertices, int num_vertices, int vertex_start_index, int use_offset)
 {
 	eassert(num_vertices <= MAX_NUM_POLY_BUFFER_VERTICES);
 
 	if (num_vertices <= 0)
 		return;
 
-	glBufferSubData(GL_ARRAY_BUFFER, 0, num_vertices * sizeof(Vertex), vertices);
+	if (use_offset)
+	{
+		vertices += vertex_start_index;
+	}
+
+	glBufferSubData(GL_ARRAY_BUFFER, vertex_start_index * sizeof(Vertex), num_vertices * sizeof(Vertex), vertices);
 
 	vbo_was_dirty_flag = TRUE;
 }
 
-void Emulator_UpdateIndexBuffer(const unsigned short* indices, int num_indices)
+void Emulator_UpdateIndexBuffer(const unsigned short* indices, int num_indices, int face_start_index, int use_offset)
 {
 	eassert(num_indices <= MAX_NUM_INDEX_BUFFER_INDICES);
 
 	if (num_indices <= 0)
 		return;
 
-	glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, num_indices * sizeof(unsigned short), indices);
+	if (use_offset)
+	{
+		indices += face_start_index;
+	}
+
+	glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, face_start_index * sizeof(unsigned short), num_indices * sizeof(unsigned short), indices);
 }
 
 void Emulator_SetViewPort(int x, int y, int width, int height)

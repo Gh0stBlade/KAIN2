@@ -11,8 +11,6 @@ int vram_need_update;
 
 int g_DisableTouchUI;
 
-int g_renderInitialised = FALSE;
-
 unsigned short vram[VRAM_WIDTH * VRAM_HEIGHT];
 
 unsigned char rgLUT[LUT_WIDTH * LUT_HEIGHT * sizeof(unsigned int)];
@@ -1057,7 +1055,7 @@ extern unsigned short resultTouchKeysPressed;
 
 void Emulator_DrawTouchUI()
 {
-	if (g_DisableTouchUI || !g_renderInitialised)
+	if (g_DisableTouchUI)
 	{
 		return;
 	}
