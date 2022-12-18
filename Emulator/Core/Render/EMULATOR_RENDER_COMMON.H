@@ -70,11 +70,15 @@ struct VertexBufferSplit
 	unsigned short vIndex;
 	unsigned short iIndex;
 	unsigned short vCount;
+	unsigned short iCount;
 	enum BlendMode blendMode;
 	enum TexFormat texFormat;
+	int isNew;
 };
 
+extern void Emulator_BlitVRAM();
 extern void Emulator_ClearVBO();
+extern void Emulator_UpdateVBO(int new_start_vertex_index, int new_start_face_index);
 extern void Emulator_ResetPolyState();
 extern void Emulator_AggregatePTAGsToSplits(unsigned long* p, int singlePrimitive);
 extern void Emulator_DrawSplit(const struct VertexBufferSplit* split);
@@ -84,6 +88,7 @@ extern void Emulator_DrawAggregatedSplits();
 extern void Emulator_DrawTouchUI();
 #endif
 
+extern int g_renderInitialised;
 extern int g_swapInterval;
 extern int g_wireframeMode;
 extern unsigned int g_swapTime;
@@ -133,6 +138,9 @@ extern unsigned char rgLUT[];
 
 extern int vram_need_update;
 
+extern int g_vertexIndex;
+extern int g_indicesIndex;
+
 #define LUT_WIDTH (256)
 #define LUT_HEIGHT (256)
 
@@ -147,7 +155,7 @@ extern int vram_need_update;
 
 #define MAX_NUM_POLY_BUFFER_VERTICES (20000)
 #define MAX_NUM_INDEX_BUFFER_INDICES (65535)
-#define MAX_NUM_INDEX_BUFFERS        (4096)
+#define MAX_NUM_INDEX_BUFFER_SPLITS  (4096)
 
 #define VRAM_FORMAT            GL_RG
 #define VRAM_INTERNAL_FORMAT   GL_RG8
@@ -171,8 +179,8 @@ extern void Emulator_SetTextureAndShader(TextureID texture, ShaderID shader);
 extern ShaderID Emulator_GetGTEShader(TexFormat texFormat);
 #endif
 
-extern void Emulator_UpdateVertexBuffer(const struct Vertex* vertices, int num_vertices);
-extern void Emulator_UpdateIndexBuffer(const unsigned short* indices, int num_indices);
+extern void Emulator_UpdateVertexBuffer(const struct Vertex* vertices, int num_vertices, int vertex_start_index, int use_offset);
+extern void Emulator_UpdateIndexBuffer(const unsigned short* indices, int num_indices, int face_start_index, int use_offset);
 extern int Emulator_CreateCommonResources();
 extern void Emulator_Ortho2D(float left, float right, float bottom, float top, float znear, float zfar);
 extern const char* renderBackendName;

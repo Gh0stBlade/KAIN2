@@ -1439,73 +1439,6 @@ void Emulator_ReadVRAM(unsigned short *dst, int x, int y, int dst_w, int dst_h)
 	}
 }
 
-void Emulator_BlitVRAM()
-{
-	if (activeDispEnv.isinter)
-	{
-		//Emulator_StoreFrameBuffer(activeDispEnv.disp.x, activeDispEnv.disp.y, activeDispEnv.disp.w, activeDispEnv.disp.h);
-		return;
-	}
-
-	Emulator_SetTextureAndShader(vramTexture, Emulator_GetGTEShader(TF_COUNT));
-	Emulator_SetBlendMode(BM_NONE);
-
-#if defined(_PATCH2)
-	u_char l, t, r, b; 
-
-	if (activeDispEnv.disp.x != activeDrawEnv.clip.x || activeDispEnv.disp.y != activeDrawEnv.clip.y)
-	{
-		l = activeDrawEnv.clip.x / 8;
-		t = activeDrawEnv.clip.y / 8;
-		r = activeDrawEnv.clip.w / 8 + l;
-		b = activeDrawEnv.clip.h / 8 + t;
-	}
-	else
-	{
-		l = activeDispEnv.disp.x / 8;
-		t = activeDispEnv.disp.y / 8;
-		r = activeDispEnv.disp.w / 8 + l;
-		b = activeDispEnv.disp.h / 8 + t;
-	}
-#else
-	u_char l = activeDispEnv.disp.x / 8;
-	u_char t = activeDispEnv.disp.y / 8;
-	u_char r = activeDispEnv.disp.w / 8 + l;
-	u_char b = activeDispEnv.disp.h / 8 + t;
-#endif
-
-	struct Vertex blit_vertices[] =
-	{
-		{ +1, +1,    0, 0,    r, t,    0, 0,    0, 0, 0, 0 },
-		{ -1, -1,    0, 0,    l, b,    0, 0,    0, 0, 0, 0 },
-		{ -1, +1,    0, 0,    l, t,    0, 0,    0, 0, 0, 0 },
-
-		{ +1, -1,    0, 0,    r, b,    0, 0,    0, 0, 0, 0 },
-		{ -1, -1,    0, 0,    l, b,    0, 0,    0, 0, 0, 0 },
-		{ +1, +1,    0, 0,    r, t,    0, 0,    0, 0, 0, 0 },
-	};
-
-	unsigned short blit_indices[] =
-	{
-		0, 1, 2,
-		3, 5, 4,
-	};
-
-#if defined(_PATCH)
-	Emulator_SetViewPort(0.0f, 0.0f, windowWidth, windowHeight);
-	Emulator_Ortho2D(0.0f, windowWidth, windowHeight, 0.0f, 0.0f, 1.0f);
-#endif
-
-	Emulator_UpdateVertexBuffer(blit_vertices, 6);
-	Emulator_UpdateIndexBuffer(blit_indices, 6);
-	
-	Emulator_SetWireframe(FALSE);
-
-	Emulator_DrawTriangles(0, 0, 2);
-
-	Emulator_SetWireframe(g_wireframeMode);
-}
-
 void Emulator_DoDebugKeys(int nKey, int down); // forward decl
 
 #if defined(TOUCH_UI)
@@ -1889,20 +1822,16 @@ int Emulator_BeginScene()
 	commandList->IASetVertexBuffers(0, 1, &dynamic_vertex_buffer_view);
 
 #elif defined(VULKAN)
-	dynamic_vertex_buffer_index = 0;
 	Emulator_UpdateVRAM();
 	Emulator_BeginPass();
 
-	VkBuffer vertexBuffers[] = { dynamic_vertex_buffer };
-	VkDeviceSize offsets[] = { 0 };
-
 	if (g_vertexBufferMemoryBound == FALSE)
 	{
-		vkBindBufferMemory(device, dynamic_vertex_buffer, dynamic_vertex_buffer_memory, 0);
+		//vkBindBufferMemory(device, dynamic_vertex_buffer, dynamic_vertex_buffer_memory, 0);
 		g_vertexBufferMemoryBound = TRUE;
 	}
 
-	vkCmdBindVertexBuffers(commandBuffers[currentFrame], 0, 1, vertexBuffers, offsets);
+	
 #elif defined(PLATFORM_NX)
 	dynamic_vertex_buffer_index = 0;
 
@@ -2491,9 +2420,6 @@ unsigned int Emulator_GetFPS()
 void Emulator_EndScene()
 {
 #if defined(VULKAN) || defined(D3D12) || defined(PLATFORM_NX)
-
-	dynamic_vertex_buffer_index = 0;
-
 	Emulator_EndPass();
 #endif
 

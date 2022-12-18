@@ -46,8 +46,6 @@ extern VkBuffer dynamic_vertex_buffer;
 
 extern VkDeviceMemory dynamic_vertex_buffer_memory;
 
-extern VkDeviceSize dynamic_vertex_buffer_index;
-
 extern VkDevice device;
 
 extern int Emulator_InitialiseVulkanContext(char* windowName);
@@ -61,6 +59,10 @@ extern std::vector<VkCommandBuffer> commandBuffers;
 extern unsigned int currentFrame;
 
 extern void Emulator_EndPass();
+
+extern int Emulator_BeginCommandBuffer();
+
+extern void Emulator_EndCommandBuffer();
 
 #endif
 

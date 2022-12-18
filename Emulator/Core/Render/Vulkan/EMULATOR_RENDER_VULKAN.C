@@ -9,6 +9,8 @@
 
 const char* renderBackendName = "Vulkan";
 
+extern void Emulator_CreateVertexBuffer();
+extern void Emulator_CreateIndexBuffer();
 extern void Emulator_CreateGraphicsPipelineState(ShaderID* shader);
 extern VkCommandBuffer Emulator_BeginSingleTimeCommands();
 extern void Emulator_CopyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
@@ -45,7 +47,10 @@ extern void Emulator_SetShader(const ShaderID shader);
 
 VkBuffer dynamic_vertex_buffer;
 VkDeviceMemory dynamic_vertex_buffer_memory;
-VkDeviceSize dynamic_vertex_buffer_index;
+
+VkBuffer dynamic_index_buffer;
+VkDeviceMemory dynamic_index_buffer_memory;
+
 int g_CurrentBlendMode = BM_NONE;
 
 std::vector<const char*> g_validationLayers = {
@@ -827,6 +832,11 @@ void Emulator_ResetDevice(int recreate)
 		dynamic_vertex_buffer = VK_NULL_HANDLE;
 	}
 
+	if (dynamic_index_buffer) {
+		vkDestroyBuffer(device, dynamic_index_buffer, NULL);
+		dynamic_index_buffer = VK_NULL_HANDLE;
+	}
+
 	enum ShaderID::ShaderType lastShaderBound = g_activeShader.T;
 
 	Emulator_DestroySyncObjects();
@@ -941,34 +951,9 @@ void Emulator_ResetDevice(int recreate)
 
 	Emulator_CreateGlobalShaders();
 
-	//VTX buffer
-	VkBufferCreateInfo bufferInfo;
-	memset(&bufferInfo, 0, sizeof(VkBufferCreateInfo));
+	Emulator_CreateVertexBuffer();
 
-	bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-	bufferInfo.size = sizeof(Vertex) * MAX_NUM_POLY_BUFFER_VERTICES;
-	bufferInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
-	bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-
-	if (vkCreateBuffer(device, &bufferInfo, NULL, &dynamic_vertex_buffer) != VK_SUCCESS)
-	{
-		eprinterr("Failed to create vertex buffer!\n");
-		assert(FALSE);
-	}
-
-	VkMemoryRequirements memRequirements;
-	vkGetBufferMemoryRequirements(device, dynamic_vertex_buffer, &memRequirements);
-
-	VkMemoryAllocateInfo allocInfo{};
-	allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-	allocInfo.allocationSize = memRequirements.size;
-	allocInfo.memoryTypeIndex = Emulator_FindMemoryType(memRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
-
-	if (vkAllocateMemory(device, &allocInfo, NULL, &dynamic_vertex_buffer_memory) != VK_SUCCESS)
-	{
-		eprinterr("Failed to allocate vertex buffer!\n");
-		assert(FALSE);
-	}
+	Emulator_CreateIndexBuffer();
 
 	currentFrame = 0;
 
@@ -985,6 +970,8 @@ void Emulator_ResetDevice(int recreate)
 		begin_commands_flag = FALSE;
 		Emulator_BeginCommandBuffer();
 	}
+
+	g_renderInitialised = TRUE;
 }
 
 int Emulator_InitialiseVulkanContext(char* windowName)
@@ -1339,6 +1326,16 @@ void Emulator_GenerateCommonTextures()
 	Emulator_TransitionImageLayout(rg8lutTexture.textureImage, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 	Emulator_CopyBufferToImage(rg8lutTexture.stagingBuffer, rg8lutTexture.textureImage, static_cast<uint32_t>(LUT_WIDTH), static_cast<uint32_t>(LUT_HEIGHT));
 	Emulator_TransitionImageLayout(rg8lutTexture.textureImage, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+}
+
+void Emulator_CreateVertexBuffer()
+{
+	Emulator_CreateVulkanBuffer(sizeof(Vertex) * MAX_NUM_POLY_BUFFER_VERTICES, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, dynamic_vertex_buffer, dynamic_vertex_buffer_memory);
+}
+
+void Emulator_CreateIndexBuffer()
+{
+	Emulator_CreateVulkanBuffer(sizeof(unsigned short) * MAX_NUM_INDEX_BUFFER_INDICES, VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, dynamic_index_buffer, dynamic_index_buffer_memory);
 }
 
 int Emulator_CreateCommonResources()
@@ -2146,12 +2143,11 @@ void Emulator_DrawTriangles(int start_vertex, int start_index, int triangles)
 
 	if (!g_resetDeviceOnNextFrame)
 	{
-		vkCmdDraw(commandBuffers[currentFrame], triangles * 3, 1, dynamic_vertex_buffer_index, 0);
-		dynamic_vertex_buffer_index += triangles * 3;
+		vkCmdDrawIndexed(commandBuffers[currentFrame], triangles * 3, 1, start_vertex, 0, 0);
 	}
 }
 
-void Emulator_UpdateVertexBuffer(const struct Vertex* vertices, int num_vertices)
+void Emulator_UpdateVertexBuffer(const struct Vertex* vertices, int num_vertices, int vertex_start_index, int use_offset)
 {
 	assert(num_vertices <= MAX_NUM_POLY_BUFFER_VERTICES);
 
@@ -2159,24 +2155,55 @@ void Emulator_UpdateVertexBuffer(const struct Vertex* vertices, int num_vertices
 		return;
 
 	void* data = NULL;
-	
-	if (vkMapMemory(device, dynamic_vertex_buffer_memory, dynamic_vertex_buffer_index * sizeof(Vertex), num_vertices * sizeof(Vertex), 0, &data) != VK_SUCCESS)
+
+	if (vkMapMemory(device, dynamic_vertex_buffer_memory, vertex_start_index * sizeof(Vertex), num_vertices * sizeof(Vertex), 0, &data) != VK_SUCCESS)
 	{
 		eprinterr("Failed to map vertex buffer memory\n");
 		assert(FALSE);
 	}
 	
+	if (use_offset)
+	{
+		vertices += vertex_start_index;
+	}
+
 	memcpy(data, vertices, num_vertices * sizeof(Vertex));
 	
 	vkUnmapMemory(device, dynamic_vertex_buffer_memory);
 
-	vbo_was_dirty_flag = TRUE;
+	VkBuffer vertexBuffers[] = { dynamic_vertex_buffer };
+	VkDeviceSize offsets[] = { 0 };
 
+	vkCmdBindVertexBuffers(commandBuffers[currentFrame], 0, 1, vertexBuffers, offsets);
+
+	vbo_was_dirty_flag = TRUE;
 }
 
-void Emulator_UpdateIndexBuffer(const unsigned short* indices, int num_indices)
+void Emulator_UpdateIndexBuffer(const unsigned short* indices, int num_indices, int face_start_index, int use_offset)
 {
-	UNIMPLEMENTED();
+	assert(num_indices <= MAX_NUM_INDEX_BUFFER_INDICES);
+
+	if (num_indices <= 0)
+		return;
+
+	void* data = NULL;
+
+	if (vkMapMemory(device, dynamic_index_buffer_memory, face_start_index * sizeof(unsigned short), num_indices * sizeof(unsigned short), 0, &data) != VK_SUCCESS)
+	{
+		eprinterr("Failed to map index buffer memory\n");
+		assert(FALSE);
+	}
+
+	if (use_offset)
+	{
+		indices += face_start_index;
+	}
+
+	memcpy(data, indices, num_indices * sizeof(unsigned short));
+
+	vkUnmapMemory(device, dynamic_index_buffer_memory);
+
+	vkCmdBindIndexBuffer(commandBuffers[currentFrame], dynamic_index_buffer, 0, VK_INDEX_TYPE_UINT16);
 }
 
 void Emulator_SetViewPort(int x, int y, int width, int height)

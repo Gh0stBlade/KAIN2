@@ -4,9 +4,11 @@ Message("Compiling for Windows!")
 
 #Find libs
 find_package(OpenGL REQUIRED)
+find_package(Vulkan)
+if(Vulkan_FOUND)
+include_directories(${Vulkan_INCLUDE_DIR})
+endif()
 
-#find_package(Vulkan)
-#include_directories(${Vulkan_INCLUDE_DIR})
 include_directories(${EXTERN_LIB_PATH}/SDL/Include)
 
 endif()
