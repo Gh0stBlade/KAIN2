@@ -124,7 +124,7 @@ static int polygon_count = 0;
 extern int g_emulatorPaused;
 
 struct Vertex g_vertexBuffer[MAX_NUM_POLY_BUFFER_VERTICES];
-unsigned short g_indexBuffer[MAX_NUM_POLY_BUFFER_VERTICES];
+unsigned short g_indexBuffer[MAX_NUM_INDEX_BUFFER_INDICES];
 struct VertexBufferSplit g_splits[MAX_NUM_INDEX_BUFFERS];
 int g_vertexIndex;
 int g_indicesIndex;
