@@ -376,7 +376,7 @@ void GlyphDrawMenu(struct _Instance* instance)
 
 		rot -= 585;
 
-		FX_MakeGlyphIcon(&place, instance->object, (glyphtunedata->glyph_size * scale_modify) < 0 ? ((glyphtunedata->glyph_size * scale_modify + 0xFFF) >> 13) : ((glyphtunedata->glyph_size * scale_modify) >> 13), num, enabled);
+		FX_MakeGlyphIcon(&place, instance->object, (glyphtunedata->glyph_size * scale_modify) < 0 ? ((glyphtunedata->glyph_size * scale_modify + 0x1FFF) >> 13) : ((glyphtunedata->glyph_size * scale_modify) >> 13), num, enabled);
 	}
 
 	if (data->glyph_time == 4096)
@@ -508,11 +508,9 @@ UNIMPLEMENTED();
 #endif
 }
 
-long GlyphTime(int time)
+long GlyphTime(int time)//Matching - 70.71%
 {
-	time *= time;
-	
-	return (time < 0) ? (time + 4095) >> 12 : (time >> 12);
+	return  (time * time < 0) ? ((time * time + 4095) >> 12) : (time * time >> 12);
 }
 
 void ShrinkGlyphMenu(struct _Instance *instance)
@@ -568,7 +566,7 @@ void ShrinkGlyphMenu(struct _Instance *instance)
 	}
 }
 
-void EnlargeGlyphMenu(struct _Instance* instance)
+void EnlargeGlyphMenu(struct _Instance* instance)//Matching - 84.92%
 {
 	struct __GlyphData* data;
 	int time;
@@ -580,20 +578,20 @@ void EnlargeGlyphMenu(struct _Instance* instance)
 
 	if (data->glyph_time < 4096)
 	{
-		data->glyph_time = (gameTrackerX.timeMult * 512) >> 12;
+		data->glyph_time += (gameTrackerX.timeMult * 512) >> 12;
 
 		if (data->glyph_time >= 0x1001)
 		{
-			data->glyph_time - 4096;
+			data->glyph_time = 4096;
 		}
 
 		glyph_time = data->glyph_time;
 	}
-	
+
 	time = GlyphTime(data->glyph_time);
 
 	data->glyph_radius = (time * 150) < 0 ? (time * 150 + 0xFFF) >> 12 : (time * 150) >> 12;
-	
+
 	data->glyph_scale = time;
 
 	GlyphDrawMenu(instance);
