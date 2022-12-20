@@ -701,31 +701,31 @@ void _GlyphSelectProcess(struct _Instance* instance, int data1, int data2)
 		case 0x100004:
 		{
 			//loc_8007B7E0
-			assert(FALSE);
+			//assert(FALSE);
 			break;
 		}
 		case 0x10000002:
 		{
 			//loc_8007B94C
-			assert(FALSE);
+			//assert(FALSE);
 			break;
 		}
 		case 0x10000004:
 		{
 			//loc_8007B804
-			assert(FALSE);
+			//assert(FALSE);
 			break;
 		}
 		case 0x80000000:
 		{
 			//loc_8007BA9C
-			assert(FALSE);
+			//assert(FALSE);
 			break;
 		}
 		case 0x80000010:
 		{
 			//loc_8007B7E8
-			assert(FALSE);
+			//assert(FALSE);
 			break;
 		}
 		default:
