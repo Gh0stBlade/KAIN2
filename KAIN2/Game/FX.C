@@ -1792,11 +1792,11 @@ void FX_MakeGlyphIcon(struct _Position* position, struct Object* glyphObject, in
 
 			otz = (24 - size) < 0 ? (((24 - size) + 3) >> 2) + 1: ((24 - size) >> 2) + 1;
 
-			color_array = glyphtunedata->color_array;
+			color_array = &glyphtunedata->color_array[glyphnum * 4];
 
 			if (enabled != 0)
 			{
-				poly = FX_SetupPolyGT4(position->x - sizex, position->y - size, position->x + sizex + 1, position->y + size + 1, otz, texture, color_array[glyphnum], color_array[glyphnum + 1], color_array[glyphnum + 2], color_array[glyphnum + 3]);
+				poly = FX_SetupPolyGT4(position->x - sizex, position->y - size, position->x + sizex + 1, position->y + size + 1, otz, texture, color_array[0], color_array[1], color_array[2], color_array[3]);
 			}
 			else
 			{
