@@ -341,9 +341,9 @@ void GlyphDrawMenu(struct _Instance* instance)
 
 		scale_modify = (data->glyph_scale * scale_modify) < 0 ? ((data->glyph_scale * scale_modify) + 0xFFF) >> 12 : ((data->glyph_scale * scale_modify) >> 12);
 
-		place.x = rot + ((rcos(rot) * radius) >> 12);
+		place.x = center.vx + ((rcos(rot) * radius) >> 12);
 		
-		place.y = center.vy - (((rcos(rot) * radius) >> 12) < 0) ? ((((rcos(rot) * radius) >> 12) + 7) >> 3) : (((rcos(rot) * radius) >> 12) >> 3);
+		place.y = center.vy - ((((rsin(rot) * radius) >> 12) < 0) ? ((((rsin(rot) * radius) >> 12) + 7) >> 3) : (((rsin(rot) * radius) >> 12) >> 3));
 
 		num = n;
 
@@ -592,7 +592,7 @@ void EnlargeGlyphMenu(struct _Instance* instance)
 	
 	time = GlyphTime(data->glyph_time);
 
-	data->glyph_radius = (time * 150) < 0 ? (time * 150 + 0xFFF) >> 12 : time * 150;
+	data->glyph_radius = (time * 150) < 0 ? (time * 150 + 0xFFF) >> 12 : (time * 150) >> 12;
 	
 	data->glyph_scale = time;
 
