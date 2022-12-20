@@ -1757,7 +1757,7 @@ void FX_MakeGlyphIcon(struct _Position* position, struct Object* glyphObject, in
 
 				if (poly != NULL)
 				{
-					poly->code = (((char*)texture->color)[3] & 0x3) | 0x3C;
+					poly->code = (((char*)&texture->color)[3] & 0x3) | 0x3C;
 				}
 			}
 		}
@@ -1787,7 +1787,7 @@ void FX_MakeGlyphIcon(struct _Position* position, struct Object* glyphObject, in
 
 			if (poly != NULL)
 			{
-				poly->code = (((char*)texture->color)[3] & 0x3) | 0x3C;
+				poly->code = (((char*)&texture->color)[3] & 0x3) | 0x3C;
 			}
 		}
 	}
