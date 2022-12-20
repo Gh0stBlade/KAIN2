@@ -146,6 +146,41 @@ typedef RECT PSX_RECT;
 #define MAX(a,b) (((a)>(b))?(a):(b))
 #endif
 
+typedef struct _BASIC_F4
+{
+	unsigned char r0; // size=0, offset=0
+	unsigned char g0; // size=0, offset=1
+	unsigned char b0; // size=0, offset=2
+	unsigned char code; // size=0, offset=3
+	short x0; // size=0, offset=4
+	short y0; // size=0, offset=6
+	short x1; // size=0, offset=8
+	short y1; // size=0, offset=10
+	short x2; // size=0, offset=12
+	short y2; // size=0, offset=14
+	short x3; // size=0, offset=16
+	short y3; // size=0, offset=18
+}_BASIC_F4;
+
+typedef struct _POLY_TF4
+{
+#if defined(USE_32_BIT_ADDR)
+	unsigned long tag;
+#if defined(PGXP)
+	unsigned short len;
+	unsigned short pgxp_index;
+#else
+	unsigned long len;
+#endif
+#else
+	unsigned long tag;
+#endif
+	unsigned long drawTPage;
+
+	_BASIC_F4 p1;
+
+}_POLY_TF4;
+
 typedef struct _SVector // hashcode: 0x73B07C09 (dec: 1940945929)
 {
 	short x; // size=0, offset=0
