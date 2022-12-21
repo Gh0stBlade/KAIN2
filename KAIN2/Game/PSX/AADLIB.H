@@ -24,28 +24,49 @@ struct AadVolume
 	short right; // size=0, offset=2
 };
 
-struct AadSequenceHdr 
+struct AadSequenceHdr
 {
-	unsigned long sequenceID; // size=0, offset=0
-	unsigned long quarterNoteTime; // size=0, offset=4
-	unsigned short ppqn; // size=0, offset=8
-	unsigned short version; // size=0, offset=10
-	unsigned short numTracks; // size=0, offset=12
-	unsigned short unused; // size=0, offset=14
+#if defined(AKUJI)
+	unsigned long sequenceID;
+	unsigned long quarterNoteTime;
+	unsigned short ppqn;
+	unsigned short version;
+#else
+	unsigned long sequenceID;
+	unsigned long quarterNoteTime;
+	unsigned short ppqn;
+	unsigned short version;
+	unsigned short numTracks;
+	unsigned short unused;
+#endif
 };
 
-struct AadSoundBankHdr // hashcode: 0x453DB83F (dec: 1161672767)
+struct AadSoundBankHdr
 {
-	unsigned long bankID; // size=0, offset=0
-	unsigned long headerSize; // size=0, offset=4
-	int bankVersion; // size=0, offset=8
-	int numPrograms; // size=0, offset=12
-	int numTones; // size=0, offset=16
-	int numWaves; // size=0, offset=20
-	int numSequences; // size=0, offset=24
-	int numLabels; // size=0, offset=28
-	int reverbMode; // size=0, offset=32
-	int reverbDepth; // size=0, offset=36
+#if defined(AKUJI)
+	unsigned long bankID;
+	unsigned short headerSize;
+	unsigned char unknown;
+	unsigned char numPrograms;
+	unsigned short numTones;
+	unsigned short numWaves;
+	unsigned short numSequences;
+	unsigned short numLabels;
+	unsigned short reverbMode;
+	unsigned short reverbDepth;
+	unsigned short unknown3[26];
+#else
+	unsigned long bankID;
+	unsigned long headerSize;
+	int bankVersion;
+	int numPrograms;
+	int numTones;
+	int numWaves;
+	int numSequences;
+	int numLabels;
+	int reverbMode;
+	int reverbDepth;
+#endif
 };
 
 struct AadProgramAtr // hashcode: 0x13FC0BEF (dec: 335285231)

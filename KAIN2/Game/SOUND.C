@@ -1594,6 +1594,15 @@ void SOUND_ProcessMusicLoad()
 
 							musicName[4] = 0;
 
+#if defined(AKUJI)
+							musicName[0] = 'r';
+							musicName[1] = 'a';
+							musicName[2] = 'i';
+							musicName[3] = 'n';
+							musicName[4] = '1';
+							musicName[5] = 0;
+#endif
+
 #if defined(UWP)
 							if (_strcmpi(musicName, musicInfo.currentMusicName) != 0)
 #else
@@ -1653,7 +1662,11 @@ void SOUND_ProcessMusicLoad()
 		}
 		break;
 	case 2:
+#if defined(AKUJI)
+		if (aadAssignDynamicSequence(0, 2, 0) == 0)
+#else
 		if (aadAssignDynamicSequence(0, 0, 0) == 0)
+#endif
 		{
 			aadStartSlot(0);
 			musicInfo.state = 0;

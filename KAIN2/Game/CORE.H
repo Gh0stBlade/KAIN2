@@ -1,6 +1,8 @@
 #ifndef CORE_H
 #define CORE_H
 
+//#define AKUJI
+
 #if defined(PC_VERSION)
 #include <Windows.h>
 #include "psyq.h"

@@ -298,13 +298,12 @@ void aadSlotUpdate()//Matching - 97.37%
 
 						do
 						{
+#if defined(AKUJI)
+							for (track = 0; track < 1; track++)
+#else
 							for (track = 0; track < 16; track++)
+#endif
 							{
-								if (track == 0xE)
-								{
-									int testing = 0;
-									testing++;
-								}
 								if (slot->sequencePosition[track] != NULL)
 								{
 									while (slot->eventsInQueue[track] < 3)
@@ -323,25 +322,17 @@ void aadSlotUpdate()//Matching - 97.37%
 
 							slotDone = 1;
 
-
+#if defined(AKUJI)
+							for (track = 0; track < 1; track++)
+#else
 							for (track = 0; track < 16; track++)
+#endif
 							{
-								if (track == 0xE)
-								{
-									int testing = 0;
-									testing++;
-								}
 								if (slot->sequencePosition[track] != NULL)
 								{
 									while (slot->eventsInQueue[track] != 0)
 									{
 										seqEventPtr = &slot->eventQueue[slot->eventOut[track]][track];
-
-										if (seqEventPtr->statusByte >= 0xC0)
-										{
-											int testing = 0;
-											testing++;
-										}
 
 										if (slot->tempo.currentTick >= seqEventPtr->deltaTime + slot->lastEventExecutedTime[track])
 										{
@@ -419,7 +410,6 @@ void aadSlotUpdate()//Matching - 97.37%
 			}
 			else
 			{
-
 				if (aadMem->masterVolFader.targetVolume < newVol)
 				{
 					fadeComplete = 1;
@@ -620,7 +610,11 @@ void aadLoadDynamicSoundBankReturn2(void* loadedDataPtr, long loadedDataSize, sh
 
 			if (info->loadOption == 0 || info->sramDataSize != 1)
 			{
+#if defined(AKUJI)
+				info->nextSramAddr = 0;
+#else
 				info->nextSramAddr = 302800;
+#endif
 			}
 			else
 			{
@@ -703,12 +697,19 @@ int aadOpenDynamicSoundBank(unsigned char *soundBank, int dynamicBankIndex)
 		return 0x1001;
 	}
 
+#if !defined(AKUJI)
 	if (soundBankHdr->bankVersion != 262)
 	{
 		return 0x1002;
 	}
+#endif
 
+#if defined(AKUJI)
+	programAtr = (struct AadProgramAtr*)(soundBankHdr + 1);
+#else
 	programAtr = (struct AadProgramAtr*)((char*)soundBankHdr + soundBankHdr->headerSize);
+#endif
+
 	aadMem->dynamicProgramAtr[dynamicBankIndex] = programAtr;
 
 	toneAtr = (struct AadToneAtr*)((char*)programAtr + soundBankHdr->numPrograms * sizeof(struct AadProgramAtr));
@@ -2013,9 +2014,17 @@ void aadInitSequenceSlot(struct _AadSequenceSlot* slot)//Matching - 99.70%
 
 	for (i = 0; i < 16; i++)
 	{
+#if defined(AKUJI)
+		if (i < 1)
+#else
 		if (i < seqHdr->numTracks)
+#endif
 		{
+#if defined(AKUJI)
+			slot->sequencePosition[i] = (unsigned char*)(seqHdr + 1);
+#else
 			slot->sequencePosition[i] = (unsigned char*)(char*)seqHdr + ((int*)seqHdr)[4 + i];
+#endif
 		}
 		else
 		{
