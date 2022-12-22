@@ -901,15 +901,15 @@ void aadGotoSequenceLabel(struct _AadSequenceSlot *slot, int track, int labelNum
 
 	bank = slot->sequenceAssignedDynamicBank;
 	seqHdr = (struct AadSequenceHdr*)aadMem->dynamicSequenceAddressTbl[bank][slot->sequenceNumberAssigned];
+	
+#if defined(AKUJI)
+	trackOffset = sizeof(struct AadSequenceHdr);
+#else
 	trackOffset = ((unsigned long*)(seqHdr + 1))[track];
+#endif	
+
 	slot->sequencePosition[track] = (unsigned char*)(char*)seqHdr + trackOffset + aadMem->dynamicSequenceLabelOffsetTbl[bank][labelNumber];
 
-
-	if (labelNumber == 204)
-	{
-		int testing = 0;
-		testing++;
-	}
 	eprintinf("[MIDI]: Track: %d Goto Sequence Position: %x Label: %d\n", track, slot->sequencePosition[track], labelNumber);
 
 
