@@ -542,6 +542,7 @@ int ParsePrimitive(uintptr_t primPtr)
 	case 0x3C:
 	{
 		POLY_GT4* poly = (POLY_GT4*)pTag;
+
 		activeDrawEnv.tpage = poly->tpage;
 
 		Emulator_AddSplit(semi_transparent, poly->tpage, vramTexture);
@@ -819,7 +820,7 @@ int ParsePrimitive(uintptr_t primPtr)
 				activeDrawEnv.tpage = tpage;
 			}
 
-			primitive_size = 4;//sizeof(DR_TPAGE);
+			primitive_size = sizeof(DR_TPAGE);
 #if defined(DEBUG_POLY_COUNT)
 			polygon_count++;
 #endif
@@ -1067,8 +1068,13 @@ void Emulator_DrawTouchUI()
 		0x4,
 	};
 
+#define setlen_ST( p, _len) 	(((POLY_F4_SEMITRANS *)(p))->len  = (u_char)(_len))
+#define setcode_ST(p, _code)	(((POLY_F4_SEMITRANS *)(p))->code = (u_char)(_code))
+#define setPolyF4_ST(p)	setlen_ST(p, 6),  setcode_ST(p, 0x2A)
+#define setAbr(p, abr) ((p)->dr_tpage) |= ((short)abr << 5)
+
 	unsigned long OT[4];
-	char polygonBuffer[sizeof(POLY_F4) * 32];
+	char polygonBuffer[sizeof(POLY_F4_SEMITRANS) * 32];
 	char* p = &polygonBuffer[0];
 
 	ClearOTagR(OT, 4 / 2);
@@ -1087,15 +1093,12 @@ void Emulator_DrawTouchUI()
 		int my = dy ? ndist * 2 : 0;
 		int pressed = (resultTouchKeysPressed & mapper[i] << 4) != 0;
 		
-		setPolyF4(p);
-		setSemiTrans(p, 1);
-		setRGB0((POLY_F4*)p, 127, pressed ? 0 : 127, pressed ? 0 : 127);
-		//((POLY_FT4*)p)->clut = touchButtonsUI[i].clut;
-		//((POLY_FT4*)p)->tpage = touchButtonsUI[i].tpage;
-		//setUV4((POLY_FT4*)p, touchButtonsUI[i].u[0], touchButtonsUI[i].v[0], touchButtonsUI[i].u[1], touchButtonsUI[i].v[1], touchButtonsUI[i].u[2], touchButtonsUI[i].v[2], touchButtonsUI[i].u[3], touchButtonsUI[i].v[3]);
-		setXY4((POLY_F4*)p, cx + mx, cy + my, cx + mx + 32, cy + my, cx + mx, cy + my + 32, cx + mx + 32, cy + my + 32);
+		setDrawTPage((POLY_F4_SEMITRANS*)p, 0, 0, 0x18);
+		setPolyF4_ST((POLY_F4_SEMITRANS*)p);
+		setRGB0((POLY_F4_SEMITRANS*)p, 127, pressed ? 0 : 127, pressed ? 0 : 127);
+		setXY4((POLY_F4_SEMITRANS*)p, cx + mx, cy + my, cx + mx + 32, cy + my, cx + mx, cy + my + 32, cx + mx + 32, cy + my + 32);
 		addPrim(OT, p);
-		p += sizeof(POLY_F4);
+		p += sizeof(POLY_F4_SEMITRANS);
 	}
 	
 	cx = 512-64;
@@ -1111,12 +1114,13 @@ void Emulator_DrawTouchUI()
 		int my = dy ? ndist * 2 : 0;
 
 		int pressed = (resultTouchKeysPressed & mapper[i] << 12) != 0;
-		setPolyF4(p);
-		setSemiTrans(p, 1);
-		setRGB0((POLY_F4*)p, 127, pressed ? 0 : 127, pressed ? 0 : 127);
-		setXY4((POLY_F4*)p, cx + mx, cy + my, cx + mx + 32, cy + my, cx + mx, cy + my + 32, cx + mx + 32, cy + my + 32);
+		
+		setDrawTPage((POLY_F4_SEMITRANS*)p, 0, 0, 0x18);
+		setPolyF4_ST((POLY_F4_SEMITRANS*)p);
+		setRGB0((POLY_F4_SEMITRANS*)p, 127, pressed ? 0 : 127, pressed ? 0 : 127);
+		setXY4((POLY_F4_SEMITRANS*)p, cx + mx, cy + my, cx + mx + 32, cy + my, cx + mx, cy + my + 32, cx + mx + 32, cy + my + 32);
 		addPrim(OT, p);
-		p += sizeof(POLY_F4);
+		p += sizeof(POLY_F4_SEMITRANS);
 	}
 
 	cx = 512 / 2;
@@ -1131,15 +1135,12 @@ void Emulator_DrawTouchUI()
 		int mx = dx ? ndist * 2 : 0;
 
 		int pressed = (resultTouchKeysPressed & mapper[!i]) != 0;
-		setPolyF4(p);
-		setSemiTrans(p, 1);
-		setRGB0((POLY_F4*)p, 127, pressed ? 0 : 127, pressed ? 0 : 127);
-		//setRGB1((POLY_F4*)p, 127, pressed ? 0 : 127, pressed ? 0 : 127);
-		//setRGB2((POLY_F4*)p, 127, pressed ? 0 : 127, pressed ? 0 : 127);
-		//setRGB3((POLY_F4*)p, 127, pressed ? 0 : 127, pressed ? 0 : 127);
-		setXY4((POLY_F4*)p, cx + mx, cy, cx + mx + 32, cy, cx + mx, cy + 16, cx + mx + 32, cy + 16);
+		setDrawTPage((POLY_F4_SEMITRANS*)p, 0, 0, 0x18);
+		setPolyF4_ST((POLY_F4_SEMITRANS*)p);
+		setRGB0((POLY_F4_SEMITRANS*)p, 127, pressed ? 0 : 127, pressed ? 0 : 127);
+		setXY4((POLY_F4_SEMITRANS*)p, cx + mx, cy, cx + mx + 32, cy, cx + mx, cy + 16, cx + mx + 32, cy + 16);
 		addPrim(OT, p);
-		p += sizeof(POLY_F4);
+		p += sizeof(POLY_F4_SEMITRANS);
 	}
 
 	Emulator_AggregatePTAGsToSplits(OT, FALSE);
