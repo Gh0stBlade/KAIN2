@@ -423,37 +423,69 @@ struct DebugMenuLine debugGlyphAbilitiesMenu[11] =
 		0,
 		"ALL",
 		(long*)&debugRazielFlags1,
-		0x3fc00
+		0x1fc0000
 	},
 	{
 		DEBUG_LINE_TYPE_BIT,
 		0,
 		0,
-		"Spectral Reaver",
+		"Sunlight Glyph",
 		(long*)&debugRazielFlags1,
-		0x400
+		0x400000
 	},
 	{
 		DEBUG_LINE_TYPE_BIT,
 		0,
 		0,
-		"Material Reaver",
+		"Water Glyph",
 		(long*)&debugRazielFlags1,
-		0x800
+		0x200000
 	},
 	{
 		DEBUG_LINE_TYPE_BIT,
 		0,
 		0,
-		"Fire Reaver",
+		"Fire Glyph",
 		(long*)&debugRazielFlags1,
-		0x8000
+		0x800000
+	},
+	{
+		DEBUG_LINE_TYPE_BIT,
+		0,
+		0,
+		"Stone Glyph",
+		(long*)&debugRazielFlags1,
+		0x80000
+	},
+	{
+		DEBUG_LINE_TYPE_BIT,
+		0,
+		0,
+		"Force Glyph",
+		(long*)&debugRazielFlags1,
+		0x40000
+	},
+	{
+		DEBUG_LINE_TYPE_BIT,
+		0,
+		0,
+		"Sound Glyph",
+		(long*)&debugRazielFlags1,
+		0x100000
+	},
+	{
+		DEBUG_LINE_TYPE_BIT,
+		0,
+		0,
+		"Plane Shift Glyph",
+		(long*)&debugRazielFlags1,
+		0x1000000
 	},
 	{
 		DEBUG_LINE_TYPE_ENDLIST,
 		0,
 		0,
-		(char*)0x800cf5f8, // Fix me
+		"",
 		&gameTrackerX.debugFlags,
 		0
 	}
