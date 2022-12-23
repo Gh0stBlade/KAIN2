@@ -357,6 +357,8 @@ void GlyphDrawMenu(struct _Instance* instance)
 			{
 				enabled = 0;
 			}
+
+			enabled = 1;
 		}
 		else
 		{
@@ -698,19 +700,77 @@ void _GlyphSelectProcess(struct _Instance* instance, int data1, int data2)
 		case 0x100004:
 		{
 			//loc_8007B7E0
-			//assert(FALSE);
+			dontdraw_flag = 1;
 			break;
 		}
 		case 0x10000002:
 		{
 			//loc_8007B94C
-			//assert(FALSE);
+			if (_GlyphIsAnyGlyphSet())
+			{
+				if (AngleDiff(data->glyph_rotation, data->target_glyph_rotation) >= 0 && AngleDiff(data->glyph_rotation, data->target_glyph_rotation) < 64 ||
+					AngleDiff(data->glyph_rotation, data->target_glyph_rotation) >= 0 && -AngleDiff(data->glyph_rotation, data->target_glyph_rotation) >= 64)
+				{
+					//loc_8007B884
+					do
+					{
+						data->selectedGlyph++;
+
+						data->glyph_movement = 1;
+
+						if (data->selectedGlyph >= 8)
+						{
+							data->selectedGlyph = 1;
+						}
+
+						//loc_8007B8A4
+
+						data->target_glyph_rotation = (data->selectedGlyph - 1) * 585;
+
+					} while (_GlyphIsGlyphSet(data->selectedGlyph) == 0);
+
+					if (AngleDiff(data->glyph_rotation, data->target_glyph_rotation) >= 0 && AngleDiff(data->glyph_rotation, data->target_glyph_rotation) < 64 ||
+						AngleDiff(data->glyph_rotation, data->target_glyph_rotation) >= 0 && -AngleDiff(data->glyph_rotation, data->target_glyph_rotation) >= 64)
+					{
+						SndPlayVolPan(0x12, 0x64, 0x40, 0);
+					}
+				}
+			}
 			break;
 		}
 		case 0x10000004:
 		{
 			//loc_8007B804
-			//assert(FALSE);
+			if (_GlyphIsAnyGlyphSet())
+			{
+				if (AngleDiff(data->glyph_rotation, data->target_glyph_rotation) >= 0 && AngleDiff(data->glyph_rotation, data->target_glyph_rotation) >= 64 ||
+					AngleDiff(data->glyph_rotation, data->target_glyph_rotation) >= 0 && -AngleDiff(data->glyph_rotation, data->target_glyph_rotation) < 64)
+				{
+					//loc_8007B884
+					do
+					{
+						data->selectedGlyph--;
+
+						data->glyph_movement = -1;
+
+						if (data->selectedGlyph <= 0)
+						{
+							data->selectedGlyph = 7;
+						}
+
+						//loc_8007B8A4
+
+						data->target_glyph_rotation = (data->selectedGlyph - 1) * 585;
+
+					} while (_GlyphIsGlyphSet(data->selectedGlyph) == 0);
+
+					if (AngleDiff(data->glyph_rotation, data->target_glyph_rotation) >= 0 && AngleDiff(data->glyph_rotation, data->target_glyph_rotation) >= 64 ||
+						AngleDiff(data->glyph_rotation, data->target_glyph_rotation) >= 0 && -AngleDiff(data->glyph_rotation, data->target_glyph_rotation) >= 64)
+					{
+						SndPlayVolPan(0x12, 0x64, 0x40, 0);
+					}
+				}
+			}
 			break;
 		}
 		case 0x80000000:
