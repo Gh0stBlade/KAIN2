@@ -2461,6 +2461,25 @@ void StateHandlerGlyphs(struct __CharacterState* In, int CurrentSection, int Dat
 			Raziel.invincibleTimer = 0;
 			break;
 		}
+		case 0x10000000:
+		{
+			//loc_800AFD4C
+			if (CurrentSection == 0)
+			{
+				if ((PadData[0] & 0x4))
+				{
+					INSTANCE_Post(Raziel.GlyphSystem, 0x10000004, Ptr->Data);
+				}
+				//loc_800AFD84
+
+				if ((PadData[0] & 0x8))
+				{
+					INSTANCE_Post(Raziel.GlyphSystem, 0x10000002, Ptr->Data);
+				}
+			}
+			//loc_800AFEA0
+			break;
+		}
 		case 0x80000010:
 		{
 			if (In->SectionList[CurrentSection].Data1 != 0)
