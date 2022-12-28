@@ -526,7 +526,7 @@ int ParsePrimitive(uintptr_t primPtr)
 
 		Emulator_GenerateVertexArrayQuad(&g_vertexBuffer[split->vCount + split->vIndex], &poly->x0, &poly->x1, &poly->x3, &poly->x2);
 		Emulator_GenerateTexcoordArrayQuadZero(&g_vertexBuffer[split->vCount + split->vIndex], 1);
-		Emulator_GenerateColourArrayQuad(&g_vertexBuffer[split->vCount + split->vIndex], &poly->r0, &poly->r1, &poly->r3, &poly->r2, TRUE);
+		Emulator_GenerateColourArrayQuad(&g_vertexBuffer[split->vCount + split->vIndex], &poly->r0, &poly->r1, &poly->r3, &poly->r2, FALSE);
 
 		Emulator_MakeTriangle();
 		Emulator_MakeIndex(6);

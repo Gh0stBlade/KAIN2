@@ -3529,8 +3529,6 @@ int AddClippedTri(SVECTOR* iv, PSX_RECT* cliprect, int *minz)
 						dst[l].vz = src[l].vz;
 						dst[l].pad = src[l].pad;
 
-						newnumvert++;
-
 						CalcVert(&dst[l + 1], &src[l_1], &src[l], clip1, clip0, k, j);
 					
 						newnumvert++;
