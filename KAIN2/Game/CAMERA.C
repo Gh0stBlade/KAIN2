@@ -4222,9 +4222,226 @@ void CAMERA_ForceEndLookaroundMode(struct Camera* camera)
 
 void CAMERA_Control(struct Camera* camera, struct _Instance* playerInstance)
 {
-	long* controlCommand; // $s2
-	int lookmode; // $s1
+	long* controlCommand;
+	int lookmode;
 	struct _Instance* focusInstance;
+
+	controlCommand = &gameTrackerX.controlCommand[0][0];
+	
+	focusInstance = camera->focusInstance;
+
+	if (!(gameTrackerX.streamFlags & 0x100000))
+	{
+		lookmode = 1;
+
+		if (CameraLookStickyFlag == 0)
+		{
+			lookmode = ((gameTrackerX.controlCommand[0][0] & 0xC00) ^ 0xC00) < 1;
+		}
+
+		camera->last_forced_movement = camera->forced_movement;
+
+		if (camera->instance_xyvel != 0 || camera->forced_movement != 1 || (camera->instance_mode & 0x2000000))
+		{
+			camera->forced_movement = 0;
+		}
+		
+		if (camera->mode != 8 && camera->instance_mode >= 0)
+		{
+			if (CenterFlag != -1)
+			{
+				if (!(camera->instance_mode & 0x2000000))
+				{
+					camera->forced_movement = 1;
+				}
+
+				CriticalDampAngle(1, &camera->focusRotation.z, CenterFlag, &camera->focusRotVel.z, &camera->focusRotAccl.z, 144);
+
+				camera->collisionTargetFocusRotation.z = camera->focusRotation.z;
+
+				camera->targetFocusRotation.z = camera->focusRotation.z;
+
+				if (CAMERA_AngleDifference(camera->focusRotation.z, CenterFlag) < 8)
+				{
+					CenterFlag = -1;
+				}
+			}
+			else
+			{
+				if (gameTrackerX.cheatMode != 1 || !(controlCommand[0] & 0xF))
+				{
+					if (!(camera->lock & 0x4) && !(camera->flags & 0x10000))
+					{
+						if (camera->mode == 0 || camera->mode == 12 ||
+							camera->mode == 4 || camera->mode == 13)
+						{
+							if (!(playerInstance->flags & 0x100))
+							{
+								if ((controlCommand[0] & 0x400) && lookmode == 0)
+								{
+									if (++camera->leftTimer >= 3)
+									{
+										camera->rotDirection = -1;
+
+										camera->focusRotation.z = (camera->focusRotation.z - ((gameTrackerX.timeMult * 32) >> 12)) & 0xFFF;
+
+										camera->forced_movement = 1;
+
+										camera->data.Follow.stopTimer = 0xE5A20000;
+
+										camera->focusRotation.z &= 0xFFF;
+
+										camera->collisionTargetFocusRotation.z = camera->focusRotation.z;
+
+										camera->targetFocusRotation.z = camera->focusRotation.z;
+
+										camera->lastModTime = gameTrackerX.frameCount;
+									}
+								}
+								else
+								{
+									if ((camera->leftTimer - 1) < 3 && lookmode != 0)
+									{
+										CAMERA_CenterCamera(camera);
+									}
+
+									camera->leftTimer = 0;
+								}
+
+								if ((controlCommand[0] & 0x800) && lookmode == 0)
+								{
+									if (++camera->rightTimer >= 3)
+									{
+										camera->rotDirection = 1;
+
+										camera->forced_movement = 1;
+
+										camera->focusRotation.z = (camera->focusRotation.z + ((gameTrackerX.timeMult * 32) >> 12)) & 0xFFF;
+
+										camera->data.Follow.stopTimer = 0xE5A20000;
+
+										camera->focusRotation.z &= 0xFFF;
+
+										camera->collisionTargetFocusRotation.z = camera->focusRotation.z;
+
+										camera->targetFocusRotation.z = camera->focusRotation.z;
+
+										camera->lastModTime = gameTrackerX.frameCount;
+									}
+								}
+								else
+								{
+									if ((camera->rightTimer - 1) < 3 && lookmode == 0)
+									{
+										CAMERA_CenterCamera(camera);
+									}
+									else
+									{
+										camera->rightTimer = 0;
+									}
+								}
+							}
+							else
+							{
+								camera->rightTimer = 0;
+
+								camera->leftTimer = 0;
+							}
+						}
+						else
+						{
+							camera->rightTimer = 0;
+
+							camera->leftTimer = 0;
+						}
+					}
+					else
+					{
+						camera->rightTimer = 0;
+
+						camera->leftTimer = 0;
+					}
+
+					if ((gameTrackerX.debugFlags2 & 0x2000000))
+					{
+						if (!(camera->lock & 0x1))
+						{
+							if ((controlCommand[0] & 0x40000008) == 0x40000008)
+							{
+								camera->targetFocusDistance -= 20;
+
+								if (camera->targetFocusDistance < 200)
+								{
+									camera->targetFocusDistance = 200;
+								}
+							}
+					
+							if ((controlCommand[0] & 0x40000004) == 0x40000004)
+							{
+								camera->targetFocusDistance += 20;
+
+								if (camera->targetFocusDistance >= 4097)
+								{
+									camera->targetFocusDistance = 4097;
+								}
+							}
+						}
+
+						if (!(camera->lock & 0x2))
+						{
+							if ((controlCommand[0] & 0x40000002) == 0x40000002)
+							{
+								camera->extraXRot += 16;
+							}
+
+							if ((controlCommand[0] & 0x40000001) == 0x40000001)
+							{
+								camera->extraXRot -= 16;
+							}
+						}
+					}
+
+					if (lookmode != 0 && !(playerInstance->flags & 0x100))
+					{
+						if ((camera->flags & 0x20000) && camera->mode != 5)
+						{
+							if (++camera->lookTimer == 2)
+							{
+								if (PLAYER_OkToLookAround(focusInstance) && !(camera->lock & 0x200))
+								{
+									CAMERA_StartLookaroundMode(camera);
+
+									PLAYER_SetLookAround(focusInstance);
+
+									camera->collideRotControl = 0;
+								}
+								else
+								{
+									camera->lookTimer = 0;
+								}
+							}
+							else if(camera->lookTimer >= 3 && camera->mode == 6)
+							{
+								PLAYER_TurnHead(focusInstance, &camera->lookRot.x, &camera->lookRot.z, &gameTrackerX);
+								
+								camera->collideRotControl = 0;
+							}
+						}
+						else
+						{
+							camera->collideRotControl = 0;
+						}
+					}
+					else
+					{
+						camera->flags |= 0x2;
+
+						CAMERA_EndLook(camera);
+					}
+				}
+			}
+		}
+	}
 }
 
 
