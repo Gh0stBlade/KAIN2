@@ -28,6 +28,16 @@ struct __VAnim // hashcode: 0xDC662191 (dec: -597286511)
 	unsigned short frame; // size=0, offset=6
 };
 
+struct __SAnim 
+{
+	struct __VAnim* anim; // size=8, offset=0
+	struct __SAnim* nextAnim; // size=16, offset=4
+	short mode; // size=0, offset=8
+	short data; // size=0, offset=10
+	short speedAdjust; // size=0, offset=12
+	short pad; // size=0, offset=14
+};
+
 struct _SoundRamp // hashcode: 0xB5503009 (dec: -1253036023)
 {
 	unsigned long soundHandle; // size=0, offset=0
