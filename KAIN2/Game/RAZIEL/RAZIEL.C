@@ -5077,11 +5077,13 @@ void RazielAdditionalCollide(struct _Instance* instance, struct GameTracker* gam
 	struct evPhysicsSwimData* swimData;
 	struct _Instance* Inst;
 
-	rc = 0;
-
 	if ((ControlFlag & 0x8))
 	{
 		rc = 1;
+	}
+	else
+	{
+		rc = 0;
 	}
 
 	if ((ControlFlag & 0x2000))
@@ -5135,7 +5137,7 @@ void RazielAdditionalCollide(struct _Instance* instance, struct GameTracker* gam
 
 			if ((Mode & 0x6) == 6)
 			{
-				SetPhysics(instance, 0, 0, 0, -3);
+				SetPhysics(instance, 0, 0, 0, 0);
 
 				Raziel.Senses.Flags |= 0x2;
 
