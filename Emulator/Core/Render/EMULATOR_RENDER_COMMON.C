@@ -1068,6 +1068,13 @@ void Emulator_DrawTouchUI()
 		0x4,
 	};
 
+	unsigned short mapperShoulder[4] = {
+		0x1,
+		0x4,
+		0x2,
+		0x8,
+	};
+
 #define setlen_ST( p, _len) 	(((POLY_F4_SEMITRANS *)(p))->len  = (u_char)(_len))
 #define setcode_ST(p, _code)	(((POLY_F4_SEMITRANS *)(p))->code = (u_char)(_code))
 #define setPolyF4_ST(p)	setlen_ST(p, 6),  setcode_ST(p, 0x2A)
@@ -1139,6 +1146,42 @@ void Emulator_DrawTouchUI()
 		setPolyF4_ST((POLY_F4_SEMITRANS*)p);
 		setRGB0((POLY_F4_SEMITRANS*)p, 127, pressed ? 0 : 127, pressed ? 0 : 127);
 		setXY4((POLY_F4_SEMITRANS*)p, cx + mx, cy, cx + mx + 32, cy, cx + mx, cy + 16, cx + mx + 32, cy + 16);
+		addPrim(OT, p);
+		p += sizeof(POLY_F4_SEMITRANS);
+	}
+
+	cx = 32;
+	cy = 32;
+
+	for (int i = 0; i < 2; i++)
+	{
+		int dy = (i % 2) ? 0 : 1;
+		
+		int my = dy ? dist : 0;
+
+		int pressed = (resultTouchKeysPressed & mapperShoulder[i] << 8) != 0;
+		setDrawTPage((POLY_F4_SEMITRANS*)p, 0, 0, 0x18);
+		setPolyF4_ST((POLY_F4_SEMITRANS*)p);
+		setRGB0((POLY_F4_SEMITRANS*)p, 127, pressed ? 0 : 127, pressed ? 0 : 127);
+		setXY4((POLY_F4_SEMITRANS*)p, cx, cy + my, cx + 32, cy + my, cx, cy + my + 16, cx + 32, cy + my + 16);
+		addPrim(OT, p);
+		p += sizeof(POLY_F4_SEMITRANS);
+	}
+
+	cx = 512-64;
+	cy = 32;
+
+	for (int i = 0; i < 2; i++)
+	{
+		int dy = (i % 2) ? 0 : 1;
+
+		int my = dy ? dist : 0;
+
+		int pressed = (resultTouchKeysPressed & mapperShoulder[i + 2] << 8) != 0;
+		setDrawTPage((POLY_F4_SEMITRANS*)p, 0, 0, 0x18);
+		setPolyF4_ST((POLY_F4_SEMITRANS*)p);
+		setRGB0((POLY_F4_SEMITRANS*)p, 127, pressed ? 0 : 127, pressed ? 0 : 127);
+		setXY4((POLY_F4_SEMITRANS*)p, cx, cy + my, cx + 32, cy + my, cx, cy + my + 16, cx + 32, cy + my + 16);
 		addPrim(OT, p);
 		p += sizeof(POLY_F4_SEMITRANS);
 	}

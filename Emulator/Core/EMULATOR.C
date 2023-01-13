@@ -1503,6 +1503,13 @@ void Emulator_HandleTouchEvent(int x, int y)
 		0x2,
 		0x4,
 	};
+
+	unsigned short mapperShoulder[4] = {
+		0x1,
+		0x4,
+		0x2,
+		0x8,
+	};
 	
 	//printf("X: %d, Y: %d, RX: %d, RY: %d\n", x, y, rx, ry);
 
@@ -1594,6 +1601,64 @@ void Emulator_HandleTouchEvent(int x, int y)
 		if (Emulator_IsPointInSquare(rx, ry, &q))
 		{
 			resultTouchKeysPressed |= mapper[!i];
+		}
+	}
+
+	cx = 32;
+	cy = 32;
+
+	for (int i = 0; i < 2; i++)
+	{
+		int dy = (i % 2) ? 0 : 1;
+
+		int my = dy ? dist : 0;
+
+		struct Quad q;
+
+		q.p[0].vx = cx;
+		q.p[0].vy = cy + my;
+
+		q.p[1].vx = cx + 32;
+		q.p[1].vy = cy + my;
+
+		q.p[2].vx = cx;
+		q.p[2].vy = cy + my + 16;
+
+		q.p[3].vx = cx + 32;
+		q.p[3].vy = cy + my + 16;
+
+		if (Emulator_IsPointInSquare(rx, ry, &q))
+		{
+			resultTouchKeysPressed |= mapperShoulder[i] << 8;
+		}
+	}
+
+	cx = 512 - 64;
+	cy = 32;
+
+	for (int i = 0; i < 2; i++)
+	{
+		int dy = (i % 2) ? 0 : 1;
+
+		int my = dy ? dist : 0;
+
+		struct Quad q;
+
+		q.p[0].vx = cx;
+		q.p[0].vy = cy + my;
+
+		q.p[1].vx = cx + 32;
+		q.p[1].vy = cy + my;
+
+		q.p[2].vx = cx;
+		q.p[2].vy = cy + my + 16;
+
+		q.p[3].vx = cx + 32;
+		q.p[3].vy = cy + my + 16;
+
+		if (Emulator_IsPointInSquare(rx, ry, &q))
+		{
+			resultTouchKeysPressed |= mapperShoulder[i + 2] << 8;
 		}
 	}
 }
