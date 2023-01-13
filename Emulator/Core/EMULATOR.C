@@ -2257,7 +2257,7 @@ void Emulator_TranslateControllerType(void* padData, SDL_GameController* padHand
 	if (hasLeftAnalog && hasRightAnalog)
 	{
 		//Analog controller
-		pd->type = 5;
+		pd->type = 7;
 		pd->size = 3;
 	}
 	else

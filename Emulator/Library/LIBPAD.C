@@ -91,7 +91,7 @@ int PadGetState(int port)
 	}
 	else
 	{
-		if (lastState == PadStateDiscon && (padData[0][1] >> 4) == 5)
+		if (lastState == PadStateDiscon && (padData[0][1] >> 4) == 7)
 		{
 			lastState = PadStateReqInfo;
 			return PadStateReqInfo;
