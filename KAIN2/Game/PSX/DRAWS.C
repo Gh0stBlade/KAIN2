@@ -487,7 +487,7 @@ long* DRAW_AnimatedModel_S(struct _Model* model, struct _PVertex* poolVertex, st
 
 							int flag = t6 >> 24;
 
-							if (/*t2 <= 0 ||*/ (flag & 0x2))///@FIXME this is because psx ver is loaded at 0x80000000 so if < 0 it's a ptr not a colour!
+							if (/*t2 < 0 ||*/ (flag & 0x2))///@FIXME this is because psx ver is loaded at 0x80000000 so if < 0 it's a ptr not a colour!
 							{
 								t7 = t2[2];
 
@@ -2991,7 +2991,7 @@ unsigned long* DRAW_DisplaySubdivPolytope_S(struct _BSPNode** polytope, struct _
 
 												gte_dpcs();
 
-												//addPrim(drawot[(t8 / 4) * 2], pNextPrim);
+												addPrim(drawot[(t8 / 4) * 2], pNextPrim);
 												setlen(pNextPrim, 7);
 
 
@@ -3002,7 +3002,7 @@ unsigned long* DRAW_DisplaySubdivPolytope_S(struct _BSPNode** polytope, struct _
 												t1 = t5 - t1;
 												pNextPrim[7] = t1;
 
-												//pNextPrim += (0x20 + 4) / 4;
+												pNextPrim += (0x20 + 4) / 4;
 
 											no_depthQ:
 												s1++;
