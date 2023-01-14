@@ -1651,7 +1651,9 @@ void _G2AnimSection_UpdateStoredFrameFromData(struct _G2AnimSection_Type* sectio
 
 	timeOffset = ((section->elapsedTime - (targetKey * timePerKey)) << 12) / timePerKey;
 
+#if !defined(EDITOR)
 	FooBar(section, anim, storedKey, targetKey, timeOffset);
+#endif
 
 	section->storedTime = section->elapsedTime;
 

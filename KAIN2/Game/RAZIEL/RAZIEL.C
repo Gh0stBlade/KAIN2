@@ -4307,7 +4307,9 @@ int SetStates(struct _Instance* instance, struct GameTracker* GT, long* controlC
 		PhysicsMode = 3;
 	}
 
+#if !defined(EDITOR)
 	ProcessPhysics(&Raziel, &Raziel.State, 0, PhysicsMode);
+#endif
 
 	if((PadData[0] & RazielCommands[7]))
 	{
