@@ -1038,6 +1038,10 @@ void SpuStart()//(F)
 	//loc_348
 }
 
+void SpuQuit(void)
+{
+}
+
 void _spu_Fw1ts()//(F)
 {
     unsigned int result = 1;

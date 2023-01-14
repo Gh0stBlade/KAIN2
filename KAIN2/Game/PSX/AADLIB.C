@@ -847,7 +847,7 @@ void aadRelocateMusicMemoryEnd(struct MemHeader* newAddress, long offset)
 
 			for (i = 0; i < bankHdr->numSequences; i++)
 			{
-				aadMem->dynamicSequenceAddressTbl[i][bank] += offset;
+				aadMem->dynamicSequenceAddressTbl[bank][i] += offset;
 			}
 
 			aadMem->dynamicSequenceLabelOffsetTbl[0] = (unsigned long*)((unsigned char*)aadMem->dynamicSequenceLabelOffsetTbl[bank]) + offset;
