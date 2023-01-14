@@ -1,6 +1,7 @@
 #ifndef PLANAPI_H
 #define PLANAPI_H
 
+
 struct _PlanMkr 
 {
 	struct _Position pos; // size=6, offset=0
@@ -55,6 +56,8 @@ struct EnemyPlanSlotData // hashcode: 0x72FA4FBD (dec: 1929007037)
 	char targetType; // size=0, offset=90
 	short timer; // size=0, offset=92
 };
+
+extern struct PoolManagementData* poolManagementData;
 
 extern void PLANAPI_ConvertPlanIntoEnmyPlanDataFormat(struct PlanningNode *goalNode, struct EnemyPlanData *planData, struct PlanningNode *planningPool); // 0x80097B8C
 extern int PLANAPI_FindPathBetweenNodes(struct PlanningNode *startNode, struct PlanningNode *goalNode, struct EnemyPlanData *planData, int validNodeTypes); // 0x80097C40
