@@ -57,6 +57,13 @@ struct EnemyPlanSlotData // hashcode: 0x72FA4FBD (dec: 1929007037)
 	short timer; // size=0, offset=92
 };
 
+struct _PlanCollideInfo 
+{
+	long StreamUnitID; // size=0, offset=0
+	struct _TFace* tFace; // size=12, offset=4
+	struct _Position collidePos; // size=6, offset=8
+};
+
 extern struct PoolManagementData* poolManagementData;
 
 extern void PLANAPI_ConvertPlanIntoEnmyPlanDataFormat(struct PlanningNode *goalNode, struct EnemyPlanData *planData, struct PlanningNode *planningPool); // 0x80097B8C

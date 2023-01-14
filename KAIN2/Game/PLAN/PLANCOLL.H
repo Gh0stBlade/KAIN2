@@ -3,13 +3,6 @@
 
 #include "PLANAPI.H"
 
-struct _PlanCollideInfo // hashcode: 0x3B1266CC (dec: 991061708)
-{
-	long StreamUnitID; // size=0, offset=0
-	struct _TFace *tFace; // size=12, offset=4
-	_Position collidePos; // size=6, offset=8
-};
-
 extern int PLANCOLL_DoesLOSExistFinal(_Position *startPos, _Position *endPos, int collideType, int passThroughHit, int zoffset); // 0x80098B14
 
 extern int PLANCOLL_CheckUnderwaterPoint(_Position *position); // 0x80098C18
