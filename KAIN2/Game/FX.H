@@ -3,6 +3,40 @@
 
 #include "CORE.H"
 
+struct _BASIC_G4 {
+	unsigned char r0; // size=0, offset=0
+	unsigned char g0; // size=0, offset=1
+	unsigned char b0; // size=0, offset=2
+	unsigned char code; // size=0, offset=3
+	short x0; // size=0, offset=4
+	short y0; // size=0, offset=6
+	unsigned char r1; // size=0, offset=8
+	unsigned char g1; // size=0, offset=9
+	unsigned char b1; // size=0, offset=10
+	unsigned char pad1; // size=0, offset=11
+	short x1; // size=0, offset=12
+	short y1; // size=0, offset=14
+	unsigned char r2; // size=0, offset=16
+	unsigned char g2; // size=0, offset=17
+	unsigned char b2; // size=0, offset=18
+	unsigned char pad2; // size=0, offset=19
+	short x2; // size=0, offset=20
+	short y2; // size=0, offset=22
+	unsigned char r3; // size=0, offset=24
+	unsigned char g3; // size=0, offset=25
+	unsigned char b3; // size=0, offset=26
+	unsigned char pad3; // size=0, offset=27
+	short x3; // size=0, offset=28
+	short y3; // size=0, offset=30
+};
+
+struct _POLY_2G4 
+{
+	unsigned long tag; // size=0, offset=0
+	struct _BASIC_G4 p1; // size=32, offset=4
+	struct _BASIC_G4 p2; // size=32, offset=36
+};
+
 typedef void (*TDRFuncPtr__FX_Build5fxSetup)();
 typedef void (*TDRFuncPtr__FX_Build6fxProcess)();
 typedef void (*TDRFuncPtr__FX_BuildNonSegmentedSplinters6fxSetup)();
@@ -318,6 +352,26 @@ struct _FXHalvePlane // hashcode: 0x10EBCD5A (dec: 283888986)
 	short colorBlendLife; // size=0, offset=42
 };
 
+struct _GenericLightningParams {
+	char type; // size=0, offset=0
+	char use_child; // size=0, offset=1
+	short lifeTime; // size=0, offset=2
+	short deg; // size=0, offset=4
+	short deg_inc; // size=0, offset=6
+	struct _Position start_offset; // size=6, offset=8
+	char startSeg; // size=0, offset=14
+	char endSeg; // size=0, offset=15
+	struct _Position end_offset; // size=6, offset=16
+	char matrixSeg; // size=0, offset=22
+	unsigned char segs; // size=0, offset=23
+	short width; // size=0, offset=24
+	short small_width; // size=0, offset=26
+	short sine_size; // size=0, offset=28
+	short variation; // size=0, offset=30
+	long color; // size=0, offset=32
+	long glow_color; // size=0, offset=36
+};
+
 struct _FXTracker // hashcode: 0xCC65A064 (dec: -865755036)
 {
 	struct _FX_MATRIX matrixPool[32]; // size=1408, offset=0
@@ -332,6 +386,8 @@ struct _FXTracker // hashcode: 0xCC65A064 (dec: -865755036)
 
 extern struct _FXBlastringEffect* fx_blastring;
 extern short fx_going;
+extern struct _FXTracker* gFXT;
+extern struct _FXTracker* fxTracker;
 
 extern void FX_Init(struct _FXTracker *fxTracker); // 0x80041F54
 extern void FX_Die(struct _FX_PRIM *fxPrim, struct _FXTracker *fxTracker); // 0x80042034
