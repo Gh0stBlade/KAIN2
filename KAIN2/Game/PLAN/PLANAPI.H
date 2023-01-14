@@ -1,6 +1,12 @@
 #ifndef PLANAPI_H
 #define PLANAPI_H
 
+struct _PlanMkr 
+{
+	struct _Position pos; // size=6, offset=0
+	short id; // size=0, offset=6
+};
+
 struct EnemyPlanData // hashcode: 0xE792BD02 (dec: -409813758)
 {
 	unsigned char nodeSkipArray[8]; // size=8, offset=0
