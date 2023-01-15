@@ -661,89 +661,57 @@ int CheckForNoBlend(struct _ColorType* Color)
 	return 0;
 }
 
-void BlendToColor(struct _ColorType *target, struct _ColorType *current, struct _ColorType *dest)
-{ 
-	//s1 = target
-	//s0 = dest
-
+void BlendToColor(struct _ColorType* target, struct _ColorType* current, struct _ColorType* dest)//Matching - 99.75%
+{
 	LoadAverageCol((unsigned char*)target, (unsigned char*)current, 512, 3584, (unsigned char*)dest);
 
-	if ((target->r - dest->r) >= 0)
+	if (target->r - dest->r >= 0)
 	{
-		if ((target->r - dest->r) >= 5)
+		if (target->r - dest->r >= 5)
 		{
 			dest->code = 0;
-		}
-		else
-		{
-			//loc_8002EB88
-			if((target->g - dest->g) >= 0)
-			{
-				if ((target->g - dest->g) >= 5)
-				{
-					dest->code = 0;
-				}
-			}
-			else
-			{
-				//loc_8002EBB0
-				if ((dest->g - target->g) < 5)
-				{
 
-				}
-			}
+			return;
 		}
 	}
-	else
+	else if (dest->r - target->r >= 5)
 	{
-		//loc_8002EB78
-		if ((dest->r - target->r) < 5)
-		{
+		dest->code = 0;
 
+		return;
+	}
+
+	if (target->g - dest->g >= 0)
+	{
+		if (target->g - dest->g >= 5)
+		{
+			dest->code = 0;
+
+			return;
 		}
 	}
-	//loc_8002EC08
-#if 0
-		loc_8002EBB0:
-		subu    $v0, $v1, $a0
-		slti    $v0, 5
-		beqz    $v0, loc_8002EC04
-		nop
+	else  if (dest->g - target->g >= 5)
+	{
+		dest->code = 0;
 
-		loc_8002EBC0 :
-	lbu     $a0, 2($s1)
-		lbu     $v1, 2($s0)
-		nop
-		subu    $v0, $a0, $v1
-		bltz    $v0, loc_8002EBE8
-		slti    $v0, 5
-		bnez    $v0, loc_8002EBF8
-		nop
-		j       loc_8002EC08
-		sb      $zero, 3($s0)
+		return;
+	}
 
-		loc_8002EBE8:
-	subu    $v0, $v1, $a0
-		slti    $v0, 5
-		beqz    $v0, loc_8002EC04
-		nop
+	if (target->b - dest->b >= 0)
+	{
+		if (target->b - dest->b >= 5)
+		{
+			dest->code = 0;
 
-		loc_8002EBF8 :
-	lw      $v0, 0($s1)
-		nop
-		sw      $v0, 0($s0)
+			return;
+		}
+	}
+	else if (dest->b - target->b < 5)
+	{
+		*(int*)dest = *(int*)target;
 
-		loc_8002EC04 :
-		sb      $zero, 3($s0)
-
-		loc_8002EC08 :
-		lw      $ra, 0x18 + var_s8($sp)
-		lw      $s1, 0x18 + var_s4($sp)
-		lw      $s0, 0x18 + var_s0($sp)
-		jr      $ra
-		addiu   $sp, 0x28
-#endif
-		UNIMPLEMENTED();//?
+		dest->code = 0;
+	}
 }
 
 void MainRenderLevel(struct _StreamUnit* currentUnit, unsigned long** drawot)
