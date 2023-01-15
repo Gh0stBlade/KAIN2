@@ -105,7 +105,7 @@ struct SoundEffectChannel* SndGetSfxChannel(int channelNum)
 #endif
 }
 
-void  SOUND_ProcessInstanceSounds(unsigned char* sfxFileData, struct SoundInstance* soundInstTbl, struct _Position* position, int livesInOnePlace, int inSpectral, int hidden, int burning, long* triggerFlags)//Matching - 84.70%
+void SOUND_ProcessInstanceSounds(unsigned char* sfxFileData, struct SoundInstance* soundInstTbl, struct _Position* position, int livesInOnePlace, int inSpectral, int hidden, int burning, long* triggerFlags)//Matching - 84.70%
 {
 #if defined(PSX_VERSION)
 
