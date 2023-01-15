@@ -923,7 +923,7 @@ void FX_UpdatePos(struct _FX_PRIM *fxPrim, struct _SVector *offset, int spritefl
 #endif
 }
 
-void FX_Relocate(struct _SVector* offset)
+void FX_Relocate(struct _SVector* offset)//Matching - 99.72%
 {
 #if defined(PSX_VERSION)
 	struct _FX_PRIM* fxPrim;
@@ -968,14 +968,11 @@ void FX_Relocate(struct _SVector* offset)
 
 			currentRibbon = (struct _FXRibbon*)currentEffect;
 
-			if (currentEffect->effectType < end)
+			for (i = 0; i < end; i++)
 			{
-				for (i = 0; i < end; i++)
-				{
-					currentRibbon->vertexPool[i].vx += offset->x;
-					currentRibbon->vertexPool[i].vy += offset->y;
-					currentRibbon->vertexPool[i].vz += offset->z;
-				}
+				currentRibbon->vertexPool[i].vx += offset->x;
+				currentRibbon->vertexPool[i].vy += offset->y;
+				currentRibbon->vertexPool[i].vz += offset->z;
 			}
 		}
 		else if (currentEffect->effectType == 0x84)
