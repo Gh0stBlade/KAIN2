@@ -661,7 +661,7 @@ int CheckForNoBlend(struct _ColorType* Color)
 	return 0;
 }
 
-void BlendToColor(struct _ColorType* target, struct _ColorType* current, struct _ColorType* dest)//Matching - 99.75%
+void BlendToColor(struct _ColorType* target, struct _ColorType* current, struct _ColorType* dest)//Matching - 99.92%
 {
 	LoadAverageCol((unsigned char*)target, (unsigned char*)current, 512, 3584, (unsigned char*)dest);
 
@@ -706,12 +706,16 @@ void BlendToColor(struct _ColorType* target, struct _ColorType* current, struct 
 			return;
 		}
 	}
-	else if (dest->b - target->b < 5)
+	else if (dest->b - target->b >= 5)
 	{
-		*(int*)dest = *(int*)target;
-
 		dest->code = 0;
+
+		return;
 	}
+
+	*(int*)dest = *(int*)target;
+
+	dest->code = 0;
 }
 
 void MainRenderLevel(struct _StreamUnit* currentUnit, unsigned long** drawot)
