@@ -23,7 +23,8 @@ unsigned long mem_used, mem_total;
 char* memBuffer = NULL;
 unsigned int overlayAddress = 0; // 0x800CE194
 #else
-char memBuffer[0x11F18C + ONE_MB * 8];
+#define OVERLAY_LENGTH 0xDDC8
+char memBuffer[OVERLAY_LENGTH + 0x11F18C + (ONE_MB * 4)];
 unsigned int overlayAddress = (int)&memBuffer[0]; // 0x800CE194
 #endif
 #else
@@ -43,7 +44,7 @@ void MEMPACK_Init()//Matching - 51.54%
 #else
 	LPVOID base = (LPVOID)NULL;
 #endif
-	unsigned int totalSize = 0x11F18C + (ONE_MB * 8);
+	unsigned int totalSize = OVERLAY_LENGTH + 0x11F18C + (ONE_MB * 4);
 	memBuffer = (char*)VirtualAlloc(base, totalSize, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
 	overlayAddress = (unsigned int)memBuffer;
 	newMemTracker.totalMemory = totalSize;
@@ -192,15 +193,16 @@ char* MEMPACK_Malloc(unsigned long allocSize, unsigned char memType)//Matching -
 			address->memSize = bestAddress->memSize - allocSize;
 
 			bestAddress->magicNumber = DEFAULT_MEM_MAGIC;
-			bestAddress->memType = memType;
 			bestAddress->memStatus = 1;
+			bestAddress->memType = memType;
 			bestAddress->memSize = allocSize;
 
 			newMemTracker.currentMemoryUsed += allocSize;
 		}
 		else
 		{
-			address = (struct MemHeader*)((char*)bestAddress + (bestAddress->memSize - allocSize));
+			topOffset = (bestAddress->memSize - allocSize);
+			address = (struct MemHeader*)((char*)bestAddress + topOffset);
 
 			address->magicNumber = DEFAULT_MEM_MAGIC;
 			address->memStatus = 1;
@@ -212,7 +214,7 @@ char* MEMPACK_Malloc(unsigned long allocSize, unsigned char memType)//Matching -
 			bestAddress->magicNumber = DEFAULT_MEM_MAGIC;
 			bestAddress->memStatus = 0;
 			bestAddress->memType = 0;
-			bestAddress->memSize = (bestAddress->memSize - allocSize);
+			bestAddress->memSize = topOffset;
 
 			bestAddress = address;
 		}
@@ -220,8 +222,8 @@ char* MEMPACK_Malloc(unsigned long allocSize, unsigned char memType)//Matching -
 	else
 	{
 		bestAddress->magicNumber = DEFAULT_MEM_MAGIC;
-		bestAddress->memType = memType;
 		bestAddress->memStatus = 1;
+		bestAddress->memType = memType;
 		bestAddress->memSize = allocSize;
 
 		newMemTracker.currentMemoryUsed += allocSize;
