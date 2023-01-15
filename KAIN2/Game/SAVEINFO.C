@@ -437,10 +437,10 @@ void SAVE_IntroForStreamID(struct _StreamUnit* streamUnit)
 	}
 }
 
-int SAVE_HasSavedIntro(struct Intro* intro, int currentStreamID)//Matching - 99.72%
+long SAVE_HasSavedIntro(struct Intro* intro, long currentStreamID)//Matching - 99.72%
 {
 	struct _SavedIntro* saveIntro;
-	int result;
+	long result;
 
 	saveIntro = (struct _SavedIntro*)savedInfoTracker.InfoStart;
 	result = 0;
