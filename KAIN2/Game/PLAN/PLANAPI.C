@@ -198,24 +198,24 @@ int PLANAPI_FindPathInGraphToTarget(_Position *startPos, struct EnemyPlanData *p
 	return 0;
 }
 
-void PLANAPI_InitPlanning(void* planningPool)
+void PLANAPI_InitPlanning(void* planningPool)//Matching - 92.66%
 {
 	int i;
 	int j;
 
 	poolManagementData = &poolManagementDataStorage;
 
-	poolManagementDataStorage.state = 0;
+	poolManagementData->state = 0;
 
-	poolManagementDataStorage.numNodesInPool = 0;
+	poolManagementData->numNodesInPool = 0;
 
-	poolManagementDataStorage.distanceMatrix[0] = (unsigned short*)((int)planningPool + 896);
+	poolManagementData->distanceMatrix[0] = (unsigned short*)((int)planningPool + 896);
 
 	for (i = 0; i < 32; i++)
 	{
 		for (j = 0; j < 32; j++)
 		{
-			*(unsigned short*)(poolManagementDataStorage.distanceMatrix[0] + i * 32 + j) = 0;
+			*(unsigned short*)(poolManagementData->distanceMatrix[0] + i * 32 + j) = 0;
 		}
 	}
 
@@ -340,7 +340,7 @@ int PLANAPI_NumNodesInPool(void* planningPool)
 	return poolManagementData->numNodesInPool;
 }
 
-void PLANAPI_InitPlanMkrList(struct _StreamUnit* streamUnit)
+void PLANAPI_InitPlanMkrList(struct _StreamUnit* streamUnit)//Matching - 97.47%
 {
 	int i;
 	int terrainFoundFlag;
@@ -354,16 +354,16 @@ void PLANAPI_InitPlanMkrList(struct _StreamUnit* streamUnit)
 	struct _Position* _v0;
 
 	level = streamUnit->level;
-	
+
 	planMkrList = level->PlanMarkerList;
 
 	numPlanMkrs = level->NumberOfPlanMarkers;
 
-	if (planMkrList != NULL && numPlanMkrs != 0)
+	if (planMkrList != NULL)
 	{
 		_v0 = &pci.collidePos;
 
-		for(i = 0; i < (numPlanMkrs & 0xFFFF); i++)
+		for (i = 0; i < (numPlanMkrs); i++)
 		{
 			_x1 = planMkrList[i].pos.x;
 			_y1 = planMkrList[i].pos.y;
@@ -390,9 +390,9 @@ void PLANAPI_InitPlanMkrList(struct _StreamUnit* streamUnit)
 
 				if (terrainFoundFlag != 0)
 				{
-					_x1 = pci.collidePos.x;
-					_y1 = pci.collidePos.y;
-					_z1 = pci.collidePos.z;
+					_x1 = _v0->x;
+					_y1 = _v0->y;
+					_z1 = _v0->z;
 
 					planMkrList[i].pos.x = _x1;
 					planMkrList[i].pos.y = _y1;

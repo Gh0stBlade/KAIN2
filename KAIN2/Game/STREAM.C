@@ -2271,8 +2271,8 @@ void RelocateBGObjects(struct _BGObject* BGObjList, long numBGObjs, struct _SVec
 	}
 }
 
-void RelocatePlanPool(struct PlanningNode* planPool, struct _SVector* offset)
-{ 
+void RelocatePlanPool(struct PlanningNode* planPool, struct _SVector* offset)//Matching - 99.78%
+{
 	int i;
 	short ox;
 	short oy;
@@ -2282,11 +2282,11 @@ void RelocatePlanPool(struct PlanningNode* planPool, struct _SVector* offset)
 	oy = offset->y;
 	oz = offset->z;
 
-	for (i = 0; i < PLANAPI_NumNodesInPool(planPool); i++)
+	for (i = PLANAPI_NumNodesInPool(planPool); i != 0; i--, planPool++)
 	{
-		planPool[i].pos.x += ox;
-		planPool[i].pos.y += oy;
-		planPool[i].pos.z += oz;
+		planPool->pos.x += ox;
+		planPool->pos.y += oy;
+		planPool->pos.z += oz;
 	}
 
 	poolManagementData->playerPosAtLastPlanMkrUpdate.x += ox;
