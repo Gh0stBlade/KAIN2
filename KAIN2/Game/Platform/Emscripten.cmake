@@ -4,12 +4,12 @@ set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -sASYNCIFY --std=c++11 -s
 
 set(SDL2_LIBRARIES "-s USE_SDL=2")
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2 -s TOTAL_MEMORY=1024MB -Wno-error=format-security -Wno-narrowing -Wno-nonportable-include-path")
-set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O2 -s TOTAL_MEMORY=1024MB -Wno-error=format-security -Wno-narrowing -Wno-nonportable-include-path")
-set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O2 -s TOTAL_MEMORY=1024MB -Wno-error=format-security -Wno-narrowing -Wno-nonportable-include-path")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -s TOTAL_MEMORY=1024MB -Wno-error=format-security -Wno-narrowing -Wno-nonportable-include-path")
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O2 -s TOTAL_MEMORY=1024MB -Wno-error=format-security -Wno-narrowing -Wno-nonportable-include-path")
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2 -s TOTAL_MEMORY=1024MB -Wno-error=format-security -Wno-narrowing -Wno-nonportable-include-path")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g3 -O2 -s TOTAL_MEMORY=1024MB -Wno-error=format-security -Wno-narrowing -Wno-nonportable-include-path")
+set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -g3 -O2 -s TOTAL_MEMORY=1024MB -Wno-error=format-security -Wno-narrowing -Wno-nonportable-include-path")
+set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -g3 -O2 -s TOTAL_MEMORY=1024MB -Wno-error=format-security -Wno-narrowing -Wno-nonportable-include-path")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g3 -O2 -s TOTAL_MEMORY=1024MB -Wno-error=format-security -Wno-narrowing -Wno-nonportable-include-path")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g3 -O2 -s TOTAL_MEMORY=1024MB -Wno-error=format-security -Wno-narrowing -Wno-nonportable-include-path")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -g3 -O2 -s TOTAL_MEMORY=1024MB -Wno-error=format-security -Wno-narrowing -Wno-nonportable-include-path")
 
 link_directories(${ROOT_DIR}/Build_EMSDK/Emulator/)
 
