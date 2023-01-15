@@ -437,65 +437,27 @@ void SAVE_IntroForStreamID(struct _StreamUnit* streamUnit)
 	}
 }
 
-long SAVE_HasSavedIntro(struct Intro *intro, long currentStreamID)
+int SAVE_HasSavedIntro(struct Intro* intro, int currentStreamID)//Matching - 99.72%
 {
-#if 0
-	long result; // $a3
-	struct _SavedIntro *saveIntro; // $a1
+	struct _SavedIntro* saveIntro;
+	int result;
 
-	saveIntro = (struct _SavedIntro*)saveIntroTracker->InfoStart;
-	//v1 = saveIntroTracker->InfoEnd
+	saveIntro = (struct _SavedIntro*)savedInfoTracker.InfoStart;
 	result = 0;
-	if (saveIntroTracker->InfoStart < saveIntroTracker->InfoEnd)
+
+	while ((unsigned int)saveIntro < (unsigned int)savedInfoTracker.InfoEnd)
 	{
-		//t2 = 1
-		//t1 = 7
-		//t0 = saveIntroTracker->InfoEnd
-
-		//loc_800B5C48
-
-		if(saveIntro->savedID == 1)
+		if (saveIntro->savedID == 1 && saveIntro->introUniqueID == intro->UniqueID ||
+			saveIntro->savedID == 7 && *(short*)&saveIntro->name[4] == intro->UniqueID)
 		{
-			if(saveIntro->introUniqueID)
+			result = 1;
+			break;
 		}
-		//loc_800B5C6C
+
+		saveIntro = (struct _SavedIntro*)(((char*)saveIntro) + saveIntro->shiftedSaveSize * 4);
 	}
-	//locret_800B5CAC
 
-		lh      $v1, 0xC($a1)
-		lw      $v0, 0x14($a0)
-		nop
-		beq     $v1, $v0, loc_800B5C88
-		nop
-
-		loc_800B5C6C :
-	bne     $a2, $t1, loc_800B5C90
-		nop
-		lh      $v1, 8($a1)
-		lw      $v0, 0x14($a0)
-		nop
-		bne     $v1, $v0, loc_800B5C90
-		nop
-
-		loc_800B5C88 :
-	j       locret_800B5CAC
-		li      $a3, 1
-
-		loc_800B5C90 :
-		lbu     $v0, 1($a1)
-		nop
-		sll     $v0, 2
-		addu    $a1, $v0
-		sltu    $v0, $a1, $t0
-		bnez    $v0, loc_800B5C48
-		nop
-
-		locret_800B5CAC :
-	jr      $ra
-		move    $v0, $a3
-#endif
-		UNIMPLEMENTED();
-	return 0;
+	return result;
 }
 
 
