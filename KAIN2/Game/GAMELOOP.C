@@ -81,14 +81,12 @@ void GAMELOOP_AllocStaticMemory()
 
 	gVertexPool = (struct _VertexPool*)MEMPACK_Malloc(sizeof(struct _VertexPool), 0x6);
 	gPolytopeList = (struct _PolytopeList*)gVertexPool;
-	//fxTracker = MEMPACK_Malloc(0x6DA8, 0x6);
-	//gFXT = fxTracker;
+	fxTracker = (struct _FXTracker*)MEMPACK_Malloc(0x6DA8, 0x6);
+	gFXT = fxTracker;
 	planningPool = MEMPACK_Malloc(0xBB8, 0x6);
 	enemyPlanPool = MEMPACK_Malloc(0x3E8, 0x6);
 	GlobalObjects = (struct _ObjectTracker*)MEMPACK_Malloc(0x6C0, 0x6);
 	G2Anim_Install();
-
-	UNIMPLEMENTED();
 }
 
 
@@ -670,10 +668,6 @@ void BlendToColor(struct _ColorType *target, struct _ColorType *current, struct 
 
 	LoadAverageCol((unsigned char*)target, (unsigned char*)current, 512, 3584, (unsigned char*)dest);
 
-	///used here clearly ABS();
-	//a0 = target->r;
-	//v1 = dest->r
-
 	if ((target->r - dest->r) >= 0)
 	{
 		if ((target->r - dest->r) >= 5)
@@ -749,6 +743,7 @@ void BlendToColor(struct _ColorType *target, struct _ColorType *current, struct 
 		jr      $ra
 		addiu   $sp, 0x28
 #endif
+		UNIMPLEMENTED();//?
 }
 
 void MainRenderLevel(struct _StreamUnit* currentUnit, unsigned long** drawot)
@@ -1343,9 +1338,9 @@ void GAMELOOP_DisplayFrame(struct GameTracker* gameTracker)
 
 		if(!(GlobalSave->flags & 0x1))
 		{
-			if (gameTracker->wipeType == 11 || gameTracker->wipeTime != 0)
+			if (gameTracker->wipeType == 11 || gameTracker->wipeTime == 0)
 			{
-				if ((gameTracker->debugFlags2 & 0x8000000))
+				if ((gameTracker->debugFlags2 & 0x800))
 				{
 					FX_Spiral(gameTrackerX.primPool, drawot);
 				}
