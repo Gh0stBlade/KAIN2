@@ -5,6 +5,23 @@
 
 typedef long (*TDRFuncPtr_COLLIDE_LineWithBoxFace6collideBoundFunc)();
 
+struct _CollideInfo // hashcode: 0xCA2DF5E9 (dec: -902957591)
+{
+	void* level; // size=0, offset=0
+	char flags; // size=0, offset=4
+	char segment; // size=0, offset=5
+	char type0; // size=0, offset=6
+	char type1; // size=0, offset=7
+	void* prim0; // size=0, offset=8
+	void* prim1; // size=0, offset=12
+	void* inst0; // size=0, offset=16
+	void* inst1; // size=0, offset=20
+	SVECTOR point0; // size=8, offset=24
+	SVECTOR point1; // size=8, offset=32
+	_Position offset; // size=6, offset=40
+	short bspID; // size=0, offset=46
+};
+
 struct IandTScratch 
 {
 	MATRIX posMatrix; // size=32, offset=0
@@ -34,21 +51,29 @@ struct _PCollideInfo
   struct _Instance *instance; // size=0, offset=40
 };
 
-struct _CollideInfo // hashcode: 0xCA2DF5E9 (dec: -902957591)
+struct SandTScratch 
 {
-	void* level; // size=0, offset=0
-	char flags; // size=0, offset=4
-	char segment; // size=0, offset=5
-	char type0; // size=0, offset=6
-	char type1; // size=0, offset=7
-	void* prim0; // size=0, offset=8
-	void* prim1; // size=0, offset=12
-	void* inst0; // size=0, offset=16
-	void* inst1; // size=0, offset=20
-	SVECTOR point0; // size=8, offset=24
-	SVECTOR point1; // size=8, offset=32
-	_Position offset; // size=6, offset=40
-	short bspID; // size=0, offset=46
+	MATRIX posMatrix; // size=32, offset=0
+	struct _Vector dpv; // size=12, offset=32
+	struct _HNormal* normalList; // size=8, offset=44
+	struct _CollideInfo collideInfo; // size=48, offset=48
+	struct _HFaceInfo hfaceInfo; // size=32, offset=96
+	struct _SVector midPoint; // size=8, offset=128
+	struct _SVector spherePos; // size=8, offset=136
+	void* collideFunc(); // size=0, offset=144
+	struct _Instance* instance; // size=668, offset=148
+	long edge; // size=0, offset=152
+	long in_spectral; // size=0, offset=156
+	struct _SVector oldPos; // size=8, offset=160
+	void* prim; // size=0, offset=168
+	struct _SVector normal; // size=8, offset=172
+	struct _Sphere sphere; // size=12, offset=180
+	short result; // size=0, offset=192
+	short i; // size=0, offset=194
+	long collide_ignoreAttr; // size=0, offset=196
+	long collide_acceptAttr; // size=0, offset=200
+	long midRadius; // size=0, offset=204
+	struct _TVertex* vertexList; // size=12, offset=208
 };
 
 struct _LCollideInfo // hashcode: 0xCC1DB336 (dec: -870468810)
