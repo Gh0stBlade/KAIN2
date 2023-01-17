@@ -216,11 +216,9 @@ void Emulator_MakeTriangle()
 // parses primitive and pushes it to VBO
 // returns primitive size
 // -1 means invalid primitive
-int ParsePrimitive(uintptr_t primPtr)
+int ParsePrimitive(uintptr_t primPtr, int code)
 {
-	P_TAG* pTag = (P_TAG*)primPtr;
-
-	int textured = (pTag->code & 0x4) != 0;
+	int textured = (code & 0x4) != 0;
 
 	int blend_mode = 0;
 
@@ -228,7 +226,7 @@ int ParsePrimitive(uintptr_t primPtr)
 
 	if (textured)
 	{
-		if ((pTag->code & 0x1) != 0)
+		if ((code & 0x1) != 0)
 		{
 			blend_mode = 2;
 		}
@@ -242,12 +240,10 @@ int ParsePrimitive(uintptr_t primPtr)
 		blend_mode = 0;
 	}
 
-	int code = 0;
-
+#if 0
 	//BLK_FILL
 	if (pTag->code != 2)
 	{
-
 		if (IsValidCode(pTag->code))
 		{
 			code = pTag->code;
@@ -263,55 +259,9 @@ int ParsePrimitive(uintptr_t primPtr)
 	}
 	else
 	{
-		//Do black fill
-		typedef struct BLK_FILL
-		{
-#if defined(USE_32_BIT_ADDR)
-			unsigned long tag; // size=0, offset=0
-			unsigned long len; // size=0, offset=0
-#else
-			unsigned long tag; // size=0, offset=0
-#endif
-			unsigned char r0;
-			unsigned char g0;
-			unsigned char b0;
-			unsigned char code;
-			unsigned short x0;
-			unsigned short y0;
-			unsigned short w;
-			unsigned short h;
-		} BLK_FILL;
-
-		BLK_FILL* poly = (BLK_FILL*)pTag;
-
-		int r5 = poly->r0 * 31 / 255;
-		int g5 = poly->g0 * 31 / 255;
-		int b5 = poly->b0 * 31 / 255;
-		int a1 = 0;
-
-		unsigned short colour = (unsigned short)(r5 << 1 | g5 << 6 | b5 << 11 | a1);
-
-		unsigned short* blackImage = (unsigned short*)malloc(poly->w * poly->h * sizeof(unsigned short));
-
-		for (int i = 0; i < poly->w * poly->h; i++)
-		{
-			blackImage[i] = colour;
-		}
-
-		RECT16 r;
-		r.x = poly->x0;
-		r.y = poly->y0;
-		r.w = poly->w;
-		r.h = poly->h;
-
-		LoadImagePSX(&r, (unsigned long*)blackImage);
-		Emulator_UpdateVRAM();
-
-		free(blackImage);
-
-		int primitive_size = sizeof(BLK_FILL);
-		return primitive_size;
+		
 	}
+#endif
 
 	int semi_transparent = (code & 2) != 0;
 
@@ -321,12 +271,67 @@ int ParsePrimitive(uintptr_t primPtr)
 	{
 	case 0x0:
 	{
-		primitive_size = 4;
+		switch (code)
+		{
+		case 0x2:
+		{
+			//Do black fill
+			typedef struct IBLK_FILL
+			{
+				unsigned char r0;
+				unsigned char g0;
+				unsigned char b0;
+				unsigned char code;
+				unsigned short x0;
+				unsigned short y0;
+				unsigned short w;
+				unsigned short h;
+			} IBLK_FILL;
+
+			IBLK_FILL* poly = (IBLK_FILL*)primPtr;
+
+			int r5 = poly->r0 * 31 / 255;
+			int g5 = poly->g0 * 31 / 255;
+			int b5 = poly->b0 * 31 / 255;
+			int a1 = 0;
+
+			unsigned short colour = (unsigned short)(r5 << 1 | g5 << 6 | b5 << 11 | a1);
+
+			unsigned short* blackImage = (unsigned short*)malloc(poly->w * poly->h * sizeof(unsigned short));
+
+			for (int i = 0; i < poly->w * poly->h; i++)
+			{
+				blackImage[i] = colour;
+			}
+
+			RECT16 r;
+			r.x = poly->x0;
+			r.y = poly->y0;
+			r.w = poly->w;
+			r.h = poly->h;
+
+			LoadImagePSX(&r, (unsigned long*)blackImage);
+			Emulator_UpdateVRAM();
+
+			free(blackImage);
+
+			int primitive_size = sizeof(IBLK_FILL);
+
+			return primitive_size;
+		}
+		default:
+		{
+			primitive_size = 4;
+
+			break;
+		}
+		}
+
 		break;
 	}
 	case 0x20:
 	{
-		POLY_F3* poly = (POLY_F3*)pTag;
+		IPOLY_F3* poly = (IPOLY_F3*)primPtr;
 
 		Emulator_AddSplit(semi_transparent, activeDrawEnv.tpage, whiteTexture);
 
@@ -340,7 +345,7 @@ int ParsePrimitive(uintptr_t primPtr)
 
 		g_vertexIndex += 3;
 
-		primitive_size = sizeof(POLY_F3);
+		primitive_size = sizeof(IPOLY_F3);
 #if defined(DEBUG_POLY_COUNT)
 		polygon_count++;
 #endif
@@ -348,7 +353,7 @@ int ParsePrimitive(uintptr_t primPtr)
 	}
 	case 0x24:
 	{
-		POLY_FT3* poly = (POLY_FT3*)pTag;
+		IPOLY_FT3* poly = (IPOLY_FT3*)primPtr;
 		activeDrawEnv.tpage = poly->tpage;
 
 		Emulator_AddSplit(semi_transparent, poly->tpage, vramTexture);
@@ -363,7 +368,7 @@ int ParsePrimitive(uintptr_t primPtr)
 
 		g_vertexIndex += 3;
 
-		primitive_size = sizeof(POLY_FT3);
+		primitive_size = sizeof(IPOLY_FT3);
 #if defined(DEBUG_POLY_COUNT)
 		polygon_count++;
 #endif
@@ -371,57 +376,29 @@ int ParsePrimitive(uintptr_t primPtr)
 	}
 	case 0x28:
 	{
-		if (dr_tpage)
-		{
-			POLY_F4_SEMITRANS* poly = (POLY_F4_SEMITRANS*)pTag;
+		IPOLY_F4* poly = (IPOLY_F4*)primPtr;
 
-			activeDrawEnv.tpage = (poly->dr_tpage & 0xFFFF);
+		Emulator_AddSplit(semi_transparent, activeDrawEnv.tpage, whiteTexture);
 
-			Emulator_AddSplit(semi_transparent, activeDrawEnv.tpage, whiteTexture);
+		struct VertexBufferSplit* split = &g_splits[g_splitIndex];
 
-			struct VertexBufferSplit* split = &g_splits[g_splitIndex];
+		Emulator_GenerateVertexArrayQuad(&g_vertexBuffer[split->vCount + split->vIndex], &poly->x0, &poly->x1, &poly->x3, &poly->x2);
+		Emulator_GenerateTexcoordArrayQuadZero(&g_vertexBuffer[split->vCount + split->vIndex], 0);
+		Emulator_GenerateColourArrayQuad(&g_vertexBuffer[split->vCount + split->vIndex], &poly->r0, &poly->r0, &poly->r0, &poly->r0, blend_mode == 2);
 
-			Emulator_GenerateVertexArrayQuad(&g_vertexBuffer[split->vCount + split->vIndex], &poly->x0, &poly->x1, &poly->x3, &poly->x2);
-			Emulator_GenerateTexcoordArrayQuadZero(&g_vertexBuffer[split->vCount + split->vIndex], 0);
-			Emulator_GenerateColourArrayQuad(&g_vertexBuffer[split->vCount + split->vIndex], &poly->r0, &poly->r0, &poly->r0, &poly->r0, blend_mode == 2);
+		Emulator_MakeTriangle();
+		Emulator_MakeIndex(6);
 
-			Emulator_MakeTriangle();
-			Emulator_MakeIndex(6);
-
-			g_vertexIndex += 6;
-
-
-			primitive_size = sizeof(POLY_F4_SEMITRANS);
+		g_vertexIndex += 6;
+		primitive_size = sizeof(IPOLY_F4);
 #if defined(DEBUG_POLY_COUNT)
-			polygon_count++;
+		polygon_count++;
 #endif
-		}
-		else
-		{
-			POLY_F4* poly = (POLY_F4*)pTag;
-
-			Emulator_AddSplit(semi_transparent, activeDrawEnv.tpage, whiteTexture);
-
-			struct VertexBufferSplit* split = &g_splits[g_splitIndex];
-
-			Emulator_GenerateVertexArrayQuad(&g_vertexBuffer[split->vCount + split->vIndex], &poly->x0, &poly->x1, &poly->x3, &poly->x2);
-			Emulator_GenerateTexcoordArrayQuadZero(&g_vertexBuffer[split->vCount + split->vIndex], 0);
-			Emulator_GenerateColourArrayQuad(&g_vertexBuffer[split->vCount + split->vIndex], &poly->r0, &poly->r0, &poly->r0, &poly->r0, blend_mode == 2);
-
-			Emulator_MakeTriangle();
-			Emulator_MakeIndex(6);
-
-			g_vertexIndex += 6;
-			primitive_size = sizeof(POLY_F4);
-#if defined(DEBUG_POLY_COUNT)
-			polygon_count++;
-#endif
-		}
 		break;
 	}
 	case 0x2C:
 	{
-		POLY_FT4* poly = (POLY_FT4*)pTag;
+		IPOLY_FT4* poly = (IPOLY_FT4*)primPtr;
 		
 		activeDrawEnv.tpage = poly->tpage;
 
@@ -438,7 +415,7 @@ int ParsePrimitive(uintptr_t primPtr)
 
 		g_vertexIndex += 6;
 
-		primitive_size = sizeof(POLY_FT4);
+		primitive_size = sizeof(IPOLY_FT4);
 #if defined(DEBUG_POLY_COUNT)
 		polygon_count++;
 #endif
@@ -446,55 +423,29 @@ int ParsePrimitive(uintptr_t primPtr)
 	}
 	case 0x30:
 	{
-		if (dr_tpage)
-		{
-			POLY_G3_SEMITRANS* poly = (POLY_G3_SEMITRANS*)pTag;
+		IPOLY_G3* poly = (IPOLY_G3*)primPtr;
 
-			activeDrawEnv.tpage = (poly->dr_tpage & 0xFFFF);
+		Emulator_AddSplit(semi_transparent, activeDrawEnv.tpage, whiteTexture);
 
-			Emulator_AddSplit(semi_transparent, activeDrawEnv.tpage, whiteTexture);
+		struct VertexBufferSplit* split = &g_splits[g_splitIndex];
 
-			struct VertexBufferSplit* split = &g_splits[g_splitIndex];
+		Emulator_GenerateVertexArrayTriangle(&g_vertexBuffer[split->vCount + split->vIndex], &poly->x0, &poly->x1, &poly->x2);
+		Emulator_GenerateTexcoordArrayTriangleZero(&g_vertexBuffer[split->vCount + split->vIndex], 1);
+		Emulator_GenerateColourArrayTriangle(&g_vertexBuffer[split->vCount + split->vIndex], &poly->r0, &poly->r1, &poly->r2);
 
-			Emulator_GenerateVertexArrayTriangle(&g_vertexBuffer[split->vCount + split->vIndex], &poly->x0, &poly->x1, &poly->x2);
-			Emulator_GenerateTexcoordArrayTriangleZero(&g_vertexBuffer[split->vCount + split->vIndex], 1);
-			Emulator_GenerateColourArrayTriangle(&g_vertexBuffer[split->vCount + split->vIndex], &poly->r0, &poly->r1, &poly->r2);
+		Emulator_MakeIndex(3);
 
-			Emulator_MakeIndex(3);
+		g_vertexIndex += 3;
 
-			g_vertexIndex += 3;
-			
-			primitive_size = sizeof(POLY_G3_SEMITRANS);
+		primitive_size = sizeof(IPOLY_G3);
 #if defined(DEBUG_POLY_COUNT)
-			polygon_count++;
+		polygon_count++;
 #endif
-		}
-		else
-		{
-			POLY_G3* poly = (POLY_G3*)pTag;
-
-			Emulator_AddSplit(semi_transparent, activeDrawEnv.tpage, whiteTexture);
-
-			struct VertexBufferSplit* split = &g_splits[g_splitIndex];
-
-			Emulator_GenerateVertexArrayTriangle(&g_vertexBuffer[split->vCount + split->vIndex], &poly->x0, &poly->x1, &poly->x2);
-			Emulator_GenerateTexcoordArrayTriangleZero(&g_vertexBuffer[split->vCount + split->vIndex], 1);
-			Emulator_GenerateColourArrayTriangle(&g_vertexBuffer[split->vCount + split->vIndex], &poly->r0, &poly->r1, &poly->r2);
-
-			Emulator_MakeIndex(3);
-
-			g_vertexIndex += 3;
-
-			primitive_size = sizeof(POLY_G3);
-#if defined(DEBUG_POLY_COUNT)
-			polygon_count++;
-#endif
-		}
 		break;
 	}
 	case 0x34:
 	{
-		POLY_GT3* poly = (POLY_GT3*)pTag;
+		IPOLY_GT3* poly = (IPOLY_GT3*)primPtr;
 
 		activeDrawEnv.tpage = poly->tpage;
 
@@ -510,7 +461,7 @@ int ParsePrimitive(uintptr_t primPtr)
 
 		g_vertexIndex += 3;
 
-		primitive_size = sizeof(POLY_GT3);
+		primitive_size = sizeof(IPOLY_GT3);
 #if defined(DEBUG_POLY_COUNT)
 		polygon_count++;
 #endif
@@ -518,7 +469,7 @@ int ParsePrimitive(uintptr_t primPtr)
 	}
 	case 0x38:
 	{
-		POLY_G4* poly = (POLY_G4*)pTag;
+		IPOLY_G4* poly = (IPOLY_G4*)primPtr;
 
 		Emulator_AddSplit(semi_transparent, activeDrawEnv.tpage, whiteTexture);
 
@@ -533,7 +484,7 @@ int ParsePrimitive(uintptr_t primPtr)
 
 		g_vertexIndex += 6;
 
-		primitive_size = sizeof(POLY_G4);
+		primitive_size = sizeof(IPOLY_G4);
 #if defined(DEBUG_POLY_COUNT)
 		polygon_count++;
 #endif
@@ -541,7 +492,7 @@ int ParsePrimitive(uintptr_t primPtr)
 	}
 	case 0x3C:
 	{
-		POLY_GT4* poly = (POLY_GT4*)pTag;
+		IPOLY_GT4* poly = (IPOLY_GT4*)primPtr;
 
 		activeDrawEnv.tpage = poly->tpage;
 
@@ -558,7 +509,7 @@ int ParsePrimitive(uintptr_t primPtr)
 
 		g_vertexIndex += 6;
 
-		primitive_size = sizeof(POLY_GT4);
+		primitive_size = sizeof(IPOLY_GT4);
 #if defined(DEBUG_POLY_COUNT)
 		polygon_count++;
 #endif
@@ -566,7 +517,7 @@ int ParsePrimitive(uintptr_t primPtr)
 	}
 	case 0x40:
 	{
-		LINE_F2* poly = (LINE_F2*)pTag;
+		ILINE_F2* poly = (ILINE_F2*)primPtr;
 
 		Emulator_AddSplit(semi_transparent, activeDrawEnv.tpage, whiteTexture);
 
@@ -582,7 +533,7 @@ int ParsePrimitive(uintptr_t primPtr)
 
 		g_vertexIndex += 6;
 
-		primitive_size = sizeof(LINE_F2);
+		primitive_size = sizeof(ILINE_F2);
 #if defined(DEBUG_POLY_COUNT)
 		polygon_count++;
 #endif
@@ -590,7 +541,7 @@ int ParsePrimitive(uintptr_t primPtr)
 	}
 	case 0x48: // TODO (unused)
 	{
-		LINE_F3* poly = (LINE_F3*)pTag;
+		ILINE_F3* poly = (ILINE_F3*)primPtr;
 		/*
 					for (int i = 0; i < 2; i++)
 					{
@@ -616,12 +567,12 @@ int ParsePrimitive(uintptr_t primPtr)
 					}
 		*/
 
-		primitive_size = sizeof(LINE_F3);
+		primitive_size = sizeof(ILINE_F3);
 		break;
 	}
 	case 0x50:
 	{
-		LINE_G2* poly = (LINE_G2*)pTag;
+		ILINE_G2* poly = (ILINE_G2*)primPtr;
 
 		Emulator_AddSplit(semi_transparent, activeDrawEnv.tpage, whiteTexture);
 
@@ -636,7 +587,7 @@ int ParsePrimitive(uintptr_t primPtr)
 
 		g_vertexIndex += 6;
 
-		primitive_size = sizeof(LINE_G2);
+		primitive_size = sizeof(ILINE_G2);
 #if defined(DEBUG_POLY_COUNT)
 		polygon_count++;
 #endif
@@ -644,7 +595,7 @@ int ParsePrimitive(uintptr_t primPtr)
 	}
 	case 0x60:
 	{
-		TILE* poly = (TILE*)pTag;
+		ITILE* poly = (ITILE*)primPtr;
 
 		Emulator_AddSplit(semi_transparent, activeDrawEnv.tpage, whiteTexture);
 
@@ -659,7 +610,7 @@ int ParsePrimitive(uintptr_t primPtr)
 
 		g_vertexIndex += 6;
 
-		primitive_size = sizeof(TILE);
+		primitive_size = sizeof(ITILE);
 #if defined(DEBUG_POLY_COUNT)
 		polygon_count++;
 #endif
@@ -668,7 +619,7 @@ int ParsePrimitive(uintptr_t primPtr)
 	}
 	case 0x64:
 	{
-		SPRT* poly = (SPRT*)pTag;
+		ISPRT* poly = (ISPRT*)primPtr;
 
 		Emulator_AddSplit(semi_transparent, activeDrawEnv.tpage, vramTexture);
 
@@ -683,7 +634,7 @@ int ParsePrimitive(uintptr_t primPtr)
 
 		g_vertexIndex += 6;
 
-		primitive_size = sizeof(SPRT);
+		primitive_size = sizeof(ISPRT);
 #if defined(DEBUG_POLY_COUNT)
 		polygon_count++;
 #endif
@@ -691,7 +642,7 @@ int ParsePrimitive(uintptr_t primPtr)
 	}
 	case 0x68:
 	{
-		TILE_1* poly = (TILE_1*)pTag;
+		ITILE_1* poly = (ITILE_1*)primPtr;
 
 		Emulator_AddSplit(semi_transparent, activeDrawEnv.tpage, whiteTexture);
 
@@ -706,7 +657,7 @@ int ParsePrimitive(uintptr_t primPtr)
 
 		g_vertexIndex += 6;
 
-		primitive_size = sizeof(TILE_1);
+		primitive_size = sizeof(ITILE_1);
 #if defined(DEBUG_POLY_COUNT)
 		polygon_count++;
 #endif
@@ -714,7 +665,7 @@ int ParsePrimitive(uintptr_t primPtr)
 	}
 	case 0x70:
 	{
-		TILE_8* poly = (TILE_8*)pTag;
+		ITILE_8* poly = (ITILE_8*)primPtr;
 
 		Emulator_AddSplit(semi_transparent, activeDrawEnv.tpage, whiteTexture);
 
@@ -729,7 +680,7 @@ int ParsePrimitive(uintptr_t primPtr)
 
 		g_vertexIndex += 6;
 
-		primitive_size = sizeof(TILE_8);
+		primitive_size = sizeof(ITILE_8);
 #if defined(DEBUG_POLY_COUNT)
 		polygon_count++;
 #endif
@@ -737,7 +688,7 @@ int ParsePrimitive(uintptr_t primPtr)
 	}
 	case 0x74:
 	{
-		SPRT_8* poly = (SPRT_8*)pTag;
+		ISPRT_8* poly = (ISPRT_8*)primPtr;
 
 		Emulator_AddSplit(semi_transparent, activeDrawEnv.tpage, vramTexture);
 
@@ -752,7 +703,7 @@ int ParsePrimitive(uintptr_t primPtr)
 
 		g_vertexIndex += 6;
 
-		primitive_size = sizeof(SPRT_8);
+		primitive_size = sizeof(ISPRT_8);
 #if defined(DEBUG_POLY_COUNT)
 		polygon_count++;
 #endif
@@ -760,7 +711,7 @@ int ParsePrimitive(uintptr_t primPtr)
 	}
 	case 0x78:
 	{
-		TILE_16* poly = (TILE_16*)pTag;
+		ITILE_16* poly = (ITILE_16*)primPtr;
 
 		Emulator_AddSplit(semi_transparent, activeDrawEnv.tpage, whiteTexture);
 
@@ -775,7 +726,7 @@ int ParsePrimitive(uintptr_t primPtr)
 
 		g_vertexIndex += 6;
 
-		primitive_size = sizeof(TILE_16);
+		primitive_size = sizeof(ITILE_16);
 #if defined(DEBUG_POLY_COUNT)
 		polygon_count++;
 #endif
@@ -783,7 +734,7 @@ int ParsePrimitive(uintptr_t primPtr)
 	}
 	case 0x7C:
 	{
-		SPRT_16* poly = (SPRT_16*)pTag;
+		ISPRT_16* poly = (ISPRT_16*)primPtr;
 
 		Emulator_AddSplit(semi_transparent, activeDrawEnv.tpage, vramTexture);
 
@@ -798,7 +749,7 @@ int ParsePrimitive(uintptr_t primPtr)
 
 		g_vertexIndex += 6;
 
-		primitive_size = sizeof(SPRT_16);
+		primitive_size = sizeof(ISPRT_16);
 #if defined(DEBUG_POLY_COUNT)
 		polygon_count++;
 #endif
@@ -806,25 +757,19 @@ int ParsePrimitive(uintptr_t primPtr)
 	}
 	case 0xE0:
 	{
-		switch (pTag->code)
+		switch (code)
 		{
 		case 0xE1:
 		{
-#if defined(USE_32_BIT_ADDR)
-			unsigned short tpage = ((unsigned short*)pTag)[4];
-#else
-			unsigned short tpage = ((unsigned short*)pTag)[2];
-#endif
-			//if (tpage != 0)
-			{
-				activeDrawEnv.tpage = tpage;
-			}
+			IDR_TPAGE* dr_tpage = (IDR_TPAGE*)primPtr;
+	
+			activeDrawEnv.tpage = dr_tpage->code[0] & 0xFFFF;
 
-			primitive_size = sizeof(DR_TPAGE);
+			primitive_size = sizeof(IDR_TPAGE);
+
 #if defined(DEBUG_POLY_COUNT)
 			polygon_count++;
 #endif
-
 			break;
 		}
 		default:
@@ -836,30 +781,30 @@ int ParsePrimitive(uintptr_t primPtr)
 		}
 		break;
 	}
-	case 0x80: {
-
-		DR_MOVE* poly = (DR_MOVE*)pTag;
+	case 0x80: 
+	{
+		IDR_MOVE* poly = (IDR_MOVE*)primPtr;
 		RECT16 r;
 		
-		int x = poly->code[2] & 0xFFFF;
-		int y = ((poly->code[2] >> 16) & 0xFFFF) & 0x1FF;
+		int x = poly->code[1] & 0xFFFF;
+		int y = ((poly->code[1] >> 16) & 0xFFFF) & 0x1FF;
 
-		r.x = poly->code[3] & 0xFFFF;
-		r.y = ((poly->code[3] >> 16) & 0xFFFF) & 0x1FF;
+		r.x = poly->code[2] & 0xFFFF;
+		r.y = ((poly->code[2] >> 16) & 0xFFFF) & 0x1FF;
 		
-		r.w = poly->code[4] & 0xFFFF;
-		r.h = ((poly->code[4] >> 16) & 0xFFFF);
+		r.w = poly->code[3] & 0xFFFF;
+		r.h = ((poly->code[3] >> 16) & 0xFFFF);
 		
 		MoveImage(&r, x, y);
 
-		primitive_size = sizeof(DR_MOVE);
+		primitive_size = sizeof(IDR_MOVE);
 
 		break;
 	}
 	default:
 	{
 		//Unhandled poly type
-		eprinterr("Unhandled primitive type: %02X type2:%02X\n", pTag->code, pTag->code & ~3);
+		eprinterr("Unhandled primitive type: %02X type2:%02X\n", code, code & ~3);
 		break;
 	}
 	}
@@ -870,18 +815,26 @@ int ParsePrimitive(uintptr_t primPtr)
 
 int ParseLinkedPrimitiveList(uintptr_t packetStart, uintptr_t packetEnd)
 {
-	uintptr_t currentAddress = packetStart;
+	unsigned long* primitiveHeader = (unsigned long*)packetStart;
+
+	IP_TAG* primitiveTag = (IP_TAG*)primitiveHeader + 2;
+
+	uintptr_t currentAddress = (uintptr_t)primitiveTag;
 
 	int lastSize = -1;
 
+	int packetLength = packetEnd - packetStart;
+
 	while (currentAddress != packetEnd)
 	{
-		lastSize = ParsePrimitive(currentAddress);
+		lastSize = ParsePrimitive(currentAddress, primitiveTag->code);
 
-		if (lastSize == -1)	// not valid packets submitted
+		if (lastSize == -1)	// no valid packets submitted
 			break;
 
 		currentAddress += lastSize;
+
+		primitiveTag = (IP_TAG*)currentAddress;
 	}
 
 	g_splits[g_splitIndex].vCount = g_vertexIndex - g_splits[g_splitIndex].vIndex;
@@ -983,8 +936,13 @@ void Emulator_AggregatePTAGsToSplits(unsigned long* p, int singlePrimitive)
 
 	if (singlePrimitive)
 	{
+		P_TAG* primitiveTag = (P_TAG*)p;
+
+		uintptr_t currentAddress = (uintptr_t)(primitiveTag + 1);
+
 		// single primitive
-		ParsePrimitive((uintptr_t)p);
+		ParsePrimitive(currentAddress, primitiveTag->code);
+		
 		g_splits[g_splitIndex].vCount = g_vertexIndex - g_splits[g_splitIndex].vIndex;
 		g_splits[g_splitIndex].iCount = g_indicesIndex - g_splits[g_splitIndex].iIndex;
 	}

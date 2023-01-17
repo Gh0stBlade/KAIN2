@@ -152,9 +152,9 @@ extern int g_indicesIndex;
 #define CLUT_WIDTH (16)
 #define CLUT_HEIGHT (1)
 
-#define MAX_NUM_POLY_BUFFER_VERTICES (8192)
-#define MAX_NUM_INDEX_BUFFER_INDICES (8192)
-#define MAX_NUM_INDEX_BUFFER_SPLITS  (4096)
+#define MAX_NUM_POLY_BUFFER_VERTICES (8192*2)
+#define MAX_NUM_INDEX_BUFFER_INDICES (8192*2)
+#define MAX_NUM_INDEX_BUFFER_SPLITS  (4096*2)
 
 #define VRAM_FORMAT            GL_RG
 #define VRAM_INTERNAL_FORMAT   GL_RG8
@@ -188,5 +188,237 @@ extern int Emulator_GetWindowWidth();
 extern int Emulator_GetWindowHeight();
 
 extern void Emulator_DestroyRender();
+
+/*
+ * Polygon Primitive Definitions
+ */
+typedef struct {
+	u_char		r0, g0, b0, code;
+} IP_TAG;
+
+typedef struct {
+	u_char	r0, g0, b0, code;
+} IP_CODE;
+
+typedef struct {
+	u_char	r0, g0, b0, code;
+	short	x0, y0;
+	short	x1, y1;
+	short	x2, y2;
+} IPOLY_F3;				/* Flat Triangle */
+
+typedef struct {
+	u_char	r0, g0, b0, code;
+	short	x0, y0;
+	short	x1, y1;
+	short	x2, y2;
+	short	x3, y3;
+} IPOLY_F4;				/* Flat Quadrangle */
+
+typedef struct {
+	u_char	r0, g0, b0, code;
+	short	x0, y0;
+	u_char	u0, v0;	u_short	clut;
+	short	x1, y1;
+	u_char	u1, v1;	u_short	tpage;
+	short	x2, y2;
+	u_char	u2, v2;	u_short	pad1;
+} IPOLY_FT3;				/* Flat Textured Triangle */
+
+typedef struct {
+	u_char	r0, g0, b0, code;
+	short	x0, y0;
+	u_char	u0, v0;	u_short	clut;
+	short	x1, y1;
+	u_char	u1, v1;	u_short	tpage;
+	short	x2, y2;
+	u_char	u2, v2;	u_short	pad1;
+	short	x3, y3;
+	u_char	u3, v3;	u_short	pad2;
+} IPOLY_FT4;				/* Flat Textured Quadrangle */
+
+typedef struct {
+	u_char	r0, g0, b0, code;
+	short	x0, y0;
+	u_char	r1, g1, b1, pad1;
+	short	x1, y1;
+	u_char	r2, g2, b2, pad2;
+	short	x2, y2;
+} IPOLY_G3;				/* Gouraud Triangle */
+
+typedef struct {
+	u_char	r0, g0, b0, code;
+	short	x0, y0;
+	u_char	r1, g1, b1, pad1;
+	short	x1, y1;
+	u_char	r2, g2, b2, pad2;
+	short	x2, y2;
+	u_char	r3, g3, b3, pad3;
+	short	x3, y3;
+} IPOLY_G4;				/* Gouraud Quadrangle */
+
+typedef struct {
+	u_char	r0, g0, b0, code;
+	short	x0, y0;
+	u_char	u0, v0;	u_short	clut;
+	u_char	r1, g1, b1, p1;
+	short	x1, y1;
+	u_char	u1, v1;	u_short	tpage;
+	u_char	r2, g2, b2, p2;
+	short	x2, y2;
+	u_char	u2, v2;	u_short	pad2;
+} IPOLY_GT3;				/* Gouraud Textured Triangle */
+
+typedef struct {
+	u_char	r0, g0, b0, code;
+	short	x0, y0;
+	u_char	u0, v0;	u_short	clut;
+	u_char	r1, g1, b1, p1;
+	short	x1, y1;
+	u_char	u1, v1;	u_short	tpage;
+	u_char	r2, g2, b2, p2;
+	short	x2, y2;
+	u_char	u2, v2;	u_short	pad2;
+	u_char	r3, g3, b3, p3;//10
+	short	x3, y3;//11
+	u_char	u3, v3;	u_short	pad3;
+} IPOLY_GT4;				/* Gouraud Textured Quadrangle */
+
+/*
+ * Line Primitive Definitions
+ */
+typedef struct {
+	u_char	r0, g0, b0, code;
+	short	x0, y0;
+	short	x1, y1;
+} ILINE_F2;				/* Unconnected Flat Line */
+
+typedef struct {
+	u_char	r0, g0, b0, code;
+	short	x0, y0;
+	u_char	r1, g1, b1, p1;
+	short	x1, y1;
+} ILINE_G2;				/* Unconnected Gouraud Line */
+
+typedef struct {
+	u_char	r0, g0, b0, code;
+	short	x0, y0;
+	short	x1, y1;
+	short	x2, y2;
+	u_long	pad;
+} ILINE_F3;				/* 2 connected Flat Line */
+
+typedef struct {
+	u_char	r0, g0, b0, code;
+	short	x0, y0;
+	u_char	r1, g1, b1, p1;
+	short	x1, y1;
+	u_char	r2, g2, b2, p2;
+	short	x2, y2;
+	u_long	pad;
+} ILINE_G3;				/* 2 connected Gouraud Line */
+
+typedef struct {
+	u_char	r0, g0, b0, code;
+	short	x0, y0;
+	short	x1, y1;
+	short	x2, y2;
+	short	x3, y3;
+	u_long	pad;
+} ILINE_F4;				/* 3 connected Flat Line Quadrangle */
+
+typedef struct {
+	u_char	r0, g0, b0, code;
+	short	x0, y0;
+	u_char	r1, g1, b1, p1;
+	short	x1, y1;
+	u_char	r2, g2, b2, p2;
+	short	x2, y2;
+	u_char	r3, g3, b3, p3;
+	short	x3, y3;
+	u_long	pad;
+} ILINE_G4;				/* 3 connected Gouraud Line */
+
+/*
+ * Sprite Primitive Definitions
+ */
+typedef struct {
+	u_char	r0, g0, b0, code;
+	short	x0, y0;
+	u_char	u0, v0;	u_short	clut;
+	short	w, h;
+} ISPRT;					/* free size Sprite */
+
+typedef struct {
+	u_char	r0, g0, b0, code;
+	short	x0, y0;
+	u_char	u0, v0;	u_short	clut;
+} ISPRT_16;				/* 16x16 Sprite */
+
+typedef struct {
+	u_char	r0, g0, b0, code;
+	short	x0, y0;
+	u_char	u0, v0;	u_short	clut;
+} ISPRT_8;				/* 8x8 Sprite */
+
+/*
+ * Tile Primitive Definitions
+ */
+typedef struct {
+	u_char	r0, g0, b0, code;
+	short	x0, y0;
+	short	w, h;
+} ITILE;					/* free size Tile */
+
+typedef struct {
+	u_char	r0, g0, b0, code;
+	short	x0, y0;
+} ITILE_16;				/* 16x16 Tile */
+
+typedef struct {
+	u_char	r0, g0, b0, code;
+	short	x0, y0;
+} ITILE_8;				/* 8x8 Tile */
+
+typedef struct {
+	u_char	r0, g0, b0, code;
+	short	x0, y0;
+} ITILE_1;				/* 1x1 Tile */
+
+/*
+ *  Special Primitive Definitions
+ */
+typedef struct {
+	u_long	code[2];
+} IDR_MODE;				/* Drawing Mode */
+
+typedef struct {
+	u_long	code[2];
+} IDR_TWIN;				/* Texture Window */
+
+typedef struct {
+	u_long	code[2];
+} IDR_AREA;				/* Drawing Area */
+
+typedef struct {
+	u_long	code[2];
+} IDR_OFFSET;				/* Drawing Offset */
+
+typedef struct {			/* MoveImage */
+	u_long	code[3];
+} IDR_MOVE;
+
+typedef struct {			/* LoadImage */
+	u_long	code[3];
+	u_long	p[13];
+} IDR_LOAD;
+
+typedef	struct {
+	u_long	code[1];
+} IDR_TPAGE;				/* Drawing TPage */
+
+typedef struct {
+	u_long  code[2];
+} IDR_STP;                               /* Drawing STP */
 
 #endif
