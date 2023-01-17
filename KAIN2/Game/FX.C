@@ -4043,9 +4043,9 @@ void FX_CalcSpiral(int degchange)
 			
 			FX_GetLinePoint(radius, next_radius, deg, next_deg, &pntx, &pnty, mod);
 			
-			FX_GetLinePoint(radius + 7168, next_radius + 7168, deg, next_deg, &pntx, &pnty, mod);
+			FX_GetLinePoint(radius + 7168, next_radius + 7168, deg, next_deg, &px, &py, mod);
 		
-			FX_GetLinePoint(radius - 7168, next_radius - 7168, deg, next_deg, &pntx, &pnty, mod);
+			FX_GetLinePoint(radius - 7168, next_radius - 7168, deg, next_deg, &mx, &my, mod);
 		}
 		else
 		{
@@ -4055,9 +4055,9 @@ void FX_CalcSpiral(int degchange)
 			
 			FX_GetSpiralPoint(radius, deg, &pntx, &pnty);
 			
-			FX_GetSpiralPoint(radius + 7168, deg, &pntx, &pnty);
+			FX_GetSpiralPoint(radius + 7168, deg, &px, &py);
 		
-			FX_GetSpiralPoint(radius - 7168, deg, &pntx, &pnty);
+			FX_GetSpiralPoint(radius - 7168, deg, &mx, &my);
 		}
 
 		Spiral_Array[n].vx = pntx;
