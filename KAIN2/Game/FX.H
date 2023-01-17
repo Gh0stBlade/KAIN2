@@ -32,7 +32,17 @@ struct _BASIC_G4 {
 
 struct _POLY_2G4 
 {
-	unsigned long tag; // size=0, offset=0
+#if defined(USE_32_BIT_ADDR)
+	unsigned long tag;
+#if defined(PGXP)
+	unsigned short len;
+	unsigned short pgxp_index;
+#else
+	unsigned long len;
+#endif
+#else
+	unsigned long	tag;
+#endif
 	struct _BASIC_G4 p1; // size=32, offset=4
 	struct _BASIC_G4 p2; // size=32, offset=36
 };
@@ -290,9 +300,7 @@ struct _FX_MATRIX // hashcode: 0x13190ADD (dec: 320408285)
 {
 	struct NodeType node; // size=8, offset=0
 	long flags; // size=0, offset=8
-#if !defined(PSX_VERSION)//Undefined
 	MATRIX lwTransform; // size=32, offset=12
-#endif
 };
 
 struct _FX_PRIM // hashcode: 0x16BF818E (dec: 381649294)
