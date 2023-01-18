@@ -380,7 +380,7 @@ void GAMELOOP_LevelLoadAndInit(char *baseAreaName, struct GameTracker *gameTrack
 	CAMERA_Initialize(&theCamera);
 	PLANAPI_InitPlanning(planningPool);
 	ENMYPLAN_InitEnemyPlanPool(enemyPlanPool);
-	//FX_Init(fxTracker);
+	FX_Init(fxTracker);
 	WARPGATE_Init();
 	DRAW_InitShadow();
 	GAMELOOP_InitStandardObjects();
