@@ -389,7 +389,7 @@ void GlyphDrawMenu(struct _Instance* instance)
 			{
 				f1.x = center.vx;
 
-				f1.y = center.vy + (radius < 0) ? ((radius + 7) >> 3) : (radius >> 3);
+				f1.y = center.vy + ((radius < 0) ? ((radius + 7) >> 3) : (radius >> 3));
 
 				DRAW_CreateAGlowingCircle(&f1, 320, gameTrackerX.primPool, gameTrackerX.drawOT, 5, 0x1404040, 20, 24, 0);
 			}
