@@ -4110,7 +4110,7 @@ void FX_Spiral(struct _PrimPool* primPool, unsigned long** ot)
 	long offp; // $s7
 	long offm; // $s4
 	int n; // $s1
-	struct DR_TPAGE* drtpage; // $v0
+	DR_TPAGE* drtpage; // $v0
 	int health; // $fp
 	int health_mod; // $t1
 	long no_color; // stack offset -76
@@ -4127,67 +4127,43 @@ void FX_Spiral(struct _PrimPool* primPool, unsigned long** ot)
 	static short deg; // offset 0x6e
 	struct _Vector f1; // stack offset -96
 
-	//v1 = gameTrackerX.gameData.asmData.MorphTime
-	//v0 = 0x3E8
-	//arg_0 = primPool
-	//arg_4 = ot
-	SPIRAL_COLOR = 0x3AFCFFD3;
-
 	if (gameTrackerX.gameData.asmData.MorphTime != 1000 && gameTrackerX.gameData.asmData.MorphType == 0)
 	{
-		if (Spiral_Number != 0)
+		if (Spiral_Number == 0)
 		{
-
 			FX_Health_Spiral(1, Spiral_Current, Spiral_Max);
 		}
 	}
 
-	//loc_8004DC2C
+	SPIRAL_COLOR = 0x3AFCFFD3;
+
 	SPIRAL_COLOR2 = 0x3ADCE0BA;
-	//t4 = 0x3ABBC09D
+
+	SPIRAL_COLOR3 = 0x3ABBC09D;
+
 	SPIRAL_COLOR_END = 0x3A483017;
 
 	SPIRAL_NOCOLOR = 0x3A002A15;
 
 	if (Spiral_Number == 0)
 	{
-		//v1 = Spiral_Current
-		//v0 = Spiral_Max
-
-		//t4 = 0x3A000000
 		if (Spiral_Current == Spiral_Max)
 		{
-			cnt++;
-
-			if (cnt >= 81)
-			{
-				cnt = 0;
-			}
+			cnt = 1;
 		}
 		else
 		{
-			//loc_8004DC9C
 			SPIRAL_COLOR = 0x3A00FF00;
-
 			SPIRAL_COLOR2 = 0x3A00E000;
-
 			SPIRAL_COLOR3 = 0x3A00BF00;
-
 			SPIRAL_COLOR_END = 0x3A004500;
 		}
 
-		//loc_8004DCC0
 		SPIRAL_NOCOLOR = 0x3A00150B;
 	}
 	else
 	{
-		//loc_8004DCC8
-		cnt++;
-
-		if (cnt >= 81)
-		{
-			cnt = 0;
-		}
+		cnt = 1;
 	}
 
 	//loc_8004DCF0
@@ -4203,11 +4179,6 @@ void FX_Spiral(struct _PrimPool* primPool, unsigned long** ot)
 	prev = ((unsigned long*)&Spiral_Array[64])[0];
 
 	poly = (struct _POLY_2G4*)primPool->nextPrim;
-	//a1 = primPool->lastPrim;
-
-	//v1 = (Spiral_Current - (health * max64)) << 12;
-
-	//v0 = poly + 65
 
 	health_mod = ((Spiral_Current - (health * max64)) << 12) / max64;
 
@@ -4215,93 +4186,58 @@ void FX_Spiral(struct _PrimPool* primPool, unsigned long** ot)
 
 	if ((unsigned long*)(poly + 65) < primPool->lastPrim)
 	{
-		//t0 = &color;
-		//s6 = 0xFFFFFF
-		//v0 = 0xFF000000
-		//v0 = SPIRAL_COLOR & 0xFF000000
-		//t4 = cnt
-		//s0 = &poly->p2.x3
-
-		//var_18 = SPIRAL_COLOR & 0xFF000000
 		color = SPIRAL_NOCOLOR;
 		no_color = SPIRAL_NOCOLOR;
 		current_cnt = cnt;
 
-		//loc_8004DD88
 		for (n = 0; n < 64; n++)
 		{
-			//v0 = color
-
-			((unsigned long*)&poly->p2.r2)[0] = color;
+			((unsigned long*)&poly->p1.r2)[0] = color;
 			((unsigned long*)&poly->p2.r0)[0] = color;
 
 			if (health < n)
 			{
 				color = no_color;
 			}
-
-			//loc_8004DDB0
-			//t4 = current_cnt
-			tmp = ((n + current_cnt) & 0xF) < 0 ? ((((n + current_cnt) & 0xF) + 3) >> 2) : (((n + current_cnt) & 0xF) >> 2);
-
-			switch (tmp)
+			else
 			{
-			case 0:
-			{
-				//loc_8004DDFC
-				//var_28 = SPIRAL_COLOR3
+				tmp = ((n + current_cnt) & 0xF) < 0 ? ((((n + current_cnt) & 0xF) + 3) >> 2) : (((n + current_cnt) & 0xF) >> 2);
+
+				switch (tmp)
+				{
+				default:
+				{
+					color = SPIRAL_COLOR;
+					break;
+				}
+				case 2:
+				{
+					color = SPIRAL_COLOR3;
+					break;
+				}
+				case 3:
+				case 1:
+				{
+					color = SPIRAL_COLOR2;
+
+					break;
+				}
+				}
 
 				if (n == health)
 				{
 					LoadAverageCol((unsigned char*)&color, (unsigned char*)&no_color, health_mod, 4096 - health_mod, (unsigned char*)&color);
 
-					color = (SPIRAL_COLOR3 & 0xFFFFFF) | (SPIRAL_COLOR & 0xFF000000);
-					//t4 = SPIRAL_COLOR & 0xFF000000
-					//t3 = SPIRAL_COLOR
-					//t2 = SPIRAL_COLOR2
-					//t1 = health_mod
-					//t0 = (unsigned char*)&color
+					color = color & 0xFFFFFF;
+					color |= (SPIRAL_COLOR & 0xFF000000);
 				}
-				break;
-			}
-			case 1:
-			case 3:
-			{
-				if (n == health)
-				{
-					LoadAverageCol((unsigned char*)&color, (unsigned char*)&no_color, health_mod, 4096 - health_mod, (unsigned char*)&color);
-
-					color = (SPIRAL_COLOR2 & 0xFFFFFF) | (SPIRAL_COLOR & 0xFF000000);
-					//t4 = SPIRAL_COLOR & 0xFF000000
-					//t3 = SPIRAL_COLOR
-					//t2 = SPIRAL_COLOR2
-					//t1 = health_mod
-					//t0 = (unsigned char*)&color
-				}
-				break;
 			}
 
-			default:
-			{
+			((unsigned long*)(&poly->p1.r0))[0] = SPIRAL_COLOR_END;//
+			((unsigned long*)(&poly->p1.r1))[0] = SPIRAL_COLOR_END;//
 
-				if (n == health)
-				{
-					LoadAverageCol((unsigned char*)&color, (unsigned char*)&no_color, health_mod, 4096 - health_mod, (unsigned char*)&color);
-
-					color = (SPIRAL_COLOR & 0xFFFFFF) | (SPIRAL_COLOR & 0xFF000000);
-				}
-				break;
-			}
-			}
-			//loc_8004DE60
-
-			((unsigned long*)(&poly->p1.r0))[0] = SPIRAL_COLOR_END;
-			((unsigned long*)(&poly->p1.r1))[0] = SPIRAL_COLOR_END;
-			//v0 = color
-			//v1 = n << 2
-
-			((unsigned long*)(&poly->p2.r2))[0] = SPIRAL_COLOR_END;
-			((unsigned long*)(&poly->p1.r3))[0] = SPIRAL_COLOR_END;
+			((unsigned long*)(&poly->p2.r2))[0] = SPIRAL_COLOR_END;//
+			((unsigned long*)(&poly->p2.r3))[0] = SPIRAL_COLOR_END;//
 
 			((unsigned long*)&poly->p2.x0)[0] = prev;
 			((unsigned long*)&poly->p1.x2)[0] = prev;
@@ -4312,14 +4248,11 @@ void FX_Spiral(struct _PrimPool* primPool, unsigned long** ot)
 			((unsigned long*)(&poly->p1.r3))[0] = color;
 			((unsigned long*)(&poly->p2.r1))[0] = color;
 
-			//v0 = &Spiral_Array[n];
 			prev = ((unsigned long*)&Spiral_Array[n])[0];
 
 			offp = ((unsigned long*)&Spiral_OffsetP[n])[0];
 
 			offm = ((unsigned long*)&Spiral_OffsetM[n])[0];
-
-			n++;
 
 			((unsigned long*)&poly->p2.x1)[0] = prev;
 
@@ -4329,13 +4262,9 @@ void FX_Spiral(struct _PrimPool* primPool, unsigned long** ot)
 
 			((unsigned long*)&poly->p2.x3)[0] = offm;
 
-			//t4 = ot
-			//v0 = 0x10000000
-
 			setlen(poly, 16);
 
 #if defined(PSXPC_VERSION)
-			//v1 = ot[1 * 2]
 			addPrim(ot[1 * 2], poly);
 #else
 			addPrim(ot[1], poly);
@@ -4343,12 +4272,8 @@ void FX_Spiral(struct _PrimPool* primPool, unsigned long** ot)
 			poly++;
 		}
 
-		//v0 = 0xE1000620
-		//a0 = 0xFFFFFF
-
 		setDrawTPage(poly, TRUE, TRUE, 32);
 
-		//v1 = Spiral_Number
 #if defined(PSXPC_VERSION)
 		addPrim(ot[1 * 2], poly);
 #else
@@ -4365,11 +4290,6 @@ void FX_Spiral(struct _PrimPool* primPool, unsigned long** ot)
 
 		if (Spiral_Number != 0 || Spiral_Current == Spiral_Max)
 		{
-			//a0 = &f1
-			//a1 = 0x140
-			//a2 = gameTrackerX.primPool
-			//v0 = Spiral_Glow_X
-			//t0 = Spiral_Glow_Y
 			deg = (deg - 32) & 0xFFF;
 
 			f1.x = Spiral_Glow_X;
@@ -4378,7 +4298,6 @@ void FX_Spiral(struct _PrimPool* primPool, unsigned long** ot)
 		}
 	}
 }
-
 
 // autogenerated function stub: 
 // void /*$ra*/ FX_Health_Spiral(int number /*$a0*/, int current_health /*$s0*/, int max_health /*$s1*/)
