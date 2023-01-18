@@ -455,13 +455,13 @@ void DRAW_CreateAGlowingCircle(struct _Vector* f1, long z, struct _PrimPool* pri
 	int v39; // $t2
 	int v40; // $t1
 	int v41; // $t2
-	struct _Vector debug_4; // [sp+24h] [-BCh]
-	_Vector height; // [sp+30h] [-B0h] BYREF
-	_Vector diag1; // [sp+40h] [-A0h]
-	_Vector diag2; // [sp+50h] [-90h]
+	struct _Vector width; // [sp+24h] [-BCh]
+	struct _Vector height; // [sp+30h] [-B0h] BYREF
+	struct _Vector diag1; // [sp+40h] [-A0h]
+	struct _Vector diag2; // [sp+50h] [-90h]
 	_Vector points[9]; // [sp+60h] [-80h] BYREF
-	struct _Vector* v47; // [sp+D4h] [-Ch]
-	_Vector* p_height; // [sp+D8h] [-8h]
+	struct _Vector* _v; // [sp+D4h] [-Ch]
+	struct _Vector* _v1; // [sp+D8h] [-8h]
 
 	f1->z = 0;
 	if (z > 0 && otz < 3072)
@@ -480,20 +480,20 @@ void DRAW_CreateAGlowingCircle(struct _Vector* f1, long z, struct _PrimPool* pri
 		v14 = rsin(angle);
 		rcos(angle);
 		v15 = (v13 << 9) / 240;
-		debug_4.x = (-v14 * -v10) >> 12;
+		width.x = (-v14 * -v10) >> 12;
 		x = f1->x;
 		y = f1->y;
 		v18 = f1->z;
-		p_height = &height;
+		_v1 = &height;
 		diag1.x = x + height.x + v15;
-		diag1.y = y + height.y + debug_4.x;
+		diag1.y = y + height.y + width.x;
 		diag1.z = v18;
 		v19 = 3072 * (diag1.x - f1->x);
 		v20 = f1->y;
 		diag1.z = v18 - f1->z;
 		diag1.x = v19 >> 12;
 		diag1.y = (3072 * (diag1.y - v20)) >> 12;
-		v21 = f1->y + height.y - debug_4.x;
+		v21 = f1->y + height.y - width.x;
 		v22 = f1->z;
 		diag2.x = f1->x + height.x - v15;
 		diag2.y = v21;
@@ -516,10 +516,10 @@ void DRAW_CreateAGlowingCircle(struct _Vector* f1, long z, struct _PrimPool* pri
 		v29 = f1->y + diag2.y;
 		v30 = f1->z + diag2.z;
 		points[2].x = f1->x + (v23 >> 12);
-		v47 = &points[2];
+		_v = &points[2];
 		points[2].y = v29;
 		points[2].z = v30;
-		v31 = f1->y + debug_4.x;
+		v31 = f1->y + width.x;
 		v32 = f1->z;
 		points[3].x = f1->x + v15;
 		points[3].y = v31;
@@ -533,7 +533,7 @@ void DRAW_CreateAGlowingCircle(struct _Vector* f1, long z, struct _PrimPool* pri
 		v36 = f1->z;
 		points[5].x = f1->x - v15;
 		points[5].z = v36;
-		points[5].y = v35 - debug_4.x;
+		points[5].y = v35 - width.x;
 		v37 = f1->y;
 		v38 = f1->z - diag2.z;
 		points[6].x = f1->x - (v23 >> 12);
@@ -556,10 +556,9 @@ void DRAW_CreateAGlowingCircle(struct _Vector* f1, long z, struct _PrimPool* pri
 		points[6].z = 4096;
 		points[7].z = 4096;
 		points[8].z = 4096;
-
 		DRAW_GlowQuad(primPool, ot, otz, color, &points[3], points, &points[4], &points[1]);
 		DRAW_GlowQuad(primPool, ot, otz, color, &points[3], &points[4], &points[6], &points[7]);
-		DRAW_GlowQuad(primPool, ot, otz, color, &points[1], v47, &points[4], &points[5]);
+		DRAW_GlowQuad(primPool, ot, otz, color, &points[1], _v, &points[4], &points[5]);
 		DRAW_GlowQuad(primPool, ot, otz, color, &points[7], &points[4], &points[8], &points[5]);
 	}
 }
