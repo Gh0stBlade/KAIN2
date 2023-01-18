@@ -41,7 +41,7 @@ int gamePadControllerOut;
 
 unsigned char controllerType[2];
 
-void GAMEPAD_Commands(long (*command)[5], long (*data)[5], long pad)
+void GAMEPAD_Commands(long(*command)[5], long(*data)[5], long pad)//Matching - 95.96%
 {
 #if defined(PSX_VERSION)
 	long analogX;
@@ -692,10 +692,10 @@ void PSXPAD_TranslateData(long *data, unsigned short padData, unsigned short las
 #endif
 }
 
-unsigned short GAMEPAD_RemapAnalogueButtons(unsigned short in)
+unsigned short GAMEPAD_RemapAnalogueButtons(unsigned short in)//Matching - 100%
 {
 	in = ~in;
-	return ~((in & 0x61F9) | ((in & 0x800) << 1) | ((in & 0x400) << 5) | ((in & 0x200) << 1) | ((in & 0x8000) >> 6) | ((in & 0x1000) >> 1) & 0xFFFF);
+	return ~(((in & 0x800) << 1) | ((in & 0x400) << 5) | ((in & 0x200) << 1) | ((in & 0x8000) >> 6) | ((in & 0x1000) >> 1) & 0xFFFF | (in & 0x61F9));
 }
 
 void GAMEPAD_DetectInit()
