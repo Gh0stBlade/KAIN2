@@ -127,9 +127,9 @@ extern int gte_ldlzc(int input);
 	: "$12", "$13" )
 
 #define gte_ldcv( r0 )                  \
-	IR1 = r0[0];   \
-	IR2 = r0[1];   \
-	IR3 = r0[2];
+	IR1 = ((unsigned char*)r0)[0];   \
+	IR2 = ((unsigned char*)r0)[1];   \
+	IR3 = ((unsigned char*)r0)[2];
 
 #define gte_ldclmv( r0 ) \
 	IR1 = ((short*)r0)[0]; \

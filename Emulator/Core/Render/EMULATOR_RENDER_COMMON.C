@@ -823,8 +823,6 @@ int ParseLinkedPrimitiveList(uintptr_t packetStart, uintptr_t packetEnd)
 
 	int lastSize = -1;
 
-	int packetLength = packetEnd - packetStart;
-
 	while (currentAddress != packetEnd)
 	{
 		lastSize = ParsePrimitive(currentAddress, primitiveTag->code);
