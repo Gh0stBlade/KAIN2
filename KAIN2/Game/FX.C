@@ -3991,7 +3991,7 @@ void FX_GetLinePoint(int radius, int next_radius, int deg, int next_deg, int* pn
 	pnty[0] = y1 + (y2 - y1) * part / 4096;
 }
 
-void FX_CalcSpiral(int degchange)
+void FX_CalcSpiral(int degchange)//Matching - 88.37%
 {
 	int radius;
 	int deg;
@@ -4012,12 +4012,12 @@ void FX_CalcSpiral(int degchange)
 
 	minx = 32767;
 	maxx = -32767;
+	miny = 32767;
 	maxy = -32767;
 	radius = 8192;
 	next_radius = 8192;
 	deg = 0;
 	next_deg = 0;
-	miny = 32767;
 
 	FX_GetSpiralPoint(8192, 0, &pntx, &pnty);
 
@@ -4028,35 +4028,37 @@ void FX_CalcSpiral(int degchange)
 	{
 		if (Spiral_Number == 0)
 		{
-			if (!(n % Spiral_Mod))
+			mod = (n % Spiral_Mod);
+
+			if (!mod)
 			{
 				deg = next_deg;
-				
+
 				radius = next_radius;
-				
+
 				next_radius += 1088 * Spiral_Mod;
-			
+
 				next_deg += degchange * Spiral_Mod;
 			}
 
-			mod = ((n % Spiral_Mod) << 12) / Spiral_Mod;
-			
+			mod = (mod << 12) / Spiral_Mod;
+
 			FX_GetLinePoint(radius, next_radius, deg, next_deg, &pntx, &pnty, mod);
-			
+
 			FX_GetLinePoint(radius + 7168, next_radius + 7168, deg, next_deg, &px, &py, mod);
-		
+
 			FX_GetLinePoint(radius - 7168, next_radius - 7168, deg, next_deg, &mx, &my, mod);
 		}
 		else
 		{
 			radius += 1088;
-			
+
 			deg += degchange;
-			
+
 			FX_GetSpiralPoint(radius, deg, &pntx, &pnty);
-			
+
 			FX_GetSpiralPoint(radius + 7168, deg, &px, &py);
-		
+
 			FX_GetSpiralPoint(radius - 7168, deg, &mx, &my);
 		}
 
@@ -4097,7 +4099,7 @@ void FX_CalcSpiral(int degchange)
 		Spiral_OffsetM[n].vx = mx;
 		Spiral_OffsetM[n].vy = my;
 	}
-	
+
 	Spiral_Glow_Size = 320 * ((maxx - minx) / 2) / 512 + 2;
 	Spiral_Glow_X = (minx + maxx) / 2;
 	Spiral_Glow_Y = (miny + maxy) / 2;
