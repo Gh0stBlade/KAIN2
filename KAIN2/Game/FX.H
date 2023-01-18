@@ -3,33 +3,6 @@
 
 #include "CORE.H"
 
-struct _BASIC_G4 {
-	unsigned char r0; // size=0, offset=0
-	unsigned char g0; // size=0, offset=1
-	unsigned char b0; // size=0, offset=2
-	unsigned char code; // size=0, offset=3
-	short x0; // size=0, offset=4
-	short y0; // size=0, offset=6
-	unsigned char r1; // size=0, offset=8
-	unsigned char g1; // size=0, offset=9
-	unsigned char b1; // size=0, offset=10
-	unsigned char pad1; // size=0, offset=11
-	short x1; // size=0, offset=12
-	short y1; // size=0, offset=14
-	unsigned char r2; // size=0, offset=16
-	unsigned char g2; // size=0, offset=17
-	unsigned char b2; // size=0, offset=18
-	unsigned char pad2; // size=0, offset=19
-	short x2; // size=0, offset=20
-	short y2; // size=0, offset=22
-	unsigned char r3; // size=0, offset=24
-	unsigned char g3; // size=0, offset=25
-	unsigned char b3; // size=0, offset=26
-	unsigned char pad3; // size=0, offset=27
-	short x3; // size=0, offset=28
-	short y3; // size=0, offset=30
-};
-
 struct _POLY_2G4 
 {
 #if defined(USE_32_BIT_ADDR)
