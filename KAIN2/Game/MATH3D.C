@@ -1367,7 +1367,7 @@ unsigned long MATH3D_SquareLength(long x, long y, long z)
 	v[1] = y;
 	v[2] = z;
 
-	gte_ldcv(v);
+	gte_ldlvl(&v);
 	gte_sqr0();
 	gte_stlvnl(r);
 

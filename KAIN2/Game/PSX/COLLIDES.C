@@ -1243,7 +1243,7 @@ void sub_80078458(struct _VMObject* vmobject, struct Level* level)
 					color.vy = ((((morphColor + v0)->morphColor15 & 0x3E0) >> 2) - ((vertex0->rgb15 & 0x3E0) >> 2)) << 4;
 					color.vz = ((((morphColor + v0)->morphColor15 & 0x7C00) >> 7) - ((vertex0->rgb15 & 0x7C00) >> 7)) << 4;
 
-					gte_ldcv(((long*)&color));
+					gte_ldlvl(&color);
 
 					MAC1 = ((vertex0->rgb15 & 0x1F) << 3) << 4;
 					MAC2 = ((vertex0->rgb15 & 0x3E0) >> 2) << 4;
@@ -1381,7 +1381,7 @@ void sub_80078458(struct _VMObject* vmobject, struct Level* level)
 			vertex.vz = bgv1->vertex.z - bgv0->vertex.z;
 
 			gte_lddp(f->unknown2);
-			gte_ldcv(((long*)&vertex));
+			gte_ldlvl(&vertex);
 			gte_gpf12();
 
 			bgv2 = &level->terrain->vertexList[f[i].v0];//s5
@@ -1436,7 +1436,7 @@ void sub_80078458(struct _VMObject* vmobject, struct Level* level)
 			vertex.vz = bgv1->vertex.z - bgv0->vertex.z;
 
 			gte_lddp(((struct _BGObject_Face*)&level->bgObjectList[i])->unknown2);
-			gte_ldcv(((long*)&vertex));
+			gte_ldlvl(&vertex);
 			gte_gpf12();
 
 			bgv2 = &level->terrain->vertexList[((struct _BGObject_Face*)&level->bgObjectList[i])->v0];//t3
