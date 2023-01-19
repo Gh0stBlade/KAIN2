@@ -209,8 +209,6 @@ int razPlaneShift(struct _Instance *instance)
 
 void razSpectralShift()
 {
-#if defined(PSX_VERSION)
-
 	struct _Instance* inst;
 
 	if (!(gameTrackerX.streamFlags & 0x40000))
@@ -218,7 +216,7 @@ void razSpectralShift()
 		if (Raziel.CurrentPlane == 1)
 		{
 			inst = razGetHeldItem();
-			
+
 			if (inst != NULL)
 			{
 				INSTANCE_Post(inst, 0x800008, 4);
@@ -230,7 +228,7 @@ void razSpectralShift()
 
 			INSTANCE_Post(gameTrackerX.playerInstance, 0x100014, 0);
 
-			if (Raziel.HitPoints == gameTrackerX.playerInstance->flags2)
+			if (Raziel.HitPoints == GetMaxHealth())
 			{
 				Raziel.HitPoints = 0x186A0;
 			}
@@ -248,103 +246,13 @@ void razSpectralShift()
 				MORPH_ToggleMorph();
 
 				if (Raziel.State.SectionList[0].Process != StateHandlerGlyphs &&
-				    Raziel.State.SectionList[0].Process != StateHandlerPuppetShow)
+					Raziel.State.SectionList[0].Process != StateHandlerPuppetShow)
 				{
 					INSTANCE_Post(gameTrackerX.playerInstance, 0x40005, 0);
 				}
 			}
 		}
 	}
-
-#elif defined(PC_VERSION)
-	struct _Instance* LinkChild; // edx
-	struct _Instance* LinkSibling; // eax
-	struct _Instance* v2; // eax
-	int v3; // eax
-	int v4; // eax
-	struct _Instance* v5; // eax
-
-	if ((gameTrackerX.streamFlags & 0x40000) != 0 || dword_B08850 != 1)
-		return;
-	LinkChild = stru_B0841C.CharacterInstance->LinkChild;
-	LinkSibling = LinkChild;
-	if (Inst && LinkChild == Inst)
-	{
-		if (!LinkChild)
-			goto LABEL_15;
-		LinkSibling = LinkChild->LinkSibling;
-	}
-	if (LinkSibling)
-	{
-		if (dword_B08804 == 8)
-		{
-			v2 = stru_B0841C.CharacterInstance->LinkChild;
-			if (Inst && LinkChild == Inst && LinkChild)
-				v2 = LinkChild->LinkSibling;
-			INSTANCE_PlainDeath(v2);
-		}
-		else
-		{
-			INSTANCE_Post(LinkSibling, 0x800008, 4);
-			v3 = dword_B08934;
-			LOBYTE(v3) = dword_B08934 | 3;
-			word_B08938 = 4096;
-			dword_B08934 = v3;
-			word_B0893A = 0;
-			dword_B08940 = 0;
-			dword_B0893C = 256;
-		}
-	}
-LABEL_15:
-	gameTrackerX.playerInstance->flags2 |= 0x8000000u;
-	INSTANCE_Post(gameTrackerX.playerInstance, 0x100014, 0);
-	if (dword_B08850 == 2)
-		v4 = 100000;
-	else
-		v4 = 100000 * (word_B08810 + 1);
-	dword_B08850 = 2;
-	current_health = v4 != current_health ? 83334 : 100000;
-	if (Inst)
-	{
-		v5 = stru_B0841C.CharacterInstance->LinkChild;
-		if (v5 == Inst)
-		{
-			if (!v5)
-			{
-			LABEL_23:
-				if ((INSTANCE_Query(Inst, 40) & 1) == 0)
-					INSTANCE_Post(Inst, 0x800100, 0);
-				dword_B08804 = 4096;
-				if (dword_B08850 == 2 && dword_B0884C != 1)
-				{
-					dword_B0884C = 1;
-					debugRazielFlags2 = 1024;
-					INSTANCE_Post(Inst, 0x800103, 1);
-				}
-				if (dword_B08850 == 1 && dword_B0884C == 1)
-				{
-					dword_B0884C = 2;
-					debugRazielFlags2 = 2048;
-					INSTANCE_Post(Inst, 0x800103, 2);
-				}
-				goto LABEL_31;
-			}
-			v5 = v5->LinkSibling;
-		}
-		if (!v5)
-			goto LABEL_23;
-	}
-LABEL_31:
-	if (!gameTrackerX.gameData.asmData.MorphType)
-	{
-		MORPH_ToggleMorph();
-		if ((int(__cdecl*)(int, int, int))stru_B0841C.SectionList[0].Process != StateHandlerGlyphs
-			&& (int(__cdecl*)(struct __CharacterState*, int, int))stru_B0841C.SectionList[0].Process != StateHandlerPuppetShow)
-		{
-			INSTANCE_Post(gameTrackerX.playerInstance, 262149, 0);
-		}
-	}
-#endif
 }
 
 void razMaterialShift()
