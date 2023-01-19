@@ -194,10 +194,15 @@ void Shift::LeftPane::zoneIndexChanged(int index)
                     if (!(strcmp(intro->name, "raziel")))
                     {
                         extern struct _Position overrideEditorPosition;
+                        extern struct _Rotation overrideEditorRotation;
 
-                        overrideEditorPosition.x = intro->position.x;
-                        overrideEditorPosition.y = intro->position.y;
-                        overrideEditorPosition.z = intro->position.z;
+                        overrideEditorPosition.x = 0x07C9;
+                        overrideEditorPosition.y = 0xEDB0;
+                        overrideEditorPosition.z = 0xEED8;
+
+                        overrideEditorRotation.x = 0x0FC7;
+                        overrideEditorRotation.y = 0x0000;
+                        overrideEditorRotation.z = 0x005E;
                     }
                 }
             }

@@ -8,3 +8,9 @@ if(NOT(DEFINED ENV{TRAVIS} OR DEFINED ENV{APPVEYOR}))
 	add_subdirectory(ShiftMidi)
 	add_subdirectory(ShiftList)
 endif()
+
+if(DEFINED ENV{APPVEYOR})
+add_subdirectory(ShiftEditor)
+endif()
+
+#add_subdirectory(ShiftEditor)

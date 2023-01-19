@@ -242,11 +242,15 @@ extern "C" {
 	extern void MORPH_ToggleMorph();
 }
 
+extern void Emulator_SaveBountyList();
+
 void Shift::ToolBox::DoMorph()
 {
 	if (gameThread != NULL)
 	{
 		MORPH_ToggleMorph();
+
+		Emulator_SaveBountyList();
 	}
 }
 
