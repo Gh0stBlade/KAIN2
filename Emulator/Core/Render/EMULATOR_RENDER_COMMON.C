@@ -476,6 +476,7 @@ int ParsePrimitive(uintptr_t primPtr, int code)
 		struct VertexBufferSplit* split = &g_splits[g_splitIndex];
 
 		Emulator_GenerateVertexArrayQuad(&g_vertexBuffer[split->vCount + split->vIndex], &poly->x0, &poly->x1, &poly->x3, &poly->x2);
+		
 		Emulator_GenerateTexcoordArrayQuadZero(&g_vertexBuffer[split->vCount + split->vIndex], 1);
 		Emulator_GenerateColourArrayQuad(&g_vertexBuffer[split->vCount + split->vIndex], &poly->r0, &poly->r1, &poly->r3, &poly->r2, FALSE);
 
@@ -833,10 +834,10 @@ int ParseLinkedPrimitiveList(uintptr_t packetStart, uintptr_t packetEnd)
 		currentAddress += lastSize;
 
 		primitiveTag = (IP_TAG*)currentAddress;
-	}
 
-	g_splits[g_splitIndex].vCount = g_vertexIndex - g_splits[g_splitIndex].vIndex;
-	g_splits[g_splitIndex].iCount = g_indicesIndex - g_splits[g_splitIndex].iIndex;
+		g_splits[g_splitIndex].vCount = g_vertexIndex - g_splits[g_splitIndex].vIndex;
+		g_splits[g_splitIndex].iCount = g_indicesIndex - g_splits[g_splitIndex].iIndex;
+	}
 
 	return lastSize;
 }
