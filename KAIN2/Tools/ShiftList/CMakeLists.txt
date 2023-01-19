@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 3.0)
 
-project (midi_${TARGET_ARCH})
+project (ShiftList_${TARGET_ARCH})
 
 #Recursively locate the source files for GAMEWAD_Unpack.
 file(GLOB_RECURSE TOOL_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/*.CPP ${CMAKE_CURRENT_SOURCE_DIR}/*.C  ${CMAKE_CURRENT_SOURCE_DIR}/*.H ${CMAKE_CURRENT_SOURCE_DIR}/*.CUR ${CMAKE_CURRENT_SOURCE_DIR}/*.RC)
@@ -11,8 +11,8 @@ ${TOOL_SRCS}
 )
 
 set_target_properties(
-${PROJECT_NAME} PROPERTIES OUTPUT_NAME "MIDI"
-${PROJECT_NAME} PROPERTIES FOLDER "Tools/Midi"
+${PROJECT_NAME} PROPERTIES OUTPUT_NAME "ShiftList"
+${PROJECT_NAME} PROPERTIES FOLDER "Tools/"
 )
 
 #This will be a console application, alter linker subsystem accordingly or main method won't be found
