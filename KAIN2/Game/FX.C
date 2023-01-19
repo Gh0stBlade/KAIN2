@@ -4112,7 +4112,7 @@ void FX_Spiral(struct _PrimPool* primPool, unsigned long** ot)//Matching - 65.16
 	long offp; // $s7
 	long offm; // $s4
 	int n; // $s1
-	struct DR_TPAGE* drtpage; // $v0
+	DR_TPAGE* drtpage; // $v0
 	int health; // $fp
 	int health_mod; // $t1
 	long no_color; // stack offset -76
