@@ -357,8 +357,6 @@ void GlyphDrawMenu(struct _Instance* instance)
 			{
 				enabled = 0;
 			}
-
-			enabled = 1;
 		}
 		else
 		{
@@ -784,7 +782,7 @@ void _GlyphSelectProcess(struct _Instance* instance, int data1, int data2)
 
 					if (MANNA_Count >= _GlyphCost(glyphtunedata, data->selectedGlyph))
 					{
-						if (_GlyphIsGlyphUsable(data->selectedGlyph) || 1)
+						if (_GlyphIsGlyphUsable(data->selectedGlyph))
 						{
 							_GlyphSwitchProcess(instance, &_GlyphGenericProcess);
 						}
