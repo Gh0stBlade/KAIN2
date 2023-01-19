@@ -1,7 +1,16 @@
 #ifndef PLANCOLL_H
 #define PLANCOLL_H
 
+#include "Game/CORE.H"
 #include "PLANAPI.H"
+#include "Game/COLLIDE.H"
+
+struct _fth {
+	char x; // size=0, offset=0
+	char y; // size=0, offset=1
+	char z; // size=0, offset=2
+	char nodeType; // size=0, offset=3
+};
 
 extern int PLANCOLL_DoesLOSExistFinal(_Position *startPos, _Position *endPos, int collideType, int passThroughHit, int zoffset); // 0x80098B14
 
