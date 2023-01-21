@@ -30,7 +30,7 @@ Please select a platform:
 
 # It is built, now what?
 
-If you wish to contribute functions to the project, it is important that you try to decompile the ones which are currently most needed. To find out which functions are higher priority, run the game in debug by launching `KAIN2_Win32_Debug.exe`. Whilst in-game press the number `6` on the keyboard. This will now have generated a _runtime bounty list_ called `VALKYRIE_RUNTIME_BOUNTY_LIST_KAIN2.txt`. If you open the bounty list, it should tell you which functions are being called but they're not currently implemented. Chose one to decompile.
+If you wish to contribute functions to the project, it is important that you try to decompile the ones which are currently most needed. To find out which functions are higher priority, run the game in debug by launching `KAIN2_Win32_Debug.exe`. Whilst in-game press the number `6` on the keyboard. This will now have generated a _runtime bounty list_ called `VALKYRIE_RUNTIME_BOUNTY_LIST_KAIN2.txt`. If you open the bounty list, it should tell you which functions are being called but they're not currently implemented. Choose one to decompile.
 
 # How do I know if a function is matching?
 
