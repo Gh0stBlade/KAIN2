@@ -2,17 +2,14 @@
 #include "ENMYPLAN.H"
 #include "PLANAPI.H"
 
-void ENMYPLAN_InitEnemyPlanPool(void* enemyPlanPool)
+void ENMYPLAN_InitEnemyPlanPool(void* enemyPlanPool)//Matching - 100%
 {
-	int i = 9;
-	struct EnemyPlanSlotData* planningSlot = &((struct EnemyPlanSlotData*)enemyPlanPool)[9];
-	do
+	int i;
+
+	for (i = 0; i < 10; i++)
 	{
-		planningSlot->slotInUse = 0;
-		i--;
-		planningSlot--;
+		((struct EnemyPlanSlotData*)enemyPlanPool)[i].slotInUse = 0;
 	}
-	while (i >= 0);
 }
 
 int ENMYPLAN_GetNextAvailablePlanningSlot()
