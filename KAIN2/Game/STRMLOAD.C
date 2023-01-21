@@ -178,13 +178,13 @@ struct _LoadQueueEntry* STREAM_AddQueueEntryToHead()
 	return entry;
 }
 
-int STREAM_IsCdBusy(long* numberInQueue)
+int STREAM_IsCdBusy(long* numberInQueue)//Matching - 98.75%
 { 
 #if defined(PSX_VERSION)
 	
 	if (numberInQueue != NULL)
 	{
-		numLoads = numberInQueue[0];
+		numberInQueue[0] = numLoads;
 	}
 
 	return numLoads;
