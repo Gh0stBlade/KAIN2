@@ -5,6 +5,8 @@
 #include "Game/STREAM.H"
 #include "Game/BSP.H"
 #include "Game/MATH3D.H"
+#include "Game/PHYSOBS.H"
+#include "Game/STATE.H"
 
 void SetNoPtCollideInFamily(struct _Instance* instance)
 {
@@ -332,49 +334,34 @@ void PhysicsDefaultLinkedMoveResponse(struct _Instance *instance, struct evPhysi
 
 int PhysicsCheckGravity(struct _Instance* instance, int Data, short Mode)
 {
-	struct evPhysicsGravityData* Ptr; // $s3
-	SVECTOR D; // stack offset -120
-	SVECTOR N; // stack offset -112
-	short Dot; // $v0
-	int rc; // $s4
-	struct _PCollideInfo CInfo; // stack offset -104
-	SVECTOR Old; // stack offset -56
-	SVECTOR New; // stack offset -48
-	int slide; // $fp
-	int stillOnOldTFace; // $v0
-	struct Level* level; // $s2
-	struct _TFace* tface; // $s1
-	struct _Instance* oldOn; // $a0
-
-
-	//s0 = instance
-	//s6 = &Old
-	//s5 = &New
+	struct evPhysicsGravityData* Ptr;
+	SVECTOR D;
+	SVECTOR N;
+	short Dot;
+	int rc;
+	struct _PCollideInfo CInfo;
+	SVECTOR Old;
+	SVECTOR New;
+	int slide;
+	int stillOnOldTFace;
+	struct Level* level;
+	struct _TFace* tface;
+	struct _Instance* oldOn;
 
 	D.vx = 0;
 	D.vy = 0;
 	D.vz = 61440;
 
-	//0x70+var_28 = s6
-	//0x70+var_2C = s5
-
-	//v0 = instance->position.x
-	//t2 = Data
 	rc = 0;
 	
 	New.vx = instance->position.x;
 	Old.vx = instance->position.x;
 	
-	//v0 = instance->position.y;
-
 	slide = 0;
 
 	New.vy = instance->position.y;
 	Old.vy = instance->position.y;
 
-	//instance->position.z;
-
-	//s7 = Mode
 	New.vz = instance->position.z;
 	Old.vz = instance->position.z;
 
@@ -389,10 +376,6 @@ int PhysicsCheckGravity(struct _Instance* instance, int Data, short Mode)
 	}
 	else
 	{
-		//loc_80074FB8
-		//v1 = cachedTFace
-		//v0 = -1
-		//a0 = instance
 		if (instance->cachedTFace != -1 && instance->cachedTFaceLevel != NULL)
 		{
 			tface = NULL;
@@ -412,7 +395,6 @@ int PhysicsCheckGravity(struct _Instance* instance, int Data, short Mode)
 				stillOnOldTFace = 0;
 			}
 
-			//v0 = 3
 			if (stillOnOldTFace == 0)
 			{
 				instance->waterFace = NULL;
@@ -434,7 +416,6 @@ int PhysicsCheckGravity(struct _Instance* instance, int Data, short Mode)
 		}
 		else
 		{
-			//loc_800750A0
 			instance->waterFace = NULL;
 
 			gameTrackerX.gameFlags |= 0x8000;
@@ -442,38 +423,19 @@ int PhysicsCheckGravity(struct _Instance* instance, int Data, short Mode)
 
 		PHYSICS_CheckLineInWorld(instance, &CInfo);
 
-		//loc_800750C0
 		gameTrackerX.gameFlags &= 0xFFFF7FFF;
 	}
-	//loc_800750D0
-	//v1 = CInfo.type
 
 	if ((unsigned)(CInfo.type - 2) < 2 || CInfo.type == 5)
 	{
-		
-		//a1 = CInfo.wNormal.vz;
-		//v1 = CInfo.wNormal.vz;
-		//v0 = Ptr->slipSlope
-
 		if (CInfo.wNormal.vz < Ptr->slipSlope && CInfo.wNormal.vz > 0)
 		{
-			//v0 = -CInfo.wNormal.vz
-			//a0 = -CInfo.wNormal.vz
-			//v1 = CInfo.wNormal.vx
-
-			//v1 = -(-CInfo.wNormal.vz * CInfo.wNormal.vx) < 0 ? -(-CInfo.wNormal.vz * CInfo.wNormal.vx) + 0xFFF : -(-CInfo.wNormal.vz * CInfo.wNormal.vx);
-
-			//t2 = (CInfo.wNormal.vy * -CInfo.wNormal.vz);
-			//v0 = -(CInfo.wNormal.vy * -CInfo.wNormal.vz) < 0 ? (-(CInfo.wNormal.vy * -CInfo.wNormal.vz) + 4095) >> 12 : -(CInfo.wNormal.vy * -CInfo.wNormal.vz) >> 12;
-
 			N.vx = -(-CInfo.wNormal.vz * CInfo.wNormal.vx) < 0 ? (-(-CInfo.wNormal.vz * CInfo.wNormal.vx) + 4095) >> 12 : -(-CInfo.wNormal.vz * CInfo.wNormal.vx) >> 12;
 			N.vy = -(CInfo.wNormal.vy * -CInfo.wNormal.vz) < 0 ? (-(CInfo.wNormal.vy * -CInfo.wNormal.vz) + 4095) >> 12 : -(CInfo.wNormal.vy * -CInfo.wNormal.vz) >> 12;
 			N.vz = (CInfo.wNormal.vz * -CInfo.wNormal.vz) < 0 ? ((CInfo.wNormal.vz * -CInfo.wNormal.vz) + 4096) >> 12 : (CInfo.wNormal.vz * -CInfo.wNormal.vz) >> 12;
 			
 			N.vz = D.vz - N.vz;
 
-
-			//loc_800751B0
 			New.vx = CInfo.newPoint->vx + (N.vx * instance->zVel < -48 ? -instance->zVel : 48) < 0 ? ((N.vx * instance->zVel < -48 ? -instance->zVel : 48) + 4095) >> 12 : (N.vx * instance->zVel < -48 ? -instance->zVel : 48) >> 12;
 			Old.vx = New.vx;
 			
@@ -490,14 +452,8 @@ int PhysicsCheckGravity(struct _Instance* instance, int Data, short Mode)
 
 			if ((unsigned)(CInfo.type - 2) < 2 || CInfo.type == 5)
 			{
-				//loc_8007528C
-				//v1 = CInfo.wNormal.z
-				//v0 = Ptr->slipSlope
-
 				if (CInfo.wNormal.vz >= Ptr->slipSlope || CInfo.wNormal.vz <= 0)
 				{
-					//loc_800752B4
-					//v0 = CInfo.newPoint.x
 					instance->position.x = CInfo.newPoint->vx;
 					instance->position.y = CInfo.newPoint->vy;
 				}
@@ -506,296 +462,161 @@ int PhysicsCheckGravity(struct _Instance* instance, int Data, short Mode)
 					slide = 1;
 				}
 			}
-			//loc_800752DC
 		}
-		//loc_800752DC
 	}
-	//loc_800752DC
-	//v0 = -1
+	
 	if (CInfo.type == 3)
 	{
 		instance->cachedBSPTree = CInfo.segment;
-		
-		//v0 = CInfo.inst->node.prev
-		//v1 = CInfo.prim
+	
+		instance->cachedTFace = -(((unsigned long)CInfo.prim - ((unsigned long*)CInfo.inst->node.prev)[8]) * 0x55555555) >> 2;
+
+		instance->cachedTFaceLevel = CInfo.instance;
 	}
-	//loc_8007534C
-#if 0
-		lw      $v0, 0x20($v0)
-		nop
-		subu    $v1, $v0
-		sll     $v0, $v1, 2
-		addu    $v0, $v1
-		sll     $v1, $v0, 4
-		addu    $v0, $v1
-		sll     $v1, $v0, 8
-		addu    $v0, $v1
-		sll     $v1, $v0, 16
-		addu    $v0, $v1
-		negu    $v0, $v0
-		sra     $v0, 2
-		sh      $v0, 0xC8($s0)
-		lw      $v0, 0x70 + var_38($sp)
-		j       loc_80075354
-		sw      $v0, 0xCC($s0)
+	else
+	{
+		instance->cachedTFace = -1;
 
-		loc_8007534C:
-	sh      $v0, 0xC8($s0)
-		sw      $zero, 0xCC($s0)
+		instance->cachedTFaceLevel = NULL;
+	}
 
-		loc_80075354 :
-		lhu     $v1, 0x70 + var_40($sp)
-		nop
-		addiu   $v0, $v1, -2
-		sltiu   $v0, 2
-		bnez    $v0, loc_80075380
-		andi    $v0, $s7, 7
-		sll     $v0, $v1, 16
-		sra     $v0, 16
-		li      $v1, 5
-		bne     $v0, $v1, loc_80075624
-		andi    $v0, $s7, 7
+	if ((unsigned)(CInfo.type - 2) < 2 || CInfo.type == 5)
+	{
+		if ((Mode & 0x7))
+		{
+			if (slide != 0)
+			{
+				Ptr->x = CInfo.newPoint->vx - instance->position.x;
+				Ptr->y = CInfo.newPoint->vy - instance->position.y;
+			}
+			else
+			{
+				Ptr->x = 0;
+				Ptr->y = 0;
+			}
 
-		loc_80075380:
-	beqz    $v0, loc_800753E8
-		andi    $v0, $s7, 2
-		beqz    $fp, loc_800753C4
-		nop
-		lw      $v0, 0x70 + var_2C($sp)
-		lhu     $v1, 0x5C($s0)
-		lhu     $v0, 0($v0)
-		nop
-		subu    $v0, $v1
-		sh      $v0, 4($s3)
-		lw      $v0, 0x70 + var_2C($sp)
-		lhu     $v1, 0x5E($s0)
-		lhu     $v0, 2($v0)
-		nop
-		subu    $v0, $v1
-		j       loc_800753CC
-		sh      $v0, 6($s3)
+			Ptr->z = CInfo.newPoint->vz - instance->position.z;
 
-		loc_800753C4:
-	sh      $zero, 4($s3)
-		sh      $zero, 6($s3)
+		}
 
-		loc_800753CC :
-		lw      $v0, 0x70 + var_2C($sp)
-		lhu     $v1, 0x60($s0)
-		lhu     $v0, 4($v0)
-		nop
-		subu    $v0, $v1
-		sh      $v0, 8($s3)
-		andi    $v0, $s7, 2
+		if ((Mode & 0x2) && slide == 0)
+		{
+			INSTANCE_Post(instance, 0x4010008, Data);
+		}
 
-		loc_800753E8:
-	beqz    $v0, loc_8007540C
-		li      $v0, 1
-		bnez    $fp, loc_8007540C
-		move    $a0, $s0
-		lui     $a1, 0x401
-		lw      $a2, 0x70 + arg_4($sp)
-		jal     sub_80034684
-		li      $a1, 0x4010008
-		li      $v0, 1
+		if (slide == 1)
+		{
+			if ((Mode & 0x2))
+			{
+				INSTANCE_Post(instance, 0x4010200, Data);
+			}
 
-		loc_8007540C:
-	bne     $fp, $v0, loc_8007543C
-		andi    $v0, $s7, 4
-		andi    $v0, $s7, 2
-		beqz    $v0, loc_80075430
-		move    $a0, $s0
-		lui     $a1, 0x401
-		lw      $a2, 0x70 + arg_4($sp)
-		jal     sub_80034684
-		li      $a1, 0x4010200
+			rc |= 0x100000;
+		}
 
-		loc_80075430:
-	lui     $v0, 0x10
-		or $s4, $v0
-		andi    $v0, $s7, 4
+		if ((Mode & 0x4))
+		{
+			if (CheckPhysOb(instance) == 0 || CheckPhysObFamily(instance, 1) == 0 || instance->attachedID == 0)
+			{
+				PhysicsDefaultGravityResponse(instance, Ptr);
+			}
+		}
 
-		loc_8007543C :
-		beqz    $v0, loc_80075480
-		nop
-		jal     sub_80068E94
-		move    $a0, $s0
-		beqz    $v0, loc_80075474
-		move    $a0, $s0
-		jal     sub_80068F3C
-		li      $a1, 1
-		beqz    $v0, loc_80075478
-		move    $a0, $s0
-		lw      $v0, 0x8C($s0)
-		nop
-		bnez    $v0, loc_80075480
-		nop
+		if (CInfo.type != 1)
+		{
+			instance->wNormal.x = CInfo.wNormal.vx;
+			instance->wNormal.y = CInfo.wNormal.vy;
+			instance->wNormal.z = CInfo.wNormal.vz;
+		}
+		else
+		{
+			instance->wNormal.x = 0;
+			instance->wNormal.y = 0;
+			instance->wNormal.z = 4096;
+		}
 
-		loc_80075474 :
-	move    $a0, $s0
+		if (CInfo.type != 3 || CInfo.inst != NULL || (CInfo.inst->object->oflags & 0x400))
+		{
+			rc |= PhysicsCheckLinkedMove(instance, SetPhysicsLinkedMoveData(CInfo.inst, CInfo.segment, NULL, NULL), Mode);
+		}
+		else
+		{
+			if (instance->attachedID != 0)
+			{
+				oldOn = INSTANCE_Find(instance->attachedID);
 
-		loc_80075478 :
-	jal     sub_80075698
-		move    $a1, $s3
+				if (oldOn != NULL)
+				{
+					oldOn->flags2 &= 0xFFFFFF7F;
+				}
+			}
+		
+			instance->attachedID = 0;
+		}
+		
+		if ((instance->flags2 & 0x40))
+		{
+			instance->shadowPosition = instance->position;
 
-		loc_80075480 :
-	lh      $v1, 0x70 + var_40($sp)
-		li      $v0, 1
-		beq     $v1, $v0, loc_800754B4
-		li      $v0, 0x1000
-		lhu     $v0, 0x70 + var_34($sp)
-		nop
-		sh      $v0, 0xD8($s0)
-		lhu     $v0, 0x70 + var_32($sp)
-		nop
-		sh      $v0, 0xDA($s0)
-		lhu     $v0, 0x70 + var_30($sp)
-		j       loc_800754C0
-		sh      $v0, 0xDC($s0)
+			instance->flags |= 0x8000000;
+		}
 
-		loc_800754B4:
-	sh      $zero, 0xD8($s0)
-		sh      $zero, 0xDA($s0)
-		sh      $v0, 0xDC($s0)
+		if (CInfo.type == 3)
+		{
+			if (instance->tface != CInfo.prim)
+			{
+				instance->oldTFace = (struct _TFace*)CInfo.prim;
 
-		loc_800754C0 :
-		lh      $v1, 0x70 + var_40($sp)
-		li      $v0, 3
-		beq     $v1, $v0, loc_80075524
-		nop
-		lw      $a0, 0x70 + var_38($sp)
-		nop
-		beqz    $a0, loc_80075524
-		nop
-		lw      $v0, 0x1C($a0)
-		nop
-		lw      $v0, 0($v0)
-		nop
-		andi    $v0, 0x400
-		beqz    $v0, loc_80075524
-		move    $a2, $zero
-		lh      $a1, 0x70 + var_3E($sp)
-		jal     sub_80071424
-		move    $a3, $a2
-		move    $a0, $s0
-		move    $a1, $v0
-		sll     $a2, $s7, 16
-		jal     sub_800749FC
-		sra     $a2, 16
-		j       loc_8007555C
-		or $s4, $v0
+				instance->tface = (struct _TFace*)CInfo.prim;
 
-		loc_80075524 :
-	lw      $a0, 0x8C($s0)
-		nop
-		beqz    $a0, loc_80075558
-		nop
-		jal     sub_80034988
-		nop
-		move    $a0, $v0
-		beqz    $a0, loc_80075558
-		li      $v1, 0xFFFFFF7F
-		lw      $v0, 0x18($a0)
-		nop
-		and $v0, $v1
-		sw      $v0, 0x18($a0)
+				instance->tfaceLevel = CInfo.inst;
 
-		loc_80075558:
-	sw      $zero, 0x8C($s0)
+				instance->bspTree = CInfo.segment;
 
-		loc_8007555C :
-		lw      $v0, 0x18($s0)
-		nop
-		andi    $v0, 0x40
-		beqz    $v0, loc_80075598
-		lui     $v1, 0x800
-		ulw     $t2, 0x5C($s0)
-		lh      $t3, 0x60($s0)
-		usw     $t2, 0x120($s0)
-		sh      $t3, 0x124($s0)
-		lw      $v0, 0x14($s0)
-		nop
-		or $v0, $v1
-		sw      $v0, 0x14($s0)
+				if (CInfo.segment == 0)
+				{
+					rc |= 0x80000;
+				}
+			}
+		}
+		else
+		{
+			if (instance->tface != NULL)
+			{
+				instance->oldTFace = instance->tface;
 
-		loc_80075598:
-	lh      $v1, 0x70 + var_40($sp)
-		li      $v0, 3
-		bne     $v1, $v0, loc_800755FC
-		nop
-		lw      $v1, 0xB4($s0)
-		lw      $v0, 0x70 + var_3C($sp)
-		nop
-		beq     $v1, $v0, loc_8007561C
-		nop
-		sw      $v1, 0xB8($s0)
-		lw      $v0, 0x70 + var_3C($sp)
-		nop
-		sw      $v0, 0xB4($s0)
-		lw      $v0, 0x70 + var_38($sp)
-		nop
-		sw      $v0, 0xBC($s0)
-		lh      $v0, 0x70 + var_3E($sp)
-		nop
-		sw      $v0, 0xC4($s0)
-		lh      $v0, 0x70 + var_3E($sp)
-		nop
-		bnez    $v0, loc_8007561C
-		lui     $v0, 8
-		j       loc_8007561C
-		or $s4, $v0
+				instance->tface = NULL;
 
-		loc_800755FC :
-	lw      $v0, 0xB4($s0)
-		nop
-		beqz    $v0, loc_8007561C
-		nop
-		sw      $v0, 0xB8($s0)
-		sw      $zero, 0xB4($s0)
-		sw      $zero, 0xBC($s0)
-		sw      $zero, 0xC4($s0)
+				instance->tfaceLevel = NULL;
 
-		loc_8007561C:
-	j       loc_80075664
-		ori     $s4, 1
+				instance->bspTree = 0;
+			}
+		}
 
-		loc_80075624 :
-		lw      $v0, 0xB4($s0)
-		nop
-		beqz    $v0, loc_80075644
-		nop
-		sw      $v0, 0xB8($s0)
-		sw      $zero, 0xB4($s0)
-		sw      $zero, 0xBC($s0)
-		sw      $zero, 0xC4($s0)
+		rc |= 0x1;
+	}
+	else
+	{
+		if (instance->tface != NULL)
+		{
+			instance->oldTFace = instance->tface;
 
-		loc_80075644:
-	andi    $v0, $s7, 2
-		beqz    $v0, loc_80075664
-		sw      $zero, 0x8C($s0)
-		move    $a0, $s0
-		lui     $a1, 0x400
-		lw      $a2, 0x70 + arg_4($sp)
-		jal     sub_80034684
-		li      $a1, 0x4000001
+			instance->tface = NULL;
 
-		loc_80075664:
-	move    $v0, $s4
-		lw      $ra, 0x70 + var_s24($sp)
-		lw      $fp, 0x70 + var_s20($sp)
-		lw      $s7, 0x70 + var_s1C($sp)
-		lw      $s6, 0x70 + var_s18($sp)
-		lw      $s5, 0x70 + var_s14($sp)
-		lw      $s4, 0x70 + var_s10($sp)
-		lw      $s3, 0x70 + var_sC($sp)
-		lw      $s2, 0x70 + var_s8($sp)
-		lw      $s1, 0x70 + var_s4($sp)
-		lw      $s0, 0x70 + var_s0($sp)
-		jr      $ra
-		addiu   $sp, 0x98
-#endif
+			instance->tfaceLevel = NULL;
 
-	return 0;
+			instance->bspTree = 0;
+		}
+	}
+
+	instance->attachedID = 0;
+
+	if ((Mode & 0x2))
+	{
+		INSTANCE_Post(instance, 0x4000001, Data);
+	}
+
+	return rc;
 }
 
 
