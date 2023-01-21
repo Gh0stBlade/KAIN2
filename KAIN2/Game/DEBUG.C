@@ -1894,6 +1894,7 @@ void DEBUG_UpdateFog(long* var)
 
 void DEBUG_UpdateHealth(long* var)
 {
+	RAZIEL_DebugHealthSetScale(1);
 }
 
 void DEBUG_UpdateMana(long* var)
