@@ -34,20 +34,13 @@ int PLANPOOL_NumNodesInPlan(struct PlanningNode *goalNode, struct PlanningNode *
 	return 0;
 }
 
-int PLANPOOL_CountBitsSetInLong(long mylong)
+int PLANPOOL_CountBitsSetInLong(long mylong)//Matching - 100%
 {
 	int numBitsSet;
 
-	numBitsSet = 0;
-
-	while (1)
+	for (numBitsSet = 0; mylong; numBitsSet++)
 	{
-		numBitsSet++;
-
-		if (!(mylong & (mylong - 1)))
-		{
-			break;
-		}
+		mylong &= (mylong - 1);
 	}
 
 	return numBitsSet;
