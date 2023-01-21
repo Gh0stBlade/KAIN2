@@ -10,6 +10,8 @@
 #include "LIGHT3D.H"
 #include "SAVEINFO.H"
 #include "Game/RAZIEL/HEALTH.H"
+#include "Game/MATH3D.H"
+#include "Game/PSX/COLLIDES.H"
 
 #ifdef PC_VERSION
 #pragma warning(disable: 4101)
@@ -2875,126 +2877,66 @@ void DEBUG_ProcessSecondController(struct GameTracker *gameTracker)
 {
 }
 
-void DEBUG_ProcessCheat(struct GameTracker *gameTracker)
-{ 
-	long angleRelCamera; // $s2
-	SVECTOR v; // stack offset -80
-	VECTOR dv; // stack offset -72
-	MATRIX rotate_mat; // stack offset -56
+void DEBUG_ProcessCheat(struct GameTracker* gameTracker)//Matching - 98.47%
+{
+	SVECTOR v;
+	VECTOR dv;
+	MATRIX rotate_mat;
+	long angleRelCamera;
 
-	//s3 = gameTracker
-	if ((gameTrackerX.controlCommand[0][0] & 0xA01))
+	angleRelCamera = 0;
+
+	if ((gameTracker->controlCommand[0][4] & 0xA01) != 0xA01 && (gameTracker->controlCommand[0][4] & 0xA02) != 0xA02)
 	{
-
+		if ((gameTracker->controlCommand[0][4] & 0x5) == 0x5)
+		{
+			angleRelCamera = 2560;
+		}
+		else if ((gameTracker->controlCommand[0][4] & 0x9) == 0x9)
+		{
+			angleRelCamera = 1536;
+		}
+		else if ((gameTracker->controlCommand[0][4] & 0x6) == 0x6)
+		{
+			angleRelCamera = 3584;
+		}
+		else if ((gameTracker->controlCommand[0][4] & 0xA) == 0xA)
+		{
+			angleRelCamera = 512;
+		}
+		else if ((gameTracker->controlCommand[0][4] & 0x2) != 0)
+		{
+			angleRelCamera = 4096;
+		}
+		else if ((gameTracker->controlCommand[0][4] & 0x4) != 0)
+		{
+			angleRelCamera = 3072;
+		}
+		else if ((gameTracker->controlCommand[0][4] & 0x8) != 0)
+		{
+			angleRelCamera = 1024;
+		}
+		else if ((gameTracker->controlCommand[0][4] & 0x1) != 0)
+		{
+			angleRelCamera = 2048;
+		}
 	}
-	UNIMPLEMENTED();
-#if 0
-		lw      $a0, 0x48($s3)
-		li      $v0, 0xA01
-		andi    $v1, $a0, 0xA01
-		beq     $v1, $v0, loc_800149D4
-		move    $s2, $zero
-		andi    $v1, $a0, 0xA02
-		li      $v0, 0xA02
-		beq     $v1, $v0, loc_800149D4
-		andi    $v1, $a0, 5
-		li      $v0, 5
-		bne     $v1, $v0, loc_8001495C
-		andi    $v1, $a0, 9
-		j       loc_800149D4
-		li      $s2, 0xA00
+	if (angleRelCamera)
+	{
+		memset(&v, 0, sizeof(SVECTOR));
+		memset(&dv, 0, sizeof(VECTOR));
 
-		loc_8001495C:
-	li      $v0, 9
-		bne     $v1, $v0, loc_80014970
-		andi    $v1, $a0, 6
-		j       loc_800149D4
-		li      $s2, 0x600
-
-		loc_80014970 :
-		li      $v0, 6
-		bne     $v1, $v0, loc_80014984
-		andi    $v1, $a0, 0xA
-		j       loc_800149D4
-		li      $s2, 0xE00
-
-		loc_80014984 :
-		li      $v0, 0xA
-		bne     $v1, $v0, loc_80014998
-		andi    $v0, $a0, 2
-		j       loc_800149D4
-		li      $s2, 0x200
-
-		loc_80014998 :
-		beqz    $v0, loc_800149A8
-		andi    $v0, $a0, 4
-		j       loc_800149D4
-		li      $s2, 0x1000
-
-		loc_800149A8 :
-		beqz    $v0, loc_800149B8
-		andi    $v0, $a0, 8
-		j       loc_800149D4
-		li      $s2, 0xC00
-
-		loc_800149B8 :
-		beqz    $v0, loc_800149C8
-		andi    $v0, $a0, 1
-		j       loc_800149D4
-		li      $s2, 0x400
-
-		loc_800149C8 :
-		beqz    $v0, loc_800149D4
-		nop
-		li      $s2, 0x800
-
-		loc_800149D4 :
-		beqz    $s2, loc_80014A60
-		addiu   $a0, $sp, 0x48 + var_38
-		move    $a1, $zero
-		jal     memset
-		li      $a2, 8
-		addiu   $s1, $sp, 0x48 + var_30
-		move    $a0, $s1
-		move    $a1, $zero
-		jal     memset
-		li      $a2, 0x10
-		addiu   $s0, $sp, 0x48 + var_20
-		move    $a0, $s0
-		li      $v0, 0xFFFFFF00
-		jal     sub_8003A130
-		sh      $v0, 0x48 + var_36($sp)
-		lh      $a0, -0x52BC($gp)
-		move    $a1, $s0
-		jal     sub_800790C8
-		addu    $a0, $s2
-		move    $a0, $s0
-		addiu   $a1, $sp, 0x48 + var_38
-		jal     ApplyMatrix
-		move    $a2, $s1
-		lw      $a0, 0x2C($s3)
-		lhu     $v1, 0x48 + var_30($sp)
-		lhu     $v0, 0x5C($a0)
-		nop
-		addu    $v0, $v1
-		sh      $v0, 0x5C($a0)
-		lw      $a0, 0x2C($s3)
-		lhu     $v1, 0x48 + var_2C($sp)
-		lhu     $v0, 0x5E($a0)
-		nop
-		addu    $v0, $v1
-		sh      $v0, 0x5E($a0)
-
-		loc_80014A60:
-	lw      $ra, 0x48 + var_s10($sp)
-		lw      $s3, 0x48 + var_sC($sp)
-		lw      $s2, 0x48 + var_s8($sp)
-		lw      $s1, 0x48 + var_s4($sp)
-		lw      $s0, 0x48 + var_s0($sp)
-		jr      $ra
-		addiu   $sp, 0x60
-		# End of function sub_80014908
-#endif
+		v.vz = -256;
+		
+		MATH3D_SetUnityMatrix(&rotate_mat);
+		
+		RotMatrixZ(theCamera.core.rotation.z + angleRelCamera, &rotate_mat);
+		
+		ApplyMatrix(&rotate_mat, &v, &dv);
+		
+		gameTracker->playerInstance->position.y += dv.vx;
+		gameTracker->playerInstance->position.y += dv.vy;
+	}
 }
 
 void DEBUG_DoAreaProtection()
