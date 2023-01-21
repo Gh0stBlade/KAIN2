@@ -3787,7 +3787,7 @@ long FX_GetHealthColor(int currentHealth)
 	return 0;
 }
 
-void FX_Start_Snow(int percent)
+void FX_Start_Snow(int percent)//Matching - 99.62%
 {
 	snow_amount = (percent * 768) / 100;
 }
