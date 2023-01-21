@@ -669,7 +669,6 @@ void metaCmdGetChannelTranspose(struct AadSeqEvent* event, struct _AadSequenceSl
 {
 }
 
-
 void metaCmdGetChannelProgram(struct AadSeqEvent* event, struct _AadSequenceSlot* slot)
 { 
 	int variableNum;
