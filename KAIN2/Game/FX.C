@@ -3124,7 +3124,7 @@ struct _FXGlowEffect * FX_DoInstanceOneSegmentGlow(struct _Instance *instance, l
 	return null;
 }
 
-void FX_SetGlowFades(struct _FXGlowEffect* glowEffect, int fadein, int fadeout)
+void FX_SetGlowFades(struct _FXGlowEffect* glowEffect, int fadein, int fadeout) //Matching - 100%
 {
 	glowEffect->fadein_time = (fadein * 32) + fadein;
 
@@ -3792,7 +3792,7 @@ void FX_Start_Snow(int percent)//Matching - 99.62%
 	snow_amount = (percent * 768) / 100;
 }
 
-void FX_Start_Rain(int percent)
+void FX_Start_Rain(int percent) //Matching - 99.33%
 {
 	rain_amount = (percent * 1024) / 100;
 
@@ -4325,7 +4325,7 @@ void FX_Health_Spiral(int number, int current_health, int max_health)
 			UNIMPLEMENTED();
 }
 
-void FX_Spiral_Init()
+void FX_Spiral_Init() //Matching - 98.44%
 {
 	Spiral_Max = 100000;
 
