@@ -919,7 +919,7 @@ short AngleDiff(short current, short destination)//Matching - 100%
 #endif
 }
 
-short MATH3D_AngleFromPosToPos(struct _Position* from, struct _Position* to)
+short MATH3D_AngleFromPosToPos(struct _Position* from, struct _Position* to)//Matching - 100%
 {
 #if defined(PSX_VERSION)
 	return (ratan2(from->y - to->y, from->x - to->x) + 3072) & 0xFFF;
