@@ -1869,6 +1869,14 @@ void DEBUG_SetGameTime(long* var)
 	GAMELOOP_SetGameTime(var[0]);
 }
 
+void DEBUG_KeepGameTime(long* var)
+{
+	long curTOD;
+
+	curTOD = gameTrackerX.timeOfDay;
+	DEBUG_SetGameTime(&curTOD);
+}
+
 void DEBUG_UpdateFog(long* var)
 {
 	struct _StreamUnit* currentUnit;
