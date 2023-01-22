@@ -405,7 +405,7 @@ int MON_AnimIDPlaying(struct _Instance* instance, int index)
 	//v0 = instance->data
 	//a0 = instance->extraData
 	//v1 = ((struct _MonsterAttributes*)instance->data)[index].
-
+	UNIMPLEMENTED();
 	return 0;
 	UNIMPLEMENTED();//structs need detecting for this!
 #elif defined(PC_VERSION)
