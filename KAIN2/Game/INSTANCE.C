@@ -927,47 +927,10 @@ struct INICommand* INSTANCE_GetIntroCommand(struct INICommand* command, int cmd)
 #endif
 }
 
-struct INICommand* INSTANCE_FindIntroCommand(struct _Instance* instance, int cmd)
+struct INICommand* INSTANCE_FindIntroCommand(struct _Instance* instance, int cmd)//Matching - 99.44%
 {
 #if defined(PSX_VERSION)
-
-	if (instance != NULL)
-	{
-		//loc_80032C60
-
-	}
-
-	UNIMPLEMENTED();//Weird struct used!
-
-	return NULL;
-#if 0
-
-		loc_80032C40 :
-	sra     $v0, 16
-		beq     $v0, $a1, locret_80032C78
-		move    $v0, $a0
-		lh      $v0, 2($a0)
-		nop
-		sll     $v0, 2
-		addiu   $v0, 4
-		addu    $a0, $v0
-
-		loc_80032C60 :
-	lh      $v0, 0($a0)
-		lhu     $v1, 0($a0)
-		bnez    $v0, loc_80032C40
-		sll     $v0, $v1, 16
-
-		locret_80032C70 :
-		jr      $ra
-		move    $v0, $zero
-
-		locret_80032C78 :
-	jr      $ra
-		nop
-#endif
-
-
+	return INSTANCE_GetIntroCommand((struct INICommand*)instance->introData, cmd);
 #elif defined(PC_VERSION)
 	struct INICommand* result; // eax
 	__int16 command; // cx
