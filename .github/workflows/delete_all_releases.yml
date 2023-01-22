@@ -1,0 +1,18 @@
+name: Delete Older Releases (All)
+     
+on:
+  workflow_dispatch:
+  
+jobs:
+  delete_releases:
+    name: Delete Older Releases (All)
+    runs-on: windows-latest
+    steps:
+        - name: Delete
+          uses: dev-drprasad/delete-older-releases@v0.2.1
+          
+          with:
+            keep_latest: 0
+            delete_tags: true
+          env:
+            GITHUB_TOKEN: ${{secrets.PAT}}
