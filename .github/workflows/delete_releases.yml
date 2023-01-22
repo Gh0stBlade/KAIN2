@@ -5,6 +5,8 @@ on:
   
 jobs:
   delete_releases:
+    name: Delete Older Releases (Keep latest 15)
+    runs-on: windows-latest
     steps:
         - name: Delete
           uses: dev-drprasad/delete-older-releases@v0.2.1
