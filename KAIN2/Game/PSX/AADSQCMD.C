@@ -342,11 +342,11 @@ void metaCmdSetChannelVolume(struct AadSeqEvent *event, struct _AadSequenceSlot 
 }
 
 
-void metaCmdSetChannelPan(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
+void metaCmdSetChannelPan(struct AadSeqEvent* event, struct _AadSequenceSlot* slot)
 {
 #if defined(PSX_VERSION)
-	int pan; // $a0
-	
+	int pan;
+
 	pan = event->dataByte[0];
 
 	slot->selectedSlotPtr->panPosition[slot->selectedChannel] = pan;
