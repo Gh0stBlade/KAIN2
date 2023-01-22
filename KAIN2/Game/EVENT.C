@@ -281,9 +281,12 @@ struct EventTimer* EVENT_GetNextTimer()
 
 void EVENT_RemoveTimer(struct EventTimer* timer)
 {
-	numActiveEventTimers--;
+	if (timer != NULL)
+	{
+		numActiveEventTimers--;
 
-	timer->flags &= 0xFFFFFFFE;
+		timer->flags &= 0xFFFFFFFE;
+	}
 }
 
 void EVENT_InitTimers()
