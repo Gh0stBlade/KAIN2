@@ -1,7 +1,15 @@
-- name: Delete Older Releases
-  uses: dev-drprasad/delete-older-releases@v0.2.1
+name: Delete Older Releases (Keep latest 15)
+     
+on:
+  workflow_dispatch:
   
-  with:
-    keep_latest: 15
-  env:
-    GITHUB_TOKEN: ${{secrets.PAT}}
+jobs:
+  delete_releases:
+    steps:
+        - name: Delete
+          uses: dev-drprasad/delete-older-releases@v0.2.1
+          
+          with:
+            keep_latest: 15
+          env:
+            GITHUB_TOKEN: ${{secrets.PAT}}
