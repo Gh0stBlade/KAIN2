@@ -2198,22 +2198,29 @@ void MON_RelocateCoords(struct _Instance *instance, struct _SVector *offset)
 #endif
 }
 
-int MON_ValidUnit(struct _Instance* instance, unsigned long unitId)//Matching 43.95%
+int MON_ValidUnit(struct _Instance* instance, unsigned long unitId)//Matching - 100%
 {
 #if defined(PSX_VERSION)
 	struct _MonsterVars* mv;
 	short* unit;
 
 	mv = (struct _MonsterVars*)instance->extraData;
-	unit = &mv->validUnits;
+	unit = &mv->validUnits[0];
+
+	if (!*unit)
+	{
+		return 1;
+	}
 
 	while (*unit)
 	{
-		if (unitId == *unit++)
+		if (unitId == *(unsigned short*)unit++)
 		{
 			return 1;
 		}
 	}
+
+	return 0;
 
 #elif defined(PC_VERSION)
 	struct _MonsterVars* extraData; // ecx
