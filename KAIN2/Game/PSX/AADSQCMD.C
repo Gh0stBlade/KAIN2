@@ -307,10 +307,7 @@ void metaCmdSetSlotVolume(struct AadSeqEvent *event, struct _AadSequenceSlot *sl
 
 void metaCmdSetSlotPan(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 {
-#if defined(PC_VERSION)
-	slot->selectedSlotPtr->slotPan = event->dataByte[0];
-	aadUpdateSlotVolPan((int)slot->selectedSlotPtr, (int)slot->selectedSlotPtr);
-#else
+#if defined(PSX_VERSION)
 	int pan;
 
 	pan = (unsigned char)event->dataByte[0];
@@ -319,17 +316,17 @@ void metaCmdSetSlotPan(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 
 	eprintinf("[MIDI]: Update Slot:%d Pan: %d\n", slot->selectedSlotNum, pan);
 
+#elif defined(PC_VERSION)
+	slot->selectedSlotPtr->slotPan = event->dataByte[0];
+	aadUpdateSlotVolPan((int)slot->selectedSlotPtr, (int)slot->selectedSlotPtr);
 #endif
 }
 
 void metaCmdSetChannelVolume(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 {
-#if defined(PC_VERSION)
-	slot->selectedSlotPtr->volume[slot->selectedChannel] = event->dataByte[0];
-	aadUpdateChannelVolPan(slot->selectedSlotPtr, slot->selectedChannel);
-#else
+#if defined(PSX_VERSION)
 	int volume;
-	
+
 	volume = (unsigned char)event->dataByte[0];
 
 	slot->selectedSlotPtr->volume[slot->selectedChannel] = volume;
@@ -338,6 +335,9 @@ void metaCmdSetChannelVolume(struct AadSeqEvent *event, struct _AadSequenceSlot 
 
 	eprintinf("[MIDI]: Set Channel: %d Volume: %d\n", slot->selectedChannel, volume);
 
+#elif defined(PC_VERSION)
+	slot->selectedSlotPtr->volume[slot->selectedChannel] = event->dataByte[0];
+	aadUpdateChannelVolPan(slot->selectedSlotPtr, slot->selectedChannel);
 #endif
 }
 
