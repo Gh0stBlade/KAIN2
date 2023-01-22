@@ -112,9 +112,11 @@ void CINE_Unload()
 	VSyncCallback(VblTick);
 
 	the_cine_table = NULL;
+
 	if (the_cine_tracker != NULL)
 	{
 		STREAM_DumpObject(the_cine_tracker);
+
 		the_cine_tracker = NULL;
 	}
 }
