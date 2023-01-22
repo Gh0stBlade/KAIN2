@@ -4533,7 +4533,7 @@ void fx_setTex(DVECTOR* x, unsigned char* uv, int tx, int offset)
 {
 	x->vx -= tx;
 
-	if (x->vy < 0x100)
+	if (x->vy < 256)
 	{
 		uv[1] = (unsigned char)x->vy;
 	}
