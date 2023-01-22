@@ -991,7 +991,7 @@ void EVENT_ChangeOperandToNumber(struct StackType* operand, long item, long flag
 	operand->data.Number.flags = flags;
 }
 
-void EVENT_ChangeOperandVector3d(struct StackType* operand, short x, short y, short z, long streamUnitID)
+void EVENT_ChangeOperandVector3d(struct StackType* operand, short x, short y, short z, long streamUnitID)//Matching - 100%
 {
 	operand->id = 9;
 
@@ -999,11 +999,11 @@ void EVENT_ChangeOperandVector3d(struct StackType* operand, short x, short y, sh
 	operand->data.vector3d.vy = y;
 	operand->data.vector3d.vz = z;
 
-	//v1 = streamUnitID
-	//v0 = 0xA0
+	operand->data.vector3d.errorx = 160;
+	operand->data.vector3d.errory = 160;
+	operand->data.vector3d.errorz = 160;
 
-	UNIMPLEMENTED();//Unfinished, storing at 0xC now?
-
+	operand->data.vector3d.streamUnitID = streamUnitID;
 }
 
 
