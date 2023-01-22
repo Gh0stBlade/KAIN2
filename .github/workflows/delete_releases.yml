@@ -13,5 +13,6 @@ jobs:
           
           with:
             keep_latest: 15
+            delete_tags: true
           env:
             GITHUB_TOKEN: ${{secrets.PAT}}
