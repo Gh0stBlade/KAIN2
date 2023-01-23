@@ -1,7 +1,6 @@
 # Legacy of Kain: Soul Reaver Decompile
 
-<img src="https://progress-bar.dev/51/?title=complete"/>
-<a href="https://ci.appveyor.com/project/Gh0stBlade/kain2"><img src="https://ci.appveyor.com/api/projects/status/7btarl3b6babqcsc?svg=true"/></a>
+<img src="https://progress-bar.dev/54/?title=SLUS_007.08%20Completion:"/> <a href="https://ci.appveyor.com/project/Gh0stBlade/kain2"><img src="https://ci.appveyor.com/api/projects/status/7btarl3b6babqcsc?svg=true"/></a>
 
 <a href="https://legacyofkain.co.uk">Live WebGL Demo</a>
 
