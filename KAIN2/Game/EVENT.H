@@ -24,6 +24,14 @@ struct evShadowSegmentData
 	unsigned short shadowSegments[4]; // size=8, offset=4
 };
 
+struct evObjectBirthProjectileData 
+{
+	struct _Instance* instance; // size=668, offset=0
+	int joint; // size=0, offset=4
+	int type; // size=0, offset=8
+	struct _Instance* birthInstance; // size=668, offset=12
+};
+
 struct WaterLevelProcess // hashcode: 0x43FF89D3 (dec: 1140820435)
 {
 	long flags; // size=0, offset=0
