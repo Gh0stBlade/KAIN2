@@ -5,6 +5,7 @@
 #include "G2/INSTNCG2.H"
 #include "G2/ANIMG2.H"
 #include "MEMPACK.H"
+#include "Game/GENERIC.H"
 
 struct _G2AnimAlphaTable_Type* G2AlphaTables[7] = {
 	NULL,
