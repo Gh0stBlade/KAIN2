@@ -2437,7 +2437,8 @@ void INSTANCE_Broadcast(struct _Instance* sender, long whatAmIMask, int Message,
 int INSTANCE_InPlane(struct _Instance* instance, int plane)
 {
 #if defined(PSX_VERSION)
-
+	UNIMPLEMENTED();
+	return 0;
 #elif defined(PC_VERSION)
 	struct Object* object; // eax
 	int result; // eax
