@@ -171,7 +171,7 @@ void HealthInstantDeath(struct _Instance *instance)
 	UNIMPLEMENTED();
 }
 
-void RAZIEL_DebugHealthSetScale(int healthScale)//Matching - 99.32%
+void RAZIEL_DebugHealthSetScale(long healthScale)//Matching - 99.32%
 {
 	Raziel.HealthScale = healthScale;
 
