@@ -3930,14 +3930,15 @@ void WARPGATE_DrawWarpGateRim(struct _StreamUnit* streamUnit, int drawOn)//Match
 	
 	if (bspTree)
 	{
-		bspTree->flags = bspTree->flags & 0xFFFD;
+		bspTree->flags &= 0xFFFD;
+
 		if (drawOn)
 		{
-			bspTree->flags = bspTree->flags & 0xFFFC;
+			bspTree->flags &= 0xFFFC;
 		}
 		else
 		{
-			bspTree->flags = bspTree->flags | 0x1;
+			bspTree->flags |= 0x1;
 		}
 	}
 }
