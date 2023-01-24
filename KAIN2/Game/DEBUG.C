@@ -1922,13 +1922,17 @@ void DEBUG_FogRestore()
 	DEBUG_UpdateFog(NULL);
 }
 
+void DEBUG_SendCinematicSwitch()
+{
+
+}
+
 void DEBUG_FillUpHealth(long* var)
 { 
 	RAZIEL_DebugHealthFillUp();
 
 	RAZIEL_DebugManaFillUp();
 }
-
 
 void DEBUG_FogLoad(void)
 {

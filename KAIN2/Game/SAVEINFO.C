@@ -736,6 +736,7 @@ void SAVE_RestoreGlobalSavePointer()//Matching - 99.09%
 	struct SavedBasic* saveIntro;
 
 	saveIntro = (struct SavedBasic*)savedInfoTracker.InfoStart;
+
 	GlobalSave = NULL;
 
 	while ((unsigned int)saveIntro < (unsigned int)savedInfoTracker.InfoEnd)
@@ -743,6 +744,7 @@ void SAVE_RestoreGlobalSavePointer()//Matching - 99.09%
 		if (saveIntro->savedID == 6)
 		{
 			GlobalSave = (struct _GlobalSaveTracker*)saveIntro;
+
 			return;
 		}
 
