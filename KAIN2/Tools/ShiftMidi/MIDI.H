@@ -2,6 +2,7 @@
 #define MIDI_H
 
 //#define AKUJI
+//#define KAIN2_ALPHA
 
 struct AadSoundBankHdr
 {
@@ -17,6 +18,37 @@ struct AadSoundBankHdr
 	unsigned short reverbMode;
 	unsigned short reverbDepth;
 	unsigned short unknown3[19];
+#elif defined(KAIN2_ALPHA)
+	unsigned long bankID;
+	unsigned long headerSize;
+	unsigned short bankVersion;
+	unsigned char numBanks;
+	unsigned char numPrograms;
+	unsigned short numTones;
+	unsigned short numWaves;
+	unsigned char numSequences;
+	unsigned char numPitchMaps;
+	unsigned short numLabels;
+	unsigned char reverbMode;
+	unsigned char unused1;
+	short reverbDepth;
+	unsigned short objectID;
+	unsigned short unused2;
+	unsigned long unused3;
+	unsigned long unused4;
+	unsigned long unused5;
+	unsigned long unused6;
+	unsigned long unused7;
+	unsigned long unused8;
+	unsigned long unused9;
+	unsigned long unused10;
+	unsigned long unused11;
+	unsigned long unused12;
+	unsigned long unused13;
+	unsigned long unused14;
+	unsigned long unused15;
+	unsigned char baseProgramTbl[16];
+	unsigned short baseToneTbl[16];
 #else
 	unsigned long bankID;
 	unsigned long headerSize;
@@ -41,7 +73,7 @@ struct AadSeqEvent
 
 struct AadSequenceHdr
 {
-#if defined(AKUJI)
+#if defined(AKUJI)|| defined(KAIN2_ALPHA)
 	unsigned long sequenceID;
 	unsigned long quarterNoteTime;
 	unsigned short ppqn;

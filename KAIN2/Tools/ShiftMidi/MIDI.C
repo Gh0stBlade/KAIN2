@@ -159,7 +159,7 @@ void MIDI_Save(char* midiFilePath, unsigned int dataLength, AadSoundBankHdr* sou
 			nextSeqHdr = (AadSequenceHdr*)&sequenceBase[sequenceOffsetTbl[i + 1]];
 		}
 
-#if defined(AKUJI)
+#if defined(AKUJI) || defined(KAIN2_ALPHA)
 		unsigned int sequenceLength = ((char*)nextSeqHdr - (char*)seqHdr) - sizeof(AadSequenceHdr);
 #else
 		unsigned int sequenceLength = ((char*)nextSeqHdr - (char*)seqHdr) - sizeof(AadSequenceHdr) - (seqHdr->numTracks * sizeof(unsigned int));
@@ -174,7 +174,7 @@ void MIDI_Save(char* midiFilePath, unsigned int dataLength, AadSoundBankHdr* sou
 		MIDI_WriteUInt32(f, MIDI_MAGIC);
 		MIDI_WriteUInt32(f, 6);
 		MIDI_WriteUInt16(f, MIDI_VERSION);
-#if defined(AKUJI)
+#if defined(AKUJI) || defined(KAIN2_ALPHA)
 		MIDI_WriteUInt16(f, 1);
 #else
 		MIDI_WriteUInt16(f, seqHdr->numTracks);
@@ -182,7 +182,7 @@ void MIDI_Save(char* midiFilePath, unsigned int dataLength, AadSoundBankHdr* sou
 		MIDI_WriteUInt16(f, seqHdr->ppqn);
 
 		//Every track
-#if defined(AKUJI)
+#if defined(AKUJI) || defined(KAIN2_ALPHA)
 		for (int t = 0; t < 1; t++)
 #else
 		for (int t = 0; t < seqHdr->numTracks; t++)
@@ -211,7 +211,7 @@ void MIDI_Save(char* midiFilePath, unsigned int dataLength, AadSoundBankHdr* sou
 			unsigned int trkLength = trkNextStartOffset - trkStartOffset;
 
 
-#if defined(AKUJI)
+#if defined(AKUJI) || defined(KAIN2_ALPHA)
 			unsigned char* sequencePosition = (unsigned char*)(char*)seqHdr + sizeof(AadSequenceHdr);
 
 			fwrite(sequencePosition, sequenceLength, 1, f);
