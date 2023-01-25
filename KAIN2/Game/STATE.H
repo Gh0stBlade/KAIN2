@@ -6,6 +6,11 @@
 #include "PHYSOBS.H"
 #include "Game/EVENT.H"
 
+struct evMonsterSoulSuckData {
+	struct _Instance* sender; // size=668, offset=0
+	struct _Position Destination; // size=6, offset=4
+};
+
 
 typedef void (*TDRFuncPtr_StateSwitchStateCharacterData1NewProcess)();
 
