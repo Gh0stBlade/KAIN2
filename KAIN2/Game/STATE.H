@@ -6,9 +6,18 @@
 #include "PHYSOBS.H"
 #include "Game/EVENT.H"
 
-struct evMonsterSoulSuckData {
+struct evMonsterSoulSuckData 
+{
 	struct _Instance* sender; // size=668, offset=0
 	struct _Position Destination; // size=6, offset=4
+};
+
+struct evAnimationControllerDoneData 
+{
+	struct _Instance* instance; // size=668, offset=0
+	long segment; // size=0, offset=4
+	long type; // size=0, offset=8
+	int data; // size=0, offset=12
 };
 
 
