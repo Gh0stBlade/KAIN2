@@ -945,17 +945,17 @@ void PhysicsForceSetWater(struct _Instance *instance, int *Time, int Depth, int 
 #endif
 }
 
-int PhysicsCheckLOS(struct _Instance* instance, int Data, int Mode)
+int PhysicsCheckLOS(struct _Instance* instance, int Data, int Mode) //Matching - 99.58%
 {
 #if defined(PSX_VERSION)
 
 	struct _PCollideInfo CInfo;
 
 	CInfo.oldPoint = (SVECTOR*)(Data + 8);
-
+	CInfo.newPoint = (SVECTOR*)Data;
 	PHYSICS_CheckLineInWorld(instance, &CInfo);
 
-	return CInfo.type < 1;
+	return (unsigned int)(CInfo.type == 0);
 #elif defined(PC_VERSION)
 	int v3; // ebp
 	int currentStreamUnitID; // edx

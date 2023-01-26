@@ -935,7 +935,7 @@ void Glyph_DoSpell(struct _Instance *instance, int glyphnum)
 			UNIMPLEMENTED();
 }
 
-void Glyph_EndFX()
+void Glyph_EndFX() //Matching - 97%
 {
 	fx_blastring->lifeTime = 0;
 	fx_blastring = NULL;
@@ -1004,7 +1004,7 @@ void _GlyphGenericProcess(struct _Instance* instance, int data1, int data2)
 	}
 }
 
-void GlyphTrigger()
+void GlyphTrigger() //Matching - 98.57%
 { 
 	if (fx_going == 0)
 	{
@@ -1012,7 +1012,7 @@ void GlyphTrigger()
 	}
 }
 
-void MANNA_Pickup()
+void MANNA_Pickup() //Matching - 98.57%
 {
 #if defined(PSX_VERSION)
 	MANNA_Pickup_Time = 122880;
@@ -1044,7 +1044,7 @@ void HUD_Damp(short* val, short target, short* vel, short max)
 	CriticalDampValue(1, val, target, vel, &accl, max);
 }
 
-void HUD_Init()
+void HUD_Init() //Matching 96.07%
 { 
 	HUD_Rotation = 0;
 	HUD_Rot_vel = 0;
@@ -1062,7 +1062,7 @@ void HUD_Init()
 	hud_warp_arrow_flash = 0;
 }
 
-void HUD_Setup_Chit_Count(int chits)
+void HUD_Setup_Chit_Count(int chits) //Matching - 99.29%
 {
 	HUD_Count_Overall = chits;
 
