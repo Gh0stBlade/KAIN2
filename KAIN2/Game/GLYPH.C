@@ -134,7 +134,7 @@ unsigned long GlyphQuery(struct _Instance* instance, unsigned long query)
 	return 0;
 }
 
-void GlyphPost(struct _Instance* instance, unsigned long message, unsigned long messageData)
+void GlyphPost(struct _Instance* instance, unsigned long message, unsigned long messageData)//Matching - 99.62%
 {
 	struct __GlyphData* data;
 	
@@ -146,7 +146,7 @@ void GlyphPost(struct _Instance* instance, unsigned long message, unsigned long 
 	}
 }
 
-void _GlyphSwitchProcess(struct _Instance* instance, void (*func)(struct _Instance* instance, int data1, int data2))
+void _GlyphSwitchProcess(struct _Instance* instance, void (*func)(struct _Instance* instance, int data1, int data2)) //Matching - 99.63%
 {
 	struct __GlyphData* data;
 
