@@ -1548,8 +1548,7 @@ void musicFadeoutReturnFunc()
 	musicInfo.state = musicInfo.nextState;
 }
 
-
-void musicEndCallbackFunc(int userData, int slot, int loopFlag)//Matching - 94.38%
+void musicEndCallbackFunc(long userData, int slot, int loopFlag)//Matching - 94.38%
 {
 	if (slot == 0)
 	{
