@@ -615,11 +615,41 @@ void AdjustVramCoordsObject(int oldx, int oldy, int newx, int newy, struct Objec
 	}
 }
 
-struct _BlockVramEntry* VRAM_InsertionSort(struct _BlockVramEntry *rootNode, struct _BlockVramEntry *newBlock, int pack_type)
+struct _BlockVramEntry* VRAM_InsertionSort(struct _BlockVramEntry* rootNode, struct _BlockVramEntry* newBlock, int pack_type)//Matching - 100%
 {
 #if defined(PSX_VERSION)
-	UNIMPLEMENTED();
-	return NULL;
+	struct _BlockVramEntry* prev;
+	struct _BlockVramEntry* next;
+
+	prev = NULL;
+	next = rootNode;
+
+	while (next != NULL)
+	{
+		if (newBlock->area >= next->area)
+		{
+			break;
+		}
+
+		prev = next;
+		next = next->next;
+	}
+
+	if (prev == NULL)
+	{
+		newBlock->next = rootNode;
+
+		rootNode = newBlock;
+	}
+	else
+	{
+		newBlock->next = next;
+		
+		prev->next = newBlock;
+	}
+
+	return rootNode;
+
 #elif defined(PC_VERSION)
 	struct _BlockVramEntry* result; // eax
 	struct _BlockVramEntry* v4; // esi
