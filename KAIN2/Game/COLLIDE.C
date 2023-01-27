@@ -1152,17 +1152,15 @@ void COLLIDE_PointAndInstanceTrivialReject(struct _PCollideInfo *pcollideInfo, s
 				UNIMPLEMENTED();
 }
 
-extern struct _StreamUnit* /*$ra*/ STREAM_GetStreamUnitWithID(long id /*$a0*/);
-
-void COLLIDE_PointAndWorld(struct _PCollideInfo* pcollideInfo, struct Level* level)//Matching - 86.29%
+void COLLIDE_PointAndWorld(struct _PCollideInfo* pcollideInfo, struct Level* level)//Matching - 92.67%
 {
-	struct _Instance* instance; // $s0
-	struct _InstanceList* instanceList; // $s3
-	struct _LCollideInfo lcol; // stack offset -56
-	int i; // $s1
-	int in_warpRoom; // $s7
-	struct _TFace* tface; // $s3
-	struct _Terrain* terrain; // $s4
+	struct _Instance* instance;
+	struct _InstanceList* instanceList;
+	struct _LCollideInfo lcol;
+	int i;
+	int in_warpRoom;
+	struct _TFace* tface;
+	struct _Terrain* terrain;
 	struct Level* thislevel;
 
 	in_warpRoom = 0;
@@ -1177,7 +1175,7 @@ void COLLIDE_PointAndWorld(struct _PCollideInfo* pcollideInfo, struct Level* lev
 		{
 			terrain = level->terrain;
 
-			tface = COLLIDE_PointAndTerrain(level->terrain, pcollideInfo, &lcol);
+			tface = COLLIDE_PointAndTerrain(terrain, pcollideInfo, &lcol);
 
 			if (tface != NULL)
 			{
@@ -1186,13 +1184,13 @@ void COLLIDE_PointAndWorld(struct _PCollideInfo* pcollideInfo, struct Level* lev
 				pcollideInfo->inst = (struct _Instance*)level;
 				pcollideInfo->segment = lcol.curTree;
 
-				if (gameTrackerX.gameData.asmData.MorphTime == 1000)
+				if (gameTrackerX.gameData.asmData.MorphTime != 1000)
 				{
-					COLLIDE_GetNormal(tface->normal, &terrain->normalList->x, (struct _SVector*)&pcollideInfo->wNormal);
+					COLLIDE_MakeNormal(terrain, tface, (struct _SVector*)&pcollideInfo->wNormal);
 				}
 				else
 				{
-					COLLIDE_MakeNormal(terrain, tface, (struct _SVector*)&pcollideInfo->wNormal);
+					COLLIDE_GetNormal(tface->normal, &terrain->normalList->x, (struct _SVector*)&pcollideInfo->wNormal);
 				}
 			}
 			else if ((STREAM_GetStreamUnitWithID(level->streamUnitID)->flags & 0x1) != 0)
@@ -1200,21 +1198,21 @@ void COLLIDE_PointAndWorld(struct _PCollideInfo* pcollideInfo, struct Level* lev
 				in_warpRoom = 1;
 			}
 		}
-		if (!tface)
+		if (tface == NULL)
 		{
 			for (i = 0; i < 16; i++)
 			{
 				thislevel = StreamTracker.StreamList[i].level;
 
-				if (StreamTracker.StreamList[i].used == 2 && thislevel != level && (!in_warpRoom || (StreamTracker.StreamList[i].flags & 1) == 0))
+				if (StreamTracker.StreamList[i].used == 2 && thislevel != level && (!in_warpRoom || !(StreamTracker.StreamList[i].flags & 0x1)))
 				{
 					if (MEMPACK_MemoryValidFunc((char*)thislevel))
 					{
 						terrain = thislevel->terrain;
 
-						tface = COLLIDE_PointAndTerrain(thislevel->terrain, pcollideInfo, &lcol);
+						tface = COLLIDE_PointAndTerrain(terrain, pcollideInfo, &lcol);
 
-						if (tface)
+						if (tface != NULL)
 						{
 							pcollideInfo->type = 3;
 							pcollideInfo->prim = tface;
@@ -1227,7 +1225,7 @@ void COLLIDE_PointAndWorld(struct _PCollideInfo* pcollideInfo, struct Level* lev
 							}
 							else
 							{
-								COLLIDE_GetNormal(tface->normal, &terrain->normalList->x, (struct _SVector*)&pcollideInfo->wNormal);
+								COLLIDE_GetNormal((short)tface->normal, &terrain->normalList->x, (struct _SVector*)&pcollideInfo->wNormal);
 							}
 							break;
 						}
@@ -1235,7 +1233,7 @@ void COLLIDE_PointAndWorld(struct _PCollideInfo* pcollideInfo, struct Level* lev
 				}
 			}
 
-			if (!tface)
+			if (tface == NULL)
 			{
 				pcollideInfo->type = 0;
 				pcollideInfo->prim = 0;
@@ -1253,12 +1251,16 @@ void COLLIDE_PointAndWorld(struct _PCollideInfo* pcollideInfo, struct Level* lev
 	{
 		for (i = 16; i < 32; i++)
 		{
-			for (instance = (struct _Instance*)gameTrackerX.instanceList->group[i].next; instance; instance = (struct _Instance*)instance->node.next)
+			instance = (struct _Instance*)instanceList->group[i].next;
+
+			while (instance)
 			{
 				if ((instance->flags2 & 0x24000000) == 0)
 				{
 					COLLIDE_PointAndInstanceTrivialReject(pcollideInfo, instance);
 				}
+
+				instance = (struct _Instance*)instance->node.next;
 			}
 		}
 	}
@@ -1268,14 +1270,16 @@ void COLLIDE_PointAndWorld(struct _PCollideInfo* pcollideInfo, struct Level* lev
 		{
 			for (i = 0; i < 8; i++)
 			{
-				for (instance = (struct _Instance*)instanceList->group[stat_clddyna[i]].next;
-					instance;
-					instance = (struct _Instance*)instance->node.next)
+				instance = (struct _Instance*)instanceList->group[stat_clddyna[i]].next;
+
+				while (instance)
 				{
 					if ((instance->flags2 & 0x24000000) == 0)
 					{
 						COLLIDE_PointAndInstanceTrivialReject(pcollideInfo, instance);
 					}
+
+					instance = (struct _Instance*)instance->node.next;
 				}
 			}
 		}
@@ -1283,14 +1287,16 @@ void COLLIDE_PointAndWorld(struct _PCollideInfo* pcollideInfo, struct Level* lev
 		{
 			for (i = 0; i < 8; i++)
 			{
-				for (instance = (struct _Instance*)instanceList->group[dyna_clddyna[i]].next;
-					instance;
-					instance = (struct _Instance*)instance->node.next)
+				instance = (struct _Instance*)instanceList->group[dyna_clddyna[i]].next;
+
+				while (instance)
 				{
 					if ((instance->flags2 & 0x24000000) == 0)
 					{
 						COLLIDE_PointAndInstanceTrivialReject(pcollideInfo, instance);
 					}
+
+					instance = (struct _Instance*)instance->node.next;
 				}
 			}
 		}
@@ -1301,20 +1307,21 @@ void COLLIDE_PointAndWorld(struct _PCollideInfo* pcollideInfo, struct Level* lev
 		{
 			for (i = 0; i < 8; i++)
 			{
-				for (instance = (struct _Instance*)instanceList->group[dyna_cldstat[i]].next;
-					instance;
-					instance = (struct _Instance*)instance->node.next)
+				instance = (struct _Instance*)instanceList->group[dyna_cldstat[i]].next;
+
+				while (instance)
 				{
 					if ((instance->flags2 & 0x24000000) == 0)
 					{
 						COLLIDE_PointAndInstanceTrivialReject(pcollideInfo, instance);
 					}
+
+					instance = (struct _Instance*)instance->node.next;
 				}
 			}
 		}
 	}
 }
-
 
 // autogenerated function stub: 
 // long /*$ra*/ COLLIDE_ClosestPointInBoxToPoint(_Position *boxPoint /*$a0*/, struct _HBox *hbox /*$a1*/, struct _SVector *point /*$a2*/)
