@@ -1152,16 +1152,17 @@ void COLLIDE_PointAndInstanceTrivialReject(struct _PCollideInfo *pcollideInfo, s
 				UNIMPLEMENTED();
 }
 
-void COLLIDE_PointAndWorld(struct _PCollideInfo* pcollideInfo, struct Level* level)//Matching - 92.67%
+void COLLIDE_PointAndWorld(struct _PCollideInfo* pcollideInfo, struct Level* level)//Matching - 96.50%
 {
-	struct _Instance* instance;
-	struct _InstanceList* instanceList;
-	struct _LCollideInfo lcol;
 	int i;
-	int in_warpRoom;
-	struct _TFace* tface;
-	struct _Terrain* terrain;
+	struct _LCollideInfo lcol;
+	struct _Instance* instance;
 	struct Level* thislevel;
+	struct _TFace* tface;
+	int in_warpRoom;
+	struct _Terrain* terrain;
+	struct _InstanceList* instanceList;
+	struct _StreamUnit* streamUnit;
 
 	in_warpRoom = 0;
 
@@ -1190,7 +1191,7 @@ void COLLIDE_PointAndWorld(struct _PCollideInfo* pcollideInfo, struct Level* lev
 				}
 				else
 				{
-					COLLIDE_GetNormal(tface->normal, &terrain->normalList->x, (struct _SVector*)&pcollideInfo->wNormal);
+					COLLIDE_GetNormal((short)tface->normal, &terrain->normalList->x, (struct _SVector*)&pcollideInfo->wNormal);
 				}
 			}
 			else if ((STREAM_GetStreamUnitWithID(level->streamUnitID)->flags & 0x1) != 0)
@@ -1200,11 +1201,13 @@ void COLLIDE_PointAndWorld(struct _PCollideInfo* pcollideInfo, struct Level* lev
 		}
 		if (tface == NULL)
 		{
-			for (i = 0; i < 16; i++)
-			{
-				thislevel = StreamTracker.StreamList[i].level;
+			streamUnit = &StreamTracker.StreamList[0];
 
-				if (StreamTracker.StreamList[i].used == 2 && thislevel != level && (!in_warpRoom || !(StreamTracker.StreamList[i].flags & 0x1)))
+			for (i = 0; i < 16; i++, streamUnit++)
+			{
+				thislevel = streamUnit->level;
+
+				if (streamUnit->used == 2 && thislevel != level && (!in_warpRoom || !(streamUnit->flags & 0x1)))
 				{
 					if (MEMPACK_MemoryValidFunc((char*)thislevel))
 					{
@@ -1255,7 +1258,7 @@ void COLLIDE_PointAndWorld(struct _PCollideInfo* pcollideInfo, struct Level* lev
 
 			while (instance)
 			{
-				if ((instance->flags2 & 0x24000000) == 0)
+				if (!(instance->flags2 & 0x24000000))
 				{
 					COLLIDE_PointAndInstanceTrivialReject(pcollideInfo, instance);
 				}
@@ -1274,7 +1277,7 @@ void COLLIDE_PointAndWorld(struct _PCollideInfo* pcollideInfo, struct Level* lev
 
 				while (instance)
 				{
-					if ((instance->flags2 & 0x24000000) == 0)
+					if (!(instance->flags2 & 0x24000000))
 					{
 						COLLIDE_PointAndInstanceTrivialReject(pcollideInfo, instance);
 					}
@@ -1291,7 +1294,7 @@ void COLLIDE_PointAndWorld(struct _PCollideInfo* pcollideInfo, struct Level* lev
 
 				while (instance)
 				{
-					if ((instance->flags2 & 0x24000000) == 0)
+					if (!(instance->flags2 & 0x24000000))
 					{
 						COLLIDE_PointAndInstanceTrivialReject(pcollideInfo, instance);
 					}
@@ -1311,7 +1314,7 @@ void COLLIDE_PointAndWorld(struct _PCollideInfo* pcollideInfo, struct Level* lev
 
 				while (instance)
 				{
-					if ((instance->flags2 & 0x24000000) == 0)
+					if (!(instance->flags2 & 0x24000000))
 					{
 						COLLIDE_PointAndInstanceTrivialReject(pcollideInfo, instance);
 					}
@@ -1828,737 +1831,393 @@ long COLLIDE_SphereAndHFace(struct _Sphere *sphere, _Position *oldPos, struct _H
 	return 0;
 }
 
-long COLLIDE_SAndT(struct SCollideInfo* scollideInfo, struct Level* level)
+long COLLIDE_SAndT(struct SCollideInfo* scollideInfo, struct Level* level)//Matching - 60.33%
 {
-	struct SandTScratch* CSpad; // $s0
-	void** stack; // $s1
-	struct _BSPNode* bspNode; // $a1
 	struct _Terrain* terrain; // $s5
-	long curTree; // stack offset -44
-	struct _SVector* _v0; // $s2
-	struct _SVector* _v1; // $v0
-	long a; // stack offset -56
-	long b; // stack offset -52
-	long c; // stack offset -48
+	void** stack; // $s1
+	int v4; // $t6
+	int radiusSquared; // $t7
+	SVECTOR* oldPos; // $v0
+	short vx; // $v1
+	short vy; // $a0
+	int v9; // $v1
+	short v10; // $v0
+	int y; // $v0
+	int z; // $v1
+	int result; // $v0
+	int v14; // $a0
+	int numBSPTrees; // $v0
 	struct BSPTree* bsp; // $s4
-	struct _SVector* _v; // $fp
-	//struct _Position* _v1; // $t0
-	//struct _Position* _v; // $s7(struct _SVector*) $fp, $s6
-	struct _SVector* point; // $t0
-	struct _BoundingBox* box; // $a3
-	struct _TFace* tface; // $s3
-	struct _SVector* vertex0; // $a3
-	short* nrmlArray; // $a0
-	struct _SVector* nrml; // $a1
-	short* sPtr; // $v1
-	int plane_front_error; // $v0
-	int plane_back_error; // $a3
-	short _x0; // $v0
-	short _y0; // $v1
-	short _z0; // $a0
-	short _x1; // $a1 $a0
-	short _y1; // $a2 $a1
-	short _z1; // $a3 $v1
-	//struct _Position* _v0; // $v0, $s2
-	//struct _Position* _v1; // $v1, $t0, $v0
-	return 0;
+	short flags; // $v1
+	int v18; // $v0
+	int v19; // dc
+	int v20; // $v0
+	short v21; // $v1
+	short v22; // $a0
+	short v23; // $v1
+	short v24; // $a0
+	short v25; // $v1
+	short v26; // $a0
+	struct _BSPNode* bspNode; // $a1
+	int v29; // $t1
+	struct _TFace* v32; // $s3
+	short* v33; // $s2
+	int v34; // $a0
+	int v35; // $v1
+	short* v36; // $v1
+	short v37; // $v0
+	int v38; // $v0
+	short* v39; // $v1
+	short v40; // $v0
+	struct _TVertex* v41; // $a3
+	char v45; // $v0
+	char segment; // $a2
+	int v47; // $v0
+	int front_spectral_error; // $v0
+	int back_spectral_error; // $a3
+	void* v53; // $v0
+	void* front; // $v0
+	void* v55; // $v0
+	void* back; // $v0
+	short v57; // $v1
+	short v58; // $a0
+	short v59; // $v1
+	short v60; // $a0
+	short v61; // $a2
+	short v62; // $a3
+	short v63; // $a1
+	short v64; // $v1
+	struct _Sphere* sphere; // $v0
+	long a; // [sp+18h] [-10h] BYREF
+	long b; // [sp+1Ch] [-Ch] BYREF
+	long c; // [sp+20h] [-8h] BYREF
+	int v69; // [sp+24h] [-4h]
+	struct SandTScratch* CSpad;
+
 	CSpad = (struct SandTScratch*)getScratchAddr(114);
-	//s1 = 0x1F800000
-	//v0 = gameTrackerX.gameData.asmData.MorphTime
-	//v1 = 0x3E8
-	//arg_0 = scollideInfo
-	//arg_4 = level
 	terrain = level->terrain;
 	stack = (void**)getScratchAddr(167);
-
 	if (gameTrackerX.gameData.asmData.MorphTime != 1000)
-	{
 		CSpad->in_spectral = 2;
-	}
 	else
-	{
-		//loc_80023010
-		if (gameTrackerX.gameData.asmData.MorphType == 1)
-		{
-			CSpad->in_spectral = 1;
-		}
-		else
-		{
-			CSpad->in_spectral = 0;
-		}
-	}
-	//loc_8002302C
-	//v0 = terrain->normalList
-	//v1 = collide_ignoreAttr
+		CSpad->in_spectral = gameTrackerX.gameData.asmData.MorphTime == 1;
 	CSpad->normalList = (struct _HNormal*)terrain->normalList;
 	CSpad->vertexList = terrain->vertexList;
-	//t2 = scollideInfo
-	//a0 = collide_acceptAttr
-	///CSpad->collideFunc = scollideInfo->collideFunc;
+	CSpad->collideFunc = scollideInfo->collideFunc;
 	CSpad->instance = scollideInfo->instance;
 	CSpad->prim = scollideInfo->prim;
-	//v0 = scollideInfo->sphere
-	//t3 = scollideInfo->sphere->position.x;
-	//t6 = scollideInfo->sphere->position.y;
-	//t7 = scollideInfo->sphere->position.z;
-	CSpad->sphere.position.x = scollideInfo->sphere->position.x;
-	CSpad->sphere.position.y = scollideInfo->sphere->position.y;
-	CSpad->sphere.position.z = scollideInfo->sphere->position.z;
+	radiusSquared = scollideInfo->sphere->radiusSquared;
+	*(unsigned int*)&CSpad->sphere.position.x = *(unsigned int*)&scollideInfo->sphere->position.x;
+	*(unsigned int*)&CSpad->sphere.position.z = *(unsigned int*)&scollideInfo->sphere->position.z;
+	CSpad->sphere.radiusSquared = radiusSquared;
 	CSpad->result = 0;
-	CSpad->collide_ignoreAttr = collide_ignoreAttr;
-	CSpad->collide_acceptAttr = collide_acceptAttr;
-
-	//t3 = scollideInfo
-	//v0 = scollideInfo->oldPos
-	_v = &CSpad->oldPos;
-
-	_x0 = scollideInfo->oldPos->vx;
-	_y0 = scollideInfo->oldPos->vy;
-	_z0 = scollideInfo->oldPos->vz;
-
-	//a1 = &b
-	_v->x = _x0;
-	_v->y = _y0;
-	_v->z = _z0;
-
-	_x0 = CSpad->sphere.position.x;//v0
-	_y0 = CSpad->sphere.position.y;//a2
-	_z0 = CSpad->sphere.position.z;//a3
-
-	//v1 = CSpad->oldPos.x
-	//a0 = &a
-
-	CSpad->spherePos.y = _y0;
-	CSpad->spherePos.z = _z0;
-
-	CSpad->midPoint.x = _x0 - CSpad->oldPos.x;
-	CSpad->midPoint.y = _y0 - CSpad->oldPos.y;
-	CSpad->midPoint.z = _z0 - CSpad->oldPos.z;
-	//v0 = _y0 -  CSpad->oldPos.y
-	//v1 = CSpad->oldPos.y
-	//a2 = &c
-
-	a = ABS(CSpad->midPoint.x);
-	b = ABS(CSpad->midPoint.y);
-	c = ABS(CSpad->midPoint.z);
-
-	MATH3D_Sort3VectorCoords(&a, &b, &c);
-
-	//v1 = (c * 30) + (b * 12) + (a * 9)
-
-	CSpad->midRadius = (c * 30) + (b * 12) + (a * 9);
-
-	if (CSpad->midRadius != 0)
+	CSpad->collide_ignoreAttr = 0u;
+	CSpad->collide_acceptAttr = 0u;
+	oldPos = scollideInfo->oldPos;
+	vx = oldPos->vx;
+	vy = oldPos->vy;
+	CSpad->oldPos.x = vx;
+	CSpad->oldPos.y = vy;
+	CSpad->oldPos.z = (short)oldPos->vz;
+	CSpad->spherePos.x = CSpad->sphere.position.x;
+	CSpad->spherePos.y = CSpad->sphere.position.y;
+	CSpad->spherePos.z = CSpad->sphere.position.z;
+	CSpad->midPoint.x = CSpad->sphere.position.x - vx;
+	CSpad->midPoint.y = CSpad->sphere.position.y - vy;
+	v9 = (short)(CSpad->sphere.position.x - vx);
+	v10 = scollideInfo->sphere->position.z - (short)oldPos->vx;
+	if (v9 < 0)
+		v9 = -v9;
+	CSpad->midPoint.z = v10;
+	a = v9;
+	y = CSpad->midPoint.y;
+	z = CSpad->midPoint.z;
+	if (CSpad->midPoint.y < 0)
+		y = -CSpad->midPoint.y;
+	if (CSpad->midPoint.z < 0)
+		z = -CSpad->midPoint.z;
+	b = y;
+	c = z;
+	MATH3D_Sort3VectorCoords(&a, & b, & c);
+	CSpad->midRadius = 30 * c + 12 * b + 9 * a;
+	result = 0;
+	if (CSpad->midRadius)
 	{
 		CSpad->midPoint.x = (CSpad->spherePos.x + CSpad->oldPos.x) >> 1;
 		CSpad->midPoint.y = (CSpad->spherePos.y + CSpad->oldPos.y) >> 1;
 		CSpad->midPoint.z = (CSpad->spherePos.z + CSpad->oldPos.z) >> 1;
-		//v0 = (CSpad->midRadius + (CSpad->midRadius >> 31)) >> 1;
-		//v1 = CSpad->sphere.radius
-		CSpad->midRadius = ((CSpad->midRadius + (CSpad->midRadius >> 31)) >> 1) + CSpad->sphere.radius;
-		
+		v14 = CSpad->midRadius / 2 + (unsigned short)CSpad->sphere.radius;
+		CSpad->midRadius = v14;
 		if (CSpad->in_spectral == 2)
+			CSpad->midRadius = v14 + 2048;
+		numBSPTrees = terrain->numBSPTrees;
+		v69 = 0;
+		if (numBSPTrees > 0)
 		{
-			CSpad->midRadius += 2048;
-		}
-		//loc_80023200
-
-		curTree = 0;
-		if (terrain->numBSPTrees > 0)
-		{
-			//fp = s2
-			_v = &CSpad->oldPos;//fp
-			_v0 = &CSpad->midPoint;//s7
-			_v1 = (struct _SVector*)&CSpad->sphere.position;//s6
-
-			//loc_8002321C
-			//t6 = curTree
-			//v1 = terrain->BSPTreeArray
-
-			bsp = &terrain->BSPTreeArray[curTree];
-
-
-			if (bsp->ID >= 0)
+			do
 			{
-				//v0 = bsp->flags & 0x2000
-				if(!(bsp->flags & 0x4000) || gameTrackerX.raziel_collide_override != 0)
+				bsp = &terrain->BSPTreeArray[v69];
+				if (bsp->ID >= 0)
 				{
-					//loc_80023268
-					//v0 = bsp->flags & 0x102
-					if (!(bsp->flags & 0x2000) || gameTrackerX.monster_collide_override != 0)
+					flags = bsp->flags;
+					v18 = flags & 0x2000;
+					if ((flags & 0x4000) == 0 || (v18 = flags & 0x2000, gameTrackerX.raziel_collide_override))
 					{
-						if (!(bsp->flags & 0x102) || ((bsp->flags & 0xE0) != 0 && INSTANCE_Query(CSpad->instance, 1) & 0x2))
+						v19 = v18 == 0;
+						v20 = flags & 0x102;
+						if (v19 || (v20 = flags & 0x102, gameTrackerX.monster_collide_override))
 						{
-							//loc_800232A8
-							//v0 = bsp->ID
-
-							//t0 = &bsp->globalOffset
-							CSpad->collideInfo.bspID = bsp->ID;
-
-							CSpad->oldPos.x -= bsp->globalOffset.x;
-							CSpad->oldPos.y -= bsp->globalOffset.y;
-							CSpad->oldPos.z -= bsp->globalOffset.z;
-
-							CSpad->midPoint.x -= bsp->globalOffset.x;
-							CSpad->midPoint.y -= bsp->globalOffset.y;
-							CSpad->midPoint.z -= bsp->globalOffset.z;
-							
-							CSpad->sphere.position.x -= bsp->globalOffset.x;
-							CSpad->sphere.position.y -= bsp->globalOffset.y;
-							CSpad->sphere.position.z -= bsp->globalOffset.z;
-
-							CSpad->posMatrix.m[0][0] = CSpad->sphere.position.x;
-							CSpad->posMatrix.m[0][1] = CSpad->sphere.position.y;
-							CSpad->posMatrix.m[0][2] = CSpad->sphere.position.z;
-
-							CSpad->posMatrix.m[1][0] = CSpad->oldPos.x;
-							CSpad->posMatrix.m[1][1] = CSpad->oldPos.y;
-							CSpad->posMatrix.m[1][2] = CSpad->oldPos.z;
-
-							stack[0] = stack;
-
-							SetRotMatrix(&CSpad->posMatrix);
-
-							//v0 = bsp->bspRoot
-							if ((void*)bsp->bspRoot != ++stack)
+							if (!v20 || (flags & 0xE0) != 0 && (INSTANCE_Query(CSpad->instance, 1) & 2) != 0)
 							{
-								//loc_80023390
-								bspNode = (struct _BSPNode*)stack[0];
-
-								--stack;
-								if ((bspNode->flags & 0x2))
+								CSpad->collideInfo.bspID = bsp->ID;
+								v21 = CSpad->oldPos.y - bsp->globalOffset.y;
+								v22 = CSpad->oldPos.z - bsp->globalOffset.z;
+								CSpad->oldPos.x -= bsp->globalOffset.x;
+								CSpad->oldPos.y = v21;
+								CSpad->oldPos.z = v22;
+								v23 = CSpad->midPoint.y - bsp->globalOffset.y;
+								v24 = CSpad->midPoint.z - bsp->globalOffset.z;
+								CSpad->midPoint.x -= bsp->globalOffset.x;
+								CSpad->midPoint.y = v23;
+								CSpad->midPoint.z = v24;
+								v25 = CSpad->sphere.position.y - bsp->globalOffset.y;
+								v26 = CSpad->sphere.position.z - bsp->globalOffset.z;
+								CSpad->sphere.position.x -= bsp->globalOffset.x;
+								CSpad->sphere.position.y = v25;
+								CSpad->sphere.position.z = v26;
+								CSpad->posMatrix.m[0][0] = CSpad->sphere.position.x;
+								CSpad->posMatrix.m[0][1] = v25;
+								CSpad->posMatrix.m[0][2] = v26;
+								CSpad->posMatrix.m[1][0] = CSpad->oldPos.x;
+								CSpad->posMatrix.m[1][1] = CSpad->oldPos.y;
+								CSpad->posMatrix.m[1][2] = CSpad->oldPos.z;
+								*stack = stack;
+								SetRotMatrix(&CSpad->posMatrix);
+								v19 = bsp->bspRoot == (struct _BSPNode*)++stack;
+								*stack = bsp->bspRoot;
+								if (!v19)
 								{
-									//t1 = 0;
-									//a3 = &bspNode->d;
-									//a0 = CSPad->midPoint.x
-									//a2 = CSPad->midRadius
-									//v1 = ((short*)&bspNode->front)[1]
-									//v0 = CSPad->midPoint.x - CSPad->midRadius
-
-									//t0 = &CSpad->midPoint;
-									if ((CSpad->midPoint.x - CSpad->midRadius) >= ((short*)&bspNode->front)[1] ||
-										((short*)&bspNode->d)[0] >= (CSpad->midPoint.x + CSpad->midRadius))
+									while (1)
 									{
-										//v0 = (CSpad->midPoint.y - CSPad->midRadius)
-										//a0 = CSpad->midPoint.y
-										//v1 = ((short*)&bspNode->back)[0];
-
-										if ((CSpad->midPoint.y - CSpad->midRadius) >= ((short*)&bspNode->back)[0] ||
-											((short*)&bspNode->d)[1] >= (CSpad->midPoint.y + CSpad->midRadius))
+										bspNode = (struct _BSPNode*)*stack;
+										if (!(*((short*)*stack-- + 7) & 2))
+											break;
+										v29 = 0;
+										if (CSpad->midPoint.x - CSpad->midRadius < *(int*)&bspNode->front
+											&& *(int*)&bspNode->d < CSpad->midPoint.x + CSpad->midRadius
+											&& CSpad->midPoint.y - CSpad->midRadius < *(int*)&bspNode->back
+											&& *(int*)&bspNode->d < CSpad->midPoint.y + CSpad->midRadius
+											&& CSpad->midPoint.z - CSpad->midRadius < *(int*)&bspNode->back)
 										{
-											if ((CSpad->midPoint.z - CSpad->midRadius) >= ((short*)&bspNode->back)[1] ||
-												((short*)&bspNode->front)[0] >= (CSpad->midPoint.z + CSpad->midRadius))
+											v29 = *(int*)&bspNode->front < CSpad->midPoint.z + CSpad->midRadius;
+										}
+										if (v29)
+										{
+											*(unsigned int*)&CSpad->posMatrix.m[0][0] = *(unsigned int*)&CSpad->sphere.position.x;
+											CSpad->posMatrix.m[0][2] = CSpad->sphere.position.z;
+
+											gte_ldv0(&CSpad->sphere.position);
+											CSpad->i = bspNode->c;
+											v32 = (struct _TFace*)&bspNode->a;
+											v33 = (short*)&v32->face.v2;
+											if ((unsigned short)CSpad->i << 16)
 											{
-												//loc_80023444
-
-												//v0 = CSpad->sphere.x
-												//v1 = CSpad->sphere.z
-
-												CSpad->posMatrix.m[0][0] = CSpad->sphere.position.x;
-												CSpad->posMatrix.m[0][1] = CSpad->sphere.position.y;
-												CSpad->posMatrix.m[0][2] = CSpad->sphere.position.z;
-
-												gte_ldv0(&CSpad->posMatrix);
-												
-												CSpad->i = bspNode->c;
-
-												tface = (struct _TFace*)((int*)&bspNode->c)[0];
-
-												//s2 = tface + 0x4;
-
-												if (CSpad->i != 0)
+												do
 												{
-													//a0 = tface->attr
-													if (!(tface->attr & CSpad->collide_ignoreAttr) && (tface->attr & collide_acceptAttr))
+													v34 = *((unsigned char*)v33 + 2);
+													if (((v34 & CSpad->collide_ignoreAttr) == 0 || (v34 & CSpad->collide_acceptAttr) != 0)
+														&& ((unsigned short)v33[3] == 0xFFFF
+															|| (*(short*)((char*)&terrain->StartTextureList->attr + (unsigned short)v33[3]) & 0x2000) == 0)
+														&& (v34 & 8) == 0)
 													{
-														//loc_800234B4
-														//v0 = tface->textoff
-
-														if (tface->textoff != 0xFFFF)
+														if (CSpad->in_spectral != 2
+															|| (unsigned short)v33[2] == *(short*)(2
+																* ((-1431655765
+																	* ((char*)v32 - (char*)terrain->faceList)) >> 2)
+																+ *(unsigned int*)terrain->morphNormalIdx))
 														{
-															if(!(((struct TextureFT3*)(((char*)terrain->StartTextureList) + tface->textoff))->attr & 0x2000))
+															v35 = v33[2];
+															if (v35 < 0)
 															{
-																if (!(tface->attr & 0x8))
-																{
-																	if (CSpad->in_spectral == 2)
-																	{
-																		
-																		plane_front_error = (((int)terrain->faceList) - ((int*)bspNode->a)[0]) << 2;
-																	}
-																	//loc_80023568
-																}
-																//loc_800237EC
+																v39 = &CSpad->normalList->x - 3 * v35;
+																v40 = *v39++;
+																CSpad->normal.x = -(v40 & 0x1FFF);
+																CSpad->normal.y = -*v39;
+																v38 = -(unsigned short)v39[1];
 															}
-															//loc_800237EC
+															else
+															{
+																v36 = &CSpad->normalList->x + 3 * v35;
+																v37 = *v36++;
+																CSpad->normal.x = v37 & 0x1FFF;
+																CSpad->normal.y = *v36;
+																v38 = v36[1];
+															}
+															CSpad->normal.z = v38;
+														}
+														else
+														{
+															COLLIDE_MakeNormal(terrain, v32, (struct _SVector*)&CSpad->normal);
+														}
+														v41 = &CSpad->vertexList[v32->face.v0];
+
+														gte_ldv2_ext(&CSpad->vertexList[v32->face.v0]);
+														gte_ldv0(&CSpad->normal);
+														gte_rtv0();
+														gte_stlvnl(&CSpad->normal);
+
+														if (CSpad->dpv.y >= CSpad->dpv.x
+															&& CSpad->dpv.x - CSpad->dpv.z < (unsigned short)CSpad->sphere.radius
+															&& CSpad->dpv.y - CSpad->dpv.z >= -(unsigned short)CSpad->sphere.radius)
+														{
+															CSpad->hfaceInfo.hface = (struct _HFace*)v32;
+															CSpad->hfaceInfo.vertex0 = (struct _HVertex*)v41;
+															CSpad->hfaceInfo.vertex1 = (struct _HVertex*)&CSpad->vertexList[*(v33 - 1)];
+															CSpad->hfaceInfo.vertex2 = (struct _HVertex*)&CSpad->vertexList[*v33];
+															*(unsigned int*)&CSpad->hfaceInfo.normal.x = *(unsigned int*)&CSpad->normal.x;
+															*(unsigned int*)&CSpad->hfaceInfo.normal.z = *(unsigned int*)&CSpad->normal.z;
+															if (COLLIDE_SphereAndHFace(
+																&CSpad->sphere,
+																(struct _Position*)&CSpad->oldPos,
+																&CSpad->hfaceInfo,
+																(struct _SVector*)&CSpad->collideInfo.point1,
+																&CSpad->edge))
+															{
+																CSpad->collideInfo.flags = 0;
+																if (CSpad->edge)
+																	v45 = 4;
+																else
+																	v45 = 8;
+																CSpad->collideInfo.flags = v45;
+																CSpad->collideInfo.type0 = 1;
+																CSpad->collideInfo.type1 = 3;
+																CSpad->collideInfo.inst1 = bsp;
+																CSpad->collideInfo.level = level;
+																CSpad->collideInfo.inst0 = (void*)CSpad->instance->node.prev;
+																segment = scollideInfo->segment;
+																CSpad->collideInfo.prim0 = CSpad->prim;
+																CSpad->collideInfo.offset.y = CSpad->sphere.position.y - CSpad->posMatrix.m[0][1];
+																CSpad->collideInfo.offset.x = CSpad->sphere.position.x - CSpad->posMatrix.m[0][0];
+																//CSpad->collideInfo.prim1 = 32;
+																CSpad->collideInfo.segment = segment;
+																CSpad->collideInfo.offset.z = CSpad->sphere.position.z - CSpad->posMatrix.m[0][2];
+																if (CSpad->instance)
+																{
+																	CSpad->instance->collideInfo = &CSpad->collideInfo;
+																	//if ( CSpad->collideFunc )
+																	  //((void (__fastcall *)(_Instance *, struct GameTracker *))CSpad->collideFunc)(
+																	  //  CSpad->instance,
+																	  //  &gameTrackerX);
+																}
+																CSpad->result = 1;
+																*(unsigned int*)&CSpad->posMatrix.m[0][0] = *(unsigned int*)&CSpad->sphere.position.x;
+																CSpad->posMatrix.m[0][2] = CSpad->sphere.position.z;
+															}
+															SetRotMatrix(&CSpad->posMatrix);
 														}
 													}
-													//loc_800237EC
-												}
-												//loc_8002380C
+													v33 += 6;
+													v47 = (unsigned short)CSpad->i-- - 1;
+													++v32;
+												} while (v47 << 16);
 											}
+											*(unsigned int*)&CSpad->posMatrix.m[0][0] = *(unsigned int*)&CSpad->sphere.position.x;
+											CSpad->posMatrix.m[0][2] = CSpad->sphere.position.z;
+
+											gte_ldv0(&CSpad->sphere.position);
+										}
+									LABEL_78:
+										if (*stack == stack)
+											goto LABEL_79;
+									}
+
+									gte_ldv0(&bspNode->a);
+
+									gte_rtv0();
+									gte_stlvnl(&bspNode->a);
+									CSpad->dpv.x -= bspNode->d;
+									CSpad->dpv.y -= bspNode->d;
+									if (CSpad->in_spectral)
+									{
+										front_spectral_error = bspNode->front_spectral_error;
+										back_spectral_error = bspNode->back_spectral_error;
+									}
+									else
+									{
+										front_spectral_error = bspNode->front_material_error;
+										back_spectral_error = bspNode->back_material_error;
+									}
+									if (CSpad->dpv.y >= (unsigned short)CSpad->sphere.radius + front_spectral_error)
+									{
+										if ((unsigned short)CSpad->sphere.radius + front_spectral_error < CSpad->dpv.x)
+											goto LABEL_75;
+										goto LABEL_73;
+									}
+									if (back_spectral_error - (unsigned short)CSpad->sphere.radius < CSpad->dpv.y)
+									{
+										if (CSpad->dpv.x < CSpad->dpv.y)
+										{
+										LABEL_73:
+											back = (void*)bspNode->back;
+											if (back)
+												*++stack = back;
+										LABEL_75:
+											front = (void*)bspNode->front;
+										}
+										else
+										{
+											v55 = (void*)bspNode->front;
+											if (v55)
+												*++stack = v55;
+											front = (void*)bspNode->back;
 										}
 									}
-									//loc_80023984
+									else
+									{
+										if (CSpad->dpv.x >= back_spectral_error - (unsigned short)CSpad->sphere.radius)
+										{
+											v53 = (void*)bspNode->front;
+											if (v53)
+												*++stack = v53;
+										}
+										front = (void*)bspNode->back;
+									}
+									if (front)
+										*++stack = front;
+									goto LABEL_78;
 								}
-								//loc_80023834
+							LABEL_79:
+								v57 = CSpad->oldPos.y + bsp->globalOffset.y;
+								v58 = CSpad->oldPos.z + bsp->globalOffset.z;
+								CSpad->oldPos.x += bsp->globalOffset.x;
+								CSpad->oldPos.y = v57;
+								CSpad->oldPos.z = v58;
+								v59 = CSpad->midPoint.y + bsp->globalOffset.y;
+								v60 = CSpad->midPoint.z + bsp->globalOffset.z;
+								CSpad->midPoint.x += bsp->globalOffset.x;
+								CSpad->midPoint.y = v59;
+								CSpad->midPoint.z = v60;
+								v61 = bsp->globalOffset.y;
+								v62 = bsp->globalOffset.z;
+								CSpad->sphere.position.x += bsp->globalOffset.x;
+								CSpad->sphere.position.y += v61;
+								CSpad->sphere.position.z += v62;
 							}
-							//loc_80023994
 						}
-						//loc_80023A28
 					}
-					//loc_80023A28
 				}
-				//loc_80023A28
-			}
-			//loc_80023A28
+				v19 = ++v69 < terrain->numBSPTrees;
+			} while (v19);
 		}
-		//loc_80023A40
+		v63 = CSpad->sphere.position.y;
+		v64 = CSpad->sphere.position.z;
+		sphere = scollideInfo->sphere;
+		sphere->position.x = CSpad->sphere.position.x;
+		sphere->position.y = v63;
+		sphere->position.z = v64;
+		return CSpad->result;
 	}
-	else
-	{
-		return 0;
-	}
-#if 0
-		loc_80023488:
-	lbu     $a0, 2($s2)
-		lw      $v0, 0xC4($s0)
-		nop
-		and $v0, $a0, $v0
-		beqz    $v0, loc_800234B4
-		nop
-		lw      $v0, 0xC8($s0)
-		nop
-		and $v0, $a0, $v0
-		beqz    $v0, loc_800237EC
-		nop
-
-		loc_800234B4 :
-	lhu     $v1, 6($s2)
-		li      $v0, 0xFFFF
-		beq     $v1, $v0, loc_800234E4
-		move    $v0, $v1
-		lw      $v1, 0x34($s5)
-		nop
-		addu    $v1, $v0
-		lhu     $v0, 0xA($v1)
-		nop
-		andi    $v0, 0x2000
-		bnez    $v0, loc_800237EC
-		nop
-
-		loc_800234E4 :
-	andi    $v0, $a0, 8
-		bnez    $v0, loc_800237EC
-		li      $v0, 2
-		lw      $v1, 0x9C($s0)
-		nop
-		bne     $v1, $v0, loc_80023568
-		nop
-		lw      $v1, 0x20($s5)
-		nop
-		subu    $v1, $s3, $v1
-		sllv    $v0, $v1, $v0
-		addu    $v0, $v1
-		sll     $v1, $v0, 4
-		addu    $v0, $v1
-		sll     $v1, $v0, 8
-		addu    $v0, $v1
-		sll     $v1, $v0, 16
-		addu    $v0, $v1
-		negu    $v0, $v0
-		sra     $v0, 2
-		lw      $v1, 0x4C($s5)
-		sll     $v0, 1
-		addu    $v0, $v1
-		lhu     $v1, 4($s2)
-		lh      $v0, 0($v0)
-		nop
-		beq     $v1, $v0, loc_80023568
-		move    $a0, $s5
-		move    $a1, $s3
-		jal     sub_8001EBA0
-		addiu   $a2, $s0, 0xAC
-		j       loc_800235F8
-		nop
-
-		loc_80023568 :
-	lh      $v1, 4($s2)
-		lw      $a0, 0x2C($s0)
-		bltz    $v1, loc_800235B0
-		addiu   $a1, $s0, 0xAC
-		sll     $v0, $v1, 1
-		addu    $v0, $v1
-		sll     $v0, 1
-		addu    $v1, $a0, $v0
-		lhu     $v0, 0($v1)
-		addiu   $v1, 2
-		andi    $v0, 0x1FFF
-		sh      $v0, 0xAC($s0)
-		lhu     $v0, 0($v1)
-		nop
-		sh      $v0, 2($a1)
-		lhu     $v0, 2($v1)
-		j       loc_800235F8
-		sh      $v0, 4($a1)
-
-		loc_800235B0:
-	negu    $v1, $v1
-		sll     $v0, $v1, 1
-		addu    $v0, $v1
-		sll     $v0, 1
-		addu    $v1, $a0, $v0
-		lhu     $v0, 0($v1)
-		addiu   $v1, 2
-		andi    $v0, 0x1FFF
-		negu    $v0, $v0
-		sh      $v0, 0xAC($s0)
-		lhu     $v0, 0($v1)
-		nop
-		negu    $v0, $v0
-		sh      $v0, 2($a1)
-		lhu     $v0, 2($v1)
-		nop
-		negu    $v0, $v0
-		sh      $v0, 4($a1)
-
-		loc_800235F8:
-	lhu     $v1, 0($s3)
-		nop
-		sll     $v0, $v1, 1
-		addu    $v0, $v1
-		lw      $v1, 0xD0($s0)
-		sll     $v0, 2
-		addu    $a3, $v1, $v0
-		lw      $t4, 0($a3)
-		lw      $t5, 4($a3)
-		ctc2    $t4, $3
-		ctc2    $t5, $4
-		addiu   $v0, $s0, 0xAC
-		lwc2    $0, 0($v0)
-		lwc2    $1, 4($v0)
-		nop
-		nop
-		cop2    0x486012
-		addiu   $v0, $s0, 0x20  # ' '
-		swc2    $25, 0($v0)
-		swc2    $26, 4($v0)
-		swc2    $27, 8($v0)
-		lw      $a2, 0x20($s0)
-		lw      $v1, 0x24($s0)
-		nop
-		slt     $v0, $v1, $a2
-		bnez    $v0, loc_800237EC
-		nop
-		lw      $a0, 0x28($s0)
-		lhu     $a1, 0xBA($s0)
-		subu    $v0, $a2, $a0
-		slt     $v0, $a1
-		beqz    $v0, loc_800237EC
-		subu    $v1, $a0
-		negu    $v0, $a1
-		slt     $v1, $v0
-		bnez    $v1, loc_800237EC
-		addiu   $a1, $s0, 0xA0
-		addiu   $a0, $s0, 0xB4
-		addiu   $a2, $s0, 0x60  # '`'
-		sw      $s3, 0x68($s0)
-		sw      $a3, 0x74($s0)
-		lh      $v1, -2($s2)
-		nop
-		sll     $v0, $v1, 1
-		addu    $v0, $v1
-		lw      $v1, 0xD0($s0)
-		sll     $v0, 2
-		addu    $v1, $v0
-		sw      $v1, 0x78($s0)
-		lh      $v1, 0($s2)
-		addiu   $v0, $s0, 0x98
-		sw      $v0, 0x28 + var_18($sp)
-		sll     $v0, $v1, 1
-		addu    $v0, $v1
-		lw      $v1, 0xD0($s0)
-		sll     $v0, 2
-		addu    $v1, $v0
-		sw      $v1, 0x7C($s0)
-		ulw     $t7, 0xAC($s0)
-		ulw     $t2, 0xB0($s0)
-		usw     $t7, 0x6C($s0)
-		usw     $t2, 0x70($s0)
-		jal     sub_800228D4
-		addiu   $a3, $s0, 0x50  # 'P'
-		beqz    $v0, loc_800237E4
-		nop
-		lw      $v0, 0x98($s0)
-		nop
-		beqz    $v0, loc_80023728
-		sb      $zero, 0x34($s0)
-		j       loc_8002372C
-		li      $v0, 4
-
-		loc_80023728:
-	li      $v0, 8
-
-		loc_8002372C :
-		sb      $v0, 0x34($s0)
-		li      $v0, 1
-		sb      $v0, 0x36($s0)
-		li      $v0, 3
-		sb      $v0, 0x37($s0)
-		sw      $s4, 0x44($s0)
-		lw      $t7, 0x28 + arg_4($sp)
-		lw      $v1, 0x94($s0)
-		lw      $v0, 0xA8($s0)
-		lhu     $a0, 0($s0)
-		lhu     $a1, 2($s0)
-		sw      $t7, 0x30($s0)
-		sw      $v1, 0x40($s0)
-		lw      $t2, 0x28 + arg_0($sp)
-		lhu     $v1, 0xB6($s0)
-		lbu     $a2, 0x10($t2)
-		sw      $v0, 0x38($s0)
-		lhu     $v0, 0xB4($s0)
-		subu    $v1, $a1
-		sh      $v1, 0x5A($s0)
-		lhu     $v1, 4($s0)
-		subu    $v0, $a0
-		sh      $v0, 0x58($s0)
-		lhu     $v0, 0xB8($s0)
-		lw      $a0, 0x94($s0)
-		sw      $s3, 0x3C($s0)
-		sb      $a2, 0x35($s0)
-		subu    $v0, $v1
-		beqz    $a0, loc_800237CC
-		sh      $v0, 0x5C($s0)
-		addiu   $v0, $s0, 0x30  # '0'
-		sw      $v0, 0xC0($a0)
-		lw      $v0, 0x90($s0)
-		nop
-		beqz    $v0, loc_800237CC
-		nop
-		lw      $a0, 0x94($s0)
-		addiu   $a1, $gp, -0x4238
-		jalr    $v0
-		nop
-
-		loc_800237CC :
-	lw      $v0, 0xB4($s0)
-		lhu     $a0, 0xB8($s0)
-		li      $v1, 1
-		sh      $v1, 0xC0($s0)
-		sw      $v0, 0($s0)
-		sh      $a0, 4($s0)
-
-		loc_800237E4:
-	jal     SetRotMatrix
-		move    $a0, $s0
-
-		loc_800237EC :
-	addiu   $s2, 0xC
-		lhu     $v0, 0xC2($s0)
-		nop
-		addiu   $v0, -1
-		sh      $v0, 0xC2($s0)
-		sll     $v0, 16
-		bnez    $v0, loc_80023488
-		addiu   $s3, 0xC
-
-		loc_8002380C:
-	lw      $v0, 0xB4($s0)
-		lhu     $v1, 0xB8($s0)
-		sw      $v0, 0($s0)
-		sh      $v1, 4($s0)
-		lw      $t4, 0($s0)
-		lw      $t5, 4($s0)
-		ctc2    $t4, $0
-		ctc2    $t5, $1
-		j       loc_80023984
-		nop
-
-		loc_80023834 :
-	addiu   $v0, $a1, 8
-		lwc2    $0, 0($v0)
-		lwc2    $1, 4($v0)
-		nop
-		nop
-		cop2    0x486012
-		addiu   $v0, $s0, 0x20  # ' '
-		swc2    $25, 0($v0)
-		swc2    $26, 4($v0)
-		swc2    $27, 8($v0)
-		lw      $v0, 0x20($s0)
-		lw      $v1, 0x10($a1)
-		nop
-		subu    $v0, $v1
-		sw      $v0, 0x20($s0)
-		lw      $v0, 0x24($s0)
-		lw      $v1, 0x10($a1)
-		lw      $a0, 0x9C($s0)
-		subu    $v0, $v1
-		beqz    $a0, loc_80023898
-		sw      $v0, 0x24($s0)
-		lh      $v0, 0x24($a1)
-		lh      $a3, 0x26($a1)
-		j       loc_800238A0
-		nop
-
-		loc_80023898 :
-	lh      $v0, 0x28($a1)
-		lh      $a3, 0x2A($a1)
-
-		loc_800238A0 :
-		lhu     $a0, 0xBA($s0)
-		lw      $a2, 0x24($s0)
-		addu    $v1, $a0, $v0
-		slt     $v0, $a2, $v1
-		bnez    $v0, loc_800238D4
-		nop
-		lw      $v0, 0x20($s0)
-		nop
-		slt     $v0, $v1, $v0
-		beqz    $v0, loc_80023954
-		nop
-		j       loc_8002396C
-		nop
-
-		loc_800238D4 :
-	subu    $v1, $a3, $a0
-		slt     $v0, $v1, $a2
-		bnez    $v0, loc_8002391C
-		nop
-		lw      $v0, 0x20($s0)
-		nop
-		slt     $v0, $v1
-		bnez    $v0, loc_80023910
-		nop
-		lw      $v0, 0x14($a1)
-		nop
-		beqz    $v0, loc_80023910
-		nop
-		addiu   $s1, 4
-		sw      $v0, 0($s1)
-
-		loc_80023910:
-	lw      $v0, 0x18($a1)
-		j       loc_80023970
-		nop
-
-		loc_8002391C :
-	lw      $v0, 0x20($s0)
-		nop
-		slt     $v0, $a2
-		bnez    $v0, loc_80023954
-		nop
-		lw      $v0, 0x14($a1)
-		nop
-		beqz    $v0, loc_80023948
-		nop
-		addiu   $s1, 4
-		sw      $v0, 0($s1)
-
-		loc_80023948:
-	lw      $v0, 0x18($a1)
-		j       loc_80023970
-		nop
-
-		loc_80023954 :
-	lw      $v0, 0x18($a1)
-		nop
-		beqz    $v0, loc_8002396C
-		nop
-		addiu   $s1, 4
-		sw      $v0, 0($s1)
-
-		loc_8002396C:
-	lw      $v0, 0x14($a1)
-
-		loc_80023970 :
-		nop
-		beqz    $v0, loc_80023984
-		nop
-		addiu   $s1, 4
-		sw      $v0, 0($s1)
-
-		loc_80023984 :
-		lw      $v0, 0($s1)
-		nop
-		bne     $v0, $s1, loc_80023390
-		nop
-
-		loc_80023994 :
-	addiu   $t0, $s4, 0xC
-		lhu     $v0, 0xA0($s0)
-		lhu     $v1, 2($fp)
-		lhu     $a0, 4($fp)
-		lhu     $a1, 0xC($s4)
-		lhu     $a2, 2($t0)
-		lhu     $a3, 4($t0)
-		addu    $v0, $a1
-		addu    $v1, $a2
-		addu    $a0, $a3
-		sh      $v0, 0xA0($s0)
-		sh      $v1, 2($fp)
-		sh      $a0, 4($fp)
-		lhu     $v0, 0x80($s0)
-		lhu     $v1, 2($s7)
-		lhu     $a0, 4($s7)
-		lhu     $a1, 0xC($s4)
-		lhu     $a2, 2($t0)
-		lhu     $a3, 4($t0)
-		addu    $v0, $a1
-		addu    $v1, $a2
-		addu    $a0, $a3
-		sh      $v0, 0x80($s0)
-		sh      $v1, 2($s7)
-		sh      $a0, 4($s7)
-		lhu     $v0, 0xB4($s0)
-		lhu     $v1, 2($s6)
-		lhu     $a0, 4($s6)
-		lhu     $a1, 0xC($s4)
-		lhu     $a2, 2($t0)
-		lhu     $a3, 4($t0)
-		addu    $v0, $a1
-		addu    $v1, $a2
-		addu    $a0, $a3
-		sh      $v0, 0xB4($s0)
-		sh      $v1, 2($s6)
-		sh      $a0, 4($s6)
-
-		loc_80023A28:
-	lw      $t3, 0x28 + var_4($sp)
-		lw      $v0, 0x44($s5)
-		addiu   $t3, 1
-		slt     $v0, $t3, $v0
-		bnez    $v0, loc_8002321C
-		sw      $t3, 0x28 + var_4($sp)
-
-		loc_80023A40:
-	addiu   $v1, $s0, 0xB4
-		lw      $t6, 0x28 + arg_0($sp)
-		lhu     $a0, 0xB4($s0)
-		lhu     $a1, 2($v1)
-		lhu     $v1, 4($v1)
-		lw      $v0, 0($t6)
-		nop
-		sh      $a0, 0($v0)
-		sh      $a1, 2($v0)
-		sh      $v1, 4($v0)
-		lh      $v0, 0xC0($s0)
-
-		loc_80023A6C:
-	lw      $ra, 0x28 + var_s24($sp)
-		lw      $fp, 0x28 + var_s20($sp)
-		lw      $s7, 0x28 + var_s1C($sp)
-		lw      $s6, 0x28 + var_s18($sp)
-		lw      $s5, 0x28 + var_s14($sp)
-		lw      $s4, 0x28 + var_s10($sp)
-		lw      $s3, 0x28 + var_sC($sp)
-		lw      $s2, 0x28 + var_s8($sp)
-		lw      $s1, 0x28 + var_s4($sp)
-		lw      $s0, 0x28 + var_s0($sp)
-		jr      $ra
-		addiu   $sp, 0x50
-#endif
-	return 0;
+	return result;
 }
 
 long COLLIDE_SphereAndTerrain(struct SCollideInfo* scollideInfo, struct Level* level)

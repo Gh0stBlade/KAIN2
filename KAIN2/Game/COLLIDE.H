@@ -60,7 +60,7 @@ struct SandTScratch
 	struct _HFaceInfo hfaceInfo; // size=32, offset=96
 	struct _SVector midPoint; // size=8, offset=128
 	struct _SVector spherePos; // size=8, offset=136
-	void* collideFunc(); // size=0, offset=144
+	void (*collideFunc)(struct _Instance* instance, struct GameTracker* gameTracker); // size=0, offset=144
 	struct _Instance* instance; // size=668, offset=148
 	long edge; // size=0, offset=152
 	long in_spectral; // size=0, offset=156
