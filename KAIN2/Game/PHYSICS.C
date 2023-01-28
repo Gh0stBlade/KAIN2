@@ -955,7 +955,7 @@ int PhysicsCheckLOS(struct _Instance* instance, int Data, int Mode) //Matching -
 	CInfo.newPoint = (SVECTOR*)Data;
 	PHYSICS_CheckLineInWorld(instance, &CInfo);
 
-	(unsigned int)(CInfo.type == 0);
+	return CInfo.type == 0;
 #elif defined(PC_VERSION)
 	int v3; // ebp
 	int currentStreamUnitID; // edx
