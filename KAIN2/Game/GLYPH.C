@@ -1044,7 +1044,7 @@ void HUD_Damp(short* val, short target, short* vel, short max)
 	CriticalDampValue(1, val, target, vel, &accl, max);
 }
 
-void HUD_Init() //Matching 96.07%
+void HUD_Init() //Matching - 96.07%
 { 
 	HUD_Rotation = 0;
 	HUD_Rot_vel = 0;
