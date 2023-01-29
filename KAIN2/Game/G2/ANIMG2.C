@@ -167,7 +167,7 @@ void G2Anim_Restore(struct _G2Anim_Type* anim) // Matching - 99.84%
 	struct _G2AnimSection_Type* section;
 	int sectionID = 0;;
 
-	for (sectionID = 0; sectionID < (int)anim->sectionCount; sectionID++)
+	for (sectionID = 0; sectionID < anim->sectionCount; sectionID++)
 	{
 		section = &anim->section[sectionID];
 		if (section->keylist != NULL)
@@ -374,7 +374,6 @@ enum _G2Bool_Enum G2Anim_SegmentHasActiveChannels(struct _G2Anim_Type* anim, int
 	return (_G2Bool_Enum)(0 < (segFlagBits & chanMask));
 }
 
-
 void G2Anim_GetSegChannelValue(struct _G2Anim_Type* anim, int segIndex, unsigned short* valueTable, unsigned short channelMask) // Matching - 96.98%
 {
 	struct _G2AnimSegValue_Type* chanFinalValue;
@@ -390,15 +389,14 @@ void G2Anim_GetSegChannelValue(struct _G2Anim_Type* anim, int segIndex, unsigned
 	_segValues[0].trans.z = z;
 	_G2Anim_ApplyControllersToStoredFrame(anim);
 	chanFinalValue = &_segValues[segIndex];
-	if (channelMask != 0) {
-		do {
-			if ((channelMask & 1) != 0) {
-				*valueTable = *(ushort*)&chanFinalValue->rotQuat;
-				valueTable = valueTable + 1;
-			}
-			channelMask = channelMask >> 1;
-			chanFinalValue = (struct _G2AnimSegValue_Type*)((int)&chanFinalValue->rotQuat + 2);
-		} while (channelMask != 0);
+	while (channelMask != 0)
+	{
+		if ((channelMask & 1) != 0) {
+			*valueTable = *(ushort*)&chanFinalValue->rotQuat;
+			valueTable = valueTable + 1;
+		}
+		channelMask = channelMask >> 1;
+		chanFinalValue = (struct _G2AnimSegValue_Type*)((int)&chanFinalValue->rotQuat + 2);
 	}
 }
 
