@@ -73,7 +73,8 @@ add_dependencies(${PROJECT_NAME} SDL2)
 endif()
 
 #Include all platform specific cmake files.
-include("Platform/Windows.cmake")
+include("Platform/Win32.cmake")
+include("Platform/Win64.cmake")
 include("Platform/Mingw.cmake")
 include("Platform/Linux.cmake")
 include("Platform/Emscripten.cmake")

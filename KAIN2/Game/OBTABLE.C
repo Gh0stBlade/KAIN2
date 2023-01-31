@@ -592,7 +592,7 @@ void OBTABLE_InitAnimPointers(struct _ObjectTracker* objectTracker)
 	struct Object* object;
 	int i;
 	char* earlyOut;
-	struct _G2AnimKeylist_Type* PTR_32* PTR_32 keyPtr;
+	struct _G2AnimKeylist_Type** keyPtr;
 	struct _ObjectOwnerInfo* oi;
 	struct _ObjectTracker* otr;
 	struct Object* ownerOb;

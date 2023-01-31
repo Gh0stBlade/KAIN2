@@ -6,7 +6,7 @@
 #include <stddef.h>
 
 struct LocalizationHeader* LocalizationTable;
-char** PTR_32 LocalStrings;
+char** LocalStrings;
 
 enum language_t localstr_get_language()
 { 
@@ -54,7 +54,7 @@ void localstr_set_language(enum language_t lang)
 	}
 }
 
-char* PTR_32 localstr_get(enum localstr_t id)
+char* localstr_get(enum localstr_t id)
 {
 	static char BlankStr[2] = { '.', 0x0 };
 
@@ -65,7 +65,7 @@ char* PTR_32 localstr_get(enum localstr_t id)
 	else
 	{
 #if defined(_WIN64)
-		return (char* PTR_32)((unsigned int*)LocalStrings)[id];
+		return (char*)((unsigned int*)LocalStrings)[id];
 #else
 		return LocalStrings[id];
 #endif

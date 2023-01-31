@@ -279,12 +279,12 @@ struct _FX_MATRIX // hashcode: 0x13190ADD (dec: 320408285)
 struct _FX_PRIM // hashcode: 0x16BF818E (dec: 381649294)
 {
 	struct NodeType node; // size=8, offset=0
-	struct TextureMT3* PTR_32 texture; // size=16, offset=8
+	struct TextureMT3* texture; // size=16, offset=8
 	long flags; // size=0, offset=12
 	short timeToLive; // size=0, offset=16
 	short curFrame; // size=0, offset=18
-	void* PTR_32 process; // size=0, offset=20
-	struct _FX_MATRIX* PTR_32 matrix; // size=44, offset=24
+	void* process; // size=0, offset=20
+	struct _FX_MATRIX* matrix; // size=44, offset=24
 	long color; // size=0, offset=28
 	long startColor; // size=0, offset=32
 	long endColor; // size=0, offset=36
@@ -303,7 +303,7 @@ struct _FX_PRIM // hashcode: 0x16BF818E (dec: 381649294)
 	short work3; // size=0, offset=90
 	union {
 		struct {
-			struct _Instance* PTR_32 parent; // size=616, offset=0
+			struct _Instance* parent; // size=616, offset=0
 			long segment; // size=0, offset=4
 		} flame; // size=8, offset=0, found in object files: debug.o, debug.o
 		struct {

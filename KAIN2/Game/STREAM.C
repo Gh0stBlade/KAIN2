@@ -165,14 +165,14 @@ struct _StreamUnit* FindStreamUnitFromLevel(struct Level* level)
 	return ret;
 }
 
-void STREAM_LoadObjectReturn(void* loadData, void* PTR_32 data, void* data2)
+void STREAM_LoadObjectReturn(void* loadData, void* data, void* data2)
 {
 	struct Object* object;
-	struct _ObjectTracker* PTR_32 objectTracker;
+	struct _ObjectTracker* objectTracker;
 	char objDsfxFileName[64];
 
 	object = (struct Object*)loadData;
-	objectTracker = (struct _ObjectTracker* PTR_32)data;
+	objectTracker = (struct _ObjectTracker*)data;
 	GetRCnt(0xF2000000);
 
 	if ((object->oflags & 0x8000000) && object->relocList != NULL && object->relocModule != NULL)
@@ -2385,7 +2385,7 @@ void RelocateStreamPortals(struct StreamUnitPortal* StreamUnitList, int NumStrea
 	}
 }
 
-void STREAM_PackVRAMObject(struct _ObjectTracker* PTR_32 objectTracker)
+void STREAM_PackVRAMObject(struct _ObjectTracker* objectTracker)
 { 
 	struct VramSize* vramSize;
 	struct VramBuffer* vramBuffer;

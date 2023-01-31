@@ -102,8 +102,8 @@ struct _AadDynSfxFileHdr // hashcode: 0xB9609773 (dec: -1184852109)
 	unsigned short uniqueID; // size=0, offset=6
 	unsigned short handle; // size=0, offset=8
 	unsigned short numSfxInFile; // size=0, offset=10
-	struct _AadDynSfxFileHdr* PTR_32 prevDynSfxFile; // size=20, offset=12
-	struct _AadDynSfxFileHdr* PTR_32 nextDynSfxFile; // size=20, offset=16
+	struct _AadDynSfxFileHdr* prevDynSfxFile; // size=20, offset=12
+	struct _AadDynSfxFileHdr* nextDynSfxFile; // size=20, offset=16
 };
 
 struct AadDynSfxAttr // hashcode: 0x20751E4B (dec: 544546379)
@@ -249,7 +249,7 @@ struct AadDynamicSfxLoadInfo // hashcode: 0xEDD41D4C (dec: -304865972)
 	int error; // size=0, offset=108
 	unsigned long waveTransferAddr; // size=0, offset=112
 	unsigned long totalSramUsed; // size=0, offset=116
-	struct _AadDynSfxFileHdr* PTR_32 snfFile; // size=20, offset=120
+	struct _AadDynSfxFileHdr* snfFile; // size=20, offset=120
 	struct AadDynSfxAttr attr; // size=24, offset=124
 };
 
@@ -329,7 +329,7 @@ typedef struct AadMemoryStruct // hashcode: 0x46CEF45B (dec: 1187968091)
 	struct AadProgramAtr* dynamicProgramAtr[2]; // size=8, offset=1240
 	struct AadToneAtr* dynamicToneAtr[2]; // size=8, offset=1248
 	unsigned long* dynamicWaveAddr[2]; // size=8, offset=1256
-	unsigned char* PTR_32 * PTR_32 dynamicSequenceAddressTbl[2]; // size=8, offset=1264
+	unsigned char** dynamicSequenceAddressTbl[2]; // size=8, offset=1264
 	unsigned long* dynamicSequenceLabelOffsetTbl[2]; // size=8, offset=1272
 	int dynamicBankStatus[2]; // size=8, offset=1280
 	unsigned char* dynamicSoundBankData[2]; // size=8, offset=1288

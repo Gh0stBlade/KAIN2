@@ -876,7 +876,7 @@ void MEMPACK_RelocateObjectType(struct MemHeader* newAddress, long offset, struc
 
 	//v0 = object->animList
 	p = NULL;
-	object->modelList = (struct _Model* PTR_32* PTR_32)p;
+	object->modelList = (struct _Model**)p;
 
 	if (object->animList != NULL)
 	{
@@ -885,7 +885,7 @@ void MEMPACK_RelocateObjectType(struct MemHeader* newAddress, long offset, struc
 	//loc_80051554
 	//v0 = object->soundData
 
-	object->animList = (struct _G2AnimKeylist_Type* PTR_32 * PTR_32)p;
+	object->animList = (struct _G2AnimKeylist_Type**)p;
 
 	p = NULL;
 

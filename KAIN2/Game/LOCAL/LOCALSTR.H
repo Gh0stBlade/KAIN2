@@ -137,10 +137,10 @@ enum localstr_t // Hashcode: 0xC51A2F36 (dec: -988139722)
 
 extern struct LocalizationHeader* LocalizationTable; // offset 0x800CF994
 
-extern char** PTR_32 LocalStrings; // offset 0x800CF998
+extern char** LocalStrings; // offset 0x800CF998
 
 extern enum language_t localstr_get_language(); // 0x800B7978
 extern void localstr_set_language(enum language_t lang); // 0x800B7984
-extern char* PTR_32 localstr_get(enum localstr_t id); // 0x800B7A14
+extern char* localstr_get(enum localstr_t id); // 0x800B7A14
 
 #endif

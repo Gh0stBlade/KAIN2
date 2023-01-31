@@ -733,7 +733,7 @@ int aadOpenDynamicSoundBank(unsigned char *soundBank, int dynamicBankIndex)
 	aadMem->dynamicWaveAddr[dynamicBankIndex] = waveAddr;
 
 	sequenceOffsetTbl = (unsigned long*)((char*)waveAddr + soundBankHdr->numWaves * sizeof(unsigned int));
-	aadMem->dynamicSequenceAddressTbl[dynamicBankIndex] = (unsigned char* PTR_32* PTR_32)sequenceOffsetTbl;
+	aadMem->dynamicSequenceAddressTbl[dynamicBankIndex] = (unsigned char**)sequenceOffsetTbl;
 
 	sequenceLabelOffsetTbl = (unsigned long*)((char*)sequenceOffsetTbl + soundBankHdr->numSequences * sizeof(unsigned int));
 	aadMem->dynamicSequenceLabelOffsetTbl[dynamicBankIndex] = sequenceLabelOffsetTbl;

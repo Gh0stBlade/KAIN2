@@ -78,7 +78,7 @@ struct _Segment
 	short py; // size=0, offset=14
 	short pz; // size=0, offset=16
 	short parent; // size=0, offset=18
-	struct _HInfo* PTR_32 hInfo; // size=24, offset=20
+	struct _HInfo* hInfo; // size=24, offset=20
 };
 
 struct DrMoveAniTexSrcInfo 
@@ -132,20 +132,20 @@ struct TextureMT3
 struct _Model 
 {
 	long numVertices; // size=0, offset=0
-	struct _MVertex* PTR_32 vertexList; // size=8, offset=4
+	struct _MVertex* vertexList; // size=8, offset=4
 	long numNormals; // size=0, offset=8
-	struct _SVectorNoPad* PTR_32 normalList; // size=6, offset=12
+	struct _SVectorNoPad* normalList; // size=6, offset=12
 	long numFaces; // size=0, offset=16
-	struct _MFace* PTR_32 faceList; // size=12, offset=20
+	struct _MFace* faceList; // size=12, offset=20
 	long numSegments; // size=0, offset=24
-	struct _Segment* PTR_32 segmentList; // size=24, offset=28
-	struct AniTex* PTR_32 aniTextures; // size=16, offset=32
+	struct _Segment* segmentList; // size=24, offset=28
+	struct AniTex* aniTextures; // size=16, offset=32
 	short maxRad; // size=0, offset=36
 	short pad; // size=0, offset=38
 	long maxRadSq; // size=0, offset=40
-	struct MultiSpline* PTR_32 multiSpline; // size=0, offset=44
-	struct TextureMT3* PTR_32 startTextures; // size=16, offset=48
-	struct TextureMT3* PTR_32 endTextures; // size=16, offset=52
+	struct MultiSpline* multiSpline; // size=0, offset=44
+	struct TextureMT3* startTextures; // size=16, offset=48
+	struct TextureMT3* endTextures; // size=16, offset=52
 };
 
 struct _HPrim 

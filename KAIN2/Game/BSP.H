@@ -49,15 +49,15 @@ struct _BSPLeaf // hashcode: 0xB2C1AC71 (dec: -1295930255)
 
 struct BSPTree // hashcode: 0x17800192 (dec: 394264978)
 {
-	struct _BSPNode* PTR_32 bspRoot; // size=44, offset=0
-	struct _BSPLeaf* PTR_32 startLeaves; // size=48, offset=4
-	struct _BSPLeaf* PTR_32 endLeaves; // size=48, offset=8
+	struct _BSPNode* bspRoot; // size=44, offset=0
+	struct _BSPLeaf* startLeaves; // size=48, offset=4
+	struct _BSPLeaf* endLeaves; // size=48, offset=8
 	_Position globalOffset; // size=6, offset=12
 	short flags; // size=0, offset=18
 	_Position localOffset; // size=6, offset=20
 	short ID; // size=0, offset=26
 	long splineID; // size=0, offset=28
-	struct _Instance* PTR_32 instanceSpline; // size=616, offset=32
+	struct _Instance* instanceSpline; // size=616, offset=32
 };
 
 union BSP_71fake // Hashcode: 0x81368942 (dec: -2127132350)

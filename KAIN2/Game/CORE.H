@@ -42,8 +42,6 @@
 
 typedef RECT PSX_RECT;
 
-#define PTR_32
-
 #elif defined(PSXPC_VERSION)
 
 #include <EMULATOR_PUBLIC.H>
@@ -74,12 +72,6 @@ typedef RECT PSX_RECT;
 #define setlen_ST( p, _len) 	(((POLY_F4_SEMITRANS *)(p))->len  = (u_char)(_len))
 #define setcode_ST(p, _code)	(((POLY_F4_SEMITRANS *)(p))->code = (u_char)(_code))
 #define setPolyFT4_ST(p) setlen_ST(p, 6),  setcode_ST(p, 0x2A)
-
-#if defined(_WIN64)
-#define PTR_32 __ptr32
-#else
-#define PTR_32
-#endif
 
 //Custom GTE macros
 #define gte_st_mac0( r0 ) \
@@ -353,8 +345,8 @@ typedef struct _HFaceInfo // hashcode: 0x0E79FF8C (dec: 242876300)
 
 typedef struct NodeType // hashcode: 0x5BF613D7 (dec: 1542853591)
 {
-	struct NodeType* PTR_32 prev; // size=8, offset=0
-	struct NodeType* PTR_32 next; // size=8, offset=4
+	struct NodeType* prev; // size=8, offset=0
+	struct NodeType* next; // size=8, offset=4
 } NodeType;
 
 struct _BASIC_G4 {

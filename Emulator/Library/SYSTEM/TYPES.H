@@ -59,7 +59,7 @@ typedef	long *	qaddr_t;
 typedef	long	swblk_t;
 #endif
 
-#if !defined(__EMSCRIPTEN__) && !(defined(WINAPI_FAMILY) && (WINAPI_FAMILY == WINAPI_FAMILY_APP)) && !defined(PLATFORM_NX_ARM)
+#if !defined(__EMSCRIPTEN__) && !(defined(WINAPI_FAMILY) && (WINAPI_FAMILY == WINAPI_FAMILY_APP)) && !defined(PLATFORM_NX_ARM) && !defined(_WIN64)
 #ifndef _SIZE_T
 #define _SIZE_T
 typedef	unsigned int size_t;
