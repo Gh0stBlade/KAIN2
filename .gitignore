@@ -1,6 +1,6 @@
 Build/
 /KAIN2/Tools/ShiftDecompiler/*
-/kain2/*.filters
+/KAIN2/*.filters
 /Build/*
 /Build/Build_Emscripten/*
 /Build/Build_EMSDK/*
