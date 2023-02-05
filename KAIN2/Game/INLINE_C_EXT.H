@@ -16,6 +16,10 @@
 	((int*)&R11)[0] = ((unsigned short*)r0)[0] | ((unsigned short*)r0)[1]; \
 	((int*)&R13)[0] = ((unsigned short*)r0)[2];\
 
+#define gte_ldv2_ext( r0 )                     \
+	((int*)&VZ1)[0] = ((int*)r0)[0];       \
+	((int*)&VX2)[0] = ((int*)r0)[1];       \
+
 #elif defined(PSX_VERSION)
 #define gte_ldlvnlsv( r0 ) __asm__ volatile (			\
 	"lhu	$12, 0( %0 );"					\

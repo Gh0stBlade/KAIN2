@@ -42,7 +42,7 @@ typedef enum menu_ctrl_t // Hashcode: 0xE0BD1E93 (dec: -524476781)
 
 struct menu_item_t // hashcode: 0xF260D8A8 (dec: -228534104)
 {
-	char* PTR_32 text; // size=0, offset=0
+	char* text; // size=0, offset=0
 #if defined(_WIN64)
 	int (*fn)(void*, long long, enum menu_ctrl_t); // size=0, offset=4
 	long long parameter; // size=0, offset=8
