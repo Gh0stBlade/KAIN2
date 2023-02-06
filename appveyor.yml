@@ -28,7 +28,8 @@ before_build:
   - cmd: git submodule update --init --recursive
   - cmd: cd Emulator
   - cmd: cd Platform
-  - cmd: cd Windows
+  - cmd: cd Win32
+  #- cmd: cd Win64
   - cmd: Generate-Project-Files.bat
   
 artifacts:
