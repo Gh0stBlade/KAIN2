@@ -374,26 +374,28 @@ enum _G2Bool_Enum G2Anim_SegmentHasActiveChannels(struct _G2Anim_Type* anim, int
 	return (_G2Bool_Enum)(0 < (segFlagBits & chanMask));
 }
 
-void G2Anim_GetSegChannelValue(struct _G2Anim_Type* anim, int segIndex, unsigned short* valueTable, unsigned short channelMask) // Matching - 96.98%
+void G2Anim_GetSegChannelValue(struct _G2Anim_Type *anim, int segIndex, unsigned short *valueTable, unsigned short channelMask) // Matching - 96.98%
 {
 	unsigned short* chanFinalValue;
 	unsigned short z;
 	unsigned long xy;
 
 	G2Anim_UpdateStoredFrame(anim);
+
 	xy = ((unsigned long*)&anim->rootTrans.x)[0];
 	z = anim->rootTrans.z;
 	((unsigned long*)&_segValues[0].trans.x)[0] = xy;
 	_segValues[0].trans.z = z;
+
 	_G2Anim_ApplyControllersToStoredFrame(anim);
-	chanFinalValue = (unsigned short*)&_segValues[segIndex];
+
+	chanFinalValue = &_segValues[segIndex];
 
 	while (channelMask != 0)
 	{
-		if ((channelMask & 1) != 0)
+		if ((channelMask & 0x1)) 
 		{
-			*valueTable = *chanFinalValue;
-			valueTable++;
+			*valueTable++ = *chanFinalValue;
 		}
 		channelMask >>= 1;
 		chanFinalValue++;
