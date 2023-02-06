@@ -374,7 +374,7 @@ enum _G2Bool_Enum G2Anim_SegmentHasActiveChannels(struct _G2Anim_Type* anim, int
 	return (_G2Bool_Enum)(0 < (segFlagBits & chanMask));
 }
 
-void G2Anim_GetSegChannelValue(struct _G2Anim_Type *anim, int segIndex, unsigned short *valueTable, unsigned short channelMask) // Matching - 96.98%
+void G2Anim_GetSegChannelValue(struct _G2Anim_Type* anim, int segIndex, unsigned short* valueTable, unsigned short channelMask) // Matching - 96.98%
 {
 	unsigned short* chanFinalValue;
 	unsigned short z;
@@ -393,7 +393,7 @@ void G2Anim_GetSegChannelValue(struct _G2Anim_Type *anim, int segIndex, unsigned
 
 	while (channelMask != 0)
 	{
-		if ((channelMask & 0x1)) 
+		if ((channelMask & 0x1))
 		{
 			*valueTable++ = *chanFinalValue;
 		}
