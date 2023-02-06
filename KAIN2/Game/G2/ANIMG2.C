@@ -165,7 +165,7 @@ void G2Anim_Free(struct _G2Anim_Type* anim)//Matching - 99.68%
 void G2Anim_Restore(struct _G2Anim_Type* anim) // Matching - 99.84%
 {
 	struct _G2AnimSection_Type* section;
-	int sectionID = 0;;
+	int sectionID;
 
 	for (sectionID = 0; sectionID < anim->sectionCount; sectionID++)
 	{
