@@ -2,6 +2,17 @@
 
 #include <typeinfo>
 #include <string>
+#include <iostream>
+
+#include <boost/mpl/range_c.hpp>
+#include <boost/fusion/include/for_each.hpp>
+#include <boost/fusion/include/zip.hpp>
+#include <boost/fusion/include/at_c.hpp>
+#include <boost/fusion/include/adapt_struct.hpp>
+#include <boost/fusion/include/mpl.hpp>
+
+#include <boost/type_index.hpp>
+
 #include <boost/fusion/include/sequence.hpp>
 #include <boost/fusion/include/algorithm.hpp>
 #include <boost/fusion/include/adapt_struct.hpp>
@@ -14,14 +25,6 @@
 #include <type_traits>
 
 #include "FILE.H"
-
-extern int dec_indents;
-struct NL {
-	static void print() {
-		printf("\n");
-		for (int i = 0; i < dec_indents; i++) printf(" ");
-	}
-};
 
 using namespace boost::fusion;
 
@@ -58,25 +61,57 @@ struct DecImplSeqItr_s
 	template <typename C = S>
 	static inline void decode(S& s)
 	{
-		printf("%d", ftell(g_fileHandle));
-		printf(" \"%s\" = ", name_t::call());
+		if (boost::is_pointer<current_t>::value)
+		{
+			union DataPointer
+			{
+				long* DTP;
+				current_t* value;
+			};
 
-		//Skip all pointers, we manually dump them since they're size based :(
-		if (!boost::is_pointer<current_t>::value)
-		{
-			UPGRADE_BaseDump<current_t>::decode(boost::fusion::at<N>(s));
-			Comma<S, N>::comma();  // Insert comma or not
+			DataPointer dtp;
+			dtp.value = &boost::fusion::at_c<N::value>(s);
+
+			if (dtp.DTP[0] != NULL)
+			{
+				g_numPointerTypes++;
+			}
 		}
-		else if (boost::is_pointer<current_t>::value)
+		else if (std::is_pointer<std::remove_pointer<current_t>::type>::value)//ptr**
 		{
-			FILE_SeekCur(sizeof(unsigned long long));
+			union DataPointer
+			{
+				long* DTP;
+				current_t* value;
+			};
+
+			DataPointer dtp;
+			dtp.value = &boost::fusion::at_c<N::value>(s);
+
+			if (dtp.DTP[0] != NULL)
+			{
+				g_numPointerTypes++;
+			}
 		}
 
 		DecImplSeqItr_s<S, next_t>::decode(s);
 	}
 
+	static inline int UPGRADE_HowManyPointersAfter(S& s)
+	{
+		static int numPointers = 0;
+
+		if (boost::is_pointer<current_t>::value || std::is_pointer<std::remove_pointer<current_t>::type>::value)
+		{
+			numPointers++;
+		}
+		
+		numPointers += DecImplSeqItr_s<S, next_t>::UPGRADE_HowManyPointersAfter(s);
+		return numPointers;
+	}
+
 	template <typename C = S>
-	static inline void decodeDTP(S& s)
+	static inline void decodeDTP(S& s, int* offset)
 	{
 		printf("%d", ftell(g_fileHandle));
 		printf(" \"%s\" = ", name_t::call());
@@ -84,86 +119,56 @@ struct DecImplSeqItr_s
 		//Dump all pointers now :)
 		if (!boost::is_pointer<current_t>::value)//ptr
 		{
-			fseek(g_fileHandle, sizeof(current_t), SEEK_CUR);
+			memmove(g_pCurr, &boost::fusion::at_c<N::value>(s), sizeof(current_t));
+			g_pCurr += sizeof(current_t);
 		}
-		else if (std::is_pointer<std::remove_pointer<current_t>::type>::value)//ptr**
+		else if (std::is_pointer<std::remove_pointer<current_t>::type>::value || boost::is_pointer<current_t>::value)//ptr**
 		{
-#if 0
-			union DTPContainer
+			union DataPointer
 			{
-				void* DTP;
-				current_t value;
+				long* DTP;
+				current_t* value;
 			};
 
-			DTPContainer DTP;
-			DTP.value = boost::fusion::at_c<N::value>(s);
+			DataPointer dtp;
+			dtp.value = &boost::fusion::at_c<N::value>(s);
 
-			unsigned int NULL_PTR = 0;
-			bool bIsNotNullPointer = memcmp(&DTP, &NULL_PTR, sizeof(unsigned int));
-			unsigned long long p = 0;
-			long savedOffset = ftell(g_fileHandle);
-			p = bIsNotNullPointer ? savedOffset - 0x800 : 0;
-			if (bIsNotNullPointer)
+			UPGRADE_RedirectList* existingrdList = UPGRADE_FindRedirectList((long*)dtp.DTP[0]);
+
+			if (existingrdList == NULL)
 			{
-				fseek(g_fileHandle, (g_lastRelocIndex++ * sizeof(unsigned int)) + sizeof(unsigned int), SEEK_SET);
-				fwrite(&p, sizeof(unsigned int), 1, g_fileHandle);
+				UPGRADE_RedirectList rdList;
+				if (dtp.DTP[0] != NULL)
+				{
+					rdList.incr = (UPGRADE_HowManyPointersAfter(s)) + ((dtp.DTP[0] - (long)g_baseAddr - 0x800) / sizeof(unsigned int));
+				}
+				else
+				{
+					rdList.incr = 0;
+				}
+				rdList.pDTP = (long*)dtp.DTP[0];
+				rdList.pDTPConvertedFile = (long*)g_pCurr;
+				rdList.pDTPConvertedFile[0] = 0;
+				g_redirectList.push_back(rdList);
+
+				if (offset != NULL && rdList.incr > 0 && rdList.incr * sizeof(unsigned int) <= *offset)
+				{
+					*offset = rdList.incr * sizeof(unsigned int);
+				}
 			}
-			fseek(g_fileHandle, 0, SEEK_END);
-			p = ftell(g_fileHandle) - 0x800;
 
-			if (bIsNotNullPointer)
-			{
-				unsigned long long offsetDTP = ftell(g_fileHandle) - 0x800 + 0x8;
-				fwrite(&offsetDTP, sizeof(unsigned long long), 1, g_fileHandle);
-			}
-
-			fseek(g_fileHandle, savedOffset, SEEK_SET);
-			fwrite(&p, sizeof(p), 1, g_fileHandle);
-#endif
-		}
-		else if (boost::is_pointer<current_t>::value)//ptr*
-		{
-			union DTPContainer
-			{
-				char* DTP;
-				current_t value;
-			};
-
-			DTPContainer DTP;
-			DTP.value = boost::fusion::at_c<N::value>(s);
-
-			unsigned int NULL_PTR = 0;
-			bool bIsNotNullPointer = DTP.DTP != NULL;
-			unsigned long long p = 0;
-			long savedOffset = ftell(g_fileHandle);
-			p = bIsNotNullPointer ? savedOffset - 0x800 : 0;
-			if (bIsNotNullPointer)
-			{
-				fseek(g_fileHandle, (g_lastRelocIndex++ * sizeof(unsigned int)) + sizeof(unsigned int), SEEK_SET);
-				fwrite(&p, sizeof(unsigned int), 1, g_fileHandle);
-			}
-			fseek(g_fileHandle, 0, SEEK_END);
-			p = ftell(g_fileHandle) - 0x800;
-
-			if (!bIsNotNullPointer)
-			{
-				unsigned long long dummy = 0;
-				fwrite(&dummy, sizeof(dummy), 1, g_fileHandle);
-			}
-			else
-			{
-				fseek(g_fileHandle, savedOffset, SEEK_SET);
-				fwrite(&p, sizeof(p), 1, g_fileHandle);
-			}
+			//memmove(g_pCurr, &boost::fusion::at_c<N::value>(s), sizeof(current_t));
+			g_pCurr += sizeof(current_t) * 2;
 		}
 
-		DecImplSeqItr_s<S, next_t>::decodeDTP(s);
+		DecImplSeqItr_s<S, next_t>::decodeDTP(s, offset);
 	}
 };
 template <typename S>
 struct DecImplSeqItr_s<S, typename boost::fusion::result_of::size<S>::type > {
 	static inline void decode(S& s) { }
-	static inline void decodeDTP(S& s) { }
+	static inline void decodeDTP(S& s, int* offset) { }
+	static inline int UPGRADE_HowManyPointersAfter(S& s) { return 0; }
 };
 template <typename S>
 struct DecImplSeqStart_s :DecImplSeqItr_s<S, boost::mpl::int_<0> > {};
@@ -173,26 +178,20 @@ template <typename S> struct DecImplSeq_s {
 	static void decode(S& s) {
 		printf("  struct  start --- { --- ");
 		dec_indents += 4;
-		NL::print();
 		DecImplSeqStart_s<S>::decode(s);
 		dec_indents -= 4;
-		NL::print();
 		printf("  struct  done  --- } --- ");
-		NL::print();
 	};
 };
 
 template <typename S> struct DecImplSeqDTP_s {
 	typedef DecImplSeqDTP_s<S> type;
-	static void decode(S& s) {
+	static void decode(S& s, int* offset) {
 		printf("  struct  start --- { --- ");
 		dec_indents += 4;
-		NL::print();
-		DecImplSeqStart_s<S>::decodeDTP(s);
+		DecImplSeqStart_s<S>::decodeDTP(s, offset);
 		dec_indents -= 4;
-		NL::print();
 		printf("  struct  done  --- } --- ");
-		NL::print();
 	};
 };
 

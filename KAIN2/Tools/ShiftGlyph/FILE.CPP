@@ -4,6 +4,10 @@ FILE* g_fileHandle = NULL;
 std::vector<int> g_currentDTPOffset;
 int g_lastRelocIndex = 0;
 int g_firstHack = 1;
+int g_numPointerTypes = 0;
+char* g_pCurr = NULL;
+long* g_baseAddr = NULL;
+std::vector<UPGRADE_RedirectList> g_redirectList;
 
 void FILE_Reserve(int size)
 {

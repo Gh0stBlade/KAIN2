@@ -72,56 +72,127 @@ void UPGRADE_Relocate(struct RedirectList* redirectList, long* data, long* baseA
 
 int dec_indents = 0;
 
-void UPGRADE_ObjectNew(struct RedirectList* redirectList, long* data, long* baseAddr, unsigned int fileSize, char* filePath)
+void UPGRADE_Delocate(long* baseAddr, long* newBaseAddr)
 {
-	struct Object* object;
-	UPGRADE_Relocate(redirectList, data, baseAddr);
-
-	FILE_OpenWrite("TEMP.DRM");
-
-	int numPointerTypes = 0;// UPGRADE_CountPointerTypes<Object>::
+	for (int i = 0; i < g_redirectList.size(); i++)
+	{
+		g_redirectList[i].pDTPConvertedFile[0] += g_redirectList[i].incr * sizeof(unsigned int);
+		//g_redirectList[i].pDTPConvertedFile[0] -= (long)baseAddr + 0x800;
+	}
 }
 
 void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAddr, unsigned int fileSize, char* filePath)
 {
 	struct Object* object;
+
 	UPGRADE_Relocate(redirectList, data, baseAddr);
 
 	FILE_OpenWrite("TEMP.DRM");
 
-	//Object Pass 1
-	FILE_PushSeek(2048);
 	object = (struct Object*)data;
+	
 	UPGRADE_BaseDump<Object>::decode(*object);
-	FILE_PopSeek();
 
-	//Object Pass 2
-	FILE_PushSeek(2048);
-	object = (struct Object*)data;
-	UPGRADE_DTPDump<Object>::decode(*object);
-	FILE_PopSeek();
-
-	//Models
 	for (int i = 0; i < object->numModels; i++)
 	{
-		FILE_PushSeekEnd();
+		UPGRADE_BaseDump<_Model>::decode(*object->modelList[i]);
+	}
+#if 0
+	for (int i = 0; i < object->numModels; i++)
+	{
 		UPGRADE_BaseDump<_Model>::decode(*object->modelList[i]);
 		
 		for (int j = 0; j < object->modelList[i]->numVertices; j++)
 		{
-			FILE_PushSeekEnd();
 			UPGRADE_BaseDump<_MVertex>::decode(object->modelList[i]->vertexList[j]);
-			FILE_PopSeek();
 		}
 
-		UPGRADE_DTPDump<_Model>::decode(*object->modelList[i]);
-		FILE_PopSeek();
+		for (int j = 0; j < object->modelList[i]->numNormals; j++)
+		{
+			UPGRADE_BaseDump<_SVectorNoPad>::decode(object->modelList[i]->normalList[j]);
+		}
+
+		for (int j = 0; j < object->modelList[i]->numFaces; j++)
+		{
+			UPGRADE_BaseDump<_MFace>::decode(object->modelList[i]->faceList[j]);
+		}
+
+		for (int j = 0; j < object->modelList[i]->numSegments; j++)
+		{
+			UPGRADE_BaseDump<_Segment>::decode(object->modelList[i]->segmentList[j]);
+		}
+
+		if (object->modelList[i]->aniTextures != NULL)
+		{
+			UPGRADE_BaseDump<AniTex>::decode(*object->modelList[i]->aniTextures);
+
+			for (int j = 0; j < object->modelList[i]->aniTextures->numAniTextues; j++)
+			{
+				UPGRADE_BaseDump<AniTexInfo>::decode(object->modelList[i]->aniTextures[i].aniTexInfo);
+			}
+		}
+	}
+#endif
+	char* newFileData = new char[fileSize + (g_numPointerTypes * sizeof(unsigned int))];
+	memset(newFileData, 0, fileSize + (g_numPointerTypes * sizeof(unsigned int)));
+	g_pCurr = &newFileData[0];
+	g_baseAddr = baseAddr;
+
+	int lowestRelocOffset = 0xFFFFFF;
+	UPGRADE_DTPDump<Object>::decode(*object, &lowestRelocOffset);
+
+#if 0
+	g_pCurr = &newFileData[lowestRelocOffset];
+
+	for (int i = 0; i < object->numModels; i++)
+	{
+		lowestRelocOffset = 0;
+		UPGRADE_DTPDump<DTPList>::decode(*(DTPList*)object->modelList[i], &lowestRelocOffset);
+		UPGRADE_DTPDump<_Model>::decode(*object->modelList[i], &lowestRelocOffset);
 	}
 
-	fseek(g_fileHandle, 0, SEEK_SET);
-	fwrite(&g_lastRelocIndex, sizeof(unsigned int), 1, g_fileHandle);
+#if 0
+	for (int i = 0; i < object->numModels; i++)
+	{
+		UPGRADE_DTPDump<_Model>::decode(*object->modelList[i]);
+
+		for (int j = 0; j < object->modelList[i]->numVertices; j++)
+		{
+			UPGRADE_DTPDump<_MVertex>::decode(object->modelList[i]->vertexList[j]);
+		}
+
+		for (int j = 0; j < object->modelList[i]->numNormals; j++)
+		{
+			UPGRADE_DTPDump<_SVectorNoPad>::decode(object->modelList[i]->normalList[j]);
+		}
+
+		for (int j = 0; j < object->modelList[i]->numFaces; j++)
+		{
+			UPGRADE_DTPDump<_MFace>::decode(object->modelList[i]->faceList[j]);
+		}
+
+		for (int j = 0; j < object->modelList[i]->numSegments; j++)
+		{
+			UPGRADE_DTPDump<_Segment>::decode(object->modelList[i]->segmentList[j]);
+		}
+
+		if (object->modelList[i]->aniTextures != NULL)
+		{
+			UPGRADE_DTPDump<AniTex>::decode(*object->modelList[i]->aniTextures);
+
+			for (int j = 0; j < object->modelList[i]->aniTextures->numAniTextues; j++)
+			{
+				UPGRADE_DTPDump<AniTexInfo>::decode(object->modelList[i]->aniTextures[i].aniTexInfo);
+			}
+		}
+	}
+#endif
+#endif
+
+	UPGRADE_Delocate(baseAddr, (long*)newFileData);
+
+	fwrite(newFileData, fileSize + (g_numPointerTypes * sizeof(unsigned int)), 1, g_fileHandle);
 	fclose(g_fileHandle);
-	g_fileHandle = NULL;
 }
 
 void UPGRADE_ProcessRedirectList(long* data, unsigned int fileSize, char* filePath, DrmFileType fileType)
@@ -149,6 +220,21 @@ void UPGRADE_ProcessRedirectList(long* data, unsigned int fileSize, char* filePa
 	//UPGRADE_Pointers(redirectList, &data[tableSize], data, fileSize, filePath);
 
 	return;
+}
+
+UPGRADE_RedirectList* UPGRADE_FindRedirectList(long* DTP)
+{
+	for (int i = 0; i < g_redirectList.size(); i++)
+	{
+		UPGRADE_RedirectList* rdList = &g_redirectList[i];
+
+		if (rdList->pDTP == DTP)
+		{
+			return rdList;
+		}
+	}
+
+	return NULL;
 }
 
 enum DrmFileType UPGRADE_GetFileType(const char* drmFilePath)

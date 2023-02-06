@@ -9,6 +9,25 @@ enum DTPFlags : int
 	DTP_FLAGS_DTP          = (1 << 1),
 };
 
+struct DTPList
+{
+	void* ptr;
+};
+
+BOOST_FUSION_ADAPT_STRUCT(DTPList,
+	ptr
+);
+
+
+struct CString
+{
+	char* pString;
+};
+
+BOOST_FUSION_ADAPT_STRUCT(CString,
+	pString
+);
+
 struct VramSize 
 {
 	short x;
@@ -476,8 +495,8 @@ struct Object
 	short removeDist;
 	short vvRemoveDist;
 	int* data;
-	char* script;
-	char* name;
+	CString* script;
+	CString* name;
 	int* soundData;
 	long oflags2;
 	short sectionA;
