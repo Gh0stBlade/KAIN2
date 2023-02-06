@@ -9,24 +9,6 @@ enum DTPFlags : int
 	DTP_FLAGS_DTP          = (1 << 1),
 };
 
-struct DTPList
-{
-	void* ptr;
-};
-
-BOOST_FUSION_ADAPT_STRUCT(DTPList,
-	ptr
-);
-
-
-struct CString
-{
-	char* pString;
-};
-
-BOOST_FUSION_ADAPT_STRUCT(CString,
-	pString
-);
 
 struct VramSize 
 {
@@ -35,13 +17,6 @@ struct VramSize
 	short w;
 	short h;
 };
-
-BOOST_FUSION_ADAPT_STRUCT(VramSize, 
-	x, 
-	y, 
-	w, 
-	h
-);
 
 struct TextureMT3
 {
@@ -58,20 +33,6 @@ struct TextureMT3
 	long color;
 };
 
-BOOST_FUSION_ADAPT_STRUCT(TextureMT3,
-	u0,
-	v0,
-	clut,
-	u1,
-	v1,
-	tpage,
-	u2,
-	v2,
-	pad1,
-	sortPush,
-	color
-);
-
 struct _Vertex
 {
 	short x;
@@ -79,22 +40,11 @@ struct _Vertex
 	short z;
 };
 
-BOOST_FUSION_ADAPT_STRUCT(_Vertex,
-	x,
-	y,
-	z
-);
-
 struct _MVertex
 {
 	struct _Vertex vertex;
 	unsigned short normal;
 };
-
-BOOST_FUSION_ADAPT_STRUCT(_MVertex,
-	vertex,
-	normal
-);
 
 struct _SVectorNoPad 
 {
@@ -103,24 +53,12 @@ struct _SVectorNoPad
 	short z;
 };
 
-BOOST_FUSION_ADAPT_STRUCT(_SVectorNoPad,
-	x,
-	y,
-	z
-);
-
 struct _Face 
 {
 	unsigned short v0;
 	unsigned short v1;
 	unsigned short v2;
 };
-
-BOOST_FUSION_ADAPT_STRUCT(_Face,
-	v0,
-	v1,
-	v2
-);
 
 struct _MFace 
 {
@@ -130,25 +68,12 @@ struct _MFace
 	long color;
 };
 
-BOOST_FUSION_ADAPT_STRUCT(_MFace,
-	face,
-	normal,
-	flags,
-	color
-);
-
 struct _Position 
 {
 	short x;
 	short y;
 	short z;
 };
-
-BOOST_FUSION_ADAPT_STRUCT(_Position,
-	x,
-	y,
-	z
-);
 
 struct _HFace 
 {
@@ -161,16 +86,6 @@ struct _HFace
 	unsigned short n0;
 };
 
-BOOST_FUSION_ADAPT_STRUCT(_HFace,
-	v0,
-	v1,
-	v2,
-	attr,
-	pad,
-	normal,
-	n0
-);
-
 struct _HSphere 
 {
 	long attr;
@@ -181,16 +96,6 @@ struct _HSphere
 	unsigned short radius;
 	unsigned long radiusSquared;
 };
-
-BOOST_FUSION_ADAPT_STRUCT(_HSphere,
-	attr,
-	id,
-	rank,
-	pad,
-	position,
-	radius,
-	radiusSquared
-);
 
 struct _HBox 
 {
@@ -211,23 +116,27 @@ struct _HBox
 	short refMaxZ;
 };
 
-BOOST_FUSION_ADAPT_STRUCT(_HBox,
-	flags,
-	id,
-	rank,
-	minX,
-	minY,
-	minZ,
-	maxX,
-	maxY,
-	maxZ,
-	refMinX,
-	refMinY,
-	refMinZ,
-	refMaxX,
-	refMaxY,
-	refMaxZ
-);
+struct _HInfo64
+{
+	long numHFaces;
+	union
+	{
+		struct _HFace* hfaceList;
+		unsigned long long hfaceList_;
+	};
+	long numHSpheres;
+	union
+	{
+		struct _HSphere* hsphereList;
+		unsigned long long hsphereList_;
+	};
+	long numHBoxes;
+	union
+	{
+		struct _HBox* hboxList;
+		unsigned long long hboxList_;
+	};
+};
 
 struct _HInfo
 {
@@ -239,14 +148,23 @@ struct _HInfo
 	struct _HBox* hboxList;
 };
 
-BOOST_FUSION_ADAPT_STRUCT(_HInfo,
-	numHFaces,
-	hfaceList,
-	numHSpheres,
-	hsphereList,
-	numHBoxes,
-	hboxList
-);
+struct _Segment64
+{
+	long flags;
+	short firstTri;
+	short lastTri;
+	short firstVertex;
+	short lastVertex;
+	short px;
+	short py;
+	short pz;
+	short parent;
+	union
+	{
+		struct _HInfo64* hInfo;
+		unsigned long long hInfo_;
+	};
+};
 
 struct _Segment
 {
@@ -262,18 +180,16 @@ struct _Segment
 	struct _HInfo* hInfo;
 };
 
-BOOST_FUSION_ADAPT_STRUCT(_Segment,
-	flags,
-	firstTri,
-	lastTri,
-	firstVertex,
-	lastVertex,
-	px,
-	py,
-	pz,
-	parent,
-	hInfo
-);
+struct AniTexInfo64
+{
+	union
+	{
+		struct TextureMT3* texture;
+		unsigned long long texture_;
+	};
+	long numFrames;
+	long speed;
+};
 
 struct AniTexInfo
 {
@@ -282,22 +198,11 @@ struct AniTexInfo
 	long speed;
 };
 
-BOOST_FUSION_ADAPT_STRUCT(AniTexInfo,
-	texture,
-	numFrames,
-	speed
-);
-
 struct AniTex
 {
 	long numAniTextues;
 	struct AniTexInfo aniTexInfo;
 };
-
-BOOST_FUSION_ADAPT_STRUCT(AniTex,
-	numAniTextues,
-	aniTexInfo
-);
 
 struct vecS
 {
@@ -306,24 +211,12 @@ struct vecS
 	short z;
 };
 
-BOOST_FUSION_ADAPT_STRUCT(vecS,
-	x,
-	y,
-	z
-);
-
 struct vecL
 {
 	long x;
 	long y;
 	long z;
 };
-
-BOOST_FUSION_ADAPT_STRUCT(vecL,
-	x,
-	y,
-	z
-);
 
 struct SplineKey
 {
@@ -333,12 +226,17 @@ struct SplineKey
 	struct vecL ds;
 };
 
-BOOST_FUSION_ADAPT_STRUCT(SplineKey,
-	count,
-	point,
-	dd,
-	ds
-);
+struct Spline64
+{
+	union
+	{
+		struct SplineKey* key;
+		unsigned long long key_;
+	};
+	short numkeys;
+	unsigned char type;
+	unsigned char flags;
+};
 
 struct Spline
 {
@@ -348,26 +246,13 @@ struct Spline
 	unsigned char flags;
 };
 
-BOOST_FUSION_ADAPT_STRUCT(Spline,
-	key,
-	numkeys,
-	type,
-	flags
-);
-
-struct _G2Quat_Type {
+struct _G2Quat_Type 
+{
 	short x;
 	short y;
 	short z;
 	short w;
 };
-
-BOOST_FUSION_ADAPT_STRUCT(_G2Quat_Type,
-	x,
-	y,
-	z,
-	w
-);
 
 struct SplineRotKey
 {
@@ -375,25 +260,17 @@ struct SplineRotKey
 	struct _G2Quat_Type q;
 };
 
-BOOST_FUSION_ADAPT_STRUCT(SplineRotKey,
-	count,
-	q
-);
-
 struct RSpline
 {
-	struct SplineRotKey* key;
+	union
+	{
+		struct SplineRotKey* key;
+		unsigned long long key_;
+	};
 	short numkeys;
 	unsigned char type;
 	unsigned char flags;
 };
-
-BOOST_FUSION_ADAPT_STRUCT(RSpline,
-	key,
-	numkeys,
-	type,
-	flags
-);
 
 struct SplineDef 
 {
@@ -402,22 +279,40 @@ struct SplineDef
 	long fracCurr;
 };
 
-BOOST_FUSION_ADAPT_STRUCT(SplineDef,
-	currkey,
-	denomFlag,
-	fracCurr,
-);
-
 struct MATRIX
 {
 	short m[3][3];
 	long t[3];
 };
 
-BOOST_FUSION_ADAPT_STRUCT(MATRIX,
-	m,
-	t,
-);
+struct MultiSpline64
+{
+	union
+	{
+		struct Spline* positional;
+		unsigned long long positional_;
+	};
+	union
+	{
+		struct RSpline* rotational;
+		unsigned long long rotational_;
+	};
+	union
+	{
+		struct Spline* scaling;
+		unsigned long long scaling_;
+	};
+	union
+	{
+		struct Spline* color;
+		unsigned long long color_;
+	};
+	struct SplineDef curPositional;
+	struct SplineDef curRotational;
+	struct SplineDef curScaling;
+	struct SplineDef curColor;
+	struct MATRIX curRotMatrix;
+};
 
 struct MultiSpline
 {
@@ -432,19 +327,59 @@ struct MultiSpline
 	struct MATRIX curRotMatrix;
 };
 
-BOOST_FUSION_ADAPT_STRUCT(MultiSpline,
-	positional,
-	rotational,
-	scaling,
-	color,
-	curPositional,
-	curRotational,
-	curScaling,
-	curColor,
-	curRotMatrix
-);
 
-struct _Model 
+struct _Model64
+{
+	long numVertices;
+	union
+	{
+		struct _MVertex* vertexList;
+		unsigned long long vertexList_;
+	};
+	long numNormals;
+	union
+	{
+		struct _SVectorNoPad* normalList;
+		unsigned long long normalList_;
+	};
+	long numFaces;
+	union
+	{
+		struct _MFace* faceList;
+		unsigned long long faceList_;
+	};
+	long numSegments;
+	union
+	{
+		struct _Segment* segmentList;
+		unsigned long long segmentList_;
+	};
+	union
+	{
+		struct AniTex* aniTextures;
+		unsigned long long aniTextures_;
+	};
+	short maxRad;
+	short pad;
+	long maxRadSq;
+	union
+	{
+		struct MultiSpline* multiSpline;
+		unsigned long long multiSpline_;
+	};
+	union
+	{
+		struct TextureMT3* startTextures;
+		unsigned long long startTextures_;
+	};
+	union
+	{
+		struct TextureMT3* endTextures;
+		unsigned long long endTextures_;
+	};
+};
+
+struct _Model
 {
 	long numVertices;
 	struct _MVertex* vertexList;
@@ -463,23 +398,112 @@ struct _Model
 	struct TextureMT3* endTextures;
 };
 
-BOOST_FUSION_ADAPT_STRUCT(_Model,
-	numVertices,
-	vertexList,
-	numNormals,
-	normalList,
-	numFaces,
-	faceList,
-	numSegments,
-	segmentList,
-	aniTextures,
-	maxRad,
-	pad,
-	maxRadSq,
-	multiSpline,
-	startTextures,
-	endTextures
-);
+struct _G2AnimFxHeader_Type 
+{
+	unsigned char sizeAndSection;
+	char type;
+	unsigned short keyframeID;
+};
+
+struct _G2AnimKeylist_Type64
+{
+	unsigned char sectionCount;
+	unsigned char s0TailTime;
+	unsigned char s1TailTime;
+	unsigned char s2TailTime;
+	unsigned short keyCount;
+	short timePerKey;
+	unsigned short pad00;
+	short pad01;
+	unsigned short pad10;
+	short pad11;
+	union
+	{
+		struct _G2AnimFxHeader_Type* fxList;
+		unsigned long long fxList_;
+	};
+	unsigned short* sectionData[0];
+};
+
+struct _G2AnimKeylist_Type 
+{
+	unsigned char sectionCount;
+	unsigned char s0TailTime;
+	unsigned char s1TailTime;
+	unsigned char s2TailTime;
+	unsigned short keyCount;
+	short timePerKey;
+	unsigned short pad00;
+	short pad01;
+	unsigned short pad10;
+	short pad11;
+	struct _G2AnimFxHeader_Type* fxList;
+	unsigned short* sectionData[0];
+};
+
+struct Object64
+{
+	long oflags;
+	short id;
+	short sfxFileHandle;
+	short numModels;
+	short numAnims;
+	union
+	{
+		struct _Model** modelList;
+		unsigned long long modelList_;
+	};
+	union
+	{
+		struct _G2AnimKeylist_Type** animList;
+		unsigned long long animList_;
+	};
+	short introDist;
+	short vvIntroDist;
+	short removeDist;
+	short vvRemoveDist;
+	union
+	{
+		int* data;
+		unsigned long long data_;
+	};
+	union
+	{
+		char* script;
+		unsigned long long script_;
+	};
+	union
+	{
+		char* name;
+		unsigned long long name_;
+	};
+	union
+	{
+		int* soundData;
+		unsigned long long soundData_;
+	};
+	long oflags2;
+	short sectionA;
+	short sectionB;
+	short sectionC;
+	short numberOfEffects;
+	union
+	{
+		int* effectList;
+		unsigned long long effectList_;
+	};
+	union
+	{
+		long* relocList;
+		unsigned long long relocList_;
+	};
+	union
+	{
+		int* relocModule;
+		unsigned long long relocModule_;
+	};
+	struct VramSize vramSize;
+};
 
 struct Object
 {
@@ -489,14 +513,14 @@ struct Object
 	short numModels;
 	short numAnims;
 	struct _Model** modelList;
-	int** animList;
+	struct _G2AnimKeylist_Type** animList;
 	short introDist;
 	short vvIntroDist;
 	short removeDist;
 	short vvRemoveDist;
 	int* data;
-	CString* script;
-	CString* name;
+	char* script;
+	char* name;
 	int* soundData;
 	long oflags2;
 	short sectionA;
@@ -508,30 +532,3 @@ struct Object
 	int* relocModule;
 	struct VramSize vramSize;
 };
-
-BOOST_FUSION_ADAPT_STRUCT(Object, 
-	oflags, 
-	id, 
-	sfxFileHandle, 
-	numModels, 
-	numAnims, 
-	modelList, 
-	animList, 
-	introDist,
-	vvIntroDist,
-	removeDist,
-	vvRemoveDist,
-	data,
-	script,
-	name,
-	soundData,
-	oflags2,
-	sectionA,
-	sectionB,
-	sectionC,
-	numberOfEffects,
-	effectList,
-	relocList,
-	relocModule,
-	vramSize
-);
