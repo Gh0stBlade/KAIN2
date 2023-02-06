@@ -389,7 +389,7 @@ void G2Anim_GetSegChannelValue(struct _G2Anim_Type* anim, int segIndex, unsigned
 
 	_G2Anim_ApplyControllersToStoredFrame(anim);
 
-	chanFinalValue = &_segValues[segIndex];
+	chanFinalValue = (unsigned short*)&_segValues[segIndex];
 
 	while (channelMask != 0)
 	{
