@@ -10,12 +10,6 @@ ${PROJECT_NAME}
 ${TOOL_SRCS}
 ${KAIN2_SRCS}
 )
-
-set(BOOST_ROOT C:/local/boost_1_81_0)
-find_package(Boost REQUIRED)
-
-include_directories(${Boost_INCLUDE_DIRS})  
-target_link_libraries(${PROJECT_NAME} ${Boost_LIBRARIES})
 	
 set_target_properties(
 ${PROJECT_NAME} PROPERTIES OUTPUT_NAME "ShiftGlyph"
