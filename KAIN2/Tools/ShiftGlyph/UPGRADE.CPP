@@ -1,13 +1,14 @@
 #include "UPGRADE.H"
 
-#define TOOLS
-#include "Game/gex2.h"
-#include "Game/CORE.H"
-#include "Game/VRAM.H"
-#include "Game/G2TYPES.H"
 #include <stdio.h>
 #include <string>
 #include <assert.h>
+#include <iostream>
+
+#include "OBJECT.H"
+
+#include "boost/pfr/core.hpp"
+#include <sstream>
 
 enum DrmFileType : int
 {
@@ -69,29 +70,62 @@ void UPGRADE_Relocate(struct RedirectList* redirectList, long* data, long* baseA
 	}
 }
 
-template <class T>
-void UPGRADE_DumpStruct()
-{
+int dec_indents = 0;
 
+void UPGRADE_ObjectNew(struct RedirectList* redirectList, long* data, long* baseAddr, unsigned int fileSize, char* filePath)
+{
+	struct Object* object;
+	UPGRADE_Relocate(redirectList, data, baseAddr);
+
+	FILE_OpenWrite("TEMP.DRM");
+
+	int numPointerTypes = 0;// UPGRADE_CountPointerTypes<Object>::
 }
 
 void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAddr, unsigned int fileSize, char* filePath)
 {
 	struct Object* object;
-
 	UPGRADE_Relocate(redirectList, data, baseAddr);
 
+	FILE_OpenWrite("TEMP.DRM");
+
+	//Object Pass 1
+	FILE_PushSeek(2048);
 	object = (struct Object*)data;
+	UPGRADE_BaseDump<Object>::decode(*object);
+	FILE_PopSeek();
 
-	UPGRADE_DumpStruct<Object>();
+	//Object Pass 2
+	FILE_PushSeek(2048);
+	object = (struct Object*)data;
+	UPGRADE_DTPDump<Object>::decode(*object);
+	FILE_PopSeek();
 
-	int testing = 0;
-	testing++;
+	//Models
+	for (int i = 0; i < object->numModels; i++)
+	{
+		FILE_PushSeekEnd();
+		UPGRADE_BaseDump<_Model>::decode(*object->modelList[i]);
+		
+		for (int j = 0; j < object->modelList[i]->numVertices; j++)
+		{
+			FILE_PushSeekEnd();
+			UPGRADE_BaseDump<_MVertex>::decode(object->modelList[i]->vertexList[j]);
+			FILE_PopSeek();
+		}
+
+		UPGRADE_DTPDump<_Model>::decode(*object->modelList[i]);
+		FILE_PopSeek();
+	}
+
+	fseek(g_fileHandle, 0, SEEK_SET);
+	fwrite(&g_lastRelocIndex, sizeof(unsigned int), 1, g_fileHandle);
+	fclose(g_fileHandle);
+	g_fileHandle = NULL;
 }
 
 void UPGRADE_ProcessRedirectList(long* data, unsigned int fileSize, char* filePath, DrmFileType fileType)
 {
-	long* lastMoveDest;
 	long tableSize;
 	struct RedirectList redirectListX;
 	struct RedirectList* redirectList;
