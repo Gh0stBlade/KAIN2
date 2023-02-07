@@ -1,15 +1,5 @@
 #pragma once
 
-#include "META.H"
-
-enum DTPFlags : int
-{
-	DTP_FLAGS_NONE               = 0,
-	DTP_FLAGS_BASE_TYPE    = (1 << 0),
-	DTP_FLAGS_DTP          = (1 << 1),
-};
-
-
 struct VramSize 
 {
 	short x;
@@ -422,7 +412,11 @@ struct _G2AnimKeylist_Type64
 		struct _G2AnimFxHeader_Type* fxList;
 		unsigned long long fxList_;
 	};
-	unsigned short* sectionData[0];
+	union
+	{
+		unsigned short* sectionData[3];
+		unsigned long long sectionData_[3];
+	};
 };
 
 struct _G2AnimKeylist_Type 
@@ -438,7 +432,7 @@ struct _G2AnimKeylist_Type
 	unsigned short pad10;
 	short pad11;
 	struct _G2AnimFxHeader_Type* fxList;
-	unsigned short* sectionData[0];
+	unsigned short* sectionData[3];
 };
 
 struct Object64

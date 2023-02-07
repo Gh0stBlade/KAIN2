@@ -274,6 +274,7 @@ void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAdd
 		if (model->startTextures != NULL && model->endTextures != NULL)
 		{
 			relocationTable.push_back(offsetOfModel + offsetof(_Model64, startTextures));
+
 			Delocate<TextureMT3*>::DumpStruct(model->startTextures, sizeof(struct TextureMT3*), offsetOfModel + offsetof(_Model64, startTextures), f);
 
 			for (struct TextureMT3* currentTexture = model->startTextures; currentTexture < model->endTextures; currentTexture++)
@@ -294,10 +295,61 @@ void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAdd
 	for (int i = 0; i < object->numAnims; i++)
 	{
 		struct _G2AnimKeylist_Type* anim = object->animList[i];
+		struct _G2AnimKeylist_Type* nextAnim = object->animList[i + 1];
+
+		if (i + 1 == object->numAnims)
+		{
+			nextAnim = (struct _G2AnimKeylist_Type*)object->data;
+		}
 
 		unsigned int offsetOfAnim = ftell(f);
-	
-		Delocate<_G2AnimKeylist_Type>::DumpRaw(anim, sizeof(struct _G2AnimKeylist_Type), offsetOfAnim, f);
+
+		Delocate<unsigned char>::DumpRaw(&anim->sectionCount, sizeof(unsigned char), offsetOfAnim + offsetof(struct _G2AnimKeylist_Type64, sectionCount), f);
+		Delocate<unsigned char>::DumpRaw(&anim->s0TailTime, sizeof(unsigned char), offsetOfAnim + offsetof(struct _G2AnimKeylist_Type64, s0TailTime), f);
+		Delocate<unsigned char>::DumpRaw(&anim->s1TailTime, sizeof(unsigned char), offsetOfAnim + offsetof(struct _G2AnimKeylist_Type64, s1TailTime), f);
+		Delocate<unsigned char>::DumpRaw(&anim->s2TailTime, sizeof(unsigned char), offsetOfAnim + offsetof(struct _G2AnimKeylist_Type64, s2TailTime), f);
+		Delocate<unsigned short>::DumpRaw(&anim->keyCount, sizeof(unsigned short), offsetOfAnim + offsetof(struct _G2AnimKeylist_Type64, keyCount), f);
+		Delocate<short>::DumpRaw(&anim->timePerKey, sizeof(short), offsetOfAnim + offsetof(struct _G2AnimKeylist_Type64, timePerKey), f);
+		Delocate<unsigned short>::DumpRaw(&anim->pad00, sizeof(unsigned short), offsetOfAnim + offsetof(struct _G2AnimKeylist_Type64, pad00), f);
+		Delocate<short>::DumpRaw(&anim->pad01, sizeof(short), offsetOfAnim + offsetof(struct _G2AnimKeylist_Type64, pad01), f);
+		Delocate<unsigned short>::DumpRaw(&anim->pad10, sizeof(unsigned short), offsetOfAnim + offsetof(struct _G2AnimKeylist_Type64, pad10), f);
+		Delocate<short>::DumpRaw(&anim->pad11, sizeof(short), offsetOfAnim + offsetof(struct _G2AnimKeylist_Type64, pad11), f);
+
+		if (anim->fxList != NULL)
+		{
+			relocationTable.push_back(offsetOfAnim + offsetof(_G2AnimKeylist_Type64, fxList));
+
+			Delocate<_G2AnimFxHeader_Type*>::DumpStruct(anim->fxList, sizeof(_G2AnimFxHeader_Type*), offsetOfAnim + offsetof(_G2AnimKeylist_Type64, fxList), f);
+		}
+		else
+		{
+			Delocate<unsigned long long>::DumpRaw(&NULL_PTR, sizeof(unsigned long long), offsetOfAnim + offsetof(_G2AnimKeylist_Type64, fxList), f);
+		}
+
+		for (int j = 0; j < 3; j++)
+		{
+			Delocate<unsigned long long>::DumpRaw(&NULL_PTR, sizeof(unsigned long long), offsetOfAnim + offsetof(_G2AnimKeylist_Type64, sectionData_[j]), f);
+		}
+
+		for (int j = 0; j < anim->sectionCount; j++)
+		{
+			unsigned short* pCurrentSection = anim->sectionData[j];
+			unsigned short* pNextSection = anim->sectionData[j + 1];
+
+			if (pCurrentSection != NULL)
+			{
+				if (j + 1 == anim->sectionCount)
+				{
+					pNextSection = (unsigned short*)nextAnim;
+				}
+
+				relocationTable.push_back(offsetOfAnim + offsetof(_G2AnimKeylist_Type64, sectionData_[j]));
+				Delocate<unsigned short*>::DumpStruct(anim->sectionData[j], sizeof(unsigned short*), offsetOfAnim + offsetof(_G2AnimKeylist_Type64, sectionData_[j]), f);
+
+				unsigned int sectionSize = (pNextSection - pCurrentSection) * sizeof(unsigned short);
+				Delocate<unsigned short>::DumpRaw(pCurrentSection, sectionSize, ftell(f), f);
+			}
+		}
 
 		unsigned int offsetOfEnd = ftell(f);
 
@@ -330,7 +382,12 @@ void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAdd
 		long relocCount = relocationTable.size();
 		fwrite(&relocCount, sizeof(long), 1, f);
 		fwrite(&relocationTable[0], sizeof(unsigned int) * relocationTable.size(), 1, f);
-		fseek(f, ((relocationTable.size() * 512))-1, SEEK_SET);
+		
+		unsigned int tableSize = (relocationTable.size() + 512 < 0) ? (relocationTable.size() + 1023) : (relocationTable.size() + 512);
+		tableSize /= 512;
+		tableSize *= 512;
+
+		fseek(f, tableSize * sizeof(unsigned int) - 1, SEEK_SET);
 		char dummy = 0;
 		fwrite(&dummy, sizeof(dummy), 1, f);
 	}
