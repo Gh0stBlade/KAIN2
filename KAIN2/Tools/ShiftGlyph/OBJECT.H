@@ -1,6 +1,19 @@
 #pragma once
 
-struct VramSize 
+#include "RAZIEL.H"
+#include "GLYPH.H"
+#include "MONSTER.H"
+
+enum ObjectType : int
+{
+	OBJ_NONE,
+	OBJ_PLAYER,
+	OBJ_GLYPH,
+	OBJ_MONSTER,
+	OBJ_OVERLAY
+};
+
+struct VramSize
 {
 	short x;
 	short y;
@@ -191,7 +204,7 @@ struct AniTexInfo
 struct AniTex
 {
 	long numAniTextues;
-	struct AniTexInfo aniTexInfo;
+	struct AniTexInfo aniTexInfo[1];
 };
 
 struct vecS

@@ -116,6 +116,21 @@ struct Delocate
 		}
 	}
 
+	static inline void DumpIndexed(T* t, int size, int offset, unsigned int arrayStart, int index, FILE* f)
+	{
+		if (f != NULL)
+		{
+			long long currentOffset = arrayStart + (index * size);
+
+			if (offset != -1)
+			{
+				fseek(f, offset, SEEK_SET);
+				fwrite(&currentOffset, sizeof(long long), 1, f);
+			}
+			fseek(f, 0, SEEK_END);
+		}
+	}
+
 	static inline void DumpRaw(T* t, int size, int offset, FILE* f)
 	{
 		if (f != NULL)
@@ -135,7 +150,22 @@ struct Delocate
 			}
 		}
 	}
+
 };
+
+enum ObjectType UPGRADE_GetObjectType(char* objectName)
+{
+	if (!strcmp(objectName, "raziel__"))
+	{
+		return ObjectType::OBJ_PLAYER;
+	}
+	else if (!strcmp(objectName, "glphicon"))
+	{
+		return ObjectType::OBJ_GLYPH;
+	}
+
+	return ObjectType::OBJ_NONE;
+}
 
 void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAddr, unsigned int fileSize, char* filePath)
 {
@@ -244,6 +274,8 @@ void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAdd
 
 		relocationTable.push_back(offsetOfModel + offsetof(_Model64, segmentList));
 	
+		unsigned int offsetOfTextures = -1;
+
 		for (int j = 0; j < model->numSegments; j++)
 		{
 			struct _Segment* segment = &model->segmentList[j];
@@ -270,12 +302,18 @@ void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAdd
 				Delocate<unsigned long long>::DumpRaw(&NULL_PTR, sizeof(unsigned long long), offsetOfSegment + offsetof(_Segment64, hInfo), f);
 			}
 		}
+		
 
 		if (model->startTextures != NULL && model->endTextures != NULL)
 		{
 			relocationTable.push_back(offsetOfModel + offsetof(_Model64, startTextures));
 
 			Delocate<TextureMT3*>::DumpStruct(model->startTextures, sizeof(struct TextureMT3*), offsetOfModel + offsetof(_Model64, startTextures), f);
+
+			if (offsetOfTextures == -1)
+			{
+				offsetOfTextures = ftell(f);
+			}
 
 			for (struct TextureMT3* currentTexture = model->startTextures; currentTexture < model->endTextures; currentTexture++)
 			{
@@ -290,6 +328,38 @@ void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAdd
 			Delocate<unsigned long long>::DumpRaw(&NULL_PTR, sizeof(unsigned long long), offsetOfModel + offsetof(_Model64, startTextures), f);
 			Delocate<unsigned long long>::DumpRaw(&NULL_PTR, sizeof(unsigned long long), offsetOfModel + offsetof(_Model64, endTextures), f);
 		}
+
+		if (model->aniTextures != NULL)
+		{
+			relocationTable.push_back(offsetOfModel + offsetof(_Model64, aniTextures));
+			Delocate<struct AniTex>::DumpStruct(model->aniTextures, sizeof(struct AniTex*), offsetOfModel + offsetof(_Model64, aniTextures), f);
+
+			for (int j = 0; j < model->aniTextures->numAniTextues; j++)
+			{
+				unsigned int offsetOfAniTexture = ftell(f);
+
+				struct AniTexInfo* aniTexture = &model->aniTextures->aniTexInfo[j];
+
+				if (aniTexture->texture != NULL)
+				{
+					relocationTable.push_back(offsetOfModel + offsetof(_Model64, aniTextures));
+
+					Delocate<struct TextureMT3>::DumpIndexed(aniTexture->texture, sizeof(struct TextureMT3), offsetOfAniTexture + offsetof(AniTexInfo64, texture), offsetOfTextures, aniTexture->texture - model->startTextures, f);
+				}
+				else
+				{
+					Delocate<unsigned long long>::DumpRaw(&NULL_PTR, sizeof(unsigned long long), offsetOfAniTexture + offsetof(AniTexInfo64, texture), f);
+				}
+				Delocate<long>::DumpRaw(&aniTexture->numFrames, sizeof(long), offsetOfAniTexture + offsetof(AniTexInfo64, numFrames), f);
+				Delocate<long>::DumpRaw(&aniTexture->speed, sizeof(long), offsetOfAniTexture + offsetof(AniTexInfo64, speed), f);
+
+
+			}
+		}
+		else
+		{
+			Delocate<unsigned long long>::DumpRaw(&NULL_PTR, sizeof(unsigned long long), offsetOfModel + offsetof(_Model64, normalList), f);
+		}
 	}
 
 	for (int i = 0; i < object->numAnims; i++)
@@ -303,6 +373,9 @@ void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAdd
 		}
 
 		unsigned int offsetOfAnim = ftell(f);
+
+		relocationTable.push_back(offsetAnimList - ((object->numAnims - i) * sizeof(long long)));
+		Delocate<_G2AnimKeylist_Type>::DumpStruct(object->animList, sizeof(struct _G2AnimKeylist_Type**)* object->numAnims, offsetAnimList - ((object->numAnims - i) * sizeof(long long)), f, object->numAnims);
 
 		Delocate<unsigned char>::DumpRaw(&anim->sectionCount, sizeof(unsigned char), offsetOfAnim + offsetof(struct _G2AnimKeylist_Type64, sectionCount), f);
 		Delocate<unsigned char>::DumpRaw(&anim->s0TailTime, sizeof(unsigned char), offsetOfAnim + offsetof(struct _G2AnimKeylist_Type64, s0TailTime), f);
@@ -331,6 +404,11 @@ void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAdd
 			Delocate<unsigned long long>::DumpRaw(&NULL_PTR, sizeof(unsigned long long), offsetOfAnim + offsetof(_G2AnimKeylist_Type64, sectionData_[j]), f);
 		}
 
+		char* pFirstSection = (char*)(anim + 1);
+		char* pNextSection = (char*)anim->sectionData[0];
+
+		Delocate<char>::DumpRaw(pFirstSection, pNextSection - pFirstSection, ftell(f), f);
+
 		for (int j = 0; j < anim->sectionCount; j++)
 		{
 			unsigned short* pCurrentSection = anim->sectionData[j];
@@ -353,10 +431,34 @@ void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAdd
 
 		unsigned int offsetOfEnd = ftell(f);
 
-		relocationTable.push_back(offsetAnimList - ((object->numAnims - i) * sizeof(long long)));
-		Delocate<_G2AnimKeylist_Type>::DumpStruct(object->animList, sizeof(struct _G2AnimKeylist_Type**) * object->numAnims, offsetAnimList - ((object->numAnims - i) * sizeof(long long)), f, object->numAnims);
-		
 		fseek(f, offsetOfEnd, SEEK_SET);
+	}
+
+	enum ObjectType objectType = UPGRADE_GetObjectType(object->name);
+
+	switch (objectType)
+	{
+	case ObjectType::OBJ_PLAYER:
+	{
+		struct RazielData* data = (struct RazielData*)object->data;
+
+
+		int testing = 0;
+		testing++;
+		break;
+	}
+	case ObjectType::OBJ_GLYPH:
+	{
+		struct _GlyphTuneData* data = (struct _GlyphTuneData*)object->data;
+
+		relocationTable.push_back(offsetof(Object64, data));
+		Delocate<struct _GlyphTuneData>::DumpStruct(data, sizeof(struct _GlyphTuneData), offsetof(Object64, data), f);
+
+		break;
+	}
+	default:
+		assert(false);
+		break;
 	}
 
 	if (object->relocModule != NULL)
