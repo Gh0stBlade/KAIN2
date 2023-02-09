@@ -51,6 +51,10 @@ extern void Emulator_ResetTouchInput();
 /* Hint which font glyphs to use for emulator touch UI, useful to use same font as game! */
 extern void Emulator_HintTouchFontUIButton(short tpage, short clut, short* x, short* y, int buttonIndex);
 
+extern uint64_t Emulator_GetPerformanceCounter();
+
+extern uint64_t Emulator_GetPerformanceFrequency();
+
 /* Used for PSP2 */
 #if defined(SN_TARGET_PSP2)
 

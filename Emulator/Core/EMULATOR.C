@@ -1898,8 +1898,6 @@ int Emulator_BeginScene()
 
 	
 #elif defined(PLATFORM_NX)
-	dynamic_vertex_buffer_index = 0;
-
 	Emulator_UpdateVRAM();
 	Emulator_BeginPass();
 	Emulator_SetVertexBuffer();
@@ -2423,6 +2421,26 @@ void Emulator_UpdateInput(int poll)
 #if !defined(__ANDROID__)
     ///@TODO SDL_NumJoysticks always reports > 0 for some reason on Android.
     //((unsigned short*)padData[0])[1] = UpdateKeyboardInput();
+#endif
+}
+
+uint64_t Emulator_GetPerformanceCounter()
+{
+#if defined(SDL2)
+	return SDL_GetPerformanceCounter();
+#else
+	nn::os::Tick tick = nn::os::GetSystemTick();
+	nn::TimeSpan timeSpan = nn::os::ConvertToTimeSpan(tick);
+	return timeSpan.GetMilliSeconds();
+#endif
+}
+
+uint64_t Emulator_GetPerformanceFrequency()
+{
+#if defined(SDL2)
+	return SDL_GetPerformanceFrequency();
+#else
+	return nn::os::GetSystemTickFrequency();
 #endif
 }
 

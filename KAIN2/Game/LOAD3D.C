@@ -34,7 +34,7 @@ void LOAD_CdSeekCallback(unsigned char intr, unsigned char *result)//Matching - 
 	{
 		loadStatus.state = 2;
 #if defined(PSXPC_VERSION)
-		crap1 = SDL_GetPerformanceCounter() / (SDL_GetPerformanceFrequency() / 1000000);
+		crap1 = Emulator_GetPerformanceCounter() / (Emulator_GetPerformanceFrequency() / 1000000);
 #else
 		crap1 = (GetRCnt(0xF2000000) & 0xFFFF) | (gameTimer << 16);
 #endif
@@ -214,7 +214,7 @@ void LOAD_CdReadReady(unsigned char intr, unsigned char *result)
 
 	loadStatus.sectorTime = TIMER_TimeDiff(crap35[0]);
 #if defined(PSXPC_VERSION)
-	crap35[0] = SDL_GetPerformanceCounter() / (SDL_GetPerformanceFrequency() / 1000000);
+	crap35[0] = Emulator_GetPerformanceCounter() / (Emulator_GetPerformanceFrequency() / 1000000);
 #else
 	crap35[0] = (GetRCnt(0xF2000000) & 0xFFFF) | (gameTimer << 16);
 #endif

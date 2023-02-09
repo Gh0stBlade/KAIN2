@@ -15,7 +15,7 @@ unsigned long TIMER_GetTimeMS()
 #endif
 {
 #if defined (PSXPC_VERSION)
-	return (1000 * SDL_GetPerformanceCounter()) / SDL_GetPerformanceFrequency();
+	return (1000 * Emulator_GetPerformanceCounter()) / Emulator_GetPerformanceFrequency();
 #elif defined(PSX_VERSION)
 	unsigned long ticks;
 	unsigned long mticks;
@@ -43,7 +43,7 @@ unsigned long TIMER_TimeDiff(unsigned long x)
 #endif
 {
 #if defined(PSXPC_VERSION)
-	return SDL_GetPerformanceCounter() / (SDL_GetPerformanceFrequency() / 1000000) - x;
+	return Emulator_GetPerformanceCounter() / (Emulator_GetPerformanceFrequency() / 1000000) - x;
 
 #elif defined(PSX_VERSION)
 	unsigned long intrs;

@@ -1075,7 +1075,7 @@ void GAMELOOP_FlipScreenAndDraw(struct GameTracker* gameTracker, unsigned long**
 	
 #if defined(PSXPC_VERSION)
 	gameTracker->drawTimerReturn = (unsigned long long*)&gameTracker->drawTime;
-	gameTracker->usecsStartDraw = SDL_GetPerformanceCounter() / (SDL_GetPerformanceFrequency() / 1000000);
+	gameTracker->usecsStartDraw = Emulator_GetPerformanceCounter() / (Emulator_GetPerformanceFrequency() / 1000000);
 #else
 	gameTracker->drawTimerReturn = (long*)&gameTracker->drawTime;
 	gameTracker->usecsStartDraw = (GetRCnt(0xF2000000) & 0xFFFF) | (gameTimer << 16);
@@ -1539,7 +1539,7 @@ void GAMELOOP_DisplayFrame(struct GameTracker* gameTracker)
 	GAMELOOP_SwitchTheDrawBuffer(drawot);
 
 #if defined(PSXPC_VERSION)
-	gameTracker->idleTime = SDL_GetPerformanceCounter() / (SDL_GetPerformanceFrequency() / 1000000);
+	gameTracker->idleTime = Emulator_GetPerformanceCounter() / (Emulator_GetPerformanceFrequency() / 1000000);
 #else
 	gameTracker->idleTime = (GetRCnt(0xF2000000) & 0xFFFF) | (gameTimer << 16);
 #endif
@@ -1577,7 +1577,7 @@ void GAMELOOP_DisplayFrame(struct GameTracker* gameTracker)
 #endif
 
 #if defined(PSXPC_VERSION)
-	gameTracker->usecsStartDraw = SDL_GetPerformanceCounter() / (SDL_GetPerformanceFrequency() / 1000000);
+	gameTracker->usecsStartDraw = Emulator_GetPerformanceCounter() / (Emulator_GetPerformanceFrequency() / 1000000);
 #else
 	gameTracker->usecsStartDraw = (GetRCnt(0xF2000000) & 0xFFFF) | (gameTimer << 16);
 #endif
@@ -2281,7 +2281,7 @@ void GAMELOOP_DoTimeProcess()
 	{
 		gameTrackerX.totalTime = TIMER_TimeDiff(gameTrackerX.currentTicks);
 
-		gameTrackerX.currentTicks = SDL_GetPerformanceCounter() / (SDL_GetPerformanceFrequency() / 1000000);
+		gameTrackerX.currentTicks = Emulator_GetPerformanceCounter() / (Emulator_GetPerformanceFrequency() / 1000000);
 
 		if (gameTrackerX.frameRateLock <= 0)
 		{

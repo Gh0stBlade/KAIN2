@@ -4177,7 +4177,7 @@ int SetStates(struct _Instance* instance, struct GameTracker* GT, long* controlC
 	Data1 = 0;
 
 #if defined(PSXPC_VERSION)
-	LastTime = SDL_GetPerformanceCounter() / (SDL_GetPerformanceFrequency() / 1000000);
+	LastTime = Emulator_GetPerformanceCounter() / (Emulator_GetPerformanceFrequency() / 1000000);
 #else
 	LastTime = (GetRCnt(0xF2000000) & 0xFFFF) | (gameTimer << 16);
 #endif
