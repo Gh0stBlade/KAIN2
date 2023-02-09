@@ -3,7 +3,7 @@
 #include "Core/Public/EMULATOR_PUBLIC.H"
 #include "Core/EMULATOR.H"
 
-#if defined(_WINDOWS)
+#if defined(_WINDOWS) && !defined(PLATFORM_NX_ARM)
 #include <d3d9.h>
 #endif
 
