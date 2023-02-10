@@ -69,89 +69,59 @@ void UPGRADE_Relocate(struct RedirectList* redirectList, long* data, long* baseA
 	}
 }
 
-template <typename T>
-struct identity
+void UPGRADE_DumpRaw(void* t, int size, int offset, FILE* f)
 {
-	using type = T;
-};
-
-template<typename T>
-struct remove_all_pointers : std::conditional_t<
-	std::is_pointer_v<T>,
-	remove_all_pointers<
-	std::remove_pointer_t<T>
-	>,
-	identity<T>
->
-{};
-
-template <typename T>
-struct Delocate
-{
-	static inline void DumpStruct(T t, int size, int offset, FILE* f)
+	if (f != NULL)
 	{
-		if (f != NULL)
-		{
-			long long currentOffset = ftell(f);
+		fseek(f, offset, SEEK_SET);
+		fwrite(t, size, 1, f);
+		fseek(f, 0, SEEK_END);
+	}
+}
 
+void UPGRADE_DumpStruct(void* t, int size, int offset, FILE* f)
+{
+	if (f != NULL)
+	{
+		long long currentOffset = ftell(f);
+
+		fwrite(t, size, 1, f);
+		if (offset != -1)
+		{
 			fseek(f, offset, SEEK_SET);
 			fwrite(&currentOffset, sizeof(long long), 1, f);
-			fseek(f, 0, SEEK_END);
 		}
+		fseek(f, 0, SEEK_END);
 	}
+}
 
-	static inline void DumpStruct(T* t, int size, int offset, FILE* f)
+void UPGRADE_DumpStructArray(void* t, int size, int offset, FILE* f)
+{
+	if (f != NULL)
 	{
-		if (f != NULL)
-		{
-			long long currentOffset = ftell(f);
+		long long currentOffset = ftell(f);
 
-			fwrite(t, size, 1, f);
-			if (offset != -1)
-			{
-				fseek(f, offset, SEEK_SET);
-				fwrite(&currentOffset, sizeof(long long), 1, f);
-			}
-			fseek(f, 0, SEEK_END);
-		}
+		fseek(f, offset, SEEK_SET);
+		fwrite(&currentOffset, sizeof(long long), 1, f);
+		fseek(f, 0, SEEK_END);
 	}
+}
 
-	static inline void DumpIndexed(T* t, int size, int offset, unsigned int arrayStart, int index, FILE* f)
+void UPGRADE_DumpIndexed(void* t, int size, int offset, unsigned int arrayStart, int index, FILE* f)
+{
+	if (f != NULL)
 	{
-		if (f != NULL)
-		{
-			long long currentOffset = arrayStart + (index * size);
+		long long currentOffset = arrayStart + (index * size);
 
-			if (offset != -1)
-			{
-				fseek(f, offset, SEEK_SET);
-				fwrite(&currentOffset, sizeof(long long), 1, f);
-			}
-			fseek(f, 0, SEEK_END);
-		}
-	}
-
-	static inline void DumpRaw(T* t, int size, int offset, FILE* f)
-	{
-		if (f != NULL)
+		if (offset != -1)
 		{
 			fseek(f, offset, SEEK_SET);
-			fwrite(t, size, 1, f);
+			fwrite(&currentOffset, sizeof(long long), 1, f);
 		}
-	}
 
-	static inline void DumpStruct(T** t, int size, int offset, FILE* f, int count)
-	{
-		if (f != NULL)
-		{
-			for (int i = 0; i < count; i++)
-			{
-				Delocate<remove_all_pointers<T>::type>::DumpStruct(*t[i], sizeof(remove_all_pointers<T>::type), offset, f);
-			}
-		}
+		fseek(f, 0, SEEK_END);
 	}
-
-};
+}
 
 enum ObjectType UPGRADE_GetObjectType(char* objectName)
 {
@@ -179,48 +149,42 @@ void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAdd
 	unsigned long long NULL_PTR = 0;
 	std::vector<unsigned int> relocationTable;
 
-	Delocate<long>::DumpRaw(&object->oflags, sizeof(long), offsetof(Object64, oflags), f);
-	Delocate<short>::DumpRaw(&object->id, sizeof(short), offsetof(Object64, id), f);
-	Delocate<short>::DumpRaw(&object->sfxFileHandle, sizeof(short), offsetof(Object64, sfxFileHandle), f);
-	Delocate<short>::DumpRaw(&object->numModels, sizeof(short), offsetof(Object64, numModels), f);
-	Delocate<short>::DumpRaw(&object->numAnims, sizeof(short), offsetof(Object64, numAnims), f);
+	UPGRADE_DumpRaw(&object->oflags, sizeof(long), offsetof(Object64, oflags), f);
+	UPGRADE_DumpRaw(&object->id, sizeof(short), offsetof(Object64, id), f);
+	UPGRADE_DumpRaw(&object->sfxFileHandle, sizeof(short), offsetof(Object64, sfxFileHandle), f);
+	UPGRADE_DumpRaw(&object->numModels, sizeof(short), offsetof(Object64, numModels), f);
+	UPGRADE_DumpRaw(&object->numAnims, sizeof(short), offsetof(Object64, numAnims), f);
 
-	Delocate<short>::DumpRaw(&object->introDist, sizeof(short), offsetof(Object64, introDist), f);
-	Delocate<short>::DumpRaw(&object->vvIntroDist, sizeof(short), offsetof(Object64, vvIntroDist), f);
-	Delocate<short>::DumpRaw(&object->removeDist, sizeof(short), offsetof(Object64, removeDist), f);
-	Delocate<short>::DumpRaw(&object->vvRemoveDist, sizeof(short), offsetof(Object64, vvRemoveDist), f);
+	UPGRADE_DumpRaw(&object->introDist, sizeof(short), offsetof(Object64, introDist), f);
+	UPGRADE_DumpRaw(&object->vvIntroDist, sizeof(short), offsetof(Object64, vvIntroDist), f);
+	UPGRADE_DumpRaw(&object->removeDist, sizeof(short), offsetof(Object64, removeDist), f);
+	UPGRADE_DumpRaw(&object->vvRemoveDist, sizeof(short), offsetof(Object64, vvRemoveDist), f);
 
-	Delocate<long>::DumpRaw(&object->oflags2, sizeof(long), offsetof(Object64, oflags2), f);
-	Delocate<short>::DumpRaw(&object->sectionA, sizeof(short), offsetof(Object64, sectionA), f);
-	Delocate<short>::DumpRaw(&object->sectionB, sizeof(short), offsetof(Object64, sectionB), f);
-	Delocate<short>::DumpRaw(&object->sectionC, sizeof(short), offsetof(Object64, sectionC), f);
+	UPGRADE_DumpRaw(&object->oflags2, sizeof(long), offsetof(Object64, oflags2), f);
+	UPGRADE_DumpRaw(&object->sectionA, sizeof(short), offsetof(Object64, sectionA), f);
+	UPGRADE_DumpRaw(&object->sectionB, sizeof(short), offsetof(Object64, sectionB), f);
+	UPGRADE_DumpRaw(&object->sectionC, sizeof(short), offsetof(Object64, sectionC), f);
 
-	Delocate<short>::DumpRaw(&object->numberOfEffects, sizeof(short), offsetof(Object64, numberOfEffects), f);
+	UPGRADE_DumpRaw(&object->numberOfEffects, sizeof(short), offsetof(Object64, numberOfEffects), f);
 
-	Delocate<VramSize>::DumpRaw(&object->vramSize, sizeof(struct VramSize), offsetof(Object64, vramSize), f);
+	UPGRADE_DumpRaw(&object->vramSize, sizeof(struct VramSize), offsetof(Object64, vramSize), f);
 
 	relocationTable.push_back(offsetof(Object64, script));
-	Delocate<char>::DumpStruct(object->script, 9, offsetof(Object64, script), f);
+	UPGRADE_DumpStruct(object->script, 9, offsetof(Object64, script), f);
 	
 	relocationTable.push_back(offsetof(Object64, name));
-	Delocate<char>::DumpStruct(object->name, 9, offsetof(Object64, name), f);
-
-	relocationTable.push_back(offsetof(Object64, modelList));
-	Delocate<_Model**>::DumpStruct(object->modelList, sizeof(_Model**) , offsetof(Object64, modelList), f);
+	UPGRADE_DumpStruct(object->name, 9, offsetof(Object64, name), f);
 
 	for (int i = 0; i < object->numModels; i++)
 	{
-		Delocate<unsigned long long>::DumpRaw(&NULL_PTR, sizeof(unsigned long long), ftell(f), f);
+		UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), ftell(f), f);
 	}
 
 	long offsetModelList = ftell(f);
 
-	relocationTable.push_back(offsetof(Object64, animList));
-	Delocate<_G2AnimKeylist_Type**>::DumpStruct(object->animList, sizeof(_G2AnimKeylist_Type**) * object->numAnims, offsetof(Object64, animList), f);
-
 	for (int i = 0; i < object->numAnims; i++)
 	{
-		Delocate<unsigned long long>::DumpRaw(&NULL_PTR, sizeof(unsigned long long),ftell(f), f);
+		UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long),ftell(f), f);
 	}
 
 	long offsetAnimList = ftell(f);
@@ -232,44 +196,48 @@ void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAdd
 		unsigned int offsetOfModel = ftell(f);
 
 		relocationTable.push_back(offsetModelList - ((object->numModels - i) * sizeof(long long)));
-		Delocate<_Model>::DumpStruct(object->modelList, sizeof(_Model**) * object->numModels, offsetModelList - ((object->numModels - i) * sizeof(long long)), f, object->numModels);
 
-		Delocate<long>::DumpRaw(&model->numVertices, sizeof(long), offsetOfModel + offsetof(_Model64, numVertices), f);
-		Delocate<long>::DumpRaw(&model->numNormals, sizeof(long), offsetOfModel + offsetof(_Model64, numNormals), f);
-		Delocate<long>::DumpRaw(&model->numFaces, sizeof(long), offsetOfModel + offsetof(_Model64, numFaces), f);
-		Delocate<long>::DumpRaw(&model->numSegments, sizeof(long), offsetOfModel + offsetof(_Model64, numSegments), f);
-		Delocate<short>::DumpRaw(&model->maxRad, sizeof(short), offsetOfModel + offsetof(_Model64, maxRad), f);
-		Delocate<short>::DumpRaw(&model->pad, sizeof(short), offsetOfModel + offsetof(_Model64, pad), f);
-		Delocate<long>::DumpRaw(&model->maxRadSq, sizeof(long), offsetOfModel + offsetof(_Model64, maxRadSq), f);
+		for (int i = 0; i < object->numModels; i++)
+		{
+			UPGRADE_DumpStruct(object->modelList[i], sizeof(_Model), offsetModelList - ((object->numModels - i) * sizeof(long long)), f);
+		}
+
+		UPGRADE_DumpRaw(&model->numVertices, sizeof(long), offsetOfModel + offsetof(_Model64, numVertices), f);
+		UPGRADE_DumpRaw(&model->numNormals, sizeof(long), offsetOfModel + offsetof(_Model64, numNormals), f);
+		UPGRADE_DumpRaw(&model->numFaces, sizeof(long), offsetOfModel + offsetof(_Model64, numFaces), f);
+		UPGRADE_DumpRaw(&model->numSegments, sizeof(long), offsetOfModel + offsetof(_Model64, numSegments), f);
+		UPGRADE_DumpRaw(&model->maxRad, sizeof(short), offsetOfModel + offsetof(_Model64, maxRad), f);
+		UPGRADE_DumpRaw(&model->pad, sizeof(short), offsetOfModel + offsetof(_Model64, pad), f);
+		UPGRADE_DumpRaw(&model->maxRadSq, sizeof(long), offsetOfModel + offsetof(_Model64, maxRadSq), f);
 
 		if (model->vertexList != NULL)
 		{
 			relocationTable.push_back(offsetOfModel + offsetof(_Model64, vertexList));
-			Delocate<_MVertex>::DumpStruct(model->vertexList, sizeof(struct _MVertex) * model->numVertices, offsetOfModel + offsetof(_Model64, vertexList), f);
+			UPGRADE_DumpStruct(model->vertexList, sizeof(struct _MVertex) * model->numVertices, offsetOfModel + offsetof(_Model64, vertexList), f);
 		}
 		else
 		{
-			Delocate<unsigned long long>::DumpRaw(&NULL_PTR, sizeof(unsigned long long), offsetOfModel + offsetof(_Model64, vertexList), f);
+			UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), offsetOfModel + offsetof(_Model64, vertexList), f);
 		}
 
 		if (model->faceList != NULL)
 		{
 			relocationTable.push_back(offsetOfModel + offsetof(_Model64, faceList));
-			Delocate<_MFace>::DumpStruct(model->faceList, sizeof(struct _MFace) * model->numFaces, offsetOfModel + offsetof(_Model64, faceList), f);
+			UPGRADE_DumpStruct(model->faceList, sizeof(struct _MFace) * model->numFaces, offsetOfModel + offsetof(_Model64, faceList), f);
 		}
 		else
 		{
-			Delocate<unsigned long long>::DumpRaw(&NULL_PTR, sizeof(unsigned long long), offsetOfModel + offsetof(_Model64, faceList), f);
+			UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), offsetOfModel + offsetof(_Model64, faceList), f);
 		}
 
 		if (model->normalList != NULL)
 		{
 			relocationTable.push_back(offsetOfModel + offsetof(_Model64, normalList));
-			Delocate<_SVectorNoPad>::DumpStruct(model->normalList, sizeof(struct _MVertex) * model->numNormals, offsetOfModel + offsetof(_Model64, normalList), f);
+			UPGRADE_DumpStruct(model->normalList, sizeof(struct _MVertex) * model->numNormals, offsetOfModel + offsetof(_Model64, normalList), f);
 		}
 		else
 		{
-			Delocate<unsigned long long>::DumpRaw(&NULL_PTR, sizeof(unsigned long long), offsetOfModel + offsetof(_Model64, normalList), f);
+			UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), offsetOfModel + offsetof(_Model64, normalList), f);
 		}
 
 		relocationTable.push_back(offsetOfModel + offsetof(_Model64, segmentList));
@@ -282,24 +250,24 @@ void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAdd
 
 			unsigned int offsetOfSegment = ftell(f);
 
-			Delocate<long>::DumpRaw(&segment->flags, sizeof(long), offsetOfSegment + offsetof(_Segment64, flags), f);
-			Delocate<short>::DumpRaw(&segment->firstTri, sizeof(short), offsetOfSegment + offsetof(_Segment64, firstTri), f);
-			Delocate<short>::DumpRaw(&segment->lastTri, sizeof(short), offsetOfSegment + offsetof(_Segment64, lastTri), f);
-			Delocate<short>::DumpRaw(&segment->firstVertex, sizeof(short), offsetOfSegment + offsetof(_Segment64, firstVertex), f);
-			Delocate<short>::DumpRaw(&segment->lastVertex, sizeof(short), offsetOfSegment + offsetof(_Segment64, lastVertex), f);
-			Delocate<short>::DumpRaw(&segment->px, sizeof(short), offsetOfSegment + offsetof(_Segment64, px), f);
-			Delocate<short>::DumpRaw(&segment->py, sizeof(short), offsetOfSegment + offsetof(_Segment64, py), f);
-			Delocate<short>::DumpRaw(&segment->pz, sizeof(short), offsetOfSegment + offsetof(_Segment64, pz), f);
-			Delocate<short>::DumpRaw(&segment->parent, sizeof(short), offsetOfSegment + offsetof(_Segment64, parent), f);
+			UPGRADE_DumpRaw(&segment->flags, sizeof(long), offsetOfSegment + offsetof(_Segment64, flags), f);
+			UPGRADE_DumpRaw(&segment->firstTri, sizeof(short), offsetOfSegment + offsetof(_Segment64, firstTri), f);
+			UPGRADE_DumpRaw(&segment->lastTri, sizeof(short), offsetOfSegment + offsetof(_Segment64, lastTri), f);
+			UPGRADE_DumpRaw(&segment->firstVertex, sizeof(short), offsetOfSegment + offsetof(_Segment64, firstVertex), f);
+			UPGRADE_DumpRaw(&segment->lastVertex, sizeof(short), offsetOfSegment + offsetof(_Segment64, lastVertex), f);
+			UPGRADE_DumpRaw(&segment->px, sizeof(short), offsetOfSegment + offsetof(_Segment64, px), f);
+			UPGRADE_DumpRaw(&segment->py, sizeof(short), offsetOfSegment + offsetof(_Segment64, py), f);
+			UPGRADE_DumpRaw(&segment->pz, sizeof(short), offsetOfSegment + offsetof(_Segment64, pz), f);
+			UPGRADE_DumpRaw(&segment->parent, sizeof(short), offsetOfSegment + offsetof(_Segment64, parent), f);
 
 			if (segment->hInfo != NULL)
 			{
 				relocationTable.push_back(offsetOfSegment + offsetof(_Segment64, hInfo));
-				Delocate<_HInfo>::DumpStruct(segment->hInfo, sizeof(struct _HInfo*), offsetOfSegment + offsetof(_Segment64, hInfo), f);
+				UPGRADE_DumpStruct(segment->hInfo, sizeof(struct _HInfo*), offsetOfSegment + offsetof(_Segment64, hInfo), f);
 			}
 			else
 			{
-				Delocate<unsigned long long>::DumpRaw(&NULL_PTR, sizeof(unsigned long long), offsetOfSegment + offsetof(_Segment64, hInfo), f);
+				UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), offsetOfSegment + offsetof(_Segment64, hInfo), f);
 			}
 		}
 		
@@ -308,7 +276,7 @@ void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAdd
 		{
 			relocationTable.push_back(offsetOfModel + offsetof(_Model64, startTextures));
 
-			Delocate<TextureMT3*>::DumpStruct(model->startTextures, sizeof(struct TextureMT3*), offsetOfModel + offsetof(_Model64, startTextures), f);
+			UPGRADE_DumpStruct(model->startTextures, sizeof(struct TextureMT3*), offsetOfModel + offsetof(_Model64, startTextures), f);
 
 			if (offsetOfTextures == -1)
 			{
@@ -317,22 +285,22 @@ void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAdd
 
 			for (struct TextureMT3* currentTexture = model->startTextures; currentTexture < model->endTextures; currentTexture++)
 			{
-				Delocate<TextureMT3>::DumpStruct(currentTexture, sizeof(struct TextureMT3), -1, f);
+				UPGRADE_DumpStruct(currentTexture, sizeof(struct TextureMT3), -1, f);
 			}
 
 			relocationTable.push_back(offsetOfModel + offsetof(_Model64, endTextures));
-			Delocate<TextureMT3*>::DumpStruct(model->endTextures, sizeof(struct TextureMT3*), offsetOfModel + offsetof(_Model64, endTextures), f);
+			UPGRADE_DumpStruct(model->endTextures, sizeof(struct TextureMT3*), offsetOfModel + offsetof(_Model64, endTextures), f);
 		}
 		else
 		{
-			Delocate<unsigned long long>::DumpRaw(&NULL_PTR, sizeof(unsigned long long), offsetOfModel + offsetof(_Model64, startTextures), f);
-			Delocate<unsigned long long>::DumpRaw(&NULL_PTR, sizeof(unsigned long long), offsetOfModel + offsetof(_Model64, endTextures), f);
+			UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), offsetOfModel + offsetof(_Model64, startTextures), f);
+			UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), offsetOfModel + offsetof(_Model64, endTextures), f);
 		}
 
 		if (model->aniTextures != NULL)
 		{
 			relocationTable.push_back(offsetOfModel + offsetof(_Model64, aniTextures));
-			Delocate<struct AniTex>::DumpStruct(model->aniTextures, sizeof(struct AniTex*), offsetOfModel + offsetof(_Model64, aniTextures), f);
+			UPGRADE_DumpStruct(model->aniTextures, sizeof(struct AniTex*), offsetOfModel + offsetof(_Model64, aniTextures), f);
 
 			for (int j = 0; j < model->aniTextures->numAniTextues; j++)
 			{
@@ -344,21 +312,21 @@ void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAdd
 				{
 					relocationTable.push_back(offsetOfModel + offsetof(_Model64, aniTextures));
 
-					Delocate<struct TextureMT3>::DumpIndexed(aniTexture->texture, sizeof(struct TextureMT3), offsetOfAniTexture + offsetof(AniTexInfo64, texture), offsetOfTextures, aniTexture->texture - model->startTextures, f);
+					UPGRADE_DumpIndexed(aniTexture->texture, sizeof(struct TextureMT3), offsetOfAniTexture + offsetof(AniTexInfo64, texture), offsetOfTextures, aniTexture->texture - model->startTextures, f);
 				}
 				else
 				{
-					Delocate<unsigned long long>::DumpRaw(&NULL_PTR, sizeof(unsigned long long), offsetOfAniTexture + offsetof(AniTexInfo64, texture), f);
+					UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), offsetOfAniTexture + offsetof(AniTexInfo64, texture), f);
 				}
-				Delocate<long>::DumpRaw(&aniTexture->numFrames, sizeof(long), offsetOfAniTexture + offsetof(AniTexInfo64, numFrames), f);
-				Delocate<long>::DumpRaw(&aniTexture->speed, sizeof(long), offsetOfAniTexture + offsetof(AniTexInfo64, speed), f);
+				UPGRADE_DumpRaw(&aniTexture->numFrames, sizeof(long), offsetOfAniTexture + offsetof(AniTexInfo64, numFrames), f);
+				UPGRADE_DumpRaw(&aniTexture->speed, sizeof(long), offsetOfAniTexture + offsetof(AniTexInfo64, speed), f);
 
 
 			}
 		}
 		else
 		{
-			Delocate<unsigned long long>::DumpRaw(&NULL_PTR, sizeof(unsigned long long), offsetOfModel + offsetof(_Model64, normalList), f);
+			UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), offsetOfModel + offsetof(_Model64, normalList), f);
 		}
 	}
 
@@ -375,39 +343,40 @@ void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAdd
 		unsigned int offsetOfAnim = ftell(f);
 
 		relocationTable.push_back(offsetAnimList - ((object->numAnims - i) * sizeof(long long)));
-		Delocate<_G2AnimKeylist_Type>::DumpStruct(object->animList, sizeof(struct _G2AnimKeylist_Type**)* object->numAnims, offsetAnimList - ((object->numAnims - i) * sizeof(long long)), f, object->numAnims);
 
-		Delocate<unsigned char>::DumpRaw(&anim->sectionCount, sizeof(unsigned char), offsetOfAnim + offsetof(struct _G2AnimKeylist_Type64, sectionCount), f);
-		Delocate<unsigned char>::DumpRaw(&anim->s0TailTime, sizeof(unsigned char), offsetOfAnim + offsetof(struct _G2AnimKeylist_Type64, s0TailTime), f);
-		Delocate<unsigned char>::DumpRaw(&anim->s1TailTime, sizeof(unsigned char), offsetOfAnim + offsetof(struct _G2AnimKeylist_Type64, s1TailTime), f);
-		Delocate<unsigned char>::DumpRaw(&anim->s2TailTime, sizeof(unsigned char), offsetOfAnim + offsetof(struct _G2AnimKeylist_Type64, s2TailTime), f);
-		Delocate<unsigned short>::DumpRaw(&anim->keyCount, sizeof(unsigned short), offsetOfAnim + offsetof(struct _G2AnimKeylist_Type64, keyCount), f);
-		Delocate<short>::DumpRaw(&anim->timePerKey, sizeof(short), offsetOfAnim + offsetof(struct _G2AnimKeylist_Type64, timePerKey), f);
-		Delocate<unsigned short>::DumpRaw(&anim->pad00, sizeof(unsigned short), offsetOfAnim + offsetof(struct _G2AnimKeylist_Type64, pad00), f);
-		Delocate<short>::DumpRaw(&anim->pad01, sizeof(short), offsetOfAnim + offsetof(struct _G2AnimKeylist_Type64, pad01), f);
-		Delocate<unsigned short>::DumpRaw(&anim->pad10, sizeof(unsigned short), offsetOfAnim + offsetof(struct _G2AnimKeylist_Type64, pad10), f);
-		Delocate<short>::DumpRaw(&anim->pad11, sizeof(short), offsetOfAnim + offsetof(struct _G2AnimKeylist_Type64, pad11), f);
+		UPGRADE_DumpStruct(object->animList[i], sizeof(struct _G2AnimKeylist_Type), offsetAnimList - ((object->numAnims - i) * sizeof(long long)), f);
+
+		UPGRADE_DumpRaw(&anim->sectionCount, sizeof(unsigned char), offsetOfAnim + offsetof(struct _G2AnimKeylist_Type64, sectionCount), f);
+		UPGRADE_DumpRaw(&anim->s0TailTime, sizeof(unsigned char), offsetOfAnim + offsetof(struct _G2AnimKeylist_Type64, s0TailTime), f);
+		UPGRADE_DumpRaw(&anim->s1TailTime, sizeof(unsigned char), offsetOfAnim + offsetof(struct _G2AnimKeylist_Type64, s1TailTime), f);
+		UPGRADE_DumpRaw(&anim->s2TailTime, sizeof(unsigned char), offsetOfAnim + offsetof(struct _G2AnimKeylist_Type64, s2TailTime), f);
+		UPGRADE_DumpRaw(&anim->keyCount, sizeof(unsigned short), offsetOfAnim + offsetof(struct _G2AnimKeylist_Type64, keyCount), f);
+		UPGRADE_DumpRaw(&anim->timePerKey, sizeof(short), offsetOfAnim + offsetof(struct _G2AnimKeylist_Type64, timePerKey), f);
+		UPGRADE_DumpRaw(&anim->pad00, sizeof(unsigned short), offsetOfAnim + offsetof(struct _G2AnimKeylist_Type64, pad00), f);
+		UPGRADE_DumpRaw(&anim->pad01, sizeof(short), offsetOfAnim + offsetof(struct _G2AnimKeylist_Type64, pad01), f);
+		UPGRADE_DumpRaw(&anim->pad10, sizeof(unsigned short), offsetOfAnim + offsetof(struct _G2AnimKeylist_Type64, pad10), f);
+		UPGRADE_DumpRaw(&anim->pad11, sizeof(short), offsetOfAnim + offsetof(struct _G2AnimKeylist_Type64, pad11), f);
 
 		if (anim->fxList != NULL)
 		{
 			relocationTable.push_back(offsetOfAnim + offsetof(_G2AnimKeylist_Type64, fxList));
 
-			Delocate<_G2AnimFxHeader_Type*>::DumpStruct(anim->fxList, sizeof(_G2AnimFxHeader_Type*), offsetOfAnim + offsetof(_G2AnimKeylist_Type64, fxList), f);
+			UPGRADE_DumpStruct(anim->fxList, sizeof(_G2AnimFxHeader_Type*), offsetOfAnim + offsetof(_G2AnimKeylist_Type64, fxList), f);
 		}
 		else
 		{
-			Delocate<unsigned long long>::DumpRaw(&NULL_PTR, sizeof(unsigned long long), offsetOfAnim + offsetof(_G2AnimKeylist_Type64, fxList), f);
+			UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), offsetOfAnim + offsetof(_G2AnimKeylist_Type64, fxList), f);
 		}
 
 		for (int j = 0; j < 3; j++)
 		{
-			Delocate<unsigned long long>::DumpRaw(&NULL_PTR, sizeof(unsigned long long), offsetOfAnim + offsetof(_G2AnimKeylist_Type64, sectionData_[j]), f);
+			UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), offsetOfAnim + offsetof(_G2AnimKeylist_Type64, sectionData_[j]), f);
 		}
 
 		char* pFirstSection = (char*)(anim + 1);
 		char* pNextSection = (char*)anim->sectionData[0];
 
-		Delocate<char>::DumpRaw(pFirstSection, pNextSection - pFirstSection, ftell(f), f);
+		UPGRADE_DumpRaw(pFirstSection, pNextSection - pFirstSection, ftell(f), f);
 
 		for (int j = 0; j < anim->sectionCount; j++)
 		{
@@ -422,10 +391,10 @@ void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAdd
 				}
 
 				relocationTable.push_back(offsetOfAnim + offsetof(_G2AnimKeylist_Type64, sectionData_[j]));
-				Delocate<unsigned short*>::DumpStruct(anim->sectionData[j], sizeof(unsigned short*), offsetOfAnim + offsetof(_G2AnimKeylist_Type64, sectionData_[j]), f);
+				UPGRADE_DumpStruct(anim->sectionData[j], sizeof(unsigned short*), offsetOfAnim + offsetof(_G2AnimKeylist_Type64, sectionData_[j]), f);
 
 				unsigned int sectionSize = (pNextSection - pCurrentSection) * sizeof(unsigned short);
-				Delocate<unsigned short>::DumpRaw(pCurrentSection, sectionSize, ftell(f), f);
+				UPGRADE_DumpRaw(pCurrentSection, sectionSize, ftell(f), f);
 			}
 		}
 
@@ -452,7 +421,7 @@ void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAdd
 		struct _GlyphTuneData* data = (struct _GlyphTuneData*)object->data;
 
 		relocationTable.push_back(offsetof(Object64, data));
-		Delocate<struct _GlyphTuneData>::DumpStruct(data, sizeof(struct _GlyphTuneData), offsetof(Object64, data), f);
+		UPGRADE_DumpStruct(data, sizeof(struct _GlyphTuneData), offsetof(Object64, data), f);
 
 		break;
 	}
@@ -465,14 +434,14 @@ void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAdd
 	{
 		relocationTable.push_back(offsetof(Object64, relocModule));
 
-		Delocate<int>::DumpStruct(object->relocModule, 0, offsetof(Object64, relocModule), f);
+		UPGRADE_DumpStruct(object->relocModule, 0, offsetof(Object64, relocModule), f);
 	}
 
 	if (object->relocList != NULL)
 	{
 		relocationTable.push_back(offsetof(Object64, relocList));
 
-		Delocate<long>::DumpStruct(object->relocList, 0, offsetof(Object64, relocList), f);
+		UPGRADE_DumpStruct(object->relocList, 0, offsetof(Object64, relocList), f);
 	}
 
 	FILE_Close(f);
