@@ -579,6 +579,33 @@ void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAdd
 			}
 		}
 
+		//
+		UPGRADE_DumpStructPointer(sizeof(unsigned long long), objectDataOffset + offsetof(RazielData64, throwList), f);
+
+		long offsetThrowListPtr = -1;
+		int offsetThrowListPtrCount = -1;
+		struct __ThrowItem** throwListPtr = data->throwList;
+
+		//Get counts
+		while (*throwListPtr++)
+		{
+			offsetThrowListPtrCount++;
+		}
+
+		//Store offsets
+		offsetThrowListPtr = ftell(f);
+		for (int i = 0; i < offsetThrowListPtrCount; i++)
+		{
+			relocationTable.push_back(offsetThrowListPtr + (i * sizeof(long long)));
+			UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), offsetThrowListPtr + (i * sizeof(long long)), f);
+		}
+
+		//Store offsets
+		for (int i = 0; i < offsetThrowListPtrCount; i++)
+		{
+			UPGRADE_DumpStruct(data->throwList[i], sizeof(struct __ThrowItem), offsetThrowListPtr + (i * sizeof(long long)), f);
+		}
+
 		break;
 	}
 	case ObjectType::OBJ_GLYPH:
