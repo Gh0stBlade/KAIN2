@@ -82,7 +82,80 @@ struct __SAnim
 	short pad;
 };
 
-struct RazielData 
+struct RazielData64
+{
+	unsigned long version;
+	unsigned long nonBurningRibbonStartColor;
+	unsigned long nonBurningRibbonEndColor;
+	union
+	{
+		struct __Idle*** idleList;
+		unsigned long long idleList_;
+	};
+	union
+	{
+		struct __AttackItem*** attackList;
+		unsigned long long attackList_;
+	};
+	union
+	{
+		struct __ThrowItem** throwList;
+		unsigned long long throwList_;
+	};
+	union
+	{
+		struct __VAnim* virtualAnimations;
+		unsigned long long virtualAnimations_;
+	};
+	union
+	{
+		struct __VAnim* virtualAnimSingle;
+		unsigned long long virtualAnimSingle_;
+	};
+	union
+	{
+		struct __SAnim** stringAnimations;
+		unsigned long long stringAnimations_;
+	};
+	short throwFadeValue;
+	short throwFadeInRate;
+	int throwFadeOutRate;
+	int throwManualDistance;
+	short healthMaterialRate;
+	short healthSpectralRate;
+	short healthInvinciblePostHit;
+	short healthInvinciblePostShunt;
+	short forceMinPitch;
+	short forceMaxPitch;
+	short forceMinVolume;
+	short forceMaxVolume;
+	unsigned long forceRampTime;
+	int SwimPhysicsFallDamping;
+	int SwimPhysicsWaterFrequency;
+	int SwimPhysicsWaterAmplitude;
+	int SwimPhysicsUnderDeceleration;
+	int SwimPhysicsUnderKickVelocity;
+	int SwimPhysicsUnderKickAccel;
+	int SwimPhysicsUnderVelocity;
+	int SwimPhysicsUnderKickDecel;
+	int SwimPhysicsUnderStealthAdjust;
+	int SwimPhysicsCoilVelocity;
+	int SwimPhysicsCoilDecelerationIn;
+	int SwimPhysicsCoilDecelerationOut;
+	int SwimPhysicsShotVelocity;
+	int SwimPhysicsShotAccelerationIn;
+	int SwimPhysicsShotAccelerationOut;
+	int SwimPhysicsSurfVelocity;
+	int SwimPhysicsSurfAccelerationIn;
+	int SwimPhysicsSurfAccelerationOut;
+	int SwimPhysicsSurfKickVelocity;
+	int SwimPhysicsSurfKickAccel;
+	int SwimPhysicsSurfMinRotation;
+	int SwimPhysicsSurfMaxRotation;
+	int SwimPhysicsSurfKickDecel;
+};
+
+struct RazielData
 {
 	unsigned long version;
 	unsigned long nonBurningRibbonStartColor;

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "RAZIEL.H"
+#include "PLAYER.H"
 #include "GLYPH.H"
 #include "MONSTER.H"
 
