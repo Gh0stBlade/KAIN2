@@ -1,7 +1,7 @@
 #include "CORE.H"
 #include "LIST.H"
 
-void LIST_InsertFunc(struct NodeType *list, struct NodeType *node)
+void LIST_InsertFunc(struct NodeType *list, struct NodeType *node) //Matching - 99.55%
 {
 #if defined(PSX_VERSION)
 	node->prev = list;
