@@ -172,7 +172,7 @@ void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAdd
 
 	object = (struct Object*)data;
 #if !defined(_WIN64)
-	FILE* f = FILE_OpenWrite("MAIN.DRM");
+	FILE* f = FILE_OpenWrite("TEMP.DRM");
 #else
 	FILE* f = NULL;
 #endif
@@ -211,7 +211,7 @@ void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAdd
 
 	if((object->oflags & 0x4))
 	{
-		assert(false);
+		//assert(false);
 		//TODO object->soundData
 	}
 
@@ -684,7 +684,7 @@ void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAdd
 		break;
 	}
 	default:
-		assert(false);
+		//assert(false);
 		break;
 	}
 
@@ -704,8 +704,18 @@ void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAdd
 
 	FILE_Close(f);
 
+	f = FILE_OpenRead("TEMP.DRM");
+	long resultFileSize = FILE_SeekEnd(f);
+	FILE_Seek(f, 0, SEEK_SET);
+
+	char* fileData = new char[resultFileSize];
+	fread(fileData, resultFileSize, 1, f);
+	FILE_Close(f);
+
 #if !defined(_WIN64)
-	f = FILE_OpenWrite("RTBL.TBL");
+	char nameBuff[4096];
+	sprintf(nameBuff, "%s.x64", filePath);
+	f = FILE_OpenWrite(nameBuff);
 #endif
 
 	if (relocationTable.size())
@@ -721,7 +731,13 @@ void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAdd
 		fseek(f, tableSize * sizeof(unsigned int) - 1, SEEK_SET);
 		char dummy = 0;
 		fwrite(&dummy, sizeof(dummy), 1, f);
+	
+		fwrite(fileData, resultFileSize, 1, f);
 	}
+
+	remove("TEMP.DRM");
+
+	delete[] fileData;
 
 	FILE_Close(f);
 }

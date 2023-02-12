@@ -15,6 +15,11 @@ FILE* FILE_OpenWrite(char* filePath)
 	return fopen(filePath, "wb+");
 }
 
+FILE* FILE_OpenRead(char* filePath)
+{
+	return fopen(filePath, "rb");
+}
+
 void FILE_Close(FILE* f)
 {
 	if (f != NULL)

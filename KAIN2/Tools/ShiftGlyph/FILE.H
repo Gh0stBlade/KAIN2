@@ -4,6 +4,7 @@
 
 extern FILE* g_fileHandle;
 
+extern FILE* FILE_OpenRead(char* filePath);
 extern void FILE_Reserve(int size);
 extern FILE* FILE_OpenWrite(char* filePath);
 extern void FILE_Close(FILE* f);
