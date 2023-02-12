@@ -72,7 +72,27 @@ struct __VAnim
 	unsigned short frame;
 };
 
-struct __SAnim 
+struct __SAnim64
+{
+	union
+	{
+		struct __VAnim* anim;
+		unsigned long long anim_;
+	};
+
+	union
+	{
+		struct __SAnim* nextAnim;
+		unsigned long long anim_;
+	};
+
+	short mode;
+	short data;
+	short speedAdjust;
+	short pad;
+};
+
+struct __SAnim
 {
 	struct __VAnim* anim;
 	struct __SAnim* nextAnim;

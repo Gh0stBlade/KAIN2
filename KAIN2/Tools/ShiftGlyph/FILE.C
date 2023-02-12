@@ -42,3 +42,20 @@ void FILE_SeekCur(FILE* f, long offset)
 		fwrite(&dummy, sizeof(dummy), 1, f);
 	}
 }
+
+long FILE_GetOffset(FILE* f)
+{
+	if (f != NULL)
+	{
+		return ftell(f);
+	}
+	return -1;
+}
+
+void FILE_Seek(FILE* f, long offset, int origin)
+{
+	if (f != NULL)
+	{
+		fseek(f, offset, origin);
+	}
+}

@@ -79,7 +79,7 @@ void UPGRADE_DumpRaw(void* t, int size, int offset, FILE* f)
 	}
 }
 
-void UPGRADE_DumpStructPointer(int size, int offset, FILE* f)
+void UPGRADE_DumpStructPointer(int offset, FILE* f)
 {
 	if (f != NULL)
 	{
@@ -171,8 +171,12 @@ void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAdd
 	UPGRADE_Relocate(redirectList, data, baseAddr);
 
 	object = (struct Object*)data;
-	
+#if !defined(_WIN64)
 	FILE* f = FILE_OpenWrite("MAIN.DRM");
+#else
+	FILE* f = NULL;
+#endif
+
 	unsigned long long NULL_PTR = 0;
 	std::vector<unsigned int> relocationTable;
 
@@ -203,7 +207,7 @@ void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAdd
 	UPGRADE_DumpStruct(object->name, 9, offsetof(Object64, name), f);
 
 	relocationTable.push_back(offsetof(Object64, modelList));
-	UPGRADE_DumpStructPointer(sizeof(unsigned long long), offsetof(Object64, modelList), f);
+	UPGRADE_DumpStructPointer(offsetof(Object64, modelList), f);
 
 	if((object->oflags & 0x4))
 	{
@@ -213,32 +217,32 @@ void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAdd
 
 	for (int i = 0; i < object->numModels; i++)
 	{
-		UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), ftell(f), f);
+		UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), FILE_GetOffset(f), f);
 	}
 
 	relocationTable.push_back(offsetof(Object64, animList));
-	UPGRADE_DumpStructPointer(sizeof(unsigned long long), offsetof(Object64, animList), f);
+	UPGRADE_DumpStructPointer(offsetof(Object64, animList), f);
 
-	long offsetModelList = ftell(f);
+	long offsetModelList = FILE_GetOffset(f);
 
 	for (int i = 0; i < object->numAnims; i++)
 	{
-		UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long),ftell(f), f);
+		UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), FILE_GetOffset(f), f);
 	}
 
-	long offsetAnimList = ftell(f);
+	long offsetAnimList = FILE_GetOffset(f);
 
 	for (int i = 0; i < object->numModels; i++)
 	{
 		struct _Model* model = object->modelList[i];
 
-		unsigned int offsetOfModel = ftell(f);
+		unsigned int offsetOfModel = FILE_GetOffset(f);
 
 		relocationTable.push_back(offsetModelList - ((object->numModels - i) * sizeof(long long)));
 
 		for (int i = 0; i < object->numModels; i++)
 		{
-			UPGRADE_DumpStructPointer(sizeof(_Model*), offsetModelList - ((object->numModels - i) * sizeof(long long)), f);
+			UPGRADE_DumpStructPointer(offsetModelList - ((object->numModels - i) * sizeof(long long)), f);
 		}
 
 		UPGRADE_DumpRaw(&model->numVertices, sizeof(long), offsetOfModel + offsetof(_Model64, numVertices), f);
@@ -287,7 +291,7 @@ void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAdd
 		{
 			struct _Segment* segment = &model->segmentList[j];
 
-			unsigned int offsetOfSegment = ftell(f);
+			unsigned int offsetOfSegment = FILE_GetOffset(f);
 
 			UPGRADE_DumpRaw(&segment->flags, sizeof(long), offsetOfSegment + offsetof(_Segment64, flags), f);
 			UPGRADE_DumpRaw(&segment->firstTri, sizeof(short), offsetOfSegment + offsetof(_Segment64, firstTri), f);
@@ -302,7 +306,7 @@ void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAdd
 			if (segment->hInfo != NULL)
 			{
 				relocationTable.push_back(offsetOfSegment + offsetof(_Segment64, hInfo));
-				UPGRADE_DumpStructPointer(sizeof(struct _HInfo*), offsetOfSegment + offsetof(_Segment64, hInfo), f);
+				UPGRADE_DumpStructPointer(offsetOfSegment + offsetof(_Segment64, hInfo), f);
 			}
 			else
 			{
@@ -315,11 +319,11 @@ void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAdd
 		{
 			relocationTable.push_back(offsetOfModel + offsetof(_Model64, startTextures));
 
-			UPGRADE_DumpStructPointer(sizeof(struct TextureMT3*), offsetOfModel + offsetof(_Model64, startTextures), f);
+			UPGRADE_DumpStructPointer(offsetOfModel + offsetof(_Model64, startTextures), f);
 
 			if (offsetOfTextures == -1)
 			{
-				offsetOfTextures = ftell(f);
+				offsetOfTextures = FILE_GetOffset(f);
 			}
 
 			for (struct TextureMT3* currentTexture = model->startTextures; currentTexture < model->endTextures; currentTexture++)
@@ -328,7 +332,7 @@ void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAdd
 			}
 
 			relocationTable.push_back(offsetOfModel + offsetof(_Model64, endTextures));
-			UPGRADE_DumpStructPointer(sizeof(struct TextureMT3*), offsetOfModel + offsetof(_Model64, endTextures), f);
+			UPGRADE_DumpStructPointer(offsetOfModel + offsetof(_Model64, endTextures), f);
 		}
 		else
 		{
@@ -339,11 +343,11 @@ void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAdd
 		if (model->aniTextures != NULL)
 		{
 			relocationTable.push_back(offsetOfModel + offsetof(_Model64, aniTextures));
-			UPGRADE_DumpStructPointer(sizeof(struct AniTex*), offsetOfModel + offsetof(_Model64, aniTextures), f);
+			UPGRADE_DumpStructPointer(offsetOfModel + offsetof(_Model64, aniTextures), f);
 
 			for (int j = 0; j < model->aniTextures->numAniTextues; j++)
 			{
-				unsigned int offsetOfAniTexture = ftell(f);
+				unsigned int offsetOfAniTexture = FILE_GetOffset(f);
 
 				struct AniTexInfo* aniTexture = &model->aniTextures->aniTexInfo[j];
 
@@ -378,11 +382,11 @@ void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAdd
 			nextAnim = (struct _G2AnimKeylist_Type*)object->data;
 		}
 
-		unsigned int offsetOfAnim = ftell(f);
+		unsigned int offsetOfAnim = FILE_GetOffset(f);
 
 		relocationTable.push_back(offsetAnimList - ((object->numAnims - i) * sizeof(long long)));
 
-		UPGRADE_DumpStructPointer( sizeof(unsigned long long), offsetAnimList - ((object->numAnims - i) * sizeof(long long)), f);
+		UPGRADE_DumpStructPointer( offsetAnimList - ((object->numAnims - i) * sizeof(long long)), f);
 
 		UPGRADE_DumpRaw(&anim->sectionCount, sizeof(unsigned char), offsetOfAnim + offsetof(struct _G2AnimKeylist_Type64, sectionCount), f);
 		UPGRADE_DumpRaw(&anim->s0TailTime, sizeof(unsigned char), offsetOfAnim + offsetof(struct _G2AnimKeylist_Type64, s0TailTime), f);
@@ -401,7 +405,7 @@ void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAdd
 			//assert(false);
 			relocationTable.push_back(offsetOfAnim + offsetof(_G2AnimKeylist_Type64, fxList));
 
-			UPGRADE_DumpStructPointer(sizeof(_G2AnimFxHeader_Type*), offsetOfAnim + offsetof(_G2AnimKeylist_Type64, fxList), f);
+			UPGRADE_DumpStructPointer(offsetOfAnim + offsetof(_G2AnimKeylist_Type64, fxList), f);
 		}
 		else
 		{
@@ -416,7 +420,7 @@ void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAdd
 		char* pFirstSection = (char*)(anim + 1);
 		char* pNextSection = (char*)anim->sectionData[0];
 
-		UPGRADE_DumpRaw(pFirstSection, pNextSection - pFirstSection, ftell(f), f);
+		UPGRADE_DumpRaw(pFirstSection, pNextSection - pFirstSection, FILE_GetOffset(f), f);
 
 		for (int j = 0; j < anim->sectionCount; j++)
 		{
@@ -434,18 +438,20 @@ void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAdd
 				UPGRADE_DumpStruct(anim->sectionData[j], sizeof(unsigned short*), offsetOfAnim + offsetof(_G2AnimKeylist_Type64, sectionData_[j]), f);
 
 				unsigned int sectionSize = (pNextSection - pCurrentSection) * sizeof(unsigned short);
-				UPGRADE_DumpRaw(pCurrentSection, sectionSize, ftell(f), f);
+				UPGRADE_DumpRaw(pCurrentSection, sectionSize, FILE_GetOffset(f), f);
 			}
 		}
 
-		unsigned int offsetOfEnd = ftell(f);
+		unsigned int offsetOfEnd = FILE_GetOffset(f);
 
-		fseek(f, offsetOfEnd, SEEK_SET);
+		FILE_Seek(f, offsetOfEnd, SEEK_SET);
 	}
 
 	enum ObjectType objectType = UPGRADE_GetObjectType(object->name);
 
-	long objectDataOffset = ftell(f);
+	long objectDataOffset = FILE_GetOffset(f);
+	relocationTable.push_back(offsetof(Object64, data));
+	UPGRADE_DumpStructPointer(offsetof(Object64, data), f);
 
 	switch (objectType)
 	{
@@ -519,7 +525,8 @@ void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAdd
 		UPGRADE_DumpRaw(&data->SwimPhysicsSurfKickDecel, sizeof(int), objectDataOffset + offsetof(RazielData64, SwimPhysicsSurfKickDecel), f);
 #endif
 
-		UPGRADE_DumpStructPointer(sizeof(unsigned long long), objectDataOffset + offsetof(RazielData64, attackList), f);
+		relocationTable.push_back(objectDataOffset + offsetof(RazielData64, attackList));
+		UPGRADE_DumpStructPointer(objectDataOffset + offsetof(RazielData64, attackList), f);
 
 		struct __AttackItem*** attackListPtrPtrPtr = data->attackList;
 		int attackListPtrPtrPtrCount = 0;
@@ -579,8 +586,8 @@ void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAdd
 			}
 		}
 
-		//
-		UPGRADE_DumpStructPointer(sizeof(unsigned long long), objectDataOffset + offsetof(RazielData64, throwList), f);
+		relocationTable.push_back(objectDataOffset + offsetof(RazielData64, throwList));
+		UPGRADE_DumpStructPointer(objectDataOffset + offsetof(RazielData64, throwList), f);
 
 		long offsetThrowListPtr = -1;
 		int offsetThrowListPtrCount = -1;
@@ -605,6 +612,51 @@ void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAdd
 		{
 			UPGRADE_DumpStruct(data->throwList[i], sizeof(struct __ThrowItem), offsetThrowListPtr + (i * sizeof(long long)), f);
 		}
+		
+		void* endOfStringAnimations = (void*)data->virtualAnimations;
+
+		struct __SAnim* sAnim = *data->stringAnimations;
+		relocationTable.push_back(objectDataOffset + offsetof(RazielData64, stringAnimations));
+		UPGRADE_DumpStructPointer(objectDataOffset + offsetof(RazielData64, stringAnimations), f);
+
+		for (long sAnimIndex = 0; sAnim != NULL; sAnim = data->stringAnimations[++sAnimIndex])
+		{
+			long sAnimOffset = ftell(f);
+
+			UPGRADE_DumpRaw(&sAnim->anim, sizeof(unsigned long long), sAnimOffset + offsetof(__SAnim64, anim), f);
+			UPGRADE_DumpRaw(&sAnim->nextAnim, sizeof(unsigned long long), sAnimOffset + offsetof(__SAnim64, nextAnim), f);
+			UPGRADE_DumpRaw(&sAnim->mode, sizeof(short), sAnimOffset + offsetof(__SAnim64, mode), f);
+			UPGRADE_DumpRaw(&sAnim->data, sizeof(short), sAnimOffset + offsetof(__SAnim64, data), f);
+			UPGRADE_DumpRaw(&sAnim->speedAdjust, sizeof(short), sAnimOffset + offsetof(__SAnim64, speedAdjust), f);
+			UPGRADE_DumpRaw(&sAnim->pad, sizeof(short), sAnimOffset + offsetof(__SAnim64, pad), f);
+
+			if (sAnim->anim != NULL)
+			{
+				UPGRADE_DumpStructPointer(sAnimOffset + offsetof(__SAnim64, anim), f);
+				UPGRADE_DumpStruct(sAnim->anim, sizeof(struct __VAnim), sAnimOffset + offsetof(__SAnim64, anim), f);
+			}
+			else
+			{
+				UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), sAnimOffset + offsetof(__SAnim64, anim), f);
+			}
+
+			//Maybe dump indexed, unsure!
+			if (sAnim->nextAnim != NULL)
+			{
+				UPGRADE_DumpStructPointer(sAnimOffset + offsetof(__SAnim64, nextAnim), f);
+				UPGRADE_DumpStruct(sAnim->nextAnim, sizeof(struct __SAnim), sAnimOffset + offsetof(__SAnim64, nextAnim), f);
+			}
+			else
+			{
+				UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), sAnimOffset + offsetof(__SAnim64, nextAnim), f);
+			}
+		}
+
+		relocationTable.push_back(objectDataOffset + offsetof(RazielData64, virtualAnimations));
+		UPGRADE_DumpStruct(data->virtualAnimations, (char*)data->virtualAnimSingle - (char*)data->virtualAnimations, objectDataOffset + offsetof(RazielData64, virtualAnimations), f);
+
+		relocationTable.push_back(objectDataOffset + offsetof(RazielData64, virtualAnimSingle));
+		UPGRADE_DumpStruct(data->virtualAnimSingle, ((char*)baseAddr) + fileSize - (char*)data->virtualAnimSingle, objectDataOffset + offsetof(RazielData64, virtualAnimSingle), f);
 
 		break;
 	}
@@ -638,7 +690,9 @@ void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAdd
 
 	FILE_Close(f);
 
+#if !defined(_WIN64)
 	f = FILE_OpenWrite("RTBL.TBL");
+#endif
 
 	if (relocationTable.size())
 	{
