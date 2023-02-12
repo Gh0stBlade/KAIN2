@@ -556,11 +556,13 @@ void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAdd
 		offsetAttackListPtrPtrPtr = FILE_GetOffset(f);
 		for (int i = 0; i < attackListPtrPtrPtrCount; i++)
 		{
-			relocationTable.push_back(offsetAttackListPtrPtrPtr + (i * sizeof(long long)));
-			UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), offsetAttackListPtrPtrPtr + (i * sizeof(long long)), f);
-
 			offsetAttackListPtrPtr[i] = ftell(f);
+
+			UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), offsetAttackListPtrPtrPtr + (i * sizeof(long long)), f);
 		}
+
+		//Term
+		UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), FILE_GetOffset(f), f);
 
 		//Store offsets
 		for (int i = 0; i < attackListPtrPtrPtrCount; i++)
@@ -640,10 +642,8 @@ void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAdd
 
 			UPGRADE_DumpStructPointer(offsetsAnimPtrs + (sAnimIndex * sizeof(long long)), f);
 
-			relocationTable.push_back(sAnimOffset + offsetof(__SAnim64, anim));
 			UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), sAnimOffset + offsetof(__SAnim64, anim), f);
 			
-			relocationTable.push_back(sAnimOffset + offsetof(__SAnim64, nextAnim));
 			UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), sAnimOffset + offsetof(__SAnim64, nextAnim), f);
 
 			UPGRADE_DumpRaw(&sAnim->mode, sizeof(short), sAnimOffset + offsetof(__SAnim64, mode), f);
@@ -653,14 +653,16 @@ void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAdd
 
 			if (sAnim->anim != NULL)
 			{
+				relocationTable.push_back(sAnimOffset + offsetof(__SAnim64, anim));
 				UPGRADE_DumpStructPointer(sAnimOffset + offsetof(__SAnim64, anim), f);
 				UPGRADE_DumpStruct(sAnim->anim, sizeof(struct __VAnim), sAnimOffset + offsetof(__SAnim64, anim), f);
 			}
 
 			if (sAnim->nextAnim != NULL)
 			{
-				UPGRADE_DumpStruct(sAnim->nextAnim, sizeof(struct __SAnim), sAnimOffset + offsetof(__SAnim64, nextAnim), f);
+				relocationTable.push_back(sAnimOffset + offsetof(__SAnim64, nextAnim));
 				UPGRADE_DumpStructPointer(sAnimOffset + offsetof(__SAnim64, nextAnim), f);
+				UPGRADE_DumpStruct(sAnim->nextAnim, sizeof(struct __SAnim), sAnimOffset + offsetof(__SAnim64, nextAnim), f);
 			}
 		}
 
