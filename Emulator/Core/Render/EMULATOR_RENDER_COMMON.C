@@ -134,13 +134,8 @@ unsigned short s_lastSemiTrans = 0xFFFF;
 unsigned short s_lastPolyType = 0xFFFF;
 
 #if defined(USE_32_BIT_ADDR)
-unsigned int actualTerminator[2] = { 0xFFFFFFFF, 0};
-unsigned int terminatorOT[2] = { (unsigned int)&actualTerminator, 0};
-
-#if defined(_WIN64)
-unsigned int terminatorAddr = 0;
-#endif
-
+uintptr_t actualTerminator[2] = { -1, 0 };
+uintptr_t terminatorOT[2] = { (uintptr_t)&actualTerminator, 0};
 #else
 unsigned int actualTerminator = -1;
 unsigned int terminatorOT = (unsigned int)&actualTerminator;
@@ -928,7 +923,7 @@ void Emulator_DrawAggregatedSplits()
 	}
 }
 
-void Emulator_AggregatePTAGsToSplits(unsigned long* p, int singlePrimitive)
+void Emulator_AggregatePTAGsToSplits(uintptr_t* p, int singlePrimitive)
 {
 	if (!p)
 		return;
@@ -951,11 +946,7 @@ void Emulator_AggregatePTAGsToSplits(unsigned long* p, int singlePrimitive)
 
 		// P_TAG as primitive list
 		//do
-#if defined(_WIN64)
-		while ((uintptr_t)pTag != (uintptr_t)terminatorAddr)
-#else
 		while ((uintptr_t)pTag != (uintptr_t)&terminatorOT)
-#endif
 		{
 			if (pTag->len > 0)
 			{
@@ -1037,11 +1028,17 @@ void Emulator_DrawTouchUI()
 #define setPolyF4_ST(p)	setlen_ST(p, 6),  setcode_ST(p, 0x2A)
 #define setAbr(p, abr) ((p)->dr_tpage) |= ((short)abr << 5)
 
-	unsigned long OT[4];
+	struct OrderingTable
+	{
+		uintptr_t addr;
+		unsigned long len;
+	};
+
+	struct OrderingTable OT[4];
 	char polygonBuffer[sizeof(POLY_F4_SEMITRANS) * 32];
 	char* p = &polygonBuffer[0];
 
-	ClearOTagR(OT, 4 / 2);
+	ClearOTagR((uintptr_t*)&OT[0], 4 / 2);
 
 	int dist = 16;
 	int cx = 32;
@@ -1143,7 +1140,7 @@ void Emulator_DrawTouchUI()
 		p += sizeof(POLY_F4_SEMITRANS);
 	}
 
-	Emulator_AggregatePTAGsToSplits(OT, FALSE);
+	Emulator_AggregatePTAGsToSplits((uintptr_t*)&OT[0], FALSE);
 }
 
 void Emulator_DestroyRender()

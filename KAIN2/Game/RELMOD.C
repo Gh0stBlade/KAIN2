@@ -1,7 +1,7 @@
 #include "CORE.H"
 #include "RELMOD.H"
 
-void RELMOD_InitModulePointers(int baseaddr, int* relocs)
+void RELMOD_InitModulePointers(intptr_t baseaddr, int* relocs)
 { 
 #if defined(PSX_VERSION)
 	unsigned int* rel_addr;

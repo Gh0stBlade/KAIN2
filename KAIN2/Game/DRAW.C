@@ -1303,14 +1303,14 @@ void DRAW_LoadingMessage()
 
 #if defined(PSX_VERSION)
 #if defined(USE_32_BIT_ADDR)
-	DrawOTag((unsigned long*)drawot + 3071 * 2);
+	DrawOTag((uintptr_t*)drawot + 3071 * 2);
 #else
-	DrawOTag((unsigned long*)drawot + 3071);
+	DrawOTag((uintptr_t*)drawot + 3071);
 #endif
 #endif
 
 	DrawSync(0);
-	ClearOTagR((unsigned long*)drawot, 3072);
+	ClearOTagR((uintptr_t*)drawot, 3072);
 	PutDrawEnv(&draw[gameTrackerX.drawPage]);
 	VSyncCallback(VblTick);
 	DrawSyncCallback(DrawCallback);

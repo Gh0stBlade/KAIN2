@@ -16,18 +16,14 @@ char byte_3352 = 0;
 
 #if defined(USE_32_BIT_ADDR)
 
-struct OrderingTable///@TODO delete?
+struct OrderingTable
 {
-	unsigned long addr;
+	uintptr_t addr;
 	unsigned long len;
 };
 
-#if defined(_WIN64)
-extern unsigned int terminatorOT[];
-extern unsigned int terminatorAddr;
-#else
-extern unsigned int terminatorOT[];
-#endif
+extern uintptr_t terminatorOT[];
+
 #else
 extern unsigned int terminatorOT = -1;
 #endif
@@ -198,20 +194,13 @@ int StoreImage(RECT16* rect, u_long* p)
 
 u_long* ClearOTag(u_long* ot, int n)
 {
-#if defined(_WIN64)
-	terminatorAddr = (unsigned int)ot;
-#endif
 	//Nothing to do here.
 	if (n == 0)
 		return NULL;
 
 	//last is special terminator
 #if defined(USE_32_BIT_ADDR)
-#if defined(_WIN64)
-	setaddr(&ot[n - 2], terminatorAddr);
-#else
 	setaddr(&ot[n - 2], &terminatorOT);
-#endif
 	setlen(&ot[n - 2], 0);
 #else
 	setaddr(&ot[n - 1], &terminatorOT);
@@ -235,23 +224,17 @@ u_long* ClearOTag(u_long* ot, int n)
 	return NULL;
 }
 
-u_long* ClearOTagR(u_long* ot, int n)
+uintptr_t* ClearOTagR(uintptr_t* ot, int n)
 {
 	struct OrderingTable* ordt = (struct OrderingTable*)ot;
 
-#if defined(_WIN64)
-	terminatorAddr = (unsigned int)ot + n * (sizeof(unsigned int) * 2);
-#endif
 	//Nothing to do here.
 	if (n == 0)
 		return NULL;
 
 	//First is special terminator
-#if defined(_WIN64)
-	setaddr(ot, terminatorAddr);
-#else
 	setaddr(ordt, &terminatorOT);
-#endif
+
 	setlen(ordt, 0);
 
 #if defined(USE_32_BIT_ADDR)
@@ -261,9 +244,9 @@ u_long* ClearOTagR(u_long* ot, int n)
 #endif
 	{
 #if defined(USE_32_BIT_ADDR)
-		setaddr(&ordt[i], (unsigned long)&ordt[i - 1]);
+		setaddr(&ordt[i], (uintptr_t)&ordt[i - 1]);
 #else
-		setaddr(&ot[i], (unsigned long)&ot[i - 1]);
+		setaddr(&ot[i], (uintptr_t)&ot[i - 1]);
 #endif
 		setlen(&ordt[i], 0);
 	}
@@ -395,7 +378,7 @@ u_short GetClut(int x, int y)
 	return getClut(x, y);
 }
 
-void DrawOTagEnv(u_long* p, DRAWENV* env)
+void DrawOTagEnv(uintptr_t* p, DRAWENV* env)
 {
 	do
 	{
@@ -408,7 +391,7 @@ void DrawOTagEnv(u_long* p, DRAWENV* env)
 #endif
 }
 
-void DrawOTag(u_long* p)
+void DrawOTag(uintptr_t* p)
 {
 	VSync(0);
 
@@ -476,7 +459,7 @@ void DrawPrim(void* p)
 	polygon_count = 0;
 #endif
 
-	Emulator_AggregatePTAGsToSplits((u_long*)p, TRUE);
+	Emulator_AggregatePTAGsToSplits((uintptr_t*)p, TRUE);
 
 	Emulator_DrawAggregatedSplits();
 

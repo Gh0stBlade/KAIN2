@@ -2873,7 +2873,7 @@ void DEBUG_FatalError(const char* fmt, ...)
 	while (1)
 	{
 		FONT_Flush();
-		DrawOTag((unsigned long*)gameTrackerX.drawOT + 3071 * 2);
+		DrawOTag((uintptr_t*)gameTrackerX.drawOT + 3071 * 2);
 		DrawSync(0);
 	}
 #endif

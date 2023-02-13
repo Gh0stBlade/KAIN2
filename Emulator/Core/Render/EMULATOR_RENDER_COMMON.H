@@ -80,7 +80,7 @@ extern void Emulator_BlitVRAM();
 extern void Emulator_ClearVBO();
 extern void Emulator_UpdateVBO(int new_start_vertex_index, int new_start_face_index);
 extern void Emulator_ResetPolyState();
-extern void Emulator_AggregatePTAGsToSplits(unsigned long* p, int singlePrimitive);
+extern void Emulator_AggregatePTAGsToSplits(uintptr_t* p, int singlePrimitive);
 extern void Emulator_DrawSplit(const struct VertexBufferSplit* split);
 extern void Emulator_DrawAggregatedSplits();
 

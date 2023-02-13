@@ -44,7 +44,7 @@ void load(struct memcard_t* memcard)
 	LOAD_LoadToAddress("\\kain2\\object\\mcardx\\mcardx.drm", object, 1);
 	memcard->table = (struct mcmenu_table_t*)object->relocModule;
 
-	RELMOD_InitModulePointers((int)object->relocModule, (int*)object->relocList);
+	RELMOD_InitModulePointers((intptr_t)object->relocModule, (int*)object->relocList);
 	
 	memcard->object = object;
 

@@ -886,7 +886,7 @@ void VRAM_TransferBufferToVram(void* dataPtr, long dataSize, short status, void 
 	
 	if ((unsigned long)nextOTag != 0xFFFFFFFF)
 	{
-		DrawOTag((u_long*)nextOTag);
+		DrawOTag((uintptr_t*)nextOTag);
 	}
 }
 

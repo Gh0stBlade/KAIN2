@@ -220,8 +220,8 @@ void ProcessArgs(char *baseAreaName, struct GameTracker *gameTracker)
 		ExtractLevelNum(levelNum, (char*)argData);
 		
 #if defined(OVERRIDE_LEVEL) || 0
-#define LEVEL_NAME "cliff"
-#define LEVEL_NUM "1"
+#define LEVEL_NAME "fire"
+#define LEVEL_NUM "6"
 		sprintf(baseAreaName, "%s%s", LEVEL_NAME, LEVEL_NUM);
 #else
 		sprintf(baseAreaName, "%s%s", worldName, levelNum);
@@ -323,8 +323,8 @@ void InitDisplay()
 
 	ClearDisplay();
 	
-	ClearOTagR((u_long*)gameTrackerX.drawOT, 3072);
-	ClearOTagR((u_long*)gameTrackerX.dispOT, 3072);
+	ClearOTagR((uintptr_t*)gameTrackerX.drawOT, 3072);
+	ClearOTagR((uintptr_t*)gameTrackerX.dispOT, 3072);
 	
 	ClearImage(&r, 0, 255, 0);
 #else
@@ -484,9 +484,9 @@ void FadeOutSayingLoading(struct GameTracker* gameTracker)
 
 #if defined(PSX_VERSION)
 #if defined(USE_32_BIT_ADDR)
-		DrawOTag((unsigned long*)drawot + 3071 * 2);
+		DrawOTag((uintptr_t*)drawot + 3071 * 2);
 #else
-		DrawOTag((unsigned long*)drawot + 3071);
+		DrawOTag((uintptr_t*)drawot + 3071);
 #endif
 #endif
 	} while (fadeTime < 255);

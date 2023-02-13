@@ -2,6 +2,7 @@
 #define LIBGPU_H
 
 #include "SYSTEM/TYPES.H"
+#include <stdint.h>
 
 #if defined(__ANDROID__)
 #ifdef __cplusplus
@@ -185,13 +186,17 @@ extern	int (*GPU_printf)(const char *fmt, ...);
   * Primitive Handling Macros
   */
 
+#if defined(_WIN64)
+#define LEN_OFFSET (8)
+#else
 #define LEN_OFFSET (4)
+#endif
 
 #if defined(PGXP)
 #define setpgxpindex(p, _pgxp_index) (((P_TAG *)(p))->pgxp_index  = (u_short)(_pgxp_index))
 #endif
 #define setlen( p, _len) 	(((P_TAG *)(p))->len  = (u_char)(_len))
-#define setaddr(p, _addr)	(((P_TAG *)(p))->addr = (u_long)(_addr))
+#define setaddr(p, _addr)	(((P_TAG *)(p))->addr = (uintptr_t)(_addr))
 #define setcode(p, _code)	(((P_TAG *)(p))->code = (u_char)(_code))
 #define getlen(p)    		(u_char)(((P_TAG *)(p))->len)
 #define getcode(p)   		(u_char)(((P_TAG *)(p))->code)
@@ -368,7 +373,7 @@ typedef struct {
  */
 typedef struct {
 #if defined(USE_32_BIT_ADDR)
-	unsigned long addr;
+	uintptr_t addr;
 #if defined(PGXP)
 	unsigned short len;
 	unsigned short pgxp_index;
@@ -388,7 +393,7 @@ typedef struct {
 	
 typedef struct {
 #if defined(USE_32_BIT_ADDR)
-	unsigned long tag;
+	uintptr_t tag;
 #if defined(PGXP)
 	unsigned short len;
 	unsigned short pgxp_index;
@@ -406,7 +411,7 @@ typedef struct {
 
 typedef struct {
 #if defined(USE_32_BIT_ADDR)
-	unsigned long tag;
+	uintptr_t tag;
 #if defined(PGXP)
 	unsigned short len;
 	unsigned short pgxp_index;
@@ -425,7 +430,7 @@ typedef struct {
 
 typedef struct {
 #if defined(USE_32_BIT_ADDR)
-	unsigned long tag;
+	uintptr_t tag;
 #if defined(PGXP)
 	unsigned short len;
 	unsigned short pgxp_index;
@@ -446,7 +451,7 @@ typedef struct {
 
 typedef struct {
 #if defined(USE_32_BIT_ADDR)
-	unsigned long tag;
+	uintptr_t tag;
 #if defined(PGXP)
 	unsigned short len;
 	unsigned short pgxp_index;
@@ -469,7 +474,7 @@ typedef struct {
 
 typedef struct {
 #if defined(USE_32_BIT_ADDR)
-	unsigned long tag;
+	uintptr_t tag;
 #if defined(PGXP)
 	unsigned short len;
 	unsigned short pgxp_index;
@@ -489,7 +494,7 @@ typedef struct {
 
 typedef struct {
 #if defined(USE_32_BIT_ADDR)
-	unsigned long tag;
+	uintptr_t tag;
 #if defined(PGXP)
 	unsigned short len;
 	unsigned short pgxp_index;
@@ -511,7 +516,7 @@ typedef struct {
 
 typedef struct {
 #if defined(USE_32_BIT_ADDR)
-	unsigned long tag;
+	uintptr_t tag;
 #if defined(PGXP)
 	unsigned short len;
 	unsigned short pgxp_index;
@@ -534,7 +539,7 @@ typedef struct {
 
 typedef struct {
 #if defined(USE_32_BIT_ADDR)
-	unsigned long tag;
+	uintptr_t tag;
 #if defined(PGXP)
 	unsigned short len;
 	unsigned short pgxp_index;
@@ -563,7 +568,7 @@ typedef struct {
  */
 typedef struct {
 #if defined(USE_32_BIT_ADDR)
-	unsigned long tag;
+	uintptr_t tag;
 #if defined(PGXP)
 	unsigned short len;
 	unsigned short pgxp_index;
@@ -580,7 +585,7 @@ typedef struct {
 
 typedef struct {
 #if defined(USE_32_BIT_ADDR)
-	unsigned long tag;
+	uintptr_t tag;
 #if defined(PGXP)
 	unsigned short len;
 	unsigned short pgxp_index;
@@ -598,7 +603,7 @@ typedef struct {
 
 typedef struct {
 #if defined(USE_32_BIT_ADDR)
-	unsigned long tag;
+	uintptr_t tag;
 #if defined(PGXP)
 	unsigned short len;
 	unsigned short pgxp_index;
@@ -617,7 +622,7 @@ typedef struct {
 
 typedef struct {
 #if defined(USE_32_BIT_ADDR)
-	unsigned long tag;
+	uintptr_t tag;
 #if defined(PGXP)
 	unsigned short len;
 	unsigned short pgxp_index;
@@ -638,7 +643,7 @@ typedef struct {
 
 typedef struct {
 #if defined(USE_32_BIT_ADDR)
-	unsigned long tag;
+	uintptr_t tag;
 #if defined(PGXP)
 	unsigned short len;
 	unsigned short pgxp_index;
@@ -658,7 +663,7 @@ typedef struct {
 
 typedef struct {
 #if defined(USE_32_BIT_ADDR)
-	unsigned long tag;
+	uintptr_t tag;
 #if defined(PGXP)
 	unsigned short len;
 	unsigned short pgxp_index;
@@ -684,7 +689,7 @@ typedef struct {
  */
 typedef struct {
 #if defined(USE_32_BIT_ADDR)
-	unsigned long tag;
+	uintptr_t tag;
 #if defined(PGXP)
 	unsigned short len;
 	unsigned short pgxp_index;
@@ -702,7 +707,7 @@ typedef struct {
 
 typedef struct {
 #if defined(USE_32_BIT_ADDR)
-	unsigned long tag;
+	uintptr_t tag;
 #if defined(PGXP)
 	unsigned short len;
 	unsigned short pgxp_index;
@@ -719,7 +724,7 @@ typedef struct {
 		   
 typedef struct {
 #if defined(USE_32_BIT_ADDR)
-	unsigned long tag;
+	uintptr_t tag;
 #if defined(PGXP)
 	unsigned short len;
 	unsigned short pgxp_index;
@@ -739,7 +744,7 @@ typedef struct {
  */
 typedef struct {
 #if defined(USE_32_BIT_ADDR)
-	unsigned long tag;
+	uintptr_t tag;
 #if defined(PGXP)
 	unsigned short len;
 	unsigned short pgxp_index;
@@ -756,7 +761,7 @@ typedef struct {
 
 typedef struct {
 #if defined(USE_32_BIT_ADDR)
-	unsigned long tag;
+	uintptr_t tag;
 #if defined(PGXP)
 	unsigned short len;
 	unsigned short pgxp_index;
@@ -772,7 +777,7 @@ typedef struct {
 
 typedef struct {
 #if defined(USE_32_BIT_ADDR)
-	unsigned long tag;
+	uintptr_t tag;
 #if defined(PGXP)
 	unsigned short len;
 	unsigned short pgxp_index;
@@ -788,7 +793,7 @@ typedef struct {
 
 typedef struct {
 #if defined(USE_32_BIT_ADDR)
-	unsigned long tag;
+	uintptr_t tag;
 #if defined(PGXP)
 	unsigned short len;
 	unsigned short pgxp_index;
@@ -807,7 +812,7 @@ typedef struct {
  */
 typedef struct {
 #if defined(USE_32_BIT_ADDR)
-	unsigned long tag;
+	uintptr_t tag;
 #if defined(PGXP)
 	unsigned short len;
 	unsigned short pgxp_index;
@@ -822,7 +827,7 @@ typedef struct {
 
 typedef struct {
 #if defined(USE_32_BIT_ADDR)
-	unsigned long tag;
+	uintptr_t tag;
 #if defined(PGXP)
 	unsigned short len;
 	unsigned short pgxp_index;
@@ -837,7 +842,7 @@ typedef struct {
 		   
 typedef struct {
 #if defined(USE_32_BIT_ADDR)
-	unsigned long tag;
+	uintptr_t tag;
 #if defined(PGXP)
 	unsigned short len;
 	unsigned short pgxp_index;
@@ -852,7 +857,7 @@ typedef struct {
 		   
 typedef struct {
 #if defined(USE_32_BIT_ADDR)
-	unsigned long tag;
+	uintptr_t tag;
 #if defined(PGXP)
 	unsigned short len;
 	unsigned short pgxp_index;
@@ -867,7 +872,7 @@ typedef struct {
 		   
 typedef struct {			/* MoveImage */
 #if defined(USE_32_BIT_ADDR)
-	unsigned long tag;
+	uintptr_t tag;
 #if defined(PGXP)
 	unsigned short len;
 	unsigned short pgxp_index;
@@ -882,7 +887,7 @@ typedef struct {			/* MoveImage */
 
 typedef struct {			/* LoadImage */
 #if defined(USE_32_BIT_ADDR)
-	unsigned long tag;
+	uintptr_t tag;
 #if defined(PGXP)
 	unsigned short len;
 	unsigned short pgxp_index;
@@ -898,7 +903,7 @@ typedef struct {			/* LoadImage */
 
 typedef	struct {
 #if defined(USE_32_BIT_ADDR)
-	unsigned long tag;
+	uintptr_t tag;
 #if defined(PGXP)
 	unsigned short len;
 	unsigned short pgxp_index;
@@ -913,7 +918,7 @@ typedef	struct {
 
 typedef struct {
 #if defined(USE_32_BIT_ADDR)
-	unsigned long tag;
+	uintptr_t tag;
 #if defined(PGXP)
 	unsigned short len;
 	unsigned short pgxp_index;
@@ -1014,7 +1019,7 @@ extern int ResetGraph(int mode);
 extern int SetGraphDebug(int level);
 extern int StoreImage(RECT16 *rect, u_long *p);
 extern u_long *ClearOTag(u_long *ot, int n);
-extern u_long *ClearOTagR(u_long *ot, int n);
+extern uintptr_t* ClearOTagR(uintptr_t*ot, int n);
 extern u_long *FntFlush(int id);
 extern u_long *KanjiFntFlush(int id);
 extern u_long DrawSyncCallback(void (*func)(void));
@@ -1027,9 +1032,9 @@ extern void *NextPrim(void *p);
 extern void AddPrim(void *ot, void *p);
 extern void AddPrims(void *ot, void *p0, void *p1);
 extern void CatPrim(void *p0, void *p1);
-extern void DrawOTag(u_long *p);
+extern void DrawOTag(uintptr_t* p);
 extern void DrawOTagIO(u_long *p);
-extern void DrawOTagEnv(u_long *p, DRAWENV *env);
+extern void DrawOTagEnv(uintptr_t*p, DRAWENV *env);
 extern void DrawPrim(void *p);
 extern void DumpClut(u_short clut);
 extern void DumpDispEnv(DISPENV *env);
