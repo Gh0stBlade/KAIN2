@@ -209,7 +209,7 @@ void PLANAPI_InitPlanning(void* planningPool)//Matching - 92.66%
 
 	poolManagementData->numNodesInPool = 0;
 
-	poolManagementData->distanceMatrix[0] = (unsigned short*)((int)planningPool + 896);
+	poolManagementData->distanceMatrix[0] = (unsigned short*)((intptr_t)planningPool + (sizeof(PlanningNode) * 32));
 
 	for (i = 0; i < 32; i++)
 	{
