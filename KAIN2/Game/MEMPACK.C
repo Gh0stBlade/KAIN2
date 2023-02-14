@@ -24,8 +24,12 @@ char* memBuffer = NULL;
 unsigned int overlayAddress = 0; // 0x800CE194
 #else
 #define OVERLAY_LENGTH 0xDDC8
+#if defined(_WIN64)
+char memBuffer[OVERLAY_LENGTH + 0x11F18C + (ONE_MB * 5)];
+#else
 char memBuffer[OVERLAY_LENGTH + 0x11F18C + (ONE_MB * 4)];
-unsigned int overlayAddress = (int)&memBuffer[0]; // 0x800CE194
+#endif
+uintptr_t overlayAddress = (uintptr_t)&memBuffer[0]; // 0x800CE194
 #endif
 #else
 unsigned int overlayAddress; // For PSX this is quite clearly set by the linker script maybe.
@@ -502,7 +506,7 @@ long MEMPACK_MemoryValidFunc(char* address)//Matching - 100.0%
 {
 #if defined(PSX_VERSION)
 	
-	if ((address != (char*)0xFAFBFCFD) && (address != NULL))
+	if ((address != (char*)INVALID_MEM_MAGIC) && (address != NULL))
 	{
 		return (address[-6]) == 1;
 	}

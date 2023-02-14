@@ -6,14 +6,14 @@ void RESOLVE_Pointers(struct RedirectList *redirectList, long *data, long *baseA
 #if defined (PSX_VERSION)
 	long* rdList;
 	int i;
-	long* handle;
+	uintptr_t* handle;
 
 	rdList = redirectList->data;
 
 	for (i = redirectList->numPointers; i != 0; i--, rdList++)
 	{
-		handle = (long*)((char*)data + *rdList);
-		*handle += (long)((char*)baseAddr);
+		handle = (uintptr_t*)((char*)data + *rdList);
+		*handle += (uintptr_t)((char*)baseAddr);
 	}
 
 #elif defined(PC_VERSION)

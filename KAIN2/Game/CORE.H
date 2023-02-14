@@ -96,7 +96,7 @@ typedef RECT PSX_RECT;
 #endif
 #endif
 
-#if !defined(PSXPC_VERSION) && !defined(PSX_VERSION)
+#if !defined(PSXPC_VERSION) && !defined(PSX_VERSION) && !defined(TOOLS)
 // wrappers for winapi crap
 #define OutputDebugStringA	printf
 #define vprintf_s(a,b,c,d)	vprintf(a,c,d)
@@ -125,6 +125,7 @@ typedef RECT PSX_RECT;
 #endif
 #define PACK_MAGIC_USHORT(A, B, C, D)	(A << 12) | (B << 8) | (C << 4) | (D << 0)
 #define DEFAULT_MEM_MAGIC				PACK_MAGIC_USHORT(0xB, 0xA, 0xD, 0xE)
+#define INVALID_MEM_MAGIC				0xFAFBFCFD
 
 #define null	0
 

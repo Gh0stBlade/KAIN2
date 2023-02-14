@@ -7,6 +7,7 @@
 #include "DEBUG.H"
 #include "RESOLVE.H"
 #include "GAMELOOP.H"
+#include "STRMLOAD.H"
 
 #include <stdlib.h>
 
@@ -248,7 +249,7 @@ void LOAD_DoCDReading()//Matching - 83.60%
 
 	if (bytesLoaded != 0 && loadStatus.currentQueueFile.checksumType != 0)
 	{
-#if !defined(__EMSCRIPTEN__)///@FIXME crash!
+#if !defined(__EMSCRIPTEN__) && !defined(_WINDOWS)///@FIXME crash!
 		LOAD_UpdateCheckSum(bytesLoaded);
 #endif
 	}
@@ -307,7 +308,7 @@ void LOAD_SetupFileToDoCDReading()
 		loadStatus.currentSector = loadStatus.bigFile.bigfileBaseOffset + (loadStatus.currentQueueFile.readStartPos >> 11);
 	}
 
-#if defined(_DEBUG) && !defined(NO_FILESYSTEM) || defined(__EMSCRIPTEN__)
+#if defined(_DEBUG) || (!defined(NO_FILESYSTEM) || defined(__EMSCRIPTEN__))
 	extern void Emulator_OpenRead(char* fileName, void* buff, int size);
 	Emulator_OpenRead(LOAD_HashToName(loadStatus.currentQueueFile.fileHash), loadStatus.currentQueueFile.readStartDest, loadStatus.currentQueueFile.readSize);
 	loadStatus.bytesTransferred = (loadStatus.currentQueueFile.readSize - loadStatus.currentQueueFile.readCurSize);
@@ -905,7 +906,8 @@ struct _BigFileEntry* LOAD_GetBigFileEntryByHash(long hash)
 { 
 	int i;
 	struct _BigFileEntry* entry;
-#if defined(_DEBUG) && !defined(NO_FILESYSTEM) || defined(__EMSCRIPTEN__)
+
+#if defined(_DEBUG) && (!defined(NO_FILESYSTEM) || defined(__EMSCRIPTEN__))
 	static struct _BigFileEntry bigFileEntry;
 
 	int fileSize = 0;

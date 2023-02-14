@@ -24,7 +24,7 @@ struct NewMemTracker // hashcode: 0x5C68280F (dec: 1550329871)
 	long doingGarbageCollection; // size=0, offset=16
 };
 
-extern unsigned int overlayAddress; // 0x800CE194
+extern uintptr_t overlayAddress; // 0x800CE194
 
 extern void MEMPACK_Init(); // 0x8004FAA4
 extern struct MemHeader * MEMPACK_GetSmallestBlockTopBottom(long allocSize); // 0x8004FB0C

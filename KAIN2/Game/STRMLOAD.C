@@ -407,14 +407,7 @@ struct _LoadQueueEntry* STREAM_SetUpQueueEntry(char *fileName, void *retFunc, vo
 	
 	strcpy(currentEntry->loadEntry.fileName, fileName);
 
-#if defined(_WIN64)
-	strcat(currentEntry->loadEntry.fileName, ".x64");
-	
-	currentEntry->loadEntry.fileHash = LOAD_HashName(currentEntry->loadEntry.fileName);
-#else
-
 	currentEntry->loadEntry.fileHash = LOAD_HashName(fileName);
-#endif
 
 	currentEntry->loadEntry.dirHash = LOAD_GetSearchDirectory();
 	currentEntry->loadEntry.posInFile = 0;
@@ -438,7 +431,11 @@ struct _LoadQueueEntry* STREAM_SetUpQueueEntry(char *fileName, void *retFunc, vo
 	
 	if (retPointer != NULL)
 	{
-		((long*)retPointer)[0] = 0xFAFBFCFD;
+#if defined(_WIN64)
+		((intptr_t*)retPointer)[0] = INVALID_MEM_MAGIC;
+#else
+		((long*)retPointer)[0] = INVALID_MEM_MAGIC;
+#endif
 	}
 
 	return currentEntry;
