@@ -297,9 +297,5 @@ extern void memcard_pop(void *opaque); // 0x800B9C8C
 extern void memcard_start(void *opaque); // 0x800B9CC8
 extern void memcard_load(void *opaque); // 0x800B9D0C
 extern void memcard_save(void *opaque); // 0x800B9D58
-#if defined(_WIN64)
-extern void memcard_item(void* opaque, int (*fn)(void*, long long, enum menu_ctrl_t), long parameter, long flags, char* text);
-#else
-extern void memcard_item(void* opaque, int (*fn)(void*, long, enum menu_ctrl_t), long parameter, long flags, char* text);
-#endif
+extern void memcard_item(void* opaque, int (*fn)(void*, intptr_t, enum menu_ctrl_t), intptr_t parameter, long flags, char* text);
 #endif

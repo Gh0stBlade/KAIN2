@@ -1,6 +1,8 @@
 #ifndef EMULATOR_PLATFORM_SETUP_H
 #define EMULATOR_PLATFORM_SETUP_H
 
+#include "EMULATOR_ARCHITECTURE_SETUP.H"
+
 #if defined(SN_TARGET_PSP2)
 		typedef unsigned int uintptr_t;
 		#define EXIT_SUCCESS (0)
@@ -8,6 +10,7 @@
 
 #define MAX_NUM_GAME_INSTANCES (6)
 
+//#define NO_AUDIO
 //#define DEBUG_PRINTS
 #define TOUCH_UI
 
@@ -87,6 +90,7 @@
 #define NO_FILESYSTEM
 #define NO_BOUNTY_LIST_EXPORT
 #define TOUCH_UI
+#define NO_AUDIO
 #elif defined(_XBOX)
 #define XED3D
 #endif

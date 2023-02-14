@@ -4,6 +4,8 @@
 #include "SYSTEM/TYPES.H"
 #include <stdint.h>
 
+#include <Core/Setup/Platform/EMULATOR_ARCHITECTURE_SETUP.H>
+
 #if defined(__ANDROID__)
 #ifdef __cplusplus
 extern "C" {
@@ -186,7 +188,7 @@ extern	int (*GPU_printf)(const char *fmt, ...);
   * Primitive Handling Macros
   */
 
-#if defined(_WIN64)
+#if defined(VALKYRIE_X64)
 #define LEN_OFFSET (8)
 #else
 #define LEN_OFFSET (4)
@@ -200,7 +202,7 @@ extern	int (*GPU_printf)(const char *fmt, ...);
 #define setcode(p, _code)	(((P_TAG *)(p))->code = (u_char)(_code))
 #define getlen(p)    		(u_char)(((P_TAG *)(p))->len)
 #define getcode(p)   		(u_char)(((P_TAG *)(p))->code)
-#define getaddr(p)   		(u_long)(((P_TAG *)(p))->addr)
+#define getaddr(p)   		(uintptr_t)(((P_TAG *)(p))->addr)
 
 #define nextPrim(p)  		(void *)((((P_TAG *)(p))->addr))
 //#define nextPrim(p)  		(void *)((((P_TAG *)(p))->addr)|0x80000000)//Original incompat with PC
@@ -243,9 +245,17 @@ extern	int (*GPU_printf)(const char *fmt, ...);
 		((dfe)?0x0400:0)|((tpage)&0x9ff))
 
 #if defined(USE_32_BIT_ADDR)
+
+#if defined(VALKYRIE_X64)
 #define setDrawTPage(p, dfe, dtd, tpage)	\
 	setlen(p, 1),	\
-	((u_long *)(p))[2] = _get_mode(dfe, dtd, tpage)
+	((u_long*)(p))[3] = _get_mode(dfe, dtd, tpage)
+#else
+#define setDrawTPage(p, dfe, dtd, tpage)	\
+	setlen(p, 1),	\
+	((u_long*)(p))[2] = _get_mode(dfe, dtd, tpage)
+#endif
+
 #else
 #define setDrawTPage(p, dfe, dtd, tpage)	\
 	setlen(p, 1),	\

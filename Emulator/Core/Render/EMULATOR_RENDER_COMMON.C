@@ -90,7 +90,7 @@ typedef struct POLY_G3_SEMITRANS
 typedef struct POLY_F4_SEMITRANS
 {
 #if defined(USE_32_BIT_ADDR)
-	unsigned long tag;
+	uintptr_t tag;
 #if defined(PGXP)
 	unsigned short len;
 	unsigned short pgxp_index;

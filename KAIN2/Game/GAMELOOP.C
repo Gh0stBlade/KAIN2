@@ -62,11 +62,19 @@ void GAMELOOP_AllocStaticMemory()
 	instancePool = (struct _InstancePool*)MEMPACK_Malloc(sizeof(struct _InstancePool), 0x6);///@FIXME struct size mis-match on PSX/PSXPC!
 
 #if defined(PSXPC_VERSION)//Increase primitive memory pools to allow 32_BIT_ADDR mode.
+#if defined(GAME_X64)
+	primBase = MEMPACK_Malloc(216600 * 12, 0x6);
+	gOt[1] = (unsigned long**)(primBase + ((3072 * 8) * 2));
+	gOt[0] = (unsigned long**)(primBase);
+	primPool[0] = (struct _PrimPool*)(primBase + (((3072 * 8) * 2) +  ((3072 * 8) * 2)));
+	primPool[1] = (struct _PrimPool*)(primBase + (((3072 * 8) * 2) + ((3072 * 8) * 2) + (0x1770C * 2)));
+#else
 	primBase = MEMPACK_Malloc(216600 * 6, 0x6);
 	gOt[1] = (unsigned long**)(primBase + ((3072 * 4) * 2));
 	gOt[0] = (unsigned long**)(primBase);
-	primPool[0] = (struct _PrimPool*)(primBase + (((3072 * 4) * 2) +  ((3072 * 4) * 2)));
+	primPool[0] = (struct _PrimPool*)(primBase + (((3072 * 4) * 2) + ((3072 * 4) * 2)));
 	primPool[1] = (struct _PrimPool*)(primBase + (((3072 * 4) * 2) + ((3072 * 4) * 2) + (0x1770C * 2)));
+#endif
 	gLightInfo = (struct LightInfo*)MEMPACK_Malloc(sizeof(struct LightInfo), 0x6);
 	memset(gLightInfo, 0, sizeof(struct LightInfo));
 #else
@@ -1141,12 +1149,7 @@ void GAMELOOP_AddClearPrim(unsigned long** drawot, int override)
 #if defined(USE_32_BIT_ADDR)
 		setlen(blkfill, 3);
 	
-#if defined(_WIN64)
-		addPrim(drawot[3071], blkfill);
-#else
 		addPrim(drawot[3071 * 2], blkfill);
-#endif
-
 #else
 		setlen(blkfill, 3);
 		addPrim(drawot[3071], blkfill);

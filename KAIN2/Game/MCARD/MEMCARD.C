@@ -212,11 +212,7 @@ void memcard_save(void *opaque)
 	SAVE_SaveGame();
 }
 
-#if defined(_WIN64)
-void memcard_item(void *opaque, int (*fn)(void*, long long, enum menu_ctrl_t), long parameter, long flags, char *text)
-#else
-void memcard_item(void *opaque, int (*fn)(void*, long, enum menu_ctrl_t), long parameter, long flags, char *text)
-#endif
+void memcard_item(void *opaque, int (*fn)(void*, intptr_t, enum menu_ctrl_t), intptr_t parameter, long flags, char *text)
 {
 	if (flags != 0)
 	{
