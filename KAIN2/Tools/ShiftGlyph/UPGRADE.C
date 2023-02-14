@@ -8,6 +8,7 @@
 
 #include "OBJECT.H"
 #include "FILE.H"
+#include "SOUND.H"
 
 enum DrmFileType : int
 {
@@ -17,6 +18,75 @@ enum DrmFileType : int
 	MUSIC,
 	SFX,
 };
+
+char HashExtensions[7][4] = { "drm", "crm", "tim", "smp", "snd", "smf", "snf" };
+
+unsigned int UPGRADE_HashName(char* string)
+{
+	long sum;
+	long _xor;	// visual studio doesn't like 'xor' for whatever reason
+	long length;
+	long ext;
+	char c;
+	long strl;
+	long endPos;
+	long i;
+	char* pos;
+
+	sum = 0;
+	_xor = 0;
+	length = 0;
+	ext = 0;
+
+	strl = strlen(string) - 1;
+	pos = strchr(string, '.');
+	endPos = 0;
+
+	if (pos != NULL)
+	{
+		pos++;
+
+		for (i = 0; i < 7; i++)
+		{
+#if defined(PSXPC_VERSION)
+			if (_strcmpi(pos, &HashExtensions[i][0]) == 0)
+#else
+			if (strcmpi(pos, &HashExtensions[i][0]) == 0)
+#endif
+			{
+				ext = i;
+				break;
+			}
+		}
+
+		if (i < 7)
+		{
+			strl -= 4;
+		}
+
+		if (strl >= endPos)
+		{
+			for (; strl >= endPos; strl--)
+			{
+				c = string[strl];
+
+				if (c != '\\')
+				{
+					if ((unsigned)(c - 0x61) < 0x1A)
+					{
+						c &= 0xDF;
+					}
+
+					c = (c - 0x1A) & 0xFF;
+					sum = sum + c;
+					_xor = _xor ^ (c * length++);
+				}
+			}
+		}
+	}
+
+	return (length << 27) | (sum << 15) | (_xor << 3) | ext;
+}
 
 char* UPGRADE_ReadFile(char* filePath, unsigned int* outSize)
 {
@@ -154,14 +224,56 @@ enum ObjectType UPGRADE_GetObjectType(char* objectName)
 {
 	if (!strcmp(objectName, "raziel__"))
 	{
+		printf("Converting player!\n");
 		return ObjectType::OBJ_PLAYER;
 	}
 	else if (!strcmp(objectName, "glphicon"))
 	{
+		printf("Converting glyph!\n");
 		return ObjectType::OBJ_GLYPH;
 	}
+	else if (!strcmp(objectName, "mcardx__") || !strcmp(objectName, "cinemax_"))
+	{
+		printf("Converting overlay!\n");
+		return ObjectType::OBJ_OVERLAY;
+	}
+	else
+	{
+		printf("Failed to detect type: %s\n", objectName);
+		return ObjectType::OBJ_NONE;
+	}
+}
 
-	return ObjectType::OBJ_NONE;
+void UPGRADE_SNF(long* data, unsigned int fileSize, char* filePath)
+{
+	struct _AadDynSfxFileHdr* sfxHeader = (struct _AadDynSfxFileHdr*)data;
+	
+#if !defined(_WIN64)
+	FILE* f = FILE_OpenWrite(filePath);
+
+	unsigned long long NULL_PTR = 0;
+
+	UPGRADE_DumpRaw(&sfxHeader->snfID, sizeof(unsigned long), offsetof(_AadDynSfxFileHdr64, snfID), f);
+	UPGRADE_DumpRaw(&sfxHeader->snfVersion, sizeof(unsigned short), offsetof(_AadDynSfxFileHdr64, snfVersion), f);
+	UPGRADE_DumpRaw(&sfxHeader->uniqueID, sizeof(unsigned short), offsetof(_AadDynSfxFileHdr64, uniqueID), f);
+	UPGRADE_DumpRaw(&sfxHeader->handle, sizeof(unsigned short), offsetof(_AadDynSfxFileHdr64, handle), f);
+
+	UPGRADE_DumpRaw(&sfxHeader->numSfxInFile, sizeof(unsigned short), offsetof(_AadDynSfxFileHdr64, numSfxInFile), f);
+	UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), offsetof(_AadDynSfxFileHdr64, prevDynSfxFile), f);
+	UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), offsetof(_AadDynSfxFileHdr64, nextDynSfxFile), f);
+
+	unsigned short* sfxData = (unsigned short*)(sfxHeader + 1);
+
+	for (int i = 0; i < sfxHeader->numSfxInFile; i++, sfxData++)
+	{
+		UPGRADE_DumpRaw(sfxData, sizeof(unsigned short), ftell(f), f);
+	}
+
+	unsigned short term = 0;
+	UPGRADE_DumpRaw(&term, sizeof(unsigned short), ftell(f), f);
+
+	FILE_Close(f);
+#endif
 }
 
 void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAddr, unsigned int fileSize, char* filePath)
@@ -688,19 +800,32 @@ void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAdd
 		break;
 	}
 
+	long* relocPtr = (long*)object->relocList;
+	long relocTableSize = 0;
+
+	if (object->relocList != NULL)
+	{
+		long relocTableOffset = FILE_GetOffset(f);
+
+		while (*relocPtr++ != -1)
+		{
+			relocTableSize += sizeof(long);
+		}
+
+		relocTableSize += sizeof(long);
+
+		relocationTable.push_back(offsetof(Object64, relocList));
+
+		UPGRADE_DumpStruct(object->relocList, relocTableSize, offsetof(Object64, relocList), f);
+	}
+
 	if (object->relocModule != NULL)
 	{
 		relocationTable.push_back(offsetof(Object64, relocModule));
 
-		UPGRADE_DumpStruct(object->relocModule, 0, offsetof(Object64, relocModule), f);
+		UPGRADE_DumpStruct(object->relocModule, (char*)baseAddr + fileSize - (char*)object->relocModule, offsetof(Object64, relocModule), f);
 	}
 
-	if (object->relocList != NULL)
-	{
-		relocationTable.push_back(offsetof(Object64, relocList));
-
-		UPGRADE_DumpStruct(object->relocList, 0, offsetof(Object64, relocList), f);
-	}
 
 	FILE_Close(f);
 
@@ -712,11 +837,7 @@ void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAdd
 	fread(fileData, resultFileSize, 1, f);
 	FILE_Close(f);
 
-#if !defined(_WIN64)
-	char nameBuff[4096];
-	sprintf(nameBuff, "%s.x64", filePath);
-	f = FILE_OpenWrite(nameBuff);
-#endif
+	f = FILE_OpenWrite(filePath);
 
 	if (relocationTable.size())
 	{
@@ -740,6 +861,57 @@ void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAdd
 	delete[] fileData;
 
 	FILE_Close(f);
+
+#if !defined(_WIN64)
+	char nameBuff[4096];
+	sprintf(nameBuff, "%s", filePath);
+
+#if defined(UPDATE_LST) || 1
+	f = fopen("bigfile.lst", "ab");
+
+	char sep = 0;
+
+	unsigned int hash = UPGRADE_HashName(strstr(nameBuff, "kain2"));///@TODO need to strip c:/path!
+
+	fprintf(f, "%x", hash);
+	fwrite(&sep, sizeof(char), 1, f);
+	fprintf(f, "%s", nameBuff);
+	fwrite(&sep, sizeof(char), 1, f);
+
+	FILE_Close(f);
+#endif
+
+#endif
+}
+
+void UPGRADE_DumpDefaultFile(long* data, unsigned int fileSize, char* filePath)
+{
+	char nameBuff[4096];
+	sprintf(nameBuff, "%s", filePath);
+
+	FILE* f = fopen("bigfile.lst", "ab");
+
+	if (f != NULL)
+	{
+		char sep = 0;
+
+		unsigned int hash = UPGRADE_HashName(nameBuff);
+
+		fprintf(f, "%x", hash);
+		fwrite(&sep, sizeof(char), 1, f);
+		fprintf(f, "%s", nameBuff);
+		fwrite(&sep, sizeof(char), 1, f);
+
+		FILE_Close(f);
+	}
+
+	f = fopen(nameBuff, "wb+");
+
+	if (f != NULL)
+	{
+		fwrite(data, fileSize, 1, f);
+		FILE_Close(f);
+	}
 }
 
 void UPGRADE_ProcessRedirectList(long* data, unsigned int fileSize, char* filePath, DrmFileType fileType)
@@ -748,21 +920,34 @@ void UPGRADE_ProcessRedirectList(long* data, unsigned int fileSize, char* filePa
 	struct RedirectList redirectListX;
 	struct RedirectList* redirectList;
 
-	redirectList = &redirectListX;
+	if (fileType == DrmFileType::OBJECT)
+	{
+		redirectList = &redirectListX;
 
-	redirectList->data = data + 1;
+		redirectList->data = data + 1;
 
-	redirectList->numPointers = data[0];
+		redirectList->numPointers = data[0];
 
-	tableSize = (redirectList->numPointers + 512 < 0) ? (redirectList->numPointers + 1023) : (redirectList->numPointers + 512);
-	tableSize /= 512;
-	tableSize *= 512;
+		tableSize = (redirectList->numPointers + 512 < 0) ? (redirectList->numPointers + 1023) : (redirectList->numPointers + 512);
+		tableSize /= 512;
+		tableSize *= 512;
+	}
 
 	switch (fileType)
 	{
 	case OBJECT:
 		UPGRADE_Object(redirectList, &data[tableSize], data, fileSize, filePath);
 		break;
+	case SFX:
+	{
+		switch (data[0])
+		{
+		case 0x61534E46:
+			UPGRADE_SNF(data, fileSize, filePath);
+			break;
+		}
+		break;
+	}
 	}
 	//UPGRADE_Pointers(redirectList, &data[tableSize], data, fileSize, filePath);
 
@@ -773,21 +958,28 @@ enum DrmFileType UPGRADE_GetFileType(const char* drmFilePath)
 {
 	if (strstr(drmFilePath, "kain2\\object\\") != NULL)
 	{
+		printf("Found Object!\n");
 		return DrmFileType::OBJECT;
 	}
 
 	if (strstr(drmFilePath, "kain2\\area\\") != NULL)
 	{
+		printf("Found Area!\n");
+
 		return DrmFileType::AREA;
 	}
 
 	if (strstr(drmFilePath, "kain2\\music\\") != NULL)
 	{
+		printf("Found Music!\n");
+
 		return DrmFileType::MUSIC;
 	}
 
 	if (strstr(drmFilePath, "kain2\\sfx\\") != NULL)
 	{
+		printf("Found SFX!\n");
+
 		return DrmFileType::SFX;
 	}
 
@@ -806,6 +998,10 @@ void UPGRADE_OpenDRM(char* drmFilePath)
 		if (fileType != DrmFileType::NONE)
 		{
 			UPGRADE_ProcessRedirectList((long*)pFileData, outSize, drmFilePath, fileType);
+		}
+		else
+		{
+			UPGRADE_DumpDefaultFile((long*)pFileData, outSize, drmFilePath);
 		}
 	}
 }
