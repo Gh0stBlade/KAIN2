@@ -9,6 +9,7 @@
 #include "OBJECT.H"
 #include "FILE.H"
 #include "SOUND.H"
+#include "LOCALS.H"
 
 enum DrmFileType : int
 {
@@ -17,6 +18,7 @@ enum DrmFileType : int
 	AREA,
 	MUSIC,
 	SFX,
+	TBL
 };
 
 char HashExtensions[7][4] = { "drm", "crm", "tim", "smp", "snd", "smf", "snf" };
@@ -242,6 +244,38 @@ enum ObjectType UPGRADE_GetObjectType(char* objectName)
 		printf("Failed to detect type: %s\n", objectName);
 		return ObjectType::OBJ_NONE;
 	}
+}
+
+void UPGRADE_Locals(long* data, unsigned int fileSize, char* filePath)
+{
+	struct LocalizationHeader* localsHeader = (struct LocalizationHeader*)data;
+	unsigned int* stringOffsets = (unsigned int*)(localsHeader + 1);
+	char* stringTable = (char*)(localsHeader + 1) + localsHeader->numStrings * sizeof(unsigned int);
+
+	unsigned short* xaTable = (unsigned short*)((char*)localsHeader + localsHeader->XATableOffset);
+
+	FILE* f = FILE_OpenWrite(filePath);
+
+	UPGRADE_DumpRaw(localsHeader, sizeof(struct LocalizationHeader), ftell(f), f);
+
+	for (int i = 0; i < localsHeader->numStrings; i++)
+	{
+		long long actualOffset = stringOffsets[i] + (localsHeader->numStrings * sizeof(unsigned int));
+
+		UPGRADE_DumpRaw(&actualOffset, sizeof(long long), ftell(f), f);
+	}
+
+	UPGRADE_DumpRaw(stringTable, (char*)xaTable - (char*)stringTable, ftell(f), f);
+
+	localsHeader->XATableOffset = ftell(f);
+
+	UPGRADE_DumpRaw(xaTable, localsHeader->numXAfiles * sizeof(unsigned short), ftell(f), f);
+
+	FILE_Seek(f, 0, SEEK_SET);
+
+	UPGRADE_DumpRaw(localsHeader, sizeof(struct LocalizationHeader), ftell(f), f);
+
+	FILE_Close(f);
 }
 
 void UPGRADE_SNF(long* data, unsigned int fileSize, char* filePath)
@@ -948,6 +982,11 @@ void UPGRADE_ProcessRedirectList(long* data, unsigned int fileSize, char* filePa
 		}
 		break;
 	}
+	case TBL:
+	{
+		UPGRADE_Locals(data, fileSize, filePath);
+		break;
+	}
 	}
 	//UPGRADE_Pointers(redirectList, &data[tableSize], data, fileSize, filePath);
 
@@ -981,6 +1020,11 @@ enum DrmFileType UPGRADE_GetFileType(const char* drmFilePath)
 		printf("Found SFX!\n");
 
 		return DrmFileType::SFX;
+	}
+
+	if (!strcmp(".TBL", strchr(drmFilePath, '.')))
+	{
+		return DrmFileType::TBL;
 	}
 
 	return DrmFileType::NONE;
