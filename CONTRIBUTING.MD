@@ -9,7 +9,7 @@ matching with the original binary to be merged into the project (proof will be r
 Please select a platform:
   1. [Windows](#Windows)
   2. ~~Linux~~
-  3. ~~Mac~~
+  3. [Mac]Mac
   4. ~~Android~~
   5. ~~Web (Emscripten)~~
   6. ~~UWP~~
@@ -21,12 +21,23 @@ Please select a platform:
   4. Clone the project (and all sub modules) using GitHub desktop or Git command line.
   5. Navigate to `Emulator/Platform/Windows` and execute `Generate-Project-Files.bat` to generate the project files (or you can do this via CMake commandline but you must always select Win32 architecture).
   6. Open the Solution file located at `(ROOT)/Build/Build_Win32/Soul Reaver.sln`
-  7. Build KAIN2_Win32
+  7. Build KAIN2_Win3
+  
+# Mac (64-bit)
+  1. Install Xcode 14.2.
+  2. Install GitHub or GitHub Desktop.
+  3. Install CMake (3.24.1 or higher).
+  4. Clone the project (and all sub modules) using GitHub desktop or Git command line.
+  5. Open CMake and navigate to the root where you cloned in step 3 using "browse source" button
+  6. "Where to build binaries" can be any path you wish.
+  7. Open the Solution file located at the path you selected in step 6 within Xcode.
+  8. Build KAIN2_Mac
 
 # Game files setup:
   1. By default (debug builds) all files must be extracted from `BIGFILE.DAT` to run as it is coded to load files externally and not packed into one file. (You can do this using the tool in Tools/LST (build it then drag and drop BIGFILE.DAT ontop, copy BIGFILE.LST and /KAIN2/ folder to where the executable is located))
   2. By default (release builds) always load files from `BIGFILE.DAT` which must be in the same folder as the main executable.
   3. Move `BIGFILE.DAT` and `LOCALS.TBL` to where the built executable is located.
+  4. Note: 64-bit support is W.I.P! If building for a 64-bit platform, all assets (when extracted from `BIGFILE.DAT` must be passed through the ShiftGlyph tool located in `ROOT/KAIN2/Tools/ShiftGlyph/`.
 
 # It is built, now what?
 

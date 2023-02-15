@@ -15,7 +15,7 @@
 2. SDL2
 
 # Supported Platforms:
-Windows 7-11, Linux, UWP, Xbox One/Series X(UWP), Web (Emscripten), Android. There are plans to support more platforms than what is currently listed.
+Windows 7-11, Linux, Mac (64-bit), UWP, Xbox One/Series X(UWP), Web (Emscripten), Android. There are plans to support more platforms than what is currently listed.
 
 # Project Scope:
 We want to achieve the same functionality as the PlayStation version of Soul Reaver by decompiling the code and making a modern port of the game as the original source was lost. This is achieved by translating MIPS r3000a ASM to C. 
