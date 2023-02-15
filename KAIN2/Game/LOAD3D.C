@@ -249,7 +249,7 @@ void LOAD_DoCDReading()//Matching - 83.60%
 
 	if (bytesLoaded != 0 && loadStatus.currentQueueFile.checksumType != 0)
 	{
-#if !defined(__EMSCRIPTEN__) && !defined(_WINDOWS) && !defined(__APPLE__)///@FIXME crash!
+#if !defined(__EMSCRIPTEN__) && !(defined(_WINDOWS) && defined(_DEBUG)) && !defined(__APPLE__)///@FIXME crash!
 		LOAD_UpdateCheckSum(bytesLoaded);
 #endif
 	}
