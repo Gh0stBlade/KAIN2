@@ -14,7 +14,6 @@ ${KAIN2_SRCS}
 set_target_properties(
 ${PROJECT_NAME} PROPERTIES OUTPUT_NAME "ShiftGlyph"
 ${PROJECT_NAME} PROPERTIES FOLDER "Tools/"
-${PROJECT_NAME} PROPERTIES LINKER_LANGUAGE CXX
 )
 
 #This will be a console application, alter linker subsystem accordingly or main method won't be found
@@ -28,4 +27,10 @@ if(MSVC)
 	PROPERTIES LINK_FLAGS_MINSIZEREL "/SUBSYSTEM:CONSOLE"
 	PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "$(TargetDir)"
 	)
+	set_target_properties(${PROJECT_NAME} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${ROOT_DIR}/Binaries/$(Configuration)")
+
+	set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${ROOT_DIR}/Binaries")	
+	set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "")
+	set_target_properties(${PROJECT_NAME} PROPERTIES DEBUG_POSTFIX "_${TARGET_ARCH}_Debug")
+	set_target_properties(${PROJECT_NAME} PROPERTIES RELEASE_POSTFIX "_${TARGET_ARCH}_Release")
 endif(MSVC)
