@@ -324,7 +324,7 @@ void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAdd
 #endif
 
 	unsigned long long NULL_PTR = 0;
-	std::vector<unsigned int> relocationTable;
+	std::vector<long long> relocationTable;
 
 	UPGRADE_DumpRaw(&object->oflags, sizeof(long), offsetof(Object64, oflags), f);
 	UPGRADE_DumpRaw(&object->id, sizeof(short), offsetof(Object64, id), f);
@@ -877,13 +877,13 @@ void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAdd
 	{
 		long relocCount = relocationTable.size();
 		fwrite(&relocCount, sizeof(long), 1, f);
-		fwrite(&relocationTable[0], sizeof(unsigned int) * relocationTable.size(), 1, f);
+		fwrite(&relocationTable[0], sizeof(long long) * relocationTable.size(), 1, f);
 		
 		unsigned int tableSize = (relocationTable.size() + 512 < 0) ? (relocationTable.size() + 1023) : (relocationTable.size() + 512);
 		tableSize /= 512;
 		tableSize *= 512;
 
-		fseek(f, tableSize * sizeof(unsigned int) - 1, SEEK_SET);
+		fseek(f, tableSize * sizeof(long long) - 1, SEEK_SET);
 		char dummy = 0;
 		fwrite(&dummy, sizeof(dummy), 1, f);
 	
