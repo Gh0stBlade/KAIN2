@@ -27,7 +27,7 @@ typedef	unsigned int	u_int;
 #endif
 #ifndef _ULONG_T
 #define _ULONG_T
-typedef	unsigned long	u_long;
+typedef	unsigned int	u_long;
 #endif
 #ifndef _SYSIII_USHORT
 #define _SYSIII_USHORT

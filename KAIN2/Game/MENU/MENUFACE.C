@@ -69,7 +69,7 @@ void menuface_initialize()
 
 					for (j = 0; j < 7; j++)
 					{
-						DRAW_LoadButton((long*)buttonAddr, &FaceButtons[(i * 7) + j]);
+						DRAW_LoadButton((int*)buttonAddr, &FaceButtons[(i * 7) + j]);
 						buttonAddr = NextTimAddr(buttonAddr, MenuFaces[i].w, MenuFaces[i].h, TIM_4BIT);
 						MenuFaces[i].loaded |= 1 << j;
 					}

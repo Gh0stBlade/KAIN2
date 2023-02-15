@@ -316,7 +316,7 @@ struct SavedBasic* SAVE_GetSavedNextEvent(long areaID, struct SavedBasic* curSav
 		curSave = &curSave[curSave->shiftedSaveSize * 2];
 	}
 
-	while ((unsigned int)curSave < (unsigned int)savedInfoTracker.InfoEnd)
+	while ((uintptr_t)curSave < (uintptr_t)savedInfoTracker.InfoEnd)
 	{
 		if (curSave->savedID == 2 && ((struct SavedEvent*)curSave)->areaID == areaID)
 		{
@@ -455,7 +455,7 @@ long SAVE_HasSavedIntro(struct Intro* intro, long currentStreamID)//Matching - 9
 	saveIntro = (struct _SavedIntro*)savedInfoTracker.InfoStart;
 	result = 0;
 
-	while ((unsigned int)saveIntro < (unsigned int)savedInfoTracker.InfoEnd)
+	while ((uintptr_t)saveIntro < (uintptr_t)savedInfoTracker.InfoEnd)
 	{
 		if (saveIntro->savedID == 1 && saveIntro->introUniqueID == intro->UniqueID ||
 			saveIntro->savedID == 7 && *(short*)&saveIntro->name[4] == intro->UniqueID)
@@ -739,7 +739,7 @@ void SAVE_RestoreGlobalSavePointer()//Matching - 99.09%
 
 	GlobalSave = NULL;
 
-	while ((unsigned int)saveIntro < (unsigned int)savedInfoTracker.InfoEnd)
+	while ((uintptr_t)saveIntro < (uintptr_t)savedInfoTracker.InfoEnd)
 	{
 		if (saveIntro->savedID == 6)
 		{

@@ -114,7 +114,7 @@ int do_save_menu(void *gt, intptr_t parameter, enum menu_ctrl_t ctrl)
 void womp_background(char *tim_path)
 { 
 	MEMPACK_Free((char*)mainMenuScreen);
-	mainMenuScreen = MAIN_LoadTim(tim_path);
+	mainMenuScreen = (int*)MAIN_LoadTim(tim_path);
 }
 
 

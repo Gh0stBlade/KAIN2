@@ -388,7 +388,7 @@ typedef struct {
 	unsigned short len;
 	unsigned short pgxp_index;
 #else
-	unsigned long len;
+	unsigned int len;
 #endif
 #else
 	unsigned	addr: 24;
@@ -408,7 +408,7 @@ typedef struct {
 	unsigned short len;
 	unsigned short pgxp_index;
 #else
-	unsigned long len;
+	unsigned int len;
 #endif
 #else
 	u_long	tag;
@@ -426,7 +426,7 @@ typedef struct {
 	unsigned short len;
 	unsigned short pgxp_index;
 #else
-	unsigned long len;
+	unsigned int len;
 #endif
 #else
 	u_long	tag;
@@ -445,7 +445,7 @@ typedef struct {
 	unsigned short len;
 	unsigned short pgxp_index;
 #else
-	unsigned long len;
+	unsigned int len;
 #endif
 #else
 	u_long	tag;
@@ -466,7 +466,7 @@ typedef struct {
 	unsigned short len;
 	unsigned short pgxp_index;
 #else
-	unsigned long len;
+	unsigned int len;
 #endif
 #else
 	u_long	tag;
@@ -489,7 +489,7 @@ typedef struct {
 	unsigned short len;
 	unsigned short pgxp_index;
 #else
-	unsigned long len;
+	unsigned int len;
 #endif
 #else
 	u_long	tag;
@@ -509,7 +509,7 @@ typedef struct {
 	unsigned short len;
 	unsigned short pgxp_index;
 #else
-	unsigned long len;
+	unsigned int len;
 #endif
 #else
 	u_long	tag;
@@ -531,7 +531,7 @@ typedef struct {
 	unsigned short len;
 	unsigned short pgxp_index;
 #else
-	unsigned long len;
+	unsigned int len;
 #endif
 #else
 	u_long	tag;
@@ -554,7 +554,7 @@ typedef struct {
 	unsigned short len;
 	unsigned short pgxp_index;
 #else
-	unsigned long len;
+	unsigned int len;
 #endif
 #else
 	u_long	tag;
@@ -583,7 +583,7 @@ typedef struct {
 	unsigned short len;
 	unsigned short pgxp_index;
 #else
-	unsigned long len;
+	unsigned int len;
 #endif
 #else
 	u_long	tag;
@@ -600,7 +600,7 @@ typedef struct {
 	unsigned short len;
 	unsigned short pgxp_index;
 #else
-	unsigned long len;
+	unsigned int len;
 #endif
 #else
 	u_long	tag;
@@ -618,7 +618,7 @@ typedef struct {
 	unsigned short len;
 	unsigned short pgxp_index;
 #else
-	unsigned long len;
+	unsigned int len;
 #endif
 #else
 	u_long	tag;
@@ -637,7 +637,7 @@ typedef struct {
 	unsigned short len;
 	unsigned short pgxp_index;
 #else
-	unsigned long len;
+	unsigned int len;
 #endif
 #else
 	u_long	tag;
@@ -658,7 +658,7 @@ typedef struct {
 	unsigned short len;
 	unsigned short pgxp_index;
 #else
-	unsigned long len;
+	unsigned int len;
 #endif
 #else
 	u_long	tag;
@@ -678,7 +678,7 @@ typedef struct {
 	unsigned short len;
 	unsigned short pgxp_index;
 #else
-	unsigned long len;
+	unsigned int len;
 #endif
 #else
 	u_long	tag;
@@ -704,7 +704,7 @@ typedef struct {
 	unsigned short len;
 	unsigned short pgxp_index;
 #else
-	unsigned long len;
+	unsigned int len;
 #endif
 #else
 	u_long	tag;
@@ -722,7 +722,7 @@ typedef struct {
 	unsigned short len;
 	unsigned short pgxp_index;
 #else
-	unsigned long len;
+	unsigned int len;
 #endif
 #else
 	u_long	tag;
@@ -739,7 +739,7 @@ typedef struct {
 	unsigned short len;
 	unsigned short pgxp_index;
 #else
-	unsigned long len;
+	unsigned int len;
 #endif
 #else
 	u_long	tag;
@@ -759,7 +759,7 @@ typedef struct {
 	unsigned short len;
 	unsigned short pgxp_index;
 #else
-	unsigned long len;
+	unsigned int len;
 #endif
 #else
 	u_long	tag;
@@ -776,7 +776,7 @@ typedef struct {
 	unsigned short len;
 	unsigned short pgxp_index;
 #else
-	unsigned long len;
+	unsigned int len;
 #endif
 #else
 	u_long	tag;
@@ -792,7 +792,7 @@ typedef struct {
 	unsigned short len;
 	unsigned short pgxp_index;
 #else
-	unsigned long len;
+	unsigned int len;
 #endif
 #else
 	u_long	tag;
@@ -808,7 +808,7 @@ typedef struct {
 	unsigned short len;
 	unsigned short pgxp_index;
 #else
-	unsigned long len;
+	unsigned int len;
 #endif
 #else
 	u_long	tag;
@@ -827,7 +827,7 @@ typedef struct {
 	unsigned short len;
 	unsigned short pgxp_index;
 #else
-	unsigned long len;
+	unsigned int len;
 #endif
 #else
 	u_long	tag;
@@ -842,7 +842,7 @@ typedef struct {
 	unsigned short len;
 	unsigned short pgxp_index;
 #else
-	unsigned long len;
+	unsigned int len;
 #endif
 #else
 	u_long	tag;
@@ -857,7 +857,7 @@ typedef struct {
 	unsigned short len;
 	unsigned short pgxp_index;
 #else
-	unsigned long len;
+	unsigned int len;
 #endif
 #else
 	u_long	tag;
@@ -872,7 +872,7 @@ typedef struct {
 	unsigned short len;
 	unsigned short pgxp_index;
 #else
-	unsigned long len;
+	unsigned int len;
 #endif
 #else
 	u_long	tag;
@@ -887,7 +887,7 @@ typedef struct {			/* MoveImage */
 	unsigned short len;
 	unsigned short pgxp_index;
 #else
-	unsigned long len;
+	unsigned int len;
 #endif
 #else
 	u_long	tag;
@@ -902,7 +902,7 @@ typedef struct {			/* LoadImage */
 	unsigned short len;
 	unsigned short pgxp_index;
 #else
-	unsigned long len;
+	unsigned int len;
 #endif
 #else
 	u_long	tag;
@@ -918,7 +918,7 @@ typedef	struct {
 	unsigned short len;
 	unsigned short pgxp_index;
 #else
-	unsigned long len;
+	unsigned int len;
 #endif
 #else
 	u_long	tag;
@@ -933,7 +933,7 @@ typedef struct {
 	unsigned short len;
 	unsigned short pgxp_index;
 #else
-	unsigned long len;
+	unsigned int len;
 #endif
 #else
 	u_long	tag;

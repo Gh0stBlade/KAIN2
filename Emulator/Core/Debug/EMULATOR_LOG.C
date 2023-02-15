@@ -1,8 +1,9 @@
 #include "EMULATOR_LOG.H"
 
-#if defined(UWP) || defined(_WIN32) && !defined(SN_TARGET_PSP2)
-
+#if defined(UWP) || defined(_WINDOWS)
 #include <Windows.h>
+#endif
+
 #include <stdio.h>
 
 void Emulator_Log(enum LOG_TYPE lt, const char* file, const char* func, int line, const char* fmt, ...) 
@@ -25,9 +26,7 @@ void Emulator_Log(enum LOG_TYPE lt, const char* file, const char* func, int line
     char buff[1024];
     sprintf(buff, "[F:%s:%s:L%d] - %s\n", file, func, line, fmt);
 
-    OutputDebugStringA(buff);
+    printf(buff);
 
 #endif
 }
-
-#endif

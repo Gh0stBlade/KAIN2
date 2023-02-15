@@ -198,7 +198,7 @@ short ecostable[] = {
 
 
 ///@FIXME this function produces bad leaves.
-void BSP_MarkVisibleLeaves_S(struct BSPTree* bsp, struct Camera* camera, struct _PolytopeList* polytopeList, unsigned long** drawot, int curTree, struct _Instance* savedLightInstance, struct _Terrain* terrain, struct GameTracker* gameTracker, struct _StreamUnit* currentUnit)
+void BSP_MarkVisibleLeaves_S(struct BSPTree* bsp, struct Camera* camera, struct _PolytopeList* polytopeList, unsigned int** drawot, int curTree, struct _Instance* savedLightInstance, struct _Terrain* terrain, struct GameTracker* gameTracker, struct _StreamUnit* currentUnit)
 {
 	//fp = drawot
 	//s0 = bsp
@@ -229,7 +229,7 @@ void BSP_MarkVisibleLeaves_S(struct BSPTree* bsp, struct Camera* camera, struct 
 	//s6 = camera
 	//fp = polytopeList
 
-	unsigned long* s0 = getScratchAddr(48);
+	unsigned int* s0 = getScratchAddr(48);
 	s0[0] = (unsigned long)s0;
 
 	unsigned long* s7 = (unsigned long*)&polytopeList->polytope;
@@ -248,8 +248,8 @@ void BSP_MarkVisibleLeaves_S(struct BSPTree* bsp, struct Camera* camera, struct 
 	{
 		unsigned int* pM = (unsigned int*)&camera->core.vvNormalWorVecMat[0].m[0][0];
 
-		unsigned long* addr = &getScratchAddr(0)[0 + i];
-		unsigned long* addr1 = &getScratchAddr(0)[1 + i];
+		unsigned int* addr = &getScratchAddr(0)[0 + i];
+		unsigned int* addr1 = &getScratchAddr(0)[1 + i];
 
 		getScratchAddr(0)[0 + (i * 4)] = pM[0 + (i * 4)];
 		getScratchAddr(0)[1 + (i * 4)] = pM[1 + (i * 4)];

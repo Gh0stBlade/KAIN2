@@ -61,7 +61,7 @@ struct _NonBlockLoadEntry // hashcode: 0x722059B4 (dec: 1914722740)
 	long fileHash; // size=0, offset=0
 	long dirHash; // size=0, offset=4
 	long filePos; // size=0, offset=8
-	long* loadAddr; // size=0, offset=12
+	int* loadAddr; // size=0, offset=12
 	long loadSize; // size=0, offset=16
 	long checksum; // size=0, offset=20
 	long checksumType; // size=0, offset=24
@@ -92,7 +92,7 @@ struct _LoadStatus // hashcode: 0x3D15BA2C (dec: 1024834092)
 	long compEndBytes; // size=0, offset=76
 	long decompressLen; // size=0, offset=80
 	long checksum; // size=0, offset=84
-	long* checkAddr; // size=0, offset=88
+	int* checkAddr; // size=0, offset=88
 	struct _BigFile bigFile; // size=36, offset=92
 	void* buffer1; // size=0, offset=128
 	void* buffer2; // size=0, offset=132
@@ -124,9 +124,9 @@ extern void LOAD_SetupFileToDoBufferedCDReading(); // 0x80037124
 extern void LOAD_ProcessReadQueue(); // 0x80037198
 extern char * LOAD_ReadFileFromCD(char *filename, int memType); // 0x80037314
 #if defined(_DEBUG) && !defined(NO_FILESYSTEM) || defined(__EMSCRIPTEN__)
-extern void LOAD_CdReadFromBigFile(long fileOffset, unsigned long* loadAddr, long bytes, long chksumLevel, long checksum, long fileHash); // 0x800373F4
+extern void LOAD_CdReadFromBigFile(long fileOffset, unsigned int* loadAddr, long bytes, long chksumLevel, long checksum, long fileHash); // 0x800373F4
 #else
-extern void LOAD_CdReadFromBigFile(long fileOffset, unsigned long* loadAddr, long bytes, long chksumLevel, long checksum); // 0x800373F4
+extern void LOAD_CdReadFromBigFile(long fileOffset, unsigned int* loadAddr, long bytes, long chksumLevel, long checksum); // 0x800373F4
 #endif
 extern struct _BigFileDir * LOAD_ReadDirectory(struct _BigFileDirEntry *dirEntry); // 0x80037420
 extern void LOAD_InitCdLoader(char *bigFileName, char *voiceFileName); // 0x80037488
@@ -138,9 +138,9 @@ extern struct _BigFileEntry * LOAD_GetBigFileEntryByHash(long hash); // 0x800378
 extern struct _BigFileEntry * LOAD_GetBigFileEntry(char *fileName); // 0x80037984
 extern long LOAD_DoesFileExist(char *fileName); // 0x800379AC
 extern void LOAD_NonBlockingReadFile(struct _NonBlockLoadEntry *loadEntry); // 0x800379E0
-extern void LOAD_LoadTIM(long *addr, long x_pos, long y_pos, long clut_x, long clut_y); // 0x80037A9C
-extern void LOAD_LoadTIM2(long *addr, long x_pos, long y_pos, long width, long height); // 0x80037B3C
-extern long LOAD_RelocBinaryData(long* data, long fileSize); // 0x80037B84
+extern void LOAD_LoadTIM(int *addr, long x_pos, long y_pos, long clut_x, long clut_y); // 0x80037A9C
+extern void LOAD_LoadTIM2(int *addr, long x_pos, long y_pos, long width, long height); // 0x80037B3C
+extern long LOAD_RelocBinaryData(int* data, long fileSize); // 0x80037B84
 extern void LOAD_CleanUpBuffers(); // 0x80037C3C
 extern void * LOAD_InitBuffers(); // 0x80037C84
 extern void LOAD_InitCdStreamMode(); // 0x80037CD4

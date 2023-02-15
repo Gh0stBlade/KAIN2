@@ -50,9 +50,9 @@ struct LightInfo
 typedef struct _PrimPool // hashcode: 0x9529B283 (dec: -1792429437)
 {
 	long numPrims; // size=0, offset=0
-	unsigned long* nextPrim; // size=0, offset=4
-	unsigned long* lastPrim; // size=0, offset=8
-	unsigned long prim[24000]; // size=96000, offset=12
+	unsigned int* nextPrim; // size=0, offset=4
+	unsigned int* lastPrim; // size=0, offset=8
+	unsigned int prim[24000]; // size=96000, offset=12
 } _PrimPool;
 
 struct GameTracker // hashcode: 0x4EB3EFC5 (dec: 1320415173)
@@ -98,8 +98,8 @@ struct GameTracker // hashcode: 0x4EB3EFC5 (dec: 1320415173)
 	long gameFlags; // size=0, offset=320
 	long streamFlags; // size=0, offset=324
 	void (*drawNonAnimatedSegmentFunc)(); // size=0, offset=328
-	long* (*drawAnimatedModelFunc)(struct _Model*, struct _PVertex*, struct _PrimPool*, unsigned long**, CVECTOR*); // size=0, offset=332
-	unsigned long* (*drawDisplayPolytopeListFunc)(struct _PolytopeList* polytopeList, struct _Terrain* terrain, struct Camera* camera, struct  _PrimPool* primPool, unsigned long** drawot, struct _Position* globalOffset); // size=0, offset=336
+	int* (*drawAnimatedModelFunc)(struct _Model*, struct _PVertex*, struct _PrimPool*, unsigned int**, CVECTOR*); // size=0, offset=332
+	unsigned int* (*drawDisplayPolytopeListFunc)(struct _PolytopeList* polytopeList, struct _Terrain* terrain, struct Camera* camera, struct  _PrimPool* primPool, unsigned int** drawot, struct _Position* globalOffset); // size=0, offset=336
 	void (*drawBgFunc)(); // size=0, offset=340
 	struct Level* mainDrawUnit; // size=392, offset=344
 	char baseAreaName[16]; // size=16, offset=348
@@ -222,7 +222,7 @@ extern int CheckForNoBlend(struct _ColorType *Color); // 0x8002E7DC
 extern void BlendToColor(struct _ColorType *target, struct _ColorType *current, struct _ColorType *dest); // 0x8002E824
 extern void MainRenderLevel(struct _StreamUnit *currentUnit, unsigned long **drawot); // 0x8002E918
 extern void StreamIntroInstancesForUnit(struct _StreamUnit *currentUnit); // 0x8002EE18
-extern long StreamRenderLevel(struct _StreamUnit *currentUnit, struct Level *mainLevel, unsigned long **drawot, long portalFogColor); // 0x8002EE58
+extern long StreamRenderLevel(struct _StreamUnit *currentUnit, struct Level *mainLevel, unsigned int **drawot, long portalFogColor); // 0x8002EE58
 extern void GAMELOOP_FlipScreenAndDraw(struct GameTracker *gameTracker, unsigned long **drawot); // 0x8002F1A0
 extern void GAMELOOP_AddClearPrim(unsigned long **drawot, int override); // 0x8002F254
 extern void GAMELOOP_SwitchTheDrawBuffer(unsigned long **drawot); // 0x8002F2FC

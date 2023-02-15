@@ -8,9 +8,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
-#if !defined(SN_TARGET_PSP2)
-#include <malloc.h>
-#endif
 
 #if defined(__ANDROID__)///@FIXME Android include order is messed up, includes SPEC_PSXPC_N MALLOC.H rather than NDK version!
 #define malloc SDL_malloc
@@ -366,7 +363,7 @@ int CdSync(int mode, u_char * result)
 			if (readMode == RM_XA_AUDIO)
 			{
 				char xaAudioData[2336];
-				CdRead(1, (unsigned long*)&xaAudioData[0], CdlReadS);
+				CdRead(1, (unsigned int*)&xaAudioData[0], CdlReadS);
 				CdReadSync(CdlReadS, NULL);
 
 				//Sector should be read now
@@ -545,17 +542,17 @@ int CdRead2(long mode)
 	return 1;
 }
 
-void StSetRing(u_long* ring_addr, u_long ring_size)
+void StSetRing(unsigned int* ring_addr, unsigned int ring_size)
 {
 	UNIMPLEMENTED();
 }
 
-void StSetStream(u_long mode, u_long start_frame, u_long end_frame, void (*func1)(), void (*func2)())
+void StSetStream(unsigned int mode, unsigned int start_frame, unsigned int end_frame, void (*func1)(), void (*func2)())
 {
 	UNIMPLEMENTED();
 }
 
-u_long StGetNext(u_long** addr, u_long** header)
+unsigned int StGetNext(unsigned int** addr, unsigned int** header)
 {
 	UNIMPLEMENTED();
 

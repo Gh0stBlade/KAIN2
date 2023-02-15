@@ -393,7 +393,7 @@ extern void FX_Relocate(struct _SVector *offset); // 0x80044430
 extern void FX_UpdateTexturePointers(struct _FX_PRIM *fxPrim, struct Object *oldObject, long sizeOfObject, long offset); // 0x800445E0
 extern void FX_RelocateFXPointers(struct Object *oldObject, struct Object *newObject, long sizeOfObject); // 0x80044640
 extern void FX_ProcessList(struct _FXTracker *fxTracker); // 0x80044710
-extern void FX_DrawReaver(struct _PrimPool *primPool, unsigned long **ot, MATRIX *wcTransform); // 0x8004490C
+extern void FX_DrawReaver(struct _PrimPool *primPool, unsigned int **ot, MATRIX *wcTransform); // 0x8004490C
 extern void FX_DrawList(struct _FXTracker *fxTracker, struct GameTracker *gameTracker, unsigned long **ot, MATRIX *wcTransform); // 0x80044958
 extern void FX_SimpleQuadSetup(struct _FX_PRIM *fxPrim, TDRFuncPtr_FX_SimpleQuadSetup1fxProcess fxProcess, struct _FX_MATRIX *fxMatrix, struct _Instance *instance, struct _MFace *mface, struct _MVertex *vertexList, SVECTOR*center, SVECTOR*vel, SVECTOR*accl, struct _FXTracker *fxTracker, int timeToLive); // 0x80045B60
 extern void FX_WaterRingProcess(struct _FX_PRIM *fxPrim, struct _FXTracker *fxTracker); // 0x80045D9C
@@ -443,9 +443,9 @@ extern void FX_MakeParticleTexFX(struct _FX_PRIM *fxPrim, struct _SVector *posit
 extern void FX_MakeHitFX(struct _SVector *position); // 0x8004A130
 extern void FX_ContinueLightning(struct _FXLightning *zap, struct _FXTracker *fxTracker); // 0x8004A1C4
 extern void FX_SetReaverInstance(struct _Instance *instance); // 0x8004A224
-extern void FX_SoulReaverBlade(struct _Instance *instance, unsigned long **drawot); // 0x8004A230
+extern void FX_SoulReaverBlade(struct _Instance *instance, unsigned int **drawot); // 0x8004A230
 extern void FX_ReaverBladeInit(); // 0x8004A620
-extern void FX_SoulReaverWinding(struct _Instance *instance, struct _PrimPool *primPool, unsigned long **ot, MATRIX *wcTransform); // 0x8004A628
+extern void FX_SoulReaverWinding(struct _Instance *instance, struct _PrimPool *primPool, unsigned int **ot, MATRIX *wcTransform); // 0x8004A628
 extern void FX_UpdateInstanceWaterSplit(struct _Instance *instance); // 0x8004A878
 extern void FX_GetPlaneEquation(struct _SVector *normal, struct _SVector *poPlane, struct _PlaneConstants *plane); // 0x8004A948
 extern void FX_DoInstancePowerRing(struct _Instance *instance, long atuTime, long *color, long numColors, int follow_halveplane); // 0x8004A9BC

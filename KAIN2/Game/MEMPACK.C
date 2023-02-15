@@ -24,7 +24,7 @@ char* memBuffer = NULL;
 unsigned int overlayAddress = 0; // 0x800CE194
 #else
 #define OVERLAY_LENGTH 0xDDC8
-#if defined(_WIN64)
+#if defined(GAME_X64)
 char memBuffer[OVERLAY_LENGTH + 0x11F18C + (ONE_MB * 5)];
 #else
 char memBuffer[OVERLAY_LENGTH + 0x11F18C + (ONE_MB * 4)];

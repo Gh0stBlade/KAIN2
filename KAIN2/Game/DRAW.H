@@ -48,11 +48,11 @@ typedef struct POLY_F4_SEMITRANS
 	unsigned short len;
 	unsigned short pgxp_index;
 #else
-	unsigned long len;
+	unsigned int len;
 #endif
 #endif
 
-	unsigned long dr_tpage; // size=0, offset=4
+	unsigned int dr_tpage; // size=0, offset=4
 	unsigned char r0; // size=0, offset=8
 	unsigned char g0; // size=0, offset=9
 	unsigned char b0; // size=0, offset=10
@@ -71,7 +71,7 @@ extern short pause_redraw_flag; // offset 0x800d2fd4
 extern void* pause_redraw_prim; // offset 0x800d2fd8
 extern short RENDER_currentStreamUnitID;
 extern int InStreamUnit;
-extern unsigned long** hackOT;
+extern unsigned int** hackOT;
 
 extern void fDRAW_SPLIT_INTPL_XYZ(struct _SVector *newVertex, struct _SVector *pvb, struct _SVector *pvc); // 0x8002A5B0
 
@@ -85,7 +85,7 @@ extern void DRAW_TranslucentQuad(short x0, short y0, short x1, short y1, int x2,
 
 extern void DRAW_DrawButton(struct _ButtonTexture *button, short x, short y, unsigned long **ot); // 0x8002AA40
 
-extern void DRAW_LoadButton(long *addr, struct _ButtonTexture *button); // 0x8002ABA8
+extern void DRAW_LoadButton(int *addr, struct _ButtonTexture *button); // 0x8002ABA8
 
 extern void DRAW_FreeButton(struct _ButtonTexture *button); // 0x8002AD48
 
@@ -103,9 +103,9 @@ extern unsigned long * DRAW_DrawGlowPoints2(struct _Instance *instance, long seg
 
 extern unsigned long * DRAW_DrawGlowPoint(struct _Instance *instance, long seg1, struct _PrimPool *primPool, unsigned long **ot, long color, int width, int height); // 0x8002BC44
 
-extern int DRAW_DisplayTFace_zclipped_C(SVECTOR*vertex0, SVECTOR*vertex1, SVECTOR*vertex2, struct UVTYPE *uv0, struct UVTYPE *uv1, struct UVTYPE *uv2, long color0, long color1, long color2, struct _PrimPool *primPool, unsigned long **ot, int ndiv); // 0x8002BD14
+extern int DRAW_DisplayTFace_zclipped_C(SVECTOR*vertex0, SVECTOR*vertex1, SVECTOR*vertex2, struct UVTYPE *uv0, struct UVTYPE *uv1, struct UVTYPE *uv2, long color0, long color1, long color2, struct _PrimPool *primPool, unsigned int **ot, int ndiv); // 0x8002BD14
 
-extern long * DRAW_Zclip_subdiv(POLY_GT3 *texture, unsigned long **ot, int ndiv); // 0x8002C554
+extern int * DRAW_Zclip_subdiv(POLY_GT3 *texture, unsigned int **ot, int ndiv); // 0x8002C554
 
 extern void DRAW_LoadingMessage(); // 0x8002CA58
 

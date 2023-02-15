@@ -245,7 +245,7 @@ void FONT_MakeSpecialFogClut(int x, int y)
 
 	DrawSync(0);
 
-	LoadImage(&myrect, (unsigned long*)&cl);
+	LoadImage(&myrect, (unsigned int*)&cl);
 	
 	DrawSync(0);
 #else
@@ -282,7 +282,7 @@ void FONT_Init()
 	{
 		timAddr = (unsigned long*)LOAD_ReadFile("\\kain2\\game\\font.tim", 5);
 
-		LOAD_LoadTIM((long*)timAddr, x, y, x, (SCREEN_HEIGHT / 2) + 6);
+		LOAD_LoadTIM((int*)timAddr, x, y, x, (SCREEN_HEIGHT / 2) + 6);
 
 		MEMPACK_Free((char*)timAddr);
 
@@ -357,7 +357,7 @@ void FONT_ReloadFont()
 {
 	unsigned long* timAddr;
 	timAddr = (unsigned long*)LOAD_ReadFile("\\kain2\\game\\font.tim", 5);
-	LOAD_LoadTIM((long*)timAddr, fontTracker.font_vramX, fontTracker.font_vramY, fontTracker.font_vramX, fontTracker.font_vramY + 126);
+	LOAD_LoadTIM((int*)timAddr, fontTracker.font_vramX, fontTracker.font_vramY, fontTracker.font_vramX, fontTracker.font_vramY + 126);
 	MEMPACK_Free((char*)timAddr);
 	FONT_MakeSpecialFogClut(fontTracker.font_vramX, fontTracker.font_vramY + 127);
 }
@@ -599,7 +599,7 @@ void drawChar2DPoly(long fpi, long x, long y)
 	
 	addPrim(drawOT, textPoly);
 
-	gameTrackerX.primPool->nextPrim = (unsigned long*)(textPoly + 1);
+	gameTrackerX.primPool->nextPrim = (unsigned int*)(textPoly + 1);
 
 #elif defined(PC_VERSION)
 	__int16 v3; // ax

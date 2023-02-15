@@ -1,10 +1,10 @@
 #include "CORE.H"
 #include "RESOLVE.H"
 
-void RESOLVE_Pointers(struct RedirectList *redirectList, long *data, long *baseAddr)//Matching - 100%
+void RESOLVE_Pointers(struct RedirectList *redirectList, int *data, int *baseAddr)//Matching - 100%
 {
 #if defined (PSX_VERSION)
-	long* rdList;
+	int* rdList;
 	int i;
 	uintptr_t* handle;
 

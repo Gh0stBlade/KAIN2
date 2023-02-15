@@ -2,7 +2,7 @@
 #define EMULATOR_FILESYSTEM_COMMON_H
 
 
-#if defined(_WIN32) || defined(_WIN64)
+#if defined(_WIN32) || defined(_WIN64) || defined(__APPLE__)
 #include "Core/FileSystem/Windows/EMULATOR_FILESYSTEM_WINDOWS.H"
 #elif defined(__EMSCRIPTEN__)
 #include "Core/FileSystem/Emscripten/EMULATOR_FILESYSTEM_EMSCRIPTEN.H"

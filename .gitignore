@@ -24,3 +24,4 @@ Emulator/Shaders/NVN/*.bnsh
 
 /.vs/*
 *.res
+.DS_Store*
