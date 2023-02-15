@@ -159,7 +159,7 @@ void Editor_BillboardSprite(struct _Position* position, struct _Rotation* rotati
 		}
 	}
 
-	gameTrackerX.primPool->nextPrim = (unsigned long*)polyf4;
+	gameTrackerX.primPool->nextPrim = (unsigned int*)polyf4;
 }
 
 void Editor_DrawSouls()
@@ -275,7 +275,7 @@ void Editor_DrawCameraSplines()
 		}
 	}
 
-	gameTrackerX.primPool->nextPrim = (unsigned long*)line;
+	gameTrackerX.primPool->nextPrim = (unsigned int*)line;
 }
 
 void Editor_DrawInstancesAsCubes()
@@ -390,7 +390,7 @@ void Editor_DrawInstancesAsCubes()
 			gameTrackerX.primPool->numPrims++;
 		}
 
-		gameTrackerX.primPool->nextPrim = (unsigned long*)pol4;
+		gameTrackerX.primPool->nextPrim = (unsigned int*)pol4;
 	}
 }
 
@@ -620,7 +620,7 @@ void Editor_DrawUnitBBOX(struct _BoundingBox box, struct _Position offset)
 		gameTrackerX.primPool->numPrims++;
 	}
 
-	gameTrackerX.primPool->nextPrim = (unsigned long*)line;
+	gameTrackerX.primPool->nextPrim = (unsigned int*)line;
 
 	theCamera.core.position.x = cam_pos_save.x;
 	theCamera.core.position.y = cam_pos_save.y;
