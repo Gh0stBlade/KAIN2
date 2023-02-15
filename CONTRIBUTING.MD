@@ -10,18 +10,18 @@ Please select a platform:
   1. [Windows](#Windows)
   2. ~~Linux~~
   3. [Mac]Mac
-  4. ~~Android~~
+  4. [Android]Android
   5. ~~Web (Emscripten)~~
   6. ~~UWP~~
 
-# Windows
+# Windows/WindowsStore (UWP) (32-bit/64-bit)
   1. Install Visual Studio 17 2022.
   2. Install GitHub or GitHub Desktop.
   3. Install CMake (3.24.1 or higher).
   4. Clone the project (and all sub modules) using GitHub desktop or Git command line.
-  5. Navigate to `Emulator/Platform/Windows` and execute `Generate-Project-Files.bat` to generate the project files (or you can do this via CMake commandline but you must always select Win32 architecture).
-  6. Open the Solution file located at `(ROOT)/Build/Build_Win32/Soul Reaver.sln`
-  7. Build KAIN2_Win3
+  5. Navigate to `Emulator/Platform/Windows` or `Emulator/Platform/WindowsStore` for UWP and execute `Generate-Project-Files.bat` to generate the project files (or you can do this via CMake commandline but you must always select Win32 architecture).
+  6. Open the Solution file located at `(ROOT)/Build/Build_Win32/Soul Reaver.sln` or `(ROOT)/Build/Build_WindowsStore/Soul Reaver.sln`
+  7. Build KAIN2_Win32
   
 # Mac (64-bit)
   1. Install Xcode 14.2.
@@ -31,7 +31,15 @@ Please select a platform:
   5. Open CMake and navigate to the root where you cloned in step 3 using "browse source" button
   6. "Where to build binaries" can be any path you wish.
   7. Open the Solution file located at the path you selected in step 6 within Xcode.
-  8. Build KAIN2_Mac
+  8. Build KAIN2_Mac.
+  
+# Android (32-bit/64-bit)
+  1. Install Android Studio plus the latest Android NDK.
+  2. Install Github or GitHub Desktop.
+  3. Install CMake (3.24.1 or higher).
+  4. Clone the project (and all sub modules) using GitHub desktop or Git command line.
+  5. Open `(ROOT)/Emulator/Platform/Android` as a project within Android Studio.
+  6. Build KAIN2_Android.
 
 # Game files setup:
   1. By default (debug builds) all files must be extracted from `BIGFILE.DAT` to run as it is coded to load files externally and not packed into one file. (You can do this using the tool in Tools/LST (build it then drag and drop BIGFILE.DAT ontop, copy BIGFILE.LST and /KAIN2/ folder to where the executable is located))
