@@ -28,9 +28,9 @@ extern void clearloop() ; // 0x80024E5C
 
 extern long TimerTick() ; // 0x80024E78
 
-extern int CheckVolatile(void* a0) ; // 0x80024EB0
+extern intptr_t CheckVolatile(void* a0) ; // 0x80024EB0
 
-extern long* DRAW_AnimatedModel_S(struct _Model* model, struct _PVertex* poolVertex, struct _PrimPool* primPool, unsigned long** ot, CVECTOR* vertexColor); // 0x80024EBC
+extern int* DRAW_AnimatedModel_S(struct _Model* model, struct _PVertex* poolVertex, struct _PrimPool* primPool, unsigned int** ot, CVECTOR* vertexColor); // 0x80024EBC
 
 extern void anim_loop_top() ; // 0x80024FA0
 
@@ -108,12 +108,12 @@ extern void do_super_subdiv() ; // 0x80025A58
 
 extern void super_clip() ; // 0x80025AC4
 
-extern long DRAW_DisplayTFace_S(unsigned long** pNextPrim, unsigned long** drawot, int s2, unsigned long* t4, int t1, int t2, int t3, int t6, struct _TVertex* a2); // 0x80025ACC
+extern long DRAW_DisplayTFace_S(unsigned int** pNextPrim, unsigned int** drawot, int s2, unsigned int* t4, int t1, int t2, int t3, int t6, struct _TVertex* a2); // 0x80025ACC
 
-extern unsigned long* DRAW_DisplaySubdivPolytope_S(struct _BSPNode** polytope, struct _Terrain* terrain, unsigned long* pNextPrim, unsigned long** drawot); // 0x8002629C
+extern unsigned int* DRAW_DisplaySubdivPolytope_S(struct _BSPNode** polytope, struct _Terrain* terrain, unsigned int* pNextPrim, unsigned int** drawot); // 0x8002629C
 
 
-extern unsigned long* DRAW_DisplayPolytopeList_S(struct _PolytopeList* polytopeList, struct _Terrain* terrain, struct Camera* camera, struct _PrimPool* primPool, unsigned long** drawot, struct _Position* globalOffset);
+extern unsigned int* DRAW_DisplayPolytopeList_S(struct _PolytopeList* polytopeList, struct _Terrain* terrain, struct Camera* camera, struct _PrimPool* primPool, unsigned int** drawot, struct _Position* globalOffset);
 
 //extern void DRAW_DisplayPolytopeList_S(struct _VertexPool*, struct _Terrain*, struct Camera*, struct _PrimPool*, unsigned int**, _Position*) ; // 0x80026BD4
 

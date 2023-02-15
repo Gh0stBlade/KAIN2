@@ -11,12 +11,10 @@
  * SDL2.H inclusion.
  */
 
-#if defined(__APPLE__)
+#if defined(__EMSCRIPTEN__)
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_opengl.h>
-#elif defined(__EMSCRIPTEN__)
-#include <SDL2/SDL.h>
-#elif (defined(_WINDOWS) || defined(__MINGW32__) || defined(__linux__)) && !defined(__ANDROID__) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX) && !defined(PLATFORM_NX_ARM) || defined(UWP_SDL2)
+#elif (defined(_WINDOWS) || defined(__MINGW32__) || defined(__linux__) || defined(__APPLE__)) && !defined(__ANDROID__) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX) && !defined(PLATFORM_NX_ARM) || defined(UWP_SDL2)
+#define _U_LONG
 #include <SDL.h>
 #if defined(SDL2_MIXER)
 #include <SDL_mixer.h>

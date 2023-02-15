@@ -56,17 +56,17 @@ TextureID rg8lutTexture;
 typedef struct POLY_G3_SEMITRANS 
 {
 #if defined(USE_32_BIT_ADDR)
-	unsigned long tag;
+	uintptr_t tag;
 #if defined(PGXP)
 	unsigned short len;
 	unsigned short pgxp_index;
 #else
-	unsigned long len;
+	unsigned int len;
 #endif
 #else
 	unsigned long tag;
 #endif
-	unsigned long dr_tpage; // size=0, offset=4
+	unsigned int dr_tpage; // size=0, offset=4
 	unsigned char r0; // size=0, offset=8
 	unsigned char g0; // size=0, offset=9
 	unsigned char b0; // size=0, offset=10
@@ -95,13 +95,13 @@ typedef struct POLY_F4_SEMITRANS
 	unsigned short len;
 	unsigned short pgxp_index;
 #else
-	unsigned long len;
+	unsigned int len;
 #endif
 #else
 	unsigned long tag;
 #endif
 
-	unsigned long dr_tpage; // size=0, offset=4
+	unsigned int dr_tpage; // size=0, offset=4
 	unsigned char r0; // size=0, offset=8
 	unsigned char g0; // size=0, offset=9
 	unsigned char b0; // size=0, offset=10
@@ -305,7 +305,7 @@ int ParsePrimitive(uintptr_t primPtr, int code)
 			r.w = poly->w;
 			r.h = poly->h;
 
-			LoadImagePSX(&r, (unsigned long*)blackImage);
+			LoadImagePSX(&r, (unsigned int*)blackImage);
 			Emulator_UpdateVRAM();
 
 			free(blackImage);
@@ -1031,10 +1031,10 @@ void Emulator_DrawTouchUI()
 	struct OrderingTable
 	{
 		uintptr_t addr;
-		unsigned long len;
+		unsigned int len;
 	};
 
-	struct OrderingTable OT[4];
+	struct OrderingTable OT[32];
 	char polygonBuffer[sizeof(POLY_F4_SEMITRANS) * 32];
 	char* p = &polygonBuffer[0];
 

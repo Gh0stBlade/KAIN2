@@ -2301,7 +2301,7 @@ void STREAM_RelocateInstance(struct _Instance* instance, struct _SVector* offset
 { 
 	STREAM_OffsetInstancePosition(instance, offset, 1);
 
-	INSTANCE_Post(instance, 0x100008, (int)offset);
+	INSTANCE_Post(instance, 0x100008, (intptr_t)offset);
 }
 
 void STREAM_OffsetInstancePosition(struct _Instance* instance, struct _SVector* offset, int streamSignalFlag)
@@ -3818,9 +3818,9 @@ void DrawFogRectangle(PSX_RECT* cliprect, struct _PrimPool* primPool, int otzpos
 	
 	polyg4 = (POLY_G4*)gameTrackerX.primPool->nextPrim;
 
-	if ((unsigned long*)(polyg4 + 1) < gameTrackerX.primPool->lastPrim)
+	if ((unsigned int*)(polyg4 + 1) < gameTrackerX.primPool->lastPrim)
 	{
-		gameTrackerX.primPool->nextPrim = (unsigned long*)(polyg4 + 1);
+		gameTrackerX.primPool->nextPrim = (unsigned int*)(polyg4 + 1);
 
 		polyg4->x0 = cliprect->x;
 		polyg4->y0 = cliprect->y;
@@ -3866,7 +3866,7 @@ void STREAM_RenderAdjacantUnit(unsigned long** curOT, struct StreamUnitPortal* c
 
 		PushMatrix();
 
-		StreamRenderLevel(toStreamUnit, mainStreamUnit->level, curOT, portalFogColor);
+		StreamRenderLevel(toStreamUnit, mainStreamUnit->level, (unsigned int**)curOT, portalFogColor);
 	
 		PopMatrix();
 	}

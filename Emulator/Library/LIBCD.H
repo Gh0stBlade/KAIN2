@@ -195,15 +195,15 @@ typedef struct {
 extern "C" {
 #endif
 #endif
-void	StSetRing(u_long *ring_addr,u_long ring_size);
+void	StSetRing(unsigned int *ring_addr,unsigned int ring_size);
 void	StClearRing(void);
 void	StUnSetRing(void);
-void	StSetStream(u_long mode,u_long start_frame,u_long end_frame,
+void	StSetStream(unsigned int mode,unsigned int start_frame,unsigned int end_frame,
 		    void (*func1)(),void (*func2)());
 void	StSetEmulate(u_long *addr,u_long mode,u_long start_frame,
 		     u_long end_frame,void (*func1)(),void (*func2)());
 u_long	StFreeRing(u_long *base);
-u_long	StGetNext(u_long **addr,u_long **header);
+unsigned int	StGetNext(unsigned int **addr,unsigned int **header);
 u_long	StGetNextS(u_long **addr,u_long **header);
 u_short	StNextStatus(u_long **addr,u_long **header);
 void    StRingStatus(short *free_sectors,short *over_sectors);

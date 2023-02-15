@@ -54,6 +54,7 @@ include("Platform/Emscripten.cmake")
 include("Platform/Android.cmake")
 include("Platform/WindowsStore.cmake")
 include("Platform/Durango.cmake")
+include("Platform/Apple.cmake")
 
 include_directories(${EMULATOR_PUBLIC_INCLUDE_DIR})
 include_directories(${EMULATOR_INCLUDE_DIR}/Core/)

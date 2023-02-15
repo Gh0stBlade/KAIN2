@@ -43,65 +43,65 @@ extern void EnMessageQueueData(struct __MessageQueue *In, int ID, int Data); // 
 
 extern void * CIRC_Alloc(int size); // 0x80070840
 
-extern int SetCollideInfoData(struct _CollideInfo *srcCI); // 0x80070884
+extern intptr_t SetCollideInfoData(struct _CollideInfo *srcCI); // 0x80070884
 
-extern int SetMonsterHitData(struct _Instance *Sender, struct _Instance *lastHit, int Power, int knockBackDistance, int knockBackFrames); // 0x800708E0
+extern intptr_t SetMonsterHitData(struct _Instance *Sender, struct _Instance *lastHit, int Power, int knockBackDistance, int knockBackFrames); // 0x800708E0
 
-extern int SetMonsterThrownData(struct _Instance *Sender, struct _Rotation *Direction, int Power); // 0x8007094C
+extern intptr_t SetMonsterThrownData(struct _Instance *Sender, struct _Rotation *Direction, int Power); // 0x8007094C
 
-extern int SetMonsterAlarmData(struct _Instance *sender, _Position *position, int type); // 0x800709B4
+extern intptr_t SetMonsterAlarmData(struct _Instance *sender, _Position *position, int type); // 0x800709B4
 
-extern int SetMonsterSoulSuckData(struct _Instance *Sender, int x, int y, int z); // 0x80070A1C
+extern intptr_t SetMonsterSoulSuckData(struct _Instance *Sender, int x, int y, int z); // 0x80070A1C
 
-extern int SetMonsterImpaleData(struct _Instance *weapon, struct _Rotation *direction, _Position *position, int distance); // 0x80070A78
+extern intptr_t SetMonsterImpaleData(struct _Instance *weapon, struct _Rotation *direction, _Position *position, int distance); // 0x80070A78
 
-extern int SetObjectData(int x, int y, int PathNumber, struct _Instance *Force, int node); // 0x80070B10
+extern intptr_t SetObjectData(int x, int y, int PathNumber, struct _Instance *Force, int node); // 0x80070B10
 
-extern int SetPositionData(int x, int y, int z); // 0x80070B7C
+extern intptr_t SetPositionData(int x, int y, int z); // 0x80070B7C
 
-extern int SetPhysicsGravityData(int UpperOffset, int LowerOffset, int x, int y, int z, int slope); // 0x80070BC8
+extern intptr_t SetPhysicsGravityData(int UpperOffset, int LowerOffset, int x, int y, int z, int slope); // 0x80070BC8
 
-extern int SetPhysicsEdgeData(int UpperOffset, int ForwardOffset, int AboveOffset, int x, int y, int z, struct _SVector *Normal1, struct _SVector *Normal2, struct _SVector *Delta); // 0x80070C44
+extern intptr_t SetPhysicsEdgeData(int UpperOffset, int ForwardOffset, int AboveOffset, int x, int y, int z, struct _SVector *Normal1, struct _SVector *Normal2, struct _SVector *Delta); // 0x80070C44
 
-extern int SetPhysicsSwimData(int CheckDepth, struct _SVector *iVelocity, int SwimDepth, int WadeDepth, int TreadDepth); // 0x80070CF0
+extern intptr_t SetPhysicsSwimData(int CheckDepth, struct _SVector *iVelocity, int SwimDepth, int WadeDepth, int TreadDepth); // 0x80070CF0
 
-extern int SetPhysicsDropOffData(int xOffset, int yOffset, int DropOffset, int slipSlope, int UpperOffset); // 0x80070D5C
+extern intptr_t SetPhysicsDropOffData(int xOffset, int yOffset, int DropOffset, int slipSlope, int UpperOffset); // 0x80070D5C
 
-extern int SetPhysicsSlideData(int Segment, int ForwardVectorX, int ForwardVectorY, int ForwardVectorZ, int DropOffset, int UpperOffset, int Height); // 0x80070DC8
+extern intptr_t SetPhysicsSlideData(int Segment, int ForwardVectorX, int ForwardVectorY, int ForwardVectorZ, int DropOffset, int UpperOffset, int Height); // 0x80070DC8
 
-extern int SetPhysicsWallCrawlData(int Segment, int Length, int ForwardOffset, int NormalDistance); // 0x80070E54
+extern intptr_t SetPhysicsWallCrawlData(int Segment, int Length, int ForwardOffset, int NormalDistance); // 0x80070E54
 
-extern int SetPhysicsLinkedMoveData(struct _Instance *instance, int segment, struct _SVector *posDelta, struct _SVector *rotDelta); // 0x80070EB0
+extern intptr_t SetPhysicsLinkedMoveData(struct _Instance *instance, int segment, struct _SVector *posDelta, struct _SVector *rotDelta); // 0x80070EB0
 
-extern int SetPhysicsDropHeightData(_Position *offset, int dropOffset, int mode); // 0x80070F50
+extern intptr_t SetPhysicsDropHeightData(_Position *offset, int dropOffset, int mode); // 0x80070F50
 
-extern int SetAnimationControllerDoneData(struct _Instance *instance, long segment, long type, int data); // 0x80070FC0
+extern intptr_t SetAnimationControllerDoneData(struct _Instance *instance, long segment, long type, int data); // 0x80070FC0
 
-extern int SetAnimationInstanceSwitchData(struct _Instance *instance, int anim, int frame, int frames, int mode); // 0x8007101C
+extern intptr_t SetAnimationInstanceSwitchData(struct _Instance *instance, int anim, int frame, int frames, int mode); // 0x8007101C
 
-extern int SetFXHitData(struct _Instance *hitter, int segment, int amount, int type); // 0x80071088
+extern intptr_t SetFXHitData(struct _Instance *hitter, int segment, int amount, int type); // 0x80071088
 
-extern int SetObjectThrowData(void *target, struct _SVector *angularVel, unsigned short type, unsigned short spinType, int speed, int gravity, int zVel, int initialXRot); // 0x80071184
+extern intptr_t SetObjectThrowData(void *target, struct _SVector *angularVel, unsigned short type, unsigned short spinType, int speed, int gravity, int zVel, int initialXRot); // 0x80071184
 
-extern int SetObjectBreakOffData(struct _Instance *force, short node, short distance, short animation, int frame, int type, int action); // 0x800712F0
+extern intptr_t SetObjectBreakOffData(struct _Instance *force, short node, short distance, short animation, int frame, int type, int action); // 0x800712F0
 
-extern int SetControlInitHangData(struct _Instance *instance, long frame, long frames); // 0x8007137C
+extern intptr_t SetControlInitHangData(struct _Instance *instance, long frame, long frames); // 0x8007137C
 
-extern int SetControlInitIdleData(int mode, long frame, long frames); // 0x800713C8
+extern intptr_t SetControlInitIdleData(int mode, long frame, long frames); // 0x800713C8
 
-extern int SetObjectDraftData(short force, unsigned short radius, unsigned short radiusCoef, unsigned short height, int maxVelocity); // 0x80071414
+extern intptr_t SetObjectDraftData(short force, unsigned short radius, unsigned short radiusCoef, unsigned short height, int maxVelocity); // 0x80071414
 
-extern int SetObjectAbsorbData(struct _Instance *force, unsigned short node, unsigned short steps); // 0x80071480
+extern intptr_t SetObjectAbsorbData(struct _Instance *force, unsigned short node, unsigned short steps); // 0x80071480
 
-extern int SetControlSaveDataData(long length, void *data); // 0x800714CC
+extern intptr_t SetControlSaveDataData(long length, void *data); // 0x800714CC
 
-extern int SetObjectIdleData(long mode, struct _Instance *instance); // 0x80071508
+extern intptr_t SetObjectIdleData(long mode, struct _Instance *instance); // 0x80071508
 
-extern int SetActionPlayHostAnimationData(struct _Instance *instance, struct _Instance *host, int newAnim, int newFrame, int frames, int mode); // 0x80071544
+extern intptr_t SetActionPlayHostAnimationData(struct _Instance *instance, struct _Instance *host, int newAnim, int newFrame, int frames, int mode); // 0x80071544
 
-extern int SetObjectBirthProjectileData(struct _Instance *instance, int joint, int type); // 0x800715C0
+extern intptr_t SetObjectBirthProjectileData(struct _Instance *instance, int joint, int type); // 0x800715C0
 
-extern int SetShadowSegmentData(unsigned long total); // 0x80071610
+extern intptr_t SetShadowSegmentData(unsigned long total); // 0x80071610
 
 extern void G2EmulationInit(); // 0x8007163C
 

@@ -41,7 +41,7 @@ struct DebugMenuLine mainMenu[8] = { DEBUG_LINE_TYPE_FORMAT,  0, 0, "-abs 256 40
 								    }; // offset 0x800C8418
 short mainMenuTimeOut; // offset 0x800D0FA8
 int mainMenuSfx; // offset 0x800D0E1C
-long* mainMenuScreen; // offset 0x800CE6C8
+int* mainMenuScreen; // offset 0x800CE6C8
 short gEndGameNow; // offset 0x800CE562
 short mainMenuFading; // offset 0x800CE6D2
 long DoMainMenu; // offset 0x800CE6C0
@@ -103,16 +103,16 @@ void ClearDisplay()
 #endif
 }
 
-void screen_to_vram(long *screen, int buffer)
+void screen_to_vram(int *screen, int buffer)
 {
 	LOAD_LoadTIM2(screen, 0, buffer << 8, SCREEN_WIDTH, SCREEN_HEIGHT + 16);
 }
 
 void show_screen(char *name)
 {
-	long *screen;
+	int *screen;
 
-	screen = LOAD_ReadFile(name, 11);
+	screen = (int*)LOAD_ReadFile(name, 11);
 	
 	if (screen != NULL)
 	{
@@ -514,7 +514,7 @@ void CheckForDevStation()
 
 void MAIN_ShowLoadingScreen()
 { 
-	long *loadingScreen;
+	int *loadingScreen;
 	char langChar[5];
 	int lang;
 	char filename[64];
@@ -530,11 +530,11 @@ void MAIN_ShowLoadingScreen()
 	if (lang != language_english)
 	{
 		sprintf(filename, "\\kain2\\game\\psx\\loading%c.tim", langChar[lang - 1]);
-		loadingScreen = LOAD_ReadFile(filename, 11);
+		loadingScreen = (int*)LOAD_ReadFile(filename, 11);
 	}
 	else
 	{
-		loadingScreen = LOAD_ReadFile("\\kain2\\game\\psx\\loading.tim", 11);
+		loadingScreen = (int*)LOAD_ReadFile("\\kain2\\game\\psx\\loading.tim", 11);
 	}
 
 	if (loadingScreen != NULL)
@@ -654,7 +654,7 @@ void MAIN_MainMenuInit()
 		aadProcessLoadQueue();
 	} while (1);
 
-	mainMenuScreen = MAIN_LoadTim("\\kain2\\game\\psx\\frontend\\title1.tim");
+	mainMenuScreen = (int*)MAIN_LoadTim("\\kain2\\game\\psx\\frontend\\title1.tim");
 	VRAM_EnableTerrainArea();
 
 #if !defined(DEMO_BUILD)//TODO face.tim load should return null if not exists.

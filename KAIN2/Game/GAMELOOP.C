@@ -819,10 +819,10 @@ void MainRenderLevel(struct _StreamUnit* currentUnit, unsigned long** drawot)
 	clearRect[1].g0 = ((struct _ColorType*)&depthQBackColor)->g;
 	clearRect[1].b0 = ((struct _ColorType*)&depthQBackColor)->b;
 
-	PIPE3D_AnimateTerrainTextures(terrain->aniList, gameTracker->frameCount, gameTracker->primPool, drawot);
-	PIPE3D_AnimateTerrainTextures(level->bgAniList, gameTracker->frameCount, gameTracker->primPool, drawot);
+	PIPE3D_AnimateTerrainTextures(terrain->aniList, gameTracker->frameCount, gameTracker->primPool, (unsigned int**)drawot);
+	PIPE3D_AnimateTerrainTextures(level->bgAniList, gameTracker->frameCount, gameTracker->primPool, (unsigned int**)drawot);
 
-	PIPE3D_InstanceListTransformAndDraw(currentUnit, gameTracker, drawot, &theCamera.core);
+	PIPE3D_InstanceListTransformAndDraw(currentUnit, gameTracker, (unsigned int**)drawot, &theCamera.core);
 
 	cam_pos_save.x = theCamera.core.position.x;
 	cam_pos_save.y = theCamera.core.position.y;
@@ -868,9 +868,9 @@ void MainRenderLevel(struct _StreamUnit* currentUnit, unsigned long** drawot)
 
 				ApplyMatrix(&cam_mat_save, (SVECTOR*)&tmp, (VECTOR*)&theCamera.core.wcTransform->t[0]);
 
-				BSP_MarkVisibleLeaves_S(bsp, &theCamera, gPolytopeList, drawot, curTree, saveLightInstance, terrain, gameTracker, currentUnit);
+				BSP_MarkVisibleLeaves_S(bsp, &theCamera, gPolytopeList, (unsigned int**)drawot, curTree, saveLightInstance, terrain, gameTracker, currentUnit);
 
-				gameTracker->primPool->nextPrim = gameTracker->drawDisplayPolytopeListFunc(gPolytopeList, terrain, &theCamera, gameTracker->primPool, drawot, &bsp->globalOffset);
+				gameTracker->primPool->nextPrim = gameTracker->drawDisplayPolytopeListFunc(gPolytopeList, terrain, &theCamera, gameTracker->primPool, (unsigned int**)drawot, &bsp->globalOffset);
 
 				if ((bsp->flags & 0x40))
 				{
@@ -910,7 +910,7 @@ void MainRenderLevel(struct _StreamUnit* currentUnit, unsigned long** drawot)
 
 	if (gameTrackerX.playerInstance->currentStreamUnitID == currentUnit->StreamUnitID)
 	{
-		FX_DrawReaver(gameTrackerX.primPool, gameTrackerX.drawOT, theCamera.core.wcTransform);
+		FX_DrawReaver(gameTrackerX.primPool, (unsigned int**)gameTrackerX.drawOT, theCamera.core.wcTransform);
 	}
 
 	//$sp = StackSave
@@ -924,7 +924,7 @@ void StreamIntroInstancesForUnit(struct _StreamUnit* currentUnit)
 	}
 }
 
-long StreamRenderLevel(struct _StreamUnit* currentUnit, struct Level* mainLevel, unsigned long** drawot, long portalFogColor)
+long StreamRenderLevel(struct _StreamUnit* currentUnit, struct Level* mainLevel, unsigned int** drawot, long portalFogColor)
 {
 	struct GameTracker* gameTracker;
 	struct Level* level;
@@ -1144,7 +1144,7 @@ void GAMELOOP_AddClearPrim(unsigned long** drawot, int override)
 		blkfill->w = clearRect[gameTrackerX.drawPage].w;
 		blkfill->h = clearRect[gameTrackerX.drawPage].h;
 
-		gameTrackerX.primPool->nextPrim = (unsigned long*)(blkfill + 1);
+		gameTrackerX.primPool->nextPrim = (unsigned int*)(blkfill + 1);
 		
 #if defined(USE_32_BIT_ADDR)
 		setlen(blkfill, 3);
@@ -1296,7 +1296,7 @@ void GAMELOOP_DisplayFrame(struct GameTracker* gameTracker)
 
 			if (pause_redraw_prim != NULL)
 			{
-				gameTrackerX.primPool->nextPrim = (unsigned long*)pause_redraw_prim;
+				gameTrackerX.primPool->nextPrim = (unsigned int*)pause_redraw_prim;
 			}
 			else
 			{
@@ -1526,7 +1526,7 @@ void GAMELOOP_DisplayFrame(struct GameTracker* gameTracker)
 
 			pause_redraw_flag = 0;
 
-			gameTrackerX.primPool->nextPrim = (unsigned long*)savedNextPrim;
+			gameTrackerX.primPool->nextPrim = (unsigned int*)savedNextPrim;
 		}
 	}
 	
@@ -3105,7 +3105,7 @@ MATRIX* GAMELOOP_GetMatrices(int numMatrices)
 
 	if (matrix + numMatrices < (MATRIX*)pool->lastPrim)
 	{
-		pool->nextPrim = (unsigned long*)(matrix + numMatrices);
+		pool->nextPrim = (unsigned int*)(matrix + numMatrices);
 
 		return matrix;
 	}

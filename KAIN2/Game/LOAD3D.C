@@ -14,7 +14,7 @@
 #define false	0
 #define true	1
 
-static struct _LoadStatus loadStatus; // offset 0x800D0D84
+struct _LoadStatus loadStatus; // offset 0x800D0D84
 long crap1;
 long crap35[4];
 
@@ -229,7 +229,7 @@ void LOAD_UpdateCheckSum(long bytes)//Matching - 95.59%
 		do
 		{
 			loadStatus.checksum += *loadStatus.checkAddr++;
-		} while(bytes -= sizeof(long));
+		} while(bytes -= sizeof(int));
 	}
 }
 
@@ -249,7 +249,7 @@ void LOAD_DoCDReading()//Matching - 83.60%
 
 	if (bytesLoaded != 0 && loadStatus.currentQueueFile.checksumType != 0)
 	{
-#if !defined(__EMSCRIPTEN__) && !defined(_WINDOWS)///@FIXME crash!
+#if !defined(__EMSCRIPTEN__) && !defined(_WINDOWS) && !defined(__APPLE__)///@FIXME crash!
 		LOAD_UpdateCheckSum(bytesLoaded);
 #endif
 	}
@@ -297,7 +297,7 @@ void LOAD_SetupFileToDoCDReading()
 	loadStatus.lastCheckPos = 0;
 	loadStatus.state = 1;
 	loadStatus.currentQueueFile.readCurDest = loadStatus.currentQueueFile.readStartDest;
-	loadStatus.checkAddr = (long*)loadStatus.currentQueueFile.readStartDest;
+	loadStatus.checkAddr = (int*)loadStatus.currentQueueFile.readStartDest;
 
 	if (loadStatus.currentQueueFile.readStartPos < 0)
 	{
@@ -338,7 +338,7 @@ void LOAD_SetupFileToDoBufferedCDReading()
 	loadStatus.currentQueueFile.readStatus = 6;
 	loadStatus.checksum = 0;
 	loadStatus.state = 1;
-	loadStatus.checkAddr = (long*)loadStatus.currentQueueFile.readStartDest;
+	loadStatus.checkAddr = (int*)loadStatus.currentQueueFile.readStartDest;
 
 	if (loadStatus.currentQueueFile.readStartPos < 0)
 	{
@@ -455,7 +455,7 @@ char* LOAD_ReadFileFromCD(char* filename, int memType)
 	}
 #else
 #if defined(PSXPC_VERSION) && defined(NO_CD)
-#if defined(_WIN64) || defined(_WIN32) || defined(__EMSCRIPTEN__) || defined(PLATFORM_NX_ARM) || defined(__ANDROID__) || defined(SN_TARGET_PSP2)
+#if defined(_WIN64) || defined(_WIN32) || defined(__EMSCRIPTEN__) || defined(PLATFORM_NX_ARM) || defined(__ANDROID__) || defined(SN_TARGET_PSP2) || defined(__APPLE__)
 	FILE* fp;
 #else
 	long fp;
@@ -472,7 +472,7 @@ char* LOAD_ReadFileFromCD(char* filename, int memType)
 	{
 		fp = PCopen(filename, 0, 0);
 
-#if defined(_WIN64) || defined(_WIN32) || defined(__EMSCRIPTEN__) || defined(PLATFORM_NX_ARM) || defined(__ANDROID__) || defined(SN_TARGET_PSP2)
+#if defined(_WIN64) || defined(_WIN32) || defined(__EMSCRIPTEN__) || defined(PLATFORM_NX_ARM) || defined(__ANDROID__) || defined(SN_TARGET_PSP2) || defined(__APPLE__)
 		if (fp != (FILE*)-1)
 #else
 		if (fp != -1)
@@ -547,9 +547,9 @@ char* LOAD_ReadFileFromCD(char* filename, int memType)
 #endif
 
 #if defined(_DEBUG) && !defined(NO_FILESYSTEM) || defined(__EMSCRIPTEN__)
-void LOAD_CdReadFromBigFile(long fileOffset, unsigned long* loadAddr, long bytes, long chksumLevel, long checksum, long fileHash)
+void LOAD_CdReadFromBigFile(long fileOffset, unsigned int* loadAddr, long bytes, long chksumLevel, long checksum, long fileHash)
 #else
-void LOAD_CdReadFromBigFile(long fileOffset, unsigned long* loadAddr, long bytes, long chksumLevel, long checksum)
+void LOAD_CdReadFromBigFile(long fileOffset, unsigned int* loadAddr, long bytes, long chksumLevel, long checksum)
 #endif
 {
 	loadStatus.currentQueueFile.readSize = bytes;
@@ -574,9 +574,9 @@ struct _BigFileDir * LOAD_ReadDirectory(struct _BigFileDirEntry *dirEntry)
 	dir = (struct _BigFileDir*)MEMPACK_Malloc(sizeOfDir, 0x2C);
 	
 #if defined(_DEBUG) && !defined(NO_FILESYSTEM) || defined(__EMSCRIPTEN__)
-	LOAD_CdReadFromBigFile(dirEntry->subDirOffset, (unsigned long*)dir, sizeOfDir, 0, 0, 0);
+	LOAD_CdReadFromBigFile(dirEntry->subDirOffset, (unsigned int*)dir, sizeOfDir, 0, 0, 0);
 #else
-	LOAD_CdReadFromBigFile(dirEntry->subDirOffset, (unsigned long*)dir, sizeOfDir, 0, 0);
+	LOAD_CdReadFromBigFile(dirEntry->subDirOffset, (unsigned int*)dir, sizeOfDir, 0, 0);
 #endif
 
 	return dir;
@@ -599,7 +599,7 @@ void LOAD_InitCdLoader(char *bigFileName, char *voiceFileName)
 	for (i = 0; i < 10; i++)
 	{
 		loadStatus.bigFile.bigfileFileHandle = PCopen(bigFileName, 0, 0);
-#if defined(_WIN64) || defined(_WIN32) || defined(__EMSCRIPTEN__) || defined(PLATFORM_NX_ARM) || defined(__ANDROID__) || defined(SN_TARGET_PSP2)
+#if defined(_WIN64) || defined(_WIN32) || defined(__EMSCRIPTEN__) || defined(PLATFORM_NX_ARM) || defined(__ANDROID__) || defined(SN_TARGET_PSP2) || defined(__APPLE__)
 		if (loadStatus.bigFile.bigfileFileHandle != (FILE*) -1)
 #else
 		if (loadStatus.bigFile.bigfileFileHandle != -1)
@@ -987,13 +987,13 @@ void LOAD_NonBlockingReadFile(struct _NonBlockLoadEntry* loadEntry)
 	{
 		if (loadEntry->loadAddr == NULL)
 		{
-			loadEntry->loadAddr = (long*)MEMPACK_Malloc(loadEntry->loadSize, loadEntry->memType);
+			loadEntry->loadAddr = (int*)MEMPACK_Malloc(loadEntry->loadSize, loadEntry->memType);
 		}
 
 #if defined(_DEBUG) && !defined(NO_FILESYSTEM) || defined(__EMSCRIPTEN__)
-		LOAD_CdReadFromBigFile(loadEntry->filePos, (unsigned long*)loadEntry->loadAddr, loadEntry->loadSize, loadEntry->checksumType, loadEntry->checksum, loadEntry->fileHash);
+		LOAD_CdReadFromBigFile(loadEntry->filePos, (unsigned int*)loadEntry->loadAddr, loadEntry->loadSize, loadEntry->checksumType, loadEntry->checksum, loadEntry->fileHash);
 #else
-		LOAD_CdReadFromBigFile(loadEntry->filePos, (unsigned long*)loadEntry->loadAddr, loadEntry->loadSize, loadEntry->checksumType, loadEntry->checksum);
+		LOAD_CdReadFromBigFile(loadEntry->filePos, (unsigned int*)loadEntry->loadAddr, loadEntry->loadSize, loadEntry->checksumType, loadEntry->checksum);
 #endif
 		loadStatus.changeDir = 0;
 	}
@@ -1004,10 +1004,10 @@ void LOAD_NonBlockingReadFile(struct _NonBlockLoadEntry* loadEntry)
 }
 
 #ifndef PC_VERSION
-void LOAD_LoadTIM(long *addr, long x_pos, long y_pos, long clut_x, long clut_y)
+void LOAD_LoadTIM(int *addr, long x_pos, long y_pos, long clut_x, long clut_y)
 { 
 	PSX_RECT rect;
-	long *clutAddr;
+	int *clutAddr;
 
 	addr += 2;
 	clutAddr = NULL;
@@ -1017,13 +1017,13 @@ void LOAD_LoadTIM(long *addr, long x_pos, long y_pos, long clut_x, long clut_y)
 		clutAddr = addr + 3;
 		addr += 11;
 	}
-
+    
 	rect.x = (short)x_pos;
 	rect.y = (short)y_pos;
 	rect.w = ((unsigned short*)addr)[4];
 	rect.h = ((unsigned short*)addr)[5];
 
-	LoadImage(&rect, (unsigned long*)(addr + 3));
+	LoadImage(&rect, (unsigned int*)(addr + 3));
 
 	if (clutAddr != NULL)
 	{
@@ -1032,13 +1032,13 @@ void LOAD_LoadTIM(long *addr, long x_pos, long y_pos, long clut_x, long clut_y)
 		rect.w = 16;
 		rect.h = 1;
 		DrawSync(0);
-		LoadImage(&rect, (unsigned long*)clutAddr);
+		LoadImage(&rect, (unsigned int*)clutAddr);
 	}
 }
 #endif
 
 #ifndef PC_VERSION
-void LOAD_LoadTIM2(long *addr, long x_pos, long y_pos, long width, long height)
+void LOAD_LoadTIM2(int *addr, long x_pos, long y_pos, long width, long height)
 {
 	PSX_RECT rect;
 
@@ -1047,14 +1047,14 @@ void LOAD_LoadTIM2(long *addr, long x_pos, long y_pos, long width, long height)
 	rect.w = ((unsigned short*)addr)[8];
 	rect.h = ((unsigned short*)addr)[9];
 
-	LoadImage(&rect, (unsigned long*)addr + 5);
+	LoadImage(&rect, (unsigned int*)addr + 5);
 	DrawSync(0);
 }
 #endif
 
-long LOAD_RelocBinaryData(long* data, long fileSize)
+long LOAD_RelocBinaryData(int* data, long fileSize)
 {
-	long* lastMoveDest;
+	int* lastMoveDest;
 	long tableSize;
 	struct RedirectList redirectListX;
 	struct RedirectList* redirectList;

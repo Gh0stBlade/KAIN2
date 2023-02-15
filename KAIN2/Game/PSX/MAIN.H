@@ -23,10 +23,10 @@ struct MainTracker // hashcode: 0x7F315B98 (dec: 2133941144)
 struct BLK_FILL // hashcode: 0x2490546A (dec: 613438570)
 {
 #if defined(USE_32_BIT_ADDR)
-	unsigned long tag; // size=0, offset=0
-	unsigned long len; // size=0, offset=0
+	uintptr_t tag; // size=0, offset=0
+	unsigned int len; // size=0, offset=0
 #else
-	unsigned long tag; // size=0, offset=0
+	uintptr_t tag; // size=0, offset=0
 #endif
 	unsigned char r0; // size=0, offset=4
 	unsigned char g0; // size=0, offset=5
@@ -46,7 +46,7 @@ extern short mainMenuTimeOut; // offset 0x800D0FA8
 
 extern int mainMenuSfx; // offset 0x800D0E1C
 
-extern long* mainMenuScreen; // offset 0x800CE6C8
+extern int* mainMenuScreen; // offset 0x800CE6C8
 
 extern short gEndGameNow; // offset 0x800CE562
 
@@ -78,7 +78,7 @@ extern struct BLK_FILL clearRect[2]; // offset 0x800D0F88
 
 extern void ClearDisplay(); // 0x80037EF8
 
-extern void screen_to_vram(long *screen, int buffer); // 0x80037FB4
+extern void screen_to_vram(int *screen, int buffer); // 0x80037FB4
 
 extern void show_screen(char *name); // 0x80037FE4
 

@@ -191,7 +191,7 @@ void CINEMAX_InitStream(char* buffer, CdlFILE* fp, void (*func)())
 	//s1 = func
 	DecDCTReset(0);
 	DecDCToutCallback(func);
-	StSetRing((u_long*)buffer, 48);
+	StSetRing((unsigned int*)buffer, 48);
 	StSetStream(1, 1, 0xFFFFFFFF, NULL, NULL);
 	CINEMAX_E190C(fp);
 	CINEMAX_E1658(&buffer_details);
@@ -228,14 +228,14 @@ int CINEMAX_E1658(struct BufferInfo* buffer_info)
 
 int CINEMAX_E1708(struct BufferInfo* buffer_info)
 {
-	unsigned long* nextstream;
+	unsigned int* nextstream;
 	StHEADER* header;
 	int s0;
 
 	//s1 = buffer_info
 	for(s0 = 0x36B0; s0 != 0; s0--)
 	{
-		if (StGetNext(&nextstream, (unsigned long**)&header) == 0)
+		if (StGetNext(&nextstream, (unsigned int**)&header) == 0)
 		{
 			//0xE1754
 		}

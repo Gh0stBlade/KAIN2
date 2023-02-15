@@ -23,8 +23,6 @@ struct _LoadQueueEntry* loadHead; // offset 0x800D2728
 
 struct _LoadQueueEntry LoadQueue[40]; // offset 0x800D1D24
 
-struct _LoadStatus loadStatus; // offset 0x800D0D84
-
 struct _LoadQueueEntry* loadTail; // offset 0x800D272C
 
 int numLoads; // offset 0x800D2730
@@ -285,7 +283,7 @@ int STREAM_PollLoadQueue()
 				break;
 			case 5:
 
-				queueEntry->loadEntry.loadAddr = (long*)LOAD_InitBuffers();
+				queueEntry->loadEntry.loadAddr = (int*)LOAD_InitBuffers();
 				queueEntry->endLoadTime = TIMER_GetTimeMS();
 
 				LOAD_CD_ReadPartOfFile(&queueEntry->loadEntry);
@@ -431,7 +429,7 @@ struct _LoadQueueEntry* STREAM_SetUpQueueEntry(char *fileName, void *retFunc, vo
 	
 	if (retPointer != NULL)
 	{
-#if defined(_WIN64)
+#if defined(GAME_X64)
 		((intptr_t*)retPointer)[0] = INVALID_MEM_MAGIC;
 #else
 		((long*)retPointer)[0] = INVALID_MEM_MAGIC;
@@ -469,7 +467,7 @@ void LOAD_LoadToAddress(char *fileName, void* loadAddr, long relocateBinary)
 	struct _LoadQueueEntry* currentEntry;
 	
 	currentEntry = STREAM_SetUpQueueEntry(fileName, NULL, NULL, NULL, NULL, 0);
-	currentEntry->loadEntry.loadAddr = (long*)loadAddr;
+	currentEntry->loadEntry.loadAddr = (int*)loadAddr;
 	currentEntry->status = 1;
 	currentEntry->relocateBinary = relocateBinary;
 	currentEntry->mempackUsed = 0;
@@ -542,8 +540,9 @@ void LOAD_PlayXA(int number)
 }
 
 long* LOAD_ReadFile(char *fileName, unsigned char memType)
-{ 
+{
 	void *loadAddr;
+    
 	STREAM_QueueNonblockingLoads(fileName, memType, NULL, NULL, NULL, &loadAddr, 0);
 	
 	while (STREAM_PollLoadQueue() != 0)
@@ -596,7 +595,7 @@ void LOAD_AbortFileLoad(char *fileName, void *retFunc)
 	struct _LoadQueueEntry *entry;
 	struct _LoadQueueEntry *prev;
 	long hash;
-	typedef void (*ret)(long*, void*, void*);
+	typedef void (*ret)(int*, void*, void*);
 	ret returnFunction;//?
 
 	if (loadHead != NULL)

@@ -6,6 +6,9 @@
 
 #if defined(OGL)
 
+#if defined(__APPLE__)
+#include <SDL_opengl.h>
+#else
 #include <gl/GL.h>
 
 // hint to the driver to use discrete GPU
@@ -15,6 +18,7 @@ extern "C" {
 	// AMD
 	__declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
 }
+#endif
 
 #if defined(_WINDOWS)
 HWND g_overrideHWND = NULL;
@@ -286,10 +290,14 @@ void Shader_CheckProgramStatus(GLuint program)
 {
 	char info[1024];
 	glGetProgramInfoLog(program, sizeof(info), NULL, info);
+    
+    
 	if (info[0] && strlen(info) > 8)
 	{
 		eprinterr("%s\n", info);
+#if !defined(__APPLE__)
 		eassert(FALSE);
+#endif
 	}
 }
 

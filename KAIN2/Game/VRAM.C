@@ -723,7 +723,7 @@ void VRAM_ClearVram()
 		// Start line: 2229
 	/* end block 3 */
 	// End Line: 2230
-			UNIMPLEMENTED();
+    UNIMPLEMENTED();
 }
 
 
@@ -850,7 +850,7 @@ void VRAM_TransferBufferToVram(void* dataPtr, long dataSize, short status, void 
 				
 				vramControl->yOffset++;
 				
-				LoadImage(&rect, (unsigned long*)vramControl->lineOverFlow);
+				LoadImage(&rect, (unsigned int*)vramControl->lineOverFlow);
 				vramControl->lengthOfLeftOverData = 0;
 			}
 		}
@@ -862,7 +862,7 @@ void VRAM_TransferBufferToVram(void* dataPtr, long dataSize, short status, void 
 			rect.h = dataSize / (vramControl->w << 1);
 			rect.w = vramControl->w;
 	
-			LoadImage(&rect, (unsigned long*)((char*)dataPtr));
+			LoadImage(&rect, (unsigned int*)((char*)dataPtr));
 
 			vramControl->yOffset += rect.h;
 			dataSize -= vramControl->w * (rect.h << 1);

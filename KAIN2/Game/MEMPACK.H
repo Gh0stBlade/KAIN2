@@ -12,7 +12,7 @@ struct MemHeader // hashcode: 0xDAEE4890 (dec: -621918064)
 	unsigned short magicNumber; // size=0, offset=0
 	unsigned char memStatus; // size=0, offset=2
 	unsigned char memType; // size=0, offset=3
-	unsigned long memSize; // size=0, offset=4
+	unsigned int memSize; // size=0, offset=4
 };
 
 struct NewMemTracker // hashcode: 0x5C68280F (dec: 1550329871)

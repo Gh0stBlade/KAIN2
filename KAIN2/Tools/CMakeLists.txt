@@ -4,7 +4,7 @@ cmake_minimum_required (VERSION 3.0)
 set(TOOL_ROOT_DIR ${TOOL_ROOT_DIR} "${CMAKE_CURRENT_SOURCE_DIR}")
 
 #Add each tool project
-if(NOT(DEFINED ENV{TRAVIS} OR DEFINED ENV{APPVEYOR}))
+if(NOT(DEFINED ENV{TRAVIS} OR DEFINED ENV{APPVEYOR}) OR APPLE)
 	add_subdirectory(ShiftMidi)
 	add_subdirectory(ShiftList)
 endif()

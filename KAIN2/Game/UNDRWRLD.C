@@ -153,7 +153,7 @@ void UNDERWORLD_SetupSource()
 	PSX_RECT rect;
 	DR_STP stp;
 
-	ContinueDraw((unsigned long*)&stp, (unsigned long*)1);
+	ContinueDraw((unsigned int*)&stp, (unsigned int*)1);
 
 	DrawPrim(&stp);
 
@@ -164,7 +164,7 @@ void UNDERWORLD_SetupSource()
 
 	MoveImage(&rect, 0, (gameTrackerX.gameData.asmData.dispPage ^ 1) << 8);
 
-	ContinueDraw((unsigned long*)&stp, (unsigned long*)0);
+	ContinueDraw((unsigned int*)&stp, (unsigned int*)0);
 
 	DrawPrim(&stp);
 

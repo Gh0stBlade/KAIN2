@@ -1,9 +1,9 @@
-#ifndef EMULATOR_FILESYSTEM_EMSCRIPTEN_H
-#define EMULATOR_FILESYSTEM_EMSCRIPTEN_H
+#ifndef EMULATOR_FILESYSTEM_WINDOWS_H
+#define EMULATOR_FILESYSTEM_WINDOWS_H
 
 #include "Core/Setup/Platform/EMULATOR_PLATFORM_SETUP.H"
 
-#if defined(_WIN32) || defined(_WIN64)
+#if defined(_WIN32) || defined(_WIN64) || defined(__APPLE__)
 extern void Emulator_OpenReadWIN(char* fileName, void* buff, int size);
 extern void Emulator_OpenReadFPWIN(const char* filePath, void* buff, int size);
 extern void Emulator_GetFileSizeWIN(const char* filePath, int* outSize);
