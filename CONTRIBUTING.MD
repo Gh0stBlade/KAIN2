@@ -9,12 +9,12 @@ matching with the original binary to be merged into the project (proof will be r
 Please select a platform:
   1. [Windows](#Windows)
   2. ~~Linux~~
-  3. [Mac]Mac
-  4. [Android]Android
+  3. [Mac](#Mac)
+  4. [Android](#Android)
   5. ~~Web (Emscripten)~~
-  6. ~~UWP~~
+  6. [UWP](#Windows)
 
-# Windows/WindowsStore (UWP) (32-bit/64-bit)
+# Windows
   1. Install Visual Studio 17 2022.
   2. Install GitHub or GitHub Desktop.
   3. Install CMake (3.24.1 or higher).
@@ -23,7 +23,7 @@ Please select a platform:
   6. Open the Solution file located at `(ROOT)/Build/Build_Win32/Soul Reaver.sln` or `(ROOT)/Build/Build_WindowsStore/Soul Reaver.sln`
   7. Build KAIN2_Win32
   
-# Mac (64-bit)
+# Mac
   1. Install Xcode 14.2.
   2. Install GitHub or GitHub Desktop.
   3. Install CMake (3.24.1 or higher).
@@ -33,7 +33,7 @@ Please select a platform:
   7. Open the Solution file located at the path you selected in step 6 within Xcode.
   8. Build KAIN2_Mac.
   
-# Android (32-bit/64-bit)
+# Android
   1. Install Android Studio plus the latest Android NDK.
   2. Install Github or GitHub Desktop.
   3. Install CMake (3.24.1 or higher).
