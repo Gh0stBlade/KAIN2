@@ -625,7 +625,7 @@ void LOAD_InitCdLoader(char *bigFileName, char *voiceFileName)
 #if defined(_DEBUG) && !defined(NO_FILESYSTEM)  || defined(__EMSCRIPTEN__)
 		LOAD_CdReadFromBigFile(0, (unsigned long*)&loadStatus.bigFile.numSubDirs, sizeof(loadStatus.bigFile.numSubDirs), 0, 0, 0);
 #else
-		LOAD_CdReadFromBigFile(0, (unsigned long*)&loadStatus.bigFile.numSubDirs, sizeof(long), 0, 0);
+		LOAD_CdReadFromBigFile(0, (unsigned int*)&loadStatus.bigFile.numSubDirs, sizeof(long), 0, 0);
 #endif
 
 		do
@@ -639,7 +639,7 @@ void LOAD_InitCdLoader(char *bigFileName, char *voiceFileName)
 #if defined(_DEBUG) && !defined(NO_FILESYSTEM) || defined(__EMSCRIPTEN__)
 		LOAD_CdReadFromBigFile(0, (unsigned long*)ptr, (loadStatus.bigFile.numSubDirs << 3) + 4, 0, 0, 0);
 #else
-		LOAD_CdReadFromBigFile(0, (unsigned long*)ptr, (loadStatus.bigFile.numSubDirs << 3) + 4, 0, 0);
+		LOAD_CdReadFromBigFile(0, (unsigned int*)ptr, (loadStatus.bigFile.numSubDirs << 3) + 4, 0, 0);
 #endif
 
 		ptr += 4;
