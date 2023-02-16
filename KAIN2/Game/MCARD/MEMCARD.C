@@ -191,7 +191,11 @@ void memcard_start(void* opaque)
 {
 	gameTrackerX.streamFlags |= 0x1000000;
 
+#if defined(DEMO)
+	MAIN_StartDemo();
+#else
 	MAIN_StartGame();
+#endif
 
 	memcard_end(gameTrackerX.memcard);
 }
@@ -202,8 +206,12 @@ void memcard_load(void* opaque)
 
 	SAVE_RestoreGame();
 	
+#if defined(DEMO)
+	MAIN_StartDemo();
+#else
 	MAIN_StartGame();
-	
+#endif
+
 	memcard_end(gameTrackerX.memcard);
 }
 

@@ -6,14 +6,28 @@
 #include "Game/MEMPACK.H"
 
 int hack_initialized;
-struct menuface_t MenuFaces[8] = { 236, 49,  48, 48, 2, -1, 0, 0, 0,
+#if defined(DEMO)
+struct menuface_t MenuFaces[] = { 236, 49,  48, 48, 8, -1, 0, 0, 0,
+								   268, 97,  48, 48, 8, -1, 0, 0, 0,
+								   273, 156, 48, 48, 8, -1, 0, 0, 0,
+								   326, 49,  48, 48, 8, -1, 0, 0, 0,
+								   342, 120, 48, 48, 8, -1, 0, 0, 0,
+								   409, 14,  64, 64, 8, -1, 0, 0, 0,
+								   383, 78,  48, 48, 8, -1, 0, 0, 0,
+								   400, 150, 48, 48, 8, -1, 0, 0, 0,
+};
+#else
+struct menuface_t MenuFaces[] = { 236, 49,  48, 48, 2, -1, 0, 0, 0,
 								   268, 97,  48, 48, 2, -1, 0, 0, 0,
 								   273, 156, 48, 48, 2, -1, 0, 0, 0,
 								   326, 49,  48, 48, 2, -1, 0, 0, 0,
 								   342, 120, 48, 48, 2, -1, 0, 0, 0,
 								   409, 14,  64, 64, 2, -1, 0, 0, 0,
 								   383, 78,  48, 48, 2, -1, 0, 0, 0,
-								   400, 150, 48, 48, 2, -1, 0, 0, 0 };
+								   400, 150, 48, 48, 2, -1, 0, 0, 0,
+};
+#endif
+
 struct _ButtonTexture* FaceButtons;
 
 char* NextTimAddr(char* addr, int w, int h, enum bdepth bpp)
@@ -52,8 +66,11 @@ void menuface_initialize()
 
 		if (addr != NULL)
 		{
+#if defined(DEMO)
+			FaceButtons = (struct _ButtonTexture*)MEMPACK_Malloc(sizeof(struct _ButtonTexture) * 64, 0x2D);
+#else
 			FaceButtons = (struct _ButtonTexture*)MEMPACK_Malloc(sizeof(struct _ButtonTexture) * 56, 0x2D);
-
+#endif
 			if (FaceButtons == NULL)
 			{
 				MEMPACK_Free(addr);
@@ -67,7 +84,11 @@ void menuface_initialize()
 					MenuFaces[i].loaded = 0;
 					MenuFaces[i].delay = 0;
 
+#if defined(DEMO)
+					for (j = 0; j < 8; j++)
+#else
 					for (j = 0; j < 7; j++)
+#endif
 					{
 						DRAW_LoadButton((int*)buttonAddr, &FaceButtons[(i * 7) + j]);
 						buttonAddr = NextTimAddr(buttonAddr, MenuFaces[i].w, MenuFaces[i].h, TIM_4BIT);

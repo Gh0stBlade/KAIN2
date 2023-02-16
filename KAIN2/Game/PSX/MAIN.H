@@ -124,6 +124,8 @@ extern void MAIN_FreeMainMenuStuff(); // 0x80038C6C
 
 extern void MAIN_StartGame(); // 0x80038CDC
 
+extern void MAIN_StartDemo();
+
 extern long MAIN_DoMainMenu(struct GameTracker *gameTracker, struct MainTracker *mainTracker, long menuPos); // 0x80038D48
 
 extern int MainG2(void *appData); // 0x80038E1C

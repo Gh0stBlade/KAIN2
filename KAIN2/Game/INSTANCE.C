@@ -956,7 +956,8 @@ void INSTANCE_ProcessIntro(struct _Instance* instance)
 {
 #if defined(PSX_VERSION)
 	struct INICommand* command;
-	
+	UNIMPLEMENTED();
+	return;//Inf loop?
 	if (instance->introData != NULL)
 	{
 		command = (struct INICommand*)instance->introData;

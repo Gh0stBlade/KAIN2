@@ -569,7 +569,6 @@ int Emulator_CreateCommonResources()
 
 void Emulator_CreateIndexBuffer()
 {
-	GLuint indexBuffer;
 	glGenBuffers(1, &dynamic_index_buffer);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, dynamic_index_buffer);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned short) * MAX_NUM_INDEX_BUFFER_INDICES, NULL, GL_DYNAMIC_DRAW);
@@ -827,8 +826,8 @@ void Emulator_UpdateIndexBuffer(const unsigned short* indices, int num_indices, 
 
 void Emulator_SetViewPort(int x, int y, int width, int height)
 {
-	float offset_x = (float)activeDispEnv.screen.x;
-	float offset_y = (float)activeDispEnv.screen.y;
+	int offset_x = activeDispEnv.screen.x;
+	int offset_y = activeDispEnv.screen.y;
 
 	glViewport(x + offset_x, y + -offset_y, width, height);
 }

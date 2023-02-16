@@ -603,12 +603,6 @@ unsigned int Emulator_CounterWrapper(unsigned int interval, void* pTimerID)
 			
 	}
 
-	//static int count = 0;
-	//wchar_t buff[32];
-	//_swprintf(buff, L"%d\n", count);
-	//OutputDebugStringW(buff);
-	//count++;
-
 #if !defined(USE_THREADS)
 	return interval;
 #endif

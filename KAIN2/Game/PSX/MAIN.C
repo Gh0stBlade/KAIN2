@@ -63,7 +63,7 @@ struct InterfaceItem InterfaceItems[] =
 	{ "\\KAININT.STR;1", 0, 0, 0, -1 },
 	{ "\\VERSE.STR;1", 0, 0, 0, 4 },
 	{ "\\CREDITS.STR;1", 0, 0, 0, -1 },
-#if defined(DEMO_BUILD) || 0
+#if defined(DEMO)
 	{ "\\kain2\\game\\psx\\mainmenu\\legal.tim", 330, 330, 1, 2},
 	{ "\\kain2\\game\\psx\\mainmenu\\instruct.tim", 1800, 10, 1, 7},
 	{ "\\kain2\\game\\psx\\mainmenu\\controls.tim", 1800, 10, 1, -1},
@@ -657,9 +657,7 @@ void MAIN_MainMenuInit()
 	mainMenuScreen = (int*)MAIN_LoadTim("\\kain2\\game\\psx\\frontend\\title1.tim");
 	VRAM_EnableTerrainArea();
 
-#if !defined(DEMO_BUILD)//TODO face.tim load should return null if not exists.
 	menuface_initialize();
-#endif
 
 	currentMenu = mainMenu;
 	gameTrackerX.gameMode = 4;
@@ -708,6 +706,13 @@ void MAIN_StartGame()
 		mainMenuFading = 1;
 		GAMELOOP_SetScreenWipe(-30, 30, 10);
 	}
+}
+
+void MAIN_StartDemo()
+{
+	mainTrackerX.mainState = 4;
+	mainTrackerX.movieNum = 12;
+	DoMainMenu = 0;
 }
 
 long MAIN_DoMainMenu(struct GameTracker *gameTracker, struct MainTracker *mainTracker, long menuPos)
@@ -945,13 +950,18 @@ void GameLoop()
 					}
 
 					VSync(0);
-					timer++;
-				} while (timer < item->timeout);
+				} while (++timer < item->timeout);
 			}
 			mainTracker->movieNum = item->nextItem;
 			if (item->nextItem < 0)
 			{
 				goto checkMovie;
+			}
+
+			if (InterfaceItems[item->nextItem].itemType != 1)
+			{
+				mainTracker->mainState = 6;
+				break;
 			}
 		}
 
@@ -1217,16 +1227,13 @@ int MainG2(void *appData)
 #endif
 
 			checkMovie:
-#if !defined(DEMO_BUILD)
-				while ((unsigned)mainTracker->movieNum < 6)
-#else
 				while ((unsigned)mainTracker->movieNum < 14)
-#endif
 				{
 					item = &InterfaceItems[mainTracker->movieNum];
 					gameTrackerX.gameFlags &= -2;
-					show_screen(&item->name[0]);
+					show_screen(item->name);
 #if defined(PSXPC_VERSION)
+					DrawOTag(NULL);
 					DrawOTag(NULL);
 #endif
 
@@ -1243,13 +1250,19 @@ int MainG2(void *appData)
 							}
 
 							VSync(0);
-							timer++;
-						} while (timer < item->timeout);
+
+						} while (++timer < item->timeout);
 					}
 					mainTracker->movieNum = item->nextItem;
 					if (item->nextItem < 0)
 					{
 						goto checkMovie;
+					}
+
+					if (InterfaceItems[item->nextItem].itemType != 1)
+					{
+						mainTracker->mainState = 6;
+						break;
 					}
 				}
 				

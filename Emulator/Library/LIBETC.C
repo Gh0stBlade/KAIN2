@@ -41,6 +41,7 @@ extern unsigned int g_swapTime;
 static unsigned int currentTime = 0;
 static unsigned int lastTime = 0;
 static int numFrames = 0;
+static int vsyncDelay = 0;
 
 int VSync(int mode)
 {
@@ -61,6 +62,19 @@ int VSync(int mode)
 			vsync_callback();
 
 		unsigned int elapsedTime = (currentTime - lastTime) * 2.354f;
+		
+		if (vsyncDelay == 0)
+		{
+			vsyncDelay = SDL_GetTicks() + 5;
+
+			while (vsyncDelay >= SDL_GetTicks())
+			{
+				Emulator_UpdateInput(1);
+			}
+
+			vsyncDelay = 0;
+		}
+
 		return elapsedTime;
 	}
 	else if (mode > 0)

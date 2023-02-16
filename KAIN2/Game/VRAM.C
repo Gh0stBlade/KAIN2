@@ -49,7 +49,11 @@ void VRAM_InitVramBlockCache()//Matching - 94.38%
 	usedVramBlocks = NULL;
 	numOfBlocksUsed = 0;
 
+#if defined(DEMO)
+	for (i = 74; i >= 0; i--)
+#else
 	for (i = 89; i >= 0; i--)
+#endif
 	{
 		vramBlockList[i].flags = 0;
 	}

@@ -407,62 +407,121 @@ void OBTABLE_GetInstanceMessageFunc(struct _Instance *instance)
 	}
 }
 
-void OBTABLE_InitObjectWithID(struct Object *object)
+void OBTABLE_InitObjectWithID(struct Object* object)
 {
 	long id;
-	struct ObjectAccess *oa;
+	struct ObjectAccess* oa;
 
-#define COMPARE_STRING_OA(x, y)	y = &objectAccess[0];							\
-								do {											\
-								int c1 = ((int*)x->name)[0];					\
-							    int c2 = ((int*)y->objectName)[0];				\
-								if(c1 == c2) {									\
-									c1 = ((int*)x->name)[1];					\
-									c2 = ((int*)y->objectName)[1];				\
-									if(c1 == c2) {								\
-									   y->object = x;                           \
-									}                                           \
-								  }												\
-								}												\
-								while((++y)->objectName != NULL);  	            \
-
-#define SET_OBJECT_ID(in_id) if (objectFunc[in_id].scriptName != 0) { \
-                                  object->id = in_id;       \
-	                  }                                     \
-	                  else {                                \
-		                          object->id = -1;          \
-	                  }                                     \
-
-#define GET_OBJECT_BY_NAME(in_id, in_script_name)           \
-            in_id = 0;                                      \
-			if(objectFunc[in_id].scriptName == NULL) {      \
-				object->id = -1;							\
-			}												\
-            while (objectFunc[in_id].scriptName != NULL) {  \
-				if (strcmp(objectFunc[in_id].scriptName, in_script_name) == 0) { \
-					SET_OBJECT_ID(in_id);                   \
-				}                                           \
-				in_id++;                                    \
-			}							                    \
-	
 	if (object != NULL)
 	{
 		if ((object->oflags2 & 0x40000))
 		{
-			GET_OBJECT_BY_NAME(id, "physical");
+			id = 0;
+
+			while (1)
+			{
+				if (objectFunc[id].scriptName != NULL)
+				{
+					if (!strcmp(objectFunc[id].scriptName, "physical"))
+					{
+						if (objectFunc[id].scriptName == NULL)
+						{
+							object->id = -1;
+						}
+						else
+						{
+							object->id = id;
+						}
+
+						break;
+					}
+				}
+				else
+				{
+					object->id = -1;
+					break;
+				}
+
+				id++;
+			}
 		}
 		else if ((object->oflags2 & 0x80000))
 		{
-			GET_OBJECT_BY_NAME(id, "monster_");
+			id = 0;
+
+			while (1)
+			{
+				if (objectFunc[id].scriptName != NULL)
+				{
+					if (!strcmp(objectFunc[id].scriptName, "monster_"))
+					{
+						if (objectFunc[id].scriptName == NULL)
+						{
+							object->id = -1;
+						}
+						else
+						{
+							object->id = id;
+						}
+
+						break;
+					}
+				}
+				else
+				{
+					object->id = -1;
+					break;
+				}
+
+				id++;
+			}
 		}
 		else
 		{
-			GET_OBJECT_BY_NAME(id, object->script);
+			id = 0;
+
+			while (1)
+			{
+				if (objectFunc[id].scriptName != NULL)
+				{
+					if (!strcmp(objectFunc[id].scriptName, object->script))
+					{
+						if (objectFunc[id].scriptName == NULL)
+						{
+							object->id = -1;
+						}
+						else
+						{
+							object->id = id;
+						}
+
+						break;
+					}
+				}
+				else
+				{
+					object->id = -1;
+					break;
+				}
+
+				id++;
+			}
 		}
 
-		if (objectAccess[0].objectName != NULL)
+		oa = &objectAccess[0];
+
+		while (oa->objectName != NULL)
 		{
-			COMPARE_STRING_OA(object, oa);
+			if (((unsigned int*)object->name)[0] == ((unsigned int*)oa->objectName)[0] &&
+				((unsigned int*)object->name)[1] == ((unsigned int*)oa->objectName)[1])
+			{
+				oa->object = object;
+				break;
+			}
+			else
+			{
+				oa++;
+			}
 		}
 	}
 }

@@ -974,7 +974,7 @@ long LOAD_DoesFileExist(char *fileName)
 	
 	if (entry != NULL)
 	{
-		return 0 < entry->fileLen;
+		return entry->fileLen != 0;
 	}
 
 	return 0;
