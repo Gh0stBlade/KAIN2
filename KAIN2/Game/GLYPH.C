@@ -197,7 +197,7 @@ int _GlyphIsAnyGlyphSet()
 	return ((abilities | debugRazielFlags3) & 0x1FC0000);
 }
 
-int _GlyphCost(struct _GlyphTuneData* glyphtunedata, int glyphNum)
+int _GlyphCost(struct _GlyphTuneData* glyphtunedata, int glyphNum)//Matching - 100%
 {
 	return glyphtunedata->glyph_costs[glyphNum - 1];
 }
@@ -350,7 +350,7 @@ void GlyphDrawMenu(struct _Instance* instance)
 		{
 			if (_GlyphIsGlyphUsable(n + 1) != 0)
 			{
-				enabled = (MANNA_Count < _GlyphCost(glyphtunedata, num)) ^ 1;
+				enabled = (MANNA_Count < _GlyphCost(glyphtunedata, n + 1)) ^ 1;
 			}
 			else
 			{
