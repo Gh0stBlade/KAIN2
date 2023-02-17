@@ -3,7 +3,7 @@
 #include "Core/Public/EMULATOR_PUBLIC.H"
 #include "Core/EMULATOR.H"
 
-#if defined(_WINDOWS) && !defined(PLATFORM_NX_ARM)
+#if defined(_WINDOWS) && !defined(PLATFORM_NX_ARM) && !defined(PLATFORM_NX)
 #include <d3d9.h>
 #endif
 
@@ -36,38 +36,35 @@ int ResetCallback(void)
 	return 0;
 }
 
-extern unsigned int g_swapTime;
+extern int64_t g_swapTime;
+static int64_t currentTime = 0;
+static int64_t lastTime = 0;
 
-static unsigned int currentTime = 0;
-static unsigned int lastTime = 0;
 static int numFrames = 0;
-static int vsyncDelay = 0;
+static int64_t vsyncDelay = 0;
 
 int VSync(int mode)
 {
 	Emulator_UpdateInput(1);
 
-#if defined(SDL2)
 	lastTime = currentTime;
-	currentTime = SDL_GetTicks();
-#endif
+	currentTime = Emulator_GetTicks();
 
-#if defined(SDL2)
 	if (mode < 0)
-		return SDL_GetTicks() - g_swapTime;
+		return Emulator_GetTicks() - g_swapTime;
 
 	if (mode == 0)
 	{
 		if (vsync_callback != NULL)
 			vsync_callback();
 
-		unsigned int elapsedTime = (currentTime - lastTime) * 2.354f;
+		int64_t elapsedTime = (currentTime - lastTime) * 2.354f;
 		
 		if (vsyncDelay == 0)
 		{
-			vsyncDelay = SDL_GetTicks() + 5;
+			vsyncDelay = Emulator_GetTicks() + 5;
 
-			while (vsyncDelay >= SDL_GetTicks())
+			while (vsyncDelay >= Emulator_GetTicks())
 			{
 				Emulator_UpdateInput(1);
 			}
@@ -81,28 +78,7 @@ int VSync(int mode)
 	{
 	}
 
-	return SDL_GetTicks();
-#elif 1
-#if !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX_ARM)
-	if (mode < 0)
-		return GetTickCount() - g_swapTime;
-
-	if (mode == 0)
-	{
-		if (vsync_callback != NULL)
-			vsync_callback();
-	}
-	else if (mode > 0)
-	{
-	}
-
-	return GetTickCount();
-#else
-	return 0;
-#endif
-#else
-	return 0;
-#endif
+	return Emulator_GetTicks();
 }
 
 int VSyncCallback(void(*f)(void))

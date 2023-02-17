@@ -23,6 +23,7 @@
 #include "Core/Render/NVN/EMULATOR_RENDER_NVN.H"
 #endif
 
+#include "Core/Utility/EMULATOR_UTILITY_COMMON.H"
 
 typedef enum BlendMode
 {
@@ -90,7 +91,7 @@ extern void Emulator_DrawTouchUI();
 
 extern int g_swapInterval;
 extern int g_wireframeMode;
-extern unsigned int g_swapTime;
+extern int64_t g_swapTime;
 extern int g_PreviousBlendMode;
 extern int g_texturelessMode;
 extern int windowWidth;

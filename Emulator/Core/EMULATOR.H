@@ -12,6 +12,7 @@
 #include "Setup/Platform/EMULATOR_PLATFORM_INCLUDES.H"
 #include "Debug/EMULATOR_LOG.H"
 #include "Core/Render/EMULATOR_RENDER_COMMON.H"
+#include "Core/Utility/EMULATOR_UTILITY_COMMON.H"
 
 //#define USE_THREADS
 
@@ -66,7 +67,7 @@ typedef struct SysCounter
 
 	union
 	{
-		unsigned short cycle;
+		int64_t cycle;
 		unsigned short unk00;
 	};
 

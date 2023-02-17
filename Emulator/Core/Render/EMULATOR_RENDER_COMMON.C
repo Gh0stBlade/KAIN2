@@ -16,7 +16,7 @@ unsigned short vram[VRAM_WIDTH * VRAM_HEIGHT];
 unsigned char rgLUT[LUT_WIDTH * LUT_HEIGHT * sizeof(unsigned int)];
 
 int splitAgain = FALSE;
-unsigned int g_swapTime;
+int64_t g_swapTime;
 int g_wireframeMode = 0;
 int g_swapInterval = SWAP_INTERVAL;
 int g_PreviousBlendMode = BM_NONE;
@@ -30,6 +30,9 @@ int begin_scene_flag = FALSE;
 int vbo_was_dirty_flag = FALSE;
 
 #if defined(PLATFORM_NX) || defined(PLATFORM_NX_ARM)
+
+int64_t g_swapTime;
+
 TextureID* g_lastBoundTexture[2];
 
 ShaderID* g_gte_shader_4;

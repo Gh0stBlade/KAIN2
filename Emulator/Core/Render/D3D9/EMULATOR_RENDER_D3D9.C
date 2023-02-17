@@ -657,14 +657,14 @@ void Emulator_WaitForTimestep(int count)
 {
 	if (g_swapInterval > 0)
 	{
-		int delta = g_swapTime + FIXED_TIME_STEP * count - SDL_GetTicks();
+		int delta = g_swapTime + FIXED_TIME_STEP * count - Emulator_GetTicks();
 
 		if (delta > 0) {
 			SDL_Delay(delta);
 		}
 	}
 
-	g_swapTime = SDL_GetTicks();
+	g_swapTime = Emulator_GetTicks();
 }
 
 void Emulator_SetRenderTarget(const RenderTargetID& frameBufferObject)

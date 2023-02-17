@@ -498,11 +498,7 @@ void Emulator_Initialise(char* windowName, int width, int height)
 		Emulator_ShutDown();
 	}
 
-#if defined(SDL2)
-	g_swapTime = SDL_GetTicks() - FIXED_TIME_STEP;
-#elif defined(UWP) || defined(XED3D)
-	g_swapTime = GetTickCount() - FIXED_TIME_STEP;
-#endif
+	g_swapTime = Emulator_GetTicks() - FIXED_TIME_STEP;
 
 #if !defined(__ANDROID__)
 	//counter_thread = std::thread(Emulator_CounterLoop);
@@ -511,23 +507,13 @@ void Emulator_Initialise(char* windowName, int width, int height)
 
 void Emulator_CounterLoop()
 {
-	unsigned int current_time;
-	unsigned int last_time = 0;
-#if defined(SDL2)
-	unsigned int start = SDL_GetTicks();
-#else
-	unsigned int start = 0;
-#endif
+	int64_t current_time;
+	int64_t last_time = 0;
+	int64_t start = Emulator_GetTicks();
 
 	while (TRUE)
 	{
-#if defined(SDL2)
-		current_time = SDL_GetTicks();
-#elif defined(XED3D)
-		current_time = GetTickCount();
-#else
-		current_time = 0;
-#endif
+		current_time = Emulator_GetTicks();
 
 		if (current_time > last_time + 1000)
 		{
@@ -595,10 +581,7 @@ unsigned int Emulator_CounterWrapper(unsigned int interval, void* pTimerID)
 			counters[timerID].padding00();
 		}
 
-#if defined(SDL2)
-		counters[timerID].cycle = SDL_GetTicks() - counters[timerID].startTick;
-#endif
-
+		counters[timerID].cycle = Emulator_GetTicks() - counters[timerID].startTick;
 #endif
 			
 	}
@@ -2475,14 +2458,14 @@ unsigned int Emulator_GetFPS()
 #if defined(SDL2)
 #define FPS_INTERVAL 1.0
 
-	static unsigned int lastTime = SDL_GetTicks();
+	static unsigned int lastTime = Emulator_GetTicks();
 	static unsigned int currentFps = 0;
 	static unsigned int passedFrames = 0;
 
 	passedFrames++;
-	if (lastTime < SDL_GetTicks() - FPS_INTERVAL * 1000)
+	if (lastTime < Emulator_GetTicks() - FPS_INTERVAL * 1000)
 	{
-		lastTime = SDL_GetTicks();
+		lastTime = Emulator_GetTicks();
 		currentFps = passedFrames;
 		passedFrames = 0;
 	}
