@@ -2554,7 +2554,7 @@ void GAMELOOP_Process(struct GameTracker* gameTracker)
 	else
 	{
 		GAMELOOP_DoTimeProcess();
-		
+
 		if (gameTrackerX.gameMode != 6 && !(gameTrackerX.streamFlags & 0x100000))
 		{
 			MORPH_UpdateTimeMult();
@@ -2584,7 +2584,7 @@ void GAMELOOP_Process(struct GameTracker* gameTracker)
 			}
 		}
 		gameTracker->numGSignals = 0;
-		
+
 		GAMELOOP_ChangeMode();
 
 		ResetPrimPool();
@@ -2600,48 +2600,47 @@ void GAMELOOP_Process(struct GameTracker* gameTracker)
 					INSTANCE_Post(gameTrackerX.playerInstance, 0x4000006, 0);
 					STREAM_MoveIntoNewStreamUnit();
 				}
-
-				if (VRAM_NeedToUpdateMorph != 0)
-				{
-					if (STREAM_IsCdBusy(NULL) == 0)
-					{
-						VRAM_UpdateMorphPalettes();
-						VRAM_NeedToUpdateMorph = 0;
-					}
-				}
-
-				if (gameTracker->gameData.asmData.MorphTime < 1000)
-				{
-					MORPH_Continue();
-				}
-
-				if ((gameTracker->streamFlags & 0x80000))
-				{
-					gameTracker->streamFlags &= 0xFFF7FFFF;
-					UNDERWORLD_StartProcess();
-				}
-
-				EVENT_DoProcess();
-
-				for(i = 0; i < 16; i++)
-				{
-					if (StreamTracker.StreamList[i].used == 2)
-					{
-						if (StreamTracker.StreamList[i].level->PuzzleInstances != NULL)
-						{
-							if ((gameTrackerX.debugFlags2 & 0x100))
-							{
-								FONT_Print("Processing unit %s\n", StreamTracker.StreamList[i].baseAreaName);
-							}
-
-							EVENT_ProcessEvents(StreamTracker.StreamList[i].level->PuzzleInstances, StreamTracker.StreamList[i].level);
-							EVENT_BSPProcess(&StreamTracker.StreamList[i]);
-						}
-					}
-				}
-				EVENT_ResetAllOneTimeVariables();
 			}
-			
+			if (VRAM_NeedToUpdateMorph != 0)
+			{
+				if (STREAM_IsCdBusy(NULL) == 0)
+				{
+					VRAM_UpdateMorphPalettes();
+					VRAM_NeedToUpdateMorph = 0;
+				}
+			}
+
+			if (gameTracker->gameData.asmData.MorphTime < 1000)
+			{
+				MORPH_Continue();
+			}
+
+			if ((gameTracker->streamFlags & 0x80000))
+			{
+				gameTracker->streamFlags &= 0xFFF7FFFF;
+				UNDERWORLD_StartProcess();
+			}
+
+			EVENT_DoProcess();
+
+			for (i = 0; i < 16; i++)
+			{
+				if (StreamTracker.StreamList[i].used == 2)
+				{
+					if (StreamTracker.StreamList[i].level->PuzzleInstances != NULL)
+					{
+						if ((gameTrackerX.debugFlags2 & 0x100))
+						{
+							FONT_Print("Processing unit %s\n", StreamTracker.StreamList[i].baseAreaName);
+						}
+
+						EVENT_ProcessEvents(StreamTracker.StreamList[i].level->PuzzleInstances, StreamTracker.StreamList[i].level);
+						EVENT_BSPProcess(&StreamTracker.StreamList[i]);
+					}
+				}
+			}
+			EVENT_ResetAllOneTimeVariables();
+
 			EVENT_ProcessHints();
 
 			for (d = 0; d < 16; d++)
@@ -2663,7 +2662,7 @@ void GAMELOOP_Process(struct GameTracker* gameTracker)
 			{
 				INSTANCE_SpatialRelationships(instanceList);
 			}
-			
+
 			INSTANCE_ProcessFunctions(gameTracker->instanceList);
 			INSTANCE_CleanUpInstanceList(gameTracker->instanceList, 0);
 			INSTANCE_DeactivateFarInstances(gameTracker);
@@ -2671,58 +2670,58 @@ void GAMELOOP_Process(struct GameTracker* gameTracker)
 
 			getScratchAddr(0)[0] = ((unsigned long*)&theCamera.core.position.x)[0];
 			getScratchAddr(1)[0] = ((unsigned long*)&theCamera.core.position.z)[0];
-			
+
 #if 0//Right this is either done to do this fast on the scratch pad!
 			//t0 = &StackSave
 			sw      $sp, 0($t0)
-			li      $t4, 0x1F8003F0
-			move    $sp, $t4
+				li      $t4, 0x1F8003F0
+				move    $sp, $t4
 #endif
 
-			G2Instance_BuildTransformsForList(gameTracker->instanceList->first);
+				G2Instance_BuildTransformsForList(gameTracker->instanceList->first);
 
 
 #if 0//Right this is either done to do this fast on the scratch pad!
 			//t0 = &StackSave
 			lw      $sp, 0($t0)
 #endif
-			if (!(gameTrackerX.streamFlags & 0x100000))
-			{
-#if 0///@TODO macro for PSX! "PUSH_STACK"
-				sw      $sp, 0($t0)
-				li      $t4, 0x1F8003F0
-				move    $sp, $t4
-#endif
-				//FX_ProcessList(fxTracker);
-
-				
-#if 0///@TODO macro for PSX! "POP_STACK"
-				//t0 = &StackSave
-				lw      $sp, 0($t0)
-#endif
 				if (!(gameTrackerX.streamFlags & 0x100000))
 				{
-					VM_Tick(256);
+#if 0///@TODO macro for PSX! "PUSH_STACK"
+					sw      $sp, 0($t0)
+						li      $t4, 0x1F8003F0
+						move    $sp, $t4
+#endif
+						//FX_ProcessList(fxTracker);
 
-					if ((gameTracker->debugFlags2 & 0x10000))
-					{
-						FONT_Print("Military Time %04d\n", gameTrackerX.timeOfDay);
-					}
 
-					for (d = 0; d < 16; d++)
-					{
-						if (StreamTracker.StreamList[d].used == 2)
+#if 0///@TODO macro for PSX! "POP_STACK"
+				//t0 = &StackSave
+						lw      $sp, 0($t0)
+#endif
+						if (!(gameTrackerX.streamFlags & 0x100000))
 						{
-							VM_ProcessVMObjectList_S(StreamTracker.StreamList[d].level, &theCamera);
-						}
-					}
+							VM_Tick(256);
 
-					if (!(gameTrackerX.streamFlags & 0x100000))
-					{
-						PLANAPI_UpdatePlanningDatabase(gameTracker, gameTrackerX.playerInstance);
-					}
+							if ((gameTracker->debugFlags2 & 0x10000))
+							{
+								FONT_Print("Military Time %04d\n", gameTrackerX.timeOfDay);
+							}
+
+							for (d = 0; d < 16; d++)
+							{
+								if (StreamTracker.StreamList[d].used == 2)
+								{
+									VM_ProcessVMObjectList_S(StreamTracker.StreamList[d].level, &theCamera);
+								}
+							}
+
+							if (!(gameTrackerX.streamFlags & 0x100000))
+							{
+								PLANAPI_UpdatePlanningDatabase(gameTracker, gameTrackerX.playerInstance);
+							}
+						}
 				}
-			}
 
 			DEBUG_Process(gameTracker);
 			COLLIDE_InstanceList(gameTracker->instanceList);
@@ -2735,7 +2734,7 @@ void GAMELOOP_Process(struct GameTracker* gameTracker)
 				LIGHT_CalcShadowPositions(gameTracker);
 				INSTANCE_CleanUpInstanceList(gameTracker->instanceList, 16);
 			}
-		
+
 			CAMERA_Process(&theCamera);
 			PIPE3D_CalculateWCTransform(&theCamera.core);
 			//theCamera.core.wcTransform2->t[0] = 0;//? padding?
@@ -2746,7 +2745,7 @@ void GAMELOOP_Process(struct GameTracker* gameTracker)
 			{
 				gameTracker->levelChange = 0;
 			}
-			
+
 			SAVE_IntroduceBufferIntros();
 		}
 		else
