@@ -11,7 +11,11 @@ struct _LoadQueueEntry // hashcode: 0xFEE70962 (dec: -18413214)
 	char mempackUsed; // size=0, offset=7
 	struct _NonBlockLoadEntry loadEntry; // size=56, offset=8
 #ifdef PSX_VERSION
+#if defined(PSXPC_VERSION)
+	long long endLoadTime; // size=0, offset=108
+#else
 	long endLoadTime; // size=0, offset=108
+#endif
 #endif
 };
 

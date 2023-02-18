@@ -31,8 +31,6 @@ int vbo_was_dirty_flag = FALSE;
 
 #if defined(PLATFORM_NX) || defined(PLATFORM_NX_ARM)
 
-int64_t g_swapTime;
-
 TextureID* g_lastBoundTexture[2];
 
 ShaderID* g_gte_shader_4;

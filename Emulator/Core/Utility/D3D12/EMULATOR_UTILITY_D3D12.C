@@ -11,4 +11,13 @@ int64_t Emulator_GetTicks()
 	return SDL_GetTicks();
 }
 
+uint64_t Emulator_GetPerformanceCounter()
+{
+	return SDL_GetPerformanceCounter();
+}
+
+uint64_t Emulator_GetPerformanceFrequency()
+{
+	return SDL_GetPerformanceFrequency();
+}
 #endif

@@ -16,12 +16,14 @@ struct _G2AppDataVM_Type _appDataVM;
 EMULATOR_THREAD_DEF
 
 #if !defined(EDITOR)
-#if (defined(PSXPC_VERSION) || defined(__ANDROID__)) && !defined(UWP) && !defined(PLATFORM_NX) && !defined(PLATFORM_NX_ARM) && !defined(__linux__) || defined(UWP_SDL2) && !defined(__EMSCRIPTEN__) || !defined(__APPLE__)
+
+#if defined(PLATFORM_NX) || defined(PLATFORM_NX_ARM)
+extern "C" void nnMain()
+#elif (defined(PSXPC_VERSION) || defined(__ANDROID__)) && !defined(UWP) && !defined(__linux__) || defined(UWP_SDL2) && !defined(__EMSCRIPTEN__) || !defined(__APPLE__)
 int main(int argc, char *argv[])
 #elif defined(UWP)
 int main(Platform::Array<Platform::String^>^ args)
 #elif defined(PLATFORM_NX) || defined(PLATFORM_NX_ARM)
-extern "C" void nnMain()
 #else
 int main()
 #endif

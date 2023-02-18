@@ -2401,26 +2401,6 @@ void Emulator_UpdateInput(int poll)
 #endif
 }
 
-uint64_t Emulator_GetPerformanceCounter()
-{
-#if defined(SDL2)
-	return SDL_GetPerformanceCounter();
-#else
-	nn::os::Tick tick = nn::os::GetSystemTick();
-	nn::TimeSpan timeSpan = nn::os::ConvertToTimeSpan(tick);
-	return timeSpan.GetMilliSeconds();
-#endif
-}
-
-uint64_t Emulator_GetPerformanceFrequency()
-{
-#if defined(SDL2)
-	return SDL_GetPerformanceFrequency();
-#else
-	return nn::os::GetSystemTickFrequency();
-#endif
-}
-
 void Emulator_UpdateInputDebug()
 {
 	// also poll events here
