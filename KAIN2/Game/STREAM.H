@@ -5,6 +5,17 @@
 #include "Game/INSTANCE.H"
 #include "PLAN/PLANAPI.H"
 
+struct _MorphVertex 
+{
+	short x; // size=0, offset=0
+	short y; // size=0, offset=2
+	short z; // size=0, offset=4
+	short vindex; // size=0, offset=6
+	short hx; // size=0, offset=8
+	short hy; // size=0, offset=10
+	short hz; // size=0, offset=12
+};
+
 struct evObjectAbsorbData 
 {
 	struct _Instance* force; // size=668, offset=0
