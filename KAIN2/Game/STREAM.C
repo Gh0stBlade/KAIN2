@@ -2692,23 +2692,28 @@ void MORPH_BringBackNormals(struct Level *BaseLevel)
 					UNIMPLEMENTED();
 }
 
-
-void MORPH_AddOffsets(struct Level* BaseLevel, int time)
+void MORPH_AddOffsets(struct Level* BaseLevel, int time)//Matching - 98.67%
 {
-	struct _Instance* instance; // $s0
-	struct _MorphVertex* mv; // $a2
-	int fixed_time; // $s1
-	struct _TVertex* v; // $a3
-	struct Intro* intro; // $a0
-	struct _Terrain* terrain; // $v1
-	struct _MorphColor* mc; // $t2
-	struct _TVertex* vertexList; // $a3
-	struct _TVertex* v18; // $t4
-	struct _Position oldPos; // [sp+10h] [-18h]
+	struct _TVertex* v;
+	struct _MorphVertex* mv;
+	struct _MorphColor* mc;
+	long m;
+	long fixed_time;
+	struct _Instance* instance;
+	SVECTOR diff;
 	SVECTOR realDiff;
-	SVECTOR diff; // [sp+18h] [-10h] BYREF
+	struct _Position oldPos;
+	long r0;
+	long g0;
+	long b0;
+	long r1;
+	long g1;
+	long b1;
+	struct _TVertex* endv;
+	struct Intro* intro;
 
 	instance = gameTrackerX.instanceList->first;
+
 	if (time < 501)
 	{
 		time = time * 2 * time * 2 * time / 2000000;
@@ -2720,11 +2725,13 @@ void MORPH_AddOffsets(struct Level* BaseLevel, int time)
 
 	mv = BaseLevel->terrain->MorphDiffList;
 	fixed_time = (time << 12) / 1000;
+
 	if (BaseLevel->terrain->MorphDiffList != NULL)
 	{
-		for (mv = BaseLevel->terrain->MorphDiffList; mv->vindex >= 0; mv++)
+		for (; mv->vindex >= 0; mv++)
 		{
 			v = &BaseLevel->terrain->vertexList[mv->vindex];
+
 			v->vertex.x = mv->hx + ((mv->x * fixed_time) >> 12);
 			v->vertex.y = mv->hy + ((mv->y * fixed_time) >> 12);
 			v->vertex.z = mv->hz + ((mv->z * fixed_time) >> 12);
@@ -2733,42 +2740,54 @@ void MORPH_AddOffsets(struct Level* BaseLevel, int time)
 	for (; instance; instance = instance->next)
 	{
 		intro = instance->intro;
-		if (intro && (*(unsigned int*)&intro->spectralPosition.x || intro->spectralPosition.z) && (instance->flags2 & 8) == 0)
+
+		if (intro && (*(unsigned int*)&intro->spectralPosition.x || intro->spectralPosition.z) && ((instance->flags2 & 0x8)) == 0)
 		{
-			realDiff.vx = (intro->spectralPosition.x * fixed_time) >> 12;
-			realDiff.vy = (intro->spectralPosition.y * fixed_time) >> 12;
-			realDiff.vz = (intro->spectralPosition.z * fixed_time) >> 12;
+			diff.vx = (intro->spectralPosition.x * fixed_time) >> 12;
+			diff.vy = (intro->spectralPosition.y * fixed_time) >> 12;
+			diff.vz = (intro->spectralPosition.z * fixed_time) >> 12;
 
 			oldPos = instance->position;
 
-			instance->position.x = intro->position.x + realDiff.vx;
-			instance->position.y = intro->position.y + realDiff.vy;
-			instance->position.z = intro->position.z + realDiff.vz;
+			instance->position.x = intro->position.x + oldPos.x;
+			instance->position.y = intro->position.y + oldPos.y;
+			instance->position.z = intro->position.z + oldPos.z;
 
-			diff.vx = instance->position.x - instance->position.x;
-			diff.vy = instance->position.y - instance->position.y;
-			diff.vz = instance->position.z - instance->position.z;
+			realDiff.vx = instance->position.x - oldPos.x;
+			realDiff.vy = instance->position.y - oldPos.y;
+			realDiff.vz = instance->position.z - oldPos.z;
 
-			if (diff.vx + diff.vy + diff.vz)
-				COLLIDE_UpdateAllTransforms(instance, &diff);
+			if (realDiff.vx + realDiff.vy + realDiff.vz)
+			{
+				COLLIDE_UpdateAllTransforms(instance, &realDiff);
+			}
 		}
 	}
-	terrain = BaseLevel->terrain;
+
 	mc = BaseLevel->terrain->MorphColorList;
+
 	if (mc)
 	{
-		vertexList = terrain->vertexList;
-		v18 = &vertexList[terrain->numVertices];
-		if (vertexList < v18)
+		v = BaseLevel->terrain->vertexList;
+		endv = &BaseLevel->terrain->vertexList[BaseLevel->terrain->numVertices];
+
+		while (v < endv)
 		{
-			do
-			{
-				++vertexList;
-				++mc;
-				v18->r0 = 8 * (v18->rgb15 & 0x1F) + ((8 * (mc->morphColor15 & 0x1F) - 8 * (v18->rgb15 & 0x1F)) * fixed_time >> 12);
-				v18->g0 = ((v18->rgb15 >> 2) & 0xF8) + ((int)((((mc->morphColor15 >> 18) & 0xF8) - ((v18->rgb15 >> 2) & 0xF8)) * fixed_time) >> 12);
-				v18->b0 = ((v18->rgb15 >> 7) & 0xF8) + ((int)((((mc->morphColor15 >> 23) & 0xF8) - ((v18->rgb15 >> 7) & 0xF8)) * fixed_time) >> 12);
-			} while (vertexList < v18);
+			r0 = (v->rgb15 & 0x1F) << 3;
+			r1 = (mc->morphColor15 & 0x1F) << 3;
+
+			g0 = (v->rgb15 >> 2) & 0xF8;
+			g1 = (mc->morphColor15 >> 2) & 0xF8;
+
+			b0 = (v->rgb15 >> 7) & 0xF8;
+			b1 = (mc->morphColor15 >> 7) & 0xF8;
+
+			v->r0 = r0 + (((r1 - r0) * fixed_time) >> 12);
+			v->g0 = g0 + (((g1 - g0) * fixed_time) >> 12);
+			v->b0 = b0 + (((b1 - b0) * fixed_time) >> 12);
+
+			v++;
+			mc++;
 		}
 	}
 }
