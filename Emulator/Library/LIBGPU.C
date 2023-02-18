@@ -129,7 +129,7 @@ int DrawSync(int mode)
 	return 0;
 }
 
-int LoadImagePSX(RECT16* rect, unsigned int* p)
+int LoadImagePSX(RECT16* rect, u_long* p)
 {
 	Emulator_CopyVRAM((unsigned short*)p, 0, 0, rect->w, rect->h, rect->x, rect->y);
 	return 0;
@@ -543,8 +543,8 @@ void FntLoad(int tx, int ty)
 	  0x00100100,0x01000100,0x00010000,0x01000100,0x00101000,0x01101100,0x01000100,0x00010000,0x00000100,0x00010000,0x01000000,0x00010000,0x00000000,0x00000000,0x00000100,0x01011000,0x01000100,0x00111000,0x00010000,0x00111000,0x00010000,0x01000100,0x01000100,0x00010000,0x01111100,0x00010000,0x00000000,0x00010000,0x00000000,0x00000000,0x00000000,
 	  0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x01110000,0x00000000,0x00011100,0x00000000,0x00000000 };
 	
-	LoadClut2(FontClut, tx, ty + 128);
-	LoadTPage(FontTex, 0, 0, tx, ty, 128, 32);
+	LoadClut2((u_long*)FontClut, tx, ty + 128);
+	LoadTPage((u_long*)FontTex, 0, 0, tx, ty, 128, 32);
 }
 
 void AddPrim(void* ot, void* p)

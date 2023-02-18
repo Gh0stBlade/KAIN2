@@ -306,7 +306,7 @@ int ParsePrimitive(uintptr_t primPtr, int code)
 			r.w = poly->w;
 			r.h = poly->h;
 
-			LoadImagePSX(&r, (unsigned int*)blackImage);
+			LoadImagePSX(&r, (u_long*)blackImage);
 			Emulator_UpdateVRAM();
 
 			free(blackImage);

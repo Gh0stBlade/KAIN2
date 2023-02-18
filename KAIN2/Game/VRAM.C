@@ -854,7 +854,7 @@ void VRAM_TransferBufferToVram(void* dataPtr, long dataSize, short status, void 
 				
 				vramControl->yOffset++;
 				
-				LoadImage(&rect, (unsigned int*)vramControl->lineOverFlow);
+				LoadImage(&rect, (u_long*)vramControl->lineOverFlow);
 				vramControl->lengthOfLeftOverData = 0;
 			}
 		}
@@ -866,7 +866,7 @@ void VRAM_TransferBufferToVram(void* dataPtr, long dataSize, short status, void 
 			rect.h = dataSize / (vramControl->w << 1);
 			rect.w = vramControl->w;
 	
-			LoadImage(&rect, (unsigned int*)((char*)dataPtr));
+			LoadImage(&rect, (u_long*)((char*)dataPtr));
 
 			vramControl->yOffset += rect.h;
 			dataSize -= vramControl->w * (rect.h << 1);

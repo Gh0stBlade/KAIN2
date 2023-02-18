@@ -27,7 +27,11 @@ typedef	unsigned int	u_int;
 #endif
 #ifndef _ULONG_T
 #define _ULONG_T
+#if defined(__EMSCRIPTEN__)
+typedef	unsigned long	u_long;
+#else
 typedef	unsigned int	u_long;
+#endif
 #endif
 #ifndef _SYSIII_USHORT
 #define _SYSIII_USHORT

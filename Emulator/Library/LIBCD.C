@@ -363,7 +363,7 @@ int CdSync(int mode, u_char * result)
 			if (readMode == RM_XA_AUDIO)
 			{
 				char xaAudioData[2336];
-				CdRead(1, (unsigned int*)&xaAudioData[0], CdlReadS);
+				CdRead(1, (u_long*)&xaAudioData[0], CdlReadS);
 				CdReadSync(CdlReadS, NULL);
 
 				//Sector should be read now

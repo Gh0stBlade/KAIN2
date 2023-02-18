@@ -247,7 +247,7 @@ void DRAW_LoadButton(int *addr, struct _ButtonTexture *button)
 	vramRect.w = button->textureW;
 	vramRect.h = button->textureH;
 	
-	LoadImage(&vramRect, (unsigned int*)(addr + 3));
+	LoadImage(&vramRect, (u_long*)(addr + 3));
 	
 	if (paletteAddr != NULL)
 	{
@@ -255,7 +255,7 @@ void DRAW_LoadButton(int *addr, struct _ButtonTexture *button)
 		vramRect.h = paletteH;
 		vramRect.y += button->textureH;
 		
-		LoadImage(&vramRect, (unsigned int*)paletteAddr);
+		LoadImage(&vramRect, (u_long*)paletteAddr);
 
 		button->clut = getClut(vramRect.x, vramRect.y);
 	}
