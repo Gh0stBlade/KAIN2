@@ -84,11 +84,7 @@ void menuface_initialize()
 					MenuFaces[i].loaded = 0;
 					MenuFaces[i].delay = 0;
 
-#if defined(DEMO)
-					for (j = 0; j < 8; j++)
-#else
 					for (j = 0; j < 7; j++)
-#endif
 					{
 						DRAW_LoadButton((int*)buttonAddr, &FaceButtons[(i * 7) + j]);
 						buttonAddr = NextTimAddr(buttonAddr, MenuFaces[i].w, MenuFaces[i].h, TIM_4BIT);

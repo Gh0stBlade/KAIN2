@@ -247,7 +247,7 @@ void DRAW_LoadButton(int *addr, struct _ButtonTexture *button)
 	vramRect.w = button->textureW;
 	vramRect.h = button->textureH;
 	
-	LoadImage(&vramRect, (u_long*)(addr + 3));
+	LoadImage(&vramRect, (unsigned int*)(addr + 3));
 	
 	if (paletteAddr != NULL)
 	{
@@ -255,7 +255,7 @@ void DRAW_LoadButton(int *addr, struct _ButtonTexture *button)
 		vramRect.h = paletteH;
 		vramRect.y += button->textureH;
 		
-		LoadImage(&vramRect, (u_long*)paletteAddr);
+		LoadImage(&vramRect, (unsigned int*)paletteAddr);
 
 		button->clut = getClut(vramRect.x, vramRect.y);
 	}
@@ -1303,14 +1303,14 @@ void DRAW_LoadingMessage()
 
 #if defined(PSX_VERSION)
 #if defined(USE_32_BIT_ADDR)
-	DrawOTag((uintptr_t*)drawot + 3071 * 2);
+	DrawOTag((unsigned int*)drawot + 3071 * 2);
 #else
-	DrawOTag((uintptr_t*)drawot + 3071);
+	DrawOTag((unsigned int*)drawot + 3071);
 #endif
 #endif
 
 	DrawSync(0);
-	ClearOTagR((uintptr_t*)drawot, 3072);
+	ClearOTagR((unsigned int*)drawot, 3072);
 	PutDrawEnv(&draw[gameTrackerX.drawPage]);
 	VSyncCallback(VblTick);
 	DrawSyncCallback(DrawCallback);

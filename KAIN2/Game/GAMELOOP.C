@@ -1060,9 +1060,9 @@ void GAMELOOP_FlipScreenAndDraw(struct GameTracker* gameTracker, unsigned long**
 {
 #if defined(PSX_VERSION)
 #if defined(USE_32_BIT_ADDR)
-	DrawOTag((uintptr_t*)drawot + 3071 * 2);
+	DrawOTag((unsigned int*)drawot + 3071 * 2);
 #else
-	DrawOTag((unsigned long*)drawot + 3071);
+	DrawOTag((unsigned int*)drawot + 3071);
 #endif
 
 #if !defined(PSXPC_VERSION)
@@ -1292,7 +1292,7 @@ void GAMELOOP_DisplayFrame(struct GameTracker* gameTracker)
 
 			drawot = gameTracker->drawOT;
 
-			ClearOTagR((uintptr_t*)gameTrackerX.drawOT, 3072);
+			ClearOTagR((unsigned int*)gameTrackerX.drawOT, 3072);
 
 			if (pause_redraw_prim != NULL)
 			{
@@ -1518,7 +1518,7 @@ void GAMELOOP_DisplayFrame(struct GameTracker* gameTracker)
 			
 			SaveOT();
 
-			ClearOTagR((uintptr_t*)gameTrackerX.drawOT, 3072);
+			ClearOTagR((unsigned int*)gameTrackerX.drawOT, 3072);
 
 			Switch_For_Redraw();
 
@@ -1592,9 +1592,9 @@ void GAMELOOP_DisplayFrame(struct GameTracker* gameTracker)
 	else
 	{
 #if defined(USE_32_BIT_ADDR)
-		DrawOTag((uintptr_t*)drawot + 3071 * 2);
+		DrawOTag((unsigned int*)drawot + 3071 * 2);
 #else
-		DrawOTag((uintptr_t*)drawot + 3071);
+		DrawOTag((unsigned int*)drawot + 3071);
 #endif
 	}
 }
@@ -1669,7 +1669,7 @@ void GAMELOOP_DrawSavedOT(unsigned long** newOT)
 	setaddr(gameTrackerX.savedOTEnd, newOT + 3071);
 #endif
 
-	DrawOTag((uintptr_t*)gameTrackerX.savedOTStart);
+	DrawOTag((unsigned int*)gameTrackerX.savedOTStart);
 }
 
 void ResetPrimPool()
@@ -2250,7 +2250,7 @@ void ResetDrawPage()
 	gameTrackerX.dispOT = temp;
 	gameTrackerX.drawPage = 1 - gameTrackerX.drawPage;
 
-	ClearOTagR((uintptr_t*)gameTrackerX.drawOT, 3072);
+	ClearOTagR((unsigned int*)gameTrackerX.drawOT, 3072);
 }
 
 void GAMELOOP_Set24FPS()

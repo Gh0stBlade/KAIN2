@@ -129,7 +129,7 @@ int DrawSync(int mode)
 	return 0;
 }
 
-int LoadImagePSX(RECT16* rect, u_long* p)
+int LoadImagePSX(RECT16* rect, unsigned int* p)
 {
 	Emulator_CopyVRAM((unsigned short*)p, 0, 0, rect->w, rect->h, rect->x, rect->y);
 	return 0;
@@ -192,7 +192,7 @@ int StoreImage(RECT16* rect, u_long* p)
 	return 0;
 }
 
-u_long* ClearOTag(u_long* ot, int n)
+unsigned int* ClearOTag(unsigned int* ot, int n)
 {
 	//Nothing to do here.
 	if (n == 0)
@@ -224,7 +224,7 @@ u_long* ClearOTag(u_long* ot, int n)
 	return NULL;
 }
 
-uintptr_t* ClearOTagR(uintptr_t* ot, int n)
+unsigned int* ClearOTagR(unsigned int* ot, int n)
 {
 	struct OrderingTable* ordt = (struct OrderingTable*)ot;
 
@@ -378,7 +378,7 @@ u_short GetClut(int x, int y)
 	return getClut(x, y);
 }
 
-void DrawOTagEnv(uintptr_t* p, DRAWENV* env)
+void DrawOTagEnv(unsigned int* p, DRAWENV* env)
 {
 	do
 	{
@@ -391,7 +391,7 @@ void DrawOTagEnv(uintptr_t* p, DRAWENV* env)
 #endif
 }
 
-void DrawOTag(uintptr_t* p)
+void DrawOTag(unsigned int* p)
 {
 	VSync(0);
 
@@ -459,7 +459,7 @@ void DrawPrim(void* p)
 	polygon_count = 0;
 #endif
 
-	Emulator_AggregatePTAGsToSplits((uintptr_t*)p, TRUE);
+	Emulator_AggregatePTAGsToSplits((unsigned int*)p, TRUE);
 
 	Emulator_DrawAggregatedSplits();
 
@@ -543,8 +543,8 @@ void FntLoad(int tx, int ty)
 	  0x00100100,0x01000100,0x00010000,0x01000100,0x00101000,0x01101100,0x01000100,0x00010000,0x00000100,0x00010000,0x01000000,0x00010000,0x00000000,0x00000000,0x00000100,0x01011000,0x01000100,0x00111000,0x00010000,0x00111000,0x00010000,0x01000100,0x01000100,0x00010000,0x01111100,0x00010000,0x00000000,0x00010000,0x00000000,0x00000000,0x00000000,
 	  0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x01110000,0x00000000,0x00011100,0x00000000,0x00000000 };
 	
-	LoadClut2((u_long*)FontClut, tx, ty + 128);
-	LoadTPage((u_long*)FontTex, 0, 0, tx, ty, 128, 32);
+	LoadClut2(FontClut, tx, ty + 128);
+	LoadTPage(FontTex, 0, 0, tx, ty, 128, 32);
 }
 
 void AddPrim(void* ot, void* p)
@@ -562,7 +562,7 @@ void CatPrim(void* p0, void* p1)
 	catPrim(p0, p1);
 }
 
-u_short LoadTPage(u_long* pix, int tp, int abr, int x, int y, int w, int h)
+u_short LoadTPage(unsigned int* pix, int tp, int abr, int x, int y, int w, int h)
 {
 	RECT16 imageArea;
 	imageArea.x = x;
@@ -615,7 +615,7 @@ u_short GetTPage(int tp, int abr, int x, int y)
 	return getTPage(tp, abr, x, y);
 }
 
-u_short LoadClut(u_long* clut, int x, int y)
+u_short LoadClut(unsigned int* clut, int x, int y)
 {
 	RECT16 rect;//&var_18
 	setRECT16(&rect, x, y, 256, 1);
@@ -623,7 +623,7 @@ u_short LoadClut(u_long* clut, int x, int y)
 	return GetClut(x, y) & 0xFFFF;
 }
 
-u_short LoadClut2(u_long* clut, int x, int y)
+u_short LoadClut2(unsigned int* clut, int x, int y)
 {
 	RECT16 drawArea;
 	drawArea.x = x;

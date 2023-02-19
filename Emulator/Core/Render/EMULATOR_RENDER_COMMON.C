@@ -306,7 +306,7 @@ int ParsePrimitive(uintptr_t primPtr, int code)
 			r.w = poly->w;
 			r.h = poly->h;
 
-			LoadImagePSX(&r, (u_long*)blackImage);
+			LoadImagePSX(&r, (unsigned int*)blackImage);
 			Emulator_UpdateVRAM();
 
 			free(blackImage);
@@ -924,7 +924,7 @@ void Emulator_DrawAggregatedSplits()
 	}
 }
 
-void Emulator_AggregatePTAGsToSplits(uintptr_t* p, int singlePrimitive)
+void Emulator_AggregatePTAGsToSplits(unsigned int* p, int singlePrimitive)
 {
 	if (!p)
 		return;
@@ -1039,7 +1039,7 @@ void Emulator_DrawTouchUI()
 	char polygonBuffer[sizeof(POLY_F4_SEMITRANS) * 32];
 	char* p = &polygonBuffer[0];
 
-	ClearOTagR((uintptr_t*)&OT[0], 4 / 2);
+	ClearOTagR((unsigned int*)&OT[0], 4 / 2);
 
 	int dist = 16;
 	int cx = 32;
@@ -1141,7 +1141,7 @@ void Emulator_DrawTouchUI()
 		p += sizeof(POLY_F4_SEMITRANS);
 	}
 
-	Emulator_AggregatePTAGsToSplits((uintptr_t*)&OT[0], FALSE);
+	Emulator_AggregatePTAGsToSplits((unsigned int*)&OT[0], FALSE);
 }
 
 void Emulator_DestroyRender()

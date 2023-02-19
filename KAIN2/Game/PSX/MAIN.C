@@ -219,9 +219,9 @@ void ProcessArgs(char *baseAreaName, struct GameTracker *gameTracker)
 		ExtractWorldName(worldName, (char*)argData);
 		ExtractLevelNum(levelNum, (char*)argData);
 		
-#if defined(OVERRIDE_LEVEL) || 0
-#define LEVEL_NAME "fire"
-#define LEVEL_NUM "6"
+#if defined(OVERRIDE_LEVEL) && !defined(DEMO) || 0
+#define LEVEL_NAME "stone"
+#define LEVEL_NUM "5"
 		sprintf(baseAreaName, "%s%s", LEVEL_NAME, LEVEL_NUM);
 #else
 		sprintf(baseAreaName, "%s%s", worldName, levelNum);
@@ -323,8 +323,8 @@ void InitDisplay()
 
 	ClearDisplay();
 	
-	ClearOTagR((uintptr_t*)gameTrackerX.drawOT, 3072);
-	ClearOTagR((uintptr_t*)gameTrackerX.dispOT, 3072);
+	ClearOTagR((unsigned int*)gameTrackerX.drawOT, 3072);
+	ClearOTagR((unsigned int*)gameTrackerX.dispOT, 3072);
 	
 	ClearImage(&r, 0, 255, 0);
 #else
@@ -484,9 +484,9 @@ void FadeOutSayingLoading(struct GameTracker* gameTracker)
 
 #if defined(PSX_VERSION)
 #if defined(USE_32_BIT_ADDR)
-		DrawOTag((uintptr_t*)drawot + 3071 * 2);
+		DrawOTag((unsigned int*)drawot + 3071 * 2);
 #else
-		DrawOTag((uintptr_t*)drawot + 3071);
+		DrawOTag((unsigned int*)drawot + 3071);
 #endif
 #endif
 	} while (fadeTime < 255);
@@ -788,7 +788,6 @@ void InitialiseGame(void* appData)
 	if (g_initiedGame == 0)
 	{
 		g_initiedGame = 1;
-
 		Emulator_Initialise(GAME_NAME, GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT);
 
 		CheckForDevStation();
@@ -811,7 +810,6 @@ void InitialiseGame(void* appData)
 			gameTracker->lastLvl = 255;
 			gameTracker->currentLvl = 255;
 			gameTracker->disp = &disp;
-
 			ProcessArgs(&gameTracker->baseAreaName[0], gameTracker);
 			InitMainTracker(mainTracker);
 			MAIN_DoMainInit();
@@ -1058,7 +1056,6 @@ void GameLoop()
 
 int MainG2(void* appData)
 {
-
 	emscripten_set_main_loop(GameLoop, 0, 1);
 
 	CloseGame();

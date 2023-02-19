@@ -1023,7 +1023,7 @@ void LOAD_LoadTIM(int *addr, long x_pos, long y_pos, long clut_x, long clut_y)
 	rect.w = ((unsigned short*)addr)[4];
 	rect.h = ((unsigned short*)addr)[5];
 
-	LoadImage(&rect, (u_long*)(addr + 3));
+	LoadImage(&rect, (unsigned int*)(addr + 3));
 
 	if (clutAddr != NULL)
 	{
@@ -1032,7 +1032,7 @@ void LOAD_LoadTIM(int *addr, long x_pos, long y_pos, long clut_x, long clut_y)
 		rect.w = 16;
 		rect.h = 1;
 		DrawSync(0);
-		LoadImage(&rect, (u_long*)clutAddr);
+		LoadImage(&rect, (unsigned int*)clutAddr);
 	}
 }
 #endif
@@ -1047,7 +1047,7 @@ void LOAD_LoadTIM2(int *addr, long x_pos, long y_pos, long width, long height)
 	rect.w = ((unsigned short*)addr)[8];
 	rect.h = ((unsigned short*)addr)[9];
 
-	LoadImage(&rect, (u_long*)addr + 5);
+	LoadImage(&rect, (unsigned int*)addr + 5);
 	DrawSync(0);
 }
 #endif

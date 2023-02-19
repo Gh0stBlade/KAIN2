@@ -245,7 +245,7 @@ void FONT_MakeSpecialFogClut(int x, int y)
 
 	DrawSync(0);
 
-	LoadImage(&myrect, (u_long*)&cl);
+	LoadImage(&myrect, (unsigned int*)&cl);
 	
 	DrawSync(0);
 #else
@@ -262,7 +262,7 @@ void FONT_MakeSpecialFogClut(int x, int y)
 	rect.h = 1;
 	font_clut = getClut(x, y);
 	DrawSync(0);
-	LoadImage(&rect, (u_long*)pal);
+	LoadImage(&rect, (unsigned int*)pal);
 	DrawSync(0);
 #endif
 }

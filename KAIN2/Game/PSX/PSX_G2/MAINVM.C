@@ -3,7 +3,7 @@
 
 #if defined(PSXPC_VERSION)
 #include "Game/CORE.H"
-#if (defined(SDL2) || defined(__ANDROID__)) && defined(UWP_SDL2) || defined(_WIN32) && !defined(SN_TARGET_PSP2)  && !defined(PLATFORM_NX)  && !defined(PLATFORM_NX_ARM) && !defined(__EMSCRIPTEN__)
+#if (defined(SDL2) || defined(__ANDROID__)) && defined(UWP_SDL2) || defined(_WIN32) && !defined(SN_TARGET_PSP2)  && !defined(PLATFORM_NX)  && !defined(PLATFORM_NX_ARM)
 #undef R13
 #undef R12
 #undef R11
@@ -19,11 +19,10 @@ EMULATOR_THREAD_DEF
 
 #if defined(PLATFORM_NX) || defined(PLATFORM_NX_ARM)
 extern "C" void nnMain()
-#elif (defined(PSXPC_VERSION) || defined(__ANDROID__)) && !defined(UWP) && !defined(__linux__) || defined(UWP_SDL2) && !defined(__EMSCRIPTEN__) || !defined(__APPLE__)
-int main(int argc, char *argv[])
+#elif (defined(PSXPC_VERSION) || defined(__ANDROID__))
+int main(int argc, char* argv[])
 #elif defined(UWP)
 int main(Platform::Array<Platform::String^>^ args)
-#elif defined(PLATFORM_NX) || defined(PLATFORM_NX_ARM)
 #else
 int main()
 #endif
@@ -31,7 +30,6 @@ int main()
 #if defined(PLATFORM_NX) || defined(PLATFORM_NX_ARM)
     MainG2(&_appDataVM);
 #else
-    printf("%s\n", argv[0]);
     return MainG2(&_appDataVM);
 #endif
 }
