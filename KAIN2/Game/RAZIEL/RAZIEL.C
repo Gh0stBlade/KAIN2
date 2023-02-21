@@ -82,8 +82,6 @@ void InitStates(struct _Instance* PlayerInstance)
 
 	InitHealthSystem();
 
-	Raziel.Abilities = 0x1000000;
-
 	debugRazielFlags1 = 0x1000000;
 
 	Raziel.GlyphManaBalls = 0;
@@ -462,8 +460,8 @@ void StateHandlerIdle(struct __CharacterState* In, int CurrentSection, int Data)
 			break;
 		}
 		case 0x100000:
-		{
-			//loc_800A8C10
+ 		{
+			DefaultStateHandler(In, CurrentSection, Data);
 			break;
 		}
 		case 0x100004:
@@ -632,7 +630,7 @@ void StateHandlerIdle(struct __CharacterState* In, int CurrentSection, int Data)
 
 			break;
 		default:
-			//assert(FALSE);
+			//DefaultStateHandler(In, CurrentSection, Data);
 			break;
 		}
 
@@ -1326,7 +1324,7 @@ void StateHandlerStartMove(struct __CharacterState* In, int CurrentSection, int 
 		}
 		default:
 			//loc_800AA7FC
-			DefaultStateHandler(In, CurrentSection, Data);
+			//DefaultStateHandler(In, CurrentSection, Data);
 			break;
 		}
 
@@ -2458,11 +2456,11 @@ void StateHandlerGlyphs(struct __CharacterState* In, int CurrentSection, int Dat
 					razSwitchStringAnimation(In->CharacterInstance, 0);
 				}
 				//loc_800AFC90
+				
+				In->SectionList[CurrentSection].Data1 = 0;
 
 				if (CurrentSection == 0)
 				{
-					In->SectionList[CurrentSection].Data1 = 0;
-
 					razPlaneShift(In->CharacterInstance);
 
 					if ((Raziel.Mode & 0x40000))
@@ -2581,7 +2579,6 @@ void StateHandlerGlyphs(struct __CharacterState* In, int CurrentSection, int Dat
 		}
 		case 0x80000000:
 		{
-
 			if (In->SectionList[CurrentSection].Data1 != 0)
 			{
 				if (CurrentSection == 0)
@@ -2595,12 +2592,46 @@ void StateHandlerGlyphs(struct __CharacterState* In, int CurrentSection, int Dat
 			//loc_800AFEA0
 			break;
 		}
+		case 0x8000003:
+		case 0x8000000:
+		{
+			if (CurrentSection == 0)
+			{
+				CheckStringAnimation(In->CharacterInstance, Ptr->ID);
+			}
+			break;
+		}
+		case 0x4000001:
+		{
+			if (!(Raziel.Mode & 0x40000))
+			{
+				PhysicsMode = 0;
+
+				SetDropPhysics(In->CharacterInstance, &Raziel);
+			}
+			break;
+		}
 		case 0:
 		{
 			break;
 		}
+		case 0x100000:
+		{
+			if (In->SectionList[CurrentSection].Data1 == 0)
+			{
+				if ((Raziel.Mode & 0x40000) == 0 && In->SectionList[CurrentSection].Data1 != 2)
+				{
+					StateInitIdle(In, CurrentSection, SetControlInitIdleData(0, 0, 3));
+					
+					In->SectionList[CurrentSection].Data1 = 2;
+				}
+			}
+			//loc_800AFA28
+			break;
+		}
 		default:
-			DefaultStateHandler(In, CurrentSection, Data);
+			printf("%x\n SHG ", Ptr->ID);
+			//DefaultStateHandler(In, CurrentSection, Data);
 			break;
 		}
 
@@ -2626,7 +2657,33 @@ void DefaultStateHandler(struct __CharacterState* In, int CurrentSection, int Da
 	struct evPhysicsEdgeData *data; // $s0
 	
 	
-	UNIMPLEMENTED();
+	while ((Ptr = PeekMessageQueue(&In->SectionList[CurrentSection].Event)) != NULL)
+	{
+		switch (Ptr->ID)
+		{
+		case 0x100006:
+		{
+			InitAlgorithmicWings(In->CharacterInstance);
+			break;
+		}
+		case 0x4000001:
+		{
+			PhysicsMode = 0;
+			SetDropPhysics(In->CharacterInstance, &Raziel);
+			if (In->CharacterInstance->zVel < Raziel.fallZVelocity && CurrentSection == 0)
+			{
+				if (razSwitchVAnimCharacterGroup(In->CharacterInstance, 24, 0, 0))
+				{
+					G2EmulationSwitchAnimationCharacter(In, 36, 0, 4, 1);
+				}
+
+				StateSwitchStateCharacterDataDefault(In, &StateHandlerFall, 0);
+			}
+		}
+		}
+
+		DeMessageQueue(&In->SectionList[CurrentSection].Event);
+	}
 }
 
 long RazielAnimCallback(struct _G2Anim_Type* anim, int sectionID, enum _G2AnimCallbackMsg_Enum message, long messageDataA, long messageDataB, void* data)
@@ -3327,281 +3384,20 @@ void RazielPost(struct _Instance* instance, unsigned long Message, unsigned long
 	//s3 = Data
 
 	//v0 = 0x10000A
-	if (Message != 0x10000A)
+	switch (Message)
 	{
-		//v0 = 0x200000
-		if (0x10000A >= Message)
+	default:
+	{
+		for (i = 0; i < 3; i++)
 		{
-			if (Message == 0x40012)
-			{
-				//loc_800B18E0
-			}
-			else if (0x40012 >= Message)//v0 = 0x40000
-			{
-				if (Message == 0x40006)
-				{
-					//loc_800B16F8
-				}
-				else if (0x40006 >= Message)
-				{
-					if (Message == 0x40001)
-					{
-						//loc_800B16A4
-					}
-					else if (Message == 0x40004)
-					{
-						//loc_800B1728
-					}
-					else
-					{
-						//j loc_800B1BD0
-						//s0 = 0
-					}
-				}
-				else
-				{
-					if (Message == 0x4000E)
-					{
-						//loc_800B1A48
-
-					}
-					else if(0x4000E >= Message)
-					{
-						if (Message == 0x40008)
-						{
-							//loc_800B1708
-						}
-						else
-						{
-							//s0 = 0
-							//j loc_800B1BD0
-						}
-					}
-					else if (Message == 0x40011)
-					{
-						//loc_800B18D0
-
-					}
-					else
-					{
-						//s0 = 0
-						//j loc_800B1BD0
-					}
-				}
-			}
-			else
-			{
-				//loc_800B1354
-				if (Message == 0x40022)
-				{
-					//loc_800B1A08
-				}
-				else if (0x40022 >= Message)
-				{
-					if (Message == 0x40015)
-					{
-						//loc_800B190C
-
-					}
-					else
-					{
-						if (Message == 0x40019)
-						{
-							//loc_800B1718
-						}
-						else
-						{
-							//s0 = 0
-							//j loc_800B1BD0
-						}
-					}
-				}
-				else
-				{
-					//loc_800B138C
-					if (Message == 0x100007)
-					{
-						//loc_800B1574
-					}
-					else
-					{
-						if (0x100007 >= Message)
-						{
-							if (Message == 0x40024)
-							{
-								//loc_800B1A14
-							}
-							else
-							{
-								//s0 = 0
-								//j loc_800B1BD0
-							}
-						}
-						else
-						{
-							//loc_800B13B8
-							if (Message == 0x100008)
-							{
-								//loc_800B1754
-							}
-							else
-							{
-								//s0 = 0
-								//j loc_800B1BD0
-							}
-						}
-					}
-				}
-			}
+			EnMessageQueueData(&Raziel.State.SectionList[i].Defer, Message, Data);;
 		}
-		else
-		{
-			//loc_800B13CC
-			if (Message == 0x200001)
-			{
-				//loc_800B14CC
-			}
-			else
-			{
-				if (0x200001 >= Message)
-				{
-					if (Message == 0x100012)
-					{
-						//loc_800B1988
-					}
-					else
-					{
-						if (0x100012 >= Message)
-						{
-							if (Message == 0x100010)
-							{
-								//loc_800B183C
-							}
-							else
-							{
-								if (Message == 0x100011)
-								{
-									//loc_800B196C
-								}
-								else
-								{
-									//j       loc_800B1BD0
-								}
-							}
-						}
-						else
-						{
-							//loc_800B1418
-							if (Message == 0x100016)
-							{
-								//loc_800B1B88
-							}
-							else
-							{
-								if (0x100016 >= Message)
-								{
-									//loc_800B1B88
-									if (Message == 0x100013)
-									{
-										//loc_800B19C4
-									}
-									else
-									{
-										//s0 = 0
-										//j loc_800B1BD0
-									}
-								}
-								else
-								{
-									//loc_800B1444
-									if (Message == 0x4000000)
-									{
-										//loc_800B1504
-									}
-									else
-									{
-										//s0 = 0
-										//j loc_800B1BD0
-									}
-								}
-							}
-						}
-					}
-				}
-				else
-				{
-					//loc_800B1454
-					if (Message == 0x4000001)
-					{
-						//loc_800B1650
-					}
-					else
-					{
-						if (0x4000001 >= Message)
-						{
-							if (Message == 0x200004)
-							{
-								//loc_800B1530
-							}
-							else
-							{
-								if (Message == 0x800024)
-								{
-									//loc_800B16E4
-								}
-								else
-								{
-									//s0 = 0
-									//j loc_800B1BD0
-								}
-							}
-						}
-						else
-						{
-							//loc_800B148C
-							if (Message == 0x4000006)
-							{
-								//loc_800B1640
-							}
-							else
-							{
-								if (0x4000006 >= Message)
-								{
-									if (Message == 0x4000005)
-									{
-										//loc_800B1634
-									}
-									else
-									{
-										//s0 = 0
-										//j loc_800B1BD0
-
-									}
-								}
-								else
-								{
-									//loc_800B14B8
-									if (Message == 0x10002000)
-									{
-										//loc_800B18FC
-									}
-									else
-									{
-										//s0 = 0
-										//j loc_800B1BD0
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
+		break;
 	}
+	}
+
 	//loc_800B17BC
 	GAMELOOP_Reset24FPS();
-
-	EnMessageQueueData(&Raziel.State.SectionList[0].Defer, Message, Data);
 #if 0
 		loc_800B14CC :
 		lw      $v0, -0x238($gp)
