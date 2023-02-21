@@ -328,7 +328,7 @@ void BSP_MarkVisibleLeaves_S(struct BSPTree* bsp, struct Camera* camera, struct 
 	//at = 0x3E8
 
 	int a2 = 2;
-	if (gameTrackerX.gameData.asmData.MorphTime == 1000 || 0 < 0)
+	if (gameTrackerX.gameData.asmData.MorphTime == 1000)
 	{
 		if (gameTrackerX.gameData.asmData.MorphType == 0)
 		{
