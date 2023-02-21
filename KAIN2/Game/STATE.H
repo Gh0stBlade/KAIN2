@@ -163,9 +163,9 @@ extern void G2EmulationInstanceInitSection(struct _Instance *instance, int Curre
 
 extern void G2EmulationSetInterpController_Vector(struct _Instance *instance, long segment, long type, struct _G2SVector3_Type *vec, int Frames, int Data); // 0x80072428
 
-extern void StateSwitchStateDataDefault(struct __CharacterState *In, int CurrentSection, TDRFuncPtr_StateSwitchStateDataDefault2NewProcess NewProcess, int Data); // 0x800724B0
+extern void StateSwitchStateDataDefault(struct __CharacterState *In, int CurrentSection, void (*NewProcess)(struct __CharacterState* In, int CurrentSection, int Data), int Data); // 0x800724B0
 
-extern void StateSwitchStateCharacterDataDefault(struct __CharacterState *In, TDRFuncPtr_StateSwitchStateCharacterDataDefault1NewProcess NewProcess, int Data); // 0x80072518
+extern void StateSwitchStateCharacterDataDefault(struct __CharacterState *In, void(*NewProcess)(struct __CharacterState* In, int CurrentSection, int Data), int Data); // 0x80072518
 
 extern void StateSwitchStateData(struct __CharacterState *In, int CurrentSection, void (*NewProcess)(struct __CharacterState* In, int CurrentSection, int Data), int Data); // 0x80072590
 
