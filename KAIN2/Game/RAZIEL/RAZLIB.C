@@ -1699,20 +1699,19 @@ int razProcessSAnim(struct _Instance* instance, int mode)
 
 	switch (mode)
 	{
-	case 0x100015:
+	case 0x8000000:
 		if (Raziel.currentSAnim->mode == 1)
 		{
 			rc = 1;
 		}
 		break;
-	case 0x8000003:
+	case 0x100015:
 		if (Raziel.currentSAnim->mode == 2)
 		{
 			rc = 1;
 		}
 		break;
-
-	case 0x8000000:
+	case 0x8000003:
 		if (Raziel.currentSAnim->mode == 3)
 		{
 			rc = 1;
@@ -1743,7 +1742,7 @@ int razProcessSAnim(struct _Instance* instance, int mode)
 		else
 		{
 			G2Anim_SetSpeedAdjustment(&instance->anim, 4096);
-			Raziel.currentSAnim = 0;
+			Raziel.currentSAnim = NULL;
 			rc = 0;
 		}
 
@@ -2306,12 +2305,8 @@ int razInBaseArea(char* name, int length)
 	{
 		string[length] = 0;
 	}
-	else
-	{
-		return strcmp(name, string) < 1;
-	}
 	
-	return 0;
+	return strcmp(name, string) == 0;
 }
 
 void razPrepGlyph()
