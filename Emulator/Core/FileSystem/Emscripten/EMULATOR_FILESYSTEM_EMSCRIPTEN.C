@@ -6,6 +6,14 @@
 
 #include <stdio.h>
 
+#define DEMO
+
+#if defined(DEMO)
+#define BUILD_PATH "DEMO"
+#else
+#define BUILD_PATH "REVIEW"
+#endif
+
 #if defined(__EMSCRIPTEN__)
 
 #include <emscripten.h>
@@ -43,11 +51,11 @@ void Emulator_ReadFileEM(const char* filePath, void* buff, int size)
 	}
 	else
 	{
-		const char* urlName = "https://legacyofkain.co.uk";
+		const char* urlName = "https://legacyofkain.co.uk/";
 		char fullName[256];
 		int err = 0;
 
-		sprintf(fullName, "%s/%s/%s", urlName, SHORT_GAME_NAME, filePath);
+		sprintf(fullName, "%s/%s/%s/%s", urlName, SHORT_GAME_NAME, BUILD_PATH, filePath);
 
 		emscripten_wget_data(fullName, &outBuff, &outSize, &err);
 
@@ -111,11 +119,11 @@ void* Emulator_OpenFile(const char* filePath, const char* mode, int* outSize)
 	}
 	else
 	{
-		const char* urlName = "https://legacyofkain.co.uk";
+		const char* urlName = "https://legacyofkain.co.uk/";
 		char fullName[256];
 		int err = 0;
 
-		sprintf(fullName, "%s/%s/%s", urlName, SHORT_GAME_NAME, filePath);
+		sprintf(fullName, "%s/%s/%s/%s", urlName, SHORT_GAME_NAME, BUILD_PATH, filePath);
 
 		emscripten_wget_data(fullName, &outBuff, outSize, &err);
 
