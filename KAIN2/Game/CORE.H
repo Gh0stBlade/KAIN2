@@ -93,6 +93,7 @@ typedef RECT PSX_RECT;
 #include <emscripten.h>
 #define strcmpi strcmp
 #define _strcmpi strcmp
+#define DEMO
 #endif
 #endif
 
