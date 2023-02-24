@@ -5,6 +5,9 @@
 #include "Game/PSX/SUPPORT.H"
 #include "Game/MEMPACK.H"
 
+#define START_FRAME 1
+#define RING_SIZE   48
+
 unsigned int unk_E21BC = 0x40000001;//0x800E21BC
 
 int buffer_count = 0;//800F3360
@@ -126,6 +129,7 @@ int CINEMAX_ActuallyPlay(char* strfile, unsigned short mask, int buffers)
 
 	CINEMAX_InitBufferDetails(buffer2, buffer3, buffer4, buffer5, &buffer_details);
 
+#if !defined(NO_CD)
 	while (CdControlB(CdlSetloc, &fp.pos.minute, NULL) == 0)
 	{
 
@@ -137,10 +141,11 @@ int CINEMAX_ActuallyPlay(char* strfile, unsigned short mask, int buffers)
 	}
 
 	CdSync(0, NULL);
+#endif
 
 	VSyncCallback(CINEMAX_VSync);
 
-	CINEMAX_InitStream(buffer1, &fp, CINEMAX_Unknown);
+	CINEMAX_InitStream(buffer1, &fp.pos, CINEMAX_Unknown);
 	
 	if (CINEMAX_E1658(&buffer_details) == -1)
 	{
@@ -184,16 +189,15 @@ void CINEMAX_InitBufferDetails(char* b1, char* b2, char* b3, char* b4, struct Bu
 }
 
 //0x800E1474
-void CINEMAX_InitStream(char* buffer, CdlFILE* fp, void (*func)())
+void CINEMAX_InitStream(char* buffer, CdlLOC* fp, void (*func)())
 {
-	//s0 = buffer
-	//s2 = fp
-	//s1 = func
 	DecDCTReset(0);
+
 	DecDCToutCallback(func);
-	StSetRing((unsigned int*)buffer, 48);
-	StSetStream(1, 1, 0xFFFFFFFF, NULL, NULL);
-	CINEMAX_E190C(fp);
+	StSetRing((unsigned int*)buffer, RING_SIZE);
+	StSetStream(1, START_FRAME, 0xFFFFFFFF, NULL, NULL);
+	CINEMAX_KickCD(fp);
+	
 	CINEMAX_E1658(&buffer_details);
 }
 
@@ -254,11 +258,11 @@ int CINEMAX_E1708(struct BufferInfo* buffer_info)
 }
 
 //0x800E190C
-void CINEMAX_E190C(CdlFILE* fp)
+void CINEMAX_KickCD(CdlLOC* fp)
 {
 	unsigned char param;
 	
-	param = 128;
+	param = CdlModeSpeed;
 
 	do
 	{
@@ -274,7 +278,7 @@ void CINEMAX_E190C(CdlFILE* fp)
 
 		VSync(3);
 
-	} while(CdRead2(0x1E0) == 0);
+	} while(CdRead2(CdlModeStream | CdlModeSpeed | CdlModeRT | CdlModeSize1) == 0);
 }
 
 //0x800E1FCC

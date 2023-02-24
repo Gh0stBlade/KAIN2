@@ -37,12 +37,12 @@ extern int CINEMAX_ActuallyPlay(char* strfile, unsigned short mask, int buffers)
 extern void CINEMAX_ClearBuffers();
 extern void CINEMAX_VSync();
 extern void CINEMAX_InitBufferDetails(char* b1, char* b2, char* b3, char* b4, struct BufferInfo* bd);
-extern void CINEMAX_InitStream(char* buffer, CdlFILE* fp, void (*func)());
+extern void CINEMAX_InitStream(char* buffer, CdlLOC* fp, void (*func)());
 extern void CINEMAX_Unknown();
 extern void CINEMAX_E1EB0(unsigned int* func, int unk2);
 extern void CINEMAX_E1FCC();
 extern int CINEMAX_E1658(struct BufferInfo* buffer_info);
 extern int CINEMAX_E1708(struct BufferInfo* buffer_info);
-extern void CINEMAX_E190C(CdlFILE* fp);
+extern void CINEMAX_KickCD(CdlLOC* fp);
 
 #endif
