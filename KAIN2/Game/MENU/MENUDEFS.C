@@ -92,7 +92,11 @@ int do_start_game(void *gt, intptr_t parameter, enum menu_ctrl_t ctrl)
 		}
 		else
 		{
+#if defined(DEMO)
+			MAIN_StartDemo();
+#else
 			MAIN_StartGame();
+#endif
 			return 1;
 		}
 	}
