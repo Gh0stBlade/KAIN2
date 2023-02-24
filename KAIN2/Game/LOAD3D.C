@@ -310,7 +310,7 @@ void LOAD_SetupFileToDoCDReading()
 
 #if defined(_DEBUG) && !defined(NO_FILESYSTEM) || defined(__EMSCRIPTEN__)
 	extern void Emulator_OpenRead(char* fileName, void* buff, int size);
-	Emulator_OpenRead(LOAD_HashToName(loadStatus.currentQueueFile.fileHash), loadStatus.currentQueueFile.readStartDest, loadStatus.currentQueueFile.readSize);
+	Emulator_OpenRead(loadHead ? &loadHead->loadEntry.fileName[1] : &loadTail->loadEntry.fileName[1], loadStatus.currentQueueFile.readStartDest, loadStatus.currentQueueFile.readSize);
 	loadStatus.bytesTransferred = (loadStatus.currentQueueFile.readSize - loadStatus.currentQueueFile.readCurSize);
 	
 	loadStatus.state = 4;
@@ -352,7 +352,7 @@ void LOAD_SetupFileToDoBufferedCDReading()
 #if defined(_DEBUG) && !defined(NO_FILESYSTEM) || defined(__EMSCRIPTEN__)
 	extern void Emulator_OpenRead(char* fileName, void* buff, int size);
 
-	Emulator_OpenRead(LOAD_HashToName(loadStatus.currentQueueFile.fileHash), loadStatus.currentQueueFile.readStartDest, loadStatus.currentQueueFile.readSize);
+	Emulator_OpenRead(loadHead ? &loadHead->loadEntry.fileName[1] : &loadTail->loadEntry.fileName[1], loadStatus.currentQueueFile.readStartDest, loadStatus.currentQueueFile.readSize);
 	loadStatus.bytesTransferred = (loadStatus.currentQueueFile.readSize - loadStatus.currentQueueFile.readCurSize);
 
 	loadStatus.state = 4;
@@ -728,11 +728,14 @@ void LOAD_InitCdLoader(char *bigFileName, char *voiceFileName)
 
 int LOAD_SetupFileInfo(struct _NonBlockLoadEntry* loadEntry)
 { 
-#if defined(PSX_VERSION) || (PSXPC_VERSION)
+#if defined(PSX_VERSION)
 	struct _BigFileEntry *fileInfo;
 
+#if defined(_DEBUG) && !defined(NO_FILESYSTEM) || defined(__EMSCRIPTEN__)
+	fileInfo = LOAD_GetBigFileEntry(loadEntry->fileName);
+#else
 	fileInfo = LOAD_GetBigFileEntryByHash(loadEntry->fileHash);
-
+#endif
 	if (fileInfo == NULL)
 	{
 		if (loadEntry->dirHash == loadStatus.bigFile.currentDirID)
@@ -907,24 +910,6 @@ struct _BigFileEntry* LOAD_GetBigFileEntryByHash(long hash)
 	int i;
 	struct _BigFileEntry* entry;
 
-#if defined(_DEBUG) && (!defined(NO_FILESYSTEM) || defined(__EMSCRIPTEN__))
-	static struct _BigFileEntry bigFileEntry;
-
-	int fileSize = 0;
-	Emulator_GetFileSize(LOAD_HashToName(hash), &fileSize);
-
-	if (fileSize == 0)
-	{
-		return NULL;
-	}
-
-	bigFileEntry.checkSumFull = 0;
-	bigFileEntry.fileHash = hash;
-	bigFileEntry.fileLen = fileSize;
-	bigFileEntry.filePos = 0;
-
-	return &bigFileEntry;
-#else
 	if (loadStatus.bigFile.currentDir != NULL && loadStatus.currentDirLoading == 0 && loadStatus.bigFile.currentDir->numFiles != 0)
 	{
 		i = loadStatus.bigFile.currentDir->numFiles;
@@ -957,12 +942,30 @@ struct _BigFileEntry* LOAD_GetBigFileEntryByHash(long hash)
 	} while (i-- != 0);
 
 	return NULL;
-#endif
 }
 
 struct _BigFileEntry* LOAD_GetBigFileEntry(char* fileName)
 {
+#if defined(PSXPC_VERSION)
+	static struct _BigFileEntry bigFileEntry;
+
+	int fileSize = 0;
+	Emulator_GetFileSize(&fileName[1], &fileSize);
+
+	if (fileSize == 0)
+	{
+		return NULL;
+	}
+
+	bigFileEntry.checkSumFull = 0;
+	bigFileEntry.fileHash = LOAD_HashName(fileName);
+	bigFileEntry.fileLen = fileSize;
+	bigFileEntry.filePos = 0;
+
+	return &bigFileEntry;
+#else
 	return LOAD_GetBigFileEntryByHash(LOAD_HashName(fileName));
+#endif
 }
 
 #ifndef PC_VERSION
@@ -1230,40 +1233,3 @@ void LOAD_StopLoad()
 		loadStatus.currentDirLoading = 0;
 	}
 }
-
-#if !defined(NO_FILESYSTEM)
-
-#define FILESYSTEM_BUFFER_LENGTH (262144)
-
-char filesystemTOC[FILESYSTEM_BUFFER_LENGTH];
-
-extern void Emulator_OpenRead(char* fileName, void* buff, int size);
-
-void LOAD_InitialiseFileSystemTOC()
-{
-	Emulator_OpenRead("bigfile.lst", filesystemTOC, -1);
-	return;
-}
-
-char* LOAD_HashToName(long fileHash)
-{
-	char* pLine = &filesystemTOC[0];
-	char* fileName = NULL;
-	long hash = 0;
-
-	while (pLine != NULL && pLine < &filesystemTOC[FILESYSTEM_BUFFER_LENGTH])
-	{
-		sscanf(pLine, "%x", &hash);
-		fileName = &pLine[9];
-		pLine = strchr(pLine, 0) + 1;
-
-		if (fileHash == hash)
-		{
-			break;
-		}
-	}
-
-	return fileName;
-}
-
-#endif

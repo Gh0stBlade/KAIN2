@@ -60,8 +60,6 @@ void STREAM_InitLoader(char *bigFileName, char *voiceFileName)
 
 #if !defined(_DEBUG) && !defined(__EMSCRIPTEN__) || defined(NO_FILESYSTEM)
 	LOAD_InitCdLoader(bigFileName, voiceFileName);
-#elif !defined(NO_FILESYSTEM)
-	LOAD_InitialiseFileSystemTOC();
 #endif
 
 	loadFree = &LoadQueue[0];
