@@ -2869,8 +2869,17 @@ void DEBUG_FatalError(const char* fmt, ...)
 
 #if defined(PSX_VERSION)
 	//break   1, 7
+#endif
 #if defined(PSXPC_VERSION)
+#if defined(__EMSCRIPTEN__)
 	while (1)
+	{
+		printf("DEBUG_FatalError: %s\n", msg);
+		VSync(0);
+	}
+#else
+	while (1)
+
 	{
 		FONT_Flush();
 		DrawOTag((unsigned int*)gameTrackerX.drawOT + 3071 * 2);
