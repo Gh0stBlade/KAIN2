@@ -2619,14 +2619,35 @@ void StateHandlerGlyphs(struct __CharacterState* In, int CurrentSection, int Dat
 		{
 			if (In->SectionList[CurrentSection].Data1 == 0)
 			{
-				if ((Raziel.Mode & 0x40000) == 0 && In->SectionList[CurrentSection].Data1 != 2)
+				if ((Raziel.Mode & 0x40000) != 0 && Raziel.CurrentPlane == 1)
+				{
+					StateSwitchStateData(In, CurrentSection, &StateHandlerSwim, 0);
+
+					if (CurrentSection == 0)
+					{
+						razSetFadeEffect(4096, 0, 256);
+					}
+				}
+				else
+				{
+					StateSwitchStateData(In, CurrentSection, &StateHandlerIdle, SetControlInitIdleData(0, 0, 3));
+					
+					if (CurrentSection == 0)
+					{
+						razSetFadeEffect(4096, 0, 256);
+					}
+				}
+			}
+			else
+			{
+				//loc_800AFA28
+				if (!(Raziel.Mode & 0x40000) && In->SectionList[CurrentSection].Data1 != 2)
 				{
 					StateInitIdle(In, CurrentSection, SetControlInitIdleData(0, 0, 3));
-					
+
 					In->SectionList[CurrentSection].Data1 = 2;
 				}
 			}
-			//loc_800AFA28
 			break;
 		}
 		default:
