@@ -1644,13 +1644,24 @@ void Emulator_HandleTouchEvent(int x, int y)
 #if defined(__EMSCRIPTEN__)
 EM_JS(int, Emulator_GetCanvasWidth, (), { return canvas.width; });
 EM_JS(int, Emulator_GetCanvasHeight, (), { return canvas.height; });
+int nextCanvasUpdate = 0;
+int currentCanvasTick = 0;
 #endif
 
 void Emulator_DoPollEvent()
 {
 #if defined(__EMSCRIPTEN__)
-	windowWidth = Emulator_GetCanvasWidth();
-	windowHeight = Emulator_GetCanvasHeight();
+	currentCanvasTick = SDL_GetTicks();
+
+	nextCanvasUpdate = currentCanvasTick + 1000;
+
+	if (currentCanvasTick >= nextCanvasUpdate)
+	{
+		windowWidth = Emulator_GetCanvasWidth();
+		windowHeight = Emulator_GetCanvasHeight();
+
+		nextCanvasUpdate = currentCanvasTick + 1000;
+	}
 #endif
 
 #if defined(SDL2)
