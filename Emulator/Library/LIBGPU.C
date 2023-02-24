@@ -119,7 +119,6 @@ int DrawSync(int mode)
 #if !defined(VULKAN)
 	if (g_splitIndex > 0) // don't do flips if nothing to draw.
 	{
-		Emulator_DrawAggregatedSplits();
 		Emulator_EndScene();
 	}
 #endif
