@@ -219,9 +219,9 @@ void ProcessArgs(char *baseAreaName, struct GameTracker *gameTracker)
 		ExtractWorldName(worldName, (char*)argData);
 		ExtractLevelNum(levelNum, (char*)argData);
 		
-#if defined(OVERRIDE_LEVEL) && !defined(DEMO) || 0
-#define LEVEL_NAME "stone"
-#define LEVEL_NUM "5"
+#if defined(OVERRIDE_LEVEL) && !defined(DEMO)
+#define LEVEL_NAME "train"
+#define LEVEL_NUM "7"
 		sprintf(baseAreaName, "%s%s", LEVEL_NAME, LEVEL_NUM);
 #else
 		sprintf(baseAreaName, "%s%s", worldName, levelNum);
@@ -920,19 +920,21 @@ void GameLoop()
 
 		break;
 	case 4:
-
 #if !defined(_DEBUG) && !defined(__EMSCRIPTEN__) || defined(NO_FILESYSTEM)
 		LOAD_ChangeDirectory("Menustuff");
 #endif
 
 	checkMovie:
-		while ((unsigned)mainTracker->movieNum < 6)
+		while ((unsigned)mainTracker->movieNum < 14)
 		{
 			item = &InterfaceItems[mainTracker->movieNum];
 			gameTrackerX.gameFlags &= -2;
-			show_screen(&item->name[0]);
+			show_screen(item->name);
 #if defined(PSXPC_VERSION)
 			DrawOTag(NULL);
+			DrawOTag(NULL);
+#else
+			VSync(0);
 #endif
 
 			timer = 1;
@@ -947,7 +949,14 @@ void GameLoop()
 						break;
 					}
 
+					
+
+#if defined(PSXPC_VERSION)
+					DrawOTag(NULL);
+#else
 					VSync(0);
+#endif
+
 				} while (++timer < item->timeout);
 			}
 			mainTracker->movieNum = item->nextItem;
