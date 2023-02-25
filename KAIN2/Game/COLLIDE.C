@@ -1897,35 +1897,48 @@ long COLLIDE_SAndT(struct SCollideInfo* scollideInfo, struct Level* level)//Matc
 	CSpad = (struct SandTScratch*)getScratchAddr(114);
 	terrain = level->terrain;
 	stack = (void**)getScratchAddr(167);
+
 	if (gameTrackerX.gameData.asmData.MorphTime != 1000)
+	{
 		CSpad->in_spectral = 2;
+	}
 	else
-		CSpad->in_spectral = gameTrackerX.gameData.asmData.MorphTime == 1;
+	{
+		if (gameTrackerX.gameData.asmData.MorphType == 1)
+		{
+			CSpad->in_spectral = 1;
+		}
+		else
+		{
+			CSpad->in_spectral = 0;
+		}
+	}
+
 	CSpad->normalList = (struct _HNormal*)terrain->normalList;
 	CSpad->vertexList = terrain->vertexList;
 	CSpad->collideFunc = scollideInfo->collideFunc;
 	CSpad->instance = scollideInfo->instance;
 	CSpad->prim = scollideInfo->prim;
-	radiusSquared = scollideInfo->sphere->radiusSquared;
+
 	*(unsigned int*)&CSpad->sphere.position.x = *(unsigned int*)&scollideInfo->sphere->position.x;
 	*(unsigned int*)&CSpad->sphere.position.z = *(unsigned int*)&scollideInfo->sphere->position.z;
-	CSpad->sphere.radiusSquared = radiusSquared;
+	CSpad->sphere.radiusSquared = scollideInfo->sphere->radiusSquared;
+
 	CSpad->result = 0;
-	CSpad->collide_ignoreAttr = 0u;
-	CSpad->collide_acceptAttr = 0u;
+	CSpad->collide_acceptAttr = collide_acceptAttr;
+	CSpad->collide_ignoreAttr = collide_ignoreAttr;
+
 	oldPos = scollideInfo->oldPos;
-	vx = oldPos->vx;
-	vy = oldPos->vy;
-	CSpad->oldPos.x = vx;
-	CSpad->oldPos.y = vy;
-	CSpad->oldPos.z = (short)oldPos->vz;
+	CSpad->oldPos.x = oldPos->vx;
+	CSpad->oldPos.y = oldPos->vy;
+	CSpad->oldPos.z = oldPos->vz;
 	CSpad->spherePos.x = CSpad->sphere.position.x;
 	CSpad->spherePos.y = CSpad->sphere.position.y;
 	CSpad->spherePos.z = CSpad->sphere.position.z;
-	CSpad->midPoint.x = CSpad->sphere.position.x - vx;
-	CSpad->midPoint.y = CSpad->sphere.position.y - vy;
-	v9 = (short)(CSpad->sphere.position.x - vx);
-	v10 = scollideInfo->sphere->position.z - (short)oldPos->vx;
+	CSpad->midPoint.x = CSpad->sphere.position.x - oldPos->vx;
+	CSpad->midPoint.y = CSpad->sphere.position.y - oldPos->vy;
+	v9 = (short)(CSpad->sphere.position.x - oldPos->vx);
+	v10 = scollideInfo->sphere->position.z - (short)oldPos->vz;
 	if (v9 < 0)
 		v9 = -v9;
 	CSpad->midPoint.z = v10;
@@ -1938,9 +1951,8 @@ long COLLIDE_SAndT(struct SCollideInfo* scollideInfo, struct Level* level)//Matc
 		z = -CSpad->midPoint.z;
 	b = y;
 	c = z;
-	MATH3D_Sort3VectorCoords(&a, & b, & c);
+	MATH3D_Sort3VectorCoords(&a, &b, &c);
 	CSpad->midRadius = 30 * c + 12 * b + 9 * a;
-	result = 0;
 	if (CSpad->midRadius)
 	{
 		CSpad->midPoint.x = (CSpad->spherePos.x + CSpad->oldPos.x) >> 1;
@@ -1970,32 +1982,25 @@ long COLLIDE_SAndT(struct SCollideInfo* scollideInfo, struct Level* level)//Matc
 							if (!v20 || (flags & 0xE0) != 0 && (INSTANCE_Query(CSpad->instance, 1) & 2) != 0)
 							{
 								CSpad->collideInfo.bspID = bsp->ID;
-								v21 = CSpad->oldPos.y - bsp->globalOffset.y;
-								v22 = CSpad->oldPos.z - bsp->globalOffset.z;
 								CSpad->oldPos.x -= bsp->globalOffset.x;
-								CSpad->oldPos.y = v21;
-								CSpad->oldPos.z = v22;
-								v23 = CSpad->midPoint.y - bsp->globalOffset.y;
-								v24 = CSpad->midPoint.z - bsp->globalOffset.z;
+								CSpad->oldPos.y -= bsp->globalOffset.y;
+								CSpad->oldPos.z -= bsp->globalOffset.z;
 								CSpad->midPoint.x -= bsp->globalOffset.x;
-								CSpad->midPoint.y = v23;
-								CSpad->midPoint.z = v24;
-								v25 = CSpad->sphere.position.y - bsp->globalOffset.y;
-								v26 = CSpad->sphere.position.z - bsp->globalOffset.z;
+								CSpad->midPoint.y -= bsp->globalOffset.y;
+								CSpad->midPoint.z -= bsp->globalOffset.z;
 								CSpad->sphere.position.x -= bsp->globalOffset.x;
-								CSpad->sphere.position.y = v25;
-								CSpad->sphere.position.z = v26;
+								CSpad->sphere.position.y -= bsp->globalOffset.y;
+								CSpad->sphere.position.z -= bsp->globalOffset.z;
 								CSpad->posMatrix.m[0][0] = CSpad->sphere.position.x;
-								CSpad->posMatrix.m[0][1] = v25;
-								CSpad->posMatrix.m[0][2] = v26;
+								CSpad->posMatrix.m[0][1] = CSpad->sphere.position.y;
+								CSpad->posMatrix.m[0][2] = CSpad->sphere.position.z;
 								CSpad->posMatrix.m[1][0] = CSpad->oldPos.x;
 								CSpad->posMatrix.m[1][1] = CSpad->oldPos.y;
 								CSpad->posMatrix.m[1][2] = CSpad->oldPos.z;
 								*stack = stack;
 								SetRotMatrix(&CSpad->posMatrix);
-								v19 = bsp->bspRoot == (struct _BSPNode*)++stack;
 								*stack = bsp->bspRoot;
-								if (!v19)
+								if (!(bsp->bspRoot == (struct _BSPNode*)++stack))
 								{
 									while (1)
 									{
@@ -2016,7 +2021,7 @@ long COLLIDE_SAndT(struct SCollideInfo* scollideInfo, struct Level* level)//Matc
 											*(unsigned int*)&CSpad->posMatrix.m[0][0] = *(unsigned int*)&CSpad->sphere.position.x;
 											CSpad->posMatrix.m[0][2] = CSpad->sphere.position.z;
 
-											gte_ldv0(&CSpad->sphere.position);
+											gte_ldsvrtrow0(&CSpad->sphere.position);
 											CSpad->i = bspNode->c;
 											v32 = (struct _TFace*)&bspNode->a;
 											v33 = (short*)&v32->face.v2;
@@ -2124,7 +2129,7 @@ long COLLIDE_SAndT(struct SCollideInfo* scollideInfo, struct Level* level)//Matc
 											*(unsigned int*)&CSpad->posMatrix.m[0][0] = *(unsigned int*)&CSpad->sphere.position.x;
 											CSpad->posMatrix.m[0][2] = CSpad->sphere.position.z;
 
-											gte_ldv0(&CSpad->sphere.position);
+											gte_ldsvrtrow0(&CSpad->sphere.position);
 										}
 									LABEL_78:
 										if (*stack == stack)
@@ -2209,15 +2214,13 @@ long COLLIDE_SAndT(struct SCollideInfo* scollideInfo, struct Level* level)//Matc
 				v19 = ++v69 < terrain->numBSPTrees;
 			} while (v19);
 		}
-		v63 = CSpad->sphere.position.y;
-		v64 = CSpad->sphere.position.z;
 		sphere = scollideInfo->sphere;
 		sphere->position.x = CSpad->sphere.position.x;
-		sphere->position.y = v63;
-		sphere->position.z = v64;
+		sphere->position.y = CSpad->sphere.position.y;
+		sphere->position.z = CSpad->sphere.position.z;
 		return CSpad->result;
 	}
-	return result;
+	return 0;
 }
 
 long COLLIDE_SphereAndTerrain(struct SCollideInfo* scollideInfo, struct Level* level)

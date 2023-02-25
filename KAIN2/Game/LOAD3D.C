@@ -946,7 +946,7 @@ struct _BigFileEntry* LOAD_GetBigFileEntryByHash(long hash)
 
 struct _BigFileEntry* LOAD_GetBigFileEntry(char* fileName)
 {
-#if defined(PSXPC_VERSION)
+#if defined(PSXPC_VERSION) && defined(__EMSCRIPTEN) || defined(_DEBUG)
 	static struct _BigFileEntry bigFileEntry;
 
 	int fileSize = 0;
