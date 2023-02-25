@@ -102,6 +102,20 @@ struct _GlobalSaveTracker {
 	short CurrentBirthID; // size=0, offset=118
 };
 
+struct SavedBspTree {
+	struct _Position localOffset; // size=6, offset=0
+	unsigned char importantFlagsSaved; // size=0, offset=6
+	unsigned char bspIndex; // size=0, offset=7
+};
+struct ActualSavedLevel {
+	unsigned char savedID; // size=0, offset=0
+	unsigned char shiftedSaveSize; // size=0, offset=1
+	short areaID; // size=0, offset=2
+	short waterZ; // size=0, offset=4
+	short numberBSPTreesSaved; // size=0, offset=6
+	struct SavedBspTree bspTreeArray[1]; // size=8, offset=8
+};
+
 extern struct _GlobalSaveTracker* GlobalSave;
 
 extern void SAVE_GetInstanceRotation(struct _Instance *instance, struct _SmallRotation *vector); // 0x800B5560
