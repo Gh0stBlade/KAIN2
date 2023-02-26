@@ -1010,21 +1010,19 @@ void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAdd
 			UPGRADE_DumpIndexed(sizeof(char), objectDataOffset + offsetof(_MonsterAttributes64, tunData), offsetTunData, 0, f);
 		}
 
+		long offsetOfCombatAttributesList = FILE_GetOffset(f);
 		if (monsterAttributes->combatAttributesList != NULL)
 		{
 			relocationTable.push_back(objectDataOffset + offsetof(_MonsterAttributes64, combatAttributesList));
 			UPGRADE_DumpStruct(&NULL_PTR, sizeof(unsigned long long) * monsterAttributes->numCombatAttributes, objectDataOffset + offsetof(_MonsterAttributes64, combatAttributesList), f);
 		}
 
-		long offsetCombatAttributesList = FILE_GetOffset(f);
-
+		long offsetOfSubAttributesList = FILE_GetOffset(f);
 		if (monsterAttributes->subAttributesList != NULL)
 		{
 			relocationTable.push_back(objectDataOffset + offsetof(_MonsterAttributes64, subAttributesList));
 			UPGRADE_DumpStruct(&NULL_PTR, sizeof(unsigned long long) * monsterAttributes->numSubAttributes, objectDataOffset + offsetof(_MonsterAttributes64, subAttributesList), f);
 		}
-
-		long offsetSubAttributesList = FILE_GetOffset(f);
 
 		if (monsterAttributes->auxAnimList != NULL)
 		{
@@ -1043,60 +1041,60 @@ void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAdd
 		{
 			struct _MonsterSubAttributes* monsterSubAttributes = monsterAttributes->subAttributesList[i];
 
-			long offsetOfMonsterSubAttributes = FILE_GetOffset(f);
+			long offsetOfCurrentSubAttributes = FILE_GetOffset(f);
 
-			relocationTable.push_back(offsetSubAttributesList - ((monsterAttributes->numSubAttributes - i) * sizeof(long long)));
+			relocationTable.push_back(offsetOfSubAttributesList + (i * sizeof(long long)));
 
 			for (int i = 0; i < monsterAttributes->numSubAttributes; i++)
 			{
-				UPGRADE_DumpStructPointer(offsetSubAttributesList - ((monsterAttributes->numSubAttributes - i) * sizeof(long long)), f);
+				UPGRADE_DumpStructPointer(offsetOfSubAttributesList + (i * sizeof(long long)), f);
 			}
 
-			UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, animList), f);
-			UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, senses), f);
-			UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, combatAttributes), f);
-			UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, allegiances), f);
-			UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, behaviorList), f);
-			UPGRADE_DumpRaw(&monsterSubAttributes->scale, sizeof(short), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, scale), f);
-			UPGRADE_DumpRaw(&monsterSubAttributes->fallDistance, sizeof(short), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, fallDistance), f);
-			UPGRADE_DumpRaw(&monsterSubAttributes->defAmbushRange, sizeof(short), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, defAmbushRange), f);
-			UPGRADE_DumpRaw(&monsterSubAttributes->fleeRange, sizeof(short), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, fleeRange), f);
-			UPGRADE_DumpRaw(&monsterSubAttributes->speedPivotTurn, sizeof(short), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, speedPivotTurn), f);
-			UPGRADE_DumpRaw(&monsterSubAttributes->speedWalkTurn, sizeof(short), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, speedWalkTurn), f);
-			UPGRADE_DumpRaw(&monsterSubAttributes->speedRunTurn, sizeof(short), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, speedRunTurn), f);
-			UPGRADE_DumpRaw(&monsterSubAttributes->speedFleeTurn, sizeof(short), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, speedFleeTurn), f);
-			UPGRADE_DumpRaw(&monsterSubAttributes->forgetTime, sizeof(short), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, forgetTime), f);
-			UPGRADE_DumpRaw(&monsterSubAttributes->modelNum, sizeof(unsigned char), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, modelNum), f);
-			UPGRADE_DumpRaw(&monsterSubAttributes->physAbility, sizeof(unsigned char), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, physAbility), f);
-			UPGRADE_DumpRaw(&monsterSubAttributes->stunnable, sizeof(unsigned char), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, stunnable), f);
-			UPGRADE_DumpRaw(&monsterSubAttributes->grabable, sizeof(unsigned char), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, grabable), f);
-			UPGRADE_DumpRaw(&monsterSubAttributes->numSections, sizeof(unsigned char), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, numSections), f);
-			UPGRADE_DumpRaw(&monsterSubAttributes->sectionEnd, sizeof(unsigned char[3]), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, sectionEnd), f);
-			UPGRADE_DumpRaw(&monsterSubAttributes->defPlayerAttitude, sizeof(short), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, defPlayerAttitude), f);
-			UPGRADE_DumpRaw(&monsterSubAttributes->defWanderRange, sizeof(short), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, defWanderRange), f);
-			UPGRADE_DumpRaw(&monsterSubAttributes->defGuardRange, sizeof(short), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, defGuardRange), f);
-			UPGRADE_DumpRaw(&monsterSubAttributes->defInitialBehavior, sizeof(unsigned char), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, defInitialBehavior), f);
-			UPGRADE_DumpRaw(&monsterSubAttributes->defTriggeredBehavior, sizeof(unsigned char), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, defTriggeredBehavior), f);
-			UPGRADE_DumpRaw(&monsterSubAttributes->defActiveBehavior, sizeof(char), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, defActiveBehavior), f);
-			UPGRADE_DumpRaw(&monsterSubAttributes->defSpectral, sizeof(unsigned char), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, defSpectral), f);
-			UPGRADE_DumpRaw(&monsterSubAttributes->sunVuln, sizeof(unsigned char), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, sunVuln), f);
-			UPGRADE_DumpRaw(&monsterSubAttributes->fireVuln, sizeof(unsigned char), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, fireVuln), f);
-			UPGRADE_DumpRaw(&monsterSubAttributes->waterVuln, sizeof(unsigned char), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, waterVuln), f);
-			UPGRADE_DumpRaw(&monsterSubAttributes->impaleVuln, sizeof(unsigned char), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, impaleVuln), f);
-			UPGRADE_DumpRaw(&monsterSubAttributes->soundVuln, sizeof(unsigned char), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, soundVuln), f);
-			UPGRADE_DumpRaw(&monsterSubAttributes->weaponVuln, sizeof(unsigned char), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, weaponVuln), f);
-			UPGRADE_DumpRaw(&monsterSubAttributes->missileVuln, sizeof(unsigned char), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, missileVuln), f);
-			UPGRADE_DumpRaw(&monsterSubAttributes->bruiseRed, sizeof(unsigned char), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, bruiseRed), f);
-			UPGRADE_DumpRaw(&monsterSubAttributes->bruiseGreen, sizeof(unsigned char), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, bruiseGreen), f);
-			UPGRADE_DumpRaw(&monsterSubAttributes->bruiseBlue, sizeof(unsigned char), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, bruiseBlue), f);
-			UPGRADE_DumpRaw(&monsterSubAttributes->minSpikeRange, sizeof(short), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, minSpikeRange), f);
-			UPGRADE_DumpRaw(&monsterSubAttributes->maxSpikeRange, sizeof(short), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, maxSpikeRange), f);
-			UPGRADE_DumpRaw(&monsterSubAttributes->maxSpikeAngle, sizeof(short), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, maxSpikeAngle), f);
-			UPGRADE_DumpRaw(&monsterSubAttributes->minSpikeHorzSpeed, sizeof(short), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, minSpikeHorzSpeed), f);
-			UPGRADE_DumpRaw(&monsterSubAttributes->maxSpikeHorzSpeed, sizeof(short), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, maxSpikeHorzSpeed), f);
-			UPGRADE_DumpRaw(&monsterSubAttributes->maxSpikeVertSpeed, sizeof(short), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, maxSpikeVertSpeed), f);
-			UPGRADE_DumpRaw(&monsterSubAttributes->upOnGroundOffset, sizeof(short), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, upOnGroundOffset), f);
-			UPGRADE_DumpRaw(&monsterSubAttributes->downOnGroundOffset, sizeof(short), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, downOnGroundOffset), f);
+			UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), offsetOfCurrentSubAttributes + offsetof(_MonsterSubAttributes64, animList), f);
+			UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), offsetOfCurrentSubAttributes + offsetof(_MonsterSubAttributes64, senses), f);
+			UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), offsetOfCurrentSubAttributes + offsetof(_MonsterSubAttributes64, combatAttributes), f);
+			UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), offsetOfCurrentSubAttributes + offsetof(_MonsterSubAttributes64, allegiances), f);
+			UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), offsetOfCurrentSubAttributes + offsetof(_MonsterSubAttributes64, behaviorList), f);
+			UPGRADE_DumpRaw(&monsterSubAttributes->scale, sizeof(short), offsetOfCurrentSubAttributes + offsetof(_MonsterSubAttributes64, scale), f);
+			UPGRADE_DumpRaw(&monsterSubAttributes->fallDistance, sizeof(short), offsetOfCurrentSubAttributes + offsetof(_MonsterSubAttributes64, fallDistance), f);
+			UPGRADE_DumpRaw(&monsterSubAttributes->defAmbushRange, sizeof(short), offsetOfCurrentSubAttributes + offsetof(_MonsterSubAttributes64, defAmbushRange), f);
+			UPGRADE_DumpRaw(&monsterSubAttributes->fleeRange, sizeof(short), offsetOfCurrentSubAttributes + offsetof(_MonsterSubAttributes64, fleeRange), f);
+			UPGRADE_DumpRaw(&monsterSubAttributes->speedPivotTurn, sizeof(short), offsetOfCurrentSubAttributes + offsetof(_MonsterSubAttributes64, speedPivotTurn), f);
+			UPGRADE_DumpRaw(&monsterSubAttributes->speedWalkTurn, sizeof(short), offsetOfCurrentSubAttributes + offsetof(_MonsterSubAttributes64, speedWalkTurn), f);
+			UPGRADE_DumpRaw(&monsterSubAttributes->speedRunTurn, sizeof(short), offsetOfCurrentSubAttributes + offsetof(_MonsterSubAttributes64, speedRunTurn), f);
+			UPGRADE_DumpRaw(&monsterSubAttributes->speedFleeTurn, sizeof(short), offsetOfCurrentSubAttributes + offsetof(_MonsterSubAttributes64, speedFleeTurn), f);
+			UPGRADE_DumpRaw(&monsterSubAttributes->forgetTime, sizeof(short), offsetOfCurrentSubAttributes + offsetof(_MonsterSubAttributes64, forgetTime), f);
+			UPGRADE_DumpRaw(&monsterSubAttributes->modelNum, sizeof(unsigned char), offsetOfCurrentSubAttributes + offsetof(_MonsterSubAttributes64, modelNum), f);
+			UPGRADE_DumpRaw(&monsterSubAttributes->physAbility, sizeof(unsigned char), offsetOfCurrentSubAttributes + offsetof(_MonsterSubAttributes64, physAbility), f);
+			UPGRADE_DumpRaw(&monsterSubAttributes->stunnable, sizeof(unsigned char), offsetOfCurrentSubAttributes + offsetof(_MonsterSubAttributes64, stunnable), f);
+			UPGRADE_DumpRaw(&monsterSubAttributes->grabable, sizeof(unsigned char), offsetOfCurrentSubAttributes + offsetof(_MonsterSubAttributes64, grabable), f);
+			UPGRADE_DumpRaw(&monsterSubAttributes->numSections, sizeof(unsigned char), offsetOfCurrentSubAttributes + offsetof(_MonsterSubAttributes64, numSections), f);
+			UPGRADE_DumpRaw(&monsterSubAttributes->sectionEnd, sizeof(unsigned char[3]), offsetOfCurrentSubAttributes + offsetof(_MonsterSubAttributes64, sectionEnd), f);
+			UPGRADE_DumpRaw(&monsterSubAttributes->defPlayerAttitude, sizeof(short), offsetOfCurrentSubAttributes + offsetof(_MonsterSubAttributes64, defPlayerAttitude), f);
+			UPGRADE_DumpRaw(&monsterSubAttributes->defWanderRange, sizeof(short), offsetOfCurrentSubAttributes + offsetof(_MonsterSubAttributes64, defWanderRange), f);
+			UPGRADE_DumpRaw(&monsterSubAttributes->defGuardRange, sizeof(short), offsetOfCurrentSubAttributes + offsetof(_MonsterSubAttributes64, defGuardRange), f);
+			UPGRADE_DumpRaw(&monsterSubAttributes->defInitialBehavior, sizeof(unsigned char), offsetOfCurrentSubAttributes + offsetof(_MonsterSubAttributes64, defInitialBehavior), f);
+			UPGRADE_DumpRaw(&monsterSubAttributes->defTriggeredBehavior, sizeof(unsigned char), offsetOfCurrentSubAttributes + offsetof(_MonsterSubAttributes64, defTriggeredBehavior), f);
+			UPGRADE_DumpRaw(&monsterSubAttributes->defActiveBehavior, sizeof(char), offsetOfCurrentSubAttributes + offsetof(_MonsterSubAttributes64, defActiveBehavior), f);
+			UPGRADE_DumpRaw(&monsterSubAttributes->defSpectral, sizeof(unsigned char), offsetOfCurrentSubAttributes + offsetof(_MonsterSubAttributes64, defSpectral), f);
+			UPGRADE_DumpRaw(&monsterSubAttributes->sunVuln, sizeof(unsigned char), offsetOfCurrentSubAttributes + offsetof(_MonsterSubAttributes64, sunVuln), f);
+			UPGRADE_DumpRaw(&monsterSubAttributes->fireVuln, sizeof(unsigned char), offsetOfCurrentSubAttributes + offsetof(_MonsterSubAttributes64, fireVuln), f);
+			UPGRADE_DumpRaw(&monsterSubAttributes->waterVuln, sizeof(unsigned char), offsetOfCurrentSubAttributes + offsetof(_MonsterSubAttributes64, waterVuln), f);
+			UPGRADE_DumpRaw(&monsterSubAttributes->impaleVuln, sizeof(unsigned char), offsetOfCurrentSubAttributes + offsetof(_MonsterSubAttributes64, impaleVuln), f);
+			UPGRADE_DumpRaw(&monsterSubAttributes->soundVuln, sizeof(unsigned char), offsetOfCurrentSubAttributes + offsetof(_MonsterSubAttributes64, soundVuln), f);
+			UPGRADE_DumpRaw(&monsterSubAttributes->weaponVuln, sizeof(unsigned char), offsetOfCurrentSubAttributes + offsetof(_MonsterSubAttributes64, weaponVuln), f);
+			UPGRADE_DumpRaw(&monsterSubAttributes->missileVuln, sizeof(unsigned char), offsetOfCurrentSubAttributes + offsetof(_MonsterSubAttributes64, missileVuln), f);
+			UPGRADE_DumpRaw(&monsterSubAttributes->bruiseRed, sizeof(unsigned char), offsetOfCurrentSubAttributes + offsetof(_MonsterSubAttributes64, bruiseRed), f);
+			UPGRADE_DumpRaw(&monsterSubAttributes->bruiseGreen, sizeof(unsigned char), offsetOfCurrentSubAttributes + offsetof(_MonsterSubAttributes64, bruiseGreen), f);
+			UPGRADE_DumpRaw(&monsterSubAttributes->bruiseBlue, sizeof(unsigned char), offsetOfCurrentSubAttributes + offsetof(_MonsterSubAttributes64, bruiseBlue), f);
+			UPGRADE_DumpRaw(&monsterSubAttributes->minSpikeRange, sizeof(short), offsetOfCurrentSubAttributes + offsetof(_MonsterSubAttributes64, minSpikeRange), f);
+			UPGRADE_DumpRaw(&monsterSubAttributes->maxSpikeRange, sizeof(short), offsetOfCurrentSubAttributes + offsetof(_MonsterSubAttributes64, maxSpikeRange), f);
+			UPGRADE_DumpRaw(&monsterSubAttributes->maxSpikeAngle, sizeof(short), offsetOfCurrentSubAttributes + offsetof(_MonsterSubAttributes64, maxSpikeAngle), f);
+			UPGRADE_DumpRaw(&monsterSubAttributes->minSpikeHorzSpeed, sizeof(short), offsetOfCurrentSubAttributes + offsetof(_MonsterSubAttributes64, minSpikeHorzSpeed), f);
+			UPGRADE_DumpRaw(&monsterSubAttributes->maxSpikeHorzSpeed, sizeof(short), offsetOfCurrentSubAttributes + offsetof(_MonsterSubAttributes64, maxSpikeHorzSpeed), f);
+			UPGRADE_DumpRaw(&monsterSubAttributes->maxSpikeVertSpeed, sizeof(short), offsetOfCurrentSubAttributes + offsetof(_MonsterSubAttributes64, maxSpikeVertSpeed), f);
+			UPGRADE_DumpRaw(&monsterSubAttributes->upOnGroundOffset, sizeof(short), offsetOfCurrentSubAttributes + offsetof(_MonsterSubAttributes64, upOnGroundOffset), f);
+			UPGRADE_DumpRaw(&monsterSubAttributes->downOnGroundOffset, sizeof(short), offsetOfCurrentSubAttributes + offsetof(_MonsterSubAttributes64, downOnGroundOffset), f);
 		}
 
 		// Nothing in _MonsterAttrubutes points to these. No need to add to relocation table here.
@@ -1113,21 +1111,21 @@ void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAdd
 			UPGRADE_DumpRaw(sensesList, sizeof(_MonsterSenses) * numSenses, offsetOfSenses, f);
 		}
 
-		long offsetCombatAttributes = FILE_GetOffset(f);
+		long offsetOfCombatAttributes = FILE_GetOffset(f);
 		for (int i = 0; i < monsterAttributes->numCombatAttributes; i++)
 		{
 			struct _MonsterCombatAttributes* monsterCombatAttributes = monsterAttributes->combatAttributesList[i];
 
-			long offsetOfCombatAttributes = FILE_GetOffset(f);
+			long offsetOfCurrentCombatAttributes = FILE_GetOffset(f);
 
-			relocationTable.push_back(offsetCombatAttributesList - ((monsterAttributes->numCombatAttributes - i) * sizeof(long long)));
+			relocationTable.push_back(offsetOfCombatAttributesList + (i * sizeof(long long)));
 
 			for (int i = 0; i < monsterAttributes->numCombatAttributes; i++)
 			{
-				UPGRADE_DumpStructPointer(offsetCombatAttributesList - ((monsterAttributes->numCombatAttributes - i) * sizeof(long long)), f);
+				UPGRADE_DumpStructPointer(offsetOfCombatAttributesList + (i * sizeof(long long)), f);
 			}
 
-			UPGRADE_DumpRaw(monsterCombatAttributes, sizeof(_MonsterCombatAttributes), offsetOfCombatAttributes, f);
+			UPGRADE_DumpRaw(monsterCombatAttributes, sizeof(_MonsterCombatAttributes), offsetOfCurrentCombatAttributes, f);
 		}
 
 		// These are only indices. Not to be confused with the _MonsterAnims referenced in _MonsterAttributes.
@@ -1186,36 +1184,36 @@ void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAdd
 		{
 			struct _MonsterSubAttributes* monsterSubAttributes = monsterAttributes->subAttributesList[i];
 
-			long offsetOfMonsterSubAttributes = offsetSubAttributes + (sizeof(_MonsterSubAttributes64) * i);
+			long offsetOfCurrentSubAttributes = offsetSubAttributes + (sizeof(_MonsterSubAttributes64) * i);
 
 			if (monsterSubAttributes->animList != NULL)
 			{
-				relocationTable.push_back(offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, animList));
-				UPGRADE_DumpIndexed(sizeof(char), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, animList), offsetOfAnimIDs, monsterSubAttributes->animList - animIDList, f);
+				relocationTable.push_back(offsetOfCurrentSubAttributes + offsetof(_MonsterSubAttributes64, animList));
+				UPGRADE_DumpIndexed(sizeof(char), offsetOfCurrentSubAttributes + offsetof(_MonsterSubAttributes64, animList), offsetOfAnimIDs, monsterSubAttributes->animList - animIDList, f);
 			}
 
 			if (monsterSubAttributes->senses != NULL)
 			{
-				relocationTable.push_back(offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, senses));
-				UPGRADE_DumpIndexed(sizeof(struct _MonsterSenses), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, senses), offsetOfSenses, monsterSubAttributes->senses - sensesList, f);
+				relocationTable.push_back(offsetOfCurrentSubAttributes + offsetof(_MonsterSubAttributes64, senses));
+				UPGRADE_DumpIndexed(sizeof(struct _MonsterSenses), offsetOfCurrentSubAttributes + offsetof(_MonsterSubAttributes64, senses), offsetOfSenses, monsterSubAttributes->senses - sensesList, f);
 			}
 
 			if (monsterSubAttributes->combatAttributes != NULL)
 			{
-				relocationTable.push_back(offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, combatAttributes));
-				UPGRADE_DumpIndexed(sizeof(struct _MonsterCombatAttributes), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, combatAttributes), offsetCombatAttributes, monsterSubAttributes->combatAttributes - monsterAttributes->combatAttributesList[0], f);
+				relocationTable.push_back(offsetOfCurrentSubAttributes + offsetof(_MonsterSubAttributes64, combatAttributes));
+				UPGRADE_DumpIndexed(sizeof(struct _MonsterCombatAttributes), offsetOfCurrentSubAttributes + offsetof(_MonsterSubAttributes64, combatAttributes), offsetOfCombatAttributes, monsterSubAttributes->combatAttributes - monsterAttributes->combatAttributesList[0], f);
 			}
 
 			if (monsterSubAttributes->allegiances != NULL)
 			{
-				relocationTable.push_back(offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, allegiances));
-				UPGRADE_DumpIndexed(sizeof(struct _MonsterAllegiances), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, allegiances), offsetOfAllegiances, monsterSubAttributes->allegiances - allegiancesList, f);
+				relocationTable.push_back(offsetOfCurrentSubAttributes + offsetof(_MonsterSubAttributes64, allegiances));
+				UPGRADE_DumpIndexed(sizeof(struct _MonsterAllegiances), offsetOfCurrentSubAttributes + offsetof(_MonsterSubAttributes64, allegiances), offsetOfAllegiances, monsterSubAttributes->allegiances - allegiancesList, f);
 			}
 
 			if (monsterSubAttributes->behaviorList != NULL)
 			{
-				relocationTable.push_back(offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, behaviorList));
-				UPGRADE_DumpIndexed(sizeof(char), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, behaviorList), offsetOfBehaviorIDs, monsterSubAttributes->behaviorList - behaviorIDList, f);
+				relocationTable.push_back(offsetOfCurrentSubAttributes + offsetof(_MonsterSubAttributes64, behaviorList));
+				UPGRADE_DumpIndexed(sizeof(char), offsetOfCurrentSubAttributes + offsetof(_MonsterSubAttributes64, behaviorList), offsetOfBehaviorIDs, monsterSubAttributes->behaviorList - behaviorIDList, f);
 			}
 		}
 
