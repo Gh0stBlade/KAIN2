@@ -952,26 +952,25 @@ struct INICommand* INSTANCE_FindIntroCommand(struct _Instance* instance, int cmd
 #endif
 }
 
-void INSTANCE_ProcessIntro(struct _Instance* instance)
+void INSTANCE_ProcessIntro(struct _Instance* instance)//Matching - 100%
 {
 #if defined(PSX_VERSION)
 	struct INICommand* command;
-	UNIMPLEMENTED();
-	return;//Inf loop?
+
 	if (instance->introData != NULL)
 	{
 		command = (struct INICommand*)instance->introData;
 
-		if (!(instance->flags & 0x2))
+		if ((instance->flags & 2) == 0)
 		{
-			while (command->command != 0)
+			while (command->command)
 			{
-				if (command->command == 0x12)
+				if (command->command == 18)
 				{
-
-					instance->currentModel = command->parameter[0];
-					command += command->numParameters + 1;
+					instance->currentModel = command[1].command;
 				}
+
+				command += command->numParameters + 1;
 			}
 		}
 	}
