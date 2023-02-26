@@ -962,27 +962,10 @@ void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAdd
 		}
 		int numBehaviorIDs = (behaviorIDListEnd - behaviorIDList) / MONSTER_NUM_BEHAVIORS;
 
-		unsigned int offsetOfAttributes = FILE_GetOffset(f);
-		unsigned int offsetOfCombatAttributesListStart = offsetOfAttributes + sizeof(_MonsterAttributes64);
-		unsigned int offsetOfCombatAttributesListEnd = offsetOfCombatAttributesListStart + (sizeof(unsigned long long) * monsterAttributes->numCombatAttributes);
-		unsigned int offsetOfSubAttributesListStart = offsetOfCombatAttributesListEnd;
-		unsigned int offsetOfSubAttributesListEnd = offsetOfSubAttributesListStart + (sizeof(unsigned long long) * monsterAttributes->numSubAttributes);
-		unsigned int offsetOfAuxAnimList = offsetOfSubAttributesListEnd;
-		unsigned int offsetOfAmbientAnimList = offsetOfSubAttributesListEnd + (sizeof(char) * monsterAttributes->numAuxAnims);
-		unsigned int offsetOfSubAttributes = offsetOfAmbientAnimList + (sizeof(char) * monsterAttributes->numAmbientAnims);
-		unsigned int offsetOfAllegiances = offsetOfSubAttributes + (sizeof(_MonsterSubAttributes64) * numAllegiances);
-		unsigned int offsetOfSenses = offsetOfAllegiances + (sizeof(_MonsterAllegiances) * numAllegiances);
-		unsigned int offsetOfCombatAttributes = offsetOfSenses + (sizeof(_MonsterSenses) * numSenses);
-		unsigned int offsetOfAnimIDs = offsetOfCombatAttributes + (sizeof(_MonsterCombatAttributes) * monsterAttributes->numCombatAttributes);
-		unsigned int offsetOfBehaviorIDs = offsetOfAnimIDs + (MONSTER_NUM_ANIMS * numAnimIDs);
-		unsigned int offsetOfAttackAttributes = offsetOfBehaviorIDs + (MONSTER_NUM_BEHAVIORS * numBehaviorIDs);
-		unsigned int offsetOfMissiles = offsetOfAttackAttributes + (sizeof(_MonsterAttackAttributes) * monsterAttributes->numAttackAttributes);
-		unsigned int offsetOfAnims = offsetOfMissiles + (sizeof(_MonsterMissile) * monsterAttributes->numMissiles);
-		unsigned int offsetOfIdles = offsetOfAnims + (sizeof(_MonsterAnim) * monsterAttributes->numAnims);
-		unsigned int offsetOfBehaviors = offsetOfIdles + (sizeof(_MonsterIdle) * monsterAttributes->numIdles);
-		unsigned int offsetOfShatters = offsetOfBehaviors + (sizeof(_MonsterBehavior) * monsterAttributes->numBehaviors);
-
 		UPGRADE_DumpRaw(&monsterAttributes->magicnum, sizeof(unsigned long), objectDataOffset + offsetof(_MonsterAttributes64, magicnum), f);
+		UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), objectDataOffset + offsetof(_MonsterAttributes64, tunData), f);
+		UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), objectDataOffset + offsetof(_MonsterAttributes64, auxAnimList), f);
+		UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), objectDataOffset + offsetof(_MonsterAttributes64, ambientAnimList), f);
 		UPGRADE_DumpRaw(&monsterAttributes->whatAmI, sizeof(long), objectDataOffset + offsetof(_MonsterAttributes64, whatAmI), f);
 		UPGRADE_DumpRaw(&monsterAttributes->numAuxAnims, sizeof(char), objectDataOffset + offsetof(_MonsterAttributes64, numAuxAnims), f);
 		UPGRADE_DumpRaw(&monsterAttributes->numAmbientAnims, sizeof(char), objectDataOffset + offsetof(_MonsterAttributes64, numAmbientAnims), f);
@@ -1012,15 +995,19 @@ void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAdd
 		UPGRADE_DumpRaw(&monsterAttributes->numIdles, sizeof(char), objectDataOffset + offsetof(_MonsterAttributes64, numIdles), f);
 		UPGRADE_DumpRaw(&monsterAttributes->numBehaviors, sizeof(char), objectDataOffset + offsetof(_MonsterAttributes64, numBehaviors), f);
 		UPGRADE_DumpRaw(&monsterAttributes->numShatters, sizeof(char), objectDataOffset + offsetof(_MonsterAttributes64, numShatters), f);
+		UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), objectDataOffset + offsetof(_MonsterAttributes64, subAttributesList), f);
+		UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), objectDataOffset + offsetof(_MonsterAttributes64, combatAttributesList), f);
+		UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), objectDataOffset + offsetof(_MonsterAttributes64, attackAttributesList), f);
+		UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), objectDataOffset + offsetof(_MonsterAttributes64, missileList), f);
+		UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), objectDataOffset + offsetof(_MonsterAttributes64, animList), f);
+		UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), objectDataOffset + offsetof(_MonsterAttributes64, idleList), f);
+		UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), objectDataOffset + offsetof(_MonsterAttributes64, behaviorList), f);
+		UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), objectDataOffset + offsetof(_MonsterAttributes64, shatterList), f);
 
 		if (monsterAttributes->tunData != NULL)
 		{
 			relocationTable.push_back(objectDataOffset + offsetof(_MonsterAttributes64, tunData));
 			UPGRADE_DumpIndexed(sizeof(char), objectDataOffset + offsetof(_MonsterAttributes64, tunData), offsetTunData, 0, f);
-		}
-		else
-		{
-			UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), objectDataOffset + offsetof(_MonsterAttributes64, tunData), f);
 		}
 
 		if (monsterAttributes->combatAttributesList != NULL)
@@ -1028,29 +1015,21 @@ void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAdd
 			relocationTable.push_back(objectDataOffset + offsetof(_MonsterAttributes64, combatAttributesList));
 			UPGRADE_DumpStruct(&NULL_PTR, sizeof(unsigned long long) * monsterAttributes->numCombatAttributes, objectDataOffset + offsetof(_MonsterAttributes64, combatAttributesList), f);
 		}
-		else
-		{
-			UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), objectDataOffset + offsetof(_MonsterAttributes64, combatAttributesList), f);
-		}
+
+		long offsetCombatAttributesList = FILE_GetOffset(f);
 
 		if (monsterAttributes->subAttributesList != NULL)
 		{
 			relocationTable.push_back(objectDataOffset + offsetof(_MonsterAttributes64, subAttributesList));
 			UPGRADE_DumpStruct(&NULL_PTR, sizeof(unsigned long long) * monsterAttributes->numSubAttributes, objectDataOffset + offsetof(_MonsterAttributes64, subAttributesList), f);
 		}
-		else
-		{
-			UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), objectDataOffset + offsetof(_MonsterAttributes64, subAttributesList), f);
-		}
+
+		long offsetSubAttributesList = FILE_GetOffset(f);
 
 		if (monsterAttributes->auxAnimList != NULL)
 		{
 			relocationTable.push_back(objectDataOffset + offsetof(_MonsterAttributes64, auxAnimList));
 			UPGRADE_DumpStruct(monsterAttributes->auxAnimList, sizeof(char*) * monsterAttributes->numAuxAnims, objectDataOffset + offsetof(_MonsterAttributes64, auxAnimList), f);
-		}
-		else
-		{
-			UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), objectDataOffset + offsetof(_MonsterAttributes64, auxAnimList), f);
 		}
 
 		if (monsterAttributes->ambientAnimList != NULL)
@@ -1058,24 +1037,26 @@ void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAdd
 			relocationTable.push_back(objectDataOffset + offsetof(_MonsterAttributes64, ambientAnimList));
 			UPGRADE_DumpStruct(monsterAttributes->ambientAnimList, sizeof(char*) * monsterAttributes->numAmbientAnims, objectDataOffset + offsetof(_MonsterAttributes64, ambientAnimList), f);
 		}
-		else
-		{
-			UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), objectDataOffset + offsetof(_MonsterAttributes64, ambientAnimList), f);
-		}
 
+		long offsetSubAttributes = FILE_GetOffset(f);
 		for (int i = 0; i < monsterAttributes->numSubAttributes; i++)
 		{
 			struct _MonsterSubAttributes* monsterSubAttributes = monsterAttributes->subAttributesList[i];
 
-			unsigned int offsetOfMonsterSubAttributes = ftell(f);
+			long offsetOfMonsterSubAttributes = FILE_GetOffset(f);
 
-			relocationTable.push_back(offsetOfSubAttributesListEnd - ((monsterAttributes->numSubAttributes - i) * sizeof(long long)));
+			relocationTable.push_back(offsetSubAttributesList - ((monsterAttributes->numSubAttributes - i) * sizeof(long long)));
 
 			for (int i = 0; i < monsterAttributes->numSubAttributes; i++)
 			{
-				UPGRADE_DumpStructPointer(offsetOfSubAttributesListEnd - ((monsterAttributes->numSubAttributes - i) * sizeof(long long)), f);
+				UPGRADE_DumpStructPointer(offsetSubAttributesList - ((monsterAttributes->numSubAttributes - i) * sizeof(long long)), f);
 			}
 
+			UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, animList), f);
+			UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, senses), f);
+			UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, combatAttributes), f);
+			UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, allegiances), f);
+			UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, behaviorList), f);
 			UPGRADE_DumpRaw(&monsterSubAttributes->scale, sizeof(short), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, scale), f);
 			UPGRADE_DumpRaw(&monsterSubAttributes->fallDistance, sizeof(short), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, fallDistance), f);
 			UPGRADE_DumpRaw(&monsterSubAttributes->defAmbushRange, sizeof(short), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, defAmbushRange), f);
@@ -1116,89 +1097,50 @@ void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAdd
 			UPGRADE_DumpRaw(&monsterSubAttributes->maxSpikeVertSpeed, sizeof(short), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, maxSpikeVertSpeed), f);
 			UPGRADE_DumpRaw(&monsterSubAttributes->upOnGroundOffset, sizeof(short), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, upOnGroundOffset), f);
 			UPGRADE_DumpRaw(&monsterSubAttributes->downOnGroundOffset, sizeof(short), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, downOnGroundOffset), f);
-
-			if (monsterSubAttributes->animList != NULL)
-			{
-				relocationTable.push_back(offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, animList));
-				UPGRADE_DumpIndexed(sizeof(char), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, animList), offsetOfAnimIDs, monsterSubAttributes->animList - animIDList, f);
-			}
-			else
-			{
-				UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, animList), f);
-			}
-
-			if (monsterSubAttributes->senses != NULL)
-			{
-				relocationTable.push_back(offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, senses));
-				UPGRADE_DumpIndexed(sizeof(struct _MonsterSenses), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, senses), offsetOfSenses, monsterSubAttributes->senses - sensesList, f);
-			}
-			else
-			{
-				UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, senses), f);
-			}
-
-			if (monsterSubAttributes->combatAttributes != NULL)
-			{
-				relocationTable.push_back(offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, combatAttributes));
-				UPGRADE_DumpIndexed(sizeof(struct _MonsterCombatAttributes), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, combatAttributes), offsetOfCombatAttributes, monsterSubAttributes->combatAttributes - monsterAttributes->combatAttributesList[0], f);
-			}
-			else
-			{
-				UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, combatAttributes), f);
-			}
-
-			if (monsterSubAttributes->allegiances != NULL)
-			{
-				relocationTable.push_back(offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, allegiances));
-				UPGRADE_DumpIndexed(sizeof(struct _MonsterAllegiances), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, allegiances), offsetOfAllegiances, monsterSubAttributes->allegiances - allegiancesList, f);
-			}
-			else
-			{
-				UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, allegiances), f);
-			}
-
-			if (monsterSubAttributes->behaviorList != NULL)
-			{
-				relocationTable.push_back(offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, behaviorList));
-				UPGRADE_DumpIndexed(sizeof(char), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, behaviorList), offsetOfBehaviorIDs, monsterSubAttributes->behaviorList - behaviorIDList, f);
-			}
-			else
-			{
-				UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, behaviorList), f);
-			}
 		}
 
+		// Nothing in _MonsterAttrubutes points to these. No need to add to relocation table here.
+		long offsetOfAllegiances = FILE_GetOffset(f);
 		if (allegiancesList != NULL)
 		{
 			UPGRADE_DumpRaw(allegiancesList, sizeof(_MonsterAllegiances) * numAllegiances, offsetOfAllegiances, f);
 		}
 
+		// Nothing in _MonsterAttrubutes points to these. No need to add to relocation table here.
+		long offsetOfSenses = FILE_GetOffset(f);
 		if (sensesList != NULL)
 		{
 			UPGRADE_DumpRaw(sensesList, sizeof(_MonsterSenses) * numSenses, offsetOfSenses, f);
 		}
 
+		long offsetCombatAttributes = FILE_GetOffset(f);
 		for (int i = 0; i < monsterAttributes->numCombatAttributes; i++)
 		{
 			struct _MonsterCombatAttributes* monsterCombatAttributes = monsterAttributes->combatAttributesList[i];
 
-			relocationTable.push_back(offsetOfCombatAttributesListEnd - ((monsterAttributes->numCombatAttributes - i) * sizeof(long long)));
+			long offsetOfCombatAttributes = FILE_GetOffset(f);
+
+			relocationTable.push_back(offsetCombatAttributesList - ((monsterAttributes->numCombatAttributes - i) * sizeof(long long)));
 
 			for (int i = 0; i < monsterAttributes->numCombatAttributes; i++)
 			{
-				UPGRADE_DumpStructPointer(offsetOfCombatAttributesListEnd - ((monsterAttributes->numCombatAttributes - i) * sizeof(long long)), f);
+				UPGRADE_DumpStructPointer(offsetCombatAttributesList - ((monsterAttributes->numCombatAttributes - i) * sizeof(long long)), f);
 			}
 
-			UPGRADE_DumpRaw(monsterCombatAttributes, sizeof(_MonsterCombatAttributes), offsetOfCombatAttributes + (sizeof(_MonsterCombatAttributes) * i), f);
+			UPGRADE_DumpRaw(monsterCombatAttributes, sizeof(_MonsterCombatAttributes), offsetOfCombatAttributes, f);
 		}
 
 		// These are only indices. Not to be confused with the _MonsterAnims referenced in _MonsterAttributes.
+		// Nothing in _MonsterAttrubutes points to these. No need to add to relocation table here.
+		long offsetOfAnimIDs = FILE_GetOffset(f);
 		if (animIDList != NULL)
 		{
 			UPGRADE_DumpRaw(animIDList, sizeof(char) * MONSTER_NUM_ANIMS * numAnimIDs, offsetOfAnimIDs, f);
 		}
 
 		// These are only indices. Not to be confused with the _MonsterBehaviors referenced in _MonsterAttributes.
+		// Nothing in _MonsterAttrubutes points to these. No need to add to relocation table here.
+		long offsetOfBehaviorIDs = FILE_GetOffset(f);
 		if (behaviorIDList != NULL)
 		{
 			UPGRADE_DumpRaw(behaviorIDList, sizeof(char) * MONSTER_NUM_BEHAVIORS * numBehaviorIDs, offsetOfBehaviorIDs, f);
@@ -1209,19 +1151,11 @@ void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAdd
 			relocationTable.push_back(objectDataOffset + offsetof(_MonsterAttributes64, attackAttributesList));
 			UPGRADE_DumpStruct(monsterAttributes->attackAttributesList, sizeof(struct _MonsterAttackAttributes) * monsterAttributes->numAttackAttributes, objectDataOffset + offsetof(_MonsterAttributes64, attackAttributesList), f);
 		}
-		else
-		{
-			UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), objectDataOffset + offsetof(_MonsterAttributes64, attackAttributesList), f);
-		}
 
 		if (monsterAttributes->missileList != NULL)
 		{
 			relocationTable.push_back(objectDataOffset + offsetof(_MonsterAttributes64, missileList));
 			UPGRADE_DumpStruct(monsterAttributes->missileList, sizeof(struct _MonsterMissile) * monsterAttributes->numMissiles, objectDataOffset + offsetof(_MonsterAttributes64, missileList), f);
-		}
-		else
-		{
-			UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), objectDataOffset + offsetof(_MonsterAttributes64, missileList), f);
 		}
 
 		if (monsterAttributes->idleList != NULL)
@@ -1229,19 +1163,11 @@ void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAdd
 			relocationTable.push_back(objectDataOffset + offsetof(_MonsterAttributes64, idleList));
 			UPGRADE_DumpStruct(monsterAttributes->idleList, sizeof(struct _MonsterIdle) * monsterAttributes->numIdles, objectDataOffset + offsetof(_MonsterAttributes64, idleList), f);
 		}
-		else
-		{
-			UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), objectDataOffset + offsetof(_MonsterAttributes64, idleList), f);
-		}
 
 		if (monsterAttributes->behaviorList != NULL)
 		{
 			relocationTable.push_back(objectDataOffset + offsetof(_MonsterAttributes64, behaviorList));
 			UPGRADE_DumpStruct(monsterAttributes->behaviorList, sizeof(struct _MonsterBehavior) * monsterAttributes->numBehaviors, offsetof(_MonsterAttributes64, behaviorList), f);
-		}
-		else
-		{
-			UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), objectDataOffset + offsetof(_MonsterAttributes64, behaviorList), f);
 		}
 
 		if (monsterAttributes->animList != NULL)
@@ -1249,19 +1175,48 @@ void UPGRADE_Object(struct RedirectList* redirectList, long* data, long* baseAdd
 			relocationTable.push_back(objectDataOffset + offsetof(_MonsterAttributes64, animList));
 			UPGRADE_DumpStruct(monsterAttributes->animList, sizeof(struct _MonsterAnim*) * monsterAttributes->numAnims, objectDataOffset + offsetof(_MonsterAttributes64, animList), f);
 		}
-		else
-		{
-			UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), objectDataOffset + offsetof(_MonsterAttributes64, animList), f);
-		}
 
 		if (monsterAttributes->shatterList != NULL)
 		{
 			relocationTable.push_back(objectDataOffset + offsetof(_MonsterAttributes64, shatterList));
 			UPGRADE_DumpStruct(monsterAttributes->shatterList, sizeof(struct FXSplinter) * monsterAttributes->numShatters, objectDataOffset + offsetof(_MonsterAttributes64, shatterList), f);
 		}
-		else
+
+		for (int i = 0; i < monsterAttributes->numSubAttributes; i++)
 		{
-			UPGRADE_DumpRaw(&NULL_PTR, sizeof(unsigned long long), objectDataOffset + offsetof(_MonsterAttributes64, shatterList), f);
+			struct _MonsterSubAttributes* monsterSubAttributes = monsterAttributes->subAttributesList[i];
+
+			long offsetOfMonsterSubAttributes = offsetSubAttributes + (sizeof(_MonsterSubAttributes64) * i);
+
+			if (monsterSubAttributes->animList != NULL)
+			{
+				relocationTable.push_back(offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, animList));
+				UPGRADE_DumpIndexed(sizeof(char), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, animList), offsetOfAnimIDs, monsterSubAttributes->animList - animIDList, f);
+			}
+
+			if (monsterSubAttributes->senses != NULL)
+			{
+				relocationTable.push_back(offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, senses));
+				UPGRADE_DumpIndexed(sizeof(struct _MonsterSenses), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, senses), offsetOfSenses, monsterSubAttributes->senses - sensesList, f);
+			}
+
+			if (monsterSubAttributes->combatAttributes != NULL)
+			{
+				relocationTable.push_back(offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, combatAttributes));
+				UPGRADE_DumpIndexed(sizeof(struct _MonsterCombatAttributes), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, combatAttributes), offsetCombatAttributes, monsterSubAttributes->combatAttributes - monsterAttributes->combatAttributesList[0], f);
+			}
+
+			if (monsterSubAttributes->allegiances != NULL)
+			{
+				relocationTable.push_back(offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, allegiances));
+				UPGRADE_DumpIndexed(sizeof(struct _MonsterAllegiances), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, allegiances), offsetOfAllegiances, monsterSubAttributes->allegiances - allegiancesList, f);
+			}
+
+			if (monsterSubAttributes->behaviorList != NULL)
+			{
+				relocationTable.push_back(offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, behaviorList));
+				UPGRADE_DumpIndexed(sizeof(char), offsetOfMonsterSubAttributes + offsetof(_MonsterSubAttributes64, behaviorList), offsetOfBehaviorIDs, monsterSubAttributes->behaviorList - behaviorIDList, f);
+			}
 		}
 
 		break;
