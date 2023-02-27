@@ -1453,6 +1453,11 @@ void sub_80078458(struct _VMObject* vmobject, struct Level* level)
 }
 
 
+void COLLIDE_NearestPointOnLine_S(struct _SVector* linePoint, SVECTOR* oldPoint, SVECTOR* newPoint, struct _Position* position)
+{
+	UNIMPLEMENTED();
+}
+
 void VM_ProcessVMObjectList_S(struct Level* level, struct Camera* camera)
 {
 	long timer;
