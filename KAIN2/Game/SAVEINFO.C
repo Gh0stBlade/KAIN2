@@ -470,7 +470,7 @@ long SAVE_HasSavedIntro(struct Intro* intro, long currentStreamID)//Matching - 9
 	return result;
 }
 
-struct SavedLevel* SAVE_HasSavedLevel(int areaID)//Matching - 91.20%
+struct SavedLevel* SAVE_HasSavedLevel(long areaID)//Matching - 91.20%
 {
 	struct SavedLevel* savedLevel;
 
