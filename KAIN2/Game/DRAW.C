@@ -102,7 +102,7 @@ unsigned long * DRAW_DrawShadow(struct _PrimPool *primPool, struct _Model *model
 	/* end block 2 */
 	// End Line: 984
 			UNIMPLEMENTED();
-	return null;
+	return (unsigned long*)primPool->nextPrim;
 }
 
 void DRAW_FlatQuad(CVECTOR *color, short x0, short y0, short x1, int y1, int x2, int y2, int x3, int y3, struct _PrimPool *primPool, unsigned long **ot)
