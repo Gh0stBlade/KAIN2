@@ -314,16 +314,10 @@ extern int gte_ldlzc(int input);
 	TRY = r1;   \
 	TRZ = r2;   \
 
-#define gte_SetTransVector( r0 ) __asm__ volatile (		\
-	"lw	$12, 0( %0 );"					\
-	"lw	$13, 4( %0 );"					\
-	"lw	$14, 8( %0 );"					\
-	"ctc2	$12, $5;"					\
-	"ctc2	$13, $6;"					\
-	"ctc2	$14, $7"					\
-	:							\
-	: "r"( r0 )						\
-	: "$12", "$13", "$14" )
+#define gte_SetTransVector( r0 ) \
+	TRX = ((int*)r0)[0];   \
+	TRY = ((int*)r0)[1];   \
+	TRZ = ((int*)r0)[2];   \
 
 #define gte_ld_intpol_uv0( r0 ) __asm__ volatile (		\
 	"lbu	$12, 0( %0 );"					\
