@@ -570,25 +570,25 @@ void GAMELOOP_HandleScreenWipes(unsigned long **drawot)
 	}
 }
 
-void UpdateFogSettings(struct _StreamUnit *currentUnit, struct Level *level)
+void UpdateFogSettings(struct _StreamUnit* currentUnit, struct Level* level)//Matching - 99.93%
 {
 	int changed;
-	int setflag;
 	int FogFar;
 	int FogNear;
-	
+	int setflag;
+
 	changed = 0;
 
 	FogNear = currentUnit->TargetFogNear;
-	
+
 	FogFar = currentUnit->TargetFogFar;
-	
+
 	setflag = 0;
 
-	if (FogNear < FogFar)
+	if (FogNear < level->fogNear)
 	{
 		level->fogNear -= 500;
-		
+
 		changed = 1;
 
 		if (FogNear >= level->fogNear)
@@ -601,7 +601,7 @@ void UpdateFogSettings(struct _StreamUnit *currentUnit, struct Level *level)
 	else if (level->fogNear < FogNear)
 	{
 		level->fogNear += 500;
-		
+
 		changed = 1;
 
 		if (level->fogNear >= FogNear)
@@ -620,16 +620,14 @@ void UpdateFogSettings(struct _StreamUnit *currentUnit, struct Level *level)
 	{
 		level->fogFar -= 500;
 
-		if (FogFar < level->fogFar)
-		{
-			changed = 1;
+		changed = 1;
 
-			setflag = 0;
+		if (FogFar >= level->fogFar)
+		{
+			level->fogFar = FogFar;
 		}
 		else
 		{
-			level->fogFar = FogFar;
-
 			setflag = 0;
 		}
 	}
@@ -637,10 +635,10 @@ void UpdateFogSettings(struct _StreamUnit *currentUnit, struct Level *level)
 	{
 		level->fogFar += 500;
 
+		changed = 1;
+
 		if (level->fogFar >= FogFar)
 		{
-			changed = 1;
-
 			level->fogFar = FogFar;
 		}
 		else
