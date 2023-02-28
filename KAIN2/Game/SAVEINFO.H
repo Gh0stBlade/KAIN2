@@ -116,6 +116,14 @@ struct ActualSavedLevel {
 	struct SavedBspTree bspTreeArray[1]; // size=8, offset=8
 };
 
+struct SavedLevel {
+	unsigned char savedID; // size=0, offset=0
+	unsigned char shiftedSaveSize; // size=0, offset=1
+	short areaID; // size=0, offset=2
+	short waterZ; // size=0, offset=4
+	short numberBSPTreesSaved; // size=0, offset=6
+};
+
 extern struct _GlobalSaveTracker* GlobalSave;
 
 extern void SAVE_GetInstanceRotation(struct _Instance *instance, struct _SmallRotation *vector); // 0x800B5560
