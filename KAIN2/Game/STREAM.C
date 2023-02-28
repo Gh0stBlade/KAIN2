@@ -897,10 +897,30 @@ void STREAM_SetMainFog(struct _StreamUnit *streamUnit)
 	}
 }
 
-void STREAM_SetStreamFog(struct _StreamUnit *streamUnit, short fogNear, short fogFar)
+void STREAM_SetStreamFog(struct _StreamUnit* streamUnit, short fogNear, short fogFar)//Matching - 99.72%
 {
-	streamUnit->TargetFogFar = streamUnit->UnitFogFar = MIN(fogFar, FindStreamUnitFromLevel(gameTrackerX.level)->UnitFogFar) - 2000;
-	streamUnit->TargetFogNear = streamUnit->UnitFogNear = MIN(fogNear, streamUnit->UnitFogFar) - 2000;
+	short unitFogFar; 
+	int unitFogHold;
+
+	unitFogFar = FindStreamUnitFromLevel(gameTrackerX.level)->UnitFogFar;
+
+	if (fogFar < unitFogFar)
+	{
+		unitFogFar = fogFar;
+	}
+
+	unitFogHold = unitFogFar - 2000;
+
+	streamUnit->TargetFogFar = unitFogFar;
+	streamUnit->UnitFogFar = unitFogFar;
+
+	if (fogNear < unitFogHold)
+	{
+		unitFogHold = fogNear;
+	}
+	
+	streamUnit->TargetFogNear = unitFogHold;
+	streamUnit->UnitFogNear = unitFogHold;
 }
 
 void STREAM_ConnectStream(struct _StreamUnit* streamUnit)
