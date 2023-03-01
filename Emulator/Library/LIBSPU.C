@@ -1506,58 +1506,19 @@ SpuTransferCallbackProc SpuSetTransferCallback(SpuTransferCallbackProc func)
     return prev;
 }
 
-void SpuSetVoiceADSRAttr(int vNum, unsigned short AR, unsigned short DR, unsigned short SR, unsigned short RR/*arg_10*/, unsigned short SL/*arg_14*/, long ARmode/*arg_18*/, long SRmode, long RRmode)
+void SpuSetVoiceADSRAttr(int vNum, unsigned short AR, unsigned short DR, unsigned short SR, unsigned short RR, unsigned short SL, long ARmode, long SRmode, long RRmode)
 {
-    SR = (SR & 0x7F) << 6;
-    AR = ((AR & 0x7F) << 8) & 0xF;
-    DR = DR << 4;
-    AR |= DR;
-    SR |= (RR & 0x1F);
-    AR |= (SL & 0xF);
-    AR |= (((ARmode ^ 5) < 1) << 15);
+    Channel* channel = &channelList[vNum];
 
-    int t0 = 16384;
-    
-    unsigned short* pVoice = &_spu_RXX[vNum << 3];
-    pVoice[4] = AR;
-
-    if (SRmode == 5)
-    {
-        t0 = 32768;
-    }
-    else if (SRmode >= 6)
-    {
-        if (SRmode == 7)
-        {
-            t0 = 49152;
-        }
-    }
-    else if (SRmode == 1)
-    {
-        t0 = 0;
-    }
-
-    if (RRmode == 7)
-    {
-        t0 |= 0x20;
-        RRmode = SR | t0;
-    }
-    else
-    {
-        RRmode = SR | t0;
-    }
- 
-    pVoice = &_spu_RXX[vNum << 3];
-    pVoice[5] = RRmode;
-
-    int var_4 = 1;
-    int var_8 = 0;
-
-    while (var_8 < 2)
-    {
-        var_4 *= 13;
-        var_8++;
-    }
+    channel->adsr.attackmodeexp = (ARmode == 5);
+    channel->adsr.attackrate = AR;
+    channel->adsr.decayrate = DR;
+    channel->adsr.sustainlevel = SL;
+    channel->adsr.sustainmodexp = (SRmode == 5);
+    channel->adsr.sustainincrease = (SRmode != 7);
+    channel->adsr.sustainrate = SR;
+    channel->adsr.releasemodeexp = (RRmode == 7);
+    channel->adsr.releaserate = RR;
 }
 
 void SpuSetVoiceStartAddr(int vNum, unsigned long startAddr)

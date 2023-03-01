@@ -21,6 +21,23 @@
 #endif
 #define OLD_SYSTEM
 
+typedef struct ADSR
+{
+    int32_t state;
+    int32_t attackmodeexp;
+    int32_t attackrate;
+    int32_t decayrate;
+    int32_t sustainlevel;
+    int32_t sustainmodexp;
+    int32_t sustainincrease;
+    int32_t sustainrate;
+    int32_t releasemodeexp;
+    int32_t releaserate;
+    int32_t envelopevol;
+    int32_t envolopevol_f;
+    int32_t lvolume;
+};
+
 typedef struct Channel
 {
     int32_t pitch;
@@ -34,6 +51,7 @@ typedef struct Channel
     uint8_t* data;
     uint8_t* loop;
     int32_t loop_s1, loop_s2;
+    ADSR adsr;
 } channel;
 
 extern short g_spuLeftVol;
