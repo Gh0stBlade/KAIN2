@@ -90,7 +90,6 @@
 #define NO_FILESYSTEM
 #define NO_BOUNTY_LIST_EXPORT
 #define TOUCH_UI
-#define NO_AUDIO
 #elif defined(_XBOX)
 #define XED3D
 #endif

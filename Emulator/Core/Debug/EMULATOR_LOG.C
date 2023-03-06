@@ -26,7 +26,7 @@ void Emulator_Log(enum LOG_TYPE lt, const char* file, const char* func, int line
     char buff[1024];
     sprintf(buff, "[F:%s:%s:L%d] - %s\n", file, func, line, fmt);
 
-    printf(buff);
+    printf("%s", buff);
 
 #endif
 }

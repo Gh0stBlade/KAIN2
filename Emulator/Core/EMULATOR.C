@@ -2261,6 +2261,10 @@ void Emulator_DoDebugKeys(int nKey, int down)
 				Emulator_SaveBountyList();
 #endif
 				break;
+			case SDL_SCANCODE_7:
+				extern int32_t disableReverb;
+				disableReverb ^= 1;
+				break;
 #endif
 		}
 	}
