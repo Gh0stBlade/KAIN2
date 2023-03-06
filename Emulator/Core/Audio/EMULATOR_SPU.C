@@ -7,9 +7,9 @@
 #define BLOCK_END       (28 << PITCH_SHIFT)
 
 REVERBInfo reverb;
-static int reverbCounter = 0;
-int32_t gSamples[SND_SAMPLES * 2]; // stereo
-int32_t sRVBStart[SND_SAMPLES * 2];
+static int32_t reverbCounter = 0;
+int32_t gSamples[SND_SAMPLES * 256]; // stereo ///@FIXME had to increase the buffer size here due to reverb overflowing!
+int32_t sRVBStart[SND_SAMPLES * 256];
 int32_t SSumL[SND_SAMPLES];
 int32_t SSumR[SND_SAMPLES];
 static int32_t RateTableAdd[128];
@@ -17,7 +17,7 @@ static int32_t RateTableAdd_f[128];
 static int32_t RateTableSub[128];
 static int32_t RateTableSub_f[128];
 static const int32_t RateTable_denom = 1 << (((4 * 32) >> 2) - 11);
-
+int32_t disableReverb = 0;
 
 #if defined(SDL2)
 SDL_AudioDeviceID gAudioDevice;
@@ -185,15 +185,21 @@ int32_t ADSR(struct Channel* channel)
     {
     case ATTACK:
     {
-        if (channel->_adsr.envelopevol < 0x6000 || !channel->_adsr.attackmodeexp)
+        if (channel->_adsr.envelopevol >= 0x6000 && channel->_adsr.attackmodeexp)
+        {
+            channel->_adsr.envelopevol += RateTableAdd[channel->_adsr.attackrate + 8];
+            channel->_adsr.envelopevol_f += RateTableAdd_f[channel->_adsr.attackrate + 8];
+        }
+        else
         {
             channel->_adsr.envelopevol += RateTableAdd[channel->_adsr.attackrate + 0];
             channel->_adsr.envelopevol_f += RateTableAdd_f[channel->_adsr.attackrate + 0];
         }
-        else
+
+        if (channel->_adsr.envelopevol_f >= RateTable_denom)
         {
-            channel->_adsr.envelopevol += RateTableAdd[channel->_adsr.attackrate + 8];
-            channel->_adsr.envelopevol_f += RateTableAdd_f[channel->_adsr.attackrate + 8];
+            channel->_adsr.envelopevol_f -= RateTable_denom;
+            channel->_adsr.envelopevol++;
         }
 
         if (channel->_adsr.envelopevol >= 0x8000)
@@ -386,18 +392,6 @@ int32_t ReverbL(struct Channel* channel, int32_t ns)
         const int INPUT_SAMPLE_L = *(sRVBStart + (ns << 1));
         const int INPUT_SAMPLE_R = *(sRVBStart + (ns << 1) + 1);
 
-        if (INPUT_SAMPLE_L)
-        {
-            int testing = 0;
-            testing++;
-        }
-
-        if (INPUT_SAMPLE_L == 0x587)
-        {
-            int testing = 0;
-            testing++;
-        }
-
         const int IIR_INPUT_A0 = (g_buffer(reverb.IIR_SRC_A0) * reverb.IIR_COEF) / 32768L + (INPUT_SAMPLE_L * reverb.IN_COEF_L) / 32768L;
         const int IIR_INPUT_A1 = (g_buffer(reverb.IIR_SRC_A1) * reverb.IIR_COEF) / 32768L + (INPUT_SAMPLE_R * reverb.IN_COEF_R) / 32768L;
         const int IIR_INPUT_B0 = (g_buffer(reverb.IIR_SRC_B0) * reverb.IIR_COEF) / 32768L + (INPUT_SAMPLE_L * reverb.IN_COEF_L) / 32768L;
@@ -439,12 +433,6 @@ int32_t ReverbL(struct Channel* channel, int32_t ns)
         reverb.iRVBLeft = (g_buffer(reverb.MIX_DEST_A0) + g_buffer(reverb.MIX_DEST_B0)) / 3;
         reverb.iRVBRight = (g_buffer(reverb.MIX_DEST_A1) + g_buffer(reverb.MIX_DEST_B1)) / 3;
 
-        if (reverb.iRVBLeft || reverb.iRVBRight)
-        {
-            int testing = 0;
-            testing++;
-        }
-
         reverb.iRVBLeft = (reverb.iRVBLeft * reverb.VolLeft) / 0x4000;
         reverb.iRVBRight = (reverb.iRVBRight * reverb.VolRight) / 0x4000;
 
@@ -464,12 +452,6 @@ void storeReverb(struct Channel* channel, int32_t ns)
     const int iRxl = (channel->sval * channel->volL) / 0x4000;
     const int iRxr = (channel->sval * channel->volR) / 0x4000;
 
-    if (channel->sval)
-    {
-        int testing = 0;
-        testing++;
-    }
-
     *(sRVBStart + (ns << 1)) += iRxl;
     *(sRVBStart + (ns << 1) + 1) += iRxr;
 }
@@ -486,9 +468,13 @@ int32_t vagProcessBlock(struct Channel* channel, int16_t* dst)
     uint8_t flags = *src++;
     uint8_t shift = pred & 0x0F;
     int32_t value = 0;
-    int32_t hasSamples = 0;
     int32_t ns = 0;
+    int32_t channelIndex = channel - channelList;
 
+    if (channelIndex != 3)
+    {
+        //return 0;
+    }
     pred >>= 4;
 
     for (i = 0; i < 14; i++)
@@ -513,7 +499,6 @@ int32_t vagProcessBlock(struct Channel* channel, int16_t* dst)
             src = channel->loop;
             s1 = channel->loop_s1;
             s2 = channel->loop_s2;
-            channel->_adsr.state = ATTACK;
         }
         else
         {
@@ -642,8 +627,8 @@ void fillSamples(int16_t* buffer, int32_t count)
     {
         int32_t* samples = &gSamples[ns * 2];
 
-        *samples++ += (SSumL[ns] + ReverbL(channel, ns));
-        *samples++ += (SSumR[ns] + ReverbR(channel));
+        *samples++ += (SSumL[ns] + (disableReverb ? 0 : ReverbL(channel, ns)));
+        *samples++ += (SSumR[ns] + (disableReverb ? 0 : ReverbR(channel)));
 
         SSumL[ns] = 0;
         SSumR[ns] = 0;
