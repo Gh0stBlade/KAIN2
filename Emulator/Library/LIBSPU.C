@@ -56,18 +56,16 @@ unsigned short _spu_rev_attr[] =
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
-int _spu_zerobuf[256];///@TODO might need zero init
-
 short _spu_RQ[10];
 
 SpuCommonAttr dword_424;//Might be wrong struct, need to check
 int _spu_isCalled = 0;
-int _spu_FiDMA = 0;///@TODO decl as extern find initial value
+int _spu_FiDMA = 0;
 int _spu_EVdma = 0;
 int _spu_rev_flag = 0;
 int _spu_rev_reserve_wa = 0;
-int _spu_rev_offsetaddr = 0;
-int _spu_rev_startaddr = 0;
+int _spu_rev_offsetaddr;
+int _spu_rev_startaddr [] = {0xFFFE, 0xFB28, 0xFC18, 0xF6F8, 0xF204, 0xEA44, 0xE128, 0xCFF8, 0xCFF8, 0xF880};
 int _spu_AllocBlockNum = 0;
 int _spu_AllocLastNum = 0;
 int _spu_memList = 0;
@@ -89,8 +87,6 @@ int _spu_inTransfer = 0;///@TODO initial value check
 int _spu_IRQCallback = 0;
 int dword_800CED70 = 0;
 unsigned short _spu_tsa = 0;
-int PrimaryDMAControlRegister = 0;///@TODO check initials wil likely be stripped though
-int* dword_E10 = &PrimaryDMAControlRegister;//Base address is 1F8010F0.
 int _spu_keystat_last = 0;
 char spuSoundBuffer[524288];
 
@@ -624,7 +620,8 @@ void SpuSetKey(long on_off, unsigned long voice_bit)
         {
             if (voice_bit & (1 << i))
             {
-                channelList[i].data = NULL; // TODO just reset the channel ADSR to Release
+                channelList[i]._adsr.state = RELEASE;
+                channelList[i].data = NULL;
             }
         }
     }
@@ -711,196 +708,6 @@ void sub_C88()
 {
     dword_800CED70 &= 0xF0FFFFFF;
     dword_800CED70 |= 0x20000000;
-}
-
-int _spu_t(int mode, int flag, int a2)
-{
-	//arg_0 = mode
-    //arg_4 = flag
-    //arg_8 = a2
-    //arg_C = a3
-
-    //s0 = &flag
-    //a2 = 1
-
-    if (mode == 1)
-    {
-        //loc_830
-        //a1 = _spu_RXX
-        //a0 = _spu_tsa
-        _spu_zerobuf[8] = 0;//asc_E40 + 0x10  # ""
-        int start = 0;//v1
-
-        if (_spu_RXX[211] != _spu_tsa)
-        {
-            start++;
-
-            do
-            {
-                if (start < 3841)
-                {
-                    start++;
-
-                    if (_spu_RXX[211] == _spu_tsa)
-                    {
-                        break;
-                    }
-                }
-                else
-                {
-                    return -2;
-                }
-
-            } while (1);
-        }
-        
-        _spu_RXX[213] &= 0xFFCF;
-        _spu_RXX[213] |= 0x20;
-        
-        return 0;
-    }
-    else if(mode >= 2)
-    {
-        //loc_7EC
-        if (mode == 2)
-        {
-            //loc_804
-            _spu_RXX[211] = flag >> _spu_mem_mode_plus;
-         
-            return 0;
-        }
-        else if (mode == 3)
-        {
-            //loc_904
-     
-            //v0 = _spu_zerobuf[8]
-            short a0 = 0x20;
-            if (_spu_zerobuf[8] == a2)
-            {
-                a0 = 0x30;
-            }
-
-            //a1 = _spu_RXX
-            int start = 0;
-            //v0 = _spu_RXX[213];
-
-            start++;
-            if ((_spu_RXX[213] & 0x30) != a0)
-            {
-                do
-                {
-                    if (start < 3841)
-                    {
-                        start++;
-
-                        if ((_spu_RXX[213] & 0x30) == a0)
-                        {
-                            break;
-                        }
-                    }
-                    else
-                    {
-                        return -2;
-                    }
-
-                } while (1);
-            }
-            else
-            {
-                int a2 = 0x1000000;
-                //s0 = &flag + 1
-                // 
-                //loc_95C
-                if (_spu_zerobuf[8] == 1)
-                {
-                    sub_CB0();
-                }
-                else
-                {
-                    sub_C88();
-                }
-
-                //loc_98C
-#if 0
-
-                loc_98C :
-                lw      $a0, -4($s0)
-                    sw      $a0, dword_E54
-                    lw      $a0, 0($s0)
-                    lw      $a1, dword_E04
-                    srl     $v1, $a0, 6
-                    andi    $v0, $a0, 0x3F
-                    sltu    $v0, $zero, $v0
-                    lw      $a0, dword_E54
-                    addu    $v1, $v0
-                    sw      $v1, dword_E58
-                    sw      $a0, 0($a1)
-                    lw      $v0, dword_E58
-                    lw      $v1, dword_E08
-                    sll     $v0, 16
-                    ori     $v0, 0x10
-                    sw      $v0, 0($v1)
-                    lw      $v1, asc_E40 + 0x10  # ""
-                    li      $v0, 1
-                    bne     $v1, $v0, loc_A00
-                    ori     $a2, 0x201
-                    li      $a2, 0x1000200
-
-                    loc_A00:
-                lw      $v0, dword_E0C
-                    nop
-                    sw      $a2, 0($v0)
-                    move    $v0, $zero
-
-                    loc_A14 :
-                lw      $ra, 0x10 + var_s4($sp)
-                    lw      $s0, 0x10 + var_s0($sp)
-                    jr      $ra
-                    addiu   $sp, 0x18
-#endif
-            }
-        }
-        else
-        {
-            return 0;
-        }
-    }
-    else if (mode == 0)
-    {
-        _spu_zerobuf[8] = a2;
-
-        int start = 0;
-        
-        if (_spu_RXX[211] != _spu_tsa)
-        {
-            start++;
-
-            do
-            {
-                if (start < 3841)
-                {
-                    start++;
-
-                    if (_spu_RXX[211] == _spu_tsa)
-                    {
-                        break;
-                    }
-                }
-                else
-                {
-                    return -2;
-                }
-
-            } while (1);
-        }
-        //loc_8E0
-        _spu_RXX[213] |= 0x30;
-        return 0;
-    }
-    else
-    {
-        return 0;
-    }
 }
 
 void _spu_Fw(unsigned char* addr, unsigned long size)
@@ -1042,247 +849,9 @@ void SpuQuit(void)
 {
 }
 
-void _spu_Fw1ts()//(F)
-{
-    unsigned int result = 1;
-
-    for (int i = 0; i < 60; i++)
-    {
-        result *= 13;
-    }
-
-    return;
-}
-
-void sub_480(unsigned short* buffer, int count)//(F)
-{
-    int s0 = 0;
-    int v1 = 0;
-    int s1 = 0;
-    int a1 = 0;
-    //v0 = _spu_RXX
-    //v1 = (unsigned short)_spu_tsa
-    s1 = count;
-    //a1 = (unsigned short)_spu_RXX[215];
-    //s2 = buffer
-    _spu_RXX[211] = _spu_tsa;
-    _spu_Fw1ts();
-
-    //s3 = (unsigned short)_spu_RXX[215] & 0x7FF;
-    a1 = (unsigned short)_spu_RXX[215] & 0x7FF;
-    //v0 = s1 < 0x41 ? 1 : 0
-    if (s1 != 0)
-    {
-        do
-        {
-            if (s1 <= 64)
-            {
-                s0 = s1;
-            }
-            else
-            {
-                s0 = 64;
-            }
-
-            //loc_4D4
-            v1 = 0;
-            if (s0 > 0)
-            {
-                //loc_4E4
-                do
-                {
-                    v1 += 2;
-                    _spu_RXX[212] = *buffer++;
-                } while (v1 < s0);
-            }//loc_500
-
-            //v1 = _spu_RXX
-            _spu_RXX[213] = (_spu_RXX[213] & 0xFFCF) | 0x10;
-            _spu_Fw1ts();
-
-            v1 = 0;
-            if ((_spu_RXX[215] & 0x400))
-            {
-                v1 = 1;
-            }//loc_590
-            else
-            {
-                //loc_548
-                do
-                {
-                    if (v1 >= 3841)
-                    {
-                        printf("SPU:T/O [%s]\n", "wait (wrdy H -> L)");
-                        break;
-                    }
-                    //loc_570
-                    v1++;
-                } while ((_spu_RXX[215] & 0x400));
-            }
-            //loc_590
-            _spu_Fw1ts();
-            s1 -= s0;
-            _spu_Fw1ts();
-        } while (s1 != 0);
-    }
-    //loc_5A8
-    //v0 = _spu_RXX
-    _spu_RXX[213] &= 0xFFCF;
-    //a1 = s3 & 0xFFFF
-
-    v1 = 0;
-    if ((_spu_RXX[215] & 0x7FF) != (a1 & 0xFFFF))
-    {
-        do
-        {
-            v1 = 1;
-
-            //loc_5DC
-            if (v1 >= 3841)
-            {
-                printf("SPU:T/O [%s]\n", "wait (dmaf clear/W)");
-                break;
-            }
-            //loc_604
-            v1++;
-        } while ((_spu_RXX[215] & 0x7FF) != a1);///@FIXME suspected lock?
-    }
-    //loc_624
-}
-
 void _spu_init(int a0)//(F)
 {
-    unsigned int v1 = 0;
-
-    //int s0 = a0
-    //a0 = dword_E10
-    //v0 = dword_E10[0];
-    dword_E10[0] |= 0xB0000;
-
-    //v0 = _spu_RXX
-    _spu_transMode = 0;
-    _spu_addrMode = 0;
-    _spu_tsa = 0;
-    _spu_RXX[192] = 0;
-    _spu_RXX[193] = 0;
-    _spu_RXX[213] = 0;
-
-    _spu_Fw1ts();
-    //v0 = _spu_RXX
-    _spu_RXX[192] = 0;
-    _spu_RXX[193] = 0;
-
-    v1 = 0;
-    if ((_spu_RXX[215] & 0x7FF))
-    {
-        v1 = 1;
-
-        //loc_288
-        do
-        {
-            if (v1 >= 3841)
-            {
-                printf("SPU:T/O [%s]\n", "wait (reset)");
-                break;
-            }//loc_2B0
-            v1++;
-        } while ((_spu_RXX[215] & 0x7FF));
-    }
-    //loc_2D0
-    //a0 = 0
-
-    //loc_2D4
-    //a1 = &_spu_RQ[0];
-    _spu_mem_mode = 2;
-    _spu_mem_mode_plus = 3;
-    _spu_mem_mode_unit = 8;
-    _spu_mem_mode_unitM = 7;
-    //v0 = _spu_RXX
-    _spu_RXX[214] = 4;
-    //v1 = 0xFFFF;
-    _spu_RXX[194] = 0;
-    _spu_RXX[195] = 0;
-    _spu_RXX[198] = 65535;
-    _spu_RXX[199] = 65535;
-    _spu_RXX[204] = 0;
-    _spu_RXX[205] = 0;
-
-    //loc_338
-    for (int i = 0; i < 10; i++)
-    {
-        _spu_RQ[i] = 0;
-    }
-
-    //v0 = 0;
-    if (a0 == 0)
-    {
-        //a0 = E40
-
-        //v0 = _spu_RXX
-        _spu_tsa = 512;
-        _spu_RXX[200] = 0;
-        _spu_RXX[201] = 0;
-        _spu_RXX[202] = 0;
-        _spu_RXX[203] = 0;
-        _spu_RXX[216] = 0;
-        _spu_RXX[217] = 0;
-        _spu_RXX[218] = 0;
-        _spu_RXX[219] = 0;
-
-        sub_480(&E40[0], 16);
-        //a0 = 0
-        //a2 = 0x3FFF
-        //a1 = 0x200
-        //v1 = _spu_RXX
-
-        //loc_3B0
-        for (int i = 0; i < 24; i++)
-        {
-            _spu_RXX[0 + (i * 8)] = 0;
-            _spu_RXX[1 + (i * 8)] = 0;
-            _spu_RXX[2 + (i * 8)] = 16383;
-            _spu_RXX[3 + (i * 8)] = 512;
-            _spu_RXX[4 + (i * 8)] = 0;
-            _spu_RXX[5 + (i * 8)] = 0;
-        }
-
-        //s1 = 0xFFFF
-        //v0 = _spu_RXX
-        //s0 = 0xFF
-        _spu_RXX[196] = 65535;
-        _spu_Fw1ts();
-        _spu_RXX[197] = 255;
-        _spu_Fw1ts();
-        _spu_Fw1ts();
-        _spu_Fw1ts();
-        _spu_RXX[198] = 65535;
-        _spu_Fw1ts();
-        _spu_RXX[199] = 255;
-        _spu_Fw1ts();
-        _spu_Fw1ts();
-        _spu_Fw1ts();
-        //v0 = 0;
-    }
-    //loc_440
-    //a0 = _spu_RXX
-    _spu_inTransfer = 1;
-    _spu_RXX[213] = 49152;
-    _spu_transferCallback = 0;
-    _spu_IRQCallback = 0;
-
 	return /*0*/;
-}
-
-void _spu_FsetRXX(int a0, int a1, int a2)//(F)
-{
-	if (a2 == 0)
-	{
-		_spu_RXX[a0] = a1;
-	}
-	else
-	{
-		_spu_RXX[a0] = a1 >> _spu_mem_mode_plus;
-	}
 }
 
 void _SpuInit(int a0)
@@ -1309,8 +878,7 @@ void _SpuInit(int a0)
 	dword_424.mvolmode.right = 0;
 	dword_424.mvolx.left = 0;
 	dword_424.mvolx.right = 0;
-	_spu_rev_offsetaddr = _spu_rev_startaddr;
-	_spu_FsetRXX(209, _spu_rev_startaddr, 0);
+	_spu_rev_offsetaddr = _spu_rev_startaddr[0];
 	_spu_AllocBlockNum = 0;
 	_spu_AllocLastNum = 0;
 	_spu_memList = 0;
@@ -1335,64 +903,9 @@ long SpuSetMute(long on_off)
 	return 0;
 }
 
-long _SpuIsInAllocateArea_(long addr)
-{
-    if (_spu_memList == 0)
-    {
-        return 0;
-    }
-
-    int i = 0;
-    
-    while (i++)
-    {
-        if (!(((long*)_spu_memList + i * 8)[0] & 0x8000))
-        {
-            if ((((long*)_spu_memList + i * 8)[0] & 0x4000))
-            {
-                return 0;
-            }
-
-            if (!(((long*)_spu_memList + i * 8)[0] & 0xFFFFFFF))
-            {
-                return 1;
-            }
-
-            if (addr < ((long*)_spu_memList + i * 8)[0] + ((long*)_spu_memList + i * 8)[1])
-            {
-                return 1;
-            }
-        }
-    }
-
-    return 0;
-}
-
 long SpuSetReverb(long on_off)
 {
-    if (on_off != 0)
-    {
-        if (on_off == 1)
-        {
-            if (_spu_rev_reserve_wa != on_off && _SpuIsInAllocateArea_(_spu_rev_offsetaddr) != 0)
-            {
-                _spu_RXX[213] &= 0xFF7F;
-                _spu_rev_flag = 0;
-            }
-            else
-            {
-                _spu_RXX[213] |= 0x80;
-                _spu_rev_flag = on_off;
-            }
-        }
-    }
-    else
-    {
-        _spu_RXX[213] &= 0xFF7F;
-        _spu_rev_flag = 0;
-    }
-
-	return _spu_rev_flag;
+    return _spu_rev_flag = on_off;;
 }
 
 unsigned long _SpuSetAnyVoice(long on_off, unsigned long voice_bit, int a2, int a3)
@@ -1453,8 +966,6 @@ void SpuSetCommonMasterVolume(short mvol_left, short mvol_right)//(F)
 {
     g_spuLeftVol = mvol_left & 0x7FFF;
     g_spuRightVol = mvol_right & 0x7FFF;
-    _spu_RXX[192] = mvol_left & 0x7FFF;
-    _spu_RXX[193] = mvol_right & 0x7FFF;
 }
 
 void SpuGetCommonCDMix(long* cd_mix)
@@ -1462,18 +973,246 @@ void SpuGetCommonCDMix(long* cd_mix)
     UNIMPLEMENTED();
 }
 
+short reverbAttr[6][34] =
+{
+    {
+     0x0000,0x0000,0x007d,0x005b,0x6d80,
+     0x54b8,0xbed0,0x0000,0x0000,0xba80,
+     0x5800,0x5300,0x04d6,0x0333,0x03f0,
+     0x0227,0x0374,0x01ef,0x0334,0x01b5,
+     0x0000,0x0000,0x0000,0x0000,0x0000,
+     0x0000,0x0000,0x0000,0x01b4,0x0136,
+     0x00b8,0x005c,0x8000,0x8000
+    },
+    {
+     0x0000,0x0000,0x0033,0x0025,0x70f0,
+     0x4fa8,0xbce0,0x4410,0xc0f0,0x9c00,
+     0x5280,0x4ec0,0x03e4,0x031b,0x03a4,
+     0x02af,0x0372,0x0266,0x031c,0x025d,
+     0x025c,0x018e,0x022f,0x0135,0x01d2,
+     0x00b7,0x018f,0x00b5,0x00b4,0x0080,
+     0x004c,0x0026,0x8000,0x8000
+    },
+    {
+      0x0000,0x0000,0x00b1,0x007f,0x70f0,
+      0x4fa8,0xbce0,0x4510,0xbef0,0xb4c0,
+      0x5280,0x4ec0,0x0904,0x076b,0x0824,
+      0x065f,0x07a2,0x0616,0x076c,0x05ed,
+      0x05ec,0x042e,0x050f,0x0305,0x0462,
+      0x02b7,0x042f,0x0265,0x0264,0x01b2,
+      0x0100,0x0080,0x8000,0x8000
+    },
+    {
+      0x0000,0x0000,0x00e3,0x00a9,0x6f60,
+      0x4fa8,0xbce0,0x4510,0xbef0,0xa680,
+      0x5680,0x52c0,0x0dfb,0x0b58,0x0d09,
+      0x0a3c,0x0bd9,0x0973,0x0b59,0x08da,
+      0x08d9,0x05e9,0x07ec,0x04b0,0x06ef,
+      0x03d2,0x05ea,0x031d,0x031c,0x0238,
+      0x0154,0x00aa,0x8000,0x8000
+    },
+    {
+      0x0000,0x0000,0x01a5,0x0139,0x6000,
+      0x5000,0x4c00,0xb800,0xbc00,0xc000,
+      0x6000,0x5c00,0x15ba,0x11bb,0x14c2,
+      0x10bd,0x11bc,0x0dc1,0x11c0,0x0dc3,
+      0x0dc0,0x09c1,0x0bc4,0x07c1,0x0a00,
+      0x06cd,0x09c2,0x05c1,0x05c0,0x041a,
+      0x0274,0x013a,0x8000,0x8000
+    },
+    {
+      0x0000,0x0000,0x033d,0x0231,0x7e00,
+      0x5000,0xb400,0xb000,0x4c00,0xb000,
+      0x6000,0x5400,0x1ed6,0x1a31,0x1d14,
+      0x183b,0x1bc2,0x16b2,0x1a32,0x15ef,
+      0x15ee,0x1055,0x1334,0x0f2d,0x11f6,
+      0x0c5d,0x1056,0x0ae1,0x0ae0,0x07a2,
+      0x0464,0x0232,0x8000,0x8000
+    }
+};
+
+int spu_setReverbAttr(short* revAttr)
+{
+    int result;
+
+    if (!((int*)revAttr)[0] || (((int*)revAttr)[0] & 0x1))
+    {
+        reverb.FB_SRC_A = revAttr[2]; 
+    }
+
+    if (!((int*)revAttr)[0] || (((int*)revAttr)[0] & 0x2))
+    {
+        reverb.FB_SRC_B = revAttr[3]; 
+    }
+
+    if (!((int*)revAttr)[0] || (((int*)revAttr)[0] & 0x4))
+    {
+        reverb.IIR_ALPHA = revAttr[4]; 
+    }
+
+    if (!((int*)revAttr)[0] || (((int*)revAttr)[0] & 0x8))
+    {
+        reverb.ACC_COEF_A = revAttr[5]; 
+    }
+
+    if (!((int*)revAttr)[0] || (((int*)revAttr)[0] & 0x10))
+    {
+        reverb.ACC_COEF_B = revAttr[6]; 
+    }
+
+    if (!((int*)revAttr)[0] || (((int*)revAttr)[0] & 0x20))
+    {
+        reverb.ACC_COEF_C = revAttr[7];
+    }
+
+    if (!((int*)revAttr)[0] || (((int*)revAttr)[0] & 0x40))
+    {
+        reverb.ACC_COEF_D = revAttr[8];
+    }
+
+    if (!((int*)revAttr)[0] || (((int*)revAttr)[0] & 0x80))
+    {
+        reverb.IIR_COEF = revAttr[9];
+    }
+
+    if (!((int*)revAttr)[0] || (((int*)revAttr)[0] & 0x100))
+    {
+        reverb.FB_ALPHA = revAttr[10]; 
+    }
+
+    if (!((int*)revAttr)[0] || (((int*)revAttr)[0] & 0x200))
+    {
+        reverb.FB_X = revAttr[11]; 
+    }
+
+    if (!((int*)revAttr)[0] || (((int*)revAttr)[0] & 0x400))
+    {
+        reverb.IIR_DEST_A0 = revAttr[12]; 
+    }
+
+    if (!((int*)revAttr)[0] || (((int*)revAttr)[0] & 0x800))
+    {
+        reverb.IIR_DEST_A1 = revAttr[13]; 
+    }
+
+    if (!((int*)revAttr)[0] || (((int*)revAttr)[0] & 0x1000))
+    {
+        reverb.ACC_SRC_A0 = revAttr[14]; 
+    }
+
+    if (!((int*)revAttr)[0] || (((int*)revAttr)[0] & 0x1000))
+    {
+        reverb.ACC_SRC_A1 = revAttr[15]; 
+    }
+
+    if (!((int*)revAttr)[0] || (((int*)revAttr)[0] & 0x4000))
+    {
+        reverb.ACC_SRC_B0 = revAttr[16]; 
+    }
+
+    if (!((int*)revAttr)[0] || (((int*)revAttr)[0] & 0x8000))
+    {
+        reverb.ACC_SRC_B1 = revAttr[17]; 
+    }
+
+    if (!((int*)revAttr)[0] || (((int*)revAttr)[0] & 0x10000))
+    {
+        reverb.IIR_SRC_A0 = revAttr[18]; 
+    }
+
+    if (!((int*)revAttr)[0] || (((int*)revAttr)[0] & 0x20000))
+    {
+        reverb.IIR_SRC_A1 = revAttr[19]; 
+    }
+
+    if (!((int*)revAttr)[0] || (((int*)revAttr)[0] & 0x40000))
+    {
+        reverb.IIR_DEST_B0 = revAttr[20]; 
+    }
+
+    if (!((int*)revAttr)[0] || (((int*)revAttr)[0] & 0x80000))
+    {
+        reverb.IIR_DEST_B1 = revAttr[21]; 
+    }
+
+    if (!((int*)revAttr)[0] || (((int*)revAttr)[0] & 0x100000))
+    {
+        reverb.ACC_SRC_C0 = revAttr[22]; 
+    }
+
+    if (!((int*)revAttr)[0] || (((int*)revAttr)[0] & 0x200000))
+    {
+        reverb.ACC_SRC_C1 = revAttr[23]; 
+    }
+
+    if (!((int*)revAttr)[0] || (((int*)revAttr)[0] & 0x400000))
+    {
+        reverb.ACC_SRC_D0 = revAttr[24]; 
+    }
+
+    if (!((int*)revAttr)[0] || (((int*)revAttr)[0] & 0x800000))
+    {
+        reverb.ACC_SRC_D1 = revAttr[25]; 
+    }
+
+    if (!((int*)revAttr)[0] || (((int*)revAttr)[0] & 0x1000000))
+    {
+        reverb.IIR_SRC_B1 = revAttr[26]; 
+    }
+
+    if (!((int*)revAttr)[0] || (((int*)revAttr)[0] & 0x2000000))
+    {
+        reverb.IIR_SRC_B0 = revAttr[27]; 
+    }
+
+    if (!((int*)revAttr)[0] || (((int*)revAttr)[0] & 0x4000000))
+    {
+        reverb.MIX_DEST_A0 = revAttr[28]; 
+    }
+
+    if (!((int*)revAttr)[0] || (((int*)revAttr)[0] & 0x8000000))
+    {
+        reverb.MIX_DEST_A1 = revAttr[29]; 
+    }
+
+    if (!((int*)revAttr)[0] || (((int*)revAttr)[0] & 0x10000000))
+    {
+        reverb.MIX_DEST_B0 = revAttr[30]; 
+    }
+
+    if (!((int*)revAttr)[0] || (((int*)revAttr)[0] & 0x20000000))
+    {
+        reverb.MIX_DEST_B1 = revAttr[31]; 
+    }
+   
+    result = ((int*)revAttr)[0] & 0x40000000;
+
+    if (!((int*)revAttr)[0] || (((int*)revAttr)[0] & 0x40000000))
+    {
+        result = revAttr[32];
+        reverb.IN_COEF_L = result; 
+    }
+
+    if (!((int*)revAttr)[0] || ((int*)revAttr)[0] < 0)
+    {
+        result = revAttr[33];
+        reverb.IN_COEF_R = result; 
+    }
+
+    return result;
+}
+
 long SpuSetReverbModeType(long mode)
 {
-	UNIMPLEMENTED();
-	return 0;
+    reverb.StartAddr = reverb.CurrAddr = _spu_rev_offsetaddr = _spu_rev_startaddr[mode];
+    spu_setReverbAttr(&reverbAttr[mode][0]);
+    return 0;
 }
 
 void SpuSetReverbModeDepth(short depth_left, short depth_right)//(F)
 {
-    _spu_RXX[194] = depth_left;
-    _spu_RXX[195] = depth_right;
-    _spu_rev_attr[4] = depth_left;
-    _spu_rev_attr[5] = depth_right;
+    reverb.VolLeft = depth_left;
+    reverb.VolRight = depth_right;
 }
 
 void SpuGetVoicePitch(int vNum, unsigned short* pitch)
@@ -1483,9 +1222,6 @@ void SpuGetVoicePitch(int vNum, unsigned short* pitch)
 
 void SpuSetVoicePitch(int vNum, unsigned short pitch)
 {
-    short* p = (short*)&_spu_RXX[vNum << 2];
-    p[3] = pitch;
-
     channelList[vNum].pitch = pitch;
 }
 
@@ -1510,29 +1246,19 @@ void SpuSetVoiceADSRAttr(int vNum, unsigned short AR, unsigned short DR, unsigne
 {
     Channel* channel = &channelList[vNum];
 
-    channel->adsr.attackmodeexp = (ARmode == 5);
-    channel->adsr.attackrate = AR;
-    channel->adsr.decayrate = DR;
-    channel->adsr.sustainlevel = SL;
-    channel->adsr.sustainmodexp = (SRmode == 5);
-    channel->adsr.sustainincrease = (SRmode != 7);
-    channel->adsr.sustainrate = SR;
-    channel->adsr.releasemodeexp = (RRmode == 7);
-    channel->adsr.releaserate = RR;
+    channel->_adsr.attackmodeexp = (ARmode == 5);
+    channel->_adsr.attackrate = AR;
+    channel->_adsr.decayrate = DR;
+    channel->_adsr.sustainlevel = SL;
+    channel->_adsr.sustainmodexp = (SRmode == 5);
+    channel->_adsr.sustainincrease = (SRmode != 7);
+    channel->_adsr.sustainrate = SR;
+    channel->_adsr.releasemodeexp = (RRmode == 7);
+    channel->_adsr.releaserate = RR;
 }
 
 void SpuSetVoiceStartAddr(int vNum, unsigned long startAddr)
 {
-    long var_4;
-
-    var_4 = _spu_FsetRXXa((vNum << 3) | 0x3, startAddr);
-
-    //Converted to size or next offset?
-    for (int i = 0; i < 2; i++)
-    {
-        var_4 *= 13;
-    }
-
     SPU_ResetChannel(channelList + vNum, (uint8_t*)spuSoundBuffer + startAddr);
 }
 
@@ -1540,10 +1266,6 @@ void SpuSetVoiceVolume(int vNum, short volL, short volR)
 {
     volL &= 0x7FFF;
     volR &= 0x7FFF;
-
-    short* p = (short*)&_spu_RXX[vNum << 2];
-    p[0] = volL;
-    p[1] = volR;
 
     channelList[vNum].volL = volL;
     channelList[vNum].volR = volR;

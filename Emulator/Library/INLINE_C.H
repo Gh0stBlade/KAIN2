@@ -218,12 +218,10 @@ extern int gte_ldlzc(int input);
 	: "r"( r0 ), "r"( r1 ), "r"( r2 )			\
 	: "$12", "$13", "$14" )
 
-#define gte_ldfcdir( r0, r1, r2 ) __asm__ volatile (		\
-	"ctc2	%0, $21;"					\
-	"ctc2	%1, $22;"					\
-	"ctc2	%2, $23"					\
-	:							\
-	: "r"( r0 ), "r"( r1 ), "r"( r2 ) )
+#define gte_ldfcdir( r0, r1, r2 ) \
+	RFC = ((int*)r0)[0]; \
+    GFC = ((int*)r1)[0]; \
+    BFC = ((int*)r2)[0]; \
 
 #define gte_SetFarColor( r0, r1, r2 ) __asm__ volatile (	\
 	"sll	$12, %0, 4;"					\
@@ -985,7 +983,7 @@ extern int gte_ldlzc(int input);
 	((int*)r0)[0] = MAC1;	
 
 #define gte_stlvnl1( r0 )	\
-	r0 = H;	
+	((int*)r0)[0] = MAC2;	
 
 #define gte_stlvnl2( r0 )	\
 	r0 = DQA;				

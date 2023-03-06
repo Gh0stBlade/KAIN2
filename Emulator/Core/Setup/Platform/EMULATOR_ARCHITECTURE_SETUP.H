@@ -13,6 +13,7 @@
 #define GAME_ARCH_NAME "64-bit"
 static_assert(sizeof(void*) == 8, "For 64-bit mode all pointers must be 8 bytes long!");
 static_assert(sizeof(intptr_t) == 8, "For 64-bit mode all pointers must be 8 bytes long!");
+static_assert(sizeof(uintptr_t) == 8, "For 64-bit mode all pointers must be 8 bytes long!");
 static_assert(sizeof(unsigned long) == 8, "For 64-bit mode all pointers must be 8 bytes long!");
 #elif INTPTR_MAX == INT32_MAX
 #define GAME_X86
@@ -20,6 +21,7 @@ static_assert(sizeof(unsigned long) == 8, "For 64-bit mode all pointers must be 
 #define GAME_ARCH_NAME "32-bit"
 static_assert(sizeof(void*) == 4, "For 32-bit mode all pointers must be 4 bytes long!");
 static_assert(sizeof(intptr_t) == 4, "For 32-bit mode all pointers must be 4 bytes long!");
+static_assert(sizeof(uintptr_t) == 4, "For 32-bit mode all pointers must be 4 bytes long!");
 static_assert(sizeof(unsigned long) == 4, "For 32-bit mode all pointers must be 4 bytes long!");
 #else
 #error Failed to detect platform bits!
