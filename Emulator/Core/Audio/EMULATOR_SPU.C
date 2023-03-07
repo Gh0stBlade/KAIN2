@@ -5,11 +5,12 @@
 #define PITCH_SHIFT     12
 #define VOL_SHIFT       15
 #define BLOCK_END       (28 << PITCH_SHIFT)
-
+#define REV_SAMPLES     1024*256
 REVERBInfo reverb;
 static int32_t reverbCounter = 0;
-int32_t gSamples[SND_SAMPLES * 256]; // stereo ///@FIXME had to increase the buffer size here due to reverb overflowing!
-int32_t sRVBStart[SND_SAMPLES * 256];
+int32_t gSamples[SND_SAMPLES];
+int32_t gReverbArea[REV_SAMPLES];
+int32_t sRVBStart[SND_SAMPLES * 2];
 int32_t SSumL[SND_SAMPLES];
 int32_t SSumR[SND_SAMPLES];
 static int32_t RateTableAdd[128];
@@ -351,7 +352,7 @@ int16_t vagPredicate(int16_t value, uint8_t pred, uint8_t shift, int32_t* s1, in
 
 static int g_buffer(int iOff)                          // get_buffer content helper: takes care about wraps
 {
-    int* p = (int*)&gSamples;
+    int* p = (int*)&gReverbArea;
     iOff = (iOff * 4) + reverb.CurrAddr;
     while (iOff > 0x3FFFF)       iOff = reverb.StartAddr + (iOff - 0x40000);
     while (iOff < reverb.StartAddr) iOff = 0x3ffff - (reverb.StartAddr - iOff);
@@ -360,7 +361,7 @@ static int g_buffer(int iOff)                          // get_buffer content hel
 
 static void s_buffer(int iOff, int iVal)                // set_buffer content helper: takes care about wraps and clipping
 {
-    int* p = (int*)&gSamples;
+    int* p = (int*)&gReverbArea;
     iOff = (iOff * 4) + reverb.CurrAddr;
     while (iOff > 0x3FFFF) iOff = reverb.StartAddr + (iOff - 0x40000);
     while (iOff < reverb.StartAddr) iOff = 0x3ffff - (reverb.StartAddr - iOff);
@@ -370,7 +371,7 @@ static void s_buffer(int iOff, int iVal)                // set_buffer content he
 
 static void s_buffer1(int iOff, int iVal)                // set_buffer (+1 sample) content helper: takes care about wraps and clipping
 {
-    int* p = (int*)&gSamples;
+    int* p = (int*)&gReverbArea;
     iOff = (iOff * 4) + reverb.CurrAddr + 1;
     while (iOff > 0x3FFFF) iOff = reverb.StartAddr + (iOff - 0x40000);
     while (iOff < reverb.StartAddr) iOff = 0x3ffff - (reverb.StartAddr - iOff);
@@ -378,12 +379,12 @@ static void s_buffer1(int iOff, int iVal)                // set_buffer (+1 sampl
     *(p + iOff) = (int)iVal;
 }
 
-int32_t ReverbR(struct Channel* channel)
+int32_t ReverbR()
 {
     return clamp(reverb.iLastRVBRight);
 }
 
-int32_t ReverbL(struct Channel* channel, int32_t ns)
+int32_t ReverbL(int32_t ns)
 {
     if (reverbCounter++ % 2 == 0)
     {
@@ -391,6 +392,8 @@ int32_t ReverbL(struct Channel* channel, int32_t ns)
 
         const int INPUT_SAMPLE_L = *(sRVBStart + (ns << 1));
         const int INPUT_SAMPLE_R = *(sRVBStart + (ns << 1) + 1);
+
+        eassert(ns < SND_SAMPLES);
 
         const int IIR_INPUT_A0 = (g_buffer(reverb.IIR_SRC_A0) * reverb.IIR_COEF) / 32768L + (INPUT_SAMPLE_L * reverb.IN_COEF_L) / 32768L;
         const int IIR_INPUT_A1 = (g_buffer(reverb.IIR_SRC_A1) * reverb.IIR_COEF) / 32768L + (INPUT_SAMPLE_R * reverb.IN_COEF_R) / 32768L;
@@ -558,6 +561,7 @@ void fillVAG(struct Channel* channel, int32_t count, int32_t ns)
     int32_t volR = channel->volR * g_spuRightVol >> VOL_SHIFT;
     int32_t blockPos = channel->blockPos;
     int32_t posInc = channel->pitch;
+    int32_t channelIndex = channel - channelList;
 
     while (channel->spos >= 0x10000)
     {
@@ -585,9 +589,14 @@ void fillVAG(struct Channel* channel, int32_t count, int32_t ns)
     SSumL[ns]+=(channel->sval*channel->volL)/0x4000L;
     SSumR[ns]+=(channel->sval*channel->volR)/0x4000L;
 
-    if (channel->reverb)
+    if (channel->reverb && !disableReverb)
     {
         storeReverb(channel,  ns);
+    }
+    else
+    {
+        int testing = 0;
+        testing++;
     }
 
     channel->spos += channel->pitch << 4;
@@ -622,13 +631,15 @@ void fillSamples(int16_t* buffer, int32_t count)
             fillVAG(channel, count, ns);
         }
     }
-    
+
+    memcpy(&gReverbArea, &gSamples, sizeof(gSamples));//?
+
+    int32_t* samples = gSamples;
+
     for (ns = 0; ns < SND_SAMPLES; ns++)
     {
-        int32_t* samples = &gSamples[ns * 2];
-
-        *samples++ += (SSumL[ns] + (disableReverb ? 0 : ReverbL(channel, ns)));
-        *samples++ += (SSumR[ns] + (disableReverb ? 0 : ReverbR(channel)));
+        *samples++ += (SSumL[ns] + ReverbL(ns));
+        *samples++ += (SSumR[ns] + ReverbR());
 
         SSumL[ns] = 0;
         SSumR[ns] = 0;
@@ -696,8 +707,6 @@ void SPU_ResetChannel(struct Channel* channel, uint8_t* data)
     channel->_adsr.sustainlevel = 1024;
     channel->_adsr.lvolume = 1;
     channel->_adsr.state = ATTACK;
-    channel->_adsr.envelopevol = 0;
-    channel->_adsr.envelopevol_f = 0;
     channel->block[28] = 0;
     channel->block[29] = 0;
     channel->block[30] = 0;
