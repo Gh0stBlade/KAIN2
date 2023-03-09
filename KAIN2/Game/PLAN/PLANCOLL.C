@@ -105,6 +105,8 @@ int PLANCOLL_FindTerrainHitFinal(struct _PlanCollideInfo* pci, int* placement, i
 	struct _Position* _v1;
 
 	pcollideinfo.collideType = 1;
+	pcollideinfo.oldPoint = &startPt;
+	pcollideinfo.newPoint = &endPt;
 
 	current = &directionList[start];
 
