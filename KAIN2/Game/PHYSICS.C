@@ -92,7 +92,7 @@ void PHYSICS_CheckLineInWorld(struct _Instance* instance, struct _PCollideInfo* 
 #endif
 }
 
-void PHYSICS_CheckLineInWorldMask(struct _Instance* instance, struct _PCollideInfo* pcollideInfo)
+void PHYSICS_CheckLineInWorldMask(struct _Instance* instance, struct _PCollideInfo* pcollideInfo)//Matching - 99.31%
 {
 #if defined(PSX_VERSION)
 
@@ -333,7 +333,7 @@ void PhysicsDefaultLinkedMoveResponse(struct _Instance *instance, struct evPhysi
 #endif
 }
 
-int PhysicsCheckGravity(struct _Instance* instance, int Data, short Mode)
+int PhysicsCheckGravity(struct _Instance* instance, int Data, short Mode)//Matching - 77.11%
 {
 	struct evPhysicsGravityData* Ptr;
 	SVECTOR D;
@@ -348,23 +348,22 @@ int PhysicsCheckGravity(struct _Instance* instance, int Data, short Mode)
 	struct Level* level;
 	struct _TFace* tface;
 	struct _Instance* oldOn;
-
-	D.vx = 0;
-	D.vy = 0;
-	D.vz = 61440;
+	int dx;
+	int dy;
+	int dz;
 
 	rc = 0;
-	
-	New.vx = instance->position.x;
-	Old.vx = instance->position.x;
-	
+
+	D = { 0,0,240 };
+
 	slide = 0;
 
-	New.vy = instance->position.y;
-	Old.vy = instance->position.y;
+	CInfo.newPoint = &New;
+	CInfo.oldPoint = &Old;
 
-	New.vz = instance->position.z;
-	Old.vz = instance->position.z;
+	Old.vx = New.vx = instance->position.x;
+	Old.vy = New.vy = instance->position.y;
+	Old.vz = New.vz = instance->position.z;
 
 	Ptr = (struct evPhysicsGravityData*)Data;
 
@@ -394,12 +393,14 @@ int PhysicsCheckGravity(struct _Instance* instance, int Data, short Mode)
 			else
 			{
 				stillOnOldTFace = 0;
+
 			}
 
 			if (stillOnOldTFace == 0)
 			{
 				instance->waterFace = NULL;
 
+				PHYSICS_CheckLineInWorld(instance, &CInfo);
 			}
 			else
 			{
@@ -407,12 +408,8 @@ int PhysicsCheckGravity(struct _Instance* instance, int Data, short Mode)
 				CInfo.prim = tface;
 				CInfo.inst = (struct _Instance*)level;
 				CInfo.segment = instance->cachedBSPTree;
-				
-				COLLIDE_GetNormal(tface->normal, (short*)level->terrain->normalList, (struct _SVector*)&CInfo.wNormal);
-			
-				instance->waterFace = NULL;
 
-				gameTrackerX.gameFlags |= 0x8000;
+				COLLIDE_GetNormal((short)tface->normal, (short*)level->terrain->normalList, (struct _SVector*)&CInfo.wNormal);
 			}
 		}
 		else
@@ -420,56 +417,54 @@ int PhysicsCheckGravity(struct _Instance* instance, int Data, short Mode)
 			instance->waterFace = NULL;
 
 			gameTrackerX.gameFlags |= 0x8000;
+
+			PHYSICS_CheckLineInWorld(instance, &CInfo);
 		}
 
-		PHYSICS_CheckLineInWorld(instance, &CInfo);
-
-		gameTrackerX.gameFlags &= 0xFFFF7FFF;
+		gameTrackerX.gameFlags &= ~0x8000;
 	}
 
-	if ((unsigned)(CInfo.type - 2) < 2 || CInfo.type == 5)
+	if ((unsigned)(short)(CInfo.type - 2) < 2 || CInfo.type == 5)
 	{
 		if (CInfo.wNormal.vz < Ptr->slipSlope && CInfo.wNormal.vz > 0)
 		{
-			N.vx = -(-CInfo.wNormal.vz * CInfo.wNormal.vx) < 0 ? (-(-CInfo.wNormal.vz * CInfo.wNormal.vx) + 4095) >> 12 : -(-CInfo.wNormal.vz * CInfo.wNormal.vx) >> 12;
-			N.vy = -(CInfo.wNormal.vy * -CInfo.wNormal.vz) < 0 ? (-(CInfo.wNormal.vy * -CInfo.wNormal.vz) + 4095) >> 12 : -(CInfo.wNormal.vy * -CInfo.wNormal.vz) >> 12;
-			N.vz = (CInfo.wNormal.vz * -CInfo.wNormal.vz) < 0 ? ((CInfo.wNormal.vz * -CInfo.wNormal.vz) + 4096) >> 12 : (CInfo.wNormal.vz * -CInfo.wNormal.vz) >> 12;
-			
-			N.vz = D.vz - N.vz;
+			N.vx = (-(CInfo.wNormal.vx * -CInfo.wNormal.vz) < 0) ? ((-(CInfo.wNormal.vx * -CInfo.wNormal.vz) + 0xFFF)) : ((-(CInfo.wNormal.vx * -CInfo.wNormal.vz)));
+			N.vx >>= 12;
+			N.vy = (-(CInfo.wNormal.vy * -CInfo.wNormal.vz) < 0) ? ((-(CInfo.wNormal.vy * -CInfo.wNormal.vz) + 0xFFF)) : ((-(CInfo.wNormal.vy * -CInfo.wNormal.vz)));
+			N.vy >>= 12;
+			N.vz = (-(CInfo.wNormal.vz * -CInfo.wNormal.vz) < 0) ? ((-(CInfo.wNormal.vz * -CInfo.wNormal.vz) + 0xFFF)) : ((-(CInfo.wNormal.vz * -CInfo.wNormal.vz)));
+			N.vz >>= 12;
 
-			New.vx = CInfo.newPoint->vx + (N.vx * instance->zVel < -48 ? -instance->zVel : 48) < 0 ? ((N.vx * instance->zVel < -48 ? -instance->zVel : 48) + 4095) >> 12 : (N.vx * instance->zVel < -48 ? -instance->zVel : 48) >> 12;
-			Old.vx = New.vx;
-			
-			New.vy = CInfo.newPoint->vy + (N.vy * instance->zVel < -48 ? -instance->zVel : 48) < 0 ? ((N.vy * instance->zVel < -48 ? -instance->zVel : 48) + 4095) >> 12 : (N.vy * instance->zVel < -48 ? -instance->zVel : 48) >> 12;
-			Old.vy = New.vy;
-			
-			New.vz = CInfo.newPoint->vz + (N.vz * instance->zVel < -48 ? -instance->zVel : 48) < 0 ? ((N.vz * instance->zVel < -48 ? -instance->zVel : 48) + 4095) >> 12 : (N.vz * instance->zVel < -48 ? -instance->zVel : 48) >> 12;
-			Old.vz = New.vz;
+			Dot = ((instance->zVel < -48) ? -instance->zVel : 48);
+
+			Old.vx = New.vx = New.vx + N.vx * Dot / 4096;
+			Old.vy = New.vy = New.vy + N.vy * Dot / 4096;
+			Old.vz = New.vz = New.vz + N.vz * Dot / 4096;
 
 			Old.vz += Ptr->UpperOffset;
 			New.vz -= Ptr->LowerOffset;
 
 			PHYSICS_CheckLineInWorld(instance, &CInfo);
 
-			if ((unsigned)(CInfo.type - 2) < 2 || CInfo.type == 5)
+			if ((unsigned)((unsigned short)CInfo.type - 2) < 2 || CInfo.type == 5)
 			{
-				if (CInfo.wNormal.vz >= Ptr->slipSlope || CInfo.wNormal.vz <= 0)
+				if (CInfo.wNormal.vz < Ptr->slipSlope && CInfo.wNormal.vz > 0)
+				{
+					slide = 1;
+				}
+				else
 				{
 					instance->position.x = CInfo.newPoint->vx;
 					instance->position.y = CInfo.newPoint->vy;
 				}
-				else
-				{
-					slide = 1;
-				}
 			}
 		}
 	}
-	
+
 	if (CInfo.type == 3)
 	{
 		instance->cachedBSPTree = CInfo.segment;
-	
+
 		instance->cachedTFace = -(((unsigned long)CInfo.prim - ((unsigned long*)CInfo.inst->node.prev)[8]) * 0x55555555) >> 2;
 
 		instance->cachedTFaceLevel = CInfo.instance;
@@ -481,7 +476,7 @@ int PhysicsCheckGravity(struct _Instance* instance, int Data, short Mode)
 		instance->cachedTFaceLevel = NULL;
 	}
 
-	if ((unsigned)(CInfo.type - 2) < 2 || CInfo.type == 5)
+	if ((unsigned)((unsigned short)CInfo.type - 2) < 2 || CInfo.type == 5)
 	{
 		if ((Mode & 0x7))
 		{
@@ -536,7 +531,7 @@ int PhysicsCheckGravity(struct _Instance* instance, int Data, short Mode)
 			instance->wNormal.z = 4096;
 		}
 
-		if (CInfo.type != 3 || CInfo.inst != NULL || (CInfo.inst->object->oflags & 0x400))
+		if (CInfo.type != 3 && CInfo.inst != NULL && (CInfo.inst->object->oflags & 0x400))
 		{
 			rc |= PhysicsCheckLinkedMove(instance, SetPhysicsLinkedMoveData(CInfo.inst, CInfo.segment, NULL, NULL), Mode);
 		}
@@ -551,10 +546,10 @@ int PhysicsCheckGravity(struct _Instance* instance, int Data, short Mode)
 					oldOn->flags2 &= 0xFFFFFF7F;
 				}
 			}
-		
+
 			instance->attachedID = 0;
 		}
-		
+
 		if ((instance->flags2 & 0x40))
 		{
 			instance->shadowPosition = instance->position;
@@ -621,19 +616,27 @@ int PhysicsCheckGravity(struct _Instance* instance, int Data, short Mode)
 }
 
 
-// autogenerated function stub: 
-// void /*$ra*/ PhysicsDefaultGravityResponse(struct _Instance *instance /*$a0*/, struct evPhysicsGravityData *Data /*$a1*/)
 void PhysicsDefaultGravityResponse(struct _Instance *instance, struct evPhysicsGravityData *Data)
-{ // line 570, offset 0x800753f0
-#if defined(PC_VERSION)
+{
+#if defined(PSX_VERSION)
+	instance->position.x += Data->x;
+	instance->position.y += Data->y;
+
+	if (instance == gameTrackerX.playerInstance && Data->z >= 129)
+	{
+		instance->position.z += 128;
+	}
+	else
+	{
+		instance->position.z += Data->z;
+	}
+#elif defined(PC_VERSION)
 	instance->position.x += Data->x;
 	instance->position.y += Data->y;
 	if (instance == gameTrackerX.playerInstance && Data->z > 128)
 		instance->position.z += 128;
 	else
 		instance->position.z += Data->z;
-#else
-	UNIMPLEMENTED();
 #endif
 }
 

@@ -984,12 +984,6 @@ void _G2Anim_BuildTransformsNoControllers(struct _G2Anim_Type* anim)//Matching -
 
 		segIndex++;
 
-		if ((segIndex % 32) == 0)
-		{
-			int testing = 0;
-			testing++;
-		}
-
 		if (disabledMask == 0)
 		{
 			disabledBitsArray++;
@@ -1021,6 +1015,11 @@ void _G2Anim_BuildSegTransformNoControllers(struct _G2Matrix_Type* segMatrix, st
 		segMatrix->scaleFlag = 1;
 	}
 
+	if (*(unsigned int*)segMatrix == 0xfffaf0)
+	{
+		int testing = 0;
+		testing++;
+	}
 	gte_SetRotMatrix(parentMatrix);
 
 	gte_ldclmv((((short*)segMatrix) + 0));

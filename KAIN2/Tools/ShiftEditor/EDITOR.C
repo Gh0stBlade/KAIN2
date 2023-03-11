@@ -278,6 +278,96 @@ void Editor_DrawCameraSplines()
 	gameTrackerX.primPool->nextPrim = (unsigned int*)line;
 }
 
+void Editor_DrawCube(struct _Position* pos, struct _Position* pos2)
+{
+	int p;
+
+	POLY_F4* pol4;
+
+	SVECTOR obj_rot;
+	VECTOR obj_pos;
+
+	obj_rot.vx = 0;
+	obj_rot.vy = 0;
+	obj_rot.vz = 0;
+
+	obj_pos.vx = pos->x - pos2->x;
+	obj_pos.vy = pos->y - pos2->y;
+	obj_pos.vz = pos->z - pos2->z;
+
+	MATRIX obj_mtx;
+
+	MATRIX tmp_mtx;
+
+	RotMatrix(&obj_rot, &obj_mtx);
+	TransMatrix(&obj_mtx,&obj_pos);
+
+	SVECTOR tmp;
+	tmp.vx = -theCamera.core.position.x >> 12;
+	tmp.vy = -theCamera.core.position.y >> 12;
+	tmp.vz = -theCamera.core.position.z >> 12;
+
+	ApplyMatrix(theCamera.core.wcTransform, &tmp, (VECTOR*)&theCamera.core.wcTransform->t[0]);
+
+	CompMatrixLV(theCamera.core.wcTransform, &obj_mtx, &tmp_mtx);
+
+	SetRotMatrix(&tmp_mtx);
+	SetTransMatrix(&tmp_mtx);
+
+	unsigned long** drawot;
+
+	drawot = gameTrackerX.drawOT;
+
+	pol4 = (POLY_F4*)gameTrackerX.primPool->nextPrim;
+
+	for (int j = 0; j < 6; j++) {
+
+		gte_ldv3(&cube_verts[cube_indices[j].v0], &cube_verts[cube_indices[j].v1], &cube_verts[cube_indices[j].v2]);
+
+		gte_rtpt();
+
+		gte_nclip();
+
+		gte_stopz(&p);
+
+		if (p < 0)
+			continue;
+
+		gte_avsz4();
+		gte_stotz(&p);
+
+		if (((p >> 2) * 2) > 3071)
+			continue;
+
+		setPolyF4(pol4);
+
+		gte_stsxy0(&pol4->x0);
+		gte_stsxy1(&pol4->x1);
+		gte_stsxy2(&pol4->x2);
+
+		gte_ldv0(&cube_verts[cube_indices[j].v3]);
+		gte_rtps();
+		gte_stsxy(&pol4->x3);
+
+		//if (quad_clip(&screen_clip, (DVECTOR*)&pol4->x0, (DVECTOR*)&pol4->x1, (DVECTOR*)&pol4->x2, (DVECTOR*)&pol4->x3))
+		{
+			//	continue;
+		}
+
+		setcode(pol4, 0x28);
+
+		setRGB0(pol4, 255, 255, 255);
+
+		addPrim(drawot + ((p >> 2) * 2), pol4);
+
+		pol4++;
+
+		gameTrackerX.primPool->numPrims++;
+	}
+
+	gameTrackerX.primPool->nextPrim = (unsigned int*)pol4;
+}
+
 void Editor_DrawInstancesAsCubes()
 {
 	int p;
