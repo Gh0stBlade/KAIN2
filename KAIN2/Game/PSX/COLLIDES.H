@@ -34,9 +34,9 @@ struct _VM_Face
 
 extern void COLLIDE_NearestPointOnLine_S(struct _SVector* linePoint, SVECTOR* oldPoint, SVECTOR* newPoint, struct _Position* position) ; // 0x80077F3C
 
-extern void COLLIDE_IntersectLineAndPlane_S() ; // 0x8007804C
+extern long COLLIDE_IntersectLineAndPlane_S(struct _SVector* planePoint, struct _Position* oldPos, struct _Position* position, struct _SVector* normal, long z) ; // 0x8007804C
 
-extern void COLLIDE_NearestPointOnPlane_S() ; // 0x80078124
+extern void COLLIDE_NearestPointOnPlane_S(struct _SVector* planePoint, struct _SVector* normal, long z, struct _Position* position); // 0x80078124
 
 extern void VM_ProcessVMObjectSetColor_S() ; // 0x800786A8
 

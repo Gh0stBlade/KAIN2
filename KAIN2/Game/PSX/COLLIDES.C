@@ -1455,7 +1455,143 @@ void sub_80078458(struct _VMObject* vmobject, struct Level* level)
 
 void COLLIDE_NearestPointOnLine_S(struct _SVector* linePoint, SVECTOR* oldPoint, SVECTOR* newPoint, struct _Position* position)
 {
-	UNIMPLEMENTED();
+	MATRIX m;
+	VECTOR v;
+	VECTOR r;
+	int l;
+	int _v2;
+
+	m.m[0][0] = oldPoint->vx;
+	m.m[0][1] = oldPoint->vy;
+	m.m[0][2] = oldPoint->vz;
+
+	m.m[1][0] = position->x;
+	m.m[1][1] = position->y;
+	m.m[1][2] = position->z;
+
+	v.vx = (unsigned int)newPoint->vx - (unsigned int)oldPoint->vx | (((unsigned int)newPoint->vy - (unsigned int)oldPoint->vy) << 16);;
+	v.vy = (unsigned int)newPoint->vz - (unsigned int)oldPoint->vz;
+
+	m.m[2][0] = ((SVECTOR*)&v)->vx;
+	m.m[2][1] = ((SVECTOR*)&v)->vy;
+	m.m[2][2] = ((SVECTOR*)&v)->vz;
+
+	gte_SetRotMatrix(&m);
+	gte_ldv0(&v);
+	gte_rtv0();
+	gte_stlvnl(&r);
+
+	l = ((r.vx - r.vy) << 12);
+	_v2 = (newPoint->vx - oldPoint->vx) | ((newPoint->vy - oldPoint->vy) << 16);
+
+	if (r.vz != 0)
+	{
+		l = -l;
+		_v2 = l / r.vz;
+
+		gte_ldsv(&v);
+	}
+
+	if (_v2 <= 4096)
+	{
+		gte_lddp(_v2);
+		gte_gpf12();
+		gte_stsv(linePoint);
+
+		linePoint->x += oldPoint->vx;
+		linePoint->y += oldPoint->vy;
+		linePoint->z += oldPoint->vz;
+	}
+	else if (_v2 > 0)
+	{
+		linePoint->x = newPoint->vx;
+		linePoint->y = newPoint->vy;
+		linePoint->z = newPoint->vz;
+
+		return;
+	}
+	else
+	{
+		linePoint->x = oldPoint->vx;
+		linePoint->y = oldPoint->vy;
+		linePoint->z = oldPoint->vz;
+
+		return;
+	}
+}
+
+long COLLIDE_IntersectLineAndPlane_S(struct _SVector* planePoint, struct _Position* oldPos, struct _Position* position, struct _SVector* normal, long z)
+{
+	VECTOR v;
+	SVECTOR d;
+	VECTOR r;
+	SVECTOR sr;
+
+	d.vx = position->x - oldPos->x;
+	d.vy = position->y - oldPos->y;
+	d.vz = position->z - oldPos->z;
+
+	v.vx = oldPos->x | (oldPos->y << 16);
+	v.vy = oldPos->z | (d.vx << 16);
+	v.vz = d.vy      | (d.vz << 16);
+	v.pad = 0;
+
+	gte_ldv0(normal);
+	gte_ldv3_ext(&v);
+	gte_rtv0();
+	gte_stlvnl0(&r.vx);
+	gte_stlvnl1(&r.vy);
+
+	if (!r.vy)
+	{
+		return 0;
+	}
+
+	gte_ldsv(&d);
+
+	int l = -(4096 * (r.vx - z)) / r.vy;
+	
+	if (l >= 0x1001)
+	{
+		return 0;
+	}
+
+	gte_lddp(l);
+
+	gte_gpf12();
+
+	gte_stsv(&sr);
+
+	planePoint->x = oldPos->x + sr.vx;
+	planePoint->y = oldPos->y + sr.vy;
+	planePoint->z = oldPos->z + sr.vz;
+
+	return 1;
+}
+
+void COLLIDE_NearestPointOnPlane_S(struct _SVector* planePoint, struct _SVector* normal, long z, struct _Position* position)
+{
+	int r;
+	SVECTOR v;
+
+	gte_ldsvrtrow0(position);
+	gte_ldv0(normal);
+	gte_rtv0();
+	gte_stlvnl0(&r);
+
+	r = z - r;
+
+	gte_lddp(r);
+
+	gte_ldsv(normal);
+
+	gte_gpf12();
+
+	gte_stsv(&v);
+
+	planePoint->x = v.vx + position->x;
+	planePoint->y = v.vy + position->y;
+	planePoint->z = v.vz + position->z;
 }
 
 void VM_ProcessVMObjectList_S(struct Level* level, struct Camera* camera)
@@ -1529,7 +1665,7 @@ void RotMatrixZYX(SVECTOR* r, MATRIX* m)
 		t0 = t7 & 0x7FF;
 		t3 = ecostable[t0];
 		t0 = ecostable[t0 + 1024];
-		
+
 		t6 = t7 & 0x800;
 
 		if (t6 != 0)
