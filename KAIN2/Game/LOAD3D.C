@@ -351,7 +351,6 @@ void LOAD_SetupFileToDoBufferedCDReading()
 
 #if defined(_DEBUG) && !defined(NO_FILESYSTEM) || defined(__EMSCRIPTEN__)
 	extern void Emulator_OpenRead(char* fileName, void* buff, int size);
-
 	Emulator_OpenRead(loadHead ? &loadHead->loadEntry.fileName[1] : &loadTail->loadEntry.fileName[1], loadStatus.currentQueueFile.readStartDest, loadStatus.currentQueueFile.readSize);
 	loadStatus.bytesTransferred = (loadStatus.currentQueueFile.readSize - loadStatus.currentQueueFile.readCurSize);
 
@@ -446,7 +445,6 @@ char* LOAD_ReadFileFromCD(char* filename, int memType)
 	int fileSize = 0;
 	
 	Emulator_GetFileSize(filename, &fileSize);	
-
 	readBuffer = MEMPACK_Malloc(fileSize, memType);
 	if (readBuffer != NULL)
 	{
@@ -946,7 +944,7 @@ struct _BigFileEntry* LOAD_GetBigFileEntryByHash(long hash)
 
 struct _BigFileEntry* LOAD_GetBigFileEntry(char* fileName)
 {
-#if defined(PSXPC_VERSION) && defined(__EMSCRIPTEN) || defined(_DEBUG)
+#if defined(_DEBUG) && !defined(NO_FILESYSTEM) || defined(__EMSCRIPTEN__)
 	static struct _BigFileEntry bigFileEntry;
 
 	int fileSize = 0;
