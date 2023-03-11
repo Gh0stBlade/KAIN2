@@ -19,6 +19,7 @@ Emulator/Shaders/GXM/*.gxp
 Emulator/Shaders/GXM/*.gxp.obj
 Emulator/Shaders/GXM/*.sdb
 Emulator/Shaders/NVN/*.bnsh
+Emulator/Shaders/XED3D/*.h
 /Binaries/*
 /External/*
 

@@ -27,7 +27,7 @@ typedef	unsigned int	u_int;
 #endif
 #ifndef _ULONG_T
 #define _ULONG_T
-#if defined(__EMSCRIPTEN__) || defined(__ANDROID__)
+#if defined(__EMSCRIPTEN__) || defined(__ANDROID__) || defined(_XBOX)
 typedef	unsigned long	u_long;
 #else
 typedef	unsigned int	u_long;

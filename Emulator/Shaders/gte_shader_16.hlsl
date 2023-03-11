@@ -93,7 +93,9 @@ struct VS_OUTPUT {
 #endif
 		if(color_rg.x == 0.0 && color_rg.y == 0.0)
 		{
+#if !defined(XENON)
 			discard;
+#endif
 		}
 		
 #if defined(D3D9)

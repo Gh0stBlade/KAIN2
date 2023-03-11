@@ -22,7 +22,7 @@
 #include "LIBGTE.H"
 #include "LIBETC.H"
 #include "LIBPAD.H"
-#if !defined(__ANDROID__) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX)  && !defined(PLATFORM_NX_ARM) && !defined(D3D12)  && !defined(PLATFORM_NX_ARM) && !defined(D3D12)
+#if !defined(__ANDROID__) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX)  && !defined(PLATFORM_NX_ARM) && !defined(D3D12)  && !defined(PLATFORM_NX_ARM) && !defined(D3D12) && !defined(_XBOX)
 #include <thread>
 #endif
 #include <assert.h>
@@ -313,7 +313,7 @@ void CreateUWPApplication()
 int g_otSize = 0;
 char* pVirtualMemory = NULL;
 SysCounter counters[3] = { 0 };
-#if !defined(__ANDROID__) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX) && !defined(PLATFORM_NX_ARM) && !defined(D3D12)
+#if !defined(__ANDROID__) && !defined(SN_TARGET_PSP2) && !defined(PLATFORM_NX) && !defined(PLATFORM_NX_ARM) && !defined(D3D12) && !defined(_XBOX)
 std::thread counter_thread;
 #endif
 #if defined(__ANDROID__)

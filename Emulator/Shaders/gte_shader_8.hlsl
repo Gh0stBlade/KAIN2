@@ -106,7 +106,9 @@ struct VS_OUTPUT {
 
 		if(clut_color.x == 0.0 && clut_color.y == 0.0)
 		{
+#if !defined(XENON)
 			discard;
+#endif
 		}
 #if defined(D3D9)
 		float4 color = tex2D(s_lut, clut_color).bgra;
