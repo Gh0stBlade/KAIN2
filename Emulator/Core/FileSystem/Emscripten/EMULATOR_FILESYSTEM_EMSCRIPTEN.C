@@ -34,7 +34,6 @@ void Emulator_ReadFileEM(const char* filePath, void* buff, int size)
 
 	if (fileExists && err == 0)
 	{
-
 		emscripten_idb_load(SHORT_GAME_NAME, filePath, &outBuff, &outSize, &err);
 
 		if (err != 0)
@@ -46,7 +45,6 @@ void Emulator_ReadFileEM(const char* filePath, void* buff, int size)
 		if (outBuff != NULL)
 		{
 			memcpy(buff, outBuff, outSize);
-			free(outBuff);
 		}
 	}
 	else
@@ -55,7 +53,7 @@ void Emulator_ReadFileEM(const char* filePath, void* buff, int size)
 		char fullName[256];
 		int err = 0;
 
-		sprintf(fullName, "%s/%s/%s/%s", urlName, SHORT_GAME_NAME, BUILD_PATH, filePath);
+		sprintf(fullName, "%s//%s//%s//%s", urlName, SHORT_GAME_NAME, BUILD_PATH, filePath);
 
 		emscripten_wget_data(fullName, &outBuff, &outSize, &err);
 
@@ -79,7 +77,6 @@ void Emulator_ReadFileEM(const char* filePath, void* buff, int size)
 		if (outBuff != NULL)
 		{
 			memcpy(buff, outBuff, outSize);
-			free(outBuff);
 		}
 	}
 }
@@ -123,7 +120,7 @@ void* Emulator_OpenFile(const char* filePath, const char* mode, int* outSize)
 		char fullName[256];
 		int err = 0;
 
-		sprintf(fullName, "%s/%s/%s/%s", urlName, SHORT_GAME_NAME, BUILD_PATH, filePath);
+		sprintf(fullName, "%s//%s//%s//%s", urlName, SHORT_GAME_NAME, BUILD_PATH, filePath);
 
 		emscripten_wget_data(fullName, &outBuff, outSize, &err);
 
@@ -152,7 +149,6 @@ void* Emulator_OpenFile(const char* filePath, const char* mode, int* outSize)
 void Emulator_GetFileSizeEM(const char* filePath, int* outSize)
 {
 	void* outBuff = Emulator_OpenFile(filePath, "rb", outSize);
-	free(outBuff);
 }
 
 #endif
