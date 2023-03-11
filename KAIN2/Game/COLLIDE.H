@@ -5,6 +5,14 @@
 
 typedef long (*TDRFuncPtr_COLLIDE_LineWithBoxFace6collideBoundFunc)();
 
+struct SandHFScratch {
+	struct _SVector normal; // size=8, offset=0
+	MATRIX posMatrix; // size=32, offset=8
+	struct _Vector dpv; // size=12, offset=40
+	struct _SVector triPoint; // size=8, offset=52
+	struct _SVector planePoint; // size=8, offset=60
+};
+
 struct _CollideInfo // hashcode: 0xCA2DF5E9 (dec: -902957591)
 {
 	void* level; // size=0, offset=0
@@ -18,7 +26,7 @@ struct _CollideInfo // hashcode: 0xCA2DF5E9 (dec: -902957591)
 	void* inst1; // size=0, offset=20
 	SVECTOR point0; // size=8, offset=24
 	SVECTOR point1; // size=8, offset=32
-	_Position offset; // size=6, offset=40
+	struct _Position offset; // size=6, offset=40
 	short bspID; // size=0, offset=46
 };
 
