@@ -927,46 +927,45 @@ void LIGHT_Restore(struct LightInfo* lightInfo)
 {
 }
 
-void LIGHT_CalcDQPTable(struct Level *level)
-{ 
+void LIGHT_CalcDQPTable(struct Level* level)
+{
 #if defined(PSX_VERSION)
 	long dqa;
 	long limit;
 
 	if (level->fogFar != level->fogNear)
 	{
+		dqa = -((level->fogFar * level->fogNear) / (level->fogFar - level->fogNear));
 		limit = 40958;
-		dqa = -((level->fogFar / level->fogNear) / (level->fogFar - level->fogNear));
-		
-		if (limit < dqa)
+
+		if (dqa > limit)
 		{
 			dqa = limit;
 
 			if (level->holdFogNear == level->fogNear)
 			{
-				level->holdFogNear = (level->fogFar * limit) / (limit - level->fogFar);
+				level->holdFogNear = limit * level->fogFar / (limit - level->fogFar);
 			}
 
-			level->fogNear = (level->fogFar * limit) / (limit - level->fogFar);
+			level->fogNear = limit * level->fogFar / (limit - level->fogFar);
 		}
-
 		if (dqa < -limit)
 		{
 			dqa = -limit;
 
 			if (level->holdFogNear == level->fogNear)
 			{
-				level->holdFogNear = (-limit * level->fogFar) / (dqa - level->fogFar);
+				level->holdFogNear = -limit * level->fogFar / (-limit - level->fogFar);
 			}
 
-			level->fogNear = (-limit * level->fogFar) / (dqa - level->fogFar);
+			level->fogNear = -limit * level->fogFar / (-limit - level->fogFar);
 		}
-	
-		depthQFogStart = (-dqa * 4096) / ((level->fogFar * 4096) / (level->fogFar - level->fogNear));
-
-		if (level->backColorR != 0 && level->backColorG != 0)///@check maybe b too
+		
+		depthQFogStart = -4096 * dqa / ((level->fogFar << 12) / (level->fogFar - level->fogNear));
+		
+		if (level->backColorR && level->backColorG && level->backColorB)
 		{
-			depthQBlendStart = (-dqa * 4096) / ((level->fogFar * 4096) / (level->fogFar - level->fogNear));
+			depthQBlendStart = depthQFogStart;
 		}
 		else
 		{
