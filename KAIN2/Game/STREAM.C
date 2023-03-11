@@ -747,7 +747,7 @@ struct Level* STREAM_GetLevelWithID(long id)
 #endif
 }
 
-struct _StreamUnit* STREAM_GetStreamUnitWithID(long id)
+struct _StreamUnit* STREAM_GetStreamUnitWithID(long id)//Matching - 94.50%
 {
 	struct _StreamUnit* retUnit;
 	long i;
