@@ -2723,7 +2723,7 @@ void GAMELOOP_Process(struct GameTracker* gameTracker)
 
 			DEBUG_Process(gameTracker);
 			COLLIDE_InstanceList(gameTracker->instanceList);
-			//COLLIDE_InstanceListTerrain(gameTracker->instanceList);
+			COLLIDE_InstanceListTerrain(gameTracker->instanceList);
 			INSTANCE_AdditionalCollideFunctions(instanceList);
 			COLLIDE_InstanceListWithSignals(instanceList);
 
