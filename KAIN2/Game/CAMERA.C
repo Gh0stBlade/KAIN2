@@ -4750,7 +4750,7 @@ void CAMERA_ChangeToUnderWater(struct Camera *camera, struct _Instance *instance
 	UNIMPLEMENTED();
 }
 
-void CAMERA_ChangeToOutOfWater(struct Camera* camera, struct _Instance* instance)
+void CAMERA_ChangeToOutOfWater(struct Camera* camera, struct _Instance* instance) //Matching - 99.48%
 {
 	if (camera->focusInstance == instance)
 	{
