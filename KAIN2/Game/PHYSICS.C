@@ -1237,7 +1237,7 @@ int PhysicsFollowWall(struct _Instance *instance, struct GameTracker *gameTracke
 	return 0;
 }
 
-void PhysicsMoveLocalZClamp(struct _Instance* instance, long segment, long time, long clamp)
+void PhysicsMoveLocalZClamp(struct _Instance* instance, long segment, long time, long clamp) //Matching - 99.91%
 {
 #if defined(PSX_VERSION)
 	struct _Position pos;

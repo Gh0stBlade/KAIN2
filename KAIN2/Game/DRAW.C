@@ -33,7 +33,7 @@ void fDRAW_SPLIT_INTPL_XYZ(struct _SVector *newVertex, struct _SVector *pvb, str
 	UNIMPLEMENTED();
 }
 
-void DRAW_InitShadow()
+void DRAW_InitShadow() //Matching - 78.68%
 {
 	int n;
 	int inc;
