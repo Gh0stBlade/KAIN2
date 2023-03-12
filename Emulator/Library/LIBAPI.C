@@ -98,7 +98,7 @@ long StartRCnt(long spec)//(F)
 		unsigned int interval = counters[spec].target >> 4;
 #endif
 #if defined(UWP_SDL2) || defined(SDL2) && !defined(USE_THREADS)
-		counters[spec].timerId = SDL_AddTimer(interval, Emulator_CounterWrapper, &counters[spec].timerIndex);
+		counters[spec].timerId = SDL_AddTimer((1000 / counters[spec].target) + 1, Emulator_CounterWrapper, &counters[spec].timerIndex);
 #else
 		counters[spec].timerId = std::thread(Emulator_CounterWrapper, spec);
 #endif
