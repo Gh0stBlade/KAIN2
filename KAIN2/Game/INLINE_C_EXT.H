@@ -31,9 +31,9 @@
     IR3 = r2; \
 
 #define gte_stsv_ext( r0, r1, r2 ) \
-	r0 = IR1; \
-	r1 = IR2; \
-	r2 = IR3; \
+	r0 = MAC1; \
+	r1 = MAC2; \
+	r2 = MAC3; \
 
 #elif defined(PSX_VERSION)
 #define gte_ldlvnlsv( r0 ) __asm__ volatile (			\
