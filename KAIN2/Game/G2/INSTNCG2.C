@@ -367,8 +367,8 @@ void _G2Instance_RebuildNonAnimatedTransforms(struct _Instance* instance)
 	}
 }
 
-void _G2Instance_BuildDeactivatedTransforms(struct _Instance* instance)
-{ 
+void _G2Instance_BuildDeactivatedTransforms(struct _Instance* instance)//Matching - 99.69%
+{
 	MATRIX* segMatrix;
 	MATRIX* startOldMatrix;
 	int numMatrices;
@@ -385,9 +385,9 @@ void _G2Instance_BuildDeactivatedTransforms(struct _Instance* instance)
 		G2Instance_BuildTransforms(instance);
 		return;
 	}
-	
+
 	model = instance->object->modelList[instance->currentModel];
-	
+
 	if (instance->object->animList != NULL && !(instance->object->oflags2 & 0x40000000))
 	{
 		numMatrices = model->numSegments + 1;
@@ -412,7 +412,7 @@ void _G2Instance_BuildDeactivatedTransforms(struct _Instance* instance)
 	if (instance->object->animList != NULL)
 	{
 		startOldMatrix--;
-		
+
 		if (!(instance->object->oflags2 & 0x40000000))
 		{
 			instance->matrix = segMatrix + 1;
@@ -435,7 +435,7 @@ void _G2Instance_BuildDeactivatedTransforms(struct _Instance* instance)
 	{
 		memcpy(segMatrix, startOldMatrix, numMatrices * sizeof(MATRIX));
 	}
-	
+
 	instance = instance->LinkChild;
 
 	while (instance != NULL)
