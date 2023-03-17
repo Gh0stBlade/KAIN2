@@ -957,6 +957,9 @@ void INSTANCE_ProcessIntro(struct _Instance* instance)//Matching - 100%
 #if defined(PSX_VERSION)
 	struct INICommand* command;
 
+	return;//inf loop
+	UNIMPLEMENTED();
+
 	if (instance->introData != NULL)
 	{
 		command = (struct INICommand*)instance->introData;
@@ -1325,7 +1328,7 @@ struct _Instance* INSTANCE_IntroduceInstance(struct Intro* intro, short streamUn
 	return NULL;
 }
 
-void INSTANCE_AdditionalCollideFunctions(struct _InstanceList* instanceList)
+void INSTANCE_AdditionalCollideFunctions(struct _InstanceList* instanceList)//Matching - 97.97%
 {
 #if defined(PSX_VERSION)
 
@@ -2041,7 +2044,7 @@ void INSTANCE_BuildStaticShadow(struct _Instance* instance)
 {
 }
 
-void INSTANCE_DefaultInit(struct _Instance* instance, struct Object* object, int modelNum)//Matching - 96.32%
+void INSTANCE_DefaultInit(struct _Instance* instance, struct Object* object, int modelNum)//Matching - 97.34%
 {
 	int i;
 	int j;
@@ -2107,8 +2110,6 @@ void INSTANCE_DefaultInit(struct _Instance* instance, struct Object* object, int
 	{
 		for (j = pModel[0]->numSegments, seg = pModel[0]->segmentList; j != 0; seg++, j--)
 		{
-
-
 			hinfo = seg->hInfo;
 
 			if (hinfo != NULL)
@@ -2124,7 +2125,7 @@ void INSTANCE_DefaultInit(struct _Instance* instance, struct Object* object, int
 
 		instance->hModelList = hmodel;
 		pModel = object->modelList;
-		hprim = (struct _HPrim*)hmodel + object->numModels;
+		hprim = (struct _HPrim*)hmodel + numModels;
 
 		for (i = numModels; i != 0; i--, pModel++, hmodel++)
 		{
@@ -2136,6 +2137,7 @@ void INSTANCE_DefaultInit(struct _Instance* instance, struct Object* object, int
 			for (j = 0; j < model->numSegments; j++, seg++)
 			{
 				hinfo = seg->hInfo;
+
 				if (hinfo != NULL)
 				{
 					hface = hinfo->hfaceList;
@@ -2143,6 +2145,7 @@ void INSTANCE_DefaultInit(struct _Instance* instance, struct Object* object, int
 					hbox = hinfo->hboxList;
 
 					hmodel->numHPrims += hinfo->numHFaces + hinfo->numHSpheres + hinfo->numHBoxes;
+
 					for (k = hinfo->numHFaces; k != 0; hprim++, hface++, k--)
 					{
 						hprim->hpFlags = 0x4D;
