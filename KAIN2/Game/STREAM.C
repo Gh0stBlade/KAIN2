@@ -2036,7 +2036,7 @@ void PreloadAllConnectedUnits(struct _StreamUnit* streamUnit, struct _SVector* o
 	}
 }
 
-void RelocateLevel(struct Level* level, struct _SVector* offset)
+void RelocateLevel(struct Level* level, struct _SVector* offset)//Matching - 98.19%
 {
 	int curTree;
 	short _x0;
@@ -2058,7 +2058,7 @@ void RelocateLevel(struct Level* level, struct _SVector* offset)
 	RelocateSavedCameras(&theCamera, level, offset);
 
 	level->deathZ += offset->z;
-	
+
 	RelocatePlanMarkers(level->PlanMarkerList, level->NumberOfPlanMarkers, offset);
 
 	RelocateSFXMarkers(level->SFXMarkerList, level->NumberOfSFXMarkers, offset);
@@ -2070,15 +2070,15 @@ void RelocateLevel(struct Level* level, struct _SVector* offset)
 
 	for (curTree = 0; curTree < level->terrain->numBSPTrees; curTree++)
 	{
-		_x1 = offset->x;
-		_y1 = offset->y;
-		_z1 = offset->z;
-
 		_v = &level->terrain->BSPTreeArray[curTree].globalOffset;
 
 		_x0 = _v->x;
 		_y0 = _v->y;
 		_z0 = _v->z;
+
+		_x1 = offset->x;
+		_y1 = offset->y;
+		_z1 = offset->z;
 
 		_x0 += _x1;
 		_y0 += _y1;
