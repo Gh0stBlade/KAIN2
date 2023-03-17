@@ -1457,6 +1457,7 @@ void COLLIDE_NearestPointOnLine_S(struct _SVector* linePoint, SVECTOR* oldPoint,
 {
 	MATRIX m;
 	VECTOR v;
+	SVECTOR v2;
 	VECTOR r;
 	int l;
 	int _v2;
@@ -1469,8 +1470,12 @@ void COLLIDE_NearestPointOnLine_S(struct _SVector* linePoint, SVECTOR* oldPoint,
 	m.m[1][1] = position->y;
 	m.m[1][2] = position->z;
 
-	v.vx = (unsigned int)newPoint->vx - (unsigned int)oldPoint->vx | (((unsigned int)newPoint->vy - (unsigned int)oldPoint->vy) << 16);;
-	v.vy = (unsigned int)newPoint->vz - (unsigned int)oldPoint->vz;
+	v.vx = ((newPoint->vx - oldPoint->vx) & 0xFFFF) | ((newPoint->vy - oldPoint->vy) << 16);
+	v.vy = newPoint->vz - oldPoint->vz;
+
+	v2.vx = (newPoint->vx - oldPoint->vx);
+	v2.vy = (newPoint->vy - oldPoint->vy);
+	v2.vz = (newPoint->vz - oldPoint->vz);
 
 	m.m[2][0] = ((SVECTOR*)&v)->vx;
 	m.m[2][1] = ((SVECTOR*)&v)->vy;
@@ -1482,17 +1487,17 @@ void COLLIDE_NearestPointOnLine_S(struct _SVector* linePoint, SVECTOR* oldPoint,
 	gte_stlvnl(&r);
 
 	l = ((r.vx - r.vy) << 12);
-	_v2 = (newPoint->vx - oldPoint->vx) | ((newPoint->vy - oldPoint->vy) << 16);
+	_v2 = ((newPoint->vx - oldPoint->vx) & 0xFFFF) | ((newPoint->vy - oldPoint->vy) << 16);
 
 	if (r.vz != 0)
 	{
 		l = -l;
 		_v2 = l / r.vz;
 
-		gte_ldsv(&v);
+		gte_ldsv(&v2);
 	}
 
-	if (_v2 <= 4096)
+	if ((unsigned int)_v2 <= 4096)
 	{
 		gte_lddp(_v2);
 		gte_gpf12();
@@ -1549,9 +1554,9 @@ long COLLIDE_IntersectLineAndPlane_S(struct _SVector* planePoint, struct _Positi
 
 	gte_ldsv(&d);
 
-	int l = -(4096 * (r.vx - z)) / r.vy;
+	unsigned int l = -(4096 * (r.vx - z)) / r.vy;
 	
-	if (l >= 0x1001)
+	if (l >= 4096)
 	{
 		return 0;
 	}
