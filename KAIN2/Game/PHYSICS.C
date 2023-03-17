@@ -333,7 +333,7 @@ void PhysicsDefaultLinkedMoveResponse(struct _Instance *instance, struct evPhysi
 #endif
 }
 
-int PhysicsCheckGravity(struct _Instance* instance, int Data, short Mode)//Matching - 77.11%
+int PhysicsCheckGravity(struct _Instance* instance, int Data, short Mode)//Matching - 93.05%
 {
 	struct evPhysicsGravityData* Ptr;
 	SVECTOR D;
@@ -354,7 +354,9 @@ int PhysicsCheckGravity(struct _Instance* instance, int Data, short Mode)//Match
 
 	rc = 0;
 
-	D = { 0,0,240 };
+	D.vx = 0;
+	D.vy = 0;
+	D.vz - 240;
 
 	slide = 0;
 
@@ -428,11 +430,11 @@ int PhysicsCheckGravity(struct _Instance* instance, int Data, short Mode)//Match
 	{
 		if (CInfo.wNormal.vz < Ptr->slipSlope && CInfo.wNormal.vz > 0)
 		{
-			N.vx = (-(CInfo.wNormal.vx * -CInfo.wNormal.vz) < 0) ? ((-(CInfo.wNormal.vx * -CInfo.wNormal.vz) + 0xFFF)) : ((-(CInfo.wNormal.vx * -CInfo.wNormal.vz)));
+			N.vx = (-(CInfo.wNormal.vx * -(unsigned short)CInfo.wNormal.vz) < 0) ? ((-(CInfo.wNormal.vx * -(unsigned short)CInfo.wNormal.vz) + 0xFFF)) : ((-(CInfo.wNormal.vx * -(unsigned short)CInfo.wNormal.vz)));
 			N.vx >>= 12;
-			N.vy = (-(CInfo.wNormal.vy * -CInfo.wNormal.vz) < 0) ? ((-(CInfo.wNormal.vy * -CInfo.wNormal.vz) + 0xFFF)) : ((-(CInfo.wNormal.vy * -CInfo.wNormal.vz)));
+			N.vy = (-(CInfo.wNormal.vy * -(unsigned short)CInfo.wNormal.vz) < 0) ? ((-(CInfo.wNormal.vy * -(unsigned short)CInfo.wNormal.vz) + 0xFFF)) : ((-(CInfo.wNormal.vy * -(unsigned short)CInfo.wNormal.vz)));
 			N.vy >>= 12;
-			N.vz = (-(CInfo.wNormal.vz * -CInfo.wNormal.vz) < 0) ? ((-(CInfo.wNormal.vz * -CInfo.wNormal.vz) + 0xFFF)) : ((-(CInfo.wNormal.vz * -CInfo.wNormal.vz)));
+			N.vz = (-(CInfo.wNormal.vz * -(unsigned short)CInfo.wNormal.vz) < 0) ? ((-(CInfo.wNormal.vz * -(unsigned short)CInfo.wNormal.vz) + 0xFFF)) : ((-(CInfo.wNormal.vz * -(unsigned short)CInfo.wNormal.vz)));
 			N.vz >>= 12;
 
 			Dot = ((instance->zVel < -48) ? -instance->zVel : 48);
@@ -614,7 +616,6 @@ int PhysicsCheckGravity(struct _Instance* instance, int Data, short Mode)//Match
 
 	return rc;
 }
-
 
 void PhysicsDefaultGravityResponse(struct _Instance *instance, struct evPhysicsGravityData *Data)
 {
