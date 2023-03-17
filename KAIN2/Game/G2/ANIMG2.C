@@ -1008,18 +1008,13 @@ void _G2Anim_BuildSegTransformNoControllers(struct _G2Matrix_Type* segMatrix, st
 
 	_G2Anim_BuildSegLocalRotMatrix(segValue, segMatrix);
 
-	if (0 < ((scale.x | scale.y | scale.z) ^ 4096))
+	if (((scale.x | scale.y | scale.z) != 4096))
 	{
 		ScaleMatrix((MATRIX*)segMatrix, (VECTOR*)&scale);
 
 		segMatrix->scaleFlag = 1;
 	}
 
-	if (*(unsigned int*)segMatrix == 0xfffaf0)
-	{
-		int testing = 0;
-		testing++;
-	}
 	gte_SetRotMatrix(parentMatrix);
 
 	gte_ldclmv((((short*)segMatrix) + 0));
