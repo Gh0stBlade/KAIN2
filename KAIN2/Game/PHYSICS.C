@@ -333,7 +333,7 @@ void PhysicsDefaultLinkedMoveResponse(struct _Instance *instance, struct evPhysi
 #endif
 }
 
-int PhysicsCheckGravity(struct _Instance* instance, int Data, short Mode)//Matching - 93.05%
+int PhysicsCheckGravity(struct _Instance* instance, int Data, short Mode)//Matching - 93.35%
 {
 	struct evPhysicsGravityData* Ptr;
 	SVECTOR D;
@@ -356,7 +356,7 @@ int PhysicsCheckGravity(struct _Instance* instance, int Data, short Mode)//Match
 
 	D.vx = 0;
 	D.vy = 0;
-	D.vz - 240;
+	D.vz = 240;
 
 	slide = 0;
 
@@ -439,9 +439,9 @@ int PhysicsCheckGravity(struct _Instance* instance, int Data, short Mode)//Match
 
 			Dot = ((instance->zVel < -48) ? -instance->zVel : 48);
 
-			Old.vx = New.vx = New.vx + N.vx * Dot / 4096;
-			Old.vy = New.vy = New.vy + N.vy * Dot / 4096;
-			Old.vz = New.vz = New.vz + N.vz * Dot / 4096;
+			Old.vx = New.vx = CInfo.newPoint->vx + N.vx * Dot / 4096;
+			Old.vy = New.vy = CInfo.newPoint->vy + N.vy * Dot / 4096;
+			Old.vz = New.vz = CInfo.newPoint->vz + N.vz * Dot / 4096;
 
 			Old.vz += Ptr->UpperOffset;
 			New.vz -= Ptr->LowerOffset;
