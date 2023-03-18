@@ -13,6 +13,16 @@ struct SandHFScratch {
 	struct _SVector planePoint; // size=8, offset=60
 };
 
+struct PandTFScratch {
+	MATRIX posMatrix; // size=32, offset=0
+	struct _SVector planePoint; // size=8, offset=32
+	struct _SVector newPos; // size=8, offset=40
+	struct _SVector oldPos; // size=8, offset=48
+	struct _SVector normal; // size=8, offset=56
+	struct _Vector dpv; // size=12, offset=64
+};
+
+
 struct _CollideInfo // hashcode: 0xCA2DF5E9 (dec: -902957591)
 {
 	void* level; // size=0, offset=0
