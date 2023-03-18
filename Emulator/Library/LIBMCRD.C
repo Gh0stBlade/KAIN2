@@ -82,7 +82,7 @@ long MemCardExist(long chan)
 	char buf[128];
 	
 #if defined(__ANDROID__)
-	sprintf(&buf[0], "/storage/self/primary/TOMB5/%ld.MCD", chan);
+	sprintf(&buf[0], "/storage/self/primary/KAIN2/%ld.MCD", chan);
 #elif defined(_XBOX)
 	sprintf(&buf[0], "game:/%ld.MCD", chan);
 #else
@@ -126,7 +126,7 @@ long MemCardAccept(long chan)
 
 	char buf[128];
 #if defined(__ANDROID__)
-	sprintf(&buf[0], "/storage/self/primary/TOMB5/%ld.MCD", chan);
+	sprintf(&buf[0], "/storage/self/primary/KAIN2/%ld.MCD", chan);
 #elif defined(_XBOX)
 	sprintf(&buf[0], "game:/%ld.MCD", chan);
 #else
@@ -167,7 +167,7 @@ long MemCardOpen(long chan, char* file, long flag)
 
 	char buf[128];
 #if defined(__ANDROID__)
-	sprintf(&buf[0], "/storage/self/primary/TOMB5/%ld.MCD", chan);
+	sprintf(&buf[0], "/storage/self/primary/KAIN2/%ld.MCD", chan);
 #elif defined(_XBOX)
 	sprintf(&buf[0], "game:/%ld.MCD", chan);
 #else
@@ -306,7 +306,7 @@ long MemCardGetDirentry(long chan, char* name, struct DIRENTRY* dir, long* files
 {
 	char buf[128];
 #if defined(__ANDROID__)
-	sprintf(&buf[0], "/storage/self/primary/TOMB5/%ld.MCD", chan);
+	sprintf(&buf[0], "/storage/self/primary/KAIN2/%ld.MCD", chan);
 #elif defined(_XBOX)
 	sprintf(&buf[0], "game:/%ld.MCD", chan);
 #else

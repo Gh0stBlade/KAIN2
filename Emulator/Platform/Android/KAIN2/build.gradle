@@ -4,14 +4,14 @@ android {
     compileSdkVersion 30
 	ndkVersion "21.4.7075529"
     defaultConfig {
-        applicationId "com.my.TOMB5"
+        applicationId "com.my.KAIN2"
         minSdkVersion 30
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
 
         // Set the apk base name.
-        setProperty("archivesBaseName", "TOMB5")
+        setProperty("archivesBaseName", "KAIN2")
 
         externalNativeBuild {
             cmake {
