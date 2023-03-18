@@ -2145,6 +2145,7 @@ void COLLIDE_Instances(struct _Instance* instance1, struct _Instance* instance2)
 		lx = (instance1->position.x - instance2->position.x) >> 1;
 		ly = (instance1->position.y - instance2->position.y) >> 1;
 		lz = (instance1->position.z - instance2->position.z) >> 1;
+
 		mrmr = (instance1->object->modelList[instance1->currentModel]->maxRad + instance2->object->modelList[instance2->currentModel]->maxRad) >> 1;
 
 		gte_ldsv_ext(lx, ly, lz);
@@ -2925,24 +2926,25 @@ long COLLIDE_SphereAndTerrain(struct SCollideInfo* scollideInfo, struct Level* l
 	return result;
 }
 
-void COLLIDE_InstanceTerrain(struct _Instance* instance, struct Level* level)//Matching - 99.30%
+void COLLIDE_InstanceTerrain(struct _Instance* instance, struct Level* level)//Matching - 99.90%
 {
-	struct _Vector* newPosVec;
-	struct _Vector* oldPosVec;
-	struct _SVector* oldPos;
-	struct SCollideInfo scollideInfoX;
-	struct SCollideInfo* scollideInfo;
-	struct _Sphere* wSphere;
-	MATRIX* swTransform;
-	MATRIX* oldSWTransform;
-	void (*collideFunc)(struct _Instance* instance, struct GameTracker* gameTracker);
-	struct _HSphere* hsphere;
-	long flags;
-	int i;
-	struct _HModel* hmodel;
-	struct _HPrim* hprim;
+
+	struct _Vector* newPosVec; // stack offset -60
+	struct _Vector* oldPosVec; // stack offset -56
+	struct _SVector* oldPos; // $fp
+	struct SCollideInfo scollideInfoX; // stack offset -96
+	struct SCollideInfo* scollideInfo; // $s3
+	struct _Sphere* wSphere; // $s5
+	MATRIX* swTransform; // $s0
+	MATRIX* oldSWTransform; // $s1
+	struct _HSphere* hsphere; // $s2
+	long flags; // stack offset -64
+	int i; // $s7
+	struct _HModel* hmodel; // $v0
+	struct _HPrim* hprim; // $s6
 	int currentModel;
 	unsigned char withFlags;
+	void (*collideFunc)(struct _Instance* instance, struct GameTracker* gameTracker);
 
 	newPosVec = (struct _Vector*)getScratchAddr(82);
 	oldPosVec = (struct _Vector*)getScratchAddr(86);
@@ -2950,6 +2952,7 @@ void COLLIDE_InstanceTerrain(struct _Instance* instance, struct Level* level)//M
 	wSphere = (struct _Sphere*)getScratchAddr(110);
 
 	scollideInfo = &scollideInfoX;
+
 
 	if (instance->matrix != NULL && instance->oldMatrix != NULL)
 	{
@@ -2999,6 +3002,7 @@ void COLLIDE_InstanceTerrain(struct _Instance* instance, struct Level* level)//M
 					oldPos->y = oldPosVec->y;
 					oldPos->z = oldPosVec->z;
 
+
 					scollideInfo->sphere = wSphere;
 
 					scollideInfo->oldPos = (SVECTOR*)oldPos;
@@ -3011,7 +3015,7 @@ void COLLIDE_InstanceTerrain(struct _Instance* instance, struct Level* level)//M
 
 					scollideInfo->id = hsphere->id;
 
-					scollideInfo->prim = (void*)hprim;
+					scollideInfo->prim = (void*)hsphere;
 
 					COLLIDE_SphereAndTerrain(scollideInfo, level);
 				}
