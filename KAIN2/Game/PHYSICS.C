@@ -333,7 +333,7 @@ void PhysicsDefaultLinkedMoveResponse(struct _Instance *instance, struct evPhysi
 #endif
 }
 
-int PhysicsCheckGravity(struct _Instance* instance, int Data, short Mode)//Matching - 93.35%
+int PhysicsCheckGravity(struct _Instance* instance, int Data, short Mode)//Matching - 93.42%
 {
 	struct evPhysicsGravityData* Ptr;
 	SVECTOR D;
@@ -469,7 +469,7 @@ int PhysicsCheckGravity(struct _Instance* instance, int Data, short Mode)//Match
 
 		instance->cachedTFace = -(((unsigned long)CInfo.prim - ((unsigned long*)CInfo.inst->node.prev)[8]) * 0x55555555) >> 2;
 
-		instance->cachedTFaceLevel = CInfo.instance;
+		instance->cachedTFaceLevel = CInfo.inst;
 	}
 	else
 	{
