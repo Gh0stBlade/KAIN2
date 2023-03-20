@@ -2487,7 +2487,7 @@ long COLLIDE_SphereAndHFace(struct _Sphere* sphere, struct _Position* oldPos, st
 
 typedef void (*collideFuncPtr)(struct _Instance*, struct GameTracker*);
 
-long COLLIDE_SAndT(struct SCollideInfo* scollideInfo, struct Level* level)//Matching - 80.55%
+long COLLIDE_SAndT(struct SCollideInfo* scollideInfo, struct Level* level)//Matching - 94.71%
 {
 	struct _Terrain* terrain; // $s5
 	void** stack; // $s1
@@ -2512,7 +2512,6 @@ long COLLIDE_SAndT(struct SCollideInfo* scollideInfo, struct Level* level)//Matc
 	struct _SVector* nrml;
 	int plane_front_error; // $v0
 	int plane_back_error; // $a3
-	void* v53; // $v0
 	void* front; // $v0
 	void* v55; // $v0
 	void* back; // $v0
@@ -2528,6 +2527,7 @@ long COLLIDE_SAndT(struct SCollideInfo* scollideInfo, struct Level* level)//Matc
 	struct _SVector* _v0;
 	struct _Position* _v1;
 	struct _Position* _v2;
+	struct _Position* _v3;
 	collideFuncPtr collideFunc;
 	int t1;
 	short normal;
@@ -2540,6 +2540,7 @@ long COLLIDE_SAndT(struct SCollideInfo* scollideInfo, struct Level* level)//Matc
 	CSpad = (struct SandTScratch*)getScratchAddr(114);
 	terrain = level->terrain;
 	stack = (void**)getScratchAddr(167);
+
 	if (gameTrackerX.gameData.asmData.MorphTime != 1000)
 	{
 		CSpad->in_spectral = 2;
@@ -2628,15 +2629,44 @@ long COLLIDE_SAndT(struct SCollideInfo* scollideInfo, struct Level* level)//Matc
 					if (!(bspTree->flags & 0x102) || (bspTree->flags & 0xE0) != 0 && (INSTANCE_Query(CSpad->instance, 0x1) & 0x2))
 					{
 						CSpad->collideInfo.bspID = bspTree->ID;
-						CSpad->oldPos.x -= bspTree->globalOffset.x;
-						CSpad->oldPos.y -= bspTree->globalOffset.y;
-						CSpad->oldPos.z -= bspTree->globalOffset.z;
-						CSpad->midPoint.x -= bspTree->globalOffset.x;
-						CSpad->midPoint.y -= bspTree->globalOffset.y;
-						CSpad->midPoint.z -= bspTree->globalOffset.z;
-						CSpad->sphere.position.x -= bspTree->globalOffset.x;
-						CSpad->sphere.position.y -= bspTree->globalOffset.y;
-						CSpad->sphere.position.z -= bspTree->globalOffset.z;
+
+						_x0 = _v->x;
+						_y0 = _v->y;
+						_z0 = _v->z;
+
+						_x0 -= bspTree->globalOffset.x;
+						_y0 -= bspTree->globalOffset.y;
+						_z0 -= bspTree->globalOffset.z;
+
+						_v->x = _x0;
+						_v->y = _y0;
+						_v->z = _z0;
+
+						_x0 = _v0->x;
+						_y0 = _v0->y;
+						_z0 = _v0->z;
+
+						_x0 -= bspTree->globalOffset.x;
+						_y0 -= bspTree->globalOffset.y;
+						_z0 -= bspTree->globalOffset.z;
+
+						_v0->x = _x0;
+						_v0->y = _y0;
+						_v0->z = _z0;
+
+						_x0 = _v1->x;
+						_y0 = _v1->y;
+						_z0 = _v1->z;
+
+						_x0 -= bspTree->globalOffset.x;
+						_y0 -= bspTree->globalOffset.y;
+						_z0 -= bspTree->globalOffset.z;
+
+						_v1->x = _x0;
+						_v1->y = _y0;
+						_v1->z = _z0;
+
+
 						CSpad->posMatrix.m[0][0] = CSpad->sphere.position.x;
 						CSpad->posMatrix.m[0][1] = CSpad->sphere.position.y;
 						CSpad->posMatrix.m[0][2] = CSpad->sphere.position.z;
@@ -2709,8 +2739,8 @@ long COLLIDE_SAndT(struct SCollideInfo* scollideInfo, struct Level* level)//Matc
 													nrml->z = -*sPtr;
 												}
 											}
-											_v1 = (struct _Position*)&CSpad->vertexList[tface->face.v0];
-											gte_ldv2_ext(_v1);
+											_v3 = (struct _Position*)&CSpad->vertexList[tface->face.v0];
+											gte_ldv2_ext(_v3);
 											gte_ldv0(&CSpad->normal);
 											gte_rtv0();
 											gte_stlvnl(&CSpad->dpv);
@@ -2720,7 +2750,7 @@ long COLLIDE_SAndT(struct SCollideInfo* scollideInfo, struct Level* level)//Matc
 											{
 												CSpad->hfaceInfo.hface = (struct _HFace*)tface;
 
-												CSpad->hfaceInfo.vertex0 = (struct _HVertex*)_v1;
+												CSpad->hfaceInfo.vertex0 = (struct _HVertex*)_v3;
 												CSpad->hfaceInfo.vertex1 = (struct _HVertex*)&CSpad->vertexList[(short)tface->face.v1];
 												CSpad->hfaceInfo.vertex2 = (struct _HVertex*)&CSpad->vertexList[(short)tface->face.v2];
 
@@ -2863,18 +2893,53 @@ long COLLIDE_SAndT(struct SCollideInfo* scollideInfo, struct Level* level)//Matc
 						}
 
 						_v2 = &bspTree->globalOffset;
-						_x0 = _v2->x;
-						_y0 = _v2->y;
-						_z0 = _v2->z;
-						CSpad->oldPos.x += _x0;
-						CSpad->oldPos.y += _y0;
-						CSpad->oldPos.z += _z0;
-						CSpad->midPoint.x += _x0;
-						CSpad->midPoint.y += _y0;
-						CSpad->midPoint.z += _z0;
-						CSpad->sphere.position.x += _x0;
-						CSpad->sphere.position.y += _y0;
-						CSpad->sphere.position.z += _z0;
+						_x1 = _v2->x;
+						_y1 = _v2->y;
+						_z1 = _v2->z;
+
+						_x0 = _v->x;
+						_y0 = _v->y;
+						_z0 = _v->z;
+
+						_x0 += _x1;
+						_y0 += _y1;
+						_z0 += _z1;
+
+						_v->x = _x0;
+						_v->y = _y0;
+						_v->z = _z0;
+
+						_x1 = _v2->x;
+						_y1 = _v2->y;
+						_z1 = _v2->z;
+
+						_x0 = _v0->x;
+						_y0 = _v0->y;
+						_z0 = _v0->z;
+
+						_x0 += _x1;
+						_y0 += _y1;
+						_z0 += _z1;
+
+						_v0->x = _x0;
+						_v0->y = _y0;
+						_v0->z = _z0;
+
+						_x1 = _v2->x;
+						_y1 = _v2->y;
+						_z1 = _v2->z;
+
+						_x0 = _v1->x;
+						_y0 = _v1->y;
+						_z0 = _v1->z;
+
+						_x0 += _x1;
+						_y0 += _y1;
+						_z0 += _z1;
+
+						_v1->x = _x0;
+						_v1->y = _y0;
+						_v1->z = _z0;
 					}
 				}
 			}
@@ -2895,7 +2960,6 @@ long COLLIDE_SAndT(struct SCollideInfo* scollideInfo, struct Level* level)//Matc
 
 	return CSpad->result;
 }
-
 
 long COLLIDE_SphereAndTerrain(struct SCollideInfo* scollideInfo, struct Level* level)//Matching - 97.67%
 {
