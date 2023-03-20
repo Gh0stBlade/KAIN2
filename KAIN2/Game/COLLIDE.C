@@ -2688,17 +2688,23 @@ long COLLIDE_SAndT(struct SCollideInfo* scollideInfo, struct Level* level)//Matc
 								box = (struct _BoundingBox*)&bspNode->d;
 								point = (struct _SVector*)&CSpad->midPoint;
 
-								if (point->x - (short)CSpad->midRadius >= box->maxX
+								if ((point->x - (short)CSpad->midRadius >= box->maxX
 									|| point->x + (short)CSpad->midRadius <= box->minX
 									|| point->y - (short)CSpad->midRadius >= box->maxY
 									|| point->y + (short)CSpad->midRadius <= box->minY
 									|| point->z - (short)CSpad->midRadius >= box->maxZ
-									|| point->z + (short)CSpad->midRadius > box->minZ)
+									|| point->z + (short)CSpad->midRadius > box->minZ) /*&&
+									(box->maxX >= point->x - (short)CSpad->midRadius
+									|| box->minX <= point->x + (short)CSpad->midRadius
+									|| box->maxY >= point->y - (short)CSpad->midRadius
+									|| box->minY <= point->y + (short)CSpad->midRadius
+									|| box->maxZ >= point->z - (short)CSpad->midRadius
+									|| box->minZ < point->z + (short)CSpad->midRadius)*/)
 								{
 
 									*(unsigned int*)&CSpad->posMatrix.m[0][0] = *(unsigned int*)&CSpad->sphere.position.x;
 									CSpad->posMatrix.m[0][2] = CSpad->sphere.position.z;
-									gte_ldsvrtrow0(&CSpad->sphere.position);
+									gte_ldsvrtrow0(&CSpad->posMatrix);
 									CSpad->i = bspNode->c;
 									tface = *(struct _TFace**)&bspNode->a;
 									while (CSpad->i)
@@ -2812,7 +2818,7 @@ long COLLIDE_SAndT(struct SCollideInfo* scollideInfo, struct Level* level)//Matc
 									}
 									*(unsigned int*)&CSpad->posMatrix.m[0][0] = *(unsigned int*)&CSpad->sphere.position.x;
 									CSpad->posMatrix.m[0][2] = CSpad->sphere.position.z;
-									gte_ldsvrtrow0(&CSpad->sphere.position);
+									gte_ldsvrtrow0(&CSpad->posMatrix);
 								}
 							}
 							else
@@ -2893,13 +2899,14 @@ long COLLIDE_SAndT(struct SCollideInfo* scollideInfo, struct Level* level)//Matc
 						}
 
 						_v2 = &bspTree->globalOffset;
-						_x1 = _v2->x;
-						_y1 = _v2->y;
-						_z1 = _v2->z;
 
 						_x0 = _v->x;
 						_y0 = _v->y;
 						_z0 = _v->z;
+
+						_x1 = _v2->x;
+						_y1 = _v2->y;
+						_z1 = _v2->z;
 
 						_x0 += _x1;
 						_y0 += _y1;
@@ -2909,13 +2916,13 @@ long COLLIDE_SAndT(struct SCollideInfo* scollideInfo, struct Level* level)//Matc
 						_v->y = _y0;
 						_v->z = _z0;
 
-						_x1 = _v2->x;
-						_y1 = _v2->y;
-						_z1 = _v2->z;
-
 						_x0 = _v0->x;
 						_y0 = _v0->y;
 						_z0 = _v0->z;
+
+						_x1 = _v2->x;
+						_y1 = _v2->y;
+						_z1 = _v2->z;
 
 						_x0 += _x1;
 						_y0 += _y1;
@@ -2925,13 +2932,13 @@ long COLLIDE_SAndT(struct SCollideInfo* scollideInfo, struct Level* level)//Matc
 						_v0->y = _y0;
 						_v0->z = _z0;
 
-						_x1 = _v2->x;
-						_y1 = _v2->y;
-						_z1 = _v2->z;
-
 						_x0 = _v1->x;
 						_y0 = _v1->y;
 						_z0 = _v1->z;
+
+						_x1 = _v2->x;
+						_y1 = _v2->y;
+						_z1 = _v2->z;
 
 						_x0 += _x1;
 						_y0 += _y1;
