@@ -3793,6 +3793,7 @@ int COLLIDE_PointAndTfaceFunc(struct _Terrain *terrain, struct BSPTree *bsp, str
 	struct _SVector* _v;
 	struct _SVector* _v1;
 	struct _Position* _v2;
+	struct _Position* _v3;
 
 	CSpad = (struct PandTFScratch*)getScratchAddr(16);
 	result = 0;
@@ -3836,13 +3837,13 @@ int COLLIDE_PointAndTfaceFunc(struct _Terrain *terrain, struct BSPTree *bsp, str
 		_v1->y = _y0;
 		_v1->z = _z0;
 
-		_x0 = CSpad->newPos.x;
-		_y0 = CSpad->newPos.y;
-		_z0 = CSpad->newPos.z;
-
 		_x1 = CSpad->oldPos.x;
 		_y1 = CSpad->oldPos.y;
 		_z1 = CSpad->oldPos.z;
+
+		_x0 = CSpad->newPos.x;
+		_y0 = CSpad->newPos.y;
+		_z0 = CSpad->newPos.z;
 
 		CSpad->posMatrix.m[0][0] = _x1;
 		CSpad->posMatrix.m[0][1] = _y1;
@@ -3900,9 +3901,12 @@ int COLLIDE_PointAndTfaceFunc(struct _Terrain *terrain, struct BSPTree *bsp, str
 					&CSpad->normal))
 				{
 					result = 1;
-					_y0 = CSpad->planePoint.y + bsp->globalOffset.y;
-					_z0 = CSpad->planePoint.z + bsp->globalOffset.z;
-					orgNewPos->x = CSpad->planePoint.x + bsp->globalOffset.x;
+
+					_v3 = &bsp->globalOffset;
+					_x0 = CSpad->planePoint.x + _v3->x;
+					_y0 = CSpad->planePoint.y + _v3->y;
+					_z0 = CSpad->planePoint.z + _v3->z;
+					orgNewPos->x = _x0;
 					orgNewPos->y = _y0;
 					orgNewPos->z = _z0;
 				}
