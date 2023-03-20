@@ -248,11 +248,14 @@ void SetExternalTransitionForce(struct __Force *in, struct _Instance *instance, 
 #endif
 }
 
-void ProcessPhysics(struct __Player* player, struct __CharacterState* In, int CurrentSection, int Mode)
+void ProcessPhysics(struct __Player* player, struct __CharacterState* In, int CurrentSection, int Mode)//Matching - 98.70%
 {
 #if defined(PSX_VERSION)
 
 	int time;
+	struct _Instance* instance;
+
+	instance = In->CharacterInstance;
 
 	if (In->CharacterInstance->matrix != NULL)
 	{
@@ -261,9 +264,9 @@ void ProcessPhysics(struct __Player* player, struct __CharacterState* In, int Cu
 		switch (Mode)
 		{
 		case 0:
-			
+
 			ApplyExternalLocalForces(player, In->CharacterInstance, ExternalForcesPtr, 4, (struct _Vector*)&In->CharacterInstance->xAccl);
-			
+
 			PhysicsMoveLocalZClamp(In->CharacterInstance, player->RotationSegment, time, 0);
 			break;
 		case 4:
@@ -285,26 +288,26 @@ void ProcessPhysics(struct __Player* player, struct __CharacterState* In, int Cu
 		case 5:
 			PhysicsMoveLocalZClamp(In->CharacterInstance, player->RotationSegment, time, 0);
 
-			PHYSICS_StopIfCloseToTarget(In->CharacterInstance, 0, 0, player->swimTargetSpeed);
+			PHYSICS_StopIfCloseToTarget(instance, 0, 0, player->swimTargetSpeed);
 
-			if (In->CharacterInstance->xAccl == 0 &&
-				In->CharacterInstance->yAccl == 0 &&
-				In->CharacterInstance->zAccl == 0)
+			if (instance->xAccl == 0 &&
+				instance->yAccl == 0 &&
+				instance->zAccl == 0)
 			{
-				INSTANCE_Post(In->CharacterInstance, 0x100011, player->swimTargetSpeed);
+				INSTANCE_Post(instance, 0x100011, player->swimTargetSpeed);
 			}
 
 			break;
 		case 6:
 			PhysicsMoveLocalZClamp(In->CharacterInstance, player->RotationSegment, time, 1);
 
-			PHYSICS_StopIfCloseToTarget(In->CharacterInstance, 0, 0, player->swimTargetSpeed);
+			PHYSICS_StopIfCloseToTarget(instance, 0, 0, player->swimTargetSpeed);
 
-			if (In->CharacterInstance->xAccl == 0 &&
-				In->CharacterInstance->yAccl == 0 &&
-				In->CharacterInstance->zAccl == 0)
+			if (instance->xAccl == 0 &&
+				instance->yAccl == 0 &&
+				instance->zAccl == 0)
 			{
-				INSTANCE_Post(In->CharacterInstance, 0x100011, player->swimTargetSpeed);
+				INSTANCE_Post(instance, 0x100011, player->swimTargetSpeed);
 			}
 
 			break;
@@ -375,7 +378,7 @@ void ProcessPhysics(struct __Player* player, struct __CharacterState* In, int Cu
 #endif
 }
 
-void ApplyExternalLocalForces(struct __Player* player, struct _Instance* instance, struct __Force* Forces, int MaxForces, struct _Vector* Out)
+void ApplyExternalLocalForces(struct __Player* player, struct _Instance* instance, struct __Force* Forces, int MaxForces, struct _Vector* Out)//Matching - 100%
 {
 #if defined(PSX_VERSION)
 	int i;
@@ -401,7 +404,7 @@ void ApplyExternalLocalForces(struct __Player* player, struct _Instance* instanc
 				Out->y += Forces[i].LinearForce.y;
 				Out->z += Forces[i].LinearForce.z;
 			}
-			else if (Forces[i].Type == 2)
+			if (Forces[i].Type == 2)
 			{
 				Out->x += Forces[i].LinearForce.x;
 				Out->y -= Forces[i].LinearForce.y;
@@ -413,9 +416,12 @@ void ApplyExternalLocalForces(struct __Player* player, struct _Instance* instanc
 			{
 				friction = Forces[i].Friction;
 
-				Forces[i].LinearForce.x = (Forces[i].LinearForce.x * friction) < 0 ? ((Forces[i].LinearForce.x * friction) + 0xFFF) >> 12 : (Forces[i].LinearForce.x * friction) >> 12;
-				Forces[i].LinearForce.y = (Forces[i].LinearForce.y * friction) < 0 ? ((Forces[i].LinearForce.y * friction) + 0xFFF) >> 12 : (Forces[i].LinearForce.y * friction) >> 12;
-				Forces[i].LinearForce.z = (Forces[i].LinearForce.z * friction) < 0 ? ((Forces[i].LinearForce.z * friction) + 0xFFF) >> 12 : (Forces[i].LinearForce.z * friction) >> 12;
+				Forces[i].LinearForce.x = (Forces[i].LinearForce.x * friction) < 0 ? (((Forces[i].LinearForce.x * friction) + 0xFFF)) : ((Forces[i].LinearForce.x * friction));
+				Forces[i].LinearForce.x >>= 12;
+				Forces[i].LinearForce.y = (Forces[i].LinearForce.y * friction) < 0 ? (((Forces[i].LinearForce.y * friction) + 0xFFF)) : ((Forces[i].LinearForce.y * friction));
+				Forces[i].LinearForce.y >>= 12;
+				Forces[i].LinearForce.z = (Forces[i].LinearForce.z * friction) < 0 ? (((Forces[i].LinearForce.z * friction) + 0xFFF)) : ((Forces[i].LinearForce.z * friction));
+				Forces[i].LinearForce.z >>= 12;
 
 				if (Forces[i].LinearForce.x == 0 && Forces[i].LinearForce.y == 0 && Forces[i].LinearForce.z == 0)
 				{
