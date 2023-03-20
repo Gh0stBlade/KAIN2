@@ -1456,7 +1456,7 @@ void sub_80078458(struct _VMObject* vmobject, struct Level* level)
 void COLLIDE_NearestPointOnLine_S(struct _SVector* linePoint, SVECTOR* oldPoint, SVECTOR* newPoint, struct _Position* position)
 {
 	MATRIX m;
-	VECTOR v;
+	SVECTOR v;
 	SVECTOR v2;
 	VECTOR r;
 	int l;
@@ -1470,16 +1470,19 @@ void COLLIDE_NearestPointOnLine_S(struct _SVector* linePoint, SVECTOR* oldPoint,
 	m.m[1][1] = position->y;
 	m.m[1][2] = position->z;
 
-	v.vx = ((newPoint->vx - oldPoint->vx) & 0xFFFF) | ((newPoint->vy - oldPoint->vy) << 16);
-	v.vy = newPoint->vz - oldPoint->vz;
+	v.vx = newPoint->vx - oldPoint->vx;
+	v.vy = newPoint->vy - oldPoint->vy;
+	v.vz = newPoint->vz - oldPoint->vz;
+	v.pad = 0;
 
 	v2.vx = (newPoint->vx - oldPoint->vx);
 	v2.vy = (newPoint->vy - oldPoint->vy);
 	v2.vz = (newPoint->vz - oldPoint->vz);
+	v2.pad = 0;
 
-	m.m[2][0] = ((SVECTOR*)&v)->vx;
-	m.m[2][1] = ((SVECTOR*)&v)->vy;
-	m.m[2][2] = ((SVECTOR*)&v)->vz;
+	m.m[2][0] = v.vx;
+	m.m[2][1] = v.vy;
+	m.m[2][2] = v.vz;
 
 	gte_SetRotMatrix(&m);
 	gte_ldv0(&v);
