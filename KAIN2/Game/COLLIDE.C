@@ -65,7 +65,7 @@ void G2Quat_ToMatrix(struct _G2EulerAngles_Type* a1, struct _G2Matrix_Type* a2)
 #endif
 }
 
-int COLLIDE_PointInTriangle(struct _SVector* v0, struct _SVector* v1, struct _SVector* v2, struct _SVector* point, struct _SVector* normal)//Matching - 88.08%
+int COLLIDE_PointInTriangle(struct _SVector* v0, struct _SVector* v1, struct _SVector* v2, struct _SVector* point, struct _SVector* normal)//Matching - 86.63%
 {
 #if defined(PSX_VERSION)
 	int ny; // $v1
@@ -154,7 +154,7 @@ int COLLIDE_PointInTriangle(struct _SVector* v0, struct _SVector* v1, struct _SV
 
 	for (j = 3; j != 0; j--)
 	{
-		yflag0 = (vert0->vy << 16 < ty << 16) ^ 1;
+		yflag0 = ((unsigned short)vert0->vy << 16 < (unsigned short)ty << 16) ^ 1;
 		yflag1 = (vert1->vy < ty) ^ 1;
 
 		if (yflag0 != yflag1)
@@ -3775,6 +3775,9 @@ int COLLIDE_PointAndTfaceFunc(struct _Terrain *terrain, struct BSPTree *bsp, str
 	short _x0;
 	short _y0; // $v1 MAPDST
 	short _z0; // $a1 OVERLAPPED MAPDST
+	short _x1; // $a2
+	short _y1; // $t0
+	short _z1; // $a3
 	int normal; // $v1
 	short* nrmlArray; // $a1
 	short* sPtr; // $v1 MAPDST
@@ -3787,32 +3790,69 @@ int COLLIDE_PointAndTfaceFunc(struct _Terrain *terrain, struct BSPTree *bsp, str
 	int result; // [sp+18h] [-8h]
 	struct PandTFScratch* CSpad; // $s0
 	struct _SVector* nrml;
+	struct _SVector* _v;
+	struct _SVector* _v1;
+	struct _Position* _v2;
 
 	CSpad = (struct PandTFScratch*)getScratchAddr(16);
 	result = 0;
 	if (!tface || (bsp->flags & 2) != 0)
 		return 0;
-	if (((1 << (tface->attr & 0x1F)) & ignoreAttr) == 0)
+	if (!((1 << (tface->attr & 0x1F)) & ignoreAttr))
 	{
-		_x0 = orgNewPos->x - bsp->globalOffset.x;
-		_y0 = orgNewPos->y - bsp->globalOffset.y;
-		_z0 = orgNewPos->z - bsp->globalOffset.z;
-		CSpad->newPos.x = _x0;
-		CSpad->newPos.y = _y0;
-		CSpad->newPos.z = _z0;
-		_x0 = orgOldPos->x - bsp->globalOffset.x;
-		_y0 = orgOldPos->y - bsp->globalOffset.y;
-		_z0 = orgOldPos->z - bsp->globalOffset.z;
-		CSpad->oldPos.x = _x0;
-		CSpad->oldPos.y = _y0;
-		CSpad->oldPos.z = _z0;
-		CSpad->posMatrix.m[0][0] = CSpad->newPos.x;
-		CSpad->posMatrix.m[0][1] = CSpad->newPos.y;
-		CSpad->posMatrix.m[0][2] = CSpad->newPos.z;
+		_v = (struct _SVector*)getScratchAddr(26);
+		_v1 = (struct _SVector*)getScratchAddr(28);
+		_v2 = &bsp->globalOffset;
+
+		_x0 = orgNewPos->x;
+		_y0 = orgNewPos->y;
+		_z0 = orgNewPos->z;
+
+		_x1 = _v2->x;
+		_y1 = _v2->y;
+		_z1 = _v2->z;
+
+		_x0 -= _x1;
+		_y0 -= _y1;
+		_z0 -= _z1;
+
+		_v->x = _x0;
+		_v->y = _y0;
+		_v->z = _z0;
+
+		_x0 = orgOldPos->x;
+		_y0 = orgOldPos->y;
+		_z0 = orgOldPos->z;
+
+		_x1 = _v2->x;
+		_y1 = _v2->y;
+		_z1 = _v2->z;
+
+		_x0 -= _x1;
+		_y0 -= _y1;
+		_z0 -= _z1;
+
+		_v1->x = _x0;
+		_v1->y = _y0;
+		_v1->z = _z0;
+
+		_x0 = CSpad->newPos.x;
+		_y0 = CSpad->newPos.y;
+		_z0 = CSpad->newPos.z;
+
+		_x1 = CSpad->oldPos.x;
+		_y1 = CSpad->oldPos.y;
+		_z1 = CSpad->oldPos.z;
+
+		CSpad->posMatrix.m[0][0] = _x1;
+		CSpad->posMatrix.m[0][1] = _y1;
+		CSpad->posMatrix.m[0][2] = _z1;
 		CSpad->posMatrix.m[1][0] = _x0;
 		CSpad->posMatrix.m[1][1] = _y0;
 		CSpad->posMatrix.m[1][2] = _z0;
+
 		SetRotMatrix(&CSpad->posMatrix);
+
 		normal = (short)tface->normal;
 		nrmlArray = (short*)terrain->normalList;
 		nrml = (struct _SVector*)getScratchAddr(30);
@@ -3843,7 +3883,7 @@ int COLLIDE_PointAndTfaceFunc(struct _Terrain *terrain, struct BSPTree *bsp, str
 		CSpad->dpv.x -= CSpad->dpv.z;
 		CSpad->dpv.y -= CSpad->dpv.z;
 
-		if ((CSpad->dpv.x < 0 && CSpad->dpv.y) >= 0 || ((flags & 1) != 0 && CSpad->dpv.x > 0 && CSpad->dpv.y <= 0))
+		if ((CSpad->dpv.x < 0 && CSpad->dpv.y >= 0) || ((flags & 1) != 0 && CSpad->dpv.x > 0 && CSpad->dpv.y <= 0))
 		{
 			if (COLLIDE_IntersectLineAndPlane_S(
 				&CSpad->planePoint,
@@ -3871,7 +3911,3 @@ int COLLIDE_PointAndTfaceFunc(struct _Terrain *terrain, struct BSPTree *bsp, str
 	}
 	return result;
 }
-
-
-
-
