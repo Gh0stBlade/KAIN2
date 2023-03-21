@@ -1289,7 +1289,7 @@ void PhysicsMoveLocalZClamp(struct _Instance* instance, long segment, long time,
 #endif
 }
 
-void PhysicsMove(struct _Instance* instance, struct _Position* position, long time)
+void PhysicsMove(struct _Instance* instance, struct _Position* position, long time)//Matching - 90.87%
 {
 #if defined(PSX_VERSION)
 	long xVel;
@@ -1298,34 +1298,54 @@ void PhysicsMove(struct _Instance* instance, struct _Position* position, long ti
 	long xat;
 	long yat;
 	long zat;
+	long x;
+	long y;
+	long z;
 
 	xVel = instance->xVel;
 	yVel = instance->yVel;
 	zVel = instance->zVel;
 
-	xat = (instance->xAccl * time) < 0 ? ((instance->xAccl * time) + 0xFFF) >> 12 : (instance->xAccl * time) >> 12;
-	yat = (instance->yAccl * time) < 0 ? ((instance->yAccl * time) + 0xFFF) >> 12 : (instance->yAccl * time) >> 12;
-	zat = (instance->zAccl * time) < 0 ? ((instance->zAccl * time) + 0xFFF) >> 12 : (instance->zAccl * time) >> 12;
+	xat = (instance->xAccl * time) < 0 ? ((instance->xAccl * time) + 0xFFF) : (instance->xAccl * time);
+	xat >>= 12;
+	yat = (instance->yAccl * time) < 0 ? ((instance->yAccl * time) + 0xFFF) : (instance->yAccl * time);
+	yat >>= 12;
+	zat = (instance->zAccl * time) < 0 ? ((instance->zAccl * time) + 0xFFF) : (instance->zAccl * time);
+	zat >>= 12;
 
-	position->x += (xVel * time) < 0 ? ((xVel * time) + 0xFFF) >> 12 : (xVel * time) >> 12 + (xat * time) < 0 ? ((xat * time) + 0x1FFF) >> 13 : (xat * time) >> 13;
-	position->y += (yVel * time) < 0 ? ((yVel * time) + 0xFFF) >> 12 : (yVel * time) >> 12 + (yat * time) < 0 ? ((yat * time) + 0x1FFF) >> 13 : (yat * time) >> 13;
-	position->z += (zVel * time) < 0 ? ((zVel * time) + 0xFFF) >> 12 : (zVel * time) >> 12 + (zat * time) < 0 ? ((zat * time) + 0x1FFF) >> 13 : (zat * time) >> 13;
+	xVel = (xVel * time) < 0 ? ((xVel * time) + 0xFFF) : (xVel * time);
+	xVel >>= 12;
+	x = (xat * time) < 0 ? (((xat * time) + 0x1FFF)) : (xat * time);
+	x >>= 13;
+	position->x += xVel + x;
+
+	yVel = (yVel * time) < 0 ? ((yVel * time) + 0xFFF) : (yVel * time);
+	yVel >>= 12;
+	y = (yat * time) < 0 ? (((yat * time) + 0x1FFF)) : (yat * time);
+	y >>= 13;
+	position->y += yVel + y;
+
+	zVel = (zVel * time) < 0 ? ((zVel * time) + 0xFFF) : (zVel * time);
+	zVel >>= 12;
+	z = (zat * time) < 0 ? (((zat * time) + 0x1FFF)) : (zat * time);
+	z >>= 13;
+	position->z += zVel + z;
 
 	xVel += xat;
 	yVel += yat;
 	zVel += zat;
 
-	if (instance->maxXVel < xVel || xVel < instance->maxXVel)
+	if (instance->maxXVel < xVel || xVel < -instance->maxXVel)
 	{
 		xVel = instance->maxXVel;
 	}
 
-	if (instance->maxYVel < yVel || yVel < instance->maxYVel)
+	if (instance->maxYVel < yVel || yVel < -instance->maxYVel)
 	{
 		yVel = instance->maxYVel;
 	}
 
-	if (instance->maxZVel < zVel || zVel < instance->maxZVel)
+	if (instance->maxZVel < zVel || zVel < -instance->maxZVel)
 	{
 		zVel = instance->maxZVel;
 	}
