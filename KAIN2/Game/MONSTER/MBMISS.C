@@ -280,26 +280,3 @@ void WALBOSC_Message(struct _Instance* instance, unsigned int message, unsigned 
 		instance->flags2 |= 0x20000000;
 	}
 }
-
-#if defined(PC_VERSION)
-struct _MonsterStateChoice WALBOSS_StateChoiceTable[] =
-{
-	{MONSTER_STATE_STUNNED, HUMAN_StunnedEntry, HUMAN_Stunned},
-	{MONSTER_STATE_COMBAT, HUMAN_DeadEntry, HUMAN_Dead},
-	{MONSTER_STATE_ATTACK, HUMAN_EmbraceEntry, HUMAN_Embrace },
-	{MONSTER_STATE_IDLE, WALBOSS_IdleEntry, WALBOSS_Idle},
-	{MONSTER_STATE_FLEE, MON_FleeEntry, HUMAN_Flee},
-	{-1}
-};
-
-struct _MonsterFunctionTable WALBOSS_FunctionTable =
-{
-	WALBOSS_Init,
-	WALBOSS_CleanUp,
-	WALBOSS_DamageEffect,
-	WALBOSS_Query,
-	WALBOSS_Message,
-	WALBOSS_StateChoiceTable,
-	__DATE__
-};
-#endif

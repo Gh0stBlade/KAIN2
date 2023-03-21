@@ -15,10 +15,6 @@
 #include "Game/STRMLOAD.H"
 #include "Game/EVENT.H"
 
-#ifdef PC_VERSION
-#pragma warning(disable: 4101)
-#endif
-
 #if defined(PSXPC_VERSION)
 #include <assert.h>
 #endif

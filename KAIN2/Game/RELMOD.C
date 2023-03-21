@@ -3,7 +3,6 @@
 
 void RELMOD_InitModulePointers(intptr_t baseaddr, int* relocs)
 { 
-#if defined(PSX_VERSION)
 	unsigned int* rel_addr;
 
 	if (*relocs != -1)
@@ -35,40 +34,6 @@ void RELMOD_InitModulePointers(intptr_t baseaddr, int* relocs)
 			
 		} while (*relocs != -1);
 	}
-
-#elif defined(PC_VERSION)
-	int* v2; // esi
-	int i; // ecx
-	int v4; // eax
-	DWORD* v5; // eax
-
-	v2 = relocs;
-	for (i = *relocs; *v2 != -1; i = *v2)
-	{
-		v4 = i;
-		v4 = i & ~3;
-		++v2;
-		v5 = (DWORD*)(baseaddr + v4);
-		switch (i & 3)
-		{
-		case 0:
-			if (*v5 < 0x80000000)
-				*v5 += baseaddr;
-			break;
-		case 1:
-			*(WORD*)v5 = (unsigned int)(*v2++ + baseaddr + 0x8000) >> 16;
-			break;
-		case 2:
-			*(WORD*)v5 += baseaddr;
-			break;
-		case 3:
-			*v5 += ((unsigned int)baseaddr >> 2) & 0x3FFFFFF;
-			break;
-		default:
-			continue;
-		}
-	}
-#endif
 }
 
 
@@ -76,41 +41,5 @@ void RELMOD_InitModulePointers(intptr_t baseaddr, int* relocs)
 // void /*$ra*/ RELMOD_RelocModulePointers(int baseaddr /*$a0*/, int offset /*$a1*/, int *relocs /*$a2*/)
 void RELMOD_RelocModulePointers(int baseaddr, int offset, int *relocs)
 { // line 42, offset 0x8007ca58
-#if defined(PC_VERSION)
-	int* v3; // esi
-	int i; // ecx
-	int v5; // eax
-	int* v6; // eax
-	int v7; // ecx
-
-	v3 = relocs;
-	for (i = *relocs; *v3 != -1; i = *v3)
-	{
-		v5 = i;
-		v5 = i & ~3;
-		++v3;
-		v6 = (int*)(baseaddr + v5);
-		switch (i & 3)
-		{
-		case 0:
-			v7 = offset + *v6;
-			goto LABEL_7;
-		case 1:
-			*(WORD*)v6 = (unsigned int)(*v3++ + baseaddr + 0x8000) >> 16;
-			break;
-		case 2:
-			*(WORD*)v6 += offset;
-			break;
-		case 3:
-			v7 = (((unsigned int)baseaddr >> 2) & 0x3FFFFFF) - (((unsigned int)(baseaddr - offset) >> 2) & 0x3FFFFFF) + *v6;
-		LABEL_7:
-			*v6 = v7;
-			break;
-		default:
-			continue;
-		}
-	}
-#else
 	UNIMPLEMENTED();
-#endif
 }

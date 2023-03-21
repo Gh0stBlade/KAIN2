@@ -219,9 +219,9 @@ void ProcessArgs(char *baseAreaName, struct GameTracker *gameTracker)
 		ExtractWorldName(worldName, (char*)argData);
 		ExtractLevelNum(levelNum, (char*)argData);
 		
-#if defined(OVERRIDE_LEVEL) && !defined(DEMO)
-#define LEVEL_NAME "train"
-#define LEVEL_NUM "7"
+#if defined(OVERRIDE_LEVEL) && !defined(DEMO) || 1
+#define LEVEL_NAME "fire"
+#define LEVEL_NUM "3"
 		sprintf(baseAreaName, "%s%s", LEVEL_NAME, LEVEL_NUM);
 #else
 		sprintf(baseAreaName, "%s%s", worldName, levelNum);
@@ -812,6 +812,7 @@ void InitialiseGame(void* appData)
 			gameTracker->disp = &disp;
 			ProcessArgs(&gameTracker->baseAreaName[0], gameTracker);
 			InitMainTracker(mainTracker);
+
 			MAIN_DoMainInit();
 
 			mainTracker->mainState = 6;

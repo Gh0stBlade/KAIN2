@@ -9,6 +9,7 @@
 #include "Game/GLYPH.H"
 #include "Game/DRAW.H"
 #include "Game/LIGHT3D.H"
+#include "Game/COLLIDE.H"
 
 struct _FXBlastringEffect* fx_blastring;
 struct _Instance* FX_reaver_instance;
@@ -100,24 +101,11 @@ void FX_Init(struct _FXTracker* fxTracker)
 // void /*$ra*/ FX_Die(struct _FX_PRIM *fxPrim /*$s0*/, struct _FXTracker *fxTracker /*$s1*/)
 void FX_Die(struct _FX_PRIM *fxPrim, struct _FXTracker *fxTracker)
 { // line 191, offset 0x80042034
-#if defined(PC_VERSION)
-	if (dword_C54BE8 == fxPrim)
-	{
-		dword_C54BE8 = (struct _FX_PRIM*)fxPrim->node.prev;
-		if (!dword_C54BE8->node.prev)
-			dword_C54BE8 = 0;
-	}
-	fxPrim->flags |= 0x10u;
-	LIST_DeleteFunc(fxPrim);
-	LIST_InsertFunc(&fxTracker->freePrimList, &fxPrim->node);
-#else
 	UNIMPLEMENTED();
-#endif
 }
 
 struct _FX_MATRIX* FX_GetMatrix(struct _FXTracker* fxTracker)//Matching - 99.25%
 {
-#if defined(PSX_VERSION)
 	struct _FX_MATRIX* fxMatrix;
 
 	fxMatrix = (struct _FX_MATRIX*)LIST_GetFunc(&fxTracker->freeMatrixList);
@@ -130,23 +118,6 @@ struct _FX_MATRIX* FX_GetMatrix(struct _FXTracker* fxTracker)//Matching - 99.25%
 	}
 
 	return fxMatrix;
-
-#elif defined(PC_VERSION)
-	struct NodeType* Func; // eax
-	struct _FX_MATRIX* v2; // esi
-
-	Func = LIST_GetFunc(&fxTracker->freeMatrixList);
-	v2 = (struct _FX_MATRIX*)Func;
-	if (Func)
-	{
-		Func[1].prev = (struct NodeType*)1;
-		LIST_InsertFunc(&fxTracker->usedMatrixList, Func);
-	}
-	return v2;
-#else
-	UNIMPLEMENTED();
-	return NULL;
-#endif
 }
 
 
@@ -154,32 +125,8 @@ struct _FX_MATRIX* FX_GetMatrix(struct _FXTracker* fxTracker)//Matching - 99.25%
 // struct _FX_PRIM * /*$ra*/ FX_GetPrim(struct _FXTracker *fxTracker /*$a0*/)
 struct _FX_PRIM * FX_GetPrim(struct _FXTracker *fxTracker)
 { // line 222, offset 0x800420f4
-#if defined(PC_VERSION)
-	struct _FX_PRIM* result; // eax
-
-	result = (struct _FX_PRIM*)LIST_GetFunc(&fxTracker->freePrimList);
-	if (result)
-		goto LABEL_6;
-	if (dword_C54BE8)
-	{
-		result = dword_C54BE8;
-		dword_C54BE8 = (struct _FX_PRIM*)dword_C54BE8->node.prev;
-		dword_C54BE8->node.next = 0;
-		if (!dword_C54BE8->node.prev)
-			dword_C54BE8 = 0;
-	}
-	if (result)
-	{
-	LABEL_6:
-		result->process = 0;
-		result->flags = 0;
-		result->matrix = 0;
-	}
-	return result;
-#else
 	UNIMPLEMENTED();
 	return NULL;
-#endif
 }
 
 
@@ -187,36 +134,8 @@ struct _FX_PRIM * FX_GetPrim(struct _FXTracker *fxTracker)
 // struct _FXParticle * /*$ra*/ FX_GetParticle(struct _Instance *instance /*$s1*/, short startSegment /*$s0*/)
 struct _FXParticle * FX_GetParticle(struct _Instance *instance, short startSegment)
 { // line 247, offset 0x80042164
-#if defined(PC_VERSION)
-	struct _FXParticle* result; // eax
-
-	result = (struct _FXParticle*)MEMPACK_Malloc(0x4Cu, 0xDu);
-	if (result)
-	{
-		result->effectType = 1;
-		result->instance = instance;
-		result->type = 0;
-		result->startSegment = startSegment;
-		result->texture = 0;
-		result->continue_process = FX_ContinueParticle;
-		result->fxprim_process = 0;
-		result->fxprim_modify_process = 0;
-		result->startScale = 4096;
-		result->scaleSpeed = 0;
-		result->offset.z = 0;
-		result->offset.y = 0;
-		result->offset.x = 0;
-		result->acceleration.z = 0;
-		result->acceleration.y = 0;
-		result->acceleration.x = 0;
-		result->flag_bits = 0;
-		result->z_undulate = 0;
-	}
-	return result;
-#else
 	UNIMPLEMENTED();
 	return NULL;
-#endif
 }
 
 
@@ -224,222 +143,12 @@ struct _FXParticle * FX_GetParticle(struct _Instance *instance, short startSegme
 // void /*$ra*/ FX_AniTexSetup(struct _FX_PRIM *fxPrim /*$a2*/, struct _MFace *mface /*$a1*/, struct _Model *model /*$a2*/, struct _FXTracker *fxTracker /*$a3*/)
 void FX_AniTexSetup(struct _FX_PRIM *fxPrim, struct _MFace *mface, struct _Model *model, struct _FXTracker *fxTracker)
 { // line 271, offset 0x80042200
-#if defined(PC_VERSION)
-	int flags; // edx
-	struct TextureMT3* color; // ecx
-
-	flags = fxPrim->flags;
-	if ((mface->flags & 2) != 0)
-	{
-		fxPrim->flags = flags | 1;
-		color = (struct TextureMT3*)mface->color;
-		fxPrim->texture = color;
-		fxPrim->color = color->color & 0x3FFFFFF | 0x24000000;
-	}
-	else
-	{
-		fxPrim->flags = flags & 0xFFFFFFFA;
-		fxPrim->color = mface->color & 0x3FFFFFF | 0x20000000;
-	}
-#else
 	UNIMPLEMENTED();
-#endif
 }
 
 void FX_StandardProcess(struct _FX_PRIM* fxPrim, struct _FXTracker* fxTracker)
 {
-#if defined(PSX_VERSION)
 	FX_StandardFXPrimProcess(fxPrim, fxTracker);
-#elif defined(PC_VERSION)
-	__int16 timeToLive; // ax
-	__int16 v4; // ax
-	int v5; // ebx
-	int endColor; // edx
-	__int16 fadeStep; // cx
-	int v8; // eax
-	int y; // eax
-	int v10; // ecx
-	int segment; // edx
-	MATRIX* matrix; // eax
-	__int16 v13; // cx
-	MATRIX* v14; // eax
-	__int16 xAccl; // bp
-	__int16 yAccl; // bx
-	__int16 zAccl; // dx
-	__int16 xVel; // ax
-	__int16 yVel; // cx
-	__int16 zVel; // dx
-	__int16 work0; // ax
-	int flags; // eax
-	struct _FX_MATRIX* v23; // ecx
-	int v24; // eax
-	__int16 v25; // di
-	__int16 v26; // bx
-	int startColor; // [esp+10h] [ebp-8h] BYREF
-	int v28; // [esp+14h] [ebp-4h] BYREF
-	int node; // [esp+1Ch] [ebp+4h]
-	struct _FXTracker* fxTrackera; // [esp+20h] [ebp+8h]
-
-	timeToLive = fxPrim->timeToLive;
-	if (timeToLive > 0)
-	{
-		v4 = timeToLive - FX_Frames;
-		fxPrim->timeToLive = v4;
-		if (v4 < 0)
-			fxPrim->timeToLive = 0;
-	}
-	if (!fxPrim->timeToLive)
-	{
-		if (dword_C54BE8 == fxPrim)
-		{
-			dword_C54BE8 = (struct _FX_PRIM*)fxPrim->node.prev;
-			if (!dword_C54BE8->node.prev)
-			{
-				dword_C54BE8 = 0;
-				fxPrim->flags |= 0x10u;
-				LIST_DeleteFunc(fxPrim);
-				LIST_InsertFunc(&fxTracker->freePrimList, &fxPrim->node);
-				return;
-			}
-		}
-		goto LABEL_26;
-	}
-	node = fxPrim->flags;
-	v5 = node;
-	if ((node & 0x40000) != 0)
-	{
-		endColor = fxPrim->endColor;
-		startColor = fxPrim->startColor;
-		v28 = endColor;
-		if (FX_Frames)
-		{
-			fadeStep = fxPrim->fadeStep;
-			v8 = FX_Frames;
-			do
-			{
-				fxPrim->fadeValue[0] += fadeStep;
-				--v8;
-			} while (v8);
-		}
-		if (fxPrim->fadeValue[0] > 4096)
-			fxPrim->fadeValue[0] = 4096;
-		if (fxPrim->fadeValue[0] < 0)
-			fxPrim->fadeValue[0] = 0;
-		gte_lddp(4096 - fxPrim->fadeValue[0]);
-		gte_ldcv(&startColor);
-		gte_GPF(1);
-		gte_lddp(fxPrim->fadeValue[0]);
-		gte_ldcv(&v28);
-		gte_GPL(1);
-		gte_stcv(&fxPrim->color);
-		if ((node & 1) != 0)
-			fxPrim->color = fxPrim->color & 0x3FFFFFF | 0x2C000000;
-	}
-	if ((node & 0x2000) != 0)
-	{
-		y = fxPrim->v0.y;
-		if (FX_Frames)
-		{
-			v10 = FX_Frames;
-			do
-			{
-				y -= fxPrim->work3;
-				--v10;
-			} while (v10);
-		}
-		if (y <= 0)
-		{
-			if (dword_C54BE8 == fxPrim)
-			{
-				dword_C54BE8 = (struct _FX_PRIM*)fxPrim->node.prev;
-				if (!dword_C54BE8->node.prev)
-					dword_C54BE8 = 0;
-			}
-		LABEL_26:
-			fxPrim->flags |= 0x10u;
-			LIST_DeleteFunc(fxPrim);
-			LIST_InsertFunc(&fxTracker->freePrimList, &fxPrim->node);
-			return;
-		}
-		fxPrim->v0.y = y;
-	}
-	if ((node & 0x20) != 0)
-	{
-		segment = fxPrim->duo.flame.segment;
-		matrix = fxPrim->duo.flame.parent->matrix;
-		v13 = matrix[segment].t[0];
-		v14 = &matrix[segment];
-		fxPrim->position.x = v13;
-		fxPrim->position.y = v14->t[1];
-		fxPrim->position.z = v14->t[2];
-	}
-	else if ((node & 2) == 0)
-	{
-		if (FX_Frames)
-		{
-			xAccl = fxPrim->duo.phys.xAccl;
-			yAccl = fxPrim->duo.phys.yAccl;
-			fxTrackera = (struct _FXTracker*)FX_Frames;
-			do
-			{
-				zAccl = fxPrim->duo.phys.zAccl;
-				fxPrim->duo.phys.xVel += xAccl;
-				fxPrim->duo.phys.yVel += yAccl;
-				fxPrim->duo.phys.zVel += zAccl;
-				xVel = fxPrim->duo.phys.xVel;
-				yVel = fxPrim->duo.phys.yVel;
-				zVel = fxPrim->duo.phys.zVel;
-				if ((node & 0x1000000) != 0)
-				{
-					fxPrim->v0.x += xVel;
-					fxPrim->v1.x += xVel;
-					fxPrim->v0.y += yVel;
-					fxPrim->v1.y += yVel;
-					fxPrim->v0.z += zVel;
-					fxPrim->v1.z += zVel;
-				}
-				else
-				{
-					fxPrim->position.x += xVel;
-					fxPrim->position.y += yVel;
-					fxPrim->position.z += zVel;
-				}
-				fxTrackera = (struct _FXTracker*)((char*)fxTrackera - 1);
-			} while (fxTrackera);
-			v5 = node;
-		}
-		if ((v5 & 0x100) != 0)
-		{
-			work0 = fxPrim->work0;
-			if (fxPrim->position.z <= work0)
-			{
-				fxPrim->position.z = work0;
-				flags = fxPrim->flags;
-				flags = flags | 2;
-				fxPrim->flags = flags;
-			}
-		}
-	}
-	if ((v5 & 0x8000000) == 0)
-	{
-		v23 = fxPrim->matrix;
-		if (v23)
-		{
-			v24 = v23->flags;
-			if ((v24 & 2) == 0)
-			{
-				v24 = v24 | 2;
-				v23->flags = v24;
-				if ((v5 & 0x80u) != 0)
-				{
-					RotMatrixX(4 * (fxPrim->work2 >> 8),   &fxPrim->matrix->lwTransform);
-					RotMatrixY(4 * (fxPrim->work3 & 0xff), &fxPrim->matrix->lwTransform);
-					RotMatrixZ(4 * (fxPrim->work3 >> 8),   &fxPrim->matrix->lwTransform);
-				}
-			}
-		}
-	}
-#endif
 }
 
 
@@ -447,80 +156,7 @@ void FX_StandardProcess(struct _FX_PRIM* fxPrim, struct _FXTracker* fxTracker)
 // void /*$ra*/ FX_ShatterProcess(struct _FX_PRIM *fxPrim /*$s0*/, struct _FXTracker *fxTracker /*$s1*/)
 void FX_ShatterProcess(struct _FX_PRIM *fxPrim, struct _FXTracker *fxTracker)
 { // line 396, offset 0x8004229c
-#if defined(PC_VERSION)
-	__int16 timeToLive; // ax
-	int flags; // ebx
-	int timeMult_low; // eax
-	int v5; // edx
-	int v6; // edi
-	__int16 xVel; // cx
-	int v8; // ebp
-	int v9; // ecx
-	int zVel; // edx
-	__int16 work0; // ax
-	__int16 work3; // dx
-	struct _FX_MATRIX* matrix; // eax
-	SVECTOR v14; // [esp+10h] [ebp-28h] BYREF
-	MATRIX v15; // [esp+18h] [ebp-20h] BYREF
-
-	timeToLive = fxPrim->timeToLive;
-	v14.pad = 0;
-	if (timeToLive > 0)
-		fxPrim->timeToLive = timeToLive - 1;
-	if (fxPrim->timeToLive)
-	{
-		flags = fxPrim->flags;
-		if ((flags & 2) == 0)
-		{
-			timeMult_low = gameTrackerX.timeMult;
-			v5 = gameTrackerX.timeMult * fxPrim->duo.phys.yAccl;
-			v6 = gameTrackerX.timeMult * fxPrim->duo.phys.zAccl;
-			fxPrim->duo.phys.xVel += (gameTrackerX.timeMult * fxPrim->duo.phys.xAccl) >> 12;
-			xVel = fxPrim->duo.phys.xVel;
-			fxPrim->duo.phys.yVel += v5 >> 12;
-			v5 = fxPrim->duo.phys.yVel;
-			v8 = xVel * timeMult_low;
-			fxPrim->duo.phys.zVel += v6 >> 12;
-			v9 = (__int16)v5 * timeMult_low;
-			zVel = fxPrim->duo.phys.zVel;
-			fxPrim->position.y += v9 >> 12;
-			fxPrim->position.z += (zVel * timeMult_low) >> 12;
-			v9 = fxPrim->position.z;
-			work0 = fxPrim->work0;
-			fxPrim->position.x += v8 >> 12;
-			if ((__int16)v9 < work0)
-			{
-				fxPrim->position.z = work0;
-				fxPrim->flags = flags | 2;
-				fxPrim->timeToLive = 6;
-			}
-			work3 = fxPrim->work3;
-			if (work3)
-			{
-				matrix = fxPrim->matrix;
-				v14.vx = (work3 * matrix->lwTransform.m[0][0]) >> 12;
-				v14.vy = (work3 * matrix->lwTransform.m[1][0]) >> 12;
-				v14.vz = (work3 * matrix->lwTransform.m[2][0]) >> 12;
-				RotMatrix(&v14, &v15);
-				MulMatrix2(&v15, &fxPrim->matrix->lwTransform);
-			}
-		}
-	}
-	else
-	{
-		if (dword_C54BE8 == fxPrim)
-		{
-			dword_C54BE8 = (struct _FX_PRIM*)fxPrim->node.prev;
-			if (!dword_C54BE8->node.prev)
-				dword_C54BE8 = 0;
-		}
-		fxPrim->flags |= 0x10u;
-		LIST_DeleteFunc(fxPrim);
-		LIST_InsertFunc(&fxTracker->freePrimList, &fxPrim->node);
-	}
-#else
 	UNIMPLEMENTED();
-#endif
 }
 
 
@@ -854,33 +490,7 @@ void _FX_BuildNonSegmentedSplinters(struct _Instance *instance, SVECTOR*center, 
 // void /*$ra*/ _FX_BuildSplinters(struct _Instance *instance /*$s2*/, SVECTOR*center /*$s4*/, SVECTOR*vel /*$s5*/, SVECTOR*accl /*$s6*/, struct FXSplinter *splintDef /*stack 16*/, struct _FXTracker *fxTracker /*stack 20*/, TDRFuncPtr__FX_BuildSplinters6fxSetup fxSetup /*stack 24*/, TDRFuncPtr__FX_BuildSplinters7fxProcess fxProcess /*stack 28*/, int shardFlags /*stack 32*/)
 void _FX_BuildSplinters(struct _Instance *instance, SVECTOR*center, SVECTOR*vel, SVECTOR*accl, struct FXSplinter *splintDef, struct _FXTracker *fxTracker, TDRFuncPtr__FX_BuildSplinters6fxSetup fxSetup, TDRFuncPtr__FX_BuildSplinters7fxProcess fxProcess, int shardFlags)
 { // line 1541, offset 0x8004403c
-#if defined(PC_VERSION)
-	int v9; // ecx
-	__int16 soundFx; // ax
-	int v11; // ebx
-
-	if (MEMPACK_MemoryValidFunc((char*)instance->object))
-	{
-		if (splintDef)
-		{
-			v9 = splintDef->flags;
-			soundFx = splintDef->soundFx;
-			v11 = v9 | shardFlags;
-			if (soundFx)
-				SndPlay(soundFx);
-		}
-		else
-		{
-			v11 = shardFlags;
-		}
-		if (instance->object->modelList[instance->currentModel]->numSegments < 4 || (v11 & 0x20) != 0)
-			FX_BuildNonSegmentedSplinters(instance, center, vel, accl, splintDef, fxTracker, fxSetup, fxProcess, v11);
-		else
-			FX_BuildSegmentedSplinters(instance, center, vel, accl, splintDef, fxTracker, fxSetup, fxProcess, v11);
-	}
-#else
 	UNIMPLEMENTED();
-#endif
 }
 
 
@@ -888,7 +498,6 @@ void _FX_BuildSplinters(struct _Instance *instance, SVECTOR*center, SVECTOR*vel,
 // void /*$ra*/ _FX_Build(struct _Instance *instance /*$s0*/, SVECTOR*center /*$s2*/, SVECTOR*vel /*$s3*/, SVECTOR*accl /*$s4*/, struct _FXTracker *fxTracker /*stack 16*/, TDRFuncPtr__FX_Build5fxSetup fxSetup /*stack 20*/, TDRFuncPtr__FX_Build6fxProcess fxProcess /*stack 24*/, int shardFlags /*stack 28*/)
 void _FX_Build(struct _Instance *instance, SVECTOR*center, SVECTOR*vel, SVECTOR*accl, struct _FXTracker *fxTracker, TDRFuncPtr__FX_Build5fxSetup fxSetup, TDRFuncPtr__FX_Build6fxProcess fxProcess, int shardFlags)
 {
-#if defined(PSX_VERSION)
 	if (MEMPACK_MemoryValidFunc((char*)instance->object) != 0)
 	{
 		if (instance->object->modelList[instance->currentModel]->numSegments < 4)
@@ -900,32 +509,11 @@ void _FX_Build(struct _Instance *instance, SVECTOR*center, SVECTOR*vel, SVECTOR*
 			_FX_BuildSegmentedSplinters(instance, center, vel, accl, NULL, fxTracker, fxSetup, fxProcess, shardFlags);
 		}
 	}
-#elif defined(PC_VERSION)
-	int shardFlags; // [esp+24h] [ebp+20h]
-
-	if (MEMPACK_MemoryValidFunc((char*)instance->object))
-	{
-		if (instance->object->modelList[instance->currentModel]->numSegments >= 4)
-			FX_BuildSegmentedSplinters(instance, center, vel, accl, 0, fxTracker, fxSetup, fxProcess, shardFlags);
-		else
-			FX_BuildNonSegmentedSplinters(instance, center, vel, accl, 0, fxTracker, fxSetup, fxProcess, shardFlags);
-	}
-#endif
 }
 
 void FX_Build(struct _Instance* instance, SVECTOR* center, SVECTOR* vel, SVECTOR* accl, struct _FXTracker* fxTracker, TDRFuncPtr_FX_Build5fxSetup fxSetup, TDRFuncPtr_FX_Build6fxProcess fxProcess)
 {
-#if defined(PSX_VERSION)
 	_FX_Build(instance, center, vel, accl, fxTracker, fxSetup, fxProcess, 0);
-#elif defined(PC_VERSION)
-	if (MEMPACK_MemoryValidFunc((char*)instance->object))
-	{
-		if (instance->object->modelList[instance->currentModel]->numSegments >= 4)
-			_FX_BuildSegmentedSplinters(instance, center, vel, accl, 0, fxTracker, fxSetup, fxProcess, 0);
-		else
-			_FX_BuildNonSegmentedSplinters(instance, center, vel, accl, 0, fxTracker, fxSetup, fxProcess, 0);
-	}
-#endif
 }
 
 
@@ -933,42 +521,11 @@ void FX_Build(struct _Instance* instance, SVECTOR* center, SVECTOR* vel, SVECTOR
 // void /*$ra*/ FX_UpdatePos(struct _FX_PRIM *fxPrim /*$t2*/, struct _SVector *offset /*$t3*/, int spriteflag /*$a2*/)
 void FX_UpdatePos(struct _FX_PRIM *fxPrim, struct _SVector *offset, int spriteflag)
 { // line 1747, offset 0x800442dc
-#if defined(PC_VERSION)
-	int flags; // edx
-
-	fxPrim->position.x += offset->x;
-	fxPrim->position.y += offset->y;
-	fxPrim->position.z += offset->z;
-	if (!spriteflag)
-	{
-		flags = fxPrim->flags;
-		if ((flags & 0x10000) != 0)
-		{
-			fxPrim->v0.x += offset->x;
-			fxPrim->v0.y += offset->y;
-			fxPrim->v0.z += offset->z;
-			fxPrim->v1.x += offset->x;
-			fxPrim->v1.y += offset->y;
-			fxPrim->v1.z += offset->z;
-			fxPrim->v2.x += offset->x;
-			fxPrim->v2.y += offset->y;
-			fxPrim->v2.z += offset->z;
-			if ((flags & 8) != 0)
-			{
-				fxPrim->v3.x += offset->x;
-				fxPrim->v3.y += offset->y;
-				fxPrim->v3.z += offset->z;
-			}
-		}
-	}
-#else
 	UNIMPLEMENTED();
-#endif
 }
 
 void FX_Relocate(struct _SVector* offset)//Matching - 99.72%
 {
-#if defined(PSX_VERSION)
 	struct _FX_PRIM* fxPrim;
 	struct _FXTracker* fxTracker;
 	struct _FXGeneralEffect* currentEffect;
@@ -1027,65 +584,10 @@ void FX_Relocate(struct _SVector* offset)//Matching - 99.72%
 
 		currentEffect = (struct _FXGeneralEffect*)currentEffect->next;
 	}
-
-#elif defined(PC_VERSION)
-	struct _FXTracker* v1; // ebx
-	struct _FX_PRIM* fxPrim; // edi
-	struct _FX_PRIM* currentEffect; // edi
-	struct _FXTracker* fxTracker; // eax
-	unsigned __int8 effectType; // cl
-	int numberVerts; // edi
-	int i; // ecx
-
-	v1 = gFXT;
-	for (fxPrim = (struct _FX_PRIM*)gFXT->usedPrimList.next; fxPrim; fxPrim = (struct _FX_PRIM*)fxPrim->node.next)
-		FX_UpdatePos(fxPrim, offset, 0);
-	for (currentEffect = (struct _FX_PRIM*)v1->usedPrimListSprite.next;
-		currentEffect;
-		currentEffect = (struct _FX_PRIM*)currentEffect->node.next)
-	{
-		FX_UpdatePos(currentEffect, offset, 1);
-		if (currentEffect->process == FX_WaterBubbleProcess)
-			currentEffect->timeToLive += offset->z;
-	}
-	fxTracker = (struct _FXTracker*)ring;
-	if (ring)
-	{
-		do
-		{
-			effectType = fxTracker->matrixPool[0].lwTransform.m[0][0];
-			if (effectType)
-			{
-				if (effectType == 0x84)
-				{
-					fxTracker->matrixPool[0].lwTransform.m[0][2] += offset->x;
-					fxTracker->matrixPool[0].lwTransform.m[1][0] += offset->y;
-					fxTracker->matrixPool[0].lwTransform.m[1][1] += offset->z;
-				}
-			}
-			else
-			{
-				numberVerts = fxTracker->matrixPool[0].lwTransform.m[0][2];
-				for (i = 0; i < numberVerts; ++i)
-				{
-					*(_WORD*)(*(_DWORD*)&fxTracker->matrixPool[0].lwTransform.m[1][1] + 8 * i) += offset->x;
-					*(_WORD*)(*(_DWORD*)&fxTracker->matrixPool[0].lwTransform.m[1][1] + 8 * i + 2) += offset->y;
-					*(_WORD*)(*(_DWORD*)&fxTracker->matrixPool[0].lwTransform.m[1][1] + 8 * i + 4) += offset->z;
-				}
-			}
-			fxTracker = (struct _FXTracker*)fxTracker->matrixPool[0].node.prev;
-		} while (fxTracker);
-	}
-	return fxTracker;
-#else
-	UNIMPLEMENTED();
-	return;
-#endif
 }
 
 void FX_UpdateTexturePointers(struct _FX_PRIM* fxPrim, struct Object* oldObject, int sizeOfObject, int offset)//Matching - 100%
 {
-#if defined(PSX_VERSION)
 	while (fxPrim)
 	{
 		if ((fxPrim->flags & 0x1))
@@ -1100,24 +602,6 @@ void FX_UpdateTexturePointers(struct _FX_PRIM* fxPrim, struct Object* oldObject,
 
 		fxPrim = (struct _FX_PRIM*)fxPrim->node.next;
 	}
-#elif defined(PC_VERSION)
-	struct _FX_PRIM* i; // ecx
-	unsigned int texture; // eax
-
-	for (i = fxPrim; i; i = (struct _FX_PRIM*)i->node.next)
-	{
-		if ((i->flags & 1) != 0)
-		{
-			texture = (unsigned int)i->texture;
-			if (texture >= (unsigned int)oldObject && texture <= (unsigned int)oldObject + sizeOfObject)
-			{
-				if (texture)
-					texture += offset;
-				i->texture = (struct TextureMT3*)texture;
-			}
-		}
-	}
-#endif
 }
 
 
@@ -1125,61 +609,7 @@ void FX_UpdateTexturePointers(struct _FX_PRIM* fxPrim, struct Object* oldObject,
 // void /*$ra*/ FX_RelocateFXPointers(struct Object *oldObject /*$s3*/, struct Object *newObject /*$a1*/, long sizeOfObject /*$s2*/)
 void FX_RelocateFXPointers(struct Object *oldObject, struct Object *newObject, long sizeOfObject)
 { // line 1842, offset 0x80044640
-#if defined(PC_VERSION)
-	struct _FXTracker* v3; // esi
-	struct _FXGeneralEffect* next; // ecx
-	int i; // edi
-	struct _FXGeneralEffect* prev; // eax
-	struct _FXGeneralEffect* j; // ecx
-	struct _Instance* v8; // eax
-	struct _FXGlowEffect* k; // ecx
-	unsigned int diffTime; // eax
-	extern struct _FXGlowEffect* ring;
-
-	v3 = gFXT;
-	next = (struct _FXGeneralEffect*)gFXT->usedPrimList.next;
-	for (i = (char*)newObject - (char*)oldObject; next; next = (struct _FXGeneralEffect*)next->continue_process)
-	{
-		if ((next->effectType & 1) != 0)
-		{
-			prev = (struct _FXGeneralEffect*)next->instance;
-			if (prev >= (struct _FXGeneralEffect*)oldObject
-				&& prev <= (struct _FXGeneralEffect*)((char*)oldObject + sizeOfObject))
-			{
-				if (prev)
-					prev = (struct _FXGeneralEffect*)((char*)prev + i);
-				next->instance = (struct _Instance*)prev;
-			}
-		}
-	}
-	for (j = (struct _FXGeneralEffect*)v3->usedPrimListSprite.next; j; j = (struct _FXGeneralEffect*)j->continue_process)
-	{
-		if ((j->effectType & 1) != 0)
-		{
-			v8 = j->instance;
-			if (v8 >= (struct _Instance*)oldObject && v8 <= (struct _Instance*)((char*)oldObject + sizeOfObject))
-			{
-				if (v8)
-					v8 = (struct _Instance*)((char*)v8 + i);
-				j->instance = v8;
-			}
-		}
-	}
-	for (k = ring; k; k = (struct _FXGlowEffect*)k->next)
-	{
-		if (k->effectType == 1)
-		{
-			diffTime = k->diffTime;
-			if (diffTime)
-			{
-				if (diffTime >= (unsigned int)oldObject && diffTime <= (unsigned int)oldObject + sizeOfObject)
-					k->diffTime = i + diffTime;
-			}
-		}
-	}
-#else
 	UNIMPLEMENTED();
-#endif
 }
 
 
@@ -1225,8 +655,6 @@ extern struct _Instance* inst_Reaver;
 
 void FX_DrawReaver(struct _PrimPool *primPool, unsigned int **ot, MATRIX *wcTransform)
 {
-#if defined(PSX_VERSION)
-
 	if (FX_reaver_instance != NULL)
 	{
 		FX_SoulReaverWinding(FX_reaver_instance, primPool, ot, wcTransform);
@@ -1235,50 +663,6 @@ void FX_DrawReaver(struct _PrimPool *primPool, unsigned int **ot, MATRIX *wcTran
 	}
 
 	FX_reaver_instance = NULL;
-
-#elif defined(PC_VERSION)
-	struct _Instance* v3; // eax
-	struct __ReaverData* rv; // esi
-	__int16 v6; // di
-	int v7; // ebx
-	__int64 v8; // rax
-	MATRIX* v10; // [esp+4h] [ebp-34h]
-	struct _SVector end; // [esp+8h] [ebp-30h] BYREF
-	struct _SVector start; // [esp+10h] [ebp-28h] BYREF
-	MATRIX mat; // [esp+18h] [ebp-20h] BYREF
-	MATRIX* wcTransforma; // [esp+44h] [ebp+Ch]
-
-	if (inst_Reaver)
-	{
-		rv = (struct __ReaverData*)inst_Reaver->extraData;
-		if (rv->ReaverPickedUp && rv->ReaverOn)
-		{
-			v6 = -rv->ReaverDeg;
-			CompMatrix(wcTransform, &gameTrackerX.playerInstance->matrix[40], &mat);
-			start.z = 0;
-			start.y = 0;
-			start.x = 0;
-			end.y = 0;
-			end.x = 0;
-			end.z = -128;
-			v7 = rv->ReaverBladeColor;
-			long glow = rv->ReaverBladeGlowColor;
-			FX_Lightning(wcTransform, ot, &mat, v6, &start, &end, 30, 10, 16, 32, 0, v7, glow);
-			CompMatrix(wcTransform, &gameTrackerX.playerInstance->matrix[39], &mat);
-			end.z = -96;
-			FX_Lightning(wcTransform, ot, &mat, v6, &start, &end, 30, 10, 16, 32, 0, v7, glow);
-			v10 = &inst_Reaver->matrix[1];
-			v8 = rv->ReaverScale * rv->ReaverSize;
-			end.z = -380 * (((WORD2(v8) & 0xFFF) + (int)v8) >> 12) / 4096;
-			if (rv->CurrentReaver == 1)
-				v7 = 0xFCFFD3;
-			CompMatrix(wcTransform, v10, &mat);
-			FX_Lightning(wcTransform, ot, &mat, v6, &start, &end, 0, 25, 4, 8, 0, v7, glow);
-		}
-		FX_SoulReaverBlade(v3, ot);
-	}
-	inst_Reaver = 0;
-#endif
 }
 
 
@@ -2384,40 +1768,12 @@ struct _FX_PRIM * FX_Dot(struct _SVector *location, struct _SVector *vel, struct
 // void /*$ra*/ FX_Blood(struct _SVector *location /*$s4*/, struct _SVector *input_vel /*$s1*/, struct _SVector *accel /*$s5*/, int amount /*$a3*/, long color /*stack 16*/, long size /*stack 20*/)
 void FX_Blood(struct _SVector *location, struct _SVector *input_vel, struct _SVector *accel, int amount, long color, long size)
 { // line 4336, offset 0x800485b8
-#if defined(PC_VERSION)
-	int i; // esi
-	struct _SVector vel; // [esp+4h] [ebp-8h] BYREF
-
-	for (i = amount; i; --i)
-	{
-		vel.x = (rand() & 7) + input_vel->x * i / 128 - 4;
-		vel.y = (rand() & 7) + input_vel->y * i / 128 - 4;
-		vel.z = (rand() & 7) + input_vel->z * i / 128 - 4;
-		FX_Dot(location, &vel, accel, 0, color, 2 * size, 16, 1);
-	}
-#else
 	UNIMPLEMENTED();
-#endif
 }
 
 void FX_Blood2(struct _SVector* location, struct _SVector* input_vel, struct _SVector* accel, int amount, long color, long dummyCrapShouldRemove)
 {
-#if defined(PSX_VERSION)
 	FX_Blood(location, input_vel, accel, amount, color, 4);
-#elif defined(PC_VERSION)
-	int i; // esi
-	struct _SVector vel; // [esp+4h] [ebp-8h] BYREF
-
-	for (i = amount; i; --i)
-	{
-		vel.x = (rand() & 7) + input_vel->x * i / 128 - 4;
-		vel.y = (rand() & 7) + input_vel->y * i / 128 - 4;
-		vel.z = (rand() & 7) + input_vel->z * i / 128 - 4;
-		FX_Dot(location, &vel, accel, 0, color, 8, 16, 1);
-	}
-#else
-	UNIMPLEMENTED();
-#endif
 }
 
 
@@ -2473,61 +1829,8 @@ struct _FXParticle * FX_BloodCone(struct _Instance *instance, short startSegment
 // struct _FXParticle * /*$ra*/ FX_GetTorchParticle(struct _Instance *instance /*$s1*/, short startSegment /*$a1*/, int tex /*$s2*/, int birthRadius /*$s3*/, int num /*stack 16*/)
 struct _FXParticle * FX_GetTorchParticle(struct _Instance *instance, short startSegment, int tex, int birthRadius, int num)
 { // line 4447, offset 0x800489b8
-#if defined(PC_VERSION)
-	struct _FXParticle* result; // eax
-	struct Object* object; // edx
-	int v7; // edx
-
-	result = (struct _FXParticle*)MEMPACK_Malloc(sizeof(_FXParticle), 0xDu);
-	if (result)
-	{
-		result->effectType = 1;
-		result->type = 0;
-		result->instance = instance;
-		result->startSegment = startSegment;
-		result->texture = 0;
-		result->continue_process = FX_ContinueParticle;
-		result->fxprim_process = 0;
-		result->fxprim_modify_process = 0;
-		result->startScale = 4096;
-		result->scaleSpeed = 0;
-		result->offset.z = 0;
-		result->offset.y = 0;
-		result->offset.x = 0;
-		result->acceleration.z = 0;
-		result->acceleration.y = 0;
-		result->acceleration.x = 0;
-		result->flag_bits = 0;
-		result->z_undulate = 0;
-	}
-	if (result)
-	{
-		result->type = 1;
-		result->fxprim_process = FX_FlamePrimProcess;
-		object = instance->object;
-		object->oflags2 |= 0x20000000u;
-		v7 = *(DWORD*)(*(DWORD*)(*((DWORD*)object->modelList + 1) + 20) + 20);
-		result->endColor = 0;
-		result->flag_bits |= 1u;
-		result->texture = (struct TextureMT3*)(16 * (tex + 1) + v7);
-		result->startFadeValue = 5;
-		result->fadeStep = 5;
-		result->primLifeTime = 16;
-		result->acceleration.z = 1;
-		result->lifeTime = -1;
-		result->startColor = 33571056;
-		result->size = 48;
-		result->scaleSpeed = 100;
-		result->birthRadius = birthRadius;
-		result->numberBirthParticles = num;
-		result->next = ring;
-		ring = (_FXParticle*)result;
-	}
-	return result;
-#else
 	UNIMPLEMENTED();
 	return NULL;
-#endif
 }
 
 
@@ -2555,7 +1858,6 @@ struct _FXParticle * FX_TorchFlame(struct _Instance *instance, short startSegmen
 
 int FX_GetMorphFadeVal()
 {
-#if defined(PSX_VERSION)
 	int fade;
 	
 	fade = (gameTrackerX.gameData.asmData.MorphTime * 4096) / 1000;
@@ -2566,12 +1868,6 @@ int FX_GetMorphFadeVal()
 	}
 
 	return fade;
-#elif defined(PC_VERSION)
-	int result = (gameTrackerX.gameData.asmData.MorphTime << 12) / 1000;
-	if (gameTrackerX.gameData.asmData.MorphType == 1)
-		return 4096 - result;
-	return result;
-#endif
 }
 
 
@@ -2579,21 +1875,7 @@ int FX_GetMorphFadeVal()
 // void /*$ra*/ FX_ConvertCamPersToWorld(SVECTOR*campos /*$s0*/, SVECTOR*worldpos /*$s1*/)
 void FX_ConvertCamPersToWorld(SVECTOR*campos, SVECTOR*worldpos)
 { // line 4550, offset 0x80048c38
-	int vz; // esi
-#if defined(PC_VERSION)
-	SetRotMatrix(theCamera.cwTransform2);
-	SetTransMatrix(theCamera.cwTransform2);
-	campos->vx += D3D_XRes / -2;
-	campos->vy += D3D_YRes / -2;
-	vz = campos->vz;
-	campos->vx = (__int16)(vz * (320 * campos->vx / 512)) / 320;
-	campos->vy = vz * campos->vy / 320;
-	gte_ldv0(campos);
-	gte_MVMVA(1, 0, 0, 0, 0);
-	gte_stsv(worldpos);
-#else
 	UNIMPLEMENTED();
-#endif
 }
 
 
@@ -2601,13 +1883,7 @@ void FX_ConvertCamPersToWorld(SVECTOR*campos, SVECTOR*worldpos)
 // void /*$ra*/ FX_GetRandomScreenPt(SVECTOR*point /*$s0*/)
 void FX_GetRandomScreenPt(SVECTOR*point)
 { // line 4570, offset 0x80048d50
-#if defined(PC_VERSION)
-	point->vx = rand() % D3D_XRes;
-	point->vy = rand() % D3D_YRes;
-	point->vz = (rand() & 0xFFF) + 384;
-#else
 	UNIMPLEMENTED();
-#endif
 }
 
 
@@ -2970,24 +2246,30 @@ void FX_SoulReaverWinding(struct _Instance *instance, struct _PrimPool *primPool
 }
 
 
-// autogenerated function stub: 
-// void /*$ra*/ FX_UpdateInstanceWaterSplit(struct _Instance *instance /*$s0*/)
-void FX_UpdateInstanceWaterSplit(struct _Instance *instance)
-{ // line 5356, offset 0x8004a878
-	/* begin block 1 */
-		// Start line: 5357
-		// Start offset: 0x8004A878
-		// Variables:
-			struct _SVector normal; // stack offset -16
-	/* end block 1 */
-	// End offset: 0x8004A938
-	// End Line: 5391
+void FX_UpdateInstanceWaterSplit(struct _Instance* instance)
+{
+	struct _TFace* waterFace;
+	struct _SVector normal;
 
-	/* begin block 2 */
-		// Start line: 13407
-	/* end block 2 */
-	// End Line: 13408
-			UNIMPLEMENTED();
+	if (instance->waterFace != NULL && instance->waterFaceTerrain != NULL)
+	{
+		if ((instance->halvePlane.flags & 0x8) == 0)
+		{
+			COLLIDE_GetNormal((short)instance->waterFace->normal, (short*)instance->waterFaceTerrain->normalList, &normal);
+			instance->halvePlane.flags = 0x2;
+			FX_GetPlaneEquation(&normal, &instance->splitPoint, &instance->halvePlane);
+		}
+		FX_MakeWaterTrail(instance, (int)instance->splitPoint.z);
+	}
+	else
+	{
+		instance->halvePlane.flags &= 0xFFFD;
+	}
+
+	waterFace = instance->waterFace;
+	instance->waterFace = NULL;
+	instance->waterFaceTerrain = NULL;
+	instance->oldWaterFace = waterFace;
 }
 
 
@@ -4669,34 +3951,8 @@ void FX_DrawFField(MATRIX *wcTransform, struct _FXForceFieldEffect *field)
 // struct _FXForceFieldEffect * /*$ra*/ FX_StartFField(struct _Instance *instance /*$s2*/, int size /*$s3*/, _Position *offset /*$s1*/, int size_diff /*$s4*/, int size_change /*stack 16*/, int deg_change /*stack 20*/, long color /*stack 24*/)
 struct _FXForceFieldEffect * FX_StartFField(struct _Instance *instance, int size, _Position *offset, int size_diff, int size_change, int deg_change, long color)
 { // line 8021, offset 0x8004e810
-#if defined(PC_VERSION)
-	struct _FXForceFieldEffect* result; // eax
-
-	result = (struct _FXForceFieldEffect*)MEMPACK_Malloc(0x2Cu, 0xDu);
-	if (result)
-	{
-		result->instance = instance;
-		result->size = size;
-		result->effectType = -122;
-		result->type = 0;
-		result->lifeTime = -1;
-		result->continue_process = 0;
-		*(_Position*)&result->offset.x = *offset;
-		result->size_diff = size_diff;
-		result->size_change = size_change;
-		result->deg = 0;
-		result->end_fade = 0;
-		result->deg_change = deg_change;
-		result->start_fade = 4096;
-		result->color = color;
-		result->next = ring;
-		ring = (struct _FXGlowEffect*)result;
-	}
-	return result;
-#else
 	UNIMPLEMENTED();
 	return 0;
-#endif
 }
 
 
@@ -4704,36 +3960,7 @@ struct _FXForceFieldEffect * FX_StartFField(struct _Instance *instance, int size
 // void /*$ra*/ FX_EndFField(struct _Instance *instance /*$a0*/)
 void FX_EndFField(struct _Instance *instance)
 { // line 8048, offset 0x8004e8e4
-#if defined(PC_VERSION)
-	struct _FXForceFieldEffect* i; // eax
-	__int16 height; // cx
-
-	i = (struct _FXForceFieldEffect*)ring;
-	if (ring)
-	{
-		do
-		{
-			if (i->instance == instance && i->effectType == 0x86)
-			{
-				height = i->start_fade;
-				if (height)
-				{
-					i->start_fade = 0;
-					i->end_fade = 4096 - height;
-					if (4096 == height)
-						i->end_fade = 1;
-				}
-				else
-				{
-					i->end_fade = 4096;
-				}
-			}
-			i = (struct _FXForceFieldEffect*)i->next;
-		} while (i);
-	}
-#else
 	UNIMPLEMENTED();
-#endif
 }
 
 
@@ -4741,63 +3968,7 @@ void FX_EndFField(struct _Instance *instance)
 // void /*$ra*/ FX_Draw_Glowing_Line(unsigned long **ot /*$t6*/, long otz /*$a0*/, struct DVECTOR *sxy0 /*$a2*/, struct DVECTOR *sxy1 /*$a3*/, struct DVECTOR *xy0 /*stack 16*/, struct DVECTOR *xy1 /*stack 20*/, long color /*stack 24*/, long color2 /*stack 28*/)
 void FX_Draw_Glowing_Line(unsigned long **ot, long otz, DVECTOR *sxy0, DVECTOR *sxy1, DVECTOR *xy0, DVECTOR *xy1, long color, long color2)
 { // line 8071, offset 0x8004e964
-#if defined(PC_VERSION)
-	int v8; // esi
-	struct _POLY_2G4T* nextPrim; // eax
-	struct _POLY_2G4T* p_nextPrim; // ebx
-	int v11; // ecx
-	int v12; // ecx
-	struct DVECTOR v13; // edx
-	struct DVECTOR v14; // edx
-
-	v8 = 0;
-	if (otz > 0 && otz < 3072)
-	{
-		nextPrim = (struct _POLY_2G4T*)gameTrackerX.primPool->nextPrim;
-		p_nextPrim = (struct _POLY_2G4T*)&gameTrackerX.primPool->nextPrim;
-		if ((ulong*)&nextPrim[1] < gameTrackerX.primPool->lastPrim)
-		{
-			v11 = color;
-			if ((color & 0x1000000) != 0)
-			{
-				v11 = color & 0xFFFFFF;
-				v8 = 1;
-			}
-			v12 = v11 | 0x3A000000;
-			*(DWORD*)&nextPrim->p1.r0 = 0x3A000000;
-			*(DWORD*)&nextPrim->p1.r2 = v12;
-			*(DWORD*)&nextPrim->p2.r0 = v12;
-			*(DWORD*)&nextPrim->p1.r1 = 0;
-			*(DWORD*)&nextPrim->p1.r3 = color2;
-			*(DWORD*)&nextPrim->p2.r1 = color2;
-			*(DWORD*)&nextPrim->p2.r2 = 0;
-			*(DWORD*)&nextPrim->p2.r3 = 0;
-			v13 = *sxy0;
-			*(struct DVECTOR*)&nextPrim->p2.x0 = *sxy0;
-			*(struct DVECTOR*)&nextPrim->p1.x2 = v13;
-			nextPrim->p1.x0 = xy0->vx + sxy0->vx;
-			nextPrim->p1.y0 = sxy0->vy - xy0->vy;
-			nextPrim->p2.x2 = sxy0->vx - xy0->vx;
-			nextPrim->p2.y2 = sxy0->vy + xy0->vy;
-			v14 = *sxy1;
-			*(struct DVECTOR*)&nextPrim->p2.x1 = *sxy1;
-			*(struct DVECTOR*)&nextPrim->p1.x3 = v14;
-			nextPrim->p1.x1 = xy1->vx + sxy1->vx;
-			nextPrim->p1.y1 = sxy1->vy - xy1->vy;
-			nextPrim->p2.x3 = sxy1->vx - xy1->vx;
-			nextPrim->p2.y3 = sxy1->vy + xy1->vy;
-			if (v8)
-				nextPrim->drawTPage1 = 0xE1000640;
-			else
-				nextPrim->drawTPage1 = 0xE1000620;
-			nextPrim->tag = (unsigned int)ot[otz] & 0xFFFFFF | 0x11000000;
-			ot[otz] = (unsigned int*)(((unsigned int)nextPrim - primBase) & 0xFFFFFF);
-			p_nextPrim->tag = (ulong)&nextPrim[1];
-		}
-	}
-#else
 	UNIMPLEMENTED();
-#endif
 }
 
 
@@ -4957,65 +4128,10 @@ void FX_LightHouse(MATRIX *wcTransform, unsigned long **ot, struct _Instance *in
 // void /*$ra*/ FX_StartPassthruFX(struct _Instance *instance /*$s0*/, struct _SVector *normal /*$a1*/, struct _SVector *point /*$a2*/)
 void FX_StartPassthruFX(struct _Instance *instance, struct _SVector *normal, struct _SVector *point)
 { // line 8391, offset 0x8004f46c
-#if defined(PC_VERSION)
-	int color; // [esp+Ch] [ebp-4h] BYREF
-
-	instance->halvePlane.a = normal->x;
-	instance->halvePlane.b = normal->y;
-	instance->halvePlane.c = normal->z;
-	instance->halvePlane.d = -((point->x * normal->x + normal->z * point->z + normal->y * point->y) >> 12);
-	color = 0x20FF40;
-	FX_DoInstancePowerRing(instance, 8400, &color, 0, 2);
-	FX_DoInstancePowerRing(instance, 8400, &color, 0, 1);
-#else
 	UNIMPLEMENTED();
-#endif
 }
 
 void FX_EndPassthruFX(struct _Instance* instance)
 {
-#if defined(PSX_VERSION)
 	FX_EndInstanceEffects(instance);
-#elif defined(PC_VERSION)
-	struct _FXGlowEffect* v1; // eax
-	struct _FXGlowEffect* v2; // esi
-	struct _FXGlowEffect* next; // edi
-	DWORD* p_next; // ecx
-
-	v1 = ring;
-	v2 = ring;
-	if (ring)
-	{
-		do
-		{
-			next = (struct _FXGlowEffect*)v2->next;
-			if (v2->instance == instance && v2)
-			{
-				p_next = 0;
-				if (v1)
-				{
-					while (v1 != v2)
-					{
-						p_next = &v1->next;
-						v1 = (struct _FXGlowEffect*)v1->next;
-						if (!v1)
-							goto LABEL_11;
-					}
-					if (p_next)
-						*p_next = next;
-					else
-						ring = (struct _FXGlowEffect*)v2->next;
-				}
-			LABEL_11:
-				if (!v2->effectType)
-					MEMPACK_Free((char*)v2->colorArray);
-				MEMPACK_Free((char*)v2);
-				v1 = ring;
-			}
-			v2 = next;
-		} while (next);
-	}
-#else
-	UNIMPLEMENTED();
-#endif
 }

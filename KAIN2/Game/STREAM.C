@@ -29,10 +29,6 @@
 
 #include <stddef.h>
 
-#ifdef PC_VERSION
-#pragma warning(disable: 4101)
-#endif
-
 long CurrentWarpNumber;
 
 struct WarpGateLoadInfo wgloadInfo;
@@ -308,11 +304,7 @@ void STREAM_NoMonsters()
 
 void STREAM_YesMonsters()
 {
-#if defined(PSX_VERSION)
 	gameTrackerX.gameFlags &= ~0x4000000;
-#elif defined(PC_VERSION)
-	gameTrackerX.gameFlags &= ~0x4000000u;
-#endif
 }
 
 
@@ -707,7 +699,6 @@ void RemoveAllObjects(struct GameTracker* gameTracker)
 
 struct Level* STREAM_GetLevelWithID(long id)
 { 
-#if defined(PSX_VERSION)
 	struct Level* retLevel;
 	long i;
 
@@ -726,25 +717,6 @@ struct Level* STREAM_GetLevelWithID(long id)
 	}
 
 	return retLevel;
-
-#elif 0//defined(PC_VERSION)
-	// line 945, offset 0x80059318
-	struct Level* result; // eax
-	int v2; // edx
-	WORD* v3; // ecx
-
-	result = 0;
-	v2 = 0;
-	v3 = &StreamTracker;
-	while (v3[2] != 2 || *(DWORD*)v3 != id)
-	{
-		v3 += 32;
-		++v2;
-		if ((int)v3 >= (int)&MORPH_SavedLevel)
-			return result;
-	}
-	return (struct Level*)dword_C593C8[16 * v2];
-#endif
 }
 
 struct _StreamUnit* STREAM_GetStreamUnitWithID(long id)//Matching - 94.50%

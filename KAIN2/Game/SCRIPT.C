@@ -7,25 +7,7 @@
 // void /*$ra*/ SCRIPT_CombineEulerAngles(struct _Rotation *combinedRotation /*$s1*/, struct _Rotation *inputRotation1 /*$a1*/, struct _Rotation *inputRotation2 /*$s0*/)
 void SCRIPT_CombineEulerAngles(struct _Rotation *combinedRotation, struct _Rotation *inputRotation1, struct _Rotation *inputRotation2)
 { // line 51, offset 0x8003c6b0
-#if defined(PC_VERSION)
-	__int16 y; // cx
-	__int16 z; // dx
-	struct _G2EulerAngles_Type euler; // [esp+0h] [ebp-48h] BYREF
-	struct _G2Matrix_Type matrix; // [esp+8h] [ebp-40h] BYREF
-	MATRIX v7; // [esp+28h] [ebp-20h] BYREF
-
-	RotMatrix((SVECTOR*)inputRotation1, (MATRIX*)&matrix);
-	RotMatrix((SVECTOR*)inputRotation2, &v7);
-	MulMatrix2(&v7, (MATRIX*)&matrix);
-	G2EulerAngles_FromMatrix(&euler, &matrix, 21);
-	y = euler.y;
-	combinedRotation->x = euler.x;
-	z = euler.z;
-	combinedRotation->y = y;
-	combinedRotation->z = z;
-#else
 	UNIMPLEMENTED();
-#endif
 }
 
 void SCRIPT_InstanceSplineInit(struct _Instance* instance)

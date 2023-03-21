@@ -218,7 +218,6 @@ int aadQueueNextEvent(struct _AadSequenceSlot* slot, int track)//Matching - 98.6
 
 void aadExecuteEvent(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)//Matching - 82.11%
 {
-#if defined(PSX_VERSION)
 	int eventType;
 
 	eventType = event->statusByte;
@@ -238,20 +237,6 @@ void aadExecuteEvent(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)//
 			midiMetaEventFunction[eventType](event, slot);
 		}
 	}
-
-#elif defined(PC_VERSION)
-	if ((event->statusByte & 0x80u) == 0)
-	{
-		aadSubstituteVariables(event, slot);
-		if (event->statusByte < 0x4Eu)
-			//((void(__cdecl*)(struct AadSeqEvent*))funcs_4351D4[event->statusByte & 0x7F])(event)
-			;
-	}
-	else
-	{
-		//((void(__cdecl*)(struct AadSeqEvent*, struct _AadSequenceSlot*))funcs_4351A9[(v2 >> 4) & 7])(event, slot);
-	}
-#endif
 }
 
 void midiNoteOff(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
@@ -560,16 +545,11 @@ void midiControlChange(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 
 void midiProgramChange(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 {
-#if defined(PSX_VERSION)
 	int channel;
 
 	channel = event->statusByte & 0xF;
 	
 	slot->currentProgram[channel] = (unsigned char)event->dataByte[0];
-
-#elif defined(PC_VERSION)
-	slot->currentProgram[event->statusByte & 0xF] = event->dataByte[0];
-#endif
 }
 
 void midiChannelAftertouch(struct AadSeqEvent* event, struct _AadSequenceSlot* slot)
@@ -578,7 +558,6 @@ void midiChannelAftertouch(struct AadSeqEvent* event, struct _AadSequenceSlot* s
 
 void midiPitchWheelControl(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 {
-#if defined(PSX_VERSION)
 	int channel;
 
 	channel = event->statusByte & 0xF;
@@ -586,13 +565,6 @@ void midiPitchWheelControl(struct AadSeqEvent *event, struct _AadSequenceSlot *s
 	slot->pitchWheel[channel] = ((unsigned char)event->dataByte[0] | ((unsigned char)event->dataByte[1] << 7));
 	
 	aadUpdateChannelPitchBend(slot, channel);
-#elif defined(PC_VERSION)
-	int v2; // [esp-4h] [ebp-4h]
-
-	v2 = event->statusByte & 0xF;
-	slot->pitchWheel[v2] = event->dataByte[0] | ((BYTE)event->dataByte[1] << 7);
-	aadUpdateChannelPitchBend(slot, v2);
-#endif
 }
 
 void midiMetaEvent(struct AadSeqEvent* event, struct _AadSequenceSlot* slot)
@@ -605,7 +577,6 @@ void midiControlBankSelect(struct AadSeqEvent* event, struct _AadSequenceSlot* s
 
 void midiControlVolume(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 {
-#if defined(PSX_VERSION)
 	int channel;
 
 	channel = event->statusByte & 0xF;
@@ -615,13 +586,6 @@ void midiControlVolume(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 	{
 		aadUpdateChannelVolPan(slot, channel);
 	}
-
-#elif defined(PC_VERSION)
-	int v2 = event->statusByte & 0xF;
-	slot->volume[v2] = event->dataByte[1];
-	if (((1 << v2) & slot->enableSustainUpdate) != 0)
-		aadUpdateChannelVolPan(slot, v2);
-#endif
 }
 
 
@@ -629,16 +593,7 @@ void midiControlVolume(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 // void /*$ra*/ midiControlPan(struct AadSeqEvent *event /*$a0*/, struct _AadSequenceSlot *slot /*$a2*/)
 void midiControlPan(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 { // line 461, offset 0x8005588c
-#if defined(PC_VERSION)
-	int v2; // ecx
-
-	v2 = event->statusByte & 0xF;
-	slot->panPosition[v2] = event->dataByte[1];
-	if (((1 << v2) & slot->enableSustainUpdate) != 0)
-		aadUpdateChannelVolPan(slot, v2);
-#else
 	UNIMPLEMENTED();
-#endif
 }
 
 
@@ -646,15 +601,7 @@ void midiControlPan(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 // void /*$ra*/ midiControlCallback(struct AadSeqEvent *event /*$a3*/, struct _AadSequenceSlot *slot /*$a1*/)
 void midiControlCallback(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 { // line 476, offset 0x800558dc
-#if defined(PC_VERSION)
-	void(__cdecl * v2)(int, DWORD, int, DWORD); // eax
-
-	v2 = *(void(__cdecl**)(int, DWORD, int, DWORD)) & aadMem[3].loadRequestQueue[12].fileName[8];
-	if (v2)
-		v2(aadMem[3].loadRequestQueue[13].handle, slot->thisSlotNumber, event->statusByte & 0xF, event->dataByte[1]);
-#else
 	UNIMPLEMENTED();
-#endif
 }
 
 void midiControlDummy(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)

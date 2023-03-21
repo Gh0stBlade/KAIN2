@@ -292,8 +292,6 @@ void razMaterialShift()
 
 int RAZIEL_OkToShift()
 {
-#if defined(PSX_VERSION)
-
 	if (Raziel.CurrentPlane == 2)
 	{
 		if (GetMaxHealth() == Raziel.HitPoints)
@@ -324,16 +322,6 @@ int RAZIEL_OkToShift()
 	}
 
 	return 1;
-
-#elif defined(PC_VERSION)
-	if (dword_B08850 != 2)
-		return 1;
-	if (current_health != 100000)
-		return 0;
-	if ((dword_B08820 & 0x40) != 0)
-		return (unsigned __int8)(dword_B08820 & 0x10) >> 4;
-	return (unsigned __int8)(dword_B087B4 & 0x40) >> 6;
-#endif
 }
 
 
@@ -341,96 +329,12 @@ int RAZIEL_OkToShift()
 // int /*$ra*/ razPickupAndGrab(struct __CharacterState *In /*$s1*/, int CurrentSection /*$s2*/)
 int razPickupAndGrab(struct __CharacterState *In, int CurrentSection)
 { // line 409, offset 0x800a5a44
-#if defined(PC_VERSION)
-	struct _Instance* LinkChild; // eax
-	struct _Instance* LinkParent; // eax
-	int v5; // esi
-	struct _Instance* v6; // eax
-	int v7; // esi
-	int v8; // edx
-	struct _Instance* v9; // eax
-	struct _Instance* v10; // esi
-	struct _Instance* v11; // esi
-	unsigned int v12; // eax
-
-	if ((dword_B087F4 & 0x20) == 0)
-		return 1;
-	LinkChild = stru_B0841C.CharacterInstance->LinkChild;
-	if (Inst && LinkChild == Inst)
-	{
-		if (!LinkChild)
-			goto LABEL_7;
-		LinkChild = LinkChild->LinkSibling;
-	}
-	if (LinkChild)
-		return 1;
-LABEL_7:
-	if (dword_B08850 != 1 || (dword_B087B4 & 0x80u) != 0)
-		return 1;
-	if (CurrentSection != 1)
-		return 0;
-	LinkParent = dword_B087F0[10]->LinkParent;
-	if (LinkParent && !(INSTANCE_Query(LinkParent, 0) | 0x40000000))
-		return 0;
-	v5 = SetObjectData(0, 0, 8, In->CharacterInstance, 1);
-	INSTANCE_Post(dword_B087F0[10], 0x80002E, v5);
-	if (*(_WORD*)(v5 + 6))
-		return 0;
-	v6 = dword_B087F0[10]->LinkParent;
-	if (v6)
-	{
-		INSTANCE_Post(v6, 0x100001B, 0);
-		INSTANCE_UnlinkFromParent(dword_B087F0[10]);
-	}
-	v7 = SetObjectData(0, 0, 8, In->CharacterInstance, 49);
-	INSTANCE_Post(dword_B087F0[10], 0x800002, v7);
-	if (*(_WORD*)(v7 + 6))
-		return 0;
-	v8 = dword_B087B4;
-	v9 = Inst;
-	LOBYTE(v8) = dword_B087B4 | 0x80;
-	dword_B087B4 = v8;
-	if (!Inst || dword_B08804 != 4096)
-		goto LABEL_32;
-	v10 = stru_B0841C.CharacterInstance->LinkChild;
-	if (v10 == Inst)
-	{
-		if (!v10)
-			goto LABEL_26;
-		v10 = v10->LinkSibling;
-	}
-	if (v10)
-	{
-		v11 = (INSTANCE_Query(v10, 1) & 0x20) != 0 ? v10 : 0;
-		v9 = Inst;
-		goto LABEL_28;
-	}
-LABEL_26:
-	v11 = Inst;
-LABEL_28:
-	if ((INSTANCE_Query(v9, 40) & 1) != 0)
-		INSTANCE_Post(Inst, 0x800101, 0);
-	if (v11 == Inst)
-		dword_B08804 = 0;
-LABEL_32:
-	In->SectionList[1].Data1 = 0;
-	v12 = INSTANCE_Query(dword_B087F0[10], 4);
-	if ((dword_B08778 & 0x40000) == 0)
-	{
-		G2EmulationSwitchAnimation(In, 1, (unsigned __int8)byte_4F4900[v12], 0, 3, 1);
-		dword_B08920 = (int)In->SectionList[1].Process;
-		StateSwitchStateData(In, 1, StateHandlerPickupObject, 0);
-	}
-	return 0;
-#else
 	UNIMPLEMENTED();
 	return 0;
-#endif
 }
 
 int razZeroAxis(long* x, long* y, int radius)//Matching - 99.79%
 {
-#if defined(PSX_VERSION)
 	unsigned long distance;
 
 	distance = MATH3D_SquareLength(*x, *y, 0);
@@ -444,24 +348,10 @@ int razZeroAxis(long* x, long* y, int radius)//Matching - 99.79%
 	}
 
 	return distance;
-
-#elif defined(PC_VERSION)
-	int result; // eax
-
-	result = MATH3D_SquareLength(*x, *y, 0);
-	if (result < (unsigned int)radius)
-	{
-		*x = 0;
-		*y = 0;
-		return 0;
-	}
-	return result;
-#endif
 }
 
 int razAdjustSpeed(struct _Instance* instance, int minSpeed)//Matching - 90.51%
 {
-#if defined(PSX_VERSION)
 	long adjustment;
 	int data;
 
@@ -481,23 +371,6 @@ int razAdjustSpeed(struct _Instance* instance, int minSpeed)//Matching - 90.51%
 	G2Anim_SetSpeedAdjustment(&instance->anim, adjustment);
 
 	return adjustment;
-#elif defined(PC_VERSION)
-	int v2; // esi
-
-	if (dword_B0878C <= word_B087B2)
-	{
-		if (dword_B0878C >= word_B087B0)
-			v2 = word_B087AE - (word_B087B2 - dword_B0878C) * (word_B087AE - word_B087AC) / (word_B087B2 - word_B087B0);
-		else
-			v2 = word_B087AC;
-	}
-	else
-	{
-		v2 = word_B087AE;
-	}
-	G2Anim_SetSpeedAdjustment(&instance->anim, v2);
-	return v2;
-#endif
 }
 
 
@@ -505,41 +378,11 @@ int razAdjustSpeed(struct _Instance* instance, int minSpeed)//Matching - 90.51%
 // void /*$ra*/ razLaunchForce(struct _Instance *instance /*$s0*/)
 void razLaunchForce(struct _Instance *instance)
 { // line 558, offset 0x800a5d50
-#if defined(PC_VERSION)
-	int v2; // edi
-	int v3; // ebx
-	__int32 v4; // esi
-	__int16 v5; // [esp+10h] [ebp-4h]
-	__int16 parent; // [esp+18h] [ebp+4h]
-
-	PHYSOB_BirthProjectile(instance, 49, (dword_B08820 & 0x100) != 0);
-	dword_B08934 |= 4u;
-	v2 = *(__int16*)(dword_B08B3C + 60);
-	v3 = *(__int16*)(dword_B08B3C + 56);
-	parent = *(_WORD*)(dword_B08B3C + 58);
-	v5 = *(_WORD*)(dword_B08B3C + 62);
-	v4 = 30 * *(_DWORD*)(dword_B08B3C + 64);
-	if (!sound.soundHandle)
-		sound.soundHandle = SOUND_Play3dSound(&instance->position, 12, v3, v2, 10000);
-	if (!v4)
-		sound.soundHandle = 0;
-	sound.soundStartVolume = v2;
-	sound.soundTotalTime = v4;
-	sound.soundStartPitch = v3;
-	sound.soundEndPitch = parent;
-	sound.soundEndVolume = v5;
-	sound.soundDistance = 10000;
-	sound.soundTimer = 0;
-	dword_B089B0 = 0;
-	dword_B089B4 = 0;
-#else
 	UNIMPLEMENTED();
-#endif
 }
 
 struct _Instance* razGetHeldItem()
 {
-#if defined(PSX_VERSION)
 	struct _Instance* instance;
 
 	instance = Raziel.State.CharacterInstance->LinkChild;
@@ -550,23 +393,10 @@ struct _Instance* razGetHeldItem()
 	}
 
 	return instance;
-
-#elif defined(PC_VERSION)
-	struct _Instance* result; // eax
-
-	result = stru_B0841C.CharacterInstance->LinkChild;
-	if (Inst && result == Inst)
-	{
-		if (result)
-			return result->LinkSibling;
-	}
-	return result;
-#endif
 }
 
 struct _Instance* razGetHeldWeapon()
 {
-#if defined(PSX_VERSION)
 	struct _Instance* instance;
 
 	instance = razGetHeldItem();
@@ -587,20 +417,6 @@ struct _Instance* razGetHeldWeapon()
 	}
 
 	return NULL;
-#elif defined(PC_VERSION)
-	struct _Instance* LinkChild; // esi
-
-	LinkChild = stru_B0841C.CharacterInstance->LinkChild;
-	if (Inst && LinkChild == Inst)
-	{
-		if (!LinkChild)
-			return dword_B08804 != 0 ? Inst : 0;
-		LinkChild = LinkChild->LinkSibling;
-	}
-	if (!LinkChild)
-		return dword_B08804 != 0 ? Inst : 0;
-	return (INSTANCE_Query(LinkChild, 1) & 0x20) != 0 ? LinkChild : 0;
-#endif
 }
 
 void razReaverBladeOff()
@@ -646,8 +462,6 @@ int razReaverOff()//Matching - 95.86%
 
 int razReaverOn()
 {
-#if defined(PSX_VERSION)
-	
 	if (Raziel.soulReaver != NULL)
 	{
 		if (razGetHeldItem() == NULL)
@@ -679,46 +493,6 @@ int razReaverOn()
 	}
 	
 	return 0;
-
-#elif defined(PC_VERSION)
-	struct _Instance* LinkChild; // eax
-	int v1; // eax
-
-	if (!Inst)
-		return 0;
-	LinkChild = stru_B0841C.CharacterInstance->LinkChild;
-	if (LinkChild == Inst)
-	{
-		if (!LinkChild)
-			goto LABEL_6;
-		LinkChild = LinkChild->LinkSibling;
-	}
-	if (LinkChild)
-		return 0;
-LABEL_6:
-	if (dword_B08850 == 2)
-		v1 = 100000;
-	else
-		v1 = 100000 * (word_B08810 + 1);
-	if (current_health != v1 && dword_B08850 != 2)
-		return 0;
-	if ((INSTANCE_Query(Inst, 40) & 1) == 0)
-		INSTANCE_Post(Inst, 0x800100, 0);
-	dword_B08804 = 4096;
-	if (dword_B08850 == 2 && dword_B0884C != 1)
-	{
-		dword_B0884C = 1;
-		debugRazielFlags2 = 1024;
-		INSTANCE_Post(Inst, 0x800103, 1);
-	}
-	if (dword_B08850 == 1 && dword_B0884C == 1)
-	{
-		dword_B0884C = 2;
-		debugRazielFlags2 = 2048;
-		INSTANCE_Post(Inst, 0x800103, 2);
-	}
-	return 1;
-#endif
 }
 
 
@@ -731,21 +505,11 @@ void razReaverPickup(struct _Instance *instance, struct _Instance *soulReaver)
 
 void razReaverImbue(int reaverType)
 {
-#if defined(PSX_VERSION)
 	Raziel.currentSoulReaver = reaverType;
 
 	debugRazielFlags2 = 1 << (reaverType + 9);
 
 	INSTANCE_Post(Raziel.soulReaver, 0x800103, reaverType);
-
-#elif defined(PC_VERSION)
-	if (reaverType == 1 || reaverType == 2 || reaverType == 6)
-	{
-		dword_B0884C = reaverType;
-		debugRazielFlags2 = 1 << (reaverType + 9);
-		INSTANCE_Post(Inst, 0x800103, reaverType);
-	}
-#endif
 }
 
 int razGetReaverFromMask(int reaverMask)
@@ -784,33 +548,7 @@ void razReaverScale(int scale)
 // void /*$ra*/ razGetForwardNormal(struct _Instance *inst /*$a0*/, struct _Instance *target /*$a1*/)
 void razGetForwardNormal(struct _Instance *inst, struct _Instance *target)
 { // line 760, offset 0x800a61f4
-#if defined(PC_VERSION)
-	MATRIX* matrix; // eax
-	MATRIX* v3; // eax
-	__int16 v4[4]; // [esp+0h] [ebp-3Ch] BYREF
-	__int16 v5[4]; // [esp+8h] [ebp-34h] BYREF
-	struct _PCollideInfo v6; // [esp+10h] [ebp-2Ch] BYREF
-
-	v6.newPoint = (struct SVECTOR*)v5;
-	v6.oldPoint = (struct SVECTOR*)v4;
-	matrix = inst->matrix;
-	v4[0] = matrix[1].t[0];
-	v4[1] = matrix[1].t[1];
-	v4[2] = matrix[1].t[2];
-	v3 = target->matrix;
-	v5[0] = v3[1].t[0];
-	v5[1] = v3[1].t[1];
-	v5[2] = v3[1].t[2];
-	PHYSICS_CheckLineInWorld(inst, &v6);
-	if (v6.type == 2 || v6.type == 3 || v6.type == 5)
-	{
-		stru_B087B8.x = v6.wNormal.vx;
-		stru_B087B8.y = v6.wNormal.vy;
-		stru_B087B8.z = v6.wNormal.vz;
-	}
-#else
 	UNIMPLEMENTED();
-#endif
 }
 
 void razGetRotFromNormal(struct _SVector* normal, struct _Rotation* rot)//Matching - 99.74%
@@ -834,80 +572,7 @@ void razGetRotFromNormal(struct _SVector* normal, struct _Rotation* rot)//Matchi
 // void /*$ra*/ razCenterWithBlock(struct _Instance *inst /*$s3*/, struct _Instance *target /*$s1*/, int dist /*$s2*/)
 void razCenterWithBlock(struct _Instance *inst, struct _Instance *target, int dist)
 { // line 811, offset 0x800a6324
-#if defined(PC_VERSION)
-	int z; // eax
-	__int16 x; // bp
-	int v5; // ecx
-	__int16 v6; // ax
-	int v7; // ebx
-	int v8; // edx
-	int v9; // eax
-	__int16 y; // ax
-	__int16 v11; // cx
-	int v12; // [esp+10h] [ebp-54h]
-	_Position to; // [esp+14h] [ebp-50h] BYREF
-	_Position from; // [esp+1Ch] [ebp-48h] BYREF
-	struct _G2SVector3_Type vec; // [esp+24h] [ebp-40h] BYREF
-	SVECTOR v0; // [esp+2Ch] [ebp-38h] BYREF
-	SVECTOR v1; // [esp+34h] [ebp-30h] BYREF
-	struct _Rotation rot; // [esp+3Ch] [ebp-28h] BYREF
-	MATRIX mat; // [esp+44h] [ebp-20h] BYREF
-
-	v12 = 0;
-	razGetForwardNormal(inst, target);
-	from = stru_B087B8;
-	to.z = 0;
-	to.y = 0;
-	to.x = 0;
-	MATH3D_RotationFromPosToPos(&from, &to, &rot);
-	z = stru_B087B8.z;
-	if (stru_B087B8.z < 0)
-		z = -stru_B087B8.z;
-	if (z > 1000)
-		v12 = 1;
-	MATH3D_SetUnityMatrix(&mat);
-	RotMatrixZ(rot.z, &mat);
-	v0.vy = 320 - dist;
-	v0.vz = 0;
-	v0.vx = 0;
-	ApplyMatrixSV(&mat, &v0, &v1);
-	x = inst->position.x;
-	LOWORD(v5) = inst->position.y - target->position.y;
-	v6 = x - target->position.x;
-	v0.vy = v5;
-	v0.vx = v6;
-	v7 = v6;
-	v8 = v6;
-	if (v6 < 0)
-		v8 = -v6;
-	v9 = (__int16)v5;
-	v5 = (__int16)v5;
-	if ((v5 & 0x8000u) != 0)
-		v5 = -(__int16)v5;
-	if (v8 >= v5)
-	{
-		v0.vy = v9 / 2;
-		if (v12)
-			v0.vx = v1.vx;
-	}
-	else
-	{
-		v0.vx = v7 / 2;
-		if (v12)
-			v0.vy = v1.vy;
-	}
-	y = inst->position.y;
-	vec.x = x + v1.vx - v0.vx;
-	v11 = inst->position.z;
-	vec.y = y + v1.vy - v0.vy;
-	vec.z = v11;
-	if (!G2Anim_IsControllerActive(&inst->anim, 0, 32))
-		G2Anim_EnableController(&inst->anim, 0, 32);
-	G2EmulationSetInterpController_Vector(inst, 0, 32, &vec, 6, 0);
-	inst->rotation.z = rot.z;
-#else
 	UNIMPLEMENTED();
-#endif
 }
 
 
@@ -1323,47 +988,8 @@ void razSelectMotionAnim(struct __CharacterState* In, int CurrentSection, int Fr
 // int /*$ra*/ razApplyMotion(struct __CharacterState *In /*$s1*/, int CurrentSection /*$s0*/)
 int razApplyMotion(struct __CharacterState *In, int CurrentSection)
 { // line 1199, offset 0x800a6c30
-#if defined(PC_VERSION)
-	struct _Instance* CharacterInstance; // edi
-	int speedAdjustment; // edi
-	struct _G2SVector3_Type vector; // [esp+8h] [ebp-8h] BYREF
-
-	vector.x = 0;
-	vector.y = 0;
-	vector.z = 0;
-	if (!CurrentSection)
-	{
-		CharacterInstance = In->CharacterInstance;
-		if (CharacterInstance->anim.section[0].keylist == G2Instance_GetKeylist(In->CharacterInstance, 2))
-		{
-			vector.y = -60;
-		}
-		else if (CharacterInstance->anim.section[0].keylist == G2Instance_GetKeylist(In->CharacterInstance, 124))
-		{
-			vector.y = -35;
-		}
-		else if (CharacterInstance->anim.section[0].keylist == G2Instance_GetKeylist(In->CharacterInstance, 123))
-		{
-			vector.y = -16;
-		}
-		else if (G2Anim_IsControllerActive(&In->CharacterInstance->anim, 0, 34))
-		{
-			G2Anim_DisableController(&In->CharacterInstance->anim, 0, 34);
-		}
-		if (vector.y)
-		{
-			if (!G2Anim_IsControllerActive(&In->CharacterInstance->anim, 0, 34))
-				G2Anim_EnableController(&In->CharacterInstance->anim, 0, 34);
-			speedAdjustment = In->CharacterInstance->anim.section[0].speedAdjustment;
-			vector.y = (__int16)((vector.y * speedAdjustment * (__int16)G2Timer_GetFrameTime()) >> 12) / 100;
-			G2Anim_SetController_Vector(&In->CharacterInstance->anim, 0, 34, &vector);
-		}
-	}
-	return -vector.y;
-#else
 	UNIMPLEMENTED();
 	return 0;
-#endif
 }
 
 void razResetMotion(struct _Instance *instance)
@@ -1380,7 +1006,6 @@ void razResetMotion(struct _Instance *instance)
 
 void razSetDampingPhysics(struct _Instance* instance)
 {
-#if defined(PSX_VERSION)
 	Raziel.RotationSegment = 0;
 	
 	Raziel.extraRot.x = 0;
@@ -1388,12 +1013,6 @@ void razSetDampingPhysics(struct _Instance* instance)
 	PhysicsMode = 4;
 
 	SetDampingPhysics(instance, PlayerData->SwimPhysicsFallDamping);
-#elif defined(PC_VERSION)
-	dword_B08780 = 0;
-	LOWORD(dword_B08928) = 0;
-	Mode = 4;
-	SetDampingPhysics(instance, *(_DWORD*)(dword_B08B3C + 68));
-#endif
 }
 
 
@@ -1401,98 +1020,7 @@ void razSetDampingPhysics(struct _Instance* instance)
 // void /*$ra*/ razEnterWater(struct __CharacterState *In /*$s0*/, int CurrentSection /*$s1*/, struct evPhysicsSwimData *SwimData /*$s3*/)
 void razEnterWater(struct __CharacterState *In, int CurrentSection, struct evPhysicsSwimData *SwimData)
 { // line 1311, offset 0x800a6e4c
-#if defined(PC_VERSION)
-	struct _Instance* LinkChild; // esi
-	struct _Instance* v4; // ebp
-	struct _Instance* CharacterInstance; // eax
-	struct _Instance* v6; // eax
-	struct _G2Anim_Type* p_anim; // edi
-	struct _Instance* v8; // eax
-
-	LinkChild = stru_B0841C.CharacterInstance->LinkChild;
-	if (Inst && LinkChild == Inst)
-	{
-		if (!LinkChild)
-		{
-		LABEL_6:
-			v4 = dword_B08804 != 0 ? Inst : 0;
-			goto LABEL_8;
-		}
-		LinkChild = LinkChild->LinkSibling;
-	}
-	if (!LinkChild)
-		goto LABEL_6;
-	v4 = (INSTANCE_Query(LinkChild, 1) & 0x20) != 0 ? LinkChild : 0;
-LABEL_8:
-	if ((SwimData->rc & 0x10) != 0)
-	{
-		if (dword_B08850 != 1 || (dword_B08820 & 0x10) != 0)
-		{
-			if (v4 && INSTANCE_Query(v4, 4) == 3)
-			{
-				G2Anim_SetSpeedAdjustment(&In->CharacterInstance->anim, 2048);
-			}
-			else if ((dword_B08778 & 0x40000) == 0 && dword_B08850 == 1)
-			{
-				if (Mode != 4)
-				{
-					CharacterInstance = In->CharacterInstance;
-					Mode = 4;
-					dword_B08780 = 0;
-					LOWORD(dword_B08928) = 0;
-					SetDampingPhysics(CharacterInstance, *(_DWORD*)(dword_B08B3C + 68));
-				}
-				v6 = In->CharacterInstance;
-				if (!In->CharacterInstance->zVel || (dword_B08778 & 0x400004) != 0)
-				{
-					p_anim = &v6->anim;
-					if (G2Anim_IsControllerActive(&v6->anim, 0, 34))
-						G2Anim_DisableController(p_anim, 0, 34);
-					dword_B08924 = 0;
-					G2Anim_SetSpeedAdjustment(p_anim, 4096);
-					StateSwitchStateCharacterData(In, StateHandlerSwim, 0);
-				}
-				TrailWaterFX(In->CharacterInstance, 9, 1, 1);
-				TrailWaterFX(In->CharacterInstance, 13, 1, 1);
-				TrailWaterFX(In->CharacterInstance, 31, 1, 1);
-				TrailWaterFX(In->CharacterInstance, 41, 1, 1);
-			}
-		}
-		else
-		{
-			current_health = 100000;
-			SetPhysics(In->CharacterInstance, -16, 0, 0, 0);
-			Mode = 0;
-		}
-	}
-	if ((SwimData->rc & 0x800) != 0 && dword_B08804 == 1)
-	{
-		if (CurrentSection == 2)
-			G2EmulationSwitchAnimation(In, 2, 61, 0, 3, 2);
-		else
-			G2EmulationSwitchAnimation(In, CurrentSection, 63, 0, 16, 2);
-	}
-	if ((SwimData->rc & 0x100) != 0 && !CurrentSection)
-	{
-		if (v4)
-		{
-			INSTANCE_Query(v4, 4);
-		}
-		else
-		{
-			v8 = In->CharacterInstance;
-			dword_B08780 = 0;
-			LOWORD(dword_B08928) = 0;
-			Mode = 4;
-			SetDampingPhysics(v8, *(_DWORD*)(dword_B08B3C + 68));
-		}
-		PurgeMessageQueue(&In->SectionList[0].Event);
-		TrailWaterFX(In->CharacterInstance, 9, 4, 1);
-		TrailWaterFX(In->CharacterInstance, 13, 4, 1);
-	}
-#else
 	UNIMPLEMENTED();
-#endif
 }
 
 void _razSetSwimVelocity(struct _Instance* instance, int vel, int accl)//Matching - 99.76%
@@ -1519,35 +1047,7 @@ void _razSetSwimVelocity(struct _Instance* instance, int vel, int accl)//Matchin
 // void /*$ra*/ razSetWallCrawlNodes(struct _Instance *instance /*$s1*/, struct evPhysicsWallCrawlData *data /*$s0*/)
 void razSetWallCrawlNodes(struct _Instance *instance, struct evPhysicsWallCrawlData *data)
 { // line 1455, offset 0x800a7144
-#if defined(PC_VERSION)
-	__int16 y; // ax
-	__int16 z; // cx
-	struct _G2SVector3_Type vector; // [esp+8h] [ebp-8h] BYREF
-
-	if ((data->rc & 8) != 0)
-	{
-		if ((int)MATH3D_SquareLength(data->NewPosition.x, data->NewPosition.y, data->NewPosition.z) > 100)
-		{
-			instance->position.x -= data->NewPosition.x;
-			instance->position.y -= data->NewPosition.y;
-		}
-		y = data->DropRotation.y;
-		z = data->DropRotation.z;
-		vector.x = data->DropRotation.x;
-		vector.y = y;
-		vector.z = z;
-		G2Anim_SetController_Vector(&instance->anim, 0, 8, &vector);
-	}
-	if (data->rc == 10)
-	{
-		vector.x = -data->ForwardXRotation;
-		vector.y = 0;
-		vector.z = 0;
-		G2EmulationSetInterpController_Vector(instance, 14, 14, &vector, 3, 0);
-	}
-#else
 	UNIMPLEMENTED();
-#endif
 }
 
 
@@ -1630,7 +1130,6 @@ void razSwitchVAnimSingle(struct _Instance* instance, int section, int anim, int
 
 void razSwitchVAnim(struct _Instance* instance, int section, struct __VAnim* vAnim, int frame, int frames)//Matching - 99.90%
 {
-#if defined(PSX_VERSION)
 	if (frame == -1)
 	{
 		frame = vAnim->frame;
@@ -1659,38 +1158,10 @@ void razSwitchVAnim(struct _Instance* instance, int section, struct __VAnim* vAn
 		break;
 	}
 	}
-
-#elif defined(PC_VERSION)
-	int v5; // ecx
-	int v6; // esi
-
-	v5 = frame;
-	if (frame == -1)
-		v5 = vAnim->frame;
-	v6 = frames;
-	if (frames == -1)
-		v6 = vAnim->frames;
-	if (section)
-	{
-		if (section == 1)
-		{
-			G2EmulationInstanceSwitchAnimationAlpha(instance, 1, vAnim->anim1, v5, v6, vAnim->mode, vAnim->alpha);
-		}
-		else if (section == 2)
-		{
-			G2EmulationInstanceSwitchAnimationAlpha(instance, 2, vAnim->anim2, v5, v6, vAnim->mode, vAnim->alpha);
-		}
-	}
-	else
-	{
-		G2EmulationInstanceSwitchAnimationAlpha(instance, 0, vAnim->anim0, v5, v6, vAnim->mode, vAnim->alpha);
-	}
-#endif
 }
 
 int razProcessSAnim(struct _Instance* instance, int mode)
 {
-#if defined(PSX_VERSION)
 	int rc;
 	struct __SAnim* nextAnim;
 	struct __VAnim* vanim;
@@ -1749,82 +1220,6 @@ int razProcessSAnim(struct _Instance* instance, int mode)
 
 	}
 	return rc;
-#elif defined(PC_VERSION)
-	int v2; // ebp
-	unsigned __int8** v3; // eax
-	unsigned __int8* v4; // esi
-	int v5; // eax
-	int v6; // ecx
-	int v8; // [esp+10h] [ebp-4h]
-
-	v2 = 0;
-	v8 = 0;
-	if (mode == 1048597)
-	{
-		if (*(WORD*)(dword_B089C4 + 8) != 2)
-			goto LABEL_10;
-		goto LABEL_9;
-	}
-	if (mode == 0x8000000)
-	{
-		if (*(WORD*)(dword_B089C4 + 8) != 1)
-			goto LABEL_10;
-		goto LABEL_9;
-	}
-	if (mode == 0x8000003 && *(WORD*)(dword_B089C4 + 8) == 3)
-		LABEL_9:
-	v8 = 1;
-LABEL_10:
-	if (v8)
-	{
-		v3 = *(unsigned __int8***)(dword_B089C4 + 4);
-		if (v3)
-		{
-			dword_B089C4 = *(DWORD*)(dword_B089C4 + 4);
-			v4 = *v3;
-			if (*v3)
-			{
-				do
-				{
-					v5 = *((unsigned __int16*)v4 + 3);
-					v6 = v4[3];
-					if (v2)
-					{
-						if (v2 == 1)
-						{
-							G2EmulationInstanceSwitchAnimationAlpha(instance, 1, v4[1], v5, v6, v4[4], v4[5]);
-						}
-						else if (v2 == 2)
-						{
-							G2EmulationInstanceSwitchAnimationAlpha(instance, 2, v4[2], v5, v6, v4[4], v4[5]);
-						}
-					}
-					else
-					{
-						G2EmulationInstanceSwitchAnimationAlpha(instance, 0, *v4, v5, v6, v4[4], v4[5]);
-					}
-					G2Anim_SetSpeedAdjustment(&instance->anim, *(__int16*)(dword_B089C4 + 12));
-					++v2;
-				} while (v2 <= 2);
-				if (*(WORD*)(dword_B089C4 + 8) == 2)
-				{
-					dword_B08960 = *(__int16*)(dword_B089C4 + 10) << 12;
-					return v8;
-				}
-			}
-		}
-		else
-		{
-			G2Anim_SetSpeedAdjustment(&instance->anim, 4096);
-			dword_B089C4 = 0;
-			return 0;
-		}
-	}
-	return v8;
-#else
-	UNIMPLEMENTED();
-	return 0;
-#endif
 }
 
 void razSwitchStringAnimation(struct _Instance* instance, int anim)
@@ -2077,27 +1472,12 @@ void razSetPlayerEventHistory(unsigned long event)
 // int /*$ra*/ razSideMoveSpiderCheck(struct _Instance *instance /*$s2*/, int x /*$a1*/)
 int razSideMoveSpiderCheck(struct _Instance *instance, int x)
 { // line 1905, offset 0x800a7cac
-#if defined(PC_VERSION)
-	SVECTORendVec; // [esp+8h] [ebp-10h] BYREF
-	SVECTORstartVec; // [esp+10h] [ebp-8h] BYREF
-
-	PHYSICS_GenericLineCheckSetup(x, 0, 192, &startVec);
-	PHYSICS_GenericLineCheckSetup(x, -320, 192, &endVec);
-	if ((PHYSICS_CheckForValidMove(instance, &startVec, &endVec, 0) & 1) == 0)
-		return 1;
-	PHYSICS_GenericLineCheckSetup(x, 0, 0, &startVec);
-	PHYSICS_GenericLineCheckSetup(x, -320, 0, &endVec);
-	return (PHYSICS_CheckForValidMove(instance, &startVec, &endVec, 0) & 1) == 0;
-#else
 	UNIMPLEMENTED();
 	return 0;
-#endif
 }
 
 struct _Instance* RAZIEL_QueryEngagedInstance(int index)
 {
-#if defined(PSX_VERSION)
-
 	if (!(Raziel.Senses.EngagedMask & (1 << index)))
 	{
 		return NULL;
@@ -2106,13 +1486,6 @@ struct _Instance* RAZIEL_QueryEngagedInstance(int index)
 	{
 		return Raziel.Senses.EngagedList[index].instance;
 	}
-
-#elif defined(PC_VERSION)
-	if ((dword_B087F4 & (1 << index)) != 0)
-		return dword_B087F0[2 * index];
-	else
-		return 0;
-#endif
 }
 
 
@@ -2120,45 +1493,8 @@ struct _Instance* RAZIEL_QueryEngagedInstance(int index)
 // int /*$ra*/ razUpdateSoundRamp(struct _Instance *instance /*$a0*/, struct _SoundRamp *sound /*$s0*/)
 int razUpdateSoundRamp(struct _Instance *instance, struct _SoundRamp *sound)
 { // line 1955, offset 0x800a7db0
-#if defined(PC_VERSION)
-	int v2; // edi
-	__int32 soundTotalTime; // ebx
-	__int32 v4; // eax
-	__int32 soundTimer; // ecx
-
-	v2 = 0;
-	if (sound->soundHandle)
-	{
-		soundTotalTime = sound->soundTotalTime;
-		v4 = gameTrackerX.timeMult + sound->soundTimer;
-		sound->soundTimer = v4;
-		if (v4 > soundTotalTime)
-			sound->soundTimer = soundTotalTime;
-		if (soundTotalTime)
-		{
-			soundTimer = sound->soundTimer;
-			if (soundTimer <= soundTotalTime)
-			{
-				v2 = sound->soundStartVolume
-					+ sound->soundTimer * (sound->soundEndVolume - sound->soundStartVolume) / soundTotalTime;
-				if (!SOUND_Update3dSound(
-					&instance->position,
-					sound->soundHandle,
-					sound->soundStartPitch + soundTimer * (sound->soundEndPitch - sound->soundStartPitch) / soundTotalTime,
-					v2,
-					sound->soundDistance))
-				{
-					SndEndLoop(sound->soundHandle);
-					sound->soundHandle = 0;
-				}
-			}
-		}
-	}
-	return v2;
-#else
 	UNIMPLEMENTED();
 	return 0;
-#endif
 }
 
 
@@ -2166,26 +1502,11 @@ int razUpdateSoundRamp(struct _Instance *instance, struct _SoundRamp *sound)
 // void /*$ra*/ razSetupSoundRamp(struct _Instance *instance /*$a0*/, struct _SoundRamp *sound /*$s0*/, int sfx /*$a1*/, int startPitch /*$s2*/, int endPitch /*stack 16*/, int startVolume /*stack 20*/, int endVolume /*stack 24*/, int timer /*stack 28*/, int distance /*stack 32*/)
 void razSetupSoundRamp(struct _Instance *instance, struct _SoundRamp *sound, int sfx, int startPitch, int endPitch, int startVolume, int endVolume, int timer, int distance)
 { // line 1995, offset 0x800a7eb4
-#if defined(PC_VERSION)
-	if (!sound->soundHandle)
-		sound->soundHandle = SOUND_Play3dSound(&instance->position, sfx, startPitch, startVolume, distance);
-	if (!timer)
-		sound->soundHandle = 0;
-	sound->soundDistance = distance;
-	sound->soundStartPitch = startPitch;
-	sound->soundEndPitch = endPitch;
-	sound->soundStartVolume = startVolume;
-	sound->soundEndVolume = endVolume;
-	sound->soundTotalTime = timer;
-	sound->soundTimer = 0;
-#else
 	UNIMPLEMENTED();
-#endif
 }
 
 void RAZIEL_SetInteractiveMusic(int modifier, int action)
 {
-#if defined(PSX_VERSION)
 	int soundFlag;
 
 	soundFlag = 1 << modifier;
@@ -2208,94 +1529,16 @@ void RAZIEL_SetInteractiveMusic(int modifier, int action)
 
 		Raziel.soundModifier &= ~soundFlag;
 	}
-
-#elif defined(PC_VERSION)
-	int v2; // esi
-
-	v2 = 1 << modifier;
-	if (action)
-	{
-		if ((dword_B08974 & v2) == 0)
-			SOUND_SetMusicModifier(modifier);
-		dword_B08974 |= v2;
-	}
-	else
-	{
-		if ((dword_B08974 & v2) != 0)
-			SOUND_ResetMusicModifier(modifier);
-		dword_B08974 &= ~v2;
-	}
-#else
-	UNIMPLEMENTED();
-#endif
 }
 
 void RAZIEL_DebugHurtRaziel()
 {
-#if defined(PSX_VERSION)
 	LoseHealth(4096);
-#elif defined(PC_VERSION)
-	struct _Instance* v0; // eax
-	struct _Instance* LinkChild; // esi
-	struct _Instance* v2; // esi
-
-	if ((ControlFlag & 0x1000000) == 0 && !dword_B0881C && current_health > 525)
-	{
-		current_health -= 20000;
-		dword_B08818 -= 20000;
-		dword_B0881C = 122880 * *(__int16*)(dword_B08B3C + 52);
-		if (dword_B08850 != 1 || (v0 = Inst) == 0)
-		{
-		LABEL_19:
-			if (SLOBYTE(gameTrackerX.gameFlags) >= 0)
-				GAMEPAD_Shock0(1, 9000);
-			return;
-		}
-		if (dword_B08804 != 4096)
-		{
-		LABEL_17:
-			if (v0)
-			{
-				INSTANCE_Post(v0, (int)&memwpsx[3112401], 0);
-				dword_B0884C = 2;
-				debugRazielFlags2 = 2048;
-				INSTANCE_Post(Inst, (int)&memwpsx[3112403], 2);
-			}
-			goto LABEL_19;
-		}
-		LinkChild = stru_B0841C.CharacterInstance->LinkChild;
-		if (LinkChild == Inst)
-		{
-			if (!LinkChild)
-				goto LABEL_11;
-			LinkChild = LinkChild->LinkSibling;
-		}
-		if (LinkChild)
-		{
-			v2 = (INSTANCE_Query(LinkChild, 1) & 0x20) != 0 ? LinkChild : 0;
-			v0 = Inst;
-			goto LABEL_13;
-		}
-	LABEL_11:
-		v2 = Inst;
-	LABEL_13:
-		if ((INSTANCE_Query(v0, 40) & 1) != 0)
-			INSTANCE_Post(Inst, (int)&memwpsx[3112401], 0);
-		v0 = Inst;
-		if (v2 == Inst)
-			dword_B08804 = 0;
-		goto LABEL_17;
-	}
-#endif
 }
 
 void RAZIEL_StartNewGame()
 {
-#if defined(PSX_VERSION)
 	memset(&Raziel, 0, sizeof(Raziel));
-#elif defined(PC_VERSION)
-	memset(&player, 0, sizeof(player));
-#endif
 }
 
 int razInBaseArea(char* name, int length)

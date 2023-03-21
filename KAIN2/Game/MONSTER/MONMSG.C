@@ -109,53 +109,7 @@ void MON_PossessedMessageHandler(struct _Instance* instance, struct __Event* mes
 // void /*$ra*/ MON_IdleMessageHandler(struct _Instance *instance /*$s2*/, struct __Event *message /*$s0*/)
 void MON_IdleMessageHandler(struct _Instance *instance, struct __Event *message)
 { // line 167, offset 0x80084a84
-#if defined(PC_VERSION)
-	struct _MonsterVars* mv; // ebx
-	struct _MonsterIR* ir = (struct _MonsterIR* )message->Data;
-
-#if 0
-	if (message->ID == 0 || (message->ID & 0xf2000000) != 0)
-	{
-		MON_PossessedMessageHandler(instance, message);
-		return;
-	}
-#endif
-
-	mv = (struct _MonsterVars*)instance->extraData;
-	switch (message->ID)
-	{
-	case 0x1000002:
-	case 0x100000A:
-	case 0x1000023:
-		if (message->Data)
-			goto def;
-		MON_SwitchState(instance, MONSTER_STATE_PARRY);
-		MON_DefaultMessageHandler(instance, message);
-		break;
-	case 0x100000E:
-		if ((mv->mvFlags & 4) == 0)
-		{
-			if ((INSTANCE_Query(ir->instance/**(struct _Instance**)(message->Data + 4)*/, 1) & 1) != 0)
-				MON_ChangeBehavior(instance, mv->triggeredBehavior);
-			MON_SwitchState(instance, MONSTER_STATE_SURPRISED);
-		}
-		break;
-	case 0x1000012:
-		if ((mv->mvFlags & 4) == 0)
-		{
-			if ((INSTANCE_Query(*(struct _Instance**)(message->Data + 4), 1) & 1) != 0)
-				MON_ChangeBehavior(instance, mv->triggeredBehavior);
-			MON_SwitchState(instance, MONSTER_STATE_NOTICE);
-		}
-		break;
-	default:
-	def:
-		MON_DefaultMessageHandler(instance, message);
-		break;
-	}
-#else
 	UNIMPLEMENTED();
-#endif
 }
 
 

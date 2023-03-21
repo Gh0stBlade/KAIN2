@@ -8,16 +8,12 @@
 
 #include <stddef.h>
 
-#ifdef PC_VERSION
-#pragma warning(disable: 4101)
-#endif
-
 extern void GXFilePrint(const char* fmt, ...);
 
 struct NewMemTracker newMemTracker;
 unsigned long mem_used, mem_total;
 
-#if defined(PSXPC_VERSION) || defined(PC_VERSION)
+#if defined(PSXPC_VERSION)
 
 #if defined(UWP)
 char* memBuffer = NULL;
@@ -403,27 +399,18 @@ void MEMPACK_FreeByType(unsigned char memType)//Matching - 90.53%
 
 unsigned long MEMPACK_Size(char *address)//Matching - 100.0%
 {
-#if defined(PSX_VERSION)
 	return ((int*)address)[-1] - sizeof(struct MemHeader);
-#elif defined(PC_VERSION)
-	return *((DWORD*)address - 1) - 8;
-#endif
 }
 
 unsigned long MEMPACK_ReportFreeMemory()//Matching - 45.00%
 {
-#if defined(PSX_VERSION)
 	return newMemTracker.totalMemory - newMemTracker.currentMemoryUsed;
-#elif defined(PC_VERSION)
-	return mem_total - mem_used;
-#endif
 }
 
 int dword_C550A8, dword_C550B4;
 
 void MEMPACK_ReportMemory2()//Matching - 97.50%
 {
-#if defined(PSX_VERSION)
 	struct MemHeader* address;
 
 	address = newMemTracker.rootNode;
@@ -432,34 +419,6 @@ void MEMPACK_ReportMemory2()//Matching - 97.50%
 	{
 		address = (struct MemHeader*)((char*)address + address->memSize);
 	}
-
-#elif defined(PC_VERSION)
-	int i;
-	GXFilePrint("----- Memory Map -----\n");
-	for (i = dword_C550A8; i != dword_C550B4; i += *(DWORD*)(i + 4))
-	{
-		if (*(BYTE*)(i + 2))
-		{
-			if (*(BYTE*)(i + 3) == 1)
-			{
-				GXFilePrint("CLOSED) addr %x size=%d type=OBJECT : %s\n", i, *(DWORD*)(i + 4), *(DWORD*)(i + 44));
-			}
-			else if (*(BYTE*)(i + 3) == 2)
-			{
-				GXFilePrint("CLOSED) addr %x size=%d type=AREA : %s\n", i, *(DWORD*)(i + 4), *(DWORD*)(i + 160));
-			}
-			else
-			{
-				GXFilePrint("CLOSED) addr %x size=%d type=%d\n", i, *(DWORD*)(i + 4), *(unsigned __int8*)(i + 3));
-			}
-		}
-		else
-		{
-			GXFilePrint("OPEN) addr %x size=%d\n", i, *(DWORD*)(i + 4));
-		}
-	}
-	GXFilePrint("Total Memory Used = %d, Total Memory Free = %d\n", mem_used, mem_total - mem_used);
-#endif
 }
 
 void MEMPACK_ReportMemory()//Matching - 93.59%
@@ -504,17 +463,12 @@ void MEMPACK_SetMemoryDoneStreamed(char *address)//Matching - 100.0%
 
 long MEMPACK_MemoryValidFunc(char* address)//Matching - 100.0%
 {
-#if defined(PSX_VERSION)
-	
 	if ((address != (char*)INVALID_MEM_MAGIC) && (address != NULL))
 	{
 		return (address[-6]) == 1;
 	}
 
 	return 0;
-#elif defined(PC_VERSION)
-	return address != (char*)0xFAFBFCFD && address && *(address - 6) == 1;
-#endif
 }
 
 
@@ -809,44 +763,7 @@ void MEMPACK_RelocateAreaType(struct MemHeader *newAddress, long offset, struct 
 // void /*$ra*/ MEMPACK_RelocateG2AnimKeylistType(struct _G2AnimKeylist_Type **pKeylist /*$a0*/, int offset /*$a1*/, char *start /*$a2*/, char *end /*$a3*/)
 void MEMPACK_RelocateG2AnimKeylistType(struct _G2AnimKeylist_Type **pKeylist, int offset, char *start, char *end)
 { // line 1432, offset 0x80050ea0
-#if defined(PC_VERSION)
-	struct _G2AnimKeylist_Type* v4; // eax
-	struct _G2AnimKeylist_Type* v5; // esi
-	struct _G2AnimFxHeader_Type* fxList; // eax
-	int v7; // edx
-	unsigned __int16** sectionData; // eax
-	unsigned __int16* v9; // ecx
-
-	v4 = *pKeylist;
-	if (*pKeylist >= (struct _G2AnimKeylist_Type*)start && v4 < (struct _G2AnimKeylist_Type*)end)
-	{
-		v5 = v4 ? (struct _G2AnimKeylist_Type*)((char*)v4 + offset) : 0;
-		*pKeylist = v5;
-		if (*(DWORD*)&v5->sectionCount != 0xFACE0FF)
-		{
-			fxList = v5->fxList;
-			if (fxList)
-				fxList = (struct _G2AnimFxHeader_Type*)((char*)fxList + offset);
-			v5->fxList = fxList;
-			v7 = 0;
-			if (v5->sectionCount)
-			{
-				sectionData = v5->sectionData;
-				do
-				{
-					v9 = *sectionData;
-					if (*sectionData)
-						v9 = (unsigned __int16*)((char*)v9 + offset);
-					*sectionData = v9;
-					++v7;
-					++sectionData;
-				} while (v7 < v5->sectionCount);
-			}
-		}
-	}
-#else
 	UNIMPLEMENTED();
-#endif
 }
 
 void MEMPACK_RelocateObjectType(struct MemHeader* newAddress, long offset, struct Object* oldObject)

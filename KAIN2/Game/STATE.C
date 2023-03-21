@@ -783,7 +783,6 @@ void G2EmulationInstanceSwitchAnimation(struct _Instance* instance, int CurrentS
 
 void G2EmulationInstanceSwitchAnimationAlpha(struct _Instance* instance, int CurrentSection, int NewAnim, int NewFrame, int Frames, int Mode, int AlphaTable)
 {
-#if defined(PSX_VERSION)
 	struct _G2AnimSection_Type* animSection;
 
 	animSection = &instance->anim.section[CurrentSection];
@@ -791,29 +790,6 @@ void G2EmulationInstanceSwitchAnimationAlpha(struct _Instance* instance, int Cur
 	G2EmulationInstanceSwitchAnimation(instance, CurrentSection, NewAnim, NewFrame, Frames, Mode);
 
 	G2AnimSection_SetAlphaTable(animSection, G2AlphaTables[AlphaTable]);
-
-#elif defined(PC_VERSION)
-	struct _G2AnimSection_Type* v7; // esi
-	struct _G2AnimKeylist_Type* Keylist; // ebx
-
-	v7 = &instance->anim.section[CurrentSection];
-	Keylist = G2Instance_GetKeylist(instance, NewAnim);
-	G2AnimSection_SetAlphaTable(v7, 0);
-	G2AnimSection_InterpToKeylistFrame(v7, Keylist, NewAnim, NewFrame, 100 * Frames);
-	if (Mode)
-	{
-		G2AnimSection_SetUnpaused(v7);
-		if (Mode == 2)
-			G2AnimSection_SetLooping(v7);
-		else
-			G2AnimSection_SetNoLooping(v7);
-	}
-	else
-	{
-		G2AnimSection_SetPaused(v7);
-	}
-	G2AnimSection_SetAlphaTable(&instance->anim.section[(unsigned __int8)CurrentSection], (&table)[AlphaTable]);
-#endif
 }
 
 void G2EmulationSwitchAnimation(struct __CharacterState* In, int CurrentSection, int NewAnim, int NewFrame, int Frames, int Mode)

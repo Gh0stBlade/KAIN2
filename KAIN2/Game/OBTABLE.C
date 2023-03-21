@@ -13,10 +13,6 @@
 #include "gex2.h"
 #include "Game/STREAM.H"
 
-#ifdef PC_VERSION
-#pragma warning(disable: 4101)
-#endif
-
 struct ObjectAccess objectAccess[28] =
 {
 	{

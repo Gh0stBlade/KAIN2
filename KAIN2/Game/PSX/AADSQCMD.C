@@ -39,7 +39,6 @@ void aadSubstituteVariables(struct AadSeqEvent* event, struct _AadSequenceSlot* 
 
 void metaCmdSelectChannel(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 {
-#if defined(PSX_VERSION)
 	int channelNumber;
 
 	channelNumber = (unsigned char)event->dataByte[0];
@@ -50,20 +49,10 @@ void metaCmdSelectChannel(struct AadSeqEvent *event, struct _AadSequenceSlot *sl
 	}
 
 	eprintinf("[MIDI]: Set Channel Number: %d\n", channelNumber);
-
-#elif defined(PC_VERSION)
-	int v2; // eax
-
-	v2 = event->dataByte[0];
-	if (v2 < 16)
-		slot->selectedChannel = v2;
-#endif
 }
 
 void metaCmdSelectSlot(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 {
-#if defined(PSX_VERSION)
-
 	int slotNumber;
 
 	slotNumber = (unsigned char)event->dataByte[0];
@@ -84,33 +73,10 @@ void metaCmdSelectSlot(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 
 		eprintinf("[MIDI]: Set Slot Number: %d\n", slot->thisSlotNumber);
 	}
-
-
-#elif defined(PC_VERSION)
-	int v2; // eax
-	unsigned __int8 thisSlotNumber; // cl
-
-	v2 = event->dataByte[0];
-	if (v2 >= aadMem->numSlots)
-	{
-		if (v2 == 127)
-		{
-			thisSlotNumber = slot->thisSlotNumber;
-			slot->selectedSlotPtr = slot;
-			slot->selectedSlotNum = thisSlotNumber;
-		}
-	}
-	else
-	{
-		slot->selectedSlotPtr = aadMem->sequenceSlots[v2];
-		slot->selectedSlotNum = v2;
-	}
-#endif
 }
 
 void metaCmdAssignSequence(struct AadSeqEvent* event, struct _AadSequenceSlot* slot)
 {
-#if defined(PSX_VERSION)
 	int sequenceNumber;
 	int bank;
 
@@ -122,16 +88,6 @@ void metaCmdAssignSequence(struct AadSeqEvent* event, struct _AadSequenceSlot* s
 		aadAssignDynamicSequence(bank, sequenceNumber, slot->selectedSlotNum);
 		eprintinf("[MIDI]: Assign dynamic bank: %d to sequence: %d\n", bank, sequenceNumber);
 	}
-
-#elif defined(PC_VERSION)
-	int selectedDynamicBank; // esi
-	int v3; // edi
-
-	selectedDynamicBank = slot->selectedDynamicBank;
-	v3 = event->dataByte[0];
-	if (aadMem->dynamicBankStatus[selectedDynamicBank] == 2 && v3 < aadGetNumDynamicSequences(slot->selectedDynamicBank))
-		aadAssignDynamicSequence(selectedDynamicBank, v3, slot->selectedSlotNum);
-#endif
 }
 
 void metaCmdUsePrimaryTempo(struct AadSeqEvent* event, struct _AadSequenceSlot* slot)
@@ -144,7 +100,6 @@ void metaCmdUseSecondaryTempo(struct AadSeqEvent *event, struct _AadSequenceSlot
 
 void metaCmdSetTempo(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 {
-#if defined(PSX_VERSION)
 	struct AadTempo tempo;
 
 	tempo.quarterNoteTime = (unsigned char)event->dataByte[0] << 16;
@@ -156,25 +111,10 @@ void metaCmdSetTempo(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 	aadSetSlotTempo(slot->selectedSlotNum, &tempo);
 
 	eprintinf("[MIDI]: Set Slot: %d Tempo: %d\n", slot->selectedSlotNum, tempo.quarterNoteTime);
-
-#elif defined(PC_VERSION)
-	struct _AadSequenceSlot* selectedSlotPtr; // eax
-	int v3; // [esp+0h] [ebp-8h] BYREF
-	int ppqn; // [esp+4h] [ebp-4h]
-
-	v3 = event->dataByte[2] | (event->dataByte[1] << 8) | (event->dataByte[0] << 16);
-	selectedSlotPtr = slot->selectedSlotPtr;
-	if (selectedSlotPtr->tempo.ticksPerUpdate)
-		ppqn = selectedSlotPtr->tempo.ppqn;
-	else
-		ppqn = 480;
-	aadSetSlotTempo(slot->selectedSlotNum, &v3);
-#endif
 }
 
 void metaCmdChangeTempo(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 {
-#if defined(PSX_VERSION)
 	struct AadTempo tempo;
 	struct _AadSequenceSlot* selectedSlot;
 
@@ -186,25 +126,10 @@ void metaCmdChangeTempo(struct AadSeqEvent *event, struct _AadSequenceSlot *slot
 	aadSetSlotTempo(slot->selectedSlotNum, &tempo);
 
 	eprintinf("[MIDI]: Change Slot: %d Tempo: %d\n", slot->selectedSlotNum, tempo.quarterNoteTime);
-
-#elif defined(PC_VERSION)
-	struct _AadSequenceSlot* selectedSlotPtr; // ecx
-	int selectedSlotNum; // edx
-	int v4[2]; // [esp+8h] [ebp-8h] BYREF
-
-	selectedSlotPtr = slot->selectedSlotPtr;
-	selectedSlotNum = slot->selectedSlotNum;
-	v4[0] = 100 * selectedSlotPtr->tempo.quarterNoteTime / event->dataByte[0];
-	v4[1] = selectedSlotPtr->tempo.ppqn;
-	aadSetSlotTempo(selectedSlotNum, v4);
-#else
-	UNIMPLEMENTED();
-#endif
 }
 
 void metaCmdSetTempoFromSequence(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 {
-#if defined(PSX_VERSION)
 	int sequenceNumber;//s1
 	struct AadTempo tempo;//-24
 	int bank;//s0
@@ -220,62 +145,29 @@ void metaCmdSetTempoFromSequence(struct AadSeqEvent *event, struct _AadSequenceS
 
 		eprintinf("[MIDI]: Set Slot: %d Tempo: %d Sequence: %d\n", slot->selectedSlotNum, tempo.quarterNoteTime, sequenceNumber);
 	}
-
-#elif defined(PC_VERSION)
-	int selectedDynamicBank; // esi
-	int v3; // edi
-	char v4[8]; // [esp+Ch] [ebp-8h] BYREF
-
-	selectedDynamicBank = slot->selectedDynamicBank;
-	v3 = event->dataByte[0];
-	if (aadMem->dynamicBankStatus[selectedDynamicBank] == 2 && v3 < aadGetNumDynamicSequences(slot->selectedDynamicBank))
-	{
-		aadGetTempoFromDynamicSequence(selectedDynamicBank, v3, v4);
-		aadSetSlotTempo(slot->selectedSlotNum, v4);
-	}
-#endif
 }
 
 void metaCmdStartSlot(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 {
-#if defined(PSX_VERSION)
 	aadStartSlot(slot->selectedSlotNum);
 	eprintinf("[MIDI]: Start Slot: %d\n", slot->selectedSlotNum);
-
-#elif defined(PC_VERSION)
-	aadStartSlot(slot->selectedSlotNum);
-#endif
 }
 
 void metaCmdStopSlot(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 {
-#if defined(PSX_VERSION)
 	aadStopSlot(slot->selectedSlotNum);
 	eprintinf("[MIDI]: Stop Slot: %d\n", slot->selectedSlotNum);
-
-#elif defined(PC_VERSION)
-	aadStopSlot(slot->selectedSlotNum);
-#endif
 }
 
 void metaCmdPauseSlot(struct AadSeqEvent* event, struct _AadSequenceSlot* slot)
 {
-#if defined(PSX_VERSION)
 	aadPauseSlot(slot->selectedSlotNum);
-#elif defined(PC_VERSION)
-	aadPauseSlot(slot->selectedSlotNum);
-#endif
 }
 
 void metaCmdResumeSlot(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 {
-#if defined(PSX_VERSION)
 	aadResumeSlot(slot->selectedSlotNum);
 	eprintinf("[MIDI]: Resume Slot: %d\n", slot->selectedSlotNum);
-
-#elif defined(PC_VERSION)
-	aadResumeSlot(slot->selectedSlotNum);
-#endif
 }
 
 void metaCmdSetSlotBendRange(struct AadSeqEvent* event, struct _AadSequenceSlot* slot)
@@ -288,7 +180,6 @@ void metaCmdSetChannelBendRange(struct AadSeqEvent* event, struct _AadSequenceSl
 
 void metaCmdSetSlotVolume(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 {
-#if defined(PSX_VERSION)
 	int volume;
 
 	volume = (unsigned char)event->dataByte[0];
@@ -298,16 +189,10 @@ void metaCmdSetSlotVolume(struct AadSeqEvent *event, struct _AadSequenceSlot *sl
 	aadUpdateSlotVolPan(slot->selectedSlotPtr);
 
 	eprintinf("[MIDI]: Update Slot:%d Vol: %d\n", slot->selectedSlotNum, volume);
-
-#elif defined(PC_VERSION)
-	slot->selectedSlotPtr->slotVolume = event->dataByte[0];
-	aadUpdateSlotVolPan((int)slot->selectedSlotPtr, (int)slot->selectedSlotPtr);
-#endif
 }
 
 void metaCmdSetSlotPan(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 {
-#if defined(PSX_VERSION)
 	int pan;
 
 	pan = (unsigned char)event->dataByte[0];
@@ -315,16 +200,10 @@ void metaCmdSetSlotPan(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 	aadUpdateSlotVolPan(slot->selectedSlotPtr);
 
 	eprintinf("[MIDI]: Update Slot:%d Pan: %d\n", slot->selectedSlotNum, pan);
-
-#elif defined(PC_VERSION)
-	slot->selectedSlotPtr->slotPan = event->dataByte[0];
-	aadUpdateSlotVolPan((int)slot->selectedSlotPtr, (int)slot->selectedSlotPtr);
-#endif
 }
 
 void metaCmdSetChannelVolume(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 {
-#if defined(PSX_VERSION)
 	int volume;
 
 	volume = (unsigned char)event->dataByte[0];
@@ -334,17 +213,11 @@ void metaCmdSetChannelVolume(struct AadSeqEvent *event, struct _AadSequenceSlot 
 	aadUpdateChannelVolPan(slot->selectedSlotPtr, slot->selectedChannel);
 
 	eprintinf("[MIDI]: Set Channel: %d Volume: %d\n", slot->selectedChannel, volume);
-
-#elif defined(PC_VERSION)
-	slot->selectedSlotPtr->volume[slot->selectedChannel] = event->dataByte[0];
-	aadUpdateChannelVolPan(slot->selectedSlotPtr, slot->selectedChannel);
-#endif
 }
 
 
 void metaCmdSetChannelPan(struct AadSeqEvent* event, struct _AadSequenceSlot* slot)
 {
-#if defined(PSX_VERSION)
 	int pan;
 
 	pan = event->dataByte[0];
@@ -352,16 +225,10 @@ void metaCmdSetChannelPan(struct AadSeqEvent* event, struct _AadSequenceSlot* sl
 	slot->selectedSlotPtr->panPosition[slot->selectedChannel] = pan;
 
 	aadUpdateChannelVolPan(slot->selectedSlotPtr, slot->selectedChannel);
-
-#elif defined(PC_VERSION)
-	slot->selectedSlotPtr->panPosition[slot->selectedChannel] = event->dataByte[0];
-	aadUpdateChannelVolPan(slot->selectedSlotPtr, slot->selectedChannel);
-#endif
 }
 
 void metaCmdEnableSustainUpdate(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 {
-#if defined(PSX_VERSION)
 	int channel;
 	
 	channel = slot->selectedChannel;
@@ -369,83 +236,46 @@ void metaCmdEnableSustainUpdate(struct AadSeqEvent *event, struct _AadSequenceSl
 	slot->selectedSlotPtr->enableSustainUpdate = (1 << channel);
 
 	eprintinf("[MIDI]: Set Channel: %d Sustain Update: %d\n", slot->selectedChannel, slot->selectedSlotPtr->enableSustainUpdate);
-
-
-#elif defined(PC_VERSION)
-	slot->selectedSlotPtr->enableSustainUpdate |= 1 << slot->selectedChannel;
-#endif
 }
 
 void metaCmdDisableSustainUpdate(struct AadSeqEvent* event, struct _AadSequenceSlot* slot)
 {
-#if defined(PSX_VERSION)
 	int channel;
 
 	channel = slot->selectedChannel;
 	
 	slot->selectedSlotPtr->enableSustainUpdate &= ~(1 << channel);
-
-#elif defined(PC_VERSION)
-	slot->selectedSlotPtr->enableSustainUpdate &= ~(1 << slot->selectedChannel);
-#endif
 }
 
 void metaCmdMuteChannel(struct AadSeqEvent* event, struct _AadSequenceSlot* slot)
 {
-#if defined(PSX_VERSION)
 	aadMuteChannels(slot->selectedSlotPtr, 1 << slot->selectedChannel);
-#elif defined(PC_VERSION)
-	aadMuteChannels(slot->selectedSlotPtr, 1 << slot->selectedChannel);
-#endif
 }
 
 void metaCmdUnMuteChannel(struct AadSeqEvent* event, struct _AadSequenceSlot* slot)
 {
-#if defined(PSX_VERSION)
 	aadUnMuteChannels(slot->selectedSlotPtr, 1 << slot->selectedChannel);
-#elif defined(PC_VERSION)
-	aadUnMuteChannels(slot->selectedSlotPtr, 1 << slot->selectedChannel);
-#endif
 }
 
 void metaCmdMuteChannelList(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 {
-#if defined(PSX_VERSION)
 	aadMuteChannels(slot->selectedSlotPtr, (unsigned char)event->dataByte[0] | ((unsigned char)event->dataByte[1] << 8));
 	eprintinf("[MIDI]: Set Muted Channel List: %d\n", (unsigned char)event->dataByte[0] | ((unsigned char)event->dataByte[1] << 8));
-
-#elif defined(PC_VERSION)
-	aadMuteChannels(slot->selectedSlotPtr, event->dataByte[0] | (event->dataByte[1] << 8));
-#endif
 }
 
 void metaCmdUnMuteChannelList(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 {
-#if defined(PSX_VERSION)
 	aadUnMuteChannels(slot->selectedSlotPtr, (((unsigned char)event->dataByte[1] << 8) | (unsigned char)event->dataByte[0]));
 	eprintinf("[MIDI]: Set Un-Muted Channel List: %d\n", (((unsigned char)event->dataByte[1] << 8) | (unsigned char)event->dataByte[0]));
-
-#elif defined(PC_VERSION)
-	aadUnMuteChannels(slot->selectedSlotPtr, (event->dataByte[1] << 8) | event->dataByte[0]);
-#endif
 }
 
 void metaCmdSetChannelMute(struct AadSeqEvent* event, struct _AadSequenceSlot* slot)//Matching - 99.52%
 {
-#if defined(PSX_VERSION)
 	int muteChannelMask;
 
 	muteChannelMask = ((unsigned char)event->dataByte[1] << 8) | (unsigned char)event->dataByte[0];
 	aadUnMuteChannels(slot->selectedSlotPtr, ~muteChannelMask);
 	aadMuteChannels(slot->selectedSlotPtr, muteChannelMask);
-
-#elif defined(PC_VERSION)
-	int v2; // esi
-
-	v2 = (event->dataByte[1] << 8) | event->dataByte[0];
-	aadUnMuteChannels(slot->selectedSlotPtr, ~v2);
-	aadMuteChannels(slot->selectedSlotPtr, v2);
-#endif
 }
 
 void metaCmdDelayMute(struct AadSeqEvent* event, struct _AadSequenceSlot* slot)

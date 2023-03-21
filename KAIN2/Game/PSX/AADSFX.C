@@ -20,7 +20,6 @@ static void(*sfxCmdFunction[])(struct AadSfxCommand*) =
 
 unsigned long aadPlaySfx(unsigned int toneID, int volume, int pan, int pitchOffset)
 {
-#if defined(PSX_VERSION)
 	unsigned long handle;
 
 	handle = createSfxHandle(toneID);
@@ -28,121 +27,18 @@ unsigned long aadPlaySfx(unsigned int toneID, int volume, int pan, int pitchOffs
 	aadPutSfxCommand(0, volume, pan, handle, pitchOffset);
 	
 	return handle;
-#elif defined(PC_VERSION)
-	AadMemoryStruct* v4; // eax
-	u_short handleCounter; // cx
-	u_short commandsInQueue; // ax
-	char v7; // bl
-	int v8; // esi
-	struct AadSfxCommand* v9; // eax
-	AadMemoryStruct* v10; // eax
-
-	++aadMem->sfxSlot.handleCounter;
-	v4 = aadMem;
-	if (!aadMem->sfxSlot.handleCounter)
-	{
-		aadMem->sfxSlot.handleCounter = 1;
-		v4 = aadMem;
-	}
-	handleCounter = v4->sfxSlot.handleCounter;
-	commandsInQueue = v4->sfxSlot.commandsInQueue;
-	v7 = 0;
-	v8 = (handleCounter << 16) | (unsigned __int16)toneID;
-	if (commandsInQueue >= 0x1Eu)
-	{
-		if (commandsInQueue > 0x1Eu)
-			return v8;
-		v7 = 4;
-	}
-	PSX_EnterCriticalSection();
-	v9 = &aadMem->sfxSlot.commandQueue[aadMem->sfxSlot.commandIn];
-	v9->dataByte[0] = volume;
-	v9->statusByte = v7;
-	v9->dataByte[1] = pan;
-	v9->ulongParam = v8;
-	v9->shortParam = pitchOffset;
-	++aadMem->sfxSlot.commandIn;
-	v10 = aadMem;
-	if (aadMem->sfxSlot.commandIn == 32)
-	{
-		aadMem->sfxSlot.commandIn = 0;
-		v10 = aadMem;
-	}
-	++v10->sfxSlot.commandsInQueue;
-	PSX_ExitCriticalSection();
-	return v8;
-#endif
 }
 
 unsigned long aadStopSfx(unsigned long handle)
 {
-#if defined(PSX_VERSION)
-	
 	aadPutSfxCommand(1, 0, 0, handle, 0);
 
 	return handle;
-#elif defined(PC_VERSION)
-	u_short commandsInQueue; // ax
-	char v2; // bl
-	struct AadSfxCommand* v3; // eax
-	AadMemoryStruct* v4; // eax
-
-	commandsInQueue = aadMem->sfxSlot.commandsInQueue;
-	v2 = 1;
-	if (commandsInQueue >= 0x1Eu)
-	{
-		if (commandsInQueue > 0x1Eu)
-			return handle;
-		v2 = 4;
-	}
-	PSX_EnterCriticalSection();
-	v3 = &aadMem->sfxSlot.commandQueue[aadMem->sfxSlot.commandIn];
-	v3->statusByte = v2;
-	v3->dataByte[0] = 0;
-	v3->dataByte[1] = 0;
-	v3->ulongParam = handle;
-	v3->shortParam = 0;
-	++aadMem->sfxSlot.commandIn;
-	v4 = aadMem;
-	if (aadMem->sfxSlot.commandIn == 32)
-	{
-		aadMem->sfxSlot.commandIn = 0;
-		v4 = aadMem;
-	}
-	++v4->sfxSlot.commandsInQueue;
-	PSX_ExitCriticalSection();
-	return handle;
-#endif
 }
 
 void aadStopAllSfx()
 {
-#ifdef PSX_VERSION
 	aadPutSfxCommand(4, 0, 0, 0, 0);
-#else
-	AadSfxCommand* v0; // eax
-	AadMemoryStruct* v1; // eax
-
-	if (aadMem->sfxSlot.commandsInQueue <= 0x1Eu)
-	{
-		PSX_EnterCriticalSection();
-		v0 = &aadMem->sfxSlot.commandQueue[aadMem->sfxSlot.commandIn];
-		v0->statusByte = 4;
-		v0->dataByte[0] = 0;
-		v0->dataByte[1] = 0;
-		v0->ulongParam = 0;
-		v0->shortParam = 0;
-		++aadMem->sfxSlot.commandIn;
-		v1 = aadMem;
-		if (aadMem->sfxSlot.commandIn == 32)
-		{
-			aadMem->sfxSlot.commandIn = 0;
-			v1 = aadMem;
-		}
-		++v1->sfxSlot.commandsInQueue;
-		PSX_ExitCriticalSection();
-	}
-#endif
 }
 
 
@@ -150,31 +46,8 @@ void aadStopAllSfx()
 // int /*$ra*/ aadIsSfxPlaying(unsigned long handle /*$a0*/)
 int aadIsSfxPlaying(unsigned long handle)
 { // line 53, offset 0x80056aac
-#if defined(PC_VERSION)
-	int v1; // ecx
-	u_long* i; // edx
-	char v3; // al
-
-	v1 = 0;
-	for (i = &aadMem->synthVoice[0].handle; ; i += 7)
-	{
-		if (*((BYTE*)i + 4) == 0xD0)
-		{
-			v3 = aadMem->voiceStatus[v1];
-			if (v3)
-			{
-				if (v3 != 2 && *i == handle)
-					break;
-			}
-		}
-		if (++v1 >= 24)
-			return 0;
-	}
-	return 1;
-#else
 	UNIMPLEMENTED();
 	return 0;
-#endif
 }
 
 
@@ -182,54 +55,8 @@ int aadIsSfxPlaying(unsigned long handle)
 // int /*$ra*/ aadIsSfxPlayingOrRequested(unsigned long handle /*$s0*/)
 int aadIsSfxPlayingOrRequested(unsigned long handle)
 { // line 72, offset 0x80056b1c
-#if defined(PC_VERSION)
-	int commandsInQueue; // esi
-	int commandOut; // ecx
-	int v3; // ecx
-	u_long* i; // edx
-	char v5; // al
-
-	PSX_EnterCriticalSection();
-	commandsInQueue = aadMem->sfxSlot.commandsInQueue;
-	commandOut = aadMem->sfxSlot.commandOut;
-	if ((WORD)commandsInQueue)
-	{
-		while (aadMem->sfxSlot.commandQueue[commandOut].statusByte
-			|| aadMem->sfxSlot.commandQueue[commandOut].ulongParam != handle)
-		{
-			if (++commandOut == 32)
-				commandOut = 0;
-			if (!--commandsInQueue)
-				goto LABEL_7;
-		}
-		PSX_ExitCriticalSection();
-		return 1;
-	}
-	else
-	{
-	LABEL_7:
-		PSX_ExitCriticalSection();
-		v3 = 0;
-		for (i = &aadMem->synthVoice[0].handle; ; i += 7)
-		{
-			if (*((BYTE*)i + 4) == 0xD0)
-			{
-				v5 = aadMem->voiceStatus[v3];
-				if (v5)
-				{
-					if (v5 != 2 && *i == handle)
-						break;
-				}
-			}
-			if (++v3 >= 24)
-				return 0;
-		}
-		return 1;
-	}
-#else
 	UNIMPLEMENTED();
 	return 0;
-#endif
 }
 
 
@@ -237,31 +64,8 @@ int aadIsSfxPlayingOrRequested(unsigned long handle)
 // int /*$ra*/ aadIsSfxTypePlaying(unsigned int toneID /*$a0*/)
 int aadIsSfxTypePlaying(unsigned int toneID)
 { // line 93, offset 0x80056bd4
-#if defined(PC_VERSION)
-	int v1; // ecx
-	u_long* i; // edx
-	char v3; // al
-
-	v1 = 0;
-	for (i = &aadMem->synthVoice[0].handle; ; i += 7)
-	{
-		if (*((BYTE*)i + 4) == 0xD0 && *(WORD*)i == (unsigned __int16)toneID)
-		{
-			v3 = aadMem->voiceStatus[v1];
-			if (v3)
-			{
-				if (v3 != 2)
-					break;
-			}
-		}
-		if (++v1 >= 24)
-			return 0;
-	}
-	return 1;
-#else
 	UNIMPLEMENTED();
 	return 0;
-#endif
 }
 
 
@@ -269,105 +73,19 @@ int aadIsSfxTypePlaying(unsigned int toneID)
 // int /*$ra*/ aadIsSfxTypePlayingOrRequested(unsigned int sfxToneID /*$s0*/)
 int aadIsSfxTypePlayingOrRequested(unsigned int sfxToneID)
 { // line 111, offset 0x80056c48
-#if defined(PC_VERSION)
-	int commandsInQueue; // esi
-	int commandOut; // ecx
-	int v3; // ecx
-	u_long* i; // edx
-	char v5; // al
-
-	PSX_EnterCriticalSection();
-	commandsInQueue = aadMem->sfxSlot.commandsInQueue;
-	commandOut = aadMem->sfxSlot.commandOut;
-	if ((WORD)commandsInQueue)
-	{
-		while (aadMem->sfxSlot.commandQueue[commandOut].statusByte
-			|| (unsigned __int16)aadMem->sfxSlot.commandQueue[commandOut].ulongParam != sfxToneID)
-		{
-			if (++commandOut == 32)
-				commandOut = 0;
-			if (!--commandsInQueue)
-				goto LABEL_7;
-		}
-		PSX_ExitCriticalSection();
-		return 1;
-	}
-	else
-	{
-	LABEL_7:
-		PSX_ExitCriticalSection();
-		v3 = 0;
-		for (i = &aadMem->synthVoice[0].handle; ; i += 7)
-		{
-			if (*((BYTE*)i + 4) == 0xD0 && *(WORD*)i == (unsigned __int16)sfxToneID)
-			{
-				v5 = aadMem->voiceStatus[v3];
-				if (v5)
-				{
-					if (v5 != 2)
-						break;
-				}
-			}
-			if (++v3 >= 24)
-				return 0;
-		}
-		return 1;
-	}
-#else
 	UNIMPLEMENTED();
 	return 0;
-#endif
 }
 
 unsigned long aadSetSfxVolPanPitch(unsigned long handle, int volume, int pan, int pitch)
 {
-#if defined(PSX_VERSION)
-
 	aadPutSfxCommand(3, volume & 0xFF, pan & 0xFF, handle, pitch);
 
 	return handle;
-
-#elif defined(PC_VERSION)
-	u_short commandsInQueue; // ax
-	char v5; // bl
-	AadSfxCommand* v6; // eax
-	AadMemoryStruct* v7; // eax
-
-	commandsInQueue = aadMem->sfxSlot.commandsInQueue;
-	v5 = 3;
-	if (commandsInQueue >= 0x1Eu)
-	{
-		if (commandsInQueue > 0x1Eu)
-			return handle;
-		v5 = 4;
-	}
-	PSX_EnterCriticalSection();
-	v6 = &aadMem->sfxSlot.commandQueue[aadMem->sfxSlot.commandIn];
-	v6->dataByte[0] = volume;
-	v6->statusByte = v5;
-	v6->dataByte[1] = pan;
-	v6->ulongParam = handle;
-	v6->shortParam = pitch;
-	++aadMem->sfxSlot.commandIn;
-	v7 = aadMem;
-	if (aadMem->sfxSlot.commandIn == 32)
-	{
-		aadMem->sfxSlot.commandIn = 0;
-		v7 = aadMem;
-	}
-	++v7->sfxSlot.commandsInQueue;
-	PSX_ExitCriticalSection();
-	return handle;
-#else
-	UNIMPLEMENTED();
-	return 0;
-#endif
 }
 
 unsigned long createSfxHandle(unsigned int toneID)//Matching - 99.44%
 {
-#if defined(PSX_VERSION)
-
 	aadMem->sfxSlot.handleCounter++;
 
 	if (aadMem->sfxSlot.handleCounter == 0)
@@ -376,24 +94,10 @@ unsigned long createSfxHandle(unsigned int toneID)//Matching - 99.44%
 	}
 
 	return (aadMem->sfxSlot.handleCounter << 16) | (toneID & 0xFFFF);
-
-#elif defined(PC_VERSION)
-	AadMemoryStruct* v1; // ecx
-
-	++aadMem->sfxSlot.handleCounter;
-	v1 = aadMem;
-	if (!aadMem->sfxSlot.handleCounter)
-	{
-		aadMem->sfxSlot.handleCounter = 1;
-		v1 = aadMem;
-	}
-	return (v1->sfxSlot.handleCounter << 16) | (unsigned __int16)toneID;
-#endif
 }
 
 void aadPutSfxCommand(int statusByte, int dataByte0, int dataByte1, unsigned long ulongParam, int shortParam)
 {
-#ifdef PSX_VERSION
 	struct AadSfxCommand* sfxCmd;
 
 	if (aadMem->sfxSlot.commandsInQueue < 30)
@@ -436,73 +140,18 @@ void aadPutSfxCommand(int statusByte, int dataByte0, int dataByte1, unsigned lon
 
 		ExitCriticalSection();
 	}
-
-#else
-	u_short commandsInQueue; // ax
-	char v6; // bl
-	AadSfxCommand* v7; // eax
-	AadMemoryStruct* v8; // eax
-
-	commandsInQueue = aadMem->sfxSlot.commandsInQueue;
-	if (commandsInQueue < 0x1Eu)
-	{
-		v6 = statusByte;
-	}
-	else
-	{
-		if (commandsInQueue > 0x1Eu)
-			return;
-		v6 = 4;
-	}
-	PSX_EnterCriticalSection();
-	v7 = &aadMem->sfxSlot.commandQueue[aadMem->sfxSlot.commandIn];
-	v7->dataByte[0] = dataByte0;
-	v7->dataByte[1] = dataByte1;
-	v7->statusByte = v6;
-	v7->ulongParam = ulongParam;
-	v7->shortParam = shortParam;
-	++aadMem->sfxSlot.commandIn;
-	v8 = aadMem;
-	if (aadMem->sfxSlot.commandIn == 32)
-	{
-		aadMem->sfxSlot.commandIn = 0;
-		v8 = aadMem;
-	}
-	++v8->sfxSlot.commandsInQueue;
-	PSX_ExitCriticalSection();
-#endif
 }
 
 void aadExecuteSfxCommand(struct AadSfxCommand *sfxCmd)
 {
-#if defined(PSX_VERSION)
 	if (sfxCmd->statusByte < 9)
 	{
 		sfxCmdFunction[sfxCmd->statusByte](sfxCmd);
 	}
-#elif defined(PC_VERSION)
-
-	static void(*sfxCmds[])(struct AadSfxCommand*) =
-	{
-		sfxCmdPlayTone,
-		sfxCmdStopTone,
-		sfxCmdSetToneVolumeAndPan,
-		sfxCmdSetToneVolPanPitch,
-		sfxCmdStopAllTones,
-		sfxCmdLockVoice,
-		sfxCmdSetVoiceAttr,
-		sfxCmdSetVoiceKeyOn,
-		sfxCmdSetVoiceKeyOff
-	};
-
-	if (sfxCmd->statusByte < 9u)
-		sfxCmds[sfxCmd->statusByte](sfxCmd);
-#endif
 }
 
 void sfxCmdPlayTone(struct AadSfxCommand* sfxCmd)//Matching - 88.08%
 {
-#if defined(PSX_VERSION)
 	unsigned long handle;
 	struct AadProgramAtr* progAtr;
 	struct AadToneAtr* toneAtr;
@@ -548,63 +197,6 @@ void sfxCmdPlayTone(struct AadSfxCommand* sfxCmd)//Matching - 88.08%
 			}
 		}
 	}
-
-#elif defined(PC_VERSION)
-	unsigned __int8* v2; // eax
-	struct AadToneAtr* v3; // edi
-	unsigned __int16 v4; // bx
-	struct AadSynthVoice* Voice; // eax
-	struct AadSynthVoice* v6; // esi
-	u_char parentProgram; // al
-	u_long ulongParam; // [esp+10h] [ebp-4h]
-	struct AadSfxCommand* sfxCmda; // [esp+18h] [ebp+4h]
-
-	static struct AadProgramAtr progAtr[] =
-	{
-		{1, 0,    0x7F, 0x40, 0},
-		{0, 0x20, 0,    0x40, 0}
-	};
-
-	u_long Param = sfxCmd->ulongParam;
-	v2 = &aadMem->sfxToneMasterList[20 * (unsigned __int16)ulongParam + 4];
-	if (*(WORD*)v2)
-	{
-		v3 = (struct AadToneAtr*)(v2 + 4);
-		sfxCmda = (struct AadSfxCommand*)&aadMem[1].sfxToneAttrTbl[*((unsigned __int16*)v2 + 1) + 95].toneAttr.adsr2;
-		if (*(WORD*)&sfxCmda->statusByte)
-		{
-			v4 = v2[10];
-			Voice = (struct AadSynthVoice*)aadAllocateVoice(v3->priority);
-			v6 = Voice;
-			if (Voice)
-			{
-				aadPlayTone(
-					v3,
-					(unsigned int)sfxCmda,
-					&progAtr,
-					v4,
-					127,
-					sfxCmd->dataByte[0],
-					sfxCmd->dataByte[1],
-					aadMem->sfxSlot.sfxVolume,
-					aadMem->sfxMasterVol,
-					Voice,
-					sfxCmd->shortParam);
-				v6->voiceID = -48;
-				v6->handle = ulongParam;
-				v6->priority = v3->priority;
-				v6->note = v4;
-				parentProgram = v3->parentProgram;
-				v6->volume = 127;
-				v6->program = parentProgram;
-				v6->updateVol = sfxCmd->dataByte[0];
-				v6->pan = sfxCmd->dataByte[1];
-				v6->progAtr = &progAtr;
-				v6->toneAtr = v3;
-			}
-		}
-	}
-#endif
 }
 
 
@@ -612,49 +204,7 @@ void sfxCmdPlayTone(struct AadSfxCommand* sfxCmd)//Matching - 88.08%
 // void /*$ra*/ sfxCmdStopTone(struct AadSfxCommand *sfxCmd /*$a0*/)
 void sfxCmdStopTone(struct AadSfxCommand *sfxCmd)
 { // line 344, offset 0x80057038
-#if defined(PC_VERSION)
-	AadMemoryStruct* v1; // edx
-	int v2; // esi
-	int v3; // edi
-	int v4; // ebp
-	int v5; // ebx
-	struct AadSfxCommand** v6; // eax
-	char v7; // cl
-	struct AadSfxCommand* v8; // ecx
-	struct AadSfxCommand* sfxCmda; // [esp+14h] [ebp+4h]
-
-	v1 = aadMem;
-	v2 = 0;
-	sfxCmda = (struct AadSfxCommand*)sfxCmd->ulongParam;
-	v3 = 0;
-	v4 = 476;
-	v5 = 24;
-	do
-	{
-		v6 = (struct AadSfxCommand**)((char*)v1 + v4);
-		if (*((BYTE*)&v1->updateMode + v4) == 0xD0 && v6[1] == sfxCmda)
-		{
-			v7 = v1->voiceStatus[v3];
-			if (v7)
-			{
-				if (v7 != 2)
-				{
-					v8 = *v6;
-					*((BYTE*)v6 + 8) = -1;
-					v1 = aadMem;
-					v2 |= (unsigned int)v8;
-				}
-			}
-		}
-		++v3;
-		v4 += 28;
-		--v5;
-	} while (v5);
-	v1->voiceKeyOffRequest |= v2;
-	aadMem->voiceKeyOnRequest &= ~v2;
-#else
 	UNIMPLEMENTED();
-#endif
 }
 
 
@@ -662,47 +212,7 @@ void sfxCmdStopTone(struct AadSfxCommand *sfxCmd)
 // void /*$ra*/ sfxCmdStopAllTones(struct AadSfxCommand *sfxCmd /*$a0*/)
 void sfxCmdStopAllTones(struct AadSfxCommand *sfxCmd)
 { // line 372, offset 0x800570f0
-#if defined(PC_VERSION)
-	AadMemoryStruct* v1; // edx
-	int v2; // esi
-	int v3; // edi
-	int v4; // ebp
-	int v5; // ebx
-	char* v6; // eax
-	char v7; // cl
-	int v8; // ecx
-
-	v1 = aadMem;
-	v2 = 0;
-	v3 = 0;
-	v4 = 476;
-	v5 = 24;
-	do
-	{
-		v6 = (char*)v1 + v4;
-		if (*((BYTE*)&v1->updateMode + v4) == 0xD0)
-		{
-			v7 = v1->voiceStatus[v3];
-			if (v7)
-			{
-				if (v7 != 2)
-				{
-					v8 = *(DWORD*)v6;
-					v6[8] = -1;
-					v1 = aadMem;
-					v2 |= v8;
-				}
-			}
-		}
-		++v3;
-		v4 += 28;
-		--v5;
-	} while (v5);
-	v1->voiceKeyOffRequest |= v2;
-	aadMem->voiceKeyOnRequest &= ~v2;
-#else
 	UNIMPLEMENTED();
-#endif
 }
 
 
@@ -710,90 +220,7 @@ void sfxCmdStopAllTones(struct AadSfxCommand *sfxCmd)
 // void /*$ra*/ sfxCmdSetToneVolumeAndPan(struct AadSfxCommand *sfxCmd /*$a0*/)
 void sfxCmdSetToneVolumeAndPan(struct AadSfxCommand *sfxCmd)
 { 
-#if defined(PC_VERSION)
-	// line 399, offset 0x80057194
-	/* begin block 1 */
-		// Start line: 400
-		// Start offset: 0x80057194
-		// Variables:
-			unsigned long handle; // $a3
-			struct AadSynthVoice *voice; // $t0
-			unsigned short i; // $t1
-			struct AadVolume newVoiceVol; // stack offset -16
-
-		/* begin block 1.1 */
-			// Start line: 418
-			// Start offset: 0x80057248
-			// Variables:
-				unsigned long tmp; // $v0
-		/* end block 1.1 */
-		// End offset: 0x80057248
-		// End Line: 418
-
-		/* begin block 1.2 */
-			// Start line: 419
-			// Start offset: 0x800572B0
-			// Variables:
-				unsigned long masterVolumeSquared; // $v1
-		/* end block 1.2 */
-		// End offset: 0x800572B0
-		// End Line: 419
-
-		/* begin block 1.3 */
-			// Start line: 420
-			// Start offset: 0x80057330
-			// Variables:
-				unsigned long tmp; // $v0
-		/* end block 1.3 */
-		// End offset: 0x80057330
-		// End Line: 420
-
-		/* begin block 1.4 */
-			// Start line: 421
-			// Start offset: 0x8005739C
-			// Variables:
-				unsigned long masterVolumeSquared; // $v1
-		/* end block 1.4 */
-		// End offset: 0x8005739C
-		// End Line: 421
-
-		/* begin block 1.5 */
-			// Start line: 421
-			// Start offset: 0x8005739C
-			// Variables:
-				unsigned long masterVolumeSquared; // $v1
-		/* end block 1.5 */
-		// End offset: 0x8005739C
-		// End Line: 421
-
-		/* begin block 1.6 */
-			// Start line: 421
-			// Start offset: 0x8005739C
-			// Variables:
-				unsigned long masterVolumeSquared; // $v0
-		/* end block 1.6 */
-		// End offset: 0x8005739C
-		// End Line: 421
-
-		/* begin block 1.7 */
-			// Start line: 421
-			// Start offset: 0x8005739C
-			// Variables:
-				unsigned long masterVolumeSquared; // $v0
-		/* end block 1.7 */
-		// End offset: 0x8005739C
-		// End Line: 421
-	/* end block 1 */
-	// End offset: 0x800574F8
-	// End Line: 436
-
-	/* begin block 2 */
-		// Start line: 881
-	/* end block 2 */
-	// End Line: 882
-#else
 	UNIMPLEMENTED();
-#endif
 }
 
 
@@ -801,97 +228,11 @@ void sfxCmdSetToneVolumeAndPan(struct AadSfxCommand *sfxCmd)
 // void /*$ra*/ sfxCmdSetToneVolPanPitch(struct AadSfxCommand *sfxCmd /*$s2*/)
 void sfxCmdSetToneVolPanPitch(struct AadSfxCommand *sfxCmd)
 { // line 439, offset 0x80057508
-#if defined(PC_VERSION)
-  /* begin block 1 */
-		// Start line: 440
-		// Start offset: 0x80057508
-		// Variables:
-			unsigned long handle; // $a2
-			struct AadSynthVoice *voice; // $s0
-			unsigned short i; // $s1
-			struct AadVolume newVoiceVol; // stack offset -24
-			unsigned short newPitch; // $a1
-			unsigned short finePitch; // $a1
-			unsigned short pitchIndex; // $a0
-
-		/* begin block 1.1 */
-			// Start line: 459
-			// Start offset: 0x800575CC
-			// Variables:
-				unsigned long tmp; // $v0
-		/* end block 1.1 */
-		// End offset: 0x800575CC
-		// End Line: 459
-
-		/* begin block 1.2 */
-			// Start line: 460
-			// Start offset: 0x80057634
-			// Variables:
-				unsigned long masterVolumeSquared; // $v1
-		/* end block 1.2 */
-		// End offset: 0x80057634
-		// End Line: 460
-
-		/* begin block 1.3 */
-			// Start line: 461
-			// Start offset: 0x800576B4
-			// Variables:
-				unsigned long tmp; // $v0
-		/* end block 1.3 */
-		// End offset: 0x800576B4
-		// End Line: 461
-
-		/* begin block 1.4 */
-			// Start line: 462
-			// Start offset: 0x80057720
-			// Variables:
-				unsigned long masterVolumeSquared; // $v1
-		/* end block 1.4 */
-		// End offset: 0x80057720
-		// End Line: 462
-
-		/* begin block 1.5 */
-			// Start line: 462
-			// Start offset: 0x80057720
-			// Variables:
-				unsigned long masterVolumeSquared; // $v1
-		/* end block 1.5 */
-		// End offset: 0x80057720
-		// End Line: 462
-
-		/* begin block 1.6 */
-			// Start line: 462
-			// Start offset: 0x80057720
-			// Variables:
-				unsigned long masterVolumeSquared; // $v0
-		/* end block 1.6 */
-		// End offset: 0x80057720
-		// End Line: 462
-
-		/* begin block 1.7 */
-			// Start line: 462
-			// Start offset: 0x80057720
-			// Variables:
-				unsigned long masterVolumeSquared; // $v0
-		/* end block 1.7 */
-		// End offset: 0x80057720
-		// End Line: 462
-	/* end block 1 */
-	// End offset: 0x8005795C
-	// End Line: 494
-
-	/* begin block 2 */
-		// Start line: 999
-	/* end block 2 */
-	// End Line: 1000
-#else
 	UNIMPLEMENTED();
-#endif
 }
 
 void sfxCmdLockVoice(struct AadSfxCommand* sfxCmd)
 {
-#if defined(PSX_VERSION)
 	typedef void* (*func)(unsigned long);
 	func callbackProc;
 	struct AadSynthVoice* voice;
@@ -910,25 +251,6 @@ void sfxCmdLockVoice(struct AadSfxCommand* sfxCmd)
 	{
 		callbackProc(voice->voiceMask);
 	}
-
-#elif defined(PC_VERSION)
-	void(__cdecl * ulongParam)(int); // esi
-	int* Voice; // eax
-	int v3; // ecx
-
-	ulongParam = (void(__cdecl*)(int))sfxCmd->ulongParam;
-	Voice = (int*)aadAllocateVoice(255);
-	if (Voice)
-	{
-		v3 = *Voice;
-		*((BYTE*)Voice + 18) |= 1u;
-		ulongParam(v3);
-	}
-	else
-	{
-		ulongParam(0);
-	}
-#endif
 }
 
 
@@ -936,48 +258,16 @@ void sfxCmdLockVoice(struct AadSfxCommand* sfxCmd)
 // void /*$ra*/ sfxCmdSetVoiceAttr(struct AadSfxCommand *sfxCmd /*$a0*/)
 void sfxCmdSetVoiceAttr(struct AadSfxCommand *sfxCmd)
 { // line 516, offset 0x800579c0
-#if defined(PC_VERSION)
-	unsigned int v1; // esi
-	ulong ulongParam; // edi
-	int v3; // eax
-	int v4; // edx
-
-	v1 = 0;
-	ulongParam = sfxCmd->ulongParam;
-	v3 = 1;
-	do
-	{
-		if ((v3 & *(DWORD*)ulongParam) != 0)
-			break;
-		++v1;
-		v3 *= 2;
-	} while (v1 < 0x18);
-	SpuSetVoiceVolume(v1, *(WORD*)(ulongParam + 8), *(WORD*)(ulongParam + 10));
-	SpuSetVoicePitch(v1, *(WORD*)(ulongParam + 20));
-	SpuSetVoiceStartAddr(v1, *(DWORD*)(ulongParam + 28));
-	v4 = *(WORD*)(ulongParam + 60);
-	SpuSetVoiceADSR1ADSR2(v1, *(WORD*)(ulongParam + 58), v4);
-#else
 	UNIMPLEMENTED();
-#endif
 }
 
 void sfxCmdSetVoiceKeyOn(struct AadSfxCommand* sfxCmd)
 {
-#if defined(PSX_VERSION)
 	aadMem->voiceKeyOnRequest |= sfxCmd->ulongParam;
-#elif defined(PC_VERSION)
-	aadMem->voiceKeyOnRequest |= sfxCmd->ulongParam;
-#endif
 }
 
 void sfxCmdSetVoiceKeyOff(struct AadSfxCommand* sfxCmd)
 {
-#if defined(PSX_VERSION)
 	aadMem->voiceKeyOffRequest |= sfxCmd->ulongParam;
 	aadMem->voiceKeyOnRequest &= ~sfxCmd->ulongParam;
-#elif defined(PC_VERSION)
-	aadMem->voiceKeyOffRequest |= sfxCmd->ulongParam;
-	aadMem->voiceKeyOnRequest &= ~sfxCmd->ulongParam;
-#endif
 }

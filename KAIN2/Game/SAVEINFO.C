@@ -817,54 +817,16 @@ void SAVE_DoInstanceDeadDead(struct _Instance* instance)
 
 void SAVE_MarkDeadDead(struct _Instance* instance)
 {
-#if defined(PSX_VERSION)
 	instance->flags |= 0x800000;
-#elif defined(PC_VERSION)
-	instance->flags |= 0x800000;
-#endif
 }
 
 void SAVE_UndestroyInstance(struct _Instance* instance)
 {
-#if defined(PSX_VERSION)
-
 	SAVE_SetDeadDeadBit(instance->introUniqueID, 0);
-
-#elif defined(PC_VERSION)
-	BYTE* v1; // edi
-	int introUniqueID; // esi
-	BYTE* v3; // eax
-
-	v1 = 0;
-	introUniqueID = instance->introUniqueID;
-	if (introUniqueID < 0x2000)
-	{
-		v3 = dword_C55294;
-		if ((unsigned int)dword_C55294 < dword_C55298)
-		{
-			while (*v3 != 4)
-			{
-				v3 += 4 * (unsigned __int8)v3[1];
-				if ((unsigned int)v3 >= dword_C55298)
-					goto LABEL_7;
-			}
-			v1 = v3;
-		}
-	LABEL_7:
-		if (v1)
-		{
-			if (introUniqueID / 8 >= 832)
-				GXFilePrint("Ran out of dead bits, size = %d, uniqueID = %d\n", 832, instance->introUniqueID);
-			else
-				v1[introUniqueID / 8 + 2] &= ~(unsigned __int8)(1 << (instance->introUniqueID & 7));
-		}
-	}
-#endif
 }
 
 struct SavedIntroSmall * SAVE_GetSavedSmallIntro(struct _Instance *instance)
 {
-#if defined(PSX_VERSION)
 	struct SavedBasic* curSave;
 
 	curSave = (struct SavedBasic*)savedInfoTracker.InfoStart;
@@ -882,26 +844,10 @@ struct SavedIntroSmall * SAVE_GetSavedSmallIntro(struct _Instance *instance)
 	}
 
 	return NULL;
-
-#elif defined(PC_VERSION)
-	struct SavedIntroSmall* result; // eax
-
-	result = dword_C55294;
-	if (dword_C55294 >= dword_C55298)
-		return 0;
-	while (result->savedID != 5 || result->introUniqueID != instance->introUniqueID)
-	{
-		result += result->shiftedSaveSize;
-		if (result >= dword_C55298)
-			return 0;
-	}
-	return result;
-#endif
 }
 
 struct SavedIntroSpline* SAVE_GetIntroSpline(struct _Instance* instance)//Matching - 91.85%
 {
-#if defined(PSX_VERSION)
 	struct SavedBasic* curSave;
 
 	curSave = (struct SavedBasic*)savedInfoTracker.InfoStart;
@@ -916,21 +862,6 @@ struct SavedIntroSpline* SAVE_GetIntroSpline(struct _Instance* instance)//Matchi
 	}
 
 	return NULL;
-
-#elif defined(PC_VERSION)
-	struct SavedIntroSpline* result; // eax
-
-	result = (struct SavedIntroSpline*)dword_C55294;
-	if (dword_C55294 >= dword_C55298)
-		return 0;
-	while (result->savedID != 8 || result->introUniqueID != instance->introUniqueID)
-	{
-		result = (struct SavedIntroSpline*)((char*)result + 4 * result->shiftedSaveSize);
-		if (result >= (struct SavedIntroSpline*)dword_C55298)
-			return 0;
-	}
-	return result;
-#endif
 }
 
 
@@ -1041,7 +972,6 @@ void SAVE_SaveEverythingInMemory()
 
 void SAVE_SaveGame()
 {
-#if defined(PSX_VERSION)
 	while (STREAM_PollLoadQueue() == 0)
 	{
 	}
@@ -1051,52 +981,6 @@ void SAVE_SaveGame()
 	SAVE_UpdateGlobalSaveTracker();
 
 	GlobalSave->sizeUsedInBlock = ((unsigned short*)&savedInfoTracker.InfoEnd)[0] - ((unsigned short*)&savedInfoTracker.InfoStart)[0];
-
-#elif defined(PC_VERSION)
-	int v0; // esi
-	int v1; // edi
-	int LevelWithID; // eax
-	DWORD* v3; // esi
-	SavedIntroSmall* result; // eax
-
-	while (STREAM_PollLoadQueue())
-		ASLD_FinishLoading();
-	v0 = (_Instance*)*((DWORD*)gameTrackerX.instanceList + 1);
-	if (v0)
-	{
-		do
-		{
-			v1 = v0->next;
-			LevelWithID = STREAM_GetLevelWithID(v0->currentStreamUnitID);
-			if (LevelWithID)
-				SAVE_Instance(v0, LevelWithID);
-			v0 = v1;
-		} while (v1);
-	}
-	v3 = &StreamTracker;
-	do
-	{
-		if (*((WORD*)v3 + 2) == 2)
-		{
-			EVENT_SaveEventsFromLevel(*v3, v3[2]);
-			SAVE_CreatedSavedLevel(*v3, v3[2]);
-		}
-		v3 += 16;
-	} while ((int)v3 < (int)&MORPH_SavedLevel);
-	GlobalSave->currentTime = dword_C66F4C;
-	memcpy(&GlobalSave->sound, &dword_C66ED0, sizeof(GlobalSave->sound));
-	GlobalSave->saveVersion = 21797;
-	if (GAMEPAD_DualShockEnabled())
-		GlobalSave->flags |= 2u;
-	else
-		GlobalSave->flags &= ~2;
-	result = dword_C55294;
-	GlobalSave->sizeUsedInBlock = (WORD)dword_C55298 - (WORD)dword_C55294;
-	return result;
-#else
-	UNIMPLEMENTED();
-	return;
-#endif
 }
 
 
@@ -1104,60 +988,7 @@ void SAVE_SaveGame()
 // void /*$ra*/ SAVE_RestoreGame()
 void SAVE_RestoreGame()
 { // line 1406, offset 0x800b6cb8
-#if defined(PC_VERSION)
-	SavedIntroSmall* v0; // eax
-	SavedIntroSmall* v1; // esi
-
-	v0 = dword_C55294;
-	dword_C66E64 |= 0x200000u;
-	v1 = 0;
-	GlobalSave = 0;
-	if (dword_C55294 < dword_C55298)
-	{
-		while (v0->savedID != 6)
-		{
-			v0 += v0->shiftedSaveSize;
-			if (v0 >= dword_C55298)
-				goto LABEL_6;
-		}
-		v1 = v0;
-		GlobalSave = (_GlobalSaveTracker*)v0;
-	}
-LABEL_6:
-	if (v1[1].introUniqueID == 21797)
-	{
-		dword_C66F4C = (int)v1[2];
-		memcpy(&dword_C66ED0, &v1[24], 0x14u);
-		SOUND_SetSfxVolume(dword_C66ED8);
-		SOUND_SetMusicVolume(dword_C66ED4);
-		SOUND_SetVoiceVolume(dword_C66EDC);
-		if ((GlobalSave->flags & 2) != 0)
-			GAMEPAD_EnableDualShock();
-		else
-			GAMEPAD_DisableDualShock();
-	}
-	else
-	{
-		//GXFilePrint(`string');
-		dword_C5529C = dword_C55290 + 24576;
-		dword_C55294 = (SavedIntroSmall*)(dword_C552A8 + dword_C55290);
-		dword_C55298 = (SavedIntroSmall*)(dword_C552A8 + dword_C55290);
-		memset(
-			(void*)(dword_C552A8 + dword_C55290),
-			0,
-			4 * ((unsigned int)(24576 - dword_C552A8) >> 2) + (-(char)dword_C552A8 & 3));
-		memset(&dword_C55190, 0, 0x100u);
-		dword_C552A4 = 0;
-		GlobalSave = (_GlobalSaveTracker*)SAVE_GetSavedBlock(6, 0);
-		GlobalSave->CurrentBirthID = 0x2000;
-		GlobalSave->humanOpinionOfRaziel = 0;
-		SAVE_GetSavedBlock(4, 0);
-	}
-	dword_C55298 = (SavedIntroSmall*)((char*)dword_C55294 + GlobalSave->sizeUsedInBlock);
-	GAMELOOP_RequestLevelChange(aUnder, 1, &gameTrackerX);
-#else
 	UNIMPLEMENTED();
-#endif
 }
 
 void SAVE_DebugSaveGame()

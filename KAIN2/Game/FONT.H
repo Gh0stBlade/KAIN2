@@ -111,10 +111,6 @@ typedef struct FontPos // hashcode: 0x0084D7DD (dec: 8706013)
 extern "C" {
 #endif
 
-#if defined(PC_VERSION)
-extern font_color_t the_font_color_table[];
-#endif
-
 extern unsigned short SpecialFogClut;
 extern FontPos fontPos[79];
 extern char charMap[92][3];

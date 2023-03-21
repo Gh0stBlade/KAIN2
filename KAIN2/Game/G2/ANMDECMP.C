@@ -24,7 +24,6 @@ int _indexTable[] = {
 
 void _G2Anim_DecompressChannel_AdaptiveDelta(struct _G2AnimDecompressChannelInfo_Type* dcInfo, struct _G2AnimChanStatus_Type* status)
 {
-#if defined(PSX_VERSION)
 	unsigned short* chanData; // $t7
 	int index; // $t2
 	int keyData; // $t5
@@ -92,61 +91,6 @@ void _G2Anim_DecompressChannel_AdaptiveDelta(struct _G2AnimDecompressChannelInfo
 	status->index = index;
 	status->keyData = keyData;
 	dcInfo->chanData = &chanData[keyCount >> 2];
-
-#elif defined(PC_VERSION)
-	struct _G2AnimChanStatus_Type* v2; // ebx
-	struct _G2AnimDecompressChannelInfo_Type* v3; // edi
-	int storedKey; // edx
-	u_short* v5; // eax
-	int v6; // ecx
-	int index; // esi
-	unsigned __int16 v8; // bp
-	unsigned __int16 v9; // ax
-	unsigned __int16 v10; // cx
-	int v11; // eax
-	int keyData; // [esp+14h] [ebp-10h]
-
-	v2 = status;
-	v3 = dcInfo;
-	storedKey = dcInfo->storedKey;
-	v5 = dcInfo->chanData + 2;
-	v6 = dcInfo->keylist->keyCount + 3;
-	keyData = status->keyData;
-	index = status->index;
-	if (storedKey < dcInfo->targetKey)
-	{
-		while (1)
-		{
-			++storedKey;
-			v8 = word_4F4AE0[2 * index];
-			v9 = (v5[storedKey >> 2] >> (4 * (storedKey & 3))) & 0xF;
-			index += dword_4F4AA0[v9];
-			if (index < 0)
-				index = 0;
-			if (index > 63)
-				index = 63;
-			v10 = v8 >> 3;
-			if ((v9 & 4) != 0)
-				v10 += v8;
-			if ((v9 & 2) != 0)
-				v10 += v8 >> 1;
-			if ((v9 & 1) != 0)
-				v10 += (v8 >> 2) + (v8 & 1);
-			v11 = (v9 & 8) != 0 ? keyData - v10 : v10 + keyData;
-			keyData = v11;
-			if (storedKey >= dcInfo->targetKey)
-				break;
-			v5 = dcInfo->chanData + 2;
-		}
-		v2 = status;
-		v6 = dcInfo->keylist->keyCount + 3;
-		v5 = dcInfo->chanData + 2;
-		v3 = dcInfo;
-	}
-	v2->index = index;
-	v2->keyData = keyData;
-	v3->chanData = &v5[v6 >> 2];
-#endif
 }
 
 void _G2Anim_DecompressChannel_Linear(struct _G2AnimDecompressChannelInfo_Type* dcInfo, struct _G2AnimChanStatus_Type* status)
@@ -183,7 +127,6 @@ void _G2Anim_DecompressChannel_Linear(struct _G2AnimDecompressChannelInfo_Type* 
 
 void _G2Anim_InitializeChannel_AdaptiveDelta(struct _G2AnimDecompressChannelInfo_Type* dcInfo, struct _G2AnimChanStatus_Type* status)//Matching - 100%
 {
-#if defined(PSX_VERSION)
 	unsigned short* chanData;
 	int keyCount;
 
@@ -196,22 +139,10 @@ void _G2Anim_InitializeChannel_AdaptiveDelta(struct _G2AnimDecompressChannelInfo
 	status->keyData = chanData[1];
 
 	dcInfo->chanData = &chanData[((keyCount + 3) >> 2)] + 2;
-
-#elif defined(PC_VERSION)
-	u_short* chanData; // eax
-	int v3; // ecx
-
-	chanData = dcInfo->chanData;
-	v3 = (dcInfo->keylist->keyCount + 3) >> 2;
-	status->index = *(unsigned __int8*)chanData;
-	status->keyData = chanData[1];
-	dcInfo->chanData = &chanData[v3 + 2];
-#endif
 }
 
 void _G2Anim_InitializeChannel_Linear(struct _G2AnimDecompressChannelInfo_Type* dcInfo, struct _G2AnimChanStatus_Type* status)//Matching - 100%
 {
-#if defined(PSX_VERSION)
 	unsigned short* chanData;
 	int chanLength;
 
@@ -222,14 +153,4 @@ void _G2Anim_InitializeChannel_Linear(struct _G2AnimDecompressChannelInfo_Type* 
 	status->keyData = chanData[1];
 
 	dcInfo->chanData = &chanData[chanLength];
-
-#elif defined(PC_VERSION)
-	u_short* chanData; // ecx
-	int v3; // eax
-
-	chanData = dcInfo->chanData;
-	v3 = *chanData & 0xFFF;
-	status->keyData = chanData[1];
-	dcInfo->chanData = &chanData[v3 + 1];
-#endif
 }

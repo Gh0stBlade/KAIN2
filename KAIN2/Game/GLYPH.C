@@ -86,7 +86,6 @@ void GlyphCollide(struct _Instance* instance, struct GameTracker* gameTracker)
 
 void GlyphProcess(struct _Instance *instance, struct GameTracker *gameTracker)
 { 
-#if defined(PSX_VERSION)
 	struct __GlyphData* data;
 
 	data = (struct __GlyphData*)instance->extraData;
@@ -104,20 +103,6 @@ void GlyphProcess(struct _Instance *instance, struct GameTracker *gameTracker)
 	instance->flags |= 0xC00;
 
 	instance->currentStreamUnitID = instance->parent->currentStreamUnitID;
-
-#elif defined(PC_VERSION)
-	struct _Instance* parent; // ecx
-	int flags; // eax
-
-	(*(void(__cdecl**)(struct _Instance*, DWORD, DWORD))instance->extraData)(instance, 0, 0);
-	parent = instance->parent;
-	instance->oldPos = parent->position;
-	instance->position = parent->position;
-	flags = instance->flags;
-	flags |= 0xC00;
-	instance->currentStreamUnitID = parent->currentStreamUnitID;
-	instance->flags = flags;
-#endif
 }
 
 unsigned long GlyphQuery(struct _Instance* instance, unsigned long query)
@@ -167,11 +152,7 @@ void _GlyphSwitchProcess(struct _Instance* instance, void (*func)(struct _Instan
 
 int GlyphIsGlyphOpen(struct _Instance* instance)
 {
-#if defined(PSX_VERSION)
 	return ((struct __GlyphData*)instance->extraData)->glyph_open;
-#elif defined(PC_VERSION)
-	return *((__int16*)instance->extraData + 71);
-#endif
 }
 
 int _GlyphIsGlyphSet(int glyph)
@@ -262,7 +243,6 @@ void HUD_GetPlayerScreenPt(DVECTOR *center)
 
 void GlyphDrawMenu(struct _Instance* instance)
 {
-#if defined(PSX_VERSION)
 	struct _Position place;
 	DVECTOR center;
 	int n;
@@ -394,117 +374,6 @@ void GlyphDrawMenu(struct _Instance* instance)
 	}
 
 	FX_DrawScreenPoly(2, ((data->glyph_time / glyphtunedata->glyph_darkness) << 16) | ((data->glyph_time / glyphtunedata->glyph_darkness) << 8) | (data->glyph_time / glyphtunedata->glyph_darkness), 32);
-
-#elif defined(PC_VERSION)
-	__int16* extraData; // ebp
-	signed int v2; // esi
-	int(__cdecl * v3)(int, int); // eax
-	__int16 v4; // cx
-	__int16 v5; // ax
-	int v6; // eax
-	int v7; // esi
-	__int16 v8; // di
-	int v9; // ebx
-	__int16 v10; // di
-	int v11; // ecx
-	int v12; // eax
-	__int64 v13; // rax
-	int v14; // ebp
-	int v15; // esi
-	int v16; // eax
-	int v17; // [esp+10h] [ebp-2Ch]
-	__int16* data; // [esp+14h] [ebp-28h]
-	__int16* v19; // [esp+18h] [ebp-24h]
-	int v20; // [esp+1Ch] [ebp-20h]
-	int(__cdecl * v21)(int, int); // [esp+20h] [ebp-1Ch]
-	SVECTOR v22; // [esp+24h] [ebp-18h] BYREF
-	__int16 v23[3]; // [esp+2Ch] [ebp-10h] BYREF
-	__int16 v24[4]; // [esp+34h] [ebp-8h] BYREF
-
-	extraData = (__int16*)instance->extraData;
-	v19 = extraData;
-	data = (__int16*)instance->object->data;
-	v2 = gameTrackerX.timeMult << 6 >> 12;
-	v3 = INSTANCE_Query(gameTrackerX.playerInstance, 32);
-	v4 = extraData[75];
-	v21 = v3;
-	v5 = extraData[76];
-	if (v5 != v4)
-	{
-		v6 = AngleDiff(v5, v4);
-		if ((v6 & 0x8000u) != 0)
-			v6 = -(__int16)v6;
-		if (v6 > v2)
-		{
-			if (extraData[77] <= 0)
-				extraData[75] = (extraData[75] - v2) & 0xFFF;
-			else
-				extraData[75] = (extraData[75] + v2) & 0xFFF;
-		}
-		else
-		{
-			extraData[75] = extraData[76];
-		}
-	}
-	PushMatrix();
-	SetRotMatrix(theCamera.core.wcTransform);
-	SetTransMatrix(theCamera.core.wcTransform);
-	*(DWORD*)&v22.vx = *(DWORD*)&gameTrackerX.playerInstance->position.x;
-	v22.vz = gameTrackerX.playerInstance->position.z + 448;
-	gte_ldv0(&v22);
-	gte_RTPS();
-	gte_stsxy(v23);
-	PopMatrix();
-	if (v23[1] < 72)
-		v23[1] = 72;
-	v7 = extraData[73];
-	v8 = extraData[75] + 3072;
-	v20 = v7;
-	v9 = 0;
-	while (1)
-	{
-		v10 = v8 & 0xFFF;
-		v11 = AngleDiff(v10, 3072) < 0 ? -AngleDiff(v10, 3072) : AngleDiff(v10, 3072);
-		v12 = 2 * (2048 - v11);
-		if (v12 < 1536)
-			v12 = 1536;
-		v13 = extraData[74] * v12;
-		v14 = ((WORD2(v13) & 0xFFF) + (int)v13) >> 12;
-		v24[0] = v23[0] + ((v7 * rcos(v10)) >> 12);
-		v24[1] = v23[1] - ((v7 * rsin(v10)) >> 12) / 8;
-		v15 = 1 << (v9 + 18);
-		if (((debugRazielFlags3 | (unsigned int)INSTANCE_Query(gameTrackerX.playerInstance, 36)) & v15) != 0)
-		{
-			v17 = v9;
-			*(DWORD*)&v22.vx = v15 & (unsigned int)INSTANCE_Query(gameTrackerX.playerInstance, 19);
-			if (*(DWORD*)&v22.vx)
-			{
-				v16 = *((char*)data + v9 + 4) <= (int)v21;
-				goto LABEL_25;
-			}
-		}
-		else
-		{
-			if (v9 != 6)
-			{
-				v17 = 7;
-				v16 = 1;
-				goto LABEL_25;
-			}
-			v17 = 6;
-		}
-		v16 = 0;
-	LABEL_25:
-		FX_MakeGlyphIcon(v24, instance->object, v14 * *data / 4096 / 2, v17, v16);
-		v8 = v10 - 585;
-		if (++v9 >= 7)
-			break;
-		extraData = v19;
-		v7 = v20;
-	}
-#else
-UNIMPLEMENTED();
-#endif
 }
 
 long GlyphTime(int time)//Matching - 70.71%
@@ -1017,15 +886,9 @@ void GlyphTrigger() //Matching - 98.57%
 
 void MANNA_Pickup() //Matching - 98.57%
 {
-#if defined(PSX_VERSION)
 	MANNA_Pickup_Time = 122880;
 
 	MANNA_Position = 24;
-
-#elif defined(PC_VERSION)
-	dword_C55068 = 0x1E000;
-	LOWORD(dword_C5508C) = 24;
-#endif
 }
 
 

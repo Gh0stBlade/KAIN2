@@ -3,46 +3,7 @@
 
 //#define AKUJI
 
-#if defined(PC_VERSION)
-#include <Windows.h>
-#include "psyq.h"
-#include "PC/LIBGTE.H"
-#include "PC/LIBGPU.H"
-#include "PC/libspu.h"
-#include "PC/LIBAPI.H"
-#include "PC/LIBPAD.H"
-#include "PC/LIBSN.H"
-
-#elif defined(PSX_VERSION) && !defined(PSXPC_VERSION)
-
-#include <SYS/TYPES.H>
-#include <LIBAPI.H>
-#include <LIBETC.H>
-#include <LIBGTE.H>
-#include <LIBSPU.H>
-#include <LIBCD.H>
-#include <LIBPAD.H>
-#include <LIBGPU.H>
-#include <LIBSN.H>
-#include <LIBMCRD.H>
-#include <LIBPRESS.H>
-#include <INLINE_C.H>
-#include "INLINE_C_EXT.H"
-#include <STDARG.H>
-
-
-#define UNIMPLEMENTED()
-
-#undef LoadImage
-#define LoadImagePSX LoadImage
-#define PSX_EnterCriticalSection	EnterCriticalSection
-#define PSX_ExitCriticalSection		ExitCriticalSection
-#define setAbr(p, abr) ((p)->dr_tpage) |= ((short)abr << 5)
-#define setPolyFT4_ST(p) setlen(p, 6),  setcode(p, 0x2A)
-
-typedef RECT PSX_RECT;
-
-#elif defined(PSXPC_VERSION)
+#if defined(PSXPC_VERSION)
 
 #include <EMULATOR_PUBLIC.H>
 
@@ -119,7 +80,7 @@ typedef RECT PSX_RECT;
 
 #define ONE_MB				1048576
 #define TWO_MB				ONE_MB * 2
-#if defined(PC_VERSION) || defined(PSXPC_VERSION)
+#if defined(PSXPC_VERSION)
 #define BASE_ADDRESS		(unsigned long)&memBuffer
 #elif defined(PSX_VERSION)
 #define BASE_ADDRESS		0x80000000
@@ -395,34 +356,10 @@ struct _POLY_NG4
 	struct _BASIC_G4 p1; // size=32, offset=8
 };
 
-#if defined(PC_VERSION)
-#include "gex2.h"
-#include "FONT.H"
-#include "DEBUG.H"
-#include "MEMPACK.H"
-
-#include "SPLINE.H"
-#include "CAMERA.H"
-#include "Game/INSTANCE.H"
-#include "COLLIDE.H"
-#include "PHYSICS.H"
-
-#include "RESOLVE.H"
-#include "VRAM.H"
-#include "MATH3D.H"
-#include "PLAN/PLANAPI.H"
-
-#elif defined(PSX_VERSION) || defined(PSXPC_VERSION)
+#if defined(PSX_VERSION) || defined(PSXPC_VERSION)
 #include "gex2.h"
 #include "VRAM.H"
 #include "Game/INSTANCE.H"//For struct LightInstance
-#endif
-
-#if defined(PC_VERSION)
-#include "GAMELOOP.H"
-#include "STREAM.H"
-#include "BSP.H"
-#include "MONSTER/MONSTER.H"
 #endif
 
 #endif

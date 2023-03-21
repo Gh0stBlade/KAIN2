@@ -6,52 +6,7 @@
 // void /*$ra*/ GenericInit(struct _Instance *instance /*$s0*/, struct GameTracker *gameTracker /*$a1*/)
 void GenericInit(struct _Instance *instance, struct GameTracker *gameTracker)
 { // line 28, offset 0x8003e194
-#if defined(PC_VERSION)
-	Spline* positional; // ecx
-	struct Intro* intro; // eax
-	struct Object* object; // edi
-	struct MultiSpline* multiSpline; // eax
-	char* name; // edi
-
-	positional = 0;
-	intro = instance->intro;
-	object = instance->object;
-	if (intro)
-	{
-		multiSpline = intro->multiSpline;
-		if (multiSpline)
-			positional = multiSpline->positional;
-	}
-	if (!positional)
-	{
-		instance->zAccl = -10;
-		instance->maxXVel = 100;
-		instance->maxYVel = 100;
-		instance->maxZVel = 100;
-	}
-	if (object)
-	{
-		if (object->numAnims)
-		{
-			if ((object->oflags2 & 0x40000000) == 0)
-			{
-				G2EmulationInstanceSetTotalSections(instance, 1);
-				G2EmulationInstanceSetStartAndEndSegment(
-					instance,
-					0,
-					0,
-					LOWORD(object->modelList[instance->currentModel]->numSegments) - 1);
-				G2EmulationInstanceSetAnimation(instance, 0, 0, 0, 0);
-				G2EmulationInstanceSetMode(instance, 0, 0);
-				name = object->name;
-				if (strcmp(name, "ariel___") == 0)
-					G2AnimSection_SetInterpInfo(instance->anim.section, &stru_C55028);
-			}
-		}
-	}
-#else
 	UNIMPLEMENTED();
-#endif
 }
 
 void GenericCollide(struct _Instance* instance, struct GameTracker* gameTracker)

@@ -49,9 +49,3 @@ int CALLBACK WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     return 0;
 }
 #endif
-
-#if defined(PC_VERSION)
-int MainG2_UpdateLoop()
-{
-}
-#endif

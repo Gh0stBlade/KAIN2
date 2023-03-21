@@ -40,106 +40,53 @@ struct SignalInfo signalInfoList[] =
 
 long SIGNAL_HandleLightGroup(struct _Instance* instance, struct Signal* signal)
 {
-#if defined(PSX_VERSION)
-
 	if (instance != NULL)
 	{
 		instance->lightGroup = signal->data.misc.size.c[0];
 	}
 
 	return 1;
-
-#elif defined(PC_VERSION)
-	if (instance)
-		instance->lightGroup = signal->data.logic.target;
-	return 1;
-#endif
 }
 
 long SIGNAL_HandleCameraAdjust(struct _Instance* instance, struct Signal* signal)
 {
-#if defined(PSX_VERSION)
 	CAMERA_Adjust(&theCamera, signal->data.cameraAdjust);
 	return 1;
-#elif defined(PC_VERSION)
-	CAMERA_Adjust((int)&theCamera, signal->data.misc.size.l);
-	return 1;
-#endif
 }
 
 long SIGNAL_HandleCamera(struct _Instance* instance, struct Signal* signal)
 {
-#if defined(PSX_VERSION)
 	CAMERA_ChangeTo(&theCamera, signal->data.cameraKey);
 	return 1;
-#elif defined(PC_VERSION)
-	CAMERA_ChangeTo(&theCamera, signal->data.cameraKey);
-	return 1;
-#endif
 }
 
 void SIGNAL_RelocateCamera(struct Signal* signal, long offset)
 {
-#if defined(PSX_VERSION)
-
-	if (signal->data.cameraAdjust)
-	{
-
-	}
-
-#elif defined(PC_VERSION)
-	int l; // eax
-
-	l = signal->data.misc.size.l;
-	if (l)
-		signal->data.misc.size.l = offset + l;
-	else
-		signal->data.misc.size.l = 0;
-#endif
+	UNIMPLEMENTED();
 }
 
 long SIGNAL_HandleCameraMode(struct _Instance* instance, struct Signal* signal)
 {
-#if defined(PSX_VERSION)
 	CAMERA_SetMode(&theCamera, signal->data.cameraMode);
 	return 1;
-#elif defined(PC_VERSION)
-	CAMERA_SetMode(&theCamera, signal->data.misc.size.l);
-	return 1;
-#endif
 }
 
 long SIGNAL_HandleCameraLock(struct _Instance* instance, struct Signal* signal)
 {
-#if defined(PSX_VERSION)
 	CAMERA_Lock(&theCamera, signal->data.cameraLock);
 	return 1;
-#elif defined(PC_VERSION)
-	CAMERA_Lock((struct Camera*)&theCamera, signal->data.misc.size.l);
-	return 1;
-#endif
 }
 
 long SIGNAL_HandleCameraUnlock(struct _Instance* instance, struct Signal* signal)
 {
-#if defined(PSX_VERSION)
 	CAMERA_Unlock(&theCamera, signal->data.cameraUnlock);
 	return 1;
-#elif defined(PC_VERSION)
-	CAMERA_Unlock(&theCamera, signal->data.misc.size.l);
-	return 1;
-#endif
 }
 
 long SIGNAL_HandleCameraSmooth(struct _Instance* instance, struct Signal* signal)
 {
-#if defined(PSX_VERSION)
 	CAMERA_SetSmoothValue(&theCamera, signal->data.cameraSmooth);
 	return 1;
-#elif defined(PC_VERSION)
-	CAMERA_SetSmoothValue(&theCamera, signal->data.misc.size.l);
-	return 1;
-#endif
 }
 
 
@@ -147,46 +94,26 @@ long SIGNAL_HandleCameraSmooth(struct _Instance* instance, struct Signal* signal
 // long /*$ra*/ SIGNAL_HandleCameraTimer(struct _Instance *instance /*$a0*/, struct Signal *signal /*$a1*/)
 long SIGNAL_HandleCameraTimer(struct _Instance *instance, struct Signal *signal)
 { // line 128, offset 0x8001d968
-#if defined(PC_VERSION)
-	CAMERA_SetTimer(&theCamera, signal->data.misc.size.l);
-	return 1;
-#else
 	UNIMPLEMENTED();
 	return 0;
-#endif
 }
 
 long SIGNAL_HandleCameraSave(struct _Instance* instance, struct Signal* signal)
 {
-#if defined(PSX_VERSION)
 	CAMERA_Save(&theCamera, signal->data.cameraSave);
 	return 1;
-#elif defined(PC_VERSION)
-	CAMERA_Save(&theCamera, signal->data.misc.size.l);
-	return 1;
-#endif
 }
 
 long SIGNAL_HandleCameraRestore(struct _Instance* instance, struct Signal* signal)
 {
-#if defined(PSX_VERSION)
 	CAMERA_Restore(&theCamera, signal->data.cameraRestore);
 	return 1;
-#elif defined(PC_VERSION)
-	CAMERA_Restore(&theCamera, signal->data.misc.size.l);
-	return 1;
-#endif
 }
 
 long SIGNAL_HandleCameraValue(struct _Instance* instance, struct Signal* signal)
 {
-#if defined(PSX_VERSION)
 	CAMERA_SetValue(&theCamera, signal->data.cameraValue.index, signal->data.cameraValue.value);
 	return 1;
-#elif defined(PC_VERSION)
-	CAMERA_SetValue(&theCamera, signal->data.misc.size.l, signal->data.cameraValue.value);
-	return 1;
-#endif
 }
 
 
@@ -194,93 +121,12 @@ long SIGNAL_HandleCameraValue(struct _Instance* instance, struct Signal* signal)
 // long /*$ra*/ SIGNAL_HandleStreamLevel(struct _Instance *instance /*$s2*/, struct Signal *signal /*$s4*/)
 long SIGNAL_HandleStreamLevel(struct _Instance *instance, struct Signal *signal)
 { // line 157, offset 0x8001da10
-#if defined(PC_VERSION)
-	char* v2; // eax
-	char* v3; // esi
-	int StreamUnitWithID; // eax
-	int v5; // edx
-	int value; // ebp
-	int result; // eax
-	__int16 v8; // dx
-	struct Level* LevelWithID; // eax
-	int flags; // eax
-	int v11; // [esp+10h] [ebp-18h]
-	__int16 v12; // [esp+14h] [ebp-14h]
-	char Str[16]; // [esp+18h] [ebp-10h] BYREF
-
-	v12 = -1;
-	v11 = 0;
-	strcpy(Str, signal->data.StreamLevel.toname);
-	v2 = strchr(Str, 44);
-	v3 = v2;
-	if (v2)
-	{
-		v12 = atoi(v2 + 1);
-		*v3 = 0;
-	}
-	if (strcmpi(Str, "warpgate"))
-	{
-		value = signal->data.cameraValue.value;
-	}
-	else
-	{
-		StreamUnitWithID = STREAM_GetStreamUnitWithID(instance->currentStreamUnitID);
-			v5 = WarpRoomArray[CurrentWarpNumber].streamUnit;;
-			if (!v5 || gameTrackerX.currentTime - dword_C552AC <= 0x64 || (*(BYTE*)(StreamUnitWithID + 6) & 8) == 0)
-				return 1;
-			value = *(DWORD*)v5;
-			strcpy(Str, WarpRoomArray[CurrentWarpNumber].name);
-		result = 1;
-		v11 = 1;
-		if ((*(BYTE*)(v5 + 6) & 8) == 0)
-			return result;
-	}
-	if (instance->currentStreamUnitID == value || v11 && gameTrackerX.SwitchToNewWarpIndex != -1)
-		return 1;
-	if (instance != gameTrackerX.playerInstance)
-	{
-		if (!instance->LinkParent)
-		{
-			if (!STREAM_GetLevelWithID(value))
-			{
-				LevelWithID = STREAM_GetLevelWithID(instance->currentStreamUnitID);
-				SAVE_Instance(instance, LevelWithID);
-				instance->flags |= 0x20;
-				return 1;
-			}
-			instance->cachedTFace = -1;
-			instance->cachedTFaceLevel = 0;
-			instance->currentStreamUnitID = value;
-			INSTANCE_UpdateFamilyStreamUnitID(instance);
-		}
-		return 1;
-	}
-	dword_C552AC = gameTrackerX.currentTime;
-	gameTrackerX.SwitchToNewStreamUnit = 1;
-	strcpy(gameTrackerX.S_baseAreaName, Str);
-	gameTrackerX.toSignal = v12;
-	v8 = signal->data.misc.size.s[0];
-	gameTrackerX.moveRazielToStreamID = value;
-	gameTrackerX.fromSignal = v8;
-	if (v11)
-	{
-		if (!gameTrackerX.gameData.asmData.MorphType && !strcmpi(Str, "under3"))
-			INSTANCE_Post(gameTrackerX.playerInstance, 0x10002001, 0);
-		gameTrackerX.SwitchToNewWarpIndex = WARPGATE_GetWarpRoomIndex(gameTrackerX.baseAreaName);
-		
-	}
-	else gameTrackerX.SwitchToNewWarpIndex = -1;
-
-	return 1;
-#else
 	UNIMPLEMENTED();
 	return 0;
-#endif
 }
 
 long SIGNAL_HandleFogNear(struct _Instance* instance, struct Signal* signal)//Matching - 94.05%
 {
-#if defined(PSX_VERSION)
 	struct Level* level;
 
 	level = STREAM_GetLevelWithID(gameTrackerX.playerInstance->currentStreamUnitID);
@@ -291,25 +137,10 @@ long SIGNAL_HandleFogNear(struct _Instance* instance, struct Signal* signal)//Ma
 	LIGHT_CalcDQPTable(level);
 	
 	return 1;
-
-#elif defined(PC_VERSION)
-	struct Level* LevelWithID; // esi
-	unsigned __int16 v3; // ax
-	unsigned __int16 fogFar; // dx
-
-	LevelWithID = STREAM_GetLevelWithID(gameTrackerX.playerInstance->currentStreamUnitID);
-	v3 = signal->data.misc.size.s[0];
-	fogFar = LevelWithID->fogFar;
-	LevelWithID->fogNear = v3;
-	SetFogNearFar(v3, fogFar, theCamera.core.projDistance);
-	LIGHT_CalcDQPTable(LevelWithID);
-	return 1;
-#endif
 }
 
 long SIGNAL_HandleFogFar(struct _Instance* instance, struct Signal* signal)
 {
-#if defined(PSX_VERSION)
 	struct Level* level;
 
 	level = STREAM_GetLevelWithID(gameTrackerX.playerInstance->currentStreamUnitID);
@@ -321,64 +152,31 @@ long SIGNAL_HandleFogFar(struct _Instance* instance, struct Signal* signal)
 	LIGHT_CalcDQPTable(level);
 
 	return 1;
-#elif defined(PC_VERSION)
-	struct Level* LevelWithID; // esi
-	unsigned __int16 v3; // ax
-	unsigned __int16 fogNear; // dx
-
-	LevelWithID = STREAM_GetLevelWithID(gameTrackerX.playerInstance->currentStreamUnitID);
-	v3 = signal->data.misc.size.s[0];
-	fogNear = LevelWithID->fogNear;
-	LevelWithID->fogFar = v3;
-	SetFogNearFar(fogNear, v3, theCamera.core.projDistance);
-	LIGHT_CalcDQPTable(LevelWithID);
-	return 1;
-#endif
 }
 
 long SIGNAL_HandleCameraShake(struct _Instance* instance, struct Signal* signal)
 {
-#if defined(PSX_VERSION)
 	CAMERA_SetShake(&theCamera, signal->data.cameraShake.time, signal->data.cameraShake.scale);
 	return 1;
-#elif defined(PC_VERSION)
-	CAMERA_SetShake((int)&theCamera, signal->data.misc.size.l, signal->data.cameraValue.value);
-	return 1;
-#endif
 }
 
 long SIGNAL_HandleCallSignal(struct _Instance* instance, struct Signal* signal)
 {
-#if defined(PSX_VERSION)
 	SIGNAL_HandleSignal(instance,(struct Signal*)signal->data.callSignal, 0);
 	return 1;
-#elif defined(PC_VERSION)
-	COLLIDE_HandleSignal(instance, (struct Signal*)(signal->data.misc.size.l + 8), 1);
-	return 1;
-#endif
 }
 
 long SIGNAL_HandleStopPlayerControl(struct _Instance* instance, struct Signal* signal)
 {
-#if defined(PSX_VERSION)
 	gameTrackerX.gameFlags |= 0x90;
 	return 1;
-#elif defined(PC_VERSION)
-	gameTrackerX.gameFlags |= 0x90;
-	return 1;
-#endif
 }
 
 long SIGNAL_HandleStartPlayerControl(struct _Instance* instance, struct Signal* signal)
 {
-#if defined(PSX_VERSION)
 	gameTrackerX.gameFlags &= 0xFFFFFF7F;
 	gameTrackerX.gameFlags &= 0xFFFFFFEF;
 	return 1;
-#elif defined(PC_VERSION)
-	gameTrackerX.gameFlags &= 0x90;
-	return 1;
-#endif
 }
 
 
@@ -386,17 +184,7 @@ long SIGNAL_HandleStartPlayerControl(struct _Instance* instance, struct Signal* 
 // void /*$ra*/ SIGNAL_RelocateCameraSpline(struct Signal *signal /*$a0*/, long offset /*$a1*/)
 void SIGNAL_RelocateCameraSpline(struct Signal *signal, long offset)
 { // line 502, offset 0x8001ddac
-#if defined(PC_VERSION)
-	int value; // eax
-
-	value = signal->data.cameraValue.value;
-	if (value)
-		signal->data.cameraValue.value = offset + value;
-	else
-		signal->data.cameraValue.value = 0;
-#else
 	UNIMPLEMENTED();
-#endif
 }
 
 
@@ -404,116 +192,51 @@ void SIGNAL_RelocateCameraSpline(struct Signal *signal, long offset)
 // long /*$ra*/ SIGNAL_HandleCameraSpline(struct _Instance *instance /*$a0*/, struct Signal *signal /*$a1*/)
 long SIGNAL_HandleCameraSpline(struct _Instance *instance, struct Signal *signal)
 { // line 507, offset 0x8001ddc8
-#if defined(PC_VERSION)
-	int v2; // eax
-	int result; // eax
-	int value; // eax
-	int v5; // ecx
-
-	if (!signal->data.misc.size.l)
-	{
-		value = signal->data.cameraValue.value;
-		if (value)
-		{
-			v5 = *(DWORD*)(value + 56);
-			result = 1;
-			dword_C6497C = v5;
-			return result;
-		}
-		dword_C6497C = 0;
-		return 1;
-	}
-	if (signal->data.misc.size.l != 1)
-		return 1;
-	v2 = signal->data.cameraValue.value;
-	if (v2)
-		dword_C64980 = *(DWORD*)(v2 + 56);
-	else
-		dword_C64980 = 0;
-	return 1;
-#else
 	UNIMPLEMENTED();
 	return 0;
-#endif
 }
 
 
 long SIGNAL_HandleScreenWipe(struct _Instance* instance, struct Signal* signal)
 {
-#if defined(PSX_VERSION)
 	gameTrackerX.wipeTime = signal->data.screenWipe.time;
 	gameTrackerX.maxWipeTime = signal->data.screenWipe.time < 0 ? -signal->data.screenWipe.time : signal->data.screenWipe.time;
 	gameTrackerX.wipeType = signal->data.screenWipe.type;
 
 	return 1;
-#elif defined(PC_VERSION)
-	short v2; // eax
-
-	gameTrackerX.wipeTime = signal->data.misc.size.s[1];
-	v2 = signal->data.misc.size.s[1];
-	if (v2 < 0)
-		v2 = -v2;
-	gameTrackerX.maxWipeTime = v2;
-	gameTrackerX.wipeType = signal->data.misc.size.s[0];
-	return 1;
-#endif
 }
 
 long SIGNAL_HandleBlendStart(struct _Instance* instance, struct Signal* signal)
 {
-#if defined(PSX_VERSION)
 	return 1;
-#elif defined(PC_VERSION)
-	return 1;
-#endif
 }
 
 long SIGNAL_HandleScreenWipeColor(struct _Instance* instance, struct Signal* signal)
 {
-#if defined(PSX_VERSION)
 	gameTrackerX.wipeColor.r = signal->data.color.r;
 	gameTrackerX.wipeColor.g = signal->data.color.g;
 	gameTrackerX.wipeColor.b = signal->data.color.b;
 	return 1;
-#elif defined(PC_VERSION)
-	gameTrackerX.wipeColor.r = signal->data.misc.size.c[0];
-	gameTrackerX.wipeColor.g = signal->data.misc.size.c[1];
-	gameTrackerX.wipeColor.b = signal->data.misc.size.c[2];
-	return 1;
-#endif
 }
 
 long SIGNAL_HandleSetSlideAngle(struct _Instance* instance, struct Signal* signal)
 {
-#if defined(PSX_VERSION)
-
 	if (instance != NULL)
 	{
 		INSTANCE_Post(instance, 0x4000005, signal->data.slideAngle);
 	}
 
 	return 1;
-#elif defined(PC_VERSION)
-	if (instance)
-		INSTANCE_Post(instance, 0x4000005, signal->data.misc.size.l);
-	return 1;
-#endif
 }
 
 long SIGNAL_HandleResetSlideAngle(struct _Instance* instance, struct Signal* signal)
 {
-#if defined(PSX_VERSION)
 	if (instance != NULL)
 	{
 		INSTANCE_Post(instance, 0x4000006, 0);
 	}
 
 	return 1;
-#elif defined(PC_VERSION)
-	if (instance)
-		INSTANCE_Post(instance, 0x4000006, 0);
-	return 1;
-#endif
 }
 
 
@@ -521,32 +244,18 @@ long SIGNAL_HandleResetSlideAngle(struct _Instance* instance, struct Signal* sig
 // long /*$ra*/ SIGNAL_HandleSetCameraTilt(struct _Instance *instance /*$a0*/, struct Signal *signal /*$a1*/)
 long SIGNAL_HandleSetCameraTilt(struct _Instance *instance, struct Signal *signal)
 { // line 595, offset 0x8001df10
-#if defined(PC_VERSION)
-	if (instance)
-		CAMERA_Adjust_tilt(&theCamera,
-			(__int16)(((unsigned __int16)(-signal->data.misc.size.l % 360) + (-signal->data.misc.size.l % 360 < 0 ? 0x168 : 0)) << 12) / 360);
-	return 1;
-#else
 	UNIMPLEMENTED();
 	return 0;
-#endif
 }
 
 long SIGNAL_HandleSetCameraDistance(struct _Instance* instance, struct Signal* signal)
 {
-#if defined(PSX_VERSION)
-
 	if (instance != NULL)
 	{
 		CAMERA_Adjust_distance(&theCamera, signal->data.cameraShake.time);
 	}
 
 	return 1;
-#elif defined(PC_VERSION)
-	if (instance)
-		CAMERA_Adjust_distance(&theCamera, signal->data.misc.size.l);
-	return 1;
-#endif
 }
 
 long SIGNAL_HandleEnd(struct _Instance* instance, struct Signal* signal)
@@ -556,7 +265,6 @@ long SIGNAL_HandleEnd(struct _Instance* instance, struct Signal* signal)
 
 void COLLIDE_HandleSignal(struct _Instance *instance, struct Signal *signal, long numSignals, int dontForceDoSignal)
 {
-#if defined(PSX_VERSION)
 	long signalNumber;
 
 	if (numSignals != 0)
@@ -578,35 +286,6 @@ void COLLIDE_HandleSignal(struct _Instance *instance, struct Signal *signal, lon
 	
 		} while (1);
 	}
-#elif defined(PC_VERSION)
-	unsigned int v5; // esi
-
-	if (numSignals)
-	{
-		while (1)
-		{
-			v5 = signal->id & 0x7FFFFFFF;
-			if (v5 >= 0x1B)
-				GXFilePrint(
-					"Signal command %d has been taken out.\nThe rest of the signal will be ignored.\n",
-					signal->id & 0x7FFFFFFF);
-			if ((!signalInfoList[v5].onlyPlayer || instance == gameTrackerX.playerInstance)
-				&& ((gameTrackerX.gameFlags & 0x40) == 0 || signal->id >= 0))
-			{
-				if ((signal->id & 0x7FFFFFFFu) >= 0x1B)
-				{
-					GXFilePrint(
-						"Signal command %d has been taken out.\nThe rest of the signal will be ignored.\n",
-						signal->id & 0x7FFFFFFF);
-					return;
-				}
-				if (!signalInfoList[signal->id & 0x7FFFFFFF].signalHandleFunc(instance, signal))
-					return;
-			}
-			signal = (struct Signal*)((char*)signal + 4 * signalInfoList[signal->id & 0x7FFFFFFF].length + 4);
-		}
-	}
-#endif
 }
 
 long SIGNAL_IsThisStreamAWarpGate(struct Signal* signal)//Matching - 91.25%
@@ -636,7 +315,6 @@ long SIGNAL_IsThisStreamAWarpGate(struct Signal* signal)//Matching - 91.25%
 
 long SIGNAL_IsStreamSignal(struct Signal* signal, long* isWarpGate)
 {
-#if defined(PSX_VERSION)
 	long result;
 	long done;
 	long signalNumber;
@@ -669,48 +347,6 @@ long SIGNAL_IsStreamSignal(struct Signal* signal, long* isWarpGate)
 	}
 
 	return result;
-
-#elif defined(PC_VERSION)
-	unsigned int v2; // ebx
-	int v3; // ebp
-	char* v4; // eax
-	int v6; // [esp+10h] [ebp-28h]
-	int v7; // [esp+14h] [ebp-24h]
-	char Str[4]; // [esp+18h] [ebp-20h] BYREF
-
-	v7 = 0;
-	v6 = 0;
-	*isWarpGate = 0;
-	while (1)
-	{
-		v2 = signal->id & 0x7FFFFFFF;
-		if (v2 >= 0x1B)
-			GXFilePrint("Signal command %d has been taken out.\nThe rest of the signal will be ignored.\n",
-				signal->id & 0x7FFFFFFF);
-		if (v2 == 15)
-		{
-			v6 = 1;
-		}
-		else if (v2 == 18)
-		{
-			v6 = 1;
-			v7 = 1;
-			v3 = 0;
-			strcpy(Str, signal->data.StreamLevel.toname);
-			v4 = strchr(Str, 44);
-			if (v4)
-				*v4 = 0;
-			if (!strcmpi(Str, "warpgate"))
-				v3 = 1;
-				if (v3)
-					*isWarpGate = 1;
-		}
-		if (v6)
-			break;
-		signal = (struct Signal*)((char*)signal + 4 * signalInfoList[v2].length + 4);
-	}
-	return v7;
-#endif
 }
 
 void SIGNAL_HandleSignal(struct _Instance* instance, struct Signal* signal, int dontForceDoSignal)
@@ -723,26 +359,8 @@ void SIGNAL_HandleSignal(struct _Instance* instance, struct Signal* signal, int 
 // struct _MultiSignal * /*$ra*/ SIGNAL_RelocateSignal(struct _MultiSignal *multiSignal /*$s4*/, long offset /*$s5*/)
 struct _MultiSignal * SIGNAL_RelocateSignal(struct _MultiSignal *multiSignal, long offset)
 { // line 976, offset 0x8001e234
-#if defined(PC_VERSION)
-	int v2; // edi
-	struct Signal* i; // esi
-	void(__cdecl * signalRelocateFunc)(struct Signal*, int); // eax
-
-	v2 = 0;
-	for (i = multiSignal->signalList;
-		v2 < multiSignal->numSignals;
-		i = (struct Signal*)((char*)i + 4 * signalInfoList[i->id & 0x7FFFFFFF].length + 4))
-	{
-		signalRelocateFunc = signalInfoList[i->id & 0x7FFFFFFF].signalRelocateFunc;
-		if (signalRelocateFunc)
-			signalRelocateFunc(i, offset);
-		++v2;
-	}
-	return (struct _MultiSignal*)&i->data;
-#else
 	UNIMPLEMENTED();
 	return 0;
-#endif
 }
 
 
@@ -750,56 +368,12 @@ struct _MultiSignal * SIGNAL_RelocateSignal(struct _MultiSignal *multiSignal, lo
 // struct _MultiSignal * /*$ra*/ SIGNAL_FindSignal(struct Level *level /*$a0*/, long id /*$a1*/)
 struct _MultiSignal * SIGNAL_FindSignal(struct Level *level, long id)
 { // line 1002, offset 0x8001e310
-#if defined(PC_VERSION)
-	struct Level* v2; // eax
-	struct _MultiSignal* SignalListStart; // ebx
-	struct _MultiSignal* SignalListEnd; // ecx
-	int v5; // zf
-	struct Signal* signalList; // edi
-	int v7; // ebp
-	unsigned int v8; // esi
-
-	v2 = level;
-	SignalListStart = level->SignalListStart;
-	SignalListEnd = level->SignalListEnd;
-	v5 = SignalListStart == SignalListEnd;
-	if (SignalListStart < SignalListEnd)
-	{
-		do
-		{
-			signalList = SignalListStart->signalList;
-			if (id == SignalListStart->signalNum)
-				break;
-			v7 = 0;
-			if (SignalListStart->numSignals > 0)
-			{
-				do
-				{
-					v8 = signalList->id & 0x7FFFFFFF;
-					if (v8 >= 0x1B)
-						GXFilePrint("Signal command %d has been taken out.\nThe rest of the signal will be ignored.\n",
-							signalList->id & 0x7FFFFFFF);
-					++v7;
-					signalList = (struct Signal*)((char*)signalList + 4 * signalInfoList[v8].length + 4);
-				} while (v7 < SignalListStart->numSignals);
-				v2 = level;
-			}
-			SignalListStart = (struct _MultiSignal*)&signalList->data;
-		} while ((struct _MultiSignal*)&signalList->data < v2->SignalListEnd);
-		v5 = SignalListStart == v2->SignalListEnd;
-	}
-	if (v5)
-		return 0;
-	return SignalListStart;
-#else
 	UNIMPLEMENTED();
 	return 0;
-#endif
 }
 
 void SIGNAL_OutOfWater(struct _Instance* instance)//Matching - 99.50%
 {
-#if defined(PSX_VERSION)
 	struct Level* level;
 
 	level = STREAM_GetLevelWithID(instance->currentStreamUnitID);
@@ -811,24 +385,10 @@ void SIGNAL_OutOfWater(struct _Instance* instance)//Matching - 99.50%
 			SIGNAL_HandleSignal(instance, &level->startGoingOutOfWaterSignal->signalList[0], 0);
 		}
 	}
-
-#elif defined(PC_VERSION)
-	struct Level* LevelWithID; // eaxg
-	struct _MultiSignal* startGoingOutOfWaterSignal; // eax
-
-	LevelWithID = STREAM_GetLevelWithID(instance->currentStreamUnitID);
-	if (LevelWithID)
-	{
-		startGoingOutOfWaterSignal = LevelWithID->startGoingOutOfWaterSignal;
-		if (startGoingOutOfWaterSignal)
-			COLLIDE_HandleSignal(instance, startGoingOutOfWaterSignal->signalList, 1, 0);
-	}
-#endif
 }
 
 void SIGNAL_InWater(struct _Instance* instance)
 {
-#if defined(PSX_VERSION)
 	struct Level* level;
 
 	level = STREAM_GetLevelWithID(instance->currentStreamUnitID);
@@ -840,17 +400,4 @@ void SIGNAL_InWater(struct _Instance* instance)
 			SIGNAL_HandleSignal(instance, &level->startGoingIntoWaterSignal->signalList[0], 0);
 		}
 	}
-
-#elif defined(PC_VERSION)
-	struct Level* LevelWithID; // eax
-	struct _MultiSignal* startGoingIntoWaterSignal; // eax
-
-	LevelWithID = STREAM_GetLevelWithID(instance->currentStreamUnitID);
-	if (LevelWithID)
-	{
-		startGoingIntoWaterSignal = LevelWithID->startGoingIntoWaterSignal;
-		if (startGoingIntoWaterSignal)
-			COLLIDE_HandleSignal(instance, startGoingIntoWaterSignal->signalList, 1, 0);
-	}
-#endif
 }

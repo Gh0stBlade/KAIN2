@@ -11,7 +11,6 @@
 
 void SetNoPtCollideInFamily(struct _Instance* instance)
 {
-#if defined(PSX_VERSION)
 	struct _Instance* child;
 
 	child = instance->LinkChild;
@@ -24,20 +23,11 @@ void SetNoPtCollideInFamily(struct _Instance* instance)
 
 		child = child->LinkSibling;
 	}
-
-#elif defined(PC_VERSION)
-	struct _Instance* LinkChild; // esi
-
-	LinkChild = instance->LinkChild;
-	for (instance->flags |= 0x40u; LinkChild; LinkChild = LinkChild->LinkSibling)
-		SetNoPtCollideInFamily(LinkChild);
-#endif
 }
 
 
 void ResetNoPtCollideInFamily(struct _Instance* instance)
 {
-#if defined(PSX_VERSION)
 	struct _Instance* child;
 
 	child = instance->LinkChild;
@@ -50,52 +40,17 @@ void ResetNoPtCollideInFamily(struct _Instance* instance)
 
 		child = child->LinkSibling;
 	}
-
-#elif defined(PC_VERSION)
-	struct _Instance* LinkChild; // esi
-
-	LinkChild = instance->LinkChild;
-	for (instance->flags &= ~0x40u; LinkChild; LinkChild = LinkChild->LinkSibling)
-		ResetNoPtCollideInFamily(LinkChild);
-#endif
 }
 
 void PHYSICS_CheckLineInWorld(struct _Instance* instance, struct _PCollideInfo* pcollideInfo)
 {
-#if defined(PSX_VERSION)
-
 	pcollideInfo->collideType = 63;
 
 	PHYSICS_CheckLineInWorldMask(instance, pcollideInfo);
-
-#elif defined(PC_VERSION)
-	struct Level* LevelWithID; // eax
-	struct _Instance* LinkChild; // esi
-	struct Level* v4; // ebp
-	struct _Instance* v5; // esi
-
-	pcollideInfo->collideType = 63;
-	LevelWithID = STREAM_GetLevelWithID(instance->currentStreamUnitID);
-	pcollideInfo->inst = 0;
-	pcollideInfo->instance = instance;
-	LinkChild = instance->LinkChild;
-	v4 = LevelWithID;
-	for (instance->flags |= 0x40u; LinkChild; LinkChild = LinkChild->LinkSibling)
-		SetNoPtCollideInFamily(LinkChild);
-	if (v4)
-		COLLIDE_PointAndWorld(pcollideInfo, v4);
-	else
-		pcollideInfo->type = 0;
-	v5 = instance->LinkChild;
-	for (instance->flags &= ~0x40u; v5; v5 = v5->LinkSibling)
-		ResetNoPtCollideInFamily(v5);
-#endif
 }
 
 void PHYSICS_CheckLineInWorldMask(struct _Instance* instance, struct _PCollideInfo* pcollideInfo)//Matching - 99.31%
 {
-#if defined(PSX_VERSION)
-
 	struct Level* level;
 
 	level = STREAM_GetLevelWithID(instance->currentStreamUnitID);
@@ -115,26 +70,6 @@ void PHYSICS_CheckLineInWorldMask(struct _Instance* instance, struct _PCollideIn
 	}
 
 	ResetNoPtCollideInFamily(instance);
-
-#elif defined(PC_VERSION)
-	struct Level* LevelWithID; // ebp
-	struct _Instance* LinkChild; // esi
-	struct _Instance* v4; // esi
-
-	LevelWithID = STREAM_GetLevelWithID(instance->currentStreamUnitID);
-	pcollideInfo->inst = 0;
-	pcollideInfo->instance = instance;
-	LinkChild = instance->LinkChild;
-	for (instance->flags |= 0x40u; LinkChild; LinkChild = LinkChild->LinkSibling)
-		SetNoPtCollideInFamily(LinkChild);
-	if (LevelWithID)
-		COLLIDE_PointAndWorld(pcollideInfo, LevelWithID);
-	else
-		pcollideInfo->type = 0;
-	v4 = instance->LinkChild;
-	for (instance->flags &= ~0x40u; v4; v4 = v4->LinkSibling)
-		ResetNoPtCollideInFamily(v4);
-#endif
 }
 
 
@@ -142,178 +77,8 @@ void PHYSICS_CheckLineInWorldMask(struct _Instance* instance, struct _PCollideIn
 // int /*$ra*/ PhysicsCheckLinkedMove(struct _Instance *instance /*$s2*/, int Data /*stack 4*/, short Mode /*stack -72*/)
 int PhysicsCheckLinkedMove(struct _Instance *instance, int Data, short Mode)
 { // line 124, offset 0x80074754
-#if defined(PC_VERSION)
-	struct _Instance* v5; // eax
-	MATRIX* v6; // ebx
-	int x; // ebp
-	struct evPhysicsLinkedMoveData* z; // edx
-	int attachedID; // ecx
-	__int32 v10; // ecx
-	__int32 v11; // eax
-	SVECTOR* p_posDelta; // ebx
-	__int16 v13; // ax
-	__int16 vz; // cx
-	__int16 v15; // dx
-	__int16 v16; // ax
-	__int16 v17; // cx
-	struct _Instance* v18; // eax
-	int flags2; // ecx
-	int v20; // ecx
-	int introUniqueID; // edx
-	__int16 vy; // cx
-	__int16 v23; // dx
-	char v24; // al
-	int v25; // eax
-	int v27; // [esp+4h] [ebp-68h]
-	int v28; // [esp+8h] [ebp-64h]
-	__int32 v29; // [esp+Ch] [ebp-60h]
-	__int32 v30; // [esp+10h] [ebp-5Ch]
-	__int32 v31; // [esp+14h] [ebp-58h]
-	struct _Instance* v32; // [esp+18h] [ebp-54h]
-	struct evPhysicsLinkedMoveData* v33; // [esp+18h] [ebp-54h]
-	int v34; // [esp+1Ch] [ebp-50h]
-	int y; // [esp+20h] [ebp-4Ch]
-	struct _G2EulerAngles_Type euler; // [esp+24h] [ebp-48h] BYREF
-	VECTOR v0; // [esp+2Ch] [ebp-40h] BYREF
-	VECTOR v1; // [esp+3Ch] [ebp-30h] BYREF
-	struct _G2Matrix_Type matrix; // [esp+4Ch] [ebp-20h] BYREF
-	struct _Instance* instancea; // [esp+70h] [ebp+4h]
-	struct evPhysicsLinkedMoveData* Dataa; // [esp+74h] [ebp+8h]
-
-	struct evPhysicsLinkedMoveData* ptr = (struct evPhysicsLinkedMoveData*)Data;
-
-	if (instance->matrix)
-	{
-		v5 = ptr->instance;
-		v32 = v5;
-		v6 = &ptr->instance->matrix[ptr->segment];
-		x = instance->position.x;
-		v29 = v6->t[0];
-		v30 = v6->t[1];
-		v31 = v6->t[2];
-		z = (struct evPhysicsLinkedMoveData*)instance->position.z;
-		instancea = (struct _Instance*)instance->position.y;
-		attachedID = instance->attachedID;
-		Dataa = z;
-		if (v5->introUniqueID == attachedID && ptr->segment == instance->attachedSegment)
-		{
-			v33 = (struct evPhysicsLinkedMoveData*)instance->oldPos.z;
-			v34 = instance->oldPos.x;
-			y = instance->oldPos.y;
-			v28 = 0;
-			v27 = 0;
-			if (instance->rotation.x != instance->oldRotation.x
-				|| instance->rotation.y != instance->oldRotation.y
-				|| instance->rotation.z != instance->oldRotation.z)
-			{
-				v27 = 1;
-			}
-			if (x != instance->oldPos.x || instancea != (struct _Instance*)instance->oldPos.y || z != v33)
-				v28 = 1;
-			if (v28 || v27)
-			{
-				TransposeMatrix(v6, (MATRIX*)&matrix);
-				if (v27)
-					MulMatrix0((MATRIX*)&matrix, instance->matrix, &instance->relativeMatrix);
-				if (v28)
-				{
-					v0.vx = x - v34;
-					v0.vy = (__int32)instancea - y;
-					v0.vz = (char*)Dataa - (char*)v33;
-					ApplyMatrixLV((MATRIX*)&matrix, &v0, &v0);
-					v10 = instance->relativeMatrix.t[1];
-					instance->relativeMatrix.t[0] += v0.vx;
-					v11 = instance->relativeMatrix.t[2];
-					instance->relativeMatrix.t[1] = v0.vy + v10;
-					instance->relativeMatrix.t[2] = v0.vz + v11;
-				}
-			}
-			ApplyMatrixLV(v6, (VECTOR*)instance->relativeMatrix.t, &v1);
-			MulMatrix0(v6, &instance->relativeMatrix, (MATRIX*)&matrix);
-			G2EulerAngles_FromMatrix(&euler, &matrix, 21);
-			p_posDelta = (struct SVECTOR*)&ptr->posDelta;
-			v13 = LOWORD(v1.vy) - (WORD)instancea;
-			vz = v1.vz;
-			ptr->posDelta.x = v29 + LOWORD(v1.vx) - x;
-			v15 = euler.x;
-			ptr->posDelta.y = v30 + v13;
-			v16 = euler.y;
-			ptr->posDelta.z = v31 + vz - (WORD)Dataa;
-			v17 = euler.z;
-			ptr->rotDelta.x = v15 - instance->oldRotation.x;
-			ptr->rotDelta.y = v16 - instance->oldRotation.y;
-			ptr->rotDelta.z = v17 - instance->oldRotation.z;
-		}
-		else
-		{
-			if (attachedID != v5->introUniqueID)
-			{
-				v18 = INSTANCE_Find(attachedID);
-				if (v18)
-				{
-					flags2 = v18->flags2;
-					flags2 = flags2 & 0x7F;
-					v18->flags2 = flags2;
-				}
-				v5 = v32;
-			}
-			v20 = v5->flags2;
-			introUniqueID = v5->introUniqueID;
-			v20 = v20 | 0x80;
-			v5->flags2 = v20;
-			instance->attachedID = introUniqueID;
-			instance->attachedSegment = ptr->segment;
-			instance->zAccl = 0;
-			instance->zVel = 0;
-			TransposeMatrix(v6, (MATRIX*)&matrix);
-			v0.vx = x - v29;
-			v0.vy = (__int32)instancea - v30;
-			v0.vz = (__int32)Dataa - v31;
-			ApplyMatrixLV((MATRIX*)&matrix, &v0, (VECTOR*)instance->relativeMatrix.t);
-			MulMatrix0((MATRIX*)&matrix, instance->matrix, &instance->relativeMatrix);
-			ApplyMatrixLV(v6, (VECTOR*)instance->relativeMatrix.t, &v0);
-			vy = v0.vy;
-			ptr->rotDelta.z = 0;
-			ptr->rotDelta.y = 0;
-			ptr->rotDelta.x = 0;
-			p_posDelta = (struct SVECTOR*)&ptr->posDelta;
-			v23 = v0.vz;
-			ptr->posDelta.x = x - LOWORD(v0.vx) - v29;
-			ptr->posDelta.y = (WORD)instancea - vy - v30;
-			ptr->posDelta.z = (WORD)Dataa - v23 - v31;
-		}
-		v24 = Mode;
-		if ((Mode & 4) != 0)
-		{
-			instance->position.x += p_posDelta->vx;
-			instance->position.y += ptr->posDelta.y;
-			instance->position.z += ptr->posDelta.z;
-			if ((~(BYTE)Mode & 8) != 0)
-			{
-				COLLIDE_UpdateAllTransforms(instance, p_posDelta);
-				v24 = Mode;
-			}
-			instance->rotation.z += ptr->rotDelta.z;
-		}
-		if ((v24 & 2) != 0)
-			INSTANCE_Post(instance, 0x4010008, (int)ptr);
-		if (p_posDelta->vx || ptr->posDelta.y || ptr->posDelta.z || ptr->rotDelta.x || ptr->rotDelta.y || ptr->rotDelta.z)
-		{
-			v25 = instance->flags2;
-			v25 = v25 | 8;
-			instance->flags2 = v25;
-		}
-		return 0x10000;
-	}
-	else
-	{
-		instance->attachedID = 0;
-		return 0;
-	}
-#else
-UNIMPLEMENTED();
+	UNIMPLEMENTED();
 	return 0;
-#endif
 }
 
 
@@ -321,19 +86,10 @@ UNIMPLEMENTED();
 // void /*$ra*/ PhysicsDefaultLinkedMoveResponse(struct _Instance *instance /*$s0*/, struct evPhysicsLinkedMoveData *Data /*$s1*/, int updateTransforms /*$a2*/)
 void PhysicsDefaultLinkedMoveResponse(struct _Instance *instance, struct evPhysicsLinkedMoveData *Data, int updateTransforms)
 { // line 272, offset 0x80074bb0
-#if defined(PC_VERSION)
-	instance->position.x += Data->posDelta.x;
-	instance->position.y += Data->posDelta.y;
-	instance->position.z += Data->posDelta.z;
-	if (updateTransforms)
-		COLLIDE_UpdateAllTransforms(instance, (SVECTOR*)&Data->posDelta);
-	instance->rotation.z += Data->rotDelta.z;
-#else
 	UNIMPLEMENTED();
-#endif
 }
 
-int PhysicsCheckGravity(struct _Instance* instance, int Data, short Mode)//Matching - 93.42%
+int PhysicsCheckGravity(struct _Instance* instance, int Data, short Mode)//Matching - 93.82%
 {
 	struct evPhysicsGravityData* Ptr;
 	SVECTOR D;
@@ -390,7 +146,7 @@ int PhysicsCheckGravity(struct _Instance* instance, int Data, short Mode)//Match
 			{
 				tface = &level->terrain->faceList[instance->cachedTFace];
 
-				stillOnOldTFace = COLLIDE_PointAndTfaceFunc(level->terrain, &level->terrain->BSPTreeArray[instance->cachedBSPTree], (struct _SVector*)&New, (struct _SVector*)&Old, &level->terrain->faceList[instance->cachedTFace], 0, 0);
+				stillOnOldTFace = COLLIDE_PointAndTfaceFunc(level->terrain, &level->terrain->BSPTreeArray[instance->cachedBSPTree], (struct _SVector*)&New, (struct _SVector*)&Old, tface, 0, 0);
 			}
 			else
 			{
@@ -467,7 +223,7 @@ int PhysicsCheckGravity(struct _Instance* instance, int Data, short Mode)//Match
 	{
 		instance->cachedBSPTree = CInfo.segment;
 
-		instance->cachedTFace = -(((unsigned long)CInfo.prim - ((unsigned long*)CInfo.inst->node.prev)[8]) * 0x55555555) >> 2;
+		instance->cachedTFace = (int)(-0x55555555 * (unsigned int)((char*)CInfo.prim - (unsigned int)CInfo.inst->node.prev[4].prev)) >> 2;
 
 		instance->cachedTFaceLevel = CInfo.inst;
 	}
@@ -619,7 +375,6 @@ int PhysicsCheckGravity(struct _Instance* instance, int Data, short Mode)//Match
 
 void PhysicsDefaultGravityResponse(struct _Instance *instance, struct evPhysicsGravityData *Data)
 {
-#if defined(PSX_VERSION)
 	instance->position.x += Data->x;
 	instance->position.y += Data->y;
 
@@ -631,14 +386,6 @@ void PhysicsDefaultGravityResponse(struct _Instance *instance, struct evPhysicsG
 	{
 		instance->position.z += Data->z;
 	}
-#elif defined(PC_VERSION)
-	instance->position.x += Data->x;
-	instance->position.y += Data->y;
-	if (instance == gameTrackerX.playerInstance && Data->z > 128)
-		instance->position.z += 128;
-	else
-		instance->position.z += Data->z;
-#endif
 }
 
 
@@ -928,64 +675,8 @@ int PhysicsCheckSwim(struct _Instance* instance, int Data, short Mode)//Matching
 // int /*$ra*/ PhysicsDefaultCheckSwimResponse(struct _Instance *instance /*$s2*/, struct evPhysicsSwimData *Data /*$s3*/)
 int PhysicsDefaultCheckSwimResponse(struct _Instance *instance, struct evPhysicsSwimData *Data)
 { // line 1584, offset 0x800768fc
-#if defined(PC_VERSION)
-	int v2; // ebp
-	int WaterLevel; // ebx
-	__int16 Depth; // ax
-	MATRIX* matrix; // ecx
-	MATRIX* oldMatrix; // eax
-	MATRIX* v7; // ecx
-	MATRIX* v8; // esi
-	int v9; // eax
-
-	v2 = 0;
-	STREAM_GetLevelWithID(instance->currentStreamUnitID);
-	WaterLevel = Data->WaterLevel;
-	if (Data->WaterDepth > -Data->WadeDepth)
-		v2 = 128;
-	Depth = Data->Depth;
-	if (Depth > -Data->TreadDepth && Depth < 0)
-		v2 |= 0x40u;
-	if (Depth < -Data->SwimDepth)
-		v2 |= 0x10u;
-	if (Depth > 0)
-		v2 |= 0x20u;
-	if (WaterLevel > instance->position.z && WaterLevel < instance->oldPos.z && Data->iVelocity->z < 0)
-	{
-		SIGNAL_InWater(instance);
-		v2 |= 0x100u;
-	}
-	matrix = instance->matrix;
-	if (matrix)
-	{
-		oldMatrix = instance->oldMatrix;
-		if (oldMatrix)
-		{
-			if (WaterLevel < matrix[1].t[2] && WaterLevel > oldMatrix[1].t[2])
-			{
-				SIGNAL_OutOfWater(instance);
-				v2 |= 0x200u;
-			}
-		}
-	}
-	if (WaterLevel < instance->position.z && WaterLevel > instance->oldPos.z && Data->iVelocity->z > 0)
-		v2 |= 0x400u;
-	v7 = instance->matrix;
-	if (v7)
-	{
-		v8 = instance->oldMatrix;
-		if (v8)
-		{
-			v9 = WaterLevel - Data->SwimDepth;
-			if (v9 > v7[1].t[2] && v9 < v8[1].t[2] && Data->iVelocity->z < 0)
-				return v2 | 0x800;
-		}
-	}
-	return v2;
-#else
 	UNIMPLEMENTED();
 	return 0;
-#endif
 }
 
 
@@ -993,30 +684,11 @@ int PhysicsDefaultCheckSwimResponse(struct _Instance *instance, struct evPhysics
 // void /*$ra*/ PhysicsForceSetWater(struct _Instance *instance /*$s1*/, int *Time /*$t0*/, int Depth /*$a2*/, int rate /*$a3*/, int maxAmplitude /*stack 16*/)
 void PhysicsForceSetWater(struct _Instance *instance, int *Time, int Depth, int rate, int maxAmplitude)
 { // line 1856, offset 0x80076af4
-#if defined(PC_VERSION)
-	int v5; // eax
-	int v6; // edx
-
-	v5 = Depth;
-	if (Depth < -3072)
-		v5 = -3072;
-	if (v5 > 0)
-		v5 = 0;
-	v6 = (rate << 12) / gameTrackerX.timeMult + *Time;
-	*Time = v6;
-	if (v6 > 4096)
-		*Time = v6 - 4096;
-	if (Depth < 0)
-		instance->position.z += maxAmplitude * v5 / -3072 * rcos(*Time) / 4096;
-#else
 	UNIMPLEMENTED();
-#endif
 }
 
 int PhysicsCheckLOS(struct _Instance* instance, int Data, int Mode) //Matching - 99.58%
 {
-#if defined(PSX_VERSION)
-
 	struct _PCollideInfo CInfo;
 
 	CInfo.oldPoint = (SVECTOR*)(Data + 8);
@@ -1024,43 +696,6 @@ int PhysicsCheckLOS(struct _Instance* instance, int Data, int Mode) //Matching -
 	PHYSICS_CheckLineInWorld(instance, &CInfo);
 
 	return CInfo.type == 0;
-#elif defined(PC_VERSION)
-	int v3; // ebp
-	int currentStreamUnitID; // edx
-	struct Level* LevelWithID; // eax
-	struct _Instance* LinkChild; // esi
-	int v7; // ecx
-	struct Level* v8; // ebx
-	struct _Instance* v9; // esi
-	struct _PCollideInfo v11; // [esp+10h] [ebp-2Ch] BYREF
-
-	v3 = 0;
-	currentStreamUnitID = instance->currentStreamUnitID;
-	v11.oldPoint = (SVECTOR*)(Data + 8);
-	v11.newPoint = (SVECTOR*)Data;
-	v11.collideType = 63;
-	LevelWithID = STREAM_GetLevelWithID(currentStreamUnitID);
-	LinkChild = instance->LinkChild;
-	v7 = instance->flags | 0x40;
-	v8 = LevelWithID;
-	v11.inst = 0;
-	v11.instance = instance;
-	for (instance->flags = v7; LinkChild; LinkChild = LinkChild->LinkSibling)
-		SetNoPtCollideInFamily(LinkChild);
-	if (v8)
-		COLLIDE_PointAndWorld(&v11, v8);
-	else
-		v11.type = 0;
-	v9 = instance->LinkChild;
-	for (instance->flags &= ~0x40u; v9; v9 = v9->LinkSibling)
-		ResetNoPtCollideInFamily(v9);
-	if (!v11.type)
-		return 1;
-	return v3;
-#else
-	UNIMPLEMENTED();
-	return 0;
-#endif
 }
 
 
@@ -1240,7 +875,6 @@ int PhysicsFollowWall(struct _Instance *instance, struct GameTracker *gameTracke
 
 void PhysicsMoveLocalZClamp(struct _Instance* instance, long segment, long time, long clamp) //Matching - 99.91%
 {
-#if defined(PSX_VERSION)
 	struct _Position pos;
 	SVECTOR v;
 	SVECTOR dv;
@@ -1262,36 +896,13 @@ void PhysicsMoveLocalZClamp(struct _Instance* instance, long segment, long time,
 	{
 		instance->position.z += dv.vz;
 	}
-
-#elif defined(PC_VERSION)
-	MATRIX* matrix; // edx
-	__int16 vy; // cx
-	_Position position; // [esp+4h] [ebp-18h] BYREF
-	SVECTOR v0; // [esp+Ch] [ebp-10h] BYREF
-	SVECTOR v1; // [esp+14h] [ebp-8h] BYREF
-
-	position.x = 0;
-	position.y = 0;
-	position.z = 0;
-	PhysicsMove(instance, &position, time);
-	v0.vx = position.x;
-	v0.vz = position.z;
-	matrix = instance->matrix;
-	v0.vy = -position.y;
-	ApplyMatrixSV(&matrix[segment], &v0, &v1);
-	vy = v1.vy;
-	instance->position.x += v1.vx;
-	instance->position.y += vy;
-	if (!clamp)
-		instance->position.z += v1.vz;
-#else
-	UNIMPLEMENTED();
-#endif
 }
 
 void PhysicsMove(struct _Instance* instance, struct _Position* position, long time)//Matching - 90.87%
 {
-#if defined(PSX_VERSION)
+	long _xVel;
+	long _yVel;
+	long _zVel;
 	long xVel;
 	long yVel;
 	long zVel;
@@ -1302,9 +913,9 @@ void PhysicsMove(struct _Instance* instance, struct _Position* position, long ti
 	long y;
 	long z;
 
-	xVel = instance->xVel;
-	yVel = instance->yVel;
-	zVel = instance->zVel;
+	_xVel = xVel = instance->xVel;
+	_yVel = yVel = instance->yVel;
+	_zVel = zVel = instance->zVel;
 
 	xat = (instance->xAccl * time) < 0 ? ((instance->xAccl * time) + 0xFFF) : (instance->xAccl * time);
 	xat >>= 12;
@@ -1331,72 +942,28 @@ void PhysicsMove(struct _Instance* instance, struct _Position* position, long ti
 	z >>= 13;
 	position->z += zVel + z;
 
-	xVel += xat;
-	yVel += yat;
-	zVel += zat;
+	_xVel += xat;
+	_yVel += yat;
+	_zVel += zat;
 
-	if (instance->maxXVel < xVel || xVel < -instance->maxXVel)
+	if (instance->maxXVel < _xVel || _xVel < -instance->maxXVel)
 	{
-		xVel = instance->maxXVel;
+		_xVel = instance->maxXVel;
 	}
 
-	if (instance->maxYVel < yVel || yVel < -instance->maxYVel)
+	if (instance->maxYVel < _yVel || _yVel < -instance->maxYVel)
 	{
-		yVel = instance->maxYVel;
+		_yVel = instance->maxYVel;
 	}
 
-	if (instance->maxZVel < zVel || zVel < -instance->maxZVel)
+	if (instance->maxZVel < _zVel || _zVel < -instance->maxZVel)
 	{
-		zVel = instance->maxZVel;
+		_zVel = instance->maxZVel;
 	}
 
-	instance->xVel = xVel;
-	instance->yVel = yVel;
-	instance->zVel = zVel;
-
-#elif defined(PC_VERSION)
-	int zVel; // ecx
-	int v6; // kr18_4
-	int v7; // ebx
-	int v8; // ecx
-	int v9; // eax
-	int maxXVel; // edx
-	int v11; // ebp
-	int maxYVel; // edx
-	int maxZVel; // edx
-	int v14; // [esp+14h] [ebp-Ch]
-	int xVel; // [esp+18h] [ebp-8h]
-	int instancea; // [esp+24h] [ebp+4h]
-	int timea; // [esp+2Ch] [ebp+Ch]
-
-	zVel = instance->zVel;
-	instancea = instance->yVel;
-	v14 = zVel;
-	xVel = instance->xVel;
-	v6 = time * instance->yAccl;
-	v7 = time * instance->xAccl / 4096;
-	timea = time * instance->zAccl / 4096;
-	position->x += time * xVel / 4096 + time * v7 / 0x2000;
-	position->y += time * instancea / 4096 + time * (v6 / 4096) / 0x2000;
-	position->z += time * v14 / 4096 + time * timea / 0x2000;
-	v8 = v7 + xVel;
-	v9 = v6 / 4096 + instancea;
-	maxXVel = instance->maxXVel;
-	v11 = timea + v14;
-	if (v7 + xVel > maxXVel || (maxXVel = -maxXVel, v8 < maxXVel))
-		v8 = maxXVel;
-	maxYVel = instance->maxYVel;
-	if (v9 > maxYVel || (maxYVel = -maxYVel, v9 < maxYVel))
-		v9 = maxYVel;
-	maxZVel = instance->maxZVel;
-	if (v11 > maxZVel || (maxZVel = -maxZVel, v11 < maxZVel))
-		v11 = maxZVel;
-	instance->xVel = v8;
-	instance->yVel = v9;
-	instance->zVel = v11;
-#else
-	UNIMPLEMENTED();
-#endif
+	instance->xVel = _xVel;
+	instance->yVel = _yVel;
+	instance->zVel = _zVel;
 }
 
 
@@ -1404,12 +971,7 @@ void PhysicsMove(struct _Instance* instance, struct _Position* position, long ti
 // void /*$ra*/ PhysicsSetVelFromZRot(struct _Instance *instance /*$s2*/, short angle /*$a1*/, long magnitude /*$s1*/)
 void PhysicsSetVelFromZRot(struct _Instance *instance, short angle, long magnitude)
 { // line 2734, offset 0x80077830
-#if defined(PC_VERSION)
-	instance->xVel = (magnitude * rcos(angle - 1024)) >> 12;
-	instance->yVel = (magnitude * rsin(angle - 1024)) >> 12;
-#else
 	UNIMPLEMENTED();
-#endif
 }
 
 
@@ -1417,26 +979,7 @@ void PhysicsSetVelFromZRot(struct _Instance *instance, short angle, long magnitu
 // void /*$ra*/ PhysicsSetVelFromRot(struct _Instance *instance /*$s0*/, struct _Rotation *rot /*$a1*/, long magnitude /*$a2*/)
 void PhysicsSetVelFromRot(struct _Instance *instance, struct _Rotation *rot, long magnitude)
 { // line 2745, offset 0x800778a0
-#if defined(PC_VERSION)
-	int vy; // edx
-	int vz; // eax
-	SVECTOR v0; // [esp+4h] [ebp-30h] BYREF
-	SVECTOR v1; // [esp+Ch] [ebp-28h] BYREF
-	MATRIX m; // [esp+14h] [ebp-20h] BYREF
-
-	v0.vx = 0;
-	v0.vz = 0;
-	v0.vy = -(__int16)magnitude;
-	RotMatrix((SVECTOR*)&instance->rotation, &m);
-	ApplyMatrixSV(&m, &v0, &v1);
-	vy = v1.vy;
-	vz = v1.vz;
-	instance->xVel = v1.vx;
-	instance->yVel = vy;
-	instance->zVel = vz;
-#else
 	UNIMPLEMENTED();
-#endif
 }
 
 
@@ -1444,61 +987,11 @@ void PhysicsSetVelFromRot(struct _Instance *instance, struct _Rotation *rot, lon
 // void /*$ra*/ PHYSICS_SetVAndAFromRot(struct _Instance *instance /*$s0*/, struct _Rotation *rot /*$a1*/, long v /*$s1*/, long a /*$s2*/)
 void PHYSICS_SetVAndAFromRot(struct _Instance *instance, struct _Rotation *rot, long v, long a)
 { // line 2765, offset 0x80077910
-#if defined(PC_VERSION)
-	int vy; // eax
-	int vz; // ecx
-	int v6; // eax
-	int v7; // ecx
-	SVECTOR v0; // [esp+10h] [ebp-30h] BYREF
-	SVECTOR v1; // [esp+18h] [ebp-28h] BYREF
-	MATRIX m; // [esp+20h] [ebp-20h] BYREF
-
-	if (v || a)
-	{
-		RotMatrix((SVECTOR*)&instance->rotation, &m);
-		v0.vx = 0;
-		v0.vz = 0;
-	}
-	if (v)
-	{
-		v0.vy = -(__int16)v;
-		ApplyMatrixSV(&m, &v0, &v1);
-		vy = v1.vy;
-		vz = v1.vz;
-		instance->xVel = v1.vx;
-		instance->yVel = vy;
-		instance->zVel = vz;
-	}
-	else
-	{
-		instance->xVel = 0;
-		instance->yVel = 0;
-		instance->zVel = 0;
-	}
-	if (a)
-	{
-		v0.vy = -(__int16)a;
-		ApplyMatrixSV(&m, &v0, &v1);
-		v6 = v1.vy;
-		v7 = v1.vz;
-		instance->xAccl = v1.vx;
-		instance->yAccl = v6;
-		instance->zAccl = v7;
-	}
-	else
-	{
-		instance->xAccl = 0;
-		instance->yAccl = 0;
-		instance->zAccl = 0;
-	}
-#else
 	UNIMPLEMENTED();
-#endif
 }
 
 long PHYSICS_FindAFromDAndT(long d, long t)
 {
-#if defined(PSX_VERSION)
 	if (t != 0)
 	{
 		return MAX((d * 8192) / (t * t), (d * 8192) / (t * t) + 4095) >> 12;
@@ -1507,17 +1000,10 @@ long PHYSICS_FindAFromDAndT(long d, long t)
 	{
 		return 0;
 	}
-#elif defined(PC_VERSION)
-	if (t)
-		return (d << 13) / (t * t) / 4096;
-	else
-		return 0;
-#endif
 }
 
 long PHYSICS_FindVFromAAndD(long a, long d)
 {
-#if defined(PSX_VERSION)
 	long vsq; // $a0
 
 	vsq = a * (d * 2);
@@ -1530,13 +1016,6 @@ long PHYSICS_FindVFromAAndD(long a, long d)
 	{
 		return MATH3D_FastSqrt0(vsq);
 	}
-
-#elif defined(PC_VERSION)
-	if (2 * a * d)
-		return MATH3D_FastSqrt0(2 * a * d);
-	else
-		return 0;
-#endif
 }
 
 
@@ -1544,37 +1023,11 @@ long PHYSICS_FindVFromAAndD(long a, long d)
 // void /*$ra*/ PHYSICS_StopIfCloseToTarget(struct _Instance *instance /*$a0*/, int x /*$a1*/, int y /*$a2*/, int z /*$a3*/)
 void PHYSICS_StopIfCloseToTarget(struct _Instance *instance, int x, int y, int z)
 { // line 2876, offset 0x80077a74
-#if defined(PC_VERSION)
-	int xAccl; // ecx
-	int yAccl; // ecx
-	int zAccl; // ecx
-
-	xAccl = instance->xAccl;
-	if (xAccl < 0 && instance->xVel <= x || xAccl > 0 && instance->xVel >= x)
-	{
-		instance->xAccl = 0;
-		instance->xVel = x;
-	}
-	yAccl = instance->yAccl;
-	if (yAccl < 0 && instance->yVel <= y || yAccl > 0 && instance->yVel >= y)
-	{
-		instance->yAccl = 0;
-		instance->yVel = y;
-	}
-	zAccl = instance->zAccl;
-	if (zAccl < 0 && instance->zVel <= z || zAccl > 0 && instance->zVel >= z)
-	{
-		instance->zAccl = 0;
-		instance->zVel = z;
-	}
-#else
 	UNIMPLEMENTED();
-#endif
 }
 
 int PHYSICS_CheckForTerrainCollide(struct _Instance* instance, SVECTOR* startVec, SVECTOR* endVec, int segment)
 {
-#if defined(PSX_VERSION)
 	struct _PCollideInfo CInfo;
 	MATRIX* pTempMat;
 
@@ -1583,27 +1036,11 @@ int PHYSICS_CheckForTerrainCollide(struct _Instance* instance, SVECTOR* startVec
 	PHYSICS_GenericLineCheckMask(instance, pTempMat, pTempMat, &CInfo);
 
 	return (CInfo.type ^ 3) < 1;
-
-#elif defined(PC_VERSION)
-	MATRIX* matrix; // eax
-	struct _PCollideInfo v6; // [esp+0h] [ebp-2Ch] BYREF
-
-	v6.newPoint = endVec;
-	v6.oldPoint = startVec;
-	matrix = instance->matrix;
-	v6.collideType = 1;
-	PHYSICS_GenericLineCheckMask(instance, &matrix[segment], &matrix[segment], &v6);
-	return v6.type == 3;
-#else
-	UNIMPLEMENTED();
-	return 0;
-#endif
 }
 
 
 int PHYSICS_CheckForObjectCollide(struct _Instance* instance, SVECTOR* startVec, SVECTOR* endVec, int segment)
 {
-#if defined(PSX_VERSION)
 	struct _PCollideInfo CInfo;
 	MATRIX* pTempMat;
 
@@ -1614,18 +1051,6 @@ int PHYSICS_CheckForObjectCollide(struct _Instance* instance, SVECTOR* startVec,
 	PHYSICS_GenericLineCheckMask(instance, &pTempMat[segment], &pTempMat[segment], &CInfo);
 
 	return (unsigned)0 < CInfo.type;
-
-#elif defined(PC_VERSION)
-	MATRIX* matrix; // eax
-	struct _PCollideInfo v6; // [esp+0h] [ebp-2Ch] BYREF
-
-	v6.newPoint = endVec;
-	v6.oldPoint = startVec;
-	matrix = instance->matrix;
-	v6.collideType = 62;
-	PHYSICS_GenericLineCheckMask(instance, &matrix[segment], &matrix[segment], &v6);
-	return v6.type != 0;
-#endif
 }
 
 
@@ -1633,38 +1058,8 @@ int PHYSICS_CheckForObjectCollide(struct _Instance* instance, SVECTOR* startVec,
 // int /*$ra*/ PHYSICS_CheckForValidMove(struct _Instance *instance /*$a0*/, SVECTOR *startVec /*$a1*/, SVECTOR *endVec /*$a2*/, int segment /*$a3*/)
 int PHYSICS_CheckForValidMove(struct _Instance *instance, SVECTOR *startVec, SVECTOR *endVec, int segment)
 { // line 2938, offset 0x80077be0
-#if defined(PC_VERSION)
-	int v4; // edi
-	int v5; // edx
-	int v6 = 0; // ecx
-	MATRIX* v8; // [esp-Ch] [ebp-44h]
-	struct _PCollideInfo v9; // [esp+Ch] [ebp-2Ch] BYREF
-
-	v9.newPoint = endVec;
-	v9.oldPoint = startVec;
-	v8 = &instance->matrix[segment];
-	v4 = 0;
-	v9.collideType = 63;
-	PHYSICS_GenericLineCheckMask(instance, v8, v8, &v9);
-	v5 = 0;
-	if (v9.type == 3)
-	{
-		if (*((WORD*)v9.prim + 5) == 0xFFFF)
-			v6 &= 0xff00;
-		else
-			v6 = *(unsigned __int16*)((char*)&v9.inst->node.prev[6].next[1].prev + *((unsigned __int16*)v9.prim + 5) + 2);
-		if ((v6 & 0x200) != 0)
-			v5 = 1;
-	}
-	if (v5)
-		v4 = 1;
-	if (v9.type == 3 || v9.type == 2 || v9.type == 5)
-		v4 += 2;
-	return v4;
-#else
 	UNIMPLEMENTED();
 	return 0;
-#endif
 }
 
 
@@ -1712,64 +1107,21 @@ int PHYSICS_CheckFaceStick(struct _PCollideInfo *CInfo)
 // int /*$ra*/ PHYSICS_CheckDontGrabEdge(struct _PCollideInfo *CInfo /*$s0*/)
 int PHYSICS_CheckDontGrabEdge(struct _PCollideInfo *CInfo)
 { // line 2992, offset 0x80077cb0
-#if defined(PC_VERSION)
-	int v1; // edi
-	__int16 type; // ax
-	int v3; // ecx
-
-	v1 = 0;
-	type = CInfo->type;
-	if (CInfo->type == 3)
-	{
-		if (*((WORD*)CInfo->prim + 5) == 0xFFFF)
-			v3 = 0;
-		else
-			v3 = *(unsigned __int16*)((char*)&CInfo->inst->node.prev[6].next[1].prev
-				+ *((unsigned __int16*)CInfo->prim + 5)
-				+ 2);
-		if ((v3 & 0x80u) != 0)
-			v1 = 1;
-		if (*((char*)&CInfo->inst->node.prev[9].prev[2].prev + 36 * CInfo->segment + 3) < 0)
-			return 1;
-	}
-	else if (type == 2)
-	{
-		if (*((char*)CInfo->prim + 6) < 0)
-			return 1;
-	}
-	else if (type == 5 && (INSTANCE_Query(CInfo->inst, 1) & 0x20) != 0 && (INSTANCE_Query(CInfo->inst, 3) & 1) == 0)
-	{
-		return 1;
-	}
-	return v1;
-#else
 	UNIMPLEMENTED();
 	return 0;
-#endif
 }
 
 void PHYSICS_GenericLineCheckSetup(short x, short y, short z, SVECTOR* inVec)
 {
-#if defined(PSX_VERSION)
 	inVec->vx = x;
 	inVec->vy = y;
 	inVec->vz = z;
-#elif defined(PC_VERSION)
-	inVec->vx = x;
-	inVec->vy = y;
-	inVec->vz = z;
-#endif
 }
 
 void PHYSICS_GenericLineCheck(struct _Instance* instance, MATRIX* transMat, MATRIX* rotMat, struct _PCollideInfo* cInfo)
 {
-#if defined(PSX_VERSION)
 	cInfo->collideType = 63;
 	PHYSICS_GenericLineCheckMask(instance, transMat, rotMat, cInfo);
-#elif defined(PC_VERSION)
-	cInfo->collideType = 63;
-	PHYSICS_GenericLineCheckMask(instance, transMat, rotMat, cInfo);
-#endif
 }
 
 
@@ -1777,42 +1129,7 @@ void PHYSICS_GenericLineCheck(struct _Instance* instance, MATRIX* transMat, MATR
 // void /*$ra*/ PHYSICS_GenericLineCheckMask(struct _Instance *instance /*$a0*/, MATRIX *transMat /*$a1*/, MATRIX *rotMat /*$a2*/, struct _PCollideInfo *cInfo /*$a3*/)
 void PHYSICS_GenericLineCheckMask(struct _Instance *instance, MATRIX *transMat, MATRIX *rotMat, struct _PCollideInfo *cInfo)
 { // line 3057, offset 0x80077e0c
-#if defined(PC_VERSION)
-	SVECTOR* oldPoint; // edi
-	SVECTOR* newPoint; // ebx
-	struct Level* LevelWithID; // eax
-	struct _Instance* LinkChild; // esi
-	struct Level* v8; // ebx
-	struct _Instance* i; // edi
-	VECTOR v10; // [esp+10h] [ebp-10h] BYREF
-
-	oldPoint = cInfo->oldPoint;
-	newPoint = cInfo->newPoint;
-	TRANS_ApplyMatrix(rotMat, oldPoint, &v10);
-	oldPoint->vx = transMat->t[0] + v10.vx;
-	oldPoint->vy = transMat->t[1] + v10.vy;
-	oldPoint->vz = transMat->t[2] + v10.vz;
-	TRANS_ApplyMatrix(rotMat, newPoint, &v10);
-	newPoint->vx = transMat->t[0] + v10.vx;
-	newPoint->vy = transMat->t[1] + v10.vy;
-	newPoint->vz = transMat->t[2] + v10.vz;
-	LevelWithID = STREAM_GetLevelWithID(instance->currentStreamUnitID);
-	cInfo->inst = 0;
-	cInfo->instance = instance;
-	LinkChild = instance->LinkChild;
-	v8 = LevelWithID;
-	for (instance->flags |= 0x40u; LinkChild; LinkChild = LinkChild->LinkSibling)
-		SetNoPtCollideInFamily(LinkChild);
-	if (v8)
-		COLLIDE_PointAndWorld(cInfo, v8);
-	else
-		cInfo->type = 0;
-	instance->flags &= ~0x40u;
-	for (i = instance->LinkChild; i; i = i->LinkSibling)
-		ResetNoPtCollideInFamily(i);
-#else
 	UNIMPLEMENTED();
-#endif
 }
 
 

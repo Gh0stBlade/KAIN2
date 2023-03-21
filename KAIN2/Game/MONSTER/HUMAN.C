@@ -31,26 +31,7 @@ extern void MON_FleeEntry(struct _Instance* instance);
 // void /*$ra*/ HUMAN_WaitForWeapon(struct _Instance *instance /*$s0*/, struct GameTracker *gameTracker /*$a1*/)
 void HUMAN_WaitForWeapon(struct _Instance *instance, struct GameTracker *gameTracker)
 { // line 92, offset 0x8007cb40
-#if defined(PC_VERSION)
-	TDRFuncPtr_MONTABLE_GetInitFunc InitFunc; // eax
-	int flags; // ecx
-	int v4; // eax
-
-	MON_GSay(instance, "waiting for weapon\n");
-	InitFunc = MONTABLE_GetInitFunc(instance);
-	((void(__cdecl*)(struct _Instance*))InitFunc)(instance);
-	if (instance->LinkChild)
-	{
-		flags = instance->flags;
-		flags &= ~0x800u;
-		v4 = instance->flags2 & 0xDFFFFF7F;
-		instance->flags = flags;
-		instance->flags2 = v4;
-		instance->processFunc = (void(*)())MonsterProcess;
-	}
-#else
 	UNIMPLEMENTED();
-#endif
 }
 
 
