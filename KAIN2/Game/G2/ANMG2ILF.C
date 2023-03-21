@@ -6,96 +6,45 @@
 
 short G2Anim_GetElapsedTime(struct _G2Anim_Type* anim)
 {
-#if defined(PSX_VERSION)
 	struct _G2AnimSection_Type* section;
 	section = &anim->section[anim->masterSection];
 	return section->elapsedTime;
-#elif defined(PC_VERSION)
-	return anim->section[anim->masterSection].elapsedTime;
-#endif
 }
 
 struct _G2AnimKeylist_Type* G2Anim_GetKeylist(struct _G2Anim_Type* anim)
 {
-#if defined(PSX_VERSION)
 	struct _G2AnimSection_Type* section;
 	section = &anim->section[anim->masterSection];
 	return section->keylist;
-#elif defined(PC_VERSION)
-	return anim->section[anim->masterSection].keylist;
-#endif
 }
 
 void G2Anim_GetRootMotionOverInterval(struct _G2Anim_Type* anim, short intervalStart, short intervalEnd, struct _G2SVector3_Type* motionVector)
 {
-#if defined(PSX_VERSION)
 	G2Anim_GetRootMotionFromTimeForDuration(anim, intervalStart, intervalEnd - intervalStart, motionVector);
-#elif defined(PC_VERSION)
-	G2Anim_GetRootMotionFromTimeForDuration(anim, intervalStart, intervalEnd - intervalStart, motionVector);
-#endif
 }
 
 void G2Anim_InterpToKeylistFrame(struct _G2Anim_Type* anim, struct _G2AnimKeylist_Type* keylist, int keylistID, int targetFrame, int duration)//Matching - 89.12%
 {
-#if defined(PSX_VERSION)
 	int i;
 
 	for (i = 0; i < anim->sectionCount; i++)
 	{
 		G2AnimSection_InterpToKeylistFrame(&anim->section[i], keylist, keylistID, targetFrame, (short)duration);
 	}
-#elif defined(PC_VERSION)
-	int sectionCount; // ecx
-	int v6; // edi
-	struct _G2AnimSection_Type* section; // esi
-
-	v6 = 0;
-	if (anim->sectionCount)
-	{
-		section = anim->section;
-		do
-		{
-			G2AnimSection_InterpToKeylistAtTime(section, keylist, keylistID, keylist->s0TailTime * targetFrame, duration);
-			sectionCount = anim->sectionCount;
-			++v6;
-			++section;
-		} while (v6 < sectionCount);
-	}
-#endif
 }
 
 void G2Anim_SetAlphaTable(struct _G2Anim_Type* anim, struct _G2AnimAlphaTable_Type* table)//Matching - 99.82%
 {
-#if defined(PSX_VERSION)
 	int i;
 
 	for (i = 0; i < anim->sectionCount; i++)
 	{
 		G2AnimSection_SetAlphaTable(&anim->section[i], table);
 	}
-
-#elif defined(PC_VERSION)
-	int v2; // edx
-	struct _G2AnimInterpInfo_Type** p_interpInfo; // ecx
-
-	v2 = 0;
-	if (anim->sectionCount)
-	{
-		p_interpInfo = &anim->section[0].interpInfo;
-		do
-		{
-			if (*p_interpInfo)
-				(*p_interpInfo)->alphaTable = table;
-			++v2;
-			p_interpInfo += 12;
-		} while (v2 < anim->sectionCount);
-	}
-#endif
 }
 
 void G2Anim_SetCallback(struct _G2Anim_Type *anim, unsigned long (*func)(struct _G2Anim_Type*, int, enum _G2AnimCallbackMsg_Enum, long, long, struct _Instance*), void *data)
 {
-#if defined(PSX_VERSION)
 	int i;
 
 	if (anim->sectionCount != 0)
@@ -106,24 +55,6 @@ void G2Anim_SetCallback(struct _G2Anim_Type *anim, unsigned long (*func)(struct 
 			anim->section[i].callbackData = data;
 		}
 	}
-
-#elif defined(PC_VERSION)
-	int v3; // ecx
-	void** p_callbackData; // eax
-
-	v3 = 0;
-	if (anim->sectionCount)
-	{
-		p_callbackData = &anim->section[0].callbackData;
-		do
-		{
-			*(p_callbackData - 1) = callback;
-			*p_callbackData = data;
-			++v3;
-			p_callbackData += 12;
-		} while (v3 < anim->sectionCount);
-	}
-#endif
 }
 
 
@@ -131,150 +62,46 @@ void G2Anim_SetCallback(struct _G2Anim_Type *anim, unsigned long (*func)(struct 
 // void /*$ra*/ G2Anim_SetLooping(struct _G2Anim_Type *anim /*$s2*/)
 void G2Anim_SetLooping(struct _G2Anim_Type *anim)
 { // line 518, offset 0x8008fbd8
-#if defined(PSX_VERSION)
 	UNIMPLEMENTED();
-#elif defined(PC_VERSION)
-	int v1; // edx
-	unsigned int* p_alarmFlags; // eax
-	unsigned int v3; // ecx
-	unsigned int v4; // ecx
-	__int16 v5; // di
-
-	v1 = 0;
-	if (anim->sectionCount)
-	{
-		p_alarmFlags = &anim->section[0].alarmFlags;
-		do
-		{
-			v3 = *p_alarmFlags;
-			*((WORD*)p_alarmFlags - 8) = 0;
-			*p_alarmFlags = v3 & 0xFFFFFFFC;
-			v4 = p_alarmFlags[3];
-			p_alarmFlags += 12;
-			v5 = *(unsigned __int8*)(v4 + 1) + *(WORD*)(v4 + 6) * (*(WORD*)(v4 + 4) - 1);
-			v4 = *((BYTE*)p_alarmFlags - 72) | 2;
-			*((WORD*)p_alarmFlags - 31) = v5;
-			*((BYTE*)p_alarmFlags - 72) = v4;
-			++v1;
-		} while (v1 < anim->sectionCount);
-	}
-#endif
 }
 
 void G2Anim_SetNoLooping(struct _G2Anim_Type* anim)//Matching - 99.79%
 {
-#if defined(PSX_VERSION)
 	int i;
 
 	for (i = 0; i < anim->sectionCount; i++)
 	{
 		G2AnimSection_SetNoLooping(&anim->section[i]);
 	}
-#elif defined(PC_VERSION)
-	int v1; // ecx
-	struct _G2AnimSection_Type* section; // eax
-	unsigned __int8 flags; // dl
-
-	v1 = 0;
-	if (anim->sectionCount)
-	{
-		section = anim->section;
-		do
-		{
-			flags = section->flags;
-			++section;
-			++v1;
-			section[-1].flags = flags & 0xFD;
-		} while (v1 < anim->sectionCount);
-	}
-#endif
 }
 
 void G2Anim_SetPaused(struct _G2Anim_Type* anim)
 {
-#if defined(PSX_VERSION)
 	UNIMPLEMENTED();
-
-#elif defined(PC_VERSION)
-	int v1; // ecx
-	struct _G2AnimSection_Type* section; // eax
-	unsigned __int8 flags; // dl
-
-	v1 = 0;
-	if (anim->sectionCount)
-	{
-		section = anim->section;
-		do
-		{
-			flags = section->flags;
-			++section;
-			++v1;
-			section[-1].flags = flags | 1;
-		} while (v1 < anim->sectionCount);
-	}
-#endif
 }
 
 void G2Anim_SetSpeedAdjustment(struct _G2Anim_Type* anim, long adjustment)
 {
-#if defined(PSX_VERSION)
 	int i;
 
 	for (i = 0; i < anim->sectionCount; i++)
 	{
 		anim->section[i].speedAdjustment = adjustment;
 	}
-
-#elif defined(PC_VERSION)
-	int v2; // eax
-	int* p_speedAdjustment; // ecx
-
-	v2 = 0;
-	if (anim->sectionCount)
-	{
-		p_speedAdjustment = &anim->section[0].speedAdjustment;
-		do
-		{
-			*p_speedAdjustment = adjustment;
-			++v2;
-			p_speedAdjustment += 12;
-		} while (v2 < anim->sectionCount);
-	}
-#endif
 }
 
 void G2Anim_SetUnpaused(struct _G2Anim_Type* anim)//Matching - 99.79%
 {
-#if defined(PSX_VERSION)
 	int i;
 
 	for (i = 0; i < anim->sectionCount; i++)
 	{
 		G2AnimSection_SetUnpaused(&anim->section[i]);
 	}
-#elif defined(PC_VERSION)
-	int v1; // ecx
-	struct _G2AnimSection_Type* section; // eax
-	unsigned __int8 flags; // dl
-
-	v1 = 0;
-	if (anim->sectionCount)
-	{
-		section = anim->section;
-		do
-		{
-			flags = section->flags;
-			++section;
-			++v1;
-			section[-1].flags = flags & 0xFE;
-		} while (v1 < anim->sectionCount);
-	}
-#endif
 }
 
 void G2Anim_SwitchToKeylist(struct _G2Anim_Type *anim, struct _G2AnimKeylist_Type *keylist, int keylistID)
 {
-#if defined(PSX_VERSION)
 	int i;
 
 	if (anim->sectionCount != 0)
@@ -284,55 +111,25 @@ void G2Anim_SwitchToKeylist(struct _G2Anim_Type *anim, struct _G2AnimKeylist_Typ
 			G2AnimSection_SwitchToKeylist(&anim->section[i], keylist, keylistID);
 		}
 	}
-
-#elif defined(PC_VERSION)
-	int v3; // esi
-	struct _G2AnimSection_Type* section; // edi
-
-	v3 = 0;
-	if (anim->sectionCount)
-	{
-		section = anim->section;
-		do
-		{
-			G2AnimSection_SwitchToKeylistAtTime(section, keylist, keylistID, 0);
-			++v3;
-			++section;
-		} while (v3 < anim->sectionCount);
-	}
-#endif
 }
 
 short G2AnimKeylist_GetDuration(struct _G2AnimKeylist_Type* keylist)//Matching - 100%
 {
-#if defined(PSX_VERSION)
 	return keylist->s0TailTime + (keylist->timePerKey * (keylist->keyCount - 1));
-#elif defined(PC_VERSION)
-	return keylist->s0TailTime + (keylist->keyCount - 1) * keylist->timePerKey;
-#endif
 }
 
 int G2AnimKeylist_GetKeyframeCount(struct _G2AnimKeylist_Type* keylist)
 {
-#if defined(PSX_VERSION)
 	return (((keylist->timePerKey * (keylist->keyCount - 1))) + (keylist->s0TailTime * 2 - 1)) / keylist->s0TailTime;
-#elif defined(PC_VERSION)
-	return ((keylist->keyCount - 1) * keylist->timePerKey + 2 * keylist->s0TailTime - 1) / keylist->s0TailTime;
-#endif
 }
 
 void G2AnimSection_ClearAlarm(struct _G2AnimSection_Type *section, unsigned long flag)
 {
-#if defined(PSX_VERSION)
 	section->alarmFlags &= ~flag;
-#elif defined(PC_VERSION)
-	section->alarmFlags &= ~flag;
-#endif
 }
 
 int G2AnimSection_GetKeyframeNumber(struct _G2AnimSection_Type* section)//Matching - 60.65%
 {
-#if defined(PSX_VERSION)
 	if (G2AnimSection_IsInInterpolation(section) != 0)
 	{
 		return section->interpInfo->targetTime / section->keylist->s0TailTime;
@@ -341,38 +138,20 @@ int G2AnimSection_GetKeyframeNumber(struct _G2AnimSection_Type* section)//Matchi
 	{
 		return section->elapsedTime / section->keylist->s0TailTime;
 	}
-#elif defined(PC_VERSION)
-	struct _G2AnimInterpInfo_Type* interpInfo; // eax
-
-	interpInfo = section->interpInfo;
-	if (interpInfo && interpInfo->stateBlockList)
-		return interpInfo->targetTime / (int)section->keylist->s0TailTime;
-	else
-		return section->elapsedTime / (int)section->keylist->s0TailTime;
-#endif
 }
 
 int G2AnimSection_GetStoredKeyframeNumber(struct _G2AnimSection_Type* section)
 {
-#if defined(PSX_VERSION)
 	return section->storedTime / section->keylist->s0TailTime;
-#elif defined(PC_VERSION)
-	return section->storedTime / (int)section->keylist->s0TailTime;
-#endif
 }
 
 void G2AnimSection_InterpToKeylistFrame(struct _G2AnimSection_Type* section, struct _G2AnimKeylist_Type* keylist, int keylistID, int targetFrame, int duration)//Matching - 99.69%
 {
-#if defined(PSX_VERSION)
 	G2AnimSection_InterpToKeylistAtTime(section, keylist, keylistID, (short)(targetFrame * keylist->s0TailTime), (short)duration);
-#elif defined(PC_VERSION)
-	G2AnimSection_InterpToKeylistAtTime(section, keylist, keylistID, targetFrame * keylist->s0TailTime, duration);
-#endif
 }
 
 enum _G2Bool_Enum G2AnimSection_IsInInterpolation(struct _G2AnimSection_Type* section)
 {
-#if defined(PSX_VERSION)
 	struct _G2AnimInterpInfo_Type* interpInfo;
 
 	interpInfo = section->interpInfo;
@@ -383,19 +162,10 @@ enum _G2Bool_Enum G2AnimSection_IsInInterpolation(struct _G2AnimSection_Type* se
 	}
 
 	return G2FALSE;
-
-#elif defined(PC_VERSION)
-	struct _G2AnimInterpInfo_Type* interpInfo; // eax
-
-	interpInfo = section->interpInfo;
-	return interpInfo && interpInfo->stateBlockList;
-#endif
 }
 
 short G2AnimSection_NextKeyframe(struct _G2AnimSection_Type* section)
 {
-#if defined(PSX_VERSION)
-
 	if (!(section->flags & 0x1))
 	{
 		G2AnimSection_SetNotRewinding(section);
@@ -404,138 +174,62 @@ short G2AnimSection_NextKeyframe(struct _G2AnimSection_Type* section)
 	}
 
 	return 0;
-
-#elif defined(PC_VERSION)
-	int FrameTime; // eax
-
-	if ((section->flags & 1) != 0)
-		return 0;
-	section->flags &= ~4;
-	FrameTime = G2Timer_GetFrameTime();
-	return G2AnimSection_UpdateOverInterval(section, FrameTime);
-#endif
 }
 
 void G2AnimSection_SetAlphaTable(struct _G2AnimSection_Type *section, struct _G2AnimAlphaTable_Type *table)
 {
-#if defined(PSX_VERSION)
 	if (section->interpInfo != NULL)
 	{
 		section->interpInfo->alphaTable = table;
 	}
-#elif defined(PC_VERSION)
-	struct _G2AnimInterpInfo_Type* interpInfo; // eax
-
-	interpInfo = section->interpInfo;
-	if (interpInfo)
-		interpInfo->alphaTable = table;
-#endif
 }
 
 void G2AnimSection_SetInterpInfo(struct _G2AnimSection_Type *section, struct _G2AnimInterpInfo_Type *newInfoPtr)
 {
-#if defined(PSX_VERSION)
-
 	section->interpInfo = newInfoPtr;
 	
 	if (section->interpInfo != NULL)
 	{
 		memset(section->interpInfo, 0, sizeof(struct _G2AnimInterpInfo_Type));
 	}
-
-#elif defined(PC_VERSION)
-	section->interpInfo = newInfoPtr;
-	if (newInfoPtr)
-	{
-		*(DWORD*)&newInfoPtr->duration = 0;
-		newInfoPtr->alphaTable = 0;
-		newInfoPtr->stateBlockList = 0;
-	}
-#endif
 }
 
 void G2AnimSection_SetLooping(struct _G2AnimSection_Type *section)
 {
-#if defined(PSX_VERSION)
-	
 	G2AnimSection_ClearAlarm(section, 0x3);
 
 	G2AnimSection_SetLoopRangeAll(section);
 
 	section->flags |= 0x2;
-
-#elif defined(PC_VERSION)
-	unsigned int alarmFlags; // ecx
-
-	alarmFlags = section->alarmFlags;
-	section->loopStartTime = 0;
-	section->alarmFlags = alarmFlags & ~3u;
-	alarmFlags = section->flags | 2;
-	section->loopEndTime = section->keylist->s0TailTime + (section->keylist->keyCount - 1) * section->keylist->timePerKey;
-	section->flags = alarmFlags;
-#endif
 }
 
 void G2AnimSection_SetLoopRangeAll(struct _G2AnimSection_Type *section)
 {
-#if defined(PSX_VERSION)
-
 	section->loopStartTime = 0;
 	section->loopEndTime = G2AnimKeylist_GetDuration(section->keylist);
-
-#elif defined(PC_VERSION)
-	struct _G2AnimKeylist_Type* keylist; // eax
-
-	keylist = section->keylist;
-	section->loopStartTime = 0;
-	section->loopEndTime = keylist->s0TailTime + (keylist->keyCount - 1) * keylist->timePerKey;
-#endif
 }
 
 void G2AnimSection_SetNoLooping(struct _G2AnimSection_Type *section)
 {
-#if defined(PSX_VERSION)
 	section->flags &= ~0x2;
-#elif defined(PC_VERSION)
-	section->flags &= ~2u;
-#endif
 }
 
 void G2AnimSection_SetNotRewinding(struct _G2AnimSection_Type* section)
 {
-#if defined(PSX_VERSION)
 	section->flags &= ~0x4;
-#elif defined(PC_VERSION)
-	section->flags &= ~4u;
-#endif
 }
 
 void G2AnimSection_SetPaused(struct _G2AnimSection_Type *section)
 {
-#if defined(PSX_VERSION)
 	section->flags |= 0x1;
-#elif defined(PC_VERSION)
-	section->flags |= 1u;
-#endif
 }
 
 void G2AnimSection_SetUnpaused(struct _G2AnimSection_Type *section)
 {
-#if defined(PSX_VERSION)
 	section->flags &= ~0x1;
-#elif defined(PC_VERSION)
-	section->flags &= ~1u;
-#endif
 }
-
 
 void G2AnimSection_SwitchToKeylist(struct _G2AnimSection_Type* section, struct _G2AnimKeylist_Type* keylist, int keylistID)
 {
-#if defined(PSX_VERSION)
 	G2AnimSection_SwitchToKeylistAtTime(section, keylist, keylistID, 0);
-#elif defined(PC_VERSION)
-	G2AnimSection_SwitchToKeylistAtTime(section, keylist, keylistID, 0);
-#else
-	UNIMPLEMENTED();
-#endif
 }

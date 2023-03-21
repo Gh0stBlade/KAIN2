@@ -109,11 +109,7 @@ extern struct _BlockVramEntry * VRAM_InsertionSort(struct _BlockVramEntry *rootN
 
 extern void VRAM_ClearVram(); // 0x80073704
 
-#if defined(PSX_VERSION)
 extern struct _BlockVramEntry * VRAM_RearrangeVramsLayer(long whichLayer); // 0x80073740
-#elif defined(PC_VERSION)
-extern struct _BlockVramEntry * VRAM_RearrangeVramsLayer(long whichLayer, short *AddX, short *AddY, short AddW, int AddH, int AddType, int AddStartY); // 0x80073740
-#endif
 
 extern void VRAM_TransferBufferToVram(void *dataPtr, long dataSize, short status, void *data1, void *data2); // 0x80073DC8
 

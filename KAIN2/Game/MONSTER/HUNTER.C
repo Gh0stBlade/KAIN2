@@ -1,27 +1,5 @@
 #include "Game/CORE.H"
 
-#if defined(PC_VERSION)
-struct _MonsterStateChoice HUNTER_StateChoiceTable[] =
-{
-	{MONSTER_STATE_STUNNED,    HUMAN_StunnedEntry,     HUMAN_Stunned},
-	{MONSTER_STATE_DEAD,       HUMAN_DeadEntry,        HUMAN_Dead},
-	{MONSTER_STATE_EMBRACE,    HUMAN_EmbraceEntry,     HUMAN_Embrace},
-	{MONSTER_STATE_PROJECTILE, HUNTER_ProjectileEntry, HUNTER_Projectile},
-	{-1}
-};
-
-struct _MonsterFunctionTable HUNTER_FunctionTable =
-{
-	HUNTER_Init,
-	HUNTER_CleanUp,
-	0,
-	HUMAN_Query,
-	0,
-	HUNTER_StateChoiceTable,
-	__DATE__
-};
-#endif
-
 //0001:00006f00       _FX_MakeHitFlame           00407f00 f   hunter.obj
 void FX_MakeHitFlame(_Position* pos, short a2, int a3, int a4, int a5) {}	// unused
  //0001:00006ff0       _HUNTER_InitFlamethrow     00407ff0 f   hunter.obj

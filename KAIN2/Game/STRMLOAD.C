@@ -176,23 +176,12 @@ struct _LoadQueueEntry* STREAM_AddQueueEntryToHead()
 
 int STREAM_IsCdBusy(long* numberInQueue)//Matching - 98.75%
 { 
-#if defined(PSX_VERSION)
-	
 	if (numberInQueue != NULL)
 	{
 		numberInQueue[0] = numLoads;
 	}
 
 	return numLoads;
-#elif defined(PC_VERSION)
-	// line 157, offset 0x8005fd28
-	int IsBusy; // eax
-
-	IsBusy = ASLD_IsBusy();
-	if (numberInQueue)
-		*numberInQueue = IsBusy;
-	return IsBusy != 0;
-#endif
 }
 
 int STREAM_PollLoadQueue()
@@ -498,7 +487,6 @@ void LOAD_NonBlockingBufferedLoad(char *fileName, void *retFunc, void *retData, 
 
 int LOAD_IsXAInQueue()
 {
-#if defined(PSX_VERSION)
 	struct _LoadQueueEntry* entry;
 
 	entry = loadHead;
@@ -514,14 +502,10 @@ int LOAD_IsXAInQueue()
 	}
 
 	return 0;
-#elif defined(PC_VERSION)
-	return VOICEXA_IsPlaying();
-#endif
 }
 
 void LOAD_PlayXA(int number)
 {
-#if defined(PSX_VERSION)
 	struct _LoadQueueEntry* currentEntry;
 
 	currentEntry = STREAM_AddQueueEntryToTail();
@@ -531,10 +515,6 @@ void LOAD_PlayXA(int number)
 	currentEntry->loadEntry.fileHash = number;
 
 	memcpy(currentEntry->loadEntry.fileName, "voice", sizeof("voice"));
-
-#elif defined(PC_VERSION)
-	VOICEXA_Play(number, 0);
-#endif
 }
 
 long* LOAD_ReadFile(char *fileName, unsigned char memType)

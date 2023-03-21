@@ -172,7 +172,6 @@ void LIGHT_GetLightMatrix(struct _Instance* instance, struct Level* level, MATRI
 
 void LIGHT_PresetInstanceLight(struct _Instance* instance, short attenuate, MATRIX* lm)
 {
-#if defined(PSX_VERSION)
 	MATRIX cm;
 	long scale;
 	long scaleRGB[3];
@@ -240,78 +239,10 @@ void LIGHT_PresetInstanceLight(struct _Instance* instance, short attenuate, MATR
 	}
 
 	SetColorMatrix(&cm);
-
-#elif defined(PC_VERSION)
-	int currentStreamUnitID; // eax
-	struct Level* LevelWithID; // edi
-	int v5; // eax
-	__int16* p_TODRedScale; // eax
-	MATRIX* p_colorM; // ecx
-	int* v8; // ebp
-	__int16* v9; // ebx
-	int v10; // edi
-	int v11; // esi
-	int v12; // eax
-	int v13; // edx
-	__int16 v14[4]; // [esp+10h] [ebp-34h] BYREF
-	int v15[3]; // [esp+18h] [ebp-2Ch] BYREF
-	MATRIX colorM; // [esp+24h] [ebp-20h] BYREF
-	int attenuatea; // [esp+4Ch] [ebp+8h]
-
-	currentStreamUnitID = instance->currentStreamUnitID;
-	v14[0] = 4096;
-	v14[1] = 4096;
-	v14[2] = 4096;
-	LevelWithID = STREAM_GetLevelWithID(currentStreamUnitID);
-	LIGHT_GetLightMatrix(instance, LevelWithID, lm, &colorM);
-	v5 = 4096;
-	if ((instance->flags & 0x200000) != 0)
-		v5 = 2048;
-	if (attenuate != 4096)
-		v5 = (v5 * attenuate) >> 12;
-	v15[0] = v5;
-	v15[1] = v5;
-	v15[2] = v5;
-	p_TODRedScale = &LevelWithID->TODRedScale;
-	if (!LevelWithID)
-		p_TODRedScale = v14;
-	p_colorM = &colorM;
-	v8 = v15;
-	v9 = p_TODRedScale;
-	attenuatea = 3;
-	do
-	{
-		v10 = (__int16)((*v8 * *v9) >> 12);
-		v11 = 3;
-		do
-		{
-			v12 = (v10 * p_colorM->m[0][0]) >> 12;
-			v13 = v12;
-			if (v12 <= -32768)
-				v13 = -32768;
-			if (v13 >= 32767)
-			{
-				v12 = 32767;
-			}
-			else if (v12 <= -32768)
-			{
-				v12 = 0x8000;
-			}
-			p_colorM->m[0][0] = v12;
-			p_colorM = (MATRIX*)((char*)p_colorM + 2);
-			--v11;
-		} while (v11);
-		++v9;
-		++v8;
-		--attenuatea;
-	} while (attenuatea);
-	SetColorMatrix(&colorM);
-#endif
 }
 
 void LIGHT_GetAmbient(struct _ColorType* color, struct _Instance* instance)
 {
-#if defined(PSX_VERSION)
 	int lightval;
 	
 	if ((instance->object->oflags2 & 0x800))
@@ -326,15 +257,6 @@ void LIGHT_GetAmbient(struct _ColorType* color, struct _Instance* instance)
 	color->b = lightval;
 	color->g = lightval;
 	color->r = lightval;
-
-#elif defined(PC_VERSION)
-	uchar v2; // al
-
-	v2 = (instance->object->oflags2 & 0x800) != 0 ? 0 : 48;
-	color->b = v2;
-	color->g = v2;
-	color->r = v2;
-#endif
 }
 
 
@@ -574,7 +496,6 @@ void LIGHT_SetMatrixForLightGroupInstance(struct _Instance* instance, struct Lev
 
 void LIGHT_DrawShadow(MATRIX* wcTransform, struct _Instance* instance, struct _PrimPool* primPool, unsigned int** ot)//Matching - 85.65%
 {
-#if defined(PSX_VERSION)
 	SVECTOR face_orient;
 	MATRIX rot;
 	MATRIX scTransform;
@@ -622,60 +543,10 @@ void LIGHT_DrawShadow(MATRIX* wcTransform, struct _Instance* instance, struct _P
 		SetTransMatrix(&scTransform);
 		primPool->nextPrim = (unsigned int*)DRAW_DrawShadow(primPool, 0, (unsigned long**)ot, playerInstance->fadeValue);
 	}
-
-#elif defined(PC_VERSION)
-	int v4; // eax
-	__int16 v5; // ax
-	__int16 z; // cx
-	int y; // edx
-	DWORD* v8; // eax
-	SVECTOR v9; // [esp+8h] [ebp-54h] BYREF
-	VECTOR v; // [esp+10h] [ebp-4Ch] BYREF
-	int x; // [esp+30h] [ebp-2Ch]
-	int v12; // [esp+34h] [ebp-28h]
-	int v13; // [esp+38h] [ebp-24h]
-	MATRIX scTransform; // [esp+3Ch] [ebp-20h] BYREF
-
-	if (instance->shadowPosition.z > instance->position.z - 1280)
-	{
-		v9.vx = -MATH3D_FastAtan2(instance->wNormal.y, instance->wNormal.z);
-		v4 = MATH3D_FastSqrt0(0x1000000 - instance->wNormal.x * instance->wNormal.x);
-		v5 = MATH3D_FastAtan2(instance->wNormal.x, v4);
-		z = instance->rotation.z;
-		v9.vy = v5;
-		v9.vz = z;
-		RotMatrix(&v9, (MATRIX*)&v.pad);
-		y = instance->shadowPosition.y;
-		x = instance->shadowPosition.x;
-		v12 = y;
-		v13 = instance->shadowPosition.z;
-		TRANS_CompMatrix(wcTransform, (MATRIX*)&v.pad, &scTransform);
-		v.vz = ((((instance->shadowPosition.z - instance->position.z) << 12) / 1280 + 4096)
-			* ((instance->object->modelList[instance->currentModel]->maxRad << 12)
-				/ 480)) >> 12;
-		v.vy = v.vz;
-		v.vx = v.vz;
-		ScaleMatrix(&scTransform, &v);
-		SetRotMatrix(&scTransform);
-		SetTransMatrix(&scTransform);
-#if PSX_VERSION
-		DRAW_DrawShadow(primPool, model, ot, instance->fadeValue);
-#else
-		v8 = (DWORD*)INSTANCE_Query(instance, 38);
-		if (v8 && *v8 >= 2u)
-			D3DDRAW_DrawSegmentShadow(instance, v8, instance->fadeValue);
-		else
-			D3DDRAW_DrawShadow(0, ot, instance->fadeValue, &scTransform);
-#endif
-	}
-#else
-	UNIMPLEMENTED();
-#endif
 }
 
 void LIGHT_CalcShadowPositions(struct GameTracker* gameTracker)//Matching - 97.15%
 {
-#if defined(PSX_VERSION)
 	struct _InstanceList* instanceList;
 	struct _Instance* instance;
 	struct _PCollideInfo pcollideInfo;
@@ -787,140 +658,6 @@ void LIGHT_CalcShadowPositions(struct GameTracker* gameTracker)//Matching - 97.1
 
 		}
 	}
-#elif defined(PC_VERSION)
-	struct _Instance* first; // esi
-	int flags; // eax
-	struct _TFace* waterFace; // eax
-	struct _Terrain** tfaceLevel; // eax
-	__int16 z; // ax
-	__int16 v6; // cx
-	struct Level* LevelWithID; // eax
-	__int16 type; // ax
-	int v9; // eax
-	int v10; // eax
-	int currentStreamUnitID; // [esp-Ch] [ebp-50h]
-	SVECTOR v12, v13; // [esp+8h] [ebp-3Ch] BYREF
-	struct _PCollideInfo pcollideInfo; // [esp+18h] [ebp-2Ch] BYREF
-
-	first = (struct _Instance*)*((DWORD*)gameTracker->instanceList + 1);
-	if (first)
-	{
-		while ((first->flags2 & 0x40) != 0)
-		{
-			flags = first->flags;
-			if ((flags & 0x200) == 0 || (flags & 0x800) != 0 || (first->flags2 & 0x4000000) != 0)
-				break;
-			if ((flags & 0x8000000) == 0)
-			{
-				if ((flags & 0x10000000) != 0)
-				{
-				LABEL_13:
-					v12.vx = first->matrix[1].t[0];
-					v13.vx = v12.vx;
-					v12.vy = first->matrix[1].t[1];
-					v13.vy = v12.vy;
-					z = first->matrix[1].t[2];
-					v6 = z;
-				}
-				else
-				{
-					*(DWORD*)&v12.vx = *(DWORD*)&first->position.x;
-					z = first->position.z;
-					v12.vz = z;
-					*(DWORD*)&v13.vx = *(DWORD*)&first->position.x;
-					v6 = first->position.z;
-				}
-				v12.vz = z - 1280;
-				v13.vz = v6 + 256;
-				pcollideInfo.collideType = 55;
-				pcollideInfo.instance = first;
-				pcollideInfo.newPoint = (struct SVECTOR*)&v12;
-				pcollideInfo.oldPoint = (struct SVECTOR*)&v13;
-				currentStreamUnitID = first->currentStreamUnitID;
-				first->flags |= 0x40u;
-				LevelWithID = STREAM_GetLevelWithID(currentStreamUnitID);
-				if (LevelWithID)
-					COLLIDE_PointAndWorld(&pcollideInfo, LevelWithID);
-				else
-					pcollideInfo.type = 0;
-				first->flags &= ~0x40u;
-				type = pcollideInfo.type;
-				if (pcollideInfo.type == 3)
-				{
-					LIGHT_CalcLightValue((struct _TFace*)pcollideInfo.prim, first, (struct _Terrain*)pcollideInfo.inst->node.prev);
-					goto LABEL_22;
-				}
-				if (pcollideInfo.type != 5)
-				{
-					LIGHT_CalcLightValue(0, first, 0);
-				LABEL_22:
-					type = pcollideInfo.type;
-				}
-				if (type)
-				{
-					if (type == 1)
-					{
-						first->wNormal.x = 0;
-						first->wNormal.y = 0;
-						first->wNormal.z = 4096;
-					}
-					else
-					{
-						if (type == 3
-							&& (*((WORD*)pcollideInfo.prim + 5) == 0xFFFF
-								? (v9 &= 0xffff00ff)
-								: (v9 = *(unsigned __int16*)((char*)&pcollideInfo.inst->node.prev[6].next[1].prev
-									+ *((unsigned __int16*)pcollideInfo.prim + 5)
-									+ 2)),
-								(v9 & 0x4000) != 0))
-						{
-							v10 = first->flags | 0x200000;
-						}
-						else
-						{
-							v10 = first->flags & 0xFFDFFFFF;
-						}
-						first->flags = v10;
-						first->wNormal.x = pcollideInfo.wNormal.vx;
-						first->wNormal.y = pcollideInfo.wNormal.vy;
-						first->wNormal.z = pcollideInfo.wNormal.vz;
-					}
-				}
-				*(DWORD*)&first->shadowPosition.x = *(DWORD*)&v12.vx;
-				first->shadowPosition.z = v12.vz;
-				goto LABEL_38;
-			}
-			if ((flags & 0x10000000) != 0)
-				goto LABEL_13;
-			waterFace = first->waterFace;
-			if (waterFace)
-			{
-				LIGHT_CalcLightValue(waterFace, first, first->waterFaceTerrain);
-			}
-			else
-			{
-				tfaceLevel = (struct _Terrain**)first->tfaceLevel;
-				if (tfaceLevel)
-					goto LABEL_37;
-			}
-		LABEL_38:
-			first->flags &= ~0x8000000u;
-			first = first->next;
-			if (!first)
-				return;
-		}
-		if ((first->flags2 & 0x40) != 0)
-			goto LABEL_38;
-		tfaceLevel = (struct _Terrain**)first->tfaceLevel;
-		if (!tfaceLevel)
-			goto LABEL_38;
-	LABEL_37:
-		LIGHT_CalcLightValue(first->tface, first, *tfaceLevel);
-		goto LABEL_38;
-	}
-#else
-UNIMPLEMENTED();
-#endif
 }
 
 void LIGHT_Restore(struct LightInfo* lightInfo)
@@ -929,7 +666,6 @@ void LIGHT_Restore(struct LightInfo* lightInfo)
 
 void LIGHT_CalcDQPTable(struct Level* level)
 {
-#if defined(PSX_VERSION)
 	long dqa;
 	long limit;
 
@@ -975,46 +711,4 @@ void LIGHT_CalcDQPTable(struct Level* level)
 		level->depthQFogStart = depthQFogStart;
 		level->depthQBlendStart = depthQBlendStart;
 	}
-#elif defined(PC_VERSION)
-	unsigned __int16 fogNear; // bx
-	int fogFar; // ecx
-	int v3; // esi
-	int v4; // eax
-	int v5; // eax
-	int v6; // eax
-	unsigned __int8 backColorG; // cl
-
-	fogNear = level->fogNear;
-	if (level->fogFar != fogNear)
-	{
-		fogFar = level->fogFar;
-		v3 = -(fogFar * fogNear / (fogFar - fogNear));
-		if (v3 > 40958)
-		{
-			v3 = 40958;
-			v4 = 40958 * fogFar / (40958 - fogFar);
-			if (level->holdFogNear == fogNear)
-				level->holdFogNear = v4;
-			level->fogNear = v4;
-		}
-		if (v3 < -40958)
-		{
-			v3 = -40958;
-			v5 = -40958 * fogFar / (-40958 - fogFar);
-			if (level->holdFogNear == level->fogNear)
-				level->holdFogNear = v5;
-			level->fogNear = v5;
-		}
-		v6 = -4096 * v3 / ((fogFar << 12) / (fogFar - level->fogNear));
-		depthQFogStart = v6;
-		if (level->backColorR || (backColorG = level->backColorG, depthQBlendStart = 0xFFFF, backColorG))
-			depthQBlendStart = v6;
-		level->depthQFogStart = v6;
-		level->depthQBlendStart = depthQBlendStart;
-	}
-#endif
 }
-
-
-
-

@@ -39,18 +39,7 @@
 
 void MON_Say(struct _Instance *instance, const char* fmt, ...)
 {
-#if defined(PC_VERSION)
-	va_list va;
-	char buf[256];
-
-	va_start(va, fmt);
-	vsprintf_s(buf, sizeof(buf), fmt, va);
-	va_end(va);
-
-	OutputDebugStringA(buf);
-#else
 	UNIMPLEMENTED();
-#endif
 }
 
 //0001:00002760       _ALUKA_CleanUp             00403760 f   aluka.obj

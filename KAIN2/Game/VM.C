@@ -9,10 +9,6 @@ void VM_Tick(long time)
 {
 	vmRealClock += time;
 	vmClock = vmRealClock >> 8;
-#if defined(PC_VERSION)
-	dword_C57FD0 += time;
-	dword_C57FD4 = dword_C57FD0 >> 8;
-#endif
 }
 
 void VM_UpdateMorph(struct Level* level, int initFlg)//Matching - 74.26%
@@ -151,15 +147,5 @@ void VM_UpdateMorph(struct Level* level, int initFlg)//Matching - 74.26%
 // void /*$ra*/ VM_VMObjectSetTable(struct Level *level /*$a0*/, struct _VMObject *vmobject /*$s0*/, int table /*$s1*/)
 void VM_VMObjectSetTable(struct Level *level, struct _VMObject *vmobject, int table)
 { // line 521, offset 0x8004fa30
-#if defined(PC_VERSION)
-	struct _VMOffsetTable** vmoffsetTableList; // ecx
-
-	if (vmobject->curVMOffsetTable != vmobject->vmoffsetTableList[vmobject->currentIdx])
-		MEMPACK_Free((char*)vmobject->curVMOffsetTable);
-	vmoffsetTableList = vmobject->vmoffsetTableList;
-	vmobject->currentIdx = table;
-	vmobject->curVMOffsetTable = vmoffsetTableList[table];
-#else
 	UNIMPLEMENTED();
-#endif
 }

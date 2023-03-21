@@ -7,6 +7,10 @@
 #include "Game/PSX/COLLIDES.H"
 #include "Game/G2/ANMDECMP.H"
 
+struct _G2AnimChanStatusBlockPool_Type _chanStatusBlockPool;
+struct _G2AnimInterpStateBlockPool_Type _interpStateBlockPool;
+struct _G2AnimControllerPool_Type _controllerPool;
+
 enum _G2Bool_Enum G2Anim_Install()
 {
 	struct _G2AnimController_Type *dummyController;
@@ -24,19 +28,8 @@ enum _G2Bool_Enum G2Anim_Install()
 	return (_G2Bool_Enum)1;
 }
 
-#if defined(PC_VERSION)
-struct _G2PoolMemPool_Type stru_B08B60,
-	stru_B08B70,
-	stru_B08B80;
-#elif defined(PSX_VERSION)
-struct _G2AnimChanStatusBlockPool_Type _chanStatusBlockPool;
-struct _G2AnimInterpStateBlockPool_Type _interpStateBlockPool;
-struct _G2AnimControllerPool_Type _controllerPool;
-#endif
-
 void G2Anim_ResetInternalState()
 {
-#if defined(PSX_VERSION)
 	struct _G2AnimController_Type* dummyController;
 
 	G2PoolMem_ResetPool(&_chanStatusBlockPool);
@@ -47,23 +40,10 @@ void G2Anim_ResetInternalState()
 	dummyController->next = 0;
 	dummyController->segNumber = 255;
 	dummyController->type = 0;
-
-#elif defined(PC_VERSION)
-	struct _G2AnimController_Type* dummyController; // eax
-
-	G2PoolMem_ResetPool(&stru_B08B70);
-	G2PoolMem_ResetPool(&stru_B08B60);
-	G2PoolMem_ResetPool(&stru_B08B80);
-	dummyController = (struct _G2AnimController_Type*)G2PoolMem_Allocate(&stru_B08B80);
-	dummyController->next = 0;
-	dummyController->segNumber = -1;
-	dummyController->type = 0;
-#endif
 }
 
 void G2Anim_Init(struct _G2Anim_Type* anim, struct _Model* modelData)
 {
-#if defined(PSX_VERSION)
 	struct _G2AnimSection_Type* section;
 	int sectionID;
 
@@ -86,30 +66,6 @@ void G2Anim_Init(struct _G2Anim_Type* anim, struct _Model* modelData)
 	}
 
 	anim->section[0].segCount = modelData->numSegments;
-
-#elif defined(PC_VERSION)
-	__int16** p_swAlarmTable; // eax
-	int v3; // ecx
-
-	anim->sectionCount = 1;
-	anim->masterSection = 0;
-	anim->controllerList = 0;
-	anim->disabledControllerList = 0;
-	anim->segMatrices = 0;
-	anim->modelData = modelData;
-	memset(anim->disabledBits, 0, 0x9Cu);
-	p_swAlarmTable = &anim->section[0].swAlarmTable;
-	v3 = 3;
-	do
-	{
-		*((WORD*)p_swAlarmTable - 3) = -1;
-		*p_swAlarmTable = 0;
-		p_swAlarmTable[1] = (__int16*)4096;
-		p_swAlarmTable += 12;
-		--v3;
-	} while (v3);
-	anim->section[0].segCount = modelData->numSegments;
-#endif
 }
 
 struct _G2AnimSection_Type * G2Anim_AddSection(struct _G2Anim_Type *anim, int firstSegID, int segCount)
@@ -1084,7 +1040,6 @@ void _G2Anim_BuildSegLocalRotMatrix(struct _G2AnimSegValue_Type* segValue, struc
 
 void wombat(unsigned char* segKeyList, int flagBitOffset, struct _G2AnimSegKeyflagInfo_Type* kfInfo)//Matching - 100%
 {
-#if defined(PSX_VERSION)
 	int flagDWordOffset;
 	int flagBitShift;
 
@@ -1099,23 +1054,10 @@ void wombat(unsigned char* segKeyList, int flagBitOffset, struct _G2AnimSegKeyfl
 	kfInfo->flags = kfInfo->stream[0] >> flagBitShift;
 
 	kfInfo->bitCount = 32 - (flagBitOffset & 0x1F);
-
-#elif defined(PC_VERSION)
-	ulong* v3; // esi
-	ulong v4; // eax
-
-	v3 = (ulong*)&segKeyList[4 * (flagBitOffset >> 5)];
-	kfInfo->stream = v3;
-	v4 = *v3 >> (flagBitOffset - 32 * (flagBitOffset >> 5));
-	kfInfo->bitCount = 32 - (flagBitOffset & 0x1F);
-	kfInfo->flags = v4;
-#endif
 }
 
 unsigned long kangaroo(struct _G2AnimSegKeyflagInfo_Type* kfInfo)
 {
-#if defined(PSX_VERSION)
-
 	unsigned long keyflags;
 	unsigned long tempFlags;
 
@@ -1151,37 +1093,6 @@ unsigned long kangaroo(struct _G2AnimSegKeyflagInfo_Type* kfInfo)
 	}
 
 	return keyflags;
-
-#elif defined(PC_VERSION)
-
-	ulong* stream; // esi
-	ulong flags; // ecx
-	int v3; // edi
-	unsigned int result; // eax
-	ulong v5; // esi
-
-	stream = kfInfo->stream;
-	if (!kfInfo->stream)
-		return 0;
-	flags = kfInfo->flags;
-	v3 = kfInfo->bitCount - 3;
-	result = flags & 7;
-	kfInfo->bitCount = v3;
-	kfInfo->flags = flags >> 3;
-	if (v3 <= 0)
-	{
-		kfInfo->stream = stream + 1;
-		v5 = stream[1];
-		kfInfo->flags = v5;
-		if (v3 < 0)
-		{
-			result |= (v5 << (v3 + 3)) & 7;
-			kfInfo->flags = v5 >> -(char)v3;
-		}
-		kfInfo->bitCount = v3 + 32;
-	}
-	return result;
-#endif
 }
 
 void _G2Anim_InitializeSegValue(struct _G2Anim_Type* anim, struct _G2AnimSegValue_Type* segValue, int segIndex)
@@ -1646,7 +1557,6 @@ struct _G2Anim_Type* _G2AnimSection_GetAnim(struct _G2AnimSection_Type* section)
 
 void _G2AnimSection_TriggerEffects(struct _G2AnimSection_Type *section, short startTime, short endTime)
 {
-#if defined(PSX_VERSION)
 	struct _G2AnimKeylist_Type* keylist;
 	struct _G2AnimFxHeader_Type* fxHeader;
 	int fxSectionID;
@@ -1674,47 +1584,6 @@ void _G2AnimSection_TriggerEffects(struct _G2AnimSection_Type *section, short st
 		}
 		fxHeader = (struct _G2AnimFxHeader_Type*)((unsigned char*)fxHeader + fxSize);
 	}
-#elif defined(PC_VERSION)
-	struct _G2AnimFxHeader_Type* fxHeader; // esi
-	signed __int8 i; // dl
-	int sectionID; // ecx
-	unsigned int sizeAndSection; // edi
-	int v8; // eax
-	int v9; // edi
-	__int16 v10; // ax
-	int(__stdcall * callback)(); // ebp
-	struct _G2AnimKeylist_Type* keylist; // [esp+Ch] [ebp+4h]
-
-	keylist = section->keylist;
-	fxHeader = keylist->fxList;
-	if (fxHeader)
-	{
-		for (i = fxHeader->type; i != -1; fxHeader = (struct _G2AnimFxHeader_Type*)((char*)fxHeader + v9))
-		{
-			sectionID = section->sectionID;
-			sizeAndSection = fxHeader->sizeAndSection;
-			v8 = sizeAndSection & 0xF;
-			v9 = (sizeAndSection >> 2) & 0x3C;
-			if (v8 == sectionID)
-			{
-				if ((v10 = fxHeader->keyframeID * keylist->s0TailTime, startTime < v10) && endTime >= v10
-					|| !v10 && startTime <= 0 && endTime >= 0)
-				{
-					callback = section->callback;
-					if (callback)
-						((void(__cdecl*)(__int16**, int, int, DWORD, struct _G2AnimFxHeader_Type*, void*))callback)(
-							&section[-sectionID - 1].swAlarmTable,
-							sectionID,
-							6,
-							i,
-							&fxHeader[1],
-							section->callbackData);
-				}
-			}
-			i = *(&fxHeader->type + v9);
-		}
-	}
-#endif
 }
 
 void _G2Anim_FreeChanStatusBlockList(struct _G2AnimChanStatusBlock_Type* block)//Matching - 92.81%

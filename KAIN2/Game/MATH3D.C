@@ -5,7 +5,6 @@
 
 void MATH3D_Sort3VectorCoords(long* a, long* b, long* c)//Matching - 100%
 {
-#if defined(PSX_VERSION)
 	long a1;
 	long b1;
 	long c1;
@@ -44,51 +43,6 @@ void MATH3D_Sort3VectorCoords(long* a, long* b, long* c)//Matching - 100%
 		*a = b1;
 		*b = a1;
 	}
-
-#elif defined(PC_VERSION)
-	int v3; // edx
-	int v4; // eax
-	int v5; // ecx
-
-	v3 = *c;
-	v4 = *a;
-	v5 = *b;
-	if (*a >= *b)
-	{
-		if (v3 >= v5)
-		{
-			*a = v5;
-			if (v3 >= v4)
-			{
-				*b = v4;
-			}
-			else
-			{
-				*b = v3;
-				*c = v4;
-			}
-		}
-		else
-		{
-			*a = v3;
-			*c = v4;
-		}
-	}
-	else if (v3 >= v4)
-	{
-		if (v3 < v5)
-		{
-			*c = v5;
-			*b = v3;
-		}
-	}
-	else
-	{
-		*c = v5;
-		*b = v4;
-		*a = v3;
-	}
-#endif
 }
 
 
@@ -96,93 +50,15 @@ void MATH3D_Sort3VectorCoords(long* a, long* b, long* c)//Matching - 100%
 // long /*$ra*/ MATH3D_LengthXYZ(long x /*$a0*/, long y /*$a1*/, long z /*$a2*/)
 long MATH3D_LengthXYZ(long x, long y, long z)
 { // line 258, offset 0x800394fc
-#if defined(PC_VERSION)
-	int v3; // edx
-	int v4; // ecx
-	int v5; // eax
-	int v6; // esi
-	int v7; // esi
-	int v8; // esi
-	int v9; // cc
-
-	v3 = x;
-	if (x < 0)
-		v3 = -x;
-	v4 = y;
-	if (y < 0)
-		v4 = -y;
-	v5 = z;
-	if (z < 0)
-		v5 = -z;
-	if (v3 >= v4)
-	{
-		if (v5 >= v4)
-		{
-			v9 = v5 < v3;
-			v6 = v3;
-			v3 = v4;
-			if (!v9)
-				goto LABEL_16;
-			v4 = v5;
-			v5 = v6;
-		}
-		else
-		{
-			v8 = v3;
-			v3 = v5;
-			v5 = v8;
-		}
-	}
-	else
-	{
-		if (v5 < v3)
-		{
-			v6 = v3;
-			v3 = v5;
-			v5 = v4;
-		LABEL_16:
-			v4 = v6;
-			return (9 * v3 + 12 * v4 + 30 * v5) / 32;
-		}
-		if (v5 < v4)
-		{
-			v7 = v4;
-			v4 = v5;
-			v5 = v7;
-		}
-	}
-	return (9 * v3 + 12 * v4 + 30 * v5) / 32;
-#else
 	UNIMPLEMENTED();
 	return 0;
-#endif
 }
 
 long MATH3D_LengthXY(long x, long y)
 {
-#if defined(PSX_VERSION)
 	UNIMPLEMENTED();
 
 	return 0;
-#elif defined(PC_VERSION)
-	int v2; // ecx
-	int v3; // eax
-	int v4; // ecx
-
-	v2 = x;
-	if (x < 0)
-		v2 = -x;
-	v3 = y;
-	if (y < 0)
-		v3 = -y;
-	if (v2 > v3)
-	{
-		v4 = v3 ^ v2;
-		v3 ^= v4;
-		v2 = v3 ^ v4;
-	}
-	return (12 * v2 + 30 * v3) / 32;
-#endif
 }
 
 
@@ -190,24 +66,11 @@ long MATH3D_LengthXY(long x, long y)
 // void /*$ra*/ MATH3D_Normalize(struct _Normal *normal /*$s0*/)
 void MATH3D_Normalize(struct _Normal *normal)
 { // line 328, offset 0x8003962c
-#if defined(PC_VERSION)
-	int v1; // eax
-
-	v1 = MATH3D_LengthXYZ(4 * normal->x, 4 * normal->y, 4 * normal->z);
-	if (v1)
-	{
-		normal->x = (normal->x << 14) / v1;
-		normal->y = (normal->y << 14) / v1;
-		normal->z = (normal->z << 14) / v1;
-	}
-#else
 	UNIMPLEMENTED();
-#endif
 }
 
 short MATH3D_FastAtan2(long y, long x)
 {
-#if defined(PSX_VERSION)
 	long ax;
 	long ay;
 
@@ -281,63 +144,6 @@ short MATH3D_FastAtan2(long y, long x)
 	{
 		return ((((ay * 512) / ax) + 0x800) << 16) >> 16;
 	}
-
-#elif defined(PC_VERSION)
-	int v2; // eax
-	int v3; // esi
-	int v4; // ecx
-
-	v2 = x;
-	if (!x)
-		v2 = 1;
-	if (y)
-	{
-		v3 = v2;
-		if (v2 < 0)
-			v3 = -v2;
-		v4 = y;
-		if (y < 0)
-			v4 = -y;
-		if (v2 <= 0)
-		{
-			if (y <= 0)
-			{
-				if (v3 <= v4)
-					v2 = 3072 - (v3 << 9) / v4;
-				else
-					v2 = (v4 << 9) / v3 + 2048;
-			}
-			else if (v3 >= v4)
-			{
-				v2 = 2048 - (v4 << 9) / v3;
-			}
-			else
-			{
-				v2 = (v3 << 9) / v4 + 1024;
-			}
-		}
-		else if (y <= 0)
-		{
-			if (v3 <= v4)
-				v2 = (v3 << 9) / v4 + 3072;
-			else
-				v2 = 4096 - (v4 << 9) / v3;
-		}
-		else if (v3 >= v4)
-		{
-			return (v4 << 9) / v3;
-		}
-		else
-		{
-			v2 = 1024 - (v3 << 9) / v4;
-		}
-	}
-	else
-	{
-		v2 = v2 <= 0 ? 2048 : 0;
-	}
-	return v2;
-#endif
 }
 
 long MATH3D_FastSqrt(long square)//Matching - 90.63%
@@ -432,7 +238,6 @@ long MATH3D_FastSqrt(long square)//Matching - 90.63%
 
 long MATH3D_FastSqrt0(long square)
 {
-#if defined(PSX_VERSION)
 	unsigned long result;
 	long remainder;
 	long mask;
@@ -496,132 +301,11 @@ long MATH3D_FastSqrt0(long square)
 	}
 
 	return 0;
-
-#elif defined(PC_VERSION)
-	int v1; // eax
-	int v2; // ebp
-	int v3; // ebp
-	int v4; // edi
-	int v5; // edx
-	int v6; // ecx
-	int result; // eax
-	int v8; // ebx
-	int v9; // ebp
-	int v10; // esi
-	int v11; // ebp
-	int v12; // ecx
-
-	if (!square)
-		return 0;
-	v1 = 0x80000000;
-	v2 = 31;
-	if (square >= 0)
-	{
-		do
-		{
-			v1 >>= 1;
-			--v2;
-		} while ((v1 & square) == 0);
-	}
-	v3 = v2 >> 1;
-	v4 = 1 << v3;
-	v5 = 1 << (2 * v3);
-	v6 = v3;
-	result = 1 << v3;
-	v8 = square - v5;
-	v9 = v3 - 1;
-	v10 = v5;
-	if (v6)
-	{
-		v11 = v9 + 1;
-		do
-		{
-			v10 >>= 2;
-			v12 = v8 - v10 - v5;
-			v4 >>= 1;
-			v5 >>= 1;
-			if (v12 >= 0)
-			{
-				v5 += v10;
-				v8 = v12;
-				result |= v4;
-			}
-			--v11;
-		} while (v11);
-	}
-	return result;
-#else
-UNIMPLEMENTED();
-	return 0;
-#endif
 }
 
 long MATH3D_DistanceBetweenPositions(struct _Position* pos1, struct _Position* pos2)
 {
-#if defined(PSX_VERSION)
-
 	return MATH3D_FastSqrt0(MATH3D_SquareLength((pos2->x - pos1->x), (pos2->y - pos1->y), (pos2->z - pos1->z)));
-
-#elif defined(PC_VERSION)
-	int v2; // edx
-	int v3; // ecx
-	int v4; // edx
-	int v5; // ecx
-	int v6; // eax
-	int v7; // eax
-	int v8; // edi
-	int v9; // esi
-	int v10; // ebp
-	int v11; // ebx
-	int v12; // edx
-	int v13; // eax
-	int v14; // ecx
-	int v15; // ebp
-	int v16; // eax
-
-	v2 = pos2->x - pos1->x;
-	v3 = pos2->z - pos1->z;
-	v4 = v3 * v3 + (pos2->y - pos1->y) * (pos2->y - pos1->y) + v2 * v2;
-	if (!v4)
-		return 0;
-	v5 = 0x80000000;
-	v6 = 31;
-	if (v4 >= 0)
-	{
-		do
-		{
-			v5 >>= 1;
-			--v6;
-		} while ((v4 & v5) == 0);
-	}
-	v7 = v6 >> 1;
-	v8 = 1 << v7;
-	v9 = 1 << (2 * v7);
-	v10 = v7;
-	v11 = 1 << v7;
-	v12 = v4 - v9;
-	v13 = v7 - 1;
-	v14 = v9;
-	if (v10)
-	{
-		v15 = v13 + 1;
-		do
-		{
-			v14 >>= 2;
-			v16 = v12 - v14 - v9;
-			v8 >>= 1;
-			v9 >>= 1;
-			if (v16 >= 0)
-			{
-				v9 += v14;
-				v12 = v16;
-				v11 |= v8;
-			}
-			--v15;
-		} while (v15);
-	}
-	return v11;
-#endif
 }
 
 
@@ -629,83 +313,8 @@ long MATH3D_DistanceBetweenPositions(struct _Position* pos1, struct _Position* p
 // short /*$ra*/ MATH3D_AngleBetweenVectors(struct _SVector *vector1 /*$a0*/, struct _SVector *vector2 /*$a1*/)
 short MATH3D_AngleBetweenVectors(struct _SVector *vector1, struct _SVector *vector2)
 { // line 616, offset 0x80039994
-#if defined(PC_VERSION)
-	int v3; // eax
-	int v4; // esi
-	int v5; // ecx
-	int v6; // eax
-	int v7; // eax
-	int v8; // edi
-	int v9; // edx
-	int v10; // ebp
-	int v11; // ebx
-	int v12; // esi
-	int v13; // eax
-	int v14; // ecx
-	int v15; // ebp
-	int v16; // eax
-	int vector1a; // [esp+14h] [ebp+4h]
-
-	if (vector1->x == vector2->x && vector1->y == vector2->y && vector1->z == vector2->z)
-		return 0;
-	vector1a = (vector1->z * vector2->z + vector1->y * vector2->y + vector1->x * vector2->x + 2048) >> 12;
-	v3 = vector1a;
-	if (vector1a <= 4096)
-	{
-		if (vector1a >= -4096)
-			goto LABEL_10;
-		v3 = -4096;
-	}
-	else
-	{
-		v3 = 4096;
-	}
-	vector1a = v3;
-LABEL_10:
-	v4 = 0x1000000 - v3 * v3;
-	if (v3 * v3 == 0x1000000)
-		return ratan2(0, v3);
-	v5 = 0x80000000;
-	v6 = 31;
-	if (v4 >= 0)
-	{
-		do
-		{
-			v5 >>= 1;
-			--v6;
-		} while ((v4 & v5) == 0);
-	}
-	v7 = v6 >> 1;
-	v8 = 1 << v7;
-	v9 = 1 << (2 * v7);
-	v10 = v7;
-	v11 = 1 << v7;
-	v12 = v4 - v9;
-	v13 = v7 - 1;
-	v14 = v9;
-	if (v10)
-	{
-		v15 = v13 + 1;
-		do
-		{
-			v14 >>= 2;
-			v16 = v12 - v14 - v9;
-			v8 >>= 1;
-			v9 >>= 1;
-			if (v16 >= 0)
-			{
-				v9 += v14;
-				v12 = v16;
-				v11 |= v8;
-			}
-			--v15;
-		} while (v15);
-	}
-	return ratan2(v11, vector1a);
-#else
 	UNIMPLEMENTED();
 	return 0;
-#endif
 }
 
 
@@ -713,114 +322,20 @@ LABEL_10:
 // void /*$ra*/ MATH3D_RotMatAboutVec(struct _SVector *vec /*$s1*/, MATRIX *mat /*$s2*/, short angle /*$a2*/)
 void MATH3D_RotMatAboutVec(struct _SVector *vec, MATRIX *mat, short angle)
 { // line 638, offset 0x80039a80
-#if defined(PC_VERSION)
-	struct _SVector* v3; // edi
-	int v4; // edx
-	int v5; // ecx
-	int v6; // esi
-	int v7; // ecx
-	int v8; // eax
-	int v9; // eax
-	int v10; // edi
-	int v11; // edx
-	int v12; // ebp
-	int v13; // ebx
-	int v14; // esi
-	int v15; // eax
-	int v16; // ecx
-	int v17; // ebp
-	int v18; // eax
-	__int16 v19; // ax
-	int x; // [esp-14h] [ebp-5Ch]
-	SVECTOR v21; // [esp+0h] [ebp-48h] BYREF
-	MATRIX v22; // [esp+8h] [ebp-40h] BYREF
-	MATRIX v23; // [esp+28h] [ebp-20h] BYREF
-
-	if (angle)
-	{
-		v3 = vec;
-		v4 = vec->y * vec->y;
-		v5 = vec->z * vec->z;
-		v6 = v4 + v5 + 2048;
-		if (v4 + v5 == -2048)
-		{
-			v13 = 0;
-		}
-		else
-		{
-			v7 = 0x80000000;
-			v8 = 31;
-			if (v6 >= 0)
-			{
-				do
-				{
-					v7 >>= 1;
-					--v8;
-				} while ((v6 & v7) == 0);
-			}
-			v9 = v8 >> 1;
-			v10 = 1 << v9;
-			v11 = 1 << (2 * v9);
-			v12 = v9;
-			v13 = 1 << v9;
-			v14 = v6 - v11;
-			v15 = v9 - 1;
-			v16 = v11;
-			if (v12)
-			{
-				v17 = v15 + 1;
-				do
-				{
-					v16 >>= 2;
-					v18 = v14 - v16 - v11;
-					v10 >>= 1;
-					v11 >>= 1;
-					if (v18 >= 0)
-					{
-						v11 += v16;
-						v14 = v18;
-						v13 |= v10;
-					}
-					--v17;
-				} while (v17);
-			}
-			v3 = vec;
-		}
-		v19 = ratan2(v3->y, v3->z);
-		x = v3->x;
-		v21.vx = -v19;
-		v21.vy = ratan2(x, v13);
-		v21.vz = 0;
-		RotMatrix(&v21, &v22);
-		TransposeMatrix(&v22, &v23);
-		MulMatrix2(&v23, mat);
-		RotMatrixZ(angle, mat);
-		MulMatrix2(&v22, mat);
-	}
-#else
 	UNIMPLEMENTED();
-#endif
 }
 
 void MATH3D_SetUnityMatrix(MATRIX *mat)
 {
-#if defined(PSX_VERSION)
 	((unsigned int*)&mat->m[0][0])[0] = ONE;
 	((unsigned int*)&mat->m[0][2])[0] = 0;
 	((unsigned int*)&mat->m[1][1])[0] = ONE;
 	((unsigned int*)&mat->m[2][0])[0] = 0;
 	mat->m[2][2] = ONE;
-#elif defined(PC_VERSION)
-	*(QWORD*)&mat->m[0][0] = 4096i64;
-	*(DWORD*)&mat->m[1][1] = 4096;
-	*(DWORD*)&mat->m[2][0] = 0;
-	mat->m[2][2] = 4096;
-#endif
 }
 
 void AngleMoveToward(short* current_ptr, short destination, short step)
 {
-#if defined(PSX_VERSION)
 	long diff; // $a0
 	short current; // $s0
 
@@ -856,49 +371,10 @@ void AngleMoveToward(short* current_ptr, short destination, short step)
 	{
 		*current_ptr = destination;
 	}
-
-#elif defined(PC_VERSION)
-	__int16 v3; // cx
-	__int16 v4; // ax
-	__int16 v5; // ax
-	int v6; // edx
-
-	v3 = *current_ptr;
-	v4 = destination - *current_ptr;
-	if ((v4 & 0xFFFu) <= 0x800)
-		v5 = v4 & 0xFFF;
-	else
-		v5 = (v4 & 0xFFF) - 4096;
-	if (!v5)
-		goto LABEL_13;
-	v6 = v5;
-	if (v5 < 0)
-		v6 = -v5;
-	if (v6 >= step)
-	{
-		if (v5 <= 0)
-		{
-			if (v5 < 0)
-				v3 -= step;
-			*current_ptr = v3 & 0xFFF;
-		}
-		else
-		{
-			*current_ptr = (step + v3) & 0xFFF;
-		}
-	}
-	else
-	{
-	LABEL_13:
-		*current_ptr = destination;
-	}
-#endif
 }
 
 short AngleDiff(short current, short destination)//Matching - 100%
 {
-#if defined(PSX_VERSION)
-
 	current = (destination - current) & 0xFFF;
 
 	if (current >= 0x801)
@@ -907,31 +383,16 @@ short AngleDiff(short current, short destination)//Matching - 100%
 	}
 
 	return current;
-
-#elif defined(PC_VERSION)
-	__int16 v2; // ax
-
-	v2 = destination - current;
-	if (((destination - current) & 0xFFFu) <= 2048)
-		return v2 & 0xFFF;
-	else
-		return (v2 & 0xFFF) - 4096;
-#endif
 }
 
 short MATH3D_AngleFromPosToPos(struct _Position* from, struct _Position* to)//Matching - 100%
 {
-#if defined(PSX_VERSION)
 	return (ratan2(from->y - to->y, from->x - to->x) + 3072) & 0xFFF;
-#elif defined(PC_VERSION)
-	return (ratan2(from->y - to->y, from->x - to->x) - 1024) & 0xFFF;
-#endif
 }
 
 
 void MATH3D_ZYXtoXYZ(struct _Rotation* rot)//Matching - 99.57%
 {
-#if defined(PSX_VERSION)
 	MATRIX tempMat;
 	struct _G2EulerAngles_Type ea;
 
@@ -942,21 +403,6 @@ void MATH3D_ZYXtoXYZ(struct _Rotation* rot)//Matching - 99.57%
 	rot->x = ea.x;
 	rot->y = ea.y;
 	rot->z = ea.z;
-
-#elif defined(PC_VERSION)
-	__int16 y; // cx
-	__int16 z; // dx
-	struct _G2EulerAngles_Type euler; // [esp+4h] [ebp-28h] BYREF
-	struct _G2Matrix_Type matrix; // [esp+Ch] [ebp-20h] BYREF
-
-	RotMatrixZYX((SVECTOR*)rot, (MATRIX*)&matrix);
-	G2EulerAngles_FromMatrix(&euler, &matrix, 21);
-	y = euler.y;
-	z = euler.z;
-	rot->x = euler.x;
-	rot->y = y;
-	rot->z = z;
-#endif
 }
 
 
@@ -964,170 +410,19 @@ void MATH3D_ZYXtoXYZ(struct _Rotation* rot)//Matching - 99.57%
 // short /*$ra*/ MATH3D_ElevationFromPosToPos(_Position *from /*$s1*/, _Position *to /*$s0*/)
 short MATH3D_ElevationFromPosToPos(_Position *from, _Position *to)
 { // line 738, offset 0x80039cd0
-#if defined(PC_VERSION)
-	_Position* v2; // ecx
-	_Position* v3; // edx
-	int v4; // esi
-	int v5; // eax
-	int v6; // esi
-	int v7; // ecx
-	int v8; // eax
-	int v9; // eax
-	int v10; // edi
-	int v11; // edx
-	int v12; // ebp
-	int v13; // ebx
-	int v14; // esi
-	int v15; // eax
-	int v16; // ecx
-	int v17; // ebp
-	int v18; // eax
-
-	v2 = to;
-	v3 = from;
-	v4 = from->y - to->y;
-	v5 = from->x - to->x;
-	v6 = v5 * v5 + v4 * v4;
-	if (v6)
-	{
-		v7 = 0x80000000;
-		v8 = 31;
-		if (v6 >= 0)
-		{
-			do
-			{
-				v7 >>= 1;
-				--v8;
-			} while ((v6 & v7) == 0);
-		}
-		v9 = v8 >> 1;
-		v10 = 1 << v9;
-		v11 = 1 << (2 * v9);
-		v12 = v9;
-		v13 = 1 << v9;
-		v14 = v6 - v11;
-		v15 = v9 - 1;
-		v16 = v11;
-		if (v12)
-		{
-			v17 = v15 + 1;
-			do
-			{
-				v16 >>= 2;
-				v18 = v14 - v16 - v11;
-				v10 >>= 1;
-				v11 >>= 1;
-				if (v18 >= 0)
-				{
-					v11 += v16;
-					v14 = v18;
-					v13 = v10 | v13;
-				}
-				--v17;
-			} while (v17);
-		}
-		v3 = from;
-		v2 = to;
-	}
-	else
-	{
-		v13 = 0;
-	}
-	return -ratan2(v2->z - v3->z, (__int16)v13) & 0xFFF;
-#else
 	UNIMPLEMENTED();
 	return 0;
-#endif
 }
 
 void MATH3D_RotationFromPosToPos(struct _Position* from, struct _Position* to, struct _Rotation* rot)//Matching - 99.52%
 {
-#if defined(PSX_VERSION)
-	
 	rot->x = MATH3D_ElevationFromPosToPos(from, to);
 	rot->y = 0;
 	rot->z = MATH3D_AngleFromPosToPos(from, to);
-
-#elif defined(PC_VERSION)
-	_Position* v3; // ebp
-	_Position* v4; // edi
-	int v5; // esi
-	int v6; // eax
-	int v7; // esi
-	int v8; // ecx
-	int v9; // eax
-	int v10; // eax
-	int v11; // edi
-	int v12; // edx
-	int v13; // ebp
-	int v14; // ebx
-	int v15; // esi
-	int v16; // eax
-	int v17; // ecx
-	int v18; // ebp
-	int v19; // eax
-	__int16 v20; // ax
-
-	v3 = to;
-	v4 = from;
-	v5 = from->y - to->y;
-	v6 = from->x - to->x;
-	v7 = v6 * v6 + v5 * v5;
-	if (v7)
-	{
-		v8 = 0x80000000;
-		v9 = 31;
-		if (v7 >= 0)
-		{
-			do
-			{
-				v8 >>= 1;
-				--v9;
-			} while ((v8 & v7) == 0);
-		}
-		v10 = v9 >> 1;
-		v11 = 1 << v10;
-		v12 = 1 << (2 * v10);
-		v13 = v10;
-		v14 = 1 << v10;
-		v15 = v7 - v12;
-		v16 = v10 - 1;
-		v17 = v12;
-		if (v13)
-		{
-			v18 = v16 + 1;
-			do
-			{
-				v17 >>= 2;
-				v19 = v15 - v17 - v12;
-				v11 >>= 1;
-				v12 >>= 1;
-				if (v19 >= 0)
-				{
-					v12 += v17;
-					v15 = v19;
-					v14 = v11 | v14;
-				}
-				--v18;
-			} while (v18);
-		}
-		v3 = to;
-		v4 = from;
-	}
-	else
-	{
-		v14 = 0;
-	}
-	v20 = ratan2(v3->z - v4->z, (__int16)v14);
-	rot->y = 0;
-	rot->x = -v20 & 0xFFF;
-	rot->z = (ratan2(v4->y - v3->y, v4->x - v3->x) - 1024) & 0xFFF;
-#endif
 }
 
 int MATH3D_veclen2(int ix, int iy)
 {
-#if defined(PSX_VERSION)
 	int t;
 	int v1 = ix;
 
@@ -1155,156 +450,14 @@ int MATH3D_veclen2(int ix, int iy)
 	ix = iy + ix;
 
 	return ((v1 - (v1 >> 5)) - (v1 >> 7)) + (ix >> 2) + (ix >> 6);
-#elif defined(PC_VERSION)
-	int v2; // edx
-	int v3; // eax
-	int v4; // edx
-
-	v2 = ix;
-	if (ix < 0)
-		v2 = -ix;
-	v3 = iy;
-	if (iy < 0)
-		v3 = -iy;
-	if (v2 < v3)
-	{
-		v4 = v3 ^ v2;
-		v3 ^= v4;
-		v2 = v3 ^ v4;
-	}
-	return v2 + ((v3 + (v3 >> 1)) >> 2) + ((v3 + (v3 >> 1)) >> 6) - (v2 >> 5) - (v2 >> 7);
-#endif
 }
 
 
 // autogenerated function stub: 
 // void /*$ra*/ MATH3D_RotateAxisToVector(MATRIX *dest /*$s3*/, MATRIX *src /*$s2*/, struct _SVector *vec /*$a2*/, enum MATH3D_AXIS axis /*$a3*/)
-void MATH3D_RotateAxisToVector(MATRIX *dest, MATRIX *src, struct _SVector *vec, enum MATH3D_AXIS axis)
+void MATH3D_RotateAxisToVector(MATRIX* dest, MATRIX* src, struct _SVector* vec, enum MATH3D_AXIS axis)
 { // line 784, offset 0x80039e08
-#if defined(PC_VERSION)
-	int v4; // edi
-	int v5; // ecx
-	int v6; // esi
-	int y; // ebx
-	int z; // ebp
-	int v9; // eax
-	int v10; // esi
-	int v11; // edi
-	int v12; // ebx
-	int v13; // ebp
-	int v14; // eax
-	int v15; // eax
-	__int16 v16; // si
-	int v17; // ebp
-	int v18; // ecx
-	int v19; // edi
-	int v20; // edi
-	int v21; // esi
-	int v22; // edx
-	int v23; // ecx
-	int v24; // ebx
-	int v25; // eax
-	int v26; // edi
-	int v27; // edi
-	int v28; // eax
-	int v29; // eax
-	G2EulerAngles v30; // [esp+10h] [ebp-28h] BYREF
-	MATRIX v31; // [esp+18h] [ebp-20h] BYREF
-	struct _SVector* vecb; // [esp+44h] [ebp+Ch]
-	__int16 veca; // [esp+44h] [ebp+Ch]
-
-	if (axis <= AXIS_Z)
-	{
-		v4 = src->m[0][axis];
-		v5 = src->m[1][axis];
-		v6 = src->m[2][axis];
-	}
-	else
-	{
-		v4 = -src->m[-1][axis];
-		v5 = -src->m[0][axis];
-		v6 = -src->m[1][axis];
-	}
-	y = vec->y;
-	z = vec->z;
-	v30.x = (z * v5 - y * v6) / 4096;
-	vecb = (struct _SVector*)vec->x;
-	v30.y = ((int)vecb * v6 - z * v4) / 4096;
-	v30.z = (y * v4 - (int)vecb * v5) / 4096;
-	v9 = z * v6 + (DWORD)vecb * v4;
-	v10 = 512;
-	v11 = 256;
-	v12 = (y * v5 + v9) / 4096;
-	v13 = v12;
-	if (v12 < 0)
-		v13 = -v12;
-	do
-	{
-		v14 = rcos(v10);
-		if (v14 == v13)
-			break;
-		if (v14 >= v13)
-			v10 += v11;
-		else
-			v10 -= v11;
-		v11 >>= 1;
-	} while (v11);
-	if (v12 < 0)
-		v10 = 2048 - v10;
-	v15 = v30.z * v30.z + v30.y * v30.y + v30.x * v30.x;
-	v16 = (__int16)v10 / 2;
-	veca = v16;
-	if (v15 > 0)
-	{
-		v18 = 0x80000000;
-		v19 = 31;
-		do
-		{
-			v18 >>= 1;
-			--v19;
-		} while ((v18 & v15) == 0);
-		v20 = v19 >> 1;
-		v21 = 1 << v20;
-		v22 = 1 << (2 * v20);
-		v17 = 1 << v20;
-		v23 = v22;
-		v24 = v15 - v22;
-		v25 = v20;
-		v26 = v20 - 1;
-		if (v25)
-		{
-			v27 = v26 + 1;
-			do
-			{
-				v23 >>= 2;
-				v28 = v24 - v23 - v22;
-				v21 >>= 1;
-				v22 >>= 1;
-				if (v28 >= 0)
-				{
-					v22 += v23;
-					v24 = v28;
-					v17 |= v21;
-				}
-				--v27;
-			} while (v27);
-		}
-		v16 = veca;
-	}
-	else
-	{
-		v17 = 4096;
-	}
-	v29 = rsin(v16);
-	v30.x = v29 * v30.x / v17;
-	v30.y = v29 * v30.y / v17;
-	v30.z = v29 * v30.z / v17;
-	v30.order = rcos(v16);
-	G2Quat_ToMatrix(&v30, (struct G2Matrix*)&v31);
-	MulMatrix0(src, &v31, dest);
-#else
-UNIMPLEMENTED();
-#endif
+	UNIMPLEMENTED();
 }
 
 
@@ -1312,44 +465,8 @@ UNIMPLEMENTED();
 // int /*$ra*/ MATH3D_ConeDetect(struct _SVector *pos /*$s2*/, int arc /*$s0*/, int elevation /*$s4*/)
 int MATH3D_ConeDetect(struct _SVector *pos, int arc, int elevation)
 { // line 859, offset 0x8003a060
-#if defined(PC_VERSION)
-	int x; // esi
-	int v4; // edi
-	int v5; // eax
-	int v6; // ecx
-	int v7; // eax
-	int v8; // eax
-	int v9; // eax
-	int z; // ecx
-
-	x = pos->x;
-	v4 = -pos->y;
-	v5 = x;
-	if (x < 0)
-		v5 = -x;
-	if (MATH3D_FastAtan2(v5, -pos->y) >= arc)
-		return 0;
-	v6 = v4;
-	v7 = x;
-	if (x < 0)
-		v7 = -x;
-	if (v4 < 0)
-		v6 = -v4;
-	if (v7 > v6)
-	{
-		v8 = v6 ^ v7;
-		v6 ^= v8;
-		v7 = v6 ^ v8;
-	}
-	v9 = (12 * v7 + 30 * v6) / 32;
-	z = pos->z;
-	if ((z & 0x8000u) != 0)
-		z = -(__int16)z;
-	return MATH3D_FastAtan2(z, v9) < elevation;
-#else
 	UNIMPLEMENTED();
 	return 0;
-#endif
 }
 
 
@@ -1357,18 +474,11 @@ int MATH3D_ConeDetect(struct _SVector *pos, int arc, int elevation)
 // void /*$ra*/ MATH3D_CrossProduct(struct _SVector *t /*$a0*/, struct _SVector *r /*$a1*/, struct _SVector *s /*$a2*/)
 void MATH3D_CrossProduct(struct _SVector *t, struct _SVector *r, struct _SVector *s)
 { // line 976, offset 0x8003a118
-#if defined(PC_VERSION)
-	t->x = (r->y * s->z - s->y * r->z) >> 12;
-	t->y = -(__int16)((s->z * r->x - r->z * s->x) >> 12);
-	t->z = (s->y * r->x - r->y * s->x) >> 12;
-#else
 	UNIMPLEMENTED();
-#endif
 }
 
 unsigned long MATH3D_SquareLength(long x, long y, long z)
 {
-#if defined(PSX_VERSION)///@FIXME inaccurate for PSX but same functionality. See ASM.
 	long v[3];
 	long r[3];
 
@@ -1381,11 +491,4 @@ unsigned long MATH3D_SquareLength(long x, long y, long z)
 	gte_stlvnl(r);
 
 	return r[0] + r[1] + r[2];
-#elif defined(PC_VERSION)
-	return z * z + y * y + x * x;
-#endif
 }
-
-
-
-

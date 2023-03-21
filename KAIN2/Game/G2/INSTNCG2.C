@@ -69,8 +69,6 @@ void G2Instance_BuildTransforms(struct _Instance* instance)//Matching - 99.57%
 
 void G2Instance_RebuildTransforms(struct _Instance *instance)
 {
-#if defined(PSX_VERSION)
-
 	if (instance->object->animList != NULL && !(instance->object->oflags2 & 0x40000000))
 	{
 		_G2Instance_RebuildAnimatedTransforms(instance);
@@ -79,15 +77,6 @@ void G2Instance_RebuildTransforms(struct _Instance *instance)
 	{
 		_G2Instance_RebuildNonAnimatedTransforms(instance);
 	}
-
-#elif defined(PC_VERSION)
-	struct Object* object; // eax
-  object = instance->object;
-  if ( !object->animList || (object->oflags2 & 0x40000000) != 0 )
-    G2Instance_RebuildNonAnimatedTransforms(instance);
-  else
-    G2Instance_RebuildAnimatedTransforms(instance);
-#endif
 }
 
 struct _G2AnimKeylist_Type* G2Instance_GetKeylist(struct _Instance* instance, int id)

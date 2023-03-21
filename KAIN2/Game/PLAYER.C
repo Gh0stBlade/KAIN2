@@ -7,20 +7,11 @@
 // void /*$ra*/ PLAYER_TurnHead(struct _Instance *instance /*$s0*/, short *rotx /*$s1*/, short *rotz /*$s2*/, struct GameTracker *gameTracker /*$s3*/)
 void PLAYER_TurnHead(struct _Instance* instance, short* rotx, short* rotz, struct GameTracker* gameTracker)
 { // line 25, offset 0x80012d5c
-#if defined(PC_VERSION)
-	if ((INSTANCE_Query(instance, 1) & 1) != 0)
-		RAZIEL_TurnHead(instance, rotx, rotz, gameTracker);
-	else
-		MONAPI_TurnHead(instance, rotx, rotz, gameTracker);
-#else
 	UNIMPLEMENTED();
-#endif
 }
 
 long PLAYER_OkToLookAround(struct _Instance* instance)
 {
-#if defined(PSX_VERSION)
-
 	if ((INSTANCE_Query(instance, 0x1) & 0x1))
 	{
 		return RAZIEL_OkToLookAround(instance);
@@ -29,18 +20,10 @@ long PLAYER_OkToLookAround(struct _Instance* instance)
 	{
 		return MONAPI_OkToLookAround(instance);
 	}
-
-#elif defined(PC_VERSION)
-	if ((INSTANCE_Query(instance, 1) & 1) != 0)
-		return RAZIEL_OkToLookAround(instance);
-	else
-		return MONAPI_OkToLookAround(instance);
-#endif
 }
 
 void PLAYER_SetLookAround(struct _Instance* instance)
 {
-#if defined(PSX_VERSION)
 	if (INSTANCE_Query(instance, 0x1) & 0x1)
 	{
 		RAZIEL_SetLookAround(instance);
@@ -49,17 +32,10 @@ void PLAYER_SetLookAround(struct _Instance* instance)
 	{
 		MONAPI_SetLookAround(instance);
 	}
-#elif defined(PC_VERSION)
-	if ((INSTANCE_Query(instance, 1) & 1) != 0)
-		RAZIEL_SetLookAround(instance);
-	else
-		MONAPI_SetLookAround(instance);
-#endif
 }
 
 void PLAYER_ReSetLookAround(struct _Instance* instance)
 {
-#if defined(PSX_VERSION)
 	if(INSTANCE_Query(instance, 0x1) & 0x1)
 	{
 		RAZIEL_ResetLookAround(instance);
@@ -68,10 +44,4 @@ void PLAYER_ReSetLookAround(struct _Instance* instance)
 	{
 		MONAPI_ResetLookAround(instance);
 	}
-#elif defined(PC_VERSION)
-	if ((INSTANCE_Query(instance, 1) & 1) != 0)
-		RAZIEL_ResetLookAround(instance);
-	else
-		MONAPI_ResetLookAround(instance);
-#endif
 }

@@ -1557,20 +1557,12 @@ void CAMERA_SetFocus(struct Camera* camera, struct _Position* targetfocusPoint)
 
 void CAMERA_Lock(struct Camera* camera, long lock)
 {
-#if defined(PSX_VERSION)
 	camera->lock |= lock;
-#elif defined(PC_VERSION)
-	camera->lock |= lock;
-#endif
 }
 
 void CAMERA_Unlock(struct Camera* camera, long unlock)
 {
-#if defined(PSX_VERSION)
 	camera->lock &= ~unlock;
-#elif defined(PC_VERSION)
-	camera->lock &= ~unlock;
-#endif
 }
 
 void CAMERA_SetSmoothValue(struct Camera* camera, long smooth)//Matching - 99%
@@ -5638,19 +5630,10 @@ long CAMERA_DoCameraCollision2(struct Camera *camera, _Position *targetCamPos, i
 
 int CAMERA_FocusInstanceMoved(struct Camera* camera)//Matching - 100%
 {
-#if defined(PSX_VERSION)
 	return (camera->newFocusInstancePos.x != camera->oldFocusInstancePos.x ||
 		camera->newFocusInstancePos.y != camera->oldFocusInstancePos.y ||
 		camera->newFocusInstancePos.z != camera->oldFocusInstancePos.z ||
 		camera->newFocusInstanceRot.x != camera->oldFocusInstanceRot.x ||
 		camera->newFocusInstanceRot.y != camera->oldFocusInstanceRot.y ||
 		camera->newFocusInstanceRot.z != camera->oldFocusInstanceRot.z);
-#elif defined(PC_VERSION)
-	return camera->newFocusInstancePos.x != camera->oldFocusInstancePos.x
-		|| camera->newFocusInstancePos.y != camera->oldFocusInstancePos.y
-		|| camera->newFocusInstancePos.z != camera->oldFocusInstancePos.z
-		|| camera->newFocusInstanceRot.x != camera->oldFocusInstanceRot.x
-		|| camera->newFocusInstanceRot.y != camera->oldFocusInstanceRot.y
-		|| camera->newFocusInstanceRot.z != camera->oldFocusInstanceRot.z;
-#endif
 }

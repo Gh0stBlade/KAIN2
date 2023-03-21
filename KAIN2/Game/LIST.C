@@ -3,7 +3,6 @@
 
 void LIST_InsertFunc(struct NodeType *list, struct NodeType *node) //Matching - 99.55%
 {
-#if defined(PSX_VERSION)
 	node->prev = list;
 
 	node->next = list->next;
@@ -14,17 +13,6 @@ void LIST_InsertFunc(struct NodeType *list, struct NodeType *node) //Matching - 
 	}
 
 	list->next = node;
-
-#elif defined(PC_VERSION)
-	struct NodeType* next; // edx
-
-	node->prev = list;
-	node->next = list->next;
-	next = list->next;
-	if (next)
-		next->prev = node;
-	list->next = node;
-#endif
 }
 
 
@@ -32,45 +20,11 @@ void LIST_InsertFunc(struct NodeType *list, struct NodeType *node) //Matching - 
 // void /*$ra*/ LIST_DeleteFunc(struct NodeType *node /*$a0*/)
 void LIST_DeleteFunc(struct NodeType *node)
 { // line 57, offset 0x8004f594
-#if defined(PC_VERSION)
-	struct NodeType* prev; // ecx
-	struct NodeType* v2; // edx
-	struct NodeType* next; // edx
-
-	prev = node->prev;
-	if (node->prev && (v2 = node->next) != 0)
-	{
-		prev->next = v2;
-		node->next->prev = node->prev;
-		node->next = 0;
-		node->prev = 0;
-	}
-	else
-	{
-		next = node->next;
-		if (next)
-		{
-			next->prev = 0;
-			node->next = 0;
-			node->prev = 0;
-		}
-		else
-		{
-			if (prev)
-				prev->next = 0;
-			node->next = 0;
-			node->prev = 0;
-		}
-	}
-#else
 	UNIMPLEMENTED();
-#endif
 }
 
 struct NodeType* LIST_GetFunc(struct NodeType* list)
 {
-#if defined(PSX_VERSION)
-
 	if (list->next != NULL)
 	{
 		LIST_DeleteFunc(list->next);
@@ -79,41 +33,4 @@ struct NodeType* LIST_GetFunc(struct NodeType* list)
 	}
 
 	return NULL;
-
-#elif defined(PC_VERSION)
-	struct NodeType* result; // eax
-	struct NodeType* prev; // ecx
-	struct NodeType* v3; // edx
-	struct NodeType* next; // edx
-
-	result = list->next;
-	if (!result)
-		return 0;
-	prev = result->prev;
-	if (result->prev && (v3 = result->next) != 0)
-	{
-		prev->next = v3;
-		result->next->prev = result->prev;
-		result->next = 0;
-		result->prev = 0;
-	}
-	else
-	{
-		next = result->next;
-		if (next)
-		{
-			next->prev = 0;
-			result->next = 0;
-			result->prev = 0;
-		}
-		else
-		{
-			if (prev)
-				prev->next = 0;
-			result->next = 0;
-			result->prev = 0;
-		}
-	}
-	return result;
-#endif
 }

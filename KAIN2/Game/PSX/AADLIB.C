@@ -21,11 +21,7 @@ unsigned long aadUpdateRate[4] = { 0x411AAAAB, 0x208D5555, 0x4E200000, 0x2710000
 
 unsigned long aadGetMemorySize(struct AadInitAttr *attributes)
 {
-#if defined(PC_VERSION)
-	return 1488 * attributes->numSlots + 23720;
-#elif defined(PSX_VERSION)
 	return 1488 * attributes->numSlots + 7304;
-#endif
 }
 
 int aadInit(struct AadInitAttr *attributes, unsigned char *memoryPtr)
@@ -35,9 +31,7 @@ int aadInit(struct AadInitAttr *attributes, unsigned char *memoryPtr)
 	int slotNumber;
 	int i;
 
-#ifndef PC_VERSION
 	aadGp = GetGp();
-#endif
 	
 	PSX_EnterCriticalSection();
 	size = aadGetMemorySize(attributes);
@@ -168,15 +162,9 @@ void aadSetMasterVolume(int volume)
 
 void aadStartMasterVolumeFade(int targetVolume, int volumeStep, TDRFuncPtr_aadStartMasterVolumeFade2fadeCompleteCallback fadeCompleteCallback)
 {
-#if defined(PSX_VERSION)
 	aadMem->masterVolFader.volumeStep = volumeStep;
 	aadMem->masterVolFader.targetVolume = targetVolume;
 	aadMem->masterVolFader.fadeCompleteCallback = fadeCompleteCallback;
-#elif defined(PC_VERSION)
-	aadMem->masterVolFader.volumeStep = volumeStep;
-	aadMem->masterVolFader.targetVolume = targetVolume;
-	aadMem->masterVolFader.fadeCompleteCallback = fadeCompleteCallback;
-#endif
 }
 
 void aadSetSfxMasterVolume(int volume)
@@ -2322,116 +2310,34 @@ void aadStopAllSlots()
 
 void aadDisableSlot(int slotNumber)
 {
-#if defined(PSX_VERSION)
-
 	if (slotNumber < aadMem->numSlots)
 	{
 		aadMem->sequenceSlots[slotNumber]->slotFlags |= 0x1;
 
 		aadAllNotesOff(slotNumber);
 	}
-
-#elif defined(PC_VERSION)
-	int v1; // esi
-	AadMemoryStruct* v2; // edi
-	int v3; // ecx
-	struct _AadSequenceSlot* v4; // ebp
-	char* v5; // eax
-	int v6; // ebx
-
-	if (slotNumber < aadMem->numSlots)
-	{
-		v1 = 476;
-		aadMem->sequenceSlots[slotNumber]->slotFlags |= 1u;
-		v2 = aadMem;
-		v3 = 0;
-		v4 = aadMem->sequenceSlots[slotNumber];
-		do
-		{
-			v5 = (char*)v2 + v1;
-			if ((*((BYTE*)&v2->updateMode + v1) & 0xF0) == v4->slotID)
-			{
-				v6 = *(DWORD*)v5;
-				v5[8] = -1;
-				v3 |= v6;
-				*((WORD*)v5 + 9) |= 2u;
-				v2 = aadMem;
-			}
-			v1 += 28;
-		} while (v1 < 1148);
-		if (v3)
-		{
-			v2->voiceKeyOffRequest |= v3;
-			aadMem->voiceKeyOnRequest &= ~v3;
-		}
-	}
-#endif
 }
 
 void aadEnableSlot(int slotNumber)
 {
-#if defined(PSX_VERSION)
 	if (slotNumber < aadMem->numSlots)
 	{
 		aadMem->sequenceSlots[slotNumber]->slotFlags &= 0xFE;
 	}
-#elif defined(PC_VERSION)
-	if (slotNumber < aadMem->numSlots)
-		aadMem->sequenceSlots[slotNumber]->slotFlags &= ~1u;
-#endif
 }
 
 void aadPauseSlot(int slotNumber)
 {
-#if defined(PSX_VERSION)
-
 	if (slotNumber < aadMem->numSlots)
 	{
 		aadMem->sequenceSlots[slotNumber]->status &= 0xFFFE;
 
 		aadAllNotesOff(slotNumber);
 	}
-
-#elif defined(PC_VERSION)
-	int v1; // esi
-	AadMemoryStruct* v2; // edi
-	int v3; // ecx
-	struct _AadSequenceSlot* v4; // ebp
-	char* v5; // eax
-	int v6; // ebx
-
-	if (slotNumber < aadMem->numSlots)
-	{
-		v1 = 476;
-		aadMem->sequenceSlots[slotNumber]->status &= ~1u;
-		v2 = aadMem;
-		v3 = 0;
-		v4 = aadMem->sequenceSlots[slotNumber];
-		do
-		{
-			v5 = (char*)v2 + v1;
-			if ((*((BYTE*)&v2->updateMode + v1) & 0xF0) == v4->slotID)
-			{
-				v6 = *(DWORD*)v5;
-				v5[8] = -1;
-				v3 |= v6;
-				*((WORD*)v5 + 9) |= 2u;
-				v2 = aadMem;
-			}
-			v1 += 28;
-		} while (v1 < 1148);
-		if (v3)
-		{
-			v2->voiceKeyOffRequest |= v3;
-			aadMem->voiceKeyOnRequest &= ~v3;
-		}
-	}
-#endif
 }
 
 void aadResumeSlot(int slotNumber)
 {
-#if defined(PSX_VERSION)
 	struct _AadSequenceSlot* slot;
 	int track;
 
@@ -2451,45 +2357,15 @@ void aadResumeSlot(int slotNumber)
 			slot->status |= 0x1;
 		}
 	}
-
-#elif defined(PC_VERSION)
-	// line 3165, offset 0x800544f8
-	/* begin block 1 */
-		// Start line: 3167
-		// Start offset: 0x800544F8
-		// Variables:
-	struct _AadSequenceSlot *slot; // $a1
-	int track; // $a0
-
-	unsigned __int8* trackFlags; // eax
-
-	if (slotNumber < aadMem->numSlots)
-	{
-		slot = aadMem->sequenceSlots[slotNumber];
-		if (slot->sequenceNumberAssigned != 0xFF)
-		{
-			trackFlags = slot->trackFlags;
-			do
-				*trackFlags++ |= 0x20u;
-			while ((int)&trackFlags[-984 - (DWORD)slot] < 16);
-			slot->status |= 1u;
-		}
-	}
-#endif
 }
 
 int aadGetSlotStatus(int slotNumber)
 {
-#if defined(PSX_VERSION)
 	return aadMem->sequenceSlots[slotNumber]->status;
-#else
-	return aadMem->sequenceSlots[slotNumber]->status;
-#endif
 }
 
 void aadAllNotesOff(int slotNumber)
 { 
-#ifdef PSX_VERSION
 	struct AadSynthVoice* voice;
 	unsigned long vmask;
 	int i;
@@ -2515,43 +2391,10 @@ void aadAllNotesOff(int slotNumber)
 		aadMem->voiceKeyOffRequest |= vmask;
 		aadMem->voiceKeyOnRequest &= ~vmask;
 	}
-#else
-	AadMemoryStruct* v1; // edi
-	int v2; // ecx
-	int v3; // esi
-	struct _AadSequenceSlot* v4; // ebp
-	char* v5; // eax
-	int v6; // ebx
-
-	v1 = aadMem;
-	v2 = 0;
-	v3 = 476;
-	v4 = aadMem->sequenceSlots[slotNumber];
-	do
-	{
-		v5 = (char*)v1 + v3;
-		if ((*((BYTE*)&v1->updateMode + v3) & 0xF0) == v4->slotID)
-		{
-			v6 = *(DWORD*)v5;
-			v5[8] = -1;
-			v2 |= v6;
-			*((WORD*)v5 + 9) |= 2u;
-			v1 = aadMem;
-		}
-		v3 += 28;
-	} while (v3 < 1148);
-	if (v2)
-	{
-		v1->voiceKeyOffRequest |= v2;
-		aadMem->voiceKeyOnRequest &= ~v2;
-	}
-
-#endif
 }
 
 void aadMuteChannels(struct _AadSequenceSlot *slot, unsigned long channelList)
 { 
-#if defined(PSX_VERSION)
 	struct AadSynthVoice* voice;
 	unsigned long vmask;
 	unsigned long delayedMute;
@@ -2592,67 +2435,10 @@ void aadMuteChannels(struct _AadSequenceSlot *slot, unsigned long channelList)
 		aadMem->voiceKeyOffRequest |= vmask;
 		aadMem->voiceKeyOnRequest &= ~vmask;
 	}
-
-#elif defined(PC_VERSION)
-	// line 3252, offset 0x80054628
-	/* begin block 1 */
-		// Start line: 3254
-		// Start offset: 0x80054628
-		// Variables:
-			struct AadSynthVoice *voice; // $a2
-			unsigned long vmask; // $t2
-			unsigned long delayedMute; // $a2
-			int channel; // $t1
-			//int i; // $t0
-	unsigned int v2; // edx
-	unsigned int v3; // eax
-	AadMemoryStruct* v4; // esi
-	int v5; // edi
-	int i; // ebp
-	int j; // eax
-	BYTE* v8; // edx
-	int v9; // ecx
-
-	v2 = channelList;
-	v3 = channelList & slot->delayedMuteMode;
-	if (((unsigned __int16)channelList & slot->delayedMuteMode) != 0)
-	{
-		slot->delayedMuteCmds |= v3;
-		v2 = ~v3 & channelList;
-		channelList = v2;
-	}
-	slot->channelMute |= v2;
-	v4 = aadMem;
-	v5 = 0;
-	for (i = 0; i < 16; ++i)
-	{
-		if (((1 << i) & v2) != 0)
-		{
-			for (j = 476; j < 1148; j += 28)
-			{
-				v8 = (BYTE*)&v4->updateMode + j;
-				if ((unsigned __int8)*v8 == (slot->slotID | i))
-				{
-					v9 = *(unsigned int*)((char*)&v4->updateCounter + j);
-					*v8 = -1;
-					v4 = aadMem;
-					v5 |= v9;
-				}
-			}
-			v2 = channelList;
-		}
-	}
-	if (v5)
-	{
-		v4->voiceKeyOffRequest |= v5;
-		aadMem->voiceKeyOnRequest &= ~v5;
-	}
-#endif
 }
 
 void aadUnMuteChannels(struct _AadSequenceSlot* slot, unsigned long channelList)//Matching - 100%
 {
-#if defined(PSX_VERSION)
 	unsigned long delayedUnMute;
 
 	delayedUnMute = slot->delayedMuteMode & channelList;
@@ -2664,52 +2450,24 @@ void aadUnMuteChannels(struct _AadSequenceSlot* slot, unsigned long channelList)
 	}
 
 	slot->channelMute &= ~channelList;
-
-#elif defined(PC_VERSION)
-	__int16 v2; // dx
-	__int16 v3; // ax
-
-	v2 = channelList;
-	v3 = channelList & slot->delayedMuteMode;
-	if (v3)
-	{
-		slot->delayedUnMuteCmds |= v3;
-		v2 = ~v3 & channelList;
-	}
-	slot->channelMute &= ~v2;
-#endif
 }
 
 void* aadInstallEndSequenceCallback(void (*func)(long, int, int), long data)
 {
-#if defined(PSX_VERSION)
 	void* previousCallbackProc;
 	previousCallbackProc = (void*)aadMem->endSequenceCallback;
 	aadMem->endSequenceCallback = func;
 	aadMem->endSequenceCallbackData = data;
 	return previousCallbackProc;
-#elif 0
-	TDRFuncPtr_aadInstallEndSequenceCallback result; // eax
-
-	result = (TDRFuncPtr_aadInstallEndSequenceCallback)aadMem[3].loadRequestQueue[13].type;
-	aadMem[3].loadRequestQueue[13].type = (int)callbackProc;
-	aadMem[3].loadRequestQueue[13].directoryID = data;
-	return result;
-#endif
 }
 
 void aadSetUserVariable(int variableNumber, int value)
 {
-#if defined(PSX_VERSION)
 	aadMem->userVariables[variableNumber] = value;
-#elif defined(PC_VERSION)
-	*((BYTE*)&aadMem[3].loadRequestQueue[13].flags + variableNumber) = value;
-#endif
 }
 
 void aadSetNoUpdateMode(int noUpdate)
 { 
-#if defined(PSX_VERSION)
 	if (noUpdate != 0)
 	{
 		aadMem->flags |= 2;
@@ -2718,15 +2476,6 @@ void aadSetNoUpdateMode(int noUpdate)
 	{
 		aadMem->flags &= -3;
 	}
-#else
-	int flags; // ecx
-
-	flags = aadMem->flags;
-	if (noUpdate)
-		aadMem->flags = flags | 2;
-	else
-		aadMem->flags = flags & ~2u;
-#endif
 }
 
 
@@ -2734,38 +2483,12 @@ void aadSetNoUpdateMode(int noUpdate)
 // void /*$ra*/ aadPauseSound()
 void aadPauseSound()
 { // line 3467, offset 0x800547a8
-#if defined(PC_VERSION)
-	int flags; // eax
-	int v1; // esi
-	int v2; // ebx
-	int i; // edi
-
-	flags = aadMem->flags;
-	if ((flags & 8) == 0)
-	{
-		v1 = 0;
-		aadMem->flags |= 0xC;
-		v2 = 0;
-		for (i = 1172; i < 1220; i += 2)
-		{
-			aadMem->synthVoice[v2].flags &= ~2u;
-			SpuGetVoicePitch(v1, (unsigned __int16*)((char*)aadMem + i));
-			SpuSetVoicePitch(v1++, 0);
-			++v2;
-		}
-	}
-#else
 	UNIMPLEMENTED();
-#endif
 }
 
 void aadCancelPauseSound()
 {
-#if defined(PSX_VERSION)
 	aadMem->flags &= 0xFFFFFFF3;
-#elif defined(PC_VERSION)
-	aadMem->flags &= ~0xCu;
-#endif
 }
 
 
@@ -2773,33 +2496,5 @@ void aadCancelPauseSound()
 // void /*$ra*/ aadResumeSound()
 void aadResumeSound()
 { // line 3493, offset 0x8005485c
-
-#if defined(PC_VERSION)
-	int flags; // eax
-	AadMemoryStruct* v1; // eax
-	int v2; // edi
-	int v3; // ebp
-	int i; // esi
-
-	flags = aadMem->flags;
-	if ((flags & 8) != 0)
-	{
-		aadMem->flags &= ~0xC;
-		v1 = aadMem;
-		v2 = 0;
-		v3 = 0;
-		for (i = 1172; i < 1220; i += 2)
-		{
-			if ((v1->synthVoice[v3].flags & 2) == 0)
-			{
-				SpuSetVoicePitch(v2, *(WORD*)((char*)&v1->updateCounter + i));
-				v1 = aadMem;
-			}
-			++v2;
-			++v3;
-		}
-	}
-#else
 	UNIMPLEMENTED();
-#endif
 }

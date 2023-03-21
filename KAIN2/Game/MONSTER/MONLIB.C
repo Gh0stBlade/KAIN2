@@ -9,31 +9,7 @@
 // void /*$ra*/ MON_TurnOffWeaponSpheres(struct _Instance *instance /*$s1*/)
 void MON_TurnOffWeaponSpheres(struct _Instance *instance)
 { // line 148, offset 0x8007f3e4
-#if defined(PSX_VERSION)
 	UNIMPLEMENTED();
-#elif defined(PC_VERSION)
-	struct _Instance* LinkChild; // esi
-	struct _MonsterVars* mv; // ebp
-	struct _HModel* hmodel; // eax
-	int numprim; // ecx
-	struct _HPrim* hprim; // eax
-
-	LinkChild = instance->LinkChild;
-	for (mv = (struct _MonsterVars*)instance->extraData; LinkChild; LinkChild = LinkChild->LinkSibling)
-		TurnOffCollisionPhysOb(LinkChild, 3);
-	if ((mv->mvFlags & 0x4000) != 0)
-	{
-		hmodel = &instance->hModelList[instance->currentModel];
-		numprim = hmodel->numHPrims;
-		for (hprim = hmodel->hPrimList; numprim; --numprim)
-		{
-			if (hprim->type == 1 && hprim->data.hsphere->id == 9)
-				hprim->hpFlags &= ~1u;
-			++hprim;
-		}
-		mv->mvFlags &= ~0x4000;
-	}
-#endif
 }
 
 
@@ -207,61 +183,7 @@ void MON_TurnOnAllSpheres(struct _Instance* instance)
 // void /*$ra*/ MON_SwitchState(struct _Instance *instance /*$s2*/, enum MonsterState state /*$s1*/)
 void MON_SwitchState(struct _Instance *instance, enum MonsterState state)
 { // line 318, offset 0x8007f850
-#if defined(PC_VERSION)
-	struct _MonsterVars* mv; // edi
-	struct _Instance* i; // esi
-	struct _HModel* v4; // eax
-	int numHPrims; // ecx
-	struct _HPrim* prim; // eax
-	unsigned int mvFlags; // eax
-	char pathSlotID; // al
-
-	mv = (struct _MonsterVars*)instance->extraData;
-	if ((mv->mvFlags & 0x4000) != 0)
-	{
-		for (i = instance->LinkChild; i; i = i->LinkSibling)
-			TurnOffCollisionPhysOb(i, 3);
-		if ((mv->mvFlags & 0x4000) != 0)
-		{
-			v4 = &instance->hModelList[instance->currentModel];
-			numHPrims = v4->numHPrims;
-			for (prim = v4->hPrimList; numHPrims; --numHPrims)
-			{
-				if (prim->type == 1 && prim->data.hsphere->id == 9)
-					prim->hpFlags &= ~1u;
-				++prim;
-			}
-			mv->mvFlags &= ~0x4000;
-		}
-	}
-	if ((mv->mvFlags & 1) != 0)
-	{
-		if ((gameTrackerX.debugFlags2 & 1) != 0)
-			MON_Say();
-	}
-	else
-	{
-		mv->previousMainState = instance->currentMainState;
-	}
-	if (state == MONSTER_STATE_GENERALDEATH
-		|| state == MONSTER_STATE_DEAD
-		|| state == MONSTER_STATE_IMPALEDEATH
-		|| state == MONSTER_STATE_GRABBED
-		|| state == MONSTER_STATE_MISSILEHIT)
-	{
-		PurgeMessageQueue(&mv->messageQueue);
-	}
-	instance->currentMainState = state;
-	pathSlotID = mv->pathSlotID;
-	mv->mvFlags = mv->mvFlags & ~0x44021001 | 1;
-	if (pathSlotID != -1)
-	{
-		ENMYPLAN_ReleasePlanningWorkspace(pathSlotID);
-		mv->pathSlotID = -1;
-	}
-#else
 	UNIMPLEMENTED();
-#endif
 }
 
 
@@ -269,36 +191,16 @@ void MON_SwitchState(struct _Instance *instance, enum MonsterState state)
 // void /*$ra*/ MON_SwitchStateDoEntry(struct _Instance *instance /*$s1*/, enum MonsterState state /*$a1*/)
 void MON_SwitchStateDoEntry(struct _Instance *instance, enum MonsterState state)
 { // line 360, offset 0x8007f94c
-#if defined(PC_VERSION)
-	struct _MonsterVars* mv; // edi
-	struct _MonsterState* StateFuncs; // eax
-	unsigned int mvFlags; // eax
-
-	mv = (struct _MonsterVars*)instance->extraData;
-	MON_SwitchState(instance, state);
-	if (mv)
-	{
-		StateFuncs = MONTABLE_GetStateFuncs(instance, instance->currentMainState);
-		((void(__cdecl*)(struct _Instance*))StateFuncs->entryFunction)(instance);
-		mv->mvFlags &= ~1;
-	}
-#else
 	UNIMPLEMENTED();
-#endif
 }
 
 int MON_TransNodeAnimation(struct _Instance* instance)
 {
-#if defined(PSX_VERSION)
 	return G2Anim_SegmentHasActiveChannels(&instance->anim, 0, 0x700);
-#elif defined(PC_VERSION)
-	return G2Anim_SegmentHasActiveChannels(&instance->anim, 0, 0x700);
-#endif
 }
 
 struct _MonsterAnim* MON_GetAnim(struct _Instance* instance, char* animList, int index)
 {
-#if defined(PSX_VERSION)
 	int whichAnim;
 
 	whichAnim = animList[index];
@@ -309,15 +211,6 @@ struct _MonsterAnim* MON_GetAnim(struct _Instance* instance, char* animList, int
 	}
 
 	return 0;
-#elif defined(PC_VERSION)
-	int whichAnim; // ecx
-
-	whichAnim = animList[index];
-	if (whichAnim == -1)
-		return 0;
-	else
-		return (struct _MonsterAnim*)(16 * whichAnim + *((DWORD*)instance->data + 16));
-#endif
 }
 
 
@@ -325,82 +218,16 @@ struct _MonsterAnim* MON_GetAnim(struct _Instance* instance, char* animList, int
 // void /*$ra*/ MON_PlayAnimID(struct _Instance *instance /*$s3*/, int index /*$a1*/, int mode /*$fp*/)
 void MON_PlayAnimID(struct _Instance *instance, int index, int mode)
 { // line 409, offset 0x8007fa10
-#if defined(PC_VERSION)
-	struct _MonsterVars* mv; // ebp
-	struct _MonsterAnim* manim; // edi
-	int anims; // eax
-	struct _MonsterAnim* v7; // ecx
-	int v8; // esi
-	int v9; // eax
-	int v10; // edx
-	int v11; // [esp+10h] [ebp-4h]
-	struct _MonsterAttributes* ma; // [esp+18h] [ebp+4h]
-	struct _Instance* instanceb; // [esp+18h] [ebp+4h]
-	int indexa; // [esp+1Ch] [ebp+8h]
-
-	mv = (struct _MonsterVars*)instance->extraData;
-	ma = (struct _MonsterAttributes*)instance->data;
-	if (index < 0)
-	{
-		MON_Say();
-		MON_Say();
-	}
-	manim = &ma->animList[index];
-	anims = manim->index[0];
-	instanceb = (struct _Instance*)anims;
-	if (anims < 0 || anims >= instance->object->numAnims)
-	{
-		MON_Say();
-		MON_Say();
-		instanceb = 0;
-	}
-	G2Anim_SetCallback(&instance->anim, INSTANCE_DefaultAnimCallback, (int)instance);
-	v7 = mv->anim;
-	if (v7 && v7->interpOut)
-	{
-		v11 = v7->interpOut;
-		indexa = v7->alphaTableOut;
-	}
-	else
-	{
-		v11 = manim->interpFrames;
-		indexa = manim->alphaTable;
-	}
-	v8 = 0;
-	if (mv->subAttr->numSections)
-	{
-		do
-		{
-			v9 = manim->index[v8];
-			if (v9 == -1)
-				v9 = (int)instanceb;
-			G2EmulationInstanceSwitchAnimationAlpha(instance, v8, v9, manim->startFrame, v11, mode, indexa);
-			G2EmulationInstanceSetAnimSpeed(instance, v8++, manim->playSpeed);
-		} while (v8 < mv->subAttr->numSections);
-	}
-	v10 = mv->mvFlags | 0x4000000;
-	mv->anim = manim;
-	mv->mvFlags = v10;
-	instance->anim.section[manim->controllingSection].callback = (int(__stdcall*)())MON_AnimCallback;
-	instance->anim.section[manim->controllingSection].callbackData = instance;
-#else
 	UNIMPLEMENTED();
-#endif
 }
 
 void MON_PlayAnimFromList(struct _Instance* instance, char* animList, int animtype, int mode)
 {
-#if defined(PSX_VERSION)
 	MON_PlayAnimID(instance, animList[animtype], mode);
-#elif defined(PC_VERSION)
-	MON_PlayAnimID(instance, animList[animtype], mode);
-#endif
 }
 
 int MON_AnimIDPlaying(struct _Instance* instance, int index)
 {
-#if defined(PSX_VERSION)
-
 	//index <<= 4
 	//v0 = instance->data
 	//a0 = instance->extraData
@@ -408,32 +235,19 @@ int MON_AnimIDPlaying(struct _Instance* instance, int index)
 	UNIMPLEMENTED();
 	return 0;
 	UNIMPLEMENTED();//structs need detecting for this!
-#elif defined(PC_VERSION)
-	struct _MonsterAttributes *ma; // $v0
-	return *((DWORD*)instance->extraData + 47) == 16 * index + *((DWORD*)instance->data + 16);
-#endif
 }
 
 void MON_PlayAnimIDIfNotPlaying(struct _Instance* instance, int index, int mode)
 {
-#if defined(PSX_VERSION)
 	if (!MON_AnimIDPlaying(instance, index))
 	{
 		MON_PlayAnimID(instance, index, mode);
 	}
-#elif defined(PC_VERSION)
-	if (*((DWORD*)instance->extraData + 47) != 16 * index + *((DWORD*)instance->data + 16))
-		MON_PlayAnimID(instance, index, mode);
-#endif
 }
 
 int MON_AnimPlayingFromList(struct _Instance* instance, char* animList, int animtype)
 {
-#if defined(PSX_VERSION)
 	return MON_AnimIDPlaying(instance, animList[animtype]);
-#elif defined(PC_VERSION)
-	return *((DWORD*)instance->extraData + 47) == *((DWORD*)instance->data + 16) + 16 * animList[animtype];
-#endif
 }
 
 void MON_PlayAnimFromListIfNotPlaying(struct _Instance* instance, char* animList, int animtype, int mode)//Matching - 90.45%
@@ -1037,39 +851,7 @@ void MON_ApplyPhysics(struct _Instance* instance)
 // void /*$ra*/ MON_ChangeBehavior(struct _Instance *instance /*$a0*/, int behavior /*$s0*/)
 void MON_ChangeBehavior(struct _Instance *instance, int behavior)
 { // line 1559, offset 0x8008116c
-#if defined(PC_VERSION)
-	struct _MonsterVars* extraData; // ebp
-	enum MonsterState v3; // esi
-
-	if (behavior != -1)
-	{
-		extraData = (struct _MonsterVars*)instance->extraData;
-		if ((gameTrackerX.debugFlags2 & 1) != 0)
-			MON_Say();
-		switch (behavior)
-		{
-		case 2:
-			v3 = MONSTER_STATE_WANDER;
-			break;
-		case 4:
-		case 8:
-			v3 = MONSTER_STATE_HIDE;
-			break;
-		case 9:
-			v3 = MONSTER_STATE_FLEE;
-			if ((gameTrackerX.debugFlags2 & 1) != 0)
-				MON_Say();
-			break;
-		default:
-			v3 = MONSTER_STATE_PURSUE;
-			break;
-		}
-		MON_SwitchState(instance, v3);
-		extraData->behaviorState = behavior;
-	}
-#else
 	UNIMPLEMENTED();
-#endif
 }
 
 
@@ -1510,40 +1292,7 @@ void MON_DisableHeadMove(struct _Instance *instance)
 // void /*$ra*/ MON_LookInDirection(struct _Instance *instance /*$a0*/, short tx /*$a1*/, short tz /*$a2*/)
 void MON_LookInDirection(struct _Instance *instance, short tx, short tz)
 { // line 2447, offset 0x800825b0
-#if defined(PC_VERSION)
-	struct _MonsterAttributes* ma; // ebp
-	uchar v4; // al
-	struct _G2SVector3_Type rot; // [esp+10h] [ebp-8h] BYREF
-
-	ma = (struct _MonsterAttributes*)instance->data;
-	v4 = ma->neckSegment;
-	if (v4)
-	{
-		if (ma->spineSegment == v4)
-		{
-			rot.x = tx;
-			rot.y = 0;
-			rot.z = tz;
-			G2Anim_SetController_Vector(&instance->anim, ma->neckSegment, 14, &rot);
-		}
-		else
-		{
-			rot.y = 0;
-			rot.x = (__int16)(70 * tx) / 100;
-			rot.z = (__int16)(70 * tz) / 100;
-			G2Anim_SetController_Vector(&instance->anim, ma->neckSegment, 14, &rot);
-			if (ma->spineSegment)
-			{
-				rot.y = 0;
-				rot.x = (__int16)(30 * tx) / 100;
-				rot.z = (__int16)(30 * tz) / 100;
-				G2Anim_SetController_Vector(&instance->anim, ma->spineSegment, 14, &rot);
-			}
-		}
-	}
-#else
 	UNIMPLEMENTED();
-#endif
 }
 
 
@@ -1551,52 +1300,7 @@ void MON_LookInDirection(struct _Instance *instance, short tx, short tz)
 // void /*$ra*/ MON_LookAtPos(struct _Instance *instance /*$s1*/, _Position *position /*$a1*/)
 void MON_LookAtPos(struct _Instance *instance, _Position *position)
 { // line 2478, offset 0x80082724
-#if defined(PC_VERSION)
-	struct _MonsterVars* mv; // esi
-	__int16 v3; // ax
-	__int16 v4; // ax
-	__int16 lookAngleZ; // cx
-	__int16 v6; // cx
-	__int16 v7; // cx
-	__int16 z; // ax
-
-	mv = (struct _MonsterVars*)instance->extraData;
-	v3 = MATH3D_AngleFromPosToPos(&instance->position, position);
-	v4 = AngleDiff(instance->rotation.z, v3);
-	if (v4 <= 796)
-	{
-		if (v4 < -796)
-			v4 = -796;
-	}
-	else
-	{
-		v4 = 796;
-	}
-	lookAngleZ = mv->lookAngleZ;
-	if (lookAngleZ <= v4)
-	{
-		if (lookAngleZ < v4)
-		{
-			v7 = lookAngleZ + 273;
-			mv->lookAngleZ = v7;
-			if (v7 > v4)
-				goto LABEL_10;
-		}
-	}
-	else
-	{
-		v6 = lookAngleZ - 273;
-		mv->lookAngleZ = v6;
-		if (v6 < v4)
-			LABEL_10:
-		mv->lookAngleZ = v4;
-	}
-	z = mv->lookAngleZ;
-	mv->lookAngleX = 0;
-	MON_LookInDirection(instance, 0, z);
-#else
 	UNIMPLEMENTED();
-#endif
 }
 
 
@@ -1604,80 +1308,7 @@ void MON_LookAtPos(struct _Instance *instance, _Position *position)
 // void /*$ra*/ MON_ProcessLookAt(struct _Instance *instance /*$s1*/)
 void MON_ProcessLookAt(struct _Instance *instance)
 { // line 2511, offset 0x80082800
-#if defined(PC_VERSION)
-	struct _MonsterVars* mv; // ebp
-	struct _MonsterAttributes* v2; // edi
-	struct _MonsterAttributes* ma; // edi
-	struct _MonsterAttributes* v4; // edi
-	uchar v5; // al
-
-	mv = (struct _MonsterVars*)instance->extraData;
-	if (mv->mode != 0x80000)
-	{
-		if ((mv->mvFlags & 0x80000000) == 0)
-		{
-			if (mv->lookAtPos)
-			{
-				ma = (struct _MonsterAttributes*)instance->data;
-				if (ma->neckSegment)
-				{
-					if (!G2Anim_IsControllerActive(&instance->anim, ma->neckSegment, 14))
-					{
-						G2Anim_SetControllerAngleOrder(&instance->anim, ma->neckSegment, 14, 1);
-						G2Anim_EnableController(&instance->anim, ma->neckSegment, 14);
-						if (ma->spineSegment != ma->neckSegment)
-						{
-							G2Anim_SetControllerAngleOrder(&instance->anim, ma->spineSegment, 14, 1);
-							G2Anim_EnableController(&instance->anim, ma->spineSegment, 14);
-						}
-					}
-				}
-				MON_LookAtPos(instance, mv->lookAtPos);
-				mv->lookAtPos = 0;
-			}
-			else if (mv->lookAngleX || mv->lookAngleZ)
-			{
-				AngleMoveToward(&mv->lookAngleX, 0, 100);
-				AngleMoveToward(&mv->lookAngleZ, 0, 100);
-				MON_LookInDirection(instance, mv->lookAngleX, mv->lookAngleZ);
-			}
-			else
-			{
-				v4 = (struct _MonsterAttributes*)instance->data;
-				if (v4->neckSegment)
-				{
-					if (G2Anim_IsControllerActive(&instance->anim, v4->neckSegment, 14))
-					{
-						G2Anim_DisableController(&instance->anim, v4->neckSegment, 14);
-						v5 = v4->spineSegment;
-						if (v5)
-						{
-							if (v5 != v4->neckSegment)
-								G2Anim_DisableController(&instance->anim, v4->spineSegment, 14);
-						}
-					}
-				}
-			}
-		}
-		else
-		{
-			v2 = (struct _MonsterAttributes*)instance->data;
-			if (v2->neckSegment && !G2Anim_IsControllerActive(&instance->anim, v2->neckSegment, 14))
-			{
-				G2Anim_SetControllerAngleOrder(&instance->anim, v2->neckSegment, 14, 1);
-				G2Anim_EnableController(&instance->anim, v2->neckSegment, 14);
-				if (v2->spineSegment != v2->neckSegment)
-				{
-					G2Anim_SetControllerAngleOrder(&instance->anim, v2->spineSegment, 14, 1);
-					G2Anim_EnableController(&instance->anim, v2->spineSegment, 14);
-				}
-			}
-			MON_LookAtPos(instance, &mv->lookAtPosData);
-		}
-	}
-#else
 	UNIMPLEMENTED();
-#endif
 }
 
 
@@ -1685,44 +1316,8 @@ void MON_ProcessLookAt(struct _Instance *instance)
 // int /*$ra*/ MON_TakeDamage(struct _Instance *instance /*$a0*/, int damage /*$s2*/, int type /*$s1*/)
 int MON_TakeDamage(struct _Instance *instance, int damage, int type)
 { // line 2545, offset 0x800828f4
-#if defined(PC_VERSION)
-	struct _MonsterVars* mv; // esi
-	struct _MonsterCombatAttributes* combatAttributes; // eax
-	char v5; // al
-	unsigned int mvFlags; // eax
-
-	mv = (struct _MonsterVars*)instance->extraData;
-	combatAttributes = mv->subAttr->combatAttributes;
-	if (!combatAttributes)
-		return 0;
-	if (!combatAttributes->hitPoints)
-		return 0;
-	v5 = INSTANCE_Query(instance, 1);
-	if (type == 0x40000 && (v5 & 8) == 0)
-		return 0;
-	mv->damageType = type;
-	mv->hitPoints -= damage;
-	if (mv->hitPoints > 0)
-		return 0;
-	mvFlags = mv->mvFlags;
-	mv->hitPoints = 0;
-	if ((mvFlags & 0x2000) != 0)
-	{
-		if ((gameTrackerX.debugFlags2 & 1) != 0)
-		{
-			MON_Say();
-			return 1;
-		}
-	}
-	else if ((gameTrackerX.debugFlags2 & 1) != 0)
-	{
-		MON_Say();
-	}
-	return 1;
-#else
 	UNIMPLEMENTED();
 	return 0;
-#endif
 }
 
 
@@ -1730,186 +1325,15 @@ int MON_TakeDamage(struct _Instance *instance, int damage, int type)
 // void /*$ra*/ MON_SetUpSaveInfo(struct _Instance *instance /*$t0*/, struct _MonsterSaveInfo *saveData /*$a3*/)
 void MON_SetUpSaveInfo(struct _Instance *instance, struct _MonsterSaveInfo *saveData)
 { // line 2582, offset 0x800829a0
-#if defined(PC_VERSION)
-	struct _MonsterVars* mv; // ecx
-	struct _MonsterAttributes* ma; // ebp
-	unsigned int v4; // esi
-	int v5; // edx
-	int v6; // ebx
-	unsigned int v7; // esi
-	__int16 soulJuice; // dx
-	unsigned int v9; // edx
-
-	mv = (struct _MonsterVars*)instance->extraData;
-	ma = (struct _MonsterAttributes*)instance->data;
-	v4 = saveData->age & ~7u;
-	saveData->mvFlags = mv->mvFlags & ~0x440004u;
-	saveData->auxFlags = mv->auxFlags & ~0x8000000u;
-	v5 = v4 | (mv->age & 7);
-	saveData->age = v5;
-	v6 = 8 * (instance->currentMainState & 0x3F);
-	saveData->age = v6 | v5 & ~0x1F8u;
-	v7 = ((mv->behaviorState & 0x1F) << 9) | v6 & ~0x3E00 | v5 & ~0x3FF8;
-	saveData->age = v7;
-	saveData->age = v7 & 0xFF1FFFFF | ((mv->causeOfDeath & 7) << 21);
-	if (instance->currentMainState != 23 || mv->causeOfDeath)
-		soulJuice = mv->soulJuice;
-	else
-		soulJuice = mv->heldID;
-	saveData->soulJuice = soulJuice;
-	saveData->soulID = mv->soulID;
-	if (mv->anim)
-	{
-		v9 = saveData->age & ~0x100000u | ((instance->anim.section[0].flags & 2) << 19);
-		saveData->age = v9;
-		saveData->age = v9 & ~0xFC000u | (((mv->anim - ma->animList) & 0x3F) << 14);
-	}
-	else
-	{
-		saveData->age = ((ma->numAnims & 0x3F) << 14) | saveData->age & 0xFFF03FFF;
-	}
-	if ((gameTrackerX.debugFlags2 & 1) != 0)
-		MON_Say();
-#else
 	UNIMPLEMENTED();
-#endif
 }
 
 
 // autogenerated function stub: 
 // void /*$ra*/ MON_GetSaveInfo(struct _Instance *instance /*$s1*/, struct _MonsterSaveInfo *saveData /*$s2*/)
-void MON_GetSaveInfo(struct _Instance *instance, struct _MonsterSaveInfo *saveData)
+void MON_GetSaveInfo(struct _Instance* instance, struct _MonsterSaveInfo* saveData)
 { // line 2616, offset 0x80082b0c
-#if defined(PC_VERSION)
-	struct _MonsterAttributes* ma; // ebx
-	struct _MonsterVars* mv; // esi
-	unsigned __int8 v4; // al
-	struct _MonsterSubAttributes* v5; // eax
-	struct _MonsterVars* extraData; // edx
-	__int16 modelNum; // ax
-	struct _HModel* v8; // eax
-	int numHPrims; // ecx
-	struct _HPrim* i; // eax
-	unsigned int mvFlags; // eax
-	struct _HModel* hModelList; // ecx
-	struct _HModel* v13; // eax
-	int v14; // ecx
-	struct _HPrim* j; // eax
-	unsigned int v16; // edx
-	int v17; // eax
-	unsigned int v18; // eax
-	int flags2; // eax
-	unsigned int age; // edi
-	int v21; // eax
-	int v22; // edi
-
-	ma = (struct _MonsterAttributes*)instance->data;
-	mv = (struct _MonsterVars*)instance->extraData;
-	if ((gameTrackerX.debugFlags2 & 1) != 0)
-		MON_Say();
-	v4 = saveData->age & 7;
-	mv->age = v4;
-	v5 = ma->subAttributesList[v4];
-	mv->subAttr = v5;
-	extraData = (struct _MonsterVars*)instance->extraData;
-	modelNum = v5->modelNum;
-	instance->currentModel = modelNum;
-	if ((saveData->mvFlags & 0x8000) == 0)
-	{
-		if ((BYTE1(extraData->mvFlags) & 0x80u) == 0)
-			goto LABEL_20;
-		v8 = &instance->hModelList[modelNum];
-		numHPrims = v8->numHPrims;
-		for (i = v8->hPrimList; numHPrims; --numHPrims)
-		{
-			if (i->type == 1 && i->data.hsphere->id == 8)
-				i->hpFlags &= ~1u;
-			++i;
-		}
-		mvFlags = extraData->mvFlags;
-		mvFlags = extraData->mvFlags & ~0x8000;
-		goto LABEL_19;
-	}
-	if ((BYTE1(extraData->mvFlags) & 0x80u) == 0)
-	{
-		hModelList = instance->hModelList;
-		if (hModelList)
-		{
-			v13 = &hModelList[modelNum];
-			v14 = v13->numHPrims;
-			for (j = v13->hPrimList; v14; --v14)
-			{
-				if (j->type == 1 && j->data.hsphere->id == 8)
-					j->hpFlags |= 1u;
-				++j;
-			}
-			mvFlags = extraData->mvFlags;
-			mvFlags = extraData->mvFlags | 0x8000;
-		LABEL_19:
-			extraData->mvFlags = mvFlags;
-		}
-	}
-LABEL_20:
-	v16 = mv->auxFlags & 0x8000000;
-	mv->mvFlags = saveData->mvFlags | mv->mvFlags & 0xC000;
-	mv->auxFlags = v16 | saveData->auxFlags;
-	mv->behaviorState = (saveData->age >> 9) & 0x1F;
-	mv->causeOfDeath = (saveData->age >> 21) & 7;
-	mv->soulID = saveData->soulID;
-	mv->soulJuice = saveData->soulJuice;
-	v17 = (saveData->age >> 3) & 0x3F;
-	switch (v17)
-	{
-	case 6:
-	case 8:
-	case 9:
-	case 21:
-	case 28:
-		instance->currentMainState = 13;
-		break;
-	case 10:
-	case 11:
-	case 12:
-	case 14:
-		instance->currentMainState = 2;
-		break;
-	case 16:
-		instance->flags2 &= ~0x40u;
-		v18 = mv->mvFlags;
-		v18 = mv->mvFlags | 0x200;
-		mv->soulID = 0x7FFFFFFF;
-		mv->mvFlags = v18;
-		goto LABEL_22;
-	case 23:
-	LABEL_22:
-		if (!mv->causeOfDeath)
-		{
-			mv->heldID = mv->soulJuice;
-			mv->soulJuice = 4096;
-			flags2 = instance->flags2;
-			flags2 = flags2 | 0x80;
-			instance->flags2 = flags2;
-		}
-		instance->currentMainState = 23;
-		break;
-	default:
-		instance->currentMainState = v17;
-		break;
-	}
-	instance->position = instance->oldPos;
-	age = saveData->age;
-	v21 = (age >> 14) & 0x3F;
-	if (v21 < ma->numAnims)
-	{
-		v22 = ((age & 0x100000) != 0) + 1;
-		if (instance->currentMainState == 23)
-			MON_PlayAnimID(instance, *(char*)(**((DWORD**)instance->extraData + 85) + 24), 1);
-		else
-			MON_PlayAnimID(instance, v21, v22);
-	}
-#else
-UNIMPLEMENTED();
-#endif
+	UNIMPLEMENTED();
 }
 
 
@@ -1917,85 +1341,7 @@ UNIMPLEMENTED();
 // void /*$ra*/ MON_KillMonster(struct _Instance *instance /*$s5*/)
 void MON_KillMonster(struct _Instance *instance)
 { // line 2694, offset 0x80082d50
-#if defined(PC_VERSION)
-	struct _Instance* LinkChild; // esi
-	struct _Instance* LinkSibling; // ebp
-	struct Intro* intro; // eax
-	struct Object* object; // edx
-	int oflags2; // ecx
-	int flags2; // eax
-	int flags; // eax
-	struct _MonsterVars* mv; // [esp-2Ch] [ebp-3Ch]
-
-	LinkChild = instance->LinkChild;
-	mv = (struct _MonsterVars*)instance->extraData;
-	if (LinkChild)
-	{
-		do
-		{
-			LinkSibling = LinkChild->LinkSibling;
-			if ((gameTrackerX.debugFlags2 & 1) != 0)
-				MON_Say();
-			if (LinkChild->ParentLinkNode == 3)
-				INSTANCE_Post(LinkChild, 0x800008, 2);
-			else
-				INSTANCE_Post(LinkChild, 0x800008, 1);
-			LinkChild = LinkSibling;
-		} while (LinkSibling);
-	}
-	if (mv->causeOfDeath == 6)
-	{
-		FX_BuildSplinters(instance, 0, 0, 0, *((struct FXSplinter**)instance->data + 19), gFXT, 0, 0, 8);
-		if ((instance->flags2 & 0x1000) == 0)
-			SOUND_Play3dSound(&instance->position, 48, 0, 95, 16000);
-	}
-	if ((mv->mvFlags & 0x1000000) == 0 || (intro = instance->intro) != 0 && (intro->flags & 0x400) != 0)
-	{
-		if ((gameTrackerX.debugFlags2 & 1) != 0)
-			MON_Say();
-		SAVE_MarkDeadDead(instance);
-	}
-	else
-	{
-		if ((gameTrackerX.debugFlags2 & 1) != 0)
-			MON_Say();
-		if (mv->regenTime)
-			MONAPI_AddToGenerator(instance);
-		SAVE_DeleteInstance(instance);
-	}
-	object = instance->object;
-	oflags2 = object->oflags2;
-	if ((oflags2 & 4) != 0)
-	{
-		flags2 = instance->flags2;
-		if ((flags2 & 0x1000) != 0)
-		{
-			SOUND_ProcessInstanceSounds(
-				object->soundData,
-				instance->soundInstanceTbl,
-				&instance->position,
-				oflags2 & 0x2000000,
-				flags2 & 0x8000000,
-				0,
-				0,
-				&instance->flags2);
-			SOUND_ProcessInstanceSounds(
-				instance->object->soundData,
-				instance->soundInstanceTbl,
-				&instance->position,
-				instance->object->oflags2 & 0x2000000,
-				instance->flags2 & 0x8000000,
-				0,
-				0,
-				&instance->flags2);
-		}
-	}
-	flags = instance->flags;
-	flags = flags | 0x20;
-	instance->flags = flags;
-#else
 	UNIMPLEMENTED();
-#endif
 }
 
 
@@ -2003,51 +1349,8 @@ void MON_KillMonster(struct _Instance *instance)
 // int /*$ra*/ MON_ShouldIAmbushEnemy(struct _Instance *instance /*$s3*/)
 int MON_ShouldIAmbushEnemy(struct _Instance *instance)
 { // line 2755, offset 0x80082f28
-#if defined(PC_VERSION)
-	struct _MonsterVars* mv; // esi
-	int birthStreamUnitID; // eax
-	struct _MonsterIR* enemy; // ebx
-	char ambushMarker; // cl
-	struct _Instance* ppos; // ebp
-	struct _StreamUnit* unit; // eax
-	__int16 arc; // ax
-	int v9; // [esp-8h] [ebp-20h]
-	_Position pos; // [esp+10h] [ebp-8h] BYREF
-
-	mv = (struct _MonsterVars*)instance->extraData;
-	birthStreamUnitID = instance->birthStreamUnitID;
-	enemy = mv->enemy;
-	if (instance->currentStreamUnitID == birthStreamUnitID)
-	{
-		ambushMarker = mv->ambushMarker;
-		if (ambushMarker)
-		{
-			if (mv->ambushArc == 2048 && mv->ambushElevation == 1024)
-			{
-				ppos = enemy ? enemy->instance : gameTrackerX.playerInstance;
-				v9 = ambushMarker;
-				unit = STREAM_GetStreamUnitWithID(birthStreamUnitID);
-				if (PLANAPI_FindNodePositionInUnit(unit, &pos, v9, 4))
-				{
-					if (MATH3D_LengthXYZ(ppos->position.x - pos.x, ppos->position.y - pos.y, ppos->position.z - pos.z) < mv->ambushRange)
-						return 1;
-				}
-			}
-		}
-	}
-	if (!enemy || instance->currentMainState == 26 && (enemy->mirFlags & 0x40) == 0)
-		return 0;
-	arc = mv->ambushArc;
-	if (arc == 2048 && mv->ambushElevation == 1024)
-		return enemy->distance < mv->ambushRange;
-	if (enemy->distance < mv->ambushRange)
-		return MATH3D_ConeDetect(&enemy->relativePosition, arc, mv->ambushElevation);
-	else
-		return 0;
-#else
 	UNIMPLEMENTED();
 	return 0;
-#endif
 }
 
 
@@ -2110,43 +1413,8 @@ int MON_ShouldIFireAtTarget(struct _Instance *instance, struct _MonsterIR *targe
 // int /*$ra*/ MON_ShouldIFlee(struct _Instance *instance /*$a0*/)
 int MON_ShouldIFlee(struct _Instance *instance)
 { // line 2847, offset 0x80083184
-#if defined(PC_VERSION)
-	struct _MonsterVars* mv; // edx
-	struct _MonsterIR* enemy; // eax
-	__int16 v3; // ax
-	__int16* validUnits; // ecx
-	struct _MonsterIR* ally; // eax
-
-	mv = (struct _MonsterVars*)instance->extraData;
-	enemy = mv->enemy;
-	if (!enemy || (enemy->mirFlags & 8) != 0 || enemy->distance >= mv->subAttr->fleeRange)
-		return 0;
-	v3 = mv->validUnits[0];
-	validUnits = mv->validUnits;
-	if (v3)
-	{
-		while (LOWORD(instance->currentStreamUnitID) != v3)
-		{
-			v3 = validUnits[1];
-			++validUnits;
-			if (!v3)
-				return 0;
-		}
-	}
-	mv->lastValidPos = instance->position;
-	if (mv->behaviorState == 9)
-		return 1;
-	if ((mv->mvFlags & 0x2000000) != 0)
-	{
-		ally = mv->ally;
-		if ((!ally || (ally->mirFlags & 0x200) == 0) && mv->hitPoints < 0x2000)
-			return 1;
-	}
-	return (mv->mvFlags & 0x2000) != 0 && !mv->hitPoints;
-#else
 	UNIMPLEMENTED();
 	return 0;
-#endif
 }
 
 
@@ -2154,34 +1422,11 @@ int MON_ShouldIFlee(struct _Instance *instance)
 // void /*$ra*/ MON_RelocateCoords(struct _Instance *instance /*$a0*/, struct _SVector *offset /*$t0*/)
 void MON_RelocateCoords(struct _Instance *instance, struct _SVector *offset)
 { // line 2877, offset 0x80083284
-#if defined(PC_VERSION)
-	__int16 x; // dx
-	__int16 y; // si
-	__int16 z; // di
-	struct _MonsterVars* mv; // eax
-	char v6; // al
-
-	x = offset->x;
-	y = offset->y;
-	z = offset->z;
-	mv = (struct _MonsterVars*)instance->extraData;
-	mv->destination.x += offset->x;
-	mv->destination.y += y;
-	mv->destination.z += z;
-	mv->lastValidPos.x += x;
-	mv->lastValidPos.y += y;
-	mv->lastValidPos.z += z;
-	v6 = mv->pathSlotID;
-	if (v6 != -1)
-		ENMYPLAN_RelocatePlanPositions(v6, offset);
-#else
 	UNIMPLEMENTED();
-#endif
 }
 
 int MON_ValidUnit(struct _Instance* instance, unsigned long unitId)//Matching - 100%
 {
-#if defined(PSX_VERSION)
 	struct _MonsterVars* mv;
 	short* unit;
 
@@ -2202,32 +1447,10 @@ int MON_ValidUnit(struct _Instance* instance, unsigned long unitId)//Matching - 
 	}
 
 	return 0;
-
-#elif defined(PC_VERSION)
-	struct _MonsterVars* extraData; // ecx
-	__int16 v3; // ax
-	__int16* validUnits; // ecx
-
-	extraData = (struct _MonsterVars*)instance->extraData;
-	v3 = extraData->validUnits[0];
-	validUnits = extraData->validUnits;
-	if (!v3)
-		return 1;
-	while ((WORD)unitId != v3)
-	{
-		v3 = validUnits[1];
-		++validUnits;
-		if (!v3)
-			return 0;
-	}
-	return 1;
-#endif
 }
 
 int MON_ValidPosition(struct _Instance* instance)
 {
-#if defined(PSX_VERSION)
-	
 	struct _MonsterVars* mv;
 
 	if (MON_ValidUnit(instance, instance->currentStreamUnitID) != 0)
@@ -2239,28 +1462,6 @@ int MON_ValidPosition(struct _Instance* instance)
 	}
 
 	return 0;
-
-#elif defined(PC_VERSION)
-	struct _MonsterVars* mv; // esi
-	__int16 v2; // ax
-	__int16* validUnits; // ecx
-
-	mv = (struct _MonsterVars*)instance->extraData;
-	v2 = mv->validUnits[0];
-	validUnits = mv->validUnits;
-	if (v2)
-	{
-		while (instance->currentStreamUnitID != v2)
-		{
-			v2 = validUnits[1];
-			++validUnits;
-			if (!v2)
-				return 0;
-		}
-	}
-	mv->lastValidPos = instance->position;
-	return 1;
-#endif
 }
 
 
@@ -2268,14 +1469,7 @@ int MON_ValidPosition(struct _Instance* instance)
 // void /*$ra*/ MON_SphereWorldPos(MATRIX *mat /*$s1*/, struct _HSphere *sphere /*$a1*/, _Position *ret /*$s0*/)
 void MON_SphereWorldPos(MATRIX *mat, struct _HSphere *sphere, _Position *ret)
 { // line 2936, offset 0x800833b4
-#if defined(PC_VERSION)
-	ApplyMatrixSV(mat, (SVECTOR*)&sphere->position, (SVECTOR*)ret);
-	ret->x += mat->t[0];
-	ret->y += mat->t[1];
-	ret->z += mat->t[2];
-#else
 	UNIMPLEMENTED();
-#endif
 }
 
 
@@ -2283,43 +1477,8 @@ void MON_SphereWorldPos(MATRIX *mat, struct _HSphere *sphere, _Position *ret)
 // struct _HPrim * /*$ra*/ MON_FindSphereForTerrain(struct _Instance *instance /*$a0*/)
 struct _HPrim * MON_FindSphereForTerrain(struct _Instance *instance)
 { // line 2945, offset 0x80083424
-#if defined(PC_VERSION)
-	struct _HPrim* usePrim; // eax
-	struct _HModel* hmodel; // ecx
-	int radius; // edi
-	int currentModel; // edx
-	int numHPrims; // esi
-	struct _HPrim* curPrim; // edx
-	int i; // ebp
-
-	usePrim = 0;
-	hmodel = instance->hModelList;
-	radius = 0;
-	if (hmodel)
-	{
-		currentModel = instance->currentModel;
-		numHPrims = hmodel[currentModel].numHPrims;
-		curPrim = hmodel[currentModel].hPrimList;
-		if (numHPrims)
-		{
-			i = numHPrims;
-			do
-			{
-				if ((curPrim->withFlags & 2) != 0 && curPrim->type == 1 && curPrim->data.hsphere->radius > radius)
-				{
-					usePrim = curPrim;
-					radius = curPrim->data.hsphere->radius;
-				}
-				++curPrim;
-				--i;
-			} while (i);
-		}
-	}
-	return usePrim;
-#else
 	UNIMPLEMENTED();
 	return NULL;
-#endif
 }
 
 

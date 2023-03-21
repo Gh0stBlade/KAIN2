@@ -1056,7 +1056,6 @@ long StreamRenderLevel(struct _StreamUnit* currentUnit, struct Level* mainLevel,
 
 void GAMELOOP_FlipScreenAndDraw(struct GameTracker* gameTracker, unsigned long** drawot)
 {
-#if defined(PSX_VERSION)
 #if defined(USE_32_BIT_ADDR)
 	DrawOTag((unsigned int*)drawot + 3071 * 2);
 #else
@@ -1087,37 +1086,6 @@ void GAMELOOP_FlipScreenAndDraw(struct GameTracker* gameTracker, unsigned long**
 	gameTracker->usecsStartDraw = (GetRCnt(0xF2000000) & 0xFFFF) | (gameTimer << 16);
 #endif
 	gameTracker->gameData.asmData.dispPage = 1 - gameTracker->gameData.asmData.dispPage;
-
-#elif defined(PC_VERSION)
-	unsigned int** dispOT; // ecx
-	struct _PrimPool* v3; // eax
-
-	DrawOTag((u_long*)drawot + 3071);
-	dispOT = gameTrackerX.dispOT;
-	gameTrackerX.dispOT = gameTrackerX.drawOT;
-	gameTrackerX.drawOT = dispOT;
-	gameTrackerX.drawPage = 1 - gameTrackerX.drawPage;
-	ClearOTagR((u_long*)dispOT, 3072);
-	if ((gameTrackerX.gameFlags & 0x8000000) != 0)
-	{
-		if (gameTrackerX.drawPage)
-			gameTrackerX.primPool->nextPrim = &gameTrackerX.primPool->prim[16500];
-		else
-			gameTrackerX.primPool->nextPrim = &gameTrackerX.primPool->prim[9000];
-		gameTrackerX.primPool->numPrims = 0;
-	}
-	else
-	{
-		v3 = &primPool0;
-		if (gameTrackerX.primPool == &primPool0)
-			v3 = &primPool1;
-		gameTrackerX.primPool = v3;
-		v3->nextPrim = v3->prim;
-		gameTrackerX.primPool->numPrims = 0;
-	}
-	RenderG2_Swap();
-	RenderG2_Clear(gameTracker, drawot);
-#endif
 }
 
 void GAMELOOP_AddClearPrim(unsigned long** drawot, int override)
@@ -1178,19 +1146,12 @@ void GAMELOOP_SwitchTheDrawBuffer(unsigned long **drawot)
 
 void GAMELOOP_SetupRenderFunction(struct GameTracker *gameTracker)
 {
-#if defined(PSX_VERSION)
 	gameTracker->drawAnimatedModelFunc = &DRAW_AnimatedModel_S;
 	gameTracker->drawDisplayPolytopeListFunc = &DRAW_DisplayPolytopeList_S;
-#elif defined(PC_VERSION)
-	gameTracker->drawAnimatedModelFunc = DRAW_AnimatedModel_S;
-	gameTracker->drawDisplayPolytopeListFunc = DRAW_DisplayPolytopeList_S;
-#endif
 }
 
 struct _StreamUnit * GAMELOOP_GetMainRenderUnit()
 {
-#if defined(PSX_VERSION)
-
 	struct _StreamUnit* streamUnit;
 	struct _Instance* focusInstance;
 	struct _StreamUnit* cameraUnit;
@@ -1226,32 +1187,6 @@ struct _StreamUnit * GAMELOOP_GetMainRenderUnit()
 	}
 
 	return streamUnit;
-
-#elif defined(PC_VERSION)
-	struct _Instance* focusInstance; // edi
-	struct _StreamUnit* StreamUnitWithID; // esi
-	struct _StreamUnit* v3; // eax
-
-	if (theCamera.mode == 5)
-		return (struct _StreamUnit*)STREAM_WhichUnitPointerIsIn(theCamera.data.Cinematic.posSpline);
-	focusInstance = theCamera.focusInstance;
-	if (theCamera.focusInstance == gameTrackerX.playerInstance && gameTrackerX.SwitchToNewStreamUnit)
-	{
-		StreamUnitWithID = STREAM_GetStreamUnitWithID(gameTrackerX.moveRazielToStreamID);
-		if (!StreamUnitWithID)
-			return STREAM_GetStreamUnitWithID(focusInstance->currentStreamUnitID);
-	}
-	else
-	{
-		StreamUnitWithID = STREAM_GetStreamUnitWithID(theCamera.focusInstance->currentStreamUnitID);
-	}
-	v3 = COLLIDE_CameraWithStreamSignals(&theCamera);
-	if (v3)
-		return v3;
-	return StreamUnitWithID;
-#else
-	return NULL;
-#endif
 }
 
 void GAMELOOP_DisplayFrame(struct GameTracker* gameTracker)
@@ -1672,7 +1607,6 @@ void GAMELOOP_DrawSavedOT(unsigned long** newOT)
 
 void ResetPrimPool()
 {
-#if defined(PSX_VERSION)
 	ResetDrawPage();
 
 	if (!(gameTrackerX.gameFlags & 0x8000000))
@@ -1701,34 +1635,6 @@ void ResetPrimPool()
 	}
 
 	gameTrackerX.primPool->numPrims = 0;
-
-#elif defined(PC_VERSION)
-	unsigned int** dispOT; // ecx
-	struct _PrimPool* v1; // eax
-
-	dispOT = gameTrackerX.dispOT;
-	gameTrackerX.dispOT = gameTrackerX.drawOT;
-	gameTrackerX.drawOT = dispOT;
-	gameTrackerX.drawPage = 1 - gameTrackerX.drawPage;
-	ClearOTagR((u_long*)dispOT, 3072);
-	if ((gameTrackerX.gameFlags & 0x8000000) != 0)
-	{
-		if (gameTrackerX.drawPage)
-			gameTrackerX.primPool->nextPrim = &gameTrackerX.primPool->prim[16500];
-		else
-			gameTrackerX.primPool->nextPrim = &gameTrackerX.primPool->prim[9000];
-		gameTrackerX.primPool->numPrims = 0;
-	}
-	else
-	{
-		v1 = &primPool0;
-		if (gameTrackerX.primPool == &primPool0)
-			v1 = &primPool1;
-		gameTrackerX.primPool = v1;
-		v1->nextPrim = v1->prim;
-		gameTrackerX.primPool->numPrims = 0;
-	}
-#endif
 }
 
 void Switch_For_Redraw()
@@ -1766,11 +1672,7 @@ void Switch_For_Redraw()
 
 void GAMELOOP_Set_Pause_Redraw()
 {
-#if defined(PSX_VERSION)
 	pause_redraw_flag = 1;
-#elif defined(PC_VERSION)
-	word_C54F8C = 1;
-#endif
 }
 
 void SaveOT()
@@ -2253,20 +2155,12 @@ void ResetDrawPage()
 
 void GAMELOOP_Set24FPS()
 {
-#if defined(PC_VERSION)
 	gameTrackerX.frameRate24fps = 1;
-#elif defined(PSX_VERSION)
-	gameTrackerX.frameRate24fps = 1;
-#endif
 }
 
 void GAMELOOP_Reset24FPS()
 {
-#if defined(PC_VERSION)
 	gameTrackerX.frameRate24fps = 0;
-#elif defined(PSX_VERSION)
-	gameTrackerX.frameRate24fps = 0;
-#endif
 }
 
 void GAMELOOP_DoTimeProcess()
@@ -2453,86 +2347,6 @@ void GAMELOOP_DoTimeProcess()
 	}
 
 	gameTrackerX.currentTime = holdTime;
-
-#elif defined(PC_VERSION)
-	unsigned int TimeMS; // ebx
-	int frameRateLock; // eax
-	unsigned int lastLoopTime; // ecx
-	unsigned int timeSinceLastGameFrame; // eax
-	unsigned int fps30Count; // ecx
-
-	TimeMS = TIMER_GetTimeMS();
-	if ((gameTrackerX.gameFlags & 0x10000000) != 0)
-	{
-		gameTrackerX.lastLoopTime = -1;
-		goto LABEL_27;
-	}
-	gameTrackerX.totalTime = D3D_TimeDiff(gameTrackerX.currentTicks);
-	gameTrackerX.currentTicks = D3D_CurrentTime();
-	frameRateLock = gameTrackerX.frameRateLock;
-	if (gameTrackerX.frameRateLock < 1)
-	{
-		frameRateLock = 1;
-		gameTrackerX.frameRateLock = 1;
-	}
-	if (frameRateLock > 2)
-	{
-		frameRateLock = 2;
-		gameTrackerX.frameRateLock = 2;
-	}
-	if (gameTrackerX.decoupleGame && (gameTrackerX.gameFlags & 0x10000000) == 0)
-	{
-		lastLoopTime = 33;
-		if (frameRateLock == 2)
-			lastLoopTime = 50;
-		if (gameTrackerX.gameData.asmData.MorphTime != 1000)
-			lastLoopTime = 15;
-		if (gameTrackerX.lastLoopTime != -1)
-			lastLoopTime = TimeMS - gameTrackerX.currentTime;
-		if (lastLoopTime > 0x42)
-		{
-			lastLoopTime = 66;
-			gameTrackerX.lastLoopTime = 66;
-			goto LABEL_22;
-		}
-		goto LABEL_20;
-	}
-	if (frameRateLock == 1)
-	{
-		lastLoopTime = 33;
-		gameTrackerX.lastLoopTime = 33;
-		goto LABEL_22;
-	}
-	if (frameRateLock == 2)
-	{
-		lastLoopTime = 50;
-	LABEL_20:
-		gameTrackerX.lastLoopTime = lastLoopTime;
-		goto LABEL_22;
-	}
-	lastLoopTime = gameTrackerX.lastLoopTime;
-LABEL_22:
-	gameTrackerX.gameFramePassed = 0;
-	gameTrackerX.timeMult = (lastLoopTime << 12) / 0x21;
-	gameTrackerX.globalTimeMult = (lastLoopTime << 12) / 0x21;
-	gameTrackerX.timeSinceLastGameFrame += (lastLoopTime << 12) / 0x21;
-	timeSinceLastGameFrame = gameTrackerX.timeSinceLastGameFrame;
-	if (gameTrackerX.timeSinceLastGameFrame <= 0x1000)
-	{
-	LABEL_27:
-		gameTrackerX.currentTime = TimeMS;
-		return;
-	}
-	fps30Count = gameTrackerX.fps30Count;
-	do
-	{
-		timeSinceLastGameFrame -= 4096;
-		++fps30Count;
-		gameTrackerX.gameFramePassed = 1;
-	} while (timeSinceLastGameFrame > 0x1000);
-	gameTrackerX.fps30Count = fps30Count;
-	gameTrackerX.timeSinceLastGameFrame = timeSinceLastGameFrame;
-	gameTrackerX.currentTime = TimeMS;
 #endif
 }
 
@@ -3058,7 +2872,6 @@ void EMSCRIPTEN_KEEPALIVE GAMELOOP_RequestLevelChangeHTML(char* name, short numb
 #endif
 void GAMELOOP_RequestLevelChange(char* name, short number, struct GameTracker* gameTracker)
 {
-#if defined(PSX_VERSION)
 	if (gameTrackerX.levelChange == 0)
 	{
 		gameTrackerX.gameFlags |= 0x1;
@@ -3071,17 +2884,6 @@ void GAMELOOP_RequestLevelChange(char* name, short number, struct GameTracker* g
 
 		gameTrackerX.levelDone = 1;
 	}
-
-#elif defined(PC_VERSION)
-	if (!gameTracker->levelChange)
-	{
-		gameTracker->gameFlags |= 1u;
-		SOUND_ResetAllSound();
-		sprintf(gameTracker->baseAreaName, "%s%d", name, number);
-		gameTracker->levelChange = 1;
-		gameTracker->levelDone = 1;
-	}
-#endif
 }
 
 void PSX_GameLoop(struct GameTracker *gameTracker)
@@ -3092,7 +2894,6 @@ void PSX_GameLoop(struct GameTracker *gameTracker)
 
 MATRIX* GAMELOOP_GetMatrices(int numMatrices)
 {
-#if defined(PSX_VERSION)
 	MATRIX* matrix;
 	struct _PrimPool* pool;
 
@@ -3108,26 +2909,11 @@ MATRIX* GAMELOOP_GetMatrices(int numMatrices)
 	}
 
 	return NULL;
-#elif defined(PC_VERSION)
-	MATRIX* result; // eax
-	u_long* v2; // edx
-
-	result = (MATRIX*)gameTrackerX.primPool->nextPrim;
-	v2 = (u_long*)&result[numMatrices];
-	if (v2 >= gameTrackerX.primPool->lastPrim)
-		return 0;
-	gameTrackerX.primPool->nextPrim = v2;
-	return result;
-#endif
 }
 
 struct GameTracker* GAMELOOP_GetGT()
 {
-#if defined(PC_VERSION)
 	return &gameTrackerX;
-#else
-	return &gameTrackerX;
-#endif
 }
 
 #if defined(EDITOR)

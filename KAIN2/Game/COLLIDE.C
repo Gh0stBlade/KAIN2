@@ -9,10 +9,6 @@
 #include "Game/PSX/COLLIDES.H"
 #include "Game/EVENT.H"
 
-#ifdef PC_VERSION
-#pragma warning(disable: 4101)
-#endif
-
 long collide_ignoreAttr;
 long collide_acceptAttr;
 long dyna_clddyna[8]; // offset 0x800d056c
@@ -28,53 +24,11 @@ _SVector* collide_normal1;
 
 void G2Quat_ToMatrix(struct _G2EulerAngles_Type* a1, struct _G2Matrix_Type* a2)
 {
-#if defined(PC_VERSION)
-	int x; // ecx
-	int y; // ebp
-	int z; // ebx
-	int order; // esi
-	int v6; // edx
-	int v7; // eax
-	int v8; // ebx
-	int v9; // edi
-	int v10; // esi
-	int v11; // [esp+10h] [ebp-Ch]
-	int v12; // [esp+14h] [ebp-8h]
-	int v13; // [esp+18h] [ebp-4h]
-	int a1a; // [esp+20h] [ebp+4h]
-
-	x = a1->x;
-	y = a1->y;
-	z = a1->z;
-	order = a1->order;
-	v6 = x * order;
-	v11 = (z * order) >> 11;
-	v12 = (x * x) >> 11;
-	v7 = x * z;
-	v13 = (y * z) >> 11;
-	v8 = (y * y) >> 11;
-	a1a = (a1->z * a1->z) >> 11;
-	v9 = (x * y) >> 11;
-	a2->rotScale[0][0] = 4096 - v8 - a1a;
-	v10 = (y * order) >> 11;
-	v7 >>= 11;
-	a2->rotScale[0][1] = v9 - v11;
-	a2->rotScale[0][2] = v7 + v10;
-	a2->rotScale[1][0] = v11 + v9;
-	a2->rotScale[1][1] = 4096 - v12 - a1a;
-	v6 >>= 11;
-	a2->rotScale[2][0] = v7 - v10;
-	a2->rotScale[2][1] = v6 + v13;
-	a2->rotScale[1][2] = v13 - v6;
-	a2->rotScale[2][2] = 4096 - v12 - v8;
-#else
 	UNIMPLEMENTED();
-#endif
 }
 
 int COLLIDE_PointInTriangle(struct _SVector* v0, struct _SVector* v1, struct _SVector* v2, struct _SVector* point, struct _SVector* normal)//Matching - 86.63%
 {
-#if defined(PSX_VERSION)
 	int ny; // $v1
 	int nx; // $t1
 	DVECTOR* vert1; // $t2
@@ -220,153 +174,10 @@ int COLLIDE_PointInTriangle(struct _SVector* v0, struct _SVector* v1, struct _SV
 	}
 
 	return inside_flag;
-
-#elif defined(PC_VERSION)
-	struct _Triangle2D* triangle; // eax
-	int x; // edi
-	__int16 y; // cx
-	int v8; // edx
-	int v9; // ecx
-	__int16* p_x; // ecx
-	__int16 v11; // si
-	__int16 z; // dx
-	__int16 v13; // bx
-	int v14; // edi
-	__int16 v15; // bp
-	int v16; // edx
-	__int16 v17; // bx
-	int v18; // eax
-	int v19; // ecx
-	int v20; // eax
-	int v21; // zf
-	int v23; // [esp+10h] [ebp-8h]
-	__int16 v0a; // [esp+1Ch] [ebp+4h]
-	int v1a; // [esp+20h] [ebp+8h]
-	struct _SVector* v2a; // [esp+24h] [ebp+Ch]
-	int normala; // [esp+2Ch] [ebp+14h]
-
-	triangle = (struct _Triangle2D*)getScratchAddr(0);
-	x = normal->x;
-	if (normal->x < 0)
-		x = -x;
-	y = normal->y;
-	v8 = y;
-	if (y < 0)
-		v8 = -y;
-	v9 = normal->z;
-	if (x <= v8)
-	{
-		v9 = (__int16)v9;
-		if ((v9 & 0x8000u) != 0)
-			v9 = -(__int16)v9;
-		if (v8 > v9)
-		{
-			*(DWORD*)&triangle->x0 = (unsigned __int16)v0->x | (v0->z << 16);
-			p_x = &triangle->x2;
-			*(DWORD*)&triangle->x1 = (unsigned __int16)v1->x | (v1->z << 16);
-			*(DWORD*)&triangle->x2 = (unsigned __int16)v2->x | (v2->z << 16);
-			v11 = point->x;
-			z = point->z;
-			goto LABEL_15;
-		}
-	LABEL_14:
-		*(DWORD*)&triangle->x0 = (unsigned __int16)v0->x | (v0->y << 16);
-		p_x = &triangle->x2;
-		*(DWORD*)&triangle->x1 = (unsigned __int16)v1->x | (v1->y << 16);
-		*(DWORD*)&triangle->x2 = (unsigned __int16)v2->x | (v2->y << 16);
-		v11 = point->x;
-		z = point->y;
-		goto LABEL_15;
-	}
-	v9 = (__int16)v9;
-	if ((v9 & 0x8000u) != 0)
-		v9 = -(__int16)v9;
-	if (x <= v9)
-		goto LABEL_14;
-	*(DWORD*)&triangle->x0 = (v0->z << 16) | (unsigned __int16)v0->y;
-	p_x = &triangle->x2;
-	*(DWORD*)&triangle->x1 = (v1->z << 16) | (unsigned __int16)v1->y;
-	*(DWORD*)&triangle->x2 = (v2->z << 16) | (unsigned __int16)v2->y;
-	v11 = point->y;
-	z = point->z;
-LABEL_15:
-	v0a = z;
-	v13 = z;
-	v2a = (struct _SVector*)triangle;
-	v1a = 0;
-	normala = 0;
-	v23 = 3;
-	v14 = p_x[1] >= z;
-	do
-	{
-		v15 = triangle->y0;
-		v16 = v15 >= v13;
-		if (v14 == v16)
-		{
-			if (v14 && v13 == p_x[1])
-			{
-				if (v13 == v15)
-				{
-					if (v11 > *p_x != v11 > triangle->x0 || v11 == *p_x || v11 == triangle->x0)
-						return 1;
-					v13 = v0a;
-				}
-				else if (v11 == *p_x)
-				{
-					return 1;
-				}
-			}
-			goto LABEL_36;
-		}
-		v17 = triangle->x0;
-		if (*p_x >= v11 == triangle->x0 >= (unsigned __int16)v11)
-		{
-			if (*p_x >= v11)
-				v1a = v1a == 0;
-		}
-		else
-		{
-			v18 = p_x[1] - v15;
-			v19 = v18 * (v17 - v11) - (*p_x - v17) * (v15 - v0a);
-			if (v18 < 0)
-			{
-				v18 = -v18;
-				v19 = -v19;
-			}
-			v20 = v18 / 2;
-			if (v19 <= v20)
-			{
-				if (v19 >= -v20)
-					return 1;
-			}
-			else
-			{
-				v1a = v1a == 0;
-			}
-			triangle = (struct _Triangle2D*)v2a;
-		}
-		if (normala)
-			break;
-		v13 = v0a;
-		normala = 1;
-	LABEL_36:
-		v14 = v16;
-		p_x = &triangle->x0;
-		triangle = (struct _Triangle2D*)((char*)triangle + 4);
-		v21 = v23 == 1;
-		v2a = (struct _SVector*)triangle;
-		--v23;
-	} while (!v21);
-	return v1a;
-#else
-UNIMPLEMENTED();
-	return 0;
-#endif
 }
 
 int COLLIDE_PointInTriangle2DPub(short* v0, short* v1, short* v2, short* point)
 {
-#if defined(PSX_VERSION)
 	struct _SVector normal;
 
 	normal.x = 0;
@@ -374,26 +185,10 @@ int COLLIDE_PointInTriangle2DPub(short* v0, short* v1, short* v2, short* point)
 	normal.z = 4096;
 
 	return COLLIDE_PointInTriangle((struct _SVector*)v0, (struct _SVector*)v1, (struct _SVector*)v2, (struct _SVector*)point, (struct _SVector*)&normal);
-
-#elif defined(PC_VERSION)
-	struct _SVector normal; // [esp+0h] [ebp-8h] BYREF
-
-	normal.z = 4096;
-	normal.x = 0;
-	normal.y = 0;
-	normal.pad = 0;
-	return COLLIDE_PointInTriangle(
-		(struct _SVector*)v0,
-		(struct _SVector*)v1,
-		(struct _SVector*)v2,
-		(struct _SVector*)point,
-		&normal);
-#endif
 }
 
 long COLLIDE_GetNormal(short nNum, short* nrmlArray, struct _SVector* nrml)//Matching - 99.87%
 {
-#if defined(PSX_VERSION)
 	short* sPtr;
 	long bitMask;
 
@@ -422,37 +217,10 @@ long COLLIDE_GetNormal(short nNum, short* nrmlArray, struct _SVector* nrml)//Mat
 	}
 
 	return bitMask;
-
-#elif defined(PC_VERSION)
-	__int16 v3; // dx
-	int result; // eax
-	__int16* v5; // ecx
-	__int16 v6; // dx
-
-	if (nNum < 0)
-	{
-		v5 = &nrmlArray[-3 * nNum];
-		v6 = *v5++;
-		nrml->x = -(v6 & 0x1FFF);
-		nrml->y = -*v5;
-		nrml->z = -v5[1];
-		return v6 >> 13;
-	}
-	else
-	{
-		v3 = nrmlArray[3 * nNum];
-		result = v3 >> 13;
-		nrml->x = v3 & 0x1FFF;
-		nrml->y = nrmlArray[3 * nNum + 1];
-		nrml->z = nrmlArray[3 * nNum + 2];
-	}
-	return result;
-#endif
 }
 
 void COLLIDE_MakeNormal(struct _Terrain* terrain, struct _TFace* tface, struct _SVector* normal)
 {
-#if defined(PSX_VERSION)
 	struct _SVector* vertex0; // $v1
 	struct _SVector* vertex1; // $v0
 	struct _SVector* vertex2; // $a2
@@ -534,89 +302,10 @@ void COLLIDE_MakeNormal(struct _Terrain* terrain, struct _TFace* tface, struct _
 		normal->y = (n->y << 12) / len;
 		normal->z = (n->z << 12) / len;
 	}
-
-#elif defined(PC_VERSION)
-	struct _Vector* ScratchAddr; // esi
-	DWORD* v4; // edi
-	int* v5; // ebx
-	struct _TVertex* vertexList; // edx
-	struct _TVertex* v7; // ecx
-	struct _TVertex* v8; // edx
-	int z; // eax
-	int v10; // edx
-	int v11; // eax
-	int v12; // eax
-	int v13; // ecx
-	int v14; // sf
-	int v15; // edi
-	int v16; // esi
-	int v17; // edx
-	int v18; // edx
-	struct _Terrain* terraina; // [esp+14h] [ebp+4h]
-
-	ScratchAddr = (struct _Vector*)getScratchAddr(0);
-	v4 = (DWORD*)getScratchAddr(4);
-	v5 = (int*)getScratchAddr(8);
-	vertexList = terrain->vertexList;
-	v7 = &vertexList[tface->face.v0];
-	terraina = (struct _Terrain*)&vertexList[tface->face.v1];
-	v8 = &vertexList[tface->face.v2];
-	ScratchAddr->x = terraina->UnitChangeFlags - v7->vertex.x;
-	ScratchAddr->y = terraina->spad - v7->vertex.y;
-	ScratchAddr->z = terraina->lpad2 - v7->vertex.z;
-	*v4 = v8->vertex.x - v7->vertex.x;
-	v4[1] = v8->vertex.y - v7->vertex.y;
-	z = v8->vertex.z;
-	v10 = v4[1];
-	v11 = z - v7->vertex.z;
-	v4[2] = v11;
-	*v5 = (__int16)((ScratchAddr->y * v11 - ScratchAddr->z * v10) >> 12);
-	v5[1] = -(__int16)((v4[2] * ScratchAddr->x - ScratchAddr->z * *v4) >> 12);
-	v12 = *v5;
-	v13 = (__int16)((v4[1] * ScratchAddr->x - ScratchAddr->y * *v4) >> 12);
-	v14 = *v5 < 0;
-	v5[2] = v13;
-	v15 = v12;
-	if (v14)
-		v15 = -v12;
-	v16 = v5[1];
-	v17 = v16;
-	if (v16 < 0)
-		v17 = -v16;
-	if (v15 <= v17)
-	{
-		if (v16 >= 0)
-			goto LABEL_10;
-	}
-	else
-	{
-		v16 = v12;
-		if (v12 >= 0)
-			goto LABEL_10;
-	}
-	v16 = -v16;
-LABEL_10:
-	v18 = v13;
-	if (v13 < 0)
-		v18 = -v13;
-	if (v18 > v16)
-	{
-		if (v13 < 0)
-			v13 = -v13;
-		v16 = v13;
-	}
-	if (v16)
-	{
-		normal->x = (v12 << 12) / v16;
-		normal->y = (v5[1] << 12) / v16;
-		normal->z = (v5[2] << 12) / v16;
-	}
-#endif
 }
 
 void COLLIDE_UpdateAllTransforms(struct _Instance* instance, SVECTOR* offset)//Matching - 100%
 {
-#if defined(PSX_VERSION)
 	MATRIX* swTransform;
 	int i;
 	long numMatrices;
@@ -647,118 +336,11 @@ void COLLIDE_UpdateAllTransforms(struct _Instance* instance, SVECTOR* offset)//M
 			swTransform->t[2] += oz;
 		}
 	}
-#elif defined(PC_VERSION)
-#ifndef PC_VERSION
-	MATRIX* matrix; // ebx
-	int vx; // edx
-	int vy; // esi
-	int vz; // edi
-	struct Object* object; // eax
-	struct _Model* v7; // ecx
-	MATRIX* v8; // eax
-	int numSegments; // ecx
-	struct _Model* v10; // ecx
-	__int32* v11; // eax
-	__int32 v12; // ebp
-	__int32 v13; // ebx
-
-	matrix = instance->matrix;
-	if (matrix)
-	{
-		vx = offset->vx;
-		vy = offset->vy;
-		vz = offset->vz;
-		object = instance->object;
-		if (!object->animList || (object->oflags2 & 0x40000000) != 0)
-		{
-			v10 = object->modelList[instance->currentModel];
-			v8 = instance->matrix;
-			numSegments = v10->numSegments;
-		}
-		else
-		{
-			v7 = object->modelList[instance->currentModel];
-			v8 = matrix - 1;
-			numSegments = v7->numSegments + 1;
-		}
-		if (numSegments)
-		{
-			v11 = &v8->t[1];
-			do
-			{
-				v12 = vy + *v11;
-				*(v11 - 1) += vx;
-				v13 = vz + v11[1];
-				*v11 = v12;
-				v11[1] = v13;
-				v11 += 8;
-				--numSegments;
-			} while (numSegments);
-		}
-	}
-#endif
-#else
-	UNIMPLEMENTED();
-#endif
 }
 
 void COLLIDE_MoveAllTransforms(struct _Instance* instance, struct _Position* offset)
 {
-#if defined(PSX_VERSION)
 	UNIMPLEMENTED();
-#elif defined(PC_VERSION)
-#ifndef PC_VERSION
-	MATRIX* oldMatrix; // ebx
-	int x; // edx
-	int y; // esi
-	int z; // edi
-	struct Object* object; // eax
-	struct _Model* v7; // ecx
-	MATRIX* v8; // eax
-	int numSegments; // ecx
-	struct _Model* v10; // ecx
-	__int32* v11; // eax
-	__int32 v12; // ebp
-	__int32 v13; // ebx
-
-	oldMatrix = instance->oldMatrix;
-	if (oldMatrix)
-	{
-		x = offset->x;
-		y = offset->y;
-		z = offset->z;
-		object = instance->object;
-		if (!object->animList || (object->oflags2 & 0x40000000) != 0)
-		{
-			v10 = object->modelList[instance->currentModel];
-			v8 = instance->oldMatrix;
-			numSegments = v10->numSegments;
-		}
-		else
-		{
-			v7 = object->modelList[instance->currentModel];
-			v8 = oldMatrix - 1;
-			numSegments = v7->numSegments + 1;
-		}
-		if (numSegments)
-		{
-			v11 = &v8->t[1];
-			do
-			{
-				v12 = y + *v11;
-				*(v11 - 1) += x;
-				v13 = z + v11[1];
-				*v11 = v12;
-				v11[1] = v13;
-				v11 += 8;
-				--numSegments;
-			} while (numSegments);
-		}
-	}
-#endif
-#else
-	UNIMPLEMENTED();
-#endif
 }
 
 long COLLIDE_WithinYZBounds(struct _SVector* point, struct _HBox* hbox)//Matching - 86.52%
@@ -984,12 +566,6 @@ struct _TFace* COLLIDE_PointAndTerrainFunc(struct _Terrain* terrain, struct _PCo
 	SVECTOR* OldPos; // $a0
 	struct _Instance* instance; // $s7
 	struct _TVertex* vertexList; // $v0
-	short _x0;
-	short _y0; // $t0 MAPDST
-	short _z0; // $t1 MAPDST
-	short _x1;
-	short _y1; // $t0 MAPDST
-	short _z1; // $t1 MAPDST
 	short vy; // $v1
 	void** stack; // $s1
 	struct BSPTree* BSPTreeArray; // $v0
@@ -1008,21 +584,24 @@ struct _TFace* COLLIDE_PointAndTerrainFunc(struct _Terrain* terrain, struct _PCo
 	int v41; // $v1
 	int v42; // $v1
 	int v43; // $v1
-	unsigned short* v44; // $s3
-	int attr; // $v1
-	int normal; // $v1
+	struct _TFace* v44; // $s3
+	int v46; // $v1
+	int v47; // $v1
 	short* v48; // $v1
 	short v49; // $v0
 	int v50; // $v0
 	short* v51; // $v1
 	short v52; // $v0
 	struct _TVertex* v53; // $a0
+	int _T5; // $t5
 	int v57; // $v1
 	int v58; // $a1
 	int v59; // $v0
 	int v60; // $t8
 	short v61; // $v1
 	short v62; // $a1
+	int _T4; // $t4
+	short* _V0; // $v0
 	int back_spectral_error; // $a0
 	int v67; // $v1
 	int v68; // $a0
@@ -1033,23 +612,25 @@ struct _TFace* COLLIDE_PointAndTerrainFunc(struct _Terrain* terrain, struct _PCo
 	short y; // $a0
 	short z; // $v0
 	SVECTOR* NewPos; // [sp+18h] [-28h]
-	struct _Instance* v81; // [sp+20h] [-20h]
+	struct _SVector* v81; // [sp+20h] [-20h]
+	struct _SVector* v82; // [sp+20h] [-20h]
 	struct _Terrain* v83; // [sp+24h] [-1Ch]
 	struct _Terrain* v84; // [sp+24h] [-1Ch]
 	int curTree; // [sp+38h] [-8h]
 	struct PandTScratch* CSpad;
-	struct _TFace* v45;
-	short* nrmlArray;
 	struct _SVector* _v;
 	struct _SVector* _v0;
-
+	short _x0;
+	short _y0; // $t0 MAPDST
+	short _z0; // $t1 MAPDST
+	short _x1;
+	short _y1; // $t0 MAPDST
+	short _z1; // $t1 MAPDST
 
 	NewPos = pCollideInfo->newPoint;
 	OldPos = pCollideInfo->oldPoint;
 
 	CSpad = (struct PandTScratch*)getScratchAddr(12);
-
-
 
 	instance = pCollideInfo->instance;
 	CSpad->backface_flag = Backface_Flag;
@@ -1095,23 +676,14 @@ struct _TFace* COLLIDE_PointAndTerrainFunc(struct _Terrain* terrain, struct _PCo
 	_v->z = _z0 - _z1;
 
 	stack = (void**)getScratchAddr(43);
-
-	if (gameTrackerX.gameData.asmData.MorphTime != 1000)
+	if (gameTrackerX.gameData.asmData.MorphTime == 1000)
 	{
-		CSpad->in_spectral = 2;
-		CSpad->slack = 2048;
+		CSpad->in_spectral = gameTrackerX.gameData.asmData.MorphType == 1;
 	}
 	else
 	{
-		if (gameTrackerX.gameData.asmData.MorphType == 1)
-		{
-			CSpad->in_spectral = 1;
-		}
-		else
-		{
-			CSpad->in_spectral = 0;
-
-		}
+		CSpad->in_spectral = 2;
+		CSpad->slack = 2048;
 	}
 	if (CSpad->backface_flag)
 		CSpad->backface_flag[0] = 0;
@@ -1148,47 +720,47 @@ struct _TFace* COLLIDE_PointAndTerrainFunc(struct _Terrain* terrain, struct _PCo
 				if (!raziel_collide_override)
 					goto LABEL_98;
 			}
-			if ((v19->flags & 0x1000) == 0 || (CSpad->ignore_attr & 0x10) == 0)
+			v24 = v19->flags;
+			v25 = v24 & 0x2000;
+			if ((v24 & 0x1000) == 0 || (v25 = v24 & 0x2000, (CSpad->ignore_attr & 0x10) == 0))
 			{
-				if (!(v19->flags & 0x2000) || gameTrackerX.monster_collide_override)
+				if (!v25 || gameTrackerX.monster_collide_override)
 				{
-					_x1 = CSpad->newPos.x - v19->globalOffset.x;
 					_y1 = CSpad->newPos.y - v19->globalOffset.y;
 					_z1 = CSpad->newPos.z - v19->globalOffset.z;
-					CSpad->newPos.x = _x1;
+					CSpad->newPos.x -= v19->globalOffset.x;
 					CSpad->newPos.y = _y1;
 					CSpad->newPos.z = _z1;
-					_x1 = CSpad->oldPos.x - v19->globalOffset.x;
 					_y1 = CSpad->oldPos.y - v19->globalOffset.y;
 					_z1 = CSpad->oldPos.z - v19->globalOffset.z;
-					CSpad->oldPos.x = _x1;
+					CSpad->oldPos.x -= v19->globalOffset.x;
 					CSpad->oldPos.y = _y1;
 					CSpad->oldPos.z = _z1;
 					CSpad->posMatrix.m[0][0] = CSpad->newPos.x;
 					CSpad->posMatrix.m[0][1] = CSpad->newPos.y;
 					CSpad->posMatrix.m[0][2] = CSpad->newPos.z;
-					CSpad->posMatrix.m[1][0] = _x1;
+					CSpad->posMatrix.m[1][0] = CSpad->oldPos.x;
 					CSpad->posMatrix.m[1][1] = _y1;
 					CSpad->posMatrix.m[1][2] = _z1;
 
 					gte_SetRotMatrix(&CSpad->posMatrix);
+
 					v35 = v19->bspRoot == (struct _BSPNode*)++stack;
+					*stack = v19->bspRoot;
 					if (!v35)
 					{
-						*stack = v19->bspRoot;
-
 						while (1)
 						{
 							bspNode = (struct _BSPNode*)*stack;
-							if (!(*((unsigned short*)*stack-- + 7) & 2))
+							if (!(*((short*)*stack-- + 7) & 2))
 								break;
 							v38 = ((short*)&bspNode->front)[1] + CSpad->slack;
 							if (v38 >= CSpad->posMatrix.m[0][0] || v38 >= CSpad->posMatrix.m[1][0])
 							{
-								v39 = ((short*)&bspNode->d)[0] - CSpad->slack;
+								v39 = (short)(bspNode->d) - CSpad->slack;
 								if (CSpad->posMatrix.m[0][0] >= v39 || CSpad->posMatrix.m[1][0] >= v39)
 								{
-									v40 = ((short*)&bspNode->back)[0] + CSpad->slack;
+									v40 = (short)(bspNode->back) + CSpad->slack;
 									if (v40 >= CSpad->posMatrix.m[0][1] || v40 >= CSpad->posMatrix.m[1][1])
 									{
 										v41 = ((short*)&bspNode->d)[1] - CSpad->slack;
@@ -1197,44 +769,37 @@ struct _TFace* COLLIDE_PointAndTerrainFunc(struct _Terrain* terrain, struct _PCo
 											v42 = ((short*)&bspNode->back)[1] + CSpad->slack;
 											if (v42 >= CSpad->posMatrix.m[0][2] || v42 >= CSpad->posMatrix.m[1][2])
 											{
-												v43 = ((short*)&bspNode->front)[0] - CSpad->slack;
+												v43 = (short)(bspNode->front) - CSpad->slack;
 												if (CSpad->posMatrix.m[0][2] >= v43 || CSpad->posMatrix.m[1][2] >= v43)
 												{
 													CSpad->i = bspNode->c;
-													v44 = *(unsigned short**)&bspNode->a;
+													v44 = *(struct _TFace**)&bspNode->a;
 													if (CSpad->i)
 													{
-														v45 = (struct _TFace*)(v44);
 														do
 														{
-															attr = (unsigned char)(v45)->attr;
-															if ((attr & CSpad->ignore_attr) == 0 || (attr & CSpad->accept_attr) != 0)
+															v46 = v44->attr;
+															if ((v46 & CSpad->ignore_attr) == 0 || (v46 & CSpad->accept_attr) != 0)
 															{
-																if (CSpad->in_spectral == 2
-																	&& (unsigned short)(v45)->normal != *((((int)-(((char*)v45 - (char*)terrain->faceList) * 0x55555555) >> 2)) + terrain->morphNormalIdx))
+																if (CSpad->in_spectral != 2
+																	|| (v44->normal) == *(short*)(2
+																		* ((-1431655765
+																			* ((char*)v44
+																				- (char*)terrain->faceList)) >> 2)
+																		+ *(int*)terrain->morphNormalIdx))
 																{
-																	//v81 = p_splitPoint;
-																	v83 = terrain;
-																	COLLIDE_MakeNormal(terrain, (struct _TFace*)v45, &CSpad->normal);
-																	//p_splitPoint = v81;
-																	terrain = v83;
-																}
-																else
-																{
-																	normal = (short)(v45)->normal;
-																	nrmlArray = CSpad->normalList;
-																	if (normal >= 0)
+																	v47 = v44->normal;
+																	if (v47 >= 0)
 																	{
-																		v48 = &nrmlArray[normal * 3];
+																		v48 = &CSpad->normalList[3 * v47];
 																		v49 = *v48++;
 																		CSpad->normal.x = v49 & 0x1FFF;
 																		CSpad->normal.y = *v48;
-																		v50 = (unsigned short)v48[1];
+																		v50 = v48[1];
 																	}
 																	else
 																	{
-																		normal = -normal;
-																		v51 = &nrmlArray[normal * 3];
+																		v51 = &CSpad->normalList[3 * -v47];
 																		v52 = *v51++;
 																		CSpad->normal.x = -(v52 & 0x1FFF);
 																		CSpad->normal.y = -*v51;
@@ -1242,8 +807,15 @@ struct _TFace* COLLIDE_PointAndTerrainFunc(struct _Terrain* terrain, struct _PCo
 																	}
 																	CSpad->normal.z = v50;
 																}
-																v53 = &CSpad->vertexList[v45->face.v0];
-																gte_ldv2_ext(v53);
+																else
+																{
+																	v81 = (struct _SVector*)&instance->splitPoint;
+																	v83 = terrain;
+																	COLLIDE_MakeNormal(terrain, v44, &CSpad->normal);
+																	terrain = v83;
+																}
+																v53 = &CSpad->vertexList[v44->face.v0];
+																gte_ldv2_ext(&v53->vertex);
 																gte_ldv0(&CSpad->normal);
 																gte_rtv0();
 																gte_stlvnl(&CSpad->dpv);
@@ -1260,55 +832,56 @@ struct _TFace* COLLIDE_PointAndTerrainFunc(struct _Terrain* terrain, struct _PCo
 																	CSpad->planePoint.x = CSpad->oldPos.x + ((CSpad->line.x * v58) >> 12);
 																	CSpad->planePoint.y = CSpad->oldPos.y + ((CSpad->line.y * v58) >> 12);
 																	CSpad->planePoint.z = CSpad->oldPos.z + ((CSpad->line.z * v58) >> 12);
-																	//v82 = p_splitPoint;
+																	v82 = (struct _SVector*)&instance->splitPoint;
 																	v84 = terrain;
 																	v59 = COLLIDE_PointInTriangle(
 																		(struct _SVector*)v53,
-																		(struct _SVector*)&CSpad->vertexList[(v45)->face.v1],
-																		(struct _SVector*)&CSpad->vertexList[(v45)->face.v2],
+																		(struct _SVector*)&CSpad->vertexList[v44->face.v0],
+																		(struct _SVector*)&CSpad->vertexList[v44->face.v1],
 																		&CSpad->planePoint,
 																		&CSpad->normal);
-																	// p_splitPoint = v82;
 																	terrain = v84;
 																	if (v59)
 																	{
-																		if (CSpad->backface_flag
+																		if (CSpad->backface_flag[0]
 																			&& (CSpad->flags & 1) != 0
 																			&& CSpad->dpv.x > 0
 																			&& CSpad->dpv.y <= 0)
 																		{
 																			CSpad->backface_flag[0] = 1;
 																		}
-																		if (((v45)->attr & 8) != 0)
+																		if ((v44->attr & 8) != 0)
 																		{
 																			if ((gameTrackerX.gameFlags & 0x8000) != 0)
 																			{
-																				instance->waterFace = (struct _TFace*)v44;
+																				instance->waterFace = v44;
 																				instance->waterFaceTerrain = v84;
-
-																				instance->splitPoint = CSpad->planePoint;
-
+																				v60 = *(int*)&CSpad->planePoint.z;
+																				*(int*)&instance->splitPoint.x = *(int*)&CSpad->planePoint.x;
+																				*(int*)&instance->splitPoint.z = v60;
+																				v61 = v82->y + v19->globalOffset.y;
+																				v62 = v82->z + v19->globalOffset.z;
 																				instance->splitPoint.x += v19->globalOffset.x;
-																				instance->splitPoint.y += v19->globalOffset.y;
-																				instance->splitPoint.z += v19->globalOffset.z;
+																				v82->y = v61;
+																				v82->z = v62;
 																			}
 																		}
-																		else if ((unsigned short)(v45)->textoff == 0xFFFF
+																		else if (v44->normal == 0xFFFF
 																			|| (*(short*)((char*)&v84->StartTextureList->attr
-																				+ (unsigned short)(v45)->textoff) & 0x2000) == 0
-																			|| ((v45)->attr & CSpad->accept_attr) != 0)
+																				+ v44->normal) & 0x2000) == 0
+																			|| (v44->attr & CSpad->accept_attr) != 0)
 																		{
-																			*(unsigned int*)&CSpad->newPos.z = *(unsigned int*)&CSpad->planePoint.z;
-																			*(unsigned int*)&CSpad->newPos.x = *(unsigned int*)&CSpad->planePoint.x;
-																			*(unsigned int*)&CSpad->posMatrix.m[0][0] = *(unsigned int*)&CSpad->planePoint.x;
-																			CSpad->result = (struct _TFace*)v44;
-																			CSpad->posMatrix.m[0][2] = CSpad->planePoint.z;
+																			*(int*)&CSpad->newPos.z = *(int*)&CSpad->planePoint.z;
+																			*(int*)&CSpad->newPos.x = *(int*)&CSpad->planePoint.x;
+																			*(int*)&CSpad->posMatrix.m[0][0] = *(int*)&CSpad->planePoint.x;
+																			CSpad->result = v44;
+																			CSpad->posMatrix.m[0][1] = CSpad->planePoint.z;
 																			CSpad->line.x = CSpad->oldPos.x - CSpad->planePoint.x;
 																			CSpad->line.y = CSpad->oldPos.y - CSpad->planePoint.y;
 																			CSpad->line.z = CSpad->oldPos.z - CSpad->planePoint.z;
 																			if (lcolinfo)
 																			{
-																				lcolinfo->tface = (struct _TFace*)v44;
+																				lcolinfo->tface = v44;
 																				lcolinfo->terrain = v84;
 																				lcolinfo->curTree = curTree;
 																			}
@@ -1317,8 +890,8 @@ struct _TFace* COLLIDE_PointAndTerrainFunc(struct _Terrain* terrain, struct _PCo
 																	}
 																}
 															}
-															++v45;
-															v35 = CSpad->i--;
+															++v44;
+															v35 = CSpad->i-- != 1;
 														} while (v35);
 													}
 													if (CSpad->result && !CSpad->in_spectral)
@@ -1333,6 +906,7 @@ struct _TFace* COLLIDE_PointAndTerrainFunc(struct _Terrain* terrain, struct _PCo
 							if (*stack == stack)
 								goto LABEL_97;
 						}
+
 						gte_ldv0(&bspNode->a);
 						gte_rtv0();
 						gte_stlvnl(&CSpad->dpv);
@@ -1351,19 +925,13 @@ struct _TFace* COLLIDE_PointAndTerrainFunc(struct _Terrain* terrain, struct _PCo
 						v68 = back_spectral_error - 5;
 						if (CSpad->dpv.y >= v67)
 						{
-							if (v67 >= CSpad->dpv.x)
-							{
-								goto LABEL_91;
-							}
-							else
-							{
+							if (v67 < CSpad->dpv.x)
 								goto LABEL_93;
-
-							}
+							goto LABEL_91;
 						}
-						if (v68 >= CSpad->dpv.y)
+						if (v68 < CSpad->dpv.y)
 						{
-							if (CSpad->dpv.x >= CSpad->dpv.y)
+							if (CSpad->dpv.x < CSpad->dpv.y)
 							{
 							LABEL_91:
 								back = (void*)bspNode->back;
@@ -3808,7 +3376,7 @@ void COLLIDE_SetBSPTreeFlag(struct _CollideInfo* collideInfo, short flag)
 	bspTreeFlags[0] |= flag;
 }
 
-int COLLIDE_PointAndTfaceFunc(struct _Terrain *terrain, struct BSPTree *bsp, struct _SVector *orgNewPos, struct _SVector *orgOldPos, struct _TFace *tface, long ignoreAttr, long flags)//Matching - 81%
+int COLLIDE_PointAndTfaceFunc(struct _Terrain* terrain, struct BSPTree* bsp, struct _SVector* orgNewPos, struct _SVector* orgOldPos, struct _TFace* tface, long ignoreAttr, long flags)//Matching - 85.47%
 {
 	short _x0;
 	short _y0; // $v1 MAPDST
@@ -3822,7 +3390,6 @@ int COLLIDE_PointAndTfaceFunc(struct _Terrain *terrain, struct BSPTree *bsp, str
 	short v18; // $v0
 	int v19; // $v0
 	short v21; // $v0
-	struct _TVertex* vertexList; // $a0
 	struct _SVector* vertex0; // $s3
 	struct _SVector* vertex1; // $s4
 	int result; // [sp+18h] [-8h]
@@ -3875,26 +3442,26 @@ int COLLIDE_PointAndTfaceFunc(struct _Terrain *terrain, struct BSPTree *bsp, str
 		_v1->y = _y0;
 		_v1->z = _z0;
 
-		_x1 = CSpad->oldPos.x;
-		_y1 = CSpad->oldPos.y;
-		_z1 = CSpad->oldPos.z;
-
 		_x0 = CSpad->newPos.x;
 		_y0 = CSpad->newPos.y;
 		_z0 = CSpad->newPos.z;
 
-		CSpad->posMatrix.m[0][0] = _x1;
-		CSpad->posMatrix.m[0][1] = _y1;
-		CSpad->posMatrix.m[0][2] = _z1;
-		CSpad->posMatrix.m[1][0] = _x0;
-		CSpad->posMatrix.m[1][1] = _y0;
-		CSpad->posMatrix.m[1][2] = _z0;
+		_x1 = CSpad->oldPos.x;
+		_y1 = CSpad->oldPos.y;
+		_z1 = CSpad->oldPos.z;
+
+		CSpad->posMatrix.m[0][0] = _x0;
+		CSpad->posMatrix.m[0][1] = _y0;
+		CSpad->posMatrix.m[0][2] = _z0;
+		CSpad->posMatrix.m[1][0] = _x1;
+		CSpad->posMatrix.m[1][1] = _y1;
+		CSpad->posMatrix.m[1][2] = _z1;
 
 		SetRotMatrix(&CSpad->posMatrix);
 
 		normal = (short)tface->normal;
 		nrmlArray = (short*)terrain->normalList;
-		nrml = (struct _SVector*)getScratchAddr(30);
+		nrml = &CSpad->normal;
 		if (normal >= 0)
 		{
 			sPtr = &nrmlArray[3 * normal];
@@ -3910,9 +3477,8 @@ int COLLIDE_PointAndTfaceFunc(struct _Terrain *terrain, struct BSPTree *bsp, str
 			nrml->z = -*sPtr;
 		}
 
-		vertexList = terrain->vertexList;
-		vertex0 = (struct _SVector*)&vertexList[tface->face.v0];
-		vertex1 = (struct _SVector*)&vertexList[tface->face.v1];
+		vertex0 = (struct _SVector*)&terrain->vertexList[tface->face.v0];
+		vertex1 = (struct _SVector*)&terrain->vertexList[tface->face.v1];
 
 		gte_ldv2_ext(vertex0);
 		gte_ldv0(&CSpad->normal);
@@ -3939,11 +3505,21 @@ int COLLIDE_PointAndTfaceFunc(struct _Terrain *terrain, struct BSPTree *bsp, str
 					&CSpad->normal))
 				{
 					result = 1;
+					_v2 = (struct _Position*)&CSpad->planePoint;
 
 					_v3 = &bsp->globalOffset;
-					_x0 = CSpad->planePoint.x + _v3->x;
-					_y0 = CSpad->planePoint.y + _v3->y;
-					_z0 = CSpad->planePoint.z + _v3->z;
+					_x0 = _v2->x;
+					_y0 = _v2->y;
+					_z0 = _v2->z;
+
+					_x1 = _v3->x;
+					_y1 = _v3->y;
+					_z1 = _v3->z;
+
+					_x0 += _x1;
+					_y0 += _y1;
+					_z0 += _z1;
+
 					orgNewPos->x = _x0;
 					orgNewPos->y = _y0;
 					orgNewPos->z = _z0;

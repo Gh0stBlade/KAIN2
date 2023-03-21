@@ -3,7 +3,6 @@
 
 short G2Timer_GetFrameTime()
 {
-#if defined(PSX_VERSION)
 	short atime;
 
 	if (gameTrackerX.timeMult == 0)
@@ -21,16 +20,4 @@ short G2Timer_GetFrameTime()
 	}
 
 	return atime;
-
-#elif defined(PC_VERSION)
-	unsigned int result; // eax
-
-  if ( gameTrackerX.timeMult )
-	result = (100 * gameTrackerX.timeMult) >> 12;
-  else
-	result = 100;
-  if ( (__int16)result <= 0 )
-	return 1;
-  return result;
-#endif
 }
