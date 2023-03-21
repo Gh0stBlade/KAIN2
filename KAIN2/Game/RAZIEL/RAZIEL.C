@@ -29,6 +29,7 @@
 #include "Game/RAZIEL/ATTACK.H"
 #include "Game/RAZIEL/SWIM.H"
 #include "Game/COLLIDE.H"
+#include "Game/GAMEPAD.H"
 
 struct RazielData* PlayerData;
 struct _G2AnimInterpInfo_Type razInterpInfo[3];
@@ -2135,6 +2136,134 @@ void StateHandlerFall(struct __CharacterState* In, int CurrentSection, int Data)
 	int DeferFlag; // $s6
 	struct evPhysicsSwimData* SwimData; // $s1
 
+	Moving = 0;
+	DeferFlag = 1;
+
+	if (CurrentSection != 0 && (STREAM_GetLevelWithID(In->CharacterInstance->currentStreamUnitID)->unitFlags & 0x1000))
+	{
+		EnMessageQueueData(&In->SectionList[CurrentSection].Event, 16, Moving);
+	}
+
+	while ((Ptr = PeekMessageQueue(&In->SectionList[CurrentSection].Event)) != NULL)
+	{
+		switch (Ptr->ID)
+		{
+			case 0x4020000:
+			{
+				SwimData = (struct evPhysicsSwimData*)Ptr->Data;
+
+				if (SwimData->Depth < 0)
+				{
+					if (!In->CharacterInstance->zVel && In->CharacterInstance->zAccl >= 0)
+					{
+						ResetPhysics(In->CharacterInstance, -16);
+					}
+				}
+				
+				Raziel.Mode &= ~0x40000;
+				
+				razEnterWater(In, CurrentSection, (struct evPhysicsSwimData*)Ptr->Data);
+
+				if (SwimData->WaterDepth < 0 && SwimData->WaterDepth != -32767 && Raziel.CurrentPlane == 1)
+				{
+					ControlFlag |= 0x2000000;
+				}
+
+				break;
+			}
+
+			case 0x10000000:
+			{
+				Moving = 1;
+
+				break;
+			}
+			case 0x20000001:
+			{
+				if (Raziel.Mode != 16 && Raziel.Mode != 32 && CurrentSection == 0)
+				{
+					SetDropPhysics(In->CharacterInstance, &Raziel);
+				}
+				break;
+			}
+			case 0x2000000:
+			{
+				razPickupAndGrab(In, CurrentSection);
+				break;
+			}
+			case 0x4010008:
+			{
+				if (DeferFlag)
+				{
+					EnMessageQueueData(&In->SectionList[CurrentSection].Defer, 0x4010008, 0);
+					DeferFlag = 0;
+				}
+				else
+				{
+					StateSwitchStateData(In, CurrentSection, &StateHandlerDeCompression, Moving);
+				}
+
+				In->SectionList[CurrentSection].Data2 = 2;
+				PhysicsMode = 3;
+				ResetPhysics(In->CharacterInstance, -16);
+				break;
+			}
+			case 0x100000:
+			{
+				StateSwitchStateCharacterData(In, &StateHandlerForcedGlide, 0);
+				break;
+			}
+			case 0x100001:
+			{
+				if (CurrentSection == 0)
+				{
+					ControlFlag = 281;
+
+					if (Raziel.Mode != 256)
+					{
+						ControlFlag = 1305;
+					}
+
+					In->SectionList[CurrentSection].Data1 = 0;
+
+					Raziel.movementMinRate = 0;
+
+					PhysicsMode = 0;
+				}
+
+				if (Ptr->Data && (PadData[0] & 0x80))
+				{
+					EnMessageQueueData(&In->SectionList[CurrentSection].Defer, 0x80000001, 0);
+				}
+
+				break;
+			}
+			case 0x40005:
+			{
+				if (Raziel.HitPoints <= 99999)
+				{
+					StateSwitchStateData(In, CurrentSection, &StateHandlerStumble, 0);
+				}
+				break;
+			}
+			case 0x80000001:
+			{
+				if (Raziel.Senses.heldClass != 3 && !(ControlFlag & 0x2000000) && CurrentSection == 0)
+				{
+					StateSwitchStateCharacterData(In,&StateHandlerGlide, 3);
+				}
+				break;
+			}
+			default:
+			{
+				DefaultStateHandler(In, CurrentSection, Data);
+				break;
+			}
+
+		}
+
+		DeMessageQueue(&In->SectionList[CurrentSection].Event);
+	}
 }
 
 
