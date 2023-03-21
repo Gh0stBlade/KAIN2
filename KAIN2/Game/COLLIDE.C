@@ -491,7 +491,7 @@ UNIMPLEMENTED();
 #endif
 }
 
-long COLLIDE_IntersectLineAndBox(_SVector* point0, _SVector* normal0, _SVector* point1, _SVector* normal1, _SVector* end, _SVector* start, struct _HBox* hbox) // Matching - 95.63%
+long COLLIDE_IntersectLineAndBox(_SVector* point0, _SVector* normal0, _SVector* point1, _SVector* normal1, _SVector* end, _SVector* start, struct _HBox* hbox)
 {
 	_SVector normal;
 	_Vector line;
@@ -508,13 +508,13 @@ long COLLIDE_IntersectLineAndBox(_SVector* point0, _SVector* normal0, _SVector* 
 	collide_point1 = point1;
 	collide_normal1 = normal1;
 
-	_x0 = (int)end->x;
-	_y0 = (int)end->y;
-	_z0 = (int)end->z;
+	_x0 = end->x;
+	_y0 = end->y;
+	_z0 = end->z;
 
-	_x0 -= (int)start->x;
-	_y0 -= (int)start->y;
-	_z0 -= (int)start->z;
+	_x0 -= start->x;
+	_y0 -= start->y;
+	_z0 -= start->z;
 
 	_v = &line;
 	_v->x = _x0;
@@ -550,10 +550,13 @@ long COLLIDE_IntersectLineAndBox(_SVector* point0, _SVector* normal0, _SVector* 
 	{
 		return 2;
 	}
-	else
+
+	if (collide_t0 != 0x1001)
 	{
-		return (unsigned int)(collide_t0 != 0x1001);
+		return 1;
 	}
+
+	return 0;
 }
 
 struct _TFace* COLLIDE_PointAndTerrain(struct _Terrain* terrain, struct _PCollideInfo* pcollideInfo, struct _LCollideInfo* lcol)//Matching - 99.58%
