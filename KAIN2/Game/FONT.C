@@ -212,7 +212,6 @@ char charMap[92][3] = {
 
 void FONT_MakeSpecialFogClut(int x, int y)
 { 
-#if defined(PSX_VERSION)
 	int n;
 	unsigned short cl[16];
 	PSX_RECT myrect;
@@ -236,30 +235,11 @@ void FONT_MakeSpecialFogClut(int x, int y)
 	LoadImage(&myrect, (unsigned int*)&cl);
 	
 	DrawSync(0);
-#else
-	PSX_RECT rect; // [esp+4h] [ebp-28h] BYREF
-	static WORD pal[16] =
-	{
-		0x4210, 0x4210, 0x4210, 0x4210, 0x4210, 0x4210, 0x4210, 0x4210, 
-		0x4210, 0x4210, 0x4210, 0x4210, 0x4210, 0x4210, 0x4210, 0
-	}; // [esp+Ch] [ebp-20h] BYREF
-
-	rect.x = x;
-	rect.y = y;
-	rect.w = 16;
-	rect.h = 1;
-	font_clut = getClut(x, y);
-	DrawSync(0);
-	LoadImage(&rect, (unsigned int*)pal);
-	DrawSync(0);
-#endif
 }
 
 
 void FONT_Init()
 {
-#ifdef PSX_VERSION
-
 	unsigned long* timAddr;
 	short x;
 	short y;
@@ -284,7 +264,7 @@ void FONT_Init()
 
 		FONT_MakeSpecialFogClut(x, y & 0x7F);
 
-#if defined(PSXPC_VERSION)
+#if defined(PSXPC_VERSION) && 0
 		for (int i = 0; i < 10; i++)
 		{
 			short xc[4];
@@ -330,15 +310,6 @@ void FONT_Init()
 	fontTracker.sprite_sort_push = 0;
 	fontTracker.color_global = 0;
 	fontTracker.color_local = 0;
-
-#else
-	fontTracker.font_xpos = 10;
-	fontTracker.font_ypos = 16;
-	fontTracker.font_buffIndex = 0;
-	fontTracker.sprite_sort_push = 0;
-	fontTracker.color_global = 0;
-	fontTracker.color_local = 0;
-#endif
 }
 
 void FONT_ReloadFont()

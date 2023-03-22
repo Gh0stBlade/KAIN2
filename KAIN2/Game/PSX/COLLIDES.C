@@ -871,7 +871,6 @@ void G2EulerAngles_ToMatrix_S(_G2Quat_Type quat, _G2Matrix_Type* matrix)
 	UNIMPLEMENTED();
 }
 
-#if defined(PSXPC_VERSION) && defined(PSX_VERSION)
 void RotMatrixX(long r, MATRIX* m)
 {
 	int v0;
@@ -1048,7 +1047,6 @@ void RotMatrixZ(long r, MATRIX* m)
 
 	return;
 }
-#endif
 
 short rsin(long a)
 {
@@ -1640,7 +1638,6 @@ long BSP_SphereIntersectsViewVolume_S(struct _Position* position)
 	return 0;
 }
 
-#if defined(PSXPC_VERSION) && defined(PSX_VERSION)
 void RotMatrixZYX(SVECTOR* r, MATRIX* m)
 {
 	int t9 = r->vz;
@@ -1763,4 +1760,3 @@ void RotMatrixZYX(SVECTOR* r, MATRIX* m)
 		((int*)m)[4] = t3;
 	}
 }
-#endif

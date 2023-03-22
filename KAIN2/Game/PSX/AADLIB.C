@@ -2224,7 +2224,6 @@ void aadStopSlot(int slotNumber)
 
 void aadStopAllSlots()
 { 
-#ifdef PSX_VERSION
 	struct _AadSequenceSlot* slot;
 	int slotNumber;
 
@@ -2245,67 +2244,6 @@ void aadStopAllSlots()
 
 		} while (++slotNumber < aadMem->numSlots);
 	}
-#else
-	AadMemoryStruct* v0; // ecx
-	int v1; // edx
-	int numSlots; // eax
-	int v3; // edi
-	int v4; // esi
-	AadMemoryStruct* v5; // ebp
-	int v6; // ecx
-	int v7; // edx
-	int i; // edi
-	char* v9; // eax
-	int v10; // ebp
-	int v11; // [esp+0h] [ebp-8h]
-	int v12; // [esp+4h] [ebp-4h]
-
-	v0 = aadMem;
-	v1 = 0;
-	v11 = 0;
-	numSlots = aadMem->numSlots;
-	if (numSlots > 0)
-	{
-		v3 = 52;
-		v12 = 52;
-		do
-		{
-			v4 = *(unsigned int*)((char*)&v0->updateCounter + v3);
-			if ((*(BYTE*)(v4 + 1344) & 1) != 0 && v1 < numSlots && *(BYTE*)(v4 + 1342) != 0xFF)
-			{
-				*(WORD*)(v4 + 1344) &= ~1u;
-				aadInitSequenceSlot((struct _AadSequenceSlot* )v4);
-				v5 = aadMem;
-				v6 = 0;
-				v7 = *(unsigned int*)((char*)&aadMem->updateCounter + v3);
-				for (i = 476; i < 1148; i += 28)
-				{
-					v9 = (char*)v5 + i;
-					if ((*((BYTE*)&v5->updateMode + i) & 0xF0) == *(BYTE*)(v7 + 1361))
-					{
-						v10 = *(DWORD*)v9;
-						v9[8] = -1;
-						v6 |= v10;
-						v9[18] |= 2u;
-						v5 = aadMem;
-					}
-				}
-				if (v6)
-				{
-					v5->voiceKeyOffRequest |= v6;
-					aadMem->voiceKeyOnRequest &= ~v6;
-				}
-			}
-			v1 = v11 + 1;
-			*(BYTE*)(v4 + 1342) = -1;
-			v0 = aadMem;
-			v3 = v12 + 4;
-			v11 = v1;
-			numSlots = aadMem->numSlots;
-			v12 += 4;
-		} while (v1 < numSlots);
-	}
-#endif
 }
 
 void aadDisableSlot(int slotNumber)

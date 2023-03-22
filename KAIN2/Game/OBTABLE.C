@@ -10,7 +10,7 @@
 #include "GENERIC.H"
 #include "GAMELOOP.H"
 #include "SCRIPT.H"
-#include "gex2.h"
+#include "GEX2.H"
 #include "Game/STREAM.H"
 
 struct ObjectAccess objectAccess[28] =
