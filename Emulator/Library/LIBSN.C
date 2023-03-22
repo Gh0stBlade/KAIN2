@@ -22,7 +22,7 @@ FILE* PCopen(char* name, int flags, int perms)
 
 #if defined(__ANDROID__)
 	char buff[64];
-	sprintf(&buff[0], "/storage/self/primary/KAIN2/%s", name);
+	sprintf(&buff[0], "/storage/self/primary/%s/%s", GAME_SHORT_NAME, name);
 	name = &buff[0];
 #elif defined(_XBOX)
 	char buff[64];

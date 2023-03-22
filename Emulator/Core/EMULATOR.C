@@ -2142,7 +2142,7 @@ void Emulator_CreateMemoryCard(int channel)
 	char buf[128];
 
 #if defined(__ANDROID__)
-	sprintf(&buf[0], "/storage/self/primary/TOMB5/%ld.MCD", channel);
+	sprintf(&buf[0], "/storage/self/primary/%s/%ld.MCD", GAME_SHORT_NAME, channel);
 #elif defined(_XBOX)
 	sprintf(&buf[0], "game:/%ld.MCD", channel);
 #else
