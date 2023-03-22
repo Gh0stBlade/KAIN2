@@ -3,7 +3,7 @@
 
 #include "Game/CORE.H"
 
-typedef long (*TDRFuncPtr_COLLIDE_LineWithBoxFace6collideBoundFunc)();
+typedef long (*TDRFuncPtr_COLLIDE_LineWithBoxFace6collideBoundFunc)(struct _SVector* point, struct _HBox* hbox);
 
 struct SandHFScratch {
 	struct _SVector normal; // size=8, offset=0
