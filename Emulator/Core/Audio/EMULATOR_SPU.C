@@ -1,7 +1,7 @@
 #include "EMULATOR_SPU.H"
 #include "Core/Debug/EMULATOR_LOG.H"
 
-#define SND_SAMPLES     1024
+#define SND_SAMPLES     10
 #define PITCH_SHIFT     12
 #define VOL_SHIFT       15
 #define BLOCK_END       (28 << PITCH_SHIFT)
@@ -184,7 +184,7 @@ int32_t getInterp(struct Channel* channel)
 
 int32_t ADSR(struct Channel* channel)
 {
-    if (channel->silent == 2)
+    if (channel->silent == 2 && channel->stop == TRUE)
     {
         return 0;
     }
@@ -572,14 +572,18 @@ void fillVAG(struct Channel* channel, int32_t count, int32_t ns)
                 channel->_adsr.lvolume = 0;
                 channel->_adsr.envelopevol = 0;
             }
+
             channel->iSBPos = 0;
 
             if (!vagProcessBlock(channel, channel->block))
             {
-                channel->data = NULL;
                 blockPos = BLOCK_END;
-                channel->silent = 1;
+                if (channel->silent == 0)
+                {
+                    channel->silent = 1;
+                }
                 channel->_adsr.state = RELEASE;
+                channel->stop = TRUE;
             }
         }
         
@@ -723,6 +727,7 @@ void SPU_ResetChannel(struct Channel* channel, uint8_t* data)
     channel->iSBPos = 28;
     channel->reverb = 0;
     channel->silent = 0;
-    
+    channel->stop = FALSE;
+
     SPU_StartADSR(channel);
 }

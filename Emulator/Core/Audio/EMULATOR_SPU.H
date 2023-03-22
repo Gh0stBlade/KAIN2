@@ -63,7 +63,8 @@ typedef struct Channel
     int32_t sval;
     int32_t spos;
     int32_t iSBPos;
-	int16_t silent;
+	int8_t silent;
+	int8_t stop;
 } channel;
 
 typedef struct
