@@ -182,6 +182,11 @@ int32_t getInterp(struct Channel* channel)
 
 int32_t ADSR(struct Channel* channel)
 {
+    if (channel->silent == 2 && channel->data == NULL)
+    {
+        return 0;
+    }
+
     switch (channel->_adsr.state)
     {
     case ATTACK:
@@ -472,12 +477,7 @@ int32_t vagProcessBlock(struct Channel* channel, int16_t* dst)
     uint8_t shift = pred & 0x0F;
     int32_t value = 0;
     int32_t ns = 0;
-    int32_t channelIndex = channel - channelList;
 
-    if (channelIndex != 3)
-    {
-        //return 0;
-    }
     pred >>= 4;
 
     for (i = 0; i < 14; i++)
@@ -505,7 +505,6 @@ int32_t vagProcessBlock(struct Channel* channel, int16_t* dst)
         }
         else
         {
-            channel->_adsr.state = RELEASE;
             return 0; // stop TODO Release
         }
     }
@@ -567,13 +566,21 @@ void fillVAG(struct Channel* channel, int32_t count, int32_t ns)
     {
         if (channel->iSBPos == 28)
         {
+            if (channel->silent == 1)
+            {
+                channel->silent = 2;
+
+                channel->_adsr.lvolume = 0;
+                channel->_adsr.envelopevol = 0;
+            }
             channel->iSBPos = 0;
 
             if (!vagProcessBlock(channel, channel->block))
             {
                 channel->data = NULL;
                 blockPos = BLOCK_END;
-                return;
+                channel->silent = 1;
+                channel->_adsr.state = RELEASE;
             }
         }
         
@@ -592,11 +599,6 @@ void fillVAG(struct Channel* channel, int32_t count, int32_t ns)
     if (channel->reverb && !disableReverb)
     {
         storeReverb(channel,  ns);
-    }
-    else
-    {
-        int testing = 0;
-        testing++;
     }
 
     channel->spos += channel->pitch << 4;
@@ -671,6 +673,7 @@ void SPU_Initialise()
     for (i = 0; i < SPU_MAX_CHANNELS; i++)
     {
         channelList[i].blockPos = BLOCK_END;
+        channelList[i]._adsr.sustainlevel = 1024;
     }
 
     initADSR();
@@ -696,6 +699,17 @@ void SPU_Destroy()
 #endif
 }
 
+void SPU_StartADSR(struct Channel* channel)
+{
+    if (channel != NULL)
+    {
+        channel->_adsr.lvolume = 1;
+        channel->_adsr.state = ATTACK;
+        channel->_adsr.envelopevol = 0;
+        channel->_adsr.envelopevol_f = 0;
+    }
+}
+
 void SPU_ResetChannel(struct Channel* channel, uint8_t* data)
 {
     channel->pos = 0;
@@ -703,13 +717,13 @@ void SPU_ResetChannel(struct Channel* channel, uint8_t* data)
     channel->s2 = 0;
     channel->data = data;
     channel->loop = NULL;
-    memset(&channel->_adsr, 0, sizeof(adsr));
-    channel->_adsr.sustainlevel = 1024;
-    channel->_adsr.lvolume = 1;
-    channel->_adsr.state = ATTACK;
     channel->block[28] = 0;
     channel->block[29] = 0;
     channel->block[30] = 0;
     channel->spos = 0x30000;
     channel->iSBPos = 28;
+    channel->reverb = 0;
+    channel->silent = 0;
+    
+    SPU_StartADSR(channel);
 }
