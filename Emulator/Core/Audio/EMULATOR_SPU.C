@@ -19,6 +19,8 @@ static int32_t RateTableSub[128];
 static int32_t RateTableSub_f[128];
 static const int32_t RateTable_denom = 1 << (((4 * 32) >> 2) - 11);
 int32_t disableReverb = 0;
+int32_t disableADSR = 0;
+int32_t disableChannelVol = 0;
 
 #if defined(SDL2)
 SDL_AudioDeviceID gAudioDevice;
@@ -554,10 +556,7 @@ void initADSR()
 
 void fillVAG(struct Channel* channel, int32_t count, int32_t ns)
 {
-    int32_t i, value, volValue, volReverbL, volReverbR;
-
-    int32_t volL = channel->volL * g_spuLeftVol >> VOL_SHIFT;
-    int32_t volR = channel->volR * g_spuRightVol >> VOL_SHIFT;
+    int32_t i;
     int32_t blockPos = channel->blockPos;
     int32_t posInc = channel->pitch;
     int32_t channelIndex = channel - channelList;
@@ -591,10 +590,10 @@ void fillVAG(struct Channel* channel, int32_t count, int32_t ns)
 
     int32_t fa = getInterp(channel);
 
-    channel->sval = (ADSR(channel) * fa) / 1023;
+    channel->sval = disableADSR ? fa : (ADSR(channel) * fa) / 1023;
 
-    SSumL[ns]+=(channel->sval*channel->volL)/0x4000L;
-    SSumR[ns]+=(channel->sval*channel->volR)/0x4000L;
+    SSumL[ns]+=(channel->sval*(disableChannelVol ? 0x3FFF : channel->volL))/0x4000L;
+    SSumR[ns]+=(channel->sval*(disableChannelVol ? 0x3FFF : channel->volR))/0x4000L;
 
     if (channel->reverb && !disableReverb)
     {

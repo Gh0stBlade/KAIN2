@@ -2265,6 +2265,14 @@ void Emulator_DoDebugKeys(int nKey, int down)
 				extern int32_t disableReverb;
 				disableReverb ^= 1;
 				break;
+			case SDL_SCANCODE_8:
+				extern int32_t disableADSR;
+				disableADSR ^= 1;
+				break;	
+			case SDL_SCANCODE_9:
+				extern int32_t disableChannelVol;
+				disableChannelVol ^= 1;
+				break;
 #endif
 		}
 	}
