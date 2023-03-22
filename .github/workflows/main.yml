@@ -12,7 +12,7 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - uses: actions/checkout@v3.3.0
+      - uses: actions/checkout@v3.4.0
         with:
            token: ${{secrets.PAT}}
            
@@ -34,7 +34,7 @@ jobs:
         run: copy ${{github.workspace}}/Build/Build_EMSDK/KAIN2/Game/KAIN2_Web.*  ${{github.workspace}}/Build/Build_EMSDK/KAIN2/Deploy/
         
       - name: Deploy to FTP
-        uses: dennisameling/ftp-upload-action@v1.0.8
+        uses: dennisameling/ftp-upload-action@v1.0.10
         with:
           server: ${{secrets.FTP_SERVER}}
           username: ${{secrets.FTP_USER}}
