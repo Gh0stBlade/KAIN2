@@ -62,7 +62,7 @@ int VSync(int mode)
 		
 		if (vsyncDelay == 0)
 		{
-			vsyncDelay = Emulator_GetTicks() + 5;
+			vsyncDelay = Emulator_GetTicks() + 2;
 
 			while (vsyncDelay >= Emulator_GetTicks())
 			{
