@@ -182,7 +182,7 @@ int32_t getInterp(struct Channel* channel)
 
 int32_t ADSR(struct Channel* channel)
 {
-    if (channel->silent == 2 && channel->data == NULL)
+    if (channel->silent == 2)
     {
         return 0;
     }
