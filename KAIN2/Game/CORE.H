@@ -357,7 +357,7 @@ struct _POLY_NG4
 };
 
 #if defined(PSX_VERSION) || defined(PSXPC_VERSION)
-#include "gex2.h"
+#include "GEX2.H"
 #include "VRAM.H"
 #include "Game/INSTANCE.H"//For struct LightInstance
 #endif
