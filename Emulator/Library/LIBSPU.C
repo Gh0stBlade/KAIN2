@@ -620,7 +620,6 @@ void SpuSetKey(long on_off, unsigned long voice_bit)
         {
             if (voice_bit & (1 << i))
             {
-                channelList[i]._adsr.state = RELEASE;
                 channelList[i].data = NULL;
             }
         }
@@ -1205,7 +1204,7 @@ int spu_setReverbAttr(short* revAttr)
 long SpuSetReverbModeType(long mode)
 {
     reverb.StartAddr = reverb.CurrAddr = _spu_rev_offsetaddr = _spu_rev_startaddr[mode];
-    spu_setReverbAttr(&reverbAttr[mode][0]);
+    spu_setReverbAttr(&reverbAttr[mode-1][0]);
     return 0;
 }
 
