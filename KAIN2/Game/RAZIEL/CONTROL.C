@@ -71,11 +71,9 @@ void GetPhysicsVelocity(struct _Instance* instance, SVECTOR* in_pos, SVECTOR* ou
 	UNIMPLEMENTED();
 }
 
-void InitExternalForces(struct __Force* Forces, int MaxForces)
+void InitExternalForces(struct __Force* Forces, int MaxForces)//Matching - 99.69%
 {
 	int i;
-
-	MaxForces -= 1;
 
 	for (i = MaxForces - 1; i != 0; i--)
 	{
@@ -83,7 +81,6 @@ void InitExternalForces(struct __Force* Forces, int MaxForces)
 		Forces[i].LinearForce.x = 0;
 		Forces[i].LinearForce.y = 0;
 		Forces[i].LinearForce.z = 0;
-		Forces[i].Type = 0;
 	}
 
 	ExternalForcesPtr = Forces;
