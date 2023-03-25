@@ -463,7 +463,7 @@ void StateHandlerIdle(struct __CharacterState* In, int CurrentSection, int Data)
 		}
 		case 0x100000:
  		{
-			DefaultStateHandler(In, CurrentSection, Data);
+			//DefaultStateHandler(In, CurrentSection, Data);
 			break;
 		}
 		case 0x100004:
@@ -1326,7 +1326,7 @@ void StateHandlerStartMove(struct __CharacterState* In, int CurrentSection, int 
 		}
 		default:
 			//loc_800AA7FC
-			//DefaultStateHandler(In, CurrentSection, Data);
+			DefaultStateHandler(In, CurrentSection, Data);
 			break;
 		}
 
@@ -5346,7 +5346,7 @@ void RazielAdditionalCollide(struct _Instance* instance, struct GameTracker* gam
 			Height = instance->oldPos.z - instance->position.z;
 		}
 
-		if ((PhysicsCheckGravity(instance, SetPhysicsGravityData(((short*)instance->matrix)[30] - (instance->matrix)->t[2], Height, 0, 0, 0, (short)Raziel.slipSlope), 7) & 0x1))
+		if ((PhysicsCheckGravity(instance, SetPhysicsGravityData((short)instance->matrix[1].t[2] - (instance->matrix)->t[2], Height, 0, 0, 0, (short)Raziel.slipSlope), 7) & 0x1))
 		{
 			Raziel.Senses.Flags |= 0x4;
 		}
@@ -5572,17 +5572,20 @@ void EnableWristCollision(struct _Instance *instance, int Side)
 	}
 }
 
-int GetCollisionType(struct _Instance* instance)//Matching - 86.82%
+int GetCollisionType(struct _Instance* instance)//Matching - 89.86%
 {
-	struct _CollideInfo* collideInfo;
-	struct _Instance* inst;
+	struct _CollideInfo* collideInfo; // $s0
+	struct _Instance* inst; // $v1
 
 	collideInfo = (struct _CollideInfo*)instance->collideInfo;
+
 	if (*(char*)((char*)collideInfo->prim0 + 4) == 9)
 	{
 		if (collideInfo->type1 != 3)
 		{
-			*(int*)((char*)collideInfo->inst1 + 20) |= 4u;
+			inst = (struct _Instance*)collideInfo->inst1;
+
+			inst->flags |= 4u;
 		}
 		else
 		{
@@ -5622,28 +5625,32 @@ int GetCollisionType(struct _Instance* instance)//Matching - 86.82%
 		}
 		else
 		{
-			inst = (struct _Instance*)(unsigned char)collideInfo->type0;
-			if (inst == (struct _Instance*)5)
-				return (ControlFlag & 0x8000000) != 0;
-			if (collideInfo->type1 == 5)
-				return (ControlFlag & 0x8000000) != 0;
-			if (inst == (struct _Instance*)2)
-				return (ControlFlag & 0x8000000) != 0;
-			if (collideInfo->type1 == 2)
-				return (ControlFlag & 0x8000000) != 0;
+			if (collideInfo->type0 == 5 || collideInfo->type1 == 5 || collideInfo->type0 == 2 || collideInfo->type1 == 2)
+			{
+				if ((ControlFlag & 0x8000000) != 0)
+				{
+					return 1;
+				}
+				else
+				{
+					return 0;
+				}
+			}
 		}
 	}
 	else
 	{
-		inst = (struct _Instance*)(unsigned char)collideInfo->type0;
-		if (inst == (struct _Instance*)5)
-			return (ControlFlag & 0x8000000) != 0;
-		if (collideInfo->type1 == 5)
-			return (ControlFlag & 0x8000000) != 0;
-		if (inst == (struct _Instance*)2)
-			return (ControlFlag & 0x8000000) != 0;
-		if (collideInfo->type1 == 2)
-			return (ControlFlag & 0x8000000) != 0;
+		if (collideInfo->type0 == 5 || collideInfo->type1 == 5 || collideInfo->type0 == 2 || collideInfo->type1 == 2)
+		{
+			if ((ControlFlag & 0x8000000) != 0)
+			{
+				return 1;
+			}
+			else
+			{
+				return 0;
+			}
+		}
 	}
 
 	return 0;
