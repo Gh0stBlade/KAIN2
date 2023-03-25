@@ -1,16 +1,16 @@
 #include "EMULATOR_SPU.H"
 #include "Core/Debug/EMULATOR_LOG.H"
 
-#define SND_SAMPLES     10
+#define SND_SAMPLES     1024
 #define PITCH_SHIFT     12
 #define VOL_SHIFT       15
 #define BLOCK_END       (28 << PITCH_SHIFT)
 #define REV_SAMPLES     1024*256
 REVERBInfo reverb;
 static int32_t reverbCounter = 0;
-int32_t gSamples[SND_SAMPLES];
+int32_t gSamples[SND_SAMPLES * 2];
 int32_t gReverbArea[REV_SAMPLES];
-int32_t sRVBStart[SND_SAMPLES * 2];
+int32_t sRVBStart[SND_SAMPLES * 2 * 4];
 int32_t SSumL[SND_SAMPLES];
 int32_t SSumR[SND_SAMPLES];
 static int32_t RateTableAdd[128];
@@ -388,19 +388,19 @@ static void s_buffer1(int iOff, int iVal)                // set_buffer (+1 sampl
 
 int32_t ReverbR()
 {
-    return clamp(reverb.iLastRVBRight);
+    int rvbR = reverb.iLastRVBRight + (reverb.iRVBRight - reverb.iLastRVBRight) / 2;
+    reverb.iLastRVBRight = reverb.iRVBRight;
+    return rvbR;
 }
 
 int32_t ReverbL(int32_t ns)
 {
-    if (reverbCounter++ % 2 == 0)
+    if ((++reverbCounter & 1))
     {
         int ACC0, ACC1, FB_A0, FB_A1, FB_B0, FB_B1;
 
         const int INPUT_SAMPLE_L = *(sRVBStart + (ns << 1));
         const int INPUT_SAMPLE_R = *(sRVBStart + (ns << 1) + 1);
-
-        eassert(ns < SND_SAMPLES);
 
         const int IIR_INPUT_A0 = (g_buffer(reverb.IIR_SRC_A0) * reverb.IIR_COEF) / 32768L + (INPUT_SAMPLE_L * reverb.IN_COEF_L) / 32768L;
         const int IIR_INPUT_A1 = (g_buffer(reverb.IIR_SRC_A1) * reverb.IIR_COEF) / 32768L + (INPUT_SAMPLE_R * reverb.IN_COEF_R) / 32768L;
@@ -498,16 +498,16 @@ int32_t vagProcessBlock(struct Channel* channel, int16_t* dst)
 
     if (flags & 1) // end
     {
-        if (flags & 2) // goto loop start
+        if (channel->loop)
         {
-            eassert(channel->loop);
             src = channel->loop;
             s1 = channel->loop_s1;
             s2 = channel->loop_s2;
         }
-        else
+
+        if (!(flags & 2)) // goto loop start
         {
-            return 0; // stop TODO Release
+            return 0;
         }
     }
 
@@ -623,11 +623,15 @@ void fillSamples(int16_t* buffer, int32_t count)
     int32_t i, ns;
     struct Channel* channel = NULL;
 
+    memset(buffer, 0, count*sizeof(int32_t));
     memset(&gSamples, 0, sizeof(gSamples));
     memset(&sRVBStart, 0, sizeof(sRVBStart));
 
     for(ns = 0; ns < SND_SAMPLES; ns++)
     {
+        SSumL[ns] = 0;
+        SSumR[ns] = 0;
+
         for (i = 0, channel = &channelList[i]; i < SPU_MAX_CHANNELS; i++, channel++)
         {
             if (!channel->data)
@@ -643,8 +647,8 @@ void fillSamples(int16_t* buffer, int32_t count)
 
     for (ns = 0; ns < SND_SAMPLES; ns++)
     {
-        *samples++ += (SSumL[ns] + ReverbL(ns));
-        *samples++ += (SSumR[ns] + ReverbR());
+        *samples++ = (SSumL[ns] + ReverbL(ns));
+        *samples++ = (SSumR[ns] + ReverbR());
 
         SSumL[ns] = 0;
         SSumR[ns] = 0;
@@ -679,6 +683,8 @@ void SPU_Initialise()
         channelList[i]._adsr.sustainlevel = 1024;
     }
 
+    memset(SSumR, 0, sizeof(SSumR));
+    memset(SSumL, 0, sizeof(SSumL));
     initADSR();
 
 #if defined(SDL2)
