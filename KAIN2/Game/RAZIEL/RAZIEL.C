@@ -595,11 +595,6 @@ void StateHandlerIdle(struct __CharacterState* In, int CurrentSection, int Data)
 		{
 			if (CurrentSection == 0)
 			{
-				eprinterr("Hack enabled (Glyph menu)!");
-				//START
-				Raziel.Senses.Flags |= 0x4;
-				//END
-
 				if ((Raziel.Senses.Flags & 0x4))
 				{
 					if ((Raziel.Senses.Flags & 0x80) || (gameTrackerX.streamFlags & 0x4))
