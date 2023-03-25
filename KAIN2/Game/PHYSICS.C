@@ -25,7 +25,6 @@ void SetNoPtCollideInFamily(struct _Instance* instance)
 	}
 }
 
-
 void ResetNoPtCollideInFamily(struct _Instance* instance)
 {
 	struct _Instance* child;
@@ -89,7 +88,7 @@ void PhysicsDefaultLinkedMoveResponse(struct _Instance *instance, struct evPhysi
 	UNIMPLEMENTED();
 }
 
-int PhysicsCheckGravity(struct _Instance* instance, int Data, short Mode)//Matching - 93.82%
+int PhysicsCheckGravity(struct _Instance* instance, int Data, short Mode)//Matching - 93.98%
 {
 	struct evPhysicsGravityData* Ptr;
 	SVECTOR D;
@@ -186,11 +185,11 @@ int PhysicsCheckGravity(struct _Instance* instance, int Data, short Mode)//Match
 	{
 		if (CInfo.wNormal.vz < Ptr->slipSlope && CInfo.wNormal.vz > 0)
 		{
-			N.vx = (-(CInfo.wNormal.vx * -(unsigned short)CInfo.wNormal.vz) < 0) ? ((-(CInfo.wNormal.vx * -(unsigned short)CInfo.wNormal.vz) + 0xFFF)) : ((-(CInfo.wNormal.vx * -(unsigned short)CInfo.wNormal.vz)));
+			N.vx = (-((unsigned short)CInfo.wNormal.vx * -(unsigned short)CInfo.wNormal.vz) < 0) ? ((-((unsigned short)CInfo.wNormal.vx * -(unsigned short)CInfo.wNormal.vz) + 0xFFF)) : ((-((unsigned short)CInfo.wNormal.vx * -(unsigned short)CInfo.wNormal.vz)));
 			N.vx >>= 12;
-			N.vy = (-(CInfo.wNormal.vy * -(unsigned short)CInfo.wNormal.vz) < 0) ? ((-(CInfo.wNormal.vy * -(unsigned short)CInfo.wNormal.vz) + 0xFFF)) : ((-(CInfo.wNormal.vy * -(unsigned short)CInfo.wNormal.vz)));
+			N.vy = (-((unsigned short)CInfo.wNormal.vy * -(unsigned short)CInfo.wNormal.vz) < 0) ? ((-((unsigned short)CInfo.wNormal.vy * -(unsigned short)CInfo.wNormal.vz) + 0xFFF)) : ((-((unsigned short)CInfo.wNormal.vy * -(unsigned short)CInfo.wNormal.vz)));
 			N.vy >>= 12;
-			N.vz = (-(CInfo.wNormal.vz * -(unsigned short)CInfo.wNormal.vz) < 0) ? ((-(CInfo.wNormal.vz * -(unsigned short)CInfo.wNormal.vz) + 0xFFF)) : ((-(CInfo.wNormal.vz * -(unsigned short)CInfo.wNormal.vz)));
+			N.vz = (-((unsigned short)CInfo.wNormal.vz * -(unsigned short)CInfo.wNormal.vz) < 0) ? ((-((unsigned short)CInfo.wNormal.vz * -(unsigned short)CInfo.wNormal.vz) + 0xFFF)) : ((-((unsigned short)CInfo.wNormal.vz * -(unsigned short)CInfo.wNormal.vz)));
 			N.vz >>= 12;
 
 			Dot = ((instance->zVel < -48) ? -instance->zVel : 48);
@@ -234,7 +233,7 @@ int PhysicsCheckGravity(struct _Instance* instance, int Data, short Mode)//Match
 		instance->cachedTFaceLevel = NULL;
 	}
 
-	if ((unsigned)((unsigned short)CInfo.type - 2) < 2 || CInfo.type == 5)
+	if ((unsigned)((unsigned short)CInfo.type - 2 < 2) || CInfo.type == 5)
 	{
 		if ((Mode & 0x7))
 		{
@@ -361,13 +360,13 @@ int PhysicsCheckGravity(struct _Instance* instance, int Data, short Mode)//Match
 
 			instance->bspTree = 0;
 		}
-	}
 
-	instance->attachedID = 0;
+		instance->attachedID = 0;
 
-	if ((Mode & 0x2))
-	{
-		INSTANCE_Post(instance, 0x4000001, Data);
+		if ((Mode & 0x2))
+		{
+			INSTANCE_Post(instance, 0x4000001, Data);
+		}
 	}
 
 	return rc;
@@ -898,11 +897,8 @@ void PhysicsMoveLocalZClamp(struct _Instance* instance, long segment, long time,
 	}
 }
 
-void PhysicsMove(struct _Instance* instance, struct _Position* position, long time)//Matching - 90.87%
+void PhysicsMove(struct _Instance* instance, struct _Position* position, long time)//Matching - 97.33%
 {
-	long _xVel;
-	long _yVel;
-	long _zVel;
 	long xVel;
 	long yVel;
 	long zVel;
@@ -912,60 +908,74 @@ void PhysicsMove(struct _Instance* instance, struct _Position* position, long ti
 	long x;
 	long y;
 	long z;
+	long _x;
+	long _y;
+	long _z;
 
-	_xVel = xVel = instance->xVel;
-	_yVel = yVel = instance->yVel;
-	_zVel = zVel = instance->zVel;
+	xVel = instance->xVel;
+	yVel = instance->yVel;
+	zVel = instance->zVel;
 
-	xat = (instance->xAccl * time) < 0 ? ((instance->xAccl * time) + 0xFFF) : (instance->xAccl * time);
-	xat >>= 12;
-	yat = (instance->yAccl * time) < 0 ? ((instance->yAccl * time) + 0xFFF) : (instance->yAccl * time);
-	yat >>= 12;
-	zat = (instance->zAccl * time) < 0 ? ((instance->zAccl * time) + 0xFFF) : (instance->zAccl * time);
-	zat >>= 12;
+	_x = (instance->xAccl * time) < 0 ? ((instance->xAccl * time) + 0xFFF) : (instance->xAccl * time);
+	xat = _x >> 12;
+	_y = (instance->yAccl * time) < 0 ? ((instance->yAccl * time) + 0xFFF) : (instance->yAccl * time);
+	yat = _y >> 12;
+	_z = (instance->zAccl * time) < 0 ? ((instance->zAccl * time) + 0xFFF) : (instance->zAccl * time);
+	zat = _z >> 12;
 
 	xVel = (xVel * time) < 0 ? ((xVel * time) + 0xFFF) : (xVel * time);
 	xVel >>= 12;
-	x = (xat * time) < 0 ? (((xat * time) + 0x1FFF)) : (xat * time);
-	x >>= 13;
+	_x = (xat * time) < 0 ? (((xat * time) + 0x1FFF)) : (xat * time);
+	x = _x >> 13;
 	position->x += xVel + x;
 
 	yVel = (yVel * time) < 0 ? ((yVel * time) + 0xFFF) : (yVel * time);
 	yVel >>= 12;
-	y = (yat * time) < 0 ? (((yat * time) + 0x1FFF)) : (yat * time);
-	y >>= 13;
+	_y = (yat * time) < 0 ? (((yat * time) + 0x1FFF)) : (yat * time);
+	y = _y >> 13;
 	position->y += yVel + y;
 
 	zVel = (zVel * time) < 0 ? ((zVel * time) + 0xFFF) : (zVel * time);
 	zVel >>= 12;
-	z = (zat * time) < 0 ? (((zat * time) + 0x1FFF)) : (zat * time);
-	z >>= 13;
-	position->z += zVel + z;
+	_z = (zat * time) < 0 ? (((zat * time) + 0x1FFF)) : (zat * time);
+	z = _z >> 13;
+	position->z += z + zVel;
 
-	_xVel += xat;
-	_yVel += yat;
-	_zVel += zat;
+	xVel += xat;
+	yVel += yat;
+	zVel += zat;
 
-	if (instance->maxXVel < _xVel || _xVel < -instance->maxXVel)
+	if (instance->maxXVel < xVel)
 	{
-		_xVel = instance->maxXVel;
+		xVel = instance->maxXVel;
+	}
+	else if (xVel < -instance->maxXVel)
+	{
+		xVel = -instance->maxXVel;
 	}
 
-	if (instance->maxYVel < _yVel || _yVel < -instance->maxYVel)
+	if (instance->maxYVel < yVel)
 	{
-		_yVel = instance->maxYVel;
+		yVel = instance->maxYVel;
+	}
+	else if (yVel < -instance->maxYVel)
+	{
+		yVel = -instance->maxYVel;
 	}
 
-	if (instance->maxZVel < _zVel || _zVel < -instance->maxZVel)
+	if (instance->maxZVel < zVel)
 	{
-		_zVel = instance->maxZVel;
+		zVel = instance->maxZVel;
+	}
+	else if (zVel < -instance->maxZVel)
+	{
+		zVel = -instance->maxZVel;
 	}
 
-	instance->xVel = _xVel;
-	instance->yVel = _yVel;
-	instance->zVel = _zVel;
+	instance->xVel = xVel;
+	instance->yVel = yVel;
+	instance->zVel = zVel;
 }
-
 
 // autogenerated function stub: 
 // void /*$ra*/ PhysicsSetVelFromZRot(struct _Instance *instance /*$s2*/, short angle /*$a1*/, long magnitude /*$s1*/)
@@ -1131,7 +1141,3 @@ void PHYSICS_GenericLineCheckMask(struct _Instance *instance, MATRIX *transMat, 
 { // line 3057, offset 0x80077e0c
 	UNIMPLEMENTED();
 }
-
-
-
-
