@@ -148,6 +148,13 @@ struct LightList
 	struct LightGroup* lightGroupList; // size=64, offset=8
 };
 
+struct _HotSpot {
+	short x; // size=0, offset=0
+	short y; // size=0, offset=2
+	short z; // size=0, offset=4
+	short id; // size=0, offset=6
+};
+
 struct Level // hashcode: 0x012B0198 (dec: 19595672)
 {
 	struct _Terrain* terrain; // size=84, offset=0
