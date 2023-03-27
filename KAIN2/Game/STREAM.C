@@ -3630,7 +3630,7 @@ int AddClippedTri(SVECTOR* iv, PSX_RECT* cliprect, int *minz)
 	return 1;
 }
 
-int STREAM_GetClipRect(struct StreamUnitPortal *portal, PSX_RECT *rect)
+int STREAM_GetClipRect(struct StreamUnitPortal* portal, PSX_RECT* rect)//Matching - 83.29%
 {
 	int v1x;
 	int v1y;
@@ -3655,29 +3655,28 @@ int STREAM_GetClipRect(struct StreamUnitPortal *portal, PSX_RECT *rect)
 	int dot;
 
 	fullscreen_flag = 0;
-
 	horizontal_flag = 0;
 
 	if (portal->t1[0].z == portal->t1[1].z)
 	{
-		horizontal_flag = (portal->t1[0].z ^ portal->t1[2].z) < 1;
+		horizontal_flag = (portal->t1[0].z == portal->t1[2].z);
 	}
-	
+
 	v1y = portal->t1[0].y - portal->t1[1].y;
 	v2z = portal->t1[0].z - portal->t1[2].z;
 	v1z = portal->t1[0].z - portal->t1[1].z;
 	v2y = portal->t1[0].y - portal->t1[2].y;
-	v2x = portal->t1[0].x - portal->t1[2].x;
 	v1x = portal->t1[0].x - portal->t1[1].x;
+	v2x = portal->t1[0].x - portal->t1[2].x;
 
 	nx = ((v1y * v2z) - (v2y * v1z)) >> 12;
 	ny = ((v2x * v1z) - (v1x * v2z)) >> 12;
-	nz = ((v2x * v1y) - (v2x * v1y)) >> 12;
+	nz = ((v1x * v2y) - (v2x * v1y)) >> 12;
 
 	side = -(((portal->t1[0].x - theCamera.core.position.x) * nx) + ((portal->t1[0].y - theCamera.core.position.y) * ny) + ((portal->t1[0].z - theCamera.core.position.z) * nz));
-	
+
 	len = MATH3D_FastSqrt((nx * nx) + (ny * ny) + (nz * nz));
-	
+
 	if (ABS(side) < len)
 	{
 		v1y = portal->t2[0].y - portal->t2[1].y;
@@ -3692,7 +3691,7 @@ int STREAM_GetClipRect(struct StreamUnitPortal *portal, PSX_RECT *rect)
 		nz2 = ((v1x * v2y) - (v2x * v1y)) >> 12;
 
 		side2 = -(((portal->t2[0].x - theCamera.core.position.x) * nx2) + ((portal->t2[0].y - theCamera.core.position.y) * ny2) + ((portal->t2[0].z - theCamera.core.position.z) * nz2));
-		
+
 		MATH3D_FastSqrt((nx2 * nx2) + (ny2 * ny2) + (nz2 * nz2));
 
 		if (side < side2)
@@ -3755,8 +3754,8 @@ int STREAM_GetClipRect(struct StreamUnitPortal *portal, PSX_RECT *rect)
 				rect->x = 0;
 				rect->y = 0;
 				rect->w = SCREEN_WIDTH;
-				rect->y = SCREEN_HEIGHT;
-				
+				rect->h = SCREEN_HEIGHT;
+
 				return 1;
 			}
 		}
@@ -3786,7 +3785,9 @@ int STREAM_GetClipRect(struct StreamUnitPortal *portal, PSX_RECT *rect)
 
 		if (horizontal_flag != 0)
 		{
-			if (ABS(side) < len)
+			side = ABS(side);
+
+			if (side < len)
 			{
 				if (nz > 0)
 				{
@@ -3794,15 +3795,14 @@ int STREAM_GetClipRect(struct StreamUnitPortal *portal, PSX_RECT *rect)
 				}
 				else
 				{
-					rect->h += rect->y;
+					rect->h = rect->y + rect->h;
+					rect->y = 0;
 				}
-
 			}
 		}
 
 		if (rect->w > 0)
 		{
-
 			return (0 < rect->h);
 		}
 	}
