@@ -414,7 +414,11 @@ void LOAD_ProcessReadQueue()
 				loadStatus.state = 0;
 				CdReset(0);
 				LOAD_InitCdStreamMode();
+#if defined(PSXPC_VERSION)
+				loadStatus.state = 5;
+#else
 				loadStatus.state = 1;
+#endif
 				CdIntToPos(loadStatus.currentSector, &loc);
 				CdControl(CdlReadN, &loc.minute, NULL);
 				loadStatus.cdWaitTime = TIMER_GetTimeMS();
@@ -1102,8 +1106,8 @@ void LOAD_CleanUpBuffers()
 void* LOAD_InitBuffers()
 {
 #if defined(PSXPC_VERSION)
-	loadStatus.buffer1 = MEMPACK_Malloc(2048*512, 0x23);
-	loadStatus.buffer2 = MEMPACK_Malloc(2048*512, 0x23);
+	loadStatus.buffer1 = MEMPACK_Malloc(2048*256, 0x23);
+	loadStatus.buffer2 = MEMPACK_Malloc(2048*256, 0x23);
 #else
 	loadStatus.buffer1 = MEMPACK_Malloc(2048, 0x23);
 	loadStatus.buffer2 = MEMPACK_Malloc(2048, 0x23);
