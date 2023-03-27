@@ -339,9 +339,38 @@ void COLLIDE_UpdateAllTransforms(struct _Instance* instance, SVECTOR* offset)//M
 	}
 }
 
-void COLLIDE_MoveAllTransforms(struct _Instance* instance, struct _Position* offset)
+void COLLIDE_MoveAllTransforms(struct _Instance* instance, struct _Position* offset)//Matching - 100%
 {
-	UNIMPLEMENTED();
+	MATRIX* swTransform;
+	int i;
+	long numMatrices;
+	long ox;
+	long oy;
+	long oz;
+
+	if (instance->oldMatrix != NULL)
+	{
+		ox = offset->x;
+		oy = offset->y;
+		oz = offset->z;
+
+		if (instance->object->animList != NULL && !(instance->object->oflags2 & 0x40000000))
+		{
+			swTransform = instance->oldMatrix - 1;
+			numMatrices = instance->object->modelList[instance->currentModel]->numSegments + 1;
+		}
+		else
+		{
+			swTransform = instance->oldMatrix;
+			numMatrices = instance->object->modelList[instance->currentModel]->numSegments;
+		}
+		for (i = numMatrices; i != 0; i--, swTransform++)
+		{
+			swTransform->t[0] += ox;
+			swTransform->t[1] += oy;
+			swTransform->t[2] += oz;
+		}
+	}
 }
 
 long COLLIDE_WithinYZBounds(struct _SVector* point, struct _HBox* hbox)//Matching - 86.52%
