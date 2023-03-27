@@ -806,7 +806,7 @@ void aadRelocateMusicMemoryBegin()
 	aadMem->flags |= 0x2;
 }
 
-void aadRelocateMusicMemoryEnd(struct MemHeader* newAddress, long offset)
+void aadRelocateMusicMemoryEnd(struct MemHeader* newAddress, long offset)//Matching - 91.40%
 {
 	int bank;
 	int slotNumber;
@@ -821,24 +821,24 @@ void aadRelocateMusicMemoryEnd(struct MemHeader* newAddress, long offset)
 		{
 			bankHdr = aadMem->dynamicSoundBankHdr[bank];
 
-			aadMem->dynamicSoundBankData[bank] = ((unsigned char*)newAddress) + offset;
+			aadMem->dynamicSoundBankHdr[bank] = (struct AadSoundBankHdr*)((char*)aadMem->dynamicSoundBankHdr[bank] + offset);
 
-			aadMem->dynamicProgramAtr[bank] = (struct AadProgramAtr*)((unsigned char*)aadMem->dynamicProgramAtr[bank]) + offset;
+			aadMem->dynamicSoundBankData[bank] = (unsigned char*)((char*)aadMem->dynamicSoundBankData[bank] + offset);
 
-			aadMem->dynamicSoundBankHdr[bank] = (struct AadSoundBankHdr*)((unsigned char*)bank) + offset;
+			aadMem->dynamicWaveAddr[bank] = (unsigned long*)((char*)aadMem->dynamicWaveAddr[bank] + offset);
 
-			aadMem->dynamicToneAtr[bank] = (struct AadToneAtr*)((unsigned char*)aadMem->dynamicToneAtr[bank]) + offset;
+			aadMem->dynamicProgramAtr[bank] = (struct AadProgramAtr*)((char*)aadMem->dynamicProgramAtr[bank] + offset);
 
-			aadMem->dynamicWaveAddr[bank] = (unsigned long*)((unsigned char*)aadMem->dynamicWaveAddr[bank]) + offset;
+			aadMem->dynamicToneAtr[bank] = (struct AadToneAtr*)((char*)aadMem->dynamicToneAtr[bank] + offset);
 
-			aadMem->dynamicSequenceAddressTbl[bank] = (unsigned char**)((unsigned char*)aadMem->dynamicSequenceAddressTbl[bank]) + offset;
+			aadMem->dynamicSequenceAddressTbl[bank] = (unsigned char**)((char*)aadMem->dynamicSequenceAddressTbl[bank] + offset);
 
 			for (i = 0; i < bankHdr->numSequences; i++)
 			{
 				aadMem->dynamicSequenceAddressTbl[bank][i] += offset;
 			}
 
-			aadMem->dynamicSequenceLabelOffsetTbl[0] = (unsigned long*)((unsigned char*)aadMem->dynamicSequenceLabelOffsetTbl[bank]) + offset;
+			aadMem->dynamicSequenceLabelOffsetTbl[bank] = (unsigned long*)((char*)aadMem->dynamicSequenceLabelOffsetTbl[bank] + offset);;
 
 			for (slotNumber = 0; slotNumber < aadMem->numSlots; slotNumber++)
 			{
@@ -852,22 +852,22 @@ void aadRelocateMusicMemoryEnd(struct MemHeader* newAddress, long offset)
 						{
 							slot->sequencePosition[track] += offset;
 
-							if (slot->loopCurrentNestLevel[track] != 0)
+							for (i = 0; i < slot->loopCurrentNestLevel[track]; i++)
 							{
-								for (i = 0; i < slot->loopCurrentNestLevel[track]; i++)
-								{
-									slot->loopSequencePosition[i][track] += offset;
-								}
+								slot->loopSequencePosition[i][track] += offset;
 							}
 						}
 					}
 				}
 			}
+
+			break;
 		}
 	}
 
 	aadMem->flags &= 0xFFFFFFFD;
 }
+
 
 void aadRelocateSfxMemory(void *oldAddress, int offset)
 {
