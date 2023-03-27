@@ -2743,7 +2743,7 @@ long COLLIDE_LineWithSignals(struct _SVector* startPoint, struct _SVector* endPo
 	int v30; // $v0
 	short* v31; // $v1
 	short v32; // $v0
-	int v33; // $a0
+	struct _SVector* v33; // $a0
 	int v37; // $v1
 	int y; // $v0
 	int v39; // $a1
@@ -2769,21 +2769,25 @@ long COLLIDE_LineWithSignals(struct _SVector* startPoint, struct _SVector* endPo
 	CSpad->normalList = (short*)terrain->normalList;
 	CSpad->vertexList = terrain->vertexList;
 
-	CSpad->oldPos.x = startPoint->x;
-	CSpad->oldPos.z = startPoint->z;
-
-	CSpad->newPos.x = endPoint->x;
-	CSpad->newPos.z = endPoint->z;
+	CSpad->oldPos = *startPoint;
+	CSpad->newPos = *endPoint;
 
 	numSignalsCollidedWith = 0;
 
-	if (gameTrackerX.gameData.asmData.MorphTime == 1000)
+	if (gameTrackerX.gameData.asmData.MorphTime != 1000)
 	{
-		CSpad->in_spectral = gameTrackerX.gameData.asmData.MorphType == 1;
+		CSpad->in_spectral = 2;
 	}
 	else
 	{
-		CSpad->in_spectral = 2;
+		if (gameTrackerX.gameData.asmData.MorphType == 1)
+		{
+			CSpad->in_spectral = 1;
+		}
+		else
+		{
+			CSpad->in_spectral = 0;
+		}
 	}
 
 	CSpad->line.x = CSpad->oldPos.x - CSpad->newPos.x;
@@ -2797,7 +2801,6 @@ long COLLIDE_LineWithSignals(struct _SVector* startPoint, struct _SVector* endPo
 		v52 = 0;
 		if (terrain->numBSPTrees > 0)
 		{
-			p_dpv = &CSpad->dpv;
 			v12 = 0;
 			do
 			{
@@ -2821,108 +2824,100 @@ long COLLIDE_LineWithSignals(struct _SVector* startPoint, struct _SVector* endPo
 					CSpad->oldPos.y -= _y1;
 					CSpad->oldPos.z -= _z1;
 
-					*++stack = *(void **)(&terrain->BSPTreeArray[v12]);
+					*++stack = *(void**)(&terrain->BSPTreeArray[v12]);
 
 					CSpad->posMatrix.m[0][0] = CSpad->newPos.x;
-					CSpad->posMatrix.m[1][1] = CSpad->newPos.y;
+					CSpad->posMatrix.m[0][1] = CSpad->newPos.y;
 					CSpad->posMatrix.m[0][2] = CSpad->newPos.z;
 					CSpad->posMatrix.m[1][0] = CSpad->oldPos.x;
 					CSpad->posMatrix.m[1][1] = CSpad->oldPos.y;
 					CSpad->posMatrix.m[1][2] = CSpad->oldPos.z;
 
-					v53 = p_dpv;
 					SetRotMatrix(&CSpad->posMatrix);
-					p_dpv = v53;
 					while (*stack != stack)
 					{
 						bspNode = (struct _BSPNode*)*stack;
 						if (*((short*)*stack-- + 7) & 2)
 						{
-							front_high = ((unsigned short*)bspNode->front)[0];
+							front_high = ((short*)&bspNode->front)[1];
 							if (front_high >= CSpad->newPos.x || front_high >= CSpad->oldPos.x)
 							{
-								d_low = ((unsigned short*)bspNode->d)[1];
+								d_low = ((short*)&bspNode->d)[0];
 								if (CSpad->newPos.x >= d_low || CSpad->oldPos.x >= d_low)
 								{
-									back_low = ((unsigned short*)bspNode->back)[1];
+									back_low = ((short*)&bspNode->back)[0];
 									if (back_low >= CSpad->newPos.y || back_low >= CSpad->oldPos.y)
 									{
-										d_high = ((unsigned short*)bspNode->d)[0];
+										d_high = ((short*)&bspNode->d)[1];
 										if (CSpad->newPos.y >= d_high || CSpad->oldPos.y >= d_high)
 										{
-											back_high = ((unsigned short*)bspNode->back)[0];
+											back_high = ((short*)&bspNode->back)[1];
 											if (back_high >= CSpad->newPos.z || back_high >= CSpad->oldPos.z)
 											{
-												front_low = ((unsigned short*)bspNode->front)[1];
+												front_low = ((short*)&bspNode->front)[0];
 												if (CSpad->newPos.z >= front_low || CSpad->oldPos.z >= front_low)
 												{
 													CSpad->i = bspNode->c;
 													tface = *(struct _TFace**)&bspNode->a;
-													p_textoff = &tface->textoff;
 													if (CSpad->i)
 													{
 														do
 														{
-															if ((*(p_textoff - 2) & 0xC0) != 0 && (unsigned short)*p_textoff != 0xFFFF)
+															if ((((unsigned short*)&tface->attr)[0] & 0xC0) != 0 && tface->textoff != 0xFFFF)
 															{
-																v27 = *(p_textoff - 1);
-																if (v27 < 0)
+																v27 = (short)tface->normal;
+																if (v27 >= 0)
 																{
-																	v31 = (short*)(*(unsigned int*)CSpad->normalList - 6 * v27);
-																	v32 = *v31++;
-																	CSpad->normal.x = -(v32 & 0x1FFF);
-																	CSpad->normal.y = -*v31;
-																	v30 = -(unsigned short)v31[1];
-																}
-																else
-																{
-																	v28 = (short*)(*(unsigned int*)CSpad->normalList + 6 * v27);
+																	v28 = &CSpad->normalList[3 * v27];
 																	v29 = *v28++;
 																	CSpad->normal.x = v29 & 0x1FFF;
 																	CSpad->normal.y = *v28;
 																	v30 = v28[1];
 																}
+																else
+																{
+																	v31 = &CSpad->normalList[3 * -v27];
+																	v32 = *v31++;
+																	CSpad->normal.x = -(v32 & 0x1FFF);
+																	CSpad->normal.y = -*v31;
+																	v30 = -(unsigned short)v31[1];
+																}
 																CSpad->normal.z = v30;
-																//                              v33 = dword_1F8000A0 + 12 * *(unsigned short *)tface->face.gap0;
 
-																gte_ldv0(&bspNode->a);
+
+																v33 = (struct _SVector*)&CSpad->vertexList[tface->face.v0];
+
+																gte_ldv2_ext(v33);
+																gte_ldv0(&CSpad->normal);
 																gte_rtv0();
 																gte_stlvnl(&CSpad->dpv);
 
 																CSpad->dpv.x -= CSpad->dpv.z;
-																v37 = CSpad->dpv.y - CSpad->dpv.z;
 																CSpad->dpv.y -= CSpad->dpv.z;
-																if (CSpad->dpv.x < 0 && v37 >= 0)
+																if (CSpad->dpv.x < 0 && CSpad->dpv.y - CSpad->dpv.z >= 0)
 																{
-																	y = p_dpv->y;
-																	if (CSpad->dpv.x == y)
-																		v39 = 0;
-																	else
-																		v39 = (y << 12) / (CSpad->dpv.x - y);
+																	v39 = (CSpad->dpv.x - CSpad->dpv.y != 0) ? (CSpad->dpv.y << 12) / (CSpad->dpv.x - CSpad->dpv.y) : 0;
+
 																	CSpad->planePoint.x = CSpad->oldPos.x + ((CSpad->line.x * v39) >> 12);
 																	CSpad->planePoint.y = CSpad->oldPos.y + ((CSpad->line.y * v39) >> 12);
 																	CSpad->planePoint.z = CSpad->oldPos.z + ((CSpad->line.z * v39) >> 12);
-																	v54 = p_dpv;
 																	v40 = COLLIDE_PointInTriangle(
-																		(struct _SVector*)v33,
-																		(struct _SVector*)(CSpad->normalList + 12 * (unsigned short)*(p_textoff - 4)),
-																		(struct _SVector*)(CSpad->normalList + 12 * (unsigned short)*(p_textoff - 3)),
+																		(struct _SVector*)(v33),
+																		(struct _SVector*)(&CSpad->vertexList[tface->face.v1]),
+																		(struct _SVector*)(&CSpad->vertexList[tface->face.v2]),
 																		&CSpad->planePoint,
 																		&CSpad->normal);
-																	p_dpv = v54;
 																	if (v40)
 																	{
 																		v41 = numSignalsCollidedWith;
 																		if (numSignalsCollidedWith < maxSignals)
 																		{
 																			++numSignalsCollidedWith;
-																			signalList[v41] = (struct _MultiSignal*)(*(unsigned int*)&terrain[1].UnitChangeFlags
-																				+ (unsigned short)*p_textoff);
+																			signalList[v41] = (struct _MultiSignal*)((char*)terrain->signals + (unsigned short)tface->textoff);
 																		}
 																	}
 																}
 															}
-															p_textoff += 6;
 															++tface;
 														} while (CSpad->i-- != 1);
 													}
@@ -2986,7 +2981,7 @@ long COLLIDE_LineWithSignals(struct _SVector* startPoint, struct _SVector* endPo
 					CSpad->oldPos.y += _y1;
 					CSpad->oldPos.z += _z1;
 				}
-				v12 += 36;
+				v12++;
 				++v52;
 			} while (v52 < terrain->numBSPTrees);
 		}
@@ -3051,7 +3046,7 @@ void COLLIDE_InstanceTerrainSignal(struct _Instance* instance, struct Level* lev
 	}
 }
 
-struct _StreamUnit* COLLIDE_CameraWithStreamSignals(struct Camera* camera)
+struct _StreamUnit* COLLIDE_CameraWithStreamSignals(struct Camera* camera)//Matching - 88.91%
 {
 	struct _SVector startPoint;
 	struct _SVector endPoint;
@@ -3059,9 +3054,9 @@ struct _StreamUnit* COLLIDE_CameraWithStreamSignals(struct Camera* camera)
 	long numSignals;
 	long i;
 	long numStreamSignals;
-	struct _MultiSignal (*signalListArray[8]);
-	struct _StreamUnit (*streamSignalUnits[8]);
-	struct _StreamUnit *playerStreamUnit;
+	struct _MultiSignal(*signalListArray[8]);
+	struct _StreamUnit(*streamSignalUnits[8]);
+	struct _StreamUnit* playerStreamUnit;
 	struct Level* level;
 	long playerStreamUnitID;
 	struct _Instance* instance;
@@ -3069,7 +3064,7 @@ struct _StreamUnit* COLLIDE_CameraWithStreamSignals(struct Camera* camera)
 	struct _MultiSignal* msignal;
 	long isWarpGateSignal;
 	struct _StreamUnit* cameraStreamUnit;
-	long cameraStreamID;	
+	long cameraStreamID;
 	int number;
 
 	instance = camera->focusInstance;
@@ -3087,9 +3082,7 @@ struct _StreamUnit* COLLIDE_CameraWithStreamSignals(struct Camera* camera)
 
 	playerStreamUnit = STREAM_GetStreamUnitWithID(playerStreamUnitID);
 
-	endPoint.x = camera->core.position.x;
-	endPoint.y = camera->core.position.y;
-	endPoint.z = camera->core.position.z;
+	endPoint = *(struct _SVector*)&camera->core.position;
 
 	if (instance->matrix != NULL)
 	{
@@ -3105,33 +3098,27 @@ struct _StreamUnit* COLLIDE_CameraWithStreamSignals(struct Camera* camera)
 			}
 			else
 			{
-				startPoint.x = instance->position.x;
-				startPoint.y = instance->position.y;
-				startPoint.z = instance->position.z;
+				startPoint = *(struct _SVector*)&instance->position;
 			}
 		}
 		else
 		{
-			startPoint.x = instance->position.x;
-			startPoint.y = instance->position.y;
-			startPoint.z = instance->position.z;
+			startPoint = *(struct _SVector*)&instance->position;
 		}
 	}
 	else
 	{
-		startPoint.x = instance->position.x;
-		startPoint.y = instance->position.y;
-		startPoint.z = instance->position.z;
+		startPoint = *(struct _SVector*)&instance->position;
 	}
 
 	level = playerStreamUnit->level;
 	numStreamSignals = 0;
-	
+
 	if (level != NULL)
 	{
 		numSignals = COLLIDE_LineWithSignals(&startPoint, &endPoint, signalListArray, 8, level);
 
-		for(i = 0; i < numSignals; i++)
+		for (i = 0; i < numSignals; i++)
 		{
 			if (SIGNAL_IsStreamSignal(signalListArray[i]->signalList, &isWarpGateSignal) != 0)
 			{
@@ -3157,7 +3144,7 @@ struct _StreamUnit* COLLIDE_CameraWithStreamSignals(struct Camera* camera)
 				}
 				else
 				{
-					signalListArray[i]->signalList->data.StreamLevel.streamID;
+					cameraStreamID = signalListArray[i]->signalList->data.StreamLevel.streamID;
 				}
 
 				if (cameraStreamID != 0)
