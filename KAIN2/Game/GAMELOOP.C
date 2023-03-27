@@ -104,8 +104,14 @@ void GAMELOOP_InitGameTracker()
 { 
 	int i;
 
+#if defined(PSXPC_VERSION)
+	primPool[0]->lastPrim = &primPool[0]->prim[23990*2];
+	primPool[1]->lastPrim = &primPool[1]->prim[23990*2];
+#else
 	primPool[0]->lastPrim = &primPool[0]->prim[23990];
 	primPool[1]->lastPrim = &primPool[1]->prim[23990];
+#endif
+
 	primPool[0]->nextPrim = &primPool[0]->prim[0];
 	primPool[1]->nextPrim = &primPool[1]->prim[0];
 
@@ -1246,15 +1252,9 @@ void GAMELOOP_DisplayFrame(struct GameTracker* gameTracker)
 
 		GAMELOOP_SetupRenderFunction(&gameTrackerX);
 
-		if(!(GlobalSave->flags & 0x1))
+		if (!(GlobalSave->flags & 0x1) && (gameTracker->wipeType != 11 || gameTracker->wipeTime == 0) && (gameTracker->debugFlags2 & 0x800))
 		{
-			if (gameTracker->wipeType == 11 || gameTracker->wipeTime == 0)
-			{
-				if ((gameTracker->debugFlags2 & 0x800))
-				{
-					FX_Spiral(gameTrackerX.primPool, drawot);
-				}
-			}
+			FX_Spiral(gameTrackerX.primPool, drawot);
 		}
 
 		if (pause_redraw_flag == 0)
@@ -1265,7 +1265,7 @@ void GAMELOOP_DisplayFrame(struct GameTracker* gameTracker)
 		mainStreamUnit = GAMELOOP_GetMainRenderUnit();
 		mainLevel = mainStreamUnit->level;
 
-		if((gameTracker->debugFlags & 0x4))
+		if ((gameTracker->debugFlags & 0x4))
 		{
 			FONT_Print("Cameraunit: %s\n", mainLevel->worldName);
 		}
@@ -1297,118 +1297,89 @@ void GAMELOOP_DisplayFrame(struct GameTracker* gameTracker)
 		}
 
 		numportals = ((int*)mainLevel->terrain->StreamUnits)[0];
-		streamPortal = (struct StreamUnitPortal*)((char*)mainLevel->terrain->StreamUnits + 0x4);
+		streamPortal = (struct StreamUnitPortal*)((long*)(mainLevel->terrain->StreamUnits) + 1);
 
-		if (numportals > 0)
+		for (d = 0; d < numportals; d++, streamPortal++)
 		{
-			for (d = 0; d < numportals; d++, streamPortal++)
+			toStreamUnit = streamPortal->toStreamUnit;
+			toStreamUnitID = streamPortal->streamID;
+
+			if (toStreamUnit == NULL || toStreamUnit->FrameCount != gameTrackerX.displayFrameCount)
 			{
-				toStreamUnit = streamPortal->toStreamUnit;
-				toStreamUnitID = ((int*)mainLevel->terrain->StreamUnits + 6)[0];
-				
-				if (toStreamUnit == NULL || toStreamUnit->FrameCount != gameTrackerX.displayFrameCount)
+				cliprect.x = SCREEN_WIDTH;
+				cliprect.y = SCREEN_HEIGHT;
+				cliprect.w = -SCREEN_WIDTH;
+				cliprect.h = -SCREEN_HEIGHT;
+
+				theCamera.core.rightX = 320;
+				theCamera.core.leftX = 0;
+				theCamera.core.topY = 0;
+				theCamera.core.bottomY = 240;
+
+				CAMERA_SetViewVolume(&theCamera);
+
+				draw = 0;
+
+				for (i = 0; i < numportals; i++)
 				{
-					cliprect.x = SCREEN_WIDTH;
-					cliprect.y = SCREEN_HEIGHT;
-					cliprect.w = -SCREEN_WIDTH;
-					cliprect.h = -SCREEN_HEIGHT;
+					streamPortal2 = (struct StreamUnitPortal*)(&((int*)mainLevel->terrain->StreamUnits)[1]) + i;
 
-					theCamera.core.rightX = 320;
-					theCamera.core.leftX = 0;
-					theCamera.core.topY = 0;
-					theCamera.core.bottomY = 240;
-
-					CAMERA_SetViewVolume(&theCamera);
-
-					draw = 0;
-					
-					if (numportals > 0)
+					if (streamPortal2->streamID == toStreamUnitID)
 					{
-						for (i = 0; i < numportals; i++)
+						if (STREAM_GetClipRect(streamPortal2, &cliprect) != 0)
 						{
-							streamPortal2 = (struct StreamUnitPortal*)(&((int*)mainLevel->terrain->StreamUnits)[1]) + i;
+							draw = 1;
+						}
+						else if ((theCamera.instance_mode & 0x2000000))
+						{
+							streamID = streamPortal2->toStreamUnit->StreamUnitID;
+							INSTANCE_Query(gameTrackerX.playerInstance, 0x22);
 
-							if (streamPortal2->streamID == toStreamUnitID)
+							if (streamID == gameTrackerX.playerInstance->currentStreamUnitID || streamPortal2->toStreamUnit != NULL && *(int*)&streamPortal2->toStreamUnit->TargetFogFar == streamID)
 							{
-								if (STREAM_GetClipRect(streamPortal2, &cliprect) != 0)
-								{
-									draw = 1;
-								}
-								else if ((theCamera.instance_mode & 0x2000000))
-								{
-									streamID = streamPortal2->toStreamUnit->StreamUnitID;
-									INSTANCE_Query(gameTrackerX.playerInstance, 0x22);
+								draw = 1;
 
-									if (streamID == gameTrackerX.playerInstance->currentStreamUnitID || streamPortal2->toStreamUnit != NULL && *(int*)&streamPortal2->toStreamUnit->TargetFogFar == streamID)
-									{
-										draw = 1;
-									
-										cliprect.w = SCREEN_WIDTH;
-										cliprect.x = 0;
-										cliprect.y = 0;
-										cliprect.h = SCREEN_HEIGHT;
-									}
-								}
+								cliprect.w = SCREEN_WIDTH;
+								cliprect.x = 0;
+								cliprect.y = 0;
+								cliprect.h = SCREEN_HEIGHT;
 							}
 						}
 					}
+				}
 
-					if (draw != 0)
+				if (draw != 0)
+				{
+					theCamera.core.leftX = 320 * cliprect.x / 512;
+					theCamera.core.topY = cliprect.y;
+					theCamera.core.rightX = 320 * (cliprect.x + cliprect.w) / 512;
+					theCamera.core.bottomY = cliprect.y + cliprect.h;
+
+					CAMERA_SetViewVolume(&theCamera);
+
+					SetRotMatrix(theCamera.core.wcTransform);
+
+					SetTransMatrix(theCamera.core.wcTransform);
+
+					if ((((short*)mainLevel->terrain->StreamUnits + 17)[46 * d] & 0x1))
 					{
-						v1 = ((cliprect.x << 2) + cliprect.x) << 6;
-						if (v1 < 0)
+						if ((mainStreamUnit->flags & 0x8))
 						{
-							v1 += SCREEN_WIDTH - 1;
-						}
-						
-						theCamera.core.leftX = v1 >> 9;
-						theCamera.core.topY = cliprect.y;
-
-						v0 = (((cliprect.x + cliprect.w) << 2) + (cliprect.x + cliprect.w)) << 6;///@MACRO
-						if (v0 < 0)
-						{
-							v0 += SCREEN_WIDTH - 1;
-						}
-		
-						theCamera.core.rightX = v0 >> 9;
-
-						theCamera.core.bottomY = cliprect.y + cliprect.h;
-
-						CAMERA_SetViewVolume(&theCamera);
-
-						SetRotMatrix(theCamera.core.wcTransform);
-
-						SetTransMatrix(theCamera.core.wcTransform);
-
-						if ((((short*)mainLevel->terrain->StreamUnits + 17)[46 * d] & 0x1))
-						{
-							if ((mainStreamUnit->flags & 0x8))
+							if (toStreamUnit != NULL)
 							{
-								if (toStreamUnit != NULL)
+								if (toStreamUnit->FrameCount != gameTrackerX.displayFrameCount)
 								{
-									if (toStreamUnit->FrameCount != gameTrackerX.displayFrameCount)
-									{
-										toStreamUnit->FrameCount = gameTrackerX.displayFrameCount;
-									}
-								}
-								else
-								{
-									STREAM_RenderWarpGate(drawot, streamPortal, mainStreamUnit, &cliprect);
+									toStreamUnit->FrameCount = gameTrackerX.displayFrameCount;
 								}
 							}
 							else
 							{
-								WARPGATE_IsItActive(mainStreamUnit);
+								STREAM_RenderWarpGate(drawot, streamPortal, mainStreamUnit, &cliprect);
 							}
 						}
-						else if (toStreamUnit != NULL)
+						else
 						{
-							if (toStreamUnit->FrameCount != gameTrackerX.displayFrameCount)
-							{
-								toStreamUnit->FrameCount = gameTrackerX.displayFrameCount;
-
-								STREAM_RenderAdjacantUnit(drawot, streamPortal, toStreamUnit, mainStreamUnit, &cliprect);
-							}
+							WARPGATE_IsItActive(mainStreamUnit);
 						}
 					}
 					else if (toStreamUnit != NULL)
@@ -1417,10 +1388,19 @@ void GAMELOOP_DisplayFrame(struct GameTracker* gameTracker)
 						{
 							toStreamUnit->FrameCount = gameTrackerX.displayFrameCount;
 
+							STREAM_RenderAdjacantUnit(drawot, streamPortal, toStreamUnit, mainStreamUnit, &cliprect);
 						}
-
-						StreamIntroInstancesForUnit(toStreamUnit);
 					}
+				}
+				else if (toStreamUnit != NULL)
+				{
+					if (toStreamUnit->FrameCount != gameTrackerX.displayFrameCount)
+					{
+						toStreamUnit->FrameCount = gameTrackerX.displayFrameCount;
+
+					}
+
+					StreamIntroInstancesForUnit(toStreamUnit);
 				}
 			}
 		}
@@ -1448,7 +1428,7 @@ void GAMELOOP_DisplayFrame(struct GameTracker* gameTracker)
 		if (pause_redraw_flag != 0)
 		{
 			GAMELOOP_AddClearPrim(drawot, 1);
-			
+
 			SaveOT();
 
 			ClearOTagR((unsigned int*)gameTrackerX.drawOT, 3072);
@@ -1462,12 +1442,12 @@ void GAMELOOP_DisplayFrame(struct GameTracker* gameTracker)
 			gameTrackerX.primPool->nextPrim = (unsigned int*)savedNextPrim;
 		}
 	}
-	
+
 	if ((gameTrackerX.gameFlags & 0x8000000))
 	{
 		HUD_Draw();
 	}
-	
+
 	DEBUG_Draw(gameTracker, drawot);
 
 	FONT_Flush();
@@ -1507,7 +1487,7 @@ void GAMELOOP_DisplayFrame(struct GameTracker* gameTracker)
 	GAMELOOP_HandleScreenWipes(drawot);
 
 #if defined(PSXPC_VERSION)
-	gameTracker->drawTimerReturn = (unsigned long long*)&gameTracker->drawTime;
+	gameTracker->drawTimerReturn = (unsigned long long*) & gameTracker->drawTime;
 #else
 	gameTracker->drawTimerReturn = (long*)&gameTracker->drawTime;
 #endif
