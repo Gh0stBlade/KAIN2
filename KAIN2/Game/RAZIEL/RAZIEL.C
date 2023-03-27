@@ -1321,7 +1321,7 @@ void StateHandlerStartMove(struct __CharacterState* In, int CurrentSection, int 
 		}
 		default:
 			//loc_800AA7FC
-			DefaultStateHandler(In, CurrentSection, Data);
+			//DefaultStateHandler(In, CurrentSection, Data);
 			break;
 		}
 
@@ -1460,115 +1460,48 @@ void StateHandlerMove(struct __CharacterState* In, int CurrentSection, int Data)
 	//loc_800AAC18
 	while ((Ptr = PeekMessageQueue(&In->SectionList[CurrentSection].Event)) != NULL)
 	{
-		if (Ptr->ID != 0)
+		switch (Ptr->ID)
 		{
-			switch (Ptr->ID)
-			{
-			case 0x8000001:
-			{
-				//loc_800AADFC
-//v0 = PadData[0];
-//v1 = RazielCommands[6];
+		case 0x100001:
+		{
+			In->SectionList[CurrentSection].Data2 = -1;
 
-				if (!(PadData[0] & RazielCommands[6]))
-				{
-					//loc_800AAE18
-					if (CurrentSection == 0)
-					{
-						if (In->CharacterInstance->tface != NULL)
-						{
-							EnMessageQueueData(&In->SectionList[CurrentSection].Defer, (intptr_t)In->CharacterInstance, 0);
+			StateInitMove(In, CurrentSection, Ptr->Data);
 
-							ControlFlag |= 0x800000;
-						}
-						//loc_800AAE54
-						if (CurrentSection == 0)
-						{
-							if (Raziel.steeringMode == 9 || Raziel.steeringMode == 14 || Raziel.steeringMode == 15)
-							{
-								razApplyMotion(In, CurrentSection);
-							}
-							else
-							{
-								if (Raziel.Mode == 2 || Anim == 123 || Anim == 124)
-								{
-									StateSwitchStateCharacterData(In, &StateHandlerIdle, SetControlInitIdleData(0, 0, 3));
-								}
-								else
-								{
-									if (Raziel.Mode == 0x1000000)
-									{
-										StateSwitchStateCharacterData(In, &StateHandlerCrouch, 0);
-									}
-								}
-							}
-						}
-					}
-					//loc_800AB21C
-				}
-				//loc_800AB21C
-#if 0
+			Raziel.constrictFlag = 1;
 
-					loc_800AAEDC :
-				bne     $v1, $v0, loc_800AAEF0
-					move    $a0, $s1
-					lui     $a1, 0x800B
-					j       loc_800AB1CC
-					li      $a1, sub_800A90E8
-#endif
-				break;
-			}
-			case 0x100001:
-			{
-				In->SectionList[CurrentSection].Data2 = -1;
-				
-				StateInitMove(In, CurrentSection, Ptr->Data);
+			SteerSwitchMode(In->CharacterInstance, 2);
 
-				Raziel.constrictFlag = 1;
+			In->SectionList[CurrentSection].Data1 = 0;
 
-				SteerSwitchMode(In->CharacterInstance, 2);
-
-				In->SectionList[CurrentSection].Data1 = 0;
-				
-				Raziel.passedMask |= 0x1000;
-				break;
-			}
-			case 0x100004:
-			{
-				//loc_800AAD84
-				FX_EndConstrict(0, NULL);
-
-				In->SectionList[CurrentSection].Data1 = 0;
-
-				break;
-			}
-			case 0x10000000:
-			{
-				//loc_800AAFA8
-				if (Raziel.Magnitude < 0x1000)
-				{
-					StateInitMove(In, CurrentSection, 3);
-				}
-				else
-				{
-					//loc_800AAFCC
-					StateInitMove(In, CurrentSection, 0);
-				}
-				break;
-			}
-			case 0x08000000:
-				break;
-			case 0x08000003:
-				break;
-			default:
-			{
-				break;
-			}
-			}
+			Raziel.passedMask |= 0x1000;
+			break;
 		}
-		else
+		case 0x100004:
 		{
-			//loc_800AAE54
+			//loc_800AAD84
+			FX_EndConstrict(0, NULL);
+
+			In->SectionList[CurrentSection].Data1 = 0;
+
+			break;
+		}
+		case 0x10000000:
+		{
+			//loc_800AAFA8
+			if (Raziel.Magnitude < 0x1000)
+			{
+				StateInitMove(In, CurrentSection, 3);
+			}
+			else
+			{
+				//loc_800AAFCC
+				StateInitMove(In, CurrentSection, 0);
+			}
+			break;
+		}
+		case 0:
+		{//loc_800AAE54
 			if (CurrentSection == 0)
 			{
 				if (Raziel.steeringMode == 9 || Raziel.steeringMode == 14 || Raziel.steeringMode == 15)
@@ -1577,6 +1510,7 @@ void StateHandlerMove(struct __CharacterState* In, int CurrentSection, int Data)
 				}
 				else
 				{
+					printf("%x\n", PadData[0]);
 					//loc_800AAE90
 					if (Raziel.Mode == 2 || Anim == 123 || Anim == 124)
 					{
@@ -1618,10 +1552,21 @@ void StateHandlerMove(struct __CharacterState* In, int CurrentSection, int Data)
 					}
 				}
 			}
+			break;
+		}
+		case 0x08000000:
+			break;
+		case 0x08000003:
+			break;
+		default:
+		{
+			break;
+		}
 		}
 		//loc_800AB21C
 		DeMessageQueue(&In->SectionList[CurrentSection].Event);
 	}
+
 	//loc_800AB22C
 	if(CurrentSection == 0 && In->SectionList[CurrentSection].Process != &StateHandlerMove)
 	{
