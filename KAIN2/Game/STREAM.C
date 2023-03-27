@@ -531,56 +531,51 @@ void STREAM_DumpLoadingObjects()
 
 	for (i = 0; i < 48; i++, tracker++)
 	{
-		if (tracker->objectStatus == 2)
+		if (tracker->objectStatus == 1)
 		{
 			STREAM_DumpObject(tracker);
 		}
 	}
 }
 
-void STREAM_DumpObject(struct _ObjectTracker *objectTracker)
-{ 
-	struct Object *object;
+void STREAM_DumpObject(struct _ObjectTracker* objectTracker)
+{
+	struct Object* object;
 	char dramName[64];
 
 	object = objectTracker->object;
-	
+
 	if (objectTracker->objectStatus == 1)
 	{
 		sprintf(dramName, "\\kain2\\object\\%s\\%s.drm", objectTracker->name, objectTracker->name);
 		LOAD_AbortFileLoad(dramName, (void*)STREAM_StreamLoadObjectAbort);
 	}
+	else if (object != NULL)
+	{
+		if (!(object->oflags & 0x2000000))
+		{
+			if (objectTracker->vramBlock != NULL)
+			{
+				VRAM_ClearVramBlock((struct _BlockVramEntry*)objectTracker->vramBlock);
+			}
+
+			if ((object->oflags2 & 0x800000) && object->sfxFileHandle != 0)
+			{
+				aadFreeDynamicSfx(object->sfxFileHandle);
+			}
+
+			OBTABLE_RemoveObjectEntry(object);
+			MEMPACK_Free((char*)object);
+
+			objectTracker->objectStatus = 0;
+		}
+	}
 	else
 	{
-		if (object != NULL)
-		{
-			if (!(object->oflags & 0x2000000))
-			{
-				if (objectTracker->vramBlock != NULL)
-				{
-					VRAM_ClearVramBlock((struct _BlockVramEntry*)objectTracker->vramBlock);
-				}
-
-				if ((object->oflags2 & 0x800000) && object->sfxFileHandle != 0)
-				{
-					aadFreeDynamicSfx(object->sfxFileHandle);
-				}
-			
-				OBTABLE_RemoveObjectEntry(object);
-				MEMPACK_Free((char*)object);
-
-				objectTracker->objectStatus = 0;
-			}
-
-			if (object == NULL)
-			{
-				objectTracker->objectStatus = 0;
-			}
-		}
-
 		objectTracker->objectStatus = 0;
 	}
 }
+
 
 int STREAM_IsObjectInAnyUnit(struct _ObjectTracker *tracker)
 {
@@ -948,7 +943,7 @@ void STREAM_ConnectStream(struct _StreamUnit* streamUnit)
 				numportals = ((long*)mainUnit->level->terrain->StreamUnits)[0];
 				streamPortal = (struct StreamUnitPortal*)((long*)mainUnit->level->terrain->StreamUnits + 1);
 
-				for (i = 0; i < numportals; i++, streamPortal++)
+				for (i = 0; i < numportals; i++)
 				{
 					if (signalID == streamPortal[i].MSignalID)
 					{
@@ -963,8 +958,8 @@ void STREAM_ConnectStream(struct _StreamUnit* streamUnit)
 		}
 
 		connectStream = &StreamTracker.StreamList[0];
-		
-		for (d = 0; d < 16; d++, connectStream++)
+
+		for (d = 0; d < 16; d++)
 		{
 			if (StreamTracker.StreamList[d].used == 2 && connectStream != streamUnit)
 			{
@@ -974,7 +969,7 @@ void STREAM_ConnectStream(struct _StreamUnit* streamUnit)
 				for (j = 0; j < numportals2; j++)
 				{
 					strcpy(text, streamPortal2->tolevelname);
-					
+
 					commapos = strchr(text, ',');
 
 					hookedUp = 0;
@@ -1023,7 +1018,7 @@ void STREAM_ConnectStream(struct _StreamUnit* streamUnit)
 			}
 		}
 
-		for(i = 0; i < streamUnit->level->numIntros; i++)
+		for (i = 0; i < streamUnit->level->numIntros; i++)
 		{
 			if (strcmpi(streamUnit->level->introList[i].name, "raziel") == 0)
 			{
@@ -1033,7 +1028,6 @@ void STREAM_ConnectStream(struct _StreamUnit* streamUnit)
 		}
 	}
 }
-
 void STREAM_StreamLoadLevelAbort(void* loadData, void* data, void* data2)
 {
 	struct _StreamUnit* streamUnit;
@@ -1336,7 +1330,7 @@ void STREAM_MoveIntoNewStreamUnit()
 
 	INSTANCE_UpdateFamilyStreamUnitID(gameTrackerX.playerInstance);
 
-	GAMELOOP_StreamLevelLoadAndInit(gameTrackerX.baseAreaName, &gameTrackerX, gameTrackerX.toSignal, gameTrackerX.fromSignal);
+	GAMELOOP_StreamLevelLoadAndInit(gameTrackerX.S_baseAreaName, &gameTrackerX, gameTrackerX.toSignal, gameTrackerX.fromSignal);
 
 	gameTrackerX.SwitchToNewStreamUnit = 0;
 
@@ -1347,12 +1341,12 @@ void STREAM_MoveIntoNewStreamUnit()
 	}
 }
 
-struct _StreamUnit * STREAM_LoadLevel(char *baseAreaName, struct StreamUnitPortal *streamPortal, int loadnext)
+struct _StreamUnit* STREAM_LoadLevel(char* baseAreaName, struct StreamUnitPortal* streamPortal, int loadnext)//Matching - 91.81%
 {
 	int i;
 	long streamID;
-	struct _StreamUnit *streamUnit;
-	struct Level *level;
+	struct _StreamUnit* streamUnit;
+	struct Level* level;
 	char dramName[80];
 
 	streamID = -1;
@@ -1365,7 +1359,7 @@ struct _StreamUnit * STREAM_LoadLevel(char *baseAreaName, struct StreamUnitPorta
 	for (i = 0; i < 16; i++)
 	{
 		streamUnit = &StreamTracker.StreamList[i];
-		
+
 		if (streamUnit->used != 0)
 		{
 #if defined(PSXPC_VERSION)
@@ -1374,42 +1368,45 @@ struct _StreamUnit * STREAM_LoadLevel(char *baseAreaName, struct StreamUnitPorta
 			if (strcmpi(streamUnit->baseAreaName, baseAreaName) == 0)
 #endif
 			{
-				if (streamUnit->used != 3)
+				if (streamUnit->used == 3)
 				{
-					if (streamUnit->used != 1)
+					streamUnit->used = 1;
+					break;
+				}
+				else if (streamUnit->used != 1)
+				{
+					streamUnit->FrameCount = 0;
+
+					if (streamPortal == NULL)
 					{
-						streamUnit->FrameCount = 0;
-						
-						if (streamPortal == NULL)
+						strcpy(gameTrackerX.baseAreaName, baseAreaName);
+
+						STREAM_SetMainFog(streamUnit);
+
+						gameTrackerX.StreamUnitID = streamUnit->StreamUnitID;
+						gameTrackerX.level = streamUnit->level;
+					}
+					else
+					{
+						level = streamUnit->level;
+
+						STREAM_ConnectStream(streamUnit);
+
+						if (gameTrackerX.gameData.asmData.MorphType != 0)
 						{
-							strcpy(gameTrackerX.baseAreaName, baseAreaName);
-							
-							STREAM_SetMainFog(streamUnit);
-							
-							gameTrackerX.StreamUnitID = streamUnit->StreamUnitID;
-							gameTrackerX.level = streamUnit->level;
+							STREAM_SetStreamFog(streamUnit, (short)level->spectralFogNear, (short)level->spectralFogFar);
 						}
 						else
 						{
-							level = streamUnit->level;
-				
-							STREAM_ConnectStream(streamUnit);
-
-							if (gameTrackerX.gameData.asmData.MorphType != 0)
-							{
-								STREAM_SetStreamFog(streamUnit, level->spectralFogNear, level->spectralFogFar);
-							}
-							else
-							{
-								STREAM_SetStreamFog(streamUnit, level->holdFogNear, level->holdFogFar);
-							}
+							STREAM_SetStreamFog(streamUnit, (short)level->holdFogNear, (short)level->holdFogFar);
 						}
 					}
 					break;
+
 				}
 				else
 				{
-					streamUnit->used = 1;
+					break;
 				}
 			}
 		}
@@ -1424,9 +1421,9 @@ struct _StreamUnit * STREAM_LoadLevel(char *baseAreaName, struct StreamUnitPorta
 			if (streamUnit->used == 0)
 			{
 				STREAM_FillOutFileNames(baseAreaName, dramName, NULL, NULL);
-				
+
 				streamUnit->used = 1;
-				
+
 				strcpy(streamUnit->baseAreaName, baseAreaName);
 
 				streamUnit->StreamUnitID = streamID;
@@ -1454,16 +1451,16 @@ struct _StreamUnit * STREAM_LoadLevel(char *baseAreaName, struct StreamUnitPorta
 			}
 		}
 	}
-	
+
 	return streamUnit;
 }
 
-void RemoveIntroducedLights(struct Level *level)
+void RemoveIntroducedLights(struct Level* level)
 {
 	int i;
 
 	LIGHT_Restore(gameTrackerX.lightInfo);
-	
+
 	gameTrackerX.lightInfo->numSavedColors = 0;
 
 	for (i = 0; i < level->numSpotLights; i++)
@@ -1505,15 +1502,15 @@ void STREAM_RemoveInstancesWithIDInInstanceList(struct _InstanceList *list, long
 			UNIMPLEMENTED();
 }
 
-void STREAM_MarkUnitNeeded(long streamID)
+void STREAM_MarkUnitNeeded(long streamID)//Matching - 93.95%
 {
 	int i;
-	
+
 	for (i = 0; i < 16; i++)
 	{
 		if (StreamTracker.StreamList[i].used != 0)
 		{
-			if (StreamTracker.StreamList[i].StreamUnitID == streamID)
+			if (streamID == StreamTracker.StreamList[i].StreamUnitID)
 			{
 				StreamTracker.StreamList[i].FrameCount = gameTrackerX.displayFrameCount;
 				return;
