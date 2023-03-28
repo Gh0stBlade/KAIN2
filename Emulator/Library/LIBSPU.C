@@ -185,26 +185,26 @@ void SpuGetAllKeysStatus(char* status)
 	{
 		if ((_spu_keystat & (1 << i)))
 		{
-			if (channelList[i].data) //(unsigned short)_spu_RXX[(i << 3) + 6] != 0)
+			if (channelList[i].data != NULL && channelList[i]._adsr.envelopevol > 0) //(unsigned short)_spu_RXX[(i << 3) + 6] != 0)
 			{
-				*status = 1;
+				*status = SPU_ON;
 			}
 			else
 			{
-				*status = 3;
+				*status = SPU_ON_ENV_OFF;
 			}
 		}
 		else
 		{
 			//loc_330
-            if (channelList[i].data)//_spu_RXX[(i << 3) + 6] != 0)
+            if (channelList[i].data == NULL && channelList[i]._adsr.envelopevol > 0)//_spu_RXX[(i << 3) + 6] != 0)
 			{
-				*status = 2;
+				*status = SPU_OFF_ENV_ON;
 			}
 			else
 			{
 				//loc_340
-				*status = 0;
+				*status = SPU_OFF;
 			}
 		}
 	}
@@ -608,22 +608,19 @@ void SpuSetKey(long on_off, unsigned long voice_bit)
         }
     }
 
-    _spu_keystat_last |= _spu_keystat;
-
-    //SDL_Delay(8);
-
-    // temporary hack
     if (on_off == 0)
     {
-        int32_t i;
-        for (i = 0; i < SPU_MAX_CHANNELS; i++)
+        for (int32_t i = 0; i < SPU_MAX_CHANNELS; i++)
         {
-            if (voice_bit & (1 << i))
+            if (voice_bit & (1 << i) && channelList[i]._adsr.envelopevol == 0)
             {
                 channelList[i].data = NULL;
+                channelList[i].stop = TRUE;
             }
         }
     }
+
+    _spu_keystat_last |= _spu_keystat;
 }
 
 void SpuSetKeyOnWithAttr(SpuVoiceAttr* attr)//(F)
