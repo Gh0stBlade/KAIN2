@@ -55,6 +55,8 @@ extern uint64_t Emulator_GetPerformanceCounter();
 
 extern uint64_t Emulator_GetPerformanceFrequency();
 
+extern void Emulator_SetAudioUpdateFunction(long(*func));
+
 /* Used for PSP2 */
 #if defined(SN_TARGET_PSP2)
 

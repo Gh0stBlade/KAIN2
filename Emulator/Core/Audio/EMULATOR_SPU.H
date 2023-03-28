@@ -54,7 +54,6 @@ typedef struct Channel
     int32_t reverb;
     int32_t pos;
     int32_t s1, s2;
-    int32_t blockPos;
     int16_t block[28+28];
     uint8_t* data;
     uint8_t* loop;

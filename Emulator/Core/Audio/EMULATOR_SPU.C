@@ -22,6 +22,9 @@ int32_t disableReverb = 0;
 int32_t disableADSR = 0;
 int32_t disableChannelVol = 0;
 
+typedef long (*audioFunc)();
+audioFunc gAudioFunc = NULL;
+
 #if defined(SDL2)
 SDL_AudioDeviceID gAudioDevice;
 #endif
@@ -557,7 +560,6 @@ void initADSR()
 void fillVAG(struct Channel* channel, int32_t count, int32_t ns)
 {
     int32_t i;
-    int32_t blockPos = channel->blockPos;
     int32_t posInc = channel->pitch;
     int32_t channelIndex = channel - channelList;
 
@@ -577,7 +579,6 @@ void fillVAG(struct Channel* channel, int32_t count, int32_t ns)
 
             if (!vagProcessBlock(channel, channel->block))
             {
-                blockPos = BLOCK_END;
                 if (channel->silent == 0)
                 {
                     channel->silent = 1;
@@ -667,6 +668,11 @@ void SPU_PrintChannelVolumes()
 
 void sndFill(void* udata, uint8_t* stream, int32_t len)
 {
+    if (gAudioFunc != NULL)
+    {
+        gAudioFunc();
+    }
+
     fillSamples((int16_t*)stream, SND_SAMPLES);
 }
 
@@ -679,12 +685,9 @@ void SPU_Initialise()
 
     for (i = 0; i < SPU_MAX_CHANNELS; i++)
     {
-        channelList[i].blockPos = BLOCK_END;
         channelList[i]._adsr.sustainlevel = 1024;
     }
 
-    memset(SSumR, 0, sizeof(SSumR));
-    memset(SSumL, 0, sizeof(SSumL));
     initADSR();
 
 #if defined(SDL2)
@@ -736,4 +739,9 @@ void SPU_ResetChannel(struct Channel* channel, uint8_t* data)
     channel->stop = FALSE;
 
     SPU_StartADSR(channel);
+}
+
+void Emulator_SetAudioUpdateFunction(long(*func))
+{
+    gAudioFunc =(audioFunc)func;
 }
