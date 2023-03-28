@@ -136,6 +136,9 @@ void aadInstallUpdateFunc(TDRFuncPtr_aadInstallUpdateFunc0updateFuncPtr updateFu
 { 
 	EnterCriticalSection();
 	
+#if defined(PSXPC_VERSION)
+	Emulator_SetAudioUpdateFunction((long*)aadSlotUpdateWrapper);
+#else
 	__hblankEvent = OpenEvent(0xF2000001, 2, 0x1000, updateFuncPtr);
 	
 	EnableEvent(__hblankEvent);
@@ -143,6 +146,7 @@ void aadInstallUpdateFunc(TDRFuncPtr_aadInstallUpdateFunc0updateFuncPtr updateFu
 	SetRCnt(0xF2000001, hblanksPerUpdate, 0x1000);
 	
 	StartRCnt(0xF2000001);
+#endif
 	
 	ExitCriticalSection();
 }
@@ -2180,7 +2184,11 @@ void aadSetSlotTempo(int slotNumber, struct AadTempo *tempo)
 	slot = aadMem->sequenceSlots[slotNumber];
 	tickTime = ((tempo->quarterNoteTime / tempo->ppqn) << 16) + ((unsigned int)((tempo->quarterNoteTime % tempo->ppqn) << 16) / tempo->ppqn);
 	slot->tempo.tickTimeFixed = tickTime;
+#if defined(PSXPC_VERSION)
+	slot->tempo.ticksPerUpdate = (1000000 * 1024 / 44100) / (tempo->quarterNoteTime / tempo->ppqn);
+#else
 	slot->tempo.ticksPerUpdate = (aadUpdateRate[aadMem->updateMode & 3]) / tickTime;
+#endif
 	slot->tempo.errorPerUpdate = (aadUpdateRate[aadMem->updateMode & 3]) % slot->tempo.tickTimeFixed;
 	slot->tempo.quarterNoteTime = tempo->quarterNoteTime;
 	slot->tempo.ppqn = tempo->ppqn;
