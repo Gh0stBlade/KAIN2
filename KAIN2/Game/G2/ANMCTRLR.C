@@ -569,6 +569,8 @@ unsigned long _G2AnimController_ApplyToSegValue(struct _G2AnimController_Type* c
 			gte_rtir();
 
 			gte_stclmv(((short*)&tempMatrix) + 2);
+
+			break;
 		}
 		case 16:
 		{
