@@ -373,6 +373,8 @@ void _G2Anim_BuildTransformsWithControllers(struct _G2Anim_Type* anim)
 			{
 				_G2Anim_BuildSegTransformNoControllers(segMatrix, parentMatrix, bRootTransUpdated, segIndex);
 
+				bRootTransUpdated = G2FALSE;
+
 				segment++;
 			}
 		}
