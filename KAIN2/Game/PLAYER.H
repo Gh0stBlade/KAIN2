@@ -126,7 +126,7 @@ struct __Player // hashcode: 0x0712E7A5 (dec: 118679461)
 	short throwZRot; // size=0, offset=1146
 	int throwReturnRot; // size=0, offset=1148
 	struct __MessageQueue padCommands; // size=136, offset=1152
-	void (*returnState)(); // size=0, offset=1288
+	void (*returnState)(struct __CharacterState*, int, int); // size=0, offset=1288
 	unsigned long passedMask; // size=0, offset=1292
 	struct _G2SVector3_Type extraRot; // size=6, offset=1296
 	long blankPad; // size=0, offset=1304

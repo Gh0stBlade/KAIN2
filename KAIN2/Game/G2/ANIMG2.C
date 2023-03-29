@@ -691,7 +691,7 @@ short G2AnimSection_AdvanceOverInterval(struct _G2AnimSection_Type* section, sho
 
 	anim->flags |= 0x1;
 
-	G2AnimSection_ClearAlarm(section, 3);
+	G2AnimSection_ClearAlarm(section, 0x3);
 
 	keylist = section->keylist;
 

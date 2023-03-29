@@ -42,6 +42,7 @@ _Normal Norm;
 struct __Force ExternalForces[4];
 int LoopCounter;
 int AutoFaceAngle;
+struct __CannedSound cannedSound[4];
 
 void InitStates(struct _Instance* PlayerInstance)
 {
@@ -427,7 +428,7 @@ void StateHandlerIdle(struct __CharacterState* In, int CurrentSection, int Data)
 		{
 			if (CurrentSection == 0)
 			{
-				Raziel.Mode = 0x10;
+				Raziel.Mode = 16;
 
 				ControlFlag |= 0x10;
 
@@ -461,11 +462,6 @@ void StateHandlerIdle(struct __CharacterState* In, int CurrentSection, int Data)
 
 			break;
 		}
-		case 0x100000:
- 		{
-			//DefaultStateHandler(In, CurrentSection, Data);
-			break;
-		}
 		case 0x100004:
 		{
 			//loc_800A86C0
@@ -478,26 +474,6 @@ void StateHandlerIdle(struct __CharacterState* In, int CurrentSection, int Data)
 				COLLIDE_SegmentCollisionOn(In->CharacterInstance, 1);
 			}
 
-			break;
-		}
-		case 0x4010400:
-		{
-			//loc_800A8BB8
-			break;
-		}
-		case 0x4010080:
-		{
-			//loc_800A87F8
-			break;
-		}
-		case 0x8000000:
-		{
-			//loc_800A86E4
-			break;
-		}
-		case 0x4010401:
-		{
-			//loc_800A87F0
 			break;
 		}
 		case 0x10000000:
@@ -610,22 +586,6 @@ void StateHandlerIdle(struct __CharacterState* In, int CurrentSection, int Data)
 			//loc_800A8C88
 			break;
 		}
-		case 0x08000001:
-
-			//assert(FALSE);
-
-			break;
-		case 0x8000003:
-			
-			//assert(FALSE);
-
-			break;
-		case 0:
-			break;
-		case 0x20000001:
-			//assert(FALSE);
-
-			break;
 		default:
 			DefaultStateHandler(In, CurrentSection, Data);
 			break;
@@ -853,11 +813,66 @@ void StateHandlerSoulSuck(struct __CharacterState* In, int CurrentSection, int D
 		case 0x8000000:
 		{
 			//loc_800A9E40
+			if (Anim == 47)
+			{
+				if (Raziel.returnState)
+				{
+					StateSwitchStateData(In, CurrentSection, Raziel.returnState, 0);
+
+				}
+				else
+				{
+					StateSwitchStateData(In, CurrentSection, &StateHandlerIdle, SetControlInitIdleData(0, 0, 3));
+				}
+			}
+
+			if (Anim == 78)
+			{
+				G2EmulationSwitchAnimation(In, CurrentSection, 79, 0, 0, 1);
+			}
+
+			if (Anim == 80)
+			{
+				if ((PadData[0] & 0x40))
+				{
+					G2EmulationSwitchAnimation(In, CurrentSection, 79, 0, 8, 1);
+				}
+
+				if (Raziel.returnState)
+				{
+					StateSwitchStateData(In, CurrentSection, Raziel.returnState, 0);
+				}
+				else
+				{
+					StateSwitchStateData(In, CurrentSection,  &StateHandlerIdle, SetControlInitIdleData(0, 0, 3));
+				}
+			}
 			break;
 		}
 		case 0x20000002:
 		{
 			//loc_800A9D8C
+			if (Anim == 79)
+			{
+				G2EmulationSwitchAnimation(In, CurrentSection, 47, 0, 3, 1);
+				PurgeMessageQueue(&In->SectionList[CurrentSection].Event);
+			}
+			else
+			{
+				if (Raziel.returnState != NULL)
+				{
+					StateSwitchStateData(In, CurrentSection, Raziel.returnState, 0);
+				}
+				else
+				{
+					StateSwitchStateData(In, CurrentSection, &StateHandlerIdle, SetControlInitIdleData(0, 0, 3));
+
+				}
+			}
+			if ((Raziel.Senses.EngagedMask & 0x1000) != 0 && CurrentSection == 0)
+			{
+				INSTANCE_Post(Raziel.Senses.EngagedList[12].instance, 0x1000014, 0);
+			}
 			break;
 		}
 		}
@@ -1930,7 +1945,7 @@ void StateHandlerCompression(struct __CharacterState* In, int CurrentSection, in
 			if (CurrentSection == 0)
 			{
 				ControlFlag = 273;
-				
+
 				SetExternalForce(&ExternalForces[2], 0, 0, 0, 1, 0);
 				
 				In->SectionList[0].Data1 = 0;
@@ -1998,6 +2013,46 @@ void StateHandlerJump(struct __CharacterState* In, int CurrentSection, int Data)
 	{
 		switch (Ptr->ID)
 		{
+		case 0x8000000:
+		{
+			if (CurrentSection == 0)
+			{
+				if (Raziel.Mode == 16)
+				{
+					if (razSwitchVAnimCharacterGroup(In->CharacterInstance, 24, 0, 0))
+					{
+						G2EmulationSwitchAnimationCharacter(In, 36, 0, 4, 1);
+					}
+				}
+				else if (Raziel.Mode == 32)
+				{
+					if (razSwitchVAnimCharacterGroup(In->CharacterInstance, 40, 0, 0))
+					{
+						G2EmulationSwitchAnimationCharacter(In, 40, 0, 10, 1);
+					}
+				}
+				else if (razSwitchVAnimCharacterGroup(In->CharacterInstance, 8, 0, 0))
+				{
+					G2EmulationSwitchAnimationCharacter(In, 28, 0, 7, 1);
+				}
+			}
+			StateSwitchStateData(In, 0, &StateHandlerFall, 0);
+
+			if (!(PadData[0] & 0x80))
+			{
+				In->SectionList[CurrentSection].Data2 = 1;
+			}
+
+			break;
+		}
+		case 0x4020000:
+		{
+			break;
+		}		
+		case 0x4010008:
+		{
+			break;
+		}
 		case 0x2000000:
 		{
 			razPickupAndGrab(In, CurrentSection);
@@ -2033,10 +2088,6 @@ void StateHandlerJump(struct __CharacterState* In, int CurrentSection, int Data)
 						EnMessageQueueData(&In->SectionList[CurrentSection].Defer, 0x20000001, 0);
 					}
 				}
-				else
-				{
-					EnMessageQueueData(&In->SectionList[CurrentSection].Defer, 0x20000001, 0);
-				}
 			}
 			break;
 		}
@@ -2055,13 +2106,9 @@ void StateHandlerJump(struct __CharacterState* In, int CurrentSection, int Data)
 
 			break;
 		}
-		case 0x04020000:
-		{
-			break;
-		}
 		default:
 		{
-			//assert(FALSE);
+			DefaultStateHandler(In, CurrentSection, Data);
 		}
 		}
 
@@ -2333,6 +2380,43 @@ void StateHandlerDeCompression(struct __CharacterState *In, int CurrentSection, 
 					G2EmulationSwitchAnimationCharacter(In, 29, 0, 0, 1);
 				}
 			}
+		}
+		case 0x8000000:
+		{
+			if ((PadData[0] & 0x100))
+			{
+				if (!CurrentSection)
+				{
+					StateSwitchStateCharacterData(In, &StateHandlerCrouch, 0);
+					In->SectionList[CurrentSection].Data1 = 0;
+				}
+				else
+				{
+					In->SectionList[CurrentSection].Data1 = 0;
+				}
+			}
+			else if (!(PadData[0] & 0x8000000F))
+			{
+				StateSwitchStateData(In, CurrentSection, &StateHandlerIdle, SetControlInitIdleData(0, 0, 4));
+				Raziel.Mode = 1;
+				In->SectionList[CurrentSection].Data1 = 0;
+			}
+			else if (CurrentSection)
+			{
+				In->SectionList[CurrentSection].Data1 = 0;
+			}
+			else if (G2EmulationQueryAnimation(In, 0) == 29)
+			{
+				StateSwitchStateCharacterData(In, &StateHandlerMove, 0);
+				In->SectionList[CurrentSection].Data1 = 0;
+			}
+			else
+			{
+				StateSwitchStateCharacterData(In, &StateHandlerStartMove, 5);
+				In->SectionList[CurrentSection].Data1 = 0;
+			}
+
+			break;
 		}
 		default:
 		{
@@ -2980,430 +3064,189 @@ long RazielAnimCallback(struct _G2Anim_Type* anim, int sectionID, enum _G2AnimCa
 	struct __State* pSection; // $a0
 	struct _G2AnimSection_Type* animSection; // $a2
 	struct evAnimationControllerDoneData* ControllerData; // $v1
-	struct __AlarmData* datax; // $s0
+	//struct __AlarmData* data; // $s0
 	struct _Instance* inst; // $a0
 	int test; // $a0
 	struct _SoundRamp* soundRamp; // $t0
-	struct _Instance* heldInstance; // $s0
+	struct _Instance* heldInstance;
+	int result;
+	int v21;
+	int v22;
+	struct __CannedSound* v24;
 
-	//s3 = anim
-	//s1 = sectionID
-	//s4 = message
-	//s5 = messageDataA
 	pSection = &Raziel.State.SectionList[sectionID];
-
 	animSection = &anim->section[sectionID];
 
-	//v1 = message - 1 < 6
-	//s2 = messageDataB
 	switch (message)
 	{
-	case G2ANIM_MSG_DONE:
+	case 1:
 	{
-		EnMessageQueueData(&pSection->Event, 0x8000000, animSection->keylistID);
-
+		EnMessageQueueData(&pSection->Event, 0x8000000, (unsigned short)animSection->keylistID);
 		return messageDataA;
-
-		break;
 	}
-	case G2ANIM_MSG_LOOPPOINT:
+	case 2:
 	{
-		EnMessageQueueData(&pSection->Event, 0x8000001, animSection->keylistID);
-	
+		EnMessageQueueData(&pSection->Event, 0x8000001, (unsigned short)animSection->keylistID);
 		return messageDataA;
-
-		break;
 	}
-	case G2ANIM_MSG_SECTION_INTERPDONE:
+	case 3:
 	{
-		EnMessageQueueData(&pSection->Event, 0x8000003, animSection->keylistID);
-
+		EnMessageQueueData(&pSection->Event, 0x8000003, (unsigned short)animSection->keylistID);
 		return messageDataA;
-
-		break;
 	}
-	case G2ANIM_MSG_SEGCTRLR_INTERPDONE:
-	{
-		UNIMPLEMENTED();
-		
-		break;
-	}
-	case G2ANIM_MSG_SWALARMSET:
-	{
-		animSection->swAlarmTable = NULL;
+	case 4:
+		ControllerData = (struct evAnimationControllerDoneData*)SetAnimationControllerDoneData( Raziel.State.CharacterInstance, messageDataB, messageDataA, (int)data);
 
-		EnMessageQueueData(&pSection->Event, 0x8000004, 0);
-
-		return messageDataA;
-
-		break;
-	}
-	case G2ANIM_MSG_PLAYEFFECT:
-	{
-		if (messageDataA == 2)
+		if (ControllerData->data == 2)
 		{
-			datax = (struct __AlarmData*)messageDataB;
-			inst = razGetHeldWeapon();
-
-			switch (datax->data)
+			AlgorithmicWings(Raziel.State.CharacterInstance, ControllerData);
+		}
+		else if (ControllerData->data)
+		{
+			if (ControllerData->data == 4)
 			{
-			default:
-				//assert(FALSE);
-				break;
+				G2Anim_DisableController(&ControllerData->instance->anim, ControllerData->segment, ControllerData->type);
 			}
 		}
-		//loc_800B0DAC
-		break;
+		else
+		{
+			G2Anim_InterpDisableController(&ControllerData->instance->anim, ControllerData->segment, ControllerData->type, 300);
+		}
+
+		return messageDataA;
+	case 5:
+		*(int*)animSection->swAlarmTable = 0;
+		EnMessageQueueData(&pSection->Event, 134217732, 0);
+		return messageDataA;
+	case 6:
+		if (messageDataA != 2)
+		{
+			if (*(short*)messageDataB == 45)
+			{
+				result = 0;
+				if ((ControlFlag & 0x100000) != 0)
+					return result;
+				heldInstance = razGetHeldWeapon();
+				if (!heldInstance)
+					return messageDataA;
+				if ((INSTANCE_Query(heldInstance, 2) & 0x20) == 0)
+					return messageDataA;
+				if ((INSTANCE_Query(heldInstance, 3) & 0x10000) == 0)
+					return messageDataA;
+			}
+			INSTANCE_DefaultAnimCallback(anim, sectionID, message, messageDataA, messageDataB, Raziel.State.CharacterInstance);
+			return messageDataA;
+		}
+		inst = razGetHeldWeapon();
+		switch (*(short*)messageDataB)
+		{
+		case 1:
+			if (inst)
+				INSTANCE_Post(inst, 0x200002, *(short*)(messageDataB + 2));
+			else
+				EnableWristCollision(gameTrackerX.playerInstance, *(short*)(messageDataB + 2));
+			return 2;
+		case 2:
+			if (inst)
+				INSTANCE_Post(inst, 0x200003, *(short*)(messageDataB + 2));
+			else
+				DisableWristCollision(gameTrackerX.playerInstance, *(short*)(messageDataB + 2));
+			ControlFlag |= 0x10000000u;
+			return 2;
+		case 3:
+			razSetCowlNoDraw(0);
+			ControlFlag |= 0x40u;
+			return 2;
+		case 4:
+			razSetCowlNoDraw(1);
+			ControlFlag &= ~0x40u;
+			return 2;
+		case 5:
+			if (*(short*)(messageDataB + 2) < 32)
+				Raziel.passedMask |= 1 << *(short*)(messageDataB + 2);
+			else
+				Raziel.passedMask = -1;
+			return 2;
+		case 6:
+			if (*(short*)(messageDataB + 2) < 32)
+				Raziel.passedMask &= ~(1 << *(short*)(messageDataB + 2));
+			else
+				Raziel.passedMask = 0;
+			return 2;
+		case 7:
+			Raziel.effectsFadeSource = gameTrackerX.playerInstance->fadeValue;
+			Raziel.effectsFlags |= 1u;
+			Raziel.effectsFadeDest = *(short*)(messageDataB + 2);
+			return 2;
+		case 8:
+			Raziel.effectsFadeSteps = 0;
+			Raziel.effectsFlags |= 1u;
+			Raziel.effectsFadeStep = *(short*)(messageDataB + 2);
+			return 2;
+		case 9:
+			if (!inst)
+				return messageDataA;
+			INSTANCE_Post(inst, 2097157, *(short*)(messageDataB + 2));
+			return 2;
+		case 0xA:
+			if (!inst)
+				return messageDataA;
+			INSTANCE_Post(inst, 2097158, *(short*)(messageDataB + 2));
+			return 2;
+		case 0xB:
+			v21 = 0;
+			if (*(short*)(messageDataB + 2) == 2)
+			{
+				v22 = 1;
+			LABEL_46:
+				if (Raziel.currentSoulReaver == v22)
+					v21 = 1;
+				goto LABEL_48;
+			}
+			if (*(short*)(messageDataB + 2) >= 3)
+			{
+				v22 = 6;
+				if (*(short*)(messageDataB + 2) != 3)
+					goto LABEL_48;
+				goto LABEL_46;
+			}
+			if (*(short*)(messageDataB + 2) >= 0)
+				v21 = 1;
+		LABEL_48:
+			result = 2;
+			if (v21)
+			{
+				v24 = &cannedSound[5 * *(short*)(messageDataB + 2)];
+				razSetupSoundRamp(
+					gameTrackerX.playerInstance,
+					(struct _SoundRamp*)&Raziel.soundHandle[v24],
+					*((short*)v24 + 1),
+					*((short*)v24 + 2),
+					*((short*)v24 + 3),
+					*((short*)v24 + 4),
+					*((short*)v24 + 5),
+					v24->time,
+					v24->distance);
+				if (!cannedSound[5 * *(short*)(messageDataB + 2)].bank)
+				{
+					Raziel.effectsFlags |= 4u;
+				}
+				result = 2;
+				if (cannedSound[4 * *(short*)(messageDataB + 2)].bank == 1)
+				{
+					Raziel.effectsFlags |= 8u;
+					result = 2;
+				}
+			}
+			break;
+		default:
+			return messageDataA;
+		}
+		return result;
+	default:
+		return messageDataA;
 	}
-	}
-#if 0
-
-		lhu     $v1, 0($s0)
-		move    $a0, $v0
-		addiu   $v1, -1
-		sll     $v1, 16
-		sra     $v1, 16
-		sltiu   $v0, $v1, 0xB    # switch 11 cases
-		beqz    $v0, def_800B0904  # jumptable 800B0904 default case
-		# jumptable 800B0A4C default case
-		lui     $v0, 0x8001
-		li      $v0, jpt_800B0A4C
-		sll     $v1, 2
-		addu    $v1, $v0
-		lw      $v0, 0($v1)
-		nop
-		jr      $v0              # switch jump
-		nop
-
-		loc_800B0A54 : # jumptable 800B0A4C case 0
-		beqz    $a0, loc_800B0A70
-		lui     $a1, 0x20  # ' '
-		lh      $a2, 2($s0)
-		jal     sub_80034684
-		li      $a1, 0x200002
-		j       loc_800B0E5C
-		move    $v0, $s5
-
-		loc_800B0A70 :
-	lw      $a0, -0x420C($gp)
-		lh      $a1, 2($s0)
-		jal     sub_800B3AE8
-		nop
-		j       loc_800B0E5C
-		move    $v0, $s5
-
-		loc_800B0A88 : # jumptable 800B0A4C case 1
-		beqz    $a0, loc_800B0AA4
-		lui     $a1, 0x20  # ' '
-		lh      $a2, 2($s0)
-		jal     sub_80034684
-		li      $a1, 0x200003
-		j       loc_800B0AB4
-		nop
-
-		loc_800B0AA4 :
-	lw      $a0, -0x420C($gp)
-		lh      $a1, 2($s0)
-		jal     sub_800B3A98
-		nop
-
-		loc_800B0AB4 :
-	lw      $v0, -0x238($gp)
-		lui     $v1, 0x1000
-		or $v0, $v1
-		sw      $v0, -0x238($gp)
-		j       loc_800B0E5C
-		move    $v0, $s5
-
-		loc_800B0ACC : # jumptable 800B0A4C case 2
-		jal     sub_800A76C4
-		move    $a0, $zero
-		lw      $v0, -0x238($gp)
-		nop
-		ori     $v0, 0x40  # '@'
-		sw      $v0, -0x238($gp)
-		j       loc_800B0E5C
-		move    $v0, $s5
-
-		loc_800B0AEC : # jumptable 800B0A4C case 3
-		jal     sub_800A76C4
-		li      $a0, 1
-		lw      $v0, -0x238($gp)
-		li      $v1, 0xFFFFFFBF
-		and $v0, $v1
-		sw      $v0, -0x238($gp)
-		j       loc_800B0E5C
-		move    $v0, $s5
-
-		loc_800B0B0C : # jumptable 800B0A4C case 4
-		lh      $a1, 2($s0)
-		nop
-		slti    $v0, $a1, 0x20  # ' '
-		bnez    $v0, loc_800B0B30
-		li      $v0, 1
-		li      $v0, 0xFFFFFFFF
-		sw      $v0, -0x4C4($gp)
-		j       loc_800B0E5C
-		move    $v0, $s5
-
-		loc_800B0B30 :
-	lw      $v1, -0x4C4($gp)
-		sllv    $v0, $a1
-		or $v1, $v0
-		sw      $v1, -0x4C4($gp)
-		j       loc_800B0E5C
-		move    $v0, $s5
-
-		loc_800B0B48 : # jumptable 800B0A4C case 5
-		lh      $v1, 2($s0)
-		nop
-		slti    $v0, $v1, 0x20  # ' '
-		bnez    $v0, loc_800B0B68
-		li      $v0, 1
-		sw      $zero, -0x4C4($gp)
-		j       loc_800B0E5C
-		move    $v0, $s5
-
-		loc_800B0B68 :
-	sllv    $v0, $v1
-		lw      $v1, -0x4C4($gp)
-		nor     $v0, $zero, $v0
-		and $v1, $v0
-		sw      $v1, -0x4C4($gp)
-		j       loc_800B0E5C
-		move    $v0, $s5
-
-		loc_800B0B84 : # jumptable 800B0A4C case 6
-		lw      $v0, -0x420C($gp)
-		nop
-		lhu     $v0, 0x104($v0)
-		nop
-		sh      $v0, -0x4B0($gp)
-		lw      $v0, -0x4B4($gp)
-		lhu     $v1, 2($s0)
-		ori     $v0, 1
-		sw      $v0, -0x4B4($gp)
-		sh      $v1, -0x4AE($gp)
-		j       loc_800B0E5C
-		move    $v0, $s5
-
-		loc_800B0BB4 : # jumptable 800B0A4C case 7
-		lw      $v0, -0x4B4($gp)
-		sw      $zero, -0x4A8($gp)
-		ori     $v0, 1
-		sw      $v0, -0x4B4($gp)
-		lh      $v0, 2($s0)
-		nop
-		sw      $v0, -0x4AC($gp)
-		j       loc_800B0E5C
-		move    $v0, $s5
-
-		loc_800B0BD8 : # jumptable 800B0A4C case 8
-		beqz    $a0, def_800B0904
-		lui     $a1, 0x20  # ' '
-		lh      $a2, 2($s0)
-		jal     sub_80034684
-		li      $a1, 0x200005
-		j       loc_800B0E5C
-		move    $v0, $s5
-
-		loc_800B0BF4 : # jumptable 800B0A4C case 9
-		beqz    $a0, def_800B0904
-		lui     $a1, 0x20  # ' '
-		lh      $a2, 2($s0)
-		jal     sub_80034684
-		li      $a1, 0x200006
-		j       loc_800B0E5C
-		move    $v0, $s5
-
-		loc_800B0C10 : # jumptable 800B0A4C case 10
-		lh      $v1, 2($s0)
-		li      $v0, 2
-		beq     $v1, $v0, loc_800B0C4C
-		move    $a0, $zero
-		slti    $v0, $v1, 3
-		bnez    $v0, loc_800B0C3C
-		li      $v0, 3
-		beq     $v1, $v0, loc_800B0C58
-		li      $v0, 6
-		j       loc_800B0C6C
-		nop
-
-		loc_800B0C3C :
-	bltz    $v1, loc_800B0C6C
-		nop
-		j       loc_800B0C6C
-		li      $a0, 1
-
-		loc_800B0C4C :
-		lw      $v1, -0x59C($gp)
-		j       loc_800B0C5C
-		li      $v0, 1
-
-		loc_800B0C58 :
-		lw      $v1, -0x59C($gp)
-
-		loc_800B0C5C :
-		nop
-		bne     $v1, $v0, loc_800B0C6C
-		nop
-		li      $a0, 1
-
-		loc_800B0C6C :
-		beqz    $a0, loc_800B0E5C
-		move    $v0, $s5
-		lh      $v1, 2($s0)
-		addiu   $s1, $gp, -0x58D4
-		sll     $v0, $v1, 2
-		addu    $v0, $v1
-		sll     $v0, 2
-		addu    $v0, $s1
-		lh      $v1, 6($v0)
-		lh      $t1, 0($v0)
-		lh      $a2, 2($v0)
-		lh      $a3, 4($v0)
-		sw      $v1, 0x28 + var_18($sp)
-		lh      $v1, 2($s0)
-		nop
-		sll     $v0, $v1, 2
-		addu    $v0, $v1
-		sll     $v0, 2
-		addu    $v0, $s1
-		lh      $v0, 8($v0)
-		nop
-		sw      $v0, 0x28 + var_14($sp)
-		lh      $v1, 2($s0)
-		lw      $a0, -0x420C($gp)
-		sll     $v0, $v1, 2
-		addu    $v0, $v1
-		sll     $v0, 2
-		addu    $v0, $s1
-		lh      $v0, 0xA($v0)
-		addiu   $t0, $gp, -0x46C
-		sw      $v0, 0x28 + var_10($sp)
-		lh      $v1, 2($s0)
-		sll     $a1, $t1, 1
-		sll     $v0, $v1, 2
-		addu    $v0, $v1
-		sll     $v0, 2
-		addu    $v0, $s1
-		lw      $v0, 0xC($v0)
-		addu    $a1, $t1
-		sw      $v0, 0x28 + var_C($sp)
-		lh      $v1, 2($s0)
-		sll     $a1, 3
-		sll     $v0, $v1, 2
-		addu    $v0, $v1
-		sll     $v0, 2
-		addu    $v0, $s1
-		lw      $v0, 0x10($v0)
-		addu    $a1, $t0
-		jal     sub_800A7D40
-		sw      $v0, 0x28 + var_8($sp)
-		lh      $v1, 2($s0)
-		nop
-		sll     $v0, $v1, 2
-		addu    $v0, $v1
-		sll     $v0, 2
-		addu    $v0, $s1
-		lh      $v0, 0($v0)
-		nop
-		bnez    $v0, loc_800B0D78
-		sll     $v0, $v1, 2
-		lw      $v0, -0x4B4($gp)
-		nop
-		ori     $v0, 4
-		sw      $v0, -0x4B4($gp)
-		lh      $v1, 2($s0)
-		nop
-		sll     $v0, $v1, 2
-
-		loc_800B0D78:
-	addu    $v0, $v1
-		sll     $v0, 2
-		addu    $v0, $s1
-		lh      $v1, 0($v0)
-		li      $v0, 1
-		bne     $v1, $v0, loc_800B0E5C
-		move    $v0, $s5
-		lw      $v0, -0x4B4($gp)
-		nop
-		ori     $v0, 8
-		sw      $v0, -0x4B4($gp)
-		j       loc_800B0E5C
-		move    $v0, $s5
-
-		loc_800B0DAC :
-	bnez    $s5, loc_800B0E3C
-		move    $a0, $s3
-		lh      $v1, 0($s2)
-		li      $v0, 0x2D  # '-'
-		bne     $v1, $v0, loc_800B0E2C
-		move    $a1, $s1
-		lw      $v0, -0x238($gp)
-		lui     $v1, 0x10
-		and $v0, $v1
-		bnez    $v0, loc_800B0E5C
-		move    $v0, $s5
-		jal     sub_800A5CBC
-		nop
-		move    $s0, $v0
-		beqz    $s0, def_800B0904  # jumptable 800B0904 default case
-		# jumptable 800B0A4C default case
-		move    $a0, $s0
-		jal     sub_80034648
-		li      $a1, 2
-		andi    $v0, 0x20
-		beqz    $v0, def_800B0904  # jumptable 800B0904 default case
-		# jumptable 800B0A4C default case
-		move    $a0, $s0
-		jal     sub_80034648
-		li      $a1, 3
-		lui     $v1, 1
-		and $v0, $v1
-		beqz    $v0, def_800B0904  # jumptable 800B0904 default case
-		# jumptable 800B0A4C default case
-		move    $a0, $s3
-		move    $a1, $s1
-		move    $a2, $s4
-		lw      $v0, -0x9CC($gp)
-		j       loc_800B0E4C
-		move    $a3, $zero
-
-		loc_800B0E2C :
-	move    $a2, $s4
-		lw      $v0, -0x9CC($gp)
-		j       loc_800B0E4C
-		move    $a3, $zero
-
-		loc_800B0E3C :
-	move    $a1, $s1
-		move    $a2, $s4
-		lw      $v0, -0x9CC($gp)
-		move    $a3, $s5
-
-		loc_800B0E4C :
-	sw      $s2, 0x28 + var_18($sp)
-		jal     sub_800359C8
-		sw      $v0, 0x28 + var_14($sp)
-
-		def_800B0904 : # jumptable 800B0904 default case
-		move    $v0, $s5         # jumptable 800B0A4C default case
-
-		loc_800B0E5C:
-			lw      $ra, 0x28 + var_s18($sp)
-				lw      $s5, 0x28 + var_s14($sp)
-				lw      $s4, 0x28 + var_s10($sp)
-				lw      $s3, 0x28 + var_sC($sp)
-				lw      $s2, 0x28 + var_s8($sp)
-				lw      $s1, 0x28 + var_s4($sp)
-				lw      $s0, 0x28 + var_s0($sp)
-				jr      $ra
-				addiu   $sp, 0x48
-#endif
-	return 0;
 }
-
 
 // autogenerated function stub: 
 // long /*$ra*/ RazielAnimCallbackDuringPause(struct _G2Anim_Type *anim /*$a0*/, int sectionID /*$a1*/, enum _G2AnimCallbackMsg_Enum message /*$s0*/, long messageDataA /*$s1*/, long messageDataB /*stack 16*/, void *data /*stack 20*/)

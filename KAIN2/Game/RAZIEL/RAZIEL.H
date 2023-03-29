@@ -7,6 +7,18 @@ struct __AlarmData
 	short data; // size=0, offset=2
 };
 
+struct __CannedSound 
+{
+	short bank; // size=0, offset=0
+	short sound; // size=0, offset=2
+	short startPitch; // size=0, offset=4
+	short endPitch; // size=0, offset=6
+	short startVolume; // size=0, offset=8
+	short endVolume; // size=0, offset=10
+	long time; // size=0, offset=12
+	long distance; // size=0, offset=16
+};
+
 struct RazielData 
 {
 	unsigned long version; // size=0, offset=0
