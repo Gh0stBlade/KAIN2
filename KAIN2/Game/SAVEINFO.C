@@ -972,7 +972,7 @@ void SAVE_SaveEverythingInMemory()
 
 void SAVE_SaveGame()
 {
-	while (STREAM_PollLoadQueue() == 0)
+	while (STREAM_PollLoadQueue() != 0)
 	{
 	}
 
