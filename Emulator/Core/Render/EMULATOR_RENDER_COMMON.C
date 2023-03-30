@@ -286,31 +286,43 @@ int ParsePrimitive(uintptr_t primPtr, int code)
 
 			IBLK_FILL* poly = (IBLK_FILL*)primPtr;
 
-			int r5 = poly->r0 * 31 / 255;
-			int g5 = poly->g0 * 31 / 255;
-			int b5 = poly->b0 * 31 / 255;
-			int a1 = 0;
+#if 1///@FIXME should really draw a dimensional quad here, this is a quick hack because the current quad drawing breaks drawing completely.
+			glEnable(GL_SCISSOR_TEST);
+			Emulator_SetViewPort(0, 0, Emulator_GetWindowWidth(), Emulator_GetWindowHeight());
+			glScissor(0, 0, Emulator_GetWindowWidth(), Emulator_GetWindowHeight());
+			glClearColor((float)poly->r0 / 255.0f, (float)poly->g0 / 255.0f, (float)poly->b0 / 255.0f, 1.0f);
+			glClear(GL_COLOR_BUFFER_BIT);
+			glDisable(GL_SCISSOR_TEST);
 
-			unsigned short colour = (unsigned short)(r5 << 1 | g5 << 6 | b5 << 11 | a1);
+#else
+			Emulator_AddSplit(FALSE, activeDrawEnv.tpage, whiteTexture);
 
-			unsigned short* blackImage = (unsigned short*)malloc(poly->w * poly->h * sizeof(unsigned short));
+			struct VertexBufferSplit* split = &g_splits[g_splitIndex];
 
-			for (int i = 0; i < poly->w * poly->h; i++)
-			{
-				blackImage[i] = colour;
-			}
+			short p0[2];
+			p0[0] = poly->x0;
+			p0[1] = poly->y0;
 
-			RECT16 r;
-			r.x = poly->x0;
-			r.y = poly->y0;
-			r.w = poly->w;
-			r.h = poly->h;
+			short p1[2];
+			p1[0] = poly->x0 + poly->w;
+			p1[1] = poly->y0;
 
-			LoadImagePSX(&r, (unsigned int*)blackImage);
-			Emulator_UpdateVRAM();
+			short p2[2];
+			p2[0] = poly->x0 + poly->w;
+			p2[1] = poly->y0 + poly->h;
 
-			free(blackImage);
+			short p3[2];
+			p3[0] = poly->x0;
+			p3[1] = poly->y0 + poly->h;
 
+			Emulator_GenerateVertexArrayQuad(&g_vertexBuffer[split->vCount + split->vIndex], p0, p1, p2, p3);
+			Emulator_GenerateColourArrayQuad(&g_vertexBuffer[split->vCount + split->vIndex], &poly->r0, &poly->r0, &poly->r0, &poly->r0, FALSE);
+
+			Emulator_MakeTriangle();
+			Emulator_MakeIndex(6);
+
+			g_vertexIndex += 6;
+#endif
 			int primitive_size = sizeof(IBLK_FILL);
 
 			return primitive_size;
@@ -933,8 +945,16 @@ void Emulator_AggregatePTAGsToSplits(unsigned int* p, int singlePrimitive)
 	{
 		P_TAG* primitiveTag = (P_TAG*)p;
 
-		uintptr_t currentAddress = (uintptr_t)(primitiveTag + 1);
-
+		uintptr_t currentAddress = NULL;
+		
+		if ((primitiveTag->code & 0x3))
+		{
+			currentAddress = (uintptr_t)((char*)primitiveTag + sizeof(uintptr_t) + sizeof(unsigned int));
+		}
+		else
+		{
+			currentAddress = (uintptr_t)(primitiveTag + 1);
+		}
 		// single primitive
 		ParsePrimitive(currentAddress, primitiveTag->code);
 		
