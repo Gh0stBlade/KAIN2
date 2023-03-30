@@ -53,7 +53,7 @@ void Emulator_ReadFileEM(const char* filePath, void* buff, int size)
 		char fullName[256];
 		int err = 0;
 
-		sprintf(fullName, "%s//%s//%s//%s", urlName, SHORT_GAME_NAME, BUILD_PATH, filePath);
+		sprintf(fullName, "%s/%s/%s/%s", urlName, SHORT_GAME_NAME, BUILD_PATH, filePath);
 
 		emscripten_wget_data(fullName, &outBuff, &outSize, &err);
 
@@ -120,7 +120,7 @@ void* Emulator_OpenFile(const char* filePath, const char* mode, int* outSize)
 		char fullName[256];
 		int err = 0;
 
-		sprintf(fullName, "%s//%s//%s//%s", urlName, SHORT_GAME_NAME, BUILD_PATH, filePath);
+		sprintf(fullName, "%s/%s/%s/%s", urlName, SHORT_GAME_NAME, BUILD_PATH, filePath);
 
 		emscripten_wget_data(fullName, &outBuff, outSize, &err);
 
