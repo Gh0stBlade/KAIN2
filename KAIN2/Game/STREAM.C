@@ -3938,7 +3938,7 @@ long GetFogColor(struct StreamUnitPortal* portal, struct _StreamUnit* mainStream
 		}
 		else
 		{
-			interp = (MainColor / (mainLevel->fogFar - mainLevel->fogNear)) >> 4;
+			interp = (((mainLevel->fogFar - mainLevel->fogNear) << 16) / (mainLevel->fogFar - mainLevel->fogNear)) >> 4;
 
 			if (interp < 0)
 			{
