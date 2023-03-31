@@ -13,6 +13,7 @@ DRAWENV activeDrawEnv;	// word_33BC
 DRAWENV byte_9CCA4;
 int dword_3410 = 0;
 char byte_3352 = 0;
+int g_blitAfterDrawPrim = 1;
 
 #if defined(USE_32_BIT_ADDR)
 
@@ -117,7 +118,7 @@ int DrawSync(int mode)
 	}
 
 #if !defined(VULKAN)
-	if (g_splitIndex > 0) // don't do flips if nothing to draw.
+	if (g_splitIndex > 1) // don't do flips if nothing to draw.
 	{
 		Emulator_EndScene();
 	}

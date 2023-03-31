@@ -285,16 +285,17 @@ int ParsePrimitive(uintptr_t primPtr, int code)
 			} IBLK_FILL;
 
 			IBLK_FILL* poly = (IBLK_FILL*)primPtr;
+			RECT16 clip;
+			clip.x = poly->x0;
+			clip.y = poly->y0;
+			clip.w = poly->w;
+			clip.h = poly->h;
 
 #if 1///@FIXME should really draw a dimensional quad here, this is a quick hack because the current quad drawing breaks drawing completely.
-			glEnable(GL_SCISSOR_TEST);
-			Emulator_SetViewPort(0, 0, Emulator_GetWindowWidth(), Emulator_GetWindowHeight());
-			glScissor(0, 0, Emulator_GetWindowWidth(), Emulator_GetWindowHeight());
-			glClearColor((float)poly->r0 / 255.0f, (float)poly->g0 / 255.0f, (float)poly->b0 / 255.0f, 1.0f);
-			glClear(GL_COLOR_BUFFER_BIT);
-			glDisable(GL_SCISSOR_TEST);
+			ClearImage(&activeDrawEnv.clip, poly->r0, poly->g0, poly->b0);
 
 #else
+			poly->r0 = 255;
 			Emulator_AddSplit(FALSE, activeDrawEnv.tpage, whiteTexture);
 
 			struct VertexBufferSplit* split = &g_splits[g_splitIndex];
