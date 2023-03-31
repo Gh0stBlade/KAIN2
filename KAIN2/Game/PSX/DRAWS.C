@@ -343,7 +343,7 @@ int* DRAW_AnimatedModel_S(struct _Model* model, struct _PVertex* poolVertex, str
 	int v1;
 	int t0;
 	int a0;
-	int* t2;
+	int t2;
 
 	//s1 = vertexColor
 	//s3 = getScratchAddr(0);
@@ -454,7 +454,7 @@ int* DRAW_AnimatedModel_S(struct _Model* model, struct _PVertex* poolVertex, str
 						{
 							gte_avsz3();
 
-							t2 = (int*)s5->color;
+							t2 = (int)s5->color;
 
 							gte_stotz(&t0);
 
@@ -481,15 +481,15 @@ int* DRAW_AnimatedModel_S(struct _Model* model, struct _PVertex* poolVertex, str
 						mm2L2:
 							fp = t0 & 0xFFFC;
 
-							t2 = (int*)s5->color;
+							t2 = s5->color;
 
 						sort_avz_continue2:
 
 							int flag = t6 >> 24;
 
-							if (/*t2 < 0 ||*/ (flag & 0x2))///@FIXME this is because psx ver is loaded at 0x80000000 so if < 0 it's a ptr not a colour!
+							if (t2 < 0 || (flag & 0x2))///@FIXME this is because psx ver is loaded at 0x80000000 so if < 0 it's a ptr not a colour!
 							{
-								t7 = t2[2];
+								t7 = ((int*)t2)[2];
 
 								fp += ((t7 >> 24) << 3);
 							}
@@ -518,11 +518,6 @@ int* DRAW_AnimatedModel_S(struct _Model* model, struct _PVertex* poolVertex, str
 								{
 									goto not_colored_fog;
 								}
-								else
-								{
-									//goto fogged_face
-									goto anim_next_mface;
-								}
 
 							not_colored_fog:
 								if ((v1 & 0x2))
@@ -535,23 +530,27 @@ int* DRAW_AnimatedModel_S(struct _Model* model, struct _PVertex* poolVertex, str
 										v1 = t6 >> 13;
 										v1 &= 0x7F8;
 
-										struct _Normal* v11 = (struct _Normal*)(char*)&gNormalList + v1;
+										struct _Normal* v11 = (struct _Normal*)((char*)&gNormalList + v1);
 
 										gte_ldv0(v11);
 
-										gteRegs.CP2D.p[6].sd = t2[3];
+										gteRegs.CP2D.p[6].sd = ((int*)t2)[3];
 
 										if (modelFadeValue != 0)
 										{
 											//v0 = 0x2000000
 											//at = 0xFEFFFFFF
-											gteRegs.CP2D.p[6].sd = 0x2000000 | (gteRegs.CP2D.p[6].sd & 0xFEFFFFFF);
+											v1 = gteRegs.CP2D.p[6].sd;
+											v1 &= 0xFEFFFFFF;
+											v1 = 0x2000000 | v1;
+											gteRegs.CP2D.p[6].sd = v1;
 										}
 										//loc_800254B0
 									nofade_ft3_a:
 										gte_ncds();
 
-										s7[4] = t2[0];
+										s7[4] = ((int*)t2)[0];
+										v1 = ((int*)t2)[1];
 										s7[8] = t7;
 										v0 = v1 >> 16;
 
@@ -580,7 +579,7 @@ int* DRAW_AnimatedModel_S(struct _Model* model, struct _PVertex* poolVertex, str
 
 											s7 += 9;
 
-											if ((t2[3] & 0x2000000) || (t7 & 0x100000))
+											if ((((int*)t2)[3] & 0x2000000) || (t7 & 0x100000))
 											{
 												goto anim_next_mface;
 											}
@@ -623,7 +622,7 @@ int* DRAW_AnimatedModel_S(struct _Model* model, struct _PVertex* poolVertex, str
 
 										if (!(a2 & 0x80000000))
 										{
-											t0 = t2[3];
+											t0 = ((int*)t2)[3];
 											v0 = t0 & 0xFF000000;
 
 											if (modelFadeValue != 0)
@@ -644,8 +643,8 @@ int* DRAW_AnimatedModel_S(struct _Model* model, struct _PVertex* poolVertex, str
 											t5 = v0 | t5;
 											s7[8] = t5;
 
-											v1 = t2[0];
-											v0 = t2[1];
+											v1 = ((int*)t2)[0];
+											v0 = ((int*)t2)[1];
 											s7[10] = t7;
 											s7[4] = v1;
 
