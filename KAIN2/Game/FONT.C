@@ -210,33 +210,33 @@ char charMap[92][3] = {
   { 0x47,(char)0xff,(char)0xff }
 };
 
-void FONT_MakeSpecialFogClut(int x, int y)
-{ 
+void FONT_MakeSpecialFogClut(int x, int y)//Matching - 98.79%
+{
 	int n;
 	unsigned short cl[16];
 	PSX_RECT myrect;
 
-	for (n = 0; n < 15; n++)
+	for (n = 15; n >= 0; n--)
 	{
-		cl[n] = 0x4210;
+		cl[n] = 16912;
 	}
-
-	cl[15] = 0;
 
 	myrect.w = 16;
 	myrect.h = 1;
+	
+	cl[0] = 0;
+	
 	myrect.x = x;
 	myrect.y = y;
 	
 	SpecialFogClut = getClut(x, y);
-
+	
 	DrawSync(0);
-
+	
 	LoadImage(&myrect, (unsigned int*)&cl);
 	
 	DrawSync(0);
 }
-
 
 void FONT_Init()
 {
