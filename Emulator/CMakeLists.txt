@@ -79,3 +79,5 @@ ${PROJECT_NAME} PROPERTIES OUTPUT_NAME "Valkyrie"
 ${PROJECT_NAME} PROPERTIES FOLDER "Libs"
 )
 endif()
+
+add_subdirectory(Shaders)
