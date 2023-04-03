@@ -677,6 +677,8 @@ void Emulator_GenerateCommonTextures()
 	srvd.Texture2D.MipLevels = 1;
 
 	hr = d3ddev->CreateShaderResourceView(vramBaseTexture, &srvd, &vramTexture);
+	
+	vram_need_update = TRUE;
 
 	eassert(!FAILED(hr));
 }
