@@ -22,7 +22,7 @@ foreach(FILE ${EMULATOR_SHADER_SRCS})
 endforeach(FILE)
 
 set_target_properties(
-Valkyrie_Vulkan_HLSL PROPERTIES FOLDER "Libs/Emulators/ShaderLib"
+Valkyrie_Vulkan_HLSL PROPERTIES FOLDER "Libs/Emulator/ShaderLib"
 )
 
 add_dependencies(${PROJECT_NAME} Valkyrie_Vulkan_HLSL)

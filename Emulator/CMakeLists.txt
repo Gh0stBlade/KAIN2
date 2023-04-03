@@ -76,7 +76,7 @@ BuildPreProcessorDefinitions()
 
 set_target_properties(
 ${PROJECT_NAME} PROPERTIES OUTPUT_NAME "Valkyrie"
-${PROJECT_NAME} PROPERTIES FOLDER "Libs"
+${PROJECT_NAME} PROPERTIES FOLDER "Libs/Emulator"
 )
 endif()
 
