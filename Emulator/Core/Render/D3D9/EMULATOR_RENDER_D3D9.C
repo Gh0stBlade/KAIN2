@@ -266,6 +266,8 @@ void Emulator_GenerateCommonTextures()
 
 	hr = d3ddev->CreateTexture(VRAM_WIDTH, VRAM_HEIGHT, 1, 0, D3DFMT_A8L8, D3DPOOL_MANAGED, &vramTexture, NULL);
 	assert(!FAILED(hr));
+
+	vram_need_update = TRUE;
 }
 
 void Emulator_CreateVertexBuffer()
@@ -595,7 +597,7 @@ void Emulator_UpdateVertexBuffer(const struct Vertex* vertices, int num_vertices
 		return;
 
 	void* ptr;
-	dynamic_vertex_buffer->Lock(vertex_start_index * sizeof(Vertex), num_vertices * sizeof(Vertex), &ptr, D3DLOCK_DISCARD);
+	dynamic_vertex_buffer->Lock(vertex_start_index * sizeof(Vertex), num_vertices * sizeof(Vertex), &ptr, 0);
 
 	if (use_offset)
 	{
@@ -616,7 +618,7 @@ void Emulator_UpdateIndexBuffer(const unsigned short* indices, int num_indices, 
 		return;
 
 	void* ptr;
-	dynamic_index_buffer->Lock(face_start_index * sizeof(unsigned short), num_indices * sizeof(unsigned short), &ptr, D3DLOCK_DISCARD);
+	dynamic_index_buffer->Lock(face_start_index * sizeof(unsigned short), num_indices * sizeof(unsigned short), &ptr, 0);
 	
 	if (use_offset)
 	{
