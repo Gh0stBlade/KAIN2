@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#if defined(Vulkan)
+#if defined(VULKAN)
 
 int64_t Emulator_GetTicks()
 {
