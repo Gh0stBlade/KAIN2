@@ -2141,7 +2141,7 @@ void Emulator_DrawTriangles(int start_vertex, int start_index, int triangles)
 
 	if (!g_resetDeviceOnNextFrame)
 	{
-		vkCmdDrawIndexed(commandBuffers[currentFrame], triangles * 3, 1, start_vertex, 0, 0);
+		vkCmdDrawIndexed(commandBuffers[currentFrame], triangles * 3, 1, start_index, 0, 0);
 	}
 }
 
