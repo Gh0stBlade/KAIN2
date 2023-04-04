@@ -231,7 +231,7 @@ ShaderID Shader_Compile_Internal(const unsigned int* vs_data, const unsigned int
 	samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
 	samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
 	samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-	samplerInfo.anisotropyEnable = VK_TRUE;
+	samplerInfo.anisotropyEnable = VK_FALSE;
 	samplerInfo.maxAnisotropy = properties.limits.maxSamplerAnisotropy;
 	samplerInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
 	samplerInfo.unnormalizedCoordinates = VK_FALSE;
@@ -253,7 +253,7 @@ ShaderID Shader_Compile_Internal(const unsigned int* vs_data, const unsigned int
 	samplerInfoLUT.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
 	samplerInfoLUT.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
 	samplerInfoLUT.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-	samplerInfoLUT.anisotropyEnable = VK_TRUE;
+	samplerInfoLUT.anisotropyEnable = VK_FALSE;
 	samplerInfoLUT.maxAnisotropy = properties.limits.maxSamplerAnisotropy;
 	samplerInfoLUT.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
 	samplerInfoLUT.unnormalizedCoordinates = VK_FALSE;
