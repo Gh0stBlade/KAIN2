@@ -113,7 +113,7 @@ VkVertexInputBindingDescription g_bindingDescriptionBlit;
 
 VkViewport g_viewport;
 VkPipelineRasterizationStateCreateInfo g_rasterizer;
-
+VkClearValue clearValue;
 unsigned int frameIndex;
 unsigned int currentFrame = 0;
 const int MAX_FRAMES_IN_FLIGHT = 2;
@@ -509,7 +509,7 @@ int Emulator_CreateVulkanSwapChain()
 	createInfo.imageColorSpace = surfaceFormat.colorSpace;
 	createInfo.imageExtent = swapchainSize;
 	createInfo.imageArrayLayers = 1;
-	createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+	createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
 
 	unsigned int queueFamilyIndices[] = { graphics_QueueFamilyIndex, present_QueueFamilyIndex };
 	if (graphics_QueueFamilyIndex != present_QueueFamilyIndex)
@@ -1473,9 +1473,10 @@ void Emulator_DestroyTexture(TextureID texture)
 
 void Emulator_Clear(int x, int y, int w, int h, unsigned char r, unsigned char g, unsigned char b)
 {
+	///@FIXME had to implement a hack here, vkBeginRenderPass does clear to black after this.
 	VkClearColorValue clearColor = { r / 255.0f, g / 255.0f, b / 255.0f, 1.0f };
 
-	VkClearValue clearValue;
+	//VkClearValue clearValue;
 	memset(&clearValue, 0, sizeof(VkClearValue));
 
 	clearValue.color = clearColor;
@@ -1490,11 +1491,14 @@ void Emulator_Clear(int x, int y, int w, int h, unsigned char r, unsigned char g
 
 	Emulator_TransitionImageLayout(swapchainImages[0], VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 	Emulator_EndSingleTimeCommands(buff);
-	vkCmdClearColorImage(commandBuffers[currentFrame], swapchainImages[0], VK_IMAGE_LAYOUT_GENERAL, &clearColor, 1, &imageRange);
 
 	VkCommandBuffer buff2 = Emulator_BeginSingleTimeCommands();
-	Emulator_TransitionImageLayout(swapchainImages[0], VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
+	vkCmdClearColorImage(buff2, swapchainImages[0], VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, &clearColor, 1, &imageRange);
 	Emulator_EndSingleTimeCommands(buff2);
+
+	VkCommandBuffer buff3 = Emulator_BeginSingleTimeCommands();
+	Emulator_TransitionImageLayout(swapchainImages[0], VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
+	Emulator_EndSingleTimeCommands(buff3);
 }
 
 void Emulator_SaveVRAM(const char* outputFileName, int x, int y, int width, int height, int bReadFromFrameBuffer)
@@ -1894,9 +1898,8 @@ void Emulator_BeginPass()
 	renderPassInfo.renderArea.offset = { 0, 0 };
 	renderPassInfo.renderArea.extent = swapChainExtent;
 
-	VkClearValue clearColor = { {{0.0f, 0.0f, 0.0f, 1.0f}} };
 	renderPassInfo.clearValueCount = 1;
-	renderPassInfo.pClearValues = &clearColor;
+	renderPassInfo.pClearValues = &clearValue;
 
 	vkCmdBeginRenderPass(commandBuffers[currentFrame], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 	vkCmdBindDescriptorSets(commandBuffers[currentFrame], VK_PIPELINE_BIND_POINT_GRAPHICS, g_activeShader.PL, 0, 1, &descriptorSets[currentFrame][g_activeDescriptor], 0, NULL);
