@@ -13,6 +13,6 @@ add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 
 set(PSX_LIB Valkyrie.lib)
 
-target_link_directories(${PROJECT_NAME} PUBLIC ${ROOT_DIR}/Build/Build_UWP/Emulator/$(Configuration))
+target_link_directories(${PROJECT_NAME} PUBLIC ${ROOT_DIR}/Build/Build_UWP/External/libValkyrie/$(Configuration))
 
 endif()

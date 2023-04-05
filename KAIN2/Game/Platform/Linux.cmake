@@ -16,7 +16,7 @@ include_directories(${SDL2_INCLUDE_DIR})
 
 set(PSX_LIB libValkyrie.a)
 
-target_link_directories(${PROJECT_NAME} PUBLIC ${ROOT_DIR}/Build_Linux/Emulator/$(Configuration))
+target_link_directories(${PROJECT_NAME} PUBLIC ${ROOT_DIR}/Build_Linux/External/libValkyrie/$(Configuration))
 
 set(CMAKE_C_FLAGS           "${CMAKE_C_FLAGS} -fpermissive -Wno-narrowing")
 set(CMAKE_C_FLAGS_DEBUG     "${CMAKE_C_FLAGS_DEBUG} -fpermissive -Wno-narrowing")

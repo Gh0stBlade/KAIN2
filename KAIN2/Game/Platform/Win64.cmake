@@ -13,7 +13,7 @@ ${Vulkan_LIBRARY}
 )
 endif()
 
-target_link_directories(${PROJECT_NAME} PUBLIC ${ROOT_DIR}/Build/Build_Win64/Emulator/$(Configuration))
+target_link_directories(${PROJECT_NAME} PUBLIC ${ROOT_DIR}/Build/Build_Win64/External/libValkyrie/$(Configuration))
 
 set(PSX_LIB Valkyrie.lib)
 

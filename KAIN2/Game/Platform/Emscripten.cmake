@@ -11,9 +11,9 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wno-error=format-security -Wno-narr
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O3 -Wno-error=format-security -Wno-narrowing -Wno-nonportable-include-path")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -Wno-error=format-security -Wno-narrowing -Wno-nonportable-include-path")
 
-link_directories(${ROOT_DIR}/Build_EMSDK/Emulator/)
+link_directories(${ROOT_DIR}/Build_EMSDK/libValkyrie/)
 
-set(PSX_LIB ${ROOT_DIR}/Build/Build_EMSDK/Emulator/libValkyrie.a)
+set(PSX_LIB ${ROOT_DIR}/Build/Build_EMSDK/External/libValkyrie/libValkyrie.a)
 
 set(CMAKE_EXECUTABLE_SUFFIX ".html")
 
