@@ -1,6 +1,6 @@
 if(WINDOWS_STORE AND DEFINED PLATFORM_DURANGO)
 
-target_link_directories(${PROJECT_NAME} PUBLIC ${ROOT_DIR}/Build_Durango/Emulator/$(Configuration) ${EXTERN_LIB_PATH}/SDL_mixer/VisualC-WinRT/x64/Debug/SDL_mixer-UWP ${EXTERN_LIB_PATH}/SDL/VisualC-WinRT/x64/Debug/SDL-UWP)
+target_link_directories(${PROJECT_NAME} PUBLIC ${ROOT_DIR}/Build_Durango/External/libValkyrie/$(Configuration) ${EXTERN_LIB_PATH}/SDL_mixer/VisualC-WinRT/x64/Debug/SDL_mixer-UWP ${EXTERN_LIB_PATH}/SDL/VisualC-WinRT/x64/Debug/SDL-UWP)
 target_link_libraries(${PROJECT_NAME} SDL2.lib SDL2_mixer.lib)
 
 include_directories(${EXTERN_LIB_PATH}/SDL/include)

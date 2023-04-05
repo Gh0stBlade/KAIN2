@@ -13,9 +13,9 @@ endif()
 include_directories(${EXTERN_LIB_PATH}/glew-cmake/Include)
 include_directories(${EXTERN_LIB_PATH}/SDL/Include)
 
-target_link_directories(${PROJECT_NAME} PUBLIC ${ROOT_DIR}/Build/Build_Win32/Emulator/$(Configuration))
+target_link_directories(${PROJECT_NAME} PUBLIC ${ROOT_DIR}/Build/Build_Win32/External/libValkyrie/$(Configuration))
 
-target_link_directories(${PROJECT_NAME} PUBLIC ${ROOT_DIR}/Build/Build_Win32/Emulator/$(Configuration))
+target_link_directories(${PROJECT_NAME} PUBLIC ${ROOT_DIR}/Build/Build_Win32/External/libValkyrie/$(Configuration))
 
 set(PSX_LIB Valkyrie.lib)
 

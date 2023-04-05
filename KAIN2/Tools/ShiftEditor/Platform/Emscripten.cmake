@@ -11,9 +11,9 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -s TOTAL_MEMORY=1024MB -Wno-error=fo
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O2 -s TOTAL_MEMORY=1024MB -Wno-error=format-security -Wno-narrowing -Wno-nonportable-include-path")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2 -s TOTAL_MEMORY=1024MB -Wno-error=format-security -Wno-narrowing -Wno-nonportable-include-path")
 
-link_directories(${ROOT_DIR}/Build_EMSDK/Emulator/)
+link_directories(${ROOT_DIR}/Build_EMSDK/External/libValkyrie/)
 
-set(PSX_LIB ${ROOT_DIR}/Build_EMSDK/Emulator/libValkyrie.a)
+set(PSX_LIB ${ROOT_DIR}/Build_EMSDK/External/libValkyrie/libValkyrie.a)
 
 set(CMAKE_EXECUTABLE_SUFFIX ".html")
 
