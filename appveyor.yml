@@ -26,7 +26,8 @@ before_build:
   - cmd: cd %clone_folder%
   - ps:  $env:GIT_COMMIT_COUNT = $(git rev-list --count HEAD)
   - cmd: git submodule update --init --recursive
-  - cmd: cd Emulator
+  - cmd: cd External
+  - cmd: cd libValkyrie
   - cmd: cd Platform
   - cmd: cd Win32
   #- cmd: cd Win64
