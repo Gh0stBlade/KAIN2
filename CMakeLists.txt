@@ -55,5 +55,4 @@ endif()
 #We want to be able to group projects in folders
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 add_subdirectory(External)
-add_subdirectory(Emulator)
 add_subdirectory(KAIN2)

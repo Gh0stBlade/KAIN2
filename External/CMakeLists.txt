@@ -1,3 +1,5 @@
+add_subdirectory(libValkyrie)
+
 if(NOT EMSCRIPTEN AND NOT PLATFORM_NX AND NOT PLATFORM_NX_ARM)
 if(ANDROID)
 add_subdirectory(SDL EXCLUDE_FROM_ALL)

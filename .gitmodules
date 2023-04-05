@@ -1,3 +1,6 @@
 [submodule "External/SDL"]
 	path = External/SDL
 	url = https://github.com/libsdl-org/SDL.git
+[submodule "External/libValkyrie"]
+	path = External/libValkyrie
+	url = https://github.com/Gh0stBlade/libValkyrie.git
