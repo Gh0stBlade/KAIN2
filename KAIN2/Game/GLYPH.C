@@ -841,7 +841,7 @@ void _GlyphGenericProcess(struct _Instance* instance, int data1, int data2)
 	//s3 = data1
 	//s4 = data2
 	data = (struct __GlyphData*)instance->extraData;
-
+	ShrinkGlyphMenu(instance);
 	//s0 = 0x100001
 
 	while (Ptr = PeekMessageQueue(&data->messages))
@@ -855,7 +855,7 @@ void _GlyphGenericProcess(struct _Instance* instance, int data1, int data2)
 			break;
 		}
 		default:
-			//_GlyphDefaultProcess(instance, data1, data2);
+			_GlyphDefaultProcess(instance, data1, data2);
 			break;
 		}
 
