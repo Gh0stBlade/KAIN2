@@ -45,6 +45,12 @@ void MATH3D_Sort3VectorCoords(long* a, long* b, long* c)//Matching - 100%
 	}
 }
 
+long MATH3D_LengthXYZ(long x, long y, long z)
+{ // line 258, offset 0x800394fc
+	UNIMPLEMENTED();
+	return 0;
+}
+
 long MATH3D_LengthXY(long x, long y)//Matching - 90.21%
 {
 	long x1;
@@ -64,13 +70,6 @@ long MATH3D_LengthXY(long x, long y)//Matching - 90.21%
 	}
 
 	return ((y1 - y) * 2 + 12 * x) / 32;
-}
-
-long MATH3D_LengthXY(long x, long y)
-{
-	UNIMPLEMENTED();
-
-	return 0;
 }
 
 void MATH3D_Normalize(struct _Normal* normal)//Matching - 100%
