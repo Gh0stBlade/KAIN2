@@ -114,6 +114,24 @@ struct DrMoveAniTex
 	struct DrMoveAniTexDestInfo* aniTexInfo; // size=40, offset=4
 };
 
+#if defined(KATANA)
+struct TextureMT3
+{
+	unsigned char u0; // size=0, offset=0
+	unsigned char v0; // size=0, offset=1
+	unsigned short clut; // size=0, offset=2
+	unsigned char u1; // size=0, offset=4
+	unsigned char v1; // size=0, offset=5
+	unsigned short tpage; // size=0, offset=6
+	unsigned char u2; // size=0, offset=8
+	unsigned char v2; // size=0, offset=9
+	char pad1; // size=0, offset=10
+	char sortPush; // size=0, offset=11
+	long unknown;
+	long unknown2;
+	long color; // size=0, offset=12
+};
+#else
 struct TextureMT3 
 {
 	unsigned char u0; // size=0, offset=0
@@ -128,6 +146,7 @@ struct TextureMT3
 	char sortPush; // size=0, offset=11
 	long color; // size=0, offset=12
 };
+#endif
 
 struct _Model 
 {
