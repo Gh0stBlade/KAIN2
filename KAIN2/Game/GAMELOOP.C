@@ -189,7 +189,7 @@ void GAMELOOP_SetGameTime(long timeOfDay)//Matching - 74.59%
 	
 	if (tim < 0)
 	{
-		tim += 1440;
+		tim += 2160;
 	}
 
 	gameTrackerX.timeOfDay = timeOfDay;
