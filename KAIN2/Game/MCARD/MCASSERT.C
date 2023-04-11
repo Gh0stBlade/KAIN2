@@ -4,7 +4,7 @@
 
 void mcassert(char* exp, char* file, int line)
 {
-    if (exp != 0)
+    if (exp != NULL)
     {
         printf("%s:%ld: %s\n", file, line, exp);
     }
