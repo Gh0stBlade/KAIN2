@@ -194,7 +194,3 @@ void MENUFACE_RefreshFaces()
 		}
 	}
 }
-
-
-
-

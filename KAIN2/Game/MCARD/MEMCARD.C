@@ -220,7 +220,7 @@ void memcard_save(void *opaque)
 	SAVE_SaveGame();
 }
 
-void memcard_item(void *opaque, int (*fn)(void*, intptr_t, enum menu_ctrl_t), intptr_t parameter, long flags, char *text)
+void memcard_item(void* opaque, int (*fn)(void*, intptr_t, enum menu_ctrl_t), intptr_t parameter, long flags, char* text)
 {
 	if (flags != 0)
 	{
@@ -231,7 +231,3 @@ void memcard_item(void *opaque, int (*fn)(void*, intptr_t, enum menu_ctrl_t), in
 		menu_item(gameTrackerX.menu, fn, parameter, text);
 	}
 }
-
-
-
-

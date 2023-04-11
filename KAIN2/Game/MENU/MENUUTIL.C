@@ -84,7 +84,3 @@ void menu_sound(enum menu_sound_t sound)
 
 	SndPlay(entry->sfx);
 }
-
-
-
-
