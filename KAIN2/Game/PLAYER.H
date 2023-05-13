@@ -62,6 +62,30 @@ struct __AttackItem {
 	unsigned short hitPowerScale; // size=0, offset=34
 };
 
+struct __ThrowItem {
+	unsigned char prepAnim; // size=0, offset=0
+	unsigned char prepAnimFramesIn; // size=0, offset=1
+	unsigned char prepAnimAlphaIn; // size=0, offset=2
+	unsigned char coilAnim; // size=0, offset=3
+	unsigned char coilAnimFramesIn; // size=0, offset=4
+	unsigned char coilAnimAlphaIn; // size=0, offset=5
+	unsigned char throwAnim; // size=0, offset=6
+	unsigned char throwAnimFramesInFactor; // size=0, offset=7
+	unsigned char throwFrameToLaunch; // size=0, offset=8
+	unsigned char framesOut; // size=0, offset=9
+	short launchPointX; // size=0, offset=10
+	short launchPointY; // size=0, offset=12
+	short launchPointZ; // size=0, offset=14
+	short maxXRotation; // size=0, offset=16
+	short minXRotation; // size=0, offset=18
+	short maxZRotation; // size=0, offset=20
+	short minZRotation; // size=0, offset=22
+	short velocity; // size=0, offset=24
+	short gravity; // size=0, offset=26
+	short coilRot; // size=0, offset=28
+	short selfAdjustingFlag; // size=0, offset=30
+};
+
 struct __Player // hashcode: 0x0712E7A5 (dec: 118679461)
 {
 	int footPrint; // size=0, offset=0
