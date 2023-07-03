@@ -4,14 +4,14 @@
 #include "VRAM.H"
 #include "CORE.H"
 
-struct UVTYPE 
+struct UVTYPE
 {
 	unsigned char u; // size=0, offset=0
 	unsigned char v; // size=0, offset=1
 	short pad; // size=0, offset=2
 };
 
-struct SP_SUBDIV_STRUCT 
+struct SP_SUBDIV_STRUCT
 {
 	struct _SVector vertex0; // size=8, offset=0
 	struct _SVector vertex1; // size=8, offset=8
@@ -40,7 +40,41 @@ struct SP_SUBDIV_STRUCT
 	DVECTOR sxy[4]; // size=16, offset=196
 };
 
-typedef struct POLY_F4_SEMITRANS 
+typedef struct POLY_G3_SEMITRANS
+{
+#if defined(USE_32_BIT_ADDR)
+	uintptr_t tag;
+#if defined(PGXP)
+	unsigned short len;
+	unsigned short pgxp_index;
+#else
+	unsigned int len;
+#endif
+#else
+	unsigned long tag;
+#endif
+	unsigned int dr_tpage; // size=0, offset=4
+	unsigned char r0; // size=0, offset=8
+	unsigned char g0; // size=0, offset=9
+	unsigned char b0; // size=0, offset=10
+	unsigned char code; // size=0, offset=11
+	short x0; // size=0, offset=12
+	short y0; // size=0, offset=14
+	unsigned char r1; // size=0, offset=16
+	unsigned char g1; // size=0, offset=17
+	unsigned char b1; // size=0, offset=18
+	unsigned char pad1; // size=0, offset=19
+	short x1; // size=0, offset=20
+	short y1; // size=0, offset=22
+	unsigned char r2; // size=0, offset=24
+	unsigned char g2; // size=0, offset=25
+	unsigned char b2; // size=0, offset=26
+	unsigned char pad2; // size=0, offset=27
+	short x2; // size=0, offset=28
+	short y2; // size=0, offset=30
+} POLY_G3_SEMITRANS;
+
+typedef struct POLY_F4_SEMITRANS
 {
 #if defined(USE_32_BIT_ADDR)
 	uintptr_t tag;
@@ -73,39 +107,39 @@ extern short RENDER_currentStreamUnitID;
 extern int InStreamUnit;
 extern unsigned int** hackOT;
 
-extern void fDRAW_SPLIT_INTPL_XYZ(struct _SVector *newVertex, struct _SVector *pvb, struct _SVector *pvc); // 0x8002A5B0
+extern void fDRAW_SPLIT_INTPL_XYZ(struct _SVector* newVertex, struct _SVector* pvb, struct _SVector* pvc); // 0x8002A5B0
 
 extern void DRAW_InitShadow(); // 0x8002A62C
 
-extern unsigned long * DRAW_DrawShadow(struct _PrimPool *primPool, struct _Model *model, unsigned long **ot, long fadeValue); // 0x8002A6F4
+extern unsigned long* DRAW_DrawShadow(struct _PrimPool* primPool, struct _Model* model, unsigned long** ot, long fadeValue); // 0x8002A6F4
 
-extern void DRAW_FlatQuad(CVECTOR *color, short x0, short y0, short x1, int y1, int x2, int y2, int x3, int y3, struct _PrimPool *primPool, unsigned long **ot); // 0x8002A8B4
+extern void DRAW_FlatQuad(CVECTOR* color, short x0, short y0, short x1, int y1, int x2, int y2, int x3, int y3, struct _PrimPool* primPool, unsigned long** ot); // 0x8002A8B4
 
-extern void DRAW_TranslucentQuad(short x0, short y0, short x1, short y1, int x2, int y2, int x3, int y3, int r, int g, int b, int abr, struct _PrimPool *primPool, unsigned long **ot); // 0x8002A95C
+extern void DRAW_TranslucentQuad(short x0, short y0, short x1, short y1, int x2, int y2, int x3, int y3, int r, int g, int b, int abr, struct _PrimPool* primPool, unsigned long** ot); // 0x8002A95C
 
-extern void DRAW_DrawButton(struct _ButtonTexture *button, short x, short y, unsigned long **ot); // 0x8002AA40
+extern void DRAW_DrawButton(struct _ButtonTexture* button, short x, short y, unsigned long** ot); // 0x8002AA40
 
-extern void DRAW_LoadButton(int *addr, struct _ButtonTexture *button); // 0x8002ABA8
+extern void DRAW_LoadButton(int* addr, struct _ButtonTexture* button); // 0x8002ABA8
 
-extern void DRAW_FreeButton(struct _ButtonTexture *button); // 0x8002AD48
+extern void DRAW_FreeButton(struct _ButtonTexture* button); // 0x8002AD48
 
-extern void DRAW_RingLine(struct _PrimPool *primPool, unsigned long **ot, long color); // 0x8002AD6C
+extern void DRAW_RingLine(struct _PrimPool* primPool, unsigned long** ot, long color); // 0x8002AD6C
 
-extern void DRAW_RingPoint(struct _PrimPool *primPool, unsigned long **ot, long color, struct _SVector *vel, struct _SVector *acc); // 0x8002AE9C
+extern void DRAW_RingPoint(struct _PrimPool* primPool, unsigned long** ot, long color, struct _SVector* vel, struct _SVector* acc); // 0x8002AE9C
 
-extern unsigned long * DRAW_DrawRingPoints(struct _Model *model, struct _VertexPool *vertexPool, MATRIX *pcTransform, struct _PrimPool *primPool, unsigned long **ot, long color, int ring_type); // 0x8002AFAC
+extern unsigned long* DRAW_DrawRingPoints(struct _Model* model, struct _VertexPool* vertexPool, MATRIX* pcTransform, struct _PrimPool* primPool, unsigned long** ot, long color, int ring_type); // 0x8002AFAC
 
-extern void DRAW_GlowQuad(struct _PrimPool *primPool, unsigned long **ot, long otz, long color, struct _Vector *v0, struct _Vector *v1, struct _Vector *v2, struct _Vector *v3); // 0x8002B2C8
+extern void DRAW_GlowQuad(struct _PrimPool* primPool, unsigned long** ot, long otz, long color, struct _Vector* v0, struct _Vector* v1, struct _Vector* v2, struct _Vector* v3); // 0x8002B2C8
 
-extern void DRAW_CreateAGlowingCircle(struct _Vector *f1, long z, struct _PrimPool *primPool, unsigned long **ot, long otz, long color, long w, long h, long angle); // 0x8002B52C
+extern void DRAW_CreateAGlowingCircle(struct _Vector* f1, long z, struct _PrimPool* primPool, unsigned long** ot, long otz, long color, long w, long h, long angle); // 0x8002B52C
 
-extern unsigned long * DRAW_DrawGlowPoints2(struct _Instance *instance, long seg1, long seg2, struct _PrimPool *primPool, unsigned long **ot, long color, long height); // 0x8002BAD8
+extern unsigned long* DRAW_DrawGlowPoints2(struct _Instance* instance, long seg1, long seg2, struct _PrimPool* primPool, unsigned long** ot, long color, long height); // 0x8002BAD8
 
-extern unsigned long * DRAW_DrawGlowPoint(struct _Instance *instance, long seg1, struct _PrimPool *primPool, unsigned long **ot, long color, int width, int height); // 0x8002BC44
+extern unsigned long* DRAW_DrawGlowPoint(struct _Instance* instance, long seg1, struct _PrimPool* primPool, unsigned long** ot, long color, int width, int height); // 0x8002BC44
 
-extern int DRAW_DisplayTFace_zclipped_C(SVECTOR*vertex0, SVECTOR*vertex1, SVECTOR*vertex2, struct UVTYPE *uv0, struct UVTYPE *uv1, struct UVTYPE *uv2, long color0, long color1, long color2, struct _PrimPool *primPool, unsigned int **ot, int ndiv); // 0x8002BD14
+extern int DRAW_DisplayTFace_zclipped_C(SVECTOR* vertex0, SVECTOR* vertex1, SVECTOR* vertex2, struct UVTYPE* uv0, struct UVTYPE* uv1, struct UVTYPE* uv2, long color0, long color1, long color2, struct _PrimPool* primPool, unsigned int** ot, int ndiv); // 0x8002BD14
 
-extern int * DRAW_Zclip_subdiv(POLY_GT3 *texture, unsigned int **ot, int ndiv); // 0x8002C554
+extern int* DRAW_Zclip_subdiv(POLY_GT3* texture, unsigned int** ot, int ndiv); // 0x8002C554
 
 extern void DRAW_LoadingMessage(); // 0x8002CA58
 
