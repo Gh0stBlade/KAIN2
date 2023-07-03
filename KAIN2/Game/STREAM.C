@@ -609,7 +609,9 @@ int STREAM_IsObjectInAnyUnit(struct _ObjectTracker *tracker)
 
 void STREAM_RemoveAllObjectsNotInUse() // Matching - 99.03%
 {
-	struct _ObjectTracker* otr;
+	UNIMPLEMENTED();
+
+	/*struct _ObjectTracker* otr;
 	int k;
 	int l;
 	int i;
@@ -686,7 +688,7 @@ void STREAM_RemoveAllObjectsNotInUse() // Matching - 99.03%
 		{
 			STREAM_DumpObject(tracker);
 		}
-	}
+	}*/
 }
 
 void RemoveAllObjects(struct GameTracker* gameTracker)
