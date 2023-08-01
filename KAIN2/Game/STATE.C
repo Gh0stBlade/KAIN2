@@ -329,6 +329,7 @@ uintptr_t SetPhysicsSlideData(int Segment, int ForwardVectorX, int ForwardVector
 	Ptr->DropOffset = DropOffset;
 	Ptr->UpperOffset = UpperOffset;
 	Ptr->Height = Height;
+	return (uintptr_t)Ptr;
 }
 
 intptr_t SetPhysicsWallCrawlData(int Segment, int Length, int ForwardOffset, int NormalDistance)//Matching - 99.78%
