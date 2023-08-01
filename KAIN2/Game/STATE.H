@@ -45,7 +45,7 @@ extern void * CIRC_Alloc(int size); // 0x80070840
 
 extern intptr_t SetCollideInfoData(struct _CollideInfo *srcCI); // 0x80070884
 
-extern uintptr_t SetMonsterHitData(struct _Instance *Sender, struct _Instance *lastHit, int Power, int knockBackDistance, int knockBackFrames); // 0x800708E0
+extern intptr_t SetMonsterHitData(struct _Instance *Sender, struct _Instance *lastHit, int Power, int knockBackDistance, int knockBackFrames); // 0x800708E0
 
 extern intptr_t SetMonsterThrownData(struct _Instance *Sender, struct _Rotation *Direction, int Power); // 0x8007094C
 
