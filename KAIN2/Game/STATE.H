@@ -73,7 +73,7 @@ extern intptr_t SetPhysicsWallCrawlData(int Segment, int Length, int ForwardOffs
 
 extern intptr_t SetPhysicsLinkedMoveData(struct _Instance *instance, int segment, struct _SVector *posDelta, struct _SVector *rotDelta); // 0x80070EB0
 
-extern intptr_t SetPhysicsDropHeightData(_Position *offset, int dropOffset, int mode); // 0x80070F50
+extern uintptr_t SetPhysicsDropHeightData(_Position *offset, int dropOffset, int mode); // 0x80070F50
 
 extern intptr_t SetAnimationControllerDoneData(struct _Instance *instance, long segment, long type, int data); // 0x80070FC0
 
