@@ -12,12 +12,31 @@ struct evMonsterHitData // hashcode: 0x5BC7AF7A (dec: 1539813242)
 	long power; // size=0, offset=12
 };
 
+struct evMonsterThrownData {
+	struct _Instance* sender; // size=668, offset=0
+	struct _Rotation direction; // size=8, offset=4
+	short power; // size=0, offset=12
+};
+
+struct evMonsterAlarmData {
+	struct _Instance* sender; // size=668, offset=0
+	struct _Position position; // size=6, offset=4
+	short type; // size=0, offset=10
+};
+
 struct evFXHitData 
 {
   _SVector location; // size=8, offset=0
   _SVector velocity; // size=8, offset=8
   short amount; // size=0, offset=16
   short type; // size=0, offset=18
+};
+
+struct evMonsterImpaleData {
+	struct _Instance* weapon; // size=668, offset=0
+	struct _Rotation direction; // size=8, offset=4
+	struct _Position position; // size=6, offset=12
+	short distance; // size=0, offset=18
 };
 
 extern void MON_TurnOffWeaponSpheres(struct _Instance *instance); // 0x8007F3E4
