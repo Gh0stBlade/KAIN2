@@ -182,7 +182,7 @@ intptr_t SetMonsterAlarmData(struct _Instance *sender, _Position *position, int 
 	return 0;
 }
 
-intptr_t SetMonsterSoulSuckData(struct _Instance* Sender, int x, int y, int z)//Matching - 99.78%
+uintptr_t SetMonsterSoulSuckData(struct _Instance* Sender, int x, int y, int z)//Matching - 99.78%
 {
 	struct evMonsterSoulSuckData* Ptr;
 
@@ -241,7 +241,7 @@ intptr_t SetObjectData(int x, int y, int PathNumber, struct _Instance *Force, in
 	return 0;
 }
 
-intptr_t SetPositionData(int x, int y, int z)
+uintptr_t SetPositionData(int x, int y, int z)
 {
 	struct evPositionData* Ptr;
 	
@@ -254,7 +254,7 @@ intptr_t SetPositionData(int x, int y, int z)
 	return (intptr_t)Ptr;
 }
 
-intptr_t SetPhysicsGravityData(int UpperOffset, int LowerOffset, int x, int y, int z, int slope)
+uintptr_t SetPhysicsGravityData(int UpperOffset, int LowerOffset, int x, int y, int z, int slope)
 {
 	struct evPhysicsGravityData* Ptr;
 	
@@ -269,7 +269,7 @@ intptr_t SetPhysicsGravityData(int UpperOffset, int LowerOffset, int x, int y, i
 	return (intptr_t)Ptr;
 }
 
-intptr_t SetPhysicsEdgeData(int UpperOffset, int ForwardOffset, int AboveOffset, int x, int y, int z, struct _SVector* Normal1, struct _SVector* Normal2, struct _SVector* Delta)
+uintptr_t SetPhysicsEdgeData(int UpperOffset, int ForwardOffset, int AboveOffset, int x, int y, int z, struct _SVector* Normal1, struct _SVector* Normal2, struct _SVector* Delta)
 {
 	struct evPhysicsEdgeData* Ptr;
 
@@ -296,7 +296,7 @@ intptr_t SetPhysicsEdgeData(int UpperOffset, int ForwardOffset, int AboveOffset,
 	return (intptr_t)Ptr;
 }
 
-intptr_t SetPhysicsSwimData(int CheckDepth, struct _SVector* iVelocity, int SwimDepth, int WadeDepth, int TreadDepth)
+uintptr_t SetPhysicsSwimData(int CheckDepth, struct _SVector* iVelocity, int SwimDepth, int WadeDepth, int TreadDepth)
 {
 	struct evPhysicsSwimData* Ptr;
 
@@ -311,7 +311,7 @@ intptr_t SetPhysicsSwimData(int CheckDepth, struct _SVector* iVelocity, int Swim
 	return (intptr_t)Ptr;
 }
 
-intptr_t SetPhysicsDropOffData(int xOffset, int yOffset, int DropOffset, int slipSlope, int UpperOffset)
+uintptr_t SetPhysicsDropOffData(int xOffset, int yOffset, int DropOffset, int slipSlope, int UpperOffset)
 {
 	struct evPhysicsDropOffData* Ptr;
 
@@ -352,7 +352,7 @@ intptr_t SetPhysicsSlideData(int Segment, int ForwardVectorX, int ForwardVectorY
 	return 0;
 }
 
-intptr_t SetPhysicsWallCrawlData(int Segment, int Length, int ForwardOffset, int NormalDistance)//Matching - 99.78%
+uintptr_t SetPhysicsWallCrawlData(int Segment, int Length, int ForwardOffset, int NormalDistance)//Matching - 99.78%
 {
 	struct evPhysicsWallCrawlData* Ptr;
 
@@ -410,7 +410,7 @@ intptr_t SetPhysicsDropHeightData(_Position *offset, int dropOffset, int mode)
 	return 0;
 }
 
-intptr_t SetAnimationControllerDoneData(struct _Instance* instance, long segment, long type, int data)//Matching - 99.78%
+uintptr_t SetAnimationControllerDoneData(struct _Instance* instance, long segment, long type, int data)//Matching - 99.78%
 {
 	struct evAnimationControllerDoneData* Ptr;
 
@@ -512,7 +512,7 @@ intptr_t SetObjectBreakOffData(struct _Instance *force, short node, short distan
 	return 0;
 }
 
-intptr_t SetControlInitHangData(struct _Instance* instance, long frame, long frames)
+uintptr_t SetControlInitHangData(struct _Instance* instance, long frame, long frames)
 {
 	struct evControlInitHangData* Ptr;
 	
@@ -525,7 +525,7 @@ intptr_t SetControlInitHangData(struct _Instance* instance, long frame, long fra
 	return (intptr_t)Ptr;
 }
 
-intptr_t SetControlInitIdleData(int mode, long frame, long frames)
+uintptr_t SetControlInitIdleData(int mode, long frame, long frames)
 {
 	struct evControlInitIdleData* Ptr;
 
@@ -560,7 +560,7 @@ intptr_t SetObjectDraftData(short force, unsigned short radius, unsigned short r
 	return 0;
 }
 
-intptr_t SetObjectAbsorbData(struct _Instance* force, unsigned short node, unsigned short steps)
+uintptr_t SetObjectAbsorbData(struct _Instance* force, unsigned short node, unsigned short steps)
 {
 	struct evObjectAbsorbData* Ptr;
 
@@ -573,7 +573,7 @@ intptr_t SetObjectAbsorbData(struct _Instance* force, unsigned short node, unsig
 	return (intptr_t)Ptr;
 }
 
-intptr_t SetControlSaveDataData(long length, void* data)
+uintptr_t SetControlSaveDataData(long length, void* data)
 {
 	struct evControlSaveDataData* Ptr;
 	
@@ -585,7 +585,7 @@ intptr_t SetControlSaveDataData(long length, void* data)
 	return (intptr_t)Ptr;
 }
 
-intptr_t SetObjectIdleData(long mode, struct _Instance* instance)
+uintptr_t SetObjectIdleData(long mode, struct _Instance* instance)
 {
 	struct evObjectIdleData* Ptr;
 	
@@ -619,7 +619,7 @@ intptr_t SetActionPlayHostAnimationData(struct _Instance *instance, struct _Inst
 	return 0;
 }
 
-intptr_t SetObjectBirthProjectileData(struct _Instance* instance, int joint, int type)
+uintptr_t SetObjectBirthProjectileData(struct _Instance* instance, int joint, int type)
 {
 	struct evObjectBirthProjectileData* Ptr;
 
@@ -636,7 +636,7 @@ intptr_t SetObjectBirthProjectileData(struct _Instance* instance, int joint, int
 	return (intptr_t)Ptr;
 }
 
-intptr_t SetShadowSegmentData(unsigned long total)
+uintptr_t SetShadowSegmentData(unsigned long total)
 {
 	struct evShadowSegmentData* Ptr;
 	
