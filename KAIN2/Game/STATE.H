@@ -6,10 +6,29 @@
 #include "PHYSOBS.H"
 #include "Game/EVENT.H"
 
+struct evMonsterThrownData {
+	struct _Instance* sender; // size=668, offset=0
+	struct _Rotation direction; // size=8, offset=4
+	short power; // size=0, offset=12
+};
+
+struct evMonsterAlarmData {
+	struct _Instance* sender; // size=668, offset=0
+	struct _Position position; // size=6, offset=4
+	short type; // size=0, offset=10
+};
+
 struct evMonsterSoulSuckData 
 {
 	struct _Instance* sender; // size=668, offset=0
 	struct _Position Destination; // size=6, offset=4
+};
+
+struct evMonsterImpaleData {
+	struct _Instance* weapon; // size=668, offset=0
+	struct _Rotation direction; // size=8, offset=4
+	struct _Position position; // size=6, offset=12
+	short distance; // size=0, offset=18
 };
 
 struct evAnimationControllerDoneData 
