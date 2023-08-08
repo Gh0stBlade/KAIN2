@@ -6,6 +6,12 @@
 #include "PHYSOBS.H"
 #include "Game/EVENT.H"
 
+struct evMonsterThrownData {
+	struct _Instance* sender; // size=668, offset=0
+	struct _Rotation direction; // size=8, offset=4
+	short power; // size=0, offset=12
+};
+
 struct evMonsterSoulSuckData 
 {
 	struct _Instance* sender; // size=668, offset=0
@@ -47,7 +53,7 @@ extern intptr_t SetCollideInfoData(struct _CollideInfo *srcCI); // 0x80070884
 
 extern intptr_t SetMonsterHitData(struct _Instance *Sender, struct _Instance *lastHit, int Power, int knockBackDistance, int knockBackFrames); // 0x800708E0
 
-extern intptr_t SetMonsterThrownData(struct _Instance *Sender, struct _Rotation *Direction, int Power); // 0x8007094C
+extern uintptr_t SetMonsterThrownData(struct _Instance *Sender, struct _Rotation *Direction, int Power); // 0x8007094C
 
 extern intptr_t SetMonsterAlarmData(struct _Instance *sender, _Position *position, int type); // 0x800709B4
 
