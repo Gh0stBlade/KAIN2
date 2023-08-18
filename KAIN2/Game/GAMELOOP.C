@@ -2140,7 +2140,7 @@ void GAMELOOP_DoTimeProcess()
 {
 #if defined(PSXPC_VERSION)
 	unsigned long long holdTime;
-	int lockRate;
+	int lockRate = 0;
 	unsigned long last;
 
 	holdTime = TIMER_GetTimeMS();

@@ -192,7 +192,7 @@ int PhysicsCheckGravity(struct _Instance* instance, int Data, short Mode)//Match
 			N.vz = (-((unsigned short)CInfo.wNormal.vz * -(unsigned short)CInfo.wNormal.vz) < 0) ? ((-((unsigned short)CInfo.wNormal.vz * -(unsigned short)CInfo.wNormal.vz) + 0xFFF)) : ((-((unsigned short)CInfo.wNormal.vz * -(unsigned short)CInfo.wNormal.vz)));
 			N.vz >>= 12;
 
-			Dot = ((instance->zVel < -48) ? -instance->zVel : 48);
+			Dot = (short)((instance->zVel < -48) ? -instance->zVel : 48);
 
 			Old.vx = New.vx = CInfo.newPoint->vx + N.vx * Dot / 4096;
 			Old.vy = New.vy = CInfo.newPoint->vy + N.vy * Dot / 4096;
@@ -613,9 +613,9 @@ int PhysicsCheckSwim(struct _Instance* instance, int Data, short Mode)//Matching
 			CInfo.oldPoint = &Old;
 			CInfo.newPoint = &New;
 
-			Old.vx = New.vx = instance->matrix[1].t[0];
-			Old.vy = New.vy = instance->matrix[1].t[1];
-			Old.vz = New.vz = instance->matrix[1].t[2];
+			Old.vx = New.vx = (short)instance->matrix[1].t[0];
+			Old.vy = New.vy = (short)instance->matrix[1].t[1];
+			Old.vz = New.vz = (short)instance->matrix[1].t[2];
 
 			New.vz -= Ptr->WadeDepth * 4;
 			Old.vz += Ptr->TreadDepth;
@@ -834,9 +834,9 @@ int PhysicsCheckDropOff(struct _Instance* instance, int Data, short Mode)//Match
 
 		ApplyMatrix(pTempMat, &New, &OutTrans);
 
-		Old.vx = instance->position.x + OutTrans.vx;
-		Old.vy = instance->position.y + OutTrans.vy;
-		Old.vz = instance->position.z + OutTrans.vz;
+		Old.vx = instance->position.x + (short)OutTrans.vx;
+		Old.vy = instance->position.y + (short)OutTrans.vy;
+		Old.vz = instance->position.z + (short)OutTrans.vz;
 
 		New.vx = Old.vx;
 		New.vy = Old.vy;
@@ -973,19 +973,19 @@ void PhysicsMove(struct _Instance* instance, struct _Position* position, long ti
 	xVel >>= 12;
 	_x = (xat * time) < 0 ? (((xat * time) + 0x1FFF)) : (xat * time);
 	x = _x >> 13;
-	position->x += xVel + x;
+	position->x += (short)(xVel + x);
 
 	yVel = (yVel * time) < 0 ? ((yVel * time) + 0xFFF) : (yVel * time);
 	yVel >>= 12;
 	_y = (yat * time) < 0 ? (((yat * time) + 0x1FFF)) : (yat * time);
 	y = _y >> 13;
-	position->y += yVel + y;
+	position->y += (short)(yVel + y);
 
 	zVel = (zVel * time) < 0 ? ((zVel * time) + 0xFFF) : (zVel * time);
 	zVel >>= 12;
 	_z = (zat * time) < 0 ? (((zat * time) + 0x1FFF)) : (zat * time);
 	z = _z >> 13;
-	position->z += z + zVel;
+	position->z += (short)(z + zVel);
 
 	xVel += xat;
 	yVel += yat;

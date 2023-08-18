@@ -579,7 +579,7 @@ long SCRIPT_InstanceSplineProcess(struct _Instance *instance, struct SplineDef *
 
 void SCRIPT_FadeOutProcess(struct _Instance* instance)
 {
-	instance->fadeValue += gameTrackerX.timeMult * 32;
+	instance->fadeValue += (short)(gameTrackerX.timeMult * 32);
 
 	if (instance->fadeValue >= 4096)
 	{

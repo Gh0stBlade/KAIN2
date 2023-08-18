@@ -92,7 +92,7 @@ void UNDERWORLD_DoUV(unsigned char* uv, struct UW_ScreenXY* p0, int tx)//Matchin
 	}
 	else
 	{
-		uv[1] = p0->sy;
+		uv[1] = (unsigned char)p0->sy;
 	}
 }
 
@@ -160,7 +160,7 @@ void UNDERWORLD_SetupSource()
 	rect.w = SCREEN_WIDTH;
 	rect.x = 0;
 	rect.h = SCREEN_HEIGHT;
-	rect.y = gameTrackerX.gameData.asmData.dispPage << 8;
+	rect.y = (short)(gameTrackerX.gameData.asmData.dispPage << 8);
 
 	MoveImage(&rect, 0, (gameTrackerX.gameData.asmData.dispPage ^ 1) << 8);
 

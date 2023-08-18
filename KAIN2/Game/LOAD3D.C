@@ -35,7 +35,7 @@ void LOAD_CdSeekCallback(unsigned char intr, unsigned char *result)//Matching - 
 	{
 		loadStatus.state = 2;
 #if defined(PSXPC_VERSION)
-		crap1 = Emulator_GetPerformanceCounter() / (Emulator_GetPerformanceFrequency() / 1000000);
+		crap1 = (long)(Emulator_GetPerformanceCounter() / (Emulator_GetPerformanceFrequency() / 1000000));
 #else
 		crap1 = (GetRCnt(0xF2000000) & 0xFFFF) | (gameTimer << 16);
 #endif
@@ -136,7 +136,7 @@ void LOAD_CdReadReady(unsigned char intr, unsigned char *result)
 				LOAD_CdDataReady();
 #else
 				//Because the emu is mostly single threaded we can't continuously call the callback.
-				unsigned int numSectorsToRead = (loadStatus.currentQueueFile.readSize - loadStatus.currentQueueFile.readCurSize) / 2048;
+				int numSectorsToRead = (loadStatus.currentQueueFile.readSize - loadStatus.currentQueueFile.readCurSize) / 2048;
 				unsigned int numRemainingDataToRead = (loadStatus.currentQueueFile.readSize - loadStatus.currentQueueFile.readCurSize) % 2048;
 				char* dest = (char*)loadStatus.currentQueueFile.readCurDest;
 
@@ -209,13 +209,13 @@ void LOAD_CdReadReady(unsigned char intr, unsigned char *result)
 	
 	if (crap1 != 0)
 	{
-		loadStatus.seekTime = TIMER_TimeDiff(crap1);
+		loadStatus.seekTime = (long)TIMER_TimeDiff(crap1);
 		crap1 = 0;
 	}
 
-	loadStatus.sectorTime = TIMER_TimeDiff(crap35[0]);
+	loadStatus.sectorTime = (long)TIMER_TimeDiff(crap35[0]);
 #if defined(PSXPC_VERSION)
-	crap35[0] = Emulator_GetPerformanceCounter() / (Emulator_GetPerformanceFrequency() / 1000000);
+	crap35[0] = (long)(Emulator_GetPerformanceCounter() / (Emulator_GetPerformanceFrequency() / 1000000));
 #else
 	crap35[0] = (GetRCnt(0xF2000000) & 0xFFFF) | (gameTimer << 16);
 #endif
@@ -325,7 +325,7 @@ void LOAD_SetupFileToDoCDReading()
 	CdIntToPos(loadStatus.currentSector, &loc);
 	CdControl(CdlReadN, &loc.minute, NULL);
 #endif
-	loadStatus.cdWaitTime = TIMER_GetTimeMS();
+	loadStatus.cdWaitTime = (long)TIMER_GetTimeMS();
 #endif
 }
 
@@ -367,7 +367,7 @@ void LOAD_SetupFileToDoBufferedCDReading()
 	CdIntToPos(loadStatus.currentSector, &loc);
 	CdControl(CdlReadN, &loc.minute, NULL);
 #endif
-	loadStatus.cdWaitTime = TIMER_GetTimeMS();
+	loadStatus.cdWaitTime = (long)TIMER_GetTimeMS();
 #endif
 }
 
@@ -405,7 +405,7 @@ void LOAD_ProcessReadQueue()
 	}
 	else if(loadStatus.cdWaitTime != 0)
 	{
-		cdWaitTimeDiff = TIMER_GetTimeMS() - loadStatus.cdWaitTime;
+		cdWaitTimeDiff = (long)TIMER_GetTimeMS() - loadStatus.cdWaitTime;
 
 		if(cdWaitTimeDiff >= 8400)
 		{
@@ -421,7 +421,7 @@ void LOAD_ProcessReadQueue()
 #endif
 				CdIntToPos(loadStatus.currentSector, &loc);
 				CdControl(CdlReadN, &loc.minute, NULL);
-				loadStatus.cdWaitTime = TIMER_GetTimeMS();
+				loadStatus.cdWaitTime = (long)TIMER_GetTimeMS();
 			}
 			else if (loadStatus.currentQueueFile.readStatus == 6)
 			{
@@ -455,6 +455,8 @@ char* LOAD_ReadFileFromCD(char* filename, int memType)
 		Emulator_OpenReadFP(filename, readBuffer, fileSize);
 		return readBuffer;
 	}
+
+    return NULL;
 #else
 #if defined(PSXPC_VERSION) && defined(NO_CD)
 #if defined(_WIN64) || defined(_WIN32) || defined(__EMSCRIPTEN__) || defined(PLATFORM_NX_ARM) || defined(__ANDROID__) || defined(SN_TARGET_PSP2) || defined(__APPLE__)
@@ -992,7 +994,7 @@ void LOAD_NonBlockingReadFile(struct _NonBlockLoadEntry* loadEntry)
 	{
 		if (loadEntry->loadAddr == NULL)
 		{
-			loadEntry->loadAddr = (int*)MEMPACK_Malloc(loadEntry->loadSize, loadEntry->memType);
+			loadEntry->loadAddr = (int*)MEMPACK_Malloc(loadEntry->loadSize, (unsigned char)loadEntry->memType);
 		}
 
 #if defined(_DEBUG) && !defined(NO_FILESYSTEM) || defined(__EMSCRIPTEN__)

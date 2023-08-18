@@ -193,17 +193,17 @@ long SIGNAL_HandleStreamLevel(struct _Instance* instance, struct Signal* signal)
 	}
 
 	gameTrackerX.SwitchToNewStreamUnit = 1;
-	lastTimeCrossed = gameTrackerX.currentTime;
+	lastTimeCrossed = (int)gameTrackerX.currentTime;
 	strcpy(gameTrackerX.S_baseAreaName, areaName);
 	gameTrackerX.toSignal = signalnum;
 	//data = signal->data;
 	gameTrackerX.moveRazielToStreamID = newStreamID;
-	gameTrackerX.fromSignal = signal->data.StreamLevel.streamID;
+	gameTrackerX.fromSignal = (short)signal->data.StreamLevel.streamID;
 	if (doingWarpRoom)
 	{
 		if (!gameTrackerX.gameData.asmData.MorphType && !strcmpi(areaName, "under3"))
 			INSTANCE_Post(gameTrackerX.playerInstance, 0x10002001, 0);
-		gameTrackerX.SwitchToNewWarpIndex = WARPGATE_GetWarpRoomIndex(gameTrackerX.baseAreaName);
+		gameTrackerX.SwitchToNewWarpIndex = (short)WARPGATE_GetWarpRoomIndex(gameTrackerX.baseAreaName);
 		return 1;
 	}
 	else
@@ -218,7 +218,7 @@ long SIGNAL_HandleFogNear(struct _Instance* instance, struct Signal* signal)//Ma
 	struct Level* level;
 
 	level = STREAM_GetLevelWithID(gameTrackerX.playerInstance->currentStreamUnitID);
-	level->fogNear = signal->data.fogNear;
+	level->fogNear = (unsigned short)signal->data.fogNear;
 	
 	SetFogNearFar(level->fogNear, level->fogFar, theCamera.core.projDistance);
 	
@@ -233,7 +233,7 @@ long SIGNAL_HandleFogFar(struct _Instance* instance, struct Signal* signal)
 
 	level = STREAM_GetLevelWithID(gameTrackerX.playerInstance->currentStreamUnitID);
 
-	level->fogFar = signal->data.fogFar;
+	level->fogFar = (unsigned short)signal->data.fogFar;
 
 	SetFogNearFar(level->fogNear, level->fogFar, theCamera.core.projDistance);
 

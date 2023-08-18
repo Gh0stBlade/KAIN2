@@ -480,12 +480,12 @@ struct _BlockVramEntry* VRAM_CheckVramSlot(short* x, short* y, short w, short h,
 		{
 			vblock = vblockright;
 	
-			VRAM_InsertFreeVram(vblock->x, vblock->y, offsetright, vblock->h, vblock->flags);
+			VRAM_InsertFreeVram(vblock->x, vblock->y, (short)offsetright, vblock->h, vblock->flags);
 			
 			fits = 0;
 			
-			vblock->x += offsetright;
-			vblock->w -= offsetright;
+			vblock->x += (short)offsetright;
+			vblock->w -= (short)offsetright;
 		}
 		
 		if (vblock == NULL)
@@ -721,7 +721,7 @@ void VRAM_TransferBufferToVram(void* dataPtr, long dataSize, short status, void 
 			if (dataSize < ((vramControl->w << 1) - vramControl->lengthOfLeftOverData))
 			{
 				memcpy(vramControl->lineOverFlow, dataPtr, dataSize);
-				vramControl->lengthOfLeftOverData += dataSize;
+				vramControl->lengthOfLeftOverData += (short)dataSize;
 				dataSize = 0;
 			}
 			else
@@ -749,7 +749,7 @@ void VRAM_TransferBufferToVram(void* dataPtr, long dataSize, short status, void 
 		{
 			rect.x = vramControl->x;
 			rect.y = vramControl->y + vramControl->yOffset;
-			rect.h = dataSize / (vramControl->w << 1);
+			rect.h = (short)(dataSize / (vramControl->w << 1));
 			rect.w = vramControl->w;
 	
 			LoadImage(&rect, (unsigned int*)((char*)dataPtr));
@@ -761,7 +761,7 @@ void VRAM_TransferBufferToVram(void* dataPtr, long dataSize, short status, void 
 			if (dataSize > 0)
 			{
 				memcpy(((char*)vramControl->lineOverFlow + vramControl->lengthOfLeftOverData), dataPtr, dataSize);
-				vramControl->lengthOfLeftOverData += dataSize;
+				vramControl->lengthOfLeftOverData += (short)dataSize;
 			}
 		}
 

@@ -80,9 +80,9 @@ void MATH3D_Normalize(struct _Normal* normal)//Matching - 100%
 
 	if (length)
 	{
-		normal->x = (normal->x << 14) / length;
-		normal->y = (normal->y << 14) / length;
-		normal->z = (normal->z << 14) / length;
+		normal->x = (short)((normal->x << 14) / length);
+		normal->y = (short)((normal->y << 14) / length);
+		normal->z = (short)((normal->z << 14) / length);
 	}
 }
 
@@ -514,9 +514,9 @@ void MATH3D_RotateAxisToVector(MATRIX* dest, MATRIX* src, struct _SVector* vec, 
 
 	sintheta = rsin(theta);
 	
-	rot.x = rot.x * sintheta / len;
-	rot.y = rot.y * sintheta / len;
-	rot.z = rot.z * sintheta / len;
+	rot.x = (short)(rot.x * sintheta / len);
+	rot.y = (short)(rot.y * sintheta / len);
+	rot.z = (short)(rot.z * sintheta / len);
 	rot.w = rcos(theta);
 	
 	G2Quat_ToMatrix_S(&rot, (struct _G2Matrix_Type*)&xform);

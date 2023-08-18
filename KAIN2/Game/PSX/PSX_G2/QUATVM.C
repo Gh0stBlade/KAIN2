@@ -38,7 +38,8 @@ void G2Quat_Slerp_VM(long ratio, struct _G2Quat_Type* quatA, struct _G2Quat_Type
 
 	if ((4096 - cos_t) > 0)
 	{
-		beta = theta = MATH3D_racos_S(cos_t);
+		beta = MATH3D_racos_S(cos_t);
+        theta = (short)beta;
 
 		theta += (spin << 12);
 

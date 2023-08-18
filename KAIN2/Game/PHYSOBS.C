@@ -2297,8 +2297,8 @@ void ExecuteFollow(struct _Instance* instance)//Matching - 100%
 
 	Force = Data->Force;
 
-	instance->position.x = Force->matrix[Data->Segment1].t[0] + Data->px;
-	instance->position.y = Force->matrix[Data->Segment1].t[1] + Data->py;
+	instance->position.x = (short)Force->matrix[Data->Segment1].t[0] + Data->px;
+	instance->position.y = (short)Force->matrix[Data->Segment1].t[1] + Data->py;
 }
 
 

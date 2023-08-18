@@ -379,4 +379,6 @@ struct _POLY_NG4
 #define GET_MASTER_VOL_SHIFT(x, y) (y * (x)) >> 14
 #define GET_MASTER_VOL(x, y) (y * (x))
 
+#pragma warning( disable : 4996 )
+
 #endif

@@ -1036,7 +1036,7 @@ void G2EmulationInstanceSetStartAndEndSegment(struct _Instance *instance, int Cu
 	struct _G2AnimSection_Type *animSection;
 	
 	animSection = &instance->anim.section[CurrentSection];
-	animSection->firstSeg = Start;
+	animSection->firstSeg = (unsigned char)Start;
 	animSection->segCount = (End - Start) + 1;
 }
 

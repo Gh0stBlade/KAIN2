@@ -426,7 +426,7 @@ void OBTABLE_InitObjectWithID(struct Object* object)
 						}
 						else
 						{
-							object->id = id;
+							object->id = (short)id;
 						}
 
 						break;
@@ -457,7 +457,7 @@ void OBTABLE_InitObjectWithID(struct Object* object)
 						}
 						else
 						{
-							object->id = id;
+							object->id = (short)id;
 						}
 
 						break;
@@ -488,7 +488,7 @@ void OBTABLE_InitObjectWithID(struct Object* object)
 						}
 						else
 						{
-							object->id = id;
+							object->id = (short)id;
 						}
 
 						break;

@@ -1,5 +1,3 @@
-#define _CRT_SECURE_NO_WARNINGS
-
 #include "CORE.H"
 #include "STRMLOAD.H"
 #include "LOAD3D.H"
@@ -437,7 +435,7 @@ void STREAM_QueueNonblockingLoads(char *fileName, unsigned char memType, void *r
 	currentEntry->loadEntry.loadAddr = NULL;
 	currentEntry->mempackUsed = 1;
 	currentEntry->loadEntry.memType = memType;
-	currentEntry->relocateBinary = relocateBinary;
+	currentEntry->relocateBinary = (char)relocateBinary;
 
 	if (memType == 0)
 	{
@@ -456,7 +454,7 @@ void LOAD_LoadToAddress(char *fileName, void* loadAddr, long relocateBinary)
 	currentEntry = STREAM_SetUpQueueEntry(fileName, NULL, NULL, NULL, NULL, 0);
 	currentEntry->loadEntry.loadAddr = (int*)loadAddr;
 	currentEntry->status = 1;
-	currentEntry->relocateBinary = relocateBinary;
+	currentEntry->relocateBinary = (char)relocateBinary;
 	currentEntry->mempackUsed = 0;
 
 	while(STREAM_PollLoadQueue() != 0)

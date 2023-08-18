@@ -602,10 +602,10 @@ unsigned long SOUND_Play3dSound(_Position* position, int sfxToneID, int pitch, i
 
 			if (pan < 64)
 			{
-				pan = 63 - ((63 - pan) * ((objDist << 8) / workMinVolDist)) >> 8;
+				pan = (63 - ((63 - pan) * ((objDist << 8) / workMinVolDist))) >> 8;
 			}
 
-			pan = (((pan - 64) * ((objDist << 8) / workMinVolDist)) >> 8)+ 64;
+			pan = (((pan - 64) * ((objDist << 8) / workMinVolDist)) >> 8) + 64;
 			
 			return SndPlayVolPan(sfxToneID, volume, pan, pitch);
 		}

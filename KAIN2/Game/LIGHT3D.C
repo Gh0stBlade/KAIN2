@@ -163,7 +163,7 @@ void LIGHT_GetLightMatrix(struct _Instance* instance, struct Level* level, MATRI
 	{
 		for (j = 0; j < 3; j++)
 		{
-			colorM->m[i][j] = start->m[i][j] + ((end->m[i][j] - start->m[i][j]) * ratio);
+			colorM->m[i][j] = (short)(start->m[i][j] + ((end->m[i][j] - start->m[i][j]) * ratio));
 		}
 	}
 
@@ -566,13 +566,13 @@ void LIGHT_CalcShadowPositions(struct GameTracker* gameTracker)//Matching - 97.1
 				{
 					if ((instance->flags & 0x10000000))
 					{
-						newPos.x = instance->matrix[1].t[0];
+						newPos.x = (short)instance->matrix[1].t[0];
 						oldPos.x = newPos.x;
 						
-						newPos.y = instance->matrix[1].t[1];
+						newPos.y = (short)instance->matrix[1].t[1];
 						oldPos.y = newPos.y;
 					
-						newPos.z = instance->matrix[1].t[2];
+						newPos.z = (short)instance->matrix[1].t[2];
 						oldPos.z = newPos.z;
 					}
 					else
@@ -680,10 +680,10 @@ void LIGHT_CalcDQPTable(struct Level* level)
 
 			if (level->holdFogNear == level->fogNear)
 			{
-				level->holdFogNear = limit * level->fogFar / (limit - level->fogFar);
+				level->holdFogNear = (unsigned short)(limit * level->fogFar / (limit - level->fogFar));
 			}
 
-			level->fogNear = limit * level->fogFar / (limit - level->fogFar);
+			level->fogNear = (unsigned short)(limit * level->fogFar / (limit - level->fogFar));
 		}
 		if (dqa < -limit)
 		{
@@ -691,10 +691,10 @@ void LIGHT_CalcDQPTable(struct Level* level)
 
 			if (level->holdFogNear == level->fogNear)
 			{
-				level->holdFogNear = -limit * level->fogFar / (-limit - level->fogFar);
+				level->holdFogNear = (unsigned short)(-limit * level->fogFar / (-limit - level->fogFar));
 			}
 
-			level->fogNear = -limit * level->fogFar / (-limit - level->fogFar);
+			level->fogNear = (unsigned short)(-limit * level->fogFar / (-limit - level->fogFar));
 		}
 		
 		depthQFogStart = -4096 * dqa / ((level->fogFar << 12) / (level->fogFar - level->fogNear));

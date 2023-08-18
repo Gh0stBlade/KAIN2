@@ -169,7 +169,7 @@ void DRAW_FlatQuad(CVECTOR *color, short x0, short y0, short x1, int y1, int x2,
 		setPolyF4((POLY_F4*)prim);
 		addPrim(ot, prim);
 
-		primPool->nextPrim = (unsigned int*)(char*)primPool->nextPrim + sizeof(POLY_F4);
+		primPool->nextPrim = (unsigned int*)(((char*)primPool->nextPrim) + sizeof(POLY_F4));
 		primPool->numPrims++;
 
 	}
@@ -220,13 +220,13 @@ void DRAW_DrawButton(struct _ButtonTexture *button, short x, short y, unsigned l
 
 		((POLY_FT4*)prim)->tpage = button->tpage;
 
-		((POLY_FT4*)prim)->v0 = offsety;
-		((POLY_FT4*)prim)->v1 = offsety;
+		((POLY_FT4*)prim)->v0 = (u_char)offsety;
+		((POLY_FT4*)prim)->v1 = (u_char)offsety;
 
 		((POLY_FT4*)prim)->x0 = x;
 		((POLY_FT4*)prim)->y0 = y;
 
-		((POLY_FT4*)prim)->u0 = offsetx;
+		((POLY_FT4*)prim)->u0 = (u_char)offsetx;
 
 		((POLY_FT4*)prim)->x1 = (x + w) - 1;
 		((POLY_FT4*)prim)->y1 = y;
@@ -239,7 +239,7 @@ void DRAW_DrawButton(struct _ButtonTexture *button, short x, short y, unsigned l
 		((POLY_FT4*)prim)->x2 = x;
 		((POLY_FT4*)prim)->y2 = (y + h) - 1;
 
-		((POLY_FT4*)prim)->u2 = offsetx;
+		((POLY_FT4*)prim)->u2 = (u_char)offsetx;
 		((POLY_FT4*)prim)->v2 = (offsety + h) - 1;
 
 		((POLY_FT4*)prim)->x3 = (x + w) - 1;
@@ -429,32 +429,32 @@ void DRAW_GlowQuad(struct _PrimPool* primPool, unsigned long** ot, long otz, lon
 			setDrawTPage(sg4, TRUE, TRUE, 32);
 		}
 
-		gte_lddp(4096 - v0->z);
+		gte_lddp((short)(4096 - v0->z));
 		gte_ldcv(&color);
 		gte_gpf12();
-		sg4->p1.x0 = v0->x;
-		sg4->p1.y0 = v0->y;
+		sg4->p1.x0 = (short)v0->x;
+		sg4->p1.y0 = (short)v0->y;
 		gte_stcv(&sg4->p1.r0);
 
-		gte_lddp(4096 - v1->z);
+		gte_lddp((short)(4096 - v1->z));
 		gte_ldcv(&color);
 		gte_gpf12();
-		sg4->p1.x1 = v1->x;
-		sg4->p1.y1 = v1->y;
+		sg4->p1.x1 = (short)v1->x;
+		sg4->p1.y1 = (short)v1->y;
 		gte_stcv(&sg4->p1.r1);
 
-		gte_lddp(4096 - v2->z);
+		gte_lddp((short)(4096 - v2->z));
 		gte_ldcv(&color);
 		gte_gpf12();
-		sg4->p1.x2 = v2->x;
-		sg4->p1.y2 = v2->y;
+		sg4->p1.x2 = (short)v2->x;
+		sg4->p1.y2 = (short)v2->y;
 		gte_stcv(&sg4->p1.r2);
 
-		gte_lddp(4096 - v3->z);
+		gte_lddp((short)(4096 - v3->z));
 		gte_ldcv(&color);
 		gte_gpf12();
-		sg4->p1.x3 = v3->x;
-		sg4->p1.y3 = v3->y;
+		sg4->p1.x3 = (short)v3->x;
+		sg4->p1.y3 = (short)v3->y;
 		gte_stcv(&sg4->p1.r3);
 
 		setlen(sg4, 9);
@@ -890,7 +890,7 @@ int DRAW_DisplayTFace_zclipped_C(SVECTOR* vertex0, SVECTOR* vertex1, SVECTOR* ve
 				}
 
 				//loc_8002C39C
-				((short*)ptr)[-1] = zn;
+				((short*)ptr)[-1] = (short)zn;
 
 				zn = (sp->out[next].y - sp->out[n].y) * interp1;//v0
 				//v1 = sp->out[0].y
@@ -911,7 +911,7 @@ int DRAW_DisplayTFace_zclipped_C(SVECTOR* vertex0, SVECTOR* vertex1, SVECTOR* ve
 					zn = -1023;
 				}
 				//loc_8002C3F4
-				((short*)ptr)[0] = zn;
+				((short*)ptr)[0] = (short)zn;
 
 				gte_lddp(interp2);
 
@@ -1265,17 +1265,17 @@ int* DRAW_Zclip_subdiv(POLY_GT3* texture, unsigned int** ot, int ndiv)
 	((int*)&sp->face_v2.vz)[0] = ((int*)&sp->vertex2.z)[0];
 	((int*)&sp->face_v0.vx)[0] = ((int*)&sp->vertex0.x)[0];
 	
-	sp->face_v01.vx = (((unsigned int)sp->face_v0.vx + (unsigned int)sp->face_v1.vx) + (((unsigned int)sp->face_v0.vx + (unsigned int)sp->face_v1.vx) >> 31) >> 1);
-	sp->face_v01.vy = (((unsigned int)sp->face_v0.vy + (unsigned int)sp->face_v1.vy) + (((unsigned int)sp->face_v0.vy + (unsigned int)sp->face_v1.vy) >> 31) >> 1);
-	sp->face_v01.vz = (((unsigned int)sp->face_v0.vz + (unsigned int)sp->face_v1.vz) + (((unsigned int)sp->face_v0.vz + (unsigned int)sp->face_v1.vz) >> 31) >> 1);
+	sp->face_v01.vx = (((((unsigned int)sp->face_v0.vx + (unsigned int)sp->face_v1.vx) + (((unsigned int)sp->face_v0.vx + (unsigned int)sp->face_v1.vx))) >> 31) >> 1);
+	sp->face_v01.vy = (((((unsigned int)sp->face_v0.vy + (unsigned int)sp->face_v1.vy) + (((unsigned int)sp->face_v0.vy + (unsigned int)sp->face_v1.vy))) >> 31) >> 1);
+	sp->face_v01.vz = (((((unsigned int)sp->face_v0.vz + (unsigned int)sp->face_v1.vz) + (((unsigned int)sp->face_v0.vz + (unsigned int)sp->face_v1.vz))) >> 31) >> 1);
 
-	sp->face_v12.vx = (((unsigned int)sp->face_v1.vx + (unsigned int)sp->face_v2.vx) + (((unsigned int)sp->face_v1.vx + (unsigned int)sp->face_v2.vx) >> 31) >> 1);
-	sp->face_v12.vy = (((unsigned int)sp->face_v1.vy + (unsigned int)sp->face_v2.vy) + (((unsigned int)sp->face_v1.vy + (unsigned int)sp->face_v2.vy) >> 31) >> 1);
-	sp->face_v12.vz = (((unsigned int)sp->face_v1.vz + (unsigned int)sp->face_v2.vz) + (((unsigned int)sp->face_v1.vz + (unsigned int)sp->face_v2.vz) >> 31) >> 1);
+	sp->face_v12.vx = (((((unsigned int)sp->face_v1.vx + (unsigned int)sp->face_v2.vx) + (((unsigned int)sp->face_v1.vx + (unsigned int)sp->face_v2.vx))) >> 31) >> 1);
+	sp->face_v12.vy = (((((unsigned int)sp->face_v1.vy + (unsigned int)sp->face_v2.vy) + (((unsigned int)sp->face_v1.vy + (unsigned int)sp->face_v2.vy))) >> 31) >> 1);
+	sp->face_v12.vz = (((((unsigned int)sp->face_v1.vz + (unsigned int)sp->face_v2.vz) + (((unsigned int)sp->face_v1.vz + (unsigned int)sp->face_v2.vz))) >> 31) >> 1);
 
-	sp->face_v20.vx = (((unsigned int)sp->face_v2.vx + (unsigned int)sp->face_v0.vx) + (((unsigned int)sp->face_v2.vx + (unsigned int)sp->face_v0.vx) >> 31) >> 1);
-	sp->face_v20.vy = (((unsigned int)sp->face_v2.vy + (unsigned int)sp->face_v0.vy) + (((unsigned int)sp->face_v2.vy + (unsigned int)sp->face_v0.vy) >> 31) >> 1);
-	sp->face_v20.vz = (((unsigned int)sp->face_v2.vz + (unsigned int)sp->face_v0.vz) + (((unsigned int)sp->face_v2.vz + (unsigned int)sp->face_v0.vz) >> 31) >> 1);
+	sp->face_v20.vx = (((((unsigned int)sp->face_v2.vx + (unsigned int)sp->face_v0.vx) + (((unsigned int)sp->face_v2.vx + (unsigned int)sp->face_v0.vx))) >> 31) >> 1);
+	sp->face_v20.vy = (((((unsigned int)sp->face_v2.vy + (unsigned int)sp->face_v0.vy) + (((unsigned int)sp->face_v2.vy + (unsigned int)sp->face_v0.vy))) >> 31) >> 1);
+	sp->face_v20.vz = (((((unsigned int)sp->face_v2.vz + (unsigned int)sp->face_v0.vz) + (((unsigned int)sp->face_v2.vz + (unsigned int)sp->face_v0.vz))) >> 31) >> 1);
 
 	((int*)&sp->face_uv0)[0] = ((int*)texture)[4];
 	((int*)&sp->face_uv1)[0] = ((int*)texture)[7];

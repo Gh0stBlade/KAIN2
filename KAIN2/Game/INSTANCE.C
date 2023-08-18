@@ -601,7 +601,7 @@ struct _Instance* INSTANCE_IntroduceInstance(struct Intro* intro, short streamUn
 					}
 
 					instance->lightGroup = (unsigned char)intro->rotation.pad;
-					instance->spectralLightGroup = intro->specturalLightGroup;
+					instance->spectralLightGroup = (unsigned char)intro->specturalLightGroup;
 
 					INSTANCE_InsertInstanceGroup(gameTrackerX.instanceList, instance);
 					OBTABLE_GetInstanceCollideFunc(instance);
@@ -848,7 +848,7 @@ void INSTANCE_ProcessFunctions(struct _InstanceList* instanceList)
 
 				if ((INSTANCE_Query(instance, 0x2) & 0x80))
 				{
-					burning = burning < INSTANCE_Query(instance, 0x3) & 0x10000;
+					burning = burning < (int)(INSTANCE_Query(instance, 0x3) & 0x10000);
 				}
 				else
 				{
@@ -1258,7 +1258,7 @@ struct _Instance* INSTANCE_BirthObject(struct _Instance* parent, struct Object* 
 
 			do
 			{
-				if (i >= strlen(instance->introName))
+				if (i >= (int)strlen(instance->introName))
 				{
 					goto loc_80034008;//:(
 				}

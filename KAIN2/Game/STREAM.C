@@ -1,5 +1,3 @@
-#define _CRT_SECURE_NO_WARNINGS
-
 #include "CORE.H"
 #include "STREAM.H"
 #include "Game/INSTANCE.H"
@@ -2834,9 +2832,9 @@ void MORPH_AddOffsets(struct Level* BaseLevel, int time)//Matching - 98.67%
 		{
 			v = &BaseLevel->terrain->vertexList[mv->vindex];
 
-			v->vertex.x = mv->hx + ((mv->x * fixed_time) >> 12);
-			v->vertex.y = mv->hy + ((mv->y * fixed_time) >> 12);
-			v->vertex.z = mv->hz + ((mv->z * fixed_time) >> 12);
+			v->vertex.x = (short)(mv->hx + ((mv->x * fixed_time) >> 12));
+			v->vertex.y = (short)(mv->hy + ((mv->y * fixed_time) >> 12));
+			v->vertex.z = (short)(mv->hz + ((mv->z * fixed_time) >> 12));
 		}
 	}
 	for (; instance; instance = instance->next)
@@ -2845,9 +2843,9 @@ void MORPH_AddOffsets(struct Level* BaseLevel, int time)//Matching - 98.67%
 
 		if (intro && (*(unsigned int*)&intro->spectralPosition.x || intro->spectralPosition.z) && ((instance->flags2 & 0x8)) == 0)
 		{
-			diff.vx = (intro->spectralPosition.x * fixed_time) >> 12;
-			diff.vy = (intro->spectralPosition.y * fixed_time) >> 12;
-			diff.vz = (intro->spectralPosition.z * fixed_time) >> 12;
+			diff.vx = (short)((intro->spectralPosition.x * fixed_time) >> 12);
+			diff.vy = (short)((intro->spectralPosition.y * fixed_time) >> 12);
+			diff.vz = (short)((intro->spectralPosition.z * fixed_time) >> 12);
 
 			oldPos = instance->position;
 
@@ -2884,9 +2882,9 @@ void MORPH_AddOffsets(struct Level* BaseLevel, int time)//Matching - 98.67%
 			b0 = (v->rgb15 >> 7) & 0xF8;
 			b1 = (mc->morphColor15 >> 7) & 0xF8;
 
-			v->r0 = r0 + (((r1 - r0) * fixed_time) >> 12);
-			v->g0 = g0 + (((g1 - g0) * fixed_time) >> 12);
-			v->b0 = b0 + (((b1 - b0) * fixed_time) >> 12);
+			v->r0 = (unsigned char)(r0 + (((r1 - r0) * fixed_time) >> 12));
+			v->g0 = (unsigned char)(g0 + (((g1 - g0) * fixed_time) >> 12));
+			v->b0 = (unsigned char)(b0 + (((b1 - b0) * fixed_time) >> 12));
 
 			v++;
 			mc++;
@@ -2934,9 +2932,9 @@ void MORPH_SubtractOffsets(struct Level* BaseLevel, int time)//Matching - 98.68%
 		{
 			v = &BaseLevel->terrain->vertexList[mv->vindex];
 
-			v->vertex.x = mv->hx + ((mv->x * fixed_time) >> 12);
-			v->vertex.y = mv->hy + ((mv->y * fixed_time) >> 12);
-			v->vertex.z = mv->hz + ((mv->z * fixed_time) >> 12);
+			v->vertex.x = (short)(mv->hx + ((mv->x * fixed_time) >> 12));
+			v->vertex.y = (short)(mv->hy + ((mv->y * fixed_time) >> 12));
+			v->vertex.z = (short)(mv->hz + ((mv->z * fixed_time) >> 12));
 		}
 	}
 
@@ -2946,9 +2944,9 @@ void MORPH_SubtractOffsets(struct Level* BaseLevel, int time)//Matching - 98.68%
 
 		if (intro && (*(unsigned int*)&intro->spectralPosition.x || intro->spectralPosition.z) && ((instance->flags2 & 0x8)) == 0)
 		{
-			diff.vx = (intro->spectralPosition.x * fixed_time) >> 12;
-			diff.vy = (intro->spectralPosition.y * fixed_time) >> 12;
-			diff.vz = (intro->spectralPosition.z * fixed_time) >> 12;
+			diff.vx = (short)((intro->spectralPosition.x * fixed_time) >> 12);
+			diff.vy = (short)((intro->spectralPosition.y * fixed_time) >> 12);
+			diff.vz = (short)((intro->spectralPosition.z * fixed_time) >> 12);
 
 			oldPos = instance->position;
 
@@ -2985,9 +2983,9 @@ void MORPH_SubtractOffsets(struct Level* BaseLevel, int time)//Matching - 98.68%
 			b0 = (v->rgb15 >> 7) & 0xF8;
 			b1 = (mc->morphColor15 >> 7) & 0xF8;
 
-			v->r0 = r0 + (((r1 - r0) * fixed_time) >> 12);
-			v->g0 = g0 + (((g1 - g0) * fixed_time) >> 12);
-			v->b0 = b0 + (((b1 - b0) * fixed_time) >> 12);
+			v->r0 = (unsigned char)(r0 + (((r1 - r0) * fixed_time) >> 12));
+			v->g0 = (unsigned char)(g0 + (((g1 - g0) * fixed_time) >> 12));
+			v->b0 = (unsigned char)(b0 + (((b1 - b0) * fixed_time) >> 12));
 
 			v++;
 			mc++;
@@ -4033,7 +4031,7 @@ void STREAM_RenderAdjacantUnit(unsigned long** curOT, struct StreamUnitPortal* c
 
 	if ((MEMPACK_MemoryValidFunc((char*)toStreamUnit->level)))
 	{
-		RENDER_currentStreamUnitID = toStreamUnit->StreamUnitID;
+		RENDER_currentStreamUnitID = (short)toStreamUnit->StreamUnitID;
 
 		portalFogColor = GetFogColor(curStreamPortal, mainStreamUnit, mainStreamUnit->level);
 	
@@ -4332,4 +4330,6 @@ int STREAM_TryAndDumpNonResident(struct _ObjectTracker* otr)
 
 		return otr->objectStatus < 1;
 	}
+
+    return 0;
 }

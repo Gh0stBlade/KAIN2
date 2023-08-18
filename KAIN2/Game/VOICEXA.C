@@ -221,8 +221,8 @@ void voiceCmdPlay(struct XAVoiceTracker *vt, short voiceIndex)
 		spuattr.ext.volume.right = 0x7FFF;
 		spuattr.ext.reverb = 0;
 		spuattr.ext.mix = 1;
-		spuattr.cd.volume.left = gameTrackerX.sound.gVoiceVol << 8;
-		spuattr.cd.volume.right = gameTrackerX.sound.gVoiceVol << 8;
+		spuattr.cd.volume.left = (short)(gameTrackerX.sound.gVoiceVol << 8);
+		spuattr.cd.volume.right = (short)(gameTrackerX.sound.gVoiceVol << 8);
 
 		SpuSetCommonAttr(&spuattr);
 

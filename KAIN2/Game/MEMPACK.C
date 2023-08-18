@@ -9,6 +9,8 @@
 
 #include <stddef.h>
 
+#pragma warning( disable : 4700 )
+
 extern void GXFilePrint(const char* fmt, ...);
 
 struct NewMemTracker newMemTracker;
@@ -78,7 +80,7 @@ struct MemHeader* MEMPACK_GetSmallestBlockTopBottom(long allocSize)//Matching - 
 
 	while ((char*)address != (char*)newMemTracker.lastMemoryAddress)
 	{
-		if (address->memStatus == 0 && address->memSize >= allocSize && bestAddress == NULL)
+		if (address->memStatus == 0 && (long)address->memSize >= allocSize && bestAddress == NULL)
 		{
 			bestAddress = address;
 			break;
@@ -97,7 +99,7 @@ struct MemHeader* MEMPACK_GetSmallestBlockBottomTop(long allocSize)//Matching - 
 
 	while ((char*)address != (char*)newMemTracker.lastMemoryAddress)
 	{
-		if (address->memStatus == 0 && address->memSize >= allocSize && (bestAddress == NULL || (char*)bestAddress < (char*)address))
+		if (address->memStatus == 0 && (long)address->memSize >= allocSize && (bestAddress == NULL || (char*)bestAddress < (char*)address))
 		{
 			bestAddress = address;
 		}
@@ -602,7 +604,7 @@ void MEMPACK_DoGarbageCollection()//Matching - 98.66%
 			MEMPACK_GarbageCollectFree(relocateAddress);
 
 			holdSize = addressSize;
-			newAddress = MEMPACK_GarbageCollectMalloc((unsigned long*)&holdSize, addressMemType, (unsigned long*)&freeSize);
+			newAddress = MEMPACK_GarbageCollectMalloc((unsigned long*)&holdSize, (unsigned char)addressMemType, (unsigned long*)&freeSize);
 			oldAddress = (char*)(relocateAddress + 1);
 
 			if (newAddress != NULL)

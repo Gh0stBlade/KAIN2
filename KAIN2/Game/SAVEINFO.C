@@ -111,8 +111,8 @@ void* SAVE_GetSavedBlock(long saveType, long extraSize)
 		{
 			savedInfo = (struct SavedBasic*)savedInfoTracker.InfoEnd;
 
-			savedInfoTracker.InfoEnd[0] = saveType;
-			savedInfo->shiftedSaveSize = sizeOfSave >> 2;
+			savedInfoTracker.InfoEnd[0] = (char)saveType;
+			savedInfo->shiftedSaveSize = (unsigned char)(sizeOfSave >> 2);
 			savedInfoTracker.InfoEnd += sizeOfSave;
 			done = 1;
 			break;
