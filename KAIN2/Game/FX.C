@@ -100,7 +100,8 @@ void FX_Init(struct _FXTracker* fxTracker)
 }
 
 void FX_Die(struct _FX_PRIM* fxPrim, struct _FXTracker* fxTracker) { // Matching 99.46%
-	if ((FX_LastUsedPrim == fxPrim) && (FX_LastUsedPrim = (_FX_PRIM*)fxPrim->node.prev, FX_LastUsedPrim->node.prev == NULL)) {
+	if ((FX_LastUsedPrim == fxPrim) && (FX_LastUsedPrim = (_FX_PRIM*)fxPrim->node.prev, FX_LastUsedPrim->node.prev == NULL)) 
+	{
 		FX_LastUsedPrim = NULL;
 	}
 	fxPrim->flags = fxPrim->flags | 16;
