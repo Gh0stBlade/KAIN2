@@ -2509,7 +2509,7 @@ struct _FXGlowEffect* FX_DoInstanceManySegmentGlow(struct _Instance* instance, l
 	
 	glowEffect = FX_DoInstanceOneSegmentGlow(instance, segment, color, numColors, atuColorCycleRate, height, height);
 	
-	glowEffect->numSegments = numSegments;
+	glowEffect->numSegments = (unsigned char)numSegments;
 
 	return glowEffect;
 }
@@ -2520,7 +2520,7 @@ struct _FXGlowEffect* FX_DoInstanceOneSegmentGlowWithTime(struct _Instance* inst
 	
 	glowEffect = FX_DoInstanceOneSegmentGlow(instance, segment, color, numColors, atuColorCycleRate, width, height);
 
-	glowEffect->lifeTime = ATULifeTime * 33;
+	glowEffect->lifeTime = (short)(ATULifeTime * 33);
 
 	return glowEffect;
 }

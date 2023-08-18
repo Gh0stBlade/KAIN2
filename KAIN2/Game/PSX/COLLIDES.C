@@ -1223,12 +1223,12 @@ void sub_80078458(struct _VMObject* vmobject, struct Level* level)
 			{
 				vmVertex = (struct _VMVertex*)vmobject->vmvertexList + i;
 
-				t2 = vmVertex->timer + vmobject->timer;
+				t2 = (short)(vmVertex->timer + vmobject->timer);
 				v0 = vmVertex->count;
 
 				if (t2 >= currentVMOffset->numVMOffsets)
 				{
-					t2 -= currentVMOffset->numVMOffsets;
+					t2 -= (short)currentVMOffset->numVMOffsets;
 				}
 
 				vertex0 = &level->terrain->vertexList[v0];
@@ -1268,9 +1268,9 @@ void sub_80078458(struct _VMObject* vmobject, struct Level* level)
 							color2 = vertex0->rgb15;
 						}
 
-						rcolor.r = (color2 & 0x1F) << 3;
-						rcolor.g = (color2 & 0x3E0) >> 2;
-						rcolor.b = (color2 & 0x7C00) >> 7;
+						rcolor.r = (u_char)((color2 & 0x1F) << 3);
+						rcolor.g = (u_char)((color2 & 0x3E0) >> 2);
+						rcolor.b = (u_char)((color2 & 0x7C00) >> 7);
 					}
 				}
 				else
@@ -1290,9 +1290,9 @@ void sub_80078458(struct _VMObject* vmobject, struct Level* level)
 						color2 = vertex0->rgb15;
 					}
 
-					rcolor.r = (color2 & 0x1F) << 3;//t4
-					rcolor.g = (color2 & 0x3E0) >> 2;//t5
-					rcolor.b = (color2 & 0x7C00) >> 7;//t6
+					rcolor.r = (u_char)((color2 & 0x1F) << 3);//t4
+					rcolor.g = (u_char)((color2 & 0x3E0) >> 2);//t5
+					rcolor.b = (u_char)((color2 & 0x7C00) >> 7);//t6
 				}
 
 				//0x7864C
@@ -1557,7 +1557,7 @@ long COLLIDE_IntersectLineAndPlane_S(struct _SVector* planePoint, struct _Positi
 
 	gte_ldsv(&d);
 
-	unsigned int l = r.vx;
+	int l = r.vx;
 	l -= r.vx;
 	l <<= 12;
 	l = -l;

@@ -154,7 +154,7 @@ void check_hack_attract()
 {
 	if (hack_attract > 0)
 	{
-		if (hack_attract + 2000 < gameTrackerX.vblCount)
+		if (hack_attract + 2000 < (int)gameTrackerX.vblCount)
 		{
 			hack_attract = 1;
 			play_movie(the_attract_movies[hack_attract_movie += 1 & 3]);

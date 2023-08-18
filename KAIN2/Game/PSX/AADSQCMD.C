@@ -408,9 +408,9 @@ void metaCmdGetTempo(struct AadSeqEvent *event, struct _AadSequenceSlot *slot)
 	{
 		quarterNoteTime = slot->selectedSlotPtr->tempo.quarterNoteTime;
 
-		aadMem->userVariables[variableNum1] = quarterNoteTime;
-		aadMem->userVariables[variableNum2] = quarterNoteTime >> 8;
-		aadMem->userVariables[variableNum3] = quarterNoteTime >> 16;
+		aadMem->userVariables[variableNum1] = (unsigned char)quarterNoteTime;
+		aadMem->userVariables[variableNum2] = (unsigned char)(quarterNoteTime >> 8);
+		aadMem->userVariables[variableNum3] = (unsigned char)(quarterNoteTime >> 16);
 
 		eprintinf("[MIDI]: Set Variable: %d Value: %d\n", variableNum1, aadMem->userVariables[variableNum1]);
 		eprintinf("[MIDI]: Set Variable: %d Value: %d\n", variableNum2, aadMem->userVariables[variableNum2]);
@@ -426,7 +426,7 @@ void metaCmdGetSlotStatus(struct AadSeqEvent *event, struct _AadSequenceSlot *sl
 
 	if (variableNum < 128)
 	{
-		aadMem->userVariables[variableNum] = slot->selectedSlotPtr->status;
+		aadMem->userVariables[variableNum] = (unsigned char)slot->selectedSlotPtr->status;
 		eprintinf("[MIDI]: Set Variable: %d\n", variableNum, slot->selectedSlotPtr->status);
 	}
 }

@@ -180,7 +180,7 @@ void EVENT_ProcessTimers()//Matching - 80.17%
 
 			if (eventTimer->flags)
 			{
-				if (eventTimer->time < gameTrackerX.timeMult)
+				if (eventTimer->time < (long)gameTrackerX.timeMult)
 				{
 					eventTimer->time = 0;
 				}
@@ -241,7 +241,7 @@ void EVENT_ProcessHints()
 
 		if (gHintSystem.fadeTimer != 0)
 		{
-			if (gameTrackerX.timeMult >= gHintSystem.fadeTimer)
+			if ((long)gameTrackerX.timeMult >= gHintSystem.fadeTimer)
 			{
 				gHintSystem.fadeTimer = 0;
 
@@ -1034,7 +1034,7 @@ void EVENT_ChangeOperandToNumber(struct StackType* operand, long item, long flag
 
 	operand->data.Number.currentNumber = item;
 	operand->data.Number.error = 0;
-	operand->data.Number.flags = flags;
+	operand->data.Number.flags = (short)flags;
 }
 
 void EVENT_ChangeOperandVector3d(struct StackType* operand, short x, short y, short z, long streamUnitID)//Matching - 100%

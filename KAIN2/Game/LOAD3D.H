@@ -37,7 +37,7 @@ struct _BigFileEntry // hashcode: 0xA904436B (dec: -1459338389)
 struct _BigFileDir // hashcode: 0x4E39D3E2 (dec: 1312412642)
 {
 	long numFiles; // size=0, offset=0
-	struct _BigFileEntry fileList[0]; // size=0, offset=4
+	struct _BigFileEntry fileList[1]; // size=0, offset=4
 };
 
 struct _BigFile // hashcode: 0x50C273F3 (dec: 1354920947)

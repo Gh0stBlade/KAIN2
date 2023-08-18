@@ -219,9 +219,9 @@ void ProcessArgs(char *baseAreaName, struct GameTracker *gameTracker)
 		ExtractWorldName(worldName, (char*)argData);
 		ExtractLevelNum(levelNum, (char*)argData);
 		
-#if defined(OVERRIDE_LEVEL) && !defined(DEMO)
+#if defined(OVERRIDE_LEVEL) && !defined(DEMO) || 1
 #define LEVEL_NAME "fire"
-#define LEVEL_NUM "6"
+#define LEVEL_NUM "3"
 		sprintf(baseAreaName, "%s%s", LEVEL_NAME, LEVEL_NUM);
 #else
 		sprintf(baseAreaName, "%s%s", worldName, levelNum);
@@ -411,7 +411,7 @@ void VblTick()
 	gameTrackerX.vblCount++;
 
 #if defined(PSXPC_VERSION)
-	if (gameTrackerX.reqDisp != NULL && gameTrackerX.frameRateLock <= gameTrackerX.vblFrames)
+	if (gameTrackerX.reqDisp != NULL && gameTrackerX.frameRateLock <= (long)gameTrackerX.vblFrames)
 #else
 	if (gameTrackerX.reqDisp != NULL && gameTrackerX.frameRateLock < gameTrackerX.vblFrames)
 #endif
@@ -455,7 +455,7 @@ void FadeOutSayingLoading(struct GameTracker* gameTracker)
 		}
 
 		gameTracker->drawPage = 1 - gameTracker->drawPage;
-		setRGB0(transPrim, fadeTime, fadeTime, fadeTime);
+		setRGB0(transPrim, (unsigned char)fadeTime, (unsigned char)fadeTime, (unsigned char)fadeTime);
 
 #if !defined(PSXPC_VERSION)
 		while (CheckVolatile(gameTracker->drawTimerReturn) != 0)

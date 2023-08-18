@@ -163,11 +163,6 @@ void _G2AnimSection_UpdateStoredFrameFromQuat(struct _G2AnimSection_Type* sectio
 	unsigned long zw;
 	unsigned long xy;
 
-#define GET_XY(a) *(long*)(&a->x);
-#define SET_XY(a, c) *(long*)(&a.x) = c;
-#define GET_ZW(b) *(long*)(&b->z);
-#define SET_ZW(b, c) *(long*)(&b.z) = c;
-
 	interpInfo = section->interpInfo;
 
 	alpha = (section->elapsedTime * 4096) / interpInfo->duration;
@@ -200,8 +195,8 @@ void _G2AnimSection_UpdateStoredFrameFromQuat(struct _G2AnimSection_Type* sectio
 			base = &quatInfo->srcScale;
 			offset = &quatInfo->destScale;
 
-			xy = GET_XY(source);
-			zw = GET_ZW(source);
+			xy = GETP_XY(source);
+			zw = GETP_ZW(source);
 
 
 			SET_XY(segValue->rotQuat.quat, xy);
@@ -268,11 +263,6 @@ void _G2AnimSection_InterpStateToQuat(struct _G2AnimSection_Type* section)//Matc
 	unsigned long zw;
 	unsigned long xy;
 
-#define GET_XY(a) *(long*)(&a.x);
-#define SET_XY(a, c) *(long*)(&a.x) = c;
-#define GET_ZW(b) *(long*)(&b->z);
-#define SET_ZW(b, c) *(long*)(&b.z) = c;
-
 	interpInfo = section->interpInfo;
 	alpha = (section->elapsedTime * 4096) / interpInfo->duration;
 	quatInfoChunkCount = 4;
@@ -294,7 +284,7 @@ void _G2AnimSection_InterpStateToQuat(struct _G2AnimSection_Type* section)//Matc
 
 			G2Quat_Slerp_VM(alpha, &quatInfo->srcQuat, &quatInfo->destQuat, &newQuat, 0);
 
-			zw = GET_ZW(source);
+			zw = GETP_ZW(source);
 			SET_ZW(quatInfo->srcQuat, zw);
 
 			xy = GET_XY(newQuat);

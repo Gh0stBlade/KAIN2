@@ -281,9 +281,9 @@ void COLLIDE_MakeNormal(struct _Terrain* terrain, struct _TFace* tface, struct _
 
 	n = (struct _Vector*)getScratchAddr(8);
 
-	n->x = ((a->y * _z0) - (a->z * _y0) >> 12);
-	n->y = ((a->x * _z0) - (a->z * _x0) >> 12);
-	n->z = ((a->x * _y0) - (a->y * _x0) >> 12);
+	n->x = (((a->y * _z0) - (a->z * _y0)) >> 12);
+	n->y = (((a->x * _z0) - (a->z * _x0)) >> 12);
+	n->z = (((a->x * _y0) - (a->y * _x0)) >> 12);
 
 	len = ABS(-n->z);
 
@@ -299,9 +299,9 @@ void COLLIDE_MakeNormal(struct _Terrain* terrain, struct _TFace* tface, struct _
 
 	if (len != 0)
 	{
-		normal->x = (n->x << 12) / len;
-		normal->y = (n->y << 12) / len;
-		normal->z = (n->z << 12) / len;
+		normal->x = (short)((n->x << 12) / len);
+		normal->y = (short)((n->y << 12) / len);
+		normal->z = (short)((n->z << 12) / len);
 	}
 }
 
@@ -562,7 +562,7 @@ long COLLIDE_IntersectLineAndBox(struct _SVector* point0, struct _SVector* norma
 	normal.x = 0;
 	normal.y = -0x1000;
 	normal.z = 0;
-	COLLIDE_LineWithBoxFace(-start->y, lineDist = -line.y, -hbox->minY, start, _v, hbox, COLLIDE_WithinXZBounds, &normal);
+	COLLIDE_LineWithBoxFace(-start->y, lineDist = -(short)line.y, -hbox->minY, start, _v, hbox, COLLIDE_WithinXZBounds, &normal);
 	normal.x = 0;
 	normal.y = 0x1000;
 	normal.z = 0;
@@ -570,7 +570,7 @@ long COLLIDE_IntersectLineAndBox(struct _SVector* point0, struct _SVector* norma
 	normal.x = 0;
 	normal.y = 0;
 	normal.z = -0x1000;
-	COLLIDE_LineWithBoxFace(-start->z, lineDist = -line.z, -hbox->minZ, start, _v, hbox, COLLIDE_WithinXYBounds, &normal);
+	COLLIDE_LineWithBoxFace(-start->z, lineDist = -(short)line.z, -hbox->minZ, start, _v, hbox, COLLIDE_WithinXYBounds, &normal);
 	normal.x = 0;
 	normal.y = 0;
 	normal.z = 0x1000;
@@ -1795,11 +1795,11 @@ void COLLIDE_Instances(struct _Instance* instance1, struct _Instance* instance2)
 
 		mrmr = (instance1->object->modelList[instance1->currentModel]->maxRad + instance2->object->modelList[instance2->currentModel]->maxRad) >> 1;
 
-		gte_ldsv_ext(lx, ly, lz);
+		gte_ldsv_ext((short)lx, (short)ly, (short)lz);
 		gte_sqr0();
 		gte_stsv_ext(lx, ly, lz);
 
-		if (lx + ly + lz < (unsigned int)(mrmr * mrmr) && instance1->matrix != NULL && instance1->oldMatrix != NULL && instance2->matrix != NULL && instance2->oldMatrix != NULL)
+		if (lx + ly + lz < (long)(unsigned int)(mrmr * mrmr) && instance1->matrix != NULL && instance1->oldMatrix != NULL && instance2->matrix != NULL && instance2->oldMatrix != NULL)
 		{
 			COLLIDE_Instance1SpheresToInstance2(instance1, instance2, 1);
 			COLLIDE_Instance1SpheresToInstance2(instance2, instance1, 0);
@@ -2008,9 +2008,9 @@ long COLLIDE_SphereAndHFace(struct _Sphere* sphere, struct _Position* oldPos, st
 				dv.y = (CSpad->normal.y * sphere->radius) >> 12;
 				dv.z = (CSpad->normal.z * sphere->radius) >> 12;
 
-				sphere->position.x = dv.x + CSpad->triPoint.x;
-				sphere->position.y = dv.y + CSpad->triPoint.y;
-				sphere->position.z = dv.z + CSpad->triPoint.z;
+				sphere->position.x = (short)(dv.x + CSpad->triPoint.x);
+				sphere->position.y = (short)(dv.y + CSpad->triPoint.y);
+				sphere->position.z = (short)(dv.z + CSpad->triPoint.z);
 
 				behind = -1;
 				*edge = 0;
@@ -2026,7 +2026,7 @@ long COLLIDE_SphereAndHFace(struct _Sphere* sphere, struct _Position* oldPos, st
 			y = sphere->position.y - CSpad->triPoint.y;
 			z = sphere->position.z - CSpad->triPoint.z;
 
-			gte_ldsv_ext(x, y, z);
+			gte_ldsv_ext((short)x, (short)y, (short)z);
 			gte_sqr0();
 			gte_stsv_ext(x, y, z);
 
@@ -2043,7 +2043,7 @@ long COLLIDE_SphereAndHFace(struct _Sphere* sphere, struct _Position* oldPos, st
 			y = sphere->position.y - CSpad->planePoint.y;
 			z = sphere->position.z - CSpad->planePoint.z;
 
-			gte_ldsv_ext(x, y, z);
+			gte_ldsv_ext((short)x, (short)y, (short)z);
 			gte_sqr0();
 			gte_stsv_ext(x, y, z);
 
@@ -2066,7 +2066,7 @@ long COLLIDE_SphereAndHFace(struct _Sphere* sphere, struct _Position* oldPos, st
 			y = sphere->position.y - CSpad->planePoint.y;
 			z = sphere->position.z - CSpad->planePoint.z;
 
-			gte_ldsv_ext(x, y, z);
+			gte_ldsv_ext((short)x, (short)y, (short)z);
 			gte_sqr0();
 			gte_stsv_ext(x, y, z);
 
@@ -2121,9 +2121,9 @@ long COLLIDE_SphereAndHFace(struct _Sphere* sphere, struct _Position* oldPos, st
 					dv.z = ((CSpad->normal.z * sphere->radius) >> 12);
 				}
 
-				sphere->position.x = dv.x + CSpad->triPoint.x;
-				sphere->position.y = dv.y + CSpad->triPoint.y;
-				sphere->position.z = dv.z + CSpad->triPoint.z;
+				sphere->position.x = (short)(dv.x + CSpad->triPoint.x);
+				sphere->position.y = (short)(dv.y + CSpad->triPoint.y);
+				sphere->position.z = (short)(dv.z + CSpad->triPoint.z);
 
 				v10 = 1;
 			}
@@ -2432,7 +2432,7 @@ long COLLIDE_SAndT(struct SCollideInfo* scollideInfo, struct Level* level)//Matc
 													CSpad->collideInfo.inst1 = bspTree;
 													CSpad->collideInfo.level = level;
 													CSpad->collideInfo.inst0 = CSpad->instance;
-													segment = scollideInfo->segment;
+													segment = (char)scollideInfo->segment;
 													CSpad->collideInfo.prim0 = CSpad->prim;
 													CSpad->collideInfo.offset.x = CSpad->sphere.position.x - CSpad->posMatrix.m[0][0];
 													CSpad->collideInfo.offset.y = CSpad->sphere.position.y - CSpad->posMatrix.m[0][1];
@@ -2710,15 +2710,15 @@ void COLLIDE_InstanceTerrain(struct _Instance* instance, struct Level* level)//M
 
 					RotTrans((SVECTOR*)&hsphere->position, (VECTOR*)oldPosVec, &flags);
 
-					wSphere->position.x = newPosVec->x;
-					wSphere->position.y = newPosVec->y;
-					wSphere->position.z = newPosVec->z;
+					wSphere->position.x = (short)newPosVec->x;
+					wSphere->position.y = (short)newPosVec->y;
+					wSphere->position.z = (short)newPosVec->z;
 					wSphere->radius = hsphere->radius;
 					wSphere->radiusSquared = hsphere->radiusSquared;
 
-					oldPos->x = oldPosVec->x;
-					oldPos->y = oldPosVec->y;
-					oldPos->z = oldPosVec->z;
+					oldPos->x = (short)oldPosVec->x;
+					oldPos->y = (short)oldPosVec->y;
+					oldPos->z = (short)oldPosVec->z;
 
 
 					scollideInfo->sphere = wSphere;
@@ -3044,13 +3044,13 @@ void COLLIDE_InstanceTerrainSignal(struct _Instance* instance, struct Level* lev
 		{
 			if (model != NULL && model->numSegments >= 2)
 			{
-				startPoint.x = instance->oldMatrix[1].t[0];
-				startPoint.y = instance->oldMatrix[1].t[1];
-				startPoint.z = instance->oldMatrix[1].t[2];
+				startPoint.x = (short)instance->oldMatrix[1].t[0];
+				startPoint.y = (short)instance->oldMatrix[1].t[1];
+				startPoint.z = (short)instance->oldMatrix[1].t[2];
 
-				endPoint.x = instance->matrix[1].t[0];
-				endPoint.y = instance->matrix[1].t[1];
-				endPoint.z = instance->matrix[1].t[2];
+				endPoint.x = (short)instance->matrix[1].t[0];
+				endPoint.y = (short)instance->matrix[1].t[1];
+				endPoint.z = (short)instance->matrix[1].t[2];
 			}
 			else
 			{
@@ -3121,9 +3121,9 @@ struct _StreamUnit* COLLIDE_CameraWithStreamSignals(struct Camera* camera)//Matc
 		{
 			if (model->numSegments >= 2)
 			{
-				startPoint.x = instance->matrix[1].t[0];
-				startPoint.y = instance->matrix[1].t[1];
-				startPoint.z = instance->matrix[1].t[2];
+				startPoint.x = (short)instance->matrix[1].t[0];
+				startPoint.y = (short)instance->matrix[1].t[1];
+				startPoint.z = (short)instance->matrix[1].t[2];
 			}
 			else
 			{

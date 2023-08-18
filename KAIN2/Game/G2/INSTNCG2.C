@@ -196,9 +196,9 @@ void _G2Instance_RebuildAnimatedTransforms(struct _Instance* instance)//Matching
 			rootMatrix->trans.z = instance->matrix[0].t[2];
 		}
 
-		instance->position.x = rootMatrix->trans.x;
-		instance->position.y = rootMatrix->trans.y;
-		instance->position.z = rootMatrix->trans.z;
+		instance->position.x = (short)rootMatrix->trans.x;
+		instance->position.y = (short)rootMatrix->trans.y;
+		instance->position.z = (short)rootMatrix->trans.z;
 
 		if ((instance->object->oflags & 0x4))
 		{

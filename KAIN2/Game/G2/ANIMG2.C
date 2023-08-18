@@ -65,7 +65,7 @@ void G2Anim_Init(struct _G2Anim_Type* anim, struct _Model* modelData)
 		section->speedAdjustment = 4096;
 	}
 
-	anim->section[0].segCount = modelData->numSegments;
+	anim->section[0].segCount = (unsigned char)modelData->numSegments;
 }
 
 struct _G2AnimSection_Type * G2Anim_AddSection(struct _G2Anim_Type *anim, int firstSegID, int segCount)
@@ -600,7 +600,7 @@ short G2AnimSection_UpdateOverInterval(struct _G2AnimSection_Type* section, shor
 
 		elapsedTime = section->elapsedTime;
 
-		s4 = (elapsedTime + ((interval * section->speedAdjustment) >> 12)) - interpInfo->duration;
+		s4 = (elapsedTime + (short)((interval * section->speedAdjustment) >> 12)) - interpInfo->duration;
 
 		if (s4 >= 0)
 		{
@@ -644,7 +644,7 @@ short G2AnimSection_UpdateOverInterval(struct _G2AnimSection_Type* section, shor
 		}
 		else
 		{
-			section->elapsedTime = elapsedTime + ((interval * section->speedAdjustment) >> 12);
+			section->elapsedTime = elapsedTime + (short)((interval * section->speedAdjustment) >> 12);
 			return 0;
 		}
 	}
@@ -708,7 +708,7 @@ short G2AnimSection_AdvanceOverInterval(struct _G2AnimSection_Type* section, sho
 		endTime = G2AnimKeylist_GetDuration(keylist);
 	}
 
-	newTime = elapsedTime + ((interval * section->speedAdjustment) >> 12);
+	newTime = elapsedTime + (short)((interval * section->speedAdjustment) >> 12);
 
 	if (section->swAlarmTable != NULL)
 	{
@@ -780,7 +780,7 @@ short G2AnimSection_AdvanceOverInterval(struct _G2AnimSection_Type* section, sho
 
 			if (section->callback != NULL)
 			{
-				swAlarmTime = section->callback((struct _G2Anim_Type*)_G2AnimSection_GetAnim(section), section->sectionID, (enum _G2AnimCallbackMsg_Enum)message, newTime, extraTime, (struct _Instance*)section->callbackData);
+				swAlarmTime = (short)section->callback((struct _G2Anim_Type*)_G2AnimSection_GetAnim(section), section->sectionID, (enum _G2AnimCallbackMsg_Enum)message, newTime, extraTime, (struct _Instance*)section->callbackData);
 
 				if (swAlarmTime != newTime)
 				{
@@ -1506,7 +1506,7 @@ void FooBar(struct _G2AnimSection_Type* section, struct _G2Anim_Type* anim, int 
 
 					if (segIndex != 0)
 					{
-						chanValue[0] += (nextChanStatus.keyData * timeOffset) >> 12;
+						chanValue[0] += (short)((nextChanStatus.keyData * timeOffset) >> 12);
 					}
 				}
 			}

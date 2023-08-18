@@ -186,7 +186,7 @@ void sfxCmdPlayTone(struct AadSfxCommand* sfxCmd)//Matching - 88.08%
 
 				voice->volume = 127;
 				voice->voiceID = 208;
-				voice->note = midiNote;
+				voice->note = (unsigned char)midiNote;
 				voice->program = 1;
 				voice->updateVol = sfxCmd->dataByte[0];
 				voice->priority = sfxToneAttr->toneAttr.priority;

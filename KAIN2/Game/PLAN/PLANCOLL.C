@@ -173,7 +173,7 @@ int PLANCOLL_FindTerrainHitFinal(struct _PlanCollideInfo* pci, int* placement, i
 
 			pci->tFace = (struct _TFace*)pcollideinfo.prim;
 
-			COLLIDE_GetNormal(((struct _Model*)pcollideinfo.prim)->numNormals, (short*)((struct _Terrain*)((unsigned long*)&pcollideinfo)[0])->normalList, &normal);
+			COLLIDE_GetNormal((short)((struct _Model*)pcollideinfo.prim)->numNormals, (short*)((struct _Terrain*)((unsigned long*)&pcollideinfo)[0])->normalList, &normal);
 
 			_x1 = normal.x * 20;
 

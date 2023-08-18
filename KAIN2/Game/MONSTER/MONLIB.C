@@ -999,7 +999,7 @@ unsigned long MON_GetTime(struct _Instance* instance)//Matching - 99.29%
 {
 	if ((instance->object->oflags & 0x80000))
 	{
-		return gameTrackerX.currentTime;
+		return (unsigned long)gameTrackerX.currentTime;
 	}
 	else if ((instance->flags2 & 0x8000000) != 0)
 	{

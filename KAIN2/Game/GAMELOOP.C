@@ -1,5 +1,3 @@
-#define _CRT_SECURE_NO_WARNINGS
-
 #include "CORE.H"
 #include "CAMERA.H"
 #include "GAMELOOP.H"
@@ -192,7 +190,7 @@ void GAMELOOP_SetGameTime(long timeOfDay)//Matching - 74.59%
 		tim += 2160;
 	}
 
-	gameTrackerX.timeOfDay = timeOfDay;
+	gameTrackerX.timeOfDay = (short)timeOfDay;
 	gameTrackerX.currentTimeOfDayTime = (((tim * 32) - tim) * 4 + tim) * 480 / gameTrackerX.multGameTime;
 	gameTrackerX.currentMaterialTime = gameTrackerX.currentTimeOfDayTime;
 }
@@ -1270,7 +1268,7 @@ void GAMELOOP_DisplayFrame(struct GameTracker* gameTracker)
 		theCamera.core.topY = 0;
 		theCamera.core.bottomY = 240;
 
-		RENDER_currentStreamUnitID = mainStreamUnit->StreamUnitID;
+		RENDER_currentStreamUnitID = (short)mainStreamUnit->StreamUnitID;
 
 		CAMERA_SetViewVolume(&theCamera);
 
@@ -1455,7 +1453,7 @@ void GAMELOOP_DisplayFrame(struct GameTracker* gameTracker)
 	gameTracker->idleTime = (GetRCnt(0xF2000000) & 0xFFFF) | (gameTimer << 16);
 #endif
 
-	if (gameTracker->frameRateLock >= gameTracker->vblFrames)
+	if (gameTracker->frameRateLock >= (long)gameTracker->vblFrames)
 	{
 		if (CheckVolatile(gameTracker->reqDisp) != 0)
 		{
@@ -2189,7 +2187,7 @@ void GAMELOOP_DoTimeProcess()
 
 			if (gameTrackerX.lastLoopTime != -1)
 			{
-				last = holdTime - gameTrackerX.currentTime;
+				last = (unsigned long)(holdTime - gameTrackerX.currentTime);
 			}
 
 			if (gameTrackerX.frameRateLock == 1 && gameTrackerX.frameRate24fps != 0)

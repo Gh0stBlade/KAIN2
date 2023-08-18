@@ -11,7 +11,7 @@ short G2Timer_GetFrameTime()
 	}
 	else 
 	{
-		atime = (gameTrackerX.timeMult * 100) >> 12;
+        atime = (short)((gameTrackerX.timeMult * 100) >> 12);
 	}
 	
 	if (atime <= 0)

@@ -27,7 +27,7 @@ struct _ObjectOwnerInfo // hashcode: 0x04BCED5C (dec: 79490396)
 {
 	long magicnum; // size=0, offset=0
 	short animID; // size=0, offset=4
-	char objectName[0]; // size=0, offset=6
+	char objectName[1]; // size=0, offset=6
 };
 
 struct OBTABLE_114fake // hashcode: 0xA297FC58 (dec: -1567097768)

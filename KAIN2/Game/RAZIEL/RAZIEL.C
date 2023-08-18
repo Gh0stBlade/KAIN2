@@ -3518,6 +3518,8 @@ void RazielPost(struct _Instance* instance, unsigned long Message, unsigned long
 	//v0 = 0x10000A
 	switch (Message)
 	{
+    case 0:
+            break;
 	default:
 	{
 		for (i = 0; i < 3; i++)
@@ -4105,7 +4107,7 @@ int SetStates(struct _Instance* instance, struct GameTracker* GT, long* controlC
 	Data1 = 0;
 
 #if defined(PSXPC_VERSION)
-	LastTime = Emulator_GetPerformanceCounter() / (Emulator_GetPerformanceFrequency() / 1000000);
+	LastTime = (unsigned long)(Emulator_GetPerformanceCounter() / (Emulator_GetPerformanceFrequency() / 1000000));
 #else
 	LastTime = (GetRCnt(0xF2000000) & 0xFFFF) | (gameTimer << 16);
 #endif
@@ -5641,8 +5643,8 @@ void RAZIEL_TurnHead(struct _Instance* instance, short* rotx, short* rotz, struc
 
 	if ((Raziel.Mode & 0x20000) && !(Raziel.throwMode & 0x4))
 	{
-		*rotx += gameTrackerX.controlData[0][4] / 8;
-		*rotz -= gameTrackerX.controlData[0][3] / 6;
+		*rotx += (short)(gameTrackerX.controlData[0][4] / 8);
+		*rotz -= (short)(gameTrackerX.controlData[0][3] / 6);
 
 		if (Raziel.extraRot.x && *rotx)
 		{
@@ -5663,8 +5665,8 @@ void RAZIEL_TurnHead(struct _Instance* instance, short* rotx, short* rotz, struc
 	}
 	else
 	{
-		*rotx += gameTrackerX.controlData[0][4] / 4;
-		*rotz -= gameTrackerX.controlData[0][3] / 3;
+		*rotx += (short)(gameTrackerX.controlData[0][4] / 4);
+		*rotz -= (short)(gameTrackerX.controlData[0][3] / 3);
 
 		rx = *rotx & 0xFFF;
 		if (rx > 0x800)

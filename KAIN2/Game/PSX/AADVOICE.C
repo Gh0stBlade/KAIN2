@@ -152,13 +152,6 @@ void aadPlayTone(struct AadToneAtr* toneAtr, unsigned long waveStartAddr, struct
 	unsigned long tmp;
 	unsigned long masterVolumeSquared;
 
-#define GET_VOLUME_SQUARED(x) (x) * (x) 
-#define GET_MASTER_PAN_LEFT(x, y) ((short)x * (GET_VOLUME_SQUARED((128 - y)) - 1)) >> 12
-#define GET_MASTER_PAN_RIGHT(x, y) ((short)x * (GET_VOLUME_SQUARED((y + 1)) + 1)) >> 12
-#define GET_MASTER_VOL_SHIFT(x, y) (y * (x)) >> 14
-#define GET_MASTER_VOL(x, y) (y * (x))
-
-
 	voiceVol.right = ((volume + 1) * (volume + 1)) - 1;
 	voiceVol.left = ((volume + 1) * (volume + 1)) - 1;
 
@@ -241,11 +234,6 @@ void aadPlayTonePitchBend(struct AadToneAtr *toneAtr, unsigned long waveStartAdd
 	unsigned long tmp; // $v0
 	unsigned long masterVolumeSquared; // $v1
 
-#define GET_VOLUME_SQUARED(x) (x) * (x) 
-#define GET_MASTER_PAN_LEFT(x, y) (x * (GET_VOLUME_SQUARED((128 - y)) - 1)) >> 12
-#define GET_MASTER_PAN_RIGHT(x, y) (x * (GET_VOLUME_SQUARED((y + 1)) + 1)) >> 12
-#define GET_MASTER_VOL(x, y) (y * (x - 1)) >> 14
-
 	//s0 = toneAtr
 	//v0 = 1
 
@@ -255,26 +243,26 @@ void aadPlayTonePitchBend(struct AadToneAtr *toneAtr, unsigned long waveStartAdd
 	//s2 = voice
 	//s4 = waveStartAddr
 	//v0 = aadMem
-	voiceVol.left = masterVolumeSquared;
-	voiceVol.right = masterVolumeSquared;
+	voiceVol.left = (short)masterVolumeSquared;
+	voiceVol.right = (short)masterVolumeSquared;
 	//s3 = midiNote
 	if (!(aadMem->flags & 0x1))
 	{
 		if (masterPan >= 65)
 		{
-			voiceVol.right = GET_MASTER_PAN_LEFT(masterPan, masterVolumeSquared);
+			voiceVol.right = (short)GET_MASTER_PAN_LEFT(masterPan, masterVolumeSquared);
 		}
 		else if (masterPan < 63)
 		{
-			voiceVol.left = GET_MASTER_PAN_RIGHT(masterPan, masterVolumeSquared);
+			voiceVol.left = (short)GET_MASTER_PAN_RIGHT(masterPan, masterVolumeSquared);
 		}
 	}
 	//loc_8005864C
 	masterVolumeSquared = GET_VOLUME_SQUARED(toneAtr->volume + 1) - 1;
 
 	//t0 = voiceVol.right * masterVolumeSquared
-	voiceVol.right = (voiceVol.right * masterVolumeSquared) >> 14;
-	voiceVol.left = (voiceVol.left * masterVolumeSquared) >> 14;
+	voiceVol.right = (short)((voiceVol.right * masterVolumeSquared) >> 14);
+	voiceVol.left = (short)((voiceVol.left * masterVolumeSquared) >> 14);
 	//v1 = voiceVol.left * masterVolumeSquared
 	//a0 = (voiceVol.left * masterVolumeSquared) >> 14
 	//v0 = aadMem
@@ -294,8 +282,8 @@ void aadPlayTonePitchBend(struct AadToneAtr *toneAtr, unsigned long waveStartAdd
 	//v0 = masterVolume
 
 	masterVolumeSquared = GET_VOLUME_SQUARED(masterVolume + 1);
-	voiceVol.right = GET_MASTER_VOL(masterVolumeSquared, voiceVol.right);
-	voiceVol.left = GET_MASTER_VOL(masterVolumeSquared, voiceVol.left);
+	voiceVol.right = (short)GET_MASTER_VOL(masterVolumeSquared, voiceVol.right);
+	voiceVol.left = (short)GET_MASTER_VOL(masterVolumeSquared, voiceVol.left);
 
 	tmp = GET_VOLUME_SQUARED(progAtr->volume + 1);
 	pitch = tmp - 1;

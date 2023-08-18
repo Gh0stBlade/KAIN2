@@ -155,7 +155,7 @@ int DecodeDirection(int Source, int Destination, short* Difference, short* Zone)
 
 	if ((unsigned short)(diff & 0x1FF) < 0x3FF)
 	{
-		Difference[0] = diff;
+		Difference[0] = (short)diff;
 
 		rc = 0x10000001;
 	}
@@ -344,7 +344,7 @@ int ProcessMovement(struct _Instance* instance, long* controlCommand, struct Gam
 
 					Raziel.steeringVelocity = 128;
 
-					AngleMoveToward(&instance->rotation.z, MATH3D_AngleFromPosToPos(&instance->position, &Raziel.Senses.EngagedList[6].instance->position), gameTrackerX.timeMult >> 5);
+					AngleMoveToward(&instance->rotation.z, MATH3D_AngleFromPosToPos(&instance->position, &Raziel.Senses.EngagedList[6].instance->position), (short)(gameTrackerX.timeMult >> 5));
 
 				}
 			}

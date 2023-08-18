@@ -316,7 +316,7 @@ void AnimDistanceAndVel(struct Object* object, struct _MonsterAnim* mAnim)
 
 	animSection->callbackData = NULL;
 
-	animSection->segCount = object->modelList[0]->numSegments;
+	animSection->segCount = (unsigned char)object->modelList[0]->numSegments;
 
 	G2AnimSection_SetInterpInfo(animSection, NULL);
 
@@ -328,9 +328,9 @@ void AnimDistanceAndVel(struct Object* object, struct _MonsterAnim* mAnim)
 	
 		total = MATH3D_FastSqrt0((dist.x * dist.x) + (dist.y * dist.y) + (dist.z * dist.z));
 		
-		mAnim->distance = total;
+		mAnim->distance = (unsigned short)total;
 	
-		mAnim->velocity = ((mAnim->playSpeed * (total * 100)) * 4096) / G2AnimKeylist_GetDuration(keylist);
+		mAnim->velocity = (unsigned short)(((mAnim->playSpeed * (total * 100)) * 4096) / G2AnimKeylist_GetDuration(keylist));
 	}
 
 	G2Anim_Free(&anim);

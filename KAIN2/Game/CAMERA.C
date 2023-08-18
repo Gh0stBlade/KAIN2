@@ -66,7 +66,7 @@ void CAMERA_CalculateViewVolumeNormals(struct Camera *camera)
 	int y2;
 
 	x1 = ((unsigned int)camera->core.leftX - 160) << 4;
-	projDistance = camera->core.projDistance << 4;
+	projDistance = (short)(camera->core.projDistance << 4);
 	x2 = ((unsigned int)camera->core.rightX - 160) << 4;
 	y1 = ((unsigned int)camera->core.topY - 120) << 4;
 	y2 = ((unsigned int)camera->core.bottomY - 120) << 4;
@@ -92,27 +92,27 @@ void CAMERA_CalculateViewVolumeNormals(struct Camera *camera)
 	camera->core.viewVolumeNormal[0].y = 0;
 	camera->core.viewVolumeNormal[0].z = 4096;
 
-	camera->core.viewVolumeNormal[1].x = (((unsigned int)(n0.y * n1.z) - (unsigned int)(n0.z * n1.y)) >> 12);
-	camera->core.viewVolumeNormal[1].y = -(((unsigned int)(n0.x * n1.z) - (unsigned int)(n0.z * n1.x)) >> 12);
-	camera->core.viewVolumeNormal[1].z = (((unsigned int)(n0.x * n1.y) - (unsigned int)(n0.y * n1.x)) >> 12);
+	camera->core.viewVolumeNormal[1].x = (((int)(n0.y * n1.z) - (int)(n0.z * n1.y)) >> 12);
+	camera->core.viewVolumeNormal[1].y = -(((int)(n0.x * n1.z) - (int)(n0.z * n1.x)) >> 12);
+	camera->core.viewVolumeNormal[1].z = (((int)(n0.x * n1.y) - (int)(n0.y * n1.x)) >> 12);
 
 	CAMERA_Normalize((_SVector*)&camera->core.viewVolumeNormal[1]);
 
-	camera->core.viewVolumeNormal[2].x = (((unsigned int)(n2.y * n0.z) - (unsigned int)(n2.z * n0.y)) >> 12);
-	camera->core.viewVolumeNormal[2].y = -(((unsigned int)(n2.x * n0.z) - (unsigned int)(n2.z * n0.x)) >> 12);
-	camera->core.viewVolumeNormal[2].z = (((unsigned int)(n2.x * n0.y) - (unsigned int)(n2.y * n0.x)) >> 12);
+	camera->core.viewVolumeNormal[2].x = (((int)(n2.y * n0.z) - (int)(n2.z * n0.y)) >> 12);
+	camera->core.viewVolumeNormal[2].y = -(((int)(n2.x * n0.z) - (int)(n2.z * n0.x)) >> 12);
+	camera->core.viewVolumeNormal[2].z = (((int)(n2.x * n0.y) - (int)(n2.y * n0.x)) >> 12);
 
 	CAMERA_Normalize((_SVector*)&camera->core.viewVolumeNormal[2]);
 
-	camera->core.viewVolumeNormal[3].x = (((unsigned int)(n1.y * n3.z) - (unsigned int)(n1.z * n3.y)) >> 12);
-	camera->core.viewVolumeNormal[3].y = -(((unsigned int)(n1.x * n3.z) - (unsigned int)(n1.z * n3.x)) >> 12);
-	camera->core.viewVolumeNormal[3].z = (((unsigned int)(n1.x * n3.y) - (unsigned int)(n1.y * n3.x)) >> 12);
+	camera->core.viewVolumeNormal[3].x = (((int)(n1.y * n3.z) - (int)(n1.z * n3.y)) >> 12);
+	camera->core.viewVolumeNormal[3].y = -(((int)(n1.x * n3.z) - (int)(n1.z * n3.x)) >> 12);
+	camera->core.viewVolumeNormal[3].z = (((int)(n1.x * n3.y) - (int)(n1.y * n3.x)) >> 12);
 
 	CAMERA_Normalize((_SVector*)&camera->core.viewVolumeNormal[3]);
 
-	camera->core.viewVolumeNormal[4].x = (((unsigned int)(n3.y * n2.z) - (unsigned int)(n3.z * n2.y)) >> 12);
-	camera->core.viewVolumeNormal[4].y = -(((unsigned int)(n3.x * n2.z) - (unsigned int)(n3.z * n2.x)) >> 12);
-	camera->core.viewVolumeNormal[4].z = (((unsigned int)(n3.x * n2.y) - (unsigned int)(n3.y * n2.x)) >> 12);
+	camera->core.viewVolumeNormal[4].x = (((int)(n3.y * n2.z) - (int)(n3.z * n2.y)) >> 12);
+	camera->core.viewVolumeNormal[4].y = -(((int)(n3.x * n2.z) - (int)(n3.z * n2.x)) >> 12);
+	camera->core.viewVolumeNormal[4].z = (((int)(n3.x * n2.y) - (int)(n3.y * n2.x)) >> 12);
 
 	CAMERA_Normalize((_SVector*)&camera->core.viewVolumeNormal[4]);
 }
@@ -307,13 +307,13 @@ void CAMERA_RestoreMode(struct Camera* camera)
 				gameTrackerX.gameFlags |= 0x40;
 			}
 
-			camera->mode = mode;
+			camera->mode = (short)mode;
 
 			camera->data.Follow.stopTimer = 0xE5A20000;
 
 			camera->focusRotVel.z = 0;
 
-			camera->targetFocusDistance = camera->focusDistanceList[camera_modeToIndex[mode]][camera->presetIndex];
+			camera->targetFocusDistance = (short)camera->focusDistanceList[camera_modeToIndex[mode]][camera->presetIndex];
 
 			if (mode == 16)
 			{
@@ -817,7 +817,7 @@ void CAMERA_SetMode(struct Camera* camera, long mode)
 
 			gameTrackerX.gameFlags &= 0xFFFFFFBF;
 
-			camera->mode = mode;
+			camera->mode = (short)mode;
 
 			camera->smooth = 8;
 
@@ -825,7 +825,7 @@ void CAMERA_SetMode(struct Camera* camera, long mode)
 
 			camera->focusRotVel.z = 0;
 
-			camera->targetFocusDistance = camera->focusDistanceList[camera_modeToIndex[mode]][camera->presetIndex];
+			camera->targetFocusDistance = (short)camera->focusDistanceList[camera_modeToIndex[mode]][camera->presetIndex];
 
 			if (oldMode == 5)
 			{
@@ -1016,7 +1016,7 @@ void CAMERA_Initialize(struct Camera* camera)
 			rand2 = rand1 & 0xFF;
 		}
 
-		camera_shakeOffset[i].x = (rand1 - ((rand2 >> 8) << 8)) - 128;
+		camera_shakeOffset[i].x = (short)((rand1 - ((rand2 >> 8) << 8)) - 128);
 
 		rand1 = rand();
 		rand2 = rand1;
@@ -1026,7 +1026,7 @@ void CAMERA_Initialize(struct Camera* camera)
 			rand2 = rand1 & 0xFF;
 		}
 
-		camera_shakeOffset[i].y = (rand1 - ((rand2 >> 8) << 8)) - 128;
+		camera_shakeOffset[i].y = (short)((rand1 - ((rand2 >> 8) << 8)) - 128);
 
 		rand1 = rand();
 		rand2 = rand1;
@@ -1036,7 +1036,7 @@ void CAMERA_Initialize(struct Camera* camera)
 			rand2 = rand1 & 0xFF;
 		}
 
-		camera_shakeOffset[i].z = (rand1 - ((rand2 >> 8) << 8)) - 128;
+		camera_shakeOffset[i].z = (short)((rand1 - ((rand2 >> 8) << 8)) - 128);
 	}
 
 	camera->core.rotation.x = 4039;
@@ -1230,8 +1230,8 @@ short CAMERA_AngleDifference(short angle0, short angle1)
 #define GET_ANGLE(x, y) ((x - y) > 2048) ? (x | 4096) : (x)
 	
 	temp = angle0;
-	angle0 = (GET_ANGLE(angle0, angle1) < angle0 ? angle0 : angle1);
-	angle1 = (GET_ANGLE(angle1, angle0) < angle1 ? angle1 : temp);
+	angle0 = (short)(GET_ANGLE(angle0, angle1) < angle0 ? angle0 : angle1);
+	angle1 = (short)(GET_ANGLE(angle1, angle0) < angle1 ? angle1 : temp);
 
 	return angle0 - angle1;
 }
@@ -1332,7 +1332,7 @@ void CAMERA_SetMaxVel(struct Camera* camera)
 
 	maxVelAccl = targetMaxVel;
 
-	camera->maxVel += maxVelVel;
+	camera->maxVel += (short)maxVelVel;
 
 	if (camera->maxVel <= 0)
 	{
@@ -1371,11 +1371,11 @@ void CAMERA_SetTarget(struct Camera* camera, _Position* pos)//Matching - 99.68%
 
 	len = CAMERA_LengthSVector(&sv);
 
-	camera->focusDistance = len;
+	camera->focusDistance = (short)len;
 
-	camera->targetFocusDistance = len;
+	camera->targetFocusDistance = (short)len;
 
-	camera->collisionTargetFocusDistance = len;
+	camera->collisionTargetFocusDistance = (short)len;
 }
 
 void CAMERA_CalcPosition(_Position* position, _Position* base, struct _Rotation* rotation, short distance)
@@ -1415,9 +1415,9 @@ void CAMERA_CalcPosition(_Position* position, _Position* base, struct _Rotation*
 
 	_v1 = &vectorPos;
 
-	_x1 = _v1->x;
-	_y1 = _v1->y;
-	_z1 = _v1->z;
+	_x1 = (short)_v1->x;
+	_y1 = (short)_v1->y;
+	_z1 = (short)_v1->z;
 
 	position->x = _x1;
 	position->y = _y1;
@@ -1569,7 +1569,7 @@ void CAMERA_Unlock(struct Camera* camera, long unlock)
 
 void CAMERA_SetSmoothValue(struct Camera* camera, long smooth)//Matching - 99%
 {
-	camera->smooth = smooth;
+	camera->smooth = (short)smooth;
 	if (smooth == 0)
 	{
 		if ((unsigned int)((unsigned short)camera->mode - 12) < 2 || camera->mode == 16)
@@ -1590,38 +1590,38 @@ void CAMERA_Adjust_tilt(struct Camera* camera, long tilt)
 	
 	tilt &= 0xFFF;
 	
-	camera->signalRot.x = tilt;
+	camera->signalRot.x = (short)tilt;
 
 	if (camera->smooth == 0)
 	{
 		camera->tilt = 0;
 
-		camera->targetFocusRotation.x = tilt;
+		camera->targetFocusRotation.x = (short)tilt;
 
-		camera->targetRotation.x = tilt;
+		camera->targetRotation.x = (short)tilt;
 
-		camera->tfaceTilt = tilt;
+		camera->tfaceTilt = (short)tilt;
 
-		camera->focusRotation.x = tilt;
+		camera->focusRotation.x = (short)tilt;
 
-		camera->actual_x_rot = tilt;
+		camera->actual_x_rot = (short)tilt;
 	}
 }
 
 void CAMERA_Adjust_distance(struct Camera* camera, long dist)//Matching - 100%
 {
-	camera->signalFocusDistance = dist;
+	camera->signalFocusDistance = (short)dist;
 	camera->distanceState = 3;
 
 	if (camera->maxFocusDistance < (short)dist)
 	{
-		camera->signalFocusDistance = camera->maxFocusDistance;
+		camera->signalFocusDistance = (short)camera->maxFocusDistance;
 	}
 	else
 	{
 		if ((short)dist < camera->minFocusDistance)
 		{
-			camera->signalFocusDistance = camera->minFocusDistance;
+			camera->signalFocusDistance = (short)camera->minFocusDistance;
 		}
 	}
 	if (!camera->smooth)
@@ -1632,7 +1632,7 @@ void CAMERA_Adjust_distance(struct Camera* camera, long dist)//Matching - 100%
 
 void CAMERA_Adjust_rotation(struct Camera* camera, long rotation)//Matching - 96.52%
 {
-	if (CAMERA_AngleDifference(rotation, camera->targetFocusRotation.z))
+	if (CAMERA_AngleDifference((short)rotation, camera->targetFocusRotation.z))
 	{
 		camera->rotState = 3;
 		camera->forced_movement = 0;
@@ -1738,7 +1738,7 @@ void Decouple_AngleMoveToward(short* current_ptr, short destination, short step)
 {
 	if (gameTrackerX.timeMult != 4096)
 	{
-		step = (step * gameTrackerX.timeMult) >> 12;
+		step = (short)((step * gameTrackerX.timeMult) >> 12);
 	}
 
 	AngleMoveToward(current_ptr, destination, step);
@@ -1776,7 +1776,7 @@ void CriticalDampValue(long dampMode, short *sourceVal, short targetVal, short *
 
 					if (gameTrackerX.timeMult != 4096)
 					{
-						useVel = (maxVel * gameTrackerX.timeMult) >> 12;
+						useVel = (short)((maxVel * gameTrackerX.timeMult) >> 12);
 					}
 				}
 				else
@@ -1789,7 +1789,7 @@ void CriticalDampValue(long dampMode, short *sourceVal, short targetVal, short *
 
 						if (gameTrackerX.timeMult != 4096)
 						{
-							useVel = -(maxVel * gameTrackerX.timeMult) >> 12;
+							useVel = -(short)((maxVel * gameTrackerX.timeMult) >> 12);
 						}
 					}
 				}
@@ -1811,7 +1811,7 @@ void CriticalDampValue(long dampMode, short *sourceVal, short targetVal, short *
 
 					if (gameTrackerX.timeMult != 4096)
 					{
-						useVel = (maxVel * gameTrackerX.timeMult) >> 12;
+						useVel = (short)((maxVel * gameTrackerX.timeMult) >> 12);
 					}
 				}
 				else
@@ -1824,7 +1824,7 @@ void CriticalDampValue(long dampMode, short *sourceVal, short targetVal, short *
 
 						if (gameTrackerX.timeMult != 4096)
 						{
-							useVel = -(maxVel * gameTrackerX.timeMult) >> 12;
+							useVel = -(short)((maxVel * gameTrackerX.timeMult) >> 12);
 						}
 					}
 				}
@@ -1845,7 +1845,7 @@ void CriticalDampValue(long dampMode, short *sourceVal, short targetVal, short *
 
 					if (gameTrackerX.timeMult != 4096)
 					{
-						useVel = (maxVel * gameTrackerX.timeMult) >> 12;
+						useVel = (short)((maxVel * gameTrackerX.timeMult) >> 12);
 					}
 				}
 				else
@@ -1858,7 +1858,7 @@ void CriticalDampValue(long dampMode, short *sourceVal, short targetVal, short *
 
 						if (gameTrackerX.timeMult != 4096)
 						{
-							useVel = -(maxVel * gameTrackerX.timeMult) >> 12;
+							useVel = -(short)((maxVel * gameTrackerX.timeMult) >> 12);
 						}
 					}
 				}
@@ -1892,7 +1892,7 @@ void CriticalDampValue(long dampMode, short *sourceVal, short targetVal, short *
 
 						if (gameTrackerX.timeMult != 4096)
 						{
-							useVel = (maxVel * gameTrackerX.timeMult) >> 12;
+							useVel = (short)((maxVel * gameTrackerX.timeMult) >> 12);
 						}
 					}
 					else
@@ -1905,7 +1905,7 @@ void CriticalDampValue(long dampMode, short *sourceVal, short targetVal, short *
 
 							if (gameTrackerX.timeMult != 4096)
 							{
-								useVel = -(maxVel * gameTrackerX.timeMult) >> 12;
+								useVel = -(short)((maxVel * gameTrackerX.timeMult) >> 12);
 							}
 						}
 					}
@@ -1927,7 +1927,7 @@ void CriticalDampValue(long dampMode, short *sourceVal, short targetVal, short *
 
 						if (gameTrackerX.timeMult != 4096)
 						{
-							useVel = (maxVel * gameTrackerX.timeMult) >> 12;
+							useVel = (short)((maxVel * gameTrackerX.timeMult) >> 12);
 						}
 					}
 					else
@@ -1940,7 +1940,7 @@ void CriticalDampValue(long dampMode, short *sourceVal, short targetVal, short *
 
 							if (gameTrackerX.timeMult != 4096)
 							{
-								useVel = -(maxVel * gameTrackerX.timeMult) >> 12;
+								useVel = -(short)((maxVel * gameTrackerX.timeMult) >> 12);
 							}
 						}
 					}
@@ -1961,7 +1961,7 @@ void CriticalDampValue(long dampMode, short *sourceVal, short targetVal, short *
 
 						if (gameTrackerX.timeMult != 4096)
 						{
-							useVel = (maxVel * gameTrackerX.timeMult) >> 12;
+							useVel = (short)((maxVel * gameTrackerX.timeMult) >> 12);
 						}
 					}
 					else
@@ -1974,7 +1974,7 @@ void CriticalDampValue(long dampMode, short *sourceVal, short targetVal, short *
 
 							if (gameTrackerX.timeMult != 4096)
 							{
-								useVel = -(maxVel * gameTrackerX.timeMult) >> 12;
+								useVel = -(short)((maxVel * gameTrackerX.timeMult) >> 12);
 							}
 						}
 					}
@@ -2116,9 +2116,9 @@ void CriticalDampPosition(long dampMode, struct _Position* position, struct _Pos
 			_v->y = _y0 - _y1;
 			_v->z = _z0 - _z1;
 
-			accl->x = (_v->x >> shift) - vel->x;
-			accl->y = (_v->y >> shift) - vel->y;
-			accl->z = (_v->z >> shift) - vel->z;
+			accl->x = (short)((_v->x >> shift) - vel->x);
+			accl->y = (short)((_v->y >> shift) - vel->y);
+			accl->z = (short)((_v->z >> shift) - vel->z);
 
 			vel->x += accl->x;
 			vel->y += accl->y;
@@ -2128,17 +2128,17 @@ void CriticalDampPosition(long dampMode, struct _Position* position, struct _Pos
 
 			if (maxVel < length)
 			{
-				vel->x = (vel->x * maxVel) / length;
-				vel->y = (vel->y * maxVel) / length;
-				vel->z = (vel->z * maxVel) / length;
+				vel->x = (short)((vel->x * maxVel) / length);
+				vel->y = (short)((vel->y * maxVel) / length);
+				vel->z = (short)((vel->z * maxVel) / length);
 
 				//v1 = gameTrackerX.timeMult
 
 				if (gameTrackerX.timeMult != ONE)
 				{
-					position->x += (vel->x * gameTrackerX.timeMult) >> 12;
-					position->y += (vel->y * gameTrackerX.timeMult) >> 12;
-					position->z += (vel->z * gameTrackerX.timeMult) >> 12;
+					position->x += (short)((vel->x * gameTrackerX.timeMult) >> 12);
+					position->y += (short)((vel->y * gameTrackerX.timeMult) >> 12);
+					position->z += (short)((vel->z * gameTrackerX.timeMult) >> 12);
 				}
 				else
 				{
@@ -2543,9 +2543,9 @@ void CAMERA_CalcRotation(struct _Rotation* rotation, _Position* target, _Positio
 	onPlane.z = 0;
 	onPlane.y = _v->y;
 
-	rotation->x = -ratan2(onPlane.z, CAMERA_LengthSVector(&onPlane));
+	rotation->x = -(short)ratan2(onPlane.z, CAMERA_LengthSVector(&onPlane));
 	rotation->y = 0;
-	rotation->z = ratan2(sv.y, sv.z) + 1024;
+	rotation->z = (short)ratan2(sv.y, sv.z) + 1024;
 }
 
 
@@ -2933,9 +2933,9 @@ void CAMERA_SetLookFocusAndBase(struct _Instance* focusInstance, struct _Positio
 
 void CAMERA_SetLookFocusAndDistance(struct Camera* camera, VECTOR* focuspoint, int distance)
 { 
-	camera->targetFocusPoint.x = focuspoint->vx;
-	camera->targetFocusPoint.y = focuspoint->vy;
-	camera->targetFocusPoint.z = focuspoint->vz;
+	camera->targetFocusPoint.x = (short)focuspoint->vx;
+	camera->targetFocusPoint.y = (short)focuspoint->vy;
+	camera->targetFocusPoint.z = (short)focuspoint->vz;
 
 	Camera_lookDist = distance;
 }
@@ -3024,9 +3024,9 @@ void CAMERA_Normalize(struct _SVector *svector)
 
 	if (len != 0)
 	{
-		svector->x = (svector->x << 12) / len;
-		svector->y = (svector->y << 12) / len;
-		svector->z = (svector->z << 12) / len;
+		svector->x = (short)((svector->x << 12) / len);
+		svector->y = (short)((svector->y << 12) / len);
+		svector->z = (short)((svector->z << 12) / len);
 	}
 }
 
@@ -3158,9 +3158,9 @@ void CAMERA_CalcFocusOffset(struct _SVector* offset, struct Camera* camera)
 
 	gte_stlvnl(&adjustedOffset);
 
-	_x1 = adjustedOffset.x;
-	_y1 = adjustedOffset.y;
-	_z1 = adjustedOffset.z;
+	_x1 = (short)adjustedOffset.x;
+	_y1 = (short)adjustedOffset.y;
+	_z1 = (short)adjustedOffset.z;
 
 	offset->x = _x1;
 	offset->y = _y1;
@@ -3187,9 +3187,9 @@ void CAMERA_CalcFocusOffsetForSwim(struct _SVector* offset, struct Camera* camer
 
 	_v1 = &adjustedOffset;
 
-	_x1 = _v1->x;
-	_y1 = _v1->y;
-	_z1 = _v1->z;
+	_x1 = (short)_v1->x;
+	_y1 = (short)_v1->y;
+	_z1 = (short)_v1->z;
 
 	offset->x = _x1;
 	offset->y = _y1;
@@ -5015,7 +5015,7 @@ void CAMERA_UpdateFocusRotationX(struct Camera* camera, struct _Instance* focusI
 					{
 						tfaceFlag = 1;
 
-						camera->targetTilt = CAMERA_CalcTilt(&normal, camera->focusRotation.z) * 9;
+						camera->targetTilt = (short)(CAMERA_CalcTilt(&normal, camera->focusRotation.z) * 9);
 						if (camera->targetTilt < 0)
 						{
 							camera->targetTilt += 15;
@@ -5382,7 +5382,7 @@ void CAMERA_CalcFollowPosition(struct Camera* camera, struct _Rotation* rotation
 						ground = pos - camera->targetPos.z;
 					}
 
-					target_rotx = ratan2(ground, hypotXY);
+					target_rotx = (short)ratan2(ground, hypotXY);
 
 					if (CAMERA_SignedAngleDifference(target_rotx, camera->actual_x_rot) < 0)
 					{

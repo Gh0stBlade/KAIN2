@@ -549,7 +549,7 @@ void FONT_DrawChar2D(unsigned char c, long x, long y)
 			drawChar2DPoly(i1, xoff, yoff);
 		}
 
-		xoff = x + (((w - w2) >> 31) + ((w - w2)) >> 1);
+		xoff = (x + ((w - w2) >> 31) + (w - w2)) >> 1;
 		yoff = y;
 
 		if (c == 'A')
@@ -569,7 +569,7 @@ void FONT_DrawChar2D(unsigned char c, long x, long y)
 
 		if (i3 >= 0)
 		{
-			xoff = x + (((w - w3) >> 31) + (w - w3) >> 1);
+			xoff = (x + ((w - w3) >> 31) + (w - w3)) >> 1;
 			yoff = (y + 1) - h;
 			drawChar2DPoly(i3, xoff, yoff);
 		}

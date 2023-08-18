@@ -89,7 +89,7 @@ void GAMEPAD_Commands(long(*command)[5], long(*data)[5], long pad)//Matching - 9
 	}
 
 	data[pad][1] = ~lastPad[pad] & data[pad][0];
-	lastPad[pad] = data[pad][0];
+	lastPad[pad] = (short)data[pad][0];
 
 	command[pad][3] = analogX;
 	command[pad][4] = analogY;

@@ -23,7 +23,7 @@ void G2Quat_Slerp_VM(long ratio, struct _G2Quat_Type* quatA, struct _G2Quat_Type
 
 	gte_stlvnl0(&cosTemp2);
 
-	cos_t = ((unsigned short*)&cosTemp2)[0] + cosTemp1;
+	cos_t = (short)(((unsigned short*)&cosTemp2)[0] + cosTemp1);
 
 	if (cos_t < 0)
 	{
@@ -88,7 +88,7 @@ void G2Quat_Slerp_VM(long ratio, struct _G2Quat_Type* quatA, struct _G2Quat_Type
 
 	gte_gpf12();
 
-	quatOut->w = (foo[3] * cosTemp1) >> 12;
+	quatOut->w =(short)((foo[3] * cosTemp1) >> 12);
 
 	gte_stsv(quatOut);
 }

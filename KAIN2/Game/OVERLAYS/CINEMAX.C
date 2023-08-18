@@ -22,9 +22,12 @@ int unk_F334C = 0;//800F334C
 int CINEMAX_E0DBC()
 {
 	unsigned char result[8];
-	CdControlB(CdlGetlocP, NULL, result);
+    CdlLOC* loc = (CdlLOC*)&result[0];
 
-	return CdPosToInt((CdlLOC*)&result[5]) < unk_F335C ^ 1;
+	CdControlB(CdlGetlocP, NULL, result);
+    result[5] =( result[5] < unk_F335C) ^ 1;
+
+	return CdPosToInt(loc);
 }
 
 //0x800E0DF8

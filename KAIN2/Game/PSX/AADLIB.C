@@ -1213,10 +1213,10 @@ int aadWaveMalloc(unsigned short waveID, unsigned long waveSize) //Matching - 98
 
 				if (!(next->waveID & 0x4000))
 				{
-					next->address -= bestFit->size - waveSize;
-					next->size += (bestFit->size - waveSize);
+					next->address -= (unsigned short)(bestFit->size - waveSize);
+					next->size += (unsigned short)(bestFit->size - waveSize);
 
-					bestFit->size = waveSize;
+					bestFit->size = (unsigned short)waveSize;
 
 					return bestFitIndex;
 				}
@@ -1249,8 +1249,8 @@ int aadWaveMalloc(unsigned short waveID, unsigned long waveSize) //Matching - 98
 			aadMem->nextSramDescIndex = (aadMem->nextSramDescIndex + 8) & 0x7F;
 
 			next->waveID = 0x8000;
-			next->address = bestFit->address + waveSize;
-			next->size = bestFit->size - waveSize;
+			next->address = bestFit->address + (unsigned short)waveSize;
+			next->size = bestFit->size - (unsigned short)waveSize;
 			next->prevIndex = bestFitIndex;
 			next->nextIndex = bestFit->nextIndex;
 
@@ -1259,7 +1259,7 @@ int aadWaveMalloc(unsigned short waveID, unsigned long waveSize) //Matching - 98
 				(sramDescTbl + next->nextIndex)->prevIndex = sramDescIndex;
 			}
 
-			bestFit->size = waveSize;
+			bestFit->size = (unsigned short)waveSize;
 			bestFit->nextIndex = sramDescIndex;
 		}
 		return bestFitIndex;
@@ -2185,7 +2185,7 @@ void aadSetSlotTempo(int slotNumber, struct AadTempo *tempo)
 	tickTime = ((tempo->quarterNoteTime / tempo->ppqn) << 16) + ((unsigned int)((tempo->quarterNoteTime % tempo->ppqn) << 16) / tempo->ppqn);
 	slot->tempo.tickTimeFixed = tickTime;
 #if defined(PSXPC_VERSION)
-	slot->tempo.ticksPerUpdate = (1000000 * 1024 / 44100) / (tempo->quarterNoteTime / tempo->ppqn);
+	slot->tempo.ticksPerUpdate = (unsigned short)((1000000 * 1024 / 44100) / (tempo->quarterNoteTime / tempo->ppqn));
 #else
 	slot->tempo.ticksPerUpdate = (aadUpdateRate[aadMem->updateMode & 3]) / tickTime;
 #endif

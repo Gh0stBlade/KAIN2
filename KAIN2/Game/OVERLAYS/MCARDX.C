@@ -459,6 +459,10 @@ long sub_80163D84(struct mcpsx_t* mcpsx)
 	{
 		return mcardxFuncTable2[mcpsx->state.func - 1]((struct mcard_t*)mcpsx);
 	}
+    else
+    {
+        return 0;
+    }
 }
 
 void sub_80163D38(struct mcpsx_t* mcpsx, int err)
@@ -905,6 +909,10 @@ int sub_80164C04(struct mcmenu_t* mcmenu, int index, int a2)
 	{
 		return mcardxFuncTable3[mcmenu->state.fsm](mcmenu, ret, a2, index);
 	}
+    else
+    {
+        return 0;
+    }
 }
 
 int MCARDX_main(struct mcmenu_t* mcmenu, int index)//80165578

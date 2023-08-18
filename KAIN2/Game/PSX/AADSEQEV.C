@@ -447,7 +447,7 @@ void aadUpdateSlotVolPan(struct _AadSequenceSlot* slot)
 				if (slot->panPosition[channel] >= 65)
 				{
 					masterVolumeSquared = (newVoiceVol.right * (((128 - slot->panPosition[channel]) * (128 - slot->panPosition[channel])) - 1)) >> 12;
-					newVoiceVol.left = masterVolumeSquared;
+					newVoiceVol.left = (short)masterVolumeSquared;
 				}
 				else if (slot->panPosition[channel] < 63)
 				{
@@ -524,7 +524,7 @@ void aadUpdateChannelPitchBend(struct _AadSequenceSlot* slot, int channel)
 					newPitch = aadPitchTable[pitchIndex] + (((aadStepsPerCent[pitchIndex] * 100) * voice->toneAtr->centerFine) >> 23);
 				}
 
-				SpuSetVoicePitch(i, newPitch + pitchValueBendAmount);
+				SpuSetVoicePitch(i, (unsigned short)(newPitch + pitchValueBendAmount));
 			}
 		}
 	}

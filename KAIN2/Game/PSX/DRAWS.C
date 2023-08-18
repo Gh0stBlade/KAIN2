@@ -8,6 +8,8 @@
 #include "Game/DRAW.H"
 #include "Game/TIMER.H"
 
+#pragma warning(disable: 4102)
+
 long depthQBackColor;
 long depthQFogStart;
 long depthQFogFar;
@@ -4134,9 +4136,9 @@ unsigned int* DRAW_DisplayPolytopeList_S(struct _PolytopeList* polytopeList, str
 				getScratchAddr(0)[8] = lm->t[1] - globalOffset->y;
 				getScratchAddr(0)[9] = lm->t[2] - globalOffset->z;
 
-				x = (lm->t[0] - globalOffset->x) - pStart[0]->sphere.position.x;
-				y = (lm->t[1] - globalOffset->y) - pStart[0]->sphere.position.y;
-				z = (lm->t[2] - globalOffset->z) - pStart[0]->sphere.position.z;
+				x = (short)((lm->t[0] - globalOffset->x) - pStart[0]->sphere.position.x);
+				y = (short)((lm->t[1] - globalOffset->y) - pStart[0]->sphere.position.y);
+				z = (short)((lm->t[2] - globalOffset->z) - pStart[0]->sphere.position.z);
 
 				if (x < 0)
 				{

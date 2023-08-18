@@ -1881,19 +1881,19 @@ void DEBUG_UpdateFog(long* var)
 
 	currentUnit = FindStreamUnitFromLevel(gameTrackerX.level);
 
-	gameTrackerX.level->fogFar = debugFogFar;
-	currentUnit->TargetFogFar = debugFogFar;
-	gameTrackerX.level->holdFogFar = debugFogFar;
+	gameTrackerX.level->fogFar = (unsigned short)debugFogFar;
+	currentUnit->TargetFogFar = (short)debugFogFar;
+	gameTrackerX.level->holdFogFar = (unsigned short)debugFogFar;
 
-	gameTrackerX.level->fogNear = debugFogNear;
-	currentUnit->TargetFogNear = debugFogFar;
-	gameTrackerX.level->holdFogNear = debugFogNear;
+	gameTrackerX.level->fogNear = (unsigned short)debugFogNear;
+	currentUnit->TargetFogNear = (short)debugFogFar;
+	gameTrackerX.level->holdFogNear = (unsigned short)debugFogNear;
 
 	currentUnit->FogColor = (debugFogBlu << 16) | (debugFogGrn << 8) | debugFogRed;
 
-	gameTrackerX.level->backColorR = debugFogRed;
-	gameTrackerX.level->backColorG = debugFogGrn;
-	gameTrackerX.level->backColorB = debugFogBlu;
+	gameTrackerX.level->backColorR = (unsigned char)debugFogRed;
+	gameTrackerX.level->backColorG = (unsigned char)debugFogGrn;
+	gameTrackerX.level->backColorB = (unsigned char)debugFogBlu;
 
 	LIGHT_CalcDQPTable(gameTrackerX.level);
 }
@@ -2756,7 +2756,7 @@ void DEBUG_LevelSelectNew()
 	p = currentMenu[debugMenuChoice].text;
 #endif
 
-	number = currentMenu[debugMenuChoice].lower;
+	number = (short)currentMenu[debugMenuChoice].lower;
 	name = p;
 	
 	while (*p != 0)
@@ -2973,8 +2973,8 @@ void DEBUG_ProcessCheat(struct GameTracker* gameTracker)//Matching - 98.47%
 		
 		ApplyMatrix(&rotate_mat, &v, &dv);
 		
-		gameTracker->playerInstance->position.y += dv.vx;
-		gameTracker->playerInstance->position.y += dv.vy;
+		gameTracker->playerInstance->position.y += (short)dv.vx;
+		gameTracker->playerInstance->position.y += (short)dv.vy;
 	}
 }
 

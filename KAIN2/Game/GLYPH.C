@@ -72,7 +72,7 @@ void GlyphInit(struct _Instance* instance, struct GameTracker* gameTracker)
 
 		data->glyph_rotation = (data->selectedGlyph - 1) * 585;
 
-		glyph_cost = 0xFFFFFFFF;
+		glyph_cost = -1;
 
 		instance->flags |= 0x10800;
 	}
@@ -394,7 +394,7 @@ void ShrinkGlyphMenu(struct _Instance *instance)
 
 	if (data->glyph_time > 0)
 	{
-		data->glyph_time -= ((gameTrackerX.timeMult * 512) >> 12);
+		data->glyph_time -= (short)((gameTrackerX.timeMult * 512) >> 12);
 
 		if (data->glyph_time < 0)
 		{
@@ -444,7 +444,7 @@ void EnlargeGlyphMenu(struct _Instance* instance)//Matching - 84.92%
 
 	if (data->glyph_time < 4096)
 	{
-		data->glyph_time += (gameTrackerX.timeMult * 512) >> 12;
+		data->glyph_time += (short)((gameTrackerX.timeMult * 512) >> 12);
 
 		if (data->glyph_time >= 0x1001)
 		{

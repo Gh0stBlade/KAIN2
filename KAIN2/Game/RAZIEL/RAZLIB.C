@@ -339,7 +339,7 @@ int razZeroAxis(long* x, long* y, int radius)//Matching - 99.79%
 
 	distance = MATH3D_SquareLength(*x, *y, 0);
 
-	if (distance < radius)
+	if ((int)distance < radius)
 	{
 		distance = 0;
 
@@ -1087,7 +1087,7 @@ void _razSetSwimVelocity(struct _Instance* instance, int vel, int accl)//Matchin
 	instance->yVel = 0;
 	instance->xVel = 0;
 
-	Raziel.swimTargetSpeed = vel * instance->anim.section[0].speedAdjustment / 4096;
+	Raziel.swimTargetSpeed = (short)(vel * instance->anim.section[0].speedAdjustment / 4096);
 
 	if (vel < instance->zVel)
 	{

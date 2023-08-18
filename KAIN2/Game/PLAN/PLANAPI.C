@@ -354,7 +354,7 @@ void PLANAPI_InitPlanMkrList(struct _StreamUnit* streamUnit)//Matching - 97.47%
 
 	planMkrList = level->PlanMarkerList;
 
-	numPlanMkrs = level->NumberOfPlanMarkers;
+	numPlanMkrs = (unsigned short)level->NumberOfPlanMarkers;
 
 	if (planMkrList != NULL)
 	{

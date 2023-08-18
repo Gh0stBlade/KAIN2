@@ -362,4 +362,21 @@ struct _POLY_NG4
 #include "Game/INSTANCE.H"//For struct LightInstance
 #endif
 
+
+#define GET_XY(a) *(long*)(&a.x);
+#define SET_XY(a, c) *(long*)(&a.x) = c;
+#define GET_ZW(b) *(long*)(&b.z);
+#define SET_ZW(b, c) *(long*)(&b.z) = c;
+
+#define GETP_XY(a) *(long*)(&a->x);
+#define SETP_XY(a, c) *(long*)(&a->x) = c;
+#define GETP_ZW(b) *(long*)(&b->z);
+#define SETP_ZW(b, c) *(long*)(&b->z) = c;
+
+#define GET_VOLUME_SQUARED(x) (x) * (x) 
+#define GET_MASTER_PAN_LEFT(x, y) ((short)x * (GET_VOLUME_SQUARED((128 - y)) - 1)) >> 12
+#define GET_MASTER_PAN_RIGHT(x, y) ((short)x * (GET_VOLUME_SQUARED((y + 1)) + 1)) >> 12
+#define GET_MASTER_VOL_SHIFT(x, y) (y * (x)) >> 14
+#define GET_MASTER_VOL(x, y) (y * (x))
+
 #endif

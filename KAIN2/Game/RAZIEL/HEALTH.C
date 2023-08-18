@@ -293,17 +293,17 @@ void HealthInstantDeath(struct _Instance *instance)
 
 void RAZIEL_DebugHealthSetScale(long healthScale)//Matching - 99.32%
 {
-	Raziel.HealthScale = healthScale;
+	Raziel.HealthScale = (short)healthScale;
 
-	Raziel.HealthBalls = 5 * (healthScale - 1);
+	Raziel.HealthBalls = (short)(5 * (healthScale - 1));
 
 	Raziel.HitPoints = 100000 * (short)healthScale + 100000;
 }
 
 void RAZIEL_DebugManaSetMax(long manaScale)
 {
-	Raziel.GlyphManaMax = manaScale << 2;
-	Raziel.GlyphManaBalls = manaScale << 2;
+	Raziel.GlyphManaMax = (short)(manaScale << 2);
+	Raziel.GlyphManaBalls = (short)(manaScale << 2);
 }
 
 
