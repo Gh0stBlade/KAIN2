@@ -14,7 +14,7 @@ ${Vulkan_LIBRARY}
 endif()
 
 target_link_directories(${PROJECT_NAME} PUBLIC ${ROOT_DIR}/Build/Build_Win32/External/libValkyrie/$(Configuration))
-
+target_link_directories(${PROJECT_NAME} PUBLIC ${ROOT_DIR}/Build/External/libValkyrie/$(Configuration))
 set(PSX_LIB Valkyrie.lib)
 
 endif()
