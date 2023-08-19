@@ -673,8 +673,8 @@ int SteerAutoFace(struct _Instance* instance, long* controlCommand) { // Matchin
 	{
 
 		instance->rotation.z = Raziel.LastBearing;
-		autoFaceRot.x = NULL;
-		autoFaceRot.y = NULL;
+		autoFaceRot.x = 0;
+		autoFaceRot.y = 0;
 		autoFaceRot.z = Raziel.autoFaceRootAngle;
 		if (G2Anim_IsControllerActive(&instance->anim, 1, 10) == G2FALSE)
 		{
@@ -695,16 +695,16 @@ int SteerAutoFace(struct _Instance* instance, long* controlCommand) { // Matchin
 	{
 		if (G2Anim_IsControllerInterpolating(&instance->anim, 14, 14) == G2FALSE)
 		{
-			autoFaceRot.x = NULL;
-			autoFaceRot.y = NULL;
+			autoFaceRot.x = 0;
+			autoFaceRot.y = 0;
 			autoFaceRot.z = diff - Raziel.autoFaceRootAngle;
 			G2EmulationSetInterpController_Vector(instance, 14, 14, &autoFaceRot, 4, 3);
 		}
 	}
 	else
 	{
-		autoFaceRot.x = NULL;
-		autoFaceRot.y = NULL;
+		autoFaceRot.x = 0;
+		autoFaceRot.y = 0;
 		autoFaceRot.z = diff - Raziel.autoFaceRootAngle;
 		if (G2Anim_IsControllerActive(&instance->anim, 14, 14) == G2FALSE)
 		{
