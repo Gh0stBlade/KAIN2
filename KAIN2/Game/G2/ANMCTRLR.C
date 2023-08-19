@@ -880,7 +880,7 @@ void _G2AnimController_GetVector(struct _G2AnimController_Type* controller, stru
 	}
 }
 
-struct _G2AnimController_Type* _G2Anim_FindController(struct _G2Anim_Type* anim, int segNumber, int type)
+struct _G2AnimController_Type* _G2Anim_FindController(struct _G2Anim_Type* anim, int segNumber, int type)//Matching - 100%
 {
 	struct _G2AnimController_Type* controller;
 	
@@ -1022,22 +1022,28 @@ void _G2AnimController_GetSimpleWorldRotQuat(struct _G2AnimController_Type *cont
 
 struct _G2AnimController_Type* _G2AnimControllerST_FindInList(int segNumber, int type, unsigned short* listPtr)
 {
-	struct _G2AnimController_Type* controller;
+    struct _G2AnimController_Type* controller;
 
-	while (_controllerPool.blockPool < (controller = &_controllerPool.blockPool[listPtr[0]]))
-	{
-		if (controller->segNumber != segNumber || controller->type != type)
-		{
-			controller = &_controllerPool.blockPool[controller->next];
-			listPtr = (unsigned short*)controller;
-		}
-		else
-		{
-			return controller;
-		}
-	}
+    controller = (struct _G2AnimController_Type*)listPtr;
 
-	return NULL;
+    while (_controllerPool.blockPool < (controller = &_controllerPool.blockPool[controller->next]))
+    {
+        if (controller->segNumber != segNumber || controller->type != type)
+        {
+            listPtr = (unsigned short*)controller;
+        }
+        else
+        {
+            break;
+        }
+    }
+
+    if (controller == _controllerPool.blockPool)
+    {
+        return NULL;
+    }
+
+    return controller;
 }
 
 
