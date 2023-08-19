@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.0)
+cmake_minimum_required (VERSION 3.5)
 
 project (KAIN2_${TARGET_ARCH})
 
@@ -128,7 +128,7 @@ endif()
 if(MSVC AND NOT WINDOWS_STORE)
 	add_dependencies(${PROJECT_NAME} ${EMULATOR_TARGET_NAME})
 	add_definitions(-D_CRT_SECURE_NO_WARNINGS)
-	#target_compile_options(${PROJECT_NAME} PRIVATE /W4 /WX)
+	target_compile_options(${PROJECT_NAME} PRIVATE /WX)
 	set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS_DEBUG "/SUBSYSTEM:CONSOLE")
 	set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS_RELWITHDEBINFO "/SUBSYSTEM:CONSOLE")
 	set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:CONSOLE")
