@@ -31,7 +31,7 @@ extern struct _G2AnimController_Type * _G2Anim_FindController(struct _G2Anim_Typ
 extern struct _G2AnimController_Type * _G2AnimController_Create(int segNumber, int type); // 0x80091B44
 extern struct _G2AnimController_Type * _G2AnimController_Destroy(struct _G2AnimController_Type *controller); // 0x80091BAC
 extern void _G2AnimController_InsertIntoList(struct _G2AnimController_Type *controller, unsigned short *listPtr); // 0x80091C10
-extern void _G2AnimController_GetCurrentInterpQuat(struct _G2AnimController_Type *controller, struct _G2Anim_Type *anim, struct _G2Quat_Type *quat); // 0x80091D40
+extern void _G2AnimController_GetCurrentInterpQuat(struct _G2AnimController_Type *controller, struct _G2Anim_Type *anim, _G2Quat_Type *quat); // 0x80091D40
 extern void _G2AnimController_GetSimpleWorldRotQuat(struct _G2AnimController_Type *controller, struct _G2Anim_Type *anim, struct _G2Quat_Type *quat); // 0x80091E7C
 extern struct _G2AnimController_Type * _G2AnimControllerST_FindInList(int segNumber, int type, unsigned short *listPtr); // 0x80091EFC
 extern struct _G2AnimController_Type * _G2AnimControllerST_FindPtrInList(int segNumber, int type, unsigned short **listPtrPtr); // 0x80091F6C
