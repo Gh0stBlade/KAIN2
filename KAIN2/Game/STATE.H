@@ -77,7 +77,7 @@ extern intptr_t SetPhysicsDropHeightData(_Position *offset, int dropOffset, int 
 
 extern intptr_t SetAnimationControllerDoneData(struct _Instance *instance, long segment, long type, int data); // 0x80070FC0
 
-extern intptr_t SetAnimationInstanceSwitchData(struct _Instance *instance, int anim, int frame, int frames, int mode); // 0x8007101C
+extern uintptr_t SetAnimationInstanceSwitchData(struct _Instance *instance, int anim, int frame, int frames, int mode); // 0x8007101C
 
 extern intptr_t SetFXHitData(struct _Instance *hitter, int segment, int amount, int type); // 0x80071088
 
