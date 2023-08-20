@@ -1017,7 +1017,8 @@ void razSetDampingPhysics(struct _Instance* instance)
 
 void razEnterWater(struct __CharacterState* In, int CurrentSection, struct evPhysicsSwimData* SwimData) // Matching 99.70%
 {
-	struct _Instance* Inst = razGetHeldWeapon();
+	struct _Instance* Inst;
+	Inst = razGetHeldWeapon();
 
 	if ((SwimData->rc & 0x10) != NULL)
 	{
