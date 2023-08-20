@@ -1,5 +1,5 @@
 #include "COLLIDES.H"
-
+#include "Game/MATH3D.H"
 #include "DRAWS.H"
 
 short ecostable[] = {
@@ -866,9 +866,133 @@ void G2Quat_FromEuler_S(struct _G2Quat_Type* quatInfo, struct _G2EulerAngles_Typ
 	quatInfo->w = t5;
 }
 
-void G2EulerAngles_ToMatrix_S(_G2Quat_Type* quat, _G2Matrix_Type* matrix)
+void G2EulerAngles_ToMatrix_S(struct _G2Quat_Type* quat, struct _G2Matrix_Type* matrix)
 {
-	UNIMPLEMENTED();
+    int t0;
+    int t1;
+    int t2;
+    int t3;
+    int t4;
+    int t5;
+    int t6;
+    int t7;
+    int t8;
+    int s2;
+    int s3;
+    int s4;
+    int a0;
+    SVECTOR sv;
+    short* q;
+    short* m1;
+    short* m2;
+    short* m3;
+    short* m4;
+    short* m5;
+    short* m6;
+
+    t5 = 0;
+
+    t0 = quat[0].x;
+    t1 = quat[0].z;
+    t2 = quat[1].w;
+
+    a0 = t0 + t1 + t2;
+
+    if (a0 >= 0)
+    {
+        sv.vx = matrix->rotScale[1][1];
+        t1 = matrix->rotScale[1][2];
+        sv.vy = matrix->rotScale[0][2];
+        t3 = matrix->rotScale[2][0];
+        sv.vz = matrix->rotScale[1][0];
+        t5 = matrix->rotScale[0][1];
+
+        quat->w = (short)((0x800000 / MATH3D_FastSqrt(a0 + 4096)) >> 1);
+
+        sv.vx -= t1;
+        sv.vy -= t3;
+        sv.vz -= t5;
+
+        gte_ldsv(&sv);
+        gte_lddp(quat->w);
+        gte_gpf12();
+        gte_stsv(&sv);
+
+        quat->x = sv.vx;
+        quat->y = sv.vy;
+        quat->z = sv.vz;
+    }
+    else
+    {
+        s2 = 0;
+        s3 = 2;
+        s4 = 4;
+
+        t3 = t0;
+        t4 = t1;
+
+        if (t0 < t1)
+        {
+            s2 = 2;
+            s3 = 4;
+            s4 = 0;
+
+            t3 = t1;
+            t4 = t2;
+            t5 = t0;
+        }
+
+        if (t3 < t2)
+        {
+            s2 = 4;
+            s3 = 0;
+            s4 = 2;
+
+            t3 = t2;
+            t4 = t0;
+            t5 = t1;
+        }
+
+        a0 = t4 + t5 + t3;
+        q = (short*)((char*)quat + s2);
+        q[0] = (short)((0x800000 / MATH3D_FastSqrt(a0 + 4096)) >> 1);
+        t0 = s2 << 1;
+        t0 += s2;
+        m1 = (short*)((char*)matrix + t0 + s3);//t3
+        m2 = (short*)((char*)matrix + t0 + s4);//t4
+
+        t1 = s3 << 1;
+        t1 += s3;
+        m3 = (short*)((char*)matrix + t1 + s2);//t5
+        m4 = (short*)((char*)matrix + t1 + s4);//t6
+
+        t2 = s4 << 1;
+        t2 += s4;
+        m5 = (short*)((char*)matrix + t2 + s2);//t7
+        m6 = (short*)((char*)matrix + t2 + s3);//t8
+
+        t6 = m4[0];
+        t8 = m6[0];
+        t3 = m1[0];
+        t5 = m3[0];
+        t4 = m2[0];
+        t7 = m5[0];
+
+        sv.vx = t8 - t6;
+        sv.vy = t5 + t3;
+        sv.vz = t7 + t4;
+
+        gte_lddp((short)(0x800000 / MATH3D_FastSqrt(a0 + 4096)));
+        gte_ldsv(&sv);
+        gte_gpf12();
+        gte_stsv(&sv);
+
+        quat->w = sv.vx;
+        m1 = (short*)((char*)quat + s3);//s3
+        m2 = (short*)((char*)quat + s4);//s4
+        m1[0] = sv.vy;
+        m2[0] = sv.vz;
+    }
 }
 
 void RotMatrixX(long r, MATRIX* m)
