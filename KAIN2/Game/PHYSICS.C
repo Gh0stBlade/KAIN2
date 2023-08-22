@@ -86,7 +86,7 @@ void PhysicsDefaultLinkedMoveResponse(struct _Instance* instance, struct evPhysi
 	instance->position.z += Data->posDelta.z;
 	if (updateTransforms != 0)
 	{
-		COLLIDE_UpdateAllTransforms(instance, &Data->posDelta);
+		COLLIDE_UpdateAllTransforms(instance, (SVECTOR*)&Data->posDelta);
 	}
 	instance->rotation.z += Data->rotDelta.z;
 }
