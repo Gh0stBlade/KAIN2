@@ -518,7 +518,7 @@ int PhysicsUpdateTface(struct _Instance* instance, int Data) { // Matching - 100
 		if (instance->tface != CInfo.prim)
 		{
 			instance->oldTFace = instance->tface;
-			instance->tface = CInfo.prim;
+			instance->tface = (_TFace*)CInfo.prim;
 			instance->tfaceLevel = CInfo.inst;
 			instance->bspTree = CInfo.segment;
 		}
