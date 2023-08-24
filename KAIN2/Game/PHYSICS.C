@@ -931,9 +931,9 @@ int PhysicsFollowWall(struct _Instance* instance, struct GameTracker* gameTracke
 			New.vy = -Ptr->NormalDistance;
 			New.vz = 0;
 			ApplyMatrix(&mat, &New, &OutTrans);
-			Ptr->NewPosition.x += OutTrans.vx;
-			Ptr->NewPosition.y += OutTrans.vy;
-			Ptr->NewPosition.z += OutTrans.vz;
+			Ptr->NewPosition.x += (short)OutTrans.vx;
+			Ptr->NewPosition.y += (short)OutTrans.vy;
+			Ptr->NewPosition.z += (short)OutTrans.vz;
 			Ptr->NewPosition.x = instance->position.x - Ptr->NewPosition.x;
 			Ptr->NewPosition.y = instance->position.y - Ptr->NewPosition.y;
 			Ptr->NewPosition.z = instance->position.z - Ptr->NewPosition.z;
@@ -969,13 +969,13 @@ int PhysicsFollowWall(struct _Instance* instance, struct GameTracker* gameTracke
 		Old.vx = 0;
 		Old.vy = 0;
 		Old.vz = 64;
-		New.vx += OutTrans.vx;
-		New.vy += OutTrans.vy;
-		New.vz += OutTrans.vz;
+		New.vx += (short)OutTrans.vx;
+		New.vy += (short)OutTrans.vy;
+		New.vz += (short)OutTrans.vz;
 		ApplyMatrix(pTempMat, &Old, &OutTrans);
-		Old.vx = New.vx + OutTrans.vx;
-		Old.vy = New.vy + OutTrans.vy;
-		Old.vz = New.vz + OutTrans.vz;
+		Old.vx = New.vx + (short)OutTrans.vx;
+		Old.vy = New.vy + (short)OutTrans.vy;
+		Old.vz = New.vz + (short)OutTrans.vz;
 		PHYSICS_CheckLineInWorld(instance, &CInfo);
 		if ((CInfo.type == 3) || (CInfo.type == 5))
 		{
@@ -983,12 +983,12 @@ int PhysicsFollowWall(struct _Instance* instance, struct GameTracker* gameTracke
 			Old.vy = 0;
 			Old.vz = 64;
 			ApplyMatrix(pTempMat, &Old, &OutTrans);
-			New.vx += OutTrans.vx;
-			New.vy += OutTrans.vy;
-			New.vz += OutTrans.vz;
-			Old.vx = pTempMat->t[0] + OutTrans.vx;
-			Old.vy = pTempMat->t[1] + OutTrans.vy;
-			Old.vz = pTempMat->t[2] + OutTrans.vz;
+			New.vx += (short)OutTrans.vx;
+			New.vy += (short)OutTrans.vy;
+			New.vz += (short)OutTrans.vz;
+			Old.vx = (short)pTempMat->t[0] + (short)OutTrans.vx;
+			Old.vy = (short)pTempMat->t[1] + (short)OutTrans.vy;
+			Old.vz = (short)pTempMat->t[2] + (short)OutTrans.vz;
 			PHYSICS_CheckLineInWorld(instance, &CInfo);
 			if (CInfo.type == 0)
 			{
