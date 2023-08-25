@@ -1718,12 +1718,12 @@ int INSTANCE_SetStatsData(struct _Instance* instance, struct _Instance* checkee,
 	long distance;
 	SVECTOR* delta;
 	distance = MATH3D_LengthXYZ(instance->position.x - checkPoint->x, instance->position.y - checkPoint->y, instance->position.z - checkPoint->z);
-	if ((distance < instance->maxCheckDistance) != 0)
+	if (((unsigned long)distance < instance->maxCheckDistance) != 0)
 	{
 		delta = (SVECTOR*)getScratchAddr(0);
-		delta->vx = checkPoint->x - instance->position.x;
-		delta->vy = checkPoint->y - instance->position.y;
-		delta->vz = checkPoint->z - instance->position.z;
+		delta->vx = (short)checkPoint->x - instance->position.x;
+		delta->vy = (short)checkPoint->y - instance->position.y;
+		delta->vz = (short)checkPoint->z - instance->position.z;
 		ApplyMatrixSV(mat, delta, (SVECTOR*)&data->relativePosition);
 		data->instance = checkee;
 		data->distance = distance;
