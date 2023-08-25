@@ -904,7 +904,7 @@ void razInitWallCrawlSteering(struct _Instance *instance)
 	UNIMPLEMENTED();
 }
 
-void razDeinitWallCrawlSteering(struct _Instance* instance) { // Matching 100%
+void razDeinitWallCrawlSteering(struct _Instance* instance) { // Matching - 100%
 	G2Anim_DisableController(&instance->anim, 1, 38);
 	instance->position.z -= 318;
 	instance->oldPos.z -= 318;
