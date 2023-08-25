@@ -1728,7 +1728,7 @@ int INSTANCE_SetStatsData(struct _Instance* instance, struct _Instance* checkee,
 		data->instance = checkee;
 		data->distance = distance;
 		data->zDelta = delta->vz;
-		data->xyDistance = MATH3D_LengthXY(delta->vx, delta->vy);;
+		data->xyDistance = MATH3D_LengthXY(delta->vx, delta->vy);
 		return 1;
 	}
 	return 0;
