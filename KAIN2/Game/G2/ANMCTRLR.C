@@ -87,7 +87,7 @@ void G2Anim_DisableController(struct _G2Anim_Type* anim, int segNumber, int type
 	}
 }
 
-void G2Anim_InterpDisableController(struct _G2Anim_Type* anim, int segNumber, int type, short duration) { // Matching 100%
+void G2Anim_InterpDisableController(struct _G2Anim_Type* anim, int segNumber, int type, short duration) { // Matching - 100%
 	struct _G2SVector3_Type zeroVector;
 	struct _G2Quat_Type targetQuat;
 	struct _G2AnimController_Type* controller;
