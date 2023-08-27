@@ -113,7 +113,8 @@ void AlgorithmicNeck(struct _Instance* Player, struct _Instance* Target) { // Ma
             G2Anim_InterpDisableController(&Player->anim, 17, 8, 900);
         }
     }
-    else {
+    else 
+    {
         if ((G2Anim_IsControllerActive(&Player->anim, 17, 8)) == G2FALSE)
         {
             G2Anim_EnableController(&Player->anim, 17, 8);
@@ -124,7 +125,8 @@ void AlgorithmicNeck(struct _Instance* Player, struct _Instance* Target) { // Ma
             To.y = (short)Raziel.Senses.lookAtPoint.y;
             To.z = (short)Raziel.Senses.lookAtPoint.z;
         }
-        else {
+        else 
+        {
             query = INSTANCE_Query(Target, 12);
             if (query != 0)
             {
