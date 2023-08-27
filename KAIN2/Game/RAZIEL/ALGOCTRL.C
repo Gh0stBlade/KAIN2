@@ -88,7 +88,8 @@ void AlgorithmicWings(struct _Instance* instance, struct evAnimationControllerDo
 	G2EmulationSetInterpController_Vector(instance, ControllerData->segment, ControllerData->type, (struct _G2SVector3_Type*)&Rot, 5, 2);
 }
 
-void AlgorithmicNeck(struct _Instance* Player, struct _Instance* Target) { // Matching - 95.22%
+void AlgorithmicNeck(struct _Instance* Player, struct _Instance* Target) // Matching - 95.22%
+{ 
     _Position From;
     _Position To;
     struct _Rotation Rot1;
@@ -101,7 +102,7 @@ void AlgorithmicNeck(struct _Instance* Player, struct _Instance* Target) { // Ma
     {
         TransposeMatrix(Player->oldMatrix, &matrix);
         if ((((INSTANCE_SetStatsData(Player, NULL, &Raziel.Senses.lookAtPoint, &data, &matrix)) != 0)
-            && ((data.distance < 3200) != 0)) && (MATH3D_ConeDetect(&data.relativePosition, 967, 967) != 0))
+        && ((data.distance < 3200) != 0)) && (MATH3D_ConeDetect(&data.relativePosition, 967, 967) != 0))
         {
             Raziel.Senses.Flags |= 8;
         }
