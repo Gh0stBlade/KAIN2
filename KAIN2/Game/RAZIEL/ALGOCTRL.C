@@ -88,7 +88,7 @@ void AlgorithmicWings(struct _Instance* instance, struct evAnimationControllerDo
 	G2EmulationSetInterpController_Vector(instance, ControllerData->segment, ControllerData->type, (struct _G2SVector3_Type*)&Rot, 5, 2);
 }
 
-void AlgorithmicNeck(struct _Instance* Player, struct _Instance* Target) { // Matching - 96.53%
+void AlgorithmicNeck(struct _Instance* Player, struct _Instance* Target) { // Matching - 95.22%
     _Position From;
     _Position To;
     struct _Rotation Rot1;
@@ -120,17 +120,17 @@ void AlgorithmicNeck(struct _Instance* Player, struct _Instance* Target) { // Ma
         }
         if ((Raziel.Senses.Flags & 8) != 0)
         {
-            To.x = Raziel.Senses.lookAtPoint.x;
-            To.y = Raziel.Senses.lookAtPoint.y;
-            To.z = Raziel.Senses.lookAtPoint.z;
+            To.x = (short)Raziel.Senses.lookAtPoint.x;
+            To.y = (short)Raziel.Senses.lookAtPoint.y;
+            To.z = (short)Raziel.Senses.lookAtPoint.z;
         }
         else {
             query = INSTANCE_Query(Target, 12);
             if (query != 0)
             {
-                To.x = ((struct _Instance*)query)->flags;
-                To.y = ((struct _Instance*)query)->flags2;
-                To.z = ((struct _Instance*)query)->object->oflags;
+                To.x = (short)((struct _Instance*)query)->flags;
+                To.y = (short)((struct _Instance*)query)->flags2;
+                To.z = (short)((struct _Instance*)query)->object->oflags;
             }
             else
             {
@@ -159,6 +159,6 @@ void AlgorithmicNeck(struct _Instance* Player, struct _Instance* Target) { // Ma
             Rot1.x = 3438;
         }
         MATH3D_ZYXtoXYZ(&Rot1);
-        G2EmulationSetInterpController_Vector(Player, 17, 8, &Rot1, 3, 0);
+        G2EmulationSetInterpController_Vector(Player, 17, 8, (struct _G2SVector3_Type*)&Rot1, 3, 0);
     }
 }
