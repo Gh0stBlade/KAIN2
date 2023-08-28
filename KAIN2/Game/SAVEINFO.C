@@ -634,7 +634,7 @@ void SAVE_Instance(struct _Instance* instance, struct Level* level) // Matching 
 				savedSmallIntro = (struct SavedIntroSmall*)SAVE_GetSavedBlock(5, extraData->length);
 				if (savedSmallIntro != 0)
 				{
-					savedSmallIntro->introUniqueID = instance->introUniqueID;
+					savedSmallIntro->introUniqueID = (short)instance->introUniqueID;
 					memcpy((void*)((int)&savedSmallIntro->introUniqueID + 2), extraData->data, extraData->length);
 				}
 			}
@@ -686,9 +686,9 @@ void SAVE_Instance(struct _Instance* instance, struct Level* level) // Matching 
 						instance->splineFlags |= 0x100;
 					}
 					savedIntroSpline->savedID = 8;
-					savedIntroSpline->introUniqueID = instance->introUniqueID;
+					savedIntroSpline->introUniqueID = (short)instance->introUniqueID;
 					savedIntroSpline->splineFlags = instance->splineFlags;
-					savedIntroSpline->splineKeyFrame = INSTANCE_GetSplineFrameNumber(instance, multi);
+					savedIntroSpline->splineKeyFrame = (short)INSTANCE_GetSplineFrameNumber(instance, multi);
 					savedIntroSpline->splineClipBeg = instance->clipBeg;
 					savedIntroSpline->splineClipEnd = instance->clipEnd;
 				}
