@@ -75,9 +75,14 @@ void G2Anim_SetNoLooping(struct _G2Anim_Type* anim)//Matching - 99.79%
 	}
 }
 
-void G2Anim_SetPaused(struct _G2Anim_Type* anim)
+void G2Anim_SetPaused(struct _G2Anim_Type* anim)  // Matching - 100%
 {
-	UNIMPLEMENTED();
+	int i;
+
+	for (i = 0; i < anim->sectionCount; i++)
+	{
+		G2AnimSection_SetPaused(&anim->section[i]);
+	}
 }
 
 void G2Anim_SetSpeedAdjustment(struct _G2Anim_Type* anim, long adjustment)
