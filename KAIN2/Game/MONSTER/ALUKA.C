@@ -36,12 +36,6 @@
 //0001:00001e50       _ALUKA_JumpTo              00402e50 f   aluka.obj
 //0001:00002330       _ALUKA_ChooseAttack        00403330 f   aluka.obj
 //0001:00002600       _ALUKA_Init                00403600 f   aluka.obj
-
-void MON_Say(struct _Instance *instance, const char* fmt, ...)
-{
-	UNIMPLEMENTED();
-}
-
 //0001:00002760       _ALUKA_CleanUp             00403760 f   aluka.obj
 //0001:00002810       _ALUKA_Message             00403810 f   aluka.obj
 //0001:00002a10       _ALUKA_PursueEntry         00403a10 f   aluka.obj
