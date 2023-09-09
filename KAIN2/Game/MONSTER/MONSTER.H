@@ -544,7 +544,7 @@ struct _MonsterFunctionTable // hashcode: 0x82983F8D (dec: -2103951475)
 #include "MONTABLE.H"
 
 // monsters
-#include "ALUKA.h"
+#include "ALUKA.H"
 #include "HUNTER.H"
 #include "HUMAN.H"
 
