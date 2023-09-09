@@ -5,7 +5,7 @@ find_package(OpenGL REQUIRED)
 
 set(PSX_LIB libValkyrie.a)
 
-target_link_directories(${PROJECT_NAME} PUBLIC ${ROOT_DIR}/Build_Linux/External/libValkyrie/$(Configuration))
+target_link_directories(${PROJECT_NAME} PUBLIC ${ROOT_DIR}/Build_Linux/External/libValkyrie/)
 
 set(CMAKE_CXX_STANDARD 11)
 
