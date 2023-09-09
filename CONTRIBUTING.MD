@@ -8,7 +8,7 @@ matching with the original binary to be merged into the project (proof will be r
 
 Please select a platform:
   1. [Windows](#Windows)
-  2. ~~Linux~~
+  2. [Linux](#Linux)
   3. [Mac](#Mac)
   4. [Android](#Android)
   5. ~~Web (Emscripten)~~
@@ -22,7 +22,25 @@ Please select a platform:
   5. Navigate to `Emulator/Platform/Windows` or `Emulator/Platform/WindowsStore` for UWP and execute `Generate-Project-Files.bat` to generate the project files (or you can do this via CMake commandline but you must always select Win32 architecture).
   6. Open the Solution file located at `(ROOT)/Build/Build_Win32/Soul Reaver.sln` or `(ROOT)/Build/Build_WindowsStore/Soul Reaver.sln`
   7. Build KAIN2_Win32
-  
+
+# Linux
+  1. Make sure you are compiling on a 32-bit distro of Linux.
+  2. Install Git (sudo apt-get install git)
+  3. Install CMake (3.24.1 or higher) `sudo apt-get install -y cmake `.
+  4. Install `sudo apt-get install -y libegl1-mesa-dev`.
+  5. Install `sudo apt-get install -y libgles2-mesa-dev`.
+  6. Install `sudo apt-get install -y libdbus-1-dev`.
+  7. Install `sudo apt-get install -y libudev-dev`.
+  8. Install `sudo apt-get install -y libasound2-dev`.
+  9. Install `sudo apt-get install -y libpulse-dev`.
+  10. Install `sudo apt-get install -y libxcursor-dev`.
+  11. Install `sudo apt-get install -y libxi-dev`.
+  13. Install `sudo apt-get install -y libxrandr-dev`.
+  14. Install `sudo apt-get install -y libxss-dev`.
+  15. Clone the project (and all sub modules) using Git command line `git clone --recursive https://github.com/Gh0stBlade/KAIN2.git`.
+  16. Navigate to `Emulator/Platform/Linux` execute `Generate-Project-Files-Win32.sh`.
+  17. Run KAIN2
+
 # Mac
   1. Install Xcode 14.2.
   2. Install GitHub or GitHub Desktop.
