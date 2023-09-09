@@ -1,4 +1,4 @@
-#include "../core.H"
+#include "../CORE.H"
 #include "MAING2.H"
 
 enum _G2Bool_Enum MainG2_InitEngine(void *appData, unsigned int screenWidth, unsigned int screenHeight, char *filesystemName)
