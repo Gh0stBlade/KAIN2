@@ -1,7 +1,7 @@
 #include "CORE.H"
 #include "RELMOD.H"
 
-void RELMOD_InitModulePointers(intptr_t baseaddr, int* relocs)
+void RELMOD_InitModulePointers(uintptr_t baseaddr, int* relocs)
 { 
 	unsigned int* rel_addr;
 

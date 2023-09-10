@@ -172,7 +172,7 @@ void STREAM_LoadObjectReturn(void* loadData, void* data, void* data2)
 
 	if ((object->oflags & 0x8000000) && object->relocList != NULL && object->relocModule != NULL)
 	{
-		RELMOD_InitModulePointers((intptr_t)object->relocModule, (int*)object->relocList);
+		RELMOD_InitModulePointers((uintptr_t)object->relocModule, (int*)object->relocList);
 	}
 
 	STREAM_PackVRAMObject(objectTracker);
