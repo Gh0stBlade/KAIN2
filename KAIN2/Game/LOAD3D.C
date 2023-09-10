@@ -249,7 +249,7 @@ void LOAD_DoCDReading()//Matching - 83.60%
 
 	if (bytesLoaded != 0 && loadStatus.currentQueueFile.checksumType != 0)
 	{
-#if !defined(__EMSCRIPTEN__) && !(defined(_WINDOWS) && defined(_DEBUG)) && !defined(__APPLE__)///@FIXME crash!
+#if !defined(__EMSCRIPTEN__) && !(defined(_WINDOWS) && defined(_DEBUG)) && !defined(__APPLE__) && !defined(__linux__)///@FIXME crash!
 		LOAD_UpdateCheckSum(bytesLoaded);
 #endif
 	}
@@ -459,7 +459,7 @@ char* LOAD_ReadFileFromCD(char* filename, int memType)
     return NULL;
 #else
 #if defined(PSXPC_VERSION) && defined(NO_CD)
-#if defined(_WIN64) || defined(_WIN32) || defined(__EMSCRIPTEN__) || defined(PLATFORM_NX_ARM) || defined(__ANDROID__) || defined(SN_TARGET_PSP2) || defined(__APPLE__)
+#if defined(_WIN64) || defined(_WIN32) || defined(__EMSCRIPTEN__) || defined(PLATFORM_NX_ARM) || defined(__ANDROID__) || defined(SN_TARGET_PSP2) || defined(__APPLE__) || defined(__linux__)
 	FILE* fp;
 #else
 	long fp;
@@ -476,7 +476,7 @@ char* LOAD_ReadFileFromCD(char* filename, int memType)
 	{
 		fp = PCopen(filename, 0, 0);
 
-#if defined(_WIN64) || defined(_WIN32) || defined(__EMSCRIPTEN__) || defined(PLATFORM_NX_ARM) || defined(__ANDROID__) || defined(SN_TARGET_PSP2) || defined(__APPLE__)
+#if defined(_WIN64) || defined(_WIN32) || defined(__EMSCRIPTEN__) || defined(PLATFORM_NX_ARM) || defined(__ANDROID__) || defined(SN_TARGET_PSP2) || defined(__APPLE__) || defined(__linux__)
 		if (fp != (FILE*)-1)
 #else
 		if (fp != -1)
@@ -603,7 +603,7 @@ void LOAD_InitCdLoader(char *bigFileName, char *voiceFileName)
 	for (i = 0; i < 10; i++)
 	{
 		loadStatus.bigFile.bigfileFileHandle = PCopen(bigFileName, 0, 0);
-#if defined(_WIN64) || defined(_WIN32) || defined(__EMSCRIPTEN__) || defined(PLATFORM_NX_ARM) || defined(__ANDROID__) || defined(SN_TARGET_PSP2) || defined(__APPLE__)
+#if defined(_WIN64) || defined(_WIN32) || defined(__EMSCRIPTEN__) || defined(PLATFORM_NX_ARM) || defined(__ANDROID__) || defined(SN_TARGET_PSP2) || defined(__APPLE__) || defined(__linux__)
 		if (loadStatus.bigFile.bigfileFileHandle != (FILE*) -1)
 #else
 		if (loadStatus.bigFile.bigfileFileHandle != -1)
