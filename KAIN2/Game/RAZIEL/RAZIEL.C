@@ -2837,7 +2837,7 @@ void StateHandlerGlyphs(struct __CharacterState* In, int CurrentSection, int Dat
 
 				if (GlyphIsGlyphOpen(Raziel.GlyphSystem))
 				{
-					INSTANCE_Post(Raziel.GlyphSystem, 0x80000010, (intptr_t)In->CharacterInstance);
+					INSTANCE_Post(Raziel.GlyphSystem, 0x80000010, (uintptr_t)In->CharacterInstance);
 				}
 			}
 
@@ -2871,7 +2871,7 @@ void StateHandlerGlyphs(struct __CharacterState* In, int CurrentSection, int Dat
 				{
 					In->SectionList[CurrentSection].Data1 = 0;
 
-					INSTANCE_Post(Raziel.GlyphSystem, 0x80000010, (intptr_t)In->CharacterInstance);
+					INSTANCE_Post(Raziel.GlyphSystem, 0x80000010, (uintptr_t)In->CharacterInstance);
 				}
 				
 				if ((Raziel.Mode & 0x40000))
@@ -2896,7 +2896,7 @@ void StateHandlerGlyphs(struct __CharacterState* In, int CurrentSection, int Dat
 				//v1 - 0x1100000
 				if (Ptr->Data == 0)
 				{
-					INSTANCE_Post(Raziel.GlyphSystem, 0x80000010, (intptr_t)In->CharacterInstance);
+					INSTANCE_Post(Raziel.GlyphSystem, 0x80000010, (uintptr_t)In->CharacterInstance);
 				}
 				//loc_800AF8D4
 
@@ -5198,7 +5198,7 @@ void RazielAdditionalCollide(struct _Instance* instance, struct GameTracker* gam
 		{
 			Data = (struct evPhysicsEdgeData*)SetPhysicsEdgeData(400, -256, 144, 0, -196, 498, &Raziel.Senses.ForwardNormal, &Raziel.Senses.AboveNormal, &Raziel.Senses.Delta);
 
-			Mode = PhysicsCheckEdgeGrabbing(instance, gameTracker, (intptr_t)Data, 3);
+			Mode = PhysicsCheckEdgeGrabbing(instance, gameTracker, (uintptr_t)Data, 3);
 
 			if ((Mode & 0x6) == 6)
 			{
@@ -5242,7 +5242,7 @@ void RazielAdditionalCollide(struct _Instance* instance, struct GameTracker* gam
 
 		swimData = (struct evPhysicsSwimData*)SetPhysicsSwimData((Raziel.Mode >> 18) & 0x1, &Raziel.iVelocity, 256, 416, 112);
 
-		WaterStatus = PhysicsCheckSwim(instance, (intptr_t)swimData, 3);
+		WaterStatus = PhysicsCheckSwim(instance, (uintptr_t)swimData, 3);
 
 		if ((swimData->rc & 0x10) && Inst != NULL)
 		{
