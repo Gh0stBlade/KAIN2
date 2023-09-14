@@ -71,7 +71,6 @@ extern int _GlyphIsGlyphSet(int glyph); // 0x8007AB70
 extern int _GlyphIsGlyphUsable(int glyph); // 0x8007ABB4
 extern int _GlyphIsAnyGlyphSet(); // 0x8007ABF0
 extern int _GlyphCost(struct _GlyphTuneData *glyphtunedata, int glyphNum); // 0x8007AC20
-extern int GlyphIsPuppetShowModeOn(); // 0x8007AC30
 extern void _GlyphDefaultProcess(struct _Instance *instance, int data1, int data2); // 0x8007AC54
 extern void HUD_GetPlayerScreenPt(DVECTOR *center); // 0x8007ACF8
 extern void GlyphDrawMenu(struct _Instance *instance); // 0x8007AD88

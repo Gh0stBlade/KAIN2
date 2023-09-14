@@ -467,7 +467,6 @@ union INSTANCE_76fake // Hashcode: 0x868EC9CC (dec: -2037462580)
 	} quat; // size=16, offset=0, found in object files: instance.o, instance.o
 };
 
-extern void INSTANCE_ClearTfaces(struct _Instance *instance); // 0x80031ED8
 extern void INSTANCE_Deactivate(struct _Instance *instance); // 0x80031F04
 extern void INSTANCE_Reactivate(struct _Instance *instance); // 0x80031FC0
 extern void INSTANCE_ForceActive(struct _Instance *instance); // 0x80032058

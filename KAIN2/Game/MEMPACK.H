@@ -31,7 +31,6 @@ extern struct MemHeader * MEMPACK_GetSmallestBlockTopBottom(long allocSize); // 
 extern struct MemHeader * MEMPACK_GetSmallestBlockBottomTop(long allocSize); // 0x8004FB74
 extern long MEMPACK_RelocatableType(long memType); // 0x8004FBE0
 extern char* MEMPACK_Malloc(unsigned long allocSize, unsigned char memType); // 0x8004FC18
-extern char* MEMPACK_MallocFailOk(unsigned long allocSize, unsigned char memType); // 0x8004FC94
 extern void MEMORY_MergeAddresses(struct MemHeader *firstAddress, struct MemHeader *secondAddress); // 0x8004FE20
 extern void MEMPACK_Return(char *address, long takeBackSize); // 0x8004FE68
 extern void MEMPACK_Free(char *address); // 0x8004FEEC

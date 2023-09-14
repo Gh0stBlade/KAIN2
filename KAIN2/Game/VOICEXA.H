@@ -95,7 +95,5 @@ extern void VOICEXA_Tick(); // 0x800B75D0
 
 extern int VOICEXA_IsPlaying(); // 0x800B7728
 
-extern int VOICEXA_IsPlayingOrPaused(); // 0x800B7768
-
 
 #endif

@@ -342,7 +342,6 @@ extern void STREAM_RemoveAllObjectsNotInUse(); // 0x80059000
 extern void RemoveAllObjects(struct GameTracker *gameTracker); // 0x800592C0
 extern struct Level * STREAM_GetLevelWithID(long id); // 0x80059318
 extern struct _StreamUnit * STREAM_GetStreamUnitWithID(long id); // 0x80059370
-extern struct _StreamUnit * STREAM_GetStreamUnitWithName(char *name); // 0x800593C0
 extern void STREAM_CalculateWaterLevel(struct Level *level); // 0x80059450
 extern int STREAM_IsMorphInProgress(); // 0x80059580
 extern long STREAM_GetWaterZLevel(struct Level *level, struct _Instance *instance); // 0x80059594

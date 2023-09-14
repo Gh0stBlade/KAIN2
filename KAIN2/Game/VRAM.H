@@ -107,8 +107,6 @@ extern void AdjustVramCoordsObject(int oldx, int oldy, int newx, int newy, struc
 
 extern struct _BlockVramEntry * VRAM_InsertionSort(struct _BlockVramEntry *rootNode, struct _BlockVramEntry *newBlock, int pack_type); // 0x8007364C
 
-extern void VRAM_ClearVram(); // 0x80073704
-
 extern struct _BlockVramEntry * VRAM_RearrangeVramsLayer(long whichLayer); // 0x80073740
 
 extern void VRAM_TransferBufferToVram(void *dataPtr, long dataSize, short status, void *data1, void *data2); // 0x80073DC8

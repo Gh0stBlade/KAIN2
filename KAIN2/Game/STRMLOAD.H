@@ -37,8 +37,6 @@ extern struct _LoadQueueEntry* loadTail; // offset 0x800D272C
 
 extern void STREAM_NextLoadFromHead(); // 0x8005FAE8
 
-extern void STREAM_NextLoadCanFail(); // 0x8005FAF8
-
 extern void STREAM_NextLoadAsNormal(); // 0x8005FB08
 
 extern void STREAM_InitLoader(char *bigFileName, char *voiceFileName); // 0x8005FB18
