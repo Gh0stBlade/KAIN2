@@ -69,6 +69,15 @@ struct PhysObData {
   int physObTimer; // size=0, offset=68
 };
 
+struct evObjectData {
+    short x; // size=0, offset=0
+    short y; // size=0, offset=2
+    short PathNumber; // size=0, offset=4
+    short LinkNode; // size=0, offset=6
+    struct _Instance* Force; // size=668, offset=8
+    int rc; // size=0, offset=12
+};
+
 struct evObjectThrowData {
   short type; // size=0, offset=0
   short spinType; // size=0, offset=2
