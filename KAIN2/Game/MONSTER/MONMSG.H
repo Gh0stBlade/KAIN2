@@ -3,6 +3,12 @@
 
 #include "MONSTER.H"
 
+struct evMonsterAlarmData {
+	struct _Instance* sender; // size=668, offset=0
+	struct _Position position; // size=6, offset=4
+	short type; // size=0, offset=10
+};
+
 extern int MON_GroundMoveQueueHandler(struct _Instance *instance); // 0x800847B8
 
 extern void MON_PupateMessageHandler(struct _Instance *instance, struct __Event *message); // 0x80084840
