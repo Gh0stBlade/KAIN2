@@ -22,11 +22,6 @@ long collide_t1;
 struct _SVector* collide_normal0;
 struct _SVector* collide_normal1;
 
-void G2Quat_ToMatrix(struct _G2EulerAngles_Type* a1, struct _G2Matrix_Type* a2)
-{
-	UNIMPLEMENTED();
-}
-
 int COLLIDE_PointInTriangle(struct _SVector* v0, struct _SVector* v1, struct _SVector* v2, struct _SVector* point, struct _SVector* normal)//Matching - 86.63%
 {
 	int ny; // $v1
