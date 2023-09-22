@@ -510,6 +510,13 @@ struct evMonsterHitObjectData // hashcode: 0xB7192556 (dec: -1223088810)
 	int hitType; // size=0, offset=4
 };
 
+struct evMonsterThrownData
+{
+	struct _Instance* sender; // size=668, offset=0
+	struct _Rotation direction; // size=8, offset=4
+	short power; // size=0, offset=12
+};
+
 struct _MonsterSaveInfo // hashcode: 0x3088BC75 (dec: 814267509)
 {
 	long mvFlags; // size=0, offset=0
