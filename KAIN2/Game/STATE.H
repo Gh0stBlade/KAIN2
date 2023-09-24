@@ -28,6 +28,16 @@ struct evAnimationControllerDoneData
 	int data; // size=0, offset=12
 };
 
+struct evObjectBreakOffData
+{
+	struct _Instance* force; // size=668, offset=0
+	unsigned short node; // size=0, offset=4
+	short distance; // size=0, offset=6
+	unsigned short animation; // size=0, offset=8
+	unsigned short frame; // size=0, offset=10
+	unsigned short type; // size=0, offset=12
+	unsigned short action; // size=0, offset=14
+};
 
 typedef void (*TDRFuncPtr_StateSwitchStateCharacterData1NewProcess)();
 
