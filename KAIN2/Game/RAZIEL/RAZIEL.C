@@ -272,7 +272,7 @@ void StateInitIdle(struct __CharacterState* In, int CurrentSection, int Ptr)//Ma
 	}
 }
 
-void StateHandlerIdle(struct __CharacterState* In, int CurrentSection, int Data)
+void StateHandlerIdle(struct __CharacterState* In, int CurrentSection, int Data)  // Matching - 31.61%
 {
 	struct __Event* Ptr; // $s0
 	int Anim; // $s5
