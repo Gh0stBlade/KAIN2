@@ -6,6 +6,15 @@
 #include "SIGNAL.H"
 #include "Game/SAVEINFO.H"
 
+struct SavedEventSmallVars 
+{
+	unsigned char savedID; // size=0, offset=0
+	unsigned char shiftedSaveSize; // size=0, offset=1
+	short areaID; // size=0, offset=2
+	char eventNumber; // size=0, offset=4
+	char eventVariables[5]; // size=5, offset=5
+};
+
 struct evObjectIdleData 
 {
 	long mode; // size=0, offset=0
