@@ -39,6 +39,14 @@ struct evObjectBreakOffData
 	unsigned short action; // size=0, offset=14
 };
 
+struct evObjectDraftData {
+	short force; // size=0, offset=0
+	unsigned short radius; // size=0, offset=2
+	unsigned short radiusCoef; // size=0, offset=4
+	unsigned short height; // size=0, offset=6
+	unsigned short maxVelocity; // size=0, offset=8
+};
+
 typedef void (*TDRFuncPtr_StateSwitchStateCharacterData1NewProcess)();
 
 typedef void (*TDRFuncPtr_StateSwitchStateCharacterDataDefault1NewProcess)();
