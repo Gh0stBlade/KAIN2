@@ -47,6 +47,16 @@ struct evObjectDraftData {
 	unsigned short maxVelocity; // size=0, offset=8
 };
 
+struct evActionPlayHostAnimationData
+{
+	struct _Instance* instance; // size=668, offset=0
+	struct _Instance* host; // size=668, offset=4
+	int newAnim; // size=0, offset=8
+	int newFrame; // size=0, offset=12
+	int frames; // size=0, offset=16
+	int mode; // size=0, offset=20
+};
+
 typedef void (*TDRFuncPtr_StateSwitchStateCharacterData1NewProcess)();
 
 typedef void (*TDRFuncPtr_StateSwitchStateCharacterDataDefault1NewProcess)();
