@@ -65,12 +65,6 @@ void SetDropPhysics(struct _Instance* instance, struct __Player* player)
 	SetExternalForce(ExternalForcesPtr, 0, 4, -16, 0, 4096);
 }
 
-// unused
-void GetPhysicsVelocity(struct _Instance* instance, SVECTOR* in_pos, SVECTOR* out_pos)
-{
-	UNIMPLEMENTED();
-}
-
 void InitExternalForces(struct __Force* Forces, int MaxForces)//Matching - 99.69%
 {
 	int i;
