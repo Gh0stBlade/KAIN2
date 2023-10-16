@@ -15,6 +15,7 @@ extern long depthQFogStart;
 extern long depthQFogFar;
 extern long depthQBlendStart;
 extern long depthQPTable;
+extern long draw_belowSplit;
 
 extern long modelFadeValue;
 
@@ -167,7 +168,7 @@ extern void DRAW_MFace3_fog_gt3() ; // 0x8002832C
 
 extern void DRAW_MFace3_fog_backface() ; // 0x800283BC
 
-extern void DRAW_SplitModel_S() ; // 0x8002842C
+extern unsigned int* DRAW_SplitModel_S(struct _Model* model, struct _Instance* instance, struct _VertexPool* textexPool, MATRIX* transform, struct _PrimPool* primPool, unsigned int** ot) ; // 0x8002842C
 
 extern void DSM_noFade() ; // 0x800284C0
 
