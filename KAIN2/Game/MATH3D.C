@@ -45,10 +45,56 @@ void MATH3D_Sort3VectorCoords(long* a, long* b, long* c)//Matching - 100%
 	}
 }
 
-long MATH3D_LengthXYZ(long x, long y, long z)
-{ // line 258, offset 0x800394fc
-	UNIMPLEMENTED();
-	return 0;
+long MATH3D_LengthXYZ(long x, long y, long z) // Matching - 100%
+{
+	long t;
+
+	x = abs(x);
+	y = abs(y);
+	z = abs(z);
+
+	if (x < y)
+	{
+		if (z < x)
+		{
+			t = x;
+			x = z;
+			z = y;
+			y = t;
+		}
+		else if (z < y)
+		{
+			t = y;
+			y = z;
+			z = t;
+		}
+	}
+	else if (z < y)
+	{
+		t = x;
+		x = z;
+		z = t;
+	}
+	else if (z < x)
+	{
+		t = x;
+		x = y;
+		y = z;
+		z = t;
+	}
+	else
+	{
+		t = x;
+		x = y;
+		y = t;
+	}
+
+	t = z * 30 + y * 12 + x * 9;
+	if (t < 0)
+	{
+		t += 31;
+	}
+	return t >> 5;
 }
 
 long MATH3D_LengthXY(long x, long y)//Matching - 90.21%
