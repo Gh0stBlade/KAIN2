@@ -1866,7 +1866,7 @@ void StateHandlerStopMove(struct __CharacterState* In, int CurrentSection, int D
 }
 
 
-void StateHandlerCompression(struct __CharacterState* In, int CurrentSection, int Data)
+void StateHandlerCompression(struct __CharacterState* In, int CurrentSection, int Data)  // Matching - 99.36%
 {
 	struct __Event* Ptr;
 
@@ -1874,46 +1874,72 @@ void StateHandlerCompression(struct __CharacterState* In, int CurrentSection, in
 	{
 		switch (Ptr->ID)
 		{
-		case 0x8000000:
-		{
-			if (Raziel.Mode == 8)
+		case 0x100001:
+			if (CurrentSection == 0)
 			{
+				ControlFlag = 273;
+				SetExternalForce(&ExternalForces[2], 0, 0, 0, 1, 0);
+				In->SectionList[0].Data1 = 0;
+				PhysicsMode = 3;
+				Raziel.movementMinRate = 0;
+				switch (Raziel.Mode)
+				{
+				case 32:
+					SteerSwitchMode(In->CharacterInstance, 4);
+					Raziel.steeringLockRotation = In->CharacterInstance->rotation.z;
+					In->CharacterInstance->yVel = 21;
+					if (G2Anim_IsControllerActive(&In->CharacterInstance->anim, 1, 14) == G2FALSE)
+					{
+						G2Anim_EnableController(&In->CharacterInstance->anim, 1, 14);
+					}
+					break;
+				case 15:
+					break;
+				case 16:
+					SteerSwitchMode(In->CharacterInstance, 4);
+					Raziel.steeringLockRotation = In->CharacterInstance->rotation.z;
+					In->CharacterInstance->yVel = 40;
+					if (G2Anim_IsControllerActive(&In->CharacterInstance->anim, 1, 14) == G2FALSE)
+					{
+						G2Anim_EnableController(&In->CharacterInstance->anim, 1, 14);
+					}
+					break;
+				}
+			}
+			break;
+		case 0x8000000:
+			switch (Raziel.Mode)
+			{
+			case 8:
 				if (CurrentSection == 0)
 				{
-					if (razSwitchVAnimCharacterGroup(In->CharacterInstance, 4, 0, 0))
+					if (razSwitchVAnimCharacterGroup(In->CharacterInstance, 4, NULL, NULL))
 					{
 						G2EmulationSwitchAnimationCharacter(In, 27, 0, 0, 1);
 					}
-
 					SetPhysics(In->CharacterInstance, -16, 0, 83, 154);
 				}
-			}
-			else if (Raziel.Mode == 32)
-			{
+				break;
+			case 32:
 				if (CurrentSection == 0)
 				{
-					if (razSwitchVAnimCharacterGroup(In->CharacterInstance, 36, 0, 0))
+					if (razSwitchVAnimCharacterGroup(In->CharacterInstance, 36, NULL, NULL))
 					{
 						G2EmulationSwitchAnimationCharacter(In, 39, 0, 0, 1);
 					}
-
 					SetPhysics(In->CharacterInstance, -16, 0, 21, 195);
-					
 					In->CharacterInstance->yVel = 0;
 				}
-			}
-			else
-			{
+				break;
+			default:
 				if (CurrentSection == 0)
 				{
-					if (razSwitchVAnimCharacterGroup(In->CharacterInstance, 20, 0, 0))
+					if (razSwitchVAnimCharacterGroup(In->CharacterInstance, 20, NULL, NULL))
 					{
 						G2EmulationSwitchAnimationCharacter(In, 35, 0, 0, 1);
 					}
-
 					SetPhysics(In->CharacterInstance, -16, 0, 40, 154);
 					In->CharacterInstance->yVel = 0;
-
 					if (In->SectionList[CurrentSection].Data1 == 1)
 					{
 						In->CharacterInstance->zVel = 2 * In->CharacterInstance->zVel / 3;
@@ -1922,9 +1948,7 @@ void StateHandlerCompression(struct __CharacterState* In, int CurrentSection, in
 			}
 			StateSwitchStateData(In, CurrentSection, &StateHandlerJump, 0);
 			break;
-		}
 		case 0x20000001:
-		{
 			if (CurrentSection == 0)
 			{
 				if (Raziel.Mode == 16)
@@ -1934,73 +1958,18 @@ void StateHandlerCompression(struct __CharacterState* In, int CurrentSection, in
 				EnMessageQueueData(&In->SectionList[CurrentSection].Defer, 0x20000001, 0);
 			}
 			break;
-		}
-		case 0x8000001:
-		{
-			EnMessageQueueData(&In->SectionList[CurrentSection].Defer, 0x20000001, 0);
+		case 0x80000001:
+			EnMessageQueueData(&In->SectionList[CurrentSection].Defer, 0x80000001, 0);
 			break;
-		}
-		case 0x100001:
-		{
-			if (CurrentSection == 0)
-			{
-				ControlFlag = 273;
-
-				SetExternalForce(&ExternalForces[2], 0, 0, 0, 1, 0);
-				
-				In->SectionList[0].Data1 = 0;
-				
-				PhysicsMode = 3;
-				
-				Raziel.movementMinRate = 0;
-
-				if (Raziel.Mode == 16)
-				{
-					SteerSwitchMode(In->CharacterInstance, 4);
-					
-					Raziel.steeringLockRotation = In->CharacterInstance->rotation.z;
-					
-					In->CharacterInstance->yVel = 40;
-
-					if (!G2Anim_IsControllerActive(&In->CharacterInstance->anim, 1, 14))
-					{
-						G2Anim_EnableController(&In->CharacterInstance->anim, 1, 14);
-					}
-				}
-				else if (Raziel.Mode >= 17 && Raziel.Mode == 32)
-				{
-					SteerSwitchMode(In->CharacterInstance, 4);
-
-					Raziel.steeringLockRotation = In->CharacterInstance->rotation.z;
-
-					In->CharacterInstance->yVel = 21;
-
-					if (!G2Anim_IsControllerActive(&In->CharacterInstance->anim, 1, 14))
-					{
-						G2Anim_EnableController(&In->CharacterInstance->anim, 1, 14);
-					}
-				}
-				else
-				{
-					if (Raziel.Mode >= 17 && Raziel.Mode == 32)
-					{
-						SteerSwitchMode(In->CharacterInstance, 4);
-
-						Raziel.steeringLockRotation = In->CharacterInstance->rotation.z;
-
-						In->CharacterInstance->yVel = 21;
-
-						if (!G2Anim_IsControllerActive(&In->CharacterInstance->anim, 1, 14))
-						{
-							G2Anim_EnableController(&In->CharacterInstance->anim, 1, 14);
-						}
-					}
-				}
-			}
+		case 0x4000001:
 			break;
+		case 0x4020000:
+			break;
+		case 0x80000000:
+			break;
+		default:
+			DefaultStateHandler(In, CurrentSection, Data);
 		}
-		}
-
 		DeMessageQueue(&In->SectionList[CurrentSection].Event);
 	}
 }
