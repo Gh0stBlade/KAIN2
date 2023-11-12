@@ -542,7 +542,7 @@ int MATH3D_veclen2(int ix, int iy)
 	return ((v1 - (v1 >> 5)) - (v1 >> 7)) + (ix >> 2) + (ix >> 6);
 }
 
-void MATH3D_RotateAxisToVector(MATRIX* dest, MATRIX* src, struct _SVector* vec, int axis)//Matching - 80.73%
+void MATH3D_RotateAxisToVector(MATRIX* dest, MATRIX* src, struct _SVector* vec, enum MATH3D_AXIS axis)//Matching - 80.73%
 {
 	MATRIX xform;
 	struct _G2Quat_Type rot;
@@ -555,16 +555,16 @@ void MATH3D_RotateAxisToVector(MATRIX* dest, MATRIX* src, struct _SVector* vec, 
 
 	if ((unsigned int)axis >= 3)
 	{
-		axis -= 3;
-		px = -src->m[0][axis];
-		py = -src->m[1][axis];
-		pz = -src->m[2][axis];
+		axis = (enum MATH3D_AXIS)((unsigned int)axis - 3);
+		px = -src->m[0][(unsigned int)axis];
+		py = -src->m[1][(unsigned int)axis];
+		pz = -src->m[2][(unsigned int)axis];
 	}
 	else
 	{
-		px = src->m[0][axis];
-		py = src->m[1][axis];
-		pz = src->m[2][axis];
+		px = src->m[0][(unsigned int)axis];
+		py = src->m[1][(unsigned int)axis];
+		pz = src->m[2][(unsigned int)axis];
 	}
 
 	rot.x = (py * vec->z - pz * vec->y) / 4096;
