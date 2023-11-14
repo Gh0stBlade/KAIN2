@@ -38,6 +38,7 @@ struct __EngagedInstance EngagedList[15];
 struct __FitPoint constrictData[32];
 int ControlFlag;
 struct _G2SVector3_Type* ExtraRot;
+struct _G2SVector3_Type ExtraRotData;
 int WaterStatus;
 _Normal Norm;
 struct __Force ExternalForces[4];

@@ -192,6 +192,8 @@ extern void TrailWaterFX(struct _Instance *instance, int Segment, int Bubbles, i
 
 extern struct _G2SVector3_Type* ExtraRot;
 
+extern struct _G2SVector3_Type ExtraRotData;
+
 extern struct RazielData* PlayerData;
 
 extern struct __Force ExternalForces[4];
