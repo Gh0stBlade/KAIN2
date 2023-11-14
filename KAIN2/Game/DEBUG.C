@@ -1932,9 +1932,27 @@ void DEBUG_FillUpHealth(long* var)
 	RAZIEL_DebugManaFillUp();
 }
 
-void DEBUG_FogLoad(void)
+void DEBUG_FogLoad()  // Matching - 97.88%
 {
-	UNIMPLEMENTED();
+	int temp, temp2, temp3, temp4, temp5;  // not in SYMDUMP
+	struct _StreamUnit* currentUnit;
+
+	currentUnit = FindStreamUnitFromLevel(gameTrackerX.level);
+	temp = currentUnit->TargetFogFar;
+	debugFogFar = temp;
+	debugOrgFogFar = temp;
+	temp2 = currentUnit->TargetFogNear;
+	debugFogNear = temp2;
+	debugOrgFogNear = temp2;
+	temp3 = (currentUnit->FogColor >> 16) & 0xFF;
+	debugFogRed = temp3;
+	debugOrgFogRed = temp3;
+	temp4 = (currentUnit->FogColor >> 8) & 0xFF;
+	debugFogGrn = temp4;
+	debugOrgFogGrn = temp4;
+	temp5 = (currentUnit->FogColor >> 0) & 0xFF;
+	debugFogBlu = temp5;
+	debugOrgFogBlu = temp5;
 }
 
 
