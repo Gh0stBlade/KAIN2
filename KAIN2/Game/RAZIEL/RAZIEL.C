@@ -2085,139 +2085,112 @@ void StateHandlerJump(struct __CharacterState* In, int CurrentSection, int Data)
 	}
 }
 
-void StateHandlerFall(struct __CharacterState* In, int CurrentSection, int Data)
+void StateHandlerFall(struct __CharacterState* In, int CurrentSection, int Data)  // Matching - 99.23%
 {
-	struct __Event* Ptr; // $s0
-	int Moving; // $s7
-	int DeferFlag; // $s6
-	struct evPhysicsSwimData* SwimData; // $s1
+	struct __Event* Ptr;
+	int Moving;
+	int DeferFlag;
+	struct evPhysicsSwimData* SwimData;
 
 	Moving = 0;
 	DeferFlag = 1;
-
-	if (CurrentSection != 0 && (STREAM_GetLevelWithID(In->CharacterInstance->currentStreamUnitID)->unitFlags & 0x1000))
+	if (CurrentSection == 0 && (STREAM_GetLevelWithID(In->CharacterInstance->currentStreamUnitID)->unitFlags & 0x1000))
 	{
-		EnMessageQueueData(&In->SectionList[CurrentSection].Event, 16, Moving);
+		EnMessageQueueData(&In->SectionList[CurrentSection].Event, 0x100000, Moving);
 	}
-
 	while ((Ptr = PeekMessageQueue(&In->SectionList[CurrentSection].Event)) != NULL)
 	{
 		switch (Ptr->ID)
 		{
-			case 0x4020000:
+		case 0x100001:
+			if (CurrentSection == 0)
 			{
-				SwimData = (struct evPhysicsSwimData*)Ptr->Data;
-
-				if (SwimData->Depth < 0)
+				ControlFlag = 0x119;
+				if (Raziel.Mode != 256)
 				{
-					if (!In->CharacterInstance->zVel && In->CharacterInstance->zAccl >= 0)
-					{
-						ResetPhysics(In->CharacterInstance, -16);
-					}
+					ControlFlag = 0x519;
 				}
-				
-				Raziel.Mode &= ~0x40000;
-				
-				razEnterWater(In, CurrentSection, (struct evPhysicsSwimData*)Ptr->Data);
-
-				if (SwimData->WaterDepth < 0 && SwimData->WaterDepth != -32767 && Raziel.CurrentPlane == 1)
+				In->SectionList[CurrentSection].Data1 = 0;
+				Raziel.movementMinRate = 0;
+				PhysicsMode = 0;
+			}
+			if (Ptr->Data && (PadData[0] & RazielCommands[3]))
+			{
+				EnMessageQueueData(&In->SectionList[CurrentSection].Defer, 0x80000001, 0);
+			}
+			break;
+		case 0x10000000:
+			Moving = 1;
+			break;
+		case 0x100000:
+			StateSwitchStateCharacterData(In, &StateHandlerForcedGlide, 0);
+			break;
+		case 0x4010008:
+			if (DeferFlag)
+			{
+				EnMessageQueueData(&In->SectionList[CurrentSection].Event, 0x4010008, 0);
+				DeferFlag = 0;
+			}
+			else
+			{
+				StateSwitchStateData(In, CurrentSection, &StateHandlerDeCompression, Moving);
+			}
+			In->SectionList[CurrentSection].Data2 = 2;
+			PhysicsMode = 3;
+			ResetPhysics(In->CharacterInstance, -16);
+			break;
+		case 0x4020000:
+			SwimData = (struct evPhysicsSwimData*)Ptr->Data;
+			if (SwimData->Depth < 0)
+			{
+				if (!In->CharacterInstance->zVel && In->CharacterInstance->zAccl >= 0)
 				{
-					ControlFlag |= 0x2000000;
+					ResetPhysics(In->CharacterInstance, -16);
 				}
-
-				break;
 			}
-
-			case 0x10000000:
+			Raziel.Mode &= ~0x40000;
+			razEnterWater(In, CurrentSection, (struct evPhysicsSwimData*)Ptr->Data);
+			if (SwimData->WaterDepth < 0 && SwimData->WaterDepth != -32767 && Raziel.CurrentPlane == 1)
 			{
-				Moving = 1;
-
-				break;
+				ControlFlag |= 0x2000000;
 			}
-			case 0x20000001:
+			break;
+		case 0x20000001:
+			if (Raziel.Mode != 16 && Raziel.Mode != 32 && CurrentSection == 0)
 			{
-				if (Raziel.Mode != 16 && Raziel.Mode != 32 && CurrentSection == 0)
-				{
-					SetDropPhysics(In->CharacterInstance, &Raziel);
-				}
-				break;
+				SetDropPhysics(In->CharacterInstance, &Raziel);
 			}
-			case 0x2000000:
+			break;
+		case 0x80000000:
+			break;
+		case 0x80000001:
+			if (Raziel.Senses.heldClass != 3 && !(ControlFlag & 0x2000000) && CurrentSection == 0)
 			{
-				razPickupAndGrab(In, CurrentSection);
-				break;
+				StateSwitchStateCharacterData(In, &StateHandlerGlide, 3);
 			}
-			case 0x4010008:
+			break;
+		case 0x2000000:
+			razPickupAndGrab(In, CurrentSection);
+			break;
+		case 0x40005:
+			if (Raziel.HitPoints <= 99999)
 			{
-				if (DeferFlag)
-				{
-					EnMessageQueueData(&In->SectionList[CurrentSection].Defer, 0x4010008, 0);
-					DeferFlag = 0;
-				}
-				else
-				{
-					StateSwitchStateData(In, CurrentSection, &StateHandlerDeCompression, Moving);
-				}
-
-				In->SectionList[CurrentSection].Data2 = 2;
-				PhysicsMode = 3;
-				ResetPhysics(In->CharacterInstance, -16);
-				break;
+				StateSwitchStateData(In, CurrentSection, &StateHandlerStumble, 0);
 			}
-			case 0x100000:
-			{
-				StateSwitchStateCharacterData(In, &StateHandlerForcedGlide, 0);
-				break;
-			}
-			case 0x100001:
-			{
-				if (CurrentSection == 0)
-				{
-					ControlFlag = 281;
-
-					if (Raziel.Mode != 256)
-					{
-						ControlFlag = 1305;
-					}
-
-					In->SectionList[CurrentSection].Data1 = 0;
-
-					Raziel.movementMinRate = 0;
-
-					PhysicsMode = 0;
-				}
-
-				if (Ptr->Data && (PadData[0] & 0x80))
-				{
-					EnMessageQueueData(&In->SectionList[CurrentSection].Defer, 0x80000001, 0);
-				}
-
-				break;
-			}
-			case 0x40005:
-			{
-				if (Raziel.HitPoints <= 99999)
-				{
-					StateSwitchStateData(In, CurrentSection, &StateHandlerStumble, 0);
-				}
-				break;
-			}
-			case 0x80000001:
-			{
-				if (Raziel.Senses.heldClass != 3 && !(ControlFlag & 0x2000000) && CurrentSection == 0)
-				{
-					StateSwitchStateCharacterData(In,&StateHandlerGlide, 3);
-				}
-				break;
-			}
-			default:
-			{
-				DefaultStateHandler(In, CurrentSection, Data);
-				break;
-			}
-
+			break;
+		case 0x1000001:
+			break;
+		case 0x80000020:
+			break;
+		case 0x80000008:
+			break;
+		case 0x4000001:
+			break;
+		case 0x8000000:
+			break;
+		default:
+			DefaultStateHandler(In, CurrentSection, Data);
 		}
-
 		DeMessageQueue(&In->SectionList[CurrentSection].Event);
 	}
 }
