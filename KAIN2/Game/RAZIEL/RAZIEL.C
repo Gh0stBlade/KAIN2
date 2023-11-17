@@ -273,225 +273,103 @@ void StateInitIdle(struct __CharacterState* In, int CurrentSection, int Ptr)//Ma
 	}
 }
 
-void StateHandlerIdle(struct __CharacterState* In, int CurrentSection, int Data)
+void StateHandlerIdle(struct __CharacterState* In, int CurrentSection, int Data)  // Matching - 99.48%
 {
-	struct __Event* Ptr; // $s0
-	int Anim; // $s5
-	int blockForwardMotion; // $s7
-	struct _Instance* heldInst; // $v0
-	struct evPhysicsEdgeData* EdgeData;// $v0
-
-	//s1 = In
-	//s2 = CurrentSection
-	//fp = Data
+	struct __Event* Ptr;
+	int Anim;
+	int blockForwardMotion;
+	struct _Instance* heldInst;
+	struct evPhysicsEdgeData* EdgeData;
 
 	blockForwardMotion = 0;
-
 	ControlFlag &= 0xFFFFFFEF;
-
 	G2EmulationQueryFrame(In, CurrentSection);
-
-	//s3 = 1
 	Anim = G2EmulationQueryAnimation(In, CurrentSection);
-
-	//s4 = &In->SectionList[CurrentSection];
-	//a0 = &In->SectionList[CurrentSection].Event;
-
-	//loc_800A8560
-	
-
-	//v0 = 0x2000000
 	while ((Ptr = PeekMessageQueue(&In->SectionList[CurrentSection].Event)) != NULL)
 	{
 		switch (Ptr->ID)
 		{
-		case 0x2000000:
-		{
-			//loc_800A8A18
-			if ((Raziel.Senses.EngagedMask & 0x1) && Raziel.Senses.heldClass != 3)
+		case 0x100001:
+			if (CurrentSection == 0)
 			{
-				Raziel.Mode = 0x200;
-
-				if (CurrentSection == 0)
-				{
-					Raziel.State.SectionList[CurrentSection].Data1 = 0;
-
-					G2EmulationSwitchAnimationCharacter(In, 21, 0, 6, 1);
-
-					StateSwitchStateCharacterData(In, &StateHandlerPushObject, 0);
-				}
-				
-				//loc_800A8A74
-				ControlFlag &= 0xFFFFFFFE;
+				Raziel.Mode = 1;
+				Raziel.idleCount = 0;
+				ControlFlag = 0x2A109;
+				PhysicsMode = 3;
+				SteerSwitchMode(In->CharacterInstance, 0);
+				Raziel.movementMinRate = 0;
+			}
+			StateInitIdle(In, CurrentSection, Ptr->Data);
+			break;
+		case 0x100004:
+			if (CurrentSection == 0)
+			{
+				razReaverScale(4096);
+				razResetPauseTranslation(In->CharacterInstance);
+				COLLIDE_SegmentCollisionOn(In->CharacterInstance, 1);
+			}
+			break;
+		case 0x8000000:
+			if (Anim == 215)
+			{
+				ControlFlag &= 0xFF7FFFFF;
+			}
+			if (Anim == 214)
+			{
+				G2EmulationSwitchAnimation(In, CurrentSection, 215, 0, 3, 1);
 			}
 			else
 			{
-				//loc_800A8A8C
-				if ((Raziel.Senses.EngagedMask & 0x8) && Raziel.Senses.heldClass != 3)
+				StateInitIdle(In, CurrentSection, SetControlInitIdleData(0, 0, 3));
+				if (CurrentSection == 0)
 				{
-					if (CurrentSection == 0)
+					if ((Raziel.playerEventHistory & 0x10000) == 0)
 					{
-						StateSwitchStateCharacterData(In, &StateHandlerPullSwitch, 0);
+						ControlFlag &= 0xFFFF7FFF;
 					}
-					//loc_800A8C88
-				}
-				else
-				{
-					//loc_800A8AC8
-
-					if ((Raziel.Senses.EngagedMask & 0x2010))
-					{
-						if (CurrentSection == 0)
-						{
-							if (Raziel.Senses.heldClass == 3)
-							{
-								heldInst = razGetHeldItem();
-
-								if (heldInst != NULL)
-								{
-									if ((INSTANCE_Query(heldInst, 0x2) & 0x20))
-									{
-										StateSwitchStateCharacterData(In, &StateHandlerBreakOff, 0);
-									}
-									//loc_800A8C88
-								}
-								//loc_800A8C88
-							}
-							else
-							{
-								//loc_800A8B28
-								StateSwitchStateCharacterData(In, &StateHandlerBreakOff, 0);
-							}
-						}
-						//loc_800A8C88
-					}
-					else
-					{
-						//loc_800A8B34
-						if ((Raziel.Senses.EngagedMask & 0x800))
-						{
-							if (CurrentSection == 1)
-							{
-								razReaverPickup(In->CharacterInstance, Raziel.Senses.EngagedList[11].instance);
-							}
-							//loc_800A8C88
-						}
-						else
-						{
-							//loc_800A8B60
-							if((Raziel.Senses.EngagedMask & 0x4000))
-							{
-								if (CurrentSection == 0)
-								{
-									StateSwitchStateCharacterData(In, &StateHandlerWarpGate, 0);
-								}
-							}
-							else
-							{
-								//loc_800A8B80
-								if (razPickupAndGrab(In, CurrentSection) != 0 && CurrentSection == 0 && !(Raziel.Senses.Flags & 0x80))
-								{
-									StateSwitchStateCharacterData(In, &StateHandlerAttack2, 0);
-								}
-								//loc_800A8C88
-							}
-						}
-					}
+					COLLIDE_SegmentCollisionOn(In->CharacterInstance, 1);
 				}
 			}
-	
-			//loc_800A8C88
-			//a0 = s6 + s1
 			break;
-		}
+		case 0x80000000:
+			if ((Raziel.Senses.Flags & 0x80) == 0)
+			{
+				StateSwitchStateData(In, CurrentSection, &StateHandlerAttack2, 0);
+			}
+			break;
 		case 0x80000002:
-		{
 			if (CurrentSection == 0)
 			{
 				if ((PadData[0] & RazielCommands[1]))
 				{
+					Raziel.returnState = NULL;
 					StateSwitchStateCharacterData(In, &StateHandlerSoulSuck, 0);
 				}
 			}
-
 			break;
-		}
-		case 0x80000000:
-		{
-			//loc_800A8794
-			if (!(Raziel.Senses.Flags & 0x80))
-			{
-				StateSwitchStateData(In, CurrentSection, &StateHandlerAttack2,0);
-			}
+		case 0x4010401:
+			blockForwardMotion = 1;
 			break;
-		}
-		case 0x80000001:
-		{
+		case 0x4010080:
 			if (CurrentSection == 0)
 			{
-				Raziel.Mode = 16;
-
-				ControlFlag |= 0x10;
-
-				if (razSwitchVAnimCharacterGroup(In->CharacterInstance, 16, NULL, NULL) != 0)
+				if (Ptr->Data != NULL)
 				{
-					G2EmulationSwitchAnimationCharacter(In, 34, 0, 2, 1);
+					razResetPauseTranslation(In->CharacterInstance);
 				}
-
-				StateSwitchStateCharacterData(In, &StateHandlerCompression, 0);
+				else
+				{
+					razSetPauseTranslation(In->CharacterInstance);
+				}
 			}
 			break;
-		}
-		case 0x100001:
-		{
-			if (CurrentSection == 0)
-			{
-				Raziel.Mode = 1;
-
-				Raziel.idleCount = 0;
-
-				ControlFlag = 0x2A109;
-
-				PhysicsMode = 3;
-
-				SteerSwitchMode(In->CharacterInstance, 0);
-
-				Raziel.movementMinRate = 0;
-			}
-			
-			StateInitIdle(In, CurrentSection, Ptr->Data);
-
-			break;
-		}
-		case 0x100004:
-		{
-			//loc_800A86C0
-			if (CurrentSection == 0)
-			{
-				razReaverScale(4096);
-
-				razResetPauseTranslation(In->CharacterInstance);
-
-				COLLIDE_SegmentCollisionOn(In->CharacterInstance, 1);
-			}
-
-			break;
-		}
 		case 0x10000000:
-		{
-			//loc_800A8838
-			//v0 = PadData[0];
-			//v1 = RazielCommands[7];
-
-			//a1 = CurrentSection
-			if (!(PadData[0] & RazielCommands[7]))
+			if ((PadData[0] & RazielCommands[7]))
 			{
-				//v1 = Raziel.Bearing
-
-				//s1 = In
-				//s2 = CurrentSection
-				//fp = Data
-
+				StateSwitchStateData(In, CurrentSection, &StateHandlerMove, 3);
+			}
+			else
+			{
 				if (Raziel.Bearing < -512)
 				{
 					if (CurrentSection == 1)
@@ -505,76 +383,137 @@ void StateHandlerIdle(struct __CharacterState* In, int CurrentSection, int Data)
 					{
 						G2EmulationSwitchAnimation(In, CurrentSection, 54, 0, 2, 1);
 					}
-
-					//loc_800A88B8
 					StateSwitchStateData(In, CurrentSection, &StateHandlerStartTurn, 0);
-
 					In->SectionList[CurrentSection].Data1 = 52;
-
-					//j loc_800A8C84
 				}
-				else
+				else if (Raziel.Bearing >= 513)
 				{
-					//loc_800A88DC
-					if (Raziel.Bearing >= 513)
+					if (CurrentSection == 1)
 					{
-						//a0 = In
-						if (CurrentSection == 1)
+						if (In->CharacterInstance->LinkChild == NULL)
 						{
-							//a1 = CurrentSection
-							if (In->CharacterInstance->LinkChild == NULL)
-							{
-								G2EmulationSwitchAnimation(In, CurrentSection, 53, 0, 2, 1);
-							}
-							//loc_800A894C
-						}
-						else
-						{
-							//loc_800A8924
 							G2EmulationSwitchAnimation(In, CurrentSection, 53, 0, 2, 1);
 						}
-
-						//loc_800A894C
-						StateSwitchStateData(In, CurrentSection, &StateHandlerStartTurn, 0);
-
-						In->SectionList[CurrentSection].Data1 = 51;
 					}
 					else
 					{
-						//loc_800A8968
-
-						//a0 = s6 + s1
-						if (blockForwardMotion == 0)
-						{
-							if (Raziel.Magnitude < 0x1000)
-							{
-								StateSwitchStateData(In, CurrentSection, &StateHandlerMove, 3);
-							}
-							else
-							{
-								//loc_800A89A0
-								StateSwitchStateData(In, CurrentSection, &StateHandlerStartMove, 0);
-							}
-						}
-						//loc_800A8C88
+						G2EmulationSwitchAnimation(In, CurrentSection, 53, 0, 2, 1);
+					}
+					StateSwitchStateData(In, CurrentSection, &StateHandlerStartTurn, 0);
+					In->SectionList[CurrentSection].Data1 = 51;
+				}
+				else if (blockForwardMotion == 0)
+				{
+					if (Raziel.Magnitude < 4096)
+					{
+						StateSwitchStateData(In, CurrentSection, &StateHandlerMove, 3);
+					}
+					else
+					{
+						StateSwitchStateData(In, CurrentSection, &StateHandlerStartMove, 0);
 					}
 				}
 			}
-			else
-			{
-				//loc_800A8988
-				StateSwitchStateData(In, CurrentSection, &StateHandlerMove, 3);
-			}
-
 			break;
-		}
-		case 0x80000010:
-		{
+		case 0x80000001:
 			if (CurrentSection == 0)
 			{
-				if ((Raziel.Senses.Flags & 0x4))
+				Raziel.Mode = 16;
+				ControlFlag |= 16;
+				if (razSwitchVAnimCharacterGroup(In->CharacterInstance, 16, NULL, NULL) != 0)
 				{
-					if ((Raziel.Senses.Flags & 0x80) || (gameTrackerX.streamFlags & 0x4))
+					G2EmulationSwitchAnimationCharacter(In, 34, 0, 2, 1);
+				}
+				StateSwitchStateCharacterData(In, &StateHandlerCompression, 0);
+			}
+			break;
+		case 0x2000000:
+			if ((Raziel.Senses.EngagedMask & 1) && (Raziel.Senses.heldClass != 3))
+			{
+				Raziel.Mode = 0x200;
+				In->SectionList[CurrentSection].Data1 = 0;
+				if (CurrentSection == 0)
+				{
+					G2EmulationSwitchAnimationCharacter(In, 21, 0, 6, 1);
+					StateSwitchStateCharacterData(In, &StateHandlerPushObject, 0);
+				}
+				ControlFlag &= 0xFFFFFFFE;
+			}
+			else
+			{
+				if ((Raziel.Senses.EngagedMask & 8) && (Raziel.Senses.heldClass != 3))
+				{
+					if (CurrentSection == 0)
+					{
+						StateSwitchStateCharacterData(In, &StateHandlerPullSwitch, 0);
+					}
+				}
+				else
+				{
+					if ((Raziel.Senses.EngagedMask & 0x2010))
+					{
+						if (CurrentSection == 0)
+						{
+							if (Raziel.Senses.heldClass == 3)
+							{
+								heldInst = razGetHeldItem();
+								if (heldInst != NULL)
+								{
+									if ((INSTANCE_Query(heldInst, 2) & 32))
+									{
+										StateSwitchStateCharacterData(In, &StateHandlerBreakOff, 0);
+									}
+								}
+							}
+							else
+							{
+								StateSwitchStateCharacterData(In, &StateHandlerBreakOff, 0);
+							}
+						}
+					}
+					else
+					{
+						if ((Raziel.Senses.EngagedMask & 0x800))
+						{
+							if (CurrentSection == 1)
+							{
+								razReaverPickup(In->CharacterInstance, Raziel.Senses.EngagedList[11].instance);
+							}
+						}
+						else
+						{
+							if ((Raziel.Senses.EngagedMask & 0x4000))
+							{
+								if (CurrentSection == 0)
+								{
+									StateSwitchStateCharacterData(In, &StateHandlerWarpGate, 0);
+								}
+							}
+							else
+							{
+								if ((razPickupAndGrab(In, CurrentSection) != 0) && (CurrentSection == 0) && ((Raziel.Senses.Flags & 0x80) == 0))
+								{
+									StateSwitchStateCharacterData(In, &StateHandlerAttack2, 0);
+								}
+							}
+						}
+					}
+				}
+			}
+			break;
+		case 0x4010400:
+			EdgeData = (struct evPhysicsEdgeData*)Ptr->Data;
+			if ((EdgeData->rc & 0x20000) && (Raziel.Abilities & 1) && (Raziel.CurrentPlane == 2))
+			{
+				Raziel.playerEvent |= 0x10000;
+			}
+			break;
+		case 0x80000010:
+			if (CurrentSection == 0)
+			{
+				if ((Raziel.Senses.Flags & 4))
+				{
+					if ((Raziel.Senses.Flags & 0x80) || (gameTrackerX.streamFlags & 4))
 					{
 						EnMessageQueueData(&In->SectionList[0].Defer, 0x80000010, 0);
 					}
@@ -584,19 +523,28 @@ void StateHandlerIdle(struct __CharacterState* In, int CurrentSection, int Data)
 					}
 				}
 			}
-			//loc_800A8C88
 			break;
-		}
+		case 0x2000001:
+		case 0x2000002:
+			break;
 		default:
 			DefaultStateHandler(In, CurrentSection, Data);
-			break;
 		}
-
-		//loc_800A8C88
 		DeMessageQueue(&In->SectionList[CurrentSection].Event);
 	}
-
-	//loc_800A8C98
+	if ((CurrentSection == 0) && (CheckHolding(In->CharacterInstance) == 0) && Anim != 55 && Anim != 214
+		&& ((Raziel.idleCount++, Raziel.idleCount < 301) == 0) && (Raziel.idleCount == (Raziel.idleCount / 900) * 900))
+	{
+		if (Raziel.idleInstance != NULL)
+		{
+			G2EmulationInstanceToInstanceSwitchAnimationCharacter(In->CharacterInstance, Raziel.idleInstance, 1, 0, 3, 1);
+		}
+		else
+		{
+			G2EmulationSwitchAnimationCharacter(In, 24, 0, 3, 1);
+			COLLIDE_SegmentCollisionOff(In->CharacterInstance, 1);
+		}
+	}
 }
 
 
