@@ -5,10 +5,5 @@ set(TOOL_ROOT_DIR ${TOOL_ROOT_DIR} "${CMAKE_CURRENT_SOURCE_DIR}")
 if(NOT(DEFINED ENV{TRAVIS} OR DEFINED ENV{APPVEYOR}) OR APPLE)
 	add_subdirectory(ShiftMidi)
 	add_subdirectory(ShiftList)
+	add_subdirectory(ShiftEditor)
 endif()
-
-if(DEFINED ENV{APPVEYOR})
-add_subdirectory(ShiftEditor)
-endif()
-
-#add_subdirectory(ShiftEditor)

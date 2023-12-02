@@ -168,7 +168,10 @@ add_dependencies(${PROJECT_NAME} "SHIFT_EDITOR_AUTOGEN")
 get_target_property(_qt5_qmake_location Qt5::qmake IMPORTED_LOCATION)
 execute_process(COMMAND "${_qt5_qmake_location}" -query QT_INSTALL_PREFIX RESULT_VARIABLE return_code OUTPUT_VARIABLE qt5_install_prefix OUTPUT_STRIP_TRAILING_WHITESPACE)
 set(WINDEPLOYQT_EXECUTABLE "${qt5_install_prefix}/bin/windeployqt.exe")
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD COMMAND "${WINDEPLOYQT_EXECUTABLE}" --verbose 1 --no-translations --no-svg --no-opengl --no-opengl-sw --no-compiler-runtime --no-system-d3d-compiler --${CMAKE_BUILD_TYPE} \"$<TARGET_FILE:${PROJECT_NAME}>\" COMMENT "Deploying Qt...")
+set(QT_ENV "${qt5_install_prefix}/bin/qtenv2.bat")
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD 
+COMMAND "${QT_ENV}"
+COMMAND "${WINDEPLOYQT_EXECUTABLE}" --verbose 1 --no-translations --no-svg --no-opengl --no-opengl-sw --no-compiler-runtime --no-system-d3d-compiler --${CMAKE_BUILD_TYPE} \"$<TARGET_FILE:${PROJECT_NAME}>\" COMMENT "Deploying Qt...")
 
 add_definitions(-DPSXPC_VERSION)
 add_definitions(-DPSX_VERSION)

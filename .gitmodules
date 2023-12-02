@@ -4,3 +4,6 @@
 [submodule "External/libValkyrie"]
 	path = External/libValkyrie
 	url = https://github.com/Gh0stBlade/libValkyrie.git
+[submodule "External/emsdk"]
+	path = External/emsdk
+	url = https://github.com/emscripten-core/emsdk.git

@@ -104,7 +104,7 @@ struct _FXRibbon // hashcode: 0xB11070B8 (dec: -1324322632)
 struct _FXParticle // hashcode: 0xDD6F143E (dec: -579922882)
 {
 	void* next; // size=0, offset=0
-	void* continue_process; // size=0, offset=4
+	void (*continue_process)(struct _FXParticle*, struct _FXTracker*); // size=0, offset=4
 	struct _Instance* instance; // size=616, offset=8
 	unsigned char effectType; // size=0, offset=12
 	unsigned char type; // size=0, offset=13
@@ -283,7 +283,7 @@ struct _FX_PRIM // hashcode: 0x16BF818E (dec: 381649294)
 	long flags; // size=0, offset=12
 	short timeToLive; // size=0, offset=16
 	short curFrame; // size=0, offset=18
-	void* process; // size=0, offset=20
+    void (*process)(struct _FX_PRIM*, struct _FXTracker*); // size=0, offset=20
 	struct _FX_MATRIX* matrix; // size=44, offset=24
 	long color; // size=0, offset=28
 	long startColor; // size=0, offset=32
