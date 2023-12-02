@@ -22,7 +22,7 @@ jobs:
         run: cmake -E make_directory ${{github.workspace}}/Build/Build_EMSDK
         
       - name: Configure CMake        
-        run: cmd.exe /k ${{github.workspace}}/Emulator/Platform/Emscripten/Generate-Project-Files-GHA.bat
+        run: cmd.exe /k ${{github.workspace}}/External/libValkyrie/Emulator/Platform/Emscripten/Generate-Project-Files-GHA.bat
 
       - name: Build
         run: cmake --build ${{github.workspace}}/Build/Build_EMSDK --config Release
