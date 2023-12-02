@@ -3,6 +3,8 @@
 #include "Editor_Version.h"
 #include "Game/GAMELOOP.H"
 
+extern struct Level* g_selectedUnit;
+
 Shift::MenuBar::MenuBar(QWidget* parent) : QMenuBar(parent)
 {
     //Set the object name (used for custom styling).
@@ -108,6 +110,7 @@ void Shift::MenuBar::OpenZone()
 
     unitNumber[unitNumberIdx] = 0;
     unitName[unitNameIdx] = 0;
-    
+    g_selectedUnit = NULL;
+
     GAMELOOP_RequestLevelChange(unitName, atoi(unitNumber), &gameTrackerX);
 }

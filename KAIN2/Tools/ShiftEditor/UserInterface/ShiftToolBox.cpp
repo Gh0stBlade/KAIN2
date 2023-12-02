@@ -246,8 +246,10 @@ extern void Emulator_SaveBountyList();
 
 void Shift::ToolBox::DoMorph()
 {
-	if (gameThread != NULL)
-	{
+    int tabIndex = g_ShiftWindow->getPanes()->m_centerPane->getTabWidget()->currentIndex();
+
+    if (tabIndex != -1 && gameThread[tabIndex] != NULL)
+    {
 		MORPH_ToggleMorph();
 
 		Emulator_SaveBountyList();
