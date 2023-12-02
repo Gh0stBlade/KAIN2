@@ -879,28 +879,34 @@ void StateHandlerSoulSuck(struct __CharacterState* In, int CurrentSection, int D
 	}
 }
 
-void StateHandlerStartTurn(struct __CharacterState* In, int CurrentSection, int Data)
+void StateHandlerStartTurn(struct __CharacterState* In, int CurrentSection, int Data)  // Matching - 99.65%
 {
 	struct __Event* Ptr;
 
 	G2EmulationQueryFrame(In, CurrentSection);
-
 	if (Raziel.Bearing == 0)
 	{
 		EnMessageQueueData(&In->SectionList[CurrentSection].Defer, 0x100000, 0);
 	}
-
 	while ((Ptr = PeekMessageQueue(&In->SectionList[CurrentSection].Event)) != NULL)
 	{
 		switch (Ptr->ID)
 		{
-		case 0x8000000:
-		case 0x100000:
-		{
-			//loc_800AA12C
+		case 0x100001:
 			if (CurrentSection == 0)
 			{
-				if (!(PadData[0] & 0x8000000F))
+				Raziel.Mode = 0x4000;
+				ControlFlag = 0x20109;
+				PhysicsMode = 3;
+				SteerSwitchMode(In->CharacterInstance, 1);
+			}
+			break;
+		case 0x100000:
+		case 0x8000000:
+		case 0:
+			if (CurrentSection == 0)
+			{
+				if ((PadData[0] & 0x8000000F) == 0)
 				{
 					StateSwitchStateCharacterData(In, &StateHandlerIdle, SetControlInitIdleData(0, 0, 3));
 				}
@@ -910,38 +916,20 @@ void StateHandlerStartTurn(struct __CharacterState* In, int CurrentSection, int 
 				}
 			}
 			break;
-		}
 		case 0x80000001:
-		{
 			if (CurrentSection == 0)
 			{
 				Raziel.Mode = 8;
-
 				if (razSwitchVAnimCharacterGroup(In->CharacterInstance, 0, NULL, NULL) != 0)
 				{
 					G2EmulationSwitchAnimationCharacter(In, 26, 0, 0, 1);
 				}
-
 				StateSwitchStateCharacterData(In, &StateHandlerCompression, 0);
 			}
 			break;
+		default:
+			DefaultStateHandler(In, CurrentSection, Data);
 		}
-		case 0x100001:
-		{
-			if (CurrentSection == 0)
-			{
-				Raziel.Mode = 0x4000;
-
-				ControlFlag = 0x20109;
-
-				PhysicsMode = 3;
-
-				SteerSwitchMode(In->CharacterInstance, 1);
-			}
-			break;
-		}
-		}
-
 		DeMessageQueue(&In->SectionList[CurrentSection].Event);
 	}
 }
