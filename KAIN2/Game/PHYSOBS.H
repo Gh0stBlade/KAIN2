@@ -4,11 +4,14 @@
 #include "COLLIDE.H"
 #include "Game/PHYSICS.H"
 
-struct PhysObSplinter {
+struct PhysObSplinter 
+{
     long numSplintData; // size=0, offset=0
     void* splinterData; // size=0, offset=4
 };
-struct PhysObWeaponAttributes {
+
+struct PhysObWeaponAttributes 
+{
     long Damage; // size=0, offset=0
     long AltDamage; // size=0, offset=4
     short knockBackDistance; // size=0, offset=8
@@ -22,21 +25,93 @@ struct PhysObWeaponAttributes {
     struct PhysObSplinter splinter; // size=8, offset=20
 };
 
-struct LightTableEntry {
+struct LightTableEntry 
+{
   short r; // size=0, offset=0
   short g; // size=0, offset=2
   short b; // size=0, offset=4
   short radius; // size=0, offset=6
 };
 
-struct PhysObProperties {
+struct SwitchData 
+{
+    short state; // size=0, offset=0
+    short accumulator; // size=0, offset=2
+};
+
+struct PhysObProperties 
+{
     unsigned short version; // size=0, offset=0
     unsigned short family; // size=0, offset=2
     unsigned short ID; // size=0, offset=4
     unsigned short Type; // size=0, offset=6
 };
 
-struct PhysObData {
+struct PhysObSwitchProperties 
+{
+    struct PhysObProperties Properties; // size=8, offset=0
+    short Distance; // size=0, offset=8
+    short Class; // size=0, offset=10
+    unsigned char onAnim; // size=0, offset=12
+    unsigned char offAnim; // size=0, offset=13
+    unsigned char failedOnAnim; // size=0, offset=14
+    unsigned char enableAnim; // size=0, offset=15
+    unsigned char shutAnim; // size=0, offset=16
+    unsigned char onWalkTimer; // size=0, offset=17
+    unsigned char offWalkTimer; // size=0, offset=18
+    unsigned char walkMode; // size=0, offset=19
+    unsigned char razielOnAnim; // size=0, offset=20
+    unsigned char razielOffAnim; // size=0, offset=21
+    unsigned char razielFailedOnAnim; // size=0, offset=22
+    unsigned char razielEnableAnim; // size=0, offset=23
+    unsigned char startMode; // size=0, offset=24
+    unsigned char startAnim; // size=0, offset=25
+    unsigned short engageXYDistance; // size=0, offset=26
+    char engageZMinDelta; // size=0, offset=28
+    char engageZMaxDelta; // size=0, offset=29
+    unsigned char engageYCone; // size=0, offset=30
+    unsigned char engageZCone; // size=0, offset=31
+};
+
+struct PhysObInteractProperties 
+{
+    struct PhysObProperties Properties; // size=8, offset=0
+    unsigned short conditions; // size=0, offset=8
+    unsigned short auxConditions; // size=0, offset=10
+    unsigned short action; // size=0, offset=12
+    unsigned short auxAction; // size=0, offset=14
+    unsigned char startAnim; // size=0, offset=16
+    unsigned char endAnim; // size=0, offset=17
+    unsigned char razielAnim; // size=0, offset=18
+    unsigned char razielAuxAnim; // size=0, offset=19
+    unsigned char frame; // size=0, offset=20
+    unsigned char startAnimMode; // size=0, offset=21
+    unsigned short distance; // size=0, offset=22
+    unsigned short newType; // size=0, offset=24
+    unsigned short newClass; // size=0, offset=26
+    unsigned short mode; // size=0, offset=28
+    unsigned short engageXYDistance; // size=0, offset=30
+    short engageZMinDelta; // size=0, offset=32
+    short engageZMaxDelta; // size=0, offset=34
+    unsigned char engageYCone; // size=0, offset=36
+    unsigned char engageZCone; // size=0, offset=37
+    unsigned short pad; // size=0, offset=38
+    struct PhysObWeaponAttributes* weapon; // size=28, offset=40
+};
+
+struct PhysObCollectibleProperties 
+{
+    struct PhysObProperties Properties; // size=8, offset=0
+    short collectClass; // size=0, offset=8
+    short collectValue; // size=0, offset=10
+    unsigned long distance; // size=0, offset=12
+    unsigned char idleAnim; // size=0, offset=16
+    unsigned char collectAnim; // size=0, offset=17
+    unsigned short spatialNode; // size=0, offset=18
+};
+
+struct PhysObData 
+{
   long Mode; // size=0, offset=0
   short xForce; // size=0, offset=4
   short yForce; // size=0, offset=6
@@ -69,7 +144,8 @@ struct PhysObData {
   int physObTimer; // size=0, offset=68
 };
 
-struct evObjectData {
+struct evObjectData 
+{
     short x; // size=0, offset=0
     short y; // size=0, offset=2
     short PathNumber; // size=0, offset=4
@@ -78,7 +154,8 @@ struct evObjectData {
     int rc; // size=0, offset=12
 };
 
-struct evObjectThrowData {
+struct evObjectThrowData 
+{
   short type; // size=0, offset=0
   short spinType; // size=0, offset=2
   union {
