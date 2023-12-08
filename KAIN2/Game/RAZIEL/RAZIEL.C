@@ -1719,7 +1719,7 @@ void StateHandlerCompression(struct __CharacterState* In, int CurrentSection, in
 	}
 }
 
-void StateHandlerJump(struct __CharacterState* In, int CurrentSection, int Data)
+void StateHandlerJump(struct __CharacterState* In, int CurrentSection, int Data)  // Matching - 98.94%
 {
 	struct __Event* Ptr;
 
@@ -1727,87 +1727,7 @@ void StateHandlerJump(struct __CharacterState* In, int CurrentSection, int Data)
 	{
 		switch (Ptr->ID)
 		{
-		case 0x8000000:
-		{
-			if (CurrentSection == 0)
-			{
-				if (Raziel.Mode == 16)
-				{
-					if (razSwitchVAnimCharacterGroup(In->CharacterInstance, 24, 0, 0))
-					{
-						G2EmulationSwitchAnimationCharacter(In, 36, 0, 4, 1);
-					}
-				}
-				else if (Raziel.Mode == 32)
-				{
-					if (razSwitchVAnimCharacterGroup(In->CharacterInstance, 40, 0, 0))
-					{
-						G2EmulationSwitchAnimationCharacter(In, 40, 0, 10, 1);
-					}
-				}
-				else if (razSwitchVAnimCharacterGroup(In->CharacterInstance, 8, 0, 0))
-				{
-					G2EmulationSwitchAnimationCharacter(In, 28, 0, 7, 1);
-				}
-			}
-			StateSwitchStateData(In, 0, &StateHandlerFall, 0);
-
-			if (!(PadData[0] & 0x80))
-			{
-				In->SectionList[CurrentSection].Data2 = 1;
-			}
-
-			break;
-		}
-		case 0x4020000:
-		{
-			break;
-		}		
-		case 0x4010008:
-		{
-			break;
-		}
-		case 0x2000000:
-		{
-			razPickupAndGrab(In, CurrentSection);
-
-			break;
-		}
-		case 0x8000004:
-		{
-			ControlFlag |= 0x8;
-			break;
-		}
-		case 0x20000001:
-		{
-			In->SectionList[CurrentSection].Data2 = 1;
-
-			if (CurrentSection == 0)
-			{
-				if (Raziel.Mode != 16 && Raziel.Mode != 32)
-				{
-					if (In->SectionList[CurrentSection].Data1 != 0 || (In->SectionList[CurrentSection].Data1 = G2EmulationQueryFrame(In, CurrentSection) + 4) != 0 && In->SectionList[CurrentSection].Data1 < G2EmulationQueryFrame(In, CurrentSection))
-					{
-						SetDropPhysics(In->CharacterInstance, &Raziel);
-
-						if (razSwitchVAnimCharacterGroup(In->CharacterInstance, 8, NULL, NULL) != 0)
-						{
-							G2EmulationSwitchAnimationCharacter(In, 28, 0, 7, 1);
-
-							StateSwitchStateCharacterData(In, &StateHandlerFall, In->SectionList[CurrentSection].Data2);
-						}
-					}
-					else
-					{
-						EnMessageQueueData(&In->SectionList[CurrentSection].Defer, 0x20000001, 0);
-					}
-				}
-			}
-			break;
-		}
 		case 0x100001:
-		{
-
 			if (CurrentSection == 0)
 			{
 				ControlFlag = 1297;
@@ -1815,17 +1735,99 @@ void StateHandlerJump(struct __CharacterState* In, int CurrentSection, int Data)
 				PhysicsMode = 0;
 				In->CharacterInstance->anim.section[CurrentSection].swAlarmTable = &Raziel.alarmTable;
 			}
-
 			In->SectionList[CurrentSection].Data2 = 0;
-
 			break;
-		}
+		case 0x8000004:
+			ControlFlag |= 8;
+			break;
+		case 0x8000000:
+			if (CurrentSection == 0)
+			{
+				if (Raziel.Mode == 16)
+				{
+					if (razSwitchVAnimCharacterGroup(In->CharacterInstance, 24, NULL, NULL))
+					{
+						G2EmulationSwitchAnimationCharacter(In, 36, 0, 4, 1);
+					}
+				}
+				else if (Raziel.Mode == 32)
+				{
+					if (razSwitchVAnimCharacterGroup(In->CharacterInstance, 40, NULL, NULL))
+					{
+						G2EmulationSwitchAnimationCharacter(In, 40, 0, 10, 1);
+					}
+				}
+				else if (razSwitchVAnimCharacterGroup(In->CharacterInstance, 8, NULL, NULL))
+				{
+					G2EmulationSwitchAnimationCharacter(In, 28, 0, 7, 1);
+				}
+			}
+			StateSwitchStateData(In, CurrentSection, &StateHandlerFall, 0);
+			if ((PadData[0] & RazielCommands[3]) == 0)
+			{
+				In->SectionList[CurrentSection].Data2 = 1;
+			}
+			break;
+		case 0x20000001:
+			In->SectionList[CurrentSection].Data2 = 1;
+			if (CurrentSection == 0)
+			{
+				if ((Raziel.Mode == 16) || (Raziel.Mode == 32))
+				{
+					EnMessageQueueData(&In->SectionList[CurrentSection].Defer, 0x20000001, 0);
+				}
+				else if (((In->SectionList[CurrentSection].Data1 != 0)
+					|| ((In->SectionList[CurrentSection].Data1 = G2EmulationQueryFrame(In, CurrentSection) + 4) != 0))
+					&& (In->SectionList[CurrentSection].Data1 < G2EmulationQueryFrame(In, CurrentSection)))
+				{
+					SetDropPhysics(In->CharacterInstance, &Raziel);
+					if (razSwitchVAnimCharacterGroup(In->CharacterInstance, 8, NULL, NULL) != 0)
+					{
+						G2EmulationSwitchAnimationCharacter(In, 28, 0, 7, 1);
+					}
+					StateSwitchStateCharacterData(In, &StateHandlerFall, In->SectionList[CurrentSection].Data2);
+				}
+				else
+				{
+					EnMessageQueueData(&In->SectionList[CurrentSection].Defer, 0x20000001, 0);
+				}
+			}
+			break;
+		case 0x80000001:
+			if (G2EmulationQueryFrame(In, CurrentSection) >= 2)
+			{
+				if ((Raziel.Senses.heldClass != 3) && (CurrentSection == 0))
+				{
+					StateSwitchStateCharacterData(In, &StateHandlerGlide, 0);
+				}
+			}
+			else
+			{
+				EnMessageQueueData(&In->SectionList[CurrentSection].Defer, 0x80000001, 0);
+			}
+			break;
+		case 0x2000000:
+			razPickupAndGrab(In, CurrentSection);
+			break;
+		case 0x40005:
+			break;
+		case 0x1000001:
+			break;
+		case 0x4000001:
+			break;
+		case 0x4010008:
+			break;
+		case 0x4020000:
+			break;
+		case 0x80000000:
+			break;
+		case 0x80000008:
+			break;
+		case 0x80000020:
+			break;
 		default:
-		{
 			DefaultStateHandler(In, CurrentSection, Data);
 		}
-		}
-
 		DeMessageQueue(&In->SectionList[CurrentSection].Event);
 	}
 }
