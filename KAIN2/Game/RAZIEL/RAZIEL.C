@@ -31,6 +31,8 @@
 #include "Game/COLLIDE.H"
 #include "Game/GAMEPAD.H"
 #include "SENSES.H"
+#include <Game/MATH3D.H>
+#include <Game/RAZIEL/SPIDER.H>
 
 struct RazielData* PlayerData;
 struct _G2AnimInterpInfo_Type razInterpInfo[3];
@@ -45,6 +47,8 @@ struct __Force ExternalForces[4];
 int LoopCounter;
 int AutoFaceAngle;
 struct __CannedSound cannedSound[4];
+static int BlockCount; 
+static int LastBlock;
 
 void InitStates(struct _Instance* PlayerInstance)
 {
@@ -2733,56 +2737,245 @@ void StateHandlerGlyphs(struct __CharacterState* In, int CurrentSection, int Dat
 	In->CharacterInstance->cachedTFace = -1;
 }
 
-void DefaultStateHandler(struct __CharacterState* In, int CurrentSection, int Data)
+void DefaultStateHandler(struct __CharacterState* In, int CurrentSection, int Data)  // Matching - 98.14%
 {
-	struct __Event *Ptr; // $s0
-	int message; // stack offset -32
-	int messageData; // stack offset -28
-	int i; // $s1
-	struct evPhysicsGravityData *ptr; // $v1
-	short zRot; // $s0
-	struct _Position pos1; // stack offset -48
-	struct _Position pos2; // stack offset -40
-	int diff; // $v0
-	struct evFXHitData *BloodData; // $a0
-	struct _SVector Accel; // stack offset -48
-	struct evPhysicsEdgeData *data; // $s0
-	
-	
+	// rearranged vars declaration order to produce better matching results
+	struct __Event* Ptr;
+	int message;
+	int messageData;
+	int i;
+	struct evPhysicsGravityData* ptr;
+	short zRot;
+	struct _SVector Accel;
+	struct _Position pos1;
+	struct _Position pos2;
+	short diff;  // changed SYMDUMP type (int to short)
+	struct evFXHitData* BloodData;
+	struct evPhysicsEdgeData* data;
+	typedef void NewProcess(struct __CharacterState* In, int CurrentSection, int Data);  // not from SYMDUMP
+
 	if ((Ptr = PeekMessageQueue(&In->SectionList[CurrentSection].Event)) != NULL)
 	{
 		switch (Ptr->ID)
 		{
-		case 0x100006:
-		{
-			InitAlgorithmicWings(In->CharacterInstance);
+		case 0x8000000:
+			StateSwitchStateData(In, CurrentSection, &StateHandlerIdle, SetControlInitIdleData(0, 0, 3));
 			break;
-		}
+		case 0x80000000:
+			if (((Raziel.Mode & 0x40000) == 0) && ((Raziel.Senses.Flags & 128) == 0))
+			{
+				StateSwitchStateDataDefault(In, CurrentSection, &StateHandlerAttack2, 0);
+			}
+			break;
+		case 0x80000020:
+			if (((((CurrentSection == 0) && (Raziel.Senses.Flags & 128) == 0)) && (PadData[1] & RazielCommands[0]) == 0)
+				&& (StateHandlerDecodeHold(&message, &messageData) != 0))
+			{
+				if (message == 0x800010)
+				{
+					StateSwitchStateCharacterDataDefault(In, &StateHandlerThrow2, 0);
+				}
+				else if (message == 0x1000002)
+				{
+					StateSwitchStateCharacterDataDefault(In, &StateHandlerGrab, messageData);
+				}
+				else if (message == 0x80000)
+				{
+					Raziel.playerEvent |= 0x400;
+					razSetPlayerEventHistory(0x400);
+					razLaunchForce(In->CharacterInstance);
+					StateSwitchStateCharacterDataDefault(In, &StateHandlerThrow2, 0);
+				}
+				else
+				{
+					StateSwitchStateCharacterDataDefault(In, &StateHandlerAttack2, 0);
+					for (i = 0; i < 3; i++)
+					{
+						EnMessageQueueData((struct __MessageQueue*)&In->SectionList[i].Event.Queue[16].ID, 0x80000020, 0);
+					}
+				}
+			}
+			break;
+		case 0x80000004:
+			Raziel.Mode |= 2;
+			break;
+		case 0x20000004:
+			Raziel.Mode = (Raziel.Mode | 1) & -3;
+			break;
+		case 0x80000008:
+			if (CurrentSection == 0)
+			{
+				StateSwitchStateCharacterDataDefault(In, &StateHandlerCrouch, 1);
+			}
+			break;
 		case 0x4000001:
-		{
 			PhysicsMode = 0;
 			SetDropPhysics(In->CharacterInstance, &Raziel);
-			if (In->CharacterInstance->zVel < Raziel.fallZVelocity && CurrentSection == 0)
+			if ((In->CharacterInstance->zVel < Raziel.fallZVelocity) && (CurrentSection == 0))
 			{
-				if (razSwitchVAnimCharacterGroup(In->CharacterInstance, 24, 0, 0))
+				if (razSwitchVAnimCharacterGroup(In->CharacterInstance, 24, NULL, NULL) != 0)
 				{
 					G2EmulationSwitchAnimationCharacter(In, 36, 0, 4, 1);
 				}
-
 				StateSwitchStateCharacterDataDefault(In, &StateHandlerFall, 0);
 			}
 			break;
-		}
 		case 0x4010008:
-		{
 			if (PhysicsMode != 3)
 			{
 				PhysicsMode = 3;
-
 				SetPhysics(In->CharacterInstance, -16, 0, 0, 0);
 			}
 			break;
-		}
+		case 0x4020000:
+			razEnterWater(In, CurrentSection, (struct evPhysicsSwimData*)Ptr->Data);
+			break;
+		case 0x1000001:
+			StateSwitchStateDataDefault(In, CurrentSection, &StateHandlerAutoFace, 0);
+			break;
+		case 0x1000000:
+			if (((CurrentSection == 0) && (ControlFlag & 0x4000) == 0) && (Raziel.invincibleTimer == 0))
+			{
+				StateSwitchStateCharacterDataDefault(In, &StateHandlerHitReaction, Ptr->Data);
+				CAMERA_ForceEndLookaroundMode(&theCamera);
+			}
+			break;
+		case 0x4010200: // @fixme causes Raziel to glitch, likely due to StateHandlerSlide malfunctioning due to the current state of collision code  
+			/*ptr = (struct evPhysicsGravityData*)Ptr->Data;
+			if (CurrentSection == 0)
+			{
+				pos1.x = 0;
+				pos1.y = 0;
+				pos2.z = 0;
+				pos2.x = ptr->x;
+				pos2.y = ptr->y;
+				pos2.z = ptr->z;
+				diff = MATH3D_AngleFromPosToPos(&pos1, &pos2);
+				if (G2Anim_IsControllerActive(&In->CharacterInstance->anim, 1, 14) != G2FALSE)
+				{
+					G2Anim_DisableController(&In->CharacterInstance->anim, 1, 14);
+					if (ExtraRot)
+					{
+						In->CharacterInstance->rotation.z += ExtraRot->z;
+					}
+					ExtraRot = 0;
+				}
+				zRot = In->CharacterInstance->rotation.z;
+				if (((zRot - diff)) + (unsigned int)1023 < 2047)
+				{
+					In->CharacterInstance->rotation.z = diff;
+					G2EmulationSwitchAnimationCharacter(&Raziel.State, 73, 0, 6, 2);
+					StateSwitchStateCharacterDataDefault(&Raziel.State, &StateHandlerSlide, 0);
+				}
+				else
+				{
+					In->CharacterInstance->rotation.z = diff + 2048;
+					G2EmulationSwitchAnimationCharacter(&Raziel.State, 77, 0, 6, 2);
+					StateSwitchStateCharacterDataDefault(&Raziel.State, &StateHandlerSlide, 0);
+				}
+			}*/
+			break;
+		case 0x4010400:
+			if (CurrentSection == 0)
+			{
+				if ((LastBlock + 2) < LoopCounter)
+				{
+					BlockCount = 0;
+				}
+				LastBlock = LoopCounter;
+				BlockCount++;
+			}
+			if ((BlockCount >= 16))
+			{
+				StateSwitchStateDataDefault(In, CurrentSection, &StateHandlerBlock, 0);
+			}
+			break;
+		case 0x400000:
+			if (CurrentSection == 0)
+			{
+				memset(&Accel, 0, 8);
+				BloodData = (struct evFXHitData*)Ptr->Data;
+				FX_Blood2(&BloodData->location, &BloodData->velocity, &Accel, 64, 0xFF8010, 0xFF8010);
+			}
+			break;
+		case 0x4000011:
+			if (((Raziel.Abilities & 2) != 0) && (Raziel.Senses.heldClass != 3) && (Raziel.CurrentPlane == 1) && (CurrentSection == 0))
+			{
+				if ((razSideMoveSpiderCheck(In->CharacterInstance, -128) == 0) && (razSideMoveSpiderCheck(In->CharacterInstance, 128)) == 0)
+				{
+					StateSwitchStateCharacterDataDefault(In, &StateHandlerWallGrab, 0);
+				}
+			}
+			break;
+		case 0x40000:
+			if (CurrentSection == 2)
+			{
+				G2EmulationSwitchAnimation(In, 2, 0, 0, 3, CurrentSection);
+			}
+			else
+			{
+				G2EmulationSwitchAnimation(In, CurrentSection, 23, 0, 3, 1);
+			}
+			break;
+		case 0x100005:
+			if (Ptr->Data == 1)
+			{
+				if (In->CharacterInstance->LinkChild != NULL)
+				{
+					G2EmulationSwitchAnimation(In, Ptr->Data, 50, 0, 3, 2);
+					StateSwitchStateDataDefault(In, Ptr->Data, In->SectionList[CurrentSection].Process, 0);
+					break;
+				}
+			}
+			G2EmulationSwitchAnimationSync(In, 1, 0, 3);
+			break;
+		case 0x100000:
+			if (Ptr->Data != 0)
+			{
+				StateSwitchStateDataDefault(In, CurrentSection, (NewProcess*)Ptr->Data, 0);
+			}
+			break;
+		case 0x100006:
+			InitAlgorithmicWings(In->CharacterInstance);
+			break;
+		case 0x4010010:
+			data = (struct evPhysicsEdgeData*)Ptr->Data;
+			StateSwitchStateDataDefault(In, CurrentSection, &StateHandlerHang, SetControlInitHangData(data->instance, 0, 3));
+			In->CharacterInstance->rotation.z = data->zRot;
+			break;
+		case 0x100009:
+			if (Ptr->Data != 0)
+			{
+				if (CurrentSection == 0)
+				{
+					Raziel.returnState = In->SectionList[0].Process;
+					if (Raziel.returnState == &StateHandlerSoulSuck)
+					{
+						Raziel.returnState = &StateHandlerIdle;
+					}
+					In->SectionList[0].Data1 = Raziel.Mode;
+					Raziel.Mode = 0x80000;
+				}
+				StateSwitchStateDataDefault(In, CurrentSection, &StateHandlerLookAround, 0);
+				break;
+			}
+			if (Raziel.returnState == NULL)
+			{
+				Raziel.returnState = &StateHandlerIdle;
+			}
+			StateSwitchStateDataDefault(In, CurrentSection, Raziel.returnState, 0);
+			break;
+		case 0x40005:
+		case 0x40025:
+			StateSwitchStateDataDefault(In, CurrentSection, &StateHandlerStumble, Ptr->Data);
+			In->SectionList[CurrentSection].Data1 = Ptr->Data * 30;
+			break;
+		case 0x10002001:
+		case 0x10002002:
+			StateSwitchStateDataDefault(In, CurrentSection, &StateHandlerGlyphs, 1);
+			break;
+		case 0x4000004:
+			break;
 		}
 	}
 }
