@@ -3377,7 +3377,7 @@ void FX_StartInstanceEffect(struct _Instance* instance, struct ObjectEffect* eff
 				currentParticle->direction.z = draft->height;
 				currentParticle->primLifeTime = draft->maxVelocity >> 3;
 				currentParticle->birthRadius = 0;
-				currentParticle->fxprim_modify_process = &FX_UpdraftPrimModify;
+				currentParticle->fxprim_modify_process = FX_UpdraftPrimModify;
 			}
 		}
 		break;
