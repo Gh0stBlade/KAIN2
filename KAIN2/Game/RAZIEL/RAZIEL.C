@@ -4368,318 +4368,125 @@ void ProcessInteractiveMusic(struct _Instance* instance)
 	}
 }
 
-void ProcessTimers(struct _Instance* instance)
+void ProcessTimers(struct _Instance* instance)  // Matching - 92.92%
 {
-	//a2 = Raziel.timeAccumulator
-	//s3 = instance
-
 	if (Raziel.timeAccumulator > 0)
 	{
 		Raziel.timeAccumulator -= gameTrackerX.timeMult;
-
 		if (Raziel.timeAccumulator <= 0)
 		{
 			INSTANCE_Post(instance, 0x100015, -Raziel.timeAccumulator);
+			Raziel.timeAccumulator = 0;
 		}
 	}
-	//loc_800B2C1C
 	if (Raziel.soundTimerNext > 0)
 	{
 		Raziel.soundTimerNext -= gameTrackerX.timeMult;
-
 		if (Raziel.soundTimerNext <= 0)
 		{
-			//v0 = 
 			Raziel.soundTimerNext = 0;
-
 			switch (Raziel.soundTimerData)
 			{
 			case 1:
-			{
 				razSetupSoundRamp(instance, (struct _SoundRamp*)&Raziel.soundHandle, 19, 1000, 1000, 120, 120, 4096, 3500);
 				razSetupSoundRamp(instance, (struct _SoundRamp*)&Raziel.soundHandle2, 20, 1030, 1030, 120, 120, 4096, 3500);
-
 				Raziel.soundTimerNext = 122880;
-
-				//v0 = Raziel.effectsFlags
-				//v1 = 2
+				Raziel.soundTimerData = 2;
+				Raziel.effectsFlags |= 8;
 				break;
-			}
 			case 2:
-			{
-				//s2 = 0x3C000
-				//a0 = instance
 				razSetupSoundRamp(instance, (struct _SoundRamp*)&Raziel.soundHandle, 19, 1000, 1000, 120, 0, 245760, 3500);
 				razSetupSoundRamp(instance, (struct _SoundRamp*)&Raziel.soundHandle2, 20, 1030, 1030, 120, 0, 245760, 3500);
-
-				//j loc_800B3078
-
+				Raziel.soundTimerNext = 0;
+				Raziel.soundTimerData = 0;
 				break;
 			case 3:
-			{
 				if (Raziel.soundHandle != 0)
 				{
 					SndEndLoop(Raziel.soundHandle);
 				}
+				Raziel.soundHandle = 0;
+				razSetupSoundRamp(instance, (struct _SoundRamp*)&Raziel.soundHandle, 13, 0, 0, 100, 100, 4096, 3500);
+				Raziel.soundTimerNext = 40960;
+				Raziel.soundTimerData = 4;
 				break;
+			case 4:
+				if (Raziel.soundHandle2 != 0)
+				{
+					SndEndLoop(Raziel.soundHandle2);
+				}
+				Raziel.soundHandle2 = 0;
+				razSetupSoundRamp(instance, (struct _SoundRamp*)&Raziel.soundHandle2, 13, 50, 50, 95, 95, 4096, 3500);
+				Raziel.soundTimerNext = 28672;
+				Raziel.soundTimerData = 5;
+				Raziel.effectsFlags |= 8;
+				break;
+			case 5:
+				if (Raziel.soundHandle != 0)
+				{
+					SndEndLoop(Raziel.soundHandle);
+				}
+				Raziel.soundHandle = 0;
+				razSetupSoundRamp(instance, (struct _SoundRamp*)&Raziel.soundHandle, 13, -20, -20, 80, 80, 4096, 3500);
+				Raziel.soundTimerNext = 32768;
+				Raziel.soundTimerData = 6;
+				break;
+			case 6:
+				if (Raziel.soundHandle2 != 0)
+				{
+					SndEndLoop(Raziel.soundHandle2);
+				}
+				Raziel.soundHandle2 = 0;
+				razSetupSoundRamp(instance, (struct _SoundRamp*)&Raziel.soundHandle2, 13, 100, 100, 75, 75, 4096, 3500);
+				Raziel.soundTimerNext = 40960;
+				Raziel.soundTimerData = 7;
+				break;
+			case 7:
+				if (Raziel.soundHandle != 0)
+				{
+					SndEndLoop(Raziel.soundHandle);
+				}
+				Raziel.soundHandle = 0;
+				razSetupSoundRamp(instance, (struct _SoundRamp*)&Raziel.soundHandle, 13, -100, -100, 65, 65, 4096, 3500);
+				Raziel.soundTimerNext = 20480;
+				Raziel.soundTimerData = 8;
+				break;
+			case 8:
+				if (Raziel.soundHandle2 != 0)
+				{
+					SndEndLoop(Raziel.soundHandle2);
+				}
+				Raziel.soundHandle2 = 0;
+				razSetupSoundRamp(instance, (struct _SoundRamp*)&Raziel.soundHandle2, 13, 30, 30, 60, 60, 4096, 3500);
+				Raziel.soundTimerNext = 40960;
+				Raziel.soundTimerData = 9;
+				break;
+			case 9:
+				if (Raziel.soundHandle != 0)
+				{
+					SndEndLoop(Raziel.soundHandle);
+				}
+				Raziel.soundHandle = 0;
+				if (Raziel.soundHandle2 != 0)
+				{
+					SndEndLoop(Raziel.soundHandle2);
+				}
+				Raziel.soundHandle2 = 0;
+				Raziel.effectsFlags &= ~4;
+				Raziel.effectsFlags &= ~8;
+				break;
+			case 10:
+				razSetupSoundRamp(instance, (struct _SoundRamp*)&Raziel.soundHandle, 51, -200, -200, 120, 0, 245760, 3500);
+				Raziel.soundTimerNext = 0;
+				Raziel.soundTimerData = 0;
+				break;
+			default:
+				if (Raziel.soundHandle != 0)
+				{
+					SndEndLoop(Raziel.soundHandle);
+				}
 			}
-			}
-			}
-			//loc_800B30A8
 		}
-		//loc_800B30A8
-		UNIMPLEMENTED();
-#if 0
-
-		loc_800B2D74 :
-		move    $a0, $s3
-			addiu   $a1, $gp, -0x46C
-			li      $a2, 0xD
-			move    $a3, $zero
-			li      $v0, 0x64  # 'd'
-			sw      $v0, 0x28 + var_14($sp)
-			sw      $v0, 0x28 + var_10($sp)
-			li      $v0, 0x1000
-			sw      $v0, 0x28 + var_C($sp)
-			li      $v0, 0xDAC
-			sw      $zero, -0x46C($gp)
-			sw      $zero, 0x28 + var_18($sp)
-			jal     sub_800A7D40
-			sw      $v0, 0x28 + var_8($sp)
-			li      $v0, 0xA000
-			sw      $v0, -0x43C($gp)
-			li      $v0, 4
-			sw      $v0, -0x438($gp)
-			j       loc_800B30A8
-			nop
-
-			loc_800B2DC4 : # jumptable 800B2C70 case 4
-			lw      $a0, -0x454($gp)
-			nop
-			beqz    $a0, loc_800B2DDC
-			nop
-			jal     sub_80040870
-			nop
-
-			loc_800B2DDC :
-		move    $a0, $s3
-			addiu   $a1, $gp, -0x454
-			li      $a2, 0xD
-			li      $a3, 0x32  # '2'
-			move    $v0, $a3
-			sw      $v0, 0x28 + var_18($sp)
-			li      $v0, 0x5F  # '_'
-			sw      $v0, 0x28 + var_14($sp)
-			sw      $v0, 0x28 + var_10($sp)
-			li      $v0, 0x1000
-			sw      $v0, 0x28 + var_C($sp)
-			li      $v0, 0xDAC
-			sw      $zero, -0x454($gp)
-			jal     sub_800A7D40
-			sw      $v0, 0x28 + var_8($sp)
-			li      $v0, 0x7000
-			sw      $v0, -0x43C($gp)
-			lw      $v0, -0x4B4($gp)
-			li      $v1, 5
-
-			loc_800B2E28:
-		sw      $v1, -0x438($gp)
-			ori     $v0, 8
-			sw      $v0, -0x4B4($gp)
-			j       loc_800B30A8
-			nop
-
-			loc_800B2E3C : # jumptable 800B2C70 case 5
-			lw      $a0, -0x46C($gp)
-			nop
-			beqz    $a0, loc_800B2E54
-			nop
-			jal     sub_80040870
-			nop
-
-			loc_800B2E54 :
-		move    $a0, $s3
-			addiu   $a1, $gp, -0x46C
-			li      $a2, 0xD
-			li      $a3, 0xFFFFFFEC
-			move    $v0, $a3
-			sw      $v0, 0x28 + var_18($sp)
-			li      $v0, 0x50  # 'P'
-			sw      $v0, 0x28 + var_14($sp)
-			sw      $v0, 0x28 + var_10($sp)
-			li      $v0, 0x1000
-			sw      $v0, 0x28 + var_C($sp)
-			li      $v0, 0xDAC
-			sw      $zero, -0x46C($gp)
-			jal     sub_800A7D40
-			sw      $v0, 0x28 + var_8($sp)
-			li      $v0, 0x8000
-			sw      $v0, -0x43C($gp)
-			li      $v0, 6
-			sw      $v0, -0x438($gp)
-			j       loc_800B30A8
-			nop
-
-			loc_800B2EA8 : # jumptable 800B2C70 case 6
-			lw      $a0, -0x454($gp)
-			nop
-			beqz    $a0, loc_800B2EC0
-			nop
-			jal     sub_80040870
-			nop
-
-			loc_800B2EC0 :
-		move    $a0, $s3
-			addiu   $a1, $gp, -0x454
-			li      $a2, 0xD
-			li      $a3, 0x64  # 'd'
-			move    $v0, $a3
-			sw      $v0, 0x28 + var_18($sp)
-			li      $v0, 0x4B  # 'K'
-			sw      $v0, 0x28 + var_14($sp)
-			sw      $v0, 0x28 + var_10($sp)
-			li      $v0, 0x1000
-			sw      $v0, 0x28 + var_C($sp)
-			li      $v0, 0xDAC
-			sw      $zero, -0x454($gp)
-			jal     sub_800A7D40
-			sw      $v0, 0x28 + var_8($sp)
-			li      $v0, 0xA000
-			sw      $v0, -0x43C($gp)
-			li      $v0, 7
-			sw      $v0, -0x438($gp)
-			j       loc_800B30A8
-			nop
-
-			loc_800B2F14 : # jumptable 800B2C70 case 7
-			lw      $a0, -0x46C($gp)
-			nop
-			beqz    $a0, loc_800B2F2C
-			nop
-			jal     sub_80040870
-			nop
-
-			loc_800B2F2C :
-		move    $a0, $s3
-			addiu   $a1, $gp, -0x46C
-			li      $a2, 0xD
-			li      $a3, 0xFFFFFF9C
-			move    $v0, $a3
-			sw      $v0, 0x28 + var_18($sp)
-			li      $v0, 0x41  # 'A'
-			sw      $v0, 0x28 + var_14($sp)
-			sw      $v0, 0x28 + var_10($sp)
-			li      $v0, 0x1000
-			sw      $v0, 0x28 + var_C($sp)
-			li      $v0, 0xDAC
-			sw      $zero, -0x46C($gp)
-			jal     sub_800A7D40
-			sw      $v0, 0x28 + var_8($sp)
-			li      $v0, 0x5000
-			sw      $v0, -0x43C($gp)
-			li      $v0, 8
-			sw      $v0, -0x438($gp)
-			j       loc_800B30A8
-			nop
-
-			loc_800B2F80 : # jumptable 800B2C70 case 8
-			lw      $a0, -0x454($gp)
-			nop
-			beqz    $a0, loc_800B2F98
-			nop
-			jal     sub_80040870
-			nop
-
-			loc_800B2F98 :
-		move    $a0, $s3
-			addiu   $a1, $gp, -0x454
-			li      $a2, 0xD
-			li      $a3, 0x1E
-			move    $v0, $a3
-			sw      $v0, 0x28 + var_18($sp)
-			li      $v0, 0x3C  # '<'
-			sw      $v0, 0x28 + var_14($sp)
-			sw      $v0, 0x28 + var_10($sp)
-			li      $v0, 0x1000
-			sw      $v0, 0x28 + var_C($sp)
-			li      $v0, 0xDAC
-			sw      $zero, -0x454($gp)
-			jal     sub_800A7D40
-			sw      $v0, 0x28 + var_8($sp)
-			li      $v0, 0xA000
-			sw      $v0, -0x43C($gp)
-			li      $v0, 9
-			sw      $v0, -0x438($gp)
-			j       loc_800B30A8
-			nop
-
-			loc_800B2FEC : # jumptable 800B2C70 case 9
-			lw      $a0, -0x46C($gp)
-			nop
-			beqz    $a0, loc_800B3004
-			nop
-			jal     sub_80040870
-			nop
-
-			loc_800B3004 :
-		lw      $a0, -0x454($gp)
-			sw      $zero, -0x46C($gp)
-			beqz    $a0, loc_800B301C
-			nop
-			jal     sub_80040870
-			nop
-
-			loc_800B301C :
-		lw      $v0, -0x4B4($gp)
-			li      $v1, 0xFFFFFFFB
-			sw      $zero, -0x454($gp)
-			and $v0, $v1
-			li      $v1, 0xFFFFFFF7
-			and $v0, $v1
-			sw      $v0, -0x4B4($gp)
-			j       loc_800B30A8
-			nop
-
-			loc_800B3040 : # jumptable 800B2C70 case 10
-			li      $v1, 0x3C000
-			move    $a0, $s3
-			addiu   $a1, $gp, -0x46C
-			li      $a2, 0x33  # '3'
-			li      $a3, 0xFFFFFF38
-			move    $v0, $a3
-			sw      $v0, 0x28 + var_18($sp)
-			li      $v0, 0x78  # 'x'
-			sw      $v0, 0x28 + var_14($sp)
-			li      $v0, 0xDAC
-			sw      $zero, 0x28 + var_10($sp)
-			sw      $v1, 0x28 + var_C($sp)
-			sw      $v0, 0x28 + var_8($sp)
-
-loc_800B3078:
-jal     sub_800A7D40
-nop
-sw      $zero, -0x43C($gp)
-sw      $zero, -0x438($gp)
-j       loc_800B30A8
-nop
-
-def_800B2C70 : # jumptable 800B2C70 default case
-lw      $a0, -0x46C($gp)
-nop
-beqz    $a0, loc_800B30A8
-nop
-jal     sub_80040870
-nop
-
-loc_800B30A8 :
-lw      $ra, 0x28 + var_s10($sp)
-lw      $s3, 0x28 + var_sC($sp)
-lw      $s2, 0x28 + var_s8($sp)
-lw      $s1, 0x28 + var_s4($sp)
-lw      $s0, 0x28 + var_s0($sp)
-jr      $ra
-addiu   $sp, 0x40
-#endif
 	}
 }
 
