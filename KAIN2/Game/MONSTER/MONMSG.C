@@ -7,9 +7,10 @@ int MON_GroundMoveQueueHandler(struct _Instance* instance)  // Matching - 100%
 	struct _MonsterVars* mv;
 	struct __Event* message;
 	int ret;
+
 	ret = 0;
 	mv = (struct _MonsterVars*)instance->extraData;
-	while (true)
+	while (TRUE)
 	{
 		message = DeMessageQueue(&mv->messageQueue);
 		if (message == NULL) break;
