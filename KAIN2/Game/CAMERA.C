@@ -8,6 +8,7 @@
 #include "COLLIDE.H"
 #include "PSX/COLLIDES.H"
 #include "RAZIEL/RAZLIB.H"
+#include "MEMPACK.H"
 
 short camera_still;
 short shorten_flag;
@@ -31,6 +32,11 @@ int roll_inc;
 short combat_cam_angle;
 short combat_cam_weight;
 short panic_count;
+struct _SVector camera_plane;
+struct _SVector left_point;
+struct _SVector right_point;
+short hitline_rot;
+long ACE_amount;
 
 short CameraLookStickyFlag;
 
@@ -53,6 +59,169 @@ long camera_modeToIndex[] = {
 	2,
 	0,
 };
+
+static inline void CAMERA_Add_Vec_To_Pos(struct _Position* dest, struct _Position* pos, struct _Vector* vec)
+{
+	short x, y, z;
+
+	x = pos->x;
+	y = pos->y;
+	z = pos->z;
+
+	x += (short)vec->x;
+	y += (short)vec->y;
+	z += (short)vec->z;
+
+	dest->x = x;
+	dest->y = y;
+	dest->z = z;
+}
+
+static inline void CAMERA_Sub_Vec_From_Pos(struct _Position* dest, struct _Position* pos, struct _Vector* vec)
+{
+	short x, y, z;
+
+	x = pos->x;
+	y = pos->y;
+	z = pos->z;
+
+	x -= (short)vec->x;
+	y -= (short)vec->y;
+	z -= (short)vec->z;
+
+	dest->x = x;
+	dest->y = y;
+	dest->z = z;
+}
+
+static inline void CAMERA_Add_Pos_To_Vec(struct _Position* dest, struct _Vector* vec, struct _Position* pos)
+{
+	short x, y, z;
+
+	x = (short)vec->x;
+	y = (short)vec->y;
+	z = (short)vec->z;
+
+	x += pos->x;
+	y += pos->y;
+	z += pos->z;
+
+	dest->x = x;
+	dest->y = y;
+	dest->z = z;
+}
+
+static inline void CAMERA_Sub_Pos_From_Vec(struct _Position* dest, struct _Vector* vec, struct _Position* pos)
+{
+	short x, y, z;
+
+	x = (short)vec->x;
+	y = (short)vec->y;
+	z = (short)vec->z;
+
+	x -= pos->x;
+	y -= pos->y;
+	z -= pos->z;
+
+	dest->x = x;
+	dest->y = y;
+	dest->z = z;
+}
+
+static inline void CAMERA_Add_Pos_To_Pos(struct _Position* dest, struct _Position* pos0, struct _Position* pos1)
+{
+	short x, y, z;
+
+	x = pos0->x;
+	y = pos0->y;
+	z = pos0->z;
+
+	x += pos1->x;
+	y += pos1->y;
+	z += pos1->z;
+
+	dest->x = x;
+	dest->y = y;
+	dest->z = z;
+}
+
+static inline void CAMERA_Sub_Pos_From_Pos(struct _Position* dest, struct _Position* pos0, struct _Position* pos1)
+{
+	short x, y, z;
+
+	x = pos0->x;
+	y = pos0->y;
+	z = pos0->z;
+
+	x -= pos1->x;
+	y -= pos1->y;
+	z -= pos1->z;
+
+	dest->x = x;
+	dest->y = y;
+	dest->z = z;
+}
+
+static inline void CAMERA_Add_SVec_To_Pos(struct _SVector* dest, struct _Position* pos, struct _SVector* vec)
+{
+	short x, y, z;
+
+	x = pos->x;
+	y = pos->y;
+	z = pos->z;
+
+	x += vec->x;
+	y += vec->y;
+	z += vec->z;
+
+	dest->x = x;
+	dest->y = y;
+	dest->z = z;
+}
+
+static inline void CAMERA_Sub_SVec_From_SVec(struct _SVector* dest, struct _SVector* vec0, struct _SVector* vec1)
+{
+	short x0, y0, z0;
+	short x1, y1, z1;
+
+	x0 = vec0->x;
+	y0 = vec0->y;
+	z0 = vec0->z;
+
+	x1 = vec1->x;
+	y1 = vec1->y;
+	z1 = vec1->z;
+
+	dest->x = x0 - x1;
+	dest->y = y0 - y1;
+	dest->z = z0 - z1;
+}
+
+static inline void CAMERA_Copy_Pos_To_SVec(struct _SVector* vec, struct _Position* pos)
+{
+	short x, y, z;
+
+	x = pos->x;
+	y = pos->y;
+	z = pos->z;
+
+	vec->x = x;
+	vec->y = y;
+	vec->z = z;
+}
+
+static inline void CAMERA_Copy_Vec_To_SVec(struct _SVector* SVec, struct _Vector* vec)
+{
+	short x, y, z;
+
+	x = (short)vec->x;
+	y = (short)vec->y;
+	z = (short)vec->z;
+
+	SVec->x = x;
+	SVec->y = y;
+	SVec->z = z;
+}
 
 void CAMERA_CalculateViewVolumeNormals(struct Camera *camera)
 {
@@ -2756,287 +2925,401 @@ void CAMERA_Relocate(struct Camera *camera, struct _SVector *offset, int streamS
 	}
 }
 
+struct _TFace* CAMERA_SphereToSphereWithLines(struct Camera* camera, struct CameraCollisionInfo* colInfo, int secondcheck_flag) // Matching - 99.37%
+{
+	long minLength;                      // stack offset -68     sp(0x134)
+	struct _SVector sv;                  // stack offset -344    sp(0x20)
+	struct _SVector startPt[5];          // stack offset -336    sp(0x28)
+	struct _SVector endPt[5];            // stack offset -296    sp(0x50)
+	struct _SVector startLine;           // stack offset -256    sp(0x78)
+	struct _Vector adjStartLine;         // stack offset -248    sp(0x80)
+	struct _SVector endLine;             // stack offset -232    sp(0x90)
+	struct _Vector adjEndLine;           // stack offset -224    sp(0x98)
+	struct _Vector CamLineNormalized;    // stack offset -208    sp(0xA8)
+	struct _Rotation rotation;           // stack offset -192    sp(0xB8)
+	MATRIX matrix;                       // stack offset -184    sp(0xC0)
+	struct _TFace* result;               // stack offset -64     sp(0x138)
+	long i;                              // stack offset -60     sp(0x13C)
+	long init;                           // stack offset -56     sp(0x140)
+	struct Level* level;                 // stack offset -52     sp(0x144)
+	// struct _Instance *focusInstance;  // $v0
+	struct _Vector ACE_vect;             // stack offset -152    sp(0xE0)
+	struct _LCollideInfo lcol;           // stack offset -136    sp(0xF0)
+	int ACE_force;                       // $s2
+	int in_warpRoom;                     // stack offset -48     sp(0x148)
+	int flag;                            // $fp
+	short backface_flag;                 // stack offset -72     sp(0x130)
+	struct _PCollideInfo pCollideInfo;   // stack offset -120    sp(0x100)
+	int n;                               // $s2
+	struct Level* thislevel;             // $s1
+	struct _SVector* _v;                 // stack offset -44     sp(0x14C)
 
-// autogenerated function stub: 
-// struct _TFace * /*$ra*/ CAMERA_SphereToSphereWithLines(struct Camera *camera /*$s6*/, struct CameraCollisionInfo *colInfo /*stack 4*/, int secondcheck_flag /*stack 8*/)
-struct _TFace * CAMERA_SphereToSphereWithLines(struct Camera *camera, struct CameraCollisionInfo *colInfo, int secondcheck_flag)
-{ // line 2017, offset 0x800179e8
-	///* begin block 1 */
-	//	// Start line: 2018
-	//	// Start offset: 0x800179E8
-	//	// Variables:
-	//		long minLength; // stack offset -68
-	//		struct _SVector sv; // stack offset -344
-	//		struct _SVector startPt[5]; // stack offset -336
-	//		struct _SVector endPt[5]; // stack offset -296
-	//		struct _SVector startLine; // stack offset -256
-	//		struct _Vector adjStartLine; // stack offset -248
-	//		struct _SVector endLine; // stack offset -232
-	//		struct _Vector adjEndLine; // stack offset -224
-	//		struct _Vector CamLineNormalized; // stack offset -208
-	//		struct _Rotation rotation; // stack offset -192
-	//		MATRIX matrix; // stack offset -184
-	//		struct _TFace *result; // stack offset -64
-	//		long i; // stack offset -60
-	//		long init; // stack offset -56
-	//		struct Level *level; // stack offset -52
-	//		struct _Instance *focusInstance; // $v0
-	//		struct _Vector ACE_vect; // stack offset -152
-	//		struct _LCollideInfo lcol; // stack offset -136
-	//		int ACE_force; // $s2
-	//		int in_warpRoom; // stack offset -48
+	minLength = 0;
+	result = NULL;
+	init = 1;
+	ACE_force = 0;
 
-	//	/* begin block 1.1 */
-	//		// Start line: 2133
-	//		// Start offset: 0x80017CF4
-	//		// Variables:
-	//			short _x0; // $v1
-	//			short _y0; // $a0
-	//			short _z0; // $v0
-	//			short _x1; // $a1
-	//			short _y1; // $a2
-	//			short _z1; // $a3
-	//			struct _SVector *_v; // $v1
-	//			_Position *_v0; // $v0
-	//	/* end block 1.1 */
-	//	// End offset: 0x80017CF4
-	//	// End Line: 2133
+	level = STREAM_GetLevelWithID(camera->focusInstance->currentStreamUnitID);
 
-	//	/* begin block 1.2 */
-	//		// Start line: 2133
-	//		// Start offset: 0x80017CF4
-	//		// Variables:
-	//			short _x0; // $v1
-	//			short _y0; // $a0
-	//			short _z0; // $v0
-	//			short _x1; // $a1
-	//			short _y1; // $a2
-	//			short _z1; // $a3
-	//			struct _SVector *_v; // $v1
-	//			_Position *_v0; // $v0
-	//	/* end block 1.2 */
-	//	// End offset: 0x80017CF4
-	//	// End Line: 2133
+	if ((level != NULL) && (MEMPACK_MemoryValidFunc((char*)level) != 0))
+	{
+		colInfo->line = -1;
+		colInfo->flags = 0;
+		colInfo->numCollided = 0;
+		startLine.x = 0;
+		startLine.z = 0;
+		endLine.x = 0;
+		endLine.z = 0;
 
-	//	/* begin block 1.3 */
-	//		// Start line: 2146
-	//		// Start offset: 0x80017E00
-	//		// Variables:
-	//			short _x0; // $v1
-	//			short _y0; // $a0
-	//			short _z0; // $v0
-	//			short _x1; // $a1
-	//			short _y1; // $a2
-	//			short _z1; // $a3
-	//			struct _SVector *_v; // $s3
-	//			_Position *_v0; // $v0
-	//	/* end block 1.3 */
-	//	// End offset: 0x80017E00
-	//	// End Line: 2146
+		CAMERA_CalcFSRotation(camera, &rotation, &colInfo->end->position, &colInfo->start->position);
 
-	//	/* begin block 1.4 */
-	//		// Start line: 2146
-	//		// Start offset: 0x80017E00
-	//		// Variables:
-	//			short _x0; // $v1
-	//			short _y0; // $a1
-	//			short _z0; // $v0
-	//			short _x1; // $a2
-	//			short _y1; // $a3
-	//			short _z1; // $t0
-	//			struct _SVector *_v; // $v1
-	//			_Position *_v0; // $v0
-	//	/* end block 1.4 */
-	//	// End offset: 0x80017E00
-	//	// End Line: 2146
+		if ((camera->flags & 0x10000U) != 0)
+		{
+			colInfo->start->position.x += (short)((colInfo->end->position.x - colInfo->start->position.x) >> 5);
+			colInfo->start->position.y += (short)((colInfo->end->position.y - colInfo->start->position.y) >> 5);
+			colInfo->start->position.z += (short)((colInfo->end->position.z - colInfo->start->position.z) >> 5);
+		}
 
-	//	/* begin block 1.5 */
-	//		// Start line: 2146
-	//		// Start offset: 0x80017E00
-	//		// Variables:
-	//			short _x0; // $v1
-	//			short _y0; // $a1
-	//			short _z0; // $a2
-	//			short _x1; // $a3
-	//			short _y1; // $t0
-	//			short _z1; // $t1
-	//			struct _SVector *_v; // $v0
-	//			_Position *_v1; // $v0
-	//	/* end block 1.5 */
-	//	// End offset: 0x80017E00
-	//	// End Line: 2146
+		MATH3D_SetUnityMatrix(&matrix);
+		RotMatrixZ(rotation.z + 1024, &matrix);
 
-	//	/* begin block 1.6 */
-	//		// Start line: 2146
-	//		// Start offset: 0x80017E00
-	//		// Variables:
-	//			short _x0; // $v1
-	//			short _y0; // $a1
-	//			short _z0; // $a2
-	//			short _x1; // $a3
-	//			short _y1; // $t0
-	//			short _z1; // $t1
-	//			struct _SVector *_v; // $v0
-	//			_Position *_v1; // $v0
-	//	/* end block 1.6 */
-	//	// End offset: 0x80017E00
-	//	// End Line: 2146
+		if (((camera->flags & 0x10000U) == 0) && ((camera->instance_mode & 0x4000000) == 0) && (camera->mode != 6))
+		{
+			startLine.y = 4096;
 
-	//	/* begin block 1.7 */
-	//		// Start line: 2146
-	//		// Start offset: 0x80017E00
-	//		// Variables:
-	//			short _x0; // $v1
-	//			short _y0; // $a2
-	//			short _z0; // $v0
-	//			short _x1; // $a3
-	//			short _y1; // $t0
-	//			short _z1; // $t1
-	//			struct _SVector *_v; // $v1
-	//			_Position *_v0; // $v0
-	//	/* end block 1.7 */
-	//	// End offset: 0x80017E00
-	//	// End Line: 2146
+			ApplyMatrix(&matrix, (SVECTOR*)&startLine, (VECTOR*)&ACE_vect);
 
-	//	/* begin block 1.8 */
-	//		// Start line: 2146
-	//		// Start offset: 0x80017E00
-	//		// Variables:
-	//			short _x0; // $v1
-	//			short _y0; // $a3
-	//			short _z0; // $v0
-	//			short _x1; // $t0
-	//			short _y1; // $t1
-	//			short _z1; // $t2
-	//			struct _SVector *_v; // $v1
-	//			_Position *_v0; // $v0
-	//	/* end block 1.8 */
-	//	// End offset: 0x80017E00
-	//	// End Line: 2146
+			ACE_amount =
+				(ACE_vect.x * camera->focusInstanceVelVec.x) +
+				(ACE_vect.y * camera->focusInstanceVelVec.y) +
+				(ACE_vect.z * camera->focusInstanceVelVec.z);
 
-	//	/* begin block 1.9 */
-	//		// Start line: 2146
-	//		// Start offset: 0x80017E00
-	//		// Variables:
-	//			short _x0; // $v0
-	//			short _y0; // $v1
-	//			short _z0; // $a3
-	//			short _x1; // $t0
-	//			short _y1; // $t2
-	//			short _z1; // $t3
-	//			struct _SVector *_v; // $v0
-	//			struct _SVector *_v0; // $a3
-	//			struct _SVector *_v1; // $t1
-	//	/* end block 1.9 */
-	//	// End offset: 0x80017E00
-	//	// End Line: 2146
+			ACE_amount >>= 12;
 
-	//	/* begin block 1.10 */
-	//		// Start line: 2146
-	//		// Start offset: 0x80017E00
-	//		// Variables:
-	//			short _x0; // $v0
-	//			short _y0; // $v1
-	//			short _z0; // $a3
-	//			short _x1; // $t0
-	//			short _y1; // $t2
-	//			short _z1; // $t1
-	//			struct _SVector *_v; // $v0
-	//	/* end block 1.10 */
-	//	// End offset: 0x80017E00
-	//	// End Line: 2146
+			if ((camera->always_rotate_flag != 0) || (camera->forced_movement != 0))
+			{
+				if (camera->forced_movement != 0)
+				{
+					if (camera->rotDirection <= 0)
+					{
+						if (camera->rotDirection < 0)
+						{
+							ACE_force = -72;
+						}
+					}
+					else
+					{
+						ACE_force = 72;
+					}
+				}
+				else
+				{
+					ACE_force = -72;
 
-	//	/* begin block 1.11 */
-	//		// Start line: 2146
-	//		// Start offset: 0x80017E00
-	//		// Variables:
-	//			short _x1; // $v1
-	//			short _y1; // $a0
-	//			short _z1; // $v0
-	//			_Position *_v1; // $v0
-	//	/* end block 1.11 */
-	//	// End offset: 0x80017E00
-	//	// End Line: 2146
+					if ((CAMERA_SignedAngleDifference(camera->focusRotation.z, camera->targetFocusRotation.z) << 16) < 0)
+					{
+						ACE_force = 72;
+					}
+				}
 
-	//	/* begin block 1.12 */
-	//		// Start line: 2146
-	//		// Start offset: 0x80017E00
-	//		// Variables:
-	//			short _x1; // $v1
-	//			short _y1; // $a0
-	//			short _z1; // $a2
-	//			_Position *_v1; // $v0
-	//	/* end block 1.12 */
-	//	// End offset: 0x80017E00
-	//	// End Line: 2146
+				if (ACE_amount > 0)
+				{
+					if (ACE_force > 0)
+					{
+						ACE_force -= ACE_amount;
 
-	//	/* begin block 1.13 */
-	//		// Start line: 2232
-	//		// Start offset: 0x80018148
-	//		// Variables:
-	//			int clut; // $fp
-	//			short backface_flag; // stack offset -72
-	//			struct _PCollideInfo pCollideInfo; // stack offset -120
+						if (ACE_force < 0)
+						{
+							ACE_force = 0;
+						}
+					}
+				}
 
-	//		/* begin block 1.13.1 */
-	//			// Start line: 2257
-	//			// Start offset: 0x800181A8
-	//			// Variables:
-	//				int n; // $s2
+				else if (ACE_force < 0)
+				{
+					ACE_force -= ACE_amount;
 
-	//			/* begin block 1.13.1.1 */
-	//				// Start line: 2262
-	//				// Start offset: 0x800181B4
-	//				// Variables:
-	//					struct Level *thislevel; // $s1
-	//			/* end block 1.13.1.1 */
-	//			// End offset: 0x8001823C
-	//			// End Line: 2279
-	//		/* end block 1.13.1 */
-	//		// End offset: 0x8001824C
-	//		// End Line: 2280
+					if (ACE_force > 0)
+					{
+						ACE_force = 0;
+					}
+				}
+			}
+		}
+		else
+		{
+			ACE_amount = 0;
+		}
 
-	//		/* begin block 1.13.2 */
-	//			// Start line: 2305
-	//			// Start offset: 0x8001828C
-	//			// Variables:
-	//				short _x0; // $v0
-	//				short _y0; // $v1
-	//				short _z0; // $a0
-	//				short _x1; // $a1
-	//				short _y1; // $a2
-	//				short _z1; // $a3
-	//				struct _SVector *_v; // stack offset -44
-	//		/* end block 1.13.2 */
-	//		// End offset: 0x8001828C
-	//		// End Line: 2305
+		startLine.y = 32;
+		endLine.y = 290;
 
-	//		/* begin block 1.13.3 */
-	//			// Start line: 2336
-	//			// Start offset: 0x800183E0
-	//			// Variables:
-	//				short _x0; // $v0
-	//				short _y0; // $v1
-	//				short _z0; // $a0
-	//				short _x1; // $a1
-	//				short _y1; // $a2
-	//				short _z1; // $a3
-	//		/* end block 1.13.3 */
-	//		// End offset: 0x800183E0
-	//		// End Line: 2336
-	//	/* end block 1.13 */
-	//	// End offset: 0x80018460
-	//	// End Line: 2361
-	///* end block 1 */
-	//// End offset: 0x800184F4
-	//// End Line: 2380
+		if (ACE_amount > 0)
+		{
+			startLine.y += (short)ACE_amount;
+			endLine.y += (short)((ACE_amount * 5) + (ACE_amount / 2));
+		}
+		else
+		{
+			startLine.y -= (short)(ACE_amount * 2);
+		}
 
-	///* begin block 2 */
-	//	// Start line: 4612
-	///* end block 2 */
-	//// End Line: 4613
-UNIMPLEMENTED();
-	return null;
+		if (ACE_force > 0)
+		{
+			endLine.y += ACE_force * 5;
+		}
+
+		ApplyMatrix(&matrix, (SVECTOR*)&startLine, (VECTOR*)&adjStartLine);
+		ApplyMatrix(&matrix, (SVECTOR*)&endLine, (VECTOR*)&adjEndLine);
+
+		{
+			struct _Vector* _v0;
+			struct _Vector* _v1;
+			struct _SVector* _v2;
+			struct _SVector* _v3;
+
+			_v0 = &adjStartLine;
+			_v1 = &adjEndLine;
+			_v2 = &startPt[1];
+			_v3 = &endPt[1];
+
+			CAMERA_Add_Vec_To_Pos((struct _Position*)_v2, &colInfo->start->position, _v0);
+			CAMERA_Add_Vec_To_Pos((struct _Position*)_v3, &colInfo->end->position, _v1);
+		}
+
+		startLine.y = 32;
+		endLine.y = 290;
+
+		if (ACE_amount < 0)
+		{
+			startLine.y -= (short)ACE_amount;
+			endLine.y -= (short)((ACE_amount * 5) + (ACE_amount / 2));
+		}
+		else
+		{
+			startLine.y += (short)(ACE_amount * 2);
+		}
+
+		if (ACE_force < 0)
+		{
+			endLine.y -= ACE_force * 5;
+		}
+
+		ApplyMatrix(&matrix, (SVECTOR*)&startLine, (VECTOR*)&adjStartLine);
+		ApplyMatrix(&matrix, (SVECTOR*)&endLine, (VECTOR*)&adjEndLine);
+
+		{
+			struct _Vector* _v0;
+			struct _Vector* _v1;
+			struct _SVector* _v2;
+			struct _SVector* _v3;
+
+			_v0 = &adjStartLine;
+			_v1 = &adjEndLine;
+			_v2 = &startPt[2];
+			_v3 = &endPt[2];
+
+			CAMERA_Sub_Vec_From_Pos((struct _Position*)_v2, &colInfo->start->position, _v0);
+			CAMERA_Sub_Vec_From_Pos((struct _Position*)_v3, &colInfo->end->position, _v1);
+		}
+
+		endLine.y = 180;
+		startLine.y = 32;
+
+		MATH3D_SetUnityMatrix(&matrix);
+		RotMatrixX(rotation.x + 1024, &matrix);
+		RotMatrixZ(rotation.z, &matrix);
+
+		ApplyMatrix(&matrix, (SVECTOR*)&startLine, (VECTOR*)&adjStartLine);
+		ApplyMatrix(&matrix, (SVECTOR*)&endLine, (VECTOR*)&adjEndLine);
+		{
+			struct _Vector* _v0;
+			struct _Vector* _v1;
+			struct _SVector* _v2;
+			struct _SVector* _v3;
+
+			_v0 = &adjStartLine;
+			_v1 = &adjEndLine;
+			_v2 = &startPt[3];
+			_v3 = &endPt[3];
+
+			CAMERA_Add_Pos_To_Vec((struct _Position*)_v2, _v0, &colInfo->start->position);
+			CAMERA_Add_Pos_To_Vec((struct _Position*)_v3, _v1, &colInfo->end->position);
+		}
+
+		{
+			struct _Vector* _v0;
+			struct _Vector* _v1;
+			struct _SVector* _v2;
+			struct _SVector* _v3;
+
+			_v0 = &adjStartLine;
+			_v1 = &adjEndLine;
+			_v2 = &startPt[4];
+			_v3 = &endPt[4];
+
+			CAMERA_Sub_Vec_From_Pos((struct _Position*)_v2, &colInfo->start->position, _v0);
+			CAMERA_Sub_Vec_From_Pos((struct _Position*)_v3, &colInfo->end->position, _v1);
+		}
+
+		{
+			struct _SVector* _v2 = &startPt[1];
+			struct _SVector* _v3 = &right_point;
+
+			CAMERA_Add_SVec_To_Pos(_v3, (struct _Position*)_v2, &camera->focusInstanceVelVec);
+		}
+
+		{
+			struct _SVector* _v2 = &startPt[2];
+			struct _SVector* _v3 = &left_point;
+
+			CAMERA_Add_SVec_To_Pos(_v3, (struct _Position*)_v2, &camera->focusInstanceVelVec);
+		}
+
+		startLine.y = 4096;
+
+		ApplyMatrix(&matrix, (SVECTOR*)&startLine, (VECTOR*)&adjStartLine);
+
+		CAMERA_Copy_Vec_To_SVec(&camera_plane, &adjStartLine);
+
+		startLine.y = 0;
+		startLine.z = 4096;
+
+		ApplyMatrix(&matrix, (SVECTOR*)&startLine, (VECTOR*)&CamLineNormalized);
+
+		{
+			struct _SVector* _v2 = &startPt[0];
+			CAMERA_Copy_Pos_To_SVec(_v2, &colInfo->start->position);
+		}
+
+		{
+			struct _SVector* _v2 = &endPt[0];
+			CAMERA_Copy_Pos_To_SVec(_v2, &colInfo->end->position);
+		}
+
+		colInfo->lenCenterToExtend = (int)camera->targetFocusDistance;
+		in_warpRoom = (unsigned int)(unsigned short)STREAM_GetStreamUnitWithID(level->streamUnitID)->flags & 1;
+
+		for (i = 0, _v = &sv; i < 5; i++)
+		{
+			if ((colInfo->cldLines & (1 << i)) != 0)
+			{
+				if ((i - 1) < 2U)
+				{
+					flag = 1;
+				}
+				else
+				{
+					flag = 0;
+				}
+
+				backface_flag = 0;
+				pCollideInfo.collideType = 1;
+				pCollideInfo.newPoint = (SVECTOR*)&endPt[i];
+				pCollideInfo.oldPoint = (SVECTOR*)&startPt[i];
+				pCollideInfo.instance = NULL;
+				colInfo->tfaceList[i] = COLLIDE_PointAndTerrainFunc(level->terrain, &pCollideInfo, flag, &backface_flag, 208, 32, &lcol);
+				colInfo->tfaceTerrain[i] = level->terrain;
+
+				if (colInfo->tfaceList[i] == NULL)
+				{
+					struct _StreamUnit* streamUnit = StreamTracker.StreamList;
+					for (n = 0; n < 16; n++, streamUnit++)
+					{
+						thislevel = streamUnit->level;
+						if ((streamUnit->used == 2) && (thislevel != level) &&
+							(MEMPACK_MemoryValidFunc((char*)thislevel) != 0) &&
+							(in_warpRoom == 0 || ((streamUnit->flags & 1) == 0)))
+						{
+							colInfo->tfaceList[i] = COLLIDE_PointAndTerrainFunc(thislevel->terrain, &pCollideInfo, flag, &backface_flag, 208, 32, &lcol);
+
+							if (colInfo->tfaceList[i] != NULL)
+							{
+								colInfo->tfaceTerrain[i] = thislevel->terrain;
+								break;
+							}
+						}
+					}
+				}
+
+				colInfo->bspTree[i] = lcol.curTree;
+
+				if (colInfo->tfaceList[i] != NULL)
+				{
+					if (secondcheck_flag != 0)
+					{
+						return colInfo->tfaceList[i];
+					}
+
+					colInfo->numCollided++;
+
+					{
+						struct _SVector* _v0;
+						struct _SVector* _v1;
+
+						_v0 = endPt;
+						_v1 = startPt;
+						CAMERA_Sub_SVec_From_SVec(&sv, &_v0[i], &_v1[i]);
+
+						colInfo->lengthList[i] = (short)(((sv.x * CamLineNormalized.x) + (sv.y * CamLineNormalized.y) + (sv.z * CamLineNormalized.z)) >> 0xc);
+					}
+
+					if (backface_flag == 0 || 100 <= colInfo->lengthList[i])
+					{
+						colInfo->lengthList[i] -= 100;
+
+						if (colInfo->lengthList[i] < 220)
+						{
+							colInfo->lengthList[i] = 220;
+						}
+
+						if (init != 0 || (int)colInfo->lengthList[i] < minLength)
+						{
+							colInfo->line = i;
+							minLength = (int)colInfo->lengthList[i];
+							init = 0;
+							colInfo->lenCenterToExtend = minLength;
+							result = colInfo->tfaceList[i];
+						}
+
+						colInfo->flags |= (1 << i);
+					}
+				}
+				else
+				{
+					{
+						struct _SVector* _v0;
+						struct _SVector* _v1;
+
+						_v0 = endPt;
+						_v1 = startPt;
+						CAMERA_Sub_SVec_From_SVec(&sv, &_v0[i], &_v1[i]);
+
+						colInfo->lengthList[i] = (short)(((sv.x * CamLineNormalized.x) + (sv.y * CamLineNormalized.y) + (sv.z * CamLineNormalized.z)) >> 0xc);
+					}
+				}
+			}
+		}
+
+		if (colInfo->line == 2)
+		{
+			hitline_rot = CAMERA_CalcZRotation((struct _Position*)&startPt[2], (struct _Position*)&endPt[2]);
+		}
+		else if (colInfo->line == 1)
+		{
+			hitline_rot = CAMERA_CalcZRotation((struct _Position*)&startPt[1], (struct _Position*)&endPt[1]);
+		}
+		else if ((colInfo->flags & 4) != 0)
+		{
+			hitline_rot = CAMERA_CalcZRotation((struct _Position*)&startPt[2], (struct _Position*)&endPt[2]);
+		}
+		else if ((colInfo->flags & 2) != 0)
+		{
+			hitline_rot = CAMERA_CalcZRotation((struct _Position*)&startPt[1], (struct _Position*)&endPt[1]);
+		}
+	}
+
+	return result;
 }
 
 long CAMERA_CalcTilt(struct _Normal* normal, short zRot)//Matching - 99.66%
