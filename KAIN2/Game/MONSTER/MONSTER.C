@@ -1897,7 +1897,7 @@ void MON_DefaultInit(struct _Instance *instance)
 }
 
 
-void MON_CleanUp(struct _Instance* instance)  // Matching - 98.41%
+void MON_CleanUp(struct _Instance* instance)  // Matching - 99.93%
 {
 	struct _MonsterVars* mv;
 	struct _MonsterAttributes* ma;
@@ -1909,14 +1909,14 @@ void MON_CleanUp(struct _Instance* instance)  // Matching - 98.41%
 	{
 		MON_UnlinkFromRaziel(instance);
 	}
-	if (((char)(unsigned long)mv->freeIRs == 3) && (mv->effect != NULL))
+	if ((mv->causeOfDeath == 3) && (mv->effect != NULL))
 	{
 		SndEndLoop((unsigned long)mv->effect);
 		mv->effect = NULL;
 	}
-	if (((signed char)mv->validUnits[3]) != -1)
+	if (((signed char)mv->pathSlotID) != -1)
 	{
-		ENMYPLAN_ReleasePlanningWorkspace((signed char)mv->validUnits[3]);
+		ENMYPLAN_ReleasePlanningWorkspace((signed char)mv->pathSlotID);
 	}
 	if (ma->neckSegment != 0)
 	{
