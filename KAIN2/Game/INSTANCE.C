@@ -20,22 +20,24 @@
 #include "CAMERA.H"
 #include "MATH3D.H"
 
-void INSTANCE_Deactivate(struct _Instance* instance) { // Matching 99.89%
+void INSTANCE_Deactivate(struct _Instance* instance)  // Matching - 99.89%
+{
 	struct Object* object;
+
 	object = instance->object;
-	if ((gameTrackerX.streamFlags & 0x2000000) == NULL)
+	if (!(gameTrackerX.streamFlags & 0x2000000))
 	{
-		instance->flags2 = instance->flags2 | 1;
-		if ((instance->flags2 & 0x20000000) != NULL)
+		instance->flags2 |= 1;
+		if ((instance->flags2 & 0x20000000))
 		{
-			instance->flags = instance->flags | 0x40000;
+			instance->flags |= 0x40000;
 		}
 		else
 		{
-			instance->flags = instance->flags & 0xFFFBFFFF;
-			instance->flags2 = instance->flags2 | 0x20000000;
+			instance->flags &= 0xFFFBFFFF;
+			instance->flags2 |= 0x20000000;
 		}
-		if ((object->animList != NULL) && (object->oflags2 & 0x40000000) == NULL)
+		if ((object->animList != NULL) && !(object->oflags2 & 0x40000000))
 		{
 			G2Anim_Free(&instance->anim);
 		}
