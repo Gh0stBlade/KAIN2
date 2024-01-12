@@ -529,7 +529,7 @@ void SOUL_Idle(struct _Instance* instance) // Matching - 99.92%
 		{
 			MON_SwitchState(instance, MONSTER_STATE_FLEE);
 		}
-		else if ((MON_GetTime(instance)) > *(unsigned int*)&mv->destination.y)
+		else if ((MON_GetTime(instance)) > mv->generalTimer)
 		{
 			MON_SwitchState(instance, MONSTER_STATE_WANDER);
 		}
@@ -562,7 +562,7 @@ void SOUL_Reanimate(struct _Instance* instance) // Matching - 99.89%
 
 	mv = (struct _MonsterVars*)instance->extraData;
 	SOUL_MoveToDest(instance, 16, gameTrackerX.timeMult);
-	if (MATH3D_LengthXY((instance->position).x - mv->lookAtPosData.y, instance->position.y - mv->lookAtPosData.z) < 250)
+	if (MATH3D_LengthXY((instance->position).x - mv->destination.x, instance->position.y - mv->destination.y) < 250)
 	{
 		if (mv->soulID != 0)
 		{
