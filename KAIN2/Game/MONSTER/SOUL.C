@@ -217,12 +217,13 @@ void SOUL_BirthEntry(struct _Instance* instance)//Matching - 99.76%
 void SOUL_Birth(struct _Instance* instance)  // Matching - 99.81%
 {
 	struct _MonsterVars* mv;
+
 	instance->zAccl = 0;
 	mv = (struct _MonsterVars*)instance->extraData;
 	SOUL_Physics(instance, gameTrackerX.timeMult);
-	if (MON_GetTime(instance) > ((unsigned int*)&mv->destination.y)[0])
+	if (MON_GetTime(instance) > mv->generalTimer)
 	{
-		MON_SwitchState(instance, (MonsterState)2);
+		MON_SwitchState(instance, MONSTER_STATE_IDLE);
 	}
 	SOUL_QueueHandler(instance);
 }
