@@ -171,22 +171,23 @@ void SOUL_Init(struct _Instance* instance)  // Matching - 100%
 {
 	struct _MonsterVars* mv;
 	mv = (struct _MonsterVars*)instance->extraData;
+
 	MON_DefaultInit(instance);
 	mv->mvFlags |= 0x200000 | 0x880;
-	instance->maxXVel = 0x258;
-	instance->maxYVel = 0x258;
-	instance->maxZVel = 0x258;
+	instance->maxXVel = 600;
+	instance->maxYVel = 600;
+	instance->maxZVel = 600;
 	instance->flags2 |= 0x20000;
-	mv->ambushRange = 0;
-	mv->lookAtPos = (_Position*)(MON_GetTime(instance) + 0x1964);
+	mv->speed = 0;
+	mv->damageTimer = MON_GetTime(instance) + 6500;
 	if (instance->parent != NULL)
 	{
 		mv->soulID = instance->parent->introUniqueID;
 	}
-	if ((instance->flags & 2) == 0)
+	if (!(instance->flags & 2))
 	{
 		instance->flags2 |= 0x8000000;
-		MON_SwitchState(instance, (MonsterState)2);
+		MON_SwitchState(instance, MONSTER_STATE_IDLE);
 	}
 }
 
