@@ -376,26 +376,26 @@ void SOUL_Wander(struct _Instance* instance) // Matching - 99.95%
 	{
 		if (instance->intro)
 		{
-			MON_GetRandomDestinationInWorld(instance, &instance->intro->position, mv->lookAngleX);
+			MON_GetRandomDestinationInWorld(instance, &instance->intro->position, mv->wanderRange);
 			instance->zAccl = 0;
 		}
 		else
 		{
-			MON_GetRandomDestinationInWorld(instance, &instance->position, mv->lookAngleX);
+			MON_GetRandomDestinationInWorld(instance, &instance->position, mv->wanderRange);
 			instance->zAccl = 0;
 		}
 	}
 	else
 	{
-		if (MATH3D_LengthXY(mv->lookAtPosData.y - instance->position.x, mv->lookAtPosData.z - instance->position.y) < 100)
+		if (MATH3D_LengthXY(mv->destination.x - instance->position.x, mv->destination.y - instance->position.y) < 100)
 		{
 			MON_SwitchState(instance, MONSTER_STATE_IDLE);
 			instance->zAccl = 0;
 		}
 		else
 		{
-			instance->xAccl = mv->lookAtPosData.y - instance->position.x - instance->xVel;
-			instance->yAccl = mv->lookAtPosData.z - instance->position.y - instance->yVel;
+			instance->xAccl = mv->destination.x - instance->position.x - instance->xVel;
+			instance->yAccl = mv->destination.y - instance->position.y - instance->yVel;
 
 			if (instance->xAccl >= -2)
 			{
@@ -437,7 +437,6 @@ void SOUL_Wander(struct _Instance* instance) // Matching - 99.95%
 			MON_SwitchState(instance, MONSTER_STATE_FLEE);
 		}
 	}
-
 	SOUL_QueueHandler(instance);
 }
 
