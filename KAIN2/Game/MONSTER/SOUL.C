@@ -71,10 +71,11 @@ void SOUL_MoveToDest(struct _Instance* instance, long maxAccel, long time)  // M
 {
 	struct _MonsterVars* mv;
 	mv = (struct _MonsterVars*)instance->extraData;
-	instance->xAccl = (mv->lookAtPosData.y - instance->position.x) - instance->xVel;
-	instance->yAccl = (mv->lookAtPosData.z - instance->position.y) - instance->yVel;
-	instance->zAccl = (mv->guardRange - instance->position.z) - instance->zVel;
-	if ((instance->xAccl < -maxAccel) != 0)
+
+	instance->xAccl = (mv->destination.x - instance->position.x) - instance->xVel;
+	instance->yAccl = (mv->destination.y - instance->position.y) - instance->yVel;
+	instance->zAccl = (mv->destination.z - instance->position.z) - instance->zVel;
+	if (instance->xAccl < -maxAccel)
 	{
 		instance->xAccl = -maxAccel;
 	}
