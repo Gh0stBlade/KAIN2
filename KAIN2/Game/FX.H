@@ -110,7 +110,7 @@ struct _FXParticle // hashcode: 0xDD6F143E (dec: -579922882)
 	unsigned char type; // size=0, offset=13
 	short lifeTime; // size=0, offset=14
 	struct TextureMT3* texture; // size=16, offset=16
-	void* fxprim_modify_process; // size=0, offset=20
+	void (*fxprim_modify_process)(struct _FX_PRIM* fxPrim, struct _Instance* instance, struct _FXParticle* particle, struct _FXTracker* fxTracker); // size=0, offset=20
 	void* fxprim_process; // size=0, offset=24
 	short size; // size=0, offset=28
 	short primLifeTime; // size=0, offset=30

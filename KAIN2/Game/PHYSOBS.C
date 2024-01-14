@@ -941,7 +941,7 @@ void InitPhysicalObject(struct _Instance* instance, struct GameTracker* gameTrac
 				switchProp->startAnim = 0;
 			}
 			G2EmulationInstanceSetAnimation(instance, 0, switchProp->startAnim, 0, 0);
-			G2EmulationInstanceInitSection(instance, 0, &PhysobAnimCallback, instance);
+			G2EmulationInstanceInitSection(instance, 0, PhysobAnimCallback, instance);
 			if (switchProp->Class == 7)
 			{
 				interact->Properties.family = 1024;

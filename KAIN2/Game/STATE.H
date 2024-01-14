@@ -195,7 +195,7 @@ extern void G2EmulationInstanceSetTotalSections(struct _Instance *instance, shor
 
 extern void G2EmulationSetTotalSections(struct __CharacterState *In, short Total); // 0x800723D4
 
-extern void G2EmulationInstanceInitSection(struct _Instance *instance, int CurrentSection, void *callback, void *data); // 0x80072404
+extern void G2EmulationInstanceInitSection(struct _Instance *instance, int CurrentSection, long (*callback)(struct _G2Anim_Type* anim, int sectionID, enum _G2AnimCallbackMsg_Enum message, long messageDataA, long messageDataB, void* data), void *data); // 0x80072404
 
 extern void G2EmulationSetInterpController_Vector(struct _Instance *instance, long segment, long type, struct _G2SVector3_Type *vec, int Frames, int Data); // 0x80072428
 
