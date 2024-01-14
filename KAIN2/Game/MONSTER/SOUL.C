@@ -43,17 +43,18 @@ void SOUL_Fade(struct _Instance* instance)  // Matching - 99.89%
 {
 	struct _MonsterVars* mv;
 	unsigned long time;
+
 	mv = (struct _MonsterVars*)instance->extraData;
 	time = MON_GetTime(instance);
-	if ((gameTrackerX.gameFlags & 0x80) == 0)
+	if (!(gameTrackerX.gameFlags & 0x80))
 	{
-		if (((unsigned long)mv->lookAtPos < time) != 0)
+		if (mv->damageTimer < time)
 		{
 			if (instance->fadeValue == 0)
 			{
 				MON_StartSpecialFade(instance, 4096, 100);
 			}
-			if ((instance->fadeValue < 4096) == 0)
+			if (instance->fadeValue >= 4096)
 			{
 				instance->flags2 |= 0x8000000;
 				MORPH_SetupInstanceFlags(instance);
@@ -63,7 +64,7 @@ void SOUL_Fade(struct _Instance* instance)  // Matching - 99.89%
 	}
 	else
 	{
-		mv->lookAtPos = (_Position*)(time + 6500);
+		mv->damageTimer = time + 6500;
 	}
 }
 
