@@ -1452,10 +1452,10 @@ int PHYSICS_CheckForValidMove(struct _Instance* instance, SVECTOR* startVec, SVE
 
 int PHYSICS_CheckFaceStick(struct _PCollideInfo* CInfo)  // Matching - 100%
 {
-	char unused[8];  // stack padding
 	int rc;
 	struct _TFace* tface;
 	struct _HFace* hface;
+	char unused[8];  // stack padding
 
 	rc = 0;
 	if (CInfo->type == 3)
@@ -1463,7 +1463,7 @@ int PHYSICS_CheckFaceStick(struct _PCollideInfo* CInfo)  // Matching - 100%
 		tface = (struct _TFace*)CInfo->prim;
 		if (tface->textoff != 0xFFFF)
 		{
-			hface = (struct _HFace*)(((unsigned short*)((char*)((struct _Terrain*)(CInfo->inst->node.prev))->StartTextureList + tface->textoff))[5] & 0x200);
+			hface = (struct _HFace*)(((struct TextureFT3*)((char*)((struct _Terrain*)(CInfo->inst->node.prev))->StartTextureList + tface->textoff))->attr & 0x200);
 			rc = (unsigned int)rc < (unsigned int)hface;
 		}
 	}
