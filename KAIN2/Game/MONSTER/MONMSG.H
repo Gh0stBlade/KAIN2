@@ -3,7 +3,8 @@
 
 #include "MONSTER.H"
 
-struct evMonsterAlarmData {
+struct evMonsterAlarmData 
+{
 	struct _Instance* sender; // size=668, offset=0
 	struct _Position position; // size=6, offset=4
 	short type; // size=0, offset=10
