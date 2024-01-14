@@ -1486,7 +1486,7 @@ void PHYSICS_GenericLineCheckSetup(short x, short y, short z, SVECTOR* inVec)
 	inVec->vz = z;
 }
 
-void PHYSICS_GenericLineCheck(struct _Instance* instance, MATRIX* transMat, MATRIX* rotMat, struct _PCollideInfo* cInfo)
+void PHYSICS_GenericLineCheck(struct _Instance* instance, MATRIX* transMat, MATRIX* rotMat, struct _PCollideInfo* cInfo)  // Matching - 100%
 {
 	cInfo->collideType = 63;
 	PHYSICS_GenericLineCheckMask(instance, transMat, rotMat, cInfo);
