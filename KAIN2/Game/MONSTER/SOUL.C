@@ -28,14 +28,15 @@ void SOUL_Physics(struct _Instance* instance, long time)  // Matching - 100%
 {
 	struct _MonsterVars* mv;
 	int a;
+
 	mv = (struct _MonsterVars*)instance->extraData;
 	a = -4;
-	if ((mv->ambushRange & 0x1F) < 16)
+	if ((mv->speed & 31) < 16)
 	{
 		a = 4;
 	}
 	instance->zAccl += a;
-	mv->ambushRange += 1;
+	mv->speed += 1;
 	PhysicsMove(instance, &instance->position, time);
 }
 
