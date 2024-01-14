@@ -1407,16 +1407,17 @@ void PHYSICS_StopIfCloseToTarget(struct _Instance* instance, int x, int y, int z
 	}
 }
 
-int PHYSICS_CheckForTerrainCollide(struct _Instance* instance, SVECTOR* startVec, SVECTOR* endVec, int segment)
+int PHYSICS_CheckForTerrainCollide(struct _Instance* instance, SVECTOR* startVec, SVECTOR* endVec, int segment)  // Matching - 100%
 {
 	struct _PCollideInfo CInfo;
 	MATRIX* pTempMat;
 
+	CInfo.oldPoint = startVec;
+	CInfo.newPoint = endVec;
 	pTempMat = instance->matrix + segment;
-
+	CInfo.collideType = 1;
 	PHYSICS_GenericLineCheckMask(instance, pTempMat, pTempMat, &CInfo);
-
-	return (CInfo.type ^ 3) < 1;
+	return CInfo.type == 3;
 }
 
 
