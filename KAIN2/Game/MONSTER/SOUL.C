@@ -9,6 +9,7 @@ void SOUL_QueueHandler(struct _Instance* instance)  // Matching - 100%
 {
 	struct _MonsterVars* mv;
 	struct __Event* message;
+
 	mv = (struct _MonsterVars*)instance->extraData;
 	while (message = DeMessageQueue(&mv->messageQueue), message != NULL)
 	{
@@ -16,7 +17,7 @@ void SOUL_QueueHandler(struct _Instance* instance)  // Matching - 100%
 		{
 			if (instance->currentMainState != 23)
 			{
-				MON_SwitchState(instance, (MonsterState)23);
+				MON_SwitchState(instance, MONSTER_STATE_DEAD);
 			}
 			continue;
 		}
