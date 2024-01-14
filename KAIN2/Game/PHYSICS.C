@@ -1432,10 +1432,12 @@ int PHYSICS_CheckForObjectCollide(struct _Instance* instance, SVECTOR* startVec,
 	return CInfo.type != 0;
 }
 
-int PHYSICS_CheckForValidMove(struct _Instance* instance, SVECTOR* startVec, SVECTOR* endVec, int segment) { // Matching - 100%
+int PHYSICS_CheckForValidMove(struct _Instance* instance, SVECTOR* startVec, SVECTOR* endVec, int segment)  // Matching - 100%
+{
 	struct _PCollideInfo CInfo;
 	MATRIX* pTempMat;
 	int rc;
+
 	CInfo.oldPoint = startVec;
 	CInfo.newPoint = endVec;
 	pTempMat = instance->matrix + segment;
