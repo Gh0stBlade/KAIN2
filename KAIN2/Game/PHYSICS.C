@@ -1420,18 +1420,17 @@ int PHYSICS_CheckForTerrainCollide(struct _Instance* instance, SVECTOR* startVec
 }
 
 
-int PHYSICS_CheckForObjectCollide(struct _Instance* instance, SVECTOR* startVec, SVECTOR* endVec, int segment)
+int PHYSICS_CheckForObjectCollide(struct _Instance* instance, SVECTOR* startVec, SVECTOR* endVec, int segment)  // Matching - 100%
 {
 	struct _PCollideInfo CInfo;
 	MATRIX* pTempMat;
 
+	CInfo.oldPoint = startVec;
+	CInfo.newPoint = endVec;
 	pTempMat = instance->matrix;
-	
 	CInfo.collideType = 62;
-
 	PHYSICS_GenericLineCheckMask(instance, &pTempMat[segment], &pTempMat[segment], &CInfo);
-
-	return (unsigned)0 < CInfo.type;
+	return CInfo.type != 0;
 }
 
 int PHYSICS_CheckForValidMove(struct _Instance* instance, SVECTOR* startVec, SVECTOR* endVec, int segment) { // Matching - 100%
