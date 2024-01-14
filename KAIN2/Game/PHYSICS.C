@@ -11,18 +11,15 @@
 #include "G2/QUATG2.H"
 #include "PSX/COLLIDES.H"
 
-void SetNoPtCollideInFamily(struct _Instance* instance)
+void SetNoPtCollideInFamily(struct _Instance* instance)  // Matching - 100%
 {
 	struct _Instance* child;
 
 	child = instance->LinkChild;
-
-	instance->flags &= 0xFFFFFFBF;
-
+	instance->flags |= 64;
 	while (child != NULL)
 	{
-		ResetNoPtCollideInFamily(child);
-
+		SetNoPtCollideInFamily(child);
 		child = child->LinkSibling;
 	}
 }
@@ -41,7 +38,7 @@ void ResetNoPtCollideInFamily(struct _Instance* instance)
 
 		child = child->LinkSibling;
 	}
-}
+} 
 
 void PHYSICS_CheckLineInWorld(struct _Instance* instance, struct _PCollideInfo* pcollideInfo)
 {
