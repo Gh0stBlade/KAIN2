@@ -420,17 +420,15 @@ void CAMERA_SaveMode(struct Camera* camera, long mode)//Matching - 96.14%
 		camera->savedCinematic[camera->stack].level = gameTrackerX.level;
 	}
 }
-void CAMERA_RestoreMode(struct Camera* camera)
+void CAMERA_RestoreMode(struct Camera* camera)  // Matching - 99.64%
 {
-	long mode; // $s1
-
-	//s0 = camera
+	long mode;
+	short temp;  // not from SYMDUMP
 
 	if (camera->stack >= 0)
 	{
 		mode = camera->savedMode[camera->stack];
-
-		if (mode == 5)
+		if (camera->mode == 5)
 		{
 			if (camera->smooth != 0)
 			{
@@ -441,276 +439,103 @@ void CAMERA_RestoreMode(struct Camera* camera)
 				camera->flags |= 0x1000;
 			}
 		}
-
-
 		switch (mode)
 		{
 		case 0:
 		case 12:
 		case 13:
 		case 16:
-		{
-
 			CAMERA_SetProjDistance(camera, 320);
-
 			if (camera->mode == 5)
 			{
-				camera->focusOffset.x = 0;
-				
-				camera->focusOffset.y = 0;
-				
-				camera->focusOffset.z = 0;
-
 				camera->focusInstance = gameTrackerX.playerInstance;
-
+				camera->focusOffset.x = 0;
+				camera->focusOffset.y = 0;
+				camera->focusOffset.z = 352;
 				CAMERA_Restore(camera, 7);
 			}
-
 			cameraMode = mode;
-
 			if (mode == 12)
 			{
-				gameTrackerX.gameFlags &= 0xFFFFFFBF;
+				gameTrackerX.gameFlags &= ~64;
 			}
 			else
 			{
-				gameTrackerX.gameFlags |= 0x40;
+				gameTrackerX.gameFlags |= 64;
 			}
-
 			camera->mode = (short)mode;
-
-			camera->data.Follow.stopTimer = 0xE5A20000;
-
+			camera->targetFocusDistance = (short)camera->focusDistanceList[camera_modeToIndex[mode << 16 >> 16]][camera->presetIndex];
+			camera->data.Follow.stopTimer = 3852599296;
 			camera->focusRotVel.z = 0;
-
-			camera->targetFocusDistance = (short)camera->focusDistanceList[camera_modeToIndex[mode]][camera->presetIndex];
-
 			if (mode == 16)
 			{
 				camera->flags |= 0x2000;
 			}
 			else
 			{
-				//loc_80015500
 				camera->flags &= 0xFFFFDFFF;
 			}
 			break;
-		}
 		case 2:
 		case 4:
 		case 5:
-		{
+			CAMERA_SetProjDistance(camera, 320);
+			camera->core.position = camera->savedCinematic[camera->stack].position;
+			camera->focusPoint = camera->savedCinematic[camera->stack].focusPoint;
+			camera->targetPos = camera->savedCinematic[camera->stack].targetPos;
+			camera->targetFocusPoint = camera->savedCinematic[camera->stack].targetFocusPoint;
+			camera->targetFocusDistance = camera->savedCinematic[camera->stack].targetFocusDistance;
+			camera->targetFocusRotation = camera->savedCinematic[camera->stack].targetFocusRotation;
+			if ((camera->smooth == 0) && (camera->mode != 6))
+			{
+				camera->focusDistance = camera->savedCinematic[camera->stack].focusDistance;
+				camera->focusRotation = camera->savedCinematic[camera->stack].focusRotation;
+			}
+			else
+			{
+				camera->always_rotate_flag = 1;
+			}
+			camera->focusPointVel = camera->savedCinematic[camera->stack].focusPointVel;
+			camera->focusPointAccl = camera->savedCinematic[camera->stack].focusPointAccl;
+			camera->maxVel = (short)camera->savedCinematic[camera->stack].maxVel;
+			camera->data.Cinematic.posSpline = camera->savedCinematic[camera->stack].posSpline;
+			camera->data.Cinematic.targetSpline = camera->savedCinematic[camera->stack].targetSpline;
+			camera->mode = (short)mode;
+			if (INSTANCE_Query(camera->focusInstance, 9) & 80)
+			{
+				CAMERA_ChangeToUnderWater(camera, camera->focusInstance);
+			}
 			break;
+		case 6:
+			if ((((unsigned int)(unsigned short)camera->mode - 4) < 2) || (camera->mode == 2))
+			{
+				temp = (short)camera->savedTargetFocusDistance[camera->targetStack];
+				camera->focusDistance = temp;
+				camera->targetFocusDistance = temp;
+				if (camera->targetStack >= 0)
+				{
+					camera->targetStack--;
+				}
+				camera->flags = (camera->flags | 0x800);
+			}
+			camera->lookTimer = 4;
+			camera->mode = (short)mode;
+			camera->targetFocusDistance = 2000;
+			break;
+		case 1:
+		case 3:
+		case 7:
+		case 8:
+		case 9:
+		case 10:
+		case 11:
+		case 14:
+		case 15:
+		default:
+			camera->mode = (short)mode;
 		}
-		}
+		camera->stack--;
 	}
-	//loc_80015840
-#if 0
-
-		loc_80015514 : # jumptable 80015430 cases 2, 4, 5
-		move    $a0, $s0
-		jal     sub_80014F2C
-		li      $a1, 0x140
-		lh      $v1, 0x278($s0)
-		nop
-		sll     $v0, $v1, 3
-		subu    $v0, $v1
-		sll     $v0, 4
-		addu    $v0, $s0, $v0
-		ulw     $a2, 0x2A0($v0)
-		lh      $a3, 0x2A4($v0)
-		usw     $a2, 0($s0)
-		sh      $a3, 4($s0)
-		lh      $v1, 0x278($s0)
-		nop
-		sll     $v0, $v1, 3
-		subu    $v0, $v1
-		sll     $v0, 4
-		addu    $v0, $s0, $v0
-		ulw     $a2, 0x2A6($v0)
-		lh      $a3, 0x2AA($v0)
-		usw     $a2, 0x100($s0)
-		sh      $a3, 0x104($s0)
-		lh      $v1, 0x278($s0)
-		nop
-		sll     $v0, $v1, 3
-		subu    $v0, $v1
-		sll     $v0, 4
-		addu    $v0, $s0, $v0
-		ulw     $a2, 0x2B2($v0)
-		lh      $a3, 0x2B6($v0)
-		usw     $a2, 0x198($s0)
-		sh      $a3, 0x19C($s0)
-		lh      $v1, 0x278($s0)
-		nop
-		sll     $v0, $v1, 3
-		subu    $v0, $v1
-		sll     $v0, 4
-		addu    $v0, $s0, $v0
-		ulw     $a2, 0x2B8($v0)
-		lh      $a3, 0x2BC($v0)
-		usw     $a2, 0x1AA($s0)
-		sh      $a3, 0x1AE($s0)
-		lh      $v1, 0x278($s0)
-		nop
-		sll     $v0, $v1, 3
-		subu    $v0, $v1
-		sll     $v0, 4
-		addu    $v0, $s0, $v0
-		lhu     $v0, 0x2DE($v0)
-		nop
-		sh      $v0, 0x1A8($s0)
-		sll     $v0, $v1, 3
-		subu    $v0, $v1
-		sll     $v0, 4
-		addu    $v0, $s0, $v0
-		ulw     $a2, 0x2D4($v0)
-		ulw     $a3, 0x2D8($v0)
-		usw     $a2, 0x1B2($s0)
-		usw     $a3, 0x1B6($s0)
-		lh      $v0, 0x1C4($s0)
-		nop
-		bnez    $v0, loc_800156B0
-		li      $v0, 1
-		lh      $v1, 0xF0($s0)
-		li      $v0, 6
-		beq     $v1, $v0, loc_800156B0
-		li      $v0, 1
-		lh      $v1, 0x278($s0)
-		nop
-		sll     $v0, $v1, 3
-		subu    $v0, $v1
-		sll     $v0, 4
-		addu    $v0, $s0, $v0
-		lhu     $v0, 0x2DC($v0)
-		nop
-		sh      $v0, 0x106($s0)
-		sll     $v0, $v1, 3
-		subu    $v0, $v1
-		sll     $v0, 4
-		addu    $v0, $s0, $v0
-		ulw     $a2, 0x2CC($v0)
-		ulw     $a3, 0x2D0($v0)
-		usw     $a2, 0x13C($s0)
-		usw     $a3, 0x140($s0)
-		j       loc_800156B4
-		nop
-
-		loc_800156B0 :
-	sh      $v0, 0x4AE($s0)
-
-		loc_800156B4 :
-		lh      $v1, 0x278($s0)
-		nop
-		sll     $v0, $v1, 3
-		subu    $v0, $v1
-		sll     $v0, 4
-		addu    $v0, $s0, $v0
-		ulw     $a2, 0x2E0($v0)
-		ulw     $a3, 0x2E4($v0)
-		usw     $a2, 0x158($s0)
-		usw     $a3, 0x15C($s0)
-		lh      $v1, 0x278($s0)
-		nop
-		sll     $v0, $v1, 3
-		subu    $v0, $v1
-		sll     $v0, 4
-		addu    $v0, $s0, $v0
-		ulw     $a2, 0x2E8($v0)
-		ulw     $a3, 0x2EC($v0)
-		usw     $a2, 0x160($s0)
-		usw     $a3, 0x164($s0)
-		lh      $v1, 0x278($s0)
-		lw      $a0, 0x108($s0)
-		sll     $v0, $v1, 3
-		subu    $v0, $v1
-		sll     $v0, 4
-		addu    $v0, $s0, $v0
-		lhu     $v0, 0x300($v0)
-		nop
-		sh      $v0, 0x194($s0)
-		sll     $v0, $v1, 3
-		subu    $v0, $v1
-		sll     $v0, 4
-		addu    $v0, $s0, $v0
-		lw      $v0, 0x304($v0)
-		nop
-		sw      $v0, 0x424($s0)
-		sll     $v0, $v1, 3
-		subu    $v0, $v1
-		sll     $v0, 4
-		addu    $v0, $s0, $v0
-		lw      $v0, 0x308($v0)
-		li      $a1, 9
-		sh      $s1, 0xF0($s0)
-		jal     sub_80034648
-		sw      $v0, 0x428($s0)
-		andi    $v0, 0x50
-		beqz    $v0, loc_80015830
-		nop
-		lw      $a1, 0x108($s0)
-		jal     sub_8001C318
-		move    $a0, $s0
-		j       loc_80015830
-		nop
-
-		loc_800157A8 : # jumptable 80015430 case 6
-		lhu     $v1, 0xF0($s0)
-		nop
-		addiu   $v0, $v1, -4
-		sltiu   $v0, 2
-		bnez    $v0, loc_800157D0
-		sll     $v0, $v1, 16
-		sra     $v0, 16
-		li      $v1, 2
-		bne     $v0, $v1, loc_80015818
-		li      $v0, 4
-
-		loc_800157D0:
-	lh      $v0, 0x27A($s0)
-		nop
-		sll     $v0, 2
-		addu    $v0, $s0, $v0
-		lhu     $v0, 0x288($v0)
-		nop
-		sh      $v0, 0x106($s0)
-		sh      $v0, 0x1A8($s0)
-		lh      $v0, 0x27A($s0)
-		lhu     $v1, 0x27A($s0)
-		bltz    $v0, loc_80015804
-		addiu   $v0, $v1, -1
-		sh      $v0, 0x27A($s0)
-
-		loc_80015804:
-	lw      $v0, 0xE8($s0)
-		nop
-		ori     $v0, 0x800
-		sw      $v0, 0xE8($s0)
-		li      $v0, 4
-
-		loc_80015818 :
-		sh      $v0, 0x1F0($s0)
-		li      $v0, 0x7D0
-		sh      $s1, 0xF0($s0)
-		j       loc_80015830
-		sh      $v0, 0x1A8($s0)
-
-		def_80015430 : # jumptable 80015430 default case, cases 1, 3, 7 - 11, 14, 15
-		sh      $s1, 0xF0($s0)
-
-		loc_80015830:
-			lhu     $v0, 0x278($s0)
-				nop
-				addiu   $v0, -1
-				sh      $v0, 0x278($s0)
-
-				loc_80015840 :
-				lw      $ra, 0x10 + var_s8($sp)
-				lw      $s1, 0x10 + var_s4($sp)
-				lw      $s0, 0x10 + var_s0($sp)
-				jr      $ra
-				addiu   $sp, 0x20
-#endif
 }
 
 
