@@ -555,9 +555,9 @@ void SOUL_ReanimateEntry(struct _Instance* instance) // Matching - 100%
 
 	mv = (struct _MonsterVars*)instance->extraData;
 	body = INSTANCE_Find(mv->soulID);
-	mv->lookAtPosData.y = body->position.x;
-	mv->lookAtPosData.z = body->position.y;
-	mv->guardRange = body->position.z + 160;
+	mv->destination.x = body->position.x;
+	mv->destination.y = body->position.y;
+	mv->destination.z = body->position.z + 160;
 	MON_TurnOffBodySpheres(instance);
 }
 
