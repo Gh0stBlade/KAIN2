@@ -1373,20 +1373,17 @@ long PHYSICS_FindAFromDAndT(long d, long t)
 	}
 }
 
-long PHYSICS_FindVFromAAndD(long a, long d)
+long PHYSICS_FindVFromAAndD(long a, long d)  // Matching - 100%
 {
-	long vsq; // $a0
+	long vsq;
 
-	vsq = a * (d * 2);
+	vsq = (a * 2) * d;
 
-	if (vsq == 0)
-	{
-		return 0;
-	}
-	else
+	if (vsq != 0)
 	{
 		return MATH3D_FastSqrt0(vsq);
 	}
+	return 0;
 }
 
 void PHYSICS_StopIfCloseToTarget(struct _Instance* instance, int x, int y, int z) { // Matching - 100%
