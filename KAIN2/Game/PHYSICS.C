@@ -1479,7 +1479,7 @@ int PHYSICS_CheckDontGrabEdge(struct _PCollideInfo *CInfo)
 	return 0;
 }
 
-void PHYSICS_GenericLineCheckSetup(short x, short y, short z, SVECTOR* inVec)
+void PHYSICS_GenericLineCheckSetup(short x, short y, short z, SVECTOR* inVec)  // Matching - 100%
 {
 	inVec->vx = x;
 	inVec->vy = y;
