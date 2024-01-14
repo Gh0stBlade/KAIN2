@@ -43,10 +43,9 @@ void ResetNoPtCollideInFamily(struct _Instance* instance)
 	}
 }
 
-void PHYSICS_CheckLineInWorld(struct _Instance* instance, struct _PCollideInfo* pcollideInfo)
+void PHYSICS_CheckLineInWorld(struct _Instance* instance, struct _PCollideInfo* pcollideInfo)  // Matching - 100%
 {
 	pcollideInfo->collideType = 63;
-
 	PHYSICS_CheckLineInWorldMask(instance, pcollideInfo);
 }
 
