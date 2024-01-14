@@ -1389,18 +1389,19 @@ long PHYSICS_FindVFromAAndD(long a, long d)
 	}
 }
 
-void PHYSICS_StopIfCloseToTarget(struct _Instance* instance, int x, int y, int z) { // Matching - 100%
-	if (((instance->xAccl < 0) && ((instance->xVel <= x) != 0)) || ((instance->xAccl > 0) && ((instance->xVel < x) == 0)))
+void PHYSICS_StopIfCloseToTarget(struct _Instance* instance, int x, int y, int z)  // Matching - 100%
+{
+	if ((instance->xAccl < 0) && (instance->xVel <= x) || (instance->xAccl > 0) && (instance->xVel >= x))
 	{
 		instance->xAccl = 0;
 		instance->xVel = x;
 	}
-	if (((instance->yAccl < 0) && ((instance->yVel <= y) != 0)) || ((instance->yAccl > 0) && ((instance->yVel < y) == 0)))
+	if ((instance->yAccl < 0) && (instance->yVel <= y) || (instance->yAccl > 0) && (instance->yVel >= y))
 	{
 		instance->yAccl = 0;
 		instance->yVel = y;
 	}
-	if (((instance->zAccl < 0) && ((instance->zVel <= z) != 0)) || ((instance->zAccl > 0) && ((instance->zVel < z) == 0)))
+	if ((instance->zAccl < 0) && (instance->zVel <= z) || (instance->zAccl > 0) && (instance->zVel >= z))
 	{
 		instance->zAccl = 0;
 		instance->zVel = z;
