@@ -350,18 +350,19 @@ void SOUL_WanderEntry(struct _Instance* instance)  // Matching - 100%
 {
 	struct _MonsterVars* mv;
 	mv = (struct _MonsterVars*)instance->extraData;
+
 	instance->maxXVel = 10;
 	instance->maxYVel = 10;
 	instance->maxZVel = 17;
-	if ((mv->mvFlags & 0x40000) == 0)
+	if (!(mv->mvFlags & 0x40000))
 	{
 		if (instance->intro != NULL)
 		{
-			MON_GetRandomDestinationInWorld(instance, &instance->intro->position, mv->lookAngleX);
+			MON_GetRandomDestinationInWorld(instance, &instance->intro->position, mv->wanderRange);
 		}
 		else
 		{
-			MON_GetRandomDestinationInWorld(instance, &instance->position, mv->lookAngleX);
+			MON_GetRandomDestinationInWorld(instance, &instance->position, mv->wanderRange);
 		}
 	}
 }
