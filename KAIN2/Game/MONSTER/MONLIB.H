@@ -3,10 +3,10 @@
 
 #include "MONSTER.H"
 
-struct evMonsterHitData // hashcode: 0x5BC7AF7A (dec: 1539813242)
+struct evMonsterHitData 
 {
-	struct _Instance *sender; // size=616, offset=0
-	struct _Instance *lastHit; // size=616, offset=4
+	struct _Instance* sender; // size=668, offset=0
+	struct _Instance* lastHit; // size=668, offset=4
 	short knockBackDistance; // size=0, offset=8
 	short knockBackDuration; // size=0, offset=10
 	long power; // size=0, offset=12
@@ -14,10 +14,10 @@ struct evMonsterHitData // hashcode: 0x5BC7AF7A (dec: 1539813242)
 
 struct evFXHitData 
 {
-  _SVector location; // size=8, offset=0
-  _SVector velocity; // size=8, offset=8
-  short amount; // size=0, offset=16
-  short type; // size=0, offset=18
+	struct _SVector location; // size=8, offset=0
+	struct _SVector velocity; // size=8, offset=8
+	short amount; // size=0, offset=16
+	short type; // size=0, offset=18
 };
 
 extern void MON_TurnOffWeaponSpheres(struct _Instance *instance); // 0x8007F3E4
