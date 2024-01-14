@@ -7,36 +7,36 @@
 #include "Game/STREAM.H"
 #include "Game/STATE.H"
 
-void MonsterProcess(struct _Instance* instance, struct GameTracker* gameTracker)  // Matching - 98.36%
+void MonsterProcess(struct _Instance* instance, struct GameTracker* gameTracker)  // Matching - 100%
 {
 	struct _MonsterState* state;
 	struct _MonsterVars* mv;
 	struct _MonsterAttributes* attributes;
-	typedef void (*MONTABLE_DamageEffectFunc)(struct _Instance*, int);
+	typedef void (*MONTABLE_DamageEffectFunc)(struct _Instance*, int);  //  not from SYMDUMP 
 
 	attributes = (struct _MonsterAttributes*)instance->data;
 	mv = (struct _MonsterVars*)instance->extraData;
-
-	if (((mv != NULL) && (attributes != NULL)) && ((mv->mvFlags & 0x80000) == 0))
+	if (((mv != NULL) && (attributes != NULL)) && (!(mv->mvFlags & 0x80000)))
 	{
 		instance->waterFace = NULL;
 		instance->waterFaceTerrain = NULL;
 		MONSENSE_DoSenses(instance);
 		MON_DoCombatTimers(instance);
 		state = MONTABLE_GetStateFuncs(instance, instance->currentMainState);
-		instance->flags2 &= -17;
-		instance->flags2 &= -3;
-		if ((mv->mvFlags & 0x80) == 0)
+		instance->flags2 &= ~16;
+		instance->flags2 &= ~2;
+		if (!(mv->mvFlags & 128))
 		{
 			G2EmulationInstancePlayAnimation(instance);
 		}
 		(state->stateFunction)(instance);
-		if ((mv->mvFlags & 1) != 0)
+		if (mv->mvFlags & 1)
 		{
-			((MONTABLE_GetStateFuncs(instance, instance->currentMainState))->entryFunction)(instance);
+			state = MONTABLE_GetStateFuncs(instance, instance->currentMainState);
+			((state)->entryFunction)(instance);
 		}
-		mv->mvFlags &= -0x42;
-		if ((instance->flags & 0x200) != 0)
+		mv->mvFlags &= -66;
+		if (instance->flags & 0x200)
 		{
 			((MONTABLE_DamageEffectFunc)MONTABLE_GetDamageEffectFunc(instance))(instance, 0);
 		}
