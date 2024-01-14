@@ -535,7 +535,7 @@ void SOUL_Idle(struct _Instance* instance) // Matching - 99.92%
 		{
 			MON_SwitchState(instance, MONSTER_STATE_FLEE);
 		}
-		else if ((MON_GetTime(instance)) > *(unsigned int*)&mv->destination.y)
+		else if ((MON_GetTime(instance)) > mv->generalTimer)
 		{
 			MON_SwitchState(instance, MONSTER_STATE_WANDER);
 		}
