@@ -1234,25 +1234,20 @@ int PhysicsFollowWall(struct _Instance* instance, struct GameTracker* gameTracke
 	return Ptr->rc;
 }
 
-void PhysicsMoveLocalZClamp(struct _Instance* instance, long segment, long time, long clamp) //Matching - 99.91%
+void PhysicsMoveLocalZClamp(struct _Instance* instance, long segment, long time, long clamp)  // Matching - 100%
 {
 	struct _Position pos;
 	SVECTOR v;
 	SVECTOR dv;
 
 	memset(&pos, 0, sizeof(struct _Position));
-
 	PhysicsMove(instance, &pos, time);
-
 	v.vx = pos.x;
 	v.vy = -pos.y;
 	v.vz = pos.z;
-
 	ApplyMatrixSV(&instance->matrix[segment], &v, &dv);
-
 	instance->position.x += dv.vx;
 	instance->position.y += dv.vy;
-
 	if (clamp == 0)
 	{
 		instance->position.z += dv.vz;
