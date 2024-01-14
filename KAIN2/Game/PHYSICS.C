@@ -668,10 +668,12 @@ int PhysicsCheckSliding(struct _Instance *instance, int Data, short Mode)
 	return 0;
 }
 
-int PhysicsUpdateTface(struct _Instance* instance, int Data) { // Matching - 100%
+int PhysicsUpdateTface(struct _Instance* instance, int Data)  // Matching - 100%
+{
 	struct _PCollideInfo CInfo;
 	SVECTOR Old;
 	SVECTOR New;
+
 	CInfo.oldPoint = &Old;
 	CInfo.newPoint = &New;
 	New.vx = instance->position.x;
@@ -688,7 +690,7 @@ int PhysicsUpdateTface(struct _Instance* instance, int Data) { // Matching - 100
 		if (instance->tface != CInfo.prim)
 		{
 			instance->oldTFace = instance->tface;
-			instance->tface = (_TFace*)CInfo.prim;
+			instance->tface = (struct _TFace*)CInfo.prim;
 			instance->tfaceLevel = CInfo.inst;
 			instance->bspTree = CInfo.segment;
 		}
