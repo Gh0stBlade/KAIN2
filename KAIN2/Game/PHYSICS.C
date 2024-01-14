@@ -27,18 +27,15 @@ void SetNoPtCollideInFamily(struct _Instance* instance)
 	}
 }
 
-void ResetNoPtCollideInFamily(struct _Instance* instance)
+void ResetNoPtCollideInFamily(struct _Instance* instance)  // Matching - 100%
 {
 	struct _Instance* child;
 
 	child = instance->LinkChild;
-
 	instance->flags &= 0xFFFFFFBF;
-
 	while (child != NULL)
 	{
 		ResetNoPtCollideInFamily(child);
-
 		child = child->LinkSibling;
 	}
 }
