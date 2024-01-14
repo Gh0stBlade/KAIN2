@@ -497,7 +497,7 @@ void SOUL_IdleEntry(struct _Instance* instance) // Matching - 100%
 	instance->maxXVel = 15;
 	instance->maxYVel = 15;
 	instance->maxZVel = 17;
-	*(long*)&mv->destination.y = MON_GetTime(instance) + 3000 + (rand() % 3000);
+	mv->generalTimer = MON_GetTime(instance) + 3000 + (rand() % 3000);
 	mv->mvFlags &= 0xFFFBFFFF;
 }
 
