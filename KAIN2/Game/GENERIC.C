@@ -69,7 +69,7 @@ void GenericProcess(struct _Instance* instance, struct GameTracker* gameTracker)
 }
 
 
-unsigned long GenericQuery(struct _Instance* instance, unsigned long query)  // Matching - 91.07%
+unsigned long GenericQuery(struct _Instance* instance, unsigned long query)  // Matching - 100%
 {
 	long ret;
 	struct evControlSaveDataData* pdata;
