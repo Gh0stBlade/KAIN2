@@ -901,15 +901,23 @@ int PhysicsCheckSwim(struct _Instance* instance, int Data, short Mode)//Matching
 	return rc;
 }
 
-int PhysicsDefaultCheckSwimResponse(struct _Instance* instance, struct evPhysicsSwimData* Data) // Matching - 99.76%
+int PhysicsDefaultCheckSwimResponse(struct _Instance* instance, struct evPhysicsSwimData* Data)  // Matching - 100%
 {
 	int rc;
 	long waterZLevel;
 
 	STREAM_GetLevelWithID(instance->currentStreamUnitID);
+
 	waterZLevel = Data->WaterLevel;
 
-	rc = (-Data->WadeDepth < Data->WaterDepth) << 7;
+	if (-Data->WadeDepth >= Data->WaterDepth)
+	{
+		rc = 0;
+	}
+	else
+	{
+		rc = 128;
+	}
 
 	if (-Data->TreadDepth < Data->Depth && Data->Depth < 0)
 	{
@@ -946,7 +954,7 @@ int PhysicsDefaultCheckSwimResponse(struct _Instance* instance, struct evPhysics
 
 	if (instance->matrix != NULL && instance->oldMatrix != NULL)
 	{
-		if (instance->matrix[1].t[2] < (waterZLevel - Data->SwimDepth) && (waterZLevel = Data->SwimDepth) < instance->oldMatrix[1].t[2] && Data->iVelocity->z < 0)
+		if (instance->matrix[1].t[2] < (waterZLevel - Data->SwimDepth) && (waterZLevel - Data->SwimDepth) < instance->oldMatrix[1].t[2] && Data->iVelocity->z < 0)
 		{
 			rc |= 0x0800;
 		}
