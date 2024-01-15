@@ -1023,7 +1023,7 @@ int PhysicsCheckDropHeight(struct _Instance *instance, int Data, int Mode)
 	return 0;
 }
 
-int PhysicsCheckDropOff(struct _Instance* instance, int Data, short Mode)//Matching - 98.79%
+int PhysicsCheckDropOff(struct _Instance* instance, int Data, short Mode)  // Matching - 100%
 {
 	struct evPhysicsDropOffData* Ptr;
 	int rc;
