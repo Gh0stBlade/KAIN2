@@ -1111,7 +1111,8 @@ int PhysicsCheckDropOff(struct _Instance* instance, int Data, short Mode)//Match
 	return rc;
 }
 
-int PhysicsFollowWall(struct _Instance* instance, struct GameTracker* gameTracker, int Data, short Mode) { // Matching - 99.89%
+int PhysicsFollowWall(struct _Instance* instance, struct GameTracker* gameTracker, int Data, short Mode)  // Matching - 100%
+{
 	VECTOR OutTrans;
 	struct evPhysicsWallCrawlData* Ptr;
 	struct _PCollideInfo CInfo;
@@ -1121,6 +1122,7 @@ int PhysicsFollowWall(struct _Instance* instance, struct GameTracker* gameTracke
 	_Position A;
 	_Position B;
 	MATRIX mat;
+
 	Ptr = (struct evPhysicsWallCrawlData*)Data;
 	Ptr->rc = 0;
 	CInfo.oldPoint = &Old;
@@ -1134,18 +1136,18 @@ int PhysicsFollowWall(struct _Instance* instance, struct GameTracker* gameTracke
 		instance->shadowPosition.x = New.vx;
 		instance->shadowPosition.y = New.vy;
 		instance->shadowPosition.z = New.vz;
-		if ((instance->flags2 & 0x40) != 0)
+		if (instance->flags2 & 64)
 		{
 			instance->flags |= 0x8000000;
 		}
 		Ptr->rc |= 8;
-		if ((Mode & 7) != 0)
+		if (Mode & 7)
 		{
 			Ptr->DropNormal.x = CInfo.wNormal.vx;
 			Ptr->DropNormal.y = CInfo.wNormal.vy;
 			Ptr->DropNormal.z = CInfo.wNormal.vz;
 		}
-		if ((Mode & 4) != 0)
+		if (Mode & 4)
 		{
 			B.z = 0;
 			B.y = 0;
@@ -1154,7 +1156,7 @@ int PhysicsFollowWall(struct _Instance* instance, struct GameTracker* gameTracke
 			A.y = Ptr->DropNormal.y;
 			A.z = Ptr->DropNormal.z;
 			MATH3D_RotationFromPosToPos(&A, &B, &Ptr->DropRotation);
-			RotMatrix((SVECTOR*) & Ptr->DropRotation, &mat);
+			RotMatrix((SVECTOR*)&Ptr->DropRotation, &mat);
 			Ptr->NewPosition.x = New.vx;
 			Ptr->NewPosition.y = New.vy;
 			Ptr->NewPosition.z = New.vz;
@@ -1173,7 +1175,7 @@ int PhysicsFollowWall(struct _Instance* instance, struct GameTracker* gameTracke
 		instance->wNormal.y = CInfo.wNormal.vy;
 		instance->wNormal.z = CInfo.wNormal.vz;
 		instance->oldTFace = instance->tface;
-		instance->tface = (_TFace*)CInfo.prim;
+		instance->tface = (struct _TFace*)CInfo.prim;
 		instance->tfaceLevel = CInfo.inst;
 		instance->bspTree = CInfo.segment;
 	}
@@ -1183,13 +1185,13 @@ int PhysicsFollowWall(struct _Instance* instance, struct GameTracker* gameTracke
 	if ((CInfo.type == 3) || (CInfo.type == 5))
 	{
 		Ptr->rc |= 2;
-		if ((Mode & 7) != 0)
+		if (Mode & 7)
 		{
 			Ptr->ForwardNormal.x = CInfo.wNormal.vx;
 			Ptr->ForwardNormal.y = CInfo.wNormal.vy;
 			Ptr->ForwardNormal.z = CInfo.wNormal.vz;
 		}
-		if ((Mode & 4) != 0)
+		if (Mode & 4)
 		{
 			Ptr->ForwardXRotation = MATH3D_AngleBetweenVectors(&Ptr->DropNormal, &Ptr->ForwardNormal);
 		}
@@ -1227,9 +1229,9 @@ int PhysicsFollowWall(struct _Instance* instance, struct GameTracker* gameTracke
 			}
 		}
 	}
-	if ((Mode & 2) != 0)
+	if (Mode & 2)
 	{
-		INSTANCE_Post(instance, 0x4010000 | 0x11, Data);
+		INSTANCE_Post(instance, 0x4010011, Data);
 	}
 	return Ptr->rc;
 }
