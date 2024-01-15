@@ -11,6 +11,15 @@
 #include "G2/QUATG2.H"
 #include "PSX/COLLIDES.H"
 
+static inline int PHYSICS_IfDotLessThanZeroAdd(int Dot)
+{
+	if (Dot < 0)
+	{
+		Dot += 0xFFF;
+	}
+	return Dot;
+}
+
 void SetNoPtCollideInFamily(struct _Instance* instance)
 {
 	struct _Instance* child;
@@ -704,7 +713,7 @@ int PhysicsUpdateTface(struct _Instance* instance, int Data) { // Matching - 100
 	return 0;
 }
 
-int PhysicsCheckBlockers(struct _Instance* instance, struct GameTracker* gameTracker, int Data, short Mode)  // Matching - 99.48%
+int PhysicsCheckBlockers(struct _Instance* instance, struct GameTracker* gameTracker, int Data, short Mode)  // Matching - 100%
 {
 	struct evPhysicsEdgeData* Ptr;
 	VECTOR OutTrans;
@@ -716,7 +725,7 @@ int PhysicsCheckBlockers(struct _Instance* instance, struct GameTracker* gameTra
 	int Dot;
 	SVECTOR Force;
 	struct _HFace* hface;
-	int temp;
+	char unused[8];  // stack padding
 
 	Ptr = (struct evPhysicsEdgeData*)Data;
 	Ptr->rc = 0;
@@ -737,27 +746,22 @@ int PhysicsCheckBlockers(struct _Instance* instance, struct GameTracker* gameTra
 		Dot = CInfo.wNormal.vx * OutTrans.vx;
 		Dot += CInfo.wNormal.vy * OutTrans.vy;
 		Dot += CInfo.wNormal.vz * OutTrans.vz;
-		temp = Dot;
-		if (temp < 0)
+		Dot = PHYSICS_IfDotLessThanZeroAdd(Dot) >> 12;
+		if ((CInfo.type == 3) && (tface->textoff != 0xFFFF) && ((struct TextureFT3*)((char*)((struct _Terrain*)(CInfo.inst->node.prev))->StartTextureList + tface->textoff))->attr & 0x1000)
 		{
-			temp = (Dot + 0xFFF);
-		}
-		Dot = temp >> 12;
-		if (CInfo.type == 3 && (tface->textoff != 0xFFFF) && (((unsigned short*)((char*)((struct _Terrain*)(CInfo.inst->node.prev))->StartTextureList + tface->textoff))[5] & 0x1000) != 0)
-		{
-			if (Dot > -0xec8)
+			if (Dot > -3784)
 			{
 				return Ptr->rc;
 			}
 		}
 		else
 		{
-			if (Dot >= -0xFC0)
+			if (Dot >= -4032)
 			{
 				return Ptr->rc;
 			}
 		}
-		if ((Mode & 1) != 0)
+		if (Mode & 1)
 		{
 			Ptr->Normal1->x = CInfo.wNormal.vx;
 			Ptr->Normal1->y = CInfo.wNormal.vy;
@@ -770,7 +774,7 @@ int PhysicsCheckBlockers(struct _Instance* instance, struct GameTracker* gameTra
 		{
 			if (tface->textoff != 0xFFFF)
 			{
-				if ((((unsigned short*)((char*)((struct _Terrain*)(CInfo.inst->node.prev))->StartTextureList + tface->textoff))[5] & 0x1000) != 0)
+				if (((struct TextureFT3*)((char*)((struct _Terrain*)(CInfo.inst->node.prev))->StartTextureList + tface->textoff))->attr & 0x1000)
 				{
 					Ptr->rc |= 0x20000;
 				}
@@ -790,18 +794,18 @@ int PhysicsCheckBlockers(struct _Instance* instance, struct GameTracker* gameTra
 		PHYSICS_CheckLineInWorld(instance, &CInfo);
 		if ((CInfo.type == 3) || (CInfo.type == 5))
 		{
-			if ((Mode & 0x1) != 0)
+			if (Mode & 1)
 			{
 				Ptr->Normal2->x = CInfo.wNormal.vx;
 				Ptr->Normal2->y = CInfo.wNormal.vy;
 				Ptr->Normal2->z = CInfo.wNormal.vz;
 			}
-			if ((CInfo.wNormal.vz < 0xB51) == 0)
+			if (CInfo.wNormal.vz >= 2897)
 			{
-				Ptr->rc |= 0x4;
+				Ptr->rc |= 4;
 			}
 		}
-		if ((Mode & 2) != 0)
+		if (Mode & 2)
 		{
 			INSTANCE_Post(instance, 0x4010400, Data);
 		}
