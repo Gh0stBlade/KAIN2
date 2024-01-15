@@ -963,14 +963,13 @@ void PhysicsForceSetWater(struct _Instance *instance, int *Time, int Depth, int 
 	UNIMPLEMENTED();
 }
 
-int PhysicsCheckLOS(struct _Instance* instance, int Data, int Mode) //Matching - 99.58%
+int PhysicsCheckLOS(struct _Instance* instance, int Data, int Mode)  // Matching - 100%
 {
 	struct _PCollideInfo CInfo;
 
 	CInfo.oldPoint = (SVECTOR*)(Data + 8);
 	CInfo.newPoint = (SVECTOR*)Data;
 	PHYSICS_CheckLineInWorld(instance, &CInfo);
-
 	return CInfo.type == 0;
 }
 
