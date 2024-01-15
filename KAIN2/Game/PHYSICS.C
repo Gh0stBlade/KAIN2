@@ -809,7 +809,7 @@ int PhysicsCheckBlockers(struct _Instance* instance, struct GameTracker* gameTra
 	return Ptr->rc;
 }
 
-int PhysicsCheckSwim(struct _Instance* instance, int Data, short Mode)//Matching - 98.81%
+int PhysicsCheckSwim(struct _Instance* instance, int Data, short Mode)  // Matching - 100%
 {
 	struct evPhysicsSwimData* Ptr;
 	int rc;
@@ -852,9 +852,9 @@ int PhysicsCheckSwim(struct _Instance* instance, int Data, short Mode)//Matching
 			Old.vz += Ptr->TreadDepth;
 
 			gameTrackerX.gameFlags |= 0x8000;
-			
+
 			instance->waterFace = 0;
-			
+
 			PHYSICS_CheckLineInWorld(instance, &CInfo);
 
 			gameTrackerX.gameFlags &= ~0x8000;
@@ -871,33 +871,33 @@ int PhysicsCheckSwim(struct _Instance* instance, int Data, short Mode)//Matching
 		else
 		{
 			Ptr->Depth = Depth;
-			
+
 			WaterDepth = instance->matrix->t[2] - waterZLevel;
-	
+
 			Ptr->WaterDepth = WaterDepth;
 		}
 	}
-	
+
 	if ((Mode & 0x3))
 	{
 		Ptr->Depth = Depth;
-		
+
 		Ptr->WaterDepth = WaterDepth;
 	}
-	
+
 	Ptr->WaterLevel = waterZLevel;
-	
-	rc = PhysicsDefaultCheckSwimResponse(instance, (struct evPhysicsSwimData*)Data);
-	
+
+	rc = PhysicsDefaultCheckSwimResponse(instance, (struct evPhysicsSwimData*)Ptr);
+
 	Ptr->rc = rc;
-	
+
 	if ((Mode & 0x2))
 	{
 		INSTANCE_Post(instance, 0x4020000, Data);
 	}
 
 	FX_UpdateInstanceWaterSplit(instance);
-	
+
 	return rc;
 }
 
