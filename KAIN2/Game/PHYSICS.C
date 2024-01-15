@@ -11,6 +11,32 @@
 #include "G2/QUATG2.H"
 #include "PSX/COLLIDES.H"
 
+static inline int PHYSICS_FixedMultiplication(long a, long b)
+{
+	int r;
+
+	r = a * b;
+	if (r < 0)
+	{
+		r += 4095;
+	}
+
+	return r >> 12;
+}
+
+static inline int PHYSICS_FixedMultiplication2(long a, long b)
+{
+	int r;
+
+	r = a * b;
+	if (r < 0)
+	{
+		r += 8191;
+	}
+
+	return r >> 13;
+}
+
 void SetNoPtCollideInFamily(struct _Instance* instance)
 {
 	struct _Instance* child;
@@ -1259,7 +1285,7 @@ void PhysicsMoveLocalZClamp(struct _Instance* instance, long segment, long time,
 	}
 }
 
-void PhysicsMove(struct _Instance* instance, struct _Position* position, long time)//Matching - 97.33%
+void PhysicsMove(struct _Instance* instance, struct _Position* position, long time)  // Matching - 100%
 {
 	long xVel;
 	long yVel;
@@ -1267,41 +1293,18 @@ void PhysicsMove(struct _Instance* instance, struct _Position* position, long ti
 	long xat;
 	long yat;
 	long zat;
-	long x;
-	long y;
-	long z;
-	long _x;
-	long _y;
-	long _z;
 
 	xVel = instance->xVel;
 	yVel = instance->yVel;
 	zVel = instance->zVel;
 
-	_x = (instance->xAccl * time) < 0 ? ((instance->xAccl * time) + 0xFFF) : (instance->xAccl * time);
-	xat = _x >> 12;
-	_y = (instance->yAccl * time) < 0 ? ((instance->yAccl * time) + 0xFFF) : (instance->yAccl * time);
-	yat = _y >> 12;
-	_z = (instance->zAccl * time) < 0 ? ((instance->zAccl * time) + 0xFFF) : (instance->zAccl * time);
-	zat = _z >> 12;
+	xat = PHYSICS_FixedMultiplication(instance->xAccl, time);
+	yat = PHYSICS_FixedMultiplication(instance->yAccl, time);
+	zat = PHYSICS_FixedMultiplication(instance->zAccl, time);
 
-	xVel = (xVel * time) < 0 ? ((xVel * time) + 0xFFF) : (xVel * time);
-	xVel >>= 12;
-	_x = (xat * time) < 0 ? (((xat * time) + 0x1FFF)) : (xat * time);
-	x = _x >> 13;
-	position->x += (short)(xVel + x);
-
-	yVel = (yVel * time) < 0 ? ((yVel * time) + 0xFFF) : (yVel * time);
-	yVel >>= 12;
-	_y = (yat * time) < 0 ? (((yat * time) + 0x1FFF)) : (yat * time);
-	y = _y >> 13;
-	position->y += (short)(yVel + y);
-
-	zVel = (zVel * time) < 0 ? ((zVel * time) + 0xFFF) : (zVel * time);
-	zVel >>= 12;
-	_z = (zat * time) < 0 ? (((zat * time) + 0x1FFF)) : (zat * time);
-	z = _z >> 13;
-	position->z += (short)(z + zVel);
+	position->x += PHYSICS_FixedMultiplication(xVel, time) + PHYSICS_FixedMultiplication2(xat, time);
+	position->y += PHYSICS_FixedMultiplication(yVel, time) + PHYSICS_FixedMultiplication2(yat, time);
+	position->z += PHYSICS_FixedMultiplication(zVel, time) + PHYSICS_FixedMultiplication2(zat, time);
 
 	xVel += xat;
 	yVel += yat;
