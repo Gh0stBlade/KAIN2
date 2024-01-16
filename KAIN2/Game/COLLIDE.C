@@ -516,7 +516,7 @@ UNIMPLEMENTED();
 #endif
 }
 
-long COLLIDE_IntersectLineAndBox(struct _SVector* point0, struct _SVector* normal0, struct _SVector* point1, struct _SVector* normal1, struct _SVector* end, struct _SVector* start, struct _HBox* hbox) // Matching - 95.63%
+long COLLIDE_IntersectLineAndBox(struct _SVector* point0, struct _SVector* normal0, struct _SVector* point1, struct _SVector* normal1, struct _SVector* end, struct _SVector* start, struct _HBox* hbox)  // Matching - 100%
 {
 	struct _SVector normal;
 	struct _Vector line;
@@ -526,11 +526,11 @@ long COLLIDE_IntersectLineAndBox(struct _SVector* point0, struct _SVector* norma
 	struct _Vector* _v;
 	short lineDist;
 
-	collide_t0 = 0x1001;
-	collide_t1 = 0x1001;
+	collide_t0 = 4097;
+	collide_t1 = 4097;
 	collide_point0 = point0;
-	collide_normal0 = normal0;
 	collide_point1 = point1;
+	collide_normal0 = normal0;
 	collide_normal1 = normal1;
 
 	_x0 = end->x;
@@ -546,37 +546,37 @@ long COLLIDE_IntersectLineAndBox(struct _SVector* point0, struct _SVector* norma
 	_v->y = _y0;
 	_v->z = _z0;
 
-	normal.x = -0x1000;
+	normal.x = -4096;
 	normal.y = 0;
 	normal.z = 0;
 	COLLIDE_LineWithBoxFace(-start->x, -line.x, -hbox->minX, start, _v, hbox, COLLIDE_WithinYZBounds, &normal);
-	normal.x = 0x1000;
+	normal.x = 4096;
 	normal.y = 0;
 	normal.z = 0;
 	COLLIDE_LineWithBoxFace(start->x, line.x, hbox->maxX, start, _v, hbox, COLLIDE_WithinYZBounds, &normal);
 	normal.x = 0;
-	normal.y = -0x1000;
+	normal.y = -4096;
 	normal.z = 0;
 	COLLIDE_LineWithBoxFace(-start->y, lineDist = -(short)line.y, -hbox->minY, start, _v, hbox, COLLIDE_WithinXZBounds, &normal);
 	normal.x = 0;
-	normal.y = 0x1000;
+	normal.y = 4096;
 	normal.z = 0;
 	COLLIDE_LineWithBoxFace(start->y, line.y, hbox->maxY, start, _v, hbox, COLLIDE_WithinXZBounds, &normal);
 	normal.x = 0;
 	normal.y = 0;
-	normal.z = -0x1000;
+	normal.z = -4096;
 	COLLIDE_LineWithBoxFace(-start->z, lineDist = -(short)line.z, -hbox->minZ, start, _v, hbox, COLLIDE_WithinXYBounds, &normal);
 	normal.x = 0;
 	normal.y = 0;
-	normal.z = 0x1000;
+	normal.z = 4096;
 	COLLIDE_LineWithBoxFace(start->z, line.z, hbox->maxZ, start, _v, hbox, COLLIDE_WithinXYBounds, &normal);
 
-	if (collide_t1 != 0x1001)
+	if (collide_t1 != 4097)
 	{
 		return 2;
 	}
 
-	if (collide_t0 != 0x1001)
+	if (collide_t0 != 4097)
 	{
 		return 1;
 	}
