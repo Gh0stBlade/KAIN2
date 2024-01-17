@@ -3236,7 +3236,7 @@ void COLLIDE_InstanceListWithSignals(struct _InstanceList* instanceList)//Matchi
 	}
 }
 
-void COLLIDE_InstanceListTerrain(struct _InstanceList* instanceList)//Matching - 99.77%
+void COLLIDE_InstanceListTerrain(struct _InstanceList* instanceList)  // Matching - 100%
 {
 	long i;
 	struct _Instance* instance;
