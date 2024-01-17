@@ -352,7 +352,7 @@ void LIGHT_CalcLightValue(struct _TFace *tface, struct _Instance *instance, stru
 						UNIMPLEMENTED();
 }
 
-void LIGHT_SetAmbientInstance(struct _Instance* instance, struct Level* level)
+void LIGHT_SetAmbientInstance(struct _Instance* instance, struct Level* level)  // Matching - 100%
 {
 	SetBackColor(((struct _ColorType*)&instance->light_color)->r, ((struct _ColorType*)&instance->light_color)->g, ((struct _ColorType*)&instance->light_color)->b);
 }
