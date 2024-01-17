@@ -3263,7 +3263,7 @@ void COLLIDE_InstanceListTerrain(struct _InstanceList* instanceList)//Matching -
 	}
 }
 
-void COLLIDE_SegmentCollisionOn(struct _Instance* instance, int segment)//Matching - 96.77%
+void COLLIDE_SegmentCollisionOn(struct _Instance* instance, int segment)  // Matching - 100%
 {
 	int i;
 	struct _HModel* hmodel;
