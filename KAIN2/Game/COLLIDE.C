@@ -2610,7 +2610,7 @@ long COLLIDE_SAndT(struct SCollideInfo* scollideInfo, struct Level* level)//Matc
 	return CSpad->result;
 }
 
-long COLLIDE_SphereAndTerrain(struct SCollideInfo* scollideInfo, struct Level* level)//Matching - 97.67%
+long COLLIDE_SphereAndTerrain(struct SCollideInfo* scollideInfo, struct Level* level)  // Matching - 100%
 {
 	int result;
 	int d;
@@ -2620,7 +2620,7 @@ long COLLIDE_SphereAndTerrain(struct SCollideInfo* scollideInfo, struct Level* l
 	result = COLLIDE_SAndT(scollideInfo, level);
 
 	in_warpRoom = 0;
-	
+
 	stream = STREAM_GetStreamUnitWithID(level->streamUnitID);
 
 	if (stream != NULL)
