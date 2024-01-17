@@ -3382,7 +3382,7 @@ long COLLIDE_FindCollisionFaceNormal(struct _CollideInfo *collideInfo, struct _N
 	return 0;
 }
 
-short* COLLIDE_GetBSPTreeFlag(struct _CollideInfo* collideInfo)
+short* COLLIDE_GetBSPTreeFlag(struct _CollideInfo* collideInfo)  // Matching - 100%
 {
 	struct Level* level;
 	struct _Terrain* terrain;
