@@ -3213,7 +3213,7 @@ struct _StreamUnit* COLLIDE_CameraWithStreamSignals(struct Camera* camera)//Matc
 	return NULL;
 }
 
-void COLLIDE_InstanceListWithSignals(struct _InstanceList* instanceList)//Matching - 99.66%
+void COLLIDE_InstanceListWithSignals(struct _InstanceList* instanceList)  // Matching - 100%
 {
 	struct _Instance* instance;
 	struct Level* level;
