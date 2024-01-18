@@ -925,7 +925,7 @@ void HUD_Setup_Chit_Count(int chits) //Matching - 99.29%
 }
 
 
-void HUD_Update()
+void HUD_Update()  // Matching - 100%
 {
 	short accl;
 
@@ -935,14 +935,14 @@ void HUD_Update()
 	}
 	else if (gameTrackerX.gameMode != 6)
 	{
-		if ((unsigned int)(HUD_State - 10) < 2)
+		if (HUD_State == 10 || HUD_State == 11)
 		{
 			HUD_State = 12;
 		}
 	}
-	else
+	else if (HUD_State > 1)
 	{
-		if (HUD_State >= 2 && HUD_State < 7)
+		if (HUD_State < 7)
 		{
 			return;
 		}
@@ -961,7 +961,6 @@ void HUD_Update()
 	case 7:
 	case 8:
 	case 9:
-	{
 		HUD_Position = -1000;
 		HUD_Rotation = 0;
 		HUD_Rot_vel = 0;
@@ -973,10 +972,12 @@ void HUD_Update()
 		}
 
 		break;
-	}
+	case 3:
+	case 4:
+	case 11:
+		break;
 	case 1:
 	case 10:
-	{
 		HUD_Damp(&HUD_Position, 0, &HUD_Pos_vel, 96);
 
 		if (HUD_Position >= 0)
@@ -1008,9 +1009,7 @@ void HUD_Update()
 		}
 
 		break;
-
 	case 2:
-	{
 		HUD_Damp(&HUD_Rotation, 819, &HUD_Rot_vel, 80);
 
 		if (HUD_Rotation >= 819)
@@ -1020,17 +1019,9 @@ void HUD_Update()
 		}
 
 		break;
-	}
-	case 3:
-	case 4:
-	case 11:
-	{
-		break;
-	}
 	case 5:
-	{
 		HUD_State = 6;
-		
+
 		HUD_Wait = 10;
 
 		HUD_Rotation = 0;
@@ -1042,10 +1033,8 @@ void HUD_Update()
 		HUD_Count_Overall++;
 
 		break;
-	}
 	case 6:
 	case 12:
-	{
 		HUD_Damp(&HUD_Position, -1000, &HUD_Pos_vel, 96);
 
 		if (HUD_Position < -999)
@@ -1054,8 +1043,6 @@ void HUD_Update()
 		}
 
 		break;
-	}
-	}
 	}
 }
 
