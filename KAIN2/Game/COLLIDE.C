@@ -1802,7 +1802,7 @@ void COLLIDE_Instances(struct _Instance* instance1, struct _Instance* instance2)
 	}
 }
 
-void COLLIDE_InstanceList(struct _InstanceList* instanceList)
+void COLLIDE_InstanceList(struct _InstanceList* instanceList)  // Matching - 100%
 {
 	struct _Instance* instance;
 	struct _Instance* instance2;
@@ -1817,35 +1817,34 @@ void COLLIDE_InstanceList(struct _InstanceList* instanceList)
 		for (i = 16; i < 32; i++)
 		{
 			instance = (struct _Instance*)instanceList->group[i].next;
-			instance2 = instance;
 
-			while (instance2 != NULL)
+			while (instance != NULL)
 			{
-				if ((instance2->flags2 & 0x24040000) == 0)
+				if ((instance->flags2 & 0x24040000) == 0)
 				{
-					COLLIDE_Instances(instance2, playerInstance);
+					COLLIDE_Instances(instance, playerInstance);
 				}
 
-				instance2 = (struct _Instance*)instance2->node.next;
+				instance = (struct _Instance*)instance->node.next;
 			}
 		}
 	}
 
 	for (i = 0; i < 8; i++)
 	{
-		playerInstance = (struct _Instance*)instanceList->group[dyna_clddyna[i]].next;
+		instance = (struct _Instance*)(instanceList->group + dyna_clddyna[i])->next;
 
-		while (playerInstance != NULL)
+		while (instance != NULL)
 		{
-			if (!(playerInstance->flags2 & 0x24040000))
+			if (!(instance->flags2 & 0x24040000))
 			{
-				instance2 = (struct _Instance*)(playerInstance->node).next;
+				instance2 = (struct _Instance*)(instance->node).next;
 
 				while (instance2 != (struct _Instance*)0x0)
 				{
 					if (!(instance2->flags2 & 0x24040000))
 					{
-						COLLIDE_Instances(playerInstance, instance2);
+						COLLIDE_Instances(instance, instance2);
 					}
 
 					instance2 = (struct _Instance*)instance2->node.next;
@@ -1853,12 +1852,12 @@ void COLLIDE_InstanceList(struct _InstanceList* instanceList)
 
 				for (j = i + 1; j < 8; j++)
 				{
-					instance2 = (struct _Instance*)instanceList->group[dyna_clddyna[j]].next;
+					instance2 = (struct _Instance*)(instanceList->group + dyna_clddyna[j])->next;
 					while (instance2 != NULL)
 					{
 						if (!(instance2->flags2 & 0x24040000))
 						{
-							COLLIDE_Instances(playerInstance, instance2);
+							COLLIDE_Instances(instance, instance2);
 						}
 
 						instance2 = (struct _Instance*)instance2->node.next;
@@ -1866,27 +1865,27 @@ void COLLIDE_InstanceList(struct _InstanceList* instanceList)
 				}
 			}
 
-			playerInstance = (struct _Instance*)playerInstance->node.next;
+			instance = (struct _Instance*)instance->node.next;
 		}
 	}
 
 	for (i = 0; i < 8; i++)
 	{
-		playerInstance = (struct _Instance*)instanceList->group[dyna_cldstat[i]].next;
+		instance = (struct _Instance*)(instanceList->group + dyna_cldstat[i])->next;
 
-		while (playerInstance != NULL)
+		while (instance != NULL)
 		{
-			if (!(playerInstance->flags2 & 0x24040000))
+			if (!(instance->flags2 & 0x24040000))
 			{
 				for (j = 0; j < 8; j++)
 				{
-					instance2 = (struct _Instance*)instanceList->group[stat_clddyna[j]].next;
+					instance2 = (struct _Instance*)(instanceList->group + stat_clddyna[j])->next;
 
 					while (instance2 != NULL)
 					{
 						if (!(instance2->flags2 & 0x24040000))
 						{
-							COLLIDE_Instances(playerInstance, instance2);
+							COLLIDE_Instances(instance, instance2);
 						}
 
 						instance2 = (struct _Instance*)instance2->node.next;
@@ -1894,7 +1893,7 @@ void COLLIDE_InstanceList(struct _InstanceList* instanceList)
 				}
 			}
 
-			playerInstance = (struct _Instance*)playerInstance->node.next;
+			instance = (struct _Instance*)instance->node.next;
 		}
 	}
 
