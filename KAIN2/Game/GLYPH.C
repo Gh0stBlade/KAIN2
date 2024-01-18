@@ -892,7 +892,7 @@ void HEALTHU_Pickup(struct _Instance* instance) // Matching - 95%
 	HUD_State = 1;
 }
 
-void HUD_Damp(short* val, short target, short* vel, short max)
+void HUD_Damp(short* val, short target, short* vel, short max)  // Matching - 100%
 {
 	short accl;
 
