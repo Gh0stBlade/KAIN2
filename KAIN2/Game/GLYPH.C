@@ -917,7 +917,7 @@ void HUD_Init() //Matching - 96.07%
 	hud_warp_arrow_flash = 0;
 }
 
-void HUD_Setup_Chit_Count(int chits) //Matching - 99.29%
+void HUD_Setup_Chit_Count(int chits)  // Matching - 100%
 {
 	HUD_Count_Overall = chits;
 
