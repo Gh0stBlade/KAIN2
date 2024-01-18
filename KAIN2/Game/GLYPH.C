@@ -207,7 +207,7 @@ void _GlyphDefaultProcess(struct _Instance* instance, int data1, int data2)
 	}
 }
 
-void HUD_GetPlayerScreenPt(DVECTOR *center)
+void HUD_GetPlayerScreenPt(DVECTOR* center)  // Matching - 99.58%
 {
 	_Position position;
 
@@ -217,9 +217,8 @@ void HUD_GetPlayerScreenPt(DVECTOR *center)
 
 	SetTransMatrix(theCamera.core.wcTransform);
 
-	position.x = gameTrackerX.playerInstance->position.x;
-	position.y = gameTrackerX.playerInstance->position.y;
-	position.z = gameTrackerX.playerInstance->position.z + 448;
+	position = gameTrackerX.playerInstance->position;
+	position.z += 448;
 
 	gte_ldv0(&position);
 	gte_rtps();
