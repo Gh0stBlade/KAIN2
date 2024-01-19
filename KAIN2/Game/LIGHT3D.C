@@ -8,6 +8,27 @@
 
 struct LightGroup default_lightgroup;
 
+static inline int LIGHT3D_FixedDivision(long a, long b)
+{
+	long r;
+
+	r = (a << 12) / (a - b);
+	return r;
+}
+
+static inline void LIGHT3D_FogCalc(long a, struct Level* level)
+{
+	int r;
+
+	r = a * level->fogFar / (a - level->fogFar);
+	if (level->holdFogNear == level->fogNear)
+	{
+		level->holdFogNear = r;
+	}
+
+	level->fogNear = r;
+}
+
 void LIGHT_GetLightMatrix(struct _Instance* instance, struct Level* level, MATRIX* lightM, MATRIX* colorM)
 {
 	MATRIX* lightGroup;
@@ -664,7 +685,7 @@ void LIGHT_Restore(struct LightInfo* lightInfo)
 {
 }
 
-void LIGHT_CalcDQPTable(struct Level* level)
+void LIGHT_CalcDQPTable(struct Level* level)  // Matching - 100%
 {
 	long dqa;
 	long limit;
@@ -677,29 +698,18 @@ void LIGHT_CalcDQPTable(struct Level* level)
 		if (dqa > limit)
 		{
 			dqa = limit;
-
-			if (level->holdFogNear == level->fogNear)
-			{
-				level->holdFogNear = (unsigned short)(limit * level->fogFar / (limit - level->fogFar));
-			}
-
-			level->fogNear = (unsigned short)(limit * level->fogFar / (limit - level->fogFar));
+			LIGHT3D_FogCalc(limit, level);
 		}
+
 		if (dqa < -limit)
 		{
 			dqa = -limit;
-
-			if (level->holdFogNear == level->fogNear)
-			{
-				level->holdFogNear = (unsigned short)(-limit * level->fogFar / (-limit - level->fogFar));
-			}
-
-			level->fogNear = (unsigned short)(-limit * level->fogFar / (-limit - level->fogFar));
+			LIGHT3D_FogCalc(-limit, level);
 		}
-		
-		depthQFogStart = -4096 * dqa / ((level->fogFar << 12) / (level->fogFar - level->fogNear));
-		
-		if (level->backColorR && level->backColorG && level->backColorB)
+
+		depthQFogStart = (4096 * -dqa) / LIGHT3D_FixedDivision(level->fogFar, level->fogNear);
+
+		if (level->backColorR != 0 || level->backColorG != 0)
 		{
 			depthQBlendStart = depthQFogStart;
 		}
