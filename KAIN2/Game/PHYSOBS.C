@@ -727,11 +727,10 @@ void StopPhysOb(struct _Instance* instance)
 }
 
 
-void InitPhysicalObject(struct _Instance* instance, struct GameTracker* gameTracker)  // Matching - 99.49%
+void InitPhysicalObject(struct _Instance* instance, struct GameTracker* gameTracker)  // Matching - 100%
 {
 	struct PhysObData* Data;
 	struct PhysObProperties* Prop;
-	struct PhysObInteractProperties* interactProp;
 	struct PhysObCollectibleProperties* collectibleProp;
 	struct PhysObInteractProperties* interact;
 	int s;
@@ -745,11 +744,11 @@ void InitPhysicalObject(struct _Instance* instance, struct GameTracker* gameTrac
 
 	if ((instance->flags & 0x20000) != 0)
 	{
+		struct PhysObInteractProperties* interactProp;
 		interactProp = (struct PhysObInteractProperties*)instance->data;
 		if (interactProp->mode == 2)
 		{
-			SetObjectIdleData(0, NULL);
-			INSTANCE_Post((struct _Instance*)gameTracker->vertexPool, 0x800024, (int)interactProp);
+			INSTANCE_Post(gameTracker->playerInstance, 0x800024, (int)SetObjectIdleData(0, 0));
 		}
 		if (CheckPhysObAbility(instance, 8) != 0)
 		{
@@ -760,7 +759,7 @@ void InitPhysicalObject(struct _Instance* instance, struct GameTracker* gameTrac
 		return;
 	}
 	Prop = (struct PhysObProperties*)instance->data;
-	Data = (struct PhysObData*)MEMPACK_Malloc(72, 26);
+	Data = (struct PhysObData*)MEMPACK_Malloc(sizeof(struct PhysObData), 26);
 	instance->extraData = Data;
 	Data->Mode = 1;
 	Data->Segment1 = 4097;
@@ -804,14 +803,14 @@ void InitPhysicalObject(struct _Instance* instance, struct GameTracker* gameTrac
 	if ((Prop->Type & 0x8000) != 0)
 	{
 		G2EmulationInstanceSetTotalSections(instance, 1);
-		G2EmulationInstanceSetStartAndEndSegment(instance, 0, 0, ((unsigned short)instance->object->modelList[instance->currentModel]->numSegments - 1) * 65536 >> 16);
+		G2EmulationInstanceSetStartAndEndSegment(instance, 0, 0, (int)instance->object->modelList[instance->currentModel]->numSegments - 1);
 		G2EmulationInstanceSetAnimation(instance, 0, 0, 0, 0);
 		G2EmulationInstanceSetMode(instance, 0, 2);
 	}
 	if (Prop->family == 5)
 	{
 		collectibleProp = (struct PhysObCollectibleProperties*)instance->data;
-		G2EmulationInstanceInitSection(instance, 0, &PhysobAnimCallback, instance);
+		G2EmulationInstanceInitSection(instance, 0, PhysobAnimCallback, instance);
 		if (collectibleProp->idleAnim != 0xFF)
 		{
 			G2EmulationInstanceSetAnimation(instance, 0, collectibleProp->idleAnim, 0, 0);
@@ -838,6 +837,7 @@ void InitPhysicalObject(struct _Instance* instance, struct GameTracker* gameTrac
 	}
 	if (Prop->family == 3)
 	{
+		struct PhysObInteractProperties* interactProp;
 		interactProp = (struct PhysObInteractProperties*)instance->extraData;
 		interactProp->Properties.ID = Prop->Type | 128;
 		interactProp->Properties.Type = 0;
@@ -892,8 +892,7 @@ void InitPhysicalObject(struct _Instance* instance, struct GameTracker* gameTrac
 		}
 		if (interact->mode == 2)
 		{
-			s = SetObjectIdleData(1, instance);
-			INSTANCE_Post((struct _Instance*)gameTracker->vertexPool, 0x800024, s);
+			INSTANCE_Post(gameTracker->playerInstance, 0x800024, SetObjectIdleData(1, instance));
 		}
 	}
 	else if (CheckPhysObAbility(instance, 1) != 0)
@@ -932,19 +931,18 @@ void InitPhysicalObject(struct _Instance* instance, struct GameTracker* gameTrac
 		{
 			instance->flags2 |= 4;
 			switchProp = (struct PhysObSwitchProperties*)instance->data;
-			switchData = (struct SwitchData*)instance->extraData;
-			interact = (struct PhysObInteractProperties*)(int*)&switchData[1];
-			switchData[1].state = switchProp->startMode;
-			interact->Properties.family = 0;
+			switchData = (struct SwitchData*)instance->extraData + 1;
+			switchData->state = switchProp->startMode;
+			switchData->accumulator = 0;
 			if (switchProp->startAnim == 0xFF)
 			{
 				switchProp->startAnim = 0;
 			}
 			G2EmulationInstanceSetAnimation(instance, 0, switchProp->startAnim, 0, 0);
-			G2EmulationInstanceInitSection(instance, 0, PhysobAnimCallback, instance);
+			G2EmulationInstanceInitSection(instance, 0, &PhysobAnimCallback, instance);
 			if (switchProp->Class == 7)
 			{
-				interact->Properties.family = 1024;
+				switchData->accumulator = 1024;
 				G2EmulationInstanceSetAnimation(instance, 0, switchProp->startAnim, 90, 0);
 				G2EmulationInstanceSetMode(instance, 0, 1);
 				G2EmulationInstancePlayAnimation(instance);
