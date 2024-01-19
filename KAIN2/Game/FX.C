@@ -3305,7 +3305,7 @@ void FX_StartLightbeam(struct _Instance *instance, int startSeg, int endSeg, int
 }
 
 
-void FX_StartInstanceEffect(struct _Instance* instance, struct ObjectEffect* effect, int InitFlag)  // Matching - 98.84%
+void FX_StartInstanceEffect(struct _Instance* instance, struct ObjectEffect* effect, int InitFlag)  // Matching - 100%
 {
 	long color;
 	long numberOfSegments;
