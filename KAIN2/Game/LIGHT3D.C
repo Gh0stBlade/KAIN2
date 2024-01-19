@@ -8,6 +8,40 @@
 
 struct LightGroup default_lightgroup;
 
+static inline int LIGHT3D_FixedMultiplication(long a, long b)
+{
+	long r;
+
+	r = a * b;
+	return r >> 12;
+}
+
+static inline int LIGHT3D_FixedMultiplication2(short a, short b)
+{
+	long r;
+
+	r = a * b;
+	return r >> 12;
+}
+
+static inline int LIGHT3D_FixedNormalization(long a, long b, long x, long y)
+{
+	long r;
+
+	r = LIGHT3D_FixedMultiplication2((int)a, (int)b);
+	if (r < x)
+	{
+		r = x;
+	}
+
+	if (y < r)
+	{
+		r = y;
+	}
+
+	return r;
+}
+
 void LIGHT_GetLightMatrix(struct _Instance* instance, struct Level* level, MATRIX* lightM, MATRIX* colorM)
 {
 	MATRIX* lightGroup;
@@ -170,45 +204,39 @@ void LIGHT_GetLightMatrix(struct _Instance* instance, struct Level* level, MATRI
 	return;
 }
 
-void LIGHT_PresetInstanceLight(struct _Instance* instance, short attenuate, MATRIX* lm)
+void LIGHT_PresetInstanceLight(struct _Instance* instance, short attenuate, MATRIX* lm)  // Matching - 100%
 {
 	MATRIX cm;
 	long scale;
 	long scaleRGB[3];
 	int i;
 	int j;
-	struct CDLight* extraLight;
 	struct Level* level;
-	short tempRGB[3];
 	short* todRGB;
-
-	extraLight = (struct CDLight*)instance->extraLight;
-
-	tempRGB[0] = 16;
-	tempRGB[1] = 16;
-	tempRGB[2] = 16;
+	struct CDLight* extraLight = (struct CDLight*)instance->extraLight;
+	short tempRGB[3] = { 16, 16, 16 };  // @fixme cannot load values on local var declarations
 
 	level = STREAM_GetLevelWithID(instance->currentStreamUnitID);
 
 	LIGHT_GetLightMatrix(instance, level, lm, &cm);
 
-	if ((instance->flags & 0x200000))
+	if (instance->flags & 0x200000)
 	{
-		scale = 2048;
+		scale = 2048; // 2.0
 	}
 	else
 	{
-		scale = 4096;
+		scale = 4096; // 1.0
 	}
 
 	if (attenuate != 4096)
 	{
-		scale = (scale * attenuate) >> 12;
+		scale = LIGHT3D_FixedMultiplication(scale, attenuate);
 	}
 
-	if (instance->extraLight != NULL && !(instance->flags & 0x200000))
+	if ((instance->extraLight != NULL) && !(instance->flags & 0x200000))
 	{
-		scale = ((4096 - instance->extraLightScale) * scale) >> 12;
+		scale = LIGHT3D_FixedMultiplication(4096 - instance->extraLightScale, scale);
 
 		scaleRGB[0] = scale + ((instance->extraLightScale * extraLight->r) >> 6);
 		scaleRGB[1] = scale + ((instance->extraLightScale * extraLight->g) >> 6);
@@ -232,9 +260,10 @@ void LIGHT_PresetInstanceLight(struct _Instance* instance, short attenuate, MATR
 
 	for (i = 0; i < 3; i++)
 	{
+		scale = LIGHT3D_FixedMultiplication(scaleRGB[i], todRGB[i]);
 		for (j = 0; j < 3; j++)
 		{
-			cm.m[i][j] = MAX(MIN((cm.m[i][j] * (((scaleRGB[i] * todRGB[i]) << 4) >> 16)) >> 12, -32768), 32767);
+			cm.m[i][j] = LIGHT3D_FixedNormalization(cm.m[i][j], scale, -32768, 32767);
 		}
 	}
 
