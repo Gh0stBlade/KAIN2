@@ -4368,7 +4368,7 @@ void ProcessInteractiveMusic(struct _Instance* instance)
 	}
 }
 
-void ProcessTimers(struct _Instance* instance)  // Matching - 96.30%
+void ProcessTimers(struct _Instance* instance)  // Matching - 100%
 {
 	if (Raziel.timeAccumulator > 0)
 	{
