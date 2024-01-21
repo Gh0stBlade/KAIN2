@@ -367,12 +367,11 @@ int PhysicsCheckGravity(struct _Instance* instance, int Data, short Mode)//Match
 	return rc;
 }
 
-void PhysicsDefaultGravityResponse(struct _Instance *instance, struct evPhysicsGravityData *Data)
+void PhysicsDefaultGravityResponse(struct _Instance* instance, struct evPhysicsGravityData* Data)  // Matching - 100%
 {
 	instance->position.x += Data->x;
 	instance->position.y += Data->y;
-
-	if (instance == gameTrackerX.playerInstance && Data->z >= 129)
+	if ((instance == gameTrackerX.playerInstance) && (Data->z >= 129))
 	{
 		instance->position.z += 128;
 	}
