@@ -378,31 +378,26 @@ void LIGHT_SetAmbientInstance(struct _Instance* instance, struct Level* level)  
 	SetBackColor(((struct _ColorType*)&instance->light_color)->r, ((struct _ColorType*)&instance->light_color)->g, ((struct _ColorType*)&instance->light_color)->b);
 }
 
-void LIGHT_SetMatrixForLightGroupInstance(struct _Instance* instance, struct Level* level)//Matching - 64.62%
+void LIGHT_SetMatrixForLightGroupInstance(struct _Instance* instance, struct Level* level)  // Matching - 100%
 {
-	int lightGrp; // $s1
-	struct LightList* lightList; // $s0
-	int numLightGroups; // $v0
-	MATRIX* lgt; // $s0
-	int lightMatrix; // $v0
-	int x; // $t0
-	int y; // $t1
-	int z; // $t2
+	MATRIX* lgt;
+	MATRIX lgt_cat;
+	MATRIX lm;
+	MATRIX cm;
+	VECTOR half = { 2048, 2048, 2048 };  // @fixme cannot load values on local var declarations
+	struct LightList* lightList;
+	int lightGrp;
+	int numLightGroups;
+	int lightMatrix;
+	int x;
+	int y;
+	int z;
 	int w;
-	MATRIX* matrix; // $v0
-	MATRIX lgt_cat; // [sp+10h] [-70h] BYREF
-	MATRIX lm; // [sp+30h] [-50h] BYREF
-	MATRIX cm; // [sp+50h] [-30h] BYREF
-	VECTOR half; // [sp+70h] [-10h] BYREF
-	typedef struct {
-		long m[5]; // size=20, offset=0
+	MATRIX* matrix;
+	typedef struct
+	{
+		long m[5];
 	} cmm;
-	static cmm cmmVec = { 2048, 2048, 2048, 0 };
-
-	half.vx = cmmVec.m[0];
-	half.vy = cmmVec.m[1];
-	half.vz = cmmVec.m[2];
-	half.pad = cmmVec.m[3];
 
 	lightGrp = instance->lightGroup;
 	if (instance->matrix)
@@ -438,27 +433,13 @@ void LIGHT_SetMatrixForLightGroupInstance(struct _Instance* instance, struct Lev
 		lightMatrix = instance->lightMatrix;
 		if (lightMatrix != 0)
 		{
-			((cmm*)&lgt_cat.m[0][0])->m[0] = ((cmm*)&instance->matrix[lightMatrix].m[0][0])->m[0];
-			((cmm*)&lgt_cat.m[0][0])->m[1] = ((cmm*)&instance->matrix[lightMatrix].m[0][0])->m[1];
-			((cmm*)&lgt_cat.m[0][0])->m[2] = ((cmm*)&instance->matrix[lightMatrix].m[0][0])->m[2];
-
-			lgt_cat.t[0] = instance->matrix[lightMatrix].t[0];
-			lgt_cat.t[1] = instance->matrix[lightMatrix].t[1];
-			lgt_cat.t[2] = instance->matrix[lightMatrix].t[2];
+			lgt_cat = instance->matrix[lightMatrix];
 		}
 		else
 		{
 			if ((instance->flags & 0x1) != 0)
 			{
-				matrix = instance->matrix;
-				((cmm*)&lgt_cat.m[0][0])->m[0] = ((cmm*)&matrix->m[0][0])->m[0];
-				((cmm*)&lgt_cat.m[0][0])->m[1] = ((cmm*)&matrix->m[0][0])->m[1];
-				((cmm*)&lgt_cat.m[0][0])->m[2] = ((cmm*)&matrix->m[0][0])->m[2];
-				((cmm*)&lgt_cat.m[0][0])->m[3] = ((cmm*)&matrix->m[0][0])->m[3];
-
-				lgt_cat.t[0] = matrix->t[0];
-				lgt_cat.t[1] = matrix->t[1];
-				lgt_cat.t[2] = matrix->t[2];
+				lgt_cat = *instance->matrix;
 			}
 			else
 			{
@@ -477,13 +458,13 @@ void LIGHT_SetMatrixForLightGroupInstance(struct _Instance* instance, struct Lev
 			lm.m[2][1] = (instance->extraLightDir.y * instance->extraLightScale) >> 12;
 			lm.m[2][2] = (instance->extraLightDir.z * instance->extraLightScale) >> 12;
 			cm.m[0][0] = lgt[1].m[0][0];
-			cm.m[0][1] = lgt[1].m[1][0];
-			cm.m[0][2] = lgt[1].m[2][0];
-			cm.m[1][0] = lgt[1].m[0][1];
+			cm.m[1][0] = lgt[1].m[1][0];
+			cm.m[2][0] = lgt[1].m[2][0];
+			cm.m[0][1] = lgt[1].m[0][1];
 			cm.m[1][1] = lgt[1].m[1][1];
-			cm.m[1][2] = lgt[1].m[2][1];
-			cm.m[2][0] = ((struct CDLight*)instance->extraLight)->r * 16;
-			cm.m[2][1] = ((struct CDLight*)instance->extraLight)->g * 16;
+			cm.m[2][1] = lgt[1].m[2][1];
+			cm.m[0][2] = ((struct CDLight*)instance->extraLight)->r * 16;
+			cm.m[1][2] = ((struct CDLight*)instance->extraLight)->g * 16;
 			cm.m[2][2] = ((struct CDLight*)instance->extraLight)->b * 16;
 			MulMatrix0(&lm, &lgt_cat, &lgt_cat);
 			SetLightMatrix(&lgt_cat);
@@ -491,6 +472,7 @@ void LIGHT_SetMatrixForLightGroupInstance(struct _Instance* instance, struct Lev
 			{
 				ScaleMatrix(&cm, &half);
 			}
+			SetColorMatrix(&cm);
 		}
 		else
 		{
@@ -498,11 +480,7 @@ void LIGHT_SetMatrixForLightGroupInstance(struct _Instance* instance, struct Lev
 			SetLightMatrix(&lgt_cat);
 			if ((instance->flags & 0x200000) != 0)
 			{
-				((cmm*)&cm.m[0][0])->m[0] = ((cmm*)&lgt[1].m[0][0])->m[0];
-				((cmm*)&cm.m[0][0])->m[1] = ((cmm*)&lgt[1].m[0][0])->m[1];
-				((cmm*)&cm.m[0][0])->m[2] = ((cmm*)&lgt[1].m[0][0])->m[2];
-				((cmm*)&cm.m[0][0])->m[3] = ((cmm*)&lgt[1].m[0][0])->m[3];
-				((cmm*)&cm.m[0][0])->m[4] = ((cmm*)&lgt[1].m[0][0])->m[4];
+				*(cmm*)&cm = *(cmm*)&lgt[1];
 
 				ScaleMatrix(&cm, &half);
 				SetColorMatrix(&cm);
