@@ -71,7 +71,8 @@ int PhysicsCheckLinkedMove(struct _Instance *instance, int Data, short Mode)
 	return 0;
 }
 
-void PhysicsDefaultLinkedMoveResponse(struct _Instance* instance, struct evPhysicsLinkedMoveData* Data, int updateTransforms) { // Matching - 100%
+void PhysicsDefaultLinkedMoveResponse(struct _Instance* instance, struct evPhysicsLinkedMoveData* Data, int updateTransforms)  // Matching - 100%
+{
 	instance->position.x += Data->posDelta.x;
 	instance->position.y += Data->posDelta.y;
 	instance->position.z += Data->posDelta.z;
