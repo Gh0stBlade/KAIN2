@@ -307,7 +307,7 @@ long INSTANCE_InstanceGroupNumber(struct _Instance* instance)
 	return result;
 }
 
-void INSTANCE_InsertInstanceGroup(struct _InstanceList* list, struct _Instance* instance)
+void INSTANCE_InsertInstanceGroup(struct _InstanceList* list, struct _Instance* instance)  // Matching - 100%
 {
 	LIST_InsertFunc(&list->group[INSTANCE_InstanceGroupNumber(instance)], &instance->node);
 }
