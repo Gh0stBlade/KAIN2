@@ -1266,7 +1266,7 @@ void COLLIDE_PointAndInstanceTrivialReject(struct _PCollideInfo* pcollideInfo, s
 	}
 }
 
-void COLLIDE_PointAndWorld(struct _PCollideInfo* pcollideInfo, struct Level* level)//Matching - 96.50%
+void COLLIDE_PointAndWorld(struct _PCollideInfo* pcollideInfo, struct Level* level)  // Matching - 100%
 {
 	int i;
 	struct _LCollideInfo lcol;
@@ -1387,7 +1387,7 @@ void COLLIDE_PointAndWorld(struct _PCollideInfo* pcollideInfo, struct Level* lev
 		{
 			for (i = 0; i < 8; i++)
 			{
-				instance = (struct _Instance*)instanceList->group[stat_clddyna[i]].next;
+				instance = (struct _Instance*)(instanceList->group + stat_clddyna[i])->next;
 
 				while (instance)
 				{
@@ -1404,7 +1404,7 @@ void COLLIDE_PointAndWorld(struct _PCollideInfo* pcollideInfo, struct Level* lev
 		{
 			for (i = 0; i < 8; i++)
 			{
-				instance = (struct _Instance*)instanceList->group[dyna_clddyna[i]].next;
+				instance = (struct _Instance*)(instanceList->group + dyna_clddyna[i])->next;
 
 				while (instance)
 				{
@@ -1424,7 +1424,7 @@ void COLLIDE_PointAndWorld(struct _PCollideInfo* pcollideInfo, struct Level* lev
 		{
 			for (i = 0; i < 8; i++)
 			{
-				instance = (struct _Instance*)instanceList->group[dyna_cldstat[i]].next;
+				instance = (struct _Instance*)(instanceList->group + dyna_cldstat[i])->next;
 
 				while (instance)
 				{
