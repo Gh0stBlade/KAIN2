@@ -46,7 +46,7 @@ void INSTANCE_Deactivate(struct _Instance* instance)  // Matching - 99.89%
 	}
 }
 
-void INSTANCE_Reactivate(struct _Instance* instance)
+void INSTANCE_Reactivate(struct _Instance* instance)  // Matching - 100%
 {
 	struct Object* object;
 
