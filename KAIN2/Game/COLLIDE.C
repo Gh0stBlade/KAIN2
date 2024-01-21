@@ -584,7 +584,7 @@ long COLLIDE_IntersectLineAndBox(struct _SVector* point0, struct _SVector* norma
 	return 0;
 }
 
-struct _TFace* COLLIDE_PointAndTerrain(struct _Terrain* terrain, struct _PCollideInfo* pcollideInfo, struct _LCollideInfo* lcol)//Matching - 99.58%
+struct _TFace* COLLIDE_PointAndTerrain(struct _Terrain* terrain, struct _PCollideInfo* pcollideInfo, struct _LCollideInfo* lcol)  // Matching - 100%
 {
 	return COLLIDE_PointAndTerrainFunc(terrain, pcollideInfo, 0, NULL, 0, 0, lcol);
 }
