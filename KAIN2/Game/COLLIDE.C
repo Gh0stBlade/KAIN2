@@ -3283,7 +3283,7 @@ void COLLIDE_SegmentCollisionOn(struct _Instance* instance, int segment)//Matchi
 	}
 }
 
-void COLLIDE_SegmentCollisionOff(struct _Instance* instance, int segment)
+void COLLIDE_SegmentCollisionOff(struct _Instance* instance, int segment)  // Matching - 100%
 {
 	int i;
 	int enabled;
@@ -3298,20 +3298,18 @@ void COLLIDE_SegmentCollisionOff(struct _Instance* instance, int segment)
 
 		enabled = 0;
 
-		if (hmodel->numHPrims != 0)
+		for (i = hmodel->numHPrims; i != 0; i--)
 		{
-			for (i = hmodel->numHPrims; i != 0; i--)
+			if (hprim->segment == segment)
 			{
-				if (hprim[i].segment == segment)
-				{
-					hprim[i].hpFlags &= 0xFE;
-				}
-
-				if (enabled == 0 && (hprim[i].hpFlags & 0x1))
-				{
-					enabled = 1;
-				}
+				hprim->hpFlags &= 0xFE;
 			}
+
+			if (enabled == 0 && (hprim->hpFlags & 0x1))
+			{
+				enabled = 1;
+			}
+			hprim++;
 		}
 
 		if (enabled == 0)
