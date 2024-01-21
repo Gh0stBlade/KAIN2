@@ -241,7 +241,7 @@ void LIGHT_PresetInstanceLight(struct _Instance* instance, short attenuate, MATR
 	SetColorMatrix(&cm);
 }
 
-void LIGHT_GetAmbient(struct _ColorType* color, struct _Instance* instance)
+void LIGHT_GetAmbient(struct _ColorType* color, struct _Instance* instance)  // Matching - 100%
 {
 	int lightval;
 	
