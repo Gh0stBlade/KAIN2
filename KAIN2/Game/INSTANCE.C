@@ -234,7 +234,7 @@ void INSTANCE_InitInstanceList(struct _InstanceList* list, struct _InstancePool*
 	pool->nextInstanceID = 1;
 }
 
-struct _Instance* INSTANCE_NewInstance(struct _InstanceList* list)
+struct _Instance* INSTANCE_NewInstance(struct _InstanceList* list)  // Matching - 100%
 {
 	struct _Instance* temp;
 	struct _Instance* instance;
@@ -251,7 +251,7 @@ struct _Instance* INSTANCE_NewInstance(struct _InstanceList* list)
 
 		if (instance->next != NULL)
 		{
-			list->first->prev = instance;
+			temp->prev = instance;
 		}
 	
 		instance->prev = NULL;
