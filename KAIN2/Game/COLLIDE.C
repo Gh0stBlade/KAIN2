@@ -172,13 +172,11 @@ int COLLIDE_PointInTriangle(struct _SVector* v0, struct _SVector* v1, struct _SV
 	return inside_flag;
 }
 
-int COLLIDE_PointInTriangle2DPub(short* v0, short* v1, short* v2, short* point)
+int COLLIDE_PointInTriangle2DPub(short* v0, short* v1, short* v2, short* point)  // Matching - 100%
 {
 	struct _SVector normal;
 
-	normal.x = 0;
-	normal.y = 0;
-	normal.z = 4096;
+	normal = _SVector {0, 0, 4096};  // decomp.me scratch differs by using a different expression here that is valid C but won't work for this C++ project
 
 	return COLLIDE_PointInTriangle((struct _SVector*)v0, (struct _SVector*)v1, (struct _SVector*)v2, (struct _SVector*)point, (struct _SVector*)&normal);
 }
