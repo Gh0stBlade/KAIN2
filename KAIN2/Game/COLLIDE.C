@@ -2639,22 +2639,22 @@ long COLLIDE_SphereAndTerrain(struct SCollideInfo* scollideInfo, struct Level* l
 	return result;
 }
 
-void COLLIDE_InstanceTerrain(struct _Instance* instance, struct Level* level)//Matching - 99.90%
+void COLLIDE_InstanceTerrain(struct _Instance* instance, struct Level* level)  // Matching - 100%
 {
 
-	struct _Vector* newPosVec; // stack offset -60
-	struct _Vector* oldPosVec; // stack offset -56
-	struct _SVector* oldPos; // $fp
-	struct SCollideInfo scollideInfoX; // stack offset -96
-	struct SCollideInfo* scollideInfo; // $s3
-	struct _Sphere* wSphere; // $s5
-	MATRIX* swTransform; // $s0
-	MATRIX* oldSWTransform; // $s1
-	struct _HSphere* hsphere; // $s2
-	long flags; // stack offset -64
-	int i; // $s7
-	struct _HModel* hmodel; // $v0
-	struct _HPrim* hprim; // $s6
+	struct _Vector* newPosVec;
+	struct _Vector* oldPosVec;
+	struct _SVector* oldPos;
+	struct SCollideInfo scollideInfoX;
+	struct SCollideInfo* scollideInfo;
+	struct _Sphere* wSphere;
+	MATRIX* swTransform;
+	MATRIX* oldSWTransform;
+	struct _HSphere* hsphere;
+	long flags;
+	int i;
+	struct _HModel* hmodel;
+	struct _HPrim* hprim;
 	int currentModel;
 	unsigned char withFlags;
 	void (*collideFunc)(struct _Instance* instance, struct GameTracker* gameTracker);
