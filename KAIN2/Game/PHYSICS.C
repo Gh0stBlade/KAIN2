@@ -43,17 +43,14 @@ void PHYSICS_CheckLineInWorld(struct _Instance* instance, struct _PCollideInfo* 
 	PHYSICS_CheckLineInWorldMask(instance, pcollideInfo);
 }
 
-void PHYSICS_CheckLineInWorldMask(struct _Instance* instance, struct _PCollideInfo* pcollideInfo)//Matching - 99.31%
+void PHYSICS_CheckLineInWorldMask(struct _Instance* instance, struct _PCollideInfo* pcollideInfo)  // Matching - 100%
 {
 	struct Level* level;
 
 	level = STREAM_GetLevelWithID(instance->currentStreamUnitID);
-
 	pcollideInfo->inst = NULL;
 	pcollideInfo->instance = instance;
-
 	SetNoPtCollideInFamily(instance);
-
 	if (level != NULL)
 	{
 		COLLIDE_PointAndWorld(pcollideInfo, level);
@@ -62,7 +59,6 @@ void PHYSICS_CheckLineInWorldMask(struct _Instance* instance, struct _PCollideIn
 	{
 		pcollideInfo->type = 0;
 	}
-
 	ResetNoPtCollideInFamily(instance);
 }
 
