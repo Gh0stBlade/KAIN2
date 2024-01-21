@@ -3397,7 +3397,7 @@ short* COLLIDE_GetBSPTreeFlag(struct _CollideInfo* collideInfo)
 	return &bspTree->flags;
 }
 
-void COLLIDE_SetBSPTreeFlag(struct _CollideInfo* collideInfo, short flag)
+void COLLIDE_SetBSPTreeFlag(struct _CollideInfo* collideInfo, short flag)  // Matching - 100%
 {
 	short* bspTreeFlags;
 
