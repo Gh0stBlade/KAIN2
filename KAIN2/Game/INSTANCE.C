@@ -198,7 +198,7 @@ void INSTANCE_DeactivateFarInstances(struct GameTracker* gameTracker)  // Matchi
 	}
 }
 
-void INSTANCE_InitInstanceList(struct _InstanceList* list, struct _InstancePool* pool)
+void INSTANCE_InitInstanceList(struct _InstanceList* list, struct _InstancePool* pool)  // Matching - 100%
 {
 	long i;
 
