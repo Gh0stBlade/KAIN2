@@ -390,16 +390,19 @@ long COLLIDE_WithinXZBounds(struct _SVector* point, struct _HBox* hbox)
 	return 0;
 }
 
-long COLLIDE_WithinXYBounds(struct _SVector* point, struct _HBox* hbox)
+long COLLIDE_WithinXYBounds(struct _SVector* point, struct _HBox* hbox)  // Matching - 100%
 {
-	if (point->x >= hbox->minX && hbox->maxX >= point->x)
+	int temp;  // not from SYMDUMP
+
+	temp = 0;
+	if ((point->x >= hbox->minX) && (hbox->maxX >= point->x))
 	{
 		if (point->y >= hbox->minY)
 		{
-			return hbox->maxY >= point->y;
+			temp = hbox->maxY >= point->y;
 		}
 	}
-	return 0;
+	return temp;
 }
 
 
