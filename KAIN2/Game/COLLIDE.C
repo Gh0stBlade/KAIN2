@@ -366,16 +366,19 @@ void COLLIDE_MoveAllTransforms(struct _Instance* instance, struct _Position* off
 	}
 }
 
-long COLLIDE_WithinYZBounds(struct _SVector* point, struct _HBox* hbox)//Matching - 86.52%
+long COLLIDE_WithinYZBounds(struct _SVector* point, struct _HBox* hbox)  // Matching - 100%
 {
-	if (point->y >= hbox->minY && hbox->maxY >= point->y)
+	int temp;  // not from SYMDUMP
+
+	temp = 0;
+	if ((point->y >= hbox->minY) && (hbox->maxY >= point->y))
 	{
 		if (point->z >= hbox->minZ)
 		{
-			return hbox->maxZ >= point->z;
+			temp = hbox->maxZ >= point->z;
 		}
 	}
-	return 0;
+	return temp;
 }
 
 long COLLIDE_WithinXZBounds(struct _SVector* point, struct _HBox* hbox)  // Matching - 100%
