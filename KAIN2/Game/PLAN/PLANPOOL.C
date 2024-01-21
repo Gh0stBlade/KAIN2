@@ -255,7 +255,7 @@ void PLANPOOL_MarkTwoNodesAsNotConnected(struct PlanningNode* node1, struct Plan
 	node1->connections &= ~(1 << (node2 - planningPool));
 }
 
-struct PlanningNode* PLANPOOL_GetClosestUnexploredValidNeighbor(struct PlanningNode* startNode, struct PlanningNode* planningPool) // Matching - 99.78%
+struct PlanningNode* PLANPOOL_GetClosestUnexploredValidNeighbor(struct PlanningNode* startNode, struct PlanningNode* planningPool) // Matching - 99.85%
 {
 	int i;
 	unsigned long connectionStatus;
@@ -265,33 +265,30 @@ struct PlanningNode* PLANPOOL_GetClosestUnexploredValidNeighbor(struct PlanningN
 
 	minDist = 0xFFFFFFFF;
 	returnNode = NULL;
-	if (startNode)
+	if (startNode == NULL)
 	{
-		connectionStatus = startNode->connectionStatus;
-		i = 0;
-
-		while (i < poolManagementData->numNodesInPool)
+		return NULL;
+	}
+	connectionStatus = startNode->connectionStatus;
+	for (i = 0; i < poolManagementData->numNodesInPool; i++)
+	{
+		if ((connectionStatus & 1) == 0)
 		{
-			if ((connectionStatus & 1) == 0)
+			if (PLANPOOL_AppropriatePair(startNode, &planningPool[i]))
 			{
-				if (PLANPOOL_AppropriatePair(startNode, &planningPool[i]) != 0)
+				dist = MATH3D_LengthXYZ(startNode->pos.x - planningPool[i].pos.x, startNode->pos.y - planningPool[i].pos.y, startNode->pos.z - planningPool[i].pos.z);
+				if (dist < minDist)
 				{
-					dist = MATH3D_LengthXYZ(startNode->pos.x - planningPool[i].pos.x, startNode->pos.y - planningPool[i].pos.y, startNode->pos.z - planningPool[i].pos.z);
-					if (dist < minDist)
-					{
-						minDist = dist;
-						returnNode = &planningPool[i];
-					}
-				}
-				else
-				{
-					PLANPOOL_MarkTwoNodesAsNotConnected(startNode, &planningPool[i], planningPool);
+					minDist = dist;
+					returnNode = &planningPool[i];
 				}
 			}
-			connectionStatus = connectionStatus >> 1;
-			i++;
+			else
+			{
+				PLANPOOL_MarkTwoNodesAsNotConnected(startNode, &planningPool[i], planningPool);
+			}
 		}
-
+		connectionStatus = connectionStatus >> 1;
 	}
 	return returnNode;
 }
