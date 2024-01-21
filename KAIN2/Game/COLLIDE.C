@@ -3013,7 +3013,7 @@ long COLLIDE_LineWithSignals(struct _SVector* startPoint, struct _SVector* endPo
 	return result;
 }
 
-void COLLIDE_InstanceTerrainSignal(struct _Instance* instance, struct Level* level)//Matching - 98.95%
+void COLLIDE_InstanceTerrainSignal(struct _Instance* instance, struct Level* level)  // Matching - 100%
 {
 	struct _Model* model;
 	int numSignals;
