@@ -566,7 +566,7 @@ void LIGHT_DrawShadow(MATRIX* wcTransform, struct _Instance* instance, struct _P
 	}
 }
 
-void LIGHT_CalcShadowPositions(struct GameTracker* gameTracker)//Matching - 97.15%
+void LIGHT_CalcShadowPositions(struct GameTracker* gameTracker)  // Matching - 100%
 {
 	struct _InstanceList* instanceList;
 	struct _Instance* instance;
@@ -579,105 +579,108 @@ void LIGHT_CalcShadowPositions(struct GameTracker* gameTracker)//Matching - 97.1
 
 	for (instance = instanceList->first; instance; instance = instance->next)
 	{
-		if ((instance->flags2 & 0x40) != 0)
+		if ((instance->flags2 & 0x40) == 0)
 		{
-			if ((instance->flags & 0xA00) == 0x200 && !(instance->flags2 & 0x4000000))
-			{
-				if ((instance->flags & 0x18000000) != 0x8000000)
-				{
-					if ((instance->flags & 0x10000000))
-					{
-						newPos.x = (short)instance->matrix[1].t[0];
-						oldPos.x = newPos.x;
-						
-						newPos.y = (short)instance->matrix[1].t[1];
-						oldPos.y = newPos.y;
-					
-						newPos.z = (short)instance->matrix[1].t[2];
-						oldPos.z = newPos.z;
-					}
-					else
-					{
-						newPos = instance->position;
-						oldPos = instance->position;
-					}
-					
-					pcollideInfo.collideType = 55;
-					pcollideInfo.newPoint = (SVECTOR*)&newPos;
-					pcollideInfo.oldPoint = (SVECTOR*)&oldPos;
-					pcollideInfo.instance = instance;
-					
-					newPos.z -= 1280;
-					oldPos.z += 256;
-					
-					instance->flags |= 0x40u;
-					
-					level = STREAM_GetLevelWithID(instance->currentStreamUnitID);
-
-					if (level)
-					{
-						COLLIDE_PointAndWorld(&pcollideInfo, level);
-					}
-					else
-					{
-						pcollideInfo.type = 0;
-					}
-					instance->flags &= ~0x40;
-					if (pcollideInfo.type == 3)
-					{
-						LIGHT_CalcLightValue((struct _TFace*)pcollideInfo.prim, instance, (struct _Terrain*)pcollideInfo.inst->node.prev);
-					}
-					else if (pcollideInfo.type != 5)
-					{
-						LIGHT_CalcLightValue(NULL, instance, (struct _Terrain*)NULL);
-					}
-
-					if (pcollideInfo.type)
-					{
-						if (pcollideInfo.type != 1)
-						{
-							if (pcollideInfo.type == 3
-								&& (((struct _TFace*)pcollideInfo.prim)->textoff != 0xFFFF)
-								&& (*(unsigned short*)((char*)&pcollideInfo.inst->node.prev[6].next[1].prev + ((struct _TFace*)pcollideInfo.prim)->textoff + 2) & 0x4000))
-							{
-								instance->flags |= 0x200000;
-							}
-							else
-							{
-								instance->flags &= ~0x200000;
-							}
-							instance->wNormal.x = pcollideInfo.wNormal.vx;
-							instance->wNormal.y = pcollideInfo.wNormal.vy;
-							instance->wNormal.z = pcollideInfo.wNormal.vz;
-						}
-						else
-						{
-							instance->wNormal.x = 0;
-							instance->wNormal.y = 0;
-							instance->wNormal.z = 4096;
-						}
-					}
-					instance->shadowPosition = newPos;
-				}
-				else
-				{
-					if (instance->waterFace != NULL)
-					{
-						LIGHT_CalcLightValue(instance->waterFace, instance, instance->waterFaceTerrain);
-					}
-					else if (instance->tfaceLevel != NULL)
-					{
-						LIGHT_CalcLightValue(instance->tface, instance, ((struct Level*)instance->tfaceLevel)->terrain);
-					}
-				}
-			}
-			else if (!(instance->flags2 & 0x40) && instance->tfaceLevel != NULL)
+			if (!(instance->flags2 & 0x40) && instance->tfaceLevel != NULL)
 			{
 				LIGHT_CalcLightValue(instance->tface, instance, ((struct Level*)instance->tfaceLevel)->terrain);
 			}
-			instance->flags &= ~0x8000000;
-
 		}
+		else if ((instance->flags & 0xA00) == 0x200 && !(instance->flags2 & 0x4000000))
+		{
+			if ((instance->flags & 0x18000000) != 0x8000000)
+			{
+				if ((instance->flags & 0x10000000))
+				{
+					newPos.x = (short)instance->matrix[1].t[0];
+					oldPos.x = newPos.x;
+
+					newPos.y = (short)instance->matrix[1].t[1];
+					oldPos.y = newPos.y;
+
+					newPos.z = (short)instance->matrix[1].t[2];
+					oldPos.z = newPos.z;
+				}
+				else
+				{
+					newPos = instance->position;
+					oldPos = instance->position;
+				}
+
+				pcollideInfo.collideType = 55;
+				pcollideInfo.newPoint = (SVECTOR*)&newPos;
+				pcollideInfo.oldPoint = (SVECTOR*)&oldPos;
+				pcollideInfo.instance = instance;
+
+				newPos.z -= 1280;
+				oldPos.z += 256;
+
+				instance->flags |= 0x40u;
+
+				level = STREAM_GetLevelWithID(instance->currentStreamUnitID);
+
+				if (level)
+				{
+					COLLIDE_PointAndWorld(&pcollideInfo, level);
+				}
+				else
+				{
+					pcollideInfo.type = 0;
+				}
+				instance->flags &= ~0x40;
+				if (pcollideInfo.type == 3)
+				{
+					LIGHT_CalcLightValue((struct _TFace*)pcollideInfo.prim, instance, (struct _Terrain*)pcollideInfo.inst->node.prev);
+				}
+				else if (pcollideInfo.type != 5)
+				{
+					LIGHT_CalcLightValue(NULL, instance, (struct _Terrain*)NULL);
+				}
+
+				if (pcollideInfo.type)
+				{
+					if (pcollideInfo.type != 1)
+					{
+						if (pcollideInfo.type == 3
+							&& (((struct _TFace*)pcollideInfo.prim)->textoff != 0xFFFF)
+							&& (((struct TextureFT3*)((char*)((struct _Terrain*)(pcollideInfo.inst->node.prev))->StartTextureList + ((struct _TFace*)pcollideInfo.prim)->textoff))->attr & 0x4000))
+						{
+							instance->flags |= 0x200000;
+						}
+						else
+						{
+							instance->flags &= ~0x200000;
+						}
+						instance->wNormal.x = pcollideInfo.wNormal.vx;
+						instance->wNormal.y = pcollideInfo.wNormal.vy;
+						instance->wNormal.z = pcollideInfo.wNormal.vz;
+					}
+					else
+					{
+						instance->wNormal.x = 0;
+						instance->wNormal.y = 0;
+						instance->wNormal.z = 4096;
+					}
+				}
+				instance->shadowPosition = newPos;
+			}
+			else
+			{
+				if (instance->waterFace != NULL)
+				{
+					LIGHT_CalcLightValue(instance->waterFace, instance, instance->waterFaceTerrain);
+				}
+				else if (instance->tfaceLevel != NULL)
+				{
+					LIGHT_CalcLightValue(instance->tface, instance, ((struct Level*)instance->tfaceLevel)->terrain);
+				}
+			}
+		}
+		else if (!(instance->flags2 & 0x40) && instance->tfaceLevel != NULL)
+		{
+			LIGHT_CalcLightValue(instance->tface, instance, ((struct Level*)instance->tfaceLevel)->terrain);
+		}
+		instance->flags &= ~0x8000000;
 	}
 }
 
