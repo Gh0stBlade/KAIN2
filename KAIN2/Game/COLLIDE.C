@@ -181,7 +181,7 @@ int COLLIDE_PointInTriangle2DPub(short* v0, short* v1, short* v2, short* point) 
 	return COLLIDE_PointInTriangle((struct _SVector*)v0, (struct _SVector*)v1, (struct _SVector*)v2, (struct _SVector*)point, (struct _SVector*)&normal);
 }
 
-long COLLIDE_GetNormal(short nNum, short* nrmlArray, struct _SVector* nrml)//Matching - 99.87%
+long COLLIDE_GetNormal(short nNum, short* nrmlArray, struct _SVector* nrml)  // Matching - 100%
 {
 	short* sPtr;
 	long bitMask;
