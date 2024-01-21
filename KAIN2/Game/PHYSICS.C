@@ -1395,16 +1395,18 @@ void PHYSICS_SetVAndAFromRot(struct _Instance* instance, struct _Rotation* rot, 
 	}
 }
 
-long PHYSICS_FindAFromDAndT(long d, long t)
+long PHYSICS_FindAFromDAndT(long d, long t)  // Matching - 100%
 {
 	if (t != 0)
 	{
-		return MAX((d * 8192) / (t * t), (d * 8192) / (t * t) + 4095) >> 12;
+		t = (d * 8192) / (t * t);
+		if (t < 0)
+		{
+			t += 4095;
+		}
+		return t >> 12;
 	}
-	else
-	{
-		return 0;
-	}
+	return 0;
 }
 
 long PHYSICS_FindVFromAAndD(long a, long d)  // Matching - 100%
