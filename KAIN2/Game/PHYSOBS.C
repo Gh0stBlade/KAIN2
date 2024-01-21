@@ -907,7 +907,7 @@ void InitPhysicalObject(struct _Instance* instance, struct GameTracker* gameTrac
 		Data->pz = instance->position.z;
 		instance->lightMatrix = 2;
 		instance->object->oflags |= 0x400;
-		G2EmulationInstanceInitSection(instance, 0, &PhysobAnimCallback, instance);
+		G2EmulationInstanceInitSection(instance, 0, PhysobAnimCallback, instance);
 		G2Anim_AttachControllerToSeg(&instance->anim, 0, 76);
 		G2Anim_AttachControllerToSeg(&instance->anim, 2, 14);
 		G2Anim_DisableController(&instance->anim, 0, 76);
@@ -939,7 +939,7 @@ void InitPhysicalObject(struct _Instance* instance, struct GameTracker* gameTrac
 				switchProp->startAnim = 0;
 			}
 			G2EmulationInstanceSetAnimation(instance, 0, switchProp->startAnim, 0, 0);
-			G2EmulationInstanceInitSection(instance, 0, &PhysobAnimCallback, instance);
+			G2EmulationInstanceInitSection(instance, 0, PhysobAnimCallback, instance);
 			if (switchProp->Class == 7)
 			{
 				switchData->accumulator = 1024;
@@ -950,7 +950,7 @@ void InitPhysicalObject(struct _Instance* instance, struct GameTracker* gameTrac
 		}
 		if (CheckPhysObFamily(instance, 7) != 0)
 		{
-			G2EmulationInstanceInitSection(instance, 0, &PhysobAnimCallback, instance);
+			G2EmulationInstanceInitSection(instance, 0, PhysobAnimCallback, instance);
 			instance->flags2 |= 0x20000;
 		}
 	}
