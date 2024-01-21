@@ -265,22 +265,22 @@ struct _Instance* INSTANCE_NewInstance(struct _InstanceList* list)
 	return NULL;
 }
 
-long INSTANCE_InstanceGroupNumber(struct _Instance* instance)
+long INSTANCE_InstanceGroupNumber(struct _Instance* instance)  // Matching - 100%
 {
 	long result;
 
 	result = 0;
 
-	if ((instance->object->oflags & 0x80))
+	if ((instance->object->oflags & 0x80) && !(instance->flags & 0x8000))
 	{
-		result = (unsigned)(instance->flags & 0x8000) < 1;
+		result = 0x1;
 	}
-	
+
 	if ((instance->object->oflags & 0x20) && !(instance->flags & 0x2000))
 	{
 		result |= 0x2;
 	}
-	
+
 	if ((instance->object->oflags & 0x40) && !(instance->flags & 0x4000))
 	{
 		result |= 0x4;
