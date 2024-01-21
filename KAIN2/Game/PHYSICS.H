@@ -3,7 +3,7 @@
 
 #include "Game/COLLIDE.H"
 
-struct evPhysicsGravityData // hashcode: 0xD13BDF0D (dec: -784605427)
+struct evPhysicsGravityData 
 {
 	short UpperOffset; // size=0, offset=0
 	short LowerOffset; // size=0, offset=2
@@ -13,7 +13,7 @@ struct evPhysicsGravityData // hashcode: 0xD13BDF0D (dec: -784605427)
 	short slipSlope; // size=0, offset=10
 };
 
-struct evPhysicsSlideData // hashcode: 0x42A65F7B (dec: 1118199675)
+struct evPhysicsSlideData 
 {
 	struct _SVector ForwardVector; // size=8, offset=0
 	struct _SVector ForwardNormal; // size=8, offset=8
@@ -22,11 +22,11 @@ struct evPhysicsSlideData // hashcode: 0x42A65F7B (dec: 1118199675)
 	short DropOffset; // size=0, offset=26
 	short UpperOffset; // size=0, offset=28
 	short Height; // size=0, offset=30
-	struct _Instance* UpperInstance; // size=616, offset=32
+	struct _Instance* UpperInstance; // size=668, offset=32
 	int Dot; // size=0, offset=36
 };
 
-struct evPhysicsDropOffData // hashcode: 0x240C7D71 (dec: 604798321)
+struct evPhysicsDropOffData 
 {
 	short xOffset; // size=0, offset=0
 	short yOffset; // size=0, offset=2
@@ -35,7 +35,7 @@ struct evPhysicsDropOffData // hashcode: 0x240C7D71 (dec: 604798321)
 	int UpperOffset; // size=0, offset=8
 };
 
-struct evPhysicsEdgeData // hashcode: 0x9E9E1CB3 (dec: -1633805133)
+struct evPhysicsEdgeData 
 {
 	short UpperOffset; // size=0, offset=0
 	short ForwardOffset; // size=0, offset=2
@@ -46,12 +46,12 @@ struct evPhysicsEdgeData // hashcode: 0x9E9E1CB3 (dec: -1633805133)
 	struct _SVector* Normal1; // size=8, offset=12
 	struct _SVector* Normal2; // size=8, offset=16
 	struct _SVector* Delta; // size=8, offset=20
-	struct _Instance* instance; // size=616, offset=24
+	struct _Instance* instance; // size=668, offset=24
 	int zRot; // size=0, offset=28
 	int rc; // size=0, offset=32
 };
 
-struct evPhysicsWallCrawlData // hashcode: 0x27DFBF06 (dec: 668974854)
+struct evPhysicsWallCrawlData 
 {
 	short Segment; // size=0, offset=0
 	short Length; // size=0, offset=2
@@ -59,13 +59,13 @@ struct evPhysicsWallCrawlData // hashcode: 0x27DFBF06 (dec: 668974854)
 	short NormalDistance; // size=0, offset=6
 	struct _SVector DropNormal; // size=8, offset=8
 	struct _SVector ForwardNormal; // size=8, offset=16
-	_Position NewPosition; // size=6, offset=24
+	struct _Position NewPosition; // size=6, offset=24
 	struct _Rotation DropRotation; // size=8, offset=30
 	short ForwardXRotation; // size=0, offset=38
 	int rc; // size=0, offset=40
 };
 
-struct evPhysicsSwimData // hashcode: 0x947F2BE5 (dec: -1803605019)
+struct evPhysicsSwimData 
 {
 	short CheckDepth; // size=0, offset=0
 	short SwimDepth; // size=0, offset=2
@@ -79,9 +79,9 @@ struct evPhysicsSwimData // hashcode: 0x947F2BE5 (dec: -1803605019)
 	int WaterLevel; // size=0, offset=20
 };
 
-struct evPhysicsDropHeightData // hashcode: 0x5DCE3926 (dec: 1573796134)
+struct evPhysicsDropHeightData 
 {
-	_Position origin; // size=6, offset=0
+	struct _Position origin; // size=6, offset=0
 	short mode; // size=0, offset=6
 	short DropOffset; // size=0, offset=8
 	short result; // size=0, offset=10
@@ -89,9 +89,9 @@ struct evPhysicsDropHeightData // hashcode: 0x5DCE3926 (dec: 1573796134)
 	struct _TFace* tface; // size=12, offset=16
 };
 
-struct evPhysicsLinkedMoveData // hashcode: 0xB4C6EBA9 (dec: -1262031959)
+struct evPhysicsLinkedMoveData 
 {
-	struct _Instance* instance; // size=616, offset=0
+	struct _Instance* instance; // size=668, offset=0
 	int segment; // size=0, offset=4
 	struct _SVector posDelta; // size=8, offset=8
 	struct _SVector rotDelta; // size=8, offset=16
