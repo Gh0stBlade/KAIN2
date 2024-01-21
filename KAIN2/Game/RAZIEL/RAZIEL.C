@@ -2986,7 +2986,7 @@ void DefaultStateHandler(struct __CharacterState* In, int CurrentSection, int Da
 			}
 			break;
 		case 0x4020000:
-			razEnterWater(In, CurrentSection, (struct evPhysicsSwimData*)Ptr->Data);
+			// razEnterWater(In, CurrentSection, (struct evPhysicsSwimData*)Ptr->Data);  @fixme can also cause Raziel to glitch, probably due to the game mistakenly thinking he's entering water
 			break;
 		case 0x1000001:
 			StateSwitchStateDataDefault(In, CurrentSection, &StateHandlerAutoFace, 0);
