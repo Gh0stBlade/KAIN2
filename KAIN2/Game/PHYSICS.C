@@ -39,6 +39,25 @@ static inline int PHYSICS_FixedMultiplication2(long a, long b)
 	return r >> 13;
 }
 
+// Fixed Q20.12 multiplication
+static inline int PHYSICS_FixedMultiplication3(short a, short b, long c)
+{
+	long r;
+	long t;
+
+	r = a * b * c;
+	if (r < 0)
+	{
+		t = r + 4095;
+	}
+	else
+	{
+		t = r;
+	}
+
+	return t >> 12;
+}
+
 static inline int PHYSICS_IfDotLessThanZeroAdd(int Dot)
 {
 	if (Dot < 0)
@@ -120,7 +139,7 @@ void PhysicsDefaultLinkedMoveResponse(struct _Instance* instance, struct evPhysi
 	instance->rotation.z += Data->rotDelta.z;
 }
 
-int PhysicsCheckGravity(struct _Instance* instance, int Data, short Mode)//Matching - 93.98%
+int PhysicsCheckGravity(struct _Instance* instance, int Data, short Mode)  // Matching - 100%
 {
 	struct evPhysicsGravityData* Ptr;
 	SVECTOR D;
@@ -139,22 +158,19 @@ int PhysicsCheckGravity(struct _Instance* instance, int Data, short Mode)//Match
 	int dy;
 	int dz;
 
+	D = SVECTOR{ 0, 0, (short)61440 };  // decomp.me scratch differs by using a different expression here that is valid C but won't work for this C++ project
+
+	Ptr = (struct evPhysicsGravityData*)Data;
+
 	rc = 0;
-
-	D.vx = 0;
-	D.vy = 0;
-	D.vz = 240;
-
 	slide = 0;
 
-	CInfo.newPoint = &New;
 	CInfo.oldPoint = &Old;
+	CInfo.newPoint = &New;
 
 	Old.vx = New.vx = instance->position.x;
 	Old.vy = New.vy = instance->position.y;
 	Old.vz = New.vz = instance->position.z;
-
-	Ptr = (struct evPhysicsGravityData*)Data;
 
 	Old.vz += Ptr->UpperOffset;
 	New.vz -= Ptr->LowerOffset;
@@ -213,16 +229,14 @@ int PhysicsCheckGravity(struct _Instance* instance, int Data, short Mode)//Match
 		gameTrackerX.gameFlags &= ~0x8000;
 	}
 
-	if ((unsigned)(short)(CInfo.type - 2) < 2 || CInfo.type == 5)
+	if (CInfo.type == 2 || CInfo.type == 3 || CInfo.type == 5)
 	{
 		if (CInfo.wNormal.vz < Ptr->slipSlope && CInfo.wNormal.vz > 0)
 		{
-			N.vx = (-((unsigned short)CInfo.wNormal.vx * -(unsigned short)CInfo.wNormal.vz) < 0) ? ((-((unsigned short)CInfo.wNormal.vx * -(unsigned short)CInfo.wNormal.vz) + 0xFFF)) : ((-((unsigned short)CInfo.wNormal.vx * -(unsigned short)CInfo.wNormal.vz)));
-			N.vx >>= 12;
-			N.vy = (-((unsigned short)CInfo.wNormal.vy * -(unsigned short)CInfo.wNormal.vz) < 0) ? ((-((unsigned short)CInfo.wNormal.vy * -(unsigned short)CInfo.wNormal.vz) + 0xFFF)) : ((-((unsigned short)CInfo.wNormal.vy * -(unsigned short)CInfo.wNormal.vz)));
-			N.vy >>= 12;
-			N.vz = (-((unsigned short)CInfo.wNormal.vz * -(unsigned short)CInfo.wNormal.vz) < 0) ? ((-((unsigned short)CInfo.wNormal.vz * -(unsigned short)CInfo.wNormal.vz) + 0xFFF)) : ((-((unsigned short)CInfo.wNormal.vz * -(unsigned short)CInfo.wNormal.vz)));
-			N.vz >>= 12;
+			N.vx = PHYSICS_FixedMultiplication3(CInfo.wNormal.vx, -CInfo.wNormal.vz, -1);
+			N.vy = PHYSICS_FixedMultiplication3(CInfo.wNormal.vy, -CInfo.wNormal.vz, -1);
+			N.vz = PHYSICS_FixedMultiplication3(CInfo.wNormal.vz, -CInfo.wNormal.vz, 1);
+			N.vz = D.vz - N.vz;
 
 			Dot = (short)((instance->zVel < -48) ? -instance->zVel : 48);
 
@@ -235,7 +249,7 @@ int PhysicsCheckGravity(struct _Instance* instance, int Data, short Mode)//Match
 
 			PHYSICS_CheckLineInWorld(instance, &CInfo);
 
-			if ((unsigned)((unsigned short)CInfo.type - 2) < 2 || CInfo.type == 5)
+			if (CInfo.type == 2 || CInfo.type == 3 || CInfo.type == 5)
 			{
 				if (CInfo.wNormal.vz < Ptr->slipSlope && CInfo.wNormal.vz > 0)
 				{
@@ -254,7 +268,7 @@ int PhysicsCheckGravity(struct _Instance* instance, int Data, short Mode)//Match
 	{
 		instance->cachedBSPTree = CInfo.segment;
 
-		instance->cachedTFace = (int)(-0x55555555 * (unsigned int)((char*)CInfo.prim - (unsigned int)CInfo.inst->node.prev[4].prev)) >> 2;
+		instance->cachedTFace = (struct _TFace*)CInfo.prim - ((struct Level*)CInfo.inst)->terrain->faceList;
 
 		instance->cachedTFaceLevel = CInfo.inst;
 	}
@@ -265,7 +279,7 @@ int PhysicsCheckGravity(struct _Instance* instance, int Data, short Mode)//Match
 		instance->cachedTFaceLevel = NULL;
 	}
 
-	if ((unsigned)((unsigned short)CInfo.type - 2 < 2) || CInfo.type == 5)
+	if (CInfo.type == 2 || CInfo.type == 3 || CInfo.type == 5)
 	{
 		if ((Mode & 0x7))
 		{
@@ -328,11 +342,12 @@ int PhysicsCheckGravity(struct _Instance* instance, int Data, short Mode)//Match
 		{
 			if (instance->attachedID != 0)
 			{
+
 				oldOn = INSTANCE_Find(instance->attachedID);
 
 				if (oldOn != NULL)
 				{
-					oldOn->flags2 &= 0xFFFFFF7F;
+					oldOn->flags2 &= ~0x80;
 				}
 			}
 
@@ -346,11 +361,10 @@ int PhysicsCheckGravity(struct _Instance* instance, int Data, short Mode)//Match
 			instance->flags |= 0x8000000;
 		}
 
-		if (CInfo.type == 3)
-		{
+		if (CInfo.type == 3) {
 			if (instance->tface != CInfo.prim)
 			{
-				instance->oldTFace = (struct _TFace*)CInfo.prim;
+				instance->oldTFace = instance->tface;
 
 				instance->tface = (struct _TFace*)CInfo.prim;
 
@@ -377,8 +391,8 @@ int PhysicsCheckGravity(struct _Instance* instance, int Data, short Mode)//Match
 				instance->bspTree = 0;
 			}
 		}
-
 		rc |= 0x1;
+
 	}
 	else
 	{
