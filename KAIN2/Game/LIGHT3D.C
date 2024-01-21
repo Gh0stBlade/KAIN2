@@ -32,6 +32,14 @@ static inline int LIGHT3D_FixedMultiplication2(short a, short b)
 	return r >> 12;
 }
 
+static inline int LIGHT3D_FixedMultiplication3(short a, long b)
+{
+	long r;
+
+	r = a * b;
+	return r >> 12;
+}
+
 static inline int LIGHT3D_FixedNormalization(long a, long b, long x, long y)
 {
 	long r;
@@ -63,7 +71,7 @@ static inline void LIGHT3D_FogCalc(long a, struct Level* level)
 	level->fogNear = r;
 }
 
-void LIGHT_GetLightMatrix(struct _Instance* instance, struct Level* level, MATRIX* lightM, MATRIX* colorM)
+void LIGHT_GetLightMatrix(struct _Instance* instance, struct Level* level, MATRIX* lightM, MATRIX* colorM)  // Matching - 100%
 {
 	MATRIX* lightGroup;
 	struct LightList* lightList;
@@ -161,9 +169,18 @@ void LIGHT_GetLightMatrix(struct _Instance* instance, struct Level* level, MATRI
 				tlightList = level->lightList;
 			}
 		}
-	}
-	else
-	{
+		if (tlightGroup == NULL)
+		{
+			if (tlightList->numLightGroups == 0 || tlightGrp >= tlightList->numLightGroups)
+			{
+				tlightGroup = (MATRIX*)&default_lightgroup;
+			}
+			else
+			{
+				tlightGroup = (MATRIX*)&tlightList->lightGroupList[tlightGrp];
+			}
+		}
+
 		lightM->m[0][0] = lightGroup[0].m[0][0];
 		lightM->m[0][1] = lightGroup[0].m[0][1];
 		lightM->m[0][2] = lightGroup[0].m[0][2];
@@ -174,6 +191,32 @@ void LIGHT_GetLightMatrix(struct _Instance* instance, struct Level* level, MATRI
 		lightM->m[2][1] = lightGroup[0].m[2][1];
 		lightM->m[2][2] = lightGroup[0].m[2][2];
 
+
+		start = tlightGroup + 1;
+		end = lightGroup + 1;
+
+
+		ratio = ((gameTrackerX.gameData.asmData.MorphTime * 4096) / 1000);
+		ratio = 0x1000 - ratio;
+
+		for (i = 0; i < 3; i++)
+		{
+			for (j = 0; j < 3; j++)
+			{
+				colorM->m[i][j] = start->m[i][j] + LIGHT3D_FixedMultiplication3((end->m[i][j] - start->m[i][j]), ratio);
+			}
+		}
+	}
+	else {
+		lightM->m[0][0] = lightGroup->m[0][0];
+		lightM->m[0][1] = lightGroup->m[0][1];
+		lightM->m[0][2] = lightGroup->m[0][2];
+		lightM->m[1][0] = lightGroup->m[1][0];
+		lightM->m[1][1] = lightGroup->m[1][1];
+		lightM->m[1][2] = lightGroup->m[1][2];
+		lightM->m[2][0] = lightGroup->m[2][0];
+		lightM->m[2][1] = lightGroup->m[2][1];
+		lightM->m[2][2] = lightGroup->m[2][2];
 		colorM->m[0][0] = lightGroup[1].m[0][0];
 		colorM->m[0][1] = lightGroup[1].m[0][1];
 		colorM->m[0][2] = lightGroup[1].m[0][2];
@@ -183,46 +226,7 @@ void LIGHT_GetLightMatrix(struct _Instance* instance, struct Level* level, MATRI
 		colorM->m[2][0] = lightGroup[1].m[2][0];
 		colorM->m[2][1] = lightGroup[1].m[2][1];
 		colorM->m[2][2] = lightGroup[1].m[2][2];
-
-		return;
 	}
-
-	if (tlightGroup == NULL)
-	{
-		if (tlightList->numLightGroups == 0 || tlightGrp >= tlightList->numLightGroups)
-		{
-			tlightGroup = (MATRIX*)&default_lightgroup;
-		}
-		else
-		{
-			tlightGroup = (MATRIX*)&tlightList->lightGroupList[tlightGrp];
-		}
-	}
-
-	lightM->m[0][0] = lightGroup->m[0][0];
-	lightM->m[0][1] = lightGroup->m[0][1];
-	lightM->m[0][2] = lightGroup->m[0][2];
-	lightM->m[1][0] = lightGroup->m[1][0];
-	lightM->m[1][1] = lightGroup->m[1][1];
-	lightM->m[1][2] = lightGroup->m[1][2];
-	lightM->m[2][0] = lightGroup->m[2][0];
-	lightM->m[2][1] = lightGroup->m[2][1];
-	lightM->m[2][2] = lightGroup->m[2][2];
-
-	start = tlightGroup + 1;
-	end = lightGroup + 1;
-	
-	ratio = 4096 - ((((gameTrackerX.gameData.asmData.MorphTime * 4096) / 1000) >> 6) - ((gameTrackerX.gameData.asmData.MorphTime * 4096) >> 31));
-
-	for (i = 0; i < 3; i++)
-	{
-		for (j = 0; j < 3; j++)
-		{
-			colorM->m[i][j] = (short)(start->m[i][j] + ((end->m[i][j] - start->m[i][j]) * ratio));
-		}
-	}
-
-	return;
 }
 
 void LIGHT_PresetInstanceLight(struct _Instance* instance, short attenuate, MATRIX* lm)  // Matching - 100%
