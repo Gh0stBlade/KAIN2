@@ -499,7 +499,7 @@ struct INICommand* INSTANCE_GetIntroCommand(struct INICommand* command, int cmd)
 	return 0;
 }
 
-struct INICommand* INSTANCE_FindIntroCommand(struct _Instance* instance, int cmd)//Matching - 99.44%
+struct INICommand* INSTANCE_FindIntroCommand(struct _Instance* instance, int cmd)  // Matching - 100%
 {
 	return INSTANCE_GetIntroCommand((struct INICommand*)instance->introData, cmd);
 }
