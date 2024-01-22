@@ -1561,7 +1561,7 @@ void INSTANCE_PlainDeath(struct _Instance* instance) // Matching - 100%
 	instance->flags |= 0x20;
 }
 
-void INSTANCE_KillInstance(struct _Instance* instance)
+void INSTANCE_KillInstance(struct _Instance* instance)  // Matching - 100%
 {
 	if (!(instance->flags & 0x20))
 	{
