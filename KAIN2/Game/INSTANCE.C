@@ -1397,7 +1397,7 @@ void INSTANCE_BuildStaticShadow(struct _Instance* instance)
 {
 }
 
-void INSTANCE_DefaultInit(struct _Instance* instance, struct Object* object, int modelNum)//Matching - 97.34%
+void INSTANCE_DefaultInit(struct _Instance* instance, struct Object* object, int modelNum)  // Matching - 100%
 {
 	int i;
 	int j;
@@ -1406,13 +1406,6 @@ void INSTANCE_DefaultInit(struct _Instance* instance, struct Object* object, int
 	struct _HPrim* hprim;
 	struct _Model** pModel;
 	struct _HModel* hmodel;
-	struct _Model* model;
-	struct _Segment* seg;
-	struct _HInfo* hinfo;
-	int k;
-	struct _HFace* hface;
-	struct _HSphere* hsphere;
-	struct _HBox* hbox;
 
 	memset(&instance->flags, 0, sizeof(struct _Instance) - 0x14);
 
@@ -1461,10 +1454,16 @@ void INSTANCE_DefaultInit(struct _Instance* instance, struct Object* object, int
 
 	for (i = numModels; i != 0; i--, pModel++)
 	{
-		for (j = pModel[0]->numSegments, seg = pModel[0]->segmentList; j != 0; seg++, j--)
-		{
-			hinfo = seg->hInfo;
+		struct _Model* model;
+		struct _Segment* seg;
 
+		model = *pModel;
+		seg = model->segmentList;
+
+		for (j = model->numSegments; j != 0; j--, seg++)
+		{
+			struct _HInfo* hinfo;
+			hinfo = seg->hInfo;
 			if (hinfo != NULL)
 			{
 				numHPrims += hinfo->numHFaces + hinfo->numHSpheres + hinfo->numHBoxes;
@@ -1474,14 +1473,18 @@ void INSTANCE_DefaultInit(struct _Instance* instance, struct Object* object, int
 
 	if (numHPrims != 0)
 	{
-		hmodel = (struct _HModel*)MEMPACK_Malloc((instance->object->numModels + numHPrims) * 8, 0xE);
 
-		instance->hModelList = hmodel;
+		instance->hModelList = (struct _HModel*)MEMPACK_Malloc((instance->object->numModels + numHPrims) * sizeof(struct _HModel), 0xE);
 		pModel = object->modelList;
-		hprim = (struct _HPrim*)hmodel + numModels;
+		hprim = (struct _HPrim*)instance->hModelList + numModels;
+
+		hmodel = instance->hModelList;
 
 		for (i = numModels; i != 0; i--, pModel++, hmodel++)
 		{
+			struct _Model* model;
+			struct _Segment* seg;
+
 			model = pModel[0];
 			hmodel->numHPrims = 0;
 			hmodel->hPrimList = hprim;
@@ -1489,10 +1492,16 @@ void INSTANCE_DefaultInit(struct _Instance* instance, struct Object* object, int
 
 			for (j = 0; j < model->numSegments; j++, seg++)
 			{
+				struct _HInfo* hinfo;
 				hinfo = seg->hInfo;
 
 				if (hinfo != NULL)
 				{
+					int k;
+					struct _HFace* hface;
+					struct _HSphere* hsphere;
+					struct _HBox* hbox;
+
 					hface = hinfo->hfaceList;
 					hsphere = hinfo->hsphereList;
 					hbox = hinfo->hboxList;
