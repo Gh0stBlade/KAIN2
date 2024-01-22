@@ -1569,18 +1569,18 @@ void INSTANCE_KillInstance(struct _Instance* instance)
 	}
 }
 
-unsigned long INSTANCE_Query(struct _Instance* Inst, int Query)
+unsigned long INSTANCE_Query(struct _Instance* Inst, int Query)  // Matching - 100%
 {
 	unsigned long (*Func)(struct _Instance*, unsigned long);
 
 	Func = Inst->queryFunc;
 
-	if (Func != NULL)
+	if (Func == NULL)
 	{
-		return Func(Inst, Query);
+		return 0;
 	}
 
-	return 0;
+	return Func(Inst, Query);
 }
 
 void INSTANCE_Post(struct _Instance* Inst, int Message, int Data)
