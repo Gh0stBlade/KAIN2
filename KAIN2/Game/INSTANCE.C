@@ -436,14 +436,14 @@ void INSTANCE_CleanUpInstanceList(struct _InstanceList* list, long reset)  // Ma
 	}
 }
 
-long INSTANCE_Introduced(struct Intro* intro, short streamUnitID)
-{ 
+long INSTANCE_Introduced(struct Intro* intro, short streamUnitID)  // Matching - 100%
+{
 	struct _Instance* instance;
 	struct _Instance* next;
 	long ret;
 
 	instance = gameTrackerX.instanceList->first;
-	
+
 	ret = 0;
 
 	while (instance != NULL)
@@ -455,24 +455,25 @@ long INSTANCE_Introduced(struct Intro* intro, short streamUnitID)
 			ret = 1;
 
 			intro->flags |= 0x8;
-			
+
 			break;
 		}
 
 		instance = next;
 	}
 
-	if (SAVE_HasSavedIntro(intro, streamUnitID) == 0)
+	if (ret == 0)
 	{
-		if (SAVE_IsIntroDeadDead(intro) == 0)
+		if (SAVE_HasSavedIntro(intro, streamUnitID) != 0)
 		{
-			return ret;
+			intro->flags |= 0x8;
+			ret = 1;
 		}
-	}
-	else
-	{
-		intro->flags |= 0x8;
-		ret = 1;
+		else if (SAVE_IsIntroDeadDead(intro) != 0)
+		{
+			intro->flags |= 0x8;
+			ret = 1;
+		}
 	}
 
 	return ret;
