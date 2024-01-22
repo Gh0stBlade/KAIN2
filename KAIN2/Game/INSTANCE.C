@@ -533,13 +533,13 @@ void INSTANCE_ProcessIntro(struct _Instance* instance)//Matching - 100%
 	}
 }
 
-void INSTANCE_InitEffects(struct _Instance* instance, struct Object* object)
+void INSTANCE_InitEffects(struct _Instance* instance, struct Object* object)  // Matching - 100%
 {
 	int i;
-	
+
 	if (!(object->oflags2 & 0x100))
 	{
-		if (object->numberOfEffects != 0 && object->numberOfEffects > 0)
+		if (object->numberOfEffects != 0)
 		{
 			for (i = 0; i < object->numberOfEffects; i++)
 			{
