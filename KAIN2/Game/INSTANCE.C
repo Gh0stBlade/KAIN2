@@ -549,25 +549,22 @@ void INSTANCE_InitEffects(struct _Instance* instance, struct Object* object)
 	}
 }
 
-struct _Instance* INSTANCE_IntroduceInstance(struct Intro* intro, short streamUnitID)
+struct _Instance* INSTANCE_IntroduceInstance(struct Intro* intro, short streamUnitID)  // Matching - 100%
 {
 	struct Object* object;
 	struct _Instance* instance;
 	struct _Instance* attachInst;
 	struct _ObjectTracker* objectTracker;
-	struct INICommand* index;
-	long attachedUniqueID;
-	struct SavedIntroSpline* savedIntroSpline;
-	struct MultiSpline* spline;
-	struct SavedIntroSmall* savedIntroSmall;
-	
-	attachInst = NULL;
-	index = NULL;
 
-	if (!(INSTANCE_Introduced(intro, streamUnitID)))
+	attachInst = NULL;
+
+	if (INSTANCE_Introduced(intro, streamUnitID) == 0)
 	{
+		struct INICommand* index;
+		long attachedUniqueID;
+
+		index = INSTANCE_GetIntroCommand((struct INICommand*)intro->data, 26);
 		attachedUniqueID = 0;
-		index = INSTANCE_GetIntroCommand(index, 26);
 
 		if (index != NULL)
 		{
@@ -580,29 +577,10 @@ struct _Instance* INSTANCE_IntroduceInstance(struct Intro* intro, short streamUn
 		{
 			object = objectTracker->object;
 
-			if (objectTracker->objectStatus == 2)
+			if ((objectTracker->objectStatus == 2) && ((attachedUniqueID == 0) || (attachInst = INSTANCE_Find(attachedUniqueID), (attachInst != NULL))) && (!(object->oflags2 & 0x10000000) || (OBTABLE_InitAnimPointers(objectTracker), (!(object->oflags2 & 0x10000000)))))
 			{
-				savedIntroSmall = NULL;
-
-				if (attachedUniqueID != 0)
-				{
-					attachInst = INSTANCE_Find(attachedUniqueID);
-					if (attachInst == NULL)
-					{
-						return 0;
-					}
-				}
-
-
-				if ((object->oflags2 & 0x10000000))
-				{
-					OBTABLE_InitAnimPointers(objectTracker);
-
-					if ((object->oflags2 & 0x10000000))
-					{
-						return 0;
-					}
-				}
+				struct SavedIntroSmall* savedIntroSmall;
+				struct MultiSpline* spline;
 
 				instance = INSTANCE_NewInstance(gameTrackerX.instanceList);
 
@@ -624,12 +602,12 @@ struct _Instance* INSTANCE_IntroduceInstance(struct Intro* intro, short streamUn
 					intro->instance = instance;
 
 					instance->intro = intro;
-					instance->introData = intro->multiSpline;
+					instance->introData = intro->data;
 					instance->position = intro->position;
 
 					if (gameTrackerX.gameData.asmData.MorphType == 1)
 					{
-						if (intro->spectralPosition.x != 0 && intro->spectralPosition.y != 0 && intro->spectralPosition.z != 0)
+						if ((intro->spectralPosition.x != 0) || (intro->spectralPosition.y != 0) || (intro->spectralPosition.z != 0))
 						{
 							instance->position.x = intro->position.x + intro->spectralPosition.x;
 							instance->position.y = intro->position.y + intro->spectralPosition.y;
@@ -640,9 +618,12 @@ struct _Instance* INSTANCE_IntroduceInstance(struct Intro* intro, short streamUn
 					instance->initialPos = instance->position;
 					instance->oldPos = intro->position;
 
+					instance->attachedID = attachedUniqueID;
+
 					LIGHT_GetAmbient((struct _ColorType*)&instance->light_color, instance);
 
 					instance->rotation = intro->rotation;
+
 					if ((instance->object->oflags & 0x100))
 					{
 						INSTANCE_BuildStaticShadow(instance);
@@ -673,10 +654,9 @@ struct _Instance* INSTANCE_IntroduceInstance(struct Intro* intro, short streamUn
 						instance->flags |= 0x800;
 					}
 
-					if ((intro->flags & 0x800) && object->id == -1)
+					if ((intro->flags & 0x800) && (object->id == -1))
 					{
-						SCRIPTCountFramesInSpline(instance);
-						SCRIPT_InstanceSplineSet(instance, -1, NULL, NULL, NULL);
+						SCRIPT_InstanceSplineSet(instance, SCRIPTCountFramesInSpline(instance), NULL, NULL, NULL);
 						instance->flags = (instance->flags ^ 0x1000000) | 0x100000;
 					}
 
@@ -714,6 +694,7 @@ struct _Instance* INSTANCE_IntroduceInstance(struct Intro* intro, short streamUn
 					}
 					else
 					{
+						struct SavedIntroSpline* savedIntroSpline;
 						spline = SCRIPT_GetMultiSpline(instance, NULL, NULL);
 						savedIntroSpline = SAVE_GetIntroSpline(instance);
 
