@@ -1815,9 +1815,11 @@ void INSTANCE_SpatialRelationships(struct _InstanceList* instanceList)//Matching
 	}
 }
 
-int INSTANCE_SetStatsData(struct _Instance* instance, struct _Instance* checkee, struct _Vector* checkPoint, struct evCollideInstanceStatsData* data, MATRIX* mat) {  // Matching - 100%
+int INSTANCE_SetStatsData(struct _Instance* instance, struct _Instance* checkee, struct _Vector* checkPoint, struct evCollideInstanceStatsData* data, MATRIX* mat)  // Matching - 100%
+{
 	long distance;
 	SVECTOR* delta;
+
 	distance = MATH3D_LengthXYZ(instance->position.x - checkPoint->x, instance->position.y - checkPoint->y, instance->position.z - checkPoint->z);
 	if (((unsigned long)distance < instance->maxCheckDistance) != 0)
 	{
