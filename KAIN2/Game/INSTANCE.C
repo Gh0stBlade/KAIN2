@@ -1267,107 +1267,91 @@ void INSTANCE_ProcessFunctions(struct _InstanceList* instanceList)
 	}
 }
 
-struct _Instance* INSTANCE_BirthObject(struct _Instance* parent, struct Object* object, int modelNum)
+struct _Instance* INSTANCE_BirthObject(struct _Instance* parent, struct Object* object, int modelNum)  // Matching - 100%
 {
 	struct _Instance* instance;
 	int i;
 
-	if (object != NULL)
+	if (object == NULL)
 	{
-		instance = INSTANCE_NewInstance(gameTrackerX.instanceList);
-
-		if (instance != NULL)
-		{
-			INSTANCE_DefaultInit(instance, object, modelNum);
-			
-			instance->position.x = parent->position.x;
-			instance->position.y = parent->position.y;
-			instance->position.z = parent->position.z;
-			
-			instance->initialPos.x = instance->position.x;
-			instance->initialPos.y = instance->position.y;
-			instance->initialPos.z = instance->position.z;
-			
-			instance->oldPos.x = parent->position.x;
-			instance->oldPos.y = parent->position.y;
-			instance->oldPos.z = parent->position.z;
-			
-			instance->rotation.x = parent->rotation.x;
-			instance->rotation.y = parent->rotation.y;
-			instance->rotation.z = parent->rotation.z;
-			
-			instance->scale.x = parent->scale.x;
-			instance->scale.y = parent->scale.y;
-			instance->scale.z = parent->scale.z;
-			instance->scale.pad = parent->scale.pad;
-			
-			instance->lightGroup = parent->lightGroup;
-			instance->spectralLightGroup = parent->spectralLightGroup;
-			
-			instance->currentStreamUnitID = parent->currentStreamUnitID;
-			instance->birthStreamUnitID = parent->birthStreamUnitID;
-			instance->introUniqueID = GlobalSave->CurrentBirthID;
-
-			GlobalSave->CurrentBirthID++;
-			
-			strcpy(instance->introName, object->name);
-
-			i = 0;
-
-			do
-			{
-				if (i >= (int)strlen(instance->introName))
-				{
-					goto loc_80034008;//:(
-				}
-
-			} while (instance->introName[i++] != '\x5F');
-
-			instance->introName[i] = 0;
-
-loc_80034008://:(
-
-			instance->parent = parent;
-			instance->intro = parent->intro;
-			instance->introData = parent->introData;
-
-			LIGHT_GetAmbient((struct _ColorType*)&instance->light_color, instance);
-
-			if ((instance->object->oflags & 0x100))
-			{
-				INSTANCE_BuildStaticShadow(instance);
-			}
-
-			if (SCRIPT_GetMultiSpline(instance, NULL, NULL) == NULL)
-			{
-				instance->flags |= 0x100000;
-			}
-
-			if ((parent->flags2 & 0x8000000))
-			{
-				instance->flags2 |= 0x8000000;
-			}
-
-			INSTANCE_InsertInstanceGroup(gameTrackerX.instanceList, instance);
-
-			OBTABLE_GetInstanceCollideFunc(instance);
-			OBTABLE_GetInstanceProcessFunc(instance);
-			OBTABLE_GetInstanceQueryFunc(instance);
-			OBTABLE_GetInstanceMessageFunc(instance);
-			OBTABLE_GetInstanceAdditionalCollideFunc(instance);
-
-			instance->flags |= 0x2;
-
-			OBTABLE_InstanceInit(instance);
-
-			EVENT_AddInstanceToInstanceList(instance);
-
-			INSTANCE_InitEffects(instance, object);
-
-			return instance;
-		}
+		return NULL;
 	}
-	
+
+	instance = INSTANCE_NewInstance(gameTrackerX.instanceList);
+
+	if (instance != NULL)
+	{
+		INSTANCE_DefaultInit(instance, object, modelNum);
+
+		instance->position = parent->position;
+
+		instance->initialPos = instance->position;
+
+		instance->oldPos = parent->position;
+
+		instance->rotation = parent->rotation;
+
+		instance->scale = parent->scale;
+
+		instance->lightGroup = parent->lightGroup;
+		instance->spectralLightGroup = parent->spectralLightGroup;
+
+		instance->currentStreamUnitID = parent->currentStreamUnitID;
+		instance->birthStreamUnitID = parent->birthStreamUnitID;
+		instance->introUniqueID = GlobalSave->CurrentBirthID++;
+
+		strcpy(instance->introName, object->name);
+
+		for (i = 0; i < (int)strlen(instance->introName); i++)
+		{
+			if ((unsigned char)instance->introName[i] == 0x5F)
+			{
+				instance->introName[i] = 0;
+				break;
+			}
+
+		}
+
+		instance->parent = parent;
+		instance->intro = parent->intro;
+		instance->introData = parent->introData;
+
+		LIGHT_GetAmbient((struct _ColorType*)&instance->light_color, instance);
+
+		if ((instance->object->oflags & 0x100))
+		{
+			INSTANCE_BuildStaticShadow(instance);
+		}
+
+		if (SCRIPT_GetMultiSpline(instance, NULL, NULL) == NULL)
+		{
+			instance->flags |= 0x100000;
+		}
+
+		if ((parent->flags2 & 0x8000000))
+		{
+			instance->flags2 |= 0x8000000;
+		}
+
+		INSTANCE_InsertInstanceGroup(gameTrackerX.instanceList, instance);
+
+		OBTABLE_GetInstanceCollideFunc(instance);
+		OBTABLE_GetInstanceProcessFunc(instance);
+		OBTABLE_GetInstanceQueryFunc(instance);
+		OBTABLE_GetInstanceMessageFunc(instance);
+		OBTABLE_GetInstanceAdditionalCollideFunc(instance);
+
+		instance->flags |= 0x2;
+
+		OBTABLE_InstanceInit(instance);
+
+		EVENT_AddInstanceToInstanceList(instance);
+
+		INSTANCE_InitEffects(instance, object);
+
+		return instance;
+	}
+
 	return NULL;
 }
 
