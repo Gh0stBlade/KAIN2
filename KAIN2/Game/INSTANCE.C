@@ -803,7 +803,7 @@ struct _Instance* INSTANCE_IntroduceInstance(struct Intro* intro, short streamUn
 	return NULL;
 }
 
-void INSTANCE_AdditionalCollideFunctions(struct _InstanceList* instanceList)//Matching - 97.97%
+void INSTANCE_AdditionalCollideFunctions(struct _InstanceList* instanceList)  // Matching - 100%
 {
 	struct _Instance* instance;
 
