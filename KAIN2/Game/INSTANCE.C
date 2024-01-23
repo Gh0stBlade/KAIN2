@@ -1972,7 +1972,7 @@ int INSTANCE_Linked(struct _Instance* instance1, struct _Instance* instance2)//M
 	return instance1 == instance2;
 }
 
-int INSTANCE_GetFadeValue(struct _Instance* instance)
+int INSTANCE_GetFadeValue(struct _Instance* instance)  // Matching - 100%
 {
 	int fadeValue;
 
@@ -1986,7 +1986,7 @@ int INSTANCE_GetFadeValue(struct _Instance* instance)
 		{
 			if ((instance->object->oflags2 & 0x2000000) || (instance->LinkParent != NULL && instance->LinkParent->object->oflags2 & 0x2000000))
 			{
-				if((instance->flags2 & 0x8000000))
+				if ((instance->flags2 & 0x8000000))
 				{
 					if (gameTrackerX.spectral_fadeValue * fadeValue < 0)
 					{
@@ -2010,8 +2010,8 @@ int INSTANCE_GetFadeValue(struct _Instance* instance)
 				}
 			}
 		}
-		
-		fadeValue -= 4096;
+
+		fadeValue = 4096 - fadeValue;
 	}
 
 	return fadeValue;
