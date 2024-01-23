@@ -1891,7 +1891,7 @@ void INSTANCE_UpdateFamilyStreamUnitID(struct _Instance* instance)
 	}
 }
 
-void INSTANCE_ReallyRemoveAllChildren(struct _Instance* instance)//Matching - 99.57%
+void INSTANCE_ReallyRemoveAllChildren(struct _Instance* instance)  // Matching - 100%
 {
 	struct _Instance* child;
 
