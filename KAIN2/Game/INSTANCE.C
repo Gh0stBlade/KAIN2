@@ -1583,9 +1583,9 @@ unsigned long INSTANCE_Query(struct _Instance* Inst, int Query)
 	return 0;
 }
 
-void INSTANCE_Post(struct _Instance* Inst, int Message, int Data)
+void INSTANCE_Post(struct _Instance* Inst, int Message, int Data)  // Matching - 100%
 {
-	void (*Func)(_Instance*, unsigned long, unsigned long);
+	void (*Func)(struct _Instance*, unsigned long, unsigned long);
 
 	Func = Inst->messageFunc;
 
