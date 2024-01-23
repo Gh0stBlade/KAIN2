@@ -1629,7 +1629,7 @@ int INSTANCE_InPlane(struct _Instance* instance, int plane)
 	return 0;
 }
 
-long INSTANCE_FindWithID(long uniqueID)
+long INSTANCE_FindWithID(long uniqueID)  // Matching - 100%
 {
 	struct _Instance* instance;
 	struct _Instance* next;
