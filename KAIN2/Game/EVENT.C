@@ -212,21 +212,22 @@ void EVENT_ProcessTimers()  // Matching - 100%
 	}
 }
 
-void EVENT_ProcessHints()
+void EVENT_ProcessHints()  // Matching - 100%
 {
 	char string[128];
 	long y;
 
 	if ((gHintSystem.flags & 0x1))
 	{
-		sprintf(string, "%s\n", localstr_get((localstr_t)gHintSystem.stringNumber));
-	
+		sprintf(string, "%s\n", localstr_get((enum localstr_t)gHintSystem.stringNumber));
+
 		if ((gHintSystem.flags & 0x2))
 		{
 			y = ((gHintSystem.fadeTimer * 52) / 61440) + 200;
 		}
 		else
 		{
+			y = 200;
 			if ((gHintSystem.flags & 0x4))
 			{
 				y = 252 - ((gHintSystem.fadeTimer * 52) / 61440);
@@ -241,7 +242,7 @@ void EVENT_ProcessHints()
 
 		if (gHintSystem.fadeTimer != 0)
 		{
-			if ((long)gameTrackerX.timeMult >= gHintSystem.fadeTimer)
+			if (gameTrackerX.timeMult >= (unsigned long)gHintSystem.fadeTimer)
 			{
 				gHintSystem.fadeTimer = 0;
 
@@ -249,7 +250,7 @@ void EVENT_ProcessHints()
 				{
 					gHintSystem.flags &= 0xFFFD;
 				}
-				else
+				else if ((gHintSystem.flags & 0x4))
 				{
 					gHintSystem.flags = 0;
 
