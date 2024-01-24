@@ -85,7 +85,7 @@ void EVENT_ResetAllOneTimeVariables()
 	}
 }
 
-void EVENT_AddSignalToReset(struct _MultiSignal *mSignal)
+void EVENT_AddSignalToReset(struct _MultiSignal *mSignal)  // Matching - 100%
 {
 	int i;
 	
