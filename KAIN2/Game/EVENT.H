@@ -6,7 +6,8 @@
 #include "SIGNAL.H"
 #include "Game/SAVEINFO.H"
 
-struct SavedEventSmallVars {
+struct SavedEventSmallVars 
+{
 	unsigned char savedID; // size=0, offset=0
 	unsigned char shiftedSaveSize; // size=0, offset=1
 	short areaID; // size=0, offset=2
@@ -40,7 +41,7 @@ struct evObjectBirthProjectileData
 	struct _Instance* birthInstance; // size=668, offset=12
 };
 
-struct WaterLevelProcess // hashcode: 0x43FF89D3 (dec: 1140820435)
+struct WaterLevelProcess 
 {
 	long flags; // size=0, offset=0
 	struct BSPTree* bspTree; // size=36, offset=4
@@ -53,13 +54,13 @@ struct WaterLevelProcess // hashcode: 0x43FF89D3 (dec: 1140820435)
 	long curStep; // size=0, offset=24
 };
 
-
-struct EventBasicObject // hashcode: 0x9FC1DB2A (dec: -1614685398)
+struct EventBasicObject 
 {
 	short id; // size=0, offset=0
 };
 
-struct Vector3d {
+struct Vector3d 
+{
 	short vx; // size=0, offset=0
 	short vy; // size=0, offset=2
 	short vz; // size=0, offset=4
@@ -70,7 +71,9 @@ struct Vector3d {
 	short pad2; // size=0, offset=14
 	long streamUnitID; // size=0, offset=16
 };
-struct Rotation3d {
+
+struct Rotation3d 
+{
 	short vx; // size=0, offset=0
 	short vy; // size=0, offset=2
 	short vz; // size=0, offset=4
@@ -81,119 +84,169 @@ struct Rotation3d {
 	short pad2; // size=0, offset=14
 	long attribute; // size=0, offset=16
 };
-struct InstanceObject {
+
+struct InstanceObject 
+{
 	struct _Instance* instance; // size=668, offset=0
 	long attribute; // size=0, offset=4
 };
-struct EventObject {
+
+struct EventObject 
+{
 	struct Event* event; // size=28, offset=0
 	long attribute; // size=0, offset=4
 };
-struct SavedEventObject {
+
+struct SavedEventObject 
+{
 	struct SavedBasic* savedEvent; // size=2, offset=0
 	long attribute; // size=0, offset=4
 	long areaID; // size=0, offset=8
 	long eventNumber; // size=0, offset=12
 };
-struct GameObject {
+
+struct GameObject 
+{
 	long attribute; // size=0, offset=0
 };
-struct SignalObject {
+
+struct SignalObject 
+{
 	struct _MultiSignal* msignal; // size=904, offset=0
 	long attribute; // size=0, offset=4
 };
-struct IntroObject {
+
+struct IntroObject 
+{
 	struct Intro* intro; // size=76, offset=0
 	long attribute; // size=0, offset=4
 };
-struct InstanceAnimate {
+
+struct InstanceAnimate 
+{
 	struct _Instance* instance; // size=668, offset=0
 	long attribute; // size=0, offset=4
 };
-struct InstanceAnimateTexture {
+
+struct InstanceAnimateTexture 
+{
 	struct _Instance* instance; // size=668, offset=0
 	struct AniTex* aniTextures; // size=16, offset=4
 	long attribute; // size=0, offset=8
 };
-struct ListObject {
+
+struct ListObject 
+{
 	struct EventWildCardObject* eventInstance; // size=12, offset=0
 	long attribute[5]; // size=20, offset=4
 	long numberOfAttributes; // size=0, offset=24
 	long lineID; // size=0, offset=28
 };
-struct SubListObject {
+
+struct SubListObject 
+{
 	struct _Instance** instanceList; // size=668, offset=0
 	long numberOfInstances; // size=0, offset=4
 	long numberOfAttributes; // size=0, offset=8
 	long attribute[5]; // size=20, offset=12
 };
-struct TGroupObject {
+
+struct TGroupObject 
+{
 	struct BSPTree* bspTree; // size=36, offset=0
 	struct _StreamUnit* streamUnit; // size=64, offset=4
 	long attribute; // size=0, offset=8
 	short arg[2]; // size=4, offset=12
 };
-struct ConstrictInfo {
+
+struct ConstrictInfo 
+{
 	struct _Instance* instance; // size=668, offset=0
 	long attribute; // size=0, offset=4
 };
-struct CameraObject {
+
+struct CameraObject 
+{
 	struct Camera* camera; // size=1220, offset=0
 	long frames; // size=0, offset=4
 	long attribute; // size=0, offset=8
 };
-struct EventVmObject {
+
+struct EventVmObject 
+{
 	struct _VMObject* vmObjectPtr; // size=60, offset=0
 	struct Level* level; // size=392, offset=4
 	long attribute; // size=0, offset=8
 };
-struct AreaObject {
+
+struct AreaObject 
+{
 	struct _StreamUnit* streamUnit; // size=64, offset=0
 	long attribute; // size=0, offset=4
 	long unitID; // size=0, offset=8
 };
-struct SoundObject {
+
+struct SoundObject 
+{
 	short flags; // size=0, offset=0
 	short attribute; // size=0, offset=2
 	long soundNumber; // size=0, offset=4
 	long value; // size=0, offset=8
 	long duration; // size=0, offset=12
-	union {
+	union 
+	{
 		struct _Instance* instance; // size=668, offset=0
 		struct _SFXMkr* sfxMarker; // size=36, offset=0
-	} data; // size=4, offset=16
+	}
+	data; // size=4, offset=16
 };
 
-struct StackType {
+struct StackType 
+{
 	long id; // size=0, offset=0
-	union {
-		struct {
+	union 
+	{
+		struct 
+		{
 			long instanceNumber; // size=0, offset=0
 			long attribute; // size=0, offset=4
-		} Object; // size=8, offset=0
-		struct {
+		}
+		Object; // size=8, offset=0
+		struct
+		{
 			struct _SavedIntro* intro; // size=40, offset=0
 			long attribute; // size=0, offset=4
-		} SavedIntroObject; // size=8, offset=0
+		}
+		SavedIntroObject; // size=8, offset=0
 		struct InstanceSpline instanceSpline; // size=24, offset=0
-		struct {
+		struct
+		{
 			long currentNumber; // size=0, offset=0
 			long error; // size=0, offset=4
 			short flags; // size=0, offset=8
-		} Number; // size=12, offset=0
-		struct {
+		}
+		Number; // size=12, offset=0
+		struct 
+		{
 			short vx; // size=0, offset=0
 			short vy; // size=0, offset=2
-		} Vector2d; // size=4, offset=0
-		struct {
+		}
+		Vector2d; // size=4, offset=0
+		struct
+		{
 			char* pointer; // size=0, offset=0
-		} CharPointer; // size=4, offset=0
-		struct {
+		}
+		CharPointer; // size=4, offset=0
+		struct
+		{
 			short* pointer; // size=0, offset=0
-		} ShortPointer; // size=4, offset=0
-		struct {
+		}
+		ShortPointer; // size=4, offset=0
+		struct 
+		{
 			long* pointer; // size=0, offset=0
-		} LongPointer; // size=4, offset=0
+		}
+		LongPointer; // size=4, offset=0
 		struct AreaObject areaObject; // size=12, offset=0
 		struct InstanceObject instanceObject; // size=8, offset=0
 		struct Vector3d vector3d; // size=20, offset=0
@@ -212,7 +265,8 @@ struct StackType {
 		struct CameraObject cameraObject; // size=12, offset=0
 		struct EventVmObject vmObject; // size=12, offset=0
 		struct SoundObject soundObject; // size=20, offset=0
-	} data; // size=32, offset=4
+	}
+	data; // size=32, offset=4
 };
 
 struct _PCodeStack 
@@ -221,14 +275,14 @@ struct _PCodeStack
 	struct StackType stack[32]; // size=1152, offset=4
 };
 
-struct ScriptPCode // hashcode: 0x5E69DEB9 (dec: 1583996601)
+struct ScriptPCode 
 {
 	unsigned short sizeOfPcodeStream; // size=0, offset=0
 	unsigned short conditionBits; // size=0, offset=2
 	short* data; // size=0, offset=4
 };
 
-struct Event // hashcode: 0x68F4AD26 (dec: 1760865574)
+struct Event 
 {
 	short eventNumber; // size=0, offset=0
 	short numInstances; // size=0, offset=2
@@ -246,7 +300,7 @@ struct EventPointers
 	struct Event* eventInstances[1]; // size=4, offset=4
 };
 
-struct EventTimer // hashcode: 0xAA55BC81 (dec: -1437221759)
+struct EventTimer 
 {
 	long flags : 1; // offset=0.0
 	long time : 31; // offset=0.1
@@ -257,20 +311,22 @@ struct EventTimer // hashcode: 0xAA55BC81 (dec: -1437221759)
 	long nextEventIndex; // size=0, offset=20
 };
 
-struct EventInstanceObject // hashcode: 0xC22B6786 (dec: -1037342842)
+struct EventInstanceObject 
 {
 	short id; // size=0, offset=0
 	short flags; // size=0, offset=2
 	long unitID; // size=0, offset=4
 	long introUniqueID; // size=0, offset=8
-	struct _Instance* instance; // size=616, offset=12
-	union {
+	struct _Instance* instance; // size=668, offset=12
+	union 
+	{
 		struct Intro* intro; // size=76, offset=0
 		struct _SFXMkr* sfxMarker; // size=36, offset=0
-	} data; // size=4, offset=16, found in object files: event.o, event.o
+	} 
+	data; // size=4, offset=16
 };
 
-struct EventEventObject // hashcode: 0x59DD7B24 (dec: 1507687204)
+struct EventEventObject 
 {
 	short id; // size=0, offset=0
 	short eventNumber; // size=0, offset=2
@@ -278,7 +334,7 @@ struct EventEventObject // hashcode: 0x59DD7B24 (dec: 1507687204)
 	struct Event* event; // size=0, offset=8
 };
 
-struct EventTGroupObject // hashcode: 0x9ED92E4E (dec: -1629934002)
+struct EventTGroupObject 
 {
 	short id; // size=0, offset=0
 	short tgroupNumber; // size=0, offset=2
@@ -287,7 +343,7 @@ struct EventTGroupObject // hashcode: 0x9ED92E4E (dec: -1629934002)
 	struct _StreamUnit* stream; // size=0, offset=12
 };
 
-struct HintSystemStruct // hashcode: 0xAD521037 (dec: -1387130825)
+struct HintSystemStruct 
 {
 	short flags; // size=0, offset=0
 	short hintNumber; // size=0, offset=2
