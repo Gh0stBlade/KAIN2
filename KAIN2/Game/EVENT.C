@@ -493,7 +493,7 @@ void EVENT_BSPProcess(struct _StreamUnit* streamUnit)//Matching - 99.93%
 	}
 }
 
-void EVENT_Process(struct Event* eventInstance, long startIndex)
+void EVENT_Process(struct Event* eventInstance, long startIndex)  // Matching - 100%
 {
 	long i;
 
@@ -515,12 +515,13 @@ void EVENT_Process(struct Event* eventInstance, long startIndex)
 
 			if (EVENT_IsConditionTrue(eventInstance, eventInstance->conditionalList[i]) != 0)
 			{
-				while (eventInstance->actionList[i++] == NULL)
+				while (eventInstance->actionList[i] == NULL)
 				{
 					if (i >= eventInstance->numActions)
 					{
 						break;
 					}
+					i++;
 				}
 
 				if (i < eventInstance->numActions)
