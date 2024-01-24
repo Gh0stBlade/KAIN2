@@ -107,7 +107,7 @@ void EVENT_AddSignalToReset(struct _MultiSignal *mSignal)
 	}
 }
 
-void HINT_ResetHint()
+void HINT_ResetHint()  // Matching - 100%
 {
 	memset(&gHintSystem, 0, sizeof(struct HintSystemStruct));
 }
