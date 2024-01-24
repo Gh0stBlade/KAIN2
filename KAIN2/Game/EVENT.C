@@ -300,7 +300,7 @@ struct EventTimer* EVENT_GetNextTimer()
 	return NULL;
 }
 
-void EVENT_RemoveTimer(struct EventTimer* timer)
+void EVENT_RemoveTimer(struct EventTimer* timer)  // Matching - 100%
 {
 	if (timer != NULL)
 	{
