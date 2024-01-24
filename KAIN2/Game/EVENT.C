@@ -278,25 +278,25 @@ void EVENT_ProcessHints()
 	}
 }
 
-struct EventTimer* EVENT_GetNextTimer()
-{ 
+struct EventTimer* EVENT_GetNextTimer()  // Matching - 100%
+{
 	int i;
 	struct EventTimer* eventTimer;
-	
-	for (i = 0; i < 24; i++)
+
+	if (numActiveEventTimers < 24)
 	{
-		eventTimer = &eventTimerArray[i];
-
-		if (!(eventTimer->flags & 0x1))
+		for (eventTimer = (struct EventTimer*)&eventTimerArray, i = 24; i > 0; i--, eventTimer++)
 		{
-			eventTimer->flags = (eventTimer->flags & 0xFFFFFFFE) | 0x1;
+			if (!(eventTimer->flags & 0x1))
+			{
+				numActiveEventTimers++;
 
-			numActiveEventTimers++;
+				eventTimer->flags |= 0x1;
 
-			return eventTimer;
+				return eventTimer;
+			}
 		}
 	}
-
 	return NULL;
 }
 
