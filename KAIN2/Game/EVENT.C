@@ -152,7 +152,7 @@ void HINT_StopHint()
 	UNIMPLEMENTED();
 }
 
-void HINT_KillSpecificHint(short hintNumber)
+void HINT_KillSpecificHint(short hintNumber)  // Matching - 100%
 {
 	if (gHintSystem.hintNumber == hintNumber)
 	{
