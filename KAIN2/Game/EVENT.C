@@ -112,23 +112,24 @@ void HINT_ResetHint()
 	memset(&gHintSystem, 0, sizeof(struct HintSystemStruct));
 }
 
-void HINT_StartHint(short hintNumber)
+void HINT_StartHint(short hintNumber)  // Matching - 100%
 {
-	int h;
+	unsigned int h;  // changed type in regards to SYMDUMP
+	unsigned int temp;  // not from SYMDUMP
 
 	h = hintNumber + 55;
 
-	gHintSystem.flags = 3;
-	
-	gHintSystem.hintNumber = hintNumber;
+	gHintSystem.flags = 0x2 | 0x1;
 
-	if (hintNumber >= 54)
+	temp = gHintSystem.hintNumber = hintNumber;
+
+	if (temp >= 54)
 	{
 		h = 108;
 	}
 
 	gHintSystem.stringNumber = h;
-	
+
 	gHintSystem.fadeTimer = 61440;
 
 	gHintSystem.spawningUnitID = gameTrackerX.playerInstance->currentStreamUnitID;
