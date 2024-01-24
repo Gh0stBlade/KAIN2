@@ -170,20 +170,20 @@ long HINT_GetCurrentHint()  // Matching - 100%
 	return -1;
 }
 
-void EVENT_ProcessTimers()//Matching - 80.17%
+void EVENT_ProcessTimers()  // Matching - 100%
 {
 	int i;
 	struct EventTimer* eventTimer;
 
-	if (numActiveEventTimers)
+	if (numActiveEventTimers != 0)
 	{
 		for (i = 0; i < 24; i++)
 		{
 			eventTimer = &eventTimerArray[i];
 
-			if (eventTimer->flags)
+			if (eventTimer->flags & 1)
 			{
-				if (eventTimer->time < (long)gameTrackerX.timeMult)
+				if ((unsigned long)eventTimer->time < gameTrackerX.timeMult)
 				{
 					eventTimer->time = 0;
 				}
@@ -197,17 +197,14 @@ void EVENT_ProcessTimers()//Matching - 80.17%
 					eventTimer->time = 0;
 					currentEventInstance = eventTimer->event;
 					eventTimer->actionScript->conditionBits &= 0xFFFE;
-					EVENT_RemoveTimer(&eventTimerArray[i]);
+					EVENT_RemoveTimer(eventTimer);
 					EventAbortLine = 0;
 					CurrentPuzzleLevel = eventTimer->level;
 					EventCurrentEventIndex = eventTimer->nextEventIndex;
 
-					if (EVENT_DoAction(eventTimer->event, eventTimer->actionScript, eventTimer->scriptPos) != 0)
+					if ((EVENT_DoAction(eventTimer->event, eventTimer->actionScript, eventTimer->scriptPos) != 0) && (EventCurrentEventIndex != -1))
 					{
-						if (EventCurrentEventIndex != -1)
-						{
-							EVENT_Process(eventTimer->event, EventCurrentEventIndex);
-						}
+						EVENT_Process(eventTimer->event, EventCurrentEventIndex);
 					}
 				}
 			}
