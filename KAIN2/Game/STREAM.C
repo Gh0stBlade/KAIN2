@@ -27,6 +27,7 @@
 #include "Game/LIST.H"
 
 #include <stddef.h>
+#include "TIMER.H"
 
 long CurrentWarpNumber;
 
@@ -160,15 +161,16 @@ struct _StreamUnit* FindStreamUnitFromLevel(struct Level* level)
 	return ret;
 }
 
-void STREAM_LoadObjectReturn(void* loadData, void* data, void* data2)
+void STREAM_LoadObjectReturn(void* loadData, void* data, void* data2)  // Matching - 100%
 {
 	struct Object* object;
 	struct _ObjectTracker* objectTracker;
-	char objDsfxFileName[64];
+
+	GetRCnt(0xF2000000);
 
 	object = (struct Object*)loadData;
 	objectTracker = (struct _ObjectTracker*)data;
-	GetRCnt(0xF2000000);
+	gameTimer;
 
 	if ((object->oflags & 0x8000000) && object->relocList != NULL && object->relocModule != NULL)
 	{
@@ -181,6 +183,7 @@ void STREAM_LoadObjectReturn(void* loadData, void* data, void* data2)
 
 	if ((object->oflags2 & 0x800000))
 	{
+		char objDsfxFileName[64];
 		sprintf(objDsfxFileName, "\\kain2\\sfx\\object\\%s\\%s.snf", objectTracker->name, objectTracker->name);
 
 		object->sfxFileHandle = 0;
