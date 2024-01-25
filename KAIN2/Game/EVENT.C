@@ -594,7 +594,7 @@ void EVENT_ProcessEvents(struct EventPointers* eventPointers, struct Level* leve
 	}
 }
 
-long EVENT_DoAction(struct Event* eventInstance, struct ScriptPCode* actionScript, short* scriptData)
+long EVENT_DoAction(struct Event* eventInstance, struct ScriptPCode* actionScript, short* scriptData)  // Matching - 100%
 {
 	long retValue;
 	long operateOnStack;
@@ -613,7 +613,7 @@ long EVENT_DoAction(struct Event* eventInstance, struct ScriptPCode* actionScrip
 	{
 		if (scriptData != NULL)
 		{
-			while(EventAbortLine == NULL)
+			while (EventAbortLine == NULL)
 			{
 				scriptData = EVENT_ParseOpcode(&stack, scriptData, &operateOnStack);
 
@@ -626,11 +626,12 @@ long EVENT_DoAction(struct Event* eventInstance, struct ScriptPCode* actionScrip
 						retValue = 0;
 						timer->event = eventInstance;
 						timer->actionScript = actionScript;
-						timer->flags &= 0x1;
+
+						timer->time = 0;
 						timer->scriptPos = EventAbortedPosition;
 
 						actionScript->conditionBits |= 0x1;
-						
+
 						timer->level = CurrentPuzzleLevel;
 						timer->nextEventIndex = EventCurrentEventIndex;
 					}
