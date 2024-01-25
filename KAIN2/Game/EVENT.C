@@ -413,7 +413,7 @@ void EVENT_DoProcess()
 }
 
 
-void EVENT_BSPProcess(struct _StreamUnit* streamUnit)//Matching - 99.93%
+void EVENT_BSPProcess(struct _StreamUnit* streamUnit)  // Matching - 100%
 {
 	struct _Terrain* terrain;
 	int curTree;
