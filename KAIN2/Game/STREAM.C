@@ -272,7 +272,7 @@ int STREAM_IsSpecialMonster(char *name)
 	return STREAM_InList(name, mon);
 }
 
-void STREAM_DumpSomeMonsters()  // Matching - 99.86%
+void STREAM_DumpSomeMonsters()  // Matching - 100%
 {
 	struct _ObjectTracker* otr;
 	int i;
