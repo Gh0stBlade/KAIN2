@@ -982,7 +982,7 @@ void ChangeOperandRotation3d(struct StackType* operand, struct Rotation3d* rotat
 	operand->data.rotation3d.attribute = -1;
 }
 
-long EVENT_AddSubListObjectToStack(struct _PCodeStack* stack, long listNumber) // Matching - 93.71%
+long EVENT_AddSubListObjectToStack(struct _PCodeStack* stack, long listNumber)  // Matching - 100%
 {
 	struct StackType* stackEntry;
 
