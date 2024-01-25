@@ -758,7 +758,7 @@ struct _MultiSignal * EVENT_ResolveObjectSignal(struct _StreamUnit *stream, long
 	return null;
 }
 
-struct Intro* EVENT_ResolveObjectIntro(struct EventInstanceObject* instanceObject)
+struct Intro* EVENT_ResolveObjectIntro(struct EventInstanceObject* instanceObject)  // Matching - 100%
 {
 	return INSTANCE_FindIntro(instanceObject->unitID, instanceObject->introUniqueID);
 }
