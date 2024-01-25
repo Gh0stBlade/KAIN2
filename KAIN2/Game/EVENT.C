@@ -3079,7 +3079,7 @@ struct SavedBasic* EVENT_CreateSaveEvent(long levelID, long eventNumber)  // Mat
 {
 	struct SavedEventSmallVars* savedEvent;
 	long d;
-	char* pEventNumber; // @fixme not in original
+	char* temp; // not in SYMDUMP
 
 	savedEvent = (struct SavedEventSmallVars*)SAVE_GetSavedBlock(9, 0);
 	if (savedEvent != NULL)
@@ -3088,11 +3088,11 @@ struct SavedBasic* EVENT_CreateSaveEvent(long levelID, long eventNumber)  // Mat
 		savedEvent->areaID = (short)levelID;
 		savedEvent->eventNumber = (char)eventNumber;
 		d = 4;
-		pEventNumber = &savedEvent->eventNumber;
+		temp = &savedEvent->eventNumber;
 		for (; d >= 0; d--)
 		{
-			pEventNumber[5] = 0;
-			pEventNumber--;
+			temp[5] = 0;
+			temp--;
 		}
 	}
 	return (struct SavedBasic*)savedEvent;
