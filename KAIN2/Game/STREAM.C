@@ -237,9 +237,11 @@ void STREAM_DumpMonster(struct _ObjectTracker *dumpee)
 				UNIMPLEMENTED();
 }
 
-int STREAM_InList(char *name, char **nameList)
+int STREAM_InList(char* name, char** nameList)  // Matching - 100%
 {
-	char** mon = nameList;
+	char** mon;
+
+	mon = nameList;
 
 	while (*mon != NULL)
 	{
