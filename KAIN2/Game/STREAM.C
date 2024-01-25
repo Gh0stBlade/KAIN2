@@ -294,7 +294,7 @@ void STREAM_NoMonsters()
 	STREAM_DumpSomeMonsters();
 }
 
-void STREAM_YesMonsters()
+void STREAM_YesMonsters()  // Matching - 100%
 {
 	gameTrackerX.gameFlags &= ~0x4000000;
 }
