@@ -682,15 +682,13 @@ void STREAM_RemoveAllObjectsNotInUse() // Matching - 99.03%
 	}*/
 }
 
-void RemoveAllObjects(struct GameTracker* gameTracker)
+void RemoveAllObjects(struct GameTracker* gameTracker)  // Matching - 100%
 {
 	int i;
 	struct _ObjectTracker* tracker;
-	
-	for (i = 0; i < 48; i++)
-	{
-		tracker = &gameTracker->GlobalObjects[i];
 
+	for (i = 0, tracker = &gameTracker->GlobalObjects[i]; i < 48; i++, tracker++)
+	{
 		if (tracker->objectStatus != 0)
 		{
 			STREAM_DumpObject(tracker);
