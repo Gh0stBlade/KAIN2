@@ -794,9 +794,9 @@ void STREAM_CalculateWaterLevel(struct Level* level)//Matching - 100%
 	}
 }
 
-int STREAM_IsMorphInProgress()
+int STREAM_IsMorphInProgress()  // Matching - 100%
 {
-	return 0 < (gameTrackerX.gameData.asmData.MorphTime ^ 1000);
+	return gameTrackerX.gameData.asmData.MorphTime != 1000;
 }
 
 
