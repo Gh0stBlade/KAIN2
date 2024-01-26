@@ -847,7 +847,7 @@ void STREAM_SetMainFog(struct _StreamUnit *streamUnit)
 	}
 }
 
-void STREAM_SetStreamFog(struct _StreamUnit* streamUnit, short fogNear, short fogFar)//Matching - 99.72%
+void STREAM_SetStreamFog(struct _StreamUnit* streamUnit, short fogNear, short fogFar)  // Matching - 100%
 {
 	short unitFogFar; 
 	int unitFogHold;
