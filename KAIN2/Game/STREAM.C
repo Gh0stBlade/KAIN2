@@ -345,80 +345,62 @@ int STREAM_TryAndDumpANonResidentObject()
 	return -1;
 }
 
-int InsertGlobalObject(char *name, struct GameTracker *gameTracker)
-{ 
+int InsertGlobalObject(char* name, struct GameTracker* gameTracker)  // Matching - 100%
+{
 	char string[64];
 	char vramname[64];
 	int i;
-	struct _ObjectTracker *otr;
-	
-	if ((gameTrackerX.gameFlags & 0x4000000))
-	{
-		if (STREAM_IsSpecialMonster(name) != 0)
-		{
-			return -1;
-		}
-	}
-	
-	if ((gameTracker->debugFlags2 & 0x8000))
-	{
-		if (STREAM_IsMonster(name) != 0)
-		{
-			return -1;
-		}
-	}
+	struct _ObjectTracker* otr;
 
-	otr = gameTracker->GlobalObjects;
-
-	for (i = 0; i < 48; i++, otr++)
-	{
-		if (otr->objectStatus != 0)
-		{
-#if defined(PSXPC_VERSION)
-			if (_strcmpi(otr->name, name) == 0)
-#else
-			if (strcmpi(otr->name, name) == 0)
-#endif
-			{
-				break;
-			}
-		}
-	}
-
-	if (i == 48)
+	i = -1;
+	if ((!(gameTrackerX.gameFlags & 0x4000000) || (STREAM_IsSpecialMonster(name) == 0)) && (!(gameTracker->debugFlags2 & 0x8000) || (STREAM_IsMonster(name) == 0)))
 	{
 		otr = gameTracker->GlobalObjects;
-		i = 0;
 
-		do
+		for (i = 0; i < 48; i++, otr++)
 		{
-			if (otr->objectStatus == 0)
+			if (otr->objectStatus != 0)
 			{
-				break;
-			}
-			i++;
-			otr++;
-		} while (i < 48);
-
-		if (i == 48)
-		{
-			i = STREAM_TryAndDumpANonResidentObject();
-
-			if (i == -1)
-			{
-				DEBUG_FatalError("The Object tracker is full MAX_OBJECTS=%d\n", 48);
+				#if defined(PSXPC_VERSION)
+				if (_strcmpi(otr->name, name) == 0)
+				#else
+				if (strcmpi(otr->name, name) == 0)
+				#endif
+				{
+					break;
+				}
 			}
 		}
+		if (i == 48)
+		{
+			for (otr = gameTracker->GlobalObjects, i = 0; i < 48; i++, otr++)
+			{
+				if (otr->objectStatus == 0)
+				{
+					break;
+				}
+			}
 
-		sprintf(string, "\\kain2\\object\\%s\\%s.drm", name, name);
-		sprintf(vramname, "\\kain2\\object\\%s\\%s.crm", name, name);
-		
-		strcpy(otr->name, name);
+			if (i == 48)
+			{
+				i = STREAM_TryAndDumpANonResidentObject();
 
-		otr->objectStatus = 1;
-		LOAD_NonBlockingBinaryLoad(string, (void*)STREAM_LoadObjectReturn, (void*)otr, NULL, (void**)&otr->object, 1);
-		otr->numInUse = 0;
-		otr->numObjectsUsing = 0;
+				if (i == -1)
+				{
+					DEBUG_FatalError("The Object tracker is full MAX_OBJECTS=%d\n", 48);
+				}
+			}
+
+			sprintf(string, "\\kain2\\object\\%s\\%s.drm", name, name);
+			sprintf(vramname, "\\kain2\\object\\%s\\%s.crm", name, name);
+
+			strcpy(otr->name, name);
+
+			otr->objectStatus = 1;
+			LOAD_NonBlockingBinaryLoad(string, (void*)STREAM_LoadObjectReturn, (void*)otr, NULL, (void**)&otr->object, 1);
+			otr->numInUse = 0;
+			otr->numObjectsUsing = 0;
+		}
 	}
 
 	return i;
