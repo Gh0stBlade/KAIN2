@@ -438,16 +438,16 @@ struct _ObjectTracker * STREAM_GetObjectTracker(char *name)
 	return NULL;
 }
 
-void LoadLevelObjects(struct _StreamUnit *stream)
+void LoadLevelObjects(struct _StreamUnit* stream)  // Matching - 100%
 {
 	int objlist_pos;
 	char name[20];
-	struct Level *level;
+	struct Level* level;
 	int i;
-	
+
 	STREAM_NextLoadAsNormal();
 	objlist_pos = 0;
-	
+
 	while (((unsigned char*)stream->level->objectNameList)[objlist_pos] != 255)
 	{
 		strcpy(name, (char*)stream->level->objectNameList + objlist_pos);
@@ -458,18 +458,15 @@ void LoadLevelObjects(struct _StreamUnit *stream)
 
 	level = stream->level;
 
-	if (level->numIntros > 0)
+	for (i = 0; i < level->numIntros; i++)
 	{
-		for (i = 0; i < level->numIntros; i++)
+		if (FindObjectName(level->introList[i].name) != -1)
 		{
-			if (FindObjectName(level->introList[i].name) != -1)
-			{
-				level->introList[i].flags &= 0xFFFFBFFF;
-			}
-			else
-			{
-				level->introList[i].flags |= 0x4000;
-			}
+			level->introList[i].flags &= 0xFFFFBFFF;
+		}
+		else
+		{
+			level->introList[i].flags |= 0x4000;
 		}
 	}
 }
