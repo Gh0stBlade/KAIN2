@@ -1437,7 +1437,7 @@ struct _StreamUnit* STREAM_LoadLevel(char* baseAreaName, struct StreamUnitPortal
 	return streamUnit;
 }
 
-void RemoveIntroducedLights(struct Level* level)
+void RemoveIntroducedLights(struct Level* level)  // Matching - 100%
 {
 	int i;
 
