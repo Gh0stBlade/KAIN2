@@ -27,6 +27,7 @@
 #include "Game/LIST.H"
 
 #include <stddef.h>
+#include "TIMER.H"
 
 long CurrentWarpNumber;
 
@@ -1102,15 +1103,16 @@ void STREAM_FinishLoad(struct _StreamUnit *streamUnit)
 	WARPGATE_FixUnit(streamUnit);
 }
 
-void STREAM_LoadLevelReturn(void *loadData, void *data, void *data2)
+void STREAM_LoadLevelReturn(void* loadData, void* data, void* data2)  // Matching - 100%
 {
 	GetRCnt(0xF2000000);
+	gameTimer;
 
 	((struct _StreamUnit*)data2)->StreamUnitID = ((struct Level*)loadData)->streamUnitID;
 
-	gameTrackerX.level = (struct Level*)loadData;
 	gameTrackerX.StreamUnitID = ((struct Level*)loadData)->streamUnitID;
-	
+	gameTrackerX.level = (struct Level*)loadData;
+
 	STREAM_SetMainFog(((struct _StreamUnit*)data2));
 	STREAM_FinishLoad(((struct _StreamUnit*)data2));
 }
