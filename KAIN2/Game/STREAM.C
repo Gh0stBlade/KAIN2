@@ -800,7 +800,7 @@ int STREAM_IsMorphInProgress()
 }
 
 
-long STREAM_GetWaterZLevel(struct Level* level, struct _Instance* instance)//Matching - 99.69%
+long STREAM_GetWaterZLevel(struct Level* level, struct _Instance* instance)  // Matching - 100%
 {
 	int waterZLevel;
 
