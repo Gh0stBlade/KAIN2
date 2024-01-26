@@ -1304,7 +1304,7 @@ void STREAM_LoadMainVram(struct GameTracker *gameTracker, char *baseAreaName, st
 	LOAD_NonBlockingBufferedLoad(vramName, (void*)VRAM_TransferBufferToVram, vramBuffer, NULL);
 }
 
-void STREAM_MoveIntoNewStreamUnit()
+void STREAM_MoveIntoNewStreamUnit()  // Matching - 100%
 {
 	gameTrackerX.playerInstance->cachedTFace = -1;
 	gameTrackerX.playerInstance->cachedTFaceLevel = NULL;
