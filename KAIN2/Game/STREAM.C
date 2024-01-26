@@ -513,7 +513,7 @@ void STREAM_StreamLoadObjectAbort(void* loadData, void* data, void* data2)
 	objectTracker->objectStatus = 0;
 }
 
-void STREAM_DumpLoadingObjects()
+void STREAM_DumpLoadingObjects()  // Matching - 100%
 {
 	int i;
 	struct _ObjectTracker* tracker;
