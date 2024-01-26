@@ -698,8 +698,8 @@ void RemoveAllObjects(struct GameTracker* gameTracker)
 	}
 }
 
-struct Level* STREAM_GetLevelWithID(long id)
-{ 
+struct Level* STREAM_GetLevelWithID(long id)  // Matching - 100%
+{
 	struct Level* retLevel;
 	long i;
 
@@ -712,7 +712,7 @@ struct Level* STREAM_GetLevelWithID(long id)
 			if (StreamTracker.StreamList[i].StreamUnitID == id)
 			{
 				retLevel = StreamTracker.StreamList[i].level;
-				return retLevel;
+				break;
 			}
 		}
 	}
