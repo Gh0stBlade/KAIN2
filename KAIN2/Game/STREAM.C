@@ -474,7 +474,7 @@ void LoadLevelObjects(struct _StreamUnit *stream)
 	}
 }
 
-long STREAM_IsAnInstanceUsingObject(struct Object* object)
+long STREAM_IsAnInstanceUsingObject(struct Object* object)  // Matching - 100%
 {
 	struct _Instance* instance;
 	struct _Instance* next;
