@@ -1115,47 +1115,49 @@ void STREAM_LoadLevelReturn(void *loadData, void *data, void *data2)
 	STREAM_FinishLoad(((struct _StreamUnit*)data2));
 }
 
-void STREAM_StreamLoadLevelReturn(void* loadData, void* data, void* data2)
+void STREAM_StreamLoadLevelReturn(void* loadData, void* data, void* data2)  // Matching - 100%
 {
 	struct Level* level;
 	struct _StreamUnit* streamUnit;
 
+	GetRCnt(0xF2000000);
+	gameTimer;
+
 	level = (struct Level*)loadData;
 	streamUnit = (struct _StreamUnit*)data2;
-
-	GetRCnt(0xF2000000);
-
 	streamUnit->StreamUnitID = level->streamUnitID;
-	
+
 	if (streamUnit->used == 3)
 	{
 		streamUnit->used = 0;
 		streamUnit->flags = 0;
 
 		MEMPACK_Free((char*)streamUnit->level);
+
+		streamUnit->level = NULL;
+
+		return;
+	}
+
+	if (gameTrackerX.gameData.asmData.MorphType != 0)
+	{
+		STREAM_SetStreamFog(streamUnit, level->spectralFogNear, level->spectralFogFar);
 	}
 	else
 	{
-		if (gameTrackerX.gameData.asmData.MorphType != 0)
-		{
-			STREAM_SetStreamFog(streamUnit, level->spectralFogNear, level->spectralFogFar);
-		}
-		else
-		{
-			STREAM_SetStreamFog(streamUnit, level->holdFogNear, level->holdFogFar);
-		}
+		STREAM_SetStreamFog(streamUnit, level->holdFogNear, level->holdFogFar);
+	}
 
-		STREAM_FinishLoad(streamUnit);
+	STREAM_FinishLoad(streamUnit);
 
-		if (gameTrackerX.playerInstance != NULL && level->streamUnitID == gameTrackerX.playerInstance->currentStreamUnitID)
-		{
-			strcpy(gameTrackerX.baseAreaName, level->worldName);
+	if (gameTrackerX.playerInstance != NULL && level->streamUnitID == gameTrackerX.playerInstance->currentStreamUnitID)
+	{
+		strcpy(gameTrackerX.baseAreaName, level->worldName);
 
-			STREAM_SetMainFog(streamUnit);
+		STREAM_SetMainFog(streamUnit);
 
-			gameTrackerX.level = level;
-			gameTrackerX.StreamUnitID = level->streamUnitID;
-		}
+		gameTrackerX.StreamUnitID = level->streamUnitID;
+		gameTrackerX.level = level;
 	}
 }
 
