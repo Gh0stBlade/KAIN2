@@ -499,7 +499,7 @@ long STREAM_IsAnInstanceUsingObject(struct Object* object)
 	return ret;
 }
 
-void STREAM_StreamLoadObjectAbort(void* loadData, void* data, void* data2)
+void STREAM_StreamLoadObjectAbort(void* loadData, void* data, void* data2)  // Matching - 100%
 {
 	struct _ObjectTracker* objectTracker;
 
