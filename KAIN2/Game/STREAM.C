@@ -1462,22 +1462,24 @@ void RemoveIntroducedLights(struct Level* level)
 	}
 }
 
-void STREAM_RemoveInstancesWithIDInInstanceList(struct _InstanceList* list, long id, struct Level* level) { // Matching 100%
+void STREAM_RemoveInstancesWithIDInInstanceList(struct _InstanceList* list, long id, struct Level* level)  // Matching - 100%
+{
 	struct _Instance* instance;
 	struct _Instance* next;
+
 	instance = list->first;
-	while (instance == next, instance != NULL) 
+	while (instance == next, instance != NULL)
 	{
 		next = instance->next;
-		if (instance->currentStreamUnitID == id) 
+		if (instance->currentStreamUnitID == id)
 		{
 			SAVE_Instance(instance, level);
-			INSTANCE_ReallyRemoveInstance(list, instance, NULL);
+			INSTANCE_ReallyRemoveInstance(list, instance, 0);
 			instance = next;
 		}
-		else 
+		else
 		{
-			if (instance->birthStreamUnitID == id) 
+			if (instance->birthStreamUnitID == id)
 			{
 				SAVE_Instance(instance, level);
 				instance->intro = NULL;
