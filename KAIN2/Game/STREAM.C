@@ -516,7 +516,7 @@ void STREAM_DumpLoadingObjects()  // Matching - 100%
 	}
 }
 
-void STREAM_DumpObject(struct _ObjectTracker* objectTracker)
+void STREAM_DumpObject(struct _ObjectTracker* objectTracker)  // Matching - 100%
 {
 	struct Object* object;
 	char dramName[64];
@@ -526,7 +526,7 @@ void STREAM_DumpObject(struct _ObjectTracker* objectTracker)
 	if (objectTracker->objectStatus == 1)
 	{
 		sprintf(dramName, "\\kain2\\object\\%s\\%s.drm", objectTracker->name, objectTracker->name);
-		LOAD_AbortFileLoad(dramName, (void*)STREAM_StreamLoadObjectAbort);
+		LOAD_AbortFileLoad(dramName, STREAM_StreamLoadObjectAbort);
 	}
 	else if (object != NULL)
 	{
@@ -545,6 +545,10 @@ void STREAM_DumpObject(struct _ObjectTracker* objectTracker)
 			OBTABLE_RemoveObjectEntry(object);
 			MEMPACK_Free((char*)object);
 
+			objectTracker->objectStatus = 0;
+		}
+		if (object == NULL)
+		{
 			objectTracker->objectStatus = 0;
 		}
 	}
