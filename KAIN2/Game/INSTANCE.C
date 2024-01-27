@@ -2006,43 +2006,39 @@ int INSTANCE_GetFadeValue(struct _Instance* instance)
 	return fadeValue;
 }
 
-unsigned long INSTANCE_DefaultAnimCallback(struct _G2Anim_Type* anim, int sectionID, enum _G2AnimCallbackMsg_Enum message, long messageDataA, long messageDataB, struct _Instance* instance)
+unsigned long INSTANCE_DefaultAnimCallback(struct _G2Anim_Type* anim, int sectionID, enum _G2AnimCallbackMsg_Enum message, long messageDataA, long messageDataB, struct _Instance* instance)  // Matching - 100%
 {
 	struct _AnimSoundData_Type* soundData;
 	int id;
 	int vol;
+	int temp;  // not from SYMDUMP
 
 	if (message == G2ANIM_MSG_PLAYEFFECT)
 	{
-		if (messageDataA == 0)
+		switch (messageDataA)
 		{
+		case 0:
 			soundData = (struct _AnimSoundData_Type*)messageDataB;
-
-			if (sectionID != 0)
+			if (soundData != 0)
 			{
 				vol = soundData->volume;
-
-				if (vol >= 1000)
+				if (soundData->volume >= 1000)
 				{
+					temp = vol / 1000;
 					vol %= 1000;
-
-					if (vol / 1000 != HUMAN_TypeOfHuman(instance))
+					if (temp != HUMAN_TypeOfHuman(instance))
 					{
 						return 0;
 					}
 				}
-			
 				SOUND_Play3dSound(&instance->position, soundData->sfxToneID, soundData->pitch, vol, soundData->minVolDistance);
-
-				return messageDataA;
+				break;
 			}
-		}
-		else if (messageDataA == 1)
-		{
+			break;
+		case 1:
 			FX_StartInstanceEffect(instance, (struct ObjectEffect*)messageDataB, 0);
-		}
-		else
-		{
+			break;
+		default:
 			return messageDataA;
 		}
 	}
