@@ -398,31 +398,30 @@ void INSTANCE_ReallyRemoveInstance(struct _InstanceList* list, struct _Instance*
 	}
 }
 
-void INSTANCE_CleanUpInstanceList(struct _InstanceList* list, long reset)
+void INSTANCE_CleanUpInstanceList(struct _InstanceList* list, long reset)  // Matching - 100%
 {
 	struct _Instance* instance;
 	struct _Instance* next;
 
 	instance = list->first;
-	
+
 	while (instance != NULL)
 	{
 		next = instance->next;
-
-		if ((instance->flags & 0x400))
+		if (!(instance->flags & 0x400))
 		{
 			if ((instance->flags & 0x20))
 			{
-				instance->flags &= 0xFFFFFFDF;
+				instance->flags |= 0x20;
 			}
 		}
-		else
+		else if (instance->flags & 0x20)
 		{
-			instance->flags |= 0x20;
+			instance->flags &= ~0x20;
 		}
-		
 		instance = next;
 	}
+	instance = list->first;
 
 	while (instance != NULL)
 	{
@@ -430,7 +429,7 @@ void INSTANCE_CleanUpInstanceList(struct _InstanceList* list, long reset)
 
 		if ((instance->flags & 0x20))
 		{
-			INSTANCE_ReallyRemoveInstance(instanceList, instance, reset);
+			INSTANCE_ReallyRemoveInstance(list, instance, reset);
 		}
 
 		instance = next;
