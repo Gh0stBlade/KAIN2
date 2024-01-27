@@ -2585,11 +2585,11 @@ void EVENT_DoStackMathOperation(struct _PCodeStack *stack, long operation)
 	UNIMPLEMENTED();
 }
 
-short* EVENT_ParseOpcode(struct _PCodeStack* stack, short* codeStream, long* operateOnStack)
+short* EVENT_ParseOpcode(struct _PCodeStack* stack, short* codeStream, long* operateOnStack)  // Matching - 100%
 {
 	short pcode;
 
-	pcode = *codeStream++;
+	pcode = *codeStream++ - 1;
 
 	MoveCodeStreamExtra = 0;
 	*operateOnStack = 0;
@@ -2601,38 +2601,6 @@ short* EVENT_ParseOpcode(struct _PCodeStack* stack, short* codeStream, long* ope
 		EVENT_AddObjectToStack(stack, *codeStream);
 
 		codeStream++;
-
-		break;
-	}
-	case 1:
-	{
-		EVENT_ModifyObjectToStackWithAttribute(stack, *codeStream, codeStream);
-
-		codeStream++;
-		
-		break;
-	}
-	case 2:
-	{
-		EVENT_DoStackOperationEquals(stack, codeStream);
-		break;
-	}
-	case 3:
-	{
-		EVENT_DoStackMathOperation(stack, 10);
-		break;
-	}
-	case 4:
-	{
-		*operateOnStack = 1;
-		EventAbortedPosition = codeStream;
-		break;
-	}
-	case 6:
-	case 8:
-	case 9:
-	{
-		codeStream = NULL;
 		break;
 	}
 	case 11:
@@ -2640,6 +2608,34 @@ short* EVENT_ParseOpcode(struct _PCodeStack* stack, short* codeStream, long* ope
 		EVENT_AddNumberToStack(stack, *codeStream, 0);
 
 		codeStream++;
+		break;
+	}
+	case 1:
+	{
+		EVENT_ModifyObjectToStackWithAttribute(stack, *codeStream, codeStream);
+
+		codeStream++;
+		break;
+	}
+	case 3:
+	{
+		EVENT_DoStackMathOperation(stack, 10);
+		break;
+	}
+	case 22:
+	{
+		EVENT_DoStackMathOperation(stack, 11);
+		break;
+	}
+	case 4:
+	{
+		EventAbortedPosition = codeStream;
+		*operateOnStack = 1;
+		break;
+	}
+	case 31:
+	{
+		EVENT_DoStackMathOperation(stack, 12);
 		break;
 	}
 	case 12:
@@ -2662,6 +2658,12 @@ short* EVENT_ParseOpcode(struct _PCodeStack* stack, short* codeStream, long* ope
 		EVENT_DoStackMathOperation(stack, 4);
 		break;
 	}
+	case 23:
+	{
+		EVENT_DoStackMathOperation(stack, 5);
+		break;
+	}
+
 	case 16:
 	{
 		EVENT_StackDuplicate(stack);
@@ -2669,6 +2671,8 @@ short* EVENT_ParseOpcode(struct _PCodeStack* stack, short* codeStream, long* ope
 		EVENT_AddNumberToStack(stack, 1, 0);
 
 		EVENT_DoStackMathOperation(stack, 1);
+
+		EVENT_DoStackOperationEquals(stack, codeStream);
 		break;
 	}
 	case 17:
@@ -2678,6 +2682,13 @@ short* EVENT_ParseOpcode(struct _PCodeStack* stack, short* codeStream, long* ope
 		EVENT_AddNumberToStack(stack, 1, 0);
 
 		EVENT_DoStackMathOperation(stack, 2);
+
+		EVENT_DoStackOperationEquals(stack, codeStream);
+		break;
+	}
+	case 2:
+	{
+		EVENT_DoStackOperationEquals(stack, codeStream);
 		break;
 	}
 	case 18:
@@ -2700,14 +2711,11 @@ short* EVENT_ParseOpcode(struct _PCodeStack* stack, short* codeStream, long* ope
 		EVENT_DoStackMathOperation(stack, 9);
 		break;
 	}
-	case 22:
+	case 6:
+	case 8:
+	case 9:
 	{
-		EVENT_DoStackMathOperation(stack, 11);
-		break;
-	}
-	case 23:
-	{
-		EVENT_DoStackMathOperation(stack, 5);
+		codeStream = NULL;
 		break;
 	}
 	case 27:
@@ -2723,7 +2731,7 @@ short* EVENT_ParseOpcode(struct _PCodeStack* stack, short* codeStream, long* ope
 	case 29:
 	{
 		EVENT_AddSubListObjectToStack(stack, *codeStream);
-		
+
 		codeStream++;
 		break;
 	}
@@ -2733,11 +2741,6 @@ short* EVENT_ParseOpcode(struct _PCodeStack* stack, short* codeStream, long* ope
 		{
 			currentActionScript->conditionBits |= 0x2;
 		}
-	}
-	case 31:
-	{
-		EVENT_DoStackMathOperation(stack, 12);
-		break;
 	}
 	}
 
