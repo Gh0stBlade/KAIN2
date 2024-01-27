@@ -1761,7 +1761,7 @@ struct _Instance* INSTANCE_IntroduceSavedInstanceWithIntro(struct _SavedIntroWit
 	return null;
 }
 
-void INSTANCE_SpatialRelationships(struct _InstanceList* instanceList)//Matching - 98.56%
+void INSTANCE_SpatialRelationships(struct _InstanceList* instanceList)  // Matching - 100%
 {
 	struct _Instance* instance;
 	int checkMask;
