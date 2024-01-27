@@ -558,15 +558,14 @@ void STREAM_DumpObject(struct _ObjectTracker* objectTracker)  // Matching - 100%
 	}
 }
 
-
-int STREAM_IsObjectInAnyUnit(struct _ObjectTracker *tracker)
+int STREAM_IsObjectInAnyUnit(struct _ObjectTracker* tracker)  // Matching - 100%
 {
 	int d;
-	unsigned char *objlist;
+	unsigned char* objlist;
 
 	for (d = 0; d < 16; d++)
 	{
-		if (StreamTracker.StreamList[d].used == 2 && StreamTracker.StreamList[d].level == NULL)
+		if (StreamTracker.StreamList[d].used == 2 && StreamTracker.StreamList[d].level != NULL)
 		{
 			objlist = (unsigned char*)StreamTracker.StreamList[d].level->objectNameList;
 
