@@ -327,7 +327,7 @@ void EVENT_InitTerrainMovement()  // Matching - 100%
 	WaterInUse = 0;
 }
 
-void EVENT_Init()
+void EVENT_Init()  // Matching - 100%
 {
 	EVENT_InitTerrainMovement();
 	EVENT_InitTimers();
