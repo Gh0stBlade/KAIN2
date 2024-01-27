@@ -309,7 +309,7 @@ void EVENT_RemoveTimer(struct EventTimer* timer)  // Matching - 100%
 	}
 }
 
-void EVENT_InitTimers()
+void EVENT_InitTimers()  // Matching - 100%
 {
 	numActiveEventTimers = 0;
 	memset(&eventTimerArray[0], 0, sizeof(struct EventTimer) * 24);
