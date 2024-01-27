@@ -1727,7 +1727,7 @@ int WARPGATE_IsWarpgateSpectral()
 }
 
 
-int WARPGATE_IsObjectOnWarpSide(struct _Instance* instance)  // Matching - 99.60%
+int WARPGATE_IsObjectOnWarpSide(struct _Instance* instance)  // Matching - 100%
 {
 	int side;
 	int temp, temp2;  // not from SYMDUMP
