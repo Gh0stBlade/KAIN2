@@ -820,9 +820,9 @@ long STREAM_GetWaterZLevel(struct Level* level, struct _Instance* instance)//Mat
 	return waterZLevel;
 }
 
-void STREAM_SetMainFog(struct _StreamUnit *streamUnit)
-{ 
-	struct Level *level;
+void STREAM_SetMainFog(struct _StreamUnit* streamUnit)  // Matching - 100%
+{
+	struct Level* level;
 
 	level = streamUnit->level;
 
@@ -836,6 +836,9 @@ void STREAM_SetMainFog(struct _StreamUnit *streamUnit)
 		streamUnit->UnitFogNear = level->holdFogNear;
 		streamUnit->UnitFogFar = level->holdFogFar;
 	}
+
+	streamUnit->TargetFogNear = streamUnit->UnitFogNear;
+	streamUnit->TargetFogFar = streamUnit->UnitFogFar;
 }
 
 void STREAM_SetStreamFog(struct _StreamUnit* streamUnit, short fogNear, short fogFar)//Matching - 99.72%
