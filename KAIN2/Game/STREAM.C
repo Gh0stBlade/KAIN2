@@ -1316,7 +1316,7 @@ void STREAM_MoveIntoNewStreamUnit()  // Matching - 100%
 	}
 }
 
-struct _StreamUnit* STREAM_LoadLevel(char* baseAreaName, struct StreamUnitPortal* streamPortal, int loadnext)//Matching - 91.81%
+struct _StreamUnit* STREAM_LoadLevel(char* baseAreaName, struct StreamUnitPortal* streamPortal, int loadnext)  // Matching - 100%
 {
 	int i;
 	long streamID;
