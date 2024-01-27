@@ -938,7 +938,7 @@ void EVENT_AddNumberToStack(struct _PCodeStack* stack, long item, long flags) //
 	}
 }
 
-void EVENT_ChangeOperandToNumber(struct StackType* operand, long item, long flags)
+void EVENT_ChangeOperandToNumber(struct StackType* operand, long item, long flags)  // Matching - 100%
 {
 	operand->id = 7;
 
