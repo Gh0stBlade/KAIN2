@@ -1822,7 +1822,7 @@ int INSTANCE_SetStatsData(struct _Instance* instance, struct _Instance* checkee,
 	return 0;
 }
 
-void INSTANCE_LinkToParent(struct _Instance* instance, struct _Instance* parent, int node) // Matching - 42.55%
+void INSTANCE_LinkToParent(struct _Instance* instance, struct _Instance* parent, int node) // Matching - 100%
 {
 	instance->LinkSibling = parent->LinkChild;
 	parent->LinkChild = instance;
