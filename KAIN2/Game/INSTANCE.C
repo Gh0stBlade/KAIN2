@@ -86,7 +86,7 @@ void INSTANCE_DeactivatedProcess(struct _Instance* instance, struct GameTracker*
 }
 
 
-void INSTANCE_DeactivateFarInstances(struct GameTracker* gameTracker) // Matching - 98.90%
+void INSTANCE_DeactivateFarInstances(struct GameTracker* gameTracker)  // Matching - 99.62%
 {
 	struct _InstanceList* instanceList;
 	struct _Instance* instance;
@@ -151,8 +151,7 @@ void INSTANCE_DeactivateFarInstances(struct GameTracker* gameTracker) // Matchin
 
 			if ((instance->flags & 0x200U) != 0)
 			{
-				cntInst = (int)instance->object->vvRemoveDist;
-				cntInst = cntInst * cntInst;
+				cntInst = instance->object->vvRemoveDist * instance->object->vvRemoveDist;
 				if (distSq > cntInst)
 				{
 					if ((instance->flags2 & 1) == 0)
@@ -167,8 +166,7 @@ void INSTANCE_DeactivateFarInstances(struct GameTracker* gameTracker) // Matchin
 			}
 			else if ((instance->flags2 & 0x80000U) == 0)
 			{
-				cntInst = (int)instance->object->removeDist;
-				cntInst = cntInst * cntInst;
+				cntInst = instance->object->removeDist * instance->object->removeDist;
 				if (distSq > cntInst)
 				{
 					if ((instance->flags2 & 1) == 0)
@@ -183,8 +181,7 @@ void INSTANCE_DeactivateFarInstances(struct GameTracker* gameTracker) // Matchin
 			}
 			else
 			{
-				cntInst = gameTracker->defRemoveDist;
-				cntInst = cntInst * cntInst;
+				cntInst = gameTracker->defRemoveDist * gameTracker->defRemoveDist;
 				if (distSq > cntInst)
 				{
 					if ((instance->flags2 & 1) == 0)
