@@ -2823,7 +2823,7 @@ long EVENT_GetInstanceValue(struct InstanceObject *instanceObject)
 	return 0;
 }
 
-long EVENT_GetSplineFrameNumber(struct InstanceSpline* instanceSpline)
+long EVENT_GetSplineFrameNumber(struct InstanceSpline* instanceSpline)  // Matching - 100%
 {
 	return SCRIPT_GetSplineFrameNumber(instanceSpline->instance, SCRIPT_GetPosSplineDef(instanceSpline->instance, instanceSpline->spline, instanceSpline->isParent, instanceSpline->isClass));
 }
