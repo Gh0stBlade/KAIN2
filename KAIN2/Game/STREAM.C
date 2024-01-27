@@ -412,18 +412,20 @@ int InsertGlobalObject(char* name, struct GameTracker* gameTracker)  // Matching
 	return i;
 }
 
-struct _ObjectTracker * STREAM_GetObjectTracker(char *name)
-{ 
+struct _ObjectTracker* STREAM_GetObjectTracker(char* name)  // Matching - 100%
+{
 	int i;
 
 	i = InsertGlobalObject(name, &gameTrackerX);
-	
-	if (i != -1)
+
+	if (i == -1)
+	{
+		return NULL;
+	}
+	else
 	{
 		return &gameTrackerX.GlobalObjects[i];
 	}
-
-	return NULL;
 }
 
 void LoadLevelObjects(struct _StreamUnit *stream)
