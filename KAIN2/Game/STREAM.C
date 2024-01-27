@@ -1706,9 +1706,9 @@ int WARPGATE_IsWarpgateInUse()
 	return WarpGateLoadInfo.warpgate_in_use;
 }
 
-int WARPGATE_IsWarpgateActive()
-{ 
-	return 0 < WarpGateLoadInfo.loading;
+int WARPGATE_IsWarpgateActive()  // Matching - 100%
+{
+	return WarpGateLoadInfo.loading != 0;
 }
 
 int WARPGATE_IsWarpgateUsable()
