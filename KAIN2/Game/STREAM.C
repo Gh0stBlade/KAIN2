@@ -121,7 +121,7 @@ int FindObjectName(char *name)  // Matching - 100%
 	return -1;
 }
 
-struct _ObjectTracker* FindObjectInTracker(struct Object* object)
+struct _ObjectTracker* FindObjectInTracker(struct Object* object)  // Matching - 100%
 {
 	int i;
 	struct _ObjectTracker* otr;
