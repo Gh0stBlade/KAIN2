@@ -1716,9 +1716,9 @@ int WARPGATE_IsWarpgateUsable()
 	return ((short)WarpGateLoadInfo.loading ^ 4) < 1;
 }
 
-int WARPGATE_IsWarpgateReady()
+int WARPGATE_IsWarpgateReady()  // Matching - 100%
 {
-	return (WarpGateLoadInfo.loading ^ 4) < 1;
+	return WarpGateLoadInfo.loading == 4;
 }
 
 int WARPGATE_IsWarpgateSpectral()
