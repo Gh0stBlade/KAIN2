@@ -1596,7 +1596,7 @@ void STREAM_DumpAllLevels(long IDNoRemove, int DoSave)  // Matching - 100%
 	}
 }
 
-void STREAM_LoadCurrentWarpRoom(struct StreamUnitPortal* streamPortal, struct _StreamUnit* mainStreamUnit) // Matching - 96.81%
+void STREAM_LoadCurrentWarpRoom(struct StreamUnitPortal* streamPortal, struct _StreamUnit* mainStreamUnit)  // Matching - 100%
 {
 	if (strcmpi(mainStreamUnit->level->worldName, WarpRoomArray[CurrentWarpNumber].name) == 0)
 	{
