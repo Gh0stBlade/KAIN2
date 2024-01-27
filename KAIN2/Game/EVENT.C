@@ -66,10 +66,10 @@ void EVENT_UpdateResetSignalArrayAndWaterMovement(struct Level *oldLevel, struct
 				UNIMPLEMENTED();
 }
 
-void EVENT_ResetAllOneTimeVariables()
+void EVENT_ResetAllOneTimeVariables()  // Matching - 100%
 {
 	int i;
-	
+
 	if (NumSignalsToReset != 0)
 	{
 		for (i = 0; i < 16; i++)
@@ -77,9 +77,9 @@ void EVENT_ResetAllOneTimeVariables()
 			if (ResetSignalArray[i].timeLeft > 0 && --ResetSignalArray[i].timeLeft == 0)
 			{
 				NumSignalsToReset--;
-				
+
 				ResetSignalArray[i].mSignal->flags &= ~0x1;
-				ResetSignalArray[i].mSignal = NULL;
+				ResetSignalArray[i].timeLeft = 0;
 			}
 		}
 	}
