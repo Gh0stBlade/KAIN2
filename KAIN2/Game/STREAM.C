@@ -1701,7 +1701,7 @@ void WARPGATE_EndUsingWarpgate()
 	WarpGateLoadInfo.warpgate_in_use = 0;
 }
 
-int WARPGATE_IsWarpgateInUse()
+int WARPGATE_IsWarpgateInUse()  // Matching - 100%
 {
 	return WarpGateLoadInfo.warpgate_in_use;
 }
