@@ -310,7 +310,7 @@ void INSTANCE_InsertInstanceGroup(struct _InstanceList* list, struct _Instance* 
 }
 
 
-void INSTANCE_ReallyRemoveInstance(struct _InstanceList* list, struct _Instance* instance, long reset)  // Matching - 99.29%
+void INSTANCE_ReallyRemoveInstance(struct _InstanceList* list, struct _Instance* instance, long reset)  // Matching - 100%
 {
 	struct _Instance* temp;
 	int i;
