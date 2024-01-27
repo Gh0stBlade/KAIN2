@@ -588,24 +588,19 @@ int STREAM_IsObjectInAnyUnit(struct _ObjectTracker* tracker)  // Matching - 100%
 	return 0;
 }
 
-void STREAM_RemoveAllObjectsNotInUse() // Matching - 99.03%
+void STREAM_RemoveAllObjectsNotInUse()  // Matching - 100%
 {
-	UNIMPLEMENTED();
-
-	/*struct _ObjectTracker* otr;
-	int k;
-	int l;
 	int i;
-	int j;
 	int abort;
 	struct _ObjectTracker* tracker;
 	struct _ObjectTracker* trackerList;
-	struct Object* object;
 
 	trackerList = gameTrackerX.GlobalObjects;
 
 	for (tracker = trackerList, i = 0; i < 0x30; i++, tracker++)
 	{
+		struct Object* object;
+
 		if (tracker->objectStatus == 2 && (object = tracker->object, (object->oflags & 0x2000000U) == 0) &&
 			!STREAM_IsObjectInAnyUnit(tracker) && !STREAM_IsAnInstanceUsingObject(object))
 		{
@@ -620,9 +615,11 @@ void STREAM_RemoveAllObjectsNotInUse() // Matching - 99.03%
 		{
 			if (tracker->objectStatus == 3)
 			{
+				int j;
+
 				for (j = 0; j < (signed char)tracker->numObjectsUsing; j++)
 				{
-					if (tracker[(signed char)tracker->objectsUsing[j]].objectStatus != 3)
+					if (trackerList[(signed char)tracker->objectsUsing[j]].objectStatus != 3)
 					{
 						tracker->objectStatus = 2;
 						abort = 0;
@@ -631,26 +628,32 @@ void STREAM_RemoveAllObjectsNotInUse() // Matching - 99.03%
 				}
 			}
 		}
-	}
-	while (!abort);
+	} while (!abort);
 
 	for (tracker = trackerList, i = 0; i < 0x30; i++, tracker++)
 	{
 		if (tracker->objectStatus == 3)
 		{
+			int j;
+			struct _ObjectTracker* otr;
+
 			for (otr = trackerList, j = 0; j < 0x30; j++, otr++)
 			{
 				if ((unsigned short)(otr->objectStatus - 1) < 2 || (signed short)(otr->objectStatus) == 4)
 				{
+					int k;
+
 					for (k = 0; k < (signed char)otr->numObjectsUsing; k++)
 					{
 						if ((signed char)otr->objectsUsing[k] == i)
 						{
+							int l;
+
 							otr->numObjectsUsing--;
 
 							for (l = k; l < (signed char)otr->numObjectsUsing; l++)
 							{
-								otr->objectsUsing[l + 1] = otr->objectsUsing[l];
+								otr->objectsUsing[l] = otr->objectsUsing[l + 1];
 							}
 
 							break;
@@ -665,11 +668,11 @@ void STREAM_RemoveAllObjectsNotInUse() // Matching - 99.03%
 
 	for (tracker = trackerList, i = 0; i < 0x30; i++, tracker++)
 	{
-		if (tracker->objectStatus == 1 && !STREAM_IsObjectInAnyUnit(trackerList) && (signed char)tracker->numObjectsUsing == 0)
+		if (tracker->objectStatus == 1 && !STREAM_IsObjectInAnyUnit(tracker) && (signed char)tracker->numObjectsUsing == 0)
 		{
 			STREAM_DumpObject(tracker);
 		}
-	}*/
+	}
 }
 
 void RemoveAllObjects(struct GameTracker* gameTracker)
