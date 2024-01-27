@@ -655,7 +655,7 @@ long EVENT_DoAction(struct Event* eventInstance, struct ScriptPCode* actionScrip
 	return retValue;
 }
 
-long EVENT_IsConditionTrue(struct Event* eventInstance, struct ScriptPCode* conditionScript)
+long EVENT_IsConditionTrue(struct Event* eventInstance, struct ScriptPCode* conditionScript)  // Matching - 100%
 {
 	long retValue;
 	long error;
