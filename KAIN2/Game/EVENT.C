@@ -1775,7 +1775,7 @@ long EVENT_TransformVector3dAttribute(struct _PCodeStack* stack, struct StackTyp
 	return 0;
 }
 
-void EVENT_ModifyObjectToStackWithAttribute(struct _PCodeStack* stack, long item, short* codeStream)
+void EVENT_ModifyObjectToStackWithAttribute(struct _PCodeStack* stack, long item, short* codeStream)  // Matching - 100%
 {
 	if(stack->topOfStack != 0)
 	{
