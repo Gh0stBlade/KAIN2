@@ -1653,7 +1653,7 @@ void WARPGATE_UpdateAddToArray(struct _StreamUnit* streamUnit)
 	}
 }
 
-void WARPGATE_RemoveFromArray(struct _StreamUnit* streamUnit)
+void WARPGATE_RemoveFromArray(struct _StreamUnit* streamUnit)  // Matching - 100%
 {
 	if (WARPGATE_GetWarpRoomIndex(streamUnit->baseAreaName) == -1)
 	{
