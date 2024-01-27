@@ -1612,7 +1612,7 @@ void STREAM_LoadCurrentWarpRoom(struct StreamUnitPortal* streamPortal, struct _S
 	}
 }
 
-void WARPGATE_RelocateLoadedWarpRooms(struct _StreamUnit* mainUnit, struct StreamUnitPortal* streamPortal)  // Matching - 94.76%
+void WARPGATE_RelocateLoadedWarpRooms(struct _StreamUnit* mainUnit, struct StreamUnitPortal* streamPortal)  // Matching - 100%
 {
 	int i;
 
