@@ -84,7 +84,7 @@ void STREAM_AbortAreaLoad(char* baseAreaName)  // Matching - 100%
 	LOAD_AbortFileLoad(vramName, VRAM_LoadReturn);
 }
 
-void STREAM_Init()
+void STREAM_Init()  // Matching - 100%
 {
 	int i;
 
