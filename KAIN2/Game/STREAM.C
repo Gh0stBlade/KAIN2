@@ -293,7 +293,7 @@ void STREAM_DumpSomeMonsters()  // Matching - 100%
 	}
 }
 
-void STREAM_NoMonsters()
+void STREAM_NoMonsters()  // Matching - 100%
 {
 	gameTrackerX.gameFlags |= 0x4000000;
 
