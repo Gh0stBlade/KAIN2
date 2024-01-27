@@ -2267,7 +2267,7 @@ long EVENT_DoSoundMarkerAction(struct SoundObject *soundObject, struct StackType
 	return 0;
 }
 
-long EVENT_GetSoundValue(struct SoundObject* soundObject)
+long EVENT_GetSoundValue(struct SoundObject* soundObject)  // Matching - 100%
 {
 	return 0;
 }
