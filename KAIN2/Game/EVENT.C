@@ -1733,21 +1733,24 @@ long EVENT_TransformSignalAttribute(struct _PCodeStack* stack, struct StackType*
 	return 0;
 }
 
-long EVENT_TransformRotation3dAttribute(struct _PCodeStack* stack, struct StackType* stackObject, long item, short* codeStream)//Matching - 28.21%
+long EVENT_TransformRotation3dAttribute(struct _PCodeStack* stack, struct StackType* stackObject, long item, short* codeStream)  // Matching - 100%
 {
 	long retValue;
 
-	if ((item >= 6 && item < 9) || (item < 0x63 && item >= 0x60))
+	switch(item)
 	{
-		stackObject->data.rotation3d.attribute = item;
-		retValue = 1;
+        case 6:
+        case 7:
+        case 8:
+        case 0x60:
+        case 0x61:
+        case 0x62:    
+    		stackObject->data.rotation3d.attribute = item;
+    		return 1;
+    
+        default:
+            return 0;
 	}
-	else
-	{
-		retValue = 0;
-	}
-
-	return retValue;
 }
 
 
