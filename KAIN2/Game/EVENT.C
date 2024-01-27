@@ -340,7 +340,7 @@ void EVENT_Init()  // Matching - 100%
 	MovieToPlay = -1;
 }
 
-struct WaterLevelProcess* EVENT_GetNextTerrainMove()
+struct WaterLevelProcess* EVENT_GetNextTerrainMove()  // Matching - 100%
 {
 	int i;
 	
