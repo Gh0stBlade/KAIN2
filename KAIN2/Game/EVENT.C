@@ -160,7 +160,7 @@ void HINT_KillSpecificHint(short hintNumber)  // Matching - 100%
 	}
 }
 
-long HINT_GetCurrentHint()
+long HINT_GetCurrentHint()  // Matching - 100%
 {
 	if ((gHintSystem.flags & 0x1))
 	{
