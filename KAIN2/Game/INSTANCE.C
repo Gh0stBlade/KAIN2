@@ -479,7 +479,7 @@ long INSTANCE_Introduced(struct Intro* intro, short streamUnitID)  // Matching -
 	return ret;
 }
 
-struct INICommand* INSTANCE_GetIntroCommand(struct INICommand* command, int cmd)
+struct INICommand* INSTANCE_GetIntroCommand(struct INICommand* command, int cmd)  // Matching - 100%
 {
 	if (command != NULL)
 	{
