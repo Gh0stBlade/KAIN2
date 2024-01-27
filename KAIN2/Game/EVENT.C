@@ -811,7 +811,7 @@ void EVENT_AddGameObjectToStack(struct _PCodeStack* stack) // Matching - 100%
 	}
 }
 
-void EVENT_AddPlayerObjectToStack(struct _PCodeStack* stack) // Matching - 99.77%
+void EVENT_AddPlayerObjectToStack(struct _PCodeStack* stack)  // Matching - 100%
 {
 	struct StackType* stackEntry;
 
