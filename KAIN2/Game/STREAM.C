@@ -1269,16 +1269,16 @@ void STREAM_UpdateInstanceCollisionInfo(struct _HModel* oldHModel, struct _HMode
 	}
 }
 
-void STREAM_LoadMainVram(struct GameTracker *gameTracker, char *baseAreaName, struct _StreamUnit *streamUnit)
+void STREAM_LoadMainVram(struct GameTracker* gameTracker, char* baseAreaName, struct _StreamUnit* streamUnit)  // Matching - 100%
 {
 	char dramName[80];
 	char vramName[80];
-	struct VramBuffer *vramBuffer;
+	struct VramBuffer* vramBuffer;
 	struct Level* level;
 
 	level = streamUnit->level;
 
-	STREAM_FillOutFileNames(gameTrackerX.baseAreaName, dramName, vramName, NULL);
+	STREAM_FillOutFileNames(gameTracker->baseAreaName, dramName, vramName, NULL);
 
 	vramBuffer = (struct VramBuffer*)MEMPACK_Malloc((level->vramSize.w << 1) + 20, 0x23);
 
@@ -1293,8 +1293,8 @@ void STREAM_LoadMainVram(struct GameTracker *gameTracker, char *baseAreaName, st
 
 	vramBuffer->yOffset = 0;
 	vramBuffer->lengthOfLeftOverData = 0;
-	
-	LOAD_NonBlockingBufferedLoad(vramName, (void*)VRAM_TransferBufferToVram, vramBuffer, NULL);
+
+	LOAD_NonBlockingBufferedLoad(vramName, VRAM_TransferBufferToVram, vramBuffer, NULL);
 }
 
 void STREAM_MoveIntoNewStreamUnit()
