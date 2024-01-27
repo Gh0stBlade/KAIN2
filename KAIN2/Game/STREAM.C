@@ -1815,7 +1815,7 @@ long WARPGATE_IsUnitWarpRoom(struct _StreamUnit *streamUnit)
 	return isWarpRoom;
 }
 
-void WARPGATE_FixUnit(struct _StreamUnit *streamUnit)
+void WARPGATE_FixUnit(struct _StreamUnit *streamUnit)  // Matching - 100%
 { 
 	if (WARPGATE_IsUnitWarpRoom(streamUnit) != 0)
 	{
