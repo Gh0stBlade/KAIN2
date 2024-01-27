@@ -872,7 +872,7 @@ void INSTANCE_AdditionalCollideFunctions(struct _InstanceList* instanceList)//Ma
 	gameTrackerX.timeMult = gameTrackerX.globalTimeMult;
 }
 
-long INSTANCE_GetSplineFrameNumber(struct _Instance* instance, struct MultiSpline* spline)
+long INSTANCE_GetSplineFrameNumber(struct _Instance* instance, struct MultiSpline* spline)  // Matching - 100%
 {
 	return SCRIPT_GetSplineFrameNumber(instance, SCRIPT_GetPosSplineDef(instance, spline, 0, 0));
 }
