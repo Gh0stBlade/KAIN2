@@ -96,7 +96,7 @@ void STREAM_Init()  // Matching - 100%
 	}
 }
 
-int FindObjectName(char *name)
+int FindObjectName(char *name)  // Matching - 100%
 {
 	int i;
 	struct _ObjectTracker *otr;
