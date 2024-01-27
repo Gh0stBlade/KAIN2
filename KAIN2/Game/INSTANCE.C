@@ -1672,7 +1672,7 @@ struct Intro* INSTANCE_FindIntro(long areaID, long introUniqueID) // Matching - 
 	return ret;
 }
 
-struct _Instance* INSTANCE_Find(long introUniqueID)
+struct _Instance* INSTANCE_Find(long introUniqueID)  // Matching - 100%
 {
 	struct _Instance* instance;
 
