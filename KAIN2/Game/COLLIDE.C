@@ -3076,7 +3076,7 @@ void COLLIDE_InstanceTerrainSignal(struct _Instance* instance, struct Level* lev
 	}
 }
 
-struct _StreamUnit* COLLIDE_CameraWithStreamSignals(struct Camera* camera)//Matching - 88.91%
+struct _StreamUnit* COLLIDE_CameraWithStreamSignals(struct Camera* camera)  // Matching - 100%
 {
 	struct _SVector startPoint;
 	struct _SVector endPoint;
@@ -3090,7 +3090,6 @@ struct _StreamUnit* COLLIDE_CameraWithStreamSignals(struct Camera* camera)//Matc
 	struct Level* level;
 	long playerStreamUnitID;
 	struct _Instance* instance;
-	struct _Instance* af_instance;
 	struct _MultiSignal* msignal;
 	long isWarpGateSignal;
 	struct _StreamUnit* cameraStreamUnit;
@@ -3098,11 +3097,10 @@ struct _StreamUnit* COLLIDE_CameraWithStreamSignals(struct Camera* camera)//Matc
 	int number;
 
 	instance = camera->focusInstance;
-	af_instance = gameTrackerX.playerInstance;
 
 	playerStreamUnitID = instance->currentStreamUnitID;
 
-	if (instance == af_instance)
+	if (instance == gameTrackerX.playerInstance)
 	{
 		if (gameTrackerX.SwitchToNewStreamUnit != 0)
 		{
@@ -3150,12 +3148,14 @@ struct _StreamUnit* COLLIDE_CameraWithStreamSignals(struct Camera* camera)//Matc
 
 		for (i = 0; i < numSignals; i++)
 		{
-			if (SIGNAL_IsStreamSignal(signalListArray[i]->signalList, &isWarpGateSignal) != 0)
+			msignal = (struct _MultiSignal*)signalListArray[i]->signalList;
+			if (SIGNAL_IsStreamSignal((struct Signal*)msignal, &isWarpGateSignal) != 0)
 			{
 				if (isWarpGateSignal)
 				{
 					if (WARPGATE_IsWarpgateActive())
 					{
+
 						if (gameTrackerX.SwitchToNewWarpIndex == -1)
 						{
 							number = CurrentWarpNumber;
@@ -3174,7 +3174,7 @@ struct _StreamUnit* COLLIDE_CameraWithStreamSignals(struct Camera* camera)//Matc
 				}
 				else
 				{
-					cameraStreamID = signalListArray[i]->signalList->data.StreamLevel.streamID;
+					cameraStreamID = msignal->signalList->id;
 				}
 
 				if (cameraStreamID != 0)
@@ -3194,26 +3194,20 @@ struct _StreamUnit* COLLIDE_CameraWithStreamSignals(struct Camera* camera)//Matc
 		}
 	}
 
-	if (numStreamSignals == 0)
+	if (numStreamSignals != 0)
 	{
-		return 0;
-	}
-	else if (numStreamSignals != 1)
-	{
-		if (numStreamSignals > 0)
+		if (numStreamSignals == 1)
 		{
-			for (i = 0; i < numStreamSignals; i++)
+			return streamSignalUnits[0];
+		}
+		for (i = 0; i < numStreamSignals; i++)
+		{
+			if (streamSignalUnits[i]->StreamUnitID != playerStreamUnitID)
 			{
-				if (streamSignalUnits[i]->StreamUnitID != playerStreamUnitID)
-				{
-					return streamSignalUnits[i];
-				}
+				return streamSignalUnits[i];
 			}
 		}
-	}
-	else
-	{
-		return streamSignalUnits[0];
+		return NULL;
 	}
 
 	return NULL;
