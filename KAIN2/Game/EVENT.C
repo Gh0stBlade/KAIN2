@@ -315,7 +315,7 @@ void EVENT_InitTimers()  // Matching - 100%
 	memset(&eventTimerArray[0], 0, sizeof(struct EventTimer) * 24);
 }
 
-void EVENT_InitTerrainMovement()
+void EVENT_InitTerrainMovement()  // Matching - 100%
 {
 	long i;
 	
