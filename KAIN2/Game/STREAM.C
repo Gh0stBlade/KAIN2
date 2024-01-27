@@ -333,7 +333,7 @@ int STREAM_IsMonster(char *name)
 	return STREAM_InList(name, monnames);
 }
 
-int STREAM_TryAndDumpANonResidentObject()
+int STREAM_TryAndDumpANonResidentObject()  // Matching - 100%
 { 
 	struct _ObjectTracker* otr;
 	int i;
