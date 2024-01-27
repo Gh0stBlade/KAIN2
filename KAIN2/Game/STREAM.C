@@ -1020,19 +1020,17 @@ void STREAM_StreamLoadLevelAbort(void* loadData, void* data, void* data2)  // Ma
 	streamUnit->flags = 0;
 }
 
-void STREAM_DoObjectLoadAndDump(struct _StreamUnit* streamUnit)
+void STREAM_DoObjectLoadAndDump(struct _StreamUnit* streamUnit)  // Matching - 100%
 {
 	int i;
 
-	i = 0;
-	do
+	for (i = 0; i < 16; i++)
 	{
 		if (StreamTracker.StreamList[i].used == 1)
 		{
-			break;
+			return;
 		}
-
-	} while (i++ < 16);
+	}
 
 	STREAM_RemoveAllObjectsNotInUse();
 }
