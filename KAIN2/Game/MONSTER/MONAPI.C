@@ -450,41 +450,42 @@ void MonsterMessage(struct _Instance *instance, unsigned long message, unsigned 
 			UNIMPLEMENTED();
 }
 
-void AnimDistanceAndVel(struct Object* object, struct _MonsterAnim* mAnim)
+void AnimDistanceAndVel(struct Object* object, struct _MonsterAnim* mAnim)  // Matching - 100%
 {
 	struct _G2Anim_Type anim;
 	struct _G2AnimSection_Type* animSection;
 	struct _G2AnimKeylist_Type* keylist;
 	long total;
-	struct _G2SVector3_Type dist;
 
 	keylist = object->animList[mAnim->index[0]];
 
 	G2Anim_Init(&anim, object->modelList[0]);
 
 	animSection = &anim.section[0];
-	
+
 	animSection->firstSeg = 0;
+
+	animSection->segCount = (unsigned char)object->modelList[0]->numSegments;
 
 	animSection->callback = NULL;
 
 	animSection->callbackData = NULL;
 
-	animSection->segCount = (unsigned char)object->modelList[0]->numSegments;
-
 	G2AnimSection_SetInterpInfo(animSection, NULL);
 
 	G2AnimSection_SwitchToKeylistAtTime(animSection, keylist, mAnim->index[0], 0);
 
-	if ((G2Anim_SegmentHasActiveChannels(&anim, 0, 0x700)))
+	if ((G2Anim_SegmentHasActiveChannels(&anim, 0, 0x700)) != G2FALSE)
 	{
+		struct _G2SVector3_Type dist;
+
 		G2Anim_GetRootMotionOverInterval(&anim, 0, G2AnimKeylist_GetDuration(keylist), &dist);
-	
-		total = MATH3D_FastSqrt0((dist.x * dist.x) + (dist.y * dist.y) + (dist.z * dist.z));
-		
-		mAnim->distance = (unsigned short)total;
-	
-		mAnim->velocity = (unsigned short)(((mAnim->playSpeed * (total * 100)) * 4096) / G2AnimKeylist_GetDuration(keylist));
+
+		total = (int)MATH3D_FastSqrt0((dist.x * dist.x) + (dist.y * dist.y) + (dist.z * dist.z));
+
+		mAnim->velocity = ((mAnim->playSpeed * 100) * (int)total) / (G2AnimKeylist_GetDuration(keylist) << 12);
+
+		mAnim->distance = (int)total;
 	}
 
 	G2Anim_Free(&anim);
