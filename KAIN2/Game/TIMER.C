@@ -2,7 +2,7 @@
 #include "TIMER.H"
 #include "PSX/MAIN.H"
 
-long gameTimer; // 0x800CE188
+volatile int gameTimer; // 0x800D05F0
 
 #if defined(PSXPC_VERSION)
 unsigned long long TIMER_GetTimeMS()
