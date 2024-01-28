@@ -180,7 +180,7 @@ void VWRAITH_CombatEntry(struct _Instance *instance)
 	MON_CombatEntry(instance);
 }
 
-void VWRAITH_Combat(struct _Instance* instance)
+void VWRAITH_Combat(struct _Instance* instance)  // Matching - 100%
 {
 	MON_Combat(instance);
 	VWRAITH_VerticalMove(instance);
