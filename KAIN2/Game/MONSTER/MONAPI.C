@@ -709,7 +709,7 @@ void MONAPI_ResetLookAround(struct _Instance* instance)
 	mv->mode = 0x1;
 }
 
-long MONAPI_OkToLookAround(struct _Instance* instance)
+long MONAPI_OkToLookAround(struct _Instance* instance)  // Matching - 100%
 {
 	return instance->currentMainState == 2;
 }
