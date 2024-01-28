@@ -175,7 +175,7 @@ void VWRAITH_VerticalMove(struct _Instance *instance)
 				UNIMPLEMENTED();
 }
 
-void VWRAITH_CombatEntry(struct _Instance *instance)
+void VWRAITH_CombatEntry(struct _Instance *instance)  // Matching - 100%
 {
 	MON_CombatEntry(instance);
 }
