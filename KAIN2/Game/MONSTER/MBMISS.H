@@ -33,7 +33,7 @@ struct MBMISS_114fake // hashcode: 0x8D708B2D (dec: -1922004179)
 	} Follow; // size=20, offset=76, found in object files: mbmiss.o, mbmiss.o
 };
 
-struct _walbossAttributes // hashcode: 0x300B2C35 (dec: 806038581)
+struct _walbossAttributes 
 {
 	unsigned char segmentToAttach; // size=0, offset=0
 	unsigned char frameToBirth; // size=0, offset=1
@@ -51,11 +51,13 @@ struct _walbossAttributes // hashcode: 0x300B2C35 (dec: 806038581)
 	short angleForShortAttack; // size=0, offset=22
 	short closeAttackStart; // size=0, offset=24
 	short junk; // size=0, offset=26
-	struct {
+	struct
+	{
 		short plusDelta; // size=0, offset=0
-		short minusDelta; // size=0, offset=2
-		short validAtHitPoint; // size=0, offset=4
-	} attackDeltas; // size=0, offset=28, found in object files: mbmiss.o, mbmiss.o
+	    short minusDelta; // size=0, offset=2
+	    short validAtHitPoint; // size=0, offset=4
+	}
+	attackDeltas[0]; // size=0, offset=28
 };
 
 extern void WCBEGG_Message(struct _Instance *instance, unsigned long message, unsigned long data); // 0x8008EFA8
