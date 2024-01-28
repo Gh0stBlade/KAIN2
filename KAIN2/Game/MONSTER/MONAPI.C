@@ -698,7 +698,7 @@ void MONAPI_SetLookAround(struct _Instance* instance)
 	mv->mode = 0x80000;
 }
 
-void MONAPI_ResetLookAround(struct _Instance* instance)
+void MONAPI_ResetLookAround(struct _Instance* instance)  // Matching - 100%
 {
 	struct _MonsterVars* mv;
 
