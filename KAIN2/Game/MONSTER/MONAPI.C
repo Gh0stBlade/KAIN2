@@ -714,10 +714,10 @@ long MONAPI_OkToLookAround(struct _Instance* instance)  // Matching - 100%
 	return instance->currentMainState == 2;
 }
 
-void MONAPI_DeleteRegen(struct _MONAPI_Regenerator* regen)//Matching - 88.68%
+void MONAPI_DeleteRegen(struct _MONAPI_Regenerator* regen)  // Matching - 100%
 {
 	--GlobalSave->numRegens;
-	memcpy(regen, regen + 1, (GlobalSave->numRegens - (regen - GlobalSave->regenEntries)) * sizeof(struct _MONAPI_Regenerator));
+	memcpy(regen, regen + 1, ((signed char)GlobalSave->numRegens - (regen - GlobalSave->regenEntries)) * sizeof(struct _MONAPI_Regenerator));
 }
 
 void MONAPI_ProcessGenerator()//Matching - 91.31%
