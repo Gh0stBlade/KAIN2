@@ -1681,7 +1681,7 @@ void WARPGATE_Init()  // Matching - 100%
 	}
 }
 
-void WARPGATE_StartUsingWarpgate()
+void WARPGATE_StartUsingWarpgate()  // Matching - 100%
 {
 	if (WarpGateLoadInfo.warpgate_in_use == 0)
 	{
