@@ -35,7 +35,7 @@ struct MISSILE_114fake // hashcode: 0xA1EFD7AB (dec: -1578117205)
 	} Follow; // size=20, offset=76, found in object files: missile.o, missile.o
 };
 
-struct MissileGraphics // hashcode: 0xD28383EB (dec: -763132949)
+struct MissileGraphics 
 {
 	unsigned char object; // size=0, offset=0
 	unsigned char model; // size=0, offset=1
