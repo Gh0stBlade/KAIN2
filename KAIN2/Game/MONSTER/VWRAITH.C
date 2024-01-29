@@ -186,7 +186,7 @@ void VWRAITH_Combat(struct _Instance* instance)  // Matching - 100%
 	VWRAITH_VerticalMove(instance);
 }
 
-void VWRAITH_EmbraceEntry(struct _Instance* instance)
+void VWRAITH_EmbraceEntry(struct _Instance* instance)  // Matching - 100%
 {
 	MON_EmbraceEntry(instance);
 }
