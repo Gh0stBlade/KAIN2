@@ -1,7 +1,7 @@
 #ifndef TIMER_H
 #define TIMER_H
 
-extern long gameTimer; // 0x800CE188
+extern volatile int gameTimer; // 0x800D05F0
 
 
 #if defined(PSXPC_VERSION)
