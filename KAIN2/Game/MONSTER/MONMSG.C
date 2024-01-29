@@ -349,7 +349,7 @@ void MON_IdleQueueHandler(struct _Instance *instance)  // Matching - 100%
 	}
 }
 
-void MON_DefaultQueueHandler(struct _Instance* instance)
+void MON_DefaultQueueHandler(struct _Instance* instance)  // Matching - 100%
 {
 	struct _MonsterVars* mv;
 	struct __Event* message;
