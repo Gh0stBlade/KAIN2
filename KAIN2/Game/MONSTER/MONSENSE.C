@@ -467,7 +467,7 @@ short MONSENSE_GetClosestFreeDirection(struct _Instance *instance, short angle, 
 	return 0;
 }
 
-int MONSENSE_GetDistanceInDirection(struct _Instance* instance, short angle)
+int MONSENSE_GetDistanceInDirection(struct _Instance* instance, short angle)  // Matching - 100%
 {
 	struct _MonsterVars* mv;
 	int bit;
