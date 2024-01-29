@@ -720,15 +720,10 @@ void MONAPI_DeleteRegen(struct _MONAPI_Regenerator* regen)  // Matching - 100%
 	memcpy(regen, regen + 1, ((signed char)GlobalSave->numRegens - (regen - GlobalSave->regenEntries)) * sizeof(struct _MONAPI_Regenerator));
 }
 
-void MONAPI_ProcessGenerator()//Matching - 91.31%
+void MONAPI_ProcessGenerator()  // Matching - 99.31%
 {
 	int i;
 	struct _MONAPI_Regenerator* regen;
-	unsigned long time;
-	struct Level* level;
-	struct Intro* intro;
-	int j;
-	long id;
 
 	regen = &GlobalSave->regenEntries[0];
 
@@ -736,6 +731,8 @@ void MONAPI_ProcessGenerator()//Matching - 91.31%
 	{
 		for (i = 0; i < GlobalSave->numRegens;)
 		{
+			unsigned long time;
+
 			if (gameTrackerX.gameData.asmData.MorphType)
 			{
 				time = gameTrackerX.currentSpectralTime;
@@ -747,11 +744,16 @@ void MONAPI_ProcessGenerator()//Matching - 91.31%
 
 			if (regen->regenTime < time)
 			{
+				struct Level* level;
+
 				level = STREAM_GetLevelWithID(regen->streamUnitID);
 				if (level != NULL)
 				{
-					id = regen->introUniqueID;
+					struct Intro* intro;
+					int j;
+					long id;
 
+					id = regen->introUniqueID;
 
 					for (j = level->numIntros, intro = level->introList; j != 0; intro++)
 					{
