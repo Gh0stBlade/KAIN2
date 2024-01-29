@@ -268,7 +268,7 @@ void MonsterCollide(struct _Instance *instance, struct GameTracker *gameTracker)
 							UNIMPLEMENTED();
 }
 
-void MonsterAdditionalCollide(struct _Instance* instance, struct GameTracker* gameTracker)
+void MonsterAdditionalCollide(struct _Instance* instance, struct GameTracker* gameTracker)  // Matching - 100%
 {
 	if (instance->data != NULL)
 	{
