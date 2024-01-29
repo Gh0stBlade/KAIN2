@@ -1721,9 +1721,9 @@ int WARPGATE_IsWarpgateReady()  // Matching - 100%
 	return WarpGateLoadInfo.loading == 4;
 }
 
-int WARPGATE_IsWarpgateSpectral()
+int WARPGATE_IsWarpgateSpectral()  // Matching - 100%
 {
-	return strcmpi(WarpRoomArray[CurrentWarpNumber].name, "under3") < 1;
+	return strcmpi(WarpRoomArray[CurrentWarpNumber].name, "under3") < 1U;
 }
 
 
