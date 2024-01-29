@@ -323,7 +323,7 @@ void MON_DefaultMessageHandler(struct _Instance *instance, struct __Event *messa
 				UNIMPLEMENTED();
 }
 
-void MON_PupateQueueHandler(struct _Instance* instance)//Matching - 99.47%
+void MON_PupateQueueHandler(struct _Instance* instance)  // Matching - 100%
 {
 	struct _MonsterVars* mv;
 	struct __Event* message;
