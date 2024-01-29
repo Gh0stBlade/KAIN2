@@ -524,7 +524,7 @@ void TranslateAnimList(struct Object* object, struct _MonsterAnim* animList, int
 	}
 }
 
-void MonsterTranslateAnim(struct Object* object)
+void MonsterTranslateAnim(struct Object* object)  // Matching - 100%
 {
 	struct _MonsterAttributes* attributes;
 	int i;
@@ -543,17 +543,10 @@ void MonsterTranslateAnim(struct Object* object)
 		{
 			relocModule = object->relocModule;
 
-			if (relocModule != NULL)
+			if (relocModule == NULL) //|| (((unsigned int*)relocModule)[6] != (unsigned int)"June 30 1999"))  // @FIXME Bypass version check. Also relocModule cast needs revalidating.
 			{
-#if defined(PSX_VERSION) && defined (PSXPC_VERSION)
-				if(0)///@FIXME Bypass version check
-#else
-				if (((unsigned int*)relocModule)[6] != (unsigned int)"June 30 1999")
-#endif
-				{
-					object->data = NULL;
-					return;
-				}
+				object->data = NULL;
+				return;
 			}
 		}
 		else
@@ -575,31 +568,25 @@ void MonsterTranslateAnim(struct Object* object)
 				}
 			}
 
-			if (attributes->numCombatAttributes > 0)
+			for (i = 0; i < attributes->numCombatAttributes; i++)
 			{
-				for(i = 0; i < attributes->numCombatAttributes; i++)
+				combatAttr = attributes->combatAttributesList[i];
+
+				if (combatAttr->combatRange == 0)
 				{
-					combatAttr = attributes->combatAttributesList[i];
+					largest = 0;
 
-					if (combatAttr->combatRange == 0)
+					for (j = 0; j < combatAttr->numAttacks; j++)
 					{
-						if (combatAttr->numAttacks > 0)
+						attack = &attributes->attackAttributesList[combatAttr->attackList[j]];
+
+						if (largest < attack->attackRange)
 						{
-							largest = 0;
-
-							for (j = 0; j < combatAttr->numAttacks; j++)
-							{
-								attack = &attributes->attackAttributesList[combatAttr->attackList[j]];
-
-								if (largest < attack->attackRange)
-								{
-									largest = attack->attackRange;
-								}
-							}
+							largest = attack->attackRange;
 						}
-
-						combatAttr->combatRange = largest + 200;
 					}
+
+					combatAttr->combatRange = largest + 200;
 				}
 			}
 		}
