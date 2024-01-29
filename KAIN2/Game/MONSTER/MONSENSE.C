@@ -146,7 +146,7 @@ int MONSENSE_Hear(struct _Instance *instance, struct evCollideInstanceStatsData 
 	return 0;
 }
 
-int MONSENSE_Smell(struct _Instance* instance, struct evCollideInstanceStatsData* data)
+int MONSENSE_Smell(struct _Instance* instance, struct evCollideInstanceStatsData* data)  // Matching - 100%
 {
 	struct _MonsterVars* mv;
 
