@@ -260,7 +260,7 @@ struct _MonsterIR* MONSENSE_GetMonsterIR(struct _MonsterVars* mv)
 	return NULL;
 }
 
-void MONSENSE_InitIRList(struct _MonsterVars* mv, struct _MonsterIR* list, int num)
+void MONSENSE_InitIRList(struct _MonsterVars* mv, struct _MonsterIR* list, int num)  // Matching - 100%
 {
 	int i;
 
