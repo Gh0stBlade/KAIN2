@@ -1626,7 +1626,7 @@ void WARPGATE_RelocateLoadedWarpRooms(struct _StreamUnit* mainUnit, struct Strea
 	}
 }
 
-long WARPGATE_GetWarpRoomIndex(char* name)
+long WARPGATE_GetWarpRoomIndex(char* name)  // Matching - 100%
 {
 	int i;
 	
