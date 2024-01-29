@@ -244,20 +244,21 @@ void MONSENSE_StartMonsterIRList(struct _Instance *instance)
 				UNIMPLEMENTED();
 }
 
-struct _MonsterIR* MONSENSE_GetMonsterIR(struct _MonsterVars* mv)
+struct _MonsterIR* MONSENSE_GetMonsterIR(struct _MonsterVars* mv)  // Matching - 100%
 {
 	struct _MonsterIR* mir;
-	
-	mir = mv->freeIRs;
 
-	if (mir != NULL)
+	if (mv->freeIRs != NULL)
 	{
+		mir = mv->freeIRs;
 		mv->freeIRs = mir->next;
-
-		return mir;
+	}
+	else
+	{
+		mir = NULL;
 	}
 
-	return NULL;
+	return mir;
 }
 
 void MONSENSE_InitIRList(struct _MonsterVars* mv, struct _MonsterIR* list, int num)  // Matching - 100%
