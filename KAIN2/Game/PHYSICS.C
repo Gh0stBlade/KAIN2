@@ -432,31 +432,37 @@ void PhysicsDefaultGravityResponse(struct _Instance* instance, struct evPhysicsG
 	}
 }
 
-int PhysicsCheckEdgeGrabbing(struct _Instance* instance, struct GameTracker* gameTracker, int Data, short Mode)  // Matching - 99.01%
+int PhysicsCheckEdgeGrabbing(struct _Instance* instance, struct GameTracker* gameTracker, int Data, short Mode)  // Matching - 100%
 {
-	VECTOR OutTrans;
 	struct evPhysicsEdgeData* Ptr;
 	int rc;
+	VECTOR OutTrans;
+	SVECTOR* ExtraRot;
 	struct _PCollideInfo CInfo;
 	SVECTOR Old;
 	SVECTOR New;
-	int wallCrawl;
-	int freeSpot;
-	SVECTOR* ExtraRot;
 	static MATRIX TempMat;
 	static MATRIX* pTempMat;
+	int wallCrawl;
+	int freeSpot;
+	char unk;  // not from SYMDUMP
 
+	unk = 0;
 	rc = 0;
 	wallCrawl = 0;
 	freeSpot = 1;
 	Ptr = (struct evPhysicsEdgeData*)Data;
+
 	if (Mode & 1)
 	{
-		Ptr->instance = NULL;
+		Ptr->instance = 0;
 	}
+
 	CInfo.oldPoint = &Old;
 	CInfo.newPoint = &New;
+
 	ExtraRot = (SVECTOR*)INSTANCE_Query(instance, 7);
+
 	if (ExtraRot != NULL)
 	{
 		pTempMat = &TempMat;
@@ -466,23 +472,35 @@ int PhysicsCheckEdgeGrabbing(struct _Instance* instance, struct GameTracker* gam
 	{
 		pTempMat = instance->matrix;
 	}
+
 	PHYSICS_GenericLineCheckSetup(0, 0, Ptr->UpperOffset + Ptr->AboveOffset, &Old);
 	PHYSICS_GenericLineCheckSetup(0, Ptr->ForwardOffset, Ptr->UpperOffset + Ptr->AboveOffset, &New);
 	PHYSICS_GenericLineCheck(instance, instance->matrix, pTempMat, &CInfo);
+
+	// there's some statement causing reorder on the original
+	// this bogus code replicates that
+	if (freeSpot)
+	{
+		unk = -unk;
+	}
+
 	if (PHYSICS_CheckFaceStick(&CInfo) != 0)
 	{
 		wallCrawl += 1;
 	}
+
 	if (CInfo.type == 0)
 	{
 		PHYSICS_GenericLineCheckSetup(0, 0, Ptr->AboveOffset, &Old);
-		PHYSICS_GenericLineCheckSetup(0, 0, (Ptr->UpperOffset + Ptr->AboveOffset) + 128, &New);
+		PHYSICS_GenericLineCheckSetup(0, 0, (Ptr->UpperOffset + Ptr->AboveOffset) + 0x80, &New);
 		PHYSICS_GenericLineCheck(instance, instance->matrix, pTempMat, &CInfo);
 	}
+
 	if (CInfo.type != 0)
 	{
 		freeSpot = 0;
 	}
+
 	if ((freeSpot != 0) || (wallCrawl != 0))
 	{
 		New.vx = 0;
@@ -508,7 +526,7 @@ int PhysicsCheckEdgeGrabbing(struct _Instance* instance, struct GameTracker* gam
 		PHYSICS_CheckLineInWorld(instance, &CInfo);
 		if (PHYSICS_CheckDontGrabEdge(&CInfo) == 0)
 		{
-			if (((CInfo.type == 3) || (CInfo.type == 5) || (CInfo.type == 2)) && ((CInfo.wNormal.vz < 2048) != 0))
+			if (((CInfo.type == 3) || (CInfo.type == 5) || (CInfo.type == 2)) && (CInfo.wNormal.vz < 0x800))
 			{
 				if (PHYSICS_CheckFaceStick(&CInfo) != 0)
 				{
@@ -526,9 +544,10 @@ int PhysicsCheckEdgeGrabbing(struct _Instance* instance, struct GameTracker* gam
 						Ptr->instance = CInfo.inst;
 					}
 				}
+
 				rc |= 2;
 				Old.vx = 0;
-				Old.vy = -16;
+				Old.vy = -0x10;
 				Old.vz = 0;
 				gte_SetRotMatrix(&pTempMat->m[0][0]);
 				gte_ldv0(&Old.vx);
@@ -543,7 +562,7 @@ int PhysicsCheckEdgeGrabbing(struct _Instance* instance, struct GameTracker* gam
 				PHYSICS_CheckLineInWorld(instance, &CInfo);
 				if (PHYSICS_CheckDontGrabEdge(&CInfo) == 0)
 				{
-					if ((((CInfo.type == 3) || (CInfo.type == 5) || CInfo.type == 2)) && ((CInfo.wNormal.vz < 3548) == 0))
+					if ((((CInfo.type == 3) || (CInfo.type == 5) || CInfo.type == 2)) && ((CInfo.wNormal.vz > 0xDDB)))
 					{
 						if ((Mode & 1) != 0)
 						{
@@ -556,7 +575,7 @@ int PhysicsCheckEdgeGrabbing(struct _Instance* instance, struct GameTracker* gam
 								Ptr->instance = CInfo.inst;
 							}
 						}
-						if ((CInfo.wNormal.vz < 2897) == 0)
+						if ((CInfo.wNormal.vz < 0xB51) == 0)
 						{
 							rc |= 0x4;
 							if ((Mode & 0x2) != 0)
@@ -590,6 +609,7 @@ int PhysicsCheckEdgeGrabbing(struct _Instance* instance, struct GameTracker* gam
 		}
 		rc |= 0x2;
 	}
+
 	if (((Mode & 2) != 0) && (wallCrawl == 2))
 	{
 		INSTANCE_Post(instance, 0x4000011, Data);
