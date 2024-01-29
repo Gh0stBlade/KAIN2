@@ -97,7 +97,7 @@ void HUMAN_Init(struct _Instance *instance)
 				UNIMPLEMENTED();
 }
 
-void HUMAN_CleanUp(struct _Instance* instance)
+void HUMAN_CleanUp(struct _Instance* instance)  // Matching - 100%
 {
 	MON_CleanUp(instance);
 }
