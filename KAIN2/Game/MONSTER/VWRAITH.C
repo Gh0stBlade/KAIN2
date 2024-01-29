@@ -191,7 +191,7 @@ void VWRAITH_EmbraceEntry(struct _Instance* instance)  // Matching - 100%
 	MON_EmbraceEntry(instance);
 }
 
-void VWRAITH_Embrace(struct _Instance* instance)
+void VWRAITH_Embrace(struct _Instance* instance)  // Matching - 100%
 {
 	MON_Embrace(instance);
 
