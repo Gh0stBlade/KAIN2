@@ -2131,7 +2131,7 @@ void RelocateLevelWithInstances(struct Level *level, struct _SVector *offset)
 	RelocatePlanPool((struct PlanningNode*)gameTrackerX.planningPool, offset);
 }
 
-void RelocateTerrain(struct _Terrain *terrain, struct _SVector *offset)
+void RelocateTerrain(struct _Terrain* terrain, struct _SVector* offset)  // Matching - 100%
 {
 	int i;
 
@@ -2147,7 +2147,7 @@ void RelocateTerrain(struct _Terrain *terrain, struct _SVector *offset)
 		}
 	}
 
-	RelocateStreamPortals((struct StreamUnitPortal*)((long*)terrain->StreamUnits + 1), ((long*)terrain->StreamUnits)[0], offset);
+	RelocateStreamPortals((struct StreamUnitPortal*)((long*)terrain->StreamUnits + 1), ((long*)terrain->StreamUnits)[0], offset);  // cast needs revalidating
 }
 
 void RelocateVMObjects(struct _VMObject* vobjectlist, long numvmobjs, struct _SVector* offset)  // Matching - 100%
