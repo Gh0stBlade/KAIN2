@@ -2263,7 +2263,7 @@ void STREAM_RelocateInstance(struct _Instance* instance, struct _SVector* offset
 	INSTANCE_Post(instance, 0x100008, (intptr_t)offset);
 }
 
-void STREAM_OffsetInstancePosition(struct _Instance* instance, struct _SVector* offset, int streamSignalFlag)
+void STREAM_OffsetInstancePosition(struct _Instance* instance, struct _SVector* offset, int streamSignalFlag)  // Matching - 100%
 {
 	instance->position.x += offset->x;
 	instance->position.y += offset->y;
