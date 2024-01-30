@@ -2150,7 +2150,7 @@ void RelocateTerrain(struct _Terrain *terrain, struct _SVector *offset)
 	RelocateStreamPortals((struct StreamUnitPortal*)((long*)terrain->StreamUnits + 1), ((long*)terrain->StreamUnits)[0], offset);
 }
 
-void RelocateVMObjects(struct _VMObject* vobjectlist, long numvmobjs, struct _SVector* offset)
+void RelocateVMObjects(struct _VMObject* vobjectlist, long numvmobjs, struct _SVector* offset)  // Matching - 100%
 {
 	int i;
 
