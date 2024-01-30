@@ -2256,11 +2256,11 @@ void STREAM_AdjustMultiSpline(struct MultiSpline* multi, struct _SVector* offset
 	}
 }
 
-void STREAM_RelocateInstance(struct _Instance* instance, struct _SVector* offset)
-{ 
+void STREAM_RelocateInstance(struct _Instance* instance, struct _SVector* offset)  // Matching - 100%
+{
 	STREAM_OffsetInstancePosition(instance, offset, 1);
 
-	INSTANCE_Post(instance, 0x100008, (intptr_t)offset);
+	INSTANCE_Post(instance, 0x100008, (uintptr_t)offset);
 }
 
 void STREAM_OffsetInstancePosition(struct _Instance* instance, struct _SVector* offset, int streamSignalFlag)
