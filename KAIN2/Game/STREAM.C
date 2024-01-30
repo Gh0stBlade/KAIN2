@@ -2313,7 +2313,7 @@ void RelocateInstances(struct _SVector* offset)
 	FX_Relocate(offset);
 }
 
-void RelocateStreamPortals(struct StreamUnitPortal* StreamUnitList, int NumStreamUnits, struct _SVector* offset)
+void RelocateStreamPortals(struct StreamUnitPortal* StreamUnitList, int NumStreamUnits, struct _SVector* offset)  // Matching - 100%
 {
 	int i;
 	int d;
