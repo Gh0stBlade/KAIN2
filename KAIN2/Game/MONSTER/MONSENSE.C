@@ -8,7 +8,7 @@ static int lastSenseFrame; // offset 0x800D637C
 static int gNumMaterialMonsters; // offset 0x800D1AF0
 static int gNumSpectralMonsters; // offset 0x800D1AEC
 
-struct _MonsterIR* MONSENSE_FindIR(struct _MonsterVars* mv, struct _Instance* instance)
+struct _MonsterIR* MONSENSE_FindIR(struct _MonsterVars* mv, struct _Instance* instance)  // Matching - 100%
 {
 	struct _MonsterIR* mir;
 
