@@ -1785,30 +1785,27 @@ void WARPGATE_IsItActive(struct _StreamUnit *streamUnit)
 	return;
 }
 
-long WARPGATE_IsUnitWarpRoom(struct _StreamUnit *streamUnit)
+long WARPGATE_IsUnitWarpRoom(struct _StreamUnit* streamUnit)  // Matching - 100%
 {
-	struct Level *level;
+	struct Level* level;
 	long isWarpRoom;
-	struct StreamUnitPortal *streamPortal;
+	struct StreamUnitPortal* streamPortal;
 	long numPortals;
 	long d;
 
 	level = streamUnit->level;
-	
-	isWarpRoom = 0;
-	
-	numPortals = ((long*)level->terrain->StreamUnits)[0];
-	
-	streamPortal = (struct StreamUnitPortal*)((long*)level->terrain->StreamUnits + 1);
 
-	if (numPortals > 0)
+	isWarpRoom = 0;
+
+	numPortals = ((long*)level->terrain->StreamUnits)[0];  // cast needs revalidating
+
+	streamPortal = (struct StreamUnitPortal*)((long*)level->terrain->StreamUnits + 1);  // cast needs revalidating
+
+	for (d = 0; d < numPortals; d++, streamPortal++)
 	{
-		for (d = 0; d < numPortals; d++)
+		if ((streamPortal->flags & 0x1))
 		{
-			if ((streamPortal[d].flags & 0x1))
-			{
-				isWarpRoom = 1;
-			}
+			isWarpRoom = 1;
 		}
 	}
 
