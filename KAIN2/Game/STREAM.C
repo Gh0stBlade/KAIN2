@@ -2178,7 +2178,7 @@ void RelocateBGObjects(struct _BGObject* BGObjList, long numBGObjs, struct _SVec
 	}
 }
 
-void RelocatePlanPool(struct PlanningNode* planPool, struct _SVector* offset)//Matching - 99.78%
+void RelocatePlanPool(struct PlanningNode* planPool, struct _SVector* offset)  // Matching - 100%
 {
 	int i;
 	short ox;
