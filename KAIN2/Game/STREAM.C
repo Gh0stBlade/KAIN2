@@ -2201,8 +2201,8 @@ void RelocatePlanPool(struct PlanningNode* planPool, struct _SVector* offset)//M
 	poolManagementData->playerPosAtLastPlanMkrUpdate.z += oz;
 }
 
-void RelocatePlanMarkers(struct _PlanMkr* planMkrList, int numPlanMkrs, struct _SVector* offset)  // Matching - 100%
-{
+void RelocatePlanMarkers(struct _PlanMkr* planMkrList, int numPlanMkrs, struct _SVector* offset)
+{ 
 	int i;
 	short ox;
 	short oy;
@@ -2212,12 +2212,11 @@ void RelocatePlanMarkers(struct _PlanMkr* planMkrList, int numPlanMkrs, struct _
 	oy = offset->y;
 	oz = offset->z;
 
-	for (i = numPlanMkrs; i != 0; i--)
+	for (i = 0; i < numPlanMkrs; i++)
 	{
-		planMkrList->pos.x += ox;
-		planMkrList->pos.y += oy;
-		planMkrList->pos.z += oz;
-		planMkrList++;
+		planMkrList[i].pos.x += ox;
+		planMkrList[i].pos.y += oy;
+		planMkrList[i].pos.z += oz;
 	}
 }
 
