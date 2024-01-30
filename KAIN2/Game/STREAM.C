@@ -2344,13 +2344,13 @@ void RelocateStreamPortals(struct StreamUnitPortal* StreamUnitList, int NumStrea
 	}
 }
 
-void STREAM_PackVRAMObject(struct _ObjectTracker* objectTracker)
-{ 
+void STREAM_PackVRAMObject(struct _ObjectTracker* objectTracker)  // Matching - 100%
+{
 	struct VramSize* vramSize;
 	struct VramBuffer* vramBuffer;
 	char fileName[64];
 	struct _BlockVramEntry* vramBlock;
-	
+
 	vramSize = &objectTracker->object->vramSize;
 
 	if (vramSize->x != -1 && VRAM_GetObjectVramSpace(vramSize, objectTracker) != 0)
@@ -2361,20 +2361,20 @@ void STREAM_PackVRAMObject(struct _ObjectTracker* objectTracker)
 		{
 			AdjustVramCoordsObject(SCREEN_WIDTH, 0, vramBlock->x, vramBlock->y, objectTracker->object);
 		}
-			
+
 		sprintf(fileName, "\\kain2\\object\\%s\\%s.crm", objectTracker->name, objectTracker->name);
-			
+
 		vramBuffer = (struct VramBuffer*)MEMPACK_Malloc((vramBlock->w << 1) + sizeof(struct VramBuffer), 0x23);
-			
+
 		vramBuffer->lineOverFlow = (short*)(vramBuffer + 1);
 		vramBuffer->flags = 0;
 		vramBuffer->x = vramBlock->x;
 		vramBuffer->y = vramBlock->y;
 		vramBuffer->w = vramBlock->w;
+		vramBuffer->h = vramBlock->h;
 		vramBuffer->yOffset = 0;
 		vramBuffer->lengthOfLeftOverData = 0;
-		vramBuffer->h = vramBlock->h;
-			
+
 		LOAD_NonBlockingBufferedLoad(fileName, (void*)VRAM_TransferBufferToVram, vramBuffer, objectTracker);
 	}
 	else
