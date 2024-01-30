@@ -2297,7 +2297,7 @@ void STREAM_SetInstancePosition(struct _Instance* instance, struct evPositionDat
 	STREAM_OffsetInstancePosition(instance, &offset, 0);
 }
 
-void RelocateInstances(struct _SVector* offset)
+void RelocateInstances(struct _SVector* offset)  // Matching - 100%
 {
 	struct _Instance* instance;
 
