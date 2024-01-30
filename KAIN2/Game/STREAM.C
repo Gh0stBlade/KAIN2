@@ -2221,7 +2221,7 @@ void RelocatePlanMarkers(struct _PlanMkr* planMkrList, int numPlanMkrs, struct _
 	}
 }
 
-void RelocateSFXMarkers(struct _SFXMkr* sfxMkrList, int numSFXMkrs, struct _SVector* offset)  // Matching - 100%
+void RelocateSFXMarkers(struct _SFXMkr* sfxMkrList, int numSFXMkrs, struct _SVector* offset)
 {
 	int i;
 	short ox;
@@ -2232,12 +2232,11 @@ void RelocateSFXMarkers(struct _SFXMkr* sfxMkrList, int numSFXMkrs, struct _SVec
 	oy = offset->y;
 	oz = offset->z;
 
-	for (i = numSFXMkrs; i != 0; i--)
+	for (i = 0; i != numSFXMkrs; i++)
 	{
-		sfxMkrList->pos.x += ox;
-		sfxMkrList->pos.y += oy;
-		sfxMkrList->pos.z += oz;
-		sfxMkrList++;
+		sfxMkrList[i].pos.x += ox;
+		sfxMkrList[i].pos.y += oy;
+		sfxMkrList[i].pos.z += oz;
 	}
 }
 
