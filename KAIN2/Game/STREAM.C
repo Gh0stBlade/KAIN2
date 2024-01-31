@@ -2178,7 +2178,7 @@ void RelocateBGObjects(struct _BGObject* BGObjList, long numBGObjs, struct _SVec
 	}
 }
 
-void RelocatePlanPool(struct PlanningNode* planPool, struct _SVector* offset)//Matching - 99.78%
+void RelocatePlanPool(struct PlanningNode* planPool, struct _SVector* offset)  // Matching - 100%
 {
 	int i;
 	short ox;
@@ -2201,26 +2201,7 @@ void RelocatePlanPool(struct PlanningNode* planPool, struct _SVector* offset)//M
 	poolManagementData->playerPosAtLastPlanMkrUpdate.z += oz;
 }
 
-void RelocatePlanMarkers(struct _PlanMkr* planMkrList, int numPlanMkrs, struct _SVector* offset)
-{ 
-	int i;
-	short ox;
-	short oy;
-	short oz;
-
-	ox = offset->x;
-	oy = offset->y;
-	oz = offset->z;
-
-	for (i = 0; i < numPlanMkrs; i++)
-	{
-		planMkrList[i].pos.x += ox;
-		planMkrList[i].pos.y += oy;
-		planMkrList[i].pos.z += oz;
-	}
-}
-
-void RelocateSFXMarkers(struct _SFXMkr* sfxMkrList, int numSFXMkrs, struct _SVector* offset)
+void RelocatePlanMarkers(struct _PlanMkr* planMkrList, int numPlanMkrs, struct _SVector* offset)  // Matching - 100%
 {
 	int i;
 	short ox;
@@ -2231,11 +2212,32 @@ void RelocateSFXMarkers(struct _SFXMkr* sfxMkrList, int numSFXMkrs, struct _SVec
 	oy = offset->y;
 	oz = offset->z;
 
-	for (i = 0; i != numSFXMkrs; i++)
+	for (i = numPlanMkrs; i != 0; i--)
 	{
-		sfxMkrList[i].pos.x += ox;
-		sfxMkrList[i].pos.y += oy;
-		sfxMkrList[i].pos.z += oz;
+		planMkrList->pos.x += ox;
+		planMkrList->pos.y += oy;
+		planMkrList->pos.z += oz;
+		planMkrList++;
+	}
+}
+
+void RelocateSFXMarkers(struct _SFXMkr* sfxMkrList, int numSFXMkrs, struct _SVector* offset)  // Matching - 100%
+{
+	int i;
+	short ox;
+	short oy;
+	short oz;
+
+	ox = offset->x;
+	oy = offset->y;
+	oz = offset->z;
+
+	for (i = numSFXMkrs; i != 0; i--)
+	{
+		sfxMkrList->pos.x += ox;
+		sfxMkrList->pos.y += oy;
+		sfxMkrList->pos.z += oz;
+		sfxMkrList++;
 	}
 }
 
