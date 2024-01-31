@@ -3049,7 +3049,7 @@ void EVENT_SaveEventsFromLevel(long levelID, struct Level *level)
 					UNIMPLEMENTED();
 }
 
-void EVENT_LoadEventsForLevel(long levelID, struct Level *level)
+void EVENT_LoadEventsForLevel(long levelID, struct Level* level)  // Matching - 100%
 {
 	long d;
 	struct EventPointers* eventPointers;
@@ -3062,7 +3062,7 @@ void EVENT_LoadEventsForLevel(long levelID, struct Level *level)
 	if (eventPointers != NULL)
 	{
 		savedEvent = SAVE_GetSavedNextEvent(levelID, NULL);
-		
+
 		while (savedEvent != NULL)
 		{
 			if (eventPointers->numPuzzles != 0)
@@ -3075,7 +3075,7 @@ void EVENT_LoadEventsForLevel(long levelID, struct Level *level)
 				}
 				else
 				{
-					eventNumber = ((struct _SavedIntro*)savedEvent)->name[0];
+					eventNumber = (unsigned char)((struct SavedEventSmallVars*)savedEvent)->eventNumber;
 				}
 
 				for (d = 0; d < eventPointers->numPuzzles; d++)
@@ -3100,12 +3100,12 @@ void EVENT_LoadEventsForLevel(long levelID, struct Level *level)
 					{
 						for (d = 0; d < 5; d++)
 						{
-							eventInstance->eventVariables[d] = ((struct _SavedIntro*)savedEvent)->name[1 + d];
+							eventInstance->eventVariables[d] = (unsigned char)((struct SavedEventSmallVars*)savedEvent)->eventVariables[d];
 						}
 					}
 				}
 			}
-			
+
 			savedEvent = SAVE_GetSavedNextEvent(levelID, savedEvent);
 		}
 	}
