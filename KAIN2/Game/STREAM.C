@@ -3260,7 +3260,7 @@ void MORPH_ToggleMorph()
 	}
 }
 
-void MORPH_DoStep(struct _StreamUnit* streamUnit, char* baseAreaName)//Matching - 98.73%
+void MORPH_DoStep(struct _StreamUnit* streamUnit, char* baseAreaName)  // Matching - 100%
 {
 	struct Level* level;
 
@@ -3302,7 +3302,7 @@ void MORPH_DoStep(struct _StreamUnit* streamUnit, char* baseAreaName)//Matching 
 	}
 }
 
-void MORPH_SetFog(struct _StreamUnit* streamUnit, int mainUnitFlag)//Matching - 97.87%
+void MORPH_SetFog(struct _StreamUnit* streamUnit, int mainUnitFlag)  // Matching - 100%
 {
 	long time;
 	struct Level* level;
@@ -3333,7 +3333,7 @@ void MORPH_SetFog(struct _StreamUnit* streamUnit, int mainUnitFlag)//Matching - 
 	}
 }
 
-void MORPH_UpdateTextures()//Matching - 95%
+void MORPH_UpdateTextures()  // Matching - 100%
 {
 	int time;
 
@@ -3347,7 +3347,7 @@ void MORPH_UpdateTextures()//Matching - 95%
 	MORPH_ChangeAreaPalettes(time);
 }
 
-void MORPH_Continue()
+void MORPH_Continue()  // Matching - 100%
 {
 	int i;
 	long mode;
@@ -3375,14 +3375,14 @@ void MORPH_Continue()
 
 	if (gameTrackerX.playerInstance->tface != NULL && mode >= 0)
 	{
-		if (gameTrackerX.playerInstance->tface == MORPH_SavedFace)
+		if (MORPH_SavedFace == gameTrackerX.playerInstance->tface)
 		{
 			MORPH_UpdateTrackingPoint(MORPH_SavedFace, MORPH_SavedLevel);
 		}
 		else
 		{
 			MORPH_GetComponentsForTrackingPoint(gameTrackerX.playerInstance->tface, (struct Level*)gameTrackerX.playerInstance->tfaceLevel);
-	
+
 			MORPH_UpdateTrackingPoint(gameTrackerX.playerInstance->tface, (struct Level*)gameTrackerX.playerInstance->tfaceLevel);
 		}
 	}
@@ -3406,7 +3406,7 @@ void MORPH_Continue()
 	}
 }
 
-void STREAM_MORPH_Relocate()
+void STREAM_MORPH_Relocate()  // Matching - 100%
 {
 	MORPH_SavedFace = NULL;
 
