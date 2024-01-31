@@ -2284,7 +2284,7 @@ void STREAM_OffsetInstancePosition(struct _Instance* instance, struct _SVector* 
 	}
 }
 
-void STREAM_SetInstancePosition(struct _Instance* instance, struct evPositionData* data)//Matching - 99.77%
+void STREAM_SetInstancePosition(struct _Instance* instance, struct evPositionData* data)  // Matching - 100%
 {
 	struct _SVector offset;
 
