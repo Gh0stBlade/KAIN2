@@ -2239,11 +2239,11 @@ void RelocateSFXMarkers(struct _SFXMkr* sfxMkrList, int numSFXMkrs, struct _SVec
 	}
 }
 
-void STREAM_AdjustMultiSpline(struct MultiSpline* multi, struct _SVector* offset)
+void STREAM_AdjustMultiSpline(struct MultiSpline* multi, struct _SVector* offset)  // Matching - 100%
 {
 	int i;
 
-	if (multi->positional != NULL && multi->positional->numkeys > 0)
+	if (multi->positional != NULL)
 	{
 		for (i = 0; i < multi->positional->numkeys; i++)
 		{
@@ -2254,14 +2254,14 @@ void STREAM_AdjustMultiSpline(struct MultiSpline* multi, struct _SVector* offset
 	}
 }
 
-void STREAM_RelocateInstance(struct _Instance* instance, struct _SVector* offset)
-{ 
+void STREAM_RelocateInstance(struct _Instance* instance, struct _SVector* offset)  // Matching - 100%
+{
 	STREAM_OffsetInstancePosition(instance, offset, 1);
 
-	INSTANCE_Post(instance, 0x100008, (intptr_t)offset);
+	INSTANCE_Post(instance, 0x100008, (uintptr_t)offset);
 }
 
-void STREAM_OffsetInstancePosition(struct _Instance* instance, struct _SVector* offset, int streamSignalFlag)
+void STREAM_OffsetInstancePosition(struct _Instance* instance, struct _SVector* offset, int streamSignalFlag)  // Matching - 100%
 {
 	instance->position.x += offset->x;
 	instance->position.y += offset->y;
@@ -2284,7 +2284,7 @@ void STREAM_OffsetInstancePosition(struct _Instance* instance, struct _SVector* 
 	}
 }
 
-void STREAM_SetInstancePosition(struct _Instance* instance, struct evPositionData* data)//Matching - 99.77%
+void STREAM_SetInstancePosition(struct _Instance* instance, struct evPositionData* data)  // Matching - 100%
 {
 	struct _SVector offset;
 
@@ -2295,7 +2295,7 @@ void STREAM_SetInstancePosition(struct _Instance* instance, struct evPositionDat
 	STREAM_OffsetInstancePosition(instance, &offset, 0);
 }
 
-void RelocateInstances(struct _SVector* offset)
+void RelocateInstances(struct _SVector* offset)  // Matching - 100%
 {
 	struct _Instance* instance;
 
@@ -2311,7 +2311,7 @@ void RelocateInstances(struct _SVector* offset)
 	FX_Relocate(offset);
 }
 
-void RelocateStreamPortals(struct StreamUnitPortal* StreamUnitList, int NumStreamUnits, struct _SVector* offset)
+void RelocateStreamPortals(struct StreamUnitPortal* StreamUnitList, int NumStreamUnits, struct _SVector* offset)  // Matching - 100%
 {
 	int i;
 	int d;
