@@ -3404,7 +3404,7 @@ void MORPH_Continue()
 	}
 }
 
-void STREAM_MORPH_Relocate()
+void STREAM_MORPH_Relocate()  // Matching - 100%
 {
 	MORPH_SavedFace = NULL;
 
