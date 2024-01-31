@@ -35,6 +35,23 @@ enum MATH3D_AXIS // Hashcode: 0x37FE6D4A (dec: 939421002)
 	AXIS_NEG_Z = 5,
 };
 
+#define MATH3D_AddPosToPos(pos0, pos1) \
+{ \
+    short _x0, _y0, _z0; \
+    short _x1, _y1, _z1; \
+    struct _Position* _v; \
+    _v = pos0; \
+	_x0 = _v->x; \
+	_y0 = _v->y; \
+	_z0 = _v->z; \
+	_x1 = (short)pos1->x; \
+	_y1 = (short)pos1->y; \
+	_z1 = (short)pos1->z; \
+	_v->x = _x0 + _x1; \
+	_v->y = _y0 + _y1; \
+	_v->z = _z0 + _z1; \
+}
+
 #if defined(_LANGUAGE_C_PLUS_PLUS)||defined(__cplusplus)||defined(c_plusplus)
 extern "C" {
 #endif

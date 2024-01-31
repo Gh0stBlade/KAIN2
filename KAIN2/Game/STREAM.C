@@ -82,7 +82,7 @@ void STREAM_AbortAreaLoad(char* baseAreaName)  // Matching - 100%
 
 	STREAM_FillOutFileNames(baseAreaName, NULL, vramName, NULL);
 	LOAD_AbortDirectoryChange(baseAreaName);
-	LOAD_AbortFileLoad(vramName, VRAM_LoadReturn);
+	LOAD_AbortFileLoad(vramName, (void*)VRAM_LoadReturn);
 }
 
 void STREAM_Init()  // Matching - 100%
@@ -526,7 +526,7 @@ void STREAM_DumpObject(struct _ObjectTracker* objectTracker)  // Matching - 100%
 	if (objectTracker->objectStatus == 1)
 	{
 		sprintf(dramName, "\\kain2\\object\\%s\\%s.drm", objectTracker->name, objectTracker->name);
-		LOAD_AbortFileLoad(dramName, STREAM_StreamLoadObjectAbort);
+		LOAD_AbortFileLoad(dramName, (void*)STREAM_StreamLoadObjectAbort);
 	}
 	else if (object != NULL)
 	{
@@ -1296,7 +1296,7 @@ void STREAM_LoadMainVram(struct GameTracker* gameTracker, char* baseAreaName, st
 	vramBuffer->yOffset = 0;
 	vramBuffer->lengthOfLeftOverData = 0;
 
-	LOAD_NonBlockingBufferedLoad(vramName, VRAM_TransferBufferToVram, vramBuffer, NULL);
+	LOAD_NonBlockingBufferedLoad(vramName, (void*)VRAM_TransferBufferToVram, vramBuffer, NULL);
 }
 
 void STREAM_MoveIntoNewStreamUnit()  // Matching - 100%
@@ -2045,80 +2045,19 @@ void RelocateCameras(struct _CameraKey* cameraList, long numCameras, struct _SVe
 	}
 }
 
-void RelocateSavedCameras(struct Camera* camera, struct Level* level, struct _SVector* offset)
+void RelocateSavedCameras(struct Camera* camera, struct Level* level, struct _SVector* offset) // Matching - 100%
 {
 	int i;
-	short _x0;
-	short _y0;
-	short _z0;
-	short _x1;
-	short _y1;
-	short _z1;
-	struct _Position* _v;
 
-	if (camera->stack >= 0)
-	{
-		for (i = 0; camera->stack >= i; i++)
-		{
-			if (camera->savedMode[i] == 5 && camera->savedCinematic[i].level == level)
-			{
-				_v = &camera->savedCinematic[i].position;
-
-				_x1 = offset->x;
-				_y1 = offset->y;
-				_z1 = offset->z;
-
-				_x0 = _v->x;
-				_y0 = _v->y;
-				_z0 = _v->z;
-
-				_v->x = _x0 + _x1;
-				_v->y = _y0 + _y1;
-				_v->z = _z0 + _z1;
-
-				_v = &camera->savedCinematic[i].focusPoint;
-
-				_x0 = _v->x;
-				_y0 = _v->y;
-				_z0 = _v->z;
-
-				_x1 = offset->x;
-				_y1 = offset->y;
-				_z1 = offset->z;
-
-				_v->x = _x0 + _x1;
-				_v->y = _y0 + _y1;
-				_v->z = _z0 + _z1;
-
-				_v = &camera->savedCinematic[i].targetPos;
-
-				_x0 = _v->x;
-				_y0 = _v->y;
-				_z0 = _v->z;
-
-				_x1 = offset->x;
-				_y1 = offset->y;
-				_z1 = offset->z;
-
-				_v->x = _x0 + _x1;
-				_v->y = _y0 + _y1;
-				_v->z = _z0 + _z1;
-
-				_v = &camera->savedCinematic[i].targetFocusPoint;
-
-				_x0 = _v->x;
-				_y0 = _v->y;
-				_z0 = _v->z;
-
-				_x1 = offset->x;
-				_y1 = offset->y;
-				_z1 = offset->z;
-
-				_v->x = _x0 + _x1;
-				_v->y = _y0 + _y1;
-				_v->z = _z0 + _z1;
-			}
-		}
+    for (i = 0; camera->stack >= i; i++)
+    {
+        if (camera->savedMode[i] == 5 && camera->savedCinematic[i].level == level)
+        {
+            MATH3D_AddPosToPos(&camera->savedCinematic[i].position, offset);
+            MATH3D_AddPosToPos(&camera->savedCinematic[i].focusPoint, offset);
+            MATH3D_AddPosToPos(&camera->savedCinematic[i].targetPos, offset);
+            MATH3D_AddPosToPos(&camera->savedCinematic[i].targetFocusPoint, offset);
+        }
 	}
 }
 
