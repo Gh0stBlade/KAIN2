@@ -82,7 +82,7 @@ void STREAM_AbortAreaLoad(char* baseAreaName)  // Matching - 100%
 
 	STREAM_FillOutFileNames(baseAreaName, NULL, vramName, NULL);
 	LOAD_AbortDirectoryChange(baseAreaName);
-	LOAD_AbortFileLoad(vramName, VRAM_LoadReturn);
+	LOAD_AbortFileLoad(vramName, (void*)VRAM_LoadReturn);
 }
 
 void STREAM_Init()  // Matching - 100%
