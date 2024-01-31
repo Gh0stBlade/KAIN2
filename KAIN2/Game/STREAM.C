@@ -3138,7 +3138,7 @@ void MORPH_AveragePoint(struct _SVector* start, struct _SVector* end, int interp
 	}
 }
 
-void MORPH_UpdateTrackingPoint(struct _TFace* face, struct Level* level)
+void MORPH_UpdateTrackingPoint(struct _TFace* face, struct Level* level)  // Matching - 100%
 {
 	struct _SVector* v[3];
 	struct _SVector p1;
@@ -3147,13 +3147,6 @@ void MORPH_UpdateTrackingPoint(struct _TFace* face, struct Level* level)
 	struct _Position* offset;
 	int next;
 	struct _TVertex* vertexList;
-	short _x0;
-	short _y0;
-	short _z0;
-	short _x1;
-	short _y1;
-	short _z1;
-	struct _Position* _v0;
 
 	if (face != NULL && level != NULL)
 	{
@@ -3183,33 +3176,42 @@ void MORPH_UpdateTrackingPoint(struct _TFace* face, struct Level* level)
 
 		MORPH_AveragePoint(&p1, &p2, MORPH_Component[2], &p3);
 
-		_z0 = p3.z;
-		_y0 = p3.y;
-		_x0 = p3.x;
+		{
+			short _x0;
+			short _y0;
+			short _z0;
+			short _x1;
+			short _y1;
+			short _z1;
+			struct _Position* _v0;
+			struct _Position* _v1;  // NOT ON SYMDUMP
 
-		offset = &level->terrain->BSPTreeArray[gameTrackerX.playerInstance->bspTree].globalOffset;
+			offset = &level->terrain->BSPTreeArray[gameTrackerX.playerInstance->bspTree].globalOffset;
+			_v0 = &gameTrackerX.playerInstance->position;
+			_v1 = (struct _Position*)&p3;
 
-		_x1 = offset->x;
-		_y1 = offset->y;
-		_z1 = offset->z;
 
-		_x0 += _x1;
-		_y0 += _y1;
-		_z0 += _z1;
+			_x0 = _v1->x;
+			_y0 = _v1->y;
+			_z0 = _v1->z;
 
-		p3.x = _x0;
-		p3.y = _y0;
-		p3.z = _z0;
+			_x1 = offset->x;
+			_y1 = offset->y;
+			_z1 = offset->z;
 
-		_v0 = &gameTrackerX.playerInstance->position;
+			_v1->x = _x0 + _x1;
+			_v1->y = _y0 + _y1;
+			_v1->z = _z0 + _z1;
 
-		_v0->x = _x0;
-		_v0->y = _y0;
-		_v0->z = _z0;
+			_v0->x = _x0 + _x1;
+			_v0->y = _y0 + _y1;
+			_v0->z = _z0 + _z1;
+
+		}
 
 		gameTrackerX.playerInstance->cachedTFace = -1;
 
-		gameTrackerX.playerInstance->cachedBSPTree = 0;
+		gameTrackerX.playerInstance->cachedTFaceLevel = NULL;
 	}
 }
 
