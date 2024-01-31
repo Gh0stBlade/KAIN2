@@ -3345,7 +3345,7 @@ void MORPH_UpdateTextures()//Matching - 95%
 	MORPH_ChangeAreaPalettes(time);
 }
 
-void MORPH_Continue()
+void MORPH_Continue()  // Matching - 100%
 {
 	int i;
 	long mode;
@@ -3373,14 +3373,14 @@ void MORPH_Continue()
 
 	if (gameTrackerX.playerInstance->tface != NULL && mode >= 0)
 	{
-		if (gameTrackerX.playerInstance->tface == MORPH_SavedFace)
+		if (MORPH_SavedFace == gameTrackerX.playerInstance->tface)
 		{
 			MORPH_UpdateTrackingPoint(MORPH_SavedFace, MORPH_SavedLevel);
 		}
 		else
 		{
 			MORPH_GetComponentsForTrackingPoint(gameTrackerX.playerInstance->tface, (struct Level*)gameTrackerX.playerInstance->tfaceLevel);
-	
+
 			MORPH_UpdateTrackingPoint(gameTrackerX.playerInstance->tface, (struct Level*)gameTrackerX.playerInstance->tfaceLevel);
 		}
 	}
