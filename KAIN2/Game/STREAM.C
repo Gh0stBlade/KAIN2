@@ -2239,11 +2239,11 @@ void RelocateSFXMarkers(struct _SFXMkr* sfxMkrList, int numSFXMkrs, struct _SVec
 	}
 }
 
-void STREAM_AdjustMultiSpline(struct MultiSpline* multi, struct _SVector* offset)
+void STREAM_AdjustMultiSpline(struct MultiSpline* multi, struct _SVector* offset)  // Matching - 100%
 {
 	int i;
 
-	if (multi->positional != NULL && multi->positional->numkeys > 0)
+	if (multi->positional != NULL)
 	{
 		for (i = 0; i < multi->positional->numkeys; i++)
 		{
