@@ -82,7 +82,7 @@ void STREAM_AbortAreaLoad(char* baseAreaName)  // Matching - 100%
 
 	STREAM_FillOutFileNames(baseAreaName, NULL, vramName, NULL);
 	LOAD_AbortDirectoryChange(baseAreaName);
-	LOAD_AbortFileLoad(vramName, VRAM_LoadReturn);
+	LOAD_AbortFileLoad(vramName, (void*)VRAM_LoadReturn);
 }
 
 void STREAM_Init()  // Matching - 100%
@@ -526,7 +526,7 @@ void STREAM_DumpObject(struct _ObjectTracker* objectTracker)  // Matching - 100%
 	if (objectTracker->objectStatus == 1)
 	{
 		sprintf(dramName, "\\kain2\\object\\%s\\%s.drm", objectTracker->name, objectTracker->name);
-		LOAD_AbortFileLoad(dramName, STREAM_StreamLoadObjectAbort);
+		LOAD_AbortFileLoad(dramName, (void*)STREAM_StreamLoadObjectAbort);
 	}
 	else if (object != NULL)
 	{
@@ -1296,7 +1296,7 @@ void STREAM_LoadMainVram(struct GameTracker* gameTracker, char* baseAreaName, st
 	vramBuffer->yOffset = 0;
 	vramBuffer->lengthOfLeftOverData = 0;
 
-	LOAD_NonBlockingBufferedLoad(vramName, VRAM_TransferBufferToVram, vramBuffer, NULL);
+	LOAD_NonBlockingBufferedLoad(vramName, (void*)VRAM_TransferBufferToVram, vramBuffer, NULL);
 }
 
 void STREAM_MoveIntoNewStreamUnit()  // Matching - 100%
