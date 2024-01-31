@@ -3300,7 +3300,7 @@ void MORPH_DoStep(struct _StreamUnit* streamUnit, char* baseAreaName)//Matching 
 	}
 }
 
-void MORPH_SetFog(struct _StreamUnit* streamUnit, int mainUnitFlag)//Matching - 97.87%
+void MORPH_SetFog(struct _StreamUnit* streamUnit, int mainUnitFlag)  // Matching - 100%
 {
 	long time;
 	struct Level* level;
