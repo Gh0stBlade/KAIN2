@@ -259,7 +259,7 @@ void MON_PlayAnimID(struct _Instance *instance, int index, int mode)
 	UNIMPLEMENTED();
 }
 
-void MON_PlayAnimFromList(struct _Instance* instance, char* animList, int animtype, int mode)
+void MON_PlayAnimFromList(struct _Instance* instance, char* animList, int animtype, int mode)  // Matching - 100%
 {
 	MON_PlayAnimID(instance, animList[animtype], mode);
 }
