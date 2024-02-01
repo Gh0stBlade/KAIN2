@@ -288,7 +288,7 @@ int MON_AnimPlayingFromList(struct _Instance* instance, char* animList, int anim
 	return MON_AnimIDPlaying(instance, animList[animtype]);
 }
 
-void MON_PlayAnimFromListIfNotPlaying(struct _Instance* instance, char* animList, int animtype, int mode)//Matching - 90.45%
+void MON_PlayAnimFromListIfNotPlaying(struct _Instance* instance, char* animList, int animtype, int mode)  // Matching - 100%
 {
 	int index;
 
