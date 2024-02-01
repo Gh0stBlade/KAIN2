@@ -1239,7 +1239,7 @@ void MON_SetDefaults(struct _Instance* instance)  // Matching - 100%
 	}
 }
 
-void MON_GetPlanSlot(struct _MonsterVars* mv)
+void MON_GetPlanSlot(struct _MonsterVars* mv)  // Matching - 100%
 {
 	if (mv->pathSlotID != -1)
 	{
