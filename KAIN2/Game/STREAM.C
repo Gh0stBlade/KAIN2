@@ -2408,42 +2408,19 @@ void MORPH_InMorphDoFadeValues()//Matching - 94.35%
 	}
 }
 
-void MORPH_UpdateTimeMult()
+void MORPH_UpdateTimeMult()  // Matching - 100%
 {
+	short temp;  // not from SYMDUMP
 	short ratio;
+	short morphTime;  // not from SYMDUMP
 
 	if (gameTrackerX.gameData.asmData.MorphTime != 1000)
 	{
-		ratio = gameTrackerX.gameData.asmData.MorphTime - 750;
+		morphTime = gameTrackerX.gameData.asmData.MorphTime;
 
 		if (gameTrackerX.gameData.asmData.MorphType != 0)
 		{
-			if (ratio < 0)
-			{
-				ratio = 0;
-			}
-		}
-		else 
-		{
-			if (ratio >= 251)
-			{
-				ratio = 250;
-			}
-
-			ratio = 250 - ratio;
-		}
-
-		gameTrackerX.materialTimeMult = (gameTrackerX.globalTimeMult * (((ratio * 65536) / 4000) - (((ratio * 65536) >> 4) >> 0x1F)) * 16) >> 16;
-	
-		if (gameTrackerX.materialTimeMult == 0)
-		{
-			gameTrackerX.materialTimeMult = 1;
-		}
-
-		if (gameTrackerX.gameData.asmData.MorphType == 0)
-		{
-			ratio = gameTrackerX.gameData.asmData.MorphTime - 750;
-
+			ratio = morphTime - 750;
 			if (ratio < 0)
 			{
 				ratio = 0;
@@ -2451,16 +2428,43 @@ void MORPH_UpdateTimeMult()
 		}
 		else
 		{
-			if (ratio >= 251)
+			if (morphTime > 250)
 			{
-				ratio = 250;
+				morphTime = 250;
 			}
+			ratio = 250 - morphTime;
 
-			ratio = 250 - ratio;
 		}
 
-		gameTrackerX.spectralTimeMult = (gameTrackerX.globalTimeMult * (((ratio * 65536) / 4000) - (((ratio * 65536) >> 4) >> 0x1F)) * 16) >> 16;
-		
+		temp = ((ratio << 12) / 250);
+		gameTrackerX.materialTimeMult = ((signed long)((gameTrackerX.globalTimeMult * temp) << 4)) >> 16;
+
+		if (gameTrackerX.materialTimeMult == 0)
+		{
+			gameTrackerX.materialTimeMult = 1;
+		}
+
+		morphTime = gameTrackerX.gameData.asmData.MorphTime;
+		if (gameTrackerX.gameData.asmData.MorphType == 0)
+		{
+			ratio = morphTime - 750;
+			if (ratio < 0)
+			{
+				ratio = 0;
+			}
+		}
+		else
+		{
+			if (morphTime > 250)
+			{
+				morphTime = 250;
+			}
+			ratio = 250 - morphTime;
+		}
+
+		temp = ((ratio << 12) / 250);
+		gameTrackerX.spectralTimeMult = (signed long)((gameTrackerX.globalTimeMult * temp) << 4) >> 16;
+
 		if (gameTrackerX.spectralTimeMult == 0)
 		{
 			gameTrackerX.spectralTimeMult = 1;
