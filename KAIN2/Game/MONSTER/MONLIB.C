@@ -813,7 +813,7 @@ int MON_GetRandomDestinationInWorld(struct _Instance *instance, _Position *in, s
 	return 0;
 }
 
-void MON_MoveForward(struct _Instance* instance)//Matching - 99.25%
+void MON_MoveForward(struct _Instance* instance)  // Matching - 100%
 {
 	struct _MonsterVars* mv;
 
