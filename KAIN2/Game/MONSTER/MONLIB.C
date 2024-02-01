@@ -283,7 +283,7 @@ void MON_PlayAnimIDIfNotPlaying(struct _Instance* instance, int index, int mode)
 	}
 }
 
-int MON_AnimPlayingFromList(struct _Instance* instance, char* animList, int animtype)
+int MON_AnimPlayingFromList(struct _Instance* instance, char* animList, int animtype)  // Matching - 100%
 {
 	return MON_AnimIDPlaying(instance, animList[animtype]);
 }
