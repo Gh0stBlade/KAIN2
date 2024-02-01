@@ -1524,7 +1524,7 @@ int MON_ValidUnit(struct _Instance* instance, unsigned long unitId)//Matching - 
 	return 0;
 }
 
-int MON_ValidPosition(struct _Instance* instance)
+int MON_ValidPosition(struct _Instance* instance)  // Matching - 100%
 {
 	struct _MonsterVars* mv;
 
