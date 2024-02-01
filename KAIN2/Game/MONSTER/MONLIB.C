@@ -376,7 +376,7 @@ void MON_AnimInit(struct _Instance* instance)  // Matching - 100%
 	MON_PlayRandomIdle(instance, 2);
 }
 
-short MON_FacingOffset(struct _Instance* instance, struct _Instance* target)
+short MON_FacingOffset(struct _Instance* instance, struct _Instance* target)  // Matching - 100%
 {
 	return MATH3D_AngleFromPosToPos(&target->position, &instance->position) - target->rotation.z;
 }
