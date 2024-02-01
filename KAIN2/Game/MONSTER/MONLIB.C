@@ -170,7 +170,7 @@ void MON_TurnOnBodySpheres(struct _Instance* instance)  // Matching - 100%
 	}
 }
 
-void MON_TurnOffAllSpheres(struct _Instance* instance)
+void MON_TurnOffAllSpheres(struct _Instance* instance)  // Matching - 100%
 {
 	MON_TurnOffWeaponSpheres(instance);
 
