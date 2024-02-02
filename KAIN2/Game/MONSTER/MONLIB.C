@@ -232,7 +232,7 @@ void MON_SwitchStateDoEntry(struct _Instance *instance, enum MonsterState state)
 	UNIMPLEMENTED();
 }
 
-int MON_TransNodeAnimation(struct _Instance* instance)
+int MON_TransNodeAnimation(struct _Instance* instance)  // Matching - 100%
 {
 	return G2Anim_SegmentHasActiveChannels(&instance->anim, 0, 0x700);
 }
