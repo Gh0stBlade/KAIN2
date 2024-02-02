@@ -267,7 +267,7 @@ void MON_LandInWaterEntry(struct _Instance *instance)
 	instance->checkMask &= 0xFFFFFFDF;
 }
 
-void MON_LandInWater(struct _Instance* instance)
+void MON_LandInWater(struct _Instance* instance)  // Matching - 100%
 {
 	MON_SwitchState(instance, MONSTER_STATE_FALL);
 }
