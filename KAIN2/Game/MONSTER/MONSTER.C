@@ -192,7 +192,7 @@ void MON_ParryEntry(struct _Instance* instance)//Matching - 84.60%
 	MON_TurnToPosition(instance, &mv->enemy->instance->position, 4096);
 }
 
-void MON_Parry(struct _Instance* instance)
+void MON_Parry(struct _Instance* instance)  // Matching - 100%
 {
 	if ((instance->flags2 & 0x10))
 	{
