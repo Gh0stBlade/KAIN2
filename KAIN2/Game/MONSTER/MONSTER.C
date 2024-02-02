@@ -858,7 +858,7 @@ void MON_Attack(struct _Instance *instance)
 			UNIMPLEMENTED();
 }
 
-void MON_CombatEntry(struct _Instance* instance)
+void MON_CombatEntry(struct _Instance* instance)  // Matching - 100%
 {
 	struct _MonsterVars* mv;
 
