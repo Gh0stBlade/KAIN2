@@ -2387,7 +2387,7 @@ void MORPH_InMorphInstanceListFlags() // Matching - 99.81%
 	}
 }
 
-void MORPH_InMorphDoFadeValues()//Matching - 94.35%
+void MORPH_InMorphDoFadeValues()  // Matching - 100%
 {
 	int fade1;
 	int fade2;
@@ -2402,7 +2402,6 @@ void MORPH_InMorphDoFadeValues()//Matching - 94.35%
 	}
 	else
 	{
-
 		gameTrackerX.spectral_fadeValue = fade2;
 		gameTrackerX.material_fadeValue = fade1;
 	}
