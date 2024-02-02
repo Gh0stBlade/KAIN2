@@ -1613,7 +1613,7 @@ void MON_Petrified(struct _Instance* instance) // Matching - 100%
 	}
 }
 
-int MONSTER_CalcDamageIntensity(int hp, int maxHp)
+int MONSTER_CalcDamageIntensity(int hp, int maxHp)  // Matching - 100%
 {
 	return ((maxHp - hp) * 256) / maxHp;
 }
