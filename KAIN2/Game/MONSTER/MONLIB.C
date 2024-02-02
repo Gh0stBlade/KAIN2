@@ -275,7 +275,7 @@ int MON_AnimIDPlaying(struct _Instance* instance, int index)
 	UNIMPLEMENTED();//structs need detecting for this!
 }
 
-void MON_PlayAnimIDIfNotPlaying(struct _Instance* instance, int index, int mode)
+void MON_PlayAnimIDIfNotPlaying(struct _Instance* instance, int index, int mode)  // Matching - 100%
 {
 	if (!MON_AnimIDPlaying(instance, index))
 	{
