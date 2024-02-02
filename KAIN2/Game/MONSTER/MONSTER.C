@@ -262,7 +262,7 @@ void MON_LandOnFeet(struct _Instance *instance)
 				UNIMPLEMENTED();
 }
 
-void MON_LandInWaterEntry(struct _Instance *instance)
+void MON_LandInWaterEntry(struct _Instance *instance)  // Matching - 100%
 {
 	instance->checkMask &= 0xFFFFFFDF;
 }
