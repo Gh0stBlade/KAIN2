@@ -1045,7 +1045,7 @@ void MON_Idle(struct _Instance *instance)
 				UNIMPLEMENTED();
 }
 
-void MON_FleeEntry(struct _Instance* instance)//Matching - 95.23%
+void MON_FleeEntry(struct _Instance* instance)  // Matching - 100%
 {
 	struct _MonsterVars* mv;
 
