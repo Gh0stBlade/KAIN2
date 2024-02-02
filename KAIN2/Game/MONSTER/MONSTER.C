@@ -2015,7 +2015,7 @@ void MON_DefaultInit(struct _Instance* instance)  // Matching - 99.86%
 }
 
 
-void MON_CleanUp(struct _Instance* instance)  // Matching - 99.93%
+void MON_CleanUp(struct _Instance* instance)  // Matching - 100%
 {
 	struct _MonsterVars* mv;
 	struct _MonsterAttributes* ma;
