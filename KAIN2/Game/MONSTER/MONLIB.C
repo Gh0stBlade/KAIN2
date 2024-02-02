@@ -730,7 +730,7 @@ void MON_PlayRandomIdle(struct _Instance *instance, int mode)
 			UNIMPLEMENTED();
 }
 
-void MON_PlayCombatIdle(struct _Instance* instance, int mode)
+void MON_PlayCombatIdle(struct _Instance* instance, int mode)  // Matching - 100%
 {
 	int anim;
 
