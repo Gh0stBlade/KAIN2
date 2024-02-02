@@ -310,7 +310,7 @@ int MON_AnimPlaying(struct _Instance* instance, enum MonsterAnim animtype)  // M
 	return MON_AnimPlayingFromList(instance, ((struct _MonsterVars*)instance->extraData)->subAttr->animList, animtype);
 }
 
-void MON_PlayAnimIfNotPlaying(struct _Instance* instance, enum MonsterAnim animtype, int mode)
+void MON_PlayAnimIfNotPlaying(struct _Instance* instance, enum MonsterAnim animtype, int mode)  // Matching - 100%
 {
 	MON_PlayAnimFromListIfNotPlaying(instance, ((struct _MonsterVars*)instance->extraData)->subAttr->animList, animtype, mode);
 }
