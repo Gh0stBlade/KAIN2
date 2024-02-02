@@ -491,33 +491,32 @@ void AnimDistanceAndVel(struct Object* object, struct _MonsterAnim* mAnim)  // M
 	G2Anim_Free(&anim);
 }
 
-void TranslateAnimList(struct Object* object, struct _MonsterAnim* animList, int numAnims)
+void TranslateAnimList(struct Object* object, struct _MonsterAnim* animList, int numAnims)  // Matching - 100%
 {
 	int i;
-	struct _MonsterAnim* animPtr;
-	int index;
-	struct _G2AnimKeylist_Type* keylist;
 
 	if (animList != NULL)
 	{
+		struct _MonsterAnim* animPtr;
+
 		animPtr = animList;
 
-		if (numAnims > 0)
+		for (i = 0; i < numAnims; i++, animPtr++)
 		{
-			for (i = 0; i < numAnims; i++)
+			int index;
+			struct _G2AnimKeylist_Type* keylist;
+
+			index = animPtr->index[0];
+
+			keylist = object->animList[index];
+
+			if (index != -1)
 			{
-				index = animPtr[i].index[0];
+				AnimDistanceAndVel(object, animPtr);
 
-				keylist = object->animList[index];
-
-				if (index != -1)
+				if (animPtr->startFrame >= (G2AnimKeylist_GetDuration(keylist) / 100))
 				{
-					AnimDistanceAndVel(object, &animPtr[i]);
-
-					if (animPtr[i].startFrame >= (G2AnimKeylist_GetDuration(keylist) / 100))
-					{
-						animPtr[i].startFrame = G2AnimKeylist_GetKeyframeCount(keylist) - 1;
-					}
+					animPtr->startFrame = G2AnimKeylist_GetKeyframeCount(keylist) - 1;
 				}
 			}
 		}
