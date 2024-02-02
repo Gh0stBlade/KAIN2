@@ -1260,7 +1260,7 @@ void MON_Wander(struct _Instance *instance)
 				UNIMPLEMENTED();
 }
 
-void MON_HideEntry(struct _Instance* instance)
+void MON_HideEntry(struct _Instance* instance)  // Matching - 100%
 {
 	MON_PlayRandomIdle(instance, 1);
 }
