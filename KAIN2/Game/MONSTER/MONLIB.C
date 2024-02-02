@@ -848,7 +848,7 @@ int MON_TurnToPosition(struct _Instance *instance, _Position *position, short tu
 	return 0;
 }
 
-void MON_MoveToPosition(struct _Instance* instance, _Position* position, short turnSpeed)
+void MON_MoveToPosition(struct _Instance* instance, struct _Position* position, short turnSpeed)  // Matching - 100%
 {
 	MON_TurnToPosition(instance, position, turnSpeed);
 
