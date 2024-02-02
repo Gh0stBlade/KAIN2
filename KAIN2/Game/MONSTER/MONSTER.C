@@ -1930,7 +1930,7 @@ void MON_DamageEffect(struct _Instance *instance, struct evFXHitData *data)
 }
 
 
-void MON_DefaultInit(struct _Instance* instance)  // Matching - 99.86%
+void MON_DefaultInit(struct _Instance* instance)  // Matching - 100%
 {
 	struct _MonsterAttributes* ma;
 	struct _MonsterVars* mv;
