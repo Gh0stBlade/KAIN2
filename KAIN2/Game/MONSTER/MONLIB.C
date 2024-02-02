@@ -264,15 +264,15 @@ void MON_PlayAnimFromList(struct _Instance* instance, char* animList, int animty
 	MON_PlayAnimID(instance, animList[animtype], mode);
 }
 
-int MON_AnimIDPlaying(struct _Instance* instance, int index)
+int MON_AnimIDPlaying(struct _Instance* instance, int index)  // Matching - 100%
 {
-	//index <<= 4
-	//v0 = instance->data
-	//a0 = instance->extraData
-	//v1 = ((struct _MonsterAttributes*)instance->data)[index].
-	UNIMPLEMENTED();
-	return 0;
-	UNIMPLEMENTED();//structs need detecting for this!
+	struct _MonsterAttributes* ma;
+	struct _MonsterVars* mv;
+
+	mv = (struct _MonsterVars*)instance->extraData;
+	ma = (struct _MonsterAttributes*)instance->data;
+
+	return mv->anim == &ma->animList[index];
 }
 
 void MON_PlayAnimIDIfNotPlaying(struct _Instance* instance, int index, int mode)
