@@ -232,15 +232,18 @@ int MON_TransNodeAnimation(struct _Instance* instance)  // Matching - 100%
 struct _MonsterAnim* MON_GetAnim(struct _Instance* instance, char* animList, int index)
 {
 	int whichAnim;
+	struct _MonsterAttributes* mv;  // not from SYMDUMP
 
 	whichAnim = animList[index];
 
-	if (whichAnim != -1)
+	if (whichAnim == -1)
 	{
-		return ((struct _MonsterAttributes*)instance->data)->animList + whichAnim;
+		return NULL;
 	}
 
-	return 0;
+	mv = (struct _MonsterAttributes*)instance->data;
+
+	return &mv->animList[whichAnim];
 }
 
 
