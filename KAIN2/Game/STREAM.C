@@ -2101,14 +2101,14 @@ void RelocateVMObjects(struct _VMObject* vobjectlist, long numvmobjs, struct _SV
 	}
 }
 
-void RelocateBGObjects(struct _BGObject* BGObjList, long numBGObjs, struct _SVector* offset)
+void RelocateBGObjects(struct _BGObject* BGObjList, long numBGObjs, struct _SVector* offset)  // Matching - 100%
 {
 	int i;
 	int d;
 
 	for (i = 0; i < numBGObjs; i++)
 	{
-		for (d = 0; d < BGObjList->numVertices; d++)
+		for (d = 0; d < BGObjList[i].numVertices; d++)
 		{
 			BGObjList[i].vertexList[d].x += offset->x;
 			BGObjList[i].vertexList[d].y += offset->y;
