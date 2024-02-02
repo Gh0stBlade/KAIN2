@@ -1310,7 +1310,7 @@ void MON_SurpriseAttackEntry(struct _Instance *instance)
 			UNIMPLEMENTED();
 }
 
-void MON_SurpriseAttack(struct _Instance* instance)
+void MON_SurpriseAttack(struct _Instance* instance)  // Matching - 100%
 {
 	MON_Attack(instance);
 }
