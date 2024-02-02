@@ -1574,13 +1574,13 @@ void MON_Embrace(struct _Instance *instance)
 				UNIMPLEMENTED();
 }
 
-void MON_PetrifiedEntry(struct _Instance* instance)
+void MON_PetrifiedEntry(struct _Instance* instance)  // Matching - 100%
 {
 	struct _MonsterVars* mv;
 
 	mv = (struct _MonsterVars*)instance->extraData;
 
-	mv->generalTimer = 7000;
+	mv->generalTimer = MON_GetTime(instance) + 7000;
 
 	mv->mvFlags |= 0x80;
 }
