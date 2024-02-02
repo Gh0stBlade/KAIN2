@@ -177,7 +177,7 @@ void MON_BirthEntry(struct _Instance* instance)
 {
 }
 
-void MON_Birth(struct _Instance* instance)
+void MON_Birth(struct _Instance* instance)  // Matching - 100%
 {
 	MON_SwitchState(instance, MONSTER_STATE_IDLE);
 }
