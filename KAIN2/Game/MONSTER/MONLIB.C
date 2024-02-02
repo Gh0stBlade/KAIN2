@@ -1037,7 +1037,7 @@ int MON_CheckPointSuitability(struct _Instance *instance, _Position *origin, _Po
 	return 0;
 }
 
-unsigned long MON_GetTime(struct _Instance* instance)//Matching - 99.29%
+unsigned long MON_GetTime(struct _Instance* instance)  // Matching - 100%
 {
 	if ((instance->object->oflags & 0x80000))
 	{
