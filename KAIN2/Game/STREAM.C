@@ -2372,13 +2372,14 @@ void MORPH_SetupInstanceListFlags()
 	}
 }
 
-void MORPH_InMorphInstanceListFlags() // Matching - 99.81%
-{ 
+void MORPH_InMorphInstanceListFlags()  // Matching - 100%
+{
 	struct _Instance* instance;
+
 	instance = gameTrackerX.instanceList->first;
-	while (instance != 0)
+	while (instance != NULL)
 	{
-		if ((instance->flags2 & 0x4000000) != 0)
+		if (instance->flags2 & 0x4000000)
 		{
 			instance->flags2 &= 0xEFFFFFFF;
 		}
