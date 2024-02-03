@@ -2825,7 +2825,7 @@ void MORPH_AddOffsets(struct Level* BaseLevel, int time)  // Matching - 100%
 	}
 }
 
-void MORPH_SubtractOffsets(struct Level* BaseLevel, int time)//Matching - 98.68%
+void MORPH_SubtractOffsets(struct Level* BaseLevel, int time)  // Matching - 100%
 {
 	struct _TVertex* v;
 	struct _MorphVertex* mv;
@@ -2833,27 +2833,19 @@ void MORPH_SubtractOffsets(struct Level* BaseLevel, int time)//Matching - 98.68%
 	long m;
 	long fixed_time;
 	struct _Instance* instance;
-	SVECTOR diff;
-	SVECTOR realDiff;
-	struct _Position oldPos;
-	long r0;
-	long g0;
-	long b0;
-	long r1;
-	long g1;
-	long b1;
-	struct _TVertex* endv;
-	struct Intro* intro;
+	int temp;  // not from SYMDUMP
 
 	instance = gameTrackerX.instanceList->first;
 
 	if (time < 501)
 	{
-		time = time * 2 * time * 2 * time / 2000000;
+		temp = time * 2;
+		time = (temp * temp * temp) / 2000000;
 	}
 	else
 	{
-		time = 1000 - (1000 - time) * 2 * (1000 - time) * 2 * (1000 - time) / 2000000;
+		temp = (1000 - time) * 2;
+		time = 1000 - ((temp * temp * temp) / 2000000);
 	}
 
 	mv = BaseLevel->terrain->MorphDiffList;
@@ -2871,21 +2863,27 @@ void MORPH_SubtractOffsets(struct Level* BaseLevel, int time)//Matching - 98.68%
 		}
 	}
 
-	for (; instance; instance = instance->next)
+	for (; instance != NULL; instance = instance->next)
 	{
+		struct Intro* intro;  // not from SYMDUMP
+
 		intro = instance->intro;
 
-		if (intro && (*(unsigned int*)&intro->spectralPosition.x || intro->spectralPosition.z) && ((instance->flags2 & 0x8)) == 0)
+		if ((intro != NULL) && (intro->spectralPosition.x || intro->spectralPosition.y || intro->spectralPosition.z) && (!(instance->flags2 & 0x8)))
 		{
+			SVECTOR diff;
+			SVECTOR realDiff;
+			struct _Position oldPos;
+
 			diff.vx = (short)((intro->spectralPosition.x * fixed_time) >> 12);
 			diff.vy = (short)((intro->spectralPosition.y * fixed_time) >> 12);
 			diff.vz = (short)((intro->spectralPosition.z * fixed_time) >> 12);
 
 			oldPos = instance->position;
 
-			instance->position.x = intro->position.x + oldPos.x;
-			instance->position.y = intro->position.y + oldPos.y;
-			instance->position.z = intro->position.z + oldPos.z;
+			instance->position.x = intro->position.x + diff.vx;
+			instance->position.y = intro->position.y + diff.vy;
+			instance->position.z = intro->position.z + diff.vz;
 
 			realDiff.vx = instance->position.x - oldPos.x;
 			realDiff.vy = instance->position.y - oldPos.y;
@@ -2898,30 +2896,35 @@ void MORPH_SubtractOffsets(struct Level* BaseLevel, int time)//Matching - 98.68%
 		}
 	}
 
-	mc = BaseLevel->terrain->MorphColorList;
-
-	if (mc)
 	{
-		v = BaseLevel->terrain->vertexList;
-		endv = &BaseLevel->terrain->vertexList[BaseLevel->terrain->numVertices];
+		long r0;
+		long g0;
+		long b0;
+		long r1;
+		long g1;
+		long b1;
 
-		while (v < endv)
+		mc = BaseLevel->terrain->MorphColorList;
+
+		if (mc != NULL)
 		{
-			r0 = (v->rgb15 & 0x1F) << 3;
-			r1 = (mc->morphColor15 & 0x1F) << 3;
+			struct _TVertex* endv;
 
-			g0 = (v->rgb15 >> 2) & 0xF8;
-			g1 = (mc->morphColor15 >> 2) & 0xF8;
+			for (endv = &BaseLevel->terrain->vertexList[BaseLevel->terrain->numVertices], v = BaseLevel->terrain->vertexList; v < endv; v++, mc++)
+			{
+				r0 = (v->rgb15 & 31) << 3;
+				r1 = (mc->morphColor15 & 31) << 3;
 
-			b0 = (v->rgb15 >> 7) & 0xF8;
-			b1 = (mc->morphColor15 >> 7) & 0xF8;
+				g0 = (v->rgb15 >> 2) & 248;
+				g1 = (mc->morphColor15 >> 2) & 248;
 
-			v->r0 = (unsigned char)(r0 + (((r1 - r0) * fixed_time) >> 12));
-			v->g0 = (unsigned char)(g0 + (((g1 - g0) * fixed_time) >> 12));
-			v->b0 = (unsigned char)(b0 + (((b1 - b0) * fixed_time) >> 12));
+				b0 = (v->rgb15 >> 7) & 248;
+				b1 = (mc->morphColor15 >> 7) & 248;
 
-			v++;
-			mc++;
+				v->r0 = (unsigned char)(r0 + (((r1 - r0) * fixed_time) >> 12));
+				v->g0 = (unsigned char)(g0 + (((g1 - g0) * fixed_time) >> 12));
+				v->b0 = (unsigned char)(b0 + (((b1 - b0) * fixed_time) >> 12));
+			}
 		}
 	}
 }
