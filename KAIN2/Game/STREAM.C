@@ -2358,7 +2358,7 @@ void MORPH_SetupInstanceFlags(struct _Instance *instance)
 	}
 }
 
-void MORPH_SetupInstanceListFlags()
+void MORPH_SetupInstanceListFlags()  // Matching - 100%
 {
 	struct _Instance* instance;
 
@@ -2372,13 +2372,14 @@ void MORPH_SetupInstanceListFlags()
 	}
 }
 
-void MORPH_InMorphInstanceListFlags() // Matching - 99.81%
-{ 
+void MORPH_InMorphInstanceListFlags()  // Matching - 100%
+{
 	struct _Instance* instance;
+
 	instance = gameTrackerX.instanceList->first;
-	while (instance != 0)
+	while (instance != NULL)
 	{
-		if ((instance->flags2 & 0x4000000) != 0)
+		if (instance->flags2 & 0x4000000)
 		{
 			instance->flags2 &= 0xEFFFFFFF;
 		}
@@ -2387,7 +2388,7 @@ void MORPH_InMorphInstanceListFlags() // Matching - 99.81%
 	}
 }
 
-void MORPH_InMorphDoFadeValues()//Matching - 94.35%
+void MORPH_InMorphDoFadeValues()  // Matching - 100%
 {
 	int fade1;
 	int fade2;
@@ -2402,7 +2403,6 @@ void MORPH_InMorphDoFadeValues()//Matching - 94.35%
 	}
 	else
 	{
-
 		gameTrackerX.spectral_fadeValue = fade2;
 		gameTrackerX.material_fadeValue = fade1;
 	}
@@ -2485,119 +2485,114 @@ void MORPH_UpdateTimeMult()  // Matching - 100%
 	}
 }
 
-void MORPH_UpdateNormals(struct Level* BaseLevel)//Matching - 93.33%
+void MORPH_UpdateNormals(struct Level* BaseLevel)  // Matching - 100%
 {
-	SVECTOR realDiff; // stack offset -32
-	struct _Position oldPos; // stack offset -24
-	struct _TFace* face; // $v1
-	long faceCount; // $a2
-	struct _TVertex* v; // $a1
-	struct _MorphVertex* mv; // $a3
-	struct _MorphColor* mc; // $a0
-	short h1; // $v1
-	short* morphNormals; // $a1
-	struct _TVertex* endv; // $a2
-	struct _BSPNode* node; // $v1
-	struct _BSPLeaf* leaf; // $a1
-	struct _Sphere_noSq hsphere; // stack offset -32
-	struct _BoundingBox hbox; // stack offset -24
-	struct _Terrain* terrain; // $a0
-	long curTree; // $t0
-	struct _Instance* instance; // $s0
-	struct Intro* intro;
+	struct _TFace* face;
+	long faceCount;
+	struct _TVertex* v;
+	struct _MorphVertex* mv;
+	struct _MorphColor* mc;
+	short h1;
+	short* morphNormals;
 
 	morphNormals = BaseLevel->terrain->morphNormalIdx;
-	faceCount = BaseLevel->terrain->numFaces;
 	face = BaseLevel->terrain->faceList;
-	while (faceCount > 0)
+
+	for (faceCount = BaseLevel->terrain->numFaces; faceCount > 0; faceCount--, face++)
 	{
 		h1 = face->normal;
 		face->normal = *morphNormals;
 		*morphNormals++ = h1;
-		face++;
-		faceCount--;
 	}
 
-	terrain = BaseLevel->terrain;
-	mv = terrain->MorphDiffList;
-
-	if (BaseLevel->terrain->MorphDiffList != NULL)
 	{
-		for (; mv->vindex >= 0; mv++)
+		struct _BSPNode* node;
+		struct _BSPLeaf* leaf;
+		struct _Terrain* terrain;
+		long curTree;
+
+		mv = BaseLevel->terrain->MorphDiffList;
+
+		if (mv != NULL)
 		{
-			v = &BaseLevel->terrain->vertexList[mv->vindex];
-
-			v->vertex.x = mv->hx + mv->x;
-			v->vertex.y = mv->hy + mv->y;
-			v->vertex.z = mv->hz + mv->z;
-		}
-	}
-	mc = BaseLevel->terrain->MorphColorList;
-
-	if (mc)
-	{
-		endv = &BaseLevel->terrain->vertexList[BaseLevel->terrain->numVertices];
-
-		v = BaseLevel->terrain->vertexList;
-
-		while (v < endv)
-		{
-			v->r0 = ((unsigned short)mc->morphColor15 & 0x1F) << 3;
-			v->g0 = ((unsigned short)mc->morphColor15 >> 2) & 0xF8;
-			v->b0 = ((unsigned short)mc->morphColor15 >> 7) & 0xF8;
-
-			v++;
-			mc++;
-		}
-	}
-
-	for (curTree = 0; curTree < BaseLevel->terrain->numBSPTrees; curTree++)
-	{
-		node = BaseLevel->terrain->BSPTreeArray[curTree].bspRoot;
-
-		while (node < (struct _BSPNode*)BaseLevel->terrain->BSPTreeArray[curTree].startLeaves)
-		{
-			hsphere = node->sphere;
-			node->sphere = node->spectralSphere;
-			node->spectralSphere = hsphere;
-			node++;
-		}
-
-		leaf = BaseLevel->terrain->BSPTreeArray[curTree].startLeaves;
-		while (leaf < BaseLevel->terrain->BSPTreeArray[curTree].endLeaves)
-		{
-			hsphere = leaf->sphere;
-			leaf->sphere = leaf->spectralSphere;
-			leaf->spectralSphere = hsphere;
-
-			hbox = leaf->spectralBox;
-			leaf->box = leaf->spectralBox;
-			leaf->spectralBox = hbox;
-			leaf++;
-		}
-	}
-
-	instance = gameTrackerX.instanceList->first;
-
-	for (; instance; instance = instance->next)
-	{
-		intro = instance->intro;
-
-		if (intro && (*(unsigned int*)&intro->spectralPosition.x || intro->spectralPosition.z) && (!(instance->flags2 & 0x8)))
-		{
-			oldPos = instance->position;
-
-			instance->position.x = intro->position.x + intro->spectralPosition.x;
-			instance->position.y = intro->position.y + intro->spectralPosition.y;
-			instance->position.z = intro->position.z + intro->spectralPosition.z;
-
-			realDiff.vx = instance->position.x - oldPos.x;
-			realDiff.vy = instance->position.y - oldPos.y;
-			realDiff.vz = instance->position.z - oldPos.z;
-
-			if (realDiff.vx + realDiff.vy + realDiff.vz)
+			for (; mv->vindex >= 0; mv++)
 			{
-				COLLIDE_UpdateAllTransforms(instance, &realDiff);
+				v = &BaseLevel->terrain->vertexList[mv->vindex];
+
+				v->vertex.x = mv->hx + mv->x;
+				v->vertex.y = mv->hy + mv->y;
+				v->vertex.z = mv->hz + mv->z;
+			}
+		}
+
+		mc = BaseLevel->terrain->MorphColorList;
+
+		if (mc != NULL)
+		{
+			struct _TVertex* endv;
+
+			for (endv = &BaseLevel->terrain->vertexList[BaseLevel->terrain->numVertices], v = BaseLevel->terrain->vertexList; v < endv; v++, mc++)
+			{
+				v->r0 = ((unsigned short)mc->morphColor15 & 31) << 3;
+				v->g0 = ((unsigned short)mc->morphColor15 >> 2) & 248;
+				v->b0 = ((unsigned short)mc->morphColor15 >> 7) & 248;
+			}
+		}
+
+		terrain = BaseLevel->terrain;
+
+		for (curTree = 0; curTree < terrain->numBSPTrees; curTree++)
+		{
+			struct _Sphere_noSq hsphere;
+			struct _BoundingBox hbox;
+
+			for (node = terrain->BSPTreeArray[curTree].bspRoot; (struct _BSPLeaf*)node < terrain->BSPTreeArray[curTree].startLeaves; node++)
+			{
+				hsphere = node->sphere;
+				node->sphere = node->spectralSphere;
+				node->spectralSphere = hsphere;
+			}
+
+			for (leaf = terrain->BSPTreeArray[curTree].startLeaves; leaf < terrain->BSPTreeArray[curTree].endLeaves; leaf++)
+			{
+				hsphere = leaf->sphere;
+				leaf->sphere = leaf->spectralSphere;
+				leaf->spectralSphere = hsphere;
+				hbox = leaf->box;
+				leaf->box = leaf->spectralBox;
+				leaf->spectralBox = hbox;
+			}
+		}
+
+		{
+			struct _Instance* instance;
+
+			for (instance = gameTrackerX.instanceList->first; instance != NULL; instance = instance->next)
+			{
+				struct Intro* intro;  // not from SYMDUMP
+
+				intro = instance->intro;
+
+				if (intro && (intro->spectralPosition.x || intro->spectralPosition.y || intro->spectralPosition.z) && (!(instance->flags2 & 0x8)))
+				{
+					SVECTOR realDiff;
+					struct _Position oldPos;
+
+					oldPos = instance->position;
+
+					instance->position.x = intro->position.x + intro->spectralPosition.x;
+					instance->position.y = intro->position.y + intro->spectralPosition.y;
+					instance->position.z = intro->position.z + intro->spectralPosition.z;
+
+					realDiff.vx = instance->position.x - oldPos.x;
+					realDiff.vy = instance->position.y - oldPos.y;
+					realDiff.vz = instance->position.z - oldPos.z;
+
+					if (realDiff.vx + realDiff.vy + realDiff.vz)
+					{
+						COLLIDE_UpdateAllTransforms(instance, &realDiff);
+					}
+				}
 			}
 		}
 	}
@@ -2726,7 +2721,7 @@ void MORPH_BringBackNormals(struct Level* BaseLevel)  // Matching - 100%
 	return;
 }
 
-void MORPH_AddOffsets(struct Level* BaseLevel, int time)//Matching - 98.67%
+void MORPH_AddOffsets(struct Level* BaseLevel, int time)  // Matching - 100%
 {
 	struct _TVertex* v;
 	struct _MorphVertex* mv;
@@ -2734,27 +2729,19 @@ void MORPH_AddOffsets(struct Level* BaseLevel, int time)//Matching - 98.67%
 	long m;
 	long fixed_time;
 	struct _Instance* instance;
-	SVECTOR diff;
-	SVECTOR realDiff;
-	struct _Position oldPos;
-	long r0;
-	long g0;
-	long b0;
-	long r1;
-	long g1;
-	long b1;
-	struct _TVertex* endv;
-	struct Intro* intro;
+	int temp;  // not from SYMDUMP
 
 	instance = gameTrackerX.instanceList->first;
 
 	if (time < 501)
 	{
-		time = time * 2 * time * 2 * time / 2000000;
+		temp = time * 2;
+		time = (temp * temp * temp) / 2000000;
 	}
 	else
 	{
-		time = 1000 - (1000 - time) * 2 * (1000 - time) * 2 * (1000 - time) / 2000000;
+		temp = (1000 - time) * 2;
+		time = 1000 - ((temp * temp * temp) / 2000000);
 	}
 
 	mv = BaseLevel->terrain->MorphDiffList;
@@ -2771,21 +2758,28 @@ void MORPH_AddOffsets(struct Level* BaseLevel, int time)//Matching - 98.67%
 			v->vertex.z = (short)(mv->hz + ((mv->z * fixed_time) >> 12));
 		}
 	}
-	for (; instance; instance = instance->next)
+
+	for (; instance != NULL; instance = instance->next)
 	{
+		struct Intro* intro;  // not from SYMDUMP
+
 		intro = instance->intro;
 
-		if (intro && (*(unsigned int*)&intro->spectralPosition.x || intro->spectralPosition.z) && ((instance->flags2 & 0x8)) == 0)
+		if ((intro != NULL) && (intro->spectralPosition.x || intro->spectralPosition.y || intro->spectralPosition.z) && (!(instance->flags2 & 0x8)))
 		{
+			SVECTOR diff;
+			SVECTOR realDiff;
+			struct _Position oldPos;
+
 			diff.vx = (short)((intro->spectralPosition.x * fixed_time) >> 12);
 			diff.vy = (short)((intro->spectralPosition.y * fixed_time) >> 12);
 			diff.vz = (short)((intro->spectralPosition.z * fixed_time) >> 12);
 
 			oldPos = instance->position;
 
-			instance->position.x = intro->position.x + oldPos.x;
-			instance->position.y = intro->position.y + oldPos.y;
-			instance->position.z = intro->position.z + oldPos.z;
+			instance->position.x = intro->position.x + diff.vx;
+			instance->position.y = intro->position.y + diff.vy;
+			instance->position.z = intro->position.z + diff.vz;
 
 			realDiff.vx = instance->position.x - oldPos.x;
 			realDiff.vy = instance->position.y - oldPos.y;
@@ -2798,35 +2792,40 @@ void MORPH_AddOffsets(struct Level* BaseLevel, int time)//Matching - 98.67%
 		}
 	}
 
-	mc = BaseLevel->terrain->MorphColorList;
-
-	if (mc)
 	{
-		v = BaseLevel->terrain->vertexList;
-		endv = &BaseLevel->terrain->vertexList[BaseLevel->terrain->numVertices];
+		long r0;
+		long g0;
+		long b0;
+		long r1;
+		long g1;
+		long b1;
 
-		while (v < endv)
+		mc = BaseLevel->terrain->MorphColorList;
+
+		if (mc != NULL)
 		{
-			r0 = (v->rgb15 & 0x1F) << 3;
-			r1 = (mc->morphColor15 & 0x1F) << 3;
+			struct _TVertex* endv;
 
-			g0 = (v->rgb15 >> 2) & 0xF8;
-			g1 = (mc->morphColor15 >> 2) & 0xF8;
+			for (endv = &BaseLevel->terrain->vertexList[BaseLevel->terrain->numVertices], v = BaseLevel->terrain->vertexList; v < endv; v++, mc++)
+			{
+				r0 = (v->rgb15 & 31) << 3;
+				r1 = (mc->morphColor15 & 31) << 3;
 
-			b0 = (v->rgb15 >> 7) & 0xF8;
-			b1 = (mc->morphColor15 >> 7) & 0xF8;
+				g0 = (v->rgb15 >> 2) & 248;
+				g1 = (mc->morphColor15 >> 2) & 248;
 
-			v->r0 = (unsigned char)(r0 + (((r1 - r0) * fixed_time) >> 12));
-			v->g0 = (unsigned char)(g0 + (((g1 - g0) * fixed_time) >> 12));
-			v->b0 = (unsigned char)(b0 + (((b1 - b0) * fixed_time) >> 12));
+				b0 = (v->rgb15 >> 7) & 248;
+				b1 = (mc->morphColor15 >> 7) & 248;
 
-			v++;
-			mc++;
+				v->r0 = (unsigned char)(r0 + (((r1 - r0) * fixed_time) >> 12));
+				v->g0 = (unsigned char)(g0 + (((g1 - g0) * fixed_time) >> 12));
+				v->b0 = (unsigned char)(b0 + (((b1 - b0) * fixed_time) >> 12));
+			}
 		}
 	}
 }
 
-void MORPH_SubtractOffsets(struct Level* BaseLevel, int time)//Matching - 98.68%
+void MORPH_SubtractOffsets(struct Level* BaseLevel, int time)  // Matching - 100%
 {
 	struct _TVertex* v;
 	struct _MorphVertex* mv;
@@ -2834,27 +2833,19 @@ void MORPH_SubtractOffsets(struct Level* BaseLevel, int time)//Matching - 98.68%
 	long m;
 	long fixed_time;
 	struct _Instance* instance;
-	SVECTOR diff;
-	SVECTOR realDiff;
-	struct _Position oldPos;
-	long r0;
-	long g0;
-	long b0;
-	long r1;
-	long g1;
-	long b1;
-	struct _TVertex* endv;
-	struct Intro* intro;
+	int temp;  // not from SYMDUMP
 
 	instance = gameTrackerX.instanceList->first;
 
 	if (time < 501)
 	{
-		time = time * 2 * time * 2 * time / 2000000;
+		temp = time * 2;
+		time = (temp * temp * temp) / 2000000;
 	}
 	else
 	{
-		time = 1000 - (1000 - time) * 2 * (1000 - time) * 2 * (1000 - time) / 2000000;
+		temp = (1000 - time) * 2;
+		time = 1000 - ((temp * temp * temp) / 2000000);
 	}
 
 	mv = BaseLevel->terrain->MorphDiffList;
@@ -2872,21 +2863,27 @@ void MORPH_SubtractOffsets(struct Level* BaseLevel, int time)//Matching - 98.68%
 		}
 	}
 
-	for (; instance; instance = instance->next)
+	for (; instance != NULL; instance = instance->next)
 	{
+		struct Intro* intro;  // not from SYMDUMP
+
 		intro = instance->intro;
 
-		if (intro && (*(unsigned int*)&intro->spectralPosition.x || intro->spectralPosition.z) && ((instance->flags2 & 0x8)) == 0)
+		if ((intro != NULL) && (intro->spectralPosition.x || intro->spectralPosition.y || intro->spectralPosition.z) && (!(instance->flags2 & 0x8)))
 		{
+			SVECTOR diff;
+			SVECTOR realDiff;
+			struct _Position oldPos;
+
 			diff.vx = (short)((intro->spectralPosition.x * fixed_time) >> 12);
 			diff.vy = (short)((intro->spectralPosition.y * fixed_time) >> 12);
 			diff.vz = (short)((intro->spectralPosition.z * fixed_time) >> 12);
 
 			oldPos = instance->position;
 
-			instance->position.x = intro->position.x + oldPos.x;
-			instance->position.y = intro->position.y + oldPos.y;
-			instance->position.z = intro->position.z + oldPos.z;
+			instance->position.x = intro->position.x + diff.vx;
+			instance->position.y = intro->position.y + diff.vy;
+			instance->position.z = intro->position.z + diff.vz;
 
 			realDiff.vx = instance->position.x - oldPos.x;
 			realDiff.vy = instance->position.y - oldPos.y;
@@ -2899,30 +2896,35 @@ void MORPH_SubtractOffsets(struct Level* BaseLevel, int time)//Matching - 98.68%
 		}
 	}
 
-	mc = BaseLevel->terrain->MorphColorList;
-
-	if (mc)
 	{
-		v = BaseLevel->terrain->vertexList;
-		endv = &BaseLevel->terrain->vertexList[BaseLevel->terrain->numVertices];
+		long r0;
+		long g0;
+		long b0;
+		long r1;
+		long g1;
+		long b1;
 
-		while (v < endv)
+		mc = BaseLevel->terrain->MorphColorList;
+
+		if (mc != NULL)
 		{
-			r0 = (v->rgb15 & 0x1F) << 3;
-			r1 = (mc->morphColor15 & 0x1F) << 3;
+			struct _TVertex* endv;
 
-			g0 = (v->rgb15 >> 2) & 0xF8;
-			g1 = (mc->morphColor15 >> 2) & 0xF8;
+			for (endv = &BaseLevel->terrain->vertexList[BaseLevel->terrain->numVertices], v = BaseLevel->terrain->vertexList; v < endv; v++, mc++)
+			{
+				r0 = (v->rgb15 & 31) << 3;
+				r1 = (mc->morphColor15 & 31) << 3;
 
-			b0 = (v->rgb15 >> 7) & 0xF8;
-			b1 = (mc->morphColor15 >> 7) & 0xF8;
+				g0 = (v->rgb15 >> 2) & 248;
+				g1 = (mc->morphColor15 >> 2) & 248;
 
-			v->r0 = (unsigned char)(r0 + (((r1 - r0) * fixed_time) >> 12));
-			v->g0 = (unsigned char)(g0 + (((g1 - g0) * fixed_time) >> 12));
-			v->b0 = (unsigned char)(b0 + (((b1 - b0) * fixed_time) >> 12));
+				b0 = (v->rgb15 >> 7) & 248;
+				b1 = (mc->morphColor15 >> 7) & 248;
 
-			v++;
-			mc++;
+				v->r0 = (unsigned char)(r0 + (((r1 - r0) * fixed_time) >> 12));
+				v->g0 = (unsigned char)(g0 + (((g1 - g0) * fixed_time) >> 12));
+				v->b0 = (unsigned char)(b0 + (((b1 - b0) * fixed_time) >> 12));
+			}
 		}
 	}
 }
@@ -3059,7 +3061,7 @@ void MORPH_GetComponentsForTrackingPoint(struct _TFace* face, struct Level* leve
 	}
 }
 
-void MORPH_AveragePoint(struct _SVector* start, struct _SVector* end, int interp, struct _SVector* out)
+void MORPH_AveragePoint(struct _SVector* start, struct _SVector* end, int interp, struct _SVector* out)  // Matching - 100%
 {
 	if (interp >= 0)
 	{
@@ -3158,28 +3160,37 @@ void MORPH_UpdateTrackingPoint(struct _TFace* face, struct Level* level)  // Mat
 	}
 }
 
-void MORPH_ToggleMorph()
+void MORPH_ToggleMorph()  // Matching - 100%
 {
 	struct Level* level;
 	int i;
+	struct _StreamUnit* temp;  // not from SYMDUMP
 
 	SOUND_PlaneShift(gameTrackerX.gameData.asmData.MorphType == 0);
 
 	INSTANCE_Broadcast(NULL, 10, 0x1000020, gameTrackerX.gameData.asmData.MorphType);
 
 	MORPH_GetComponentsForTrackingPoint(gameTrackerX.playerInstance->tface, (struct Level*)gameTrackerX.playerInstance->tfaceLevel);
-	
+
 	MORPH_UpdateTrackingPoint(gameTrackerX.playerInstance->tface, (struct Level*)gameTrackerX.playerInstance->tfaceLevel);
+
+	do
+	{
+
+	} while (FALSE); // garbage code for reordering
 
 	gameTrackerX.gameData.asmData.MorphTime = 0;
 
 	SOUND_Play3dSound(&gameTrackerX.playerInstance->position, 26, -350, 127, 32767);
 
-	for (i = 0; i < 16; i++)
+	temp = StreamTracker.StreamList;
+
+	for (i = 16; i > 0; i--, temp++)
 	{
-		if (StreamTracker.StreamList[i].used == 2)
+		if (temp->used == 2)
 		{
-			level = StreamTracker.StreamList[i].level;
+
+			level = temp->level;
 
 			if (gameTrackerX.gameData.asmData.MorphType == 1)
 			{
@@ -3187,7 +3198,7 @@ void MORPH_ToggleMorph()
 				{
 					level->materialSignal->flags |= 0x1;
 
-					SIGNAL_HandleSignal(gameTrackerX.playerInstance, &level->materialSignal->signalList[0], 8);
+					SIGNAL_HandleSignal(gameTrackerX.playerInstance, level->materialSignal->signalList, 0);
 					EVENT_AddSignalToReset(level->materialSignal);
 				}
 			}
@@ -3197,7 +3208,7 @@ void MORPH_ToggleMorph()
 				{
 					level->spectralSignal->flags |= 0x1;
 
-					SIGNAL_HandleSignal(gameTrackerX.playerInstance, &level->spectralSignal->signalList[0], 8);
+					SIGNAL_HandleSignal(gameTrackerX.playerInstance, level->spectralSignal->signalList, 0);
 					EVENT_AddSignalToReset(level->spectralSignal);
 				}
 			}

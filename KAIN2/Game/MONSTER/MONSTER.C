@@ -182,12 +182,18 @@ void MON_Birth(struct _Instance* instance)  // Matching - 100%
 	MON_SwitchState(instance, MONSTER_STATE_IDLE);
 }
 
-void MON_ParryEntry(struct _Instance* instance)//Matching - 84.60%
+void MON_ParryEntry(struct _Instance* instance)  // Matching - 100%
 {
 	struct _MonsterVars* mv;
+
 	mv = (struct _MonsterVars*)instance->extraData;
 
 	MON_PlayAnim(instance, MONSTER_ANIM_JUMPRIGHT, 1);
+
+	do
+	{
+
+	} while (FALSE);  // garbage code for reordering
 
 	MON_TurnToPosition(instance, &mv->enemy->instance->position, 4096);
 }
@@ -943,17 +949,22 @@ void MON_Combat(struct _Instance *instance)
 					UNIMPLEMENTED();
 }
 
-void MON_ProjectileEntry(struct _Instance* instance)//Matching - 73.41%
+void MON_ProjectileEntry(struct _Instance* instance)  // Matching - 100%
 {
 	struct _MonsterVars* mv;
 	struct _MonsterAttributes* ma;
 	struct _MonsterMissile* missileDef;
 
 	mv = (struct _MonsterVars*)instance->extraData;
-	
+
 	ma = (struct _MonsterAttributes*)instance->data;
 
 	missileDef = &ma->missileList[mv->subAttr->combatAttributes->missileAttack];
+
+	do
+	{
+
+	} while (FALSE);  // garbage code for reordering
 
 	MON_PlayAnimFromList(instance, missileDef->animList, 0, 1);
 

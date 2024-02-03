@@ -154,7 +154,7 @@ void MON_TurnOnBodySpheres(struct _Instance* instance)  // Matching - 100%
 	}
 }
 
-void MON_TurnOffAllSpheres(struct _Instance* instance)
+void MON_TurnOffAllSpheres(struct _Instance* instance)  // Matching - 100%
 {
 	MON_TurnOffWeaponSpheres(instance);
 
@@ -229,7 +229,7 @@ int MON_TransNodeAnimation(struct _Instance* instance)  // Matching - 100%
 	return G2Anim_SegmentHasActiveChannels(&instance->anim, 0, 0x700);
 }
 
-struct _MonsterAnim* MON_GetAnim(struct _Instance* instance, char* animList, int index)
+struct _MonsterAnim* MON_GetAnim(struct _Instance* instance, char* animList, int index)  // Matching - 100%
 {
 	int whichAnim;
 	struct _MonsterAttributes* mv;  // not from SYMDUMP
