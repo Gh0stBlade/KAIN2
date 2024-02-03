@@ -2358,7 +2358,7 @@ void MORPH_SetupInstanceFlags(struct _Instance *instance)
 	}
 }
 
-void MORPH_SetupInstanceListFlags()
+void MORPH_SetupInstanceListFlags()  // Matching - 100%
 {
 	struct _Instance* instance;
 
