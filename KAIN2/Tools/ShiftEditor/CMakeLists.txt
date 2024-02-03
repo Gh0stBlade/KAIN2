@@ -161,7 +161,6 @@ endif()
 add_custom_target("SHIFT_EDITOR_AUTOGEN" ALL COMMAND ${CMAKE_COMMAND} -P ${ROOT_DIR}/CMake/EditorVersion.cmake)
 add_dependencies(${PROJECT_NAME} "SHIFT_EDITOR_AUTOGEN")
 
-get_target_property(_qt5_qmake_location Qt5::qmake IMPORTED_LOCATION)
 execute_process(COMMAND "${_qt5_qmake_location}" -query QT_INSTALL_PREFIX RESULT_VARIABLE return_code OUTPUT_VARIABLE qt5_install_prefix OUTPUT_STRIP_TRAILING_WHITESPACE)
 set(WINDEPLOYQT_EXECUTABLE "${qt5_install_prefix}/bin/windeployqt.exe")
 set(QT_ENV "${qt5_install_prefix}/bin/qtenv2.bat")
