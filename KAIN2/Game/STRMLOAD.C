@@ -523,8 +523,8 @@ void LOAD_ChangeDirectory(char *name)
 	sprintf(&currentEntry->loadEntry.fileName[0], "dir %s", name);
 }
 
-void LOAD_AbortDirectoryChange(char *name)
-{ 
+void LOAD_AbortDirectoryChange(char* name)  // Matching - 100%
+{
 	struct _LoadQueueEntry* entry;
 	struct _LoadQueueEntry* prev;
 	long hash;
@@ -532,7 +532,7 @@ void LOAD_AbortDirectoryChange(char *name)
 	if (loadHead != NULL)
 	{
 		hash = LOAD_HashUnit(name);
-		prev = loadHead->next;
+		prev = loadHead;
 		entry = prev->next;
 
 		while (entry != NULL)
