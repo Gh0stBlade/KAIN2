@@ -3061,7 +3061,7 @@ void MORPH_GetComponentsForTrackingPoint(struct _TFace* face, struct Level* leve
 	}
 }
 
-void MORPH_AveragePoint(struct _SVector* start, struct _SVector* end, int interp, struct _SVector* out)
+void MORPH_AveragePoint(struct _SVector* start, struct _SVector* end, int interp, struct _SVector* out)  // Matching - 100%
 {
 	if (interp >= 0)
 	{
