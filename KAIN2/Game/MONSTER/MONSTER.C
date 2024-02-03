@@ -943,17 +943,22 @@ void MON_Combat(struct _Instance *instance)
 					UNIMPLEMENTED();
 }
 
-void MON_ProjectileEntry(struct _Instance* instance)//Matching - 73.41%
+void MON_ProjectileEntry(struct _Instance* instance)  // Matching - 100%
 {
 	struct _MonsterVars* mv;
 	struct _MonsterAttributes* ma;
 	struct _MonsterMissile* missileDef;
 
 	mv = (struct _MonsterVars*)instance->extraData;
-	
+
 	ma = (struct _MonsterAttributes*)instance->data;
 
 	missileDef = &ma->missileList[mv->subAttr->combatAttributes->missileAttack];
+
+	do
+	{
+
+	} while (FALSE);  // garbage code for reordering
 
 	MON_PlayAnimFromList(instance, missileDef->animList, 0, 1);
 
