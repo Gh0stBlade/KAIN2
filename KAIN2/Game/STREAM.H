@@ -37,7 +37,7 @@ struct evControlInitHangData
 	int frames; // size=0, offset=8
 };
 
-struct evPositionData // hashcode: 0x853C21E0 (dec: -2059656736)
+struct evPositionData 
 {
 	short x; // size=0, offset=0
 	short y; // size=0, offset=2
@@ -45,30 +45,41 @@ struct evPositionData // hashcode: 0x853C21E0 (dec: -2059656736)
 	short pad; // size=0, offset=6
 };
 
-struct _VMOffset {
+struct _VMOffset 
+{
 	short dx; // size=0, offset=0
 	short dy; // size=0, offset=2
 	short dz; // size=0, offset=4
 };
-struct _VMColorOffset {
+
+struct _VMColorOffset 
+{
 	char dr; // size=0, offset=0
 	char dg; // size=0, offset=1
 	char db; // size=0, offset=2
 };
-struct _VMInterpolated {
+
+struct _VMInterpolated 
+{
 	short tvIdx; // size=0, offset=0
 	short startIdx; // size=0, offset=2
 	short endIdx; // size=0, offset=4
 	short time; // size=0, offset=6
 };
-struct _VMOffsetTable {
+
+struct _VMOffsetTable 
+{
 	long numVMOffsets; // size=0, offset=0
-	union {
+	union 
+	{
 		struct _VMOffset moveOffsets; // size=6, offset=0
 		struct _VMColorOffset colorOffsets; // size=3, offset=0
-	} offsets; // size=6, offset=4
+	}
+	offsets; // size=6, offset=4
 };
-struct _VMObject {
+
+struct _VMObject 
+{
 	unsigned short flags; // size=0, offset=0
 	short bspIdx; // size=0, offset=2
 	short materialIdx; // size=0, offset=4
@@ -91,13 +102,13 @@ struct _VMObject {
 
 struct WarpGateLoadInfo
 {
-	int warpgate_in_use; // size=0, offset=0
-	char loading; // size=0, offset=4
-	char blocked; // size=0, offset=5
-	short fadeValue; // size=0, offset=6
-	long curTime; // size=0, offset=8
-	long maxTime; // size=0, offset=12
-	struct _Instance* warpFaceInstance; // size=668, offset=16
+    int warpgate_in_use; // size=0, offset=0
+    char loading; // size=0, offset=4
+    char blocked; // size=0, offset=5
+    short fadeValue; // size=0, offset=6
+    long curTime; // size=0, offset=8
+    long maxTime; // size=0, offset=12
+    struct _Instance* warpFaceInstance; // size=668, offset=16
 };
 
 struct WarpRoom 
@@ -117,7 +128,7 @@ struct _SFXMkr
 	unsigned char* soundData; // size=0, offset=0
 	long uniqueID; // size=0, offset=4
 	struct SoundInstance sfxTbl[4]; // size=12, offset=8
-	_Position pos; // size=6, offset=20
+	struct _Position pos; // size=6, offset=20
 	short pad; // size=0, offset=26
 	long livesInOnePlace; // size=0, offset=28
 	long inSpectral; // size=0, offset=32
@@ -138,24 +149,29 @@ struct _BGObject
 
 struct LightGroup 
 {
+	//struct MATRIX lightMatrix; // size=32, offset=0
 	MATRIX lightMatrix; // size=32, offset=0
+	//struct MATRIX colorMatrix; // size=32, offset=32
 	MATRIX colorMatrix; // size=32, offset=32
 };
+
 struct LightList 
 {
+	//struct CVECTOR ambient; // size=4, offset=0
 	CVECTOR ambient; // size=4, offset=0
 	long numLightGroups; // size=0, offset=4
 	struct LightGroup* lightGroupList; // size=64, offset=8
 };
 
-struct _HotSpot {
+struct _HotSpot 
+{
 	short x; // size=0, offset=0
 	short y; // size=0, offset=2
 	short z; // size=0, offset=4
 	short id; // size=0, offset=6
 };
 
-struct Level // hashcode: 0x012B0198 (dec: 19595672)
+struct Level 
 {
 	struct _Terrain* terrain; // size=84, offset=0
 	struct LightList* lightList; // size=12, offset=4
@@ -247,7 +263,7 @@ struct Level // hashcode: 0x012B0198 (dec: 19595672)
 	struct LightGroup* razielSpectralLightGroup; // size=64, offset=388
 };
 
-struct _StreamUnit // hashcode: 0xAC366E40 (dec: -1405718976)
+struct _StreamUnit 
 {
 	long StreamUnitID; // size=0, offset=0
 	short used; // size=0, offset=4
@@ -267,7 +283,7 @@ struct _StreamUnit // hashcode: 0xAC366E40 (dec: -1405718976)
 	short pad; // size=0, offset=62
 };
 
-struct StreamUnitPortal // hashcode: 0x7C52D8D9 (dec: 2085804249)
+struct StreamUnitPortal 
 {
 	char tolevelname[16]; // size=16, offset=0
 	long MSignalID; // size=0, offset=16
@@ -285,12 +301,14 @@ struct StreamUnitPortal // hashcode: 0x7C52D8D9 (dec: 2085804249)
 	struct _SVector t2[3]; // size=24, offset=68
 };
 
-struct _BVertex {
+struct _BVertex 
+{
 	short x; // size=0, offset=0
 	short y; // size=0, offset=2
 	short z; // size=0, offset=4
 	short pad; // size=0, offset=6
 };
+
 struct _BFace 
 {
 	short v0; // size=0, offset=0
@@ -300,7 +318,7 @@ struct _BFace
 	struct TextureFT3* texture; // size=12, offset=8
 };
 
-struct STracker // hashcode: 0xAED5E069 (dec: -1361715095)
+struct STracker 
 {
 	struct _StreamUnit StreamList[16]; // size=1024, offset=0
 };
