@@ -9,10 +9,6 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
-set (CMAKE_PREFIX_PATH "C:\\Qt\\5.15.2\\msvc2019\\")
-
-find_package(Qt5 COMPONENTS Widgets Gui Core REQUIRED)
-
 #Disable MinSizeRel and RelWithDebInfo add Final.
 #set(CMAKE_CONFIGURATION_TYPES "Debug;Release;Final")
 
