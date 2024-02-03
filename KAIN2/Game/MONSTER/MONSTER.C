@@ -182,12 +182,18 @@ void MON_Birth(struct _Instance* instance)  // Matching - 100%
 	MON_SwitchState(instance, MONSTER_STATE_IDLE);
 }
 
-void MON_ParryEntry(struct _Instance* instance)//Matching - 84.60%
+void MON_ParryEntry(struct _Instance* instance)  // Matching - 100%
 {
 	struct _MonsterVars* mv;
+
 	mv = (struct _MonsterVars*)instance->extraData;
 
 	MON_PlayAnim(instance, MONSTER_ANIM_JUMPRIGHT, 1);
+
+	do
+	{
+
+	} while (FALSE);  // garbage code for reordering
 
 	MON_TurnToPosition(instance, &mv->enemy->instance->position, 4096);
 }
