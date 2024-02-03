@@ -2485,119 +2485,114 @@ void MORPH_UpdateTimeMult()  // Matching - 100%
 	}
 }
 
-void MORPH_UpdateNormals(struct Level* BaseLevel)//Matching - 93.33%
+void MORPH_UpdateNormals(struct Level* BaseLevel)  // Matching - 100%
 {
-	SVECTOR realDiff; // stack offset -32
-	struct _Position oldPos; // stack offset -24
-	struct _TFace* face; // $v1
-	long faceCount; // $a2
-	struct _TVertex* v; // $a1
-	struct _MorphVertex* mv; // $a3
-	struct _MorphColor* mc; // $a0
-	short h1; // $v1
-	short* morphNormals; // $a1
-	struct _TVertex* endv; // $a2
-	struct _BSPNode* node; // $v1
-	struct _BSPLeaf* leaf; // $a1
-	struct _Sphere_noSq hsphere; // stack offset -32
-	struct _BoundingBox hbox; // stack offset -24
-	struct _Terrain* terrain; // $a0
-	long curTree; // $t0
-	struct _Instance* instance; // $s0
-	struct Intro* intro;
+	struct _TFace* face;
+	long faceCount;
+	struct _TVertex* v;
+	struct _MorphVertex* mv;
+	struct _MorphColor* mc;
+	short h1;
+	short* morphNormals;
 
 	morphNormals = BaseLevel->terrain->morphNormalIdx;
-	faceCount = BaseLevel->terrain->numFaces;
 	face = BaseLevel->terrain->faceList;
-	while (faceCount > 0)
+
+	for (faceCount = BaseLevel->terrain->numFaces; faceCount > 0; faceCount--, face++)
 	{
 		h1 = face->normal;
 		face->normal = *morphNormals;
 		*morphNormals++ = h1;
-		face++;
-		faceCount--;
 	}
 
-	terrain = BaseLevel->terrain;
-	mv = terrain->MorphDiffList;
-
-	if (BaseLevel->terrain->MorphDiffList != NULL)
 	{
-		for (; mv->vindex >= 0; mv++)
+		struct _BSPNode* node;
+		struct _BSPLeaf* leaf;
+		struct _Terrain* terrain;
+		long curTree;
+
+		mv = BaseLevel->terrain->MorphDiffList;
+
+		if (mv != NULL)
 		{
-			v = &BaseLevel->terrain->vertexList[mv->vindex];
-
-			v->vertex.x = mv->hx + mv->x;
-			v->vertex.y = mv->hy + mv->y;
-			v->vertex.z = mv->hz + mv->z;
-		}
-	}
-	mc = BaseLevel->terrain->MorphColorList;
-
-	if (mc)
-	{
-		endv = &BaseLevel->terrain->vertexList[BaseLevel->terrain->numVertices];
-
-		v = BaseLevel->terrain->vertexList;
-
-		while (v < endv)
-		{
-			v->r0 = ((unsigned short)mc->morphColor15 & 0x1F) << 3;
-			v->g0 = ((unsigned short)mc->morphColor15 >> 2) & 0xF8;
-			v->b0 = ((unsigned short)mc->morphColor15 >> 7) & 0xF8;
-
-			v++;
-			mc++;
-		}
-	}
-
-	for (curTree = 0; curTree < BaseLevel->terrain->numBSPTrees; curTree++)
-	{
-		node = BaseLevel->terrain->BSPTreeArray[curTree].bspRoot;
-
-		while (node < (struct _BSPNode*)BaseLevel->terrain->BSPTreeArray[curTree].startLeaves)
-		{
-			hsphere = node->sphere;
-			node->sphere = node->spectralSphere;
-			node->spectralSphere = hsphere;
-			node++;
-		}
-
-		leaf = BaseLevel->terrain->BSPTreeArray[curTree].startLeaves;
-		while (leaf < BaseLevel->terrain->BSPTreeArray[curTree].endLeaves)
-		{
-			hsphere = leaf->sphere;
-			leaf->sphere = leaf->spectralSphere;
-			leaf->spectralSphere = hsphere;
-
-			hbox = leaf->spectralBox;
-			leaf->box = leaf->spectralBox;
-			leaf->spectralBox = hbox;
-			leaf++;
-		}
-	}
-
-	instance = gameTrackerX.instanceList->first;
-
-	for (; instance; instance = instance->next)
-	{
-		intro = instance->intro;
-
-		if (intro && (*(unsigned int*)&intro->spectralPosition.x || intro->spectralPosition.z) && (!(instance->flags2 & 0x8)))
-		{
-			oldPos = instance->position;
-
-			instance->position.x = intro->position.x + intro->spectralPosition.x;
-			instance->position.y = intro->position.y + intro->spectralPosition.y;
-			instance->position.z = intro->position.z + intro->spectralPosition.z;
-
-			realDiff.vx = instance->position.x - oldPos.x;
-			realDiff.vy = instance->position.y - oldPos.y;
-			realDiff.vz = instance->position.z - oldPos.z;
-
-			if (realDiff.vx + realDiff.vy + realDiff.vz)
+			for (; mv->vindex >= 0; mv++)
 			{
-				COLLIDE_UpdateAllTransforms(instance, &realDiff);
+				v = &BaseLevel->terrain->vertexList[mv->vindex];
+
+				v->vertex.x = mv->hx + mv->x;
+				v->vertex.y = mv->hy + mv->y;
+				v->vertex.z = mv->hz + mv->z;
+			}
+		}
+
+		mc = BaseLevel->terrain->MorphColorList;
+
+		if (mc != NULL)
+		{
+			struct _TVertex* endv;
+
+			for (endv = &BaseLevel->terrain->vertexList[BaseLevel->terrain->numVertices], v = BaseLevel->terrain->vertexList; v < endv; v++, mc++)
+			{
+				v->r0 = ((unsigned short)mc->morphColor15 & 31) << 3;
+				v->g0 = ((unsigned short)mc->morphColor15 >> 2) & 248;
+				v->b0 = ((unsigned short)mc->morphColor15 >> 7) & 248;
+			}
+		}
+
+		terrain = BaseLevel->terrain;
+
+		for (curTree = 0; curTree < terrain->numBSPTrees; curTree++)
+		{
+			struct _Sphere_noSq hsphere;
+			struct _BoundingBox hbox;
+
+			for (node = terrain->BSPTreeArray[curTree].bspRoot; (struct _BSPLeaf*)node < terrain->BSPTreeArray[curTree].startLeaves; node++)
+			{
+				hsphere = node->sphere;
+				node->sphere = node->spectralSphere;
+				node->spectralSphere = hsphere;
+			}
+
+			for (leaf = terrain->BSPTreeArray[curTree].startLeaves; leaf < terrain->BSPTreeArray[curTree].endLeaves; leaf++)
+			{
+				hsphere = leaf->sphere;
+				leaf->sphere = leaf->spectralSphere;
+				leaf->spectralSphere = hsphere;
+				hbox = leaf->box;
+				leaf->box = leaf->spectralBox;
+				leaf->spectralBox = hbox;
+			}
+		}
+
+		{
+			struct _Instance* instance;
+
+			for (instance = gameTrackerX.instanceList->first; instance != NULL; instance = instance->next)
+			{
+				struct Intro* intro;  // not from SYMDUMP
+
+				intro = instance->intro;
+
+				if (intro && (intro->spectralPosition.x || intro->spectralPosition.y || intro->spectralPosition.z) && (!(instance->flags2 & 0x8)))
+				{
+					SVECTOR realDiff;
+					struct _Position oldPos;
+
+					oldPos = instance->position;
+
+					instance->position.x = intro->position.x + intro->spectralPosition.x;
+					instance->position.y = intro->position.y + intro->spectralPosition.y;
+					instance->position.z = intro->position.z + intro->spectralPosition.z;
+
+					realDiff.vx = instance->position.x - oldPos.x;
+					realDiff.vy = instance->position.y - oldPos.y;
+					realDiff.vz = instance->position.z - oldPos.z;
+
+					if (realDiff.vx + realDiff.vy + realDiff.vz)
+					{
+						COLLIDE_UpdateAllTransforms(instance, &realDiff);
+					}
+				}
 			}
 		}
 	}
