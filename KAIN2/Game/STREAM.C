@@ -3158,28 +3158,37 @@ void MORPH_UpdateTrackingPoint(struct _TFace* face, struct Level* level)  // Mat
 	}
 }
 
-void MORPH_ToggleMorph()
+void MORPH_ToggleMorph()  // Matching - 100%
 {
 	struct Level* level;
 	int i;
+	struct _StreamUnit* temp;  // not from SYMDUMP
 
 	SOUND_PlaneShift(gameTrackerX.gameData.asmData.MorphType == 0);
 
 	INSTANCE_Broadcast(NULL, 10, 0x1000020, gameTrackerX.gameData.asmData.MorphType);
 
 	MORPH_GetComponentsForTrackingPoint(gameTrackerX.playerInstance->tface, (struct Level*)gameTrackerX.playerInstance->tfaceLevel);
-	
+
 	MORPH_UpdateTrackingPoint(gameTrackerX.playerInstance->tface, (struct Level*)gameTrackerX.playerInstance->tfaceLevel);
+
+	do
+	{
+
+	} while (FALSE); // garbage code for reordering
 
 	gameTrackerX.gameData.asmData.MorphTime = 0;
 
 	SOUND_Play3dSound(&gameTrackerX.playerInstance->position, 26, -350, 127, 32767);
 
-	for (i = 0; i < 16; i++)
+	temp = StreamTracker.StreamList;
+
+	for (i = 16; i > 0; i--, temp++)
 	{
-		if (StreamTracker.StreamList[i].used == 2)
+		if (temp->used == 2)
 		{
-			level = StreamTracker.StreamList[i].level;
+
+			level = temp->level;
 
 			if (gameTrackerX.gameData.asmData.MorphType == 1)
 			{
@@ -3187,7 +3196,7 @@ void MORPH_ToggleMorph()
 				{
 					level->materialSignal->flags |= 0x1;
 
-					SIGNAL_HandleSignal(gameTrackerX.playerInstance, &level->materialSignal->signalList[0], 8);
+					SIGNAL_HandleSignal(gameTrackerX.playerInstance, level->materialSignal->signalList, 0);
 					EVENT_AddSignalToReset(level->materialSignal);
 				}
 			}
@@ -3197,7 +3206,7 @@ void MORPH_ToggleMorph()
 				{
 					level->spectralSignal->flags |= 0x1;
 
-					SIGNAL_HandleSignal(gameTrackerX.playerInstance, &level->spectralSignal->signalList[0], 8);
+					SIGNAL_HandleSignal(gameTrackerX.playerInstance, level->spectralSignal->signalList, 0);
 					EVENT_AddSignalToReset(level->spectralSignal);
 				}
 			}
