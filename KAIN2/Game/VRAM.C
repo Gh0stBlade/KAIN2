@@ -69,7 +69,7 @@ void VRAM_EnableTerrainArea()
 	VRAM_InsertFreeVram(SCREEN_WIDTH, 0, SCREEN_WIDTH, SCREEN_HEIGHT + 16, 0);
 }
 
-void VRAM_DisableTerrainArea()
+void VRAM_DisableTerrainArea()  // Matching - 100%
 {
 	VRAM_DeleteFreeVram(SCREEN_WIDTH, 0, SCREEN_WIDTH, SCREEN_HEIGHT + 16);
 }
