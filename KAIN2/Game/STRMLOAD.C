@@ -121,7 +121,7 @@ struct _LoadQueueEntry* STREAM_AddQueueEntryToTail()
 	return entry;
 }
 
-struct _LoadQueueEntry* STREAM_AddQueueEntryToHead()
+struct _LoadQueueEntry* STREAM_AddQueueEntryToHead()  // Matching - 100%
 {
 	struct _LoadQueueEntry* entry;
 
