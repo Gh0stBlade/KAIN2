@@ -155,7 +155,7 @@ struct _LoadQueueEntry* STREAM_AddQueueEntryToHead()
 	return entry;
 }
 
-int STREAM_IsCdBusy(long* numberInQueue)//Matching - 98.75%
+int STREAM_IsCdBusy(long* numberInQueue)  // Matching - 100%
 { 
 	if (numberInQueue != NULL)
 	{
