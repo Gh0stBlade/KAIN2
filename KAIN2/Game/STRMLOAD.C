@@ -165,11 +165,12 @@ int STREAM_IsCdBusy(long* numberInQueue)//Matching - 98.75%
 	return numLoads;
 }
 
-int STREAM_PollLoadQueue()
-{ 
+int STREAM_PollLoadQueue()  // Matching - 98.77%
+{
 	struct _LoadQueueEntry* queueEntry;
 	long size;
 	struct _LoadQueueEntry* newQueue;
+
 	LOAD_ProcessReadQueue();
 
 	if (loadHead != NULL)
@@ -180,51 +181,22 @@ int STREAM_PollLoadQueue()
 		{
 			FONT_Print("%s status %d\n", &queueEntry->loadEntry.fileName[0], queueEntry->status);
 		}
-		
-		if (!(gameTrackerX.gameFlags & 0x800) || (queueEntry->status != 5 && queueEntry->status != 8 && queueEntry->status != 10))
+
+		if (!(gameTrackerX.gameFlags & 0x800) || (queueEntry->status != 1 && queueEntry->status != 5 && queueEntry->status != 8 && queueEntry->status != 10))
 		{
 			switch (queueEntry->status)
 			{
-			case 1:
-
-				queueEntry->endLoadTime = TIMER_GetTimeMS();
-				LOAD_NonBlockingReadFile(&queueEntry->loadEntry);
-
-				if (LOAD_ChangeDirectoryFlag() != 0)
-				{
-					newQueue = STREAM_AddQueueEntryToHead();
-					sprintf(&newQueue->loadEntry.fileName[0], "(%d)", queueEntry->loadEntry.dirHash);
-					newQueue->loadEntry.fileHash = 0;
-					newQueue->status = 10;
-					newQueue->loadEntry.dirHash = 0;
-				}
-				else
-				{
-					queueEntry->status = 2;
-
-					if (queueEntry->mempackUsed != 0)
-					{
-						MEMPACK_SetMemoryBeingStreamed((char*)queueEntry->loadEntry.loadAddr);
-					}
-
-					if (queueEntry->loadEntry.retPointer != NULL)
-					{
-						queueEntry->loadEntry.retPointer[0] = queueEntry->loadEntry.loadAddr;
-					}
-				}
-
-				break;
 			case 2:
 
 				if (LOAD_IsFileLoading() == 0)
 				{
 					queueEntry->endLoadTime = TIMER_GetTimeMS() - queueEntry->endLoadTime;
 
-					if (queueEntry->relocateBinary != 0)
+					if ((unsigned char)queueEntry->relocateBinary != 0)
 					{
 						size = LOAD_RelocBinaryData(queueEntry->loadEntry.loadAddr, queueEntry->loadEntry.loadSize);
 
-						if (queueEntry->mempackUsed != 0)
+						if ((unsigned char)queueEntry->mempackUsed != 0)
 						{
 							MEMPACK_Return((char*)queueEntry->loadEntry.loadAddr, size);
 						}
@@ -239,7 +211,7 @@ int STREAM_PollLoadQueue()
 					else
 					{
 						queueEntry->status = 4;
-						if (queueEntry->mempackUsed != 0)
+						if ((unsigned char)queueEntry->mempackUsed != 0)
 						{
 							MEMPACK_SetMemoryDoneStreamed((char*)queueEntry->loadEntry.loadAddr);
 						}
@@ -247,55 +219,15 @@ int STREAM_PollLoadQueue()
 						STREAM_RemoveQueueHead();
 					}
 				}
-				
-				break;
-			case 5:
-
-				queueEntry->loadEntry.loadAddr = (int*)LOAD_InitBuffers();
-				queueEntry->endLoadTime = TIMER_GetTimeMS();
-
-				LOAD_CD_ReadPartOfFile(&queueEntry->loadEntry);
-
-				if (LOAD_ChangeDirectoryFlag() != 0)
-				{
-					newQueue = STREAM_AddQueueEntryToHead();
-					sprintf(&newQueue->loadEntry.fileName[0], "(%d)", queueEntry->loadEntry.dirHash);
-					newQueue->loadEntry.fileHash = 0;
-					newQueue->status = 10;
-					newQueue->loadEntry.dirHash = queueEntry->loadEntry.dirHash;
-					LOAD_CleanUpBuffers();
-				}
-				else
-				{
-					queueEntry->status = 6;
-					queueEntry->loadEntry.posInFile = 0;
-				}
-
-				break;
-			case 6:
-
-				if (LOAD_IsFileLoading() == 0)
-				{
-					queueEntry->endLoadTime = TIMER_GetTimeMS() - queueEntry->endLoadTime;
-					queueEntry->status = 4;
-					
-					STREAM_RemoveQueueHead();
-					LOAD_CleanUpBuffers();
-
-					if (queueEntry->loadEntry.retFunc == VRAM_TransferBufferToVram)
-					{
-						VRAM_LoadReturn(queueEntry->loadEntry.loadAddr, queueEntry->loadEntry.retData, queueEntry->loadEntry.retData2);
-					}
-				}
 
 				break;
 			case 7:
-				
+
 				queueEntry->status = 4;
-				
+
 				STREAM_RemoveQueueHead();
-				
-				if (queueEntry->mempackUsed != 0)
+
+				if ((unsigned char)queueEntry->mempackUsed != 0)
 				{
 					MEMPACK_SetMemoryDoneStreamed((char*)queueEntry->loadEntry.loadAddr);
 				}
@@ -312,6 +244,78 @@ int STREAM_PollLoadQueue()
 				STREAM_NextLoadAsNormal();
 
 				break;
+			case 1:
+
+				queueEntry->endLoadTime = TIMER_GetTimeMS();
+				LOAD_NonBlockingReadFile(&queueEntry->loadEntry);
+
+				if (LOAD_ChangeDirectoryFlag() != 0)
+				{
+					newQueue = STREAM_AddQueueEntryToHead();
+					sprintf(&newQueue->loadEntry.fileName[0], "(%d)", queueEntry->loadEntry.dirHash);
+					newQueue->loadEntry.dirHash = queueEntry->loadEntry.dirHash;
+					newQueue->loadEntry.fileHash = 0;
+					newQueue->status = 10;
+				}
+				else
+				{
+					queueEntry->status = 2;
+
+					if ((unsigned char)queueEntry->mempackUsed != 0)
+					{
+						MEMPACK_SetMemoryBeingStreamed((char*)queueEntry->loadEntry.loadAddr);
+					}
+
+					if (queueEntry->loadEntry.retPointer != NULL)
+					{
+						queueEntry->loadEntry.retPointer[0] = queueEntry->loadEntry.loadAddr;
+					}
+				}
+
+				break;
+
+			case 5:
+
+				queueEntry->loadEntry.loadAddr = (int*)LOAD_InitBuffers();
+				queueEntry->endLoadTime = TIMER_GetTimeMS();
+
+				LOAD_CD_ReadPartOfFile(&queueEntry->loadEntry);
+
+				if (LOAD_ChangeDirectoryFlag() != 0)
+				{
+					newQueue = STREAM_AddQueueEntryToHead();
+					sprintf(&newQueue->loadEntry.fileName[0], "(%d)", queueEntry->loadEntry.dirHash);
+					newQueue->loadEntry.dirHash = queueEntry->loadEntry.dirHash;
+					newQueue->loadEntry.fileHash = 0;
+					newQueue->status = 10;
+
+					LOAD_CleanUpBuffers();
+				}
+				else
+				{
+					queueEntry->status = 6;
+					queueEntry->loadEntry.posInFile = 0;
+				}
+
+				break;
+			case 6:
+
+				if (LOAD_IsFileLoading() == 0)
+				{
+					queueEntry->endLoadTime = TIMER_GetTimeMS() - queueEntry->endLoadTime;
+					queueEntry->status = 4;
+
+					STREAM_RemoveQueueHead();
+					LOAD_CleanUpBuffers();
+
+					if (queueEntry->loadEntry.retFunc == (void*)VRAM_TransferBufferToVram)
+					{
+						VRAM_LoadReturn(queueEntry->loadEntry.loadAddr, queueEntry->loadEntry.retData, queueEntry->loadEntry.retData2);
+					}
+				}
+
+				break;
+
 			case 8:
 				queueEntry->status = 9;
 				VOICEXA_Play(queueEntry->loadEntry.fileHash, 0);
@@ -323,7 +327,7 @@ int STREAM_PollLoadQueue()
 					LOAD_InitCdStreamMode();
 					STREAM_RemoveQueueHead();
 				}
-				
+
 				break;
 			case 10:
 
@@ -407,7 +411,7 @@ struct _LoadQueueEntry* STREAM_SetUpQueueEntry(char *fileName, void *retFunc, vo
 	return currentEntry;
 }
 
-void STREAM_QueueNonblockingLoads(char *fileName, unsigned char memType, void *retFunc, void *retData, void *retData2, void **retPointer, long relocateBinary)
+void STREAM_QueueNonblockingLoads(char *fileName, unsigned char memType, void *retFunc, void *retData, void *retData2, void **retPointer, long relocateBinary)  // Matching - 100%
 { 
 	struct _LoadQueueEntry* currentEntry;
 	int fromhead;
@@ -430,7 +434,7 @@ void STREAM_QueueNonblockingLoads(char *fileName, unsigned char memType, void *r
 	}
 }
 
-void LOAD_LoadToAddress(char *fileName, void* loadAddr, long relocateBinary)
+void LOAD_LoadToAddress(char *fileName, void* loadAddr, long relocateBinary)  // Matching - 100%
 {
 	struct _LoadQueueEntry* currentEntry;
 	
@@ -446,27 +450,23 @@ void LOAD_LoadToAddress(char *fileName, void* loadAddr, long relocateBinary)
 }
 
 
-// autogenerated function stub: 
-// void /*$ra*/ LOAD_NonBlockingBinaryLoad(char *fileName /*$a0*/, void *retFunc /*$t0*/, void *retData /*$t1*/, void *retData2 /*$a3*/, void **retPointer /*stack 16*/, int memType /*stack 20*/)
-void LOAD_NonBlockingBinaryLoad(char *fileName, void *retFunc, void *retData, void *retData2, void **retPointer, int memType)
-{ // line 498, offset 0x800602a8
+void LOAD_NonBlockingBinaryLoad(char* fileName, void* retFunc, void* retData, void* retData2, void** retPointer, int memType)  // Matching - 100%
+{
 	STREAM_QueueNonblockingLoads(fileName, memType, retFunc, retData, retData2, retPointer, 1);
 }
 
 
-// autogenerated function stub: 
-// void /*$ra*/ LOAD_NonBlockingFileLoad(char *fileName /*$a0*/, void *retFunc /*$v1*/, void *retData /*$t0*/, void *retData2 /*$a3*/, void **retPointer /*stack 16*/, int memType /*stack 20*/)
-void LOAD_NonBlockingFileLoad(char *fileName, void *retFunc, void *retData, void *retData2, void **retPointer, int memType)
-{ // line 505, offset 0x800602ec
+void LOAD_NonBlockingFileLoad(char* fileName, void* retFunc, void* retData, void* retData2, void** retPointer, int memType)  // Matching - 100%
+{
 	STREAM_QueueNonblockingLoads(fileName, memType, retFunc, retData, retData2, retPointer, 0);
 }
 
-void LOAD_NonBlockingBufferedLoad(char *fileName, void *retFunc, void *retData, void *retData2)
+void LOAD_NonBlockingBufferedLoad(char* fileName, void* retFunc, void* retData, void* retData2)  // Matching - 100%
 {
 	STREAM_QueueNonblockingLoads(fileName, 0, retFunc, retData, retData2, NULL, 0);
 }
 
-int LOAD_IsXAInQueue()
+int LOAD_IsXAInQueue()  // Matching - 100%
 {
 	struct _LoadQueueEntry* entry;
 
@@ -474,7 +474,7 @@ int LOAD_IsXAInQueue()
 
 	while (entry != NULL)
 	{
-		if (entry->status - 8 < 2)
+		if ((unsigned short)(entry->status - 8) < 2U)
 		{
 			return 1;
 		}
@@ -485,7 +485,7 @@ int LOAD_IsXAInQueue()
 	return 0;
 }
 
-void LOAD_PlayXA(int number)
+void LOAD_PlayXA(int number)  // Matching - 100%
 {
 	struct _LoadQueueEntry* currentEntry;
 
@@ -498,7 +498,7 @@ void LOAD_PlayXA(int number)
 	memcpy(currentEntry->loadEntry.fileName, "voice", sizeof("voice"));
 }
 
-long* LOAD_ReadFile(char *fileName, unsigned char memType)
+long* LOAD_ReadFile(char *fileName, unsigned char memType)  // Matching - 100%
 {
 	void *loadAddr;
     
@@ -511,7 +511,7 @@ long* LOAD_ReadFile(char *fileName, unsigned char memType)
 	return (long*)loadAddr;
 }
 
-void LOAD_ChangeDirectory(char *name)
+void LOAD_ChangeDirectory(char *name)  // Matching - 100%
 {
 	struct _LoadQueueEntry* currentEntry;
 
@@ -523,8 +523,8 @@ void LOAD_ChangeDirectory(char *name)
 	sprintf(&currentEntry->loadEntry.fileName[0], "dir %s", name);
 }
 
-void LOAD_AbortDirectoryChange(char *name)
-{ 
+void LOAD_AbortDirectoryChange(char* name)  // Matching - 100%
+{
 	struct _LoadQueueEntry* entry;
 	struct _LoadQueueEntry* prev;
 	long hash;
@@ -532,7 +532,7 @@ void LOAD_AbortDirectoryChange(char *name)
 	if (loadHead != NULL)
 	{
 		hash = LOAD_HashUnit(name);
-		prev = loadHead->next;
+		prev = loadHead;
 		entry = prev->next;
 
 		while (entry != NULL)

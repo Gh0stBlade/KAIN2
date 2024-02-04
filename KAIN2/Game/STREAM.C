@@ -3441,7 +3441,7 @@ int GetPlaneDist(int k, int j, int i, VECTOR* v)//Matching - 100%
 		   (((v->vz >> 12) - (theCamera.core.position.z << 4)) * theCamera.core.vvNormalWorVecMat[k].m[j][2]) ;
 }
 
-void CalcVert(VECTOR *v, VECTOR *v1, VECTOR *v2, int dist1, int dist2, int k, int j)
+void CalcVert(VECTOR *v, VECTOR *v1, VECTOR *v2, int dist1, int dist2, int k, int j)  // Matching - 100%
 { 
 	int diff;
 
@@ -3972,7 +3972,7 @@ void DrawFogRectangle(PSX_RECT* cliprect, struct _PrimPool* primPool, int otzpos
 	}
 }
 
-void STREAM_RenderAdjacantUnit(unsigned long** curOT, struct StreamUnitPortal* curStreamPortal, struct _StreamUnit* toStreamUnit, struct _StreamUnit* mainStreamUnit, PSX_RECT* cliprect)
+void STREAM_RenderAdjacantUnit(unsigned long** curOT, struct StreamUnitPortal* curStreamPortal, struct _StreamUnit* toStreamUnit, struct _StreamUnit* mainStreamUnit, PSX_RECT* cliprect)  // Matching - 99.88%
 {
 	long portalFogColor;
 
@@ -4036,7 +4036,7 @@ void WARPGATE_BlockWarpGateEntrance(struct _StreamUnit *streamUnit, long collide
 			UNIMPLEMENTED();
 }
 
-void WARPGATE_DrawWarpGateRim(struct _StreamUnit* streamUnit, int drawOn)//Matching - 99.77%
+void WARPGATE_DrawWarpGateRim(struct _StreamUnit* streamUnit, int drawOn)  // Matching - 100%
 {
 	struct BSPTree* bspTree;
 
@@ -4203,7 +4203,7 @@ void WARPGATE_RenderWarpUnit(unsigned long** mainOT, struct StreamUnitPortal* cu
 	UNIMPLEMENTED();
 }
 
-void STREAM_DumpNonResidentObjects()
+void STREAM_DumpNonResidentObjects()  // Matching - 100%
 {
 	struct _Instance* instance;
 	struct _Instance* next;
@@ -4213,17 +4213,17 @@ void STREAM_DumpNonResidentObjects()
 
 	while (instance != NULL)
 	{
+		next = instance->next;
 		object = instance->object;
 
 		if (!(object->oflags & 0x2000000))
 		{
-			if (STREAM_GetStreamUnitWithID(instance->birthStreamUnitID) == 0 &&
-				STREAM_IsObjectInAnyUnit(FindObjectInTracker(object)) == 0)
+			if ((STREAM_GetStreamUnitWithID(instance->birthStreamUnitID) == 0) && (STREAM_IsObjectInAnyUnit(FindObjectInTracker(object)) == 0))
 			{
 				INSTANCE_ReallyRemoveInstance(gameTrackerX.instanceList, instance, 0);
 			}
 		}
-		instance = instance->next;
+		instance = next;
 	}
 
 	STREAM_RemoveAllObjectsNotInUse();
