@@ -56,7 +56,7 @@ void STREAM_InitLoader(char *bigFileName, char *voiceFileName)
 	LoadQueue[39].next = NULL;
 }
 
-void STREAM_RemoveQueueHead()
+void STREAM_RemoveQueueHead()  // Matching - 100%
 {
 	struct _LoadQueueEntry* entry = loadHead;
 
