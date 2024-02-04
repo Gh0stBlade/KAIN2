@@ -457,7 +457,7 @@ void LOAD_NonBlockingFileLoad(char* fileName, void* retFunc, void* retData, void
 	STREAM_QueueNonblockingLoads(fileName, memType, retFunc, retData, retData2, retPointer, 0);
 }
 
-void LOAD_NonBlockingBufferedLoad(char *fileName, void *retFunc, void *retData, void *retData2)
+void LOAD_NonBlockingBufferedLoad(char* fileName, void* retFunc, void* retData, void* retData2)  // Matching - 100%
 {
 	STREAM_QueueNonblockingLoads(fileName, 0, retFunc, retData, retData2, NULL, 0);
 }
