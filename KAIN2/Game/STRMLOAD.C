@@ -466,7 +466,7 @@ void LOAD_NonBlockingBufferedLoad(char *fileName, void *retFunc, void *retData, 
 	STREAM_QueueNonblockingLoads(fileName, 0, retFunc, retData, retData2, NULL, 0);
 }
 
-int LOAD_IsXAInQueue()
+int LOAD_IsXAInQueue()  // Matching - 100%
 {
 	struct _LoadQueueEntry* entry;
 
@@ -474,7 +474,7 @@ int LOAD_IsXAInQueue()
 
 	while (entry != NULL)
 	{
-		if (entry->status - 8 < 2)
+		if ((unsigned short)(entry->status - 8) < 2U)
 		{
 			return 1;
 		}
