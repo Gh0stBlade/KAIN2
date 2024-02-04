@@ -74,7 +74,7 @@ void VRAM_DisableTerrainArea()
 	VRAM_DeleteFreeVram(SCREEN_WIDTH, 0, SCREEN_WIDTH, SCREEN_HEIGHT + 16);
 }
 
-int VRAM_ConcatanateMemory(struct _BlockVramEntry* curBlock)
+int VRAM_ConcatanateMemory(struct _BlockVramEntry* curBlock)  // Matching - 100%
 {
 	struct _BlockVramEntry* nextBlock;
 
@@ -84,52 +84,47 @@ int VRAM_ConcatanateMemory(struct _BlockVramEntry* curBlock)
 
 		while (nextBlock != NULL)
 		{
-			if (curBlock->x == nextBlock->x && curBlock->w == nextBlock->w &&
-				(curBlock->y >> 8) == (nextBlock->y >> 8))
+			if ((curBlock->x == nextBlock->x) && ((curBlock->w == nextBlock->w)))
 			{
-				if ((curBlock->y + curBlock->h) == nextBlock->y)
+				if ((curBlock->y >> 8) == (nextBlock->y >> 8))
 				{
-					curBlock->h += nextBlock->h;
-					VRAM_DeleteFreeBlock(nextBlock);
-					nextBlock->flags = 0;
-					return 1;
-				}
-				else
-				{
-					if ((nextBlock->y + nextBlock->h) == nextBlock->y)
+					if ((curBlock->y + curBlock->h) == nextBlock->y)
 					{
-						nextBlock->h += curBlock->h;
-					}
-
-					VRAM_DeleteFreeBlock(curBlock);
-					curBlock->flags = 0;
-					return 1;
-				}
-			}
-			else
-			{
-				if (curBlock->y == nextBlock->y && curBlock->h == nextBlock->h)
-				{
-					if ((curBlock->x + curBlock->w) == nextBlock->x &&
-						!(curBlock->x & 0x3F) || curBlock->w + nextBlock->w < 65)
-					{
-						curBlock->w += nextBlock->w;
+						curBlock->h += nextBlock->h;
 						VRAM_DeleteFreeBlock(nextBlock);
 						nextBlock->flags = 0;
 						return 1;
 					}
 
-					if ((nextBlock->x + nextBlock->w) == curBlock->x)
+					if ((nextBlock->y + nextBlock->h) == curBlock->y)
 					{
-						if (!(nextBlock->x & 0x3F) || curBlock->w + nextBlock->w < 65)
-						{
-							curBlock->w += nextBlock->w;
-							VRAM_DeleteFreeBlock(curBlock);
-							curBlock->flags = 0;
-							return 1;
-						}
+						nextBlock->h += curBlock->h;
+						VRAM_DeleteFreeBlock(curBlock);
+						curBlock->flags = 0;
+						return 1;
 					}
+
 				}
+
+			}
+			if ((curBlock->y == nextBlock->y) && (curBlock->h == nextBlock->h))
+			{
+				if (((curBlock->x + curBlock->w) == nextBlock->x) && (!(curBlock->x & 0x3F) || curBlock->w + nextBlock->w < 65))
+				{
+					curBlock->w += nextBlock->w;
+					VRAM_DeleteFreeBlock(nextBlock);
+					nextBlock->flags = 0;
+					return 1;
+				}
+
+				if (((nextBlock->x + nextBlock->w) == curBlock->x) && (!(nextBlock->x & 0x3F) || curBlock->w + nextBlock->w < 65))
+				{
+					nextBlock->w = nextBlock->w + curBlock->w;
+					VRAM_DeleteFreeBlock(curBlock);
+					curBlock->flags = 0;
+					return 1;
+				}
+
 			}
 			nextBlock = nextBlock->next;
 		}
