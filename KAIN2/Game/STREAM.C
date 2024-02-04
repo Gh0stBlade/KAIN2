@@ -3972,7 +3972,7 @@ void DrawFogRectangle(PSX_RECT* cliprect, struct _PrimPool* primPool, int otzpos
 	}
 }
 
-void STREAM_RenderAdjacantUnit(unsigned long** curOT, struct StreamUnitPortal* curStreamPortal, struct _StreamUnit* toStreamUnit, struct _StreamUnit* mainStreamUnit, PSX_RECT* cliprect)
+void STREAM_RenderAdjacantUnit(unsigned long** curOT, struct StreamUnitPortal* curStreamPortal, struct _StreamUnit* toStreamUnit, struct _StreamUnit* mainStreamUnit, PSX_RECT* cliprect)  // Matching - 99.88%
 {
 	long portalFogColor;
 
