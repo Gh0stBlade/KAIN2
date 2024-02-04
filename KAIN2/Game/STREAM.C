@@ -4203,7 +4203,7 @@ void WARPGATE_RenderWarpUnit(unsigned long** mainOT, struct StreamUnitPortal* cu
 	UNIMPLEMENTED();
 }
 
-void STREAM_DumpNonResidentObjects()
+void STREAM_DumpNonResidentObjects()  // Matching - 100%
 {
 	struct _Instance* instance;
 	struct _Instance* next;
@@ -4213,17 +4213,17 @@ void STREAM_DumpNonResidentObjects()
 
 	while (instance != NULL)
 	{
+		next = instance->next;
 		object = instance->object;
 
 		if (!(object->oflags & 0x2000000))
 		{
-			if (STREAM_GetStreamUnitWithID(instance->birthStreamUnitID) == 0 &&
-				STREAM_IsObjectInAnyUnit(FindObjectInTracker(object)) == 0)
+			if ((STREAM_GetStreamUnitWithID(instance->birthStreamUnitID) == 0) && (STREAM_IsObjectInAnyUnit(FindObjectInTracker(object)) == 0))
 			{
 				INSTANCE_ReallyRemoveInstance(gameTrackerX.instanceList, instance, 0);
 			}
 		}
-		instance = instance->next;
+		instance = next;
 	}
 
 	STREAM_RemoveAllObjectsNotInUse();
