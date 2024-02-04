@@ -137,7 +137,7 @@ void* MONTABLE_GetDamageEffectFunc(struct _Instance* instance)
 	return (void*)DefaultFunctionTable.damageEffectFunc;
 }
 
-void* MONTABLE_GetInitFunc(struct _Instance* instance)
+void* MONTABLE_GetInitFunc(struct _Instance* instance)  // Matching - 100%
 {
 	struct _MonsterFunctionTable* ft;
 
