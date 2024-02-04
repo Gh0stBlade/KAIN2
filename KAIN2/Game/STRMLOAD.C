@@ -511,7 +511,7 @@ long* LOAD_ReadFile(char *fileName, unsigned char memType)
 	return (long*)loadAddr;
 }
 
-void LOAD_ChangeDirectory(char *name)
+void LOAD_ChangeDirectory(char *name)  // Matching - 100%
 {
 	struct _LoadQueueEntry* currentEntry;
 
