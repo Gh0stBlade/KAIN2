@@ -26,7 +26,7 @@ void VRAM_PrintVramBlock(struct _BlockVramEntry* vblock)
 {
 }
 
-void VRAM_PrintInfo()
+void VRAM_PrintInfo()  // Matching - 100%
 {
 	struct _BlockVramEntry* vblock;
 
