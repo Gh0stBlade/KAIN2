@@ -5,7 +5,7 @@
 long vmRealClock; // offset 0x800d106c
 long vmClock; // offset 0x800d1070
 
-void VM_Tick(long time)
+void VM_Tick(long time)  // Matching - 100%
 {
 	vmRealClock += time;
 	vmClock = vmRealClock >> 8;
