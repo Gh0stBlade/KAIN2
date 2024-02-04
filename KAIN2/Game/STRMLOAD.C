@@ -498,7 +498,7 @@ void LOAD_PlayXA(int number)
 	memcpy(currentEntry->loadEntry.fileName, "voice", sizeof("voice"));
 }
 
-long* LOAD_ReadFile(char *fileName, unsigned char memType)
+long* LOAD_ReadFile(char *fileName, unsigned char memType)  // Matching - 100%
 {
 	void *loadAddr;
     
