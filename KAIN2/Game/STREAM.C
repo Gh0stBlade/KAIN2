@@ -4036,7 +4036,7 @@ void WARPGATE_BlockWarpGateEntrance(struct _StreamUnit *streamUnit, long collide
 			UNIMPLEMENTED();
 }
 
-void WARPGATE_DrawWarpGateRim(struct _StreamUnit* streamUnit, int drawOn)//Matching - 99.77%
+void WARPGATE_DrawWarpGateRim(struct _StreamUnit* streamUnit, int drawOn)  // Matching - 100%
 {
 	struct BSPTree* bspTree;
 
