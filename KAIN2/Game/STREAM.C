@@ -3441,7 +3441,7 @@ int GetPlaneDist(int k, int j, int i, VECTOR* v)//Matching - 100%
 		   (((v->vz >> 12) - (theCamera.core.position.z << 4)) * theCamera.core.vvNormalWorVecMat[k].m[j][2]) ;
 }
 
-void CalcVert(VECTOR *v, VECTOR *v1, VECTOR *v2, int dist1, int dist2, int k, int j)
+void CalcVert(VECTOR *v, VECTOR *v1, VECTOR *v2, int dist1, int dist2, int k, int j)  // Matching - 100%
 { 
 	int diff;
 
