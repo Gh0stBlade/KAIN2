@@ -177,7 +177,7 @@ void MONTABLE_SetQueryFunc(struct _Instance* instance)
 	}
 }
 
-void MONTABLE_SetMessageFunc(struct _Instance* instance)
+void MONTABLE_SetMessageFunc(struct _Instance* instance)  // Matching - 100%
 {
 	struct _MonsterFunctionTable* ft;
 
