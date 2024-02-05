@@ -30,7 +30,7 @@ void STREAM_NextLoadFromHead()
 	loadFromHead = 1;
 }
 
-void STREAM_NextLoadAsNormal()
+void STREAM_NextLoadAsNormal()  // Matching - 100%
 { 
 	loadFromHead = 0;
 }
