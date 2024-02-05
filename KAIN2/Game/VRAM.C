@@ -43,7 +43,7 @@ void VRAM_PrintInfo()  // Matching - 100%
 	}
 }
 
-void VRAM_InitVramBlockCache()//Matching - 94.38%
+void VRAM_InitVramBlockCache()  // Matching - 100%
 {
 	int i;
 
