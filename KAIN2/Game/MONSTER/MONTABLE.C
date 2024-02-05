@@ -183,7 +183,7 @@ void* MONTABLE_GetCleanUpFunc(struct _Instance *instance)
 	return (void*)DefaultFunctionTable.queryFunc;
 }
 
-void MONTABLE_SetQueryFunc(struct _Instance* instance)
+void MONTABLE_SetQueryFunc(struct _Instance* instance)  // Matching - 100%
 {
 	struct _MonsterFunctionTable* ft;
 
