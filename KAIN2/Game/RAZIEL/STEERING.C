@@ -13,11 +13,11 @@
 int ZoneDelta;
 int LastRC;
 
-int UpdateZoneDelta(int rc, int LastRC)
+int UpdateZoneDelta(int rc, int LastRC)  // Matching - 100%
 {
 	if (LastRC != 0)
 	{
-		if (rc == LastRC)
+		if (LastRC == rc)
 		{
 			ZoneDelta -= 4;
 
@@ -31,7 +31,7 @@ int UpdateZoneDelta(int rc, int LastRC)
 			ZoneDelta = 256;
 		}
 	}
-	
+
 	return ZoneDelta;
 }
 
