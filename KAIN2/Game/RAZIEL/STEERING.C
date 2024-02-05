@@ -143,56 +143,47 @@ int GetControllerInput(int* ZDirection, long* controlCommand)  // Matching - 100
 	return rc;
 }
 
-int DecodeDirection(int Source, int Destination, short* Difference, short* Zone)//Matching - 83.95%
+int DecodeDirection(int Source, int Destination, short* Difference, short* Zone)  // Matching - 100%
 {
-	int rc; // $s1
-	long diff;///@FIXME not in original, likely macro used.
+	int rc;
 
 	rc = 0;
 
-	diff = AngleDiff((short)Destination, (short)Source);
+	Difference[0] = AngleDiff((short)Destination, (short)Source);
 
-	Zone[0] = diff & 0x1FF;
-
-	if ((unsigned short)(diff & 0x1FF) < 0x3FF)
+	if ((unsigned short)(Difference[0] + 0x1FF) < 0x3FF)
 	{
-		Difference[0] = (short)diff;
+		Zone[0] = 0;
 
 		rc = 0x10000001;
 	}
+	else if ((unsigned short)(Difference[0] - 512) < 0x400)
+	{
+		Zone[0] = 0x400;
+
+		rc = 0x10000004;
+	}
+	else if ((unsigned short)(Difference[0] + 0x5FF) < 0x400)
+	{
+		Zone[0] = -1024;
+
+		rc = 0x10000002;
+	}
 	else
 	{
-		if ((unsigned short)(diff - 512) < 0x400)
+		if ((short)Difference[0] >= 0x600)
 		{
-			Zone[0] = 1024;
+			Zone[0] = 2048;
 
-			rc = 0x10000004;
+			rc = 0x10000003;
 		}
 		else
 		{
-			if ((unsigned short)(diff + 0x5FF) < 0x400)
+			if (Difference[0] < -0x5FF)
 			{
-				Zone[0] = -1024;
+				Zone[0] = -2048;
 
-				rc = 0x10000002;
-			}
-			else
-			{
-				if ((short)diff >= 0x600)
-				{
-					Zone[0] = 2048;
-
-					rc = 0x10000003;
-				}
-				else
-				{
-					if (diff < -0x5FF)
-					{
-						Zone[0] = -2048;
-
-						rc = 0x10000003;
-					}
-				}
+				rc = 0x10000003;
 			}
 		}
 	}
