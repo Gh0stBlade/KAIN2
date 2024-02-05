@@ -236,11 +236,11 @@ void VRAM_InsertUsedBlock(struct _BlockVramEntry *block)  // Matching - 100%
 	}
 }
 
-void VRAM_DeleteUsedBlock(struct _BlockVramEntry *block)
+void VRAM_DeleteUsedBlock(struct _BlockVramEntry* block)  // Matching - 100%
 {
-	struct _BlockVramEntry *next;
-	struct _BlockVramEntry *prev;
-	
+	struct _BlockVramEntry* next;
+	struct _BlockVramEntry* prev;
+
 	next = usedVramBlocks;
 	prev = NULL;
 
@@ -249,10 +249,13 @@ void VRAM_DeleteUsedBlock(struct _BlockVramEntry *block)
 		if (next != NULL)
 		{
 			prev = next;
-
 			next = prev->next;
-		}
 
+			if (block != next)
+			{
+				continue;
+			}
+		}
 		if (block != next)
 		{
 			return;
@@ -262,10 +265,11 @@ void VRAM_DeleteUsedBlock(struct _BlockVramEntry *block)
 	if (prev == NULL)
 	{
 		usedVramBlocks = block->next;
-		return;
 	}
-
-	prev->next = block->next;
+	else
+	{
+		prev->next = block->next;
+	}
 }
 
 struct _BlockVramEntry * VRAM_GetOpenBlock()  // Matching - 100%
