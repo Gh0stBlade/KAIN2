@@ -142,7 +142,7 @@ void VRAM_GarbageCollect()
 	}
 }
 
-int VRAM_InsertFreeBlock(struct _BlockVramEntry* block)//Matching - 99.44%
+int VRAM_InsertFreeBlock(struct _BlockVramEntry* block)  // Matching - 100%
 {
 	struct _BlockVramEntry* next;
 	struct _BlockVramEntry* prev;
