@@ -548,7 +548,7 @@ struct _BlockVramEntry* VRAM_CheckVramSlot(short* x, short* y, short w, short h,
 	return vblock;
 }
 
-void VRAM_ClearVramBlock(struct _BlockVramEntry* block)
+void VRAM_ClearVramBlock(struct _BlockVramEntry* block)  // Matching - 100%
 {
 	if (block != NULL)
 	{
