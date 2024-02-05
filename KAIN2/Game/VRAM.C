@@ -268,7 +268,7 @@ void VRAM_DeleteUsedBlock(struct _BlockVramEntry *block)
 	prev->next = block->next;
 }
 
-struct _BlockVramEntry * VRAM_GetOpenBlock()
+struct _BlockVramEntry * VRAM_GetOpenBlock()  // Matching - 100%
 { 
 	int i;
 
