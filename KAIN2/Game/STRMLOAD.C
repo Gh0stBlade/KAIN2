@@ -72,7 +72,7 @@ void STREAM_RemoveQueueHead()
 	loadFree = entry;
 }
 
-void STREAM_RemoveQueueEntry(struct _LoadQueueEntry *entry, struct _LoadQueueEntry *prev)
+void STREAM_RemoveQueueEntry(struct _LoadQueueEntry *entry, struct _LoadQueueEntry *prev)  // Matching - 100%
 { 
 	if (loadTail == entry)
 	{
