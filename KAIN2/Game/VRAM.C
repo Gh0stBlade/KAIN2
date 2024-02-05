@@ -181,30 +181,28 @@ int VRAM_InsertFreeBlock(struct _BlockVramEntry* block)//Matching - 99.44%
 	return 1;
 }
 
-void VRAM_DeleteFreeBlock(struct _BlockVramEntry *block)
+void VRAM_DeleteFreeBlock(struct _BlockVramEntry* block)  // Matching - 100%
 {
-	struct _BlockVramEntry *next;
-	struct _BlockVramEntry *prev;
-	
+	struct _BlockVramEntry* next;
+	struct _BlockVramEntry* prev;
+
 	next = openVramBlocks;
 	prev = NULL;
 
 	if (block != NULL)
 	{
-		if (block != next)
+		while (block != next)
 		{
-			do
+			if (next != NULL)
 			{
-				if (next == NULL)
-				{
-					break;
-				}
-
 				prev = next;
 				next = prev->next;
 
-			} while (block != next);
-		
+				if (block != next)
+				{
+					continue;
+				}
+			}
 			if (block != next)
 			{
 				return;
@@ -220,8 +218,6 @@ void VRAM_DeleteFreeBlock(struct _BlockVramEntry *block)
 			prev->next = block->next;
 		}
 	}
-
-	return;
 }
 
 void VRAM_InsertUsedBlock(struct _BlockVramEntry *block)
