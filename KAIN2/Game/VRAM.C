@@ -26,7 +26,7 @@ void VRAM_PrintVramBlock(struct _BlockVramEntry* vblock)
 {
 }
 
-void VRAM_PrintInfo()
+void VRAM_PrintInfo()  // Matching - 100%
 {
 	struct _BlockVramEntry* vblock;
 
@@ -43,7 +43,7 @@ void VRAM_PrintInfo()
 	}
 }
 
-void VRAM_InitVramBlockCache()//Matching - 94.38%
+void VRAM_InitVramBlockCache()  // Matching - 100%
 {
 	int i;
 
@@ -64,17 +64,17 @@ void VRAM_InitVramBlockCache()//Matching - 94.38%
 	VRAM_InitMorphPalettes();
 }
 
-void VRAM_EnableTerrainArea()
+void VRAM_EnableTerrainArea()  // Matching - 100%
 { 
 	VRAM_InsertFreeVram(SCREEN_WIDTH, 0, SCREEN_WIDTH, SCREEN_HEIGHT + 16, 0);
 }
 
-void VRAM_DisableTerrainArea()
+void VRAM_DisableTerrainArea()  // Matching - 100%
 {
 	VRAM_DeleteFreeVram(SCREEN_WIDTH, 0, SCREEN_WIDTH, SCREEN_HEIGHT + 16);
 }
 
-int VRAM_ConcatanateMemory(struct _BlockVramEntry* curBlock)
+int VRAM_ConcatanateMemory(struct _BlockVramEntry* curBlock)  // Matching - 100%
 {
 	struct _BlockVramEntry* nextBlock;
 
@@ -84,52 +84,47 @@ int VRAM_ConcatanateMemory(struct _BlockVramEntry* curBlock)
 
 		while (nextBlock != NULL)
 		{
-			if (curBlock->x == nextBlock->x && curBlock->w == nextBlock->w &&
-				(curBlock->y >> 8) == (nextBlock->y >> 8))
+			if ((curBlock->x == nextBlock->x) && ((curBlock->w == nextBlock->w)))
 			{
-				if ((curBlock->y + curBlock->h) == nextBlock->y)
+				if ((curBlock->y >> 8) == (nextBlock->y >> 8))
 				{
-					curBlock->h += nextBlock->h;
-					VRAM_DeleteFreeBlock(nextBlock);
-					nextBlock->flags = 0;
-					return 1;
-				}
-				else
-				{
-					if ((nextBlock->y + nextBlock->h) == nextBlock->y)
+					if ((curBlock->y + curBlock->h) == nextBlock->y)
 					{
-						nextBlock->h += curBlock->h;
-					}
-
-					VRAM_DeleteFreeBlock(curBlock);
-					curBlock->flags = 0;
-					return 1;
-				}
-			}
-			else
-			{
-				if (curBlock->y == nextBlock->y && curBlock->h == nextBlock->h)
-				{
-					if ((curBlock->x + curBlock->w) == nextBlock->x &&
-						!(curBlock->x & 0x3F) || curBlock->w + nextBlock->w < 65)
-					{
-						curBlock->w += nextBlock->w;
+						curBlock->h += nextBlock->h;
 						VRAM_DeleteFreeBlock(nextBlock);
 						nextBlock->flags = 0;
 						return 1;
 					}
 
-					if ((nextBlock->x + nextBlock->w) == curBlock->x)
+					if ((nextBlock->y + nextBlock->h) == curBlock->y)
 					{
-						if (!(nextBlock->x & 0x3F) || curBlock->w + nextBlock->w < 65)
-						{
-							curBlock->w += nextBlock->w;
-							VRAM_DeleteFreeBlock(curBlock);
-							curBlock->flags = 0;
-							return 1;
-						}
+						nextBlock->h += curBlock->h;
+						VRAM_DeleteFreeBlock(curBlock);
+						curBlock->flags = 0;
+						return 1;
 					}
+
 				}
+
+			}
+			if ((curBlock->y == nextBlock->y) && (curBlock->h == nextBlock->h))
+			{
+				if (((curBlock->x + curBlock->w) == nextBlock->x) && (!(curBlock->x & 0x3F) || curBlock->w + nextBlock->w < 65))
+				{
+					curBlock->w += nextBlock->w;
+					VRAM_DeleteFreeBlock(nextBlock);
+					nextBlock->flags = 0;
+					return 1;
+				}
+
+				if (((nextBlock->x + nextBlock->w) == curBlock->x) && (!(nextBlock->x & 0x3F) || curBlock->w + nextBlock->w < 65))
+				{
+					nextBlock->w = nextBlock->w + curBlock->w;
+					VRAM_DeleteFreeBlock(curBlock);
+					curBlock->flags = 0;
+					return 1;
+				}
+
 			}
 			nextBlock = nextBlock->next;
 		}
@@ -186,30 +181,28 @@ int VRAM_InsertFreeBlock(struct _BlockVramEntry* block)//Matching - 99.44%
 	return 1;
 }
 
-void VRAM_DeleteFreeBlock(struct _BlockVramEntry *block)
+void VRAM_DeleteFreeBlock(struct _BlockVramEntry* block)  // Matching - 100%
 {
-	struct _BlockVramEntry *next;
-	struct _BlockVramEntry *prev;
-	
+	struct _BlockVramEntry* next;
+	struct _BlockVramEntry* prev;
+
 	next = openVramBlocks;
 	prev = NULL;
 
 	if (block != NULL)
 	{
-		if (block != next)
+		while (block != next)
 		{
-			do
+			if (next != NULL)
 			{
-				if (next == NULL)
-				{
-					break;
-				}
-
 				prev = next;
 				next = prev->next;
 
-			} while (block != next);
-		
+				if (block != next)
+				{
+					continue;
+				}
+			}
 			if (block != next)
 			{
 				return;
@@ -225,8 +218,6 @@ void VRAM_DeleteFreeBlock(struct _BlockVramEntry *block)
 			prev->next = block->next;
 		}
 	}
-
-	return;
 }
 
 void VRAM_InsertUsedBlock(struct _BlockVramEntry *block)

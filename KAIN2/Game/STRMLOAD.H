@@ -3,20 +3,20 @@
 
 #include "LOAD3D.H"
 
-struct _LoadQueueEntry // hashcode: 0xFEE70962 (dec: -18413214)
+struct _LoadQueueEntry 
 {
-	struct _LoadQueueEntry* next; // size=64, offset=0
+	struct _LoadQueueEntry* next; // size=112, offset=0
 	short status; // size=0, offset=4
 	char relocateBinary; // size=0, offset=6
 	char mempackUsed; // size=0, offset=7
-	struct _NonBlockLoadEntry loadEntry; // size=56, offset=8
-#ifdef PSX_VERSION
-#if defined(PSXPC_VERSION)
-	long long endLoadTime; // size=0, offset=108
-#else
-	long endLoadTime; // size=0, offset=108
-#endif
-#endif
+	struct _NonBlockLoadEntry loadEntry; // size=100, offset=8
+	#ifdef PSX_VERSION
+	#if defined(PSXPC_VERSION)
+		long long endLoadTime; // size=0, offset=108
+	#else
+		long endLoadTime; // size=0, offset=108
+	#endif
+	#endif
 };
 
 extern int gCurDir; // offset 0x800CF4E8

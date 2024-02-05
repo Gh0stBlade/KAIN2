@@ -25,12 +25,12 @@ struct _LoadQueueEntry* loadTail; // offset 0x800D272C
 
 int numLoads; // offset 0x800D2730
 
-void STREAM_NextLoadFromHead()
+void STREAM_NextLoadFromHead()  // Matching - 100%
 {
 	loadFromHead = 1;
 }
 
-void STREAM_NextLoadAsNormal()
+void STREAM_NextLoadAsNormal()  // Matching - 100%
 { 
 	loadFromHead = 0;
 }
@@ -56,7 +56,7 @@ void STREAM_InitLoader(char *bigFileName, char *voiceFileName)
 	LoadQueue[39].next = NULL;
 }
 
-void STREAM_RemoveQueueHead()
+void STREAM_RemoveQueueHead()  // Matching - 100%
 {
 	struct _LoadQueueEntry* entry = loadHead;
 
@@ -72,7 +72,7 @@ void STREAM_RemoveQueueHead()
 	loadFree = entry;
 }
 
-void STREAM_RemoveQueueEntry(struct _LoadQueueEntry *entry, struct _LoadQueueEntry *prev)
+void STREAM_RemoveQueueEntry(struct _LoadQueueEntry *entry, struct _LoadQueueEntry *prev)  // Matching - 100%
 { 
 	if (loadTail == entry)
 	{
@@ -93,7 +93,7 @@ void STREAM_RemoveQueueEntry(struct _LoadQueueEntry *entry, struct _LoadQueueEnt
 	numLoads--;
 }
 
-struct _LoadQueueEntry* STREAM_AddQueueEntryToTail()
+struct _LoadQueueEntry* STREAM_AddQueueEntryToTail()  // Matching - 100%
 { 
 	struct _LoadQueueEntry* entry;
 	
@@ -121,7 +121,7 @@ struct _LoadQueueEntry* STREAM_AddQueueEntryToTail()
 	return entry;
 }
 
-struct _LoadQueueEntry* STREAM_AddQueueEntryToHead()
+struct _LoadQueueEntry* STREAM_AddQueueEntryToHead()  // Matching - 100%
 {
 	struct _LoadQueueEntry* entry;
 
@@ -155,7 +155,7 @@ struct _LoadQueueEntry* STREAM_AddQueueEntryToHead()
 	return entry;
 }
 
-int STREAM_IsCdBusy(long* numberInQueue)//Matching - 98.75%
+int STREAM_IsCdBusy(long* numberInQueue)  // Matching - 100%
 { 
 	if (numberInQueue != NULL)
 	{
