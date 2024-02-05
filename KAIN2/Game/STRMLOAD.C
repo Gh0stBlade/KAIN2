@@ -25,7 +25,7 @@ struct _LoadQueueEntry* loadTail; // offset 0x800D272C
 
 int numLoads; // offset 0x800D2730
 
-void STREAM_NextLoadFromHead()
+void STREAM_NextLoadFromHead()  // Matching - 100%
 {
 	loadFromHead = 1;
 }
