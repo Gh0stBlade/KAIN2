@@ -11,7 +11,7 @@ void VM_Tick(long time)  // Matching - 100%
 	vmClock = vmRealClock >> 8;
 }
 
-void VM_UpdateMorph(struct Level* level, int initFlg)//Matching - 74.26%
+void VM_UpdateMorph(struct Level* level, int initFlg)  // Matching - 99.84%
 {
     struct _VMObject* vmobject;
     int i;
@@ -26,18 +26,15 @@ void VM_UpdateMorph(struct Level* level, int initFlg)//Matching - 74.26%
 
     vmobject = level->vmobjectList;
 
-    for (i = 0; i != level->numVMObjects; i++)
+    for (i = level->numVMObjects; i != 0; i--, vmobject++)
     {
-        if (vmobject[i].materialIdx == vmobject[i].spectralIdx)
+        if ((vmobject->materialIdx != vmobject->spectralIdx) || (vmobject->flags & 0x100))
         {
-            curTable = vmobject[i].curVMOffsetTable;
-        }
+            curTable = vmobject->curVMOffsetTable;
 
-        if ((vmobject[i].flags & 0x100))
-        {
             if (gameTrackerX.gameData.asmData.MorphTime == 1000)
             {
-                if (curTable != vmobject[i].vmoffsetTableList[vmobject[i].currentIdx])
+                if (curTable != vmobject->vmoffsetTableList[vmobject->currentIdx])
                 {
                     MEMPACK_Free((char*)curTable);
                 }
@@ -46,26 +43,26 @@ void VM_UpdateMorph(struct Level* level, int initFlg)//Matching - 74.26%
                 {
                     if (gameTrackerX.gameData.asmData.MorphType == 0)
                     {
-                        vmobject[i].currentIdx = vmobject[i].materialIdx;
+                        vmobject->currentIdx = vmobject->materialIdx;
                     }
                     else
                     {
-                        vmobject[i].currentIdx = vmobject[i].spectralIdx;
+                        vmobject->currentIdx = vmobject->spectralIdx;
                     }
                 }
                 else
                 {
                     if (gameTrackerX.gameData.asmData.MorphType != 0)
                     {
-                        vmobject[i].currentIdx = vmobject[i].materialIdx;
+                        vmobject->currentIdx = vmobject->materialIdx;
                     }
                     else
                     {
-                        vmobject[i].currentIdx = vmobject[i].spectralIdx;
+                        vmobject->currentIdx = vmobject->spectralIdx;
                     }
                 }
 
-                vmobject[i].curVMOffsetTable = vmobject[i].vmoffsetTableList[vmobject[i].currentIdx];
+                vmobject->curVMOffsetTable = vmobject->vmoffsetTableList[vmobject->currentIdx];
             }
             else
             {
@@ -73,31 +70,31 @@ void VM_UpdateMorph(struct Level* level, int initFlg)//Matching - 74.26%
 
                 ratio = gameTrackerX.spectral_fadeValue;
 
-                if (curTable == vmobject[i].vmoffsetTableList[vmobject[i].currentIdx])
+                if (curTable == vmobject->vmoffsetTableList[vmobject->currentIdx])
                 {
-                    if ((vmobject[i].flags & 0x8))
+                    if ((vmobject->flags & 0x8))
                     {
-                        vmobject[i].curVMOffsetTable = (struct _VMOffsetTable*)MEMPACK_Malloc(num * 6 + 4, 0x28);
-                        vmobject[i].curVMOffsetTable->numVMOffsets = num;
+                        vmobject->curVMOffsetTable = (struct _VMOffsetTable*)MEMPACK_Malloc(num * 6 + 4, 0x28);
+                        vmobject->curVMOffsetTable->numVMOffsets = num;
                     }
                     else
                     {
-                        vmobject[i].curVMOffsetTable = (struct _VMOffsetTable*)MEMPACK_Malloc(num * 3 + 4, 0x28);
-                        vmobject[i].curVMOffsetTable->numVMOffsets = num;
+                        vmobject->curVMOffsetTable = (struct _VMOffsetTable*)MEMPACK_Malloc(num * 3 + 4, 0x28);
+                        vmobject->curVMOffsetTable->numVMOffsets = num;
                     }
                 }
 
-                if ((vmobject[i].flags & 0x8))
+                if ((vmobject->flags & 0x8))
                 {
                     struct _VMOffset* material;
                     struct _VMOffset* spectral;
                     struct _VMOffset* offset;
 
-                    material = &vmobject[i].vmoffsetTableList[vmobject[i].materialIdx]->offsets.moveOffsets;
+                    material = &vmobject->vmoffsetTableList[vmobject->materialIdx]->offsets.moveOffsets;
 
-                    spectral = &vmobject[i].vmoffsetTableList[vmobject[i].spectralIdx]->offsets.moveOffsets;
+                    spectral = &vmobject->vmoffsetTableList[vmobject->spectralIdx]->offsets.moveOffsets;
 
-                    offset = &vmobject[i].curVMOffsetTable->offsets.moveOffsets;
+                    offset = &vmobject->curVMOffsetTable->offsets.moveOffsets;
 
                     for (j = 0; j < num; j++)
                     {
@@ -112,25 +109,26 @@ void VM_UpdateMorph(struct Level* level, int initFlg)//Matching - 74.26%
                     struct _VMColorOffset* spectral;
                     struct _VMColorOffset* offset;
 
-                    material = &vmobject[i].vmoffsetTableList[vmobject[i].materialIdx]->offsets.colorOffsets;
+                    material = &vmobject->vmoffsetTableList[vmobject->materialIdx]->offsets.colorOffsets;
 
-                    spectral = &vmobject[i].vmoffsetTableList[vmobject[i].spectralIdx]->offsets.colorOffsets;
+                    spectral = &vmobject->vmoffsetTableList[vmobject->spectralIdx]->offsets.colorOffsets;
 
-                    offset = &vmobject[i].curVMOffsetTable->offsets.colorOffsets;
+                    offset = &vmobject->curVMOffsetTable->offsets.colorOffsets;
 
                     for (j = 0; j < num; j++)
                     {
-                        if ((vmobject[i].flags & 0x100))
+                        if ((vmobject->flags & 0x100))
                         {
-                            dr = spectral[j].db - spectral[j].dr;
+                            dr = spectral[j].db - material[j].dr;
+                            dg = spectral[j].dg - material[j].dg;
+                            db = spectral[j].dr - material[j].db;
                         }
                         else
                         {
                             dr = spectral[j].dr - material[j].dr;
+                            dg = spectral[j].dg - material[j].dg;
+                            db = spectral[j].db - material[j].db;
                         }
-
-                        dg = spectral[j].db - material[j].dg;
-                        db = spectral[j].dr - material[j].db;
 
                         offset[j].dr = material[j].dr + ((dr * ratio) >> 12);
                         offset[j].dg = material[j].dg + ((dg * ratio) >> 12);
