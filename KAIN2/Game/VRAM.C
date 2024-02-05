@@ -64,7 +64,7 @@ void VRAM_InitVramBlockCache()  // Matching - 100%
 	VRAM_InitMorphPalettes();
 }
 
-void VRAM_EnableTerrainArea()
+void VRAM_EnableTerrainArea()  // Matching - 100%
 { 
 	VRAM_InsertFreeVram(SCREEN_WIDTH, 0, SCREEN_WIDTH, SCREEN_HEIGHT + 16, 0);
 }
