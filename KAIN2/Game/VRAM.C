@@ -220,7 +220,7 @@ void VRAM_DeleteFreeBlock(struct _BlockVramEntry* block)  // Matching - 100%
 	}
 }
 
-void VRAM_InsertUsedBlock(struct _BlockVramEntry *block)
+void VRAM_InsertUsedBlock(struct _BlockVramEntry *block)  // Matching - 100%
 { 
 	if (block != NULL)
 	{
