@@ -134,7 +134,7 @@ int VRAM_ConcatanateMemory(struct _BlockVramEntry* curBlock)  // Matching - 100%
 	return 0;
 }
 
-void VRAM_GarbageCollect()
+void VRAM_GarbageCollect()  // Matching - 100%
 { 
 	while (VRAM_ConcatanateMemory(openVramBlocks) == 1)
 	{
@@ -142,7 +142,7 @@ void VRAM_GarbageCollect()
 	}
 }
 
-int VRAM_InsertFreeBlock(struct _BlockVramEntry* block)//Matching - 99.44%
+int VRAM_InsertFreeBlock(struct _BlockVramEntry* block)  // Matching - 100%
 {
 	struct _BlockVramEntry* next;
 	struct _BlockVramEntry* prev;
@@ -220,7 +220,7 @@ void VRAM_DeleteFreeBlock(struct _BlockVramEntry* block)  // Matching - 100%
 	}
 }
 
-void VRAM_InsertUsedBlock(struct _BlockVramEntry *block)
+void VRAM_InsertUsedBlock(struct _BlockVramEntry *block)  // Matching - 100%
 { 
 	if (block != NULL)
 	{
@@ -236,11 +236,11 @@ void VRAM_InsertUsedBlock(struct _BlockVramEntry *block)
 	}
 }
 
-void VRAM_DeleteUsedBlock(struct _BlockVramEntry *block)
+void VRAM_DeleteUsedBlock(struct _BlockVramEntry* block)  // Matching - 100%
 {
-	struct _BlockVramEntry *next;
-	struct _BlockVramEntry *prev;
-	
+	struct _BlockVramEntry* next;
+	struct _BlockVramEntry* prev;
+
 	next = usedVramBlocks;
 	prev = NULL;
 
@@ -249,10 +249,13 @@ void VRAM_DeleteUsedBlock(struct _BlockVramEntry *block)
 		if (next != NULL)
 		{
 			prev = next;
-
 			next = prev->next;
-		}
 
+			if (block != next)
+			{
+				continue;
+			}
+		}
 		if (block != next)
 		{
 			return;
@@ -262,13 +265,14 @@ void VRAM_DeleteUsedBlock(struct _BlockVramEntry *block)
 	if (prev == NULL)
 	{
 		usedVramBlocks = block->next;
-		return;
 	}
-
-	prev->next = block->next;
+	else
+	{
+		prev->next = block->next;
+	}
 }
 
-struct _BlockVramEntry * VRAM_GetOpenBlock()
+struct _BlockVramEntry * VRAM_GetOpenBlock()  // Matching - 100%
 { 
 	int i;
 
@@ -860,41 +864,42 @@ void VRAM_TransferBufferToVram(void* dataPtr, long dataSize, short status, void 
 	}
 }
 
-void VRAM_LoadReturn(void *dataPtr, void *data1, void *data2)
+void VRAM_LoadReturn(void *dataPtr, void *data1, void *data2)  // Matching - 100%
 {
 	MEMPACK_Free((char*)data1);
 }
 
-long VRAM_GetObjectVramSpace(struct VramSize *vramSize, struct _ObjectTracker *objectTracker)
+long VRAM_GetObjectVramSpace(struct VramSize* vramSize, struct _ObjectTracker* objectTracker)  // Matching - 100%
 {
 	PSX_RECT rect;
 	long result;
 	struct _BlockVramEntry* lastVramBlockUsed;
 
 	result = 1;
-	
-	rect.x = SCREEN_WIDTH;
+
+	rect.x = vramSize->x + SCREEN_WIDTH;
 	rect.y = vramSize->y;
 	rect.w = vramSize->w;
 	rect.h = vramSize->h;
 
-	lastVramBlockUsed = VRAM_CheckVramSlot(&rect.x, &rect.y, vramSize->w, vramSize->h, 2, 256);
+	lastVramBlockUsed = VRAM_CheckVramSlot(&rect.x, &rect.y, rect.w, rect.h, 2, 256);
 
 	if (lastVramBlockUsed == NULL)
 	{
 		VRAM_RearrangeVramsLayer(result);
 		lastVramBlockUsed = VRAM_CheckVramSlot(&rect.x, &rect.y, rect.w, rect.h, 2, 256);
 
-		if (lastVramBlockUsed == 0)
+		if (lastVramBlockUsed == NULL)
 		{
 			result = 0;
 			VRAM_PrintInfo();
 		}
 	}
-	
+
+	objectTracker->vramBlock = lastVramBlockUsed;
+
 	if (lastVramBlockUsed != NULL)
 	{
-		objectTracker->vramBlock = lastVramBlockUsed;
 		lastVramBlockUsed->udata.streamObject = objectTracker;
 	}
 
