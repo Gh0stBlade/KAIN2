@@ -17,7 +17,7 @@ void SBSP_IntroduceInstances(struct _Terrain* terrain, int unitID)
 	}
 }
 
-void SBSP_IntroduceInstancesAndLights(struct _Terrain* terrain, struct _CameraCore_Type* cameraCore, struct LightInfo* lightInfo, int unitID)
+void SBSP_IntroduceInstancesAndLights(struct _Terrain* terrain, struct _CameraCore_Type* cameraCore, struct LightInfo* lightInfo, int unitID)  // Matching - 100%
 {
 	SBSP_IntroduceInstances(terrain, unitID);
 }
