@@ -141,7 +141,7 @@ struct _MonsterState* MONTABLE_GetStateFuncs(struct _Instance* instance, int sta
 	return (struct _MonsterState*)&DefaultStateTable[state].entryFunction;
 }
 
-void* MONTABLE_GetDamageEffectFunc(struct _Instance* instance)
+void* MONTABLE_GetDamageEffectFunc(struct _Instance* instance)  // Matching - 100%
 {
 	struct _MonsterFunctionTable* ft;
 
