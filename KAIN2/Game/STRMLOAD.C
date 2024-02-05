@@ -93,7 +93,7 @@ void STREAM_RemoveQueueEntry(struct _LoadQueueEntry *entry, struct _LoadQueueEnt
 	numLoads--;
 }
 
-struct _LoadQueueEntry* STREAM_AddQueueEntryToTail()
+struct _LoadQueueEntry* STREAM_AddQueueEntryToTail()  // Matching - 100%
 { 
 	struct _LoadQueueEntry* entry;
 	
