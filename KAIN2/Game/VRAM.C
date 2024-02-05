@@ -865,36 +865,37 @@ void VRAM_LoadReturn(void *dataPtr, void *data1, void *data2)
 	MEMPACK_Free((char*)data1);
 }
 
-long VRAM_GetObjectVramSpace(struct VramSize *vramSize, struct _ObjectTracker *objectTracker)
+long VRAM_GetObjectVramSpace(struct VramSize* vramSize, struct _ObjectTracker* objectTracker)  // Matching - 100%
 {
 	PSX_RECT rect;
 	long result;
 	struct _BlockVramEntry* lastVramBlockUsed;
 
 	result = 1;
-	
-	rect.x = SCREEN_WIDTH;
+
+	rect.x = vramSize->x + SCREEN_WIDTH;
 	rect.y = vramSize->y;
 	rect.w = vramSize->w;
 	rect.h = vramSize->h;
 
-	lastVramBlockUsed = VRAM_CheckVramSlot(&rect.x, &rect.y, vramSize->w, vramSize->h, 2, 256);
+	lastVramBlockUsed = VRAM_CheckVramSlot(&rect.x, &rect.y, rect.w, rect.h, 2, 256);
 
 	if (lastVramBlockUsed == NULL)
 	{
 		VRAM_RearrangeVramsLayer(result);
 		lastVramBlockUsed = VRAM_CheckVramSlot(&rect.x, &rect.y, rect.w, rect.h, 2, 256);
 
-		if (lastVramBlockUsed == 0)
+		if (lastVramBlockUsed == NULL)
 		{
 			result = 0;
 			VRAM_PrintInfo();
 		}
 	}
-	
+
+	objectTracker->vramBlock = lastVramBlockUsed;
+
 	if (lastVramBlockUsed != NULL)
 	{
-		objectTracker->vramBlock = lastVramBlockUsed;
 		lastVramBlockUsed->udata.streamObject = objectTracker;
 	}
 
