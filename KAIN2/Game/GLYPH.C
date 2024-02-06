@@ -119,10 +119,10 @@ unsigned long GlyphQuery(struct _Instance* instance, unsigned long query)
 	return 0;
 }
 
-void GlyphPost(struct _Instance* instance, unsigned long message, unsigned long messageData)//Matching - 99.62%
+void GlyphPost(struct _Instance* instance, unsigned long message, unsigned long messageData)  // Matching - 100%
 {
 	struct __GlyphData* data;
-	
+
 	data = (struct __GlyphData*)instance->extraData;
 
 	if (message != 0x100007)
