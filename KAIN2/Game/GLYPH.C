@@ -88,25 +88,21 @@ void GlyphCollide(struct _Instance* instance, struct GameTracker* gameTracker)
 {
 }
 
-void GlyphProcess(struct _Instance *instance, struct GameTracker *gameTracker)
-{ 
+void GlyphProcess(struct _Instance* instance, struct GameTracker* gameTracker)  // Matching - 100%
+{
 	struct __GlyphData* data;
 
 	data = (struct __GlyphData*)instance->extraData;
 
 	data->process(instance, 0, 0);
 
-	instance->oldPos.x = instance->parent->position.x;
-	instance->oldPos.y = instance->parent->position.y;
-	instance->oldPos.z = instance->parent->position.z;
+	instance->oldPos = instance->parent->position;
 
-	instance->position.x = instance->parent->position.x;
-	instance->position.y = instance->parent->position.y;
-	instance->position.z = instance->parent->position.z;
-
-	instance->flags |= 0xC00;
+	instance->position = instance->oldPos;
 
 	instance->currentStreamUnitID = instance->parent->currentStreamUnitID;
+
+	instance->flags |= 0xC00;
 }
 
 unsigned long GlyphQuery(struct _Instance* instance, unsigned long query)
