@@ -8,6 +8,7 @@
 #include "Game/GENERIC.H"
 #include "G2/ANMCTRLR.H"
 
+//static struct _G2AnimAlphaTable_Type* G2AlphaTables[7]; // offset 0x800D1A50
 struct _G2AnimAlphaTable_Type* G2AlphaTables[7] = {
 	NULL,
 	NULL,
@@ -18,8 +19,9 @@ struct _G2AnimAlphaTable_Type* G2AlphaTables[7] = {
 	NULL,
 };
 
-char circBuf[4096];
+static char circBuf[4096]; // offset 0x800D47E0
 
+//static void *circWhere; // offset 0x800D1A6C
 void* circWhere = &circBuf[92];
 
 static inline void STATE_CheckIfObjectSpins(struct evObjectThrowData* Ptr, struct _SVector* angularVel, long spinType)
