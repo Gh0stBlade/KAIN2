@@ -292,7 +292,7 @@ uintptr_t SetPhysicsSwimData(int CheckDepth, struct _SVector* iVelocity, int Swi
 	return (uintptr_t)Ptr;
 }
 
-uintptr_t SetPhysicsDropOffData(int xOffset, int yOffset, int DropOffset, int slipSlope, int UpperOffset)
+uintptr_t SetPhysicsDropOffData(int xOffset, int yOffset, int DropOffset, int slipSlope, int UpperOffset)  // Matching - 100%
 {
 	struct evPhysicsDropOffData* Ptr;
 
