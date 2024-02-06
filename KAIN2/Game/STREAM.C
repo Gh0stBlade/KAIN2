@@ -1752,37 +1752,41 @@ int WARPGATE_IsObjectOnWarpSide(struct _Instance* instance)  // Matching - 100%
 	return 0;
 }
 
-void WARPGATE_IsItActive(struct _StreamUnit *streamUnit)
+void WARPGATE_IsItActive(struct _StreamUnit* streamUnit)  // Matching - 100%
 {
-	struct Level *level;
+	struct Level* level;
 	int d;
+	int temp;  // not from SYMDUMP
 
 	level = streamUnit->level;
 	streamUnit->flags |= 0x1;
 
-	if (level->PuzzleInstances != NULL && level->PuzzleInstances->numPuzzles > 0)
+	if (level->PuzzleInstances == NULL)
 	{
-		for (d = 0; d < level->PuzzleInstances->numPuzzles; d++)
-		{
-			if (level->PuzzleInstances->eventInstances[d]->eventNumber == 1)
-			{
-				if ((gameTrackerX.streamFlags & 0x400000))
-				{
-					level->PuzzleInstances->eventInstances[d]->eventVariables[0] = level->PuzzleInstances->eventInstances[d]->eventNumber;
-				}
-
-				if (level->PuzzleInstances->eventInstances[d]->eventVariables[0] != level->PuzzleInstances->eventInstances[d]->eventNumber)
-				{
-					return;
-				}
-
-				streamUnit->flags |= 0x8;
-				return;
-			}
-		}
+		return;
 	}
 
-	return;
+	for (d = 0; d < level->PuzzleInstances->numPuzzles; d++)
+	{
+		temp = level->PuzzleInstances->eventInstances[d]->eventNumber;
+
+		if (temp != 1)
+		{
+			continue;
+		}
+
+		if ((gameTrackerX.streamFlags & 0x400000))
+		{
+			level->PuzzleInstances->eventInstances[d]->eventVariables[0] = temp;
+		}
+
+		if (level->PuzzleInstances->eventInstances[d]->eventVariables[0] == temp)
+		{
+			streamUnit->flags |= 0x8;
+		}
+
+		break;
+	}
 }
 
 long WARPGATE_IsUnitWarpRoom(struct _StreamUnit* streamUnit)  // Matching - 100%
