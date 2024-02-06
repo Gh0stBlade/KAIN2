@@ -1647,7 +1647,7 @@ long INSTANCE_FindWithID(long uniqueID)  // Matching - 100%
 	return ret;
 }
 
-struct _Instance* INSTANCE_FindWithName(long areaID, char* instanceName, struct _Instance* startInstance) // Matching - 99.91%
+struct _Instance* INSTANCE_FindWithName(long areaID, char* instanceName, struct _Instance* startInstance) // Matching - 100%
 {
 	struct _Instance* instance;
 	struct _Instance* ret;
