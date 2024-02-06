@@ -325,8 +325,8 @@ struct STracker
 
 typedef struct StreamUnitPortal StreamUnitPortal;
 
-extern struct WarpRoom WarpRoomArray[14];
-extern long CurrentWarpNumber;
+extern struct WarpRoom WarpRoomArray[14]; // offset 0x800D1698
+extern long CurrentWarpNumber; // offset 0x800D1694
 
 #if defined(_LANGUAGE_C_PLUS_PLUS)||defined(__cplusplus)||defined(c_plusplus)
 extern "C" {

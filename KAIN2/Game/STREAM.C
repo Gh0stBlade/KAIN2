@@ -29,23 +29,23 @@
 #include <stddef.h>
 #include "TIMER.H"
 
-long CurrentWarpNumber;
+long CurrentWarpNumber; // offset 0x800D1694
 
-struct WarpGateLoadInfo WarpGateLoadInfo;
+struct WarpGateLoadInfo WarpGateLoadInfo; // offset 0x800D3CB0
 
-struct WarpRoom WarpRoomArray[14];
+struct WarpRoom WarpRoomArray[14]; // offset 0x800D1698
 
-struct STracker StreamTracker; // offset 0x800D1920
+struct STracker StreamTracker; // offset 0x800D3CD4
 
-struct _TFace* MORPH_SavedFace;
+struct _TFace* MORPH_SavedFace; // offset 0x800D40D4
 
-struct Level* MORPH_SavedLevel;
+struct Level* MORPH_SavedLevel; // offset 0x800D3CC4
 
-short MORPH_Component[3];
+short MORPH_Component[3]; // offset 0x800D3CC8
 
-short MORPH_Track[2];
+short MORPH_Track[2]; // offset 0x800D3CD0
 
-int s_zval;
+static int s_zval; // offset 0x800D3CAC
 
 void STREAM_FillOutFileNames(char *baseAreaName, char *dramName, char *vramName, char *sfxName)  // Matching - 100%
 { 
