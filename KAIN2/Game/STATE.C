@@ -419,9 +419,12 @@ uintptr_t SetObjectThrowData(void* target, struct _SVector* angularVel, unsigned
 	temp2 = gravity;
 	temp3 = zVel;
 	temp4 = initialXRot;
-	Ptr = (struct evObjectThrowData*)CIRC_Alloc(28);
+
+	Ptr = (struct evObjectThrowData*)CIRC_Alloc(sizeof(struct evObjectThrowData));
+
 	Ptr->type = type;
 	Ptr->spinType = spinType;
+
 	if (target == NULL)
 	{
 		Ptr->type = 0;
@@ -446,11 +449,14 @@ uintptr_t SetObjectThrowData(void* target, struct _SVector* angularVel, unsigned
 			break;
 		}
 	}
+
 	STATE_CheckIfObjectSpins(Ptr, angularVel, spinType);
+
 	Ptr->speed = temp;
 	Ptr->gravity = temp2;
 	Ptr->zVel = temp3;
 	Ptr->initialXRot = temp4;
+
 	return (uintptr_t)Ptr;
 }
 
