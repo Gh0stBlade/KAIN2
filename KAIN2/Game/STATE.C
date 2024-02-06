@@ -334,7 +334,7 @@ uintptr_t SetPhysicsSlideData(int Segment, int ForwardVectorX, int ForwardVector
 	return (uintptr_t)Ptr;
 }
 
-uintptr_t SetPhysicsWallCrawlData(int Segment, int Length, int ForwardOffset, int NormalDistance)//Matching - 99.78%
+uintptr_t SetPhysicsWallCrawlData(int Segment, int Length, int ForwardOffset, int NormalDistance)  // Matching - 100%
 {
 	struct evPhysicsWallCrawlData* Ptr;
 
