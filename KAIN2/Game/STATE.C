@@ -369,14 +369,18 @@ uintptr_t SetPhysicsLinkedMoveData(struct _Instance* instance, int segment, stru
 	return (uintptr_t)Ptr;
 }
 
-uintptr_t SetPhysicsDropHeightData(_Position* offset, int dropOffset, int mode) { // Matching 100%
+uintptr_t SetPhysicsDropHeightData(struct _Position* offset, int dropOffset, int mode)  // Matching - 100%
+{
 	struct evPhysicsDropHeightData* ptr;
+
 	ptr = (struct evPhysicsDropHeightData*)CIRC_Alloc(sizeof(struct evPhysicsDropHeightData));
+
 	ptr->DropOffset = dropOffset;
 	ptr->mode = mode;
 	ptr->origin.x = offset->x;
 	ptr->origin.y = offset->y;
 	ptr->origin.z = offset->z + 25;
+
 	return (uintptr_t)ptr;
 }
 
