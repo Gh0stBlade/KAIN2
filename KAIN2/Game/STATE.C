@@ -505,7 +505,7 @@ uintptr_t SetControlInitHangData(struct _Instance* instance, long frame, long fr
 	return (uintptr_t)Ptr;
 }
 
-uintptr_t SetControlInitIdleData(int mode, long frame, long frames)
+uintptr_t SetControlInitIdleData(int mode, long frame, long frames)  // Matching - 100%
 {
 	struct evControlInitIdleData* Ptr;
 
