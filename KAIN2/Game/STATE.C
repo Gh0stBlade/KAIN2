@@ -384,7 +384,7 @@ uintptr_t SetPhysicsDropHeightData(struct _Position* offset, int dropOffset, int
 	return (uintptr_t)ptr;
 }
 
-uintptr_t SetAnimationControllerDoneData(struct _Instance* instance, long segment, long type, int data)//Matching - 99.78%
+uintptr_t SetAnimationControllerDoneData(struct _Instance* instance, long segment, long type, int data)  // Matching - 100%
 {
 	struct evAnimationControllerDoneData* Ptr;
 
