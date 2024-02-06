@@ -36,20 +36,20 @@ struct _SVector HUD_Cap_Pos; // offset 0x800d6298
 struct _SVector HUD_Cap_Vel; // offset 0x800d62a0
 
 
-void GlyphInit(struct _Instance* instance, struct GameTracker* gameTracker)
+void GlyphInit(struct _Instance* instance, struct GameTracker* gameTracker)  // Matching - 98.45%
 {
 	struct __GlyphData* data;
 
-	if ((instance->flags & 0x20000))
+	if (instance->flags & 0x20000)
 	{
 		MEMPACK_Free((char*)instance->extraData);
 	}
 	else
 	{
-		data = (struct __GlyphData*)MEMPACK_Malloc(sizeof(struct __GlyphData), 0x1D);
+		data = (struct __GlyphData*)MEMPACK_Malloc(sizeof(struct __GlyphData), 29);
 
 		instance->extraData = data;
-		
+
 		InitMessageQueue(&data->messages);
 
 		EnMessageQueueData(&data->messages, 0x100001, 0);
@@ -58,17 +58,18 @@ void GlyphInit(struct _Instance* instance, struct GameTracker* gameTracker)
 		data->selectedGlyph = 7;
 		data->target_glyph_rotation = 3510;
 		data->glyph_time = 0;
-		
+
 		glyph_time = 0;
-		
+
 		data->glyph_radius = 0;
 		data->glyph_scale = 0;
 		data->glyph_movement = 1;
 		data->glyph_open = 0;
 
 		glyph_trigger = 0;
-	
+
 		fx_blastring = NULL;
+		fx_going = 0;
 
 		data->glyph_rotation = (data->selectedGlyph - 1) * 585;
 
@@ -78,6 +79,9 @@ void GlyphInit(struct _Instance* instance, struct GameTracker* gameTracker)
 	}
 
 	HUD_Init();
+	MANNA_Pickup_Time = 0;
+	MANNA_Position = -64;
+	MANNA_Pos_vel = 0;
 }
 
 void GlyphCollide(struct _Instance* instance, struct GameTracker* gameTracker)
