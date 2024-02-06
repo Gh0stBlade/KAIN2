@@ -508,7 +508,7 @@ uintptr_t SetObjectDraftData(short force, unsigned short radius, unsigned short 
 	return (uintptr_t)Ptr;
 }
 
-uintptr_t SetObjectAbsorbData(struct _Instance* force, unsigned short node, unsigned short steps)
+uintptr_t SetObjectAbsorbData(struct _Instance* force, unsigned short node, unsigned short steps)  // Matching - 100%
 {
 	struct evObjectAbsorbData* Ptr;
 
