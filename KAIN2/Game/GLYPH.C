@@ -104,18 +104,16 @@ void GlyphProcess(struct _Instance* instance, struct GameTracker* gameTracker)  
 
 	instance->flags |= 0xC00;
 }
-
-unsigned long GlyphQuery(struct _Instance* instance, unsigned long query)
+ 
+unsigned long GlyphQuery(struct _Instance* instance, unsigned long query)  // Matching - 100%
 {
-	if (query == 1)
+	switch (query)
 	{
+	case 24:
 		return 0;
+	case 1:
+		break;
 	}
-	else if (query == 24)
-	{
-		return 0;
-	}
-
 	return 0;
 }
 
