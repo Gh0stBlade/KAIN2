@@ -556,7 +556,7 @@ uintptr_t SetControlSaveDataData(long length, void* data)  // Matching - 100%
 	return (uintptr_t)Ptr;
 }
 
-uintptr_t SetObjectIdleData(long mode, struct _Instance* instance)
+uintptr_t SetObjectIdleData(long mode, struct _Instance* instance)  // Matching - 100%
 {
 	struct evObjectIdleData* Ptr;
 	
