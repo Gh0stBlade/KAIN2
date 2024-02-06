@@ -10,12 +10,12 @@
 #include <assert.h>//TEMP
 #endif
 
-short M_TrackClutUpdate;
-struct _BlockVramEntry* openVramBlocks; // offset 0x800D482C
-struct _BlockVramEntry* usedVramBlocks; // offset 0x800D4828
-struct _BlockVramEntry vramBlockList[90]; // offset 0x800D3E2C
-long numOfBlocksUsed; // offset 0x800D4808
-long VRAM_NeedToUpdateMorph;
+short M_TrackClutUpdate; // offset 0x800D61B8
+struct _BlockVramEntry* openVramBlocks; // offset 0x800D61E0
+struct _BlockVramEntry *usedVramBlocks; // offset 0x800D61DC
+struct _BlockVramEntry vramBlockList[90]; // offset 0x800D57E0
+long numOfBlocksUsed; // offset 0x800D61BC
+long VRAM_NeedToUpdateMorph; // offset 0x800D1A70
 
 static inline int VRAM_DisPageXOR()
 {

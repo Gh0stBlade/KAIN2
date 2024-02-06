@@ -67,12 +67,12 @@ struct VramSize
 	short h; // size=0, offset=6
 };
 
-extern long VRAM_NeedToUpdateMorph;
-extern short M_TrackClutUpdate;
-extern struct _BlockVramEntry* openVramBlocks; // offset 0x800D482C
-extern struct _BlockVramEntry* usedVramBlocks; // offset 0x800D4828
-extern struct _BlockVramEntry vramBlockList[90]; // offset 0x800D3E2C
-extern long numOfBlocksUsed; // offset 0x800D4808
+extern long VRAM_NeedToUpdateMorph; // offset 0x800D1A70
+extern short M_TrackClutUpdate; // offset 0x800D61B8
+extern struct _BlockVramEntry* openVramBlocks; // offset 0x800D61E0
+extern struct _BlockVramEntry* usedVramBlocks; // offset 0x800D61DC
+extern struct _BlockVramEntry vramBlockList[90]; // offset 0x800D57E0
+extern long numOfBlocksUsed; // offset 0x800D61BC
 
 extern void VRAM_PrintVramBlock(struct _BlockVramEntry* vblock /*$a0*/);
 
