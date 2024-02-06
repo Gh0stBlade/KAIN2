@@ -63,7 +63,7 @@ union UNDRWRLD_195fake // Hashcode: 0xA8618D78 (dec: -1470001800)
 	_Position throwVector; // size=6, offset=0
 };
 
-struct UW_ScreenXY // hashcode: 0x88757B16 (dec: -2005566698)
+struct UW_ScreenXY 
 {
 	short sx; // size=0, offset=0
 	short sy; // size=0, offset=2
