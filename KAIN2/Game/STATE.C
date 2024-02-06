@@ -68,7 +68,7 @@ struct __Event* DeMessageQueue(struct __MessageQueue* In)//Matching - 100%
 	return &In->Queue[head];
 }
 
-void PurgeMessageQueue(struct __MessageQueue* In)
+void PurgeMessageQueue(struct __MessageQueue* In)  // Matching - 100%
 {
 	In->Tail = 0;
 	In->Head = 0;
