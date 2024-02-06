@@ -599,7 +599,7 @@ uintptr_t SetObjectBirthProjectileData(struct _Instance* instance, int joint, in
 	return (uintptr_t)Ptr;
 }
 
-uintptr_t SetShadowSegmentData(unsigned long total)
+uintptr_t SetShadowSegmentData(unsigned long total)  // Matching - 100%
 {
 	struct evShadowSegmentData* Ptr;
 	
