@@ -141,14 +141,18 @@ void* CIRC_Alloc(int size)
 	}
 }
 
-uintptr_t SetMonsterHitData(struct _Instance* Sender, struct _Instance* lastHit, int Power, int knockBackDistance, int knockBackFrames) { // Matching 100%
+uintptr_t SetMonsterHitData(struct _Instance* Sender, struct _Instance* lastHit, int Power, int knockBackDistance, int knockBackFrames)  // Matching - 100%
+{
 	struct evMonsterHitData* Ptr;
+
 	Ptr = (struct evMonsterHitData*)CIRC_Alloc(sizeof(struct evMonsterHitData));
+
 	Ptr->sender = Sender;
 	Ptr->lastHit = lastHit;
 	Ptr->power = Power;
 	Ptr->knockBackDistance = knockBackDistance;
 	Ptr->knockBackDuration = knockBackFrames;
+
 	return (uintptr_t)Ptr;
 }
 
