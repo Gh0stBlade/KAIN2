@@ -117,28 +117,23 @@ void EnMessageQueueData(struct __MessageQueue* In, int ID, int Data)//Matching -
 }
 
 
-void* CIRC_Alloc(int size)
+void* CIRC_Alloc(int size)  // Matching - 99.71%
 {
 	void* ret;
-	
+
 	size = (size + 3) & -4;
 
-	if (&circBuf[sizeof(circBuf)] < (char*)circWhere + size)
+	if (circBuf + sizeof(circBuf) < (char*)circWhere + size)
 	{
-		ret = &circBuf[0];
-
-		circWhere = (char*)circWhere + size;
-
-		return ret;
+		ret = circBuf;
+		circWhere = circBuf + size;
 	}
 	else
 	{
-		ret = circWhere;
-
+		ret = (char*)circWhere;
 		circWhere = (char*)circWhere + size;
-
-		return circWhere;
 	}
+	return ret;
 }
 
 uintptr_t SetMonsterHitData(struct _Instance* Sender, struct _Instance* lastHit, int Power, int knockBackDistance, int knockBackFrames) { // Matching 100%
