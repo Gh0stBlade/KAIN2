@@ -178,7 +178,7 @@ uintptr_t SetMonsterAlarmData(struct _Instance* sender, _Position* position, int
 	return (uintptr_t)Ptr;
 }
 
-uintptr_t SetMonsterSoulSuckData(struct _Instance* Sender, int x, int y, int z)//Matching - 99.78%
+uintptr_t SetMonsterSoulSuckData(struct _Instance* Sender, int x, int y, int z)  // Matching - 100%
 {
 	struct evMonsterSoulSuckData* Ptr;
 
