@@ -57,9 +57,9 @@ struct XAVoiceTracker // hashcode: 0x77052065 (dec: 1996824677)
 
 extern enum language_t the_language; // offset 0x800D5BFC
 
-extern struct XAVoiceListEntry* voiceList; // offset 0x800CF99C
+extern struct XAVoiceListEntry* voiceList; // offset 0x800D1EE4
 
-extern struct XAVoiceTracker voiceTracker; // offset 0x800D5AD4
+extern struct XAVoiceTracker voiceTracker; // offset 0x800D7488
 
 extern void VOICEXA_Init(); // 0x800B6E14
 
