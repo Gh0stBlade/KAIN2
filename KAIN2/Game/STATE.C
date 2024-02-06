@@ -380,14 +380,18 @@ uintptr_t SetAnimationControllerDoneData(struct _Instance* instance, long segmen
 	return (uintptr_t)Ptr;
 }
 
-uintptr_t SetAnimationInstanceSwitchData(struct _Instance* instance, int anim, int frame, int frames, int mode) { // Matching 100%
+uintptr_t SetAnimationInstanceSwitchData(struct _Instance* instance, int anim, int frame, int frames, int mode)  // Matching - 100%
+{
 	struct evAnimationInstanceSwitchData* Ptr;
+
 	Ptr = (struct evAnimationInstanceSwitchData*)CIRC_Alloc(sizeof(struct evAnimationInstanceSwitchData));
+
 	Ptr->instance = instance;
 	Ptr->anim = anim;
 	Ptr->frame = frame;
 	Ptr->frames = frames;
 	Ptr->mode = mode;
+
 	return (uintptr_t)Ptr;
 }
 
