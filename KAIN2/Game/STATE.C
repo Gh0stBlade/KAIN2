@@ -201,11 +201,12 @@ uintptr_t SetMonsterSoulSuckData(struct _Instance* Sender, int x, int y, int z) 
 	return (uintptr_t)Ptr;
 }
 
-uintptr_t SetMonsterImpaleData(struct _Instance* weapon, struct _Rotation* direction, _Position* position, int distance)  // Matching - 100%
+uintptr_t SetMonsterImpaleData(struct _Instance* weapon, struct _Rotation* direction, struct _Position* position, int distance)  // Matching - 100%
 {
 	struct evMonsterImpaleData* Ptr;
 
 	Ptr = (struct evMonsterImpaleData*)CIRC_Alloc(sizeof(struct evMonsterImpaleData));
+
 	Ptr->weapon = weapon;
 	Ptr->direction.x = direction->x;
 	Ptr->direction.y = direction->y;
@@ -214,6 +215,7 @@ uintptr_t SetMonsterImpaleData(struct _Instance* weapon, struct _Rotation* direc
 	Ptr->position.y = position->y;
 	Ptr->position.z = position->z;
 	Ptr->distance = distance;
+
 	return (uintptr_t)Ptr;
 }
 
