@@ -582,7 +582,7 @@ uintptr_t SetActionPlayHostAnimationData(struct _Instance* instance, struct _Ins
 	return (uintptr_t)Ptr;
 }
 
-uintptr_t SetObjectBirthProjectileData(struct _Instance* instance, int joint, int type)
+uintptr_t SetObjectBirthProjectileData(struct _Instance* instance, int joint, int type)  // Matching - 100%
 {
 	struct evObjectBirthProjectileData* Ptr;
 
