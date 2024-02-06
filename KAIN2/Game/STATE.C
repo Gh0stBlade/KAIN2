@@ -48,7 +48,7 @@ static inline void STATE_CheckIfObjectSpins(struct evObjectThrowData* Ptr, struc
 	}
 }
 
-void InitMessageQueue(struct __MessageQueue* In)
+void InitMessageQueue(struct __MessageQueue* In)  // Matching - 100%
 {
 	In->Head = 0;
 	In->Tail = 0;
