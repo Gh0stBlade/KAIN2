@@ -28,7 +28,7 @@ struct evAnimationControllerDoneData
 	int data; // size=0, offset=12
 };
 
-struct evObjectBreakOffData
+struct evObjectBreakOffData 
 {
 	struct _Instance* force; // size=668, offset=0
 	unsigned short node; // size=0, offset=4
@@ -39,7 +39,8 @@ struct evObjectBreakOffData
 	unsigned short action; // size=0, offset=14
 };
 
-struct evObjectDraftData {
+struct evObjectDraftData 
+{
 	short force; // size=0, offset=0
 	unsigned short radius; // size=0, offset=2
 	unsigned short radiusCoef; // size=0, offset=4
@@ -47,7 +48,7 @@ struct evObjectDraftData {
 	unsigned short maxVelocity; // size=0, offset=8
 };
 
-struct evActionPlayHostAnimationData
+struct evActionPlayHostAnimationData 
 {
 	struct _Instance* instance; // size=668, offset=0
 	struct _Instance* host; // size=668, offset=4
