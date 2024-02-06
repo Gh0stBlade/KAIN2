@@ -3,17 +3,17 @@
 
 #include "LOCAL/LOCALSTR.H"
 
-struct XAVoiceListEntry // hashcode: 0xDBE9AB23 (dec: -605443293)
+struct XAVoiceListEntry 
 {
 	unsigned short length; // size=0, offset=0
 };
 
-struct XAFileInfo // hashcode: 0xD7260012 (dec: -685375470)
+struct XAFileInfo 
 {
 	int startPos; // size=0, offset=0
 };
 
-struct CdCommand // hashcode: 0x042C215C (dec: 70000988)
+struct CdCommand
 {
 	unsigned short flags; // size=0, offset=0
 	unsigned char unused; // size=0, offset=2
@@ -21,18 +21,20 @@ struct CdCommand // hashcode: 0x042C215C (dec: 70000988)
 	unsigned char cdCmdParam[4]; // size=4, offset=4
 };
 
-struct VoiceCommand // hashcode: 0xEEB8F864 (dec: -289867676)
+struct VoiceCommand 
 {
 	unsigned char voiceCmd; // size=0, offset=0
 	unsigned char nextVoiceStatus; // size=0, offset=1
 	unsigned short voiceCmdParam; // size=0, offset=2
 };
 
-struct XAVoiceTracker // hashcode: 0x77052065 (dec: 1996824677)
+struct XAVoiceTracker 
 {
+	//struct CdlLOC currentPos; // size=4, offset=0
 	CdlLOC currentPos; // size=4, offset=0
 	int currentSector; // size=0, offset=4
 	int endSector; // size=0, offset=8
+	//void (*prevCallback)(); // size=0, offset=12
 	CdlCB prevCallback; // size=0, offset=12
 	unsigned char cdResult[8]; // size=8, offset=16
 	struct CdCommand cdCmdQueue[8]; // size=64, offset=24
