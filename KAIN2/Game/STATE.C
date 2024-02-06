@@ -165,16 +165,18 @@ uintptr_t SetMonsterThrownData(struct _Instance* Sender, struct _Rotation* Direc
 	return (uintptr_t)Ptr;
 }
 
-uintptr_t SetMonsterAlarmData(struct _Instance* sender, _Position* position, int type)  // Matching - 100%
+uintptr_t SetMonsterAlarmData(struct _Instance* sender, struct _Position* position, int type)  // Matching - 100%
 {
 	struct evMonsterAlarmData* Ptr;
 
 	Ptr = (struct evMonsterAlarmData*)CIRC_Alloc(sizeof(struct evMonsterAlarmData));
+
 	Ptr->sender = sender;
 	Ptr->position.x = position->x;
 	Ptr->position.y = position->y;
 	Ptr->position.z = position->z;
 	Ptr->type = type;
+
 	return (uintptr_t)Ptr;
 }
 
