@@ -250,11 +250,11 @@ uintptr_t SetPhysicsGravityData(int UpperOffset, int LowerOffset, int x, int y, 
 	return (uintptr_t)Ptr;
 }
 
-uintptr_t SetPhysicsEdgeData(int UpperOffset, int ForwardOffset, int AboveOffset, int x, int y, int z, struct _SVector* Normal1, struct _SVector* Normal2, struct _SVector* Delta)
+uintptr_t SetPhysicsEdgeData(int UpperOffset, int ForwardOffset, int AboveOffset, int x, int y, int z, struct _SVector* Normal1, struct _SVector* Normal2, struct _SVector* Delta)  // Matching - 100%
 {
 	struct evPhysicsEdgeData* Ptr;
 
-	Ptr = (struct evPhysicsEdgeData*)CIRC_Alloc(sizeof(evPhysicsEdgeData));
+	Ptr = (struct evPhysicsEdgeData*)CIRC_Alloc(sizeof(struct evPhysicsEdgeData));
 
 	Ptr->UpperOffset = UpperOffset;
 
@@ -263,17 +263,17 @@ uintptr_t SetPhysicsEdgeData(int UpperOffset, int ForwardOffset, int AboveOffset
 	Ptr->AboveOffset = AboveOffset;
 
 	Ptr->XDistance = x;
-	
+
 	Ptr->YDistance = y;
-	
+
 	Ptr->ZDistance = z;
 
 	Ptr->Normal1 = Normal1;
-	
+
 	Ptr->Normal2 = Normal2;
 
 	Ptr->Delta = Delta;
-	
+
 	return (uintptr_t)Ptr;
 }
 
