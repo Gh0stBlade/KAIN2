@@ -2,8 +2,8 @@
 #include "VM.H"
 #include "MEMPACK.H"
 
-long vmRealClock; // offset 0x800d106c
-long vmClock; // offset 0x800d1070
+static long vmRealClock; // offset 0x800D106C
+static long vmClock; // offset 0x800D1070
 
 void VM_Tick(long time)  // Matching - 100%
 {

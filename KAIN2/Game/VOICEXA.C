@@ -3,8 +3,9 @@
 #include "GAMELOOP.H"
 #include "PSX/AADLIB.H"
 
-struct XAVoiceTracker voiceTracker; // offset 0x800D5AD4
-struct XAVoiceListEntry* voiceList; // offset 0x800CF99C
+struct XAVoiceTracker voiceTracker; // offset 0x800D7488
+struct XAVoiceListEntry* voiceList; // offset 0x800D1EE4
+// static enum language_t the_language; // offset 0x800D75B0
 enum language_t the_language; // offset 0x800D5BFC
 
 typedef void (*voiceCmdFunc)(struct XAVoiceTracker* vt, short cmdParam);

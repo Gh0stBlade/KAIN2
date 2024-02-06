@@ -17,7 +17,7 @@ struct VramBuffer
 	short* lineOverFlow; // size=0, offset=16
 };
 
-struct _BlockVramEntry // hashcode: 0x24B2FBC5 (dec: 615709637)
+struct _BlockVramEntry 
 {
 #if defined(PSX_VERSION)
 	struct _BlockVramEntry* next; // size=28, offset=0
@@ -30,12 +30,13 @@ struct _BlockVramEntry // hashcode: 0x24B2FBC5 (dec: 615709637)
 	short w; // size=0, offset=16
 	short h; // size=0, offset=18
 	long area; // size=0, offset=20
-	union 
+	union
 	{
 		struct _StreamUnit* streamUnit; // size=64, offset=0
 		struct _ObjectTracker* streamObject; // size=36, offset=0
 		struct _ButtonTexture* button; // size=16, offset=0
-	} udata; // size=4, offset=24
+	}
+	udata; // size=4, offset=24
 #else
 	struct _BlockVramEntry* next; // size=28, offset=0
 	unsigned char type; // size=0, offset=4
@@ -48,15 +49,17 @@ struct _BlockVramEntry // hashcode: 0x24B2FBC5 (dec: 615709637)
 	short w; // size=0, offset=16
 	short h; // size=0, offset=18
 	long area; // size=0, offset=20
-	union {
+	union 
+	{
 		struct _StreamUnit* streamUnit; // size=64, offset=0
 		struct _ObjectTracker* streamObject; // size=36, offset=0
 		struct _ButtonTexture* button; // size=16, offset=0
-	} udata; // size=4, offset=24, found in object files: debug.o, debug.o
+	} 
+	udata; // size=4, offset=24, found in object files: debug.o, debug.o
 #endif
 };
 
-struct VramSize // hashcode: 0xD96A55BF (dec: -647342657)
+struct VramSize 
 {
 	short x; // size=0, offset=0
 	short y; // size=0, offset=2
@@ -64,12 +67,12 @@ struct VramSize // hashcode: 0xD96A55BF (dec: -647342657)
 	short h; // size=0, offset=6
 };
 
-extern long VRAM_NeedToUpdateMorph;
-extern short M_TrackClutUpdate;
-extern struct _BlockVramEntry* openVramBlocks; // offset 0x800D482C
-extern struct _BlockVramEntry* usedVramBlocks; // offset 0x800D4828
-extern struct _BlockVramEntry vramBlockList[90]; // offset 0x800D3E2C
-extern long numOfBlocksUsed; // offset 0x800D4808
+extern long VRAM_NeedToUpdateMorph; // offset 0x800D1A70
+extern short M_TrackClutUpdate; // offset 0x800D61B8
+extern struct _BlockVramEntry* openVramBlocks; // offset 0x800D61E0
+extern struct _BlockVramEntry* usedVramBlocks; // offset 0x800D61DC
+extern struct _BlockVramEntry vramBlockList[90]; // offset 0x800D57E0
+extern long numOfBlocksUsed; // offset 0x800D61BC
 
 extern void VRAM_PrintVramBlock(struct _BlockVramEntry* vblock /*$a0*/);
 

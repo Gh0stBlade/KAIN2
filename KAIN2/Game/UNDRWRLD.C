@@ -5,13 +5,13 @@
 #include "MEMPACK.H"
 #include "PSX/MAIN.H"
 
-struct UW_ScreenXY* ScreenMorphArray;
-long UW_angle;
-long UW_scalex;
-long UW_scalexInc;
-long UW_angleInc;
+static struct UW_ScreenXY* ScreenMorphArray; // offset 0x800D1DC4
+static long UW_angle; // offset 0x800D7364
+static long UW_scalex; // offset 0x800D7368
+static long UW_scalexInc; // offset 0x800D736C
+static long UW_angleInc; // offset 0x800D7370
 
-void UNDERWORLD_StartProcess()
+void UNDERWORLD_StartProcess()  // Matching - 100%
 { 
 	INSTANCE_Post(gameTrackerX.playerInstance, 0x40001, 0);
 

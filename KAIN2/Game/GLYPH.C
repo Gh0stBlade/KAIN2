@@ -36,20 +36,20 @@ struct _SVector HUD_Cap_Pos; // offset 0x800d6298
 struct _SVector HUD_Cap_Vel; // offset 0x800d62a0
 
 
-void GlyphInit(struct _Instance* instance, struct GameTracker* gameTracker)
+void GlyphInit(struct _Instance* instance, struct GameTracker* gameTracker)  // Matching - 98.45%
 {
 	struct __GlyphData* data;
 
-	if ((instance->flags & 0x20000))
+	if (instance->flags & 0x20000)
 	{
 		MEMPACK_Free((char*)instance->extraData);
 	}
 	else
 	{
-		data = (struct __GlyphData*)MEMPACK_Malloc(sizeof(struct __GlyphData), 0x1D);
+		data = (struct __GlyphData*)MEMPACK_Malloc(sizeof(struct __GlyphData), 29);
 
 		instance->extraData = data;
-		
+
 		InitMessageQueue(&data->messages);
 
 		EnMessageQueueData(&data->messages, 0x100001, 0);
@@ -58,17 +58,18 @@ void GlyphInit(struct _Instance* instance, struct GameTracker* gameTracker)
 		data->selectedGlyph = 7;
 		data->target_glyph_rotation = 3510;
 		data->glyph_time = 0;
-		
+
 		glyph_time = 0;
-		
+
 		data->glyph_radius = 0;
 		data->glyph_scale = 0;
 		data->glyph_movement = 1;
 		data->glyph_open = 0;
 
 		glyph_trigger = 0;
-	
+
 		fx_blastring = NULL;
+		fx_going = 0;
 
 		data->glyph_rotation = (data->selectedGlyph - 1) * 585;
 
@@ -78,51 +79,48 @@ void GlyphInit(struct _Instance* instance, struct GameTracker* gameTracker)
 	}
 
 	HUD_Init();
+	MANNA_Pickup_Time = 0;
+	MANNA_Position = -64;
+	MANNA_Pos_vel = 0;
 }
 
 void GlyphCollide(struct _Instance* instance, struct GameTracker* gameTracker)
 {
 }
 
-void GlyphProcess(struct _Instance *instance, struct GameTracker *gameTracker)
-{ 
+void GlyphProcess(struct _Instance* instance, struct GameTracker* gameTracker)  // Matching - 100%
+{
 	struct __GlyphData* data;
 
 	data = (struct __GlyphData*)instance->extraData;
 
 	data->process(instance, 0, 0);
 
-	instance->oldPos.x = instance->parent->position.x;
-	instance->oldPos.y = instance->parent->position.y;
-	instance->oldPos.z = instance->parent->position.z;
+	instance->oldPos = instance->parent->position;
 
-	instance->position.x = instance->parent->position.x;
-	instance->position.y = instance->parent->position.y;
-	instance->position.z = instance->parent->position.z;
-
-	instance->flags |= 0xC00;
+	instance->position = instance->oldPos;
 
 	instance->currentStreamUnitID = instance->parent->currentStreamUnitID;
+
+	instance->flags |= 0xC00;
 }
-
-unsigned long GlyphQuery(struct _Instance* instance, unsigned long query)
+ 
+unsigned long GlyphQuery(struct _Instance* instance, unsigned long query)  // Matching - 100%
 {
-	if (query == 1)
+	switch (query)
 	{
+	case 24:
 		return 0;
+	case 1:
+		break;
 	}
-	else if (query == 24)
-	{
-		return 0;
-	}
-
 	return 0;
 }
 
-void GlyphPost(struct _Instance* instance, unsigned long message, unsigned long messageData)//Matching - 99.62%
+void GlyphPost(struct _Instance* instance, unsigned long message, unsigned long messageData)  // Matching - 100%
 {
 	struct __GlyphData* data;
-	
+
 	data = (struct __GlyphData*)instance->extraData;
 
 	if (message != 0x100007)
@@ -150,7 +148,7 @@ void _GlyphSwitchProcess(struct _Instance* instance, void (*func)(struct _Instan
 	func(instance, 0, 0);
 }
 
-int GlyphIsGlyphOpen(struct _Instance* instance)
+int GlyphIsGlyphOpen(struct _Instance* instance)  // Matching - 100%
 {
 	return ((struct __GlyphData*)instance->extraData)->glyph_open;
 }
