@@ -317,9 +317,12 @@ uintptr_t SetPhysicsDropOffData(int xOffset, int yOffset, int DropOffset, int sl
 	return (uintptr_t)Ptr;
 }
 
-uintptr_t SetPhysicsSlideData(int Segment, int ForwardVectorX, int ForwardVectorY, int ForwardVectorZ, int DropOffset, int UpperOffset, int Height) { // Matching 100%
+uintptr_t SetPhysicsSlideData(int Segment, int ForwardVectorX, int ForwardVectorY, int ForwardVectorZ, int DropOffset, int UpperOffset, int Height)  // Matching - 100%
+{
 	struct evPhysicsSlideData* Ptr;
+
 	Ptr = (struct evPhysicsSlideData*)CIRC_Alloc(sizeof(struct evPhysicsSlideData));
+
 	Ptr->Segment = Segment;
 	Ptr->ForwardVector.x = ForwardVectorX;
 	Ptr->ForwardVector.y = ForwardVectorY;
@@ -327,6 +330,7 @@ uintptr_t SetPhysicsSlideData(int Segment, int ForwardVectorX, int ForwardVector
 	Ptr->DropOffset = DropOffset;
 	Ptr->UpperOffset = UpperOffset;
 	Ptr->Height = Height;
+
 	return (uintptr_t)Ptr;
 }
 
