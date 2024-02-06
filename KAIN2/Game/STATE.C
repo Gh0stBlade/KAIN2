@@ -84,7 +84,7 @@ struct __Event* PeekMessageQueue(struct __MessageQueue* In)//Matching - 100%
 	return &In->Queue[In->Head];
 }
 
-void EnMessageQueue(struct __MessageQueue* In, struct __Event* Element)
+void EnMessageQueue(struct __MessageQueue* In, struct __Event* Element)  // Matching - 100%
 { 
 	EnMessageQueueData(In, Element->ID, Element->Data);
 }
