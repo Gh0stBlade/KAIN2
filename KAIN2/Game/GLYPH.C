@@ -150,7 +150,7 @@ void _GlyphSwitchProcess(struct _Instance* instance, void (*func)(struct _Instan
 	func(instance, 0, 0);
 }
 
-int GlyphIsGlyphOpen(struct _Instance* instance)
+int GlyphIsGlyphOpen(struct _Instance* instance)  // Matching - 100%
 {
 	return ((struct __GlyphData*)instance->extraData)->glyph_open;
 }
