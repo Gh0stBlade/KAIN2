@@ -926,15 +926,22 @@ void razInitWallCrawlSteering(struct _Instance* instance) // Matching - 98.48%
 	ExtraRot->x = 0;
 }
 
-void razDeinitWallCrawlSteering(struct _Instance* instance) { // Matching - 100%
+void razDeinitWallCrawlSteering(struct _Instance* instance)  // Matching - 100%
+{
 	G2Anim_DisableController(&instance->anim, 1, 38);
+
 	instance->position.z -= 318;
 	instance->oldPos.z -= 318;
 	instance->matrix->t[2] -= 318;
 	instance->oldMatrix->t[2] -= 318;
+
 	G2Anim_InterpDisableController(&instance->anim, 0, 14, 300);
+
 	G2Anim_InterpDisableController(&instance->anim, 0, 8, 300);
+
 	G2Anim_InterpDisableController(&instance->anim, 14, 14, 300);
+
 	G2Anim_InterpDisableController(&instance->anim, 50, 76, 300);
+
 	G2Anim_InterpDisableController(&instance->anim, 58, 76, 300);
 }
