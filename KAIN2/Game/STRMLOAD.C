@@ -11,18 +11,25 @@
 
 #include <stddef.h>
 
+//static int gCurDir; // offset 0x800D197C
 int gCurDir; // offset 0x800CF4E8
 
+//static struct _LoadQueueEntry *loadFree; // offset 0x800D40D8
 struct _LoadQueueEntry* loadFree; // offset 0x800D2724
 
+//static int loadFromHead; // offset 0x800D1978
 int loadFromHead; // offset 0x800CF4E0
 
+//static struct _LoadQueueEntry *loadHead; // offset 0x800D40DC
 struct _LoadQueueEntry* loadHead; // offset 0x800D2728
 
+//static struct _LoadQueueEntry LoadQueue[40]; // offset 0x800DA984
 struct _LoadQueueEntry LoadQueue[40]; // offset 0x800D1D24
 
+//static struct _LoadQueueEntry *loadTail; // offset 0x800D40E0
 struct _LoadQueueEntry* loadTail; // offset 0x800D272C
 
+//static int numLoads; // offset 0x800D40E4
 int numLoads; // offset 0x800D2730
 
 void STREAM_NextLoadFromHead()  // Matching - 100%
@@ -361,20 +368,12 @@ int STREAM_PollLoadQueue()  // Matching - 98.77%
 	return numLoads;
 }
 
-struct _LoadQueueEntry* STREAM_SetUpQueueEntry(char *fileName, void *retFunc, void *retData, void *retData2, void **retPointer, int fromhead)
-{ 
-	struct _LoadQueueEntry *currentEntry;
+struct _LoadQueueEntry* STREAM_SetUpQueueEntry(char* fileName, void* retFunc, void* retData, void* retData2, void** retPointer, int fromhead)  // Matching - 100%
+{
+	struct _LoadQueueEntry* currentEntry;
 
-	if (fromhead != 0)
-	{
-		currentEntry = STREAM_AddQueueEntryToHead();
-	}
-	else
-	{
-		currentEntry = STREAM_AddQueueEntryToTail();
-	}
+	currentEntry = (fromhead != 0) ? STREAM_AddQueueEntryToHead() : STREAM_AddQueueEntryToTail();
 
-	
 	strcpy(currentEntry->loadEntry.fileName, fileName);
 
 	currentEntry->loadEntry.fileHash = LOAD_HashName(fileName);
@@ -387,24 +386,24 @@ struct _LoadQueueEntry* STREAM_SetUpQueueEntry(char *fileName, void *retFunc, vo
 	{
 		currentEntry->loadEntry.dirHash = LOAD_GetSearchDirectory();
 		LOAD_SetSearchDirectory(0);
-		currentEntry->loadEntry.retFunc = retFunc;
 	}
 	else
 	{
 		currentEntry->loadEntry.dirHash = gCurDir;
-		currentEntry->loadEntry.retFunc = retFunc;
 	}
+
+	currentEntry->loadEntry.retFunc = retFunc;
 
 	currentEntry->loadEntry.retData = retData;
 	currentEntry->loadEntry.retData2 = retData2;
 	currentEntry->loadEntry.retPointer = retPointer;
-	
+
 	if (retPointer != NULL)
 	{
 #if defined(GAME_X64)
 		((intptr_t*)retPointer)[0] = INVALID_MEM_MAGIC;
 #else
-		((long*)retPointer)[0] = INVALID_MEM_MAGIC;
+		((long*)retPointer)[0] = INVALID_MEM_MAGIC;  // double check if retPointer is getting parsed correctly
 #endif
 	}
 

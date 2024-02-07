@@ -29,23 +29,23 @@
 #include <stddef.h>
 #include "TIMER.H"
 
-long CurrentWarpNumber;
+long CurrentWarpNumber; // offset 0x800D1694
 
-struct WarpGateLoadInfo WarpGateLoadInfo;
+struct WarpGateLoadInfo WarpGateLoadInfo; // offset 0x800D3CB0
 
-struct WarpRoom WarpRoomArray[14];
+struct WarpRoom WarpRoomArray[14]; // offset 0x800D1698
 
-struct STracker StreamTracker; // offset 0x800D1920
+struct STracker StreamTracker; // offset 0x800D3CD4
 
-struct _TFace* MORPH_SavedFace;
+struct _TFace* MORPH_SavedFace; // offset 0x800D40D4
 
-struct Level* MORPH_SavedLevel;
+struct Level* MORPH_SavedLevel; // offset 0x800D3CC4
 
-short MORPH_Component[3];
+short MORPH_Component[3]; // offset 0x800D3CC8
 
-short MORPH_Track[2];
+short MORPH_Track[2]; // offset 0x800D3CD0
 
-int s_zval;
+static int s_zval; // offset 0x800D3CAC
 
 void STREAM_FillOutFileNames(char *baseAreaName, char *dramName, char *vramName, char *sfxName)  // Matching - 100%
 { 
@@ -1752,37 +1752,41 @@ int WARPGATE_IsObjectOnWarpSide(struct _Instance* instance)  // Matching - 100%
 	return 0;
 }
 
-void WARPGATE_IsItActive(struct _StreamUnit *streamUnit)
+void WARPGATE_IsItActive(struct _StreamUnit* streamUnit)  // Matching - 100%
 {
-	struct Level *level;
+	struct Level* level;
 	int d;
+	int temp;  // not from SYMDUMP
 
 	level = streamUnit->level;
 	streamUnit->flags |= 0x1;
 
-	if (level->PuzzleInstances != NULL && level->PuzzleInstances->numPuzzles > 0)
+	if (level->PuzzleInstances == NULL)
 	{
-		for (d = 0; d < level->PuzzleInstances->numPuzzles; d++)
-		{
-			if (level->PuzzleInstances->eventInstances[d]->eventNumber == 1)
-			{
-				if ((gameTrackerX.streamFlags & 0x400000))
-				{
-					level->PuzzleInstances->eventInstances[d]->eventVariables[0] = level->PuzzleInstances->eventInstances[d]->eventNumber;
-				}
-
-				if (level->PuzzleInstances->eventInstances[d]->eventVariables[0] != level->PuzzleInstances->eventInstances[d]->eventNumber)
-				{
-					return;
-				}
-
-				streamUnit->flags |= 0x8;
-				return;
-			}
-		}
+		return;
 	}
 
-	return;
+	for (d = 0; d < level->PuzzleInstances->numPuzzles; d++)
+	{
+		temp = level->PuzzleInstances->eventInstances[d]->eventNumber;
+
+		if (temp != 1)
+		{
+			continue;
+		}
+
+		if ((gameTrackerX.streamFlags & 0x400000))
+		{
+			level->PuzzleInstances->eventInstances[d]->eventVariables[0] = temp;
+		}
+
+		if (level->PuzzleInstances->eventInstances[d]->eventVariables[0] == temp)
+		{
+			streamUnit->flags |= 0x8;
+		}
+
+		break;
+	}
 }
 
 long WARPGATE_IsUnitWarpRoom(struct _StreamUnit* streamUnit)  // Matching - 100%

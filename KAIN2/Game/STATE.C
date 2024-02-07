@@ -8,6 +8,7 @@
 #include "Game/GENERIC.H"
 #include "G2/ANMCTRLR.H"
 
+//static struct _G2AnimAlphaTable_Type* G2AlphaTables[7]; // offset 0x800D1A50
 struct _G2AnimAlphaTable_Type* G2AlphaTables[7] = {
 	NULL,
 	NULL,
@@ -18,8 +19,9 @@ struct _G2AnimAlphaTable_Type* G2AlphaTables[7] = {
 	NULL,
 };
 
-char circBuf[4096];
+static char circBuf[4096]; // offset 0x800D47E0
 
+//static void *circWhere; // offset 0x800D1A6C
 void* circWhere = &circBuf[92];
 
 static inline void STATE_CheckIfObjectSpins(struct evObjectThrowData* Ptr, struct _SVector* angularVel, long spinType)
@@ -46,7 +48,7 @@ static inline void STATE_CheckIfObjectSpins(struct evObjectThrowData* Ptr, struc
 	}
 }
 
-void InitMessageQueue(struct __MessageQueue* In)
+void InitMessageQueue(struct __MessageQueue* In)  // Matching - 100%
 {
 	In->Head = 0;
 	In->Tail = 0;
@@ -68,7 +70,7 @@ struct __Event* DeMessageQueue(struct __MessageQueue* In)//Matching - 100%
 	return &In->Queue[head];
 }
 
-void PurgeMessageQueue(struct __MessageQueue* In)
+void PurgeMessageQueue(struct __MessageQueue* In)  // Matching - 100%
 {
 	In->Tail = 0;
 	In->Head = 0;
@@ -84,7 +86,7 @@ struct __Event* PeekMessageQueue(struct __MessageQueue* In)//Matching - 100%
 	return &In->Queue[In->Head];
 }
 
-void EnMessageQueue(struct __MessageQueue* In, struct __Event* Element)
+void EnMessageQueue(struct __MessageQueue* In, struct __Event* Element)  // Matching - 100%
 { 
 	EnMessageQueueData(In, Element->ID, Element->Data);
 }
@@ -117,38 +119,37 @@ void EnMessageQueueData(struct __MessageQueue* In, int ID, int Data)//Matching -
 }
 
 
-void* CIRC_Alloc(int size)
+void* CIRC_Alloc(int size)  // Matching - 99.71%
 {
 	void* ret;
-	
+
 	size = (size + 3) & -4;
 
-	if (&circBuf[sizeof(circBuf)] < (char*)circWhere + size)
+	if (circBuf + sizeof(circBuf) < (char*)circWhere + size)
 	{
-		ret = &circBuf[0];
-
-		circWhere = (char*)circWhere + size;
-
-		return ret;
+		ret = circBuf;
+		circWhere = circBuf + size;
 	}
 	else
 	{
-		ret = circWhere;
-
+		ret = (char*)circWhere;
 		circWhere = (char*)circWhere + size;
-
-		return circWhere;
 	}
+	return ret;
 }
 
-uintptr_t SetMonsterHitData(struct _Instance* Sender, struct _Instance* lastHit, int Power, int knockBackDistance, int knockBackFrames) { // Matching 100%
+uintptr_t SetMonsterHitData(struct _Instance* Sender, struct _Instance* lastHit, int Power, int knockBackDistance, int knockBackFrames)  // Matching - 100%
+{
 	struct evMonsterHitData* Ptr;
+
 	Ptr = (struct evMonsterHitData*)CIRC_Alloc(sizeof(struct evMonsterHitData));
+
 	Ptr->sender = Sender;
 	Ptr->lastHit = lastHit;
 	Ptr->power = Power;
 	Ptr->knockBackDistance = knockBackDistance;
 	Ptr->knockBackDuration = knockBackFrames;
+
 	return (uintptr_t)Ptr;
 }
 
@@ -165,20 +166,22 @@ uintptr_t SetMonsterThrownData(struct _Instance* Sender, struct _Rotation* Direc
 	return (uintptr_t)Ptr;
 }
 
-uintptr_t SetMonsterAlarmData(struct _Instance* sender, _Position* position, int type)  // Matching - 100%
+uintptr_t SetMonsterAlarmData(struct _Instance* sender, struct _Position* position, int type)  // Matching - 100%
 {
 	struct evMonsterAlarmData* Ptr;
 
 	Ptr = (struct evMonsterAlarmData*)CIRC_Alloc(sizeof(struct evMonsterAlarmData));
+
 	Ptr->sender = sender;
 	Ptr->position.x = position->x;
 	Ptr->position.y = position->y;
 	Ptr->position.z = position->z;
 	Ptr->type = type;
+
 	return (uintptr_t)Ptr;
 }
 
-uintptr_t SetMonsterSoulSuckData(struct _Instance* Sender, int x, int y, int z)//Matching - 99.78%
+uintptr_t SetMonsterSoulSuckData(struct _Instance* Sender, int x, int y, int z)  // Matching - 100%
 {
 	struct evMonsterSoulSuckData* Ptr;
 
@@ -193,11 +196,12 @@ uintptr_t SetMonsterSoulSuckData(struct _Instance* Sender, int x, int y, int z)/
 	return (uintptr_t)Ptr;
 }
 
-uintptr_t SetMonsterImpaleData(struct _Instance* weapon, struct _Rotation* direction, _Position* position, int distance)  // Matching - 100%
+uintptr_t SetMonsterImpaleData(struct _Instance* weapon, struct _Rotation* direction, struct _Position* position, int distance)  // Matching - 100%
 {
 	struct evMonsterImpaleData* Ptr;
 
 	Ptr = (struct evMonsterImpaleData*)CIRC_Alloc(sizeof(struct evMonsterImpaleData));
+
 	Ptr->weapon = weapon;
 	Ptr->direction.x = direction->x;
 	Ptr->direction.y = direction->y;
@@ -206,6 +210,7 @@ uintptr_t SetMonsterImpaleData(struct _Instance* weapon, struct _Rotation* direc
 	Ptr->position.y = position->y;
 	Ptr->position.z = position->z;
 	Ptr->distance = distance;
+
 	return (uintptr_t)Ptr;
 }
 
@@ -222,7 +227,7 @@ uintptr_t SetObjectData(int x, int y, int PathNumber, struct _Instance* Force, i
 	return (uintptr_t)Ptr;
 }
 
-uintptr_t SetPositionData(int x, int y, int z)
+uintptr_t SetPositionData(int x, int y, int z)  // Matching - 100%
 {
 	struct evPositionData* Ptr;
 	
@@ -235,7 +240,7 @@ uintptr_t SetPositionData(int x, int y, int z)
 	return (uintptr_t)Ptr;
 }
 
-uintptr_t SetPhysicsGravityData(int UpperOffset, int LowerOffset, int x, int y, int z, int slope)
+uintptr_t SetPhysicsGravityData(int UpperOffset, int LowerOffset, int x, int y, int z, int slope)  // Matching - 100%
 {
 	struct evPhysicsGravityData* Ptr;
 	
@@ -250,11 +255,11 @@ uintptr_t SetPhysicsGravityData(int UpperOffset, int LowerOffset, int x, int y, 
 	return (uintptr_t)Ptr;
 }
 
-uintptr_t SetPhysicsEdgeData(int UpperOffset, int ForwardOffset, int AboveOffset, int x, int y, int z, struct _SVector* Normal1, struct _SVector* Normal2, struct _SVector* Delta)
+uintptr_t SetPhysicsEdgeData(int UpperOffset, int ForwardOffset, int AboveOffset, int x, int y, int z, struct _SVector* Normal1, struct _SVector* Normal2, struct _SVector* Delta)  // Matching - 100%
 {
 	struct evPhysicsEdgeData* Ptr;
 
-	Ptr = (struct evPhysicsEdgeData*)CIRC_Alloc(sizeof(evPhysicsEdgeData));
+	Ptr = (struct evPhysicsEdgeData*)CIRC_Alloc(sizeof(struct evPhysicsEdgeData));
 
 	Ptr->UpperOffset = UpperOffset;
 
@@ -263,21 +268,21 @@ uintptr_t SetPhysicsEdgeData(int UpperOffset, int ForwardOffset, int AboveOffset
 	Ptr->AboveOffset = AboveOffset;
 
 	Ptr->XDistance = x;
-	
+
 	Ptr->YDistance = y;
-	
+
 	Ptr->ZDistance = z;
 
 	Ptr->Normal1 = Normal1;
-	
+
 	Ptr->Normal2 = Normal2;
 
 	Ptr->Delta = Delta;
-	
+
 	return (uintptr_t)Ptr;
 }
 
-uintptr_t SetPhysicsSwimData(int CheckDepth, struct _SVector* iVelocity, int SwimDepth, int WadeDepth, int TreadDepth)
+uintptr_t SetPhysicsSwimData(int CheckDepth, struct _SVector* iVelocity, int SwimDepth, int WadeDepth, int TreadDepth)  // Matching - 100%
 {
 	struct evPhysicsSwimData* Ptr;
 
@@ -292,7 +297,7 @@ uintptr_t SetPhysicsSwimData(int CheckDepth, struct _SVector* iVelocity, int Swi
 	return (uintptr_t)Ptr;
 }
 
-uintptr_t SetPhysicsDropOffData(int xOffset, int yOffset, int DropOffset, int slipSlope, int UpperOffset)
+uintptr_t SetPhysicsDropOffData(int xOffset, int yOffset, int DropOffset, int slipSlope, int UpperOffset)  // Matching - 100%
 {
 	struct evPhysicsDropOffData* Ptr;
 
@@ -311,9 +316,12 @@ uintptr_t SetPhysicsDropOffData(int xOffset, int yOffset, int DropOffset, int sl
 	return (uintptr_t)Ptr;
 }
 
-uintptr_t SetPhysicsSlideData(int Segment, int ForwardVectorX, int ForwardVectorY, int ForwardVectorZ, int DropOffset, int UpperOffset, int Height) { // Matching 100%
+uintptr_t SetPhysicsSlideData(int Segment, int ForwardVectorX, int ForwardVectorY, int ForwardVectorZ, int DropOffset, int UpperOffset, int Height)  // Matching - 100%
+{
 	struct evPhysicsSlideData* Ptr;
+
 	Ptr = (struct evPhysicsSlideData*)CIRC_Alloc(sizeof(struct evPhysicsSlideData));
+
 	Ptr->Segment = Segment;
 	Ptr->ForwardVector.x = ForwardVectorX;
 	Ptr->ForwardVector.y = ForwardVectorY;
@@ -321,10 +329,11 @@ uintptr_t SetPhysicsSlideData(int Segment, int ForwardVectorX, int ForwardVector
 	Ptr->DropOffset = DropOffset;
 	Ptr->UpperOffset = UpperOffset;
 	Ptr->Height = Height;
+
 	return (uintptr_t)Ptr;
 }
 
-uintptr_t SetPhysicsWallCrawlData(int Segment, int Length, int ForwardOffset, int NormalDistance)//Matching - 99.78%
+uintptr_t SetPhysicsWallCrawlData(int Segment, int Length, int ForwardOffset, int NormalDistance)  // Matching - 100%
 {
 	struct evPhysicsWallCrawlData* Ptr;
 
@@ -355,18 +364,22 @@ uintptr_t SetPhysicsLinkedMoveData(struct _Instance* instance, int segment, stru
 	return (uintptr_t)Ptr;
 }
 
-uintptr_t SetPhysicsDropHeightData(_Position* offset, int dropOffset, int mode) { // Matching 100%
+uintptr_t SetPhysicsDropHeightData(struct _Position* offset, int dropOffset, int mode)  // Matching - 100%
+{
 	struct evPhysicsDropHeightData* ptr;
+
 	ptr = (struct evPhysicsDropHeightData*)CIRC_Alloc(sizeof(struct evPhysicsDropHeightData));
+
 	ptr->DropOffset = dropOffset;
 	ptr->mode = mode;
 	ptr->origin.x = offset->x;
 	ptr->origin.y = offset->y;
 	ptr->origin.z = offset->z + 25;
+
 	return (uintptr_t)ptr;
 }
 
-uintptr_t SetAnimationControllerDoneData(struct _Instance* instance, long segment, long type, int data)//Matching - 99.78%
+uintptr_t SetAnimationControllerDoneData(struct _Instance* instance, long segment, long type, int data)  // Matching - 100%
 {
 	struct evAnimationControllerDoneData* Ptr;
 
@@ -380,14 +393,18 @@ uintptr_t SetAnimationControllerDoneData(struct _Instance* instance, long segmen
 	return (uintptr_t)Ptr;
 }
 
-uintptr_t SetAnimationInstanceSwitchData(struct _Instance* instance, int anim, int frame, int frames, int mode) { // Matching 100%
+uintptr_t SetAnimationInstanceSwitchData(struct _Instance* instance, int anim, int frame, int frames, int mode)  // Matching - 100%
+{
 	struct evAnimationInstanceSwitchData* Ptr;
+
 	Ptr = (struct evAnimationInstanceSwitchData*)CIRC_Alloc(sizeof(struct evAnimationInstanceSwitchData));
+
 	Ptr->instance = instance;
 	Ptr->anim = anim;
 	Ptr->frame = frame;
 	Ptr->frames = frames;
 	Ptr->mode = mode;
+
 	return (uintptr_t)Ptr;
 }
 
@@ -419,9 +436,12 @@ uintptr_t SetObjectThrowData(void* target, struct _SVector* angularVel, unsigned
 	temp2 = gravity;
 	temp3 = zVel;
 	temp4 = initialXRot;
-	Ptr = (struct evObjectThrowData*)CIRC_Alloc(28);
+
+	Ptr = (struct evObjectThrowData*)CIRC_Alloc(sizeof(struct evObjectThrowData));
+
 	Ptr->type = type;
 	Ptr->spinType = spinType;
+
 	if (target == NULL)
 	{
 		Ptr->type = 0;
@@ -446,11 +466,14 @@ uintptr_t SetObjectThrowData(void* target, struct _SVector* angularVel, unsigned
 			break;
 		}
 	}
+
 	STATE_CheckIfObjectSpins(Ptr, angularVel, spinType);
+
 	Ptr->speed = temp;
 	Ptr->gravity = temp2;
 	Ptr->zVel = temp3;
 	Ptr->initialXRot = temp4;
+
 	return (uintptr_t)Ptr;
 }
 
@@ -469,7 +492,7 @@ uintptr_t SetObjectBreakOffData(struct _Instance* force, short node, short dista
 	return (uintptr_t)Ptr;
 }
 
-uintptr_t SetControlInitHangData(struct _Instance* instance, long frame, long frames)
+uintptr_t SetControlInitHangData(struct _Instance* instance, long frame, long frames)  // Matching - 100%
 {
 	struct evControlInitHangData* Ptr;
 	
@@ -482,7 +505,7 @@ uintptr_t SetControlInitHangData(struct _Instance* instance, long frame, long fr
 	return (uintptr_t)Ptr;
 }
 
-uintptr_t SetControlInitIdleData(int mode, long frame, long frames)
+uintptr_t SetControlInitIdleData(int mode, long frame, long frames)  // Matching - 100%
 {
 	struct evControlInitIdleData* Ptr;
 
@@ -508,7 +531,7 @@ uintptr_t SetObjectDraftData(short force, unsigned short radius, unsigned short 
 	return (uintptr_t)Ptr;
 }
 
-uintptr_t SetObjectAbsorbData(struct _Instance* force, unsigned short node, unsigned short steps)
+uintptr_t SetObjectAbsorbData(struct _Instance* force, unsigned short node, unsigned short steps)  // Matching - 100%
 {
 	struct evObjectAbsorbData* Ptr;
 
@@ -521,7 +544,7 @@ uintptr_t SetObjectAbsorbData(struct _Instance* force, unsigned short node, unsi
 	return (uintptr_t)Ptr;
 }
 
-uintptr_t SetControlSaveDataData(long length, void* data)
+uintptr_t SetControlSaveDataData(long length, void* data)  // Matching - 100%
 {
 	struct evControlSaveDataData* Ptr;
 	
@@ -533,7 +556,7 @@ uintptr_t SetControlSaveDataData(long length, void* data)
 	return (uintptr_t)Ptr;
 }
 
-uintptr_t SetObjectIdleData(long mode, struct _Instance* instance)
+uintptr_t SetObjectIdleData(long mode, struct _Instance* instance)  // Matching - 100%
 {
 	struct evObjectIdleData* Ptr;
 	
@@ -559,7 +582,7 @@ uintptr_t SetActionPlayHostAnimationData(struct _Instance* instance, struct _Ins
 	return (uintptr_t)Ptr;
 }
 
-uintptr_t SetObjectBirthProjectileData(struct _Instance* instance, int joint, int type)
+uintptr_t SetObjectBirthProjectileData(struct _Instance* instance, int joint, int type)  // Matching - 100%
 {
 	struct evObjectBirthProjectileData* Ptr;
 
@@ -576,7 +599,7 @@ uintptr_t SetObjectBirthProjectileData(struct _Instance* instance, int joint, in
 	return (uintptr_t)Ptr;
 }
 
-uintptr_t SetShadowSegmentData(unsigned long total)
+uintptr_t SetShadowSegmentData(unsigned long total)  // Matching - 100%
 {
 	struct evShadowSegmentData* Ptr;
 	

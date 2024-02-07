@@ -1594,10 +1594,32 @@ void INSTANCE_Broadcast(struct _Instance* sender, long whatAmIMask, int Message,
 	}
 }
 
-int INSTANCE_InPlane(struct _Instance* instance, int plane)
+int INSTANCE_InPlane(struct _Instance* instance, int plane)  // Matching - 100%
 {
-	UNIMPLEMENTED();
-	return 0;
+	int ret;
+
+	ret = 0;
+
+	if (instance->object)
+	{
+		if (!(instance->object->oflags2 & 0x2000000))
+		{
+			ret = 1;
+		}
+		else if (!(instance->flags2 & 0x8000000))
+		{
+			if (plane == 0)
+			{
+				ret = 1;
+			}
+		}
+		else if (plane != 0)
+		{
+			ret = 1;
+		}
+	}
+
+	return ret;
 }
 
 long INSTANCE_FindWithID(long uniqueID)  // Matching - 100%
@@ -1625,7 +1647,7 @@ long INSTANCE_FindWithID(long uniqueID)  // Matching - 100%
 	return ret;
 }
 
-struct _Instance* INSTANCE_FindWithName(long areaID, char* instanceName, struct _Instance* startInstance) // Matching - 99.91%
+struct _Instance* INSTANCE_FindWithName(long areaID, char* instanceName, struct _Instance* startInstance) // Matching - 100%
 {
 	struct _Instance* instance;
 	struct _Instance* ret;
