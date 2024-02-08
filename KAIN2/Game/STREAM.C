@@ -1736,7 +1736,7 @@ int WARPGATE_IsWarpgateReady()  // Matching - 100%
 
 int WARPGATE_IsWarpgateSpectral()  // Matching - 100%
 {
-	return strcmpi(WarpRoomArray[CurrentWarpNumber].name, "under3") < 1U;
+	return strcmpi(WarpRoomArray[CurrentWarpNumber].name, "under3") == 0;
 }
 
 
