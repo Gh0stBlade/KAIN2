@@ -173,34 +173,30 @@ void UNDERWORLD_SetupSource()
 	PutDrawEnv(&draw[gameTrackerX.gameData.asmData.dispPage]);
 }
 
-void UNDERWORLD_InitDisplayProcess()
+void UNDERWORLD_InitDisplayProcess()  // Matching - 100%
 {
 	int row;
 	int col;
-	struct UW_ScreenXY* p;
 
 #if !defined(PSXPC_VERSION)
-	while (CheckVolatile(gameTrackerX.drawTimerReturn) != 0)
+	do
 	{
-
-	}
-
-	while (CheckVolatile(gameTrackerX.reqDisp) != 0)
-	{
-
-	}
+		while (CheckVolatile(gameTrackerX.drawTimerReturn) != 0);
+	} while (CheckVolatile(gameTrackerX.reqDisp) != 0);
 #endif
 
-	ScreenMorphArray = (struct UW_ScreenXY*)MEMPACK_Malloc(sizeof(struct UW_ScreenXY) * 9, 0x18);
-	
+	ScreenMorphArray = (struct UW_ScreenXY*)MEMPACK_Malloc(sizeof(struct UW_ScreenXY[3][3]), 24);
+
 	for (row = 0; row < 3; row++)
 	{
-		p = ScreenMorphArray + (row * 3);
-
-		for (col = 0; col < 3; col++, p++)
+		for (col = 0; col < 3; col++)
 		{
-			p->sx = 1 + (col * 254);
-			p->sy = 1 + (row * 119);
+			struct UW_ScreenXY* p;
+
+			p = ScreenMorphArray + col + (row * 3);
+
+			p->sx = (col * 254) + 1;
+			p->sy = (row * 119) + 1;
 		}
 	}
 
