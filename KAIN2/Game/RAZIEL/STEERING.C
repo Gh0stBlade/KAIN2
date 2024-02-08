@@ -811,11 +811,12 @@ void SteerSwitchMode(struct _Instance* instance, int mode)
 	Raziel.steeringMode = mode;
 }
 
-void razInitWallCrawlSteering(struct _Instance* instance) // Matching - 98.48%
+void razInitWallCrawlSteering(struct _Instance* instance)  // Matching - 100%
 {
 	struct _G2SVector3_Type vec;
 
 	G2Anim_EnableController(&instance->anim, 1, 38);
+
 	vec.x = 0;
 	vec.y = 0;
 	vec.z = -318;
@@ -823,17 +824,27 @@ void razInitWallCrawlSteering(struct _Instance* instance) // Matching - 98.48%
 	instance->oldPos.z += 318;
 	instance->matrix->t[2] += 318;
 	instance->oldMatrix->t[2] += 318;
+
 	G2Anim_SetController_Vector(&instance->anim, 1, 38, &vec);
+
 	G2Anim_EnableController(&instance->anim, 0, 14);
+
 	vec.x = instance->rotation.x;
 	vec.y = instance->rotation.y;
 	vec.z = instance->rotation.z;
+
 	G2Anim_EnableController(&instance->anim, 0, 8);
+
 	G2Anim_SetControllerAngleOrder(&instance->anim, 0, 8, 1);
+
 	G2Anim_SetController_Vector(&instance->anim, 0, 8, &vec);
+
 	G2Anim_EnableController(&instance->anim, 14, 14);
+
 	G2Anim_EnableController(&instance->anim, 50, 76);
+
 	G2Anim_EnableController(&instance->anim, 58, 76);
+
 	ExtraRot = &ExtraRotData;
 	ExtraRot->z = 0;
 	ExtraRot->y = 0;
