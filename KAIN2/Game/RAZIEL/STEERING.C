@@ -191,42 +191,29 @@ int DecodeDirection(int Source, int Destination, short* Difference, short* Zone)
 	return rc;
 }
 
-int ProcessMovement(struct _Instance* instance, long* controlCommand, struct GameTracker* GT)
+int ProcessMovement(struct _Instance* instance, long* controlCommand, struct GameTracker* GT)  // Matching - 100%
 {
-	int ZDirection; // stack offset -32
-	int rc; // $s2
-	int lag; // $v1
-	short diff; // stack offset -28, -24
-	short zone; // stack offset -26, -22
-	struct _G2SVector3_Type rot; // stack offset -40
-	short angle; // $s0
+	int ZDirection;
+	int rc;
+	int lag;
 
-	//s1 = instance
-	//s0 = controlCommand
-	//v1 = Raziel.steeringMode
-	//v0 = 9
-
-	//a0 = &ZDirection
-	if (Raziel.steeringMode == 9 || Raziel.steeringMode == 14 || Raziel.steeringMode == 15)
+	if ((Raziel.steeringMode == 9) || (Raziel.steeringMode == 14) || (Raziel.steeringMode == 15))
 	{
 		rc = 0;
 	}
 	else
 	{
-		//loc_800A23BC
 		rc = GetControllerInput(&ZDirection, controlCommand);
 	}
 
-	//loc_800A23C8
-	razZeroAxis(&controlCommand[3], &controlCommand[4],1024);
+	razZeroAxis(&controlCommand[3], &controlCommand[4], 1024);
 
-	if (controlCommand[3] == 128 || controlCommand[3] == -128 || controlCommand[4] == 128 || controlCommand[4] == -128)
+	if ((controlCommand[3] == 128) || (controlCommand[3] == -128) || (controlCommand[4] == 128) || (controlCommand[4] == -128))
 	{
 		Raziel.Magnitude = 4096;
 	}
 	else
 	{
-		//loc_800A2410
 		Raziel.Magnitude = MATH3D_veclen2(controlCommand[3], controlCommand[4]) * 32;
 
 		if (Raziel.Magnitude >= 4097)
@@ -234,22 +221,17 @@ int ProcessMovement(struct _Instance* instance, long* controlCommand, struct Gam
 			Raziel.Magnitude = 4096;
 		}
 
-		//loc_800A2430
-
-		if (Raziel.Magnitude != 0 && Raziel.Magnitude < 1024)
+		if ((Raziel.Magnitude != 0) && (Raziel.Magnitude < 1024))
 		{
 			Raziel.Magnitude = 1024;
 		}
 	}
-	//loc_800A244C
-	//v0 = Raziel.input
+
 	Raziel.lastInput = Raziel.input;
 
 	Raziel.input = rc;
 
-	//a0 = (controlCommand[4] * 4096) / 96;
-	//a1 = ((controlCommand[3] * 4096) / 96) & 0xFFF;
-
+	// 0.25
 	Raziel.ZDirection = (1024 - (ratan2(((controlCommand[4] * 4096) / 96), ((controlCommand[3] * 4096) / 96))) & 0xFFF);
 
 	lag = theCamera.lagZ;
@@ -258,21 +240,31 @@ int ProcessMovement(struct _Instance* instance, long* controlCommand, struct Gam
 	{
 		Raziel.LastBearing = Raziel.ZDirection + lag;
 	}
-	//loc_800A24CC
 
 	Raziel.Bearing = AngleDiff(instance->rotation.z, Raziel.LastBearing);
 
 	switch (Raziel.steeringMode)
 	{
+	case 11:
+	{
+		if (G2Anim_IsControllerActive(&instance->anim, 1, 14) == G2FALSE)
+		{
+			G2Anim_EnableController(&instance->anim, 1, 14);
+		}
 
+		G2EmulationSetInterpController_Vector(instance, 1, 14, &Raziel.extraRot, 5, 0);
+	}
 	case 0:
 	case 16:
 	{
+		short diff;
+		short zone;
+
 		if (rc != 0)
 		{
 			rc = DecodeDirection(Raziel.Bearing, 0, &diff, &zone);
 		}
-		//def_800A2504
+
 		break;
 	}
 	case 1:
@@ -281,7 +273,21 @@ int ProcessMovement(struct _Instance* instance, long* controlCommand, struct Gam
 
 		SteerTurn(instance, rc);
 
-		return rc;
+		break;
+	}
+	case 18:
+	{
+		Raziel.steeringVelocity = 64;
+
+		SteerTurn(instance, rc);
+
+		break;
+	}
+	case 8:
+	{
+		Raziel.steeringVelocity = 96;
+
+		SteerTurn(instance, rc);
 
 		break;
 	}
@@ -289,12 +295,12 @@ int ProcessMovement(struct _Instance* instance, long* controlCommand, struct Gam
 	{
 		SteerMove(instance, rc);
 
-		return rc;
-
 		break;
 	}
 	case 4:
 	{
+		struct _G2SVector3_Type rot;
+
 		rot.y = 0;
 		rot.x = 0;
 		rot.z = Raziel.steeringLockRotation - Raziel.LastBearing;
@@ -312,19 +318,57 @@ int ProcessMovement(struct _Instance* instance, long* controlCommand, struct Gam
 				instance->yVel = 21;
 			}
 		}
-	
-		G2Anim_SetController_Vector(&instance->anim, 1, 0xE, &rot);
 
-		return rc;
+		G2Anim_SetController_Vector(&instance->anim, 1, 14, &rot);
+
+		break;
+	}
+	case 14:
+	{
+		if (PadData[0] & RazielCommands[7])
+		{
+			if (Raziel.Senses.EngagedMask & 0x40)
+			{
+				instance->rotation.z = MATH3D_AngleFromPosToPos(&instance->position, &Raziel.Senses.EngagedList[6].instance->position);
+			}
+		}
+
+		break;
+	}
+	case 15:
+	{
+		short angle;
+
+		if (rc == 0)
+		{
+			if (Raziel.Senses.EngagedMask & 0x40)
+			{
+				SteerDisableAutoFace(instance);
+
+				angle = MATH3D_AngleFromPosToPos(&instance->position, &Raziel.Senses.EngagedList[6].instance->position);
+
+				if (((MON_FacingOffset(Raziel.Senses.EngagedList[6].instance, instance) & 0xFFF) - 683) >= 2731U)
+				{
+					Raziel.steeringVelocity = 128;
+
+					AngleMoveToward(&instance->rotation.z, angle, (short)(gameTrackerX.timeMult / 32));
+				}
+			}
+		}
+		else
+		{
+			rc = SteerAutoFace(instance, controlCommand);
+		}
+		break;
 	}
 	case 5:
 	case 9:
 	{
+		short angle;
+
 		if (rc != 0)
 		{
 			rc = SteerAutoFace(instance, controlCommand);
-
-			return rc;
 		}
 		else
 		{
@@ -334,226 +378,96 @@ int ProcessMovement(struct _Instance* instance, long* controlCommand, struct Gam
 				{
 					SteerDisableAutoFace(instance);
 
+					angle = MATH3D_AngleFromPosToPos(&instance->position, &Raziel.Senses.EngagedList[6].instance->position);
+
 					Raziel.steeringVelocity = 128;
 
-					AngleMoveToward(&instance->rotation.z, MATH3D_AngleFromPosToPos(&instance->position, &Raziel.Senses.EngagedList[6].instance->position), (short)(gameTrackerX.timeMult >> 5));
-
+					AngleMoveToward(&instance->rotation.z, angle, (short)(gameTrackerX.timeMult / 32));
 				}
 			}
 		}
 
-		return rc;
-
 		break;
 	}
-	case 11:
+	case 6:
+	case 17:
 	{
-		if (G2Anim_IsControllerActive(&instance->anim, 1, 0xE) == 0)
+		if (rc != 0)
 		{
-			G2Anim_EnableController(&instance->anim, 1, 0xE);
+			SteerSwim(instance);
 		}
 
-		G2EmulationSetInterpController_Vector(instance, 1, 0xE, &Raziel.extraRot, 5, 0);
-		
+		if (G2Anim_IsControllerActive(&instance->anim, 1, 14) == G2FALSE)
+		{
+			G2Anim_EnableController(&instance->anim, 1, 14);
+		}
+
+		G2EmulationSetInterpController_Vector(instance, 1, 14, &Raziel.extraRot, 4, 3);
+
+		break;
+	}
+	case 7:
+	{
+		short diff;
+		short zone;
+
+		SteerWallcrawling(instance);
+
+		if (rc != 0)
+		{
+			rc = DecodeDirection(Raziel.Bearing, 0, &diff, &zone);
+		}
+
+		break;
+	}
+	case 10:
+	{
+		short angle;
+
+		angle = MATH3D_AngleFromPosToPos(&instance->position, &Raziel.attackedBy->position);
+
 		Raziel.steeringVelocity = 256;
-		
-		SteerTurn(instance, rc);
 
-		return rc;
+		AngleMoveToward(&instance->rotation.z, angle, (short)(gameTrackerX.timeMult / 16));
 
 		break;
 	}
-	default:
+	case 12:
+	{
+		short angle;
+
+		angle = MATH3D_AngleFromPosToPos(&instance->position, &Raziel.puppetRotToPoint);
+
+		Raziel.steeringVelocity = 256;
+
+		AngleMoveToward(&instance->rotation.z, angle, (short)(gameTrackerX.timeMult / 16));
+
+		if (angle == instance->rotation.z)
+		{
+			SteerSwitchMode(instance, 0);
+		}
+
 		break;
 	}
-#if 0
-		loc_800A2578:            # jumptable 800A2504 case 18
-		j       loc_800A2584
-		li      $v0, 0x40  # '@'
+	case 13:
+	{
+		short temp;  // not from SYMDUMP
 
-		loc_800A2580:            # jumptable 800A2504 case 8
-		li      $v0, 0x60  # '`'
+		temp = Raziel.puppetRotToPoint.z;
 
-				move    $a0, $s1
-				jal     sub_800A28BC
-				move    $a1, $s2
-				j       loc_800A28A4
-				move    $v0, $s2
+		Raziel.steeringVelocity = 256;
 
-				
+		AngleMoveToward(&instance->rotation.z, temp, (short)(gameTrackerX.timeMult / 16));
 
+		if (temp == instance->rotation.z)
+		{
+			SteerSwitchMode(instance, 0);
+		}
 
-				loc_800A2604 : # jumptable 800A2504 case 14
-				lw      $v0, -0x33C($gp)
-				lw      $v1, -0x5B60($gp)
-				lw      $v0, 0($v0)
-				nop
-				and $v0, $v1
-				beqz    $v0, loc_800A28A4
-				move    $v0, $s2
-				lw      $v0, -0x5F4($gp)
-				nop
-				andi    $v0, 0x40
-				beqz    $v0, def_800A2504  # jumptable 800A2504 default case, case 3
-				addiu   $a0, $s1, 0x5C  # '\'
-				lw      $v0, -0x5F8($gp)
-				nop
-				lw      $a1, 0x30($v0)
-				jal     sub_8003A21C
-				addiu   $a1, 0x5C  # '\'
-				j       def_800A2504     # jumptable 800A2504 default case, case 3
-				sh      $v0, 0x78($s1)
+		break;
 
-				loc_800A2650:            # jumptable 800A2504 case 15
-				bnez    $s2, loc_800A26DC
-				move    $a0, $s1
-				lw      $v0, -0x5F4($gp)
-				nop
-				andi    $v0, 0x40
-				beqz    $v0, loc_800A28A4
-				move    $v0, $s2
-				jal     sub_800A2DB8
-				move    $a0, $s1
-				lw      $v0, -0x5F8($gp)
-				nop
-				lw      $a1, 0x30($v0)
-				addiu   $a0, $s1, 0x5C  # '\'
-				jal     sub_8003A21C
-				addiu   $a1, 0x5C  # '\'
-				lw      $v1, -0x5F8($gp)
-				move    $a1, $s1
-				lw      $a0, 0x30($v1)
-				jal     sub_8008019C
-				move    $s0, $v0
-				andi    $v0, 0xFFF
-				addiu   $v0, -0x2AB
-				sltiu   $v0, 0xAAB
-				bnez    $v0, loc_800A28A4
-				move    $v0, $s2
-				addiu   $a0, $s1, 0x78  # 'x'
-				sll     $a1, $s0, 16
-				sra     $a1, 16
-				lw      $a2, -0x3FF8($gp)
-				li      $v0, 0x80
-				sh      $v0, -0x644($gp)
-				j       loc_800A281C
-				sll     $a2, 11
-
-				
-
-				loc_800A275C:            # jumptable 800A2504 cases 6, 17
-				beqz    $s2, loc_800A2770
-				addiu   $s0, $s1, 0x1C8
-				jal     sub_800A2C94
-				move    $a0, $s1
-				addiu   $s0, $s1, 0x1C8
-
-				loc_800A2770:
-			move    $a0, $s0
-				li      $a1, 1
-				jal     sub_80090794
-				li      $a2, 0xE
-				bnez    $v0, loc_800A279C
-				move    $a0, $s1
-				move    $a0, $s0
-				li      $a1, 1
-				jal     sub_80090558
-				li      $a2, 0xE
-				move    $a0, $s1
-
-				loc_800A279C :
-			li      $a1, 1
-				li      $a2, 0xE
-				addiu   $a3, $gp, -0x4C0
-				li      $v0, 4
-				sw      $v0, 0x30 + var_20($sp)
-				li      $v0, 3
-				jal     sub_8007299C
-				sw      $v0, 0x30 + var_1C($sp)
-				j       loc_800A28A4
-				move    $v0, $s2
-
-				loc_800A27C4 : # jumptable 800A2504 case 7
-				jal     sub_800A2D84
-				move    $a0, $s1
-				beqz    $s2, def_800A2504  # jumptable 800A2504 default case, case 3
-				addiu   $a2, $sp, 0x30 + var_8
-				lh      $a0, Raziel.Bearing
-				move    $a1, $zero
-				addiu   $a3, $sp, 0x30 + var_6
-
-				loc_800A27E0 :
-			jal     sub_800A2288
-				nop
-				j       def_800A2504     # jumptable 800A2504 default case, case 3
-				move    $s2, $v0
-
-				loc_800A27F0 : # jumptable 800A2504 case 10
-				lw      $a1, -0x570($gp)
-				addiu   $a0, $s1, 0x5C  # '\'
-				jal     sub_8003A21C
-				addiu   $a1, 0x5C  # '\'
-				addiu   $a0, $s1, 0x78  # 'x'
-				sll     $v0, 16
-				sra     $a1, $v0, 16
-				lw      $a2, -0x3FF8($gp)
-				li      $v0, 0x100
-				sh      $v0, -0x644($gp)
-				sll     $a2, 12
-
-				loc_800A281C:
-			jal     sub_8003A14C
-				sra     $a2, 16
-				j       loc_800A28A4
-				move    $v0, $s2
-
-				loc_800A282C : # jumptable 800A2504 case 12
-				addiu   $a1, $gp, -0x47E
-				jal     sub_8003A21C
-				addiu   $a0, $s1, 0x5C  # '\'
-				addiu   $a0, $s1, 0x78  # 'x'
-				sll     $s0, $v0, 16
-				sra     $s0, 16
-				lw      $a2, -0x3FF8($gp)
-				li      $v0, 0x100
-				sh      $v0, -0x644($gp)
-				j       loc_800A2878
-				move    $a1, $s0
-
-				loc_800A2858 : # jumptable 800A2504 case 13
-				addiu   $a0, $s1, 0x78  # 'x'
-				lhu     $s0, -0x47A($gp)
-				lw      $a2, -0x3FF8($gp)
-				li      $v0, 0x100
-				sh      $v0, -0x644($gp)
-				sll     $s0, 16
-				sra     $s0, 16
-				move    $a1, $s0
-
-				loc_800A2878 :
-			sll     $a2, 12
-				jal     sub_8003A14C
-				sra     $a2, 16
-				lh      $v0, 0x78($s1)
-				nop
-				bne     $s0, $v0, loc_800A28A4
-				move    $v0, $s2
-				move    $a0, $s1
-				jal     sub_800A2E4C
-				move    $a1, $zero
-
-				def_800A2504 : # jumptable 800A2504 default case, case 3
-				move    $v0, $s2
-
-				loc_800A28A4 :
-			lw      $ra, 0x30 + var_sC($sp)
-				lw      $s2, 0x30 + var_s8($sp)
-				lw      $s1, 0x30 + var_s4($sp)
-				lw      $s0, 0x30 + var_s0($sp)
-				jr      $ra
-				addiu   $sp, 0x40
-#endif
-
+	}
+	}
 	return rc;
 }
 
@@ -897,11 +811,12 @@ void SteerSwitchMode(struct _Instance* instance, int mode)
 	Raziel.steeringMode = mode;
 }
 
-void razInitWallCrawlSteering(struct _Instance* instance) // Matching - 98.48%
+void razInitWallCrawlSteering(struct _Instance* instance)  // Matching - 100%
 {
 	struct _G2SVector3_Type vec;
 
 	G2Anim_EnableController(&instance->anim, 1, 38);
+
 	vec.x = 0;
 	vec.y = 0;
 	vec.z = -318;
@@ -909,32 +824,49 @@ void razInitWallCrawlSteering(struct _Instance* instance) // Matching - 98.48%
 	instance->oldPos.z += 318;
 	instance->matrix->t[2] += 318;
 	instance->oldMatrix->t[2] += 318;
+
 	G2Anim_SetController_Vector(&instance->anim, 1, 38, &vec);
+
 	G2Anim_EnableController(&instance->anim, 0, 14);
+
 	vec.x = instance->rotation.x;
 	vec.y = instance->rotation.y;
 	vec.z = instance->rotation.z;
+
 	G2Anim_EnableController(&instance->anim, 0, 8);
+
 	G2Anim_SetControllerAngleOrder(&instance->anim, 0, 8, 1);
+
 	G2Anim_SetController_Vector(&instance->anim, 0, 8, &vec);
+
 	G2Anim_EnableController(&instance->anim, 14, 14);
+
 	G2Anim_EnableController(&instance->anim, 50, 76);
+
 	G2Anim_EnableController(&instance->anim, 58, 76);
+
 	ExtraRot = &ExtraRotData;
 	ExtraRot->z = 0;
 	ExtraRot->y = 0;
 	ExtraRot->x = 0;
 }
 
-void razDeinitWallCrawlSteering(struct _Instance* instance) { // Matching - 100%
+void razDeinitWallCrawlSteering(struct _Instance* instance)  // Matching - 100%
+{
 	G2Anim_DisableController(&instance->anim, 1, 38);
+
 	instance->position.z -= 318;
 	instance->oldPos.z -= 318;
 	instance->matrix->t[2] -= 318;
 	instance->oldMatrix->t[2] -= 318;
+
 	G2Anim_InterpDisableController(&instance->anim, 0, 14, 300);
+
 	G2Anim_InterpDisableController(&instance->anim, 0, 8, 300);
+
 	G2Anim_InterpDisableController(&instance->anim, 14, 14, 300);
+
 	G2Anim_InterpDisableController(&instance->anim, 50, 76, 300);
+
 	G2Anim_InterpDisableController(&instance->anim, 58, 76, 300);
 }
