@@ -4255,54 +4255,64 @@ void STREAM_DumpNonResidentObjects()  // Matching - 100%
 	STREAM_RemoveAllObjectsNotInUse();
 }
 
-int STREAM_TryAndDumpNonResident(struct _ObjectTracker* otr)
+int STREAM_TryAndDumpNonResident(struct _ObjectTracker* otr)  // Matching - 100%
 {
 	struct _Instance* instance;
 	struct _Instance* next;
 
-	if (otr->objectStatus == 2 && !(otr->object->oflags & 0x2000000) && STREAM_IsObjectInAnyUnit(otr) == 0)
+	if ((otr->objectStatus != 2) || (otr->object->oflags & 0x2000000))
 	{
-		instance = gameTrackerX.instanceList->first;
+		return 0;
+	}
 
-		while (instance != NULL)
+	if (STREAM_IsObjectInAnyUnit(otr) != 0)
+	{
+		return 0;
+	}
+
+	instance = gameTrackerX.instanceList->first;
+
+	while (instance != NULL)
+	{
+		next = instance->next;
+
+		if (instance->object == otr->object)
 		{
-			if (instance->object == otr->object && instance->LinkParent != NULL)
+			if (instance->LinkParent != NULL)
 			{
 				if (!(instance->object->oflags2 & 0x80000))
 				{
 					return 0;
 				}
 			}
-
-			instance = instance->next;
 		}
 
-		instance = gameTrackerX.instanceList->first;
-
-		while (instance != NULL)
-		{
-			next = instance->next;
-
-			if (instance->object == otr->object)
-			{
-				SAVE_DeleteInstance(instance);
-
-				if (instance->LinkChild != NULL)
-				{
-					INSTANCE_ReallyRemoveAllChildren(instance);
-					instance = instance->next;
-				}
-
-				INSTANCE_ReallyRemoveInstance(gameTrackerX.instanceList, instance, 0);
-			}
-
-			instance = next;
-		}
-
-		STREAM_RemoveAllObjectsNotInUse();
-
-		return otr->objectStatus < 1;
+		instance = next;
 	}
 
-    return 0;
+	instance = gameTrackerX.instanceList->first;
+
+	while (instance != NULL)
+	{
+		next = instance->next;
+
+		if (instance->object == otr->object)
+		{
+			SAVE_DeleteInstance(instance);
+
+			if (instance->LinkChild != NULL)
+			{
+				INSTANCE_ReallyRemoveAllChildren(instance);
+				next = instance->next;
+			}
+
+			INSTANCE_ReallyRemoveInstance(gameTrackerX.instanceList, instance, 0);
+		}
+
+		instance = next;
+	}
+
+	STREAM_RemoveAllObjectsNotInUse();
+
+	return otr->objectStatus == 0;
 }
