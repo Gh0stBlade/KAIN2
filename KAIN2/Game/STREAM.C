@@ -1837,10 +1837,10 @@ void STREAM_MarkWarpUnitsNeeded()  // Matching - 100%
 	}
 }
 
-long WARPGATE_IncrementIndex()
+long WARPGATE_IncrementIndex()  // Matching - 100%
 {
 	long result;
-	
+
 	result = 1;
 
 	if (WarpGateLoadInfo.loading == 4)
@@ -1852,18 +1852,18 @@ long WARPGATE_IncrementIndex()
 		WarpGateLoadInfo.warpFaceInstance->fadeValue = 4096;
 		WarpGateLoadInfo.warpFaceInstance = NULL;
 
-		WarpRoomArray[CurrentWarpNumber].streamUnit->StreamUnitID = 0;
+		WarpRoomArray[CurrentWarpNumber].streamUnit = NULL;
 
 		CurrentWarpNumber = (CurrentWarpNumber + 1) % 14;
 
-		if (strcmpi(gameTrackerX.baseAreaName, WarpRoomArray->name) == 0)
+		if (strcmpi(gameTrackerX.baseAreaName, WarpRoomArray[CurrentWarpNumber].name) == 0)
 		{
 			CurrentWarpNumber = (CurrentWarpNumber + 1) % 14;
 		}
 
 		hud_warp_arrow_flash = -8192;
 	}
-	
+
 	return result;
 }
 
