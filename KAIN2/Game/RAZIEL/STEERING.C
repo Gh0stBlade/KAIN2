@@ -656,15 +656,20 @@ void SteerWallcrawling(struct _Instance* instance)
 	Raziel.Bearing = AngleDiff(ExtraRot->y - 2048, Raziel.ZDirection);
 }
 
-void SteerDisableAutoFace(struct _Instance* instance) { // Matching 99.59%
-	if (G2Anim_IsControllerActive(&instance->anim, 1, 10) != NULL) {
+void SteerDisableAutoFace(struct _Instance* instance)  // Matching - 100%
+{
+	if (G2Anim_IsControllerActive(&instance->anim, 1, 10) != G2FALSE)
+	{
 		G2Anim_DisableController(&instance->anim, 1, 10);
 	}
-	if (G2Anim_IsControllerActive(&instance->anim, 14, 14) != NULL) {
+
+	if (G2Anim_IsControllerActive(&instance->anim, 14, 14) != G2FALSE)
+	{
 		G2Anim_DisableController(&instance->anim, 14, 14);
 	}
-	instance->rotation.z = instance->rotation.z + Raziel.autoFaceRootAngle;
-	Raziel.autoFaceRootAngle = NULL;
+
+	instance->rotation.z += Raziel.autoFaceRootAngle;
+	Raziel.autoFaceRootAngle = 0;
 	Raziel.autoFaceAnim = -1;
 }
 
