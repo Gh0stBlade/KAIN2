@@ -878,7 +878,7 @@ void STREAM_SetStreamFog(struct _StreamUnit* streamUnit, short fogNear, short fo
 	streamUnit->UnitFogNear = unitFogHold;
 }
 
-void STREAM_ConnectStream(struct _StreamUnit* streamUnit)
+void STREAM_ConnectStream(struct _StreamUnit* streamUnit)  // Matching - 100%
 {
 	struct _StreamUnit* mainUnit;
 	struct StreamUnitPortal* streamPortal;
@@ -890,114 +890,135 @@ void STREAM_ConnectStream(struct _StreamUnit* streamUnit)
 	char text[16];
 	char* commapos;
 	int signalID;
-	struct _StreamUnit* connectStream;
-	struct _SVector offset;
-	long d;
-	long hookedUp;
 
 	WARPGATE_UpdateAddToArray(streamUnit);
 
 	if (gameTrackerX.StreamUnitID != streamUnit->StreamUnitID)
 	{
+		mainUnit = STREAM_GetStreamUnitWithID(gameTrackerX.StreamUnitID);
+
 		numportals2 = ((long*)streamUnit->level->terrain->StreamUnits)[0];
 		streamPortal2 = (struct StreamUnitPortal*)((long*)streamUnit->level->terrain->StreamUnits + 1);
 
-		mainUnit = STREAM_GetStreamUnitWithID(gameTrackerX.StreamUnitID);
-
-		for (j = 0; j < numportals2; j++)
+		for (j = 0; j < numportals2; j++, streamPortal2++)
 		{
-			strcpy(text, streamPortal2[j].tolevelname);
-			commapos = strchr(text, ',');
-			signalID = 0;
+			struct _StreamUnit* connectStream;
 
-			if (commapos != 0)
+			strcpy(text, streamPortal2->tolevelname);
+
+			commapos = strchr(text, ',');
+
+			if (commapos != NULL)
 			{
 				commapos[0] = 0;
-				signalID = atoi(&commapos[1]);
+
+				signalID = atoi(commapos + 1);
+			}
+			else
+			{
+				signalID = 0;
 			}
 
-			connectStream = STREAM_GetStreamUnitWithID(streamPortal2[j].streamID);
+			connectStream = STREAM_GetStreamUnitWithID(streamPortal2->streamID);
 
-			if (strcmpi(text, "warpgate") == 0 && WARPGATE_IsUnitWarpRoom(mainUnit))
+			if ((strcmpi(text, "warpgate") == 0) && (WARPGATE_IsUnitWarpRoom(mainUnit) != 0))
 			{
 				connectStream = mainUnit;
 			}
 
-			streamPortal2[j].toStreamUnit = connectStream;
+			streamPortal2->toStreamUnit = connectStream;
 
-			if (connectStream != NULL && connectStream == mainUnit)
+			if ((connectStream == NULL) || (connectStream != mainUnit))
 			{
-				numportals = ((long*)mainUnit->level->terrain->StreamUnits)[0];
-				streamPortal = (struct StreamUnitPortal*)((long*)mainUnit->level->terrain->StreamUnits + 1);
+				continue;
+			}
 
-				for (i = 0; i < numportals; i++)
+			numportals = ((long*)mainUnit->level->terrain->StreamUnits)[0];
+			streamPortal = (struct StreamUnitPortal*)((long*)mainUnit->level->terrain->StreamUnits + 1);
+
+			for (i = 0; i < numportals; i++, streamPortal++)
+			{
+				if (signalID == streamPortal->MSignalID)
 				{
-					if (signalID == streamPortal[i].MSignalID)
-					{
-						offset.x = streamPortal[i].minx - streamPortal2[j].minx;
-						offset.y = streamPortal[i].miny - streamPortal2[j].miny;
-						offset.z = streamPortal[i].minz - streamPortal2[j].minz;
+					struct _SVector offset;
 
-						RelocateLevel(streamUnit->level, &offset);
-					}
+					offset.x = streamPortal->minx - streamPortal2->minx;
+					offset.y = streamPortal->miny - streamPortal2->miny;
+					offset.z = streamPortal->minz - streamPortal2->minz;
+
+					RelocateLevel(streamUnit->level, &offset);
+
+					break;
 				}
 			}
 		}
 
-		connectStream = &StreamTracker.StreamList[0];
-
-		for (d = 0; d < 16; d++)
 		{
-			if (StreamTracker.StreamList[d].used == 2 && connectStream != streamUnit)
+			long d;
+			struct _StreamUnit* connectStream;
+
+			connectStream = StreamTracker.StreamList;
+
+			for (d = 0; d < 16; d++, connectStream++)
 			{
-				numportals2 = ((long*)StreamTracker.StreamList[d].level->terrain->StreamUnits)[0];
-				streamPortal2 = (struct StreamUnitPortal*)((long*)StreamTracker.StreamList[d].level->terrain->StreamUnits + 1);
-
-				for (j = 0; j < numportals2; j++)
+				if ((connectStream->used == 2) && (connectStream != streamUnit))
 				{
-					strcpy(text, streamPortal2->tolevelname);
+					numportals2 = ((long*)connectStream->level->terrain->StreamUnits)[0];
+					streamPortal2 = (struct StreamUnitPortal*)((long*)connectStream->level->terrain->StreamUnits + 1);
 
-					commapos = strchr(text, ',');
-
-					hookedUp = 0;
-
-					if (commapos != NULL)
+					for (j = 0; j < numportals2; j++, streamPortal2++)
 					{
-						commapos[0] = 0;
+						long hookedUp;
 
-						signalID = atoi(&commapos[1]);
-					}
+						hookedUp = 0;
 
-					if (streamPortal2[j].streamID == streamUnit->StreamUnitID)
-					{
-						streamPortal2[j].toStreamUnit = streamUnit;
-						hookedUp = 1;
-					}
-					else
-					{
-						if (strcmpi(text, "warpgate") == 0 && WARPGATE_IsUnitWarpRoom(streamUnit))
+						strcpy(text, streamPortal2->tolevelname);
+
+						commapos = strchr(text, ',');
+
+						if (commapos != NULL)
 						{
-							streamPortal2[j].toStreamUnit = streamUnit;
+							commapos[0] = 0;
+
+							signalID = atoi(commapos + 1);
+						}
+						else
+						{
+							signalID = 0;
+						}
+
+						if (streamPortal2->streamID == streamUnit->StreamUnitID)
+						{
+							streamPortal2->toStreamUnit = streamUnit;
+
 							hookedUp = 1;
 						}
-					}
-
-					if (hookedUp == 1 && connectStream == mainUnit)
-					{
-						numportals = ((long*)streamUnit->level->terrain->StreamUnits)[0];
-
-						streamPortal = (struct StreamUnitPortal*)((long*)streamUnit->level->terrain->StreamUnits + 1);
-
-						for (i = 0; i < numportals; i++)
+						else if ((strcmpi(text, "warpgate") == 0) && (WARPGATE_IsUnitWarpRoom(streamUnit) != 0))
 						{
-							if (signalID == streamPortal[i].MSignalID)
-							{
-								offset.x = streamPortal2[j].minx - streamPortal[i].minx;
-								offset.y = streamPortal2[j].miny - streamPortal[i].miny;
-								offset.z = streamPortal2[j].minz - streamPortal[i].minz;
+							streamPortal2->toStreamUnit = streamUnit;
 
-								RelocateLevel(streamUnit->level, &offset);
-								break;
+							hookedUp = 1;
+						}
+
+						if ((hookedUp == 1) && (connectStream == mainUnit))
+						{
+							numportals = ((long*)streamUnit->level->terrain->StreamUnits)[0];
+							streamPortal = (struct StreamUnitPortal*)((long*)streamUnit->level->terrain->StreamUnits + 1);
+
+							for (i = 0; i < numportals; i++, streamPortal++)
+							{
+								if (signalID == streamPortal->MSignalID)
+								{
+									struct _SVector offset;
+
+									offset.x = streamPortal2->minx - streamPortal->minx;
+									offset.y = streamPortal2->miny - streamPortal->miny;
+									offset.z = streamPortal2->minz - streamPortal->minz;
+
+									RelocateLevel(streamUnit->level, &offset);
+
+									break;
+								}
 							}
 						}
 					}
@@ -1010,6 +1031,7 @@ void STREAM_ConnectStream(struct _StreamUnit* streamUnit)
 			if (strcmpi(streamUnit->level->introList[i].name, "raziel") == 0)
 			{
 				streamUnit->level->introList[i].flags |= 0x8;
+
 				break;
 			}
 		}
