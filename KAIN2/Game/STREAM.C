@@ -878,7 +878,7 @@ void STREAM_SetStreamFog(struct _StreamUnit* streamUnit, short fogNear, short fo
 	streamUnit->UnitFogNear = unitFogHold;
 }
 
-void STREAM_ConnectStream(struct _StreamUnit* streamUnit)
+void STREAM_ConnectStream(struct _StreamUnit* streamUnit)  // Matching - 100%
 {
 	struct _StreamUnit* mainUnit;
 	struct StreamUnitPortal* streamPortal;
@@ -890,114 +890,135 @@ void STREAM_ConnectStream(struct _StreamUnit* streamUnit)
 	char text[16];
 	char* commapos;
 	int signalID;
-	struct _StreamUnit* connectStream;
-	struct _SVector offset;
-	long d;
-	long hookedUp;
 
 	WARPGATE_UpdateAddToArray(streamUnit);
 
 	if (gameTrackerX.StreamUnitID != streamUnit->StreamUnitID)
 	{
+		mainUnit = STREAM_GetStreamUnitWithID(gameTrackerX.StreamUnitID);
+
 		numportals2 = ((long*)streamUnit->level->terrain->StreamUnits)[0];
 		streamPortal2 = (struct StreamUnitPortal*)((long*)streamUnit->level->terrain->StreamUnits + 1);
 
-		mainUnit = STREAM_GetStreamUnitWithID(gameTrackerX.StreamUnitID);
-
-		for (j = 0; j < numportals2; j++)
+		for (j = 0; j < numportals2; j++, streamPortal2++)
 		{
-			strcpy(text, streamPortal2[j].tolevelname);
-			commapos = strchr(text, ',');
-			signalID = 0;
+			struct _StreamUnit* connectStream;
 
-			if (commapos != 0)
+			strcpy(text, streamPortal2->tolevelname);
+
+			commapos = strchr(text, ',');
+
+			if (commapos != NULL)
 			{
 				commapos[0] = 0;
-				signalID = atoi(&commapos[1]);
+
+				signalID = atoi(commapos + 1);
+			}
+			else
+			{
+				signalID = 0;
 			}
 
-			connectStream = STREAM_GetStreamUnitWithID(streamPortal2[j].streamID);
+			connectStream = STREAM_GetStreamUnitWithID(streamPortal2->streamID);
 
-			if (strcmpi(text, "warpgate") == 0 && WARPGATE_IsUnitWarpRoom(mainUnit))
+			if ((strcmpi(text, "warpgate") == 0) && (WARPGATE_IsUnitWarpRoom(mainUnit) != 0))
 			{
 				connectStream = mainUnit;
 			}
 
-			streamPortal2[j].toStreamUnit = connectStream;
+			streamPortal2->toStreamUnit = connectStream;
 
-			if (connectStream != NULL && connectStream == mainUnit)
+			if ((connectStream == NULL) || (connectStream != mainUnit))
 			{
-				numportals = ((long*)mainUnit->level->terrain->StreamUnits)[0];
-				streamPortal = (struct StreamUnitPortal*)((long*)mainUnit->level->terrain->StreamUnits + 1);
+				continue;
+			}
 
-				for (i = 0; i < numportals; i++)
+			numportals = ((long*)mainUnit->level->terrain->StreamUnits)[0];
+			streamPortal = (struct StreamUnitPortal*)((long*)mainUnit->level->terrain->StreamUnits + 1);
+
+			for (i = 0; i < numportals; i++, streamPortal++)
+			{
+				if (signalID == streamPortal->MSignalID)
 				{
-					if (signalID == streamPortal[i].MSignalID)
-					{
-						offset.x = streamPortal[i].minx - streamPortal2[j].minx;
-						offset.y = streamPortal[i].miny - streamPortal2[j].miny;
-						offset.z = streamPortal[i].minz - streamPortal2[j].minz;
+					struct _SVector offset;
 
-						RelocateLevel(streamUnit->level, &offset);
-					}
+					offset.x = streamPortal->minx - streamPortal2->minx;
+					offset.y = streamPortal->miny - streamPortal2->miny;
+					offset.z = streamPortal->minz - streamPortal2->minz;
+
+					RelocateLevel(streamUnit->level, &offset);
+
+					break;
 				}
 			}
 		}
 
-		connectStream = &StreamTracker.StreamList[0];
-
-		for (d = 0; d < 16; d++)
 		{
-			if (StreamTracker.StreamList[d].used == 2 && connectStream != streamUnit)
+			long d;
+			struct _StreamUnit* connectStream;
+
+			connectStream = StreamTracker.StreamList;
+
+			for (d = 0; d < 16; d++, connectStream++)
 			{
-				numportals2 = ((long*)StreamTracker.StreamList[d].level->terrain->StreamUnits)[0];
-				streamPortal2 = (struct StreamUnitPortal*)((long*)StreamTracker.StreamList[d].level->terrain->StreamUnits + 1);
-
-				for (j = 0; j < numportals2; j++)
+				if ((connectStream->used == 2) && (connectStream != streamUnit))
 				{
-					strcpy(text, streamPortal2->tolevelname);
+					numportals2 = ((long*)connectStream->level->terrain->StreamUnits)[0];
+					streamPortal2 = (struct StreamUnitPortal*)((long*)connectStream->level->terrain->StreamUnits + 1);
 
-					commapos = strchr(text, ',');
-
-					hookedUp = 0;
-
-					if (commapos != NULL)
+					for (j = 0; j < numportals2; j++, streamPortal2++)
 					{
-						commapos[0] = 0;
+						long hookedUp;
 
-						signalID = atoi(&commapos[1]);
-					}
+						hookedUp = 0;
 
-					if (streamPortal2[j].streamID == streamUnit->StreamUnitID)
-					{
-						streamPortal2[j].toStreamUnit = streamUnit;
-						hookedUp = 1;
-					}
-					else
-					{
-						if (strcmpi(text, "warpgate") == 0 && WARPGATE_IsUnitWarpRoom(streamUnit))
+						strcpy(text, streamPortal2->tolevelname);
+
+						commapos = strchr(text, ',');
+
+						if (commapos != NULL)
 						{
-							streamPortal2[j].toStreamUnit = streamUnit;
+							commapos[0] = 0;
+
+							signalID = atoi(commapos + 1);
+						}
+						else
+						{
+							signalID = 0;
+						}
+
+						if (streamPortal2->streamID == streamUnit->StreamUnitID)
+						{
+							streamPortal2->toStreamUnit = streamUnit;
+
 							hookedUp = 1;
 						}
-					}
-
-					if (hookedUp == 1 && connectStream == mainUnit)
-					{
-						numportals = ((long*)streamUnit->level->terrain->StreamUnits)[0];
-
-						streamPortal = (struct StreamUnitPortal*)((long*)streamUnit->level->terrain->StreamUnits + 1);
-
-						for (i = 0; i < numportals; i++)
+						else if ((strcmpi(text, "warpgate") == 0) && (WARPGATE_IsUnitWarpRoom(streamUnit) != 0))
 						{
-							if (signalID == streamPortal[i].MSignalID)
-							{
-								offset.x = streamPortal2[j].minx - streamPortal[i].minx;
-								offset.y = streamPortal2[j].miny - streamPortal[i].miny;
-								offset.z = streamPortal2[j].minz - streamPortal[i].minz;
+							streamPortal2->toStreamUnit = streamUnit;
 
-								RelocateLevel(streamUnit->level, &offset);
-								break;
+							hookedUp = 1;
+						}
+
+						if ((hookedUp == 1) && (connectStream == mainUnit))
+						{
+							numportals = ((long*)streamUnit->level->terrain->StreamUnits)[0];
+							streamPortal = (struct StreamUnitPortal*)((long*)streamUnit->level->terrain->StreamUnits + 1);
+
+							for (i = 0; i < numportals; i++, streamPortal++)
+							{
+								if (signalID == streamPortal->MSignalID)
+								{
+									struct _SVector offset;
+
+									offset.x = streamPortal2->minx - streamPortal->minx;
+									offset.y = streamPortal2->miny - streamPortal->miny;
+									offset.z = streamPortal2->minz - streamPortal->minz;
+
+									RelocateLevel(streamUnit->level, &offset);
+
+									break;
+								}
 							}
 						}
 					}
@@ -1010,6 +1031,7 @@ void STREAM_ConnectStream(struct _StreamUnit* streamUnit)
 			if (strcmpi(streamUnit->level->introList[i].name, "raziel") == 0)
 			{
 				streamUnit->level->introList[i].flags |= 0x8;
+
 				break;
 			}
 		}
@@ -1166,35 +1188,108 @@ void STREAM_StreamLoadLevelReturn(void* loadData, void* data, void* data2)  // M
 }
 
 
-// autogenerated function stub: 
-// void /*$ra*/ STREAM_UpdateLevelPointer(struct Level *oldLevel /*$a0*/, struct Level *newLevel /*$a1*/, long sizeOfLevel /*$a2*/)
-void STREAM_UpdateLevelPointer(struct Level *oldLevel, struct Level *newLevel, long sizeOfLevel)
-{ // line 1623, offset 0x80059e18
-	/* begin block 1 */
-		// Start line: 1624
-		// Start offset: 0x80059E18
-		// Variables:
-			long i; // $t0
-			long offset; // $t1
-			struct GameTracker *gameTracker; // $v0
+void STREAM_UpdateLevelPointer(struct Level* oldLevel, struct Level* newLevel, long sizeOfLevel)  // Matching - 100%
+{
+	long i;
+	long offset;
+	struct GameTracker* gameTracker;
 
-		/* begin block 1.1 */
-			// Start line: 1652
-			// Start offset: 0x80059E7C
-			// Variables:
-				struct _Instance *instance; // $a3
-		/* end block 1.1 */
-		// End offset: 0x8005A00C
-		// End Line: 1692
-	/* end block 1 */
-	// End offset: 0x8005A0F0
-	// End Line: 1714
+	offset = (int)newLevel - (int)oldLevel;
 
-	/* begin block 2 */
-		// Start line: 3246
-	/* end block 2 */
-	// End Line: 3247
-				UNIMPLEMENTED();
+	for (i = 0; i < 16; i++)
+	{
+		if ((StreamTracker.StreamList[i].used == 2) && (StreamTracker.StreamList[i].level == oldLevel))
+		{
+			StreamTracker.StreamList[i].level = newLevel;
+
+			break;
+		}
+	}
+
+	gameTracker = &gameTrackerX;
+
+	if (gameTrackerX.level == oldLevel)
+	{
+		gameTrackerX.level = newLevel;
+	}
+
+	{
+		struct _Instance* instance;
+
+		instance = gameTracker->instanceList->first;
+
+		while (instance != NULL)
+		{
+			i = (int)oldLevel + sizeOfLevel;
+
+			if (IN_BOUNDS(instance->intro, oldLevel, i))
+			{
+				instance->intro = (struct Intro*)OFFSET_DATA(instance->intro, offset);
+			}
+
+			if (IN_BOUNDS(instance->introData, oldLevel, i))
+			{
+				instance->introData = (void*)OFFSET_DATA(instance->introData, offset);
+			}
+
+			if (IN_BOUNDS(instance->tface, oldLevel, i))
+			{
+				instance->tface = (struct _TFace*)OFFSET_DATA(instance->tface, offset);
+			}
+
+			if (IN_BOUNDS(instance->waterFace, oldLevel, i))
+			{
+				instance->waterFace = (struct _TFace*)OFFSET_DATA(instance->waterFace, offset);
+			}
+
+			if (IN_BOUNDS(instance->waterFaceTerrain, oldLevel, i))
+			{
+				instance->waterFaceTerrain = (struct _Terrain*)OFFSET_DATA(instance->waterFaceTerrain, offset);
+			}
+
+			if (IN_BOUNDS(instance->oldTFace, oldLevel, i))
+			{
+				instance->oldTFace = (struct _TFace*)OFFSET_DATA(instance->oldTFace, offset);
+			}
+
+			if (IN_BOUNDS(instance->tfaceLevel, oldLevel, i))
+			{
+				instance->tfaceLevel = (void*)OFFSET_DATA(instance->tfaceLevel, offset);
+			}
+
+			if (IN_BOUNDS(instance->cachedTFaceLevel, oldLevel, i))
+			{
+				instance->cachedTFaceLevel = (void*)OFFSET_DATA(instance->cachedTFaceLevel, offset);
+			}
+
+			instance = instance->next;
+		}
+	}
+
+	if (IN_BOUNDS(theCamera.data.Cinematic.posSpline, oldLevel, (int)oldLevel + sizeOfLevel))
+	{
+		theCamera.data.Cinematic.posSpline = (struct MultiSpline*)OFFSET_DATA(theCamera.data.Cinematic.posSpline, offset);
+	}
+
+	if (IN_BOUNDS(theCamera.data.Cinematic.targetSpline, oldLevel, (int)oldLevel + sizeOfLevel))
+	{
+		theCamera.data.Cinematic.targetSpline = (struct MultiSpline*)OFFSET_DATA(theCamera.data.Cinematic.targetSpline, offset);
+	}
+
+	for (i = 0; i <= theCamera.stack; i++)
+	{
+		if (IN_BOUNDS(theCamera.savedCinematic[i].posSpline, oldLevel, (int)oldLevel + sizeOfLevel))
+		{
+			theCamera.savedCinematic[i].posSpline = (struct MultiSpline*)OFFSET_DATA(theCamera.savedCinematic[i].posSpline, offset);
+		}
+
+		if (IN_BOUNDS(theCamera.savedCinematic[i].targetSpline, oldLevel, (int)oldLevel + sizeOfLevel))
+		{
+			theCamera.savedCinematic[i].targetSpline = (struct MultiSpline*)OFFSET_DATA(theCamera.savedCinematic[i].targetSpline, offset);
+		}
+	}
+
+	EVENT_UpdateResetSignalArrayAndWaterMovement(oldLevel, newLevel, sizeOfLevel);
 }
 
 
@@ -1514,53 +1609,61 @@ void STREAM_MarkUnitNeeded(long streamID)  // Matching - 100%
 	}
 }
 
-void STREAM_DumpUnit(struct _StreamUnit* streamUnit, long doSave)
+void STREAM_DumpUnit(struct _StreamUnit* streamUnit, long doSave)  // Matching - 100%
 {
 	int i;
 	int j;
 	int numportals;
-	char dramName[80];
-	struct _SFXMkr* sfxMkr;
 
 	for (i = 0; i < 16; i++)
 	{
 		if (StreamTracker.StreamList[i].used == 2)
 		{
-			numportals = ((int*)StreamTracker.StreamList[i].level->terrain->StreamUnits)[0];
+			struct StreamUnitPortal* p;  // not from SYMDUMP
 
-			for (j = 0; j < numportals; j++)
+			numportals = ((long*)StreamTracker.StreamList[i].level->terrain->StreamUnits)[0];
+			p = (struct StreamUnitPortal*)((long*)StreamTracker.StreamList[i].level->terrain->StreamUnits + 1);
+
+			for (j = 0; j < numportals; j++, p++)
 			{
-				if (((struct StreamUnitPortal*)((int*)StreamTracker.StreamList[i].level->terrain->StreamUnits + 1))[j].toStreamUnit == streamUnit)
+				if (p->toStreamUnit == streamUnit)
 				{
-					((struct StreamUnitPortal*)((int*)StreamTracker.StreamList[i].level->terrain->StreamUnits + 1))[j].toStreamUnit = NULL;
+					p->toStreamUnit = NULL;
 				}
 			}
 		}
 	}
-	
-	if (streamUnit->used == 1 || streamUnit->used == 3)
+
+	if ((streamUnit->used == 1) || (streamUnit->used == 3))
 	{
+		char dramName[80];
+
 		STREAM_FillOutFileNames(streamUnit->baseAreaName, dramName, NULL, NULL);
 
 		LOAD_AbortFileLoad(dramName, (void*)&STREAM_StreamLoadLevelAbort);
 
 		streamUnit->used = 0;
+		streamUnit->flags = 0;
+
+		return;
 	}
 
-	if (WARPGATE_IsUnitWarpRoom(streamUnit))
+	if (WARPGATE_IsUnitWarpRoom(streamUnit) != 0)
 	{
 		WARPGATE_RemoveFromArray(streamUnit);
 	}
-	
+
 	EVENT_RemoveStreamToInstanceList(streamUnit);
 
 	for (i = 0; i < streamUnit->level->NumberOfSFXMarkers; i++)
 	{
+		struct _SFXMkr* sfxMkr;
+
 		sfxMkr = &streamUnit->level->SFXMarkerList[i];
 
 		SOUND_EndInstanceSounds(sfxMkr->soundData, sfxMkr->sfxTbl);
 	}
-	
+
 	if (streamUnit->sfxFileHandle != 0)
 	{
 		aadFreeDynamicSfx(streamUnit->sfxFileHandle);
@@ -1814,9 +1917,9 @@ long WARPGATE_IsUnitWarpRoom(struct _StreamUnit* streamUnit)  // Matching - 100%
 
 	isWarpRoom = 0;
 
-	numPortals = ((long*)level->terrain->StreamUnits)[0];  // cast needs revalidating
+	numPortals = ((long*)level->terrain->StreamUnits)[0];
 
-	streamPortal = (struct StreamUnitPortal*)((long*)level->terrain->StreamUnits + 1);  // cast needs revalidating
+	streamPortal = (struct StreamUnitPortal*)((long*)level->terrain->StreamUnits + 1);
 
 	for (d = 0; d < numPortals; d++, streamPortal++)
 	{
@@ -1939,7 +2042,7 @@ long WARPGATE_DecrementIndex()  // Matching - 100%
 	return result;
 }
 
-void PreloadAllConnectedUnits(struct _StreamUnit* streamUnit, struct _SVector* offset)
+void PreloadAllConnectedUnits(struct _StreamUnit* streamUnit, struct _SVector* offset)  // Matching - 100%
 {
 	int i;
 	char text[16];
@@ -1950,12 +2053,11 @@ void PreloadAllConnectedUnits(struct _StreamUnit* streamUnit, struct _SVector* o
 	gameTrackerX.displayFrameCount += 1;
 
 	numportals = ((long*)streamUnit->level->terrain->StreamUnits)[0];
+	stream = (struct StreamUnitPortal*)&((long*)streamUnit->level->terrain->StreamUnits)[1];
 
 	for (i = 0; i < numportals; i++)
 	{
-		stream = (struct StreamUnitPortal*)((long*)streamUnit->level->terrain->StreamUnits + 1) + i;
-
-		strcpy(text, stream->tolevelname);
+		strcpy(text, stream[i].tolevelname);
 
 		commapos = strchr(text, ',');
 
@@ -1963,14 +2065,14 @@ void PreloadAllConnectedUnits(struct _StreamUnit* streamUnit, struct _SVector* o
 		{
 			commapos[0] = 0;
 		}
-		
+
 		if (strcmpi(text, "warpgate") == 0)
 		{
 			STREAM_MarkWarpUnitsNeeded();
 		}
 		else
 		{
-			STREAM_MarkUnitNeeded(stream->streamID);
+			STREAM_MarkUnitNeeded(stream[i].streamID);
 		}
 	}
 
@@ -1998,9 +2100,9 @@ void PreloadAllConnectedUnits(struct _StreamUnit* streamUnit, struct _SVector* o
 
 			if (strcmpi(text, "warpgate") == 0)
 			{
-				stream->toStreamUnit = NULL;
+				stream->flags |= 0x1;
 
-				streamUnit->fromSignal |= 0x1;
+				stream->toStreamUnit = NULL;
 
 				WARPGATE_RelocateLoadedWarpRooms(streamUnit, stream);
 			}

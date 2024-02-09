@@ -471,7 +471,7 @@ int ProcessMovement(struct _Instance* instance, long* controlCommand, struct Gam
 	return rc;
 }
 
-void SteerTurn(struct _Instance* instance, int rc)//Matching - 96.08%
+void SteerTurn(struct _Instance* instance, int rc)  // Matching - 100%
 {
 	int rot;
 
@@ -483,17 +483,15 @@ void SteerTurn(struct _Instance* instance, int rc)//Matching - 96.08%
 
 			if (rot <= 0)
 			{
-				rot = Raziel.LastBearing - 1;
+				Raziel.LastBearing--;
 			}
 			else
 			{
-				rot = Raziel.LastBearing + 1;
+				Raziel.LastBearing++;
 			}
-
-			Raziel.LastBearing = rot;
 		}
 
-		AngleMoveToward(&instance->rotation.z, Raziel.LastBearing, (short)((Raziel.steeringVelocity * gameTrackerX.timeMult) >> 12));
+		AngleMoveToward(&instance->rotation.z, Raziel.LastBearing, (short)((Raziel.steeringVelocity * gameTrackerX.timeMult) / 4096));
 	}
 	else
 	{
@@ -656,15 +654,20 @@ void SteerWallcrawling(struct _Instance* instance)
 	Raziel.Bearing = AngleDiff(ExtraRot->y - 2048, Raziel.ZDirection);
 }
 
-void SteerDisableAutoFace(struct _Instance* instance) { // Matching 99.59%
-	if (G2Anim_IsControllerActive(&instance->anim, 1, 10) != NULL) {
+void SteerDisableAutoFace(struct _Instance* instance)  // Matching - 100%
+{
+	if (G2Anim_IsControllerActive(&instance->anim, 1, 10) != G2FALSE)
+	{
 		G2Anim_DisableController(&instance->anim, 1, 10);
 	}
-	if (G2Anim_IsControllerActive(&instance->anim, 14, 14) != NULL) {
+
+	if (G2Anim_IsControllerActive(&instance->anim, 14, 14) != G2FALSE)
+	{
 		G2Anim_DisableController(&instance->anim, 14, 14);
 	}
-	instance->rotation.z = instance->rotation.z + Raziel.autoFaceRootAngle;
-	Raziel.autoFaceRootAngle = NULL;
+
+	instance->rotation.z += Raziel.autoFaceRootAngle;
+	Raziel.autoFaceRootAngle = 0;
 	Raziel.autoFaceAnim = -1;
 }
 
