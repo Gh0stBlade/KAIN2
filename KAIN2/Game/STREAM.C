@@ -1814,9 +1814,9 @@ long WARPGATE_IsUnitWarpRoom(struct _StreamUnit* streamUnit)  // Matching - 100%
 
 	isWarpRoom = 0;
 
-	numPortals = ((long*)level->terrain->StreamUnits)[0];  // cast needs revalidating
+	numPortals = ((long*)level->terrain->StreamUnits)[0];
 
-	streamPortal = (struct StreamUnitPortal*)((long*)level->terrain->StreamUnits + 1);  // cast needs revalidating
+	streamPortal = (struct StreamUnitPortal*)((long*)level->terrain->StreamUnits + 1);
 
 	for (d = 0; d < numPortals; d++, streamPortal++)
 	{
