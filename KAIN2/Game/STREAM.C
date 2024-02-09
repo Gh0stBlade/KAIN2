@@ -1939,7 +1939,7 @@ long WARPGATE_DecrementIndex()  // Matching - 100%
 	return result;
 }
 
-void PreloadAllConnectedUnits(struct _StreamUnit* streamUnit, struct _SVector* offset)
+void PreloadAllConnectedUnits(struct _StreamUnit* streamUnit, struct _SVector* offset)  // Matching - 100%
 {
 	int i;
 	char text[16];
@@ -1950,12 +1950,11 @@ void PreloadAllConnectedUnits(struct _StreamUnit* streamUnit, struct _SVector* o
 	gameTrackerX.displayFrameCount += 1;
 
 	numportals = ((long*)streamUnit->level->terrain->StreamUnits)[0];
+	stream = (struct StreamUnitPortal*)&((long*)streamUnit->level->terrain->StreamUnits)[1];
 
 	for (i = 0; i < numportals; i++)
 	{
-		stream = (struct StreamUnitPortal*)((long*)streamUnit->level->terrain->StreamUnits + 1) + i;
-
-		strcpy(text, stream->tolevelname);
+		strcpy(text, stream[i].tolevelname);
 
 		commapos = strchr(text, ',');
 
@@ -1963,14 +1962,14 @@ void PreloadAllConnectedUnits(struct _StreamUnit* streamUnit, struct _SVector* o
 		{
 			commapos[0] = 0;
 		}
-		
+
 		if (strcmpi(text, "warpgate") == 0)
 		{
 			STREAM_MarkWarpUnitsNeeded();
 		}
 		else
 		{
-			STREAM_MarkUnitNeeded(stream->streamID);
+			STREAM_MarkUnitNeeded(stream[i].streamID);
 		}
 	}
 
@@ -1998,9 +1997,9 @@ void PreloadAllConnectedUnits(struct _StreamUnit* streamUnit, struct _SVector* o
 
 			if (strcmpi(text, "warpgate") == 0)
 			{
-				stream->toStreamUnit = NULL;
+				stream->flags |= 0x1;
 
-				streamUnit->fromSignal |= 0x1;
+				stream->toStreamUnit = NULL;
 
 				WARPGATE_RelocateLoadedWarpRooms(streamUnit, stream);
 			}
