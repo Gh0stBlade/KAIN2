@@ -325,6 +325,9 @@ struct STracker
 
 typedef struct StreamUnitPortal StreamUnitPortal;
 
+#define OFFSET_DATA(x, offset) (((x) == 0) ? 0 : ((uintptr_t)(x) + offset))
+#define IN_BOUNDS(x, level, max) (((uintptr_t)(level) <= (uintptr_t)(x)) && ((uintptr_t)(x) <= (uintptr_t)(max)))
+
 extern struct WarpRoom WarpRoomArray[14]; // offset 0x800D1698
 extern long CurrentWarpNumber; // offset 0x800D1694
 
