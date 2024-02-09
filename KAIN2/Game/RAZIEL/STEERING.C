@@ -471,7 +471,7 @@ int ProcessMovement(struct _Instance* instance, long* controlCommand, struct Gam
 	return rc;
 }
 
-void SteerTurn(struct _Instance* instance, int rc)//Matching - 96.08%
+void SteerTurn(struct _Instance* instance, int rc)  // Matching - 100%
 {
 	int rot;
 
@@ -483,17 +483,15 @@ void SteerTurn(struct _Instance* instance, int rc)//Matching - 96.08%
 
 			if (rot <= 0)
 			{
-				rot = Raziel.LastBearing - 1;
+				Raziel.LastBearing--;
 			}
 			else
 			{
-				rot = Raziel.LastBearing + 1;
+				Raziel.LastBearing++;
 			}
-
-			Raziel.LastBearing = rot;
 		}
 
-		AngleMoveToward(&instance->rotation.z, Raziel.LastBearing, (short)((Raziel.steeringVelocity * gameTrackerX.timeMult) >> 12));
+		AngleMoveToward(&instance->rotation.z, Raziel.LastBearing, (short)((Raziel.steeringVelocity * gameTrackerX.timeMult) / 4096));
 	}
 	else
 	{
