@@ -1514,53 +1514,61 @@ void STREAM_MarkUnitNeeded(long streamID)  // Matching - 100%
 	}
 }
 
-void STREAM_DumpUnit(struct _StreamUnit* streamUnit, long doSave)
+void STREAM_DumpUnit(struct _StreamUnit* streamUnit, long doSave)  // Matching - 100%
 {
 	int i;
 	int j;
 	int numportals;
-	char dramName[80];
-	struct _SFXMkr* sfxMkr;
 
 	for (i = 0; i < 16; i++)
 	{
 		if (StreamTracker.StreamList[i].used == 2)
 		{
-			numportals = ((int*)StreamTracker.StreamList[i].level->terrain->StreamUnits)[0];
+			struct StreamUnitPortal* p;  // not from SYMDUMP
 
-			for (j = 0; j < numportals; j++)
+			numportals = ((long*)StreamTracker.StreamList[i].level->terrain->StreamUnits)[0];
+			p = (struct StreamUnitPortal*)((long*)StreamTracker.StreamList[i].level->terrain->StreamUnits + 1);
+
+			for (j = 0; j < numportals; j++, p++)
 			{
-				if (((struct StreamUnitPortal*)((int*)StreamTracker.StreamList[i].level->terrain->StreamUnits + 1))[j].toStreamUnit == streamUnit)
+				if (p->toStreamUnit == streamUnit)
 				{
-					((struct StreamUnitPortal*)((int*)StreamTracker.StreamList[i].level->terrain->StreamUnits + 1))[j].toStreamUnit = NULL;
+					p->toStreamUnit = NULL;
 				}
 			}
 		}
 	}
-	
-	if (streamUnit->used == 1 || streamUnit->used == 3)
+
+	if ((streamUnit->used == 1) || (streamUnit->used == 3))
 	{
+		char dramName[80];
+
 		STREAM_FillOutFileNames(streamUnit->baseAreaName, dramName, NULL, NULL);
 
 		LOAD_AbortFileLoad(dramName, (void*)&STREAM_StreamLoadLevelAbort);
 
 		streamUnit->used = 0;
+		streamUnit->flags = 0;
+
+		return;
 	}
 
-	if (WARPGATE_IsUnitWarpRoom(streamUnit))
+	if (WARPGATE_IsUnitWarpRoom(streamUnit) != 0)
 	{
 		WARPGATE_RemoveFromArray(streamUnit);
 	}
-	
+
 	EVENT_RemoveStreamToInstanceList(streamUnit);
 
 	for (i = 0; i < streamUnit->level->NumberOfSFXMarkers; i++)
 	{
+		struct _SFXMkr* sfxMkr;
+
 		sfxMkr = &streamUnit->level->SFXMarkerList[i];
 
 		SOUND_EndInstanceSounds(sfxMkr->soundData, sfxMkr->sfxTbl);
 	}
-	
+
 	if (streamUnit->sfxFileHandle != 0)
 	{
 		aadFreeDynamicSfx(streamUnit->sfxFileHandle);
