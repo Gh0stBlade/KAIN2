@@ -10,8 +10,8 @@
 #include "Game/RAZCNTRL.H"
 #include "Game/PSX/COLLIDES.H"
 
-int ZoneDelta;
-int LastRC;
+static int ZoneDelta; // offset 0x800D1D18
+static int LastRC; // offset 0x800D7358
 
 int UpdateZoneDelta(int rc, int LastRC)  // Matching - 100%
 {
