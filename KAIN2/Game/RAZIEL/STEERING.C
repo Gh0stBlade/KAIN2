@@ -671,10 +671,8 @@ void SteerDisableAutoFace(struct _Instance* instance)  // Matching - 100%
 	Raziel.autoFaceAnim = -1;
 }
 
-void SteerSwitchMode(struct _Instance* instance, int mode)
+void SteerSwitchMode(struct _Instance* instance, int mode)  // Matching - 100%
 {
-	int rotx;
-
 	switch (Raziel.steeringMode)
 	{
 	case 0:
@@ -684,36 +682,39 @@ void SteerSwitchMode(struct _Instance* instance, int mode)
 	case 8:
 	case 18:
 	{
-		if (G2Anim_IsControllerActive(&instance->anim, 1, 0xE) != 0)
+		if (G2Anim_IsControllerActive(&instance->anim, 1, 14) != G2FALSE)
 		{
-			G2Anim_DisableController(&instance->anim, 1, 0xE);
-		
+			G2Anim_DisableController(&instance->anim, 1, 14);
+
 			instance->rotation.z = Raziel.steeringLockRotation;
 
 			Raziel.LastBearing = Raziel.steeringLockRotation;
 		}
+
 		break;
 	}
-
 	case 5:
 	case 9:
 	case 15:
 	{
 		SteerDisableAutoFace(instance);
+
 		break;
 	}
 	case 6:
 	case 17:
 	{
-		if (mode != 6 && mode != 11 && mode != 16 && mode != 17)
+		if ((mode != 6) && (mode != 11) && (mode != 16) && (mode != 17))
 		{
-			if ((G2Anim_IsControllerActive(&instance->anim, 1, 0xE)))
+			if ((G2Anim_IsControllerActive(&instance->anim, 1, 14) != G2FALSE))
 			{
-				G2Anim_InterpDisableController(&instance->anim, 1, 0xE, 600);
+				G2Anim_InterpDisableController(&instance->anim, 1, 14, 600);
 			}
 
 			Raziel.extraRot.x = 0;
 		}
+
+		break;
 	}
 	case 7:
 	{
@@ -721,11 +722,13 @@ void SteerSwitchMode(struct _Instance* instance, int mode)
 		{
 			razDeinitWallCrawlSteering(instance);
 		}
+
 		break;
 	}
 	case 10:
 	{
-		Raziel.HitPoints = 0;
+		Raziel.attackedBy = NULL;
+
 		break;
 	}
 	case 11:
@@ -764,19 +767,23 @@ void SteerSwitchMode(struct _Instance* instance, int mode)
 	case 18:
 	{
 		Raziel.RotationSegment = 0;
+
 		break;
 	}
 	case 11:
 	{
-		rotx = (4096 - theCamera.core.rotation.x) & 0xFFF;
+		int rotx;
 
 		Raziel.throwReturnRot = Raziel.extraRot.x;
 
-		if (rotx < -1025)
+		rotx = (4096 - theCamera.core.rotation.x);
+		rotx &= 0xFFF;
+
+		if ((rotx > 1024) && (rotx < 2048))
 		{
 			rotx = 1024;
 		}
-		else if ((rotx - 2049) < 1023)
+		else if ((rotx > 2048) && (rotx < 3072))
 		{
 			rotx = 3072;
 		}
@@ -786,12 +793,12 @@ void SteerSwitchMode(struct _Instance* instance, int mode)
 		CAMERA_StartSwimThrowMode(&theCamera);
 
 		CAMERA_SetLookRot(&theCamera, 4096 - Raziel.extraRot.x, 0);
-		break;
 	}
 	case 6:
 	case 17:
 	{
 		Raziel.RotationSegment = 1;
+
 		break;
 	}
 
@@ -811,6 +818,7 @@ void SteerSwitchMode(struct _Instance* instance, int mode)
 		break;
 	}
 	}
+
 	Raziel.steeringMode = mode;
 }
 
