@@ -619,34 +619,42 @@ int SteerAutoFace(struct _Instance* instance, long* controlCommand) { // Matchin
 	return rc;
 }
 
-void SteerSwim(struct _Instance* instance) // Matching - 98.58%
+void SteerSwim(struct _Instance* instance)  // Matching - 99.67%
 {
 	int step;
 	int velocity;
-	int temp;
-	int temp1;
+	int temp;  // not from SYMDUMP
+	int temp1;  // not from SYMDUMP
 
-	temp = 0x20;
+	temp = 32;
+
 	temp1 = rsin(Raziel.ZDirection);
-	step = (gameTrackerX.timeMult * temp) / 0x1000;
-	instance->rotation.z -= (int)(step * temp1) / 0x1000;
-	temp = 0x30;
+
+	step = (gameTrackerX.timeMult * temp) / 4096;
+	instance->rotation.z -= (int)(step * temp1) / 4096;
+	temp = 48;
+
 	temp1 = rcos(Raziel.ZDirection);
-	step = (gameTrackerX.timeMult * temp) / 0x1000;
-	if ((Raziel.steeringMode != 0x11) || (temp1 < 0))
+
+	step = (gameTrackerX.timeMult * temp) / 4096;
+
+	if ((Raziel.steeringMode != 17) || (temp1 < 0))
 	{
-		Raziel.extraRot.x -= (int)(step * temp1) / 0x1000;
+		Raziel.extraRot.x -= (int)(step * temp1) / 4096;
 	}
+
 	if (Raziel.extraRot.x > 2048)
 	{
 		Raziel.extraRot.x = 2048;
 	}
+
 	if (Raziel.extraRot.x < 0)
 	{
 		Raziel.extraRot.x = 0;
 	}
-	Raziel.extraRot.y = 0;
+
 	Raziel.extraRot.z = 0;
+	Raziel.extraRot.y = 0;
 }
 
 void SteerWallcrawling(struct _Instance* instance)  // Matching - 100%
