@@ -810,7 +810,7 @@ struct _SFXMkr* EVENT_ResolveSFXMarker(struct _StreamUnit* stream, struct EventI
 	return result;
 }
 
-void EVENT_AddGameObjectToStack(struct _PCodeStack* stack) // Matching - 100%
+void EVENT_AddGameObjectToStack(struct _PCodeStack* stack)  // Matching - 100%
 {
 	struct StackType* stackEntry;
 
@@ -818,7 +818,7 @@ void EVENT_AddGameObjectToStack(struct _PCodeStack* stack) // Matching - 100%
 	{
 		stackEntry = &stack->stack[stack->topOfStack];
 		stackEntry->id = 3;
-		stackEntry->data.Object.instanceNumber = -1;
+		stackEntry->data.gameObject.attribute = -1;
 		stack->topOfStack++;
 	}
 }
