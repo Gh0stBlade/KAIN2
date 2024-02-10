@@ -59,6 +59,13 @@ struct EventBasicObject
 	short id; // size=0, offset=0
 };
 
+struct EventWildCardObject {
+	short id; // size=0, offset=0
+	short spad; // size=0, offset=2
+	long unitID; // size=0, offset=4
+	char* objectName; // size=0, offset=8
+};
+
 struct Vector3d
 {
 	short vx; // size=0, offset=0
