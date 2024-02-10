@@ -499,7 +499,7 @@ void SteerTurn(struct _Instance* instance, int rc)  // Matching - 100%
 	}
 }
 
-void SteerMove(struct _Instance* instance, int rc)
+void SteerMove(struct _Instance* instance, int rc)  // Matching - 100%
 {
 	if ((rc != 0) || (Raziel.Bearing != 0))
 	{
@@ -514,7 +514,7 @@ void SteerMove(struct _Instance* instance, int rc)
 
 		if (Raziel.steeringVelocity >= 0x301)
 		{
-			Raziel.steeringVelocity = Raziel.steeringVelocity < 0 ? (((Raziel.steeringVelocity + 3) >> 2) + 0x70) : ((Raziel.steeringVelocity >> 2) + 0x7);
+			Raziel.steeringVelocity = Raziel.steeringVelocity / 4 + 0x70;
 		}
 		else
 		{
