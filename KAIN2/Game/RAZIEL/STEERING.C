@@ -529,7 +529,8 @@ void SteerMove(struct _Instance* instance, int rc)
 	}
 }
 
-int SteerAutoFace(struct _Instance* instance, long* controlCommand) { // Matching 99.21%
+int SteerAutoFace(struct _Instance* instance, long* controlCommand)  // Matching - 100%
+{
 	short angle;
 	int rc;
 	struct _Instance* target;
@@ -537,53 +538,64 @@ int SteerAutoFace(struct _Instance* instance, long* controlCommand) { // Matchin
 	int diff;
 	int predict;
 
-	predict = NULL;
+	predict = 0;
+
 	angle = MATH3D_AngleFromPosToPos(&instance->position, &Raziel.Senses.EngagedList[6].instance->position);
+
 	Raziel.autoFaceTrueAngle = angle;
 	Raziel.autoFaceLastAnim = Raziel.autoFaceAnim;
+
 	diff = AngleDiff(angle, Raziel.LastBearing);
-	if (((unsigned int)diff + 383 < 767) != NULL)
+
+	if (((unsigned int)diff + 383 < 767))
 	{
 		predict = 1;
-		Raziel.autoFaceAnim = NULL;
-		Raziel.autoFaceRootAngle = NULL;
+		Raziel.autoFaceAnim = 0;
+		Raziel.autoFaceRootAngle = 0;
 	}
-	if (((unsigned int)diff + 1535 < 1152) != NULL)
+
+	if (((unsigned int)diff + 1535 < 1152))
 	{
 		predict = 2;
 		Raziel.autoFaceAnim = 1;
 		Raziel.autoFaceRootAngle = 1024;
 	}
-	if (((unsigned int)diff - 384 < 1152) != NULL)
+
+	if (((unsigned int)diff - 384 < 1152))
 	{
 		predict = 4;
 		Raziel.autoFaceAnim = 3;
 		Raziel.autoFaceRootAngle = -1024;
 	}
-	if (((unsigned int)diff + 1535 < 3071) == NULL)
+
+	if (((unsigned int)diff + 1535 >= 3071))
 	{
 		predict = 3;
 		Raziel.autoFaceAnim = 2;
 		Raziel.autoFaceRootAngle = 2048;
 	}
+
 	angle = Raziel.LastBearing;
 	Raziel.steeringVelocity = 64;
-	AngleMoveToward(&instance->rotation.z, angle, (short) gameTrackerX.timeMult >> 6);
 
-	Raziel.autoFaceLastAnim = predict - 1;
+	AngleMoveToward(&instance->rotation.z, angle, (int)gameTrackerX.timeMult >> 6);
+
+	Raziel.autoFaceAnim = predict - 1;
 	Raziel.autoFaceAngle = angle;
 	rc = predict | 0x10001000;
-	if (Raziel.autoFaceLastAnim != Raziel.autoFaceAnim)
-	{
 
+	if (Raziel.autoFaceAnim != Raziel.autoFaceLastAnim)
+	{
 		instance->rotation.z = Raziel.LastBearing;
 		autoFaceRot.x = 0;
 		autoFaceRot.y = 0;
 		autoFaceRot.z = Raziel.autoFaceRootAngle;
+
 		if (G2Anim_IsControllerActive(&instance->anim, 1, 10) == G2FALSE)
 		{
 			G2Anim_EnableController(&instance->anim, 1, 10);
 		}
+
 		if (Raziel.input == Raziel.lastInput)
 		{
 			G2EmulationSetInterpController_Vector(instance, 1, 10, &autoFaceRot, 4, 3);
@@ -595,6 +607,7 @@ int SteerAutoFace(struct _Instance* instance, long* controlCommand) { // Matchin
 	}
 
 	diff = AngleDiff(instance->rotation.z, Raziel.autoFaceTrueAngle);
+
 	if (G2Anim_IsControllerInterpolating(&instance->anim, 1, 10) != G2FALSE)
 	{
 		if (G2Anim_IsControllerInterpolating(&instance->anim, 14, 14) == G2FALSE)
@@ -602,6 +615,7 @@ int SteerAutoFace(struct _Instance* instance, long* controlCommand) { // Matchin
 			autoFaceRot.x = 0;
 			autoFaceRot.y = 0;
 			autoFaceRot.z = diff - Raziel.autoFaceRootAngle;
+
 			G2EmulationSetInterpController_Vector(instance, 14, 14, &autoFaceRot, 4, 3);
 		}
 	}
@@ -610,12 +624,15 @@ int SteerAutoFace(struct _Instance* instance, long* controlCommand) { // Matchin
 		autoFaceRot.x = 0;
 		autoFaceRot.y = 0;
 		autoFaceRot.z = diff - Raziel.autoFaceRootAngle;
+
 		if (G2Anim_IsControllerActive(&instance->anim, 14, 14) == G2FALSE)
 		{
 			G2Anim_EnableController(&instance->anim, 14, 14);
 		}
+
 		G2Anim_SetController_Vector(&instance->anim, 14, 14, &autoFaceRot);
 	}
+
 	return rc;
 }
 
