@@ -610,7 +610,7 @@ uintptr_t SetShadowSegmentData(unsigned long total)  // Matching - 100%
 	return (uintptr_t)Ptr;
 }
 
-void G2EmulationInit()//Matching - 98.37%
+void G2EmulationInit()  // Matching - 100%
 {
 	G2AlphaTables[0] = NULL;
 
