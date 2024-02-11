@@ -947,9 +947,9 @@ int G2EmulationQueryAnimation(struct __CharacterState* In, int CurrentSection)
 	return G2EmulationInstanceQueryAnimation(In->CharacterInstance, CurrentSection);
 }
 
-int G2EmulationInstanceQueryFrame(struct _Instance* instance, int CurrentSection)
+int G2EmulationInstanceQueryFrame(struct _Instance* instance, int CurrentSection)  // Matching - 100%
 {
-	return G2AnimSection_GetKeyframeNumber(&instance->anim.section[CurrentSection]);
+	return G2AnimSection_GetKeyframeNumber(&instance->anim.section[CurrentSection & 0xFF]);
 }
 
 int G2EmulationInstanceQueryLastFrame(struct _Instance* instance, int CurrentSection)
