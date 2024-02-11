@@ -919,7 +919,7 @@ void G2EmulationInstanceSetMode(struct _Instance* instance, int CurrentSection, 
 	}
 }
 
-void G2EmulationSetMode(struct __CharacterState *In, int CurrentSection, int Mode)
+void G2EmulationSetMode(struct __CharacterState *In, int CurrentSection, int Mode)  // Matching - 100%
 { 
 	G2EmulationInstanceSetMode(In->CharacterInstance, CurrentSection, Mode);
 }
