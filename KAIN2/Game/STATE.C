@@ -717,7 +717,7 @@ void G2EmulationInstanceToInstanceSwitchAnimation(struct _Instance* instance, st
 	}
 }
 
-void G2EmulationInstanceSwitchAnimation(struct _Instance* instance, int CurrentSection, int NewAnim, int NewFrame, int Frames, int Mode)//Matching - 99.43%
+void G2EmulationInstanceSwitchAnimation(struct _Instance* instance, int CurrentSection, int NewAnim, int NewFrame, int Frames, int Mode)  // Matching - 100%
 {
 	struct _G2AnimSection_Type* animSection;
 	struct _G2AnimKeylist_Type* keylist;
