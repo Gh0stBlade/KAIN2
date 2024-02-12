@@ -948,11 +948,11 @@ void G2EmulationInstanceSetAnimSpeed(struct _Instance* instance, int CurrentSect
 	animSection->speedAdjustment = speed;
 }
 
-int G2EmulationInstanceQueryAnimation(struct _Instance* instance, int CurrentSection)
+int G2EmulationInstanceQueryAnimation(struct _Instance* instance, int CurrentSection)  // Matching - 100%
 {
 	struct _G2AnimSection_Type* animSection;
-	
-	animSection = &instance->anim.section[CurrentSection];
+
+	animSection = &instance->anim.section[CurrentSection & 0xFF];
 
 	return animSection->keylistID;
 }
