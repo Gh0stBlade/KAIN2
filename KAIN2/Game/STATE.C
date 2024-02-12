@@ -939,11 +939,11 @@ void G2EmulationSetMode(struct __CharacterState *In, int CurrentSection, int Mod
 	G2EmulationInstanceSetMode(In->CharacterInstance, CurrentSection, Mode);
 }
 
-void G2EmulationInstanceSetAnimSpeed(struct _Instance* instance, int CurrentSection, int speed)
+void G2EmulationInstanceSetAnimSpeed(struct _Instance* instance, int CurrentSection, int speed)  // Matching - 100%
 {
 	struct _G2AnimSection_Type* animSection;
 
-	animSection = &instance->anim.section[CurrentSection];
+	animSection = &instance->anim.section[CurrentSection & 0xFF];
 
 	animSection->speedAdjustment = speed;
 }
