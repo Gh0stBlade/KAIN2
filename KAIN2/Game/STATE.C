@@ -957,7 +957,7 @@ int G2EmulationInstanceQueryAnimation(struct _Instance* instance, int CurrentSec
 	return animSection->keylistID;
 }
 
-int G2EmulationQueryAnimation(struct __CharacterState* In, int CurrentSection)
+int G2EmulationQueryAnimation(struct __CharacterState* In, int CurrentSection)  // Matching - 100%
 {
 	return G2EmulationInstanceQueryAnimation(In->CharacterInstance, CurrentSection);
 }
