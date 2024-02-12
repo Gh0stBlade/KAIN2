@@ -909,11 +909,11 @@ void G2EmulationSetAnimation(struct __CharacterState *In, int CurrentSection, in
 #endif
 }
 
-void G2EmulationInstanceSetMode(struct _Instance* instance, int CurrentSection, int Mode)//Matching - 99.38%
+void G2EmulationInstanceSetMode(struct _Instance* instance, int CurrentSection, int Mode)  // Matching - 100%
 {
 	struct _G2AnimSection_Type* animSection;
 
-	animSection = &instance->anim.section[(char)CurrentSection];
+	animSection = &instance->anim.section[CurrentSection & 0xFF];
 
 	if (Mode == 0)
 	{
