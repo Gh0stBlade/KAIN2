@@ -749,11 +749,11 @@ void G2EmulationInstanceSwitchAnimation(struct _Instance* instance, int CurrentS
 	}
 }
 
-void G2EmulationInstanceSwitchAnimationAlpha(struct _Instance* instance, int CurrentSection, int NewAnim, int NewFrame, int Frames, int Mode, int AlphaTable)
+void G2EmulationInstanceSwitchAnimationAlpha(struct _Instance* instance, int CurrentSection, int NewAnim, int NewFrame, int Frames, int Mode, int AlphaTable)  // Matching - 100%
 {
 	struct _G2AnimSection_Type* animSection;
 
-	animSection = &instance->anim.section[CurrentSection];
+	animSection = &instance->anim.section[CurrentSection & 0xFF];
 
 	G2EmulationInstanceSwitchAnimation(instance, CurrentSection, NewAnim, NewFrame, Frames, Mode);
 
