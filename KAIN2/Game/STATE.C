@@ -685,7 +685,7 @@ void G2EmulationInstancePlayAnimation(struct _Instance* instance)  // Matching -
 	}
 }
 
-void G2EmulatePlayAnimation(struct __CharacterState* In)
+void G2EmulatePlayAnimation(struct __CharacterState* In)  // Matching - 100%
 {
 	G2EmulationInstancePlayAnimation(In->CharacterInstance);
 }
