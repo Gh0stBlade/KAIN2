@@ -896,7 +896,7 @@ void G2EmulationInstanceSetAnimation(struct _Instance* instance, int CurrentSect
 	G2AnimSection_InterpToKeylistFrame(animSection, keylist, NewAnim, NewFrame, (short)(Frames * 100));
 }
 
-void G2EmulationSetAnimation(struct __CharacterState *In, int CurrentSection, int NewAnim, int NewFrame, int Frames)
+void G2EmulationSetAnimation(struct __CharacterState *In, int CurrentSection, int NewAnim, int NewFrame, int Frames)  // Matching - 100%
 {
 #if defined(PSX_VERSION)
 
