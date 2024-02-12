@@ -760,7 +760,7 @@ void G2EmulationInstanceSwitchAnimationAlpha(struct _Instance* instance, int Cur
 	G2AnimSection_SetAlphaTable(animSection, G2AlphaTables[AlphaTable]);
 }
 
-void G2EmulationSwitchAnimation(struct __CharacterState* In, int CurrentSection, int NewAnim, int NewFrame, int Frames, int Mode)
+void G2EmulationSwitchAnimation(struct __CharacterState* In, int CurrentSection, int NewAnim, int NewFrame, int Frames, int Mode)  // Matching - 100%
 {
 	if (NewAnim < 0)
 	{
