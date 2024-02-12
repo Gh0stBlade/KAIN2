@@ -882,18 +882,18 @@ void G2EmulationSwitchAnimationCharacter(struct __CharacterState* In, int NewAni
 	}
 }
 
-void G2EmulationInstanceSetAnimation(struct _Instance *instance, int CurrentSection, int NewAnim, int NewFrame, int Frames)
+void G2EmulationInstanceSetAnimation(struct _Instance* instance, int CurrentSection, int NewAnim, int NewFrame, int Frames)  // Matching - 100%
 {
-	struct _G2AnimSection_Type *animSection;
-	struct _G2AnimKeylist_Type *keylist;
+	struct _G2AnimSection_Type* animSection;
+	struct _G2AnimKeylist_Type* keylist;
 
-	animSection = &instance->anim.section[CurrentSection];
-	
+	animSection = &instance->anim.section[CurrentSection & 0xFF];
+
 	keylist = G2Instance_GetKeylist(instance, NewAnim);
-	
+
 	G2AnimSection_SetAlphaTable(animSection, NULL);
-	
-	G2AnimSection_InterpToKeylistFrame(animSection, keylist, NewAnim, NewFrame, Frames * 100);
+
+	G2AnimSection_InterpToKeylistFrame(animSection, keylist, NewAnim, NewFrame, (short)(Frames * 100));
 }
 
 void G2EmulationSetAnimation(struct __CharacterState *In, int CurrentSection, int NewAnim, int NewFrame, int Frames)
