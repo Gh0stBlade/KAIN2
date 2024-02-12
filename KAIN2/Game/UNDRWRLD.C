@@ -14,6 +14,11 @@ static long UW_scalex; // offset 0x800D7368
 static long UW_scalexInc; // offset 0x800D736C
 static long UW_angleInc; // offset 0x800D7370
 
+static inline int getPage()
+{
+	return gameTrackerX.gameData.asmData.dispPage;
+}
+
 void UNDERWORLD_StartProcess()  // Matching - 100%
 { 
 	INSTANCE_Post(gameTrackerX.playerInstance, 0x40001, 0);
@@ -151,29 +156,31 @@ void UNDERWORLD_DisplayFrame(long *primStart, long drawY)
 			UNIMPLEMENTED();
 }
 
-void UNDERWORLD_SetupSource()
-{ 
+void UNDERWORLD_SetupSource()  // Matching - 100%
+{
 	PSX_RECT rect;
 	DR_STP stp;
 
-	ContinueDraw((u_long*)&stp, (u_long*)1);
+	//SetDrawStp(&stp, 1);		SetDrawStp needs libValkyrie implementation
 
 	DrawPrim(&stp);
 
-	rect.w = SCREEN_WIDTH;
 	rect.x = 0;
+
+	rect.y = getPage() << 8;
+
+	rect.w = SCREEN_WIDTH;
 	rect.h = SCREEN_HEIGHT;
-	rect.y = (short)(gameTrackerX.gameData.asmData.dispPage << 8);
 
-	MoveImage(&rect, 0, (gameTrackerX.gameData.asmData.dispPage ^ 1) << 8);
+	MoveImage(&rect, 0, (getPage() ^ 1) << 8);
 
-	ContinueDraw((u_long*)&stp, (u_long*)0);
+	//SetDrawStp(&stp, 0);
 
 	DrawPrim(&stp);
 
 	DrawSync(0);
 
-	PutDrawEnv(&draw[gameTrackerX.gameData.asmData.dispPage]);
+	PutDrawEnv(&draw[getPage()]);
 }
 
 void UNDERWORLD_InitDisplayProcess()  // Matching - 100%
