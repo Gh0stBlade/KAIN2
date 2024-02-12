@@ -1868,19 +1868,19 @@ long EVENT_TransformRotation3dAttribute(struct _PCodeStack* stack, struct StackT
 {
 	long retValue;
 
-	switch(item)
+	switch (item)
 	{
-        case 6:
-        case 7:
-        case 8:
-        case 0x60:
-        case 0x61:
-        case 0x62:    
-    		stackObject->data.rotation3d.attribute = item;
-    		return 1;
-    
-        default:
-            return 0;
+	case 6:
+	case 7:
+	case 8:
+	case 96:
+	case 97:
+	case 98:
+		stackObject->data.rotation3d.attribute = item;
+		return 1;
+
+	default:
+		return 0;
 	}
 }
 
