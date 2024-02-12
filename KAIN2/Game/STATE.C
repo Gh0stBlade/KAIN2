@@ -672,16 +672,16 @@ void G2EmulationInit()  // Matching - 100%
 	}
 }
 
-void G2EmulationInstancePlayAnimation(struct _Instance* instance)
+void G2EmulationInstancePlayAnimation(struct _Instance* instance)  // Matching - 100%
 {
 	int i;
 	struct _G2Anim_Type* anim;
-	
+
 	anim = &instance->anim;
 
 	for (i = 0; i < anim->sectionCount; i++)
 	{
-		G2AnimSection_NextKeyframe(&anim->section[i]);
+		G2AnimSection_NextKeyframe(&anim->section[i & 0xFF]);
 	}
 }
 
