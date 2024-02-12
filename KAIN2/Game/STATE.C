@@ -1062,14 +1062,17 @@ void G2EmulationInstanceInitSection(struct _Instance* instance, int CurrentSecti
 	animSection->callbackData = data;
 }
 
-void G2EmulationSetInterpController_Vector(struct _Instance *instance, long segment, long type, struct _G2SVector3_Type *vec, int Frames, int Data)
+void G2EmulationSetInterpController_Vector(struct _Instance* instance, long segment, long type, struct _G2SVector3_Type* vec, int Frames, int Data)  // Matching - 100%
 {
-    int segment0;
-    int type0;
-    segment0 = segment & 0xFF;
-    type0 = type & 0xFF;
-    G2Anim_SetInterpController_Vector(&instance->anim, segment0, type0, vec, (short)(Frames * 25 * 4));
-    G2Anim_SetControllerCallbackData(&instance->anim, segment0, type0, (void*)Data);
+	int segment0;
+	int type0;
+
+	segment0 = segment & 0xFF;
+	type0 = type & 0xFF;
+
+	G2Anim_SetInterpController_Vector(&instance->anim, segment0, type0, vec, (short)(Frames * 25 * 4));
+
+	G2Anim_SetControllerCallbackData(&instance->anim, segment0, type0, (void*)Data);
 }
 
 void StateSwitchStateDataDefault(struct __CharacterState *In, int CurrentSection, void (*NewProcess)(struct __CharacterState* In, int CurrentSection, int Data), int Data)
