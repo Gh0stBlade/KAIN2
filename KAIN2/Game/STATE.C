@@ -990,7 +990,7 @@ int G2EmulationInstanceQueryPassedFrame(struct _Instance* instance, int CurrentS
 	return 0;
 }
 
-int G2EmulationQueryFrame(struct __CharacterState* In, int CurrentSection)
+int G2EmulationQueryFrame(struct __CharacterState* In, int CurrentSection)  // Matching - 100%
 {
 	return G2EmulationInstanceQueryFrame(In->CharacterInstance, CurrentSection);
 }
