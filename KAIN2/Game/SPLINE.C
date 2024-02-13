@@ -164,35 +164,35 @@ short SplineMultiIsWhere(struct MultiSpline *multi)
 	return 0;
 }
 
-struct _G2Quat_Type* SplineGetFirstRot(struct RSpline* rspline, struct SplineDef* def)
+struct _G2Quat_Type* SplineGetFirstRot(struct RSpline* rspline, struct SplineDef* def)  // Matching - 100%
 {
-	if (rspline != NULL)
+	if (rspline == NULL)
 	{
-		def->fracCurr = 0;
-		def->currkey = 0;
-		def->denomFlag = 0;
-
-		return &rspline->key->q;
+		return NULL;
 	}
 
-	return NULL;
+	def->fracCurr = 0;
+	def->currkey = 0;
+	def->denomFlag = 0;
+
+	return &rspline->key->q;
 }
 
-struct _SVector* SplineGetFirstPoint(struct Spline* spline, struct SplineDef* def)
+struct _SVector* SplineGetFirstPoint(struct Spline* spline, struct SplineDef* def)  // Matching - 100%
 {
-	if (spline != NULL)
+	if (spline == NULL)
 	{
-		def->fracCurr = 0;
-		def->currkey = 0;
-		def->denomFlag = 0;
-
-		return (_SVector*)&spline->key->point;
+		return NULL;
 	}
 
-	return NULL;
+	def->fracCurr = 0;
+	def->currkey = 0;
+	def->denomFlag = 0;
+
+	return (struct _SVector*)&spline->key->point;
 }
 
-struct _SVector* SplineGetNextPoint(struct Spline* spline, struct SplineDef* def)//Matching - 89.55%
+struct _SVector* SplineGetNextPoint(struct Spline* spline, struct SplineDef* def)  // Matching - 100%
 {
 	static struct _SVector point;
 
@@ -207,7 +207,7 @@ struct _SVector* SplineGetNextPoint(struct Spline* spline, struct SplineDef* def
 	return NULL;
 }
 
-struct _SVector* SplineGetPrevPoint(struct Spline* spline, struct SplineDef* def)
+struct _SVector* SplineGetPreviousPoint(struct Spline* spline, struct SplineDef* def)  // Matching - 100%
 {
 	static struct _SVector point;
 
@@ -435,7 +435,7 @@ unsigned long SplineGetOffsetPrev(struct Spline *spline, struct SplineDef *def, 
 	return 0;
 }
 
-struct _SVector* SplineGetOffsetNextPoint(struct Spline* spline, struct SplineDef* def, long offset)
+struct _SVector* SplineGetOffsetNextPoint(struct Spline* spline, struct SplineDef* def, long offset)  // Matching - 100%
 {
 	static struct _SVector point;
 
@@ -450,7 +450,7 @@ struct _SVector* SplineGetOffsetNextPoint(struct Spline* spline, struct SplineDe
 	return NULL;
 }
 
-struct _SVector* SplineGetOffsetPreviousPoint(struct Spline* spline, struct SplineDef* def, long offset)
+struct _SVector* SplineGetOffsetPreviousPoint(struct Spline* spline, struct SplineDef* def, long offset)  // Matching - 100%
 {
 	static struct _SVector point;
 
