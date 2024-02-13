@@ -207,7 +207,7 @@ struct _SVector* SplineGetNextPoint(struct Spline* spline, struct SplineDef* def
 	return NULL;
 }
 
-struct _SVector* SplineGetPrevPoint(struct Spline* spline, struct SplineDef* def)
+struct _SVector* SplineGetPreviousPoint(struct Spline* spline, struct SplineDef* def)  // Matching - 100%
 {
 	static struct _SVector point;
 
