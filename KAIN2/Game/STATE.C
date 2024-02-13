@@ -1075,7 +1075,7 @@ void G2EmulationSetInterpController_Vector(struct _Instance* instance, long segm
 	G2Anim_SetControllerCallbackData(&instance->anim, segment0, type0, (void*)Data);
 }
 
-void StateSwitchStateDataDefault(struct __CharacterState *In, int CurrentSection, void (*NewProcess)(struct __CharacterState* In, int CurrentSection, int Data), int Data)
+void StateSwitchStateDataDefault(struct __CharacterState *In, int CurrentSection, void (*NewProcess)(struct __CharacterState* In, int CurrentSection, int Data), int Data)  // Matching - 100%
 {
 	void(*process)(struct __CharacterState*, int, int);
 
