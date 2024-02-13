@@ -1014,11 +1014,11 @@ int G2EmulationQueryMode(struct __CharacterState* In, int CurrentSection)  // Ma
 	return G2EmulationInstanceQueryMode(In->CharacterInstance, CurrentSection);
 }
 
-void G2EmulationInstanceSetStartAndEndSegment(struct _Instance *instance, int CurrentSection, short Start, short End)
+void G2EmulationInstanceSetStartAndEndSegment(struct _Instance* instance, int CurrentSection, short Start, short End)  // Matching - 100%
 {
-	struct _G2AnimSection_Type *animSection;
-	
-	animSection = &instance->anim.section[CurrentSection];
+	struct _G2AnimSection_Type* animSection;
+
+	animSection = &instance->anim.section[CurrentSection & 0xFF];
 	animSection->firstSeg = (unsigned char)Start;
 	animSection->segCount = (End - Start) + 1;
 }
