@@ -1086,7 +1086,7 @@ void StateSwitchStateDataDefault(struct __CharacterState *In, int CurrentSection
 	process(In, CurrentSection, 0);
 }
 
-void StateSwitchStateCharacterDataDefault(struct __CharacterState* In, void (*NewProcess)(struct __CharacterState* In, int CurrentSection, int Data), int Data)
+void StateSwitchStateCharacterDataDefault(struct __CharacterState* In, void (*NewProcess)(struct __CharacterState* In, int CurrentSection, int Data), int Data)  // Matching - 100%
 {
 	int i;
 
