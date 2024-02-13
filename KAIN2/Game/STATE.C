@@ -1042,11 +1042,11 @@ void G2EmulationInstanceSetTotalSections(struct _Instance *instance, short Total
 	G2Anim_SetCallback(anim, INSTANCE_DefaultAnimCallback, instance);
 }
 
-void G2EmulationSetTotalSections(struct __CharacterState* In, short Total)
+void G2EmulationSetTotalSections(struct __CharacterState* In, short Total)  // Matching - 100%
 {
 	In->TotalSections = Total;
-	
-	G2EmulationInstanceSetTotalSections(In->CharacterInstance, In->TotalSections);
+
+	G2EmulationInstanceSetTotalSections(In->CharacterInstance, Total);
 }
 
 void G2EmulationInstanceInitSection(struct _Instance* instance, int CurrentSection, long (*callback)(struct _G2Anim_Type* anim, int sectionID, enum _G2AnimCallbackMsg_Enum message, long messageDataA, long messageDataB, void* data), void* data)
