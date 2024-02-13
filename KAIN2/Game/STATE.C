@@ -1096,7 +1096,7 @@ void StateSwitchStateCharacterDataDefault(struct __CharacterState* In, void (*Ne
 	}
 }
 
-void StateSwitchStateData(struct __CharacterState* In, int CurrentSection, void (*NewProcess)(struct __CharacterState* In, int CurrentSection, int Data), int Data)//Matching - 99.61%
+void StateSwitchStateData(struct __CharacterState* In, int CurrentSection, void (*NewProcess)(struct __CharacterState* In, int CurrentSection, int Data), int Data)  // Matching - 100%
 {
 	PurgeMessageQueue(&In->SectionList[CurrentSection].Event);
 	EnMessageQueueData(&In->SectionList[CurrentSection].Event, 0x100001, Data);
