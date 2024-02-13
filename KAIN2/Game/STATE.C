@@ -1108,7 +1108,7 @@ void StateSwitchStateData(struct __CharacterState* In, int CurrentSection, void 
 	EnMessageQueueData(&In->SectionList[CurrentSection].Event, 0x100004, 0);
 }
 
-void StateSwitchStateCharacterData(struct __CharacterState* In, void (*NewProcess)(struct __CharacterState* In, int CurrentSection, int Data), int Data)//Matching - 99.67%
+void StateSwitchStateCharacterData(struct __CharacterState* In, void (*NewProcess)(struct __CharacterState* In, int CurrentSection, int Data), int Data)  // Matching - 100%
 {
 	int i;
 	typedef void (*func)(struct __CharacterState* In, int CurrentSection, int Data);
