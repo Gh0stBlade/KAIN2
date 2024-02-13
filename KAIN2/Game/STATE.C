@@ -1134,7 +1134,7 @@ void StateSwitchStateCharacterData(struct __CharacterState* In, void (*NewProces
 	}
 }
 
-void StateGovernState(struct __CharacterState* In, int Frames)//Matching - 90.26%
+void StateGovernState(struct __CharacterState* In, int Frames)  // Matching - 100%
 {
 	struct __State* pSectionA;
 	struct __State* pSectionB;
@@ -1151,12 +1151,12 @@ void StateGovernState(struct __CharacterState* In, int Frames)//Matching - 90.26
 
 		if (pSectionA->Process == pSectionB->Process)
 		{
-			animSectionA = &In->CharacterInstance->anim.section[(char)(i - 1)];
-			animSectionB = &In->CharacterInstance->anim.section[(char)i];
+			animSectionA = &In->CharacterInstance->anim.section[(i - 1) & 0xFF];
+			animSectionB = &In->CharacterInstance->anim.section[i & 0xFF];
 
 			if (animSectionA->keylistID == animSectionB->keylistID)
 			{
-				if (!(G2AnimSection_IsInInterpolation(animSectionA)) && !(G2AnimSection_IsInInterpolation(animSectionB)))
+				if ((G2AnimSection_IsInInterpolation(animSectionA) == G2FALSE) && (G2AnimSection_IsInInterpolation(animSectionB) == G2FALSE))
 				{
 					if (G2AnimSection_GetKeyframeNumber(animSectionA) != G2AnimSection_GetKeyframeNumber(animSectionB))
 					{
