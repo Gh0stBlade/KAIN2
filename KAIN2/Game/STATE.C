@@ -1009,7 +1009,7 @@ int G2EmulationInstanceQueryMode(struct _Instance* instance, int CurrentSection)
 	return 0;
 }
 
-int G2EmulationQueryMode(struct __CharacterState* In, int CurrentSection)
+int G2EmulationQueryMode(struct __CharacterState* In, int CurrentSection)  // Matching - 100%
 {
 	return G2EmulationInstanceQueryMode(In->CharacterInstance, CurrentSection);
 }
