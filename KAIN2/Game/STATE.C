@@ -990,7 +990,7 @@ int G2EmulationInstanceQueryPassedFrame(struct _Instance* instance, int CurrentS
 	return 0;
 }
 
-int G2EmulationQueryFrame(struct __CharacterState* In, int CurrentSection)
+int G2EmulationQueryFrame(struct __CharacterState* In, int CurrentSection)  // Matching - 100%
 {
 	return G2EmulationInstanceQueryFrame(In->CharacterInstance, CurrentSection);
 }
@@ -1009,26 +1009,26 @@ int G2EmulationInstanceQueryMode(struct _Instance* instance, int CurrentSection)
 	return 0;
 }
 
-int G2EmulationQueryMode(struct __CharacterState* In, int CurrentSection)
+int G2EmulationQueryMode(struct __CharacterState* In, int CurrentSection)  // Matching - 100%
 {
 	return G2EmulationInstanceQueryMode(In->CharacterInstance, CurrentSection);
 }
 
-void G2EmulationInstanceSetStartAndEndSegment(struct _Instance *instance, int CurrentSection, short Start, short End)
+void G2EmulationInstanceSetStartAndEndSegment(struct _Instance* instance, int CurrentSection, short Start, short End)  // Matching - 100%
 {
-	struct _G2AnimSection_Type *animSection;
-	
-	animSection = &instance->anim.section[CurrentSection];
+	struct _G2AnimSection_Type* animSection;
+
+	animSection = &instance->anim.section[CurrentSection & 0xFF];
 	animSection->firstSeg = (unsigned char)Start;
 	animSection->segCount = (End - Start) + 1;
 }
 
-void G2EmulationSetStartAndEndSegment(struct __CharacterState *In, int CurrentSection, short Start, short End)
+void G2EmulationSetStartAndEndSegment(struct __CharacterState *In, int CurrentSection, short Start, short End)  // Matching - 100%
 { 
 	G2EmulationInstanceSetStartAndEndSegment(In->CharacterInstance, CurrentSection, Start, End);
 }
 
-void G2EmulationInstanceSetTotalSections(struct _Instance *instance, short Total)
+void G2EmulationInstanceSetTotalSections(struct _Instance *instance, short Total)  // Matching - 100%
 {
 	struct _G2Anim_Type *anim;
 	
@@ -1042,14 +1042,14 @@ void G2EmulationInstanceSetTotalSections(struct _Instance *instance, short Total
 	G2Anim_SetCallback(anim, INSTANCE_DefaultAnimCallback, instance);
 }
 
-void G2EmulationSetTotalSections(struct __CharacterState* In, short Total)
+void G2EmulationSetTotalSections(struct __CharacterState* In, short Total)  // Matching - 100%
 {
 	In->TotalSections = Total;
-	
-	G2EmulationInstanceSetTotalSections(In->CharacterInstance, In->TotalSections);
+
+	G2EmulationInstanceSetTotalSections(In->CharacterInstance, Total);
 }
 
-void G2EmulationInstanceInitSection(struct _Instance* instance, int CurrentSection, long (*callback)(struct _G2Anim_Type* anim, int sectionID, enum _G2AnimCallbackMsg_Enum message, long messageDataA, long messageDataB, void* data), void* data)
+void G2EmulationInstanceInitSection(struct _Instance* instance, int CurrentSection, long (*callback)(struct _G2Anim_Type* anim, int sectionID, enum _G2AnimCallbackMsg_Enum message, long messageDataA, long messageDataB, void* data), void* data)  // Matching - 100%
 {
 	struct _G2AnimSection_Type* animSection;
 
@@ -1075,7 +1075,7 @@ void G2EmulationSetInterpController_Vector(struct _Instance* instance, long segm
 	G2Anim_SetControllerCallbackData(&instance->anim, segment0, type0, (void*)Data);
 }
 
-void StateSwitchStateDataDefault(struct __CharacterState *In, int CurrentSection, void (*NewProcess)(struct __CharacterState* In, int CurrentSection, int Data), int Data)
+void StateSwitchStateDataDefault(struct __CharacterState *In, int CurrentSection, void (*NewProcess)(struct __CharacterState* In, int CurrentSection, int Data), int Data)  // Matching - 100%
 {
 	void(*process)(struct __CharacterState*, int, int);
 
@@ -1086,7 +1086,7 @@ void StateSwitchStateDataDefault(struct __CharacterState *In, int CurrentSection
 	process(In, CurrentSection, 0);
 }
 
-void StateSwitchStateCharacterDataDefault(struct __CharacterState* In, void (*NewProcess)(struct __CharacterState* In, int CurrentSection, int Data), int Data)
+void StateSwitchStateCharacterDataDefault(struct __CharacterState* In, void (*NewProcess)(struct __CharacterState* In, int CurrentSection, int Data), int Data)  // Matching - 100%
 {
 	int i;
 
@@ -1096,7 +1096,7 @@ void StateSwitchStateCharacterDataDefault(struct __CharacterState* In, void (*Ne
 	}
 }
 
-void StateSwitchStateData(struct __CharacterState* In, int CurrentSection, void (*NewProcess)(struct __CharacterState* In, int CurrentSection, int Data), int Data)//Matching - 99.61%
+void StateSwitchStateData(struct __CharacterState* In, int CurrentSection, void (*NewProcess)(struct __CharacterState* In, int CurrentSection, int Data), int Data)  // Matching - 100%
 {
 	PurgeMessageQueue(&In->SectionList[CurrentSection].Event);
 	EnMessageQueueData(&In->SectionList[CurrentSection].Event, 0x100001, Data);
@@ -1108,7 +1108,7 @@ void StateSwitchStateData(struct __CharacterState* In, int CurrentSection, void 
 	EnMessageQueueData(&In->SectionList[CurrentSection].Event, 0x100004, 0);
 }
 
-void StateSwitchStateCharacterData(struct __CharacterState* In, void (*NewProcess)(struct __CharacterState* In, int CurrentSection, int Data), int Data)//Matching - 99.67%
+void StateSwitchStateCharacterData(struct __CharacterState* In, void (*NewProcess)(struct __CharacterState* In, int CurrentSection, int Data), int Data)  // Matching - 100%
 {
 	int i;
 	typedef void (*func)(struct __CharacterState* In, int CurrentSection, int Data);
@@ -1134,7 +1134,7 @@ void StateSwitchStateCharacterData(struct __CharacterState* In, void (*NewProces
 	}
 }
 
-void StateGovernState(struct __CharacterState* In, int Frames)//Matching - 90.26%
+void StateGovernState(struct __CharacterState* In, int Frames)  // Matching - 100%
 {
 	struct __State* pSectionA;
 	struct __State* pSectionB;
@@ -1151,12 +1151,12 @@ void StateGovernState(struct __CharacterState* In, int Frames)//Matching - 90.26
 
 		if (pSectionA->Process == pSectionB->Process)
 		{
-			animSectionA = &In->CharacterInstance->anim.section[(char)(i - 1)];
-			animSectionB = &In->CharacterInstance->anim.section[(char)i];
+			animSectionA = &In->CharacterInstance->anim.section[(i - 1) & 0xFF];
+			animSectionB = &In->CharacterInstance->anim.section[i & 0xFF];
 
 			if (animSectionA->keylistID == animSectionB->keylistID)
 			{
-				if (!(G2AnimSection_IsInInterpolation(animSectionA)) && !(G2AnimSection_IsInInterpolation(animSectionB)))
+				if ((G2AnimSection_IsInInterpolation(animSectionA) == G2FALSE) && (G2AnimSection_IsInInterpolation(animSectionB) == G2FALSE))
 				{
 					if (G2AnimSection_GetKeyframeNumber(animSectionA) != G2AnimSection_GetKeyframeNumber(animSectionB))
 					{
