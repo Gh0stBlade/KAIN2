@@ -450,7 +450,7 @@ struct _SVector* SplineGetOffsetNextPoint(struct Spline* spline, struct SplineDe
 	return NULL;
 }
 
-struct _SVector* SplineGetOffsetPreviousPoint(struct Spline* spline, struct SplineDef* def, long offset)
+struct _SVector* SplineGetOffsetPreviousPoint(struct Spline* spline, struct SplineDef* def, long offset)  // Matching - 100%
 {
 	static struct _SVector point;
 
