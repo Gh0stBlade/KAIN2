@@ -1028,7 +1028,7 @@ void G2EmulationSetStartAndEndSegment(struct __CharacterState *In, int CurrentSe
 	G2EmulationInstanceSetStartAndEndSegment(In->CharacterInstance, CurrentSection, Start, End);
 }
 
-void G2EmulationInstanceSetTotalSections(struct _Instance *instance, short Total)
+void G2EmulationInstanceSetTotalSections(struct _Instance *instance, short Total)  // Matching - 100%
 {
 	struct _G2Anim_Type *anim;
 	
