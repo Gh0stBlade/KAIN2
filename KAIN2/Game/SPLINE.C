@@ -192,7 +192,7 @@ struct _SVector* SplineGetFirstPoint(struct Spline* spline, struct SplineDef* de
 	return (struct _SVector*)&spline->key->point;
 }
 
-struct _SVector* SplineGetNextPoint(struct Spline* spline, struct SplineDef* def)//Matching - 89.55%
+struct _SVector* SplineGetNextPoint(struct Spline* spline, struct SplineDef* def)  // Matching - 100%
 {
 	static struct _SVector point;
 
