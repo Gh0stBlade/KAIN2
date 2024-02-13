@@ -178,18 +178,18 @@ struct _G2Quat_Type* SplineGetFirstRot(struct RSpline* rspline, struct SplineDef
 	return &rspline->key->q;
 }
 
-struct _SVector* SplineGetFirstPoint(struct Spline* spline, struct SplineDef* def)
+struct _SVector* SplineGetFirstPoint(struct Spline* spline, struct SplineDef* def)  // Matching - 100%
 {
-	if (spline != NULL)
+	if (spline == NULL)
 	{
-		def->fracCurr = 0;
-		def->currkey = 0;
-		def->denomFlag = 0;
-
-		return (_SVector*)&spline->key->point;
+		return NULL;
 	}
 
-	return NULL;
+	def->fracCurr = 0;
+	def->currkey = 0;
+	def->denomFlag = 0;
+
+	return (struct _SVector*)&spline->key->point;
 }
 
 struct _SVector* SplineGetNextPoint(struct Spline* spline, struct SplineDef* def)//Matching - 89.55%
