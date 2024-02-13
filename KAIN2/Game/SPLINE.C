@@ -164,18 +164,18 @@ short SplineMultiIsWhere(struct MultiSpline *multi)
 	return 0;
 }
 
-struct _G2Quat_Type* SplineGetFirstRot(struct RSpline* rspline, struct SplineDef* def)
+struct _G2Quat_Type* SplineGetFirstRot(struct RSpline* rspline, struct SplineDef* def)  // Matching - 100%
 {
-	if (rspline != NULL)
+	if (rspline == NULL)
 	{
-		def->fracCurr = 0;
-		def->currkey = 0;
-		def->denomFlag = 0;
-
-		return &rspline->key->q;
+		return NULL;
 	}
 
-	return NULL;
+	def->fracCurr = 0;
+	def->currkey = 0;
+	def->denomFlag = 0;
+
+	return &rspline->key->q;
 }
 
 struct _SVector* SplineGetFirstPoint(struct Spline* spline, struct SplineDef* def)
