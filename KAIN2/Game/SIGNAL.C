@@ -49,13 +49,13 @@ long SIGNAL_HandleLightGroup(struct _Instance* instance, struct Signal* signal)
 	return 1;
 }
 
-long SIGNAL_HandleCameraAdjust(struct _Instance* instance, struct Signal* signal)
+long SIGNAL_HandleCameraAdjust(struct _Instance* instance, struct Signal* signal)  // Matching - 100%
 {
 	CAMERA_Adjust(&theCamera, signal->data.cameraAdjust);
 	return 1;
 }
 
-long SIGNAL_HandleCamera(struct _Instance* instance, struct Signal* signal)
+long SIGNAL_HandleCamera(struct _Instance* instance, struct Signal* signal)  // Matching - 100%
 {
 	CAMERA_ChangeTo(&theCamera, signal->data.cameraKey);
 	return 1;
@@ -66,25 +66,25 @@ void SIGNAL_RelocateCamera(struct Signal* signal, long offset)
 	UNIMPLEMENTED();
 }
 
-long SIGNAL_HandleCameraMode(struct _Instance* instance, struct Signal* signal)
+long SIGNAL_HandleCameraMode(struct _Instance* instance, struct Signal* signal)  // Matching - 100%
 {
 	CAMERA_SetMode(&theCamera, signal->data.cameraMode);
 	return 1;
 }
 
-long SIGNAL_HandleCameraLock(struct _Instance* instance, struct Signal* signal)
+long SIGNAL_HandleCameraLock(struct _Instance* instance, struct Signal* signal)  // Matching - 100%
 {
 	CAMERA_Lock(&theCamera, signal->data.cameraLock);
 	return 1;
 }
 
-long SIGNAL_HandleCameraUnlock(struct _Instance* instance, struct Signal* signal)
+long SIGNAL_HandleCameraUnlock(struct _Instance* instance, struct Signal* signal)  // Matching - 100%
 {
 	CAMERA_Unlock(&theCamera, signal->data.cameraUnlock);
 	return 1;
 }
 
-long SIGNAL_HandleCameraSmooth(struct _Instance* instance, struct Signal* signal)
+long SIGNAL_HandleCameraSmooth(struct _Instance* instance, struct Signal* signal)  // Matching - 100%
 {
 	CAMERA_SetSmoothValue(&theCamera, signal->data.cameraSmooth);
 	return 1;
@@ -96,7 +96,7 @@ long SIGNAL_HandleCameraTimer(struct _Instance* instance, struct Signal* signal)
 	return 1;
 }
 
-long SIGNAL_HandleCameraSave(struct _Instance* instance, struct Signal* signal)
+long SIGNAL_HandleCameraSave(struct _Instance* instance, struct Signal* signal)  // Matching - 100%
 {
 	CAMERA_Save(&theCamera, signal->data.cameraSave);
 	return 1;
