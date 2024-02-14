@@ -49,7 +49,7 @@ long SIGNAL_HandleLightGroup(struct _Instance* instance, struct Signal* signal)
 	return 1;
 }
 
-long SIGNAL_HandleCameraAdjust(struct _Instance* instance, struct Signal* signal)
+long SIGNAL_HandleCameraAdjust(struct _Instance* instance, struct Signal* signal)  // Matching - 100%
 {
 	CAMERA_Adjust(&theCamera, signal->data.cameraAdjust);
 	return 1;
