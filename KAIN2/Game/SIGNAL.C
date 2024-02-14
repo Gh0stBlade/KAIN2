@@ -55,7 +55,7 @@ long SIGNAL_HandleCameraAdjust(struct _Instance* instance, struct Signal* signal
 	return 1;
 }
 
-long SIGNAL_HandleCamera(struct _Instance* instance, struct Signal* signal)
+long SIGNAL_HandleCamera(struct _Instance* instance, struct Signal* signal)  // Matching - 100%
 {
 	CAMERA_ChangeTo(&theCamera, signal->data.cameraKey);
 	return 1;
