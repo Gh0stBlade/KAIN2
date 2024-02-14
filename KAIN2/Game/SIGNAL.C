@@ -78,7 +78,7 @@ long SIGNAL_HandleCameraLock(struct _Instance* instance, struct Signal* signal)
 	return 1;
 }
 
-long SIGNAL_HandleCameraUnlock(struct _Instance* instance, struct Signal* signal)
+long SIGNAL_HandleCameraUnlock(struct _Instance* instance, struct Signal* signal)  // Matching - 100%
 {
 	CAMERA_Unlock(&theCamera, signal->data.cameraUnlock);
 	return 1;
