@@ -96,7 +96,7 @@ long SIGNAL_HandleCameraTimer(struct _Instance* instance, struct Signal* signal)
 	return 1;
 }
 
-long SIGNAL_HandleCameraSave(struct _Instance* instance, struct Signal* signal)
+long SIGNAL_HandleCameraSave(struct _Instance* instance, struct Signal* signal)  // Matching - 100%
 {
 	CAMERA_Save(&theCamera, signal->data.cameraSave);
 	return 1;
