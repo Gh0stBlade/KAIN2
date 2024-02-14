@@ -551,6 +551,13 @@ struct bloodyMessType {
 	int bloodIntensity; // size=0, offset=16
 };
 
+struct burntMessType {
+	int closestvert; // size=0, offset=0
+	int closestdist; // size=0, offset=4
+	int closestseg; // size=0, offset=8
+	struct burntTuneType* burntTune; // size=8, offset=12
+};
+
 // base inclusion for functions
 #include "MONAPI.H"
 #include "MONLIB.H"
