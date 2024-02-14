@@ -88,7 +88,7 @@ enum MonsterState : int
 	MONSTER_NUM_STATES = 31,
 };
 
-typedef void (*TDRFuncPtr_MONSTER_ProcessClosestVerts2processVert_cb)();
+typedef void (*TDRFuncPtr_MONSTER_ProcessClosestVerts2processVert_cb)(struct _Instance*, int, int, int, void*);
 typedef void (*TDRFuncPtr_MONTABLE_GetCleanUpFunc)();
 typedef void (*TDRFuncPtr_MONTABLE_GetDamageEffectFunc)();
 typedef void (*TDRFuncPtr_MONTABLE_GetInitFunc)();
@@ -541,6 +541,21 @@ struct _MonsterFunctionTable
 	struct _MonsterStateChoice* stateFuncs; // size=12, offset=20
 	char* versionID; // size=0, offset=24
 	char* localVersionID; // size=0, offset=28
+};
+
+struct bloodyMessType {
+	int closestvert; // size=0, offset=0
+	int closestdist; // size=0, offset=4
+	int closestseg; // size=0, offset=8
+	int bloodiedAVert; // size=0, offset=12
+	int bloodIntensity; // size=0, offset=16
+};
+
+struct burntMessType {
+	int closestvert; // size=0, offset=0
+	int closestdist; // size=0, offset=4
+	int closestseg; // size=0, offset=8
+	struct burntTuneType* burntTune; // size=8, offset=12
 };
 
 // base inclusion for functions
