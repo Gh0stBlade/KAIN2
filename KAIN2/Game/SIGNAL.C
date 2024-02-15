@@ -222,7 +222,7 @@ long SIGNAL_HandleStreamLevel(struct _Instance* instance, struct Signal* signal)
 	return 1;
 }
 
-long SIGNAL_HandleFogNear(struct _Instance* instance, struct Signal* signal)//Matching - 94.05%
+long SIGNAL_HandleFogNear(struct _Instance* instance, struct Signal* signal)  // Matching - 100%
 {
 	struct Level* level;
 
