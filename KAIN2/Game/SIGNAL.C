@@ -102,112 +102,124 @@ long SIGNAL_HandleCameraSave(struct _Instance* instance, struct Signal* signal) 
 	return 1;
 }
 
-long SIGNAL_HandleCameraRestore(struct _Instance* instance, struct Signal* signal)
+long SIGNAL_HandleCameraRestore(struct _Instance* instance, struct Signal* signal)  // Matching - 100%
 {
 	CAMERA_Restore(&theCamera, signal->data.cameraRestore);
 	return 1;
 }
 
-long SIGNAL_HandleCameraValue(struct _Instance* instance, struct Signal* signal)
+long SIGNAL_HandleCameraValue(struct _Instance* instance, struct Signal* signal)  // Matching - 100%
 {
 	CAMERA_SetValue(&theCamera, signal->data.cameraValue.index, signal->data.cameraValue.value);
 	return 1;
 }
 
 
-long SIGNAL_HandleStreamLevel(struct _Instance* instance, struct Signal* signal)
+long SIGNAL_HandleStreamLevel(struct _Instance* instance, struct Signal* signal)  // Matching - 98.68%
 {
-	int signalnum; // $s5
-	int doingWarpRoom; // $s3
-	int v6; // $v0
-	char* commapos; // $s0
-	struct _StreamUnit* curStreamUnit; // $v0
-	int v9; // dc
-	int result; // $v0
-	const char* v11; // $a1
-	int newStreamID; // $s1
-	int v13; // $v0
-	short data; // $v0
-	struct Level* LevelWithID; // $v0
-	char areaName[16]; // [sp+10h] [-10h] BYREF
+	char areaName[16];
+	int signalnum;
+	char* commapos;
+	long newStreamID;
 	static int lastTimeCrossed;
+	long doingWarpRoom;
 
 	signalnum = -1;
 	doingWarpRoom = 0;
+
 	strcpy(areaName, &signal->data.StreamLevel.toname[0]);
+
 	commapos = (char*)strchr(areaName, ',');
-	if (commapos)
+
+	if (commapos != NULL)
 	{
 		signalnum = atoi(commapos + 1);
-		*commapos = 0;
+
+		commapos[0] = 0;
 	}
-	if (strcmpi(areaName, "warpgate"))
+
+	if (strcmpi(areaName, "warpgate") == 0)
+	{
+		struct _StreamUnit* curStreamUnit;
+
+		curStreamUnit = STREAM_GetStreamUnitWithID(instance->currentStreamUnitID);
+
+		if (gameTrackerX.currentTime < 101U)
+		{
+			return 1;
+		}
+
+		if (!(curStreamUnit->flags & 8))
+		{
+			return 1;
+		}
+
+		newStreamID = WarpRoomArray[CurrentWarpNumber].streamUnit->StreamUnitID;
+
+		strcpy(areaName, (char*)&WarpRoomArray[CurrentWarpNumber]);
+
+		doingWarpRoom = 1;
+
+		if ((WarpRoomArray[CurrentWarpNumber].streamUnit == NULL) || (!(WarpRoomArray[CurrentWarpNumber].streamUnit->flags & 8)))
+		{
+			return 1;
+		}
+	}
+	else
 	{
 		newStreamID = signal->data.StreamLevel.streamID;
 	}
-	else
+
+	if (instance->currentStreamUnitID != newStreamID)
 	{
-		curStreamUnit = STREAM_GetStreamUnitWithID(instance->currentStreamUnitID);
-		if (gameTrackerX.currentTime < 0x65u)
-			return 1;
-		v9 = (curStreamUnit->flags & 8) == 0;
-		if (v9)
-			return 1;
-		v11 = "under3";
-		newStreamID = **((int**)v11 + 4);
-		strcpy(areaName, v11);
-		v13 = *(int*)&WarpRoomArray[CurrentWarpNumber];
-		doingWarpRoom = 1;
-		if (!v13)
-			return 1;
-		v9 = (*(int*)(v13 + 6) & 8) != 0;
-		if (!v9)
-			return 1;
-	}
-	if (instance->currentStreamUnitID == newStreamID)
-	{
-		return 1;
-	}
-	if (instance != gameTrackerX.playerInstance)
-	{
-		if (instance->LinkParent)
+		if (instance == gameTrackerX.playerInstance)
 		{
+			gameTrackerX.SwitchToNewStreamUnit = 1;
+			lastTimeCrossed = (int)gameTrackerX.currentTime;
+
+			strcpy(gameTrackerX.S_baseAreaName, areaName);
+
+			gameTrackerX.toSignal = signalnum;
+			gameTrackerX.fromSignal = (short)signal->data.StreamLevel.currentnum;
+			gameTrackerX.moveRazielToStreamID = newStreamID;
+
+			if (doingWarpRoom != 0)
+			{
+				if ((gameTrackerX.gameData.asmData.MorphType == 0) && (strcmpi(areaName, "under3") == 0))
+				{
+					INSTANCE_Post(gameTrackerX.playerInstance, 0x10002001, 0);
+				}
+
+				gameTrackerX.SwitchToNewWarpIndex = (short)WARPGATE_GetWarpRoomIndex(gameTrackerX.baseAreaName);
+				return 1;
+			}
+
+			gameTrackerX.SwitchToNewWarpIndex = -1;
 			return 1;
 		}
-		if (STREAM_GetLevelWithID(newStreamID))
+
+		if (instance->LinkParent == NULL)
 		{
-			instance->cachedTFace = -1;
-			instance->cachedTFaceLevel = 0;
-			instance->currentStreamUnitID = newStreamID;
-			INSTANCE_UpdateFamilyStreamUnitID(instance);
+			if (STREAM_GetLevelWithID(newStreamID) == 0)
+			{
+				SAVE_Instance(instance, STREAM_GetLevelWithID(instance->currentStreamUnitID));
+
+				instance->flags |= 0x20;
+			}
+			else
+			{
+				instance->cachedTFace = -1;
+				instance->cachedTFaceLevel = NULL;
+				instance->currentStreamUnitID = newStreamID;
+
+				INSTANCE_UpdateFamilyStreamUnitID(instance);
+			}
 		}
-		else
-		{
-			SAVE_Instance(instance, STREAM_GetLevelWithID(instance->currentStreamUnitID));
-			instance->flags |= 0x20;
-		}
+
 		return 1;
 	}
 
-	gameTrackerX.SwitchToNewStreamUnit = 1;
-	lastTimeCrossed = (int)gameTrackerX.currentTime;
-	strcpy(gameTrackerX.S_baseAreaName, areaName);
-	gameTrackerX.toSignal = signalnum;
-	//data = signal->data;
-	gameTrackerX.moveRazielToStreamID = newStreamID;
-	gameTrackerX.fromSignal = (short)signal->data.StreamLevel.streamID;
-	if (doingWarpRoom)
-	{
-		if (!gameTrackerX.gameData.asmData.MorphType && !strcmpi(areaName, "under3"))
-			INSTANCE_Post(gameTrackerX.playerInstance, 0x10002001, 0);
-		gameTrackerX.SwitchToNewWarpIndex = (short)WARPGATE_GetWarpRoomIndex(gameTrackerX.baseAreaName);
-		return 1;
-	}
-	else
-	{
-		gameTrackerX.SwitchToNewWarpIndex = -1;
-		return 1;
-	}
+	return 1;
 }
 
 long SIGNAL_HandleFogNear(struct _Instance* instance, struct Signal* signal)//Matching - 94.05%
