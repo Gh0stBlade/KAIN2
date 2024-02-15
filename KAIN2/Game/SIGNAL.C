@@ -108,7 +108,7 @@ long SIGNAL_HandleCameraRestore(struct _Instance* instance, struct Signal* signa
 	return 1;
 }
 
-long SIGNAL_HandleCameraValue(struct _Instance* instance, struct Signal* signal)
+long SIGNAL_HandleCameraValue(struct _Instance* instance, struct Signal* signal)  // Matching - 100%
 {
 	CAMERA_SetValue(&theCamera, signal->data.cameraValue.index, signal->data.cameraValue.value);
 	return 1;
