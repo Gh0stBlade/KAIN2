@@ -2461,39 +2461,62 @@ void STREAM_PackVRAMObject(struct _ObjectTracker* objectTracker)  // Matching - 
 	}
 }
 
-void MORPH_SetupInstanceFlags(struct _Instance *instance)
-{ 
-	if (!(instance->object->oflags & 0x80000))
+void MORPH_SetupInstanceFlags(struct _Instance* instance)  // Matching - 100%
+{
+	if ((instance->object->oflags & 0x80000))
 	{
-		if (gameTrackerX.gameData.asmData.MorphType == 0)
+		return;
+	}
+
+	switch (gameTrackerX.gameData.asmData.MorphType)
+	{
+	case 0:
+		if (!(instance->flags2 & 0x8000000))
 		{
-			if (!(instance->flags2 & 0x8000000))
-			{
-				instance->flags2 &= 0xEFFFFFFF;
-				instance->flags2 &= 0xFBFFFFFF;
-				return;
-			}
-		}
-		else
-		{
-			instance->flags2 &= 0xEFFFFFFF;
-			instance->flags2 &= 0xFBFFFFFF;
-			return;
+			instance->flags2 &= ~0x10000000;
+			instance->flags2 &= ~0x4000000;
+			break;
 		}
 
-		instance->flags2 &= 0x10000000;
+		instance->flags2 |= 0x10000000;
 
-		if (MEMPACK_MemoryValidFunc((char*)instance->data) != 0)
+		if (MEMPACK_MemoryValidFunc((char*)instance->object) == 0)
 		{
-			if (!(instance->object->oflags2 & 0x2000000) && instance->LinkParent != NULL && !(instance->LinkParent->object->oflags2 & 0x2000000))
-			{
-				return;
-			}
+			break;
+		}
 
+		if ((instance->object->oflags2 & 0x2000000) || ((instance->LinkParent != NULL) && (instance->LinkParent->object->oflags2 & 0x2000000)))
+		{
 			INSTANCE_Post(instance, 0x40026, 0);
 
 			instance->flags2 |= 0x4000000;
 		}
+
+		break;
+
+	default:
+		if ((instance->flags2 & 0x8000000))
+		{
+			instance->flags2 &= ~0x10000000;
+			instance->flags2 &= ~0x4000000;
+			break;
+		}
+
+		instance->flags2 |= 0x10000000;
+
+		if (MEMPACK_MemoryValidFunc((char*)instance->object) == 0)
+		{
+			break;
+		}
+
+		if ((instance->object->oflags2 & 0x2000000) || ((instance->LinkParent != NULL) && (instance->LinkParent->object->oflags2 & 0x2000000)))
+		{
+			INSTANCE_Post(instance, 0x40026, 0);
+
+			instance->flags2 |= 0x4000000;
+		}
+
+		break;
 	}
 }
 
