@@ -236,7 +236,7 @@ long SIGNAL_HandleFogNear(struct _Instance* instance, struct Signal* signal)  //
 	return 1;
 }
 
-long SIGNAL_HandleFogFar(struct _Instance* instance, struct Signal* signal)
+long SIGNAL_HandleFogFar(struct _Instance* instance, struct Signal* signal)  // Matching - 100%
 {
 	struct Level* level;
 
