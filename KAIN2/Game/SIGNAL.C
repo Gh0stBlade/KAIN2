@@ -269,7 +269,7 @@ long SIGNAL_HandleStopPlayerControl(struct _Instance* instance, struct Signal* s
 	return 1;
 }
 
-long SIGNAL_HandleStartPlayerControl(struct _Instance* instance, struct Signal* signal)
+long SIGNAL_HandleStartPlayerControl(struct _Instance* instance, struct Signal* signal)  // Matching - 100%
 {
 	gameTrackerX.gameFlags &= 0xFFFFFF7F;
 	gameTrackerX.gameFlags &= 0xFFFFFFEF;
