@@ -22,151 +22,173 @@ long collide_t1;
 struct _SVector* collide_normal0;
 struct _SVector* collide_normal1;
 
-int COLLIDE_PointInTriangle(struct _SVector* v0, struct _SVector* v1, struct _SVector* v2, struct _SVector* point, struct _SVector* normal)//Matching - 86.63%
+int COLLIDE_PointInTriangle(struct _SVector* v0, struct _SVector* v1, struct _SVector* v2, struct _SVector* point, struct _SVector* normal)  // Matching - 99.94%
 {
-	int ny; // $v1
-	int nx; // $t1
-	DVECTOR* vert1; // $t2
-	int v8; // $v0
-	short tx; // $t0
-	short ty; // $a3
-	int x; // $v1
-	int z; // $v0
-	int y; // $v0
-	DVECTOR* vert0; // $t1
-	int inside_flag; // $t3
-	int line_flag; // $t7
-	int j; // $t6
-	int yflag0; // $v1
+	struct _Triangle2D* triangle;
+	int nx;
+	int ny;
+	short tx;
+	short ty;
+	int inside_flag;
+	int line_flag;
+	DVECTOR* vert1;
+	DVECTOR* vert0;
 	int yflag1;
-	int vy; // $t0
-	int xdiff; // $v1
-	int ydiff; // $a1
-	int v26; // $v1
-	int v27; // $a1
-	int vx; // $a1
-	struct _Triangle2D* tri;
+	int yflag0;
+	int j;
+	long ydist;
+	long xdist;
+	long xdiff;
+	long ydiff;
+	long ix;
+	int temp, temp2;  // not from SYMDUMP
 
-	ny = normal->y;
-	nx = normal->x;
+	nx = normal->x > 0 ? normal->x : -normal->x;
+	ny = normal->y > 0 ? normal->y : -normal->y;
 
-	if (nx < 0)
-		nx = -nx;
-
-	if (ny < 0)
-		ny = -ny;
-
-	tri = (struct _Triangle2D*)getScratchAddr(0);
-	vert1 = (DVECTOR*)tri;
+	triangle = (struct _Triangle2D*)getScratchAddr(0);
 
 	if (ny < nx)
 	{
-		z = normal->z;
-		if (z < 0)
-			z = -z;
-		if (z < nx)
+		temp = normal->z;
+
+		if (temp < 0)
+		{
+			temp = -temp;
+		}
+
+		if (temp < nx)
 		{
 			tx = point->y;
 			ty = point->z;
-			*(int*)&tri->x0 = (unsigned short)v0->y | (v0->z << 16);
-			*(int*)&tri->x1 = (unsigned short)v1->y | (v1->z << 16);
-			*(int*)&tri->x2 = (unsigned short)v2->y | (v2->z << 16);
+
+			*(int*)&triangle->x0 = (unsigned short)v0->y | (v0->z << 16);
+			*(int*)&triangle->x1 = (unsigned short)v1->y | (v1->z << 16);
+			*(int*)&triangle->x2 = (unsigned short)v2->y | (v2->z << 16);
 		}
 		else
 		{
 			tx = point->x;
 			ty = point->y;
-			*(int*)&tri->x0 = (unsigned short)v0->x | (v0->y << 16);
-			*(int*)&tri->x1 = (unsigned short)v1->x | (v1->y << 16);
-			*(int*)&tri->x2 = (unsigned short)v2->x | (v2->y << 16);
+
+			*(int*)&triangle->x0 = (unsigned short)v0->x | (v0->y << 16);
+			*(int*)&triangle->x1 = (unsigned short)v1->x | (v1->y << 16);
+			*(int*)&triangle->x2 = (unsigned short)v2->x | (v2->y << 16);
 		}
 	}
 	else
 	{
-		z = normal->z;
-		if (z < 0)
-			z = -z;
-		if (z < ny)
+		temp = normal->z;
+
+		if (temp < 0)
+		{
+			temp = -temp;
+		}
+
+		if (temp < ny)
 		{
 			tx = point->x;
 			ty = point->z;
-			*(int*)&tri->x0 = (unsigned short)v0->x | (v0->z << 16);
-			*(int*)&tri->x1 = (unsigned short)v1->x | (v1->z << 16);
-			*(int*)&tri->x2 = (unsigned short)v2->x | (v2->z << 16);
+
+			*(int*)&triangle->x0 = (unsigned short)v0->x | (v0->z << 16);
+			*(int*)&triangle->x1 = (unsigned short)v1->x | (v1->z << 16);
+			*(int*)&triangle->x2 = (unsigned short)v2->x | (v2->z << 16);
 		}
 		else
 		{
 			tx = point->x;
 			ty = point->y;
-			*(int*)&tri->x0 = (unsigned short)v0->x | (v0->y << 16);
-			*(int*)&tri->x1 = (unsigned short)v1->x | (v1->y << 16);
-			*(int*)&tri->x2 = (unsigned short)v2->x | (v2->y << 16);
+
+			*(int*)&triangle->x0 = (unsigned short)v0->x | (v0->y << 16);
+			*(int*)&triangle->x1 = (unsigned short)v1->x | (v1->y << 16);
+			*(int*)&triangle->x2 = (unsigned short)v2->x | (v2->y << 16);
 		}
 	}
-	vert0 = (DVECTOR*)vert1 + 2;//t1
 
+	vert1 = (DVECTOR*)triangle;
+	vert0 = (DVECTOR*)vert1 + 2;
+
+	yflag0 = (vert0->vy >= ty);
 	inside_flag = 0;
 	line_flag = 0;
 
 	for (j = 3; j != 0; j--)
 	{
-		yflag0 = ((unsigned short)vert0->vy << 16 < (unsigned short)ty << 16) ^ 1;
-		yflag1 = (vert1->vy < ty) ^ 1;
+		yflag1 = (vert1->vy >= ty);
 
 		if (yflag0 != yflag1)
 		{
-			ydiff = (vert0->vx < tx) ^ 1;
-			if ((ydiff != vert1->vx >= tx) == 0)
+			temp2 = (vert0->vx >= tx);
+
+			if (temp2 == (vert1->vx >= tx))
 			{
-				if (ydiff != 0)
-					inside_flag = inside_flag == 0;
+				if (temp2 != 0)
+				{
+					inside_flag = !inside_flag;
+				}
 			}
 			else
 			{
+				xdist = vert1->vx - tx;
 				ydiff = vert0->vy - vert1->vy;
-				v26 = (vert1->vx - tx) * ydiff - (vert0->vx - vert1->vx) * (vert1->vy - ty);
+				xdiff = vert0->vx - vert1->vx;
+				ydist = vert1->vy - ty;
+
+				ix = xdist * ydiff - ydist * xdiff;
+
 				if (ydiff < 0)
 				{
 					ydiff = -ydiff;
-					v26 = -v26;
+					ix = -ix;
 				}
-				v27 = ydiff / 2;
-				if (v27 < v26)
+
+				ydiff = ydiff / 2;
+
+				if (ydiff < ix)
 				{
-					inside_flag = inside_flag == 0;
+					inside_flag = !inside_flag;
 				}
-				else if (v26 >= -v27)
+				else if (ix >= -ydiff)
 				{
 					return 1;
 				}
 			}
+
 			if (line_flag != 0)
+			{
 				return inside_flag;
+			}
+
 			line_flag = 1;
 		}
 		else
 		{
-			if (yflag1 != 0 && ty == vert0->vy)
+			if ((yflag1 != 0) && (ty == vert0->vy))
 			{
 				if (ty == vert1->vy)
 				{
-					if ((vert0->vx < tx) != (vert1->vx < tx))
+					if (((vert0->vx < tx) != (vert1->vx < tx) == 0) && (tx != vert0->vx))
+					{
+						if (tx == vert1->vx)
+						{
+							return 1;
+						}
+					}
+					else
+					{
 						return 1;
-					if (tx == vert0->vx)
-						return 1;
-					yflag0 = vert1->vy >= ty;
-					if (tx == vert1->vx)
-						return 1;
+					}
 				}
-				else
+				else if (tx == vert0->vx)
 				{
-					yflag0 = vert1->vy >= ty;
-					if (tx == vert0->vx)
-						return 1;
+					return 1;
 				}
 			}
 		}
-		vert0 = vert1++;
+
+		yflag0 = yflag1;
+		vert0 = vert1;
+		vert1++;
 	}
 
 	return inside_flag;
