@@ -222,7 +222,7 @@ long SIGNAL_HandleStreamLevel(struct _Instance* instance, struct Signal* signal)
 	return 1;
 }
 
-long SIGNAL_HandleFogNear(struct _Instance* instance, struct Signal* signal)//Matching - 94.05%
+long SIGNAL_HandleFogNear(struct _Instance* instance, struct Signal* signal)  // Matching - 100%
 {
 	struct Level* level;
 
@@ -236,7 +236,7 @@ long SIGNAL_HandleFogNear(struct _Instance* instance, struct Signal* signal)//Ma
 	return 1;
 }
 
-long SIGNAL_HandleFogFar(struct _Instance* instance, struct Signal* signal)
+long SIGNAL_HandleFogFar(struct _Instance* instance, struct Signal* signal)  // Matching - 100%
 {
 	struct Level* level;
 
@@ -263,13 +263,13 @@ long SIGNAL_HandleCallSignal(struct _Instance* instance, struct Signal* signal)
 	return 1;
 }
 
-long SIGNAL_HandleStopPlayerControl(struct _Instance* instance, struct Signal* signal)
+long SIGNAL_HandleStopPlayerControl(struct _Instance* instance, struct Signal* signal)  // Matching - 100%
 {
 	gameTrackerX.gameFlags |= 0x90;
 	return 1;
 }
 
-long SIGNAL_HandleStartPlayerControl(struct _Instance* instance, struct Signal* signal)
+long SIGNAL_HandleStartPlayerControl(struct _Instance* instance, struct Signal* signal)  // Matching - 100%
 {
 	gameTrackerX.gameFlags &= 0xFFFFFF7F;
 	gameTrackerX.gameFlags &= 0xFFFFFFEF;
