@@ -42,22 +42,22 @@ void STREAM_NextLoadAsNormal()  // Matching - 100%
 	loadFromHead = 0;
 }
 
-void STREAM_InitLoader(char *bigFileName, char *voiceFileName)
-{ 
+void STREAM_InitLoader(char* bigFileName, char* voiceFileName)  // Matching - 100%
+{
 	int i;
 
 #if !defined(_DEBUG) && !defined(__EMSCRIPTEN__) || defined(NO_FILESYSTEM)
 	LOAD_InitCdLoader(bigFileName, voiceFileName);
 #endif
 
-	loadFree = &LoadQueue[0];
+	loadFree = (struct _LoadQueueEntry*)&LoadQueue->next;
 	loadHead = NULL;
 	loadTail = NULL;
 	numLoads = 0;
 
 	for (i = 38; i >= 0; i--)
 	{
-		LoadQueue[38 - i].next = &LoadQueue[39 - i];
+		LoadQueue[i].next = &LoadQueue[i + 1];
 	}
 
 	LoadQueue[39].next = NULL;
