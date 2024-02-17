@@ -548,26 +548,30 @@ void LOAD_AbortDirectoryChange(char* name)  // Matching - 100%
 	}
 }
 
-void LOAD_AbortFileLoad(char *fileName, void *retFunc)
+void LOAD_AbortFileLoad(char* fileName, void* retFunc)  // Matching - 100%
 {
-	struct _LoadQueueEntry *entry;
-	struct _LoadQueueEntry *prev;
+	struct _LoadQueueEntry* entry;
+	struct _LoadQueueEntry* prev;
 	long hash;
-	typedef void (*ret)(int*, void*, void*);
-	ret returnFunction;//?
+	typedef void (*ret)(int*, void*, void*);  // not from SYMDUMP
+	ret returnFunction;  // not from SYMDUMP
 
 	if (loadHead != NULL)
 	{
 		prev = NULL;
+
 		hash = LOAD_HashName(fileName);
 
 		entry = loadHead;
 
 		while (entry != NULL)
 		{
-			if (entry->loadEntry.fileHash == hash && prev == NULL)
+			if (entry->loadEntry.fileHash == hash)
 			{
-				LOAD_StopLoad();
+				if (prev == NULL)
+				{
+					LOAD_StopLoad();
+				}
 
 				if (entry->status == 6)
 				{
@@ -575,9 +579,11 @@ void LOAD_AbortFileLoad(char *fileName, void *retFunc)
 				}
 
 				returnFunction = (ret)retFunc;
+
 				returnFunction(entry->loadEntry.loadAddr, entry->loadEntry.retData, entry->loadEntry.retData2);
-				
+
 				STREAM_RemoveQueueEntry(entry, prev);
+				break;
 			}
 			else
 			{
