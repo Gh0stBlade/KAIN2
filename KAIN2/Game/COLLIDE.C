@@ -3426,156 +3426,164 @@ void COLLIDE_SetBSPTreeFlag(struct _CollideInfo* collideInfo, short flag)  // Ma
 	bspTreeFlags[0] |= flag;
 }
 
-int COLLIDE_PointAndTfaceFunc(struct _Terrain* terrain, struct BSPTree* bsp, struct _SVector* orgNewPos, struct _SVector* orgOldPos, struct _TFace* tface, long ignoreAttr, long flags)//Matching - 85.47%
+int COLLIDE_PointAndTfaceFunc(struct _Terrain* terrain, struct BSPTree* bsp, struct _SVector* orgNewPos, struct _SVector* orgOldPos, struct _TFace* tface, long ignoreAttr, long flags)  // Matching - 99.06%
 {
-	short _x0;
-	short _y0; // $v1 MAPDST
-	short _z0; // $a1 OVERLAPPED MAPDST
-	short _x1; // $a2
-	short _y1; // $t0
-	short _z1; // $a3
-	int normal; // $v1
-	short* nrmlArray; // $a1
-	short* sPtr; // $v1 MAPDST
-	short v18; // $v0
-	int v19; // $v0
-	short v21; // $v0
-	struct _SVector* vertex0; // $s3
-	struct _SVector* vertex1; // $s4
-	int result; // [sp+18h] [-8h]
-	struct PandTFScratch* CSpad; // $s0
-	struct _SVector* nrml;
-	struct _SVector* _v;
-	struct _SVector* _v1;
-	struct _Position* _v2;
-	struct _Position* _v3;
+	struct PandTFScratch* CSpad;
+	int result;
 
 	CSpad = (struct PandTFScratch*)getScratchAddr(16);
 	result = 0;
-	if (!tface || (bsp->flags & 2) != 0)
+
+	if ((tface == NULL) || (bsp->flags & 2))
+	{
 		return 0;
+	}
+
 	if (!((1 << (tface->attr & 0x1F)) & ignoreAttr))
 	{
-		_v = (struct _SVector*)getScratchAddr(26);
-		_v1 = (struct _SVector*)getScratchAddr(28);
-		_v2 = &bsp->globalOffset;
-
-		_x0 = orgNewPos->x;
-		_y0 = orgNewPos->y;
-		_z0 = orgNewPos->z;
-
-		_x1 = _v2->x;
-		_y1 = _v2->y;
-		_z1 = _v2->z;
-
-		_x0 -= _x1;
-		_y0 -= _y1;
-		_z0 -= _z1;
-
-		_v->x = _x0;
-		_v->y = _y0;
-		_v->z = _z0;
-
-		_x0 = orgOldPos->x;
-		_y0 = orgOldPos->y;
-		_z0 = orgOldPos->z;
-
-		_x1 = _v2->x;
-		_y1 = _v2->y;
-		_z1 = _v2->z;
-
-		_x0 -= _x1;
-		_y0 -= _y1;
-		_z0 -= _z1;
-
-		_v1->x = _x0;
-		_v1->y = _y0;
-		_v1->z = _z0;
-
-		_x0 = CSpad->newPos.x;
-		_y0 = CSpad->newPos.y;
-		_z0 = CSpad->newPos.z;
-
-		_x1 = CSpad->oldPos.x;
-		_y1 = CSpad->oldPos.y;
-		_z1 = CSpad->oldPos.z;
-
-		CSpad->posMatrix.m[0][0] = _x0;
-		CSpad->posMatrix.m[0][1] = _y0;
-		CSpad->posMatrix.m[0][2] = _z0;
-		CSpad->posMatrix.m[1][0] = _x1;
-		CSpad->posMatrix.m[1][1] = _y1;
-		CSpad->posMatrix.m[1][2] = _z1;
-
-		SetRotMatrix(&CSpad->posMatrix);
-
-		normal = (short)tface->normal;
-		nrmlArray = (short*)terrain->normalList;
-		nrml = &CSpad->normal;
-		if (normal >= 0)
 		{
-			sPtr = &nrmlArray[3 * normal];
-			nrml->x = *sPtr++ & 0x1FFF;
-			nrml->y = *sPtr++;
-			nrml->z = *sPtr;
-		}
-		else
-		{
-			sPtr = &nrmlArray[3 * -normal];
-			nrml->x = -(*sPtr++ & 0x1FFF);
-			nrml->y = -*sPtr++;
-			nrml->z = -*sPtr;
+			short _x0;
+			short _y0;
+			short _z0;
+			short _x1;
+			short _y1;
+			short _z1;
+			struct _SVector* _v;
+			struct _Position* _v1;
+
+			_v = (struct _SVector*)getScratchAddr(26);
+			_v1 = &bsp->globalOffset;
+
+			_x0 = orgNewPos->x;
+			_y0 = orgNewPos->y;
+			_z0 = orgNewPos->z;
+
+			_x1 = _v1->x;
+			_y1 = _v1->y;
+			_z1 = _v1->z;
+
+			_v->x = _x0 - _x1;
+			_v->y = _y0 - _y1;
+			_v->z = _z0 - _z1;
 		}
 
-		vertex0 = (struct _SVector*)&terrain->vertexList[tface->face.v0];
-		vertex1 = (struct _SVector*)&terrain->vertexList[tface->face.v1];
-
-		gte_ldv2_ext(vertex0);
-		gte_ldv0(&CSpad->normal);
-		gte_rtv0();
-		gte_stlvnl(&CSpad->dpv);
-
-		CSpad->dpv.x -= CSpad->dpv.z;
-		CSpad->dpv.y -= CSpad->dpv.z;
-
-		if ((CSpad->dpv.x < 0 && CSpad->dpv.y >= 0) || ((flags & 1) != 0 && CSpad->dpv.x > 0 && CSpad->dpv.y <= 0))
 		{
-			if (COLLIDE_IntersectLineAndPlane_S(
-				&CSpad->planePoint,
-				(struct _Position*)&CSpad->oldPos,
-				(struct _Position*)&CSpad->newPos,
-				&CSpad->normal,
-				CSpad->dpv.z))
+			short _x0;
+			short _y0;
+			short _z0;
+			short _x1;
+			short _y1;
+			short _z1;
+			struct _SVector* _v;
+			struct _Position* _v1; // not from SYMDUMP
+
+			_v = (struct _SVector*)getScratchAddr(28);
+			_v1 = &bsp->globalOffset;
+
+			_x0 = orgOldPos->x;
+			_y0 = orgOldPos->y;
+			_z0 = orgOldPos->z;
+
+			_x1 = _v1->x;
+			_y1 = _v1->y;
+			_z1 = _v1->z;
+
+			_v->x = _x0 - _x1;
+			_v->y = _y0 - _y1;
+			_v->z = _z0 - _z1;
+
+			CSpad->posMatrix.m[0][0] = CSpad->newPos.x;
+			CSpad->posMatrix.m[0][1] = CSpad->newPos.y;
+			CSpad->posMatrix.m[0][2] = CSpad->newPos.z;
+			CSpad->posMatrix.m[1][0] = CSpad->oldPos.x;
+			CSpad->posMatrix.m[1][1] = CSpad->oldPos.y;
+			CSpad->posMatrix.m[1][2] = CSpad->oldPos.z;
+
+			SetRotMatrix(&CSpad->posMatrix);
+		}
+
+		{
+			short* nrmlArray;
+			struct _SVector* nrml;
+			short* sPtr;
+			int temp; // not from SYMDUMP
+
+			temp = (short)tface->normal;
+			nrmlArray = (short*)terrain->normalList;
+			nrml = &CSpad->normal;
+
+			if (temp >= 0)
 			{
-				if (COLLIDE_PointInTriangle(
-					vertex0,
-					vertex1,
-					(struct _SVector*)&terrain->vertexList[tface->face.v2],
-					&CSpad->planePoint,
-					&CSpad->normal))
+				sPtr = &nrmlArray[3 * temp];
+
+				nrml->x = *sPtr++ & 0x1FFF;
+				nrml->y = *sPtr++;
+				nrml->z = *sPtr;
+			}
+			else
+			{
+				sPtr = &nrmlArray[3 * -temp];
+
+				nrml->x = -(*sPtr++ & 0x1FFF);
+				nrml->y = -*sPtr++;
+				nrml->z = -*sPtr;
+			}
+		}
+		{
+			struct _SVector* vertex0;
+			struct _SVector* vertex1;
+
+			vertex0 = (struct _SVector*)&terrain->vertexList[tface->face.v0];
+			vertex1 = (struct _SVector*)&terrain->vertexList[tface->face.v1];
+
+			gte_ldv2_ext(vertex0);
+			gte_ldv0(&CSpad->normal);
+			gte_rtv0();
+			gte_stlvnl(&CSpad->dpv);
+
+			CSpad->dpv.x -= CSpad->dpv.z;
+			CSpad->dpv.y -= CSpad->dpv.z;
+
+			if (((CSpad->dpv.x < 0) && (CSpad->dpv.y >= 0)) || ((flags & 1) && (CSpad->dpv.x > 0) && (CSpad->dpv.y <= 0)))
+			{
+				if (COLLIDE_IntersectLineAndPlane_S(&CSpad->planePoint, (struct _Position*)&CSpad->oldPos,
+					(struct _Position*)&CSpad->newPos, &CSpad->normal, CSpad->dpv.z))
 				{
-					result = 1;
-					_v2 = (struct _Position*)&CSpad->planePoint;
+					if (COLLIDE_PointInTriangle(vertex0, vertex1, (struct _SVector*)&terrain->vertexList[tface->face.v2],
+						&CSpad->planePoint, &CSpad->normal))
+					{
+						{
+							short _x0;
+							short _y0;
+							short _z0;
+							short _x1;
+							short _y1;
+							short _z1;
+							struct _Position* _v1;
+							struct _Position* _v2; // not from SYMDUMP
 
-					_v3 = &bsp->globalOffset;
-					_x0 = _v2->x;
-					_y0 = _v2->y;
-					_z0 = _v2->z;
+							result = 1;
 
-					_x1 = _v3->x;
-					_y1 = _v3->y;
-					_z1 = _v3->z;
+							_v1 = &bsp->globalOffset;
+							_v2 = (struct _Position*)&CSpad->planePoint;
 
-					_x0 += _x1;
-					_y0 += _y1;
-					_z0 += _z1;
+							_x0 = _v2->x;
+							_y0 = _v2->y;
+							_z0 = _v2->z;
 
-					orgNewPos->x = _x0;
-					orgNewPos->y = _y0;
-					orgNewPos->z = _z0;
+							_x1 = _v1->x;
+							_y1 = _v1->y;
+							_z1 = _v1->z;
+
+							orgNewPos->x = _x0 + _x1;
+							orgNewPos->y = _y0 + _y1;
+							orgNewPos->z = _z0 + _z1;
+						}
+					}
 				}
 			}
 		}
 	}
+
 	return result;
 }
