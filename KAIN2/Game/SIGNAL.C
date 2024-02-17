@@ -321,7 +321,7 @@ long SIGNAL_HandleScreenWipe(struct _Instance* instance, struct Signal* signal)
 	return 1;
 }
 
-long SIGNAL_HandleBlendStart(struct _Instance* instance, struct Signal* signal)
+long SIGNAL_HandleBlendStart(struct _Instance* instance, struct Signal* signal)  // Matching - 100%
 {
 	return 1;
 }
