@@ -251,7 +251,7 @@ long SIGNAL_HandleFogFar(struct _Instance* instance, struct Signal* signal)  // 
 	return 1;
 }
 
-long SIGNAL_HandleCameraShake(struct _Instance* instance, struct Signal* signal)
+long SIGNAL_HandleCameraShake(struct _Instance* instance, struct Signal* signal)  // Matching - 100%
 {
 	CAMERA_SetShake(&theCamera, signal->data.cameraShake.time, signal->data.cameraShake.scale);
 	return 1;

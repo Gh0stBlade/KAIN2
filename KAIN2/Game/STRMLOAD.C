@@ -42,22 +42,22 @@ void STREAM_NextLoadAsNormal()  // Matching - 100%
 	loadFromHead = 0;
 }
 
-void STREAM_InitLoader(char *bigFileName, char *voiceFileName)
-{ 
+void STREAM_InitLoader(char* bigFileName, char* voiceFileName)  // Matching - 100%
+{
 	int i;
 
 #if !defined(_DEBUG) && !defined(__EMSCRIPTEN__) || defined(NO_FILESYSTEM)
 	LOAD_InitCdLoader(bigFileName, voiceFileName);
 #endif
 
-	loadFree = &LoadQueue[0];
+	loadFree = (struct _LoadQueueEntry*)&LoadQueue->next;
 	loadHead = NULL;
 	loadTail = NULL;
 	numLoads = 0;
 
 	for (i = 38; i >= 0; i--)
 	{
-		LoadQueue[38 - i].next = &LoadQueue[39 - i];
+		LoadQueue[i].next = &LoadQueue[i + 1];
 	}
 
 	LoadQueue[39].next = NULL;
@@ -548,26 +548,30 @@ void LOAD_AbortDirectoryChange(char* name)  // Matching - 100%
 	}
 }
 
-void LOAD_AbortFileLoad(char *fileName, void *retFunc)
+void LOAD_AbortFileLoad(char* fileName, void* retFunc)  // Matching - 100%
 {
-	struct _LoadQueueEntry *entry;
-	struct _LoadQueueEntry *prev;
+	struct _LoadQueueEntry* entry;
+	struct _LoadQueueEntry* prev;
 	long hash;
-	typedef void (*ret)(int*, void*, void*);
-	ret returnFunction;//?
+	typedef void (*ret)(int*, void*, void*);  // not from SYMDUMP
+	ret returnFunction;  // not from SYMDUMP
 
 	if (loadHead != NULL)
 	{
 		prev = NULL;
+
 		hash = LOAD_HashName(fileName);
 
 		entry = loadHead;
 
 		while (entry != NULL)
 		{
-			if (entry->loadEntry.fileHash == hash && prev == NULL)
+			if (entry->loadEntry.fileHash == hash)
 			{
-				LOAD_StopLoad();
+				if (prev == NULL)
+				{
+					LOAD_StopLoad();
+				}
 
 				if (entry->status == 6)
 				{
@@ -575,9 +579,11 @@ void LOAD_AbortFileLoad(char *fileName, void *retFunc)
 				}
 
 				returnFunction = (ret)retFunc;
+
 				returnFunction(entry->loadEntry.loadAddr, entry->loadEntry.retData, entry->loadEntry.retData2);
-				
+
 				STREAM_RemoveQueueEntry(entry, prev);
+				break;
 			}
 			else
 			{
