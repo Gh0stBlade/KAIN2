@@ -97,21 +97,18 @@ struct MONTABLE_207fake mon_tables[] =
 };
 #endif
 
-void MONTABLE_SetupTablePointer(struct Object* object)
+void MONTABLE_SetupTablePointer(struct Object* object)  // Matching - 100%
 {
 	long whatAmI;
-	int i;///@FIXME original not like this.
-	
-	whatAmI = ((struct _MonsterAttributes*)object->data)->whatAmI;
+	int i;  // not from SYMDUMP
 
-	for (i = 0; i < 6; i++)
+	whatAmI = ((struct _MonsterAttributes*)(object->data))->whatAmI;
+
+	for (i = 0; functionChoiceTable[i].whatAmI != 0; i++)
 	{
-		if (functionChoiceTable[i].whatAmI != 0)
+		if (whatAmI == functionChoiceTable[i].whatAmI)
 		{
-			if (whatAmI == functionChoiceTable[i].whatAmI)
-			{
-				object->relocModule = functionChoiceTable[i].table;
-			}
+			object->relocModule = functionChoiceTable[i].table;
 		}
 	}
 }
