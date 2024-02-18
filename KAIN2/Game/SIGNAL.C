@@ -312,7 +312,7 @@ long SIGNAL_HandleCameraSpline(struct _Instance* instance, struct Signal* signal
 	return 1;
 }
 
-long SIGNAL_HandleScreenWipe(struct _Instance* instance, struct Signal* signal)
+long SIGNAL_HandleScreenWipe(struct _Instance* instance, struct Signal* signal)  // Matching - 100%
 {
 	gameTrackerX.wipeTime = signal->data.screenWipe.time;
 	gameTrackerX.maxWipeTime = signal->data.screenWipe.time < 0 ? -signal->data.screenWipe.time : signal->data.screenWipe.time;
