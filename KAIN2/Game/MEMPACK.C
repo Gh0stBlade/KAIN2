@@ -609,671 +609,209 @@ void MEMPACK_DoGarbageCollection()//Matching - 98.66%
 }
 
 
-void MEMPACK_RelocateAreaType(struct MemHeader* newAddress, long offset, struct Level* oldLevel)
+void MEMPACK_RelocateAreaType(struct MemHeader* newAddress, long offset, struct Level* oldLevel)  // Matching - 100%
 {
-	int v5; // $a1
-	struct Level* level; // $s0
-	int v7; // $v1
-	int v8; // $s2
-	int memSize; // $v0
-	struct LightList* v10; // $v1
-	int v11; // $v0
-	struct LightGroup* v12; // $a0
-	struct LightGroup* razielSpectralLightGroup; // $v0
-	struct LightGroup* v14; // $v1
-	struct _VMObject* vmobjectList; // $v0
-	struct _VMObject* v16; // $a0
-	struct SpotLight* spotLightList; // $v0
-	struct SpotLight* v18; // $v1
-	struct PointLight* pointLightList; // $v0
-	struct PointLight* v20; // $a0
-	struct SpotLight* spotSpecturalLightList; // $v0
-	struct SpotLight* v22; // $v1
-	struct PointLight* pointSpecturalLightList; // $v0
-	struct PointLight* v24; // $a0
-	struct _BGObject* bgObjectList; // $v0
-	struct _BGObject* v26; // $v1
-	int cameraList; // $v0
-	int v28; // $a0
-	struct _VGroup* vGroupList; // $v0
-	struct _VGroup* v30; // $v1
-	struct _MultiSignal* startSignal; // $v0
-	struct _MultiSignal* msignal; // $a0
-	struct Intro* introList; // $v0
-	struct Intro* v34; // $v1
-	struct DrMoveAniTex* bgAniList; // $v0
-	struct DrMoveAniTex* v36; // $a0
-	struct _HotSpot* hotSpotList; // $v0
-	struct _HotSpot* v38; // $v1
-	int objectNameList; // $v0
-	int v40; // $a0
-	int v41; // $v0
-	int v42; // $v1
-	int v43; // $v0
-	int v44; // $a0
-	int timesSignalList; // $v0
-	int v46; // $v1
-	struct _MultiSignal* spectralSignal; // $v0
-	struct _MultiSignal* v48; // $a0
-	struct _MultiSignal* materialSignal; // $v0
-	struct _MultiSignal* v50; // $v1
-	struct _MultiSignal* startUnitLoadedSignal; // $v0
-	struct _MultiSignal* v52; // $a0
-	struct _MultiSignal* startUnitMainSignal; // $v0
-	struct _MultiSignal* v54; // $v1
-	struct _MultiSignal* startGoingIntoWaterSignal; // $v0
-	struct _MultiSignal* v56; // $a0
-	struct _MultiSignal* startGoingOutOfWaterSignal; // $v0
-	struct _MultiSignal* v58; // $v1
-	struct _MultiSignal* SignalListStart; // $v0
-	struct _MultiSignal* v60; // $a0
-	struct _MultiSignal* SignalListEnd; // $v0
-	struct _MultiSignal* v62; // $v1
-	struct EventPointers* PuzzleInstances; // $v0
-	struct EventPointers* v64; // $a0
-	struct _PlanMkr* PlanMarkerList; // $v0
-	struct _PlanMkr* v66; // $v1
-	struct _SFXMkr* SFXMarkerList; // $v0
-	struct _SFXMkr* v68; // $a0
-	int NumberOfSFXMarkers; // $v0
-	int i; // $t0 MAPDST
-	struct _SFXMkr* v72; // $a0
-	int v73; // $v1
-	int v74; // $v0
-	int v75; // $v1
-	struct LightList* spectrallightList; // $v0
-	struct LightList* v77; // $a0
-	struct _Terrain* terrain_r; // $v0
-	int v79; // dc
-	struct _Terrain* terrain; // $t1
-	struct Intro* intro; // $v0
-	struct Intro* v82; // $v1
-	struct _TVertex* vertexList; // $v0
-	struct _TVertex* v84; // $a0
-	struct _TFace* faceList; // $v0
-	struct _TFace* v86; // $v1
-	struct _Normal* normalList; // $v0
-	struct _Normal* v88; // $a0
-	struct DrMoveAniTex* aniList; // $v0
-	struct DrMoveAniTex* v90; // $v1
-	int StreamUnits; // $v0
-	int v92; // $a0
-	struct TextureFT3* StartTextureList; // $v0
-	struct TextureFT3* v94; // $v1
-	struct TextureFT3* EndTextureList; // $v0
-	struct TextureFT3* v96; // $a0
-	struct _MorphVertex* MorphDiffList; // $v0
-	struct _MorphVertex* v98; // $v1
-	struct _MorphColor* MorphColorList; // $v0
-	struct _MorphColor* v100; // $a0
-	struct BSPTree* BSPTreeArray; // $v0
-	struct BSPTree* v102; // $v1
-	int v103; // $v0
-	int v104; // $a0
-	struct _MultiSignal* signals; // $v0
-	struct _MultiSignal* v106; // $v1
-	int numIntros; // $v0
-	struct Intro* v110; // $v0
-	int data; // $v1
-	int v112; // $a1
-	struct MultiSpline* v1155; // $a0
-	struct MultiSpline* v114; // $v1
-	struct MultiSpline* multiSpline; // $a2
-	struct Spline* positional; // $v1
-	struct Spline* v117; // $a0
-	struct RSpline* rotational; // $v1
-	struct RSpline* v119; // $a1
-	struct Spline* scaling; // $v1
-	struct Spline* v121; // $a3
-	struct Spline* color; // $v1
-	struct Spline* v123; // $a0
-	struct Spline* v124; // $v1
-	int v125; // $a0
-	struct RSpline* v126; // $v1
-	int v127; // $a0
-	struct Spline* v128; // $v1
-	int v129; // $a0
-	struct Spline* v130; // $v1
-	int v131; // $a0
-	int dsignal; // $v1
-	int v133; // $a0
-	int* p_numAniTextues; // $v0
-	int v135; // $v1
-	int v136; // $a3
-	int* v137; // $v0
-	int* v138; // $a0
-	int v139; // $v0
-	struct LightList* lightList; // $v0
-	struct LightGroup* lightGroupList; // $a0
-	struct LightGroup* v142; // $v1
-	struct LightList* v143; // $v0
-	struct LightGroup* v144; // $a0
-	struct LightGroup* v145; // $v1
-	struct _VMObject* vmo; // $a1
-	struct _VMOffsetTable* vmoffsetTableList; // $v0
-	struct _VMOffsetTable* v150; // $v1
-	int currentIdx; // $v0
-	struct _VMOffsetTable** v152; // $v0
-	struct _VMOffsetTable* curVMOffsetTable; // $v1
-	struct _VMOffsetTable* v154; // $v0
-	int d; // $a3
-	struct _VMOffsetTable* v156; // $v0
-	int v157; // $v1
-	int vmvertexList; // $v0
-	int v159; // $v1
-	struct _VMInterpolated* vminterpolatedList; // $v0
-	struct _VMInterpolated* v161; // $a0
-	int v162; // $v0
-	int v163; // $v1
-	struct BSPTree* bsp; // $t2
-	int v165; // $a3
-	int v167; // $v0
-	struct _BSPLeaf* v168; // $v0
-	unsigned int v169; // $a0
-	unsigned int v170; // $v1
-	unsigned int v171; // $v0
-	struct _BSPNode* node; // $a2
-	int* v173; // $a0
-	int v174; // $v0
-	struct _BSPLeaf* leaf; // $a1
-	int v176; // $v1
-	int v177; // $v0
-	unsigned int v178; // $a1
-	int* v179; // $a0
-	int v180; // $v0
-	struct _MultiSignal* j; // $a0
+	struct Level* level;
+	struct _MultiSignal* msignal;
+	long sizeOfLevel;
+	long i;
+	long d;
 
-	v5 = 0;
-	level = (struct Level*)&newAddress[1];
-	v7 = *(int*)&newAddress[1].magicNumber;
-	v8 = newAddress->memSize - 8;
-	if (v7)
-		v5 = v7 + offset;
-	*(int*)&newAddress[1].magicNumber = v5;
-	memSize = newAddress[1].memSize;
-	v10 = 0;
-	if (memSize)
-		v10 = (struct LightList*)(memSize + offset);
-	v11 = *(int*)&newAddress[49].magicNumber;
-	v12 = 0;
-	level->lightList = v10;
-	if (v11)
-		v12 = (struct LightGroup*)(v11 + offset);
-	razielSpectralLightGroup = level->razielSpectralLightGroup;
-	v14 = 0;
-	level->razielLightGroup = v12;
-	if (razielSpectralLightGroup)
-		v14 = (struct LightGroup*)((char*)razielSpectralLightGroup + offset);
-	vmobjectList = level->vmobjectList;
-	v16 = 0;
-	level->razielSpectralLightGroup = v14;
-	if (vmobjectList)
-		v16 = (struct _VMObject*)((char*)vmobjectList + offset);
-	spotLightList = level->spotLightList;
-	v18 = 0;
-	level->vmobjectList = v16;
-	if (spotLightList)
-		v18 = (struct SpotLight*)((char*)spotLightList + offset);
-	pointLightList = level->pointLightList;
-	v20 = 0;
-	level->spotLightList = v18;
-	if (pointLightList)
-		v20 = (struct PointLight*)((char*)pointLightList + offset);
-	spotSpecturalLightList = level->spotSpecturalLightList;
-	v22 = 0;
-	level->pointLightList = v20;
-	if (spotSpecturalLightList)
-		v22 = (struct SpotLight*)((char*)spotSpecturalLightList + offset);
-	pointSpecturalLightList = level->pointSpecturalLightList;
-	v24 = 0;
-	level->spotSpecturalLightList = v22;
-	if (pointSpecturalLightList)
-		v24 = (struct PointLight*)((char*)pointSpecturalLightList + offset);
-	bgObjectList = level->bgObjectList;
-	v26 = 0;
-	level->pointSpecturalLightList = v24;
-	if (bgObjectList)
-		v26 = (struct _BGObject*)((char*)bgObjectList + offset);
-	cameraList = (int)level->cameraList;
-	v28 = 0;
-	level->bgObjectList = v26;
-	if (cameraList)
-		v28 = cameraList + offset;
-	vGroupList = level->vGroupList;
-	v30 = 0;
-	level->cameraList = (void*)v28;
-	if (vGroupList)
-		v30 = (struct _VGroup*)((char*)vGroupList + offset);
-	startSignal = level->startSignal;
-	msignal = 0;
-	level->vGroupList = v30;
-	if (startSignal)
-		msignal = (struct _MultiSignal*)((char*)startSignal + offset);
-	introList = level->introList;
-	v34 = 0;
-	level->startSignal = msignal;
-	if (introList)
-		v34 = (struct Intro*)((char*)introList + offset);
-	bgAniList = level->bgAniList;
-	v36 = 0;
-	level->introList = v34;
-	if (bgAniList)
-		v36 = (struct DrMoveAniTex*)((char*)bgAniList + offset);
-	hotSpotList = level->hotSpotList;
-	v38 = 0;
-	level->bgAniList = v36;
-	if (hotSpotList)
-		v38 = (struct _HotSpot*)((char*)hotSpotList + offset);
-	objectNameList = (int)level->objectNameList;
-	v40 = 0;
-	level->hotSpotList = v38;
-	if (objectNameList)
-		v40 = objectNameList + offset;
-	v41 = *(int*)level->worldName;
-	v42 = 0;
-	level->objectNameList = (void*)v40;
-	if (v41)
-		v42 = v41 + offset;
-	v44 = 0;
-	*(int*)level->worldName = v42;
-	if (level->enemyUnitsNames)
-		v44 = (int)level->enemyUnitsNames + offset;
-	timesSignalList = (int)level->timesSignalList;
-	v46 = 0;
-	level->enemyUnitsNames = (char**)v44;
-	if (timesSignalList)
-		v46 = timesSignalList + offset;
-	spectralSignal = level->spectralSignal;
-	v48 = 0;
-	level->timesSignalList = (long**)v46;
-	if (spectralSignal)
-		v48 = (struct _MultiSignal*)((char*)spectralSignal + offset);
-	materialSignal = level->materialSignal;
-	v50 = 0;
-	level->spectralSignal = v48;
-	if (materialSignal)
-		v50 = (struct _MultiSignal*)((char*)materialSignal + offset);
-	startUnitLoadedSignal = level->startUnitLoadedSignal;
-	v52 = 0;
-	level->materialSignal = v50;
-	if (startUnitLoadedSignal)
-		v52 = (struct _MultiSignal*)((char*)startUnitLoadedSignal + offset);
-	startUnitMainSignal = level->startUnitMainSignal;
-	v54 = 0;
-	level->startUnitLoadedSignal = v52;
-	if (startUnitMainSignal)
-		v54 = (struct _MultiSignal*)((char*)startUnitMainSignal + offset);
-	startGoingIntoWaterSignal = level->startGoingIntoWaterSignal;
-	v56 = 0;
-	level->startUnitMainSignal = v54;
-	if (startGoingIntoWaterSignal)
-		v56 = (struct _MultiSignal*)((char*)startGoingIntoWaterSignal + offset);
-	startGoingOutOfWaterSignal = level->startGoingOutOfWaterSignal;
-	v58 = 0;
-	level->startGoingIntoWaterSignal = v56;
-	if (startGoingOutOfWaterSignal)
-		v58 = (struct _MultiSignal*)((char*)startGoingOutOfWaterSignal + offset);
-	SignalListStart = level->SignalListStart;
-	v60 = 0;
-	level->startGoingOutOfWaterSignal = v58;
-	if (SignalListStart)
-		v60 = (struct _MultiSignal*)((char*)SignalListStart + offset);
-	SignalListEnd = level->SignalListEnd;
-	v62 = 0;
-	level->SignalListStart = v60;
-	if (SignalListEnd)
-		v62 = (struct _MultiSignal*)((char*)SignalListEnd + offset);
-	PuzzleInstances = level->PuzzleInstances;
-	v64 = 0;
-	level->SignalListEnd = v62;
-	if (PuzzleInstances)
-		v64 = (struct EventPointers*)((char*)PuzzleInstances + offset);
-	PlanMarkerList = level->PlanMarkerList;
-	v66 = 0;
-	level->PuzzleInstances = v64;
-	if (PlanMarkerList)
-		v66 = (struct _PlanMkr*)((char*)PlanMarkerList + offset);
-	SFXMarkerList = level->SFXMarkerList;
-	v68 = 0;
-	level->PlanMarkerList = v66;
-	if (SFXMarkerList)
-		v68 = (struct _SFXMkr*)((char*)SFXMarkerList + offset);
-	NumberOfSFXMarkers = level->NumberOfSFXMarkers;
-	i = 0;
-	level->SFXMarkerList = v68;
-	if (NumberOfSFXMarkers > 0)
+	level = (struct Level*)(newAddress + 1);
+
+	sizeOfLevel = newAddress->memSize - sizeof(struct MemHeader);
+
+	((struct Level*)(newAddress + 1))->terrain = (struct _Terrain*)OFFSET_DATA(((struct Level*)(newAddress + 1))->terrain, offset);
+
+	level->lightList = (struct LightList*)OFFSET_DATA(level->lightList, offset);
+	level->razielLightGroup = (struct LightGroup*)OFFSET_DATA(level->razielLightGroup, offset);
+	level->razielSpectralLightGroup = (struct LightGroup*)OFFSET_DATA(level->razielSpectralLightGroup, offset);
+	level->vmobjectList = (struct _VMObject*)OFFSET_DATA(level->vmobjectList, offset);
+	level->spotLightList = (struct SpotLight*)OFFSET_DATA(level->spotLightList, offset);
+	level->pointLightList = (struct PointLight*)OFFSET_DATA(level->pointLightList, offset);
+	level->spotSpecturalLightList = (struct SpotLight*)OFFSET_DATA(level->spotSpecturalLightList, offset);
+	level->pointSpecturalLightList = (struct PointLight*)OFFSET_DATA(level->pointSpecturalLightList, offset);
+	level->bgObjectList = (struct _BGObject*)OFFSET_DATA(level->bgObjectList, offset);
+	level->cameraList = (void*)OFFSET_DATA(level->cameraList, offset);
+	level->vGroupList = (struct _VGroup*)OFFSET_DATA(level->vGroupList, offset);
+	level->startSignal = (struct _MultiSignal*)OFFSET_DATA(level->startSignal, offset);
+	level->introList = (struct Intro*)OFFSET_DATA(level->introList, offset);
+	level->bgAniList = (struct DrMoveAniTex*)OFFSET_DATA(level->bgAniList, offset);
+	level->hotSpotList = (struct _HotSpot*)OFFSET_DATA(level->hotSpotList, offset);
+	level->objectNameList = (void*)OFFSET_DATA(level->objectNameList, offset);
+	level->worldName = (char*)OFFSET_DATA(level->worldName, offset);
+	level->enemyUnitsNames = (char**)OFFSET_DATA(level->enemyUnitsNames, offset);
+	level->timesSignalList = (long**)OFFSET_DATA(level->timesSignalList, offset);
+	level->spectralSignal = (struct _MultiSignal*)OFFSET_DATA(level->spectralSignal, offset);
+	level->materialSignal = (struct _MultiSignal*)OFFSET_DATA(level->materialSignal, offset);
+	level->startUnitLoadedSignal = (struct _MultiSignal*)OFFSET_DATA(level->startUnitLoadedSignal, offset);
+	level->startUnitMainSignal = (struct _MultiSignal*)OFFSET_DATA(level->startUnitMainSignal, offset);
+	level->startGoingIntoWaterSignal = (struct _MultiSignal*)OFFSET_DATA(level->startGoingIntoWaterSignal, offset);
+	level->startGoingOutOfWaterSignal = (struct _MultiSignal*)OFFSET_DATA(level->startGoingOutOfWaterSignal, offset);
+	level->SignalListStart = (struct _MultiSignal*)OFFSET_DATA(level->SignalListStart, offset);
+	level->SignalListEnd = (struct _MultiSignal*)OFFSET_DATA(level->SignalListEnd, offset);
+	level->PuzzleInstances = (struct EventPointers*)OFFSET_DATA(level->PuzzleInstances, offset);
+	level->PlanMarkerList = (struct _PlanMkr*)OFFSET_DATA(level->PlanMarkerList, offset);
+	level->SFXMarkerList = (struct _SFXMkr*)OFFSET_DATA(level->SFXMarkerList, offset);
+
+	for (i = 0; i < level->NumberOfSFXMarkers; i++)
 	{
-		i = 0;
-		do
-		{
-			v72 = (struct _SFXMkr*)((char*)level->SFXMarkerList + i);
-			v73 = 0;
-			if (*(int*)v72->soundData)
-				v73 = *(int*)v72->soundData + offset;
-			*(int*)v72->soundData = v73;
-			++i;
-			i += 36;
-		} while (i < level->NumberOfSFXMarkers);
+		level->SFXMarkerList[i].soundData = (unsigned char*)OFFSET_DATA(level->SFXMarkerList[i].soundData, offset);
 	}
-	v74 = *(int*)level->dynamicMusicName;
-	v75 = 0;
-	if (v74)
-		v75 = v74 + offset;
-	spectrallightList = level->spectrallightList;
-	v77 = 0;
-	*(int*)level->dynamicMusicName = v75;
-	if (spectrallightList)
-		v77 = (struct LightList*)((char*)spectrallightList + offset);
-	terrain_r = level->terrain;
-	v79 = level->terrain == 0;
-	level->spectrallightList = v77;
-	if (!v79)
+
+	level->dynamicMusicName = (char*)OFFSET_DATA(level->dynamicMusicName, offset);
+	level->spectrallightList = (struct LightList*)OFFSET_DATA(level->spectrallightList, offset);
+
+	if (level->terrain != NULL)
 	{
-		terrain = terrain_r;
-		intro = terrain_r->introList;
-		v82 = 0;
-		if (intro)
-			v82 = (struct Intro*)((char*)intro + offset);
-		vertexList = terrain->vertexList;
-		v84 = 0;
-		terrain->introList = v82;
-		if (vertexList)
-			v84 = (struct _TVertex*)((char*)vertexList + offset);
-		faceList = terrain->faceList;
-		v86 = 0;
-		terrain->vertexList = v84;
-		if (faceList)
-			v86 = (struct _TFace*)((char*)faceList + offset);
-		normalList = terrain->normalList;
-		v88 = 0;
-		terrain->faceList = v86;
-		if (normalList)
-			v88 = (struct _Normal*)((char*)normalList + offset);
-		aniList = terrain->aniList;
-		v90 = 0;
-		terrain->normalList = v88;
-		if (aniList)
-			v90 = (struct DrMoveAniTex*)((char*)aniList + offset);
-		StreamUnits = (int)terrain->StreamUnits;
-		v92 = 0;
-		terrain->aniList = v90;
-		if (StreamUnits)
-			v92 = StreamUnits + offset;
-		StartTextureList = terrain->StartTextureList;
-		v94 = 0;
-		terrain->StreamUnits = (void*)v92;
-		if (StartTextureList)
-			v94 = (struct TextureFT3*)((char*)StartTextureList + offset);
-		EndTextureList = terrain->EndTextureList;
-		v96 = 0;
-		terrain->StartTextureList = v94;
-		if (EndTextureList)
-			v96 = (struct TextureFT3*)((char*)EndTextureList + offset);
-		MorphDiffList = terrain->MorphDiffList;
-		v98 = 0;
-		terrain->EndTextureList = v96;
-		if (MorphDiffList)
-			v98 = (struct _MorphVertex*)((char*)MorphDiffList + offset);
-		MorphColorList = terrain->MorphColorList;
-		v100 = 0;
-		terrain->MorphDiffList = v98;
-		if (MorphColorList)
-			v100 = (struct _MorphColor*)((char*)MorphColorList + offset);
-		BSPTreeArray = terrain->BSPTreeArray;
-		v102 = 0;
-		terrain->MorphColorList = v100;
-		if (BSPTreeArray)
-			v102 = (struct BSPTree*)((char*)BSPTreeArray + offset);
-		v103 = *(int*)terrain->morphNormalIdx;
-		v104 = 0;
-		terrain->BSPTreeArray = v102;
-		if (v103)
-			v104 = v103 + offset;
-		signals = terrain->signals;
-		v106 = 0;
-		*(int*)terrain->morphNormalIdx = v104;
-		if (signals)
-			v106 = (struct _MultiSignal*)((char*)signals + offset);
-		numIntros = terrain->numIntros;
-		i = 0;
-		terrain->signals = v106;
-		if (numIntros > 0)
+		struct _Terrain* terrain;
+
+		terrain = level->terrain;
+
+		terrain->introList = (struct Intro*)OFFSET_DATA(terrain->introList, offset);
+		terrain->vertexList = (struct _TVertex*)OFFSET_DATA(terrain->vertexList, offset);
+		terrain->faceList = (struct _TFace*)OFFSET_DATA(terrain->faceList, offset);
+		terrain->normalList = (struct _Normal*)OFFSET_DATA(terrain->normalList, offset);
+		terrain->aniList = (struct DrMoveAniTex*)OFFSET_DATA(terrain->aniList, offset);
+		terrain->StreamUnits = (void*)OFFSET_DATA(terrain->StreamUnits, offset);
+		terrain->StartTextureList = (struct TextureFT3*)OFFSET_DATA(terrain->StartTextureList, offset);
+		terrain->EndTextureList = (struct TextureFT3*)OFFSET_DATA(terrain->EndTextureList, offset);
+		terrain->MorphDiffList = (struct _MorphVertex*)OFFSET_DATA(terrain->MorphDiffList, offset);
+		terrain->MorphColorList = (struct _MorphColor*)OFFSET_DATA(terrain->MorphColorList, offset);
+		terrain->BSPTreeArray = (struct BSPTree*)OFFSET_DATA(terrain->BSPTreeArray, offset);
+		terrain->morphNormalIdx = (short*)OFFSET_DATA(terrain->morphNormalIdx, offset);
+		terrain->signals = (struct _MultiSignal*)OFFSET_DATA(terrain->signals, offset);
+
+		for (i = 0; i < terrain->numIntros; i++)
 		{
-			i = 0;
-			do
+			struct Intro* intro;
+
+			intro = &terrain->introList[i];
+
+			intro->data = (void*)OFFSET_DATA(intro->data, offset);
+			intro->multiSpline = (struct MultiSpline*)OFFSET_DATA(intro->multiSpline, offset);
+
+			if (intro->multiSpline != NULL)
 			{
-				v110 = (struct Intro*)((char*)terrain->introList + i);
-				data = (int)v110->data;
-				v112 = 0;
-				if (data)
-					v112 = data + offset;
-				v1155 = v110->multiSpline;
-				v114 = 0;
-				v110->data = (void*)v112;
-				if (v1155)
-					v114 = (struct MultiSpline*)((char*)v1155 + offset);
-				v110->multiSpline = v114;
-				if (v114)
+				struct MultiSpline* multiSpline;
+
+				multiSpline = intro->multiSpline;
+
+				multiSpline->positional = (struct Spline*)OFFSET_DATA(multiSpline->positional, offset);
+				multiSpline->rotational = (struct RSpline*)OFFSET_DATA(multiSpline->rotational, offset);
+				multiSpline->scaling = (struct Spline*)OFFSET_DATA(multiSpline->scaling, offset);
+				multiSpline->color = (struct Spline*)OFFSET_DATA(multiSpline->color, offset);
+
+				if (multiSpline->positional != NULL)
 				{
-					multiSpline = v114;
-					positional = v114->positional;
-					v117 = 0;
-					if (positional)
-						v117 = (struct Spline*)((char*)positional + offset);
-					rotational = multiSpline->rotational;
-					v119 = 0;
-					multiSpline->positional = v117;
-					if (rotational)
-						v119 = (struct RSpline*)((char*)rotational + offset);
-					scaling = multiSpline->scaling;
-					v121 = 0;
-					multiSpline->rotational = v119;
-					if (scaling)
-						v121 = (struct Spline*)((char*)scaling + offset);
-					color = multiSpline->color;
-					v123 = 0;
-					multiSpline->scaling = v121;
-					if (color)
-						v123 = (struct Spline*)((char*)color + offset);
-					v124 = multiSpline->positional;
-					v79 = multiSpline->positional == 0;
-					multiSpline->color = v123;
-					if (!v79)
-					{
-						v125 = 0;
-						if (v124->key)
-							v125 = (int)v124->key + offset;
-						v124->key = (struct SplineKey*)v125;
-					}
-					v126 = multiSpline->rotational;
-					if (v126)
-					{
-						v127 = 0;
-						if (v126->key)
-							v127 = (int)v126->key + offset;
-						v126->key = (struct SplineRotKey*)v127;
-					}
-					v128 = multiSpline->scaling;
-					if (v128)
-					{
-						v129 = 0;
-						if (v128->key)
-							v129 = (int)v128->key + offset;
-						v128->key = (struct SplineKey*)v129;
-					}
-					v130 = multiSpline->color;
-					if (v130)
-					{
-						v131 = 0;
-						if (v130->key)
-							v131 = (int)v130->key + offset;
-						v130->key = (struct SplineKey*)v131;
-					}
+					multiSpline->positional->key = (struct SplineKey*)OFFSET_DATA(multiSpline->positional->key, offset);
 				}
-				dsignal = (int)v110->dsignal;
-				v133 = 0;
-				if (dsignal)
-					v133 = dsignal + offset;
-				v110->dsignal = (void*)v133;
-				++i;
-				i += 76;
-			} while (i < terrain->numIntros);
+
+				if (multiSpline->rotational != NULL)
+				{
+					multiSpline->rotational->key = (struct SplineRotKey*)OFFSET_DATA(multiSpline->rotational->key, offset);
+				}
+
+				if (multiSpline->scaling != NULL)
+				{
+					multiSpline->scaling->key = (struct SplineKey*)OFFSET_DATA(multiSpline->scaling->key, offset);
+				}
+
+				if (multiSpline->color != NULL)
+				{
+					multiSpline->color->key = (struct SplineKey*)OFFSET_DATA(multiSpline->color->key, offset);
+				}
+			}
+
+			intro->dsignal = (void*)OFFSET_DATA(intro->dsignal, offset);
 		}
-		if (terrain->aniList->numAniTextues)
+
+		if (terrain->aniList != NULL)
 		{
-			v135 = *p_numAniTextues;
 			if (terrain->aniList->numAniTextues > 0)
 			{
-				v136 = 0;
-				v137 = p_numAniTextues + 1;
-				if (v135 > 0)
+				struct DrMoveAniTexDestInfo** dest;
+
+				dest = &terrain->aniList->aniTexInfo;
+
+				for (d = 0; d < terrain->aniList->numAniTextues; d++)
 				{
-					v138 = v137;
-					do
-					{
-						v139 = 0;
-						if (*v138)
-							v139 = *v138 + offset;
-						*v138 = v139;
-						++v136;
-						++v138;
-					} while (v136 < terrain->aniList->numAniTextues);
+					dest[d] = (struct DrMoveAniTexDestInfo*)OFFSET_DATA(dest[d], offset);
 				}
 			}
 		}
-		lightList = level->lightList;
-		if (lightList)
+
+		if (level->lightList != NULL)
 		{
-			lightGroupList = lightList->lightGroupList;
-			v142 = 0;
-			if (lightGroupList)
-				v142 = (struct LightGroup*)((char*)lightGroupList + offset);
-			lightList->lightGroupList = v142;
+			level->lightList->lightGroupList = (struct LightGroup*)OFFSET_DATA(level->lightList->lightGroupList, offset);
 		}
-		v143 = level->spectrallightList;
-		if (v143)
+
+		if (level->spectrallightList != NULL)
 		{
-			v144 = v143->lightGroupList;
-			v145 = 0;
-			if (v144)
-				v145 = (struct LightGroup*)((char*)v144 + offset);
-			v143->lightGroupList = v145;
+			level->spectrallightList->lightGroupList = (struct LightGroup*)OFFSET_DATA(level->spectrallightList->lightGroupList, offset);
 		}
-		i = 0;
-		if (level->numVMObjects > 0)
+
+		for (i = 0; i < level->numVMObjects; i++)
 		{
-			i = 0;
-			do
+			struct _VMObject* vmo;
+
+			vmo = &level->vmobjectList[i];
+
+			vmo->vmoffsetTableList = (struct _VMOffsetTable**)OFFSET_DATA(vmo->vmoffsetTableList, offset);
+
+			if (vmo->curVMOffsetTable == vmo->vmoffsetTableList[vmo->currentIdx])
 			{
-				vmo = (struct _VMObject*)((char*)level->vmobjectList + i);
-				vmoffsetTableList = (struct _VMOffsetTable*)vmo->vmoffsetTableList;
-				v150 = 0;
-				if (vmoffsetTableList)
-					v150 = (struct _VMOffsetTable*)((char*)vmoffsetTableList + offset);
-				currentIdx = vmo->currentIdx;
-				vmo->vmoffsetTableList = (struct _VMOffsetTable**)v150;
-				v152 = (struct _VMOffsetTable**)(&v150->numVMOffsets + currentIdx);
-				curVMOffsetTable = vmo->curVMOffsetTable;
-				if (curVMOffsetTable == *v152)
-				{
-					v154 = 0;
-					if (curVMOffsetTable)
-						v154 = (struct _VMOffsetTable*)((char*)curVMOffsetTable + offset);
-					vmo->curVMOffsetTable = v154;
-				}
-				for (d = 0; d < vmo->numVMOffsetTables; ++d)
-				{
-					v156 = vmo->vmoffsetTableList[d];
-					v157 = 0;
-					if (v156->numVMOffsets)
-						v157 = v156->numVMOffsets + offset;
-					v156->numVMOffsets = v157;
-				}
-				vmvertexList = (int)vmo->vmvertexList;
-				v159 = 0;
-				if (vmvertexList)
-					v159 = vmvertexList + offset;
-				vminterpolatedList = vmo->vminterpolatedList;
-				v161 = 0;
-				vmo->vmvertexList = (void*)v159;
-				if (vminterpolatedList)
-					v161 = (struct _VMInterpolated*)((char*)vminterpolatedList + offset);
-				v162 = *(int*)vmo->name;
-				v163 = 0;
-				vmo->vminterpolatedList = v161;
-				if (v162)
-					v163 = v162 + offset;
-				*(int*)vmo->name = v163;
-				++i;
-				i += 60;
-			} while (i < level->numVMObjects);
-		}
-		bsp = terrain->BSPTreeArray;
-		v165 = 0;
-		if (terrain->numBSPTrees > 0)
-		{
-			do
+				vmo->curVMOffsetTable = (struct _VMOffsetTable*)OFFSET_DATA(vmo->curVMOffsetTable, offset);
+			}
+
+			for (d = 0; d < vmo->numVMOffsetTables; d++)
 			{
-				v167 = 0;
-				if (bsp->bspRoot)
-					v167 = (int)bsp->bspRoot + offset;
-				bsp->bspRoot = (struct _BSPNode*)v167;
-				v168 = bsp->startLeaves;
-				v169 = 0;
-				if (v168)
-					v169 = (unsigned int)v168 + offset;
-				v170 = (unsigned int)bsp->endLeaves;
-				v171 = 0;
-				v79 = bsp->endLeaves == 0;
-				bsp->startLeaves = (struct _BSPLeaf*)v169;
-				if (!v79)
-					v171 = v170 + offset;
-				bsp->endLeaves = (struct _BSPLeaf*)v171;
-				node = bsp->bspRoot;
-				if (bsp->bspRoot < (struct _BSPNode*)bsp->startLeaves)
+				vmo->vmoffsetTableList[d] = (struct _VMOffsetTable*)OFFSET_DATA(vmo->vmoffsetTableList[d], offset);
+			}
+
+			vmo->vmvertexList = (void*)OFFSET_DATA(vmo->vmvertexList, offset);
+			vmo->vminterpolatedList = (struct _VMInterpolated*)OFFSET_DATA(vmo->vminterpolatedList, offset);
+			vmo->name = (char*)OFFSET_DATA(vmo->name, offset);
+		}
+		{
+			struct BSPTree* bsp;
+			struct _BSPNode* node;
+			struct _BSPLeaf* leaf;
+
+			bsp = terrain->BSPTreeArray;
+
+			for (d = 0; d < terrain->numBSPTrees; d++, bsp++)
+			{
+				bsp->bspRoot = (struct _BSPNode*)OFFSET_DATA(bsp->bspRoot, offset);
+				bsp->startLeaves = (struct _BSPLeaf*)OFFSET_DATA(bsp->startLeaves, offset);
+				bsp->endLeaves = (struct _BSPLeaf*)OFFSET_DATA(bsp->endLeaves, offset);
+
+				for (node = bsp->bspRoot; (struct _BSPLeaf*)node < bsp->startLeaves; node++)
 				{
-					v173 = (int*)&node->back;
-					do
-					{
-						v174 = *(v173 - 1);
-						leaf = 0;
-						if (v174)
-							leaf = (struct _BSPLeaf*)(v174 + offset);
-						v176 = *v173;
-						v177 = 0;
-						v79 = *v173 == 0;
-						*(v173 - 1) = (int)leaf;
-						if (!v79)
-							v177 = v176 + offset;
-						*v173 = v177;
-						++node;
-						v173 += 11;
-					} while ((struct _BSPLeaf*)node < bsp->startLeaves);
+					node->front = (void*)OFFSET_DATA(node->front, offset);
+					node->back = (void*)OFFSET_DATA(node->back, offset);
 				}
-				v178 = (unsigned int)bsp->startLeaves;
-				if ((struct _BSPLeaf*)v178 < bsp->endLeaves)
+
+				for (leaf = bsp->startLeaves; leaf < bsp->endLeaves; leaf++)
 				{
-					v179 = (int*)(v178 + 8);
-					do
-					{
-						v180 = 0;
-						if (*v179)
-							v180 = *v179 + offset;
-						*v179 = v180;
-						v178 += 48;
-						v179 += 12;
-					} while ((struct _BSPLeaf*)v178 < bsp->endLeaves);
+					leaf->faceList = (struct _TFace*)OFFSET_DATA(leaf->faceList, offset);
 				}
-				++v165;
-				++bsp;
-			} while (v165 < terrain->numBSPTrees);
+			}
 		}
 	}
-	//for (j = level->SignalListStart; j < level->SignalListEnd; j = SIGNAL_RelocateSignal(j, offset))
-		;
+
+	{
+		struct _MultiSignal* temp;
+
+		for (temp = level->SignalListStart; temp < level->SignalListEnd;)
+		{
+			temp = SIGNAL_RelocateSignal(temp, offset);
+		}
+	}
+
 	EVENT_UpdatePuzzlePointers(level->PuzzleInstances, offset);
-	STREAM_UpdateLevelPointer(oldLevel, level, v8);
-	EVENT_RelocateInstanceList(oldLevel, level, v8);
+	STREAM_UpdateLevelPointer(oldLevel, level, sizeOfLevel);
+	EVENT_RelocateInstanceList(oldLevel, level, sizeOfLevel);
 }
 
 // autogenerated function stub: 
