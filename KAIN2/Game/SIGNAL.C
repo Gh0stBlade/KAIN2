@@ -61,9 +61,9 @@ long SIGNAL_HandleCamera(struct _Instance* instance, struct Signal* signal)  // 
 	return 1;
 }
 
-void SIGNAL_RelocateCamera(struct Signal* signal, long offset)
+void SIGNAL_RelocateCamera(struct Signal* signal, long offset) // Matching - 100%
 {
-	UNIMPLEMENTED();
+	signal->data.cameraKey = (struct _CameraKey*)OFFSET_DATA(signal->data.cameraKey, offset);
 }
 
 long SIGNAL_HandleCameraMode(struct _Instance* instance, struct Signal* signal)  // Matching - 100%
