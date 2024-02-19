@@ -1025,7 +1025,7 @@ void EVENT_Addvector3dToStack(struct _PCodeStack* stack, short x, short y, short
 	}
 }
 
-void ChangeOperandRotation3d(struct StackType* operand, struct Rotation3d* rotation) // Matching - 100%
+void EVENT_ChangeOperandRotation3d(struct StackType* operand, struct Rotation3d* rotation) // Matching - 100%
 {
 	operand->id = 14;
 	operand->data.rotation3d.vx = rotation->vx;
