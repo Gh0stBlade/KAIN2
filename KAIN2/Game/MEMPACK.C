@@ -6,7 +6,7 @@
 #include "PSX/AADLIB.H"
 #include "LOAD3D.H"
 #include "Game/EVENT.H"
-
+#include "Game/PIPE3D.H"
 #include <stddef.h>
 
 #pragma warning( disable : 4700 )
@@ -1283,488 +1283,159 @@ void MEMPACK_RelocateG2AnimKeylistType(struct _G2AnimKeylist_Type **pKeylist, in
 	UNIMPLEMENTED();
 }
 
-void MEMPACK_RelocateObjectType(struct MemHeader* newAddress, long offset, struct Object* oldObject)
+void MEMPACK_RelocateObjectType(struct MemHeader* newAddress, long offset, struct Object* oldObject)  // Matching - 99.87%
 {
-	struct _Instance* instance; // $a1
-	struct Object* object; // $s1
-	int i; // $s2
-	int j; // $a2
-	int d; // $a3
-	int sizeOfObject; // $s4
-	struct _Model* model; // $t0
-	struct _MFace* mface; // $a0
-	struct _Segment* segment; // $v0
-	struct _HInfo* hInfo; // $v1
-	struct AniTexInfo* aniTexInfo; // $a0
-	struct MultiSpline* multiSpline; // $v0
-	char* p;//$a1
+	struct _Instance* instance;
+	struct Object* object;
+	int i;
+	int j;
+	int d;
+	int sizeOfObject;
+	struct _Model* model;
 
-	//s0 = offset
-	//s3 = oldObject
-	p = NULL;
 	object = (struct Object*)(newAddress + 1);
 
 	sizeOfObject = newAddress->memSize - sizeof(struct MemHeader);
 
-	if (object->modelList != NULL)
-	{
-		p = ((char*)object->modelList + offset);
-	}
-	//loc_80051540
+	object->modelList = (struct _Model**)OFFSET_DATA(object->modelList, offset);
+	object->animList = (struct _G2AnimKeylist_Type**)OFFSET_DATA(object->animList, offset);
+	object->soundData = (unsigned char*)OFFSET_DATA(object->soundData, offset);
+	object->data = (void*)OFFSET_DATA(object->data, offset);
+	object->script = (char*)OFFSET_DATA(object->script, offset);
+	object->name = (char*)OFFSET_DATA(object->name, offset);
+	object->effectList = (struct ObjectEffect*)OFFSET_DATA(object->effectList, offset);
 
-	//v0 = object->animList
-	p = NULL;
-	object->modelList = (struct _Model**)p;
+	if (((struct Object*)(newAddress + 1))->oflags & 0x8000000)
+	{
+		object->relocList = (unsigned long*)OFFSET_DATA(object->relocList, offset);
+		object->relocModule = (void*)OFFSET_DATA(object->relocModule, offset);
+	}
+
+	for (i = 0; i < object->numModels; i++)
+	{
+		object->modelList[i]->numVertices = (long)OFFSET_DATA(&object->modelList[i]->numVertices, offset);
+
+		model = object->modelList[i];
+
+		model->vertexList = (struct _MVertex*)OFFSET_DATA(model->vertexList, offset);
+		model->normalList = (struct _SVectorNoPad*)OFFSET_DATA(model->normalList, offset);
+		model->faceList = (struct _MFace*)OFFSET_DATA(model->faceList, offset);
+		model->segmentList = (struct _Segment*)OFFSET_DATA(model->segmentList, offset);
+		model->aniTextures = (struct AniTex*)OFFSET_DATA(model->aniTextures, offset);
+		model->multiSpline = (struct MultiSpline*)OFFSET_DATA(model->multiSpline, offset);
+		model->startTextures = (struct TextureMT3*)OFFSET_DATA(model->startTextures, offset);
+		model->endTextures = (struct TextureMT3*)OFFSET_DATA(model->endTextures, offset);
+
+		for (d = 0; d < model->numFaces; d++)
+		{
+			struct _MFace* mface;
+
+			mface = &model->faceList[d];
+
+			if (mface->flags & 2)
+			{
+				mface->color = (long)OFFSET_DATA(mface->color, offset);
+			}
+		}
+
+		for (d = 0; d < model->numSegments; d++)
+		{
+			struct _Segment* segment;
+			struct _HInfo* hInfo;
+
+			segment = &model->segmentList[d];
+
+			segment->hInfo = (struct _HInfo*)OFFSET_DATA(segment->hInfo, offset);
+
+			if (segment->hInfo != NULL)
+			{
+				hInfo = segment->hInfo;
+
+				hInfo->hfaceList = (struct _HFace*)OFFSET_DATA(hInfo->hfaceList, offset);
+				hInfo->hsphereList = (struct _HSphere*)OFFSET_DATA(hInfo->hsphereList, offset);
+				hInfo->hboxList = (struct _HBox*)OFFSET_DATA(hInfo->hboxList, offset);
+			}
+		}
+
+		if (model->aniTextures != NULL)
+		{
+			struct AniTexInfo* aniTexInfo;
+
+			aniTexInfo = &model->aniTextures->aniTexInfo;
+
+			for (d = 0; d < model->aniTextures->numAniTextues; d++, aniTexInfo++)
+			{
+				aniTexInfo->texture = (struct TextureMT3*)OFFSET_DATA(aniTexInfo->texture, offset);
+			}
+		}
+
+		{
+			struct MultiSpline* multiSpline;
+
+			if (model->multiSpline != NULL)
+			{
+				multiSpline = model->multiSpline;
+
+				multiSpline->positional = (struct Spline*)OFFSET_DATA(multiSpline->positional, offset);
+				multiSpline->rotational = (struct RSpline*)OFFSET_DATA(multiSpline->rotational, offset);
+				multiSpline->scaling = (struct Spline*)OFFSET_DATA(multiSpline->scaling, offset);
+				multiSpline->color = (struct Spline*)OFFSET_DATA(multiSpline->color, offset);
+
+				if (multiSpline->positional != NULL)
+				{
+					multiSpline->positional->key = (struct SplineKey*)OFFSET_DATA(multiSpline->positional->key, offset);
+				}
+
+				if (multiSpline->rotational != NULL)
+				{
+					multiSpline->rotational->key = (struct SplineRotKey*)OFFSET_DATA(multiSpline->rotational->key, offset);
+				}
+
+				if (multiSpline->scaling != NULL)
+				{
+					multiSpline->scaling->key = (struct SplineKey*)OFFSET_DATA(multiSpline->scaling->key, offset);
+				}
+
+				if (multiSpline->color != NULL)
+				{
+					multiSpline->color->key = (struct SplineKey*)OFFSET_DATA(multiSpline->color->key, offset);
+				}
+			}
+		}
+	}
+
+	for (i = 0; i < object->numAnims; i++)
+	{
+		MEMPACK_RelocateG2AnimKeylistType(&object->animList[i], offset, (char*)oldObject, (char*)oldObject + sizeOfObject);
+	}
 
 	if (object->animList != NULL)
 	{
-		p = ((char*)object->animList + offset);
+		instance = gameTrackerX.instanceList->first;
+
+		if (instance != NULL)
+		{
+			do
+			{
+				if (instance->object == oldObject)
+				{
+					instance->anim.modelData = (struct _Model*)OFFSET_DATA(instance->anim.modelData, offset);
+				}
+
+				for (j = 0; j < instance->anim.sectionCount; j++)
+				{
+					if (((unsigned int)instance->anim.section[j].keylist >= (unsigned int)oldObject) && ((unsigned int)((char*)oldObject + sizeOfObject) >= (unsigned int)instance->anim.section[j].keylist))
+					{
+						instance->anim.section[j].keylist = (struct _G2AnimKeylist_Type*)OFFSET_DATA(instance->anim.section[j].keylist, offset);
+					}
+				}
+
+				instance = instance->next;
+			} while (instance != NULL);
+		}
 	}
-	//loc_80051554
-	//v0 = object->soundData
 
-	object->animList = (struct _G2AnimKeylist_Type**)p;
-
-	p = NULL;
-
-	if (object->soundData != NULL)
-	{
-		p = (char*)object->soundData + offset;
-	}
-	//loc_80051568
-#if 0
-		loc_80051568 :
-		lw      $v0, 0x1C($s1)
-		move    $v1, $zero
-		beqz    $v0, loc_8005157C
-		sw      $a1, 0x28($s1)
-		addu    $v1, $v0, $s0
-
-		loc_8005157C :
-	lw      $v0, 0x20($s1)
-		move    $a1, $zero
-		beqz    $v0, loc_80051590
-		sw      $v1, 0x1C($s1)
-		addu    $a1, $v0, $s0
-
-		loc_80051590 :
-	lw      $v0, 0x24($s1)
-		move    $a2, $zero
-		beqz    $v0, loc_800515A4
-		sw      $a1, 0x20($s1)
-		addu    $a2, $v0, $s0
-
-		loc_800515A4 :
-	lw      $v1, 0x38($s1)
-		move    $v0, $zero
-		beqz    $v1, loc_800515B8
-		sw      $a2, 0x24($s1)
-		addu    $v0, $v1, $s0
-
-		loc_800515B8 :
-	sw      $v0, 0x38($s1)
-		lw      $v0, 8($a0)
-		lui     $v1, 0x800
-		and $v0, $v1
-		beqz    $v0, loc_800515FC
-		nop
-		lw      $v0, 0x3C($s1)
-		nop
-		beqz    $v0, loc_800515E4
-		move    $a0, $zero
-		addu    $a0, $v0, $s0
-
-		loc_800515E4 :
-	lw      $v1, 0x40($s1)
-		move    $v0, $zero
-		beqz    $v1, loc_800515F8
-		sw      $a0, 0x3C($s1)
-		addu    $v0, $v1, $s0
-
-		loc_800515F8 :
-	sw      $v0, 0x40($s1)
-
-		loc_800515FC :
-		lh      $v0, 8($s1)
-		nop
-		blez    $v0, loc_80051948
-		move    $s2, $zero
-		move    $t2, $s2
-
-		loc_80051610 :
-	lw      $v0, 0xC($s1)
-		nop
-		addu    $a0, $t2, $v0
-		lw      $v1, 0($a0)
-		nop
-		beqz    $v1, loc_80051630
-		move    $v0, $zero
-		addu    $v0, $v1, $s0
-
-		loc_80051630 :
-	sw      $v0, 0($a0)
-		lw      $v0, 0xC($s1)
-		nop
-		addu    $v0, $t2, $v0
-		lw      $t0, 0($v0)
-		nop
-		lw      $v0, 4($t0)
-		nop
-		beqz    $v0, loc_8005165C
-		move    $v1, $zero
-		addu    $v1, $v0, $s0
-
-		loc_8005165C :
-	lw      $v0, 0xC($t0)
-		move    $a0, $zero
-		beqz    $v0, loc_80051670
-		sw      $v1, 4($t0)
-		addu    $a0, $v0, $s0
-
-		loc_80051670 :
-	lw      $v0, 0x14($t0)
-		move    $v1, $zero
-		beqz    $v0, loc_80051684
-		sw      $a0, 0xC($t0)
-		addu    $v1, $v0, $s0
-
-		loc_80051684 :
-	lw      $v0, 0x1C($t0)
-		move    $a0, $zero
-		beqz    $v0, loc_80051698
-		sw      $v1, 0x14($t0)
-		addu    $a0, $v0, $s0
-
-		loc_80051698 :
-	lw      $v0, 0x20($t0)
-		move    $v1, $zero
-		beqz    $v0, loc_800516AC
-		sw      $a0, 0x1C($t0)
-		addu    $v1, $v0, $s0
-
-		loc_800516AC :
-	lw      $v0, 0x2C($t0)
-		move    $a0, $zero
-		beqz    $v0, loc_800516C0
-		sw      $v1, 0x20($t0)
-		addu    $a0, $v0, $s0
-
-		loc_800516C0 :
-	lw      $v0, 0x30($t0)
-		move    $v1, $zero
-		beqz    $v0, loc_800516D4
-		sw      $a0, 0x2C($t0)
-		addu    $v1, $v0, $s0
-
-		loc_800516D4 :
-	lw      $v0, 0x34($t0)
-		move    $a0, $zero
-		beqz    $v0, loc_800516E8
-		sw      $v1, 0x30($t0)
-		addu    $a0, $v0, $s0
-
-		loc_800516E8 :
-	lw      $v0, 0x10($t0)
-		move    $a3, $zero
-		blez    $v0, loc_80051748
-		sw      $a0, 0x34($t0)
-		move    $a1, $a3
-
-		loc_800516FC :
-	lw      $v0, 0x14($t0)
-		nop
-		addu    $a0, $v0, $a1
-		lbu     $v0, 7($a0)
-		nop
-		andi    $v0, 2
-		beqz    $v0, loc_80051734
-		nop
-		lw      $v1, 8($a0)
-		nop
-		beqz    $v1, loc_80051730
-		move    $v0, $zero
-		addu    $v0, $v1, $s0
-
-		loc_80051730 :
-	sw      $v0, 8($a0)
-
-		loc_80051734 :
-		lw      $v0, 0x10($t0)
-		addiu   $a3, 1
-		slt     $v0, $a3, $v0
-		bnez    $v0, loc_800516FC
-		addiu   $a1, 0xC
-
-		loc_80051748 :
-		lw      $v0, 0x18($t0)
-		nop
-		blez    $v0, loc_800517DC
-		move    $a3, $zero
-		move    $t1, $a3
-
-		loc_8005175C :
-	lw      $v0, 0x1C($t0)
-		nop
-		addu    $v0, $t1
-		lw      $v1, 0x14($v0)
-		nop
-		beqz    $v1, loc_8005177C
-		move    $a2, $zero
-		addu    $a2, $v1, $s0
-
-		loc_8005177C :
-	beqz    $a2, loc_800517C8
-		sw      $a2, 0x14($v0)
-		move    $v1, $a2
-		lw      $v0, 4($v1)
-		nop
-		beqz    $v0, loc_8005179C
-		move    $a0, $zero
-		addu    $a0, $v0, $s0
-
-		loc_8005179C :
-	lw      $v0, 0xC($v1)
-		move    $a1, $zero
-		beqz    $v0, loc_800517B0
-		sw      $a0, 4($v1)
-		addu    $a1, $v0, $s0
-
-		loc_800517B0 :
-	lw      $a0, 0x14($v1)
-		move    $v0, $zero
-		beqz    $a0, loc_800517C4
-		sw      $a1, 0xC($v1)
-		addu    $v0, $a0, $s0
-
-		loc_800517C4 :
-	sw      $v0, 0x14($a2)
-
-		loc_800517C8 :
-		lw      $v0, 0x18($t0)
-		addiu   $a3, 1
-		slt     $v0, $a3, $v0
-		bnez    $v0, loc_8005175C
-		addiu   $t1, 0x18
-
-		loc_800517DC :
-		lw      $v0, 0x20($t0)
-		nop
-		beqz    $v0, loc_80051834
-		nop
-		addiu   $a0, $v0, 4
-		lw      $v0, 0($v0)
-		nop
-		blez    $v0, loc_80051834
-		move    $a3, $zero
-
-		loc_80051800 :
-	lw      $v1, 0($a0)
-		nop
-		beqz    $v1, loc_80051814
-		move    $v0, $zero
-		addu    $v0, $v1, $s0
-
-		loc_80051814 :
-	sw      $v0, 0($a0)
-		lw      $v0, 0x20($t0)
-		addiu   $a3, 1
-		lw      $v0, 0($v0)
-		nop
-		slt     $v0, $a3, $v0
-		bnez    $v0, loc_80051800
-		addiu   $a0, 0xC
-
-		loc_80051834:
-	lw      $v0, 0x2C($t0)
-		nop
-		beqz    $v0, loc_80051934
-		nop
-		lw      $v1, 0($v0)
-		nop
-		beqz    $v1, loc_80051858
-		move    $a0, $zero
-		addu    $a0, $v1, $s0
-
-		loc_80051858 :
-	lw      $v1, 4($v0)
-		move    $a1, $zero
-		beqz    $v1, loc_8005186C
-		sw      $a0, 0($v0)
-		addu    $a1, $v1, $s0
-
-		loc_8005186C :
-	lw      $v1, 8($v0)
-		move    $a2, $zero
-		beqz    $v1, loc_80051880
-		sw      $a1, 4($v0)
-		addu    $a2, $v1, $s0
-
-		loc_80051880 :
-	lw      $v1, 0xC($v0)
-		move    $a0, $zero
-		beqz    $v1, loc_80051894
-		sw      $a2, 8($v0)
-		addu    $a0, $v1, $s0
-
-		loc_80051894 :
-	lw      $v1, 0($v0)
-		nop
-		beqz    $v1, loc_800518BC
-		sw      $a0, 0xC($v0)
-		lw      $a1, 0($v1)
-		nop
-		beqz    $a1, loc_800518B8
-		move    $a0, $zero
-		addu    $a0, $a1, $s0
-
-		loc_800518B8 :
-	sw      $a0, 0($v1)
-
-		loc_800518BC :
-		lw      $v1, 4($v0)
-		nop
-		beqz    $v1, loc_800518E4
-		nop
-		lw      $a1, 0($v1)
-		nop
-		beqz    $a1, loc_800518E0
-		move    $a0, $zero
-		addu    $a0, $a1, $s0
-
-		loc_800518E0 :
-	sw      $a0, 0($v1)
-
-		loc_800518E4 :
-		lw      $v1, 8($v0)
-		nop
-		beqz    $v1, loc_8005190C
-		nop
-		lw      $a1, 0($v1)
-		nop
-		beqz    $a1, loc_80051908
-		move    $a0, $zero
-		addu    $a0, $a1, $s0
-
-		loc_80051908 :
-	sw      $a0, 0($v1)
-
-		loc_8005190C :
-		lw      $v0, 0xC($v0)
-		nop
-		beqz    $v0, loc_80051934
-		nop
-		lw      $a0, 0($v0)
-		nop
-		beqz    $a0, loc_80051930
-		move    $v1, $zero
-		addu    $v1, $a0, $s0
-
-		loc_80051930 :
-	sw      $v1, 0($v0)
-
-		loc_80051934 :
-		lh      $v0, 8($s1)
-		addiu   $s2, 1
-		slt     $v0, $s2, $v0
-		bnez    $v0, loc_80051610
-		addiu   $t2, 4
-
-		loc_80051948 :
-		lh      $v0, 0xA($s1)
-		nop
-		blez    $v0, loc_80051988
-		move    $s2, $zero
-		move    $a1, $s0
-
-		loc_8005195C :
-	move    $a2, $s3
-		sll     $a0, $s2, 2
-		lw      $v0, 0x10($s1)
-		addu    $a3, $s3, $s4
-		jal     sub_8005145C
-		addu    $a0, $v0, $a0
-		lh      $v0, 0xA($s1)
-		addiu   $s2, 1
-		slt     $v0, $s2, $v0
-		bnez    $v0, loc_8005195C
-		move    $a1, $s0
-
-		loc_80051988 :
-	lw      $v0, 0x10($s1)
-		nop
-		beqz    $v0, loc_80051A3C
-		nop
-		lw      $v0, -0x4204($gp)//gameTrackerX.instanceList//gameTrackerX.instanceList
-		nop
-		lw      $a1, 4($v0)
-		nop
-		beqz    $a1, loc_80051A3C
-		addu    $a3, $s3, $s4
-
-		loc_800519B0 :
-	lw      $v0, 0x1C($a1)
-		nop
-		bne     $v0, $s3, loc_800519D8
-		nop
-		lw      $v1, 0x1D8($a1)
-		nop
-		beqz    $v1, loc_800519D4
-		move    $v0, $zero
-		addu    $v0, $v1, $s0
-
-		loc_800519D4 :
-	sw      $v0, 0x1D8($a1)
-
-		loc_800519D8 :
-		lbu     $v0, 0x1C8($a1)
-		nop
-		beqz    $v0, loc_80051A2C
-		move    $a2, $zero
-		move    $a0, $a1
-
-		loc_800519EC :
-	lw      $v1, 0x210($a0)
-		nop
-		sltu    $v0, $v1, $s3
-		bnez    $v0, loc_80051A18
-		sltu    $v0, $a3, $v1
-		bnez    $v0, loc_80051A18
-		nop
-		beqz    $v1, loc_80051A14
-		move    $v0, $zero
-		addu    $v0, $v1, $s0
-
-		loc_80051A14 :
-	sw      $v0, 0x210($a0)
-
-		loc_80051A18 :
-		lbu     $v0, 0x1C8($a1)
-		addiu   $a2, 1
-		slt     $v0, $a2, $v0
-		bnez    $v0, loc_800519EC
-		addiu   $a0, 0x30  # '0'
-
-		loc_80051A2C :
-		lw      $a1, 8($a1)
-		nop
-		bnez    $a1, loc_800519B0
-		nop
-
-		loc_80051A3C :
-	move    $a0, $s3
-		move    $a1, $s1
-		jal     sub_8005A67C
-		move    $a2, $s4
-		lw      $ra, 0x10 + var_s14($sp)
-		lw      $s4, 0x10 + var_s10($sp)
-		lw      $s3, 0x10 + var_sC($sp)
-		lw      $s2, 0x10 + var_s8($sp)
-		lw      $s1, 0x10 + var_s4($sp)
-		lw      $s0, 0x10 + var_s0($sp)
-		jr      $ra
-		addiu   $sp, 0x28
-#endif
-
+	STREAM_UpdateObjectPointer(oldObject, object, sizeOfObject);
 }
 
 void MEMPACK_RelocateCDMemory(struct MemHeader *newAddress, long offset, struct _BigFileDir *oldDir)
