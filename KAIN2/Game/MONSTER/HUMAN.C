@@ -94,7 +94,7 @@ void HUMAN_Init(struct _Instance* instance)  // Matching - 100%
 			allegiances->enemies |= 0x1;
 		}
 	}
-	if (strcmpi(instance->object->name, "vlgra") == 0)  // could also be vlgrb or vlgrc?
+	if (strcmpi(instance->object->name, "vlgrb___") == 0)
 	{
 		mv->auxFlags |= 0x20;
 	}
