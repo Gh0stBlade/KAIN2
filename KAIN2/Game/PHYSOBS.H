@@ -73,6 +73,11 @@ struct PhysObSwitchProperties
     unsigned char engageZCone; // size=0, offset=31
 };
 
+struct PhysObWeaponProperties {
+    struct PhysObProperties Properties; // size=8, offset=0
+    struct PhysObWeaponAttributes WeaponAttributes; // size=28, offset=8
+};
+
 struct PhysObInteractProperties 
 {
     struct PhysObProperties Properties; // size=8, offset=0
