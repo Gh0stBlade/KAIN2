@@ -2082,12 +2082,25 @@ long EVENT_TransformSavedEventAttribute(struct _PCodeStack *stack, struct StackT
 	return 0;
 }
 
-long EVENT_TransformSubListObjectAttribute(struct _PCodeStack* stack, struct StackType* stackObject, long item)
+long EVENT_TransformSubListObjectAttribute(struct _PCodeStack* stack, struct StackType* stackObject, long item)  // Matching - 100%
 {
-	long retValue; // $a0
-	
-	UNIMPLEMENTED();//Unions messy here!
-	return 0;
+	long retValue;
+	int temp;  // not from SYMDUMP
+
+	temp = stackObject->data.subListObject.numberOfAttributes;
+
+	retValue = 0;
+
+	if (temp < 5)
+	{
+		retValue = 1;
+
+		stackObject->data.subListObject.attribute[temp] = item;
+
+		stackObject->data.subListObject.numberOfAttributes = (temp + 1);
+	}
+
+	return retValue;
 }
 
 
