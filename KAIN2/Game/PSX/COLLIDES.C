@@ -1730,6 +1730,11 @@ void COLLIDE_NearestPointOnPlane_S(struct _SVector* planePoint, struct _SVector*
 	planePoint->z = v.vz + position->z;
 }
 
+void VM_ProcessVMObjectSetColor_S(struct Level* level, struct _VMObject* vmobject) 
+{
+	UNIMPLEMENTED();
+}
+
 void VM_ProcessVMObjectList_S(struct Level* level, struct Camera* camera)
 {
 	long timer;

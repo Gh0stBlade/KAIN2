@@ -38,7 +38,7 @@ extern long COLLIDE_IntersectLineAndPlane_S(struct _SVector* planePoint, struct 
 
 extern void COLLIDE_NearestPointOnPlane_S(struct _SVector* planePoint, struct _SVector* normal, long z, struct _Position* position); // 0x80078124
 
-extern void VM_ProcessVMObjectSetColor_S() ; // 0x800786A8
+extern void VM_ProcessVMObjectSetColor_S(struct Level* level, struct _VMObject* vmobject); // 0x800786A8
 
 extern void VM_ProcessVMObjectList_S(struct Level* level, struct Camera* camera); // 0x8007871C
 
