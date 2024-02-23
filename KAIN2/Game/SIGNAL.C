@@ -397,7 +397,7 @@ void COLLIDE_HandleSignal(struct _Instance* instance, struct Signal* signal, lon
 	}
 }
 
-long SIGNAL_IsThisStreamAWarpGate(struct Signal* signal)//Matching - 91.25%
+long SIGNAL_IsThisStreamAWarpGate(struct Signal* signal)  // Matching - 100%
 {
 	long result;
 	char areaName[32];
