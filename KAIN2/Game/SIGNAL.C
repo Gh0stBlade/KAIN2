@@ -458,7 +458,7 @@ long SIGNAL_IsStreamSignal(struct Signal* signal, long* isWarpGate)
 	return result;
 }
 
-void SIGNAL_HandleSignal(struct _Instance* instance, struct Signal* signal, int dontForceDoSignal)
+void SIGNAL_HandleSignal(struct _Instance* instance, struct Signal* signal, int dontForceDoSignal)  // Matching - 100%
 {
 	COLLIDE_HandleSignal(instance, signal, 1, dontForceDoSignal);
 }
