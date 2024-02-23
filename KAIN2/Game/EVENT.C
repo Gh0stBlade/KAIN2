@@ -4666,14 +4666,17 @@ long EVENT_GetAnimateValue(struct InstanceAnimate* instanceAnimate)  // Matching
 	return value;
 }
 
-long EVENT_TransformObjectOnStack(struct _PCodeStack* stack, long item, short* codeStream) // Matching - 100%
+long EVENT_TransformObjectOnStack(struct _PCodeStack* stack, long item, short* codeStream)  // Matching - 100%
 {
 	long retValue;
 
 	retValue = 0;
-	if (stack->topOfStack != 0) {
+
+	if (stack->topOfStack != 0)
+	{
 		retValue = EVENT_TransformOperand(&stack->stack[stack->topOfStack - 1], stack, item, codeStream);
 	}
+
 	return retValue;
 }
 
