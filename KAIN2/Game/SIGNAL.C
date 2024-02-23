@@ -340,7 +340,7 @@ long SIGNAL_HandleSetSlideAngle(struct _Instance* instance, struct Signal* signa
 	return 1;
 }
 
-long SIGNAL_HandleResetSlideAngle(struct _Instance* instance, struct Signal* signal)
+long SIGNAL_HandleResetSlideAngle(struct _Instance* instance, struct Signal* signal)  // Matching - 100%
 {
 	if (instance != NULL)
 	{
@@ -397,7 +397,7 @@ void COLLIDE_HandleSignal(struct _Instance* instance, struct Signal* signal, lon
 	}
 }
 
-long SIGNAL_IsThisStreamAWarpGate(struct Signal* signal)//Matching - 91.25%
+long SIGNAL_IsThisStreamAWarpGate(struct Signal* signal)  // Matching - 100%
 {
 	long result;
 	char areaName[32];
@@ -458,7 +458,7 @@ long SIGNAL_IsStreamSignal(struct Signal* signal, long* isWarpGate)
 	return result;
 }
 
-void SIGNAL_HandleSignal(struct _Instance* instance, struct Signal* signal, int dontForceDoSignal)
+void SIGNAL_HandleSignal(struct _Instance* instance, struct Signal* signal, int dontForceDoSignal)  // Matching - 100%
 {
 	COLLIDE_HandleSignal(instance, signal, 1, dontForceDoSignal);
 }
@@ -481,7 +481,7 @@ struct _MultiSignal * SIGNAL_FindSignal(struct Level *level, long id)
 	return 0;
 }
 
-void SIGNAL_OutOfWater(struct _Instance* instance)//Matching - 99.50%
+void SIGNAL_OutOfWater(struct _Instance* instance)  // Matching - 100%
 {
 	struct Level* level;
 
@@ -496,7 +496,7 @@ void SIGNAL_OutOfWater(struct _Instance* instance)//Matching - 99.50%
 	}
 }
 
-void SIGNAL_InWater(struct _Instance* instance)
+void SIGNAL_InWater(struct _Instance* instance)  // Matching - 100%
 {
 	struct Level* level;
 
