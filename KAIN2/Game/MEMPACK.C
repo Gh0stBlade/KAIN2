@@ -800,14 +800,15 @@ void MEMPACK_RelocateAreaType(struct MemHeader* newAddress, long offset, struct 
 		}
 	}
 
-	{
+	// @fixme this block causes streaming issues due to SIGNAL_RelocateSignal being unimplemented
+	/*{
 		struct _MultiSignal* temp;
 
 		for (temp = level->SignalListStart; temp < level->SignalListEnd;)
 		{
 			temp = SIGNAL_RelocateSignal(temp, offset);
 		}
-	}
+	}*/
 
 	EVENT_UpdatePuzzlePointers(level->PuzzleInstances, offset);
 	STREAM_UpdateLevelPointer(oldLevel, level, sizeOfLevel);
@@ -942,10 +943,11 @@ void MEMPACK_RelocateObjectType(struct MemHeader* newAddress, long offset, struc
 		}
 	}
 
-	for (i = 0; i < object->numAnims; i++)
+	// @fixme this block causes streaming issues due to MEMPACK_RelocateG2AnimKeylistType being unimplemented
+	/*for (i = 0; i < object->numAnims; i++)
 	{
 		MEMPACK_RelocateG2AnimKeylistType(&object->animList[i], offset, (char*)oldObject, (char*)oldObject + sizeOfObject);
-	}
+	}*/
 
 	if (object->animList != NULL)
 	{
