@@ -5185,95 +5185,9 @@ void EVENT_AddStreamToInstanceList(struct _StreamUnit *stream)
 }
 
 
-void EVENT_RemoveStreamToInstanceList(struct _StreamUnit* stream)  // Matching - 100%
+void EVENT_RemoveStreamToInstanceList(struct _StreamUnit* stream) 
 {
-	int d;
-	int i;
-	int i2;
-	struct EventPointers* puzzle;
-	struct EventBasicObject** basicEventObject;
-	struct EventEventObject* eventEventObject;  // not from SYMDUMP
-	struct EventTGroupObject* tgroupEventObject;  // not from SYMDUMP
-	struct EventWildCardObject* wildcardEventObject;  // not from SYMDUMP
-	struct EventInstanceObject* instanceEventObject;  // not from SYMDUMP
-
-	for (d = 0; d < 16; d++)
-	{
-		if ((StreamTracker.StreamList[d].used != 2) || (&StreamTracker.StreamList[d] == stream))
-		{
-			continue;
-		}
-
-		puzzle = StreamTracker.StreamList[d].level->PuzzleInstances;
-
-		if (puzzle == NULL)
-		{
-			continue;
-		}
-
-		for (i = 0; i < puzzle->numPuzzles; i++)
-		{
-			basicEventObject = puzzle->eventInstances[i]->instanceList;
-
-			for (i2 = 0; i2 < puzzle->eventInstances[i]->numInstances; i2++)
-			{
-				if (basicEventObject[i2]->id == 5)
-				{
-					wildcardEventObject = (struct EventWildCardObject*)basicEventObject[i2];
-
-					if (wildcardEventObject->unitID == stream->StreamUnitID)
-					{
-						wildcardEventObject->objectName = NULL;
-					}
-				}
-				else if (basicEventObject[i2]->id == 3)
-				{
-					eventEventObject = (struct EventEventObject*)basicEventObject[i2];
-
-					if (eventEventObject->unitID == stream->StreamUnitID)
-					{
-						eventEventObject->event = NULL;
-					}
-				}
-				else if (basicEventObject[i2]->id == 4)
-				{
-					tgroupEventObject = (struct EventTGroupObject*)basicEventObject[i2];
-
-					if (tgroupEventObject->unitID == stream->StreamUnitID)
-					{
-						tgroupEventObject->bspTree = NULL;
-						tgroupEventObject->stream = NULL;
-					}
-				}
-				else if (basicEventObject[i2]->id == 6)
-				{
-					wildcardEventObject = (struct EventWildCardObject*)basicEventObject[i2];
-
-					if (wildcardEventObject->unitID == stream->StreamUnitID)
-					{
-						wildcardEventObject->objectName = NULL;
-					}
-				}
-				else if (basicEventObject[i2]->id == 1)
-				{
-					instanceEventObject = (struct EventInstanceObject*)basicEventObject[i2];
-
-					if (instanceEventObject->unitID == stream->StreamUnitID)
-					{
-						instanceEventObject->data.intro = NULL;
-					}
-				}
-			}
-		}
-	}
-
-	for (i = 0; i < 24; i++)
-	{
-		if ((eventTimerArray[i].flags & 0x1) && (eventTimerArray[i].level == stream->level))
-		{
-			EVENT_RemoveTimer(&eventTimerArray[i]);
-		}
-	}
+	UNIMPLEMENTED();
 }
 
 
