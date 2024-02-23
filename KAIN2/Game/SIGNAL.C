@@ -340,7 +340,7 @@ long SIGNAL_HandleSetSlideAngle(struct _Instance* instance, struct Signal* signa
 	return 1;
 }
 
-long SIGNAL_HandleResetSlideAngle(struct _Instance* instance, struct Signal* signal)
+long SIGNAL_HandleResetSlideAngle(struct _Instance* instance, struct Signal* signal)  // Matching - 100%
 {
 	if (instance != NULL)
 	{
