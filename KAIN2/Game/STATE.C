@@ -995,17 +995,27 @@ int G2EmulationQueryFrame(struct __CharacterState* In, int CurrentSection)  // M
 	return G2EmulationInstanceQueryFrame(In->CharacterInstance, CurrentSection);
 }
 
-int G2EmulationInstanceQueryMode(struct _Instance* instance, int CurrentSection)
+int G2EmulationInstanceQueryMode(struct _Instance* instance, int CurrentSection)  // Matching - 100%
 {
 	struct _G2AnimSection_Type* animSection;
-	
-	animSection = &instance->anim.section[CurrentSection];
+	int temp;  // not from SYMDUMP
 
-	if (!(animSection->flags & 0x1) && !(animSection->flags & 0x2))
+	animSection = &instance->anim.section[CurrentSection & 0xFF];
+
+	temp = 0;
+
+	if (!(animSection->flags & 0x1))
 	{
-		return 1;
+		if (!(animSection->flags & 0x2))
+		{
+			temp = 1;
+
+			return 1;
+		}
+
+		return 2;
 	}
-	
+
 	return 0;
 }
 
