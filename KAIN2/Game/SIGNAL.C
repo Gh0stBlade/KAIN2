@@ -481,7 +481,7 @@ struct _MultiSignal * SIGNAL_FindSignal(struct Level *level, long id)
 	return 0;
 }
 
-void SIGNAL_OutOfWater(struct _Instance* instance)//Matching - 99.50%
+void SIGNAL_OutOfWater(struct _Instance* instance)  // Matching - 100%
 {
 	struct Level* level;
 
