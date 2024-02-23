@@ -39,11 +39,11 @@ struct SignalInfo signalInfoList[] =
 	{SIGNAL_HandleSetCameraDistance,	1, 1, NULL}
 };
 
-long SIGNAL_HandleLightGroup(struct _Instance* instance, struct Signal* signal)
+long SIGNAL_HandleLightGroup(struct _Instance* instance, struct Signal* signal)  // Matching - 100%
 {
 	if (instance != NULL)
 	{
-		instance->lightGroup = signal->data.misc.size.c[0];
+		instance->lightGroup = signal->data.misc[0].size.c[0];
 	}
 
 	return 1;
