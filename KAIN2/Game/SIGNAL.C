@@ -369,7 +369,7 @@ long SIGNAL_HandleSetCameraDistance(struct _Instance* instance, struct Signal* s
 	return 1;
 }
 
-long SIGNAL_HandleEnd(struct _Instance* instance, struct Signal* signal)
+long SIGNAL_HandleEnd(struct _Instance* instance, struct Signal* signal)  // Matching - 100%
 {
 	return 0;
 }
