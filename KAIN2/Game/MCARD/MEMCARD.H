@@ -106,60 +106,6 @@ struct mcpsx_directory_t // hashcode: 0xED9CBF92 (dec: -308494446)
 	int nbytes; // size=0, offset=20
 };
 
-union MEMCARD_79fake // Hashcode: 0xCBE8E87E (dec: -873928578)
-{
-	struct {
-		unsigned long (*function)(); // size=0, offset=0
-		void* fnData; // size=0, offset=4
-	} callback; // size=8, offset=0, found in object files: memcard.o, memcard.o
-	struct {
-		struct _G2SVector3_Type base; // size=6, offset=0
-		struct _G2SVector3_Type offset; // size=6, offset=6
-	} vector; // size=12, offset=0, found in object files: memcard.o, memcard.o
-	struct {
-		struct _G2Quat_Type src; // size=8, offset=0
-		struct _G2Quat_Type dest; // size=8, offset=8
-	} quat; // size=16, offset=0, found in object files: memcard.o, memcard.o
-};
-
-union MEMCARD_80fake // Hashcode: 0xCA90C9EC (dec: -896480788)
-{
-	long color; // size=0, offset=0
-	struct _RGBAColor rgba; // size=4, offset=0
-};
-
-struct MEMCARD_117fake // hashcode: 0x86F561E0 (dec: -2030738976)
-{
-	struct {
-		struct MultiSpline* posSpline; // size=0, offset=0
-		struct MultiSpline* targetSpline; // size=0, offset=4
-		struct _SVector lastSplinePos; // size=8, offset=8
-		short splinePointAhead; // size=0, offset=16
-		short cinema_done; // size=0, offset=18
-		int splinecam_currkey; // size=0, offset=20
-		int splinecam_helpkey; // size=0, offset=24
-	} Cinematic; // size=28, offset=0, found in object files: memcard.o, memcard.o
-	struct {
-		_Position offset; // size=6, offset=0
-		struct _Rotation rotation; // size=8, offset=6
-		long focusDistance; // size=0, offset=16
-	} Idle; // size=20, offset=28, found in object files: memcard.o, memcard.o
-	struct {
-		struct _TFace* tface; // size=12, offset=0
-		struct _TFace* oldTFace; // size=12, offset=4
-		struct _SVector oldTargetRot; // size=8, offset=8
-		long timer; // size=0, offset=16
-		struct _SVector oldFocusInstancePos; // size=8, offset=20
-	} Behind; // size=28, offset=48, found in object files: memcard.o, memcard.o
-	struct {
-		long stopTimer; // size=0, offset=0
-		long stopHit; // size=0, offset=4
-		struct _TFace* tface; // size=12, offset=8
-		struct _TFace* oldTFace; // size=12, offset=12
-		long hit; // size=0, offset=16
-	} Follow; // size=20, offset=76, found in object files: memcard.o, memcard.o
-};
-
 struct mcard_t // hashcode: 0x55AF6CB2 (dec: 1437559986)
 {
 	struct {
@@ -210,14 +156,6 @@ struct memcard_t // hashcode: 0xAEC9A344 (dec: -1362517180)
 	short wrongVerison; // size=0, offset=14
 };
 
-union MEMCARD_196fake // Hashcode: 0xF7F7C377 (dec: -134757513)
-{
-	struct _Instance* target; // size=616, offset=0
-	_Position position; // size=6, offset=0
-	struct _Rotation direction; // size=8, offset=0
-	_Position throwVector; // size=6, offset=0
-};
-
 struct mcmenu_table_t // hashcode: 0xB78C7C17 (dec: -1215529961)
 {
 	int  (*data_size)(); // size=0, offset=0
@@ -251,13 +189,6 @@ struct mcpsx_t // hashcode: 0x79B44761 (dec: 2041857889)
 		long* nfilesptr; // size=0, offset=28
 	} params; // size=32, offset=20, found in object files: memcard.o, memcard.o
 	void* opaque; // size=0, offset=52
-};
-
-struct MEMCARD_216fake // hashcode: 0x1C10213E (dec: 470819134)
-{
-	struct mcmenu_t dummy1; // size=404, offset=0
-	struct mcard_t dummy2; // size=52, offset=404
-	struct mcpsx_t dummy3; // size=56, offset=456
 };
 
 struct SavedInfoTracker // hashcode: 0x03231C9A (dec: 52632730)
