@@ -261,14 +261,6 @@ struct GenericFXObject // hashcode: 0xD22FD65C (dec: -768616868)
 	long* ColorList; // size=0, offset=24
 };
 
-union FX_204fake // Hashcode: 0x83EDAC95 (dec: -2081575787)
-{
-	struct _Instance* target; // size=616, offset=0
-	_Position position; // size=6, offset=0
-	struct _Rotation direction; // size=8, offset=0
-	_Position throwVector; // size=6, offset=0
-};
-
 struct _FX_MATRIX // hashcode: 0x13190ADD (dec: 320408285)
 {
 	struct NodeType node; // size=8, offset=0
