@@ -48,14 +48,18 @@ void LIST_DeleteFunc(struct NodeType* node)//Matching - 100%
     node->prev = NULL;
 }
 
-struct NodeType* LIST_GetFunc(struct NodeType* list)
+struct NodeType* LIST_GetFunc(struct NodeType* list)  // Matching - 100%
 {
-	if (list->next != NULL)
-	{
-		LIST_DeleteFunc(list->next);
+    struct NodeType* temp;  // not from SYMDUMP
 
-		return list->next;
-	}
+    temp = list->next;
 
-	return NULL;
+    if (temp != NULL)
+    {
+        LIST_DeleteFunc(temp);
+
+        return temp;
+    }
+
+    return NULL;
 }
