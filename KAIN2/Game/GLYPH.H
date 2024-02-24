@@ -3,38 +3,6 @@
 
 #include "MONSTER/MONSTER.H"
 
-struct GLYPH_114fake // hashcode: 0x249332FF (dec: 613626623)
-{
-	struct {
-		struct MultiSpline* posSpline; // size=0, offset=0
-		struct MultiSpline* targetSpline; // size=0, offset=4
-		struct _SVector lastSplinePos; // size=8, offset=8
-		short splinePointAhead; // size=0, offset=16
-		short cinema_done; // size=0, offset=18
-		int splinecam_currkey; // size=0, offset=20
-		int splinecam_helpkey; // size=0, offset=24
-	} Cinematic; // size=28, offset=0, found in object files: glyph.o, glyph.o
-	struct {
-		_Position offset; // size=6, offset=0
-		struct _Rotation rotation; // size=8, offset=6
-		long focusDistance; // size=0, offset=16
-	} Idle; // size=20, offset=28, found in object files: glyph.o, glyph.o
-	struct {
-		struct _TFace* tface; // size=12, offset=0
-		struct _TFace* oldTFace; // size=12, offset=4
-		struct _SVector oldTargetRot; // size=8, offset=8
-		long timer; // size=0, offset=16
-		struct _SVector oldFocusInstancePos; // size=8, offset=20
-	} Behind; // size=28, offset=48, found in object files: glyph.o, glyph.o
-	struct {
-		long stopTimer; // size=0, offset=0
-		long stopHit; // size=0, offset=4
-		struct _TFace* tface; // size=12, offset=8
-		struct _TFace* oldTFace; // size=12, offset=12
-		long hit; // size=0, offset=16
-	} Follow; // size=20, offset=76, found in object files: glyph.o, glyph.o
-};
-
 struct __GlyphData // hashcode: 0x9C88C1F1 (dec: -1668759055)
 {
 	void (*process)(struct _Instance*, int, int); // size=0, offset=0
