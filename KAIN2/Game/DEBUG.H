@@ -31,12 +31,6 @@ struct debug_format_t // hashcode: 0xCC4C6103 (dec: -867409661)
 	int is_centered; // size=0, offset=8
 };
 
-union DEBUG_260fake // Hashcode: 0x8C9106F7 (dec: -1936652553)
-{
-	struct Intro* intro; // size=76, offset=0
-	struct _SFXMkr* sfxMarker; // size=36, offset=0
-};
-
 struct DebugMenuLine // hashcode: 0x1BD18E81 (dec: 466718337)
 {
 	enum DEBUG_LINE_TYPE type; // size=4, offset=0
