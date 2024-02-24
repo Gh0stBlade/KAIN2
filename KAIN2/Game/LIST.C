@@ -1,18 +1,18 @@
 #include "CORE.H"
 #include "LIST.H"
 
-void LIST_InsertFunc(struct NodeType *list, struct NodeType *node) //Matching - 99.55%
+void LIST_InsertFunc(struct NodeType* list, struct NodeType* node)  // Matching - 100%
 {
-	node->prev = list;
+    node->prev = list;
 
-	node->next = list->next;
+    node->next = list->next;
 
-	if (list->next != NULL)
-	{
-		list->prev = node;
-	}
+    if (list->next != NULL)
+    {
+        list->next->prev = node;
+    }
 
-	list->next = node;
+    list->next = node;
 }
 
 void LIST_DeleteFunc(struct NodeType* node)//Matching - 100%
