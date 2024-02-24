@@ -627,7 +627,7 @@ void OBTABLE_RelocateObjectTune(struct Object *object, long offset)
 			UNIMPLEMENTED();
 }
 
-void OBTABLE_RelocateInstanceObject(struct _Instance* instance, int offset)
+void OBTABLE_RelocateInstanceObject(struct _Instance* instance, long offset)
 {
 	int id;
 
