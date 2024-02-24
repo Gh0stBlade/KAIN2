@@ -4,28 +4,6 @@
 #include "G2/QUATG2.H"
 #include "CORE.H"
 
-union FONT_76fake // Hashcode: 0x7BE39A46 (dec: 2078513734)
-{
-	struct {
-		unsigned long (*function)(); // size=0, offset=0
-		void* fnData; // size=0, offset=4
-	} callback; // size=8, offset=0, found in object files: font.o, font.o
-	struct {
-		struct _G2SVector3_Type base; // size=6, offset=0
-		struct _G2SVector3_Type offset; // size=6, offset=6
-	} vector; // size=12, offset=0, found in object files: font.o, font.o
-	struct {
-		struct _G2Quat_Type src; // size=8, offset=0
-		struct _G2Quat_Type dest; // size=8, offset=8
-	} quat; // size=16, offset=0, found in object files: font.o, font.o
-};
-
-union FONT_77fake // Hashcode: 0xADC7F886 (dec: -1379403642)
-{
-	long color; // size=0, offset=0
-	struct _RGBAColor rgba; // size=4, offset=0
-};
-
 typedef struct FontChar // hashcode: 0x5A2F9F5B (dec: 1513070427)
 {
 	short x; // size=0, offset=0
@@ -50,46 +28,6 @@ struct FontTracker // hashcode: 0xE32D3F0A (dec: -483574006)
 	short font_vramY; // size=0, offset=1562
 	char color_global; // size=0, offset=1564
 	char color_local; // size=0, offset=1565
-};
-
-struct FONT_118fake // hashcode: 0x5664C5CE (dec: 1449444814)
-{
-	struct {
-		struct MultiSpline* posSpline; // size=0, offset=0
-		struct MultiSpline* targetSpline; // size=0, offset=4
-		struct _SVector lastSplinePos; // size=8, offset=8
-		short splinePointAhead; // size=0, offset=16
-		short cinema_done; // size=0, offset=18
-		int splinecam_currkey; // size=0, offset=20
-		int splinecam_helpkey; // size=0, offset=24
-	} Cinematic; // size=28, offset=0, found in object files: font.o, font.o
-	struct {
-		_Position offset; // size=6, offset=0
-		struct _Rotation rotation; // size=8, offset=6
-		long focusDistance; // size=0, offset=16
-	} Idle; // size=20, offset=28, found in object files: font.o, font.o
-	struct {
-		struct _TFace* tface; // size=12, offset=0
-		struct _TFace* oldTFace; // size=12, offset=4
-		struct _SVector oldTargetRot; // size=8, offset=8
-		long timer; // size=0, offset=16
-		struct _SVector oldFocusInstancePos; // size=8, offset=20
-	} Behind; // size=28, offset=48, found in object files: font.o, font.o
-	struct {
-		long stopTimer; // size=0, offset=0
-		long stopHit; // size=0, offset=4
-		struct _TFace* tface; // size=12, offset=8
-		struct _TFace* oldTFace; // size=12, offset=12
-		long hit; // size=0, offset=16
-	} Follow; // size=20, offset=76, found in object files: font.o, font.o
-};
-
-union FONT_213fake // Hashcode: 0x740A6D3C (dec: 1946840380)
-{
-	struct _Instance* target; // size=616, offset=0
-	_Position position; // size=6, offset=0
-	struct _Rotation direction; // size=8, offset=0
-	_Position throwVector; // size=6, offset=0
 };
 
 typedef struct font_color_t // hashcode: 0x5F515B79 (dec: 1599167353)
