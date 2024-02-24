@@ -439,33 +439,6 @@ struct _InstanceList // hashcode: 0x7594B1C7 (dec: 1972679111)
 	struct NodeType group[32]; // size=256, offset=12
 };
 
-union INSTANCE_270fake // Hashcode: 0xB44B3EBC (dec: -1270137156)
-{
-	struct Intro* intro; // size=76, offset=0
-	struct _SFXMkr* sfxMarker; // size=36, offset=0
-};
-
-union INSTANCE_77fake // Hashcode: 0x2031C6D4 (dec: 540133076)
-{
-	long color; // size=0, offset=0
-	struct _RGBAColor rgba; // size=4, offset=0
-};
-
-union INSTANCE_76fake // Hashcode: 0x868EC9CC (dec: -2037462580)
-{
-	struct {
-		unsigned long (*function)(); // size=0, offset=0
-		void* fnData; // size=0, offset=4
-	} callback; // size=8, offset=0, found in object files: instance.o, instance.o
-	struct {
-		struct _G2SVector3_Type base; // size=6, offset=0
-		struct _G2SVector3_Type offset; // size=6, offset=6
-	} vector; // size=12, offset=0, found in object files: instance.o, instance.o
-	struct {
-		struct _G2Quat_Type src; // size=8, offset=0
-		struct _G2Quat_Type dest; // size=8, offset=8
-	} quat; // size=16, offset=0, found in object files: instance.o, instance.o
-};
 
 extern void INSTANCE_ClearTfaces(struct _Instance *instance); // 0x80031ED8
 extern void INSTANCE_Deactivate(struct _Instance *instance); // 0x80031F04
