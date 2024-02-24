@@ -1193,7 +1193,7 @@ long EVENT_TransformConstrictAttribute(struct _PCodeStack* stack, struct StackTy
 	return retValue;
 }
 
-long EVENT_TransformInstanceAttribute(struct _PCodeStack* stack, struct StackType* stackObject, long item, short* codeStream)  // Matching - 99.03%
+long EVENT_TransformInstanceAttribute(struct _PCodeStack* stack, struct StackType* stackObject, long item, short* codeStream)  // Matching - 99.31%
 {
 	long retValue;
 	long x;
@@ -1235,7 +1235,6 @@ long EVENT_TransformInstanceAttribute(struct _PCodeStack* stack, struct StackTyp
 	{
 		struct evPositionData* rotation;
 		struct Rotation3d vector;
-		struct _SVector pad;  // not from SYMDUMP
 
 		rotation = (struct evPositionData*)INSTANCE_Query(instance, 7);
 
@@ -1252,9 +1251,9 @@ long EVENT_TransformInstanceAttribute(struct _PCodeStack* stack, struct StackTyp
 			vector.vz = rotation->z;
 		}
 
-		pad.x = 512;
-		pad.y = 512;
-		pad.z = 512;
+		vector.errorx = 512;
+		vector.errorz = 512;
+		vector.errory = 512;
 
 		EVENT_ChangeOperandRotation3d(stackObject, &vector);
 
