@@ -29,38 +29,6 @@ struct _G2AnimController_Type // hashcode: 0x74838F3C (dec: 1954778940)
 	} data; // size=16, offset=20, found in object files: AnimG2.o, AnimG2.o
 };
 
-struct ANIMG2_109fake // hashcode: 0x1C77A67E (dec: 477603454)
-{
-	struct {
-		struct MultiSpline* posSpline; // size=0, offset=0
-		struct MultiSpline* targetSpline; // size=0, offset=4
-		struct _SVector lastSplinePos; // size=8, offset=8
-		short splinePointAhead; // size=0, offset=16
-		short cinema_done; // size=0, offset=18
-		int splinecam_currkey; // size=0, offset=20
-		int splinecam_helpkey; // size=0, offset=24
-	} Cinematic; // size=28, offset=0, found in object files: AnimG2.o, AnimG2.o
-	struct {
-		_Position offset; // size=6, offset=0
-		struct _Rotation rotation; // size=8, offset=6
-		long focusDistance; // size=0, offset=16
-	} Idle; // size=20, offset=28, found in object files: AnimG2.o, AnimG2.o
-	struct {
-		struct _TFace* tface; // size=12, offset=0
-		struct _TFace* oldTFace; // size=12, offset=4
-		struct _SVector oldTargetRot; // size=8, offset=8
-		long timer; // size=0, offset=16
-		struct _SVector oldFocusInstancePos; // size=8, offset=20
-	} Behind; // size=28, offset=48, found in object files: AnimG2.o, AnimG2.o
-	struct {
-		long stopTimer; // size=0, offset=0
-		long stopHit; // size=0, offset=4
-		struct _TFace* tface; // size=12, offset=8
-		struct _TFace* oldTFace; // size=12, offset=12
-		long hit; // size=0, offset=16
-	} Follow; // size=20, offset=76, found in object files: AnimG2.o, AnimG2.o
-};
-
 struct _G2AnimSegKeyflagInfo_Type // hashcode: 0x5786AAF7 (dec: 1468443383)
 {
 	unsigned long* stream; // size=0, offset=0
