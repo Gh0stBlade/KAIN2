@@ -3,28 +3,6 @@
 
 typedef struct _G2EulerAngles_Type G2EulerAngles;
 
-union MATH3D_76fake // Hashcode: 0x663290A4 (dec: 1714589860)
-{
-	struct {
-		unsigned long (*function)(); // size=0, offset=0
-		void* fnData; // size=0, offset=4
-	} callback; // size=8, offset=0, found in object files: math3d.o, math3d.o
-	struct {
-		struct _G2SVector3_Type base; // size=6, offset=0
-		struct _G2SVector3_Type offset; // size=6, offset=6
-	} vector; // size=12, offset=0, found in object files: math3d.o, math3d.o
-	struct {
-		struct _G2Quat_Type src; // size=8, offset=0
-		struct _G2Quat_Type dest; // size=8, offset=8
-	} quat; // size=16, offset=0, found in object files: math3d.o, math3d.o
-};
-
-union MATH3D_77fake // Hashcode: 0xA8CF04EA (dec: -1462827798)
-{
-	long color; // size=0, offset=0
-	struct _RGBAColor rgba; // size=4, offset=0
-};
-
 enum MATH3D_AXIS // Hashcode: 0x37FE6D4A (dec: 939421002)
 {
 	AXIS_X = 0,
