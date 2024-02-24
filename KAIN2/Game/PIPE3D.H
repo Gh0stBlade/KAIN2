@@ -4,84 +4,12 @@
 #include "FX.H"
 #include "G2/MAING2.H"
 
-union PIPE3D_71fake // Hashcode: 0x1EBB5F62 (dec: 515596130)
-{
-	struct {
-		unsigned long (*function)(); // size=0, offset=0
-		void* fnData; // size=0, offset=4
-	} callback; // size=8, offset=0, found in object files: pipe3d.o, pipe3d.o
-	struct {
-		struct _G2SVector3_Type base; // size=6, offset=0
-		struct _G2SVector3_Type offset; // size=6, offset=6
-	} vector; // size=12, offset=0, found in object files: pipe3d.o, pipe3d.o
-	struct {
-		struct _G2Quat_Type src; // size=8, offset=0
-		struct _G2Quat_Type dest; // size=8, offset=8
-	} quat; // size=16, offset=0, found in object files: pipe3d.o, pipe3d.o
-};
-
-union PIPE3D_72fake // Hashcode: 0x17C0E47B (dec: 398517371)
-{
-	long color; // size=0, offset=0
-	struct _RGBAColor rgba; // size=4, offset=0
-};
-
 struct _Mirror // hashcode: 0x6161DBD4 (dec: 1633803220)
 {
 	short a; // size=0, offset=0
 	short b; // size=0, offset=2
 	short c; // size=0, offset=4
 	short d; // size=0, offset=6
-};
-
-struct PIPE3D_109fake // hashcode: 0xEADE4BF5 (dec: -354530315)
-{
-	struct {
-		struct MultiSpline* posSpline; // size=0, offset=0
-		struct MultiSpline* targetSpline; // size=0, offset=4
-		struct _SVector lastSplinePos; // size=8, offset=8
-		short splinePointAhead; // size=0, offset=16
-		short cinema_done; // size=0, offset=18
-		int splinecam_currkey; // size=0, offset=20
-		int splinecam_helpkey; // size=0, offset=24
-	} Cinematic; // size=28, offset=0, found in object files: pipe3d.o, pipe3d.o
-	struct {
-		_Position offset; // size=6, offset=0
-		struct _Rotation rotation; // size=8, offset=6
-		long focusDistance; // size=0, offset=16
-	} Idle; // size=20, offset=28, found in object files: pipe3d.o, pipe3d.o
-	struct {
-		struct _TFace* tface; // size=12, offset=0
-		struct _TFace* oldTFace; // size=12, offset=4
-		struct _SVector oldTargetRot; // size=8, offset=8
-		long timer; // size=0, offset=16
-		struct _SVector oldFocusInstancePos; // size=8, offset=20
-	} Behind; // size=28, offset=48, found in object files: pipe3d.o, pipe3d.o
-	struct {
-		long stopTimer; // size=0, offset=0
-		long stopHit; // size=0, offset=4
-		struct _TFace* tface; // size=12, offset=8
-		struct _TFace* oldTFace; // size=12, offset=12
-		long hit; // size=0, offset=16
-	} Follow; // size=20, offset=76, found in object files: pipe3d.o, pipe3d.o
-};
-
-union PIPE3D_199fake // Hashcode: 0x416C539D (dec: 1097618333)
-{
-	struct _Instance* target; // size=616, offset=0
-	_Position position; // size=6, offset=0
-	struct _Rotation direction; // size=8, offset=0
-	_Position throwVector; // size=6, offset=0
-};
-
-struct PIPE3D_239fake // hashcode: 0x11DBF281 (dec: 299627137)
-{
-	long m[3]; // size=12, offset=0
-};
-
-struct PIPE3D_240fake // hashcode: 0xB73CD4A8 (dec: -1220750168)
-{
-	long m[5]; // size=20, offset=0
 };
 
 struct AniTexInfo 
