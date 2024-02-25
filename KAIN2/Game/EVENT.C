@@ -761,8 +761,8 @@ long EVENT_WriteEventObject(struct StackType* stackEntry, long areaID, struct Ev
 	if (event != NULL)
 	{
 		stackEntry->id = 16;
-		stackEntry->data.savedEventObject.savedEvent = (struct SavedBasic*)event;
-		stackEntry->data.savedEventObject.attribute = -1;
+		stackEntry->data.eventObject.event = event;
+		stackEntry->data.eventObject.attribute = -1;
 	}
 	else
 	{
