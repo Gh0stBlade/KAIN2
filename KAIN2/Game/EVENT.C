@@ -5508,6 +5508,7 @@ void EVENT_RemoveStreamToInstanceList(struct _StreamUnit* stream)  // Matching -
 	struct EventTGroupObject* tgroupEventObject;  // not from SYMDUMP
 	struct EventWildCardObject* wildcardEventObject;  // not from SYMDUMP
 	struct EventInstanceObject* instanceEventObject;  // not from SYMDUMP
+	struct EventSignalObject* eventSignalObject;  // not from SYMDUMP
 
 	for (d = 0; d < 16; d++)
 	{
@@ -5559,11 +5560,11 @@ void EVENT_RemoveStreamToInstanceList(struct _StreamUnit* stream)  // Matching -
 				}
 				else if (basicEventObject[i2]->id == 6)
 				{
-					wildcardEventObject = (struct EventWildCardObject*)basicEventObject[i2];
+					eventSignalObject = (struct EventSignalObject*)basicEventObject[i2];
 
-					if (wildcardEventObject->unitID == stream->StreamUnitID)
+					if (eventSignalObject->unitID == stream->StreamUnitID)
 					{
-						wildcardEventObject->objectName = NULL;
+						eventSignalObject->mSignal = NULL;
 					}
 				}
 				else if (basicEventObject[i2]->id == 1)
@@ -5572,7 +5573,7 @@ void EVENT_RemoveStreamToInstanceList(struct _StreamUnit* stream)  // Matching -
 
 					if (instanceEventObject->unitID == stream->StreamUnitID)
 					{
-						instanceEventObject->data.intro = NULL;
+						instanceEventObject->data.sfxMarker = NULL;
 					}
 				}
 			}
