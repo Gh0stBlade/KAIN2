@@ -350,6 +350,23 @@ struct EventTGroupObject
 	struct _StreamUnit* stream; // size=0, offset=12
 };
 
+struct EventSignalObject  // not from SYMDUMP
+{
+	short id; // size=0, offset=0
+	short signalNum; // size=0, offset=2
+	long unitID; // size=0, offset=4
+	struct _MultiSignal* mSignal; // size=904, offset=8
+};
+
+struct EventEventVmObject  // not from SYMDUMP
+{
+	short id; // size=0, offset=0
+	short spad; // size=0, offset=2
+	long unitID; // size=0, offset=4
+	char objectName[12]; // size=12, offset=8
+	struct _VMObject* vmObject; // size=60, offset=20
+};
+
 struct HintSystemStruct
 {
 	short flags; // size=0, offset=0
