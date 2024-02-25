@@ -70,60 +70,6 @@ struct menu_t // hashcode: 0x8AB0D2F2 (dec: -1968123150)
 	void* opaque; // size=0, offset=900
 };
 
-union MENU_71fake // Hashcode: 0x9417F09E (dec: -1810370402)
-{
-	struct {
-		unsigned long (*function)(); // size=0, offset=0
-		void* fnData; // size=0, offset=4
-	} callback; // size=8, offset=0, found in object files: menu.o, menu.o
-	struct {
-		struct _G2SVector3_Type base; // size=6, offset=0
-		struct _G2SVector3_Type offset; // size=6, offset=6
-	} vector; // size=12, offset=0, found in object files: menu.o, menu.o
-	struct {
-		struct _G2Quat_Type src; // size=8, offset=0
-		struct _G2Quat_Type dest; // size=8, offset=8
-	} quat; // size=16, offset=0, found in object files: menu.o, menu.o
-};
-
-union MENU_72fake // Hashcode: 0xE575C374 (dec: -445267084)
-{
-	long color; // size=0, offset=0
-	struct _RGBAColor rgba; // size=4, offset=0
-};
-
-struct MENU_113fake // hashcode: 0x792A6BAF (dec: 2032823215)
-{
-	struct {
-		struct MultiSpline* posSpline; // size=0, offset=0
-		struct MultiSpline* targetSpline; // size=0, offset=4
-		struct _SVector lastSplinePos; // size=8, offset=8
-		short splinePointAhead; // size=0, offset=16
-		short cinema_done; // size=0, offset=18
-		int splinecam_currkey; // size=0, offset=20
-		int splinecam_helpkey; // size=0, offset=24
-	} Cinematic; // size=28, offset=0, found in object files: menu.o, menu.o
-	struct {
-		_Position offset; // size=6, offset=0
-		struct _Rotation rotation; // size=8, offset=6
-		long focusDistance; // size=0, offset=16
-	} Idle; // size=20, offset=28, found in object files: menu.o, menu.o
-	struct {
-		struct _TFace* tface; // size=12, offset=0
-		struct _TFace* oldTFace; // size=12, offset=4
-		struct _SVector oldTargetRot; // size=8, offset=8
-		long timer; // size=0, offset=16
-		struct _SVector oldFocusInstancePos; // size=8, offset=20
-	} Behind; // size=28, offset=48, found in object files: menu.o, menu.o
-	struct {
-		long stopTimer; // size=0, offset=0
-		long stopHit; // size=0, offset=4
-		struct _TFace* tface; // size=12, offset=8
-		struct _TFace* oldTFace; // size=12, offset=12
-		long hit; // size=0, offset=16
-	} Follow; // size=20, offset=76, found in object files: menu.o, menu.o
-};
-
 struct menu_sound_entry_t // hashcode: 0xFFB1DFB2 (dec: -5120078)
 {
 	enum menu_sound_t sound; // size=4, offset=0
