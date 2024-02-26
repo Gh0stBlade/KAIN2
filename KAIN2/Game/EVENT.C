@@ -4060,9 +4060,9 @@ long EVENT_DoAreaAction(struct AreaObject* areaObject, struct StackType* operand
 	if (areaObject->attribute != -1)
 	{
 		number = EVENT_ParseOperand2(operand2, &error, &trueValue);
-		if (areaObject->attribute != 0x70)
+		if (areaObject->attribute != 112)
 		{
-			if ((areaObject->attribute == 0x71) && (error == 0))
+			if ((areaObject->attribute == 113) && (error == 0))
 			{
 				streamUnit->TargetFogNear = (short)number;
 				streamUnit->level->fogNear = (short)number;
