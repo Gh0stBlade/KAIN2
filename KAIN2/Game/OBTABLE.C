@@ -6,7 +6,7 @@
 #include "PHYSOBS.H"
 #include "MONSTER/MONAPI.H"
 #include "FX.H"
-#include "SCRIPT2.H"
+#include "EVENT.H"
 #include "GENERIC.H"
 #include "GAMELOOP.H"
 #include "SCRIPT.H"
