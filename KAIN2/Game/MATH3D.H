@@ -3,7 +3,7 @@
 
 typedef struct _G2EulerAngles_Type G2EulerAngles;
 
-enum MATH3D_AXIS // Hashcode: 0x37FE6D4A (dec: 939421002)
+enum MATH3D_AXIS : int 
 {
 	AXIS_X = 0,
 	AXIS_Y = 1,
