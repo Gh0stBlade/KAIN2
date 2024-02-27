@@ -27,10 +27,10 @@ struct PhysObWeaponAttributes
 
 struct LightTableEntry 
 {
-  short r; // size=0, offset=0
-  short g; // size=0, offset=2
-  short b; // size=0, offset=4
-  short radius; // size=0, offset=6
+    short r; // size=0, offset=0
+    short g; // size=0, offset=2
+    short b; // size=0, offset=4
+    short radius; // size=0, offset=6
 };
 
 struct SwitchData 
@@ -73,7 +73,8 @@ struct PhysObSwitchProperties
     unsigned char engageZCone; // size=0, offset=31
 };
 
-struct PhysObWeaponProperties {
+struct PhysObWeaponProperties 
+{
     struct PhysObProperties Properties; // size=8, offset=0
     struct PhysObWeaponAttributes WeaponAttributes; // size=28, offset=8
 };
@@ -117,36 +118,36 @@ struct PhysObCollectibleProperties
 
 struct PhysObData 
 {
-  long Mode; // size=0, offset=0
-  short xForce; // size=0, offset=4
-  short yForce; // size=0, offset=6
-  struct _Instance *Force; // size=668, offset=8
-  short LinkNode; // size=0, offset=12
-  short px; // size=0, offset=14
-  short py; // size=0, offset=16
-  short pz; // size=0, offset=18
-  short rx1; // size=0, offset=20
-  short ry1; // size=0, offset=22
-  short rz1; // size=0, offset=24
-  short Segment1; // size=0, offset=26
-  short rx2; // size=0, offset=28
-  short ry2; // size=0, offset=30
-  short rz2; // size=0, offset=32
-  short Segment2; // size=0, offset=34
-  short Steps; // size=0, offset=36
-  short Step; // size=0, offset=38
-  short PathNumber; // size=0, offset=40
-  short Pad1; // size=0, offset=42
-  struct _HInfo *RightCollision; // size=24, offset=44
-  struct _HInfo *LeftCollision; // size=24, offset=48
-  short burnAmpl; // size=0, offset=52
-  short throwFlags; // size=0, offset=54
-  short initialXRot; // size=0, offset=56
-  short xRotVel; // size=0, offset=58
-  short yRotVel; // size=0, offset=60
-  short zRotVel; // size=0, offset=62
-  struct _Instance *throwingInstance; // size=668, offset=64
-  int physObTimer; // size=0, offset=68
+    long Mode; // size=0, offset=0
+    short xForce; // size=0, offset=4
+    short yForce; // size=0, offset=6
+    struct _Instance* Force; // size=668, offset=8
+    short LinkNode; // size=0, offset=12
+    short px; // size=0, offset=14
+    short py; // size=0, offset=16
+    short pz; // size=0, offset=18
+    short rx1; // size=0, offset=20
+    short ry1; // size=0, offset=22
+    short rz1; // size=0, offset=24
+    short Segment1; // size=0, offset=26
+    short rx2; // size=0, offset=28
+    short ry2; // size=0, offset=30
+    short rz2; // size=0, offset=32
+    short Segment2; // size=0, offset=34
+    short Steps; // size=0, offset=36
+    short Step; // size=0, offset=38
+    short PathNumber; // size=0, offset=40
+    short Pad1; // size=0, offset=42
+    struct _HInfo* RightCollision; // size=24, offset=44
+    struct _HInfo* LeftCollision; // size=24, offset=48
+    short burnAmpl; // size=0, offset=52
+    short throwFlags; // size=0, offset=54
+    short initialXRot; // size=0, offset=56
+    short xRotVel; // size=0, offset=58
+    short yRotVel; // size=0, offset=60
+    short zRotVel; // size=0, offset=62
+    struct _Instance* throwingInstance; // size=668, offset=64
+    int physObTimer; // size=0, offset=68
 };
 
 struct evObjectData 
@@ -161,27 +162,29 @@ struct evObjectData
 
 struct evObjectThrowData 
 {
-  short type; // size=0, offset=0
-  short spinType; // size=0, offset=2
-  union {
-    struct _Instance *target; // size=668, offset=0
-    struct _Position position; // size=6, offset=0
-    struct _Rotation direction; // size=8, offset=0
-    struct _Position throwVector; // size=6, offset=0
-  } data; // size=8, offset=4
-  struct _SVector angularVel; // size=8, offset=12
-  unsigned short speed; // size=0, offset=20
-  short gravity; // size=0, offset=22
-  short initialXRot; // size=0, offset=24
-  short zVel; // size=0, offset=26
+    short type; // size=0, offset=0
+    short spinType; // size=0, offset=2
+    union 
+    {
+        struct _Instance* target; // size=668, offset=0
+        struct _Position position; // size=6, offset=0
+        struct _Rotation direction; // size=8, offset=0
+        struct _Position throwVector; // size=6, offset=0
+    } 
+    data; // size=8, offset=4
+    struct _SVector angularVel; // size=8, offset=12
+    unsigned short speed; // size=0, offset=20
+    short gravity; // size=0, offset=22
+    short initialXRot; // size=0, offset=24
+    short zVel; // size=0, offset=26
 };
 
 struct _PhysObLight 
 {
-  unsigned char length; // size=0, offset=0
-  unsigned char segment; // size=0, offset=1
-  short speed; // size=0, offset=2
-  struct LightTableEntry *lightTable; // size=8, offset=4
+    unsigned char length; // size=0, offset=0
+    unsigned char segment; // size=0, offset=1
+    short speed; // size=0, offset=2
+    struct LightTableEntry* lightTable; // size=8, offset=4
 };
 
 extern void PHYSOB_PlayDropSound(struct _Instance *instance); // 0x80068700
