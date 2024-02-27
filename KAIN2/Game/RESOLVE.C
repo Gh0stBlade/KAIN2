@@ -1,17 +1,17 @@
 #include "CORE.H"
 #include "RESOLVE.H"
 
-void RESOLVE_Pointers(struct RedirectList *redirectList, int *data, int *baseAddr)//Matching - 100%
+void RESOLVE_Pointers(struct RedirectList* redirectList, long* data, long* baseAddr)//Matching - 100%
 {
-	int* rdList;
+	long* rdList;
 	int i;
-	uintptr_t* handle;
+	long* handle;
 
 	rdList = redirectList->data;
 
 	for (i = redirectList->numPointers; i != 0; i--, rdList++)
 	{
-		handle = (uintptr_t*)((char*)data + *rdList);
-		*handle += (uintptr_t)((char*)baseAddr);
+		handle = (long*)((char*)data + *rdList);
+		*handle += (long)((char*)baseAddr);
 	}
 }
