@@ -1070,7 +1070,7 @@ long LOAD_RelocBinaryData(int* data, long fileSize)
 
 	redirectList = &redirectListX;
 
-	redirectList->data = data + 1;
+	redirectList->data = (long*)data + 1;
 
 	redirectList->numPointers = data[0];
 
@@ -1078,7 +1078,7 @@ long LOAD_RelocBinaryData(int* data, long fileSize)
 	tableSize /= 512;
 	tableSize *= 512;
 
-	RESOLVE_Pointers(redirectList, &data[tableSize], data);
+	RESOLVE_Pointers(redirectList, (long*)&data[tableSize], (long*)data);
 
 	lastMoveDest = &data[fileSize - (tableSize)];
 
