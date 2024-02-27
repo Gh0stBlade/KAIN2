@@ -394,6 +394,7 @@ extern short MovieToPlay; // offset 0x800D2A70
 extern struct _Instance* eventListArray[20][10]; // offset 0x800D44C0
 extern long eventListNumInstances[20]; // offset 0x800D43D0
 
+extern void LitShaftInit(struct _Instance* instance, struct GameTracker* gameTracker); // 0x8005EEE0
 extern void EVENT_UpdateResetSignalArrayAndWaterMovement(struct Level *oldLevel, struct Level *newLevel, long sizeOfLevel); // 0x800605D0
 extern void EVENT_ResetAllOneTimeVariables(); // 0x800606AC
 extern void EVENT_AddSignalToReset(struct _MultiSignal *mSignal); // 0x80060714
