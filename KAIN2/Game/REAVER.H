@@ -1,12 +1,12 @@
 #ifndef REAVER_H
 #define REAVER_H
 
-struct __ReaverSaveDat // hashcode: 0x18BBFFA1 (dec: 414973857)
+struct __ReaverSaveDat 
 {
 	unsigned long pad; // size=0, offset=0
 };
 
-struct __ReaverData // hashcode: 0xD1EA4FE0 (dec: -773173280)
+struct __ReaverData 
 {
 	char ReaverPickedUp; // size=0, offset=0
 	char ReaverOn; // size=0, offset=1
@@ -23,7 +23,7 @@ struct __ReaverData // hashcode: 0xD1EA4FE0 (dec: -773173280)
 	struct __ReaverSaveDat saveData; // size=4, offset=32
 };
 
-struct __ReaverTuneData // hashcode: 0xE4E74D43 (dec: -454603453)
+struct __ReaverTuneData 
 {
 	unsigned long spectralGlowColor; // size=0, offset=0
 	unsigned long materialGlowColor; // size=0, offset=4
