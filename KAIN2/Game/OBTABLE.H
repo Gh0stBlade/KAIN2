@@ -1,14 +1,14 @@
 #ifndef OBTABLE_H
 #define OBTABLE_H
 
-struct _ObjectOwnerInfo // hashcode: 0x04BCED5C (dec: 79490396)
+struct _ObjectOwnerInfo 
 {
 	long magicnum; // size=0, offset=0
 	short animID; // size=0, offset=4
 	char objectName[1]; // size=0, offset=6
 };
 
-struct ObjectAccess // hashcode: 0x1268C513 (dec: 308856083)
+struct ObjectAccess 
 {
 	char* objectName; // size=0, offset=0
 	void* object; // size=0, offset=4
@@ -18,7 +18,7 @@ typedef struct _ObjectOwnerInfo ObjectOwnerInfo;
 
 typedef struct ObjectAccess ObjectAccess;
 
-struct ObjectFunc // hashcode: 0xFDE6E2DA (dec: -35200294)
+struct ObjectFunc 
 {
 	char* scriptName; // size=0, offset=0
 	void (*initFunc)(struct _Instance*, struct GameTracker*); // size=0, offset=4
