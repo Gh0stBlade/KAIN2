@@ -35,7 +35,7 @@ struct _SavedIntroWithIntro
 	long flags; // size=0, offset=12
 	long flags2; // size=0, offset=16
 	struct _SmallRotation smallRotation; // size=6, offset=20
-	_Position position; // size=6, offset=26
+	struct _Position position; // size=6, offset=26
 };
 
 struct SavedEvent 
@@ -59,7 +59,7 @@ struct _SavedIntro
 	short birthUnitID; // size=0, offset=16
 	unsigned short attachedUniqueID; // size=0, offset=18
 	struct _SmallRotation smallRotation; // size=6, offset=20
-	_Position position; // size=6, offset=26
+	struct _Position position; // size=6, offset=26
 	long flags; // size=0, offset=32
 	long flags2; // size=0, offset=36
 };
@@ -82,13 +82,14 @@ struct SavedIntroSpline
 	short splineClipEnd; // size=0, offset=10
 };
 
-struct SavedBasic // hashcode: 0x6198E1EF (dec: 1637409263)
+struct SavedBasic 
 {
 	unsigned char savedID; // size=0, offset=0
 	unsigned char shiftedSaveSize; // size=0, offset=1
 };
 
-struct _GlobalSaveTracker {
+struct _GlobalSaveTracker 
+{
 	short savedID; // size=0, offset=0
 	short saveSize; // size=0, offset=2
 	short flags; // size=0, offset=4
@@ -102,12 +103,15 @@ struct _GlobalSaveTracker {
 	short CurrentBirthID; // size=0, offset=118
 };
 
-struct SavedBspTree {
+struct SavedBspTree 
+{
 	struct _Position localOffset; // size=6, offset=0
 	unsigned char importantFlagsSaved; // size=0, offset=6
 	unsigned char bspIndex; // size=0, offset=7
 };
-struct ActualSavedLevel {
+
+struct ActualSavedLevel 
+{
 	unsigned char savedID; // size=0, offset=0
 	unsigned char shiftedSaveSize; // size=0, offset=1
 	short areaID; // size=0, offset=2
@@ -116,7 +120,8 @@ struct ActualSavedLevel {
 	struct SavedBspTree bspTreeArray[1]; // size=8, offset=8
 };
 
-struct SavedLevel {
+struct SavedLevel 
+{
 	unsigned char savedID; // size=0, offset=0
 	unsigned char shiftedSaveSize; // size=0, offset=1
 	short areaID; // size=0, offset=2
