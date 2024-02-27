@@ -7,15 +7,15 @@
 extern "C" {
 #endif
 
-struct MemHeader // hashcode: 0xDAEE4890 (dec: -621918064)
+struct MemHeader 
 {
 	unsigned short magicNumber; // size=0, offset=0
 	unsigned char memStatus; // size=0, offset=2
 	unsigned char memType; // size=0, offset=3
-	unsigned int memSize; // size=0, offset=4
+	unsigned long memSize; // size=0, offset=4
 };
 
-struct NewMemTracker // hashcode: 0x5C68280F (dec: 1550329871)
+struct NewMemTracker 
 {
 	struct MemHeader* rootNode; // size=8, offset=0
 	unsigned long totalMemory; // size=0, offset=4
