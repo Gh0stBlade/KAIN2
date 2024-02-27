@@ -4,7 +4,7 @@
 #include "FX.H"
 #include "G2/MAING2.H"
 
-struct _Mirror // hashcode: 0x6161DBD4 (dec: 1633803220)
+struct _Mirror 
 {
 	short a; // size=0, offset=0
 	short b; // size=0, offset=2
