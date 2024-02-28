@@ -1694,7 +1694,7 @@ long EVENT_TransformInstanceAttribute(struct _PCodeStack* stack, struct StackTyp
 }
 
 
-long EVENT_TransformSoundObjectAttribute(struct _PCodeStack* stack, struct SoundObject* soundObject, long item, short* codeStream) // Matching - 100%
+long EVENT_TransformSoundObjectAttribute(struct _PCodeStack* stack, struct SoundObject* soundObject, long item, short* codeStream)  // Matching - 100%
 {
 	long retValue;
 	int status;
@@ -1705,9 +1705,9 @@ long EVENT_TransformSoundObjectAttribute(struct _PCodeStack* stack, struct Sound
 	case 126:
 		if (codeStream != NULL)
 		{
-			codeStream++;
 			MoveCodeStreamExtra = 1;
-			soundObject->soundNumber = codeStream[0];
+			codeStream++;
+			soundObject->soundNumber = *codeStream;
 		}
 		status = SOUND_IsInstanceSoundLoaded(soundObject->data.sfxMarker->soundData, soundObject->soundNumber);
 		if (status == 0)
@@ -1732,10 +1732,11 @@ long EVENT_TransformSoundObjectAttribute(struct _PCodeStack* stack, struct Sound
 		soundObject->attribute = (short)item;
 		if (codeStream != NULL)
 		{
-			codeStream++;
 			MoveCodeStreamExtra = 2;
-			soundObject->value = codeStream[0];
-			soundObject->duration = codeStream[1];
+			codeStream++;
+			soundObject->value = *codeStream;
+			codeStream++;
+			soundObject->duration = *codeStream;
 		}
 		retValue = 1;
 		break;
@@ -1748,10 +1749,11 @@ long EVENT_TransformSoundObjectAttribute(struct _PCodeStack* stack, struct Sound
 		soundObject->attribute = (short)item;
 		if (codeStream != NULL)
 		{
-			codeStream++;
 			MoveCodeStreamExtra = 2;
-			soundObject->value = codeStream[0];
-			soundObject->duration = codeStream[1];
+			codeStream++;
+			soundObject->value = *codeStream;
+			codeStream++;
+			soundObject->duration = *codeStream;
 		}
 		retValue = 1;
 		break;
