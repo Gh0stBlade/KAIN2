@@ -2118,7 +2118,7 @@ long EVENT_TransformAreaAttribute(struct _PCodeStack* stack, struct StackType* s
 }
 
 
-long EVENT_TransformEventAttribute(struct _PCodeStack* stack, struct StackType* stackObject, long item, short* codeStream)  // Matching - 95.42%
+long EVENT_TransformEventAttribute(struct _PCodeStack* stack, struct StackType* stackObject, long item, short* codeStream)  // Matching - 100%
 {
 	long retValue;
 	long offset;
@@ -2133,7 +2133,8 @@ long EVENT_TransformEventAttribute(struct _PCodeStack* stack, struct StackType* 
 	case 3:
 		MoveCodeStreamExtra = 1;
 
-		offset = codeStream[1];
+		codeStream++;
+		offset = *codeStream;
 
 		if (offset < 6U)
 		{
