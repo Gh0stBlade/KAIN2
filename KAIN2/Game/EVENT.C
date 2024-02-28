@@ -1796,7 +1796,7 @@ long EVENT_GetGameValue(struct GameObject* gameObject)  // Matching - 100%
 }
 
 
-long EVENT_TransformGameAttribute(struct _PCodeStack* stack, struct StackType* stackObject, long item, short* codeStream)  // Matching - 99.48%
+long EVENT_TransformGameAttribute(struct _PCodeStack* stack, struct StackType* stackObject, long item, short* codeStream)  // Matching - 99.68%
 {
 	long value;
 	long retValue;
@@ -1872,8 +1872,8 @@ long EVENT_TransformGameAttribute(struct _PCodeStack* stack, struct StackType* s
 		{
 			if (codeStream != NULL)
 			{
-				codeStream++;
 				MoveCodeStreamExtra = 1;
+				codeStream++;
 				time = *codeStream++;
 				EventAbortLine = 1;
 				EventJustRecievedTimer = 1;
@@ -1912,12 +1912,13 @@ long EVENT_TransformGameAttribute(struct _PCodeStack* stack, struct StackType* s
 
 		if (codeStream != NULL)
 		{
-			codeStream++;
 			MoveCodeStreamExtra = 2;
-			wipeType = codeStream[0];
-			wipeTime = codeStream[1];
+			codeStream++;
+			wipeType = *codeStream;
+			codeStream++;
+			wipeTime = *codeStream;
 
-			gameTrackerX.maxWipeTime = (codeStream[1] < 0) ? -codeStream[1] : codeStream[1];
+			gameTrackerX.maxWipeTime = (*codeStream < 0) ? -*codeStream : *codeStream;
 
 			gameTrackerX.wipeTime = (int)wipeTime;
 			gameTrackerX.wipeType = (int)wipeType;
@@ -1951,13 +1952,13 @@ long EVENT_TransformGameAttribute(struct _PCodeStack* stack, struct StackType* s
 		{
 			MoveCodeStreamExtra = 4;
 			codeStream++;
-			motor0Speed = codeStream[0];
+			motor0Speed = *codeStream;
 			codeStream++;
-			motor0Time = codeStream[0];
+			motor0Time = *codeStream;
 			codeStream++;
-			motor1Speed = codeStream[0];
+			motor1Speed = *codeStream;
 			codeStream++;
-			motor1Time = codeStream[0];
+			motor1Time = *codeStream;
 			stack->topOfStack -= 1;
 
 			GAMEPAD_Shock(motor0Speed, motor0Time << 12, motor1Speed, motor1Time << 12);
@@ -1985,10 +1986,11 @@ long EVENT_TransformGameAttribute(struct _PCodeStack* stack, struct StackType* s
 
 		if (codeStream != NULL)
 		{
-			codeStream++;
 			MoveCodeStreamExtra = 2;
-			rand1 = codeStream[0];
-			rand2 = codeStream[1];
+			codeStream++;
+			rand1 = *codeStream;
+			codeStream++;
+			rand2 = *codeStream;
 
 			EVENT_ChangeOperandToNumber(stackObject, rand() % (rand2 - rand1) + rand1, 0);
 		}
