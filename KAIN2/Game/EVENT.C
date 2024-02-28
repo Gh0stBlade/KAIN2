@@ -1154,7 +1154,7 @@ void EVENT_StackDuplicate(struct _PCodeStack* stack) // Matching - 100%
 	}
 }
 
-long EVENT_TransformTGroupAttribute(struct _PCodeStack* stack, struct StackType* stackObject, long item, short* codeStream) // Matching - 100%
+long EVENT_TransformTGroupAttribute(struct _PCodeStack* stack, struct StackType* stackObject, long item, short* codeStream)  // Matching - 100%
 {
 	long retValue;
 
@@ -1208,38 +1208,40 @@ long EVENT_TransformTGroupAttribute(struct _PCodeStack* stack, struct StackType*
 		case 44:
 			if (codeStream)
 			{
-				codeStream++;
 				MoveCodeStreamExtra = 2;
-				stackObject->data.terrainGroup.arg[0] = codeStream[0];
-				stackObject->data.terrainGroup.arg[1] = codeStream[1];
+				codeStream++;
+				stackObject->data.terrainGroup.arg[0] = *codeStream;
+				codeStream++;
+				stackObject->data.terrainGroup.arg[1] = *codeStream;
 			}
 			retValue = 1;
 			break;
 		case 45:
 			if (codeStream)
 			{
-				codeStream++;
 				MoveCodeStreamExtra = 1;
-				stackObject->data.terrainGroup.arg[0] = codeStream[0];
+				codeStream++;
+				stackObject->data.terrainGroup.arg[0] = *codeStream;
 			}
 			retValue = 1;
 			break;
 		case 46:
 			if (codeStream)
 			{
-				codeStream++;
 				MoveCodeStreamExtra = 2;
-				stackObject->data.terrainGroup.arg[0] = codeStream[0];
-				stackObject->data.terrainGroup.arg[1] = codeStream[1];
+				codeStream++;
+				stackObject->data.terrainGroup.arg[0] = *codeStream;
+				codeStream++;
+				stackObject->data.terrainGroup.arg[1] = *codeStream;
 			}
 			retValue = 1;
 			break;
 		case 47:
 			if (codeStream)
 			{
-				codeStream++;
 				MoveCodeStreamExtra = 1;
-				stackObject->data.terrainGroup.arg[0] = codeStream[0];
+				codeStream++;
+				stackObject->data.terrainGroup.arg[0] = *codeStream;
 			}
 			retValue = 1;
 			break;
