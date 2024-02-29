@@ -317,11 +317,16 @@ void STREAM_YesMonsters()  // Matching - 100%
 }
 
 
-int STREAM_IsMonster(char *name)
-{ 
+int STREAM_IsMonster(char* name)  // Matching - 55.56%
+{
 	static char* monnames[19] = {
 		"skinner",
 		"morlock",
+		"wallcr",
+		"ronin",
+		"aluka",
+		"sluagh",
+		"vwraith",
 		"vlgra",
 		"vlgrb",
 		"vlgrc",
@@ -333,14 +338,9 @@ int STREAM_IsMonster(char *name)
 		"alukabss",
 		"morboss",
 		"soul",
-		"wallcr",
-		"aluka",
-		"ronin",
-		"sluagh",
-		"vwraith",
 		NULL,
 	};
-	
+
 	return STREAM_InList(name, monnames);
 }
 
