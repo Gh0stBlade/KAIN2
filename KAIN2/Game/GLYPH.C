@@ -362,9 +362,11 @@ void GlyphDrawMenu(struct _Instance* instance)
 	FX_DrawScreenPoly(2, ((data->glyph_time / glyphtunedata->glyph_darkness) << 16) | ((data->glyph_time / glyphtunedata->glyph_darkness) << 8) | (data->glyph_time / glyphtunedata->glyph_darkness), 32);
 }
 
-long GlyphTime(int time)//Matching - 70.71%
+long GlyphTime(int time)  // Matching - 100%
 {
-	return  (time * time < 0) ? ((time * time + 4095) >> 12) : (time * time >> 12);
+	time *= time;
+
+	return time / 4096;
 }
 
 void ShrinkGlyphMenu(struct _Instance *instance)
