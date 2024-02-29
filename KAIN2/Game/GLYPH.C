@@ -162,7 +162,7 @@ int _GlyphIsGlyphSet(int glyph)
 	return abilities & (1 << (glyph + 17));
 }
 
-int _GlyphIsGlyphUsable(int glyph)
+int _GlyphIsGlyphUsable(int glyph)  // Matching - 100%
 {
 	return (1 << (glyph + 17)) & INSTANCE_Query(gameTrackerX.playerInstance, 0x13);
 }
