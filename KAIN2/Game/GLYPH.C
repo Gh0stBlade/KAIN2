@@ -420,11 +420,12 @@ void ShrinkGlyphMenu(struct _Instance *instance)
 	}
 }
 
-void EnlargeGlyphMenu(struct _Instance* instance)//Matching - 84.92%
+void EnlargeGlyphMenu(struct _Instance* instance)  // Matching - 100%
 {
 	struct __GlyphData* data;
 	int time;
 	short accl;
+	int temp;  // not from SYMDUMP
 
 	data = (struct __GlyphData*)instance->extraData;
 
@@ -434,7 +435,7 @@ void EnlargeGlyphMenu(struct _Instance* instance)//Matching - 84.92%
 	{
 		data->glyph_time += (short)((gameTrackerX.timeMult * 512) >> 12);
 
-		if (data->glyph_time >= 0x1001)
+		if (data->glyph_time >= 4097)
 		{
 			data->glyph_time = 4096;
 		}
@@ -444,7 +445,9 @@ void EnlargeGlyphMenu(struct _Instance* instance)//Matching - 84.92%
 
 	time = GlyphTime(data->glyph_time);
 
-	data->glyph_radius = (time * 150) < 0 ? (time * 150 + 0xFFF) >> 12 : (time * 150) >> 12;
+	temp = (time * 150) / 4096;
+
+	data->glyph_radius = temp;
 
 	data->glyph_scale = time;
 
