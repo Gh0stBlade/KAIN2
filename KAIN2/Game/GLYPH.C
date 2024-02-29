@@ -153,13 +153,13 @@ int GlyphIsGlyphOpen(struct _Instance* instance)  // Matching - 100%
 	return ((struct __GlyphData*)instance->extraData)->glyph_open;
 }
 
-int _GlyphIsGlyphSet(int glyph)
+int _GlyphIsGlyphSet(int glyph)  // Matching - 100%
 {
 	unsigned long abilities;
 
 	abilities = INSTANCE_Query(gameTrackerX.playerInstance, 0x24) | debugRazielFlags3;
-	
-	return abilities & (1 << (glyph + 17));
+
+	return (1 << (glyph + 17)) & abilities;
 }
 
 int _GlyphIsGlyphUsable(int glyph)
