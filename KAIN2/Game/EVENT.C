@@ -2832,7 +2832,8 @@ long EVENT_TransformVector3dAttribute(struct _PCodeStack* stack, struct StackTyp
 		retValue = 1;
 		break;
 	case 23:
-		stackObject->data.vector3d.errorx = codeStream[1];
+		codeStream++;
+		stackObject->data.vector3d.errorx = *codeStream;
 		stackObject->data.vector3d.errory = -1;
 		stackObject->data.vector3d.errorz = -1;
 
@@ -2841,27 +2842,31 @@ long EVENT_TransformVector3dAttribute(struct _PCodeStack* stack, struct StackTyp
 		retValue = 1;
 		break;
 	case 24:
-		codeStream += 1;
-
 		MoveCodeStreamExtra = 2;
+
+		codeStream++;
 
 		retValue = 1;
 
-		stackObject->data.vector3d.errorx = codeStream[0];
-		stackObject->data.vector3d.errory = codeStream[1];
+		stackObject->data.vector3d.errorx = *codeStream;
+		codeStream++;
+		stackObject->data.vector3d.errory = *codeStream;
 		stackObject->data.vector3d.errorz = -1;
 		break;
 	case 25:
 		MoveCodeStreamExtra = 3;
 
-		codeStream += 1;
+		codeStream++;
 
-		stackObject->data.vector3d.errorx = codeStream[0];
+		stackObject->data.vector3d.errorx = *codeStream;
 
-		codeStream += 1;
+		codeStream++;
 
-		stackObject->data.vector3d.errory = codeStream[0];
-		stackObject->data.vector3d.errorz = codeStream[1];
+		stackObject->data.vector3d.errory = *codeStream;
+
+		codeStream++;
+
+		stackObject->data.vector3d.errorz = *codeStream;
 
 		retValue = 1;
 		break;
