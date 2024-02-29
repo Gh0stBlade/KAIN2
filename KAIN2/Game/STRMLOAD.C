@@ -283,7 +283,7 @@ int STREAM_PollLoadQueue()  // Matching - 98.77%
 
 			case 5:
 
-				queueEntry->loadEntry.loadAddr = (int*)LOAD_InitBuffers();
+				queueEntry->loadEntry.loadAddr = (long*)LOAD_InitBuffers();
 				queueEntry->endLoadTime = TIMER_GetTimeMS();
 
 				LOAD_CD_ReadPartOfFile(&queueEntry->loadEntry);
@@ -438,7 +438,7 @@ void LOAD_LoadToAddress(char *fileName, void* loadAddr, long relocateBinary)  //
 	struct _LoadQueueEntry* currentEntry;
 	
 	currentEntry = STREAM_SetUpQueueEntry(fileName, NULL, NULL, NULL, NULL, 0);
-	currentEntry->loadEntry.loadAddr = (int*)loadAddr;
+	currentEntry->loadEntry.loadAddr = (long*)loadAddr;
 	currentEntry->status = 1;
 	currentEntry->relocateBinary = (char)relocateBinary;
 	currentEntry->mempackUsed = 0;
@@ -553,7 +553,7 @@ void LOAD_AbortFileLoad(char* fileName, void* retFunc)  // Matching - 100%
 	struct _LoadQueueEntry* entry;
 	struct _LoadQueueEntry* prev;
 	long hash;
-	typedef void (*ret)(int*, void*, void*);  // not from SYMDUMP
+	typedef void (*ret)(long*, void*, void*);  // not from SYMDUMP
 	ret returnFunction;  // not from SYMDUMP
 
 	if (loadHead != NULL)

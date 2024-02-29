@@ -1,7 +1,7 @@
 #ifndef LOAD3D_H
 #define LOAD3D_H
 
-struct _ReadQueueEntry // hashcode: 0x5360DCDA (dec: 1398856922)
+struct _ReadQueueEntry 
 {
 	long readStartPos; // size=0, offset=0
 	long readSize; // size=0, offset=4
@@ -19,14 +19,14 @@ struct _ReadQueueEntry // hashcode: 0x5360DCDA (dec: 1398856922)
 #endif
 };
 
-struct _BigFileDirEntry // hashcode: 0x7D70C603 (dec: 2104542723)
+struct _BigFileDirEntry 
 {
 	short streamUnitID; // size=0, offset=0
 	short numFiles; // size=0, offset=2
 	long subDirOffset; // size=0, offset=4
 };
 
-struct _BigFileEntry // hashcode: 0xA904436B (dec: -1459338389)
+struct _BigFileEntry 
 {
 	long fileHash; // size=0, offset=0
 	long fileLen; // size=0, offset=4
@@ -34,13 +34,13 @@ struct _BigFileEntry // hashcode: 0xA904436B (dec: -1459338389)
 	long checkSumFull; // size=0, offset=12
 };
 
-struct _BigFileDir // hashcode: 0x4E39D3E2 (dec: 1312412642)
+struct _BigFileDir 
 {
 	long numFiles; // size=0, offset=0
 	struct _BigFileEntry fileList[1]; // size=0, offset=4
 };
 
-struct _BigFile // hashcode: 0x50C273F3 (dec: 1354920947)
+struct _BigFile 
 {
 #if defined(PSXPC_VERSION) && defined(NO_CD)
 	FILE* bigfileFileHandle;
@@ -56,29 +56,28 @@ struct _BigFile // hashcode: 0x50C273F3 (dec: 1354920947)
 	struct _BigFileDirEntry* subDirList; // size=8, offset=32
 };
 
-struct _NonBlockLoadEntry // hashcode: 0x722059B4 (dec: 1914722740)
+struct _NonBlockLoadEntry 
 {
 	long fileHash; // size=0, offset=0
 	long dirHash; // size=0, offset=4
 	long filePos; // size=0, offset=8
-	int* loadAddr; // size=0, offset=12
+	long* loadAddr; // size=0, offset=12
 	long loadSize; // size=0, offset=16
 	long checksum; // size=0, offset=20
 	long checksumType; // size=0, offset=24
 	long memType; // size=0, offset=28
 	long posInFile; // size=0, offset=32
-	long mallocFailOk; // size=0, offset=36
-	void* retFunc; // size=0, offset=40
-	void* retData; // size=0, offset=44
-	void* retData2; // size=0, offset=48
-	void** retPointer; // size=0, offset=52
+	void* retFunc; // size=0, offset=36
+	void* retData; // size=0, offset=40
+	void* retData2; // size=0, offset=44
+	void** retPointer; // size=0, offset=48
 #if defined(PSX_VERSION)
 	char fileName[48]; // size=48, offset=52
 #endif
 };
 
 
-struct _LoadStatus // hashcode: 0x3D15BA2C (dec: 1024834092)
+struct _LoadStatus 
 {
 	struct _ReadQueueEntry currentQueueFile; // size=44, offset=0
 	long state; // size=0, offset=44
@@ -92,7 +91,7 @@ struct _LoadStatus // hashcode: 0x3D15BA2C (dec: 1024834092)
 	long compEndBytes; // size=0, offset=76
 	long decompressLen; // size=0, offset=80
 	long checksum; // size=0, offset=84
-	int* checkAddr; // size=0, offset=88
+	long* checkAddr; // size=0, offset=88
 	struct _BigFile bigFile; // size=36, offset=92
 	void* buffer1; // size=0, offset=128
 	void* buffer2; // size=0, offset=132
@@ -140,7 +139,7 @@ extern long LOAD_DoesFileExist(char *fileName); // 0x800379AC
 extern void LOAD_NonBlockingReadFile(struct _NonBlockLoadEntry *loadEntry); // 0x800379E0
 extern void LOAD_LoadTIM(int *addr, long x_pos, long y_pos, long clut_x, long clut_y); // 0x80037A9C
 extern void LOAD_LoadTIM2(int *addr, long x_pos, long y_pos, long width, long height); // 0x80037B3C
-extern long LOAD_RelocBinaryData(int* data, long fileSize); // 0x80037B84
+extern long LOAD_RelocBinaryData(long* data, long fileSize); // 0x80037B84
 extern void LOAD_CleanUpBuffers(); // 0x80037C3C
 extern void * LOAD_InitBuffers(); // 0x80037C84
 extern void LOAD_InitCdStreamMode(); // 0x80037CD4
