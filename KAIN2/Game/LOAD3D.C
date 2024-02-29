@@ -297,7 +297,7 @@ void LOAD_SetupFileToDoCDReading()
 	loadStatus.lastCheckPos = 0;
 	loadStatus.state = 1;
 	loadStatus.currentQueueFile.readCurDest = loadStatus.currentQueueFile.readStartDest;
-	loadStatus.checkAddr = (int*)loadStatus.currentQueueFile.readStartDest;
+	loadStatus.checkAddr = (long*)loadStatus.currentQueueFile.readStartDest;
 
 	if (loadStatus.currentQueueFile.readStartPos < 0)
 	{
@@ -338,7 +338,7 @@ void LOAD_SetupFileToDoBufferedCDReading()
 	loadStatus.currentQueueFile.readStatus = 6;
 	loadStatus.checksum = 0;
 	loadStatus.state = 1;
-	loadStatus.checkAddr = (int*)loadStatus.currentQueueFile.readStartDest;
+	loadStatus.checkAddr = (long*)loadStatus.currentQueueFile.readStartDest;
 
 	if (loadStatus.currentQueueFile.readStartPos < 0)
 	{
@@ -994,7 +994,7 @@ void LOAD_NonBlockingReadFile(struct _NonBlockLoadEntry* loadEntry)
 	{
 		if (loadEntry->loadAddr == NULL)
 		{
-			loadEntry->loadAddr = (int*)MEMPACK_Malloc(loadEntry->loadSize, (unsigned char)loadEntry->memType);
+			loadEntry->loadAddr = (long*)MEMPACK_Malloc(loadEntry->loadSize, (unsigned char)loadEntry->memType);
 		}
 
 #if defined(_DEBUG) && !defined(NO_FILESYSTEM) || defined(__EMSCRIPTEN__)
@@ -1059,9 +1059,9 @@ void LOAD_LoadTIM2(int *addr, long x_pos, long y_pos, long width, long height)
 }
 #endif
 
-long LOAD_RelocBinaryData(int* data, long fileSize)
+long LOAD_RelocBinaryData(long* data, long fileSize)
 {
-	int* lastMoveDest;
+	long* lastMoveDest;
 	long tableSize;
 	struct RedirectList redirectListX;
 	struct RedirectList* redirectList;
