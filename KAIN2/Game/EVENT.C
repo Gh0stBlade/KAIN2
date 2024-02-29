@@ -2339,11 +2339,11 @@ long EVENT_TransformSplineAttribute(struct _PCodeStack* stack, struct StackType*
 	switch (item)
 	{
 	case 31:
-		codeStream += 1;
 		MoveCodeStreamExtra = 2;
-
-		instance->clipBeg = codeStream[0];
-		instance->clipEnd = codeStream[1];
+		codeStream++;
+		instance->clipBeg = *codeStream;
+		codeStream++;
+		instance->clipEnd = *codeStream;
 
 		instance->splineFlags |= 2;
 
