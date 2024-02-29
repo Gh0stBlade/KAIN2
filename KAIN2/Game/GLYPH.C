@@ -181,7 +181,7 @@ int _GlyphCost(struct _GlyphTuneData* glyphtunedata, int glyphNum)//Matching - 1
 	return glyphtunedata->glyph_costs[glyphNum - 1];
 }
 
-void _GlyphDefaultProcess(struct _Instance* instance, int data1, int data2)
+void _GlyphDefaultProcess(struct _Instance* instance, int data1, int data2)  // Matching - 100%
 {
 	struct __Event* Ptr;
 	struct __GlyphData* data;
