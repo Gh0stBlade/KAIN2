@@ -10,6 +10,8 @@
 #include <Game/MEMPACK.H>
 #include <Game/GENERIC.H>
 
+char monVersion[12]; // offset 0x800D1EA4
+
 void MonsterProcess(struct _Instance* instance, struct GameTracker* gameTracker)  // Matching - 100%
 {
 	struct _MonsterState* state;
@@ -584,7 +586,7 @@ void MonsterTranslateAnim(struct Object* object)  // Matching - 100%
 		{
 			relocModule = object->relocModule;
 
-			if (relocModule == NULL) //|| (((unsigned int*)relocModule)[6] != (unsigned int)"June 30 1999"))  // @FIXME Bypass version check. Also relocModule cast needs revalidating.
+			if (relocModule == NULL) //|| ((char*)(((unsigned int*)relocModule)[6]) != monVersion))  // @FIXME Bypass version check. Also relocModule cast needs revalidating.
 			{
 				object->data = NULL;
 				return;
