@@ -167,13 +167,15 @@ int _GlyphIsGlyphUsable(int glyph)
 	return (1 << (glyph + 17)) & INSTANCE_Query(gameTrackerX.playerInstance, 0x13);
 }
 
-int _GlyphIsAnyGlyphSet()
+int _GlyphIsAnyGlyphSet()  // Matching - 100%
 {
 	unsigned long abilities;
-	
+
 	abilities = INSTANCE_Query(gameTrackerX.playerInstance, 0x24);
 
-	return ((abilities | debugRazielFlags3) & 0x1FC0000);
+	abilities |= debugRazielFlags3;
+
+	return abilities & 0x1FC0000;
 }
 
 int _GlyphCost(struct _GlyphTuneData* glyphtunedata, int glyphNum)//Matching - 100%
