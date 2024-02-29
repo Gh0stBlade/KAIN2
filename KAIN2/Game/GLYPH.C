@@ -129,7 +129,7 @@ void GlyphPost(struct _Instance* instance, unsigned long message, unsigned long 
 	}
 }
 
-void _GlyphSwitchProcess(struct _Instance* instance, void (*func)(struct _Instance* instance, int data1, int data2)) //Matching - 99.63%
+void _GlyphSwitchProcess(struct _Instance* instance, void (*func)(struct _Instance* instance, int data1, int data2))  // Matching - 100%
 {
 	struct __GlyphData* data;
 
