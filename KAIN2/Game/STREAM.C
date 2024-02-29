@@ -275,13 +275,13 @@ int STREAM_InList(char* name, char** nameList)  // Matching - 100%
 	return 0;
 }
 
-int STREAM_IsSpecialMonster(char *name)
+int STREAM_IsSpecialMonster(char* name)  // Matching - 55.56%
 {
 	static char* mon[6] = {
 		"wallcr",
 		"aluka",
 		"ronin",
-		"slaugh"
+		"sluagh"
 		"vwraith",
 		NULL
 	};
