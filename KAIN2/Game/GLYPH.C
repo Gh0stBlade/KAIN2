@@ -691,21 +691,38 @@ void _GlyphSelectProcess(struct _Instance* instance, int data1, int data2)
 	Glyph_DoFX(instance);
 }
 
-void Glyph_StartSpell(struct _Instance* instance, int glyphnum)
+void Glyph_StartSpell(struct _Instance* instance, int glyphnum)  // Matching - 100%
 {
-	int message; // $a2
+	int message;
 
 	message = 0;
 
 	switch (glyphnum)
 	{
+	case 6:
+		message = 0x80006;
+		break;
+	case 4:
+		message = 0x80004;
+		break;
+	case 5:
+		message = 0x80005;
+		break;
+	case 2:
+		message = 0x80002;
+		break;
+	case 1:
+		message = 0x80001;
+		break;
+	case 3:
+		message = 0x80003;
+		break;
 	case 7:
-	{
-		INSTANCE_Post(gameTrackerX.playerInstance, 0x80007, 0);
-
+		message = 0x80007;
 		break;
 	}
-	}
+
+	INSTANCE_Post(gameTrackerX.playerInstance, message, 0);
 }
 
 
