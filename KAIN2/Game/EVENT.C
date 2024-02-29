@@ -1269,7 +1269,7 @@ long EVENT_TransformConstrictAttribute(struct _PCodeStack* stack, struct StackTy
 	return retValue;
 }
 
-long EVENT_TransformInstanceAttribute(struct _PCodeStack* stack, struct StackType* stackObject, long item, short* codeStream)  // Matching - 99.31%
+long EVENT_TransformInstanceAttribute(struct _PCodeStack* stack, struct StackType* stackObject, long item, short* codeStream)  // Matching - 100%
 {
 	long retValue;
 	long x;
@@ -1359,7 +1359,9 @@ long EVENT_TransformInstanceAttribute(struct _PCodeStack* stack, struct StackTyp
 		if (codeStream != NULL)
 		{
 			MoveCodeStreamExtra = 1;
-			stackObject->data.soundObject.soundNumber = codeStream[1];
+
+			codeStream++;
+			stackObject->data.soundObject.soundNumber = *codeStream;
 		}
 
 		status = SOUND_IsInstanceSoundLoaded(instance->object->soundData, stackObject->data.soundObject.soundNumber);
