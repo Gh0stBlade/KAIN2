@@ -422,38 +422,40 @@ long SIGNAL_IsThisStreamAWarpGate(struct Signal* signal)  // Matching - 100%
 	return result;
 }
 
-long SIGNAL_IsStreamSignal(struct Signal* signal, long* isWarpGate)
+long SIGNAL_IsStreamSignal(struct Signal* signal, long* isWarpGate)  // Matching - 100%
 {
-	long result;
 	long done;
+	long result;
 	long signalNumber;
 
 	result = 0;
 	done = 0;
-	isWarpGate[0] = 0;
+	*isWarpGate = 0;
 
-	while (!done)
+	do
 	{
 		signalNumber = signal->id & 0x7FFFFFFF;
 
-		if (signalNumber == 0xF)
+		if (signalNumber == 15)
 		{
 			done = 1;
 		}
-		else if (signalNumber == 0x12)
+		else if (signalNumber == 18)
 		{
 			done = 1;
-
 			result = 1;
 
 			if (SIGNAL_IsThisStreamAWarpGate(signal) != 0)
 			{
-				isWarpGate[0] = 1;
+				*isWarpGate = 1;
 			}
 		}
 
-		signal = (struct Signal*)(((char*)signal) + ((signalInfoList[signalNumber].length + 1) << 2));
-	}
+		if (!done)
+		{
+			signal = (struct Signal*)(((char*)signal) + ((signalInfoList[signalNumber].length + 1) << 2));
+		}
+	} while (!done);
 
 	return result;
 }
