@@ -2084,12 +2084,8 @@ long EVENT_TransformAreaAttribute(struct _PCodeStack* stack, struct StackType* s
 		case 3:
 			MoveCodeStreamExtra = 1;
 
-			do
-			{
-
-			} while (0);  // garbage code for reordering
-
-			offset = codeStream[1];
+			codeStream++;
+			offset = *codeStream;
 
 			if ((offset >= 0) && (offset <= 5))
 			{
