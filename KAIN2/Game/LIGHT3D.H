@@ -7,7 +7,8 @@ extern "C" {
 
 #include "CORE.H"
 
-struct CDLight {
+struct CDLight 
+{
 	struct NodeType node; // size=8, offset=0
 	unsigned char r; // size=0, offset=8
 	unsigned char g; // size=0, offset=9
