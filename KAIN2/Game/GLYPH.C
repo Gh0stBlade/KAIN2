@@ -892,7 +892,7 @@ void GlyphTrigger() //Matching - 98.57%
 	}
 }
 
-void MANNA_Pickup() //Matching - 98.57%
+void MANNA_Pickup()  // Matching - 100%
 {
 	MANNA_Pickup_Time = 122880;
 
