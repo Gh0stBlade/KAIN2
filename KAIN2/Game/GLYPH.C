@@ -812,12 +812,13 @@ void Glyph_DoSpell(struct _Instance *instance, int glyphnum)
 			UNIMPLEMENTED();
 }
 
-void Glyph_EndFX() //Matching - 97%
+void Glyph_EndFX()  // Matching - 100%
 {
 	fx_blastring->lifeTime = 0;
-	fx_blastring = NULL;
 
 	fx_going = 0;
+
+	fx_blastring = NULL;
 }
 
 void Glyph_DoFX(struct _Instance *instance)
