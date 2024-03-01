@@ -225,31 +225,38 @@ void G2Anim_SetController_Vector(struct _G2Anim_Type* anim, int segNumber, int t
 	controller->flags = (unsigned char)controller->flags;
 }
 
-void G2Anim_SetInterpController_Vector(struct _G2Anim_Type* anim, int segNumber, int type, struct _G2SVector3_Type* vector, int duration) // Matching 68.96%
+void G2Anim_SetInterpController_Vector(struct _G2Anim_Type* anim, int segNumber, int type, struct _G2SVector3_Type* vector, int duration)  // Matching - 99.29%
 {
 	struct _G2EulerAngles_Type eulerVector;
 	struct _G2Quat_Type quat;
 	struct _G2AnimController_Type* controller;
 	struct _G2SVector3_Type* base;
 	struct _G2SVector3_Type* offset;
+
 	controller = _G2Anim_FindController(anim, segNumber, type);
+
 	if ((controller->type & 0x38) == 8)
 	{
 		_G2Anim_CopyVectorWithOrder(vector, &eulerVector, (unsigned char)controller->flags);
+
 		G2Quat_FromEuler_S(&quat, &eulerVector);
+
 		G2Anim_SetInterpController_Quat(anim, segNumber, type, &quat, (short)duration);
 	}
 	else
 	{
 		base = &controller->data.vector.base;
+
 		offset = &controller->data.vector.offset;
+
 		G2Anim_GetControllerCurrentInterpVector(anim, segNumber, type, base);
+
 		offset->x = ((vector->x - base->x) * 4096) / ((short)duration + 1);
 		offset->y = ((vector->y - base->y) * 4096) / ((short)duration + 1);
 		offset->z = ((vector->z - base->z) * 4096) / ((short)duration + 1);
 
 		controller->duration = duration;
-		controller->elapsedTime = NULL;
+		controller->elapsedTime = 0;
 		controller->flags = (unsigned char)controller->flags | 0x4000;
 	}
 }
