@@ -2534,7 +2534,7 @@ void FX_InsertGeneralEffect(void* ptr)
 }
 
 
-void FX_DeleteGeneralEffect(struct _FXGeneralEffect* effect)  // Matching - 99.74%
+void FX_DeleteGeneralEffect(struct _FXGeneralEffect* effect)  // Matching - 100%
 {
 	struct _FXGeneralEffect* currentEffect;
 	struct _FXGeneralEffect* previousEffect;
@@ -2543,8 +2543,11 @@ void FX_DeleteGeneralEffect(struct _FXGeneralEffect* effect)  // Matching - 99.7
 	{
 		return;
 	}
+
 	currentEffect = FX_GeneralEffectTracker;
+
 	previousEffect = NULL;
+
 	while (currentEffect != NULL)
 	{
 		if (currentEffect == effect)
@@ -2557,18 +2560,22 @@ void FX_DeleteGeneralEffect(struct _FXGeneralEffect* effect)  // Matching - 99.7
 			{
 				FX_GeneralEffectTracker = (struct _FXGeneralEffect*)currentEffect->next;
 			}
+
 			break;
 		}
 		else
 		{
 			previousEffect = currentEffect;
 		}
+
 		currentEffect = (struct _FXGeneralEffect*)currentEffect->next;
 	}
+
 	if (effect->effectType == 0)
 	{
 		MEMPACK_Free((char*)effect[1].continue_process);
 	}
+
 	MEMPACK_Free((char*)effect);
 }
 
