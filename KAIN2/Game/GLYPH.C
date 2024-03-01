@@ -457,7 +457,7 @@ void EnlargeGlyphMenu(struct _Instance* instance)//Matching - 84.92%
 	data->glyph_open = 1;
 }
 
-void _GlyphOffProcess(struct _Instance* instance, int data1, int data2)//Matching - 78.83%
+void _GlyphOffProcess(struct _Instance* instance, int data1, int data2)  // Matching - 100%
 {
 	struct __Event* Ptr;
 	struct __GlyphData* data;
@@ -485,6 +485,8 @@ void _GlyphOffProcess(struct _Instance* instance, int data1, int data2)//Matchin
 			{
 				_GlyphSwitchProcess(instance, _GlyphSelectProcess);
 			}
+
+			break;
 		}
 		default:
 		{
@@ -492,7 +494,6 @@ void _GlyphOffProcess(struct _Instance* instance, int data1, int data2)//Matchin
 
 			break;
 		}
-		break;
 		}
 
 		DeMessageQueue(&data->messages);
