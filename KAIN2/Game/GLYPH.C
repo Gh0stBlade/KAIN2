@@ -369,13 +369,13 @@ long GlyphTime(int time)  // Matching - 100%
 	return time / 4096;
 }
 
-void ShrinkGlyphMenu(struct _Instance *instance)
+void ShrinkGlyphMenu(struct _Instance* instance)  // Matching - 100%
 {
-	struct __GlyphData *data;
+	struct __GlyphData* data;
 	int time;
 	short accl;
 
-#define GET_GLYPH_RADIUS(x) (x * 150) < 0 ? ((x + 4095) >> 12) : (x >> 12)
+#define GET_GLYPH_RADIUS(x) (x * 150) / 4096
 
 	data = (struct __GlyphData*)instance->extraData;
 	gameTrackerX.streamFlags &= 0xFFEFFFFF;
@@ -394,6 +394,7 @@ void ShrinkGlyphMenu(struct _Instance *instance)
 		time = GlyphTime(data->glyph_time);
 
 		data->glyph_radius = GET_GLYPH_RADIUS(time);
+
 		data->glyph_scale = time;
 
 		if (data->glyph_time > 0)
@@ -409,15 +410,13 @@ void ShrinkGlyphMenu(struct _Instance *instance)
 	if (MANNA_Pickup_Time <= 0)
 	{
 		CriticalDampValue(5, &MANNA_Position, -64, &MANNA_Pos_vel, &accl, 12);
-
-		data->glyph_open = 0;
 	}
 	else
 	{
 		MANNA_Pickup_Time -= gameTrackerX.timeMult;
-
-		data->glyph_open = 0;
 	}
+
+	data->glyph_open = 0;
 }
 
 void EnlargeGlyphMenu(struct _Instance* instance)//Matching - 84.92%
