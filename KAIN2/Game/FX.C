@@ -109,13 +109,17 @@ void FX_Init(struct _FXTracker* fxTracker)
 	FX_TimeCount = 0;
 }
 
-void FX_Die(struct _FX_PRIM* fxPrim, struct _FXTracker* fxTracker) { // Matching 99.46%
-	if ((FX_LastUsedPrim == fxPrim) && (FX_LastUsedPrim = (_FX_PRIM*)fxPrim->node.prev, FX_LastUsedPrim->node.prev == NULL)) 
+void FX_Die(struct _FX_PRIM* fxPrim, struct _FXTracker* fxTracker)  // Matching - 100%
+{
+	if ((FX_LastUsedPrim == fxPrim) && (FX_LastUsedPrim = (struct _FX_PRIM*)fxPrim->node.prev, FX_LastUsedPrim->node.prev == NULL))
 	{
 		FX_LastUsedPrim = NULL;
 	}
-	fxPrim->flags = fxPrim->flags | 16;
+
+	fxPrim->flags |= 16;
+
 	LIST_DeleteFunc(&fxPrim->node);
+
 	LIST_InsertFunc(&fxTracker->freePrimList, &fxPrim->node);
 }
 
