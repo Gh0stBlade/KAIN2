@@ -892,7 +892,7 @@ void _GlyphGenericProcess(struct _Instance* instance, int data1, int data2)
 	}
 }
 
-void GlyphTrigger() //Matching - 98.57%
+void GlyphTrigger()  // Matching - 100%
 { 
 	if (fx_going == 0)
 	{
