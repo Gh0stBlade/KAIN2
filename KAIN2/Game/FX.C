@@ -135,10 +135,12 @@ struct _FX_MATRIX* FX_GetMatrix(struct _FXTracker* fxTracker)//Matching - 99.25%
 	return fxMatrix;
 }
 
-struct _FX_PRIM* FX_GetPrim(struct _FXTracker* fxTracker) // Matching 99.46%
+struct _FX_PRIM* FX_GetPrim(struct _FXTracker* fxTracker)  // Matching - 100%
 {
 	struct _FX_PRIM* fxPrim;
+
 	fxPrim = (struct _FX_PRIM*)LIST_GetFunc(&fxTracker->freePrimList);
+
 	if (fxPrim == NULL)
 	{
 		if (FX_LastUsedPrim != NULL)
@@ -146,26 +148,26 @@ struct _FX_PRIM* FX_GetPrim(struct _FXTracker* fxTracker) // Matching 99.46%
 			fxPrim = FX_LastUsedPrim;
 
 			FX_LastUsedPrim = (struct _FX_PRIM*)fxPrim->node.prev;
+
 			FX_LastUsedPrim->node.next = NULL;
 
 			if (FX_LastUsedPrim->node.prev == NULL)
 			{
 				FX_LastUsedPrim = NULL;
 			}
-
 		}
 
 		if (fxPrim != NULL)
 		{
 			fxPrim->process = NULL;
-			fxPrim->flags = NULL;
+			fxPrim->flags = 0;
 			fxPrim->matrix = NULL;
 		}
 	}
 	else
 	{
 		fxPrim->process = NULL;
-		fxPrim->flags = NULL;
+		fxPrim->flags = 0;
 		fxPrim->matrix = NULL;
 	}
 
