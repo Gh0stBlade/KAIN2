@@ -899,15 +899,15 @@ void MANNA_Pickup() //Matching - 98.57%
 	MANNA_Position = 24;
 }
 
-void HEALTHU_Pickup(struct _Instance* instance) // Matching - 95%
+void HEALTHU_Pickup(struct _Instance* instance)  // Matching - 100%
 {
 	ApplyMatrixSV(theCamera.core.wcTransform2, (SVECTOR*)&instance->position, (SVECTOR*)&HUD_Cap_Pos);
 	HUD_Cap_Pos.x += (short)theCamera.core.wcTransform2->t[0];
 	HUD_Cap_Pos.y += (short)theCamera.core.wcTransform2->t[1];
 	HUD_Cap_Pos.z += (short)theCamera.core.wcTransform2->t[2];
-	HUD_Cap_Vel.x = 0;
-	HUD_Cap_Vel.y = 0;
 	HUD_Cap_Vel.z = 0;
+	HUD_Cap_Vel.y = 0;
+	HUD_Cap_Vel.x = 0;
 	INSTANCE_KillInstance(instance);
 	HUD_Captured = 1;
 	HUD_State = 1;
