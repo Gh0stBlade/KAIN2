@@ -34,6 +34,7 @@ int MANNA_Pickup_Time;
 short HUD_Captured;
 struct _SVector HUD_Cap_Pos; // offset 0x800d6298
 struct _SVector HUD_Cap_Vel; // offset 0x800d62a0
+static int fx_radius_old; // offset 0x800D6284
 
 
 void GlyphInit(struct _Instance* instance, struct GameTracker* gameTracker)  // Matching - 98.45%
@@ -820,13 +821,19 @@ void Glyph_EndFX() //Matching - 97%
 	fx_going = 0;
 }
 
-void Glyph_DoFX(struct _Instance *instance)
-{ 
-	if (gameTrackerX.gameMode != 6 && !(gameTrackerX.streamFlags & 0x100000) && fx_going != 0)
+void Glyph_DoFX(struct _Instance* instance)  // Matching - 100%
+{
+	int temp;  // not from SYMDUMP
+
+	if ((gameTrackerX.gameMode != 6) && (!(gameTrackerX.streamFlags & 0x100000)) && (fx_going != 0))
 	{
 		Glyph_Broadcast(instance, fx_going);
 
-		if (blast_range < fx_blastring->radius)
+		temp = fx_blastring->radius;
+
+		fx_radius_old = temp;
+
+		if (fx_blastring->radius > blast_range)
 		{
 			Glyph_EndFX();
 		}
