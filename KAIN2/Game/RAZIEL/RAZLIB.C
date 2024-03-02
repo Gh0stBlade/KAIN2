@@ -1141,34 +1141,37 @@ void razSetDampingPhysics(struct _Instance* instance)
 	SetDampingPhysics(instance, PlayerData->SwimPhysicsFallDamping);
 }
 
-void razEnterWater(struct __CharacterState* In, int CurrentSection, struct evPhysicsSwimData* SwimData) // Matching 99.70%
+void razEnterWater(struct __CharacterState* In, int CurrentSection, struct evPhysicsSwimData* SwimData)  // Matching - 100%
 {
 	struct _Instance* Inst;
+
 	Inst = razGetHeldWeapon();
 
-	if ((SwimData->rc & 0x10) != NULL)
+	if ((SwimData->rc & 0x10))
 	{
-		if ((Raziel.CurrentPlane == 1) && (Raziel.Abilities & 0x10) == NULL)
+		if ((Raziel.CurrentPlane == 1) && (!(Raziel.Abilities & 0x10)))
 		{
 			Raziel.HitPoints = 0x10000 | 0x86A0;
-			SetPhysics(In->CharacterInstance, -16, NULL, NULL, NULL);
-			PhysicsMode = NULL;
+
+			SetPhysics(In->CharacterInstance, -16, 0, 0, 0);
+
+			PhysicsMode = 0;
 		}
-		else if (Inst != NULL && INSTANCE_Query(Inst, 4) == 3)
+		else if ((Inst != NULL) && (INSTANCE_Query(Inst, 4) == 3))
 		{
 			G2Anim_SetSpeedAdjustment(&In->CharacterInstance->anim, 2048);
 		}
-		else if (((Raziel.Mode & 0x40000) == NULL) && (Raziel.CurrentPlane == 1))
+		else if ((!(Raziel.Mode & 0x40000)) && (Raziel.CurrentPlane == 1))
 		{
 			if (PhysicsMode != 4)
 			{
 				razSetDampingPhysics(In->CharacterInstance);
 			}
 
-			if (In->CharacterInstance->zVel == NULL || (Raziel.Mode & 0x400004) != NULL)
+			if ((In->CharacterInstance->zVel == 0) || ((Raziel.Mode & 0x400004)))
 			{
 				razResetMotion(In->CharacterInstance);
-				StateSwitchStateCharacterData(In, StateHandlerSwim, NULL);
+				StateSwitchStateCharacterData(In, StateHandlerSwim, 0);
 			}
 
 			TrailWaterFX(In->CharacterInstance, 9, 1, 1);
@@ -1178,19 +1181,19 @@ void razEnterWater(struct __CharacterState* In, int CurrentSection, struct evPhy
 		}
 	}
 
-	if (((SwimData->rc & 0x800) != NULL) && (Raziel.Senses.heldClass == 1))
+	if (((SwimData->rc & 0x800)) && (Raziel.Senses.heldClass == 1))
 	{
 		if (CurrentSection == 2)
 		{
-			G2EmulationSwitchAnimation(In, CurrentSection, 61, NULL, 3, 2);
+			G2EmulationSwitchAnimation(In, CurrentSection, 61, 0, 3, 2);
 		}
 		else
 		{
-			G2EmulationSwitchAnimation(In, CurrentSection, 63, NULL, 16, 2);
+			G2EmulationSwitchAnimation(In, CurrentSection, 63, 0, 16, 2);
 		}
 	}
 
-	if (((SwimData->rc & 0x100) != NULL) && (CurrentSection == NULL))
+	if (((SwimData->rc & 0x100)) && (CurrentSection == 0))
 	{
 		if (Inst != NULL)
 		{
