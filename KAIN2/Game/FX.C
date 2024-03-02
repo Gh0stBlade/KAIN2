@@ -178,10 +178,12 @@ struct _FX_PRIM* FX_GetPrim(struct _FXTracker* fxTracker)  // Matching - 100%
 	return fxPrim;
 }
 
-struct _FXParticle* FX_GetParticle(struct _Instance* instance, short startSegment) // Matching - 99.87%
+struct _FXParticle* FX_GetParticle(struct _Instance* instance, short startSegment)  // Matching - 100%
 {
 	struct _FXParticle* particle;
-	particle = (struct _FXParticle*)MEMPACK_Malloc(76, 0xD);
+
+	particle = (struct _FXParticle*)MEMPACK_Malloc(sizeof(struct _FXParticle), 13);
+
 	if (particle != NULL)
 	{
 		particle->effectType = 1;
@@ -203,6 +205,7 @@ struct _FXParticle* FX_GetParticle(struct _Instance* instance, short startSegmen
 		particle->flag_bits = 0;
 		particle->z_undulate = 0;
 	}
+
 	return particle;
 }
 
