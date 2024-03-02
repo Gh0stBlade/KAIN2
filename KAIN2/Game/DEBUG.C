@@ -1932,7 +1932,7 @@ void DEBUG_FillUpHealth(long* var)
 	RAZIEL_DebugManaFillUp();
 }
 
-void DEBUG_FogLoad()  // Matching - 97.88%
+void DEBUG_FogLoad()  // Matching - 100%
 {
 	int temp, temp2, temp3, temp4, temp5;  // not in SYMDUMP
 	struct _StreamUnit* currentUnit;
@@ -1945,14 +1945,14 @@ void DEBUG_FogLoad()  // Matching - 97.88%
 	debugFogNear = temp2;
 	debugOrgFogNear = temp2;
 	temp3 = (currentUnit->FogColor >> 16) & 0xFF;
-	debugFogRed = temp3;
-	debugOrgFogRed = temp3;
+	debugFogBlu = temp3;
+	debugOrgFogBlu = temp3;
 	temp4 = (currentUnit->FogColor >> 8) & 0xFF;
 	debugFogGrn = temp4;
 	debugOrgFogGrn = temp4;
 	temp5 = (currentUnit->FogColor >> 0) & 0xFF;
-	debugFogBlu = temp5;
-	debugOrgFogBlu = temp5;
+	debugFogRed = temp5;
+	debugOrgFogRed = temp5;
 }
 
 
