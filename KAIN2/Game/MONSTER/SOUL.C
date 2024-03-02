@@ -219,7 +219,7 @@ void SOUL_BirthEntry(struct _Instance* instance)//Matching - 99.76%
 	mv->generalTimer = MON_GetTime(instance) + 1500;
 }
 
-void SOUL_Birth(struct _Instance* instance)  // Matching - 99.81%
+void SOUL_Birth(struct _Instance* instance)  // Matching - 100%
 {
 	struct _MonsterVars* mv;
 
