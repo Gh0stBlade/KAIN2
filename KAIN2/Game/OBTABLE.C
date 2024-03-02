@@ -224,7 +224,7 @@ struct ObjectFunc objectFunc[8] =
 		NULL
 	},
 	{
-		"sreaver__",
+		"sreavr__",
 		SoulReaverInit,
 		SoulReaverProcess,
 		SoulReaverCollide,
