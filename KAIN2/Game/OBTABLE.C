@@ -323,15 +323,18 @@ void OBTABLE_InstanceInit(struct _Instance *instance)
 	}
 }
 
-void OBTABLE_GetInstanceCollideFunc(struct _Instance *instance)
+void OBTABLE_GetInstanceCollideFunc(struct _Instance* instance) // Matching - 100%
 {
+	struct ObjectFunc* temp;  // not from SYMDUMP
 	long id;
 
 	id = instance->object->id;
 
 	if (id >= 0)
 	{
-		instance->collideFunc = objectFunc[id].collideFunc;
+		temp = objectFunc;
+
+		instance->collideFunc = temp[id].collideFunc;
 	}
 	else
 	{
