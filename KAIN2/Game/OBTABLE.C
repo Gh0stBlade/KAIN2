@@ -355,15 +355,18 @@ void OBTABLE_GetInstanceAdditionalCollideFunc(struct _Instance *instance)
 	}
 }
 
-void OBTABLE_GetInstanceProcessFunc(struct _Instance *instance)
+void OBTABLE_GetInstanceProcessFunc(struct _Instance* instance) // Matching - 100%
 {
+	struct ObjectFunc* temp;  // not from SYMDUMP
 	long id;
-	
+
 	id = instance->object->id;
 
 	if (id >= 0)
 	{
-		instance->processFunc = objectFunc[id].processFunc;
+		temp = objectFunc;
+
+		instance->processFunc = temp[id].processFunc;
 	}
 	else
 	{
