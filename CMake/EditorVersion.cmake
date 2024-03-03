@@ -16,4 +16,4 @@ endif()
  
 string(TIMESTAMP _time_stamp)
  
-configure_file(../../../../../KAIN2/Tools/ShiftEditor/Editor_Version.h.in ../../../../KAIN2/Tools/ShiftEditor/Editor_Version.h @ONLY)
+configure_file(../../../../KAIN2/Tools/ShiftEditor/Editor_Version.h.in ../../../KAIN2/Tools/ShiftEditor/Editor_Version.h @ONLY)
