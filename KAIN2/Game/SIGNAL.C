@@ -359,11 +359,15 @@ long SIGNAL_HandleSetCameraTilt(struct _Instance *instance, struct Signal *signa
 	return 0;
 }
 
-long SIGNAL_HandleSetCameraDistance(struct _Instance* instance, struct Signal* signal)
+long SIGNAL_HandleSetCameraDistance(struct _Instance* instance, struct Signal* signal)  // Matching - 100%
 {
+	int temp;  // not from SYMDUMP
+
+	temp = signal->data.farPlane;
+
 	if (instance != NULL)
 	{
-		CAMERA_Adjust_distance(&theCamera, signal->data.cameraShake.time);
+		CAMERA_Adjust_distance(&theCamera, temp);
 	}
 
 	return 1;
