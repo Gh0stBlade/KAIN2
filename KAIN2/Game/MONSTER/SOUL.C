@@ -41,7 +41,7 @@ void SOUL_Physics(struct _Instance* instance, long time)  // Matching - 100%
 	PhysicsMove(instance, &instance->position, time);
 }
 
-void SOUL_Fade(struct _Instance* instance)  // Matching - 99.89%
+void SOUL_Fade(struct _Instance* instance)  // Matching - 100%
 {
 	struct _MonsterVars* mv;
 	unsigned long time;
