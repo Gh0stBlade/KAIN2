@@ -257,9 +257,9 @@ long SIGNAL_HandleCameraShake(struct _Instance* instance, struct Signal* signal)
 	return 1;
 }
 
-long SIGNAL_HandleCallSignal(struct _Instance* instance, struct Signal* signal)
+long SIGNAL_HandleCallSignal(struct _Instance* instance, struct Signal* signal) // Matching - 100%
 {
-	SIGNAL_HandleSignal(instance,(struct Signal*)signal->data.callSignal, 0);
+	SIGNAL_HandleSignal(instance, ((struct _MultiSignal*)(signal->data.callSignal))->signalList, 0);
 	return 1;
 }
 
