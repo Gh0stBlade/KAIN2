@@ -855,29 +855,27 @@ void Glyph_DoFX(struct _Instance* instance)  // Matching - 100%
 	}
 }
 
-void _GlyphGenericProcess(struct _Instance* instance, int data1, int data2)
+void _GlyphGenericProcess(struct _Instance* instance, int data1, int data2)  // Matching - 100%
 {
-	struct __Event* Ptr; // $v0
-	struct __GlyphData* data; // $s1
-	struct _GlyphTuneData* glyphtunedata; // $s0
+	struct __Event* Ptr;
+	struct __GlyphData* data;
 
-	//s2 = instance
-	//s3 = data1
-	//s4 = data2
 	data = (struct __GlyphData*)instance->extraData;
+
 	ShrinkGlyphMenu(instance);
-	//s0 = 0x100001
 
 	while (Ptr = PeekMessageQueue(&data->messages))
 	{
 		switch (Ptr->ID)
 		{
-		case 0x00100001:
-		{
+		case 0x100001:
 			Glyph_StartSpell(instance, data->selectedGlyph);
-
 			break;
-		}
+		case 0x100004:
+			break;
+		case 0x80000000:
+			_GlyphSwitchProcess(instance, &_GlyphOffProcess);
+			break;
 		default:
 			_GlyphDefaultProcess(instance, data1, data2);
 			break;
@@ -888,6 +886,8 @@ void _GlyphGenericProcess(struct _Instance* instance, int data1, int data2)
 
 	if (glyph_trigger != 0)
 	{
+		struct _GlyphTuneData* glyphtunedata;
+
 		glyphtunedata = (struct _GlyphTuneData*)instance->object->data;
 
 		Glyph_DoSpell(instance, data->selectedGlyph);
@@ -895,9 +895,9 @@ void _GlyphGenericProcess(struct _Instance* instance, int data1, int data2)
 		glyph_trigger = 0;
 
 		INSTANCE_Post(gameTrackerX.playerInstance, 0x40008, _GlyphCost(glyphtunedata, data->selectedGlyph));
-	
-		Glyph_DoFX(instance);
 	}
+
+	Glyph_DoFX(instance);
 }
 
 void GlyphTrigger()  // Matching - 100%
