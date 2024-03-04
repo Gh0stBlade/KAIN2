@@ -917,7 +917,7 @@ int PhysicsUpdateTface(struct _Instance* instance, int Data)  // Matching - 100%
 	return 0;
 }
 
-int PhysicsCheckBlockers(struct _Instance* instance, struct GameTracker* gameTracker, int Data, short Mode)  // Matching - 100%
+int PhysicsCheckBlockers(struct _Instance* instance, struct GameTracker* gameTracker, int Data, short Mode) // Matching - 100%
 {
 	struct evPhysicsEdgeData* Ptr;
 	VECTOR OutTrans;
@@ -951,7 +951,7 @@ int PhysicsCheckBlockers(struct _Instance* instance, struct GameTracker* gameTra
 		Dot += CInfo.wNormal.vy * OutTrans.vy;
 		Dot += CInfo.wNormal.vz * OutTrans.vz;
 		Dot = PHYSICS_IfDotLessThanZeroAdd(Dot) >> 12;
-		if ((CInfo.type == 3) && (tface->textoff != 0xFFFF) && ((struct TextureFT3*)((char*)((struct _Terrain*)(CInfo.inst->node.prev))->StartTextureList + tface->textoff))->attr & 0x1000)
+		if ((CInfo.type == 3) && (tface->textoff != 0xFFFF) && ((struct TextureFT3*)((char*)((struct Level*)(&CInfo.inst->node))->terrain->StartTextureList + tface->textoff))->attr & 0x1000)
 		{
 			if (Dot > -3784)
 			{
@@ -978,7 +978,7 @@ int PhysicsCheckBlockers(struct _Instance* instance, struct GameTracker* gameTra
 		{
 			if (tface->textoff != 0xFFFF)
 			{
-				if (((struct TextureFT3*)((char*)((struct _Terrain*)(CInfo.inst->node.prev))->StartTextureList + tface->textoff))->attr & 0x1000)
+				if (((struct TextureFT3*)((char*)((struct Level*)(&CInfo.inst->node))->terrain->StartTextureList + tface->textoff))->attr & 0x1000)
 				{
 					Ptr->rc |= 0x20000;
 				}
