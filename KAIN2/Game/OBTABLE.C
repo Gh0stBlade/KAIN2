@@ -339,7 +339,7 @@ void OBTABLE_GetInstanceCollideFunc(struct _Instance* instance) // Matching - 10
 	}
 }
 
-void OBTABLE_GetInstanceAdditionalCollideFunc(struct _Instance *instance)
+void OBTABLE_GetInstanceAdditionalCollideFunc(struct _Instance *instance) // Matching - 100%
 { 
 	long id;
 
