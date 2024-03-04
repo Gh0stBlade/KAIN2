@@ -217,9 +217,16 @@ struct RSpline* ScriptGetRotSpline(struct _Instance* instance) // Matching - 100
 	return NULL;
 }
 
-int SCRIPT_GetSplineFrameNumber(struct _Instance* instance, struct SplineDef* splineDef)//Matching - 95%
+int SCRIPT_GetSplineFrameNumber(struct _Instance* instance, struct SplineDef* splineDef) // Matching - 100%
 {
-	return SplineGetFrameNumber(ScriptGetPosSpline(instance) == NULL ? ScriptGetPosSpline(instance) : (struct Spline*)ScriptGetRotSpline(instance), splineDef);
+	if (ScriptGetPosSpline(instance) != NULL)
+	{
+		return SplineGetFrameNumber(ScriptGetPosSpline(instance), splineDef);
+	}
+	else
+	{
+		return SplineGetFrameNumber((struct Spline*)ScriptGetRotSpline(instance), splineDef);
+	}
 }
 
 struct MultiSpline* SCRIPT_GetMultiSpline(struct _Instance* instance, unsigned long* isParent, unsigned long* isClass) // Matching - 100%
