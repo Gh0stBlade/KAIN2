@@ -1685,7 +1685,7 @@ int PHYSICS_CheckForValidMove(struct _Instance* instance, SVECTOR* startVec, SVE
 	return rc;
 }
 
-int PHYSICS_CheckFaceStick(struct _PCollideInfo* CInfo)  // Matching - 100%
+int PHYSICS_CheckFaceStick(struct _PCollideInfo* CInfo) // Matching - 100%
 {
 	int rc;
 	struct _TFace* tface;
@@ -1698,7 +1698,7 @@ int PHYSICS_CheckFaceStick(struct _PCollideInfo* CInfo)  // Matching - 100%
 		tface = (struct _TFace*)CInfo->prim;
 		if (tface->textoff != 0xFFFF)
 		{
-			hface = (struct _HFace*)(((struct TextureFT3*)((char*)((struct _Terrain*)(CInfo->inst->node.prev))->StartTextureList + tface->textoff))->attr & 0x200);
+			hface = (struct _HFace*)(((struct TextureFT3*)((char*)((struct Level*)(&CInfo->inst->node))->terrain->StartTextureList + tface->textoff))->attr & 0x200);
 			rc = (unsigned int)rc < (unsigned int)hface;
 		}
 	}
