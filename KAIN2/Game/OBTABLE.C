@@ -531,14 +531,13 @@ void OBTABLE_InitObjectWithID(struct Object* object)
 	}
 }
 
-void OBTABLE_ClearObjectReferences()
+void OBTABLE_ClearObjectReferences() // Matching - 100%
 {
-	ObjectAccess* oa = objectAccess;
+	struct ObjectAccess* oa;
 
-	while (oa->objectName != NULL)
+	for (oa = objectAccess; oa->objectName != NULL; oa++)
 	{
 		oa->object = NULL;
-		oa++;
 	}
 }
 
