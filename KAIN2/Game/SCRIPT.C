@@ -267,7 +267,7 @@ struct MultiSpline* SCRIPT_GetMultiSpline(struct _Instance* instance, unsigned l
 }
 
 
-struct SplineDef* SCRIPT_GetPosSplineDef(struct _Instance* instance, struct MultiSpline* multi, unsigned long isParent, unsigned long isClass)
+struct SplineDef* SCRIPT_GetPosSplineDef(struct _Instance* instance, struct MultiSpline* multi, unsigned long isParent, unsigned long isClass) // Matching - 100%
 {
 	struct SplineDef* splineDef;
 
@@ -275,15 +275,13 @@ struct SplineDef* SCRIPT_GetPosSplineDef(struct _Instance* instance, struct Mult
 	{
 		return (struct SplineDef*)&instance->work0;
 	}
-	else
+
+	if (multi == NULL)
 	{
-		if (multi != NULL)
-		{
-			return &multi->curPositional;
-		}
+		return NULL;
 	}
 
-	return NULL;
+	return &multi->curPositional;
 }
 
 struct SplineDef* SCRIPT_GetRotSplineDef(struct _Instance* instance, struct MultiSpline* multi, unsigned long isParent, unsigned long isClass)
