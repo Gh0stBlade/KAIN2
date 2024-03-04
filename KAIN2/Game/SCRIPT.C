@@ -222,7 +222,7 @@ int SCRIPT_GetSplineFrameNumber(struct _Instance* instance, struct SplineDef* sp
 	return SplineGetFrameNumber(ScriptGetPosSpline(instance) == NULL ? ScriptGetPosSpline(instance) : (struct Spline*)ScriptGetRotSpline(instance), splineDef);
 }
 
-struct MultiSpline* SCRIPT_GetMultiSpline(struct _Instance* instance, unsigned long* isParent, unsigned long* isClass)
+struct MultiSpline* SCRIPT_GetMultiSpline(struct _Instance* instance, unsigned long* isParent, unsigned long* isClass) // Matching - 100%
 {
 	struct MultiSpline* multi;
 
@@ -247,24 +247,22 @@ struct MultiSpline* SCRIPT_GetMultiSpline(struct _Instance* instance, unsigned l
 			{
 				*isParent = 1;
 			}
-
-		}
-
-		if (multi == NULL)
-		{
-			if (instance->object->modelList[0] != NULL)
-			{
-				multi = instance->object->modelList[0]->multiSpline;
-
-				if (isClass != NULL)
-				{
-					*isClass = 1;
-				}
-			}
-
 		}
 	}
-	
+
+	if (multi == NULL)
+	{
+		if (instance->object->modelList[0] != NULL)
+		{
+			multi = instance->object->modelList[0]->multiSpline;
+
+			if (isClass != NULL)
+			{
+				*isClass = 1;
+			}
+		}
+	}
+
 	return multi;
 }
 
