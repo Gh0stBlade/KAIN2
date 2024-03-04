@@ -629,7 +629,7 @@ void OBTABLE_RelocateObjectTune(struct Object *object, long offset)
 			UNIMPLEMENTED();
 }
 
-void OBTABLE_RelocateInstanceObject(struct _Instance* instance, long offset)
+void OBTABLE_RelocateInstanceObject(struct _Instance* instance, long offset) // Matching - 100%
 {
 	int id;
 
