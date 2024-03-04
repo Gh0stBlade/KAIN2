@@ -203,18 +203,18 @@ struct Spline* ScriptGetPosSpline(struct _Instance* instance)
 	return multi->positional;
 }
 
-struct RSpline* ScriptGetRotSpline(struct _Instance* instance)
+struct RSpline* ScriptGetRotSpline(struct _Instance* instance) // Matching - 100%
 {
 	struct MultiSpline* multi;
 
 	multi = SCRIPT_GetMultiSpline(instance, NULL, NULL);
 
-	if (multi == NULL)
+	if (multi != NULL)
 	{
-		return NULL;
+		return multi->rotational;
 	}
 
-	return multi->rotational;
+	return NULL;
 }
 
 int SCRIPT_GetSplineFrameNumber(struct _Instance* instance, struct SplineDef* splineDef)//Matching - 95%
