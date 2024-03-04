@@ -584,22 +584,17 @@ struct Object * OBTABLE_FindObject(char *objectName)
 	return null;
 }
 
-void OBTABLE_ChangeObjectAccessPointers(struct Object* oldObject, struct Object* newObject)
+void OBTABLE_ChangeObjectAccessPointers(struct Object* oldObject, struct Object* newObject) // Matching - 100%
 {
 	struct ObjectAccess* oa;
 
-	oa = &objectAccess[0];
-
-	while (oa->objectName != NULL)
+	for (oa = objectAccess; oa->objectName != NULL; oa++)
 	{
 		if (oa->object == oldObject)
 		{
 			oa->object = newObject;
-
-			return;
+			break;
 		}
-
-		oa++;
 	}
 }
 
