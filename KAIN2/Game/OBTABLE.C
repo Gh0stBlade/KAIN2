@@ -541,21 +541,17 @@ void OBTABLE_ClearObjectReferences() // Matching - 100%
 	}
 }
 
-void OBTABLE_RemoveObjectEntry(struct Object* object)
+void OBTABLE_RemoveObjectEntry(struct Object* object) // Matching - 100%
 {
 	struct ObjectAccess* oa;
 
-	oa = &objectAccess[0];
-
-	while (oa->objectName != NULL)
+	for (oa = objectAccess; oa->objectName != NULL; oa++)
 	{
 		if (oa->object == object)
 		{
 			oa->object = NULL;
-			return;
+			break;
 		}
-
-		oa++;
 	}
 }
 
