@@ -387,15 +387,18 @@ void OBTABLE_GetInstanceQueryFunc(struct _Instance *instance)
 	}
 }
 
-void OBTABLE_GetInstanceMessageFunc(struct _Instance *instance)
+void OBTABLE_GetInstanceMessageFunc(struct _Instance* instance) // Matching - 100%
 {
+	struct ObjectFunc* temp;  // not from SYMDUMP
 	long id;
 
 	id = instance->object->id;
 
 	if (id >= 0)
 	{
-		instance->messageFunc = objectFunc[id].messageFunc;
+		temp = objectFunc;
+
+		instance->messageFunc = temp[id].messageFunc;
 	}
 	else
 	{
