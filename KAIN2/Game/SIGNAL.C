@@ -330,11 +330,15 @@ long SIGNAL_HandleScreenWipeColor(struct _Instance* instance, struct Signal* sig
 	return 1;
 }
 
-long SIGNAL_HandleSetSlideAngle(struct _Instance* instance, struct Signal* signal)
+long SIGNAL_HandleSetSlideAngle(struct _Instance* instance, struct Signal* signal) // Matching - 100%
 {
+	int temp;  // not from SYMDUMP
+
+	temp = signal->data.slideAngle;
+
 	if (instance != NULL)
 	{
-		INSTANCE_Post(instance, 0x4000005, signal->data.slideAngle);
+		INSTANCE_Post(instance, 0x4000005, temp);
 	}
 
 	return 1;
