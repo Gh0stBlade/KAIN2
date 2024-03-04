@@ -641,7 +641,7 @@ void OBTABLE_RelocateInstanceObject(struct _Instance* instance, long offset)
 	}
 }
 
-void OBTABLE_InitAnimPointers(struct _ObjectTracker* objectTracker)
+void OBTABLE_InitAnimPointers(struct _ObjectTracker* objectTracker) // Matching - 100%
 {
 	struct Object* object;
 	int i;
@@ -665,13 +665,13 @@ void OBTABLE_InitAnimPointers(struct _ObjectTracker* objectTracker)
 		{
 			oi = (struct _ObjectOwnerInfo*)keyPtr[0];
 
-			if(oi->magicnum == 0xFACE0FF)
+			if (oi->magicnum == 0xFACE0FF)
 			{
 				otr = STREAM_GetObjectTracker(oi->objectName);
 
 				if (otr != NULL)
 				{
-					objectIndex = (objectTracker - gameTrackerX.GlobalObjects) / sizeof(struct _ObjectTracker);
+					objectIndex = (objectTracker - gameTrackerX.GlobalObjects);
 
 					ownerOb = otr->object;
 
@@ -688,7 +688,7 @@ void OBTABLE_InitAnimPointers(struct _ObjectTracker* objectTracker)
 						otr->numObjectsUsing += 1;
 						otr->objectsUsing[j] = objectIndex;
 					}
-					
+
 					if (otr->objectStatus == 2)
 					{
 						keyPtr[0] = ownerOb->animList[oi->animID];
