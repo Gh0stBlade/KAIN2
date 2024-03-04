@@ -291,10 +291,10 @@ struct ObjectFunc objectFunc[8] =
 	}
 };
 
-void OBTABLE_InstanceInit(struct _Instance *instance)
+void OBTABLE_InstanceInit(struct _Instance* instance) // Matching - 100%
 {
 	long id;
-	
+
 	id = instance->object->id;
 
 	if (id < 0)
@@ -318,8 +318,8 @@ void OBTABLE_InstanceInit(struct _Instance *instance)
 
 	if (instance->intro != NULL && (instance->intro->flags & 0x20))
 	{
-		instance->flags2 &= 0xFFFFFFFB;
-		instance->flags2 &= 0xFFFDFFFF;
+		instance->flags2 &= ~0x4;
+		instance->flags2 &= ~0x20000;
 	}
 }
 
