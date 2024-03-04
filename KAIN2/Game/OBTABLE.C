@@ -377,15 +377,18 @@ void OBTABLE_GetInstanceProcessFunc(struct _Instance* instance) // Matching - 10
 	}
 }
 
-void OBTABLE_GetInstanceQueryFunc(struct _Instance *instance)
-{ 
+void OBTABLE_GetInstanceQueryFunc(struct _Instance* instance) // Matching - 100%
+{
+	struct ObjectFunc* temp;  // not from SYMDUMP
 	long id;
 
 	id = instance->object->id;
-	
+
 	if (id >= 0)
 	{
-		instance->queryFunc = objectFunc[id].queryFunc;
+		temp = objectFunc;
+
+		instance->queryFunc = temp[id].queryFunc;
 	}
 	else
 	{
