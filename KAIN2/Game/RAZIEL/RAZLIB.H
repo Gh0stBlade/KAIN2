@@ -68,7 +68,7 @@ extern void razAlignYMoveRot(struct _Instance *dest, short distance, _Position *
 
 extern void razAlignYRotMove(struct _Instance *dest, short distance, _Position *position, struct _Rotation *rotation, int extraZ); // 0x800A5274
 
-extern void razAlignYRotMoveInterp(struct _Instance *source, struct _Instance *dest, short distance, unsigned char segNumber, int Frames, int extraZ); // 0x800A534C
+extern void razAlignYRotMoveInterp(struct _Instance *source, struct _Instance *dest, short distance, unsigned char segNumber, int Frames, volatile int extraZ); // 0x800A534C
 
 extern void razAlignYRotInterp(struct _Instance *source, _Position *dest, unsigned char segNumber, int Frames); // 0x800A5440
 
