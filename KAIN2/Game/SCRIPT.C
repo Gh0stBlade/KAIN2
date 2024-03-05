@@ -26,7 +26,7 @@ void SCRIPT_CombineEulerAngles(struct _Rotation* combinedRotation, struct _Rotat
 	combinedRotation->z = _z1;
 }
 
-void SCRIPT_InstanceSplineInit(struct _Instance* instance)
+void SCRIPT_InstanceSplineInit(struct _Instance* instance) // Matching - 100%
 {
 	struct Spline* spline;
 	struct RSpline* rspline;
@@ -37,77 +37,102 @@ void SCRIPT_InstanceSplineInit(struct _Instance* instance)
 	struct SplineDef* ssd;
 	unsigned long isParent;
 	unsigned long isClass;
-	struct _G2Quat_Type* q;
-	struct _G2EulerAngles_Type ea;
-	MATRIX introTransform;
-	struct _Rotation combinedRotation;
-	short _x1;
-	short _y1;
-	short _z1;
-	short _x0;
-	short _y0;
-	short _z0;
-	struct _Position* _v;
-	struct _Position* _v0;
-	struct _SVector* start_point;
 
 	multi = SCRIPT_GetMultiSpline(instance, &isParent, &isClass);
 
 	if (multi != NULL)
 	{
 		sd = SCRIPT_GetPosSplineDef(instance, multi, isParent, isClass);
+
 		rsd = SCRIPT_GetRotSplineDef(instance, multi, isParent, isClass);
+
 		ssd = SCRIPT_GetScaleSplineDef(instance, multi, isParent, isClass);
 
 		spline = multi->positional;
+
 		rspline = multi->rotational;
+
 		sspline = multi->scaling;
 
 		if (rspline != NULL)
 		{
+			struct _G2Quat_Type* q;
+			struct _G2EulerAngles_Type ea;
+
 			q = SplineGetFirstRot(rspline, rsd);
 
-			if (isParent == 0)
+			if ((isParent == 0) && (isClass == 0))
 			{
-				if (isClass == 0)
 				{
 					G2Quat_ToMatrix_S(q, (struct _G2Matrix_Type*)&multi->curRotMatrix);
-				
-					q = (struct _G2Quat_Type*)&instance->intro->rotation;
+
+					q = (struct _G2Quat_Type*)&instance->rotation;
 
 					if (instance->intro != NULL)
 					{
+						MATRIX introTransform;
+
 						RotMatrix((SVECTOR*)&instance->intro->rotation, &introTransform);
 
 						MulMatrix0(&multi->curRotMatrix, &introTransform, &multi->curRotMatrix);
 					}
+
 					instance->flags |= 0x1;
 				}
 			}
-		
-			G2Quat_ToEuler(q, &ea, 0);
+			else
+			{
+				G2Quat_ToEuler(q, &ea, 0);
 
-			instance->rotation.x = ea.x;
-			instance->rotation.y = ea.y;
-			instance->rotation.z = ea.z;
+				instance->rotation.x = ea.x;
+				instance->rotation.y = ea.y;
+				instance->rotation.z = ea.z;
 
-			SCRIPT_CombineEulerAngles(&combinedRotation, (struct _Rotation*)instance->data, &instance->intro->rotation);
+				{
+					struct _Rotation combinedRotation;
+					short _x1;
+					short _y1;
+					short _z1;
+					struct _Position* _v;  // not from SYMDUMP
+					struct _Position* _v0;  // not from SYMDUMP
 
-			((struct _Rotation*)instance->data)->x = combinedRotation.x;
-			((struct _Rotation*)instance->data)->y = combinedRotation.y;
-			((struct _Rotation*)instance->data)->z = combinedRotation.z;
+					_v = (struct _Position*)&instance->rotation;
+					_v0 = (struct _Position*)&combinedRotation;
+
+					SCRIPT_CombineEulerAngles((struct _Rotation*)_v0, (struct _Rotation*)_v, &instance->intro->rotation);
+
+					_x1 = _v0->x;
+					_y1 = _v0->y;
+					_z1 = _v0->z;
+
+					_v->x = _x1;
+					_v->y = _y1;
+					_v->z = _z1;
+				}
+			}
 		}
-		
+
 		if (spline != NULL)
 		{
+			struct _SVector* start_point;
+
 			start_point = SplineGetFirstPoint(spline, sd);
-			
+
 			if (start_point != NULL)
 			{
-				_v0 = (struct _Position*)&instance->initialPos;
-
 				if (isClass != 0)
 				{
+					short _x0;
+					short _y0;
+					short _z0;
+					short _x1;
+					short _y1;
+					short _z1;
+					struct _Position* _v;
+					struct _Position* _v0;
+
+					_v0 = (struct _Position*)&instance->initialPos;
+
 					_x0 = _v0->x;
 					_y0 = _v0->y;
 					_z0 = _v0->z;
@@ -133,6 +158,8 @@ void SCRIPT_InstanceSplineInit(struct _Instance* instance)
 
 		if (sspline != NULL)
 		{
+			struct _SVector* start_point;
+
 			start_point = SplineGetFirstPoint(sspline, ssd);
 
 			if (start_point != NULL)
