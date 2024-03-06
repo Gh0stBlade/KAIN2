@@ -2756,7 +2756,7 @@ int PHYSOB_CheckDropOnSlope(struct _Instance *instance, int x, int y, struct evP
 	return 0;
 }
 
-int PHYSOB_CheckSlideNormal(struct _Instance* instance, int x, int y, struct evPhysicsSlideData** data)//Matching - 99.52%
+int PHYSOB_CheckSlideNormal(struct _Instance* instance, int x, int y, struct evPhysicsSlideData** data) // Matching - 100%
 {
 	PHYSOB_NormalToAxis((short*)&x, (short*)&y);
 
