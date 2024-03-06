@@ -187,23 +187,6 @@ struct _PhysObLight
     struct LightTableEntry* lightTable; // size=8, offset=4
 };
 
-struct __PhysObProjectileData 
-{
-    char model; // size=0, offset=0
-    char startAnim; // size=0, offset=1
-    char loopAnim; // size=0, offset=2
-    char endAnim; // size=0, offset=3
-    long flags; // size=0, offset=4
-    struct PhysObWeaponAttributes* weapon; // size=28, offset=8
-};
-
-struct __PhysObProjectileProperties 
-{
-    struct PhysObProperties Properties; // size=8, offset=0
-    long totalProjectiles; // size=0, offset=8
-    struct __PhysObProjectileData* data; // size=12, offset=12
-};
-
 extern void PHYSOB_PlayDropSound(struct _Instance *instance); // 0x80068700
 
 extern struct _Instance * PHYSOBS_IsAPushBlockAttached(struct _Instance *block); // 0x80068820
