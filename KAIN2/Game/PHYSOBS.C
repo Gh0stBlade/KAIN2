@@ -1957,14 +1957,18 @@ void ExecuteFlip(struct _Instance *instance)
 			UNIMPLEMENTED();
 }
 
-int CheckSlope(int Znormal, int Slope, int Slop)
+int CheckSlope(int Znormal, int Slope, int Slop) // Matching - 100%
 {
+	int result;  // not from SYMDUMP
+
+	result = 0;
+
 	if ((Slope - Slop) < Znormal)
 	{
-		return Znormal < (Slope + Slop);
+		result = Znormal < (Slope + Slop);
 	}
-	
-	return 0;
+
+	return result;
 }
 
 
