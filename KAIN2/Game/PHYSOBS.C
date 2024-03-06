@@ -1797,24 +1797,27 @@ void TurnOnCollisionPhysOb(struct _Instance *instance, int coll)
 }
 
 
-void TurnOffCollisionPhysOb(struct _Instance* instance, int coll)  // Matching - 100%
+void TurnOffCollisionPhysOb(struct _Instance* instance, int coll) // Matching - 100%
 {
 	struct PhysObWeaponAttributes* weapon;
 
 	weapon = PhysObGetWeapon(instance);
+
 	if (weapon != NULL)
 	{
-		if ((coll & 2) != 0)
+		if ((coll & 0x2))
 		{
-			COLLIDE_SegmentCollisionOff(instance, *(signed char*)(&weapon->LeftHandSphere));
+			COLLIDE_SegmentCollisionOff(instance, (signed char)weapon->LeftHandSphere);
 		}
-		if ((coll & 1) != 0)
+
+		if ((coll & 0x1))
 		{
-			COLLIDE_SegmentCollisionOff(instance, *(signed char*)(&weapon->RightHandSphere));
+			COLLIDE_SegmentCollisionOff(instance, (signed char)weapon->RightHandSphere);
 		}
-		if ((coll & 4) != 0)
+
+		if ((coll & 0x4))
 		{
-			COLLIDE_SegmentCollisionOff(instance, *(signed char*)(&weapon->ThrowSphere));
+			COLLIDE_SegmentCollisionOff(instance, (signed char)weapon->ThrowSphere);
 		}
 	}
 }
