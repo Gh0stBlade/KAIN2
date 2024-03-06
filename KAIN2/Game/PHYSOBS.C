@@ -679,7 +679,7 @@ void PHYSOB_StartBurning(struct _Instance* instance, struct _PhysObLight* pLight
 	PHYSOB_StartLighting(instance, pLight);
 }
 
-void PHYSOB_StopLighting(struct _Instance* instance, struct _PhysObLight* pLight)
+void PHYSOB_StopLighting(struct _Instance* instance, struct _PhysObLight* pLight) // Matching - 100%
 {
 	struct PhysObData* Data;
 
