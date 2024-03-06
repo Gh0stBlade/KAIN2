@@ -103,7 +103,7 @@ int CheckPhysObAbility(struct _Instance* instance, unsigned short ability) // Ma
 	return 0;
 }
 
-int CheckPhysObFamily(struct _Instance* instance, unsigned short family)
+int CheckPhysObFamily(struct _Instance* instance, unsigned short family) // Matching - 100%
 {
 	struct PhysObProperties* Prop;
 
