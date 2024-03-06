@@ -63,18 +63,18 @@ struct _Instance* PHYSOBS_IsAnythingAttached(struct _Instance* block)
 	return result;
 }
 
-int CheckPhysOb(struct _Instance* instance)
+int CheckPhysOb(struct _Instance* instance) // Matching - 100%
 {
 	struct PhysObProperties* Prop;
 
 	Prop = (struct PhysObProperties*)instance->data;
 
-	if (Prop == NULL)
+	if (Prop != NULL)
 	{
-		return 0;
+		return (Prop->ID ^ 0xB00B) < 1;
 	}
 
-	return (Prop->ID ^ 0xB00B) < 1;
+	return 0;
 }
 
 int CheckPhysObAbility(struct _Instance* instance, unsigned short ability) // Matching - 100%
