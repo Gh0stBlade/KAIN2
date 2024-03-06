@@ -712,7 +712,7 @@ void PHYSOB_EndBurning(struct _Instance* instance, struct _PhysObLight* pLight) 
 	Data->Mode &= 0xFFFEFFFF;
 }
 
-void StopPhysOb(struct _Instance* instance)
+void StopPhysOb(struct _Instance* instance) // Matching - 100%
 {
 	struct PhysObData* Data;
 
