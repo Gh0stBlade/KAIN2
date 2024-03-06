@@ -672,7 +672,7 @@ void PHYSOB_StartBurnFX(struct _Instance *instance)
 			UNIMPLEMENTED();
 }
 
-void PHYSOB_StartBurning(struct _Instance* instance, struct _PhysObLight* pLight)
+void PHYSOB_StartBurning(struct _Instance* instance, struct _PhysObLight* pLight) // Matching - 100%
 { 
 	PHYSOB_StartBurnFX(instance);
 
