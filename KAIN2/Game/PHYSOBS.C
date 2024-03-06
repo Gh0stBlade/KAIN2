@@ -611,7 +611,7 @@ void PHYSOB_SetLightTable(struct _PhysObLight *pLight, struct LightInstance *li,
 			UNIMPLEMENTED();
 }
 
-void PHYSOB_EndLighting(struct _Instance* instance, struct _PhysObLight* pLight)
+void PHYSOB_EndLighting(struct _Instance* instance, struct _PhysObLight* pLight) // Matching - 100%
 {
 	if (pLight != NULL && gameTrackerX.gameData.asmData.lightInstances[0].lightInstance == instance)
 	{
