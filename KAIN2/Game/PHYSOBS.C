@@ -512,7 +512,7 @@ struct _Instance * PHYSOB_BirthCollectible(struct _Instance *parent, int x, int 
 }
 
 
-struct evObjectBirthProjectileData* PHYSOB_BirthProjectile(struct _Instance* parent, int joint, int type)//Matching - 99.55%
+struct evObjectBirthProjectileData* PHYSOB_BirthProjectile(struct _Instance* parent, int joint, int type) // Matching - 100%
 {
 	struct evObjectBirthProjectileData* rc;
 
