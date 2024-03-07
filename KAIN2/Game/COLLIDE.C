@@ -22,7 +22,7 @@ long collide_t1;
 struct _SVector* collide_normal0;
 struct _SVector* collide_normal1;
 
-int COLLIDE_PointInTriangle(struct _SVector* v0, struct _SVector* v1, struct _SVector* v2, struct _SVector* point, struct _SVector* normal)  // Matching - 99.94%
+int COLLIDE_PointInTriangle(struct _SVector* v0, struct _SVector* v1, struct _SVector* v2, struct _SVector* point, struct _SVector* normal) // Matching - 99.94%
 {
 	struct _Triangle2D* triangle;
 	int nx;
@@ -50,12 +50,7 @@ int COLLIDE_PointInTriangle(struct _SVector* v0, struct _SVector* v1, struct _SV
 
 	if (ny < nx)
 	{
-		temp = normal->z;
-
-		if (temp < 0)
-		{
-			temp = -temp;
-		}
+		temp = ABS(normal->z);
 
 		if (temp < nx)
 		{
@@ -78,12 +73,7 @@ int COLLIDE_PointInTriangle(struct _SVector* v0, struct _SVector* v1, struct _SV
 	}
 	else
 	{
-		temp = normal->z;
-
-		if (temp < 0)
-		{
-			temp = -temp;
-		}
+		temp = ABS(normal->z);
 
 		if (temp < ny)
 		{
