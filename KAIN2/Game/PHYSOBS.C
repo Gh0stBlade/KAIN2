@@ -1741,7 +1741,7 @@ struct PhysObWeaponAttributes * PhysObGetWeapon(struct _Instance *instance)
 	return null;
 }
 
-struct _PhysObLight* PhysObGetLight(struct _Instance* instance)
+struct _PhysObLight* PhysObGetLight(struct _Instance* instance) // Matching - 100%
 {
 	struct PhysObWeaponAttributes* weapon;
 	struct _PhysObLight* pLight;
