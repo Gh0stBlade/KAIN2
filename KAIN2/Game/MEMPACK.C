@@ -609,7 +609,7 @@ void MEMPACK_DoGarbageCollection()//Matching - 98.66%
 }
 
 
-void MEMPACK_RelocateAreaType(struct MemHeader* newAddress, long offset, struct Level* oldLevel)  // Matching - 100%
+void MEMPACK_RelocateAreaType(struct MemHeader* newAddress, long offset, struct Level* oldLevel) // Matching - 100%
 {
 	struct Level* level;
 	struct _MultiSignal* msignal;
@@ -800,15 +800,10 @@ void MEMPACK_RelocateAreaType(struct MemHeader* newAddress, long offset, struct 
 		}
 	}
 
-	// @fixme this block causes streaming issues due to SIGNAL_RelocateSignal being unimplemented
-	/*{
-		struct _MultiSignal* temp;
-
-		for (temp = level->SignalListStart; temp < level->SignalListEnd;)
-		{
-			temp = SIGNAL_RelocateSignal(temp, offset);
-		}
-	}*/
+	for (msignal = level->SignalListStart; msignal < level->SignalListEnd; )
+	{
+		msignal = SIGNAL_RelocateSignal(msignal, offset);
+	}
 
 	EVENT_UpdatePuzzlePointers(level->PuzzleInstances, offset);
 	STREAM_UpdateLevelPointer(oldLevel, level, sizeOfLevel);
