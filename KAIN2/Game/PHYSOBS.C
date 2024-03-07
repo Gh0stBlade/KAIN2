@@ -701,15 +701,18 @@ void PHYSOB_StopBurning(struct _Instance* instance, struct _PhysObLight* pLight)
 	Data->Mode |= 0x48000;
 }
 
-void PHYSOB_EndBurning(struct _Instance* instance, struct _PhysObLight* pLight)  // Matching - 100%
+void PHYSOB_EndBurning(struct _Instance* instance, struct _PhysObLight* pLight) // Matching - 100%
 {
 	struct PhysObData* Data;
 
 	Data = (struct PhysObData*)instance->extraData;
+
 	FX_EndInstanceEffects(instance);
+
 	PHYSOB_EndLighting(instance, pLight);
+
 	Data->burnAmpl = 0;
-	Data->Mode &= 0xFFFEFFFF;
+	Data->Mode &= ~0x10000;
 }
 
 void StopPhysOb(struct _Instance* instance) // Matching - 100%
