@@ -322,120 +322,52 @@ void OBTABLE_GetInstanceMessageFunc(struct _Instance* instance) // Matching - 10
 	}
 }
 
-void OBTABLE_InitObjectWithID(struct Object* object)
+void OBTABLE_InitObjectWithID(struct Object* object) // Matching - 100%
 {
 	long id;
-	struct ObjectAccess* oa;
 
 	if (object != NULL)
 	{
+		struct ObjectAccess* oa;
+
 		if ((object->oflags2 & 0x40000))
 		{
-			id = 0;
-
-			while (1)
+			for (id = 0; (objectFunc[id].scriptName != NULL) && (strcmp(objectFunc[id].scriptName, "physical")); id++)
 			{
-				if (objectFunc[id].scriptName != NULL)
-				{
-					if (!strcmp(objectFunc[id].scriptName, "physical"))
-					{
-						if (objectFunc[id].scriptName == NULL)
-						{
-							object->id = -1;
-						}
-						else
-						{
-							object->id = (short)id;
-						}
 
-						break;
-					}
-				}
-				else
-				{
-					object->id = -1;
-					break;
-				}
-
-				id++;
 			}
 		}
 		else if ((object->oflags2 & 0x80000))
 		{
-			id = 0;
-
-			while (1)
+			for (id = 0; (objectFunc[id].scriptName != NULL) && (strcmp(objectFunc[id].scriptName, "monster_")); id++)
 			{
-				if (objectFunc[id].scriptName != NULL)
-				{
-					if (!strcmp(objectFunc[id].scriptName, "monster_"))
-					{
-						if (objectFunc[id].scriptName == NULL)
-						{
-							object->id = -1;
-						}
-						else
-						{
-							object->id = (short)id;
-						}
 
-						break;
-					}
-				}
-				else
-				{
-					object->id = -1;
-					break;
-				}
-
-				id++;
 			}
 		}
 		else
 		{
-			id = 0;
-
-			while (1)
+			for (id = 0; (objectFunc[id].scriptName != NULL) && (strcmp(objectFunc[id].scriptName, object->script)); id++)
 			{
-				if (objectFunc[id].scriptName != NULL)
-				{
-					if (!strcmp(objectFunc[id].scriptName, object->script))
-					{
-						if (objectFunc[id].scriptName == NULL)
-						{
-							object->id = -1;
-						}
-						else
-						{
-							object->id = (short)id;
-						}
 
-						break;
-					}
-				}
-				else
-				{
-					object->id = -1;
-					break;
-				}
-
-				id++;
 			}
 		}
 
-		oa = &objectAccess[0];
-
-		while (oa->objectName != NULL)
+		if (objectFunc[id].scriptName != NULL)
 		{
-			if (((unsigned int*)object->name)[0] == ((unsigned int*)oa->objectName)[0] &&
-				((unsigned int*)object->name)[1] == ((unsigned int*)oa->objectName)[1])
+			object->id = (short)id;
+		}
+		else
+		{
+			object->id = -1;
+		}
+
+		for (oa = objectAccess; oa->objectName != NULL; oa++)
+		{
+			if ((((unsigned int*)oa->objectName)[0] == ((unsigned int*)object->name)[0])
+				&& (((unsigned int*)oa->objectName)[1] == ((unsigned int*)object->name)[1]))
 			{
 				oa->object = object;
 				break;
-			}
-			else
-			{
-				oa++;
 			}
 		}
 	}
