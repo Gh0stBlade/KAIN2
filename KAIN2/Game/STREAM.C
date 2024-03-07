@@ -3141,7 +3141,7 @@ void MORPH_SubtractOffsets(struct Level* BaseLevel, int time)  // Matching - 100
 	}
 }
 
-void MORPH_GetComponentsForTrackingPoint(struct _TFace* face, struct Level* level)
+void MORPH_GetComponentsForTrackingPoint(struct _TFace* face, struct Level* level) // Matching - 100%
 {
 	struct _SVector* v[3];
 	struct _Position* offset;
@@ -3153,48 +3153,29 @@ void MORPH_GetComponentsForTrackingPoint(struct _TFace* face, struct Level* leve
 	int track;
 	int x[2];
 	struct _TVertex* vertexList;
-	short _x0;
-	short _y0;
-	short _z0;
-	short _x1;
-	short _y1;
-	short _z1;
-	struct _Position* _v;
-	struct _Position* _v0;
-	int div;
 
 	MORPH_SavedFace = face;
+
 	MORPH_SavedLevel = level;
 
-	if (face != NULL && level != NULL)
+	if ((face != NULL) && (level != NULL))
 	{
 		vertexList = level->terrain->vertexList;
-		
+
 		v[0] = (struct _SVector*)&vertexList[face->face.v0].vertex;
 		v[1] = (struct _SVector*)&vertexList[face->face.v1].vertex;
 		v[2] = (struct _SVector*)&vertexList[face->face.v2].vertex;
 
-		_v0 = &gameTrackerX.playerInstance->position;
-		
 		offset = &level->terrain->BSPTreeArray[gameTrackerX.playerInstance->bspTree].globalOffset;
 
-		_x0 = _v0->x;
-		_y0 = _v0->y;
-		_z0 = _v0->z;
+		SUB_VEC((struct _SVector*)&player, &gameTrackerX.playerInstance->position, offset);
 
-		_x1 = offset->x;
-		_y1 = offset->y;
-		_z1 = offset->z;
-
-		_v = &player;
-
-		_v->x = _x0 - _x1;
-		_v->y = _y0 - _y1;
-		_v->z = _z0 - _z1;
-
-		for(track = 0; track < 2; track++)
+		for (track = 0; track < 2; track++)
 		{
+			int div;
+
 			saved_div = 0;
+
 			side = 0;
 
 			for (n = 0; n < 3; n++)
@@ -3206,65 +3187,48 @@ void MORPH_GetComponentsForTrackingPoint(struct _TFace* face, struct Level* leve
 					next = 0;
 				}
 
-				if (track != 1 || n != MORPH_Track[0])
+				if (((track != 1) || (n != MORPH_Track[0])) && ((player.y >= v[n]->y) && (v[next]->y >= player.y)
+					|| ((player.y >= v[next]->y) && (v[n]->y >= player.y))))
 				{
-					_v = (struct _Position*)v[0];
+					div = v[next]->y - v[n]->y;
 
-					if (player.y < _v->y || v[next]->y < player.y)
+					if (ABS(div) > ABS(saved_div))
 					{
-						if (player.y >= v[next]->y || _v->y >= player.y)
-						{
-							if (ABS(saved_div) < ABS(v[next]->y - v[n]->y))
-							{
-								saved_div = v[next]->y - v[n]->y;
-								side = n;
-							}
-						}
-					}
-					else
-					{
-						if (ABS(saved_div) < ABS(v[next]->y - v[n]->y))
-						{
-							saved_div = v[next]->y - v[n]->y;
-							side = n;
-						}
+						saved_div = div;
+
+						side = n;
 					}
 				}
 			}
 
-			MORPH_Track[track] = side;
-
-			div = side + 1;
-			
-			if (div >= 3)
 			{
-				div = 0;
-			}
+				int next;
 
-			if (saved_div != 0)
-			{
-				_v = (struct _Position*)v[side];
+				MORPH_Track[track] = side;
 
-				MORPH_Component[track] = ((player.y - _v->y) << 12) / saved_div;
-			}
-			else
-			{
-				MORPH_Component[track] = 0;
-			}
+				next = side + 1;
 
-			div = MORPH_Component[track] * (v[div]->x - v[side]->x);
-			
-			if (div < 0)
-			{
-				div += 4095;
+				if (next >= 3)
+				{
+					next = 0;
+				}
+
+				if (saved_div != 0)
+				{
+					MORPH_Component[track] = (((player.y - v[side]->y) << 12) / saved_div);
+				}
+				else
+				{
+					MORPH_Component[track] = 0;
+				}
+
+				x[track] = v[side]->x + (MORPH_Component[track] * (v[next]->x - v[side]->x) / 4096);
 			}
-			
-			x[track] = v[side]->x + (div >> 12);
 		}
 
 		if (x[0] != x[1])
 		{
-			MORPH_Component[2] = ((player.x - x[0]) << 12) / (x[1] - x[0]);
+			MORPH_Component[2] = (((player.x - x[0]) << 12) / (x[1] - x[0]));
 		}
 		else
 		{
