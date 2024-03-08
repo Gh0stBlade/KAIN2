@@ -95,13 +95,13 @@ void SoulReaverCollide(struct _Instance* instance, struct GameTracker* gameTrack
 	}
 }
 
-void SoulReaverProcess(struct _Instance* instance, struct GameTracker* gameTracker)
+void SoulReaverProcess(struct _Instance* instance, struct GameTracker* gameTracker) // Matching - 100%
 {
 	struct __ReaverData* data;
 
 	data = (struct __ReaverData*)instance->extraData;
 
-	if (data->ReaverPickedUp != 0)
+	if ((unsigned char)data->ReaverPickedUp != 0)
 	{
 		instance->currentStreamUnitID = gameTrackerX.playerInstance->currentStreamUnitID;
 	}
