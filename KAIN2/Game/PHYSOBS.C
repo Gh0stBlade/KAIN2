@@ -2562,14 +2562,17 @@ long PHYSOBS_CheckForStackedForwardHits(struct _Instance* block, long xoffset, l
 }
 
 
-void PHYSOBS_SetNewAnim(struct _Instance* instance, struct PhysObData* Data, unsigned long modeBits, int path, int resetflg)  // Matching - 100%
+void PHYSOBS_SetNewAnim(struct _Instance* instance, struct PhysObData* Data, unsigned long modeBits, int path, int resetflg) // Matching - 100%
 {
 	Data->PathNumber = (short)path;
-	Data->Mode = Data->Mode & 0xFFFFFFFE | modeBits;
+
+	Data->Mode = (Data->Mode & ~0x00000001) | modeBits;
+
 	if (resetflg != 0)
 	{
 		ResetOrientation(instance);
 	}
+
 	PhysOb_AlignPush(instance, (int)Data->xForce, (int)Data->yForce, path, Data);
 }
 
