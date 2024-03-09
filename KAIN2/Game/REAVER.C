@@ -209,7 +209,7 @@ void SoulReaverPost(struct _Instance* instance, unsigned long message, unsigned 
 	UNIMPLEMENTED();
 }
 
-unsigned long REAVER_GetGlowColor(struct _Instance* instance)
+unsigned long REAVER_GetGlowColor(struct _Instance* instance) // Matching - 100%
 {
 	struct __ReaverTuneData* tuneData;
 	struct __ReaverData* data;
