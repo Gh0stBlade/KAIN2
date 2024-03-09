@@ -6,7 +6,7 @@ int Pending;
 int Up;
 int Down;
 
-void ProcessRazControl(long* command)
+void ProcessRazControl(long* command) // Matching - 100%
 {
 	if ((command[0] & RazielCommands[2]))
 	{
