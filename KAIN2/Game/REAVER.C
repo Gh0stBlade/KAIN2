@@ -243,7 +243,7 @@ void _SoulReaverAnimate(struct _Instance *instance)
 			UNIMPLEMENTED();
 }
 
-int SoulReaverFire()
+int SoulReaverFire() // Matching - 100%
 {
 	return FireReaverFlag;
 }
