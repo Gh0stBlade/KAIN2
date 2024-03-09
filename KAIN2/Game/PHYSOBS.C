@@ -101,6 +101,7 @@ int CheckPhysObAbility(struct _Instance* instance, unsigned short ability) // Ma
 	struct PhysObProperties* prop;
 
 	prop = (struct PhysObProperties*)instance->data;
+
 	if (prop != NULL)
 	{
 		if (prop->ID != 0xB00B)
@@ -109,7 +110,7 @@ int CheckPhysObAbility(struct _Instance* instance, unsigned short ability) // Ma
 		}
 		else if (prop->family == 3)
 		{
-			if (((struct PhysObData*)instance->extraData)->xForce & (ability & 0xFFFF))
+			if (((short)((struct PhysObInteractProperties*)instance->extraData)->Properties.ID & (ability & 0xFFFF)))
 			{
 				return 1;
 			}
@@ -119,6 +120,7 @@ int CheckPhysObAbility(struct _Instance* instance, unsigned short ability) // Ma
 			return 1;
 		}
 	}
+
 	return 0;
 }
 
