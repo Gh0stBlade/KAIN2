@@ -190,7 +190,7 @@ void SoulReaverCharge(struct _Instance* instance, struct __ReaverData* data) // 
 	}
 }
 
-void StopSoulReaverCharge(struct __ReaverData* data, struct _Instance* instance)
+void StopSoulReaverCharge(struct __ReaverData* data, struct _Instance* instance) // Matching - 100%
 {
 	data->ReaverChargeTime = 0;
 	
