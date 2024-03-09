@@ -619,9 +619,9 @@ long SCRIPT_InstanceSplineProcess(struct _Instance *instance, struct SplineDef *
 	return 0;
 }
 
-void SCRIPT_FadeOutProcess(struct _Instance* instance)
+void SCRIPT_FadeOutProcess(struct _Instance* instance) // Matching - 100%
 {
-	instance->fadeValue += (short)(gameTrackerX.timeMult * 32);
+	instance->fadeValue += (short)(gameTrackerX.timeMult / 32);
 
 	if (instance->fadeValue >= 4096)
 	{
