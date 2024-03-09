@@ -1068,31 +1068,33 @@ void STREAM_DoObjectLoadAndDump(struct _StreamUnit* streamUnit)  // Matching - 1
 	STREAM_RemoveAllObjectsNotInUse();
 }
 
-void STREAM_FinishLoad(struct _StreamUnit *streamUnit)
+void STREAM_FinishLoad(struct _StreamUnit* streamUnit) // Matching - 86.63%
 {
-	struct Level *level;
+	struct Level* level;
 	char sfxName[80];
 
 	STREAM_FillOutFileNames(streamUnit->baseAreaName, NULL, NULL, sfxName);
 
 	level = streamUnit->level;
+
 	level->morphLastStep = -1;
-	
+
 	streamUnit->sfxFileHandle = 0;
-	
+
 	if (LOAD_DoesFileExist(sfxName) != 0)
 	{
 		streamUnit->sfxFileHandle = aadLoadDynamicSfx(streamUnit->baseAreaName, streamUnit->StreamUnitID, 1);
 	}
-	
+
 	LoadLevelObjects(streamUnit);
-	
+
 	streamUnit->FogColor = (level->cpad1 << 24) | (level->backColorB << 16) | (level->backColorG << 8) | (level->backColorR);
-	streamUnit->TargetFogFar = level->fogFar;
-	streamUnit->TargetFogNear = level->fogNear;
+
+	level->fogFar = streamUnit->TargetFogFar;
+	level->fogNear = streamUnit->TargetFogNear;
 
 	LIGHT_CalcDQPTable(level);
-	
+
 	STREAM_CalculateWaterLevel(level);
 
 	if (gameTrackerX.gameData.asmData.MorphType == 1)
@@ -1107,23 +1109,24 @@ void STREAM_FinishLoad(struct _StreamUnit *streamUnit)
 	STREAM_DoObjectLoadAndDump(streamUnit);
 
 	EVENT_LoadEventsForLevel(streamUnit->StreamUnitID, level);
-	
+
 	PLANAPI_InitPlanMkrList(streamUnit);
 
 	if (level->startUnitLoadedSignal != NULL)
 	{
 		level->startUnitLoadedSignal->flags |= 0x1;
-		
+
 		SIGNAL_HandleSignal(gameTrackerX.playerInstance, &level->startUnitLoadedSignal->signalList[0], 0);
-		
+
 		EVENT_AddSignalToReset(level->startUnitLoadedSignal);
 	}
 
 	SAVE_IntroForStreamID(streamUnit);
+
 	SAVE_UpdateLevelWithSave(streamUnit);
-	
+
 	EVENT_AddStreamToInstanceList(streamUnit);
-	
+
 	WARPGATE_FixUnit(streamUnit);
 }
 
