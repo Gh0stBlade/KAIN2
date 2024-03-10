@@ -26,7 +26,7 @@ void PIPE3D_AspectAdjustMatrix(MATRIX* matrix)
 	matrix->m[0][2] = (matrix->m[0][2] * 512) / 320;
 }
 
-void PIPE3D_CalculateWCTransform(struct _CameraCore_Type *cameraCore)
+void PIPE3D_CalculateWCTransform(struct _CameraCore_Type* cameraCore) // Matching - 97.74%
 {
 	MATRIX user_rotation;
 	MATRIX first;
@@ -45,7 +45,7 @@ void PIPE3D_CalculateWCTransform(struct _CameraCore_Type *cameraCore)
 #endif
 
 	cam_wcTrans = cameraCore->wcTransform;
-	
+
 	v0.vx = -cameraCore->position.x;
 	v0.vy = -cameraCore->position.y;
 	v0.vz = -cameraCore->position.z;
@@ -66,9 +66,9 @@ void PIPE3D_CalculateWCTransform(struct _CameraCore_Type *cameraCore)
 	{
 		MATH3D_SetUnityMatrix(&user_rotation);
 
-		RotMatrixZ(-cameraCore->rotation.z, &user_rotation);
-		RotMatrixX(-cameraCore->rotation.x, &user_rotation);
-		RotMatrixY(-cameraCore->rotation.y, &user_rotation);
+		RotMatrixZ(-cameraCore->debugRot.z, &user_rotation);
+		RotMatrixY(-cameraCore->debugRot.y, &user_rotation);
+		RotMatrixX(-cameraCore->debugRot.x, &user_rotation);
 
 		v0.vx = -cameraCore->debugPos.x;
 		v0.vy = -cameraCore->debugPos.y;
