@@ -2,7 +2,7 @@
 #include "PLAYER.H"
 #include "Game/RAZIEL/RAZIEL.H"
 
-void PLAYER_TurnHead(struct _Instance* instance, short* rotx, short* rotz, struct GameTracker* gameTracker)//Matching - 99.53%
+void PLAYER_TurnHead(struct _Instance* instance, short* rotx, short* rotz, struct GameTracker* gameTracker) // Matching - 100%
 {
 	if ((INSTANCE_Query(instance, 0x1) & 0x1))
 	{
