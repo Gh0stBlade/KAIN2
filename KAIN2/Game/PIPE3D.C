@@ -15,11 +15,17 @@ struct _Rotation overrideEditorRotation;
 struct _Position overrideEditorPosition;
 #endif
 
-void PIPE3D_AspectAdjustMatrix(MATRIX* matrix)
+void PIPE3D_AspectAdjustMatrix(MATRIX* matrix) // Matching - 100%
 {
-	matrix->m[1][0] = matrix->m[1][0];
-	matrix->m[1][1] = matrix->m[1][1];
-	matrix->m[1][2] = matrix->m[1][2];
+	int temp, temp2, temp3;  // not from SYMDUMP
+
+	temp = matrix->m[1][0];
+	temp2 = matrix->m[1][1];
+	temp3 = matrix->m[1][2];
+
+	matrix->m[1][0] = temp;
+	matrix->m[1][1] = temp2;
+	matrix->m[1][2] = temp3;
 
 	matrix->m[0][0] = (matrix->m[0][0] * 512) / 320;
 	matrix->m[0][1] = (matrix->m[0][1] * 512) / 320;
