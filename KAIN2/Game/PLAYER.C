@@ -26,7 +26,7 @@ long PLAYER_OkToLookAround(struct _Instance* instance) // Matching - 100%
 	}
 }
 
-void PLAYER_SetLookAround(struct _Instance* instance)
+void PLAYER_SetLookAround(struct _Instance* instance) // Matching - 100%
 {
 	if (INSTANCE_Query(instance, 0x1) & 0x1)
 	{
