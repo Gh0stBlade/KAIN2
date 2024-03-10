@@ -160,37 +160,49 @@ long PIPE3D_MatrixColumnLength(MATRIX* transform, long column)
 	return MATH3D_FastSqrt0(MATH3D_SquareLength(transform->m[0][column], transform->m[1][column], transform->m[2][column]));;
 }
 
-void PIPE3D_NormalizeMatrix(MATRIX* target, MATRIX* source) // Matching - 74.58%
+void PIPE3D_NormalizeMatrix(MATRIX* target, MATRIX* source) // Matching - 96.44%
 {
 	VECTOR scalevec;
 	long scale;
-	typedef struct {
+	typedef struct
+	{
 		long m[3];
 	} tmm;
-	typedef struct {
+	typedef struct
+	{
 		long m[5];
 	} cmm;
 
 	scale = PIPE3D_MatrixColumnLength(source, 0);
-	if (scale != 0) {
-		scale = 0x01000000u / scale;
+
+	if (scale != 0)
+	{
+		scale = 0x1000000 / scale;
 	}
+
 	scalevec.vx = scale;
 
 	scale = PIPE3D_MatrixColumnLength(source, 1);
-	if (scale != 0) {
-		scale = 0x01000000u / scale;
+
+	if (scale != 0)
+	{
+		scale = 0x1000000 / scale;
 	}
+
 	scalevec.vy = scale;
 
 	scale = PIPE3D_MatrixColumnLength(source, 2);
-	if (scale != 0) {
-		scale = 0x01000000u / scale;
+
+	if (scale != 0)
+	{
+		scale = 0x1000000 / scale;
 	}
+
 	scalevec.vz = scale;
 
 	*(tmm*)(target->t) = *(tmm*)(source->t);
 	*(cmm*)(target->m) = *(cmm*)(source->m);
+
 	ScaleMatrix(target, &scalevec);
 }
 
