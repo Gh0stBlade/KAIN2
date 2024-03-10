@@ -13,6 +13,8 @@ enum MATH3D_AXIS : int
 	AXIS_NEG_Z = 5,
 };
 
+#define compare(a,b) ( a-b<0?b-a:a-b )
+
 #define POW2(x) ((x) * (x))
 
 #define MATH3D_AddPosToPos(pos0, pos1) \
