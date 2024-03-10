@@ -14,7 +14,7 @@ void PLAYER_TurnHead(struct _Instance* instance, short* rotx, short* rotz, struc
 	}
 }
 
-long PLAYER_OkToLookAround(struct _Instance* instance)
+long PLAYER_OkToLookAround(struct _Instance* instance) // Matching - 100%
 {
 	if ((INSTANCE_Query(instance, 0x1) & 0x1))
 	{
