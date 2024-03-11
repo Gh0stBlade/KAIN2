@@ -250,6 +250,15 @@ struct _FXFlash // hashcode: 0xD3DE17A3 (dec: -740419677)
 	long color; // size=0, offset=32
 };
 
+struct _GenericFlashParams 
+{
+	short type; // size=0, offset=0
+	short timeToColor; // size=0, offset=2
+	long color; // size=0, offset=4
+	short timeAtColor; // size=0, offset=8
+	short timeFromColor; // size=0, offset=10
+};
+
 struct GenericFXObject // hashcode: 0xD22FD65C (dec: -768616868)
 {
 	struct _GenericParticleParams* ParticleList; // size=48, offset=0
