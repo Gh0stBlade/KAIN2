@@ -943,21 +943,21 @@ void PIPE3D_DoGlow(struct _Instance *instance, MATRIX *wcTransform, struct _Vert
 					UNIMPLEMENTED();
 }
 
-long PIPE3D_Segment2ScreenPt(struct _Instance* instance, MATRIX* wcTransform, int segIndex, _Position* pos)
+long PIPE3D_Segment2ScreenPt(struct _Instance* instance, MATRIX* wcTransform, int segIndex, struct _Position* pos) // Matching - 93.94%
 {
 	MATRIX scTransform;
 	struct _Position vOrigin;
 	long face_z;
 
-	CompMatrix(wcTransform, wcTransform + segIndex, &scTransform);
+	CompMatrix(wcTransform, &instance->matrix[segIndex], &scTransform);
 
 	SetRotMatrix(&scTransform);
 
 	SetTransMatrix(&scTransform);
 
-	vOrigin.x = 0;
-	vOrigin.y = 0;
 	vOrigin.z = 0;
+	vOrigin.y = 0;
+	vOrigin.x = 0;
 
 	gte_ldv0(&vOrigin);
 
