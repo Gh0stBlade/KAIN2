@@ -792,7 +792,7 @@ void PIPE3D_AnimateTerrainTextures(struct DrMoveAniTex* aniTextures, long req_fr
 	}
 }
 
-void PIPE3D_HalvePlaneInstanceTransformAndDraw(struct _Instance* instance, MATRIX* wcTransform, struct _VertexPool* vertexPool, struct _PrimPool* primPool, unsigned int** ot, struct _Mirror* mirror) // Matching - 99.88%
+void PIPE3D_HalvePlaneInstanceTransformAndDraw(struct _Instance* instance, MATRIX* wcTransform, struct _VertexPool* vertexPool, struct _PrimPool* primPool, unsigned int** ot, struct _Mirror* mirror) // Matching - 100%
 {
 	struct Object* object;
 	struct _Model* model;
@@ -822,7 +822,7 @@ void PIPE3D_HalvePlaneInstanceTransformAndDraw(struct _Instance* instance, MATRI
 	PIPE3D_InvertTransform(&pwTransform, &wpTransform);
 	CompMatrix(wcTransform, &pwTransform, &pcTransform);
 
-	if (matrixPool != 0)
+	if (matrixPool != NULL)
 	{
 		LIGHT_PresetInstanceLight(instance, 2048, &lm);
 		modelFadeValue = INSTANCE_GetFadeValue(instance);
