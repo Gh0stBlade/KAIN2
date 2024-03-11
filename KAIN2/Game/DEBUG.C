@@ -1903,9 +1903,9 @@ void DEBUG_UpdateHealth(long* var)
 	RAZIEL_DebugHealthSetScale(1);
 }
 
-void DEBUG_UpdateMana(long* var)
-{ 
-	RAZIEL_DebugHealthSetScale(debugHealthLevel);
+void DEBUG_UpdateMana(long* var) // Matching - 100%
+{
+	RAZIEL_DebugManaSetMax(debugManaLevel);
 }
 
 void DEBUG_FogRestore()
