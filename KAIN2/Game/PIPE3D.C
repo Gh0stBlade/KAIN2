@@ -155,9 +155,9 @@ void PIPE3D_InvertTransform(MATRIX *target, MATRIX *source)
 	ApplyMatrixLV(target, &sourceTrans, (VECTOR*)target->t);
 }
 
-long PIPE3D_MatrixColumnLength(MATRIX* transform, long column)
+long PIPE3D_MatrixColumnLength(MATRIX* transform, long column) // Matching - 100%
 {
-	return MATH3D_FastSqrt0(MATH3D_SquareLength(transform->m[0][column], transform->m[1][column], transform->m[2][column]));;
+	return MATH3D_FastSqrt0(MATH3D_SquareLength(transform->m[0][column], transform->m[1][column], transform->m[2][column]));
 }
 
 void PIPE3D_NormalizeMatrix(MATRIX* target, MATRIX* source) // Matching - 96.44%
