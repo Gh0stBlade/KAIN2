@@ -376,7 +376,7 @@ void PIPE3D_InstanceTransformAndDraw(struct _Instance* instance, struct _CameraC
 	}
 }
 
-void PIPE3D_InstanceListTransformAndDrawFunc(struct _StreamUnit* unit, unsigned int** ot, struct _CameraCore_Type* cameraCore, struct _Instance* instance)
+void PIPE3D_InstanceListTransformAndDrawFunc(struct _StreamUnit* unit, unsigned int** ot, struct _CameraCore_Type* cameraCore, struct _Instance* instance) // Matching - 98.07%
 {
 	struct _VertexPool* vertexPool;
 	struct _PrimPool* primPool;
@@ -395,7 +395,7 @@ void PIPE3D_InstanceListTransformAndDrawFunc(struct _StreamUnit* unit, unsigned 
 	bsPos.vy = instance->position.y;
 	bsPos.vz = instance->position.z;
 
-	if (unit == NULL || !(unit->flags & 0x1) || unit->StreamUnitID != gameTrackerX.StreamUnitID || WARPGATE_IsObjectOnWarpSide(instance))
+	if (unit == NULL || !(unit->flags & 0x1) || unit->StreamUnitID == gameTrackerX.StreamUnitID || WARPGATE_IsObjectOnWarpSide(instance))
 	{
 		maxRad = instance->object->modelList[instance->currentModel]->maxRad;
 
@@ -406,7 +406,7 @@ void PIPE3D_InstanceListTransformAndDrawFunc(struct _StreamUnit* unit, unsigned 
 
 		dpv[0].vx -= cameraCore->vvPlaneConsts[0];
 
-		if (-maxRad < dpv[0].vx && 
+		if (-maxRad < dpv[0].vx &&
 			dpv[0].vx < cameraCore->farPlane + maxRad &&
 			-maxRad < dpv[0].vy - cameraCore->vvPlaneConsts[1] &&
 			-maxRad < dpv[0].vz - cameraCore->vvPlaneConsts[2])
@@ -459,18 +459,17 @@ void PIPE3D_InstanceListTransformAndDrawFunc(struct _StreamUnit* unit, unsigned 
 			}
 			else
 			{
-				instance->flags &= 0xFFFFFDFF;
-
+				instance->flags &= ~0x200;
 			}
 		}
 		else
 		{
-			instance->flags &= 0xFFFFFDFF;
+			instance->flags &= ~0x200;
 		}
 	}
 	else
 	{
-		instance->flags &= 0xFFFFFDFF;
+		instance->flags &= ~0x200;
 	}
 }
 
