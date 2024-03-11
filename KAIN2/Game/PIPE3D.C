@@ -244,48 +244,46 @@ void PIPE3D_TransformVerticesToWorld(struct _Instance *instance, struct _SVector
 				UNIMPLEMENTED();
 }
 
-void PIPE3D_InstanceTransformAndDraw(struct _Instance* instance, struct _CameraCore_Type* cameraCore, struct _VertexPool* vertexPool, struct _PrimPool* primPool, unsigned int** ot, struct _Mirror* mirror)
+void PIPE3D_InstanceTransformAndDraw(struct _Instance* instance, struct _CameraCore_Type* cameraCore, struct _VertexPool* vertexPool, struct _PrimPool* primPool, unsigned int** ot, struct _Mirror* mirror) // Matching - 90.68%
 {
 	struct Object* object;
 	struct _Model* model;
 	MATRIX* matrixPool;
 	MATRIX lm;
 	long flags;
-	_MVertex* vertexList;
-	struct _PVertex* poolVertex;
-	CVECTOR* vertexColor;
-	long spadOffset;
-	long spadFree;
-	long allocSize;
-	long BackColorSave;
-	long BlendStartSave;
-	int pval;
 
 	object = instance->object;
-	
+
 	matrixPool = instance->matrix;
 
 	model = object->modelList[instance->currentModel];
 
 	if (matrixPool != NULL)
 	{
+		struct _MVertex* vertexList;
+		struct _PVertex* poolVertex;
+		CVECTOR* vertexColor;
+		long spadOffset;
+		long spadFree;
+		long allocSize;
+
 		LIGHT_PresetInstanceLight(instance, 2048, &lm);
 
 		poolVertex = (struct _PVertex*)&vertexPool->vertex[0];
-		
+
 		vertexColor = (CVECTOR*)&vertexPool->color[0];
 
 		spadFree = 224;
-		
+
 		vertexList = model->vertexList;
 
 		spadOffset = 32;
-		
-		if (spadFree >= model->numVertices * 4)
+
+		if (spadFree >= model->numVertices * 2)
 		{
 			poolVertex = (struct _PVertex*)getScratchAddr(32);
-			spadOffset += model->numVertices * 4 + 32;
-			spadFree -= model->numVertices * 4 + 32;
+			spadOffset += model->numVertices * 2;
+			spadFree -= model->numVertices * 2;
 		}
 
 		if (spadFree >= model->numVertices)
@@ -295,7 +293,7 @@ void PIPE3D_InstanceTransformAndDraw(struct _Instance* instance, struct _CameraC
 
 		modelFadeValue = INSTANCE_GetFadeValue(instance);
 
-		flags = PIPE3D_TransformAnimatedInstanceVertices_S((_VertexPool*)vertexList, poolVertex, model, cameraCore->wcTransform, matrixPool, &lm, vertexColor, instance->perVertexColor);
+		flags = PIPE3D_TransformAnimatedInstanceVertices_S((struct _VertexPool*)vertexList, poolVertex, model, cameraCore->wcTransform, matrixPool, &lm, vertexColor, instance->perVertexColor);
 
 		LIGHT_PresetInstanceLight(instance, 4096, &lm);
 
@@ -305,13 +303,15 @@ void PIPE3D_InstanceTransformAndDraw(struct _Instance* instance, struct _CameraC
 
 		if ((flags & 0x8000))
 		{
-			flags &= 0x7FFF6FFF;
+			flags &= ~0x80009000;
 		}
-		
-		object = instance->object;
 
-		if (!(flags & 0xFFFFEFFF) || !(object->oflags2 & 0x2000))
+		if (!(flags & ~0x1000) || (object = instance->object, object->oflags2 & 0x2000))
 		{
+			long BackColorSave;
+			long BlendStartSave;
+			int pval;
+
 			BlendStartSave = 0;
 
 			if (primPool->nextPrim + (model->numFaces * 12) < primPool->lastPrim)
@@ -323,7 +323,7 @@ void PIPE3D_InstanceTransformAndDraw(struct _Instance* instance, struct _CameraC
 				if (!(object->oflags2 & 0x1000))
 				{
 					SetRotMatrix(theCamera.core.wcTransform);
-					
+
 					SetTransMatrix(theCamera.core.wcTransform);
 
 					gte_ldv0(&instance->position);
@@ -335,23 +335,23 @@ void PIPE3D_InstanceTransformAndDraw(struct _Instance* instance, struct _CameraC
 
 				if (instance->petrifyValue != 0)
 				{
+					BackColorSave = depthQBackColor;
+
 					BlendStartSave = depthQBlendStart;
 
 					depthQBackColor = 0x707070;
-					
+
 					depthQBlendStart = depthQFogStart;
-					
-					BackColorSave = depthQBackColor;
 
 					LoadAverageCol((unsigned char*)&BackColorSave, (unsigned char*)&depthQBackColor, pval, ONE - pval, (unsigned char*)&depthQBackColor);
-				
+
 					if (instance->petrifyValue < pval)
 					{
 						gte_lddp(pval);
 					}
 					else
 					{
-						gte_lddp(pval);
+						gte_lddp(instance->petrifyValue);
 					}
 				}
 
@@ -359,7 +359,7 @@ void PIPE3D_InstanceTransformAndDraw(struct _Instance* instance, struct _CameraC
 				{
 					object = instance->object;
 
-					if ((object->oflags2 & 0x1000) || pval < 4090)
+					if ((object->oflags2 & 0x1000) || (pval < 4090))
 					{
 						primPool->nextPrim = (unsigned int*)gameTrackerX.drawAnimatedModelFunc(model, poolVertex, primPool, ot, vertexColor);
 					}
