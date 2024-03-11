@@ -15,7 +15,7 @@ Please select a platform:
   6. [UWP](#Windows)
 
 # Windows
-  1. Install Visual Studio 17 2022.
+  1. Install Visual Studio 17 2022 (Preview).
   2. Install Git or GitHub Desktop.
   3. Install CMake (3.24.1 or higher).
   4. Clone the project (and all submodules) using GitHub desktop or Git command line.
