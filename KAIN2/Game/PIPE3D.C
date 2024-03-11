@@ -842,7 +842,7 @@ void PIPE3D_HalvePlaneInstanceTransformAndDraw(struct _Instance* instance, MATRI
 	}
 }
 
-void PIPE3D_HalvePlaneGetRingPoints(struct _Instance* instance, MATRIX* wcTransform, struct _VertexPool* vertexPool, _PrimPool* primPool, unsigned long** ot, struct _FXHalvePlane* ring) // Matching - 99.96%
+void PIPE3D_HalvePlaneGetRingPoints(struct _Instance* instance, MATRIX* wcTransform, struct _VertexPool* vertexPool, struct _PrimPool* primPool, unsigned long** ot, struct _FXHalvePlane* ring) // Matching - 100%
 {
 	struct Object* object;
 	struct _Model* model;
@@ -852,9 +852,9 @@ void PIPE3D_HalvePlaneGetRingPoints(struct _Instance* instance, MATRIX* wcTransf
 	MATRIX pcTransform;
 	struct _MVertex* vertexList;
 	struct _PVertex* poolVertex;
-	_SVector normalX;
-	_SVector* normal;
-	_SVector translation;
+	struct _SVector normalX;
+	struct _SVector* normal;
+	struct _SVector translation;
 	struct _PlaneConstants* halvePlane;
 
 	poolVertex = (struct _PVertex*)vertexPool;
@@ -893,9 +893,9 @@ void PIPE3D_HalvePlaneGetRingPoints(struct _Instance* instance, MATRIX* wcTransf
 		CompMatrix(wcTransform, &pwTransform, &pcTransform);
 	}
 
-	if (matrixPool != 0)
+	if (matrixPool != NULL)
 	{
-		PIPE3D_TransformSplitInstanceVertices(vertexList, poolVertex, model, &wpTransform, matrixPool, 0);
+		PIPE3D_TransformSplitInstanceVertices(vertexList, poolVertex, model, &wpTransform, matrixPool, NULL);
 		draw_belowSplit = 0;
 		primPool->nextPrim = (unsigned int*)DRAW_DrawRingPoints(model, vertexPool, &pcTransform, primPool, ot, ring->currentColor, ring->type);
 	}
