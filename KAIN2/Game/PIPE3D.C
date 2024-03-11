@@ -473,15 +473,15 @@ void PIPE3D_InstanceListTransformAndDrawFunc(struct _StreamUnit* unit, unsigned 
 	}
 }
 
-void PIPE3D_InstanceListTransformAndDraw(struct _StreamUnit* unit, struct GameTracker* gameTracker, unsigned int** ot, struct _CameraCore_Type* cameraCore)
+void PIPE3D_InstanceListTransformAndDraw(struct _StreamUnit* unit, struct GameTracker* gameTracker, unsigned int** ot, struct _CameraCore_Type* cameraCore) // Matching - 100%
 {
 	struct _Instance* instance;
 	int id;
 	struct _Instance* player;
 
+	instance = gameTracker->instanceList->first;
 	player = gameTracker->playerInstance;
 	id = unit->StreamUnitID;
-	instance = gameTracker->instanceList->first;
 
 	if (player->currentStreamUnitID == id)
 	{
