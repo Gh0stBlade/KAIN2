@@ -5599,48 +5599,47 @@ void CAMERA_CalculateLead(struct Camera* camera)
 }
 
 
-void CAMERA_CalcFollowPosition(struct Camera* camera, struct _Rotation* rotation)
-{ 
+void CAMERA_CalcFollowPosition(struct Camera* camera, struct _Rotation* rotation) // Matching - 98.95%
+{
 	struct _Instance* focusInstance;
-	short _x1;
-	short _y1;
-	short _z1;
-	struct _Rotation* _v0;
-	short target_rotx;
-	int hypotXY;
-	int smooth;
-	int diff;
-	struct _Vector dpv;
-	int zdiff;
-	int velz;
-	int ground;
-	int pos;
 
 	focusInstance = camera->focusInstance;
 
 	CAMERA_CalcPosition(&camera->targetPos, &camera->focusPoint, rotation, camera->focusDistance);
 
-	camera->core.position.x = camera->targetPos.x;
-	camera->core.position.y = camera->targetPos.y;
-	camera->core.position.z = camera->targetPos.z;
+	camera->core.position = camera->targetPos;
 
-	_x1 = rotation->x;
-	_y1 = rotation->y;
-	_z1 = rotation->z;
+	{
+		short _x1;
+		short _y1;
+		short _z1;
+		struct _Rotation* _v0;
 
-	_v0 = &camera->core.rotation;
+		_x1 = rotation->x;
+		_y1 = rotation->y;
+		_z1 = rotation->z;
 
-	_v0->x = _x1;
-	_v0->y = _y1;
-	_v0->z = _z1;
+		_v0 = &camera->core.rotation;
+
+		_v0->x = _x1;
+		_v0->y = _y1;
+		_v0->z = _z1;
+	}
 
 	if (!(camera->flags & 0x10000))
 	{
+		short target_rotx;
+		int hypotXY;
+		int smooth;
+		int diff;
+		struct _Vector dpv;
+		int zdiff;
+
 		camera->actual_x_rot -= camera->x_rot_change;
 
 		dpv.x = camera->real_focuspoint.x - camera->targetPos.x;
-		dpv.z = 0;
 		dpv.y = camera->real_focuspoint.y - camera->targetPos.y;
+		dpv.z = 0;
 
 		gte_ldlvl(&dpv);
 
@@ -5656,6 +5655,8 @@ void CAMERA_CalcFollowPosition(struct Camera* camera, struct _Rotation* rotation
 
 		if ((camera->instance_mode & 0x1038))
 		{
+			int velz;
+
 			velz = camera->focusInstanceVelVec.z;
 
 			if (focusInstance->shadowPosition.z != focusInstance->position.z)
@@ -5664,42 +5665,46 @@ void CAMERA_CalcFollowPosition(struct Camera* camera, struct _Rotation* rotation
 				{
 					if (velz < -260)
 					{
-						if (-520 - velz > 0)
+						velz = -520 - velz;
+						if (velz > 0)
 						{
 							velz = 0;
 						}
 					}
-
-					pos = camera->real_focuspoint.z + (velz * 2);
-
-					ground = focusInstance->shadowPosition.z + 352;
-
-					if (pos < ground)
 					{
-						ground -= camera->targetPos.z;
-					}
-					else
-					{
-						ground = pos - camera->targetPos.z;
-					}
+						int ground;
+						int pos;
 
-					target_rotx = (short)ratan2(ground, hypotXY);
+						pos = camera->real_focuspoint.z + (velz * 2);
 
-					if (CAMERA_SignedAngleDifference(target_rotx, camera->actual_x_rot) < 0)
-					{
-						target_rotx = camera->actual_x_rot;
+						ground = focusInstance->shadowPosition.z + 352;
+
+						if (pos < ground)
+						{
+							ground -= camera->targetPos.z;
+						}
+						else
+						{
+							ground = pos - camera->targetPos.z;
+						}
+
+						target_rotx = (short)ratan2(ground, hypotXY);
+
+						if (CAMERA_SignedAngleDifference(target_rotx, camera->actual_x_rot) > 0)
+						{
+							target_rotx = camera->actual_x_rot;
+						}
 					}
 				}
-
-				target_rotx = camera->core.rotation.x;
+				else
+				{
+					target_rotx = camera->core.rotation.x;
+				}
 			}
 		}
-		else
+		else if (CAMERA_AngleDifference(target_rotx, camera->core.rotation.x) < 4)
 		{
-			if (CAMERA_AngleDifference(target_rotx, camera->core.rotation.x) < 4)
-			{
-				target_rotx = camera->core.rotation.x;
-			}
+			target_rotx = camera->core.rotation.x;
 		}
 
 		if ((camera->flags & 0x1800))
@@ -5714,7 +5719,7 @@ void CAMERA_CalcFollowPosition(struct Camera* camera, struct _Rotation* rotation
 		{
 			if (zdiff >= 81)
 			{
-				smooth = zdiff - 80 / 3;
+				smooth = (zdiff - 80) / 3;
 
 				if (smooth >= 4)
 				{
@@ -5722,12 +5727,17 @@ void CAMERA_CalcFollowPosition(struct Camera* camera, struct _Rotation* rotation
 					{
 						smooth = 24;
 					}
-					else
-					{
-						smooth = 4;
-					}
 				}
 				else
+				{
+					smooth = 4;
+				}
+			}
+			else
+			{
+				smooth = 24;
+
+				if (zdiff > 0)
 				{
 					smooth = 4;
 				}
@@ -5740,7 +5750,7 @@ void CAMERA_CalcFollowPosition(struct Camera* camera, struct _Rotation* rotation
 
 		if (smooth != 0)
 		{
-			CriticalDampAngle(1, &camera->actual_x_rot, target_rotx, &camera->actual_vel_x, &camera->actual_acc_x, smooth);
+			CriticalDampAngle(1, &camera->actual_x_rot, target_rotx, &camera->actual_vel_x, &camera->actual_acc_x, (short)smooth);
 		}
 		else
 		{
