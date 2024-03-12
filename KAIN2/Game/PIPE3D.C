@@ -133,14 +133,14 @@ void PIPE3D_CalculateWCTransform(struct _CameraCore_Type* cameraCore) // Matchin
 	TransMatrix(cameraCore->wcTransform2, &v1);
 }
 
-void PIPE3D_InvertTransform(MATRIX *target, MATRIX *source)
+void PIPE3D_InvertTransform(MATRIX* target, MATRIX* source) // Matching - 100%
 {
 	VECTOR sourceTrans;
 	MATRIX normMat;
 
-	if (source->m[2][0] == 1)
+	if (((short*)&source->t)[-1] == 1)
 	{
-		PIPE3D_NormalizeMatrix(target, &normMat);
+		PIPE3D_NormalizeMatrix(&normMat, source);
 		TransposeMatrix(&normMat, target);
 	}
 	else
