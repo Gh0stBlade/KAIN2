@@ -2342,7 +2342,7 @@ void FX_ContinueLightning(struct _FXLightning* zap, struct _FXTracker* fxTracker
 	}
 }
 
-void FX_SetReaverInstance(struct _Instance* instance)
+void FX_SetReaverInstance(struct _Instance* instance) // Matching - 100%
 {
 	FX_reaver_instance = instance;
 }
