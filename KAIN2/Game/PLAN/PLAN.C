@@ -232,7 +232,7 @@ void PLAN_AddInitialNodes(struct PlanningNode* planningPool, struct _Instance* p
 	poolManagementData->playerPosAtLastPlanMkrUpdate = player->position;
 }
 
-void PLAN_AddOrRemoveNodes(struct PlanningNode* planningPool, struct _Instance* player) // Matching - 99.83%
+void PLAN_AddOrRemoveNodes(struct PlanningNode* planningPool, struct _Instance* player) // Matching - 100%
 {
 	if (MATH3D_LengthXYZ(
 		player->position.x - poolManagementData->playerPosAtLastPlanMkrUpdate.x,
