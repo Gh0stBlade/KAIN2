@@ -359,15 +359,20 @@ void RAZIEL_DebugManaFillUp()
 	SetMana(1);
 }
 
-void razPlayUnderworldSounds(struct _Instance* instance)  // Matching - 98.21%
+void razPlayUnderworldSounds(struct _Instance* instance) // Matching - 100%
 {
 	if (Raziel.soundHandle != 0)
 	{
 		SndEndLoop(Raziel.soundHandle);
+
 		Raziel.soundHandle = 0;
 	}
+
 	razSetupSoundRamp(instance, (struct _SoundRamp*)&Raziel.soundHandle, 26, -250, -250, 120, 120, 0, 3500);
+
 	razSetupSoundRamp(instance, (struct _SoundRamp*)&Raziel.soundHandle, 26, -300, -300, 120, 120, 0, 3500);
+
 	razSetupSoundRamp(instance, (struct _SoundRamp*)&Raziel.soundHandle, 18, -220, -220, 120, 120, 0, 3500);
+
 	razSetupSoundRamp(instance, (struct _SoundRamp*)&Raziel.soundHandle, 26, -250, -250, 120, 120, 0, 3500);
 }
