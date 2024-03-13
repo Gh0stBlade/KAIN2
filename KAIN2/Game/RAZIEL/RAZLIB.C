@@ -93,7 +93,7 @@ void razAlignYRotMove(struct _Instance* dest, short distance, struct _Position* 
 
 void razAlignYRotMoveInterp(struct _Instance* source, struct _Instance* dest, short distance, unsigned char segNumber, int Frames, volatile int extraZ) // Matching - 100%
 {
-	_Position position;
+	struct _Position position;
 	struct _Rotation rotation;
 	struct _G2SVector3_Type v;
 
