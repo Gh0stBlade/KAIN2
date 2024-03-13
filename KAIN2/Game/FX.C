@@ -986,7 +986,8 @@ void FX_SimpleQuadSetup(struct _FX_PRIM *fxPrim, TDRFuncPtr_FX_SimpleQuadSetup1f
 				UNIMPLEMENTED();
 }
 
-void FX_WaterRingProcess(struct _FX_PRIM* fxPrim, struct _FXTracker* fxTracker) { // Matching 100%
+void FX_WaterRingProcess(struct _FX_PRIM* fxPrim, struct _FXTracker* fxTracker) // Matching - 100%
+{
 	fxPrim->v0.x -= 8;
 	fxPrim->v0.y -= 8;
 	fxPrim->v1.x += 8;
@@ -995,6 +996,7 @@ void FX_WaterRingProcess(struct _FX_PRIM* fxPrim, struct _FXTracker* fxTracker) 
 	fxPrim->v2.y += 8;
 	fxPrim->v3.x += 8;
 	fxPrim->v3.y += 8;
+
 	FX_StandardFXPrimProcess(fxPrim, fxTracker);
 }
 
