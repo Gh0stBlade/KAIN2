@@ -209,7 +209,7 @@ void PLAN_AddOrRemoveRandomNodes(struct PlanningNode* planningPool, struct _Posi
 }
 
 
-void PLAN_AddInitialNodes(struct PlanningNode* planningPool, struct _Instance* player) // Matching - 99.89%
+void PLAN_AddInitialNodes(struct PlanningNode* planningPool, struct _Instance* player) // Matching - 100%
 {
 	struct _PlanCollideInfo pci;
 	short _x1;
