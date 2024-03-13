@@ -161,7 +161,7 @@ void UNDERWORLD_SetupSource()  // Matching - 100%
 	PSX_RECT rect;
 	DR_STP stp;
 
-	//SetDrawStp(&stp, 1);		SetDrawStp needs libValkyrie implementation
+	//SetDrawStp(&stp, 1);		@fixme SetDrawStp() needs libValkyrie implementation
 
 	DrawPrim(&stp);
 
@@ -303,6 +303,7 @@ struct _StreamUnit* UNDERWORLD_LoadLevel(char* baseAreaName, struct GameTracker*
 	}
 
 	{
+		//@fixme prim drawing needs porting to libValkyrie 
 		POLY_F4 poly;
 		DR_TPAGE tpage;
 
