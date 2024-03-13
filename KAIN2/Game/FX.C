@@ -3960,7 +3960,7 @@ void FX_Health_Spiral(int number, int current_health, int max_health)//Matching 
 	Spiral_Max = max_health;
 }
 
-void FX_Spiral_Init() //Matching - 98.44%
+void FX_Spiral_Init() // Matching - 100%
 {
 	Spiral_Max = 100000;
 
