@@ -635,76 +635,97 @@ void StateHandlerAttack2(struct __CharacterState* In, int CurrentSection, int Da
 }
 
 
-void StateHandlerCannedReaction(struct __CharacterState* In, int CurrentSection, int Data)  // Matching - 99.05%
+void StateHandlerCannedReaction(struct __CharacterState* In, int CurrentSection, int Data) // Matching - 100%
 {
-	struct __Event* Ptr;
-	struct _Instance* Inst;
-	struct _Instance* temp; // had to use a different name than in SYMDUMP for this one 
+    struct __Event* Ptr;
 
-	while (Ptr = PeekMessageQueue(&In->SectionList[CurrentSection].Event))
-	{
-		if (Ptr != NULL)
-		{
-			switch (Ptr->ID)
-			{
-			case 0x100001:
-				if (CurrentSection == 0)
-				{
-					Raziel.alarmTable = 4500;
-					Raziel.Mode = 0x10000;
-					ControlFlag = 0x1041009;
-					PhysicsMode = 3;
-					SteerSwitchMode(In->CharacterInstance, 0);
-					In->CharacterInstance->anim.section[0].swAlarmTable = &Raziel.alarmTable;
-				}
-				break;
-			case 0x100004:
-				if (CurrentSection == 1)
-				{
-					G2EmulationSwitchAnimationSync(In, 2, 1, 4);
-				}
-				break;
-			case 0x100014:
-			case 0x08000000:
-				StateSwitchStateData(In, CurrentSection, &StateHandlerIdle, SetControlInitIdleData(0, 0, 3));
-				Raziel.Mode = 1;
-				break;
-			case 0x8000003:
-				if (CurrentSection == 0)
-				{
-					temp = razGetHeldItem();
-					if (Raziel.Senses.EngagedMask & 0x200)
-					{
-						INSTANCE_Post(Raziel.Senses.EngagedList[9].instance, 0x100000A, SetMonsterImpaleData(temp, &In->CharacterInstance->rotation, &In->CharacterInstance->position, 520));
-					}
-				}
-				break;
-			case 0x8000004:
-				Inst = razGetHeldItem();
-				INSTANCE_Post(Inst, 0x800008, 2);
-				razReaverOn();
-				if (Raziel.Senses.EngagedMask & 0x200)
-				{
-					INSTANCE_Post(Raziel.Senses.EngagedList[9].instance, 0x100000A, SetMonsterImpaleData(Inst, &In->CharacterInstance->rotation, &In->CharacterInstance->position, 520));
-				}
-				break;
-			case 0x80000000:
-				break;
-			case 0x80000008:
-				break;
-			case 0x1000001:
-				break;
-			case 0x1000000:
-				break;
-			case 0x80000020:
-				break;
-			default:
-				DefaultStateHandler(In, CurrentSection, Data);
-				break;
-			}
-			DeMessageQueue(&In->SectionList[CurrentSection].Event);
-		}
-	}
+    while (Ptr = PeekMessageQueue(&In->SectionList[CurrentSection].Event))
+    {
+        if (Ptr != NULL)
+        {
+            switch (Ptr->ID)
+            {
+            case 0x100001:
+                if (CurrentSection == 0)
+                {
+                    Raziel.alarmTable = 4500;
+
+                    Raziel.Mode = 0x10000;
+
+                    ControlFlag = 0x1041009;
+
+                    PhysicsMode = 3;
+
+                    SteerSwitchMode(In->CharacterInstance, 0);
+
+                    In->CharacterInstance->anim.section[0].swAlarmTable = &Raziel.alarmTable;
+                }
+
+                break;
+            case 0x100004:
+                if (CurrentSection == 1)
+                {
+                    G2EmulationSwitchAnimationSync(In, 2, 1, 4);
+                }
+
+                break;
+            case 0x100014:
+            case 0x08000000:
+                StateSwitchStateData(In, CurrentSection, &StateHandlerIdle, SetControlInitIdleData(0, 0, 3));
+
+                Raziel.Mode = 1;
+                break;
+            case 0x8000003:
+            {
+                struct _Instance* Inst;
+
+                if (CurrentSection == 0)
+                {
+                    Inst = razGetHeldItem();
+
+                    if ((Raziel.Senses.EngagedMask & 0x200))
+                    {
+                        INSTANCE_Post(Raziel.Senses.EngagedList[9].instance, 0x100000A, SetMonsterImpaleData(Inst, &In->CharacterInstance->rotation, &In->CharacterInstance->position, 520));
+                    }
+                }
+
+                break;
+            }
+            case 0x8000004:
+            {
+                struct _Instance* Inst;
+
+                Inst = razGetHeldItem();
+
+                INSTANCE_Post(Inst, 0x800008, 2);
+
+                razReaverOn();
+
+                if ((Raziel.Senses.EngagedMask & 0x200))
+                {
+                    INSTANCE_Post(Raziel.Senses.EngagedList[9].instance, 0x100000A, SetMonsterImpaleData(Inst, &In->CharacterInstance->rotation, &In->CharacterInstance->position, 520));
+                }
+
+                break;
+            }
+            case 0x80000000:
+                break;
+            case 0x80000008:
+                break;
+            case 0x1000001:
+                break;
+            case 0x1000000:
+                break;
+            case 0x80000020:
+                break;
+            default:
+                DefaultStateHandler(In, CurrentSection, Data);
+                break;
+            }
+
+            DeMessageQueue(&In->SectionList[CurrentSection].Event);
+        }
+    }
 }
 
 
