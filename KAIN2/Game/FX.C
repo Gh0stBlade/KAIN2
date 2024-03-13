@@ -3886,29 +3886,39 @@ void FX_Spiral(struct _PrimPool* primPool, unsigned long** ot)//Matching - 65.16
 	}
 }
 
-void FX_Health_Spiral(int number, int current_health, int max_health)//Matching - 76.08%
+void FX_Health_Spiral(int number, int current_health, int max_health) // Matching - 100%
 {
 	int degchange;
 
-	if (number)
+	if (number != 0)
 	{
-		if (Spiral_Mod >= 2)
+		degchange = Spiral_Mod;
+
+		if (degchange >= 2)
 		{
 			--Spiral_Mod;
+
 			FX_CalcSpiral(128);
 			return;
 		}
 	}
-	else if (Spiral_Mod < 6)
+	else if (degchange = Spiral_Mod, degchange < 6)
 	{
 		++Spiral_Mod;
+
 		Spiral_Number = 0;
+
 		FX_CalcSpiral(128);
 		return;
 	}
-	
+
 	switch (number)
 	{
+	case 0:
+	case 1:
+	default:
+		degchange = 128;
+		break;
 	case 2:
 		degchange = 160;
 		break;
@@ -3918,42 +3928,35 @@ void FX_Health_Spiral(int number, int current_health, int max_health)//Matching 
 	case 4:
 		degchange = 224;
 		break;
-	default:
-		degchange = 128;
-		break;
 	}
 
-	if (degchange != Spiral_Degrees || Spiral_Number != number)
+	if ((degchange != Spiral_Degrees) || (Spiral_Number != number))
 	{
 		Spiral_Number = number;
-		
+
 		if (Spiral_Degrees < degchange)
 		{
 			Spiral_Degrees += 4;
-			
+
 			if (degchange < Spiral_Degrees)
 			{
 				Spiral_Degrees = degchange;
 			}
-		
-			FX_CalcSpiral(Spiral_Degrees);
 		}
 		else
 		{
-			if (degchange >= Spiral_Degrees)
-			{
-				FX_CalcSpiral(Spiral_Degrees);
-			}
-			else
+			if (degchange < Spiral_Degrees)
 			{
 				Spiral_Degrees -= 4;
+
 				if (Spiral_Degrees < degchange)
 				{
 					Spiral_Degrees = degchange;
 				}
-				FX_CalcSpiral(Spiral_Degrees);
 			}
 		}
+
+		FX_CalcSpiral(Spiral_Degrees);
 	}
 
 	Spiral_Current = current_health;
