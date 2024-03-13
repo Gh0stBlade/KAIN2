@@ -158,7 +158,7 @@ void PLAN_AddRandomNode(struct PlanningNode *planningPool, _Position *playerPos)
 					UNIMPLEMENTED();
 }
 
-void PLAN_DeleteRandomNode(struct PlanningNode* planningPool)
+void PLAN_DeleteRandomNode(struct PlanningNode* planningPool) // Matching - 100%
 { 
 	PLANPOOL_DeleteNodeFromPool(PLANPOOL_GetFirstNodeOfSource(planningPool, 0), planningPool);
 }
