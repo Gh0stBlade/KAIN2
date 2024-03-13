@@ -250,25 +250,28 @@ void PLAN_AddOrRemoveNodes(struct PlanningNode* planningPool, struct _Instance* 
 	PLAN_AddOrRemoveRandomNodes(planningPool, &player->position);
 }
 
-struct PlanningNode* PLAN_FindNodeMostInNeedOfConnectivityExpansion(struct PlanningNode* planningPool) // Matching - 99.68%
+struct PlanningNode* PLAN_FindNodeMostInNeedOfConnectivityExpansion(struct PlanningNode* planningPool) // Matching - 100%
 {
 	int i;
 	int numConnections;
 	int minNumConnections;
 	struct PlanningNode* nodeToReturn;
 
-	minNumConnections = 0xFFFF;
+	minNumConnections = 65535;
+
 	nodeToReturn = NULL;
-	i = 0;
-	while (i < poolManagementData->numNodesInPool)
+
+	for (i = 0; i < poolManagementData->numNodesInPool; i++)
 	{
 		numConnections = PLANPOOL_NumConnectionsForNode(&planningPool[i]);
-		if (numConnections < minNumConnections && PLANPOOL_NumConnectionsExaminedForNode(&planningPool[i]) != poolManagementData->numNodesInPool)
+
+		if ((numConnections < minNumConnections) && (PLANPOOL_NumConnectionsExaminedForNode(&planningPool[i]) != poolManagementData->numNodesInPool))
 		{
 			minNumConnections = numConnections;
+
 			nodeToReturn = &planningPool[i];
 		}
-		i += 1;
 	}
+
 	return nodeToReturn;
 }
