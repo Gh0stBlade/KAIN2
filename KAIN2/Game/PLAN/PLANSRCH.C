@@ -92,7 +92,7 @@ void PLANSRCH_ExpandNode(struct PlanningNode *planningPool, struct PlanningNode 
 				UNIMPLEMENTED();
 }
 
-void PLANSRCH_InitNodesForSearch(struct PlanningNode* planningPool)//Matching - 99.74%
+void PLANSRCH_InitNodesForSearch(struct PlanningNode* planningPool) // Matching - 100%
 {
 	int i;
 
@@ -100,8 +100,8 @@ void PLANSRCH_InitNodesForSearch(struct PlanningNode* planningPool)//Matching - 
 	{
 		planningPool[i].cost = 0;
 		planningPool[i].parent = 0;
-		planningPool[i].flags = planningPool[i].flags & 0xFFFC;
 
+		planningPool[i].flags &= ~0x3;
 	}
 }
 
