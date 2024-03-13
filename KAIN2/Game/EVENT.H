@@ -6,6 +6,12 @@
 #include "SIGNAL.H"
 #include "Game/SAVEINFO.H"
 
+struct LitShaftProperties 
+{
+	short fadeValue; // size=0, offset=0
+	short pad; // size=0, offset=2
+};
+
 struct SavedEventSmallVars
 {
 	unsigned char savedID; // size=0, offset=0
