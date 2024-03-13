@@ -451,14 +451,16 @@ void StateHandlerWarpGate(struct __CharacterState* In, int CurrentSection, int D
 	}
 }
 
-void StateHandlerForcedGlide(struct __CharacterState* In, int CurrentSection, int Data)  // Matching - 98.83%
+void StateHandlerForcedGlide(struct __CharacterState* In, int CurrentSection, int Data) // Matching - 98.77%
 {
 	struct __Event* Ptr;
 	int Anim;
 	int extraProcess;
 
 	extraProcess = 0;
+
 	Anim = G2EmulationQueryAnimation(In, CurrentSection);
+
 	while (Ptr = PeekMessageQueue(&In->SectionList[CurrentSection].Event))
 	{
 		if (Ptr != NULL)
@@ -469,46 +471,62 @@ void StateHandlerForcedGlide(struct __CharacterState* In, int CurrentSection, in
 				if (CurrentSection == 0)
 				{
 					Raziel.Mode = 0x2000;
+
 					ControlFlag = 0;
+
 					PhysicsMode = 0;
+
 					SteerSwitchMode(In->CharacterInstance, 0);
+
 					DeInitAlgorithmicWings(In->CharacterInstance);
+
 					SetExternalTransitionForce((struct __Force*)&ExternalForces, In->CharacterInstance, 4, 0, 24, -24);
+
 					gameTrackerX.wipeType = 11;
 					gameTrackerX.wipeTime = -10;
 					gameTrackerX.maxWipeTime = 10;
-					if ((Raziel.forcedGlideSpeed < -23) == 0)
+
+					if (Raziel.forcedGlideSpeed >= -23)
 					{
 						Raziel.forcedGlideSpeed = -24;
 					}
 				}
+
 				G2EmulationSwitchAnimation(In, CurrentSection, 16, Ptr->Data, 5, 1);
 				break;
 			case 0x100004:
 				if (CurrentSection == 0)
 				{
 					InitAlgorithmicWings(In->CharacterInstance);
+
 					gameTrackerX.wipeType = 11;
 					gameTrackerX.wipeTime = 10;
 					gameTrackerX.maxWipeTime = 10;
-					Raziel.forcedGlideSpeed = 0xFFFFFFE8;
+
+					Raziel.forcedGlideSpeed = ~0x17;
 				}
+
 				break;
 			case 0x100000:
 				SetPhysics(In->CharacterInstance, -16, 0, 0, 0);
+
 				if (razSwitchVAnimCharacterGroup(In->CharacterInstance, 24, NULL, NULL) != 0)
 				{
 					G2EmulationSwitchAnimationCharacter(In, 36, 0, 4, 1);
 				}
+
 				extraProcess = 1;
+
 				StateSwitchStateCharacterData(In, &StateHandlerFall, 0);
 				break;
 			case 0x8000000:
 				if (Anim == 16)
 				{
 					G2EmulationSwitchAnimationAlpha(In, CurrentSection, 17, 0, 5, 1, 4);
+
 					SetExternalTransitionForce((struct __Force*)&ExternalForces, In->CharacterInstance, 4, 0, 0, Raziel.forcedGlideSpeed);
 				}
+
 				break;
 			case 0x4010008:
 				StateSwitchStateData(In, CurrentSection, &StateHandlerDeCompression, 0);
@@ -538,10 +556,12 @@ void StateHandlerForcedGlide(struct __CharacterState* In, int CurrentSection, in
 			default:
 				DefaultStateHandler(In, CurrentSection, Data);
 			}
+
 			DeMessageQueue(&In->SectionList[CurrentSection].Event);
 		}
 	}
-	if ((extraProcess == 0) && (CurrentSection == 0) && (STREAM_GetLevelWithID(In->CharacterInstance->currentStreamUnitID)->unitFlags & 0x1000) == 0)
+
+	if ((extraProcess == 0) && (CurrentSection == 0) && (!(STREAM_GetLevelWithID(In->CharacterInstance->currentStreamUnitID)->unitFlags & 0x1000)))
 	{
 		EnMessageQueueData(&In->SectionList[0].Event, 0x100000, 0);
 	}
