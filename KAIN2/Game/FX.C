@@ -3572,7 +3572,7 @@ void FX_GetLinePoint(int radius, int next_radius, int deg, int next_deg, int* pn
 	pnty[0] = y1 + (y2 - y1) * part / 4096;
 }
 
-void FX_CalcSpiral(int degchange)//Matching - 88.37%
+void FX_CalcSpiral(int degchange) // Matching - 100%
 {
 	int radius;
 	int deg;
