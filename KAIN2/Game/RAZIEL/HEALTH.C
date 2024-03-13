@@ -343,15 +343,16 @@ void RAZIEL_DebugManaSetMax(long manaScale)
 	Raziel.GlyphManaBalls = (short)(manaScale << 2);
 }
 
-void RAZIEL_DebugHealthFillUp()  // Matching - 99.17%
+void RAZIEL_DebugHealthFillUp() // Matching - 100%
 {
 	if (Raziel.CurrentPlane == 1)
 	{
-		Raziel.HitPoints = 0x186A0 + (Raziel.HealthScale * 100000);
-		return;
+		Raziel.HitPoints = 100000 + (Raziel.HealthScale * 100000);
 	}
-	Raziel.HitPoints = 0x186A0;
-	return;
+	else
+	{
+		Raziel.HitPoints = 100000;
+	}
 }
 
 void RAZIEL_DebugManaFillUp()
