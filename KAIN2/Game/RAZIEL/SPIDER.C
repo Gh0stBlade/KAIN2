@@ -5,67 +5,85 @@
 #include "RAZIEL.H"
 #include "CONTROL.H"
 
-void StateHandlerWallGrab(struct __CharacterState* In, int CurrentSection, int Data)  // Matching - 99.81%
+void StateHandlerWallGrab(struct __CharacterState* In, int CurrentSection, int Data) // Matching - 100%
 {
-	struct __Event* Ptr;
-	struct evPhysicsWallCrawlData* data;
+    struct __Event* Ptr;
+    struct evPhysicsWallCrawlData* data;
 
-	while (Ptr = PeekMessageQueue(&In->SectionList[CurrentSection].Event))
-	{
-		if (Ptr != NULL)
-		{
-			switch (Ptr->ID)
-			{
-			case 0x100001:
-				if (CurrentSection == 0)
-				{
-					Raziel.Mode = 0x4000000;
-					SteerSwitchMode(In->CharacterInstance, 7);
-					ControlFlag = 0x80A1101;
-					In->CharacterInstance->tface = NULL;
-					PhysicsMode = 3;
-					ResetPhysics(In->CharacterInstance, -16);
-					razReaverBladeOff();
+    while (Ptr = PeekMessageQueue(&In->SectionList[CurrentSection].Event))
+    {
+        if (Ptr != NULL)
+        {
+            switch (Ptr->ID)
+            {
+            case 0x100001:
+                if (CurrentSection == 0)
+                {
+                    Raziel.Mode = 0x4000000;
 
-				}
-				G2EmulationSwitchAnimation(In, CurrentSection, 75, 0, 3, 1);
-				PurgeMessageQueue(&In->SectionList[CurrentSection].Event);
-				In->CharacterInstance->flags2 &= -0x41;
-				break;
-			case 0x8000000:
-				if (CurrentSection == 0)
-				{
-					StateSwitchStateCharacterData(In, &StateHandlerWallIdle, 0);
-				}
-				break;
-			case 0x1000001: break;
-			case 0x80000008: break;
-			case 0x00100004: break;
-			case 0x80000020: break;
-			case 0x80000000: break;
-			case 0x4010011:
-				data = (struct evPhysicsWallCrawlData*)Ptr->Data;
-				if (data->rc == 0)
-				{
-					In->CharacterInstance->rotation.x = 0;
-					In->CharacterInstance->rotation.y = 0;
-					In->CharacterInstance->rotation.z = 0;
-					data = (struct evPhysicsWallCrawlData*)SetControlInitIdleData(0, 0, 3);
-					StateSwitchStateData(In, CurrentSection, &StateHandlerIdle, Data);
-					In->CharacterInstance->flags2 |= 0x40;
-				}
-				else if (CurrentSection == 0)
-				{
-					razSetWallCrawlNodes(In->CharacterInstance, data);
-				}
-				break;
-			default:
-				DefaultStateHandler(In, CurrentSection, Data);
-				break;
-			}
-			DeMessageQueue(&In->SectionList[CurrentSection].Event);
-		}
-	}
+                    SteerSwitchMode(In->CharacterInstance, 7);
+
+                    ControlFlag = 0x80A1101;
+
+                    In->CharacterInstance->tface = NULL;
+
+                    PhysicsMode = 3;
+
+                    ResetPhysics(In->CharacterInstance, -16);
+
+                    razReaverBladeOff();
+                }
+
+                G2EmulationSwitchAnimation(In, CurrentSection, 75, 0, 3, 1);
+
+                PurgeMessageQueue(&In->SectionList[CurrentSection].Event);
+
+                In->CharacterInstance->flags2 &= ~0x40;
+                break;
+            case 0x8000000:
+                if (CurrentSection == 0)
+                {
+                    StateSwitchStateCharacterData(In, &StateHandlerWallIdle, 0);
+                }
+
+                break;
+            case 0x1000001:
+                break;
+            case 0x80000008:
+                break;
+            case 0x00100004:
+                break;
+            case 0x80000020:
+                break;
+            case 0x80000000:
+                break;
+            case 0x4010011:
+                data = (struct evPhysicsWallCrawlData*)Ptr->Data;
+
+                if (data->rc == 0)
+                {
+                    In->CharacterInstance->rotation.x = 0;
+                    In->CharacterInstance->rotation.y = 0;
+                    In->CharacterInstance->rotation.z = 0;
+
+                    StateSwitchStateData(In, CurrentSection, &StateHandlerIdle, SetControlInitIdleData(0, 0, 3));
+
+                    In->CharacterInstance->flags2 |= 0x40;
+                }
+                else if (CurrentSection == 0)
+                {
+                    razSetWallCrawlNodes(In->CharacterInstance, data);
+                }
+
+                break;
+            default:
+                DefaultStateHandler(In, CurrentSection, Data);
+                break;
+            }
+
+            DeMessageQueue(&In->SectionList[CurrentSection].Event);
+        }
+    }
 }
 
 
