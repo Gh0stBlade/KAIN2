@@ -54,23 +54,29 @@ void GainHealth(int data)
 }
 
 
-void LoseHealth(int amount)  // Matching - 99.13%
+void LoseHealth(int amount) // Matching - 100%
 {
-	if ((((ControlFlag & 0x1000000) == 0) && (Raziel.invincibleTimer == 0)) && (Raziel.HitPoints > 525))
+	if (((!(ControlFlag & 0x1000000)) && (Raziel.invincibleTimer == 0)) && (Raziel.HitPoints > 525))
 	{
-		Raziel.HitPoints = Raziel.HitPoints - ((amount * 20000) / 4096);
-		Raziel.DamageFrequency = Raziel.DamageFrequency - ((amount * 20000) / 4096);
-		Raziel.invincibleTimer = PlayerData->healthInvinciblePostHit * 0x1E000;
+		Raziel.HitPoints -= (amount * 20000) / 4096;
+
+		Raziel.DamageFrequency -= (amount * 20000) / 4096;
+
+		Raziel.invincibleTimer = PlayerData->healthInvinciblePostHit * 122880;
+
 		if (Raziel.CurrentPlane == 1)
 		{
 			razReaverOff();
+
 			if (Raziel.soulReaver != NULL)
 			{
 				INSTANCE_Post(Raziel.soulReaver, 0x800101, 0);
+
 				razReaverImbue(2);
 			}
 		}
-		if ((gameTrackerX.gameFlags & 0x80) == 0)
+
+		if (!(gameTrackerX.gameFlags & 0x80))
 		{
 			GAMEPAD_Shock0(1, 9000);
 		}
