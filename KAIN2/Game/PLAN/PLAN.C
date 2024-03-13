@@ -177,7 +177,7 @@ void PLAN_DeleteOutOfRangeNodesOfSource(struct PlanningNode* planningPool, struc
 	}
 }
 
-void PLAN_AddOrRemoveRandomNodes(struct PlanningNode* planningPool, struct _Position* playerPos)//Matching - 99.25%
+void PLAN_AddOrRemoveRandomNodes(struct PlanningNode* planningPool, struct _Position* playerPos) // Matching - 100%
 {
 	int numNodeError;
 
