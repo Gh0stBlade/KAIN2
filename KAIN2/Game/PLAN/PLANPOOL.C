@@ -3,14 +3,14 @@
 #include "Game/MATH3D.H"
 
 
-int PLANPOOL_NumNodesInPlan(struct PlanningNode* goalNode, struct PlanningNode* planningPool)//Matching - 93.42%
+int PLANPOOL_NumNodesInPlan(struct PlanningNode* goalNode, struct PlanningNode* planningPool) // Matching - 100%
 {
 	struct PlanningNode* currentNode;
 	int i;
 
 	for (i = 0, currentNode = &planningPool[goalNode->parent]; goalNode != currentNode; i++)
 	{
-		goalNode = &planningPool[currentNode->parent];
+		goalNode = &planningPool[goalNode->parent];
 
 		currentNode = &planningPool[goalNode->parent];
 	}
