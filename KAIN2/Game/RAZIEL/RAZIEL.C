@@ -3511,13 +3511,14 @@ long RazielAnimCallback(struct _G2Anim_Type* anim, int sectionID, enum _G2AnimCa
 	}
 }
 
-long RazielAnimCallbackDuringPause(struct _G2Anim_Type* anim, int sectionID, enum _G2AnimCallbackMsg_Enum message, long messageDataA, long messageDataB, void* data)  // Matching - 99.78%
+long RazielAnimCallbackDuringPause(struct _G2Anim_Type* anim, int sectionID, enum _G2AnimCallbackMsg_Enum message, long messageDataA, long messageDataB, void* data) // Matching - 100%
 {
 	struct evAnimationControllerDoneData* ControllerData;
 
-	if (message == 4)
+	if (message == G2ANIM_MSG_SEGCTRLR_INTERPDONE)
 	{
 		ControllerData = (struct evAnimationControllerDoneData*)SetAnimationControllerDoneData(Raziel.State.CharacterInstance, messageDataB, messageDataA, (int)data);
+
 		if (ControllerData->data == 2)
 		{
 			AlgorithmicWings(Raziel.State.CharacterInstance, ControllerData);
@@ -3531,6 +3532,7 @@ long RazielAnimCallbackDuringPause(struct _G2Anim_Type* anim, int sectionID, enu
 			G2Anim_DisableController(&ControllerData->instance->anim, ControllerData->segment, ControllerData->type);
 		}
 	}
+
 	return messageDataA;
 }
 
