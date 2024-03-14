@@ -251,16 +251,12 @@ void StateHandlerMoveToPosition(struct __CharacterState* In, int CurrentSection,
 	}
 }
 
-void DefaultPuppetStateHandler(struct __CharacterState* In, int CurrentSection, int Data)  // Matching - 98.99%
+void DefaultPuppetStateHandler(struct __CharacterState* In, int CurrentSection, int Data) // Matching - 100%
 {
 	struct __Event* Ptr;
-	struct evPositionData* data;
-	long _x1;
-	long _y1;
-	long _z1;
-	struct _Vector* _v0;
 
 	Ptr = PeekMessageQueue(&In->SectionList[CurrentSection].Event);
+
 	if (Ptr != NULL)
 	{
 		switch (Ptr->ID)
@@ -272,36 +268,60 @@ void DefaultPuppetStateHandler(struct __CharacterState* In, int CurrentSection, 
 			STREAM_SetInstancePosition(gameTrackerX.playerInstance, (struct evPositionData*)Ptr->Data);
 			break;
 		case 0x4000B:
+		{
+			struct evPositionData* data;
+
 			if (CurrentSection == 0)
 			{
 				data = (struct evPositionData*)Ptr->Data;
+
 				gameTrackerX.playerInstance->rotation.z = data->z;
 			}
+
 			break;
+		}
 		case 0x4000F:
+		{
+			struct evPositionData* data;
+			long _x1;
+			long _y1;
+			long _z1;
+			struct _Vector* _v0;
+
+			data = (struct evPositionData*)Ptr->Data;
+
 			_v0 = &Raziel.Senses.lookAtPoint;
-			_x1 = ((struct evPositionData*)Ptr->Data)->x;
-			_y1 = ((struct evPositionData*)Ptr->Data)->y;
-			_z1 = ((struct evPositionData*)Ptr->Data)->z;
+
+			_x1 = data->x;
+			_y1 = data->y;
+			_z1 = data->z;
+
 			_v0->x = _x1;
 			_v0->y = _y1;
 			_v0->z = _z1;
-			Raziel.Senses.Flags |= 16;
+
+			Raziel.Senses.Flags |= 0x10;
+
 			ControlFlag |= 0x20000;
 			break;
+		}
 		case 0x40020:
 			if (CurrentSection == 0)
 			{
 				G2Anim_SetSpeedAdjustment(&gameTrackerX.playerInstance->anim, Ptr->Data);
 			}
+
 			break;
 		case 0x800027:
 			if (Data != 0)
 			{
-				ControlFlag |= 8;
-				break;
+				ControlFlag |= 0x8;
 			}
-			ControlFlag &= 0xFFFFFFF7;
+			else
+			{
+				ControlFlag &= ~0x8;
+			}
+
 			break;
 		case 0x10002002:
 			razMaterialShift();
