@@ -270,7 +270,7 @@ void ProcessHealth(struct _Instance* instance)//Matching - 91.10%
 	}
 }
 
-int HealthCheckForLowHealth() // Matching - 99.44%
+int HealthCheckForLowHealth() // Matching - 100%
 {
 	if (STREAM_IsMorphInProgress() == 0)
 	{
@@ -281,14 +281,14 @@ int HealthCheckForLowHealth() // Matching - 99.44%
 				return 1;
 			}
 		}
-		else
+		else if (Raziel.HitPoints < 100)
 		{
-			if ((Raziel.HitPoints >= 100) == 0) {
-				return 1;
-			}
+			return 1;
 		}
+
 		return 0;
 	}
+
 	return 1;
 }
 
