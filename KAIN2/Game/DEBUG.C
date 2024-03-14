@@ -2871,32 +2871,54 @@ void DEBUG_CaptureScreen(struct GameTracker *gameTracker)
 }
 
 
-void DEBUG_PageFlip()  // Matching - 97.35%
+// @fixme needs libValkyrie implementation
+void DEBUG_PageFlip() // Matching - 100%
 {
 	POLY_F4 poly;
 	unsigned long** drawot;
 
 	DrawSync(0);
+
 	VSync(0);
+
 	VSync(0);
+
 	VSync(0);
+
 	VSync(0);
+
 	VSync(0);
+
 	DrawSyncCallback(NULL);
+
 	VSyncCallback(NULL);
+
 	ResetPrimPool();
+
 	drawot = gameTrackerX.drawOT;
+
 	gameTrackerX.drawPage = 0;
+
 	PutDrawEnv(draw);
+
 	ClearOTagR((unsigned int*)drawot, 3072);
+
 	DrawSync(0);
+
 	setPolyF4(&poly);
+
 	setRGB0(&poly, 32, 32, 32);
+
 	setXY4(&poly, 0, 14, 511, 14, 0, (short)fontTracker.font_ypos - 2, 511, (short)fontTracker.font_ypos - 2);
+
 	DrawPrim(&poly);
+
 	FONT_Flush();
+
 	DrawOTag((unsigned int*)drawot);
+
 	DrawSync(0);
+
 	PutDispEnv((DISPENV*)gameTrackerX.disp);
 }
 
