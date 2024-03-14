@@ -3764,44 +3764,52 @@ unsigned long RazielQuery(struct _Instance *instance, unsigned long Query)
 	return 0;
 }
 
-void RazielPost(struct _Instance* instance, unsigned long Message, unsigned long Data)  // Matching - 96.42%
+void RazielPost(struct _Instance* instance, unsigned long Message, unsigned long Data) // Matching - 100%
 {
 	int i;
-	struct PlayerSaveData* data;
-	struct _G2AnimSection_Type* animSection;
-	int j;
-	struct _Instance* heldWeapon;
 	typedef unsigned long fn(struct _G2Anim_Type*, int, enum _G2AnimCallbackMsg_Enum, long, long, struct _Instance*);
 
 	switch (Message)
 	{
 	case 0x200001:
-		if (((ControlFlag & 0x40000) == 0) && (HealthCheckForLowHealth() == 0))
+		if (!((ControlFlag & 0x40000)) && (HealthCheckForLowHealth() == 0))
 		{
 			UpdateEngagementList((struct evCollideInstanceStatsData*)Data, &Raziel);
 		}
+
 		break;
 	case 0x200000:
-		if ((ControlFlag & 0x40000) == 0)
+		if (!(ControlFlag & 0x40000))
 		{
 			Raziel.Senses.EngagedMask = 0;
 		}
-		Raziel.Senses.Flags &= 0xFFFFFFDF;
-		Raziel.Senses.Flags &= 0xFFFFFFBF;
+
+		Raziel.Senses.Flags &= ~0x20;
+		Raziel.Senses.Flags &= ~0x40;
 		break;
 	case 0x200004:
-		if ((ControlFlag & 0x40000000) != 0)
+		if ((ControlFlag & 0x40000000))
 		{
 			instance->collideInfo = (struct _CollideInfo*)Data;
+
 			((struct _CollideInfo*)Data)->offset.z = 0;
+
 			RazielCollide(instance, &gameTrackerX);
+
 			COLLIDE_UpdateAllTransforms(razGetHeldItem(), (SVECTOR*)&((struct _CollideInfo*)instance->collideInfo)->offset);
 		}
+
 		break;
 	case 0x100007:
-		data = (struct PlayerSaveData*)((struct _Instance*)Data)->node.next;
-		debugRazielFlags1 = data->abilities;
-		Raziel.Abilities = debugRazielFlags1;
+	{
+		struct PlayerSaveData* data;
+
+		data = (struct PlayerSaveData*)((struct evControlSaveDataData*)Data)->data;
+
+		Raziel.Abilities = data->abilities;
+
+		debugRazielFlags1 = Raziel.Abilities;
+
 		if ((razInBaseArea("under", 5)) != 0)
 		{
 			Raziel.CurrentPlane = 2;
@@ -3810,24 +3818,35 @@ void RazielPost(struct _Instance* instance, unsigned long Message, unsigned long
 		{
 			Raziel.CurrentPlane = data->currentPlane;
 		}
+
 		Raziel.HealthScale = (short)data->healthScale;
 		Raziel.HealthBalls = (short)data->healthBalls;
+
 		HUD_Setup_Chit_Count(data->healthBalls);
+
 		Raziel.GlyphManaBalls = data->manaBalls;
 		Raziel.GlyphManaMax = data->manaMax;
+
 		Raziel.soulReaver = NULL;
-		if (Raziel.Abilities & 8)
+
+		if ((Raziel.Abilities & 0x8))
 		{
 			debugRazielFlags2 = 0;
 		}
+
 		Raziel.playerEventHistory = data->playerEventHistory;
-		if ((Raziel.playerEventHistory & 0x1000) == 0)
+
+		if (!(Raziel.playerEventHistory & 0x1000))
 		{
 			Raziel.HitPoints = 100;
-			break;
 		}
-		Raziel.HitPoints = GetMaxHealth();
+		else
+		{
+			Raziel.HitPoints = GetMaxHealth();
+		}
+
 		break;
+	}
 	case 0x4000005:
 		Raziel.slipSlope = Data;
 		break;
@@ -3835,27 +3854,31 @@ void RazielPost(struct _Instance* instance, unsigned long Message, unsigned long
 		Raziel.slipSlope = 2896;
 		break;
 	case 0x4000001:
-		if ((ControlFlag & 8) && ((Raziel.Senses.Flags & 2) == 0))
+		if (((ControlFlag & 8)) && (!(Raziel.Senses.Flags & 2)))
 		{
 			for (i = 0; i < 3; i++)
 			{
 				EnMessageQueueData(&Raziel.State.SectionList[i].Defer, Message, Data);
 			}
 		}
+
 		break;
 	case 0x40001:
 		instance->currentStreamUnitID = Data;
 		instance->tface = NULL;
+
 		Raziel.GlyphSystem->currentStreamUnitID = Data;
 		Raziel.GlyphSystem->tface = NULL;
+
 		if (Raziel.soulReaver != NULL)
 		{
 			Raziel.soulReaver->currentStreamUnitID = Data;
 			Raziel.soulReaver->tface = NULL;
 		}
+
 		break;
 	case 0x800024:
-		Raziel.idleInstance = (struct _Instance*)((struct NodeType*)((struct _Instance*)Data)->node.next);
+		Raziel.idleInstance = ((struct evObjectIdleData*)Data)->instance;
 		break;
 	case 0x40006:
 		DrainHealth(Data);
@@ -3868,57 +3891,74 @@ void RazielPost(struct _Instance* instance, unsigned long Message, unsigned long
 		break;
 	case 0x40004:
 		G2EmulationSwitchAnimationCharacter(&Raziel.State, 128, 0, 3, 1);
+
 		StateSwitchStateCharacterData(&Raziel.State, &StateHandlerCannedReaction, 0);
 		break;
 	case 0x100008:
-		if (ControlFlag & 0x200000)
+		if ((ControlFlag & 0x200000))
 		{
-			RelocateConstrict((_SVector*)Data);
+			RelocateConstrict((struct _SVector*)Data);
 		}
-		Raziel.puppetMoveToPoint.x += ((_Position*)Data)->x;
-		Raziel.puppetMoveToPoint.y += ((_Position*)Data)->y;
-		Raziel.puppetMoveToPoint.z += ((_Position*)Data)->z;
+
+		Raziel.puppetMoveToPoint.x += ((struct _SVector*)Data)->x;
+		Raziel.puppetMoveToPoint.y += ((struct _SVector*)Data)->y;
+		Raziel.puppetMoveToPoint.z += ((struct _SVector*)Data)->z;
+
 		STREAM_MORPH_Relocate();
 		break;
 	case 0x10000A:
 		if (Data != 0)
 		{
+			struct _G2AnimSection_Type* animSection;
+
 			for (i = 0; i < 3; i++)
 			{
 				animSection = &instance->anim.section[i];
+
 				animSection->callback = (fn*)&RazielAnimCallbackDuringPause;
 				animSection->callbackData = NULL;
 			}
+
 			DeInitAlgorithmicWings(instance);
+
 			razResetPauseTranslation(instance);
-			break;
 		}
-		for (i = 0; i < 3; i++)
+		else
 		{
-			animSection = &instance->anim.section[i];
-			animSection->callback = (fn*)&RazielAnimCallback;
-			animSection->callbackData = NULL;
+			struct _G2AnimSection_Type* animSection;
+
+			for (i = 0; i < 3; i++)
+			{
+				animSection = &instance->anim.section[i];
+
+				animSection->callback = (fn*)&RazielAnimCallback;
+				animSection->callbackData = NULL;
+			}
+
+			InitAlgorithmicWings(instance);
 		}
-		InitAlgorithmicWings(instance);
+
 		break;
 	case 0x100010:
 		if (Data != 0)
 		{
-			if ((Raziel.Mode & 0x40000000) == 0)
+			if (!(Raziel.Mode & 0x40000000))
 			{
 				Raziel.Mode = 0x40000000;
+
 				ResetPhysics(instance, -16);
+
 				for (i = 0; i < 3; i++)
 				{
 					StateSwitchStateData(&Raziel.State, i, &StateHandlerIdle, SetControlInitIdleData(0, 0, 3));
 				}
 			}
-			break;
 		}
-		if (Raziel.Mode & 0x40000000)
+		else if ((Raziel.Mode & 0x40000000))
 		{
-			Raziel.Mode &= 0xBFFFFFFF;
+			Raziel.Mode &= ~0x40000000;
 		}
+
 		break;
 	case 0x40011:
 		HealthInstantDeath(instance);
@@ -3930,25 +3970,33 @@ void RazielPost(struct _Instance* instance, unsigned long Message, unsigned long
 		razPlaneShift(instance);
 		break;
 	case 0x40015:
-		debugRazielFlags1 = Raziel.Abilities | Data;
-		Raziel.Abilities = debugRazielFlags1;
+		Raziel.Abilities = Raziel.Abilities | Data;
+
+		debugRazielFlags1 = Raziel.Abilities;
+
 		RAZIEL_DebugHealthFillUp();
-		if ((Data & 0x3FC00) && (Raziel.soulReaver))
+
+		if ((Data & 0x3FC00) && (Raziel.soulReaver != NULL))
 		{
 			razReaverOn();
+
 			razReaverImbue(razGetReaverFromMask(Data));
 		}
+
 		break;
 	case 0x100011:
-		EnMessageQueueData((struct __MessageQueue*)&Raziel.State, 0x100011, Data);
+		EnMessageQueueData(&Raziel.State.SectionList[0].Defer, 0x100011, Data);
 		break;
 	case 0x100012:
 		Raziel.Senses.heldClass = INSTANCE_Query((struct _Instance*)Data, 4);
-		if (Raziel.Senses.heldClass != 8)
+
+		if (Raziel.Senses.heldClass != 0x8)
 		{
 			razReaverBladeOff();
 		}
-		Raziel.Mode &= 0xFFFFF7FF;
+
+		Raziel.Mode &= ~0x800;
+
 		Raziel.Senses.Flags &= ~0x80;
 		break;
 	case 0x100013:
@@ -3958,9 +4006,11 @@ void RazielPost(struct _Instance* instance, unsigned long Message, unsigned long
 			{
 				Raziel.Senses.heldClass = 0;
 			}
+
 			razReaverBladeOn();
 		}
-		Raziel.Senses.Flags &= 0xFFFFFF7F;
+
+		Raziel.Senses.Flags &= ~0x80;
 		break;
 	case 0x40022:
 		Raziel.forcedGlideSpeed = Data;
@@ -3970,45 +4020,67 @@ void RazielPost(struct _Instance* instance, unsigned long Message, unsigned long
 		{
 			SOUND_Play3dSound(&gameTrackerX.playerInstance->position, 1, 0, 75, 3500);
 		}
+
 		break;
 	case 0x4000E:
 		if (Data != 0)
 		{
+			int i;
+			struct _Instance* heldWeapon;
+
 			Raziel.returnState = StateHandlerPuppetShow;
+
 			StateSwitchStateCharacterDataDefault(&Raziel.State, &StateHandlerPuppetShow, 0);
+
 			InitAlgorithmicWings(instance);
-			for (j = 0; j < 3; j++)
+
+			for (i = 0; i < 3; i++)
 			{
-				PurgeMessageQueue(&Raziel.State.SectionList[j].Event);
-				PurgeMessageQueue(&Raziel.State.SectionList[j].Defer);
+				PurgeMessageQueue(&Raziel.State.SectionList[i].Event);
+
+				PurgeMessageQueue(&Raziel.State.SectionList[i].Defer);
 			}
+
 			GAMELOOP_Reset24FPS();
+
 			heldWeapon = razGetHeldWeapon();
-			if ((heldWeapon) && (heldWeapon != Raziel.soulReaver))
+
+			if ((heldWeapon != NULL) && (heldWeapon != Raziel.soulReaver))
 			{
 				razSetFadeEffect(0, 4096, 10);
 			}
 		}
 		else
 		{
-			Raziel.Senses.Flags &= 0xFFFFFFEF;
-			ControlFlag &= 0xFFFDFFFF;
+			struct _Instance* heldWeapon;
+
+			Raziel.Senses.Flags &= ~0x10;
+
+			ControlFlag &= ~0x20000;
+
 			StateSwitchStateCharacterDataDefault(&Raziel.State, &StateHandlerIdle, SetControlInitIdleData(0, 0, 3));
+
 			for (i = 0; i < 3; i++)
 			{
 				PurgeMessageQueue(&Raziel.State.SectionList[i].Event);
+
 				PurgeMessageQueue(&Raziel.State.SectionList[i].Defer);
 			}
+
 			GAMELOOP_Set24FPS();
+
 			heldWeapon = razGetHeldWeapon();
-			if ((heldWeapon) && (heldWeapon != Raziel.soulReaver))
+
+			if ((heldWeapon != NULL) && (heldWeapon != Raziel.soulReaver))
 			{
 				razSetFadeEffect(4096, 0, 10);
 			}
 		}
+
 		break;
 	case 0x100016:
 		razSetupSoundRamp(instance, (struct _SoundRamp*)&Raziel.soundHandle, 51, -200, -200, 120, 120, Data << 12, 3500);
+
 		Raziel.soundTimerNext = Data << 12;
 		Raziel.soundTimerData = 0;
 		break;
