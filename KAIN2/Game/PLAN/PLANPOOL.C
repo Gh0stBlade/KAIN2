@@ -30,7 +30,7 @@ int PLANPOOL_CountBitsSetInLong(long mylong)//Matching - 100%
 	return numBitsSet;
 }
 
-int PLANPOOL_NumConnectionsExaminedForNode(struct PlanningNode* node)
+int PLANPOOL_NumConnectionsExaminedForNode(struct PlanningNode* node) // Matching - 100%
 {
 	return PLANPOOL_CountBitsSetInLong(node->connectionStatus);
 }
