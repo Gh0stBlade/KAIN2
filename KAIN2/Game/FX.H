@@ -197,6 +197,21 @@ struct _FXForceFieldEffect // hashcode: 0x59105BC4 (dec: 1494244292)
 	long color; // size=0, offset=40
 };
 
+struct _GenericRibbonParams 
+{
+	char id; // size=0, offset=0
+	char StartOnInit; // size=0, offset=1
+	char startSegment; // size=0, offset=2
+	char endSegment; // size=0, offset=3
+	char type; // size=0, offset=4
+	char use_child; // size=0, offset=5
+	short ribbonLifeTime; // size=0, offset=6
+	short faceLifeTime; // size=0, offset=8
+	short startFadeValue; // size=0, offset=10
+	long startColor; // size=0, offset=12
+	long endColor; // size=0, offset=16
+};
+
 struct _FXLightning // hashcode: 0x552145A3 (dec: 1428243875)
 {
 	void* next; // size=0, offset=0
