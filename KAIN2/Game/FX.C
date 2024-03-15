@@ -50,7 +50,7 @@ static inline long FX_GetColor(struct ObjectEffect* effect, long i)
 	return FX_ColorArray[effect->modifierList[i]];
 }
 
-void FX_Init(struct _FXTracker* fxTracker)
+void FX_Init(struct _FXTracker* fxTracker) // Matching - 100%
 {
 	struct _FX_MATRIX* fxMatrix;
 	struct _FX_MATRIX* endFXMatrix;
@@ -76,23 +76,27 @@ void FX_Init(struct _FXTracker* fxTracker)
 	fxTracker->freePrimList.next = 0;
 	fxTracker->freePrimList.prev = 0;
 
-	while (fxMatrix++ < endFXMatrix)
+	while (fxMatrix < endFXMatrix)
 	{
 		LIST_InsertFunc(&fxTracker->freeMatrixList, &fxMatrix->node);
+
+		fxMatrix++;
 	}
 
 	fxPrim = fxTracker->primPool;
 
-	endFXPrim = (struct _FX_PRIM*)fxTracker->usedPrimList.prev;
+	endFXPrim = (struct _FX_PRIM*)&fxTracker->usedPrimList.prev;
 
-	while (fxPrim++ < endFXPrim)
+	while (fxPrim < endFXPrim)
 	{
 		LIST_InsertFunc(&fxTracker->freePrimList, &fxPrim->node);
+
+		fxPrim++;
 	}
 
-	FX_ConstrictPositionPtr = &FX_ConstrictPosition;
-
 	FX_LastUsedPrim = NULL;
+
+	FX_ConstrictPositionPtr = &FX_ConstrictPosition;
 
 	FX_Spiral_Init();
 
