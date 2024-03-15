@@ -127,13 +127,13 @@ void FX_Die(struct _FX_PRIM* fxPrim, struct _FXTracker* fxTracker)  // Matching 
 	LIST_InsertFunc(&fxTracker->freePrimList, &fxPrim->node);
 }
 
-struct _FX_MATRIX* FX_GetMatrix(struct _FXTracker* fxTracker)//Matching - 99.25%
+struct _FX_MATRIX* FX_GetMatrix(struct _FXTracker* fxTracker) // Matching - 100%
 {
 	struct _FX_MATRIX* fxMatrix;
 
 	fxMatrix = (struct _FX_MATRIX*)LIST_GetFunc(&fxTracker->freeMatrixList);
 
-	if (fxMatrix)
+	if (fxMatrix != NULL)
 	{
 		fxMatrix->flags = 0x1;
 
