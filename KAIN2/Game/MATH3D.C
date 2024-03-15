@@ -97,13 +97,13 @@ long MATH3D_LengthXYZ(long x, long y, long z) // Matching - 100%
 	return t >> 5;
 }
 
-long MATH3D_LengthXY(long x, long y)//Matching - 90.21%
+long MATH3D_LengthXY(long x, long y) // Matching - 98.75%
 {
 	long x1;
 	long y1;
 
-	x = ABS(x);
-	y = ABS(y);
+	x = abs(x);
+	y = abs(y);
 
 	y1 = y * 16;
 
