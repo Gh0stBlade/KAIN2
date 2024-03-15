@@ -132,7 +132,7 @@ void MATH3D_Normalize(struct _Normal* normal)//Matching - 100%
 	}
 }
 
-short MATH3D_FastAtan2(long y, long x)
+short MATH3D_FastAtan2(long y, long x) // Matching - 100%
 {
 	long ax;
 	long ay;
@@ -147,19 +147,9 @@ short MATH3D_FastAtan2(long y, long x)
 		return (x < 1) * 2048;
 	}
 
-	ax = x;
+	ax = abs(-x);
 
-	if (x < 0)
-	{
-		ax = -ax;
-	}
-
-	ay = y;
-	
-	if (y < 0)
-	{
-		ay = -ay;
-	}
+	ay = abs(-y);
 
 	if (x > 0)
 	{
@@ -167,22 +157,22 @@ short MATH3D_FastAtan2(long y, long x)
 		{
 			if (ax < ay)
 			{
-				return ((1024 - ((ax * 512) / ay)) << 16) >> 16;
+				return (short)(1024 - ((ax * 512) / ay));
 			}
 			else
 			{
-				return (((ay * 512) / ax) << 16) >> 16;
+				return (short)((ay * 512) / ax);
 			}
 		}
 		else
 		{
 			if (ay < ax)
 			{
-				return ((4096 - ((ay * 512) / ax)) << 16) >> 16;
+				return (short)(4096 - ((ay * 512) / ax));
 			}
 			else
 			{
-				return ((((ax * 512) / ay) + 3072) << 16) >> 16;
+				return (short)(((ax * 512) / ay) + 3072);
 			}
 		}
 	}
@@ -191,21 +181,21 @@ short MATH3D_FastAtan2(long y, long x)
 	{
 		if (ax < ay)
 		{
-			return ((((ax * 512) / ay) + 0x400) << 16) >> 16;
+			return (short)(((ax * 512) / ay) + 1024);
 		}
 		else
 		{
-			return ((2048 - ((ay * 512) / ax)) << 16) >> 16;
+			return (short)(2048 - ((ay * 512) / ax));
 		}
 	}
 
-	if (ay >= ax)
+	if (ay < ax)
 	{
-		return ((3072 - ((ax * 512) / ay)) << 16) >> 16;
+		return (short)(((ay * 512) / ax) + 2048);
 	}
 	else
 	{
-		return ((((ay * 512) / ax) + 0x800) << 16) >> 16;
+		return (short)(3072 - ((ax * 512) / ay));
 	}
 }
 
