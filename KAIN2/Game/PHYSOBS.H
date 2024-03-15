@@ -47,6 +47,26 @@ struct PhysObProperties
     unsigned short Type; // size=0, offset=6
 };
 
+struct PhysObAnimatedProperties {
+    struct PhysObProperties Properties; // size=8, offset=0
+    unsigned short flags; // size=0, offset=8
+    unsigned short pad; // size=0, offset=10
+};
+
+struct _PhysObSaveData {
+    struct SwitchData switchData; // size=4, offset=0
+    long Mode; // size=0, offset=4
+};
+
+struct PhysObDraftProperties {
+    struct PhysObProperties Properties; // size=8, offset=0
+    short force; // size=0, offset=8
+    unsigned short radius; // size=0, offset=10
+    unsigned short radiusCoef; // size=0, offset=12
+    short maxVelocity; // size=0, offset=14
+    unsigned long height; // size=0, offset=16
+};
+
 struct PhysObSwitchProperties 
 {
     struct PhysObProperties Properties; // size=8, offset=0
