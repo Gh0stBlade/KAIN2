@@ -265,6 +265,41 @@ struct _FXFlash // hashcode: 0xD3DE17A3 (dec: -740419677)
 	long color; // size=0, offset=32
 };
 
+struct _GenericParticleParams 
+{
+	short size; // size=0, offset=0
+	unsigned char StartOnInit; // size=0, offset=2
+	unsigned char type; // size=0, offset=3
+	short birthRadius; // size=0, offset=4
+	char startSegment; // size=0, offset=6
+	char endSegment; // size=0, offset=7
+	struct _Position direction; // size=6, offset=8
+	unsigned char spectral_colorize; // size=0, offset=14
+	unsigned char absolute_direction; // size=0, offset=15
+	char accx; // size=0, offset=16
+	char accy; // size=0, offset=17
+	char accz; // size=0, offset=18
+	char useInstanceModel; // size=0, offset=19
+	unsigned char startColor_red; // size=0, offset=20
+	unsigned char startColor_green; // size=0, offset=21
+	unsigned char startColor_blue; // size=0, offset=22
+	char model; // size=0, offset=23
+	unsigned char endColor_red; // size=0, offset=24
+	unsigned char endColor_green; // size=0, offset=25
+	unsigned char endColor_blue; // size=0, offset=26
+	char texture; // size=0, offset=27
+	short lifeTime; // size=0, offset=28
+	unsigned char primLifeTime; // size=0, offset=30
+	char use_child; // size=0, offset=31
+	short startFadeValue; // size=0, offset=32
+	short fadeStep; // size=0, offset=34
+	char numberBirthParticles; // size=0, offset=36
+	char z_undulation_mode; // size=0, offset=37
+	short scaleSpeed; // size=0, offset=38
+	struct _Position offset; // size=6, offset=40
+	short startScale; // size=0, offset=46
+};
+
 struct _GenericFlashParams 
 {
 	short type; // size=0, offset=0
