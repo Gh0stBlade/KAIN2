@@ -366,7 +366,7 @@ long MATH3D_FastSqrt0(long square)
 	return 0;
 }
 
-long MATH3D_DistanceBetweenPositions(struct _Position* pos1, struct _Position* pos2)
+long MATH3D_DistanceBetweenPositions(struct _Position* pos1, struct _Position* pos2) // Matching - 100%
 {
 	return MATH3D_FastSqrt0(MATH3D_SquareLength((pos2->x - pos1->x), (pos2->y - pos1->y), (pos2->z - pos1->z)));
 }
