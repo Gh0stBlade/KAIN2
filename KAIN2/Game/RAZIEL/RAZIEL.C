@@ -279,7 +279,7 @@ void StateInitIdle(struct __CharacterState* In, int CurrentSection, int Ptr)//Ma
 	}
 }
 
-void StateHandlerIdle(struct __CharacterState* In, int CurrentSection, int Data)  // Matching - 99.48%
+void StateHandlerIdle(struct __CharacterState* In, int CurrentSection, int Data) // Matching - 100%
 {
 	struct __Event* Ptr;
 	int Anim;
@@ -288,23 +288,33 @@ void StateHandlerIdle(struct __CharacterState* In, int CurrentSection, int Data)
 	struct evPhysicsEdgeData* EdgeData;
 
 	blockForwardMotion = 0;
-	ControlFlag &= 0xFFFFFFEF;
+
+	ControlFlag &= ~0x10;
+
 	G2EmulationQueryFrame(In, CurrentSection);
+
 	Anim = G2EmulationQueryAnimation(In, CurrentSection);
-	while ((Ptr = PeekMessageQueue(&In->SectionList[CurrentSection].Event)) != NULL)
+
+	while ((Ptr = PeekMessageQueue(&In->SectionList[CurrentSection].Event)))
 	{
 		switch (Ptr->ID)
 		{
 		case 0x100001:
 			if (CurrentSection == 0)
 			{
-				Raziel.Mode = 1;
+				Raziel.Mode = 0x1;
+
 				Raziel.idleCount = 0;
+
 				ControlFlag = 0x2A109;
-				PhysicsMode = 3;
+
+				PhysicsMode = 0x3;
+
 				SteerSwitchMode(In->CharacterInstance, 0);
+
 				Raziel.movementMinRate = 0;
 			}
+
 			StateInitIdle(In, CurrentSection, Ptr->Data);
 			break;
 		case 0x100004:
@@ -314,12 +324,14 @@ void StateHandlerIdle(struct __CharacterState* In, int CurrentSection, int Data)
 				razResetPauseTranslation(In->CharacterInstance);
 				COLLIDE_SegmentCollisionOn(In->CharacterInstance, 1);
 			}
+
 			break;
 		case 0x8000000:
 			if (Anim == 215)
 			{
-				ControlFlag &= 0xFF7FFFFF;
+				ControlFlag &= ~0x800000;
 			}
+
 			if (Anim == 214)
 			{
 				G2EmulationSwitchAnimation(In, CurrentSection, 215, 0, 3, 1);
@@ -327,21 +339,25 @@ void StateHandlerIdle(struct __CharacterState* In, int CurrentSection, int Data)
 			else
 			{
 				StateInitIdle(In, CurrentSection, SetControlInitIdleData(0, 0, 3));
+
 				if (CurrentSection == 0)
 				{
-					if ((Raziel.playerEventHistory & 0x10000) == 0)
+					if (!(Raziel.playerEventHistory & 0x10000))
 					{
-						ControlFlag &= 0xFFFF7FFF;
+						ControlFlag &= ~0x8000;
 					}
+
 					COLLIDE_SegmentCollisionOn(In->CharacterInstance, 1);
 				}
 			}
+
 			break;
 		case 0x80000000:
-			if ((Raziel.Senses.Flags & 0x80) == 0)
+			if (!(Raziel.Senses.Flags & 0x80))
 			{
 				StateSwitchStateData(In, CurrentSection, &StateHandlerAttack2, 0);
 			}
+
 			break;
 		case 0x80000002:
 			if (CurrentSection == 0)
@@ -349,9 +365,11 @@ void StateHandlerIdle(struct __CharacterState* In, int CurrentSection, int Data)
 				if ((PadData[0] & RazielCommands[1]))
 				{
 					Raziel.returnState = NULL;
+
 					StateSwitchStateCharacterData(In, &StateHandlerSoulSuck, 0);
 				}
 			}
+
 			break;
 		case 0x4010401:
 			blockForwardMotion = 1;
@@ -359,7 +377,7 @@ void StateHandlerIdle(struct __CharacterState* In, int CurrentSection, int Data)
 		case 0x4010080:
 			if (CurrentSection == 0)
 			{
-				if (Ptr->Data != NULL)
+				if (Ptr->Data != 0)
 				{
 					razResetPauseTranslation(In->CharacterInstance);
 				}
@@ -368,6 +386,7 @@ void StateHandlerIdle(struct __CharacterState* In, int CurrentSection, int Data)
 					razSetPauseTranslation(In->CharacterInstance);
 				}
 			}
+
 			break;
 		case 0x10000000:
 			if ((PadData[0] & RazielCommands[7]))
@@ -389,7 +408,9 @@ void StateHandlerIdle(struct __CharacterState* In, int CurrentSection, int Data)
 					{
 						G2EmulationSwitchAnimation(In, CurrentSection, 54, 0, 2, 1);
 					}
+
 					StateSwitchStateData(In, CurrentSection, &StateHandlerStartTurn, 0);
+
 					In->SectionList[CurrentSection].Data1 = 52;
 				}
 				else if (Raziel.Bearing >= 513)
@@ -405,7 +426,9 @@ void StateHandlerIdle(struct __CharacterState* In, int CurrentSection, int Data)
 					{
 						G2EmulationSwitchAnimation(In, CurrentSection, 53, 0, 2, 1);
 					}
+
 					StateSwitchStateData(In, CurrentSection, &StateHandlerStartTurn, 0);
+
 					In->SectionList[CurrentSection].Data1 = 51;
 				}
 				else if (blockForwardMotion == 0)
@@ -420,34 +443,42 @@ void StateHandlerIdle(struct __CharacterState* In, int CurrentSection, int Data)
 					}
 				}
 			}
+
 			break;
 		case 0x80000001:
 			if (CurrentSection == 0)
 			{
-				Raziel.Mode = 16;
-				ControlFlag |= 16;
+				Raziel.Mode = 0x10;
+				ControlFlag |= 0x10;
+
 				if (razSwitchVAnimCharacterGroup(In->CharacterInstance, 16, NULL, NULL) != 0)
 				{
 					G2EmulationSwitchAnimationCharacter(In, 34, 0, 2, 1);
 				}
+
 				StateSwitchStateCharacterData(In, &StateHandlerCompression, 0);
 			}
+
 			break;
 		case 0x2000000:
-			if ((Raziel.Senses.EngagedMask & 1) && (Raziel.Senses.heldClass != 3))
+			if ((Raziel.Senses.EngagedMask & 0x1) && (Raziel.Senses.heldClass != 0x3))
 			{
 				Raziel.Mode = 0x200;
+
 				In->SectionList[CurrentSection].Data1 = 0;
+
 				if (CurrentSection == 0)
 				{
 					G2EmulationSwitchAnimationCharacter(In, 21, 0, 6, 1);
+
 					StateSwitchStateCharacterData(In, &StateHandlerPushObject, 0);
 				}
-				ControlFlag &= 0xFFFFFFFE;
+
+				ControlFlag &= ~0x1;
 			}
 			else
 			{
-				if ((Raziel.Senses.EngagedMask & 8) && (Raziel.Senses.heldClass != 3))
+				if ((Raziel.Senses.EngagedMask & 0x8) && (Raziel.Senses.heldClass != 0x3))
 				{
 					if (CurrentSection == 0)
 					{
@@ -460,12 +491,13 @@ void StateHandlerIdle(struct __CharacterState* In, int CurrentSection, int Data)
 					{
 						if (CurrentSection == 0)
 						{
-							if (Raziel.Senses.heldClass == 3)
+							if (Raziel.Senses.heldClass == 0x3)
 							{
 								heldInst = razGetHeldItem();
+
 								if (heldInst != NULL)
 								{
-									if ((INSTANCE_Query(heldInst, 2) & 32))
+									if ((INSTANCE_Query(heldInst, 2) & 0x20))
 									{
 										StateSwitchStateCharacterData(In, &StateHandlerBreakOff, 0);
 									}
@@ -497,7 +529,7 @@ void StateHandlerIdle(struct __CharacterState* In, int CurrentSection, int Data)
 							}
 							else
 							{
-								if ((razPickupAndGrab(In, CurrentSection) != 0) && (CurrentSection == 0) && ((Raziel.Senses.Flags & 0x80) == 0))
+								if ((razPickupAndGrab(In, CurrentSection) != 0) && (CurrentSection == 0) && (!(Raziel.Senses.Flags & 0x80)))
 								{
 									StateSwitchStateCharacterData(In, &StateHandlerAttack2, 0);
 								}
@@ -506,20 +538,23 @@ void StateHandlerIdle(struct __CharacterState* In, int CurrentSection, int Data)
 					}
 				}
 			}
+
 			break;
 		case 0x4010400:
 			EdgeData = (struct evPhysicsEdgeData*)Ptr->Data;
-			if ((EdgeData->rc & 0x20000) && (Raziel.Abilities & 1) && (Raziel.CurrentPlane == 2))
+
+			if ((EdgeData->rc & 0x20000) && (Raziel.Abilities & 0x1) && (Raziel.CurrentPlane == 2))
 			{
 				Raziel.playerEvent |= 0x10000;
 			}
+
 			break;
 		case 0x80000010:
 			if (CurrentSection == 0)
 			{
-				if ((Raziel.Senses.Flags & 4))
+				if ((Raziel.Senses.Flags & 0x4))
 				{
-					if ((Raziel.Senses.Flags & 0x80) || (gameTrackerX.streamFlags & 4))
+					if ((Raziel.Senses.Flags & 0x80) || (gameTrackerX.streamFlags & 0x4))
 					{
 						EnMessageQueueData(&In->SectionList[0].Defer, 0x80000010, 0);
 					}
@@ -529,6 +564,7 @@ void StateHandlerIdle(struct __CharacterState* In, int CurrentSection, int Data)
 					}
 				}
 			}
+
 			break;
 		case 0x2000001:
 		case 0x2000002:
@@ -536,10 +572,12 @@ void StateHandlerIdle(struct __CharacterState* In, int CurrentSection, int Data)
 		default:
 			DefaultStateHandler(In, CurrentSection, Data);
 		}
+
 		DeMessageQueue(&In->SectionList[CurrentSection].Event);
 	}
-	if ((CurrentSection == 0) && (CheckHolding(In->CharacterInstance) == 0) && Anim != 55 && Anim != 214
-		&& ((Raziel.idleCount++, Raziel.idleCount < 301) == 0) && (Raziel.idleCount == (Raziel.idleCount / 900) * 900))
+
+	if ((CurrentSection == 0) && (CheckHolding(In->CharacterInstance) == 0) && (Anim != 55) && (Anim != 214)
+		&& (Raziel.idleCount++, Raziel.idleCount >= 301) && (Raziel.idleCount == (Raziel.idleCount / 900) * 900))
 	{
 		if (Raziel.idleInstance != NULL)
 		{
@@ -548,6 +586,7 @@ void StateHandlerIdle(struct __CharacterState* In, int CurrentSection, int Data)
 		else
 		{
 			G2EmulationSwitchAnimationCharacter(In, 24, 0, 3, 1);
+
 			COLLIDE_SegmentCollisionOff(In->CharacterInstance, 1);
 		}
 	}
