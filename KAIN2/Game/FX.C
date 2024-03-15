@@ -322,7 +322,7 @@ struct _FX_PRIM * FX_BuildSingleFaceWithModel(struct _Model *model, struct _MFac
 	return null;
 }
 
-void FX_SetupLighting(struct _Instance* instance)//Matching - 99.25%
+void _FX_SetupLighting(struct _Instance* instance) // Matching - 100%
 {
 	MATRIX lm;
 
