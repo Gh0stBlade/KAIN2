@@ -199,7 +199,7 @@ short MATH3D_FastAtan2(long y, long x) // Matching - 100%
 	}
 }
 
-long MATH3D_FastSqrt(long square)//Matching - 90.63%
+long MATH3D_FastSqrt(long square) // Matching - 100%
 {
 	unsigned long result;
 	long remainder;
