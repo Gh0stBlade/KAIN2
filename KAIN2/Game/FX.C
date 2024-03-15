@@ -220,7 +220,7 @@ void FX_AniTexSetup(struct _FX_PRIM *fxPrim, struct _MFace *mface, struct _Model
 	UNIMPLEMENTED();
 }
 
-void FX_StandardProcess(struct _FX_PRIM* fxPrim, struct _FXTracker* fxTracker)
+void FX_StandardProcess(struct _FX_PRIM* fxPrim, struct _FXTracker* fxTracker) // Matching - 100%
 {
 	FX_StandardFXPrimProcess(fxPrim, fxTracker);
 }
