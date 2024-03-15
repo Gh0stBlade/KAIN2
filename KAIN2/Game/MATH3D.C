@@ -361,8 +361,10 @@ long MATH3D_DistanceBetweenPositions(struct _Position* pos1, struct _Position* p
 	return MATH3D_FastSqrt0(MATH3D_SquareLength((pos2->x - pos1->x), (pos2->y - pos1->y), (pos2->z - pos1->z)));
 }
 
-short MATH3D_AngleBetweenVectors(struct _SVector* vector1, struct _SVector* vector2) { // Matching - 100%
+short MATH3D_AngleBetweenVectors(struct _SVector* vector1, struct _SVector* vector2) // Matching - 100%
+{
 	long projection_length;
+
 	if (vector1->x == vector2->x)
 	{
 		if ((vector1->y == vector2->y) && (vector1->z == vector2->z))
@@ -370,16 +372,19 @@ short MATH3D_AngleBetweenVectors(struct _SVector* vector1, struct _SVector* vect
 			return 0;
 		}
 	}
-	projection_length = (vector1->x * vector2->x + vector1->y * vector2->y + vector1->z * vector2->z + 2048) >> 12;
-	if ((projection_length < 4097) == 0)
+
+	projection_length = (((vector1->x * vector2->x) + (vector1->y * vector2->y) + (vector1->z * vector2->z)) + 2048) >> 12;
+
+	if (projection_length >= 4097)
 	{
 		projection_length = 4096;
 	}
-	else if ((projection_length < -4096) != 0)
+	else if (projection_length < -4096)
 	{
 		projection_length = -4096;
 	}
-	return (short)ratan2(MATH3D_FastSqrt0(0x1000000 - projection_length * projection_length), projection_length);
+
+	return (short)ratan2(MATH3D_FastSqrt0(16777216 - projection_length * projection_length), projection_length);
 }
 
 void MATH3D_RotMatAboutVec(struct _SVector* vec, MATRIX* mat, short angle) // Matching - 100%
