@@ -1139,53 +1139,52 @@ void LOAD_DumpCurrentDir()
 	}
 }
 
-int LOAD_ChangeDirectoryByID(int id)
-{ 
+int LOAD_ChangeDirectoryByID(int id) // Matching - 100%
+{
 	int i;
 	struct _BigFileDir* dir;
+	struct _BigFileDir* temp;  // not from SYMDUMP
 
 	if (id != 0)
 	{
-		if (loadStatus.bigFile.currentDirID != id)
+		if (loadStatus.bigFile.currentDirID == id)
 		{
-			if (loadStatus.bigFile.cachedDirID == id)
+			return 1;
+		}
+		if (loadStatus.bigFile.cachedDirID == id)
+		{
+			temp = loadStatus.bigFile.cachedDir;
+			loadStatus.bigFile.cachedDirID = loadStatus.bigFile.currentDirID;
+			loadStatus.bigFile.currentDirID = id;
+			loadStatus.bigFile.cachedDir = loadStatus.bigFile.currentDir;
+			loadStatus.bigFile.currentDir = temp;
+			return 1;
+		}
+		else
+		{
+			for (i = 0; i < loadStatus.bigFile.numSubDirs; i++)
 			{
-				loadStatus.bigFile.cachedDirID = loadStatus.bigFile.currentDirID;
-				loadStatus.bigFile.currentDirID = id;
-				loadStatus.bigFile.cachedDir = loadStatus.bigFile.currentDir;
-				return 1;
-			}
-			else
-			{
-				if (loadStatus.bigFile.numSubDirs > 0)
+				if (id == loadStatus.bigFile.subDirList[i].streamUnitID)
 				{
-					for (i = 0; i < loadStatus.bigFile.numSubDirs; i++)
+					if (loadStatus.bigFile.cachedDir != NULL)
 					{
-						if (id == loadStatus.bigFile.subDirList[i].streamUnitID)
-						{
-							if (loadStatus.bigFile.cachedDir != NULL)
-							{
-								MEMPACK_Free((char*)loadStatus.bigFile.cachedDir);
-							}
-
-							loadStatus.currentDirLoading = 1;
-							loadStatus.bigFile.cachedDirID = loadStatus.bigFile.currentDirID;
-							loadStatus.bigFile.cachedDir = loadStatus.bigFile.currentDir;
-
-							dir = LOAD_ReadDirectory(&loadStatus.bigFile.subDirList[i]);
-							loadStatus.bigFile.currentDir = dir;
-							MEMPACK_SetMemoryBeingStreamed((char*)dir);
-							loadStatus.bigFile.currentDirID = id;
-							return 1;
-						}
+						MEMPACK_Free((char*)loadStatus.bigFile.cachedDir);
 					}
+
+					loadStatus.currentDirLoading = 1;
+					loadStatus.bigFile.cachedDirID = loadStatus.bigFile.currentDirID;
+					loadStatus.bigFile.cachedDir = loadStatus.bigFile.currentDir;
+
+					dir = LOAD_ReadDirectory(&loadStatus.bigFile.subDirList[i]);
+					loadStatus.bigFile.currentDir = dir;
+					MEMPACK_SetMemoryBeingStreamed((char*)dir);
+					loadStatus.bigFile.currentDirID = id;
+					return 1;
 				}
-				return 0;
 			}
 		}
-		return 1;
 	}
-	
+
 	return 0;
 }
 
