@@ -474,7 +474,7 @@ short MATH3D_AngleFromPosToPos(struct _Position* from, struct _Position* to)//Ma
 }
 
 
-void MATH3D_ZYXtoXYZ(struct _Rotation* rot)//Matching - 99.57%
+void MATH3D_ZYXtoXYZ(struct _Rotation* rot) // Matching - 100%
 {
 	MATRIX tempMat;
 	struct _G2EulerAngles_Type ea;
