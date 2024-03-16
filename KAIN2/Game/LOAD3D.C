@@ -973,18 +973,21 @@ struct _BigFileEntry* LOAD_GetBigFileEntry(char* fileName)
 }
 
 #ifndef PC_VERSION
-long LOAD_DoesFileExist(char *fileName)
-{ 
-	struct _BigFileEntry *entry;
-	
+long LOAD_DoesFileExist(char* fileName) // Matching - 100%
+{
+	struct _BigFileEntry* entry;
+	int temp;  // not from SYMDUMP
+
 	entry = LOAD_GetBigFileEntry(fileName);
-	
+
+	temp = 0;
+
 	if (entry != NULL)
 	{
-		return entry->fileLen != 0;
+		temp = entry->fileLen != 0;
 	}
 
-	return 0;
+	return temp;
 }
 #endif
 
