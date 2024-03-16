@@ -936,7 +936,7 @@ struct _BigFileEntry* LOAD_GetBigFileEntryByHash(long hash) // Matching - 100%
 	return NULL;
 }
 
-struct _BigFileEntry* LOAD_GetBigFileEntry(char* fileName)
+struct _BigFileEntry* LOAD_GetBigFileEntry(char* fileName) // Matching - 100%
 {
 #if defined(_DEBUG) && !defined(NO_FILESYSTEM) || defined(__EMSCRIPTEN__)
 	static struct _BigFileEntry bigFileEntry;
