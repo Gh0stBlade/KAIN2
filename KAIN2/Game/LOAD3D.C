@@ -979,7 +979,7 @@ long LOAD_DoesFileExist(char* fileName) // Matching - 100%
 }
 #endif
 
-void LOAD_NonBlockingReadFile(struct _NonBlockLoadEntry* loadEntry)
+void LOAD_NonBlockingReadFile(struct _NonBlockLoadEntry* loadEntry) // Matching - 100%
 { 
 	if (LOAD_SetupFileInfo(loadEntry) != 0)
 	{
