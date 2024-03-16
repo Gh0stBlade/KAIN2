@@ -1219,7 +1219,7 @@ int LOAD_IsFileLoading()
 	return loadStatus.currentQueueFile.readStatus != 0;
 }
 
-void LOAD_StopLoad()
+void LOAD_StopLoad() // Matching - 100%
 {
 	loadStatus.state = 5;
 	loadStatus.currentQueueFile.readStatus = 0;
