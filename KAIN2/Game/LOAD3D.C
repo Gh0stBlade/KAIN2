@@ -758,28 +758,28 @@ int LOAD_SetupFileInfo(struct _NonBlockLoadEntry* loadEntry)
 	return 1;
 }
 
-void LOAD_CD_ReadPartOfFile(struct _NonBlockLoadEntry *loadEntry)
-{ 
-	struct _ReadQueueEntry *currentQueueReq;
+void LOAD_CD_ReadPartOfFile(struct _NonBlockLoadEntry* loadEntry) // Matching - 100%
+{
+	struct _ReadQueueEntry* currentQueueReq;
 
 	if (LOAD_SetupFileInfo(loadEntry) != 0)
 	{
 		currentQueueReq = &loadStatus.currentQueueFile;
-		currentQueueReq->readCurSize = 0;
 		currentQueueReq->readSize = loadEntry->loadSize;
+		currentQueueReq->readCurSize = 0;
 		currentQueueReq->readStartDest = loadEntry->loadAddr;
 		currentQueueReq->readCurDest = loadEntry->loadAddr;
+		currentQueueReq->readStartPos = loadEntry->filePos;
 		currentQueueReq->readStatus = 5;
 		currentQueueReq->checksumType = 0;
-		loadStatus.currentQueueFile.readStartPos = loadEntry->filePos;
 		currentQueueReq->checksum = loadEntry->checksum;
 		currentQueueReq->retFunc = loadEntry->retFunc;
 		currentQueueReq->retData = loadEntry->retData;
-		loadStatus.changeDir = 0;
 		currentQueueReq->retData2 = loadEntry->retData2;
 #if defined(_DEBUG) || defined(__EMSCRIPTEN__)
 		currentQueueReq->fileHash = loadEntry->fileHash;
 #endif
+		loadStatus.changeDir = 0;
 	}
 	else
 	{
