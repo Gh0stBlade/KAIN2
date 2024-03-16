@@ -499,7 +499,7 @@ short  MATH3D_ElevationFromPosToPos(struct _Position* from, struct _Position* to
 	return -ratan2(to->z - from->z, (short)MATH3D_FastSqrt0(dx * dx + dy * dy)) & 0xFFF;
 }
 
-void MATH3D_RotationFromPosToPos(struct _Position* from, struct _Position* to, struct _Rotation* rot)//Matching - 99.52%
+void MATH3D_RotationFromPosToPos(struct _Position* from, struct _Position* to, struct _Rotation* rot) // Matching - 100%
 {
 	rot->x = MATH3D_ElevationFromPosToPos(from, to);
 	rot->y = 0;
