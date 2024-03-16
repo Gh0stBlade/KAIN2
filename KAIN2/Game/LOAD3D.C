@@ -1110,10 +1110,13 @@ void* LOAD_InitBuffers() // Matching - 100%
 	return loadStatus.buffer1;
 }
 
-void LOAD_InitCdStreamMode()
+void LOAD_InitCdStreamMode() // Matching - 100%
 { 
 #if defined(PSX_VERSION) || (PSXPC_VERSION)
-	unsigned char cdMode = CdlModeSize1 | CdlModeSpeed;
+	unsigned char cdMode;
+
+	cdMode = CdlModeSize1 | CdlModeSpeed;
+
 	CdReadyCallback(&LOAD_CdReadReady);
 	CdSyncCallback(&LOAD_CdSeekCallback);
 	CdControl(CdlSetmode, &cdMode, NULL);
