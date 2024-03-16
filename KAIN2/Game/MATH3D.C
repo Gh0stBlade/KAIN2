@@ -408,7 +408,7 @@ void MATH3D_RotMatAboutVec(struct _SVector* vec, MATRIX* mat, short angle) // Ma
 	}
 }
 
-void MATH3D_SetUnityMatrix(MATRIX *mat)
+void MATH3D_SetUnityMatrix(MATRIX *mat) // Matching - 100%
 {
 	((unsigned int*)&mat->m[0][0])[0] = ONE;
 	((unsigned int*)&mat->m[0][2])[0] = 0;
