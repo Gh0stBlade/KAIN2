@@ -488,7 +488,7 @@ void MATH3D_ZYXtoXYZ(struct _Rotation* rot)//Matching - 99.57%
 	rot->z = ea.z;
 }
 
-short  MATH3D_ElevationFromPosToPos(struct _Position* from, struct _Position* to)//Matching - 99.85%
+short MATH3D_ElevationFromPosToPos(struct _Position* from, struct _Position* to) // Matching - 100%
 {
 	int dx;
 	int dy;
