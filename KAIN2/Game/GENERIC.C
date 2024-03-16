@@ -190,11 +190,11 @@ void GenericMessage(struct _Instance* instance, unsigned long message, unsigned 
 	}
 }
 
-void GenericRelocateTune(struct Object* object, long offset)
+void GenericRelocateTune(struct Object* object, long offset) // Matching - 100%
 {
 	struct GenericTune* tune;
 
-	tune = (struct GenericTune*)object->modelList;
+	tune = (struct GenericTune*)object->data;
 
 	if (tune != NULL && tune->shatterData != NULL)
 	{
