@@ -1098,14 +1098,14 @@ void LOAD_CleanUpBuffers() // Matching - 100%
 	}
 }
 
-void* LOAD_InitBuffers()
+void* LOAD_InitBuffers() // Matching - 100%
 {
 #if defined(PSXPC_VERSION)
-	loadStatus.buffer1 = MEMPACK_Malloc(2048*256, 0x23);
-	loadStatus.buffer2 = MEMPACK_Malloc(2048*256, 0x23);
+	loadStatus.buffer1 = MEMPACK_Malloc(2048*256, 35);
+	loadStatus.buffer2 = MEMPACK_Malloc(2048*256, 35);
 #else
-	loadStatus.buffer1 = MEMPACK_Malloc(2048, 0x23);
-	loadStatus.buffer2 = MEMPACK_Malloc(2048, 0x23);
+	loadStatus.buffer1 = MEMPACK_Malloc(2048, 35);
+	loadStatus.buffer2 = MEMPACK_Malloc(2048, 35);
 #endif
 	return loadStatus.buffer1;
 }
