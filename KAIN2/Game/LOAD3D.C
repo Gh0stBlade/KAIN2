@@ -1189,7 +1189,7 @@ int LOAD_ChangeDirectoryByID(int id) // Matching - 100%
 	return 0;
 }
 
-void LOAD_SetSearchDirectory(long id)
+void LOAD_SetSearchDirectory(long id) // Matching - 100%
 { 
 	loadStatus.bigFile.searchDirID = id;
 }
