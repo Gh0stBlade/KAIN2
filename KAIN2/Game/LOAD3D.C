@@ -1120,7 +1120,7 @@ void LOAD_InitCdStreamMode()
 #endif
 }
 
-void LOAD_DumpCurrentDir()
+void LOAD_DumpCurrentDir() // Matching - 100%
 {
 	if (loadStatus.bigFile.currentDir != NULL)
 	{
