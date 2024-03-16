@@ -1002,20 +1002,20 @@ void LOAD_NonBlockingReadFile(struct _NonBlockLoadEntry* loadEntry)
 }
 
 #ifndef PC_VERSION
-void LOAD_LoadTIM(int *addr, long x_pos, long y_pos, long clut_x, long clut_y)
-{ 
+void LOAD_LoadTIM(int* addr, long x_pos, long y_pos, long clut_x, long clut_y) // Matching - 100%
+{
 	PSX_RECT rect;
-	int *clutAddr;
+	int* clutAddr;
 
-	addr += 2;
 	clutAddr = NULL;
-	
+	addr += 2;
+
 	if (addr[-1] == 8)
 	{
 		clutAddr = addr + 3;
 		addr += 11;
 	}
-    
+
 	rect.x = (short)x_pos;
 	rect.y = (short)y_pos;
 	rect.w = ((unsigned short*)addr)[4];
