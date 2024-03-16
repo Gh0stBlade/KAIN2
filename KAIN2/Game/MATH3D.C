@@ -590,7 +590,7 @@ void MATH3D_RotateAxisToVector(MATRIX* dest, MATRIX* src, struct _SVector* vec, 
 	MulMatrix0(src, &xform, dest);
 }
 
-int MATH3D_ConeDetect(struct _SVector* pos, int arc, int elevation)//Matching - 93.39%
+int MATH3D_ConeDetect(struct _SVector* pos, int arc, int elevation) // Matching - 100%
 {
 	long x;
 	long y;
@@ -598,9 +598,9 @@ int MATH3D_ConeDetect(struct _SVector* pos, int arc, int elevation)//Matching - 
 	x = pos->x;
 	y = -pos->y;
 
-	if ((short)MATH3D_FastAtan2(ABS(x), y) < arc)
+	if ((short)MATH3D_FastAtan2(abs(x), y) < arc)
 	{
-		if ((short)MATH3D_FastAtan2(ABS(pos->z), MATH3D_LengthXY(x, y)) < elevation)
+		if ((short)MATH3D_FastAtan2(abs(pos->z), MATH3D_LengthXY(x, y)) < elevation)
 		{
 			return 1;
 		}
