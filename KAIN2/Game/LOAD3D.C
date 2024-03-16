@@ -568,14 +568,14 @@ void LOAD_CdReadFromBigFile(long fileOffset, unsigned int* loadAddr, long bytes,
 #endif
 }
 
-struct _BigFileDir * LOAD_ReadDirectory(struct _BigFileDirEntry *dirEntry)
+struct _BigFileDir * LOAD_ReadDirectory(struct _BigFileDirEntry *dirEntry) // Matching - 100%
 {
 #if defined(PSX_VERSION) || (PSXPC_VERSION)
 	struct _BigFileDir* dir;
 	long sizeOfDir;
-	
+
 	sizeOfDir = (dirEntry->numFiles * sizeof(struct _BigFileEntry)) + sizeof(long);
-	dir = (struct _BigFileDir*)MEMPACK_Malloc(sizeOfDir, 0x2C);
+	dir = (struct _BigFileDir*)MEMPACK_Malloc(sizeOfDir, 44);
 	
 #if defined(_DEBUG) && !defined(NO_FILESYSTEM) || defined(__EMSCRIPTEN__)
 	LOAD_CdReadFromBigFile(dirEntry->subDirOffset, (unsigned int*)dir, sizeOfDir, 0, 0, 0);
