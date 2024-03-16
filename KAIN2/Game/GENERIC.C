@@ -56,7 +56,7 @@ void GenericCollide(struct _Instance* instance, struct GameTracker* gameTracker)
 {
 }
 
-void GenericProcess(struct _Instance* instance, struct GameTracker* gameTracker)//Matching - 99.76%
+void GenericProcess(struct _Instance* instance, struct GameTracker* gameTracker) // Matching - 100%
 {
 	struct Object* object;
 
