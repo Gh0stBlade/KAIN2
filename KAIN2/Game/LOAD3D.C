@@ -1083,7 +1083,7 @@ long LOAD_RelocBinaryData(long* data, long fileSize) // Matching - 100%
 	return (tableSize * 4);
 }
 
-void LOAD_CleanUpBuffers()
+void LOAD_CleanUpBuffers() // Matching - 100%
 { 
 	if (loadStatus.buffer1 != NULL)
 	{
