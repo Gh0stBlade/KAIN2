@@ -553,7 +553,7 @@ char* LOAD_ReadFileFromCD(char* filename, int memType)
 #if defined(_DEBUG) && !defined(NO_FILESYSTEM) || defined(__EMSCRIPTEN__)
 void LOAD_CdReadFromBigFile(long fileOffset, unsigned int* loadAddr, long bytes, long chksumLevel, long checksum, long fileHash)
 #else
-void LOAD_CdReadFromBigFile(long fileOffset, unsigned int* loadAddr, long bytes, long chksumLevel, long checksum)
+void LOAD_CdReadFromBigFile(long fileOffset, unsigned int* loadAddr, long bytes, long chksumLevel, long checksum) // Matching - 100%
 #endif
 {
 	loadStatus.currentQueueFile.readSize = bytes;
