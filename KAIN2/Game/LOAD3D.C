@@ -1217,7 +1217,7 @@ void LOAD_UpdateBigFilePointers(struct _BigFileDir *oldDir, struct _BigFileDir *
 	}
 }
 
-int LOAD_IsFileLoading()
+int LOAD_IsFileLoading() // Matching - 100%
 {
 	return loadStatus.currentQueueFile.readStatus != 0;
 }
