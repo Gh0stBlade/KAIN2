@@ -1194,7 +1194,7 @@ void LOAD_SetSearchDirectory(long id) // Matching - 100%
 	loadStatus.bigFile.searchDirID = id;
 }
 
-long LOAD_GetSearchDirectory()
+long LOAD_GetSearchDirectory() // Matching - 100%
 {
 	return loadStatus.bigFile.searchDirID;
 }
