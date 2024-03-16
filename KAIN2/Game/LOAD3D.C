@@ -730,7 +730,7 @@ void LOAD_InitCdLoader(char *bigFileName, char *voiceFileName)
 
 #endif
 
-int LOAD_SetupFileInfo(struct _NonBlockLoadEntry* loadEntry)
+int LOAD_SetupFileInfo(struct _NonBlockLoadEntry* loadEntry) // Matching - 100%
 { 
 #if defined(PSX_VERSION)
 	struct _BigFileEntry *fileInfo;
