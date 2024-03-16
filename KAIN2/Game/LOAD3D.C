@@ -909,41 +909,29 @@ long LOAD_HashUnit(char *name)
 	return (hash << 16) >> 16;
 }
 
-struct _BigFileEntry* LOAD_GetBigFileEntryByHash(long hash)
-{ 
+struct _BigFileEntry* LOAD_GetBigFileEntryByHash(long hash) // Matching - 100%
+{
 	int i;
 	struct _BigFileEntry* entry;
 
-	if (loadStatus.bigFile.currentDir != NULL && loadStatus.currentDirLoading == 0 && loadStatus.bigFile.currentDir->numFiles != 0)
+	if ((loadStatus.bigFile.currentDir != NULL) && (loadStatus.currentDirLoading == 0))
 	{
-		i = loadStatus.bigFile.currentDir->numFiles;
-		entry = &loadStatus.bigFile.currentDir->fileList[0];
-
-		do
+		for (i = loadStatus.bigFile.currentDir->numFiles, entry = &loadStatus.bigFile.currentDir->fileList[0]; i != 0; i--, entry++)
 		{
 			if (entry->fileHash == hash)
 			{
 				return entry;
 			}
-			
-			entry++;
-
-		} while (i-- != 0);
+		}
 	}
 
-	i = loadStatus.bigFile.rootDir->numFiles;
-	entry = &loadStatus.bigFile.rootDir->fileList[0];
-
-	do
+	for (i = loadStatus.bigFile.rootDir->numFiles, entry = &loadStatus.bigFile.rootDir->fileList[0]; i != 0; i--, entry++)
 	{
 		if (entry->fileHash == hash)
 		{
 			return entry;
 		}
-
-		entry++;
-
-	} while (i-- != 0);
+	}
 
 	return NULL;
 }
