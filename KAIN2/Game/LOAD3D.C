@@ -1201,7 +1201,7 @@ int LOAD_ChangeDirectoryFlag()
 	return loadStatus.changeDir;
 }
 
-void LOAD_UpdateBigFilePointers(struct _BigFileDir *oldDir, struct _BigFileDir *newDir)
+void LOAD_UpdateBigFilePointers(struct _BigFileDir *oldDir, struct _BigFileDir *newDir) // Matching - 100%
 { 
 	if (loadStatus.bigFile.currentDir == oldDir)
 	{
