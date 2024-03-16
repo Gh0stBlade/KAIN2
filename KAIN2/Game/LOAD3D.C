@@ -1054,7 +1054,7 @@ void LOAD_LoadTIM2(int* addr, long x_pos, long y_pos, long width, long height) /
 }
 #endif
 
-long LOAD_RelocBinaryData(long* data, long fileSize)
+long LOAD_RelocBinaryData(long* data, long fileSize) // Matching - 100%
 {
 	long* lastMoveDest;
 	long tableSize;
@@ -1069,9 +1069,7 @@ long LOAD_RelocBinaryData(long* data, long fileSize)
 
 	redirectList->numPointers = data[0];
 
-	tableSize = (redirectList->numPointers + 512 < 0) ? (redirectList->numPointers + 1023) : (redirectList->numPointers + 512);
-	tableSize /= 512;
-	tableSize *= 512;
+	tableSize = ((redirectList->numPointers + 512) / 512) * 512;
 
 	RESOLVE_Pointers(redirectList, (long*)&data[tableSize], (long*)data);
 
