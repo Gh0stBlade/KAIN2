@@ -1196,7 +1196,7 @@ long LOAD_GetSearchDirectory()
 	return loadStatus.bigFile.searchDirID;
 }
 
-int LOAD_ChangeDirectoryFlag()
+int LOAD_ChangeDirectoryFlag() // Matching - 100%
 {
 	return loadStatus.changeDir;
 }
