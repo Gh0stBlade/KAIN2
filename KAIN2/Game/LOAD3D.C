@@ -277,7 +277,7 @@ void LOAD_DoCDReading()//Matching - 83.60%
 	}
 }
 
-void LOAD_DoCDBufferedReading()
+void LOAD_DoCDBufferedReading() // Matching - 100%
 { 
 	if (loadStatus.state == 5)
 	{
