@@ -62,6 +62,26 @@ _v->y = _y0 - _y1;\
 _v->z = _z0 - _z1;\
 }
 
+#define SET_VEC(A, B) {\
+short _x0;\
+short _y0;\
+short _z0;\
+struct _SVector *_v;\
+struct _Position *_v0;\
+\
+_v0 = B;\
+_v = A;\
+\
+_x0 = _v0->x;\
+_y0 = _v0->y;\
+_z0 = _v0->z;\
+\
+\
+_v->x = _x0;\
+_v->y = _y0;\
+_v->z = _z0;\
+}
+
 #if defined(_LANGUAGE_C_PLUS_PLUS)||defined(__cplusplus)||defined(c_plusplus)
 extern "C" {
 #endif
