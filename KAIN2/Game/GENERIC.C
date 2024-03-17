@@ -151,7 +151,7 @@ unsigned long GenericQuery(struct _Instance* instance, unsigned long query)  // 
 }
 
 
-void GenericMessage(struct _Instance* instance, unsigned long message, unsigned long data)  // Matching - 100%
+void GenericMessage(struct _Instance* instance, unsigned long message, unsigned long data) // Matching - 100%
 {
 	struct evAnimationInstanceSwitchData* Ptr;
 
@@ -159,6 +159,7 @@ void GenericMessage(struct _Instance* instance, unsigned long message, unsigned 
 	{
 	case 0x8000008:
 		Ptr = (struct evAnimationInstanceSwitchData*)data;
+
 		if (instance->anim.section[0].interpInfo != NULL)
 		{
 			G2EmulationInstanceSetAnimation(instance, 0, Ptr->anim, Ptr->frame, Ptr->frames);
@@ -167,6 +168,7 @@ void GenericMessage(struct _Instance* instance, unsigned long message, unsigned 
 		{
 			G2EmulationInstanceSetAnimation(instance, 0, Ptr->anim, Ptr->frame, 0);
 		}
+
 		G2EmulationInstanceSetMode(instance, 0, Ptr->mode);
 		break;
 	case 0x4000A:
@@ -184,8 +186,8 @@ void GenericMessage(struct _Instance* instance, unsigned long message, unsigned 
 		ScriptKillInstance(instance, data);
 		break;
 	case 0x100007:
-		instance->flags = (int)((struct _Instance*)data)->node.next[0].prev;
-		instance->flags2 = (int)((struct _Instance*)data)->node.next[0].next;
+		instance->flags = ((struct _MonsterSaveInfo*)((struct evControlSaveDataData*)data)->data)->mvFlags;
+		instance->flags2 = ((struct _MonsterSaveInfo*)((struct evControlSaveDataData*)data)->data)->auxFlags;
 		break;
 	}
 }
