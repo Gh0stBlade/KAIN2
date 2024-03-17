@@ -20,7 +20,7 @@ long crap35[4];
 
 char HashExtensions[7][4] = { "drm", "crm", "tim", "smp", "snd", "smf", "snf"};
 
-void LOAD_InitCd()//Matching - 99.17%
+void LOAD_InitCd() // Matching - 100%
 {
 #if defined(PSX_VERSION)
 	CdInit();
