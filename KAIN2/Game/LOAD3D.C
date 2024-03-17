@@ -222,7 +222,7 @@ void LOAD_CdReadReady(unsigned char intr, unsigned char *result)
 #endif
 }
 
-void LOAD_UpdateCheckSum(long bytes)//Matching - 95.59%
+void LOAD_UpdateCheckSum(long bytes) // Matching - 100%
 {
 	if (loadStatus.currentQueueFile.checksumType == 1 && bytes != 0)
 	{
