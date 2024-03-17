@@ -109,7 +109,7 @@ void SetExternalForce(struct __Force* In, short x, short y, short z, int Space, 
 }
 
 
-void SetExternalTransitionForce(struct __Force* in, struct _Instance* instance, int time, int x, int y, int z)  // Matching - 0.00%
+void SetExternalTransitionForce(struct __Force* in, struct _Instance* instance, int time, int x, int y, int z) // Matching - 100%
 {
 	in->Type = 2;
 	in->LinearForce.x = (x - instance->xVel) / time;
