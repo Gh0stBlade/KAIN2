@@ -160,7 +160,7 @@ void UpdateEngagementList(struct evCollideInstanceStatsData *Ptr, struct __Playe
 					UNIMPLEMENTED();
 }
 
-long UpdateAutoFaceAngle(struct _Instance* player, struct _Instance* instance)
+long UpdateAutoFaceAngle(struct _Instance* player, struct _Instance* instance) // Matching - 100%
 {
 	long rc;
 
