@@ -2826,34 +2826,34 @@ void EMSCRIPTEN_KEEPALIVE GAMELOOP_RequestLevelChangeHTML(char* name, short numb
 
 	gameTracker = &gameTrackerX;
 
-	if (gameTrackerX.levelChange == 0)
+	if (gameTracker->levelChange == 0)
 	{
-		gameTrackerX.gameFlags |= 0x1;
+		gameTracker->gameFlags |= 0x1;
 
 		SOUND_ResetAllSound();
 
 		sprintf(gameTracker->baseAreaName, "%s%d", name, number);
 
-		gameTrackerX.levelChange = 1;
+		gameTracker->levelChange = 1;
 
-		gameTrackerX.levelDone = 1;
+		gameTracker->levelDone = 1;
 	}
 }
 }
 #endif
-void GAMELOOP_RequestLevelChange(char* name, short number, struct GameTracker* gameTracker)
+void GAMELOOP_RequestLevelChange(char* name, short number, struct GameTracker* gameTracker) // Matching - 100%
 {
-	if (gameTrackerX.levelChange == 0)
+	if (gameTracker->levelChange == 0)
 	{
-		gameTrackerX.gameFlags |= 0x1;
+		gameTracker->gameFlags |= 0x1;
 
 		SOUND_ResetAllSound();
 
 		sprintf(gameTracker->baseAreaName, "%s%d", name, number);
 
-		gameTrackerX.levelChange = 1;
+		gameTracker->levelChange = 1;
 
-		gameTrackerX.levelDone = 1;
+		gameTracker->levelDone = 1;
 	}
 }
 
