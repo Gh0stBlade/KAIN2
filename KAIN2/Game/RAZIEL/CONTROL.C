@@ -73,9 +73,9 @@ void SetImpulsePhysics(struct _Instance* instance, struct __Player* player)//Mat
 	}
 }
 
-void SetDropPhysics(struct _Instance* instance, struct __Player* player)
+void SetDropPhysics(struct _Instance* instance, struct __Player* player) // Matching - 100%
 {
-	SetExternalForce(ExternalForcesPtr, 0, 4, -16, 0, 4096);
+	SetExternalForce(ExternalForces, 0, 4, -16, 0, 4096);
 }
 
 // unused
