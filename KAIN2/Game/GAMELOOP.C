@@ -33,6 +33,7 @@
 #include "MENU/MENU.H"
 #include "MENU/MENUDEFS.H"
 #include "G2/MAING2.H"
+#include "MATH3D.H"
 
 //#include <assert.h>
 
@@ -245,23 +246,11 @@ int GAMELOOP_WaitForLoad()
 	return STREAM_PollLoadQueue();
 }
 
-struct _StreamUnit * LoadLevels(char *baseAreaName, struct GameTracker *gameTracker)
+struct _StreamUnit* LoadLevels(char* baseAreaName, struct GameTracker* gameTracker) // Matching - 100%
 {
-	_SVector offset;
-	struct _StreamUnit *streamUnit;
+	struct _SVector offset;
+	struct _StreamUnit* streamUnit;
 	static char oldArea[16] = { "under1" };
-	int cd;
-	int num;
-	int waitFor;
-	short _x0;
-	short _y0;
-	short _z0;
-	short _x1;
-	short _y1;
-	short _z1;
-	_SVector *_v;
-	_Position *_v0;
-	_Position *_v1;
 
 	if (strlen(oldArea) != 0)
 	{
@@ -275,21 +264,27 @@ struct _StreamUnit * LoadLevels(char *baseAreaName, struct GameTracker *gameTrac
 #endif
 
 	streamUnit = STREAM_LoadLevel(baseAreaName, NULL, 0);
-	
+
 	if (streamUnit->used == 1)
 	{
+		int num;
+		int waitFor;
+
 		DRAW_LoadingMessage();
+
 		while (streamUnit->used == 1)
 		{
 			GAMELOOP_WaitForLoad();
 		}
 
 		STREAM_NextLoadFromHead();
+
 		STREAM_LoadMainVram(gameTracker, baseAreaName, streamUnit);
+
 		STREAM_NextLoadAsNormal();
 
 		waitFor = GAMELOOP_WaitForLoad() - 1;
-		
+
 		do
 		{
 			num = GAMELOOP_WaitForLoad();
@@ -301,9 +296,11 @@ struct _StreamUnit * LoadLevels(char *baseAreaName, struct GameTracker *gameTrac
 
 		} while (num >= waitFor);
 	}
+
 	else
 	{
 		STREAM_DumpLoadingObjects();
+
 		STREAM_LoadMainVram(gameTracker, baseAreaName, streamUnit);
 	}
 
@@ -312,26 +309,18 @@ struct _StreamUnit * LoadLevels(char *baseAreaName, struct GameTracker *gameTrac
 		if (gameTracker->playerInstance != NULL)
 		{
 			streamUnit->level->startUnitMainSignal->flags |= 0x1;
+
 			SIGNAL_HandleSignal(gameTracker->playerInstance, streamUnit->level->startUnitMainSignal->signalList, 0);
+
 			EVENT_AddSignalToReset(streamUnit->level->startUnitMainSignal);
 		}
 	}
-	
-	_v = &offset;
-	_v1 = &streamUnit->level->terrain->BSPTreeArray->globalOffset;
-	_v0 = &streamUnit->level->terrain->BSPTreeArray->bspRoot->sphere.position;
 
-	_x1 = _v1->x;
-	_y1 = _v1->y;
-	_z1 = _v1->z;
+	ADD_VEC(&offset, &streamUnit->level->terrain->BSPTreeArray->bspRoot->sphere.position, &streamUnit->level->terrain->BSPTreeArray->globalOffset);
 
-	_x0 = _v0->x;
-	_y0 = _v0->y;
-	_z0 = _v0->z;
-
-	_v->x = -(_x0 + _x1);
-	_v->y = -(_y0 + _y1);
-	_v->z = -(_z0 + _z1);
+	offset.x = -offset.x;
+	offset.y = -offset.y;
+	offset.z = -offset.z;
 
 #if defined(EDITOR)
 	extern struct _SVector g_relocationOffset;
@@ -339,7 +328,7 @@ struct _StreamUnit * LoadLevels(char *baseAreaName, struct GameTracker *gameTrac
 #endif
 
 	PreloadAllConnectedUnits(streamUnit, &offset);
-	
+
 	return streamUnit;
 }
 
