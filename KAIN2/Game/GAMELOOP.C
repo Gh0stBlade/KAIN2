@@ -2863,7 +2863,7 @@ void PSX_GameLoop(struct GameTracker *gameTracker)
 	GAMELOOP_Process(gameTracker);
 }
 
-MATRIX* GAMELOOP_GetMatrices(int numMatrices)
+MATRIX* GAMELOOP_GetMatrices(int numMatrices) // Matching - 100%
 {
 	MATRIX* matrix;
 	struct _PrimPool* pool;
