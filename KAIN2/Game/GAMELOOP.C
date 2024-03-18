@@ -2857,7 +2857,7 @@ void GAMELOOP_RequestLevelChange(char* name, short number, struct GameTracker* g
 	}
 }
 
-void PSX_GameLoop(struct GameTracker *gameTracker)
+void PSX_GameLoop(struct GameTracker *gameTracker) // Matching - 100%
 {
 	GAMEPAD_Process(gameTracker);
 	GAMELOOP_Process(gameTracker);
