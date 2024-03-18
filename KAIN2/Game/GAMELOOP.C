@@ -2882,7 +2882,7 @@ MATRIX* GAMELOOP_GetMatrices(int numMatrices)
 	return NULL;
 }
 
-struct GameTracker* GAMELOOP_GetGT()
+struct GameTracker* GAMELOOP_GetGT() // Matching - 100%
 {
 	return &gameTrackerX;
 }
