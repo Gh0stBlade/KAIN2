@@ -59,11 +59,11 @@ void InitAlgorithmicWings(struct _Instance* instance) // Matching - 99.51%
 	}
 }
 
-void DeInitAlgorithmicWings(struct _Instance* instance) // Matching - 99.31%
+void DeInitAlgorithmicWings(struct _Instance* instance) // Matching - 100%
 {
 	unsigned char i;
 
-	if ((AlgoControlFlag & 1) != 0)
+	if ((AlgoControlFlag & 1))
 	{
 		for (i = 51; i < 54; i++)
 		{
@@ -75,7 +75,7 @@ void DeInitAlgorithmicWings(struct _Instance* instance) // Matching - 99.31%
 			G2Anim_DisableController(&instance->anim, i, 8);
 		}
 
-		AlgoControlFlag &= 0xfffffffe;
+		AlgoControlFlag &= ~0x1;
 	}
 }
 
