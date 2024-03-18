@@ -7,12 +7,12 @@
 
 static int AlgoControlFlag;
 
-void InitAlgorithmicWings(struct _Instance* instance) // Matching - 99.51%
+void InitAlgorithmicWings(struct _Instance* instance) // Matching - 100%
 {
 	struct _G2EulerAngles_Type Rot;
 	unsigned char i;
 
-	if ((AlgoControlFlag & 1) == 0)
+	if (!(AlgoControlFlag & 0x1))
 	{
 		if (instance->matrix == NULL)
 		{
@@ -30,7 +30,7 @@ void InitAlgorithmicWings(struct _Instance* instance) // Matching - 99.51%
 				}
 				else
 				{
-					G2EulerAngles_FromMatrix(&Rot, &(instance->anim).segMatrices[i - 1], 0x15);
+					G2EulerAngles_FromMatrix(&Rot, &(instance->anim).segMatrices[i - 1], 21);
 				}
 
 				G2Anim_EnableController(&instance->anim, i, 8);
@@ -47,14 +47,14 @@ void InitAlgorithmicWings(struct _Instance* instance) // Matching - 99.51%
 				}
 				else
 				{
-					G2EulerAngles_FromMatrix(&Rot, &(instance->anim).segMatrices[i - 1], 0x15);
+					G2EulerAngles_FromMatrix(&Rot, &(instance->anim).segMatrices[i - 1], 21);
 				}
 
 				G2Anim_EnableController(&instance->anim, i, 8);
 				G2EmulationSetInterpController_Vector(instance, i, 8, (struct _G2SVector3_Type*)&Rot, (i - 58) * 3, 2);
 			}
 
-			AlgoControlFlag |= 1;
+			AlgoControlFlag |= 0x1;
 		}
 	}
 }
