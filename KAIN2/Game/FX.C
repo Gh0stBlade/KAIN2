@@ -4759,7 +4759,7 @@ void FX_StartPassthruFX(struct _Instance* instance, struct _SVector* normal, str
 	FX_DoInstancePowerRing(instance, 8400, &color, 0, 1);
 }
 
-void FX_EndPassthruFX(struct _Instance* instance)
+void FX_EndPassthruFX(struct _Instance* instance) // Matching - 100%
 {
 	FX_EndInstanceEffects(instance);
 }
