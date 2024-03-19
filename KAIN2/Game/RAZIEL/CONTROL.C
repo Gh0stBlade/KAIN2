@@ -2,7 +2,6 @@
 #include "CONTROL.H"
 #include "Game/RAZIEL/RAZIEL.H"
 
-struct __Force* dword_B08390;
 int PhysicsMode;
 struct __Force* ExternalForcesPtr = &ExternalForces[0];
 
@@ -79,12 +78,6 @@ void SetImpulsePhysics(struct _Instance* instance, struct __Player* player)//Mat
 void SetDropPhysics(struct _Instance* instance, struct __Player* player) // Matching - 100%
 {
 	SetExternalForce(ExternalForces, 0, 4, -16, 0, 4096);
-}
-
-// unused
-void GetPhysicsVelocity(struct _Instance* instance, SVECTOR* in_pos, SVECTOR* out_pos)
-{
-	UNIMPLEMENTED();
 }
 
 void InitExternalForces(struct __Force* Forces, int MaxForces)//Matching - 99.69%
