@@ -20,9 +20,9 @@ static inline int damp(int val, int damping)
 	return -(temp >> 12);
 }
 
-void SetPhysics(struct _Instance *instance, short gravity, long x, long y, long z)
+void SetPhysics(struct _Instance* instance, short gravity, long x, long y, long z) // Matching - 100%
 {
-	SetExternalForce(ExternalForcesPtr, 0, 0, gravity, 0, 4096);
+	SetExternalForce(ExternalForces, 0, 0, gravity, 0, 4096);
 
 	instance->xVel = x;
 	instance->yVel = y;
