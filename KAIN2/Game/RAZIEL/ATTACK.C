@@ -14,25 +14,27 @@
 #include "Game/RAZIEL/HEALTH.H"
 #include "Game/RAZCNTRL.H"
 
-int StateHandlerDecodeHold(int* Message, int* Data)  // Matching - 99.28%
+int StateHandlerDecodeHold(int* Message, int* Data) // Matching - 99.28%
 {
     int rc;
     int WhoAmI;
     struct _Instance* heldInstance;
-    int hitState;
-    struct _Instance* heldWeapon;
 
     rc = 1;
     WhoAmI = 0;
+
     heldInstance = razGetHeldWeapon();
+
     if (Raziel.CurrentPlane == 2)
     {
         *Data = rc;
-        *Message = ~0x7FFFFFFF;
+        *Message = 0x80000000;
+
         if (!(Raziel.Senses.EngagedMask & 0x200))
         {
             rc = 0;
-            if (Raziel.Senses.heldClass == 0x1000 && Raziel.Abilities & 4)
+
+            if ((Raziel.Senses.heldClass == 0x1000) && (Raziel.Abilities & 0x4))
             {
                 rc = 1;
                 *Message = 0x800010;
@@ -41,26 +43,31 @@ int StateHandlerDecodeHold(int* Message, int* Data)  // Matching - 99.28%
     }
     else
     {
-        if (Raziel.Senses.EngagedMask & 0x200)
+        if ((Raziel.Senses.EngagedMask & 0x200))
         {
             WhoAmI = INSTANCE_Query(Raziel.Senses.EngagedList[9].instance, 1);
         }
-        if (WhoAmI & 8)
+
+        if ((WhoAmI & 0x8))
         {
             *Data = rc;
+
             if (Raziel.Senses.heldClass == 0x1000)
             {
                 *Message = 0x1000023;
             }
             else
             {
-                *Message = ~0x7FFFFFFF;
+                *Message = 0x80000000;
             }
         }
-        else if (Raziel.Senses.EngagedMask & 0x200 && heldInstance != NULL && Raziel.Senses.heldClass != 3 && Raziel.Senses.heldClass != 8)
+        else if (((Raziel.Senses.EngagedMask & 0x200)) && (heldInstance != NULL) && (Raziel.Senses.heldClass != 0x3) && (Raziel.Senses.heldClass != 0x8))
         {
+            int hitState;
+
             hitState = INSTANCE_Query(Raziel.Senses.EngagedList[9].instance, 0);
-            if (hitState & 0x2000000)
+
+            if ((hitState & 0x2000000))
             {
                 if (heldInstance == Raziel.soulReaver)
                 {
@@ -74,7 +81,7 @@ int StateHandlerDecodeHold(int* Message, int* Data)  // Matching - 99.28%
             }
             else
             {
-                if (hitState & 0x10000000)
+                if ((hitState & 0x10000000))
                 {
                     *Data = rc;
                     *Message = 0x100000A;
@@ -84,10 +91,12 @@ int StateHandlerDecodeHold(int* Message, int* Data)  // Matching - 99.28%
                     *Data = 0;
                     *Message = 0x100000A;
                 }
+
                 if (heldInstance == Raziel.soulReaver)
                 {
                     *Message = 0x1000023;
-                    if (hitState & 0x21000000)
+
+                    if ((hitState & 0x21000000))
                     {
                         *Data = 1;
                     }
@@ -96,10 +105,11 @@ int StateHandlerDecodeHold(int* Message, int* Data)  // Matching - 99.28%
                         *Data = 0;
                     }
                 }
-                else if ((INSTANCE_Query(heldInstance, 2) & 32))
+                else if ((INSTANCE_Query(heldInstance, 2) & 0x20))
                 {
                     *Message = 0x1000018;
-                    if ((*Data != 0))
+
+                    if (*Data != 0)
                     {
                         if ((INSTANCE_Query(heldInstance, 3) & 0x10000))
                         {
@@ -113,7 +123,7 @@ int StateHandlerDecodeHold(int* Message, int* Data)  // Matching - 99.28%
                 }
             }
         }
-        else if (Raziel.Senses.EngagedMask & 0x100 && heldInstance == NULL)
+        else if (((Raziel.Senses.EngagedMask & 0x100)) && (heldInstance == NULL))
         {
             if ((INSTANCE_Query(Raziel.Senses.EngagedList[8].instance, 0)) < 0)
             {
@@ -128,16 +138,21 @@ int StateHandlerDecodeHold(int* Message, int* Data)  // Matching - 99.28%
         }
         else
         {
-            if (Raziel.Senses.EngagedMask & 0x200 && Raziel.Senses.heldClass == 3)
+            struct _Instance* heldWeapon;
+
+            if (((Raziel.Senses.EngagedMask & 0x200)) && (Raziel.Senses.heldClass == 0x3))
             {
                 *Message = 0x80000000;
                 *Data = 1;
+
                 return 1;
             }
+
             heldWeapon = razGetHeldWeapon();
+
             if (heldWeapon != NULL)
             {
-                if (heldWeapon != Raziel.soulReaver || Raziel.Abilities & 4)
+                if ((heldWeapon != Raziel.soulReaver) || ((Raziel.Abilities & 0x4)))
                 {
                     *Message = 0x800010;
                 }
@@ -146,7 +161,7 @@ int StateHandlerDecodeHold(int* Message, int* Data)  // Matching - 99.28%
                     rc = 0;
                 }
             }
-            else if (Raziel.Abilities & 4)
+            else if ((Raziel.Abilities & 0x4))
             {
                 *Message = 0x80000;
             }
@@ -155,15 +170,18 @@ int StateHandlerDecodeHold(int* Message, int* Data)  // Matching - 99.28%
                 rc = 0;
             }
         }
-        if (Raziel.Senses.heldClass != 3)
+
+        if (Raziel.Senses.heldClass != 0x3)
         {
             return rc;
         }
+
         if (*Message != 0x800010)
         {
             return 0;
         }
     }
+
     return rc;
 }
 
