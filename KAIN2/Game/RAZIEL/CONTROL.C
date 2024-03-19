@@ -118,7 +118,7 @@ void SetExternalTransitionForce(struct __Force* in, struct _Instance* instance, 
 	in->Friction = (short)time;
 }
 
-void ProcessPhysics(struct __Player* player, struct __CharacterState* In, int CurrentSection, int Mode)//Matching - 98.70%
+void ProcessPhysics(struct __Player* player, struct __CharacterState* In, int CurrentSection, int Mode) // Matching - 100%
 {
 	int time;
 	struct _Instance* instance;
@@ -133,13 +133,13 @@ void ProcessPhysics(struct __Player* player, struct __CharacterState* In, int Cu
 		{
 		case 0:
 
-			ApplyExternalLocalForces(player, In->CharacterInstance, ExternalForcesPtr, 4, (struct _Vector*)&In->CharacterInstance->xAccl);
+			ApplyExternalLocalForces(player, In->CharacterInstance, ExternalForces, 4, (struct _Vector*)&In->CharacterInstance->xAccl);
 
 			PhysicsMoveLocalZClamp(In->CharacterInstance, player->RotationSegment, time, 0);
 			break;
 		case 4:
 
-			ApplyExternalLocalForces(player, In->CharacterInstance, ExternalForcesPtr, 4, (struct _Vector*)&In->CharacterInstance->xAccl);
+			ApplyExternalLocalForces(player, In->CharacterInstance, ExternalForces, 4, (struct _Vector*)&In->CharacterInstance->xAccl);
 
 			PhysicsMoveLocalZClamp(In->CharacterInstance, player->RotationSegment, time, 0);
 
@@ -149,7 +149,7 @@ void ProcessPhysics(struct __Player* player, struct __CharacterState* In, int Cu
 				In->CharacterInstance->yAccl == 0 &&
 				In->CharacterInstance->zAccl == 0)
 			{
-				SetExternalForce(ExternalForcesPtr, 0, 0, 0, 0, 0);
+				SetExternalForce(ExternalForces, 0, 0, 0, 0, 0);
 			}
 
 			break;
