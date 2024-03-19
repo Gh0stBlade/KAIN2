@@ -11,10 +11,12 @@ static inline int damp(int val, int damping)
 	int temp;
 
 	temp = val * damping;
+
 	if (temp < 0)
 	{
 		temp += 0xFFF;
 	}
+
 	return -(temp >> 12);
 }
 
@@ -47,12 +49,13 @@ void ResetPhysics(struct _Instance *instance, short gravity)
 }
 
 
-void SetDampingPhysics(struct _Instance* instance, int damping)  // Matching - 99.88%
+void SetDampingPhysics(struct _Instance* instance, int damping) // Matching - 100%
 {
 	instance->xAccl = damp(instance->xVel, damping);
 	instance->yAccl = damp(instance->yVel, damping);
 	instance->zAccl = damp(instance->zVel, damping);
-	SetExternalForce(ExternalForcesPtr, (short)instance->xAccl, (short)instance->yAccl, (short)instance->zAccl, 0, 4096);
+
+	SetExternalForce(ExternalForces, (short)instance->xAccl, (short)instance->yAccl, (short)instance->zAccl, 0, 4096);
 }
 
 void SetImpulsePhysics(struct _Instance* instance, struct __Player* player)//Matching - 52.50%
