@@ -1,39 +1,41 @@
 #include "CORE.H"
 #include "RELMOD.H"
 
+#if defined(PSXPC_VERSION)
 void RELMOD_InitModulePointers(uintptr_t baseaddr, int* relocs)
+#else
+void RELMOD_InitModulePointers(int baseaddr, int* relocs) // Matching - 100%
+#endif
 { 
-	unsigned int* rel_addr;
+    unsigned int* rel_addr;
+    int temp;  // not from SYMDUMP
 
-	if (*relocs != -1)
-	{
-		do
-		{
-			rel_addr = (unsigned int*)(baseaddr + (*relocs & 0xFFFFFFFC));
+    while (*relocs != -1)
+    {
+        rel_addr = (unsigned int*)(baseaddr + (*relocs & ~0x3));
 
-			switch (*relocs++ & 0x3)
-			{
-			case 0:
-				if (*rel_addr >= 0)
-				{
-					*rel_addr += baseaddr;
-				}
-				break;
-			case 1:
-				*rel_addr = (((*relocs++ + baseaddr) + 0x8000) >> 16);
-				break;
-			case 2:
-				*rel_addr += baseaddr;
-				break;
-			case 3:
-				*rel_addr += ((baseaddr << 4) >> 6);
-				break;
-			default:
-				break;
-			}
-			
-		} while (*relocs != -1);
-	}
+        switch (*relocs++ & 0x3)
+        {
+        case 0:
+            temp = *rel_addr;
+
+            if (temp >= 0)
+            {
+                *rel_addr += baseaddr;
+            }
+
+            break;
+        case 1:
+            *(short*)rel_addr = ((baseaddr + *relocs++) + 32768) >> 16;
+            break;
+        case 2:
+            *(short*)rel_addr += baseaddr;
+            break;
+        case 3:
+            *rel_addr += ((unsigned int)baseaddr << 4) >> 6;
+            break;
+        }
+    }
 }
 
 
