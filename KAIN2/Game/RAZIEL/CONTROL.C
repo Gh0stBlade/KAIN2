@@ -27,15 +27,15 @@ void SetPhysics(struct _Instance *instance, short gravity, long x, long y, long 
 	instance->zVel = z;
 }
 
-void ResetPhysics(struct _Instance *instance, short gravity)
+void ResetPhysics(struct _Instance* instance, short gravity) // Matching - 100%
 {
 	int i;
 
-	SetExternalForce(ExternalForcesPtr, 0, 0, gravity, 0, 4096);
-	
-	for(i = 1; i < 4; i++)
+	SetExternalForce(ExternalForces, 0, 0, gravity, 0, 4096);
+
+	for (i = 1; i < 4; i++)
 	{
-		SetExternalForce(ExternalForcesPtr + i, 0, 0, 0, 0, 0);
+		SetExternalForce(&ExternalForces[i], 0, 0, 0, 0, 0);
 	}
 
 	instance->xVel = 0;
