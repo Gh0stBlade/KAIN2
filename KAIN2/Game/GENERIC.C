@@ -4,10 +4,12 @@
 #include "Game/G2/ANMG2ILF.H"
 #include "SCRIPT.H"
 
-void GenericInit(struct _Instance* instance, struct GameTracker* gameTracker)//Matching - 86.44%
+static char D_800D0F14[] = { "ariel___" }; // not from SYMDUMP
+
+void GenericInit(struct _Instance* instance, struct GameTracker* gameTracker) // Matching - 100%
 {
-	struct Object* object; // $s1
-	struct Spline* spline; // $v1
+	struct Object* object;
+	struct Spline* spline;
 	static struct _G2AnimInterpInfo_Type crap;
 
 	object = instance->object;
@@ -36,14 +38,14 @@ void GenericInit(struct _Instance* instance, struct GameTracker* gameTracker)//M
 			if (!(object->oflags2 & 0x40000000))
 			{
 				G2EmulationInstanceSetTotalSections(instance, 1);
-				
-				G2EmulationInstanceSetStartAndEndSegment(instance, 0,0,(short)((unsigned short)object->modelList[instance->currentModel]->numSegments - 1));
-				
+
+				G2EmulationInstanceSetStartAndEndSegment(instance, 0, 0, (short)(object->modelList[instance->currentModel]->numSegments - 1));
+
 				G2EmulationInstanceSetAnimation(instance, 0, 0, 0, 0);
-				
+
 				G2EmulationInstanceSetMode(instance, 0, 0);
 
-				if (((unsigned int*)object->name)[0] == 0x65697261 && ((unsigned int*)object->name)[1] == 0x5F5F5F6C)
+				if (((unsigned int*)object->name)[0] == ((unsigned int*)D_800D0F14)[0] && ((unsigned int*)object->name)[1] == ((unsigned int*)D_800D0F14)[1])
 				{
 					G2AnimSection_SetInterpInfo(&instance->anim.section[0], &crap);
 				}
