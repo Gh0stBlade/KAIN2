@@ -3898,31 +3898,28 @@ void FX_CalcSpiral(int degchange) // Matching - 100%
 	Spiral_Glow_Y = (miny + maxy) / 2;
 }
 
-void FX_Spiral(struct _PrimPool* primPool, unsigned long** ot)//Matching - 65.16%
+void FX_Spiral(struct _PrimPool* primPool, unsigned long** ot) // Matching - 82.27%
 {
-	struct _POLY_2G4* poly; // $s2
-	long prev; // $s3
-	long offp; // $s7
-	long offm; // $s4
-	int n; // $s1
-	DR_TPAGE* drtpage; // $v0
-	int health; // $fp
-	int health_mod; // $t1
-	long no_color; // stack offset -76
-	long color; // stack offset -80
-	static short cnt; // offset 0x6c
-	int current_cnt; // stack offset -72
-	int max64; // $a0
-	long SPIRAL_COLOR; // $t3
-	long SPIRAL_COLOR2; // $t2
-	long SPIRAL_COLOR3; // stack offset -68
-	long SPIRAL_COLOR_END; // $s5
-	long SPIRAL_NOCOLOR; // $a2
-	int tmp; // $v1
-	static short deg; // offset 0x6e
-	struct _Vector f1; // stack offset -96
+	struct _POLY_2G4* poly;
+	long prev;
+	long offp;
+	long offm;
+	int n;
+	DR_TPAGE* drtpage;
+	int health;
+	int health_mod;
+	long no_color;
+	long color;
+	static short cnt;
+	int current_cnt;
+	int max64;
+	long SPIRAL_COLOR;
+	long SPIRAL_COLOR2;
+	long SPIRAL_COLOR3;
+	long SPIRAL_COLOR_END;
+	long SPIRAL_NOCOLOR;
 
-	if (gameTrackerX.gameData.asmData.MorphTime != 1000 && gameTrackerX.gameData.asmData.MorphType == 0)
+	if ((gameTrackerX.gameData.asmData.MorphTime != 1000) && (gameTrackerX.gameData.asmData.MorphType == 0))
 	{
 		if (Spiral_Number != 0)
 		{
@@ -3944,7 +3941,7 @@ void FX_Spiral(struct _PrimPool* primPool, unsigned long** ot)//Matching - 65.16
 	{
 		if (Spiral_Current == Spiral_Max)
 		{
-			if (++cnt >= 0x51)
+			if (++cnt >= 81)
 			{
 				cnt = 0;
 			}
@@ -3961,15 +3958,15 @@ void FX_Spiral(struct _PrimPool* primPool, unsigned long** ot)//Matching - 65.16
 	}
 	else
 	{
-		if (++cnt >= 0x51)
+		if (++cnt >= 81)
 		{
 			cnt = 0;
 		}
 	}
 
-	max64 = Spiral_Max < 0 ? Spiral_Max + 63 : Spiral_Max;
+	max64 = Spiral_Max / 64;
 
-	health = Spiral_Current / (max64 >> 6);
+	health = Spiral_Current / max64;
 
 	prev = ((unsigned long*)&Spiral_Array[64])[0];
 
@@ -3987,7 +3984,7 @@ void FX_Spiral(struct _PrimPool* primPool, unsigned long** ot)//Matching - 65.16
 		no_color = SPIRAL_NOCOLOR;
 		current_cnt = cnt;
 
-		for (n = 0; n < 64; n++)
+		for (n = 0; n < 64; n++, poly++)
 		{
 			((unsigned long*)&poly->p1.r2)[0] = color;
 			((unsigned long*)&poly->p2.r0)[0] = color;
@@ -3998,20 +3995,21 @@ void FX_Spiral(struct _PrimPool* primPool, unsigned long** ot)//Matching - 65.16
 			}
 			else
 			{
-				tmp = (((n + current_cnt) & 0xF) < 0 ? ((((n + current_cnt) & 0xF) + 3) >> 2) : (((n + current_cnt) & 0xF) >> 2));
+				int tmp;
+
+				tmp = ((n + current_cnt) & 0xF) / 4;
 
 				switch (tmp)
 				{
+				default:
 				case 0:
 				{
 					color = SPIRAL_COLOR;
 					break;
 				}
 				case 1:
-				case 3:
 				{
 					color = SPIRAL_COLOR2;
-
 					break;
 				}
 				case 2:
@@ -4019,23 +4017,29 @@ void FX_Spiral(struct _PrimPool* primPool, unsigned long** ot)//Matching - 65.16
 					color = SPIRAL_COLOR3;
 					break;
 				}
-
-				}
-
-				if (n == health)
+				case 3:
 				{
-					LoadAverageCol((unsigned char*)&color, (unsigned char*)&no_color, health_mod, 4096 - health_mod, (unsigned char*)&color);
-
-					color = color & 0xFFFFFF;
-					color |= (SPIRAL_COLOR & 0xFF000000);
+					color = SPIRAL_COLOR2;
+					break;
+				}
 				}
 			}
 
-			((unsigned long*)(&poly->p1.r0))[0] = SPIRAL_COLOR_END;//
-			((unsigned long*)(&poly->p1.r1))[0] = SPIRAL_COLOR_END;//
+			if (n == health)
+			{
+				LoadAverageCol((unsigned char*)&color, (unsigned char*)&no_color, health_mod, 4096 - health_mod, (unsigned char*)&color);
 
-			((unsigned long*)(&poly->p2.r2))[0] = SPIRAL_COLOR_END;//
-			((unsigned long*)(&poly->p2.r3))[0] = SPIRAL_COLOR_END;//
+				color = color & 0xFFFFFF;
+
+				color |= (SPIRAL_COLOR & 0xFF000000);
+			}
+
+			((unsigned long*)(&poly->p1.r0))[0] = SPIRAL_COLOR_END;
+			((unsigned long*)(&poly->p1.r1))[0] = SPIRAL_COLOR_END;
+			((unsigned long*)(&poly->p1.r3))[0] = color;
+			((unsigned long*)(&poly->p2.r2))[0] = SPIRAL_COLOR_END;
+			((unsigned long*)(&poly->p2.r3))[0] = SPIRAL_COLOR_END;
+			((unsigned long*)(&poly->p2.r1))[0] = color;
 
 			((unsigned long*)&poly->p2.x0)[0] = prev;
 			((unsigned long*)&poly->p1.x2)[0] = prev;
@@ -4043,8 +4047,6 @@ void FX_Spiral(struct _PrimPool* primPool, unsigned long** ot)//Matching - 65.16
 			((unsigned long*)&poly->p1.x0)[0] = offp;
 			((unsigned long*)&poly->p2.x2)[0] = offm;
 
-			((unsigned long*)(&poly->p1.r3))[0] = color;
-			((unsigned long*)(&poly->p2.r1))[0] = color;
 
 			prev = ((unsigned long*)&Spiral_Array[n])[0];
 
@@ -4079,21 +4081,22 @@ void FX_Spiral(struct _PrimPool* primPool, unsigned long** ot)//Matching - 65.16
 #endif
 
 #if defined(PSXPC_VERSION)
-		poly = (struct _POLY_2G4*)(((char*)poly) + 12);
+		primPool->nextPrim = (unsigned int*)(struct _POLY_2G4*)(((char*)poly) + 12);
 #else
-		poly = (struct _POLY_2G4*)(((char*)poly) + 8);
+		primPool->nextPrim = (unsigned int*)(struct _POLY_2G4*)(((char*)poly) + 8);
 #endif
 
-		primPool->nextPrim = (unsigned int*)poly;
-
-		if (Spiral_Number != 0 || Spiral_Current == Spiral_Max)
+		if ((Spiral_Number != 0) || (Spiral_Current == Spiral_Max))
 		{
+			static short deg;
+			struct _Vector f1;
+
 			f1.x = Spiral_Glow_X;
 			f1.y = Spiral_Glow_Y;
 
 			deg = (deg - 32) & 0xFFF;
 
-			DRAW_CreateAGlowingCircle(&f1, 0x140, gameTrackerX.primPool, ot, 5, 0x8000, Spiral_Glow_Size, Spiral_Glow_Size, deg);
+			DRAW_CreateAGlowingCircle(&f1, 320, gameTrackerX.primPool, ot, 5, 32768, Spiral_Glow_Size, Spiral_Glow_Size, deg);
 		}
 	}
 }
