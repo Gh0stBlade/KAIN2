@@ -4110,16 +4110,18 @@ long GetFogColor(struct StreamUnitPortal* portal, struct _StreamUnit* mainStream
 	return Color;
 }
 
-
-void DrawFogRectangle(PSX_RECT* cliprect, struct _PrimPool* primPool, int otzpos, unsigned long** drawot, long color)
+void DrawFogRectangle(PSX_RECT* cliprect, struct _PrimPool* primPool, int otzpos, unsigned long** drawot, long color) // Matching - 78.98%
 {
 	POLY_G4* polyg4;
-	
+	POLY_G4* polyg41;  // not from SYMDUMP
+
 	polyg4 = (POLY_G4*)gameTrackerX.primPool->nextPrim;
 
-	if ((unsigned int*)(polyg4 + 1) < gameTrackerX.primPool->lastPrim)
+	polyg41 = polyg4 + 1;
+
+	if ((unsigned int*)polyg41 < gameTrackerX.primPool->lastPrim)
 	{
-		gameTrackerX.primPool->nextPrim = (unsigned int*)(polyg4 + 1);
+		gameTrackerX.primPool->nextPrim = (unsigned int*)polyg41;
 
 		polyg4->x0 = cliprect->x;
 		polyg4->y0 = cliprect->y;
@@ -4131,17 +4133,14 @@ void DrawFogRectangle(PSX_RECT* cliprect, struct _PrimPool* primPool, int otzpos
 		polyg4->y2 = cliprect->y + cliprect->h;
 
 		polyg4->x3 = cliprect->x + cliprect->w;
-		
-		setlen(polyg4, 8);
+		polyg4->y3 = cliprect->y + cliprect->h;
 
 		((int*)&polyg4->r0)[0] = color;
 		((int*)&polyg4->r1)[0] = color;
 		((int*)&polyg4->r2)[0] = color;
 		((int*)&polyg4->r3)[0] = color;
 
-		setcode(polyg4, 0x38);
-
-		polyg4->y3 = cliprect->y + cliprect->h;
+		setPolyG4(polyg4);
 
 #if defined(PSXPC_VERSION)
 		addPrim(drawot[otzpos * 2], polyg4);
