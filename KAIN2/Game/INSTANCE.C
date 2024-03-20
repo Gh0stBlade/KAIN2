@@ -858,31 +858,26 @@ long INSTANCE_GetSplineFrameNumber(struct _Instance* instance, struct MultiSplin
 	return SCRIPT_GetSplineFrameNumber(instance, SCRIPT_GetPosSplineDef(instance, spline, 0, 0));
 }
 
-void INSTANCE_ProcessFunctions(struct _InstanceList* instanceList)
+// goto label needs to be removed
+void INSTANCE_ProcessFunctions(struct _InstanceList* instanceList) // Matching - 99.77%
 {
-	struct _Instance* instance;
-	int hidden;
-	int burning;
-	long prevFrame;
-	struct MultiSpline* multi;
-	long endOfSpline;
-	short direction;
-	long frame;
-	long maxFrames;
-	int killTest;
-
 	if (!(gameTrackerX.debugFlags & 0x8000010))
 	{
-		if (gameTrackerX.gameMode != 6 && !(gameTrackerX.streamFlags & 0x100000))
+		struct _Instance* instance;
+
+		if ((gameTrackerX.gameMode != 6) && (!(gameTrackerX.streamFlags & 0x100000)))
 		{
-			gameTrackerX.streamFlags &= 0xFFFFFFFB;
+			gameTrackerX.streamFlags &= ~0x4;
 		}
 
 		instance = instanceList->first;
 
 		while (instance != NULL)
 		{
-			if (instance->object != NULL && (instance->object->oflags2 & 0x2000000))
+			int hidden;
+			int burning;
+
+			if ((instance->object != NULL) && ((instance->object->oflags2 & 0x2000000)))
 			{
 				if ((instance->flags2 & 0x8000000))
 				{
@@ -904,359 +899,270 @@ void INSTANCE_ProcessFunctions(struct _InstanceList* instanceList)
 			{
 				hidden = instance->flags & 0x800;
 
-				if ((INSTANCE_Query(instance, 0x2) & 0x80))
+				if ((INSTANCE_Query(instance, 2) & 0x20))
 				{
-					burning = burning < (int)(INSTANCE_Query(instance, 0x3) & 0x10000);
+					burning = (unsigned int)burning < (unsigned int)((INSTANCE_Query(instance, 3) & 0x10000));
 				}
 				else
 				{
-					if ((instance->object->oflags2 & 0x80000) && ((unsigned int*)instance->extraData)[0] & 0x400000)
+					if ((instance->object->oflags2 & 0x80000))
 					{
-						burning = 1;
+						if ((((struct PhysObData*)instance->extraData)->Mode & 0x400000))  // double-check
+						{
+							burning = 1;
+						}
 					}
 				}
 
 				SOUND_ProcessInstanceSounds(instance->object->soundData, &instance->soundInstanceTbl[0], &instance->position, instance->object->oflags2 & 0x2000000, instance->flags2 & 0x8000000, hidden, burning, &instance->flags2);
 			}
 
-			if (instance->intro == NULL || (instance->intro->flags & 0x100))
+			if (((instance->intro == NULL) || (!(instance->intro->flags & 0x100))) && ((gameTrackerX.gameMode != 6) || ((instance->object->oflags & 0x20000))) && ((!(gameTrackerX.streamFlags & 0x100000)) || ((instance->object->oflags & 0x40000))) && (!(instance->flags2 & 0x10000000)))
 			{
-				if(gameTrackerX.gameMode != 6 || (instance->object->oflags & 0x20000))
+				long prevFrame;
+				struct MultiSpline* multi;
+
+				instance->oldPos.x = instance->position.x;
+				instance->oldPos.y = instance->position.y;
+				instance->oldPos.z = instance->position.z;
+
+				instance->oldRotation.x = instance->rotation.x;
+				instance->oldRotation.y = instance->rotation.y;
+				instance->oldRotation.z = instance->rotation.z;
+
+				if ((!(instance->flags & 0x100000)) && (multi = SCRIPT_GetMultiSpline(instance, NULL, NULL), (multi != NULL)) && ((instance->flags & 0x2000000)))
 				{
-					if (!(gameTrackerX.streamFlags & 0x100000) || (instance->object->oflags & 0x40000))
+					long endOfSpline;
+					short direction;
+
+					direction = ((instance->flags & 0x1000000)) ? -1 : 1;
+
+					if ((instance->object->oflags & 0x10000000))
 					{
-						if (!(instance->flags2 & 0x10000000))
+						instance->flags |= 0x400;
+
+						if (SplineMultiIsWhere(multi) != 0)
 						{
-							instance->oldPos.x = instance->position.x;
-							instance->oldPos.y = instance->position.y;
-							instance->oldPos.z = instance->position.z;
-
-							instance->oldRotation.x = instance->rotation.x;
-							instance->oldRotation.y = instance->rotation.y;
-							instance->oldRotation.z = instance->rotation.z;
-
-							if (!(instance->flags & 0x10000000))
+							if (direction > 0)
 							{
-								multi = SCRIPT_GetMultiSpline(instance, NULL, NULL);
+								instance->intro->flags |= 0x800;
+							}
+							else
+							{
+								instance->intro->flags &= ~0x800;
+							}
+						}
+					}
 
-								if (multi != NULL && (instance->flags & 0x2000000))
+					prevFrame = INSTANCE_GetSplineFrameNumber(instance, multi);
+
+					endOfSpline = SCRIPT_InstanceSplineProcess(instance, &multi->curPositional, &multi->curRotational, &multi->curScaling, direction);
+
+					if (instance->splineFlags != 0)
+					{
+						long frame;
+						long maxFrames;
+
+						frame = INSTANCE_GetSplineFrameNumber(instance, multi);
+
+						maxFrames = SCRIPTCountFramesInSpline(instance);
+
+						if ((instance->splineFlags & 0x1))
+						{
+							if ((gameTrackerX.debugFlags2 & 0x400000))
+							{
+								printf("Spline %s%ld playto %d preveFram=%ld frame=%ld endOfSpline=%ld, maxFrames=%ld\n", instance->introName, instance->introNum, instance->targetFrame, prevFrame, frame, endOfSpline, maxFrames);
+							}
+
+							if (direction > 0)
+							{
+								if (maxFrames < prevFrame)
 								{
-									if ((instance->flags & 0x1000000))
+									prevFrame = maxFrames;
+								}
+
+								if ((instance->targetFrame > frame) || (instance->targetFrame < prevFrame))
+								{
+									if ((frame < prevFrame) && (frame >= instance->targetFrame) && ((instance->targetFrame + maxFrames) >= prevFrame))
 									{
-										direction = -1;
-									}
-									else
-									{
-										direction = 1;
-									}
+										instance->flags &= ~0x2000000;
 
-									if ((instance->object->oflags & 0x10000000))
-									{
-										instance->flags |= 0x400;
-										
-										if (SplineMultiIsWhere(multi) != 0)
-										{
-											if (direction > 0)
-											{
-												instance->intro->flags |= 0x800;
-											}
-											else
-											{
-												instance->intro->flags &= 0xFFFFF7FF;
-											}
-										}
-									}
+										SCRIPT_InstanceSplineSet(instance, instance->targetFrame, NULL, NULL, NULL);
 
-									prevFrame = INSTANCE_GetSplineFrameNumber(instance, multi);
+										endOfSpline = 0;
 
-									endOfSpline = SCRIPT_InstanceSplineProcess(instance, &multi->curPositional, &multi->curRotational, &multi->curScaling, direction);
-								
-									if (instance->splineFlags != 0)
-									{
-										frame = INSTANCE_GetSplineFrameNumber(instance, multi);
-
-										maxFrames = SCRIPTCountFramesInSpline(instance);
-									
-										if ((instance->splineFlags & 0x1))
-										{
-											if ((gameTrackerX.debugFlags2 & 0x400000))
-											{
-												printf("Spline %s%ld playto %d preveFram=%ld frame=%ld endOfSpline=%ld, maxFrames=%ld\n", instance->introName, instance->introNum, instance->targetFrame, prevFrame, frame, endOfSpline, maxFrames);
-											}
-
-											if (direction > 0)
-											{
-												if (maxFrames < prevFrame)
-												{
-													prevFrame = maxFrames;
-												}
-
-												if (frame >= instance->targetFrame && instance->targetFrame < prevFrame)
-												{
-													if (frame >= prevFrame)
-													{
-														instance->flags &= 0xFDFFFFFF;
-														SCRIPT_InstanceSplineSet(instance, instance->targetFrame, NULL, NULL, NULL);
-													}
-												}
-												else
-												{
-													if (frame < prevFrame && frame >= instance->targetFrame)
-													{
-														if (instance->targetFrame + maxFrames >= prevFrame)
-														{
-															instance->flags &= 0xFDFFFFFF;
-															SCRIPT_InstanceSplineSet(instance, instance->targetFrame, NULL, NULL, NULL);
-														}
-													}
-												}
-											}
-											else
-											{
-												if (instance->targetFrame >= frame && prevFrame < instance->targetFrame)
-												{
-													instance->flags &= 0xFDFFFFFF;
-													SCRIPT_InstanceSplineSet(instance, instance->targetFrame, NULL, NULL, NULL);
-												}
-												else
-												{
-													if (prevFrame < frame)
-													{
-														if (prevFrame + maxFrames >= instance->targetFrame)
-														{
-															instance->flags &= 0xFDFFFFFF;
-															SCRIPT_InstanceSplineSet(instance, instance->targetFrame, NULL, NULL, NULL);
-														}
-													}
-												}
-											}
-										}
-
-										if ((instance->splineFlags & 0x2))
-										{
-											if ((gameTrackerX.debugFlags2 & 0x400000))
-											{
-												FONT_Print("Spline %s%d : clip(%d,%d) prevFrame=%d, frame=%d\n", instance->introName, instance->introNum, instance->clipBeg, instance->clipEnd, frame, prevFrame);
-											}
-
-											if (direction == 1)
-											{
-												if (instance->clipEnd < prevFrame || frame < instance->clipEnd && frame < instance->clipBeg)
-												{
-													if (*(unsigned int*)&multi->positional->numkeys & 0x6000000)
-													{
-														SCRIPT_InstanceSplineSet(instance, instance->clipBeg, NULL, NULL, NULL);
-													}
-													else
-													{
-														killTest = 1;
-
-														SCRIPT_InstanceSplineSet(instance, instance->clipEnd, NULL, NULL, NULL);
-													}
-												}
-											}
-											else
-											{
-												if (prevFrame < instance->clipBeg || instance->clipBeg >= frame && instance->clipEnd < frame)
-												{
-													if (*(unsigned int*)&multi->positional->numkeys & 0x6000000)
-													{
-														SCRIPT_InstanceSplineSet(instance, instance->clipBeg, NULL, NULL, NULL);
-													}
-													else
-													{
-														killTest = 1;
-
-														SCRIPT_InstanceSplineSet(instance, instance->clipEnd, NULL, NULL, NULL);
-													}
-												}
-											}
-										}
-									}
-									else
-									{
-										if ((gameTrackerX.debugFlags2 & 0x400000))
-										{
-											FONT_Print("Spline %s%d prevFrame=%d, frame=%d\n", instance->introName, instance->introNum, prevFrame, INSTANCE_GetSplineFrameNumber(instance, multi));
-										}
-									}
-									
-									if (endOfSpline > 0)
-									{
-										if ((instance->object->oflags & 0x10000000))
-										{
-											instance->flags &= 0xFFFFFBFF;
-											instance->flags &= 0xFDFFFFFF;
-											instance->flags |= 0x100000;
-										}
-
-										if ((instance->object->oflags & 0x20000000))
-										{
-											instance->flags |= 0x100000;
-
-											INSTANCE_KillInstance(instance);
-										}
-										else
-										{
-											if ((instance->object->oflags & 0x1000))
-											{
-												instance->flags &= 0xFDFFFFFF;
-
-												if ((instance->object->oflags & 0x800000))
-												{
-													SCRIPT_InstanceSplineInit(instance);
-												}
-											}
-											else if ((instance->object->oflags & 0x1000000))
-											{
-												instance->flags &= 0xFDFFFFFF;
-											}
-
-											if (multi->positional != NULL)
-											{
-												if (!(multi->positional->flags & 0x4))
-												{
-													if (!(instance->object->oflags & 0x800000))
-													{
-														instance->flags ^= 0x1000000;
-													}
-												}
-											}
-											else if (multi->rotational != NULL)
-											{
-												if (!(multi->rotational->flags & 0x4))
-												{
-													if (!(instance->object->oflags & 0x800000))
-													{
-														instance->flags ^= 0x1000000;
-													}
-												}
-											}
-
-											if ((instance->object->oflags & 0x200000) && instance->introData != NULL && ((unsigned int*)instance->introData)[0] != NULL)
-											{
-												SIGNAL_HandleSignal(instance, (struct Signal*)(((unsigned int*)instance->introData)[0] + 8), 0);
-											}
-											else
-											{
-												if (instance->processFunc != NULL)
-												{
-													if ((instance->flags2 & 0x1))
-													{
-														INSTANCE_DeactivatedProcess(instance, &gameTrackerX);
-													}
-													else
-													{
-														instance->processFunc(instance, &gameTrackerX);
-													}
-												}
-
-												if (32768 < instance->position.z - instance->oldPos.z)
-												{
-													INSTANCE_PlainDeath(instance);
-												}
-
-												if (instance->position.z - instance->oldPos.z < -32768)
-												{
-													INSTANCE_PlainDeath(instance);
-												}
-
-												if (INSTANCE_Query(instance, 0x2F) != 0)
-												{
-													gameTrackerX.streamFlags |= 0x4;
-												}
-											}
-										}
-									}
-									else
-									{
-										if (instance->processFunc != NULL)
-										{
-											if ((instance->flags2 & 0x1))
-											{
-												INSTANCE_DeactivatedProcess(instance, &gameTrackerX);
-											}
-											else
-											{
-												instance->processFunc(instance, &gameTrackerX);
-											}
-										}
-
-										if (32768 < instance->position.z - instance->oldPos.z)
-										{
-											INSTANCE_PlainDeath(instance);
-										}
-
-										if (instance->position.z - instance->oldPos.z < -32768)
-										{
-											INSTANCE_PlainDeath(instance);
-										}
-
-										if (INSTANCE_Query(instance, 0x2F) != 0)
-										{
-											gameTrackerX.streamFlags |= 0x4;
-										}
+										instance->splineFlags &= ~0x1;
 									}
 								}
 								else
 								{
-									if (instance->processFunc != NULL)
-									{
-										if ((instance->flags2 & 0x1))
-										{
-											INSTANCE_DeactivatedProcess(instance, &gameTrackerX);
-										}
-										else
-										{
-											instance->processFunc(instance, &gameTrackerX);
-										}
-									}
+									instance->flags &= ~0x2000000;
 
-									if (32768 < instance->position.z - instance->oldPos.z)
-									{
-										INSTANCE_PlainDeath(instance);
-									}
+									SCRIPT_InstanceSplineSet(instance, instance->targetFrame, NULL, NULL, NULL);
 
-									if (instance->position.z - instance->oldPos.z < -32768)
-									{
-										INSTANCE_PlainDeath(instance);
-									}
+									endOfSpline = 0;
 
-									if (INSTANCE_Query(instance, 0x2F) != 0)
+									instance->splineFlags &= ~0x1;
+								}
+							}
+							else
+							{
+								if ((instance->targetFrame >= frame) && ((prevFrame >= instance->targetFrame) || ((prevFrame < frame) && ((prevFrame + maxFrames) >= instance->targetFrame))))
+								{
+									instance->flags &= ~0x2000000;
+
+									SCRIPT_InstanceSplineSet(instance, instance->targetFrame, NULL, NULL, NULL);
+
+									endOfSpline = 0;
+
+									instance->splineFlags &= ~0x1;
+								}
+							}
+						}
+
+						if ((instance->splineFlags & 0x2))
+						{
+							if ((gameTrackerX.debugFlags2 & 0x400000))
+							{
+								FONT_Print("Spline %s%d : clip(%d,%d) prevFrame=%d, frame=%d\n", instance->introName, instance->introNum, instance->clipBeg, instance->clipEnd, prevFrame, frame);
+							}
+
+							if (direction == 1)
+							{
+								if (((instance->clipEnd >= prevFrame) && (frame >= instance->clipEnd)) || (frame < instance->clipBeg))
+								{
+									if (((multi->positional->flags & 0x6) != 0) || (multi->positional->type != 0))  // double-check
 									{
-										gameTrackerX.streamFlags |= 0x4;
+										SCRIPT_InstanceSplineSet(instance, instance->clipBeg, NULL, NULL, NULL);
+									}
+									else
+									{
+										SCRIPT_InstanceSplineSet(instance, instance->clipEnd, NULL, NULL, NULL);
+
+										endOfSpline = 1;
 									}
 								}
 							}
 							else
 							{
-								if (instance->processFunc != NULL)
+								if (((prevFrame >= instance->clipBeg) && (instance->clipBeg >= frame)) || (instance->clipEnd < frame))
 								{
-									if ((instance->flags2 & 0x1))
+									if (((multi->positional->flags & 0x6) != 0) || (multi->positional->type != 0))  // double-check
 									{
-										INSTANCE_DeactivatedProcess(instance, &gameTrackerX);
+										SCRIPT_InstanceSplineSet(instance, instance->clipEnd, NULL, NULL, NULL);
 									}
 									else
 									{
-										instance->processFunc(instance, &gameTrackerX);
+										SCRIPT_InstanceSplineSet(instance, instance->clipBeg, NULL, NULL, NULL);
+
+										endOfSpline = 1;
 									}
 								}
+							}
+						}
+					}
+					else if ((gameTrackerX.debugFlags2 & 0x400000))
+					{
+						FONT_Print("Spline %s%d prevFrame=%d, frame=%d\n", instance->introName, instance->introNum, prevFrame, INSTANCE_GetSplineFrameNumber(instance, multi));
+					}
 
-								if (32768 < instance->position.z - instance->oldPos.z)
-								{
-									INSTANCE_PlainDeath(instance);
-								}
+					if (endOfSpline > 0)
+					{
+						if ((instance->object->oflags & 0x10000000))
+						{
+							instance->flags &= ~0x400;
+							instance->flags &= ~0x2000000;
+							instance->flags |= 0x100000;
+						}
 
-								if (instance->position.z - instance->oldPos.z < -32768)
-								{
-									INSTANCE_PlainDeath(instance);
-								}
+						if ((instance->object->oflags & 0x2000))
+						{
+							instance->flags |= 0x100000;
 
-								if (INSTANCE_Query(instance, 0x2F) != 0)
+							INSTANCE_KillInstance(instance);
+						}
+						else
+						{
+							if ((instance->object->oflags & 0x1000))
+							{
+								instance->flags &= ~0x2000000;
+
+								if ((instance->object->oflags & 0x800000))
 								{
-									gameTrackerX.streamFlags |= 0x4;
+									SCRIPT_InstanceSplineInit(instance);
 								}
 							}
+							else if ((instance->object->oflags & 0x1000000))
+							{
+								instance->flags &= ~0x2000000;
+							}
+
+							if (multi->positional != NULL)
+							{
+								if ((!(multi->positional->flags & 0x4)) && (!(instance->object->oflags & 0x800000)))
+								{
+									instance->flags ^= 0x1000000;
+								}
+							}
+							else if (multi->rotational != NULL)
+							{
+								if ((!(multi->rotational->flags & 0x4)) && (!(instance->object->oflags & 0x800000)))
+								{
+									instance->flags ^= 0x1000000;
+								}
+							}
+
+							if ((instance->object->oflags & 0x200000))
+							{
+								if (instance->introData != NULL)
+								{
+									if (((struct Signal*)(instance->introData))->id != 0)
+									{
+										SIGNAL_HandleSignal(instance, (struct Signal*)&((struct Signal*)(instance->introData))->data.gotoFrame.frame, 0);  // double-check
+									}
+								}
+							}
+
+							goto block;
+						}
+					}
+					else
+					{
+						goto block;
+					}
+				}
+				else
+				{
+				block:
+					if (instance->processFunc != NULL)
+					{
+						if ((instance->flags2 & 0x1))
+						{
+							INSTANCE_DeactivatedProcess(instance, &gameTrackerX);
+						}
+						else
+						{
+							instance->processFunc(instance, &gameTrackerX);
+						}
+					}
+					{
+						int killTest;
+
+						killTest = instance->position.z - instance->oldPos.z;
+
+						if (killTest > 32768)
+						{
+							INSTANCE_PlainDeath(instance);
+						}
+
+						if (killTest < -32768)
+						{
+							INSTANCE_PlainDeath(instance);
+						}
+
+						if (INSTANCE_Query(instance, 47) != 0)
+						{
+							gameTrackerX.streamFlags |= 0x4;
 						}
 					}
 				}
@@ -1264,6 +1170,13 @@ void INSTANCE_ProcessFunctions(struct _InstanceList* instanceList)
 
 			instance = instance->next;
 		}
+	}
+
+	gameTrackerX.timeMult = gameTrackerX.globalTimeMult;
+
+	if (gameTrackerX.gameData.asmData.MorphTime != 1000)
+	{
+		gameTrackerX.streamFlags |= 0x4;
 	}
 }
 
