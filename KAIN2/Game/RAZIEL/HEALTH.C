@@ -115,15 +115,15 @@ void BumpUpHealth() // Matching - 100%
 	Raziel.HitPoints = GetMaxHealth();
 }
 
-int GetMaxHealth()
+int GetMaxHealth() // Matching - 100%
 {
-	if (Raziel.CurrentPlane != 2)
+	if (Raziel.CurrentPlane == 2)
 	{
-		return (Raziel.HealthScale + 1) * 100000;
+		return 100000;
 	}
 	else
 	{
-		return 100000;
+		return (Raziel.HealthScale + 1) * 100000;
 	}
 }
 
