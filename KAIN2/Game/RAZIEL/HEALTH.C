@@ -278,7 +278,7 @@ int HealthCheckForLowHealth() // Matching - 100%
 	return 1;
 }
 
-void DrainMana(int amount)
+void DrainMana(int amount) // Matching - 100%
 {
 	Raziel.GlyphManaBalls -= amount;
 
