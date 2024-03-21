@@ -41,11 +41,11 @@ void InitHealthSystem()
 	}
 }
 
-void GainHealth(int data)
+void GainHealth(int data) // Matching - 100%
 {
-	Raziel.HitPoints += MIN(data * 20000, 4095) >> 12;
+	Raziel.HitPoints += (data * 20000) / 4096;
 
-	if (Raziel.HitPoints >= GetMaxHealth() && Raziel.CurrentPlane == 1)
+	if ((Raziel.HitPoints >= GetMaxHealth()) && (Raziel.CurrentPlane == 1))
 	{
 		Raziel.HitPoints = GetMaxHealth();
 
