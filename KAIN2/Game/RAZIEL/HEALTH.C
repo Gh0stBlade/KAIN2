@@ -9,7 +9,7 @@
 #include "Game/GAMEPAD.H"
 #include "Game/SOUND.H"
 
-void InitHealthSystem()
+void InitHealthSystem() // Matching - 100%
 {
 	Raziel.DamageFrequency = 0;
 	Raziel.HealthScale = 1;
