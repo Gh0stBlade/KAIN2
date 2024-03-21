@@ -343,10 +343,10 @@ void RAZIEL_DebugHealthSetScale(long healthScale)//Matching - 99.32%
 	Raziel.HitPoints = 100000 * (short)healthScale + 100000;
 }
 
-void RAZIEL_DebugManaSetMax(long manaScale)
+void RAZIEL_DebugManaSetMax(long manaScale) // Matching - 100%
 {
-	Raziel.GlyphManaMax = (short)(manaScale << 2);
-	Raziel.GlyphManaBalls = (short)(manaScale << 2);
+	Raziel.GlyphManaMax = (short)(manaScale * 4);
+	Raziel.GlyphManaBalls = (short)(manaScale * 4);
 }
 
 void RAZIEL_DebugHealthFillUp() // Matching - 100%
