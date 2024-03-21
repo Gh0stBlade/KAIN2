@@ -334,7 +334,7 @@ void HealthInstantDeath(struct _Instance* instance) // Matching - 98.91%
 	razPlayUnderworldSounds(gameTrackerX.playerInstance);
 }
 
-void RAZIEL_DebugHealthSetScale(long healthScale)//Matching - 99.32%
+void RAZIEL_DebugHealthSetScale(long healthScale) // Matching - 100%
 {
 	Raziel.HealthScale = (short)healthScale;
 
