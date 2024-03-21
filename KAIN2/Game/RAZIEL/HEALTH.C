@@ -108,7 +108,7 @@ void DrainHealth(int amount) // Matching - 99.15%
 	}
 }
 
-void BumpUpHealth()
+void BumpUpHealth() // Matching - 100%
 {
 	Raziel.HealthScale++;
 
