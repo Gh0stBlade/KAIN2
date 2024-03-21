@@ -307,7 +307,7 @@ void DrainMana(int amount)
 	}
 }
 
-void SetMana(int amount)
+void SetMana(int amount) // Matching - 100%
 { 
 	if (amount <= 0)
 	{
