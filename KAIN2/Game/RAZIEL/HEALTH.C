@@ -354,7 +354,7 @@ void RAZIEL_DebugHealthFillUp() // Matching - 100%
 	}
 }
 
-void RAZIEL_DebugManaFillUp()
+void RAZIEL_DebugManaFillUp() // Matching - 100%
 {
 	SetMana(1);
 }
