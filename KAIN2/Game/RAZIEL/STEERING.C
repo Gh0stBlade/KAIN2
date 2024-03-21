@@ -521,7 +521,7 @@ void SteerMove(struct _Instance* instance, int rc)  // Matching - 100%
 			Raziel.steeringVelocity = 0x70;
 		}
 
-		AngleMoveToward(&instance->rotation.z, Raziel.LastBearing, (short)((Raziel.steeringVelocity * gameTrackerX.timeMult) >> 12));
+		AngleMoveToward(&instance->rotation.z, Raziel.LastBearing, (short)((Raziel.steeringVelocity * gameTrackerX.timeMult) / 4096));
 	}
 	else
 	{
@@ -578,7 +578,7 @@ int SteerAutoFace(struct _Instance* instance, long* controlCommand)  // Matching
 	angle = Raziel.LastBearing;
 	Raziel.steeringVelocity = 64;
 
-	AngleMoveToward(&instance->rotation.z, angle, (int)gameTrackerX.timeMult >> 6);
+	AngleMoveToward(&instance->rotation.z, angle, (short)(gameTrackerX.timeMult / 64));
 
 	Raziel.autoFaceAnim = predict - 1;
 	Raziel.autoFaceAngle = angle;
