@@ -319,18 +319,25 @@ void SetMana(int amount)
 	}
 }
 
-void HealthInstantDeath(struct _Instance* instance) // Matching - 98.91%
+void HealthInstantDeath(struct _Instance* instance) // Matching - 100%
 {
 	gameTrackerX.gameData.asmData.MorphType = 1;
+
 	razSpectralShift();
+
 	Raziel.HitPoints = 50000;
+
 	gameTracker->streamFlags |= 0x80000;
-	if (Raziel.soulReaver != 0)
+
+	if (Raziel.soulReaver != NULL)
 	{
 		INSTANCE_Post(Raziel.soulReaver, 0x800105, 0);
 	}
+
 	razSetPlayerEventHistory(0x8000);
+
 	Raziel.playerEvent |= 0x8000;
+
 	razPlayUnderworldSounds(gameTrackerX.playerInstance);
 }
 
