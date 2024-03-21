@@ -1898,9 +1898,9 @@ void DEBUG_UpdateFog(long* var)
 	LIGHT_CalcDQPTable(gameTrackerX.level);
 }
 
-void DEBUG_UpdateHealth(long* var)
+void DEBUG_UpdateHealth(long* var) // Matching - 100%
 {
-	RAZIEL_DebugHealthSetScale(1);
+	RAZIEL_DebugHealthSetScale(debugHealthLevel);
 }
 
 void DEBUG_UpdateMana(long* var) // Matching - 100%
