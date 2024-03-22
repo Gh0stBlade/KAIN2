@@ -83,18 +83,20 @@ void LoseHealth(int amount) // Matching - 100%
 	}
 }
 
-void DrainHealth(int amount) // Matching - 99.15%
+void DrainHealth(int amount) // Matching - 100%
 {
-	if ((ControlFlag & 0x01000000) == 0)
+	if (!(ControlFlag & 0x1000000))
 	{
 		amount /= 4096;
 
 		if (Raziel.CurrentPlane == 1)
 		{
 			Raziel.HitPoints += (int)(PlayerData->healthMaterialRate * amount * gameTrackerX.timeMult) / 4096;
-			if (Raziel.soulReaver)
+
+			if (Raziel.soulReaver != NULL)
 			{
 				INSTANCE_Post(Raziel.soulReaver, 0x800101, 0);
+
 				razReaverImbue(2);
 			}
 		}
