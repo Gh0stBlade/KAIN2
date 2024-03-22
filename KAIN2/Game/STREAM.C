@@ -3771,7 +3771,7 @@ int AddClippedTri(SVECTOR* iv, PSX_RECT* cliprect, int *minz)
 	return 1;
 }
 
-int STREAM_GetClipRect(struct StreamUnitPortal* portal, PSX_RECT* rect)//Matching - 83.29%
+int STREAM_GetClipRect(struct StreamUnitPortal* portal, PSX_RECT* rect) // Matching - 99.57%
 {
 	int v1x;
 	int v1y;
@@ -3793,7 +3793,6 @@ int STREAM_GetClipRect(struct StreamUnitPortal* portal, PSX_RECT* rect)//Matchin
 	int fullscreen_flag;
 	int minz;
 	int minz2;
-	int dot;
 
 	fullscreen_flag = 0;
 	horizontal_flag = 0;
@@ -3818,12 +3817,12 @@ int STREAM_GetClipRect(struct StreamUnitPortal* portal, PSX_RECT* rect)//Matchin
 
 	len = MATH3D_FastSqrt((nx * nx) + (ny * ny) + (nz * nz));
 
-	if (ABS(side) < len)
+	if (abs(side) < len)
 	{
 		v1y = portal->t2[0].y - portal->t2[1].y;
 		v2z = portal->t2[0].z - portal->t2[2].z;
 		v1z = portal->t2[0].z - portal->t2[1].z;
-		v2y = portal->t2[0].y - portal->t2[1].y;
+		v2y = portal->t2[0].y - portal->t2[2].y;
 		v2x = portal->t2[0].x - portal->t2[2].x;
 		v1x = portal->t2[0].x - portal->t2[1].x;
 
@@ -3846,8 +3845,10 @@ int STREAM_GetClipRect(struct StreamUnitPortal* portal, PSX_RECT* rect)//Matchin
 
 	if (memcmp(portal->tolevelname, "warpgate", sizeof("warpgate") - 1) != 0)
 	{
-		if (ABS(side) < len)
+		if (abs(side) < len)
 		{
+			int dot;
+
 			dot = -((((theCamera.focusInstance->matrix + 1)->t[0] - theCamera.core.position.x) * nx) + (((theCamera.focusInstance->matrix + 1)->t[1] - theCamera.core.position.y) * ny) + (((theCamera.focusInstance->matrix + 1)->t[2] - theCamera.core.position.z) * nz));
 
 			if (dot > 0 && horizontal_flag == 0)
@@ -3926,9 +3927,7 @@ int STREAM_GetClipRect(struct StreamUnitPortal* portal, PSX_RECT* rect)//Matchin
 
 		if (horizontal_flag != 0)
 		{
-			side = ABS(side);
-
-			if (side < len)
+			if (abs(side) < len)
 			{
 				if (nz > 0)
 				{
@@ -3942,9 +3941,13 @@ int STREAM_GetClipRect(struct StreamUnitPortal* portal, PSX_RECT* rect)//Matchin
 			}
 		}
 
-		if (rect->w > 0)
+		if (rect->w <= 0)
 		{
-			return (0 < rect->h);
+			return 0;
+		}
+		else
+		{
+			return (rect->h > 0);
 		}
 	}
 
