@@ -5156,7 +5156,7 @@ void ProcessSpecialAbilities(struct _Instance* instance) // Matching - 100%
 }
 
 
-int GetControllerMessages(long* controlCommand)
+int GetControllerMessages(long* controlCommand) // Matching - 100%
 {
 	if ((controlCommand[1] & RazielCommands[2]))
 	{
