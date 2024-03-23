@@ -5635,11 +5635,11 @@ void mdRazielProcess(struct _Instance *playerInstance, struct GameTracker *gameT
 	debugRazielFlags1 |= debugRazielFlags2;
 }
 
-void RazielProcess(struct _Instance *playerInstance, struct GameTracker *gameTracker)
+void RazielProcess(struct _Instance* playerInstance, struct GameTracker* gameTracker) // Matching - 100%
 {
-	mdRazielProcess(gameTracker->playerInstance, gameTracker, &gameTrackerX.controlCommand[0][0]);
+	mdRazielProcess(gameTracker->playerInstance, gameTracker, &gameTracker->controlCommand[0][0]);
 
-	DebugProcess(playerInstance , &Raziel);
+	DebugProcess(playerInstance, &Raziel);
 
 	Norm.z = 0;
 	Norm.y = 0;
