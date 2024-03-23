@@ -5050,9 +5050,9 @@ void ProcessTimers(struct _Instance* instance)  // Matching - 100%
 	}
 }
 
-void SetTimer(int ticks)
+void SetTimer(int ticks) // Matching - 100%
 {
-	Raziel.timeAccumulator = ticks >> 12;
+	Raziel.timeAccumulator = ticks << 12;
 }
 
 
