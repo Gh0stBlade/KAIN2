@@ -5486,16 +5486,16 @@ void DisableWristCollision(struct _Instance *instance, int Side)
 	}
 }
 
-void EnableWristCollision(struct _Instance *instance, int Side)
+void EnableWristCollision(struct _Instance* instance, int Side) // Matching - 100%
 {
 	if ((Side & 0x1))
 	{
-		COLLIDE_SegmentCollisionOn(instance, 0x1F);
+		COLLIDE_SegmentCollisionOn(instance, 31);
 	}
 
 	if ((Side & 0x2))
 	{
-		COLLIDE_SegmentCollisionOn(instance, 0x29);
+		COLLIDE_SegmentCollisionOn(instance, 41);
 	}
 }
 
