@@ -5583,7 +5583,7 @@ int GetCollisionType(struct _Instance* instance)//Matching - 89.86%
 	return 0;
 }
 
-void InitGlyphSystem(struct _Instance* instance)
+void InitGlyphSystem(struct _Instance* instance) // Matching - 100%
 {
 	struct Object* GlyphOb;
 	struct _Instance* iGlyph;
