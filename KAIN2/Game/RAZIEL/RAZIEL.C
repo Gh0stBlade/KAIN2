@@ -5056,14 +5056,14 @@ void SetTimer(int ticks) // Matching - 100%
 }
 
 
-void ProcessSpecialAbilities(struct _Instance* instance)
+void ProcessSpecialAbilities(struct _Instance* instance) // Matching - 100%
 {
 	unsigned long reaver;
 	unsigned long temp;
 	struct Object* soulReaverOb;
 	struct Level* level;
 
-	if ((Raziel.Abilities & 0x00000008) != 0)
+	if ((Raziel.Abilities & 0x8))
 	{
 		if (debugRazielFlags2 != 0)
 		{
@@ -5120,7 +5120,7 @@ void ProcessSpecialAbilities(struct _Instance* instance)
 							return;
 						}
 
-						if (instance->matrix[0x29].t[2] < instance->splitPoint.z)
+						if (instance->matrix[41].t[2] < instance->splitPoint.z)
 						{
 							razReaverImbue(2);
 						}
@@ -5132,7 +5132,7 @@ void ProcessSpecialAbilities(struct _Instance* instance)
 							return;
 						}
 
-						if (instance->matrix[0x29].t[2] < level->waterZLevel)
+						if (instance->matrix[41].t[2] < level->waterZLevel)
 						{
 							razReaverImbue(2);
 						}
