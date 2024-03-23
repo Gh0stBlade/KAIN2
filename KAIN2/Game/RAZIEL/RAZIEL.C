@@ -5444,7 +5444,7 @@ int GetEngageEvent(struct _Instance* instance) // Matching - 100%
 	return 0;
 }
 
-int SetupReaction(struct _Instance* player, struct _Instance* instance) // Matching - 94.42%
+int SetupReaction(struct _Instance* player, struct _Instance* instance) // Matching - 100%
 {
 	int FaceAngle;
 	int isEvent;
@@ -5452,9 +5452,9 @@ int SetupReaction(struct _Instance* player, struct _Instance* instance) // Match
 	player->yVel = 0;
 	player->xVel = 0;
 	*(struct _Instance**)&player->work3 = instance;
-	isEvent = GetEngageEvent(instance) != 0x02000001;
+	isEvent = GetEngageEvent(instance) != 0x2000001;
 	FaceAngle = player->position.z;
-	if (isEvent)
+	if (isEvent != 0)
 	{
 		PhysicsCheckEdgeGrabbing(player, gameTracker,
 			SetPhysicsEdgeData(400, -256, 144, 0, -196, 498, &Raziel.Senses.ForwardNormal, &Raziel.Senses.AboveNormal, &Raziel.Senses.Delta),
