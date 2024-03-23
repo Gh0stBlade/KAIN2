@@ -152,7 +152,7 @@ void GAMELOOP_ResetGameStates()
 	EVENT_Init();
 }
 
-void GAMELOOP_ClearGameTracker()
+void GAMELOOP_ClearGameTracker() // Matching - 100%
 {
 	gameTrackerX.gameData.asmData.MorphTime = 1000;
 	gameTrackerX.currentTime = 0;
