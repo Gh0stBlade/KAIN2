@@ -147,7 +147,7 @@ void GAMELOOP_SystemInit(struct GameTracker* gameTracker)
 	GAMELOOP_InitGameTracker();
 }
 
-void GAMELOOP_ResetGameStates()
+void GAMELOOP_ResetGameStates() // Matching - 100%
 {
 	EVENT_Init();
 }
