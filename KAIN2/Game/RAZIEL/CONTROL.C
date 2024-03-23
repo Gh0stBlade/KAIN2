@@ -3,7 +3,6 @@
 #include "Game/RAZIEL/RAZIEL.H"
 
 int PhysicsMode;
-struct __Force* ExternalForcesPtr = &ExternalForces[0];
 
 static inline int damp(int val, int damping)
 {
@@ -80,7 +79,7 @@ void SetDropPhysics(struct _Instance* instance, struct __Player* player) // Matc
 	SetExternalForce(ExternalForces, 0, 4, -16, 0, 4096);
 }
 
-void InitExternalForces(struct __Force* Forces, int MaxForces)//Matching - 99.69%
+void InitExternalForces(struct __Force* Forces, int MaxForces) // Matching - 100%
 {
 	int i;
 
@@ -92,7 +91,7 @@ void InitExternalForces(struct __Force* Forces, int MaxForces)//Matching - 99.69
 		Forces[i].LinearForce.z = 0;
 	}
 
-	ExternalForcesPtr = Forces;
+	*(struct __Force**)&ExternalForces = Forces;
 }
 
 void SetExternalForce(struct __Force* In, short x, short y, short z, int Space, int Friction)
