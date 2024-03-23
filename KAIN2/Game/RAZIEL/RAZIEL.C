@@ -5793,7 +5793,7 @@ void RAZIEL_TurnHead(struct _Instance* instance, short* rotx, short* rotz, struc
 	}
 }
 
-void RAZIEL_SetLookAround(struct _Instance* instance)//Matching - 99%
+void RAZIEL_SetLookAround(struct _Instance* instance) // Matching - 100%
 {
 	G2Anim_EnableController(&instance->anim, 17, 14);
 	G2Anim_EnableController(&instance->anim, 16, 14);
