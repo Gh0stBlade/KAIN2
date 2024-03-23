@@ -5646,8 +5646,8 @@ void RazielProcess(struct _Instance *playerInstance, struct GameTracker *gameTra
 	Norm.x = 0;
 }
 
-void RazielInit(struct _Instance *instance, struct GameTracker *gameTracker)
-{ 
+void RazielInit(struct _Instance* instance, struct GameTracker* gameTracker) // Matching - 100%
+{
 	instance->data = instance->object->data;
 	gameTracker->playerInstance = instance;
 	instance->intro = NULL;
@@ -5666,8 +5666,7 @@ void RazielInit(struct _Instance *instance, struct GameTracker *gameTracker)
 	instance->maxZVel = 0;
 	instance->work3 = 0;
 	instance->lightGroup = 0;
-	instance->flags |= 0x400;
-	instance->flags &= 0xFFFFFEFF;
+	instance->flags = ((instance->flags | 0x400) & ~0x100) | 0x80;
 	instance->flags2 |= 0x84;
 
 	OBTABLE_GetInstanceCollideFunc(instance);
