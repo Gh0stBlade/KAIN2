@@ -5473,16 +5473,16 @@ int CheckHolding(struct _Instance* instance)//Matching - 100%
 	return instance->LinkChild != NULL;
 }
 
-void DisableWristCollision(struct _Instance *instance, int Side)
+void DisableWristCollision(struct _Instance* instance, int Side) // Matching - 100%
 {
 	if ((Side & 0x1))
 	{
-		COLLIDE_SegmentCollisionOff(instance, 0x1F);
+		COLLIDE_SegmentCollisionOff(instance, 31);
 	}
 
 	if ((Side & 0x2))
 	{
-		COLLIDE_SegmentCollisionOff(instance, 0x29);
+		COLLIDE_SegmentCollisionOff(instance, 41);
 	}
 }
 
