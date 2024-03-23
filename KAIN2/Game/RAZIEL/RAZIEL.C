@@ -5601,7 +5601,7 @@ void InitGlyphSystem(struct _Instance* instance)
 	}
 }
 
-void mdRazielProcess(struct _Instance *playerInstance, struct GameTracker *gameTracker, long *controlCommand)
+void mdRazielProcess(struct _Instance *playerInstance, struct GameTracker *gameTracker, long *controlCommand) // Matching - 100%
 {
 	ProcessTimers(playerInstance);
 
