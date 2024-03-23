@@ -5417,25 +5417,25 @@ void RazielAdditionalCollide(struct _Instance* instance, struct GameTracker* gam
 	}
 }
 
-int GetEngageEvent(struct _Instance* instance)//Matching - 91.46%
+int GetEngageEvent(struct _Instance* instance) // Matching - 100%
 {
 	int Ability;
 
 	if (instance != NULL)
 	{
-		Ability = INSTANCE_Query(instance, 0x2);
+		Ability = INSTANCE_Query(instance, 2);
 
-		if ((Ability & 0x8) != 0)
+		if ((Ability & 0x8))
 		{
 			return 0x2000000;
 		}
 
-		if ((Ability & 0x1) != 0)
+		if ((Ability & 0x1))
 		{
 			return 0x2000001;
 		}
 
-		if ((Ability & 0x2) != 0)
+		if ((Ability & 0x2))
 		{
 			return 0x2000004;
 		}
