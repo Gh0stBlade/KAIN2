@@ -140,7 +140,7 @@ void GAMELOOP_InitGameTracker()
 	EVENT_Init();
 }
 
-void GAMELOOP_SystemInit(struct GameTracker* gameTracker)
+void GAMELOOP_SystemInit(struct GameTracker* gameTracker) // Matching - 100%
 { 
 	GAMELOOP_AllocStaticMemory();
 	INSTANCE_InitInstanceList(instanceList, instancePool);
