@@ -5804,7 +5804,7 @@ void RAZIEL_SetLookAround(struct _Instance* instance) // Matching - 100%
 	Raziel.throwZRot = 0;
 }
 
-void  RAZIEL_ResetLookAround(struct _Instance* instance)//Matching - 99.35%
+void RAZIEL_ResetLookAround(struct _Instance* instance) // Matching - 100%
 {
 	G2Anim_InterpDisableController(&instance->anim, 17, 14, 300);
 	G2Anim_InterpDisableController(&instance->anim, 16, 14, 300);
