@@ -55,44 +55,44 @@ struct _InstancePool* instancePool; // offset 0x800D0C24
 
 struct GameTracker* gameTracker;
 
-void GAMELOOP_AllocStaticMemory()
+void GAMELOOP_AllocStaticMemory() // Matching - 100%
 {
-	instanceList = (struct _InstanceList*)MEMPACK_Malloc(sizeof(struct _InstanceList), 0x6);
-	instancePool = (struct _InstancePool*)MEMPACK_Malloc(sizeof(struct _InstancePool), 0x6);///@FIXME struct size mis-match on PSX/PSXPC!
+	instanceList = (struct _InstanceList*)MEMPACK_Malloc(sizeof(struct _InstanceList), 6);
+	instancePool = (struct _InstancePool*)MEMPACK_Malloc(sizeof(struct _InstancePool), 6);
 
 #if defined(PSXPC_VERSION)//Increase primitive memory pools to allow 32_BIT_ADDR mode.
 #if defined(GAME_X64)
-	primBase = MEMPACK_Malloc(216600 * 12, 0x6);
+	primBase = MEMPACK_Malloc(216600 * 12, 6);
 	gOt[1] = (unsigned long**)(primBase + ((3072 * 8) * 2));
 	gOt[0] = (unsigned long**)(primBase);
-	primPool[0] = (struct _PrimPool*)(primBase + (((3072 * 8) * 2) +  ((3072 * 8) * 2)));
-	primPool[1] = (struct _PrimPool*)(primBase + (((3072 * 8) * 2) + ((3072 * 8) * 2) + (0x1770C * 2)));
+	primPool[0] = (struct _PrimPool*)(primBase + (((3072 * 8) * 2) + ((3072 * 8) * 2)));
+	primPool[1] = (struct _PrimPool*)(primBase + (((3072 * 8) * 2) + ((3072 * 8) * 2) + (96012 * 2)));
 #else
-	primBase = MEMPACK_Malloc(216600 * 6, 0x6);
+	primBase = MEMPACK_Malloc(216600 * 6, 6);
 	gOt[1] = (unsigned long**)(primBase + ((3072 * 4) * 2));
 	gOt[0] = (unsigned long**)(primBase);
 	primPool[0] = (struct _PrimPool*)(primBase + (((3072 * 4) * 2) + ((3072 * 4) * 2)));
-	primPool[1] = (struct _PrimPool*)(primBase + (((3072 * 4) * 2) + ((3072 * 4) * 2) + (0x1770C * 2)));
+	primPool[1] = (struct _PrimPool*)(primBase + (((3072 * 4) * 2) + ((3072 * 4) * 2) + (96012 * 2)));
 #endif
-	gLightInfo = (struct LightInfo*)MEMPACK_Malloc(sizeof(struct LightInfo), 0x6);
+	gLightInfo = (struct LightInfo*)MEMPACK_Malloc(sizeof(struct LightInfo), 6);
 	memset(gLightInfo, 0, sizeof(struct LightInfo));
 #else
-	primBase = MEMPACK_Malloc(216600, 0x6);
+	primBase = MEMPACK_Malloc(216600, 6);
 	gOt[1] = (unsigned long**)(primBase + (3072 * 4));
 	gOt[0] = (unsigned long**)(primBase);
 	primPool[0] = (struct _PrimPool*)(primBase + ((3072 * 4) + (3072 * 4)));
-	primPool[1] = (struct _PrimPool*)(primBase + ((3072 * 4) + (3072 * 4) + (0x1770C)));
-	gLightInfo = (struct LightInfo*)MEMPACK_Malloc(sizeof(LightInfo), 0x6);
+	primPool[1] = (struct _PrimPool*)(primBase + ((3072 * 4) + (3072 * 4) + (96012)));
+	gLightInfo = (struct LightInfo*)MEMPACK_Malloc(sizeof(struct LightInfo), 6);
 	memset(gLightInfo, 0, sizeof(struct LightInfo));
 #endif
 
-	gVertexPool = (struct _VertexPool*)MEMPACK_Malloc(sizeof(struct _VertexPool), 0x6);
+	gVertexPool = (struct _VertexPool*)MEMPACK_Malloc(sizeof(struct _VertexPool), 6);
 	gPolytopeList = (struct _PolytopeList*)gVertexPool;
-	fxTracker = (struct _FXTracker*)MEMPACK_Malloc(0x6DA8, 0x6);
+	fxTracker = (struct _FXTracker*)MEMPACK_Malloc(sizeof(struct _FXTracker), 6);
 	gFXT = fxTracker;
-	planningPool = MEMPACK_Malloc(0xBB8, 0x6);
-	enemyPlanPool = MEMPACK_Malloc(0x3E8, 0x6);
-	GlobalObjects = (struct _ObjectTracker*)MEMPACK_Malloc(0x6C0, 0x6);
+	planningPool = MEMPACK_Malloc(3000, 6);
+	enemyPlanPool = MEMPACK_Malloc(1000, 6);
+	GlobalObjects = (struct _ObjectTracker*)MEMPACK_Malloc(1728, 6);
 	G2Anim_Install();
 }
 
