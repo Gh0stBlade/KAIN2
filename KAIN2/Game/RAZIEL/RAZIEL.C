@@ -51,10 +51,11 @@ struct __CannedSound cannedSound[4];
 static int BlockCount; 
 static int LastBlock;
 
-void InitStates(struct _Instance* PlayerInstance)
+void InitStates(struct _Instance* PlayerInstance) // Matching - 99.97%
 {
 	unsigned char i;
 	struct _G2AnimSection_Type* animSection;
+	typedef unsigned long fn(struct _G2Anim_Type*, int, enum _G2AnimCallbackMsg_Enum, long, long, struct _Instance*);  // not from SYMDUMP
 
 	if (Raziel.footPrint == 0)
 	{
@@ -69,13 +70,13 @@ void InitStates(struct _Instance* PlayerInstance)
 	G2EmulationSetStartAndEndSegment(&Raziel.State, 0, 0, 13);
 	G2EmulationSetStartAndEndSegment(&Raziel.State, 1, 14, 49);
 	G2EmulationSetStartAndEndSegment(&Raziel.State, 2, 50, 65);
-	
+
 	for (i = 0; i < 3; i++)
 	{
 		animSection = &PlayerInstance->anim.section[i];
-		animSection->callback = (unsigned long (*)(struct _G2Anim_Type*, int, enum _G2AnimCallbackMsg_Enum, long, long, struct _Instance*)) & RazielAnimCallback;
+		animSection->callback = (fn*)&RazielAnimCallback;
 		animSection->callbackData = NULL;
-	
+
 		Raziel.State.SectionList[i].Process = &StateHandlerIdle;
 
 		InitMessageQueue(&Raziel.State.SectionList[i].Event);
@@ -92,19 +93,18 @@ void InitStates(struct _Instance* PlayerInstance)
 
 	InitHealthSystem();
 
-	debugRazielFlags1 = 0x1000000;
+	Raziel.Abilities = 0x1000000;
+	debugRazielFlags1 = Raziel.Abilities;
 
 	Raziel.GlyphManaBalls = 0;
 	Raziel.GlyphManaMax = 0;
 	Raziel.Abilities = 0;
 	Raziel.RotationSegment = 0;
 	Raziel.extraRot.x = 0;
-	Raziel.extraRot.y = 0;
-	Raziel.extraRot.z = 0;
+	Raziel.blankPad = 0;
 
-	PlayerInstance->rotation.x = 0;
 	PlayerInstance->rotation.y = 0;
-	PlayerInstance->rotation.z = 0;
+	PlayerInstance->rotation.x = 0;
 
 	Raziel.Senses.EngagedList = &EngagedList[0];
 	Raziel.constrictData = &constrictData[0];
@@ -150,7 +150,7 @@ void InitStates(struct _Instance* PlayerInstance)
 
 	InitGlyphSystem(PlayerInstance);
 
-	Raziel.slipSlope = 0xB50;
+	Raziel.slipSlope = 2896;
 	Raziel.terminator = -1;
 
 	gameTrackerX.raziel_collide_override = 0;
@@ -4006,7 +4006,7 @@ unsigned long RazielQuery(struct _Instance *instance, unsigned long Query)
 void RazielPost(struct _Instance* instance, unsigned long Message, unsigned long Data) // Matching - 100%
 {
 	int i;
-	typedef unsigned long fn(struct _G2Anim_Type*, int, enum _G2AnimCallbackMsg_Enum, long, long, struct _Instance*);
+	typedef unsigned long fn(struct _G2Anim_Type*, int, enum _G2AnimCallbackMsg_Enum, long, long, struct _Instance*);  // not from SYMDUMP
 
 	switch (Message)
 	{
