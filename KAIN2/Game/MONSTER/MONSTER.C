@@ -6,7 +6,7 @@
 #include <Game/SAVEINFO.H>
 #include <Game/STREAM.H>
 #include <Game/MATH3D.H>
-#include <GAME/CAMERA.H>
+#include <Game/CAMERA.H>
 #include <Game/STATE.H>
 #include <Game/G2/ANMG2ILF.H>
 #include <Game/FX.H>
