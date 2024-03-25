@@ -50,6 +50,7 @@ struct __razController controllerList[] = {
 	{ 0x003D, 0x0008 },
 
 }; // offset 0x800d1c64
+static unsigned short cowlList[19]; // offset 0x800D1C3C
 
 void razAlignYMoveRot(struct _Instance* dest, short distance, _Position* position, struct _Rotation* rotation, int extraZ)  // Matching - 100%
 {
@@ -1532,61 +1533,25 @@ void razLaunchBubbles(int segments, int count, int type)
 	UNIMPLEMENTED();
 }
 
-void razSetCowlNoDraw(int mode)
+void razSetCowlNoDraw(int mode) // Matching - 99.89%
 {
-#if 0
-	sub_800A76C4:
-	move    $t0, $a0
-		addiu   $a2, $gp, -0x595C
-		addiu   $a3, $gp, -0x5936
+	unsigned short* temp;  // not from SYMDUMP
 
-		loc_800A76D0 :
-		beqz    $t0, loc_800A7718
-		nop
-		lw      $v0, -0x420C($gp)
-		lhu     $a1, 0($a2)
-		lh      $a0, 0x126($v0)
-		lw      $v0, 0x1C($v0)
-		sll     $v1, $a1, 1
-		lw      $v0, 0xC($v0)
-		sll     $a0, 2
-		addu    $a0, $v0
-		lw      $v0, 0($a0)
-		addu    $v1, $a1
-		lw      $v0, 0x14($v0)
-		sll     $v1, 2
-		addu    $v1, $v0
-		lbu     $v0, 7($v1)
-		j       loc_800A7758
-		ori     $v0, 0x10
+	temp = (unsigned short*)&cowlList;
 
-		loc_800A7718:
-	lw      $v0, -0x420C($gp)
-		lhu     $a1, 0($a2)
-		lh      $a0, 0x126($v0)
-		lw      $v0, 0x1C($v0)
-		sll     $v1, $a1, 1
-		lw      $v0, 0xC($v0)
-		sll     $a0, 2
-		addu    $a0, $v0
-		lw      $v0, 0($a0)
-		addu    $v1, $a1
-		lw      $v0, 0x14($v0)
-		sll     $v1, 2
-		addu    $v1, $v0
-		lbu     $v0, 7($v1)
-		nop
-		andi    $v0, 0xEF
+	do
+	{
+		if (mode != 0)
+		{
+			gameTrackerX.playerInstance->object->modelList[gameTrackerX.playerInstance->currentModel]->faceList[*temp].flags |= 0x10;
+		}
+		else
+		{
+			gameTrackerX.playerInstance->object->modelList[gameTrackerX.playerInstance->currentModel]->faceList[*temp].flags &= ~0x10;
+		}
 
-		loc_800A7758:
-	sb      $v0, 7($v1)
-		addiu   $a2, 2
-		slt     $v0, $a2, $a3
-		bnez    $v0, loc_800A76D0
-		nop
-		jr      $ra
-		nop
-#endif
+		temp++;
+	} while ((int)temp < (int)&cowlList[20]);
 }
 
 void razAttachControllers()
