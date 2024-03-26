@@ -194,25 +194,25 @@ void GAMELOOP_SetGameTime(long timeOfDay)//Matching - 74.59%
 	gameTrackerX.currentMaterialTime = gameTrackerX.currentTimeOfDayTime;
 }
 
-int GAMELOOP_GetTimeOfDay()
+int GAMELOOP_GetTimeOfDay() // Matching - 100%
 {
 	int timeOfDay;
 
 	timeOfDay = gameTrackerX.timeOfDay;
 
-	if (timeOfDay - 601 < 99)
+	if ((timeOfDay - 601) < 99U)
 	{
 		return 600;
 	}
-	else if (timeOfDay - 700 < 1100)
+	else if ((timeOfDay - 700) < 1100U)
 	{
 		return 700;
 	}
-	else if (timeOfDay - 1800 < 100)
+	else if ((timeOfDay - 1800) < 100U)
 	{
 		return 1800;
 	}
-	
+
 	return 1900;
 }
 
