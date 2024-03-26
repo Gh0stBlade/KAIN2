@@ -463,7 +463,7 @@ void GAMELOOP_LevelLoadAndInit(char *baseAreaName, struct GameTracker *gameTrack
 	}
 }
 
-void GAMELOOP_StreamLevelLoadAndInit(char* baseAreaName, struct GameTracker* gameTracker, int toSignalNum, int fromSignalNum)
+void GAMELOOP_StreamLevelLoadAndInit(char* baseAreaName, struct GameTracker* gameTracker, int toSignalNum, int fromSignalNum) // Matching - 100%
 {
 	LoadLevels(baseAreaName, gameTracker);
 }
