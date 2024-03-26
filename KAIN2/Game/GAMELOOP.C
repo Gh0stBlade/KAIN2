@@ -332,8 +332,8 @@ struct _StreamUnit* LoadLevels(char* baseAreaName, struct GameTracker* gameTrack
 	return streamUnit;
 }
 
-void GAMELOOP_InitStandardObjects()
-{ 
+void GAMELOOP_InitStandardObjects() // Matching - 95%
+{
 	static char* sobjects[10] = {
 		(char*)"raziel",
 		(char*)"paths",
@@ -346,12 +346,12 @@ void GAMELOOP_InitStandardObjects()
 		(char*)"eaggot",
 		(char*)"eaggots"
 	};
-	
+
 	int i;
 
 	LOAD_DumpCurrentDir();
 
-	for (i = 0; i < 10; i++)
+	for (i = 0; i < 10U; i++)
 	{
 		InsertGlobalObject(sobjects[i], &gameTrackerX);
 	}
