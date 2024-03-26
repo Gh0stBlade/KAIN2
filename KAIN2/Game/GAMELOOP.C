@@ -236,7 +236,7 @@ int GAMELOOP_GetTimeOfDayIdx(int timeOfDay)//Matching - 100%
 	return 0;
 }
 
-int GAMELOOP_WaitForLoad()
+int GAMELOOP_WaitForLoad() // Matching - 100%
 { 
 	if ((gameTrackerX.debugFlags & 0x80000))
 	{
