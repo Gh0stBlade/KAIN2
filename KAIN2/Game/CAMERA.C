@@ -5936,9 +5936,10 @@ static inline int GetSecondCheckFlag(struct Camera* camera)
 	return 1;
 }
 
-long CAMERA_DoCameraCollision2(struct Camera* camera, _Position* targetCamPos, int simpleflag) // Matching - 99.75%
+// @fixme commented out because causes camera to rotate unnecessarily, maybe needs implementation of CAMERA_ACNoForcedMovement
+long CAMERA_DoCameraCollision2(struct Camera* camera, struct _Position* targetCamPos, int simpleflag) // Matching - 99.75%
 {
-	int secondcheck_flag;
+	/*int secondcheck_flag;
 	long hit;
 	struct CameraCollisionInfo colInfo;
 	static int collisiontimeDown = 0;
@@ -6141,7 +6142,8 @@ long CAMERA_DoCameraCollision2(struct Camera* camera, _Position* targetCamPos, i
 		}
 	}
 
-	return hit;
+	return hit;*/
+	return 0;
 }
 
 int CAMERA_FocusInstanceMoved(struct Camera* camera)//Matching - 100%
