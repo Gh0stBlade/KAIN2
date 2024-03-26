@@ -170,7 +170,7 @@ void GAMELOOP_ClearGameTracker() // Matching - 100%
 #endif
 }
 
-void GAMELOOP_CalcGameTime()
+void GAMELOOP_CalcGameTime() // Matching - 100%
 {
 	long time;
 
