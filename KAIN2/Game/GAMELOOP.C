@@ -357,19 +357,21 @@ void GAMELOOP_InitStandardObjects()
 	}
 }
 
-void GAMELOOP_LevelLoadAndInit(char *baseAreaName, struct GameTracker *gameTracker)
+void GAMELOOP_LevelLoadAndInit(char* baseAreaName, struct GameTracker* gameTracker) // Matching - 100%
 {
 	long i;
-	struct _StreamUnit *streamUnit;
+	struct _StreamUnit* streamUnit;
 
 	short _x1;
 	short _y1;
 	short _z1;
-	_Position *_v0;
-	_Position *_v1;
+	struct _Position* _v0;
+	struct _Position* _v1;
+
+	struct BLK_FILL* temp;  // not from SYMDUMP
 
 	G2Anim_ResetInternalState();
-	gameTrackerX.playerInstance = NULL;
+	gameTracker->playerInstance = NULL;
 
 	INSTANCE_InitInstanceList(instanceList, instancePool);
 	GAMELOOP_ClearGameTracker();
@@ -387,27 +389,25 @@ void GAMELOOP_LevelLoadAndInit(char *baseAreaName, struct GameTracker *gameTrack
 	{
 
 	}
-	
-	gameTrackerX.introFX = (struct Object*)objectAccess[6].object;
 
 	fontsObject = (struct Object*)objectAccess[2].object;
-	RENDER_currentStreamUnitID = (unsigned short)gameTrackerX.StreamUnitID;
 
-	if (streamUnit->level->numIntros > 0)
+	gameTracker->introFX = (struct Object*)objectAccess[6].object;
+
+	RENDER_currentStreamUnitID = (unsigned short)gameTracker->StreamUnitID;
+
+	for (i = 0; i < streamUnit->level->numIntros; i++)
 	{
-		for (i = 0; i < streamUnit->level->numIntros; i++)
-		{
 #if defined(UWP)
-			if (_strcmpi(streamUnit->level->introList[i].name, "raziel") == 0)
+		if (_strcmpi(streamUnit->level->introList[i].name, "raziel") == 0)
 #else
-			if (strcmpi(streamUnit->level->introList[i].name, "raziel") == 0)
+		if (strcmpi(streamUnit->level->introList[i].name, "raziel") == 0)
 #endif
-			{
-				INSTANCE_IntroduceInstance(&streamUnit->level->introList[i], (short)streamUnit->StreamUnitID);
-				break;
-			}
+		{
+			INSTANCE_IntroduceInstance(&streamUnit->level->introList[i], (short)streamUnit->StreamUnitID);
+			break;
 		}
-	}
+}
 
 	gameTracker->playerInstance->data = gameTracker->playerInstance->object->data;
 
@@ -426,20 +426,24 @@ void GAMELOOP_LevelLoadAndInit(char *baseAreaName, struct GameTracker *gameTrack
 #if defined(EDITOR)
 	extern struct _Position overrideEditorPosition;
 	extern struct _Rotation overrideEditorRotation;
-	
+
 	overrideEditorPosition = theCamera.core.position;
 #endif
 
 	SetFogNearFar(streamUnit->level->fogNear, streamUnit->level->fogFar, 320);
 	SetFarColor(0, 0, 0);
 
-	clearRect[0].r0 = streamUnit->level->backColorR;
-	clearRect[0].g0 = streamUnit->level->backColorG;
-	clearRect[0].b0 = streamUnit->level->backColorB;
+	temp = clearRect;
 
-	clearRect[1].r0 = streamUnit->level->backColorR;
-	clearRect[1].g0 = streamUnit->level->backColorG;
-	clearRect[1].b0 = streamUnit->level->backColorB;
+	temp->r0 = streamUnit->level->backColorR;
+	temp->g0 = streamUnit->level->backColorG;
+	temp->b0 = streamUnit->level->backColorB;
+
+	temp++;
+
+	temp->r0 = streamUnit->level->backColorR;
+	temp->g0 = streamUnit->level->backColorG;
+	temp->b0 = streamUnit->level->backColorB;
 
 	gameTracker->wipeType = 10;
 	gameTracker->hideBG = 0;
@@ -453,7 +457,7 @@ void GAMELOOP_LevelLoadAndInit(char *baseAreaName, struct GameTracker *gameTrack
 		EVENT_AddSignalToReset(streamUnit->level->startSignal);
 	}
 
-	gameTrackerX.vblFrames = 0;
+	gameTracker->vblFrames = 0;
 
 	if (streamUnit->level->startUnitMainSignal != NULL && gameTracker->playerInstance != NULL)
 	{
