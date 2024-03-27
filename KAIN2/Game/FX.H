@@ -396,7 +396,7 @@ extern void FX_StandardProcess(struct _FX_PRIM *fxPrim, struct _FXTracker *fxTra
 extern void FX_ShatterProcess(struct _FX_PRIM *fxPrim, struct _FXTracker *fxTracker); // 0x8004229C
 extern void FX_DFacadeProcess(struct _FX_PRIM *fxPrim, struct _FXTracker *fxTracker); // 0x80042544
 extern struct _FX_PRIM * _FX_BuildSingleFaceWithModel(struct _Model *model, struct _MFace *mface, SVECTOR*center, SVECTOR*vel, SVECTOR*accl, struct _FXTracker *fxTracker, TDRFuncPtr__FX_BuildSingleFaceWithModel6fxSetup fxSetup, TDRFuncPtr__FX_BuildSingleFaceWithModel7fxProcess fxProcess, struct _FX_MATRIX *fxMatrix, int timeToLive); // 0x80042718
-extern struct _FX_PRIM * FX_BuildSingleFaceWithModel(struct _Model *model, struct _MFace *mface, SVECTOR*center, SVECTOR*vel, SVECTOR*accl, struct _FXTracker *fxTracker, TDRFuncPtr_FX_BuildSingleFaceWithModel6fxSetup fxSetup, TDRFuncPtr_FX_BuildSingleFaceWithModel7fxProcess fxProcess, int timeToLive); // 0x80042814
+extern struct _FX_PRIM* FX_BuildSingleFaceWithModel(struct _Model* model, struct _MFace* mface, SVECTOR* center, SVECTOR* vel, SVECTOR* accl, struct _FXTracker* fxTracker, void (*fxSetup)(), void (*fxProcess)(), short timeToLive); // 0x80042E20
 extern void _FX_SetupLighting(struct _Instance *instance); // 0x80042864
 extern long _FX_DoLighting(struct _MFace *mface); // 0x800428B4
 extern void _FX_BuildSegmentedSplinters(struct _Instance *instance, SVECTOR*center, SVECTOR*vel, SVECTOR*accl, struct FXSplinter *splintDef, struct _FXTracker *fxTracker, TDRFuncPtr__FX_BuildSegmentedSplinters6fxSetup fxSetup, TDRFuncPtr__FX_BuildSegmentedSplinters7fxProcess fxProcess, int shardFlags); // 0x800429CC
