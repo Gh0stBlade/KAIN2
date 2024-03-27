@@ -560,7 +560,7 @@ void GAMELOOP_HandleScreenWipes(unsigned long **drawot)
 	}
 }
 
-void UpdateFogSettings(struct _StreamUnit* currentUnit, struct Level* level)//Matching - 99.93%
+void UpdateFogSettings(struct _StreamUnit* currentUnit, struct Level* level) // Matching - 100%
 {
 	int changed;
 	int FogFar;
