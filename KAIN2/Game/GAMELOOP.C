@@ -178,19 +178,19 @@ void GAMELOOP_CalcGameTime()
 	gameTrackerX.timeOfDay = (((((time + 720) / 60) % 24) * 100) + ((time + 720) % 60));
 }
 
-void GAMELOOP_SetGameTime(long timeOfDay)//Matching - 74.59%
+void GAMELOOP_SetGameTime(long timeOfDay) // Matching - 99.59%
 {
 	long tim;
 
-	tim = (timeOfDay / 100) * 60 + timeOfDay % 100 - 720;
-	
+	tim = ((timeOfDay / 100) * 60) + (timeOfDay % 100) - 720;
+
 	if (tim < 0)
 	{
 		tim += 2160;
 	}
 
 	gameTrackerX.timeOfDay = (short)timeOfDay;
-	gameTrackerX.currentTimeOfDayTime = (((tim * 32) - tim) * 4 + tim) * 480 / gameTrackerX.multGameTime;
+	gameTrackerX.currentTimeOfDayTime = (((((tim * 32) - tim) * 4) + tim) * 480) / gameTrackerX.multGameTime;
 	gameTrackerX.currentMaterialTime = gameTrackerX.currentTimeOfDayTime;
 }
 
