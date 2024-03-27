@@ -659,52 +659,52 @@ int CheckForNoBlend(struct _ColorType* Color)
 	return 0;
 }
 
-void BlendToColor(struct _ColorType* target, struct _ColorType* current, struct _ColorType* dest)//Matching - 99.92%
+void BlendToColor(struct _ColorType* target, struct _ColorType* current, struct _ColorType* dest) // Matching - 100%
 {
 	LoadAverageCol((unsigned char*)target, (unsigned char*)current, 512, 3584, (unsigned char*)dest);
 
-	if (target->r - dest->r >= 0)
+	if ((target->r - dest->r) >= 0)
 	{
-		if (target->r - dest->r >= 5)
+		if ((target->r - dest->r) >= 5)
 		{
 			dest->code = 0;
 
 			return;
 		}
 	}
-	else if (dest->r - target->r >= 5)
+	else if ((dest->r - target->r) >= 5)
 	{
 		dest->code = 0;
 
 		return;
 	}
 
-	if (target->g - dest->g >= 0)
+	if ((target->g - dest->g) >= 0)
 	{
-		if (target->g - dest->g >= 5)
+		if ((target->g - dest->g) >= 5)
 		{
 			dest->code = 0;
 
 			return;
 		}
 	}
-	else  if (dest->g - target->g >= 5)
+	else if ((dest->g - target->g) >= 5)
 	{
 		dest->code = 0;
 
 		return;
 	}
 
-	if (target->b - dest->b >= 0)
+	if ((target->b - dest->b) >= 0)
 	{
-		if (target->b - dest->b >= 5)
+		if ((target->b - dest->b) >= 5)
 		{
 			dest->code = 0;
 
 			return;
 		}
 	}
-	else if (dest->b - target->b >= 5)
+	else if ((dest->b - target->b) >= 5)
 	{
 		dest->code = 0;
 
