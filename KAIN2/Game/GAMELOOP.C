@@ -649,9 +649,9 @@ void UpdateFogSettings(struct _StreamUnit* currentUnit, struct Level* level)//Ma
 	}
 }
 
-int CheckForNoBlend(struct _ColorType* Color)
-{ 
-	if (Color->r < 5 && Color->g < 5 && Color->b < 5)
+int CheckForNoBlend(struct _ColorType* Color) // Matching - 100%
+{
+	if ((Color->r < 5) && (Color->g < 5) && (Color->b < 5))
 	{
 		return 1;
 	}
