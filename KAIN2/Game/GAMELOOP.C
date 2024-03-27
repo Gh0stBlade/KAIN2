@@ -472,7 +472,7 @@ void GAMELOOP_StreamLevelLoadAndInit(char* baseAreaName, struct GameTracker* gam
 	LoadLevels(baseAreaName, gameTracker);
 }
 
-void GAMELOOP_SetScreenWipe(int time, int maxTime, int type)
+void GAMELOOP_SetScreenWipe(int time, int maxTime, int type) // Matching - 100%
 {
 	gameTrackerX.maxWipeTime = maxTime * FRAMERATE_MULT;
 	gameTrackerX.wipeTime = time;
