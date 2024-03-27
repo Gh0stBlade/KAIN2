@@ -5715,30 +5715,36 @@ void RazielCollide(struct _Instance* instance, struct GameTracker* gameTracker)/
 	}
 }
 
-void RAZIEL_TurnHead(struct _Instance* instance, short* rotx, short* rotz, struct GameTracker* gameTracker)//Matching - 95.18%
+void RAZIEL_TurnHead(struct _Instance* instance, short* rotx, short* rotz, struct GameTracker* gameTracker) // Matching - 100%
 {
 	struct _Rotation rot;
 	struct evActionLookAroundData data;
 	short rx;
+	short rz;
 
-	if ((Raziel.Mode & 0x20000) && !(Raziel.throwMode & 0x4))
+	if (((Raziel.Mode & 0x20000)) && (!(Raziel.throwMode & 0x4)))
 	{
 		*rotx += (short)(gameTrackerX.controlData[0][4] / 8);
 		*rotz -= (short)(gameTrackerX.controlData[0][3] / 6);
 
-		if (Raziel.extraRot.x && *rotx)
+		if ((Raziel.extraRot.x != 0) && (*rotx != 0))
 		{
 			*rotx -= Raziel.throwData->coilRot;
 		}
-		*rotx = Raziel.extraRot.x + *rotx - 4096;
+
+		*rotx += Raziel.extraRot.x - 4096;
 		rot.x = *rotx;
 		rot.y = 0;
 		rot.z = *rotz;
+
 		LimitRotation(&rot);
-		*rotx = rot.x + 4096 - Raziel.extraRot.x;
+
+		*rotx = rot.x - (Raziel.extraRot.x - 4096);
 		*rotz = rot.z;
+
 		ThrowSetFocusPoint(instance, &rot);
-		if (Raziel.extraRot.x)
+
+		if (Raziel.extraRot.x != 0)
 		{
 			CAMERA_SetLookRot(&theCamera, *rotx + Raziel.throwData->coilRot, *rotz);
 		}
@@ -5749,18 +5755,22 @@ void RAZIEL_TurnHead(struct _Instance* instance, short* rotx, short* rotz, struc
 		*rotz -= (short)(gameTrackerX.controlData[0][3] / 3);
 
 		rx = *rotx & 0xFFF;
+
 		if (rx > 0x800)
 		{
-			rx |= 0xF000;
+			rx |= ~0xFFF;
 		}
+
 		*rotx = rx;
 
-		rx = *rotz & 0xFFF;
-		if (rx > 0x800)
+		rz = *rotz & 0xFFF;
+
+		if (rz > 0x800)
 		{
-			rx |= 0xF000;
+			rz |= ~0xFFF;
 		}
-		*rotz = rx;
+
+		*rotz = rz;
 
 		data.minx = -768;
 		data.maxx = 512;
@@ -5768,6 +5778,7 @@ void RAZIEL_TurnHead(struct _Instance* instance, short* rotx, short* rotz, struc
 		data.rotx = rotx;
 		data.rotz = rotz;
 		data.maxz = 1024;
+
 		razRotateUpperBody(instance, &data);
 	}
 }
