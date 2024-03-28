@@ -371,7 +371,7 @@ void LOAD_SetupFileToDoBufferedCDReading()
 #endif
 }
 
-void LOAD_ProcessReadQueue()
+void LOAD_ProcessReadQueue() // Matching - 100%
 {
 #if defined(PSX_VERSION) || (PSXPC_VERSION)
 	long cdWaitTimeDiff;
@@ -379,37 +379,44 @@ void LOAD_ProcessReadQueue()
 
 	if (gameTrackerX.debugFlags < 0)
 	{
-		FONT_Print("CD St %d LS %d sk %d tm %d rd %d cs %d\n", loadStatus.currentQueueFile.readStatus, loadStatus.state, loadStatus.seekTime, loadStatus.sectorTime, loadStatus.currentQueueFile.readCurSize);
+		FONT_Print("CD St %d LS %d sk %d tm %d rd %d cs %d\n", loadStatus.currentQueueFile.readStatus, loadStatus.state, loadStatus.seekTime, loadStatus.sectorTime, loadStatus.currentQueueFile.readCurSize, loadStatus.currentSector);
 	}
 
-	if (loadStatus.currentQueueFile.readStatus == 3)
+	switch (loadStatus.currentQueueFile.readStatus)
+	{
+	case 3:
 	{
 		LOAD_DoCDReading();
+		break;
 	}
-	else if (loadStatus.currentQueueFile.readStatus == 1)
-	{
-		LOAD_SetupFileToDoCDReading();
-	}
-	else if (loadStatus.currentQueueFile.readStatus == 5)
-	{
-		LOAD_SetupFileToDoBufferedCDReading();
-	}
-	else if (loadStatus.currentQueueFile.readStatus == 6)
+	case 6:
 	{
 		LOAD_DoCDBufferedReading();
+		break;
+	}
+	case 1:
+	{
+		LOAD_SetupFileToDoCDReading();
+		break;
+	}
+	case 5:
+	{
+		LOAD_SetupFileToDoBufferedCDReading();
+		break;
+	}
 	}
 
 	if (loadStatus.currentQueueFile.readStatus == 7)
 	{
 		loadStatus.currentQueueFile.readStatus = 1;
 	}
-	else if(loadStatus.cdWaitTime != 0)
+	else if (loadStatus.cdWaitTime != 0)
 	{
 		cdWaitTimeDiff = (long)TIMER_GetTimeMS() - loadStatus.cdWaitTime;
 
-		if(cdWaitTimeDiff >= 8400)
+		if (cdWaitTimeDiff >= 8401)
 		{
-			if (loadStatus.currentQueueFile.readStatus == 3)
+			if ((loadStatus.currentQueueFile.readStatus == 3) || (loadStatus.currentQueueFile.readStatus == 6))
 			{
 				loadStatus.state = 0;
 				CdReset(0);
@@ -423,7 +430,7 @@ void LOAD_ProcessReadQueue()
 				CdControl(CdlReadN, &loc.minute, NULL);
 				loadStatus.cdWaitTime = (long)TIMER_GetTimeMS();
 			}
-			else if (loadStatus.currentQueueFile.readStatus == 6)
+			else
 			{
 				if (VOICEXA_IsPlaying() == 0)
 				{
