@@ -94,7 +94,7 @@ void InitExternalForces(struct __Force* Forces, int MaxForces) // Matching - 100
 	*(struct __Force**)&ExternalForces = Forces;
 }
 
-void SetExternalForce(struct __Force* In, short x, short y, short z, int Space, int Friction)
+void SetExternalForce(struct __Force* In, short x, short y, short z, short Space, int Friction) // Matching - 100%
 {
 	In->LinearForce.x = x;
 	In->LinearForce.y = y;
