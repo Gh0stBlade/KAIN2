@@ -92,7 +92,7 @@ void razAlignYRotMove(struct _Instance* dest, short distance, struct _Position* 
 	position->y = dest->position.y + dd.vy;
 }
 
-void razAlignYRotMoveInterp(struct _Instance* source, struct _Instance* dest, short distance, unsigned char segNumber, int Frames, volatile int extraZ) // Matching - 100%
+void razAlignYRotMoveInterp(struct _Instance* source, struct _Instance* dest, short distance, unsigned char segNumber, int Frames, short extraZ) // Matching - 100%
 {
 	struct _Position position;
 	struct _Rotation rotation;
@@ -100,7 +100,7 @@ void razAlignYRotMoveInterp(struct _Instance* source, struct _Instance* dest, sh
 
 	position = source->position;
 
-	razAlignYRotMove(dest, distance, &position, &rotation, (short)extraZ);
+	razAlignYRotMove(dest, distance, &position, &rotation, extraZ);
 
 	v.x = position.x;
 	v.y = position.y;
