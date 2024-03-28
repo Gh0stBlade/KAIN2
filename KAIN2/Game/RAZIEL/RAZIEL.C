@@ -964,40 +964,48 @@ void StateHandlerDropAction(struct __CharacterState* In, int CurrentSection, int
 	}
 }
 
-void StateHandlerSoulSuck(struct __CharacterState* In, int CurrentSection, int Data)  // Matching - 99.61%
+void StateHandlerSoulSuck(struct __CharacterState* In, int CurrentSection, int Data) // Matching - 100%
 {
 	struct __Event* Ptr;
 	int Anim;
 	struct evPhysicsSwimData* SwimData;
 
-	if ((LoopCounter & 3) == 0)
+	if (!(LoopCounter & 0x3))
 	{
 		FX_MakeSoulDust(In->CharacterInstance, 16);
 	}
+
 	Anim = G2EmulationQueryAnimation(In, CurrentSection);
-	while ((Ptr = PeekMessageQueue(&In->SectionList[CurrentSection].Event)) != NULL)
+
+	while (Ptr = PeekMessageQueue(&In->SectionList[CurrentSection].Event))
 	{
 		switch (Ptr->ID)
 		{
 		case 0x100001:
 			if (CurrentSection == 0)
 			{
-				ControlFlag = 9;
-				PhysicsMode = 3;
-				if ((Raziel.Senses.EngagedMask & 0x1000) && Raziel.Senses.heldClass != 3)
+				ControlFlag = 0x9;
+
+				PhysicsMode = 0x3;
+
+				if (((Raziel.Senses.EngagedMask & 0x1000)) && (Raziel.Senses.heldClass != 0x3))
 				{
 					razAlignYRotMove(Raziel.Senses.EngagedList[12].instance, 220, &In->CharacterInstance->position, &In->CharacterInstance->rotation, 0);
+
 					INSTANCE_Post(Raziel.Senses.EngagedList[12].instance, 0x1000014, 1);
 				}
+
 				G2EmulationSwitchAnimationAlpha(In, CurrentSection, 78, 0, 4, 1, 4);
 			}
+
 			if (CurrentSection == 2)
 			{
 				G2EmulationSwitchAnimation(In, CurrentSection, 0, 0, 4, 2);
 			}
+
 			if (CurrentSection == 1)
 			{
-				if (razGetHeldWeapon() != NULL || (Raziel.Senses.EngagedMask & 0x1000))
+				if ((razGetHeldWeapon() != NULL) || ((Raziel.Senses.EngagedMask & 0x1000)))
 				{
 					G2EmulationSwitchAnimation(In, CurrentSection, 94, 0, 4, 1);
 				}
@@ -1005,26 +1013,33 @@ void StateHandlerSoulSuck(struct __CharacterState* In, int CurrentSection, int D
 				{
 					G2EmulationSwitchAnimation(In, CurrentSection, 78, 0, 4, 1);
 				}
+
 				Raziel.Mode |= 0x10000000;
 			}
+
 			break;
 		case 0x100004:
 			if (CurrentSection == 1)
 			{
 				razSetCowlNoDraw(1);
-				ControlFlag &= 0xFFFFFFBF;
-				Raziel.Mode &= 0xEFFFFFFF;
-				if (Raziel.Senses.EngagedMask & 0x1000)
+
+				ControlFlag &= ~0x40;
+
+				Raziel.Mode &= ~0x10000000;
+
+				if ((Raziel.Senses.EngagedMask & 0x1000))
 				{
 					INSTANCE_Post(Raziel.Senses.EngagedList[12].instance, 0x1000014, 0);
 				}
 			}
+
 			break;
 		case 0x1000006:
 		case 0x20000002:
 			if (Anim == 79)
 			{
 				G2EmulationSwitchAnimation(In, CurrentSection, 47, 0, 3, 1);
+
 				PurgeMessageQueue(&In->SectionList[CurrentSection].Event);
 			}
 			else
@@ -1038,10 +1053,12 @@ void StateHandlerSoulSuck(struct __CharacterState* In, int CurrentSection, int D
 					StateSwitchStateData(In, CurrentSection, Raziel.returnState, 0);
 				}
 			}
-			if (((Raziel.Senses.EngagedMask & 0x1000) != 0) && (CurrentSection == 0))
+
+			if (((Raziel.Senses.EngagedMask & 0x1000)) && (CurrentSection == 0))
 			{
 				INSTANCE_Post(Raziel.Senses.EngagedList[12].instance, 0x1000014, 0);
 			}
+
 			break;
 		case 0x8000000:
 			if (Anim == 47)
@@ -1055,10 +1072,12 @@ void StateHandlerSoulSuck(struct __CharacterState* In, int CurrentSection, int D
 					StateSwitchStateData(In, CurrentSection, &StateHandlerIdle, SetControlInitIdleData(0, 0, 3));
 				}
 			}
+
 			if (Anim == 78)
 			{
 				G2EmulationSwitchAnimation(In, CurrentSection, 79, 0, 0, 1);
 			}
+
 			if (Anim == 80)
 			{
 				if ((PadData[0] & RazielCommands[1]))
@@ -1066,6 +1085,7 @@ void StateHandlerSoulSuck(struct __CharacterState* In, int CurrentSection, int D
 					G2EmulationSwitchAnimation(In, CurrentSection, 79, 0, 8, 1);
 					break;
 				}
+
 				if (Raziel.returnState != NULL)
 				{
 					StateSwitchStateData(In, CurrentSection, Raziel.returnState, 0);
@@ -1075,23 +1095,28 @@ void StateHandlerSoulSuck(struct __CharacterState* In, int CurrentSection, int D
 					StateSwitchStateData(In, CurrentSection, &StateHandlerIdle, SetControlInitIdleData(0, 0, 3));
 				}
 			}
+
 			break;
 		case 0x1000016:
-			if ((gameTrackerX.debugFlags2 & 0x800) && (CurrentSection == 1))
+			if (((gameTrackerX.debugFlags2 & 0x800)) && (CurrentSection == 1))
 			{
 				GainHealth(Ptr->Data);
-				razSetPlayerEventHistory(4096);
+
+				razSetPlayerEventHistory(0x1000);
 			}
+
 			break;
 		case 0x1000009:
 			G2EmulationSwitchAnimation(In, CurrentSection, 80, 0, 2, 1);
 			break;
 		case 0x4020000:
 			SwimData = (struct evPhysicsSwimData*)Ptr->Data;
-			if (SwimData->rc & 64)
+
+			if ((SwimData->rc & 0x40))
 			{
 				StateHandlerInitSwim(In, CurrentSection, 0);
 			}
+
 			break;
 		case 0x80000010:
 			break;
@@ -1100,6 +1125,7 @@ void StateHandlerSoulSuck(struct __CharacterState* In, int CurrentSection, int D
 		default:
 			DefaultStateHandler(In, CurrentSection, Data);
 		}
+
 		DeMessageQueue(&In->SectionList[CurrentSection].Event);
 	}
 }
