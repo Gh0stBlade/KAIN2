@@ -8,7 +8,7 @@ struct _ReadQueueEntry
 	long readCurSize; // size=0, offset=8
 	void* readStartDest; // size=0, offset=12
 	void* readCurDest; // size=0, offset=16
-	long readStatus; // size=0, offset=20
+	volatile long readStatus; // size=0, offset=20
 	long checksum; // size=0, offset=24
 	long checksumType; // size=0, offset=28
 	void* retFunc; // size=0, offset=32
@@ -80,7 +80,7 @@ struct _NonBlockLoadEntry
 struct _LoadStatus 
 {
 	struct _ReadQueueEntry currentQueueFile; // size=44, offset=0
-	long state; // size=0, offset=44
+	volatile long state; // size=0, offset=44
 	long bytesTransferred; // size=0, offset=48
 	long lastCheckPos; // size=0, offset=52
 	long cdWaitTime; // size=0, offset=56
@@ -99,7 +99,7 @@ struct _LoadStatus
 	long endLoadTime; // size=0, offset=140
 	long currentDirLoading; // size=0, offset=144
 	long currentSector; // size=0, offset=148
-	long sectorTime; // size=0, offset=152
+	volatile long sectorTime; // size=0, offset=152
 	long seekTime; // size=0, offset=156
 };
 
