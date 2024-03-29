@@ -1479,11 +1479,11 @@ void StateHandlerStartMove(struct __CharacterState* In, int CurrentSection, int 
 	}
 }
 
-void StateInitMove(struct __CharacterState* In, int CurrentSection, int Frames)//Matching - 97.69%
+void StateInitMove(struct __CharacterState* In, int CurrentSection, int Frames) // Matching - 100%
 {
 	if ((PadData[0] & RazielCommands[7]))
 	{
-		Raziel.Mode = 2;
+		Raziel.Mode = 0x2;
 
 		if ((ControlFlag & 0x800000))
 		{
