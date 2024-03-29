@@ -1248,7 +1248,7 @@ void StateHandlerStartTurn(struct __CharacterState* In, int CurrentSection, int 
 	}
 }
 
-void StateInitStartMove(struct __CharacterState* In, int CurrentSection, int Frame)//Matching - 92.02%
+void StateInitStartMove(struct __CharacterState* In, int CurrentSection, int Frame) // Matching - 100%
 {
 	if ((PadData[0] & RazielCommands[7]))
 	{
