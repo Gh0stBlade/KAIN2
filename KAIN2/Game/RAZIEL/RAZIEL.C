@@ -2247,7 +2247,7 @@ void StateHandlerFall(struct __CharacterState* In, int CurrentSection, int Data)
 }
 
 
-void StateHandlerSlide(struct __CharacterState* In, int CurrentSection, int Data)  // Matching - 99.71%
+void StateHandlerSlide(struct __CharacterState* In, int CurrentSection, int Data) // Matching - 100%
 {
 	struct __Event* Ptr;
 
@@ -2261,18 +2261,25 @@ void StateHandlerSlide(struct __CharacterState* In, int CurrentSection, int Data
 				if (CurrentSection == 0)
 				{
 					Raziel.Mode = 0x400000;
+
 					ControlFlag = 0x509;
+
 					PhysicsMode = 0;
+
 					ResetPhysics(In->CharacterInstance, -16);
+
 					Raziel.soundHandle = SOUND_Play3dSound(&In->CharacterInstance->position, 30, 0, 60, 3500);
 				}
+
 				break;
 			case 0x100004:
 				if (Raziel.soundHandle != 0)
 				{
 					SndEndLoop(Raziel.soundHandle);
+
 					Raziel.soundHandle = 0;
 				}
+
 				break;
 			case 0x100000:
 				StateSwitchStateData(In, CurrentSection, &StateHandlerIdle, SetControlInitIdleData(0, 0, 3));
@@ -2293,9 +2300,9 @@ void StateHandlerSlide(struct __CharacterState* In, int CurrentSection, int Data
 				break;
 			default:
 				DefaultStateHandler(In, CurrentSection, Data);
-				break;
 			}
 		}
+
 		DeMessageQueue(&In->SectionList[CurrentSection].Event);
 	}
 }
