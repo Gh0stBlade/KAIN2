@@ -5,7 +5,7 @@ struct _ReadQueueEntry
 {
 	long readStartPos; // size=0, offset=0
 	long readSize; // size=0, offset=4
-	long readCurSize; // size=0, offset=8
+	volatile long readCurSize; // size=0, offset=8
 	void* readStartDest; // size=0, offset=12
 	void* readCurDest; // size=0, offset=16
 	volatile long readStatus; // size=0, offset=20

@@ -233,7 +233,7 @@ void LOAD_UpdateCheckSum(long bytes) // Matching - 100%
 	}
 }
 
-void LOAD_DoCDReading()//Matching - 83.60%
+void LOAD_DoCDReading() // Matching - 100%
 {
 	long bytesLoaded;
 	long readSoFar;
