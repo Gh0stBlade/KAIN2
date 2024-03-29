@@ -1068,7 +1068,7 @@ void STREAM_DoObjectLoadAndDump(struct _StreamUnit* streamUnit)  // Matching - 1
 	STREAM_RemoveAllObjectsNotInUse();
 }
 
-void STREAM_FinishLoad(struct _StreamUnit* streamUnit) // Matching - 86.63%
+void STREAM_FinishLoad(struct _StreamUnit* streamUnit) // Matching - 90.24%
 {
 	struct Level* level;
 	char sfxName[80];
@@ -1088,7 +1088,7 @@ void STREAM_FinishLoad(struct _StreamUnit* streamUnit) // Matching - 86.63%
 
 	LoadLevelObjects(streamUnit);
 
-	streamUnit->FogColor = (level->cpad1 << 24) | (level->backColorB << 16) | (level->backColorG << 8) | (level->backColorR);
+	streamUnit->FogColor = (level->backColorB << 16) | (level->backColorG << 8) | (level->backColorR);
 
 	level->fogFar = streamUnit->TargetFogFar;
 	level->fogNear = streamUnit->TargetFogNear;
