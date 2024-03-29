@@ -1555,28 +1555,36 @@ void StateInitMove(struct __CharacterState* In, int CurrentSection, int Frames) 
 	}
 }
 
-void StateHandlerMove(struct __CharacterState* In, int CurrentSection, int Data)  // Matching - 99.54%
+void StateHandlerMove(struct __CharacterState* In, int CurrentSection, int Data) // Matching - 100%
 {
 	struct __Event* Ptr;
 	int Anim;
 	int data;
 
 	Anim = G2EmulationQueryAnimation(In, CurrentSection);
+
 	In->SectionList[CurrentSection].Data1++;
-	while ((Ptr = PeekMessageQueue(&In->SectionList[CurrentSection].Event)) != NULL)
+
+	while (Ptr = PeekMessageQueue(&In->SectionList[CurrentSection].Event))
 	{
 		switch (Ptr->ID)
 		{
 		case 0x100001:
 			In->SectionList[CurrentSection].Data2 = -1;
+
 			StateInitMove(In, CurrentSection, Ptr->Data);
-			Raziel.constrictFlag = 1;
+
+			Raziel.constrictFlag = 0x1;
+
 			SteerSwitchMode(In->CharacterInstance, 2);
+
 			In->SectionList[CurrentSection].Data1 = 0;
+
 			Raziel.passedMask |= 0x1000;
 			break;
 		case 0x100004:
 			FX_EndConstrict(0, NULL);
+
 			In->SectionList[CurrentSection].Data1 = 0;
 			break;
 		case 0x80000008:
@@ -1593,15 +1601,16 @@ void StateHandlerMove(struct __CharacterState* In, int CurrentSection, int Data)
 					razSetPauseTranslation(In->CharacterInstance);
 				}
 			}
+
 			break;
 		case 0x2000000:
-			if ((Raziel.Senses.EngagedMask & 32) != 0)
+			if ((Raziel.Senses.EngagedMask & 0x20))
 			{
 				razPickupAndGrab(In, CurrentSection);
 				break;
 			}
 		case 0x80000002:
-			if ((PadData[0] & RazielCommands[6]) != 0)  // double check command index
+			if ((PadData[0] & RazielCommands[6]))
 			{
 				break;
 			}
@@ -1610,9 +1619,11 @@ void StateHandlerMove(struct __CharacterState* In, int CurrentSection, int Data)
 			{
 				break;
 			}
+
 			if (In->CharacterInstance->tface != NULL)
 			{
 				EnMessageQueueData(&In->SectionList[0].Defer, Ptr->ID, 0);
+
 				ControlFlag |= 0x800000;
 			}
 		case 0:
@@ -1624,7 +1635,7 @@ void StateHandlerMove(struct __CharacterState* In, int CurrentSection, int Data)
 				}
 				else
 				{
-					if ((Raziel.Mode == 2) || (Anim == 123) || (Anim == 124))
+					if ((Raziel.Mode == 0x2) || (Anim == 123) || (Anim == 124))
 					{
 						StateSwitchStateCharacterData(In, &StateHandlerIdle, SetControlInitIdleData(0, 0, 3));
 					}
@@ -1632,26 +1643,31 @@ void StateHandlerMove(struct __CharacterState* In, int CurrentSection, int Data)
 					{
 						StateSwitchStateCharacterData(In, &StateHandlerCrouch, 0);
 					}
-					else if ((Ptr->Data < 4) && (ControlFlag & 0x800000) == 0)
+					else if ((Ptr->Data < 4) && (!(ControlFlag & 0x800000)))
 					{
 						ControlFlag |= 0x2000;
-						if ((PadData[0] & 0x8000000F) == 0)
+
+						if (!(PadData[0] & 0x8000000F))
 						{
 							EnMessageQueueData(&In->SectionList[CurrentSection].Defer, 0, Ptr->Data + 1);
+
 							razApplyMotion(In, 0);
 						}
 					}
 					else
 					{
 						data = 0;
-						if ((Raziel.passedMask & 0x2000) != 0)
+
+						if ((Raziel.passedMask & 0x2000))
 						{
 							data = 30;
 						}
-						if ((Raziel.passedMask & 0x1000) != 0)
+
+						if ((Raziel.passedMask & 0x1000))
 						{
 							data = 60;
 						}
+
 						if (CurrentSection == 0)
 						{
 							StateSwitchStateCharacterData(In, &StateHandlerStopMove, data);
@@ -1659,9 +1675,10 @@ void StateHandlerMove(struct __CharacterState* In, int CurrentSection, int Data)
 					}
 				}
 			}
+
 			break;
 		case 0x10000000:
-			if ((Raziel.Magnitude < 0x1000) != 0)
+			if (Raziel.Magnitude < 4096)
 			{
 				StateInitMove(In, CurrentSection, 3);
 			}
@@ -1669,9 +1686,10 @@ void StateHandlerMove(struct __CharacterState* In, int CurrentSection, int Data)
 			{
 				StateInitMove(In, CurrentSection, 0);
 			}
+
 			break;
 		case 0x80000004:
-			if ((Raziel.Mode & 0x200000) == 0)
+			if (!(Raziel.Mode & 0x200000))
 			{
 				if (CurrentSection == 2)
 				{
@@ -1681,21 +1699,26 @@ void StateHandlerMove(struct __CharacterState* In, int CurrentSection, int Data)
 				{
 					G2EmulationSwitchAnimation(In, CurrentSection, 1, 0, 3, 2);
 				}
-				Raziel.Mode = 2;
+
+				Raziel.Mode = 0x2;
+
 				ControlFlag |= 0x2000;
 			}
+
 			break;
 		case 0x20000004:
 		case 0x20000008:
-			Raziel.Mode = 4;
+			Raziel.Mode = 0x4;
+
 			ControlFlag &= ~0x2000;
 			break;
 		case 0x80000001:
 			if (CurrentSection == 0)
 			{
-				if ((PadData[0] & RazielCommands[6]) != 0)  // double check command index
+				if ((PadData[0] & RazielCommands[6]))
 				{
-					Raziel.Mode = 32;
+					Raziel.Mode = 0x20;
+
 					if (razSwitchVAnimCharacterGroup(In->CharacterInstance, 32, NULL, NULL) != 0)
 					{
 						G2EmulationSwitchAnimationCharacter(In, 26, 0, 1, 1);
@@ -1703,25 +1726,30 @@ void StateHandlerMove(struct __CharacterState* In, int CurrentSection, int Data)
 				}
 				else
 				{
-					Raziel.Mode = 8;
+					Raziel.Mode = 0x8;
+
 					if (razSwitchVAnimCharacterGroup(In->CharacterInstance, 0, NULL, NULL) != 0)
 					{
 						G2EmulationSwitchAnimationCharacter(In, 26, 0, 0, 1);
 					}
 				}
+
 				StateSwitchStateCharacterData(In, &StateHandlerCompression, 0);
+
 				ControlFlag &= ~0x2000;
 			}
+
 			break;
 		case 0x80000000:
-			if ((PadData[0] & RazielCommands[7]) == 0)  // double check command index
+			if (!(PadData[0] & RazielCommands[7]))
 			{
 				if (In->SectionList[CurrentSection].Data2 == 68)
 				{
-					if ((CurrentSection == 1) && (Raziel.Senses.Flags & 0x80) == 0)
+					if ((CurrentSection == 1) && (!(Raziel.Senses.Flags & 0x80)))
 					{
 						StateSwitchStateData(In, 1, &StateHandlerAttack2, 10);
 					}
+
 					Raziel.dropOffHeight = 200;
 					Raziel.fallZVelocity = -96;
 					break;
@@ -1735,7 +1763,7 @@ void StateHandlerMove(struct __CharacterState* In, int CurrentSection, int Data)
 				}
 				else
 				{
-					if ((Raziel.Senses.Flags & 0x80) == 0)
+					if (!(Raziel.Senses.Flags & 0x80))
 					{
 						StateSwitchStateData(In, CurrentSection, &StateHandlerAttack2, 0);
 					}
@@ -1743,17 +1771,20 @@ void StateHandlerMove(struct __CharacterState* In, int CurrentSection, int Data)
 			}
 			else
 			{
-				if ((Raziel.Senses.Flags & 0x80) == 0)
+				if (!(Raziel.Senses.Flags & 0x80))
 				{
 					StateSwitchStateData(In, CurrentSection, &StateHandlerAttack2, 0);
 				}
 			}
+
 			break;
 		default:
 			DefaultStateHandler(In, CurrentSection, Data);
 		}
+
 		DeMessageQueue(&In->SectionList[CurrentSection].Event);
 	}
+
 	if ((CurrentSection == 0) && (In->SectionList[CurrentSection].Process != &StateHandlerMove))
 	{
 		razResetMotion(In->CharacterInstance);
