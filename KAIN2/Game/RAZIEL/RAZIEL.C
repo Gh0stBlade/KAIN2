@@ -156,7 +156,7 @@ void InitStates(struct _Instance* PlayerInstance) // Matching - 99.97%
 	gameTrackerX.raziel_collide_override = 0;
 }
 
-void StateInitIdle(struct __CharacterState* In, int CurrentSection, int Ptr)//Matching - 99.73%
+void StateInitIdle(struct __CharacterState* In, int CurrentSection, int Ptr) // Matching - 100%
 {
 	struct evControlInitIdleData* data;
 	struct _Instance* linkWeapon;
@@ -193,7 +193,7 @@ void StateInitIdle(struct __CharacterState* In, int CurrentSection, int Ptr)//Ma
 	}
 	else
 	{
-		if (linkWeapon == NULL || CurrentSection != 1)
+		if ((linkWeapon == NULL) || (CurrentSection != 1))
 		{
 			if (data->mode == 0)
 			{
@@ -206,7 +206,7 @@ void StateInitIdle(struct __CharacterState* In, int CurrentSection, int Ptr)//Ma
 		}
 		else
 		{
-			if ((unsigned)(data->mode - 2) < 3)
+			if ((data->mode == 2) || (data->mode == 3) || (data->mode == 4))
 			{
 				data->mode = 0;
 			}
@@ -215,7 +215,7 @@ void StateInitIdle(struct __CharacterState* In, int CurrentSection, int Ptr)//Ma
 			{
 			case 0:
 				break;
-			case 1:
+			case 0x1:
 			{
 				if (data->mode == 0)
 				{
@@ -225,6 +225,7 @@ void StateInitIdle(struct __CharacterState* In, int CurrentSection, int Ptr)//Ma
 				{
 					G2EmulationSwitchAnimation(In, 1, 127, 0, data->frames, 2);
 				}
+
 				break;
 			}
 			case 0x1000:
@@ -239,9 +240,10 @@ void StateInitIdle(struct __CharacterState* In, int CurrentSection, int Ptr)//Ma
 				{
 					G2EmulationSwitchAnimation(In, 1, 137, 0, data->frames, 2);
 				}
+
 				break;
 			}
-			case 2:
+			case 0x2:
 			{
 				if (data->mode == 0)
 				{
@@ -251,17 +253,17 @@ void StateInitIdle(struct __CharacterState* In, int CurrentSection, int Ptr)//Ma
 				{
 					G2EmulationSwitchAnimation(In, 1, 126, 0, data->frames, 2);
 				}
+
 				break;
 			}
-
-			case 3:
+			case 0x3:
 			{
 				G2EmulationSwitchAnimation(In, 1, 98, 0, data->frames, 2);
 				break;
 			}
 			default:
 			{
-				if (Raziel.Senses.heldClass != CurrentSection && Raziel.Senses.heldClass == CurrentSection)
+				if ((Raziel.Senses.heldClass != CurrentSection) && (Raziel.Senses.heldClass == CurrentSection))
 				{
 					if (data->mode == 0)
 					{
@@ -272,6 +274,7 @@ void StateInitIdle(struct __CharacterState* In, int CurrentSection, int Ptr)//Ma
 						G2EmulationSwitchAnimation(In, 1, 127, 0, data->frames, 2);
 					}
 				}
+
 				break;
 			}
 			}
