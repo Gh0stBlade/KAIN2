@@ -119,7 +119,7 @@ void razAlignYRotMoveInterp(struct _Instance* source, struct _Instance* dest, sh
 	source->rotation.z = rotation.z;
 }
 
-void razAlignYRotInterp(struct _Instance* source, _Position* dest, unsigned char segNumber, int Frames)
+void razAlignYRotInterp(struct _Instance* source, struct _Position* dest, unsigned char segNumber, int Frames) // Matching - 100%
 {
 	source->rotation.z = MATH3D_AngleFromPosToPos(&source->position, dest);
 }
