@@ -22,7 +22,7 @@ extern void SetDropPhysics(struct _Instance *instance, struct __Player *player);
 
 extern void InitExternalForces(struct __Force *Forces, int MaxForces); // 0x8009A4F0
 
-extern void SetExternalForce(struct __Force *In, short x, short y, short z, int Space, int Friction); // 0x8009A530
+extern void SetExternalForce(struct __Force *In, short x, short y, short z, short Space, int Friction); // 0x8009A530
 
 extern void SetExternalTransitionForce(struct __Force *in, struct _Instance *instance, int time, int x, int y, int z); // 0x8009A570
 
