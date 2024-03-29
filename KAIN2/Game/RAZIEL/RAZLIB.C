@@ -286,7 +286,7 @@ void razSpectralShift()
 	}
 }
 
-void razMaterialShift()
+void razMaterialShift() // Matching - 100%
 {
 	if (Raziel.CurrentPlane == 2)
 	{
@@ -294,7 +294,7 @@ void razMaterialShift()
 		{
 			Raziel.CurrentPlane = 1;
 
-			gameTrackerX.playerInstance->flags &= 0xF7FFFFFF;
+			gameTrackerX.playerInstance->flags2 &= ~0x8000000;
 
 			Raziel.HitPoints = GetMaxHealth();
 
