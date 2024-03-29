@@ -29,7 +29,7 @@ void LOAD_InitCd() // Matching - 100%
 #endif
 }
 
-void LOAD_CdSeekCallback(unsigned char intr, unsigned char *result)//Matching - 88.16%
+void LOAD_CdSeekCallback(unsigned char intr, unsigned char *result) // Matching - 100%
 { 
 	if (loadStatus.state == 1)
 	{
