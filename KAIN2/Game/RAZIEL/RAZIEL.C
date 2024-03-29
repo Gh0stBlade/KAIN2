@@ -1263,30 +1263,37 @@ void StateInitStartMove(struct __CharacterState* In, int CurrentSection, int Fra
 	ControlFlag |= 0x2000;
 }
 
-void StateHandlerStartMove(struct __CharacterState* In, int CurrentSection, int Data)  // Matching - 99.23%
+void StateHandlerStartMove(struct __CharacterState* In, int CurrentSection, int Data) // Matching - 100%
 {
 	struct __Event* Ptr;
 	int mode;
 
-	while ((Ptr = PeekMessageQueue(&In->SectionList[CurrentSection].Event)) != NULL)
+	while (Ptr = PeekMessageQueue(&In->SectionList[CurrentSection].Event))
 	{
 		switch (Ptr->ID)
 		{
 		case 0x100001:
 			StateInitStartMove(In, CurrentSection, Ptr->Data);
+
 			In->SectionList[CurrentSection].Data2 = 1;
+
 			if (CurrentSection == 0)
 			{
 				ControlFlag = 0x2A119;
+
 				Raziel.Mode &= 0x200800;
-				Raziel.Mode |= 4;
-				PhysicsMode = 3;
+				Raziel.Mode |= 0x4;
+
+				PhysicsMode = 0x3;
+
 				SteerSwitchMode(In->CharacterInstance, 2);
+
 				Raziel.movementMinRate = 3276;
 				Raziel.movementMinAnalog = 1024;
 				Raziel.movementMaxAnalog = 4096;
 				Raziel.passedMask = 0;
 			}
+
 			break;
 		case 0x8000000:
 		case 0x8000001:
@@ -1304,17 +1311,20 @@ void StateHandlerStartMove(struct __CharacterState* In, int CurrentSection, int 
 					G2EmulationSetMode(In, CurrentSection, 0);
 				}
 			}
-			if ((Raziel.passedMask & 2) != 0)
+
+			if ((Raziel.passedMask & 0x2))
 			{
-				if ((PadData[0] & 0x8000000F) != 0)
+				if ((PadData[0] & 0x8000000F))
 				{
 					G2EmulationSetMode(In, CurrentSection, 2);
-					ControlFlag &= -0x2001;
+
+					ControlFlag &= ~0x2000;
 				}
 			}
+
 			break;
 		case 0x2000000:
-			if ((Raziel.Senses.EngagedMask & 32) != 0)
+			if ((Raziel.Senses.EngagedMask & 0x20))
 			{
 				razPickupAndGrab(In, CurrentSection);
 				break;
@@ -1326,63 +1336,77 @@ void StateHandlerStartMove(struct __CharacterState* In, int CurrentSection, int 
 				if (In->CharacterInstance->tface != NULL)
 				{
 					EnMessageQueueData(&In->SectionList[0].Defer, Ptr->ID, 0);
+
 					ControlFlag |= 0x800000;
 				}
 			}
 		case 0:
 			if (CurrentSection == 0)
 			{
-				if (((Raziel.passedMask & 7) != 0) || ((G2EmulationQueryMode(In, 0)) == 0))
+				if (((Raziel.passedMask & 0x7)) || (G2EmulationQueryMode(In, 0) == 0))
 				{
 					mode = Raziel.passedMask;
-					if ((Raziel.passedMask & 1) != 0)
+
+					if ((Raziel.passedMask & 0x1))
 					{
-						mode = 2;
+						mode = 0x2;
 					}
-					else if ((Raziel.passedMask & 2) != 0)
+					else if ((Raziel.passedMask & 0x2))
 					{
-						mode = 3;
+						mode = 0x3;
 					}
 					else
 					{
-						mode &= 4;
+						mode &= 0x4;
 					}
+
 					StateSwitchStateCharacterData(In, &StateHandlerIdle, SetControlInitIdleData(mode, 5, 5));
-					ControlFlag &= -0x2001;
+
+					ControlFlag &= ~0x2000;
 				}
+
 				ControlFlag |= 0x2000;
 			}
+
 			break;
 		case 0x80000001:
 			if (CurrentSection == 0)
 			{
-				Raziel.Mode = 8;
+				Raziel.Mode = 0x8;
+
 				if (razSwitchVAnimCharacterGroup(In->CharacterInstance, 0, NULL, NULL) != 0)
 				{
 					G2EmulationSwitchAnimationCharacter(In, 26, 0, 0, 1);
 				}
+
 				StateSwitchStateCharacterData(In, &StateHandlerCompression, 0);
-				ControlFlag &= -0x2001;
+
+				ControlFlag &= ~0x2000;
 			}
+
 			break;
 		case 0x80000000:
-			if ((Raziel.passedMask & 4) != 0)
+			if ((Raziel.passedMask & 0x4))
 			{
 				if (CurrentSection == 1)
 				{
-					if ((Raziel.Senses.Flags & 128) == 0)
+					if (!(Raziel.Senses.Flags & 0x80))
 					{
 						StateSwitchStateData(In, 1, &StateHandlerAttack2, 10);
 					}
+
 					break;
 				}
+
 				StateSwitchStateData(In, CurrentSection, &StateHandlerMove, 0);
 				break;
 			}
-			if ((CurrentSection == 0) && (Raziel.Senses.Flags & 128) == 0)
+
+			if ((CurrentSection == 0) && (!(Raziel.Senses.Flags & 0x80)))
 			{
 				StateSwitchStateCharacterData(In, &StateHandlerAttack2, 0);
 			}
+
 			break;
 		case 0x80000004:
 			StateSwitchStateData(In, CurrentSection, &StateHandlerMove, 3);
@@ -1390,20 +1414,24 @@ void StateHandlerStartMove(struct __CharacterState* In, int CurrentSection, int 
 		case 0x4000001:
 			if (CurrentSection == 0)
 			{
-				if ((G2EmulationQueryFrame(In, 0) < 7) == 0)
+				if (G2EmulationQueryFrame(In, 0) >= 7)
 				{
 					PhysicsMode = 0;
+
 					SetDropPhysics(In->CharacterInstance, &Raziel);
-					if ((In->CharacterInstance->zVel < -32) != 0)
+
+					if (In->CharacterInstance->zVel < -32)
 					{
 						if (razSwitchVAnimCharacterGroup(In->CharacterInstance, 24, NULL, NULL) != 0)
 						{
 							G2EmulationSwitchAnimationCharacter(In, 36, 0, 4, 1);
 						}
+
 						StateSwitchStateCharacterData(In, &StateHandlerFall, 0);
 					}
 				}
 			}
+
 			break;
 		case 0x4010401:
 			StateSwitchStateData(In, CurrentSection, &StateHandlerIdle, SetControlInitIdleData(0, 5, 5));
@@ -1413,31 +1441,38 @@ void StateHandlerStartMove(struct __CharacterState* In, int CurrentSection, int 
 		default:
 			DefaultStateHandler(In, CurrentSection, Data);
 		}
+
 		DeMessageQueue(&In->SectionList[CurrentSection].Event);
 	}
-	if (((PadData[0] & 0x8000000F) != 0) && (In->SectionList[CurrentSection].Data2 != 0))
+
+	if (((PadData[0] & 0x8000000F)) && (In->SectionList[CurrentSection].Data2 != 0))
 	{
-		if ((++In->SectionList[CurrentSection].Data2 >= 8) != 0)
+		if (++In->SectionList[CurrentSection].Data2 >= 8)
 		{
 			G2EmulationSetMode(In, CurrentSection, 1);
-			ControlFlag &= 0xFFFFDFFF;
+
+			ControlFlag &= ~0x2000;
+
 			In->SectionList[CurrentSection].Data2 = 0;
 		}
 	}
+
 	if ((G2EmulationQueryFrame(In, CurrentSection) >= 11) && (CurrentSection == 0) && (CheckHolding(In->CharacterInstance) != 0))
 	{
 		if (In->SectionList[1].Process == &StateHandlerStartMove)
 		{
 			StateSwitchStateData(In, 1, &StateHandlerMove, 11);
 		}
+
 		if (In->SectionList[2].Process == &StateHandlerStartMove)
 		{
 			StateSwitchStateData(In, 2, &StateHandlerMove, 11);
 		}
 	}
-	if ((Raziel.Magnitude != 0) && ((Raziel.Magnitude < 4096) != 0))
+
+	if ((Raziel.Magnitude != 0) && (Raziel.Magnitude < 4096))
 	{
-		if ((Raziel.passedMask & 1))
+		if ((Raziel.passedMask & 0x1))
 		{
 			StateSwitchStateData(In, CurrentSection, &StateHandlerMove, 0);
 		}
