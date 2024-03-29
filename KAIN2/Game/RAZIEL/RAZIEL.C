@@ -1714,19 +1714,20 @@ void StateHandlerMove(struct __CharacterState* In, int CurrentSection, int Data)
 	}
 }
 
-void StateHandlerStopMove(struct __CharacterState* In, int CurrentSection, int Data)  // Matching - 99.71%
+void StateHandlerStopMove(struct __CharacterState* In, int CurrentSection, int Data) // Matching - 100%
 {
 	struct __Event* Ptr;
 
-	while ((Ptr = PeekMessageQueue(&In->SectionList[CurrentSection].Event)) != NULL)
+	while (Ptr = PeekMessageQueue(&In->SectionList[CurrentSection].Event))
 	{
 		switch (Ptr->ID)
 		{
 		case 0x100001:
 			if (CurrentSection == 0)
 			{
-				Raziel.Mode = 4;
-				if ((ControlFlag & 0x800000) != 0)
+				Raziel.Mode = 0x4;
+
+				if ((ControlFlag & 0x800000))
 				{
 					ControlFlag = 0x800000;
 				}
@@ -1734,9 +1735,12 @@ void StateHandlerStopMove(struct __CharacterState* In, int CurrentSection, int D
 				{
 					ControlFlag = 0;
 				}
+
 				ControlFlag |= 0x2119;
-				PhysicsMode = 3;
+
+				PhysicsMode = 0x3;
 			}
+
 			if (Ptr->Data == 60)
 			{
 				if (razSwitchVAnimGroup(In->CharacterInstance, CurrentSection, 88, -1, -1) != 0)
@@ -1755,6 +1759,7 @@ void StateHandlerStopMove(struct __CharacterState* In, int CurrentSection, int D
 			{
 				StateSwitchStateData(In, CurrentSection, &StateHandlerIdle, SetControlInitIdleData(0, 0, 6));
 			}
+
 			break;
 		case 0x10000000:
 			StateSwitchStateData(In, CurrentSection, &StateHandlerStartMove, 0);
@@ -1765,6 +1770,7 @@ void StateHandlerStopMove(struct __CharacterState* In, int CurrentSection, int D
 				if (Ptr->Data == 0)
 				{
 					razSetPauseTranslation(In->CharacterInstance);
+
 					StateSwitchStateCharacterData(In, &StateHandlerIdle, SetControlInitIdleData(0, 0, 5));
 				}
 				else
@@ -1772,6 +1778,7 @@ void StateHandlerStopMove(struct __CharacterState* In, int CurrentSection, int D
 					razResetPauseTranslation(In->CharacterInstance);
 				}
 			}
+
 			break;
 		case 0x2000000:
 		case 0x80000002:
@@ -1785,17 +1792,21 @@ void StateHandlerStopMove(struct __CharacterState* In, int CurrentSection, int D
 		case 0x80000001:
 			if (CurrentSection == 0)
 			{
-				Raziel.Mode = 16;
+				Raziel.Mode = 0x10;
+
 				if (razSwitchVAnimCharacterGroup(In->CharacterInstance, 0, NULL, NULL) != 0)
 				{
 					G2EmulationSwitchAnimationCharacter(In, 26, 0, 0, 1);
 				}
+
 				StateSwitchStateCharacterData(In, &StateHandlerCompression, 0);
 			}
+
 			break;
 		default:
 			DefaultStateHandler(In, CurrentSection, Data);
 		}
+
 		DeMessageQueue(&In->SectionList[CurrentSection].Event);
 	}
 }
