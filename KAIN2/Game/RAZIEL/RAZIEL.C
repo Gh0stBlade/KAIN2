@@ -2148,7 +2148,7 @@ void StateHandlerJump(struct __CharacterState* In, int CurrentSection, int Data)
 	}
 }
 
-void StateHandlerFall(struct __CharacterState* In, int CurrentSection, int Data)  // Matching - 99.23%
+void StateHandlerFall(struct __CharacterState* In, int CurrentSection, int Data) // Matching - 100%
 {
 	struct __Event* Ptr;
 	int Moving;
@@ -2156,12 +2156,15 @@ void StateHandlerFall(struct __CharacterState* In, int CurrentSection, int Data)
 	struct evPhysicsSwimData* SwimData;
 
 	Moving = 0;
-	DeferFlag = 1;
-	if (CurrentSection == 0 && (STREAM_GetLevelWithID(In->CharacterInstance->currentStreamUnitID)->unitFlags & 0x1000))
+
+	DeferFlag = 0x1;
+
+	if ((CurrentSection == 0) && (STREAM_GetLevelWithID(In->CharacterInstance->currentStreamUnitID)->unitFlags & 0x1000))
 	{
 		EnMessageQueueData(&In->SectionList[CurrentSection].Event, 0x100000, Moving);
 	}
-	while ((Ptr = PeekMessageQueue(&In->SectionList[CurrentSection].Event)) != NULL)
+
+	while (Ptr = PeekMessageQueue(&In->SectionList[CurrentSection].Event))
 	{
 		switch (Ptr->ID)
 		{
@@ -2169,18 +2172,24 @@ void StateHandlerFall(struct __CharacterState* In, int CurrentSection, int Data)
 			if (CurrentSection == 0)
 			{
 				ControlFlag = 0x119;
-				if (Raziel.Mode != 256)
+
+				if (Raziel.Mode != 0x100)
 				{
 					ControlFlag = 0x519;
 				}
+
 				In->SectionList[CurrentSection].Data1 = 0;
+
 				Raziel.movementMinRate = 0;
+
 				PhysicsMode = 0;
 			}
-			if (Ptr->Data && (PadData[0] & RazielCommands[3]))
+
+			if ((Ptr->Data != 0) && ((PadData[0] & RazielCommands[3])))
 			{
 				EnMessageQueueData(&In->SectionList[CurrentSection].Defer, 0x80000001, 0);
 			}
+
 			break;
 		case 0x10000000:
 			Moving = 1;
@@ -2189,48 +2198,59 @@ void StateHandlerFall(struct __CharacterState* In, int CurrentSection, int Data)
 			StateSwitchStateCharacterData(In, &StateHandlerForcedGlide, 0);
 			break;
 		case 0x4010008:
-			if (DeferFlag)
+			if (DeferFlag != 0)
 			{
 				EnMessageQueueData(&In->SectionList[CurrentSection].Event, 0x4010008, 0);
+
 				DeferFlag = 0;
 			}
 			else
 			{
 				StateSwitchStateData(In, CurrentSection, &StateHandlerDeCompression, Moving);
 			}
+
 			In->SectionList[CurrentSection].Data2 = 2;
-			PhysicsMode = 3;
+
+			PhysicsMode = 0x3;
+
 			ResetPhysics(In->CharacterInstance, -16);
 			break;
 		case 0x4020000:
 			SwimData = (struct evPhysicsSwimData*)Ptr->Data;
+
 			if (SwimData->Depth < 0)
 			{
-				if (!In->CharacterInstance->zVel && In->CharacterInstance->zAccl >= 0)
+				if ((In->CharacterInstance->zVel == 0) && (In->CharacterInstance->zAccl >= 0))
 				{
 					ResetPhysics(In->CharacterInstance, -16);
 				}
 			}
+
 			Raziel.Mode &= ~0x40000;
+
 			razEnterWater(In, CurrentSection, (struct evPhysicsSwimData*)Ptr->Data);
-			if (SwimData->WaterDepth < 0 && SwimData->WaterDepth != -32767 && Raziel.CurrentPlane == 1)
+
+			if ((SwimData->WaterDepth < 0) && (SwimData->WaterDepth != -32767) && (Raziel.CurrentPlane == 1))
 			{
 				ControlFlag |= 0x2000000;
 			}
+
 			break;
 		case 0x20000001:
-			if (Raziel.Mode != 16 && Raziel.Mode != 32 && CurrentSection == 0)
+			if ((Raziel.Mode != 0x10) && (Raziel.Mode != 0x20) && (CurrentSection == 0))
 			{
 				SetDropPhysics(In->CharacterInstance, &Raziel);
 			}
+
 			break;
 		case 0x80000000:
 			break;
 		case 0x80000001:
-			if (Raziel.Senses.heldClass != 3 && !(ControlFlag & 0x2000000) && CurrentSection == 0)
+			if ((Raziel.Senses.heldClass != 0x3) && (!(ControlFlag & 0x2000000)) && (CurrentSection == 0))
 			{
 				StateSwitchStateCharacterData(In, &StateHandlerGlide, 3);
 			}
+
 			break;
 		case 0x2000000:
 			razPickupAndGrab(In, CurrentSection);
@@ -2240,6 +2260,7 @@ void StateHandlerFall(struct __CharacterState* In, int CurrentSection, int Data)
 			{
 				StateSwitchStateData(In, CurrentSection, &StateHandlerStumble, 0);
 			}
+
 			break;
 		case 0x1000001:
 			break;
@@ -2254,6 +2275,7 @@ void StateHandlerFall(struct __CharacterState* In, int CurrentSection, int Data)
 		default:
 			DefaultStateHandler(In, CurrentSection, Data);
 		}
+
 		DeMessageQueue(&In->SectionList[CurrentSection].Event);
 	}
 }
