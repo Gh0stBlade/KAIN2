@@ -2023,72 +2023,81 @@ void StateHandlerCompression(struct __CharacterState* In, int CurrentSection, in
 	}
 }
 
-void StateHandlerJump(struct __CharacterState* In, int CurrentSection, int Data)  // Matching - 98.94%
+void StateHandlerJump(struct __CharacterState* In, int CurrentSection, int Data) // Matching - 100%
 {
 	struct __Event* Ptr;
 
-	while ((Ptr = PeekMessageQueue(&In->SectionList[CurrentSection].Event)) != NULL)
+	while (Ptr = PeekMessageQueue(&In->SectionList[CurrentSection].Event))
 	{
 		switch (Ptr->ID)
 		{
 		case 0x100001:
 			if (CurrentSection == 0)
 			{
-				ControlFlag = 1297;
+				ControlFlag = 0x511;
+
 				Raziel.alarmTable = 200;
+
 				PhysicsMode = 0;
+
 				In->CharacterInstance->anim.section[CurrentSection].swAlarmTable = &Raziel.alarmTable;
 			}
+
 			In->SectionList[CurrentSection].Data2 = 0;
 			break;
 		case 0x8000004:
-			ControlFlag |= 8;
+			ControlFlag |= 0x8;
 			break;
 		case 0x8000000:
 			if (CurrentSection == 0)
 			{
-				if (Raziel.Mode == 16)
+				if (Raziel.Mode == 0x10)
 				{
-					if (razSwitchVAnimCharacterGroup(In->CharacterInstance, 24, NULL, NULL))
+					if (razSwitchVAnimCharacterGroup(In->CharacterInstance, 24, NULL, NULL) != 0)
 					{
 						G2EmulationSwitchAnimationCharacter(In, 36, 0, 4, 1);
 					}
 				}
-				else if (Raziel.Mode == 32)
+				else if (Raziel.Mode == 0x20)
 				{
-					if (razSwitchVAnimCharacterGroup(In->CharacterInstance, 40, NULL, NULL))
+					if (razSwitchVAnimCharacterGroup(In->CharacterInstance, 40, NULL, NULL) != 0)
 					{
 						G2EmulationSwitchAnimationCharacter(In, 40, 0, 10, 1);
 					}
 				}
-				else if (razSwitchVAnimCharacterGroup(In->CharacterInstance, 8, NULL, NULL))
+				else if (razSwitchVAnimCharacterGroup(In->CharacterInstance, 8, NULL, NULL) != 0)
 				{
 					G2EmulationSwitchAnimationCharacter(In, 28, 0, 7, 1);
 				}
 			}
+
 			StateSwitchStateData(In, CurrentSection, &StateHandlerFall, 0);
-			if ((PadData[0] & RazielCommands[3]) == 0)
+
+			if (!(PadData[0] & RazielCommands[3]))
 			{
 				In->SectionList[CurrentSection].Data2 = 1;
 			}
+
 			break;
 		case 0x20000001:
 			In->SectionList[CurrentSection].Data2 = 1;
+
 			if (CurrentSection == 0)
 			{
-				if ((Raziel.Mode == 16) || (Raziel.Mode == 32))
+				if ((Raziel.Mode == 0x10) || (Raziel.Mode == 0x20))
 				{
 					EnMessageQueueData(&In->SectionList[CurrentSection].Defer, 0x20000001, 0);
 				}
-				else if (((In->SectionList[CurrentSection].Data1 != 0)
-					|| ((In->SectionList[CurrentSection].Data1 = G2EmulationQueryFrame(In, CurrentSection) + 4) != 0))
-					&& (In->SectionList[CurrentSection].Data1 < G2EmulationQueryFrame(In, CurrentSection)))
+				else if (((In->SectionList[CurrentSection].Data1 != 0) || (In->SectionList[CurrentSection].Data1 = G2EmulationQueryFrame(In, CurrentSection) + 4,
+					In->SectionList[CurrentSection].Data1 != 0)) && (In->SectionList[CurrentSection].Data1 < G2EmulationQueryFrame(In, CurrentSection)))
 				{
 					SetDropPhysics(In->CharacterInstance, &Raziel);
+
 					if (razSwitchVAnimCharacterGroup(In->CharacterInstance, 8, NULL, NULL) != 0)
 					{
 						G2EmulationSwitchAnimationCharacter(In, 28, 0, 7, 1);
 					}
+
 					StateSwitchStateCharacterData(In, &StateHandlerFall, In->SectionList[CurrentSection].Data2);
 				}
 				else
@@ -2096,11 +2105,12 @@ void StateHandlerJump(struct __CharacterState* In, int CurrentSection, int Data)
 					EnMessageQueueData(&In->SectionList[CurrentSection].Defer, 0x20000001, 0);
 				}
 			}
+
 			break;
 		case 0x80000001:
 			if (G2EmulationQueryFrame(In, CurrentSection) >= 2)
 			{
-				if ((Raziel.Senses.heldClass != 3) && (CurrentSection == 0))
+				if ((Raziel.Senses.heldClass != 0x3) && (CurrentSection == 0))
 				{
 					StateSwitchStateCharacterData(In, &StateHandlerGlide, 0);
 				}
@@ -2109,6 +2119,7 @@ void StateHandlerJump(struct __CharacterState* In, int CurrentSection, int Data)
 			{
 				EnMessageQueueData(&In->SectionList[CurrentSection].Defer, 0x80000001, 0);
 			}
+
 			break;
 		case 0x2000000:
 			razPickupAndGrab(In, CurrentSection);
@@ -2132,6 +2143,7 @@ void StateHandlerJump(struct __CharacterState* In, int CurrentSection, int Data)
 		default:
 			DefaultStateHandler(In, CurrentSection, Data);
 		}
+
 		DeMessageQueue(&In->SectionList[CurrentSection].Event);
 	}
 }
