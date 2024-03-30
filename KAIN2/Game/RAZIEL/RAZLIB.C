@@ -204,7 +204,7 @@ void razRotateUpperBody(struct _Instance* instance, struct evActionLookAroundDat
 	G2Anim_SetController_Vector((struct _G2Anim_Type*)&instance->anim, 17, 14, &Rot);
 }
 
-void razSetFadeEffect(short source, short dest, int steps)
+void razSetFadeEffect(short source, short dest, int steps) // Matching - 100%
 {
 	Raziel.effectsFadeSource = source;
 
