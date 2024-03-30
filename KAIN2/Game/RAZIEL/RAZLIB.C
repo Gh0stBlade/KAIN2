@@ -238,7 +238,7 @@ int razPlaneShift(struct _Instance *instance) // Matching - 100%
 	return 0;
 }
 
-void razSpectralShift()
+void razSpectralShift() // Matching - 100%
 {
 	struct _Instance* inst;
 
