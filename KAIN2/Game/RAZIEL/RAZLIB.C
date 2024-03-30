@@ -217,7 +217,7 @@ void razSetFadeEffect(short source, short dest, int steps) // Matching - 100%
 	Raziel.effectsFlags |= 0x3;
 }
 
-int razPlaneShift(struct _Instance *instance)
+int razPlaneShift(struct _Instance *instance) // Matching - 100%
 {
 	if (!(gameTrackerX.streamFlags & 0x40000))
 	{
