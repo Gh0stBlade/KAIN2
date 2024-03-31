@@ -351,7 +351,7 @@ void MEMPACK_ReportMemory2()//Matching - 97.50%
 	}
 }
 
-void MEMPACK_ReportMemory()//Matching - 93.59%
+void MEMPACK_ReportMemory() // Matching - 100%
 {
 	struct MemHeader* address;
 	long i;
@@ -363,7 +363,7 @@ void MEMPACK_ReportMemory()//Matching - 93.59%
 	{
 		address = (struct MemHeader*)((char*)address + address->memSize);
 	}
-	
+
 	for (i = 0; i < 49; i++)
 	{
 		address = newMemTracker.rootNode;
@@ -371,7 +371,7 @@ void MEMPACK_ReportMemory()//Matching - 93.59%
 
 		while ((char*)address != newMemTracker.lastMemoryAddress)
 		{
-			if (address->memStatus != 0 && address->memType == 1 && firstTime != 0)
+			if (address->memStatus != 0 && address->memType == i && firstTime != 0)
 			{
 				firstTime = 0;
 			}
