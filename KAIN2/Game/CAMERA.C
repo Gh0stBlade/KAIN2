@@ -61,6 +61,8 @@ long camera_modeToIndex[] = {
 	0,
 };
 
+static struct _Rotation splinecam_helprot; // offset 0x800D221C
+
 static inline void CAMERA_Add_Vec_To_Pos(struct _Position* dest, struct _Position* pos, struct _Vector* vec)
 {
 	short x, y, z;
@@ -629,401 +631,298 @@ struct _SVector* SplineGetNextPointDC(struct Spline* spline, struct SplineDef* d
 	return NULL;
 }
 
-void CAMERA_SetMode(struct Camera* camera, long mode)
+void CAMERA_SetMode(struct Camera* camera, long mode) // Matching - 99.68%
 {
-	int oldMode; // $s0
-	struct SplineDef curPositional; // stack offset -56
-	struct _SVector sv; // stack offset -48
-	{ // line 47, offset 0x80015b10
-		short _x1; // $v0
-		short _y1; // $a0
-		short _z1; // $a1
-		struct _Rotation* _v0; // $v0
-		struct _Rotation* _v1; // $v1
-	} // line 47, offset 0x80015b10
-	{ // line 47, offset 0x80015b10
-		short _x1; // $v0
-		short _y1; // $a0
-		short _z1; // $v1
-		struct _Rotation* _v0; // $v0
-	} // line 47, offset 0x80015b10
-	{ // line 47, offset 0x80015b10
-		short _x0; // $v0
-		short _y0; // $a1
-		short _z0; // $v1
-		short _x1; // $a2
-		short _y1; // $a3
-		short _z1; // $t0
-		struct _SVector* _v; // $a0
-		struct _Position* _v0; // $v1
-	} // line 47, offset 0x80015b10
-	{ // line 107, offset 0x80015c6c
-		struct _SVector* camPos; // stack offset -32
-		struct _SVector* targetPos; // $a0
-		{ // line 112, offset 0x80015c80
-			struct _Position pos; // stack offset -40
-		} // line 114, offset 0x80015c80
-		{ // line 128, offset 0x80015d2c
-			short _x1; // $v0
-			short _y1; // $v1
-			short _z1; // $a0
-			struct _Position* _v0; // $v0
-		} // line 128, offset 0x80015d2c
-		{ // line 138, offset 0x80015d80
-			short _x1; // $v0
-			short _y1; // $v1
-			short _z1; // $a0
-			struct _Position* _v0; // $v0
-		} // line 138, offset 0x80015d9c
-	} // line 142, offset 0x80015d9c
+	int oldMode;
+	struct SplineDef curPositional;
+	struct _SVector sv;
 
-	//s2 = camera
-	//s3 = mode
 	oldMode = camera->mode;
-	//v1 = camera->mode
 
-	//v0 = camera->mode - 2
-
-	if (oldMode == mode)
+	if ((oldMode != mode) || ((mode != 12) && (mode != 13)))
 	{
-		if (mode - 12 < 2)
+		switch ((short)(camera->mode - 2))
 		{
-			return;
-		}
-	}
-	//loc_80015A7C
-	switch (camera->mode)
-	{
-	case 0:
-	case 2:
-	{
-		//loc_80015AF0
-		CAMERA_SaveMode(camera, camera->mode);
-		//j loc_80015BE0
-		break;
-	}
-	case 1:
-	case 5:
-	case 6:
-	case 7:
-	case 8:
-	case 9:
-	{
-		//def_80015AA4
-		break;
-	}
-	case 3:
-	{
-		//loc_80015B04
-#if 0
-		loc_80015B04:            # jumptable 80015AA4 case 3
-			li      $v0, 5
-			beq     $s3, $v0, loc_80015BE0
-			sltiu   $v0, $s3, 0x11
-			lh      $a1, 0xF0($s2)
-			jal     sub_80015074
-			move    $a0, $s2
-			addiu   $v1, $s2, 0xB0
-			lhu     $v0, 0xB0($s2)
-			lhu     $a0, 2($v1)
-			lhu     $a1, 4($v1)
-			sh      $v0, 0x1B2($s2)
-			addiu   $v0, $s2, 0x1B2
-			sh      $a0, 2($v0)
-			sh      $a1, 4($v0)
-			lhu     $v0, 0xB0($s2)
-			lhu     $a0, 2($v1)
-			lhu     $v1, 4($v1)
-			sh      $v0, 0x13C($s2)
-			addiu   $v0, $s2, 0x13C
-			sh      $a0, 2($v0)
-			addiu   $a0, $sp, 0x30 + var_18
-			sh      $v1, 4($v0)
-			lhu     $v0, 0xB0($s2)
-			lhu     $a2, 0($s2)
-			lhu     $a3, 2($s2)
-			lhu     $t0, 4($s2)
-			addiu   $v1, $s2, 0x100
-			sh      $v0, 0x4B2($s2)
-			lhu     $v0, 0x100($s2)
-			lhu     $a1, 2($v1)
-			lhu     $v1, 4($v1)
-			subu    $v0, $a2
-			subu    $a1, $a3
-			subu    $v1, $t0
-			sh      $v0, 0x30 + var_18($sp)
-			sh      $a1, 2($a0)
-			jal     sub_80016270
-			sh      $v1, 4($a0)
-			sh      $v0, 0x106($s2)
-			sw      $zero, -0x71B4($gp)
-			sw      $zero, -0x71B0($gp)
-			sw      $zero, -0x71AC($gp)
-			j       loc_80015BE0
-			sltiu   $v0, $s3, 0x11
-#endif
-		break;
-	}
-	case 4:
-	{
-		CAMERA_EndLook(camera);
+		case 4:
+			CAMERA_EndLook(camera);
 
-		CAMERA_SaveMode(camera, camera->mode);
+			CAMERA_SaveMode(camera, camera->mode);
 
-		if (mode == 5)
-		{
-			camera->focusRotation.z = camera->targetFocusRotation.z;
+			if (mode == 5)
+			{
+				CenterFlag = ~0;
 
-			CenterFlag = -1;
+				camera->focusRotation.z = camera->targetFocusRotation.z;
 
-			CAMERA_Save(camera, 7);
-		}
+				CAMERA_Save(camera, 7);
+			}
 
-		//j loc_80015BE0
-		break;
-	}
-	case 10:
-	case 11:
-	{
-		//loc_80015BB4
-#if 0
-
-		loc_80015BB4:            # jumptable 80015AA4 cases 10, 11
-			lh      $a1, 0xF0($s2)
-			jal     sub_80015074
-			move    $a0, $s2
-			li      $v0, 5
-			bne     $s3, $v0, loc_80015BD4
-			move    $a0, $s2
-			jal     sub_80015854
-			li      $a1, 7
-
-			loc_80015BD4:
-		jal     sub_80014FD0
-			move    $a0, $s2
-#endif
-		break;
-	}
-	}
-
-	if (mode < 17)
-	{
-		switch (mode)
-		{
+			break;
 		case 0:
+		case 2:
+			CAMERA_SaveMode(camera, camera->mode);
+			break;
+		case 3:
+			if (mode != 5)
+			{
+				{
+					short _x1;
+					short _y1;
+					short _z1;
+					struct _Rotation* _v0;
+					struct _Rotation* _v1;
+
+					CAMERA_SaveMode(camera, camera->mode);
+
+					_v0 = &camera->targetFocusRotation;
+					_v1 = &camera->core.rotation;
+
+					_x1 = _v1->x;
+					_y1 = _v1->y;
+					_z1 = _v1->z;
+
+					_v0->x = _x1;
+					_v0->y = _y1;
+					_v0->z = _z1;
+				}
+				{
+					short _x1;
+					short _y1;
+					short _z1;
+					struct _Rotation* _v0;
+					struct _Rotation* _v1; // not from SYMDUMP
+
+					_v0 = &camera->focusRotation;
+					_v1 = &camera->core.rotation;
+
+					_x1 = _v1->x;
+					_y1 = _v1->y;
+					_z1 = _v1->z;
+
+					_v0->x = _x1;
+					_v0->y = _y1;
+					_v0->z = _z1;
+				}
+
+				camera->actual_x_rot = camera->core.rotation.x;
+
+				{
+					short _x0;
+					short _y0;
+					short _z0;
+					short _x1;
+					short _y1;
+					short _z1;
+					struct _SVector* _v;
+					struct _Position* _v0;
+
+					_v = &sv;
+					_v0 = &camera->focusPoint;
+
+					_x0 = _v0->x;
+					_y0 = _v0->y;
+					_z0 = _v0->z;
+
+					_x1 = camera->core.position.x;
+					_y1 = camera->core.position.y;
+					_z1 = camera->core.position.z;
+
+					_v->x = _x0 - _x1;
+					_v->y = _y0 - _y1;
+					_v->z = _z0 - _z1;
+				}
+
+				camera->focusDistance = (short)CAMERA_LengthSVector(&sv);
+
+				roll_target = 0;
+
+				current_roll_amount = 0;
+
+				roll_inc = 0;
+			}
+
+			break;
 		case 10:
 		case 11:
-		{
-#if 0
-			loc_80015EA4:            # jumptable 80015BFC cases 0, 10, 11
-				lhu     $v0, 0x1A8($s2)
-				nop
-				sh      $v0, 0x1B0($s2)
-				ulw     $t1, 0x1B2($s2)
-				ulw     $t2, 0x1B6($s2)
-				usw     $t1, 0x1BC($s2)
-				usw     $t2, 0x1C0($s2)
-#endif
+			CAMERA_SaveMode(camera, camera->mode);
+
+			if (mode == 5)
+			{
+				CAMERA_Save(camera, 7);
+			}
+
+			CAMERA_CreateNewFocuspoint(camera);
+		default:
 			break;
 		}
-		case 12:
-		case 13:
-		case 16:
 
-			CAMERA_SetProjDistance(camera, 320);
-
-			if (mode == 16)
+		if (mode < 17U)
+		{
+			switch (mode)
 			{
-				mode = 12;
+			case 2:
+			case 4:
+			case 5:
+				CAMERA_SetProjDistance(camera, 320);
 
-				camera->flags |= 0x2000;
-			}
-			else
-			{
-				//loc_80015E08
-				camera->flags &= 0xFFFFDFFF;
-			}
+				camera->data.Cinematic.posSpline = camera->Spline00;
+				camera->data.Cinematic.targetSpline = camera->Spline01;
+				camera->data.Cinematic.cinema_done = 0;
+				camera->Spline00 = NULL;
+				camera->data.Cinematic.lastSplinePos.z = 0;
+				camera->data.Cinematic.lastSplinePos.y = 0;
+				camera->data.Cinematic.lastSplinePos.x = 0;
+				camera->Spline01 = NULL;
 
-			cameraMode = mode;
+				if (camera->data.Cinematic.posSpline != NULL)
+				{
+					*(int*)&camera->data.Cinematic.posSpline->curPositional.currkey = 0;  // double-check
+				}
 
-			gameTrackerX.gameFlags &= 0xFFFFFFBF;
+				if (camera->data.Cinematic.targetSpline != NULL)
+				{
+					*(int*)&camera->data.Cinematic.targetSpline->curPositional.currkey = 0;  // double-check
+				}
 
-			camera->mode = (short)mode;
+				camera->mode = (short)mode;
 
-			camera->smooth = 8;
+				if (camera->data.Cinematic.posSpline != NULL)
+				{
+					struct _SVector* camPos;
+					struct _SVector* targetPos;
 
-			camera->data.Follow.stopTimer = 0xE5A20000;
+					if ((mode == 4) || (mode == 2))
+					{
+						struct _Position pos;
 
-			camera->focusRotVel.z = 0;
+						splinecam_helprot.x = camera->focusRotation.x;
+						splinecam_helprot.z = (camera->focusRotation.z + 2048) & 0xFFF;
 
-			camera->targetFocusDistance = (short)camera->focusDistanceList[camera_modeToIndex[mode]][camera->presetIndex];
+						CAMERA_CalcPosition(&pos, &camera->targetFocusPoint, &splinecam_helprot, camera->targetFocusDistance);
 
-			if (oldMode == 5)
-			{
-				if (camera->focusInstance != NULL)
+						camPos = SplineGetNearestPoint(camera->data.Cinematic.posSpline->positional, (struct _SVector*)&pos, &curPositional);
+
+						CAMERA_CalcRotation(&splinecam_helprot, &camera->focusInstance->position, (struct _Position*)&camPos);
+
+						camera->data.Cinematic.splinecam_helpkey = curPositional.currkey;
+
+						camPos = SplineGetNearestPoint(camera->data.Cinematic.posSpline->positional, (struct _SVector*)&camera->core.position, &curPositional);
+
+						camera->data.Cinematic.splinecam_currkey = curPositional.currkey;
+					}
+					else
+					{
+						camPos = SplineGetFirstPoint(camera->data.Cinematic.posSpline->positional, &camera->data.Cinematic.posSpline->curPositional);
+					}
+
+					if (camPos != NULL)
+					{
+						short _x1;
+						short _y1;
+						short _z1;
+						struct _Position* _v0;
+
+						_v0 = &camera->targetPos;
+
+						_x1 = camPos->x;
+						_y1 = camPos->y;
+						_z1 = camPos->z;
+
+						_v0->x = _x1;
+						_v0->y = _y1;
+						_v0->z = _z1;
+
+						if (mode == 5)
+						{
+							camera->posState = 3;
+						}
+
+						if (camera->data.Cinematic.targetSpline != NULL)
+						{
+							targetPos = SplineGetFirstPoint(camera->data.Cinematic.targetSpline->positional, &camera->data.Cinematic.targetSpline->curPositional);
+
+							if (targetPos != NULL)
+							{
+								short _x1;
+								short _y1;
+								short _z1;
+								struct _Position* _v0;
+
+								_v0 = &camera->targetFocusPoint;
+
+								_x1 = targetPos->x;
+								_y1 = targetPos->y;
+								_z1 = targetPos->z;
+
+								_v0->x = _x1;
+								_v0->y = _y1;
+								_v0->z = _z1;
+							}
+						}
+					}
+				}
+
+				camera->targetRotation = camera->focusRotation;
+
+				CenterFlag = ~0;
+
+				camera->tiltState = 0;
+				camera->lead_angle = 0;
+				camera->flags &= ~0x2000;
+				break;
+			case 12:
+			case 13:
+			case 16:
+				CAMERA_SetProjDistance(camera, 320);
+
+				if (mode == 16)
+				{
+					mode = 12;
+
+					camera->flags |= 0x2000;
+				}
+				else
+				{
+					camera->flags &= ~0x2000;
+				}
+
+				cameraMode = mode;
+
+				gameTrackerX.gameFlags &= ~0x40;
+
+				camera->mode = (short)mode;
+				camera->targetFocusDistance = (short)camera->focusDistanceList[camera_modeToIndex[(short)mode]][camera->presetIndex];
+				camera->smooth = 8;
+				camera->data.Follow.stopTimer = 0xE5A20000;
+				camera->focusRotVel.z = 0;
+
+				if ((oldMode == 5) && (camera->focusInstance != NULL))
 				{
 					CAMERA_SetFocus(camera, &camera->targetFocusPoint);
 				}
+
+				break;
+			case 0:
+			case 1:
+			case 3:
+			case 6:
+			case 7:
+			case 8:
+			case 9:
+			case 14:
+			case 15:
+			default:
+				camera->mode = (short)mode;
 			}
-			//loc_80015EA4
-
-			camera->collisionTargetFocusDistance = camera->targetFocusDistance;
-			camera->collisionTargetFocusRotation = camera->targetFocusRotation;
-			break;
 		}
+		else
+		{
+			camera->mode = (short)mode;
+		}
+
+		camera->collisionTargetFocusDistance = camera->targetFocusDistance;
+		camera->collisionTargetFocusRotation = camera->targetFocusRotation;
 	}
-	//def_80015BFC
-#if 0
-
-		loc_80015C04 : # jumptable 80015BFC cases 2, 4, 5
-		move    $a0, $s2
-		jal     sub_80014F2C
-		li      $a1, 0x140
-		lw      $v0, 0x41C($s2)
-		nop
-		sw      $v0, 0x424($s2)
-		lw      $v0, 0x420($s2)
-		lw      $v1, 0x424($s2)
-		sh      $zero, 0x436($s2)
-		sw      $zero, 0x41C($s2)
-		sh      $zero, 0x430($s2)
-		sh      $zero, 0x42E($s2)
-		sh      $zero, 0x42C($s2)
-		sw      $zero, 0x420($s2)
-		beqz    $v1, loc_80015C48
-		sw      $v0, 0x428($s2)
-		sw      $zero, 0x10($v1)
-
-		loc_80015C48:
-	lw      $v0, 0x428($s2)
-		nop
-		beqz    $v0, loc_80015C5C
-		nop
-		sw      $zero, 0x10($v0)
-
-		loc_80015C5C :
-		lw      $a1, 0x424($s2)
-		nop
-		beqz    $a1, loc_80015D9C
-		sh      $s3, 0xF0($s2)
-		li      $v0, 4
-		beq     $s3, $v0, loc_80015C80
-		li      $v0, 2
-		bne     $s3, $v0, loc_80015D0C
-		nop
-
-		loc_80015C80 :
-	addiu   $s1, $sp, 0x30 + var_10
-		move    $a0, $s1
-		lhu     $v0, 0x13C($s2)
-		addiu   $a1, $s2, 0x1AA
-		sh      $v0, -0x537C($gp)
-		lhu     $v0, 0x140($s2)
-		addiu   $s0, $gp, -0x537C
-		addiu   $v0, 0x800
-		andi    $v0, 0xFFF
-		sh      $v0, -0x5378($gp)
-		lh      $a3, 0x1A8($s2)
-		jal     sub_800169BC
-		move    $a2, $s0
-		lw      $v0, 0x424($s2)
-		move    $a1, $s1
-		lw      $a0, 0($v0)
-		jal     sub_80041810
-		addiu   $a2, $sp, 0x30 + var_20
-		move    $a0, $s0
-		lw      $a1, 0x108($s2)
-		addiu   $a2, $sp, 0x30 + var_8
-		sw      $v0, 0x30 + var_8($sp)
-		jal     sub_80017B10
-		addiu   $a1, 0x5C  # '\'
-		lh      $v0, 0x30 + var_20($sp)
-		lw      $v1, 0x424($s2)
-		move    $a1, $s2
-		sw      $v0, 0x43C($s2)
-		lw      $a0, 0($v1)
-		jal     sub_80041810
-		addiu   $a2, $sp, 0x30 + var_20
-		lh      $v1, 0x30 + var_20($sp)
-		sw      $v0, 0x30 + var_8($sp)
-		j       loc_80015D1C
-		sw      $v1, 0x438($s2)
-
-		loc_80015D0C:
-	lw      $a0, 0($a1)
-		jal     sub_80041738
-		addiu   $a1, 0x10
-		sw      $v0, 0x30 + var_8($sp)
-
-		loc_80015D1C :
-		lw      $a0, 0x30 + var_8($sp)
-		nop
-		beqz    $a0, loc_80015DA0
-		li      $v0, 0xFFFFFFFF
-		lhu     $v0, 0($a0)
-		lhu     $v1, 2($a0)
-		lhu     $a0, 4($a0)
-		sh      $v0, 0x198($s2)
-		addiu   $v0, $s2, 0x198
-		sh      $v1, 2($v0)
-		sh      $a0, 4($v0)
-		li      $v0, 5
-		bne     $s3, $v0, loc_80015D58
-		li      $v0, 3
-		sh      $v0, 0xF4($s2)
-
-		loc_80015D58:
-	lw      $a1, 0x428($s2)
-		nop
-		beqz    $a1, loc_80015DA0
-		li      $v0, 0xFFFFFFFF
-		lw      $a0, 0($a1)
-		jal     sub_80041738
-		addiu   $a1, 0x10
-		move    $a0, $v0
-		beqz    $a0, loc_80015DA0
-		li      $v0, 0xFFFFFFFF
-		lhu     $v0, 0($a0)
-		lhu     $v1, 2($a0)
-		lhu     $a0, 4($a0)
-		sh      $v0, 0x1AA($s2)
-		addiu   $v0, $s2, 0x1AA
-		sh      $v1, 2($v0)
-		sh      $a0, 4($v0)
-
-		loc_80015D9C:
-	li      $v0, 0xFFFFFFFF
-
-		loc_80015DA0 :
-		ulw     $t1, 0x13C($s2)
-		ulw     $t2, 0x140($s2)
-		usw     $t1, 0x1A0($s2)
-		usw     $t2, 0x1A4($s2)
-		sh      $v0, -0x5424($gp)
-		lw      $v0, 0xE8($s2)
-		li      $v1, 0xFFFFDFFF
-		sh      $zero, 0xF8($s2)
-		sh      $zero, 0x4BC($s2)
-		and $v0, $v1
-		j       loc_80015EA4     # jumptable 80015BFC cases 0, 10, 11
-		sw      $v0, 0xE8($s2)
-
-		
-
-		def_80015BFC : # jumptable 80015BFC default case, cases 1, 3, 6 - 9, 14, 15
-		sh      $s3, 0xF0($s2)
-
-		
-
-		loc_80015ED0:
-	lw      $ra, 0x30 + var_s10($sp)
-		lw      $s3, 0x30 + var_sC($sp)
-		lw      $s2, 0x30 + var_s8($sp)
-		lw      $s1, 0x30 + var_s4($sp)
-		lw      $s0, 0x30 + var_s0($sp)
-		jr      $ra
-		addiu   $sp, 0x48
-#endif
 }
 
 extern int rando();
