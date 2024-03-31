@@ -476,7 +476,7 @@ void MEMPACK_GarbageSplitMemoryNow(unsigned long allocSize, struct MemHeader* be
 }
 
 
-void MEMPACK_GarbageCollectFree(struct MemHeader *memAddress)//Matching - 95.11%
+void MEMPACK_GarbageCollectFree(struct MemHeader *memAddress) // Matching - 100%
 {
 	struct MemHeader* secondAddress;
 	
