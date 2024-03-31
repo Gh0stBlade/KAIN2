@@ -5140,9 +5140,10 @@ void ProcessHints() // Matching - 100%
 	}
 }
 
-void ProcessInteractiveMusic(struct _Instance* instance)
+void ProcessInteractiveMusic(struct _Instance* instance) // Matching - 100%
 {
 	struct Level* level;
+	int temp;  // not from SYMDUMP
 
 	level = STREAM_GetLevelWithID(instance->currentStreamUnitID);
 
@@ -5160,41 +5161,57 @@ void ProcessInteractiveMusic(struct _Instance* instance)
 
 	RAZIEL_SetInteractiveMusic(14, level->unitFlags & 0x4000);
 
-	if ((level->unitFlags & 0x2) && !(level->unitFlags & 0xC0))
+	if ((level->unitFlags & 0x2))
 	{
-		RAZIEL_SetInteractiveMusic(7, 0 < (GAMELOOP_GetTimeOfDay() ^ 0x76C));
+		if (!(level->unitFlags & 0xC0))
+		{
+			temp = GAMELOOP_GetTimeOfDay();
 
-		RAZIEL_SetInteractiveMusic(7, (GAMELOOP_GetTimeOfDay() < 1));
+			RAZIEL_SetInteractiveMusic(7, temp != 1900);
+
+			RAZIEL_SetInteractiveMusic(8, temp == 1900);
+		}
 	}
 
-	RAZIEL_SetInteractiveMusic(12, (Raziel.CurrentPlane ^ 2) < 1);
+	RAZIEL_SetInteractiveMusic(12, Raziel.CurrentPlane == 2);
 
-	RAZIEL_SetInteractiveMusic(5, (Raziel.Mode & 0x40000));
+	RAZIEL_SetInteractiveMusic(5, Raziel.Mode & 0x40000);
 
-	if ((level->unitFlags & 0x10) || (Raziel.Mode & 0x2000000))
+	if (((level->unitFlags & 0x10)) || ((Raziel.Mode & 0x2000000)))
 	{
+		Raziel.soundModifier &= ~0x1E;
+
 		RAZIEL_SetInteractiveMusic(3, 1);
+		return;
 	}
-	else if ((level->unitFlags & 0x8) || (Raziel.Senses.Flags & 0x20))
+
+	if (((level->unitFlags & 0x8)) || ((Raziel.Senses.Flags & 0x20)))
 	{
+		Raziel.soundModifier &= ~0x1E;
+
 		RAZIEL_SetInteractiveMusic(2, 1);
+		return;
 	}
-	else if ((level->unitFlags & 0x4))
+
+	if ((level->unitFlags & 0x4))
 	{
+		Raziel.soundModifier &= ~0x1E;
+
 		RAZIEL_SetInteractiveMusic(1, 1);
+		return;
 	}
-	else if ((level->unitFlags & 0x20))
+
+	if ((level->unitFlags & 0x20))
 	{
-		Raziel.soundModifier &= 0xFFFFFFE1;
+		Raziel.soundModifier &= ~0x1E;
 
 		RAZIEL_SetInteractiveMusic(4, 1);
+		return;
 	}
-	else
-	{
-		Raziel.soundModifier &= 0xFFFFFFE1;
 
-		SOUND_SetMusicModifier(0);
-	}
+	Raziel.soundModifier &= ~0x1E;
+
+	SOUND_SetMusicModifier(0);
 }
 
 void ProcessTimers(struct _Instance* instance)  // Matching - 100%
