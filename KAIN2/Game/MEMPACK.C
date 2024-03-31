@@ -988,7 +988,7 @@ void MEMPACK_RelocateObjectType(struct MemHeader* newAddress, long offset, struc
 	STREAM_UpdateObjectPointer(oldObject, object, sizeOfObject);
 }
 
-void MEMPACK_RelocateCDMemory(struct MemHeader *newAddress, long offset, struct _BigFileDir *oldDir)
+void MEMPACK_RelocateCDMemory(struct MemHeader *newAddress, long offset, struct _BigFileDir *oldDir) // Matching - 100%
 { 
 	struct _BigFileDir *newDir;
 	newDir = (struct _BigFileDir*)(newAddress + 1);
