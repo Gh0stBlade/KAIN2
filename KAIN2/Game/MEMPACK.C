@@ -304,7 +304,7 @@ void MEMPACK_Free(char *address)//Matching - 84.20%
 	}
 }
 
-void MEMPACK_FreeByType(unsigned char memType)//Matching - 90.53%
+void MEMPACK_FreeByType(unsigned char memType) // Matching - 100%
 {
 	struct MemHeader* address;
 	int freed;
