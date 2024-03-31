@@ -5023,7 +5023,7 @@ void ProcessEffects(struct _Instance* instance)//Matching - 95.41%
 	}
 }
 
-void ProcessHints()
+void ProcessHints() // Matching - 100%
 {
 	long hint;
 
@@ -5062,9 +5062,13 @@ void ProcessHints()
 	}
 	else
 	{
-		if (hint == 12 || hint == 40)
+		if (hint == 12)
 		{
 			HINT_KillSpecificHint(12);
+		}
+		else if (hint == 40)
+		{
+			HINT_KillSpecificHint(40);
 		}
 	}
 
