@@ -339,7 +339,7 @@ unsigned long MEMPACK_ReportFreeMemory() // Matching - 100%
 	return newMemTracker.totalMemory - newMemTracker.currentMemoryUsed;
 }
 
-void MEMPACK_ReportMemory2()//Matching - 97.50%
+void MEMPACK_ReportMemory2() // Matching - 100%
 {
 	struct MemHeader* address;
 
