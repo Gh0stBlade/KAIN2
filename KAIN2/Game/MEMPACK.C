@@ -507,7 +507,7 @@ void MEMPACK_GarbageCollectFree(struct MemHeader *memAddress)//Matching - 95.11%
 	}
 }
 
-void MEMPACK_DoGarbageCollection()//Matching - 98.66%
+void MEMPACK_DoGarbageCollection() // Matching - 100%
 { 
 	struct MemHeader* relocateAddress;
 	long foundOpening;
