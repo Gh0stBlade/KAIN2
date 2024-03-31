@@ -402,7 +402,7 @@ long MEMPACK_MemoryValidFunc(char* address)//Matching - 100.0%
 }
 
 
-char* MEMPACK_GarbageCollectMalloc(unsigned long *allocSize, unsigned char memType, unsigned long *freeSize)//Matching - 98.62%
+char* MEMPACK_GarbageCollectMalloc(unsigned long *allocSize, unsigned char memType, unsigned long *freeSize) // Matching - 100%
 {
 	struct MemHeader* bestAddress;
 	
