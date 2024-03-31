@@ -334,7 +334,7 @@ unsigned long MEMPACK_Size(char *address)//Matching - 100.0%
 	return ((int*)address)[-1] - sizeof(struct MemHeader);
 }
 
-unsigned long MEMPACK_ReportFreeMemory()//Matching - 45.00%
+unsigned long MEMPACK_ReportFreeMemory() // Matching - 100%
 {
 	return newMemTracker.totalMemory - newMemTracker.currentMemoryUsed;
 }
