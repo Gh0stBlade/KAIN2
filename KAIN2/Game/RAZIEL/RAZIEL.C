@@ -4942,43 +4942,45 @@ void RelocateConstrict(struct _SVector* offset) // Matching - 100%
 }
 
 
-void ProcessEffects(struct _Instance* instance)//Matching - 95.41%
+void ProcessEffects(struct _Instance* instance) // Matching - 100%
 {
 	struct _Instance* heldInst;
 	int step;
 
 	heldInst = razGetHeldItem();
 
-	if ((Raziel.effectsFlags & 0x4) && !razUpdateSoundRamp(instance, (struct _SoundRamp*)&Raziel.soundHandle))
+	if (((Raziel.effectsFlags & 0x4)) && (razUpdateSoundRamp(instance, (struct _SoundRamp*)&Raziel.soundHandle) == NULL))
 	{
 		SndEndLoop(Raziel.soundHandle);
+
 		Raziel.soundHandle = 0;
 		Raziel.effectsFlags &= ~0x4;
 	}
 
-	if ((Raziel.effectsFlags & 0x8) && !razUpdateSoundRamp(instance, (struct _SoundRamp*)&Raziel.soundHandle2))
+	if (((Raziel.effectsFlags & 0x8)) && (razUpdateSoundRamp(instance, (struct _SoundRamp*)&Raziel.soundHandle2) == 0))
 	{
 		SndEndLoop(Raziel.soundHandle2);
+
 		Raziel.soundHandle2 = 0;
 		Raziel.effectsFlags &= ~0x8;
 	}
 
 	if ((Raziel.effectsFlags & 0x2))
 	{
-		if (Raziel.throwInstance)
+		if (Raziel.throwInstance != NULL)
 		{
 			instance = Raziel.throwInstance;
 		}
-		else if (heldInst)
+		else if (heldInst != NULL)
 		{
-			if ((unsigned int)(Raziel.Senses.heldClass - 1) < 3)
+			if (((Raziel.Senses.heldClass == 0x1) || (Raziel.Senses.heldClass == 0x2) || (Raziel.Senses.heldClass == 0x3)))
 			{
 				instance = heldInst;
 			}
 			else
 			{
 				Raziel.effectsFlags &= ~0x2;
-				Raziel.throwInstance = 0;
+				Raziel.throwInstance = NULL;
 			}
 		}
 	}
@@ -4986,19 +4988,22 @@ void ProcessEffects(struct _Instance* instance)//Matching - 95.41%
 	if ((Raziel.effectsFlags & 0x1))
 	{
 		Raziel.effectsFadeSteps += Raziel.effectsFadeStep * gameTrackerX.timeMult;
+
 		step = Raziel.effectsFadeSteps / 4096;
-		instance->fadeValue = instance->fadeValue + step;
+
+		instance->fadeValue += step;
 
 		if (step > 0)
 		{
 			if (instance->fadeValue > Raziel.effectsFadeDest)
 			{
 				instance->fadeValue = Raziel.effectsFadeDest;
+
 				Raziel.effectsFlags &= ~0x1;
 
 				if (instance == Raziel.throwInstance)
 				{
-					Raziel.effectsFlags &= 0xFFFFFFFD;
+					Raziel.effectsFlags &= ~0x2;
 				}
 			}
 		}
@@ -5009,13 +5014,13 @@ void ProcessEffects(struct _Instance* instance)//Matching - 95.41%
 				if (Raziel.effectsFadeDest > instance->fadeValue)
 				{
 					instance->fadeValue = Raziel.effectsFadeDest;
+
 					Raziel.effectsFlags &= ~0x1;
 
 					if (instance == Raziel.throwInstance)
 					{
-						Raziel.effectsFlags &= 0xFFFFFFFD;
-						Raziel.throwInstance = 0;
-
+						Raziel.effectsFlags &= ~0x2;
+						Raziel.throwInstance = NULL;
 					}
 				}
 			}
