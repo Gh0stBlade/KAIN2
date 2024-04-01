@@ -44,7 +44,7 @@ int COLLIDE_PointInTriangle(struct _SVector* v0, struct _SVector* v1, struct _SV
 	long xdiff;
 	long ydiff;
 	long ix;
-	int temp, temp2;  // not from SYMDUMP
+	int temp;  // not from SYMDUMP
 
 	nx = normal->x > 0 ? normal->x : -normal->x;
 	ny = normal->y > 0 ? normal->y : -normal->y;
@@ -53,9 +53,7 @@ int COLLIDE_PointInTriangle(struct _SVector* v0, struct _SVector* v1, struct _SV
 
 	if (ny < nx)
 	{
-		temp = ABS(normal->z);
-
-		if (temp < nx)
+		if (abs(normal->z) < nx)
 		{
 			tx = point->y;
 			ty = point->z;
@@ -76,9 +74,7 @@ int COLLIDE_PointInTriangle(struct _SVector* v0, struct _SVector* v1, struct _SV
 	}
 	else
 	{
-		temp = ABS(normal->z);
-
-		if (temp < ny)
+		if (abs(normal->z) < ny)
 		{
 			tx = point->x;
 			ty = point->z;
@@ -111,11 +107,11 @@ int COLLIDE_PointInTriangle(struct _SVector* v0, struct _SVector* v1, struct _SV
 
 		if (yflag0 != yflag1)
 		{
-			temp2 = (vert0->vx >= tx);
+			temp = (vert0->vx >= tx);
 
-			if (temp2 == (vert1->vx >= tx))
+			if (temp == (vert1->vx >= tx))
 			{
-				if (temp2 != 0)
+				if (temp != 0)
 				{
 					inside_flag = !inside_flag;
 				}
