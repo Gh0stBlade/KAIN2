@@ -3286,7 +3286,7 @@ void StateHandlerAutoFace(struct __CharacterState *In, int CurrentSection, int D
 			UNIMPLEMENTED();
 }
 
-void StateHandlerGlyphs(struct __CharacterState* In, int CurrentSection, int Data)  // Matching - 98.87%
+void StateHandlerGlyphs(struct __CharacterState* In, int CurrentSection, int Data) // Matching - 100%
 {
 	struct __Event* Ptr;
 	int hitPosted;
@@ -3294,8 +3294,11 @@ void StateHandlerGlyphs(struct __CharacterState* In, int CurrentSection, int Dat
 	struct evMonsterHitData* data;
 
 	hitPosted = 0;
+
 	G2EmulationQueryAnimation(In, CurrentSection);
+
 	Raziel.invincibleTimer = 12288;
+
 	while ((Ptr = PeekMessageQueue(&In->SectionList[CurrentSection].Event)) != NULL)
 	{
 		switch (Ptr->ID)
@@ -3307,27 +3310,37 @@ void StateHandlerGlyphs(struct __CharacterState* In, int CurrentSection, int Dat
 				{
 					INSTANCE_Post(Raziel.GlyphSystem, 0x80000010, (uintptr_t)In->CharacterInstance);
 				}
-				Raziel.Mode |= 1;
+
+				Raziel.Mode |= 0x1;
+
 				ControlFlag = 0x1100008;
+
 				SteerSwitchMode(In->CharacterInstance, 16);
+
 				razResetMotion(In->CharacterInstance);
 			}
+
 			In->SectionList[CurrentSection].Data1 = 1;
-			PhysicsMode = 3;
+
+			PhysicsMode = 0x3;
+
 			if (Ptr->Data != 0)
 			{
 				EnMessageQueueData(&In->SectionList[CurrentSection].Defer, 0x80007, 0);
 			}
+
 			break;
 		case 0x100004:
 			if (CurrentSection == 0)
 			{
 				razReaverOn();
+
 				if (GlyphIsGlyphOpen(Raziel.GlyphSystem) != 0)
 				{
 					INSTANCE_Post(Raziel.GlyphSystem, 0x80000010, (uintptr_t)In->CharacterInstance);
 				}
 			}
+
 			Raziel.invincibleTimer = 0;
 			break;
 		case 0x8000003:
@@ -3337,13 +3350,15 @@ void StateHandlerGlyphs(struct __CharacterState* In, int CurrentSection, int Dat
 			{
 				CheckStringAnimation(In->CharacterInstance, Ptr->ID);
 			}
+
 			break;
 		case 0x100000:
 			if (In->SectionList[CurrentSection].Data1 == 0)
 			{
-				if (((Raziel.Mode & 0x40000) != 0) && (Raziel.CurrentPlane == 1))
+				if (((Raziel.Mode & 0x40000)) && (Raziel.CurrentPlane == 1))
 				{
 					StateSwitchStateData(In, CurrentSection, &StateHandlerSwim, 0);
+
 					if (CurrentSection == 0)
 					{
 						razSetFadeEffect(4096, 0, 256);
@@ -3352,6 +3367,7 @@ void StateHandlerGlyphs(struct __CharacterState* In, int CurrentSection, int Dat
 				else
 				{
 					StateSwitchStateData(In, CurrentSection, &StateHandlerIdle, SetControlInitIdleData(0, 0, 3));
+
 					if (CurrentSection == 0)
 					{
 						razSetFadeEffect(4096, 0, 256);
@@ -3360,12 +3376,14 @@ void StateHandlerGlyphs(struct __CharacterState* In, int CurrentSection, int Dat
 			}
 			else
 			{
-				if (((Raziel.Mode & 0x40000) == 0) && (In->SectionList[CurrentSection].Data1 != 2))
+				if ((!(Raziel.Mode & 0x40000)) && (In->SectionList[CurrentSection].Data1 != 2))
 				{
 					StateInitIdle(In, CurrentSection, SetControlInitIdleData(0, 0, 3));
+
 					In->SectionList[CurrentSection].Data1 = 2;
 				}
 			}
+
 			break;
 		case 0x80000010:
 			if (In->SectionList[CurrentSection].Data1 != 0)
@@ -3373,9 +3391,11 @@ void StateHandlerGlyphs(struct __CharacterState* In, int CurrentSection, int Dat
 				if (CurrentSection == 0)
 				{
 					In->SectionList[CurrentSection].Data1 = 0;
+
 					INSTANCE_Post(Raziel.GlyphSystem, 0x80000010, (uintptr_t)In->CharacterInstance);
 				}
-				if ((Raziel.Mode & 0x40000) != 0)
+
+				if ((Raziel.Mode & 0x40000))
 				{
 					StateSwitchStateData(In, CurrentSection, &StateHandlerSwim, 0);
 				}
@@ -3384,61 +3404,80 @@ void StateHandlerGlyphs(struct __CharacterState* In, int CurrentSection, int Dat
 					StateSwitchStateData(In, CurrentSection, &StateHandlerIdle, SetControlInitIdleData(0, 0, 3));
 				}
 			}
+
 			break;
 		case 0x80006:
 			if (CurrentSection == 0)
 			{
 				razPrepGlyph();
+
 				razSwitchStringAnimation(In->CharacterInstance, 6);
 			}
+
 			In->SectionList[CurrentSection].Data1 = 0;
 			break;
 		case 0x80004:
 			if (CurrentSection == 0)
 			{
 				razPrepGlyph();
+
 				razSwitchStringAnimation(In->CharacterInstance, 5);
 			}
+
 			In->SectionList[CurrentSection].Data1 = 0;
 			break;
 		case 0x80003:
 			if (CurrentSection == 0)
 			{
 				razPrepGlyph();
+
 				razSwitchStringAnimation(In->CharacterInstance, 4);
-				Raziel.effectsFlags |= 4;
-				razSetupSoundRamp(In->CharacterInstance, (struct _SoundRamp*)&Raziel.soundHandle, 19, 600, 750, 60, 120, 0x32000, 3500);
-				Raziel.soundTimerNext = 0x32000;
+
+				Raziel.effectsFlags |= 0x4;
+
+				razSetupSoundRamp(In->CharacterInstance, (struct _SoundRamp*)&Raziel.soundHandle, 19, 600, 750, 60, 120, 204800, 3500);
+
+				Raziel.soundTimerNext = 204800;
 				Raziel.soundTimerData = 1;
 			}
+
 			In->SectionList[CurrentSection].Data1 = 0;
 			break;
 		case 0x80005:
 			if (CurrentSection == 0)
 			{
 				razPrepGlyph();
+
 				razSwitchStringAnimation(In->CharacterInstance, 3);
 			}
+
 			In->SectionList[CurrentSection].Data1 = 0;
 			break;
 		case 0x80002:
 			if (CurrentSection == 0)
 			{
 				razPrepGlyph();
+
 				razSwitchStringAnimation(In->CharacterInstance, 2);
 			}
+
 			In->SectionList[CurrentSection].Data1 = 0;
 			break;
 		case 0x80001:
 			if (CurrentSection == 0)
 			{
 				razPrepGlyph();
+
 				razSwitchStringAnimation(In->CharacterInstance, 1);
-				Raziel.effectsFlags |= 4;
-				razSetupSoundRamp(In->CharacterInstance, (struct _SoundRamp*)&Raziel.soundHandle, 12, 0, 125, 80, 80, 0x4D000, 3500);
-				Raziel.soundTimerNext = 0x4D000;
+
+				Raziel.effectsFlags |= 0x4;
+
+				razSetupSoundRamp(In->CharacterInstance, (struct _SoundRamp*)&Raziel.soundHandle, 12, 0, 125, 80, 80, 315392, 3500);
+
+				Raziel.soundTimerNext = 315392;
 				Raziel.soundTimerData = 3;
 			}
+
 			In->SectionList[CurrentSection].Data1 = 0;
 			break;
 		case 0x80007:
@@ -3447,26 +3486,36 @@ void StateHandlerGlyphs(struct __CharacterState* In, int CurrentSection, int Dat
 				if (CurrentSection == 0)
 				{
 					razPrepGlyph();
+
 					razSwitchStringAnimation(In->CharacterInstance, 0);
 				}
+
 				In->SectionList[CurrentSection].Data1 = 0;
+
 				if (CurrentSection == 0)
 				{
 					razPlaneShift(In->CharacterInstance);
-					if ((Raziel.Mode & 0x40000) != 0)
+
+					if ((Raziel.Mode & 0x40000))
 					{
 						CAMERA_ChangeToOutOfWater(&theCamera, In->CharacterInstance);
+
 						SteerSwitchMode(In->CharacterInstance, 6);
 					}
+
 					SteerSwitchMode(In->CharacterInstance, 0);
-					if ((Raziel.playerEvent & 0x2000) != 0)
+
+					if ((Raziel.playerEvent & 0x2000))
 					{
 						razSetPlayerEventHistory(0x2000);
+
 						HINT_KillSpecificHint(40);
 					}
 				}
+
 				Raziel.invincibleTimer = 122880;
 			}
+
 			break;
 		case 0x2000000:
 		case 0x80000000:
@@ -3475,41 +3524,51 @@ void StateHandlerGlyphs(struct __CharacterState* In, int CurrentSection, int Dat
 				if (CurrentSection == 0)
 				{
 					INSTANCE_Post(Raziel.GlyphSystem, 0x80000000, 0);
+
 					PurgeMessageQueue(&In->SectionList[CurrentSection].Event);
 				}
 			}
+
 			break;
 		case 0x10000000:
 			if (CurrentSection == 0)
 			{
-				if ((PadData[0] & 4) != 0)
+				if ((PadData[0] & 0x4))
 				{
 					INSTANCE_Post(Raziel.GlyphSystem, 0x10000004, Ptr->Data);
 				}
-				if ((PadData[0] & 8) != 0)
+
+				if ((PadData[0] & 0x8))
 				{
 					INSTANCE_Post(Raziel.GlyphSystem, 0x10000002, Ptr->Data);
 				}
 			}
+
 			break;
 		case 0x4000001:
-			if ((Raziel.Mode & 0x40000) == 0)
+			if (!(Raziel.Mode & 0x40000))
 			{
 				PhysicsMode = 0;
+
 				SetDropPhysics(In->CharacterInstance, &Raziel);
 			}
+
 			break;
 		case 0x40003:
 			ptr = (struct evActionPlayHostAnimationData*)Ptr->Data;
+
 			EnMessageQueueData(&In->SectionList[CurrentSection].Defer, Ptr->ID, SetActionPlayHostAnimationData(ptr->instance, ptr->host, ptr->newAnim, ptr->newFrame, ptr->frames, ptr->mode));
 			break;
 		case 0x1000000:
 			data = (struct evMonsterHitData*)Ptr->Data;
+
 			if ((hitPosted == 0) && (Raziel.invincibleTimer == 0))
 			{
 				EnMessageQueueData(&In->SectionList[CurrentSection].Defer, 0x1000000, SetMonsterHitData(data->sender, data->lastHit, data->power, data->knockBackDistance, data->knockBackDuration));
+
 				hitPosted = 1;
 			}
+
 			break;
 		case 0x40025:
 		case 0x40005:
@@ -3528,8 +3587,10 @@ void StateHandlerGlyphs(struct __CharacterState* In, int CurrentSection, int Dat
 		default:
 			DefaultStateHandler(In, CurrentSection, Data);
 		}
+
 		DeMessageQueue(&In->SectionList[CurrentSection].Event);
 	}
+
 	In->CharacterInstance->cachedTFace = -1;
 }
 
