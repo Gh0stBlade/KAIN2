@@ -2225,7 +2225,7 @@ struct _FXParticle* FX_GetTorchParticle(struct _Instance* instance, short startS
 	if (currentParticle != NULL)
 	{
 		currentParticle->type = 1;
-		currentParticle->fxprim_process = &FX_FlamePrimProcess;
+		currentParticle->fxprim_process = (void*)FX_FlamePrimProcess;
 		currentParticle->texture = FX_GetTextureObject(instance->object, 1, tex);
 		currentParticle->startColor = 0x020040F0;
 		currentParticle->primLifeTime = 16;
@@ -3388,7 +3388,7 @@ struct _FXLightning* FX_CreateLightning(struct _Instance* instance, int lifeTime
 	zap = (struct _FXLightning*)MEMPACK_Malloc(sizeof(struct _FXLightning), 13);
 	if (zap != NULL)
 	{
-		zap->continue_process = &FX_ContinueLightning;
+		zap->continue_process = (void*)FX_ContinueLightning;
 
 		zap->instance = instance;
 		zap->end_instance = instance;
@@ -3546,7 +3546,7 @@ struct _FXFlash* FX_StartGenericFlash(struct _Instance* instance, int num) // Ma
 
 	if (flash != NULL)
 	{
-		flash->continue_process = FX_ContinueFlash;
+		flash->continue_process = (void*)FX_ContinueFlash;
 		flash->effectType = 136;
 		flash->instance = instance;
 		flash->type = 0;
