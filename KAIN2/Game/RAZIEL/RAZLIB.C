@@ -1268,7 +1268,7 @@ void razEnterWater(struct __CharacterState* In, int CurrentSection, struct evPhy
 	}
 }
 
-void _razSetSwimVelocity(struct _Instance* instance, int vel, int accl)//Matching - 99.76%
+void razSetSwimVelocity(struct _Instance* instance, int vel, int accl)//Matching - 99.76%
 {
 	instance->yAccl = 0;
 	instance->xAccl = 0;
