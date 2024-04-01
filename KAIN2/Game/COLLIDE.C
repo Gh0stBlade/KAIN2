@@ -224,7 +224,7 @@ long COLLIDE_GetNormal(short nNum, short* nrmlArray, struct _SVector* nrml)  // 
 	return bitMask;
 }
 
-void COLLIDE_MakeNormal(struct _Terrain* terrain, struct _TFace* tface, struct _SVector* normal) // Matching - 58.73%
+void COLLIDE_MakeNormal(struct _Terrain* terrain, struct _TFace* tface, struct _SVector* normal) // Matching - 72.03%
 {
 	struct _SVector* vertex0;
 	struct _SVector* vertex1;
@@ -233,61 +233,70 @@ void COLLIDE_MakeNormal(struct _Terrain* terrain, struct _TFace* tface, struct _
 	struct _Vector* a;
 	struct _Vector* b;
 	struct _Vector* n;
-	long _x0;
-	long _y0;
-	long _z0;
-	long _x1;
-	long _y1;
-	long _z1;
 
 	vertex0 = (struct _SVector*)&terrain->vertexList[tface->face.v0];
 	vertex1 = (struct _SVector*)&terrain->vertexList[tface->face.v1];
 	vertex2 = (struct _SVector*)&terrain->vertexList[tface->face.v2];
 
-	_x0 = vertex1->x;
-	_y0 = vertex1->y;
-	_z0 = vertex1->z;
+	{
+		long _x0;
+		long _y0;
+		long _z0;
+		long _x1;
+		long _y1;
+		long _z1;
 
-	_x1 = vertex0->x;
-	_y1 = vertex0->y;
-	_z1 = vertex0->z;
+		_x0 = vertex1->x;
+		_y0 = vertex1->y;
+		_z0 = vertex1->z;
 
-	_x0 -= _x1;
-	_y0 -= _y1;
-	_z0 -= _z1;
+		_x1 = vertex0->x;
+		_y1 = vertex0->y;
+		_z1 = vertex0->z;
 
-	a = (struct _Vector*)getScratchAddr(0);
+		_x0 = _x0 - _x1;
+		_y0 = _y0 - _y1;
+		_z0 = _z0 - _z1;
 
-	a->x = _x0;
-	a->y = _y0;
-	a->z = _z0;
+		a = (struct _Vector*)getScratchAddr(0);
 
-	_z0 = vertex2->z;
-	_z1 = vertex0->z;
+		a->x = _x0;
+		a->y = _y0;
+		a->z = _z0;
+	}
 
-	_z0 -= _z1;
+	{
+		long _x0;
+		long _y0;
+		long _z0;
+		long _x1;
+		long _y1;
+		long _z1;
 
-	_y0 = vertex2->y;
-	_y1 = vertex0->y;
+		_x0 = vertex2->x;
+		_y0 = vertex2->y;
+		_z0 = vertex2->z;
 
-	_y0 -= _y1;
+		_x1 = vertex0->x;
+		_y1 = vertex0->y;
+		_z1 = vertex0->z;
 
-	_x0 = vertex2->x;
-	_x1 = vertex0->x;
+		_x0 = _x0 - _x1;
+		_y0 = _y0 - _y1;
+		_z0 = _z0 - _z1;
 
-	_x0 -= _x1;
+		b = (struct _Vector*)getScratchAddr(4);
 
-	b = (struct _Vector*)getScratchAddr(4);
-
-	b->x = _x0;
-	b->y = _y0;
-	b->z = _z0;
+		b->x = _x0;
+		b->y = _y0;
+		b->z = _z0;
+	}
 
 	n = (struct _Vector*)getScratchAddr(8);
 
-	n->x = (((a->y * _z0) - (a->z * _y0)) >> 12);
-	n->y = (((a->x * _z0) - (a->z * _x0)) >> 12);
-	n->z = (((a->x * _y0) - (a->y * _x0)) >> 12);
+	n->x = (((a->y * b->z) - (a->z * b->y)) >> 12);
+	n->y = (((a->x * b->z) - (a->z * b->x)) >> 12);
+	n->z = (((a->x * b->y) - (a->y * b->x)) >> 12);
 
 	len = abs(-n->z);
 
