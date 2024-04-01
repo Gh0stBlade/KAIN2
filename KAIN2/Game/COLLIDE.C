@@ -228,25 +228,25 @@ long COLLIDE_GetNormal(short nNum, short* nrmlArray, struct _SVector* nrml)  // 
 	return bitMask;
 }
 
-void COLLIDE_MakeNormal(struct _Terrain* terrain, struct _TFace* tface, struct _SVector* normal)
+void COLLIDE_MakeNormal(struct _Terrain* terrain, struct _TFace* tface, struct _SVector* normal) // Matching - 58.73%
 {
-	struct _SVector* vertex0; // $v1
-	struct _SVector* vertex1; // $v0
-	struct _SVector* vertex2; // $a2
-	int len; // $a0
-	struct _Vector* a; // $v0
-	struct _Vector* b; // $v0
-	struct _Vector* n; // $t0
-	long _x0; // $t1, $a0
-	long _y0; // $t2, $a1
-	long _z0; // $t0, $a3
-	long _x1; // $a0, $v0
-	long _y1; // $v0, $v0
-	long _z1; // $a0, $v0
+	struct _SVector* vertex0;
+	struct _SVector* vertex1;
+	struct _SVector* vertex2;
+	int len;
+	struct _Vector* a;
+	struct _Vector* b;
+	struct _Vector* n;
+	long _x0;
+	long _y0;
+	long _z0;
+	long _x1;
+	long _y1;
+	long _z1;
 
-	vertex0 = (struct _SVector*)&terrain->vertexList[tface->face.v0];//v1
-	vertex1 = (struct _SVector*)&terrain->vertexList[tface->face.v1];//v0
-	vertex2 = (struct _SVector*)&terrain->vertexList[tface->face.v2];//a2
+	vertex0 = (struct _SVector*)&terrain->vertexList[tface->face.v0];
+	vertex1 = (struct _SVector*)&terrain->vertexList[tface->face.v1];
+	vertex2 = (struct _SVector*)&terrain->vertexList[tface->face.v2];
 
 	_x0 = vertex1->x;
 	_y0 = vertex1->y;
@@ -266,9 +266,9 @@ void COLLIDE_MakeNormal(struct _Terrain* terrain, struct _TFace* tface, struct _
 	a->y = _y0;
 	a->z = _z0;
 
-
 	_z0 = vertex2->z;
 	_z1 = vertex0->z;
+
 	_z0 -= _z1;
 
 	_y0 = vertex2->y;
@@ -293,16 +293,16 @@ void COLLIDE_MakeNormal(struct _Terrain* terrain, struct _TFace* tface, struct _
 	n->y = (((a->x * _z0) - (a->z * _x0)) >> 12);
 	n->z = (((a->x * _y0) - (a->y * _x0)) >> 12);
 
-	len = ABS(-n->z);
+	len = abs(-n->z);
 
-	if (len < ABS(-n->x))
+	if (len < abs(-n->x))
 	{
-		len = ABS(n->x);
+		len = abs(n->x);
 	}
 
-	if (len < ABS(-n->z))
+	if (len < abs(-n->z))
 	{
-		len = ABS(n->z);
+		len = abs(n->z);
 	}
 
 	if (len != 0)
