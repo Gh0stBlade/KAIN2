@@ -34,7 +34,7 @@ uintptr_t overlayAddress = (uintptr_t)&memBuffer[0]; // 0x800CE194
 unsigned int overlayAddress; // For PSX this is quite clearly set by the linker script maybe.
 #endif
 
-void MEMPACK_Init()//Matching - 51.54%
+void MEMPACK_Init() // Matching - 100%
 {
 #if defined(PSX_VERSION)
 #if defined(PSXPC_VERSION)
@@ -56,21 +56,21 @@ void MEMPACK_Init()//Matching - 51.54%
 	newMemTracker.totalMemory = sizeof(memBuffer);
 	memset(&memBuffer[0], 0, sizeof(memBuffer));
 #endif
-	
+
 	newMemTracker.rootNode = (struct MemHeader*)&memBuffer[0];
 #else
-	newMemTracker.totalMemory = (BASE_ADDRESS + (TWO_MB - (ONE_MB / 256))) - overlayAddress;
 	newMemTracker.rootNode = (struct MemHeader*)overlayAddress;
+	newMemTracker.totalMemory = (BASE_ADDRESS + (TWO_MB - (ONE_MB / 256))) - overlayAddress;
 #endif
 #endif
-	
+
 	newMemTracker.rootNode->magicNumber = DEFAULT_MEM_MAGIC;
 	newMemTracker.rootNode->memStatus = 0;
 	newMemTracker.rootNode->memType = 0;
 	newMemTracker.rootNode->memSize = newMemTracker.totalMemory;
+	newMemTracker.lastMemoryAddress = (char*)newMemTracker.rootNode + newMemTracker.totalMemory;
 	newMemTracker.currentMemoryUsed = 0;
 	newMemTracker.doingGarbageCollection = 0;
-	newMemTracker.lastMemoryAddress = (char*)newMemTracker.rootNode + newMemTracker.rootNode->memSize;
 }
 
 struct MemHeader* MEMPACK_GetSmallestBlockTopBottom(long allocSize)//Matching - 100.0%
