@@ -120,7 +120,7 @@ long MEMPACK_RelocatableType(long memType)//Matching - 100.0%
 	return 0;
 }
 
-char* MEMPACK_Malloc(unsigned long allocSize, unsigned char memType)//Matching - 99.25%
+char* MEMPACK_Malloc(unsigned long allocSize, unsigned char memType) // Matching - 100%
 {
 #if defined(UWP)
 	struct MemHeader* bestAddress = NULL;
