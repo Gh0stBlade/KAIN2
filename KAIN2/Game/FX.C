@@ -3546,7 +3546,7 @@ struct _FXFlash* FX_StartGenericFlash(struct _Instance* instance, int num) // Ma
 
 	if (flash != NULL)
 	{
-		flash->continue_process = &FX_ContinueFlash;
+		flash->continue_process = FX_ContinueFlash;
 		flash->effectType = 136;
 		flash->instance = instance;
 		flash->type = 0;
