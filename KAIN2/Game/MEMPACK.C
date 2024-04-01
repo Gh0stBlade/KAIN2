@@ -110,9 +110,9 @@ struct MemHeader* MEMPACK_GetSmallestBlockBottomTop(long allocSize)//Matching - 
 	return bestAddress;
 }
 
-long MEMPACK_RelocatableType(long memType)//Matching - 100.0%
+long MEMPACK_RelocatableType(long memType) // Matching - 100%
 {
-	if (memType - 1 < 2U || memType == 0x2C || memType == 0x2F || memType == 0x4)
+	if ((memType == 1) || (memType == 2) || (memType == 44) || (memType == 47) || (memType == 4))
 	{
 		return 1;
 	}
