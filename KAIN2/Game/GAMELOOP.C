@@ -1134,7 +1134,7 @@ void GAMELOOP_SwitchTheDrawBuffer(unsigned long **drawot)
 	PutDrawEnv(&draw[gameTrackerX.drawPage]);
 }
 
-void GAMELOOP_SetupRenderFunction(struct GameTracker *gameTracker)
+void GAMELOOP_SetupRenderFunction(struct GameTracker *gameTracker) // Matching - 100%
 {
 	gameTracker->drawAnimatedModelFunc = &DRAW_AnimatedModel_S;
 	gameTracker->drawDisplayPolytopeListFunc = &DRAW_DisplayPolytopeList_S;
