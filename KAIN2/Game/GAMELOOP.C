@@ -2632,11 +2632,12 @@ void GAMELOOP_ModeStartPause() // Matching - 98.89%
 	pause_redraw_flag = 1;
 }
 
-void GAMELOOP_ChangeMode()
+void GAMELOOP_ChangeMode() // Matching - 99.74%
 {
 	long* controlCommand;
+	int temp;  // not from SYMDUMP
 
-	controlCommand = &gameTrackerX.controlCommand[0][0];
+	controlCommand = (long*)gameTrackerX.controlCommand;
 
 	if (!(gameTrackerX.debugFlags & 0x40000))
 	{
@@ -2647,23 +2648,19 @@ void GAMELOOP_ChangeMode()
 				theCamera.forced_movement = 1;
 
 				gameTrackerX.playerInstance->position.z += 100;
-
 				gameTrackerX.playerInstance->zVel = 0;
-
 				gameTrackerX.cheatMode = 1;
 
 				INSTANCE_Post(gameTrackerX.playerInstance, 0x100010, 1);
 
-				gameTrackerX.playerInstance->flags &= 0xFFFFF7FF;
+				gameTrackerX.playerInstance->flags &= ~0x800;
 			}
 			else if ((gameTrackerX.controlCommand[0][0] & 0xA02) == 0xA02)
 			{
 				theCamera.forced_movement = 1;
 
 				gameTrackerX.playerInstance->position.z -= 100;
-
 				gameTrackerX.playerInstance->zVel = 0;
-
 				gameTrackerX.cheatMode = 0;
 
 				INSTANCE_Post(gameTrackerX.playerInstance, 0x100010, 0);
@@ -2671,142 +2668,95 @@ void GAMELOOP_ChangeMode()
 				gameTrackerX.gameMode = 0;
 			}
 		}
-		
-		if (!(gameTrackerX.debugFlags & 0x40000) || (gameTrackerX.playerCheatFlags & 0x2))
-		{
-			if ((controlCommand[1] & 0x60) == 0x60 && (controlCommand[0] & 0xF) == 0)
-			{
-				if (gameTrackerX.gameMode == 0)
-				{
-					gameTrackerX.gameMode = 4;
-
-					currentMenu = &standardMenu[0];
-
-					if (gameTrackerX.sound.gVoiceOn != 0)
-					{
-						gameTrackerX.debugFlags |= 0x80000;
-					}
-					else
-					{
-						gameTrackerX.debugFlags &= 0xFFF7FFFF;
-					}
-
-					if (gameTrackerX.sound.gMusicOn != 0)
-					{
-						gameTrackerX.debugFlags2 |= 0x1000;
-					}
-					else
-					{
-						gameTrackerX.debugFlags2 &= 0xFFFFEFFF;
-					}
-
-
-					if (gameTrackerX.sound.gSfxOn != 0)
-					{
-						gameTrackerX.debugFlags2 |= 0x2000;
-					}
-					else
-					{
-						gameTrackerX.debugFlags2 &= 0xFFFFDFFF;
-					}
-				}
-				else if (gameTrackerX.gameMode == 7)
-				{
-					DEBUG_EndViewVram(&gameTrackerX);
-
-					gameTrackerX.gameMode = 0;
-				}
-				else
-				{
-					GAMELOOP_ModeStartRunning();
-				}
-			}
-		}
 	}
-	else
+
+	if ((!(gameTrackerX.debugFlags & 0x40000)) || ((gameTrackerX.playerCheatFlags & 0x2)))
 	{
-		if ((gameTrackerX.playerCheatFlags & 0x2))
+		if (((controlCommand[1] & 0x60) == 0x60) && (!(controlCommand[0] & 0xF)))
 		{
-			if ((controlCommand[1] & 0x60) == 0x60 && (controlCommand[0] & 0xF) == 0)
+			if (gameTrackerX.gameMode == 0)
 			{
-				if (gameTrackerX.gameMode == 0)
+				gameTrackerX.gameMode = 4;
+
+				currentMenu = (struct DebugMenuLine*)&standardMenu;
+
+				if ((unsigned char)gameTrackerX.sound.gVoiceOn != 0)
 				{
-					gameTrackerX.gameMode = 4;
-
-					currentMenu = &standardMenu[0];
-
-					if (gameTrackerX.sound.gVoiceOn != 0)
-					{
-						gameTrackerX.debugFlags |= 0x80000;
-					}
-					else
-					{
-						gameTrackerX.debugFlags &= 0xFFF7FFFF;
-					}
-
-					if (gameTrackerX.sound.gMusicOn != 0)
-					{
-						gameTrackerX.debugFlags2 |= 0x1000;
-					}
-					else
-					{
-						gameTrackerX.debugFlags2 &= 0xFFFFEFFF;
-					}
-
-
-					if (gameTrackerX.sound.gSfxOn != 0)
-					{
-						gameTrackerX.debugFlags2 |= 0x2000;
-					}
-					else
-					{
-						gameTrackerX.debugFlags2 &= 0xFFFFDFFF;
-					}
-				}
-				else if (gameTrackerX.gameMode == 7)
-				{
-					DEBUG_EndViewVram(&gameTrackerX);
-
-					gameTrackerX.gameMode = 0;
+					gameTrackerX.debugFlags |= 0x80000;
 				}
 				else
 				{
-					GAMELOOP_ModeStartRunning();
+					gameTrackerX.debugFlags &= ~0x80000;
 				}
+
+				if ((unsigned char)gameTrackerX.sound.gMusicOn != 0)
+				{
+					gameTrackerX.debugFlags2 |= 0x1000;
+				}
+				else
+				{
+					gameTrackerX.debugFlags2 &= ~0x1000;
+				}
+
+				if ((unsigned char)gameTrackerX.sound.gSfxOn != 0)
+				{
+					gameTrackerX.debugFlags2 |= 0x2000;
+				}
+				else
+				{
+					gameTrackerX.debugFlags2 &= ~0x2000;
+				}
+			}
+			else if (gameTrackerX.gameMode == 7)
+			{
+				DEBUG_EndViewVram(&gameTrackerX);
+
+				gameTrackerX.gameMode = 0;
+			}
+			else
+			{
+				GAMELOOP_ModeStartRunning();
 			}
 		}
 	}
 
-	if (((controlCommand[1] & 0x4000) || (gamePadControllerOut >= 6)) && (gameTrackerX.gameMode == 0) && !(gameTrackerX.gameFlags & 0x80) && gameTrackerX.wipeTime == 0 || (gameTrackerX.wipeType != 11 && gameTrackerX.wipeTime == -1))
+	if ((((controlCommand[1] & 0x4000)) || (gamePadControllerOut >= 6)) && (gameTrackerX.gameMode == 0)
+		&& (!(gameTrackerX.gameFlags & 0x80)) && ((gameTrackerX.wipeTime == 0) || ((gameTrackerX.wipeType != 11)
+			&& (gameTrackerX.wipeTime == -1))))
 	{
 		GAMELOOP_ModeStartPause();
 	}
 	else
 	{
-		if ((controlCommand[1] & 0x4000) || (gameTrackerX.gameFlags & 0x40000000) && gameTrackerX.gameMode != 0)
+		temp = controlCommand[1] & 0x4000;
+
+		if (((temp != 0) || ((gameTrackerX.gameFlags & 0x40000000))) && (gameTrackerX.gameMode != 0)
+			&& (!(gameTrackerX.gameFlags & 0x20000000)) && ((gameTrackerX.wipeTime == 0) || ((gameTrackerX.wipeType != 11)
+				&& (gameTrackerX.wipeTime == -1))))
 		{
-			if (!(gameTrackerX.gameFlags & 0x20000000) && (gameTrackerX.wipeTime == 0) || (gameTrackerX.wipeType != 11 && gameTrackerX.wipeTime == -1))
+			if (temp != 0)
 			{
-				if ((controlCommand[1] & 0x4000) && !(gameTrackerX.gameFlags & 0x40000000))
+				if (!(gameTrackerX.gameFlags & 0x40000000))
 				{
 					SndPlay(5);
 				}
-
-				gameTrackerX.gameFlags &= 0xBFFFFFFF;
-
-				GAMELOOP_ModeStartRunning();
 			}
+
+			gameTrackerX.gameFlags &= ~0x40000000;
+
+			GAMELOOP_ModeStartRunning();
 		}
 	}
 
 	if ((gameTrackerX.controlCommand[0][0] & 0x40000000))
 	{
 		gameTrackerX.playerInstance->flags |= 0x100;
+		return;
 	}
 
 	if ((gameTrackerX.controlCommand[0][2] & 0x40000000))
 	{
-		gameTrackerX.playerInstance->flags &= 0xFFFFFEFF;
+		gameTrackerX.playerInstance->flags &= ~0x100;
 	}
 }
 
