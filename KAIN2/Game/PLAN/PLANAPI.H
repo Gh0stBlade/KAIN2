@@ -37,7 +37,7 @@ struct PoolManagementData
 	struct _Position playerPosAtLastPlanMkrUpdate; // size=6, offset=2
 	struct PlanningNode* expansionNode1; // size=28, offset=8
 	struct PlanningNode* expansionNode2; // size=28, offset=12
-	unsigned short* distanceMatrix[32]; // size=4, offset=16
+	unsigned short* (distanceMatrix)[32]; // size=4, offset=16 modified in regards to SYMDUMP
 	unsigned short pairType; // size=0, offset=20
 	struct _Position peakPos; // size=6, offset=22
 	unsigned char currentNode; // size=0, offset=28
