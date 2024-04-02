@@ -2122,7 +2122,7 @@ void GAMELOOP_Set24FPS()
 	gameTrackerX.frameRate24fps = 1;
 }
 
-void GAMELOOP_Reset24FPS()
+void GAMELOOP_Reset24FPS() // Matching - 100%
 {
 	gameTrackerX.frameRate24fps = 0;
 }
