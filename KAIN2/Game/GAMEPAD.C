@@ -567,7 +567,7 @@ void GAMEPAD_DisplayControllerStatus(int msgY)
 	}
 }
 
-void GAMEPAD_Process(struct GameTracker *gameTracker)
+void GAMEPAD_Process(struct GameTracker *gameTracker) // Matching - 100%
 { 
 	GAMEPAD_GetData(gameTracker->controlData);
 	GAMEPAD_Commands(gameTracker->controlCommand, gameTracker->controlData, 0);
