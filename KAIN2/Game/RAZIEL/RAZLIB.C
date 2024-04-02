@@ -1557,7 +1557,7 @@ void razSetCowlNoDraw(int mode) // Matching - 99.89%
 		}
 
 		temp++;
-	} while ((int)temp < (int)&cowlList[20]);
+	} while ((int)temp < (int)&cowlList[19]);
 }
 
 void razAttachControllers()
