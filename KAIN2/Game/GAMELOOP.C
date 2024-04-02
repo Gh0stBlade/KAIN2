@@ -2558,7 +2558,7 @@ void GAMELOOP_Process(struct GameTracker* gameTracker)
 	}
 }
 
-void GAMELOOP_ModeStartRunning()
+void GAMELOOP_ModeStartRunning() // Matching - 98.15%
 {
 	if (gameTrackerX.gameMode == 4 || gameTrackerX.gameMode == 6)
 	{
@@ -2576,7 +2576,7 @@ void GAMELOOP_ModeStartRunning()
 
 	if ((gameTrackerX.gameFlags & 0x8000000))
 	{
-		gameTrackerX.gameFlags &= 0xF7FFFFFF;
+		gameTrackerX.gameFlags &= ~0x8000000;
 
 		gameTrackerX.savedOTStart = NULL;
 
@@ -2584,8 +2584,8 @@ void GAMELOOP_ModeStartRunning()
 	}
 
 	gameTrackerX.gameMode = 0;
-	gameTrackerX.gameFlags &= 0xEFFFFFFF;
-	gameTrackerX.playerInstance->flags &= 0xFFFFFEFF;
+	gameTrackerX.gameFlags &= ~0x10000000;
+	gameTrackerX.playerInstance->flags &= ~0x100;
 	gameTrackerX.gameMode = 0;
 
 	GAMEPAD_RestoreControllers();
