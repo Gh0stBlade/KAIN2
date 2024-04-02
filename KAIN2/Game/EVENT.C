@@ -4146,7 +4146,7 @@ long EVENT_DoTGroupAction(struct TGroupObject* terrainGroup, struct StackType* o
 }
 
 
-long EVENT_DoCameraAction(struct CameraObject* cameraObject, struct StackType* operand2, short* codeStream)  // Matching - 99.91%
+long EVENT_DoCameraAction(struct CameraObject* cameraObject, struct StackType* operand2, short* codeStream) // Matching - 100%
 {
 	long trueValue;
 	long number;
@@ -4218,8 +4218,9 @@ long EVENT_DoCameraAction(struct CameraObject* cameraObject, struct StackType* o
 				if (cameraObject->attribute == 70)
 				{
 					angle = -number;
+					angle %= 360;
 
-					if ((angle % 360) < 0)
+					if (angle < 0)
 					{
 						angle += 360;
 					}
@@ -4229,8 +4230,9 @@ long EVENT_DoCameraAction(struct CameraObject* cameraObject, struct StackType* o
 				else
 				{
 					angle = -number;
+					angle %= 360;
 
-					if ((angle % 360) < 0)
+					if (angle < 0)
 					{
 						angle += 360;
 					}
