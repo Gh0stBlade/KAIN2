@@ -2593,7 +2593,7 @@ void GAMELOOP_ModeStartRunning()
 	INSTANCE_Post(gameTrackerX.playerInstance, 0x10000A, 0);
 }
 
-void GAMELOOP_ModeStartPause()
+void GAMELOOP_ModeStartPause() // Matching - 98.89%
 {
 	gameTrackerX.gameMode = 6;
 
