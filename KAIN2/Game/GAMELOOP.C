@@ -1118,7 +1118,7 @@ void GAMELOOP_AddClearPrim(unsigned long** drawot, int override)
 	}
 }
 
-void GAMELOOP_SwitchTheDrawBuffer(unsigned long **drawot)
+void GAMELOOP_SwitchTheDrawBuffer(unsigned long **drawot) // Matching - 100%
 {
 	GAMELOOP_AddClearPrim(drawot, 0);
 
