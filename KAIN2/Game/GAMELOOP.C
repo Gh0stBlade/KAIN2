@@ -1140,7 +1140,7 @@ void GAMELOOP_SetupRenderFunction(struct GameTracker *gameTracker)
 	gameTracker->drawDisplayPolytopeListFunc = &DRAW_DisplayPolytopeList_S;
 }
 
-struct _StreamUnit * GAMELOOP_GetMainRenderUnit()
+struct _StreamUnit * GAMELOOP_GetMainRenderUnit() // Matching - 100%
 {
 	struct _StreamUnit* streamUnit;
 	struct _Instance* focusInstance;
