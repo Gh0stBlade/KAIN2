@@ -2105,7 +2105,7 @@ loc_80030250:
 }
 #endif
 
-void ResetDrawPage()
+void ResetDrawPage() // Matching - 100%
 { 
 	unsigned long **temp;
 
