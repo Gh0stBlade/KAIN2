@@ -893,8 +893,7 @@ void MainRenderLevel(struct _StreamUnit* currentUnit, unsigned long** drawot)
 	//StackSave = $sp
 	//$sp = 0x1F8003F0
 
-	///@TODO no FX tracker in place yet!
-	///FX_DrawList(fxTracker, &gameTrackerX, gameTrackerX.drawOT, theCamera.core.wcTransform);
+	FX_DrawList(fxTracker, &gameTrackerX, gameTrackerX.drawOT, theCamera.core.wcTransform);
 
 	if (gameTrackerX.playerInstance->currentStreamUnitID == currentUnit->StreamUnitID)
 	{
@@ -2468,7 +2467,7 @@ void GAMELOOP_Process(struct GameTracker* gameTracker)
 						li      $t4, 0x1F8003F0
 						move    $sp, $t4
 #endif
-						//FX_ProcessList(fxTracker);
+						FX_ProcessList(fxTracker);
 
 
 #if 0///@TODO macro for PSX! "POP_STACK"
