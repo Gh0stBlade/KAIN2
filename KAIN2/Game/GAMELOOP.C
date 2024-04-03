@@ -1634,7 +1634,7 @@ void Switch_For_Redraw() // Matching - 100%
 	gameTrackerX.primPool->numPrims = 0;
 }
 
-void GAMELOOP_Set_Pause_Redraw()
+void GAMELOOP_Set_Pause_Redraw() // Matching - 100%
 {
 	pause_redraw_flag = 1;
 }
