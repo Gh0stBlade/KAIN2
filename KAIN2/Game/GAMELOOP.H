@@ -29,7 +29,7 @@
 
 #define STACK_SAVE() STACK_SET(0x1F8003F0)
 
-#define STACK_RESTORE(x) 
+#define STACK_RESTORE() 
 #endif
 
 struct PointLight 
