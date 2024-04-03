@@ -2117,7 +2117,7 @@ void ResetDrawPage() // Matching - 100%
 	ClearOTagR((unsigned int*)gameTrackerX.drawOT, 3072);
 }
 
-void GAMELOOP_Set24FPS()
+void GAMELOOP_Set24FPS() // Matching - 100%
 {
 	gameTrackerX.frameRate24fps = 1;
 }
