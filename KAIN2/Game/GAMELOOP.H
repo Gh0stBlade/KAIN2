@@ -4,6 +4,34 @@
 #include "CORE.H"
 #include "G2TYPES.H"
 
+#ifndef PSXPC_VERSION
+#define STACK_SET(x) {\
+    asm(\
+        "sw      $sp, 0(%0);"\
+        "li      $t4, 0x1F8003F0;"\
+        "move    $sp, $t4;"\
+        : \
+        : "r"(&StackSave) : "$12" \
+    ); \
+    }
+
+#define STACK_SAVE() STACK_SET(0x1F8003F0)
+
+#define STACK_RESTORE(x) {\
+    asm(\
+        "lw      $sp, 0(%0);"\
+        : \
+        : "r"(&StackSave) : "$sp" \
+    ); \
+    }
+#else
+#define STACK_SET(x) 
+
+#define STACK_SAVE() STACK_SET(0x1F8003F0)
+
+#define STACK_RESTORE(x) 
+#endif
+
 struct PointLight 
 {
 	struct NodeType node; // size=8, offset=0

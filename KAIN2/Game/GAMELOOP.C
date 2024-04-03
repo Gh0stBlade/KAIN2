@@ -54,6 +54,7 @@ struct _InstanceList* instanceList; // offset 0x800D0C20
 struct _InstancePool* instancePool; // offset 0x800D0C24
 
 struct GameTracker* gameTracker;
+unsigned long StackSave; // offset 0x800D2FEC
 
 void GAMELOOP_AllocStaticMemory() // Matching - 100%
 {
@@ -2314,7 +2315,7 @@ void GAMELOOP_DoTimeProcess()
 #endif
 }
 
-void GAMELOOP_Process(struct GameTracker* gameTracker)
+void GAMELOOP_Process(struct GameTracker* gameTracker) // Matching - 100%
 {
 	int d;
 	int useTime;
@@ -2325,15 +2326,17 @@ void GAMELOOP_Process(struct GameTracker* gameTracker)
 	if (gEndGameNow != 0)
 	{
 		DEBUG_ExitGame();
-		gameTrackerX.levelDone = 3;
+
+		gameTracker->levelDone = 3;
 	}
 	else
 	{
 		GAMELOOP_DoTimeProcess();
 
-		if (gameTrackerX.gameMode != 6 && !(gameTrackerX.streamFlags & 0x100000))
+		if ((gameTrackerX.gameMode != 6) && (!(gameTrackerX.streamFlags & 0x100000)))
 		{
 			MORPH_UpdateTimeMult();
+
 			GAMELOOP_CalcGameTime();
 
 			if (gameTracker->gameData.asmData.MorphType != 0)
@@ -2343,22 +2346,25 @@ void GAMELOOP_Process(struct GameTracker* gameTracker)
 			else
 			{
 				useTime = 1;
+
 				if (gameTrackerX.playerInstance != NULL)
 				{
 					level = STREAM_GetLevelWithID(gameTrackerX.playerInstance->currentStreamUnitID);
+
 					if (level != NULL)
 					{
-						useTime = (level->unitFlags & 0x2000) < 1;
+						useTime = (unsigned long)((level->unitFlags & 0x2000)) < (unsigned int)useTime;
 					}
 				}
 				if (useTime != 0)
 				{
 					gameTracker->currentTimeOfDayTime += gameTracker->lastLoopTime;
-
 				}
+
 				gameTracker->currentMaterialTime += gameTracker->lastLoopTime;
 			}
 		}
+
 		gameTracker->numGSignals = 0;
 
 		GAMELOOP_ChangeMode();
@@ -2374,59 +2380,66 @@ void GAMELOOP_Process(struct GameTracker* gameTracker)
 				if (gameTrackerX.SwitchToNewStreamUnit == 1)
 				{
 					INSTANCE_Post(gameTrackerX.playerInstance, 0x4000006, 0);
+
 					STREAM_MoveIntoNewStreamUnit();
 				}
-			}
-			if (VRAM_NeedToUpdateMorph != 0)
-			{
-				if (STREAM_IsCdBusy(NULL) == 0)
+
+				if (VRAM_NeedToUpdateMorph != 0)
 				{
-					VRAM_UpdateMorphPalettes();
-					VRAM_NeedToUpdateMorph = 0;
-				}
-			}
-
-			if (gameTracker->gameData.asmData.MorphTime < 1000)
-			{
-				MORPH_Continue();
-			}
-
-			if ((gameTracker->streamFlags & 0x80000))
-			{
-				gameTracker->streamFlags &= 0xFFF7FFFF;
-				UNDERWORLD_StartProcess();
-			}
-
-			EVENT_DoProcess();
-
-			for (i = 0; i < 16; i++)
-			{
-				if (StreamTracker.StreamList[i].used == 2)
-				{
-					if (StreamTracker.StreamList[i].level->PuzzleInstances != NULL)
+					if (STREAM_IsCdBusy(NULL) == 0)
 					{
-						if ((gameTrackerX.debugFlags2 & 0x100))
+						VRAM_UpdateMorphPalettes();
+
+						VRAM_NeedToUpdateMorph = 0;
+					}
+				}
+
+				if (gameTracker->gameData.asmData.MorphTime < 1000)
+				{
+					MORPH_Continue();
+				}
+
+				if ((gameTracker->streamFlags & 0x80000))
+				{
+					gameTracker->streamFlags &= ~0x80000;
+
+					UNDERWORLD_StartProcess();
+				}
+
+				EVENT_DoProcess();
+
+				for (i = 0; i < 16; i++)
+				{
+					if (StreamTracker.StreamList[i].used == 2)
+					{
+						if (StreamTracker.StreamList[i].level->PuzzleInstances != NULL)
 						{
-							FONT_Print("Processing unit %s\n", StreamTracker.StreamList[i].baseAreaName);
+							if ((gameTrackerX.debugFlags2 & 0x100))
+							{
+								FONT_Print("Processing unit %s\n", StreamTracker.StreamList[i].baseAreaName);
+							}
+
+							EVENT_ProcessEvents(StreamTracker.StreamList[i].level->PuzzleInstances, StreamTracker.StreamList[i].level);
 						}
 
-						EVENT_ProcessEvents(StreamTracker.StreamList[i].level->PuzzleInstances, StreamTracker.StreamList[i].level);
 						EVENT_BSPProcess(&StreamTracker.StreamList[i]);
 					}
 				}
+
+				EVENT_ResetAllOneTimeVariables();
 			}
-			EVENT_ResetAllOneTimeVariables();
 
 			EVENT_ProcessHints();
 
 			for (d = 0; d < 16; d++)
 			{
-				if (StreamTracker.StreamList[d].used == 2 && StreamTracker.StreamList[d].level->NumberOfSFXMarkers > 0)
+				if (StreamTracker.StreamList[d].used == 2)
 				{
 					for (i = 0; i < StreamTracker.StreamList[d].level->NumberOfSFXMarkers; i++)
 					{
 						sfxMkr = &StreamTracker.StreamList[d].level->SFXMarkerList[i];
-						if (sfxMkr != NULL && sfxMkr->soundData != NULL)
+
+						if ((sfxMkr != NULL) && (sfxMkr->soundData != NULL))
 						{
 							SOUND_ProcessInstanceSounds(sfxMkr->soundData, sfxMkr->sfxTbl, &sfxMkr->pos, sfxMkr->livesInOnePlace, sfxMkr->inSpectral, 0, 0, NULL);
 						}
@@ -2440,81 +2453,80 @@ void GAMELOOP_Process(struct GameTracker* gameTracker)
 			}
 
 			INSTANCE_ProcessFunctions(gameTracker->instanceList);
+
 			INSTANCE_CleanUpInstanceList(gameTracker->instanceList, 0);
+
 			INSTANCE_DeactivateFarInstances(gameTracker);
+
 			MONAPI_ProcessGenerator();
 
 			getScratchAddr(0)[0] = ((unsigned long*)&theCamera.core.position.x)[0];
+
 			getScratchAddr(1)[0] = ((unsigned long*)&theCamera.core.position.z)[0];
 
-#if 0//Right this is either done to do this fast on the scratch pad!
-			//t0 = &StackSave
-			sw      $sp, 0($t0)
-				li      $t4, 0x1F8003F0
-				move    $sp, $t4
-#endif
+			STACK_SAVE();
 
-				G2Instance_BuildTransformsForList(gameTracker->instanceList->first);
+			G2Instance_BuildTransformsForList(gameTracker->instanceList->first);
 
+			STACK_RESTORE(StackSave);
 
-#if 0//Right this is either done to do this fast on the scratch pad!
-			//t0 = &StackSave
-			lw      $sp, 0($t0)
-#endif
+			if (!(gameTrackerX.streamFlags & 0x100000))
+			{
+				STACK_SAVE();
+
+				FX_ProcessList(fxTracker);
+
+				STACK_RESTORE(StackSave);
+
 				if (!(gameTrackerX.streamFlags & 0x100000))
 				{
-#if 0///@TODO macro for PSX! "PUSH_STACK"
-					sw      $sp, 0($t0)
-						li      $t4, 0x1F8003F0
-						move    $sp, $t4
-#endif
-						//FX_ProcessList(fxTracker);
+					VM_Tick(256);
 
+					if ((gameTracker->debugFlags2 & 0x10000))
+					{
+						FONT_Print("Military Time %04d\n", gameTrackerX.timeOfDay);
+					}
 
-#if 0///@TODO macro for PSX! "POP_STACK"
-				//t0 = &StackSave
-						lw      $sp, 0($t0)
-#endif
-						if (!(gameTrackerX.streamFlags & 0x100000))
+					for (d = 0; d < 16; d++)
+					{
+						if (StreamTracker.StreamList[d].used == 2)
 						{
-							VM_Tick(256);
-
-							if ((gameTracker->debugFlags2 & 0x10000))
-							{
-								FONT_Print("Military Time %04d\n", gameTrackerX.timeOfDay);
-							}
-
-							for (d = 0; d < 16; d++)
-							{
-								if (StreamTracker.StreamList[d].used == 2)
-								{
-									VM_ProcessVMObjectList_S(StreamTracker.StreamList[d].level, &theCamera);
-								}
-							}
-
-							if (!(gameTrackerX.streamFlags & 0x100000))
-							{
-								PLANAPI_UpdatePlanningDatabase(gameTracker, gameTrackerX.playerInstance);
-							}
+							VM_ProcessVMObjectList_S(StreamTracker.StreamList[d].level, &theCamera);
 						}
+					}
+
+					if (!(gameTrackerX.streamFlags & 0x100000))
+					{
+						PLANAPI_UpdatePlanningDatabase(gameTracker, gameTrackerX.playerInstance);
+					}
 				}
+			}
 
 			DEBUG_Process(gameTracker);
+
 			COLLIDE_InstanceList(gameTracker->instanceList);
+
 			COLLIDE_InstanceListTerrain(gameTracker->instanceList);
+
 			INSTANCE_AdditionalCollideFunctions(instanceList);
+
 			COLLIDE_InstanceListWithSignals(instanceList);
 
 			if (!(gameTrackerX.streamFlags & 0x100000))
 			{
 				LIGHT_CalcShadowPositions(gameTracker);
+
 				INSTANCE_CleanUpInstanceList(gameTracker->instanceList, 16);
 			}
 
 			CAMERA_Process(&theCamera);
+
 			PIPE3D_CalculateWCTransform(&theCamera.core);
-			//theCamera.core.wcTransform2->t[0] = 0;//? padding?
+
+			theCamera.core.wcTransform2->m[2][3] = 0; // no apparent code purpose
+
 			PIPE3D_InvertTransform(theCamera.core.cwTransform2, theCamera.core.wcTransform2);
+
 			CAMERA_CalcVVClipInfo(&theCamera);
 
 			if (gameTracker->levelChange != 0)
@@ -2527,21 +2539,16 @@ void GAMELOOP_Process(struct GameTracker* gameTracker)
 		else
 		{
 			getScratchAddr(0)[0] = ((unsigned long*)&theCamera.core.position.x)[0];
+
 			getScratchAddr(1)[0] = ((unsigned long*)&theCamera.core.position.z)[0];
-#if 0
-			sw      $sp, 0($t0)
-				li      $t4, 0x1F8003F0
-				move    $sp, $t4
-#endif
 
-				G2Instance_BuildTransformsForList(gameTracker->instanceList->first);
+			STACK_SAVE();
 
-#if 0
-			//t0 = &StackSave
-			addiu   $t0, $gp, -0x45AC
-				lw      $sp, 0($t0)
-#endif
-				DEBUG_Process(gameTracker);
+			G2Instance_BuildTransformsForList(gameTracker->instanceList->first);
+
+			STACK_RESTORE(StackSave);
+
+			DEBUG_Process(gameTracker);
 		}
 
 		if (gameTracker->levelDone == 0)
@@ -2554,7 +2561,8 @@ void GAMELOOP_Process(struct GameTracker* gameTracker)
 		}
 
 		gameTracker->frameCount++;
-		gameTracker->debugFlags &= 0xF7FFFFFF;
+
+		gameTracker->debugFlags &= ~0x8000000;
 	}
 }
 
