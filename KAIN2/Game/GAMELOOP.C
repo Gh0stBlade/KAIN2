@@ -922,7 +922,7 @@ void StreamIntroInstancesForUnit(struct _StreamUnit* currentUnit)
 	}
 }
 
-long StreamRenderLevel(struct _StreamUnit* currentUnit, struct Level* mainLevel, unsigned int** drawot, long portalFogColor)
+long StreamRenderLevel(struct _StreamUnit* currentUnit, struct Level* mainLevel, unsigned int** drawot, long portalFogColor) // Matching - 92.56%
 {
 	struct GameTracker* gameTracker;
 	struct Level* level;
@@ -946,9 +946,9 @@ long StreamRenderLevel(struct _StreamUnit* currentUnit, struct Level* mainLevel,
 
 	gameTracker = &gameTrackerX;
 
-	depthQBackColor = portalFogColor;
-
 	currentUnit->FogColor = portalFogColor;
+
+	depthQBackColor = portalFogColor;
 
 	depthQFogFar = level->fogFar;
 
@@ -956,13 +956,13 @@ long StreamRenderLevel(struct _StreamUnit* currentUnit, struct Level* mainLevel,
 
 	theCamera.core.farPlane = level->fogFar;
 
-	if (CheckForNoBlend((struct _ColorType*)&depthQBackColor) == 0)
+	if (CheckForNoBlend((struct _ColorType*)&depthQBackColor))
 	{
-		depthQBlendStart = depthQFogStart;
+		depthQBlendStart = 65535;
 	}
 	else
 	{
-		depthQBlendStart = 65535;
+		depthQBlendStart = depthQFogStart;
 	}
 
 	SetFogNearFar(depthQFogStart, depthQFogFar, 320);
@@ -973,82 +973,53 @@ long StreamRenderLevel(struct _StreamUnit* currentUnit, struct Level* mainLevel,
 
 	PIPE3D_InstanceListTransformAndDraw(currentUnit, gameTracker, drawot, &theCamera.core);
 
-	cam_pos_save.x = theCamera.core.position.x;
-	cam_pos_save.y = theCamera.core.position.y;
-	cam_pos_save.z = theCamera.core.position.z;
+	cam_pos_save = theCamera.core.position;
 
-	cam_mat_save.m[0][0] = theCamera.core.wcTransform->m[0][0];
-	cam_mat_save.m[0][1] = theCamera.core.wcTransform->m[0][1];
-	cam_mat_save.m[0][2] = theCamera.core.wcTransform->m[0][2];
-	cam_mat_save.m[1][0] = theCamera.core.wcTransform->m[1][0];
-	cam_mat_save.m[1][1] = theCamera.core.wcTransform->m[1][1];
-	cam_mat_save.m[1][2] = theCamera.core.wcTransform->m[1][2];
-	cam_mat_save.m[2][0] = theCamera.core.wcTransform->m[2][0];
-	cam_mat_save.m[2][1] = theCamera.core.wcTransform->m[2][1];
-	cam_mat_save.m[2][2] = theCamera.core.wcTransform->m[2][2];
-
-	cam_mat_save.t[0] = theCamera.core.wcTransform->t[0];
-	cam_mat_save.t[1] = theCamera.core.wcTransform->t[1];
-	cam_mat_save.t[2] = theCamera.core.wcTransform->t[2];
+	cam_mat_save = *theCamera.core.wcTransform;
 
 	for (curTree = 0; curTree < terrain->numBSPTrees; curTree++)
 	{
 		bsp = &terrain->BSPTreeArray[curTree];
 
-		if (bsp->ID >= 0 && !(bsp->flags & 0x1))
+		if ((bsp->ID >= 0) && (!(bsp->flags & 0x1)))
 		{
 			theCamera.core.position.x = cam_pos_save.x - bsp->globalOffset.x;
 			theCamera.core.position.y = cam_pos_save.y - bsp->globalOffset.y;
 			theCamera.core.position.z = cam_pos_save.z - bsp->globalOffset.z;
-		
-			tmp.x = -(cam_pos_save.x - bsp->globalOffset.x);
-			tmp.y = -(cam_pos_save.y - bsp->globalOffset.y);
-			tmp.z = -(cam_pos_save.z - bsp->globalOffset.z);
+
+			tmp.x = -(theCamera.core.position.x);
+			tmp.y = -(theCamera.core.position.y);
+			tmp.z = -(theCamera.core.position.z);
 
 			ApplyMatrix(&cam_mat_save, (SVECTOR*)&tmp, (VECTOR*)&theCamera.core.wcTransform->t[0]);
-		
-			BSP_MarkVisibleLeaves_S(bsp, &theCamera, gPolytopeList, drawot, curTree, NULL, terrain, gameTracker, currentUnit);
+
+			//BSP_MarkVisibleLeaves_S(bsp, &theCamera, gPolytopeList);  // @fixme won't match with all the arguments from the current codebase declaration
 
 			gameTracker->primPool->nextPrim = gameTracker->drawDisplayPolytopeListFunc(gPolytopeList, terrain, &theCamera, gameTracker->primPool, drawot, &bsp->globalOffset);
 		}
 	}
-	
-	theCamera.core.position.x = cam_pos_save.x;
-	theCamera.core.position.y = cam_pos_save.y;
-	theCamera.core.position.z = cam_pos_save.z;
+
+	theCamera.core.position = cam_pos_save;
 
 	InStreamUnit = 1;
 
-	theCamera.core.wcTransform->m[0][0] = cam_mat_save.m[0][0];
-	theCamera.core.wcTransform->m[0][1] = cam_mat_save.m[0][1];
-	theCamera.core.wcTransform->m[0][2] = cam_mat_save.m[0][2];
-	theCamera.core.wcTransform->m[1][0] = cam_mat_save.m[1][0];
-	theCamera.core.wcTransform->m[1][1] = cam_mat_save.m[1][1];
-	theCamera.core.wcTransform->m[1][2] = cam_mat_save.m[1][2];
-	theCamera.core.wcTransform->m[2][0] = cam_mat_save.m[2][0];
-	theCamera.core.wcTransform->m[2][1] = cam_mat_save.m[2][1];
-	theCamera.core.wcTransform->m[2][2] = cam_mat_save.m[2][2];
-
-	theCamera.core.wcTransform->t[0] = cam_mat_save.t[0];
-	theCamera.core.wcTransform->t[1] = cam_mat_save.t[1];
-	theCamera.core.wcTransform->t[2] = cam_mat_save.t[2];
+	*theCamera.core.wcTransform = cam_mat_save;
 
 	SBSP_IntroduceInstancesAndLights(terrain, &theCamera.core, gLightInfo, RENDER_currentStreamUnitID);
 
 	theCamera.core.farPlane = farplanesave;
-	
+
 	InStreamUnit = 0;
 
 	if (gameTrackerX.playerInstance->currentStreamUnitID == currentUnit->StreamUnitID)
 	{
 		hackOT = drawot;
 
-		//StackSave[0] = sp
-		//sp = 0x1F8003F0
+		STACK_SET(StackSave);
 
 		FX_DrawReaver(gameTrackerX.primPool, hackOT, theCamera.core.wcTransform);
 
-		//sp = StackSave[0];
+		STACK_RESTORE(StackSave);
 	}
 
 	return 0;
