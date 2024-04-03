@@ -3838,7 +3838,7 @@ void FX_EndInstanceParticleEffects(struct _Instance* instance) // Matching - 100
 	}
 }
 
-void FX_GetSpiralPoint(int radius, int deg, int* x, int* y)//Matching - 96.67%
+void FX_GetSpiralPoint(int radius, int deg, int* x, int* y) // Matching - 98.68%
 {
 	int prevx;
 	int prevy;
