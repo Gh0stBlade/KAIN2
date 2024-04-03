@@ -2477,7 +2477,7 @@ void GAMELOOP_Process(struct GameTracker* gameTracker) // Matching - 100%
 
 			G2Instance_BuildTransformsForList(gameTracker->instanceList->first);
 
-			STACK_RESTORE(StackSave);
+			STACK_RESTORE();
 
 			if (!(gameTrackerX.streamFlags & 0x100000))
 			{
@@ -2485,7 +2485,7 @@ void GAMELOOP_Process(struct GameTracker* gameTracker) // Matching - 100%
 
 				FX_ProcessList(fxTracker);
 
-				STACK_RESTORE(StackSave);
+				STACK_RESTORE();
 
 				if (!(gameTrackerX.streamFlags & 0x100000))
 				{
@@ -2555,7 +2555,7 @@ void GAMELOOP_Process(struct GameTracker* gameTracker) // Matching - 100%
 
 			G2Instance_BuildTransformsForList(gameTracker->instanceList->first);
 
-			STACK_RESTORE(StackSave);
+			STACK_RESTORE();
 
 			DEBUG_Process(gameTracker);
 		}
