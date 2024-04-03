@@ -1601,7 +1601,7 @@ void ResetPrimPool()
 	gameTrackerX.primPool->numPrims = 0;
 }
 
-void Switch_For_Redraw()
+void Switch_For_Redraw() // Matching - 100%
 {
 	unsigned long **temp;
 
