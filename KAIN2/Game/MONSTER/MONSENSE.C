@@ -548,7 +548,7 @@ int MONSENSE_GetDistanceInDirection(struct _Instance* instance, short angle)  //
 }
 
 
-void MONSENSE_DoSenses(struct _Instance* instance) // Matching - 99.76%
+void MONSENSE_DoSenses(struct _Instance* instance) // Matching - 100%
 {
 	struct _MonsterVars* mv;
 	static int doneThisFrame; 
