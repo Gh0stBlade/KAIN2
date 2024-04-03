@@ -479,67 +479,76 @@ void GAMELOOP_SetScreenWipe(int time, int maxTime, int type) // Matching - 100%
 	gameTrackerX.wipeType = type;
 }
 
-void GAMELOOP_HandleScreenWipes(unsigned long **drawot)
+void GAMELOOP_HandleScreenWipes(unsigned long** drawot) // Matching - 100%
 {
 	long temp;
-	struct _PrimPool *primPool;
-	
+	struct _PrimPool* primPool;
+
 	primPool = gameTrackerX.primPool;
 
 	if ((GlobalSave->flags & 0x1))
 	{
 		DRAW_FlatQuad(&gameTrackerX.wipeColor, 0, 0, SCREEN_WIDTH, 0, 0, 30, SCREEN_WIDTH, 30, primPool, drawot);
-		DRAW_FlatQuad(&gameTrackerX.wipeColor, 0, 210, SCREEN_WIDTH, 210, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 210, primPool, drawot);
+
+		DRAW_FlatQuad(&gameTrackerX.wipeColor, 0, 210, SCREEN_WIDTH, 210, 0, SCREEN_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT, primPool, drawot);
 	}
 
 	if (gameTrackerX.wipeTime > 0)
 	{
-		if (gameTrackerX.wipeType == 10)
+		switch (gameTrackerX.wipeType)
 		{
-			temp = ((gameTrackerX.wipeTime << 8) - (gameTrackerX.wipeTime)) / gameTrackerX.maxWipeTime;
-			DRAW_TranslucentQuad(0, 0, SCREEN_WIDTH, 0, 0, SCREEN_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT, temp, temp, temp, 2, primPool, drawot);
-		}
-		else if (gameTrackerX.wipeType == 11)
-		{
-			temp = ((gameTrackerX.wipeTime << 8) - (gameTrackerX.wipeTime)) / gameTrackerX.maxWipeTime;
-			DRAW_TranslucentQuad(0, 0, SCREEN_WIDTH, 0, 0, 30, SCREEN_WIDTH, 30, temp, temp, temp, 2, primPool, drawot);
-			DRAW_TranslucentQuad(0, 210, SCREEN_WIDTH, 210, 0, SCREEN_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT, temp, temp, temp, 2, primPool, drawot);
+		case 10:
+			temp = (gameTrackerX.wipeTime * 0xFF) / gameTrackerX.maxWipeTime;
 
-			GlobalSave->flags &= 0xFFFE;
+			DRAW_TranslucentQuad(0, 0, SCREEN_WIDTH, 0, 0, SCREEN_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT, (short)temp, (short)temp, (short)temp, 2, primPool, drawot);
+			break;
+		case 11:
+			temp = (gameTrackerX.wipeTime * 0xFF) / gameTrackerX.maxWipeTime;
+
+			DRAW_TranslucentQuad(0, 0, SCREEN_WIDTH, 0, 0, 30, SCREEN_WIDTH, 30, (short)temp, (short)temp, (short)temp, 2, primPool, drawot);
+
+			DRAW_TranslucentQuad(0, 210, SCREEN_WIDTH, 210, 0, SCREEN_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT, (short)temp, (short)temp, (short)temp, 2, primPool, drawot);
+
+			GlobalSave->flags &= ~0x1;
+			break;
 		}
-		
+
 		if (gameTrackerX.gameFramePassed != 0)
 		{
 			gameTrackerX.wipeTime--;
 		}
 	}
-	else
+	else if (gameTrackerX.wipeTime < -1)
 	{
-		if (gameTrackerX.wipeTime < -1)
+		switch (gameTrackerX.wipeType)
 		{
-			if (gameTrackerX.wipeType == 10)
-			{
-				temp = ((((gameTrackerX.maxWipeTime + gameTrackerX.wipeTime) + 2) << 8) - ((gameTrackerX.maxWipeTime + gameTrackerX.wipeTime) + 2)) / gameTrackerX.maxWipeTime;
-				DRAW_TranslucentQuad(0, 0, SCREEN_WIDTH, 0, 0, SCREEN_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT, temp, temp, temp, 2, primPool, drawot);
-			}
-			else if (gameTrackerX.wipeType == 11)
-			{
-				temp = (((gameTrackerX.maxWipeTime + gameTrackerX.wipeTime) << 8) - ((gameTrackerX.maxWipeTime + gameTrackerX.wipeTime) + 2)) / gameTrackerX.maxWipeTime;
-				DRAW_TranslucentQuad(0, 0, SCREEN_WIDTH, 0, 0, 30, SCREEN_WIDTH, 30, temp, temp, temp, 2, primPool, drawot);
-				DRAW_TranslucentQuad(0, 210, SCREEN_WIDTH, 210, 0, SCREEN_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT, temp, temp, temp, 2, primPool, drawot);
+		case 10:
+			temp = ((gameTrackerX.maxWipeTime + gameTrackerX.wipeTime + 2) * 0xFF) / gameTrackerX.maxWipeTime;
 
-				if (gameTrackerX.wipeTime == -2)
-				{
-					GlobalSave->flags |= 0x1;
-				}
+			DRAW_TranslucentQuad(0, 0, SCREEN_WIDTH, 0, 0, SCREEN_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT, (short)temp, (short)temp, (short)temp, 2, primPool, drawot);
+			break;
+		case 11:
+			temp = ((gameTrackerX.maxWipeTime + gameTrackerX.wipeTime) * 0xFF) / gameTrackerX.maxWipeTime;
+
+			DRAW_TranslucentQuad(0, 0, SCREEN_WIDTH, 0, 0, 30, SCREEN_WIDTH, 30, (short)temp, (short)temp, (short)temp, 2, primPool, drawot);
+
+			DRAW_TranslucentQuad(0, 210, SCREEN_WIDTH, 210, 0, SCREEN_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT, (short)temp, (short)temp, (short)temp, 2, primPool, drawot);
+
+			if (gameTrackerX.wipeTime == -2)
+			{
+				GlobalSave->flags |= 0x1;
 			}
 
-			if (gameTrackerX.gameFramePassed != 0)
-			{
-				gameTrackerX.wipeTime++;
-			}
+			break;
 		}
 
+		if (gameTrackerX.gameFramePassed != 0)
+		{
+			gameTrackerX.wipeTime++;
+		}
+	}
+	else
+	{
 		if (gameTrackerX.wipeTime == -1)
 		{
 			if (gameTrackerX.wipeType == 11)
