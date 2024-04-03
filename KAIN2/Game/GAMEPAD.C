@@ -555,7 +555,7 @@ void GAMEPAD_GetData(long(*data)[5])//Matching - 87.92%
 	}
 }
 
-void GAMEPAD_DisplayControllerStatus(int msgY)
+void GAMEPAD_DisplayControllerStatus(int msgY) // Matching - 100%
 {
 	char *noCtrlStr;
 
