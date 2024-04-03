@@ -73,7 +73,8 @@ struct FXSplinter {
 struct _FXGeneralEffect // hashcode: 0xC4783451 (dec: -998755247)
 {
 	void* next; // size=0, offset=0
-	void* continue_process; // size=0, offset=4
+	//void* continue_process; // size=0, offset=4
+	void (*continue_process)(struct _FXGeneralEffect*, struct _FXTracker*); // size=0, offset=4
 	struct _Instance* instance; // size=616, offset=8
 	unsigned char effectType; // size=0, offset=12
 	unsigned char type; // size=0, offset=13
