@@ -242,7 +242,7 @@ void SOUL_SoulSuckEntry(struct _Instance* instance)
 	instance->flags &= ~0x800u;
 }
 
-long SOUL_CalcAccel(long delta, long vel, long magnitude)//Matching - 43.75%
+long SOUL_CalcAccel(long delta, long vel, long magnitude) // Matching - 100%
 {
 	long rv;
 
