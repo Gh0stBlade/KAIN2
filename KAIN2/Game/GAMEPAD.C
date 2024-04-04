@@ -446,7 +446,7 @@ unsigned short GAMEPAD_RemapAnalogueButtons(unsigned short in)//Matching - 100%
 	return ~(((in & 0x800) << 1) | ((in & 0x400) << 5) | ((in & 0x200) << 1) | ((in & 0x8000) >> 6) | ((in & 0x1000) >> 1) & 0xFFFF | (in & 0x61F9));
 }
 
-void GAMEPAD_DetectInit()
+void GAMEPAD_DetectInit() // Matching - 100%
 {
 	int orgdualshock_onflag;
 
