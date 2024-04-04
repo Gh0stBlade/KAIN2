@@ -858,8 +858,8 @@ long INSTANCE_GetSplineFrameNumber(struct _Instance* instance, struct MultiSplin
 	return SCRIPT_GetSplineFrameNumber(instance, SCRIPT_GetPosSplineDef(instance, spline, 0, 0));
 }
 
-// goto label needs to be removed
-void INSTANCE_ProcessFunctions(struct _InstanceList* instanceList) // Matching - 99.77%
+// @fixme goto label needs to be removed
+void INSTANCE_ProcessFunctions(struct _InstanceList* instanceList) // Matching - 99.79%
 {
 	if (!(gameTrackerX.debugFlags & 0x8000010))
 	{
@@ -1031,7 +1031,7 @@ void INSTANCE_ProcessFunctions(struct _InstanceList* instanceList) // Matching -
 							{
 								if (((instance->clipEnd >= prevFrame) && (frame >= instance->clipEnd)) || (frame < instance->clipBeg))
 								{
-									if (((multi->positional->flags & 0x6) != 0) || (multi->positional->type != 0))  // double-check
+									if (((multi->positional->flags & 0x4)) || ((multi->positional->flags & 0x2)))
 									{
 										SCRIPT_InstanceSplineSet(instance, instance->clipBeg, NULL, NULL, NULL);
 									}
@@ -1047,7 +1047,7 @@ void INSTANCE_ProcessFunctions(struct _InstanceList* instanceList) // Matching -
 							{
 								if (((prevFrame >= instance->clipBeg) && (instance->clipBeg >= frame)) || (instance->clipEnd < frame))
 								{
-									if (((multi->positional->flags & 0x6) != 0) || (multi->positional->type != 0))  // double-check
+									if (((multi->positional->flags & 0x4)) || ((multi->positional->flags & 0x2)))
 									{
 										SCRIPT_InstanceSplineSet(instance, instance->clipEnd, NULL, NULL, NULL);
 									}
