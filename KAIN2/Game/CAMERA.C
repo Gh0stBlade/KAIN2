@@ -429,7 +429,8 @@ void CAMERA_SaveMode(struct Camera* camera, long mode)//Matching - 96.14%
 		camera->savedCinematic[camera->stack].level = gameTrackerX.level;
 	}
 }
-void CAMERA_RestoreMode(struct Camera* camera)  // Matching - 99.64%
+
+void CAMERA_RestoreMode(struct Camera* camera) // Matching - 100%
 {
 	long mode;
 	short temp;  // not from SYMDUMP
@@ -437,6 +438,7 @@ void CAMERA_RestoreMode(struct Camera* camera)  // Matching - 99.64%
 	if (camera->stack >= 0)
 	{
 		mode = camera->savedMode[camera->stack];
+
 		if (camera->mode == 5)
 		{
 			if (camera->smooth != 0)
@@ -448,6 +450,7 @@ void CAMERA_RestoreMode(struct Camera* camera)  // Matching - 99.64%
 				camera->flags |= 0x1000;
 			}
 		}
+
 		switch (mode)
 		{
 		case 0:
@@ -455,46 +458,55 @@ void CAMERA_RestoreMode(struct Camera* camera)  // Matching - 99.64%
 		case 13:
 		case 16:
 			CAMERA_SetProjDistance(camera, 320);
+
 			if (camera->mode == 5)
 			{
 				camera->focusInstance = gameTrackerX.playerInstance;
 				camera->focusOffset.x = 0;
 				camera->focusOffset.y = 0;
 				camera->focusOffset.z = 352;
+
 				CAMERA_Restore(camera, 7);
 			}
+
 			cameraMode = mode;
+
 			if (mode == 12)
 			{
-				gameTrackerX.gameFlags &= ~64;
+				gameTrackerX.gameFlags &= ~0x40;
 			}
 			else
 			{
-				gameTrackerX.gameFlags |= 64;
+				gameTrackerX.gameFlags |= 0x40;
 			}
+
 			camera->mode = (short)mode;
-			camera->targetFocusDistance = (short)camera->focusDistanceList[camera_modeToIndex[mode << 16 >> 16]][camera->presetIndex];
-			camera->data.Follow.stopTimer = 3852599296;
+			camera->targetFocusDistance = (short)camera->focusDistanceList[camera_modeToIndex[(short)mode]][camera->presetIndex];
+			camera->data.Follow.stopTimer = 0xE5A20000;
 			camera->focusRotVel.z = 0;
+
 			if (mode == 16)
 			{
 				camera->flags |= 0x2000;
 			}
 			else
 			{
-				camera->flags &= 0xFFFFDFFF;
+				camera->flags &= ~0x2000;
 			}
+
 			break;
 		case 2:
 		case 4:
 		case 5:
 			CAMERA_SetProjDistance(camera, 320);
+
 			camera->core.position = camera->savedCinematic[camera->stack].position;
 			camera->focusPoint = camera->savedCinematic[camera->stack].focusPoint;
 			camera->targetPos = camera->savedCinematic[camera->stack].targetPos;
 			camera->targetFocusPoint = camera->savedCinematic[camera->stack].targetFocusPoint;
 			camera->targetFocusDistance = camera->savedCinematic[camera->stack].targetFocusDistance;
 			camera->targetFocusRotation = camera->savedCinematic[camera->stack].targetFocusRotation;
+
 			if ((camera->smooth == 0) && (camera->mode != 6))
 			{
 				camera->focusDistance = camera->savedCinematic[camera->stack].focusDistance;
@@ -502,31 +514,39 @@ void CAMERA_RestoreMode(struct Camera* camera)  // Matching - 99.64%
 			}
 			else
 			{
-				camera->always_rotate_flag = 1;
+				camera->always_rotate_flag = 0x1;
 			}
+
 			camera->focusPointVel = camera->savedCinematic[camera->stack].focusPointVel;
 			camera->focusPointAccl = camera->savedCinematic[camera->stack].focusPointAccl;
 			camera->maxVel = (short)camera->savedCinematic[camera->stack].maxVel;
 			camera->data.Cinematic.posSpline = camera->savedCinematic[camera->stack].posSpline;
 			camera->data.Cinematic.targetSpline = camera->savedCinematic[camera->stack].targetSpline;
 			camera->mode = (short)mode;
-			if (INSTANCE_Query(camera->focusInstance, 9) & 80)
+
+			if ((INSTANCE_Query(camera->focusInstance, 9) & 0x50))
 			{
 				CAMERA_ChangeToUnderWater(camera, camera->focusInstance);
 			}
+
 			break;
 		case 6:
-			if ((((unsigned int)(unsigned short)camera->mode - 4) < 2) || (camera->mode == 2))
+			if ((camera->mode == 4) || (camera->mode == 5) || (camera->mode == 2))
 			{
 				temp = (short)camera->savedTargetFocusDistance[camera->targetStack];
+
 				camera->focusDistance = temp;
+
 				camera->targetFocusDistance = temp;
+
 				if (camera->targetStack >= 0)
 				{
 					camera->targetStack--;
 				}
-				camera->flags = (camera->flags | 0x800);
+
+				camera->flags |= 0x800;
 			}
+
 			camera->lookTimer = 4;
 			camera->mode = (short)mode;
 			camera->targetFocusDistance = 2000;
@@ -543,6 +563,7 @@ void CAMERA_RestoreMode(struct Camera* camera)  // Matching - 99.64%
 		default:
 			camera->mode = (short)mode;
 		}
+
 		camera->stack--;
 	}
 }
