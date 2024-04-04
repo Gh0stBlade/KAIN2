@@ -397,7 +397,7 @@ void GAMEPAD_Init()
 	gpbuffer2.transStatus = 0;
 }
 
-void PSXPAD_TranslateData(long *data, unsigned short padData, unsigned short lastData)
+void PSXPAD_TranslateData(long *data, unsigned short padData, unsigned short lastData) // Matching - 100%
 {
 	int i;
 	struct JoypadMappingStruct table[16] = { 0x0010, 0x0001,
