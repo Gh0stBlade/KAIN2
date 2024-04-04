@@ -460,11 +460,14 @@ void GAMEPAD_DetectInit()
 	}
 }
 
-void GAMEPAD_GetData(long(*data)[5])//Matching - 87.92%
+void GAMEPAD_GetData(long(*data)[5]) // Matching - 100%
 {
 	long analogue_x;
 	long analogue_y;
 	int padState;
+	int temp;
+
+	temp = ignoreFind;
 
 	data[0][2] = 0;
 	data[0][1] = 0;
@@ -481,34 +484,25 @@ void GAMEPAD_GetData(long(*data)[5])//Matching - 87.92%
 	data[1][3] = 0;
 	data[1][4] = 0;
 
-	if (ignoreFind != 0)
+	if (temp != 0)
 	{
 		memcpy(&gpbuffer1, &readGPBuffer1, sizeof(gpbuffer1));
+
 		memcpy(&gpbuffer2, &readGPBuffer2, sizeof(gpbuffer2));
 	}
 	else
 	{
 		padState = PadGetState(0);
 
-		if (padState != PadStateFindPad)
+		if ((padState != PadStateFindPad) && (padState != PadStateReqInfo) && (padState != PadStateExecCmd))
 		{
-			if (padState != PadStateReqInfo)
-			{
-				if (padState != PadStateExecCmd)
-				{
-					GAMEPAD_HandleDualShock();
+			GAMEPAD_HandleDualShock();
 
-					memcpy(&gpbuffer1, &readGPBuffer1, sizeof(gpbuffer1));
-					memcpy(&gpbuffer2, &readGPBuffer2, sizeof(gpbuffer2));
-				}
-			}
+			memcpy(&gpbuffer1, &readGPBuffer1, sizeof(gpbuffer1));
 
-			if (padState == 1)
-			{
-				GAMEPAD_DetectInit();
-			}
+			memcpy(&gpbuffer2, &readGPBuffer2, sizeof(gpbuffer2));
 		}
-		else
+		else if (padState == PadStateFindPad)
 		{
 			GAMEPAD_DetectInit();
 		}
@@ -522,6 +516,7 @@ void GAMEPAD_GetData(long(*data)[5])//Matching - 87.92%
 		}
 
 		psxData[0] = gpbuffer1.data.pad;
+
 		gamePadControllerOut = 0;
 
 		if (controllerType[0] == 0x53)
@@ -532,14 +527,15 @@ void GAMEPAD_GetData(long(*data)[5])//Matching - 87.92%
 		PSXPAD_TranslateData((long*)data, psxData[0], lastData[0]);
 
 		controllerType[0] = gpbuffer1.dataFormat;
+
 		lastData[0] = psxData[0];
 
-		if ((gpbuffer1.dataFormat & 0xFF) == 115 || (gpbuffer1.dataFormat & 0xFF) == 83)
+		if (((gpbuffer1.dataFormat & 0xFF) == 115) || ((gpbuffer1.dataFormat & 0xFF) == 83))
 		{
 			analogue_x = gpbuffer1.data.analogue.xL;
 			analogue_y = gpbuffer1.data.analogue.yL;
 
-			if ((unsigned)(analogue_x - 74) < 109 && analogue_y >= 74 && analogue_y < 183)
+			if ((analogue_x >= 74) && (analogue_x < 183) && (analogue_y >= 74) && (analogue_y < 183))
 			{
 				analogue_x = 128;
 				analogue_y = 128;
