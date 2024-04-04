@@ -447,7 +447,7 @@ void SOUL_Wander(struct _Instance* instance) // Matching - 99.95%
 	SOUL_QueueHandler(instance);
 }
 
-void SOUL_FleeEntry(struct _Instance* instance)
+void SOUL_FleeEntry(struct _Instance* instance) // Matching - 100%
 {
 	instance->maxXVel = 15;
 	instance->maxYVel = 15;
