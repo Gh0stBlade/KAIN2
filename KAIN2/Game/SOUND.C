@@ -1307,7 +1307,7 @@ void SOUND_SetMusicModifier(long modifier)
 	}
 }
 
-void SOUND_ResetMusicModifier(long modifier)
+void SOUND_ResetMusicModifier(long modifier) // Matching - 100%
 {
 	switch (modifier)
 	{
@@ -1317,55 +1317,55 @@ void SOUND_ResetMusicModifier(long modifier)
 	case 3:
 	case 4:
 	{
-		SOUND_SetMusicVariable(0x0, 0);
+		SOUND_SetMusicVariable(0, 0);
 
 		break;
 	}
 	case 5:
 	{
-		SOUND_SetMusicVariable(0x1, 0);
+		SOUND_SetMusicVariable(1, 0);
 
 		break;
 	}
 	case 6:
 	{
-		SOUND_SetMusicVariable(0x2, 0);
+		SOUND_SetMusicVariable(2, 0);
 
 		break;
 	}
 	case 9:
 	{
-		SOUND_SetMusicVariable(0x7D, 0);
+		SOUND_SetMusicVariable(125, 0);
 
 		break;
 	}
 	case 10:
 	{
-		SOUND_SetMusicVariable(0x7E, 0);
+		SOUND_SetMusicVariable(126, 0);
 
 		break;
 	}
 	case 11:
 	{
-		SOUND_SetMusicVariable(0x7C, 0);
+		SOUND_SetMusicVariable(124, 0);
 
 		break;
 	}
 	case 13:
 	{
-		SOUND_SetMusicVariable(0x78, 0);
+		SOUND_SetMusicVariable(120, 0);
 
 		break;
 	}
 	case 14:
 	{
-		SOUND_SetMusicVariable(0x3, 0);
+		SOUND_SetMusicVariable(3, 0);
 
 		break;
 	}
 	case 15:
 	{
-		SOUND_SetMusicVariable(0x77, 0);
+		SOUND_SetMusicVariable(119, 0);
 
 		break;
 	}
