@@ -1183,9 +1183,9 @@ void SOUND_UpdateSound()//Matching - 88.37%
 	}
 }
 
-void SOUND_PlaneShift(int newPlane)
-{ 
-	if (gameTrackerX.sound.gMusicOn != 0)
+void SOUND_PlaneShift(int newPlane) // Matching - 100%
+{
+	if ((unsigned char)gameTrackerX.sound.gMusicOn != 0)
 	{
 		SOUND_PutMusicCommand(0, newPlane);
 	}
