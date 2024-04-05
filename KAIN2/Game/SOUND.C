@@ -1222,86 +1222,86 @@ void SOUND_ShutdownMusic()
 	aadStartMusicMasterVolFade(gameTrackerX.sound.gMusicVol, 1, NULL);
 }
 
-void SOUND_SetMusicModifier(long modifier)
+void SOUND_SetMusicModifier(long modifier) // Matching - 100%
 {
 	switch (modifier)
 	{
 	case 0:
 	{
-		SOUND_SetMusicVariable(0x0, 0);
+		SOUND_SetMusicVariable(0, 0);
 
 		break;
 	}
 	case 1:
 	{
-		SOUND_SetMusicVariable(0x0, 1);
+		SOUND_SetMusicVariable(0, 1);
 
 		break;
 	}
 	case 2:
 	{
-		SOUND_SetMusicVariable(0x0, 0x3);
+		SOUND_SetMusicVariable(0, 3);
 
 		break;
 	}
 	case 3:
 	{
-		SOUND_SetMusicVariable(0x0, 0x4);
+		SOUND_SetMusicVariable(0, 4);
 
 		break;
 	}
 	case 4:
 	{
-		SOUND_SetMusicVariable(0x0, 2);
+		SOUND_SetMusicVariable(0, 2);
 
 		break;
 	}
 	case 5:
 	{
-		SOUND_SetMusicVariable(0x1, 1);
+		SOUND_SetMusicVariable(1, 1);
 
 		break;
 	}
 	case 6:
 	{
-		SOUND_SetMusicVariable(0x2, 1);
+		SOUND_SetMusicVariable(2, 1);
 
 		break;
 	}
 	case 9:
 	{
-		SOUND_SetMusicVariable(0x7D, 1);
+		SOUND_SetMusicVariable(125, 1);
 
 		break;
 	}
 	case 10:
 	{
-		SOUND_SetMusicVariable(0x7E, 1);
+		SOUND_SetMusicVariable(126, 1);
 
 		break;
 	}
 	case 11:
 	{
-		SOUND_SetMusicVariable(0x7C, 1);
+		SOUND_SetMusicVariable(124, 1);
 
 		break;
 	}
 	case 13:
 	{
-		SOUND_SetMusicVariable(0x78, 1);
+		SOUND_SetMusicVariable(120, 1);
 
 		break;
 	}
 	case 14:
 	{
-		SOUND_SetMusicVariable(0x3, 1);
+		SOUND_SetMusicVariable(3, 1);
 
 		break;
 	}
 	case 15:
 	{
-		SOUND_SetMusicVariable(0x77, 1);
-	
+		SOUND_SetMusicVariable(119, 1);
+
 		break;
 	}
 	}
