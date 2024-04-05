@@ -1195,7 +1195,7 @@ void SOUND_PlaneShift(int newPlane)
 	}
 }
 
-void SOUND_ShutdownMusic()
+void SOUND_ShutdownMusic() // Matching - 100%
 {
 	aadStopAllSlots();
 	EnterCriticalSection();
