@@ -461,7 +461,7 @@ extern void FX_SoulDustProcess(struct _FX_PRIM *fxPrim, struct _FXTracker *fxTra
 extern void FX_MakeSoulDust(struct _Instance *instance, short segment); // 0x80046A08
 extern void FX_WaterTrailProcess(struct _FX_PRIM *fxPrim, struct _FXTracker *fxTracker); // 0x80046C48
 extern void FX_MakeWaterTrail(struct _Instance *instance, int depth); // 0x80046D60
-extern struct _FXRibbon * FX_StartRibbon(struct _Instance *instance, short startSegment, short endSegment, short type, int ribbonLifeTime, int faceLifeTime, int startFadeValue, long startColor, long endColor); // 0x80046F94
+extern struct _FXRibbon * FX_StartRibbon(struct _Instance* instance, short startSegment, short endSegment, short type, short ribbonLifeTime, short faceLifeTime, short startFadeValue, long startColor, long endColor); // 0x80046F94
 extern void FX_RibbonProcess(struct _FX_PRIM *fxPrim, struct _FXTracker *fxTracker); // 0x80047264
 extern void FX_ConstrictProcess(struct _FX_PRIM *fxPrim, struct _FXTracker *fxTracker); // 0x80047358
 extern void FX_StartConstrict(struct _Instance *instance, struct _SVector *constrict_point, short startSegment, short endSegment); // 0x800475FC
