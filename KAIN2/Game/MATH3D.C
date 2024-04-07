@@ -289,7 +289,7 @@ long MATH3D_FastSqrt(long square) // Matching - 100%
 	return 0;
 }
 
-long MATH3D_FastSqrt0(long square)
+long MATH3D_FastSqrt0(long square) // Matching - 96.81%
 {
 	unsigned long result;
 	long remainder;
@@ -300,33 +300,33 @@ long MATH3D_FastSqrt0(long square)
 
 	if (square != 0)
 	{
-		shift = 0x1F;
+		shift = 31;
 		mask = 0x80000000;
-		
+
 		if (square >= 0)
 		{
 			do
 			{
 				mask >>= 1;
-				
+
 				remainder = mask & square;
-			
+
 				shift--;
-		
+
 			} while (remainder == 0);
 		}
-		
+
 		shift >>= 1;
 
 		result = 1 << shift;
-		
+
 		mask = result;
 
 		result_shift = shift << 1;
 		result_shift = 1 << result_shift;
-		
+
 		mask_squared = result_shift;
-		
+
 		square -= result_shift;
 
 		while (--shift != -1)
@@ -337,15 +337,15 @@ long MATH3D_FastSqrt0(long square)
 
 			remainder = square - result_shift;
 			remainder -= mask_squared;
-			
+
 			result_shift >>= 1;
 
 			if (remainder >= 0)
 			{
 				square = remainder;
-			
+
 				result_shift += mask_squared;
-				
+
 				result |= mask;
 			}
 		}
