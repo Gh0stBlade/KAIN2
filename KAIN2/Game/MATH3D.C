@@ -417,17 +417,18 @@ void MATH3D_SetUnityMatrix(MATRIX *mat) // Matching - 100%
 	mat->m[2][2] = ONE;
 }
 
-void AngleMoveToward(short* current_ptr, short destination, short step)
+void AngleMoveToward(short* current_ptr, short destination, short step) // Matching - 67.49%
 {
-	long diff; // $a0
-	short current; // $s0
+	long diff;
+	short current;
 
 	current = *current_ptr;
+
 	diff = (short)AngleDiff(*current_ptr, destination);
 
 	if (diff != 0)
 	{
-		if (ABS(diff) < step)
+		if (abs(diff) < step)
 		{
 			*current_ptr = destination;
 		}
@@ -445,7 +446,7 @@ void AngleMoveToward(short* current_ptr, short destination, short step)
 				}
 				else
 				{
-					*current_ptr = (current & 0xFFF);
+					*current_ptr = current & 0xFFF;
 				}
 			}
 		}
