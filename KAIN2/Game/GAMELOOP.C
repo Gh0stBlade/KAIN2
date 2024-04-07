@@ -726,7 +726,7 @@ void BlendToColor(struct _ColorType* target, struct _ColorType* current, struct 
 	dest->code = 0;
 }
 
-void MainRenderLevel(struct _StreamUnit* currentUnit, unsigned long** drawot)
+void MainRenderLevel(struct _StreamUnit* currentUnit, unsigned long** drawot) // Matching - 95.19%
 {
 	struct Level* level;
 	struct GameTracker* gameTracker;
@@ -736,32 +736,38 @@ void MainRenderLevel(struct _StreamUnit* currentUnit, unsigned long** drawot)
 	struct _Position cam_pos_save;
 	MATRIX cam_mat_save;
 	struct _Instance* saveLightInstance;
-	int time;
-	int tod;
-	struct _SVector tmp;
-	struct BSPTree* bsp;
+	struct BLK_FILL* temp, * temp2, * temp3;  // not from SYMDUMP
 
 	level = currentUnit->level;
+
 	terrain = level->terrain;
 
 	UpdateFogSettings(currentUnit, level);
 
 	gameTracker = &gameTrackerX;
+
 	currentUnit->FrameCount = gameTracker->displayFrameCount;
 
 	SetFogNearFar(level->fogNear, level->fogFar, 320);
+
 	SetFarColor(0, 0, 0);
 
-	clearRect[0].r0 = level->backColorR;
-	clearRect[0].g0 = level->backColorG;
-	clearRect[0].b0 = level->backColorB;
+	temp = clearRect;
 
-	clearRect[1].r0 = level->backColorR;
-	clearRect[1].g0 = level->backColorG;
-	clearRect[1].b0 = level->backColorB;
+	temp->r0 = level->backColorR;
+	temp->g0 = level->backColorG;
+	temp->b0 = level->backColorB;
+
+	temp++;
+
+	temp->r0 = level->backColorR;
+	temp->g0 = level->backColorG;
+	temp->b0 = level->backColorB;
 
 	if (gameTrackerX.gameData.asmData.MorphTime != 1000)
 	{
+		int time;
+
 		time = (gameTrackerX.gameData.asmData.MorphTime << 12) / 1000;
 
 		if (gameTrackerX.gameData.asmData.MorphType == 1)
@@ -769,35 +775,34 @@ void MainRenderLevel(struct _StreamUnit* currentUnit, unsigned long** drawot)
 			time = 4096 - time;
 		}
 
-		LoadAverageCol(&level->specturalColorR, &level->backColorR, 4096, 4096, (unsigned char*)&BackColor);
+		LoadAverageCol(&level->specturalColorR, &level->backColorR, time, 4096 - time, (u_char*)&BackColor);
+	}
+	else if (gameTrackerX.gameData.asmData.MorphType == 1)
+	{
+		BackColor = *(long*)(&level->specturalColorR);
 	}
 	else
 	{
-		if (gameTrackerX.gameData.asmData.MorphType == 1)
-		{
-			BackColor = ((long*)&level->specturalColorR)[0];
-		}
-		else
-		{
-			BackColor = ((long*)&level->backColorR)[0];
-		}
+		BackColor = *(long*)(&level->backColorR);
 	}
 
 	BlendToColor((struct _ColorType*)&BackColor, (struct _ColorType*)&currentUnit->FogColor, (struct _ColorType*)&currentUnit->FogColor);
 
 	depthQBackColor = currentUnit->FogColor;
 
-	tod = GAMELOOP_GetTimeOfDay();
-
-	if (tod == 600 && tod != 1800 || !(level->unitFlags & 0x2))
 	{
-		if (gameTrackerX.gameData.asmData.MorphTime == 1000)
+		int tod;
+
+		tod = GAMELOOP_GetTimeOfDay();
+
+		if ((((tod != 600) && (tod != 1800)) || (!(level->unitFlags & 0x2))) && (gameTrackerX.gameData.asmData.MorphTime == 1000))
 		{
 			depthQBackColor = (depthQBackColor & 0xFFF8F8F8) | 0x40404;
 		}
 	}
 
 	depthQFogStart = level->fogNear;
+
 	depthQFogFar = level->fogFar;
 
 	if (CheckForNoBlend((struct _ColorType*)&depthQBackColor) == 0)
@@ -806,112 +811,89 @@ void MainRenderLevel(struct _StreamUnit* currentUnit, unsigned long** drawot)
 	}
 	else
 	{
-		depthQBlendStart = 0xFFFF;
+		depthQBlendStart = 65535;
 	}
 
-	clearRect[0].r0 = ((struct _ColorType*)&depthQBackColor)->r;
-	clearRect[0].g0 = ((struct _ColorType*)&depthQBackColor)->g;
-	clearRect[0].b0 = ((struct _ColorType*)&depthQBackColor)->b;
+	temp2 = &clearRect[0];
 
-	clearRect[1].r0 = ((struct _ColorType*)&depthQBackColor)->r;
-	clearRect[1].g0 = ((struct _ColorType*)&depthQBackColor)->g;
-	clearRect[1].b0 = ((struct _ColorType*)&depthQBackColor)->b;
+	temp2->r0 = ((struct _ColorType*)&depthQBackColor)->r;
+	temp2->g0 = ((struct _ColorType*)&depthQBackColor)->g;
+	temp2->b0 = ((struct _ColorType*)&depthQBackColor)->b;
+
+	temp3 = &clearRect[1];
+
+	temp3->r0 = ((struct _ColorType*)&depthQBackColor)->r;
+	temp3->g0 = ((struct _ColorType*)&depthQBackColor)->g;
+	temp3->b0 = ((struct _ColorType*)&depthQBackColor)->b;
 
 	PIPE3D_AnimateTerrainTextures(terrain->aniList, gameTracker->frameCount, gameTracker->primPool, (unsigned int**)drawot);
+
 	PIPE3D_AnimateTerrainTextures(level->bgAniList, gameTracker->frameCount, gameTracker->primPool, (unsigned int**)drawot);
+
+	gLightInfo->numSavedColors = 0;
 
 	PIPE3D_InstanceListTransformAndDraw(currentUnit, gameTracker, (unsigned int**)drawot, &theCamera.core);
 
-	cam_pos_save.x = theCamera.core.position.x;
-	cam_pos_save.y = theCamera.core.position.y;
-	cam_pos_save.z = theCamera.core.position.z;
+	cam_pos_save = theCamera.core.position;
 
-	cam_mat_save.m[0][0] = theCamera.core.wcTransform->m[0][0];
-	cam_mat_save.m[0][1] = theCamera.core.wcTransform->m[0][1];
-	cam_mat_save.m[0][2] = theCamera.core.wcTransform->m[0][2];
-	cam_mat_save.m[1][0] = theCamera.core.wcTransform->m[1][0];
-	cam_mat_save.m[1][1] = theCamera.core.wcTransform->m[1][1];
-	cam_mat_save.m[1][2] = theCamera.core.wcTransform->m[1][2];
-	cam_mat_save.m[2][0] = theCamera.core.wcTransform->m[2][0];
-	cam_mat_save.m[2][1] = theCamera.core.wcTransform->m[2][1];
-	cam_mat_save.m[2][2] = theCamera.core.wcTransform->m[2][2];
+	cam_mat_save = *theCamera.core.wcTransform;
 
-	cam_mat_save.t[0] = theCamera.core.wcTransform->t[0];
-	cam_mat_save.t[1] = theCamera.core.wcTransform->t[1];
-	cam_mat_save.t[2] = theCamera.core.wcTransform->t[2];
-
-	if (terrain->numBSPTrees > 0)
+	for (curTree = 0; curTree < terrain->numBSPTrees; curTree++)
 	{
-		for (curTree = 0; curTree < terrain->numBSPTrees; curTree++)
+		struct _SVector tmp;
+		struct BSPTree* bsp;
+
+		bsp = &terrain->BSPTreeArray[curTree];
+
+		if ((bsp->ID >= 0) && (!(bsp->flags & 0x1)))
 		{
-			bsp = &terrain->BSPTreeArray[curTree];
+			saveLightInstance = NULL;
 
-			if (bsp->ID >= 0 && !(bsp->flags & 0x1))
+			if ((bsp->flags & 0x40))
 			{
-				saveLightInstance = NULL;
+				saveLightInstance = gameTrackerX.gameData.asmData.lightInstances[0].lightInstance;
 
-				if ((bsp->flags & 0x40))
-				{
-					saveLightInstance = gameTrackerX.gameData.asmData.lightInstances[0].lightInstance;
-					gameTrackerX.gameData.asmData.lightInstances[0].lightInstance = NULL;
-				}
+				gameTrackerX.gameData.asmData.lightInstances[0].lightInstance = NULL;
+			}
 
-				theCamera.core.position.x = cam_pos_save.x - bsp->globalOffset.x;
-				theCamera.core.position.y = cam_pos_save.y - bsp->globalOffset.y;
-				theCamera.core.position.z = cam_pos_save.z - bsp->globalOffset.z;
+			theCamera.core.position.x = cam_pos_save.x - bsp->globalOffset.x;
+			theCamera.core.position.y = cam_pos_save.y - bsp->globalOffset.y;
+			theCamera.core.position.z = cam_pos_save.z - bsp->globalOffset.z;
 
-				tmp.x = -(cam_pos_save.x - bsp->globalOffset.x);
-				tmp.y = -(cam_pos_save.y - bsp->globalOffset.y);
-				tmp.z = -(cam_pos_save.z - bsp->globalOffset.z);
+			tmp.x = -(theCamera.core.position.x);
+			tmp.y = -(theCamera.core.position.y);
+			tmp.z = -(theCamera.core.position.z);
 
-				ApplyMatrix(&cam_mat_save, (SVECTOR*)&tmp, (VECTOR*)&theCamera.core.wcTransform->t[0]);
+			ApplyMatrix(&cam_mat_save, (SVECTOR*)&tmp, (VECTOR*)theCamera.core.wcTransform->t);
 
-				BSP_MarkVisibleLeaves_S(bsp, &theCamera, gPolytopeList, (unsigned int**)drawot, curTree, saveLightInstance, terrain, gameTracker, currentUnit);
+			//BSP_MarkVisibleLeaves_S(bsp, &theCamera, gPolytopeList);  // @fixme matches higher than the invocation below
+			BSP_MarkVisibleLeaves_S(bsp, &theCamera, gPolytopeList, (unsigned int**)drawot, curTree, NULL, terrain, gameTracker, currentUnit);
 
-				gameTracker->primPool->nextPrim = gameTracker->drawDisplayPolytopeListFunc(gPolytopeList, terrain, &theCamera, gameTracker->primPool, (unsigned int**)drawot, &bsp->globalOffset);
+			gameTracker->primPool->nextPrim = gameTracker->drawDisplayPolytopeListFunc(gPolytopeList, terrain, &theCamera, gameTracker->primPool, (unsigned int**)drawot, &bsp->globalOffset);
 
-				if ((bsp->flags & 0x40))
-				{
-					gameTracker->gameData.asmData.lightInstances[0].lightInstance = saveLightInstance;
-				}
+			if ((bsp->flags & 0x40))
+			{
+				gameTrackerX.gameData.asmData.lightInstances[0].lightInstance = saveLightInstance;
 			}
 		}
 	}
 
-	theCamera.core.position.x = cam_pos_save.x;
-	theCamera.core.position.y = cam_pos_save.y;
-	theCamera.core.position.z = cam_pos_save.z;
+	theCamera.core.position = cam_pos_save;
 
-	theCamera.core.wcTransform->m[0][0] = cam_mat_save.m[0][0];
-	theCamera.core.wcTransform->m[0][1] = cam_mat_save.m[0][1];
-	theCamera.core.wcTransform->m[0][2] = cam_mat_save.m[0][2];
-	theCamera.core.wcTransform->m[1][0] = cam_mat_save.m[1][0];
-	theCamera.core.wcTransform->m[1][1] = cam_mat_save.m[1][1];
-	theCamera.core.wcTransform->m[1][2] = cam_mat_save.m[1][2];
-	theCamera.core.wcTransform->m[2][0] = cam_mat_save.m[2][0];
-	theCamera.core.wcTransform->m[2][1] = cam_mat_save.m[2][1];
-	theCamera.core.wcTransform->m[2][2] = cam_mat_save.m[2][2];
-
-	theCamera.core.wcTransform->t[0] = cam_mat_save.t[0];
-	theCamera.core.wcTransform->t[1] = cam_mat_save.t[1];
-	theCamera.core.wcTransform->t[2] = cam_mat_save.t[2];
+	*theCamera.core.wcTransform = cam_mat_save;
 
 	SBSP_IntroduceInstancesAndLights(terrain, &theCamera.core, gLightInfo, RENDER_currentStreamUnitID);
 
-	///@TODO PSX_VERSION sp speedup.
-	//t2 = &StackSave
-	//StackSave = $sp
-	//$sp = 0x1F8003F0
+	STACK_SAVE();
 
-	///@TODO no FX tracker in place yet!
-	///FX_DrawList(fxTracker, &gameTrackerX, gameTrackerX.drawOT, theCamera.core.wcTransform);
+	FX_DrawList(fxTracker, &gameTrackerX, gameTrackerX.drawOT, theCamera.core.wcTransform);
 
 	if (gameTrackerX.playerInstance->currentStreamUnitID == currentUnit->StreamUnitID)
 	{
 		FX_DrawReaver(gameTrackerX.primPool, (unsigned int**)gameTrackerX.drawOT, theCamera.core.wcTransform);
 	}
 
-	//$sp = StackSave
+	STACK_RESTORE();
 }
 
 void StreamIntroInstancesForUnit(struct _StreamUnit* currentUnit) // Matching - 100%
