@@ -504,30 +504,28 @@ struct INICommand* INSTANCE_FindIntroCommand(struct _Instance* instance, int cmd
 	return INSTANCE_GetIntroCommand((struct INICommand*)instance->introData, cmd);
 }
 
-void INSTANCE_ProcessIntro(struct _Instance* instance)//Matching - 100%
+// currently commented out due to the infinite loop
+void INSTANCE_ProcessIntro(struct _Instance* instance) // Matching - 100%
 {
-	struct INICommand* command;
-
-	return;//inf loop
-	UNIMPLEMENTED();
+	/*struct INICommand* command;
 
 	if (instance->introData != NULL)
 	{
 		command = (struct INICommand*)instance->introData;
 
-		if ((instance->flags & 2) == 0)
+		if (!(instance->flags & 0x2))
 		{
-			while (command->command)
+			while (command->command != 0)
 			{
 				if (command->command == 18)
 				{
-					instance->currentModel = command[1].command;
+					instance->currentModel = (short)command->parameter[0];
 				}
 
 				command += command->numParameters + 1;
 			}
 		}
-	}
+	}*/
 }
 
 void INSTANCE_InitEffects(struct _Instance* instance, struct Object* object)  // Matching - 100%
