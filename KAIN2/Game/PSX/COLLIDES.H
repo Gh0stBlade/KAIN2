@@ -42,7 +42,7 @@ extern void VM_ProcessVMObjectSetColor_S(struct Level* level, struct _VMObject* 
 
 extern void VM_ProcessVMObjectList_S(struct Level* level, struct Camera* camera); // 0x8007871C
 
-extern long BSP_SphereIntersectsViewVolume_S(struct _Position* position) ; // 0x800787E0
+extern long BSP_SphereIntersectsViewVolume_S(struct _Sphere* sphere, struct Camera* camera); // 0x800787E0
 
 extern void RotMatrixZYX(SVECTOR* r, MATRIX* m); // 0x800788B8
 

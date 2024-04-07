@@ -1753,7 +1753,7 @@ void VM_ProcessVMObjectList_S(struct Level* level, struct Camera* camera)
 
 			level->vmobjectList[i].timer = timer;
 
-			//if (BSP_SphereIntersectsViewVolume_S(&level->vmobjectList[i].position) != 0)
+			if (BSP_SphereIntersectsViewVolume_S((struct _Sphere*)&level->vmobjectList[i].position, camera) != 0)
 			{
 				sub_80078458(&level->vmobjectList[i], level);
 			}
@@ -1761,9 +1761,40 @@ void VM_ProcessVMObjectList_S(struct Level* level, struct Camera* camera)
 	}
 }
 
-long BSP_SphereIntersectsViewVolume_S(struct _Position* position)
+/* This function is handwritten in MIPS, so in order to get it working on PC we had to make an equivalent version in C language.
+   The prototype from February 16th shows that this was originally written in C before being translated to assembly, so the
+   following code has been decompiled with a 100% matching rate from that prototype's version (which lacks the _S suffix) */
+
+long BSP_SphereIntersectsViewVolume_S(struct _Sphere* sphere, struct Camera* camera)
 {
-	UNIMPLEMENTED();
+	VECTOR dpv[2];
+
+	gte_SetRotMatrix(&camera->core.vvNormalWorVecMat[0]);
+	gte_ldv0(&sphere->position);
+	gte_rtv0();
+	gte_stlvnl(&dpv[0]);
+
+	dpv[0].vx -= camera->core.vvPlaneConsts[0];
+
+	if (-sphere->radius < dpv[0].vx)
+	{
+		if (dpv[0].vx < (camera->core.farPlane + sphere->radius))
+		{
+			if ((-sphere->radius < (dpv[0].vy - camera->core.vvPlaneConsts[1])) && ((-sphere->radius < (dpv[0].vz - camera->core.vvPlaneConsts[2]))))
+			{
+				gte_SetRotMatrix(&camera->core.vvNormalWorVecMat[1]);
+				gte_ldv0(&sphere->position);
+				gte_rtv0();
+				gte_stlvnl(&dpv[1]);
+
+				if (((dpv[1].vx - camera->core.vvPlaneConsts[3]) > -sphere->radius) && ((dpv[1].vy - camera->core.vvPlaneConsts[4]) > -sphere->radius))
+				{
+					return 1;
+				}
+			}
+		}
+	}
+
 	return 0;
 }
 
