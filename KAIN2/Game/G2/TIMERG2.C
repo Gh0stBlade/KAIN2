@@ -1,7 +1,7 @@
 #include "Game/CORE.H"
 #include "TIMERG2.H"
 
-short G2Timer_GetFrameTime()
+short G2Timer_GetFrameTime() // Matching - 100%
 {
 	short atime;
 
