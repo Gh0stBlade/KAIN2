@@ -47,7 +47,7 @@ void* G2PoolMem_Allocate(void* voidPool)//Matching - 100%
 	return (char*)(((struct _G2PoolMemPool_Type*)voidPool)->blockPool) + (((struct _G2PoolMemPool_Type*)voidPool)->blockSize * blockIndex);
 }
 
-void G2PoolMem_Free(void *voidPool, void *block)
+void G2PoolMem_Free(void *voidPool, void *block) // Matching - 100%
 {
 	int blockIndex;
 	
