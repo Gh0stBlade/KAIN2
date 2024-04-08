@@ -10,7 +10,7 @@
 #define EulFrmR	1
 #define EulParOdd 1
 
-void G2Quat_ToEuler(struct _G2Quat_Type* quat, struct _G2EulerAngles_Type* euler, int order)
+void G2Quat_ToEuler(struct _G2Quat_Type* quat, struct _G2EulerAngles_Type* euler, int order) // Matching - 100%
 {
 	struct _G2Matrix_Type tempMatrix;
 
