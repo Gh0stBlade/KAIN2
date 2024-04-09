@@ -6176,19 +6176,14 @@ void RAZIEL_ResetLookAround(struct _Instance* instance) // Matching - 100%
 	INSTANCE_Post(instance, 0x100009, 0);
 }
 
-long RAZIEL_OkToLookAround(struct _Instance* playerInstance)
+long RAZIEL_OkToLookAround(struct _Instance* playerInstance) // Matching - 100%
 {
-	if ((Raziel.Senses.Flags & 0x4) && (Raziel.State.SectionList[0].Process == &StateHandlerIdle || Raziel.State.SectionList[0].Process == &StateHandlerThrow2))
+	if (((Raziel.Senses.Flags & 0x4)) && ((Raziel.State.SectionList[0].Process == &StateHandlerIdle) || (Raziel.State.SectionList[0].Process == &StateHandlerThrow2)))
 	{
 		return 1;
 	}
 
-	if (Raziel.State.SectionList[1].Process == &StateHandlerSwim)
-	{
-		return 1;
-	}
-
-	if (Raziel.State.SectionList[1].Process == &StateHandlerSwimTread)
+	if ((Raziel.State.SectionList[1].Process == &StateHandlerSwim) || (Raziel.State.SectionList[1].Process == &StateHandlerSwimTread))
 	{
 		return 1;
 	}
