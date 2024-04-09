@@ -58,14 +58,6 @@ struct evActionPlayHostAnimationData
 	int mode; // size=0, offset=20
 };
 
-typedef void (*TDRFuncPtr_StateSwitchStateCharacterData1NewProcess)();
-
-typedef void (*TDRFuncPtr_StateSwitchStateCharacterDataDefault1NewProcess)();
-
-typedef void (*TDRFuncPtr_StateSwitchStateData2NewProcess)();
-
-typedef void (*TDRFuncPtr_StateSwitchStateDataDefault2NewProcess)();
-
 extern void InitMessageQueue(struct __MessageQueue *In); // 0x8007071C
 
 extern struct __Event * DeMessageQueue(struct __MessageQueue *In); // 0x80070728

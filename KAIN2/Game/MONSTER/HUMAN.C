@@ -28,7 +28,6 @@ struct _MonsterFunctionTable HUMAN_FunctionTable =
 	__DATE__
 };
 
-typedef void (*TDRFuncPtr_MONTABLE_GetInitFunc)();
 extern void MonsterProcess(struct _Instance* instance, struct GameTracker* gameTracker);
 extern void MON_FleeEntry(struct _Instance* instance);
 

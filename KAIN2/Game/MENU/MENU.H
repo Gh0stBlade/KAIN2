@@ -78,14 +78,6 @@ struct menu_sound_entry_t // hashcode: 0xFFB1DFB2 (dec: -5120078)
 
 typedef struct menu_sound_entry_t menu_sound_entry_t;
 
-typedef int (*TDRFuncPtr_menu_item_flags1fn)();
-
-typedef int (*TDRFuncPtr_menu_item1fn)();
-
-typedef int (*TDRFuncPtr_menu_push1fn)();
-
-typedef int (*TDRFuncPtr_menu_set1fn)();
-
 extern int menu_data_size(); // 0x800B7A40
 extern void menu_initialize(struct menu_t *menu, void *opaque); // 0x800B7A48
 extern void menu_format(struct menu_t *menu, int center, int xpos, int ypos, int width, int lineskip, int itemskip, int border); // 0x800B7A8C
