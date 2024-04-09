@@ -26,8 +26,6 @@ struct _GlyphTuneData // hashcode: 0x14FFD660 (dec: 352310880)
 	long color_array[28]; // size=112, offset=28
 };
 
-typedef void (*TDRFuncPtr__GlyphSwitchProcess1process)();
-
 extern void GlyphInit(struct _Instance *instance, struct GameTracker *gameTracker); // 0x8007A8BC
 extern void GlyphCollide(struct _Instance *instance, struct GameTracker *gameTracker); // 0x8007A9D8
 extern void GlyphProcess(struct _Instance *instance, struct GameTracker *gameTracker); // 0x8007A9E0

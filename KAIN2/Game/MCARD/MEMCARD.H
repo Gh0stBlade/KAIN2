@@ -208,8 +208,6 @@ struct mcmenu
 
 extern struct mcmenu gMcmenu;
 
-typedef int (*TDRFuncPtr_memcard_item1fn)();
-
 extern struct memcard_t gMemcard;
 extern int the_header_size;
 extern struct SavedInfoTracker savedInfoTracker;

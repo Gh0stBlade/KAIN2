@@ -89,9 +89,6 @@ enum MonsterState : int
 };
 
 typedef void (*TDRFuncPtr_MONSTER_ProcessClosestVerts2processVert_cb)(struct _Instance*, int, int, int, void*);
-typedef void (*TDRFuncPtr_MONTABLE_GetCleanUpFunc)();
-typedef void (*TDRFuncPtr_MONTABLE_GetDamageEffectFunc)();
-typedef void (*TDRFuncPtr_MONTABLE_GetInitFunc)();
 
 struct _MonsterSenses 
 {

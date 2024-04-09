@@ -6,9 +6,6 @@
 #include "Game/MEMPACK.H"
 
 typedef long (*TDRFuncPtr_aadInstallUpdateFunc0updateFuncPtr)();
-typedef void (*TDRFuncPtr_aadInstallEndSequenceCallback)();
-typedef void (*TDRFuncPtr_aadInstallEndSequenceCallback0callbackProc)();
-typedef void (*TDRFuncPtr_aadLoadDynamicSoundBank4retProc)();
 typedef void (*TDRFuncPtr_aadStartMasterVolumeFade2fadeCompleteCallback)();
 typedef void (*TDRFuncPtr_aadStartMusicMasterVolFade2fadeCompleteCallback)();
 
