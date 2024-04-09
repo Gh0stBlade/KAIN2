@@ -435,12 +435,12 @@ void _G2Instance_BuildDeactivatedTransforms(struct _Instance* instance)//Matchin
 	}
 }
 
-void _G2Instance_BuildNonAnimatedTransforms(struct _Instance* instance)
+void _G2Instance_BuildNonAnimatedTransforms(struct _Instance* instance) // Matching - 100%
 {
 	MATRIX* segMatrix;
 	struct _Model* model;
 
-	if ((instance->flags2 & 0x10000000) && (instance->flags2 & 0x4000000) && (instance->flags2 & 0x20000000) && (instance->flags & 0x800))
+	if (((instance->flags2 & 0x10000000)) && (((instance->flags2 & 0x4000000)) || (((instance->flags2 & 0x20000000)) && ((instance->flags & 0x800)))))
 	{
 		G2Instance_ClearMatrices(instance);
 	}
