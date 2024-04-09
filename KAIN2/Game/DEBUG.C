@@ -77,7 +77,7 @@ long debugFogBlu = 0;
 struct DebugMenuLine fogMenu[8] = {
 	{ DEBUG_LINE_TYPE_MENU, 0, 0, "", (long*)&standardMenu[0], 0 },
 	{ DEBUG_LINE_TYPE_LONG, -1, 11500, "FOG FAR", (long*)&debugFogFar, (long)&DEBUG_UpdateFog },
-	{ DEBUG_LINE_TYPE_LONG, -1, 11500, "FOG NEAR", (long*)&debugHealthLevel, (long)&DEBUG_UpdateFog },
+	{ DEBUG_LINE_TYPE_LONG, -1, 11500, "FOG NEAR", (long*)&debugFogNear, (long)&DEBUG_UpdateFog },
 	{ DEBUG_LINE_TYPE_LONG, 0, 255, "FOG RED", (long*)&debugFogRed, (long)&DEBUG_UpdateFog },
 	{ DEBUG_LINE_TYPE_LONG, 0, 255, "FOG GREEN", (long*)&debugFogGrn, (long)&DEBUG_UpdateFog },
 	{ DEBUG_LINE_TYPE_LONG, 0, 255, "FOG BLUE", (long*)&debugFogBlu, (long)&DEBUG_UpdateFog },
