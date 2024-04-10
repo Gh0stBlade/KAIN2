@@ -208,9 +208,9 @@ void _GlyphDefaultProcess(struct _Instance* instance, int data1, int data2)  // 
 	}
 }
 
-void HUD_GetPlayerScreenPt(DVECTOR* center)  // Matching - 99.58%
+void HUD_GetPlayerScreenPt(DVECTOR* center) // Matching - 99.58%
 {
-	_Position position;
+	struct _Position position;
 
 	PushMatrix();
 
