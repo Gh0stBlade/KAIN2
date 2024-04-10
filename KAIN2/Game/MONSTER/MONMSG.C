@@ -137,7 +137,11 @@ void MON_IdleMessageHandler(struct _Instance* instance, struct __Event* message)
 	case 0x100000E:
 		if (!(mv->mvFlags & 0x4))
 		{
-			if (INSTANCE_Query(((struct _MonsterIR*)(message->Data))->instance, 1) & 0x1)  // double-check
+			struct _MonsterIR* mir;
+
+			mir = (struct _MonsterIR*)message->Data;
+
+			if ((INSTANCE_Query(mir->instance, 1) & 0x1))
 			{
 				MON_ChangeBehavior(instance, mv->triggeredBehavior);
 			}
@@ -149,7 +153,11 @@ void MON_IdleMessageHandler(struct _Instance* instance, struct __Event* message)
 	case 0x1000012:
 		if (!(mv->mvFlags & 0x4))
 		{
-			if (INSTANCE_Query(((struct _MonsterIR*)(message->Data))->instance, 1) & 0x1)  // double-check
+			struct _MonsterIR* mir;
+
+			mir = (struct _MonsterIR*)message->Data;
+
+			if ((INSTANCE_Query(mir->instance, 1) & 0x1))
 			{
 				MON_ChangeBehavior(instance, mv->triggeredBehavior);
 			}
