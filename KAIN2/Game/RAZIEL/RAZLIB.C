@@ -468,12 +468,15 @@ int razAdjustSpeed(struct _Instance* instance, int minSpeed)//Matching - 90.51%
 	return adjustment;
 }
 
-void razLaunchForce(struct _Instance* instance) // Matching - 96.11%
+void razLaunchForce(struct _Instance* instance) // Matching - 100%
 {
-	PHYSOB_BirthProjectile(instance, 49, (char)Raziel.Abilities & 1);
-	Raziel.effectsFlags |= 4;
+	PHYSOB_BirthProjectile(instance, 49, ((char*)&Raziel.Abilities)[1] & 1);
+
+	Raziel.effectsFlags |= 0x4;
+
 	razSetupSoundRamp(instance, (struct _SoundRamp*)&Raziel.soundHandle, 12, PlayerData->forceMinPitch, PlayerData->forceMaxPitch,
 		PlayerData->forceMinVolume, PlayerData->forceMaxVolume, PlayerData->forceRampTime * 30, 10000);
+
 	Raziel.soundTimerNext = 0;
 	Raziel.soundTimerData = 0;
 }
