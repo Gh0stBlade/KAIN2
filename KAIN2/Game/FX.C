@@ -1664,7 +1664,7 @@ void FX_SoulDustProcess(struct _FX_PRIM* fxPrim, struct _FXTracker* fxTracker)  
 }
 
 
-void FX_MakeSoulDust(struct _Instance* instance, short segment)  // Matching - 97.05%
+void FX_MakeSoulDust(struct _Instance* instance, short segment) // Matching - 100%
 {
 	struct _FX_PRIM* fxPrim;
 	SVECTOR location;
@@ -1674,38 +1674,55 @@ void FX_MakeSoulDust(struct _Instance* instance, short segment)  // Matching - 9
 	{
 		return;
 	}
-	particle = (struct Object*)objectAccess[9].object;
+
+	particle = (struct Object*)objectAccess[10].object;
+
 	if (particle == NULL)
 	{
 		return;
 	}
+
 	fxPrim = FX_GetPrim(gFXT);
+
 	if (fxPrim != NULL)
 	{
 		location.vx = 0;
 		location.vy = 0;
+
 		location.vz = (short)instance->matrix[1].t[2] + (rand() % 512) - 256;
+
 		FX_DFacadeParticleSetup(fxPrim, &location, 25, 25, 0x2E000000, NULL, NULL, gFXT, 8);
+
 		fxPrim->flags |= 0x2001;
+
 		fxPrim->texture = FX_GetTextureObject(particle, 0, 0);
+
 		fxPrim->v0.y = 4096;
 		fxPrim->process = &FX_SoulDustProcess;
 		fxPrim->color = 0x2E000000;
 		fxPrim->v1.y = 0;
 		fxPrim->duo.flame.parent = instance;
 		fxPrim->duo.flame.segment = segment;
+
 		fxPrim->work0 = (rand() % 320) - 160;
+
 		fxPrim->work1 = (rand() & 63) + 320;
+
 		fxPrim->v1.x = (rand() % 896) + 128;
-		fxPrim->work2 = ((fxPrim->v1.x * 0x10000) >> 16) / 16;
+
+		fxPrim->work2 = ((fxPrim->v1.x * 65536) >> 16) / 16;
 		fxPrim->v2.x = fxPrim->work1 / 16;
-		if ((rand() & 1) != 0)
+
+		if ((rand() & 0x1))
 		{
 			fxPrim->v1.x = -fxPrim->v1.x;
 			fxPrim->work2 = -fxPrim->work2;
 		}
+
 		fxPrim->v1.x = (instance->rotation.z - 1024) - fxPrim->v1.x;
+
 		FX_SoulDustProcess(fxPrim, gFXT);
+
 		FX_Sprite_Insert(&gFXT->usedPrimListSprite, fxPrim);
 	}
 }
