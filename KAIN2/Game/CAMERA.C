@@ -3534,37 +3534,35 @@ long CAMERA_ACNoForcedMovement(struct Camera *camera, struct CameraCollisionInfo
 	return 0;
 }
 
-long CAMERA_AbsoluteCollision(struct Camera* camera, struct CameraCollisionInfo* colInfo) // Matching - 99.80%
+long CAMERA_AbsoluteCollision(struct Camera* camera, struct CameraCollisionInfo* colInfo) // Matching - 100%
 {
 	long hit = 0;
 
-	if ((gameTrackerX.debugFlags & 0x10000U) != 0)
+	if (gameTrackerX.debugFlags & 0x10000U)
 	{
 		return hit;
 	}
-
 	camera->focusRotation.x = camera->focusRotation.x & 0xfff;
-
-	if (((camera->flags & 0x10000) != 0 ||
-		(camera->instance_mode & 0x24000000) != 0 ||
-		(camera->flags & 0x2000) != 0 ||
-		camera->rotState != 0 ||
-		camera->always_rotate_flag != 0) &&
-		(camera->lock & 1U) == 0)
+	if ((camera->flags & 0x10000 ||
+		camera->instance_mode & 0x24000000 ||
+		camera->flags & 0x2000 ||
+		camera->rotState ||
+		camera->always_rotate_flag) &&
+		!(camera->lock & 1U))
 	{
-		if ((camera->flags & 0x10000U) != 0)
+		if (camera->flags & 0x10000U)
 		{
-			if ((colInfo->flags & 0x18U) != 0)
+			if (colInfo->flags & 0x18U)
 			{
 				camera->collisionTargetFocusDistance = (short)colInfo->lenCenterToExtend - 150;
-				if (400 > camera->collisionTargetFocusDistance)
+				if (camera->collisionTargetFocusDistance < 400)
 				{
 					camera->collisionTargetFocusDistance = 400;
 				}
 			}
 			else
 			{
-				hit = CAMERA_ACForcedMovement(camera, colInfo);
+				hit = CAMERA_ACNoForcedMovement(camera, colInfo);
 			}
 		}
 		else
@@ -3572,15 +3570,14 @@ long CAMERA_AbsoluteCollision(struct Camera* camera, struct CameraCollisionInfo*
 			camera->collisionTargetFocusDistance = (short)colInfo->lenCenterToExtend;
 		}
 	}
-	else if (*(int*)&camera->forced_movement != 0)
-	{
-		hit = CAMERA_ACNoForcedMovement(camera, colInfo);
-	}
-	else
+	else if ((camera->forced_movement != 0) || (camera->last_forced_movement != 0))
 	{
 		hit = CAMERA_ACForcedMovement(camera, colInfo);
 	}
-
+	else
+	{
+		hit = CAMERA_ACNoForcedMovement(camera, colInfo);
+	}
 	return hit;
 }
 
