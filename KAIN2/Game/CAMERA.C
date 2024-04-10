@@ -3482,21 +3482,24 @@ void CAMERA_update_dist_debounced(struct Camera* camera, short dist)//Matching -
 	}
 }
 
-short CAMERA_dampgetline(short angle) // Matching - 91.63%
+short CAMERA_dampgetline(short angle) // Matching - 100%
 {
 	static short target_angle;
 	static short angle_vel;
 	static short angle_accl;
 
 	CriticalDampAngle(1, &target_angle, angle, &angle_vel, &angle_accl, 1024);
+
 	if (target_angle > 2048)
 	{
 		target_angle -= 4096;
 	}
+
 	if ((abs(target_angle) < 32) && (abs(angle) > 31))
 	{
 		target_angle = angle < 0 ? -32 : 32;
 	}
+
 	return target_angle;
 }
 
