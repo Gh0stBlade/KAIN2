@@ -356,14 +356,14 @@ void _G2Instance_RebuildNonAnimatedTransforms(struct _Instance* instance)
 	}
 }
 
-void _G2Instance_BuildDeactivatedTransforms(struct _Instance* instance)//Matching - 99.69%
+void _G2Instance_BuildDeactivatedTransforms(struct _Instance* instance) // Matching - 100%
 {
 	MATRIX* segMatrix;
 	MATRIX* startOldMatrix;
 	int numMatrices;
 	struct _Model* model;
 
-	if ((instance->flags2 & 0x10000000) && ((instance->flags2 & 0x04000000) || ((instance->flags2 & 0x20000000) && (instance->flags & 0x800))))
+	if (((instance->flags2 & 0x10000000)) && (((instance->flags2 & 0x4000000)) || (((instance->flags2 & 0x20000000)) && ((instance->flags & 0x800)))))
 	{
 		G2Instance_ClearMatrices(instance);
 		return;
@@ -377,7 +377,7 @@ void _G2Instance_BuildDeactivatedTransforms(struct _Instance* instance)//Matchin
 
 	model = instance->object->modelList[instance->currentModel];
 
-	if (instance->object->animList != NULL && !(instance->object->oflags2 & 0x40000000))
+	if ((instance->object->animList != NULL) && (!(instance->object->oflags2 & 0x40000000)))
 	{
 		numMatrices = model->numSegments + 1;
 	}
@@ -398,20 +398,9 @@ void _G2Instance_BuildDeactivatedTransforms(struct _Instance* instance)//Matchin
 
 	instance->oldMatrix = startOldMatrix;
 
-	if (instance->object->animList != NULL)
+	if ((instance->object->animList != NULL) && (startOldMatrix--, (!(instance->object->oflags2 & 0x40000000))))
 	{
-		startOldMatrix--;
-
-		if (!(instance->object->oflags2 & 0x40000000))
-		{
-			instance->matrix = segMatrix + 1;
-		}
-		else
-		{
-			startOldMatrix = instance->oldMatrix;
-
-			instance->matrix = segMatrix;
-		}
+		instance->matrix = &segMatrix[1];
 	}
 	else
 	{
