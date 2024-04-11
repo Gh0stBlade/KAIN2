@@ -3042,7 +3042,7 @@ void CAMERA_SetLookFocusAndDistance(struct Camera* camera, VECTOR* focuspoint, i
 	Camera_lookDist = distance;
 }
 
-void CAMERA_LookProcess(struct Camera* camera) // Matching - 99.90%
+void CAMERA_LookProcess(struct Camera* camera) // Matching - 100%
 {
 	struct _Instance* focusInstance;
 	int smooth;
@@ -3086,7 +3086,7 @@ void CAMERA_LookProcess(struct Camera* camera) // Matching - 99.90%
 	if (camera->flags & 0x800)
 	{
 		camera->focusDistance = camera->targetFocusDistance;
-		CAMERA_Copy_Pos_To_Pos(&camera->targetFocusPoint, &camera->focusPoint);
+		SET_VEC((struct _SVector*)&camera->focusPoint, &camera->targetFocusPoint);
 	}
 	else
 	{
@@ -3099,9 +3099,9 @@ void CAMERA_LookProcess(struct Camera* camera) // Matching - 99.90%
 	CriticalDampAngle(1, &camera->focusRotation.z, camera->targetFocusRotation.z, &camera->focusRotVel.z, &camera->focusRotAccl.z, 64);
 	CriticalDampAngle(1, &camera->focusRotation.x, camera->targetFocusRotation.x, &camera->focusRotVel.x, &camera->focusRotAccl.x, 64);
 	CAMERA_CalcPosition(&camera->targetPos, &camera->focusPoint, &camera->focusRotation, camera->focusDistance);
-	CAMERA_Copy_Pos_To_Pos(&camera->targetPos, &camera->core.position);
-	CAMERA_Copy_Rot_To_Rot(&camera->focusRotation, &camera->targetRotation);
-	CAMERA_Copy_Rot_To_Rot(&camera->targetRotation, &camera->core.rotation);
+	SET_VEC((struct _SVector*)&camera->core.position, &camera->targetPos);
+	SET_VEC((struct _SVector*)&camera->targetRotation, (struct _Position*)&camera->focusRotation);
+	SET_VEC((struct _SVector*)&camera->core.rotation, (struct _Position*)&camera->targetRotation);
 	camera->distanceState = 0;
 	camera->lagZ = camera->core.rotation.z;
 	CAMERA_CalculateLead(camera);
