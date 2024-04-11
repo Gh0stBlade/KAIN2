@@ -36,7 +36,7 @@ extern void COLLIDE_NearestPointOnLine_S(struct _SVector* linePoint, SVECTOR* ol
 
 extern long COLLIDE_IntersectLineAndPlane_S(struct _SVector* planePoint, struct _Position* oldPos, struct _Position* position, struct _SVector* normal, long z) ; // 0x8007804C
 
-extern void COLLIDE_NearestPointOnPlane_S(struct _SVector* planePoint, struct _SVector* normal, long z, struct _Position* position); // 0x80078124
+extern void COLLIDE_NearestPointOnPlane_S(struct _SVector* planePoint, struct _SVector* normal, long constant, struct _SVector* point); // 0x80078124
 
 extern void VM_ProcessVMObjectSetColor_S(struct Level* level, struct _VMObject* vmobject); // 0x800786A8
 

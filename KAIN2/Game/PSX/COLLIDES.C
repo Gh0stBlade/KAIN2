@@ -1705,7 +1705,8 @@ long COLLIDE_IntersectLineAndPlane_S(struct _SVector* planePoint, struct _Positi
 	return 1;
 }
 
-void COLLIDE_NearestPointOnPlane_S(struct _SVector* planePoint, struct _SVector* normal, long z, struct _Position* position)
+#if 0
+void COLLIDE_NearestPointOnPlane_S(struct _SVector* planePoint, struct _SVector* normal, long constant, struct _SVector* point)
 {
 	int r;
 	SVECTOR v;
@@ -1729,6 +1730,29 @@ void COLLIDE_NearestPointOnPlane_S(struct _SVector* planePoint, struct _SVector*
 	planePoint->y = v.vy + position->y;
 	planePoint->z = v.vz + position->z;
 }
+#else
+/* This function is handwritten in MIPS, so in order to get it working on PC we had to make an equivalent version in C language.
+   The prototype from April 14th shows that this was originally written in C before being translated to assembly, so the
+   following code has been decompiled with a 100% matching rate from that prototype's version (which lacks the _S suffix) */
+
+void COLLIDE_NearestPointOnPlane_S(struct _SVector* planePoint, struct _SVector* normal, long constant, struct _SVector* point)
+{
+	struct _Vector* dpv;
+
+	dpv = (struct _Vector*)getScratchAddr(0);
+
+	gte_SetRotMatrix(point);
+	gte_ldv0(normal);
+	gte_rtv0();
+	gte_stlvnl(dpv);
+
+	dpv->x = constant - dpv->x;
+
+	planePoint->x = (short)(point->x + ((normal->x * dpv->x) >> 12));
+	planePoint->y = (short)(point->y + ((normal->y * dpv->x) >> 12));
+	planePoint->z = (short)(point->z + ((normal->z * dpv->x) >> 12));
+}
+#endif
 
 void VM_ProcessVMObjectSetColor_S(struct Level* level, struct _VMObject* vmobject) 
 {
