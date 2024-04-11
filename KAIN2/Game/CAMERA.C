@@ -114,23 +114,6 @@ static inline void CAMERA_Add_Pos_To_Vec(struct _Position* dest, struct _Vector*
 	dest->z = z;
 }
 
-static inline void CAMERA_Sub_Pos_From_Vec(struct _Position* dest, struct _Vector* vec, struct _Position* pos)
-{
-	short x, y, z;
-
-	x = (short)vec->x;
-	y = (short)vec->y;
-	z = (short)vec->z;
-
-	x -= pos->x;
-	y -= pos->y;
-	z -= pos->z;
-
-	dest->x = x;
-	dest->y = y;
-	dest->z = z;
-}
-
 static inline void CAMERA_Add_Pos_To_Pos(struct _Position* dest, struct _Position* pos0, struct _Position* pos1)
 {
 	short x, y, z;
@@ -165,23 +148,6 @@ static inline void CAMERA_Sub_Pos_From_Pos(struct _Position* dest, struct _Posit
 	dest->z = z;
 }
 
-static inline void CAMERA_Add_SVec_To_Pos(struct _SVector* dest, struct _Position* pos, struct _SVector* vec)
-{
-	short x, y, z;
-
-	x = pos->x;
-	y = pos->y;
-	z = pos->z;
-
-	x += vec->x;
-	y += vec->y;
-	z += vec->z;
-
-	dest->x = x;
-	dest->y = y;
-	dest->z = z;
-}
-
 static inline void CAMERA_Sub_SVec_From_Pos(struct _SVector* _v, struct _Position* p1, struct _Position* p2)
 {
 	short _x0, _y0, _z0;
@@ -198,37 +164,6 @@ static inline void CAMERA_Sub_SVec_From_Pos(struct _SVector* _v, struct _Positio
 	_v->x = _x0 - _x1;
 	_v->y = _y0 - _y1;
 	_v->z = _z0 - _z1;
-}
-
-static inline void CAMERA_Sub_SVec_From_SVec(struct _SVector* dest, struct _SVector* vec0, struct _SVector* vec1)
-{
-	short x0, y0, z0;
-	short x1, y1, z1;
-
-	x0 = vec0->x;
-	y0 = vec0->y;
-	z0 = vec0->z;
-
-	x1 = vec1->x;
-	y1 = vec1->y;
-	z1 = vec1->z;
-
-	dest->x = x0 - x1;
-	dest->y = y0 - y1;
-	dest->z = z0 - z1;
-}
-
-static inline void CAMERA_Copy_Pos_To_SVec(struct _SVector* vec, struct _Position* pos)
-{
-	short x, y, z;
-
-	x = pos->x;
-	y = pos->y;
-	z = pos->z;
-
-	vec->x = x;
-	vec->y = y;
-	vec->z = z;
 }
 
 static inline void CAMERA_Copy_Vec_To_SVec(struct _SVector* SVec, struct _Vector* vec)
@@ -268,6 +203,41 @@ static inline void CAMERA_Copy_Rot_To_Rot(_Rotation* _v0, _Rotation* _v1)
 	_v1->x = _x1;
 	_v1->y = _y1;
 	_v1->z = _z1;
+}
+
+static inline int GetSecondCheckFlag(struct Camera* camera)
+{
+	if ((camera->flags & 0x10000U) != 0)
+	{
+		return 0;
+	}
+
+	if (camera->real_focuspoint.z - camera->targetFocusPoint.z >= 0)
+	{
+		if (camera->real_focuspoint.z - camera->targetFocusPoint.z < 5)
+		{
+			return 0;
+		}
+	}
+	else if (camera->targetFocusPoint.z - camera->real_focuspoint.z < 5)
+	{
+		return 0;
+	}
+
+	return 1;
+}
+
+static inline void CAMERA_SetupColInfo_CopyPosition(struct _Position* _v1, struct _Position* _v0)
+{
+	short _x1, _y1, _z1;
+
+	_x1 = _v1->x;
+	_y1 = _v1->y;
+	_z1 = _v1->z;
+
+	_v0->x = _x1;
+	_v0->y = _y1;
+	_v0->z = _z1;
 }
 
 void CAMERA_CalculateViewVolumeNormals(struct Camera *camera)
@@ -2705,34 +2675,33 @@ void CAMERA_Relocate(struct Camera *camera, struct _SVector *offset, int streamS
 	}
 }
 
-struct _TFace* CAMERA_SphereToSphereWithLines(struct Camera* camera, struct CameraCollisionInfo* colInfo, int secondcheck_flag) // Matching - 99.37%
+struct _TFace* CAMERA_SphereToSphereWithLines(struct Camera* camera, struct CameraCollisionInfo* colInfo, int secondcheck_flag) // Matching - 100%
 {
-	long minLength;                      // stack offset -68     sp(0x134)
-	struct _SVector sv;                  // stack offset -344    sp(0x20)
-	struct _SVector startPt[5];          // stack offset -336    sp(0x28)
-	struct _SVector endPt[5];            // stack offset -296    sp(0x50)
-	struct _SVector startLine;           // stack offset -256    sp(0x78)
-	struct _Vector adjStartLine;         // stack offset -248    sp(0x80)
-	struct _SVector endLine;             // stack offset -232    sp(0x90)
-	struct _Vector adjEndLine;           // stack offset -224    sp(0x98)
-	struct _Vector CamLineNormalized;    // stack offset -208    sp(0xA8)
-	struct _Rotation rotation;           // stack offset -192    sp(0xB8)
-	MATRIX matrix;                       // stack offset -184    sp(0xC0)
-	struct _TFace* result;               // stack offset -64     sp(0x138)
-	long i;                              // stack offset -60     sp(0x13C)
-	long init;                           // stack offset -56     sp(0x140)
-	struct Level* level;                 // stack offset -52     sp(0x144)
-	// struct _Instance *focusInstance;  // $v0
-	struct _Vector ACE_vect;             // stack offset -152    sp(0xE0)
-	struct _LCollideInfo lcol;           // stack offset -136    sp(0xF0)
-	int ACE_force;                       // $s2
-	int in_warpRoom;                     // stack offset -48     sp(0x148)
-	int flag;                            // $fp
-	short backface_flag;                 // stack offset -72     sp(0x130)
-	struct _PCollideInfo pCollideInfo;   // stack offset -120    sp(0x100)
-	int n;                               // $s2
-	struct Level* thislevel;             // $s1
-	struct _SVector* _v;                 // stack offset -44     sp(0x14C)
+	long minLength;
+	struct _SVector sv;
+	struct _SVector startPt[5];
+	struct _SVector endPt[5];
+	struct _SVector startLine;
+	struct _Vector adjStartLine;
+	struct _SVector endLine;
+	struct _Vector adjEndLine;
+	struct _Vector CamLineNormalized;
+	struct _Rotation rotation;
+	MATRIX matrix;
+	struct _TFace* result;
+	long i;
+	long init;
+	struct Level* level;
+	struct _Instance* focusInstance; // appears on SYMDUMP, but doesn't get use here
+	struct _Vector ACE_vect;
+	struct _LCollideInfo lcol;
+	int ACE_force;
+	int in_warpRoom;
+	int flag;
+	short backface_flag;
+	struct _PCollideInfo pCollideInfo;
+	int n;
+	struct Level* thislevel;
 
 	minLength = 0;
 	result = NULL;
@@ -2942,19 +2911,9 @@ struct _TFace* CAMERA_SphereToSphereWithLines(struct Camera* camera, struct Came
 			CAMERA_Sub_Vec_From_Pos((struct _Position*)_v3, &colInfo->end->position, _v1);
 		}
 
-		{
-			struct _SVector* _v2 = &startPt[1];
-			struct _SVector* _v3 = &right_point;
+		ADD_VEC(&right_point, (struct _Position*)&startPt[1], (struct _Position*)&camera->focusInstanceVelVec);
 
-			CAMERA_Add_SVec_To_Pos(_v3, (struct _Position*)_v2, &camera->focusInstanceVelVec);
-		}
-
-		{
-			struct _SVector* _v2 = &startPt[2];
-			struct _SVector* _v3 = &left_point;
-
-			CAMERA_Add_SVec_To_Pos(_v3, (struct _Position*)_v2, &camera->focusInstanceVelVec);
-		}
+		ADD_VEC(&left_point, (struct _Position*)&startPt[2], (struct _Position*)&camera->focusInstanceVelVec);
 
 		startLine.y = 4096;
 
@@ -2967,20 +2926,14 @@ struct _TFace* CAMERA_SphereToSphereWithLines(struct Camera* camera, struct Came
 
 		ApplyMatrix(&matrix, (SVECTOR*)&startLine, (VECTOR*)&CamLineNormalized);
 
-		{
-			struct _SVector* _v2 = &startPt[0];
-			CAMERA_Copy_Pos_To_SVec(_v2, &colInfo->start->position);
-		}
+		SET_VEC(&startPt[0], &colInfo->start->position);
 
-		{
-			struct _SVector* _v2 = &endPt[0];
-			CAMERA_Copy_Pos_To_SVec(_v2, &colInfo->end->position);
-		}
+		SET_VEC(&endPt[0], &colInfo->end->position);
 
 		colInfo->lenCenterToExtend = (int)camera->targetFocusDistance;
 		in_warpRoom = (unsigned int)(unsigned short)STREAM_GetStreamUnitWithID(level->streamUnitID)->flags & 1;
 
-		for (i = 0, _v = &sv; i < 5; i++)
+		for (i = 0; i < 5; i++)
 		{
 			if ((colInfo->cldLines & (1 << i)) != 0)
 			{
@@ -3033,16 +2986,9 @@ struct _TFace* CAMERA_SphereToSphereWithLines(struct Camera* camera, struct Came
 
 					colInfo->numCollided++;
 
-					{
-						struct _SVector* _v0;
-						struct _SVector* _v1;
+					SUB_VEC(&sv, (struct _Position*)&startPt[i], (struct _Position*)&endPt[i]);
 
-						_v0 = endPt;
-						_v1 = startPt;
-						CAMERA_Sub_SVec_From_SVec(&sv, &_v0[i], &_v1[i]);
-
-						colInfo->lengthList[i] = (short)(((sv.x * CamLineNormalized.x) + (sv.y * CamLineNormalized.y) + (sv.z * CamLineNormalized.z)) >> 0xc);
-					}
+					colInfo->lengthList[i] = (short)(((sv.x * CamLineNormalized.x) + (sv.y * CamLineNormalized.y) + (sv.z * CamLineNormalized.z)) >> 0xc);
 
 					if (backface_flag == 0 || 100 <= colInfo->lengthList[i])
 					{
@@ -3067,16 +3013,9 @@ struct _TFace* CAMERA_SphereToSphereWithLines(struct Camera* camera, struct Came
 				}
 				else
 				{
-					{
-						struct _SVector* _v0;
-						struct _SVector* _v1;
+					SUB_VEC(&sv, (struct _Position*)&startPt[i], (struct _Position*)&endPt[i]);
 
-						_v0 = endPt;
-						_v1 = startPt;
-						CAMERA_Sub_SVec_From_SVec(&sv, &_v0[i], &_v1[i]);
-
-						colInfo->lengthList[i] = (short)(((sv.x * CamLineNormalized.x) + (sv.y * CamLineNormalized.y) + (sv.z * CamLineNormalized.z)) >> 0xc);
-					}
+					colInfo->lengthList[i] = (short)(((sv.x * CamLineNormalized.x) + (sv.y * CamLineNormalized.y) + (sv.z * CamLineNormalized.z)) >> 0xc);
 				}
 			}
 		}
@@ -5909,19 +5848,6 @@ void CAMERA_CalcFollowPosition(struct Camera* camera, struct _Rotation* rotation
 	camera->lagZ = camera->core.rotation.z;
 }
 
-static inline void CAMERA_SetupColInfo_CopyPosition(struct _Position* _v1, struct _Position* _v0)
-{
-	short _x1, _y1, _z1;
-
-	_x1 = _v1->x;
-	_y1 = _v1->y;
-	_z1 = _v1->z;
-
-	_v0->x = _x1;
-	_v0->y = _y1;
-	_v0->z = _z1;
-}
-
 void CAMERA_SetupColInfo(struct Camera* camera, struct CameraCollisionInfo* colInfo, struct _Position* targetCamPos) // Matching - 99.58%
 {
 	static short toggle = 0;
@@ -6053,28 +5979,6 @@ void CAMERA_Panic(struct Camera* camera, short min_dist) // Matching - 99.52%
 		camera->collisionTargetFocusRotation.z = best_z;
 		camera->signalRot.z = best_z;
 	}
-}
-
-static inline int GetSecondCheckFlag(struct Camera* camera)
-{
-	if ((camera->flags & 0x10000U) != 0)
-	{
-		return 0;
-	}
-
-	if (camera->real_focuspoint.z - camera->targetFocusPoint.z >= 0)
-	{
-		if (camera->real_focuspoint.z - camera->targetFocusPoint.z < 5)
-		{
-			return 0;
-		}
-	}
-	else if (camera->targetFocusPoint.z - camera->real_focuspoint.z < 5)
-	{
-		return 0;
-	}
-
-	return 1;
 }
 
 // @fixme commented out because causes camera to rotate unnecessarily, maybe needs implementation of CAMERA_ACNoForcedMovement
