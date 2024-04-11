@@ -959,14 +959,14 @@ int SOUND_IsMusicLoading()
 	return 0;
 }
 
-void SOUND_ProcessMusicLoad()
+void SOUND_ProcessMusicLoad() // Matching - 100%
 {
 	char musicName[8];
 	char sndFileName[32];
 	char smpFileName[32];
-	struct MusicLoadCmd *cmd;
-	struct Level *level;
-	
+	struct MusicLoadCmd* cmd;
+	struct Level* level;
+
 	switch (musicInfo.state)
 	{
 	case 0:
@@ -1035,7 +1035,7 @@ void SOUND_ProcessMusicLoad()
 							if (strcmpi(musicName, musicInfo.currentMusicName) != 0)
 #endif
 							{
-								if (musicInfo.currentMusicName[0] != 0)
+								if ((unsigned char)musicInfo.currentMusicName[0] != 0)
 								{
 									sprintf(sndFileName, "\\kain2\\music\\%s\\%s.snd", musicName, musicName);
 
@@ -1044,11 +1044,11 @@ void SOUND_ProcessMusicLoad()
 										strcpy(musicInfo.currentMusicName, musicName);
 										strcpy(sndFileName, "\\kain2\\music\\uwtr\\uwtr.snd");
 										strcpy(smpFileName, "\\kain2\\music\\uwtr\\uwtr.smp");
-									
+
 										musicInfo.state = 3;
 										musicInfo.nextState = 4;
 
-										aadLoadDynamicSoundBank(sndFileName, smpFileName, 1, 1, musicLoadReturnFunc);
+										aadLoadDynamicSoundBank(sndFileName, smpFileName, 1, 0, musicLoadReturnFunc);
 									}
 								}
 								else
@@ -1059,10 +1059,10 @@ void SOUND_ProcessMusicLoad()
 									if (LOAD_DoesFileExist(sndFileName) != 0)
 									{
 										strcpy(musicInfo.currentMusicName, musicName);
-										
+
 										musicInfo.state = 1;
 										musicInfo.nextState = 2;
-										
+
 										aadLoadDynamicSoundBank(sndFileName, smpFileName, 0, 1, musicLoadReturnFunc);
 									}
 								}
@@ -1070,7 +1070,7 @@ void SOUND_ProcessMusicLoad()
 						}
 						else
 						{
-							if (musicInfo.currentMusicName[0] != 0)
+							if ((unsigned char)musicInfo.currentMusicName[0] != 0)
 							{
 								musicInfo.currentMusicName[0] = 0;
 								musicInfo.state = 11;
@@ -1095,8 +1095,9 @@ void SOUND_ProcessMusicLoad()
 #endif
 		{
 			aadStartSlot(0);
-			musicInfo.state = 0;
+
 		}
+		musicInfo.state = 0;
 		break;
 	case 4:
 		if (musicInfo.errorStatus == 0)
@@ -1106,6 +1107,7 @@ void SOUND_ProcessMusicLoad()
 			musicInfo.bankLoaded = 1;
 
 			aadInstallEndSequenceCallback(musicEndCallbackFunc, 0);
+			aadSetUserVariable(127, 1);
 		}
 		else
 		{
@@ -1131,7 +1133,7 @@ void SOUND_ProcessMusicLoad()
 			musicInfo.bankLoaded = 0;
 
 			aadInstallEndSequenceCallback(musicEndCallbackFunc, 0);
-			aadSetUserVariable(0x7F, 1);
+			aadSetUserVariable(127, 1);
 		}
 		else
 		{
