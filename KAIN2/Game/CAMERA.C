@@ -144,32 +144,6 @@ static inline void CAMERA_Copy_Vec_To_SVec(struct _SVector* SVec, struct _Vector
 	SVec->z = z;
 }
 
-static inline void CAMERA_Copy_Pos_To_Pos(_Position* _v0, _Position* _v1)
-{
-	short _x1, _y1, _z1;
-
-	_x1 = _v0->x;
-	_y1 = _v0->y;
-	_z1 = _v0->z;
-
-	_v1->x = _x1;
-	_v1->y = _y1;
-	_v1->z = _z1;
-}
-
-static inline void CAMERA_Copy_Rot_To_Rot(_Rotation* _v0, _Rotation* _v1)
-{
-	short _x1, _y1, _z1;
-
-	_x1 = _v0->x;
-	_y1 = _v0->y;
-	_z1 = _v0->z;
-
-	_v1->x = _x1;
-	_v1->y = _y1;
-	_v1->z = _z1;
-}
-
 static inline int GetSecondCheckFlag(struct Camera* camera)
 {
 	if ((camera->flags & 0x10000U) != 0)
