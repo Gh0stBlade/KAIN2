@@ -1159,11 +1159,11 @@ void SOUND_ProcessMusicLoad()
 	}
 }
 
-void SOUND_UpdateSound()//Matching - 88.37%
+void SOUND_UpdateSound() // Matching - 100%
 {
 	aadProcessLoadQueue();
 
-	if ((gameTrackerX.debugFlags & 0x40000) || gSramFullAlarm == 0 && gSramFullMsgCnt != 0)
+	if ((!(gameTrackerX.debugFlags & 0x40000)) && ((gSramFullAlarm != 0) || (gSramFullMsgCnt != 0)))
 	{
 		if (gSramFullMsgCnt == 0)
 		{
@@ -1177,7 +1177,7 @@ void SOUND_UpdateSound()//Matching - 88.37%
 		FONT_Print("$\n\n\n\n\n\n\n\n\n\nsound memory full!\nu = % d % d f = % d % d lf = % d", gSramTotalUsed, gSramUsedBlocks, gSramTotalFree, gSramFreeBlocks, gSramLargestFree);
 	}
 
-	if (gameTrackerX.sound.gMusicOn != 0)
+	if ((unsigned char)gameTrackerX.sound.gMusicOn != 0)
 	{
 		SOUND_ProcessMusicLoad();
 	}
