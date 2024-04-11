@@ -100,7 +100,7 @@ extern struct _BlockVramEntry * VRAM_GetOpenBlock(); // 0x80072D38
 
 extern int VRAM_DeleteFreeVram(short x, short y, short w, short h); // 0x80072D6C
 
-extern int VRAM_InsertFreeVram(short x, short y, short w, short h, int flags); // 0x80072E9C
+extern int VRAM_InsertFreeVram(short x, short y, short w, short h, short flags); // 0x80072E9C
 
 extern struct _BlockVramEntry * VRAM_CheckVramSlot(short *x, short *y, short w, short h, int type, int startY); // 0x80073030
 
