@@ -192,19 +192,6 @@ static inline int GetSecondCheckFlag(struct Camera* camera)
 	return 1;
 }
 
-static inline void CAMERA_SetupColInfo_CopyPosition(struct _Position* _v1, struct _Position* _v0)
-{
-	short _x1, _y1, _z1;
-
-	_x1 = _v1->x;
-	_y1 = _v1->y;
-	_z1 = _v1->z;
-
-	_v0->x = _x1;
-	_v0->y = _y1;
-	_v0->z = _z1;
-}
-
 void CAMERA_CalculateViewVolumeNormals(struct Camera *camera)
 {
 	short projDistance;
@@ -5813,21 +5800,20 @@ void CAMERA_CalcFollowPosition(struct Camera* camera, struct _Rotation* rotation
 	camera->lagZ = camera->core.rotation.z;
 }
 
-void CAMERA_SetupColInfo(struct Camera* camera, struct CameraCollisionInfo* colInfo, struct _Position* targetCamPos) // Matching - 99.58%
+void CAMERA_SetupColInfo(struct Camera* camera, struct CameraCollisionInfo* colInfo, struct _Position* targetCamPos) // Matching - 100%
 {
 	static short toggle = 0;
 
 	if (camera->mode == 6)
 	{
-		CAMERA_SetupColInfo_CopyPosition(&camera->targetFocusPoint, &camera->focusSphere.position);
+		SET_VEC((struct _SVector*)&camera->focusSphere.position, &camera->targetFocusPoint);
 	}
 	else
 	{
-		CAMERA_SetupColInfo_CopyPosition(&camera->real_focuspoint, &camera->focusSphere.position);
-
+		SET_VEC((struct _SVector*)&camera->focusSphere.position, &camera->real_focuspoint);
 	}
 
-	CAMERA_SetupColInfo_CopyPosition(targetCamPos, &camera->posSphere.position);
+	SET_VEC((struct _SVector*)&camera->posSphere.position, targetCamPos);
 
 	colInfo->start = &camera->focusSphere;
 	colInfo->end = &camera->posSphere;
