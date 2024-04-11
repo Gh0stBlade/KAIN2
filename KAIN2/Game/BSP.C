@@ -1,6 +1,6 @@
 #include "CORE.H"
 
-#ifdef BREAKS
+#if 0
 // @fixme in spite of matching better than the version below, this code somehow renders all debug menu areas inaccessible. 
 void SBSP_IntroduceInstances(struct _Terrain* terrain, int unitID) // Matching - 100%
 {

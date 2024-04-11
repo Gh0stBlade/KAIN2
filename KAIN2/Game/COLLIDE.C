@@ -2575,7 +2575,7 @@ long COLLIDE_SphereAndHFace(struct _Sphere* sphere, struct _Position* oldPos, st
 				return behind;
 			if (CSpad->dpv.x >= 0)
 			{
-				COLLIDE_NearestPointOnPlane_S(&CSpad->planePoint, &CSpad->normal, CSpad->dpv.z, &sphere->position);
+				COLLIDE_NearestPointOnPlane_S(&CSpad->planePoint, &CSpad->normal, CSpad->dpv.z, (struct _SVector*)&sphere->position);
 			}
 			else if (!COLLIDE_IntersectLineAndPlane_S(
 				&CSpad->planePoint,
