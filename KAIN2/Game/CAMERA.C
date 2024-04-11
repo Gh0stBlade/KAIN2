@@ -114,23 +114,6 @@ static inline void CAMERA_Add_Pos_To_Vec(struct _Position* dest, struct _Vector*
 	dest->z = z;
 }
 
-static inline void CAMERA_Add_Pos_To_Pos(struct _Position* dest, struct _Position* pos0, struct _Position* pos1)
-{
-	short x, y, z;
-
-	x = pos0->x;
-	y = pos0->y;
-	z = pos0->z;
-
-	x += pos1->x;
-	y += pos1->y;
-	z += pos1->z;
-
-	dest->x = x;
-	dest->y = y;
-	dest->z = z;
-}
-
 static inline void CAMERA_Sub_Pos_From_Pos(struct _Position* dest, struct _Position* pos0, struct _Position* pos1)
 {
 	short x, y, z;
@@ -146,24 +129,6 @@ static inline void CAMERA_Sub_Pos_From_Pos(struct _Position* dest, struct _Posit
 	dest->x = x;
 	dest->y = y;
 	dest->z = z;
-}
-
-static inline void CAMERA_Sub_SVec_From_Pos(struct _SVector* _v, struct _Position* p1, struct _Position* p2)
-{
-	short _x0, _y0, _z0;
-	short _x1, _y1, _z1;
-
-	_x0 = p1->x;
-	_y0 = p1->y;
-	_z0 = p1->z;
-
-	_x1 = p2->x;
-	_y1 = p2->y;
-	_z1 = p2->z;
-
-	_v->x = _x0 - _x1;
-	_v->y = _y0 - _y1;
-	_v->z = _z0 - _z1;
 }
 
 static inline void CAMERA_Copy_Vec_To_SVec(struct _SVector* SVec, struct _Vector* vec)
@@ -359,8 +324,8 @@ void CAMERA_CreateNewFocuspoint(struct Camera* camera) // Matching - 100%
 
 	camera->focusRotation.x = camera->actual_x_rot;
 	CAMERA_CalcPosition(&camera->targetPos, &camera->core.position, &camera->focusRotation, camera->focusDistance);
-	CAMERA_Sub_SVec_From_Pos(&sv, &camera->core.position, &camera->targetPos);
-	CAMERA_Add_Pos_To_Pos(&camera->focusPoint, &camera->core.position, (struct _Position*)&sv);
+	SUB_VEC(&sv, &camera->core.position, &camera->targetPos);
+	ADD_VEC((struct _SVector*)&camera->focusPoint, &camera->core.position, (struct _Position*)&sv);
 }
 
 void CAMERA_SaveMode(struct Camera* camera, long mode)//Matching - 96.14%
