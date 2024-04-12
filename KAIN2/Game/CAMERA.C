@@ -1106,8 +1106,6 @@ short CAMERA_AngleDifference(short angle0, short angle1)
 	long temp;///@FIXME not in original, likely macro used for swap.
 	angle0 &= 0xFFF;
 	angle1 &= 0xFFF;
-
-#define GET_ANGLE(x, y) ((x - y) > 2048) ? (x | 4096) : (x)
 	
 	temp = angle0;
 	angle0 = (short)(GET_ANGLE(angle0, angle1) < angle0 ? angle0 : angle1);
@@ -3775,55 +3773,19 @@ void CAMERA_CinematicProcess(struct Camera* camera) // Matching - 100%
 			{
 				if (camera->data.Cinematic.splinePointAhead == 0)
 				{
-					short _x1;
-					short _y1;
-					short _z1;
-
-					_x1 = camPos->x;
-					_y1 = camPos->y;
-					_z1 = camPos->z;
-
-					camera->core.position.x = _x1;
-					camera->core.position.y = _y1;
-					camera->core.position.z = _z1;
+					SET_VEC((struct _SVector*)&camera->core.position, (struct _Position*)camPos);
 				}
 				else
 				{
-					short _x1;
-					short _y1;
-					short _z1;
-					struct _SVector* _v1;
-
-					_v1 = &camera->data.Cinematic.lastSplinePos;
-
-					_x1 = _v1->x;
-					_y1 = _v1->y;
-					_z1 = _v1->z;
-
-					camera->core.position.x = _x1;
-					camera->core.position.y = _y1;
-					camera->core.position.z = _z1;
+					SET_VEC((struct _SVector*)&camera->core.position, (struct _Position*)&camera->data.Cinematic.lastSplinePos);
 				}
 			}
 
 			if (camera->data.Cinematic.splinePointAhead != 0)
 			{
-				short _x1;
-				short _y1;
-				short _z1;
-				struct _SVector* _v0;
-
 				CAMERA_SetTarget(camera, (struct _Position*)camPos);
 
-				_v0 = &camera->data.Cinematic.lastSplinePos;
-
-				_x1 = camPos->x;
-				_y1 = camPos->y;
-				_z1 = camPos->z;
-
-				_v0->x = _x1;
-				_v0->y = _y1;
-				_v0->z = _z1;
+				SET_VEC((struct _SVector*)&camera->data.Cinematic.lastSplinePos, (struct _Position*)camPos);
 			}
 			else if (targetSpline != NULL)
 			{
@@ -3831,20 +3793,7 @@ void CAMERA_CinematicProcess(struct Camera* camera) // Matching - 100%
 
 				if (camTarget != NULL)
 				{
-					short _x1;
-					short _y1;
-					short _z1;
-					struct _Position* _v0;
-
-					_v0 = &camera->targetFocusPoint;
-
-					_x1 = camTarget->x;
-					_y1 = camTarget->y;
-					_z1 = camTarget->z;
-
-					_v0->x = _x1;
-					_v0->y = _y1;
-					_v0->z = _z1;
+					SET_VEC((struct _SVector*)&camera->targetFocusPoint, (struct _Position*)camTarget);
 
 					CAMERA_SetTarget(camera, (struct _Position*)camTarget);
 				}
@@ -3855,22 +3804,9 @@ void CAMERA_CinematicProcess(struct Camera* camera) // Matching - 100%
 
 				CriticalDampPosition(1, &camera->focusPoint, &camera->targetFocusPoint, &camera->focusPointVel, &camera->focusPointAccl, camera->maxVel * 2);
 			}
-			{
-				short _x1;
-				short _y1;
-				short _z1;
-				struct _Position* _v0;
 
-				_v0 = &camera->targetPos;
+			SET_VEC((struct _SVector*)&camera->targetPos, &camera->core.position);
 
-				_x1 = camera->core.position.x;
-				_y1 = camera->core.position.y;
-				_z1 = camera->core.position.z;
-
-				_v0->x = _x1;
-				_v0->y = _y1;
-				_v0->z = _z1;
-			}
 			if (posSpline != NULL)
 			{
 				if ((camera->data.Cinematic.targetSpline != NULL) || (camera->data.Cinematic.splinePointAhead != 0))
@@ -4041,24 +3977,7 @@ void CAMERA_CinematicProcess(struct Camera* camera) // Matching - 100%
 
 	CAMERA_CalcRotation(&camera->targetRotation, &camera->focusPoint, &camera->core.position);
 
-	{
-		short _x1;
-		short _y1;
-		short _z1;
-		struct _Rotation* _v0;
-		struct _Rotation* _v1; // not from SYMDUMP
-
-		_v0 = &camera->core.rotation;
-		_v1 = &camera->targetRotation;
-
-		_x1 = _v1->x;
-		_y1 = _v1->y;
-		_z1 = _v1->z;
-
-		_v0->x = _x1;
-		_v0->y = _y1;
-		_v0->z = _z1;
-	}
+	SET_VEC((struct _SVector*)&camera->core.rotation, (struct _Position*)&camera->targetRotation);
 
 	camera->actual_x_rot = camera->core.rotation.x;
 

@@ -13,6 +13,8 @@ enum MATH3D_AXIS : int
 	AXIS_NEG_Z = 5,
 };
 
+#define GET_ANGLE(x, y) ((x - y) > 2048) ? (x | 4096) : (x)
+
 #define compare(a,b) ( a-b<0?b-a:a-b )
 
 #define POW2(x) ((x) * (x))
