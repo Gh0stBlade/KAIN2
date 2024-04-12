@@ -1631,42 +1631,28 @@ void CAMERA_Adjust_roll(long roll_degrees, int frames) // Matching - 100%
 	}
 }
 
-void CAMERA_Adjust(struct Camera* camera, long adjust)  // Matching - 100%
+void CAMERA_Adjust(struct Camera* camera, long adjust) // Matching - 100%
 {
 	struct _SVector dv;
-	short _x0;
-	short _y0;
-	short _z0;
-	short _x1;
-	short _y1;
-	short _z1;
-	struct _SVector* _v;
-	struct _SVector* _v1;
-	struct _CameraKey* temp;  // not from SYMDUMP
+	struct _CameraKey* temp; // not from SYMDUMP
 
 	temp = camera->cameraKey;
+
 	if (temp != NULL)
 	{
-		if ((adjust & 1) != 0)
+		if ((adjust & 0x1))
 		{
-			_v = (struct _SVector*)&temp->tx;
-			_v1 = &dv;
-			_x0 = temp->x;
-			_y0 = temp->y;
-			_z0 = temp->z;
-			_x1 = _v->x;
-			_y1 = _v->y;
-			_z1 = _v->z;
-			_v1->x = _x0 - _x1;
-			_v1->y = _y0 - _y1;
-			_v1->z = _z0 - _z1;
-			CAMERA_Adjust_distance(camera, CAMERA_LengthSVector(_v1));
+			SUB_VEC(&dv, (struct _Position*)temp, (struct _Position*)&temp->tx);
+
+			CAMERA_Adjust_distance(camera, CAMERA_LengthSVector(&dv));
 		}
-		if ((adjust & 2) != 0)
+
+		if ((adjust & 0x2))
 		{
 			CAMERA_Adjust_tilt(camera, temp->rx);
 		}
-		if ((adjust & 4) != 0)
+
+		if ((adjust & 0x4))
 		{
 			CAMERA_Adjust_rotation(camera, temp->rz);
 		}
