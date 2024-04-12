@@ -114,23 +114,6 @@ static inline void CAMERA_Add_Pos_To_Vec(struct _Position* dest, struct _Vector*
 	dest->z = z;
 }
 
-static inline void CAMERA_Sub_Pos_From_Pos(struct _Position* dest, struct _Position* pos0, struct _Position* pos1)
-{
-	short x, y, z;
-
-	x = pos0->x;
-	y = pos0->y;
-	z = pos0->z;
-
-	x -= pos1->x;
-	y -= pos1->y;
-	z -= pos1->z;
-
-	dest->x = x;
-	dest->y = y;
-	dest->z = z;
-}
-
 static inline void CAMERA_Copy_Vec_To_SVec(struct _SVector* SVec, struct _Vector* vec)
 {
 	short x, y, z;
@@ -3331,32 +3314,22 @@ short CAMERA_GetLineAngle(struct Camera *camera, struct CameraCollisionInfo *col
 	return 0;
 }
 
-long CAMERA_ACForcedMovement(struct Camera* camera, struct CameraCollisionInfo* colInfo) // Matching - 99.62
+long CAMERA_ACForcedMovement(struct Camera* camera, struct CameraCollisionInfo* colInfo) // Matching - 99.81%
 {
 	short dp;
 	struct _Normal normal;
 	struct _SVector sv;
+	struct _Position* temp; // not from SYMDUMP
 
 	COLLIDE_GetNormal(colInfo->tfaceList[colInfo->line]->normal, (short*)colInfo->tfaceTerrain[colInfo->line]->normalList, (struct _SVector*)&normal);
-
+	temp = &colInfo->end->position;
+	SUB_VEC(&sv, &colInfo->start->position, &colInfo->end->position);
+	CAMERA_Normalize(&sv);
+	if ((sv.x * normal.x) + (sv.y * normal.y) + (sv.z * normal.z)) // garbage code for matching
 	{
-		struct _SVector* _v;
-		struct _Position* _v0;
-		struct _Position* _v1;
-		_v = &sv;
-		_v0 = &colInfo->start->position;
-		_v1 = &colInfo->end->position;
-		CAMERA_Sub_Pos_From_Pos((struct _Position*)_v, _v0, _v1);
-		CAMERA_Normalize(_v);
-
-		if (sv.x * normal.x + sv.y * normal.y + sv.z * normal.z)
-		{
-			_v = (struct _SVector*)&colInfo->start->position;
-		}
+		temp = &colInfo->end->position;
 	}
-
 	camera->collisionTargetFocusDistance = (short)colInfo->lenCenterToExtend;
-
 	return 0;
 }
 
