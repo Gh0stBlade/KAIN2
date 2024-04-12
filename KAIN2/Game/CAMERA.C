@@ -582,72 +582,15 @@ void CAMERA_SetMode(struct Camera* camera, long mode) // Matching - 99.68%
 		case 3:
 			if (mode != 5)
 			{
-				{
-					short _x1;
-					short _y1;
-					short _z1;
-					struct _Rotation* _v0;
-					struct _Rotation* _v1;
+				CAMERA_SaveMode(camera, camera->mode);
 
-					CAMERA_SaveMode(camera, camera->mode);
+				SET_VEC((struct _SVector*)&camera->targetFocusRotation, (struct _Position*)&camera->core.rotation);
 
-					_v0 = &camera->targetFocusRotation;
-					_v1 = &camera->core.rotation;
-
-					_x1 = _v1->x;
-					_y1 = _v1->y;
-					_z1 = _v1->z;
-
-					_v0->x = _x1;
-					_v0->y = _y1;
-					_v0->z = _z1;
-				}
-				{
-					short _x1;
-					short _y1;
-					short _z1;
-					struct _Rotation* _v0;
-					struct _Rotation* _v1; // not from SYMDUMP
-
-					_v0 = &camera->focusRotation;
-					_v1 = &camera->core.rotation;
-
-					_x1 = _v1->x;
-					_y1 = _v1->y;
-					_z1 = _v1->z;
-
-					_v0->x = _x1;
-					_v0->y = _y1;
-					_v0->z = _z1;
-				}
+				SET_VEC((struct _SVector*)&camera->focusRotation, (struct _Position*)&camera->core.rotation);
 
 				camera->actual_x_rot = camera->core.rotation.x;
 
-				{
-					short _x0;
-					short _y0;
-					short _z0;
-					short _x1;
-					short _y1;
-					short _z1;
-					struct _SVector* _v;
-					struct _Position* _v0;
-
-					_v = &sv;
-					_v0 = &camera->focusPoint;
-
-					_x0 = _v0->x;
-					_y0 = _v0->y;
-					_z0 = _v0->z;
-
-					_x1 = camera->core.position.x;
-					_y1 = camera->core.position.y;
-					_z1 = camera->core.position.z;
-
-					_v->x = _x0 - _x1;
-					_v->y = _y0 - _y1;
-					_v->z = _z0 - _z1;
-				}
+				SUB_VEC(&sv, &camera->focusPoint, &camera->core.position);
 
 				camera->focusDistance = (short)CAMERA_LengthSVector(&sv);
 
@@ -734,20 +677,7 @@ void CAMERA_SetMode(struct Camera* camera, long mode) // Matching - 99.68%
 
 					if (camPos != NULL)
 					{
-						short _x1;
-						short _y1;
-						short _z1;
-						struct _Position* _v0;
-
-						_v0 = &camera->targetPos;
-
-						_x1 = camPos->x;
-						_y1 = camPos->y;
-						_z1 = camPos->z;
-
-						_v0->x = _x1;
-						_v0->y = _y1;
-						_v0->z = _z1;
+						SET_VEC((struct _SVector*)&camera->targetPos, (struct _Position*)camPos);
 
 						if (mode == 5)
 						{
@@ -760,20 +690,7 @@ void CAMERA_SetMode(struct Camera* camera, long mode) // Matching - 99.68%
 
 							if (targetPos != NULL)
 							{
-								short _x1;
-								short _y1;
-								short _z1;
-								struct _Position* _v0;
-
-								_v0 = &camera->targetFocusPoint;
-
-								_x1 = targetPos->x;
-								_y1 = targetPos->y;
-								_z1 = targetPos->z;
-
-								_v0->x = _x1;
-								_v0->y = _y1;
-								_v0->z = _z1;
+								SET_VEC((struct _SVector*)&camera->targetFocusPoint, (struct _Position*)targetPos);
 							}
 						}
 					}
@@ -841,8 +758,6 @@ void CAMERA_SetMode(struct Camera* camera, long mode) // Matching - 99.68%
 		camera->collisionTargetFocusRotation = camera->targetFocusRotation;
 	}
 }
-
-extern int rando();
 
 void CAMERA_Initialize(struct Camera* camera)
 {
