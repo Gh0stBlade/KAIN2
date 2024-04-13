@@ -5616,29 +5616,14 @@ void CAMERA_SetupColInfo(struct Camera* camera, struct CameraCollisionInfo* colI
 void CAMERA_DoPanicCheck(struct Camera* camera, struct CameraCollisionInfo* tmpcolInfo, struct _Rotation* rotation, short* best_z, short* max_dist) // Matching - 99.81%
 {
 	struct _Position targetCamPos;
-	short _x1, _y1, _z1;
-	struct _Position* _v0;
-	struct _Position* _v1;
 
 	CAMERA_CalcPosition(&targetCamPos, &camera->focusPoint, rotation, camera->targetFocusDistance);
-
-	_v0 = &targetCamPos;
-	_v1 = &camera->posSphere.position;
-
-	_x1 = _v0->x;
-	_y1 = _v0->y;
-	_z1 = _v0->z;
-
-	_v1->x = _x1;
-	_v1->y = _y1;
-	_v1->z = _z1;
-
+	SET_VEC((struct _SVector*)&camera->posSphere.position, &targetCamPos);
 	CAMERA_SphereToSphereWithLines(camera, tmpcolInfo, 0);
-
-	if ((tmpcolInfo->numCollided == 0) || ((int)*max_dist < tmpcolInfo->lenCenterToExtend))
+	if ((tmpcolInfo->numCollided == 0) || (*max_dist < tmpcolInfo->lenCenterToExtend))
 	{
 		*best_z = rotation->z;
-		*max_dist = *(short*)&tmpcolInfo->lenCenterToExtend;
+		*max_dist = (short)tmpcolInfo->lenCenterToExtend;
 	}
 }
 
