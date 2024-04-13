@@ -1200,6 +1200,7 @@ short rcos(long a)
 	}
 }
 
+#if 0 
 long MATH3D_racos_S(long a)
 {
 	int v0 = 512;
@@ -1243,6 +1244,55 @@ start:
 
 	return v0;
 }
+#else
+/* This function is handwritten in MIPS, so in order to get it working on PC we had to make an equivalent version in C language.
+   The prototype from April 14th shows that this was originally written in C before being translated to assembly, so the
+   following code has been decompiled with a 100% matching rate from that prototype's version (which lacks the _S suffix) */
+
+short MATH3D_racos_S(short cos_ang_dest_act)
+{
+	short test_angle;
+	short cos_ang;
+	short step;
+	short cos_ang_dest;
+
+	test_angle = 512;
+
+	cos_ang = 0;
+
+	step = 256;
+
+	if (cos_ang_dest_act >= 0)
+	{
+		cos_ang_dest = cos_ang_dest_act;
+	}
+	else
+	{
+		cos_ang_dest = -cos_ang_dest_act;
+	}
+
+	for (; (cos_ang != cos_ang_dest) && (step != 0); step >>= 1)
+	{
+		cos_ang = rcos(test_angle);
+
+		if (cos_ang < cos_ang_dest)
+		{
+			test_angle -= step;
+		}
+		else
+		{
+			test_angle += step;
+		}
+	}
+
+	if (cos_ang_dest_act < 0)
+	{
+		test_angle = 2048 - test_angle;
+	}
+
+	return test_angle;
+}
+#endif
 
 void sub_80078458(struct _VMObject* vmobject, struct Level* level)
 {
