@@ -662,65 +662,28 @@ void PIPE3D_TransformSplitInstanceVertices(_MVertex *vertexList, struct _PVertex
 				UNIMPLEMENTED();
 }
 
-void PIPE3D_AnimateTextures(struct AniTex* aniTextures, long req_frame)
+void PIPE3D_AnimateTextures(struct AniTex* aniTextures, long req_frame) // Matching - 100%
 {
-	struct AniTexInfo* ani_tex_info; // $t0
-	struct TextureMT3* dest; // $a0
-	struct TextureMT3* src; // $v1
-	long i; // $a3
+	struct AniTexInfo* ani_tex_info;
+	struct TextureMT3* dest;
+	struct TextureMT3* src;
+	long i;
 
-	//t1 = aniTextures
-	
-	if (aniTextures != NULL && req_frame != -1)
+	if ((aniTextures != NULL) && (req_frame != -1))
 	{
-		ani_tex_info = &aniTextures->aniTexInfo;
-		
-		i = 0;
-		if (aniTextures->numAniTextues > 0)
+		for (ani_tex_info = &aniTextures->aniTexInfo, i = 0; i < aniTextures->numAniTextues; ani_tex_info++, i++)
 		{
-			//a2 = &aniTextures->aniTexInfo.speed
+			dest = ani_tex_info->texture;
 
+			src = &dest[(unsigned)req_frame / ani_tex_info->speed % ani_tex_info->numFrames] + 1;
+
+			*(int*)&dest->u0 = *(int*)&src->u0;
+			*(int*)&dest->u1 = *(int*)&src->u1;
+			*(int*)&dest->u2 = *(int*)&src->u2;
+
+			dest->color = src->color;
 		}
-		//locret_8003C2C0
 	}
-	//locret_8003C2C0
-#if 0
-		addiu   $a2, $t1, 8
-
-		loc_8003C250:
-	lw      $v0, 4($a2)
-		nop
-		divu    $a1, $v0
-		mflo    $v0
-		lw      $v1, 0($a2)
-		nop
-		divu    $v0, $v1
-		mfhi    $v1
-		lw      $a0, 0($t0)
-		sll     $v1, 4
-		addu    $v1, $a0, $v1
-		lw      $v0, 0x10($v1)
-		addiu   $v1, 0x10
-		sw      $v0, 0($a0)
-		lw      $v0, 4($v1)
-		nop
-		sw      $v0, 4($a0)
-		lw      $v0, 8($v1)
-		addiu   $t0, 0xC
-		sw      $v0, 8($a0)
-		lw      $v0, 0xC($v1)
-		addiu   $a3, 1
-		sw      $v0, 0xC($a0)
-		lw      $v0, 0($t1)
-		nop
-		slt     $v0, $a3, $v0
-		bnez    $v0, loc_8003C250
-		addiu   $a2, 0xC
-
-		locret_8003C2C0:
-	jr      $ra
-		nop
-#endif
 }
 
 void PIPE3D_AnimateTerrainTextures(struct DrMoveAniTex* aniTextures, long req_frame, struct _PrimPool* primPool, unsigned int** drawot)
