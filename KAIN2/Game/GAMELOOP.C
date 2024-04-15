@@ -2091,12 +2091,10 @@ void GAMELOOP_Reset24FPS() // Matching - 100%
 	gameTrackerX.frameRate24fps = 0;
 }
 
-void GAMELOOP_DoTimeProcess()
+void GAMELOOP_DoTimeProcess() // Matching - 99.84%
 {
 #if defined(PSXPC_VERSION)
 	unsigned long long holdTime;
-	int lockRate = 0;
-	unsigned long last;
 
 	holdTime = TIMER_GetTimeMS();
 
@@ -2116,7 +2114,7 @@ void GAMELOOP_DoTimeProcess()
 			gameTrackerX.frameRateLock = 2;
 		}
 
-		if (gameTrackerX.decoupleGame == 0 && (gameTrackerX.gameFlags & 0x10000000))
+		if ((gameTrackerX.decoupleGame == 0) || ((gameTrackerX.gameFlags & 0x10000000)))
 		{
 			if (gameTrackerX.frameRateLock == 1)
 			{
@@ -2126,16 +2124,22 @@ void GAMELOOP_DoTimeProcess()
 			{
 				gameTrackerX.lastLoopTime = 50;
 			}
+
+			gameTrackerX.timeMult = (gameTrackerX.lastLoopTime << 12) / 33;
 		}
 		else
 		{
-			if (gameTrackerX.frameRateLock == 1)
+			int lockRate;
+			unsigned long last;
+
+			lockRate = 33;
+
+			if (gameTrackerX.frameRateLock != 1)
 			{
-				lockRate = 33;
-			}
-			else if (gameTrackerX.frameRateLock == 2)
-			{
-				lockRate = 50;
+				if (gameTrackerX.frameRateLock == 2)
+				{
+					lockRate = 50;
+				}
 			}
 
 			last = lockRate;
@@ -2145,27 +2149,24 @@ void GAMELOOP_DoTimeProcess()
 				last = (unsigned long)(holdTime - gameTrackerX.currentTime);
 			}
 
-			if (gameTrackerX.frameRateLock == 1 && gameTrackerX.frameRate24fps != 0)
+			if ((gameTrackerX.frameRateLock == 1) && (gameTrackerX.frameRate24fps != 0))
 			{
 				last -= 9;
 			}
 
-			if (last >= holdTime && gameTrackerX.gameData.asmData.MorphTime == 1000)
-			{
-				if (last >= 67)
-				{
-					last = 66;
-				}
-			}
-			else
+			if ((last < (unsigned int)lockRate) || (gameTrackerX.gameData.asmData.MorphTime != 1000))
 			{
 				last = lockRate;
 			}
+			else if (last >= 67)
+			{
+				last = 66;
+			}
 
+			gameTrackerX.timeMult = (last << 12) / 33;
 			gameTrackerX.lastLoopTime = last;
 		}
 
-		gameTrackerX.timeMult = ((last << 12) / 33);
 		gameTrackerX.timeSinceLastGameFrame += gameTrackerX.timeMult;
 		gameTrackerX.gameFramePassed = 0;
 		gameTrackerX.globalTimeMult = gameTrackerX.timeMult;
@@ -2174,8 +2175,8 @@ void GAMELOOP_DoTimeProcess()
 		{
 			gameTrackerX.gameFramePassed = 1;
 			gameTrackerX.timeSinceLastGameFrame -= 4096;
-			gameTrackerX.fps30Count++;
-		}
+			gameTrackerX.fps30Count += 1;
+		};
 	}
 	else
 	{
@@ -2187,8 +2188,6 @@ void GAMELOOP_DoTimeProcess()
 #elif defined(PSX_VERSION)
 
 	int holdTime;
-	int lockRate;
-	unsigned long last;
 
 	holdTime = TIMER_GetTimeMS();
 
@@ -2208,7 +2207,7 @@ void GAMELOOP_DoTimeProcess()
 			gameTrackerX.frameRateLock = 2;
 		}
 
-		if (gameTrackerX.decoupleGame == 0 && (gameTrackerX.gameFlags & 0x10000000))
+		if ((gameTrackerX.decoupleGame == 0) || ((gameTrackerX.gameFlags & 0x10000000)))
 		{
 			if (gameTrackerX.frameRateLock == 1)
 			{
@@ -2218,16 +2217,22 @@ void GAMELOOP_DoTimeProcess()
 			{
 				gameTrackerX.lastLoopTime = 50;
 			}
+
+			gameTrackerX.timeMult = (gameTrackerX.lastLoopTime << 12) / 33;
 		}
 		else
 		{
-			if (gameTrackerX.frameRateLock == 1)
+			int lockRate;
+			unsigned long last;
+
+			lockRate = 33;
+
+			if (gameTrackerX.frameRateLock != 1)
 			{
-				lockRate = 33;
-			}
-			else if (gameTrackerX.frameRateLock == 2)
-			{
-				lockRate = 50;
+				if (gameTrackerX.frameRateLock == 2)
+				{
+					lockRate = 50;
+				}
 			}
 
 			last = lockRate;
@@ -2237,27 +2242,24 @@ void GAMELOOP_DoTimeProcess()
 				last = holdTime - gameTrackerX.currentTime;
 			}
 
-			if (gameTrackerX.frameRateLock == 1 && gameTrackerX.frameRate24fps != 0)
+			if ((gameTrackerX.frameRateLock == 1) && (gameTrackerX.frameRate24fps != 0))
 			{
 				last -= 9;
 			}
 
-			if (last >= holdTime && gameTrackerX.gameData.asmData.MorphTime == 1000)
-			{
-				if (last >= 67)
-				{
-					last = 66;
-				}
-			}
-			else
+			if ((last < (unsigned int)lockRate) || (gameTrackerX.gameData.asmData.MorphTime != 1000))
 			{
 				last = lockRate;
 			}
+			else if (last >= 67)
+			{
+				last = 66;
+			}
 
+			gameTrackerX.timeMult = (last << 12) / 33;
 			gameTrackerX.lastLoopTime = last;
 		}
 
-		gameTrackerX.timeMult = ((last << 12) / 33);
 		gameTrackerX.timeSinceLastGameFrame += gameTrackerX.timeMult;
 		gameTrackerX.gameFramePassed = 0;
 		gameTrackerX.globalTimeMult = gameTrackerX.timeMult;
@@ -2266,8 +2268,8 @@ void GAMELOOP_DoTimeProcess()
 		{
 			gameTrackerX.gameFramePassed = 1;
 			gameTrackerX.timeSinceLastGameFrame -= 4096;
-			gameTrackerX.fps30Count++;
-		}
+			gameTrackerX.fps30Count += 1;
+		};
 	}
 	else
 	{
