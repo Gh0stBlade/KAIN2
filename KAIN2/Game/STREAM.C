@@ -4241,7 +4241,7 @@ void WARPGATE_DrawWarpGateRim(struct _StreamUnit* streamUnit, int drawOn)  // Ma
 	}
 }
 
-void WARPGATE_HideAllCloudCovers()  // Matching - 99.58%
+void WARPGATE_HideAllCloudCovers() // Matching - 100%
 {
 	struct Object* warpFaceObject;
 
@@ -4271,7 +4271,7 @@ void WARPGATE_HideAllCloudCovers()  // Matching - 99.58%
 }
 
 
-struct _Instance* WARPGATE_UnHideCloudCoverInUnit(long streamUnitID)  // Matching - 99.67%
+struct _Instance* WARPGATE_UnHideCloudCoverInUnit(long streamUnitID) // Matching - 100%
 {
 	struct Object* warpFaceObject;
 	struct _Instance* result;
