@@ -117,7 +117,7 @@ int CheckPhysOb(struct _Instance* instance) // Matching - 100%
 
 	if (Prop != NULL)
 	{
-		return (Prop->ID ^ 0xB00B) < 1;
+		return (Prop->ID ^ 0xB00B) == 0;
 	}
 
 	return 0;
@@ -126,6 +126,7 @@ int CheckPhysOb(struct _Instance* instance) // Matching - 100%
 int CheckPhysObAbility(struct _Instance* instance, unsigned short ability) // Matching - 100%
 {
 	struct PhysObProperties* prop;
+	struct PhysObInteractProperties* temp; // not from SYMDUMP
 
 	prop = (struct PhysObProperties*)instance->data;
 
@@ -137,12 +138,14 @@ int CheckPhysObAbility(struct _Instance* instance, unsigned short ability) // Ma
 		}
 		else if (prop->family == 3)
 		{
-			if (((short)((struct PhysObInteractProperties*)instance->extraData)->Properties.ID & (ability & 0xFFFF)))
+			temp = (struct PhysObInteractProperties*)instance->extraData;
+
+			if (((short)temp->Properties.ID & ((ability & 0xFFFF))))
 			{
 				return 1;
 			}
 		}
-		else if (prop->Type & ability)
+		else if ((prop->Type & ability))
 		{
 			return 1;
 		}
@@ -178,6 +181,7 @@ int CheckPhysObFamily(struct _Instance* instance, unsigned short family) // Matc
 int GetPhysicalAbility(struct _Instance* instance) // Matching - 100%
 {
 	struct PhysObProperties* Prop;
+	struct PhysObInteractProperties* temp; // not from SYMDUMP
 
 	Prop = (struct PhysObProperties*)instance->data;
 
@@ -185,7 +189,9 @@ int GetPhysicalAbility(struct _Instance* instance) // Matching - 100%
 	{
 		if (Prop->family == 3)
 		{
-			return (short)((struct PhysObInteractProperties*)instance->extraData)->Properties.ID;
+			temp = (struct PhysObInteractProperties*)instance->extraData;
+
+			return (short)temp->Properties.ID;
 		}
 
 		return Prop->Type;
