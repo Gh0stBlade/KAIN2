@@ -261,7 +261,7 @@ void _G2Instance_BuildAnimatedTransforms(struct _Instance* instance)//Matching -
 	_G2Instance_RebuildAnimatedTransforms(instance);
 }
 
-void _G2Instance_RebuildNonAnimatedTransforms(struct _Instance* instance)
+void _G2Instance_RebuildNonAnimatedTransforms(struct _Instance* instance) // Matching - 100%
 {
 	VECTOR* scale;
 	MATRIX* introTransform;
@@ -279,7 +279,7 @@ void _G2Instance_RebuildNonAnimatedTransforms(struct _Instance* instance)
 	if (segMatrix != NULL)
 	{
 		model = instance->object->modelList[instance->currentModel];
-		
+
 		segment = model->segmentList;
 
 		if (instance->scale.x != 4096 || instance->scale.y != 4096 || instance->scale.z != 4096)
@@ -290,8 +290,8 @@ void _G2Instance_RebuildNonAnimatedTransforms(struct _Instance* instance)
 
 			scale_flag = 1;
 		}
-		
-		for (i = 0; i < model->numSegments; i++, segMatrix++, segment++)
+
+		for (i = 0; i < model->numSegments; segMatrix++, segment++, i++)
 		{
 			if (segment->lastTri != -1)
 			{
@@ -310,15 +310,7 @@ void _G2Instance_RebuildNonAnimatedTransforms(struct _Instance* instance)
 				{
 					if ((instance->flags & 0x1) && instance->intro != NULL)
 					{
-						((long*)segMatrix)[0] = (long)instance->intro->data;
-						((long*)segMatrix)[1] = (long)instance->intro->instance;
-						((long*)segMatrix)[2] = (long)instance->intro->multiSpline;
-						((long*)segMatrix)[3] = (long)instance->intro->dsignal;
-
-						((long*)segMatrix)[4] = (long)((long*)&instance->intro->multiSpline->curRotMatrix)[4];
-						((long*)segMatrix)[5] = (long)instance->intro->multiSpline->curRotMatrix.t[0];
-						((long*)segMatrix)[6] = (long)instance->intro->multiSpline->curRotMatrix.t[1];
-						((long*)segMatrix)[7] = (long)instance->intro->multiSpline->curRotMatrix.t[2];
+						*segMatrix = instance->intro->multiSpline->curRotMatrix;
 					}
 					else
 					{
@@ -336,7 +328,7 @@ void _G2Instance_RebuildNonAnimatedTransforms(struct _Instance* instance)
 					{
 						ScaleMatrix(segMatrix, scale);
 					}
-					
+
 					segMatrix->t[0] = instance->position.x;
 					segMatrix->t[1] = instance->position.y;
 					segMatrix->t[2] = instance->position.z;
