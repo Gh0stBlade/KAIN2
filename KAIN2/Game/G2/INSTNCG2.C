@@ -55,7 +55,7 @@ void G2Instance_BuildTransformsForList(struct _Instance* listHead) // Matching -
 	}
 }
 
-void G2Instance_BuildTransforms(struct _Instance* instance)//Matching - 99.57%
+void G2Instance_BuildTransforms(struct _Instance* instance) // Matching - 100%
 {
 	if (instance->object->animList != NULL && !(instance->object->oflags2 & 0x40000000))
 	{
