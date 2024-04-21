@@ -2,7 +2,7 @@
 #include "Game/G2/POOLMMG2.H"
 #include "Game/MEMPACK.H"
 
-void G2PoolMem_InitPool(void *voidPool, int blockCount, int blockSize)//Matching - 100%
+void G2PoolMem_InitPool(void *voidPool, int blockCount, int blockSize) // Matching - 100%
 {
 	((struct _G2PoolMemPool_Type*)voidPool)->blockPool = (struct _G2PoolMem_Type*)MEMPACK_Malloc(blockCount * blockSize, 0x19);
 	((struct _G2PoolMemPool_Type*)voidPool)->stack = (unsigned short*)MEMPACK_Malloc(blockCount * 4, 0x19);
@@ -12,7 +12,7 @@ void G2PoolMem_InitPool(void *voidPool, int blockCount, int blockSize)//Matching
 	G2PoolMem_ResetPool(voidPool);
 }
 
-void G2PoolMem_ResetPool(void* voidPool)//Matching - 100%
+void G2PoolMem_ResetPool(void* voidPool) // Matching - 100%
 { 
 	struct _G2PoolMemPool_Type* pool;
 	int blockIndex;
@@ -33,7 +33,7 @@ void G2PoolMem_ResetPool(void* voidPool)//Matching - 100%
 	}
 }
 
-void* G2PoolMem_Allocate(void* voidPool)//Matching - 100%
+void* G2PoolMem_Allocate(void* voidPool) // Matching - 100%
 {
 	int blockIndex;
 
