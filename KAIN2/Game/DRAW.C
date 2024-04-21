@@ -33,48 +33,29 @@ void fDRAW_SPLIT_INTPL_XYZ(struct _SVector *newVertex, struct _SVector *pvb, str
 	UNIMPLEMENTED();
 }
 
-void DRAW_InitShadow() //Matching - 78.68%
+void DRAW_InitShadow() // Matching - 100%
 {
 	int n;
 	int inc;
 	int deg;
 	int ret;
-	
+
 	deg = 0;
+
 	inc = 1677721;
 
 	for (n = 0; n < 10; n++)
 	{
-		if (deg < 0)
-		{
-			deg += 0xFFF;
-		}
-
-		ret = rcos(deg >> 12);
-
-		if (ret < 0)
-		{
-			ret += 0x1F;
-		}
-
-		shadow_vertices[n].vx = ret >> 5;
-
-		ret = rsin(deg >> 12);
-
-		if (ret < 0)
-		{
-			ret += 0x1F;
-		}
+		shadow_vertices[n].vx = rcos(deg / 4096) / 32;
+		shadow_vertices[n].vy = rsin(deg / 4096) / 32;
+		shadow_vertices[n].vz = 0;
 
 		deg += inc;
-
-		shadow_vertices[n].vy = ret >> 5;
-		shadow_vertices[n].vz = 0;
 	}
 
 	shadow_vertices[10].vx = shadow_vertices[0].vx;
 	shadow_vertices[10].vy = shadow_vertices[0].vy;
-	shadow_vertices[10].vz = shadow_vertices[0].vy;
+	shadow_vertices[10].vz = shadow_vertices[0].vz;
 }
 
 unsigned long* DRAW_DrawShadow(struct _PrimPool* primPool, struct _Model* model, unsigned long** ot, long fadeValue) // Matching - 97.17%
