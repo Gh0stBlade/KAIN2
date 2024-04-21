@@ -3,17 +3,21 @@
 
 #include "CORE.H"
 
-struct _CameraCore_Type // hashcode: 0xD341D51C (dec: -750660324)
+struct _CameraCore_Type 
 {
-	_Position position; // size=6, offset=0
+	struct _Position position; // size=6, offset=0
 	short pad1; // size=0, offset=6
+	//struct MATRIX vvNormalWorVecMat[2]; // size=64, offset=8
 	MATRIX vvNormalWorVecMat[2]; // size=64, offset=8
 	long vvPlaneConsts[6]; // size=24, offset=72
+	//struct MATRIX* wcTransform; // size=32, offset=96
 	MATRIX* wcTransform; // size=32, offset=96
 	long farPlane; // size=0, offset=100
 	long projDistance; // size=0, offset=104
 	long nearPlane; // size=0, offset=108
+	//struct MATRIX* wcTransform2; // size=32, offset=112
 	MATRIX* wcTransform2; // size=32, offset=112
+	//struct MATRIX* cwTransform2; // size=32, offset=116
 	MATRIX* cwTransform2; // size=32, offset=116
 	struct _Normal viewVolumeNormal[5]; // size=40, offset=120
 	int leftX; // size=0, offset=160
@@ -24,15 +28,15 @@ struct _CameraCore_Type // hashcode: 0xD341D51C (dec: -750660324)
 	short pad2; // size=0, offset=184
 	struct _SVector screenScale; // size=8, offset=186
 	short pad3; // size=0, offset=194
-	_Position debugPos; // size=6, offset=196
+	struct _Position debugPos; // size=6, offset=196
 	short pad4; // size=0, offset=202
 	struct _Rotation debugRot; // size=8, offset=204
 	short pad5; // size=0, offset=212
-	_Position nondebugPos; // size=6, offset=214
+	struct _Position nondebugPos; // size=6, offset=214
 	short pad6; // size=0, offset=220
 };
 
-struct _CameraKey // hashcode: 0xB9E6B724 (dec: -1176062172)
+struct _CameraKey 
 {
 	short x; // size=0, offset=0
 	short y; // size=0, offset=2
@@ -48,14 +52,14 @@ struct _CameraKey // hashcode: 0xB9E6B724 (dec: -1176062172)
 	short pad; // size=0, offset=22
 };
 
-struct _SavedCinematic // hashcode: 0x1E29151B (dec: 506008859)
+struct _SavedCinematic 
 {
-	_Position position; // size=6, offset=0
-	_Position focusPoint; // size=6, offset=6
-	_Position base; // size=6, offset=12
-	_Position targetPos; // size=6, offset=18
-	_Position targetFocusPoint; // size=6, offset=24
-	_Position targetBase; // size=6, offset=30
+	struct _Position position; // size=6, offset=0
+	struct _Position focusPoint; // size=6, offset=6
+	struct _Position base; // size=6, offset=12
+	struct _Position targetPos; // size=6, offset=18
+	struct _Position targetFocusPoint; // size=6, offset=24
+	struct _Position targetBase; // size=6, offset=30
 	struct _Rotation baseRot; // size=8, offset=36
 	struct _Rotation focusRotation; // size=8, offset=44
 	struct _Rotation targetFocusRotation; // size=8, offset=52
@@ -71,10 +75,10 @@ struct _SavedCinematic // hashcode: 0x1E29151B (dec: 506008859)
 	struct Level* level; // size=0, offset=108
 };
 
-struct CameraCollisionInfo // hashcode: 0x76C89E59 (dec: 1992859225)
+struct CameraCollisionInfo 
 {
-	struct _TFace(*tfaceList[5]); // size=20, offset=0
-	struct _Terrain(*tfaceTerrain[5]); // size=20, offset=20
+	struct _TFace* tfaceList[5]; // size=20, offset=0
+	struct _Terrain* tfaceTerrain[5]; // size=20, offset=20
 	short bspTree[6]; // size=12, offset=40
 	short lengthList[6]; // size=12, offset=52
 	long flags; // size=0, offset=64
@@ -86,6 +90,7 @@ struct CameraCollisionInfo // hashcode: 0x76C89E59 (dec: 1992859225)
 	long cldLines; // size=0, offset=88
 };
 
+// @fixme needs updating
 struct Camera // hashcode: 0x0670C20F (dec: 108053007)
 {
 	struct _CameraCore_Type core; // size=224, offset=0
