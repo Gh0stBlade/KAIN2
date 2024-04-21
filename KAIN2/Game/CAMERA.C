@@ -232,7 +232,7 @@ void CAMERA_CalcVVClipInfo(struct Camera* camera) // Matching - 94.44%
 	gte_stlvnl(&camera->core.vvPlaneConsts[3]);
 }
 
-void CAMERA_SetViewVolume(struct Camera *camera)
+void CAMERA_SetViewVolume(struct Camera *camera) // Matching - 100%
 {
 	CAMERA_CalculateViewVolumeNormals(camera);
 	CAMERA_CalcVVClipInfo(camera);
