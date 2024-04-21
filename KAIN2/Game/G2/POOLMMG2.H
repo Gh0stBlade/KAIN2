@@ -1,7 +1,7 @@
 #ifndef POOLMMG2_H
 #define POOLMMG2_H
 
-struct _G2PoolMemPool_Type // hashcode: 0x987744BB (dec: -1737014085)
+struct _G2PoolMemPool_Type 
 {
 	unsigned short blockSize; // size=0, offset=0
 	unsigned short stackTop; // size=0, offset=2

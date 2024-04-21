@@ -4,7 +4,6 @@
 #include "Game/MATH3D.H"
 #include "Game/PSX/COLLIDES.H"
 
-
 #define EulSafe "\000\001\002\000"
 #define EulNext "\001\002\000\001"
 #define EulFrmR	1
@@ -27,7 +26,7 @@ void G2EulerAngles_FromMatrix(struct _G2EulerAngles_Type* euler, struct _G2Matri
     long n;
     long s;
     long f;
-    long g; // Not exist in sysdump
+    long g; // not from SYMDUMP
 
     unsigned int o;
     o = order;
