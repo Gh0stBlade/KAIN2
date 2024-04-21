@@ -213,7 +213,7 @@ void CAMERA_CalculateViewVolumeNormals(struct Camera *camera)
 	CAMERA_Normalize((_SVector*)&camera->core.viewVolumeNormal[4]);
 }
 
-void CAMERA_CalcVVClipInfo(struct Camera* camera)
+void CAMERA_CalcVVClipInfo(struct Camera* camera) // Matching - 94.44%
 {
 	ApplyMatrixSV(camera->core.cwTransform2, (SVECTOR*)&camera->core.viewVolumeNormal[0], (SVECTOR*)&camera->core.vvNormalWorVecMat[0].m[0][0]);
 	ApplyMatrixSV(camera->core.cwTransform2, (SVECTOR*)&camera->core.viewVolumeNormal[1], (SVECTOR*)&camera->core.vvNormalWorVecMat[0].m[1][0]);
