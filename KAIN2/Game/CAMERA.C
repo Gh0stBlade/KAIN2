@@ -192,25 +192,25 @@ void CAMERA_CalculateViewVolumeNormals(struct Camera *camera)
 	camera->core.viewVolumeNormal[1].y = -(((int)(n0.x * n1.z) - (int)(n0.z * n1.x)) >> 12);
 	camera->core.viewVolumeNormal[1].z = (((int)(n0.x * n1.y) - (int)(n0.y * n1.x)) >> 12);
 
-	CAMERA_Normalize((_SVector*)&camera->core.viewVolumeNormal[1]);
+	CAMERA_Normalize((struct _SVector*)&camera->core.viewVolumeNormal[1]);
 
 	camera->core.viewVolumeNormal[2].x = (((int)(n2.y * n0.z) - (int)(n2.z * n0.y)) >> 12);
 	camera->core.viewVolumeNormal[2].y = -(((int)(n2.x * n0.z) - (int)(n2.z * n0.x)) >> 12);
 	camera->core.viewVolumeNormal[2].z = (((int)(n2.x * n0.y) - (int)(n2.y * n0.x)) >> 12);
 
-	CAMERA_Normalize((_SVector*)&camera->core.viewVolumeNormal[2]);
+	CAMERA_Normalize((struct _SVector*)&camera->core.viewVolumeNormal[2]);
 
 	camera->core.viewVolumeNormal[3].x = (((int)(n1.y * n3.z) - (int)(n1.z * n3.y)) >> 12);
 	camera->core.viewVolumeNormal[3].y = -(((int)(n1.x * n3.z) - (int)(n1.z * n3.x)) >> 12);
 	camera->core.viewVolumeNormal[3].z = (((int)(n1.x * n3.y) - (int)(n1.y * n3.x)) >> 12);
 
-	CAMERA_Normalize((_SVector*)&camera->core.viewVolumeNormal[3]);
+	CAMERA_Normalize((struct _SVector*)&camera->core.viewVolumeNormal[3]);
 
 	camera->core.viewVolumeNormal[4].x = (((int)(n3.y * n2.z) - (int)(n3.z * n2.y)) >> 12);
 	camera->core.viewVolumeNormal[4].y = -(((int)(n3.x * n2.z) - (int)(n3.z * n2.x)) >> 12);
 	camera->core.viewVolumeNormal[4].z = (((int)(n3.x * n2.y) - (int)(n3.y * n2.x)) >> 12);
 
-	CAMERA_Normalize((_SVector*)&camera->core.viewVolumeNormal[4]);
+	CAMERA_Normalize((struct _SVector*)&camera->core.viewVolumeNormal[4]);
 }
 
 void CAMERA_CalcVVClipInfo(struct Camera* camera) // Matching - 94.44%
@@ -272,7 +272,7 @@ void CAMERA_CreateNewFocuspoint(struct Camera* camera) // Matching - 100%
 	ADD_VEC((struct _SVector*)&camera->focusPoint, &camera->core.position, (struct _Position*)&sv);
 }
 
-void CAMERA_SaveMode(struct Camera* camera, long mode)//Matching - 96.14%
+void CAMERA_SaveMode(struct Camera* camera, long mode) // Matching - 100%
 {
 	long i;
 
@@ -283,7 +283,6 @@ void CAMERA_SaveMode(struct Camera* camera, long mode)//Matching - 96.14%
 		for (i = 0; i < 2; i++)
 		{
 			camera->savedMode[i] = camera->savedMode[i + 1];
-
 			camera->savedCinematic[i] = camera->savedCinematic[i + 1];
 		}
 	}
@@ -296,14 +295,14 @@ void CAMERA_SaveMode(struct Camera* camera, long mode)//Matching - 96.14%
 		camera->savedCinematic[camera->stack].focusPoint = camera->focusPoint;
 		camera->savedCinematic[camera->stack].targetPos = camera->targetPos;
 		camera->savedCinematic[camera->stack].targetFocusPoint = camera->targetFocusPoint;
-		camera->savedCinematic[camera->stack].focusPointVel = camera->focusPointVel;
-		camera->savedCinematic[camera->stack].focusPointAccl = camera->focusPointAccl;
 		camera->savedCinematic[camera->stack].focusRotation = camera->focusRotation;
 		camera->savedCinematic[camera->stack].targetFocusRotation = camera->targetFocusRotation;
-		camera->savedCinematic[camera->stack].focusDistance = camera->focusDistance;
-		camera->savedCinematic[camera->stack].posSpline = camera->data.Cinematic.posSpline;
-		camera->savedCinematic[camera->stack].targetFocusDistance = camera->targetFocusDistance;
+		camera->savedCinematic[camera->stack].focusPointVel = camera->focusPointVel;
+		camera->savedCinematic[camera->stack].focusPointAccl = camera->focusPointAccl;
 		camera->savedCinematic[camera->stack].maxVel = camera->maxVel;
+		camera->savedCinematic[camera->stack].focusDistance = camera->focusDistance;
+		camera->savedCinematic[camera->stack].targetFocusDistance = camera->targetFocusDistance;
+		camera->savedCinematic[camera->stack].posSpline = camera->data.Cinematic.posSpline;
 		camera->savedCinematic[camera->stack].targetSpline = camera->data.Cinematic.targetSpline;
 		camera->savedCinematic[camera->stack].level = gameTrackerX.level;
 	}
