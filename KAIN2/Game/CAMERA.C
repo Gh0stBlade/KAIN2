@@ -238,7 +238,7 @@ void CAMERA_SetViewVolume(struct Camera *camera)
 	CAMERA_CalcVVClipInfo(camera);
 }
 
-void CAMERA_SetProjDistance(struct Camera *camera, long distance)
+void CAMERA_SetProjDistance(struct Camera *camera, long distance) // Matching - 100%
 {
 	struct Level* level;
 	int i;
