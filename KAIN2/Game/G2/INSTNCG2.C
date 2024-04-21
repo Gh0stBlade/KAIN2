@@ -6,7 +6,7 @@
 #include "Game/PSX/COLLIDES.H"
 #include "Game/G2/ANMCTRLR.H"
 
-void G2Instance_BuildTransformsForList(struct _Instance* listHead)//Matching - 99.74%
+void G2Instance_BuildTransformsForList(struct _Instance* listHead) // Matching - 100%
 {
 	struct _Instance* instance;
 
@@ -24,7 +24,7 @@ void G2Instance_BuildTransformsForList(struct _Instance* listHead)//Matching - 9
 				(instance->oldRotation.y == instance->rotation.y) &&
 				(instance->oldRotation.z == instance->rotation.z) &&
 				(instance->matrix != NULL) && (((instance->object->animList == NULL)) ||
-				(instance->object->oflags2 & 0x40000000) || !(instance->anim.flags & 0x1))))
+					(instance->object->oflags2 & 0x40000000) || !(instance->anim.flags & 0x1))))
 			{
 				_G2Instance_BuildDeactivatedTransforms(instance);
 			}
@@ -43,7 +43,7 @@ void G2Instance_BuildTransformsForList(struct _Instance* listHead)//Matching - 9
 	{
 		if (instance->rebuildCallback != NULL)
 		{
-			if (instance->rebuildCallback(instance) != FALSE)
+			if (instance->rebuildCallback(instance) != G2FALSE)
 			{
 				G2Anim_UpdateStoredFrame(&instance->anim);
 
