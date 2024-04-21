@@ -516,7 +516,7 @@ void CAMERA_Restore(struct Camera* camera, long restore)  // Matching - 100%
 	}
 }
 
-struct _SVector* SplineGetNextPointDC(struct Spline* spline, struct SplineDef* def)
+struct _SVector* SplineGetNextPointDC(struct Spline* spline, struct SplineDef* def) // Matching - 100%
 {
 	static struct _SVector point;
 
