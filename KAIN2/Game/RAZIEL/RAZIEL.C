@@ -5591,7 +5591,7 @@ int GetControllerMessages(long* controlCommand) // Matching - 100%
 	return 0;
 }
 
-void RazielAdditionalCollide(struct _Instance* instance, struct GameTracker* gameTracker)//Matching - 92.83%
+void RazielAdditionalCollide(struct _Instance* instance, struct GameTracker* gameTracker) // Matching - 99.28%
 {
 	int rc;
 	int Mode;
@@ -5603,15 +5603,20 @@ void RazielAdditionalCollide(struct _Instance* instance, struct GameTracker* gam
 	if ((ControlFlag & 0x8))
 	{
 		rc = 1;
+
+		if ((ControlFlag & 0x2000))
+		{
+			PhysicsCheckDropOff(instance, SetPhysicsDropOffData(0, -96, Raziel.dropOffHeight, (short)Raziel.slipSlope, 256), 2);
+		}
 	}
 	else
 	{
 		rc = 0;
-	}
 
-	if ((ControlFlag & 0x2000))
-	{
-		PhysicsCheckDropOff(instance, SetPhysicsDropOffData(0, -96, Raziel.dropOffHeight, (short)Raziel.slipSlope, 256), 2);
+		if ((ControlFlag & 0x2000))
+		{
+			PhysicsCheckDropOff(instance, SetPhysicsDropOffData(0, -96, Raziel.dropOffHeight, (short)Raziel.slipSlope, 256), 2);
+		}
 	}
 
 	if ((rc & 0x1))
@@ -5625,18 +5630,18 @@ void RazielAdditionalCollide(struct _Instance* instance, struct GameTracker* gam
 			Height = 128;
 		}
 
-		if (Height < instance->oldPos.z - instance->position.z)
+		if ((instance->oldPos.z - instance->position.z) > Height)
 		{
 			Height = instance->oldPos.z - instance->position.z;
 		}
 
-		if ((PhysicsCheckGravity(instance, SetPhysicsGravityData((short)instance->matrix[1].t[2] - (instance->matrix)->t[2], Height, 0, 0, 0, (short)Raziel.slipSlope), 7) & 0x1))
+		if ((PhysicsCheckGravity(instance, SetPhysicsGravityData((short)instance->matrix[1].t[2] - instance->matrix[0].t[2], Height, 0, 0, 0, (short)Raziel.slipSlope), 7) & 0x1))
 		{
 			Raziel.Senses.Flags |= 0x4;
 		}
 		else
 		{
-			Raziel.Senses.Flags &= 0xFFFFFFFB;
+			Raziel.Senses.Flags &= ~0x4;
 		}
 
 		FX_UpdateInstanceWaterSplit(instance);
@@ -5652,11 +5657,12 @@ void RazielAdditionalCollide(struct _Instance* instance, struct GameTracker* gam
 
 	if ((ControlFlag & 0x400))
 	{
-		if (Raziel.Senses.heldClass != 3)
+		if (Raziel.Senses.heldClass != 0x3)
 		{
-			Data = (struct evPhysicsEdgeData*)SetPhysicsEdgeData(400, -256, 144, 0, -196, 498, &Raziel.Senses.ForwardNormal, &Raziel.Senses.AboveNormal, &Raziel.Senses.Delta);
+			Data = (struct evPhysicsEdgeData*)SetPhysicsEdgeData(400, -256, 144, 0, -196, 498, &Raziel.Senses.ForwardNormal,
+				&Raziel.Senses.AboveNormal, &Raziel.Senses.Delta);
 
-			Mode = PhysicsCheckEdgeGrabbing(instance, gameTracker, (intptr_t)Data, 3);
+			Mode = PhysicsCheckEdgeGrabbing(instance, gameTracker, (uintptr_t)Data, 3);
 
 			if ((Mode & 0x6) == 6)
 			{
@@ -5680,7 +5686,7 @@ void RazielAdditionalCollide(struct _Instance* instance, struct GameTracker* gam
 			}
 			else
 			{
-				Raziel.Senses.Flags &= 0xFFFFFFFD;
+				Raziel.Senses.Flags &= ~0x2;
 			}
 
 			if ((Mode & 0x2))
@@ -5689,7 +5695,7 @@ void RazielAdditionalCollide(struct _Instance* instance, struct GameTracker* gam
 			}
 			else
 			{
-				Raziel.Senses.Flags &= 0xFFFFFFFE;
+				Raziel.Senses.Flags &= ~0x1;
 			}
 		}
 	}
@@ -5698,11 +5704,11 @@ void RazielAdditionalCollide(struct _Instance* instance, struct GameTracker* gam
 	{
 		Inst = razGetHeldWeapon();
 
-		swimData = (struct evPhysicsSwimData*)SetPhysicsSwimData((Raziel.Mode >> 18) & 0x1, &Raziel.iVelocity, 256, 416, 112);
+		swimData = (struct evPhysicsSwimData*)SetPhysicsSwimData(((Raziel.Mode & (0x1 << 18))) >> 18, &Raziel.iVelocity, 256, 416, 112);
 
-		WaterStatus = PhysicsCheckSwim(instance, (intptr_t)swimData, 3);
+		WaterStatus = PhysicsCheckSwim(instance, (uintptr_t)swimData, 3);
 
-		if ((swimData->rc & 0x10) && Inst != NULL)
+		if (((swimData->rc & 0x10)) && (Inst != NULL))
 		{
 			if (INSTANCE_Query(Inst, 4) == 3)
 			{
@@ -5710,7 +5716,7 @@ void RazielAdditionalCollide(struct _Instance* instance, struct GameTracker* gam
 			}
 		}
 
-		if ((swimData->rc & 0x20) && Inst != NULL)
+		if (((swimData->rc & 0x20)) && (Inst != NULL))
 		{
 			if (INSTANCE_Query(Inst, 4) == 3)
 			{
@@ -5727,7 +5733,8 @@ void RazielAdditionalCollide(struct _Instance* instance, struct GameTracker* gam
 
 	if ((ControlFlag & 0x8000))
 	{
-		Mode = PhysicsCheckBlockers(instance, gameTracker, SetPhysicsEdgeData(256, -256, 80, 0, -104, 0, &Raziel.Senses.ForwardNormal, &Raziel.Senses.AboveNormal, &Raziel.Senses.Delta), 3);
+		Mode = PhysicsCheckBlockers(instance, gameTracker, SetPhysicsEdgeData(256, -256, 80, 0, -104, 0,
+			&Raziel.Senses.ForwardNormal, &Raziel.Senses.AboveNormal, &Raziel.Senses.Delta), 3);
 
 		if ((Mode & 0x4))
 		{
@@ -5735,7 +5742,7 @@ void RazielAdditionalCollide(struct _Instance* instance, struct GameTracker* gam
 		}
 		else
 		{
-			Raziel.Senses.Flags &= 0xFFFFFFFD;
+			Raziel.Senses.Flags &= ~0x2;
 		}
 
 		if ((Mode & 0x2))
@@ -5744,7 +5751,7 @@ void RazielAdditionalCollide(struct _Instance* instance, struct GameTracker* gam
 		}
 		else
 		{
-			Raziel.Senses.Flags &= 0xFFFFFFFE;
+			Raziel.Senses.Flags &= ~0x1;
 		}
 	}
 
@@ -5757,7 +5764,7 @@ void RazielAdditionalCollide(struct _Instance* instance, struct GameTracker* gam
 	{
 		if (Raziel.attachedPlatform != NULL)
 		{
-			if (INSTANCE_Query(Raziel.attachedPlatform, 2) & 0x8)
+			if ((INSTANCE_Query(Raziel.attachedPlatform, 2) & 0x8))
 			{
 				PhysicsCheckLinkedMove(instance, SetPhysicsLinkedMoveData(Raziel.attachedPlatform, 2, NULL, NULL), 5);
 			}
