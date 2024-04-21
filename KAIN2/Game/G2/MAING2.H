@@ -1,16 +1,17 @@
 #ifndef MAING2_H
 #define MAING2_H
 
-struct _PVertex // hashcode: 0x4AC0ECE8 (dec: 1254157544)
+struct _PVertex 
 {
 	short x; // size=0, offset=0
 	short y; // size=0, offset=2
 	long otz; // size=0, offset=4
 };
 
-struct _VertexPool // hashcode: 0x98F8C96E (dec: -1728525970)
+struct _VertexPool 
 {
 	struct _PVertex vertex[528]; // size=4224, offset=0
+	//struct CVECTOR color[528]; // size=2112, offset=4224
 	CVECTOR color[528]; // size=2112, offset=4224
 };
 
